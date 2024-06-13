@@ -231,6 +231,15 @@ const extract = (_doc) => {
   const look = config.look;
   resetDataFetching();
   dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look);
+  nodes.forEach((node) => {
+    if (Array.isArray(node.label)) {
+      // add the rest as description
+      node.description = node.label.slice(1);
+      // add first description as label
+      node.label = node.label[0];
+    }
+  });
+  console.log('nodes after extract', nodes);
 };
 
 /**

@@ -8,6 +8,7 @@ import { forkJoin } from './shapes/forkJoin.ts';
 import { choice } from './shapes/choice.ts';
 import { note } from './shapes/note.ts';
 import { stadium } from './shapes/stadium.js';
+import { rectWithTitle } from './shapes/rectWithTitle.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { subroutine } from './shapes/subroutine.js';
 import { cylinder } from './shapes/cylinder.js';
@@ -36,7 +37,7 @@ const shapes = {
   choice,
   note,
   roundedRect,
-  rectWithTitle: roundedRect,
+  rectWithTitle,
   squareRect,
   stadium,
   subroutine,
@@ -57,6 +58,8 @@ let nodeElems = {};
 export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
+
+  console.log('node DDD', node);
 
   //special check for rect shape (with or without rounded corners)
   if (node.shape === 'rect') {

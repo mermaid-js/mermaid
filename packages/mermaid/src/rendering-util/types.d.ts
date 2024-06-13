@@ -13,6 +13,7 @@ export type CheckFitFunction = (text: MarkdownLine) => boolean;
 interface Node {
   id: string;
   label?: string;
+  description?: string[];
   parentId?: string;
   position?: string; // Keep, this is for notes 'left of', 'right of', etc. Move into nodeNode
   cssStyles?: string; // Renamed from `styles` to `cssStyles`
