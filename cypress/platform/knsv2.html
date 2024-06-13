@@ -77,12 +77,8 @@
   <body>
     <pre id="diagram" class="mermaid">
 flowchart LR
-subgraph Apa["Apa"]
-    A["Start"]
-    B["This is B"]
-end
-    A --> B & C["C"]
-    Apa --> C
+
+    Apa --AA--> C
       </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -131,7 +127,7 @@ Apa --> C
 A --> B & C["C"]
       </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 stateDiagram
 direction LR
       state Gorilla0 {
@@ -142,6 +138,7 @@ direction LR
       }
       Apa0 --> C0
       A0 --> C0
+      C1: "`This is C`"
       </pre
     >
     <pre id="diagram" class="mermaid2">
@@ -182,14 +179,9 @@ stateDiagram
 
       </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
 flowchart LR
- subgraph Apa["Apa"]
-        A["Start"]
-        B["This is B"]
-  end
-    A --> B & C["C"]
-    Apa --> C
+    Apa --Hello--> C
 
       </pre
     >
@@ -327,13 +319,13 @@ stateDiagram-v2
         // handdrawnSeed: 12,
         // look: 'handdrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-        layout: 'dagre',
+        // layout: 'dagre',
         // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
-        fontFamily: 'Kalam',
+        // fontFamily: 'Kalam',
         // fontFamily: 'courier',
         sequence: {
           actorFontFamily: 'courier',
