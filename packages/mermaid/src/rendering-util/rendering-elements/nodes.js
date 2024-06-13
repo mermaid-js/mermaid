@@ -85,6 +85,8 @@ export const insertNode = async (elem, node, dir) => {
   newEl.attr('data-id', node.id);
   newEl.attr('data-node', true);
   newEl.attr('data-et', 'node');
+  newEl.attr('data-look', node.look);
+
   if (node.tooltip) {
     el.attr('title', node.tooltip);
   }

@@ -75,27 +75,80 @@
     </style>
   </head>
   <body>
+    <pre id="diagram" class="mermaid2">
+---
+config:
+  theme: neo
+  look: neo
+  layout: elk
+  elk.mergeEdges: true
+  themeVariables: {}
+---
+
+stateDiagram
+  direction TB
+  A --> B
+  A --> C
+  A --> D
+  A --> E
+  A --> F
+      </pre
+    >
+    <pre id="diagram" class="mermaid2">
+---
+config:
+  theme: default
+  look: classic
+  layout: elk
+---
+flowchart TD
+ subgraph subgraph_ao83d50qa["Subgraph"]
+        C("Let me think")
+  end
+    A["Easter"] -- Get eggs --> B("Go shopping")
+    B o--o C
+    B --> H["H"]
+    C -- One --> D["Laptop"]
+    C -- Two --> E["iPhone"]
+    C -- Three --> F["fa:fa-car Car"]
+    C --> G["G"]
+    G --> H
+    H --> C & E
+    D --> E
+    F --> E
+    style B stroke:#FF6D00,stroke-width:4px,stroke-dasharray: 0,fill:#FFFFFF
+
+
+      </pre
+    >
+    <pre id="diagram" class="mermaid2">
+---
+config:
+  theme: default
+  look: classic
+  layout: elk
+---
+flowchart TD
+ subgraph subgraph_ao83d50qa["Subgraph1"]
+        C("Let me think")
+  end
+    A["Easter"] -- Get eggs --> B("Go shopping")
+    B o--o C
+    B --> H["H"]
+    C -- One --> D["Laptop"]
+    C -- Two --> E["iPhone"]
+    C -- Three --> F["fa:fa-car Car"]
+    C --> G["G"]
+    G --> H
+    H --> C & E
+    D --> E
+    F --> E
+    style B stroke:#FF6D00,stroke-width:4px,stroke-dasharray: 0,fill:#FFFFFF
+
+
+      </pre
+    >
     <pre id="diagram" class="mermaid">
-flowchart LR
-subgraph Apa["Apa"]
-    A["Start"]
-    B["This is B"]
-end
-    A --> B & C["C"]
-    Apa --> C
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-flowchart LR
-subgraph Apa["Apa"]
-    B["This is B"]
-    A["Start"]
-end
-    A --> B & C["C"]
-    Apa --> C
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
 flowchart RL
 subgraph Apa["Apa"]
   subgraph Gorilla
@@ -301,7 +354,7 @@ stateDiagram
   end note
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 stateDiagram-v2
     direction LR
     [*] --> Active
@@ -317,24 +370,25 @@ stateDiagram-v2
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      // import { layouts } from './mermaid-layout-elk.esm.mjs';
-      // mermaid.registerLayoutLoaders(layouts);
+      import { layouts } from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        // theme: 'base',
+        theme: 'neo',
         // handdrawnSeed: 12,
-        // look: 'handdrawn',
+        look: 'neo',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-        layout: 'dagre',
+        // layout: 'dagre',
         // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
-        fontFamily: 'Kalam',
+        // fontFamily: 'Kalam',
         // fontFamily: 'courier',
+        fontFamily: 'arial',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
@@ -350,12 +404,6 @@ stateDiagram-v2
         console.error('In parse error:');
         console.error(err);
       };
-      void (async () => {
-        const { svg } = await mermaid.render('the-id-of-the-svg', code);
-        console.log(svg);
-        const elem = document.querySelector('#graph-to-be');
-        elem.innerHTML = svg;
-      })();
     </script>
   </body>
 </html>

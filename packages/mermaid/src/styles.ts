@@ -72,6 +72,11 @@ const getStyles = (
   .node .neo-node {
     stroke: ${options.nodeBorder};
   }
+
+  [data-look="neo"].node rect {
+    stroke: ${options.nodeBorder};
+    stroke: red !important
+  }
   ${userStyles}
 `;
 };
