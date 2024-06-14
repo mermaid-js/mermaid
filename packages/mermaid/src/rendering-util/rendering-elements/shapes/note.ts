@@ -13,11 +13,7 @@ export const note = async (parent: SVGAElement, node: Node) => {
   if (!useHtmlLabels) {
     node.centerLabel = true;
   }
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    'node ' + node.cssClasses
-  );
+  const { shapeSvg, bbox } = await labelHelper(parent, node, 'node ' + node.cssClasses);
 
   log.info('Classes = ', node.cssClasses);
   const { cssStyles } = node;

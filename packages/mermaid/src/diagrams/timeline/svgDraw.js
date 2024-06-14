@@ -258,7 +258,6 @@ export const drawTask = function (elem, task, conf) {
   rect.ry = 3;
   drawRect(g, rect);
 
-  let xPos = task.x + 14;
   // task.people.forEach((person) => {
   //   const colour = task.actors[person].color;
 

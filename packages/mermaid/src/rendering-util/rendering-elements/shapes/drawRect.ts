@@ -7,7 +7,7 @@ import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
-  const { themeVariables, look } = getConfig();
+  const { look } = getConfig();
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
