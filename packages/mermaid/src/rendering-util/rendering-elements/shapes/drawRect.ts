@@ -23,7 +23,6 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   const y = -totalHeight / 2;
 
   let rect;
-  node.look = look;
   let { rx, ry } = node;
   const { cssStyles } = node;
 

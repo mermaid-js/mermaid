@@ -4,7 +4,6 @@ import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const roundedRect = async (parent: SVGAElement, node: Node) => {
   const { look } = getConfig();
-  node.look = look;
   const options = {
     rx: node.look === 'neo' ? 3 : 5,
     ry: node.look === 'neo' ? 3 : 5,
