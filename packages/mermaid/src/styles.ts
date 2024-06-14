@@ -77,6 +77,13 @@ const getStyles = (
     stroke: none;
     filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
   }
+
+  [data-look="neo"].statediagram-cluster rect {
+    fill: ${options.compositeTitleBackground};
+    stroke: none;
+    stroke-width: 1px;
+  }
+
   ${userStyles}
 `;
 };

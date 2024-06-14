@@ -90,24 +90,23 @@ stateDiagram-v2
     >
 
     <pre id="diagram" class="mermaid">
-      stateDiagram
-       StateA
-
+      stateDiagram-v2
+      [*] --> First
+      state First {
+          [*] --> second
+          second --> [*]
+      }
 
 
     </pre>
 
     <pre id="diagram" class="mermaid2">
-      stateDiagram
-        direction LR
-        [*] --> A
-        A --> B
-        B --> C
-        state B {
-          direction LR
-          a --> b
-        }
-        B --> D
+      flowchart LR
+        A[Start] --Some text--> B(Continue)
+        B --> C{Evaluate}
+        C -- One --> D[Option 1]
+        C -- Two --> E[Option 2]
+        C -- Three --> F[fa:fa-car Option 3]
     </pre>
 
     <script type="module">
@@ -118,7 +117,7 @@ stateDiagram-v2
         console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'neo',
+        theme: 'forest',
         handdrawnSeed: 12,
         look: 'neo',
         //layout: 'elk',

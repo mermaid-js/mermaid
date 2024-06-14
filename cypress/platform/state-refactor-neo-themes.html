@@ -91,8 +91,9 @@
   <table>
     <tr>
       <th></th> <!-- Placeholder for the top left corner -->
-      <th>neo-default-light</th>
-      <th>neo-default-dark</th>
+      <th>default-light</th>
+      <th>neo-neo-light</th>
+      <th>neo-neo-dark</th>
       <th>neo-forest-light</th>
       <th>neo-base-light</th>
     </tr>
@@ -106,6 +107,13 @@
   </pre>
           </div>
       </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+%%{init: {"look": "classic", "theme": "default"} }%%
+stateDiagram-v2
+    stateId
+      </pre>
+      </td>
       <td>
         <pre id="diagram1" class="mermaid">
 %%{init: {"look": "neo", "theme": "neo"} }%%
@@ -431,7 +439,6 @@ stateDiagram-v2
         <div class="content">
           <div class="pre-scrollable">
             <pre>
-%%{init: {"look": "neo", "theme": "neo"} }%%
       [*] --> First
     state First {
         [*] --> second
@@ -444,7 +451,7 @@ stateDiagram-v2
       </th>
       <td>
         <pre id="diagram1" class="mermaid">
-
+%%{init: {"look": "neo", "theme": "neo"} }%%
     stateDiagram-v2
        [*] --> First
     state First {

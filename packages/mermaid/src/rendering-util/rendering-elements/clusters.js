@@ -182,7 +182,8 @@ const roundedWithTitle = (parent, node) => {
     .attr('class', node.cssClasses)
     .attr('id', node.id)
     .attr('data-et', 'node')
-    .attr('data-id', node.id);
+    .attr('data-id', node.id)
+    .attr('data-look', node.look);
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
@@ -269,7 +270,8 @@ const roundedWithTitle = (parent, node) => {
       .attr('x', x)
       .attr('y', y)
       .attr('width', width)
-      .attr('height', node.height + padding);
+      .attr('height', node.height + padding)
+      .attr('data-look', node.look);
     innerRect
       .attr('class', 'inner')
       .attr('x', x)

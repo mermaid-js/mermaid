@@ -15,8 +15,7 @@ class Theme {
     this.background = '#ffffff';
 
     this.primaryColor = '#cccccc';
-    //this.mainBkg = '#ffffff';
-    this.mainBkg = '#ecedfe';
+    this.mainBkg = '#ffffff';
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
