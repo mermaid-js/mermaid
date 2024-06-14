@@ -225,10 +225,11 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           graph.parent(v)
         );
         node.height += 0;
-        const parent = graph.node(node.parentId);
+        graph.node(node.parentId);
         const halfPadding = node?.padding / 2 || 0;
         const labelHeight = node?.labelBBox?.height || 0;
         const offsetY = labelHeight - halfPadding || 0;
+        log.debug('OffsetY', offsetY, 'labelHeight', labelHeight, 'halfPadding', halfPadding);
         // node.y += offsetY + (parent?.offsetY / 2 || 0);
         // node.offsetY = offsetY;
         insertCluster(clusters, node);

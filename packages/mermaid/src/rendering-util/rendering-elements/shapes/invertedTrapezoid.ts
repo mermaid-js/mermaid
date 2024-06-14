@@ -1,7 +1,5 @@
-import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';

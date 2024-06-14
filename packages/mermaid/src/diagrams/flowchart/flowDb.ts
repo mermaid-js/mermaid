@@ -2,7 +2,7 @@ import { select } from 'd3';
 import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
-import type { LayoutData, LayoutMethod, Node, Edge } from '../../rendering-util/types.js';
+import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
 import {
   setAccTitle,

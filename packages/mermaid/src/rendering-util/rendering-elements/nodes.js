@@ -21,12 +21,6 @@ import { lean_right } from './shapes/leanRight.js';
 import { lean_left } from './shapes/leanLeft.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
-const formatClass = (str) => {
-  if (str) {
-    return ' ' + str;
-  }
-  return '';
-};
 
 const shapes = {
   state,

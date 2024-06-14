@@ -30,10 +30,10 @@ export const getDiagramElements = (id, securityLevel) => {
  */
 export function insertElementsForSize(el, data) {
   const nodesElem = el.insert('g').attr('class', 'nodes');
-  const edgesElem = el.insert('g').attr('class', 'edges');
+  el.insert('g').attr('class', 'edges');
   data.nodes.forEach(async (item) => {
     item.shape = 'rect';
-    const e = await insertNode(nodesElem, {
+    await insertNode(nodesElem, {
       ...item,
       class: 'default flowchart-label',
       labelStyle: '',
