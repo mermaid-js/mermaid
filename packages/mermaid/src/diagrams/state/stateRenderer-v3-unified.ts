@@ -84,9 +84,6 @@ export const draw = async function (
   const config = getConfig();
   if (config.look === 'neo') {
     data4Layout.markers = ['barbNeo'];
-    data4Layout.nodes.forEach((node) => {
-      node.look = 'neo';
-    });
   } else {
     data4Layout.markers = ['barb'];
   }
