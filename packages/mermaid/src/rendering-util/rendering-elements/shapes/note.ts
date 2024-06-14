@@ -16,8 +16,7 @@ export const note = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox, halfPadding } = await labelHelper(
     parent,
     node,
-    'node ' + node.cssClasses,
-    true
+    'node ' + node.cssClasses
   );
 
   log.info('Classes = ', node.cssClasses);

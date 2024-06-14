@@ -1,7 +1,7 @@
-import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
+import type { Node } from '$root/rendering-util/types.d.ts';
 import { select } from 'd3';
 import { evaluate } from '$root/diagrams/common/common.js';
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
+import { updateNodeBounds } from './util.js';
 import createLabel from '../createLabel.js';
 import intersect from '../intersect/index.js';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';

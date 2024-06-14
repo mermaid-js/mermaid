@@ -1,4 +1,3 @@
-import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
@@ -52,7 +51,7 @@ export const createStadiumPathD = (
 };
 
 export const stadium = async (parent: SVGAElement, node: Node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), true);
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const h = bbox.height + node.padding;
   const w = bbox.width + h / 4 + node.padding;

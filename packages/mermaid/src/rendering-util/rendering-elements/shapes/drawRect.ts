@@ -7,15 +7,9 @@ import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
-  const { themeVariables, handdrawnSeed, look } = getConfig();
-  const { nodeBorder, mainBkg } = themeVariables;
+  const { themeVariables, look } = getConfig();
 
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    getNodeClasses(node),
-    true
-  );
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
   const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
@@ -76,7 +70,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
 };
 
 export const labelRect = async (parent: SVGElement, node: Node) => {
-  const { shapeSvg } = await labelHelper(parent, node, 'label', true);
+  const { shapeSvg } = await labelHelper(parent, node, 'label');
 
   // log.trace('Classes = ', node.class);
   // add the rect

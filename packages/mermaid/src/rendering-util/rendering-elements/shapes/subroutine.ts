@@ -1,4 +1,3 @@
-import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
@@ -33,7 +32,7 @@ export const createSubroutinePathD = (
 };
 
 export const subroutine = async (parent: SVGAElement, node: Node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), true);
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const halfPadding = (node?.padding || 0) / 2;
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -58,7 +57,6 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
-    const pathData = createSubroutinePathD(-w / 2, -h / 2, w, h);
 
     const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
     const l1 = rc.line(x, y, x, y + h, options);

@@ -50,7 +50,7 @@ export const createInnerCylinderPathD = (
   return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
 };
 export const cylinder = async (parent: SVGAElement, node: Node) => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), true);
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const w = bbox.width + node.padding;
   const rx = w / 2;

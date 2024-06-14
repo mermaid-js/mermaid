@@ -1,4 +1,3 @@
-import config from '../../dist/defaultConfig';
 import type { MermaidConfig } from '../../dist/config.type';
 export type MarkdownWordType = 'normal' | 'strong' | 'emphasis';
 export interface MarkdownWord {

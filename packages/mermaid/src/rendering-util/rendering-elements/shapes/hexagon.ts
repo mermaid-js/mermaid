@@ -26,12 +26,7 @@ export const createHexagonPathD = (
 };
 
 export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    getNodeClasses(node),
-    true
-  );
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
 
   const f = 4;
   const h = bbox.height + node.padding;
