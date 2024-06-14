@@ -368,7 +368,7 @@ export const clear = () => {
 };
 
 export const positionCluster = (node) => {
-  log.info('Position cluster (' + node.id + ', ' + node.x + ', ' + node.y + ')');
+  log.debug('Position cluster (' + node.id + ', ' + node.x + ', ' + node.y + ')');
   const el = clusterElems[node.id];
 
   el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');

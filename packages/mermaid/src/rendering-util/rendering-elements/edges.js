@@ -149,7 +149,7 @@ export const positionEdgeLabel = (edge, paths) => {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
       log.info(
-        'Moving label ' + edge.label + ' from (',
+        'Moving label ' + edge?.id + ' from (',
         x,
         ',',
         y,
@@ -499,7 +499,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   const tail = startNode;
   var head = endNode;
 
-  // log.info('abc88 InsertEdge SPLIT: ', points, edge.start, id);
+  log.info('abc88 InsertEdge XBX: ', points, edge.start, id);
   if (head.intersect && tail.intersect) {
     // log.info('abc88 InsertEdge SPLIT: 0.5', points);
     points = points.slice(1, edge.points.length - 1);
