@@ -21,7 +21,7 @@ export const rect_left_inv_arrow = async (
   parent: SVGAElement,
   node: Node
 ): Promise<SVGAElement> => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), true);
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;

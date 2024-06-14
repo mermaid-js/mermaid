@@ -1,11 +1,10 @@
-import createLabel from '../createLabel.js';
 import { createText } from '$root/rendering-util/createText.ts';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { select } from 'd3';
 import { evaluate, sanitizeText } from '$root/diagrams/common/common.js';
 import { decodeEntities } from '$root/utils.js';
 
-export const labelHelper = async (parent, node, _classes, isNode) => {
+export const labelHelper = async (parent, node, _classes) => {
   let cssClasses;
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig().flowchart.htmlLabels);
   if (!_classes) {

@@ -6,12 +6,7 @@ import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shape
 import rough from 'roughjs';
 
 export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    getNodeClasses(node),
-    true
-  );
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
 
   const radius = bbox.width / 2 + halfPadding;
   let circleElem;

@@ -85,7 +85,7 @@ export const draw = async function (
   }
 
   // Get color scheme for the graph
-  const colorScheme = d3scaleOrdinal(d3schemeTableau10);
+  // const colorScheme = d3scaleOrdinal(d3schemeTableau10);
 };
 
 export default {

@@ -110,12 +110,13 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   graph.edges().forEach(function (e) {
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
   });
+  log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
   log.info('#############################################');
   log.info('###                Layout                 ###');
   log.info('#############################################');
   log.info(graph);
   dagreLayout(graph);
-  log.info('Graph after layout:', graphlibJson.write(graph));
+  log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
   // Move the nodes to the correct place
   let diff = 0;
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
