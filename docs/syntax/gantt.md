@@ -482,13 +482,18 @@ todayMarker off
 
 You can assign core working hours within the Gantt by providing a time value to `wdStartTime` and `wdEndTime`. It expects a time in the 24hour format as shown below.
 
-```gantt
-        title A Gantt Diagram
+```
+---
+title: A Gantt Diagram
+config:
+  gantt:
+    dateFormat: YYYY-MM-DD
+    workdayStartTime: 08:00
+    workdayEndTime: 17:00
+---
+gantt
         accTitle: A simple sample gantt diagram
         accDescr: 2 sections with 2 tasks each, from 2014
-        dateFormat  YYYY-MM-DD
-        wdStartTime 08:00
-        wdEndTime 17:00
 ```
 
 When a start and end time is provided alongside task durations in hours and/or minutes the task end date will be calculated using the working hours between the start and end time
