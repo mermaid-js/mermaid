@@ -122,7 +122,8 @@
     "typescript": "^5.4.3",
     "vite": "^5.2.3",
     "vite-plugin-istanbul": "^6.0.0",
-    "vitest": "^1.4.0"
+    "vitest": "^1.4.0",
+    "cytoscape": "^3.28.1"
   },
   "nyc": {
     "report-dir": "coverage/cypress"
