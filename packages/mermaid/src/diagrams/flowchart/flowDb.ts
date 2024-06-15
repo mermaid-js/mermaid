@@ -17,12 +17,12 @@ import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
 let config = getConfig();
-let vertices: Record<string, FlowVertex> = {};
+let vertices: Map<string, FlowVertex> = new Map();
 let edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
-let classes: Record<string, FlowClass> = {};
+let classes: Map<string, FlowClass> = new Map();
 let subGraphs: FlowSubGraph[] = [];
-let subGraphLookup: Record<string, FlowSubGraph> = {};
-let tooltips: Record<string, string> = {};
+let subGraphLookup: Map<string, FlowSubGraph> = new Map();
+let tooltips: Map<string, string> = new Map();
 let subCount = 0;
 let firstGraphFlag = true;
 let direction: string;
@@ -40,10 +40,9 @@ const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
  * @param id - id of the node
  */
 export const lookUpDomId = function (id: string) {
-  const vertexKeys = Object.keys(vertices);
-  for (const vertexKey of vertexKeys) {
-    if (vertices[vertexKey].id === id) {
-      return vertices[vertexKey].domId;
+  for (const vertex of vertices.values()) {
+    if (vertex.id === id) {
+      return vertex.domId;
     }
   }
   return id;
@@ -67,50 +66,53 @@ export const addVertex = function (
   }
   let txt;
 
-  if (vertices[id] === undefined) {
-    vertices[id] = {
+  let vertex = vertices.get(id);
+  if (vertex === undefined) {
+    vertex = {
       id,
       labelType: 'text',
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
       styles: [],
       classes: [],
     };
+    vertices.set(id, vertex);
   }
   vertexCounter++;
+
   if (textObj !== undefined) {
     config = getConfig();
     txt = sanitizeText(textObj.text.trim());
-    vertices[id].labelType = textObj.type;
+    vertex.labelType = textObj.type;
     // strip quotes if string starts and ends with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
       txt = txt.substring(1, txt.length - 1);
     }
-    vertices[id].text = txt;
+    vertex.text = txt;
   } else {
-    if (vertices[id].text === undefined) {
-      vertices[id].text = id;
+    if (vertex.text === undefined) {
+      vertex.text = id;
     }
   }
   if (type !== undefined) {
-    vertices[id].type = type;
+    vertex.type = type;
   }
   if (style !== undefined && style !== null) {
     style.forEach(function (s) {
-      vertices[id].styles.push(s);
+      vertex.styles.push(s);
     });
   }
   if (classes !== undefined && classes !== null) {
     classes.forEach(function (s) {
-      vertices[id].classes.push(s);
+      vertex.classes.push(s);
     });
   }
   if (dir !== undefined) {
-    vertices[id].dir = dir;
+    vertex.dir = dir;
   }
-  if (vertices[id].props === undefined) {
-    vertices[id].props = props;
+  if (vertex.props === undefined) {
+    vertex.props = props;
   } else if (props !== undefined) {
-    Object.assign(vertices[id].props, props);
+    Object.assign(vertex.props, props);
   }
 };
 
@@ -208,17 +210,19 @@ export const updateLink = function (positions: ('default' | number)[], style: st
 
 export const addClass = function (ids: string, style: string[]) {
   ids.split(',').forEach(function (id) {
-    if (classes[id] === undefined) {
-      classes[id] = { id, styles: [], textStyles: [] };
+    let classNode = classes.get(id);
+    if (classNode === undefined) {
+      classNode = { id, styles: [], textStyles: [] };
+      classes.set(id, classNode);
     }
 
     if (style !== undefined && style !== null) {
       style.forEach(function (s) {
         if (s.match('color')) {
           const newStyle = s.replace('fill', 'bgFill').replace('color', 'fill');
-          classes[id].textStyles.push(newStyle);
+          classNode.textStyles.push(newStyle);
         }
-        classes[id].styles.push(s);
+        classNode.styles.push(s);
       });
     }
   });
@@ -255,11 +259,13 @@ export const setDirection = function (dir: string) {
  */
 export const setClass = function (ids: string, className: string) {
   for (const id of ids.split(',')) {
-    if (vertices[id]) {
-      vertices[id].classes.push(className);
+    const vertex = vertices.get(id);
+    if (vertex) {
+      vertex.classes.push(className);
     }
-    if (subGraphLookup[id]) {
-      subGraphLookup[id].classes.push(className);
+    const subGraph = subGraphLookup.get(id);
+    if (subGraph) {
+      subGraph.classes.push(className);
     }
   }
 };
@@ -270,7 +276,7 @@ const setTooltip = function (ids: string, tooltip: string) {
   }
   tooltip = sanitizeText(tooltip);
   for (const id of ids.split(',')) {
-    tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = tooltip;
+    tooltips.set(version === 'gen-1' ? lookUpDomId(id) : id, tooltip);
   }
 };
 
@@ -303,8 +309,9 @@ const setClickFun = function (id: string, functionName: string, functionArgs: st
     argList.push(id);
   }
 
-  if (vertices[id] !== undefined) {
-    vertices[id].haveCallback = true;
+  const vertex = vertices.get(id);
+  if (vertex) {
+    vertex.haveCallback = true;
     funs.push(function () {
       const elem = document.querySelector(`[id="${domId}"]`);
       if (elem !== null) {
@@ -329,19 +336,17 @@ const setClickFun = function (id: string, functionName: string, functionArgs: st
  */
 export const setLink = function (ids: string, linkStr: string, target: string) {
   ids.split(',').forEach(function (id) {
-    if (vertices[id] !== undefined) {
-      vertices[id].link = utils.formatUrl(linkStr, config);
-      vertices[id].linkTarget = target;
+    const vertex = vertices.get(id);
+    if (vertex !== undefined) {
+      vertex.link = utils.formatUrl(linkStr, config);
+      vertex.linkTarget = target;
     }
   });
   setClass(ids, 'clickable');
 };
 
 export const getTooltip = function (id: string) {
-  if (tooltips.hasOwnProperty(id)) {
-    return tooltips[id];
-  }
-  return undefined;
+  return tooltips.get(id);
 };
 
 /**
@@ -435,14 +440,14 @@ funs.push(setupToolTips);
  *
  */
 export const clear = function (ver = 'gen-1') {
-  vertices = {};
-  classes = {};
+  vertices = new Map();
+  classes = new Map();
   edges = [];
   funs = [setupToolTips];
   subGraphs = [];
-  subGraphLookup = {};
+  subGraphLookup = new Map();
   subCount = 0;
-  tooltips = {};
+  tooltips = new Map();
   firstGraphFlag = true;
   version = ver;
   config = getConfig();
@@ -516,7 +521,7 @@ export const addSubGraph = function (
   // Remove the members in the new subgraph if they already belong to another subgraph
   subGraph.nodes = makeUniq(subGraph, subGraphs).nodes;
   subGraphs.push(subGraph);
-  subGraphLookup[id] = subGraph;
+  subGraphLookup.set(id, subGraph);
   return id;
 };
 

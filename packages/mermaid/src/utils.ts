@@ -929,3 +929,19 @@ export const decodeEntities = function (text: string): string {
 export const isString = (value: unknown): value is string => {
   return typeof value === 'string';
 };
+
+export const getEdgeId = (
+  from: string,
+  to: string,
+  {
+    counter = 0,
+    prefix,
+    suffix,
+  }: {
+    counter?: number;
+    prefix?: string;
+    suffix?: string;
+  }
+) => {
+  return `${prefix ? `${prefix}_` : ''}${from}_${to}_${counter}${suffix ? `_${suffix}` : ''}`;
+};

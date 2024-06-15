@@ -137,4 +137,9 @@ describe('XSS', () => {
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
+  it('should sanitize backticks block diagram labels properly', () => {
+    cy.visit('http://localhost:9000/xss25.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
 });
