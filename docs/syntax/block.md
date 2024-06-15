@@ -636,10 +636,8 @@ Understanding and avoiding common syntax errors is key to a smooth experience wi
 
 A common mistake is incorrect linking syntax, which can lead to unexpected results or broken diagrams:
 
-```
-block-beta
-  A - B
-```
+    block-beta
+      A - B
 
 **Correction**:
 Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection. Also remember that one of the fundaments for block diagram is to give the author full control of where the boxes are positioned so in the example you need to add a space between the boxes:

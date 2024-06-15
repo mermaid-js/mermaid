@@ -120,9 +120,9 @@ A colon, `:`, separates the task title from its metadata.
 Metadata items are separated by a comma, `,`. Valid tags are `active`, `done`, `crit`, and `milestone`. Tags are optional, but if used, they must be specified first.
 After processing the tags, the remaining metadata items are interpreted as follows:
 
-1. If a single item is specified, it determines when the task ends. It can either be a specific date/time or a duration. If a duration is specified, it is added to the start date of the task to determine the end date of the task, taking into account any exclusions.
-2. If two items are specified, the last item is interpreted as in the previous case. The first item can either specify an explicit start date/time (in the format specified by `dateFormat`) or reference another task using `after <otherTaskID> [[otherTaskID2 [otherTaskID3]]...]`. In the latter case, the start date of the task will be set according to the latest end date of any referenced task.
-3. If three items are specified, the last two will be interpreted as in the previous case. The first item will denote the ID of the task, which can be referenced using the `later <taskID>` syntax.
+1.  If a single item is specified, it determines when the task ends. It can either be a specific date/time or a duration. If a duration is specified, it is added to the start date of the task to determine the end date of the task, taking into account any exclusions.
+2.  If two items are specified, the last item is interpreted as in the previous case. The first item can either specify an explicit start date/time (in the format specified by `dateFormat`) or reference another task using `after <otherTaskID> [[otherTaskID2 [otherTaskID3]]...]`. In the latter case, the start date of the task will be set according to the latest end date of any referenced task.
+3.  If three items are specified, the last two will be interpreted as in the previous case. The first item will denote the ID of the task, which can be referenced using the `later <taskID>` syntax.
 
 | Metadata syntax                                      | Start date                                          | End date                                              | ID       |
 | ---------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------- | -------- |
@@ -468,32 +468,23 @@ Styling of the Gantt diagram is done by defining a number of CSS classes. During
 
 You can style or hide the marker for the current date. To style it, add a value for the `todayMarker` key.
 
-```
-todayMarker stroke-width:5px,stroke:#0f0,opacity:0.5
-```
+    todayMarker stroke-width:5px,stroke:#0f0,opacity:0.5
 
 To hide the marker, set `todayMarker` to `off`.
 
-```
-todayMarker off
-```
+    todayMarker off
 
 ## Working hours and durations
 
 You can assign core working hours within the Gantt by providing a time value to `wdStartTime` and `wdEndTime`. It expects a time in the 24hour format as shown below.
 
-```
----
-title: A Gantt Diagram
-config:
-  gantt:
-    dateFormat: YYYY-MM-DD
-    workdayStartTime: 08:00
-    workdayEndTime: 17:00
----
-gantt
+```gantt
+        title A Gantt Diagram
         accTitle: A simple sample gantt diagram
         accDescr: 2 sections with 2 tasks each, from 2014
+        dateFormat  YYYY-MM-DD
+        wdStartTime 08:00
+        wdEndTime 17:00
 ```
 
 When a start and end time is provided alongside task durations in hours and/or minutes the task end date will be calculated using the working hours between the start and end time
@@ -538,10 +529,8 @@ mermaid.ganttConfig = {
 
 It is possible to bind a click event to a task. The click can lead to either a javascript callback or to a link which will be opened in the current browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
-```
-click taskId call callback(arguments)
-click taskId href URL
-```
+    click taskId call callback(arguments)
+    click taskId href URL
 
 - taskId is the id of the task
 - callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified.

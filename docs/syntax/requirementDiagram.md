@@ -56,14 +56,12 @@ An important note on user text: all input can be surrounded in quotes or not. Fo
 
 A requirement definition contains a requirement type, name, id, text, risk, and verification method. The syntax follows:
 
-```
-<type> user_defined_name {
-    id: user_defined_id
-    text: user_defined text
-    risk: <risk>
-    verifymethod: <method>
-}
-```
+    <type> user_defined_name {
+        id: user_defined_id
+        text: user_defined text
+        risk: <risk>
+        verifymethod: <method>
+    }
 
 Type, risk, and method are enumerations defined in SysML.
 
@@ -77,12 +75,10 @@ Type, risk, and method are enumerations defined in SysML.
 
 An element definition contains an element name, type, and document reference. These three are all user defined. The element feature is intended to be lightweight but allow requirements to be connected to portions of other documents.
 
-```
-element user_defined_name {
-    type: user_defined_type
-    docref: user_defined_ref
-}
-```
+    element user_defined_name {
+        type: user_defined_type
+        docref: user_defined_ref
+    }
 
 ### Relationship
 
@@ -90,15 +86,11 @@ Relationships are comprised of a source node, destination node, and relationship
 
 Each follows the definition format of
 
-```
-{name of source} - <type> -> {name of destination}
-```
+    {name of source} - <type> -> {name of destination}
 
 or
 
-```
-{name of destination} <- <type> - {name of source}
-```
+    {name of destination} <- <type> - {name of source}
 
 "name of source" and "name of destination" should be names of requirement or element nodes defined elsewhere.
 

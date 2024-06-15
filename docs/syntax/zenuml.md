@@ -105,10 +105,10 @@ zenuml
 
 Messages can be one of:
 
-1. Sync message
-2. Async message
-3. Creation message
-4. Reply message
+1.  Sync message
+2.  Async message
+3.  Creation message
+4.  Reply message
 
 ### Sync message
 
@@ -290,10 +290,10 @@ zenuml
 It is possible to express loops in a ZenUML diagram. This is done by any of the
 following notations:
 
-1. while
-2. for
-3. forEach, foreach
-4. loop
+1.  while
+2.  for
+3.  forEach, foreach
+4.  loop
 
 ```zenuml
 while(condition) {
@@ -423,15 +423,13 @@ It is possible to indicate a stop of the sequence within the flow (usually used 
 
 This is done by the notation
 
-```
-try {
-  ...statements...
-} catch {
-  ...statements...
-} finally {
-  ...statements...
-}
-```
+    try {
+      ...statements...
+    } catch {
+      ...statements...
+    } finally {
+      ...statements...
+    }
 
 See the example below:
 

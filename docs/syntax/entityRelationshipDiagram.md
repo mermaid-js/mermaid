@@ -86,9 +86,7 @@ When including attributes on ER diagrams, you must decide whether to include for
 
 Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to label the relationship. Each statement consists of the following parts:
 
-```
-    <first-entity> [<relationship> <second-entity> : <relationship-label>]
-```
+        <first-entity> [<relationship> <second-entity> : <relationship-label>]
 
 Where:
 
@@ -99,9 +97,7 @@ Where:
 
 For example:
 
-```
-    PROPERTY ||--|{ ROOM : contains
-```
+        PROPERTY ||--|{ ROOM : contains
 
 This statement can be read as _a property contains one or more rooms, and a room is part of one and only one property_. You can see that the label here is from the first entity's perspective: a property contains a room, but a room does not contain a property. When considered from the perspective of the second entity, the equivalent label is usually very easy to infer. (Some ER diagrams label relationships from both perspectives, but this is not supported here, and is usually superfluous).
 

@@ -470,8 +470,8 @@ state or states in the diagram.
 
 **These are the current limitations with state diagram classDefs:**
 
-1. Cannot be applied to start or end states
-2. Cannot be applied to or within composite states
+1.  Cannot be applied to start or end states
+2.  Cannot be applied to or within composite states
 
 _These are in development and will be available in a future version._
 
@@ -483,9 +483,7 @@ a _[valid CSS property name](https://www.w3.org/TR/CSS/#properties)_ followed by
 
 Here is an example of a classDef with just one property-value pair:
 
-```
-    classDef movement font-style:italic;
-```
+        classDef movement font-style:italic;
 
 where
 
@@ -496,9 +494,7 @@ If you want to have more than one _property-value pair_ then you put a comma (`,
 
 Here is an example with three property-value pairs:
 
-```
-    classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
-```
+        classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
 
 where
 
@@ -513,9 +509,9 @@ where
 
 There are two ways to apply a `classDef` style to a state:
 
-1. use the `class` keyword to apply a classDef style to one or more states in a single statement, or
-2. use the `:::` operator to apply a classDef style to a state as it is being used in a transition statement (e.g. with an arrow
-   to/from another state)
+1.  use the `class` keyword to apply a classDef style to one or more states in a single statement, or
+2.  use the `:::` operator to apply a classDef style to a state as it is being used in a transition statement (e.g. with an arrow
+    to/from another state)
 
 #### 1. `class` statement
 
