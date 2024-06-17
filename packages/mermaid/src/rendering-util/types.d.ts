@@ -1,4 +1,3 @@
-import config from '../../dist/defaultConfig';
 import type { MermaidConfig } from '../../dist/config.type';
 export type MarkdownWordType = 'normal' | 'strong' | 'emphasis';
 export interface MarkdownWord {
@@ -13,6 +12,7 @@ export type CheckFitFunction = (text: MarkdownLine) => boolean;
 interface Node {
   id: string;
   label?: string;
+  description?: string[];
   parentId?: string;
   position?: string; // Keep, this is for notes 'left of', 'right of', etc. Move into nodeNode
   cssStyles?: string; // Renamed from `styles` to `cssStyles`

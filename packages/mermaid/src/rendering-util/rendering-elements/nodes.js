@@ -8,6 +8,7 @@ import { forkJoin } from './shapes/forkJoin.ts';
 import { choice } from './shapes/choice.ts';
 import { note } from './shapes/note.ts';
 import { stadium } from './shapes/stadium.js';
+import { rectWithTitle } from './shapes/rectWithTitle.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { subroutine } from './shapes/subroutine.js';
 import { cylinder } from './shapes/cylinder.js';
@@ -20,12 +21,6 @@ import { lean_right } from './shapes/leanRight.js';
 import { lean_left } from './shapes/leanLeft.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
-const formatClass = (str) => {
-  if (str) {
-    return ' ' + str;
-  }
-  return '';
-};
 
 const shapes = {
   state,
@@ -36,7 +31,7 @@ const shapes = {
   choice,
   note,
   roundedRect,
-  rectWithTitle: roundedRect,
+  rectWithTitle,
   squareRect,
   stadium,
   subroutine,
@@ -111,18 +106,19 @@ export const clear = () => {
 export const positionNode = (node) => {
   const el = nodeElems[node.id];
 
-  log.trace(
-    'Transforming node',
+  log.debug(
+    'Position node',
+    node.id,
     node.diff,
     node,
     'translate(' + (node.x - node.width / 2 - 5) + ', ' + node.width / 2 + ')'
   );
-
-  const diff = 0;
+  // Handling of the case where teh label grows the cluster
+  const diff = node.diff || 0;
   if (node.clusterNode) {
     el.attr(
       'transform',
-      'translate(' + (node.x + diff - node.width / 2) + ', ' + (node.y - node.height / 2) + ')'
+      'translate(' + (node.x - node.width / 2) + ', ' + (node.y - node.height / 2) + ')'
     );
   } else {
     el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');

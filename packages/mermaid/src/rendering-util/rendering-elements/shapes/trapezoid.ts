@@ -1,4 +1,3 @@
-import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
@@ -22,7 +21,7 @@ export const createTrapezoidPathD = (
 };
 
 export const trapezoid = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), true);
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -37,8 +36,7 @@ export const trapezoid = async (parent: SVGAElement, node: Node): Promise<SVGAEl
   const { cssStyles } = node;
 
   if (node.look === 'handdrawn') {
-    console.log('Trapezoid: Inside handdrawn block');
-    // @ts-ignore
+    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createTrapezoidPathD(0, 0, w, h);

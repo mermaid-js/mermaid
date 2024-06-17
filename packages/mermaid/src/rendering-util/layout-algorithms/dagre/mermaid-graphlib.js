@@ -173,6 +173,7 @@ const findCommonEdges = (graph, id1, id2) => {
  *
  * @param id
  * @param {any} graph
+ * @param {string} clusterId
  */
 export const findNonClusterChild = (id, graph, clusterId) => {
   const children = graph.children(id);

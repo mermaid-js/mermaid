@@ -3,7 +3,6 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import mermaid from '@mermaid-chart/mermaid';
 import { findCommonAncestor } from './find-common-ancestor.js';
-import config from '../../mermaid/src/defaultConfig';
 
 const {
   common,
@@ -123,7 +122,7 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
         const clusterNode = JSON.parse(JSON.stringify(node));
         clusterNode.x = node.offset.posX + node.width / 2;
         clusterNode.y = node.offset.posY + node.height / 2;
-        const cluster = insertCluster(subgraphEl, clusterNode);
+        insertCluster(subgraphEl, clusterNode);
 
         log.info('Id (UGH)= ', node.shape, node.labels);
       } else {

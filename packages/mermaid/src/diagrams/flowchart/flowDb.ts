@@ -2,7 +2,7 @@ import { select } from 'd3';
 import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
-import type { LayoutData, LayoutMethod, Node, Edge } from '../../rendering-util/types.js';
+import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
 import {
   setAccTitle,
@@ -852,7 +852,7 @@ export const getData = () => {
 
   const n = getVertices();
   n.forEach((vertex) => {
-    const node = addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look);
+    addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
   });
 
   const e = getEdges();
@@ -874,7 +874,6 @@ export const getData = () => {
       pattern: rawEdge.stroke,
       look: config.look,
     };
-    console.log('rawEdge SPLIT', rawEdge, index);
     edges.push(edge);
   });
 

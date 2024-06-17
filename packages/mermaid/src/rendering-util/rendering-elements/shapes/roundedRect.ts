@@ -11,6 +11,8 @@ export const roundedRect = async (parent: SVGAElement, node: Node) => {
     labelPaddingX: node.look === 'neo' ? node.padding * 2 : node.padding,
     labelPaddingY: node.look === 'neo' ? node.padding : node.padding,
     classes: '',
+    labelPaddingX: (node?.padding || 0) * 1,
+    labelPaddingY: (node?.padding || 0) * 1,
   } as RectOptions;
 
   return drawRect(parent, node, options);

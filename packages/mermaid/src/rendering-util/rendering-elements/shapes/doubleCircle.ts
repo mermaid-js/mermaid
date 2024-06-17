@@ -7,12 +7,7 @@ import rough from 'roughjs';
 //import d3 from 'd3';
 
 export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    getNodeClasses(node),
-    true
-  );
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
   const gap = 5;
   const outerRadius = bbox.width / 2 + halfPadding + gap;
   const innerRadius = bbox.width / 2 + halfPadding;

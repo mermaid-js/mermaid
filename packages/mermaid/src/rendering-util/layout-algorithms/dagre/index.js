@@ -71,7 +71,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
       if (node && node.clusterNode) {
         // const children = graph.children(v);
-        log.info('Cluster identified XXX', v, node.width, graph.node(v));
+        log.info('Cluster identified XBX', v, node.width, graph.node(v));
         // "o" will contain the full cluster not just the children
         const o = await recursiveRender(
           nodes,
@@ -84,7 +84,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
         node.diff = o.diff || 0;
-        log.trace(
+        log.info(
           'New compound node after recursive render XAX',
           v,
           'width',
@@ -100,7 +100,15 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         if (graph.children(v).length > 0) {
           // This is a cluster but not to be rendered recursively
           // Render as before
-          log.info('Cluster - the non recursive path XXX', v, node.id, node, graph);
+          log.info(
+            'Cluster - the non recursive path XBX',
+            v,
+            node.id,
+            node,
+            node.width,
+            'Graph:',
+            graph
+          );
           log.info(findNonClusterChild(node.id, graph));
           clusterDb[node.id] = { id: findNonClusterChild(node.id, graph), node };
           // insertCluster(clusters, graph.node(v));
@@ -130,11 +138,38 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
   });
 
+  graph.nodes().map(async function (v) {
+    const node = graph.node(v);
+    log.info(
+      'Position PRE XBX => ' + v + ': (' + node.x,
+      ',' + node.y,
+      ') width: ',
+      node.width,
+      ' height: ',
+      node.height
+    );
+  });
+
+  log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
+
   log.info('############################################# XXX');
   log.info('###                Layout                 ### XXX');
   log.info('############################################# XXX');
 
   dagreLayout(graph);
+  log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
+
+  graph.nodes().map(async function (v) {
+    const node = graph.node(v);
+    log.info(
+      'Position AFTER XBX => ' + v + ': (' + node.x,
+      ',' + node.y,
+      ') width: ',
+      node.width,
+      ' height: ',
+      node.height
+    );
+  });
 
   log.info('Graph after layout:', graphlibJson.write(graph));
   // Move the nodes to the correct place
@@ -148,7 +183,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     subGraphTitleTotalMargin = p?.offsetY || subGraphTitleTotalMargin;
 
     log.info(
-      'Position XAX' + v + ': (' + node.x,
+      'Position XBX => ' + v + ': (' + node.x,
       ',' + node.y,
       ') width: ',
       node.width,
@@ -158,11 +193,11 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     if (node && node.clusterNode) {
       const parentId = graph.parent(v);
       // Adjust for padding when on root level
-      node.y = parentId ? node.y + 2 : node.y - 8;
+      node.y = parentId ? node.y - 8 : node.y - 8;
       node.x -= 8;
 
       log.info(
-        'A pure cluster node XBX',
+        'A tainted cluster node XBX1',
         v,
         node.id,
         node.width,
@@ -174,37 +209,39 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       clusterDb[node.id].node = node;
       // node.y += subGraphTitleTotalMargin - 10;
       node.y -= (node.offsetY || 0) / 2;
+      // node.y -= 10;
       positionNode(node);
     } else {
-      // Non cluster node
+      // A tainted cluster node
       if (graph.children(v).length > 0) {
+        log.info(
+          'A pure cluster node XBX1',
+          v,
+          node.id,
+          node.x,
+          node.y,
+          node.width,
+          node.height,
+          graph.parent(v)
+        );
         node.height += 0;
-        const parent = graph.node(node.parentId);
+        graph.node(node.parentId);
         const halfPadding = node?.padding / 2 || 0;
         const labelHeight = node?.labelBBox?.height || 0;
         const offsetY = labelHeight - halfPadding || 0;
-        node.y += offsetY + (parent?.offsetY / 2 || 0);
+        log.debug('OffsetY', offsetY, 'labelHeight', labelHeight, 'halfPadding', halfPadding);
+        // node.y += offsetY + (parent?.offsetY / 2 || 0);
         // node.offsetY = offsetY;
         insertCluster(clusters, node);
 
         // A cluster in the non-recursive way
-        console.log(
-          'A tainted cluster node with children XBX',
-          v,
-          node.id,
-          node.width,
-          node.height,
-          node.x,
-          node.y,
-          'offset',
-          parent?.offsetY
-        );
         clusterDb[node.id].node = node;
       } else {
+        // Regular node
         const parent = graph.node(node.parentId);
         node.y += (parent?.offsetY || 0) / 2;
         log.info(
-          'A regular node XBX - using the padding',
+          'A regular node XBX1 - using the padding',
           node.id,
           'parent',
           node.parentId,
@@ -230,7 +267,8 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     const edge = graph.edge(e);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
-    edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
+    // OBS HERE
+    // edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
     const startNode = graph.node(e.v);
     var endNode = graph.node(e.w);
     const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, startNode, endNode, id);
@@ -244,13 +282,16 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       diff = n.diff;
     }
   });
-  log.trace('Returning from recursive render XAX', elem, diff);
+  log.warn('Returning from recursive render XAX', elem, diff);
   return { elem, diff };
 };
 /**
  * ###############################################################
  * Render the graph
  * ###############################################################
+ * @param data4Layout
+ * @param svg
+ * @param element
  */
 export const render = async (data4Layout, svg, element) => {
   // Create the input mermaid.graph

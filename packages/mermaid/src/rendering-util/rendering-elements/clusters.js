@@ -125,21 +125,6 @@ const rect = (parent, node) => {
  * @returns {any} ShapeSvg
  */
 const noteGroup = (parent, node) => {
-  const { themeVariables } = getConfig();
-  const {
-    textColor,
-    clusterTextColor,
-    altBackground,
-    compositeBackground,
-    compositeTitleBackground,
-    compositeBorder,
-    noteBorderColor,
-    noteBkgColor,
-    nodeBorder,
-    mainBkg,
-    stateBorder,
-  } = themeVariables;
-
   // Add outer g element
   const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id);
 
@@ -182,7 +167,8 @@ const roundedWithTitle = (parent, node) => {
     .attr('class', node.cssClasses)
     .attr('id', node.id)
     .attr('data-et', 'node')
-    .attr('data-id', node.id)
+    .attr('data-node', 'true')
+    .attr('data-id', node.id);
     .attr('data-look', node.look);
 
   // add the rect
@@ -288,7 +274,7 @@ const roundedWithTitle = (parent, node) => {
   const rectBox = rect.node().getBBox();
   node.height = rectBox.height;
   node.offsetX = 0;
-  // Used by payout engone to position subgraph in parent
+  // Used by layout engine to position subgraph in parent
   node.offsetY = bbox.height - node.padding / 2;
   node.labelBBox = bbox;
 

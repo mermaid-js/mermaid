@@ -13,20 +13,15 @@ export const note = async (parent: SVGAElement, node: Node) => {
   if (!useHtmlLabels) {
     node.centerLabel = true;
   }
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    'node ' + node.cssClasses,
-    true
-  );
+  const { shapeSvg, bbox } = await labelHelper(parent, node, 'node ' + node.cssClasses);
 
   log.info('Classes = ', node.cssClasses);
   const { cssStyles } = node;
   let rect;
   const totalWidth = bbox.width + node.padding;
   const totalHeight = bbox.height + node.padding;
-  const x = -bbox.width / 2 - halfPadding;
-  const y = -bbox.height / 2 - halfPadding;
+  const x = -totalWidth / 2;
+  const y = -totalHeight / 2;
 
   if (node.look === 'handdrawn') {
     // add the rect

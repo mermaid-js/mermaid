@@ -149,7 +149,7 @@ export const positionEdgeLabel = (edge, paths) => {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
       log.info(
-        'Moving label ' + edge.label + ' from (',
+        'Moving label ' + edge?.id + ' from (',
         x,
         ',',
         y,
@@ -475,24 +475,7 @@ const fixCorners = function (lineData) {
   }
   return newLineData;
 };
-/**
- * Given a line, this function will return a new line where the corners are rounded.
- * @param lineData
- */
-function roundedCornersLine(lineData) {
-  const newLineData = fixCorners(lineData);
-  let path = '';
-  for (let i = 0; i < newLineData.length; i++) {
-    if (i === 0) {
-      path += 'M' + newLineData[i].x + ',' + newLineData[i].y;
-    } else if (i === newLineData.length - 1) {
-      path += 'L' + newLineData[i].x + ',' + newLineData[i].y;
-    } else {
-      path += 'L' + newLineData[i].x + ',' + newLineData[i].y;
-    }
-  }
-  return path;
-}
+
 export const insertEdge = function (elem, edge, clusterDb, diagramType, startNode, endNode, id) {
   const { handdrawnSeed } = getConfig();
   let points = edge.points;
@@ -500,7 +483,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   const tail = startNode;
   var head = endNode;
 
-  // log.info('abc88 InsertEdge SPLIT: ', points, edge.start, id);
+  log.info('abc88 InsertEdge XBX: ', points, edge.start, id);
   if (head.intersect && tail.intersect) {
     // log.info('abc88 InsertEdge SPLIT: 0.5', points);
     points = points.slice(1, edge.points.length - 1);
@@ -531,7 +514,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
   // The data for our line
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  const { cornerPoints, cornerPointPositions } = extractCornerPoints(lineData);
+  // const { cornerPoints, cornerPointPositions } = extractCornerPoints(lineData);
   lineData = fixCorners(lineData);
   let lastPoint = lineData[lineData.length - 1];
   if (lineData.length > 1) {
@@ -594,11 +577,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       strokeClasses += ' edge-pattern-solid';
   }
   let svgPath;
-  let path = '';
   let linePath = lineFunction(lineData);
   if (edge.look === 'handdrawn') {
     const rc = rough.svg(elem);
-    const ld = Object.assign([], lineData);
+    Object.assign([], lineData);
     // const svgPathNode = rc.path(lineFunction(ld.splice(0, ld.length-1)), {
     // const svgPathNode = rc.path(lineFunction(ld), {
     //   roughness: 0.3,

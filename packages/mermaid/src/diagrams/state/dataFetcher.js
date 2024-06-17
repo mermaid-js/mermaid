@@ -324,10 +324,11 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         domId: stateDomId(itemId, graphItemCount, NOTE),
         type: newNode.type,
         isGroup: newNode.type === 'group',
-        padding: 0, //getConfig().flowchart.padding
+        padding: getConfig().flowchart.padding,
         look,
         position: parsedItem.note.position,
       };
+      const parentNodeId = itemId + PARENT_ID;
       const groupData = {
         labelStyle: '',
         shape: SHAPE_NOTEGROUP,
@@ -344,12 +345,11 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
       };
       graphItemCount++;
 
-      const parentNodeId = itemId + PARENT_ID;
-
       //add parent id to groupData
       groupData.id = parentNodeId;
       //add parent id to noteData
       noteData.parentId = parentNodeId;
+      nodeData.parentId = parentNodeId;
 
       //insert groupData
       insertOrUpdateNode(nodes, groupData);
