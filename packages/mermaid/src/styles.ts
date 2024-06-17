@@ -73,7 +73,7 @@ const getStyles = (
     stroke: ${options.nodeBorder};
   }
 
-  [data-look="neo"].node rect {
+  [data-look="neo"].node rect,  [data-look="neo"].node circle, [data-look="neo"].node polygon {
     stroke: none;
     filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
   }

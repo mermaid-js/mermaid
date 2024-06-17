@@ -5,4 +5,7 @@
 5. When look is "neo" and "theme" is "neo", the background color shall be white. Status: Fixed
 6. Composite states contains borders in neo. Status: Fixed
 7. Nested states contains borders in neo. Status: Fixed
-8. The font-size of node labels seems a bit off:
+8. The font-size of node labels seems a bit off.
+9. When selecting look=neo and theme for composite stated, the height differs.
+10. Drop-shadows for non-rectangular shapes are not supported: Status: Fixed
+11. Gradient
