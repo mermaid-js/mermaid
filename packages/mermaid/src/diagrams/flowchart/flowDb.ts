@@ -813,6 +813,9 @@ const addNodeFromVertex = (
       domId: vertex.domId,
       isGroup,
       look,
+      link: vertex.link,
+      linkTarget: vertex.linkTarget,
+      tooltip: getTooltip(vertex.id),
     });
   }
 };
