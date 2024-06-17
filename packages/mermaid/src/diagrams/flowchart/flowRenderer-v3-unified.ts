@@ -8,6 +8,7 @@ import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js
 import { getDirection } from './flowDb.js';
 
 import utils from '../../utils.js';
+import { select } from 'd3';
 
 // Configuration
 const conf: Record<string, any> = {};
@@ -31,6 +32,15 @@ export const draw = async function (text: string, id: string, _version: string, 
   log.info('REF0:');
   log.info('Drawing state diagram (v2)', id);
   const { securityLevel, state: conf, layout } = getConfig();
+
+  // Handle root and document for when rendering in sandbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+
+  // @ts-ignore - document is always available
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   const DIR = getDirection();
 
@@ -60,6 +70,41 @@ export const draw = async function (text: string, id: string, _version: string, 
     diag.db.getDiagramTitle()
   );
   setupViewPortForSVG(svg, padding, 'flowchart', conf?.useMaxWidth || false);
+
+  // If node has a link, wrap it in an anchor SVG object.
+  data4Layout.nodes.forEach((vertex) => {
+    if (vertex.link) {
+      const node = select('#' + id + ' [id="' + vertex.id + '"]');
+      if (node) {
+        const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.cssClasses);
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+        if (securityLevel === 'sandbox') {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
+        } else if (vertex.linkTarget) {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
+        }
+
+        const linkNode = node.insert(function () {
+          return link;
+        }, ':first-child');
+
+        const shape = node.select('.label-container');
+        if (shape) {
+          linkNode.append(function () {
+            return shape.node();
+          });
+        }
+
+        const label = node.select('.label');
+        if (label) {
+          linkNode.append(function () {
+            return label.node();
+          });
+        }
+      }
+    }
+  });
 };
 
 export default {

@@ -35,6 +35,7 @@ interface Node {
   haveCallback?: boolean;
   link?: string;
   linkTarget?: string;
+  tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
   shape?: string;
   tooltip?: string;
