@@ -806,7 +806,8 @@ const addNodeFromVertex = (
       labelStyle: '',
       parentId,
       padding: config.flowchart?.padding || 8,
-      cssStyles: vertex.styles.join(' '),
+      cssStyles: vertex.styles,
+      cssCompiledStyles: getCompiledStyles(vertex.classes),
       cssClasses: vertex.classes.join(' '),
       shape: getTypeFromVertex(vertex),
       dir: vertex.dir,
@@ -819,6 +820,16 @@ const addNodeFromVertex = (
     });
   }
 };
+
+function getCompiledStyles(classDefs: string[]) {
+  let compiledStyles: string[] = [];
+  for (const customClass of classDefs) {
+    if (classes.get(customClass)) {
+      compiledStyles = [...compiledStyles, ...(classes.get(customClass)?.styles ?? [])];
+    }
+  }
+  return compiledStyles;
+}
 
 export const getData = () => {
   const config = getConfig();
@@ -844,7 +855,7 @@ export const getData = () => {
       labelStyle: '',
       parentId: parentDB.get(subGraph.id),
       padding: config.flowchart?.padding || 8,
-      cssStyles: '',
+      cssStyles: [],
       cssClasses: '',
       shape: 'rect',
       dir: subGraph.dir,
