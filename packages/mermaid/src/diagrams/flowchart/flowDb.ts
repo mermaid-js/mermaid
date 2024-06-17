@@ -824,8 +824,14 @@ const addNodeFromVertex = (
 function getCompiledStyles(classDefs: string[]) {
   let compiledStyles: string[] = [];
   for (const customClass of classDefs) {
-    if (classes.get(customClass)) {
-      compiledStyles = [...compiledStyles, ...(classes.get(customClass)?.styles ?? [])];
+    const cssClass = classes.get(customClass);
+    if (cssClass) {
+      if (cssClass.styles) {
+        compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])];
+      }
+      if (cssClass.textStyles) {
+        compiledStyles = [...compiledStyles, ...(cssClass.textStyles ?? [])];
+      }
     }
   }
   return compiledStyles;
