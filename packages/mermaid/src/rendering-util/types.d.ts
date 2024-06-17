@@ -15,7 +15,8 @@ interface Node {
   description?: string[];
   parentId?: string;
   position?: string; // Keep, this is for notes 'left of', 'right of', etc. Move into nodeNode
-  cssStyles?: string; // Renamed from `styles` to `cssStyles`
+  cssStyles?: string[]; // Renamed from `styles` to `cssStyles`
+  cssCompiledStyles?: string[];
   cssClasses?: string; // Renamed from `classes` to `cssClasses`
   // style?: string; //REMOVE ✅
   // class?: string; //REMOVE ✅
@@ -23,7 +24,7 @@ interface Node {
   // props?: Record<string, unknown>; //REMOVE  ✅
   // type: string; // REMOVE, replace with isGroup: boolean, default false  ✅
   // borders?: string; //REMOVE  ✅
-  labelStyle?: string;
+  labelStyle?: string; // REMOVE - use cssStyles instead  ✅
 
   // Flowchart specific properties
   labelType?: string; // REMOVE? Always use markdown string, need to check for KaTeX - ⏳ wait with this one
@@ -34,6 +35,7 @@ interface Node {
   haveCallback?: boolean;
   link?: string;
   linkTarget?: string;
+  tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
   shape?: string;
   tooltip?: string;
