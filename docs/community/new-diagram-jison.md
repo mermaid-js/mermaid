@@ -175,15 +175,13 @@ statement
 
 The functions for setting title and description are provided by a common module. This is the import from flowDb.js:
 
-```
-import {
-  setAccTitle,
-  getAccTitle,
-  getAccDescription,
-  setAccDescription,
-  clear as commonClear,
-} from '../../commonDb';
-```
+    import {
+      setAccTitle,
+      getAccTitle,
+      getAccDescription,
+      setAccDescription,
+      clear as commonClear,
+    } from '../../commonDb';
 
 The accessibility title and description are inserted into the SVG element in the `render` function in mermaidAPI.
 

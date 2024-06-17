@@ -59,10 +59,8 @@ The title is a short description of the chart and it will always render on top o
 
 #### Example
 
-```
-quadrantChart
-    title This is a sample example
-```
+    quadrantChart
+        title This is a sample example
 
 ### x-axis
 
@@ -70,8 +68,8 @@ The x-axis determines what text would be displayed in the x-axis. In x-axis ther
 
 #### Example
 
-1. `x-axis <text> --> <text>` both the left and right axis text will be rendered.
-2. `x-axis <text>` only the left axis text will be rendered.
+1.  `x-axis <text> --> <text>` both the left and right axis text will be rendered.
+2.  `x-axis <text>` only the left axis text will be rendered.
 
 ### y-axis
 
@@ -79,8 +77,8 @@ The y-axis determines what text would be displayed in the y-axis. In y-axis ther
 
 #### Example
 
-1. `y-axis <text> --> <text>` both the bottom and top axis text will be rendered.
-2. `y-axis <text>` only the bottom axis text will be rendered.
+1.  `y-axis <text> --> <text>` both the bottom and top axis text will be rendered.
+2.  `y-axis <text>` only the bottom axis text will be rendered.
 
 ### Quadrants text
 
@@ -88,10 +86,10 @@ The `quadrant-[1,2,3,4]` determine what text would be displayed inside the quadr
 
 #### Example
 
-1. `quadrant-1 <text>` determine what text will be rendered inside the top right quadrant.
-2. `quadrant-2 <text>` determine what text will be rendered inside the top left quadrant.
-3. `quadrant-3 <text>` determine what text will be rendered inside the bottom left quadrant.
-4. `quadrant-4 <text>` determine what text will be rendered inside the bottom right quadrant.
+1.  `quadrant-1 <text>` determine what text will be rendered inside the top right quadrant.
+2.  `quadrant-2 <text>` determine what text will be rendered inside the top left quadrant.
+3.  `quadrant-3 <text>` determine what text will be rendered inside the bottom left quadrant.
+4.  `quadrant-4 <text>` determine what text will be rendered inside the bottom right quadrant.
 
 ### Points
 
@@ -99,8 +97,8 @@ Points are used to plot a circle inside the quadrantChart. The syntax is `<text>
 
 #### Example
 
-1. `Point 1: [0.75, 0.80]` here the Point 1 will be drawn in the top right quadrant.
-2. `Point 2: [0.35, 0.24]` here the Point 2 will be drawn in the bottom left quadrant.
+1.  `Point 1: [0.75, 0.80]` here the Point 1 will be drawn in the top right quadrant.
+2.  `Point 2: [0.35, 0.24]` here the Point 2 will be drawn in the bottom left quadrant.
 
 ## Chart Configurations
 
@@ -173,7 +171,7 @@ quadrantChart
 
 Points can either be styled directly or with defined shared classes
 
-1. Direct styling
+1.  Direct styling
 
 ```md
 Point A: [0.9, 0.0] radius: 12
@@ -182,7 +180,7 @@ Point C: [0.7, 0.2] radius: 25, color: #00ff33, stroke-color: #10f0f0
 Point D: [0.6, 0.3] radius: 15, stroke-color: #00ff0f, stroke-width: 5px ,color: #ff33f0
 ```
 
-2. Classes styling
+2.  Classes styling
 
 ```md
 Point A:::class1: [0.9, 0.0]
@@ -206,9 +204,9 @@ classDef class3 color: #f00fff, radius : 10
 > **Note**
 > Order of preference:
 >
-> 1. Direct styles
-> 2. Class styles
-> 3. Theme styles
+> 1.  Direct styles
+> 2.  Class styles
+> 3.  Theme styles
 
 ## Example on styling
 

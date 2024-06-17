@@ -98,10 +98,8 @@ sequenceDiagram
 
 It is possible to create and destroy actors by messages. To do so, add a create or destroy directive before the message.
 
-```
-create participant B
-A --> B: Hello
-```
+    create participant B
+    A --> B: Hello
 
 Create directives support actor/participant distinction and aliases. The sender or the recipient of a message can be destroyed but only the recipient can be created.
 
@@ -145,26 +143,22 @@ And fixing diagram code does not get rid of this error and rendering of all othe
 
 The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
 
-```
-box Aqua Group Description
-... actors ...
-end
-box Group without description
-... actors ...
-end
-box rgb(33,66,99)
-... actors ...
-end
-```
+    box Aqua Group Description
+    ... actors ...
+    end
+    box Group without description
+    ... actors ...
+    end
+    box rgb(33,66,99)
+    ... actors ...
+    end
 
 > **Note**
 > If your group name is a color you can force the color to be transparent:
 
-```
-box transparent Aqua
-... actors ...
-end
-```
+    box transparent Aqua
+    ... actors ...
+    end
 
 ```mermaid-example
     sequenceDiagram
@@ -202,9 +196,7 @@ end
 
 Messages can be of two displayed either solid or with a dotted line.
 
-```
-[Actor][Arrow][Actor]:Message text
-```
+    [Actor][Arrow][Actor]:Message text
 
 There are six types of arrows currently supported:
 
@@ -322,11 +314,9 @@ sequenceDiagram
 
 It is possible to express loops in a sequence diagram. This is done by the notation
 
-```
-loop Loop text
-... statements ...
-end
-```
+    loop Loop text
+    ... statements ...
+    end
 
 See the example below:
 
@@ -350,21 +340,17 @@ sequenceDiagram
 
 It is possible to express alternative paths in a sequence diagram. This is done by the notation
 
-```
-alt Describing text
-... statements ...
-else
-... statements ...
-end
-```
+    alt Describing text
+    ... statements ...
+    else
+    ... statements ...
+    end
 
 or if there is sequence that is optional (if without else).
 
-```
-opt Describing text
-... statements ...
-end
-```
+    opt Describing text
+    ... statements ...
+    end
 
 See the example below:
 
@@ -400,15 +386,13 @@ It is possible to show actions that are happening in parallel.
 
 This is done by the notation
 
-```
-par [Action 1]
-... statements ...
-and [Action 2]
-... statements ...
-and [Action N]
-... statements ...
-end
-```
+    par [Action 1]
+    ... statements ...
+    and [Action 2]
+    ... statements ...
+    and [Action N]
+    ... statements ...
+    end
 
 See the example below:
 
@@ -470,15 +454,13 @@ It is possible to show actions that must happen automatically with conditional h
 
 This is done by the notation
 
-```
-critical [Action that must be performed]
-... statements ...
-option [Circumstance A]
-... statements ...
-option [Circumstance B]
-... statements ...
-end
-```
+    critical [Action that must be performed]
+    ... statements ...
+    option [Circumstance A]
+    ... statements ...
+    option [Circumstance B]
+    ... statements ...
+    end
 
 See the example below:
 
@@ -528,11 +510,9 @@ It is possible to indicate a stop of the sequence within the flow (usually used 
 
 This is done by the notation
 
-```
-break [something happened]
-... statements ...
-end
-```
+    break [something happened]
+    ... statements ...
+    end
 
 See the example below:
 
@@ -562,17 +542,15 @@ It is possible to highlight flows by providing colored background rects. This is
 
 The colors are defined using rgb and rgba syntax.
 
-```
-rect rgb(0, 255, 0)
-... content ...
-end
-```
+    rect rgb(0, 255, 0)
+    ... content ...
+    end
 
-```
-rect rgba(0, 0, 255, .1)
-... content ...
-end
-```
+<!---->
+
+    rect rgba(0, 0, 255, .1)
+    ... content ...
+    end
 
 See the examples below:
 
@@ -696,9 +674,7 @@ Actors can have popup-menus containing individualized links to external pages. F
 
 This can be configured by adding one or more link lines with the format:
 
-```
-link <actor>: <link-label> @ <link-url>
-```
+    link <actor>: <link-label> @ <link-url>
 
 ```mermaid-example
 sequenceDiagram
@@ -732,9 +708,7 @@ There is an advanced syntax that relies on JSON formatting. If you are comfortab
 
 This can be configured by adding the links lines with the format:
 
-```
-links <actor>: <json-formatted link-name link-url pairs>
-```
+    links <actor>: <json-formatted link-name link-url pairs>
 
 An example is below:
 

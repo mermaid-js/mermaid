@@ -505,4 +505,37 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('test1', 'id1,202304,1d');
     expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
   });
+
+  describe('when calculating task end times with working hours', function () {
+    beforeEach(function () {
+      ganttDb.clear();
+      ganttDb.setDateFormat('YYYY-MM-DD HH:mm');
+      ganttDb.setWDStartTime('09:00');
+      ganttDb.setWDEndTime('17:00');
+    });
+
+    it('should calculate end time extending to the next working day', function () {
+      ganttDb.addTask('task2', 'id2,2024-01-01 16:00, 3h');
+      const tasks = ganttDb.getTasks();
+      expect(dayjs(tasks[0].endTime).toISOString()).toEqual(
+        dayjs(new Date('2024-01-02 11:00')).toISOString()
+      );
+    });
+
+    it('should handle tasks spanning multiple days', function () {
+      ganttDb.addTask('task3', 'id3,2024-01-01 09:00, 16h');
+      const tasks = ganttDb.getTasks();
+      expect(dayjs(tasks[0].endTime).toISOString()).toEqual(
+        dayjs(new Date('2024-01-02 17:00')).toISOString()
+      );
+    });
+
+    it('should handle tasks within the same working day', function () {
+      ganttDb.addTask('task4', 'id4,2024-01-01 09:00, 3h');
+      const tasks = ganttDb.getTasks();
+      expect(dayjs(tasks[0].endTime).toISOString()).toEqual(
+        dayjs(new Date('2024-01-01 12:00')).toISOString()
+      );
+    });
+  });
 });

@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import utils from '../../utils.js';
@@ -20,6 +21,7 @@ import {
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
+dayjs.extend(isSameOrAfter);
 
 const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
 let dateFormat = '';
@@ -38,6 +40,8 @@ let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
 let weekday = 'sunday';
+let wdStartTime = undefined;
+let wdEndTime = undefined;
 let weekend = 'saturday';
 
 // The serial order of the task in the script
@@ -65,6 +69,8 @@ export const clear = function () {
   links = new Map();
   commonClear();
   weekday = 'sunday';
+  wdStartTime = undefined;
+  wdEndTime = undefined;
   weekend = 'saturday';
 };
 
@@ -94,6 +100,22 @@ export const getTodayMarker = function () {
 
 export const setDateFormat = function (txt) {
   dateFormat = txt;
+};
+
+export const setWDStartTime = function (txt) {
+  wdStartTime = dayjs(txt, 'HH:mm');
+};
+
+export const getWDStartTime = function () {
+  return wdStartTime;
+};
+
+export const setWDEndTime = function (txt) {
+  wdEndTime = dayjs(txt, 'HH:mm');
+};
+
+export const getWDEndTime = function () {
+  return wdEndTime;
 };
 
 export const enableInclusiveEndDates = function () {
@@ -345,7 +367,7 @@ const parseDuration = function (str) {
   return [NaN, 'ms'];
 };
 
-const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
+const getEndDate = function (prevTime, dateFormat, str, inclusive = false, wdStartTime, wdEndTime) {
   str = str.trim();
 
   // test for until
@@ -382,6 +404,41 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   let endTime = dayjs(prevTime);
   const [durationValue, durationUnit] = parseDuration(str);
   if (!Number.isNaN(durationValue)) {
+    if (wdStartTime != undefined && wdEndTime != undefined && durationUnit == 'h') {
+      let currentTime = prevTime;
+      let durationTime = durationValue;
+      let wdEndTimeCompare = dayjs(currentTime)
+        .clone()
+        .hour(wdEndTime.hour())
+        .minute(wdEndTime.minute());
+      let wdStartTimeCompare = dayjs(currentTime)
+        .clone()
+        .hour(wdStartTime.hour())
+        .minute(wdStartTime.minute());
+      while (
+        durationTime > 0 &&
+        dayjs(currentTime).isBefore(wdEndTimeCompare, 'hour') &&
+        dayjs(currentTime).isSameOrAfter(wdStartTimeCompare, 'hour')
+      ) {
+        currentTime = dayjs(currentTime).add(1, 'hour');
+        durationTime -= 1;
+
+        if (dayjs(currentTime).isSameOrAfter(wdEndTimeCompare, 'hour')) {
+          currentTime = dayjs(currentTime)
+            .add(1, 'day')
+            .clone()
+            .hour(wdStartTime.hour())
+            .minute(wdStartTime.minute());
+          wdEndTimeCompare = dayjs(currentTime)
+            .add(1, 'day')
+            .clone()
+            .hour(wdStartTime.hour())
+            .minute(wdStartTime.minute());
+        }
+      }
+      return currentTime;
+    }
+
     const newEndTime = endTime.add(durationValue, durationUnit);
     if (newEndTime.isValid()) {
       endTime = newEndTime;
@@ -450,7 +507,14 @@ const compileData = function (prevTask, dataStr) {
   }
 
   if (endTimeData) {
-    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
+    task.endTime = getEndDate(
+      task.startTime,
+      dateFormat,
+      endTimeData,
+      inclusiveEndDates,
+      wdStartTime,
+      wdEndTime
+    );
     task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
     checkTaskDates(task, dateFormat, excludes, includes);
   }
@@ -597,14 +661,18 @@ const compileTasks = function () {
         rawTasks[pos].startTime,
         dateFormat,
         rawTasks[pos].raw.endTime.data,
-        inclusiveEndDates
+        inclusiveEndDates,
+        wdStartTime,
+        wdEndTime
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
         rawTasks[pos].manualEndTime = dayjs(
           rawTasks[pos].raw.endTime.data,
           'YYYY-MM-DD',
-          true
+          true,
+          wdStartTime,
+          wdEndTime
         ).isValid();
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
@@ -792,6 +860,10 @@ export default {
   isInvalidDate,
   setWeekday,
   getWeekday,
+  setWDStartTime,
+  getWDStartTime,
+  setWDEndTime,
+  getWDEndTime,
   setWeekend,
 };
 
