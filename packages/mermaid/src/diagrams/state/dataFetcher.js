@@ -54,21 +54,39 @@ export function stateDomId(itemId = '', counter = 0, type = '', typeSpacer = DOM
   return `${DOMID_STATE}-${itemId}${typeStr}-${counter}`;
 }
 
-const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, look) => {
+const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, look, classes) => {
   // graphItemCount = 0;
   log.trace('items', doc);
   doc.forEach((item) => {
     switch (item.stmt) {
       case STMT_STATE:
-        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look);
+        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look, classes);
         break;
       case DEFAULT_STATE_TYPE:
-        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look);
+        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look, classes);
         break;
       case STMT_RELATION:
         {
-          dataFetcher(parentParsedItem, item.state1, diagramStates, nodes, edges, altFlag, look);
-          dataFetcher(parentParsedItem, item.state2, diagramStates, nodes, edges, altFlag, look);
+          dataFetcher(
+            parentParsedItem,
+            item.state1,
+            diagramStates,
+            nodes,
+            edges,
+            altFlag,
+            look,
+            classes
+          );
+          dataFetcher(
+            parentParsedItem,
+            item.state2,
+            diagramStates,
+            nodes,
+            edges,
+            altFlag,
+            look,
+            classes
+          );
           const edgeData = {
             id: 'edge' + graphItemCount,
             start: item.state1.id,
@@ -135,7 +153,7 @@ let cssClasses = newClassesList(); // style classes defined by a classDef
  * @param nodes
  * @param nodeData
  */
-function insertOrUpdateNode(nodes, nodeData) {
+function insertOrUpdateNode(nodes, nodeData, classes) {
   if (!nodeData.id || nodeData.id === '</join></fork>' || nodeData.id === '</choice>') {
     return;
   }
@@ -143,29 +161,62 @@ function insertOrUpdateNode(nodes, nodeData) {
   //Populate node style attributes if nodeData has classes defined
   if (nodeData.cssClasses) {
     nodeData.cssClasses.split(' ').forEach((cssClass) => {
-      if (cssClasses[cssClass]) {
-        cssClasses[cssClass].styles.forEach((style) => {
-          // Populate nodeData with style attributes specifically to be used by rough.js
-          if (style && style.startsWith('fill:')) {
-            nodeData.backgroundColor = style.replace('fill:', '');
-          }
-          if (style && style.startsWith('stroke:')) {
-            nodeData.borderColor = style.replace('stroke:', '');
-          }
-          if (style && style.startsWith('stroke-width:')) {
-            nodeData.borderWidth = style.replace('stroke-width:', '');
-          }
+      if (classes.get(cssClass)) {
+        const classDef = classes.get(cssClass);
+        // classDef.styles.forEach((style) => {
+        //   nodeData.cssCompiledStyles += style + ',';
+        //   // Populate nodeData with style attributes specifically to be used by rough.js
+        //   if (style && style.startsWith('fill:')) {
+        //     nodeData.backgroundColor = style.replace('fill:', '');
+        //   }
+        //   if (style && style.startsWith('stroke:')) {
+        //     nodeData.borderColor = style.replace('stroke:', '');
+        //   }
+        //   if (style && style.startsWith('stroke-width:')) {
+        //     nodeData.borderWidth = style.replace('stroke-width:', '');
+        //   }
 
-          nodeData.cssStyles += style + ';';
-        });
-        cssClasses[cssClass].textStyles.forEach((style) => {
-          nodeData.labelStyle += style + ';';
-          if (style && style.startsWith('fill:')) {
-            nodeData.labelTextColor = style.replace('fill:', '');
-          }
-        });
+        //   nodeData.cssStyles += style + ';';
+        // });
+
+        // classDef.textStyles.forEach((style) => {
+        //   nodeData.labelStyle += style + ';';
+        //   if (style && style.startsWith('fill:')) {
+        //     nodeData.labelTextColor = style.replace('fill:', '');
+        //   }
+        // });
+        nodeData.cssCompiledStyles = [...nodeData.cssCompiledStyles, ...classDef.styles];
       }
     });
+    //Populate node style attributes if nodeData has classes defined
+    if (nodeData.cssStyles) {
+      // nodeData.cssStyles.split(' ').forEach((csStyle) => {
+      //   if (classes[cssClass]) {
+      //     classes[cssClass].styles.forEach((style) => {
+      //       // Populate nodeData with style attributes specifically to be used by rough.js
+      //       if (style && style.startsWith('fill:')) {
+      //         nodeData.backgroundColor = style.replace('fill:', '');
+      //       }
+      //       if (style && style.startsWith('stroke:')) {
+      //         nodeData.borderColor = style.replace('stroke:', '');
+      //       }
+      //       if (style && style.startsWith('stroke-width:')) {
+      //         nodeData.borderWidth = style.replace('stroke-width:', '');
+      //       }
+      //       nodeData.cssStyles += style + ';';
+      //     });
+      //     classes[cssClass].textStyles.forEach((style) => {
+      //       nodeData.labelStyle += style + ';';
+      //       if (style && style.startsWith('fill:')) {
+      //         nodeData.labelTextColor = style.replace('fill:', '');
+      //       }
+      //     });
+      //   }
+      // });
+    }
+    // nodeData.labelTextColor = '#ffffff';
+    // nodeData.labelStyle = 'color:#ffffff';
+    // nodeData.cssStyles = 'fill:#f77';
   }
   const existingNodeData = nodes.find((node) => node.id === nodeData.id);
   if (existingNodeData) {
@@ -197,7 +248,7 @@ function getClassesFromDbInfo(dbInfoItem) {
         }
         //add comma for all other classes
         else {
-          classStr += dbInfoItem.classes[i] + ' ';
+          classStr += dbInfoItem.classes[i] + ',';
         }
       }
       return classStr;
@@ -206,9 +257,41 @@ function getClassesFromDbInfo(dbInfoItem) {
     }
   }
 }
-export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, altFlag, look) => {
+/**
+ * Get classes from the db for the info item.
+ * If there aren't any or if dbInfoItem isn't defined, return an empty string.
+ * Else create 1 string from the list of classes found
+ *
+ * @param {undefined | null | object} dbInfoItem
+ * @returns {string}
+ */
+function getStylesFromDbInfo(dbInfoItem) {
+  if (dbInfoItem === undefined || dbInfoItem === null) {
+    return;
+  } else {
+    if (dbInfoItem.styles) {
+      return dbInfoItem.styles;
+    } else {
+      return [];
+    }
+  }
+}
+export const dataFetcher = (
+  parent,
+  parsedItem,
+  diagramStates,
+  nodes,
+  edges,
+  altFlag,
+  look,
+  classes
+) => {
   const itemId = parsedItem.id;
-  const classStr = getClassesFromDbInfo(diagramStates.get(itemId));
+  const dbState = diagramStates.get(itemId);
+  const classStr = getClassesFromDbInfo(dbState);
+  const style = getStylesFromDbInfo(dbState);
+
+  log.info('dataFetcher parsedItem', parsedItem, dbState, style);
 
   if (itemId !== 'root') {
     let shape = SHAPE_STATE;
@@ -229,6 +312,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         shape,
         description: common.sanitizeText(itemId, getConfig()),
         cssClasses: `${classStr} ${CSS_DIAGRAM_STATE}`,
+        cssStyles: style,
       };
     }
 
@@ -287,7 +371,8 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
       shape: newNode.shape,
       label: newNode.description,
       cssClasses: newNode.cssClasses,
-      cssStyles: '',
+      cssCompiledStyles: [],
+      cssStyles: newNode.cssStyles,
       id: itemId,
       dir: newNode.dir,
       domId: stateDomId(itemId, graphItemCount),
@@ -319,7 +404,8 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         label: parsedItem.note.text,
         cssClasses: CSS_DIAGRAM_NOTE,
         // useHtmlLabels: false,
-        cssStyles: '', // styles.style,
+        cssStyles: [],
+        cssCompilesStyles: [],
         id: itemId + NOTE_ID + '-' + graphItemCount,
         domId: stateDomId(itemId, graphItemCount, NOTE),
         type: newNode.type,
@@ -334,7 +420,7 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         shape: SHAPE_NOTEGROUP,
         label: parsedItem.note.text,
         cssClasses: newNode.cssClasses,
-        cssStyles: '', // styles.style,
+        cssStyles: [],
         id: itemId + PARENT_ID,
         domId: stateDomId(itemId, graphItemCount, PARENT),
         type: 'group',
@@ -352,11 +438,11 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
       nodeData.parentId = parentNodeId;
 
       //insert groupData
-      insertOrUpdateNode(nodes, groupData);
+      insertOrUpdateNode(nodes, groupData, classes);
       //insert noteData
-      insertOrUpdateNode(nodes, noteData);
+      insertOrUpdateNode(nodes, noteData, classes);
       //insert nodeData
-      insertOrUpdateNode(nodes, nodeData);
+      insertOrUpdateNode(nodes, nodeData, classes);
 
       let from = itemId;
       let to = noteData.id;
@@ -382,12 +468,12 @@ export const dataFetcher = (parent, parsedItem, diagramStates, nodes, edges, alt
         look,
       });
     } else {
-      insertOrUpdateNode(nodes, nodeData);
+      insertOrUpdateNode(nodes, nodeData, classes);
     }
   }
   if (parsedItem.doc) {
     log.trace('Adding nodes children ');
-    setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, look);
+    setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, look, classes);
   }
 };
 

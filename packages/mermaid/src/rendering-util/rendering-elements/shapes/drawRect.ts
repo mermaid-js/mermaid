@@ -2,19 +2,26 @@ import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
 import { createRoundedRectPathD } from './roundedRectPath.js';
-import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+import {
+  userNodeOverrides,
+  styles2String,
+} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
+import { log } from '$root/logger.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
   const { look } = getConfig();
-
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
   const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
+
+  log.info('IPI node = ', node);
 
   let rect;
   node.look = look;
@@ -44,7 +51,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
 
     rect
       .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
+      .attr('style', nodeStyles)
       .attr('rx', rx)
       .attr('data-id', 'abc')
       .attr('data-et', 'node')

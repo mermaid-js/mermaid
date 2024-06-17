@@ -18,6 +18,7 @@ import {
   STMT_STATE,
   STMT_RELATION,
   STMT_CLASSDEF,
+  STMT_STYLEDEF,
   STMT_APPLYCLASS,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
@@ -171,9 +172,10 @@ const extract = (_doc) => {
   log.info(doc);
   clear(true);
 
-  log.info('Extract', doc);
+  log.info('Extract initial document:', doc);
 
   doc.forEach((item) => {
+    log.warn('Statement', item.stmt);
     switch (item.stmt) {
       case STMT_STATE:
         addState(
@@ -193,8 +195,20 @@ const extract = (_doc) => {
       case STMT_CLASSDEF:
         addStyleClass(item.id.trim(), item.classes);
         break;
+      case STMT_STYLEDEF:
+        {
+          const ids = item.id.trim().split(',');
+          const styles = item.styleClass.split(',');
+          ids.forEach((id) => {
+            const state = getState(id);
+            if (state !== undefined) {
+              state.styles = styles;
+            }
+          });
+        }
+        break;
       case STMT_APPLYCLASS:
-        setCssClass(item.id.trim(), item.styleClass);
+        setStyle(item.id.trim(), item.styleClass);
         break;
     }
   });
@@ -203,7 +217,7 @@ const extract = (_doc) => {
   const config = getConfig();
   const look = config.look;
   resetDataFetching();
-  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look);
+  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look, classes);
   nodes.forEach((node) => {
     if (Array.isArray(node.label)) {
       // add the rest as description
@@ -538,7 +552,7 @@ export const setCssClass = function (itemIds, cssClassName) {
 export const setStyle = function (itemId, styleText) {
   const item = getState(itemId);
   if (item !== undefined) {
-    item.textStyles.push(styleText);
+    item.styles.push(styleText);
   }
 };
 
