@@ -73,7 +73,7 @@ Example:
 ## Simple full example:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <body>
     <pre class="mermaid">
