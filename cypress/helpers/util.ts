@@ -116,6 +116,8 @@ export const openURLAndVerifyRendering = (
     cy.get('svg').should(validation);
   }
 
+  cy.argosScreenshot(name);
+
   if (useAppli) {
     cy.log(`Check eyes ${Cypress.spec.name}`);
     cy.eyesCheckWindow('Click!');

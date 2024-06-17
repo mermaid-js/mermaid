@@ -146,6 +146,7 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true
           CYPRESS_COMMIT: ${{ github.sha }}
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4

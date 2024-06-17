@@ -2,6 +2,8 @@ import { defineConfig } from 'cypress';
 import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin';
 import coverage from '@cypress/code-coverage/task';
 import eyesPlugin from '@applitools/eyes-cypress';
+import { registerArgosTask } from '@argos-ci/cypress/task';
+
 export default eyesPlugin(
   defineConfig({
     projectId: 'n2sma2',
@@ -20,6 +22,12 @@ export default eyesPlugin(
         addMatchImageSnapshotPlugin(on, config);
         // copy any needed variables from process.env to config.env
         config.env.useAppli = process.env.USE_APPLI ? true : false;
+
+        // Argos
+        registerArgosTask(on, config, {
+          uploadToArgos: !!process.env.CI,
+          token: process.env.ARGOS_TOKEN,
+        });
 
         // do not forget to return the changed config object!
         return config;
