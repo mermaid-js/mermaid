@@ -147,6 +147,9 @@ jobs:
           VITEST_COVERAGE: true
           CYPRESS_COMMIT: ${{ github.sha }}
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+          ARGOS_PARALLEL: true
+          ARGOS_PARALLEL_TOTAL: 4
+          ARGOS_PARALLEL_INDEX: ${{ matrix.containers }}
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4
