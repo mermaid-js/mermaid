@@ -124,6 +124,7 @@ export const openURLAndVerifyRendering = (
     cy.log(`Closing eyes ${Cypress.spec.name}`);
     cy.eyesClose();
   } else {
-    cy.matchImageSnapshot(name);
+    // Argos will take care of this
+    // cy.matchImageSnapshot(name);
   }
 };
