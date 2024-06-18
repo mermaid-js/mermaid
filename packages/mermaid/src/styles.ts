@@ -76,19 +76,19 @@ const getStyles = (
 
   [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon {
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
-    filter: ${options.dropShadow} );
+    filter: ${options.dropShadow};
   }
 
   [data-look="neo"].node rect,  [data-look="neo"].node circle, [data-look="neo"].node polygon {
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
-    filter: ${options.dropShadow} );
+    filter: ${options.dropShadow};
   }
 
   [data-look="neo"].node circle{
     stroke: $(options.nodeBorder);
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
 
-    filter: ${options.dropShadow} );
+    filter: ${options.dropShadow};
   }
 
   [data-look="neo"].node circle .state-start{
