@@ -1582,6 +1582,349 @@ direction LR
     </tr>
 
 
+  <!-- Separator row -->
+  <tr class="separator">
+    <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+  </tr>
+
+  <tr>
+    <th class="vertical-header">
+      <button class="collapsible">
+        Flow chart Node
+      </button>
+      <div class="content">
+        <div class="pre-scrollable">
+          <pre>
+            flowchart LR
+            A[Start]
+          </pre>
+        </div>
+      </div>
+    </th>
+    <td>
+      <pre id="diagram1" class="mermaid">
+        %%{init: {"look": "neo", "theme": "neo","fontFamily": "Arial"} }%%
+        flowchart LR
+        A[Start]
+      </pre>
+    </td>
+    <td>
+      <pre id="diagram1" class="mermaid">
+        %%{init: {"look": "neo", "theme": "dark","fontFamily": "Arial"} }%%
+        flowchart LR
+        A[Start]
+    </pre>
+    </td>
+    <td>
+      <pre id="diagram2" class="mermaid">
+        %%{init: {"look": "neo", "theme": "default","fontFamily": "Arial"} }%%
+        flowchart LR
+        A[Start]
+    </pre>
+    </td>
+    <td>
+      <pre id="diagram2" class="mermaid">
+        %%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial"} }%%
+        flowchart LR
+        A[Start]
+    </pre>
+    </td>
+    <td>
+      <pre id="diagram3" class="mermaid">
+        %%{init: {"look": "handdrawn", "theme": "default","fontFamily": "Arial"} }%%
+        flowchart LR
+        A[Start]
+    </pre>
+    </td>
+    <td>
+      <pre id="diagram3" class="mermaid">
+        %%{init: {"look": "classic", "theme": "default","fontFamily": "Arial"} }%%
+        flowchart LR
+        A[Start]
+    </pre>
+    </td>
+  </tr>
+
+<!-- Separator row -->
+<tr class="separator">
+  <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+</tr>
+
+<tr>
+  <th class="vertical-header">
+    <button class="collapsible">
+      Flow chart Nodes with Edges and labels
+    </button>
+    <div class="content">
+      <div class="pre-scrollable">
+        <pre>
+          flowchart LR
+          A[Start] --Some text--> B(Continue)
+        </pre>
+      </div>
+    </div>
+  </th>
+  <td>
+    <pre id="diagram1" class="mermaid">
+      %%{init: {"look": "neo", "theme": "neo","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] --Some text--> B(Continue)
+    </pre>
+  </td>
+  <td>
+    <pre id="diagram1" class="mermaid">
+      %%{init: {"look": "neo", "theme": "dark","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] --Some text--> B(Continue)
+  </pre>
+  </td>
+  <td>
+    <pre id="diagram2" class="mermaid">
+      %%{init: {"look": "neo", "theme": "default","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] --Some text--> B(Continue)
+    </pre>
+  </td>
+  <td>
+    <pre id="diagram2" class="mermaid">
+      %%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] --Some text--> B(Continue)
+  </pre>
+  </td>
+  <td>
+    <pre id="diagram3" class="mermaid">
+      %%{init: {"look": "handdrawn", "theme": "default","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] --Some text--> B(Continue)
+    </pre>
+  </td>
+  <td>
+    <pre id="diagram3" class="mermaid">
+      %%{init: {"look": "classic", "theme": "default","fontFamily": "Arial"} }%%
+      flowchart LR
+      A[Start] --Some text--> B(Continue)
+    </pre>
+  </td>
+</tr>
+
+<!-- Separator row -->
+<tr class="separator">
+  <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+</tr>
+
+<tr>
+  <th class="vertical-header">
+    <button class="collapsible">
+      Flow chart with polygon
+    </button>
+    <div class="content">
+      <div class="pre-scrollable">
+        <pre>
+          flowchart LR
+            A[Start] -->C{Evaluate}
+            C -- One --> D[Option 1]
+            C -- Two --> E[Option 2]
+            C -- Three --> F[fa:fa-car Option 3]
+        </pre>
+      </div>
+    </div>
+  </th>
+  <td>
+    <pre id="diagram1" class="mermaid">
+      %%{init: {"look": "neo", "theme": "neo","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] -->C{Evaluate}
+        C -- One --> D[Option 1]
+        C -- Two --> E[Option 2]
+        C -- Three --> F[fa:fa-car Option 3]
+    </pre>
+  </td>
+  <td>
+    <pre id="diagram1" class="mermaid">
+      %%{init: {"look": "neo", "theme": "dark","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] -->C{Evaluate}
+        C -- One --> D[Option 1]
+        C -- Two --> E[Option 2]
+        C -- Three --> F[fa:fa-car Option 3]
+  </pre>
+  </td>
+  <td>
+    <pre id="diagram2" class="mermaid">
+      %%{init: {"look": "neo", "theme": "default","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] -->C{Evaluate}
+        C -- One --> D[Option 1]
+        C -- Two --> E[Option 2]
+        C -- Three --> F[fa:fa-car Option 3]
+    </pre>
+  </td>
+  <td>
+    <pre id="diagram2" class="mermaid">
+      %%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] -->C{Evaluate}
+        C -- One --> D[Option 1]
+        C -- Two --> E[Option 2]
+        C -- Three --> F[fa:fa-car Option 3]
+  </pre>
+  </td>
+  <td>
+    <pre id="diagram3" class="mermaid">
+      %%{init: {"look": "handdrawn", "theme": "default","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] -->C{Evaluate}
+        C -- One --> D[Option 1]
+        C -- Two --> E[Option 2]
+        C -- Three --> F[fa:fa-car Option 3]
+    </pre>
+  </td>
+  <td>
+    <pre id="diagram3" class="mermaid">
+      %%{init: {"look": "classic", "theme": "default","fontFamily": "Arial"} }%%
+      flowchart LR
+        A[Start] -->C{Evaluate}
+        C -- One --> D[Option 1]
+        C -- Two --> E[Option 2]
+        C -- Three --> F[fa:fa-car Option 3]
+    </pre>
+  </td>
+</tr>
+
+
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          Flow chart with subgraph
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+              flowchart LR
+                subgraph TOP
+                  direction TB
+                  subgraph B1
+                  direction RL
+                  i1 -->f1
+                end
+              end
+              A --> TOP --> B
+              B1 --> B2
+            </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "neo","fontFamily": "Arial"} }%%
+          flowchart LR
+            subgraph TOP
+              direction TB
+              subgraph B1
+                direction RL
+                i1 -->f1
+              end
+            end
+          A --> TOP --> B
+          B1 --> B2
+        </pre>
+      </td>
+      <td>
+        <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "dark","fontFamily": "Arial"} }%%
+          flowchart LR
+            subgraph TOP
+              direction TB
+              subgraph B1
+                direction RL
+                i1 -->f1
+              end
+            end
+          A --> TOP --> B
+          B1 --> B2
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "default","fontFamily": "Arial"} }%%
+          flowchart LR
+            subgraph TOP
+              direction TB
+              subgraph B1
+                direction RL
+                i1 -->f1
+              end
+            end
+          A --> TOP --> B
+          B1 --> B2
+        </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial"} }%%
+          flowchart LR
+            subgraph TOP
+              direction TB
+              subgraph B1
+                direction RL
+                i1 -->f1
+              end
+            end
+          A --> TOP --> B
+          B1 --> B2
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "handdrawn", "theme": "default","fontFamily": "Arial"} }%%
+          flowchart LR
+          subgraph TOP
+            direction TB
+            subgraph B1
+              direction RL
+              i1 -->f1
+            end
+          end
+        A --> TOP --> B
+        B1 --> B2
+        </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "classic", "theme": "default","fontFamily": "Arial"} }%%
+          flowchart LR
+          subgraph TOP
+            direction TB
+            subgraph B1
+              direction RL
+              i1 -->f1
+            end
+          end
+        A --> TOP --> B
+        B1 --> B2
+        </pre>
+      </td>
+    </tr>
+
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+    <!-- New row -->
+    <tr>
+      <th class="vertical-header">Additional Content</th>
+      <td>New content 1</td>
+      <td>New content 2</td>
+      <td>New content 3</td>
+      <td>New content 4</td>
+    </tr>
+
     <!-- Separator row -->
     <tr class="separator">
       <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
