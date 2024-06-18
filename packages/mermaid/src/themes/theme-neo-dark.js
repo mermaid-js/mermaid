@@ -23,7 +23,7 @@ class Theme {
     this.secondaryTextColor = invert(this.secondaryColor);
     this.tertiaryTextColor = invert(this.tertiaryColor);
 
-    this.mainBkg = '#1f2020';
+    this.mainBkg = '#2a2020';
     this.secondBkg = 'calculated';
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
