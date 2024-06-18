@@ -1,6 +1,5 @@
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
-import styles from '../../../../dist/diagrams/packet/styles';
 
 // Striped fill like start or fork nodes in state diagrams
 export const solidStateFill = (color: string) => {
@@ -22,31 +21,33 @@ export const compileStyles = (node: Node) => {
   // node.cssStyles is an array of styles directly set on the node
 
   // concat the arrays and remove duplicates such that the values from node.cssStyles are used if there are duplicates
-  return [...(node.cssCompiledStyles || []), ...(node.cssStyles || [])];
+  const stylesMap = styles2Map([...(node.cssCompiledStyles || []), ...(node.cssStyles || [])]);
+  return { stylesMap, stylesArray: [...stylesMap] };
 };
 
 export const styles2Map = (styles: string[]) => {
-  const styleMap = new Map();
+  const styleMap = new Map<string, string>();
   styles.forEach((style) => {
     const [key, value] = style.split(':');
-    styleMap.set(key.trim(), value.trim());
+    styleMap.set(key.trim(), value?.trim());
   });
   return styleMap;
 };
 
 export const styles2String = (node: Node) => {
-  const styles = compileStyles(node);
+  const { stylesArray } = compileStyles(node);
   const labelStyles: string[] = [];
   const nodeStyles: string[] = [];
 
-  styles.forEach((style) => {
-    const [key, value] = style.split(':');
+  stylesArray.forEach((style) => {
+    const key = style[0];
     if (key === 'color') {
-      labelStyles.push(style);
+      labelStyles.push(style.join(':') + ' !important');
     } else {
-      nodeStyles.push(style);
+      nodeStyles.push(style.join(':') + ' !important');
     }
   });
+
   return { labelStyles: labelStyles.join(';'), nodeStyles: nodeStyles.join(';') };
 };
 
@@ -55,18 +56,16 @@ export const styles2String = (node: Node) => {
 export const userNodeOverrides = (node: Node, options: any) => {
   const { themeVariables, handdrawnSeed } = getConfig();
   const { nodeBorder, mainBkg } = themeVariables;
-  const styles = compileStyles(node);
+  const { stylesArray: styles, stylesMap } = compileStyles(node);
 
   // index the style array to a map object
-  const styleMap = styles2Map(styles);
-
   const result = Object.assign(
     {
       roughness: 0.7,
-      fill: styleMap.get('fill') || mainBkg,
+      fill: stylesMap.get('fill') || mainBkg,
       fillStyle: 'hachure', // solid fill
       fillWeight: 3.5,
-      stroke: styleMap.get('stroke') || nodeBorder,
+      stroke: stylesMap.get('stroke') || nodeBorder,
       seed: handdrawnSeed,
       strokeWidth: 1.3,
     },

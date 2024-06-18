@@ -75,12 +75,127 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid">
-flowchart LR
+    <h4>Case 1</h4>
+    <div class="flex">
+      <pre id="diagram" class="mermaid">
+stateDiagram-v2
+AState: Should NOT be white
+BState
+classDef exampleStyleClass fill:#fff,color: blue;
+class AState,BState exampleStyleClass
+style AState fill:#636,border:1px solid red,color:white;
+      </pre>
+      <pre id="diagram" class="mermaid">
+        %%{init: {"look": "classic"} }%%
+stateDiagram-v2
+AState: Should NOT be white
+BState
+classDef exampleStyleClass fill:#fff,color: blue;
+class AState,BState exampleStyleClass
+style AState fill:#636,border:1px solid red,color:white;
+      </pre>
+      <pre id="diagram" class="mermaid2">
+stateDiagram-v2
 
-    Apa --AA--> C
-      </pre
-    >
+classDef exampleStyleClass background:#bbb,border:1px solid red;
+a --> b
+class a exampleStyleClass
+%% a:::exampleStyleClass
+      </pre>
+      <pre id="diagram" class="mermaid2">
+stateDiagram
+   direction TB
+
+   accTitle: This is the accessible title
+   accDescr: This is an accessible description
+
+   classDef notMoving fill:white
+   classDef movement font-style:italic;
+   classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
+
+   [*] --> Still:::notMoving
+   Still --> [*]
+   Still --> Moving:::movement
+   Moving --> Still
+   Moving --> Crash:::movement
+   Crash:::badBadEvent --> [*]
+      </pre>
+      <pre id="diagram" class="mermaid2">
+stateDiagram-v2
+    MyState
+    note left of MyState : I am a leftie
+    note right of MyState : I am a rightie
+
+      </pre>
+      <pre id="diagram" class="mermaid2">
+stateDiagram
+%% direction LR
+
+        state C0 {
+          A0 --> B0
+        }
+
+      C0 --> Apa0
+
+      </pre>
+      <pre id="diagram" class="mermaid2">
+stateDiagram
+direction LR
+
+
+        state C1 {
+          A1 --> B1
+        }
+
+      C1 --> Apa1
+
+      </pre>
+    </div>
+    <h4>Case 2</h4>
+    <div class="flex">
+      <pre id="diagram" class="mermaid2">
+stateDiagram
+direction LR
+      state Gorilla0 {
+        state Apa0 {
+          A0 --> B0
+        }
+
+      }
+      Apa --> Gorilla0:Label
+      A0 --> C0
+      %% C1: "`This is C`"
+      </pre>
+      <pre id="diagram" class="mermaid2">
+stateDiagram
+direction LR
+        state Apa1 {
+          A1
+        }
+
+      Apa11 --> Apa1
+      A1 --> C1
+      %% C1: "`This is C`"
+      </pre>
+      <pre id="diagram" class="mermaid2">
+stateDiagram
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+      </pre>
+    </div>
     <pre id="diagram" class="mermaid2">
 flowchart LR
 subgraph Apa["Apa"]
@@ -127,20 +242,7 @@ Apa --> C
 A --> B & C["C"]
       </pre
     >
-    <pre id="diagram" class="mermaid">
-stateDiagram
-direction LR
-      state Gorilla0 {
-        state Apa0 {
-          A0 --> B0
-        }
 
-      }
-      Apa0 --> C0
-      A0 --> C0
-      C1: "`This is C`"
-      </pre
-    >
     <pre id="diagram" class="mermaid2">
 flowchart LR
     subgraph Gorilla
@@ -180,7 +282,7 @@ stateDiagram
 
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 flowchart LR
     Apa --Hello--> C
 
@@ -318,7 +420,7 @@ stateDiagram-v2
       mermaid.initialize({
         // theme: 'base',
         // handdrawnSeed: 12,
-        // look: 'handdrawn',
+        look: 'handdrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
         // layout: 'elk',

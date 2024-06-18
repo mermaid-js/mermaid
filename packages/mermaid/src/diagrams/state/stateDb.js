@@ -202,13 +202,13 @@ const extract = (_doc) => {
           ids.forEach((id) => {
             const state = getState(id);
             if (state !== undefined) {
-              state.styles = styles;
+              state.styles = styles.map((s) => s.replace(/;/g, '')?.trim());
             }
           });
         }
         break;
       case STMT_APPLYCLASS:
-        setStyle(item.id.trim(), item.styleClass);
+        setCssClass(item.id.trim(), item.styleClass);
         break;
     }
   });

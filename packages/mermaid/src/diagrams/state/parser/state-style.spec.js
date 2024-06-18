@@ -221,41 +221,46 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
   describe('style statement for a state (style)', () => {
     describe('defining (style)', () => {
       it('has "style" as a keyword, an id, and can set a css style attribute', function () {
-        stateDiagram.parser.parse(`
-stateDiagram-v2
-  style id1 background:#bbb;`);
-
+        stateDiagram.parser.parse(`stateDiagram-v2
+        id1
+        style id1 background:#bbb`);
         stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+        const data4Layout = stateDiagram.parser.yy.getData();
 
-        // const styleClasses = stateDb.getClasses();
-        // expect(styleClasses.get('exampleClass').styles.length).toEqual(1);
-        // expect(styleClasses.get('exampleClass').styles[0]).toEqual('background:#bbb');
+        expect(data4Layout.nodes[0].cssStyles).toEqual(['background:#bbb']);
+      });
+      it('has "style" as a keyword, an id, and can set a css style attribute', function () {
+        stateDiagram.parser.parse(`stateDiagram-v2
+        id1
+        id2
+        style id1,id2 background:#bbb`);
+        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+        const data4Layout = stateDiagram.parser.yy.getData();
+
+        expect(data4Layout.nodes[0].cssStyles).toEqual(['background:#bbb']);
+        expect(data4Layout.nodes[1].cssStyles).toEqual(['background:#bbb']);
       });
 
-      it('has handles multiple ids', function () {
-        stateDiagram.parser.parse(`
-stateDiagram-v2
-  style id1,id2 background:#bbb;`);
+      it('can define multiple attributes separated by commas', function () {
+        stateDiagram.parser.parse(`stateDiagram-v2
+        id1
+        id2
+        style id1,id2 background:#bbb, font-weight:bold, font-style:italic;`);
 
         stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+        const data4Layout = stateDiagram.parser.yy.getData();
 
-        // const styleClasses = stateDb.getClasses();
-        // expect(styleClasses.get('exampleClass').styles.length).toEqual(1);
-        // expect(styleClasses.get('exampleClass').styles[0]).toEqual('background:#bbb');
+        expect(data4Layout.nodes[0].cssStyles).toEqual([
+          'background:#bbb',
+          'font-weight:bold',
+          'font-style:italic',
+        ]);
+        expect(data4Layout.nodes[1].cssStyles).toEqual([
+          'background:#bbb',
+          'font-weight:bold',
+          'font-style:italic',
+        ]);
       });
-
-      // it('can define multiple attributes separated by commas', function () {
-      //   stateDiagram.parser.parse(
-      //     'stateDiagram-v2\n classDef exampleClass background:#bbb, font-weight:bold, font-style:italic;'
-      //   );
-      //   stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
-
-      //   const styleClasses = stateDb.getClasses();
-      //   expect(styleClasses.get('exampleClass').styles.length).toEqual(3);
-      //   expect(styleClasses.get('exampleClass').styles[0]).toEqual('background:#bbb');
-      //   expect(styleClasses.get('exampleClass').styles[1]).toEqual('font-weight:bold');
-      //   expect(styleClasses.get('exampleClass').styles[2]).toEqual('font-style:italic');
-      // });
     });
   });
 });

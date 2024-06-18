@@ -558,6 +558,29 @@ stateDiagram-v2
         { logLevel: 0, fontFamily: 'courier' }
       );
     });
+    it(' can have styles applied ', () => {
+      imgSnapshotTest(
+        `
+stateDiagram-v2
+AState
+style AState fill:#636,border:1px solid red,color:white;
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
+    it(' should let styles take preceedence over classes', () => {
+      imgSnapshotTest(
+        `
+stateDiagram-v2
+AState: Should NOT be white
+BState
+classDef exampleStyleClass fill:#fff,color: blue;
+class AState,BState exampleStyleClass
+style AState fill:#636,border:1px solid red,color:white;
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
   });
   it('1433: should render a simple state diagram with a title', () => {
     imgSnapshotTest(
