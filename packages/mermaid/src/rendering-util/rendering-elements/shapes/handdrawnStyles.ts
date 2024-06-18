@@ -15,28 +15,61 @@ export const solidStateFill = (color: string) => {
   };
 };
 
+export const compileStyles = (node: Node) => {
+  // node.cssCompiledStyles is an array of strings in the form of 'key: value' where jey is the css property and value is the value
+  // the array is the styles of node node from the classes it is using
+  // node.cssStyles is an array of styles directly set on the node
+
+  // concat the arrays and remove duplicates such that the values from node.cssStyles are used if there are duplicates
+  const stylesMap = styles2Map([...(node.cssCompiledStyles || []), ...(node.cssStyles || [])]);
+  return { stylesMap, stylesArray: [...stylesMap] };
+};
+
+export const styles2Map = (styles: string[]) => {
+  const styleMap = new Map<string, string>();
+  styles.forEach((style) => {
+    const [key, value] = style.split(':');
+    styleMap.set(key.trim(), value?.trim());
+  });
+  return styleMap;
+};
+
+export const styles2String = (node: Node) => {
+  const { stylesArray } = compileStyles(node);
+  const labelStyles: string[] = [];
+  const nodeStyles: string[] = [];
+
+  stylesArray.forEach((style) => {
+    const key = style[0];
+    if (key === 'color') {
+      labelStyles.push(style.join(':') + ' !important');
+    } else {
+      nodeStyles.push(style.join(':') + ' !important');
+    }
+  });
+
+  return { labelStyles: labelStyles.join(';'), nodeStyles: nodeStyles.join(';') };
+};
+
 // Striped fill like start or fork nodes in state diagrams
 // TODO remove any
 export const userNodeOverrides = (node: Node, options: any) => {
   const { themeVariables, handdrawnSeed } = getConfig();
   const { nodeBorder, mainBkg } = themeVariables;
+  const { stylesArray: styles, stylesMap } = compileStyles(node);
+
+  // index the style array to a map object
   const result = Object.assign(
     {
       roughness: 0.7,
-      fill: mainBkg,
+      fill: stylesMap.get('fill') || mainBkg,
       fillStyle: 'hachure', // solid fill
       fillWeight: 3.5,
-      stroke: nodeBorder,
+      stroke: stylesMap.get('stroke') || nodeBorder,
       seed: handdrawnSeed,
       strokeWidth: 1.3,
     },
     options
   );
-  if (node.backgroundColor) {
-    result.fill = node.backgroundColor;
-  }
-  if (node.borderColor) {
-    result.stroke = node.borderColor;
-  }
   return result;
 };
