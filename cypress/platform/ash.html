@@ -78,6 +78,7 @@
     <pre id="diagram" class="mermaid">
 flowchart
    node
+   rounded(rounded)
    id1([This is the text in the box])
    id2((circle))
    id3(((double circle)))
@@ -87,7 +88,9 @@ flowchart
    id7[/This is the text in the box/]
    id8[\This is the text in the box\]
    A[/Christmas\]
-       B[\Christmas/]
+   B[\Christmas/]
+   sub[[subroutine]]
+   db[(Database)]
     
 
       </pre
@@ -100,6 +103,7 @@ config:
 ---
 flowchart
    node
+   rounded(rounded)
    id1([This is the text in the box])
    id2((circle))
    id3(((double circle)))
@@ -109,6 +113,8 @@ flowchart
    id7[/This is the text in the box/]
    id8[\This is the text in the box\]
    B[/Christmas\]
+   sub[[subroutine]]
+   db[(Database)]
     
 
             
