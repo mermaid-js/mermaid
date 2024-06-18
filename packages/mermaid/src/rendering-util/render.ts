@@ -52,7 +52,7 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
 
     gradient
       .attr('id', 'gradient')
-      .attr('gradientUnits', 'userSpaceOnUse')
+      .attr('gradientUnits', 'objectBoundingBox')
       .attr('spreadMethod', 'pad');
 
     gradient
@@ -63,9 +63,32 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
 
     gradient
       .append('svg:stop')
-      .attr('offset', '100%')
+      .attr('offset', '75%')
       .attr('stop-color', gradientStop)
       .attr('stop-opacity', 1);
+
+    // gradient
+    //   .append('svg:stop')
+    //   .attr('offset', '20%')
+    //   .attr('stop-color', gradientStart)
+    //   .attr('stop-opacity', 1);
+
+    // gradient
+    //   .append('svg:stop')
+    //   .attr('offset', '30%')
+    //   .attr('stop-color', gradientStop)
+    //   .attr('stop-opacity', 1);
+    // gradient
+    //   .append('svg:stop')
+    //   .attr('offset', '40%')
+    //   .attr('stop-color', gradientStart)
+    //   .attr('stop-opacity', 1);
+
+    // gradient
+    //   .append('svg:stop')
+    //   .attr('offset', '50%')
+    //   .attr('stop-color', gradientStop)
+    //   .attr('stop-opacity', 1);
   }
   return layoutRenderer.render(data4Layout, svg, element, layoutDefinition.algorithm, positions);
 };
