@@ -77,24 +77,23 @@ const getStyles = (
   [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon {
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
     filter: ${options.dropShadow} );
-    rx: 3;
-    ry: 3;
   }
 
   [data-look="neo"].node rect,  [data-look="neo"].node circle, [data-look="neo"].node polygon {
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
     filter: ${options.dropShadow} );
-    rx: 3;
-    ry: 3;
   }
 
   [data-look="neo"].node circle{
     stroke: $(options.nodeBorder);
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
+
     filter: ${options.dropShadow} );
+  }
+
+  [data-look="neo"].node circle .state-start{
     fill: #000000;
-    rx: 3;
-    ry: 3;
+
   }
 
   [data-look="neo"].statediagram-cluster rect {

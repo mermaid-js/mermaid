@@ -53,8 +53,15 @@ export const createStadiumPathD = (
 export const stadium = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const h = bbox.height + node.padding;
-  const w = bbox.width + h / 4 + node.padding;
+  let labelPaddingX = node.padding;
+  const labelPaddingY = node.padding;
+
+  if (node.look === 'neo') {
+    labelPaddingX = node.padding ? node.padding * 2 : 0;
+  }
+
+  const h = bbox.height + labelPaddingX;
+  const w = bbox.width + h / 4 + labelPaddingY;
 
   let rect;
   const { cssStyles } = node;
