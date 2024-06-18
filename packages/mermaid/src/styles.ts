@@ -14,6 +14,7 @@ const getStyles = (
     errorBkgColor: string;
     errorTextColor: string;
     lineColor: string;
+    useGradient: boolean;
   } & FlowChartStyleOptions
 ) => {
   let diagramStyles = '';
@@ -73,35 +74,26 @@ const getStyles = (
     stroke: ${options.nodeBorder};
   }
 
-  [data-look="neo"].node rect, [data-look="neo"].node polygon {
-    //stroke: none;
+  [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon {
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
-    filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
-    // rx: 3;
-    // ry: 3;
+    filter: ${options.dropShadow} );
   }
 
   [data-look="neo"].node rect,  [data-look="neo"].node circle, [data-look="neo"].node polygon {
-    //stroke: $(options.nodeBorder);
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
-    filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
-    // rx: 3;
-    // ry: 3;
+    filter: ${options.dropShadow} );
   }
 
   [data-look="neo"].node circle{
     stroke: $(options.nodeBorder);
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
-    filter: drop-shadow( 1px 2px 2px rgba(185,185,185,1.0) );
-    //fill: #000000;
-    // rx: 3;
-    // ry: 3;
+
+    filter: ${options.dropShadow} );
   }
 
   [data-look="neo"].node circle .state-start{
-   
     fill: #000000;
-    
+
   }
 
   [data-look="neo"].statediagram-cluster rect {

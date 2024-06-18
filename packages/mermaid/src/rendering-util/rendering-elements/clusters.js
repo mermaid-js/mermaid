@@ -17,7 +17,11 @@ const rect = (parent, node) => {
   const { clusterBkg, clusterBorder } = themeVariables;
 
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', 'cluster').attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'cluster')
+    .attr('id', node.id)
+    .attr('data-look', node.look);
 
   const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
 

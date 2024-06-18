@@ -23,7 +23,7 @@ class Theme {
     this.secondaryTextColor = invert(this.secondaryColor);
     this.tertiaryTextColor = invert(this.tertiaryColor);
 
-    this.mainBkg = '#1f2020';
+    this.mainBkg = '#2a2020';
     this.secondBkg = 'calculated';
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
@@ -52,6 +52,7 @@ class Theme {
     this.useGradient = true;
     this.gradientStart = '#eb0042';
     this.gradientStop = '#0042eb';
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,0.5))';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
