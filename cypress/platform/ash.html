@@ -1,0 +1,200 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background: #333; */
+        font-family: 'Arial';
+        /* font-size: 18px !important; */
+      }
+      h1 {
+        color: grey;
+      }
+      .mermaid2 {
+        display: none;
+      }
+      .mermaid svg {
+        /* font-size: 18px !important; */
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
+      }
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+      /* tspan {
+              font-size: 6px !important;
+            } */
+    </style>
+  </head>
+  <body>
+    <pre id="diagram" class="mermaid">
+flowchart
+   node
+   id1([This is the text in the box])
+   id2((circle))
+   id3(((double circle)))
+   id4>Asymetrical]
+   id5{This is the text in the box}
+   id6{{This is the text in the box}}
+            
+
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+---
+config: 
+      theme: default
+      look: classic
+---
+flowchart
+   node
+   id1([This is the text in the box])
+   id2((circle))
+   id3(((double circle)))
+   id4>Asymetrical]
+   id5{This is the text in the box}
+   id6{{This is the text in the box}}
+            
+
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+stateDiagram
+    [*] --> Active
+    Active --> Inactive
+    Inactive --> Active
+    Active --> [*]
+    </pre>
+
+    <pre id="diagram" class="mermaid2">
+flowchart
+   a_a(Aftonbladet) --> b_b[gorilla]:::apa --> c_c{chimp}:::apa -->a_a
+        a_a --> c --> d_d --> c_c
+        classDef apa fill:#f9f,stroke:#333,stroke-width:4px;
+        class a_a apa;
+        click a_a "http://www.aftonbladet.se" "bookmark"
+        click c_c callback "new tooltip"
+      </pre
+    >
+    <pre id="diagram2" class="mermaid2">
+flowchart LR
+    id1(Start)-->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+
+      
+    </pre>
+
+    <pre id="diagram3" class="mermaid2">
+      flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef ash color:red
+    class C ash
+    style C stroke:#00f, fill:black
+
+    </pre>
+
+    <pre id="diagram4" class="mermaid2">
+      stateDiagram
+    A:::foo 
+    B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    style C stroke:#00f, fill:black, color:white
+
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import { layouts } from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
+      mermaid.initialize({
+        theme: 'neo',
+        look: 'neo',
+        // handdrawnSeed: 12,
+        // look: 'handdrawn',
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        // layout: 'dagre',
+        // layout: 'elk',
+        // layout: 'fixed',
+        // htmlLabels: false,
+        flowchart: { titleTopMargin: 10 },
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        // fontFamily: 'courier',
+        fontFamily: 'arial',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        fontSize: 12,
+        logLevel: 0,
+        securityLevel: 'loose',
+      });
+      function callback() {
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+</html>

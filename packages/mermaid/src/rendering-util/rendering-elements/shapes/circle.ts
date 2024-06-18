@@ -8,7 +8,8 @@ import rough from 'roughjs';
 export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const radius = bbox.width / 2 + halfPadding;
+  const labelPadding = node.look === 'neo' ? halfPadding * 2 : halfPadding;
+  const radius = bbox.width / 2 + labelPadding;
   let circleElem;
   const { cssStyles } = node;
 

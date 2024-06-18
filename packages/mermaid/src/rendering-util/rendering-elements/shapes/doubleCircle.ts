@@ -9,8 +9,9 @@ import rough from 'roughjs';
 export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
   const gap = 5;
-  const outerRadius = bbox.width / 2 + halfPadding + gap;
-  const innerRadius = bbox.width / 2 + halfPadding;
+  const labelPadding = node.look === 'neo' ? halfPadding * 2 : halfPadding;
+  const outerRadius = bbox.width / 2 + labelPadding + gap;
+  const innerRadius = bbox.width / 2 + labelPadding;
 
   let circleGroup;
   const { cssStyles } = node;
@@ -32,8 +33,9 @@ export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVG
     circleGroup.node()?.appendChild(innerRoughNode);
   } else {
     circleGroup = shapeSvg.insert('g', ':first-child');
-    const outerCircle = circleGroup.insert('circle', ':first-child');
+
     const innerCircle = circleGroup.insert('circle', ':first-child');
+    const outerCircle = circleGroup.insert('circle', ':first-child');
 
     circleGroup.attr('class', 'basic label-container').attr('style', cssStyles);
 
