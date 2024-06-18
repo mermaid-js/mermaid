@@ -117,6 +117,9 @@ class Theme {
     this.labelColor = 'black';
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
     this.updateColors();
   }
   updateColors() {

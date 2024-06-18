@@ -1,4 +1,4 @@
-import { darken, lighten, adjust, invert, isDark, toRgba } from 'khroma';
+import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
 import { mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
@@ -12,24 +12,46 @@ class Theme {
      * - Background - used to know what the background color is of the diagram. This is used for
      *   deducing colors for instance line color. Default value is #f4f4f4.
      */
-    this.background = '#ffffff';
+    this.background = '#333';
+    this.primaryColor = '#1f2020';
+    this.secondaryColor = lighten(this.primaryColor, 16);
+    this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
+    this.primaryBorderColor = invert(this.background);
+    this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
+    this.primaryTextColor = invert(this.primaryColor);
+    this.secondaryTextColor = invert(this.secondaryColor);
+    this.tertiaryTextColor = invert(this.tertiaryColor);
 
-    this.primaryColor = '#cccccc';
-    this.mainBkg = '#ffffff';
+    this.mainBkg = '#1f2020';
+    this.secondBkg = 'calculated';
+    this.mainContrastColor = 'lightgrey';
+    this.darkTextColor = lighten(invert('#323D47'), 10);
+    this.border1 = '#ccc';
+    this.border2 = rgba(255, 255, 255, 0.25);
+    this.arrowheadColor = 'calculated';
+    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
+    this.fontSize = '16px';
+    this.labelBackground = '#181818';
+    this.textColor = '#ccc';
+    this.THEME_COLOR_LIMIT = 12;
+    this.radius = 3;
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
 
     this.THEME_COLOR_LIMIT = 12;
-    this.radius = 3;
     // dark
-
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '10px';
 
     // Neo-specific
-    this.nodeBorder = '#550000';
+    this.nodeBorder = 'none';
     this.stateBorder = 'none';
+
+    this.useGradient = true;
+    this.gradientStart = '#eb0042';
+    this.gradientStop = '#0042eb';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used

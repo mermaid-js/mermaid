@@ -90,6 +90,9 @@ class Theme {
 
     this.errorBkgColor = '#a44141';
     this.errorTextColor = '#ddd';
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
   }
   updateColors() {
     this.secondBkg = lighten(this.mainBkg, 16);
