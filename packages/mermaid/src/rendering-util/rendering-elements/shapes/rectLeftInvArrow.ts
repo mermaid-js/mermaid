@@ -21,9 +21,9 @@ export const rect_left_inv_arrow = async (
   node: Node
 ): Promise<SVGAElement> => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+  const labelPadding = node.look === 'neo' ? node.padding * 2 : node.padding;
+  const w = bbox.width + labelPadding;
+  const h = bbox.height + labelPadding;
   const points = [
     { x: -h / 2, y: 0 },
     { x: w, y: 0 },
