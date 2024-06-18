@@ -51,10 +51,12 @@ export const createInnerCylinderPathD = (
 export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = bbox.width + node.padding;
+  const labelPaddingX = node.look === 'neo' ? node.padding * 2 : node.padding;
+  const labelPaddingY = node.look === 'neo' ? node.padding * 1 : node.padding;
+  const w = bbox.width + labelPaddingY;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = bbox.height + ry + node.padding;
+  const h = bbox.height + ry + labelPaddingX;
 
   let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;

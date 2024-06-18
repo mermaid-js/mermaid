@@ -80,7 +80,8 @@ const getStyles = (
     filter: ${options.dropShadow};
   }
 
-  [data-look="neo"].node rect,  [data-look="neo"].node circle, [data-look="neo"].node polygon {
+
+  [data-look="neo"].node rect,  [data-look="neo"].node circle, [data-look="neo"].node polygon , [data-look="neo"].node path {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow};
   }

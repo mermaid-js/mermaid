@@ -28,10 +28,11 @@ export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElem
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const f = 4;
-  const labelPaddingX = node.look === 'neo' ? node.padding * 2 : node.padding;
+  const labelPaddingX = node.look === 'neo' ? node.padding * 3 : node.padding;
+  const labelPaddingY = node.look === 'neo' ? node.padding * 1.5 : node.padding;
   const h = bbox.height + labelPaddingX;
   const m = h / f;
-  const w = bbox.width + 2 * m + node.padding;
+  const w = bbox.width + 2 * m + labelPaddingY;
   const points = [
     { x: m, y: 0 },
     { x: w - m, y: 0 },
