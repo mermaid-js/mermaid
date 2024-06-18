@@ -89,7 +89,7 @@ stateDiagram-v2
       </pre
     >
 
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram" class="mermaid">
       stateDiagram-v2
       [*] --> First
       state First {
@@ -100,7 +100,7 @@ stateDiagram-v2
 
     </pre>
 
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       flowchart LR
         A[Start] --Some text--> B(Continue)
         B --> C{Evaluate}
@@ -117,7 +117,7 @@ stateDiagram-v2
         console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'forest',
+        theme: 'neo',
         handdrawnSeed: 12,
         look: 'neo',
         //layout: 'elk',

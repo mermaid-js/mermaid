@@ -9,3 +9,4 @@
 9. When selecting look=neo and theme for composite stated, the height differs.
 10. Drop-shadows for non-rectangular shapes are not supported: Status: Fixed
 11. Gradient
+12. Rx,Ry of rects do not apply any longer
