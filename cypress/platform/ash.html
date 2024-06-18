@@ -79,18 +79,35 @@
 flowchart
    node
    id1([This is the text in the box])
+   id2((circle))
+   id1(((double circle)))
+            
+
+      </pre
+    >
+    <pre id="diagram" class="mermaid">
+---
+config: 
+      theme: default
+      look: classic
+---
+flowchart
+   node
+   id1([This is the text in the box])
+   id2((circle))
+   id1(((double circle)))
             
 
       </pre
     >
     <pre id="diagram" class="mermaid">
 stateDiagram
-   node
-   
-            
+    [*] --> Active
+    Active --> Inactive
+    Inactive --> Active
+    Active --> [*]
+    </pre>
 
-      </pre
-    >
     <pre id="diagram" class="mermaid2">
 flowchart
    a_a(Aftonbladet) --> b_b[gorilla]:::apa --> c_c{chimp}:::apa -->a_a
