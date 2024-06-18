@@ -52,7 +52,7 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
 
     gradient
       .attr('id', 'gradient')
-      .attr('gradientUnits', 'objectBoundingBox')
+      .attr('gradientUnits', 'userSpaceOnUse')
       .attr('spreadMethod', 'pad');
 
     gradient
@@ -63,32 +63,32 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
 
     gradient
       .append('svg:stop')
-      .attr('offset', '75%')
+      .attr('offset', '10%')
       .attr('stop-color', gradientStop)
       .attr('stop-opacity', 1);
 
-    // gradient
-    //   .append('svg:stop')
-    //   .attr('offset', '20%')
-    //   .attr('stop-color', gradientStart)
-    //   .attr('stop-opacity', 1);
+    gradient
+      .append('svg:stop')
+      .attr('offset', '30%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
 
-    // gradient
-    //   .append('svg:stop')
-    //   .attr('offset', '30%')
-    //   .attr('stop-color', gradientStop)
-    //   .attr('stop-opacity', 1);
-    // gradient
-    //   .append('svg:stop')
-    //   .attr('offset', '40%')
-    //   .attr('stop-color', gradientStart)
-    //   .attr('stop-opacity', 1);
+    gradient
+      .append('svg:stop')
+      .attr('offset', '35%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+    gradient
+      .append('svg:stop')
+      .attr('offset', '60%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
 
-    // gradient
-    //   .append('svg:stop')
-    //   .attr('offset', '50%')
-    //   .attr('stop-color', gradientStop)
-    //   .attr('stop-opacity', 1);
+    gradient
+      .append('svg:stop')
+      .attr('offset', '80%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
   }
   return layoutRenderer.render(data4Layout, svg, element, layoutDefinition.algorithm, positions);
 };
