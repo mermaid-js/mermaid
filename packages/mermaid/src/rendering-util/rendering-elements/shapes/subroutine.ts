@@ -34,10 +34,12 @@ export const createSubroutinePathD = (
 export const subroutine = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const halfPadding = (node?.padding || 0) / 2;
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
-  const x = -bbox.width / 2 - halfPadding;
-  const y = -bbox.height / 2 - halfPadding;
+  const labelPaddingX = node.look === 'neo' ? node.padding * 3 : node.padding;
+  const labelPaddingY = node.look === 'neo' ? node.padding * 1.5 : node.padding;
+  const w = bbox.width + labelPaddingY;
+  const h = bbox.height + labelPaddingX;
+  const x = -bbox.width / 2 - labelPaddingX / 2;
+  const y = -bbox.height / 2 - labelPaddingY / 2;
   let rect;
   const { cssStyles } = node;
   const points = [

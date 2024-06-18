@@ -22,9 +22,10 @@ export const createTrapezoidPathD = (
 
 export const trapezoid = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+  const labelPaddingX = node.look === 'neo' ? node.padding * 3 : node.padding;
+  const labelPaddingY = node.look === 'neo' ? node.padding * 1.5 : node.padding;
+  const w = bbox.width + labelPaddingY;
+  const h = bbox.height + labelPaddingX;
   const points = [
     { x: (-2 * h) / 6, y: 0 },
     { x: w + (2 * h) / 6, y: 0 },

@@ -174,7 +174,7 @@ g.stateGroup line {
 
 
 .state-shadow-neo {
-  filter: ${options.dropShadow} );
+  filter: ${options.dropShadow};
 }
 
 
