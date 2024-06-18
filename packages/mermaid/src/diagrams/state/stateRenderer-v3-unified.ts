@@ -50,6 +50,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
   const data4Layout = diag.db.getData() as LayoutData;
+
   // Create the root SVG - the element is the div containing the SVG element
   const { element, svg } = getDiagramElements(id, securityLevel);
 
