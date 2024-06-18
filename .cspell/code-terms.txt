@@ -110,6 +110,7 @@ strikethrough
 stringifying
 struct
 STYLECLASS
+STYLEDEF
 STYLEOPTS
 subcomponent
 subcomponents

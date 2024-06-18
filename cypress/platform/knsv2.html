@@ -75,295 +75,45 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid2">
----
-config:
-  theme: neo
-  look: neo
-  layout: elk
-  elk.mergeEdges: true
-  themeVariables: {}
----
-
-stateDiagram
-  direction TB
-  A --> B
-  A --> C
-  A --> D
-  A --> E
-  A --> F
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
----
-config:
-  theme: default
-  look: classic
-  layout: elk
----
-flowchart TD
- subgraph subgraph_ao83d50qa["Subgraph"]
-        C("Let me think")
-  end
-    A["Easter"] -- Get eggs --> B("Go shopping")
-    B o--o C
-    B --> H["H"]
-    C -- One --> D["Laptop"]
-    C -- Two --> E["iPhone"]
-    C -- Three --> F["fa:fa-car Car"]
-    C --> G["G"]
-    G --> H
-    H --> C & E
-    D --> E
-    F --> E
-    style B stroke:#FF6D00,stroke-width:4px,stroke-dasharray: 0,fill:#FFFFFF
-
-
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
----
-config:
-  theme: default
-  look: classic
-  layout: elk
----
-flowchart TD
- subgraph subgraph_ao83d50qa["Subgraph1"]
-        C("Let me think")
-  end
-    A["Easter"] -- Get eggs --> B("Go shopping")
-    B o--o C
-    B --> H["H"]
-    C -- One --> D["Laptop"]
-    C -- Two --> E["iPhone"]
-    C -- Three --> F["fa:fa-car Car"]
-    C --> G["G"]
-    G --> H
-    H --> C & E
-    D --> E
-    F --> E
-    style B stroke:#FF6D00,stroke-width:4px,stroke-dasharray: 0,fill:#FFFFFF
-
-
-      </pre
-    >
     <pre id="diagram" class="mermaid">
-flowchart RL
-subgraph Apa["Apa"]
-  subgraph Gorilla
-    A["Start"]
-    B["This is B"]
-  end
-end
-    A --> B & C["C"]
-    Gorilla --> C
+flowchart
+   a_a(Aftonbladet) --> b_b[gorilla]:::apa --> c_c{chimp}:::apa -->a_a
+        a_a --> c --> d_d --> c_c
+        classDef apa fill:#f9f,stroke:#333,stroke-width:4px;
+        class a_a apa;
+        click a_a "http://www.aftonbladet.se" "bookmark"
+        click c_c callback "new tooltip"
       </pre
     >
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram2" class="mermaid">
 flowchart LR
-subgraph Apa["Apa"]
-  subgraph Gorilla
-    A["Start"]
-    B["This is B"]
-  end
-end
-    A --> B & C["C"]
-    Apa --> C
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-flowchart LR
-subgraph Apa["Apa"]
-  subgraph Gorilla
-    B["This is B"]
-    A["Start"]
-  end
-end
-Apa --> C
-A --> B & C["C"]
-      </pre
-    >
-    <pre id="diagram" class="mermaid">
-stateDiagram
-direction LR
-      state Gorilla0 {
-        state Apa0 {
-          A0 --> B0
-        }
+    id1(Start)-->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 
-      }
-      Apa0 --> C0
-      A0 --> C0
-      C1: "`This is C`"
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-flowchart LR
-    subgraph Gorilla
-      subgraph Apa
-        A[A] --- B
-      end
-    end
-    Apa --- C
-    A --x C
+      
     </pre>
 
-    <pre id="diagram" class="mermaid2">
----
-config:
-  look: neo
-  theme: neo
-  layout: elk
-  elk.mergeEdges: true
-  themeVariables: {}
----
-%% 'elk.stress',
-%% 'elk.force'
-%%'elk.mrtree'
-%% 'elk.sporeOverlap
-stateDiagram
-  direction TB
-  A --> B
-  A --> C
-  A --> D
-  A --> E
-  A --> F
-  state F {
-    Another
-  }
-  Another --> A
+    <pre id="diagram3" class="mermaid">
+      flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef ash color:red
+    class C ash
+    style C stroke:#00f, fill:black
 
+    </pre>
 
-      </pre
-    >
-    <pre id="diagram" class="mermaid">
-flowchart LR
-    Apa --Hello--> C
-
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "dagre", "mergeEdges": false} }%%
-flowchart LR
-      A ==> B(This is B)
-    A[Start] --> B(Is it?)
-    B -- Yes --> C[OK]
-    C --> D[Rethink]
-    D --> B
-    B -. No ...-> E[End]
-
-
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "elk", "mergeEdges": true} }%%
-flowchart
-      A --> B(This is B)
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "SIMPLE"} }%%
+    <pre id="diagram4" class="mermaid">
       stateDiagram
-    state if_state &lt;&lt;choice&gt;&gt;
-    [*] --> IsPositive
-    IsPositive --> if_state
-    if_state --> False: if n < 0
-    if_state --> True : if n >= 0
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "elk", "mergeEdges": false, "elk.nodePlacement.strategy": "SIMPLE"} }%%
-      stateDiagram
-    state if_state &lt;&lt;choice&gt;&gt;
-    [*] --> IsPositive
-    IsPositive --> if_state
-    if_state --> False: if n < 0
-    if_state --> True : if n >= 0
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "dagre", "mergeEdges": true} }%%
-stateDiagram
-  direction TB
-  State T1 {
-    T12--> T11
-  }
-  T1 --> T2
-  T11 --> T2
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "dagre", "mergeEdges": true} }%%
-stateDiagram
-State T1 {
-    T21
-    --
-    T22
-    }
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layouts": "elk2", "mergeEdges": true} }%%
-      stateDiagram
-      State S1 {
-    direction TB
-    S11
-  }
-  S1 --> S2
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "elk", "mergeEdges": true} }%%
-stateDiagram
-State T1 {
-    T21
-    --
-    T22
-    }
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "elk", "mergeEdges": true} }%%
-stateDiagram
-  [*] --> T1
-  T1 --> T2
-  T1 --> T3
-  T1 --> T4
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"layout": "elk"} }%%
-stateDiagram
-  [*] --> T1
-  T1 --> T2
-  T2 --> T3
-  T3 --> T1
-  T1 --> T3
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-stateDiagram
-  State1: The state with a note
-  note right of State1
-      Important information! You can write
-      notes.
-  end note
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-stateDiagram-v2
-    direction LR
-    [*] --> Active
+    A:::foo 
+    B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    style C stroke:#00f, fill:black, color:white
 
-    state Active {
-      direction BT
-        [*] --> Inner
-        Inner --> NumLockOn : EvNumLockPressed
-    }
-    %% Outer --> Inner
-      </pre
-    >
+    </pre>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
@@ -372,10 +122,13 @@ stateDiagram-v2
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
       mermaid.initialize({
         theme: 'neo',
         // handdrawnSeed: 12,
-        look: 'neo',
+        // look: 'handdrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
         // layout: 'elk',
@@ -393,6 +146,7 @@ stateDiagram-v2
         },
         fontSize: 12,
         logLevel: 0,
+        securityLevel: 'loose',
       });
       function callback() {
         alert('It worked');

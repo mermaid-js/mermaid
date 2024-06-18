@@ -14,6 +14,7 @@ export const STMT_STATE = 'state';
 export const STMT_RELATION = 'relation';
 // parsed statement type for a classDef
 export const STMT_CLASSDEF = 'classDef';
+export const STMT_STYLEDEF = 'style';
 // parsed statement type for applyClass
 export const STMT_APPLYCLASS = 'applyClass';
 
@@ -64,6 +65,7 @@ export default {
   STMT_STATE,
   STMT_RELATION,
   STMT_CLASSDEF,
+  STMT_STYLEDEF,
   STMT_APPLYCLASS,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
