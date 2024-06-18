@@ -7,6 +7,7 @@ import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
 import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
+import { lookUpDomId } from '../flowchart/flowDb';
 
 /**
  * Get the direction from the statement items.
@@ -87,7 +88,7 @@ export const draw = async function (
     data4Layout.markers = ['barb'];
   }
   data4Layout.diagramId = id;
-  // console.log('REF1:', data4Layout);
+  console.log('REF1:', data4Layout);
   await render(data4Layout, svg, element, positions);
   const padding = 8;
   utils.insertTitle(

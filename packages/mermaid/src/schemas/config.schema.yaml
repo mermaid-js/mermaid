@@ -79,6 +79,7 @@ properties:
     enum:
       - classic
       - handdrawn
+      - neo
     default: 'classic'
   handdrawnSeed:
     description: |

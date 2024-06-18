@@ -24,7 +24,6 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   log.info('IPI node = ', node);
 
   let rect;
-  node.look = look;
   let { rx, ry } = node;
   const { cssStyles } = node;
 
@@ -48,11 +47,25 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     rect.attr('class', 'basic label-container').attr('style', cssStyles);
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
+    let gradient = shapeSvg.append('linearGradient');
 
-    let rectClass = 'basic label-container';
-    if (node.look === 'neo') {
-      rectClass += ' state-shadow-neo';
-    }
+    gradient
+      .attr('id', 'gradient')
+      .attr('gradientUnits', 'userSpaceOnUse')
+      .attr('spreadMethod', 'pad');
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '0%')
+      .attr('stop-color', '#eb0042')
+      .attr('stop-opacity', 1);
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '100%')
+      .attr('stop-color', '#0042eb')
+      .attr('stop-opacity', 1);
+    const rectClass = 'basic label-container';
 
     rect
       .attr('class', rectClass)
@@ -64,7 +77,8 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
       .attr('x', x)
       .attr('y', y)
       .attr('width', totalWidth)
-      .attr('height', totalHeight);
+      .attr('height', totalHeight)
+      .attr('stroke', 'url(#gradient)');
   }
 
   updateNodeBounds(node, rect);

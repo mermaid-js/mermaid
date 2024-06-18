@@ -4,6 +4,7 @@ import { getThemeVariables as defaultThemeVariables } from './theme-default.js';
 import { getThemeVariables as forestThemeVariables } from './theme-forest.js';
 import { getThemeVariables as neutralThemeVariables } from './theme-neutral.js';
 import { getThemeVariables as neoThemeVariables } from './theme-neo.js';
+import { getThemeVariables as gradientThemeVariables } from './theme-gradient.js';
 
 export default {
   base: {
@@ -23,5 +24,8 @@ export default {
   },
   neo: {
     getThemeVariables: neoThemeVariables,
+  },
+  gradient: {
+    getThemeVariables: gradientThemeVariables,
   },
 };

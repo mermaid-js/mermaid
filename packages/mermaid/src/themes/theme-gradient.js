@@ -28,9 +28,8 @@ class Theme {
     this.fontSize = '10px';
 
     // Neo-specific
-    this.nodeBorder = 'none';
+    this.nodeBorder = '#550000';
     this.stateBorder = 'none';
-    this.useGradient = false;
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
