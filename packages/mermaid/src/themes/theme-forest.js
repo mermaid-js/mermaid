@@ -92,6 +92,10 @@ class Theme {
 
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
   }
   updateColors() {
     /* Sequence Diagram variables */
@@ -338,6 +342,8 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
+
+    this.useGradient = true;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

@@ -44,5 +44,28 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
 
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
+
+  const { useGradient, gradientStart, gradientStop } = data4Layout.config.themeVariables;
+
+  if (useGradient) {
+    const gradient = svg.append('linearGradient');
+
+    gradient
+      .attr('id', 'gradient')
+      .attr('gradientUnits', 'userSpaceOnUse')
+      .attr('spreadMethod', 'pad');
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '100%')
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
   return layoutRenderer.render(data4Layout, svg, element, layoutDefinition.algorithm, positions);
 };

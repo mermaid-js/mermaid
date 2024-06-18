@@ -25,6 +25,7 @@ class Theme {
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
+    this.useGradient = true;
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
@@ -336,6 +337,9 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
+
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
