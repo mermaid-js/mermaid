@@ -30,7 +30,7 @@ class Theme {
     // Neo-specific
     this.nodeBorder = 'none';
     this.stateBorder = 'none';
-    this.useGradient = false;
+    this.useGradient = true;
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
