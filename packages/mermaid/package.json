@@ -70,7 +70,7 @@
   "dependencies": {
     "@braintree/sanitize-url": "^7.0.1",
     "@mermaid-js/parser": "workspace:^",
-    "cytoscape": "^3.28.1",
+    "cytoscape": "3.29.2",
     "cytoscape-cose-bilkent": "^4.1.0",
     "d3": "^7.9.0",
     "d3-sankey": "^0.12.3",

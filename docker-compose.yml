@@ -15,6 +15,7 @@ services:
       - root_cache:/root/.cache
       - root_local:/root/.local
       - root_npm:/root/.npm
+      - /tmp:/tmp
     ports:
       - 9000:9000
       - 3333:3333

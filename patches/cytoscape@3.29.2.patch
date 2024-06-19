@@ -1,0 +1,19 @@
+diff --git a/package.json b/package.json
+index e25191e..f2af9d7 100644
+--- a/package.json
++++ b/package.json
+@@ -31,11 +31,11 @@
+     "node": ">=0.10"
+   },
+   "main": "dist/cytoscape.cjs.js",
+-  "module": "dist/cytoscape.esm.mjs",
++  "module": "dist/cytoscape.umd.js",
+   "exports": {
+     ".": {
+-      "import": "./dist/cytoscape.esm.mjs",
+-      "require": "./dist/cytoscape.cjs.js"
++      "import": "./dist/cytoscape.umd.js",
++      "default": "./dist/cytoscape.cjs.js"
+     },
+     "./dist/cytoscape.esm": {
+       "import": "./dist/cytoscape.esm.mjs"
