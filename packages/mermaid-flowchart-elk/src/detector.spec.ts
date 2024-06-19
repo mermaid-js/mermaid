@@ -39,6 +39,26 @@ describe('flowchart-elk detector', () => {
     ).toBe(true);
   });
 
+  // The error from the issue was reproduced with mindmap, so this is just an example
+  // what matters is the keyword somewhere inside graph definition
+  it('should check only the beginning of the line in search of keywords', () => {
+    expect(
+      detector('mindmap ["Descendant node in flowchart"]', {
+        flowchart: {
+          defaultRenderer: 'elk',
+        },
+      })
+    ).toBe(false)
+
+    expect(
+      detector('mindmap ["Descendant node in graph"]', {
+        flowchart: {
+          defaultRenderer: 'elk',
+        },
+      })
+    ).toBe(false)
+  });
+
   it('should detect flowchart-elk', () => {
     expect(detector('flowchart-elk')).toBe(true);
   });
