@@ -314,26 +314,42 @@ export const adjustClustersAndEdges = (graph, depth) => {
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
-      const specialId = e.w + '---' + e.v;
-      graph.setNode(specialId, {
-        domId: specialId,
-        id: specialId,
+      const specialId1 = e.w + '---' + e.v + '---1';
+      const specialId2 = e.w + '---' + e.v + '---2';
+      graph.setNode(specialId1, {
+        domId: specialId1,
+        id: specialId1,
         labelStyle: '',
         label: edge.label,
         padding: 0,
         shape: 'labelRect',
         style: '',
+        width: 10,
+        height: 10,
+      });
+      graph.setNode(specialId2, {
+        domId: specialId2,
+        id: specialId2,
+        labelStyle: '',
+        padding: 0,
+        shape: 'labelRect',
+        style: '',
+        width: 10,
+        height: 10,
       });
       const edge1 = structuredClone(edge);
+      const edgeMid = structuredClone(edge);
       const edge2 = structuredClone(edge);
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
+      edgeMid.arrowTypeEnd = 'none';
       edge2.label = '';
       edge1.fromCluster = e.v;
       edge2.toCluster = e.v;
 
-      graph.setEdge(v, specialId, edge1, e.name + '-cyclic-special');
-      graph.setEdge(specialId, w, edge2, e.name + '-cyclic-special');
+      graph.setEdge(v, specialId1, edge1, e.name + '-cyclic-special');
+      graph.setEdge(specialId1, specialId2, edgeMid, e.name + '-cyclic-special');
+      graph.setEdge(specialId2, w, edge2, e.name + '-cyclic-special');
     } else if (clusterDb[e.v] || clusterDb[e.w]) {
       log.warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
