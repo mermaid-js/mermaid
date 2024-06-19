@@ -32,7 +32,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background: #333; */
+        background: #333;
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
@@ -54,26 +54,33 @@
           10px 10px;
         background-repeat: repeat; */
       }
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+      /* tspan {
+              font-size: 6px !important;
+            } */
     </style>
   </head>
   <body>
     <pre id="diagram" class="mermaid">
-      %%{init: {"look": "neo", "theme": "neo","fontFamily": "Arial"} }%%
 flowchart
-      A[A really really really super long node] --> B & C
+      A --> B & C
       subgraph apa
         D --> E
       end
-      </pre
-    >
-    <pre id="diagram" class="mermaid">
-%%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial",         "themeVariables": {
-          "useGradient": true,
-          "gradientStart": '#fff',
-          "gradientStop": '#ccc'
-        }} }%%
-stateDiagram-v2
-    stateId
       </pre
     >
     <pre id="diagram2" class="mermaid2">
@@ -117,8 +124,7 @@ flowchart LR
         alert('A callback was triggered');
       };
       mermaid.initialize({
-        theme: 'forest',
-
+        theme: 'neo-dark',
         // handdrawnSeed: 12,
         look: 'neo',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
@@ -127,7 +133,6 @@ flowchart LR
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
-
         // fontFamily: 'Caveat',
         // fontFamily: 'Kalam',
         // fontFamily: 'courier',

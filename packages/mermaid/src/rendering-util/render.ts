@@ -47,11 +47,13 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
 
   const { useGradient, gradientStart, gradientStop } = data4Layout.config.themeVariables;
 
+  // console.log('IPI data4Layout', svg.attr('id'));
+
   if (useGradient) {
     const gradient = svg.append('linearGradient');
 
     gradient
-      .attr('id', 'gradient')
+      .attr('id', svg.attr('id') + '-gradient')
       .attr('gradientUnits', 'userSpaceOnUse')
       .attr('spreadMethod', 'pad');
 
