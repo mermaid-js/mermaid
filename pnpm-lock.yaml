@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  cytoscape@3.28.1:
-    hash: claipxynndhyqyu2csninuoh5e
-    path: patches/cytoscape@3.28.1.patch
-
 importers:
 
   .:
@@ -212,11 +207,11 @@ importers:
         specifier: workspace:^
         version: link:../parser
       cytoscape:
-        specifier: ^3.28.1
-        version: 3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)
+        specifier: ^3.29.2
+        version: 3.29.2
       cytoscape-cose-bilkent:
         specifier: ^4.1.0
-        version: 4.1.0(cytoscape@3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e))
+        version: 4.1.0(cytoscape@3.29.2)
       d3:
         specifier: ^7.9.0
         version: 7.9.0
@@ -261,8 +256,8 @@ importers:
         specifier: ^8.0.0
         version: 8.0.2
       '@types/cytoscape':
-        specifier: ^3.19.16
-        version: 3.21.0
+        specifier: ^3.21.4
+        version: 3.21.4
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
@@ -2636,8 +2631,8 @@ packages:
   '@types/cors@2.8.17':
     resolution: {integrity: sha512-8CGDvrBj1zgo2qE+oS3pOCyYNqCPryMWY2bGfwA0dcfopWGgxs+78df0Rs3rc9THP4JkOhLsAa+15VdpAqkcUA==}
 
-  '@types/cytoscape@3.21.0':
-    resolution: {integrity: sha512-RN5SPiyVDpUP+LoOlxxlOYAMzkE7iuv3gA1jt3Hx2qTwArpZVPPdO+SI0hUj49OAn4QABR7JK9Gi0hibzGE0Aw==}
+  '@types/cytoscape@3.21.4':
+    resolution: {integrity: sha512-g4M57Zho+AMNYuEptTWH+aZ5VpyF8VcaI2t0+1/PWRZp5XQM6hku1Vo5/Ui721i+L+WCGkI1EjGAeHcYUQ2PRg==}
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
@@ -4284,8 +4279,8 @@ packages:
     peerDependencies:
       cytoscape: ^3.2.0
 
-  cytoscape@3.28.1:
-    resolution: {integrity: sha512-xyItz4O/4zp9/239wCcH8ZcFuuZooEeF8KHRmzjDfGdXsj3OG9MFSMA0pJE0uX3uCN/ygof6hHf4L7lst+JaDg==}
+  cytoscape@3.29.2:
+    resolution: {integrity: sha512-2G1ycU28Nh7OHT9rkXRLpCDP30MKH1dXJORZuBhtEhEW7pKwgPi77ImqlCWinouyE1PNepIOGZBOrE84DG7LyQ==}
     engines: {node: '>=0.10'}
 
   d3-array@2.12.1:
@@ -5514,9 +5509,6 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
-
-  heap@0.2.7:
-    resolution: {integrity: sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==}
 
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
@@ -11606,7 +11598,7 @@ snapshots:
       '@antfu/install-pkg': 0.1.1
       '@antfu/utils': 0.7.7
       '@iconify/types': 2.0.0
-      debug: 4.3.5
+      debug: 4.3.4(supports-color@8.1.1)
       kolorist: 1.8.0
       local-pkg: 0.5.0
       mlly: 1.6.1
@@ -12143,7 +12135,7 @@ snapshots:
     dependencies:
       '@types/node': 20.12.7
 
-  '@types/cytoscape@3.21.0': {}
+  '@types/cytoscape@3.21.4': {}
 
   '@types/d3-array@3.2.1': {}
 
@@ -13202,7 +13194,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.3.5
+      debug: 4.3.4(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -13397,7 +13389,7 @@ snapshots:
   avvio@7.2.5:
     dependencies:
       archy: 1.0.0
-      debug: 4.3.5
+      debug: 4.3.4(supports-color@8.1.1)
       fastq: 1.17.1
       queue-microtask: 1.2.3
     transitivePeerDependencies:
@@ -14238,15 +14230,12 @@ snapshots:
       untildify: 4.0.0
       yauzl: 2.10.0
 
-  cytoscape-cose-bilkent@4.1.0(cytoscape@3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)):
+  cytoscape-cose-bilkent@4.1.0(cytoscape@3.29.2):
     dependencies:
       cose-base: 1.0.3
-      cytoscape: 3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)
+      cytoscape: 3.29.2
 
-  cytoscape@3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e):
-    dependencies:
-      heap: 0.2.7
-      lodash: 4.17.21
+  cytoscape@3.29.2: {}
 
   d3-array@2.12.1:
     dependencies:
@@ -15356,7 +15345,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       commander: 5.1.0
-      debug: 4.3.5
+      debug: 4.3.4(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -15726,8 +15715,6 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  heap@0.2.7: {}
-
   highlight.js@10.7.3: {}
 
   hookable@5.5.3: {}
@@ -15783,7 +15770,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 2.0.0
       agent-base: 6.0.2
-      debug: 4.3.5
+      debug: 4.3.4(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -15839,7 +15826,7 @@ snapshots:
   https-proxy-agent@5.0.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.5
+      debug: 4.3.4(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
