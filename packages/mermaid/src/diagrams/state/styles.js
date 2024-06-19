@@ -103,12 +103,19 @@ g.stateGroup line {
 .node circle.state-end {
   fill:  ${options.stateBkg || options.mainBkg};
   stroke: ${options.background};
-  stroke-width: 1.5
+  stroke-width: 1.5;
 }
+
+[data-look="neo"].node circle.state-end {
+  filter: none;
+  stroke:${options.background};
+  fill: ${options.lineColor};
+}
+
 .end-state-inner {
   fill: ${options.compositeBackground || options.background};
   stroke: ${options.background};
-  stroke-width: 1.5
+  stroke-width: 1.5;
 }
 
 .node rect {
