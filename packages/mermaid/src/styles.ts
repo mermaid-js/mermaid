@@ -81,27 +81,23 @@ const getStyles = (
   }
 
 
-  [data-look="neo"].node rect,  [data-look="neo"].node circle, [data-look="neo"].node polygon , [data-look="neo"].node path {
+  [data-look="neo"].node rect,  [data-look="neo"].node polygon , [data-look="neo"].node path {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow};
   }
 
   [data-look="neo"].node circle{
-    stroke: $(options.nodeBorder);
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
-
     filter: ${options.dropShadow};
   }
 
   [data-look="neo"].node circle .state-start{
     fill: #000000;
-
   }
 
   [data-look="neo"].statediagram-cluster rect {
     fill: ${options.compositeTitleBackground};
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
-    //stroke: none;
     stroke-width: 1px;
   }
 
