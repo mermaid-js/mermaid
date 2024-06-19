@@ -126,10 +126,5 @@
   },
   "nyc": {
     "report-dir": "coverage/cypress"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "cytoscape@3.29.2": "patches/cytoscape@3.29.2.patch"
-    }
   }
 }
