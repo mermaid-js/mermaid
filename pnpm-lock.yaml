@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  cytoscape@3.28.1:
-    hash: claipxynndhyqyu2csninuoh5e
-    path: patches/cytoscape@3.28.1.patch
-
 importers:
 
   .:
@@ -21,7 +16,7 @@ importers:
         version: 8.7.0(eslint@8.57.0)
       '@cypress/code-coverage':
         specifier: ^3.12.30
-        version: 3.12.38(@babel/core@7.24.4)(@babel/preset-env@7.24.5(@babel/core@7.24.4))(babel-loader@9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2)))(cypress@13.7.3)(webpack@5.91.0(esbuild@0.20.2))
+        version: 3.12.38(@babel/core@7.24.4)(@babel/preset-env@7.24.7(@babel/core@7.24.4))(babel-loader@9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2)))(cypress@13.7.3)(webpack@5.91.0(esbuild@0.20.2))
       '@rollup/plugin-typescript':
         specifier: ^11.1.6
         version: 11.1.6(rollup@4.17.2)(tslib@2.6.2)(typescript@5.4.5)
@@ -209,11 +204,11 @@ importers:
         specifier: workspace:^
         version: link:../parser
       cytoscape:
-        specifier: ^3.28.1
-        version: 3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)
+        specifier: ^3.29.2
+        version: 3.29.2
       cytoscape-cose-bilkent:
         specifier: ^4.1.0
-        version: 4.1.0(cytoscape@3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e))
+        version: 4.1.0(cytoscape@3.29.2)
       d3:
         specifier: ^7.9.0
         version: 7.9.0
@@ -258,8 +253,8 @@ importers:
         specifier: ^8.0.0
         version: 8.0.2
       '@types/cytoscape':
-        specifier: ^3.19.16
-        version: 3.21.0
+        specifier: ^3.21.4
+        version: 3.21.4
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
@@ -382,10 +377,10 @@ importers:
         version: 5.0.0
       vitepress:
         specifier: ^1.0.1
-        version: 1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.0)(typescript@5.4.5)
+        version: 1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.1)(typescript@5.4.5)
       vitepress-plugin-search:
         specifier: 1.0.4-alpha.22
-        version: 1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.0)(typescript@5.4.5))(vue@3.4.26(typescript@5.4.5))
+        version: 1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.1)(typescript@5.4.5))(vue@3.4.26(typescript@5.4.5))
 
   packages/mermaid-example-diagram:
     dependencies:
@@ -1437,12 +1432,6 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0
-
-  '@babel/preset-env@7.24.5':
-    resolution: {integrity: sha512-UGK2ifKtcC8i5AI4cH+sbLLuLc2ktYSFJgBAXorKAsHUZmrQ1q6aQ6i3BvU24wWs2AAKqQB6kq3N9V9Gw1HiMQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
 
   '@babel/preset-env@7.24.7':
     resolution: {integrity: sha512-1YZNsc+y6cTvWlDHidMBsQZrZfEFjRIo/BZCT906PMdzOyXtSLTgqGdrpcuTDCXyd11Am5uQULtDIcCfnTc8fQ==}
@@ -2505,8 +2494,8 @@ packages:
   '@types/cors@2.8.17':
     resolution: {integrity: sha512-8CGDvrBj1zgo2qE+oS3pOCyYNqCPryMWY2bGfwA0dcfopWGgxs+78df0Rs3rc9THP4JkOhLsAa+15VdpAqkcUA==}
 
-  '@types/cytoscape@3.21.0':
-    resolution: {integrity: sha512-RN5SPiyVDpUP+LoOlxxlOYAMzkE7iuv3gA1jt3Hx2qTwArpZVPPdO+SI0hUj49OAn4QABR7JK9Gi0hibzGE0Aw==}
+  '@types/cytoscape@3.21.4':
+    resolution: {integrity: sha512-g4M57Zho+AMNYuEptTWH+aZ5VpyF8VcaI2t0+1/PWRZp5XQM6hku1Vo5/Ui721i+L+WCGkI1EjGAeHcYUQ2PRg==}
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
@@ -4139,8 +4128,8 @@ packages:
     peerDependencies:
       cytoscape: ^3.2.0
 
-  cytoscape@3.28.1:
-    resolution: {integrity: sha512-xyItz4O/4zp9/239wCcH8ZcFuuZooEeF8KHRmzjDfGdXsj3OG9MFSMA0pJE0uX3uCN/ygof6hHf4L7lst+JaDg==}
+  cytoscape@3.29.2:
+    resolution: {integrity: sha512-2G1ycU28Nh7OHT9rkXRLpCDP30MKH1dXJORZuBhtEhEW7pKwgPi77ImqlCWinouyE1PNepIOGZBOrE84DG7LyQ==}
     engines: {node: '>=0.10'}
 
   d3-array@2.12.1:
@@ -5356,9 +5345,6 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
-
-  heap@0.2.7:
-    resolution: {integrity: sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==}
 
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
@@ -7891,11 +7877,6 @@ packages:
 
   terser@5.29.2:
     resolution: {integrity: sha512-ZiGkhUBIM+7LwkNjXYJq8svgkd+QK3UUr0wJqY4MieaezBSAIPgbSPZyIx0idM6XWK5CMzSWa8MJIzmRcB8Caw==}
-    engines: {node: '>=10'}
-    hasBin: true
-
-  terser@5.31.0:
-    resolution: {integrity: sha512-Q1JFAoUKE5IMfI4Z/lkE/E6+SwgzO+x4tq4v1AyBLRj8VSYvRO6A/rQrPg1yud4g0En9EKI1TvFRF2tQFcoUkg==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -10605,7 +10586,7 @@ snapshots:
       '@babel/helper-create-regexp-features-plugin': 7.24.7(@babel/core@7.24.7)
       '@babel/helper-plugin-utils': 7.24.7
 
-  '@babel/preset-env@7.24.5(@babel/core@7.24.4)':
+  '@babel/preset-env@7.24.7(@babel/core@7.24.4)':
     dependencies:
       '@babel/compat-data': 7.24.7
       '@babel/core': 7.24.4
@@ -11089,11 +11070,11 @@ snapshots:
 
   '@cspell/strong-weak-map@8.7.0': {}
 
-  '@cypress/code-coverage@3.12.38(@babel/core@7.24.4)(@babel/preset-env@7.24.5(@babel/core@7.24.4))(babel-loader@9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2)))(cypress@13.7.3)(webpack@5.91.0(esbuild@0.20.2))':
+  '@cypress/code-coverage@3.12.38(@babel/core@7.24.4)(@babel/preset-env@7.24.7(@babel/core@7.24.4))(babel-loader@9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2)))(cypress@13.7.3)(webpack@5.91.0(esbuild@0.20.2))':
     dependencies:
       '@babel/core': 7.24.4
-      '@babel/preset-env': 7.24.5(@babel/core@7.24.4)
-      '@cypress/webpack-preprocessor': 6.0.1(@babel/core@7.24.4)(@babel/preset-env@7.24.5(@babel/core@7.24.4))(babel-loader@9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2)))(webpack@5.91.0(esbuild@0.20.2))
+      '@babel/preset-env': 7.24.7(@babel/core@7.24.4)
+      '@cypress/webpack-preprocessor': 6.0.1(@babel/core@7.24.4)(@babel/preset-env@7.24.7(@babel/core@7.24.4))(babel-loader@9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2)))(webpack@5.91.0(esbuild@0.20.2))
       babel-loader: 9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2))
       chalk: 4.1.2
       cypress: 13.7.3
@@ -11129,10 +11110,10 @@ snapshots:
       tunnel-agent: 0.6.0
       uuid: 8.3.2
 
-  '@cypress/webpack-preprocessor@6.0.1(@babel/core@7.24.4)(@babel/preset-env@7.24.5(@babel/core@7.24.4))(babel-loader@9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2)))(webpack@5.91.0(esbuild@0.20.2))':
+  '@cypress/webpack-preprocessor@6.0.1(@babel/core@7.24.4)(@babel/preset-env@7.24.7(@babel/core@7.24.4))(babel-loader@9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2)))(webpack@5.91.0(esbuild@0.20.2))':
     dependencies:
       '@babel/core': 7.24.4
-      '@babel/preset-env': 7.24.5(@babel/core@7.24.4)
+      '@babel/preset-env': 7.24.7(@babel/core@7.24.4)
       babel-loader: 9.1.3(@babel/core@7.24.4)(webpack@5.91.0(esbuild@0.20.2))
       bluebird: 3.7.1
       debug: 4.3.4(supports-color@8.1.1)
@@ -11873,7 +11854,7 @@ snapshots:
     dependencies:
       '@types/node': 20.12.7
 
-  '@types/cytoscape@3.21.0': {}
+  '@types/cytoscape@3.21.4': {}
 
   '@types/d3-array@3.2.1': {}
 
@@ -12513,11 +12494,6 @@ snapshots:
   '@vite-pwa/vitepress@0.4.0(vite-plugin-pwa@0.19.8(vite@5.2.10(@types/node@20.12.7)(terser@5.31.1))(workbox-build@7.1.0(@types/babel__core@7.20.5))(workbox-window@7.0.0))':
     dependencies:
       vite-plugin-pwa: 0.19.8(vite@5.2.10(@types/node@20.12.7)(terser@5.31.1))(workbox-build@7.1.0(@types/babel__core@7.20.5))(workbox-window@7.0.0)
-
-  '@vitejs/plugin-vue@5.0.4(vite@5.2.10(@types/node@20.12.7)(terser@5.31.0))(vue@3.4.26(typescript@5.4.5))':
-    dependencies:
-      vite: 5.2.10(@types/node@20.12.7)(terser@5.31.0)
-      vue: 3.4.26(typescript@5.4.5)
 
   '@vitejs/plugin-vue@5.0.4(vite@5.2.10(@types/node@20.12.7)(terser@5.31.1))(vue@3.4.26(typescript@5.4.5))':
     dependencies:
@@ -13953,15 +13929,12 @@ snapshots:
       untildify: 4.0.0
       yauzl: 2.10.0
 
-  cytoscape-cose-bilkent@4.1.0(cytoscape@3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)):
+  cytoscape-cose-bilkent@4.1.0(cytoscape@3.29.2):
     dependencies:
       cose-base: 1.0.3
-      cytoscape: 3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e)
+      cytoscape: 3.29.2
 
-  cytoscape@3.28.1(patch_hash=claipxynndhyqyu2csninuoh5e):
-    dependencies:
-      heap: 0.2.7
-      lodash: 4.17.21
+  cytoscape@3.29.2: {}
 
   d3-array@2.12.1:
     dependencies:
@@ -15434,8 +15407,6 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
-
-  heap@0.2.7: {}
 
   highlight.js@10.7.3: {}
 
@@ -18466,14 +18437,6 @@ snapshots:
       commander: 2.20.3
       source-map-support: 0.5.21
 
-  terser@5.31.0:
-    dependencies:
-      '@jridgewell/source-map': 0.3.6
-      acorn: 8.11.3
-      commander: 2.20.3
-      source-map-support: 0.5.21
-    optional: true
-
   terser@5.31.1:
     dependencies:
       '@jridgewell/source-map': 0.3.6
@@ -18912,16 +18875,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite@5.2.10(@types/node@20.12.7)(terser@5.31.0):
-    dependencies:
-      esbuild: 0.20.2
-      postcss: 8.4.38
-      rollup: 4.17.2
-    optionalDependencies:
-      '@types/node': 20.12.7
-      fsevents: 2.3.3
-      terser: 5.31.0
-
   vite@5.2.10(@types/node@20.12.7)(terser@5.31.1):
     dependencies:
       esbuild: 0.20.2
@@ -18932,61 +18885,15 @@ snapshots:
       fsevents: 2.3.3
       terser: 5.31.1
 
-  vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.0)(typescript@5.4.5))(vue@3.4.26(typescript@5.4.5)):
+  vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.1)(typescript@5.4.5))(vue@3.4.26(typescript@5.4.5)):
     dependencies:
       '@types/flexsearch': 0.7.3
       '@types/markdown-it': 12.2.3
       flexsearch: 0.7.43
       glob-to-regexp: 0.4.1
       markdown-it: 13.0.1
-      vitepress: 1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.0)(typescript@5.4.5)
+      vitepress: 1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.1)(typescript@5.4.5)
       vue: 3.4.26(typescript@5.4.5)
-
-  vitepress@1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.0)(typescript@5.4.5):
-    dependencies:
-      '@docsearch/css': 3.6.0
-      '@docsearch/js': 3.6.0(@algolia/client-search@4.23.3)(search-insights@2.13.0)
-      '@shikijs/core': 1.4.0
-      '@shikijs/transformers': 1.4.0
-      '@types/markdown-it': 14.0.1
-      '@vitejs/plugin-vue': 5.0.4(vite@5.2.10(@types/node@20.12.7)(terser@5.31.0))(vue@3.4.26(typescript@5.4.5))
-      '@vue/devtools-api': 7.1.3(vue@3.4.26(typescript@5.4.5))
-      '@vueuse/core': 10.9.0(vue@3.4.26(typescript@5.4.5))
-      '@vueuse/integrations': 10.9.0(axios@1.6.7)(focus-trap@7.5.4)(vue@3.4.26(typescript@5.4.5))
-      focus-trap: 7.5.4
-      mark.js: 8.11.1
-      minisearch: 6.3.0
-      shiki: 1.4.0
-      vite: 5.2.10(@types/node@20.12.7)(terser@5.31.0)
-      vue: 3.4.26(typescript@5.4.5)
-    optionalDependencies:
-      postcss: 8.4.38
-    transitivePeerDependencies:
-      - '@algolia/client-search'
-      - '@types/node'
-      - '@types/react'
-      - '@vue/composition-api'
-      - async-validator
-      - axios
-      - change-case
-      - drauu
-      - fuse.js
-      - idb-keyval
-      - jwt-decode
-      - less
-      - lightningcss
-      - nprogress
-      - qrcode
-      - react
-      - react-dom
-      - sass
-      - search-insights
-      - sortablejs
-      - stylus
-      - sugarss
-      - terser
-      - typescript
-      - universal-cookie
 
   vitepress@1.1.4(@algolia/client-search@4.23.3)(@types/node@20.12.7)(axios@1.6.7)(postcss@8.4.38)(search-insights@2.13.0)(terser@5.31.1)(typescript@5.4.5):
     dependencies:
