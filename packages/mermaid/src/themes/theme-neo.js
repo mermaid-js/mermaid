@@ -28,11 +28,11 @@ class Theme {
     this.fontSize = '10px';
 
     // Neo-specific
-    this.nodeBorder = 'none';
-    this.stateBorder = 'none';
+    this.nodeBorder = '#000000';
+    this.stateBorder = '#000000';
     this.useGradient = true;
-    this.gradientStart = '#eb0042';
-    this.gradientStop = '#0042eb';
+    this.gradientStart = '#0042eb';
+    this.gradientStop = '#eb0042';
     this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
     this.tertiaryColor = '#ffffff';
   }

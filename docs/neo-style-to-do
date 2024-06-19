@@ -8,5 +8,9 @@
 8. The font-size of node labels seems a bit off.
 9. When selecting look=neo and theme for composite stated, the height differs.
 10. Drop-shadows for non-rectangular shapes are not supported: Status: Fixed
-11. Gradient
-12. Rx,Ry of rects do not apply any longer
+11. Gradient: Fix proper color from blue to red. Do last (render.ts)
+12. Rx,Ry of rects in neo is not applied correct on rects except composite states
+
+13. Stop state shall be filled and no drop-shadow on inner circle: Status: Fixed
+14. No curve on line under title in composite states: Status fixed
+15. When this.useGradient = false the color of the composite states are not correct
