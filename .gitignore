@@ -46,3 +46,9 @@ stats/
 
 demos/dev/**
 !/demos/dev/example.html
+!/demos/dev/reload.js
+tsx-0/**
+vite.config.ts.timestamp-*
+
+# autogenereated by langium-cli
+generated/

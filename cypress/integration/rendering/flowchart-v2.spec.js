@@ -741,6 +741,70 @@ A ~~~ B
     );
   });
 
+  it('5059: Should render when subgraph contains only subgraphs, has link to outside and itself is part of a link', () => {
+    imgSnapshotTest(
+      `flowchart
+
+      subgraph Main
+        subgraph Child1
+          Node1
+          Node2
+        end
+        subgraph Child2
+          Node3
+          Node4
+        end
+      end
+      Main --> Out1
+      Child2 --> Out2`
+    );
+  });
+
+  it('3258: Should render subgraphs with main graph nodeSpacing and rankSpacing', () => {
+    imgSnapshotTest(
+      `---
+      title: Subgraph nodeSpacing and rankSpacing example
+      ---
+      flowchart LR
+        X --> Y
+        subgraph X
+          direction LR
+          A
+          C
+        end
+        subgraph Y
+          B
+          D
+        end
+      `,
+      { flowchart: { nodeSpacing: 1, rankSpacing: 1 } }
+    );
+  });
+
+  it('3258: Should render subgraphs with large nodeSpacing and rankSpacing', () => {
+    imgSnapshotTest(
+      `---
+      title: Subgraph nodeSpacing and rankSpacing example
+      config:
+        flowchart: 
+          nodeSpacing: 250
+          rankSpacing: 250
+      ---
+      flowchart LR
+        X --> Y
+        subgraph X
+          direction LR
+          A
+          C
+        end
+        subgraph Y
+          B
+          D
+        end
+      `
+    );
+  });
+
   describe('Markdown strings flowchart (#4220)', () => {
     describe('html labels', () => {
       it('With styling and classes', () => {
@@ -884,6 +948,18 @@ end
           { flowchart: { titleTopMargin: 0 } }
         );
       });
+    });
+
+    it('should not auto wrap when markdownAutoWrap is false', () => {
+      imgSnapshotTest(
+        `flowchart TD
+    angular_velocity["\`**angular_velocity**
+      *angular_displacement / duration*
+      [rad/s, 1/s]
+      {vector}\`"]
+    frequency["frequency\n(1 / period_duration)\n[Hz, 1/s]"]`,
+        { markdownAutoWrap: false }
+      );
     });
   });
   describe('Subgraph title margins', () => {

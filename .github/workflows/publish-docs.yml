@@ -31,19 +31,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           cache: pnpm
-          node-version: 18
+          node-version-file: '.node-version'
 
       - name: Install Packages
         run: pnpm install --frozen-lockfile
 
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Run Build
         run: pnpm --filter mermaid run docs:build:vitepress
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: packages/mermaid/src/vitepress/.vitepress/dist
 
@@ -56,4 +56,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4

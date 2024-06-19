@@ -10,17 +10,15 @@
 
 /* eslint-disable no-console */
 
-import { readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import _Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
+import { JSON_SCHEMA, load } from 'js-yaml';
+import { compile, type JSONSchema } from 'json-schema-to-typescript';
 import assert from 'node:assert';
 import { execFile } from 'node:child_process';
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { promisify } from 'node:util';
-
-import { load, JSON_SCHEMA } from 'js-yaml';
-import { compile, type JSONSchema } from 'json-schema-to-typescript';
 import prettier from 'prettier';
-
-import _Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
 
 // Workaround for wrong AJV types, see
 // https://github.com/ajv-validator/ajv/issues/2132#issuecomment-1290409907
@@ -33,29 +31,6 @@ import type { MermaidConfig } from '../src/config.type.js';
 const verifyOnly = process.argv.includes('--verify');
 /** If `true`, automatically `git add` any changes (i.e. during `pnpm run pre-commit`)*/
 const git = process.argv.includes('--git');
-
-/**
- * All of the keys in the mermaid config that have a mermaid diagram config.
- */
-const MERMAID_CONFIG_DIAGRAM_KEYS = [
-  'flowchart',
-  'sequence',
-  'gantt',
-  'journey',
-  'class',
-  'state',
-  'er',
-  'pie',
-  'quadrantChart',
-  'xyChart',
-  'requirement',
-  'mindmap',
-  'timeline',
-  'gitGraph',
-  'c4',
-  'sankey',
-  'railroad',
-];
 
 /**
  * Loads the MermaidConfig JSON schema YAML file.
@@ -149,55 +124,9 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
     return { ...schema, required: [] };
   }
 
-  /**
-   * This is a temporary hack to control the order the types are generated in.
-   *
-   * By default, json-schema-to-typescript outputs the $defs in the order they
-   * are used, then any unused schemas at the end.
-   *
-   * **The only purpose of this function is to make the `git diff` simpler**
-   * **We should remove this later to simplify the code**
-   *
-   * @todo TODO: Remove this function in a future PR.
-   * @param schema - The input schema.
-   * @returns The schema with all `$ref`s removed.
-   */
-  function unrefSubschemas(schema: JSONSchemaType<Record<string, any>>) {
-    return {
-      ...schema,
-      properties: Object.fromEntries(
-        Object.entries(schema.properties).map(([key, propertySchema]) => {
-          if (MERMAID_CONFIG_DIAGRAM_KEYS.includes(key)) {
-            const { $ref, ...propertySchemaWithoutRef } = propertySchema as JSONSchemaType<unknown>;
-            if ($ref === undefined) {
-              throw Error(
-                `subSchema ${key} is in MERMAID_CONFIG_DIAGRAM_KEYS but does not have a $ref field`
-              );
-            }
-            const [
-              _root, // eslint-disable-line @typescript-eslint/no-unused-vars
-              _defs, // eslint-disable-line @typescript-eslint/no-unused-vars
-              defName,
-            ] = $ref.split('/');
-            return [
-              key,
-              {
-                ...propertySchemaWithoutRef,
-                tsType: defName,
-              },
-            ];
-          }
-          return [key, propertySchema];
-        })
-      ),
-    };
-  }
-
   assert.ok(mermaidConfigSchema.$defs);
   const modifiedSchema = {
-    ...unrefSubschemas(removeRequired(mermaidConfigSchema)),
-    //...removeRequired(mermaidConfigSchema),
-
+    ...removeRequired(mermaidConfigSchema),
     $defs: Object.fromEntries(
       Object.entries(mermaidConfigSchema.$defs).map(([key, subSchema]) => {
         return [key, removeRequired(replaceAllOfWithExtends(subSchema))];
@@ -235,6 +164,23 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
   }
 }
 
+/**
+ * Workaround for type duplication when a $ref property has siblings.
+ *
+ * @param json - The input JSON object.
+ *
+ * @see https://github.com/bcherny/json-schema-to-typescript/issues/193
+ */
+function removeProp(json: any, name: string) {
+  for (const prop in json) {
+    if (prop === name) {
+      delete json[prop];
+    } else if (typeof json[prop] === 'object') {
+      removeProp(json[prop], name);
+    }
+  }
+}
+
 /** Main function */
 async function main() {
   if (verifyOnly) {
@@ -244,6 +190,8 @@ async function main() {
   }
 
   const configJsonSchema = await loadJsonSchemaFromYaml();
+
+  removeProp(configJsonSchema, 'default');
 
   validateSchema(configJsonSchema);
 

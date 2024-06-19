@@ -1,12 +1,12 @@
-#!/bin/bash
-RUN="docker-compose run --rm"
+#!/usr/bin/env bash
+RUN="docker compose run --rm"
 
 ansi()          { echo -e "\e[${1}m${*:2}\e[0m"; }
 bold()          { ansi 1 "$@"; }
 # italic()        { ansi 3 "$@"; }
 underline()     { ansi 4 "$@"; }
 # strikethrough() { ansi 9 "$@"; }
-# red()           { ansi 31 "$@"; }
+red()           { ansi 31 "$@"; }
 
 name=$(basename $0)
 command=$1
@@ -14,27 +14,31 @@ args=${@:2}
 
 case $command in
 
+build)
+docker compose build $args
+;;
+
 sh)
-$RUN mermaid sh -c "npx $args" 
+$RUN mermaid sh
 ;;
 
 pnpm)
-$RUN mermaid sh -c "npx pnpm $args"
+$RUN mermaid sh -c "pnpm $args"
 ;;
 
 dev)
-$RUN --service-ports mermaid sh -c "npx pnpm run dev"
+$RUN --service-ports mermaid sh -c "pnpm run dev"
 ;;
 
 docs:dev)
-$RUN --service-ports mermaid sh -c "npx pnpm run --filter mermaid docs:dev:docker"
+$RUN --service-ports mermaid sh -c "pnpm run --filter mermaid docs:dev:docker"
 ;;
 
 cypress)
 $RUN cypress $args
 ;;
 
-help)
+help|"")
 
 # Alignment of help message must be as it is, it will be nice looking when printed
 usage=$(
@@ -46,30 +50,35 @@ Welcome! Thank you for joining the development.
 This is a script for running commands within docker containers at ease.
 __________________________________________________________________________________________
 
-Development quick start guide:
+Development Quick Start Guide:
 
-$(bold ./$name pnpm install)                 # Install packages
-$(bold ./$name dev)                          # Run dev server with examples, open http://localhost:9000
-$(bold ./$name pnpm vitest)                  # Run watcher for unit tests
-$(bold ./$name cypress)                      # Run integration tests (after starting dev server)
-$(bold ./$name pnpm build)                   # Prepare it for production
-$(bold ./$name docs:dev)                     # Then add documentation, open http://localhost:3333
+$(bold ./$name pnpm install)           # Install packages
+$(bold ./$name dev)                    # Launch dev server with examples, open http://localhost:9000
+$(bold ./$name docs:dev)               # Launch official website, open http://localhost:3333
+
+$(bold ./$name pnpm vitest)            # Run watcher for unit tests
+$(bold ./$name cypress)                # Run integration tests (after starting dev server)
+$(bold ./$name pnpm build)             # Prepare it for production
 __________________________________________________________________________________________
 
 Commands:
 
-$(bold ./$name pnpm)                         # Run any 'pnpm' command
-$(bold ./$name dev)                          # Run dev server with examples, open http://localhost:9000
-$(bold ./$name docs:dev)                     # For docs contributions, open http://localhost:3333
-$(bold ./$name cypress)                      # Run integration tests
-$(bold ./$name sh)                           # Open 'sh' inside docker container for development
-$(bold ./$name help)                         # Show this help
+$(bold ./$name build)                  # Build image
+$(bold ./$name cypress)                # Run integration tests
+$(bold ./$name dev)                    # Run dev server with examples, open http://localhost:9000
+$(bold ./$name docs:dev)               # For docs contributions, open http://localhost:3333
+$(bold ./$name help)                   # Show this help
+$(bold ./$name pnpm)                   # Run any 'pnpm' command
+$(bold ./$name sh)                     # Open 'sh' inside docker container for development
 __________________________________________________________________________________________
 
-Examples of frequiently used commands:
+Examples of frequently used commands:
 
 $(bold ./$name pnpm add --filter mermaid) $(underline package)
         Add package to mermaid
+
+$(bold ./$name pnpm -w run lint:fix)
+        Run prettier and ES lint
 
 $(bold git diff --name-only develop \| xargs ./$name pnpm prettier --write)
         Prettify everything you added so far
@@ -93,7 +102,10 @@ echo -n -e "$usage"
 ;;
 
 *)
-$name help
+message="$(red Unknown command: $command). See $(bold ./$name help) for available commands."
+echo -n -e "$message\n" >&2
+$0 help
+exit 1
 ;;
 
 esac

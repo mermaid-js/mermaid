@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -15,7 +15,7 @@
   <body>
     <h1>Pie chart demos</h1>
     <pre class="mermaid">
-      pie title Pets adopted by volunteers
+      pie title Default text position: Animal adoption
         accTitle: simple pie char demo
         accDescr: pie chart with 3 sections: dogs, cats, rats. Most are dogs.
         "Dogs": 386
@@ -27,7 +27,7 @@
     <pre class="mermaid">
       %%{init: {"pie": {"textPosition": 0.9}, "themeVariables": {"pieOuterStrokeWidth": "5px"}}}%%
       pie
-        title Key elements in Product X
+        title Offset labels close to border: Product X
         accTitle: Key elements in Product X
         accDescr: This is a pie chart showing the key elements in Product X.
         "Calcium": 42.96
@@ -36,8 +36,21 @@
         "Iron": 5
     </pre>
 
+    <pre class="mermaid">
+      %%{init: {"pie": {"textPosition": 0.45}, "themeVariables": {"pieOuterStrokeWidth": "5px"}}}%%
+      pie
+        title Centralized labels: Languages
+        accTitle: Key elements in Product X
+        accDescr: This is a pie chart showing the key elements in Product X.
+        "JavaScript": 30
+        "Python": 25
+        "Java": 20
+        "C#": 15
+        "Others": 10
+    </pre>
+
     <script type="module">
-      import mermaid from './mermaid.esm.mjs';
+      import mermaid from '/mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
         logLevel: 3,

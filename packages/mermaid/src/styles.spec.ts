@@ -17,7 +17,6 @@ import theme from './themes/index.js';
 import c4 from './diagrams/c4/styles.js';
 import classDiagram from './diagrams/class/styles.js';
 import flowchart from './diagrams/flowchart/styles.js';
-import flowchartElk from './diagrams/flowchart/elk/styles.js';
 import er from './diagrams/er/styles.js';
 import git from './diagrams/git/styles.js';
 import gantt from './diagrams/gantt/styles.js';
@@ -29,6 +28,8 @@ import journey from './diagrams/user-journey/styles.js';
 import timeline from './diagrams/timeline/styles.js';
 import mindmap from './diagrams/mindmap/styles.js';
 import railroad from './diagrams/railroad/railroadStyles.js';
+import packet from './diagrams/packet/styles.js';
+import block from './diagrams/block/styles.js';
 import themes from './themes/index.js';
 
 async function checkValidStylisCSSStyleSheet(stylisString: string) {
@@ -87,7 +88,6 @@ describe('styles', () => {
         classDiagram,
         er,
         flowchart,
-        flowchartElk,
         gantt,
         git,
         journey,
@@ -96,8 +96,10 @@ describe('styles', () => {
         requirement,
         sequence,
         state,
+        block,
         timeline,
         railroad,
+        packet,
       })) {
         test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {
           const { default: getStyles, addStylesForDiagram } = await import('./styles.js');

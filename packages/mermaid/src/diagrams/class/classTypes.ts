@@ -10,6 +10,7 @@ export interface ClassNode {
   members: ClassMember[];
   annotations: string[];
   domId: string;
+  styles: string[];
   parent?: string;
   link?: string;
   linkTarget?: string;
@@ -137,7 +138,7 @@ export interface ClassNote {
   text: string;
 }
 
-export type ClassRelation = {
+export interface ClassRelation {
   id1: string;
   id2: string;
   relationTitle1: string;
@@ -151,7 +152,7 @@ export type ClassRelation = {
     type2: number;
     lineType: number;
   };
-};
+}
 
 export interface NamespaceNode {
   id: string;
@@ -160,5 +161,5 @@ export interface NamespaceNode {
   children: NamespaceMap;
 }
 
-export type ClassMap = Record<string, ClassNode>;
-export type NamespaceMap = Record<string, NamespaceNode>;
+export type ClassMap = Map<string, ClassNode>;
+export type NamespaceMap = Map<string, NamespaceNode>;

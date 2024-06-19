@@ -34,9 +34,9 @@ export interface PieStyleOptions {
   pieOpacity: string;
 }
 
-export type Sections = Record<string, number>;
+export type Sections = Map<string, number>;
 
-export interface D3Sections {
+export interface D3Section {
   label: string;
   value: number;
 }
@@ -51,13 +51,12 @@ export interface PieDB extends DiagramDB {
   getDiagramTitle: () => string;
   setAccTitle: (title: string) => void;
   getAccTitle: () => string;
-  setAccDescription: (describetion: string) => void;
+  setAccDescription: (description: string) => void;
   getAccDescription: () => string;
 
   // diagram db
-  addSection: (label: string, value: number) => void;
+  addSection: ({ label, value }: D3Section) => void;
   getSections: () => Sections;
-  cleanupValue: (value: string) => number;
   setShowData: (toggle: boolean) => void;
   getShowData: () => boolean;
 }

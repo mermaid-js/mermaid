@@ -1,11 +1,11 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { select, curveLinear, selectAll } from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import { render } from '../../dagre-wrapper/index.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger.js';
-import common, { evaluate } from '../common/common.js';
+import common, { evaluate, renderKatex } from '../common/common.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 
@@ -27,13 +27,13 @@ export const setConf = function (cnf) {
  * @param doc
  * @param diagObj
  */
-export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
+export const addVertices = async function (vert, g, svgId, root, doc, diagObj) {
   const svg = root.select(`[id="${svgId}"]`);
-  const keys = Object.keys(vert);
+  const keys = vert.keys();
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function (id) {
-    const vertex = vert[id];
+  for (const id of keys) {
+    const vertex = vert.get(id);
 
     /**
      * Variable for storing the classes for the vertex
@@ -59,10 +59,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       if (evaluate(getConfig().flowchart.htmlLabels)) {
         // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
         const node = {
-          label: vertexText.replace(
-            /fa[blrs]?:fa-[\w-]+/g,
-            (s) => `<i class='${s.replace(':', ' ')}'></i>`
-          ),
+          label: vertexText,
         };
         vertexNode = addHtmlLabel(svg, node).node();
         vertexNode.parentNode.removeChild(vertexNode);
@@ -84,12 +81,12 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       }
     }
 
-    let radious = 0;
+    let radius = 0;
     let _shape = '';
     // Set the shape based parameters
     switch (vertex.type) {
       case 'round':
-        radious = 5;
+        radius = 5;
         _shape = 'rect';
         break;
       case 'square':
@@ -143,14 +140,16 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       default:
         _shape = 'rect';
     }
+    const labelText = await renderKatex(vertexText, getConfig());
+
     // Add the node
     g.setNode(vertex.id, {
       labelStyle: styles.labelStyle,
       shape: _shape,
-      labelText: vertexText,
+      labelText,
       labelType: vertex.labelType,
-      rx: radious,
-      ry: radious,
+      rx: radius,
+      ry: radius,
       class: classStr,
       style: styles.style,
       id: vertex.id,
@@ -170,9 +169,9 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       labelStyle: styles.labelStyle,
       labelType: vertex.labelType,
       shape: _shape,
-      labelText: vertexText,
-      rx: radious,
-      ry: radious,
+      labelText,
+      rx: radius,
+      ry: radius,
       class: classStr,
       style: styles.style,
       id: vertex.id,
@@ -183,7 +182,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       props: vertex.props,
       padding: getConfig().flowchart.padding,
     });
-  });
+  }
 };
 
 /**
@@ -193,7 +192,7 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
  * @param {object} g The graph object
  * @param diagObj
  */
-export const addEdges = function (edges, g, diagObj) {
+export const addEdges = async function (edges, g, diagObj) {
   log.info('abc78 edges = ', edges);
   let cnt = 0;
   let linkIdCnt = {};
@@ -207,11 +206,15 @@ export const addEdges = function (edges, g, diagObj) {
     defaultLabelStyle = defaultStyles.labelStyle;
   }
 
-  edges.forEach(function (edge) {
+  for (const edge of edges) {
     cnt++;
 
     // Identify Link
-    const linkIdBase = 'L-' + edge.start + '-' + edge.end;
+    const linkIdBase = getEdgeId(edge.start, edge.end, {
+      counter: cnt,
+      prefix: 'L',
+    });
+
     // count the links from+to the same node to give unique id
     if (linkIdCnt[linkIdBase] === undefined) {
       linkIdCnt[linkIdBase] = 0;
@@ -220,7 +223,8 @@ export const addEdges = function (edges, g, diagObj) {
       linkIdCnt[linkIdBase]++;
       log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
     }
-    let linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
+    let linkId = `${linkIdBase}_${linkIdCnt[linkIdBase]}`;
+
     log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
     const linkNameStart = 'LS-' + edge.start;
     const linkNameEnd = 'LE-' + edge.end;
@@ -315,9 +319,8 @@ export const addEdges = function (edges, g, diagObj) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
     }
-
     edgeData.labelType = edge.labelType;
-    edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
+    edgeData.label = await renderKatex(edge.text.replace(common.lineBreakRegex, '\n'), getConfig());
 
     if (edge.style === undefined) {
       edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
@@ -330,7 +333,7 @@ export const addEdges = function (edges, g, diagObj) {
 
     // Add the edge to the graph
     g.setEdge(edge.start, edge.end, edgeData, cnt);
-  });
+  }
 };
 
 /**
@@ -338,7 +341,7 @@ export const addEdges = function (edges, g, diagObj) {
  *
  * @param text
  * @param diagObj
- * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
+ * @returns {Map<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   return diagObj.db.getClasses();
@@ -349,6 +352,8 @@ export const getClasses = function (text, diagObj) {
  *
  * @param text
  * @param id
+ * @param _version
+ * @param diagObj
  */
 
 export const draw = async function (text, id, _version, diagObj) {
@@ -425,8 +430,8 @@ export const draw = async function (text, id, _version, diagObj) {
       g.setParent(subG.nodes[j], subG.id);
     }
   }
-  addVertices(vert, g, id, root, doc, diagObj);
-  addEdges(edges, g, diagObj);
+  await addVertices(vert, g, id, root, doc, diagObj);
+  await addEdges(edges, g, diagObj);
 
   // Add custom shapes
   // flowChartShapes.addToRenderV2(addShape);
@@ -463,9 +468,9 @@ export const draw = async function (text, id, _version, diagObj) {
   }
 
   // If node has a link, wrap it in an anchor SVG object.
-  const keys = Object.keys(vert);
-  keys.forEach(function (key) {
-    const vertex = vert[key];
+  const keys = [...vert.keys()];
+  keys.forEach((key) => {
+    const vertex = vert.get(key);
 
     if (vertex.link) {
       const node = select('#' + id + ' [id="' + key + '"]');

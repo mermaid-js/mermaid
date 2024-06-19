@@ -4,7 +4,7 @@ import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { render } from '../../dagre-wrapper/index.js';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
@@ -44,14 +44,11 @@ export const addNamespaces = function (
   _id: string,
   diagObj: any
 ) {
-  const keys = Object.keys(namespaces);
-  log.info('keys:', keys);
+  log.info('keys:', [...namespaces.keys()]);
   log.info(namespaces);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function (id) {
-    const vertex = namespaces[id];
-
+  namespaces.forEach(function (vertex) {
     // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
     const shape = 'rect';
 
@@ -89,22 +86,19 @@ export const addClasses = function (
   diagObj: any,
   parent?: string
 ) {
-  const keys = Object.keys(classes);
-  log.info('keys:', keys);
+  log.info('keys:', [...classes.keys()]);
   log.info(classes);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys
-    .filter((id) => classes[id].parent == parent)
-    .forEach(function (id) {
-      const vertex = classes[id];
-
+  [...classes.values()]
+    .filter((vertex) => vertex.parent === parent)
+    .forEach(function (vertex) {
       /**
        * Variable for storing the classes for the vertex
        */
       const cssClassStr = vertex.cssClasses.join(' ');
 
-      const styles = { labelStyle: '', style: '' }; //getStylesFromArray(vertex.styles);
+      const styles = getStylesFromArray(vertex.styles);
 
       // Use vertex id as text in the box if no text is provided by the graph definition
       const vertexText = vertex.label ?? vertex.id;
@@ -187,7 +181,7 @@ export const addNotes = function (
     g.setNode(vertex.id, node);
     log.info('setNode', node);
 
-    if (!vertex.class || !(vertex.class in classes)) {
+    if (!vertex.class || !classes.has(vertex.class)) {
       return;
     }
     const edgeId = startEdgeId + i;
@@ -231,7 +225,10 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       //Set relationship style and line type
       classes: 'relation',
       pattern: edge.relation.lineType == 1 ? 'dashed' : 'solid',
-      id: `id_${edge.id1}_${edge.id2}_${cnt}`,
+      id: getEdgeId(edge.id1, edge.id2, {
+        prefix: 'id',
+        counter: cnt,
+      }),
       // Set link type for rendering
       arrowhead: edge.type === 'arrow_open' ? 'none' : 'normal',
       //Set edge extra labels
@@ -346,7 +343,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   }
   const root =
     securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      ? select(sandboxElement!.nodes()[0]!.contentDocument.body)
       : select('body');
   const svg = root.select(`[id="${id}"]`);
 
@@ -366,7 +363,8 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // Add label rects for non html labels
   if (!conf?.htmlLabels) {
-    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+    const doc =
+      securityLevel === 'sandbox' ? sandboxElement!.nodes()[0]!.contentDocument : document;
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (const label of labels) {
       // Get dimensions of label

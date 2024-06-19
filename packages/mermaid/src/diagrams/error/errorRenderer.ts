@@ -4,20 +4,20 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 /**
- * Draws a an info picture in the tag with id: id based on the graph definition in text.
+ * Draws an info picture in the tag with id: id based on the graph definition in text.
  *
  * @param _text - Mermaid graph definition.
  * @param id - The text for the error
  * @param version - The version
  */
 export const draw = (_text: string, id: string, version: string) => {
-  log.debug('renering svg for syntax error\n');
-
+  log.debug('rendering svg for syntax error\n');
   const svg: SVG = selectSvgElement(id);
+  const g: Group = svg.append('g');
+
   svg.attr('viewBox', '0 0 2412 512');
   configureSvgSize(svg, 100, 512, true);
 
-  const g: Group = svg.append('g');
   g.append('path')
     .attr('class', 'error-icon')
     .attr(

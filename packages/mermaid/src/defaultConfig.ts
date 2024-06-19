@@ -257,6 +257,9 @@ const config: RequiredDeep<MermaidConfig> = {
     // TODO: can we make this default to `true` instead?
     useMaxWidth: false,
   },
+  packet: {
+    ...defaultConfigJson.packet,
+  },
   railroad: {
     ...defaultConfigJson.railroad,
     useMaxWidth: true,

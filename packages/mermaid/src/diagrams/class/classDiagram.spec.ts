@@ -2,6 +2,7 @@
 import { parser } from './parser/classDiagram.jison';
 import classDb from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
+import type { ClassMap, NamespaceNode } from './classTypes.js';
 const spyOn = vi.spyOn;
 
 const staticCssStyle = 'text-decoration:underline;';
@@ -392,8 +393,8 @@ class C13["With Città foreign language"]
           Student "1" --o "1" IdCard : carries
           Student "1" --o "1" Bike : rides`);
 
-      expect(Object.keys(classDb.getClasses()).length).toBe(3);
-      expect(classDb.getClasses().Student).toMatchInlineSnapshot(`
+      expect(classDb.getClasses().size).toBe(3);
+      expect(classDb.getClasses().get('Student')).toMatchInlineSnapshot(`
         {
           "annotations": [],
           "cssClasses": [],
@@ -409,6 +410,7 @@ class C13["With Città foreign language"]
             },
           ],
           "methods": [],
+          "styles": [],
           "type": "",
         }
       `);
@@ -1043,6 +1045,19 @@ foo()
 `;
       parser.parse(str);
     });
+
+    it('should handle namespace with generic types', () => {
+      parser.parse(`classDiagram
+
+namespace space {
+    class Square~Shape~{
+        int id
+        List~int~ position
+        setPoints(List~int~ points)
+        getPoints() List~int~
+    }
+}`);
+    });
   });
 });
 
@@ -1525,12 +1540,12 @@ class Class2
 }`;
       parser.parse(str);
 
-      const testNamespace = parser.yy.getNamespace('Namespace1');
-      const testClasses = parser.yy.getClasses();
-      expect(Object.keys(testNamespace.classes).length).toBe(2);
+      const testNamespace: NamespaceNode = parser.yy.getNamespace('Namespace1');
+      const testClasses: ClassMap = parser.yy.getClasses();
+      expect(testNamespace.classes.size).toBe(2);
       expect(Object.keys(testNamespace.children).length).toBe(0);
-      expect(testNamespace.classes['Class1'].id).toBe('Class1');
-      expect(Object.keys(testClasses).length).toBe(2);
+      expect(testNamespace.classes.get('Class1')?.id).toBe('Class1');
+      expect(testClasses.size).toBe(2);
     });
 
     it('should add relations between classes of different namespaces', function () {
@@ -1559,25 +1574,25 @@ class Class2
       const testNamespaceB = parser.yy.getNamespace('B');
       const testClasses = parser.yy.getClasses();
       const testRelations = parser.yy.getRelations();
-      expect(Object.keys(testNamespaceA.classes).length).toBe(2);
-      expect(testNamespaceA.classes['A1'].members[0].getDisplayDetails().displayText).toBe(
+      expect(testNamespaceA.classes.size).toBe(2);
+      expect(testNamespaceA.classes.get('A1').members[0].getDisplayDetails().displayText).toBe(
         '+foo : string'
       );
-      expect(testNamespaceA.classes['A2'].members[0].getDisplayDetails().displayText).toBe(
+      expect(testNamespaceA.classes.get('A2').members[0].getDisplayDetails().displayText).toBe(
         '+bar : int'
       );
-      expect(Object.keys(testNamespaceB.classes).length).toBe(2);
-      expect(testNamespaceB.classes['B1'].members[0].getDisplayDetails().displayText).toBe(
+      expect(testNamespaceB.classes.size).toBe(2);
+      expect(testNamespaceB.classes.get('B1').members[0].getDisplayDetails().displayText).toBe(
         '+foo : bool'
       );
-      expect(testNamespaceB.classes['B2'].members[0].getDisplayDetails().displayText).toBe(
+      expect(testNamespaceB.classes.get('B2').members[0].getDisplayDetails().displayText).toBe(
         '+bar : float'
       );
-      expect(Object.keys(testClasses).length).toBe(4);
-      expect(testClasses['A1'].parent).toBe('A');
-      expect(testClasses['A2'].parent).toBe('A');
-      expect(testClasses['B1'].parent).toBe('B');
-      expect(testClasses['B2'].parent).toBe('B');
+      expect(testClasses.size).toBe(4);
+      expect(testClasses.get('A1').parent).toBe('A');
+      expect(testClasses.get('A2').parent).toBe('A');
+      expect(testClasses.get('B1').parent).toBe('B');
+      expect(testClasses.get('B2').parent).toBe('B');
       expect(testRelations[0].id1).toBe('A1');
       expect(testRelations[0].id2).toBe('B1');
       expect(testRelations[1].id1).toBe('A2');

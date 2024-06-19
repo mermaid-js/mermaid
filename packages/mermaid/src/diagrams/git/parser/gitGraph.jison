@@ -39,10 +39,12 @@ branch(?=\s|$)                          return 'BRANCH';
 "order:"                                return 'ORDER';
 merge(?=\s|$)                           return 'MERGE';
 cherry\-pick(?=\s|$)                    return 'CHERRY_PICK';
+"parent:"                               return 'PARENT_COMMIT'
 // "reset"                                 return 'RESET';
-checkout(?=\s|$)                        return 'CHECKOUT';
+\b(checkout|switch)(?=\s|$)             return 'CHECKOUT';
 "LR"                                    return 'DIR';
 "TB"                                    return 'DIR';
+"BT"                                    return 'DIR';
 ":"                                     return ':';
 "^"                                     return 'CARET'
 "options"\r?\n                          this.begin("options"); //
@@ -83,7 +85,7 @@ options
     | NL
     ;
 body
-    : /*emmpty*/ {$$ = []}
+    : /*empty*/ {$$ = []}
     | body line {$1.push($2); $$=$1;}
     ;
 line
@@ -109,10 +111,17 @@ branchStatement
 
 cherryPickStatement
     : CHERRY_PICK COMMIT_ID STR {yy.cherryPick($3, '', undefined)}
+    | CHERRY_PICK COMMIT_ID STR PARENT_COMMIT STR {yy.cherryPick($3, '', undefined,$5)}
     | CHERRY_PICK COMMIT_ID STR COMMIT_TAG STR {yy.cherryPick($3, '', $5)}
-    | CHERRY_PICK COMMIT_ID STR COMMIT_TAG EMPTYSTR {yy.cherryPick($3, '', '')}
+    | CHERRY_PICK COMMIT_ID STR PARENT_COMMIT STR COMMIT_TAG STR {yy.cherryPick($3, '', $7,$5)}
+    | CHERRY_PICK COMMIT_ID STR COMMIT_TAG STR PARENT_COMMIT STR {yy.cherryPick($3, '', $5,$7)}
     | CHERRY_PICK COMMIT_TAG STR COMMIT_ID STR {yy.cherryPick($5, '', $3)}
-    | CHERRY_PICK COMMIT_TAG EMPTYSTR COMMIT_ID STR {yy.cherryPick($3, '', '')}
+    | CHERRY_PICK COMMIT_TAG EMPTYSTR COMMIT_ID STR {yy.cherryPick($5, '', '')}
+    | CHERRY_PICK COMMIT_ID STR COMMIT_TAG EMPTYSTR {yy.cherryPick($3, '', '')}
+    | CHERRY_PICK COMMIT_ID STR PARENT_COMMIT STR COMMIT_TAG EMPTYSTR {yy.cherryPick($3, '', '',$5)}
+    | CHERRY_PICK COMMIT_ID STR COMMIT_TAG EMPTYSTR PARENT_COMMIT STR {yy.cherryPick($3, '', '',$7)}
+    | CHERRY_PICK COMMIT_TAG STR COMMIT_ID STR PARENT_COMMIT STR {yy.cherryPick($5, '', $3,$7)}
+    | CHERRY_PICK COMMIT_TAG EMPTYSTR COMMIT_ID STR PARENT_COMMIT STR{yy.cherryPick($5, '', '',$7)}
     ;
 
 mergeStatement
