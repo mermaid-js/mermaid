@@ -21,6 +21,7 @@ import { lean_right } from './shapes/leanRight.js';
 import { lean_left } from './shapes/leanLeft.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
+import { labelRect } from './shapes/labelRect.js';
 
 const shapes = {
   state,
@@ -45,6 +46,7 @@ const shapes = {
   lean_left,
   trapezoid,
   inv_trapezoid,
+  labelRect,
 };
 
 let nodeElems = {};
