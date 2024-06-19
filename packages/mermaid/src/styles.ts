@@ -99,10 +99,7 @@ const getStyles = (
   [data-look="neo"].statediagram-cluster rect {
     fill: ${options.compositeTitleBackground};
     stroke: ${options.useGradient ? 'url(#gradient)' : options.nodeBorder};
-    //stroke: none;
     stroke-width: 1px;
-    rx: 3;
-    ry: 3;
   }
 
   ${userStyles}
