@@ -48,7 +48,7 @@ describe('flowchart-elk detector', () => {
           defaultRenderer: 'elk',
         },
       })
-    ).toBe(false)
+    ).toBe(false);
 
     expect(
       detector('mindmap ["Descendant node in graph"]', {
@@ -56,7 +56,7 @@ describe('flowchart-elk detector', () => {
           defaultRenderer: 'elk',
         },
       })
-    ).toBe(false)
+    ).toBe(false);
   });
 
   it('should detect flowchart-elk', () => {
