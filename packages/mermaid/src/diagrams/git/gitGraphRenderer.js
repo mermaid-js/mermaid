@@ -3,7 +3,12 @@ import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import utils from '../../utils.js';
 
-let allCommitsDict = {};
+/**
+ * @typedef {Map<string, { id: string, message: string, seq: number, type: number, tag: string, parents: string[], branch: string }>} CommitMap
+ */
+
+/** @type {CommitMap} */
+let allCommitsDict = new Map();
 
 const commitType = {
   NORMAL: 0,
@@ -22,9 +27,9 @@ let maxPos = 0;
 let dir = 'LR';
 let defaultPos = 30;
 const clear = () => {
-  branchPos = {};
-  commitPos = {};
-  allCommitsDict = {};
+  branchPos = new Map();
+  commitPos = new Map();
+  allCommitsDict = new Map();
   maxPos = 0;
   lanes = [];
   dir = 'LR';
@@ -78,7 +83,8 @@ const findClosestParent = (parents) => {
   let maxPosition = 0;
 
   parents.forEach((parent) => {
-    const parentPosition = dir === 'TB' || dir === 'BT' ? commitPos[parent].y : commitPos[parent].x;
+    const parentPosition =
+      dir === 'TB' || dir === 'BT' ? commitPos.get(parent).y : commitPos.get(parent).x;
     if (parentPosition >= maxPosition) {
       closestParent = parent;
       maxPosition = parentPosition;
@@ -101,7 +107,7 @@ const findClosestParentBT = (parents) => {
   let maxPosition = Infinity;
 
   parents.forEach((parent) => {
-    const parentPosition = commitPos[parent].y;
+    const parentPosition = commitPos.get(parent).y;
     if (parentPosition <= maxPosition) {
       closestParent = parent;
       maxPosition = parentPosition;
@@ -119,7 +125,7 @@ const findClosestParentBT = (parents) => {
  * of the remaining commits.
  *
  * @param {any} sortedKeys
- * @param {any} commits
+ * @param {CommitMap} commits
  * @param {any} defaultPos
  * @param {any} commitStep
  * @param {any} layoutOffset
@@ -129,38 +135,38 @@ const setParallelBTPos = (sortedKeys, commits, defaultPos, commitStep, layoutOff
   let maxPosition = defaultPos;
   let roots = [];
   sortedKeys.forEach((key) => {
-    const commit = commits[key];
+    const commit = commits.get(key);
     if (commit.parents.length) {
       const closestParent = findClosestParent(commit.parents);
-      curPos = commitPos[closestParent].y + commitStep;
+      curPos = commitPos.get(closestParent).y + commitStep;
       if (curPos >= maxPosition) {
         maxPosition = curPos;
       }
     } else {
       roots.push(commit);
     }
-    const x = branchPos[commit.branch].pos;
+    const x = branchPos.get(commit.branch).pos;
     const y = curPos + layoutOffset;
-    commitPos[commit.id] = { x: x, y: y };
+    commitPos.set(commit.id, { x: x, y: y });
   });
   curPos = maxPosition;
   roots.forEach((commit) => {
     const posWithOffset = curPos + defaultPos;
     const y = posWithOffset;
-    const x = branchPos[commit.branch].pos;
-    commitPos[commit.id] = { x: x, y: y };
+    const x = branchPos.get(commit.branch).pos;
+    commitPos.set(commit.id, { x: x, y: y });
   });
   sortedKeys.forEach((key) => {
-    const commit = commits[key];
+    const commit = commits.get(key);
     if (commit.parents.length) {
       const closestParent = findClosestParentBT(commit.parents);
-      curPos = commitPos[closestParent].y - commitStep;
+      curPos = commitPos.get(closestParent).y - commitStep;
       if (curPos <= maxPosition) {
         maxPosition = curPos;
       }
-      const x = branchPos[commit.branch].pos;
+      const x = branchPos.get(commit.branch).pos;
       const y = curPos - layoutOffset;
-      commitPos[commit.id] = { x: x, y: y };
+      commitPos.set(commit.id, { x: x, y: y });
     }
   });
 };
@@ -171,7 +177,7 @@ const setParallelBTPos = (sortedKeys, commits, defaultPos, commitStep, layoutOff
  * vertical layering correct in the graph.
  *
  * @param {any} svg
- * @param {any} commits
+ * @param {CommitMap} commits
  * @param {any} modifyGraph
  */
 const drawCommits = (svg, commits, modifyGraph) => {
@@ -183,18 +189,18 @@ const drawCommits = (svg, commits, modifyGraph) => {
   if (dir === 'TB' || dir === 'BT') {
     pos = defaultPos;
   }
-  const keys = Object.keys(commits);
+  const keys = [...commits.keys()];
   const isParallelCommits = gitGraphConfig.parallelCommits;
   const layoutOffset = 10;
   const commitStep = 40;
   let sortedKeys =
     dir !== 'BT' || (dir === 'BT' && isParallelCommits)
       ? keys.sort((a, b) => {
-          return commits[a].seq - commits[b].seq;
+          return commits.get(a).seq - commits.get(b).seq;
         })
       : keys
           .sort((a, b) => {
-            return commits[a].seq - commits[b].seq;
+            return commits.get(a).seq - commits.get(b).seq;
           })
           .reverse();
 
@@ -203,31 +209,31 @@ const drawCommits = (svg, commits, modifyGraph) => {
     sortedKeys = sortedKeys.reverse();
   }
   sortedKeys.forEach((key) => {
-    const commit = commits[key];
+    const commit = commits.get(key);
     if (isParallelCommits) {
       if (commit.parents.length) {
         const closestParent =
           dir === 'BT' ? findClosestParentBT(commit.parents) : findClosestParent(commit.parents);
         if (dir === 'TB') {
-          pos = commitPos[closestParent].y + commitStep;
+          pos = commitPos.get(closestParent).y + commitStep;
         } else if (dir === 'BT') {
-          pos = commitPos[key].y - commitStep;
+          pos = commitPos.get(key).y - commitStep;
         } else {
-          pos = commitPos[closestParent].x + commitStep;
+          pos = commitPos.get(closestParent).x + commitStep;
         }
       } else {
         if (dir === 'TB') {
           pos = defaultPos;
         } else if (dir === 'BT') {
-          pos = commitPos[key].y - commitStep;
+          pos = commitPos.get(key).y - commitStep;
         } else {
           pos = 0;
         }
       }
     }
     const posWithOffset = dir === 'BT' && isParallelCommits ? pos : pos + layoutOffset;
-    const y = dir === 'TB' || dir === 'BT' ? posWithOffset : branchPos[commit.branch].pos;
-    const x = dir === 'TB' || dir === 'BT' ? branchPos[commit.branch].pos : posWithOffset;
+    const y = dir === 'TB' || dir === 'BT' ? posWithOffset : branchPos.get(commit.branch).pos;
+    const x = dir === 'TB' || dir === 'BT' ? branchPos.get(commit.branch).pos : posWithOffset;
 
     // Don't draw the commits now but calculate the positioning which is used by the branch lines etc.
     if (modifyGraph) {
@@ -265,7 +271,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
         circle.attr(
           'class',
           `commit ${commit.id} commit-highlight${
-            branchPos[commit.branch].index % THEME_COLOR_LIMIT
+            branchPos.get(commit.branch).index % THEME_COLOR_LIMIT
           } ${typeClass}-outer`
         );
         gBullets
@@ -277,7 +283,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr(
             'class',
             `commit ${commit.id} commit${
-              branchPos[commit.branch].index % THEME_COLOR_LIMIT
+              branchPos.get(commit.branch).index % THEME_COLOR_LIMIT
             } ${typeClass}-inner`
           );
       } else if (commitSymbolType === commitType.CHERRY_PICK) {
@@ -324,7 +330,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
         circle.attr('r', commit.type === commitType.MERGE ? 9 : 10);
         circle.attr(
           'class',
-          `commit ${commit.id} commit${branchPos[commit.branch].index % THEME_COLOR_LIMIT}`
+          `commit ${commit.id} commit${branchPos.get(commit.branch).index % THEME_COLOR_LIMIT}`
         );
         if (commitSymbolType === commitType.MERGE) {
           const circle2 = gBullets.append('circle');
@@ -334,7 +340,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
           circle2.attr(
             'class',
             `commit ${typeClass} ${commit.id} commit${
-              branchPos[commit.branch].index % THEME_COLOR_LIMIT
+              branchPos.get(commit.branch).index % THEME_COLOR_LIMIT
             }`
           );
         }
@@ -345,16 +351,16 @@ const drawCommits = (svg, commits, modifyGraph) => {
             .attr(
               'class',
               `commit ${typeClass} ${commit.id} commit${
-                branchPos[commit.branch].index % THEME_COLOR_LIMIT
+                branchPos.get(commit.branch).index % THEME_COLOR_LIMIT
               }`
             );
         }
       }
     }
     if (dir === 'TB' || dir === 'BT') {
-      commitPos[commit.id] = { x: x, y: posWithOffset };
+      commitPos.set(commit.id, { x: x, y: posWithOffset });
     } else {
-      commitPos[commit.id] = { x: posWithOffset, y: y };
+      commitPos.set(commit.id, { x: posWithOffset, y: y });
     }
 
     // The first iteration over the commits are for positioning purposes, this
@@ -482,7 +488,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * @param {any} commitB
  * @param p1
  * @param p2
- * @param allCommits
+ * @param {CommitMap} allCommits
  * @returns {boolean}
  * If there are commits between
  * commitA's x-position
@@ -496,7 +502,7 @@ const shouldRerouteArrow = (commitA, commitB, p1, p2, allCommits) => {
   const branchToGetCurve = commitBIsFurthest ? commitB.branch : commitA.branch;
   const isOnBranchToGetCurve = (x) => x.branch === branchToGetCurve;
   const isBetweenCommits = (x) => x.seq > commitA.seq && x.seq < commitB.seq;
-  return Object.values(allCommits).some((commitX) => {
+  return [...allCommits.values()].some((commitX) => {
     return isBetweenCommits(commitX) && isOnBranchToGetCurve(commitX);
   });
 };
@@ -531,11 +537,11 @@ const findLane = (y1, y2, depth = 0) => {
  * @param {any} svg
  * @param {any} commitA
  * @param {any} commitB
- * @param {any} allCommits
+ * @param {CommitMap} allCommits
  */
 const drawArrow = (svg, commitA, commitB, allCommits) => {
-  const p1 = commitPos[commitA.id]; // arrowStart
-  const p2 = commitPos[commitB.id]; // arrowEnd
+  const p1 = commitPos.get(commitA.id); // arrowStart
+  const p2 = commitPos.get(commitB.id); // arrowEnd
   const arrowNeedsRerouting = shouldRerouteArrow(commitA, commitB, p1, p2, allCommits);
   // log.debug('drawArrow', p1, p2, arrowNeedsRerouting, commitA.id, commitB.id);
 
@@ -545,9 +551,9 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
   let arc2 = '';
   let radius = 0;
   let offset = 0;
-  let colorClassNum = branchPos[commitB.branch].index;
+  let colorClassNum = branchPos.get(commitB.branch).index;
   if (commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0]) {
-    colorClassNum = branchPos[commitA.branch].index;
+    colorClassNum = branchPos.get(commitA.branch).index;
   }
 
   let lineDef;
@@ -570,7 +576,7 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
       } else {
         // Source commit is on branch position right of destination commit
         // so render arrow leftward with colour of source branch
-        colorClassNum = branchPos[commitA.branch].index;
+        colorClassNum = branchPos.get(commitA.branch).index;
         lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc} ${lineX} ${
           p1.y + offset
         } L ${lineX} ${p2.y - radius} ${arc2} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
@@ -585,7 +591,7 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
       } else {
         // Source commit is on branch position right of destination commit
         // so render arrow leftward with colour of source branch
-        colorClassNum = branchPos[commitA.branch].index;
+        colorClassNum = branchPos.get(commitA.branch).index;
         lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc2} ${lineX} ${
           p1.y - offset
         } L ${lineX} ${p2.y + radius} ${arc} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
@@ -600,7 +606,7 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
       } else {
         // Source commit is on branch positioned below destination commit
         // so render arrow upward with colour of source branch
-        colorClassNum = branchPos[commitA.branch].index;
+        colorClassNum = branchPos.get(commitA.branch).index;
         lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY + radius} ${arc2} ${
           p1.x + offset
         } ${lineY} L ${p2.x - radius} ${lineY} ${arc} ${p2.x} ${lineY - offset} L ${p2.x} ${p2.y}`;
@@ -710,13 +716,17 @@ const drawArrow = (svg, commitA, commitB, allCommits) => {
     .attr('class', 'arrow arrow' + (colorClassNum % THEME_COLOR_LIMIT));
 };
 
+/**
+ * @param {*} svg
+ * @param {CommitMap} commits
+ */
 const drawArrows = (svg, commits) => {
   const gArrows = svg.append('g').attr('class', 'commit-arrows');
-  Object.keys(commits).forEach((key) => {
-    const commit = commits[key];
+  [...commits.keys()].forEach((key) => {
+    const commit = commits.get(key);
     if (commit.parents && commit.parents.length > 0) {
       commit.parents.forEach((parent) => {
-        drawArrow(gArrows, commits[parent], commit, commits);
+        drawArrow(gArrows, commits.get(parent), commit, commits);
       });
     }
   });
@@ -734,7 +744,7 @@ const drawBranches = (svg, branches) => {
   branches.forEach((branch, index) => {
     const adjustIndexForTheme = index % THEME_COLOR_LIMIT;
 
-    const pos = branchPos[branch.name].pos;
+    const pos = branchPos.get(branch.name).pos;
     const line = g.append('line');
     line.attr('x1', 0);
     line.attr('y1', pos);
@@ -822,7 +832,7 @@ export const draw = function (txt, id, ver, diagObj) {
     label.node().appendChild(labelElement);
     let bbox = labelElement.getBBox();
 
-    branchPos[branch.name] = { pos, index };
+    branchPos.set(branch.name, { pos, index });
     pos +=
       50 +
       (gitGraphConfig.rotateCommitLabel ? 40 : 0) +
