@@ -21,20 +21,13 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid">
-graph TB
-      a --> b
-      a --> c
-      b --> d
-      c --> d
-    </pre>
-
-    <hr />
     Type code to view diagram:
     <div class="container">
       <textarea name="code" id="code" cols="30" rows="10"></textarea>
       <div id="dynamicDiagram"></div>
     </div>
+    <br>
+    <button id="render" type="button">Render</button>
     <pre class="mermaid">info</pre>
 
     <script type="module">
@@ -42,8 +35,12 @@ graph TB
       import flowchartELK from '/mermaid-flowchart-elk.esm.mjs';
       await mermaid.registerExternalDiagrams([flowchartELK]);
       async function render(str) {
-        const { svg } = await mermaid.render('dynamic', str);
-        document.getElementById('dynamicDiagram').innerHTML = svg;
+        try {
+          const { svg } = await mermaid.render('dynamic', str);
+          document.getElementById('dynamicDiagram').innerHTML = svg;
+        } catch (error) {
+          console.error(error);
+        }
       }
       const storeKey = window.location.pathname;
       const code = localStorage.getItem(storeKey);
@@ -58,8 +55,14 @@ graph TB
       document.getElementById('code').addEventListener('input', async (e) => {
         const value = e.target.value;
         localStorage.setItem(storeKey, value);
-        await render(value);
+        render(value);
       });
+
+      document.getElementById('render').addEventListener('click', async (e) => {
+        const value = document.getElementById('code').target.value;
+        localStorage.setItem(storeKey, value);
+        await render(value);
+      })
     </script>
 
     <script src="/dev/reload.js"></script>
