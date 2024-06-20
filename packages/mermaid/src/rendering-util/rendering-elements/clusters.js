@@ -8,7 +8,10 @@ import { createText } from '../createText.ts';
 import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
-import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+import {
+  styles2String,
+  userNodeOverrides,
+} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -16,13 +19,18 @@ const rect = async (parent, node) => {
   const { themeVariables, handdrawnSeed } = siteConfig;
   const { clusterBkg, clusterBorder } = themeVariables;
 
+  const { labelStyles, nodeStyles } = styles2String(node);
+
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', 'cluster').attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'cluster ' + node.cssClasses)
+    .attr('id', node.id);
 
   const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
 
   // Create the label and insert it after the rect
-  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label');
+  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
   // const text = label
   //   .node()
@@ -82,7 +90,7 @@ const rect = async (parent, node) => {
     rect = shapeSvg.insert('rect', ':first-child');
     // center the rect around its coordinate
     rect
-      .attr('style', node.cssStyles)
+      .attr('style', nodeStyles)
       .attr('rx', node.rx)
       .attr('ry', node.ry)
       .attr('x', x)
@@ -103,6 +111,13 @@ const rect = async (parent, node) => {
       // This puts the label on top of the box instead of inside it
       `translate(${node.x}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
     );
+  }
+
+  if (labelStyles) {
+    const span = labelEl.select('span');
+    if (span) {
+      span.attr('style', labelStyles);
+    }
   }
   // Center the label
 
