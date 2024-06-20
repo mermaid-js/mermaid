@@ -19,17 +19,17 @@ export const clear = () => {
   terminalLabels = {};
 };
 
-export const insertEdgeLabel = (elem, edge) => {
+export const insertEdgeLabel = async (elem, edge) => {
   const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
   // Create the actual text element
   const labelElement =
     edge.labelType === 'markdown'
-      ? createText(elem, edge.label, {
+      ? await createText(elem, edge.label, {
           style: edge.labelStyle,
           useHtmlLabels,
           addSvgBackground: true,
         })
-      : createLabel(edge.label, edge.labelStyle);
+      : await createLabel(edge.label, edge.labelStyle);
   log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
@@ -60,7 +60,7 @@ export const insertEdgeLabel = (elem, edge) => {
   let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
-    const startLabelElement = createLabel(edge.startLabelLeft, edge.labelStyle);
+    const startLabelElement = await createLabel(edge.startLabelLeft, edge.labelStyle);
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
     fo = inner.node().appendChild(startLabelElement);
@@ -74,7 +74,7 @@ export const insertEdgeLabel = (elem, edge) => {
   }
   if (edge.startLabelRight) {
     // Create the actual text element
-    const startLabelElement = createLabel(edge.startLabelRight, edge.labelStyle);
+    const startLabelElement = await createLabel(edge.startLabelRight, edge.labelStyle);
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
     fo = startEdgeLabelRight.node().appendChild(startLabelElement);
@@ -90,7 +90,7 @@ export const insertEdgeLabel = (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
-    const endLabelElement = createLabel(edge.endLabelLeft, edge.labelStyle);
+    const endLabelElement = await createLabel(edge.endLabelLeft, edge.labelStyle);
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     fo = inner.node().appendChild(endLabelElement);
@@ -107,7 +107,7 @@ export const insertEdgeLabel = (elem, edge) => {
   }
   if (edge.endLabelRight) {
     // Create the actual text element
-    const endLabelElement = createLabel(edge.endLabelRight, edge.labelStyle);
+    const endLabelElement = await createLabel(edge.endLabelRight, edge.labelStyle);
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 

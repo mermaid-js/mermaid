@@ -10,7 +10,7 @@ import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 
-const rect = (parent, node) => {
+const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
   const { themeVariables, handdrawnSeed } = siteConfig;
@@ -29,8 +29,8 @@ const rect = (parent, node) => {
   //   .appendChild(createLabel(node.label, node.labelStyle, undefined, true));
   const text =
     node.labelType === 'markdown'
-      ? createText(labelEl, node.label, { style: node.labelStyle, useHtmlLabels })
-      : labelEl.node().appendChild(createLabel(node.label, node.labelStyle, undefined, true));
+      ? await createText(labelEl, node.label, { style: node.labelStyle, useHtmlLabels })
+      : labelEl.node().appendChild(await createLabel(node.label, node.labelStyle, undefined, true));
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -154,7 +154,7 @@ const noteGroup = (parent, node) => {
 
   return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
 };
-const roundedWithTitle = (parent, node) => {
+const roundedWithTitle = async (parent, node) => {
   const siteConfig = getConfig();
 
   const { themeVariables, handdrawnSeed } = siteConfig;
@@ -177,7 +177,9 @@ const roundedWithTitle = (parent, node) => {
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
   let innerRect = shapeSvg.append('rect');
 
-  const text = label.node().appendChild(createLabel(node.label, node.labelStyle, undefined, true));
+  const text = label
+    .node()
+    .appendChild(await createLabel(node.label, node.labelStyle, undefined, true));
 
   // Get the size of the label
   let bbox = text.getBBox();

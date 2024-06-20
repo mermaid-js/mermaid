@@ -8,6 +8,8 @@ import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdo
 import { decodeEntities } from '../utils.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
+import common, { renderKatex } from '$root/diagrams/common/common.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {
@@ -15,11 +17,16 @@ function applyStyle(dom, styleFn) {
   }
 }
 
-function addHtmlSpan(element, node, width, classes, addBackground = false) {
+async function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
   const div = fo.append('xhtml:div');
 
-  const label = node.label;
+  // const label = node.label;
+  let label = '';
+
+  if (node.label) {
+    label = await renderKatex(node.label.replace(common.lineBreakRegex, '\n'), getConfig());
+  }
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   div.html(
     `<span class="${labelClass} ${classes}" ` +
@@ -184,7 +191,7 @@ export function replaceIconSubstring(text: string) {
 
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to sett classes to'nodeLabel' when isNode=true otherwise 'edgeLabel'
 // When not using htmlLabels => to set classes to 'title-row' when isTitle=true otherwise 'title-row'
-export const createText = (
+export const createText = async (
   el,
   text = '',
   {
@@ -218,7 +225,7 @@ export const createText = (
       label: decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
-    const vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
+    const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text, config);
