@@ -161,63 +161,16 @@ function insertOrUpdateNode(nodes, nodeData, classes) {
 
   //Populate node style attributes if nodeData has classes defined
   if (nodeData.cssClasses) {
+    if (!Array.isArray(nodeData.cssCompiledStyles)) {
+      nodeData.cssCompiledStyles = [];
+    }
+
     nodeData.cssClasses.split(' ').forEach((cssClass) => {
       if (classes.get(cssClass)) {
         const classDef = classes.get(cssClass);
-        // classDef.styles.forEach((style) => {
-        //   nodeData.cssCompiledStyles += style + ',';
-        //   // Populate nodeData with style attributes specifically to be used by rough.js
-        //   if (style && style.startsWith('fill:')) {
-        //     nodeData.backgroundColor = style.replace('fill:', '');
-        //   }
-        //   if (style && style.startsWith('stroke:')) {
-        //     nodeData.borderColor = style.replace('stroke:', '');
-        //   }
-        //   if (style && style.startsWith('stroke-width:')) {
-        //     nodeData.borderWidth = style.replace('stroke-width:', '');
-        //   }
-
-        //   nodeData.cssStyles += style + ';';
-        // });
-
-        // classDef.textStyles.forEach((style) => {
-        //   nodeData.labelStyle += style + ';';
-        //   if (style && style.startsWith('fill:')) {
-        //     nodeData.labelTextColor = style.replace('fill:', '');
-        //   }
-        // });
         nodeData.cssCompiledStyles = [...nodeData.cssCompiledStyles, ...classDef.styles];
       }
     });
-    //Populate node style attributes if nodeData has classes defined
-    if (nodeData.cssStyles) {
-      // nodeData.cssStyles.split(' ').forEach((csStyle) => {
-      //   if (classes[cssClass]) {
-      //     classes[cssClass].styles.forEach((style) => {
-      //       // Populate nodeData with style attributes specifically to be used by rough.js
-      //       if (style && style.startsWith('fill:')) {
-      //         nodeData.backgroundColor = style.replace('fill:', '');
-      //       }
-      //       if (style && style.startsWith('stroke:')) {
-      //         nodeData.borderColor = style.replace('stroke:', '');
-      //       }
-      //       if (style && style.startsWith('stroke-width:')) {
-      //         nodeData.borderWidth = style.replace('stroke-width:', '');
-      //       }
-      //       nodeData.cssStyles += style + ';';
-      //     });
-      //     classes[cssClass].textStyles.forEach((style) => {
-      //       nodeData.labelStyle += style + ';';
-      //       if (style && style.startsWith('fill:')) {
-      //         nodeData.labelTextColor = style.replace('fill:', '');
-      //       }
-      //     });
-      //   }
-      // });
-    }
-    // nodeData.labelTextColor = '#ffffff';
-    // nodeData.labelStyle = 'color:#ffffff';
-    // nodeData.cssStyles = 'fill:#f77';
   }
   const existingNodeData = nodes.find((node) => node.id === nodeData.id);
   if (existingNodeData) {
