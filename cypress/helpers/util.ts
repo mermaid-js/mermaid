@@ -95,18 +95,7 @@ export const openURLAndVerifyRendering = (
   options: CypressMermaidConfig,
   validation?: any
 ): void => {
-  const useAppli: boolean = Cypress.env('useAppli');
   const name: string = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
-
-  if (useAppli) {
-    cy.log(`Opening eyes ${Cypress.spec.name} --- ${name}`);
-    cy.eyesOpen({
-      appName: 'Mermaid',
-      testName: name,
-      batchName: Cypress.spec.name,
-      batchId: batchId + Cypress.spec.name,
-    });
-  }
 
   cy.visit(url);
   cy.window().should('have.property', 'rendered', true);
@@ -116,11 +105,27 @@ export const openURLAndVerifyRendering = (
     cy.get('svg').should(validation);
   }
 
+  verifyScreenshot(name);
+};
+
+export const verifyScreenshot = (name: string): void => {
+  const useAppli: boolean = Cypress.env('useAppli');
+  const useArgos: boolean = Cypress.env('useArgos');
+
   if (useAppli) {
+    cy.log(`Opening eyes ${Cypress.spec.name} --- ${name}`);
+    cy.eyesOpen({
+      appName: 'Mermaid',
+      testName: name,
+      batchName: Cypress.spec.name,
+      batchId: batchId + Cypress.spec.name,
+    });
     cy.log(`Check eyes ${Cypress.spec.name}`);
     cy.eyesCheckWindow('Click!');
     cy.log(`Closing eyes ${Cypress.spec.name}`);
     cy.eyesClose();
+  } else if (useArgos) {
+    cy.argosScreenshot(name);
   } else {
     cy.matchImageSnapshot(name);
   }
