@@ -37,10 +37,10 @@ const STYLECLASS_SEP = ',';
  * In the future, this can be replaced with a class common to all diagrams.
  * ClassDef information = { id: id, styles: [], textStyles: [] }
  *
- * @returns {{}}
+ * @returns {Map<string, any>}
  */
 function newClassesList() {
-  return {};
+  return new Map();
 }
 
 let direction = DEFAULT_DIAGRAM_DIRECTION;
@@ -49,8 +49,9 @@ let classes = newClassesList(); // style classes defined by a classDef
 
 const newDoc = () => {
   return {
+    /** @type {{ id1: string, id2: string, relationTitle: string }[]} */
     relations: [],
-    states: {},
+    states: new Map(),
     documents: {},
   };
 };
@@ -145,7 +146,7 @@ const getRootDocV2 = () => {
  * Ex: the section within a fork has its own statements, and incoming and outgoing statements
  * refer to the fork as a whole (document).
  * See the parser grammar:  the definition of a document is a document then a 'line', where a line can be a statement.
- * This will push the statement into the the list of statements for the current document.
+ * This will push the statement into the list of statements for the current document.
  *
  * @param _doc
  */
@@ -217,9 +218,9 @@ export const addState = function (
 ) {
   const trimmedId = id?.trim();
   // add the state if needed
-  if (currentDocument.states[trimmedId] === undefined) {
+  if (!currentDocument.states.has(trimmedId)) {
     log.info('Adding state ', trimmedId, descr);
-    currentDocument.states[trimmedId] = {
+    currentDocument.states.set(trimmedId, {
       id: trimmedId,
       descriptions: [],
       type,
@@ -228,13 +229,13 @@ export const addState = function (
       classes: [],
       styles: [],
       textStyles: [],
-    };
+    });
   } else {
-    if (!currentDocument.states[trimmedId].doc) {
-      currentDocument.states[trimmedId].doc = doc;
+    if (!currentDocument.states.get(trimmedId).doc) {
+      currentDocument.states.get(trimmedId).doc = doc;
     }
-    if (!currentDocument.states[trimmedId].type) {
-      currentDocument.states[trimmedId].type = type;
+    if (!currentDocument.states.get(trimmedId).type) {
+      currentDocument.states.get(trimmedId).type = type;
     }
   }
 
@@ -250,11 +251,9 @@ export const addState = function (
   }
 
   if (note) {
-    currentDocument.states[trimmedId].note = note;
-    currentDocument.states[trimmedId].note.text = common.sanitizeText(
-      currentDocument.states[trimmedId].note.text,
-      getConfig()
-    );
+    const doc2 = currentDocument.states.get(trimmedId);
+    doc2.note = note;
+    doc2.note.text = common.sanitizeText(doc2.note.text, getConfig());
   }
 
   if (classes) {
@@ -291,7 +290,7 @@ export const clear = function (saveCommon) {
 };
 
 export const getState = function (id) {
-  return currentDocument.states[id];
+  return currentDocument.states.get(id);
 };
 
 export const getStates = function () {
@@ -429,7 +428,7 @@ export const addRelation = function (item1, item2, title) {
 };
 
 export const addDescription = function (id, descr) {
-  const theState = currentDocument.states[id];
+  const theState = currentDocument.states.get(id);
   const _descr = descr.startsWith(':') ? descr.replace(':', '').trim() : descr;
   theState.descriptions.push(common.sanitizeText(_descr, getConfig()));
 };
@@ -456,10 +455,10 @@ const getDividerId = () => {
  */
 export const addStyleClass = function (id, styleAttributes = '') {
   // create a new style class object with this id
-  if (classes[id] === undefined) {
-    classes[id] = { id: id, styles: [], textStyles: [] }; // This is a classDef
+  if (!classes.has(id)) {
+    classes.set(id, { id: id, styles: [], textStyles: [] }); // This is a classDef
   }
-  const foundClass = classes[id];
+  const foundClass = classes.get(id);
   if (styleAttributes !== undefined && styleAttributes !== null) {
     styleAttributes.split(STYLECLASS_SEP).forEach((attrib) => {
       // remove any trailing ;

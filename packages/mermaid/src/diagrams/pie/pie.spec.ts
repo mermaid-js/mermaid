@@ -16,7 +16,7 @@ describe('pie', () => {
       `);
 
       const sections = db.getSections();
-      expect(sections['ash']).toBe(100);
+      expect(sections.get('ash')).toBe(100);
     });
 
     it('should handle simple pie', async () => {
@@ -26,8 +26,8 @@ describe('pie', () => {
       `);
 
       const sections = db.getSections();
-      expect(sections['ash']).toBe(60);
-      expect(sections['bat']).toBe(40);
+      expect(sections.get('ash')).toBe(60);
+      expect(sections.get('bat')).toBe(40);
     });
 
     it('should handle simple pie with showData', async () => {
@@ -39,8 +39,8 @@ describe('pie', () => {
       expect(db.getShowData()).toBeTruthy();
 
       const sections = db.getSections();
-      expect(sections['ash']).toBe(60);
-      expect(sections['bat']).toBe(40);
+      expect(sections.get('ash')).toBe(60);
+      expect(sections.get('bat')).toBe(40);
     });
 
     it('should handle simple pie with comments', async () => {
@@ -51,8 +51,8 @@ describe('pie', () => {
       `);
 
       const sections = db.getSections();
-      expect(sections['ash']).toBe(60);
-      expect(sections['bat']).toBe(40);
+      expect(sections.get('ash')).toBe(60);
+      expect(sections.get('bat')).toBe(40);
     });
 
     it('should handle simple pie with a title', async () => {
@@ -64,8 +64,8 @@ describe('pie', () => {
       expect(db.getDiagramTitle()).toBe('a 60/40 pie');
 
       const sections = db.getSections();
-      expect(sections['ash']).toBe(60);
-      expect(sections['bat']).toBe(40);
+      expect(sections.get('ash')).toBe(60);
+      expect(sections.get('bat')).toBe(40);
     });
 
     it('should handle simple pie with an acc title (accTitle)', async () => {
@@ -80,8 +80,8 @@ describe('pie', () => {
       expect(db.getAccTitle()).toBe('a neat acc title');
 
       const sections = db.getSections();
-      expect(sections['ash']).toBe(60);
-      expect(sections['bat']).toBe(40);
+      expect(sections.get('ash')).toBe(60);
+      expect(sections.get('bat')).toBe(40);
     });
 
     it('should handle simple pie with an acc description (accDescr)', async () => {
@@ -96,8 +96,8 @@ describe('pie', () => {
       expect(db.getAccDescription()).toBe('a neat description');
 
       const sections = db.getSections();
-      expect(sections['ash']).toBe(60);
-      expect(sections['bat']).toBe(40);
+      expect(sections.get('ash')).toBe(60);
+      expect(sections.get('bat')).toBe(40);
     });
 
     it('should handle simple pie with a multiline acc description (accDescr)', async () => {
@@ -115,8 +115,8 @@ describe('pie', () => {
       expect(db.getAccDescription()).toBe('a neat description\non multiple lines');
 
       const sections = db.getSections();
-      expect(sections['ash']).toBe(60);
-      expect(sections['bat']).toBe(40);
+      expect(sections.get('ash')).toBe(60);
+      expect(sections.get('bat')).toBe(40);
     });
 
     it('should handle simple pie with positive decimal', async () => {
@@ -126,8 +126,8 @@ describe('pie', () => {
       `);
 
       const sections = db.getSections();
-      expect(sections['ash']).toBe(60.67);
-      expect(sections['bat']).toBe(40);
+      expect(sections.get('ash')).toBe(60.67);
+      expect(sections.get('bat')).toBe(40);
     });
 
     it('should handle simple pie with negative decimal', () => {
@@ -137,6 +137,16 @@ describe('pie', () => {
         "bat" : 40.12
         `);
       }).rejects.toThrowError();
+    });
+
+    it('should handle unsafe properties', async () => {
+      await expect(
+        parser.parse(`pie title Unsafe props test
+        "__proto__" : 386
+        "constructor" : 85
+        "prototype" : 15`)
+      ).resolves.toBeUndefined();
+      expect([...db.getSections().keys()]).toEqual(['__proto__', 'constructor', 'prototype']);
     });
   });
 

@@ -15,7 +15,7 @@
     "fetch-contributors": "tsx .vitepress/scripts/fetch-contributors.ts"
   },
   "dependencies": {
-    "@mdi/font": "^6.9.96",
+    "@mdi/font": "^7.0.0",
     "@vueuse/core": "^10.9.0",
     "font-awesome": "^4.7.0",
     "jiti": "^1.21.0",
@@ -24,17 +24,17 @@
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.1.31",
-    "@unocss/reset": "^0.58.6",
+    "@unocss/reset": "^0.59.0",
     "@vite-pwa/vitepress": "^0.4.0",
-    "@vitejs/plugin-vue": "^4.6.2",
+    "@vitejs/plugin-vue": "^5.0.0",
     "fast-glob": "^3.3.2",
     "https-localhost": "^4.7.1",
     "pathe": "^1.1.2",
-    "unocss": "^0.58.6",
+    "unocss": "^0.59.0",
     "unplugin-vue-components": "^0.26.0",
-    "vite": "^4.5.2",
+    "vite": "^5.0.0",
     "vite-plugin-pwa": "^0.19.7",
-    "vitepress": "1.0.0-rc.45",
+    "vitepress": "1.1.4",
     "workbox-window": "^7.0.0"
   }
 }

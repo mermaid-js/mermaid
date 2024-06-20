@@ -1,6 +1,5 @@
 import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
@@ -308,7 +307,7 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
     return;
   }
   actorKeys.forEach((actorKey) => {
-    const actor = actors[actorKey];
+    const actor = actors.get(actorKey);
     const actorDOM = diagram.select('#actor' + actor.actorCnt);
     if (!conf.mirrorActors && actor.stopy) {
       actorDOM.attr('y2', actor.stopy + actor.height / 2);
@@ -416,11 +415,11 @@ const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
 
-  elem.lower();
+  const line = elem.append('g').lower();
 
   if (!isFooter) {
     actorCnt++;
-    elem
+    line
       .append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)

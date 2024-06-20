@@ -464,6 +464,18 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should render notes over actors and participant', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        actor Alice
+        participant Charlie
+        note over Alice: some note
+        note over Charlie: other note
+      `,
+        {}
+      );
+    });
     it('should render long messages from an actor to the left to one to the right', () => {
       imgSnapshotTest(
         `

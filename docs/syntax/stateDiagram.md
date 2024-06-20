@@ -160,7 +160,7 @@ In a real world use of state diagrams you often end up with diagrams that are mu
 have several internal states. These are called composite states in this terminology.
 
 In order to define a composite state you need to use the state keyword followed by an id and the body of the composite
-state between {}. See the example below:
+state between {}. You can name a composite state on a separate line just like a simple state. See the example below:
 
 ```mermaid-example
 stateDiagram-v2
@@ -168,6 +168,14 @@ stateDiagram-v2
     state First {
         [*] --> second
         second --> [*]
+    }
+
+    [*] --> NamedComposite
+    NamedComposite: Another Composite
+    state NamedComposite {
+        [*] --> namedSimple
+        namedSimple --> [*]
+        namedSimple: Another simple
     }
 ```
 
@@ -177,6 +185,14 @@ stateDiagram-v2
     state First {
         [*] --> second
         second --> [*]
+    }
+
+    [*] --> NamedComposite
+    NamedComposite: Another Composite
+    state NamedComposite {
+        [*] --> namedSimple
+        namedSimple --> [*]
+        namedSimple: Another simple
     }
 ```
 

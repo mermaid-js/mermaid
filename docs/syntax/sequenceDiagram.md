@@ -304,17 +304,35 @@ sequenceDiagram
     Note over Alice,John: A typical interaction
 ```
 
-It is also possible to add a line break (applies to text input in general):
+## Line breaks
+
+Line break can be added to Note and Message:
 
 ```mermaid-example
 sequenceDiagram
-    Alice->John: Hello John, how are you?
+    Alice->John: Hello John,<br/>how are you?
     Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
 ```mermaid
 sequenceDiagram
-    Alice->John: Hello John, how are you?
+    Alice->John: Hello John,<br/>how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
+```
+
+Line breaks in Actor names requires aliases:
+
+```mermaid-example
+sequenceDiagram
+    participant Alice as Alice<br/>Johnson
+    Alice->John: Hello John,<br/>how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice as Alice<br/>Johnson
+    Alice->John: Hello John,<br/>how are you?
     Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
