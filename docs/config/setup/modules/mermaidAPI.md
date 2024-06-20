@@ -98,7 +98,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:636](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L636)
+[mermaidAPI.ts:634](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L634)
 
 ## Functions
 
@@ -129,7 +129,7 @@ Return the last node appended
 
 #### Defined in
 
-[mermaidAPI.ts:278](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L278)
+[mermaidAPI.ts:276](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L276)
 
 ---
 
@@ -280,4 +280,4 @@ Remove any existing elements from the given document
 
 #### Defined in
 
-[mermaidAPI.ts:328](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L328)
+[mermaidAPI.ts:326](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L326)
