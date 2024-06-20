@@ -1,4 +1,4 @@
-import { renderGraph } from '../../helpers/util.ts';
+import { renderGraph, verifyScreenshot } from '../../helpers/util.ts';
 describe('Configuration', () => {
   describe('arrowMarkerAbsolute', () => {
     it('should handle default value false of arrowMarkerAbsolute', () => {
@@ -120,7 +120,7 @@ describe('Configuration', () => {
       cy.visit(url);
       cy.window().should('have.property', 'rendered', true);
       cy.get('svg').should('be.visible');
-      cy.matchImageSnapshot(
+      verifyScreenshot(
         'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
       );
     });
@@ -145,7 +145,7 @@ describe('Configuration', () => {
           // none of the diagrams should be error diagrams
           expect($svg).to.not.contain('Syntax error');
         });
-      cy.matchImageSnapshot(
+      verifyScreenshot(
         'configuration.spec-should-not-render-error-diagram-if-suppressErrorRendering-is-set'
       );
     });
@@ -162,7 +162,7 @@ describe('Configuration', () => {
           // some of the diagrams should be error diagrams
           expect($svg).to.contain('Syntax error');
         });
-      cy.matchImageSnapshot(
+      verifyScreenshot(
         'configuration.spec-should-render-error-diagram-if-suppressErrorRendering-is-not-set'
       );
     });
