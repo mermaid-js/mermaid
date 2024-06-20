@@ -252,9 +252,9 @@ describe('XY Chart', () => {
       config:
         xyChart:
           xAxis:
-            showTick: false
+            showTick: true
           yAxis:
-            showTick: false
+            showTick: true
       ---
       xychart-beta
         title "Sales Revenue"
