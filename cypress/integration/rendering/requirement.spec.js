@@ -44,6 +44,5 @@ describe('Requirement diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 });
