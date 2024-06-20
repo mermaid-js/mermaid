@@ -131,7 +131,7 @@ jobs:
           VITEST_COVERAGE: true
           CYPRESS_COMMIT: ${{ github.sha }}
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-          ARGOS_PARALLEL: ${{ env.CYPRESS_RECORD_KEY != '' }}
+          ARGOS_PARALLEL: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
           ARGOS_PARALLEL_TOTAL: 4
           ARGOS_PARALLEL_INDEX: ${{ matrix.containers }}
 
