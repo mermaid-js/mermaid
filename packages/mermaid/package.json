@@ -68,7 +68,6 @@
     ]
   },
   "dependencies": {
-    "@braintree/sanitize-url": "^7.0.1",
     "@mermaid-js/parser": "workspace:^",
     "cytoscape": "^3.29.2",
     "cytoscape-cose-bilkent": "^4.1.0",
@@ -82,6 +81,7 @@
     "khroma": "^2.1.0",
     "lodash-es": "^4.17.21",
     "mdast-util-from-markdown": "^2.0.0",
+    "micromark-util-sanitize-uri": "^2.0.0",
     "stylis": "^4.3.1",
     "ts-dedent": "^2.2.0",
     "uuid": "^9.0.1"

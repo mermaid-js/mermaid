@@ -1,4 +1,4 @@
-import { sanitizeUrl } from '@braintree/sanitize-url';
+import { sanitizeUri } from 'micromark-util-sanitize-uri';
 import type { CurveFactory } from 'd3';
 import {
   curveBasis,
@@ -258,7 +258,7 @@ export function formatUrl(linkStr: string, config: MermaidConfig): string | unde
   }
 
   if (config.securityLevel !== 'loose') {
-    return sanitizeUrl(url);
+    return sanitizeUri(url);
   }
 
   return url;

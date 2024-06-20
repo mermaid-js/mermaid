@@ -1,4 +1,4 @@
-import { sanitizeUrl } from '@braintree/sanitize-url';
+import { sanitizeUri } from 'micromark-util-sanitize-uri';
 import type { Group, SVG } from '../../diagram-api/types.js';
 import type {
   Bound,
@@ -80,7 +80,7 @@ export const drawImage = (elem: SVG | Group, x: number, y: number, link: string)
   const imageElement: D3ImageElement = elem.append('image');
   imageElement.attr('x', x);
   imageElement.attr('y', y);
-  const sanitizedLink: string = sanitizeUrl(link);
+  const sanitizedLink: string = sanitizeUri(link);
   imageElement.attr('xlink:href', sanitizedLink);
 };
 
@@ -93,7 +93,7 @@ export const drawEmbeddedImage = (
   const imageElement: D3UseElement = element.append('use');
   imageElement.attr('x', x);
   imageElement.attr('y', y);
-  const sanitizedLink: string = sanitizeUrl(link);
+  const sanitizedLink: string = sanitizeUri(link);
   imageElement.attr('xlink:href', `#${sanitizedLink}`);
 };
 

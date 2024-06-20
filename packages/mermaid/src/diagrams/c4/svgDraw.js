@@ -1,6 +1,6 @@
 import common from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import { sanitizeUrl } from '@braintree/sanitize-url';
+import { sanitizeUri } from 'micromark-util-sanitize-uri';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
@@ -12,7 +12,7 @@ export const drawImage = function (elem, width, height, x, y, link) {
   imageElem.attr('height', height);
   imageElem.attr('x', x);
   imageElem.attr('y', y);
-  let sanitizedLink = link.startsWith('data:image/png;base64') ? link : sanitizeUrl(link);
+  let sanitizedLink = link.startsWith('data:image/png;base64') ? link : sanitizeUri(link);
   imageElem.attr('xlink:href', sanitizedLink);
 };
 

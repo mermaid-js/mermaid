@@ -1,5 +1,5 @@
-import { sanitizeUrl } from '@braintree/sanitize-url';
-import dayjs from 'dayjs';
+import { sanitizeUri } from 'micromark-util-sanitize-uri';
+import dayjs from 'dayjs/esm/index.js';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
@@ -631,7 +631,7 @@ const compileTasks = function () {
 export const setLink = function (ids, _linkStr) {
   let linkStr = _linkStr;
   if (getConfig().securityLevel !== 'loose') {
-    linkStr = sanitizeUrl(_linkStr);
+    linkStr = sanitizeUri(_linkStr);
   }
   ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id);

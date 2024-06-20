@@ -200,9 +200,6 @@ importers:
 
   packages/mermaid:
     dependencies:
-      '@braintree/sanitize-url':
-        specifier: ^7.0.1
-        version: 7.0.1
       '@mermaid-js/parser':
         specifier: workspace:^
         version: link:../parser
@@ -240,6 +237,9 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       mdast-util-from-markdown:
+        specifier: ^2.0.0
+        version: 2.0.0
+      micromark-util-sanitize-uri:
         specifier: ^2.0.0
         version: 2.0.0
       stylis:
@@ -387,15 +387,15 @@ importers:
 
   packages/mermaid-example-diagram:
     dependencies:
-      '@braintree/sanitize-url':
-        specifier: ^7.0.0
-        version: 7.0.1
       d3:
         specifier: ^7.9.0
         version: 7.9.0
       khroma:
         specifier: ^2.1.0
         version: 2.1.0
+      micromark-util-sanitize-uri:
+        specifier: ^2.0.0
+        version: 2.0.0
     devDependencies:
       concurrently:
         specifier: ^8.2.2
@@ -1516,9 +1516,6 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
-
-  '@braintree/sanitize-url@7.0.1':
-    resolution: {integrity: sha512-URg8UM6lfC9ZYqFipItRSxYJdgpU5d2Z4KnjsJ+rj6tgAmGme7E+PQNCiud8g0HDaZKMovu2qjfa0f5Ge0Vlsg==}
 
   '@chevrotain/cst-dts-gen@11.0.3':
     resolution: {integrity: sha512-BvIKpRLeS/8UbfxXxgC33xOumsacaeCKAjAeLyOn7Pcp95HiRbrpl14S+9vaZLolnbssPIUuiUd8IvgkRyt6NQ==}
@@ -11060,8 +11057,6 @@ snapshots:
       js-yaml: 4.1.0
 
   '@bcoe/v8-coverage@0.2.3': {}
-
-  '@braintree/sanitize-url@7.0.1': {}
 
   '@chevrotain/cst-dts-gen@11.0.3':
     dependencies:

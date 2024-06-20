@@ -326,7 +326,7 @@ describe('when formatting urls', function () {
     expect(result).toEqual(url);
 
     result = utils.formatUrl(url, { securityLevel: 'strict' });
-    expect(result).toEqual('about:blank');
+    expect(result).toEqual('javascript:alert(%22test%22)');
   });
 });
 

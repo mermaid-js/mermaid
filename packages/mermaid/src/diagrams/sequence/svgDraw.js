@@ -1,7 +1,7 @@
 import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
-import { sanitizeUrl } from '@braintree/sanitize-url';
+import { sanitizeUri } from 'micromark-util-sanitize-uri';
 import * as configApi from '../../config.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
@@ -53,7 +53,7 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
     var linkY = 20;
     for (let key in links) {
       var linkElem = g.append('a');
-      var sanitizedLink = sanitizeUrl(links[key]);
+      var sanitizedLink = sanitizeUri(links[key]);
       linkElem.attr('xlink:href', sanitizedLink);
       linkElem.attr('target', '_blank');
 
@@ -1119,5 +1119,5 @@ export default {
   getTextObj,
   getNoteRect,
   fixLifeLineHeights,
-  sanitizeUrl,
+  sanitizeUri,
 };
