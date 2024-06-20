@@ -30,7 +30,6 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render a simple C4Container diagram', () => {
     imgSnapshotTest(
@@ -50,7 +49,6 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render a simple C4Component diagram', () => {
     imgSnapshotTest(
@@ -69,7 +67,6 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render a simple C4Dynamic diagram', () => {
     imgSnapshotTest(
@@ -93,7 +90,6 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render a simple C4Deployment diagram', () => {
     imgSnapshotTest(
@@ -117,6 +113,5 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 });
