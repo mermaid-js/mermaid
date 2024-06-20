@@ -193,90 +193,92 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   log.info('Need the size here XAX', graph.node('T1')?.height);
   let { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   subGraphTitleTotalMargin = 0;
-  sortNodesByHierarchy(graph).forEach(function (v) {
-    const node = graph.node(v);
-    const p = graph.node(node?.parentId);
-    subGraphTitleTotalMargin = p?.offsetY || subGraphTitleTotalMargin;
-
-    log.info(
-      'Position XBX => ' + v + ': (' + node.x,
-      ',' + node.y,
-      ') width: ',
-      node.width,
-      ' height: ',
-      node.height
-    );
-    if (node && node.clusterNode) {
-      const parentId = graph.parent(v);
-      // Adjust for padding when on root level
-      node.y = parentId ? node.y - 8 : node.y - 8;
-      node.x -= 8;
+  await Promise.all(
+    sortNodesByHierarchy(graph).map(async function (v) {
+      const node = graph.node(v);
+      const p = graph.node(node?.parentId);
+      subGraphTitleTotalMargin = p?.offsetY || subGraphTitleTotalMargin;
 
       log.info(
-        'A tainted cluster node XBX1',
-        v,
-        node.id,
+        'Position XBX => ' + v + ': (' + node.x,
+        ',' + node.y,
+        ') width: ',
         node.width,
-        node.height,
-        node.x,
-        node.y,
-        graph.parent(v)
+        ' height: ',
+        node.height
       );
-      clusterDb[node.id].node = node;
-      // node.y += subGraphTitleTotalMargin - 10;
-      node.y -= (node.offsetY || 0) / 2;
-      // node.y -= 10;
-      positionNode(node);
-    } else {
-      // A tainted cluster node
-      if (graph.children(v).length > 0) {
+      if (node && node.clusterNode) {
+        const parentId = graph.parent(v);
+        // Adjust for padding when on root level
+        node.y = parentId ? node.y - 8 : node.y - 8;
+        node.x -= 8;
+
         log.info(
-          'A pure cluster node XBX1',
+          'A tainted cluster node XBX1',
           v,
           node.id,
-          node.x,
-          node.y,
           node.width,
           node.height,
+          node.x,
+          node.y,
           graph.parent(v)
         );
-        node.height += 0;
-        graph.node(node.parentId);
-        const halfPadding = node?.padding / 2 || 0;
-        const labelHeight = node?.labelBBox?.height || 0;
-        const offsetY = labelHeight - halfPadding || 0;
-        log.debug('OffsetY', offsetY, 'labelHeight', labelHeight, 'halfPadding', halfPadding);
-        // node.y += offsetY + (parent?.offsetY / 2 || 0);
-        // node.offsetY = offsetY;
-        insertCluster(clusters, node);
-
-        // A cluster in the non-recursive way
         clusterDb[node.id].node = node;
-      } else {
-        // Regular node
-        const parent = graph.node(node.parentId);
-        node.y += (parent?.offsetY || 0) / 2;
-        log.info(
-          'A regular node XBX1 - using the padding',
-          node.id,
-          'parent',
-          node.parentId,
-          node.width,
-          node.height,
-          node.x,
-          node.y,
-          'offsetY',
-          node.offsetY,
-          'parent',
-          parent,
-          parent?.offsetY,
-          node
-        );
-
+        // node.y += subGraphTitleTotalMargin - 10;
+        node.y -= (node.offsetY || 0) / 2;
+        // node.y -= 10;
         positionNode(node);
+      } else {
+        // A tainted cluster node
+        if (graph.children(v).length > 0) {
+          log.info(
+            'A pure cluster node XBX1',
+            v,
+            node.id,
+            node.x,
+            node.y,
+            node.width,
+            node.height,
+            graph.parent(v)
+          );
+          node.height += 0;
+          graph.node(node.parentId);
+          const halfPadding = node?.padding / 2 || 0;
+          const labelHeight = node?.labelBBox?.height || 0;
+          const offsetY = labelHeight - halfPadding || 0;
+          log.debug('OffsetY', offsetY, 'labelHeight', labelHeight, 'halfPadding', halfPadding);
+          // node.y += offsetY + (parent?.offsetY / 2 || 0);
+          // node.offsetY = offsetY;
+          await insertCluster(clusters, node);
+
+          // A cluster in the non-recursive way
+          clusterDb[node.id].node = node;
+        } else {
+          // Regular node
+          const parent = graph.node(node.parentId);
+          node.y += (parent?.offsetY || 0) / 2;
+          log.info(
+            'A regular node XBX1 - using the padding',
+            node.id,
+            'parent',
+            node.parentId,
+            node.width,
+            node.height,
+            node.x,
+            node.y,
+            'offsetY',
+            node.offsetY,
+            'parent',
+            parent,
+            parent?.offsetY,
+            node
+          );
+
+          positionNode(node);
+        }
       }
-    }
-  });
+    })
+  );
 
   // Move the edge labels to the correct place after layout
   graph.edges().forEach(function (e) {
