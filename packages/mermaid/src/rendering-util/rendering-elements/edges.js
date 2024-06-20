@@ -237,7 +237,7 @@ const outsideNode = (node, point) => {
 };
 
 export const intersection = (node, outsidePoint, insidePoint) => {
-  log.warn(`intersection calc abc89:
+  log.debug(`intersection calc abc89:
   outsidePoint: ${JSON.stringify(outsidePoint)}
   insidePoint : ${JSON.stringify(insidePoint)}
   node        : x:${node.x} y:${node.y} w:${node.width} h:${node.height}`);
@@ -250,26 +250,9 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
   const h = node.height / 2;
 
-  // const edges = {
-  //   x1: x - w,
-  //   x2: x + w,
-  //   y1: y - h,
-  //   y2: y + h
-  // };
-
-  // if (
-  //   outsidePoint.x === edges.x1 ||
-  //   outsidePoint.x === edges.x2 ||
-  //   outsidePoint.y === edges.y1 ||
-  //   outsidePoint.y === edges.y2
-  // ) {
-  //   log.warn('abc89 calc equals on edge', outsidePoint, edges);
-  //   return outsidePoint;
-  // }
-
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
-  // log.warn();
+
   if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // Intersection is top or bottom of rect.
     let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
@@ -279,10 +262,10 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q,
     };
 
-    // if (r === 0) {
-    //   res.x = outsidePoint.x;
-    //   res.y = outsidePoint.y;
-    // }
+    if (r === 0) {
+      res.x = outsidePoint.x;
+      res.y = outsidePoint.y;
+    }
     if (R === 0) {
       res.x = outsidePoint.x;
     }
@@ -290,7 +273,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       res.y = outsidePoint.y;
     }
 
-    log.warn(`abc89 top/bot calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res, 'apa');
+    log.debug(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res); // cspell: disable-line
 
     return res;
   } else {
@@ -307,7 +290,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
     // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
     let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
-    log.warn(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
+    log.debug(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
     if (r === 0) {
       _x = outsidePoint.x;
       _y = outsidePoint.y;
@@ -344,8 +327,8 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
       // First point inside the rect found
       // Calc the intersection coord between the point anf the last point outside the rect
       const inter = intersection(boundaryNode, lastPointOutside, point);
-      log.warn('abc88 inside', point, lastPointOutside, inter);
-      log.warn('abc88 intersection', inter, boundaryNode);
+      log.debug('abc88 inside', point, lastPointOutside, inter);
+      log.debug('abc88 intersection', inter, boundaryNode);
 
       // // Check case where the intersection is the same as the last point
       let pointPresent = false;
@@ -370,7 +353,7 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
       }
     }
   });
-  log.warn('abc88 returning points', points);
+  log.debug('returning points', points);
   return points;
 };
 
@@ -482,14 +465,23 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   const tail = startNode;
   var head = endNode;
 
-  log.info('abc88 InsertEdge XBX: ', points, edge.start, id);
+  log.info(
+    'abc88 InsertEdge Start: ',
+    edge.start,
+    '-->',
+    edge.end,
+    JSON.stringify(points, null, 2)
+  );
   if (head.intersect && tail.intersect) {
-    // log.info('abc88 InsertEdge SPLIT: 0.5', points);
+    // log.info('abc88 InsertEdge: 0.5', edge.start, '-->', edge.end, JSON.stringify(points));
     points = points.slice(1, edge.points.length - 1);
-    // log.info('abc88 InsertEdge SPLIT: 0.7', points);
+    // log.info('abc88 InsertEdge APA12: 0.7', edge.start, '-->', edge.end,   JSON.stringify(points));
     points.unshift(tail.intersect(points[0]));
-    log.info(
-      'Last point abc88',
+    log.debug(
+      'Last point APA12',
+      edge.start,
+      '-->',
+      edge.end,
       points[points.length - 1],
       head,
       head.intersect(points[points.length - 1])
@@ -505,8 +497,9 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
 
   if (edge.fromCluster) {
-    log.info('from cluster abc88', clusterDb[edge.fromCluster]);
+    log.debug('from cluster abc88', clusterDb[edge.fromCluster], JSON.stringify(points, null, 2));
     points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse();
+    // log.info('from cluster abc88 fixed', JSON.stringify(points, null, 2));
 
     pointsHasChanged = true;
   }
