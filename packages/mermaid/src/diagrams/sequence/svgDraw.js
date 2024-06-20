@@ -415,11 +415,11 @@ const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
 
-  elem.lower();
+  const line = elem.append('g').lower();
 
   if (!isFooter) {
     actorCnt++;
-    elem
+    line
       .append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
