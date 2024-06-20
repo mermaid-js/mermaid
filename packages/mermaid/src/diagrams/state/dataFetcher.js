@@ -152,6 +152,7 @@ let cssClasses = newClassesList(); // style classes defined by a classDef
  *
  * @param nodes
  * @param nodeData
+ * @param classes
  */
 function insertOrUpdateNode(nodes, nodeData, classes) {
   if (!nodeData.id || nodeData.id === '</join></fork>' || nodeData.id === '</choice>') {
@@ -248,7 +249,7 @@ function getClassesFromDbInfo(dbInfoItem) {
         }
         //add comma for all other classes
         else {
-          classStr += dbInfoItem.classes[i] + ',';
+          classStr += dbInfoItem.classes[i] + ' ';
         }
       }
       return classStr;
