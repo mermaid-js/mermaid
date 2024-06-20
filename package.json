@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.42.3",
+    "@argos-ci/cypress": "^2.0.5",
     "@cspell/eslint-plugin": "^8.6.0",
     "@cypress/code-coverage": "^3.12.30",
     "@rollup/plugin-typescript": "^11.1.6",
@@ -126,10 +127,5 @@
   },
   "nyc": {
     "report-dir": "coverage/cypress"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "cytoscape@3.28.1": "patches/cytoscape@3.28.1.patch"
-    }
   }
 }
