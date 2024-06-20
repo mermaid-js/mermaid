@@ -33,7 +33,7 @@ export const insertEdgeLabel = (elem, edge) => {
   log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
-  const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
+  const edgeLabel = elem.insert('g').attr('class', 'edgeLabel').attr('data-id', edge.id);
 
   // Create inner g, label, this will be positioned now for centering the text
   const label = edgeLabel.insert('g').attr('class', 'label');
