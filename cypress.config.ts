@@ -19,16 +19,19 @@ export default eyesPlugin(
           }
           return launchOptions;
         });
-        addMatchImageSnapshotPlugin(on, config);
         // copy any needed variables from process.env to config.env
         config.env.useAppli = process.env.USE_APPLI ? true : false;
+        config.env.useArgos = !!process.env.ARGOS_TOKEN;
 
-        // Argos
-        registerArgosTask(on, config, {
-          uploadToArgos: !!process.env.CI,
-          token: process.env.ARGOS_TOKEN,
-        });
-
+        if (config.env.useArgos) {
+          // Argos
+          registerArgosTask(on, config, {
+            uploadToArgos: !!process.env.CI,
+            token: process.env.ARGOS_TOKEN,
+          });
+        } else {
+          addMatchImageSnapshotPlugin(on, config);
+        }
         // do not forget to return the changed config object!
         return config;
       },
