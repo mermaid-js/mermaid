@@ -34,7 +34,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
 
   const title = node.label;
 
-  const text = label.node().appendChild(createLabel(title, node.labelStyle, true, true));
+  const text = label.node().appendChild(await createLabel(title, node.labelStyle, true, true));
   let bbox = { width: 0, height: 0 };
   if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
     const div = text.children[0];
@@ -49,7 +49,12 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   const descr = label
     .node()
     .appendChild(
-      createLabel(textRows.join ? textRows.join('<br/>') : textRows, node.labelStyle, true, true)
+      await createLabel(
+        textRows.join ? textRows.join('<br/>') : textRows,
+        node.labelStyle,
+        true,
+        true
+      )
     );
 
   if (evaluate(getConfig()?.flowchart?.htmlLabels)) {

@@ -31,7 +31,7 @@ export const labelHelper = async (parent, node, _classes) => {
   }
 
   let text;
-  text = createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
+  text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
     useHtmlLabels,
     width: node.width || getConfig().flowchart.wrappingWidth,
     cssClasses: 'markdown-node-label',

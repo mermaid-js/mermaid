@@ -249,7 +249,7 @@ function getClassesFromDbInfo(dbInfoItem) {
         }
         //add comma for all other classes
         else {
-          classStr += dbInfoItem.classes[i] + ',';
+          classStr += dbInfoItem.classes[i] + ' ';
         }
       }
       return classStr;
