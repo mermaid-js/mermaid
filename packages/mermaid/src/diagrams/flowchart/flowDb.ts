@@ -843,10 +843,10 @@ export const getData = () => {
   const edges: Edge[] = [];
 
   const subGraphs = getSubGraphs();
-  log.info('Subgraphs - APA12', subGraphs);
   const parentDB = new Map<string, string>();
   const subGraphDB = new Map<string, boolean>();
 
+  // Setup the subgraph data for adding nodes
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     const subGraph = subGraphs[i];
     if (subGraph.nodes.length > 0) {
@@ -855,6 +855,11 @@ export const getData = () => {
     subGraph.nodes.forEach((id) => {
       parentDB.set(id, subGraph.id);
     });
+  }
+
+  // Data is setup, add the nodes
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
     nodes.push({
       id: subGraph.id,
       label: subGraph.title,
