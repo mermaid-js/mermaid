@@ -21,12 +21,23 @@
     </style>
   </head>
   <body>
+    <h1>Mermaid development page</h1>
+    <h2>Static diagram example</h2>
+    <pre id="diagram" class="mermaid">
+graph TB
+      a --> b
+      a --> c
+      b --> d
+      c --> d
+    </pre>
+
+    <hr />
+    <h2>Dynamic diagram example</h2>
     Type code to view diagram:
     <div class="container">
       <textarea name="code" id="code" cols="30" rows="10"></textarea>
       <div id="dynamicDiagram"></div>
     </div>
-    <br>
     <button id="render" type="button">Render</button>
     <pre class="mermaid">info</pre>
 
