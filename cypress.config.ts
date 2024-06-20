@@ -21,13 +21,11 @@ export default eyesPlugin(
         });
         // copy any needed variables from process.env to config.env
         config.env.useAppli = process.env.USE_APPLI ? true : false;
-        config.env.useArgos = !!process.env.ARGOS_TOKEN;
+        config.env.useArgos = !!process.env.CI;
 
         if (config.env.useArgos) {
-          // Argos
           registerArgosTask(on, config, {
-            uploadToArgos: !!process.env.CI,
-            token: process.env.ARGOS_TOKEN,
+            token: 'fc3a35cf5200db928d65b2047861582d9444032b',
           });
         } else {
           addMatchImageSnapshotPlugin(on, config);

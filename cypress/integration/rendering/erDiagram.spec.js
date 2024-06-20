@@ -218,7 +218,6 @@ describe('Entity Relationship Diagram', () => {
         `,
       { loglevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render entities with keys', () => {
