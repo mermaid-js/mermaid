@@ -2,7 +2,7 @@ import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 import type { DrawDefinition, HTML, SVG } from '../../diagram-api/types.js';
 import { select } from 'd3';
-import { RailroadDB } from './railroadDB.js';
+import { RailroadDB, Node, Rule, NonTerm, Term, ZeroOrMany, ZeroOrOne, OneOrMany, Sequence, Choice, Exception } from './railroadDB.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 // import { configureSvgSize } from '../../setupGraphViewbox.js';
 // import { Uid } from '../../rendering-util/uid.js';
@@ -31,12 +31,99 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 //   return svg;
 // };
 
-interface RailroadRenderer {
+const railroadConfig = configApi.getConfig().railroad;
 
+abstract class RailroadRenderer<T> {
+  render(node: Node): T {
+    if (node instanceof Rule) {
+      return this.renderRule(node);
+    } else if (node instanceof Rule) {
+      return this.renderRule(node);
+    } else if (node instanceof NonTerm) {
+      return this.renderNonTerm(node);
+    } else if (node instanceof OneOrMany) {
+      return this.renderOneOrMany(node);
+    } else if (node instanceof Sequence) {
+      return this.renderSequence(node);
+    } else if (node instanceof Choice) {
+      return this.renderChoice(node);
+    } else if (node instanceof Term) {
+      return this.renderTerm(node);
+    } else if (node instanceof ZeroOrMany) {
+      return this.renderZeroOrMany(node);
+    } else if (node instanceof ZeroOrOne) {
+      return this.renderZeroOrOne(node);
+    } else if (node instanceof Exception) {
+      return this.renderException(node);
+    } else {
+      // return this.renderBlank();
+      throw `${this.constructor.name} does not know how to render ${node.constructor.name}`
+    }
+  };
+  abstract renderBlank(): T;
+
+  abstract renderRule(node: Rule): T;
+  abstract renderNonTerm(node: NonTerm): T;
+  abstract renderOneOrMany(node: OneOrMany): T;
+  abstract renderSequence(node: Sequence): T;
+  abstract renderChoice(node: Choice): T;
+  abstract renderTerm(node: Term): T;
+  abstract renderZeroOrMany(node: ZeroOrMany): T;
+  abstract renderZeroOrOne(node: ZeroOrOne): T;
+  abstract renderException(node: Exception): T
 }
 
-class StringRailroadRenderer implements RailroadRenderer {
+class EBNFStringRenderer extends RailroadRenderer<string> {
+  renderBlank(): string {
+    return '';
+  }
 
+  renderRule(node: Rule): string {
+    return `${node.label} ::= ${this.render(node.definition)}`;
+  }
+
+  renderNonTerm(node: NonTerm): string {
+    const escaped = node.label.replaceAll(/\\([\\'"<>])/g, "\\$1");
+
+    return '<' + escaped + '>';
+  }
+
+  renderTerm(node: Term): string {
+    const escaped = node.label.replaceAll(/\\([\\'"])/g, "\\$1");
+
+    return '"' + escaped + '"';
+  }
+
+  renderZeroOrOne(node: ZeroOrOne): string {
+    return this.render(node.child) + '?';
+  }
+
+  renderOneOrMany(node: OneOrMany): string {
+    return this.render(node.child) + '+';
+  }
+
+  renderZeroOrMany(node: ZeroOrMany): string {
+    return this.render(node.child) + '*';
+  }
+
+  renderSequence(node: Sequence): string {
+    const delimiter = railroadConfig?.format?.forceComma ? ', ' : ' ';
+    const content = node.children.map((c) => this.render(c)).join(delimiter);
+    return content;
+  }
+
+  renderChoice(node: Choice): string {
+    const content = node.children.map((c) => this.render(c)).join('|');
+    return '(' + content + ')';
+  }
+
+  renderException(node: Exception): string {
+    return `(${this.render(node.base)}) - ${this.render(node.except)}`;
+  }
+
+  renderEpsilon(node: Epsilon): string {
+    return node.label;
+  }
 }
 
 class Dimension {
@@ -61,30 +148,37 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj): void => {
   const rules = db.getRules();
 
   rules.forEach((rule, index) => {
-    const { ID: label, definition: chunk } = rule;
+    const { label: label, definition: chunk } = rule;
     console.log(`Key: ${label}, Value:`, chunk);
 
     const g = svg.append('g').attr('transform', `translate(${0},${10 + index * 20})`);
 
-    const body = chunk.traverse<String>((item, index, parent, result) => {
-      console.log(item, index, parent);
+    const renderer = new EBNFStringRenderer;
 
-      return result + item.toEBNF();
-      // const nestedDimensions = result.reduce((acc, curr) => acc.add(curr), new Dimension(0, 0));
-      // item.toEBNF();
-      // return nestedDimensions;
-    });
+    const text = renderer.render(rule);
+    // const body = chunk.traverse<String>((item, index, parent, result) => {
+    //   console.log(item, index, parent);
 
-    const text = label + ':==' + body;
+    //   // return result + item.toEBNF()
+    //   return result + renderer.render(item);
+    //   // const nestedDimensions = result.reduce((acc, curr) => acc.add(curr), new Dimension(0, 0));
+    //   // item.toEBNF();
+    //   // return nestedDimensions;
+    // });
+
+    // const text = label + ':==' + body;
     g.append('text').text(text);
 
-    // g
-    //   .append('rect')
-    //   .attr('x', 100)
-    //   .attr('y', 0)
-    //   .attr('width', 300)
-    //   .attr('height', 10)
-    //   .attr('fill', '#999')
+    const x = g
+      .append('rect')
+      .attr('x', 100)
+      .attr('y', 0)
+      .attr('width', 300)
+      .attr('height', 10)
+      .attr('fill', '#999')
+
+    console.log(x);
+    console.log(typeof x);
   });
 
   // diagObj.renderer
