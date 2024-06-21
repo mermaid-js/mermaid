@@ -1111,13 +1111,13 @@ const shapes = {
   doublecircle,
   stadium,
   hexagon,
-  blockArrow,
-  rectLeftInvArrow,
-  leanRight,
-  leanLeft,
+  block_arrow: blockArrow,
+  rect_left_inv_arrow: rectLeftInvArrow,
+  lean_right: leanRight,
+  lean_left: leanLeft,
   trapezoid,
-  invTrapezoid,
-  rectRightInvArrow,
+  inv_trapezoid: invTrapezoid,
+  rect_right_inv_arrow: rectRightInvArrow,
   cylinder,
   start,
   end,
@@ -1125,7 +1125,7 @@ const shapes = {
   subroutine,
   fork: forkJoin,
   join: forkJoin,
-  classBox,
+  class_box: classBox,
 };
 
 let nodeElems = {};

@@ -335,22 +335,22 @@ export function addToRenderV2(addShape) {
   addShape({ cylinder });
 
   // Add custom shape for box with inverted arrow on left side
-  addShape({ rectLeftInvArrow });
+  addShape({ rect_left_inv_arrow: rectLeftInvArrow });
 
   // Add custom shape for box with inverted arrow on left side
-  addShape({ leanRight });
+  addShape({ lean_right: leanRight });
 
   // Add custom shape for box with inverted arrow on left side
-  addShape({ leanLeft });
+  addShape({ lean_left: leanLeft });
 
   // Add custom shape for box with inverted arrow on left side
   addShape({ trapezoid });
 
   // Add custom shape for box with inverted arrow on left side
-  addShape({ invTrapezoid });
+  addShape({ inv_trapezoid: invTrapezoid });
 
   // Add custom shape for box with inverted arrow on right side
-  addShape({ rectRightInvArrow });
+  addShape({ rect_right_inv_arrow: rectRightInvArrow });
 }
 
 /**
