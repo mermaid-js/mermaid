@@ -303,4 +303,16 @@ describe('XY Chart', () => {
       {}
     );
   });
+  it('should use the correct distances between data points', () => {
+    imgSnapshotTest(
+      `
+      xychart-beta
+        x-axis 0 --> 2
+        line [0, 1, 0, 1]
+        bar [1, 0, 1, 0]
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
 });
