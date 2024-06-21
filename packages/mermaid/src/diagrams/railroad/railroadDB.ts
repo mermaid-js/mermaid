@@ -37,7 +37,6 @@ const clear = (): void => {
 // type ruleID = string;
 
 export type Rules = Record<string, Chunk>;
-
 let rules: Rules = {};
 
 const getConsole = () => console;
@@ -55,11 +54,37 @@ type Callback<T> = (item: Chunk, index: number, parent: Chunk | undefined, resul
 //   toEBNF(): string;
 // }
 
+// Chunk represents any part of grammar side of a Rule or any other part of it.
+// This is basically a tree in which leafs are numbers, symbols or other rules
+// and nodes are the groups of them (one-or-many, alternative a or b, etc.)
+//
 abstract class Chunk {
   // static staticMethod(): void;
   static display: ((instance: Chunk) => void) | undefined;
   abstract traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T;
   abstract toEBNF(): string;
+}
+
+// Production Rule or a Rule for simplicity represents a grammar production
+//
+//    expr = expr "+" number | expr;
+//
+// That is a rule. Left side is its label, always non-terminal for context-free
+// grammars, and right side is its body (definition)
+//
+export class Rule implements Chunk {
+  constructor(public label: string, public definition: Chunk) { }
+
+  traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
+    index ??= 0;
+    const nested = this.definition.traverse(callback, index, this);
+
+    return callback(this, index, parent, [nested]);
+  }
+
+  toEBNF() {
+    return `${this.label} ::= ${this.definition.toEBNF()}`;
+  }
 }
 
 abstract class Leaf implements Chunk {
@@ -73,19 +98,8 @@ abstract class Leaf implements Chunk {
   abstract toEBNF(): string;
 }
 
-abstract class Node implements Chunk {
-  constructor(public child: Chunk) {}
-
-  traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
-    index ??= 0;
-    const nested = this.child.traverse(callback, index, this);
-
-    return callback(this, index, parent, [nested]);
-  }
-
-  abstract toEBNF(): string;
-}
-
+// Chain is base class for a alternatives or sequences
+//
 abstract class Chain implements Chunk {
   constructor(public children: Chunk[]) {}
 
@@ -101,10 +115,27 @@ abstract class Chain implements Chunk {
   abstract toEBNF(): string;
 }
 
-export class Rule {
-  constructor(public ID: string, public definition: Chunk) {}
-  toEBNF() {
-    return `${this.ID} ::= ${this.definition.toEBNF()}`;
+// Choice represents alternative - one or another
+//
+// expr | number
+//
+//
+class Choice extends Chain {
+  toEBNF(): string {
+    const content = this.children.map((c) => c.toEBNF()).join('|');
+    return '(' + content + ')';
+  }
+}
+
+// Sequence is concatenation of elements
+//
+// expr '+' expr
+//
+class Sequence extends Chain {
+  toEBNF(): string {
+    const delimiter = railroadConfig?.format?.forceComma ? ', ' : ' ';
+    const content = this.children.map((c) => c.toEBNF()).join(delimiter);
+    return content;
   }
 }
 
@@ -123,14 +154,22 @@ class Epsilon extends Leaf {
   }
 }
 
+// Terminal is just a symbol or a string in a grammar
+//
 class Term extends Leaf {
   toEBNF(): string {
     const escaped = this.label.replaceAll(/\\([\\'"])/g, "\\$1");
-    
+
     return '"' + escaped + '"';
   }
 }
 
+// NonTerm is reference to a rule
+//
+//    assignment = variable "=" num
+//
+// in that case <variable> and <num> are non terminals
+//
 class NonTerm extends Leaf {
   toEBNF(): string {
     const escaped = this.label.replaceAll(/\\([\\'"<>])/g, "\\$1");
@@ -139,6 +178,12 @@ class NonTerm extends Leaf {
   }
 }
 
+// Something except another something
+//
+//    variable = alphanum - "const"
+//
+// means that <variable> is an alphanumeric, but not the word "const"
+//
 class Exception implements Chunk {
   constructor(public base: Chunk, public except: Chunk) {}
 
@@ -157,48 +202,51 @@ class Exception implements Chunk {
   }
 }
 
-class Choice extends Chain {
-  toEBNF(): string {
-    const content = this.children.map((c) => c.toEBNF()).join('|');
-    return '(' + content + ')';
+// Closure means a grammar (regexp if you will) closure:
+// 0 or 1, 1 or many, 0 or many, {n,m} repetitions, etc.
+//
+abstract class Closure implements Chunk {
+  constructor(public child: Chunk) {}
+
+  traverse<T>(callback: Callback<T>, index?: number, parent?: Chunk): T {
+    index ??= 0;
+    const nested = this.child.traverse(callback, index, this);
+
+    return callback(this, index, parent, [nested]);
   }
+
+  abstract toEBNF(): string;
 }
 
-class Sequence extends Chain {
-  toEBNF(): string {
-    const delimiter = railroadConfig?.format?.forceComma ? ', ' : ' ';
-    const content = this.children.map((c) => c.toEBNF()).join(delimiter);
-    return content;
-  }
-}
-
-class OneOrMany extends Node {
+class OneOrMany extends Closure {
   toEBNF(): string {
     return this.child.toEBNF() + '+';
   }
 }
 
-class ZeroOrOne extends Node {
+class ZeroOrOne extends Closure {
   toEBNF(): string {
     return this.child.toEBNF() + '?';
   }
 }
 
-class ZeroOrMany extends Node {
+class ZeroOrMany extends Closure {
   toEBNF(): string {
     return this.child.toEBNF() + '*';
   }
 }
+
+//==========================================================
 
 const addTerm = (label: string): Chunk => {
   label.replaceAll(/\\(.)/g, "$1");
 
   return new Term(label);
 };
+
 const addNonTerm = (label: string): Chunk => {
   return new NonTerm(label);
 };
-
 
 // resolve quantifiers
 // (()?)? => ()?
@@ -224,13 +272,25 @@ const addZeroOrMany = (chunk: Chunk): Chunk => {
 const addException = (base: Chunk, except: Chunk): Chunk => {
   return new Exception(base, except);
 }
-const addRuleOrChoice = (ID: string, chunk: Chunk): void => {
-  if (rules[ID]) {
-    const value = rules[ID];
+
+// tmp
+const addOrMergeRule = (label: string, chunk: Chunk): void => {
+  if (rules[label]) {
+    const value = rules[label];
     const alternative = addChoice([value, chunk]);
-    rules[ID] = alternative;
+    rules[label] = alternative;
   } else {
-    rules[ID] = chunk;
+    rules[label] = chunk;
+  }
+};
+
+const addRuleOrChoice = (label: string, chunk: Chunk): void => {
+  if (rules[label]) {
+    const value = rules[label];
+    const alternative = addChoice([value, chunk]);
+    rules[label] = alternative;
+  } else {
+    rules[label] = chunk;
   }
 };
 
@@ -291,7 +351,8 @@ export interface RailroadDB extends DiagramDB {
   addEpsilon: () => Chunk;
   addNonTerm: (label: string) => Chunk;
   addOneOrMany: (chunk: Chunk) => Chunk;
-  addRuleOrChoice: (ID: string, chunk: Chunk) => void;
+  addOrMergeRule: (label: string, chunk: Chunk) => void;
+  addRuleOrChoice: (label: string, chunk: Chunk) => void;
   addSequence: (chunks: Chunk[]) => Chunk;
   addTerm: (label: string) => Chunk;
   addZeroOrMany: (chunk: Chunk) => Chunk;
@@ -307,6 +368,7 @@ export const db: RailroadDB = {
   addEpsilon,
   addNonTerm,
   addOneOrMany,
+  addOrMergeRule,
   addRuleOrChoice,
   addSequence,
   addTerm,

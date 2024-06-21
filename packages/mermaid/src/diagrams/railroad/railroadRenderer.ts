@@ -31,6 +31,14 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 //   return svg;
 // };
 
+interface RailroadRenderer {
+
+}
+
+class StringRailroadRenderer implements RailroadRenderer {
+
+}
+
 class Dimension {
   constructor(public width: number, public height: number) {}
 
@@ -58,15 +66,17 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj): void => {
 
     const g = svg.append('g').attr('transform', `translate(${0},${10 + index * 20})`);
 
-    g.append('text').text(label);
-
-    chunk.traverse<Dimension>((item, index, parent, result) => {
+    const body = chunk.traverse<String>((item, index, parent, result) => {
       console.log(item, index, parent);
 
-      const nestedDimensions = result.reduce((acc, curr) => acc.add(curr), new Dimension(0, 0));
-      return nestedDimensions;
-      // item.toString()
+      return result + item.toEBNF();
+      // const nestedDimensions = result.reduce((acc, curr) => acc.add(curr), new Dimension(0, 0));
+      // item.toEBNF();
+      // return nestedDimensions;
     });
+
+    const text = label + ':==' + body;
+    g.append('text').text(text);
 
     // g
     //   .append('rect')

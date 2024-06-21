@@ -277,7 +277,7 @@ fact
   | prim {
     $$ = $prim;
   }
-  | NUMBER '*' prim {
+  | NUMBER\[number_] '*' prim {
     $$ = yy.addRepetitions($prim, $number_);
   }
   ;
