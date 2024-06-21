@@ -5,6 +5,7 @@ braintree
 catmull
 compositTitleSize
 doublecircle
+drawables
 elems
 gantt
 gitgraph
