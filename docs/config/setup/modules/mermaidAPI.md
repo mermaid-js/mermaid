@@ -34,7 +34,7 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 • `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](../interfaces/mermaidAPI.ParseResult.md) | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md)) => `Promise`<[`ParseResult`](../interfaces/mermaidAPI.ParseResult.md)> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](../interfaces/mermaidAPI.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
 
-- Use mermaid.<function> instead of mermaid.mermaidAPI.<function>
+- Use mermaid.function instead of mermaid.mermaidAPI.function
 
 #### Defined in
 

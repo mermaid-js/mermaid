@@ -568,7 +568,7 @@ function addA11yInfo(
 }
 
 /**
- * @internal - Use mermaid.<function> instead of mermaid.mermaidAPI.<function>
+ * @internal - Use mermaid.function instead of mermaid.mermaidAPI.function
  */
 export const mermaidAPI = Object.freeze({
   render,
