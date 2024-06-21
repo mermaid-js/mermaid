@@ -52,6 +52,7 @@ import mm from 'micromatch';
 // @ts-ignore No typescript declaration file
 import flatmap from 'unist-util-flatmap';
 import { visit } from 'unist-util-visit';
+import { prettierConfig } from './prettier.js';
 
 export const MERMAID_RELEASE_VERSION = JSON.parse(readFileSync('../mermaid/package.json', 'utf8'))
   .version as string;
@@ -85,7 +86,6 @@ const LOGMSG_COPIED = `, and copied to ${FINAL_DOCS_DIR}`;
 
 const WARN_DOCSDIR_DOESNT_MATCH = `Changed files were transformed in ${SOURCE_DOCS_DIR} but do not match the files in ${FINAL_DOCS_DIR}. Please run 'pnpm --filter mermaid run docs:build' after making changes to ${SOURCE_DOCS_DIR} to update the ${FINAL_DOCS_DIR} directory with the transformed files.`;
 
-const prettierConfig = (await prettier.resolveConfig('.')) ?? {};
 // From https://github.com/vuejs/vitepress/blob/428eec3750d6b5648a77ac52d88128df0554d4d1/src/node/markdownToVue.ts#L20-L21
 const includesRE = /<!--\s*@include:\s*(.*?)\s*-->/g;
 const includedFiles: Set<string> = new Set();
