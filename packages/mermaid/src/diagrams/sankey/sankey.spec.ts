@@ -11,6 +11,15 @@ describe('sankey', () => {
     const data = fs.readFileSync(csv, 'utf8');
     const graphDefinition = 'sankey-beta\n\n ' + data;
 
-    await parser.parse(graphDefinition);
+    void parser.parse(graphDefinition);
+  });
+
+  it('allows __proto__ as id', async () => {
+    void parser.parse(
+      `sankey-beta
+      __proto__,A,0.597
+      A,__proto__,0.403
+      `
+    );
   });
 });

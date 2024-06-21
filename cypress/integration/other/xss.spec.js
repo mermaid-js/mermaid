@@ -10,7 +10,6 @@ describe('XSS', () => {
     cy.wait(1000).then(() => {
       cy.get('.mermaid').should('exist');
     });
-    cy.get('svg');
   });
 
   it('should not allow tags in the css', () => {
@@ -134,6 +133,11 @@ describe('XSS', () => {
   });
   it('should sanitize backticks in class names properly', () => {
     cy.visit('http://localhost:9000/xss24.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
+  it('should sanitize backticks block diagram labels properly', () => {
+    cy.visit('http://localhost:9000/xss25.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });

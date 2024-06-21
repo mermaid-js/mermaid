@@ -3,7 +3,7 @@
  *  (c) 2014-2015 Knut Sveidqvist
  *  MIT license.
  *
- *  Based on js sequence diagrams jison grammr
+ *  Based on js sequence diagrams jison grammar
  *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
@@ -33,7 +33,7 @@
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
 "create"                                                        return 'create';
 "destroy"                                                       { this.begin('ID'); return 'destroy'; }
-<ID>[^\->:\n,;]+?([\-]*[^\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
+<ID>[^\<->\->:\n,;]+?([\-]*[^\<->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
 "loop"                                                          { this.begin('LINE'); return 'loop'; }
@@ -73,9 +73,11 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "off"															return 'off';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
-[^\+\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
+[^\+\<->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\<->\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"                                                           return 'SOLID_ARROW';
+"<<->>"                                                           return 'BIDIRECTIONAL_SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
+"<<-->>"                                                          return 'BIDIRECTIONAL_DOTTED_ARROW';
 "->"                                                            return 'SOLID_OPEN_ARROW';
 "-->"                                                           return 'DOTTED_OPEN_ARROW';
 \-[x]                                                           return 'SOLID_CROSS';
@@ -138,8 +140,8 @@ statement
 	| autonumber NUM 'NEWLINE' { $$ = {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:1, sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};}
 	| autonumber off 'NEWLINE' { $$ = {type:'sequenceIndex', sequenceVisible:false, signalType:yy.LINETYPE.AUTONUMBER};}
 	| autonumber 'NEWLINE'  {$$ = {type:'sequenceIndex', sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER}; }
-	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
-	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
+	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2.actor};}
+	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2.actor};}
 	| note_statement 'NEWLINE'
 	| links_statement 'NEWLINE'
 	| link_statement 'NEWLINE'
@@ -288,11 +290,11 @@ placement
 signal
 	: actor signaltype '+' actor text2
 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5, activate: true},
-	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $4}
+	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $4.actor}
 	             ]}
 	| actor signaltype '-' actor text2
 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
-	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $1}
+	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $1.actor}
 	             ]}
 	| actor signaltype actor text2
 	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
@@ -310,7 +312,9 @@ signaltype
 	: SOLID_OPEN_ARROW  { $$ = yy.LINETYPE.SOLID_OPEN; }
 	| DOTTED_OPEN_ARROW { $$ = yy.LINETYPE.DOTTED_OPEN; }
 	| SOLID_ARROW       { $$ = yy.LINETYPE.SOLID; }
+  | BIDIRECTIONAL_SOLID_ARROW       { $$ = yy.LINETYPE.BIDIRECTIONAL_SOLID; }
 	| DOTTED_ARROW      { $$ = yy.LINETYPE.DOTTED; }
+	| BIDIRECTIONAL_DOTTED_ARROW      { $$ = yy.LINETYPE.BIDIRECTIONAL_DOTTED; }
 	| SOLID_CROSS       { $$ = yy.LINETYPE.SOLID_CROSS; }
 	| DOTTED_CROSS      { $$ = yy.LINETYPE.DOTTED_CROSS; }
 	| SOLID_POINT { $$ = yy.LINETYPE.SOLID_POINT; }

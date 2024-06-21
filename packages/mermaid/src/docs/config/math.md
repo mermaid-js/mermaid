@@ -60,3 +60,13 @@ Example with legacy mode enabled (the latest version of KaTeX's stylesheet can b
   </body>
 </html>
 ```
+
+## Handling Rendering Differences
+
+Due to differences between default fonts across operating systems and browser's MathML implementations, inconsistent results can be seen across platforms. If having consistent results are important, or the most optimal rendered results are desired, `forceLegacyMathML` can be enabled in the config.
+
+This option will always use KaTeX's stylesheet instead of only when MathML is not supported (as with `legacyMathML`). Note that only `forceLegacyMathML` needs to be set.
+
+If including KaTeX's stylesheet is not a concern, enabling this option is recommended to avoid scenarios where no MathML implementation within a browser provides the desired output (as seen below).
+
+![Image showing differences between Browsers](img/mathMLDifferences.png)

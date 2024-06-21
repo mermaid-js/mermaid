@@ -26,7 +26,7 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 #### Defined in
 
-[mermaidAPI.ts:74](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L74)
+[mermaidAPI.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L75)
 
 ## Variables
 
@@ -98,7 +98,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:635](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L635)
+[mermaidAPI.ts:634](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L634)
 
 ## Functions
 
@@ -129,7 +129,7 @@ Return the last node appended
 
 #### Defined in
 
-[mermaidAPI.ts:277](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L277)
+[mermaidAPI.ts:276](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L276)
 
 ---
 
@@ -167,10 +167,10 @@ Create the user styles
 
 #### Parameters
 
-| Name        | Type                                                                | Description                                                                                                               |
-| :---------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `config`    | `MermaidConfig`                                                     | configuration that has style and theme settings to use                                                                    |
-| `classDefs` | `undefined` \| `null` \| `Record`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
+| Name        | Type                                                             | Description                                                                                                               |
+| :---------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `config`    | `MermaidConfig`                                                  | configuration that has style and theme settings to use                                                                    |
+| `classDefs` | `undefined` \| `null` \| `Map`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
 
 #### Returns
 
@@ -180,7 +180,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:153](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L153)
+[mermaidAPI.ts:154](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L154)
 
 ---
 
@@ -190,12 +190,12 @@ the string with all the user styles
 
 #### Parameters
 
-| Name        | Type                                                      |
-| :---------- | :-------------------------------------------------------- |
-| `config`    | `MermaidConfig`                                           |
-| `graphType` | `string`                                                  |
-| `classDefs` | `undefined` \| `Record`<`string`, `DiagramStyleClassDef`> |
-| `svgId`     | `string`                                                  |
+| Name        | Type                                                   |
+| :---------- | :----------------------------------------------------- |
+| `config`    | `MermaidConfig`                                        |
+| `graphType` | `string`                                               |
+| `classDefs` | `undefined` \| `Map`<`string`, `DiagramStyleClassDef`> |
+| `svgId`     | `string`                                               |
 
 #### Returns
 
@@ -230,7 +230,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:138](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L138)
+[mermaidAPI.ts:139](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L139)
 
 ---
 
@@ -252,11 +252,10 @@ Put the svgCode into an iFrame. Return the iFrame code
 `string`
 
 - the code with the iFrame that now contains the svgCode
-  TODO replace btoa(). Replace with buf.toString('base64')?
 
 #### Defined in
 
-[mermaidAPI.ts:254](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L254)
+[mermaidAPI.ts:253](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L253)
 
 ---
 
@@ -281,4 +280,4 @@ Remove any existing elements from the given document
 
 #### Defined in
 
-[mermaidAPI.ts:327](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L327)
+[mermaidAPI.ts:326](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L326)

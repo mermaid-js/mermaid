@@ -31,6 +31,7 @@ import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
+import { toBase64 } from './utils/base64.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -152,7 +153,7 @@ export const cssImportantStyles = (
  */
 export const createCssStyles = (
   config: MermaidConfig,
-  classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
+  classDefs: Map<string, DiagramStyleClassDef> | null | undefined = new Map()
 ): string => {
   let cssStyles = '';
 
@@ -171,7 +172,7 @@ export const createCssStyles = (
   }
 
   // classDefs defined in the diagram text
-  if (!isEmpty(classDefs)) {
+  if (classDefs instanceof Map) {
     const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
@@ -180,8 +181,7 @@ export const createCssStyles = (
     const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
 
     // create the CSS styles needed for each styleClass definition and css element
-    for (const classId in classDefs) {
-      const styleClassDef = classDefs[classId];
+    classDefs.forEach((styleClassDef) => {
       // create the css styles for each cssElement and the styles (only if there are styles)
       if (!isEmpty(styleClassDef.styles)) {
         cssElements.forEach((cssElement) => {
@@ -192,7 +192,7 @@ export const createCssStyles = (
       if (!isEmpty(styleClassDef.textStyles)) {
         cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
       }
-    }
+    });
   }
   return cssStyles;
 };
@@ -200,7 +200,7 @@ export const createCssStyles = (
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
-  classDefs: Record<string, DiagramStyleClassDef> | undefined,
+  classDefs: Map<string, DiagramStyleClassDef> | undefined,
   svgId: string
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
@@ -249,14 +249,13 @@ export const cleanUpSvgCode = (
  * @param svgCode - the svg code to put inside the iFrame
  * @param svgElement - the d3 node that has the current svgElement so we can get the height from it
  * @returns  - the code with the iFrame that now contains the svgCode
- * TODO replace btoa(). Replace with  buf.toString('base64')?
  */
 export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
   const height = svgElement?.viewBox?.baseVal?.height
     ? svgElement.viewBox.baseVal.height + 'px'
     : IFRAME_HEIGHT;
-  const base64encodedSrc = btoa('<body style="' + IFRAME_BODY_STYLE + '">' + svgCode + '</body>');
-  return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
+  const base64encodedSrc = toBase64(`<body style="${IFRAME_BODY_STYLE}">${svgCode}</body>`);
+  return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
 </iframe>`;
 };
