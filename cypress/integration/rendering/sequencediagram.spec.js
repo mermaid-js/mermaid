@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+// <reference types="Cypress" />
 
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
@@ -66,6 +66,19 @@ context('Sequence diagram', () => {
         end
       `,
       { sequence: { actorFontFamily: 'courier' } }
+    );
+  });
+  it('should render bidirectional arrows', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice<<->>John: Hello John, how are you?
+      Alice<<-->>John: Hi Alice, I can hear you!
+      John<<->>Alice: This also works the other way
+      John<<-->>Alice: Yes
+      Alice->John: Test
+      John->>Alice: Still works
+      `
     );
   });
   it('should handle different line breaks', () => {
@@ -375,7 +388,7 @@ context('Sequence diagram', () => {
         {}
       );
     });
-    it('should have actor-top and actor-bottom classes on top and bottom actor box and symbol', () => {
+    it('should have actor-top and actor-bottom classes on top and bottom actor box and symbol and actor-box and actor-man classes for text tags', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
@@ -394,6 +407,9 @@ context('Sequence diagram', () => {
       cy.get('.actor-man').should('have.class', 'actor-bottom');
       cy.get('.actor.actor-bottom').should('not.have.class', 'actor-top');
       cy.get('.actor-man.actor-bottom').should('not.have.class', 'actor-top');
+
+      cy.get('text.actor-box').should('include.text', 'Alice');
+      cy.get('text.actor-man').should('include.text', 'Bob');
     });
     it('should render long notes left of actor', () => {
       imgSnapshotTest(
@@ -457,6 +473,18 @@ context('Sequence diagram', () => {
         Alice->>Bob: Hola
         Note over Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render notes over actors and participant', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        actor Alice
+        participant Charlie
+        note over Alice: some note
+        note over Charlie: other note
       `,
         {}
       );
@@ -807,7 +835,10 @@ context('Sequence diagram', () => {
         note left of Alice: config: mirrorActors=true<br/>directive: mirrorActors=false
         Bob->>Alice: Short as well
       `,
-        { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
       );
     });
   });
@@ -858,7 +889,10 @@ context('Sequence diagram', () => {
         a->>j: Hello John, how are you?
         j-->>a: Great!
       `,
-        { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
       );
     });
     it('should support actor links and properties when not mirrored EXPERIMENTAL: USE WITH CAUTION', () => {

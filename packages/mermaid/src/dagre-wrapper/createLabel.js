@@ -3,6 +3,7 @@ import { log } from '../logger.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { evaluate } from '../diagrams/common/common.js';
 import { decodeEntities } from '../utils.js';
+import { replaceIconSubstring } from '../rendering-util/createText.js';
 
 /**
  * @param dom
@@ -59,10 +60,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
     log.debug('vertexText' + vertexText);
     const node = {
       isNode,
-      label: decodeEntities(vertexText).replace(
-        /fa[blrs]?:fa-[\w-]+/g,
-        (s) => `<i class='${s.replace(':', ' ')}'></i>`
-      ),
+      label: replaceIconSubstring(decodeEntities(vertexText)),
       labelStyle: style.replace('fill:', 'color:'),
     };
     let vertexNode = addHtmlLabel(node);

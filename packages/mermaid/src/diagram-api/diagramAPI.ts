@@ -49,7 +49,7 @@ export const registerDiagram = (
   detector?: DiagramDetector
 ) => {
   if (diagrams[id]) {
-    throw new Error(`Diagram ${id} already registered.`);
+    log.warn(`Diagram with id ${id} already registered. Overwriting.`);
   }
   diagrams[id] = diagram;
   if (detector) {

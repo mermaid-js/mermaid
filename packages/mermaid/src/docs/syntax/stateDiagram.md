@@ -98,7 +98,7 @@ In a real world use of state diagrams you often end up with diagrams that are mu
 have several internal states. These are called composite states in this terminology.
 
 In order to define a composite state you need to use the state keyword followed by an id and the body of the composite
-state between \{\}. See the example below:
+state between \{\}. You can name a composite state on a separate line just like a simple state. See the example below:
 
 ```mermaid-example
 stateDiagram-v2
@@ -106,6 +106,14 @@ stateDiagram-v2
     state First {
         [*] --> second
         second --> [*]
+    }
+
+    [*] --> NamedComposite
+    NamedComposite: Another Composite
+    state NamedComposite {
+        [*] --> namedSimple
+        namedSimple --> [*]
+        namedSimple: Another simple
     }
 ```
 
@@ -396,7 +404,7 @@ Spaces can be added to a state by first defining the state with an id and then r
 
 In the following example there is a state with the id **yswsii** and description **Your state with spaces in it**.
 After it has been defined, **yswsii** is used in the diagram in the first transition (`[*] --> yswsii`)
-and also in the transition to **YetAnotherState** (`yswsii --> YetAnotherState`).  
+and also in the transition to **YetAnotherState** (`yswsii --> YetAnotherState`).
 (**yswsii** has been styled so that it is different from the other states.)
 
 ```mermaid-example
@@ -410,3 +418,5 @@ stateDiagram
     yswsii --> YetAnotherState
     YetAnotherState --> [*]
 ```
+
+<!--- cspell:ignore yswsii --->

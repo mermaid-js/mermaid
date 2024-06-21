@@ -9,6 +9,7 @@
 ## Interfaces
 
 - [ParseOptions](../interfaces/mermaidAPI.ParseOptions.md)
+- [ParseResult](../interfaces/mermaidAPI.ParseResult.md)
 - [RenderResult](../interfaces/mermaidAPI.RenderResult.md)
 
 ## References
@@ -25,13 +26,13 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 #### Defined in
 
-[mermaidAPI.ts:64](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L64)
+[mermaidAPI.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L75)
 
 ## Variables
 
 ### mermaidAPI
 
-• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `void` ; `parse`: (`text`: `string`, `parseOptions?`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md)) => `Promise`<`boolean`> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](../interfaces/mermaidAPI.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
+• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](../interfaces/mermaidAPI.ParseResult.md) | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](../interfaces/mermaidAPI.ParseOptions.md)) => `Promise`<[`ParseResult`](../interfaces/mermaidAPI.ParseResult.md)> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](../interfaces/mermaidAPI.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
 
 ## mermaidAPI configuration defaults
 
@@ -42,6 +43,7 @@ const config = {
   securityLevel: 'strict',
   startOnLoad: true,
   arrowMarkerAbsolute: false,
+  suppressErrorRendering: false,
 
   er: {
     diagramPadding: 20,
@@ -96,7 +98,7 @@ mermaid.initialize(config);
 
 #### Defined in
 
-[mermaidAPI.ts:607](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L607)
+[mermaidAPI.ts:634](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L634)
 
 ## Functions
 
@@ -127,7 +129,7 @@ Return the last node appended
 
 #### Defined in
 
-[mermaidAPI.ts:263](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L263)
+[mermaidAPI.ts:276](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L276)
 
 ---
 
@@ -153,7 +155,7 @@ the cleaned up svgCode
 
 #### Defined in
 
-[mermaidAPI.ts:209](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L209)
+[mermaidAPI.ts:223](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L223)
 
 ---
 
@@ -165,10 +167,10 @@ Create the user styles
 
 #### Parameters
 
-| Name        | Type                                                                | Description                                                                                                               |
-| :---------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `config`    | `MermaidConfig`                                                     | configuration that has style and theme settings to use                                                                    |
-| `classDefs` | `undefined` \| `null` \| `Record`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
+| Name        | Type                                                             | Description                                                                                                               |
+| :---------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `config`    | `MermaidConfig`                                                  | configuration that has style and theme settings to use                                                                    |
+| `classDefs` | `undefined` \| `null` \| `Map`<`string`, `DiagramStyleClassDef`> | the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...) |
 
 #### Returns
 
@@ -178,7 +180,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:139](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L139)
+[mermaidAPI.ts:154](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L154)
 
 ---
 
@@ -188,12 +190,12 @@ the string with all the user styles
 
 #### Parameters
 
-| Name        | Type                                                      |
-| :---------- | :-------------------------------------------------------- |
-| `config`    | `MermaidConfig`                                           |
-| `graphType` | `string`                                                  |
-| `classDefs` | `undefined` \| `Record`<`string`, `DiagramStyleClassDef`> |
-| `svgId`     | `string`                                                  |
+| Name        | Type                                                   |
+| :---------- | :----------------------------------------------------- |
+| `config`    | `MermaidConfig`                                        |
+| `graphType` | `string`                                               |
+| `classDefs` | `undefined` \| `Map`<`string`, `DiagramStyleClassDef`> |
+| `svgId`     | `string`                                               |
 
 #### Returns
 
@@ -201,7 +203,7 @@ the string with all the user styles
 
 #### Defined in
 
-[mermaidAPI.ts:186](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L186)
+[mermaidAPI.ts:200](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L200)
 
 ---
 
@@ -228,7 +230,7 @@ with an enclosing block that has each of the cssClasses followed by !important;
 
 #### Defined in
 
-[mermaidAPI.ts:124](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L124)
+[mermaidAPI.ts:139](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L139)
 
 ---
 
@@ -250,11 +252,10 @@ Put the svgCode into an iFrame. Return the iFrame code
 `string`
 
 - the code with the iFrame that now contains the svgCode
-  TODO replace btoa(). Replace with buf.toString('base64')?
 
 #### Defined in
 
-[mermaidAPI.ts:240](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L240)
+[mermaidAPI.ts:253](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L253)
 
 ---
 
@@ -279,4 +280,4 @@ Remove any existing elements from the given document
 
 #### Defined in
 
-[mermaidAPI.ts:313](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L313)
+[mermaidAPI.ts:326](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaidAPI.ts#L326)

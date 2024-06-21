@@ -41,9 +41,10 @@ merge(?=\s|$)                           return 'MERGE';
 cherry\-pick(?=\s|$)                    return 'CHERRY_PICK';
 "parent:"                               return 'PARENT_COMMIT'
 // "reset"                                 return 'RESET';
-checkout(?=\s|$)                        return 'CHECKOUT';
+\b(checkout|switch)(?=\s|$)             return 'CHECKOUT';
 "LR"                                    return 'DIR';
 "TB"                                    return 'DIR';
+"BT"                                    return 'DIR';
 ":"                                     return ':';
 "^"                                     return 'CARET'
 "options"\r?\n                          this.begin("options"); //
@@ -84,7 +85,7 @@ options
     | NL
     ;
 body
-    : /*emmpty*/ {$$ = []}
+    : /*empty*/ {$$ = []}
     | body line {$1.push($2); $$=$1;}
     ;
 line
