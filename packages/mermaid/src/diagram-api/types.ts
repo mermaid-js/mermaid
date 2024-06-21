@@ -70,7 +70,7 @@ export interface DiagramRenderer {
   getClasses?: (
     text: string,
     diagram: Pick<DiagramDefinition, 'db'>
-  ) => Record<string, DiagramStyleClassDef>;
+  ) => Map<string, DiagramStyleClassDef>;
 }
 
 export interface DiagramDefinition {

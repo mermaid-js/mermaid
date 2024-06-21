@@ -19,12 +19,12 @@ import { PacketTokenBuilder } from './tokenBuilder.js';
 /**
  * Declaration of `Packet` services.
  */
-type PacketAddedServices = {
+interface PacketAddedServices {
   parser: {
     TokenBuilder: PacketTokenBuilder;
     ValueConverter: CommonValueConverter;
   };
-};
+}
 
 /**
  * Union of Langium default services and `Packet` services.

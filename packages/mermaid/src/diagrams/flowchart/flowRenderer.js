@@ -6,9 +6,10 @@ import { applyStyle } from 'dagre-d3-es/src/dagre-js/util.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
 import { log } from '../../logger.js';
 import common, { evaluate, renderKatex } from '../common/common.js';
-import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
+import { interpolateToCurve, getStylesFromArray, getEdgeId } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import flowChartShapes from './flowChartShapes.js';
+import { replaceIconSubstring } from '../../rendering-util/createText.js';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -56,14 +57,9 @@ export const addVertices = async function (vert, g, svgId, root, _doc, diagObj) 
     let vertexNode;
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
+      const replacedVertexText = replaceIconSubstring(vertexText);
       const node = {
-        label: await renderKatex(
-          vertexText.replace(
-            /fa[blrs]?:fa-[\w-]+/g, // cspell:disable-line
-            (s) => `<i class='${s.replace(':', ' ')}'></i>`
-          ),
-          getConfig()
-        ),
+        label: await renderKatex(replacedVertexText, getConfig()),
       };
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
@@ -179,7 +175,10 @@ export const addEdges = async function (edges, g, diagObj) {
     cnt++;
 
     // Identify Link
-    const linkId = 'L-' + edge.start + '-' + edge.end;
+    const linkId = getEdgeId(edge.start, edge.end, {
+      counter: cnt,
+      prefix: 'L',
+    });
     const linkNameStart = 'LS-' + edge.start;
     const linkNameEnd = 'LE-' + edge.end;
 
@@ -242,13 +241,7 @@ export const addEdges = async function (edges, g, diagObj) {
         edgeData.labelType = 'html';
         edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}" style="${
           edgeData.labelStyle
-        }">${await renderKatex(
-          edge.text.replace(
-            /fa[blrs]?:fa-[\w-]+/g, // cspell:disable-line
-            (s) => `<i class='${s.replace(':', ' ')}'></i>`
-          ),
-          getConfig()
-        )}</span>`;
+        }">${await renderKatex(replaceIconSubstring(edge.text), getConfig())}</span>`;
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
@@ -275,7 +268,7 @@ export const addEdges = async function (edges, g, diagObj) {
  *
  * @param text
  * @param diagObj
- * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
+ * @returns {Map<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');
@@ -462,9 +455,9 @@ export const draw = async function (text, id, _version, diagObj) {
   setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 
   // If node has a link, wrap it in an anchor SVG object.
-  const keys = Object.keys(vert);
+  const keys = [...vert.keys()];
   keys.forEach(function (key) {
-    const vertex = vert[key];
+    const vertex = vert.get(key);
 
     if (vertex.link) {
       const node = root.select('#' + id + ' [id="' + diagObj.db.lookUpDomId(key) + '"]');

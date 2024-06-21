@@ -567,7 +567,7 @@ Examples of tooltip usage below:
 
 ```html
 <script>
-  const callback = function () {
+  window.callback = function () {
     alert('A callback was triggered');
   };
 </script>
@@ -588,7 +588,7 @@ flowchart LR
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
-?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/Ogglas/2o73vdez/7).
+?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/yk4h7qou/2/).
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
 
@@ -620,7 +620,7 @@ Beginner's tip—a full example using interactive links in a html context:
   </pre>
 
   <script>
-    const callback = function () {
+    window.callback = function () {
       alert('A callback was triggered');
     };
     const config = {
@@ -797,6 +797,30 @@ Adding this snippet in the `<head>` would add support for Font Awesome v6.5.1
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
   rel="stylesheet"
 />
+```
+
+### Custom icons
+
+It is possible to use custom icons served from Font Awesome as long as the website imports the corresponding kit.
+
+Note that this is currently a paid feature from Font Awesome.
+
+For custom icons, you need to use the `fak` prefix.
+
+**Example**
+
+```
+flowchart TD
+    B[fa:fa-twitter] %% standard icon
+    B-->E(fak:fa-custom-icon-name) %% custom icon
+```
+
+And trying to render it
+
+```mermaid-example
+flowchart TD
+    B["fa:fa-twitter for peace"]
+    B-->C["fab:fa-truck-bold a custom icon"]
 ```
 
 ## Graph declarations with spaces between vertices and link and without semicolon

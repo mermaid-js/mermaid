@@ -24,7 +24,7 @@
 #   you may need to add it to `.build/jsonSchema.ts`, `src/docs.mts`
 #   and `scripts/create-types-from-json-schema.mjs`
 #   to get the default values/docs/types to generate properly.
-$id: https://mermaid-js.github.io/schemas/config.schema.json
+$id: https://mermaid.js.org/schemas/config.schema.json
 $schema: https://json-schema.org/draft/2019-09/schema
 title: Mermaid Config
 type: object
@@ -178,6 +178,13 @@ properties:
       without their own MathML implementation. If this option is disabled and MathML is not supported, the math
       equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
       fall back to legacy rendering for KaTeX.
+    type: boolean
+    default: false
+  forceLegacyMathML:
+    description: |
+      This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS 
+      fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
+      If set to true, ignores legacyMathML.
     type: boolean
     default: false
   deterministicIds:
