@@ -20,5 +20,14 @@ describe('Sankey diagram', function () {
 
       sankey.parser.parse(graphDefinition);
     });
+
+    it('allows __proto__ as id', function () {
+      sankey.parser.parse(
+        prepareTextForParsing(`sankey-beta
+      __proto__,A,0.597
+      A,__proto__,0.403
+      `)
+      );
+    });
   });
 });

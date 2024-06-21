@@ -152,7 +152,7 @@ function transformDataWithoutCategory(data: number[], plotType: PlotType): Simpl
   if (isLinearAxisData(xyChartData.xAxis)) {
     const min = xyChartData.xAxis.min;
     const max = xyChartData.xAxis.max;
-    const step = (max - min + 1) / data.length;
+    const step = (max - min) / (data.length - 1);
     const categories: string[] = [];
     for (let i = min; i <= max; i += step) {
       categories.push(`${i}`);

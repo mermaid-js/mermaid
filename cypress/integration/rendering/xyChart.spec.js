@@ -10,7 +10,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Should render a complete chart', () => {
       imgSnapshotTest(
@@ -36,7 +35,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('y-axis title not required', () => {
       imgSnapshotTest(
@@ -49,7 +47,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Should render a chart without y-axis with different range', () => {
       imgSnapshotTest(
@@ -61,7 +58,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('x axis title not required', () => {
       imgSnapshotTest(
@@ -73,7 +69,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Decimals and negative numbers are supported', () => {
       imgSnapshotTest(
@@ -84,7 +79,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Render spark line with "plotReservedSpacePercent"', () => {
       imgSnapshotTest(
@@ -102,7 +96,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Render spark bar without displaying other property', () => {
       imgSnapshotTest(
@@ -129,7 +122,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Should use all the config from directive', () => {
       imgSnapshotTest(
@@ -144,7 +136,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Should use all the config from yaml', () => {
       imgSnapshotTest(
@@ -185,7 +176,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Render with show axis title false', () => {
       imgSnapshotTest(
@@ -207,7 +197,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Render with show axis label false', () => {
       imgSnapshotTest(
@@ -229,7 +218,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Render with show axis tick false', () => {
       imgSnapshotTest(
@@ -251,7 +239,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Render with show axis line false', () => {
       imgSnapshotTest(
@@ -273,7 +260,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
     it('Render all the theme color', () => {
       imgSnapshotTest(
@@ -303,7 +289,6 @@ describe('XY Chart', () => {
       `,
         {}
       );
-      cy.get('svg');
     });
   });
 

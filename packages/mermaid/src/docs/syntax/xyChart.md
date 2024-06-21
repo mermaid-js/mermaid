@@ -158,11 +158,11 @@ Themes for xychart resides inside xychart attribute so to set the variables use 
 | ---------------- | --------------------------------------------------------- |
 | backgroundColor  | Background color of the whole chart                       |
 | titleColor       | Color of the Title text                                   |
-| xAxisLableColor  | Color of the x-axis labels                                |
+| xAxisLabelColor  | Color of the x-axis labels                                |
 | xAxisTitleColor  | Color of the x-axis title                                 |
 | xAxisTickColor   | Color of the x-axis tick                                  |
 | xAxisLineColor   | Color of the x-axis line                                  |
-| yAxisLableColor  | Color of the y-axis labels                                |
+| yAxisLabelColor  | Color of the y-axis labels                                |
 | yAxisTitleColor  | Color of the y-axis title                                 |
 | yAxisTickColor   | Color of the y-axis tick                                  |
 | yAxisLineColor   | Color of the y-axis line                                  |

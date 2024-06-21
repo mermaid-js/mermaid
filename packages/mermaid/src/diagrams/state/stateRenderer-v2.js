@@ -5,7 +5,7 @@ import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -81,7 +81,7 @@ export const setConf = function (cnf) {
  *
  * @param {string} text - the diagram text to be parsed
  * @param diagramObj
- * @returns {Record<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles (a Map with keys = strings, values = )
+ * @returns {Map<string, import('../../diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles (a Map with keys = strings, values = )
  */
 export const getClasses = function (text, diagramObj) {
   diagramObj.db.extract(diagramObj.db.getRootDocV2());
@@ -129,13 +129,13 @@ export function stateDomId(itemId = '', counter = 0, type = '', typeSpacer = DOM
  * @param g - graph
  * @param {object} parent
  * @param {object} parsedItem - parsed statement item
- * @param {object[]} diagramStates - the list of all known  states for the diagram
+ * @param {Map<string, object>} diagramStates - the list of all known  states for the diagram
  * @param {object} diagramDb
  * @param {boolean} altFlag - for clusters, add the "statediagram-cluster-alt" CSS class
  */
 const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => {
   const itemId = parsedItem.id;
-  const classStr = getClassesFromDbInfo(diagramStates[itemId]);
+  const classStr = getClassesFromDbInfo(diagramStates.get(itemId));
 
   if (itemId !== 'root') {
     let shape = SHAPE_STATE;
@@ -252,7 +252,6 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
         type: 'group',
         padding: 0, //getConfig().flowchart.padding
       };
-      graphItemCount++;
 
       const parentNodeId = itemId + PARENT_ID;
       g.setNode(parentNodeId, groupData);
@@ -270,17 +269,23 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
         from = noteData.id;
         to = itemId;
       }
+
       g.setEdge(from, to, {
         arrowhead: 'none',
         arrowType: '',
         style: G_EDGE_STYLE,
         labelStyle: '',
+        id: getEdgeId(from, to, {
+          counter: graphItemCount,
+        }),
         classes: CSS_EDGE_NOTE_EDGE,
         arrowheadStyle: G_EDGE_ARROWHEADSTYLE,
         labelpos: G_EDGE_LABELPOS,
         labelType: G_EDGE_LABELTYPE,
         thickness: G_EDGE_THICKNESS,
       });
+
+      graphItemCount++;
     } else {
       g.setNode(itemId, nodeData);
     }
@@ -303,7 +308,7 @@ const setupNode = (g, parent, parsedItem, diagramStates, diagramDb, altFlag) => 
  * @param g
  * @param parentParsedItem - parsed Item that is the parent of this document (doc)
  * @param doc - the document to set up; it is a list of parsed statements
- * @param {object[]} diagramStates - the list of all known states for the diagram
+ * @param {Map<string, object>} diagramStates - the list of all known states for the diagram
  * @param diagramDb
  * @param {boolean} altFlag
  * @todo This duplicates some of what is done in stateDb.js extract method
@@ -324,7 +329,9 @@ const setupDoc = (g, parentParsedItem, doc, diagramStates, diagramDb, altFlag) =
           setupNode(g, parentParsedItem, item.state1, diagramStates, diagramDb, altFlag);
           setupNode(g, parentParsedItem, item.state2, diagramStates, diagramDb, altFlag);
           const edgeData = {
-            id: 'edge' + graphItemCount,
+            id: getEdgeId(item.state1.id, item.state2.id, {
+              counter: graphItemCount,
+            }),
             arrowhead: 'normal',
             arrowTypeEnd: 'arrow_barb',
             style: G_EDGE_STYLE,

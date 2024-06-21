@@ -33,6 +33,8 @@ In Mermaid, we support the basic git operations like:
 With the help of these key git commands, you will be able to draw a gitgraph in Mermaid very easily and quickly.
 Entity names are often capitalized, although there is no accepted standard on this, and it is not required in Mermaid.
 
+**NOTE**: `checkout` and `switch` can be used interchangeably.
+
 ## Syntax
 
 Mermaid syntax for a gitgraph is very straight-forward and simple. It follows a declarative-approach, where each commit is drawn on the timeline in the diagram, in order of its occurrences/presence in code. Basically, it follows the insertion order for each command.
@@ -277,6 +279,7 @@ In Mermaid, you have the option to configure the gitgraph diagram. You can confi
 - `showCommitLabel` : Boolean, default is `true`. If set to `false`, the commit labels are not shown in the diagram.
 - `mainBranchName` : String, default is `main`. The name of the default/root branch.
 - `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meaning, by default `main` branch is the first in the order.
+- `parallelCommits`: Boolean, default is `false`. If set to `true`, commits x distance away from the parent are shown at the same level in the diagram.
 
 Let's look at them one by one.
 
@@ -518,9 +521,9 @@ Here, we have changed the default main branch name to `MetroLine1`.
 
 ## Orientation (v10.3.0+)
 
-Mermaid supports two graph orientations: **Left-to-Right** (default) and **Top-to-Bottom**.
+Mermaid supports three graph orientations: **Left-to-Right** (default), **Top-to-Bottom**, and **Bottom-to-Top**.
 
-You can set this with either `LR:` (for [**Left-to-Right**](#left-to-right-default-lr)) or `TB:` (for [**Top-to-Bottom**](#top-to-bottom-tb)) after `gitGraph`.
+You can set this with either `LR:` (for [**Left-to-Right**](#left-to-right-default-lr)), `TB:` (for [**Top-to-Bottom**](#top-to-bottom-tb)) or `BT:` (for [**Bottom-to-Top**](#bottom-to-top-bt)) after `gitGraph`.
 
 ### Left to Right (default, `LR:`)
 
@@ -566,6 +569,69 @@ Usage example:
        merge develop
        commit
        commit
+```
+
+### Bottom to Top (`BT:`) (v<MERMAID_RELEASE_VERSION>+)
+
+In `BT` (**Bottom-to-Top**) orientation, the commits run from bottom to top of the graph and branches are arranged side-by-side.
+
+To orient the graph this way, you need to add `BT:` after gitGraph.
+
+Usage example:
+
+```mermaid-example
+    gitGraph BT:
+       commit
+       commit
+       branch develop
+       commit
+       commit
+       checkout main
+       commit
+       commit
+       merge develop
+       commit
+       commit
+```
+
+## Parallel commits (v10.8.0+)
+
+Commits in Mermaid display temporal information in gitgraph by default. For example if two commits are one commit away from its parent, the commit that was made earlier is rendered closer to its parent. You can turn this off by enabling the `parallelCommits` flag.
+
+### Temporal Commits (default, `parallelCommits: false`)
+
+```mermaid-example
+---
+config:
+  gitGraph:
+    parallelCommits: false
+---
+gitGraph:
+  commit
+  branch develop
+  commit
+  commit
+  checkout main
+  commit
+  commit
+```
+
+### Parallel commits (`parallelCommits: true`)
+
+```mermaid-example
+---
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph:
+  commit
+  branch develop
+  commit
+  commit
+  checkout main
+  commit
+  commit
 ```
 
 ## Themes
@@ -959,7 +1025,7 @@ See how the commit label color and background color are changed to the values sp
 
 ### Customizing Commit Label Font Size
 
-You can customize commit using the `commitLabelFontSize` theme variables for changing in the font soze of the commit label .
+You can customize commit using the `commitLabelFontSize` theme variables for changing in the font size of the commit label .
 
 Example:
 Now let's override the default values for the `commitLabelFontSize` variable:
@@ -989,7 +1055,7 @@ See how the commit label font size changed.
 
 ### Customizing Tag Label Font Size
 
-You can customize commit using the `tagLabelFontSize` theme variables for changing in the font soze of the tag label .
+You can customize commit using the `tagLabelFontSize` theme variables for changing in the font size of the tag label .
 
 Example:
 Now let's override the default values for the `tagLabelFontSize` variable:

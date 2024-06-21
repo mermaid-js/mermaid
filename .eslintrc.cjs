@@ -14,7 +14,7 @@ module.exports = {
     },
     tsconfigRootDir: __dirname,
     sourceType: 'module',
-    ecmaVersion: 2020,
+    ecmaVersion: 2022,
     allowAutomaticSingleRunInference: true,
     project: ['./tsconfig.eslint.json', './packages/*/tsconfig.json'],
     parser: '@typescript-eslint/parser',
@@ -23,7 +23,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:json/recommended',
-    'plugin:markdown/recommended',
+    'plugin:markdown/recommended-legacy',
     'plugin:@cspell/recommended',
     'prettier',
   ],
@@ -53,6 +53,7 @@ module.exports = {
     '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-misused-promises': 'error',
     '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/consistent-type-definitions': 'error',
     '@typescript-eslint/ban-ts-comment': [
       'error',
       {
@@ -78,9 +79,9 @@ module.exports = {
     '@cspell/spellchecker': [
       'error',
       {
-        checkIdentifiers: false,
-        checkStrings: false,
-        checkStringTemplates: false,
+        checkIdentifiers: true,
+        checkStrings: true,
+        checkStringTemplates: true,
       },
     ],
     'no-empty': [
@@ -157,6 +158,19 @@ module.exports = {
       rules: {
         'jsdoc/require-jsdoc': 'off',
         '@typescript-eslint/no-unused-vars': 'off',
+      },
+    },
+    {
+      files: ['*.spec.{ts,js}', 'tests/**', 'cypress/**/*.js'],
+      rules: {
+        '@cspell/spellchecker': [
+          'error',
+          {
+            checkIdentifiers: false,
+            checkStrings: false,
+            checkStringTemplates: false,
+          },
+        ],
       },
     },
     {
