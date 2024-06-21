@@ -44,7 +44,7 @@ exclude = [
 "https://chromewebstore.google.com",
 
 # Drupal 403
-"https://www.drupal.org"
+"https://(www.)?drupal.org"
 ]
 
 # Exclude all private IPs from checking.
