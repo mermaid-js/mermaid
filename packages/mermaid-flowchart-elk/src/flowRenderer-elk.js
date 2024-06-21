@@ -445,6 +445,7 @@ export const addEdges = function (edges, diagObj, graph, svg) {
     edgeData.arrowTypeStart = 'arrow_open';
     edgeData.arrowTypeEnd = 'arrow_open';
 
+    // eslint-disable no-fallthrough
     switch (edge.type) {
       // biome-ignore lint/suspicious/noFallthroughSwitchClause: <explanation>
       case 'double_arrow_cross':
