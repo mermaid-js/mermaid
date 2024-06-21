@@ -1,4 +1,4 @@
-import { defineConfig, MarkdownOptions } from 'vitepress';
+import { defineConfig, type MarkdownOptions } from 'vitepress';
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all.js';
 

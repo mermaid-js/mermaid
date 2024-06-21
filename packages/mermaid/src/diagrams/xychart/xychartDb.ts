@@ -75,8 +75,8 @@ function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
 
-function setTmpSVGG(SVGG: Group) {
-  tmpSVGGroup = SVGG;
+function setTmpSVGG(svgg: Group) {
+  tmpSVGGroup = svgg;
 }
 function setOrientation(orientation: string) {
   if (orientation === 'horizontal') {

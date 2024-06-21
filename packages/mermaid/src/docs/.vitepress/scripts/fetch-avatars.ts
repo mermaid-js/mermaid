@@ -32,7 +32,7 @@ async function fetchAvatars() {
   });
 
   contributors = JSON.parse(await readFile(pathContributors, { encoding: 'utf-8' }));
-  let avatars = contributors.map((name) => {
+  const avatars = contributors.map((name) => {
     download(`https://github.com/${name}.png?size=100`, getAvatarPath(name));
   });
 

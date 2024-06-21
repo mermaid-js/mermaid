@@ -70,8 +70,9 @@ describe('diagram detection', () => {
       --------------^
       Expecting 'AMP', 'COLON', 'PIPE', 'TESTSTR', 'DOWN', 'DEFAULT', 'NUM', 'COMMA', 'NODE_STRING', 'BRKT', 'MINUS', 'MULT', 'UNICODE_TEXT', got 'EOF']
     `);
-    await expect(Diagram.fromText('sequenceDiagram; A-->B')).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
+    await expect(
+      Diagram.fromText('sequenceDiagram; A-->B')
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
       [Error: Parse error on line 1:
       ...quenceDiagram; A-->B
       -----------------------^

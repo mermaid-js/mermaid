@@ -244,18 +244,20 @@ export const addEdges = async function (edges, g, diagObj) {
     edgeData.arrowTypeStart = 'arrow_open';
     edgeData.arrowTypeEnd = 'arrow_open';
 
-    /* eslint-disable no-fallthrough */
     switch (edge.type) {
+      // biome-ignore lint/suspicious/noFallthroughSwitchClause: <explanation>
       case 'double_arrow_cross':
         edgeData.arrowTypeStart = 'arrow_cross';
       case 'arrow_cross':
         edgeData.arrowTypeEnd = 'arrow_cross';
         break;
+      // biome-ignore lint/suspicious/noFallthroughSwitchClause: <explanation>
       case 'double_arrow_point':
         edgeData.arrowTypeStart = 'arrow_point';
       case 'arrow_point':
         edgeData.arrowTypeEnd = 'arrow_point';
         break;
+      // biome-ignore lint/suspicious/noFallthroughSwitchClause: <explanation>
       case 'double_arrow_circle':
         edgeData.arrowTypeStart = 'arrow_circle';
       case 'arrow_circle':

@@ -61,7 +61,7 @@ onMounted(async () => {
 
   //refresh images on first render
   const hasImages = /<img([\w\W]+?)>/.exec(code.value)?.length > 0;
-  if (hasImages)
+  if (hasImages) {
     setTimeout(() => {
       let imgElements = document.getElementsByTagName('img');
       let imgs = Array.from(imgElements);
@@ -80,6 +80,7 @@ onMounted(async () => {
         });
       }
     }, 100);
+  }
 });
 
 onUnmounted(() => mut.disconnect());

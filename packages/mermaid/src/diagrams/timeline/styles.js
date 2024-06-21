@@ -15,9 +15,7 @@ const genSections = (options) => {
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
     const sw = '' + (17 - 3 * i);
     sections += `
-    .section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${
-      i - 1
-    } path  {
+    .section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${i - 1} path  {
       fill: ${options['cScale' + i]};
     }
     .section-${i - 1} text {

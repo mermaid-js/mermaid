@@ -12,12 +12,7 @@
     },
     "./*": "./*"
   },
-  "keywords": [
-    "diagram",
-    "markdown",
-    "zenuml",
-    "mermaid"
-  ],
+  "keywords": ["diagram", "markdown", "zenuml", "mermaid"],
   "scripts": {
     "clean": "rimraf dist",
     "prepublishOnly": "pnpm -w run build"
@@ -42,7 +37,5 @@
   "peerDependencies": {
     "mermaid": "workspace:>=10.0.0"
   },
-  "files": [
-    "dist"
-  ]
+  "files": ["dist"]
 }

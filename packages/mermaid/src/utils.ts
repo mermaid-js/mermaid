@@ -173,6 +173,7 @@ export const detectDirective = function (
     );
     let match: RegExpExecArray | null;
     const result: Directive[] = [];
+    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
     while ((match = directiveRegex.exec(text)) !== null) {
       // This is necessary to avoid infinite loops with zero-width matches
       if (match.index === directiveRegex.lastIndex) {
@@ -443,7 +444,10 @@ function calcTerminalLabelPosition(
  * @param arr - Declarations
  * @returns The styles grouped as strings
  */
-export function getStylesFromArray(arr: string[]): { style: string; labelStyle: string } {
+export function getStylesFromArray(arr: string[]): {
+  style: string;
+  labelStyle: string;
+} {
   let style = '';
   let labelStyle = '';
 

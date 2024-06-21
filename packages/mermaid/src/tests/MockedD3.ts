@@ -74,6 +74,7 @@ export class MockedD3 {
   attr(attrName: string): undefined | string;
   attr(attrName: string, attrValue: string): MockedD3;
   attr(attrName: string, attrValue?: string): undefined | string | MockedD3 {
+    // biome-ignore lint/style/noArguments: <explanation>
     if (arguments.length === 1) {
       return this.attribs.get(attrName);
     } else {
@@ -105,8 +106,8 @@ export class MockedD3 {
   // Real implementation returns an HTML Element
   public node = vi.fn().mockImplementation(() => {
     const topElem = this._containingHTMLdoc.createElement('svg');
-    const elem_svgChild = this._containingHTMLdoc.createElement('svg'); // another svg element
-    topElem.appendChild(elem_svgChild);
+    const elemSvgChild = this._containingHTMLdoc.createElement('svg'); // another svg element
+    topElem.appendChild(elemSvgChild);
     return topElem;
   });
 

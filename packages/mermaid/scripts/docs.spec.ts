@@ -24,11 +24,11 @@ describe('docs.mts', () => {
 
       describe('is a code block', () => {
         const beforeCodeLine = 'test\n';
-        const diagram_text = 'graph\n A --> B\n';
+        const diagramText = 'graph\n A --> B\n';
 
         describe('language = "mermaid-nocode"', () => {
-          const lang_keyword = 'mermaid-nocode';
-          const contents = beforeCodeLine + '```' + lang_keyword + '\n' + diagram_text + '\n```\n';
+          const langKeyword = 'mermaid-nocode';
+          const contents = beforeCodeLine + '```' + langKeyword + '\n' + diagramText + '\n```\n';
 
           it('changes the language to "mermaid"', async () => {
             const result = (
@@ -37,17 +37,16 @@ describe('docs.mts', () => {
                 .process(contents)
             ).toString();
             expect(result).toEqual(
-              beforeCodeLine + '\n' + '```' + 'mermaid' + '\n' + diagram_text + '\n```\n'
+              beforeCodeLine + '\n' + '```' + 'mermaid' + '\n' + diagramText + '\n```\n'
             );
           });
         });
 
         describe('language = "mermaid" | "mmd" | "mermaid-example"', () => {
-          const mermaid_keywords = ['mermaid', 'mmd', 'mermaid-example'];
+          const mermaidKeywords = ['mermaid', 'mmd', 'mermaid-example'];
 
-          mermaid_keywords.forEach((lang_keyword) => {
-            const contents =
-              beforeCodeLine + '```' + lang_keyword + '\n' + diagram_text + '\n```\n';
+          mermaidKeywords.forEach((langKeyword) => {
+            const contents = beforeCodeLine + '```' + langKeyword + '\n' + diagramText + '\n```\n';
 
             it('changes the language to "mermaid-example" and adds a copy of the code block with language = "mermaid"', async () => {
               const result = (
@@ -59,10 +58,10 @@ describe('docs.mts', () => {
                 beforeCodeLine +
                   '\n' +
                   '```mermaid-example\n' +
-                  diagram_text +
+                  diagramText +
                   '\n```\n' +
                   '\n```mermaid\n' +
-                  diagram_text +
+                  diagramText +
                   '\n```\n'
               );
             });
@@ -70,9 +69,9 @@ describe('docs.mts', () => {
         });
 
         it('calls transformToBlockQuote with the node information', async () => {
-          const lang_keyword = 'note';
+          const langKeyword = 'note';
           const contents =
-            beforeCodeLine + '```' + lang_keyword + '\n' + 'This is the text\n' + '```\n';
+            beforeCodeLine + '```' + langKeyword + '\n' + 'This is the text\n' + '```\n';
 
           const result = (
             await remarkBuilder().use(transformMarkdownAst, { originalFilename }).process(contents)

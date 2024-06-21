@@ -367,26 +367,26 @@ async function transformJsonSchema(file: string) {
   });
 
   /** Location of the `schema.yaml` files */
-  const SCHEMA_INPUT_DIR = 'src/schemas/';
+  const schemaInputDir = 'src/schemas/';
   /**
    * Location to store the generated `schema.json` file for the website
    *
    * Because Vitepress doesn't handle bundling `.json` files properly, we need
    * to instead place it into a `public/` subdirectory.
    */
-  const SCHEMA_OUTPUT_DIR = 'src/docs/public/schemas/';
-  const VITEPRESS_PUBLIC_DIR = 'src/docs/public';
+  const schemaOutputDir = 'src/docs/public/schemas/';
+  const vitepressPublicDir = 'src/docs/public';
   /**
    * Location to store the generated Schema Markdown docs.
    * Links to JSON Schemas should automatically be rewritten to point to
    * `SCHEMA_OUTPUT_DIR`.
    */
-  const SCHEMA_MARKDOWN_OUTPUT_DIR = join('src', 'docs', 'config', 'schema-docs');
+  const schemaMarkdownOutputDir = join('src', 'docs', 'config', 'schema-docs');
 
   // write .schema.json files
   const jsonFileName = file
     .replace('.schema.yaml', '.schema.json')
-    .replace(SCHEMA_INPUT_DIR, SCHEMA_OUTPUT_DIR);
+    .replace(schemaInputDir, schemaOutputDir);
   copyTransformedContents(jsonFileName, !verifyOnly, JSON.stringify(jsonSchema, undefined, 2));
 
   const schemas = traverseSchemas([schemaLoader()(jsonFileName, jsonSchema)]);
@@ -414,7 +414,7 @@ async function transformJsonSchema(file: string) {
      * @returns New absolute Vitepress path to schema
      */
     rewritelinks: (origin: string) => {
-      return `/${relative(VITEPRESS_PUBLIC_DIR, origin)}`;
+      return `/${relative(vitepressPublicDir, origin)}`;
     },
   })(schemas);
 
@@ -458,7 +458,7 @@ async function transformJsonSchema(file: string) {
       parser: 'markdown',
       ...prettierConfig,
     });
-    const newFileName = join(SCHEMA_MARKDOWN_OUTPUT_DIR, `${name}.md`);
+    const newFileName = join(schemaMarkdownOutputDir, `${name}.md`);
     copyTransformedContents(newFileName, !verifyOnly, formatted);
   }
 }

@@ -2,35 +2,12 @@
   "$schema": "https://biomejs.dev/schemas/1.8.2/schema.json",
   "files": {
     "ignore": [
-      "**/.DS_Store",
-      "**/.cache",
-      "**/.eslintcache",
-      "**/.idea/",
-      "**/.npmrc",
-      "**/.nyc_output",
-      "**/.pnpm-store/",
-      "**/.tsbuildinfo",
-      "**/.vitepress/cache",
-      "**/.vitepress/components.d.ts",
-      "**/Gemfile.lock",
-      "**/_site",
       "**/contributor-names.json",
-      "**/coverage/",
-      "**/dist",
       "**/generated/",
       "**/knsv*.html",
       "**/local*.html",
-      "**/local/",
-      "**/node_modules/",
-      "**/package-lock.json",
-      "**/pnpm-lock.yaml",
       "**/stats/",
-      "**/token",
-      "**/tsconfig.tsbuildinfo",
       "**/user-avatars/*",
-      "**/v8-compile-cache-0",
-      "**/vite.config.ts.timestamp-*",
-      "**/yarn-error.log",
       "./.vscode/**",
       "cypress/platform/current.html",
       "cypress/platform/experimental.html",
@@ -38,8 +15,7 @@
       "cypress/screenshots/",
       "cypress/snapshots/",
       "demos/dev/**",
-      "packages/mermaid/src/config.type.ts",
-      "tsx-0/**"
+      "packages/mermaid/src/config.type.ts"
     ]
   },
   "formatter": {
@@ -86,7 +62,7 @@
         "noUnsafeFinally": "error",
         "noUnsafeOptionalChaining": "error",
         "noUnusedLabels": "error",
-        "noUnusedVariables": "warn",
+        "noUnusedVariables": "off",
         "useArrayLiterals": "off",
         "useIsNan": "error",
         "useValidForDirection": "error",
@@ -96,28 +72,28 @@
         "noNamespace": "error",
         "useAsConstAssertion": "error",
         "useBlockStatements": "error",
-        "useForOf": "error",
+        "useForOf": "warn",
         "useImportType": "error",
         "useNamingConvention": {
-          "level": "error",
+          "level": "off",
           "options": { "strictCase": false }
         }
       },
       "suspicious": {
-        "noAssignInExpressions": "error",
+        "noAssignInExpressions": "warn",
         "noAsyncPromiseExecutor": "error",
         "noCatchAssign": "error",
         "noClassAssign": "error",
         "noCompareNegZero": "error",
-        "noConsoleLog": "error",
+        "noConsoleLog": "off",
         "noControlCharactersInRegex": "error",
         "noDebugger": "error",
         "noDuplicateCase": "error",
         "noDuplicateClassMembers": "error",
         "noDuplicateObjectKeys": "error",
         "noDuplicateParameters": "error",
-        "noEmptyBlockStatements": "error",
-        "noExplicitAny": "warn",
+        "noEmptyBlockStatements": "off",
+        "noExplicitAny": "off",
         "noExtraNonNullAssertion": "error",
         "noFallthroughSwitchClause": "error",
         "noFunctionAssign": "error",
@@ -148,22 +124,45 @@
       "quoteStyle": "single",
       "attributePosition": "auto"
     },
-    "globals": ["it", "describe", "beforeEach", "afterEach", "cy", "expect"]
+    "globals": [
+      "it",
+      "describe",
+      "beforeEach",
+      "beforeAll",
+      "afterEach",
+      "cy",
+      "expect",
+      "context",
+      "Cypress"
+    ]
   },
   "overrides": [
     {
-      "include": ["cypress/**", "demos/**"],
+      "include": ["cypress/**", "demos/**", "**/scripts"],
       "linter": { "rules": { "suspicious": { "noConsoleLog": "off" } } }
     },
     { "include": ["*.{js,jsx,mjs,cjs}"], "linter": { "rules": {} } },
     { "include": ["*.{ts,tsx}"], "linter": { "rules": {} } },
     {
       "include": ["*.spec.{ts,js}", "cypress/**", "demos/**", "**/docs/**"],
-      "linter": { "rules": { "correctness": { "noUnusedVariables": "off" } } }
+      "linter": {
+        "rules": {
+          "correctness": { "noUnusedVariables": "off" },
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
     },
     {
       "include": ["*.spec.{ts,js}", "tests/**", "cypress/**/*.js"],
-      "linter": { "rules": {} }
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
     },
     {
       "include": ["*.html", "*.md", "**/*.md/*"],
@@ -221,5 +220,10 @@
         }
       }
     }
-  ]
+  ],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  }
 }

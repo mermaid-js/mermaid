@@ -49,11 +49,11 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   rectElem.attr('height', rectData.height);
   rectElem.attr('rx', rectData.rx);
   rectElem.attr('ry', rectData.ry);
+  let linkY = 20;
   if (links != null) {
-    var linkY = 20;
     for (let key in links) {
-      var linkElem = g.append('a');
-      var sanitizedLink = sanitizeUrl(links[key]);
+      const linkElem = g.append('a');
+      const sanitizedLink = sanitizeUrl(links[key]);
       linkElem.attr('xlink:href', sanitizedLink);
       linkElem.attr('target', '_blank');
 

@@ -40,9 +40,9 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const db = diagObj.db as PieDB;
   const globalConfig: MermaidConfig = getConfig();
   const pieConfig: Required<PieDiagramConfig> = cleanAndMerge(db.getConfig(), globalConfig.pie);
-  const MARGIN = 40;
-  const LEGEND_RECT_SIZE = 18;
-  const LEGEND_SPACING = 4;
+  const margin = 40;
+  const legendRectSize = 18;
+  const legendSpacing = 4;
   const height = 450;
   const pieWidth: number = height;
   const svg: SVG = selectSvgElement(id);
@@ -54,7 +54,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   outerStrokeWidth ??= 2;
 
   const textPosition: number = pieConfig.textPosition;
-  const radius: number = Math.min(pieWidth, height) / 2 - MARGIN;
+  const radius: number = Math.min(pieWidth, height) / 2 - margin;
   // Shape helper to build arcs:
   const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<d3.PieArcDatum<D3Section>>()
     .innerRadius(0)
@@ -139,25 +139,25 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .append('g')
     .attr('class', 'legend')
     .attr('transform', (_datum, index: number): string => {
-      const height = LEGEND_RECT_SIZE + LEGEND_SPACING;
+      const height = legendRectSize + legendSpacing;
       const offset = (height * color.domain().length) / 2;
-      const horizontal = 12 * LEGEND_RECT_SIZE;
+      const horizontal = 12 * legendRectSize;
       const vertical = index * height - offset;
       return 'translate(' + horizontal + ',' + vertical + ')';
     });
 
   legend
     .append('rect')
-    .attr('width', LEGEND_RECT_SIZE)
-    .attr('height', LEGEND_RECT_SIZE)
+    .attr('width', legendRectSize)
+    .attr('height', legendRectSize)
     .style('fill', color)
     .style('stroke', color);
 
   legend
     .data(arcs)
     .append('text')
-    .attr('x', LEGEND_RECT_SIZE + LEGEND_SPACING)
-    .attr('y', LEGEND_RECT_SIZE - LEGEND_SPACING)
+    .attr('x', legendRectSize + legendSpacing)
+    .attr('y', legendRectSize - legendSpacing)
     .text((datum: d3.PieArcDatum<D3Section>): string => {
       const { label, value } = datum.data;
       if (db.getShowData()) {
@@ -173,7 +173,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       .map((node) => (node as Element)?.getBoundingClientRect().width ?? 0)
   );
 
-  const totalWidth = pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+  const totalWidth = pieWidth + margin + legendRectSize + legendSpacing + longestTextWidth;
 
   // Set viewBox
   svg.attr('viewBox', `0 0 ${totalWidth} ${height}`);

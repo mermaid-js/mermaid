@@ -157,7 +157,7 @@ describe('when parsing a gantt diagram it', function () {
     ${'crit'}                | ${false}  | ${false} | ${true}  | ${false}
     ${'active'}              | ${false}  | ${false} | ${false} | ${true}
     ${'crit,milestone,done'} | ${true}   | ${true}  | ${true}  | ${false}
-  `)('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
+  `)('should handle a task with tags $tags', ({ tags }) => {
     const str =
       'gantt\n' +
       'dateFormat YYYY-MM-DD\n' +
@@ -207,7 +207,6 @@ describe('when parsing a gantt diagram it', function () {
       'click cl2 call ganttTestClick("test0", test1, test2)\n';
 
     expect(parserFnConstructor(str)).not.toThrow();
-    const args = '"test1", "test2", "test3"';
     expect(ganttDb.setClickEvent).toHaveBeenCalledWith(
       'cl2',
       'ganttTestClick',

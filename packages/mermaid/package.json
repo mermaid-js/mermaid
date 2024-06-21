@@ -58,14 +58,8 @@
   "author": "Knut Sveidqvist",
   "license": "MIT",
   "standard": {
-    "ignore": [
-      "**/parser/*.js",
-      "dist/**/*.js",
-      "cypress/**/*.js"
-    ],
-    "globals": [
-      "page"
-    ]
+    "ignore": ["**/parser/*.js", "dist/**/*.js", "cypress/**/*.js"],
+    "globals": ["page"]
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.0.1",
@@ -132,10 +126,7 @@
     "vitepress": "^1.0.1",
     "vitepress-plugin-search": "1.0.4-alpha.22"
   },
-  "files": [
-    "dist/",
-    "README.md"
-  ],
+  "files": ["dist/", "README.md"],
   "sideEffects": false,
   "publishConfig": {
     "access": "public"
