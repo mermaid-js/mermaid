@@ -427,9 +427,9 @@ export const draw = async function (text, id, _version, diagObj) {
 
     selectAll('cluster').append('text');
 
-    for (let j = 0; j < subG.nodes.length; j++) {
-      log.info('Setting up subgraphs', subG.nodes[j], subG.id);
-      g.setParent(subG.nodes[j], subG.id);
+    for (const node of subG.nodes) {
+      log.info('Setting up subgraphs', node, subG.id);
+      g.setParent(node, subG.id);
     }
   }
   await addVertices(vert, g, id, root, doc, diagObj);

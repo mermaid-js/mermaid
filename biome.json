@@ -72,7 +72,7 @@
         "noNamespace": "error",
         "useAsConstAssertion": "error",
         "useBlockStatements": "error",
-        "useForOf": "warn",
+        "useForOf": "error",
         "useImportType": "error",
         "useNamingConvention": {
           "level": "off",
