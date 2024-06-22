@@ -98,7 +98,7 @@ const run = async function (
   }
 ) {
   try {
-    await runThrowsErrors(options);
+    await runThrowsErrors(42);
   } catch (e) {
     if (isDetailedError(e)) {
       log.error(e.str);
