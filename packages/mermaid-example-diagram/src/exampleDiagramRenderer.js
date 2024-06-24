@@ -13,7 +13,7 @@ export const draw = (text, id, version) => {
   try {
     const conf = getConfig();
     log.debug('Rendering example diagram\n' + text, 'Conf: ');
-    const THEME_COLOR_LIMIT = getConfig().themeVariables.THEME_COLOR_LIMIT;
+    const themeColorLimit = getConfig().themeVariables.THEME_COLOR_LIMIT;
     const securityLevel = getConfig().securityLevel;
     // Handle root and Document for when rendering in sandbox mode
     let sandboxElement;
@@ -30,7 +30,7 @@ export const draw = (text, id, version) => {
     const g = svg.append('g');
 
     let i;
-    for (i = 0; i < THEME_COLOR_LIMIT; i++) {
+    for (i = 0; i < themeColorLimit; i++) {
       const section = g.append('g').attr('class', 'section-' + i);
       section
         .append('rect')

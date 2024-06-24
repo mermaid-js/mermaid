@@ -75,8 +75,8 @@ function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
 
-function setTmpSVGG(SVGG: Group) {
-  tmpSVGGroup = SVGG;
+function setTmpSVGG(svgg: Group) {
+  tmpSVGGroup = svgg;
 }
 function setOrientation(orientation: string) {
   if (orientation === 'horizontal') {
@@ -143,7 +143,7 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
   if (isLinearAxisData(xyChartData.xAxis)) {
     const min = xyChartData.xAxis.min;
     const max = xyChartData.xAxis.max;
-    const step = (max - min + 1) / data.length;
+    const step = (max - min) / (data.length - 1);
     const categories: string[] = [];
     for (let i = min; i <= max; i += step) {
       categories.push(`${i}`);

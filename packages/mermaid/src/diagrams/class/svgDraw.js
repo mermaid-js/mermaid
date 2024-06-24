@@ -78,28 +78,28 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
   x = labelPosition.x;
   y = labelPosition.y;
 
-  let p1_card_x, p1_card_y;
-  let p2_card_x, p2_card_y;
+  let p1CardX, p1CardY;
+  let p2CardX, p2CardY;
 
   if (l % 2 !== 0 && l > 1) {
-    let cardinality_1_point = utils.calcCardinalityPosition(
+    let cardinality1Point = utils.calcCardinalityPosition(
       relation.relation.type1 !== 'none',
       path.points,
       path.points[0]
     );
-    let cardinality_2_point = utils.calcCardinalityPosition(
+    let cardinality2Point = utils.calcCardinalityPosition(
       relation.relation.type2 !== 'none',
       path.points,
       path.points[l - 1]
     );
 
-    log.debug('cardinality_1_point ' + JSON.stringify(cardinality_1_point));
-    log.debug('cardinality_2_point ' + JSON.stringify(cardinality_2_point));
+    log.debug('cardinality_1_point ' + JSON.stringify(cardinality1Point));
+    log.debug('cardinality_2_point ' + JSON.stringify(cardinality2Point));
 
-    p1_card_x = cardinality_1_point.x;
-    p1_card_y = cardinality_1_point.y;
-    p2_card_x = cardinality_2_point.x;
-    p2_card_y = cardinality_2_point.y;
+    p1CardX = cardinality1Point.x;
+    p1CardY = cardinality1Point.y;
+    p2CardX = cardinality2Point.x;
+    p2CardY = cardinality2Point.y;
   }
 
   if (relation.title !== undefined) {
@@ -129,8 +129,8 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type1')
-      .attr('x', p1_card_x)
-      .attr('y', p1_card_y)
+      .attr('x', p1CardX)
+      .attr('y', p1CardY)
       .attr('fill', 'black')
       .attr('font-size', '6')
       .text(relation.relationTitle1);
@@ -139,8 +139,8 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
       .attr('class', 'type2')
-      .attr('x', p2_card_x)
-      .attr('y', p2_card_y)
+      .attr('x', p2CardX)
+      .attr('y', p2CardY)
       .attr('fill', 'black')
       .attr('font-size', '6')
       .text(relation.relationTitle2);

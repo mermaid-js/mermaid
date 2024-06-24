@@ -119,7 +119,7 @@ const hexagon = async (parent, node) => {
   return shapeSvg;
 };
 
-const block_arrow = async (parent, node) => {
+const blockArrow = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
 
   const f = 2;
@@ -140,7 +140,7 @@ const block_arrow = async (parent, node) => {
   return shapeSvg;
 };
 
-const rect_left_inv_arrow = async (parent, node) => {
+const rectLeftInvArrow = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(
     parent,
     node,
@@ -171,7 +171,7 @@ const rect_left_inv_arrow = async (parent, node) => {
   return shapeSvg;
 };
 
-const lean_right = async (parent, node) => {
+const leanRight = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(parent, node, getClassesFromNode(node), true);
 
   const w = bbox.width + node.padding;
@@ -194,7 +194,7 @@ const lean_right = async (parent, node) => {
   return shapeSvg;
 };
 
-const lean_left = async (parent, node) => {
+const leanLeft = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(
     parent,
     node,
@@ -250,7 +250,7 @@ const trapezoid = async (parent, node) => {
   return shapeSvg;
 };
 
-const inv_trapezoid = async (parent, node) => {
+const invTrapezoid = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(
     parent,
     node,
@@ -278,7 +278,7 @@ const inv_trapezoid = async (parent, node) => {
   return shapeSvg;
 };
 
-const rect_right_inv_arrow = async (parent, node) => {
+const rectRightInvArrow = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(
     parent,
     node,
@@ -876,7 +876,7 @@ const end = (parent, node) => {
   return shapeSvg;
 };
 
-const class_box = (parent, node) => {
+const classBox = (parent, node) => {
   const halfPadding = node.padding / 2;
   const rowPadding = 4;
   const lineHeight = 8;
@@ -1112,13 +1112,13 @@ const shapes = {
   doublecircle,
   stadium,
   hexagon,
-  block_arrow,
-  rect_left_inv_arrow,
-  lean_right,
-  lean_left,
+  block_arrow: blockArrow,
+  rect_left_inv_arrow: rectLeftInvArrow,
+  lean_right: leanRight,
+  lean_left: leanLeft,
   trapezoid,
-  inv_trapezoid,
-  rect_right_inv_arrow,
+  inv_trapezoid: invTrapezoid,
+  rect_right_inv_arrow: rectRightInvArrow,
   cylinder,
   start,
   end,
@@ -1126,7 +1126,7 @@ const shapes = {
   subroutine,
   fork: forkJoin,
   join: forkJoin,
-  class_box,
+  class_box: classBox,
 };
 
 let nodeElems = {};

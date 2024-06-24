@@ -3,7 +3,7 @@ import * as configApi from '../config.js';
 
 describe('getSubGraphTitleMargins', () => {
   it('should get subgraph title margins after config has been set', () => {
-    const config_0 = {
+    const config0 = {
       flowchart: {
         subGraphTitleMargin: {
           top: 10,
@@ -12,8 +12,8 @@ describe('getSubGraphTitleMargins', () => {
       },
     };
 
-    configApi.setSiteConfig(config_0);
-    expect(getSubGraphTitleMargins(config_0)).toEqual({
+    configApi.setSiteConfig(config0);
+    expect(getSubGraphTitleMargins(config0)).toEqual({
       subGraphTitleTopMargin: 10,
       subGraphTitleBottomMargin: 5,
       subGraphTitleTotalMargin: 15,

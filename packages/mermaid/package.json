@@ -58,19 +58,13 @@
   "author": "Knut Sveidqvist",
   "license": "MIT",
   "standard": {
-    "ignore": [
-      "**/parser/*.js",
-      "dist/**/*.js",
-      "cypress/**/*.js"
-    ],
-    "globals": [
-      "page"
-    ]
+    "ignore": ["**/parser/*.js", "dist/**/*.js", "cypress/**/*.js"],
+    "globals": ["page"]
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.0.1",
     "@mermaid-js/parser": "workspace:^",
-    "cytoscape": "^3.28.1",
+    "cytoscape": "^3.29.2",
     "cytoscape-cose-bilkent": "^4.1.0",
     "d3": "^7.9.0",
     "d3-sankey": "^0.12.3",
@@ -88,7 +82,7 @@
   },
   "devDependencies": {
     "@adobe/jsonschema2md": "^8.0.0",
-    "@types/cytoscape": "^3.19.16",
+    "@types/cytoscape": "^3.21.4",
     "@types/d3": "^7.4.3",
     "@types/d3-sankey": "^0.12.4",
     "@types/d3-scale": "^4.0.8",
@@ -103,8 +97,6 @@
     "@types/prettier": "^3.0.0",
     "@types/stylis": "^4.2.5",
     "@types/uuid": "^9.0.8",
-    "@typescript-eslint/eslint-plugin": "^7.3.1",
-    "@typescript-eslint/parser": "^7.3.1",
     "ajv": "^8.12.0",
     "chokidar": "^3.6.0",
     "concurrently": "^8.2.2",
@@ -132,10 +124,7 @@
     "vitepress": "^1.0.1",
     "vitepress-plugin-search": "1.0.4-alpha.22"
   },
-  "files": [
-    "dist/",
-    "README.md"
-  ],
+  "files": ["dist/", "README.md"],
   "sideEffects": false,
   "publishConfig": {
     "access": "public"

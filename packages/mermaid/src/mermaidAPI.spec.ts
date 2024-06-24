@@ -69,6 +69,7 @@ vi.mock('stylis', () => {
 import { compile, serialize } from 'stylis';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
+import { toBase64 } from './utils/base64.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -176,7 +177,7 @@ describe('mermaidAPI', () => {
   });
 
   describe('putIntoIFrame', () => {
-    const inputSvgCode = 'this is the SVG code';
+    const inputSvgCode = 'this is the SVG code ⛵';
 
     it('uses the default SVG iFrame height is used if no svgElement given', () => {
       const result = putIntoIFrame(inputSvgCode);
@@ -199,15 +200,14 @@ describe('mermaidAPI', () => {
     });
 
     it('sets src to base64 version of <body style="IFRAME_SVG_BODY_STYLE">svgCode<//body>', () => {
-      const base64encodedSrc = btoa('<body style="' + 'margin:0' + '">' + inputSvgCode + '</body>');
-      const expectedRegExp = new RegExp('src="data:text/html;base64,' + base64encodedSrc + '"');
-
+      const base64encodedSrc = toBase64(`<body style="margin:0">${inputSvgCode}</body>`);
+      const expectedSrc = `src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}"`;
       const result = putIntoIFrame(inputSvgCode);
-      expect(result).toMatch(expectedRegExp);
+      expect(result).toContain(expectedSrc);
     });
 
     it('uses the height and appends px from the svgElement given', () => {
-      const faux_svgElement = {
+      const fauxSvgElement = {
         viewBox: {
           baseVal: {
             height: 42,
@@ -215,7 +215,7 @@ describe('mermaidAPI', () => {
         },
       };
 
-      const result = putIntoIFrame(inputSvgCode, faux_svgElement);
+      const result = putIntoIFrame(inputSvgCode, fauxSvgElement);
       expect(result).toMatch(/style="(.*)height:42px;/);
     });
   });
@@ -226,54 +226,54 @@ describe('mermaidAPI', () => {
 
   describe('appendDivSvgG', () => {
     const fauxGNode = new MockedD3();
-    const parent_append_spy = vi.spyOn(fauxParentNode, 'append').mockReturnValue(fauxEnclosingDiv);
-    const div_append_spy = vi.spyOn(fauxEnclosingDiv, 'append').mockReturnValue(fauxSvgNode);
+    const parentAppendSpy = vi.spyOn(fauxParentNode, 'append').mockReturnValue(fauxEnclosingDiv);
+    const divAppendSpy = vi.spyOn(fauxEnclosingDiv, 'append').mockReturnValue(fauxSvgNode);
     // @ts-ignore @todo TODO why is this getting a type error?
-    const div_attr_spy = vi.spyOn(fauxEnclosingDiv, 'attr').mockReturnValue(fauxEnclosingDiv);
-    const svg_append_spy = vi.spyOn(fauxSvgNode, 'append').mockReturnValue(fauxGNode);
+    const divAttrSpy = vi.spyOn(fauxEnclosingDiv, 'attr').mockReturnValue(fauxEnclosingDiv);
+    const svgAppendSpy = vi.spyOn(fauxSvgNode, 'append').mockReturnValue(fauxGNode);
     // @ts-ignore @todo TODO why is this getting a type error?
-    const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+    const svgAttrSpy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
 
     // cspell:ignore dthe
 
     it('appends a div node', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(parent_append_spy).toHaveBeenCalledWith('div');
-      expect(div_append_spy).toHaveBeenCalledWith('svg');
+      expect(parentAppendSpy).toHaveBeenCalledWith('div');
+      expect(divAppendSpy).toHaveBeenCalledWith('svg');
     });
     it('the id for the div is "d" with the id appended', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(div_attr_spy).toHaveBeenCalledWith('id', 'dtheId');
+      expect(divAttrSpy).toHaveBeenCalledWith('id', 'dtheId');
     });
 
     it('sets the style for the div if one is given', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId', 'given div style', 'given x link');
-      expect(div_attr_spy).toHaveBeenCalledWith('style', 'given div style');
+      expect(divAttrSpy).toHaveBeenCalledWith('style', 'given div style');
     });
 
     it('appends a svg node to the div node', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(div_attr_spy).toHaveBeenCalledWith('id', 'dtheId');
+      expect(divAttrSpy).toHaveBeenCalledWith('id', 'dtheId');
     });
     it('sets the svg width to 100%', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_attr_spy).toHaveBeenCalledWith('width', '100%');
+      expect(svgAttrSpy).toHaveBeenCalledWith('width', '100%');
     });
     it('the svg id is the id', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_attr_spy).toHaveBeenCalledWith('id', 'theId');
+      expect(svgAttrSpy).toHaveBeenCalledWith('id', 'theId');
     });
     it('the svg xml namespace is the 2000 standard', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_attr_spy).toHaveBeenCalledWith('xmlns', 'http://www.w3.org/2000/svg');
+      expect(svgAttrSpy).toHaveBeenCalledWith('xmlns', 'http://www.w3.org/2000/svg');
     });
     it('sets the  svg xlink if one is given', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId', 'div style', 'given x link');
-      expect(svg_attr_spy).toHaveBeenCalledWith('xmlns:xlink', 'given x link');
+      expect(svgAttrSpy).toHaveBeenCalledWith('xmlns:xlink', 'given x link');
     });
     it('appends a g (group) node to the svg node', () => {
       appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_append_spy).toHaveBeenCalledWith('g');
+      expect(svgAppendSpy).toHaveBeenCalledWith('g');
     });
     it('returns the given parentRoot d3 nodes', () => {
       expect(appendDivSvgG(fauxParentNode, 'theId', 'dtheId')).toEqual(fauxParentNode);
@@ -283,7 +283,7 @@ describe('mermaidAPI', () => {
   describe('createCssStyles', () => {
     const serif = 'serif';
     const sansSerif = 'sans-serif';
-    const mocked_config_with_htmlLabels: MermaidConfig = {
+    const mockedConfigWithHtmlLabels: MermaidConfig = {
       themeCSS: 'default',
       fontFamily: serif,
       altFontFamily: sansSerif,
@@ -291,15 +291,15 @@ describe('mermaidAPI', () => {
     };
 
     it('gets the cssStyles from the theme', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, null);
+      const styles = createCssStyles(mockedConfigWithHtmlLabels, null);
       expect(styles).toMatch(/^\ndefault(.*)/);
     });
     it('gets the fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, new Map());
+      const styles = createCssStyles(mockedConfigWithHtmlLabels, new Map());
       expect(styles).toMatch(/(.*)\n:root { --mermaid-font-family: serif(.*)/);
     });
     it('gets the alt fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, undefined);
+      const styles = createCssStyles(mockedConfigWithHtmlLabels, undefined);
       expect(styles).toMatch(/(.*)\n:root { --mermaid-alt-font-family: sans-serif(.*)/);
     });
 
@@ -310,13 +310,13 @@ describe('mermaidAPI', () => {
       const classDefs = { classDef1, classDef2, classDef3 };
 
       describe('the graph supports classDefs', () => {
-        const REGEXP_SPECIALS = ['^', '$', '?', '(', '{', '[', '.', '*', '!'];
+        const regexpSpecials = ['^', '$', '?', '(', '{', '[', '.', '*', '!'];
 
         // prefix any special RegExp characters in the given string with a \ so we can use the literal character in a RegExp
         function escapeForRegexp(str: string) {
           const strChars = [...str]; // split into array of every char
           const strEscaped = strChars.map((char) => {
-            if (REGEXP_SPECIALS.includes(char)) {
+            if (regexpSpecials.includes(char)) {
               return `\\${char}`;
             } else {
               return char;
@@ -326,7 +326,7 @@ describe('mermaidAPI', () => {
         }
 
         // Common test expecting given styles to have .classDef1 and .classDef2 statements but not .classDef3
-        function expect_styles_matchesHtmlElements(styles: string, htmlElement: string) {
+        function expectStylesMatchesHtmlElements(styles: string, htmlElement: string) {
           expect(styles).toMatch(
             new RegExp(
               `\\.classDef1 ${escapeForRegexp(
@@ -344,7 +344,7 @@ describe('mermaidAPI', () => {
         }
 
         // Common test expecting given textStyles to have .classDef2 and .classDef3 statements but not .classDef1
-        function expect_textStyles_matchesHtmlElements(textStyles: string, htmlElement: string) {
+        function expectTextStylesMatchesHtmlElements(textStyles: string, htmlElement: string) {
           expect(textStyles).toMatch(
             new RegExp(
               `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{ textStyle2-1 !important; }`
@@ -367,7 +367,7 @@ describe('mermaidAPI', () => {
         }
 
         // common suite and tests to verify that the right styles are created with the right htmlElements
-        function expect_correct_styles_with_htmlElements(mocked_config: MermaidConfig) {
+        function expectCorrectStylesWithHtmlElements(mockedConfig: MermaidConfig) {
           describe('creates styles for "> *" and  "span" elements', () => {
             const htmlElements = ['> *', 'span'];
 
@@ -375,21 +375,21 @@ describe('mermaidAPI', () => {
               // @todo TODO Can't figure out how to spy on the cssImportantStyles method.
               //   That would be a much better approach than manually checking the result
 
-              const styles = createCssStyles(mocked_config, new Map(Object.entries(classDefs)));
+              const styles = createCssStyles(mockedConfig, new Map(Object.entries(classDefs)));
               htmlElements.forEach((htmlElement) => {
-                expect_styles_matchesHtmlElements(styles, htmlElement);
+                expectStylesMatchesHtmlElements(styles, htmlElement);
               });
-              expect_textStyles_matchesHtmlElements(styles, 'tspan');
+              expectTextStylesMatchesHtmlElements(styles, 'tspan');
             });
           });
         }
 
         it('there are htmlLabels in the configuration', () => {
-          expect_correct_styles_with_htmlElements(mocked_config_with_htmlLabels);
+          expectCorrectStylesWithHtmlElements(mockedConfigWithHtmlLabels);
         });
 
         it('there are flowchart.htmlLabels in the configuration', () => {
-          const mocked_config_flowchart_htmlLabels: MermaidConfig = {
+          const mockedConfigFlowchartHtmlLabels: MermaidConfig = {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
@@ -397,11 +397,11 @@ describe('mermaidAPI', () => {
               htmlLabels: true,
             },
           };
-          expect_correct_styles_with_htmlElements(mocked_config_flowchart_htmlLabels);
+          expectCorrectStylesWithHtmlElements(mockedConfigFlowchartHtmlLabels);
         });
 
         describe('no htmlLabels in the configuration', () => {
-          const mocked_config_no_htmlLabels = {
+          const mockedConfigNoHtmlLabels = {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
@@ -414,13 +414,13 @@ describe('mermaidAPI', () => {
               // TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result.
 
               const styles = createCssStyles(
-                mocked_config_no_htmlLabels,
+                mockedConfigNoHtmlLabels,
                 new Map(Object.entries(classDefs))
               );
               htmlElements.forEach((htmlElement) => {
-                expect_styles_matchesHtmlElements(styles, htmlElement);
+                expectStylesMatchesHtmlElements(styles, htmlElement);
               });
-              expect_textStyles_matchesHtmlElements(styles, 'tspan');
+              expectTextStylesMatchesHtmlElements(styles, 'tspan');
             });
           });
         });
@@ -692,8 +692,9 @@ describe('mermaidAPI', () => {
       ).resolves.toBe(false);
     });
     it('resolves for valid definition', async () => {
-      await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
-        .toMatchInlineSnapshot(`
+      await expect(
+        mermaidAPI.parse('graph TD;A--x|text including URL space|B;')
+      ).resolves.toMatchInlineSnapshot(`
         {
           "diagramType": "flowchart-v2",
         }
@@ -748,15 +749,12 @@ describe('mermaidAPI', () => {
           const expectedDiagramType = testedDiagram.expectedType;
 
           it('should set aria-roledescription to the diagram type AND should call addSVGa11yTitleDescription', async () => {
-            const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
-            const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
+            const a11yDiagramInfoSpy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
+            const a11yTitleDescSpy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
             const result = await mermaidAPI.render(id, diagramText);
             expect(result.diagramType).toBe(expectedDiagramType);
-            expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
-              expect.anything(),
-              expectedDiagramType
-            );
-            expect(a11yTitleDesc_spy).toHaveBeenCalled();
+            expect(a11yDiagramInfoSpy).toHaveBeenCalledWith(expect.anything(), expectedDiagramType);
+            expect(a11yTitleDescSpy).toHaveBeenCalled();
           });
         });
       });

@@ -88,9 +88,9 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         expect(classes.get('exampleStyleClass').styles[0]).toEqual('background:#bbb');
         expect(classes.get('exampleStyleClass').styles[1]).toEqual('border:1px solid red');
 
-        const state_a = stateDb.getState('a');
-        expect(state_a.classes.length).toEqual(1);
-        expect(state_a.classes[0]).toEqual('exampleStyleClass');
+        const stateA = stateDb.getState('a');
+        expect(stateA.classes.length).toEqual(1);
+        expect(stateA.classes[0]).toEqual('exampleStyleClass');
       });
 
       it('can be applied to a state with an id containing _', function () {
@@ -109,9 +109,9 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         expect(classes.get('exampleStyleClass').styles[0]).toBe('background:#bbb');
         expect(classes.get('exampleStyleClass').styles[1]).toBe('border:1px solid red');
 
-        const state_a_a = stateDiagram.parser.yy.getState('a_a');
-        expect(state_a_a.classes.length).toEqual(1);
-        expect(state_a_a.classes[0]).toEqual('exampleStyleClass');
+        const stateAA = stateDiagram.parser.yy.getState('a_a');
+        expect(stateAA.classes.length).toEqual(1);
+        expect(stateAA.classes[0]).toEqual('exampleStyleClass');
       });
 
       describe('::: syntax', () => {

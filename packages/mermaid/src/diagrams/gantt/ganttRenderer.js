@@ -724,6 +724,7 @@ export const draw = function (text, id, version, diagObj) {
       .attr('x', 10)
       .attr('y', function (d, i) {
         if (i > 0) {
+          // biome-ignore lint/correctness/noUnreachable: <explanation>
           for (let j = 0; j < i; j++) {
             prevGap += numOccurrences[i - 1][1];
             return (d[1] * theGap) / 2 + prevGap * theGap + theTopPad;

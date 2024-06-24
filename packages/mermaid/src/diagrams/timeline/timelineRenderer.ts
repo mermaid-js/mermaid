@@ -29,7 +29,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
   //1. Fetch the configuration
   const conf = getConfig();
   // @ts-expect-error - wrong config?
-  const LEFT_MARGIN = conf.leftMargin ?? 50;
+  const leftMargin = conf.leftMargin ?? 50;
 
   log.debug('timeline', diagObj.db);
 
@@ -68,7 +68,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
   //let sectionBeginX = 0;
   let depthY = 0;
   let sectionBeginY = 0;
-  let masterX = 50 + LEFT_MARGIN;
+  let masterX = 50 + leftMargin;
   //sectionBeginX = masterX;
   let masterY = 50;
   sectionBeginY = 50;
@@ -115,8 +115,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     maxEventCount = Math.max(maxEventCount, task.events.length);
     //calculate maxEventLineLength
     let maxEventLineLengthTemp = 0;
-    for (let j = 0; j < task.events.length; j++) {
-      const event = task.events[j];
+    for (const event of task.events) {
       const eventNode = {
         descr: event,
         section: task.section,
@@ -203,7 +202,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     svg
       .append('text')
       .text(title)
-      .attr('x', box.width / 2 - LEFT_MARGIN)
+      .attr('x', box.width / 2 - leftMargin)
       .attr('font-size', '4ex')
       .attr('font-weight', 'bold')
       .attr('y', 20);
@@ -215,9 +214,9 @@ export const draw = function (text: string, id: string, version: string, diagObj
   // Draw activity line
   lineWrapper
     .append('line')
-    .attr('x1', LEFT_MARGIN)
+    .attr('x1', leftMargin)
     .attr('y1', depthY) // One section head + one task + margins
-    .attr('x2', box.width + 3 * LEFT_MARGIN) // Subtract stroke width so arrow point is retained
+    .attr('x2', box.width + 3 * leftMargin) // Subtract stroke width so arrow point is retained
     .attr('y2', depthY)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')

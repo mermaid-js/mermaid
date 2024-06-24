@@ -30,18 +30,18 @@ const setupDompurifyHooksIfNotSetup = (() => {
 })();
 
 function setupDompurifyHooks() {
-  const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
+  const temporaryAttribute = 'data-temp-href-target';
 
   DOMPurify.addHook('beforeSanitizeAttributes', (node: Element) => {
     if (node.tagName === 'A' && node.hasAttribute('target')) {
-      node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') || '');
+      node.setAttribute(temporaryAttribute, node.getAttribute('target') || '');
     }
   });
 
   DOMPurify.addHook('afterSanitizeAttributes', (node: Element) => {
-    if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
-      node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) || '');
-      node.removeAttribute(TEMPORARY_ATTRIBUTE);
+    if (node.tagName === 'A' && node.hasAttribute(temporaryAttribute)) {
+      node.setAttribute('target', node.getAttribute(temporaryAttribute) || '');
+      node.removeAttribute(temporaryAttribute);
       if (node.getAttribute('target') === '_blank') {
         node.setAttribute('rel', 'noopener');
       }

@@ -12,13 +12,7 @@
     },
     "./*": "./*"
   },
-  "keywords": [
-    "diagram",
-    "markdown",
-    "flowchart",
-    "elk",
-    "mermaid"
-  ],
+  "keywords": ["diagram", "markdown", "flowchart", "elk", "mermaid"],
   "scripts": {
     "prepublishOnly": "pnpm -w run build"
   },
@@ -39,7 +33,5 @@
     "mermaid": "workspace:^",
     "rimraf": "^5.0.5"
   },
-  "files": [
-    "dist"
-  ]
+  "files": ["dist"]
 }

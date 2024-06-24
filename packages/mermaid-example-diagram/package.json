@@ -12,12 +12,7 @@
     },
     "./*": "./*"
   },
-  "keywords": [
-    "diagram",
-    "markdown",
-    "example",
-    "mermaid"
-  ],
+  "keywords": ["diagram", "markdown", "example", "mermaid"],
   "scripts": {
     "prepublishOnly": "pnpm -w run build"
   },
@@ -28,14 +23,8 @@
   "author": "Knut Sveidqvist",
   "license": "MIT",
   "standard": {
-    "ignore": [
-      "**/parser/*.js",
-      "dist/**/*.js",
-      "cypress/**/*.js"
-    ],
-    "globals": [
-      "page"
-    ]
+    "ignore": ["**/parser/*.js", "dist/**/*.js", "cypress/**/*.js"],
+    "globals": ["page"]
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.0.0",
@@ -47,11 +36,6 @@
     "mermaid": "workspace:*",
     "rimraf": "^5.0.5"
   },
-  "files": [
-    "dist"
-  ],
-  "sideEffects": [
-    "**/*.css",
-    "**/*.scss"
-  ]
+  "files": ["dist"],
+  "sideEffects": ["**/*.css", "**/*.scss"]
 }

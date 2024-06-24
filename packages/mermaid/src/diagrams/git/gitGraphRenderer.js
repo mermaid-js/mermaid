@@ -405,11 +405,11 @@ const drawCommits = (svg, commits, modifyGraph) => {
             text.attr('transform', 'rotate(' + -45 + ', ' + x + ', ' + y + ')');
             labelBkg.attr('transform', 'rotate(' + -45 + ', ' + x + ', ' + y + ')');
           } else {
-            let r_x = -7.5 - ((bbox.width + 10) / 25) * 9.5;
-            let r_y = 10 + (bbox.width / 25) * 8.5;
+            let rX = -7.5 - ((bbox.width + 10) / 25) * 9.5;
+            let rY = 10 + (bbox.width / 25) * 8.5;
             wrapper.attr(
               'transform',
-              'translate(' + r_x + ', ' + r_y + ') rotate(' + -45 + ', ' + pos + ', ' + y + ')'
+              'translate(' + rX + ', ' + rY + ') rotate(' + -45 + ', ' + pos + ', ' + y + ')'
             );
           }
         }

@@ -1,4 +1,4 @@
-import { build, InlineConfig, type PluginOption } from 'vite';
+import { build, type InlineConfig, type PluginOption } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
@@ -48,7 +48,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
   const external: (string | RegExp)[] = ['require', 'fs', 'path'];
   console.log(entryName, packageOptions[entryName]);
   const { name, file, packageName } = packageOptions[entryName];
-  let output: OutputOptions = [
+  const output: OutputOptions = [
     {
       name,
       format: 'esm',

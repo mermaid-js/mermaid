@@ -53,7 +53,7 @@ function hexagon(parent, bbox, node) {
  * @param bbox
  * @param node
  */
-function rect_left_inv_arrow(parent, bbox, node) {
+function rectLeftInvArrow(parent, bbox, node) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -75,7 +75,7 @@ function rect_left_inv_arrow(parent, bbox, node) {
  * @param bbox
  * @param node
  */
-function lean_right(parent, bbox, node) {
+function leanRight(parent, bbox, node) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -96,7 +96,7 @@ function lean_right(parent, bbox, node) {
  * @param bbox
  * @param node
  */
-function lean_left(parent, bbox, node) {
+function leanLeft(parent, bbox, node) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -138,7 +138,7 @@ function trapezoid(parent, bbox, node) {
  * @param bbox
  * @param node
  */
-function inv_trapezoid(parent, bbox, node) {
+function invTrapezoid(parent, bbox, node) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -159,7 +159,7 @@ function inv_trapezoid(parent, bbox, node) {
  * @param bbox
  * @param node
  */
-function rect_right_inv_arrow(parent, bbox, node) {
+function rectRightInvArrow(parent, bbox, node) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [
@@ -308,22 +308,22 @@ export function addToRender(render) {
   render.shapes().cylinder = cylinder;
 
   // Add custom shape for box with inverted arrow on left side
-  render.shapes().rect_left_inv_arrow = rect_left_inv_arrow;
+  render.shapes().rect_left_inv_arrow = rectLeftInvArrow;
 
   // Add custom shape for box with inverted arrow on left side
-  render.shapes().lean_right = lean_right;
+  render.shapes().lean_right = leanRight;
 
   // Add custom shape for box with inverted arrow on left side
-  render.shapes().lean_left = lean_left;
+  render.shapes().lean_left = leanLeft;
 
   // Add custom shape for box with inverted arrow on left side
   render.shapes().trapezoid = trapezoid;
 
   // Add custom shape for box with inverted arrow on left side
-  render.shapes().inv_trapezoid = inv_trapezoid;
+  render.shapes().inv_trapezoid = invTrapezoid;
 
   // Add custom shape for box with inverted arrow on right side
-  render.shapes().rect_right_inv_arrow = rect_right_inv_arrow;
+  render.shapes().rect_right_inv_arrow = rectRightInvArrow;
 }
 
 /** @param addShape */
@@ -335,22 +335,22 @@ export function addToRenderV2(addShape) {
   addShape({ cylinder });
 
   // Add custom shape for box with inverted arrow on left side
-  addShape({ rect_left_inv_arrow });
+  addShape({ rect_left_inv_arrow: rectLeftInvArrow });
 
   // Add custom shape for box with inverted arrow on left side
-  addShape({ lean_right });
+  addShape({ lean_right: leanRight });
 
   // Add custom shape for box with inverted arrow on left side
-  addShape({ lean_left });
+  addShape({ lean_left: leanLeft });
 
   // Add custom shape for box with inverted arrow on left side
   addShape({ trapezoid });
 
   // Add custom shape for box with inverted arrow on left side
-  addShape({ inv_trapezoid });
+  addShape({ inv_trapezoid: invTrapezoid });
 
   // Add custom shape for box with inverted arrow on right side
-  addShape({ rect_right_inv_arrow });
+  addShape({ rect_right_inv_arrow: rectRightInvArrow });
 }
 
 /**

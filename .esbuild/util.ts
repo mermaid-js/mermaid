@@ -56,7 +56,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
   const outFileName = getFileName(name, options);
-  let output: BuildOptions = buildOptions({
+  const output: BuildOptions = buildOptions({
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
     entryPoints: {
       [outFileName]: `src/${file}`,

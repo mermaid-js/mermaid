@@ -170,8 +170,9 @@ describe('when using mermaid and ', () => {
       ).resolves.not.toThrow();
     });
     it('should throw for an invalid flow definition', async () => {
-      await expect(mermaid.parse('graph TQ;A--x|text including URL space|B;')).rejects
-        .toThrowErrorMatchingInlineSnapshot(`
+      await expect(
+        mermaid.parse('graph TQ;A--x|text including URL space|B;')
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`
         [Error: Lexical error on line 1. Unrecognized text.
         graph TQ;A--x|text includ
         -----^]
@@ -207,7 +208,7 @@ describe('when using mermaid and ', () => {
         [Error: Parse error on line 2:
         ...equenceDiagramAlice:->Bob: Hello Bob, h...
         ----------------------^
-        Expecting 'SOLID_OPEN_ARROW', 'DOTTED_OPEN_ARROW', 'SOLID_ARROW', 'DOTTED_ARROW', 'SOLID_CROSS', 'DOTTED_CROSS', 'SOLID_POINT', 'DOTTED_POINT', got 'TXT']
+        Expecting 'SOLID_OPEN_ARROW', 'DOTTED_OPEN_ARROW', 'SOLID_ARROW', 'BIDIRECTIONAL_SOLID_ARROW', 'DOTTED_ARROW', 'BIDIRECTIONAL_DOTTED_ARROW', 'SOLID_CROSS', 'DOTTED_CROSS', 'SOLID_POINT', 'DOTTED_POINT', got 'TXT']
       `);
     });
 

@@ -18,7 +18,7 @@ import { execFile } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
-import prettier from 'prettier';
+import { prettierConfig } from './prettier.js';
 
 // Workaround for wrong AJV types, see
 // https://github.com/ajv-validator/ajv/issues/2132#issuecomment-1290409907
@@ -141,7 +141,7 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
     {
       additionalProperties: false, // in JSON Schema 2019-09, these are called `unevaluatedProperties`
       unreachableDefinitions: true, // definition for FontConfig is unreachable
-      style: (await prettier.resolveConfig('.')) ?? {},
+      style: prettierConfig,
     }
   );
 

@@ -147,9 +147,9 @@ export const branch = function (name, order) {
   }
 };
 
-export const merge = function (otherBranch, custom_id, override_type, custom_tag) {
+export const merge = function (otherBranch, customId, overrideType, customTag) {
   otherBranch = common.sanitizeText(otherBranch, getConfig());
-  custom_id = common.sanitizeText(custom_id, getConfig());
+  customId = common.sanitizeText(customId, getConfig());
 
   const currentCommit = commits.get(branches.get(curBranch));
   const otherCommit = commits.get(branches.get(otherBranch));
@@ -209,19 +209,19 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
       expected: ['branch abc'],
     };
     throw error;
-  } else if (custom_id && commits.has(custom_id)) {
+  } else if (customId && commits.has(customId)) {
     let error = new Error(
       'Incorrect usage of "merge". Commit with id:' +
-        custom_id +
+        customId +
         ' already exists, use different custom Id'
     );
     error.hash = {
-      text: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
-      token: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
+      text: 'merge ' + otherBranch + customId + overrideType + customTag,
+      token: 'merge ' + otherBranch + customId + overrideType + customTag,
       line: '1',
       loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [
-        'merge ' + otherBranch + ' ' + custom_id + '_UNIQUE ' + override_type + ' ' + custom_tag,
+        'merge ' + otherBranch + ' ' + customId + '_UNIQUE ' + overrideType + ' ' + customTag,
       ],
     };
 
@@ -237,15 +237,15 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
   // } else {
   // create merge commit
   const commit = {
-    id: custom_id ? custom_id : seq + '-' + getId(),
+    id: customId ? customId : seq + '-' + getId(),
     message: 'merged branch ' + otherBranch + ' into ' + curBranch,
     seq: seq++,
     parents: [head == null ? null : head.id, branches.get(otherBranch)],
     branch: curBranch,
     type: commitType.MERGE,
-    customType: override_type,
-    customId: custom_id ? true : false,
-    tag: custom_tag ? custom_tag : '',
+    customType: overrideType,
+    customId: customId ? true : false,
+    tag: customTag ? customTag : '',
   };
   head = commit;
   commits.set(commit.id, commit);

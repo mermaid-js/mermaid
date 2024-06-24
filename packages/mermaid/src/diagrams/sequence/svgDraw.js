@@ -49,11 +49,11 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   rectElem.attr('height', rectData.height);
   rectElem.attr('rx', rectData.rx);
   rectElem.attr('ry', rectData.ry);
+  let linkY = 20;
   if (links != null) {
-    var linkY = 20;
     for (let key in links) {
-      var linkElem = g.append('a');
-      var sanitizedLink = sanitizeUrl(links[key]);
+      const linkElem = g.append('a');
+      const sanitizedLink = sanitizeUrl(links[key]);
       linkElem.attr('xlink:href', sanitizedLink);
       linkElem.attr('target', '_blank');
 
@@ -415,11 +415,11 @@ const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
 
-  elem.lower();
+  const line = elem.append('g').lower();
 
   if (!isFooter) {
     actorCnt++;
-    elem
+    line
       .append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
@@ -735,7 +735,7 @@ export const insertArrowHead = function (elem) {
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 12)
     .attr('markerHeight', 12)
-    .attr('orient', 'auto')
+    .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M -1 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };

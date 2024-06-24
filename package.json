@@ -4,7 +4,7 @@
   "version": "10.2.4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@9.1.2+sha512.127dc83b9ea10c32be65d22a8efb4a65fb952e8fefbdfded39bdc3c97efc32d31b48b00420df2c1187ace28c921c902f0cb5a134a4d032b8b5295cbfa2c681e2",
+  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a",
   "keywords": [
     "diagram",
     "markdown",
@@ -25,8 +25,9 @@
     "dev:vite": "tsx .vite/server.ts",
     "dev:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm dev:vite",
     "release": "pnpm build",
-    "lint": "cross-env NODE_OPTIONS=--max_old_space_size=48192 eslint --cache --cache-strategy content . && pnpm lint:jison && prettier --cache --check .",
-    "lint:fix": "cross-env NODE_OPTIONS=--max_old_space_size=48192 eslint --cache --cache-strategy content --fix . && prettier --write . && tsx scripts/fixCSpell.ts",
+    "lint": "pnpm biome check && pnpm lint:jison",
+    "lint:fix": "pnpm biome check --write",
+    "lint:ci": "pnpm lint && cross-env NODE_OPTIONS=--max_old_space_size=48192 eslint --cache --cache-strategy content .",
     "lint:jison": "tsx ./scripts/jison/lint.mts",
     "contributors": "tsx scripts/updateContributors.ts",
     "cypress": "cypress run",
@@ -51,17 +52,13 @@
   "author": "Knut Sveidqvist",
   "license": "MIT",
   "standard": {
-    "ignore": [
-      "**/parser/*.js",
-      "dist/**/*.js",
-      "cypress/**/*.js"
-    ],
-    "globals": [
-      "page"
-    ]
+    "ignore": ["**/parser/*.js", "dist/**/*.js", "cypress/**/*.js"],
+    "globals": ["page"]
   },
   "devDependencies": {
-    "@applitools/eyes-cypress": "^3.44.4",
+    "@applitools/eyes-cypress": "^3.42.3",
+    "@argos-ci/cypress": "^2.0.5",
+    "@biomejs/biome": "1.8.2",
     "@cspell/eslint-plugin": "^8.6.0",
     "@cypress/code-coverage": "^3.12.30",
     "@rollup/plugin-typescript": "^11.1.6",
@@ -89,7 +86,7 @@
     "cypress-image-snapshot": "^4.0.1",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-biome": "^1.7.3",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-html": "^8.0.0",
     "eslint-plugin-jest": "^27.9.0",

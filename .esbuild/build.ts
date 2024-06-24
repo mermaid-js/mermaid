@@ -2,7 +2,7 @@ import { build } from 'esbuild';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
-import { MermaidBuildOptions, defaultOptions, getBuildConfig } from './util.js';
+import { type MermaidBuildOptions, defaultOptions, getBuildConfig } from './util.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
 

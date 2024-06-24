@@ -11,51 +11,51 @@ addDiagrams();
 
 describe('when assignWithDepth: should merge objects within objects', function () {
   it('should handle simple, depth:1 types (identity)', function () {
-    const config_0 = { foo: 'bar', bar: 0 };
-    const config_1 = { foo: 'bar', bar: 0 };
-    const result = assignWithDepth(config_0, config_1);
-    expect(result).toEqual(config_1);
+    const config0 = { foo: 'bar', bar: 0 };
+    const config1 = { foo: 'bar', bar: 0 };
+    const result = assignWithDepth(config0, config1);
+    expect(result).toEqual(config1);
   });
   it('should handle simple, depth:1 types (dst: undefined)', function () {
-    const config_0 = undefined;
-    const config_1 = { foo: 'bar', bar: 0 };
-    const result = assignWithDepth(config_0, config_1);
-    expect(result).toEqual(config_1);
+    const config0 = undefined;
+    const config1 = { foo: 'bar', bar: 0 };
+    const result = assignWithDepth(config0, config1);
+    expect(result).toEqual(config1);
   });
   it('should handle simple, depth:1 types (src: undefined)', function () {
-    const config_0 = { foo: 'bar', bar: 0 };
-    const config_1 = undefined;
-    const result = assignWithDepth(config_0, config_1);
-    expect(result).toEqual(config_0);
+    const config0 = { foo: 'bar', bar: 0 };
+    const config1 = undefined;
+    const result = assignWithDepth(config0, config1);
+    expect(result).toEqual(config0);
   });
   it('should handle simple, depth:1 types (merge)', function () {
-    const config_0 = { foo: 'bar', bar: 0 };
-    const config_1 = { foo: 'foo' };
-    const result = assignWithDepth(config_0, config_1);
+    const config0 = { foo: 'bar', bar: 0 };
+    const config1 = { foo: 'foo' };
+    const result = assignWithDepth(config0, config1);
     expect(result).toEqual({ foo: 'foo', bar: 0 });
   });
   it('should handle depth:2 types (dst: orphan)', function () {
-    const config_0 = { foo: 'bar', bar: { foo: 'bar' } };
-    const config_1 = { foo: 'bar' };
-    const result = assignWithDepth(config_0, config_1);
-    expect(result).toEqual(config_0);
+    const config0 = { foo: 'bar', bar: { foo: 'bar' } };
+    const config1 = { foo: 'bar' };
+    const result = assignWithDepth(config0, config1);
+    expect(result).toEqual(config0);
   });
   it('should handle depth:2 types (dst: object, src: simple type)', function () {
-    const config_0 = { foo: 'bar', bar: { foo: 'bar' } };
-    const config_1 = { foo: 'foo', bar: 'should NOT clobber' };
-    const result = assignWithDepth(config_0, config_1);
+    const config0 = { foo: 'bar', bar: { foo: 'bar' } };
+    const config1 = { foo: 'foo', bar: 'should NOT clobber' };
+    const result = assignWithDepth(config0, config1);
     expect(result).toEqual({ foo: 'foo', bar: { foo: 'bar' } });
   });
   it('should handle depth:2 types (src: orphan)', function () {
-    const config_0 = { foo: 'bar' };
-    const config_1 = { foo: 'bar', bar: { foo: 'bar' } };
-    const result = assignWithDepth(config_0, config_1);
-    expect(result).toEqual(config_1);
+    const config0 = { foo: 'bar' };
+    const config1 = { foo: 'bar', bar: { foo: 'bar' } };
+    const result = assignWithDepth(config0, config1);
+    expect(result).toEqual(config1);
   });
   it('should handle depth:2 types (merge)', function () {
-    const config_0 = { foo: 'bar', bar: { foo: 'bar' }, boofar: 1 };
-    const config_1 = { foo: 'foo', bar: { bar: 0 }, foobar: 'foobar' };
-    const result = assignWithDepth(config_0, config_1);
+    const config0 = { foo: 'bar', bar: { foo: 'bar' }, boofar: 1 };
+    const config1 = { foo: 'foo', bar: { bar: 0 }, foobar: 'foobar' };
+    const result = assignWithDepth(config0, config1);
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'bar', bar: 0 },
@@ -64,17 +64,17 @@ describe('when assignWithDepth: should merge objects within objects', function (
     });
   });
   it('should handle depth:3 types (merge with clobber because assignWithDepth::depth == 2)', function () {
-    const config_0 = {
+    const config0 = {
       foo: 'bar',
       bar: { foo: 'bar', bar: { foo: { message: 'this', willbe: 'clobbered' } } },
       boofar: 1,
     };
-    const config_1 = {
+    const config1 = {
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'clobbered other foo' } } },
       foobar: 'foobar',
     };
-    const result = assignWithDepth(config_0, config_1);
+    const result = assignWithDepth(config0, config1);
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'clobbered other foo' } } },
@@ -83,7 +83,7 @@ describe('when assignWithDepth: should merge objects within objects', function (
     });
   });
   it('should handle depth:3 types (merge with clobber because assignWithDepth::depth == 1)', function () {
-    const config_0 = {
+    const config0 = {
       foo: 'bar',
       bar: {
         foo: 'bar',
@@ -91,12 +91,12 @@ describe('when assignWithDepth: should merge objects within objects', function (
       },
       boofar: 1,
     };
-    const config_1 = {
+    const config1 = {
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this' } } },
       foobar: 'foobar',
     };
-    const result = assignWithDepth(config_0, config_1, { depth: 1 });
+    const result = assignWithDepth(config0, config1, { depth: 1 });
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this' } } },
@@ -105,17 +105,17 @@ describe('when assignWithDepth: should merge objects within objects', function (
     });
   });
   it('should handle depth:3 types (merge with no clobber because assignWithDepth::depth == 3)', function () {
-    const config_0 = {
+    const config0 = {
       foo: 'bar',
       bar: { foo: 'bar', bar: { foo: { message: '', willbe: 'present' } } },
       boofar: 1,
     };
-    const config_1 = {
+    const config1 = {
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this' } } },
       foobar: 'foobar',
     };
-    const result = assignWithDepth(config_0, config_1, { depth: 3 });
+    const result = assignWithDepth(config0, config1, { depth: 3 });
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this', willbe: 'present' } } },

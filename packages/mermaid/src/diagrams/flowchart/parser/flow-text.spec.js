@@ -591,7 +591,7 @@ describe('[Text] when parsing', () => {
 
   it('should throw error for escaping quotes in text state', function () {
     //prettier-ignore
-    const str = 'graph TD; A[This is a \"()\" in text];'; //eslint-disable-line no-useless-escape
+    const str = 'graph TD; A[This is a "()" in text];'; //eslint-disable-line no-useless-escape
 
     expect(() => flow.parser.parse(str)).toThrowError("got 'STR'");
   });

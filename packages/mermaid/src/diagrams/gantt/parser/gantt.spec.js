@@ -157,30 +157,40 @@ describe('when parsing a gantt diagram it', function () {
     ${'crit'}                | ${false}  | ${false} | ${true}  | ${false}
     ${'active'}              | ${false}  | ${false} | ${false} | ${true}
     ${'crit,milestone,done'} | ${true}   | ${true}  | ${true}  | ${false}
-  `)('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
-    const str =
-      'gantt\n' +
-      'dateFormat YYYY-MM-DD\n' +
-      'title Adding gantt diagram functionality to mermaid\n' +
-      'section Documentation\n' +
-      'test task:' +
-      tags +
-      ', 2014-01-01, 2014-01-04';
+  `)(
+    'should handle a task with tags $tags',
+    ({
+      tags,
+      // Do not remove, these are used in eval.
+      milestone,
+      done,
+      crit,
+      active,
+    }) => {
+      const str =
+        'gantt\n' +
+        'dateFormat YYYY-MM-DD\n' +
+        'title Adding gantt diagram functionality to mermaid\n' +
+        'section Documentation\n' +
+        'test task:' +
+        tags +
+        ', 2014-01-01, 2014-01-04';
 
-    const allowedTags = ['active', 'done', 'crit', 'milestone'];
+      const allowedTags = ['active', 'done', 'crit', 'milestone'];
 
-    expect(parserFnConstructor(str)).not.toThrow();
+      expect(parserFnConstructor(str)).not.toThrow();
 
-    const tasks = parser.yy.getTasks();
+      const tasks = parser.yy.getTasks();
 
-    allowedTags.forEach(function (t) {
-      if (eval(t)) {
-        expect(tasks[0][t]).toBeTruthy();
-      } else {
-        expect(tasks[0][t]).toBeFalsy();
-      }
-    });
-  });
+      allowedTags.forEach(function (t) {
+        if (eval(t)) {
+          expect(tasks[0][t]).toBeTruthy();
+        } else {
+          expect(tasks[0][t]).toBeFalsy();
+        }
+      });
+    }
+  );
   it('should parse callback specifier with no args', function () {
     spyOn(ganttDb, 'setClickEvent');
     const str =
@@ -207,7 +217,6 @@ describe('when parsing a gantt diagram it', function () {
       'click cl2 call ganttTestClick("test0", test1, test2)\n';
 
     expect(parserFnConstructor(str)).not.toThrow();
-    const args = '"test1", "test2", "test3"';
     expect(ganttDb.setClickEvent).toHaveBeenCalledWith(
       'cl2',
       'ganttTestClick',

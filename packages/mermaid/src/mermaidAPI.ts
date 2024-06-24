@@ -31,6 +31,7 @@ import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
+import { toBase64 } from './utils/base64.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -248,14 +249,13 @@ export const cleanUpSvgCode = (
  * @param svgCode - the svg code to put inside the iFrame
  * @param svgElement - the d3 node that has the current svgElement so we can get the height from it
  * @returns  - the code with the iFrame that now contains the svgCode
- * TODO replace btoa(). Replace with  buf.toString('base64')?
  */
 export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
   const height = svgElement?.viewBox?.baseVal?.height
     ? svgElement.viewBox.baseVal.height + 'px'
     : IFRAME_HEIGHT;
-  const base64encodedSrc = btoa('<body style="' + IFRAME_BODY_STYLE + '">' + svgCode + '</body>');
-  return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
+  const base64encodedSrc = toBase64(`<body style="${IFRAME_BODY_STYLE}">${svgCode}</body>`);
+  return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
 </iframe>`;
 };
@@ -363,14 +363,14 @@ const render = async function (
 
   const idSelector = '#' + id;
   const iFrameID = 'i' + id;
-  const iFrameID_selector = '#' + iFrameID;
+  const iFrameIdSelector = '#' + iFrameID;
   const enclosingDivID = 'd' + id;
-  const enclosingDivID_selector = '#' + enclosingDivID;
+  const enclosingDivIdSelector = '#' + enclosingDivID;
 
   const removeTempElements = () => {
     // -------------------------------------------------------------------------------
     // Remove the temporary HTML element if appropriate
-    const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
+    const tmpElementSelector = isSandboxed ? iFrameIdSelector : enclosingDivIdSelector;
     const node = select(tmpElementSelector).node();
     if (node && 'remove' in node) {
       node.remove();
@@ -442,7 +442,7 @@ const render = async function (
   }
 
   // Get the temporary div element containing the svg
-  const element = root.select(enclosingDivID_selector).node();
+  const element = root.select(enclosingDivIdSelector).node();
   const diagramType = diag.type;
 
   // -------------------------------------------------------------------------------
@@ -473,7 +473,7 @@ const render = async function (
   }
 
   // This is the d3 node for the svg element
-  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const svgNode = root.select(`${enclosingDivIdSelector} svg`);
   const a11yTitle: string | undefined = diag.db.getAccTitle?.();
   const a11yDescr: string | undefined = diag.db.getAccDescription?.();
   addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
@@ -482,13 +482,13 @@ const render = async function (
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
   // Fix for when the base tag is used
-  let svgCode: string = root.select(enclosingDivID_selector).node().innerHTML;
+  let svgCode: string = root.select(enclosingDivIdSelector).node().innerHTML;
 
   log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
   svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
 
   if (isSandboxed) {
-    const svgEl = root.select(enclosingDivID_selector + ' svg').node();
+    const svgEl = root.select(enclosingDivIdSelector + ' svg').node();
     svgCode = putIntoIFrame(svgCode, svgEl);
   } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
