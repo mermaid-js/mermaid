@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import { log } from '$root/logger.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import common, { evaluate, renderKatex } from '$root/diagrams/common/common.js';
+import common, { evaluate, renderKatex, hasKatex } from '$root/diagrams/common/common.js';
 import { decodeEntities } from '$root/utils.js';
 
 /**
@@ -23,7 +23,7 @@ async function addHtmlLabel(node) {
   const div = fo.append('xhtml:div');
 
   let label = node.label;
-  if (node.label) {
+  if (node.label && hasKatex(node.label)) {
     label = await renderKatex(node.label.replace(common.lineBreakRegex, '\n'), getConfig());
   }
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
