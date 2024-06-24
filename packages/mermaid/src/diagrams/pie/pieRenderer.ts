@@ -167,8 +167,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     });
 
   const titleTextElement = group.select('.pieTitleText');
-  const titleTextLeft = titleTextElement.node().getBoundingClientRect().left;
-  const titleTextWidth = titleTextElement.node().getBoundingClientRect().width;
+  const titleTextLeft = (titleTextElement.node() as Element).getBoundingClientRect().left;
+  const titleTextWidth = (titleTextElement.node() as Element).getBoundingClientRect().width;
 
   // Adjust chart placement.
   if (titleTextLeft < MARGIN && titleTextElement.text()) {
@@ -178,7 +178,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     );
   }
 
-  const circleOffset = group.select('circle').node().getBoundingClientRect().left;
+  const circleOffset = (group.select('circle').node() as Element).getBoundingClientRect().left;
 
   const furthestTextPos = Math.max(
     ...legend
