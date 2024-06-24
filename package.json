@@ -27,7 +27,7 @@
     "release": "pnpm build",
     "lint": "pnpm biome check && pnpm lint:jison",
     "lint:fix": "pnpm biome check --write",
-    "lint:ci": "cross-env NODE_OPTIONS=--max_old_space_size=8192 eslint --cache --cache-strategy content . && pnpm lint",
+    "lint:ci": "pnpm lint && cross-env NODE_OPTIONS=--max_old_space_size=16384 eslint --cache --cache-strategy content .",
     "lint:jison": "tsx ./scripts/jison/lint.mts",
     "contributors": "tsx scripts/updateContributors.ts",
     "cypress": "cypress run",
@@ -52,14 +52,8 @@
   "author": "Knut Sveidqvist",
   "license": "MIT",
   "standard": {
-    "ignore": [
-      "**/parser/*.js",
-      "dist/**/*.js",
-      "cypress/**/*.js"
-    ],
-    "globals": [
-      "page"
-    ]
+    "ignore": ["**/parser/*.js", "dist/**/*.js", "cypress/**/*.js"],
+    "globals": ["page"]
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.42.3",
