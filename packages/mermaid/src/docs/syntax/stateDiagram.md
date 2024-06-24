@@ -419,4 +419,22 @@ stateDiagram
     YetAnotherState --> [*]
 ```
 
+## Adding Triggers, Guards, and Actions
+
+You can add UML-style triggers, guards, and actions to your diagrams.
+
+```mermaid-example
+stateDiagram
+    state "Still State" as Still
+    Still: enter [hasGps] / recordLocation()
+
+    [*] --> Still
+    Still --> [*]
+
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+```
+
 <!--- cspell:ignore yswsii --->
