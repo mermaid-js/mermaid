@@ -166,14 +166,28 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       return label;
     });
 
-  const longestTextWidth = Math.max(
+  const titleTextElement = group.select('.pieTitleText');
+  const titleTextLeft = titleTextElement.node().getBoundingClientRect().left;
+  const titleTextWidth = titleTextElement.node().getBoundingClientRect().width;
+
+  // Adjust chart placement.
+  if (titleTextLeft < MARGIN && titleTextElement.text()) {
+    group.attr(
+      'transform',
+      'translate(' + (pieWidth / 2 - (titleTextLeft - MARGIN)) + ',' + height / 2 + ')'
+    );
+  }
+
+  const circleOffset = group.select('circle').node().getBoundingClientRect().left;
+
+  const furthestTextPos = Math.max(
     ...legend
       .selectAll('text')
       .nodes()
-      .map((node) => (node as Element)?.getBoundingClientRect().width ?? 0)
+      .map((node) => (node as Element)?.getBoundingClientRect().right ?? 0)
   );
 
-  const totalWidth = pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
+  const totalWidth = Math.max(circleOffset + furthestTextPos, MARGIN * 2 + titleTextWidth);
 
   // Set viewBox
   svg.attr('viewBox', `0 0 ${totalWidth} ${height}`);
