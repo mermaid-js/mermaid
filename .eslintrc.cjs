@@ -25,7 +25,7 @@ module.exports = {
     'plugin:json/recommended',
     'plugin:markdown/recommended-legacy',
     'plugin:@cspell/recommended',
-    'prettier',
+    'biome',
   ],
   plugins: [
     '@typescript-eslint',

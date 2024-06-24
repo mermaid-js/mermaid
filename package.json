@@ -52,8 +52,14 @@
   "author": "Knut Sveidqvist",
   "license": "MIT",
   "standard": {
-    "ignore": ["**/parser/*.js", "dist/**/*.js", "cypress/**/*.js"],
-    "globals": ["page"]
+    "ignore": [
+      "**/parser/*.js",
+      "dist/**/*.js",
+      "cypress/**/*.js"
+    ],
+    "globals": [
+      "page"
+    ]
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.42.3",
@@ -86,7 +92,7 @@
     "cypress-image-snapshot": "^4.0.1",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-biome": "^1.7.3",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-html": "^8.0.0",
     "eslint-plugin-jest": "^27.9.0",

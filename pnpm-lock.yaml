@@ -98,9 +98,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
-      eslint-config-prettier:
-        specifier: ^9.1.0
-        version: 9.1.0(eslint@8.57.0)
+      eslint-config-biome:
+        specifier: ^1.7.3
+        version: 1.7.3
       eslint-plugin-cypress:
         specifier: ^2.15.1
         version: 2.15.2(eslint@8.57.0)
@@ -4867,11 +4867,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  eslint-config-prettier@9.1.0:
-    resolution: {integrity: sha512-NSWl5BFQWEPi1j4TjVNItzYV7dZXZ+wP6I6ZhrBGpChQhZRUaElihE9uRRkcbRnNb76UMKDF3r+WTmNcGPKsqw==}
-    hasBin: true
-    peerDependencies:
-      eslint: '>=7.0.0'
+  eslint-config-biome@1.7.3:
+    resolution: {integrity: sha512-HX8asstXGCOnTy8asvBhVesnkdvbX9OR6cRtE+vtDYokCzfy16OTzFpkGruYPcclUgSRs6VCDpR5ocJw3gpCXA==}
 
   eslint-plugin-cypress@2.15.2:
     resolution: {integrity: sha512-CtcFEQTDKyftpI22FVGpx8bkpKyYXBlNge6zSo0pl5/qJvBAnzaD76Vu2AsP16d6mTj478Ldn2mhgrWV+Xr0vQ==}
@@ -14915,9 +14912,7 @@ snapshots:
     optionalDependencies:
       source-map: 0.1.43
 
-  eslint-config-prettier@9.1.0(eslint@8.57.0):
-    dependencies:
-      eslint: 8.57.0
+  eslint-config-biome@1.7.3: {}
 
   eslint-plugin-cypress@2.15.2(eslint@8.57.0):
     dependencies:
