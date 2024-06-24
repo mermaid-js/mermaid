@@ -136,39 +136,3 @@ export type LayoutMethod =
   | 'fdp'
   | 'osage'
   | 'grid';
-
-export function createDomElement(node: Node): Node {
-  // Create a new DOM element. Assuming we're creating a div as an example
-  const element = document.createElement('div');
-
-  // Check if node.domId is set, if not generate a unique identifier for it
-  if (!node.domId) {
-    // This is a simplistic approach to generate a unique ID
-    // In a real application, you might want to use a more robust method
-    node.domId = `node-${Math.random().toString(36).substr(2, 9)}`;
-  }
-
-  // Set the ID of the DOM element
-  element.id = node.domId;
-
-  // Optional: Apply styles and classes to the element
-  if (node.cssStyles) {
-    element.style.cssText = node.cssStyles;
-  }
-  if (node.classes) {
-    element.className = node.classes;
-  }
-
-  // Optional: Add content or additional attributes to the element
-  // This can be based on other properties of the node
-  if (node.label) {
-    element.textContent = node.label;
-  }
-
-  // Append the newly created element to the document body or a specific container
-  // This is just an example; in a real application, you might append it somewhere specific
-  document.body.appendChild(element);
-
-  // Return the updated node with its domId set
-  return node;
-}

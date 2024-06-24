@@ -12,12 +12,7 @@
     },
     "./*": "./*"
   },
-  "keywords": [
-    "diagram",
-    "markdown",
-    "elk",
-    "mermaid"
-  ],
+  "keywords": ["diagram", "markdown", "elk", "mermaid"],
   "scripts": {
     "prepublishOnly": "pnpm -w run build"
   },
@@ -25,10 +20,7 @@
     "type": "git",
     "url": "https://github.com/mermaid-js/mermaid"
   },
-  "contributors": [
-    "Knut Sveidqvist",
-    "Sidharth Vinod"
-  ],
+  "contributors": ["Knut Sveidqvist", "Sidharth Vinod"],
   "license": "MIT",
   "dependencies": {
     "elkjs": "^0.9.3",
@@ -37,7 +29,5 @@
   "peerDependencies": {
     "mermaid": "workspace:^"
   },
-  "files": [
-    "dist"
-  ]
+  "files": ["dist"]
 }
