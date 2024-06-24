@@ -20,10 +20,7 @@ function applyStyle(dom, styleFn) {
 async function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
   const div = fo.append('xhtml:div');
-
-  // const label = node.label;
-  let label = '';
-
+  let label = node.label;
   if (node.label && hasKatex(node.label)) {
     label = await renderKatex(node.label.replace(common.lineBreakRegex, '\n'), getConfig());
   }
