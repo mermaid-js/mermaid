@@ -818,6 +818,10 @@ const addNodeFromVertex = (
       linkTarget: vertex.linkTarget,
       tooltip: getTooltip(vertex.id),
     });
+  } else {
+    node.cssStyles = vertex.styles;
+    node.cssCompiledStyles = getCompiledStyles(vertex.classes);
+    node.cssClasses = vertex.classes.join(' ');
   }
 };
 
@@ -827,10 +831,10 @@ function getCompiledStyles(classDefs: string[]) {
     const cssClass = classes.get(customClass);
     if (cssClass) {
       if (cssClass.styles) {
-        compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])];
+        compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
       }
       if (cssClass.textStyles) {
-        compiledStyles = [...compiledStyles, ...(cssClass.textStyles ?? [])];
+        compiledStyles = [...compiledStyles, ...(cssClass.textStyles ?? [])].map((s) => s.trim());
       }
     }
   }
@@ -866,8 +870,8 @@ export const getData = () => {
       labelStyle: '',
       parentId: parentDB.get(subGraph.id),
       padding: config.flowchart?.padding || 8,
-      cssStyles: [],
-      cssClasses: '',
+      cssCompiledStyles: getCompiledStyles(subGraph.classes),
+      cssClasses: subGraph.classes.join(' '),
       shape: 'rect',
       dir: subGraph.dir,
       isGroup: true,
@@ -901,6 +905,8 @@ export const getData = () => {
     };
     edges.push(edge);
   });
+
+  log.debug('IPI nodes', JSON.stringify(nodes, null, 2));
 
   return { nodes, edges, other: {}, config };
 };
