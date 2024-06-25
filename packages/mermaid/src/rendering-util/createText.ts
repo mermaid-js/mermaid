@@ -115,7 +115,7 @@ function createFormattedText(
 ) {
   const lineHeight = 1.1;
   const labelGroup = g.append('g');
-  const bkg = labelGroup.insert('rect').attr('class', 'background');
+  const bkg = labelGroup.insert('rect').attr('class', 'background').attr('style', 'stroke: none');
   const textElement = labelGroup.append('text').attr('y', '-10.1');
   let lineIndex = 0;
   for (const line of structuredText) {
@@ -202,16 +202,16 @@ export const createText = async (
   } = {},
   config: MermaidConfig
 ) => {
-  // log.info(
-  //   'IPI createText',
-  //   text,
-  //   style,
-  //   isTitle,
-  //   classes,
-  //   useHtmlLabels,
-  //   isNode,
-  //   addSvgBackground
-  // );
+  log.info(
+    'XXX createText',
+    text,
+    style,
+    isTitle,
+    classes,
+    useHtmlLabels,
+    isNode,
+    addSvgBackground
+  );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
@@ -227,6 +227,10 @@ export const createText = async (
   } else {
     const structuredText = markdownToLines(text, config);
     const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
+    svgLabel.setAttribute(
+      'style',
+      style.replace('fill:', 'color:') + (isNode ? ';text-anchor: middle;' : '')
+    );
     return svgLabel;
   }
 };

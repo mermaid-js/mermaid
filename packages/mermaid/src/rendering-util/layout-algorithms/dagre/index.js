@@ -252,7 +252,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
             node.height,
             graph.parent(v)
           );
-          node.height += 0;
+          node.height += subGraphTitleTotalMargin;
           graph.node(node.parentId);
           const halfPadding = node?.padding / 2 || 0;
           const labelHeight = node?.labelBBox?.height || 0;
@@ -267,7 +267,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         } else {
           // Regular node
           const parent = graph.node(node.parentId);
-          node.y += (parent?.offsetY || 0) / 2;
+          node.y += subGraphTitleTotalMargin / 2;
           log.info(
             'A regular node XBX1 - using the padding',
             node.id,
@@ -297,7 +297,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     // OBS HERE
-    // edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
+    edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
     const startNode = graph.node(e.v);
     var endNode = graph.node(e.w);
     const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, startNode, endNode, id);

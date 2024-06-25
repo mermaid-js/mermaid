@@ -901,6 +901,8 @@ export const getData = () => {
       arrowTypeStart,
       arrowTypeEnd,
       arrowheadStyle: 'fill: #333',
+      labelStyle: rawEdge.style,
+      style: rawEdge.style,
       pattern: rawEdge.stroke,
       look: config.look,
     };

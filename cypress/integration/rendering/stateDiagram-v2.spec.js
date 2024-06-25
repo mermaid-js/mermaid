@@ -581,6 +581,20 @@ style AState fill:#636,border:1px solid red,color:white;
         { logLevel: 0, fontFamily: 'courier' }
       );
     });
+    it(' should allow styles to take effect in stubgraphs', () => {
+      imgSnapshotTest(
+        `
+  stateDiagram
+    state roundWithTitle {
+      C: Black with white text
+    }
+    D: Black with white text
+
+    style C,D stroke:#00f, fill:black, color:white
+        `,
+        { logLevel: 0, fontFamily: 'courier' }
+      );
+    });
   });
   it('1433: should render a simple state diagram with a title', () => {
     imgSnapshotTest(
