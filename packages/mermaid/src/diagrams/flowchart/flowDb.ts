@@ -901,9 +901,12 @@ export const getData = () => {
       labelpos: 'c',
       thickness: rawEdge.stroke,
       minlen: rawEdge.length,
-      classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
-      arrowTypeStart,
-      arrowTypeEnd,
+      classes:
+        rawEdge?.stroke === 'invisible'
+          ? ''
+          : 'edge-thickness-normal edge-pattern-solid flowchart-link',
+      arrowTypeStart: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeStart,
+      arrowTypeEnd: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeEnd,
       arrowheadStyle: 'fill: #333',
       labelStyle: styles,
       style: styles,

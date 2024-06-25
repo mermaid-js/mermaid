@@ -35,10 +35,7 @@ const rect = async (parent, node) => {
   // const text = label
   //   .node()
   //   .appendChild(createLabel(node.label, node.labelStyle, undefined, true));
-  const text =
-    node.labelType === 'markdown'
-      ? await createText(labelEl, node.label, { style: node.labelStyle, useHtmlLabels })
-      : labelEl.node().appendChild(await createLabel(node.label, node.labelStyle, undefined, true));
+  const text = await createText(labelEl, node.label, { style: node.labelStyle, useHtmlLabels });
 
   // Get the size of the label
   let bbox = text.getBBox();

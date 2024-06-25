@@ -569,7 +569,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       strokeClasses = 'edge-thickness-thick';
       break;
     case 'invisible':
-      strokeClasses = 'edge-thickness-thick';
+      strokeClasses = 'edge-thickness-invisible';
       break;
     default:
       strokeClasses = 'edge-thickness-normal';
