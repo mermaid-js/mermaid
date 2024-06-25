@@ -829,7 +829,7 @@ function getCompiledStyles(classDefs: string[]) {
   let compiledStyles: string[] = [];
   for (const customClass of classDefs) {
     const cssClass = classes.get(customClass);
-    log.debug('IPI cssClass in flowDb', cssClass);
+    // log.debug('IPI cssClass in flowDb', cssClass);
     if (cssClass) {
       if (cssClass.styles) {
         compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
@@ -907,7 +907,7 @@ export const getData = () => {
     edges.push(edge);
   });
 
-  log.debug('IPI nodes', JSON.stringify(nodes, null, 2));
+  // log.debug('IPI nodes', JSON.stringify(nodes, null, 2));
 
   return { nodes, edges, other: {}, config };
 };

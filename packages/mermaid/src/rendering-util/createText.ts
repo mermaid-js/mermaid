@@ -205,16 +205,16 @@ export const createText = async (
   } = {},
   config: MermaidConfig
 ) => {
-  log.info(
-    'IPI createText',
-    text,
-    style,
-    isTitle,
-    classes,
-    useHtmlLabels,
-    isNode,
-    addSvgBackground
-  );
+  // log.info(
+  //   'IPI createText',
+  //   text,
+  //   style,
+  //   isTitle,
+  //   classes,
+  //   useHtmlLabels,
+  //   isNode,
+  //   addSvgBackground
+  // );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 

@@ -44,6 +44,7 @@ interface Node {
   height?: number;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
+  intersect2?: (node: Node, point: any) => any;
 
   // Non-generic properties
   rx?: number; // Used for rounded corners in Rect, Ellipse, etc.Maybe it to specialized RectNode, EllipseNode, etc.

@@ -1,7 +1,7 @@
 // @ts-ignore: JISON doesn't support types
 import flowParser from './parser/flow.jison';
 import flowDb from './flowDb.js';
-//import flowRendererV2 from './flowRenderer-v2.js';
+import flowRendererV2 from './flowRenderer-v2.js';
 import flowRendererV3 from './flowRenderer-v3-unified.js';
 import flowStyles from './styles.js';
 import type { MermaidConfig } from '../../config.type.js';
