@@ -72,6 +72,16 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       if (node && node.clusterNode) {
         // const children = graph.children(v);
         log.info('Cluster identified XBX', v, node.width, graph.node(v));
+
+        // `node.graph.setGraph` applies the graph configurations such as nodeSpacing to subgraphs as without this the default values would be used
+        // We override only the `ranksep` and `nodesep` configurations to allow for setting subgraph spacing while avoiding overriding other properties
+        const { ranksep, nodesep } = graph.graph();
+        node.graph.setGraph({
+          ...node.graph.graph(),
+          ranksep: 75,
+          nodesep,
+        });
+
         // "o" will contain the full cluster not just the children
         const o = await recursiveRender(
           nodes,
@@ -83,6 +93,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         );
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
+        // node.height = o.diff;
         node.diff = o.diff || 0;
         log.info(
           'New compound node after recursive render XAX',
@@ -190,14 +201,13 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   log.info('Graph after layout:', graphlibJson.write(graph));
   // Move the nodes to the correct place
   let diff = 0;
-  log.info('Need the size here XAX', graph.node('T1')?.height);
   let { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
-  subGraphTitleTotalMargin = 0;
+  // subGraphTitleTotalMargin = 0;
   await Promise.all(
     sortNodesByHierarchy(graph).map(async function (v) {
       const node = graph.node(v);
       const p = graph.node(node?.parentId);
-      subGraphTitleTotalMargin = p?.offsetY || subGraphTitleTotalMargin;
+      // subGraphTitleTotalMargin = p?.offsetY || subGraphTitleTotalMargin;
 
       log.info(
         'Position XBX => ' + v + ': (' + node.x,
@@ -210,8 +220,9 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       if (node && node.clusterNode) {
         const parentId = graph.parent(v);
         // Adjust for padding when on root level
-        node.y = parentId ? node.y - 8 : node.y - 8;
-        node.x -= 8;
+        node.y += subGraphTitleTotalMargin;
+        // node.y = parentId ? node.y - 8 : node.y - 8;
+        // node.x -= 8;
 
         log.info(
           'A tainted cluster node XBX1',
@@ -225,7 +236,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         );
         clusterDb[node.id].node = node;
         // node.y += subGraphTitleTotalMargin - 10;
-        node.y -= (node.offsetY || 0) / 2;
+        // node.y -= (node.offsetY || 0) / 2;
         // node.y -= 10;
         positionNode(node);
       } else {
