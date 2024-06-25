@@ -99,19 +99,11 @@ const rect = async (parent, node) => {
       .attr('height', totalHeight);
   }
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
-  if (useHtmlLabels) {
-    labelEl.attr(
-      'transform',
-      // This puts the label on top of the box instead of inside it
-      `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
-    );
-  } else {
-    labelEl.attr(
-      'transform',
-      // This puts the label on top of the box instead of inside it
-      `translate(${node.x}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
-    );
-  }
+  labelEl.attr(
+    'transform',
+    // This puts the label on top of the box instead of inside it
+    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+  );
 
   if (labelStyles) {
     const span = labelEl.select('span');

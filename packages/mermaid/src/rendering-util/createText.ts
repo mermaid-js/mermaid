@@ -203,13 +203,14 @@ export const createText = async (
   config: MermaidConfig
 ) => {
   log.info(
-    'XXX createText',
+    'XYZ createText',
     text,
     style,
     isTitle,
     classes,
     useHtmlLabels,
     isNode,
+    'addSvgBackground: ',
     addSvgBackground
   );
   if (useHtmlLabels) {
@@ -226,7 +227,12 @@ export const createText = async (
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text, config);
-    const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
+    const svgLabel = createFormattedText(
+      width,
+      el,
+      structuredText,
+      text ? addSvgBackground : false
+    );
     svgLabel.setAttribute(
       'style',
       style.replace('fill:', 'color:') + (isNode ? ';text-anchor: middle;' : '')

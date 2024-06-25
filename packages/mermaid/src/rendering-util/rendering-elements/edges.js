@@ -25,7 +25,7 @@ export const getLabelStyles = (styleArray) => {
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
-  const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+  let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
 
   // Create the actual text element
   // const labelElement =
@@ -36,6 +36,7 @@ export const insertEdgeLabel = async (elem, edge) => {
   //         addSvgBackground: true,
   //       })
   //     : await createLabel(edge.label, getLabelStyles(edge.labelStyle));
+
   const labelElement = await createText(elem, edge.label, {
     style: getLabelStyles(edge.labelStyle),
     useHtmlLabels,
