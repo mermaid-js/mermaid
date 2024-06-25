@@ -888,6 +888,10 @@ export const getData = () => {
   const e = getEdges();
   e.forEach((rawEdge, index) => {
     const { arrowTypeStart, arrowTypeEnd } = destructEdgeType(rawEdge.type);
+    const styles = e.defaultStyle || [];
+    if (rawEdge.style) {
+      styles.push(...rawEdge.style);
+    }
     const edge: Edge = {
       id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'edge' }),
       start: rawEdge.start,
@@ -901,8 +905,8 @@ export const getData = () => {
       arrowTypeStart,
       arrowTypeEnd,
       arrowheadStyle: 'fill: #333',
-      labelStyle: rawEdge.style,
-      style: rawEdge.style,
+      labelStyle: styles,
+      style: styles,
       pattern: rawEdge.stroke,
       look: config.look,
     };
