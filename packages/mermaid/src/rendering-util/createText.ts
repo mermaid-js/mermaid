@@ -8,7 +8,7 @@ import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdo
 import { decodeEntities } from '../utils.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
-import common, { renderKatex } from '$root/diagrams/common/common.js';
+import common, { hasKatex, renderKatex, hasKatex } from '$root/diagrams/common/common.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 function applyStyle(dom, styleFn) {
@@ -20,11 +20,8 @@ function applyStyle(dom, styleFn) {
 async function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
   const div = fo.append('xhtml:div');
-
-  // const label = node.label;
-  let label = '';
-
-  if (node.label) {
+  let label = node.label;
+  if (node.label && hasKatex(node.label)) {
     label = await renderKatex(node.label.replace(common.lineBreakRegex, '\n'), getConfig());
   }
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
