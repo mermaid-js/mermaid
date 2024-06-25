@@ -78,7 +78,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         const { ranksep, nodesep } = graph.graph();
         node.graph.setGraph({
           ...node.graph.graph(),
-          ranksep: 75,
+          ranksep: ranksep + 25,
           nodesep,
         });
 
@@ -324,14 +324,21 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
  */
 export const render = async (data4Layout, svg, element) => {
   // Create the input mermaid.graph
+  // console.log('XYZ data4Layout', data4Layout);
   const graph = new graphlib.Graph({
     multigraph: true,
     compound: true,
   })
     .setGraph({
       rankdir: data4Layout.direction,
-      nodesep: data4Layout.nodeSpacing,
-      ranksep: data4Layout.rankSpacing,
+      nodesep:
+        data4Layout.config?.nodeSpacing ||
+        data4Layout.config?.flowchart?.nodeSpacing ||
+        data4Layout.nodeSpacing,
+      ranksep:
+        data4Layout.config?.rankSpacing ||
+        data4Layout.config?.flowchart?.rankSpacing ||
+        data4Layout.rankSpacing,
       marginx: 8,
       marginy: 8,
     })
