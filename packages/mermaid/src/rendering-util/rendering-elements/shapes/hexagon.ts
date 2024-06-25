@@ -1,7 +1,10 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
-import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+import {
+  styles2String,
+  userNodeOverrides,
+} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 
 import { insertPolygonShape } from './insertPolygonShape.js';
@@ -25,6 +28,8 @@ export const createHexagonPathD = (
 };
 
 export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const f = 4;
@@ -61,8 +66,8 @@ export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElem
     polygon = insertPolygonShape(shapeSvg, w, h, points);
   }
 
-  if (cssStyles) {
-    polygon.attr('style', cssStyles);
+  if (nodeStyles) {
+    polygon.attr('style', nodeStyles);
   }
 
   node.width = w;

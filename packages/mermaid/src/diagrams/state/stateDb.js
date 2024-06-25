@@ -200,10 +200,13 @@ const extract = (_doc) => {
           const ids = item.id.trim().split(',');
           const styles = item.styleClass.split(',');
           ids.forEach((id) => {
-            const state = getState(id);
-            if (state !== undefined) {
-              state.styles = styles.map((s) => s.replace(/;/g, '')?.trim());
+            let foundState = getState(id);
+            if (foundState === undefined) {
+              const trimmedId = id.trim();
+              addState(trimmedId);
+              foundState = getState(trimmedId);
             }
+            foundState.styles = styles.map((s) => s.replace(/;/g, '')?.trim());
           });
         }
         break;

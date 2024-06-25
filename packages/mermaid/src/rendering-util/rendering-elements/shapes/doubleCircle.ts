@@ -2,11 +2,15 @@ import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
-import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+import {
+  styles2String,
+  userNodeOverrides,
+} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
-//import d3 from 'd3';
 
 export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
   const gap = 5;
   const outerRadius = bbox.width / 2 + halfPadding + gap;
@@ -32,21 +36,21 @@ export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVG
     circleGroup.node()?.appendChild(innerRoughNode);
   } else {
     circleGroup = shapeSvg.insert('g', ':first-child');
-    const outerCircle = circleGroup.insert('circle', ':first-child');
-    const innerCircle = circleGroup.insert('circle', ':first-child');
 
-    circleGroup.attr('class', 'basic label-container').attr('style', cssStyles);
+    const outerCircle = circleGroup.insert('circle', ':first-child');
+    const innerCircle = circleGroup.insert('circle');
+    circleGroup.attr('class', 'basic label-container').attr('style', nodeStyles);
 
     outerCircle
       .attr('class', 'outer-circle')
-      .attr('style', cssStyles)
+      .attr('style', nodeStyles)
       .attr('r', outerRadius)
       .attr('cx', 0)
       .attr('cy', 0);
 
     innerCircle
       .attr('class', 'inner-circle')
-      .attr('style', cssStyles)
+      .attr('style', nodeStyles)
       .attr('r', innerRadius)
       .attr('cx', 0)
       .attr('cy', 0);

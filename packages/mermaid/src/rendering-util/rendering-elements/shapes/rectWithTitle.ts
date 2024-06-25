@@ -4,13 +4,18 @@ import { evaluate } from '$root/diagrams/common/common.js';
 import { updateNodeBounds } from './util.js';
 import createLabel from '../createLabel.js';
 import intersect from '../intersect/index.js';
-import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+import {
+  styles2String,
+  userNodeOverrides,
+} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { log } from '$root/logger.js';
 
 export const rectWithTitle = async (parent: SVGElement, node: Node) => {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
   let classes;
   if (!node.cssClasses) {
     classes = 'node default';
@@ -28,7 +33,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   // Create the title label and insert it after the rect
   const g = shapeSvg.insert('g');
 
-  const label = shapeSvg.insert('g').attr('class', 'label');
+  const label = shapeSvg.insert('g').attr('class', 'label').attr('style', nodeStyles);
 
   const description = node.description;
 
