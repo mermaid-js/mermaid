@@ -1,7 +1,10 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
-import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+import {
+  styles2String,
+  userNodeOverrides,
+} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 
 export const createCylinderPathD = (
@@ -49,8 +52,9 @@ export const createInnerCylinderPathD = (
   return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
 };
 export const cylinder = async (parent: SVGAElement, node: Node) => {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-
   const w = bbox.width + node.padding;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
@@ -79,7 +83,8 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
       .insert('path', ':first-child')
       .attr('d', pathData)
       .attr('class', 'basic label-container')
-      .attr('style', cssStyles);
+      .attr('style', cssStyles)
+      .attr('style', nodeStyles);
   }
 
   cylinder.attr('label-offset-y', ry);

@@ -2,10 +2,15 @@ import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
-import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+import {
+  styles2String,
+  userNodeOverrides,
+} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 
 export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
 
   const radius = bbox.width / 2 + halfPadding;
@@ -24,7 +29,7 @@ export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAEleme
     circleElem = shapeSvg
       .insert('circle', ':first-child')
       .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
+      .attr('style', nodeStyles)
       .attr('r', radius)
       .attr('cx', 0)
       .attr('cy', 0);

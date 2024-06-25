@@ -1,7 +1,10 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
-import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+import {
+  styles2String,
+  userNodeOverrides,
+} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 
@@ -51,6 +54,8 @@ export const createStadiumPathD = (
 };
 
 export const stadium = async (parent: SVGAElement, node: Node) => {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const h = bbox.height + node.padding;
@@ -73,7 +78,7 @@ export const stadium = async (parent: SVGAElement, node: Node) => {
 
     rect
       .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
+      .attr('style', nodeStyles)
       .attr('rx', h / 2)
       .attr('ry', h / 2)
       .attr('x', -w / 2)

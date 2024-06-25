@@ -2,10 +2,12 @@ import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
-import { solidStateFill } from './handdrawnStyles.js';
+import { solidStateFill, styles2String } from './handdrawnStyles.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const choice = (parent: SVG, node: Node) => {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
   const { themeVariables } = getConfig();
   const { lineColor } = themeVariables;
   const shapeSvg = parent
@@ -43,7 +45,13 @@ export const choice = (parent: SVG, node: Node) => {
 
   // center the circle around its coordinate
   // @ts-ignore TODO: Fix rough typings
-  choice.attr('class', 'state-start').attr('r', 7).attr('width', 28).attr('height', 28);
+  choice
+    .attr('class', 'state-start')
+    .attr('r', 7)
+    .attr('width', 28)
+    .attr('height', 28)
+    .attr('style', nodeStyles);
+
   node.width = 28;
   node.height = 28;
 
