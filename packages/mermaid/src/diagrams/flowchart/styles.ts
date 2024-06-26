@@ -95,6 +95,9 @@ const getStyles = (options: FlowChartStyleOptions) =>
 
   .edgeLabel {
     background-color: ${options.edgeLabelBackground};
+    p {
+      background-color: ${options.edgeLabelBackground};
+    }
     rect {
       opacity: 0.5;
       background-color: ${options.edgeLabelBackground};
@@ -106,7 +109,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
   /* For html labels only */
   .labelBkg {
     background-color: ${fade(options.edgeLabelBackground, 0.5)};
-    // background-color: 
+    // background-color:
   }
 
   .cluster rect {
