@@ -70,6 +70,9 @@ g.stateGroup line {
 }
 .edgeLabel {
   background-color: ${options.edgeLabelBackground};
+  p {
+    background-color: ${options.edgeLabelBackground};
+  }
   rect {
     opacity: 0.5;
     background-color: ${options.edgeLabelBackground};

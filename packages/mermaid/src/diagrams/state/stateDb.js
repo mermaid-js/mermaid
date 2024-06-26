@@ -225,6 +225,13 @@ const extract = (_doc) => {
     if (Array.isArray(node.label)) {
       // add the rest as description
       node.description = node.label.slice(1);
+      if (node.isGroup && node.description.length > 0) {
+        throw new Error(
+          'Group nodes can only have label. Remove the additional description for node [' +
+            node.id +
+            ']'
+        );
+      }
       // add first description as label
       node.label = node.label[0];
     }
