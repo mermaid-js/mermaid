@@ -220,7 +220,7 @@ export const addClass = function (ids: string, style: string[]) {
     if (style !== undefined && style !== null) {
       style.forEach(function (s) {
         if (s.match('color')) {
-          const newStyle = s.replace('fill', 'bgFill').replace('color', 'fill');
+          const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
           classNode.textStyles.push(newStyle);
         }
         classNode.styles.push(s);
@@ -829,6 +829,7 @@ function getCompiledStyles(classDefs: string[]) {
   let compiledStyles: string[] = [];
   for (const customClass of classDefs) {
     const cssClass = classes.get(customClass);
+    // log.debug('IPI cssClass in flowDb', cssClass);
     if (cssClass) {
       if (cssClass.styles) {
         compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
@@ -887,6 +888,10 @@ export const getData = () => {
   const e = getEdges();
   e.forEach((rawEdge, index) => {
     const { arrowTypeStart, arrowTypeEnd } = destructEdgeType(rawEdge.type);
+    const styles = e.defaultStyle || [];
+    if (rawEdge.style) {
+      styles.push(...rawEdge.style);
+    }
     const edge: Edge = {
       id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'edge' }),
       start: rawEdge.start,
@@ -896,17 +901,22 @@ export const getData = () => {
       labelpos: 'c',
       thickness: rawEdge.stroke,
       minlen: rawEdge.length,
-      classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
-      arrowTypeStart,
-      arrowTypeEnd,
+      classes:
+        rawEdge?.stroke === 'invisible'
+          ? ''
+          : 'edge-thickness-normal edge-pattern-solid flowchart-link',
+      arrowTypeStart: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeStart,
+      arrowTypeEnd: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeEnd,
       arrowheadStyle: 'fill: #333',
+      labelStyle: styles,
+      style: styles,
       pattern: rawEdge.stroke,
       look: config.look,
     };
     edges.push(edge);
   });
 
-  log.debug('IPI nodes', JSON.stringify(nodes, null, 2));
+  // log.debug('IPI nodes', JSON.stringify(nodes, null, 2));
 
   return { nodes, edges, other: {}, config };
 };

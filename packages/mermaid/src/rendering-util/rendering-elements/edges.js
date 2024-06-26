@@ -19,17 +19,30 @@ export const clear = () => {
   terminalLabels = {};
 };
 
+export const getLabelStyles = (styleArray) => {
+  let styles = styleArray ? styleArray.reduce((acc, style) => acc + ';' + style, '') : '';
+  return styles;
+};
+
 export const insertEdgeLabel = async (elem, edge) => {
-  const useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+  let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+
   // Create the actual text element
-  const labelElement =
-    edge.labelType === 'markdown'
-      ? await createText(elem, edge.label, {
-          style: edge.labelStyle,
-          useHtmlLabels,
-          addSvgBackground: true,
-        })
-      : await createLabel(edge.label, edge.labelStyle);
+  // const labelElement =
+  //   edge.labelType === 'markdown'
+  //     ? await createText(elem, edge.label, {
+  //         style: labelStyles,
+  //         useHtmlLabels,
+  //         addSvgBackground: true,
+  //       })
+  //     : await createLabel(edge.label, getLabelStyles(edge.labelStyle));
+
+  const labelElement = await createText(elem, edge.label, {
+    style: getLabelStyles(edge.labelStyle),
+    useHtmlLabels,
+    addSvgBackground: true,
+    isNode: false,
+  });
   log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
@@ -60,7 +73,10 @@ export const insertEdgeLabel = async (elem, edge) => {
   let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
-    const startLabelElement = await createLabel(edge.startLabelLeft, edge.labelStyle);
+    const startLabelElement = await createLabel(
+      edge.startLabelLeft,
+      getLabelStyles(edge.labelStyle)
+    );
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
     fo = inner.node().appendChild(startLabelElement);
@@ -74,7 +90,10 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.startLabelRight) {
     // Create the actual text element
-    const startLabelElement = await createLabel(edge.startLabelRight, edge.labelStyle);
+    const startLabelElement = await createLabel(
+      edge.startLabelRight,
+      getLabelStyles(edge.labelStyle)
+    );
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
     fo = startEdgeLabelRight.node().appendChild(startLabelElement);
@@ -90,7 +109,7 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelLeft, edge.labelStyle);
+    const endLabelElement = await createLabel(edge.endLabelLeft, getLabelStyles(edge.labelStyle));
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     fo = inner.node().appendChild(endLabelElement);
@@ -107,7 +126,7 @@ export const insertEdgeLabel = async (elem, edge) => {
   }
   if (edge.endLabelRight) {
     // Create the actual text element
-    const endLabelElement = await createLabel(edge.endLabelRight, edge.labelStyle);
+    const endLabelElement = await createLabel(edge.endLabelRight, getLabelStyles(edge.labelStyle));
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
@@ -137,7 +156,7 @@ function setTerminalWidth(fo, value) {
 }
 
 export const positionEdgeLabel = (edge, paths) => {
-  log.info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
+  log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels[edge.id], paths);
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
@@ -148,8 +167,8 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
-      log.info(
-        'Moving label ' + edge?.id + ' from (',
+      log.debug(
+        'Moving label ' + edge.label + ' from (',
         x,
         ',',
         y,
@@ -157,8 +176,7 @@ export const positionEdgeLabel = (edge, paths) => {
         pos.x,
         ',',
         pos.y,
-        ') abc78',
-        el
+        ') abc88'
       );
       if (paths.updatedPath) {
         x = pos.x;
@@ -551,7 +569,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       strokeClasses = 'edge-thickness-thick';
       break;
     case 'invisible':
-      strokeClasses = 'edge-thickness-thick';
+      strokeClasses = 'edge-thickness-invisible';
       break;
     default:
       strokeClasses = 'edge-thickness-normal';

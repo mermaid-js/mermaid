@@ -8,7 +8,7 @@ import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdo
 import { decodeEntities } from '../utils.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
-import common, { renderKatex } from '$root/diagrams/common/common.js';
+import common, { hasKatex, renderKatex, hasKatex } from '$root/diagrams/common/common.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 function applyStyle(dom, styleFn) {
@@ -20,11 +20,8 @@ function applyStyle(dom, styleFn) {
 async function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
   const div = fo.append('xhtml:div');
-
-  // const label = node.label;
-  let label = '';
-
-  if (node.label) {
+  let label = node.label;
+  if (node.label && hasKatex(node.label)) {
     label = await renderKatex(node.label.replace(common.lineBreakRegex, '\n'), getConfig());
   }
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
@@ -118,7 +115,7 @@ function createFormattedText(
 ) {
   const lineHeight = 1.1;
   const labelGroup = g.append('g');
-  const bkg = labelGroup.insert('rect').attr('class', 'background');
+  const bkg = labelGroup.insert('rect').attr('class', 'background').attr('style', 'stroke: none');
   const textElement = labelGroup.append('text').attr('y', '-10.1');
   let lineIndex = 0;
   for (const line of structuredText) {
@@ -206,13 +203,14 @@ export const createText = async (
   config: MermaidConfig
 ) => {
   log.info(
-    'IPI createText',
+    'XYZ createText',
     text,
     style,
     isTitle,
     classes,
     useHtmlLabels,
     isNode,
+    'addSvgBackground: ',
     addSvgBackground
   );
   if (useHtmlLabels) {
@@ -229,7 +227,16 @@ export const createText = async (
     return vertexNode;
   } else {
     const structuredText = markdownToLines(text, config);
-    const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
+    const svgLabel = createFormattedText(
+      width,
+      el,
+      structuredText,
+      text ? addSvgBackground : false
+    );
+    svgLabel.setAttribute(
+      'style',
+      style.replace('fill:', 'color:') + (isNode ? ';text-anchor: middle;' : '')
+    );
     return svgLabel;
   }
 };

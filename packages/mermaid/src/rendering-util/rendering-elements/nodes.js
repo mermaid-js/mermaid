@@ -107,20 +107,22 @@ export const clear = () => {
 
 export const positionNode = (node) => {
   const el = nodeElems[node.id];
-
-  log.debug(
-    'Position node',
-    node.id,
+  log.trace(
+    'Transforming node',
     node.diff,
     node,
     'translate(' + (node.x - node.width / 2 - 5) + ', ' + node.width / 2 + ')'
   );
-  // Handling of the case where teh label grows the cluster
+  const padding = 8;
   const diff = node.diff || 0;
   if (node.clusterNode) {
     el.attr(
       'transform',
-      'translate(' + (node.x - node.width / 2) + ', ' + (node.y - node.height / 2) + ')'
+      'translate(' +
+        (node.x + diff - node.width / 2) +
+        ', ' +
+        (node.y - node.height / 2 - padding) +
+        ')'
     );
   } else {
     el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');

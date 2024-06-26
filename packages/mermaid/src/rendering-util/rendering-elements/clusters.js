@@ -36,10 +36,7 @@ const rect = async (parent, node) => {
   // const text = label
   //   .node()
   //   .appendChild(createLabel(node.label, node.labelStyle, undefined, true));
-  const text =
-    node.labelType === 'markdown'
-      ? await createText(labelEl, node.label, { style: node.labelStyle, useHtmlLabels })
-      : labelEl.node().appendChild(await createLabel(node.label, node.labelStyle, undefined, true));
+  const text = await createText(labelEl, node.label, { style: node.labelStyle, useHtmlLabels });
 
   // Get the size of the label
   let bbox = text.getBBox();
@@ -100,19 +97,11 @@ const rect = async (parent, node) => {
       .attr('height', totalHeight);
   }
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
-  if (useHtmlLabels) {
-    labelEl.attr(
-      'transform',
-      // This puts the label on top of the box instead of inside it
-      `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
-    );
-  } else {
-    labelEl.attr(
-      'transform',
-      // This puts the label on top of the box instead of inside it
-      `translate(${node.x}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
-    );
-  }
+  labelEl.attr(
+    'transform',
+    // This puts the label on top of the box instead of inside it
+    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+  );
 
   if (labelStyles) {
     const span = labelEl.select('span');
@@ -215,9 +204,9 @@ const roundedWithTitle = async (parent, node) => {
   const width =
     (node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width) + padding;
   if (node.width <= bbox.width + node.padding) {
-    node.diff = (bbox.width + node.padding * 0 - node.width) / 2;
+    node.diff = (width - node.width) / 2 - node.padding;
   } else {
-    node.diff = -node.padding / 2;
+    node.diff = -node.padding;
   }
 
   // if (node.id === 'Apa0') {
@@ -226,11 +215,13 @@ const roundedWithTitle = async (parent, node) => {
   // } else {
   //   console.log('XBX there', node);
   // }
-  const x = node.x - width / 2 - halfPadding;
-  const y = node.y - node.height / 2 - halfPadding;
-  const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;
   const height = node.height + padding;
+  // const height = node.height + padding;
   const innerHeight = node.height + padding - bbox.height - 6;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+
+  const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;
   const look = siteConfig.look;
 
   // add the rect
@@ -274,7 +265,7 @@ const roundedWithTitle = async (parent, node) => {
       .attr('x', x)
       .attr('y', y)
       .attr('width', width)
-      .attr('height', node.height + padding)
+      .attr('height', height)
       .attr('data-look', node.look);
     innerRect
       .attr('class', 'inner')
@@ -314,8 +305,8 @@ const divider = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
-  const x = node.x - node.width / 2 - halfPadding;
-  const y = node.y - node.height / 2;
+  const x = node.x - node.width / 2 - node.padding;
+  const y = node.y - node.height / 2 + node.padding;
   const width = node.width + padding;
   const height = node.height + padding;
   if (node.look === 'handdrawn') {

@@ -14,6 +14,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   const { look } = getConfig();
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  // console.log('IPI labelStyles:', labelStyles);
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
@@ -21,7 +22,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 
-  log.info('IPI node = ', node);
+  // log.info('IPI node = ', node);
 
   let rect;
   let { rx, ry } = node;

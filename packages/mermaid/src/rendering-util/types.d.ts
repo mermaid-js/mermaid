@@ -72,7 +72,7 @@ interface Edge {
   id: string;
   label?: string;
   classes?: string;
-  style?: string;
+  style?: string[];
   // Properties common to both Flowchart and State Diagram edges
   arrowhead?: string;
   arrowheadStyle?: string;
@@ -91,7 +91,7 @@ interface Edge {
   // Rendering specific properties
   curve?: string;
   labelpos?: string;
-  labelStyle?: string;
+  labelStyle?: string[];
   minlen?: number;
   pattern?: string;
   thickness?: 'normal' | 'thick' | 'invisible';

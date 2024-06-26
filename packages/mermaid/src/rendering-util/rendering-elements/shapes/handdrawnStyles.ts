@@ -19,7 +19,6 @@ export const compileStyles = (node: Node) => {
   // node.cssCompiledStyles is an array of strings in the form of 'key: value' where jey is the css property and value is the value
   // the array is the styles of node node from the classes it is using
   // node.cssStyles is an array of styles directly set on the node
-
   // concat the arrays and remove duplicates such that the values from node.cssStyles are used if there are duplicates
   const stylesMap = styles2Map([...(node.cssCompiledStyles || []), ...(node.cssStyles || [])]);
   return { stylesMap, stylesArray: [...stylesMap] };
@@ -75,7 +74,7 @@ export const styles2String = (node: Node) => {
 export const userNodeOverrides = (node: Node, options: any) => {
   const { themeVariables, handdrawnSeed } = getConfig();
   const { nodeBorder, mainBkg } = themeVariables;
-  const { stylesArray: styles, stylesMap } = compileStyles(node);
+  const { stylesMap } = compileStyles(node);
 
   // index the style array to a map object
   const result = Object.assign(
