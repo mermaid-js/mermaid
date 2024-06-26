@@ -301,7 +301,12 @@ export const dataFetcher = (
 
     // If there's only 1 description entry, just use a regular state shape
     if (newNode.description?.length === 1 && newNode.shape === SHAPE_STATE_WITH_DESC) {
-      newNode.shape = SHAPE_STATE;
+      if (newNode.type === 'group') {
+        newNode.shape = SHAPE_GROUP;
+      } else {
+        newNode.shape = SHAPE_STATE;
+      }
+      //newNode.shape = SHAPE_STATE;
     }
 
     // group
