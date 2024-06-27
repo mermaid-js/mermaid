@@ -32,8 +32,7 @@ import type { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
 import { directiveRegex } from './diagram-api/regexes.js';
-import type { D3Element } from './mermaidAPI.js';
-import type { Point, TextDimensionConfig, TextDimensions } from './types.js';
+import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 

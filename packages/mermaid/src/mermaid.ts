@@ -6,7 +6,7 @@ import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { log } from './logger.js';
 import utils from './utils.js';
-import type { ParseOptions, ParseResult, RenderResult } from './mermaidAPI.js';
+import type { ParseOptions, ParseResult, RenderResult } from './types.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';

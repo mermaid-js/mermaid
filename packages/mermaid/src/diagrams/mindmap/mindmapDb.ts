@@ -1,5 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { D3Element } from '../../mermaidAPI.js';
+import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import type { MindmapNode } from './mindmapTypes.js';

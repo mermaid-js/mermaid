@@ -104,8 +104,8 @@ export interface MermaidConfig {
   arrowMarkerAbsolute?: boolean;
   /**
    * This option controls which `currentConfig` keys are considered secure and
-   * can only be changed via call to `mermaidAPI.initialize`.
-   * Calls to `mermaidAPI.reinitialize` cannot make changes to the secure keys
+   * can only be changed via call to `mermaid.initialize`.
+   * Calls to `mermaid.reinitialize` cannot make changes to the secure keys
    * in the current `currentConfig`.
    *
    * This prevents malicious graph directives from overriding a site's default security.
