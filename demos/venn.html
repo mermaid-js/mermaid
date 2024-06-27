@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Venn diagram demo</h1>
+
+    <div class="diagrams">
+      <pre class="mermaid">
+      venn-beta
+        title Very Basic Venn Diagram
+        sets A
+        sets B
+        sets A,B     label: AB
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      venn-beta
+        title Three overlapping circles
+        sets A
+        sets B
+        sets C
+        sets A,B   label: AB, background: skyblue
+        sets B,C   label: BC, background: orange
+        sets A,C   label: AC, background: lightgreen
+        sets A,B,C   label: ABC, color: red,  background: white
+      </pre>
+      <hr />
+      <pre class="mermaid">
+      venn-beta
+        title Three concatenated circles and one isolated circle
+        sets A       size: 15, label: ALPHA
+        sets B       size: 5,  label: BETA
+        sets C       size: 10
+        sets D       size: 10, label: DELTA
+        sets A,B     size: 1,  label: AB, background: gold
+        sets B,D     size: 1
+      </pre>
+    </div>
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.initialize({
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+
+    <style>
+      pre {
+        /*width: 45vw;*/
+        /*padding: 2em;*/
+      }
+    </style>
+  </body>
+</html>
