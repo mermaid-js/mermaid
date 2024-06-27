@@ -409,7 +409,7 @@ export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
   /**
-   * @deprecated Use {@link parse} and {@link render} instead.
+   * @deprecated Use {@link parse} and {@link render} instead. Please open a discussion https://github.com/mermaid-js/mermaid/discussions if your use case does not fit the new API.
    * @internal
    */
   mermaidAPI: typeof mermaidAPI;
