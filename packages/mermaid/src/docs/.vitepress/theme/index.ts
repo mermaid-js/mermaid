@@ -8,6 +8,8 @@ import Contributors from '../components/Contributors.vue';
 import HomePage from '../components/HomePage.vue';
 // @ts-ignore
 import TopBar from '../components/TopBar.vue';
+// @ts-ignore
+import ProductHuntBadge from '../components/ProductHuntBadge.vue';
 import { getRedirect } from './redirect.js';
 import { h } from 'vue';
 import Theme from 'vitepress/theme';
@@ -21,6 +23,7 @@ export default {
     return h(Theme.Layout, null, {
       // Keeping this as comment as it took a lot of time to figure out how to add a component to the top bar.
       'home-hero-before': () => h(TopBar),
+      'home-hero-info-before': () => h(ProductHuntBadge),
       'home-features-after': () => h(HomePage),
     });
   },
