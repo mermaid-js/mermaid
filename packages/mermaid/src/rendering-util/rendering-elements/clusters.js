@@ -301,7 +301,13 @@ const roundedWithTitle = async (parent, node) => {
 const divider = (parent, node) => {
   const { handdrawnSeed } = getConfig();
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.cssClasses).attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.cssClasses)
+    .attr('id', node.id)
+    .attr('data-id', node.id)
+    .attr('data-et', 'node')
+    .attr('data-node', 'true');
 
   // add the rect
   let rect;
