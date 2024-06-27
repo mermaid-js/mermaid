@@ -126,7 +126,7 @@
     "type-fest": "^4.13.1",
     "typedoc": "^0.25.12",
     "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "^5.4.3",
+    "typescript": "~5.4.3",
     "unist-util-flatmap": "^1.0.0",
     "unist-util-visit": "^5.0.0",
     "vitepress": "^1.0.1",
