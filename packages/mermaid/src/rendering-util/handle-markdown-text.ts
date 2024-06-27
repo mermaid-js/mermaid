@@ -75,7 +75,7 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return `<em>${node.children.map(output).join('')}</em>`;
     } else if (node.type === 'paragraph') {
       return `<p>${node.children.map(output).join('')}</p>`;
-    } else if (node.type === 'html' && /^<br\s*\/?>$/i.test(node.value)) {
+    } else if (node.type === 'html') {
       return `${node.value}`;
     }
     return `Unsupported markdown: ${node.type}`;
