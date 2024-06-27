@@ -120,7 +120,7 @@
     "rollup-plugin-visualizer": "^5.12.0",
     "start-server-and-test": "^2.0.3",
     "tsx": "^4.7.1",
-    "typescript": "^5.4.3",
+    "typescript": "~5.4.3",
     "vite": "^5.2.3",
     "vite-plugin-istanbul": "^6.0.0",
     "vitest": "^1.4.0"
