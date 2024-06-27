@@ -136,6 +136,12 @@
   "pnpm": {
     "patchedDependencies": {
       "roughjs": "patches/roughjs.patch"
+    },
+    "overrides": {
+      "fmin>json2module": "npm:empty-npm-package@1.0.0",
+      "fmin>rollup": "npm:empty-npm-package@1.0.0",
+      "fmin>tape": "npm:empty-npm-package@1.0.0",
+      "fmin>uglify-js": "npm:empty-npm-package@1.0.0"
     }
   }
 }

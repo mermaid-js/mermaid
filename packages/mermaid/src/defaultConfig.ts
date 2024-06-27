@@ -252,6 +252,9 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  venn: {
+    ...defaultConfigJson.venn,
+  },
 };
 
 const keyify = (obj: any, prefix = ''): string[] =>

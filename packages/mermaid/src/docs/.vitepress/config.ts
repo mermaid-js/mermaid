@@ -158,6 +158,7 @@ function sidebarSyntax() {
         { text: 'Block Diagram 🔥', link: '/syntax/block' },
         { text: 'Packet 🔥', link: '/syntax/packet' },
         { text: 'Architecture 🔥', link: '/syntax/architecture' },
+        { text: 'Venn 🔥', link: '/syntax/venn' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

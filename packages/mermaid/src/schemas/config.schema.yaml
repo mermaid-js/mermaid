@@ -54,6 +54,7 @@ required:
   - packet
   - block
   - look
+  - venn
 properties:
   theme:
     description: |
@@ -289,6 +290,8 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  venn:
+    $ref: '#/$defs/VennDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2169,6 +2172,18 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     title: Block Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
     description: The object containing configurations specific for block diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        type: number
+        minimum: 0
+        default: 8
+
+  VennDiagramConfig:
+    title: Venn Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Venn diagrams.
     type: object
     unevaluatedProperties: false
     properties:
