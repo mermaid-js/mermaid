@@ -307,8 +307,8 @@ Renders the mermaid diagrams
 ## setParseErrorHandler Alternative to directly setting parseError using:
 
 ```js
-mermaid.parseError = function(err,hash){=
-  forExampleDisplayErrorInGui(err);  // do something with the error
+mermaid.parseError = function (err, hash) {
+  forExampleDisplayErrorInGui(err); // do something with the error
 };
 ```
 
