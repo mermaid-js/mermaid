@@ -25,6 +25,7 @@ export default {
       'home-hero-before': () => h(TopBar),
       'home-hero-info-before': () => h(ProductHuntBadge),
       'home-features-after': () => h(HomePage),
+      'doc-before': () => h(TopBar),
     });
   },
   enhanceApp({ app, router }: EnhanceAppContext) {

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full top-bar bg-gradient-to-r from-[#bd34fe] to-[#ff3670] flex items-center text-center justify-center p-1 text-white"
+    class="mb-4 w-full top-bar bg-gradient-to-r from-[#bd34fe] to-[#ff3670] flex items-center text-center justify-center p-1 text-white"
   >
     <p class="flex-grow text-center tracking-wide text-text">
       <a
