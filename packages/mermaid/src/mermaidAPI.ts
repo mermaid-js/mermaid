@@ -1,5 +1,5 @@
 /**
- * This file contains functions that are used internally by mermaid 
+ * This file contains functions that are used internally by mermaid
  * and is not intended to be used by the end user.
  */
 // @ts-ignore TODO: Investigate D3 issue
