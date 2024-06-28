@@ -49,7 +49,7 @@ const shapes = {
   labelRect,
 };
 
-let nodeElems = {};
+const nodeElems = new Map();
 
 export const insertNode = async (elem, node, dir) => {
   let newEl;
@@ -81,26 +81,23 @@ export const insertNode = async (elem, node, dir) => {
   if (node.tooltip) {
     el.attr('title', node.tooltip);
   }
-  // if (node.class) {
-  //   el.attr('class', 'node default ' + node.class);
-  // }
 
-  nodeElems[node.id] = newEl;
+  nodeElems.set(node.id, newEl);
 
   if (node.haveCallback) {
-    nodeElems[node.id].attr('class', nodeElems[node.id].attr('class') + ' clickable');
+    nodeElems.get(node.id).attr('class', nodeElems.get(node.id).attr('class') + ' clickable');
   }
   return newEl;
 };
 export const setNodeElem = (elem, node) => {
-  nodeElems[node.id] = elem;
+  nodeElems.set(node.id, elem);
 };
 export const clear = () => {
-  nodeElems = {};
+  nodeElems.clear();
 };
 
 export const positionNode = (node) => {
-  const el = nodeElems[node.id];
+  const el = nodeElems.get(node.id);
   log.trace(
     'Transforming node',
     node.diff,

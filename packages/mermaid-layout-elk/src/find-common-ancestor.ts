@@ -3,8 +3,7 @@ export interface TreeData {
   childrenById: Record<string, string[]>;
 }
 
-export const findCommonAncestor = (id1: string, id2: string, treeData: TreeData) => {
-  const { parentById } = treeData;
+export const findCommonAncestor = (id1: string, id2: string, { parentById }: TreeData) => {
   const visited = new Set();
   let currentId = id1;
 
@@ -20,6 +19,7 @@ export const findCommonAncestor = (id1: string, id2: string, treeData: TreeData)
     }
     currentId = parentById[currentId];
   }
+
   currentId = id2;
   while (currentId) {
     if (visited.has(currentId)) {
@@ -27,5 +27,6 @@ export const findCommonAncestor = (id1: string, id2: string, treeData: TreeData)
     }
     currentId = parentById[currentId];
   }
+
   return 'root';
 };

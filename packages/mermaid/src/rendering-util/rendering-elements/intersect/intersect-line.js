@@ -1,10 +1,5 @@
 /**
  * Returns the point at which two lines, p and q, intersect or returns undefined if they do not intersect.
- *
- * @param p1
- * @param p2
- * @param q1
- * @param q2
  */
 function intersectLine(p1, p2, q1, q2) {
   // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
@@ -67,10 +62,6 @@ function intersectLine(p1, p2, q1, q2) {
   return { x: x, y: y };
 }
 
-/**
- * @param r1
- * @param r2
- */
 function sameSign(r1, r2) {
   return r1 * r2 > 0;
 }

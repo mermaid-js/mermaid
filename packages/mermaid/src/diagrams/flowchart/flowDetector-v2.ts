@@ -18,7 +18,6 @@ const detector: DiagramDetector = (txt, config) => {
   return /^\s*flowchart/.test(txt);
 };
 
-// @ts-ignore - TODO: Fix after refactor
 const loader: DiagramLoader = async () => {
   const { diagram } = await import('./flowDiagram-v2.js');
   return { id, diagram };

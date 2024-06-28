@@ -1,9 +1,3 @@
-/**
- * @param node
- * @param rx
- * @param ry
- * @param point
- */
 function intersectEllipse(node, rx, ry, point) {
   // Formulae from: https://mathworld.wolfram.com/Ellipse-LineIntersection.html
 
