@@ -201,9 +201,9 @@ export const updateLink = function (positions: ('default' | number)[], style: st
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
-      if (utils.isSubstringInArray('fill', style) === -1) {
-        style.push('fill:none');
-      }
+      // if (utils.isSubstringInArray('fill', style) === -1) {
+      //   style.push('fill:none');
+      // }
       edges[pos].style = style;
     }
   });
@@ -807,8 +807,8 @@ const addNodeFromVertex = (
       parentId,
       padding: config.flowchart?.padding || 8,
       cssStyles: vertex.styles,
-      cssCompiledStyles: getCompiledStyles(vertex.classes),
-      cssClasses: vertex.classes.join(' '),
+      cssCompiledStyles: getCompiledStyles(['default', 'node', ...vertex.classes]),
+      cssClasses: 'default ' + vertex.classes.join(' '),
       shape: getTypeFromVertex(vertex),
       dir: vertex.dir,
       domId: vertex.domId,
@@ -888,7 +888,8 @@ export const getData = () => {
   const e = getEdges();
   e.forEach((rawEdge, index) => {
     const { arrowTypeStart, arrowTypeEnd } = destructEdgeType(rawEdge.type);
-    const styles = e.defaultStyle || [];
+    const styles = [...(e.defaultStyle || [])];
+
     if (rawEdge.style) {
       styles.push(...rawEdge.style);
     }
