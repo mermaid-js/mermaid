@@ -24,7 +24,12 @@ export default tseslint.config(
   {
     languageOptions: {
       parserOptions: {
-        project: ['./tsconfig.eslint.json', './packages/*/tsconfig.json'],
+        project: [
+          './tsconfig.eslint.json',
+          './packages/*/tsconfig.json',
+          './packages/*/tsconfig.eslint.json',
+          './packages/mermaid/src/docs/tsconfig.json',
+        ],
         tsconfigRootDir: import.meta.dirname,
       },
       globals: {

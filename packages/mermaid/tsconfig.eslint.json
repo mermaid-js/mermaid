@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": ["./tsconfig.json"],
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "./src/**/*.spec.js",
+    "./src/**/*.spec.ts", // test files
+    "./scripts",
+    "./.lintstagedrc.mjs",
+    // These seem to be orphaned files
+    // Can we delete them?
+    "./src/dagre-wrapper/intersect.js",
+    "./src/dagre-wrapper/patterns.js",
+    "./src/diagrams/git/gitGraphRenderer-old.js",
+    "./src/diagrams/git/layout.js",
+    "./src/diagrams/git/mockDb.js"
+  ]
+}

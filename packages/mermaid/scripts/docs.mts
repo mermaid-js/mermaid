@@ -509,6 +509,7 @@ export const getGlobs = (globs: string[]): string[] => {
     globs.push(
       '!**/.vitepress/**',
       '!**/vite.config.ts',
+      '!**/tsconfig.json',
       '!src/docs/index.md',
       '!**/package.json',
       '!**/user-avatars/**'
