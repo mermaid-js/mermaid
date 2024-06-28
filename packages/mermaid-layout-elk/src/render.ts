@@ -348,11 +348,6 @@ export const addEdges = function (dataForLayout, graph, svg) {
         edgeData.style = 'stroke-width: 3.5px;fill:none;';
         break;
     }
-    // if (edge.style !== undefined) {
-    //   const styles = getStylesFromArray(edge.style);
-    //   style = styles.style;
-    //   labelStyle = styles.labelStyle;
-    // }
 
     edgeData.style = edgeData.style += style;
     edgeData.labelStyle = edgeData.labelStyle += labelStyle;
