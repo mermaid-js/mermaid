@@ -8,7 +8,7 @@ import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdo
 import { decodeEntities } from '../utils.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
-import common, { hasKatex, renderKatex, hasKatex } from '$root/diagrams/common/common.js';
+import common, { hasKatex, renderKatex } from '$root/diagrams/common/common.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 function applyStyle(dom, styleFn) {
