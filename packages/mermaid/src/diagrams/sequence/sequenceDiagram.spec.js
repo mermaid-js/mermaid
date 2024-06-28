@@ -516,6 +516,36 @@ Alice->>Bob:Hello Bob, how are you?`;
     expect(messages.length).toBe(1);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
   });
+  it('should handle bidirectional arrow messages', async () => {
+    const str = `
+sequenceDiagram
+Alice<<->>Bob:Hello Bob, how are you?`;
+
+    await mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+    expect(actors.get('Alice').description).toBe('Alice');
+    expect(actors.get('Bob').description).toBe('Bob');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(1);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.BIDIRECTIONAL_SOLID);
+  });
+  it('should handle bidirectional dotted arrow messages', async () => {
+    const str = `
+    sequenceDiagram
+    Alice<<-->>Bob:Hello Bob, how are you?`;
+
+    await mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+    expect(actors.get('Alice').description).toBe('Alice');
+    expect(actors.get('Bob').description).toBe('Bob');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(1);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.BIDIRECTIONAL_DOTTED);
+  });
   it('should handle actor activation', async () => {
     const str = `
 sequenceDiagram
@@ -1645,7 +1675,6 @@ it should handle one actor, when textPlacement is ${textPlacement}`, async () =>
 sequenceDiagram
 participant Alice`;
 
-      // mermaidAPI.reinitialize({ sequence: { textPlacement: textPlacement } });
       await mermaidAPI.parse(str);
       // diagram.renderer.setConf(mermaidAPI.getConfig().sequence);
       await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);

@@ -10,4 +10,4 @@
 
 - [config](modules/config.md)
 - [defaultConfig](modules/defaultConfig.md)
-- [mermaidAPI](modules/mermaidAPI.md)
+- [mermaid](modules/mermaid.md)

@@ -11,7 +11,7 @@ const detector: DiagramDetector = (txt, config): boolean => {
     // If diagram explicitly states flowchart-elk
     /^\s*flowchart-elk/.test(txt) ||
     // If a flowchart/graph diagram has their default renderer set to elk
-    (/^\s*flowchart|graph/.test(txt) && config?.flowchart?.defaultRenderer === 'elk')
+    (/^\s*(flowchart|graph)/.test(txt) && config?.flowchart?.defaultRenderer === 'elk')
   ) {
     return true;
   }
