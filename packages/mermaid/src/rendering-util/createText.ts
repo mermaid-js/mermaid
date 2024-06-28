@@ -2,6 +2,7 @@
 // @ts-nocheck TODO: Fix types
 import type { MermaidConfig } from '../config.type.js';
 import type { Group } from '../diagram-api/types.js';
+import { select } from 'd3';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
@@ -33,7 +34,7 @@ async function addHtmlSpan(element, node, width, classes, addBackground = false)
   applyStyle(div, node.labelStyle);
   div.style('display', 'table-cell');
   div.style('white-space', 'nowrap');
-  div.style('line-height', '1');
+  div.style('line-height', '1.5');
   div.style('max-width', width + 'px');
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
   if (addBackground) {
@@ -223,17 +224,18 @@ export const createText = async (
     const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
-    const structuredText = markdownToLines(text, config);
+    const structuredText = markdownToLines(text.replace('<br>', '<br/>'), config);
     const svgLabel = createFormattedText(
       width,
       el,
       structuredText,
       text ? addSvgBackground : false
     );
-    svgLabel.setAttribute(
-      'style',
-      style.replace('fill:', 'color:') + (isNode ? ';text-anchor: middle;' : '')
-    );
+    if (style.match('stroke:')) style = style.replace('stroke:', 'lineColor:');
+    select(svgLabel)
+      .select('text')
+      .attr('style', style.replace(/color\:/g, 'fill:'));
+    // svgLabel.setAttribute('style', style);
     return svgLabel;
   }
 };
