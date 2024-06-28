@@ -1,16 +1,8 @@
-/* eslint "no-console": off */
-
 import intersectLine from './intersect-line.js';
-
-export default intersectPolygon;
 
 /**
  * Returns the point ({x, y}) at which the point argument intersects with the node argument assuming
  * that it has the shape specified by polygon.
- *
- * @param node
- * @param polyPoints
- * @param point
  */
 function intersectPolygon(node, polyPoints, point) {
   let x1 = node.x;
@@ -67,3 +59,5 @@ function intersectPolygon(node, polyPoints, point) {
   }
   return intersections[0];
 }
+
+export default intersectPolygon;
