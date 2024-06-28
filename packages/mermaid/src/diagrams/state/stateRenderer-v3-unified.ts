@@ -17,14 +17,18 @@ import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
  * @returns The direction to use
  */
 const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
+  if (!parsedItem.doc) {
+    return defaultDir;
+  }
+
   let dir = defaultDir;
-  if (parsedItem.doc) {
-    for (const parsedItemDoc of parsedItem.doc) {
-      if (parsedItemDoc.stmt === 'dir') {
-        dir = parsedItemDoc.value;
-      }
+
+  for (const parsedItemDoc of parsedItem.doc) {
+    if (parsedItemDoc.stmt === 'dir') {
+      dir = parsedItemDoc.value;
     }
   }
+
   return dir;
 };
 
