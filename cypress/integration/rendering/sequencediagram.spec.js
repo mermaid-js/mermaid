@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+// <reference types="Cypress" />
 
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
@@ -66,6 +66,19 @@ context('Sequence diagram', () => {
         end
       `,
       { sequence: { actorFontFamily: 'courier' } }
+    );
+  });
+  it('should render bidirectional arrows', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice<<->>John: Hello John, how are you?
+      Alice<<-->>John: Hi Alice, I can hear you!
+      John<<->>Alice: This also works the other way
+      John<<-->>Alice: Yes
+      Alice->John: Test
+      John->>Alice: Still works
+      `
     );
   });
   it('should handle different line breaks', () => {
@@ -460,6 +473,18 @@ context('Sequence diagram', () => {
         Alice->>Bob: Hola
         Note over Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render notes over actors and participant', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        actor Alice
+        participant Charlie
+        note over Alice: some note
+        note over Charlie: other note
       `,
         {}
       );

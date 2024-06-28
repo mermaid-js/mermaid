@@ -25,13 +25,10 @@ async function addHtmlSpan(element, node, width, classes, addBackground = false)
     label = await renderKatex(node.label.replace(common.lineBreakRegex, '\n'), getConfig());
   }
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  div.html(
-    `<span class="${labelClass} ${classes}" ` +
-      (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
-      '>' +
-      label +
-      '</span>'
-  );
+  const span = div.append('span');
+  span.html(label);
+  applyStyle(span, node.labelStyle);
+  span.attr('class', `${labelClass} ${classes}`);
 
   applyStyle(div, node.labelStyle);
   div.style('display', 'table-cell');

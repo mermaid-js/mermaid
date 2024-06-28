@@ -41,7 +41,10 @@ exclude = [
 "https://bundlephobia.com",
 
 # Chrome webstore migration issue. Temporary
-"https://chromewebstore.google.com"
+"https://chromewebstore.google.com",
+
+# Drupal 403
+"https://(www.)?drupal.org"
 ]
 
 # Exclude all private IPs from checking.
