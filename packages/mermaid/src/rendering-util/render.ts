@@ -50,12 +50,14 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
   // console.log('IPI data4Layout', svg.attr('id'));
 
   if (useGradient) {
-    const gradient = svg.append('linearGradient');
-
-    gradient
+    const gradient = svg
+      .append('linearGradient')
       .attr('id', svg.attr('id') + '-gradient')
-      .attr('gradientUnits', 'userSpaceOnUse')
-      .attr('spreadMethod', 'pad');
+      .attr('gradientUnits', 'objectBoundingBox') // Changed to objectBoundingBox for relative sizing
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
 
     gradient
       .append('svg:stop')
@@ -65,30 +67,7 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
 
     gradient
       .append('svg:stop')
-      .attr('offset', '10%')
-      .attr('stop-color', gradientStop)
-      .attr('stop-opacity', 1);
-
-    gradient
-      .append('svg:stop')
-      .attr('offset', '30%')
-      .attr('stop-color', gradientStart)
-      .attr('stop-opacity', 1);
-
-    gradient
-      .append('svg:stop')
-      .attr('offset', '35%')
-      .attr('stop-color', gradientStop)
-      .attr('stop-opacity', 1);
-    gradient
-      .append('svg:stop')
-      .attr('offset', '60%')
-      .attr('stop-color', gradientStart)
-      .attr('stop-opacity', 1);
-
-    gradient
-      .append('svg:stop')
-      .attr('offset', '80%')
+      .attr('offset', '100%') // Adjusted to 100% to ensure full gradient spread
       .attr('stop-color', gradientStop)
       .attr('stop-opacity', 1);
   }

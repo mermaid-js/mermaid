@@ -107,11 +107,12 @@ export const clear = () => {
 
 export const positionNode = (node) => {
   const el = nodeElems[node.id];
-  log.trace(
-    'Transforming node',
-    node.diff,
+  log.info(
+    'Transforming node IPI',
+    node.id,
+    node?.diff,
     node,
-    'translate(' + (node.x - node.width / 2 - 5) + ', ' + node.width / 2 + ')'
+    'translate(' + (node.x - +(node.diff || 0) - node.width / 2) + ', ' + node.width / 2 + ')'
   );
   const padding = 8;
   const diff = node.diff || 0;

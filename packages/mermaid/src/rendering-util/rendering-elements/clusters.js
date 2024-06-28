@@ -224,7 +224,7 @@ const roundedWithTitle = async (parent, node) => {
   const innerHeight = node.height + padding - bbox.height - 6;
   const x = node.x - width / 2;
   const y = node.y - height / 2;
-
+  node.width = width;
   const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;
   const look = siteConfig.look;
 
@@ -297,8 +297,94 @@ const roundedWithTitle = async (parent, node) => {
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
+const divider = async (parent, node) => {
+  const siteConfig = getConfig();
 
-const divider = (parent, node) => {
+  const { themeVariables, handdrawnSeed } = siteConfig;
+  const { altBackground, compositeBackground, compositeTitleBackground, nodeBorder } =
+    themeVariables;
+
+  // Add outer g element
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.cssClasses)
+    .attr('id', node.id)
+    .attr('data-et', 'node')
+    .attr('data-node', 'true')
+    .attr('data-id', node.id)
+    .attr('data-look', node.look);
+
+  // add the rect
+  const outerRectG = shapeSvg.insert('g', ':first-child');
+
+  // Create the label and insert it after the rect
+  let innerRect = shapeSvg.append('rect');
+
+  const padding = 0 * node.padding;
+  const halfPadding = padding / 2;
+
+  const width = node.width + padding;
+
+  node.diff = -node.padding;
+
+  const height = node.height + padding;
+  // const height = node.height + padding;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+  node.width = width;
+  const look = siteConfig.look;
+
+  // add the rect
+  let rect;
+  if (node.look === 'handdrawn') {
+    const isAlt = node.cssClasses.includes('statediagram-cluster-alt');
+    const rc = rough.svg(shapeSvg);
+    const roughOuterNode =
+      node.rx || node.ry
+        ? rc.path(createRoundedRectPathD(x, y, width, height, 10), {
+            roughness: 0.7,
+            fill: compositeTitleBackground,
+            fillStyle: 'solid',
+            stroke: nodeBorder,
+            seed: handdrawnSeed,
+          })
+        : rc.rectangle(x, y, width, height, { seed: handdrawnSeed });
+
+    rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
+  } else {
+    rect = outerRectG.insert('rect', ':first-child');
+    let outerRectClass = 'outer';
+    if (look === 'neo') {
+      outerRectClass = 'divider';
+    } else {
+      outerRectClass = 'divider';
+    }
+
+    // center the rect around its coordinate
+    rect
+      .attr('class', outerRectClass)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('data-look', node.look);
+  }
+
+  const rectBox = rect.node().getBBox();
+  node.height = rectBox.height;
+  node.offsetX = 0;
+  // Used by layout engine to position subgraph in parent
+  node.offsetY = 0;
+
+  node.intersect = function (point) {
+    return intersectRect(node, point);
+  };
+
+  return { cluster: shapeSvg, labelBBox: {} };
+};
+
+const dividerorg = (parent, node) => {
+  console.log('Divider node IPI', node);
   const { handdrawnSeed } = getConfig();
   // Add outer g element
   const shapeSvg = parent
@@ -351,7 +437,13 @@ const divider = (parent, node) => {
   return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
 };
 const squareRect = rect;
-const shapes = { rect, squareRect, roundedWithTitle, noteGroup, divider };
+const shapes = {
+  rect,
+  squareRect,
+  roundedWithTitle,
+  noteGroup,
+  divider,
+};
 
 let clusterElems = {};
 
