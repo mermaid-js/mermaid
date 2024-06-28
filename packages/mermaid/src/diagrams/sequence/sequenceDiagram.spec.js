@@ -1675,7 +1675,6 @@ it should handle one actor, when textPlacement is ${textPlacement}`, async () =>
 sequenceDiagram
 participant Alice`;
 
-      // mermaidAPI.reinitialize({ sequence: { textPlacement: textPlacement } });
       await mermaidAPI.parse(str);
       // diagram.renderer.setConf(mermaidAPI.getConfig().sequence);
       await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);

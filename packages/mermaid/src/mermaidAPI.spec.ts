@@ -593,7 +593,6 @@ describe('mermaidAPI', () => {
           mermaidAPI.initialize({ securityLevel: 'loose' });
         },
       };
-      // mermaidAPI.reinitialize(config);
       expect(mermaidAPI.getConfig().secure).toEqual(mermaidAPI.getSiteConfig().secure);
       expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
       mermaidAPI.reset();
