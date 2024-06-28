@@ -233,10 +233,7 @@ export const createText = async (
       structuredText,
       text ? addSvgBackground : false
     );
-    svgLabel.setAttribute(
-      'style',
-      style.replace('fill:', 'color:') + (isNode ? ';text-anchor: middle;' : '')
-    );
+    svgLabel.setAttribute('style', style.replace('fill:', 'color:'));
     return svgLabel;
   }
 };
