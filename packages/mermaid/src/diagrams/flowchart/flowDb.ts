@@ -787,6 +787,7 @@ const destructEdgeType = (type: string | undefined) => {
   }
   return { arrowTypeStart, arrowTypeEnd };
 };
+
 const addNodeFromVertex = (
   vertex: FlowVertex,
   nodes: Node[],
@@ -799,7 +800,11 @@ const addNodeFromVertex = (
   const isGroup = subGraphDB.get(vertex.id) || false;
 
   const node = findNode(nodes, vertex.id);
-  if (!node) {
+  if (node) {
+    node.cssStyles = vertex.styles;
+    node.cssCompiledStyles = getCompiledStyles(vertex.classes);
+    node.cssClasses = vertex.classes.join(' ');
+  } else {
     nodes.push({
       id: vertex.id,
       label: vertex.text,
@@ -818,10 +823,6 @@ const addNodeFromVertex = (
       linkTarget: vertex.linkTarget,
       tooltip: getTooltip(vertex.id),
     });
-  } else {
-    node.cssStyles = vertex.styles;
-    node.cssCompiledStyles = getCompiledStyles(vertex.classes);
-    node.cssClasses = vertex.classes.join(' ');
   }
 };
 
