@@ -1,6 +1,7 @@
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
+// @ts-ignore TODO: Fix rough typings
 import rough from 'roughjs';
 import { solidStateFill, styles2String } from './handdrawnStyles.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
@@ -44,9 +45,9 @@ export const choice = (parent: SVG, node: Node) => {
   }
 
   // center the circle around its coordinate
-  // @ts-ignore TODO: Fix rough typings
   choice
     .attr('class', 'state-start')
+    // @ts-ignore TODO: Fix rough typings
     .attr('r', 7)
     .attr('width', 28)
     .attr('height', 28)
