@@ -436,7 +436,8 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     type === diagObj.db.LINETYPE.DOTTED ||
     type === diagObj.db.LINETYPE.DOTTED_CROSS ||
     type === diagObj.db.LINETYPE.DOTTED_POINT ||
-    type === diagObj.db.LINETYPE.DOTTED_OPEN
+    type === diagObj.db.LINETYPE.DOTTED_OPEN ||
+    type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED
   ) {
     line.style('stroke-dasharray', '3, 3');
     line.attr('class', 'messageLine1');
@@ -460,6 +461,13 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   line.attr('stroke', 'none'); // handled by theme/css anyway
   line.style('fill', 'none'); // remove any fill colour
   if (type === diagObj.db.LINETYPE.SOLID || type === diagObj.db.LINETYPE.DOTTED) {
+    line.attr('marker-end', 'url(' + url + '#arrowhead)');
+  }
+  if (
+    type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID ||
+    type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED
+  ) {
+    line.attr('marker-start', 'url(' + url + '#arrowhead)');
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
   }
   if (type === diagObj.db.LINETYPE.SOLID_POINT || type === diagObj.db.LINETYPE.DOTTED_POINT) {
@@ -1036,6 +1044,8 @@ export const draw = async function (_text: string, id: string, _version: string,
         diagObj.db.LINETYPE.DOTTED_CROSS,
         diagObj.db.LINETYPE.SOLID_POINT,
         diagObj.db.LINETYPE.DOTTED_POINT,
+        diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID,
+        diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED,
       ].includes(msg.type)
     ) {
       sequenceIndex = sequenceIndex + sequenceIndexStep;
@@ -1416,6 +1426,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
       diagObj.db.LINETYPE.DOTTED_CROSS,
       diagObj.db.LINETYPE.SOLID_POINT,
       diagObj.db.LINETYPE.DOTTED_POINT,
+      diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID,
+      diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED,
     ].includes(msg.type)
   ) {
     return {};
@@ -1423,7 +1435,7 @@ const buildMessageModel = function (msg, actors, diagObj) {
   const [fromLeft, fromRight] = activationBounds(msg.from, actors);
   const [toLeft, toRight] = activationBounds(msg.to, actors);
   const isArrowToRight = fromLeft <= toLeft;
-  const startx = isArrowToRight ? fromRight : fromLeft;
+  let startx = isArrowToRight ? fromRight : fromLeft;
   let stopx = isArrowToRight ? toLeft : toRight;
 
   // As the line width is considered, the left and right values will be off by 2.
@@ -1461,6 +1473,17 @@ const buildMessageModel = function (msg, actors, diagObj) {
      */
     if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
       stopx += adjustValue(3);
+    }
+
+    /**
+     * Shorten start position of bidirectional arrow to accommodate for second arrowhead
+     */
+    if (
+      [diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID, diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED].includes(
+        msg.type
+      )
+    ) {
+      startx -= adjustValue(3);
     }
   }
 
