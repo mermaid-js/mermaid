@@ -1,8 +1,8 @@
 // @ts-nocheck File not ready to check types
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
-import mermaid from 'mermaid';
-import { findCommonAncestor } from './find-common-ancestor.js';
+import mermaid, { type LayoutData } from 'mermaid';
+import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
 const {
   common,
@@ -199,13 +199,13 @@ const getNextPort = (node, edgeDirection, graphDirection) => {
   return result;
 };
 
-const addSubGraphs = function (nodeArr) {
-  const parentLookupDb = { parentById: {}, childrenById: {} };
+const addSubGraphs = (nodeArr): TreeData => {
+  const parentLookupDb: TreeData = { parentById: {}, childrenById: {} };
   const subgraphs = nodeArr.filter((node) => node.isGroup);
   log.info('Subgraphs - ', subgraphs);
-  subgraphs.forEach(function (subgraph) {
+  subgraphs.forEach((subgraph) => {
     const children = nodeArr.filter((node) => node.parentId === subgraph.id);
-    children.forEach(function (node) {
+    children.forEach((node) => {
       parentLookupDb.parentById[node.id] = subgraph.id;
       if (parentLookupDb.childrenById[subgraph.id] === undefined) {
         parentLookupDb.childrenById[subgraph.id] = [];
@@ -250,7 +250,7 @@ const getEdgeStartEndPoint = (edge, dir) => {
   return { source, target, sourceId, targetId };
 };
 
-const calcOffset = function (src, dest, parentLookupDb) {
+const calcOffset = function (src: string, dest: string, parentLookupDb: TreeData) {
   const ancestor = findCommonAncestor(src, dest, parentLookupDb);
   if (ancestor === undefined || ancestor === 'root') {
     return { x: 0, y: 0 };
@@ -451,7 +451,7 @@ function setIncludeChildrenPolicy(nodeId: string, ancestorId: string) {
   }
 }
 
-export const render = async (data4Layout, svg, element, algorithm) => {
+export const render = async (data4Layout: LayoutData, svg, element, algorithm) => {
   const elk = new ELK();
 
   // Add the arrowheads to the svg
@@ -467,13 +467,6 @@ export const render = async (data4Layout, svg, element, algorithm) => {
       'elk.layered.mergeEdges': data4Layout.config['elk.mergeEdges'],
       'elk.direction': 'DOWN',
       'spacing.baseValue': 30,
-      // 'spacing.nodeNode': 40,
-      // 'spacing.nodeNodeBetweenLayers': 45,
-      // 'spacing.edgeNode': 40,
-      // 'spacing.edgeNodeBetweenLayers': 30,
-      // 'spacing.edgeEdge': 30,
-      // 'spacing.edgeEdgeBetweenLayers': 40,
-      // 'spacing.nodeSelfLoop': 50,
     },
     children: [],
     edges: [],
@@ -550,9 +543,7 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     }
   });
 
-  // log.info('before layout', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
-  // log.info('after layout', JSON.stringify(g));
 
   // debugger;
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
@@ -565,33 +556,34 @@ export const render = async (data4Layout, svg, element, algorithm) => {
 
     const offset = calcOffset(sourceId, targetId, parentLookupDb);
     log.info('APA12 offset', offset, sourceId, targetId, edge);
-    if (edge.sections) {
-      const src = edge.sections[0].startPoint;
-      const dest = edge.sections[0].endPoint;
-      const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
-
-      const segPoints = segments.map((segment) => {
-        return { x: segment.x + offset.x, y: segment.y + offset.y };
-      });
-      edge.points = [
-        { x: src.x + offset.x, y: src.y + offset.y },
-        ...segPoints,
-        { x: dest.x + offset.x, y: dest.y + offset.y },
-      ];
-      const paths = insertEdge(
-        edgesEl,
-        edge,
-        clusterDb,
-        data4Layout.type,
-        startNode,
-        endNode,
-        data4Layout.diagramId
-      );
-      log.info('APA12 edge points after insert', JSON.stringify(edge.points));
-
-      edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
-      edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
-      positionEdgeLabel(edge, paths);
+    if (!edge.sections) {
+      return;
     }
+    const src = edge.sections[0].startPoint;
+    const dest = edge.sections[0].endPoint;
+    const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+
+    const segPoints = segments.map((segment) => {
+      return { x: segment.x + offset.x, y: segment.y + offset.y };
+    });
+    edge.points = [
+      { x: src.x + offset.x, y: src.y + offset.y },
+      ...segPoints,
+      { x: dest.x + offset.x, y: dest.y + offset.y },
+    ];
+    const paths = insertEdge(
+      edgesEl,
+      edge,
+      clusterDb,
+      data4Layout.type,
+      startNode,
+      endNode,
+      data4Layout.diagramId
+    );
+    log.info('APA12 edge points after insert', JSON.stringify(edge.points));
+
+    edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
+    edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
+    positionEdgeLabel(edge, paths);
   });
 };
