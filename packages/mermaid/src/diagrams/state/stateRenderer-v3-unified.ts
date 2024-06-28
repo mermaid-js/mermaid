@@ -57,17 +57,6 @@ export const draw = async function (text: string, id: string, _version: string, 
   // Create the root SVG - the element is the div containing the SVG element
   const { element, svg } = getDiagramElements(id, securityLevel);
 
-  // // For some diagrams this call is not needed, but in the state diagram it is
-  // await insertElementsForSize(element, data4Layout);
-
-  // console.log('data4Layout:', data4Layout);
-
-  // // Now we have layout data with real sizes, we can perform the layout
-  // const data4Rendering = doLayout(data4Layout, id, _version, 'dagre-wrapper');
-
-  // // The performRender method provided in all supported diagrams is used to render the data
-  // performRender(data4Rendering);
-
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = layout;
   data4Layout.direction = DIR;
