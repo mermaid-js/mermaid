@@ -56,7 +56,9 @@ const handler = (e) => {
 
 const main = async () => {
   await generateLangium();
-  await mkdir('stats').catch(() => {});
+  await mkdir('stats').catch(() => {
+    // Ignore error if directory already exists
+  });
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
   // it should build `parser` before `mermaid` because it's a dependency
   for (const pkg of packageNames) {
