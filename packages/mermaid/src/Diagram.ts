@@ -19,7 +19,7 @@ export class Diagram {
     text = encodeEntities(text) + '\n';
     try {
       getDiagram(type);
-    } catch (e) {
+    } catch {
       const loader = getDiagramLoader(type);
       if (!loader) {
         throw new UnknownDiagramError(`Diagram ${type} not found.`);

@@ -258,24 +258,6 @@ export const drawTask = function (elem, task, conf) {
   rect.ry = 3;
   drawRect(g, rect);
 
-  let xPos = task.x + 14;
-  // task.people.forEach((person) => {
-  //   const colour = task.actors[person].color;
-
-  //   const circle = {
-  //     cx: xPos,
-  //     cy: task.y,
-  //     r: 7,
-  //     fill: colour,
-  //     stroke: '#000',
-  //     title: person,
-  //     pos: task.actors[person].position,
-  //   };
-
-  //   drawCircle(g, circle);
-  //   xPos += 10;
-  // });
-
   _drawTextCandidateFunc(conf)(
     task.task,
     g,

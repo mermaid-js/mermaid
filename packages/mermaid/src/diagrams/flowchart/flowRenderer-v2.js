@@ -190,9 +190,9 @@ export const addVertices = async function (vert, g, svgId, root, doc, diagObj) {
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
- * @param diagObj
+ * @param _diagObj
  */
-export const addEdges = async function (edges, g, diagObj) {
+export const addEdges = async function (edges, g, _diagObj) {
   log.info('abc78 edges = ', edges);
   let cnt = 0;
   let linkIdCnt = {};

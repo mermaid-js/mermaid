@@ -1,8 +1,4 @@
-import {
-  scaleOrdinal as d3scaleOrdinal,
-  schemeTableau10 as d3schemeTableau10,
-  select as d3select,
-} from 'd3';
+import { select as d3select } from 'd3';
 import type { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 import type { MermaidConfig } from '../../config.type.js';
@@ -83,9 +79,6 @@ export const draw = async function (
       `${bounds2.x - 5} ${bounds2.y - 5} ${bounds2.width + 10} ${bounds2.height + 10}`
     );
   }
-
-  // Get color scheme for the graph
-  const colorScheme = d3scaleOrdinal(d3schemeTableau10);
 };
 
 export default {
