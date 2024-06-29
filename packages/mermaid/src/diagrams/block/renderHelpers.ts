@@ -18,7 +18,6 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   // We create a SVG label, either by delegating to addHtmlLabel or manually
   let radius = 0;
   let shape = '';
-  let layoutOptions = {};
   let padding;
   // Set the shape based parameters
   switch (vertex.type) {
@@ -36,9 +35,6 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
       break;
     case 'diamond':
       shape = 'question';
-      layoutOptions = {
-        portConstraints: 'FIXED_SIDE',
-      };
       break;
     case 'hexagon':
       shape = 'hexagon';
@@ -142,7 +138,7 @@ export async function insertBlockPositioned(elem: any, block: Block, db: any) {
   // Add the element to the DOM to size it
   const obj = db.getBlock(node.id);
   if (obj.type !== 'space') {
-    const nodeEl = await insertNode(elem, node);
+    await insertNode(elem, node);
     block.intersect = node?.intersect;
     positionNode(node);
   }

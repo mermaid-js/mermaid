@@ -195,7 +195,7 @@ export const drawNode = function (
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
   const description = node.descr.replace(/(<br\/*>)/g, '\n');
-  const newEl = createText(
+  createText(
     textElem,
     description,
     {

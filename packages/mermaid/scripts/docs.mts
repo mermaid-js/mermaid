@@ -242,7 +242,7 @@ export function transformMarkdownAst({
   addEditLink,
   removeYAML,
 }: TransformMarkdownAstOptions) {
-  return (tree: Root, _file?: any): Root => {
+  return (tree: Root): Root => {
     const astWithTransformedBlocks = flatmap(tree, (node: Code) => {
       if (node.type !== 'code' || !node.lang) {
         return [node]; // no transformation if this is not a code block

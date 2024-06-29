@@ -133,8 +133,6 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
       xSize = columns;
     }
 
-    const w = block.widthInColumns || 1;
-
     const ySize = Math.ceil(numItems / xSize);
 
     let width = xSize * (maxWidth + padding) + padding;

@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
-import express from 'express';
-import type { NextFunction, Request, Response } from 'express';
-import cors from 'cors';
-import { getBuildConfig, defaultOptions } from './util.js';
-import { context } from 'esbuild';
 import chokidar from 'chokidar';
-import { generateLangium } from '../.build/generateLangium.js';
+import cors from 'cors';
+import { context } from 'esbuild';
+import type { Request, Response } from 'express';
+import express from 'express';
 import { packageOptions } from '../.build/common.js';
+import { generateLangium } from '../.build/generateLangium.js';
+import { defaultOptions, getBuildConfig } from './util.js';
 
 const configs = Object.values(packageOptions).map(({ packageName }) =>
   getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: packageName })
@@ -29,7 +29,7 @@ const rebuildAll = async () => {
 };
 
 let clients: { id: number; response: Response }[] = [];
-function eventsHandler(request: Request, response: Response, next: NextFunction) {
+function eventsHandler(request: Request, response: Response) {
   const headers = {
     'Content-Type': 'text/event-stream',
     Connection: 'keep-alive',
