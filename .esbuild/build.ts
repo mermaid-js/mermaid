@@ -2,7 +2,8 @@ import { build } from 'esbuild';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
-import { MermaidBuildOptions, defaultOptions, getBuildConfig } from './util.js';
+import type { MermaidBuildOptions } from './util.js';
+import { defaultOptions, getBuildConfig } from './util.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
 
@@ -35,11 +36,11 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
 
   if (shouldVisualize) {
     for (const { metafile } of results) {
-      if (!metafile) {
+      if (!metafile?.outputs) {
         continue;
       }
       const fileName = Object.keys(metafile.outputs)
-        .filter((file) => !file.includes('chunks') && file.endsWith('js'))[0]
+        .find((file) => !file.includes('chunks') && file.endsWith('js'))
         .replace('dist/', '');
       // Upload metafile into https://esbuild.github.io/analyze/
       await writeFile(`stats/${fileName}.meta.json`, JSON.stringify(metafile));
@@ -48,6 +49,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
 };
 
 const handler = (e) => {
+  // eslint-disable-next-line no-console
   console.error(e);
   process.exit(1);
 };

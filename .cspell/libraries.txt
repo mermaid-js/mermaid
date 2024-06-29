@@ -58,6 +58,7 @@ rscratch
 sparkline
 sphinxcontrib
 ssim
+shiki
 stylis
 Swimm
 tsbuildinfo

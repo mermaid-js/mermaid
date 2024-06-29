@@ -1,4 +1,5 @@
-import { defineConfig, MarkdownOptions } from 'vitepress';
+import type { MarkdownOptions } from 'vitepress';
+import { defineConfig } from 'vitepress';
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all.js';
 
@@ -8,6 +9,7 @@ const allMarkdownTransformers: MarkdownOptions = {
     light: 'github-light',
     dark: 'github-dark',
   },
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   config: async (md) => {
     await MermaidExample(md);
   },
@@ -228,8 +230,6 @@ function sidebarNews() {
 
 /**
  * Return a string that puts together the pagePage, a '#', then the given id
- * @param  pagePath
- * @param  id
  * @returns  the fully formed path
  */
 function pathToId(pagePath: string, id = ''): string {

@@ -1,4 +1,5 @@
-import { build, InlineConfig, type PluginOption } from 'vite';
+import type { InlineConfig } from 'vite';
+import { build, type PluginOption } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
@@ -46,9 +47,10 @@ interface BuildOptions {
 
 export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions): InlineConfig => {
   const external: (string | RegExp)[] = ['require', 'fs', 'path'];
+  // eslint-disable-next-line no-console
   console.log(entryName, packageOptions[entryName]);
   const { name, file, packageName } = packageOptions[entryName];
-  let output: OutputOptions = [
+  const output: OutputOptions = [
     {
       name,
       format: 'esm',
@@ -83,7 +85,6 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     plugins: [
       jisonPlugin(),
       jsonSchemaPlugin(), // handles `.schema.yaml` files
-      // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
       typescript({ compilerOptions: { declaration: false } }),
       istanbul({
         exclude: ['node_modules', 'test/', '__mocks__', 'generated'],
@@ -121,10 +122,10 @@ await generateLangium();
 
 if (watch) {
   await build(getBuildConfig({ minify: false, watch, core: false, entryName: 'parser' }));
-  build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
+  void build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
   if (!mermaidOnly) {
-    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
-    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
+    void build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+    void build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
   }
 } else if (visualize) {
   await build(getBuildConfig({ minify: false, watch, core: false, entryName: 'parser' }));

@@ -1,8 +1,6 @@
-// <reference types="Cypress" />
-
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
-context('Sequence diagram', () => {
+describe('Sequence diagram', () => {
   it('should render a sequence diagram with boxes', () => {
     renderGraph(
       `
@@ -244,7 +242,7 @@ context('Sequence diagram', () => {
       `
     );
   });
-  context('font settings', () => {
+  describe('font settings', () => {
     it('should render different note fonts when configured', () => {
       imgSnapshotTest(
         `
@@ -341,7 +339,7 @@ context('Sequence diagram', () => {
       );
     });
   });
-  context('auth width scaling', () => {
+  describe('auth width scaling', () => {
     it('should render long actor descriptions', () => {
       imgSnapshotTest(
         `
@@ -530,7 +528,7 @@ context('Sequence diagram', () => {
       );
     });
   });
-  context('background rects', () => {
+  describe('background rects', () => {
     it('should render a single and nested rects', () => {
       imgSnapshotTest(
         `
@@ -810,7 +808,7 @@ context('Sequence diagram', () => {
       );
     });
   });
-  context('directives', () => {
+  describe('directives', () => {
     it('should override config with directive settings', () => {
       imgSnapshotTest(
         `
@@ -842,7 +840,7 @@ context('Sequence diagram', () => {
       );
     });
   });
-  context('links', () => {
+  describe('links', () => {
     it('should support actor links', () => {
       renderGraph(
         `
@@ -933,7 +931,7 @@ context('Sequence diagram', () => {
       );
     });
   });
-  context('svg size', () => {
+  describe('svg size', () => {
     it('should render a sequence diagram when useMaxWidth is true (default)', () => {
       renderGraph(
         `
@@ -1012,7 +1010,7 @@ context('Sequence diagram', () => {
       });
     });
   });
-  context('render after error', () => {
+  describe('render after error', () => {
     it('should render diagram after fixing destroy participant error', () => {
       cy.on('uncaught:exception', (err) => {
         return false;

@@ -5,7 +5,7 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { PacketDB, PacketWord } from './types.js';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const db = diagram.db as PacketDB;
   const config = db.getConfig();

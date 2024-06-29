@@ -138,3 +138,6 @@ yaxis
 yfunc
 yytext
 zenuml
+treemap
+brotli
+subconfig

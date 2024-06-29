@@ -777,7 +777,7 @@ export const entityDecode = function (html: string): string {
   // Escape HTML before decoding for HTML Entities
   html = escape(html).replace(/%26/g, '&').replace(/%23/g, '#').replace(/%3B/g, ';');
   decoder.innerHTML = html;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+   
   return unescape(decoder.textContent!);
 };
 

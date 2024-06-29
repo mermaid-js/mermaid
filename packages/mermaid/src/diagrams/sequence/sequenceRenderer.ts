@@ -383,9 +383,11 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
 
-  hasKatex(textObj.text)
-    ? await drawKatex(diagram, textObj, { startx, stopx, starty: lineStartY })
-    : drawText(diagram, textObj);
+  if (hasKatex(textObj.text)) {
+    await drawKatex(diagram, textObj, { startx, stopx, starty: lineStartY });
+  } else {
+    drawText(diagram, textObj);
+  }
 
   const textWidth = textDims.width;
 

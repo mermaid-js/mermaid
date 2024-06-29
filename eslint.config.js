@@ -19,7 +19,14 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ['**/dist/', '**/node_modules/', '.git/', '**/generated/', '**/coverage/'],
+    ignores: [
+      '**/dist/',
+      '**/node_modules/',
+      '.git/',
+      '**/generated/',
+      '**/coverage/',
+      'packages/mermaid/src/config.type.ts',
+    ],
   },
   {
     languageOptions: {
@@ -38,6 +45,7 @@ export default tseslint.config(
         ...globals.es2020,
         ...globals.jest,
         cy: 'readonly',
+        Cypress: 'readonly',
       },
     },
   },

@@ -35,7 +35,7 @@ function getId() {
 //  * @param currentCommit
 //  * @param otherCommit
 //  */
-// eslint-disable-next-line @cspell/spellchecker
+ 
 // function isFastForwardable(currentCommit, otherCommit) {
 //   log.debug('Entering isFastForwardable:', currentCommit.id, otherCommit.id);
 //   let cnt = 0;

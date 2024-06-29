@@ -24,8 +24,12 @@ export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElemen
   if (rectData.name) {
     rectElement.attr('name', rectData.name);
   }
-  rectData.rx !== undefined && rectElement.attr('rx', rectData.rx);
-  rectData.ry !== undefined && rectElement.attr('ry', rectData.ry);
+  if (rectData.rx) {
+    rectElement.attr('rx', rectData.rx);
+  }
+  if (rectData.ry) {
+    rectElement.attr('ry', rectData.ry);
+  }
 
   if (rectData.attrs !== undefined) {
     for (const attrKey in rectData.attrs) {
@@ -33,7 +37,9 @@ export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElemen
     }
   }
 
-  rectData.class !== undefined && rectElement.attr('class', rectData.class);
+  if (rectData.class) {
+    rectElement.attr('class', rectData.class);
+  }
 
   return rectElement;
 };
@@ -67,7 +73,9 @@ export const drawText = (element: SVG | Group, textData: TextData): D3TextElemen
   textElem.attr('class', 'legend');
 
   textElem.style('text-anchor', textData.anchor);
-  textData.class !== undefined && textElem.attr('class', textData.class);
+  if (textData.class) {
+    textElem.attr('class', textData.class);
+  }
 
   const tspan: D3TSpanElement = textElem.append('tspan');
   tspan.attr('x', textData.x + textData.textMargin * 2);

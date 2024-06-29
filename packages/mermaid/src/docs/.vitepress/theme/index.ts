@@ -1,14 +1,16 @@
+/* eslint-disable no-console */
 import DefaultTheme from 'vitepress/theme';
 import './custom.css';
-// @ts-ignore
+// @ts-ignore Type not available
 import Mermaid from './Mermaid.vue';
-// @ts-ignore
+// @ts-ignore Type not available
 import Contributors from '../components/Contributors.vue';
-// @ts-ignore
+// @ts-ignore Type not available
 import HomePage from '../components/HomePage.vue';
-// @ts-ignore
+// @ts-ignore Type not available
 import TopBar from '../components/TopBar.vue';
 import { getRedirect } from './redirect.js';
+// @ts-ignore Type not available
 import { h } from 'vue';
 import Theme from 'vitepress/theme';
 import '../style/main.css';
