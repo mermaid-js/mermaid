@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import express from 'express';
 import type { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
@@ -54,6 +55,7 @@ function handleFileChange() {
   if (timeoutId !== undefined) {
     clearTimeout(timeoutId);
   }
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   timeoutId = setTimeout(async () => {
     await rebuildAll();
     sendEventsToAll();
@@ -74,6 +76,7 @@ async function createServer() {
       ignoreInitial: true,
       ignored: [/node_modules/, /dist/, /docs/, /coverage/],
     })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     .on('all', async (event, path) => {
       // Ignore other events.
       if (!['add', 'change'].includes(event)) {
@@ -99,4 +102,4 @@ async function createServer() {
   });
 }
 
-createServer();
+void createServer();

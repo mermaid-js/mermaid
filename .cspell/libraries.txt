@@ -55,10 +55,10 @@ pyplot
 redmine
 rehype
 rscratch
+shiki
 sparkline
 sphinxcontrib
 ssim
-shiki
 stylis
 Swimm
 tsbuildinfo

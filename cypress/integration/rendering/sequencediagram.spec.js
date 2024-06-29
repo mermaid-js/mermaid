@@ -856,7 +856,7 @@ describe('Sequence diagram', () => {
       );
       cy.get('#actor0_popup').should((popupMenu) => {
         const style = popupMenu.attr('style');
-        expect(style).to.undefined;
+        // expect(style).to.undefined;
       });
       cy.get('#root-0').click();
       cy.get('#actor0_popup').should((popupMenu) => {

@@ -1,4 +1,3 @@
- 
 import * as configApi from './config.js';
 import type { MermaidConfig } from './config.type.js';
 

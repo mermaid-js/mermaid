@@ -1,16 +1,12 @@
 import cspell from '@cspell/eslint-plugin';
 import eslint from '@eslint/js';
-// @ts-ignore - no types available
 import cypress from 'eslint-plugin-cypress';
 import jsdoc from 'eslint-plugin-jsdoc';
-// @ts-ignore - no types available
 import json from 'eslint-plugin-json';
-// @ts-ignore - no types available
 import lodash from 'eslint-plugin-lodash';
-// @ts-ignore - no types available
+import markdown from 'eslint-plugin-markdown';
 import noOnlyTests from 'eslint-plugin-no-only-tests';
 import tsdoc from 'eslint-plugin-tsdoc';
-// @ts-ignore - no types available
 import unicorn from 'eslint-plugin-unicorn';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -57,6 +53,7 @@ export default tseslint.config(
       lodash,
       unicorn,
       cypress,
+      markdown,
       tsdoc,
       jsdoc,
     },
@@ -198,10 +195,6 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-misused-promises': 'off',
     },
-    languageOptions: {
-      parserOptions: {
-        project: null,
-      },
-    },
+    processor: 'markdown/markdown',
   }
 );

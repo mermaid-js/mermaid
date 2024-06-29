@@ -6,6 +6,18 @@
     "noEmit": true,
     "allowJs": true
   },
-  "include": ["./.build/*.ts", "./.esbuild/*.ts", "./.vite/*.ts", "./cypress.config.ts", "./tests", "./scripts", "./cypress", "./__mocks__", "./demos/dev",       "./vite.config.ts",
-      "./vitest.workspace.js", "eslint.config.js"]
+  "include": [
+    "./.build/*.ts",
+    "./.esbuild/*.ts",
+    "./.vite/*.ts",
+    "./cypress.config.ts",
+    "./tests",
+    "./scripts",
+    "./cypress",
+    "./__mocks__",
+    "./demos/dev",
+    "./vite.config.ts",
+    "./vitest.workspace.js",
+    "eslint.config.js"
+  ]
 }

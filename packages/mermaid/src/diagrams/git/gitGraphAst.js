@@ -35,7 +35,7 @@ function getId() {
 //  * @param currentCommit
 //  * @param otherCommit
 //  */
- 
+
 // function isFastForwardable(currentCommit, otherCommit) {
 //   log.debug('Entering isFastForwardable:', currentCommit.id, otherCommit.id);
 //   let cnt = 0;
