@@ -218,7 +218,7 @@ export async function insertEdges(
           { x: end.x, y: end.y },
         ];
         // edge.points = points;
-        await insertEdge(
+        insertEdge(
           elem,
           { v: edge.start, w: edge.end, name: edge.id },
           {
@@ -243,7 +243,7 @@ export async function insertEdges(
             points,
             classes: 'edge-thickness-normal edge-pattern-solid flowchart-link LS-a1 LE-b1',
           });
-          await positionEdgeLabel(
+          positionEdgeLabel(
             { ...edge, x: points[1].x, y: points[1].y },
             {
               originalPath: points,

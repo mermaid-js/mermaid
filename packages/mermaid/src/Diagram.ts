@@ -6,6 +6,7 @@ import { encodeEntities } from './utils.js';
 import type { DetailedError } from './utils.js';
 import type { DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
 
 /**

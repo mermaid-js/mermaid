@@ -83,6 +83,7 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
     return text;
   }
   if (config.dompurifyConfig) {
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
     text = DOMPurify.sanitize(sanitizeMore(text, config), {

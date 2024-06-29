@@ -80,7 +80,7 @@ export const addActor = function (
   }
 
   // Don't allow null descriptions, either
-  if (description == null || description.text == null) {
+  if (description?.text == null) {
     description = { text: name, wrap: null, type };
   }
   if (type == null || description.text == null) {
@@ -155,7 +155,7 @@ export const addSignal = function (
   idTo?: Message['to'],
   message?: { text: string; wrap: boolean },
   messageType?: number,
-  activate: boolean = false
+  activate = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
     const cnt = activationCount(idFrom || '');
@@ -247,13 +247,13 @@ export const parseMessage = function (str: string) {
   const message = {
     text: trimmedStr.replace(/^:?(?:no)?wrap:/, '').trim(),
     wrap:
-      trimmedStr.match(/^:?wrap:/) !== null
+      /^:?wrap:/.exec(trimmedStr) !== null
         ? true
-        : trimmedStr.match(/^:?nowrap:/) !== null
+        : /^:?nowrap:/.exec(trimmedStr) !== null
           ? false
           : undefined,
   };
-  log.debug(`parseMessage: ${message}`);
+  log.debug(`parseMessage: ${JSON.stringify(message)}`);
   return message;
 };
 
@@ -261,12 +261,12 @@ export const parseMessage = function (str: string) {
 // The color can be rgb,rgba,hsl,hsla, or css code names  #hex codes are not supported for now because of the way the char # is handled
 // We extract first segment as color, the rest of the line is considered as text
 export const parseBoxData = function (str: string) {
-  const match = str.match(/^((?:rgba?|hsla?)\s*\(.*\)|\w*)(.*)$/);
-  let color = match != null && match[1] ? match[1].trim() : 'transparent';
-  let title = match != null && match[2] ? match[2].trim() : undefined;
+  const match = /^((?:rgba?|hsla?)\s*\(.*\)|\w*)(.*)$/.exec(str);
+  let color = match?.[1] ? match[1].trim() : 'transparent';
+  let title = match?.[2] ? match[2].trim() : undefined;
 
   // check that the string is a color
-  if (window && window.CSS) {
+  if (window?.CSS) {
     if (!window.CSS.supports('color', color)) {
       color = 'transparent';
       title = str.trim();
@@ -288,9 +288,9 @@ export const parseBoxData = function (str: string) {
         : undefined,
     wrap:
       title !== undefined
-        ? title.match(/^:?wrap:/) !== null
+        ? /^:?wrap:/.exec(title) !== null
           ? true
-          : title.match(/^:?nowrap:/) !== null
+          : /^:?nowrap:/.exec(title) !== null
             ? false
             : undefined
         : undefined,
@@ -461,12 +461,12 @@ export const addDetails = function (actorId: string, text: { text: string }) {
     const text = elem.innerHTML;
     const details = JSON.parse(text);
     // add the deserialized text to the actor's property field.
-    if (details['properties']) {
-      insertProperties(actor, details['properties']);
+    if (details.properties) {
+      insertProperties(actor, details.properties);
     }
 
-    if (details['links']) {
-      insertLinks(actor, details['links']);
+    if (details.links) {
+      insertLinks(actor, details.links);
     }
   } catch (e) {
     log.error('error while parsing actor details text', e);
@@ -474,13 +474,14 @@ export const addDetails = function (actorId: string, text: { text: string }) {
 };
 
 export const getActorProperty = function (actor: Actor, key: string) {
-  if (actor !== undefined && actor.properties !== undefined) {
+  if (actor?.properties !== undefined) {
     return actor.properties[key];
   }
 
   return undefined;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
 export const apply = function (param: any | AddMessageParams | AddMessageParams[]) {
   if (Array.isArray(param)) {
     param.forEach(function (item) {
@@ -544,7 +545,7 @@ export const apply = function (param: any | AddMessageParams | AddMessageParams[
           if (param.to !== state.records.lastCreated) {
             throw new Error(
               'The created participant ' +
-                state.records.lastCreated +
+                state.records.lastCreated.name +
                 ' does not have an associated creating message after its declaration. Please check the sequence diagram.'
             );
           } else {
@@ -557,7 +558,7 @@ export const apply = function (param: any | AddMessageParams | AddMessageParams[
           ) {
             throw new Error(
               'The destroyed participant ' +
-                state.records.lastDestroyed +
+                state.records.lastDestroyed.name +
                 ' does not have an associated destroying message after its declaration. Please check the sequence diagram.'
             );
           } else {

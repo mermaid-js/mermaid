@@ -1339,15 +1339,15 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
-    expect(actors.get('a').links['Repo']).toBe('https://repo.contoso.com/');
-    expect(actors.get('b').links['Repo']).toBe(undefined);
-    expect(actors.get('a').links['Dashboard']).toBe('https://dashboard.contoso.com/');
-    expect(actors.get('b').links['Dashboard']).toBe('https://dashboard.contoso.com/');
+    expect(actors.get('a').links.Repo).toBe('https://repo.contoso.com/');
+    expect(actors.get('b').links.Repo).toBe(undefined);
+    expect(actors.get('a').links.Dashboard).toBe('https://dashboard.contoso.com/');
+    expect(actors.get('b').links.Dashboard).toBe('https://dashboard.contoso.com/');
     expect(actors.get('a').links['On-Call']).toBe('https://oncall.contoso.com/?svc=alice');
-    expect(actors.get('c').links['Dashboard']).toBe(undefined);
-    expect(actors.get('a').links['Endpoint']).toBe('https://alice.contoso.com');
-    expect(actors.get('a').links['Swagger']).toBe('https://swagger.contoso.com');
-    expect(actors.get('a').links['Tests']).toBe('https://tests.contoso.com/?svc=alice@contoso.com');
+    expect(actors.get('c').links.Dashboard).toBe(undefined);
+    expect(actors.get('a').links.Endpoint).toBe('https://alice.contoso.com');
+    expect(actors.get('a').links.Swagger).toBe('https://swagger.contoso.com');
+    expect(actors.get('a').links.Tests).toBe('https://tests.contoso.com/?svc=alice@contoso.com');
   });
 
   it('should handle properties EXPERIMENTAL: USE WITH CAUTION', async () => {
@@ -1363,11 +1363,11 @@ properties b: {"class": "external-service-actor", "icon": "@computer"}
 
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
-    expect(actors.get('a').properties['class']).toBe('internal-service-actor');
-    expect(actors.get('b').properties['class']).toBe('external-service-actor');
-    expect(actors.get('a').properties['icon']).toBe('@clock');
-    expect(actors.get('b').properties['icon']).toBe('@computer');
-    expect(actors.get('c').properties['class']).toBe(undefined);
+    expect(actors.get('a').properties.class).toBe('internal-service-actor');
+    expect(actors.get('b').properties.class).toBe('external-service-actor');
+    expect(actors.get('a').properties.icon).toBe('@clock');
+    expect(actors.get('b').properties.icon).toBe('@computer');
+    expect(actors.get('c').properties.class).toBe(undefined);
   });
 
   it('should handle box', async () => {

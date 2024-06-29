@@ -127,7 +127,7 @@ export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
   private data: QuadrantBuilderData;
-  private classes: Map<string, StylesObject> = new Map();
+  private classes = new Map<string, StylesObject>();
 
   constructor() {
     this.config = this.getDefaultConfig();

@@ -75,7 +75,7 @@ export const draw = async function (
     const magicFactor = Math.max(1, Math.round(0.125 * (bounds2.width / bounds2.height)));
     const height = bounds2.height + magicFactor + 10;
     const width = bounds2.width + 10;
-    const { useMaxWidth } = conf as Exclude<MermaidConfig['block'], undefined>;
+    const { useMaxWidth } = conf!;
     configureSvgSize(svg, height, width, !!useMaxWidth);
     log.debug('Here Bounds', bounds, bounds2);
     svg.attr(

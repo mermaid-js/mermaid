@@ -35,7 +35,7 @@ export const mermaidUrl = (
   };
   const objStr: string = JSON.stringify(codeObject);
   let url = `http://localhost:9000/e2e.html?graph=${utf8ToB64(objStr)}`;
-  if (api) {
+  if (api && typeof graphStr === 'string') {
     url = `http://localhost:9000/xss.html?graph=${graphStr}`;
   }
 
@@ -60,10 +60,9 @@ export const imgSnapshotTest = (
     sequence: {
       ...(_options.sequence || {}),
       actorFontFamily: 'courier',
-      noteFontFamily:
-        _options.sequence && _options.sequence.noteFontFamily
-          ? _options.sequence.noteFontFamily
-          : 'courier',
+      noteFontFamily: _options.sequence?.noteFontFamily
+        ? _options.sequence.noteFontFamily
+        : 'courier',
       messageFontFamily: 'courier',
     },
   };

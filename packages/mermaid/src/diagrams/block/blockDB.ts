@@ -8,9 +8,9 @@ import { clear as commonClear } from '../common/commonDb.js';
 import type { Block, ClassDef } from './blockTypes.js';
 
 // Initialize the node database for simple lookups
-let blockDatabase: Map<string, Block> = new Map();
+let blockDatabase = new Map<string, Block>();
 let edgeList: Block[] = [];
-let edgeCount: Map<string, number> = new Map();
+let edgeCount = new Map<string, number>();
 
 const COLOR_KEYWORD = 'color';
 const FILL_KEYWORD = 'fill';
@@ -18,7 +18,7 @@ const BG_FILL = 'bgFill';
 const STYLECLASS_SEP = ',';
 const config = getConfig();
 
-let classes: Map<string, ClassDef> = new Map();
+let classes = new Map<string, ClassDef>();
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
@@ -42,7 +42,7 @@ export const addStyleClass = function (id: string, styleAttributes = '') {
       const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
 
       // replace some style keywords
-      if (attrib.match(COLOR_KEYWORD)) {
+      if (RegExp(COLOR_KEYWORD).exec(attrib)) {
         const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
         const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
         foundClass.textStyles.push(newStyle2);
@@ -89,7 +89,7 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
   });
 };
 
-const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): void => {
+const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
   for (const block of blockList) {
@@ -168,7 +168,7 @@ const clear = (): void => {
   commonClear();
   rootBlock = { id: 'root', type: 'composite', children: [], columns: -1 } as Block;
   blockDatabase = new Map([['root', rootBlock]]);
-  blocks = [] as Block[];
+  blocks = [];
   classes = new Map();
 
   edgeList = [];

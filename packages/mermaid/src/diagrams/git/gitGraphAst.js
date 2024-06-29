@@ -90,7 +90,7 @@ export const setDirection = function (dir) {
 let options = {};
 export const setOptions = function (rawOptString) {
   log.debug('options str', rawOptString);
-  rawOptString = rawOptString && rawOptString.trim();
+  rawOptString = rawOptString?.trim();
   rawOptString = rawOptString || '{}';
   try {
     options = JSON.parse(rawOptString);

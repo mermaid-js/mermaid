@@ -82,7 +82,7 @@ async function createServer() {
       if (!['add', 'change'].includes(event)) {
         return;
       }
-      if (/\.langium$/.test(path)) {
+      if (path.endsWith('.langium')) {
         await generateLangium();
       }
       console.log(`${path} changed. Rebuilding...`);

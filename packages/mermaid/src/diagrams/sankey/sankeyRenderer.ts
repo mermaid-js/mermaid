@@ -41,7 +41,7 @@ const alignmentsMap: Record<
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
   // Get Sankey config
   const { securityLevel, sankey: conf } = getConfig();
-  const defaultSankeyConfig = defaultConfig!.sankey!;
+  const defaultSankeyConfig = defaultConfig.sankey!;
 
   // TODO:
   // This code repeats for every diagram

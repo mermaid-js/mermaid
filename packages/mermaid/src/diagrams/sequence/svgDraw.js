@@ -359,8 +359,8 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
 
   const rect = svgDrawCommon.getNoteRect();
   var cssclass = 'actor';
-  if (actor.properties != null && actor.properties['class']) {
-    cssclass = actor.properties['class'];
+  if (actor.properties?.class) {
+    cssclass = actor.properties.class;
   } else {
     rect.fill = '#eaeaea';
   }
@@ -380,8 +380,8 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   const rectElem = drawRect(g, rect);
   actor.rectData = rect;
 
-  if (actor.properties != null && actor.properties['icon']) {
-    const iconSrc = actor.properties['icon'].trim();
+  if (actor.properties?.icon) {
+    const iconSrc = actor.properties.icon.trim();
     if (iconSrc.charAt(0) === '@') {
       svgDrawCommon.drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
     } else {
