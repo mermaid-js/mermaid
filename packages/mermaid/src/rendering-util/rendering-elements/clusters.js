@@ -256,12 +256,7 @@ const roundedWithTitle = async (parent, node) => {
     innerRect = shapeSvg.insert(() => roughInnerNode);
   } else {
     rect = outerRectG.insert('rect', ':first-child');
-    let outerRectClass = 'outer';
-    if (look === 'neo') {
-      outerRectClass = 'outer state-shadow-neo';
-    } else {
-      outerRectClass = 'outer';
-    }
+    const outerRectClass = 'outer';
 
     // center the rect around its coordinate
     rect

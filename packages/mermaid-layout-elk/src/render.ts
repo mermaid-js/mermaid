@@ -263,7 +263,7 @@ const calcOffset = function (src, dest, parentLookupDb) {
 /**
  * Add edges to graph based on parsed graph definition
  */
-export const addEdges = function (dataForLayout, graph, svg) {
+export const addEdges = async function (dataForLayout, graph, svg) {
   log.info('abc78 DAGA edges = ', dataForLayout);
   const edges = dataForLayout.edges;
   const labelsEl = svg.insert('g').attr('class', 'edgeLabels');
@@ -272,152 +272,154 @@ export const addEdges = function (dataForLayout, graph, svg) {
   let defaultStyle;
   let defaultLabelStyle;
 
-  edges.forEach(function (edge) {
-    // Identify Link
-    const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
-    // count the links from+to the same node to give unique id
-    if (linkIdCnt[linkIdBase] === undefined) {
-      linkIdCnt[linkIdBase] = 0;
-      log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
-    } else {
-      linkIdCnt[linkIdBase]++;
-      log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
-    }
-    const linkId = linkIdBase + '_' + linkIdCnt[linkIdBase];
-    edge.id = linkId;
-    log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
-    const linkNameStart = 'LS_' + edge.start;
-    const linkNameEnd = 'LE_' + edge.end;
-
-    const edgeData = { style: '', labelStyle: '' };
-    edgeData.minlen = edge.length || 1;
-    edge.text = edge.label;
-    // Set link type for rendering
-    if (edge.type === 'arrow_open') {
-      edgeData.arrowhead = 'none';
-    } else {
-      edgeData.arrowhead = 'normal';
-    }
-
-    // Check of arrow types, placed here in order not to break old rendering
-    edgeData.arrowTypeStart = 'arrow_open';
-    edgeData.arrowTypeEnd = 'arrow_open';
-
-    /* eslint-disable no-fallthrough */
-    switch (edge.type) {
-      case 'double_arrow_cross':
-        edgeData.arrowTypeStart = 'arrow_cross';
-      case 'arrow_cross':
-        edgeData.arrowTypeEnd = 'arrow_cross';
-        break;
-      case 'double_arrow_point':
-        edgeData.arrowTypeStart = 'arrow_point';
-      case 'arrow_point':
-        edgeData.arrowTypeEnd = 'arrow_point';
-        break;
-      case 'double_arrow_circle':
-        edgeData.arrowTypeStart = 'arrow_circle';
-      case 'arrow_circle':
-        edgeData.arrowTypeEnd = 'arrow_circle';
-        break;
-    }
-
-    let style = '';
-    let labelStyle = '';
-
-    switch (edge.stroke) {
-      case 'normal':
-        style = 'fill:none;';
-        if (defaultStyle !== undefined) {
-          style = defaultStyle;
-        }
-        if (defaultLabelStyle !== undefined) {
-          labelStyle = defaultLabelStyle;
-        }
-        edgeData.thickness = 'normal';
-        edgeData.pattern = 'solid';
-        break;
-      case 'dotted':
-        edgeData.thickness = 'normal';
-        edgeData.pattern = 'dotted';
-        edgeData.style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
-        break;
-      case 'thick':
-        edgeData.thickness = 'thick';
-        edgeData.pattern = 'solid';
-        edgeData.style = 'stroke-width: 3.5px;fill:none;';
-        break;
-    }
-    // if (edge.style !== undefined) {
-    //   const styles = getStylesFromArray(edge.style);
-    //   style = styles.style;
-    //   labelStyle = styles.labelStyle;
-    // }
-
-    edgeData.style = edgeData.style += style;
-    edgeData.labelStyle = edgeData.labelStyle += labelStyle;
-
-    const conf = getConfig();
-    if (edge.interpolate !== undefined) {
-      edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
-    } else if (edges.defaultInterpolate !== undefined) {
-      edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
-    } else {
-      edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
-    }
-
-    if (edge.text === undefined) {
-      if (edge.style !== undefined) {
-        edgeData.arrowheadStyle = 'fill: #333';
+  await Promise.all(
+    edges.map(async function (edge) {
+      // Identify Link
+      const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
+      // count the links from+to the same node to give unique id
+      if (linkIdCnt[linkIdBase] === undefined) {
+        linkIdCnt[linkIdBase] = 0;
+        log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+      } else {
+        linkIdCnt[linkIdBase]++;
+        log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
       }
-    } else {
-      edgeData.arrowheadStyle = 'fill: #333';
-      edgeData.labelpos = 'c';
-    }
+      const linkId = linkIdBase + '_' + linkIdCnt[linkIdBase];
+      edge.id = linkId;
+      log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
+      const linkNameStart = 'LS_' + edge.start;
+      const linkNameEnd = 'LE_' + edge.end;
 
-    edgeData.labelType = edge.labelType;
-    edgeData.label = (edge?.text || '').replace(common.lineBreakRegex, '\n');
+      const edgeData = { style: '', labelStyle: '' };
+      edgeData.minlen = edge.length || 1;
+      edge.text = edge.label;
+      // Set link type for rendering
+      if (edge.type === 'arrow_open') {
+        edgeData.arrowhead = 'none';
+      } else {
+        edgeData.arrowhead = 'normal';
+      }
 
-    if (edge.style === undefined) {
-      edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
-    }
+      // Check of arrow types, placed here in order not to break old rendering
+      edgeData.arrowTypeStart = 'arrow_open';
+      edgeData.arrowTypeEnd = 'arrow_open';
 
-    edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
+      /* eslint-disable no-fallthrough */
+      switch (edge.type) {
+        case 'double_arrow_cross':
+          edgeData.arrowTypeStart = 'arrow_cross';
+        case 'arrow_cross':
+          edgeData.arrowTypeEnd = 'arrow_cross';
+          break;
+        case 'double_arrow_point':
+          edgeData.arrowTypeStart = 'arrow_point';
+        case 'arrow_point':
+          edgeData.arrowTypeEnd = 'arrow_point';
+          break;
+        case 'double_arrow_circle':
+          edgeData.arrowTypeStart = 'arrow_circle';
+        case 'arrow_circle':
+          edgeData.arrowTypeEnd = 'arrow_circle';
+          break;
+      }
 
-    edgeData.id = linkId;
-    edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
+      let style = '';
+      let labelStyle = '';
 
-    const labelEl = insertEdgeLabel(labelsEl, edgeData);
+      switch (edge.stroke) {
+        case 'normal':
+          style = 'fill:none;';
+          if (defaultStyle !== undefined) {
+            style = defaultStyle;
+          }
+          if (defaultLabelStyle !== undefined) {
+            labelStyle = defaultLabelStyle;
+          }
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'solid';
+          break;
+        case 'dotted':
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'dotted';
+          edgeData.style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
+          break;
+        case 'thick':
+          edgeData.thickness = 'thick';
+          edgeData.pattern = 'solid';
+          edgeData.style = 'stroke-width: 3.5px;fill:none;';
+          break;
+      }
+      // if (edge.style !== undefined) {
+      //   const styles = getStylesFromArray(edge.style);
+      //   style = styles.style;
+      //   labelStyle = styles.labelStyle;
+      // }
 
-    // calculate start and end points of the edge, note that the source and target
-    // can be modified for shapes that have ports
-    const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge, dir);
-    log.debug('abc78 source and target', source, target);
-    // Add the edge to the graph
-    graph.edges.push({
-      id: 'e' + edge.start + edge.end,
-      ...edge,
-      sources: [source],
-      targets: [target],
-      sourceId,
-      targetId,
-      labelEl: labelEl,
-      labels: [
-        {
-          width: edgeData.width,
-          height: edgeData.height,
-          orgWidth: edgeData.width,
-          orgHeight: edgeData.height,
-          text: edgeData.label,
-          layoutOptions: {
-            'edgeLabels.inline': 'true',
-            'edgeLabels.placement': 'CENTER',
+      edgeData.style = edgeData.style += style;
+      edgeData.labelStyle = edgeData.labelStyle += labelStyle;
+
+      const conf = getConfig();
+      if (edge.interpolate !== undefined) {
+        edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
+      } else if (edges.defaultInterpolate !== undefined) {
+        edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
+      } else {
+        edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
+      }
+
+      if (edge.text === undefined) {
+        if (edge.style !== undefined) {
+          edgeData.arrowheadStyle = 'fill: #333';
+        }
+      } else {
+        edgeData.arrowheadStyle = 'fill: #333';
+        edgeData.labelpos = 'c';
+      }
+
+      edgeData.labelType = edge.labelType;
+      edgeData.label = (edge?.text || '').replace(common.lineBreakRegex, '\n');
+
+      if (edge.style === undefined) {
+        edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
+      }
+
+      edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
+
+      edgeData.id = linkId;
+      edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
+
+      const labelEl = await insertEdgeLabel(labelsEl, edgeData);
+
+      // calculate start and end points of the edge, note that the source and target
+      // can be modified for shapes that have ports
+      const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge, dir);
+      log.debug('abc78 source and target', source, target);
+      // Add the edge to the graph
+      graph.edges.push({
+        id: 'e' + edge.start + edge.end,
+        ...edge,
+        sources: [source],
+        targets: [target],
+        sourceId,
+        targetId,
+        labelEl: labelEl,
+        labels: [
+          {
+            width: edgeData.width,
+            height: edgeData.height,
+            orgWidth: edgeData.width,
+            orgHeight: edgeData.height,
+            text: edgeData.label,
+            layoutOptions: {
+              'edgeLabels.inline': 'true',
+              'edgeLabels.placement': 'CENTER',
+            },
           },
-        },
-      ],
-      edgeData,
-    });
-  });
+        ],
+        edgeData,
+      });
+    })
+  );
   return graph;
 };
 
@@ -503,7 +505,7 @@ export const render = async (data4Layout, svg, element, algorithm) => {
   const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
 
   // Add the edges to the elk graph, this will entail creating the actual edges
-  elkGraph = addEdges(data4Layout, elkGraph, svg);
+  elkGraph = await addEdges(data4Layout, elkGraph, svg);
 
   // Iterate through all nodes and add the top level nodes to the graph
   const nodes = data4Layout.nodes;
