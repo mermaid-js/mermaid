@@ -549,15 +549,11 @@ export const drawNode = function (elem, node, fullSection, conf) {
   node.height = Math.max(node.height, node.maxHeight);
   node.width = node.width + 2 * node.padding;
 
-  if (!htmlLabels) {
-    const dx = node.width / 2;
-    const dy = node.padding / 2;
-    textElem.attr('transform', 'translate(' + dx + ', ' + dy + ')');
-  } else {
-    const dx = (node.width - bbox.width) / 2;
-    const dy = (node.height - bbox.height) / 2;
-    textElem.attr('transform', 'translate(' + dx + ', ' + dy + ')');
-  }
+  // Work out how to move the node to the right place.
+  // If html labels we need to account for the bounding box.
+  const dx = (node.width - (htmlLabels ? bbox.width : 0)) / 2;
+  const dy = (node.height - (htmlLabels ? bbox.height : 0)) / 2;
+  textElem.attr('transform', `translate(${dx}, ${dy})`);
 
   // Create the background element
   defaultBkg(bkgElem, node, section, conf);
