@@ -115,6 +115,7 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
       stopx = temp;
     }
 
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
     if (textData.class === 'loopText') {
       textElem.attr('y', Math.round(starty));
@@ -325,7 +326,7 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
  * @param {any} conf - DrawText implementation discriminator object
  * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
+const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 5;
@@ -389,7 +390,7 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
     }
   }
 
-  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
@@ -410,7 +411,7 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   return height;
 };
 
-const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
+const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
@@ -491,7 +492,7 @@ const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height;
 
-  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
@@ -514,12 +515,12 @@ export const drawActor = async function (elem, actor, conf, isFooter) {
   }
 };
 
-export const drawBox = async function (elem, box, conf) {
+export const drawBox = function (elem, box, conf) {
   const boxplusTextGroup = elem.append('g');
   const g = boxplusTextGroup;
   drawBackgroundRect(g, box);
   if (box.name) {
-    await _drawTextCandidateFunc(conf)(
+    _drawTextCandidateFunc(conf)(
       box.name,
       g,
       box.x,

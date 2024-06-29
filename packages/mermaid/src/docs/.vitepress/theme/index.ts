@@ -35,7 +35,7 @@ export default {
         const url = new URL(window.location.origin + to);
         const newPath = getRedirect(url);
         if (newPath) {
-          console.log(`Redirecting to ${newPath} from ${window.location}`);
+          console.log(`Redirecting to ${newPath} from ${window.location.toString()}`);
           // router.go isn't loading the ID properly.
           window.location.href = `/${newPath}`;
         }
