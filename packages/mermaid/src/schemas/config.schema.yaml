@@ -7,7 +7,7 @@
 #   - `scripts/create-types-from-json-schema.mjs`
 #     Used to generate the `src/config.type.ts` TypeScript types for MermaidConfig
 #     with the `json-schema-to-typescript` NPM package.
-#   - `.vite/jsonSchemaPlugin.ts`
+#   - `.build/jsonSchema.ts`
 #     Used to generate the default values from the `default` keys in this
 #     JSON Schema using the `ajv` NPM package.
 #     Non-JSON values, like functions or `undefined`, still need to be manually
@@ -21,8 +21,9 @@
 # - Use `meta:enum` to document enum values (from jsonschema2md)
 # - Use `tsType` to override the TypeScript type (from json-schema-to-typescript)
 # - If adding a new object to `MermaidConfig` (e.g. a new diagram type),
-#   you may need to add it to `.vite/jsonSchemaPlugin.ts` and `src/docs.mts`
-#   to get the docs/default values to generate properly.
+#   you may need to add it to `.build/jsonSchema.ts`, `src/docs.mts`
+#   and `scripts/create-types-from-json-schema.mjs`
+#   to get the default values/docs/types to generate properly.
 $id: https://mermaid-js.github.io/schemas/config.schema.json
 $schema: https://json-schema.org/draft/2019-09/schema
 title: Mermaid Config
@@ -43,11 +44,14 @@ required:
   - er
   - pie
   - quadrantChart
+  - xyChart
   - requirement
   - mindmap
   - gitGraph
   - c4
   - sankey
+  - packet
+  - block
 properties:
   theme:
     description: |
@@ -63,8 +67,6 @@ properties:
     meta:enum:
       'null': Can be set to disable any pre-defined mermaid theme
     default: 'default'
-    # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-    tsType: 'string | "default" | "forest" | "dark" | "neutral" | "null"'
   themeVariables:
     tsType: any
   themeCSS:
@@ -73,6 +75,12 @@ properties:
     description: The maximum allowed size of the users text diagram
     type: number
     default: 50000
+  maxEdges:
+    description: |
+      Defines the maximum number of edges that can be drawn in a graph.
+    type: integer
+    default: 500
+    minimum: 0
   darkMode:
     type: boolean
     default: false
@@ -115,8 +123,6 @@ properties:
       error: Equivalent to 4
       fatal: Equivalent to 5 (default)
     default: 5
-    # Allow any number or string for typescript backwards compatibility (fix in Mermaid v10)
-    tsType: 'number | string | 0 | 2 | 1 | "trace" | "debug" | "info" | "warn" | "error" | "fatal" | 3 | 4 | 5 | undefined'
   securityLevel:
     description: Level of trust for parsed diagram
     type: string
@@ -134,8 +140,6 @@ properties:
         This prevent any JavaScript from running in the context.
         This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, or links to other tabs or targets, etc.
     default: strict
-    # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-    tsType: 'string | "strict" | "loose" | "antiscript" | "sandbox" | undefined'
   startOnLoad:
     description: Dictates whether mermaid starts on Page load
     type: boolean
@@ -155,11 +159,27 @@ properties:
       in the current `currentConfig`.
 
       This prevents malicious graph directives from overriding a site's default security.
-    default: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
+    default:
+      [
+        'secure',
+        'securityLevel',
+        'startOnLoad',
+        'maxTextSize',
+        'suppressErrorRendering',
+        'maxEdges',
+      ]
     type: array
     items:
       type: string
     uniqueItems: false # Should be enabled, but it may be a breaking change from the old config
+  legacyMathML:
+    description: |
+      This option specifies if Mermaid can expect the dependent to include KaTeX stylesheets for browsers
+      without their own MathML implementation. If this option is disabled and MathML is not supported, the math
+      equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
+      fall back to legacy rendering for KaTeX.
+    type: boolean
+    default: false
   deterministicIds:
     description: |
       This option controls if the generated ids of nodes in the SVG are
@@ -197,6 +217,8 @@ properties:
     $ref: '#/$defs/PieDiagramConfig'
   quadrantChart:
     $ref: '#/$defs/QuadrantChartConfig'
+  xyChart:
+    $ref: '#/$defs/XYChartConfig'
   requirement:
     $ref: '#/$defs/RequirementDiagramConfig'
   mindmap:
@@ -207,6 +229,10 @@ properties:
     $ref: '#/$defs/C4DiagramConfig'
   sankey:
     $ref: '#/$defs/SankeyDiagramConfig'
+  packet:
+    $ref: '#/$defs/PacketDiagramConfig'
+  block:
+    $ref: '#/$defs/BlockDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -217,8 +243,14 @@ properties:
   fontSize:
     type: number
     default: 16
+  suppressErrorRendering:
+    type: boolean
+    default: false
+    description: |
+      Suppresses inserting 'Syntax error' diagram in the DOM.
+      This is useful when you want to control how to handle syntax errors in your application.
 
-$defs: # JSON Schema definition (maybe we should move these to a seperate file)
+$defs: # JSON Schema definition (maybe we should move these to a separate file)
   BaseDiagramConfig:
     # TODO: More config needs to be moved here
     title: Base Diagram Config
@@ -777,6 +809,9 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
       rotateCommitLabel:
         type: boolean
         default: true
+      parallelCommits:
+        type: boolean
+        default: false
       # YAML anchor reference, don't use $ref since ajv doesn't load defaults
       arrowMarkerAbsolute: *arrowMarkerAbsolute
 
@@ -982,6 +1017,132 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: number
         minimum: 0
         default: 2
+  XYChartAxisConfig:
+    title: XYChart axis config
+    description: This object contains configuration for XYChart axis config
+    type: object
+    unevaluatedProperties: true
+    required:
+      - showLabel
+      - labelFontSize
+      - labelPadding
+      - showTitle
+      - titleFontSize
+      - titlePadding
+      - showTick
+      - tickLength
+      - tickWidth
+      - showAxisLine
+      - axisLineWidth
+    properties:
+      showLabel:
+        description: Should show the axis labels (tick text)
+        type: boolean
+        default: true
+      labelFontSize:
+        description: font size of the axis labels (tick text)
+        type: number
+        default: 14
+        minimum: 1
+      labelPadding:
+        description: top and bottom space from axis label (tick text)
+        type: number
+        default: 5
+        minimum: 0
+      showTitle:
+        description: Should show the axis title
+        type: boolean
+        default: true
+      titleFontSize:
+        description: font size of the axis title
+        type: number
+        default: 16
+        minimum: 1
+      titlePadding:
+        description: top and bottom space from axis title
+        type: number
+        default: 5
+        minimum: 0
+      showTick:
+        description: Should show the axis tick lines
+        type: boolean
+        default: true
+      tickLength:
+        description: length of the axis tick lines
+        type: number
+        default: 5
+        minimum: 1
+      tickWidth:
+        description: width of the axis tick lines
+        type: number
+        default: 2
+        minimum: 1
+      showAxisLine:
+        description: Show line across the axis
+        type: boolean
+        default: true
+      axisLineWidth:
+        description: Width of the axis line
+        type: number
+        default: 2
+        minimum: 1
+
+  XYChartConfig:
+    title: XYChart Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: This object contains configuration specific to XYCharts
+    type: object
+    unevaluatedProperties: false
+    required:
+      - width
+      - height
+      - titleFontSize
+      - titlePadding
+      - xAxis
+      - yAxis
+      - showTitle
+      - chartOrientation
+      - plotReservedSpacePercent
+    properties:
+      width:
+        description: width of the chart
+        type: number
+        default: 700
+        minimum: 1
+      height:
+        description: height of the chart
+        type: number
+        default: 500
+        minimum: 1
+      titleFontSize:
+        description: Font size of the chart title
+        type: number
+        default: 20
+        minimum: 1
+      titlePadding:
+        description: Top and bottom space from the chart title
+        type: number
+        default: 10
+        minimum: 0
+      showTitle:
+        description: Should show the chart title
+        type: boolean
+        default: true
+      xAxis:
+        $ref: '#/$defs/XYChartAxisConfig'
+        default: { '$ref': '#/$defs/XYChartAxisConfig' }
+      yAxis:
+        $ref: '#/$defs/XYChartAxisConfig'
+        default: { '$ref': '#/$defs/XYChartAxisConfig' }
+      chartOrientation:
+        description: How to plot will be drawn horizontal or vertical
+        tsType: '"vertical" | "horizontal"'
+        default: 'vertical'
+      plotReservedSpacePercent:
+        description: Minimum percent of space plots of the chart will take
+        type: number
+        default: 50
+        minimum: 30
 
   ErDiagramConfig:
     title: Er Diagram Config
@@ -1021,8 +1182,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           LR: Left-Right
           RL: Right to Left
         default: TB
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "TB" | "BT" | "LR" | "RL"'
       minEntityWidth:
         description: The minimum width of an entity box. Expressed in pixels.
         type: integer
@@ -1135,8 +1294,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           dagre-d3: The [dagre-d3-es](https://www.npmjs.com/package/dagre-d3-es) library.
           dagre-wrapper: wrapper for dagre implemented in mermaid
           elk: Layout using [elkjs](https://github.com/kieler/elkjs)
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "dagre-d3" | "dagre-wrapper" | "elk"'
 
   ClassDiagramConfig:
     title: Class Diagram Config
@@ -1252,8 +1409,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           - center
           - right
         default: center
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "left" | "center" | "right"'
       bottomMarginAdj:
         description: |
           Prolongs the edge of the diagram downwards.
@@ -1379,8 +1534,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           - center
           - right
         default: center
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "left" | "center" | "right"'
       bottomMarginAdj:
         description: |
           Prolongs the edge of the diagram downwards.
@@ -1549,13 +1702,10 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         meta:enum:
           compact: Enables displaying multiple tasks on the same row.
         default: ''
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "compact"'
       weekday:
         description: |
           On which day a week-based interval should start
         type: string
-        tsType: '"monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"'
         enum:
           - monday
           - tuesday
@@ -1697,8 +1847,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: string
         enum: ['left', 'center', 'right']
         default: 'center'
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "left" | "center" | "right"'
 
       messageFontSize:
         description: This sets the font size of actor messages
@@ -1740,6 +1888,7 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
     unevaluatedProperties: false
     required:
       - titleTopMargin
+      - subGraphTitleMargin
       - diagramPadding
       - htmlLabels
       - nodeSpacing
@@ -1752,6 +1901,20 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
+      subGraphTitleMargin:
+        description: |
+          Defines a top/bottom margin for subgraph titles
+        type: object
+        properties:
+          top:
+            type: integer
+            minimum: 0
+          bottom:
+            type: integer
+            minimum: 0
+        default:
+          top: 0
+          bottom: 0
       arrowMarkerAbsolute:
         type: boolean # TODO, is this actually used here (it has no default value but was in types)
       diagramPadding:
@@ -1786,8 +1949,6 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         type: string
         enum: ['basis', 'linear', 'cardinal']
         default: 'basis'
-        # Allow any string for typescript backwards compatibility (fix in Mermaid v10)
-        tsType: 'string | "basis" | "linear" | "cardinal"'
       padding:
         description: |
           Represents the padding between the labels and the shape
@@ -1864,10 +2025,12 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
         $ref: '#/$defs/SankeyNodeAlignment'
         default: justify
       useMaxWidth:
+        type: boolean
         default: false
       showValues:
         description: |
           Toggle to display or hide values along with title.
+        type: boolean
         default: true
       prefix:
         description: |
@@ -1879,6 +2042,55 @@ $defs: # JSON Schema definition (maybe we should move these to a seperate file)
           The suffix to use for values
         type: string
         default: ''
+
+  PacketDiagramConfig:
+    title: Packet Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for packet diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      rowHeight:
+        description: The height of each row in the packet diagram.
+        type: number
+        minimum: 1
+        default: 32
+      bitWidth:
+        description: The width of each bit in the packet diagram.
+        type: number
+        minimum: 1
+        default: 32
+      bitsPerRow:
+        description: The number of bits to display per row.
+        type: number
+        minimum: 1
+        default: 32
+      showBits:
+        description: Toggle to display or hide bit numbers.
+        type: boolean
+        default: true
+      paddingX:
+        description: The horizontal padding between the blocks in a row.
+        type: number
+        minimum: 0
+        default: 5
+      paddingY:
+        description: The vertical padding between the rows.
+        type: number
+        minimum: 0
+        default: 5
+
+  BlockDiagramConfig:
+    title: Block Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for block diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        type: number
+        minimum: 0
+        default: 8
 
   FontCalculator:
     title: Font Calculator

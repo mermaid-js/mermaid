@@ -4,7 +4,7 @@ import flowDb from './flowDb.js';
 import flowRendererV2 from './flowRenderer-v2.js';
 import flowStyles from './styles.js';
 import type { MermaidConfig } from '../../config.type.js';
-import { setConfig } from '../../config.js';
+import { setConfig } from '../../diagram-api/diagramAPI.js';
 
 export const diagram = {
   parser: flowParser,

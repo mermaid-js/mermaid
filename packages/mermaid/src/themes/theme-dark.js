@@ -1,4 +1,4 @@
-import { invert, lighten, darken, rgba, adjust, isDark } from 'khroma';
+import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
 import { mkBorder } from './theme-helpers.js';
 
 class Theme {
@@ -109,7 +109,7 @@ class Theme {
     this.actorBorder = this.border1;
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.mainContrastColor;
-    this.actorLineColor = this.mainContrastColor;
+    this.actorLineColor = this.actorBorder;
     this.signalColor = this.mainContrastColor;
     this.signalTextColor = this.mainContrastColor;
     this.labelBoxBkgColor = this.actorBkg;
@@ -203,7 +203,7 @@ class Theme {
         this['surfacePeer' + i] || adjust(this.mainBkg, { h: 30, s: -30, l: -(-7 + i * 4) });
     }
 
-    // Setup teh label color for the set
+    // Setup the label color for the set
     this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
 
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
@@ -250,6 +250,32 @@ class Theme {
     this.quadrantExternalBorderStrokeFill =
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
+
+    /* xychart */
+    this.xyChart = {
+      backgroundColor: this.xyChart?.backgroundColor || this.background,
+      titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
+      xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
+      xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
+      xAxisLineColor: this.xyChart?.xAxisLineColor || this.primaryTextColor,
+      yAxisTitleColor: this.xyChart?.yAxisTitleColor || this.primaryTextColor,
+      yAxisLabelColor: this.xyChart?.yAxisLabelColor || this.primaryTextColor,
+      yAxisTickColor: this.xyChart?.yAxisTickColor || this.primaryTextColor,
+      yAxisLineColor: this.xyChart?.yAxisLineColor || this.primaryTextColor,
+      plotColorPalette:
+        this.xyChart?.plotColorPalette ||
+        '#3498db,#2ecc71,#e74c3c,#f1c40f,#bdc3c7,#ffffff,#34495e,#9b59b6,#1abc9c,#e67e22',
+    };
+
+    this.packet = {
+      startByteColor: this.primaryTextColor,
+      endByteColor: this.primaryTextColor,
+      labelColor: this.primaryTextColor,
+      titleColor: this.primaryTextColor,
+      blockStrokeColor: this.primaryTextColor,
+      blockFillColor: this.background,
+    };
 
     /* class */
     this.classText = this.primaryTextColor;

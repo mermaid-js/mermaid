@@ -59,8 +59,10 @@ The title is a short description of the chart and it will always render on top o
 
 #### Example
 
-    quadrantChart
-        title This is a sample example
+```
+quadrantChart
+    title This is a sample example
+```
 
 ### x-axis
 
@@ -68,8 +70,8 @@ The x-axis determines what text would be displayed in the x-axis. In x-axis ther
 
 #### Example
 
-1.  `x-axis <text> --> <text>` both the left and right axis text will be rendered.
-2.  `x-axis <text>` only the left axis text will be rendered.
+1. `x-axis <text> --> <text>` both the left and right axis text will be rendered.
+2. `x-axis <text>` only the left axis text will be rendered.
 
 ### y-axis
 
@@ -77,8 +79,8 @@ The y-axis determines what text would be displayed in the y-axis. In y-axis ther
 
 #### Example
 
-1.  `y-axis <text> --> <text>` both the bottom and top axis text will be rendered.
-2.  `y-axis <text>` only the bottom axis text will be rendered.
+1. `y-axis <text> --> <text>` both the bottom and top axis text will be rendered.
+2. `y-axis <text>` only the bottom axis text will be rendered.
 
 ### Quadrants text
 
@@ -86,10 +88,10 @@ The `quadrant-[1,2,3,4]` determine what text would be displayed inside the quadr
 
 #### Example
 
-1.  `quadrant-1 <text>` determine what text will be rendered inside the top right quadrant.
-2.  `quadrant-2 <text>` determine what text will be rendered inside the top left quadrant.
-3.  `quadrant-3 <text>` determine what text will be rendered inside the bottom left quadrant.
-4.  `quadrant-4 <text>` determine what text will be rendered inside the bottom right quadrant.
+1. `quadrant-1 <text>` determine what text will be rendered inside the top right quadrant.
+2. `quadrant-2 <text>` determine what text will be rendered inside the top left quadrant.
+3. `quadrant-3 <text>` determine what text will be rendered inside the bottom left quadrant.
+4. `quadrant-4 <text>` determine what text will be rendered inside the bottom right quadrant.
 
 ### Points
 
@@ -97,31 +99,31 @@ Points are used to plot a circle inside the quadrantChart. The syntax is `<text>
 
 #### Example
 
-1.  `Point 1: [0.75, 0.80]` here the Point 1 will be drawn in the top right quadrant.
-2.  `Point 2: [0.35, 0.24]` here the Point 2 will be drawn in the bottom left quadrant.
+1. `Point 1: [0.75, 0.80]` here the Point 1 will be drawn in the top right quadrant.
+2. `Point 2: [0.35, 0.24]` here the Point 2 will be drawn in the bottom left quadrant.
 
 ## Chart Configurations
 
-| Parameter                         | Description                                                                                       | Default value |
-| --------------------------------- | ------------------------------------------------------------------------------------------------- | :-----------: |
-| chartWidth                        | Width of the chart                                                                                |      500      |
-| chartHeight                       | Height of the chart                                                                               |      500      |
-| titlePadding                      | Top and Bottom padding of the title                                                               |      10       |
-| titleFontSize                     | Title font size                                                                                   |      20       |
-| quadrantPadding                   | Padding outside all the quadrants                                                                 |       5       |
-| quadrantTextTopPadding            | Quadrant text top padding when text is drawn on top ( not data points are there)                  |       5       |
-| quadrantLabelFontSize             | Quadrant text font size                                                                           |      16       |
-| quadrantInternalBorderStrokeWidth | Border stroke width inside the quadrants                                                          |       1       |
-| quadrantExternalBorderStrokeWidth | Quadrant external border stroke width                                                             |       2       |
-| xAxisLabelPadding                 | Top and bottom padding of x-axis text                                                             |       5       |
-| xAxisLabelFontSize                | X-axis texts font size                                                                            |      16       |
-| xAxisPosition                     | Position of x-axis (top , bottom) if there are points the x-axis will alway be rendered in bottom |     'top'     |
-| yAxisLabelPadding                 | Left and Right padding of y-axis text                                                             |       5       |
-| yAxisLabelFontSize                | Y-axis texts font size                                                                            |      16       |
-| yAxisPosition                     | Position of y-axis (left , right)                                                                 |    'left'     |
-| pointTextPadding                  | Padding between point and the below text                                                          |       5       |
-| pointLabelFontSize                | Point text font size                                                                              |      12       |
-| pointRadius                       | Radius of the point to be drawn                                                                   |       5       |
+| Parameter                         | Description                                                                                        | Default value |
+| --------------------------------- | -------------------------------------------------------------------------------------------------- | :-----------: |
+| chartWidth                        | Width of the chart                                                                                 |      500      |
+| chartHeight                       | Height of the chart                                                                                |      500      |
+| titlePadding                      | Top and Bottom padding of the title                                                                |      10       |
+| titleFontSize                     | Title font size                                                                                    |      20       |
+| quadrantPadding                   | Padding outside all the quadrants                                                                  |       5       |
+| quadrantTextTopPadding            | Quadrant text top padding when text is drawn on top ( not data points are there)                   |       5       |
+| quadrantLabelFontSize             | Quadrant text font size                                                                            |      16       |
+| quadrantInternalBorderStrokeWidth | Border stroke width inside the quadrants                                                           |       1       |
+| quadrantExternalBorderStrokeWidth | Quadrant external border stroke width                                                              |       2       |
+| xAxisLabelPadding                 | Top and bottom padding of x-axis text                                                              |       5       |
+| xAxisLabelFontSize                | X-axis texts font size                                                                             |      16       |
+| xAxisPosition                     | Position of x-axis (top , bottom) if there are points the x-axis will always be rendered in bottom |     'top'     |
+| yAxisLabelPadding                 | Left and Right padding of y-axis text                                                              |       5       |
+| yAxisLabelFontSize                | Y-axis texts font size                                                                             |      16       |
+| yAxisPosition                     | Position of y-axis (left , right)                                                                  |    'left'     |
+| pointTextPadding                  | Padding between point and the below text                                                           |       5       |
+| pointLabelFontSize                | Point text font size                                                                               |      12       |
+| pointRadius                       | Radius of the point to be drawn                                                                    |       5       |
 
 ## Chart Theme Variables
 

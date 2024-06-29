@@ -3,7 +3,7 @@ import idCache from './id-cache.js';
 import stateDb from './stateDb.js';
 import utils from '../../utils.js';
 import common from '../common/common.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 
 /**
@@ -206,7 +206,7 @@ export const addTitleAndBox = (g, stateDef, altBkg) => {
   g.insert('rect', ':first-child')
     .attr('x', startX)
     .attr('y', lineY)
-    .attr('class', altBkg ? 'alt-composit' : 'composit')
+    .attr('class', altBkg ? 'alt-composit' : 'composit') // cspell:disable-line
     .attr('width', width)
     .attr(
       'height',
@@ -482,11 +482,11 @@ export const drawEdge = function (elem, path, relation) {
         .attr('x', x)
         .attr('y', y + titleHeight);
 
-      const boundstmp = title.node().getBBox();
-      maxWidth = Math.max(maxWidth, boundstmp.width);
-      minX = Math.min(minX, boundstmp.x);
+      const boundsTmp = title.node().getBBox();
+      maxWidth = Math.max(maxWidth, boundsTmp.width);
+      minX = Math.min(minX, boundsTmp.x);
 
-      log.info(boundstmp.x, x, y + titleHeight);
+      log.info(boundsTmp.x, x, y + titleHeight);
 
       if (titleHeight === 0) {
         const titleBox = title.node().getBBox();

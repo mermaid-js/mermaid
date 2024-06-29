@@ -2,7 +2,7 @@ import mermaid from './mermaid.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import './diagram-api/diagram-orchestration.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import { beforeAll, describe, it, expect, vi } from 'vitest';
+import { beforeAll, describe, it, expect, vi, afterEach } from 'vitest';
 import type { DiagramDefinition } from './diagram-api/types.js';
 
 beforeAll(async () => {
@@ -89,7 +89,7 @@ describe('when using mermaid and ', () => {
       ).resolves.not.toThrow();
       // should still render, even if lazyLoadedDiagrams fails
       expect(mermaidAPI.render).toHaveBeenCalled();
-    });
+    }, 20_000);
 
     it('should defer diagram load based on parameter', async () => {
       let loaded = false;
@@ -104,7 +104,6 @@ describe('when using mermaid and ', () => {
           parse: (_text) => {
             return;
           },
-          parser: { yy: {} },
         },
         styles: () => {
           // do nothing
@@ -161,7 +160,7 @@ describe('when using mermaid and ', () => {
       await expect(
         mermaid.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
+        `[UnknownDiagramError: No diagram type detected matching given configuration for text: this is not a mermaid diagram definition]`
       );
     });
 
@@ -173,9 +172,9 @@ describe('when using mermaid and ', () => {
     it('should throw for an invalid flow definition', async () => {
       await expect(mermaid.parse('graph TQ;A--x|text including URL space|B;')).rejects
         .toThrowErrorMatchingInlineSnapshot(`
-        "Lexical error on line 1. Unrecognized text.
+        [Error: Lexical error on line 1. Unrecognized text.
         graph TQ;A--x|text includ
-        -----^"
+        -----^]
       `);
     });
 
@@ -205,10 +204,10 @@ describe('when using mermaid and ', () => {
         'Bob-->Alice: Feel sick...\n' +
         'end';
       await expect(mermaid.parse(text)).rejects.toThrowErrorMatchingInlineSnapshot(`
-        "Parse error on line 2:
+        [Error: Parse error on line 2:
         ...equenceDiagramAlice:->Bob: Hello Bob, h...
         ----------------------^
-        Expecting 'SOLID_OPEN_ARROW', 'DOTTED_OPEN_ARROW', 'SOLID_ARROW', 'DOTTED_ARROW', 'SOLID_CROSS', 'DOTTED_CROSS', 'SOLID_POINT', 'DOTTED_POINT', got 'TXT'"
+        Expecting 'SOLID_OPEN_ARROW', 'DOTTED_OPEN_ARROW', 'SOLID_ARROW', 'DOTTED_ARROW', 'SOLID_CROSS', 'DOTTED_CROSS', 'SOLID_POINT', 'DOTTED_POINT', got 'TXT']
       `);
     });
 
@@ -220,7 +219,7 @@ describe('when using mermaid and ', () => {
       await expect(
         mermaid.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
+        `[UnknownDiagramError: No diagram type detected matching given configuration for text: this is not a mermaid diagram definition]`
       );
       expect(parseErrorWasCalled).toEqual(true);
     });

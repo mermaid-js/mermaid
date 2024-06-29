@@ -13,7 +13,7 @@ Mermaid will automatically insert the [aria-roledescription](#aria-roledescripti
 
 The [aria-roledescription](https://www.w3.org/TR/wai-aria-1.1/#aria-roledescription) for the SVG HTML element is set to the diagram type key. (Note this may be slightly different than the keyword used for the diagram in the diagram text.)
 
-For example: The diagram type key for a state diagram is "stateDiagram". Here (a part of) the HTML of the SVG tag that shows the automatically inserted aria-roledscription set to "stateDiagram". _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.):_
+For example: The diagram type key for a state diagram is "stateDiagram". Here (a part of) the HTML of the SVG tag that shows the automatically inserted aria-roledescription set to "stateDiagram". _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.):_
 
 ```html
 <svg
@@ -91,7 +91,7 @@ See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-exam
   graph LR
       accTitle: Big Decisions
       accDescr: Bob's Burgers process for making big decisions
-      A[Identify Big Descision] --> B{Make Big Decision}
+      A[Identify Big Decision] --> B{Make Big Decision}
       B --> D[Be done]
 ```
 
@@ -123,7 +123,7 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
         for making very, very big decisions.
         This is actually a very simple flow: identify the big decision and then make the big decision.
          }
-      A[Identify Big Descision] --> B{Make Big Decision}
+      A[Identify Big Decision] --> B{Make Big Decision}
       B --> D[Be done]
 ```
 

@@ -1,4 +1,4 @@
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { sanitizeText } from '../common/common.js';
 import {
   setAccTitle,
@@ -11,7 +11,7 @@ let c4ShapeArray = [];
 let boundaryParseStack = [''];
 let currentBoundaryParse = 'global';
 let parentBoundaryParse = '';
-let boundarys = [
+let boundaries = [
   {
     alias: 'global',
     label: { text: 'global' },
@@ -33,7 +33,7 @@ export const getC4Type = function () {
 };
 
 export const setC4Type = function (c4TypeParam) {
-  let sanitizedText = sanitizeText(c4TypeParam, configApi.getConfig());
+  let sanitizedText = sanitizeText(c4TypeParam, getConfig());
   c4Type = sanitizedText;
 };
 
@@ -312,12 +312,12 @@ export const addPersonOrSystemBoundary = function (alias, label, type, tags, lin
   }
 
   let boundary = {};
-  const old = boundarys.find((boundary) => boundary.alias === alias);
+  const old = boundaries.find((boundary) => boundary.alias === alias);
   if (old && alias === old.alias) {
     boundary = old;
   } else {
     boundary.alias = alias;
-    boundarys.push(boundary);
+    boundaries.push(boundary);
   }
 
   // Don't allow null labels, either
@@ -368,12 +368,12 @@ export const addContainerBoundary = function (alias, label, type, tags, link) {
   }
 
   let boundary = {};
-  const old = boundarys.find((boundary) => boundary.alias === alias);
+  const old = boundaries.find((boundary) => boundary.alias === alias);
   if (old && alias === old.alias) {
     boundary = old;
   } else {
     boundary.alias = alias;
-    boundarys.push(boundary);
+    boundaries.push(boundary);
   }
 
   // Don't allow null labels, either
@@ -433,12 +433,12 @@ export const addDeploymentNode = function (
   }
 
   let boundary = {};
-  const old = boundarys.find((boundary) => boundary.alias === alias);
+  const old = boundaries.find((boundary) => boundary.alias === alias);
   if (old && alias === old.alias) {
     boundary = old;
   } else {
     boundary.alias = alias;
-    boundarys.push(boundary);
+    boundaries.push(boundary);
   }
 
   // Don't allow null labels, either
@@ -514,7 +514,7 @@ export const updateElStyle = function (
 ) {
   let old = c4ShapeArray.find((element) => element.alias === elementName);
   if (old === undefined) {
-    old = boundarys.find((element) => element.alias === elementName);
+    old = boundaries.find((element) => element.alias === elementName);
     if (old === undefined) {
       return;
     }
@@ -697,13 +697,18 @@ export const getC4ShapeKeys = function (parentBoundary) {
   return Object.keys(getC4ShapeArray(parentBoundary));
 };
 
-export const getBoundarys = function (parentBoundary) {
+export const getBoundaries = function (parentBoundary) {
   if (parentBoundary === undefined || parentBoundary === null) {
-    return boundarys;
+    return boundaries;
   } else {
-    return boundarys.filter((boundary) => boundary.parentBoundary === parentBoundary);
+    return boundaries.filter((boundary) => boundary.parentBoundary === parentBoundary);
   }
 };
+
+/**
+ * @deprecated Use {@link getBoundaries} instead
+ */
+export const getBoundarys = getBoundaries;
 
 export const getRels = function () {
   return rels;
@@ -723,7 +728,7 @@ export const autoWrap = function () {
 
 export const clear = function () {
   c4ShapeArray = [];
-  boundarys = [
+  boundaries = [
     {
       alias: 'global',
       label: { text: 'global' },
@@ -783,7 +788,7 @@ export const PLACEMENT = {
 };
 
 export const setTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  let sanitizedText = sanitizeText(txt, getConfig());
   title = sanitizedText;
 };
 
@@ -804,6 +809,7 @@ export default {
   getC4ShapeArray,
   getC4Shape,
   getC4ShapeKeys,
+  getBoundaries,
   getBoundarys,
   getCurrentBoundaryParse,
   getParentBoundaryParse,
@@ -816,7 +822,7 @@ export default {
   getAccTitle,
   getAccDescription,
   setAccDescription,
-  getConfig: () => configApi.getConfig().c4,
+  getConfig: () => getConfig().c4,
   clear,
   LINETYPE,
   ARROWTYPE,

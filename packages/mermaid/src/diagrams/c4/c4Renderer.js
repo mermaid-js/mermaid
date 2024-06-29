@@ -4,7 +4,7 @@ import { log } from '../../logger.js';
 import { parser } from './parser/c4Diagram.jison';
 import common from '../common/common.js';
 import c4Db from './c4Db.js';
-import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -542,15 +542,15 @@ function drawInsideBoundary(
       );
     }
     parentBoundaryAlias = currentBoundary.alias;
-    let nextCurrentBoundarys = diagObj.db.getBoundarys(parentBoundaryAlias);
+    let nextCurrentBoundaries = diagObj.db.getBoundarys(parentBoundaryAlias);
 
-    if (nextCurrentBoundarys.length > 0) {
+    if (nextCurrentBoundaries.length > 0) {
       // draw boundary inside currentBoundary
       drawInsideBoundary(
         diagram,
         parentBoundaryAlias,
         currentBounds,
-        nextCurrentBoundarys,
+        nextCurrentBoundaries,
         diagObj
       );
     }
@@ -580,8 +580,8 @@ function drawInsideBoundary(
  * @param diagObj
  */
 export const draw = function (_text, id, _version, diagObj) {
-  conf = configApi.getConfig().c4;
-  const securityLevel = configApi.getConfig().securityLevel;
+  conf = getConfig().c4;
+  const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {

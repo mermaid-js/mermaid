@@ -25,7 +25,7 @@ import {
   timeMonth,
 } from 'd3';
 import common from '../common/common.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 export const setConf = function () {
@@ -178,7 +178,7 @@ export const draw = function (text, id, version, diagObj) {
   // tasks are created based on their order of startTime
   taskArray.sort(taskCompare);
 
-  makeGant(taskArray, w, h);
+  makeGantt(taskArray, w, h);
 
   configureSvgSize(svg, h, w, conf.useMaxWidth);
 
@@ -194,7 +194,7 @@ export const draw = function (text, id, version, diagObj) {
    * @param pageWidth
    * @param pageHeight
    */
-  function makeGant(tasks, pageWidth, pageHeight) {
+  function makeGantt(tasks, pageWidth, pageHeight) {
     const barHeight = conf.barHeight;
     const gap = barHeight + conf.barGap;
     const topPadding = conf.topPadding;
@@ -695,12 +695,12 @@ export const draw = function (text, id, version, diagObj) {
   function vertLabels(theGap, theTopPad) {
     let prevGap = 0;
 
-    const numOccurances = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
+    const numOccurrences = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
 
     svg
       .append('g') // without doing this, impossible to put grid lines behind text
       .selectAll('text')
-      .data(numOccurances)
+      .data(numOccurrences)
       .enter()
       .append(function (d) {
         const rows = d[0].split(common.lineBreakRegex);
@@ -725,7 +725,7 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         if (i > 0) {
           for (let j = 0; j < i; j++) {
-            prevGap += numOccurances[i - 1][1];
+            prevGap += numOccurrences[i - 1][1];
             return (d[1] * theGap) / 2 + prevGap * theGap + theTopPad;
           }
         } else {

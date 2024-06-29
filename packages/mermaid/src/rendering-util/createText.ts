@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
+import type { Group } from '../diagram-api/types.js';
+import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
-import { decodeEntities } from '../mermaidAPI.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
+import { decodeEntities } from '../utils.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
 
@@ -74,6 +76,21 @@ function computeWidthOfText(parentNode: any, lineHeight: number, line: MarkdownL
   const textLength = testSpan.node().getComputedTextLength();
   testElement.remove();
   return textLength;
+}
+
+export function computeDimensionOfText(
+  parentNode: Group,
+  lineHeight: number,
+  text: string
+): DOMRect | undefined {
+  const testElement: D3TextElement = parentNode.append('text');
+  const testSpan: D3TSpanElement = createTspan(testElement, 1, lineHeight);
+  updateTextContentAndStyles(testSpan, [{ content: text, type: 'normal' }]);
+  const textDimension: DOMRect | undefined = testSpan.node()?.getBoundingClientRect();
+  if (textDimension) {
+    testElement.remove();
+  }
+  return textDimension;
 }
 
 /**
@@ -171,11 +188,11 @@ export const createText = (
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     // text = text.replace(/\\n|\n/g, '<br />');
     const htmlText = markdownToHTML(text);
-    // log.info('markdo  wnToHTML' + text, markdownToHTML(text));
+    // log.info('markdownToHTML' + text, markdownToHTML(text));
     const node = {
       isNode,
       label: decodeEntities(htmlText).replace(
-        /fa[blrs]?:fa-[\w-]+/g,
+        /fa[blrs]?:fa-[\w-]+/g, // cspell: disable-line
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
       labelStyle: style.replace('fill:', 'color:'),

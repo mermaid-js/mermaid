@@ -86,18 +86,22 @@ When including attributes on ER diagrams, you must decide whether to include for
 
 Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to label the relationship. Each statement consists of the following parts:
 
-        <first-entity> [<relationship> <second-entity> : <relationship-label>]
+```
+    <first-entity> [<relationship> <second-entity> : <relationship-label>]
+```
 
 Where:
 
-- `first-entity` is the name of an entity. Names must begin with an alphabetic character or an underscore (from v\<MERMAID_RELEASE_VERSION>+), and may also contain digits and hyphens.
+- `first-entity` is the name of an entity. Names must begin with an alphabetic character or an underscore (from v10.5.0+), and may also contain digits and hyphens.
 - `relationship` describes the way that both entities inter-relate. See below.
 - `second-entity` is the name of the other entity.
 - `relationship-label` describes the relationship from the perspective of the first entity.
 
 For example:
 
-        PROPERTY ||--|{ ROOM : contains
+```
+    PROPERTY ||--|{ ROOM : contains
+```
 
 This statement can be read as _a property contains one or more rooms, and a room is part of one and only one property_. You can see that the label here is from the first entity's perspective: a property contains a room, but a room does not contain a property. When considered from the perspective of the second entity, the equivalent label is usually very easy to infer. (Some ER diagrams label relationships from both perspectives, but this is not supported here, and is usually superfluous).
 
@@ -198,7 +202,7 @@ erDiagram
 
 The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
-### Entity Name Aliases (v\<MERMAID_RELEASE_VERSION>+)
+### Entity Name Aliases (v10.5.0+)
 
 An alias can be added to an entity using square brackets. If provided, the alias will be showed in the diagram instead of the entity name.
 
@@ -307,3 +311,5 @@ The following CSS class selectors are available for richer styling:
 | `.er.relationshipLabel`    | The label for a relationship                          |
 | `.er.relationshipLabelBox` | The box surrounding a relationship label              |
 | `.er.relationshipLine`     | The line representing a relationship between entities |
+
+<!--- cspell:locale en,en-gb --->

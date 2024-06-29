@@ -4,7 +4,7 @@ import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { log } from '../../logger.js';
 import svgDraw from './svgDraw.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { getConfig } from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 let idCache = {};
 const padding = 20;
@@ -193,6 +193,7 @@ export const draw = function (text, id, _version, diagObj) {
   const relations = diagObj.db.getRelations();
   relations.forEach(function (relation) {
     log.info(
+      // cspell:ignore tjoho
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
     );
     g.setEdge(

@@ -8,7 +8,7 @@
 
 > "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
 >
-> \-Wikipedia
+> -Wikipedia
 
 The class diagram is the main building block of object-oriented modeling. It is used for general conceptual modeling of the structure of the application, and for detailed modeling to translate the models into programming code. Class diagrams can also be used for data modeling. The classes in a class diagram represent both the main elements, interactions in the application, and the classes to be programmed.
 
@@ -240,9 +240,9 @@ class BankAccount{
 
 #### Generic Types
 
-Members can be defined using generic types, such as `List<int>`, for fields, parameters, and return types by enclosing the type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported.
+Generics can be represented as part of a class definition, and for class members/return types. In order to denote an item as generic, you enclose that type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported, though generics that include a comma are currently not supported. (such as `List<List<K, V>>`)
 
-Generics can be represented as part of a class definition and also in the parameters or the return value of a method/function:
+> _note_ when a generic is used within a class definition, the generic type is NOT considered part of the class name. i.e.: for any syntax which required you to reference the class name, you need to drop the type part of the definition. This also means that mermaid does not currently support having two classes with the same name, but different generic types.
 
 ```mermaid-example
 classDiagram
@@ -296,7 +296,9 @@ To describe the visibility (or encapsulation) of an attribute or method/function
 
 A relationship is a general term covering the specific types of logical connections found on class and object diagrams.
 
-    [classA][Arrow][ClassB]
+```
+[classA][Arrow][ClassB]
+```
 
 There are eight different types of relations defined for classes under UML which are currently supported:
 
@@ -369,7 +371,9 @@ classO .. classP : Link(Dashed)
 
 It is possible to add label text to a relation:
 
-    [classA][Arrow][ClassB]:LabelText
+```
+[classA][Arrow][ClassB]:LabelText
+```
 
 ```mermaid-example
 classDiagram
@@ -401,7 +405,9 @@ classDiagram
 
 Here is the syntax:
 
-    [Relation Type][Link][Relation Type]
+```
+[Relation Type][Link][Relation Type]
+```
 
 Where `Relation Type` can be one of:
 
@@ -424,8 +430,6 @@ And `Link` can be one of:
 ## Define Namespace
 
 A namespace groups classes.
-
-Code:
 
 ```mermaid-example
 classDiagram
@@ -461,13 +465,15 @@ The different cardinality options are :
 - `0..1` Zero or One
 - `1..*` One or more
 - `*` Many
-- `n` n {where n>1}
-- `0..n` zero to n {where n>1}
-- `1..n` one to n {where n>1}
+- `n` n (where n>1)
+- `0..n` zero to n (where n>1)
+- `1..n` one to n (where n>1)
 
 Cardinality can be easily defined by placing the text option within quotes `"` before or after a given arrow. For example:
 
-    [classA] "cardinality1" [Arrow] "cardinality2" [ClassB]:LabelText
+```
+[classA] "cardinality1" [Arrow] "cardinality2" [ClassB]:LabelText
+```
 
 ```mermaid-example
 classDiagram
@@ -620,9 +626,11 @@ It is possible to bind a click event to a node. The click can lead to either a j
 
 You would define these actions on a separate line after all classes have been declared.
 
-    action className "reference" "tooltip"
-    click className call callback() "tooltip"
-    click className href "url" "tooltip"
+```
+action className "reference" "tooltip"
+click className call callback() "tooltip"
+click className href "url" "tooltip"
+```
 
 - _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
 - _className_ is the id of the node that the action will be associated with
@@ -768,9 +776,30 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
 ## Styling
 
-### Styling a node
+### Styling a node (v10.7.0+)
 
-It is possible to apply specific styles such as a thicker border or a different background color to individual nodes. This is done by predefining classes in css styles that can be applied from the graph definition using the `cssClass` statement or the `:::` short hand.
+It is possible to apply specific styles such as a thicker border or a different background color to an individual node using the `style` keyword.
+
+```mermaid-example
+classDiagram
+  class Animal
+  class Mineral
+  style Animal fill:#f9f,stroke:#333,stroke-width:4px
+  style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
+
+```mermaid
+classDiagram
+  class Animal
+  class Mineral
+  style Animal fill:#f9f,stroke:#333,stroke-width:4px
+  style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
+
+#### Classes
+
+More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
+should have a different look. This is done by predefining classes in css styles that can be applied from the graph definition using the `cssClass` statement or the `:::` short hand.
 
 ```html
 <style>
@@ -784,11 +813,15 @@ It is possible to apply specific styles such as a thicker border or a different 
 
 Then attaching that class to a specific node:
 
-        cssClass "nodeId1" styleClass;
+```
+    cssClass "nodeId1" styleClass;
+```
 
 It is also possible to attach a class to a list of nodes in one statement:
 
-        cssClass "nodeId1,nodeId2" styleClass;
+```
+    cssClass "nodeId1,nodeId2" styleClass;
+```
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 

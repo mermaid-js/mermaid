@@ -70,7 +70,7 @@ class Theme {
     this.actorBorder = this.actorBorder || this.primaryBorderColor;
     this.actorBkg = this.actorBkg || this.mainBkg;
     this.actorTextColor = this.actorTextColor || this.primaryTextColor;
-    this.actorLineColor = this.actorLineColor || 'grey';
+    this.actorLineColor = this.actorLineColor || this.actorBorder;
     this.labelBoxBkgColor = this.labelBoxBkgColor || this.actorBkg;
     this.signalColor = this.signalColor || this.textColor;
     this.signalTextColor = this.signalTextColor || this.textColor;
@@ -165,7 +165,7 @@ class Theme {
       }
     }
 
-    // Setup teh label color for the set
+    // Setup the label color for the set
     this.scaleLabelColor = this.scaleLabelColor || this.labelTextColor;
 
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
@@ -244,6 +244,23 @@ class Theme {
     this.quadrantExternalBorderStrokeFill =
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
+
+    /* xychart */
+    this.xyChart = {
+      backgroundColor: this.xyChart?.backgroundColor || this.background,
+      titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
+      xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
+      xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
+      xAxisLineColor: this.xyChart?.xAxisLineColor || this.primaryTextColor,
+      yAxisTitleColor: this.xyChart?.yAxisTitleColor || this.primaryTextColor,
+      yAxisLabelColor: this.xyChart?.yAxisLabelColor || this.primaryTextColor,
+      yAxisTickColor: this.xyChart?.yAxisTickColor || this.primaryTextColor,
+      yAxisLineColor: this.xyChart?.yAxisLineColor || this.primaryTextColor,
+      plotColorPalette:
+        this.xyChart?.plotColorPalette ||
+        '#FFF4DD,#FFD8B1,#FFA07A,#ECEFF1,#D6DBDF,#C3E0A8,#FFB6A4,#FFD74D,#738FA7,#FFFFF0',
+    };
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
