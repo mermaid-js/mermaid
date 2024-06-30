@@ -46,7 +46,7 @@ const state = new ImperativeState<SequenceState>(() => ({
 export const addBox = function (data: { text: string; color: string; wrap: boolean }) {
   state.records.boxes.push({
     name: data.text,
-    wrap: (data.wrap === undefined && autoWrap()) || !!data.wrap,
+    wrap: (data.wrap === undefined && autoWrap()) ?? !!data.wrap,
     fill: data.color,
     actorKeys: [],
   });
@@ -91,7 +91,7 @@ export const addActor = function (
     box: assignedBox,
     name: name,
     description: description.text,
-    wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
+    wrap: (description.wrap === undefined && autoWrap()) ?? !!description.wrap,
     prevActor: state.records.prevActor,
     links: {},
     properties: {},
@@ -145,7 +145,7 @@ export const addMessage = function (
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    wrap: (message.wrap === undefined && autoWrap()) ?? !!message.wrap,
     answer: answer,
   });
 };
@@ -158,7 +158,7 @@ export const addSignal = function (
   activate = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
-    const cnt = activationCount(idFrom || '');
+    const cnt = activationCount(idFrom ?? '');
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
       const error = new Error('Trying to inactivate an inactive participant (' + idFrom + ')');
@@ -178,7 +178,7 @@ export const addSignal = function (
     from: idFrom,
     to: idTo,
     message: message?.text ?? '',
-    wrap: (message?.wrap === undefined && autoWrap()) || !!message?.wrap,
+    wrap: (message?.wrap === undefined && autoWrap()) ?? !!message?.wrap,
     type: messageType,
     activate,
   });
@@ -352,7 +352,7 @@ export const addNote = function (
     actor: actor,
     placement: placement,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    wrap: (message.wrap === undefined && autoWrap()) ?? !!message.wrap,
   };
 
   //@ts-ignore: Coerce actor into a [to, from, ...] array
@@ -363,7 +363,7 @@ export const addNote = function (
     from: actors[0],
     to: actors[1],
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    wrap: (message.wrap === undefined && autoWrap()) ?? !!message.wrap,
     type: LINETYPE.NOTE,
     placement: placement,
   });

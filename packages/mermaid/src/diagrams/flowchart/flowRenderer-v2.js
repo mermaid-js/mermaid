@@ -366,8 +366,8 @@ export const draw = async function (text, id, _version, diagObj) {
   }
 
   const { securityLevel, flowchart: conf } = getConfig();
-  const nodeSpacing = conf.nodeSpacing || 50;
-  const rankSpacing = conf.rankSpacing || 50;
+  const nodeSpacing = conf.nodeSpacing ?? 50;
+  const rankSpacing = conf.rankSpacing ?? 50;
 
   // Handle root and document for when rendering in sandbox mode
   let sandboxElement;

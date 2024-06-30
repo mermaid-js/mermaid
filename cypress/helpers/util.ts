@@ -54,11 +54,11 @@ export const imgSnapshotTest = (
 ): void => {
   const options: CypressMermaidConfig = {
     ..._options,
-    fontFamily: _options.fontFamily || 'courier',
+    fontFamily: _options.fontFamily ?? 'courier',
     // @ts-ignore TODO: Fix type of fontSize
-    fontSize: _options.fontSize || '16px',
+    fontSize: _options.fontSize ?? '16px',
     sequence: {
-      ...(_options.sequence || {}),
+      ...(_options.sequence ?? {}),
       actorFontFamily: 'courier',
       noteFontFamily: _options.sequence?.noteFontFamily
         ? _options.sequence.noteFontFamily
@@ -94,7 +94,7 @@ export const openURLAndVerifyRendering = (
   options: CypressMermaidConfig,
   validation?: any
 ): void => {
-  const name: string = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
+  const name: string = (options.name ?? cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   cy.visit(url);
   cy.window().should('have.property', 'rendered', true);

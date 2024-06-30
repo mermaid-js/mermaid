@@ -503,7 +503,7 @@ export const addSubGraph = function (
     }
   }
 
-  id = id || 'subGraph' + subCount;
+  id = id ?? 'subGraph' + subCount;
   title = title || '';
   title = sanitizeText(title);
   subCount = subCount + 1;

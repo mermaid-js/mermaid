@@ -5,7 +5,6 @@ import {
   scaleOrdinal as d3scaleOrdinal,
   schemeTableau10 as d3schemeTableau10,
 } from 'd3';
-
 import type { SankeyNode as d3SankeyNode } from 'd3-sankey';
 import {
   sankey as d3Sankey,
@@ -160,7 +159,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('class', 'link')
     .style('mix-blend-mode', 'multiply');
 
-  const linkColor = conf?.linkColor || 'gradient';
+  const linkColor = conf?.linkColor ?? 'gradient';
 
   if (linkColor === 'gradient') {
     const gradient = link

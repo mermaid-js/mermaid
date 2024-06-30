@@ -109,7 +109,6 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/only-throw-error': 'warn',
-      '@typescript-eslint/prefer-nullish-coalescing': 'warn',
       '@typescript-eslint/prefer-promise-reject-errors': 'warn',
       // END
       'json/*': ['error', 'allowComments'],

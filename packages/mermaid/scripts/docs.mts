@@ -181,10 +181,10 @@ export const transformToBlockQuote = (
 ) => {
   if (vitepress) {
     const vitepressType = type === 'note' ? 'info' : type;
-    return `::: ${vitepressType} ${customTitle || ''}\n${content}\n:::`;
+    return `::: ${vitepressType} ${customTitle ?? ''}\n${content}\n:::`;
   } else {
-    const icon = blockIcons[type] || '';
-    const title = `${icon}${customTitle || capitalize(type)}`;
+    const icon = blockIcons[type] ?? '';
+    const title = `${icon}${customTitle ?? capitalize(type)}`;
     return `> **${title}** \n> ${content.replace(/\n/g, '\n> ')}`;
   }
 };

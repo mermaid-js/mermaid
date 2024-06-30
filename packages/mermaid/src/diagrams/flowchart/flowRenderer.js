@@ -301,8 +301,8 @@ export const draw = async function (text, id, _version, diagObj) {
   if (dir === undefined) {
     dir = 'TD';
   }
-  const nodeSpacing = conf.nodeSpacing || 50;
-  const rankSpacing = conf.rankSpacing || 50;
+  const nodeSpacing = conf.nodeSpacing ?? 50;
+  const rankSpacing = conf.rankSpacing ?? 50;
 
   // Create the input mermaid.graph
   const g = new graphlib.Graph({

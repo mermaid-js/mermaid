@@ -101,7 +101,7 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       continue;
     }
     if (block.type === 'applyClass') {
-      setCssClass(block.id, block?.styleClass || '');
+      setCssClass(block.id, block?.styleClass ?? '');
       continue;
     }
     if (block.type === 'applyStyles') {
@@ -111,7 +111,7 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       continue;
     }
     if (block.type === 'column-setting') {
-      parent.columns = block.columns || -1;
+      parent.columns = block.columns ?? -1;
     } else if (block.type === 'edge') {
       const count = (edgeCount.get(block.id) ?? 0) + 1;
       edgeCount.set(block.id, count);
@@ -145,7 +145,7 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       }
       if (block.type === 'space') {
         // log.debug('abc95 space', block);
-        const w = block.width || 1;
+        const w = block.width ?? 1;
         for (let j = 0; j < w; j++) {
           const newBlock = clone(block);
           newBlock.id = newBlock.id + '-' + j;
