@@ -97,14 +97,14 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   // Also figure out which edges point to/from clusters and adjust them accordingly
   // Edges from/to clusters really points to the first child in the cluster.
   // TODO: pick optimal child in the cluster to us as link anchor
-  graph.edges().forEach(function (e) {
+  graph.edges().forEach(async function (e) {
     const edge = graph.edge(e.v, e.w, e.name);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
 
     // Check if link is either from or to a cluster
     log.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translating: ', clusterDb[e.v], clusterDb[e.w]);
-    insertEdgeLabel(edgeLabels, edge);
+    await insertEdgeLabel(edgeLabels, edge);
   });
 
   graph.edges().forEach(function (e) {

@@ -15,9 +15,6 @@ export const LEVELS: Record<LogLevel, number> = {
   fatal: 5,
 };
 
-console.log('apa');
-const apa = 1;
-
 export const log: Record<keyof typeof LEVELS, typeof console.log> = {
   trace: (..._args: any[]) => {},
   debug: (..._args: any[]) => {},
