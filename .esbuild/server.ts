@@ -19,12 +19,24 @@ const mermaidIIFEConfig = getBuildConfig({
 });
 configs.push(mermaidIIFEConfig);
 
-const contexts = await Promise.all(configs.map((config) => context(config)));
+const contexts = await Promise.all(
+  configs.map(async (config) => ({ config, context: await context(config) }))
+);
 
+let rebuildCounter = 1;
 const rebuildAll = async () => {
-  console.time('Rebuild time');
-  await Promise.all(contexts.map((ctx) => ctx.rebuild())).catch((e) => console.error(e));
-  console.timeEnd('Rebuild time');
+  const buildNumber = rebuildCounter++;
+  const timeLabel = `Rebuild ${buildNumber} Time (total)`;
+  console.time(timeLabel);
+  await Promise.all(
+    contexts.map(async ({ config, context }) => {
+      const buildVariant = `Rebuild ${buildNumber} Time (${Object.keys(config.entryPoints!)[0]} ${config.format})`;
+      console.time(buildVariant);
+      await context.rebuild();
+      console.timeEnd(buildVariant);
+    })
+  ).catch((e) => console.error(e));
+  console.timeEnd(timeLabel);
 };
 
 let clients: { id: number; response: Response }[] = [];
@@ -45,19 +57,19 @@ function eventsHandler(request: Request, response: Response, next: NextFunction)
   });
 }
 
-let timeoutId: NodeJS.Timeout | undefined = undefined;
+let timeoutID: NodeJS.Timeout | undefined = undefined;
 
 /**
  * Debounce file change events to avoid rebuilding multiple times.
  */
 function handleFileChange() {
-  if (timeoutId !== undefined) {
-    clearTimeout(timeoutId);
+  if (timeoutID !== undefined) {
+    clearTimeout(timeoutID);
   }
-  timeoutId = setTimeout(async () => {
+  timeoutID = setTimeout(async () => {
     await rebuildAll();
     sendEventsToAll();
-    timeoutId = undefined;
+    timeoutID = undefined;
   }, 100);
 }
 
@@ -79,10 +91,11 @@ async function createServer() {
       if (!['add', 'change'].includes(event)) {
         return;
       }
+      console.log(`${path} changed. Rebuilding...`);
+
       if (/\.langium$/.test(path)) {
         await generateLangium();
       }
-      console.log(`${path} changed. Rebuilding...`);
       handleFileChange();
     });
 

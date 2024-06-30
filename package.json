@@ -88,7 +88,7 @@
     "cspell": "^8.6.0",
     "cypress": "^13.7.1",
     "cypress-image-snapshot": "^4.0.1",
-    "esbuild": "^0.20.2",
+    "esbuild": "^0.21.5",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-cypress": "^2.15.1",
