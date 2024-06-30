@@ -13,7 +13,5 @@ export const roundedRect = async (parent: SVGAElement, node: Node) => {
     classes: '',
   } as RectOptions;
 
-  console.log('Perra1, node, options: ', node, options);
-
   return drawRect(parent, node, options);
 };

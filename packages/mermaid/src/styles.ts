@@ -85,8 +85,13 @@ const getStyles = (
 
 
   [data-look="neo"].node rect,  [data-look="neo"].node polygon , [data-look="neo"].node path {
-    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : 'none'};
     filter: ${options.dropShadow};
+  }
+
+  [data-look="neo"].node .neo-line path {
+    stroke: ${options.primaryBorderColor};
+    filter: none;
   }
 
   [data-look="neo"].node circle{

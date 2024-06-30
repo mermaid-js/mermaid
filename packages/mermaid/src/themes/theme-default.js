@@ -30,6 +30,7 @@ class Theme {
     this.secondBkg = '#ffffde';
     this.lineColor = '#333333';
     this.border1 = '#9370DB';
+    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     this.border2 = '#aaaa33';
     this.arrowheadColor = '#333333';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
@@ -117,7 +118,8 @@ class Theme {
     this.labelColor = 'black';
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
-    this.useGradient = true;
+
+    this.useGradient = false;
     this.gradientStart = this.primaryBorderColor;
     this.gradientStop = this.secondaryBorderColor;
     this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';

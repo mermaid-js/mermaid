@@ -1,6 +1,7 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import {
   styles2String,
   userNodeOverrides,
@@ -35,14 +36,19 @@ export const createSubroutinePathD = (
 };
 
 export const subroutine = async (parent: SVGAElement, node: Node) => {
+  const { themeVariables } = getConfig();
+  const { useGradient, mainBkg } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const halfPadding = (node?.padding || 0) / 2;
-  const labelPaddingX = node.look === 'neo' ? node.padding * 3 : node.padding;
-  const labelPaddingY = node.look === 'neo' ? node.padding * 1.5 : node.padding;
-  const w = bbox.width + labelPaddingY;
-  const h = bbox.height + labelPaddingX;
+  const halfPadding = (node?.padding || 8) / 2;
+  const nodePadding = node?.padding || 8;
+  // const labelPaddingX = node.padding;
+  // const labelPaddingY = node.padding;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
+  const w = bbox.width + labelPaddingX;
+  const h = bbox.height + labelPaddingY;
   const x = -bbox.width / 2 - labelPaddingX / 2;
   const y = -bbox.height / 2 - labelPaddingY / 2;
   let rect;
@@ -60,20 +66,29 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     { x: -8, y: 0 },
   ];
 
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handdrawn' || (node.look === 'neo' && !useGradient)) {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
+
+    if (node.look === 'neo') {
+      options.roughness = 0;
+      options.fillStyle = 'solid';
+      // options.stroke = 'none';
+      // options.strokeWidth = 0
+    }
 
     const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
     const l1 = rc.line(x, y, x, y + h, options);
     const l2 = rc.line(x + w, y, x + w, y + h, options);
 
-    shapeSvg.insert(() => l1, ':first-child');
-    shapeSvg.insert(() => l2, ':first-child');
+    const l1El = shapeSvg.insert(() => l1, ':first-child');
+    const l2El = shapeSvg.insert(() => l2, ':first-child');
+    l1El.attr('class', 'neo-line');
+    l2El.attr('class', 'neo-line');
     rect = shapeSvg.insert(() => roughNode, ':first-child');
 
-    rect.attr('class', 'basic label-container').attr('style', cssStyles);
+    // rect.attr('class', 'basic label-container').attr('style', cssStyles);
   } else {
     const el = insertPolygonShape(shapeSvg, w, h, points);
     if (nodeStyles) {
