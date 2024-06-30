@@ -231,10 +231,10 @@ export const createText = async (
       structuredText,
       text ? addSvgBackground : false
     );
-    if (style.match('stroke:')) style = style.replace('stroke:', 'lineColor:');
+    if (/stroke:/.exec(style)) {style = style.replace('stroke:', 'lineColor:');}
     select(svgLabel)
       .select('text')
-      .attr('style', style.replace(/color\:/g, 'fill:'));
+      .attr('style', style.replace(/color:/g, 'fill:'));
     // svgLabel.setAttribute('style', style);
     return svgLabel;
   }

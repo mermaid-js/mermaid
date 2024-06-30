@@ -437,7 +437,7 @@ export const extractor = (graph, depth) => {
 
       const graphSettings = graph.graph();
       let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
-      if (clusterDb[node] && clusterDb[node].clusterData && clusterDb[node].clusterData.dir) {
+      if (clusterDb[node]?.clusterData?.dir) {
         dir = clusterDb[node].clusterData.dir;
         log.warn('Fixing dir', clusterDb[node].clusterData.dir, dir);
       }

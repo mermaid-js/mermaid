@@ -69,7 +69,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         }
       }
       log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
-      if (node && node.clusterNode) {
+      if (node?.clusterNode) {
         // const children = graph.children(v);
         log.info('Cluster identified XBX', v, node.width, graph.node(v));
 
@@ -217,7 +217,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         ' height: ',
         node.height
       );
-      if (node && node.clusterNode) {
+      if (node?.clusterNode) {
         const parentId = graph.parent(v);
         // Adjust for padding when on root level
         node.y += subGraphTitleTotalMargin;
