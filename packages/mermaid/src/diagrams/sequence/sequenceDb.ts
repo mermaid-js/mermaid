@@ -229,7 +229,7 @@ export const setWrap = function (wrapSetting?: boolean) {
 };
 
 const extractWrap = (text?: string): { cleanedText?: string; wrap?: boolean } => {
-  if (!text) {
+  if (text === undefined) {
     return {};
   }
   text = text.trim();
