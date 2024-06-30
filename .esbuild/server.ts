@@ -95,8 +95,7 @@ async function createServer() {
         return;
       }
       console.log(`${path} changed. Rebuilding...`);
-
-      if (/\.langium$/.test(path)) {
+      if (path.endsWith('.langium')) {
         await generateLangium();
       }
       handleFileChange();

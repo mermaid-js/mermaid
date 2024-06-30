@@ -515,8 +515,7 @@ export const drawNode = function (elem, node, fullSection, conf) {
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
   const bbox = txt.node().getBBox();
-  const fontSize =
-    conf.fontSize && conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
+  const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
   node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
   node.height = Math.max(node.height, node.maxHeight);
   node.width = node.width + 2 * node.padding;
@@ -540,8 +539,7 @@ export const getVirtualNodeHeight = function (elem, node, conf) {
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
   const bbox = txt.node().getBBox();
-  const fontSize =
-    conf.fontSize && conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
+  const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
   textElem.remove();
   return bbox.height + fontSize * 1.1 * 0.5 + node.padding;
 };

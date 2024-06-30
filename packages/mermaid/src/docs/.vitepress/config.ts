@@ -9,9 +9,9 @@ const allMarkdownTransformers: MarkdownOptions = {
     light: 'github-light',
     dark: 'github-dark',
   },
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  config: async (md) => {
-    await MermaidExample(md);
+
+  config: (md) => {
+    MermaidExample(md);
   },
 };
 

@@ -13,7 +13,8 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
   {
     ignores: [
       '**/dist/',
@@ -101,6 +102,15 @@ export default tseslint.config(
           },
         },
       ],
+      // START: These rules should be turned on once the codebase is cleaned up
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/only-throw-error': 'warn',
+      '@typescript-eslint/prefer-promise-reject-errors': 'warn',
+      // END
       'json/*': ['error', 'allowComments'],
       '@cspell/spellchecker': [
         'error',

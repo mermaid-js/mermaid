@@ -2,7 +2,8 @@ import type { BlockDB } from './blockDB.js';
 import type { Block } from './blockTypes.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-const padding = getConfig()?.block?.padding || 8;
+// TODO: This means the number we provide in diagram's config will never be used. Should fix.
+const padding = getConfig()?.block?.padding ?? 8;
 
 interface BlockPosition {
   px: number;
@@ -42,7 +43,7 @@ const getMaxChildSize = (block: Block) => {
   // find max width of children
   // log.debug('getMaxChildSize abc95 (start) parent:', block.id);
   for (const child of block.children) {
-    const { width, height, x, y } = child.size || { width: 0, height: 0, x: 0, y: 0 };
+    const { width, height, x, y } = child.size ?? { width: 0, height: 0, x: 0, y: 0 };
     log.debug(
       'getMaxChildSize abc95 child:',
       child.id,
@@ -60,7 +61,7 @@ const getMaxChildSize = (block: Block) => {
       continue;
     }
     if (width > maxWidth) {
-      maxWidth = width / (block.widthInColumns || 1);
+      maxWidth = width / (block.widthInColumns ?? 1);
     }
     if (height > maxHeight) {
       maxHeight = height;
@@ -104,10 +105,10 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
     for (const child of block.children) {
       if (child.size) {
         log.debug(
-          `abc95 Setting size of children of ${block.id} id=${child.id} ${maxWidth} ${maxHeight} ${child.size}`
+          `abc95 Setting size of children of ${block.id} id=${child.id} ${maxWidth} ${maxHeight} ${JSON.stringify(child.size)}`
         );
         child.size.width =
-          maxWidth * (child.widthInColumns || 1) + padding * ((child.widthInColumns || 1) - 1);
+          maxWidth * (child.widthInColumns ?? 1) + padding * ((child.widthInColumns ?? 1) - 1);
         child.size.height = maxHeight;
         child.size.x = 0;
         child.size.y = 0;
@@ -121,10 +122,10 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
       setBlockSizes(child, db, maxWidth, maxHeight);
     }
 
-    const columns = block.columns || -1;
+    const columns = block.columns ?? -1;
     let numItems = 0;
     for (const child of block.children) {
-      numItems += child.widthInColumns || 1;
+      numItems += child.widthInColumns ?? 1;
     }
 
     // The width and height in number blocks
@@ -204,13 +205,13 @@ function layoutBlocks(block: Block, db: BlockDB) {
   log.debug(
     `abc85 layout blocks (=>layoutBlocks) ${block.id} x: ${block?.size?.x} y: ${block?.size?.y} width: ${block?.size?.width}`
   );
-  const columns = block.columns || -1;
+  const columns = block.columns ?? -1;
   log.debug('layoutBlocks columns abc95', block.id, '=>', columns, block);
   if (
     block.children && // find max width of children
     block.children.length > 0
   ) {
-    const width = block?.children[0]?.size?.width || 0;
+    const width = block?.children[0]?.size?.width ?? 0;
     const widthOfChildren = block.children.length * width + (block.children.length - 1) * padding;
 
     log.debug('widthOfChildren 88', widthOfChildren, 'posX');
@@ -249,7 +250,7 @@ function layoutBlocks(block: Block, db: BlockDB) {
           } ${halfWidth} padding=${padding} width=${width} halfWidth=${halfWidth} => x:${
             child.size.x
           } y:${child.size.y} ${child.widthInColumns} (width * (child?.w || 1)) / 2 ${
-            (width * (child?.widthInColumns || 1)) / 2
+            (width * (child?.widthInColumns ?? 1)) / 2
           }`
         );
 
@@ -263,15 +264,13 @@ function layoutBlocks(block: Block, db: BlockDB) {
             child.id
           }startingPosX${startingPosX}${padding}${halfWidth}=>x:${child.size.x}y:${child.size.y}${
             child.widthInColumns
-          }(width * (child?.w || 1)) / 2${(width * (child?.widthInColumns || 1)) / 2}`
+          }(width * (child?.w || 1)) / 2${(width * (child?.widthInColumns ?? 1)) / 2}`
         );
       }
-
-      // posY += height + padding;
       if (child.children) {
         layoutBlocks(child, db);
       }
-      columnPos += child?.widthInColumns || 1;
+      columnPos += child?.widthInColumns ?? 1;
       log.debug('abc88 columnsPos', child, columnPos);
     }
   }

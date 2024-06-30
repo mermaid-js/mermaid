@@ -177,11 +177,7 @@ export const detectDirective = function (
       if (match.index === directiveRegex.lastIndex) {
         directiveRegex.lastIndex++;
       }
-      if (
-        (match && !type) ||
-        (type && match[1] && match[1].match(type)) ||
-        (type && match[2] && match[2].match(type))
-      ) {
+      if ((match && !type) || (type && match[1]?.match(type)) || (type && match[2]?.match(type))) {
         const type = match[1] ? match[1] : match[2];
         const args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
         result.push({ type, args });
