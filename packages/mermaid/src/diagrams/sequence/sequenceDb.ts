@@ -46,7 +46,7 @@ const state = new ImperativeState<SequenceState>(() => ({
 export const addBox = function (data: { text: string; color: string; wrap: boolean }) {
   state.records.boxes.push({
     name: data.text,
-    wrap: (data.wrap === undefined && autoWrap()) ?? !!data.wrap,
+    wrap: data.wrap ?? autoWrap(),
     fill: data.color,
     actorKeys: [],
   });
@@ -81,17 +81,17 @@ export const addActor = function (
 
   // Don't allow null descriptions, either
   if (description?.text == null) {
-    description = { text: name, wrap: null, type };
+    description = { text: name, type };
   }
   if (type == null || description.text == null) {
-    description = { text: name, wrap: null, type };
+    description = { text: name, type };
   }
 
   state.records.actors.set(id, {
     box: assignedBox,
     name: name,
     description: description.text,
-    wrap: (description.wrap === undefined && autoWrap()) ?? !!description.wrap,
+    wrap: description.wrap ?? autoWrap(),
     prevActor: state.records.prevActor,
     links: {},
     properties: {},
@@ -232,6 +232,7 @@ const extractWrap = (text?: string): { cleanedText?: string; wrap?: boolean } =>
   if (!text) {
     return {};
   }
+  text = text.trim();
   const wrap =
     /^:?wrap:/.exec(text) !== null ? true : /^:?nowrap:/.exec(text) !== null ? false : undefined;
   const cleanedText = (wrap === undefined ? text : text.replace(/^:?(?:no)?wrap:/, '')).trim();
