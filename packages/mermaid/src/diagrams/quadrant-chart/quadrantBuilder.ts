@@ -127,7 +127,7 @@ export class QuadrantBuilder {
   private config: QuadrantBuilderConfig;
   private themeConfig: QuadrantBuilderThemeConfig;
   private data: QuadrantBuilderData;
-  private classes: Map<string, StylesObject> = new Map();
+  private classes = new Map<string, StylesObject>();
 
   constructor() {
     this.config = this.getDefaultConfig();
@@ -493,8 +493,8 @@ export class QuadrantBuilder {
       const props: QuadrantPointType = {
         x: xAxis(point.x),
         y: yAxis(point.y),
-        fill: point.color || this.themeConfig.quadrantPointFill,
-        radius: point.radius || this.config.pointRadius,
+        fill: point.color ?? this.themeConfig.quadrantPointFill,
+        radius: point.radius ?? this.config.pointRadius,
         text: {
           text: point.text,
           fill: this.themeConfig.quadrantPointTextFill,
@@ -505,8 +505,8 @@ export class QuadrantBuilder {
           fontSize: this.config.pointLabelFontSize,
           rotation: 0,
         },
-        strokeColor: point.strokeColor || this.themeConfig.quadrantPointFill,
-        strokeWidth: point.strokeWidth || '0px',
+        strokeColor: point.strokeColor ?? this.themeConfig.quadrantPointFill,
+        strokeWidth: point.strokeWidth ?? '0px',
       };
       return props;
     });

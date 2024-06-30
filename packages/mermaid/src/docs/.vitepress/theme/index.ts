@@ -1,14 +1,16 @@
+/* eslint-disable no-console */
 import DefaultTheme from 'vitepress/theme';
 import './custom.css';
-// @ts-ignore
+// @ts-ignore Type not available
 import Mermaid from './Mermaid.vue';
-// @ts-ignore
+// @ts-ignore Type not available
 import Contributors from '../components/Contributors.vue';
-// @ts-ignore
+// @ts-ignore Type not available
 import HomePage from '../components/HomePage.vue';
-// @ts-ignore
+// @ts-ignore Type not available
 import TopBar from '../components/TopBar.vue';
 import { getRedirect } from './redirect.js';
+// @ts-ignore Type not available
 import { h } from 'vue';
 import Theme from 'vitepress/theme';
 import '../style/main.css';
@@ -33,7 +35,7 @@ export default {
         const url = new URL(window.location.origin + to);
         const newPath = getRedirect(url);
         if (newPath) {
-          console.log(`Redirecting to ${newPath} from ${window.location}`);
+          console.log(`Redirecting to ${newPath} from ${window.location.toString()}`);
           // router.go isn't loading the ID properly.
           window.location.href = `/${newPath}`;
         }

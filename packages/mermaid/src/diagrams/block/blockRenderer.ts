@@ -1,11 +1,6 @@
-import {
-  scaleOrdinal as d3scaleOrdinal,
-  schemeTableau10 as d3schemeTableau10,
-  select as d3select,
-} from 'd3';
+import { select as d3select } from 'd3';
 import type { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
-import type { MermaidConfig } from '../../config.type.js';
 import insertMarkers from '../../dagre-wrapper/markers.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -75,7 +70,7 @@ export const draw = async function (
     const magicFactor = Math.max(1, Math.round(0.125 * (bounds2.width / bounds2.height)));
     const height = bounds2.height + magicFactor + 10;
     const width = bounds2.width + 10;
-    const { useMaxWidth } = conf as Exclude<MermaidConfig['block'], undefined>;
+    const { useMaxWidth } = conf!;
     configureSvgSize(svg, height, width, !!useMaxWidth);
     log.debug('Here Bounds', bounds, bounds2);
     svg.attr(
@@ -83,9 +78,6 @@ export const draw = async function (
       `${bounds2.x - 5} ${bounds2.y - 5} ${bounds2.width + 10} ${bounds2.height + 10}`
     );
   }
-
-  // Get color scheme for the graph
-  // const colorScheme = d3scaleOrdinal(d3schemeTableau10);
 };
 
 export default {

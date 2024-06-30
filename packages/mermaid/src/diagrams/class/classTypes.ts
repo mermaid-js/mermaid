@@ -77,7 +77,7 @@ export class ClassMember {
 
     if (this.memberType === 'method') {
       const methodRegEx = /([#+~-])?(.+)\((.*)\)([\s$*])?(.*)([$*])?/;
-      const match = input.match(methodRegEx);
+      const match = methodRegEx.exec(input);
       if (match) {
         const detectedVisibility = match[1] ? match[1].trim() : '';
 
@@ -92,7 +92,7 @@ export class ClassMember {
 
         if (potentialClassifier === '') {
           const lastChar = this.returnType.substring(this.returnType.length - 1);
-          if (lastChar.match(/[$*]/)) {
+          if (/[$*]/.exec(lastChar)) {
             potentialClassifier = lastChar;
             this.returnType = this.returnType.substring(0, this.returnType.length - 1);
           }
@@ -107,7 +107,7 @@ export class ClassMember {
         this.visibility = firstChar as Visibility;
       }
 
-      if (lastChar.match(/[$*]/)) {
+      if (/[$*]/.exec(lastChar)) {
         potentialClassifier = lastChar;
       }
 

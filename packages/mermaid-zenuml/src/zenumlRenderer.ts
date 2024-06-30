@@ -9,7 +9,7 @@ function createTemporaryZenumlContainer(id: string) {
   container.id = `container-${id}`;
   container.style.display = 'flex';
   container.innerHTML = `<div id="zenUMLApp-${id}"></div>`;
-  const app = container.querySelector(`#zenUMLApp-${id}`) as HTMLElement;
+  const app = container.querySelector(`#zenUMLApp-${id}`)!;
   return { container, app };
 }
 

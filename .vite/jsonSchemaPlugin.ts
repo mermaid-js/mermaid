@@ -1,4 +1,4 @@
-import { PluginOption } from 'vite';
+import type { PluginOption } from 'vite';
 import { getDefaults, getSchema, loadSchema } from '../.build/jsonSchema.js';
 
 /**

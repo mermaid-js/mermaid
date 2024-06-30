@@ -27,7 +27,7 @@ const code3 = `flowchart TD
 A(<img scr='https://iconscout.com/ms-icon-310x310.png' width='20' height='20' />)
 B(<b>Bold text!</b>)`;
 
-if (location.href.match('test-html-escaping')) {
+if (/test-html-escaping/.exec(location.href)) {
   code = code3;
 }
 

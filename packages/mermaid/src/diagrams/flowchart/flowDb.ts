@@ -18,12 +18,12 @@ import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
 let config = getConfig();
-let vertices: Map<string, FlowVertex> = new Map();
+let vertices = new Map<string, FlowVertex>();
 let edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
-let classes: Map<string, FlowClass> = new Map();
+let classes = new Map<string, FlowClass>();
 let subGraphs: FlowSubGraph[] = [];
-let subGraphLookup: Map<string, FlowSubGraph> = new Map();
-let tooltips: Map<string, string> = new Map();
+let subGraphLookup = new Map<string, FlowSubGraph>();
+let tooltips = new Map<string, string>();
 let subCount = 0;
 let firstGraphFlag = true;
 let direction: string;
@@ -85,7 +85,7 @@ export const addVertex = function (
     txt = sanitizeText(textObj.text.trim());
     vertex.labelType = textObj.type;
     // strip quotes if string starts and ends with a quote
-    if (txt[0] === '"' && txt[txt.length - 1] === '"') {
+    if (txt.startsWith('"') && txt.endsWith('"')) {
       txt = txt.substring(1, txt.length - 1);
     }
     vertex.text = txt;
@@ -133,7 +133,7 @@ export const addSingleLink = function (_start: string, _end: string, type: any) 
     edge.text = sanitizeText(linkTextObj.text.trim());
 
     // strip quotes if string starts and ends with a quote
-    if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
+    if (edge.text.startsWith('"') && edge.text.endsWith('"')) {
       edge.text = edge.text.substring(1, edge.text.length - 1);
     }
     edge.labelType = linkTextObj.type;
@@ -219,7 +219,7 @@ export const addClass = function (ids: string, style: string[]) {
 
     if (style !== undefined && style !== null) {
       style.forEach(function (s) {
-        if (s.match('color')) {
+        if (/color/.exec(s)) {
           const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
           classNode.textStyles.push(newStyle);
         }
@@ -235,16 +235,16 @@ export const addClass = function (ids: string, style: string[]) {
  */
 export const setDirection = function (dir: string) {
   direction = dir;
-  if (direction.match(/.*</)) {
+  if (/.*</.exec(direction)) {
     direction = 'RL';
   }
-  if (direction.match(/.*\^/)) {
+  if (/.*\^/.exec(direction)) {
     direction = 'BT';
   }
-  if (direction.match(/.*>/)) {
+  if (/.*>/.exec(direction)) {
     direction = 'LR';
   }
-  if (direction.match(/.*v/)) {
+  if (/.*v/.exec(direction)) {
     direction = 'TB';
   }
   if (direction === 'TD') {
@@ -298,7 +298,7 @@ const setClickFun = function (id: string, functionName: string, functionArgs: st
       let item = argList[i].trim();
       /* Removes all double quotes at the start and end of an argument */
       /* This preserves all starting and ending whitespace inside */
-      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+      if (item.startsWith('"') && item.endsWith('"')) {
         item = item.substr(1, item.length - 2);
       }
       argList[i] = item;
@@ -470,7 +470,7 @@ export const addSubGraph = function (
 ) {
   let id: string | undefined = _id.text.trim();
   let title = _title.text;
-  if (_id === _title && _title.text.match(/\s/)) {
+  if (_id === _title && /\s/.exec(_title.text)) {
     id = undefined;
   }
 
@@ -504,7 +504,7 @@ export const addSubGraph = function (
     }
   }
 
-  id = id || 'subGraph' + subCount;
+  id = id ?? 'subGraph' + subCount;
   title = title || '';
   title = sanitizeText(title);
   subCount = subCount + 1;
@@ -652,21 +652,21 @@ const destructEndLink = (_str: string) => {
   switch (str.slice(-1)) {
     case 'x':
       type = 'arrow_cross';
-      if (str[0] === 'x') {
+      if (str.startsWith('x')) {
         type = 'double_' + type;
         line = line.slice(1);
       }
       break;
     case '>':
       type = 'arrow_point';
-      if (str[0] === '<') {
+      if (str.startsWith('<')) {
         type = 'double_' + type;
         line = line.slice(1);
       }
       break;
     case 'o':
       type = 'arrow_circle';
-      if (str[0] === 'o') {
+      if (str.startsWith('o')) {
         type = 'double_' + type;
         line = line.slice(1);
       }
@@ -676,11 +676,11 @@ const destructEndLink = (_str: string) => {
   let stroke = 'normal';
   let length = line.length - 1;
 
-  if (line[0] === '=') {
+  if (line.startsWith('=')) {
     stroke = 'thick';
   }
 
-  if (line[0] === '~') {
+  if (line.startsWith('~')) {
     stroke = 'invisible';
   }
 
@@ -764,7 +764,7 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
     return 'roundedRect';
   }
 
-  return vertex.type || 'squareRect';
+  return vertex.type ?? 'squareRect';
 };
 
 const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
@@ -796,7 +796,7 @@ const addNodeFromVertex = (
   look: string
 ) => {
   const parentId = parentDB.get(vertex.id);
-  const isGroup = subGraphDB.get(vertex.id) || false;
+  const isGroup = subGraphDB.get(vertex.id) ?? false;
 
   const node = findNode(nodes, vertex.id);
   if (!node) {
@@ -870,7 +870,7 @@ export const getData = () => {
       label: subGraph.title,
       labelStyle: '',
       parentId: parentDB.get(subGraph.id),
-      padding: config.flowchart?.padding || 8,
+      padding: config.flowchart?.padding ?? 8,
       cssCompiledStyles: getCompiledStyles(subGraph.classes),
       cssClasses: subGraph.classes.join(' '),
       shape: 'rect',
@@ -888,7 +888,7 @@ export const getData = () => {
   const e = getEdges();
   e.forEach((rawEdge, index) => {
     const { arrowTypeStart, arrowTypeEnd } = destructEdgeType(rawEdge.type);
-    const styles = [...(e.defaultStyle || [])];
+    const styles = [...(e.defaultStyle ?? [])];
 
     if (rawEdge.style) {
       styles.push(...rawEdge.style);
@@ -897,7 +897,7 @@ export const getData = () => {
       id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'edge' }),
       start: rawEdge.start,
       end: rawEdge.end,
-      type: rawEdge.type || 'normal',
+      type: rawEdge.type ?? 'normal',
       label: rawEdge.text,
       labelpos: 'c',
       thickness: rawEdge.stroke,

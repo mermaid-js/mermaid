@@ -45,7 +45,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/Diagram.ts:9](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/Diagram.ts#L9)
+[packages/mermaid/src/Diagram.ts:10](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/Diagram.ts#L10)
 
 ## Variables
 
