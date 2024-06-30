@@ -145,7 +145,7 @@ export const addMessage = function (
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) ?? !!message.wrap,
+    wrap: message.wrap ?? autoWrap(),
     answer: answer,
   });
 };
@@ -178,7 +178,7 @@ export const addSignal = function (
     from: idFrom,
     to: idTo,
     message: message?.text ?? '',
-    wrap: (message?.wrap === undefined && autoWrap()) ?? !!message?.wrap,
+    wrap: message?.wrap ?? autoWrap(),
     type: messageType,
     activate,
   });
@@ -228,13 +228,23 @@ export const setWrap = function (wrapSetting?: boolean) {
   state.records.wrapEnabled = wrapSetting;
 };
 
+const extractWrap = (text?: string): { cleanedText?: string; wrap?: boolean } => {
+  if (!text) {
+    return {};
+  }
+  const wrap =
+    /^:?wrap:/.exec(text) !== null ? true : /^:?nowrap:/.exec(text) !== null ? false : undefined;
+  const cleanedText = (wrap === undefined ? text : text.replace(/^:?(?:no)?wrap:/, '')).trim();
+  return { cleanedText, wrap };
+};
+
 export const autoWrap = () => {
   // if setWrap has been called, use that value, otherwise use the value from the config
   // TODO: refactor, always use the config value let setWrap update the config value
   if (state.records.wrapEnabled !== undefined) {
     return state.records.wrapEnabled;
   }
-  return getConfig()?.sequence?.wrap;
+  return getConfig().sequence?.wrap ?? false;
 };
 
 export const clear = function () {
@@ -244,14 +254,10 @@ export const clear = function () {
 
 export const parseMessage = function (str: string) {
   const trimmedStr = str.trim();
+  const { wrap, cleanedText } = extractWrap(trimmedStr);
   const message = {
-    text: trimmedStr.replace(/^:?(?:no)?wrap:/, '').trim(),
-    wrap:
-      /^:?wrap:/.exec(trimmedStr) !== null
-        ? true
-        : /^:?nowrap:/.exec(trimmedStr) !== null
-          ? false
-          : undefined,
+    text: cleanedText,
+    wrap,
   };
   log.debug(`parseMessage: ${JSON.stringify(message)}`);
   return message;
@@ -279,21 +285,11 @@ export const parseBoxData = function (str: string) {
       title = str.trim();
     }
   }
-
+  const { wrap, cleanedText } = extractWrap(title);
   return {
-    color: color,
-    text:
-      title !== undefined
-        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), getConfig())
-        : undefined,
-    wrap:
-      title !== undefined
-        ? /^:?wrap:/.exec(title) !== null
-          ? true
-          : /^:?nowrap:/.exec(title) !== null
-            ? false
-            : undefined
-        : undefined,
+    text: cleanedText ? sanitizeText(cleanedText, getConfig()) : undefined,
+    color,
+    wrap,
   };
 };
 
@@ -352,7 +348,7 @@ export const addNote = function (
     actor: actor,
     placement: placement,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) ?? !!message.wrap,
+    wrap: message.wrap ?? autoWrap(),
   };
 
   //@ts-ignore: Coerce actor into a [to, from, ...] array
@@ -363,7 +359,7 @@ export const addNote = function (
     from: actors[0],
     to: actors[1],
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) ?? !!message.wrap,
+    wrap: message.wrap ?? autoWrap(),
     type: LINETYPE.NOTE,
     placement: placement,
   });
