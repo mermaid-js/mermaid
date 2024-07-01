@@ -55,12 +55,14 @@ pyplot
 redmine
 rehype
 rscratch
+shiki
 sparkline
 sphinxcontrib
 ssim
 stylis
 Swimm
 tsbuildinfo
+tseslint
 Tuleap
 Typora
 unocss

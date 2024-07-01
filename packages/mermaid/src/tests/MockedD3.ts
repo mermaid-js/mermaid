@@ -60,7 +60,7 @@ export class MockedD3 {
     if (beforeSelector === undefined) {
       this._children.push(newMock);
     } else {
-      const idOnly = beforeSelector[0] == '#' ? beforeSelector.substring(1) : beforeSelector;
+      const idOnly = beforeSelector.startsWith('#') ? beforeSelector.substring(1) : beforeSelector;
       const foundIndex = this._children.findIndex((child) => child.id === idOnly);
       if (foundIndex < 0) {
         this._children.push(newMock);

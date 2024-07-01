@@ -1,3 +1,4 @@
+/* eslint-disable @cspell/spellchecker */
 export interface Contributor {
   name: string;
   avatar: string;

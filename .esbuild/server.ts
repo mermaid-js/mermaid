@@ -1,11 +1,12 @@
-import express from 'express';
-import type { NextFunction, Request, Response } from 'express';
-import cors from 'cors';
-import { getBuildConfig, defaultOptions } from './util.js';
-import { context } from 'esbuild';
+/* eslint-disable no-console */
 import chokidar from 'chokidar';
-import { generateLangium } from '../.build/generateLangium.js';
+import cors from 'cors';
+import { context } from 'esbuild';
+import type { Request, Response } from 'express';
+import express from 'express';
 import { packageOptions } from '../.build/common.js';
+import { generateLangium } from '../.build/generateLangium.js';
+import { defaultOptions, getBuildConfig } from './util.js';
 
 const configs = Object.values(packageOptions).map(({ packageName }) =>
   getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: packageName })
@@ -40,7 +41,7 @@ const rebuildAll = async () => {
 };
 
 let clients: { id: number; response: Response }[] = [];
-function eventsHandler(request: Request, response: Response, next: NextFunction) {
+function eventsHandler(request: Request, response: Response) {
   const headers = {
     'Content-Type': 'text/event-stream',
     Connection: 'keep-alive',
@@ -66,6 +67,7 @@ function handleFileChange() {
   if (timeoutID !== undefined) {
     clearTimeout(timeoutID);
   }
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   timeoutID = setTimeout(async () => {
     await rebuildAll();
     sendEventsToAll();
@@ -86,14 +88,14 @@ async function createServer() {
       ignoreInitial: true,
       ignored: [/node_modules/, /dist/, /docs/, /coverage/],
     })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     .on('all', async (event, path) => {
       // Ignore other events.
       if (!['add', 'change'].includes(event)) {
         return;
       }
       console.log(`${path} changed. Rebuilding...`);
-
-      if (/\.langium$/.test(path)) {
+      if (path.endsWith('.langium')) {
         await generateLangium();
       }
       handleFileChange();
@@ -112,4 +114,4 @@ async function createServer() {
   });
 }
 
-createServer();
+void createServer();
