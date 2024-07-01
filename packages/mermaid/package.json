@@ -84,7 +84,7 @@
     "mdast-util-from-markdown": "^2.0.0",
     "stylis": "^4.3.1",
     "ts-dedent": "^2.2.0",
-    "uuid": "^9.0.1"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@adobe/jsonschema2md": "^8.0.0",
@@ -102,7 +102,7 @@
     "@types/micromatch": "^4.0.6",
     "@types/prettier": "^3.0.0",
     "@types/stylis": "^4.2.5",
-    "@types/uuid": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "ajv": "^8.12.0",
     "chokidar": "^3.6.0",
     "concurrently": "^8.2.2",
@@ -112,7 +112,7 @@
     "jison": "^0.4.18",
     "js-base64": "^3.7.7",
     "jsdom": "^24.0.0",
-    "json-schema-to-typescript": "^13.1.2",
+    "json-schema-to-typescript": "^14.0.0",
     "micromatch": "^4.0.5",
     "path-browserify": "^1.0.1",
     "prettier": "^3.2.5",
@@ -123,7 +123,7 @@
     "start-server-and-test": "^2.0.3",
     "type-fest": "^4.13.1",
     "typedoc": "^0.25.12",
-    "typedoc-plugin-markdown": "^3.17.1",
+    "typedoc-plugin-markdown": "^4.0.0",
     "typescript": "~5.4.3",
     "unist-util-flatmap": "^1.0.0",
     "unist-util-visit": "^5.0.0",
