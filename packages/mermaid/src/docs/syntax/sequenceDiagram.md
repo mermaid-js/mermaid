@@ -186,6 +186,8 @@ sequenceDiagram
     John-->>-Alice: I feel great!
 ```
 
+If no deactivation is found for an activated actor, it is still added to the diagram.
+
 ## Notes
 
 It is possible to add notes to a sequence diagram. This is done by the notation
