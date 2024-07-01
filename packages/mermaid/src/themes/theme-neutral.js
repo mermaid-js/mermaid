@@ -161,8 +161,8 @@ class Theme {
     // Setup the label color for the set
     this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
 
-    this['cScaleLabel0'] = this['cScaleLabel0'] || this.cScale1;
-    this['cScaleLabel2'] = this['cScaleLabel2'] || this.cScale1;
+    this.cScaleLabel0 = this.cScaleLabel0 || this.cScale1;
+    this.cScaleLabel2 = this.cScaleLabel2 || this.cScale1;
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
       this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
     }

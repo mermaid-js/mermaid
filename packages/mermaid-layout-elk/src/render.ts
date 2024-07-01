@@ -144,7 +144,7 @@ const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
     }
   });
   nodeArray.forEach(function (node) {
-    if (node && node.isGroup) {
+    if (node?.isGroup) {
       drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, depth + 1);
     }
   });

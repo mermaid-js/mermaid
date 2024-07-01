@@ -56,12 +56,14 @@ redmine
 rehype
 roughjs
 rscratch
+shiki
 sparkline
 sphinxcontrib
 ssim
 stylis
 Swimm
 tsbuildinfo
+tseslint
 Tuleap
 Typora
 unocss

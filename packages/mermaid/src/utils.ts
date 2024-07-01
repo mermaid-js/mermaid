@@ -177,11 +177,7 @@ export const detectDirective = function (
       if (match.index === directiveRegex.lastIndex) {
         directiveRegex.lastIndex++;
       }
-      if (
-        (match && !type) ||
-        (type && match[1] && match[1].match(type)) ||
-        (type && match[2] && match[2].match(type))
-      ) {
+      if ((match && !type) || (type && match[1]?.match(type)) || (type && match[2]?.match(type))) {
         const type = match[1] ? match[1] : match[2];
         const args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
         result.push({ type, args });
@@ -777,7 +773,7 @@ export const entityDecode = function (html: string): string {
   // Escape HTML before decoding for HTML Entities
   html = escape(html).replace(/%26/g, '&').replace(/%23/g, '#').replace(/%3B/g, ';');
   decoder.innerHTML = html;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
   return unescape(decoder.textContent!);
 };
 

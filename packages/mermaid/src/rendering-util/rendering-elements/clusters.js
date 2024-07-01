@@ -226,7 +226,6 @@ const roundedWithTitle = async (parent, node) => {
   const y = node.y - height / 2;
   node.width = width;
   const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;
-  const look = siteConfig.look;
 
   // add the rect
   let rect;
@@ -292,12 +291,11 @@ const roundedWithTitle = async (parent, node) => {
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
-const divider = async (parent, node) => {
+const divider = (parent, node) => {
   const siteConfig = getConfig();
 
   const { themeVariables, handdrawnSeed } = siteConfig;
-  const { altBackground, compositeBackground, compositeTitleBackground, nodeBorder } =
-    themeVariables;
+  const { compositeTitleBackground, nodeBorder } = themeVariables;
 
   // Add outer g element
   const shapeSvg = parent
@@ -312,11 +310,7 @@ const divider = async (parent, node) => {
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
 
-  // Create the label and insert it after the rect
-  let innerRect = shapeSvg.append('rect');
-
   const padding = 0 * node.padding;
-  const halfPadding = padding / 2;
 
   const width = node.width + padding;
 
@@ -327,12 +321,10 @@ const divider = async (parent, node) => {
   const x = node.x - width / 2;
   const y = node.y - height / 2;
   node.width = width;
-  const look = siteConfig.look;
 
   // add the rect
   let rect;
   if (node.look === 'handdrawn') {
-    const isAlt = node.cssClasses.includes('statediagram-cluster-alt');
     const rc = rough.svg(shapeSvg);
     const roughOuterNode =
       node.rx || node.ry
@@ -378,59 +370,6 @@ const divider = async (parent, node) => {
   return { cluster: shapeSvg, labelBBox: {} };
 };
 
-const dividerorg = (parent, node) => {
-  console.log('Divider node IPI', node);
-  const { handdrawnSeed } = getConfig();
-  // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', node.cssClasses)
-    .attr('id', node.id)
-    .attr('data-id', node.id)
-    .attr('data-et', 'node')
-    .attr('data-node', 'true');
-
-  // add the rect
-  let rect;
-
-  const padding = 0 * node.padding;
-  const halfPadding = padding / 2;
-
-  const x = node.x - node.width / 2 - node.padding;
-  const y = node.y - node.height / 2 + node.padding;
-  const width = node.width + padding;
-  const height = node.height + padding;
-  if (node.look === 'handdrawn') {
-    const rc = rough.svg(shapeSvg);
-    const roughNode = rc.rectangle(x, y, width, height, {
-      fill: 'lightgrey',
-      roughness: 0.5,
-      strokeLineDash: [5],
-      seed: handdrawnSeed,
-    });
-
-    rect = shapeSvg.insert(() => roughNode);
-  } else {
-    rect = shapeSvg.insert('rect', ':first-child');
-    // center the rect around its coordinate
-    rect
-      .attr('class', 'divider')
-      .attr('x', x)
-      .attr('y', y)
-      .attr('width', width)
-      .attr('height', height);
-  }
-  const rectBox = rect.node().getBBox();
-  node.width = rectBox.width;
-  node.height = rectBox.height - node.padding;
-  node.diff = 0; //-node.padding / 2;
-  node.offsetY = 0;
-  node.intersect = function (point) {
-    return intersectRect(node, point);
-  };
-
-  return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
-};
 const squareRect = rect;
 const shapes = {
   rect,

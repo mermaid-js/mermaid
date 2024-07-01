@@ -123,8 +123,7 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
 const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   let dir = defaultDir;
   if (parsedItem.doc) {
-    for (let i = 0; i < parsedItem.doc.length; i++) {
-      const parsedItemDoc = parsedItem.doc[i];
+    for (const parsedItemDoc of parsedItem.doc) {
       if (parsedItemDoc.stmt === 'dir') {
         dir = parsedItemDoc.value;
       }
@@ -132,21 +131,6 @@ const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   }
   return dir;
 };
-
-/**
- * Returns a new list of classes.
- * In the future, this can be replaced with a class common to all diagrams.
- * ClassDef information = { id: id, styles: [], textStyles: [] }
- *
- * @returns {{}}
- */
-function newClassesList() {
-  return {};
-}
-
-// let direction = DEFAULT_DIAGRAM_DIRECTION;
-// let rootDoc = [];
-let cssClasses = newClassesList(); // style classes defined by a classDef
 
 /**
  *

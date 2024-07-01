@@ -425,9 +425,8 @@ const findAdjacentPoint = function (pointA, pointB, distance) {
  */
 
 const fixCorners = function (lineData) {
-  const { cornerPoints, cornerPointPositions } = extractCornerPoints(lineData);
+  const { cornerPointPositions } = extractCornerPoints(lineData);
   const newLineData = [];
-  let lastCorner = 0;
   for (let i = 0; i < lineData.length; i++) {
     if (cornerPointPositions.includes(i)) {
       const prevPoint = lineData[i - 1];

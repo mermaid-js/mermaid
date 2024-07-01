@@ -6,9 +6,9 @@ import {
   userNodeOverrides,
   styles2String,
 } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+// @ts-expect-error TODO: Fix rough typings
 import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import { log } from '$root/logger.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
   const { look } = getConfig();
@@ -29,7 +29,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   const { cssStyles } = node;
 
   //use options rx, ry overrides if present
-  if (options && options.rx && options.ry) {
+  if (options?.rx && options.ry) {
     rx = options.rx;
     ry = options.ry;
   }

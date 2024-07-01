@@ -20,8 +20,7 @@ import { lookUpDomId } from '../flowchart/flowDb';
 const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   let dir = defaultDir;
   if (parsedItem.doc) {
-    for (let i = 0; i < parsedItem.doc.length; i++) {
-      const parsedItemDoc = parsedItem.doc[i];
+    for (const parsedItemDoc of parsedItem.doc) {
       if (parsedItemDoc.stmt === 'dir') {
         dir = parsedItemDoc.value;
       }
