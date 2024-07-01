@@ -16,18 +16,20 @@ import defaultConfig from '../../defaultConfig.js';
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
 
-function drawNodes(
+async function drawNodes(
   db: MindmapDB,
   svg: D3Element,
   mindmap: FilledMindMapNode,
   section: number,
   conf: MermaidConfig
 ) {
-  drawNode(db, svg, mindmap, section, conf);
+  await drawNode(db, svg, mindmap, section, conf);
   if (mindmap.children) {
-    mindmap.children.forEach((child, index) => {
-      drawNodes(db, svg, child, section < 0 ? index : section, conf);
-    });
+    await Promise.all(
+      mindmap.children.map((child, index) =>
+        drawNodes(db, svg, child, section < 0 ? index : section, conf)
+      )
+    );
   }
 }
 
@@ -177,7 +179,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   edgesElem.attr('class', 'mindmap-edges');
   const nodesElem = svg.append('g');
   nodesElem.attr('class', 'mindmap-nodes');
-  drawNodes(db, nodesElem, mm as FilledMindMapNode, -1, conf);
+  await drawNodes(db, nodesElem, mm as FilledMindMapNode, -1, conf);
 
   // Next step is to layout the mindmap, giving each node a position
 

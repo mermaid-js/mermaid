@@ -27,6 +27,13 @@
 %x CLASSDEFID
 %x CLASS
 %x CLASS_STYLE
+
+// Style statement states
+%x STYLE
+%x STYLE_IDS
+%x STYLEDEF_STYLES
+%x STYLEDEF_STYLEOPTS
+
 %x NOTE
 %x NOTE_ID
 %x NOTE_TEXT
@@ -74,6 +81,10 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <INITIAL,struct>"class"\s+      { this.pushState('CLASS'); return 'class'; }
 <CLASS>(\w+)+((","\s*\w+)*)     { this.popState(); this.pushState('CLASS_STYLE'); return 'CLASSENTITY_IDS' }
 <CLASS_STYLE>[^\n]*             { this.popState(); return 'STYLECLASS' }
+
+<INITIAL,struct>"style"\s+   { this.pushState('STYLE'); return 'style'; }
+<STYLE>[\w,]+\s+                 { this.popState(); this.pushState('STYLEDEF_STYLES'); return 'STYLE_IDS' }
+<STYLEDEF_STYLES>[^\n]*              { this.popState(); return 'STYLEDEF_STYLEOPTS' }
 
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
@@ -168,6 +179,7 @@ line
 
 statement
 	: classDefStatement
+    | styleStatement
     | cssClassStatement
 	| idStatement { /* console.log('got id', $1); */
             $$=$1;
@@ -243,6 +255,12 @@ classDefStatement
         }
     | classDef DEFAULT CLASSDEF_STYLEOPTS {
         $$ = { stmt: 'classDef', id: $2.trim(), classes: $3.trim() };
+        }
+    ;
+
+styleStatement
+    : style STYLE_IDS STYLEDEF_STYLEOPTS {
+        $$ = { stmt: 'style', id: $2.trim(), styleClass: $3.trim() };
         }
     ;
 

@@ -26,7 +26,7 @@ const detector: DiagramDetector = (txt, config): boolean => {
   }
   return false;
 };
-
+// @ts-ignore - TODO: Fix after refactor
 const loader: DiagramLoader = async () => {
   const { diagram } = await import('../flowDiagram-v2.js');
   return { id, diagram };

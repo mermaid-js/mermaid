@@ -29,6 +29,8 @@ export const setConf = function (cnf) {
  */
 export const addVertices = async function (vert, g, svgId, root, doc, diagObj) {
   const svg = root.select(`[id="${svgId}"]`);
+  // console.log('SVG:', svg, svg.node(), 'root:', root, root.node());
+
   const keys = vert.keys();
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
@@ -190,9 +192,8 @@ export const addVertices = async function (vert, g, svgId, root, doc, diagObj) {
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
- * @param _diagObj
  */
-export const addEdges = async function (edges, g, _diagObj) {
+export const addEdges = async function (edges, g) {
   log.info('abc78 edges = ', edges);
   let cnt = 0;
   let linkIdCnt = {};

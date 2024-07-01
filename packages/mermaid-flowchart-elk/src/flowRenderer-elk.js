@@ -663,7 +663,6 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb, i
 /**
  * Recursive function that iterates over an array of nodes and inserts the children of each node.
  * It also recursively populates the inserts the children of the children and so on.
- * @param {*} graph
  * @param nodeArray
  * @param parentLookupDb
  */

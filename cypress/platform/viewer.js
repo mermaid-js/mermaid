@@ -1,5 +1,5 @@
 import mermaid from './mermaid.esm.mjs';
-import flowchartELK from './mermaid-flowchart-elk.esm.mjs';
+// import flowchartELK from './mermaid-flowchart-elk.esm.mjs';
 import externalExample from './mermaid-example-diagram.esm.mjs';
 import zenUml from './mermaid-zenuml.esm.mjs';
 
@@ -9,6 +9,7 @@ function b64ToUtf8(str) {
 
 // Adds a rendered flag to window when rendering is done, so cypress can wait for it.
 function markRendered() {
+  console.log('Done rendering');
   if (window.Cypress) {
     window.rendered = true;
   }
@@ -46,7 +47,8 @@ const contentLoaded = async function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
-    await mermaid.registerExternalDiagrams([externalExample, zenUml, flowchartELK]);
+    // await mermaid.registerExternalDiagrams([externalExample, zenUml, flowchartELK]);
+    await mermaid.registerExternalDiagrams([externalExample, zenUml]);
     mermaid.initialize(graphObj.mermaid);
     await mermaid.run();
   }

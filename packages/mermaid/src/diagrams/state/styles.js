@@ -68,6 +68,18 @@ g.stateGroup line {
   fill: ${options.labelBackgroundColor};
   opacity: 0.5;
 }
+.edgeLabel {
+  background-color: ${options.edgeLabelBackground};
+  p {
+    background-color: ${options.edgeLabelBackground};
+  }
+  rect {
+    opacity: 0.5;
+    background-color: ${options.edgeLabelBackground};
+    fill: ${options.edgeLabelBackground};
+  }
+  text-align: center;
+}
 .edgeLabel .label text {
   fill: ${options.transitionLabelColor || options.tertiaryTextColor};
 }
@@ -124,6 +136,7 @@ g.stateGroup line {
 
 .cluster-label, .nodeLabel {
   color: ${options.stateLabelColor};
+  // line-height: 1;
 }
 
 .statediagram-cluster rect.outer {

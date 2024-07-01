@@ -8,7 +8,7 @@ import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-export interface MermaidBuildOptions {
+export interface MermaidBuildOptions extends BuildOptions {
   minify: boolean;
   core: boolean;
   metafile: boolean;

@@ -14,6 +14,7 @@
 
 - [DetailedError](../interfaces/mermaid.DetailedError.md)
 - [ExternalDiagramDefinition](../interfaces/mermaid.ExternalDiagramDefinition.md)
+- [LayoutLoaderDefinition](../interfaces/mermaid.LayoutLoaderDefinition.md)
 - [Mermaid](../interfaces/mermaid.Mermaid.md)
 - [MermaidConfig](../interfaces/mermaid.MermaidConfig.md)
 - [ParseOptions](../interfaces/mermaid.ParseOptions.md)
@@ -54,4 +55,4 @@
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:430](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L430)
+[packages/mermaid/src/mermaid.ts:440](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L440)

@@ -174,13 +174,13 @@ const roundedRectBkg: ShapeFunction = function (db, elem, node) {
  * @param conf - The configuration object
  * @returns The height nodes dom element
  */
-export const drawNode = function (
+export const drawNode = async function (
   db: MindmapDB,
   elem: D3Element,
   node: FilledMindMapNode,
   fullSection: number,
   conf: MermaidConfig
-): number {
+): Promise<number> {
   const htmlLabels = conf.htmlLabels;
   const section = fullSection % (MAX_SECTIONS - 1);
   const nodeElem = elem.append('g');
@@ -195,7 +195,7 @@ export const drawNode = function (
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
   const description = node.descr.replace(/(<br\/*>)/g, '\n');
-  createText(
+  await createText(
     textElem,
     description,
     {
