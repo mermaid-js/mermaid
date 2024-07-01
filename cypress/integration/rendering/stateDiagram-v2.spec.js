@@ -592,4 +592,18 @@ State1 --> [*]
       {}
     );
   });
+  it('should align dividers correctly', () => {
+    imgSnapshotTest(
+      `stateDiagram-v2
+  state s2 {
+      s3
+      --
+      s4
+      --
+      55
+  }
+`,
+      {}
+    );
+  });
 });
