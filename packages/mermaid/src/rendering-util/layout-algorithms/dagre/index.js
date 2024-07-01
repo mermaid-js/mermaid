@@ -161,22 +161,6 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   //   await insertEdgeLabel(edgeLabels, edge);
   // });
 
-  graph.edges().forEach(function (e) {
-    log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-  });
-
-  graph.nodes().map(function (v) {
-    const node = graph.node(v);
-    log.info(
-      'Position PRE XBX => ' + v + ': (' + node.x,
-      ',' + node.y,
-      ') width: ',
-      node.width,
-      ' height: ',
-      node.height
-    );
-  });
-
   log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
 
   log.info('############################################# XXX');
@@ -184,21 +168,8 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   log.info('############################################# XXX');
 
   dagreLayout(graph);
+
   log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
-
-  graph.nodes().map(function (v) {
-    const node = graph.node(v);
-    log.info(
-      'Position AFTER XBX => ' + v + ': (' + node.x,
-      ',' + node.y,
-      ') width: ',
-      node.width,
-      ' height: ',
-      node.height
-    );
-  });
-
-  log.info('Graph after layout:', graphlibJson.write(graph));
   // Move the nodes to the correct place
   let diff = 0;
   let { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
