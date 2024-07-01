@@ -134,7 +134,6 @@
     "dist/",
     "README.md"
   ],
-  "sideEffects": false,
   "publishConfig": {
     "access": "public"
   }

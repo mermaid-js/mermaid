@@ -6,7 +6,6 @@ import {
   userNodeOverrides,
   styles2String,
 } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
-// @ts-expect-error TODO: Fix rough typings
 import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
