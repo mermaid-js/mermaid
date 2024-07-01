@@ -341,7 +341,7 @@ const divider = (parent, node) => {
   } else {
     rect = outerRectG.insert('rect', ':first-child');
     let outerRectClass = 'outer';
-    if (look === 'neo') {
+    if (node.look === 'neo') {
       outerRectClass = 'divider';
     } else {
       outerRectClass = 'divider';

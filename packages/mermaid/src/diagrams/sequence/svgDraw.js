@@ -397,7 +397,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     g.attr('data-id', actor.name);
   }
 
-  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
