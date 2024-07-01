@@ -381,9 +381,9 @@ const shapes = {
 
 let clusterElems = {};
 
-export const insertCluster = (elem, node) => {
+export const insertCluster = async (elem, node) => {
   const shape = node.shape || 'rect';
-  const cluster = shapes[shape](elem, node);
+  const cluster = await shapes[shape](elem, node);
   clusterElems[node.id] = cluster;
   return cluster;
 };

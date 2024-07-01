@@ -499,7 +499,7 @@ function initialize(options: MermaidConfig = {}) {
 
   const config =
     typeof options === 'object' ? configApi.setSiteConfig(options) : configApi.getSiteConfig();
-  console.log('IPI config', config.themeVariables.useGradient);
+  // console.log('IPI config', config.themeVariables.useGradient);
   setLogLevel(config.logLevel);
   addDiagrams();
 }

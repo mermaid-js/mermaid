@@ -1,6 +1,8 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
+import { select } from 'd3';
 import type { Node } from '$root/rendering-util/types.d.ts';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import {
   styles2String,
   userNodeOverrides,
@@ -52,10 +54,11 @@ export const createInnerCylinderPathD = (
   return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
 };
 export const cylinder = async (parent: SVGAElement, node: Node) => {
+  const { themeVariables } = getConfig();
+  const { useGradient } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-
   const labelPaddingX = node.look === 'neo' ? node.padding * 2 : node.padding;
   const labelPaddingY = node.look === 'neo' ? node.padding * 1 : node.padding;
   const w = bbox.width + labelPaddingY;
@@ -66,15 +69,26 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handdrawn' || (node.look === 'neo' && !useGradient)) {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
-    const outerNode = rc.path(outerPathData, userNodeOverrides(node, {}));
-    const innerLine = rc.path(innerPathData, userNodeOverrides(node, { fill: 'none' }));
+    const options = userNodeOverrides(node, {});
+    const overrides =
+      node.look === 'neo'
+        ? {
+            roughness: 0,
+            stroke: 'none',
+            fillStyle: 'solid',
+          }
+        : {};
 
-    cylinder = shapeSvg.insert(() => innerLine, ':first-child');
+    const outerNode = rc.path(outerPathData, { ...options, ...overrides });
+    const innerLine = rc.path(innerPathData, { ...options, ...overrides });
+
+    const innerLineEl = shapeSvg.insert(() => innerLine, ':first-child');
+    innerLineEl.attr('class', 'neo-line');
     cylinder = shapeSvg.insert(() => outerNode, ':first-child');
     cylinder.attr('class', 'basic label-container');
     if (cssStyles) {
@@ -90,6 +104,7 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
       .attr('style', nodeStyles);
   }
 
+  // find label and move it down
   cylinder.attr('label-offset-y', ry);
   cylinder.attr('transform', `translate(${-w / 2}, ${-(h / 2 + ry)})`);
 
