@@ -41,7 +41,7 @@ const getStyles = (
   }
 
   & .edge-thickness-normal {
-    stroke-width: 2px;
+    stroke-width: 1px;
   }
   & .edge-thickness-thick {
     stroke-width: 3.5px
