@@ -24,7 +24,6 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   // log.info('IPI node = ', node);
 
   let rect;
-  node.look = look;
   let { rx, ry } = node;
   const { cssStyles } = node;
 
