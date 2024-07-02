@@ -203,6 +203,7 @@ Communication tools and platforms
   - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
 - [JSDoc](https://jsdoc.app/)
   - [jsdoc-mermaid](https://github.com/Jellyvision/jsdoc-mermaid)
+- [Madness](https://madness.dannyb.co/)
 - [mdBook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
 - [MkDocs](https://www.mkdocs.org)
