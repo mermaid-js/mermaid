@@ -321,4 +321,52 @@ ORDER ||--|{ LINE-ITEM : contains
       { logLevel: 1 }
     );
   });
+
+  it('should handle the direction statement with TB', () => {
+    imgSnapshotTest(
+      `
+      erDiagram
+        direction TB
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ LINE-ITEM : contains
+      `,
+      { logLevel: 1 }
+    );
+  });
+
+  it('should handle the direction statement with BT', () => {
+    imgSnapshotTest(
+      `
+      erDiagram
+        direction BT
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ LINE-ITEM : contains
+      `,
+      { logLevel: 1 }
+    );
+  });
+
+  it('should handle the direction statement with LR', () => {
+    imgSnapshotTest(
+      `
+      erDiagram
+        direction LR
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ LINE-ITEM : contains
+      `,
+      { logLevel: 1 }
+    );
+  });
+
+  it('should handle the direction statement with RL', () => {
+    imgSnapshotTest(
+      `
+      erDiagram
+        direction RL
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ LINE-ITEM : contains
+      `,
+      { logLevel: 1 }
+    );
+  });
 });

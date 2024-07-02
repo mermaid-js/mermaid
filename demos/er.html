@@ -114,6 +114,7 @@
 
     <pre class="mermaid">
     erDiagram
+      direction LR
       p[Person] {
           string firstName
           string lastName
@@ -130,12 +131,12 @@
       _customer_order {
           bigint id PK
           bigint customer_id FK
-          text shipping_address 
-          text delivery_method 
-          timestamp_with_time_zone ordered_at 
-          numeric total_tax_amount 
-          numeric total_price 
-          text payment_method 
+          text shipping_address
+          text delivery_method
+          timestamp_with_time_zone ordered_at
+          numeric total_tax_amount
+          numeric total_price
+          text payment_method
       }
     </pre>
     <hr />

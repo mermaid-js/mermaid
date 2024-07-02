@@ -7,6 +7,12 @@
 %x acc_descr_multiline
 
 %%
+.*direction\s+TB[^\n]*                       return 'direction_tb';
+.*direction\s+BT[^\n]*                       return 'direction_bt';
+.*direction\s+RL[^\n]*                       return 'direction_rl';
+.*direction\s+LR[^\n]*                       return 'direction_lr';
+\%\%(?!\{)*[^\n]*(\r?\n?)+                   /* skip comments */
+\%\%[^\n]*(\r?\n)*                           /* skip comments */
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
 accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
@@ -109,6 +115,7 @@ statement
     | entityName SQS entityName SQE BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); }
     | entityName SQS entityName SQE { yy.addEntity($1, $3); }
     | title title_value  { $$=$2.trim();yy.setAccTitle($$); }
+    | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
@@ -178,6 +185,17 @@ role
     : 'WORD'      { $$ = $1.replace(/"/g, ''); }
     | 'ENTITY_NAME' { $$ = $1.replace(/"/g, ''); }
     | 'ALPHANUM'  { $$ = $1; }
+    ;
+
+direction
+    : direction_tb
+    { yy.setDirection('TB');}
+    | direction_bt
+    { yy.setDirection('BT');}
+    | direction_rl
+    { yy.setDirection('RL');}
+    | direction_lr
+    { yy.setDirection('LR');}
     ;
 
 %%

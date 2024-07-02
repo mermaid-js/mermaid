@@ -601,7 +601,7 @@ export const draw = function (text, id, _version, diagObj) {
     compound: false,
   })
     .setGraph({
-      rankdir: conf.layoutDirection,
+      rankdir: diagObj.db.getDirection(),
       marginx: 20,
       marginy: 20,
       nodesep: 100,
