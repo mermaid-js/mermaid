@@ -135,6 +135,5 @@
   "files": [
     "dist/",
     "README.md"
-  ],
-  "sideEffects": false
+  ]
 }

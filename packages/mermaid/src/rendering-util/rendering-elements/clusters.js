@@ -326,16 +326,13 @@ const divider = (parent, node) => {
   let rect;
   if (node.look === 'handdrawn') {
     const rc = rough.svg(shapeSvg);
-    const roughOuterNode =
-      node.rx || node.ry
-        ? rc.path(createRoundedRectPathD(x, y, width, height, 10), {
-            roughness: 0.7,
-            fill: compositeTitleBackground,
-            fillStyle: 'solid',
-            stroke: nodeBorder,
-            seed: handdrawnSeed,
-          })
-        : rc.rectangle(x, y, width, height, { seed: handdrawnSeed });
+    const roughOuterNode = rc.rectangle(x, y, width, height, {
+      fill: 'lightgrey',
+      roughness: 0.5,
+      strokeLineDash: [5],
+      stroke: nodeBorder,
+      seed: handdrawnSeed,
+    });
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
   } else {

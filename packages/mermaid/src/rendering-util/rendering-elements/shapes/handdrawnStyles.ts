@@ -82,7 +82,7 @@ export const userNodeOverrides = (node: Node, options: any) => {
       roughness: 0.7,
       fill: stylesMap.get('fill') || mainBkg,
       fillStyle: 'hachure', // solid fill
-      fillWeight: 3.5,
+      fillWeight: 4,
       stroke: stylesMap.get('stroke') || nodeBorder,
       seed: handdrawnSeed,
       strokeWidth: 1.3,
