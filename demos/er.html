@@ -140,6 +140,18 @@
     </pre>
     <hr />
 
+    <pre class="mermaid">
+    erDiagram
+      hotel {
+          String address
+          String `city, state`
+          String `alias?`
+          String `"checkin"`
+          String `geo.accuracy`
+      }
+    </pre>
+    <hr />
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
