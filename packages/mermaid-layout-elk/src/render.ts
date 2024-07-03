@@ -652,7 +652,6 @@ export const render = async (data4Layout, svg, element, algorithm) => {
           y: startNode.y + startNode.height / 2 + offset.y,
           width: sw,
           height: startNode.height,
-          intersection: startNode.intersect,
           padding: startNode.padding,
         },
         startNode.shape === 'diamond'
@@ -665,13 +664,11 @@ export const render = async (data4Layout, svg, element, algorithm) => {
           y: endNode.y + endNode.height / 2 + offset.y,
           width: ew,
           height: endNode.height,
-          intersection: endNode.intersect,
           padding: endNode.padding,
         },
         endNode.shape === 'diamond'
       );
-      //   cutPathAtIntersect(edge.points, endNode);
-      // }
+
       const paths = insertEdge(
         edgesEl,
         edge,
@@ -763,8 +760,8 @@ const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
   var x1 = bounds.x;
   var y1 = bounds.y;
 
-  const w = bounds.width + bounds.padding;
-  const h = bounds.height + bounds.padding;
+  const w = bounds.width; //+ bounds.padding;
+  const h = bounds.height; // + bounds.padding;
   const s = w + h;
 
   const polyPoints = [
@@ -812,15 +809,17 @@ const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
     return bounds;
   }
 
+  console.log('UIO intersections', intersections);
+
   if (intersections.length > 1) {
     // More intersections, find the one nearest to edge end point
     intersections.sort(function (p, q) {
-      var pdx = p.x - point.x;
-      var pdy = p.y - point.y;
+      var pdx = p.x - outsidePoint.x;
+      var pdy = p.y - outsidePoint.y;
       var distp = Math.sqrt(pdx * pdx + pdy * pdy);
 
-      var qdx = q.x - point.x;
-      var qdy = q.y - point.y;
+      var qdx = q.x - outsidePoint.x;
+      var qdy = q.y - outsidePoint.y;
       var distq = Math.sqrt(qdx * qdx + qdy * qdy);
 
       return distp < distq ? -1 : distp === distq ? 0 : 1;
@@ -933,14 +932,22 @@ const cutPathAtIntersect = (_points, bounds, isDiamond: boolean) => {
     if (!outsideNode(bounds, point) && !isInside) {
       // First point inside the rect found
       // Calc the intersection coord between the point anf the last point outside the rect
-      const inter = !isDiamond
-        ? intersection(bounds, lastPointOutside, point)
-        : diamondIntersection(bounds, lastPointOutside, point);
+      let inter;
 
-      console.log('abc88 inside', point, lastPointOutside, inter);
-      console.log('abc88 intersection', inter, bounds);
+      if (isDiamond) {
+        let inter2 = diamondIntersection(bounds, lastPointOutside, point);
+        const distance = Math.sqrt(
+          (lastPointOutside.x - inter2.x) ** 2 + (lastPointOutside.y - inter2.y) ** 2
+        );
+        if (distance > 1) {
+          inter = inter2;
+        }
+      }
+      if (!inter) {
+        inter = intersection(bounds, lastPointOutside, point);
+      }
 
-      // // Check case where the intersection is the same as the last point
+      // Check case where the intersection is the same as the last point
       let pointPresent = false;
       points.forEach((p) => {
         pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
