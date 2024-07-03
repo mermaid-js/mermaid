@@ -644,25 +644,32 @@ export const render = async (data4Layout, svg, element, algorithm) => {
           startNode.innerHTML
         );
       }
-      // // if (startNode.isGroup) {
 
-      edge.points = cutPathAtIntersect(edge.points.reverse(), {
-        x: startNode.x + startNode.width / 2 + offset.x,
-        y: startNode.y + startNode.height / 2 + offset.y,
-        width: sw,
-        height: startNode.height,
-        intersection: startNode.intersection,
-      }).reverse();
+      edge.points = cutPathAtIntersect(
+        edge.points.reverse(),
+        {
+          x: startNode.x + startNode.width / 2 + offset.x,
+          y: startNode.y + startNode.height / 2 + offset.y,
+          width: sw,
+          height: startNode.height,
+          intersection: startNode.intersect,
+          padding: startNode.padding,
+        },
+        startNode.shape === 'diamond'
+      ).reverse();
 
-      // }
-      // if (endNode.isGroup) {
-      edge.points = cutPathAtIntersect(edge.points, {
-        x: endNode.x + ew / 2 + offset.x,
-        y: endNode.y + endNode.height / 2 + offset.y,
-        width: ew,
-        height: endNode.height,
-        intersection: endNode.intersection,
-      });
+      edge.points = cutPathAtIntersect(
+        edge.points,
+        {
+          x: endNode.x + ew / 2 + offset.x,
+          y: endNode.y + endNode.height / 2 + offset.y,
+          width: ew,
+          height: endNode.height,
+          intersection: endNode.intersect,
+          padding: endNode.padding,
+        },
+        endNode.shape === 'diamond'
+      );
       //   cutPathAtIntersect(edge.points, endNode);
       // }
       const paths = insertEdge(
@@ -682,6 +689,147 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     }
   });
 };
+
+function intersectLine(p1, p2, q1, q2) {
+  console.log('UIO intersectLine', p1, p2, q1, q2);
+  // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
+  // p7 and p473.
+
+  var a1, a2, b1, b2, c1, c2;
+  var r1, r2, r3, r4;
+  var denom, offset, num;
+  var x, y;
+
+  // Compute a1, b1, c1, where line joining points 1 and 2 is F(x,y) = a1 x +
+  // b1 y + c1 = 0.
+  a1 = p2.y - p1.y;
+  b1 = p1.x - p2.x;
+  c1 = p2.x * p1.y - p1.x * p2.y;
+
+  // Compute r3 and r4.
+  r3 = a1 * q1.x + b1 * q1.y + c1;
+  r4 = a1 * q2.x + b1 * q2.y + c1;
+
+  // Check signs of r3 and r4. If both point 3 and point 4 lie on
+  // same side of line 1, the line segments do not intersect.
+  if (r3 !== 0 && r4 !== 0 && sameSign(r3, r4)) {
+    return /*DON'T_INTERSECT*/;
+  }
+
+  // Compute a2, b2, c2 where line joining points 3 and 4 is G(x,y) = a2 x + b2 y + c2 = 0
+  a2 = q2.y - q1.y;
+  b2 = q1.x - q2.x;
+  c2 = q2.x * q1.y - q1.x * q2.y;
+
+  // Compute r1 and r2
+  r1 = a2 * p1.x + b2 * p1.y + c2;
+  r2 = a2 * p2.x + b2 * p2.y + c2;
+
+  // Check signs of r1 and r2. If both point 1 and point 2 lie
+  // on same side of second line segment, the line segments do
+  // not intersect.
+  if (r1 !== 0 && r2 !== 0 && sameSign(r1, r2)) {
+    return /*DON'T_INTERSECT*/;
+  }
+
+  // Line segments intersect: compute intersection point.
+  denom = a1 * b2 - a2 * b1;
+  if (denom === 0) {
+    return /*COLLINEAR*/;
+  }
+
+  offset = Math.abs(denom / 2);
+
+  // The denom/2 is to get rounding instead of truncating. It
+  // is added or subtracted to the numerator, depending upon the
+  // sign of the numerator.
+  num = b1 * c2 - b2 * c1;
+  x = num < 0 ? (num - offset) / denom : (num + offset) / denom;
+
+  num = a2 * c1 - a1 * c2;
+  y = num < 0 ? (num - offset) / denom : (num + offset) / denom;
+
+  return { x: x, y: y };
+}
+
+/**
+ * @param r1
+ * @param r2
+ */
+function sameSign(r1, r2) {
+  return r1 * r2 > 0;
+}
+const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
+  var x1 = bounds.x;
+  var y1 = bounds.y;
+
+  const w = bounds.width + bounds.padding;
+  const h = bounds.height + bounds.padding;
+  const s = w + h;
+
+  const polyPoints = [
+    { x: x1, y: y1 - h / 2 },
+    { x: x1 + w / 2, y: y1 },
+    { x: x1, y: y1 + h / 2 },
+    { x: x1 - w / 2, y: y1 },
+  ];
+  log.debug(
+    `UIO diamondIntersection calc abc89:
+  outsidePoint: ${JSON.stringify(outsidePoint)}
+  insidePoint : ${JSON.stringify(insidePoint)}
+  node        : x:${bounds.x} y:${bounds.y} w:${bounds.width} h:${bounds.height}`,
+    polyPoints
+  );
+
+  var intersections = [];
+
+  var minX = Number.POSITIVE_INFINITY;
+  var minY = Number.POSITIVE_INFINITY;
+  if (typeof polyPoints.forEach === 'function') {
+    polyPoints.forEach(function (entry) {
+      minX = Math.min(minX, entry.x);
+      minY = Math.min(minY, entry.y);
+    });
+  } else {
+    minX = Math.min(minX, polyPoints.x);
+    minY = Math.min(minY, polyPoints.y);
+  }
+
+  var left = x1 - w / 2;
+  var top = y1 + h / 2;
+
+  for (var i = 0; i < polyPoints.length; i++) {
+    var p1 = polyPoints[i];
+    var p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
+    var intersect = intersectLine(bounds, outsidePoint, { x: p1.x, y: p1.y }, { x: p2.x, y: p2.y });
+
+    if (intersect) {
+      intersections.push(intersect);
+    }
+  }
+
+  if (!intersections.length) {
+    return bounds;
+  }
+
+  if (intersections.length > 1) {
+    // More intersections, find the one nearest to edge end point
+    intersections.sort(function (p, q) {
+      var pdx = p.x - point.x;
+      var pdy = p.y - point.y;
+      var distp = Math.sqrt(pdx * pdx + pdy * pdy);
+
+      var qdx = q.x - point.x;
+      var qdy = q.y - point.y;
+      var distq = Math.sqrt(qdx * qdx + qdy * qdy);
+
+      return distp < distq ? -1 : distp === distq ? 0 : 1;
+    });
+  }
+
+  return intersections[0];
+};
+
 export const intersection = (node, outsidePoint, insidePoint) => {
   log.debug(`intersection calc abc89:
   outsidePoint: ${JSON.stringify(outsidePoint)}
@@ -772,8 +920,8 @@ const outsideNode = (node, point) => {
  * @param {any} bounds
  * @returns {Array} Points
  */
-const cutPathAtIntersect = (_points, bounds) => {
-  console.log('UIO cutPathAtIntersect Points:', _points, 'node:', bounds);
+const cutPathAtIntersect = (_points, bounds, isDiamond: boolean) => {
+  console.log('UIO cutPathAtIntersect Points:', _points, 'node:', bounds, 'isDiamond', isDiamond);
   let points = [];
   let lastPointOutside = _points[0];
   let isInside = false;
@@ -785,7 +933,10 @@ const cutPathAtIntersect = (_points, bounds) => {
     if (!outsideNode(bounds, point) && !isInside) {
       // First point inside the rect found
       // Calc the intersection coord between the point anf the last point outside the rect
-      const inter = intersection(bounds, lastPointOutside, point);
+      const inter = !isDiamond
+        ? intersection(bounds, lastPointOutside, point)
+        : diamondIntersection(bounds, lastPointOutside, point);
+
       console.log('abc88 inside', point, lastPointOutside, inter);
       console.log('abc88 intersection', inter, bounds);
 
