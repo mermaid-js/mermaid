@@ -16,7 +16,7 @@ import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
  * @param defaultDir - the direction to use if none is found
  * @returns The direction to use
  */
-const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
+export const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   let dir = defaultDir;
   if (parsedItem.doc) {
     for (const parsedItemDoc of parsedItem.doc) {
@@ -44,7 +44,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   // Not related to the refactoring, but this is the first step in the rendering process
   diag.db.extract(diag.db.getRootDocV2());
 
-  const DIR = getDir(diag.db.getRootDocV2());
+  //const DIR = getDir(diag.db.getRootDocV2());
 
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
@@ -66,7 +66,6 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = layout;
-  data4Layout.direction = DIR;
 
   // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
 
@@ -89,4 +88,5 @@ export const draw = async function (text: string, id: string, _version: string, 
 export default {
   getClasses,
   draw,
+  getDir,
 };
