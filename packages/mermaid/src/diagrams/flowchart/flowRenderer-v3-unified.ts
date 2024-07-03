@@ -37,10 +37,11 @@ export const draw = async function (text: string, id: string, _version: string, 
   log.debug('Data: ', data4Layout);
   // Create the root SVG - the element is the div containing the SVG element
   const { element, svg } = getDiagramElements(id, securityLevel);
+  const direction = getDirection();
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = layout;
-  data4Layout.direction = getDirection();
+  data4Layout.direction = direction;
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
   data4Layout.markers = ['point', 'circle', 'cross'];

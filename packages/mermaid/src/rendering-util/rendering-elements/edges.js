@@ -520,6 +520,15 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
   // This is the accessor function we talked about above
   let curve = curveBasis;
+  // curve = curveCardinal;
+  // curve = curveLinear;
+  // curve = curveNatural;
+  // curve = curveCatmullRom.alpha(0.5);
+  // curve = curveCatmullRom;
+  // curve = curveCardinal.tension(0.7);
+  // curve = curveMonotoneY;
+  // let curve = interpolateToCurve([5], curveNatural, 0.01, 10);
+
   // Currently only flowcharts get the curve from the settings, perhaps this should
   // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
   // have not been thought through
@@ -528,6 +537,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
+  // const lineFunction = edge.curve ? line().x(x).y(y).curve(curve) : roundedCornersLine;
   const lineFunction = line().x(x).y(y).curve(curve);
 
   // Construct stroke classes based on properties
@@ -563,6 +573,11 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   if (edge.look === 'handdrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
+    // const svgPathNode = rc.path(lineFunction(ld.splice(0, ld.length-1)), {
+    // const svgPathNode = rc.path(lineFunction(ld), {
+    //   roughness: 0.3,
+    //   seed: handdrawnSeed,
+    // });
     const svgPathNode = rc.path(linePath, {
       roughness: 0.3,
       seed: handdrawnSeed,
@@ -572,6 +587,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
     svgPath = select(svgPathNode)
       .select('path')
+      // .attr('d', lineFunction(lineData))
       .attr('id', edge.id)
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
       .attr('style', edge.style);
