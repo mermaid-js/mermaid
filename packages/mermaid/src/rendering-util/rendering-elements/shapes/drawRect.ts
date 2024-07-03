@@ -8,7 +8,6 @@ import {
 } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import { log } from '$root/logger.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
   const { look } = getConfig();
@@ -25,12 +24,11 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   // log.info('IPI node = ', node);
 
   let rect;
-  node.look = look;
   let { rx, ry } = node;
   const { cssStyles } = node;
 
   //use options rx, ry overrides if present
-  if (options && options.rx && options.ry) {
+  if (options?.rx && options.ry) {
     rx = options.rx;
     ry = options.ry;
   }

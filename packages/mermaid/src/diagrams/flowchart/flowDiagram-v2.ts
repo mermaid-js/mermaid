@@ -16,7 +16,6 @@ export const diagram = {
       cnf.flowchart = {};
     }
     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-    // flowchart-v2 uses dagre-wrapper, which doesn't have access to flowchart cnf
     setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
     flowRendererV3.setConf(cnf.flowchart);
     flowDb.clear();

@@ -132,21 +132,6 @@ const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
 };
 
 /**
- * Returns a new list of classes.
- * In the future, this can be replaced with a class common to all diagrams.
- * ClassDef information = { id: id, styles: [], textStyles: [] }
- *
- * @returns {{}}
- */
-function newClassesList() {
-  return {};
-}
-
-// let direction = DEFAULT_DIAGRAM_DIRECTION;
-// let rootDoc = [];
-let cssClasses = newClassesList(); // style classes defined by a classDef
-
-/**
  *
  * @param nodes
  * @param nodeData

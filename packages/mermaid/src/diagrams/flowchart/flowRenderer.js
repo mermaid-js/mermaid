@@ -301,8 +301,8 @@ export const draw = async function (text, id, _version, diagObj) {
   if (dir === undefined) {
     dir = 'TD';
   }
-  const nodeSpacing = conf.nodeSpacing || 50;
-  const rankSpacing = conf.rankSpacing || 50;
+  const nodeSpacing = conf.nodeSpacing ?? 50;
+  const rankSpacing = conf.rankSpacing ?? 50;
 
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
@@ -339,14 +339,14 @@ export const draw = async function (text, id, _version, diagObj) {
 
     selectAll('cluster').append('text');
 
-    for (let j = 0; j < subG.nodes.length; j++) {
+    for (const node of subG.nodes) {
       log.warn(
         'Setting subgraph',
-        subG.nodes[j],
-        diagObj.db.lookUpDomId(subG.nodes[j]),
+        node,
+        diagObj.db.lookUpDomId(node),
         diagObj.db.lookUpDomId(subG.id)
       );
-      g.setParent(diagObj.db.lookUpDomId(subG.nodes[j]), diagObj.db.lookUpDomId(subG.id));
+      g.setParent(diagObj.db.lookUpDomId(node), diagObj.db.lookUpDomId(subG.id));
     }
   }
   await addVertices(vert, g, id, root, doc, diagObj);
@@ -429,8 +429,8 @@ export const draw = async function (text, id, _version, diagObj) {
       te.attr('transform', `translate(${xPos + _width / 2}, ${yPos + 14})`);
       te.attr('id', id + 'Text');
 
-      for (let j = 0; j < subG.classes.length; j++) {
-        clusterEl[0].classList.add(subG.classes[j]);
+      for (const className of subG.classes) {
+        clusterEl[0].classList.add(className);
       }
     }
   }

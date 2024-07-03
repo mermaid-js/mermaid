@@ -16,7 +16,7 @@ function applyStyle(dom, styleFn) {
 
 /**
  * @param {any} node
- * @returns {SVGForeignObjectElement} Node
+ * @returns {Promise<SVGForeignObjectElement>} Node
  */
 async function addHtmlLabel(node) {
   const fo = select(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));

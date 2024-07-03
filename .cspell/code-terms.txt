@@ -13,6 +13,7 @@ bqstring
 BQUOTE
 bramp
 BRKT
+brotli
 callbackargs
 callbackname
 classdef
@@ -114,6 +115,7 @@ STYLEDEF
 STYLEOPTS
 subcomponent
 subcomponents
+subconfig
 SUBROUTINEEND
 SUBROUTINESTART
 Subschemas
@@ -128,6 +130,7 @@ titlevalue
 topbar
 TRAPEND
 TRAPSTART
+treemap
 ts-nocheck
 tsdoc
 typeof

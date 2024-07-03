@@ -17,8 +17,8 @@ const getStyles = (
   } & FlowChartStyleOptions
 ) => {
   let diagramStyles = '';
-  if (type in themes && themes[type as keyof typeof themes]) {
-    diagramStyles = themes[type as keyof typeof themes](options);
+  if (type in themes && themes[type]) {
+    diagramStyles = themes[type](options);
   } else {
     log.warn(`No theme found for ${type}`);
   }
@@ -39,7 +39,7 @@ const getStyles = (
   }
 
   & .edge-thickness-normal {
-    stroke-width: 2px;
+    stroke-width: 1px;
   }
   & .edge-thickness-thick {
     stroke-width: 3.5px

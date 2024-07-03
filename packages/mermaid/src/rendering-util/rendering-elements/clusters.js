@@ -25,7 +25,8 @@ const rect = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
-    .attr('id', node.id);
+    .attr('id', node.id)
+    .attr('data-look', node.look);
 
   const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
 
@@ -174,9 +175,8 @@ const roundedWithTitle = async (parent, node) => {
     .insert('g')
     .attr('class', node.cssClasses)
     .attr('id', node.id)
-    .attr('data-et', 'node')
-    .attr('data-node', 'true')
-    .attr('data-id', node.id);
+    .attr('data-id', node.id)
+    .attr('data-look', node.look);
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
@@ -222,9 +222,8 @@ const roundedWithTitle = async (parent, node) => {
   const innerHeight = node.height + padding - bbox.height - 6;
   const x = node.x - width / 2;
   const y = node.y - height / 2;
-
+  node.width = width;
   const innerY = node.y - node.height / 2 - halfPadding + bbox.height + 2;
-  const look = siteConfig.look;
 
   // add the rect
   let rect;
@@ -254,12 +253,7 @@ const roundedWithTitle = async (parent, node) => {
     innerRect = shapeSvg.insert(() => roughInnerNode);
   } else {
     rect = outerRectG.insert('rect', ':first-child');
-    let outerRectClass = 'outer';
-    if (look === 'neo') {
-      outerRectClass = 'outer state-shadow-neo';
-    } else {
-      outerRectClass = 'outer';
-    }
+    const outerRectClass = 'outer';
 
     // center the rect around its coordinate
     rect
@@ -267,7 +261,8 @@ const roundedWithTitle = async (parent, node) => {
       .attr('x', x)
       .attr('y', y)
       .attr('width', width)
-      .attr('height', height);
+      .attr('height', height)
+      .attr('data-look', node.look);
     innerRect
       .attr('class', 'inner')
       .attr('x', x)
@@ -294,55 +289,82 @@ const roundedWithTitle = async (parent, node) => {
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
-
 const divider = (parent, node) => {
-  const { handdrawnSeed } = getConfig();
+  const siteConfig = getConfig();
+
+  const { themeVariables, handdrawnSeed } = siteConfig;
+  const { compositeTitleBackground, nodeBorder } = themeVariables;
+
   // Add outer g element
-  const shapeSvg = parent.insert('g').attr('class', node.cssClasses).attr('id', node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.cssClasses)
+    .attr('id', node.id)
+    .attr('data-look', node.look);
+
+  // add the rect
+  const outerRectG = shapeSvg.insert('g', ':first-child');
+
+  const padding = 0 * node.padding;
+
+  const width = node.width + padding;
+
+  node.diff = -node.padding;
+
+  const height = node.height + padding;
+  // const height = node.height + padding;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+  node.width = width;
 
   // add the rect
   let rect;
-
-  const padding = 0 * node.padding;
-  const halfPadding = padding / 2;
-
-  const x = node.x - node.width / 2 - node.padding;
-  const y = node.y - node.height / 2 + node.padding;
-  const width = node.width + padding;
-  const height = node.height + padding;
   if (node.look === 'handdrawn') {
     const rc = rough.svg(shapeSvg);
-    const roughNode = rc.rectangle(x, y, width, height, {
+    const roughOuterNode = rc.rectangle(x, y, width, height, {
       fill: 'lightgrey',
       roughness: 0.5,
       strokeLineDash: [5],
+      stroke: nodeBorder,
       seed: handdrawnSeed,
     });
 
-    rect = shapeSvg.insert(() => roughNode);
+    rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
   } else {
-    rect = shapeSvg.insert('rect', ':first-child');
+    rect = outerRectG.insert('rect', ':first-child');
+    const outerRectClass = 'divider';
+
     // center the rect around its coordinate
     rect
-      .attr('class', 'divider')
+      .attr('class', outerRectClass)
       .attr('x', x)
       .attr('y', y)
       .attr('width', width)
-      .attr('height', height);
+      .attr('height', height)
+      .attr('data-look', node.look);
   }
+
   const rectBox = rect.node().getBBox();
-  node.width = rectBox.width;
-  node.height = rectBox.height - node.padding;
-  node.diff = 0; //-node.padding / 2;
+  node.height = rectBox.height;
+  node.offsetX = 0;
+  // Used by layout engine to position subgraph in parent
   node.offsetY = 0;
+
   node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
-  return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
+  return { cluster: shapeSvg, labelBBox: {} };
 };
+
 const squareRect = rect;
-const shapes = { rect, squareRect, roundedWithTitle, noteGroup, divider };
+const shapes = {
+  rect,
+  squareRect,
+  roundedWithTitle,
+  noteGroup,
+  divider,
+};
 
 let clusterElems = {};
 
@@ -365,8 +387,20 @@ export const clear = () => {
 };
 
 export const positionCluster = (node) => {
-  log.debug('Position cluster (' + node.id + ', ' + node.x + ', ' + node.y + ')');
+  log.info(
+    'Position cluster (' +
+      node.id +
+      ', ' +
+      node.x +
+      ', ' +
+      node.y +
+      ') (' +
+      node?.width +
+      ', ' +
+      node?.height +
+      ')',
+    clusterElems[node.id]
+  );
   const el = clusterElems[node.id];
-
-  el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
+  el.cluster.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };

@@ -97,7 +97,7 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
    * @returns The schema with `allOf` replaced with `extends`.
    */
   function replaceAllOfWithExtends(schema: JSONSchemaType<Record<string, any>>) {
-    if (schema['allOf']) {
+    if (schema.allOf) {
       const { allOf, ...schemaWithoutAllOf } = schema;
       return {
         ...schemaWithoutAllOf,

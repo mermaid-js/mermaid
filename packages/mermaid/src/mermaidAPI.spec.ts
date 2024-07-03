@@ -605,26 +605,26 @@ describe('mermaidAPI', () => {
       let error: any = { message: '' };
       try {
         // @ts-ignore This is a read-only property. Typescript will not allow assignment, but regular javascript might.
-        mermaidAPI['defaultConfig'] = config;
+        mermaidAPI.defaultConfig = config;
       } catch (e) {
         error = e;
       }
       expect(error.message).toBe(
         "Cannot assign to read only property 'defaultConfig' of object '#<Object>'"
       );
-      expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
     });
     it('prevents changes to global defaults (direct)', () => {
       let error: any = { message: '' };
       try {
-        mermaidAPI.defaultConfig['logLevel'] = 0;
+        mermaidAPI.defaultConfig.logLevel = 0;
       } catch (e) {
         error = e;
       }
       expect(error.message).toBe(
         "Cannot assign to read only property 'logLevel' of object '#<Object>'"
       );
-      expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
     });
     it('prevents sneaky changes to global defaults (assignWithDepth)', () => {
       const config = {
@@ -639,7 +639,7 @@ describe('mermaidAPI', () => {
       expect(error.message).toBe(
         "Cannot assign to read only property 'logLevel' of object '#<Object>'"
       );
-      expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
     });
   });
 
@@ -647,7 +647,7 @@ describe('mermaidAPI', () => {
     it('allows dompurify config to be set', () => {
       mermaidAPI.initialize({ dompurifyConfig: { ADD_ATTR: ['onclick'] } });
 
-      expect(mermaidAPI!.getConfig()!.dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
+      expect(mermaidAPI.getConfig().dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
     });
   });
 

@@ -69,7 +69,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         }
       }
       log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
-      if (node && node.clusterNode) {
+      if (node?.clusterNode) {
         // const children = graph.children(v);
         log.info('Cluster identified XBX', v, node.width, graph.node(v));
 
@@ -161,22 +161,6 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   //   await insertEdgeLabel(edgeLabels, edge);
   // });
 
-  graph.edges().forEach(function (e) {
-    log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-  });
-
-  graph.nodes().map(async function (v) {
-    const node = graph.node(v);
-    log.info(
-      'Position PRE XBX => ' + v + ': (' + node.x,
-      ',' + node.y,
-      ') width: ',
-      node.width,
-      ' height: ',
-      node.height
-    );
-  });
-
   log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
 
   log.info('############################################# XXX');
@@ -184,31 +168,14 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   log.info('############################################# XXX');
 
   dagreLayout(graph);
+
   log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
-
-  graph.nodes().map(async function (v) {
-    const node = graph.node(v);
-    log.info(
-      'Position AFTER XBX => ' + v + ': (' + node.x,
-      ',' + node.y,
-      ') width: ',
-      node.width,
-      ' height: ',
-      node.height
-    );
-  });
-
-  log.info('Graph after layout:', graphlibJson.write(graph));
   // Move the nodes to the correct place
   let diff = 0;
   let { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
-  // subGraphTitleTotalMargin = 0;
   await Promise.all(
     sortNodesByHierarchy(graph).map(async function (v) {
       const node = graph.node(v);
-      const p = graph.node(node?.parentId);
-      // subGraphTitleTotalMargin = p?.offsetY || subGraphTitleTotalMargin;
-
       log.info(
         'Position XBX => ' + v + ': (' + node.x,
         ',' + node.y,
@@ -217,12 +184,9 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         ' height: ',
         node.height
       );
-      if (node && node.clusterNode) {
-        const parentId = graph.parent(v);
+      if (node?.clusterNode) {
         // Adjust for padding when on root level
         node.y += subGraphTitleTotalMargin;
-        // node.y = parentId ? node.y - 8 : node.y - 8;
-        // node.x -= 8;
 
         log.info(
           'A tainted cluster node XBX1',
@@ -235,9 +199,6 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           graph.parent(v)
         );
         clusterDb[node.id].node = node;
-        // node.y += subGraphTitleTotalMargin - 10;
-        // node.y -= (node.offsetY || 0) / 2;
-        // node.y -= 10;
         positionNode(node);
       } else {
         // A tainted cluster node
@@ -258,8 +219,6 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           const labelHeight = node?.labelBBox?.height || 0;
           const offsetY = labelHeight - halfPadding || 0;
           log.debug('OffsetY', offsetY, 'labelHeight', labelHeight, 'halfPadding', halfPadding);
-          // node.y += offsetY + (parent?.offsetY / 2 || 0);
-          // node.offsetY = offsetY;
           await insertCluster(clusters, node);
 
           // A cluster in the non-recursive way

@@ -41,6 +41,9 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .cluster-label span {
     color: ${options.titleColor};
   }
+  .cluster-label span p {
+    background-color: transparent;
+  }
 
   .label text,span {
     fill: ${options.nodeTextColor || options.textColor};
@@ -56,7 +59,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
-  .flowchart-label text {
+  .node .label text {
     text-anchor: middle;
   }
   // .flowchart-label .text-outer-tspan {
