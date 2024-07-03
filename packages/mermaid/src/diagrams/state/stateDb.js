@@ -12,6 +12,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import { dataFetcher, reset as resetDataFetching } from './dataFetcher.js';
+import { getDir } from './stateRenderer-v3-unified.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -588,7 +589,7 @@ const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.t
 
 export const getData = () => {
   const config = getConfig();
-  return { nodes, edges, other: {}, config };
+  return { nodes, edges, other: {}, config, direction: getDir(getRootDocV2()) };
 };
 
 export default {

@@ -483,13 +483,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   const tail = startNode;
   var head = endNode;
 
-  log.info(
-    'abc88 InsertEdge Start: ',
-    edge.start,
-    '-->',
-    edge.end,
-    JSON.stringify(points, null, 2)
-  );
   if (head.intersect && tail.intersect) {
     // log.info('abc88 InsertEdge: 0.5', edge.start, '-->', edge.end, JSON.stringify(points));
     points = points.slice(1, edge.points.length - 1);
