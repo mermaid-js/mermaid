@@ -54,18 +54,20 @@ const rect = async (parent, node) => {
   }
 
   const padding = 0 * node.padding;
+  const halfPadding = padding / 2;
 
-  const width = node.width <= bbox.width + padding ? bbox.width + padding : node.width;
-  if (node.width <= bbox.width + padding) {
-    node.diff = (bbox.width - node.width) / 2 - node.padding / 2;
+  const width =
+    (node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width) + padding;
+  if (node.width <= bbox.width + node.padding) {
+    node.diff = (width - node.width) / 2 - node.padding;
   } else {
-    node.diff = -node.padding / 2;
+    node.diff = -node.padding;
   }
 
-  const totalWidth = width + padding;
-  const totalHeight = node.height + padding;
-  const x = node.x - totalWidth / 2;
-  const y = node.y - totalHeight / 2;
+  const height = node.height;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+  // console.log('UIO diff 2', node.id, node.diff, 'totalWidth: ', width);
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
@@ -80,9 +82,8 @@ const rect = async (parent, node) => {
       fillWeight: 3,
       seed: handdrawnSeed,
     });
-    const roughNode = rc.path(createRoundedRectPathD(x, y, totalWidth, totalHeight, 0), options);
+    const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, 0), options);
     // console.log('Rough node insert CXC', roughNode);
-
     rect = shapeSvg.insert(() => {
       log.debug('Rough node insert CXC', roughNode);
       return roughNode;
@@ -97,8 +98,8 @@ const rect = async (parent, node) => {
       .attr('ry', node.ry)
       .attr('x', x)
       .attr('y', y)
-      .attr('width', totalWidth)
-      .attr('height', totalHeight);
+      .attr('width', width)
+      .attr('height', height);
   }
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
   labelEl.attr(
@@ -116,8 +117,11 @@ const rect = async (parent, node) => {
   // Center the label
 
   const rectBox = rect.node().getBBox();
+  node.offsetX = 0;
   node.width = rectBox.width;
   node.height = rectBox.height;
+  // Used by layout engine to position subgraph in parent
+  node.offsetY = bbox.height - node.padding / 2;
 
   node.intersect = function (point) {
     return intersectRect(node, point);
@@ -163,6 +167,7 @@ const noteGroup = (parent, node) => {
 
   return { cluster: shapeSvg, labelBBox: { width: 0, height: 0 } };
 };
+
 const roundedWithTitle = async (parent, node) => {
   const siteConfig = getConfig();
 
@@ -200,6 +205,7 @@ const roundedWithTitle = async (parent, node) => {
     dv.attr('height', bbox.height);
   }
 
+  // Rounded With Title
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
@@ -211,12 +217,6 @@ const roundedWithTitle = async (parent, node) => {
     node.diff = -node.padding;
   }
 
-  // if (node.id === 'Apa0') {
-  //   console.log('XBX here', node);
-  //   node.y += 10;
-  // } else {
-  //   console.log('XBX there', node);
-  // }
   const height = node.height + padding;
   // const height = node.height + padding;
   const innerHeight = node.height + padding - bbox.height - 6;

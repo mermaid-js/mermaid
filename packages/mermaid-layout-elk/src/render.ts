@@ -17,7 +17,7 @@ const {
   log,
   positionEdgeLabel,
 } = mermaid.internalHelpers;
-
+// import { insertEdge } from '../../mermaid/src/rendering-util/rendering-elements/edges.js';
 const nodeDb = {};
 const portPos = {};
 const clusterDb = {};
@@ -54,7 +54,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
   let boundingBox;
   const child = {
     ...node,
-    ports: node.shape === 'diamond' ? ports : [],
+    // ports: node.shape === 'diamond' ? ports : [],
   };
   graph.children.push(child);
   nodeDb[node.id] = child;
@@ -102,47 +102,49 @@ export const addVertices = async function (nodeEl, nodeArr, graph, parentId) {
   return graph;
 };
 
-const drawNodes = (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
-  nodeArray.forEach(function (node) {
-    if (node) {
-      nodeDb[node.id] = node;
-      nodeDb[node.id].offset = {
-        posX: node.x + relX,
-        posY: node.y + relY,
-        x: relX,
-        y: relY,
-        depth,
-        width: node.width,
-        height: node.height,
-      };
-      if (node.isGroup) {
-        log.debug('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
-        const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
-        // TODO use faster way of cloning
-        const clusterNode = JSON.parse(JSON.stringify(node));
-        clusterNode.x = node.offset.posX + node.width / 2;
-        clusterNode.y = node.offset.posY + node.height / 2;
-        insertCluster(subgraphEl, clusterNode);
+const drawNodes = async (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
+  Promise.all(
+    nodeArray.map(async function (node) {
+      if (node) {
+        nodeDb[node.id] = node;
+        nodeDb[node.id].offset = {
+          posX: node.x + relX,
+          posY: node.y + relY,
+          x: relX,
+          y: relY,
+          depth,
+          width: Math.max(node.width, node.labels ? node.labels[0]?.width || 0 : 0),
+          height: node.height,
+        };
+        if (node.isGroup) {
+          console.log('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
+          const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
+          // TODO use faster way of cloning
+          const clusterNode = JSON.parse(JSON.stringify(node));
+          clusterNode.x = node.offset.posX + node.width / 2;
+          clusterNode.y = node.offset.posY + node.height / 2;
+          await insertCluster(subgraphEl, clusterNode);
 
-        log.info('Id (UGH)= ', node.shape, node.labels);
-      } else {
-        log.info(
-          'Id NODE = ',
-          node.id,
-          node.x,
-          node.y,
-          relX,
-          relY,
-          node.domId.node(),
-          `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
-        );
-        node.domId.attr(
-          'transform',
-          `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
-        );
+          console.log('Id (UIO)= ', node.id, node.width, node.shape, node.labels);
+        } else {
+          log.info(
+            'Id NODE = ',
+            node.id,
+            node.x,
+            node.y,
+            relX,
+            relY,
+            node.domId.node(),
+            `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
+          );
+          node.domId.attr(
+            'transform',
+            `translate(${node.x + relX + node.width / 2}, ${node.y + relY + node.height / 2})`
+          );
+        }
       }
-    }
-  });
+    })
+  );
   nodeArray.forEach(function (node) {
     if (node?.isGroup) {
       drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, depth + 1);
@@ -393,7 +395,7 @@ export const addEdges = async function (dataForLayout, graph, svg) {
       // calculate start and end points of the edge, note that the source and target
       // can be modified for shapes that have ports
       const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge, dir);
-      log.debug('abc78 source and target', source, target);
+      console.log('abc78 source and target', source, target);
       // Add the edge to the graph
       graph.edges.push({
         id: 'e' + edge.start + edge.end,
@@ -494,6 +496,7 @@ export const render = async (data4Layout, svg, element, algorithm) => {
   // Add elements in the svg to be used to hold the subgraphs container
   // elements and the nodes
   const subGraphsEl = svg.insert('g').attr('class', 'subgraphs');
+
   const nodeEl = svg.insert('g').attr('class', 'nodes');
 
   // Add the nodes to the graph, this will entail creating the actual nodes
@@ -516,21 +519,24 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     if (parentLookupDb.childrenById[node.id] !== undefined) {
       node.labels = [
         {
-          text: node.labelText,
-          layoutOptions: {
-            'nodeLabels.placement': '[H_CENTER, V_TOP, INSIDE]',
-          },
-          width: node?.labelData?.width || 0,
-          height: node?.labelData?.height || 0,
+          text: node.label,
+          width: node?.labelData?.width || 50,
+          height: node?.labelData?.height || 50,
         },
+        (node.width = node.width + 2 * node.paddding),
+        console.log('UIO node label', node?.labelData?.width, node.padding),
       ];
       node.layoutOptions = {
         'spacing.baseValue': 30,
+        'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
       };
       if (node.dir) {
         node.layoutOptions = {
           ...node.layoutOptions,
+          'elk.algorithm': algorithm,
           'elk.direction': dir2ElkDirection(node.dir),
+          'nodePlacement.strategy': data4Layout.config['elk.nodePlacement.strategy'],
+          'elk.layered.mergeEdges': data4Layout.config['elk.mergeEdges'],
           'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
         };
       }
@@ -561,12 +567,24 @@ export const render = async (data4Layout, svg, element, algorithm) => {
   g.edges?.map((edge) => {
     // (elem, edge, clusterDb, diagramType, graph, id)
     const startNode = nodeDb[edge.sources[0]];
+    const startCluster = parentLookupDb[edge.sources[0]];
     const endNode = nodeDb[edge.targets[0]];
     const sourceId = edge.start;
     const targetId = edge.end;
 
     const offset = calcOffset(sourceId, targetId, parentLookupDb);
-    log.info('APA12 offset', offset, sourceId, targetId, edge);
+    console.log(
+      'offset',
+      offset,
+      sourceId,
+      ' ==> ',
+      targetId,
+      'edge:',
+      edge,
+      'cluster:',
+      startCluster,
+      startNode
+    );
     if (edge.sections) {
       const src = edge.sections[0].startPoint;
       const dest = edge.sections[0].endPoint;
@@ -576,10 +594,77 @@ export const render = async (data4Layout, svg, element, algorithm) => {
         return { x: segment.x + offset.x, y: segment.y + offset.y };
       });
       edge.points = [
+        {
+          x: startNode.x + startNode.width / 2 + offset.x,
+          y: startNode.y + startNode.height / 2 + offset.y,
+        },
         { x: src.x + offset.x, y: src.y + offset.y },
         ...segPoints,
         { x: dest.x + offset.x, y: dest.y + offset.y },
+        {
+          x: endNode.x + endNode.width / 2 + offset.x,
+          y: endNode.y + endNode.height / 2 + offset.y,
+        },
       ];
+      let sw = startNode.width;
+      let ew = endNode.width;
+      if (startNode.isGroup) {
+        const bbox = startNode.domId.node().getBBox();
+        // sw = Math.max(bbox.width, startNode.width, startNode.labels[0].width);
+        sw = Math.max(startNode.width, startNode.labels[0].width + startNode.padding);
+        // sw = startNode.width;
+        console.log(
+          'UIO width',
+          startNode.id,
+          startNode.with,
+          'bbox.width=',
+          bbox.width,
+          'lw=',
+          startNode.labels[0].width,
+          'node:',
+          startNode.width,
+          'SW = ',
+          sw
+          // 'HTML:',
+          // startNode.domId.node().innerHTML
+        );
+      }
+      if (endNode.isGroup) {
+        const bbox = endNode.domId.node().getBBox();
+        ew = Math.max(startNode.width, endNode.labels[0].width + endNode.padding);
+
+        console.log(
+          'UIO width',
+          startNode.id,
+          startNode.with,
+          bbox.width,
+          'EW = ',
+          ew,
+          'HTML:',
+          startNode.innerHTML
+        );
+      }
+      // // if (startNode.isGroup) {
+
+      edge.points = cutPathAtIntersect(edge.points.reverse(), {
+        x: startNode.x + startNode.width / 2 + offset.x,
+        y: startNode.y + startNode.height / 2 + offset.y,
+        width: sw,
+        height: startNode.height,
+        intersection: startNode.intersection,
+      }).reverse();
+
+      // }
+      // if (endNode.isGroup) {
+      edge.points = cutPathAtIntersect(edge.points, {
+        x: endNode.x + ew / 2 + offset.x,
+        y: endNode.y + endNode.height / 2 + offset.y,
+        width: ew,
+        height: endNode.height,
+        intersection: endNode.intersection,
+      });
+      //   cutPathAtIntersect(edge.points, endNode);
+      // }
       const paths = insertEdge(
         edgesEl,
         edge,
@@ -596,4 +681,137 @@ export const render = async (data4Layout, svg, element, algorithm) => {
       positionEdgeLabel(edge, paths);
     }
   });
+};
+export const intersection = (node, outsidePoint, insidePoint) => {
+  log.debug(`intersection calc abc89:
+  outsidePoint: ${JSON.stringify(outsidePoint)}
+  insidePoint : ${JSON.stringify(insidePoint)}
+  node        : x:${node.x} y:${node.y} w:${node.width} h:${node.height}`);
+  const x = node.x;
+  const y = node.y;
+
+  const dx = Math.abs(x - insidePoint.x);
+  // const dy = Math.abs(y - insidePoint.y);
+  const w = node.width / 2;
+  let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
+  const h = node.height / 2;
+
+  const Q = Math.abs(outsidePoint.y - insidePoint.y);
+  const R = Math.abs(outsidePoint.x - insidePoint.x);
+
+  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
+    // Intersection is top or bottom of rect.
+    let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    r = (R * q) / Q;
+    const res = {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q,
+    };
+
+    if (r === 0) {
+      res.x = outsidePoint.x;
+      res.y = outsidePoint.y;
+    }
+    if (R === 0) {
+      res.x = outsidePoint.x;
+    }
+    if (Q === 0) {
+      res.y = outsidePoint.y;
+    }
+
+    log.debug(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res); // cspell: disable-line
+
+    return res;
+  } else {
+    // Intersection onn sides of rect
+    if (insidePoint.x < outsidePoint.x) {
+      r = outsidePoint.x - w - x;
+    } else {
+      // r = outsidePoint.x - w - x;
+      r = x - w - outsidePoint.x;
+    }
+    let q = (Q * r) / R;
+    //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
+    // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
+    let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
+    // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
+    let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
+    log.debug(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
+    if (r === 0) {
+      _x = outsidePoint.x;
+      _y = outsidePoint.y;
+    }
+    if (R === 0) {
+      _x = outsidePoint.x;
+    }
+    if (Q === 0) {
+      _y = outsidePoint.y;
+    }
+
+    return { x: _x, y: _y };
+  }
+};
+const outsideNode = (node, point) => {
+  console.log('Checking bounds ', node, point);
+  const x = node.x;
+  const y = node.y;
+  const dx = Math.abs(point.x - x);
+  const dy = Math.abs(point.y - y);
+  const w = node.width / 2;
+  const h = node.height / 2;
+  if (dx >= w || dy >= h) {
+    return true;
+  }
+  return false;
+};
+/**
+ * This function will page a path and node where the last point(s) in the path is inside the node
+ * and return an update path ending by the border of the node.
+ *
+ * @param {Array} _points
+ * @param {any} bounds
+ * @returns {Array} Points
+ */
+const cutPathAtIntersect = (_points, bounds) => {
+  console.log('UIO cutPathAtIntersect Points:', _points, 'node:', bounds);
+  let points = [];
+  let lastPointOutside = _points[0];
+  let isInside = false;
+  _points.forEach((point) => {
+    // const node = clusterDb[edge.toCluster].node;
+    console.log(' checking point', point, bounds);
+
+    // check if point is inside the boundary rect
+    if (!outsideNode(bounds, point) && !isInside) {
+      // First point inside the rect found
+      // Calc the intersection coord between the point anf the last point outside the rect
+      const inter = intersection(bounds, lastPointOutside, point);
+      console.log('abc88 inside', point, lastPointOutside, inter);
+      console.log('abc88 intersection', inter, bounds);
+
+      // // Check case where the intersection is the same as the last point
+      let pointPresent = false;
+      points.forEach((p) => {
+        pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+      });
+      // if (!pointPresent) {
+      if (!points.some((e) => e.x === inter.x && e.y === inter.y)) {
+        points.push(inter);
+      } else {
+        console.log('abc88 no intersect', inter, points);
+      }
+      // points.push(inter);
+      isInside = true;
+    } else {
+      // Outside
+      console.log('abc88 outside', point, lastPointOutside, points);
+      lastPointOutside = point;
+      // points.push(point);
+      if (!isInside) {
+        points.push(point);
+      }
+    }
+  });
+  console.log('returning points', points);
+  return points;
 };
