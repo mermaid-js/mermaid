@@ -594,18 +594,11 @@ export const render = async (data4Layout, svg, element, algorithm) => {
         return { x: segment.x + offset.x, y: segment.y + offset.y };
       });
       edge.points = [
-        {
-          x: startNode.x + startNode.width / 2 + offset.x,
-          y: startNode.y + startNode.height / 2 + offset.y,
-        },
         { x: src.x + offset.x, y: src.y + offset.y },
         ...segPoints,
         { x: dest.x + offset.x, y: dest.y + offset.y },
-        {
-          x: endNode.x + endNode.width / 2 + offset.x,
-          y: endNode.y + endNode.height / 2 + offset.y,
-        },
       ];
+
       let sw = startNode.width;
       let ew = endNode.width;
       if (startNode.isGroup) {
@@ -644,7 +637,18 @@ export const render = async (data4Layout, svg, element, algorithm) => {
           startNode.innerHTML
         );
       }
-
+      if (startNode.shape === 'diamond') {
+        edge.points.unshift({
+          x: startNode.x + startNode.width / 2 + offset.x,
+          y: startNode.y + startNode.height / 2 + offset.y,
+        });
+      }
+      if (startNode.shape === 'diamond') {
+        edge.points.push({
+          x: endNode.x + endNode.width / 2 + offset.x,
+          y: endNode.y + endNode.height / 2 + offset.y,
+        });
+      }
       edge.points = cutPathAtIntersect(
         edge.points.reverse(),
         {
