@@ -48,6 +48,7 @@ function newClassesList() {
 
 let nodes = [];
 let edges = [];
+
 let direction = DEFAULT_DIAGRAM_DIRECTION;
 let rootDoc = [];
 let classes = newClassesList(); // style classes defined by a classDef
@@ -221,7 +222,6 @@ const extract = (_doc) => {
   const look = config.look;
   resetDataFetching();
   dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look, classes);
-
   nodes.forEach((node) => {
     if (Array.isArray(node.label)) {
       // add the rest as description
@@ -237,8 +237,6 @@ const extract = (_doc) => {
       node.label = node.label[0];
     }
   });
-
-  direction = getDir(getRootDocV2());
 };
 
 /**
@@ -591,7 +589,7 @@ const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.t
 
 export const getData = () => {
   const config = getConfig();
-  return { nodes, edges, other: {}, config, direction };
+  return { nodes, edges, other: {}, config, direction: getDir(getRootDocV2()) };
 };
 
 export default {
