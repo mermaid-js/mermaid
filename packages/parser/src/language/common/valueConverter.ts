@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { CstNode, GrammarAST, ValueType } from 'langium';
 import { DefaultValueConverter } from 'langium';
 

@@ -383,9 +383,11 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
 
-  hasKatex(textObj.text)
-    ? await drawKatex(diagram, textObj, { startx, stopx, starty: lineStartY })
-    : drawText(diagram, textObj);
+  if (hasKatex(textObj.text)) {
+    await drawKatex(diagram, textObj, { startx, stopx, starty: lineStartY });
+  } else {
+    drawText(diagram, textObj);
+  }
 
   const textWidth = textDims.width;
 
@@ -493,7 +495,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   }
 };
 
-const addActorRenderingData = async function (
+const addActorRenderingData = function (
   diagram,
   actors,
   createdActors: Map<string, any>,
@@ -820,7 +822,7 @@ export const draw = async function (_text: string, id: string, _version: string,
     actorKeys = actorKeys.filter((actorKey) => newActors.has(actorKey));
   }
 
-  await addActorRenderingData(diagram, actors, createdActors, actorKeys, 0, messages, false);
+  addActorRenderingData(diagram, actors, createdActors, actorKeys, 0, messages, false);
   const loopWidths = await calculateLoopBounds(messages, actors, maxMessageWidthPerActor, diagObj);
 
   // The arrow head definition is attached to the svg once
@@ -1074,7 +1076,7 @@ export const draw = async function (_text: string, id: string, _version: string,
     box.stopx = box.startx + box.width;
     box.stopy = box.starty + box.height;
     box.stroke = 'rgb(0,0,0, 0.5)';
-    await svgDraw.drawBox(diagram, box, conf);
+    svgDraw.drawBox(diagram, box, conf);
   }
 
   if (hasBoxes) {
@@ -1145,7 +1147,7 @@ async function getMaxMessageWidthPerActor(
   actors: Map<string, any>,
   messages: any[],
   diagObj: Diagram
-): Promise<{ [id: string]: number }> {
+): Promise<Record<string, number>> {
   const maxMessageWidthPerActor = {};
 
   for (const msg of messages) {
@@ -1579,7 +1581,7 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
           const lastActorActivationIdx = bounds.activations
             .map((a) => a.actor)
             .lastIndexOf(msg.from);
-          delete bounds.activations.splice(lastActorActivationIdx, 1)[0];
+          bounds.activations.splice(lastActorActivationIdx, 1).splice(0, 1);
         }
         break;
     }
