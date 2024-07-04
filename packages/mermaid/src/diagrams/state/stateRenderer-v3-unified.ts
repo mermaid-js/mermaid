@@ -48,7 +48,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   // Not related to the refactoring, but this is the first step in the rendering process
   diag.db.extract(diag.db.getRootDocV2());
 
-  const DIR = getDir(diag.db.getRootDocV2());
+  //const DIR = getDir(diag.db.getRootDocV2());
 
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
@@ -59,7 +59,6 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = layout;
-  data4Layout.direction = DIR;
 
   // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
 
@@ -82,4 +81,5 @@ export const draw = async function (text: string, id: string, _version: string, 
 export default {
   getClasses,
   draw,
+  getDir,
 };

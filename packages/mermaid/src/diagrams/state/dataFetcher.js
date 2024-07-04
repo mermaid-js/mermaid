@@ -372,7 +372,7 @@ export const dataFetcher = (
       groupData.id = parentNodeId;
       //add parent id to noteData
       noteData.parentId = parentNodeId;
-      nodeData.parentId = parentNodeId;
+      //nodeData.parentId = parentNodeId;
 
       //insert groupData
       insertOrUpdateNode(nodes, groupData, classes);

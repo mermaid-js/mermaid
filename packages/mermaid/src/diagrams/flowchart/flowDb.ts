@@ -866,7 +866,7 @@ export const getData = () => {
       label: subGraph.title,
       labelStyle: '',
       parentId: parentDB.get(subGraph.id),
-      padding: config.flowchart?.padding ?? 8,
+      padding: 8,
       cssCompiledStyles: getCompiledStyles(subGraph.classes),
       cssClasses: subGraph.classes.join(' '),
       shape: 'rect',
