@@ -187,7 +187,11 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       .map((node) => (node as Element)?.getBoundingClientRect().right ?? 0)
   );
 
-  const totalWidth = Math.max(circleOffset + furthestTextPos, MARGIN * 2 + titleTextWidth);
+  const totalWidth = Math.max(
+    pieWidth,
+    circleOffset + furthestTextPos,
+    MARGIN * 2 + titleTextWidth
+  );
 
   // Set viewBox
   svg.attr('viewBox', `0 0 ${totalWidth} ${height}`);
