@@ -58,25 +58,25 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
 
     if (targetGroup) {
       if (isArchitectureDirectionX(targetDir)) {
-        endX = targetDir === 'L' ? -groupEdgeShift : groupEdgeShift;
+        endX += targetDir === 'L' ? -groupEdgeShift : groupEdgeShift;
       } else {
-        endY = targetDir === 'T' ? -groupEdgeShift : groupEdgeShift + 18;
+        endY += targetDir === 'T' ? -groupEdgeShift : groupEdgeShift + 18;
       }
     }
 
     // Adjust the edge distance if it doesn't have the {group} modifier and the endpoint is a junction node
     if (!sourceGroup && db.getNode(source)?.type === 'junction') {
       if (isArchitectureDirectionX(sourceDir)) {
-        startX = sourceDir === 'L' ? halfIconSize : -halfIconSize;
+        startX += sourceDir === 'L' ? halfIconSize : -halfIconSize;
       } else {
-        startY = sourceDir === 'T' ? halfIconSize : -halfIconSize;
+        startY += sourceDir === 'T' ? halfIconSize : -halfIconSize;
       }
     }
     if (!targetGroup && db.getNode(target)?.type === 'junction') {
       if (isArchitectureDirectionX(targetDir)) {
-        endX = targetDir === 'L' ? halfIconSize : -halfIconSize;
+        endX += targetDir === 'L' ? halfIconSize : -halfIconSize;
       } else {
-        endY = targetDir === 'T' ? halfIconSize : -halfIconSize;
+        endY += targetDir === 'T' ? halfIconSize : -halfIconSize;
       }
     }
 
