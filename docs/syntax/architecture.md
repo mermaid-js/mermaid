@@ -40,11 +40,11 @@ architecture
 
 ## Syntax
 
-The building blocks of an architecture are `groups`, `services`, and `edges`.
+The building blocks of an architecture are `groups`, `services`, `edges`, and `junctions`.
 
 For supporting components, icons are declared by surrounding the icon name with `()`, while labels are declared by surrounding the text with `[]`.
 
-To begin an architecture diagram, use the keyword `architecture`, followed by your groups, services, and edges. While each of the 3 building blocks can be declared in any order, care must be taken to ensure the identifier was previously declared by another component.
+To begin an architecture diagram, use the keyword `architecture`, followed by your groups, services, edges, and junctions. While each of the 3 building blocks can be declared in any order, care must be taken to ensure the identifier was previously declared by another component.
 
 ### Groups
 
@@ -70,7 +70,7 @@ group private_api(cloud)[Private API] in public_api
 
 ### Services
 
-The syntax for declaring a group is:
+The syntax for declaring a service is:
 
 ```
 service {service id}({icon name})[{title}] (in {parent id})?
@@ -92,6 +92,103 @@ service database(db)[Database] in private_api
 
 ### Edges
 
-TODO
+The syntax for declaring an edge is:
+
+```
+{serviceId}{{group}}? {(}?{T|B|L|R}--{T|B|L|R}{)}? {serviceId}{{group}}?
+```
+
+#### Edge Direction
+
+The side of the service the edge comes out of is specified by adding `L|R|T|B` to each end of `--`.
+
+For example:
+
+```
+db R--L server
+```
+
+creates an edge between the services `db` and `server`, with the edge coming out of the right of `db` and the left of `server`.
+
+```
+db T--L server
+```
+
+creates a 90 degree edge between the services `db` and `server`, with the edge coming out of the top of `db` and the left of `server`.
+
+#### Arrows
+
+Arrows can be added to each side of an edge by adding `(` before the direction on the left, and/or `)` after the direction on the right.
+
+For example:
+
+```
+subnet R--L) gateway
+```
+
+creates an edge with the arrow going into the `gateway` service
+
+#### Edges out of Groups
+
+To have an edge go from a group to another group or service within another group, the `{group}` modifier can be added after the `serviceId`.
+
+For example:
+
+```
+service server[Server] in groupOne
+service subnet[Subnet] in groupTwo
+
+server{group} B--T) subnet{group}
+```
+
+creates an edge going out of `groupOne`, adjacent to `server`, and into `groupTwo`, adjacent to `subnet`.
+
+It's important to note that `groupId`s cannot be used for specifying edges and the `{group}` modifier can only be used for services within a group.
+
+### Junctions
+
+Junctions are a special type of node which acts as a potential 4-way split between edges.
+
+The syntax for declaring a junction is:
+
+```
+junction {junction id} (in {parent id})?
+```
+
+```mermaid-example
+architecture
+    service left_disk(disk)[Disk]
+    service top_disk(disk)[Disk]
+    service bottom_disk(disk)[Disk]
+    service top_gateway(internet)[Gateway]
+    service bottom_gateway(internet)[Gateway]
+    junction junctionCenter
+    junction junctionRight
+
+    left_disk R--L junctionCenter
+    top_disk B--T junctionCenter
+    bottom_disk T--B junctionCenter
+    junctionCenter R--L junctionRight
+    top_gateway B--T junctionRight
+    bottom_gateway T--B junctionRight
+```
+
+```mermaid
+architecture
+    service left_disk(disk)[Disk]
+    service top_disk(disk)[Disk]
+    service bottom_disk(disk)[Disk]
+    service top_gateway(internet)[Gateway]
+    service bottom_gateway(internet)[Gateway]
+    junction junctionCenter
+    junction junctionRight
+
+    left_disk R--L junctionCenter
+    top_disk B--T junctionCenter
+    bottom_disk T--B junctionCenter
+    junctionCenter R--L junctionRight
+    top_gateway B--T junctionRight
+    bottom_gateway T--B junctionRight
+```
 
 ## Configuration
