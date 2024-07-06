@@ -31,7 +31,7 @@ import {
 } from '../common/commonDb.js';
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
-import type { D3Element } from '../../mermaidAPI.js';
+import type { D3Element } from '../../types.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 
 const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
@@ -91,11 +91,10 @@ const addService = function ({
   };
 };
 
-const getServices = (): ArchitectureService[] => Object.values(state.records.nodes).filter<ArchitectureService>(isArchitectureService);
+const getServices = (): ArchitectureService[] =>
+  Object.values(state.records.nodes).filter<ArchitectureService>(isArchitectureService);
 
-const addJunction = function ({
-  id, in: parent
-}: Omit<ArchitectureJunction, 'edges'>) {
+const addJunction = function ({ id, in: parent }: Omit<ArchitectureJunction, 'edges'>) {
   state.records.registeredIds[id] = 'node';
 
   state.records.nodes[id] = {
@@ -104,14 +103,14 @@ const addJunction = function ({
     edges: [],
     in: parent,
   };
-}
+};
 
-const getJunctions = (): ArchitectureJunction[] => Object.values(state.records.nodes).filter<ArchitectureJunction>(isArchitectureJunction);
+const getJunctions = (): ArchitectureJunction[] =>
+  Object.values(state.records.nodes).filter<ArchitectureJunction>(isArchitectureJunction);
 
 const getNodes = (): ArchitectureNode[] => Object.values(state.records.nodes);
 
 const getNode = (id: string): ArchitectureNode | null => state.records.nodes[id];
-
 
 const addGroup = function ({ id, icon, in: parent, title }: ArchitectureGroup) {
   if (state.records.registeredIds[id] !== undefined) {
@@ -156,7 +155,7 @@ const addEdge = function ({
   lhsGroup,
   rhsGroup,
   title,
-}: ArchitectureEdge) {
+}: ArchitectureEdge<string>) {
   if (!isArchitectureDirection(lhsDir)) {
     throw new Error(
       `Invalid direction given for left hand side of edge ${lhsId}--${rhsId}. Expected (L,R,T,B) got ${lhsDir}`
@@ -179,17 +178,17 @@ const addEdge = function ({
     );
   }
 
-  const lhsGroupId = state.records.nodes[lhsId].in
-  const rhsGroupId = state.records.nodes[rhsId].in
+  const lhsGroupId = state.records.nodes[lhsId].in;
+  const rhsGroupId = state.records.nodes[rhsId].in;
   if (lhsGroup && lhsGroupId && rhsGroupId && lhsGroupId == rhsGroupId) {
     throw new Error(
       `The left-hand id [${lhsId}] is modified to traverse the group boundary, but the edge does not pass through two groups.`
-    )
+    );
   }
   if (rhsGroup && lhsGroupId && rhsGroupId && lhsGroupId == rhsGroupId) {
     throw new Error(
       `The right-hand id [${rhsId}] is modified to traverse the group boundary, but the edge does not pass through two groups.`
-    )
+    );
   }
 
   const edge = {
@@ -223,9 +222,9 @@ const getDataStructures = () => {
     // Create an adjacency list of the diagram to perform BFS on
     // Outer reduce applied on all services
     // Inner reduce applied on the edges for a service
-    const adjList = Object.entries(state.records.nodes).reduce<{
-      [id: string]: ArchitectureDirectionPairMap;
-    }>((prevOuter, [id, service]) => {
+    const adjList = Object.entries(state.records.nodes).reduce<
+      Record<string, ArchitectureDirectionPairMap>
+    >((prevOuter, [id, service]) => {
       prevOuter[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prevInner, edge) => {
         if (edge.lhsId === id) {
           // source is LHS
@@ -330,7 +329,7 @@ export function getConfigField<T extends keyof ArchitectureDiagramConfig>(
   field: T
 ): Required<ArchitectureDiagramConfig>[T] {
   const arch = getConfig().architecture;
-  if (arch && arch[field] !== undefined) {
+  if (arch?.[field]) {
     return arch[field] as Required<ArchitectureDiagramConfig>[T];
   }
   return DEFAULT_ARCHITECTURE_CONFIG[field];

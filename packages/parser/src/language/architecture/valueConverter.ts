@@ -6,13 +6,12 @@ export class ArchitectureValueConverter extends AbstractMermaidValueConverter {
   protected runCustomConverter(
     rule: GrammarAST.AbstractRule,
     input: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _cstNode: CstNode
   ): ValueType | undefined {
     if (rule.name === 'ARCH_ICON') {
       return input.replace(/[()]/g, '').trim();
     } else if (rule.name === 'ARCH_TEXT_ICON') {
-      return input.replace(/[()"]/g, '');
+      return input.replace(/["()]/g, '');
     } else if (rule.name === 'ARCH_TITLE') {
       return input.replace(/[[\]]/g, '').trim();
     }

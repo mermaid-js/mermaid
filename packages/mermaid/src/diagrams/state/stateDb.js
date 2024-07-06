@@ -465,7 +465,7 @@ export const addStyleClass = function (id, styleAttributes = '') {
       const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
 
       // replace some style keywords
-      if (attrib.match(COLOR_KEYWORD)) {
+      if (RegExp(COLOR_KEYWORD).exec(attrib)) {
         const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
         const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
         foundClass.textStyles.push(newStyle2);

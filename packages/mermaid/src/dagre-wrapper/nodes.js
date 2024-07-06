@@ -901,7 +901,7 @@ const class_box = (parent, node) => {
 
   const labelContainer = shapeSvg.insert('g').attr('class', 'label');
   let verticalPos = 0;
-  const hasInterface = node.classData.annotations && node.classData.annotations[0];
+  const hasInterface = node.classData.annotations?.[0];
 
   // 1. Create the labels
   const interfaceLabelText = node.classData.annotations[0]

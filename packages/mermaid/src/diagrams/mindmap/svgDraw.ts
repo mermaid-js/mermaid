@@ -1,7 +1,6 @@
-import type { D3Element } from '../../mermaidAPI.js';
 import { createText } from '../../rendering-util/createText.js';
 import type { FilledMindMapNode, MindmapDB } from './mindmapTypes.js';
-import type { Point } from '../../types.js';
+import type { Point, D3Element } from '../../types.js';
 import { parseFontSize } from '../../utils.js';
 import type { MermaidConfig } from '../../config.type.js';
 
@@ -196,7 +195,7 @@ export const drawNode = function (
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
   const description = node.descr.replace(/(<br\/*>)/g, '\n');
-  const newEl = createText(
+  createText(
     textElem,
     description,
     {

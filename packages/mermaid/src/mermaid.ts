@@ -6,7 +6,7 @@ import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { log } from './logger.js';
 import utils from './utils.js';
-import type { ParseOptions, ParseResult, RenderResult } from './mermaidAPI.js';
+import type { ParseOptions, ParseResult, RenderResult } from './types.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
@@ -283,7 +283,7 @@ if (typeof document !== 'undefined') {
  * ## setParseErrorHandler  Alternative to directly setting parseError using:
  *
  * ```js
- * mermaid.parseError = function(err,hash){=
+ * mermaid.parseError = function(err,hash) {
  *   forExampleDisplayErrorInGui(err);  // do something with the error
  * };
  * ```
@@ -414,9 +414,16 @@ const render: typeof mermaidAPI.render = (id, text, container) => {
 export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
+  /**
+   * @deprecated Use {@link parse} and {@link render} instead. Please [open a discussion](https://github.com/mermaid-js/mermaid/discussions) if your use case does not fit the new API.
+   * @internal
+   */
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
   render: typeof render;
+  /**
+   * @deprecated Use {@link initialize} and {@link run} instead.
+   */
   init: typeof init;
   run: typeof run;
   registerExternalDiagrams: typeof registerExternalDiagrams;

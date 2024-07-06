@@ -383,9 +383,11 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
 
-  hasKatex(textObj.text)
-    ? await drawKatex(diagram, textObj, { startx, stopx, starty: lineStartY })
-    : drawText(diagram, textObj);
+  if (hasKatex(textObj.text)) {
+    await drawKatex(diagram, textObj, { startx, stopx, starty: lineStartY });
+  } else {
+    drawText(diagram, textObj);
+  }
 
   const textWidth = textDims.width;
 
@@ -436,7 +438,8 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     type === diagObj.db.LINETYPE.DOTTED ||
     type === diagObj.db.LINETYPE.DOTTED_CROSS ||
     type === diagObj.db.LINETYPE.DOTTED_POINT ||
-    type === diagObj.db.LINETYPE.DOTTED_OPEN
+    type === diagObj.db.LINETYPE.DOTTED_OPEN ||
+    type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED
   ) {
     line.style('stroke-dasharray', '3, 3');
     line.attr('class', 'messageLine1');
@@ -462,6 +465,13 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   if (type === diagObj.db.LINETYPE.SOLID || type === diagObj.db.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
   }
+  if (
+    type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID ||
+    type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED
+  ) {
+    line.attr('marker-start', 'url(' + url + '#arrowhead)');
+    line.attr('marker-end', 'url(' + url + '#arrowhead)');
+  }
   if (type === diagObj.db.LINETYPE.SOLID_POINT || type === diagObj.db.LINETYPE.DOTTED_POINT) {
     line.attr('marker-end', 'url(' + url + '#filled-head)');
   }
@@ -485,7 +495,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   }
 };
 
-const addActorRenderingData = async function (
+const addActorRenderingData = function (
   diagram,
   actors,
   createdActors: Map<string, any>,
@@ -812,7 +822,7 @@ export const draw = async function (_text: string, id: string, _version: string,
     actorKeys = actorKeys.filter((actorKey) => newActors.has(actorKey));
   }
 
-  await addActorRenderingData(diagram, actors, createdActors, actorKeys, 0, messages, false);
+  addActorRenderingData(diagram, actors, createdActors, actorKeys, 0, messages, false);
   const loopWidths = await calculateLoopBounds(messages, actors, maxMessageWidthPerActor, diagObj);
 
   // The arrow head definition is attached to the svg once
@@ -1036,6 +1046,8 @@ export const draw = async function (_text: string, id: string, _version: string,
         diagObj.db.LINETYPE.DOTTED_CROSS,
         diagObj.db.LINETYPE.SOLID_POINT,
         diagObj.db.LINETYPE.DOTTED_POINT,
+        diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID,
+        diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED,
       ].includes(msg.type)
     ) {
       sequenceIndex = sequenceIndex + sequenceIndexStep;
@@ -1064,7 +1076,7 @@ export const draw = async function (_text: string, id: string, _version: string,
     box.stopx = box.startx + box.width;
     box.stopy = box.starty + box.height;
     box.stroke = 'rgb(0,0,0, 0.5)';
-    await svgDraw.drawBox(diagram, box, conf);
+    svgDraw.drawBox(diagram, box, conf);
   }
 
   if (hasBoxes) {
@@ -1135,7 +1147,7 @@ async function getMaxMessageWidthPerActor(
   actors: Map<string, any>,
   messages: any[],
   diagObj: Diagram
-): Promise<{ [id: string]: number }> {
+): Promise<Record<string, number>> {
   const maxMessageWidthPerActor = {};
 
   for (const msg of messages) {
@@ -1416,6 +1428,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
       diagObj.db.LINETYPE.DOTTED_CROSS,
       diagObj.db.LINETYPE.SOLID_POINT,
       diagObj.db.LINETYPE.DOTTED_POINT,
+      diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID,
+      diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED,
     ].includes(msg.type)
   ) {
     return {};
@@ -1423,7 +1437,7 @@ const buildMessageModel = function (msg, actors, diagObj) {
   const [fromLeft, fromRight] = activationBounds(msg.from, actors);
   const [toLeft, toRight] = activationBounds(msg.to, actors);
   const isArrowToRight = fromLeft <= toLeft;
-  const startx = isArrowToRight ? fromRight : fromLeft;
+  let startx = isArrowToRight ? fromRight : fromLeft;
   let stopx = isArrowToRight ? toLeft : toRight;
 
   // As the line width is considered, the left and right values will be off by 2.
@@ -1461,6 +1475,17 @@ const buildMessageModel = function (msg, actors, diagObj) {
      */
     if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
       stopx += adjustValue(3);
+    }
+
+    /**
+     * Shorten start position of bidirectional arrow to accommodate for second arrowhead
+     */
+    if (
+      [diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID, diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED].includes(
+        msg.type
+      )
+    ) {
+      startx -= adjustValue(3);
     }
   }
 
@@ -1556,7 +1581,7 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
           const lastActorActivationIdx = bounds.activations
             .map((a) => a.actor)
             .lastIndexOf(msg.from);
-          delete bounds.activations.splice(lastActorActivationIdx, 1)[0];
+          bounds.activations.splice(lastActorActivationIdx, 1).splice(0, 1);
         }
         break;
     }

@@ -35,7 +35,7 @@ function getId() {
 //  * @param currentCommit
 //  * @param otherCommit
 //  */
-// eslint-disable-next-line @cspell/spellchecker
+
 // function isFastForwardable(currentCommit, otherCommit) {
 //   log.debug('Entering isFastForwardable:', currentCommit.id, otherCommit.id);
 //   let cnt = 0;
@@ -90,7 +90,7 @@ export const setDirection = function (dir) {
 let options = {};
 export const setOptions = function (rawOptString) {
   log.debug('options str', rawOptString);
-  rawOptString = rawOptString && rawOptString.trim();
+  rawOptString = rawOptString?.trim();
   rawOptString = rawOptString || '{}';
   try {
     options = JSON.parse(rawOptString);

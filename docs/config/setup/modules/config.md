@@ -10,11 +10,11 @@
 
 ### defaultConfig
 
-• `Const` **defaultConfig**: `MermaidConfig`
+• `Const` **defaultConfig**: [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 #### Defined in
 
-[config.ts:8](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L8)
+[packages/mermaid/src/config.ts:8](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L8)
 
 ## Functions
 
@@ -26,9 +26,9 @@ Pushes in a directive to the configuration
 
 #### Parameters
 
-| Name        | Type            | Description              |
-| :---------- | :-------------- | :----------------------- |
-| `directive` | `MermaidConfig` | The directive to push in |
+| Name        | Type                                                      | Description              |
+| :---------- | :-------------------------------------------------------- | :----------------------- |
+| `directive` | [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md) | The directive to push in |
 
 #### Returns
 
@@ -36,13 +36,13 @@ Pushes in a directive to the configuration
 
 #### Defined in
 
-[config.ts:188](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L188)
+[packages/mermaid/src/config.ts:188](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L188)
 
 ---
 
 ### getConfig
 
-▸ **getConfig**(): `MermaidConfig`
+▸ **getConfig**(): [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 ## getConfig
 
@@ -54,19 +54,19 @@ Pushes in a directive to the configuration
 
 #### Returns
 
-`MermaidConfig`
+[`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 The currentConfig
 
 #### Defined in
 
-[config.ts:131](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L131)
+[packages/mermaid/src/config.ts:131](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L131)
 
 ---
 
 ### getSiteConfig
 
-▸ **getSiteConfig**(): `MermaidConfig`
+▸ **getSiteConfig**(): [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 ## getSiteConfig
 
@@ -78,13 +78,13 @@ The currentConfig
 
 #### Returns
 
-`MermaidConfig`
+[`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 The siteConfig
 
 #### Defined in
 
-[config.ts:96](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L96)
+[packages/mermaid/src/config.ts:96](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L96)
 
 ---
 
@@ -108,9 +108,9 @@ The siteConfig
 
 #### Parameters
 
-| Name     | Type            | Default value | Description                                                                                                                                                   |
-| :------- | :-------------- | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `config` | `MermaidConfig` | `siteConfig`  | base set of values, which currentConfig could be **reset** to. Defaults to the current siteConfig (e.g returned by [getSiteConfig](config.md#getsiteconfig)). |
+| Name     | Type                                                      | Default value | Description                                                                                                                                                   |
+| :------- | :-------------------------------------------------------- | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `config` | [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md) | `siteConfig`  | base set of values, which currentConfig could be **reset** to. Defaults to the current siteConfig (e.g returned by [getSiteConfig](config.md#getsiteconfig)). |
 
 #### Returns
 
@@ -118,7 +118,7 @@ The siteConfig
 
 #### Defined in
 
-[config.ts:218](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L218)
+[packages/mermaid/src/config.ts:218](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L218)
 
 ---
 
@@ -147,7 +147,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L146)
+[packages/mermaid/src/config.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L146)
 
 ---
 
@@ -157,9 +157,9 @@ options in-place
 
 #### Parameters
 
-| Name   | Type            |
-| :----- | :-------------- |
-| `conf` | `MermaidConfig` |
+| Name   | Type                                                      |
+| :----- | :-------------------------------------------------------- |
+| `conf` | [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md) |
 
 #### Returns
 
@@ -167,13 +167,13 @@ options in-place
 
 #### Defined in
 
-[config.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L75)
+[packages/mermaid/src/config.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L75)
 
 ---
 
 ### setConfig
 
-▸ **setConfig**(`conf`): `MermaidConfig`
+▸ **setConfig**(`conf`): [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 ## setConfig
 
@@ -187,25 +187,25 @@ corresponding siteConfig value.
 
 #### Parameters
 
-| Name   | Type            | Description                 |
-| :----- | :-------------- | :-------------------------- |
-| `conf` | `MermaidConfig` | The potential currentConfig |
+| Name   | Type                                                      | Description                 |
+| :----- | :-------------------------------------------------------- | :-------------------------- |
+| `conf` | [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md) | The potential currentConfig |
 
 #### Returns
 
-`MermaidConfig`
+[`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 The currentConfig merged with the sanitized conf
 
 #### Defined in
 
-[config.ts:113](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L113)
+[packages/mermaid/src/config.ts:113](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L113)
 
 ---
 
 ### setSiteConfig
 
-▸ **setSiteConfig**(`conf`): `MermaidConfig`
+▸ **setSiteConfig**(`conf`): [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 ## setSiteConfig
 
@@ -220,57 +220,57 @@ function _Default value: At default, will mirror Global Config_
 
 #### Parameters
 
-| Name   | Type            | Description                                 |
-| :----- | :-------------- | :------------------------------------------ |
-| `conf` | `MermaidConfig` | The base currentConfig to use as siteConfig |
+| Name   | Type                                                      | Description                                 |
+| :----- | :-------------------------------------------------------- | :------------------------------------------ |
+| `conf` | [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md) | The base currentConfig to use as siteConfig |
 
 #### Returns
 
-`MermaidConfig`
+[`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 The new siteConfig
 
 #### Defined in
 
-[config.ts:61](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L61)
+[packages/mermaid/src/config.ts:61](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L61)
 
 ---
 
 ### updateCurrentConfig
 
-▸ **updateCurrentConfig**(`siteCfg`, `_directives`): `MermaidConfig`
+▸ **updateCurrentConfig**(`siteCfg`, `_directives`): [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 #### Parameters
 
-| Name          | Type               |
-| :------------ | :----------------- |
-| `siteCfg`     | `MermaidConfig`    |
-| `_directives` | `MermaidConfig`\[] |
+| Name          | Type                                                         |
+| :------------ | :----------------------------------------------------------- |
+| `siteCfg`     | [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)    |
+| `_directives` | [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)\[] |
 
 #### Returns
 
-`MermaidConfig`
+[`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 #### Defined in
 
-[config.ts:15](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L15)
+[packages/mermaid/src/config.ts:15](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L15)
 
 ---
 
 ### updateSiteConfig
 
-▸ **updateSiteConfig**(`conf`): `MermaidConfig`
+▸ **updateSiteConfig**(`conf`): [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 #### Parameters
 
-| Name   | Type            |
-| :----- | :-------------- |
-| `conf` | `MermaidConfig` |
+| Name   | Type                                                      |
+| :----- | :-------------------------------------------------------- |
+| `conf` | [`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md) |
 
 #### Returns
 
-`MermaidConfig`
+[`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)
 
 #### Defined in
 
-[config.ts:79](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L79)
+[packages/mermaid/src/config.ts:79](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L79)

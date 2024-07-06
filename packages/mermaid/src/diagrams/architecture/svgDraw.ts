@@ -1,6 +1,6 @@
 // TODO remove no-console
 /* eslint-disable no-console */
-import type { D3Element } from '../../mermaidAPI.js';
+import type { D3Element } from '../../types.js';
 import { createText } from '../../rendering-util/createText.js';
 import {
   ArchitectureDirectionArrow,
@@ -15,7 +15,7 @@ import {
   getArchitectureDirectionPair,
   getArchitectureDirectionXYFactors,
   isArchitecturePairXY,
-  ArchitectureJunction,
+  type ArchitectureJunction,
 } from './architectureTypes.js';
 import type cytoscape from 'cytoscape';
 import { getIcon } from '../../rendering-util/svgRegister.js';
@@ -29,8 +29,18 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
   const arrowSize = iconSize / 6;
   const halfArrowSize = arrowSize / 2;
 
-  cy.edges().map((edge, id) => {
-    const { source, sourceDir, sourceArrow, sourceGroup, target, targetDir, targetArrow, targetGroup, label } = edgeData(edge);
+  cy.edges().map((edge) => {
+    const {
+      source,
+      sourceDir,
+      sourceArrow,
+      sourceGroup,
+      target,
+      targetDir,
+      targetArrow,
+      targetGroup,
+      label,
+    } = edgeData(edge);
     let { x: startX, y: startY } = edge[0].sourceEndpoint();
     const { x: midX, y: midY } = edge[0].midpoint();
     let { x: endX, y: endY } = edge[0].targetEndpoint();
@@ -40,33 +50,33 @@ export const drawEdges = function (edgesEl: D3Element, cy: cytoscape.Core) {
     // +18 comes from the service label height that extends the padding on the bottom side of each group
     if (sourceGroup) {
       if (isArchitectureDirectionX(sourceDir)) {
-        sourceDir === 'L' ? startX -= groupEdgeShift : startX += groupEdgeShift;
+        startX += sourceDir === 'L' ? -groupEdgeShift : groupEdgeShift;
       } else {
-        sourceDir === 'T' ? startY -= groupEdgeShift : startY += (groupEdgeShift + 18);
+        startY += sourceDir === 'T' ? -groupEdgeShift : groupEdgeShift + 18;
       }
     }
 
     if (targetGroup) {
       if (isArchitectureDirectionX(targetDir)) {
-        targetDir === 'L' ? endX -= groupEdgeShift : endX += groupEdgeShift;
+        endX = targetDir === 'L' ? -groupEdgeShift : groupEdgeShift;
       } else {
-        targetDir === 'T' ? endY -= groupEdgeShift : endY += (groupEdgeShift + 18);
+        endY = targetDir === 'T' ? -groupEdgeShift : groupEdgeShift + 18;
       }
     }
 
     // Adjust the edge distance if it doesn't have the {group} modifier and the endpoint is a junction node
     if (!sourceGroup && db.getNode(source)?.type === 'junction') {
       if (isArchitectureDirectionX(sourceDir)) {
-        sourceDir === 'L' ? startX += halfIconSize : startX -= halfIconSize;
+        startX = sourceDir === 'L' ? halfIconSize : -halfIconSize;
       } else {
-        sourceDir === 'T' ? startY += halfIconSize : startY -= halfIconSize;
+        startY = sourceDir === 'T' ? halfIconSize : -halfIconSize;
       }
     }
     if (!targetGroup && db.getNode(target)?.type === 'junction') {
       if (isArchitectureDirectionX(targetDir)) {
-        targetDir === 'L' ? endX += halfIconSize : endX -= halfIconSize;
+        endX = targetDir === 'L' ? halfIconSize : -halfIconSize;
       } else {
-        targetDir === 'T' ? endY += halfIconSize : endY -= halfIconSize;
+        endY = targetDir === 'T' ? halfIconSize : -halfIconSize;
       }
     }
 
@@ -181,10 +191,10 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
   const iconSize = getConfigField('iconSize');
   const halfIconSize = iconSize / 2;
 
-  cy.nodes().map((node, id) => {
+  cy.nodes().map((node) => {
     const data = nodeData(node);
     if (data.type === 'group') {
-      const { h, w, x1, x2, y1, y2 } = node.boundingBox();
+      const { h, w, x1, y1 } = node.boundingBox();
       console.log(`Draw group (${data.id}): pos=(${x1}, ${y1}), dim=(${w}, ${h})`);
 
       groupsEl
@@ -204,10 +214,10 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
         bkgElem.attr(
           'transform',
           'translate(' +
-          (shiftedX1 + halfIconSize + 1) +
-          ', ' +
-          (shiftedY1 + halfIconSize + 1) +
-          ')'
+            (shiftedX1 + halfIconSize + 1) +
+            ', ' +
+            (shiftedY1 + halfIconSize + 1) +
+            ')'
         );
         shiftedX1 += groupIconSize;
         // TODO: test with more values
@@ -235,10 +245,10 @@ export const drawGroups = function (groupsEl: D3Element, cy: cytoscape.Core) {
         textElem.attr(
           'transform',
           'translate(' +
-          (shiftedX1 + halfIconSize + 4) +
-          ', ' +
-          (shiftedY1 + halfIconSize + 2) +
-          ')'
+            (shiftedX1 + halfIconSize + 4) +
+            ', ' +
+            (shiftedY1 + halfIconSize + 2) +
+            ')'
         );
       }
     }
@@ -301,7 +311,7 @@ export const drawServices = function (
           window
             .getComputedStyle(divElem.node(), null)
             .getPropertyValue('font-size')
-            .replace(/[^\d]/g, '')
+            .replace(/\D/g, '')
         ) ?? 16;
       divElem.attr('style', `-webkit-line-clamp: ${Math.floor((iconSize - 2) / fontSize)};`);
     } else {
@@ -329,13 +339,12 @@ export const drawJunctions = function (
   db: ArchitectureDB,
   elem: D3Element,
   junctions: ArchitectureJunction[]
-
 ) {
   junctions.forEach((junction) => {
     const junctionElem = elem.append('g');
     const iconSize = getConfigField('iconSize');
 
-    let bkgElem = junctionElem.append('g');
+    const bkgElem = junctionElem.append('g');
     bkgElem
       .append('rect')
       .attr('id', 'node-' + junction.id)
@@ -350,4 +359,4 @@ export const drawJunctions = function (
     junctionElem.height = height;
     db.setElementForId(junction.id, junctionElem);
   });
-}
+};

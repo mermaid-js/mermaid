@@ -40,7 +40,7 @@ const getIcon = (name: string): IconResolver | null => {
   if (isIconNameInUse(name)) {
     return icons[name];
   }
-  return icons['unknown'];
+  return icons.unknown;
 };
 
 export {

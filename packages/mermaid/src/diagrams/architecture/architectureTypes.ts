@@ -1,6 +1,6 @@
 import type { DiagramDB } from '../../diagram-api/types.js';
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
-import type { D3Element } from '../../mermaidAPI.js';
+import type { D3Element } from '../../types.js';
 import type cytoscape from 'cytoscape';
 
 /*=======================================*\
@@ -218,13 +218,13 @@ export interface ArchitectureGroup {
   in?: string;
 }
 
-export interface ArchitectureEdge {
+export interface ArchitectureEdge<DT = ArchitectureDirection> {
   lhsId: string;
-  lhsDir: ArchitectureDirection;
+  lhsDir: DT;
   lhsInto?: boolean;
   lhsGroup?: boolean;
   rhsId: string;
-  rhsDir: ArchitectureDirection;
+  rhsDir: DT;
   rhsInto?: boolean;
   rhsGroup?: boolean;
   title?: string;
@@ -247,12 +247,12 @@ export interface ArchitectureDB extends DiagramDB {
   getDataStructures: () => ArchitectureDataStructures;
 }
 
-export type ArchitectureAdjacencyList = { [id: string]: ArchitectureDirectionPairMap };
+export type ArchitectureAdjacencyList = Record<string, ArchitectureDirectionPairMap>;
 export type ArchitectureSpatialMap = Record<string, number[]>;
-export type ArchitectureDataStructures = {
+export interface ArchitectureDataStructures {
   adjList: ArchitectureAdjacencyList;
   spatialMaps: ArchitectureSpatialMap[];
-};
+}
 
 export interface ArchitectureState extends Record<string, unknown> {
   nodes: Record<string, ArchitectureNode>;
@@ -268,7 +268,7 @@ export interface ArchitectureState extends Record<string, unknown> {
 |        Cytoscape Override Types         |
 \*=======================================*/
 
-export type EdgeSingularData = {
+export interface EdgeSingularData {
   id: string;
   label?: string;
   source: string;
@@ -280,7 +280,7 @@ export type EdgeSingularData = {
   targetArrow?: boolean;
   targetGroup?: boolean;
   [key: string]: any;
-};
+}
 
 export const edgeData = (edge: cytoscape.EdgeSingular) => {
   return edge.data() as EdgeSingularData;
@@ -304,31 +304,31 @@ export interface EdgeSingular extends cytoscape.EdgeSingular {
 
 export type NodeSingularData =
   | {
-    type: 'service';
-    id: string;
-    icon?: string;
-    label?: string;
-    parent?: string;
-    width: number;
-    height: number;
-    [key: string]: any;
-  }
+      type: 'service';
+      id: string;
+      icon?: string;
+      label?: string;
+      parent?: string;
+      width: number;
+      height: number;
+      [key: string]: any;
+    }
   | {
-    type: 'junction';
-    id: string;
-    parent?: string;
-    width: number;
-    height: number;
-    [key: string]: any;
-  }
+      type: 'junction';
+      id: string;
+      parent?: string;
+      width: number;
+      height: number;
+      [key: string]: any;
+    }
   | {
-    type: 'group';
-    id: string;
-    icon?: string;
-    label?: string;
-    parent?: string;
-    [key: string]: any;
-  };
+      type: 'group';
+      id: string;
+      icon?: string;
+      label?: string;
+      parent?: string;
+      [key: string]: any;
+    };
 
 export const nodeData = (node: cytoscape.NodeSingular) => {
   return node.data() as NodeSingularData;

@@ -64,7 +64,6 @@ export const addVertices = async function (vert, svgId, root, doc, diagObj, pare
       let vertexText = vertex.text !== undefined ? vertex.text : vertex.id;
 
       // We create a SVG label, either by delegating to addHtmlLabel or manually
-      let vertexNode;
       const labelData = { width: 0, height: 0 };
 
       const ports = [
@@ -188,19 +187,6 @@ export const addVertices = async function (vert, svgId, root, doc, diagObj, pare
         nodeEl = await insertNode(nodes, node, vertex.dir);
         boundingBox = nodeEl.node().getBBox();
       } else {
-        const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
-        // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-        // const rows = vertexText.split(common.lineBreakRegex);
-        // for (const row of rows) {
-        //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-        //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-        //   tspan.setAttribute('dy', '1em');
-        //   tspan.setAttribute('x', '1');
-        //   tspan.textContent = row;
-        //   svgLabel.appendChild(tspan);
-        // }
-        // vertexNode = svgLabel;
-        // const bbox = vertexNode.getBBox();
         const { shapeSvg, bbox } = await labelHelper(nodes, node, undefined, true);
         labelData.width = bbox.width;
         labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;

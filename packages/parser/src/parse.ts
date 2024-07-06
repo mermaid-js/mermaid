@@ -9,22 +9,22 @@ const initializers = {
   info: async () => {
     const { createInfoServices } = await import('./language/info/index.js');
     const parser = createInfoServices().Info.parser.LangiumParser;
-    parsers['info'] = parser;
+    parsers.info = parser;
   },
   packet: async () => {
     const { createPacketServices } = await import('./language/packet/index.js');
     const parser = createPacketServices().Packet.parser.LangiumParser;
-    parsers['packet'] = parser;
+    parsers.packet = parser;
   },
   pie: async () => {
     const { createPieServices } = await import('./language/pie/index.js');
     const parser = createPieServices().Pie.parser.LangiumParser;
-    parsers['pie'] = parser;
+    parsers.pie = parser;
   },
   architecture: async () => {
     const { createArchitectureServices } = await import('./language/architecture/index.js');
     const parser = createArchitectureServices().Architecture.parser.LangiumParser;
-    parsers['architecture'] = parser;
+    parsers.architecture = parser;
   },
 } as const;
 

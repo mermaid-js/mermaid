@@ -19,12 +19,12 @@ import { ArchitectureValueConverter } from './valueConverter.js';
 /**
  * Declaration of `Architecture` services.
  */
-type ArchitectureAddedServices = {
+interface ArchitectureAddedServices {
   parser: {
     TokenBuilder: ArchitectureTokenBuilder;
     ValueConverter: ArchitectureValueConverter;
   };
-};
+}
 
 /**
  * Union of Langium default services and `Architecture` services.
