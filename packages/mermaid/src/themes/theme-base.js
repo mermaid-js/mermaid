@@ -221,11 +221,11 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* architecture */
-    this.archEdgeStrokeColor = this.archEdgeStrokeColor || '#777';
+    this.archEdgeColor = this.archEdgeColor || '#777';
     this.archEdgeArrowColor = this.archEdgeArrowColor || '#777';
-    this.archEdgeStrokeWidth = this.archEdgeStrokeWidth || '3';
-    this.archGroupBorderStrokeColor = this.archGroupBorderStrokeColor || '#000';
-    this.archGroupBorderStrokeWidth = this.archGroupBorderStrokeWidth || '2px';
+    this.archEdgeWidth = this.archEdgeWidth || '3';
+    this.archGroupBorderColor = this.archGroupBorderColor || '#000';
+    this.archGroupBorderWidth = this.archGroupBorderWidth || '2px';
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;

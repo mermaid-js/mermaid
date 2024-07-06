@@ -4,8 +4,8 @@ import type { ArchitectureStyleOptions } from './architectureTypes.js';
 const getStyles: DiagramStylesProvider = (options: ArchitectureStyleOptions) =>
   `
   .edge {
-    stroke-width: ${options.archEdgeStrokeWidth};
-    stroke: ${options.archEdgeStrokeColor};
+    stroke-width: ${options.archEdgeWidth};
+    stroke: ${options.archEdgeColor};
     fill: none;
   }
 
@@ -15,8 +15,8 @@ const getStyles: DiagramStylesProvider = (options: ArchitectureStyleOptions) =>
 
   .node-bkg {
     fill: none;
-    stroke: ${options.archGroupBorderStrokeColor};
-    stroke-width: ${options.archGroupBorderStrokeWidth};
+    stroke: ${options.archGroupBorderColor};
+    stroke-width: ${options.archGroupBorderWidth};
     stroke-dasharray: 8;
   }
   .node-icon-text {

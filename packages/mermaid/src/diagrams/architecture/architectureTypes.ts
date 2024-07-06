@@ -171,11 +171,11 @@ export const getArchitectureDirectionXYFactors = function (
 };
 
 export interface ArchitectureStyleOptions {
-  archEdgeStrokeColor: string;
+  archEdgeColor: string;
   archEdgeArrowColor: string;
-  archEdgeStrokeWidth: string;
-  archGroupBorderStrokeColor: string;
-  archGroupBorderStrokeWidth: string;
+  archEdgeWidth: string;
+  archGroupBorderColor: string;
+  archGroupBorderWidth: string;
 }
 
 export interface ArchitectureService {
