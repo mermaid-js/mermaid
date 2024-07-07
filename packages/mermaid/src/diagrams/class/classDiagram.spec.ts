@@ -444,6 +444,17 @@ class C13["With Città foreign language"]
         ]
       `);
     });
+
+    it('should revert direction to default once direction is removed', () => {
+      parser.parse(`classDiagram
+          direction RL
+          class A`);
+      expect(classDb.getDirection()).toBe('RL');
+      classDb.clear();
+      parser.parse(`classDiagram
+          class B`);
+      expect(classDb.getDirection()).toBe('TB');
+    });
   });
 
   describe('when parsing class defined in brackets', function () {
