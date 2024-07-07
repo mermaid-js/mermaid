@@ -10,7 +10,7 @@ export const loadRegisteredDiagrams = async () => {
       if (loader) {
         try {
           getDiagram(key);
-        } catch (error) {
+        } catch {
           try {
             // Register diagram if it is not already registered
             const { diagram, id } = await loader();

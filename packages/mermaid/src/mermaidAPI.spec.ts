@@ -69,6 +69,7 @@ vi.mock('stylis', () => {
 import { compile, serialize } from 'stylis';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
+import { toBase64 } from './utils/base64.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -176,7 +177,7 @@ describe('mermaidAPI', () => {
   });
 
   describe('putIntoIFrame', () => {
-    const inputSvgCode = 'this is the SVG code';
+    const inputSvgCode = 'this is the SVG code ⛵';
 
     it('uses the default SVG iFrame height is used if no svgElement given', () => {
       const result = putIntoIFrame(inputSvgCode);
@@ -199,11 +200,10 @@ describe('mermaidAPI', () => {
     });
 
     it('sets src to base64 version of <body style="IFRAME_SVG_BODY_STYLE">svgCode<//body>', () => {
-      const base64encodedSrc = btoa('<body style="' + 'margin:0' + '">' + inputSvgCode + '</body>');
-      const expectedRegExp = new RegExp('src="data:text/html;base64,' + base64encodedSrc + '"');
-
+      const base64encodedSrc = toBase64(`<body style="margin:0">${inputSvgCode}</body>`);
+      const expectedSrc = `src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}"`;
       const result = putIntoIFrame(inputSvgCode);
-      expect(result).toMatch(expectedRegExp);
+      expect(result).toContain(expectedSrc);
     });
 
     it('uses the height and appends px from the svgElement given', () => {
@@ -593,7 +593,6 @@ describe('mermaidAPI', () => {
           mermaidAPI.initialize({ securityLevel: 'loose' });
         },
       };
-      // mermaidAPI.reinitialize(config);
       expect(mermaidAPI.getConfig().secure).toEqual(mermaidAPI.getSiteConfig().secure);
       expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
       mermaidAPI.reset();
@@ -607,26 +606,26 @@ describe('mermaidAPI', () => {
       let error: any = { message: '' };
       try {
         // @ts-ignore This is a read-only property. Typescript will not allow assignment, but regular javascript might.
-        mermaidAPI['defaultConfig'] = config;
+        mermaidAPI.defaultConfig = config;
       } catch (e) {
         error = e;
       }
       expect(error.message).toBe(
         "Cannot assign to read only property 'defaultConfig' of object '#<Object>'"
       );
-      expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
     });
     it('prevents changes to global defaults (direct)', () => {
       let error: any = { message: '' };
       try {
-        mermaidAPI.defaultConfig['logLevel'] = 0;
+        mermaidAPI.defaultConfig.logLevel = 0;
       } catch (e) {
         error = e;
       }
       expect(error.message).toBe(
         "Cannot assign to read only property 'logLevel' of object '#<Object>'"
       );
-      expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
     });
     it('prevents sneaky changes to global defaults (assignWithDepth)', () => {
       const config = {
@@ -641,7 +640,7 @@ describe('mermaidAPI', () => {
       expect(error.message).toBe(
         "Cannot assign to read only property 'logLevel' of object '#<Object>'"
       );
-      expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
+      expect(mermaidAPI.defaultConfig.logLevel).toBe(5);
     });
   });
 
@@ -649,7 +648,7 @@ describe('mermaidAPI', () => {
     it('allows dompurify config to be set', () => {
       mermaidAPI.initialize({ dompurifyConfig: { ADD_ATTR: ['onclick'] } });
 
-      expect(mermaidAPI!.getConfig()!.dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
+      expect(mermaidAPI.getConfig().dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
     });
   });
 

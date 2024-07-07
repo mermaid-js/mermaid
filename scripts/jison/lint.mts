@@ -6,8 +6,9 @@ import { ESLint } from 'eslint';
 import jison from 'jison';
 
 const linter = new ESLint({
-  overrideConfig: { rules: { 'no-console': 'error' }, parser: '@typescript-eslint/parser' },
-  useEslintrc: false,
+  // @ts-expect-error ESLint types are incorrect
+  overrideConfigFile: true,
+  overrideConfig: { rules: { 'no-console': 'error' } },
 });
 
 const lint = async (file: string): Promise<boolean> => {

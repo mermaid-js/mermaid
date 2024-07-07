@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* eslint-disable no-console */
 import dayjs from 'dayjs';
 
@@ -29,12 +29,11 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
  *
  * @param level - The level to set the logging to. Default is `"fatal"`
  */
-export const setLogLevel = function (level: keyof typeof LEVELS | number | string = 'fatal') {
+export const setLogLevel = function (level: keyof typeof LEVELS | number = 'fatal') {
   let numericLevel: number = LEVELS.fatal;
   if (typeof level === 'string') {
-    level = level.toLowerCase();
-    if (level in LEVELS) {
-      numericLevel = LEVELS[level as keyof typeof LEVELS];
+    if (level.toLowerCase() in LEVELS) {
+      numericLevel = LEVELS[level];
     }
   } else if (typeof level === 'number') {
     numericLevel = level;

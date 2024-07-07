@@ -119,6 +119,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       return ((datum.data.value / sum) * 100).toFixed(0) + '%';
     })
     .attr('transform', (datum: d3.PieArcDatum<D3Section>): string => {
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       return 'translate(' + labelArcGenerator.centroid(datum) + ')';
     })
     .style('text-anchor', 'middle')
