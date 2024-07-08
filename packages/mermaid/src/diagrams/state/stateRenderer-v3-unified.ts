@@ -18,14 +18,18 @@ import { lookUpDomId } from '../flowchart/flowDb';
  * @returns The direction to use
  */
 export const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
+  if (!parsedItem.doc) {
+    return defaultDir;
+  }
+
   let dir = defaultDir;
-  if (parsedItem.doc) {
-    for (const parsedItemDoc of parsedItem.doc) {
-      if (parsedItemDoc.stmt === 'dir') {
-        dir = parsedItemDoc.value;
-      }
+
+  for (const parsedItemDoc of parsedItem.doc) {
+    if (parsedItemDoc.stmt === 'dir') {
+      dir = parsedItemDoc.value;
     }
   }
+
   return dir;
 };
 
@@ -60,17 +64,6 @@ export const draw = async function (
 
   // Create the root SVG - the element is the div containing the SVG element
   const { element, svg } = getDiagramElements(id, securityLevel);
-
-  // // For some diagrams this call is not needed, but in the state diagram it is
-  // await insertElementsForSize(element, data4Layout);
-
-  // console.log('data4Layout:', data4Layout);
-
-  // // Now we have layout data with real sizes, we can perform the layout
-  // const data4Rendering = doLayout(data4Layout, id, _version, 'dagre-wrapper');
-
-  // // The performRender method provided in all supported diagrams is used to render the data
-  // performRender(data4Rendering);
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = layout;

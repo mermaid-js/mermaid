@@ -9,7 +9,6 @@ import { setConfig } from '../../diagram-api/diagramAPI.js';
 export const diagram = {
   parser: flowParser,
   db: flowDb,
-  // renderer: flowRendererV2,
   renderer: flowRendererV3,
   styles: flowStyles,
   init: (cnf: MermaidConfig) => {
@@ -18,7 +17,6 @@ export const diagram = {
     }
     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
     setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
-    flowRendererV3.setConf(cnf.flowchart);
     flowDb.clear();
     flowDb.setGen('gen-2');
   },

@@ -729,14 +729,12 @@ export const destructLink = (_str: string, _startStr: string) => {
 
 // Todo optimizer this by caching existing nodes
 const exists = (allSgs: FlowSubGraph[], _id: string) => {
-  let res = false;
-  allSgs.forEach((sg) => {
-    const pos = sg.nodes.indexOf(_id);
-    if (pos >= 0) {
-      res = true;
+  for (const sg of allSgs) {
+    if (sg.nodes.includes(_id)) {
+      return true;
     }
-  });
-  return res;
+  }
+  return false;
 };
 /**
  * Deletes an id from all subgraphs
@@ -787,6 +785,7 @@ const destructEdgeType = (type: string | undefined) => {
   }
   return { arrowTypeStart, arrowTypeEnd };
 };
+
 const addNodeFromVertex = (
   vertex: FlowVertex,
   nodes: Node[],
@@ -799,7 +798,11 @@ const addNodeFromVertex = (
   const isGroup = subGraphDB.get(vertex.id) ?? false;
 
   const node = findNode(nodes, vertex.id);
-  if (!node) {
+  if (node) {
+    node.cssStyles = vertex.styles;
+    node.cssCompiledStyles = getCompiledStyles(vertex.classes);
+    node.cssClasses = vertex.classes.join(' ');
+  } else {
     nodes.push({
       id: vertex.id,
       label: vertex.text,
@@ -818,10 +821,6 @@ const addNodeFromVertex = (
       linkTarget: vertex.linkTarget,
       tooltip: getTooltip(vertex.id),
     });
-  } else {
-    node.cssStyles = vertex.styles;
-    node.cssCompiledStyles = getCompiledStyles(vertex.classes);
-    node.cssClasses = vertex.classes.join(' ');
   }
 };
 
@@ -829,14 +828,11 @@ function getCompiledStyles(classDefs: string[]) {
   let compiledStyles: string[] = [];
   for (const customClass of classDefs) {
     const cssClass = classes.get(customClass);
-    // log.debug('IPI cssClass in flowDb', cssClass);
-    if (cssClass) {
-      if (cssClass.styles) {
-        compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
-      }
-      if (cssClass.textStyles) {
-        compiledStyles = [...compiledStyles, ...(cssClass.textStyles ?? [])].map((s) => s.trim());
-      }
+    if (cssClass?.styles) {
+      compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
+    }
+    if (cssClass?.textStyles) {
+      compiledStyles = [...compiledStyles, ...(cssClass.textStyles ?? [])].map((s) => s.trim());
     }
   }
   return compiledStyles;
@@ -857,9 +853,9 @@ export const getData = () => {
     if (subGraph.nodes.length > 0) {
       subGraphDB.set(subGraph.id, true);
     }
-    subGraph.nodes.forEach((id) => {
+    for (const id of subGraph.nodes) {
       parentDB.set(id, subGraph.id);
-    });
+    }
   }
 
   // Data is setup, add the nodes
@@ -894,7 +890,7 @@ export const getData = () => {
       styles.push(...rawEdge.style);
     }
     const edge: Edge = {
-      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'edge' }),
+      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }),
       start: rawEdge.start,
       end: rawEdge.end,
       type: rawEdge.type ?? 'normal',
@@ -916,8 +912,6 @@ export const getData = () => {
     };
     edges.push(edge);
   });
-
-  // log.debug('IPI nodes', JSON.stringify(nodes, null, 2));
 
   return { nodes, edges, other: {}, config };
 };

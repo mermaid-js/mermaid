@@ -54,7 +54,6 @@ const rect = async (parent, node) => {
   }
 
   const padding = 0 * node.padding;
-  const halfPadding = padding / 2;
 
   const width =
     (node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width) + padding;
@@ -295,7 +294,7 @@ const divider = (parent, node) => {
   const siteConfig = getConfig();
 
   const { themeVariables, handdrawnSeed } = siteConfig;
-  const { compositeTitleBackground, nodeBorder } = themeVariables;
+  const { nodeBorder } = themeVariables;
 
   // Add outer g element
   const shapeSvg = parent

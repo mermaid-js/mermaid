@@ -35,7 +35,7 @@ import {
 } from './stateCommon.js';
 
 // List of nodes created from the parsed diagram statement items
-let nodeDb = {};
+let nodeDb = new Map();
 
 let graphItemCount = 0; // used to construct ids, etc.
 
@@ -104,7 +104,6 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
             look,
           };
           edges.push(edgeData);
-          //g.setEdge(item.state1.id, item.state2.id, edgeData, graphItemCount);
           graphItemCount++;
         }
         break;
@@ -214,6 +213,7 @@ function getStylesFromDbInfo(dbInfoItem) {
     }
   }
 }
+
 export const dataFetcher = (
   parent,
   parsedItem,
@@ -244,17 +244,17 @@ export const dataFetcher = (
     }
 
     // Add the node to our list (nodeDb)
-    if (!nodeDb[itemId]) {
-      nodeDb[itemId] = {
+    if (!nodeDb.get(itemId)) {
+      nodeDb.set(itemId, {
         id: itemId,
         shape,
         description: common.sanitizeText(itemId, getConfig()),
         cssClasses: `${classStr} ${CSS_DIAGRAM_STATE}`,
         cssStyles: style,
-      };
+      });
     }
 
-    const newNode = nodeDb[itemId];
+    const newNode = nodeDb.get(itemId);
 
     // Save data for description and group so that for instance a statement without description overwrites
     // one with description  @todo TODO What does this mean? If important, add a test for it
@@ -290,7 +290,6 @@ export const dataFetcher = (
       } else {
         newNode.shape = SHAPE_STATE;
       }
-      //newNode.shape = SHAPE_STATE;
     }
 
     // group
@@ -300,12 +299,7 @@ export const dataFetcher = (
       newNode.isGroup = true;
       newNode.dir = getDir(parsedItem);
       newNode.shape = parsedItem.type === DIVIDER_TYPE ? SHAPE_DIVIDER : SHAPE_GROUP;
-      newNode.cssClasses =
-        newNode.cssClasses +
-        ' ' +
-        CSS_DIAGRAM_CLUSTER +
-        ' ' +
-        (altFlag ? CSS_DIAGRAM_CLUSTER_ALT : '');
+      newNode.cssClasses = `${newNode.cssClasses} ${CSS_DIAGRAM_CLUSTER} ${altFlag ? CSS_DIAGRAM_CLUSTER_ALT : ''}`;
     }
 
     // This is what will be added to the graph
@@ -421,6 +415,6 @@ export const dataFetcher = (
 };
 
 export const reset = () => {
-  nodeDb = {};
+  nodeDb.clear();
   graphItemCount = 0;
 };

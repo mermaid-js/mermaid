@@ -1,8 +1,6 @@
-// import type { LayoutData } from './types';
 import { select } from 'd3';
 import { insertNode } from '../dagre-wrapper/nodes.js';
 
-// export const getDiagramElements = (id: string, securityLevel: any) => {
 export const getDiagramElements = (id, securityLevel) => {
   let sandboxElement;
   if (securityLevel === 'sandbox') {
@@ -22,12 +20,6 @@ export const getDiagramElements = (id, securityLevel) => {
   return { svg, element };
 };
 
-// export function insertElementsForSize(el: SVGElement, data: LayoutData): void {
-/**
- *
- * @param el
- * @param data
- */
 export function insertElementsForSize(el, data) {
   const nodesElem = el.insert('g').attr('class', 'nodes');
   el.insert('g').attr('class', 'edges');
@@ -60,5 +52,3 @@ export function insertElementsForSize(el, data) {
     // document.body.appendChild(element);
   });
 }
-
-export default insertElementsForSize;

@@ -9,14 +9,13 @@ import { curveBasis, curveLinear, curveCardinal, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
-//import type { Edge } from '$root/rendering-util/types.d.ts';
 
-let edgeLabels = {};
-let terminalLabels = {};
+const edgeLabels = new Map();
+const terminalLabels = new Map();
 
 export const clear = () => {
-  edgeLabels = {};
-  terminalLabels = {};
+  edgeLabels.clear();
+  terminalLabels.clear();
 };
 
 export const getLabelStyles = (styleArray) => {
@@ -26,16 +25,6 @@ export const getLabelStyles = (styleArray) => {
 
 export const insertEdgeLabel = async (elem, edge) => {
   let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
-
-  // Create the actual text element
-  // const labelElement =
-  //   edge.labelType === 'markdown'
-  //     ? await createText(elem, edge.label, {
-  //         style: labelStyles,
-  //         useHtmlLabels,
-  //         addSvgBackground: true,
-  //       })
-  //     : await createLabel(edge.label, getLabelStyles(edge.labelStyle));
 
   const labelElement = await createText(elem, edge.label, {
     style: getLabelStyles(edge.labelStyle),
@@ -64,7 +53,7 @@ export const insertEdgeLabel = async (elem, edge) => {
   label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
 
   // Make element accessible by id for positioning
-  edgeLabels[edge.id] = edgeLabel;
+  edgeLabels.set(edge.id, edgeLabel);
 
   // Update the abstract data of the edge with the new information about its width and height
   edge.width = bbox.width;
@@ -82,10 +71,10 @@ export const insertEdgeLabel = async (elem, edge) => {
     fo = inner.node().appendChild(startLabelElement);
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
-    if (!terminalLabels[edge.id]) {
-      terminalLabels[edge.id] = {};
+    if (!terminalLabels.get(edge.id)) {
+      terminalLabels.set(edge.id, {});
     }
-    terminalLabels[edge.id].startLeft = startEdgeLabelLeft;
+    terminalLabels.get(edge.id).startLeft = startEdgeLabelLeft;
     setTerminalWidth(fo, edge.startLabelLeft);
   }
   if (edge.startLabelRight) {
@@ -101,10 +90,10 @@ export const insertEdgeLabel = async (elem, edge) => {
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
-    if (!terminalLabels[edge.id]) {
-      terminalLabels[edge.id] = {};
+    if (!terminalLabels.get(edge.id)) {
+      terminalLabels.set(edge.id, {});
     }
-    terminalLabels[edge.id].startRight = startEdgeLabelRight;
+    terminalLabels.get(edge.id).startRight = startEdgeLabelRight;
     setTerminalWidth(fo, edge.startLabelRight);
   }
   if (edge.endLabelLeft) {
@@ -118,10 +107,10 @@ export const insertEdgeLabel = async (elem, edge) => {
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
 
-    if (!terminalLabels[edge.id]) {
-      terminalLabels[edge.id] = {};
+    if (!terminalLabels.get(edge.id)) {
+      terminalLabels.set(edge.id, {});
     }
-    terminalLabels[edge.id].endLeft = endEdgeLabelLeft;
+    terminalLabels.get(edge.id).endLeft = endEdgeLabelLeft;
     setTerminalWidth(fo, edge.endLabelLeft);
   }
   if (edge.endLabelRight) {
@@ -135,10 +124,10 @@ export const insertEdgeLabel = async (elem, edge) => {
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelRight.node().appendChild(endLabelElement);
-    if (!terminalLabels[edge.id]) {
-      terminalLabels[edge.id] = {};
+    if (!terminalLabels.get(edge.id)) {
+      terminalLabels.set(edge.id, {});
     }
-    terminalLabels[edge.id].endRight = endEdgeLabelRight;
+    terminalLabels.get(edge.id).endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight);
   }
   return labelElement;
@@ -156,12 +145,12 @@ function setTerminalWidth(fo, value) {
 }
 
 export const positionEdgeLabel = (edge, paths) => {
-  log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels[edge.id], paths);
+  log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   if (edge.label) {
-    const el = edgeLabels[edge.id];
+    const el = edgeLabels.get(edge.id);
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -188,7 +177,7 @@ export const positionEdgeLabel = (edge, paths) => {
 
   //let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.startLabelLeft) {
-    const el = terminalLabels[edge.id].startLeft;
+    const el = terminalLabels.get(edge.id).startLeft;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -200,7 +189,7 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.startLabelRight) {
-    const el = terminalLabels[edge.id].startRight;
+    const el = terminalLabels.get(edge.id).startRight;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -216,7 +205,7 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelLeft) {
-    const el = terminalLabels[edge.id].endLeft;
+    const el = terminalLabels.get(edge.id).endLeft;
     let x = edge.x;
     let y = edge.y;
     if (path) {
@@ -228,11 +217,10 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y})`);
   }
   if (edge.endLabelRight) {
-    const el = terminalLabels[edge.id].endRight;
+    const el = terminalLabels.get(edge.id).endRight;
     let x = edge.x;
     let y = edge.y;
     if (path) {
-      // debugger;
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
       x = pos.x;
       y = pos.y;
@@ -242,17 +230,13 @@ export const positionEdgeLabel = (edge, paths) => {
 };
 
 const outsideNode = (node, point) => {
-  // log.warn('Checking bounds ', node, point);
   const x = node.x;
   const y = node.y;
   const dx = Math.abs(point.x - x);
   const dy = Math.abs(point.y - y);
   const w = node.width / 2;
   const h = node.height / 2;
-  if (dx >= w || dy >= h) {
-    return true;
-  }
-  return false;
+  return dx >= w || dy >= h;
 };
 
 export const intersection = (node, outsidePoint, insidePoint) => {
@@ -264,7 +248,6 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   const y = node.y;
 
   const dx = Math.abs(x - insidePoint.x);
-  // const dy = Math.abs(y - insidePoint.y);
   const w = node.width / 2;
   let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
   const h = node.height / 2;
@@ -300,7 +283,6 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     if (insidePoint.x < outsidePoint.x) {
       r = outsidePoint.x - w - x;
     } else {
-      // r = outsidePoint.x - w - x;
       r = x - w - outsidePoint.x;
     }
     let q = (Q * r) / R;
@@ -530,8 +512,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     lineData.splice(-1, 0, midPoint);
   }
   // This is the accessor function we talked about above
-  let curve;
-  curve = curveBasis;
+  let curve = curveBasis;
   // curve = curveCardinal;
   // curve = curveLinear;
   // curve = curveNatural;
@@ -540,6 +521,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   // curve = curveCardinal.tension(0.7);
   // curve = curveMonotoneY;
   // let curve = interpolateToCurve([5], curveNatural, 0.01, 10);
+
   // Currently only flowcharts get the curve from the settings, perhaps this should
   // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
   // have not been thought through
