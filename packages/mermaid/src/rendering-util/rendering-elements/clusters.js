@@ -179,8 +179,7 @@ const roundedWithTitle = async (parent, node) => {
     .insert('g')
     .attr('class', node.cssClasses)
     .attr('id', node.id)
-    .attr('data-et', 'node')
-    .attr('data-node', 'true')
+    .attr('data-et', 'cluster')
     .attr('data-id', node.id)
     .attr('data-look', node.look);
 

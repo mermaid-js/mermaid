@@ -1,7 +1,7 @@
 // @ts-nocheck File not ready to check types
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
-import mermaid, { type LayoutData } from 'mermaid';
+import { type LayoutData } from 'mermaid';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
 const {

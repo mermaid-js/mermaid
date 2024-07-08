@@ -57,7 +57,7 @@
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       %%{init: {"look": "neo", "theme": "neo","fontFamily": "Arial"} }%%
 flowchart
       A[A really really really super long node] --> B & C
@@ -66,7 +66,7 @@ flowchart
       end
       </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
 %%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial",         "themeVariables": {
           "useGradient": true,
           "gradientStart": '#fff',
@@ -95,14 +95,29 @@ flowchart LR
     style C stroke:#00f, fill:black
 
     </pre>
+    <!-- Flowchart with subgraph-->
+    <pre id="diagram3" class="mermaid">
+flowchart TB
+    c1-->a2
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+    </pre>
 
-    <pre id="diagram4" class="mermaid2">
-      stateDiagram
-    A:::foo
-    B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    style C stroke:#00f, fill:black, color:white
+    <pre id="diagram4" class="mermaid">
+stateDiagram-v2
+    [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
 
     </pre>
 
