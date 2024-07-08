@@ -188,7 +188,7 @@ const runThrowsErrors = async function (
 
 /**
  * Used to set configurations for mermaid.
-* This function should be called before the run function.
+ * This function should be called before the run function.
  * @param config - Configuration object for mermaid.
  */
 
