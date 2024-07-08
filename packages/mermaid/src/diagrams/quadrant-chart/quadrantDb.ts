@@ -126,21 +126,21 @@ function getQuadrantData() {
     quadrantBuilder.setConfig(quadrantChartConfig);
   }
   quadrantBuilder.setThemeConfig({
-    quadrant1Fill: themeVariables.quadrant1Fill,
-    quadrant2Fill: themeVariables.quadrant2Fill,
-    quadrant3Fill: themeVariables.quadrant3Fill,
-    quadrant4Fill: themeVariables.quadrant4Fill,
-    quadrant1TextFill: themeVariables.quadrant1TextFill,
-    quadrant2TextFill: themeVariables.quadrant2TextFill,
-    quadrant3TextFill: themeVariables.quadrant3TextFill,
-    quadrant4TextFill: themeVariables.quadrant4TextFill,
-    quadrantPointFill: themeVariables.quadrantPointFill,
-    quadrantPointTextFill: themeVariables.quadrantPointTextFill,
-    quadrantXAxisTextFill: themeVariables.quadrantXAxisTextFill,
-    quadrantYAxisTextFill: themeVariables.quadrantYAxisTextFill,
-    quadrantExternalBorderStrokeFill: themeVariables.quadrantExternalBorderStrokeFill,
-    quadrantInternalBorderStrokeFill: themeVariables.quadrantInternalBorderStrokeFill,
-    quadrantTitleFill: themeVariables.quadrantTitleFill,
+    quadrant1Fill: themeVariables?.quadrant1Fill,
+    quadrant2Fill: themeVariables?.quadrant2Fill,
+    quadrant3Fill: themeVariables?.quadrant3Fill,
+    quadrant4Fill: themeVariables?.quadrant4Fill,
+    quadrant1TextFill: themeVariables?.quadrant1TextFill,
+    quadrant2TextFill: themeVariables?.quadrant2TextFill,
+    quadrant3TextFill: themeVariables?.quadrant3TextFill,
+    quadrant4TextFill: themeVariables?.quadrant4TextFill,
+    quadrantPointFill: themeVariables?.quadrantPointFill,
+    quadrantPointTextFill: themeVariables?.quadrantPointTextFill,
+    quadrantXAxisTextFill: themeVariables?.quadrantXAxisTextFill,
+    quadrantYAxisTextFill: themeVariables?.quadrantYAxisTextFill,
+    quadrantExternalBorderStrokeFill: themeVariables?.quadrantExternalBorderStrokeFill,
+    quadrantInternalBorderStrokeFill: themeVariables?.quadrantInternalBorderStrokeFill,
+    quadrantTitleFill: themeVariables?.quadrantTitleFill,
   });
   quadrantBuilder.setData({ titleText: getDiagramTitle() });
   return quadrantBuilder.build();

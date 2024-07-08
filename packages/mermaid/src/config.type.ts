@@ -55,6 +55,56 @@ export type DOMPurifyConfiguration = import('dompurify').Config;
  */
 export type CSSFontSize = string | number;
 
+export interface ThemeVariables {
+  fontFamily?: string;
+  fontSize?: CSSFontSize;
+  fontWeight?: number;
+  primaryColor?: string;
+  primaryTextColor?: string;
+  pie1?: string;
+  pie2?: string;
+  pie3?: string;
+  pie4?: string;
+  pie5?: string;
+  pie6?: string;
+  pie7?: string;
+  pie8?: string;
+  pie9?: string;
+  pie10?: string;
+  pie11?: string;
+  pie12?: string;
+  pieOuterStrokeWidth?:number;
+  quadrant1Fill?: string;
+  quadrant2Fill?: string;
+  quadrant3Fill?: string;
+  quadrant4Fill?: string;
+  quadrant1TextFill?: string;
+  quadrant2TextFill?: string;
+  quadrant3TextFill?: string;
+  quadrant4TextFill?: string;
+  quadrantPointFill?: string;
+  quadrantPointTextFill?: string;
+  quadrantXAxisTextFill?: string;
+  quadrantYAxisTextFill?: string;
+  quadrantInternalBorderStrokeFill?: string;
+  quadrantExternalBorderStrokeFill?: string;
+  quadrantTitleFill?: string;
+  xyChart?: {
+    backgroundColor?: string;
+    titleColor?: string;
+    xAxisTitleColor?: string;
+    xAxisLabelColor?: string;
+    xAxisTickColor?: string;  
+    xAxisLineColor?: string;
+    yAxisTitleColor?: string;
+    yAxisLabelColor?: string;
+    yAxisTickColor?: string;
+    yAxisLineColor?: string;
+    plotColorPalette?: string;
+  };
+  THEME_COLOR_LIMIT?: number;
+
+}
 export interface MermaidConfig {
   /**
    * Theme, the CSS style sheet.
@@ -62,7 +112,7 @@ export interface MermaidConfig {
    *
    */
   theme?: 'default' | 'forest' | 'dark' | 'neutral' | 'null';
-  themeVariables?: any;
+  themeVariables?: ThemeVariables;
   themeCSS?: string;
   /**
    * The maximum allowed size of the users text diagram

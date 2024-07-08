@@ -471,9 +471,9 @@ const render = async function (
 /**
  * @param  options - Initial Mermaid options
  */
-function initialize(options: MermaidConfig = { themeVariables: {} }) {
+function initialize(options: MermaidConfig = {}) {
   // Handle legacy location of font-family configuration
-  if (options?.fontFamily && !options.themeVariables.fontFamily) {
+  if (options?.fontFamily && !options.themeVariables?.fontFamily) {
     if (!options.themeVariables) {
       options.themeVariables = {};
     }

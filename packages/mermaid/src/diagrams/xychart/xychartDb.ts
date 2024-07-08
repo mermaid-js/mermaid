@@ -42,7 +42,7 @@ interface NormalTextType {
 function getChartDefaultThemeConfig(): XYChartThemeConfig {
   const defaultThemeVariables = getThemeVariables();
   const config = configApi.getConfig();
-  return cleanAndMerge(defaultThemeVariables.xyChart, config.themeVariables.xyChart);
+  return cleanAndMerge(defaultThemeVariables.xyChart, config.themeVariables?.xyChart);
 }
 function getChartDefaultConfig(): XYChartConfig {
   const config = configApi.getConfig();
