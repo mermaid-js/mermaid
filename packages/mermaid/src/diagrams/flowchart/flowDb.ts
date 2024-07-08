@@ -730,7 +730,7 @@ export const destructLink = (_str: string, _startStr: string) => {
 // Todo optimizer this by caching existing nodes
 const exists = (allSgs: FlowSubGraph[], _id: string) => {
   for (const sg of allSgs) {
-    if (sg.nodes.indexOf(_id) >= 0) {
+    if (sg.nodes.includes(_id)) {
       return true;
     }
   }
@@ -890,7 +890,7 @@ export const getData = () => {
       styles.push(...rawEdge.style);
     }
     const edge: Edge = {
-      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'edge' }),
+      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }),
       start: rawEdge.start,
       end: rawEdge.end,
       type: rawEdge.type ?? 'normal',

@@ -19,7 +19,7 @@ export const getClasses = function (
 export const draw = async function (text: string, id: string, _version: string, diag: any) {
   log.info('REF0:');
   log.info('Drawing state diagram (v2)', id);
-  const { securityLevel, state: conf, layout } = getConfig();
+  const { securityLevel, flowchart: conf, layout } = getConfig();
 
   // Handle root and document for when rendering in sandbox mode
   let sandboxElement;

@@ -16,7 +16,7 @@ import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
  * @param defaultDir - the direction to use if none is found
  * @returns The direction to use
  */
-const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
+export const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   if (!parsedItem.doc) {
     return defaultDir;
   }

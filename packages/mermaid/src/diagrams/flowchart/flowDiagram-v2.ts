@@ -17,7 +17,6 @@ export const diagram = {
     }
     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
     setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
-    flowRendererV3.setConf(cnf.flowchart);
     flowDb.clear();
     flowDb.setGen('gen-2');
   },
