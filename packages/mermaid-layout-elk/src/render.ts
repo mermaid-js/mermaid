@@ -1,8 +1,8 @@
 // @ts-nocheck File not ready to check types
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
-import mermaid from 'mermaid';
-import { findCommonAncestor } from './find-common-ancestor.js';
+import mermaid, { type LayoutData } from 'mermaid';
+import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
 const {
   common,
@@ -201,13 +201,13 @@ const getNextPort = (node, edgeDirection, graphDirection) => {
   return result;
 };
 
-const addSubGraphs = function (nodeArr) {
-  const parentLookupDb = { parentById: {}, childrenById: {} };
+const addSubGraphs = (nodeArr): TreeData => {
+  const parentLookupDb: TreeData = { parentById: {}, childrenById: {} };
   const subgraphs = nodeArr.filter((node) => node.isGroup);
   log.info('Subgraphs - ', subgraphs);
-  subgraphs.forEach(function (subgraph) {
+  subgraphs.forEach((subgraph) => {
     const children = nodeArr.filter((node) => node.parentId === subgraph.id);
-    children.forEach(function (node) {
+    children.forEach((node) => {
       parentLookupDb.parentById[node.id] = subgraph.id;
       if (parentLookupDb.childrenById[subgraph.id] === undefined) {
         parentLookupDb.childrenById[subgraph.id] = [];
@@ -252,7 +252,7 @@ const getEdgeStartEndPoint = (edge, dir) => {
   return { source, target, sourceId, targetId };
 };
 
-const calcOffset = function (src, dest, parentLookupDb) {
+const calcOffset = function (src: string, dest: string, parentLookupDb: TreeData) {
   const ancestor = findCommonAncestor(src, dest, parentLookupDb);
   if (ancestor === undefined || ancestor === 'root') {
     return { x: 0, y: 0 };
@@ -351,11 +351,6 @@ export const addEdges = async function (dataForLayout, graph, svg) {
           edgeData.style = 'stroke-width: 3.5px;fill:none;';
           break;
       }
-      // if (edge.style !== undefined) {
-      //   const styles = getStylesFromArray(edge.style);
-      //   style = styles.style;
-      //   labelStyle = styles.labelStyle;
-      // }
 
       edgeData.style = edgeData.style += style;
       edgeData.labelStyle = edgeData.labelStyle += labelStyle;
@@ -455,7 +450,7 @@ function setIncludeChildrenPolicy(nodeId: string, ancestorId: string) {
   }
 }
 
-export const render = async (data4Layout, svg, element, algorithm) => {
+export const render = async (data4Layout: LayoutData, svg, element, algorithm) => {
   const elk = new ELK();
 
   // Add the arrowheads to the svg
@@ -558,9 +553,7 @@ export const render = async (data4Layout, svg, element, algorithm) => {
     }
   });
 
-  // log.info('before layout', JSON.stringify(elkGraph, null, 2));
   const g = await elk.layout(elkGraph);
-  // log.info('after layout', JSON.stringify(g));
 
   // debugger;
   drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
@@ -688,6 +681,32 @@ export const render = async (data4Layout, svg, element, algorithm) => {
       edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
       positionEdgeLabel(edge, paths);
     }
+    const src = edge.sections[0].startPoint;
+    const dest = edge.sections[0].endPoint;
+    const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+
+    const segPoints = segments.map((segment) => {
+      return { x: segment.x + offset.x, y: segment.y + offset.y };
+    });
+    edge.points = [
+      { x: src.x + offset.x, y: src.y + offset.y },
+      ...segPoints,
+      { x: dest.x + offset.x, y: dest.y + offset.y },
+    ];
+    const paths = insertEdge(
+      edgesEl,
+      edge,
+      clusterDb,
+      data4Layout.type,
+      startNode,
+      endNode,
+      data4Layout.diagramId
+    );
+    log.info('APA12 edge points after insert', JSON.stringify(edge.points));
+
+    edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
+    edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
+    positionEdgeLabel(edge, paths);
   });
 };
 
@@ -696,10 +715,10 @@ function intersectLine(p1, p2, q1, q2) {
   // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
   // p7 and p473.
 
-  var a1, a2, b1, b2, c1, c2;
-  var r1, r2, r3, r4;
-  var denom, offset, num;
-  var x, y;
+  let a1, a2, b1, b2, c1, c2;
+  let r1, r2, r3, r4;
+  let denom, offset, num;
+  let x, y;
 
   // Compute a1, b1, c1, where line joining points 1 and 2 is F(x,y) = a1 x +
   // b1 y + c1 = 0.
@@ -761,8 +780,8 @@ function sameSign(r1, r2) {
   return r1 * r2 > 0;
 }
 const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
-  var x1 = bounds.x;
-  var y1 = bounds.y;
+  const x1 = bounds.x;
+  const y1 = bounds.y;
 
   const w = bounds.width; //+ bounds.padding;
   const h = bounds.height; // + bounds.padding;
@@ -782,10 +801,10 @@ const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
     polyPoints
   );
 
-  var intersections = [];
+  const intersections = [];
 
-  var minX = Number.POSITIVE_INFINITY;
-  var minY = Number.POSITIVE_INFINITY;
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
   if (typeof polyPoints.forEach === 'function') {
     polyPoints.forEach(function (entry) {
       minX = Math.min(minX, entry.x);
@@ -796,13 +815,18 @@ const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
     minY = Math.min(minY, polyPoints.y);
   }
 
-  var left = x1 - w / 2;
-  var top = y1 + h / 2;
+  const left = x1 - w / 2;
+  const top = y1 + h / 2;
 
-  for (var i = 0; i < polyPoints.length; i++) {
-    var p1 = polyPoints[i];
-    var p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
-    var intersect = intersectLine(bounds, outsidePoint, { x: p1.x, y: p1.y }, { x: p2.x, y: p2.y });
+  for (let i = 0; i < polyPoints.length; i++) {
+    const p1 = polyPoints[i];
+    const p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
+    const intersect = intersectLine(
+      bounds,
+      outsidePoint,
+      { x: p1.x, y: p1.y },
+      { x: p2.x, y: p2.y }
+    );
 
     if (intersect) {
       intersections.push(intersect);
@@ -818,13 +842,13 @@ const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
   if (intersections.length > 1) {
     // More intersections, find the one nearest to edge end point
     intersections.sort(function (p, q) {
-      var pdx = p.x - outsidePoint.x;
-      var pdy = p.y - outsidePoint.y;
-      var distp = Math.sqrt(pdx * pdx + pdy * pdy);
+      const pdx = p.x - outsidePoint.x;
+      const pdy = p.y - outsidePoint.y;
+      const distp = Math.sqrt(pdx * pdx + pdy * pdy);
 
-      var qdx = q.x - outsidePoint.x;
-      var qdy = q.y - outsidePoint.y;
-      var distq = Math.sqrt(qdx * qdx + qdy * qdy);
+      const qdx = q.x - outsidePoint.x;
+      const qdy = q.y - outsidePoint.y;
+      const distq = Math.sqrt(qdx * qdx + qdy * qdy);
 
       return distp < distq ? -1 : distp === distq ? 0 : 1;
     });
@@ -852,7 +876,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
 
   if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // Intersection is top or bottom of rect.
-    let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    const q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = (R * q) / Q;
     const res = {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
@@ -881,7 +905,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       // r = outsidePoint.x - w - x;
       r = x - w - outsidePoint.x;
     }
-    let q = (Q * r) / R;
+    const q = (Q * r) / R;
     //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
     // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
     let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
@@ -925,7 +949,7 @@ const outsideNode = (node, point) => {
  */
 const cutPathAtIntersect = (_points, bounds, isDiamond: boolean) => {
   console.log('UIO cutPathAtIntersect Points:', _points, 'node:', bounds, 'isDiamond', isDiamond);
-  let points = [];
+  const points = [];
   let lastPointOutside = _points[0];
   let isInside = false;
   _points.forEach((point) => {
@@ -939,7 +963,7 @@ const cutPathAtIntersect = (_points, bounds, isDiamond: boolean) => {
       let inter;
 
       if (isDiamond) {
-        let inter2 = diamondIntersection(bounds, lastPointOutside, point);
+        const inter2 = diamondIntersection(bounds, lastPointOutside, point);
         const distance = Math.sqrt(
           (lastPointOutside.x - inter2.x) ** 2 + (lastPointOutside.y - inter2.y) ** 2
         );

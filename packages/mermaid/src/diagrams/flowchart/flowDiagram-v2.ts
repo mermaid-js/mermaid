@@ -9,7 +9,6 @@ import { setConfig } from '../../diagram-api/diagramAPI.js';
 export const diagram = {
   parser: flowParser,
   db: flowDb,
-  // renderer: flowRendererV2,
   renderer: flowRendererV3,
   styles: flowStyles,
   init: (cnf: MermaidConfig) => {
