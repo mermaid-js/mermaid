@@ -76,18 +76,18 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const arcs: d3.PieArcDatum<D3Section>[] = createPieArcs(sections);
 
   const myGeneratedColors = [
-    themeVariables?.pie1 || null,
-    themeVariables?.pie2 || null,
-    themeVariables?.pie3 || null,
-    themeVariables?.pie4 || null,
-    themeVariables?.pie5 || null,
-    themeVariables?.pie6 || null,
-    themeVariables?.pie7 || null,
-    themeVariables?.pie8 || null,
-    themeVariables?.pie9 || null,
-    themeVariables?.pie10 || null,
-    themeVariables?.pie11 || null,
-    themeVariables?.pie12 || null,
+    themeVariables?.pie1 ?? null,
+    themeVariables?.pie2 ?? null,
+    themeVariables?.pie3 ?? null,
+    themeVariables?.pie4 ?? null,
+    themeVariables?.pie5 ?? null,
+    themeVariables?.pie6 ?? null,
+    themeVariables?.pie7 ?? null,
+    themeVariables?.pie8 ?? null,
+    themeVariables?.pie9 ?? null,
+    themeVariables?.pie10 ?? null,
+    themeVariables?.pie11 ?? null,
+    themeVariables?.pie12 ?? null,
   ];
   // Set the color scale
   const color: d3.ScaleOrdinal<string, string | null, never> = scaleOrdinal(myGeneratedColors);
