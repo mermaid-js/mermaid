@@ -68,6 +68,7 @@ properties:
       'null': Can be set to disable any pre-defined mermaid theme
     default: 'default'
   themeVariables:
+    title: Theme Variables
     description: |
       Theme variables to create a custom theme.
     type: object
@@ -84,9 +85,19 @@ properties:
       primaryColor:
         description: The primary color to use.
         type: string
+        default: '#fff4dd'
       primaryTextColor:
         description: The primary text color to use.
         type: string
+        default: '#333'
+      noteBkgColor:
+        description: The note background color to use.
+        type: string
+        default: '#fff5ad'
+      noteTextColor:
+        description: The note text color to use.
+        type: string
+        default: '#333'
       pie1:
         description: The color to use for the first pie chart color.
         type: string
