@@ -125,7 +125,7 @@ export const verifyScreenshot = (name: string): void => {
     cy.eyesClose();
   } else if (useArgos) {
     cy.argosScreenshot(name, {
-      threshold: 0.3,
+      threshold: 0.01,
     });
   } else {
     cy.matchImageSnapshot(name);
