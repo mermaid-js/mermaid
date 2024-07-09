@@ -55,6 +55,7 @@ pyplot
 redmine
 rehype
 rscratch
+Slidev
 sparkline
 sphinxcontrib
 ssim

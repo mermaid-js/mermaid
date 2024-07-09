@@ -56,6 +56,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
 - [Joplin](https://joplinapp.org) ✅
 - [LiveBook](https://livebook.dev) ✅
+- [Slidev](https://sli.dev) ✅
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) ✅
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
 - [Mermerd](https://github.com/KarnerTh/mermerd)
