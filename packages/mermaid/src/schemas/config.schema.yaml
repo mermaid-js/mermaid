@@ -68,7 +68,151 @@ properties:
       'null': Can be set to disable any pre-defined mermaid theme
     default: 'default'
   themeVariables:
-    tsType: any
+    description: |
+      Theme variables to create a custom theme.
+    type: object
+    properties:
+      fontFamily:
+        description: The CSS `font-family` to use.
+        type: string
+      fontSize:
+        description: The font size to use.
+        type: number
+      fontWeight:
+        description: The font weight to use.
+        type: number
+      primaryColor:
+        description: The primary color to use.
+        type: string
+      primaryTextColor:
+        description: The primary text color to use.
+        type: string
+      pie1:
+        description: The color to use for the first pie chart color.
+        type: string
+      pie2:
+        description: The color to use for the second pie chart color.
+        type: string
+      pie3:
+        description: The color to use for the third pie chart color.
+        type: string
+      pie4:
+        description: The color to use for the fourth pie chart color.
+        type: string
+      pie5:
+        description: The color to use for the fifth pie chart color.
+        type: string
+      pie6:
+        description: The color to use for the sixth pie chart color.
+        type: string
+      pie7:
+        description: The color to use for the seventh pie chart color.
+        type: string
+      pie8:
+        description: The color to use for the eighth pie chart color.
+        type: string
+      pie9:
+        description: The color to use for the ninth pie chart color.
+        type: string
+      pie10:
+        description: The color to use for the tenth pie chart color.
+        type: string
+      pie11:
+        description: The color to use for the eleventh pie chart color.
+        type: string
+      pie12:
+        description: The color to use for the twelfth pie chart color.
+        type: string
+      pieOuterStrokeWidth:
+        description: The width of the stroke around the pie chart.
+        type: number
+        default: 2
+      quadrant1Fill:
+        description: The color to use for the first quadrant fill.
+        type: string
+      quadrant2Fill:
+        description: The color to use for the second quadrant fill.
+        type: string
+      quadrant3Fill:
+        description: The color to use for the third quadrant fill.
+        type: string
+      quadrant4Fill:
+        description: The color to use for the fourth quadrant fill.
+        type: string
+      quadrant1TextFill:
+        description: The color to use for the first quadrant text fill.
+        type: string
+      quadrant2TextFill:
+        description: The color to use for the second quadrant text fill.
+        type: string
+      quadrant3TextFill:
+        description: The color to use for the third quadrant text fill.
+        type: string
+      quadrant4TextFill:
+        description: The color to use for the fourth quadrant text fill.
+        type: string
+      quadrantPointFill:
+        description: The color to use for the quadrant point fill.
+        type: string
+      quadrantPointTextFill:
+        description: The color to use for the quadrant point text fill.
+        type: string
+      quadrantXAxisTextFill:
+        description: The color to use for the quadrant x-axis text fill.
+        type: string
+      quadrantYAxisTextFill:
+        description: The color to use for the quadrant y-axis text fill.
+        type: string
+      quadrantInternalBorderStrokeFill:
+        description: The color to use for the quadrant internal border stroke fill.
+        type: string
+      quadrantExternalBorderStrokeFill:
+        description: The color to use for the quadrant external border stroke fill.
+        type: string
+      quadrantTitleFill:
+        description: The color to use for the quadrant title fill.
+        type: string
+      xyChart:
+        description: The color to use for the xy chart.
+        type: object
+        properties:
+          backgroundColor:
+            description: The color to use for the xy chart background.
+            type: string
+          titleColor:
+            description: The color to use for the xy chart title.
+            type: string
+          xAxisTitleColor:
+            description: The color to use for the xy chart x-axis title.
+            type: string
+          xAxisLabelColor:
+            description: The color to use for the xy chart x-axis label.
+            type: string
+          xAxisTickColor:
+            description: The color to use for the xy chart x-axis tick.
+            type: string
+          xAxisLineColor:
+            description: The color to use for the xy chart x-axis line.
+            type: string
+          yAxisTitleColor:
+            description: The color to use for the xy chart y-axis title.
+            type: string
+          yAxisLabelColor:
+            description: The color to use for the xy chart y-axis label.
+            type: string
+          yAxisTickColor:
+            description: The color to use for the xy chart y-axis tick.
+            type: string
+          yAxisLineColor:
+            description: The color to use for the xy chart y-axis line.
+            type: string
+          plotColorPalette:
+            description: The color to use for the xy chart plot color palette.
+            type: string
+      THEME_COLOR_LIMIT:
+        description: The maximum number of colors allowed in the theme.
+        type: number
+        default: 12
   themeCSS:
     type: string
   maxTextSize:
