@@ -516,6 +516,36 @@ Alice->>Bob:Hello Bob, how are you?`;
     expect(messages.length).toBe(1);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
   });
+  it('should handle bidirectional arrow messages', async () => {
+    const str = `
+sequenceDiagram
+Alice<<->>Bob:Hello Bob, how are you?`;
+
+    await mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+    expect(actors.get('Alice').description).toBe('Alice');
+    expect(actors.get('Bob').description).toBe('Bob');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(1);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.BIDIRECTIONAL_SOLID);
+  });
+  it('should handle bidirectional dotted arrow messages', async () => {
+    const str = `
+    sequenceDiagram
+    Alice<<-->>Bob:Hello Bob, how are you?`;
+
+    await mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+    expect(actors.get('Alice').description).toBe('Alice');
+    expect(actors.get('Bob').description).toBe('Bob');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(1);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.BIDIRECTIONAL_DOTTED);
+  });
   it('should handle actor activation', async () => {
     const str = `
 sequenceDiagram
@@ -1309,15 +1339,15 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
-    expect(actors.get('a').links['Repo']).toBe('https://repo.contoso.com/');
-    expect(actors.get('b').links['Repo']).toBe(undefined);
-    expect(actors.get('a').links['Dashboard']).toBe('https://dashboard.contoso.com/');
-    expect(actors.get('b').links['Dashboard']).toBe('https://dashboard.contoso.com/');
+    expect(actors.get('a').links.Repo).toBe('https://repo.contoso.com/');
+    expect(actors.get('b').links.Repo).toBe(undefined);
+    expect(actors.get('a').links.Dashboard).toBe('https://dashboard.contoso.com/');
+    expect(actors.get('b').links.Dashboard).toBe('https://dashboard.contoso.com/');
     expect(actors.get('a').links['On-Call']).toBe('https://oncall.contoso.com/?svc=alice');
-    expect(actors.get('c').links['Dashboard']).toBe(undefined);
-    expect(actors.get('a').links['Endpoint']).toBe('https://alice.contoso.com');
-    expect(actors.get('a').links['Swagger']).toBe('https://swagger.contoso.com');
-    expect(actors.get('a').links['Tests']).toBe('https://tests.contoso.com/?svc=alice@contoso.com');
+    expect(actors.get('c').links.Dashboard).toBe(undefined);
+    expect(actors.get('a').links.Endpoint).toBe('https://alice.contoso.com');
+    expect(actors.get('a').links.Swagger).toBe('https://swagger.contoso.com');
+    expect(actors.get('a').links.Tests).toBe('https://tests.contoso.com/?svc=alice@contoso.com');
   });
 
   it('should handle properties EXPERIMENTAL: USE WITH CAUTION', async () => {
@@ -1333,11 +1363,11 @@ properties b: {"class": "external-service-actor", "icon": "@computer"}
 
     await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
-    expect(actors.get('a').properties['class']).toBe('internal-service-actor');
-    expect(actors.get('b').properties['class']).toBe('external-service-actor');
-    expect(actors.get('a').properties['icon']).toBe('@clock');
-    expect(actors.get('b').properties['icon']).toBe('@computer');
-    expect(actors.get('c').properties['class']).toBe(undefined);
+    expect(actors.get('a').properties.class).toBe('internal-service-actor');
+    expect(actors.get('b').properties.class).toBe('external-service-actor');
+    expect(actors.get('a').properties.icon).toBe('@clock');
+    expect(actors.get('b').properties.icon).toBe('@computer');
+    expect(actors.get('c').properties.class).toBe(undefined);
   });
 
   it('should handle box', async () => {
@@ -1489,7 +1519,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     diagram.renderer.bounds.init();
     conf = diagram.db.getConfig();
   });
-  it('should handle a simple bound call', async () => {
+  it('should handle a simple bound call', () => {
     diagram.renderer.bounds.insert(100, 100, 200, 200);
 
     const { bounds } = diagram.renderer.bounds.getBounds();
@@ -1498,7 +1528,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(200);
     expect(bounds.stopy).toBe(200);
   });
-  it('should handle an expanding bound', async () => {
+  it('should handle an expanding bound', () => {
     diagram.renderer.bounds.insert(100, 100, 200, 200);
     diagram.renderer.bounds.insert(25, 50, 300, 400);
 
@@ -1508,7 +1538,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(300);
     expect(bounds.stopy).toBe(400);
   });
-  it('should handle inserts within the bound without changing the outer bounds', async () => {
+  it('should handle inserts within the bound without changing the outer bounds', () => {
     diagram.renderer.bounds.insert(100, 100, 200, 200);
     diagram.renderer.bounds.insert(25, 50, 300, 400);
     diagram.renderer.bounds.insert(125, 150, 150, 200);
@@ -1519,7 +1549,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(300);
     expect(bounds.stopy).toBe(400);
   });
-  it('should handle a loop without expanding the area', async () => {
+  it('should handle a loop without expanding the area', () => {
     diagram.renderer.bounds.insert(25, 50, 300, 400);
     diagram.renderer.bounds.verticalPos = 150;
     diagram.renderer.bounds.newLoop();
@@ -1540,7 +1570,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(300);
     expect(bounds.stopy).toBe(400);
   });
-  it('should handle multiple loops withtout expanding the bounds', async () => {
+  it('should handle multiple loops withtout expanding the bounds', () => {
     diagram.renderer.bounds.insert(100, 100, 1000, 1000);
     diagram.renderer.bounds.verticalPos = 200;
     diagram.renderer.bounds.newLoop();
@@ -1571,7 +1601,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(1000);
     expect(bounds.stopy).toBe(1000);
   });
-  it('should handle a loop that expands the area', async () => {
+  it('should handle a loop that expands the area', () => {
     diagram.renderer.bounds.insert(100, 100, 200, 200);
     diagram.renderer.bounds.verticalPos = 200;
     diagram.renderer.bounds.newLoop();
@@ -1645,7 +1675,6 @@ it should handle one actor, when textPlacement is ${textPlacement}`, async () =>
 sequenceDiagram
 participant Alice`;
 
-      // mermaidAPI.reinitialize({ sequence: { textPlacement: textPlacement } });
       await mermaidAPI.parse(str);
       // diagram.renderer.setConf(mermaidAPI.getConfig().sequence);
       await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);

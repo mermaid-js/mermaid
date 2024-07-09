@@ -9,7 +9,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Should render a complete chart', () => {
     imgSnapshotTest(
@@ -35,7 +34,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('y-axis title not required', () => {
     imgSnapshotTest(
@@ -48,7 +46,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Should render a chart without y-axis with different range', () => {
     imgSnapshotTest(
@@ -60,7 +57,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('x axis title not required', () => {
     imgSnapshotTest(
@@ -72,7 +68,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Multiple plots can be rendered', () => {
     imgSnapshotTest(
@@ -87,7 +82,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Decimals and negative numbers are supported', () => {
     imgSnapshotTest(
@@ -98,7 +92,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render spark line with "plotReservedSpacePercent"', () => {
     imgSnapshotTest(
@@ -116,7 +109,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render spark bar without displaying other property', () => {
     imgSnapshotTest(
@@ -143,7 +135,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Should use all the config from directive', () => {
     imgSnapshotTest(
@@ -158,7 +149,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Should use all the config from yaml', () => {
     imgSnapshotTest(
@@ -199,7 +189,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render with show axis title false', () => {
     imgSnapshotTest(
@@ -221,7 +210,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render with show axis label false', () => {
     imgSnapshotTest(
@@ -243,7 +231,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render with show axis tick false', () => {
     imgSnapshotTest(
@@ -265,7 +252,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render with show axis line false', () => {
     imgSnapshotTest(
@@ -287,7 +273,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render all the theme color', () => {
     imgSnapshotTest(
@@ -314,6 +299,17 @@ describe('XY Chart', () => {
         y-axis "Revenue (in $)" 4000 --> 11000
         bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
         line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+      `,
+      {}
+    );
+  });
+  it('should use the correct distances between data points', () => {
+    imgSnapshotTest(
+      `
+      xychart-beta
+        x-axis 0 --> 2
+        line [0, 1, 0, 1]
+        bar [1, 0, 1, 0]
       `,
       {}
     );

@@ -33,9 +33,7 @@ const processDirectives = (code: string) => {
   const initDirective = utils.detectInit(code) ?? {};
   const wrapDirectives = utils.detectDirective(code, 'wrap');
   if (Array.isArray(wrapDirectives)) {
-    initDirective.wrap = wrapDirectives.some(({ type }) => {
-      type === 'wrap';
-    });
+    initDirective.wrap = wrapDirectives.some(({ type }) => type === 'wrap');
   } else if (wrapDirectives?.type === 'wrap') {
     initDirective.wrap = true;
   }

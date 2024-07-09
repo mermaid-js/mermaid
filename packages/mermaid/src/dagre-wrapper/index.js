@@ -51,7 +51,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         }
       }
       log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
-      if (node && node.clusterNode) {
+      if (node?.clusterNode) {
         // const children = graph.children(v);
         log.info('Cluster identified', v, node.width, graph.node(v));
         // `node.graph.setGraph` applies the graph configurations such as nodeSpacing to subgraphs as without this the default values would be used
@@ -130,7 +130,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       ' height: ',
       node.height
     );
-    if (node && node.clusterNode) {
+    if (node?.clusterNode) {
       // clusterDb[node.id].node = node;
       node.y += subGraphTitleTotalMargin;
       positionNode(node);

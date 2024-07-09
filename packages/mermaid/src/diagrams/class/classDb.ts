@@ -26,10 +26,10 @@ import type {
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 
 let relations: ClassRelation[] = [];
-let classes: Map<string, ClassNode> = new Map();
+let classes = new Map<string, ClassNode>();
 let notes: ClassNote[] = [];
 let classCounter = 0;
-let namespaces: Map<string, NamespaceNode> = new Map();
+let namespaces = new Map<string, NamespaceNode>();
 let namespaceCounter = 0;
 
 let functions: any[] = [];
@@ -113,6 +113,7 @@ export const clear = function () {
   functions.push(setupToolTips);
   namespaces = new Map();
   namespaceCounter = 0;
+  direction = 'TB';
   commonClear();
 };
 
@@ -223,7 +224,7 @@ export const cleanupLabel = function (label: string) {
 export const setCssClass = function (ids: string, className: string) {
   ids.split(',').forEach(function (_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) {
+    if (/\d/.exec(_id[0])) {
       id = MERMAID_DOM_ID_PREFIX + id;
     }
     const classNode = classes.get(id);
@@ -266,7 +267,7 @@ export const setLink = function (ids: string, linkStr: string, target: string) {
   const config = getConfig();
   ids.split(',').forEach(function (_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) {
+    if (/\d/.exec(_id[0])) {
       id = MERMAID_DOM_ID_PREFIX + id;
     }
     const theClass = classes.get(id);
@@ -320,7 +321,7 @@ const setClickFunc = function (_domId: string, functionName: string, functionArg
         let item = argList[i].trim();
         /* Removes all double quotes at the start and end of an argument */
         /* This preserves all starting and ending whitespace inside */
-        if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+        if (item.startsWith('"') && item.endsWith('"')) {
           item = item.substr(1, item.length - 2);
         }
         argList[i] = item;

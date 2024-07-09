@@ -8,7 +8,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render a complete quadrant chart', () => {
     imgSnapshotTest(
@@ -30,7 +29,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render without points', () => {
     imgSnapshotTest(
@@ -46,7 +44,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should able to render y-axix on right side', () => {
     imgSnapshotTest(
@@ -63,7 +60,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should able to render x-axix on bottom', () => {
     imgSnapshotTest(
@@ -80,7 +76,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should able to render x-axix on bottom and y-axis on right', () => {
     imgSnapshotTest(
@@ -97,7 +92,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render without title', () => {
     imgSnapshotTest(
@@ -112,7 +106,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should use all the config', () => {
     imgSnapshotTest(
@@ -135,7 +128,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should use all the theme variable', () => {
     imgSnapshotTest(
@@ -158,7 +150,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render x-axis labels in the center, if x-axis has two labels', () => {
     imgSnapshotTest(
@@ -180,7 +171,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render y-axis labels in the center, if y-axis has two labels', () => {
     imgSnapshotTest(
@@ -202,7 +192,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('should render both axes labels on the left and bottom, if both axes have only one label', () => {
     imgSnapshotTest(
@@ -224,7 +213,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('it should render data points with styles', () => {
@@ -249,7 +237,6 @@ describe('Quadrant Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('it should render data points with styles + classes', () => {

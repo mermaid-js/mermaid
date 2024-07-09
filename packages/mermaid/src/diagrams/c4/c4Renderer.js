@@ -258,21 +258,21 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
     c4ShapeLabelConf.fontSize = c4ShapeLabelConf.fontSize + 2;
     c4ShapeLabelConf.fontWeight = 'bold';
     calcC4ShapeTextWH('label', c4Shape, c4ShapeTextWrap, c4ShapeLabelConf, textLimitWidth);
-    c4Shape['label'].Y = Y + 8;
-    Y = c4Shape['label'].Y + c4Shape['label'].height;
+    c4Shape.label.Y = Y + 8;
+    Y = c4Shape.label.Y + c4Shape.label.height;
 
     if (c4Shape.type && c4Shape.type.text !== '') {
       c4Shape.type.text = '[' + c4Shape.type.text + ']';
       let c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
       calcC4ShapeTextWH('type', c4Shape, c4ShapeTextWrap, c4ShapeTypeConf, textLimitWidth);
-      c4Shape['type'].Y = Y + 5;
-      Y = c4Shape['type'].Y + c4Shape['type'].height;
+      c4Shape.type.Y = Y + 5;
+      Y = c4Shape.type.Y + c4Shape.type.height;
     } else if (c4Shape.techn && c4Shape.techn.text !== '') {
       c4Shape.techn.text = '[' + c4Shape.techn.text + ']';
       let c4ShapeTechnConf = c4ShapeFont(conf, c4Shape.techn.text);
       calcC4ShapeTextWH('techn', c4Shape, c4ShapeTextWrap, c4ShapeTechnConf, textLimitWidth);
-      c4Shape['techn'].Y = Y + 5;
-      Y = c4Shape['techn'].Y + c4Shape['techn'].height;
+      c4Shape.techn.Y = Y + 5;
+      Y = c4Shape.techn.Y + c4Shape.techn.height;
     }
 
     let rectHeight = Y;
@@ -281,11 +281,11 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
     if (c4Shape.descr && c4Shape.descr.text !== '') {
       let c4ShapeDescrConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
       calcC4ShapeTextWH('descr', c4Shape, c4ShapeTextWrap, c4ShapeDescrConf, textLimitWidth);
-      c4Shape['descr'].Y = Y + 20;
-      Y = c4Shape['descr'].Y + c4Shape['descr'].height;
+      c4Shape.descr.Y = Y + 20;
+      Y = c4Shape.descr.Y + c4Shape.descr.height;
 
       rectWidth = Math.max(c4Shape.label.width, c4Shape.descr.width);
-      rectHeight = Y - c4Shape['descr'].textLines * 5;
+      rectHeight = Y - c4Shape.descr.textLines * 5;
     }
 
     rectWidth = rectWidth + conf.c4ShapePadding;
@@ -482,8 +482,8 @@ function drawInsideBoundary(
       currentBoundaryLabelConf,
       currentBounds.data.widthLimit
     );
-    currentBoundary['label'].Y = Y + 8;
-    Y = currentBoundary['label'].Y + currentBoundary['label'].height;
+    currentBoundary.label.Y = Y + 8;
+    Y = currentBoundary.label.Y + currentBoundary.label.height;
 
     if (currentBoundary.type && currentBoundary.type.text !== '') {
       currentBoundary.type.text = '[' + currentBoundary.type.text + ']';
@@ -495,8 +495,8 @@ function drawInsideBoundary(
         currentBoundaryTypeConf,
         currentBounds.data.widthLimit
       );
-      currentBoundary['type'].Y = Y + 5;
-      Y = currentBoundary['type'].Y + currentBoundary['type'].height;
+      currentBoundary.type.Y = Y + 5;
+      Y = currentBoundary.type.Y + currentBoundary.type.height;
     }
 
     if (currentBoundary.descr && currentBoundary.descr.text !== '') {
@@ -509,8 +509,8 @@ function drawInsideBoundary(
         currentBoundaryDescrConf,
         currentBounds.data.widthLimit
       );
-      currentBoundary['descr'].Y = Y + 20;
-      Y = currentBoundary['descr'].Y + currentBoundary['descr'].height;
+      currentBoundary.descr.Y = Y + 20;
+      Y = currentBoundary.descr.Y + currentBoundary.descr.height;
     }
 
     if (i == 0 || i % c4BoundaryInRow === 0) {
