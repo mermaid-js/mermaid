@@ -1,7 +1,8 @@
-import { createIcon } from "../../svgRegister.js";
-
+import { createIcon } from '../../svgRegister.js';
+// cSpell:disable
 const digitalOceanIcons = {
-    'do:api': createIcon(`<g>
+  'do:api': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}.cls-4{font-size:16px;fill:#fff;font-family:ProximaNova-Extrabld,
@@ -13,8 +14,11 @@ const digitalOceanIcons = {
         <path class="cls-3"
             d="M32.8,22.44V19.65l-3.09-1a9.47,9.47,0,0,0-.89-2.1l1.51-2.9-2-2-2.88,1.45h0a9.45,9.45,0,0,0-2-.88h0l-1-3.07H19.59l-1,3.11a9.39,9.39,0,0,0-2.09.89h0l-2.89-1.5-2,2,1.5,2.89h0a8.91,8.91,0,0,0-.88,2L9.2,19.65v2.83l3.1,1h0a9.07,9.07,0,0,0,.82,2h0l-1.46,2.87,2,2,2.9-1.51a9,9,0,0,0,2,.89l1,3.11H22.4l1-3.08h0a8.65,8.65,0,0,0,2-.82h0l2.89,1.51,2-2.06L28.8,25.49a9.48,9.48,0,0,0,.88-2.07Zm-11.8,2A3.45,3.45,0,1,1,24.44,21v0A3.44,3.44,0,0,1,21,24.42Z" />
     </g>
-</g>`, 41.61),
-    'do:cli': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:cli': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}</style>
@@ -25,8 +29,11 @@ const digitalOceanIcons = {
         <polyline class="cls-3" points="14.34 24.5 17.84 21 14.34 17.5" />
         <line class="cls-3" x1="20.13" y1="23.89" x2="27.53" y2="23.89" />
     </g>
-</g>`, 41.61),
-    'do:dns': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:dns': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}</style>
@@ -40,8 +47,11 @@ const digitalOceanIcons = {
         <path class="cls-3" d="M21,32.87c-3.27,0-5.93-8.6-5.93-11.87S17.73,9.13,21,9.13" />
         <path class="cls-3" d="M21.09,9.13C24.36,9.13,27,17.73,27,21s-2.66,11.87-5.93,11.87" />
     </g>
-</g>`, 41.61),
-    'do:droplet': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:droplet': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}</style>
@@ -53,8 +63,11 @@ const digitalOceanIcons = {
         <path class="cls-3"
             d="M21,26.28a3.37,3.37,0,0,1-3.39-3.39c0-2.61,3.39-5.09,3.39-5.09s3.39,2.42,3.39,5.09A3.37,3.37,0,0,1,21,26.28Z" />
     </g>
-</g>`, 41.61),
-    'do:kubernetes': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:kubernetes': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}</style>
@@ -64,8 +77,11 @@ const digitalOceanIcons = {
         <path class="cls-3"
             d="M31.15,21.18A10.19,10.19,0,1,1,21,11,10.19,10.19,0,0,1,31.15,21.18Zm-6.51,0A3.64,3.64,0,1,1,21,17.56,3.64,3.64,0,0,1,24.64,21.2ZM21,17.47v0ZM10.1,12.33,18,18.79Zm21.79,0L24,18.79ZM34.72,24.2,24.75,22Zm-27.44,0,10-2.18Zm19.93,9.62-4.53-9.43Zm-12.41,0,4.45-9.43Z" />
     </g>
-</g>`, 41.61),
-    'do:local-ssd': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:local-ssd': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}</style>
@@ -77,8 +93,11 @@ const digitalOceanIcons = {
         <path class="cls-3"
             d="M21,26.28a3.37,3.37,0,0,1-3.39-3.39c0-2.61,3.39-5.09,3.39-5.09s3.39,2.42,3.39,5.09A3.37,3.37,0,0,1,21,26.28Z" />
     </g>
-</g>`, 41.61),
-    'do:mysql': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:mysql': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-4{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3,.cls-5{fill:#fff;}.cls-4{stroke:#fff;stroke-width:1.49px;}.cls-5{font-size:16px;font-family:ProximaNova-Extrabld,
@@ -101,8 +120,11 @@ const digitalOceanIcons = {
             d="M13.89,14.44c-2.54-.46-4.23-1.27-4.23-2.2,0-1.43,4-2.58,8.88-2.58s8.87,1.15,8.87,2.58-4,2.58-8.87,2.58a27,27,0,0,1-4.65-.38" />
         <circle class="cls-4" cx="25.44" cy="25.43" r="6.91" />
     </g>
-</g>`, 41.61),
-    'do:redis-copy': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:redis-copy': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}.cls-4{fill:#fff;}</style>
@@ -126,8 +148,11 @@ const digitalOceanIcons = {
         <path class="cls-3" d="M15.83,29.69c-2.54-.45-4.23-1.27-4.23-2.2" />
         <path class="cls-4" d="M30.41,26.2v0Z" />
     </g>
-</g>`, 41.61),
-    'do:redis': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:redis': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}.cls-4{fill:#fff;}</style>
@@ -149,8 +174,11 @@ const digitalOceanIcons = {
         <path class="cls-4"
             d="M28.47,24a2.68,2.68,0,0,0-2.68-2.65H23.88a.75.75,0,0,0-.57.21.77.77,0,0,0-.23.57v6.73a.77.77,0,0,0,1.53,0V26.62h.53l1.5,2.58a.76.76,0,0,0,.66.37.75.75,0,0,0,.38-.1.76.76,0,0,0,.27-1l-1.17-2a2.78,2.78,0,0,0,.9-.58A2.72,2.72,0,0,0,28.47,24Zm-3.86-1.12h1.14a1.18,1.18,0,0,1,.82.33,1.11,1.11,0,0,1,0,1.58,1.14,1.14,0,0,1-.82.33H24.61Z" />
     </g>
-</g>`, 41.61),
-    'do:monitoring': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:monitoring': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}</style>
@@ -165,8 +193,11 @@ const digitalOceanIcons = {
         <circle class="cls-3" cx="12.4" cy="29.13" r="2.39" />
         <circle class="cls-3" cx="29.6" cy="12.87" r="2.39" />
     </g>
-</g>`, 41.61),
-    'do:projects': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:projects': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1{fill:none;stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{fill:#fff;}</style>
@@ -182,8 +213,11 @@ const digitalOceanIcons = {
         <rect class="cls-3" x="16.21" y="22.18" width="1.18" height="1.22" />
         <rect class="cls-3" x="16.21" y="25.49" width="1.18" height="1.22" />
     </g>
-</g>`, 41.61),
-    'do:spaces-cdn': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:spaces-cdn': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1{fill:none;stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{fill:#fff;}</style>
@@ -199,8 +233,11 @@ const digitalOceanIcons = {
         <path class="cls-3"
             d="M16.66,10.9a1,1,0,0,0,1-.87.94.94,0,0,0-.86-1h-.1a.92.92,0,0,0-.61.2.88.88,0,0,0-.34.69,1.08,1.08,0,0,0,.19.65A.84.84,0,0,0,16.66,10.9ZM21,28.84V27.2a6.27,6.27,0,0,1,0-12.54V13a7.92,7.92,0,0,0,0,15.83Zm.42-20.53V10a11.05,11.05,0,0,1,0,22.1v1.64a12.69,12.69,0,0,0,0-25.38Z" />
     </g>
-</g>`, 41.61),
-    'do:spaces-object-storage': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:spaces-object-storage': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1{fill:none;stroke:#000;stroke-miterlimit:10;}.cls-2{font-size:16px;font-family:ProximaNova-Extrabld,
@@ -218,8 +255,11 @@ const digitalOceanIcons = {
         <path class="cls-20"
             d="M16.66,10.9a1,1,0,0,0,1-.87.94.94,0,0,0-.86-1h-.1a.92.92,0,0,0-.61.2.88.88,0,0,0-.34.69,1.08,1.08,0,0,0,.19.65A.84.84,0,0,0,16.66,10.9ZM21,28.84V27.2a6.27,6.27,0,0,1,0-12.54V13a7.92,7.92,0,0,0,0,15.83Zm.42-20.53V10a11.05,11.05,0,0,1,0,22.1v1.64a12.69,12.69,0,0,0,0-25.38Z" />
     </g>
-</g>`, 41.61),
-    'do:teams': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:teams': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}</style>
@@ -235,8 +275,11 @@ const digitalOceanIcons = {
             d="M26.33,28.79a5.1,5.1,0,0,0-4.92-5.29,2.94,2.94,0,0,0-.42,0,5.12,5.12,0,0,0-5.3,4.94,2.67,2.67,0,0,0,0,.4" />
         <circle class="cls-3" cx="20.99" cy="20.8" r="2.7" />
     </g>
-</g>`, 41.61),
-    'do:terraform-provider': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:terraform-provider': createIcon(
+    `<g>
     <defs>
         <style>
             .cls-1,.cls-3{fill:none;stroke-miterlimit:10;}.cls-1{stroke:#000;}.cls-2{fill:#0069ff;}.cls-3{stroke:#fff;stroke-width:1.49px;}</style>
@@ -248,8 +291,11 @@ const digitalOceanIcons = {
         <path class="cls-3" d="M26.5,19.34v5.25l4.61-2.65V16.7Z" />
         <path class="cls-3" d="M18.63,31l4.62,2.64V28.43l-4.6-2.62Z" />
     </g>
-</g>`, 41.61),
-    'do:volumes-block-storage': createIcon(`<g>
+</g>`,
+    41.61
+  ),
+  'do:volumes-block-storage': createIcon(
+    `<g>
     <defs>
         <style>.cls-1,.cls-3,.cls-4,.cls-5,.cls-6,.cls-7{fill:none;}.cls-1{stroke:#000;stroke-miterlimit:10;}.cls-2{fill:#0069ff;}.cls-3,.cls-4,.cls-5,.cls-6,.cls-7{stroke:#fff;stroke-width:1.49px;}.cls-3,.cls-4,.cls-5,.cls-6{stroke-linecap:round;}.cls-4{stroke-dasharray:0
             3.11;}.cls-5{stroke-dasharray:0 2.94;}.cls-6{stroke-dasharray:0 2.95;}</style>
@@ -267,7 +313,9 @@ const digitalOceanIcons = {
         <path class="cls-7"
             d="M21,21V33.44M21,21.2,11,15m20.11,0L21,21.2m-10.1-6.42V27.17l10,6.22L31,27.17V14.73l-10-6.17Z" />
     </g>
-</g>`, 41.61),
-}
+</g>`,
+    41.61
+  ),
+};
 
-export default digitalOceanIcons
+export default digitalOceanIcons;

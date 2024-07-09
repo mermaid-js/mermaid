@@ -20,7 +20,7 @@ const defaultIconLibrary: IconLibrary = {
   blank: blank,
   ...awsCommon,
   ...digitalOcean,
-  ...github
+  ...github,
 };
 
 export default defaultIconLibrary;
