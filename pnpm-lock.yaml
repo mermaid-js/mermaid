@@ -12,8 +12,8 @@ importers:
         specifier: ^3.42.3
         version: 3.43.1(encoding@0.1.13)(typescript@5.4.5)
       '@argos-ci/cypress':
-        specifier: ^2.0.5
-        version: 2.0.5(cypress@13.7.3)
+        specifier: ^2.1.0
+        version: 2.1.0(cypress@13.7.3)
       '@cspell/eslint-plugin':
         specifier: ^8.8.4
         version: 8.9.1(eslint@9.6.0)
@@ -744,18 +744,18 @@ packages:
     resolution: {integrity: sha512-4dpz76kW0KnXCYdxtkcdiaYUM4owmKtT9zPqrd1yPo+VuSNCNULyCZJ4mdy0aXWT716JLMMmIZ3AnQSkyaqvaA==}
     engines: {node: '>=18.0.0'}
 
-  '@argos-ci/core@2.3.0':
-    resolution: {integrity: sha512-0mHncBeOD7GFYfGZYUEcDgLyzsvPyxK/L1MROfAurFeWcw89ODG24JEdPsECtZBSCZMmMcK8XqeJIJkZsnDGZA==}
+  '@argos-ci/core@2.4.0':
+    resolution: {integrity: sha512-CY8IQsc71cuIeF2U47aePzH8+YWK4ePG1j+gK5aQ0r744Wc467U4xej7gChMVrAaGlZKsgoIIeXE1ezF+rCryw==}
     engines: {node: '>=18.0.0'}
 
-  '@argos-ci/cypress@2.0.5':
-    resolution: {integrity: sha512-pMM2+hGT8IE2XfWQpk4Mnf73K1B+97x0f1tkHrEpsopZBWmZy5nMZ0iqNLafJsRfo1LtZA8171oftPl5nEAz8g==}
+  '@argos-ci/cypress@2.1.0':
+    resolution: {integrity: sha512-EvzoWrX9owK40aeOcP3k3pMdML3m1PynLjDOGBtxWUG87gAGjsVd0rvVMTHQJTrCwhF4TRlqDv3vAllMWdZIAA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       cypress: ^12.0.0 || ^13.0.0
 
-  '@argos-ci/util@2.0.0':
-    resolution: {integrity: sha512-wnsNQOjcNfxOi8cHWSv8+GhzUeIitDJgjhuSNR9zrfHB0Y3nDVI57S/mHRo+EMAaWwghfbrxW1ypRCXVseN0GA==}
+  '@argos-ci/util@2.1.0':
+    resolution: {integrity: sha512-/78zJjZJCh3i7Eh3/lo7ybXK2pzXFGUNHbK3SgJNKNbFiBDllNRfy+x0kccjvN2gCCDz877jnFOlSoZZuMK56A==}
     engines: {node: '>=18.0.0'}
 
   '@babel/code-frame@7.24.2':
@@ -9695,9 +9695,9 @@ snapshots:
 
   '@argos-ci/browser@2.1.2': {}
 
-  '@argos-ci/core@2.3.0':
+  '@argos-ci/core@2.4.0':
     dependencies:
-      '@argos-ci/util': 2.0.0
+      '@argos-ci/util': 2.1.0
       axios: 1.7.2(debug@4.3.5)
       convict: 6.2.4
       debug: 4.3.5
@@ -9707,17 +9707,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/cypress@2.0.5(cypress@13.7.3)':
+  '@argos-ci/cypress@2.1.0(cypress@13.7.3)':
     dependencies:
       '@argos-ci/browser': 2.1.2
-      '@argos-ci/core': 2.3.0
-      '@argos-ci/util': 2.0.0
+      '@argos-ci/core': 2.4.0
+      '@argos-ci/util': 2.1.0
       cypress: 13.7.3
       cypress-wait-until: 3.0.1
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/util@2.0.0': {}
+  '@argos-ci/util@2.1.0': {}
 
   '@babel/code-frame@7.24.2':
     dependencies:

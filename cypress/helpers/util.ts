@@ -124,7 +124,9 @@ export const verifyScreenshot = (name: string): void => {
     cy.log(`Closing eyes ${Cypress.spec.name}`);
     cy.eyesClose();
   } else if (useArgos) {
-    cy.argosScreenshot(name);
+    cy.argosScreenshot(name, {
+      threshold: 0,
+    });
   } else {
     cy.matchImageSnapshot(name);
   }
