@@ -177,6 +177,7 @@ function sidebarConfig() {
         { text: 'Directives', link: '/config/directives' },
         { text: 'Theming', link: '/config/theming' },
         { text: 'Math', link: '/config/math' },
+        { text: 'Icons', link: '/config/icons' },
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },
