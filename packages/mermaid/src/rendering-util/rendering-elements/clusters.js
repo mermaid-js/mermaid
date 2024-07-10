@@ -26,6 +26,7 @@ const rect = async (parent, node) => {
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
     .attr('id', node.id)
+    .attr('data-id', node.id)
     .attr('data-et', 'cluster')
     .attr('data-look', node.look);
 
