@@ -24,6 +24,7 @@ env:
       ) || 
       github.event.before
     }}
+  shouldRunParallel: ${{ secrets.CYPRESS_RECORD_KEY != '' && !(github.event_name == 'push' && github.ref == 'refs/heads/develop') }}
 jobs:
   cache:
     runs-on: ubuntu-latest
@@ -116,7 +117,7 @@ jobs:
         id: cypress
         # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
         # Otherwise (e.g. if running from fork), we run on a single container only
-        if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
+        if: ${{ env.shouldRunParallel || ( matrix.containers == 1 ) }}
         with:
           install: false
           start: pnpm run dev:coverage
@@ -124,14 +125,14 @@ jobs:
           browser: chrome
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
-          record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
-          parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          record: ${{ env.shouldRunParallel }}
+          parallel: ${{ env.shouldRunParallel }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true
           CYPRESS_COMMIT: ${{ github.sha }}
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-          ARGOS_PARALLEL: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          ARGOS_PARALLEL: ${{ env.shouldRunParallel }}
           ARGOS_PARALLEL_TOTAL: 4
           ARGOS_PARALLEL_INDEX: ${{ matrix.containers }}
 
