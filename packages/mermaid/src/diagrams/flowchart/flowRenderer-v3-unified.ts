@@ -52,7 +52,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   const padding = data4Layout.config.flowchart?.padding ?? 8;
   utils.insertTitle(
     element,
-    'statediagramTitleText',
+    'flowchartTitleText',
     conf?.titleTopMargin || 0,
     diag.db.getDiagramTitle()
   );
