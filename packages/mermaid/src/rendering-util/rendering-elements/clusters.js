@@ -39,7 +39,7 @@ const rect = async (parent, node) => {
   const text = await createText(labelEl, node.label, {
     style: node.labelStyle,
     useHtmlLabels,
-    isNode: false,
+    isNode: true,
   });
 
   // Get the size of the label
