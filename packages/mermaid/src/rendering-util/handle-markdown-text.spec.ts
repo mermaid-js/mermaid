@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import { markdownToLines, markdownToHTML } from './handle-markdown-text.js';
 import { test, expect } from 'vitest';
 
@@ -215,13 +214,13 @@ test('markdownToLines - No auto wrapping', () => {
     [
       [
         {
-          "content": "Hello, how do",
+          "content": "Hello,&nbsp;how&nbsp;do",
           "type": "normal",
         },
       ],
       [
         {
-          "content": "you do?",
+          "content": "you&nbsp;do?",
           "type": "normal",
         },
       ],
@@ -296,5 +295,5 @@ test('markdownToHTML - no auto wrapping', () => {
   you do?`,
       { markdownAutoWrap: false }
     )
-  ).toMatchInlineSnapshot('"<p>Hello,&nbsp;how&nbsp;do<br/>you&nbsp;do?</p>"');
+  ).toMatchInlineSnapshot(`"<p>Hello,&nbsp;how&nbsp;do<br/>&nbsp;&nbsp;you&nbsp;do?</p>"`);
 });

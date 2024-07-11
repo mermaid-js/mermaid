@@ -239,9 +239,9 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
-      mdast-util-from-markdown:
-        specifier: ^2.0.0
-        version: 2.0.1
+      marked:
+        specifier: ^13.0.2
+        version: 13.0.2
       stylis:
         specifier: ^4.3.1
         version: 4.3.2
@@ -6783,6 +6783,11 @@ packages:
 
   markdown-table@3.0.3:
     resolution: {integrity: sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==}
+
+  marked@13.0.2:
+    resolution: {integrity: sha512-J6CPjP8pS5sgrRqxVRvkCIkZ6MFdRIjDkwUwgJ9nL2fbmM6qGQeB2C16hi8Cc9BOzj6xXzy0jyi0iPIfnMHYzA==}
+    engines: {node: '>= 18'}
+    hasBin: true
 
   marked@4.3.0:
     resolution: {integrity: sha512-PRsaiG84bK+AMvxziE/lCFss8juXjNaWzVbN5tXAm4XjeaS9NAHhop+PjQxz2A9h8Q4M/xGmzP8vqNwy6JeK0A==}
@@ -16892,6 +16897,8 @@ snapshots:
       uc.micro: 1.0.6
 
   markdown-table@3.0.3: {}
+
+  marked@13.0.2: {}
 
   marked@4.3.0: {}
 
