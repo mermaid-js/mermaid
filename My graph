@@ -1,0 +1,36 @@
+graph TB
+  subgraph Raw Material Storage
+    style Raw Material Storage fill:#C3E6CB
+    A1[Bin Bag Filters] --> A2[Bunkers] --> A3[Screw Conveyors]
+  end
+
+  subgraph Dosing and Mixing
+    style Dosing and Mixing fill:#C3E6CB
+    B1[Metering Systems] --> B2[Minor Material Premixer] --> B3[Block Powder Solvent Tank] --> B4[Slurry Preparator] --> B5[Slurry Aging Tank]
+  end
+
+  subgraph Pumping and Filtering
+    style Pumping and Filtering fill:#C3E6CB
+    C1[Slurry Feeding Filter] --> C2[Magnetic Filter] --> C3[Low-Pressure and High-Pressure Pumps]
+  end
+
+  subgraph Spray Drying
+    style Spray Drying fill:#F8D7DA
+    D1[Spray Tower] --> D2[Hot Air Furnace] --> D3[Cyclone Dust Catcher] --> D4[Hydrocyclone] --> D5[End Gas Fan]
+  end
+
+  subgraph Post-Tower Processing
+    style Post-Tower Processing fill:#F8D7DA
+    E1[Vibrating Screen] --> E2[Base Bin] --> E3[Post Blender] --> E4[Packing Machine]
+  end
+
+  subgraph Transport and Storage
+    style Transport and Storage fill:#C3E6CB
+    F1[Belt Conveyors] --> F2[Finished Product Bin]
+  end
+
+  A3 --> B1
+  B5 --> C1
+  C3 --> D1
+  D5 --> E1
+  E4 --> F1
