@@ -44,7 +44,7 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
       });
     } else if (node.type === 'strong' || node.type === 'em') {
       node.tokens.forEach((contentNode) => {
-        processNode(contentNode as MarkedToken, node.type === 'em' ? 'emphasis' : node.type);
+        processNode(contentNode as MarkedToken, node.type);
       });
     }
   }
