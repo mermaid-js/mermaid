@@ -295,5 +295,15 @@ test('markdownToHTML - no auto wrapping', () => {
   you do?`,
       { markdownAutoWrap: false }
     )
-  ).toMatchInlineSnapshot(`"<p>Hello,&nbsp;how&nbsp;do<br/>&nbsp;&nbsp;you&nbsp;do?</p>"`);
+  ).toMatchInlineSnapshot(`"<p>Hello,&nbsp;how&nbsp;do<br/>you&nbsp;do?</p>"`);
+});
+
+test('markdownToHTML - auto wrapping', () => {
+  expect(
+    markdownToHTML(
+      `Hello, how do
+  you do?`,
+      { markdownAutoWrap: true }
+    )
+  ).toMatchInlineSnapshot(`"<p>Hello, how do<br/>you do?</p>"`);
 });

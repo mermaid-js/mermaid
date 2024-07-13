@@ -66,9 +66,9 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
   function output(node: Token): string {
     if (node.type === 'text') {
       if (markdownAutoWrap === false) {
-        return node.text.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
+        return node.text.replace(/\n */g, '<br/>').replace(/ /g, '&nbsp;');
       }
-      return node.text.replace(/\n/g, '<br/>');
+      return node.text.replace(/\n */g, '<br/>');
     } else if (node.type === 'strong') {
       return `<strong>${node.tokens?.map(output).join('')}</strong>`;
     } else if (node.type === 'em') {
