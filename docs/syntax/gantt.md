@@ -338,6 +338,66 @@ gantt
 
 > **Warning** > `millisecond` and `second` support was added in v10.3.0
 
+### Changing Today (v\<MERMAID_RELEASE_VERSION>+)
+
+By default, the today marker uses the current date. Use `today` to set a custom date, using the `dateFormat`.
+
+```mermaid-example
+gantt
+    title A Gantt Diagram With Custom Today
+    dateFormat YYYY-MM-DD
+    today 2024-01-20
+    section Section
+        A task          :a1, 2024-01-01, 30d
+        Another task    :after a1, 20d
+```
+
+```mermaid
+gantt
+    title A Gantt Diagram With Custom Today
+    dateFormat YYYY-MM-DD
+    today 2024-01-20
+    section Section
+        A task          :a1, 2024-01-01, 30d
+        Another task    :after a1, 20d
+```
+
+You can also use a duration:
+
+```mermaid-example
+---
+displayMode: compact
+---
+gantt
+    title A Gantt Diagram With Custom Today (Duration)
+    dateFormat  x
+    axisFormat  %L ms
+    today       18ms
+    todayMarker stroke-width:2px,stroke:#FF0,opacity:0.5
+    section Graphics
+    Draw 1:  a1, 0, 28ms
+    Draw 2:  after a1, 20ms
+    section Compute
+    Kernel:  b1, 20, 12ms
+```
+
+```mermaid
+---
+displayMode: compact
+---
+gantt
+    title A Gantt Diagram With Custom Today (Duration)
+    dateFormat  x
+    axisFormat  %L ms
+    today       18ms
+    todayMarker stroke-width:2px,stroke:#FF0,opacity:0.5
+    section Graphics
+    Draw 1:  a1, 0, 28ms
+    Draw 2:  after a1, 20ms
+    section Compute
+    Kernel:  b1, 20, 12ms
+```
+
 ## Output in compact mode
 
 The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceding YAML settings.

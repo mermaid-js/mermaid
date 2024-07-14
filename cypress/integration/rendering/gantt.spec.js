@@ -208,6 +208,36 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should position a dateFormat-based today marker', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title Reposition a today marker (using dateFormat)
+        dateFormat YYYY-MM-DD
+        today 2024-01-18
+        section Project
+            A task          :a1, 2024-01-01, 30d
+            Another task    :after a1, 20d
+      `,
+      {}
+    );
+  });
+
+  it('should position a duration-based today marker', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title Reposition a today marker (using duration)
+        dateFormat  x
+        axisFormat  %L ms
+        today       19ms
+        section Section1
+         A task: Draw 1:  a1, 0, 28ms
+      `,
+      {}
+    );
+  });
+
   it('should handle milliseconds', () => {
     imgSnapshotTest(
       `
