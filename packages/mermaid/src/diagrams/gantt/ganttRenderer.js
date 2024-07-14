@@ -756,7 +756,24 @@ export const draw = function (text, id, version, diagObj) {
     }
 
     const todayG = svg.append('g').attr('class', 'today');
-    const today = new Date();
+
+    let today = new Date();
+    const dateFormat = diagObj.db.getDateFormat();
+    const dbToday = diagObj.db.getToday();
+    let customToday = dayjs(dbToday, dateFormat.trim(), true);
+    if (customToday.isValid()) {
+      today = customToday.toDate();
+    } else {
+      const [durationValue, durationUnit] = diagObj.db.parseDuration(dbToday);
+      if (!Number.isNaN(durationValue)) {
+        // let dayjs do the math to support 'ms' and such
+        customToday = dayjs(0).add(durationValue, durationUnit);
+        if (customToday.isValid()) {
+          today = customToday;
+        }
+      }
+    }
+
     const todayLine = todayG.append('line');
 
     todayLine
