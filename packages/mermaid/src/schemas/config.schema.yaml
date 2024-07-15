@@ -102,12 +102,12 @@ properties:
     minimum: 0
   elk.mergeEdges:
     description: |
-      Elk specific option that allows egdes to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+      Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
     type: boolean
     default: false
   elk.nodePlacement.strategy:
     description: |
-      Elk specific option affedcting how nodes are placed.
+      Elk specific option affecting how nodes are placed.
     type: string
     enum:
       - SIMPLE
