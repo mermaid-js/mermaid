@@ -105,6 +105,7 @@ export class MockedD3 {
   // Real implementation returns an HTML Element
   public node = vi.fn().mockImplementation(() => {
     const topElem = this._containingHTMLdoc.createElement('svg');
+    topElem.getBBox = this.getBBox;
     const elem_svgChild = this._containingHTMLdoc.createElement('svg'); // another svg element
     topElem.appendChild(elem_svgChild);
     return topElem;

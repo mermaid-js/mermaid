@@ -9,7 +9,7 @@ export default defineConfig({
     extensions: ['.js'],
     alias: {
       // Define your alias here
-      '$root/*': path.resolve(__dirname, 'src/*'),
+      $root: path.resolve(__dirname, 'packages/mermaid/src'),
     },
   },
   plugins: [

@@ -583,7 +583,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       // .attr('d', lineFunction(lineData))
       .attr('id', edge.id)
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-      .attr('style', edge.style);
+      .attr('style', edge.style ? edge.style.reduce((acc, style) => acc + ';' + style, '') : '');
     let d = svgPath.attr('d');
     svgPath.attr('d', d);
     elem.node().appendChild(svgPath.node());
@@ -593,7 +593,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       .attr('d', linePath)
       .attr('id', edge.id)
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-      .attr('style', edge.style);
+      .attr('style', edge.style ? edge.style.reduce((acc, style) => acc + ';' + style, '') : '');
   }
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
