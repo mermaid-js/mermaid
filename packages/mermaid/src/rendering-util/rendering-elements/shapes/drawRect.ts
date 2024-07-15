@@ -7,10 +7,8 @@ import {
   styles2String,
 } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
-  const { look } = getConfig();
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   // console.log('IPI labelStyles:', labelStyles);
