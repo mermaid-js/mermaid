@@ -119,7 +119,7 @@ should not change unless content is changed.
 
 • `Optional` **elk.mergeEdges**: `boolean`
 
-Elk specific option that allows egdes to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
 
 #### Defined in
 
@@ -131,7 +131,7 @@ Elk specific option that allows egdes to share path where it convenient. It can 
 
 • `Optional` **elk.nodePlacement.strategy**: `"SIMPLE"` | `"NETWORK_SIMPLEX"` | `"LINEAR_SEGMENTS"` | `"BRANDES_KOEPF"`
 
-Elk specific option affedcting how nodes are placed.
+Elk specific option affecting how nodes are placed.
 
 #### Defined in
 
