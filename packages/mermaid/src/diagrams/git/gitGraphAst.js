@@ -103,17 +103,17 @@ export const getOptions = function () {
   return options;
 };
 
-export const commit = function (msg, id, type, tag) {
-  log.debug('Entering commit:', msg, id, type, tag);
+export const commit = function (msg, id, type, tags) {
+  log.debug('Entering commit:', msg, id, type, tags);
   id = common.sanitizeText(id, getConfig());
   msg = common.sanitizeText(msg, getConfig());
-  tag = common.sanitizeText(tag, getConfig());
+  tags = tags?.map((tag) => common.sanitizeText(tag, getConfig()));
   const commit = {
     id: id ? id : seq + '-' + getId(),
     message: msg,
     seq: seq++,
     type: type ? type : commitType.NORMAL,
-    tags: tag ? [tag] : [],
+    tags: tags ?? [],
     parents: head == null ? [] : [head.id],
     branch: curBranch,
   };
@@ -216,8 +216,8 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
         ' already exists, use different custom Id'
     );
     error.hash = {
-      text: 'merge ' + otherBranch + custom_id + override_type + custom_tags.join?.(','),
-      token: 'merge ' + otherBranch + custom_id + override_type + custom_tags.join?.(','),
+      text: 'merge ' + otherBranch + custom_id + override_type + custom_tags?.join(','),
+      token: 'merge ' + otherBranch + custom_id + override_type + custom_tags?.join(','),
       line: '1',
       loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [
@@ -228,7 +228,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
           '_UNIQUE ' +
           override_type +
           ' ' +
-          custom_tags.join?.(','),
+          custom_tags?.join(','),
       ],
     };
 
@@ -262,11 +262,11 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
   log.debug('in mergeBranch');
 };
 
-export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
-  log.debug('Entering cherryPick:', sourceId, targetId, tag);
+export const cherryPick = function (sourceId, targetId, tags, parentCommitId) {
+  log.debug('Entering cherryPick:', sourceId, targetId, tags);
   sourceId = common.sanitizeText(sourceId, getConfig());
   targetId = common.sanitizeText(targetId, getConfig());
-  tag = common.sanitizeText(tag, getConfig());
+  tags = tags?.map((tag) => common.sanitizeText(tag, getConfig()));
   parentCommitId = common.sanitizeText(parentCommitId, getConfig());
 
   if (!sourceId || commits[sourceId] === undefined) {
@@ -336,16 +336,13 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
       parents: [head == null ? null : head.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
-      tags:
-        typeof tag === 'string'
-          ? tag
-            ? [tag]
-            : []
-          : [
-              `cherry-pick:${sourceCommit.id}${
-                sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
-              }`,
-            ],
+      tags: tags
+        ? tags.filter(Boolean)
+        : [
+            `cherry-pick:${sourceCommit.id}${
+              sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
+            }`,
+          ],
     };
     head = commit;
     commits[commit.id] = commit;

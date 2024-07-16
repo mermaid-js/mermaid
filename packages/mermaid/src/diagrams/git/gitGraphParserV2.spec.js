@@ -764,6 +764,22 @@ describe('when parsing a gitGraph', function () {
     expect(commits[cherryPickCommitID].branch).toBe('main');
   });
 
+  it('should support cherry-picking commits with multiple tags', function () {
+    const str = `gitGraph
+    commit id: "ZERO"
+    branch develop
+    commit id:"A"
+    checkout main
+    cherry-pick id:"A" tag:"MyTag" tag:"MyTag2"
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    const cherryPickCommitID = Object.keys(commits)[2];
+    expect(commits[cherryPickCommitID].tags).toStrictEqual(['MyTag', 'MyTag2']);
+    expect(commits[cherryPickCommitID].branch).toBe('main');
+  });
+
   it('should support cherry-picking commits with no tag', function () {
     const str = `gitGraph
     commit id: "ZERO"
