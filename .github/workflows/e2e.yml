@@ -1,9 +1,3 @@
-# We use github cache to save snapshots between runs.
-# For PRs and MergeQueues, the target commit is used, and for push events, github.event.previous is used.
-# If a snapshot for a given Hash is not found, we checkout that commit, run the tests and cache the snapshots.
-# These are then downloaded before running the E2E, providing the reference snapshots.
-# If there are any errors, the diff image is uploaded to artifacts, and the user is notified.
-
 name: E2E
 
 on:
@@ -30,6 +24,7 @@ env:
       ) || 
       github.event.before
     }}
+  shouldRunParallel: ${{ secrets.CYPRESS_RECORD_KEY != '' && !(github.event_name == 'push' && github.ref == 'refs/heads/develop') }}
 jobs:
   cache:
     runs-on: ubuntu-latest
@@ -38,7 +33,7 @@ jobs:
       options: --user 1001
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -72,16 +67,6 @@ jobs:
           mkdir -p cypress/snapshots/stats/base
           mv stats cypress/snapshots/stats/base
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        id: cypress-snapshot-gen
-        if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
-        with:
-          install: false
-          start: pnpm run dev
-          wait-on: 'http://localhost:9000'
-          browser: chrome
-
   e2e:
     runs-on: ubuntu-latest
     container:
@@ -95,7 +80,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         # uses version from "packageManager" field in package.json
 
       - name: Setup Node.js
@@ -132,7 +117,7 @@ jobs:
         id: cypress
         # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
         # Otherwise (e.g. if running from fork), we run on a single container only
-        if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
+        if: ${{ env.shouldRunParallel == 'true' || ( matrix.containers == 1 ) }}
         with:
           install: false
           start: pnpm run dev:coverage
@@ -140,12 +125,16 @@ jobs:
           browser: chrome
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
-          record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
-          parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          record: ${{ env.shouldRunParallel == 'true' }}
+          parallel: ${{ env.shouldRunParallel == 'true' }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true
           CYPRESS_COMMIT: ${{ github.sha }}
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+          ARGOS_PARALLEL: ${{ env.shouldRunParallel == 'true' }}
+          ARGOS_PARALLEL_TOTAL: 4
+          ARGOS_PARALLEL_INDEX: ${{ matrix.containers }}
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -158,55 +147,3 @@ jobs:
           fail_ci_if_error: false
           verbose: true
           token: 6845cc80-77ee-4e17-85a1-026cd95e0766
-
-      # We upload the artifacts into numbered archives to prevent overwriting
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        if: ${{ always() }}
-        with:
-          name: snapshots-${{ matrix.containers }}
-          retention-days: 1
-          path: ./cypress/snapshots
-
-  combineArtifacts:
-    needs: e2e
-    runs-on: ubuntu-latest
-    if: ${{ always() }}
-    steps:
-      # Download all snapshot artifacts and merge them into a single folder
-      - name: Download All Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: snapshots
-          pattern: snapshots-*
-          merge-multiple: true
-
-      # For successful push events, we save the snapshots cache
-      - name: Save snapshots cache
-        id: cache-upload
-        if: ${{ github.event_name == 'push' && needs.e2e.result != 'failure' }}
-        uses: actions/cache/save@v4
-        with:
-          path: ./snapshots
-          key: ${{ runner.os }}-snapshots-${{ github.event.after }}
-
-      - name: Flatten images to a folder
-        if: ${{ needs.e2e.result == 'failure'  }}
-        run: |
-          mkdir errors
-          cd snapshots
-          find . -mindepth 2 -type d -name "*__diff_output__*" -exec sh -c 'mv "$0"/*.png ../errors/' {} \;
-
-      - name: Upload Error snapshots
-        if: ${{ needs.e2e.result == 'failure' }}
-        uses: actions/upload-artifact@v4
-        id: upload-artifacts
-        with:
-          name: error-snapshots
-          retention-days: 10
-          path: errors/
-
-      - name: Notify Users
-        if: ${{ needs.e2e.result == 'failure' }}
-        run: |
-          echo "::error title=Visual tests failed::You can view images that failed by downloading the error-snapshots artifact: ${{ steps.upload-artifacts.outputs.artifact-url }}"

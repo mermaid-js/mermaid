@@ -40,6 +40,6 @@ export class BandAxis extends BaseAxis {
   }
 
   getScaleValue(value: string): number {
-    return this.scale(value) || this.getRange()[0];
+    return this.scale(value) ?? this.getRange()[0];
   }
 }

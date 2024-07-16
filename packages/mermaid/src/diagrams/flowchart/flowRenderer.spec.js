@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { addVertices, addEdges } from './flowRenderer.js';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
 

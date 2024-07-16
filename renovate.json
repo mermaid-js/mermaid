@@ -31,6 +31,10 @@
       "groupSlug": "all-patch",
       "matchPackagePatterns": ["*"],
       "matchUpdateTypes": ["patch"]
+    },
+    {
+      "groupName": "eslint",
+      "matchPackagePatterns": ["eslint"]
     }
   ],
   "dependencyDashboard": false,

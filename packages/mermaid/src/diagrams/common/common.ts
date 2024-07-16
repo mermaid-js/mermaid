@@ -34,13 +34,13 @@ function setupDompurifyHooks() {
 
   DOMPurify.addHook('beforeSanitizeAttributes', (node: Element) => {
     if (node.tagName === 'A' && node.hasAttribute('target')) {
-      node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') || '');
+      node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') ?? '');
     }
   });
 
   DOMPurify.addHook('afterSanitizeAttributes', (node: Element) => {
     if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
-      node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) || '');
+      node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) ?? '');
       node.removeAttribute(TEMPORARY_ATTRIBUTE);
       if (node.getAttribute('target') === '_blank') {
         node.setAttribute('rel', 'noopener');
@@ -83,6 +83,7 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
     return text;
   }
   if (config.dompurifyConfig) {
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
     text = DOMPurify.sanitize(sanitizeMore(text, config), {
@@ -337,18 +338,20 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
     return text;
   }
 
-  if (!isMathMLSupported() && !config.legacyMathML) {
+  if (!(isMathMLSupported() || config.legacyMathML || config.forceLegacyMathML)) {
     return text.replace(katexRegex, 'MathML is unsupported in this environment.');
   }
 
   const { default: katex } = await import('katex');
+  const outputMode =
+    config.forceLegacyMathML || (!isMathMLSupported() && config.legacyMathML)
+      ? 'htmlAndMathml'
+      : 'mathml';
   return text
     .split(lineBreakRegex)
     .map((line) =>
       hasKatex(line)
-        ? `<div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">
-              ${line}
-            </div>`
+        ? `<div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">${line}</div>`
         : `<div>${line}</div>`
     )
     .join('')
@@ -357,7 +360,7 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
         .renderToString(c, {
           throwOnError: true,
           displayMode: true,
-          output: isMathMLSupported() ? 'mathml' : 'htmlAndMathml',
+          output: outputMode,
         })
         .replace(/\n/g, ' ')
         .replace(/<annotation.*<\/annotation>/g, '')

@@ -19,8 +19,8 @@ describe('parsing a flow chart', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['B'].id).toBe('B');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -34,8 +34,8 @@ describe('parsing a flow chart', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['endpoint'].id).toBe('endpoint');
-    expect(vert['sender'].id).toBe('sender');
+    expect(vert.get('endpoint').id).toBe('endpoint');
+    expect(vert.get('sender').id).toBe('sender');
     expect(edges[0].start).toBe('endpoint');
     expect(edges[0].end).toBe('sender');
   });
@@ -46,8 +46,8 @@ describe('parsing a flow chart', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['blend'].id).toBe('blend');
-    expect(vert['monograph'].id).toBe('monograph');
+    expect(vert.get('blend').id).toBe('blend');
+    expect(vert.get('monograph').id).toBe('monograph');
     expect(edges[0].start).toBe('blend');
     expect(edges[0].end).toBe('monograph');
   });
@@ -58,8 +58,8 @@ describe('parsing a flow chart', function () {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['default'].id).toBe('default');
-    expect(vert['monograph'].id).toBe('monograph');
+    expect(vert.get('default').id).toBe('default');
+    expect(vert.get('monograph').id).toBe('monograph');
     expect(edges[0].start).toBe('default');
     expect(edges[0].end).toBe('monograph');
   });
@@ -71,12 +71,12 @@ describe('parsing a flow chart', function () {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
 
-      expect(vert['A'].id).toBe('A');
-      expect(vert['B'].id).toBe('B');
+      expect(vert.get('A').id).toBe('A');
+      expect(vert.get('B').id).toBe('B');
       if (result) {
-        expect(vert['A'].text).toBe(result);
+        expect(vert.get('A').text).toBe(result);
       } else {
-        expect(vert['A'].text).toBe(char);
+        expect(vert.get('A').text).toBe(char);
       }
       flow.parser.yy.clear();
     };
@@ -135,7 +135,7 @@ describe('parsing a flow chart', function () {
     const res = flow.parser.parse(statement);
     const vertices = flow.parser.yy.getVertices();
     const classes = flow.parser.yy.getClasses();
-    expect(vertices['node1TB'].id).toBe('node1TB');
+    expect(vertices.get('node1TB').id).toBe('node1TB');
   });
 
   it('should be possible to use direction in node ids', function () {
@@ -145,7 +145,7 @@ describe('parsing a flow chart', function () {
     const res = flow.parser.parse(statement);
     const vertices = flow.parser.yy.getVertices();
     const classes = flow.parser.yy.getClasses();
-    expect(vertices['A'].id).toBe('A');
+    expect(vertices.get('A').id).toBe('A');
   });
 
   it('should be possible to use numbers as labels', function () {
@@ -154,8 +154,8 @@ describe('parsing a flow chart', function () {
     statement = statement + 'graph TB;subgraph "number as labels";1;end;';
     const res = flow.parser.parse(statement);
     const vertices = flow.parser.yy.getVertices();
-    const classes = flow.parser.yy.getClasses();
-    expect(vertices['1'].id).toBe('1');
+
+    expect(vertices.get('1').id).toBe('1');
   });
 
   it('should add accTitle and accDescr to flow chart', function () {
@@ -194,4 +194,47 @@ describe('parsing a flow chart', function () {
 with a second line`
     );
   });
+
+  for (const unsafeProp of ['__proto__', 'constructor']) {
+    it(`should work with node id ${unsafeProp}`, function () {
+      const flowChart = `graph LR
+      ${unsafeProp} --> A;`;
+
+      expect(() => {
+        flow.parser.parse(flowChart);
+      }).not.toThrow();
+    });
+
+    it(`should work with tooltip id ${unsafeProp}`, function () {
+      const flowChart = `graph LR
+      click ${unsafeProp} callback "${unsafeProp}";`;
+
+      expect(() => {
+        flow.parser.parse(flowChart);
+      }).not.toThrow();
+    });
+
+    it(`should work with class id ${unsafeProp}`, function () {
+      const flowChart = `graph LR
+      ${unsafeProp} --> A;
+      classDef ${unsafeProp} color:#ffffff,fill:#000000;
+      class ${unsafeProp} ${unsafeProp};`;
+
+      expect(() => {
+        flow.parser.parse(flowChart);
+      }).not.toThrow();
+    });
+
+    it(`should work with subgraph id ${unsafeProp}`, function () {
+      const flowChart = `graph LR
+      ${unsafeProp} --> A;
+      subgraph ${unsafeProp}
+        C --> D;
+      end;`;
+
+      expect(() => {
+        flow.parser.parse(flowChart);
+      }).not.toThrow();
+    });
+  }
 });

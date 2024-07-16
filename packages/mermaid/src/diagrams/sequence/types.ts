@@ -78,8 +78,7 @@ export interface AddMessageParams {
     | 'breakEnd'
     | 'parOverStart'
     | 'parOverEnd'
-    | 'parOverAnd'
-    | 'parOverEnd';
+    | 'parOverAnd';
 
   activate: boolean;
 }

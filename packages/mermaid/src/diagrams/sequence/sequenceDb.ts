@@ -15,9 +15,9 @@ import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
 
 interface SequenceState {
   prevActor?: string;
-  actors: Record<string, Actor>;
-  createdActors: Record<string, number>;
-  destroyedActors: Record<string, number>;
+  actors: Map<string, Actor>;
+  createdActors: Map<string, number>;
+  destroyedActors: Map<string, number>;
   boxes: Box[];
   messages: Message[];
   notes: Note[];
@@ -30,9 +30,9 @@ interface SequenceState {
 
 const state = new ImperativeState<SequenceState>(() => ({
   prevActor: undefined,
-  actors: {},
-  createdActors: {},
-  destroyedActors: {},
+  actors: new Map(),
+  createdActors: new Map(),
+  destroyedActors: new Map(),
   boxes: [],
   messages: [],
   notes: [],
@@ -46,7 +46,7 @@ const state = new ImperativeState<SequenceState>(() => ({
 export const addBox = function (data: { text: string; color: string; wrap: boolean }) {
   state.records.boxes.push({
     name: data.text,
-    wrap: (data.wrap === undefined && autoWrap()) || !!data.wrap,
+    wrap: data.wrap ?? autoWrap(),
     fill: data.color,
     actorKeys: [],
   });
@@ -60,7 +60,7 @@ export const addActor = function (
   type: string
 ) {
   let assignedBox = state.records.currentBox;
-  const old = state.records.actors[id];
+  const old = state.records.actors.get(id);
   if (old) {
     // If already set and trying to set to a new one throw error
     if (state.records.currentBox && old.box && state.records.currentBox !== old.box) {
@@ -80,27 +80,30 @@ export const addActor = function (
   }
 
   // Don't allow null descriptions, either
-  if (description == null || description.text == null) {
-    description = { text: name, wrap: null, type };
+  if (description?.text == null) {
+    description = { text: name, type };
   }
   if (type == null || description.text == null) {
-    description = { text: name, wrap: null, type };
+    description = { text: name, type };
   }
 
-  state.records.actors[id] = {
+  state.records.actors.set(id, {
     box: assignedBox,
     name: name,
     description: description.text,
-    wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
+    wrap: description.wrap ?? autoWrap(),
     prevActor: state.records.prevActor,
     links: {},
     properties: {},
     actorCnt: null,
     rectData: null,
     type: type ?? 'participant',
-  };
-  if (state.records.prevActor && state.records.actors[state.records.prevActor]) {
-    state.records.actors[state.records.prevActor].nextActor = id;
+  });
+  if (state.records.prevActor) {
+    const prevActorInRecords = state.records.actors.get(state.records.prevActor);
+    if (prevActorInRecords) {
+      prevActorInRecords.nextActor = id;
+    }
   }
 
   if (state.records.currentBox) {
@@ -142,7 +145,7 @@ export const addMessage = function (
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    wrap: message.wrap ?? autoWrap(),
     answer: answer,
   });
 };
@@ -152,10 +155,10 @@ export const addSignal = function (
   idTo?: Message['to'],
   message?: { text: string; wrap: boolean },
   messageType?: number,
-  activate: boolean = false
+  activate = false
 ) {
   if (messageType === LINETYPE.ACTIVE_END) {
-    const cnt = activationCount(idFrom || '');
+    const cnt = activationCount(idFrom ?? '');
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
       const error = new Error('Trying to inactivate an inactive participant (' + idFrom + ')');
@@ -175,7 +178,7 @@ export const addSignal = function (
     from: idFrom,
     to: idTo,
     message: message?.text ?? '',
-    wrap: (message?.wrap === undefined && autoWrap()) || !!message?.wrap,
+    wrap: message?.wrap ?? autoWrap(),
     type: messageType,
     activate,
   });
@@ -207,10 +210,11 @@ export const getDestroyedActors = function () {
   return state.records.destroyedActors;
 };
 export const getActor = function (id: string) {
-  return state.records.actors[id];
+  // TODO: do we ever use this function in a way that it might return undefined?
+  return state.records.actors.get(id)!;
 };
 export const getActorKeys = function () {
-  return Object.keys(state.records.actors);
+  return [...state.records.actors.keys()];
 };
 export const enableSequenceNumbers = function () {
   state.records.sequenceNumbersEnabled = true;
@@ -224,13 +228,24 @@ export const setWrap = function (wrapSetting?: boolean) {
   state.records.wrapEnabled = wrapSetting;
 };
 
+const extractWrap = (text?: string): { cleanedText?: string; wrap?: boolean } => {
+  if (text === undefined) {
+    return {};
+  }
+  text = text.trim();
+  const wrap =
+    /^:?wrap:/.exec(text) !== null ? true : /^:?nowrap:/.exec(text) !== null ? false : undefined;
+  const cleanedText = (wrap === undefined ? text : text.replace(/^:?(?:no)?wrap:/, '')).trim();
+  return { cleanedText, wrap };
+};
+
 export const autoWrap = () => {
   // if setWrap has been called, use that value, otherwise use the value from the config
   // TODO: refactor, always use the config value let setWrap update the config value
   if (state.records.wrapEnabled !== undefined) {
     return state.records.wrapEnabled;
   }
-  return getConfig()?.sequence?.wrap;
+  return getConfig().sequence?.wrap ?? false;
 };
 
 export const clear = function () {
@@ -240,16 +255,12 @@ export const clear = function () {
 
 export const parseMessage = function (str: string) {
   const trimmedStr = str.trim();
+  const { wrap, cleanedText } = extractWrap(trimmedStr);
   const message = {
-    text: trimmedStr.replace(/^:?(?:no)?wrap:/, '').trim(),
-    wrap:
-      trimmedStr.match(/^:?wrap:/) !== null
-        ? true
-        : trimmedStr.match(/^:?nowrap:/) !== null
-          ? false
-          : undefined,
+    text: cleanedText,
+    wrap,
   };
-  log.debug(`parseMessage: ${message}`);
+  log.debug(`parseMessage: ${JSON.stringify(message)}`);
   return message;
 };
 
@@ -257,12 +268,12 @@ export const parseMessage = function (str: string) {
 // The color can be rgb,rgba,hsl,hsla, or css code names  #hex codes are not supported for now because of the way the char # is handled
 // We extract first segment as color, the rest of the line is considered as text
 export const parseBoxData = function (str: string) {
-  const match = str.match(/^((?:rgba?|hsla?)\s*\(.*\)|\w*)(.*)$/);
-  let color = match != null && match[1] ? match[1].trim() : 'transparent';
-  let title = match != null && match[2] ? match[2].trim() : undefined;
+  const match = /^((?:rgba?|hsla?)\s*\(.*\)|\w*)(.*)$/.exec(str);
+  let color = match?.[1] ? match[1].trim() : 'transparent';
+  let title = match?.[2] ? match[2].trim() : undefined;
 
   // check that the string is a color
-  if (window && window.CSS) {
+  if (window?.CSS) {
     if (!window.CSS.supports('color', color)) {
       color = 'transparent';
       title = str.trim();
@@ -275,21 +286,11 @@ export const parseBoxData = function (str: string) {
       title = str.trim();
     }
   }
-
+  const { wrap, cleanedText } = extractWrap(title);
   return {
-    color: color,
-    text:
-      title !== undefined
-        ? sanitizeText(title.replace(/^:?(?:no)?wrap:/, ''), getConfig())
-        : undefined,
-    wrap:
-      title !== undefined
-        ? title.match(/^:?wrap:/) !== null
-          ? true
-          : title.match(/^:?nowrap:/) !== null
-            ? false
-            : undefined
-        : undefined,
+    text: cleanedText ? sanitizeText(cleanedText, getConfig()) : undefined,
+    color,
+    wrap,
   };
 };
 
@@ -324,6 +325,8 @@ export const LINETYPE = {
   BREAK_START: 30,
   BREAK_END: 31,
   PAR_OVER_START: 32,
+  BIDIRECTIONAL_SOLID: 33,
+  BIDIRECTIONAL_DOTTED: 34,
 };
 
 export const ARROWTYPE = {
@@ -346,7 +349,7 @@ export const addNote = function (
     actor: actor,
     placement: placement,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    wrap: message.wrap ?? autoWrap(),
   };
 
   //@ts-ignore: Coerce actor into a [to, from, ...] array
@@ -357,7 +360,7 @@ export const addNote = function (
     from: actors[0],
     to: actors[1],
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    wrap: message.wrap ?? autoWrap(),
     type: LINETYPE.NOTE,
     placement: placement,
   });
@@ -455,12 +458,12 @@ export const addDetails = function (actorId: string, text: { text: string }) {
     const text = elem.innerHTML;
     const details = JSON.parse(text);
     // add the deserialized text to the actor's property field.
-    if (details['properties']) {
-      insertProperties(actor, details['properties']);
+    if (details.properties) {
+      insertProperties(actor, details.properties);
     }
 
-    if (details['links']) {
-      insertLinks(actor, details['links']);
+    if (details.links) {
+      insertLinks(actor, details.links);
     }
   } catch (e) {
     log.error('error while parsing actor details text', e);
@@ -468,13 +471,14 @@ export const addDetails = function (actorId: string, text: { text: string }) {
 };
 
 export const getActorProperty = function (actor: Actor, key: string) {
-  if (actor !== undefined && actor.properties !== undefined) {
+  if (actor?.properties !== undefined) {
     return actor.properties[key];
   }
 
   return undefined;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
 export const apply = function (param: any | AddMessageParams | AddMessageParams[]) {
   if (Array.isArray(param)) {
     param.forEach(function (item) {
@@ -499,18 +503,18 @@ export const apply = function (param: any | AddMessageParams | AddMessageParams[
         addActor(param.actor, param.actor, param.description, param.draw);
         break;
       case 'createParticipant':
-        if (state.records.actors[param.actor]) {
+        if (state.records.actors.has(param.actor)) {
           throw new Error(
             "It is not possible to have actors with the same id, even if one is destroyed before the next is created. Use 'AS' aliases to simulate the behavior"
           );
         }
         state.records.lastCreated = param.actor;
         addActor(param.actor, param.actor, param.description, param.draw);
-        state.records.createdActors[param.actor] = state.records.messages.length;
+        state.records.createdActors.set(param.actor, state.records.messages.length);
         break;
       case 'destroyParticipant':
         state.records.lastDestroyed = param.actor;
-        state.records.destroyedActors[param.actor] = state.records.messages.length;
+        state.records.destroyedActors.set(param.actor, state.records.messages.length);
         break;
       case 'activeStart':
         addSignal(param.actor, undefined, undefined, param.signalType);
@@ -538,7 +542,7 @@ export const apply = function (param: any | AddMessageParams | AddMessageParams[
           if (param.to !== state.records.lastCreated) {
             throw new Error(
               'The created participant ' +
-                state.records.lastCreated +
+                state.records.lastCreated.name +
                 ' does not have an associated creating message after its declaration. Please check the sequence diagram.'
             );
           } else {
@@ -551,7 +555,7 @@ export const apply = function (param: any | AddMessageParams | AddMessageParams[
           ) {
             throw new Error(
               'The destroyed participant ' +
-                state.records.lastDestroyed +
+                state.records.lastDestroyed.name +
                 ' does not have an associated destroying message after its declaration. Please check the sequence diagram.'
             );
           } else {
