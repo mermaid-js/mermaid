@@ -1532,8 +1532,26 @@ gitGraph TB:
         {}
       );
     });
+    it('75: should render a gitGraph with multiple tags on a merge commit on bottom-to-top orientation', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+        commit id: "ZERO"
+        branch develop
+        commit id:"A"
+        checkout main
+        commit id:"ONE"
+        checkout develop
+        commit id:"B"
+        checkout main
+        merge develop id:"Release 1.0" type:HIGHLIGHT tag: "SAML v2.0" tag: "OpenID v1.1"
+        commit id:"TWO"
+        checkout develop
+        commit id:"C"`,
+        {}
+      );
+    });
   });
-  it('75: should render a gitGraph with multiple tags on a merge commit', () => {
+  it('76: should render a gitGraph with multiple tags on a merge commit on left-to-right orientation', () => {
     imgSnapshotTest(
       `gitGraph
     commit id: "ZERO"
