@@ -59,6 +59,24 @@ describe('when parsing a gitGraph', function () {
     expect(commits[key].type).toBe(0);
   });
 
+  it('should handle a gitGraph commit with multiple commit tags', function () {
+    const str = `gitGraph:
+    commit tag:"test" tag:"test2"
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getCurrentBranch()).toBe('main');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    const key = Object.keys(commits)[0];
+    expect(commits[key].message).toBe('');
+    expect(commits[key].id).not.toBeNull();
+    expect(commits[key].tags).toStrictEqual(['test', 'test2']);
+    expect(commits[key].type).toBe(0);
+  });
+
   it('should handle a gitGraph commit with custom commit type HIGHLIGHT only', function () {
     const str = `gitGraph:
     commit type: HIGHLIGHT
