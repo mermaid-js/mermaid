@@ -113,7 +113,7 @@ export const commit = function (msg, id, type, tag) {
     message: msg,
     seq: seq++,
     type: type ? type : commitType.NORMAL,
-    tag: tag ? tag : '',
+    tags: tag ? [tag] : [],
     parents: head == null ? [] : [head.id],
     branch: curBranch,
   };
@@ -147,7 +147,7 @@ export const branch = function (name, order) {
   }
 };
 
-export const merge = function (otherBranch, custom_id, override_type, custom_tag) {
+export const merge = function (otherBranch, custom_id, override_type, custom_tags) {
   otherBranch = common.sanitizeText(otherBranch, getConfig());
   custom_id = common.sanitizeText(custom_id, getConfig());
 
@@ -216,12 +216,19 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
         ' already exists, use different custom Id'
     );
     error.hash = {
-      text: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
-      token: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
+      text: 'merge ' + otherBranch + custom_id + override_type + custom_tags.join(','),
+      token: 'merge ' + otherBranch + custom_id + override_type + custom_tags.join(','),
       line: '1',
       loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [
-        'merge ' + otherBranch + ' ' + custom_id + '_UNIQUE ' + override_type + ' ' + custom_tag,
+        'merge ' +
+          otherBranch +
+          ' ' +
+          custom_id +
+          '_UNIQUE ' +
+          override_type +
+          ' ' +
+          custom_tags.join(','),
       ],
     };
 
@@ -245,7 +252,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
     type: commitType.MERGE,
     customType: override_type,
     customId: custom_id ? true : false,
-    tag: custom_tag ? custom_tag : '',
+    tags: custom_tags ? custom_tags : [],
   };
   head = commit;
   commits[commit.id] = commit;
@@ -329,11 +336,11 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
       parents: [head == null ? null : head.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
-      tag:
-        tag ??
+      tags: tag ? [tag] : [
         `cherry-pick:${sourceCommit.id}${
           sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
         }`,
+      ],
     };
     head = commit;
     commits[commit.id] = commit;

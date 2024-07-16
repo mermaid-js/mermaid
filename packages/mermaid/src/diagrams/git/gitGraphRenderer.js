@@ -408,59 +408,83 @@ const drawCommits = (svg, commits, modifyGraph) => {
           }
         }
       }
-      if (commit.tag) {
-        const rect = gLabels.insert('polygon');
-        const hole = gLabels.append('circle');
-        const tag = gLabels
-          .append('text')
-          // Note that we are delaying setting the x position until we know the width of the text
-          .attr('y', y - 16)
-          .attr('class', 'tag-label')
-          .text(commit.tag);
-        let tagBbox = tag.node().getBBox();
-        tag.attr('x', posWithOffset - tagBbox.width / 2);
+      if (commit.tags.length > 0) {
+        let yOffset = 0;
+        let maxTagBboxWidth = 0;
+        let maxTagBboxHeight = 0;
+        const tagElements = [];
 
-        const h2 = tagBbox.height / 2;
-        const ly = y - 19.2;
-        rect.attr('class', 'tag-label-bkg').attr(
-          'points',
-          `
-          ${pos - tagBbox.width / 2 - px / 2},${ly + py}
-          ${pos - tagBbox.width / 2 - px / 2},${ly - py}
-          ${posWithOffset - tagBbox.width / 2 - px},${ly - h2 - py}
-          ${posWithOffset + tagBbox.width / 2 + px},${ly - h2 - py}
-          ${posWithOffset + tagBbox.width / 2 + px},${ly + h2 + py}
-          ${posWithOffset - tagBbox.width / 2 - px},${ly + h2 + py}`
-        );
+        for (const tagValue of commit.tags.reverse()) {
+          const rect = gLabels.insert('polygon');
+          const hole = gLabels.append('circle');
+          const tag = gLabels
+            .append('text')
+            // Note that we are delaying setting the x position until we know the width of the text
+            .attr('y', y - 16 - yOffset)
+            .attr('class', 'tag-label')
+            .text(tagValue);
+          let tagBbox = tag.node().getBBox();
+          maxTagBboxWidth = Math.max(maxTagBboxWidth, tagBbox.width);
+          maxTagBboxHeight = Math.max(maxTagBboxHeight, tagBbox.height);
 
-        hole
-          .attr('cx', pos - tagBbox.width / 2 + px / 2)
-          .attr('cy', ly)
-          .attr('r', 1.5)
-          .attr('class', 'tag-hole');
+          // We don't use the max over here to center the text within the tags
+          tag.attr('x', posWithOffset - tagBbox.width / 2);
 
-        if (dir === 'TB' || dir === 'BT') {
-          rect
-            .attr('class', 'tag-label-bkg')
-            .attr(
-              'points',
-              `
-            ${x},${pos + py}
-            ${x},${pos - py}
-            ${x + layoutOffset},${pos - h2 - py}
-            ${x + layoutOffset + tagBbox.width + px},${pos - h2 - py}
-            ${x + layoutOffset + tagBbox.width + px},${pos + h2 + py}
-            ${x + layoutOffset},${pos + h2 + py}`
-            )
-            .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
+          tagElements.push({
+            tag,
+            hole,
+            rect,
+            yOffset,
+          });
+
+          yOffset += 20;
+        }
+
+        for (const { tag, hole, rect, yOffset } of tagElements) {
+          const h2 = maxTagBboxHeight / 2;
+          const ly = y - 19.2 - yOffset;
+          rect.attr('class', 'tag-label-bkg').attr(
+            'points',
+            `
+            ${pos - maxTagBboxWidth / 2 - px / 2},${ly + py}
+            ${pos - maxTagBboxWidth / 2 - px / 2},${ly - py}
+            ${posWithOffset - maxTagBboxWidth / 2 - px},${ly - h2 - py}
+            ${posWithOffset + maxTagBboxWidth / 2 + px},${ly - h2 - py}
+            ${posWithOffset + maxTagBboxWidth / 2 + px},${ly + h2 + py}
+            ${posWithOffset - maxTagBboxWidth / 2 - px},${ly + h2 + py}`
+          );
+
           hole
-            .attr('cx', x + px / 2)
-            .attr('cy', pos)
-            .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
-          tag
-            .attr('x', x + 5)
-            .attr('y', pos + 3)
-            .attr('transform', 'translate(14,14) rotate(45, ' + x + ',' + pos + ')');
+            .attr('cy', ly)
+            .attr('cx', pos - maxTagBboxWidth / 2 + px / 2)
+            .attr('r', 1.5)
+            .attr('class', 'tag-hole');
+
+          if (dir === 'TB' || dir === 'BT') {
+            const yOrigin = pos + yOffset;
+
+            rect
+              .attr('class', 'tag-label-bkg')
+              .attr(
+                'points',
+                `
+              ${x},${yOrigin + py}
+              ${x},${yOrigin - py}
+              ${x + layoutOffset},${yOrigin - h2 - py}
+              ${x + layoutOffset + maxTagBboxWidth + px},${yOrigin - h2 - py}
+              ${x + layoutOffset + maxTagBboxWidth + px},${yOrigin + h2 + py}
+              ${x + layoutOffset},${yOrigin + h2 + py}`
+              )
+              .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
+            hole
+              .attr('cx', x + px / 2)
+              .attr('cy', yOrigin)
+              .attr('transform', 'translate(12,12) rotate(45, ' + x + ',' + pos + ')');
+            tag
+              .attr('x', x + 5)
+              .attr('y', yOrigin + 3)
+              .attr('transform', 'translate(14,14) rotate(45, ' + x + ',' + pos + ')');
+          }
         }
       }
     }

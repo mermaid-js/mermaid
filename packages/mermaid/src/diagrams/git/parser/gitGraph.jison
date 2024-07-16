@@ -128,19 +128,19 @@ mergeStatement
     : MERGE ref {yy.merge($2,'','','')}
     | MERGE ref COMMIT_ID STR {yy.merge($2, $4,'','')}
     | MERGE ref COMMIT_TYPE commitType  {yy.merge($2,'', $4,'')}
-    | MERGE ref COMMIT_TAG STR {yy.merge($2, '','',$4)}
-    | MERGE ref COMMIT_TAG STR COMMIT_ID STR {yy.merge($2, $6,'', $4)}
-    | MERGE ref COMMIT_TAG STR COMMIT_TYPE commitType {yy.merge($2, '',$6, $4)}
-    | MERGE ref COMMIT_TYPE commitType COMMIT_TAG STR {yy.merge($2, '',$4, $6)}
+    | MERGE ref commitTags {yy.merge($2, '','',$3)}
+    | MERGE ref commitTags COMMIT_ID STR {yy.merge($2, $5,'', $3)}
+    | MERGE ref commitTags COMMIT_TYPE commitType {yy.merge($2, '',$5, $3)}
+    | MERGE ref COMMIT_TYPE commitType commitTags {yy.merge($2, '',$4, $5)}
     | MERGE ref COMMIT_ID STR COMMIT_TYPE commitType {yy.merge($2, $4, $6, '')}
-    | MERGE ref COMMIT_ID STR COMMIT_TAG STR {yy.merge($2, $4, '', $6)}
+    | MERGE ref COMMIT_ID STR commitTags {yy.merge($2, $4, '', $5)}
     | MERGE ref COMMIT_TYPE commitType COMMIT_ID STR {yy.merge($2, $6,$4, '')}
-    | MERGE ref COMMIT_ID STR COMMIT_TYPE commitType COMMIT_TAG STR {yy.merge($2, $4, $6, $8)}
-    | MERGE ref COMMIT_TYPE commitType COMMIT_TAG STR COMMIT_ID STR {yy.merge($2, $8, $4, $6)}
-    | MERGE ref COMMIT_ID STR COMMIT_TAG STR COMMIT_TYPE commitType {yy.merge($2, $4, $8, $6)}
-    | MERGE ref COMMIT_TYPE commitType COMMIT_ID STR COMMIT_TAG STR {yy.merge($2, $6, $4, $8)}
-    | MERGE ref COMMIT_TAG STR COMMIT_TYPE commitType COMMIT_ID STR {yy.merge($2, $8, $6, $4)}
-    | MERGE ref COMMIT_TAG STR COMMIT_ID STR COMMIT_TYPE commitType {yy.merge($2, $6, $8, $4)}
+    | MERGE ref COMMIT_ID STR COMMIT_TYPE commitType commitTags {yy.merge($2, $4, $6, $7)}
+    | MERGE ref COMMIT_TYPE commitType commitTags COMMIT_ID STR {yy.merge($2, $7, $4, $5)}
+    | MERGE ref COMMIT_ID STR commitTags COMMIT_TYPE commitType {yy.merge($2, $4, $7, $5)}
+    | MERGE ref COMMIT_TYPE commitType COMMIT_ID STR commitTags {yy.merge($2, $6, $4, $7)}
+    | MERGE ref commitTags COMMIT_TYPE commitType COMMIT_ID STR {yy.merge($2, $7, $5, $3)}
+    | MERGE ref commitTags COMMIT_ID STR COMMIT_TYPE commitType {yy.merge($2, $5, $7, $3)}
     ;
 
 commitStatement
@@ -237,6 +237,10 @@ commitType
     : NORMAL { $$=yy.commitType.NORMAL;}
     | REVERSE   { $$=yy.commitType.REVERSE;}
     | HIGHLIGHT { $$=yy.commitType.HIGHLIGHT;}
+    ;
+commitTags
+    : COMMIT_TAG STR {$$=[$2]}
+    | commitTags COMMIT_TAG STR {$commitTags.push($3); $$=$commitTags;}
     ;
 
 ref
