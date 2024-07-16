@@ -19,10 +19,9 @@ pnpm build:esbuild
 pnpm build:types
 
 # Clone the Mermaid Live Editor repository
-rm -rf mermaid-live-editor
-git clone --single-branch https://github.com/mermaid-js/mermaid-live-editor.git
-
 cd mermaid-live-editor
+git clean -xdf
+rm -rf docs/
 
 # We have to use npm instead of yarn because it causes trouble in netlify
 # Install dependencies
