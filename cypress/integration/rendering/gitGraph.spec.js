@@ -1533,4 +1533,22 @@ gitGraph TB:
       );
     });
   });
+  it('75: should render a gitGraph with multiple tags on a merge commit', () => {
+    imgSnapshotTest(
+      `gitGraph
+    commit id: "ZERO"
+    branch develop
+    commit id:"A"
+    checkout main
+    commit id:"ONE"
+    checkout develop
+    commit id:"B"
+    checkout main
+    merge develop id:"Release 1.0" type:HIGHLIGHT tag: "SAML v2.0" tag: "OpenID v1.1"
+    commit id:"TWO"
+    checkout develop
+    commit id:"C"`,
+      {}
+    );
+  });
 });
