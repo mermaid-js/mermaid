@@ -216,8 +216,8 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
         ' already exists, use different custom Id'
     );
     error.hash = {
-      text: 'merge ' + otherBranch + custom_id + override_type + custom_tags.join(','),
-      token: 'merge ' + otherBranch + custom_id + override_type + custom_tags.join(','),
+      text: 'merge ' + otherBranch + custom_id + override_type + custom_tags.join?.(','),
+      token: 'merge ' + otherBranch + custom_id + override_type + custom_tags.join?.(','),
       line: '1',
       loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [
@@ -228,7 +228,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
           '_UNIQUE ' +
           override_type +
           ' ' +
-          custom_tags.join(','),
+          custom_tags.join?.(','),
       ],
     };
 
@@ -336,11 +336,16 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
       parents: [head == null ? null : head.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
-      tags: tag ? [tag] : [
-        `cherry-pick:${sourceCommit.id}${
-          sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
-        }`,
-      ],
+      tags:
+        typeof tag === 'string'
+          ? tag
+            ? [tag]
+            : []
+          : [
+              `cherry-pick:${sourceCommit.id}${
+                sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
+              }`,
+            ],
     };
     head = commit;
     commits[commit.id] = commit;

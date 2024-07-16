@@ -240,7 +240,9 @@ commitType
     ;
 commitTags
     : COMMIT_TAG STR {$$=[$2]}
+    | COMMIT_TAG EMPTYSTR {$$=['']}
     | commitTags COMMIT_TAG STR {$commitTags.push($3); $$=$commitTags;}
+    | commitTags COMMIT_TAG EMPTYSTR {$commitTags.push(''); $$=$commitTags;}
     ;
 
 ref
