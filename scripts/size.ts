@@ -25,6 +25,7 @@ const formatBytes = (bytes: number): string => {
   if (bytes == 0) {
     return '0 Bytes';
   }
+  bytes = Math.abs(bytes);
   const base = 1024;
   const decimals = 2;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
