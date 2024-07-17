@@ -104,6 +104,7 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     bbox = div.getBoundingClientRect();
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
+    dv.style('height', bbox.height + 'px');
   }
 
   // Center the label
