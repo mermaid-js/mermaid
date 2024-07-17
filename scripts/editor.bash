@@ -19,6 +19,9 @@ pnpm build:esbuild
 pnpm build:types
 
 # Clone the Mermaid Live Editor repository
+if [ ! -d "mermaid-live-editor" ]; then
+  git clone --single-branch https://github.com/mermaid-js/mermaid-live-editor.git
+fi
 cd mermaid-live-editor
 git clean -xdf
 rm -rf docs/
