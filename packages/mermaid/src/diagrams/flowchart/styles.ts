@@ -106,7 +106,6 @@ const getStyles = (options: FlowChartStyleOptions) =>
   /* For html labels only */
   .labelBkg {
     background-color: ${fade(options.edgeLabelBackground, 0.5)};
-    // background-color: 
   }
 
   .cluster rect {
@@ -144,6 +143,15 @@ const getStyles = (options: FlowChartStyleOptions) =>
     text-anchor: middle;
     font-size: 18px;
     fill: ${options.textColor};
+  }
+
+  .animated {
+    animation: animate-dash-line 5s linear infinite;
+  }
+
+  @keyframes animate-dash-line {
+    from { stroke-dashoffset: 102; }
+    to { stroke-dashoffset: 0; }
   }
 `;
 
