@@ -49,8 +49,8 @@ async function addHtmlSpan(element, node, width, classes, addBackground = false)
     bbox = div.node().getBoundingClientRect();
   }
 
-  fo.style('width', bbox.width);
-  fo.style('height', bbox.height);
+  // fo.style('width', bbox.width);
+  // fo.style('height', bbox.height);
 
   return fo.node();
 }
@@ -231,13 +231,36 @@ export const createText = async (
       structuredText,
       text ? addSvgBackground : false
     );
-    if (/stroke:/.exec(style)) {
-      style = style.replace('stroke:', 'lineColor:');
+    if (isNode) {
+      if (/stroke:/.exec(style)) {
+        style = style.replace('stroke:', 'lineColor:');
+      }
+      select(svgLabel)
+        .select('text')
+        .attr('style', style.replace(/color:/g, 'fill:'));
+      // svgLabel.setAttribute('style', style);
+    } else {
+      //On style, assume `stroke`, `stroke-width` are used for edge path, so remove them
+      // remove `fill`
+      //  use  `background` as `fill` for label rect,
+
+      const edgeLabelRectStyle = style
+        .replace(/stroke:[^;]+;?/g, '')
+        .replace(/stroke-width:[^;]+;?/g, '')
+        .replace(/fill:[^;]+;?/g, '')
+        .replace(/background:/g, 'fill:');
+      select(svgLabel)
+        .select('rect')
+        .attr('style', edgeLabelRectStyle.replace(/background:/g, 'fill:'));
+
+      // for text, update fill color with `color`
+      const edgeLabelTextStyle = style
+        .replace(/stroke:[^;]+;?/g, '')
+        .replace(/stroke-width:[^;]+;?/g, '')
+        .replace(/fill:[^;]+;?/g, '')
+        .replace(/color:/g, 'fill:');
+      select(svgLabel).select('text').attr('style', edgeLabelTextStyle);
     }
-    select(svgLabel)
-      .select('text')
-      .attr('style', style.replace(/color:/g, 'fill:'));
-    // svgLabel.setAttribute('style', style);
     return svgLabel;
   }
 };

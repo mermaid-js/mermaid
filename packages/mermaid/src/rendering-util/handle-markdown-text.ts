@@ -9,8 +9,10 @@ import type { MermaidConfig } from '../config.type.js';
  * @returns processed markdown
  */
 function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfig): string {
+  //Replace <br/>with \n
+  const withoutBR = markdown.replace(/<br\/>/g, '\n');
   // Replace multiple newlines with a single newline
-  const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
+  const withoutMultipleNewlines = withoutBR.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
   const withoutExtraSpaces = dedent(withoutMultipleNewlines);
   if (markdownAutoWrap === false) {
@@ -46,6 +48,8 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
       node.tokens.forEach((contentNode) => {
         processNode(contentNode as MarkedToken, node.type);
       });
+    } else if (node.type === 'html') {
+      lines[currentLine].push({ content: node.text, type: 'normal' });
     }
   }
 
@@ -54,6 +58,8 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
       treeNode.tokens?.forEach((contentNode) => {
         processNode(contentNode as MarkedToken);
       });
+    } else if (treeNode.type === 'html') {
+      lines[currentLine].push({ content: treeNode.text, type: 'normal' });
     }
   });
 
