@@ -216,9 +216,13 @@ export const createText = async (
 
     const htmlText = markdownToHTML(text, config);
     const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
+
+    //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
+    const inputForKatex = text.replace(/\\\\/g, '\\');
+
     const node = {
       isNode,
-      label: decodedReplacedText,
+      label: hasKatex(text) ? inputForKatex : decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
     const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground);

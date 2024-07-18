@@ -51,7 +51,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   await render(data4Layout, svg, element);
   const padding = data4Layout.config.flowchart?.padding ?? 8;
   utils.insertTitle(
-    element,
+    svg,
     'flowchartTitleText',
     conf?.titleTopMargin || 0,
     diag.db.getDiagramTitle()
