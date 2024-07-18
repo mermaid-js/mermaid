@@ -12,8 +12,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 
-let mainBranchName = getConfig().gitGraph.mainBranchName;
-let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
+let { mainBranchName, mainBranchOrder } = getConfig().gitGraph;
 let commits = new Map();
 let head = null;
 let branchesConfig = new Map();
@@ -105,9 +104,10 @@ export const getOptions = function () {
 
 export const commit = function (msg, id, type, tags) {
   log.debug('Entering commit:', msg, id, type, tags);
-  id = common.sanitizeText(id, getConfig());
-  msg = common.sanitizeText(msg, getConfig());
-  tags = tags?.map((tag) => common.sanitizeText(tag, getConfig()));
+  const config = getConfig();
+  id = common.sanitizeText(id, config);
+  msg = common.sanitizeText(msg, config);
+  tags = tags?.map((tag) => common.sanitizeText(tag, config));
   const commit = {
     id: id ? id : seq + '-' + getId(),
     message: msg,
@@ -148,8 +148,9 @@ export const branch = function (name, order) {
 };
 
 export const merge = function (otherBranch, custom_id, override_type, custom_tags) {
-  otherBranch = common.sanitizeText(otherBranch, getConfig());
-  custom_id = common.sanitizeText(custom_id, getConfig());
+  const config = getConfig();
+  otherBranch = common.sanitizeText(otherBranch, config);
+  custom_id = common.sanitizeText(custom_id, config);
 
   const currentCommit = commits.get(branches.get(curBranch));
   const otherCommit = commits.get(branches.get(otherBranch));
@@ -221,14 +222,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
       line: '1',
       loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [
-        'merge ' +
-          otherBranch +
-          ' ' +
-          custom_id +
-          '_UNIQUE ' +
-          override_type +
-          ' ' +
-          custom_tags?.join(','),
+        `merge ${otherBranch} ${custom_id}_UNIQUE ${override_type} ${custom_tags?.join(',')}`,
       ],
     };
 
@@ -264,10 +258,11 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
 
 export const cherryPick = function (sourceId, targetId, tags, parentCommitId) {
   log.debug('Entering cherryPick:', sourceId, targetId, tags);
-  sourceId = common.sanitizeText(sourceId, getConfig());
-  targetId = common.sanitizeText(targetId, getConfig());
-  tags = tags?.map((tag) => common.sanitizeText(tag, getConfig()));
-  parentCommitId = common.sanitizeText(parentCommitId, getConfig());
+  const config = getConfig();
+  sourceId = common.sanitizeText(sourceId, config);
+  targetId = common.sanitizeText(targetId, config);
+  tags = tags?.map((tag) => common.sanitizeText(tag, config));
+  parentCommitId = common.sanitizeText(parentCommitId, config);
 
   if (!sourceId || !commits.has(sourceId)) {
     let error = new Error(
@@ -365,8 +360,6 @@ export const checkout = function (branch) {
       expected: ['"branch ' + branch + '"'],
     };
     throw error;
-    //branches[branch] = head != null ? head.id : null;
-    //log.debug('in createBranch');
   } else {
     curBranch = branch;
     const id = branches.get(curBranch);
@@ -453,13 +446,12 @@ export const prettyPrint = function () {
 export const clear = function () {
   commits = new Map();
   head = null;
-  let mainBranch = getConfig().gitGraph.mainBranchName;
-  let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
+  const { mainBranchName, mainBranchOrder } = getConfig().gitGraph;
   branches = new Map();
-  branches.set(mainBranch, null);
+  branches.set(mainBranchName, null);
   branchesConfig = new Map();
-  branchesConfig.set(mainBranch, { name: mainBranch, order: mainBranchOrder });
-  curBranch = mainBranch;
+  branchesConfig.set(mainBranchName, { name: mainBranchName, order: mainBranchOrder });
+  curBranch = mainBranchName;
   seq = 0;
   commonClear();
 };
