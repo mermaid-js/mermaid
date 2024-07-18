@@ -88,9 +88,9 @@ const WARN_DOCSDIR_DOESNT_MATCH = `Changed files were transformed in ${SOURCE_DO
 const prettierConfig = (await prettier.resolveConfig('.')) ?? {};
 // From https://github.com/vuejs/vitepress/blob/428eec3750d6b5648a77ac52d88128df0554d4d1/src/node/markdownToVue.ts#L20-L21
 const includesRE = /<!--\s*@include:\s*(.*?)\s*-->/g;
-const includedFiles: Set<string> = new Set();
+const includedFiles = new Set<string>();
 
-const filesTransformed: Set<string> = new Set();
+const filesTransformed = new Set<string>();
 
 const generateHeader = (file: string): string => {
   // path from file in docs/* to repo root, e.g ../ or ../../ */
@@ -181,10 +181,10 @@ export const transformToBlockQuote = (
 ) => {
   if (vitepress) {
     const vitepressType = type === 'note' ? 'info' : type;
-    return `::: ${vitepressType} ${customTitle || ''}\n${content}\n:::`;
+    return `::: ${vitepressType} ${customTitle ?? ''}\n${content}\n:::`;
   } else {
-    const icon = blockIcons[type] || '';
-    const title = `${icon}${customTitle || capitalize(type)}`;
+    const icon = blockIcons[type] ?? '';
+    const title = `${icon}${customTitle ?? capitalize(type)}`;
     return `> **${title}** \n> ${content.replace(/\n/g, '\n> ')}`;
   }
 };
@@ -201,6 +201,7 @@ const transformIncludeStatements = (file: string, text: string): string => {
       includedFiles.add(changeToFinalDocDir(includePath));
       return content;
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`Failed to resolve include "${m1}" in "${file}": ${error}`);
     }
   });
@@ -241,7 +242,7 @@ export function transformMarkdownAst({
   addEditLink,
   removeYAML,
 }: TransformMarkdownAstOptions) {
-  return (tree: Root, _file?: any): Root => {
+  return (tree: Root): Root => {
     const astWithTransformedBlocks = flatmap(tree, (node: Code) => {
       if (node.type !== 'code' || !node.lang) {
         return [node]; // no transformation if this is not a code block
@@ -509,6 +510,7 @@ export const getGlobs = (globs: string[]): string[] => {
     globs.push(
       '!**/.vitepress/**',
       '!**/vite.config.ts',
+      '!**/tsconfig.json',
       '!src/docs/index.md',
       '!**/package.json',
       '!**/user-avatars/**'

@@ -26,12 +26,16 @@ const Identification = {
   NON_IDENTIFYING: 'NON_IDENTIFYING',
   IDENTIFYING: 'IDENTIFYING',
 };
-
+/**
+ * Add entity
+ * @param {string} name - The name of the entity
+ * @param {string | undefined} alias - The alias of the entity
+ */
 const addEntity = function (name, alias = undefined) {
   if (!entities.has(name)) {
-    entities.set(name, { attributes: [], alias: alias });
+    entities.set(name, { attributes: [], alias });
     log.info('Added new entity :', name);
-  } else if (entities.has(name) && !entities.get(name).alias && alias) {
+  } else if (!entities.get(name).alias && alias) {
     entities.get(name).alias = alias;
     log.info(`Add alias '${alias}' to entity '${name}'`);
   }

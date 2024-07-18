@@ -49,12 +49,12 @@ export default defineConfig({
       // TODO: will be fixed in the next vitepress release.
       name: 'fix-virtual',
 
-      async resolveId(id: string) {
+      resolveId(id: string) {
         if (id === virtualModuleId) {
           return resolvedVirtualModuleId;
         }
       },
-      async load(this, id: string) {
+      load(this, id: string) {
         if (id === resolvedVirtualModuleId) {
           return `export default ${JSON.stringify({
             securityLevel: 'loose',

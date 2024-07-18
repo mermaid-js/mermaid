@@ -132,7 +132,7 @@ if (typeof document !== 'undefined') {
   window.addEventListener(
     'load',
     function () {
-      if (this.location.href.match('xss.html')) {
+      if (/xss.html/.exec(this.location.href)) {
         this.console.log('Using api');
         void contentLoadedApi().finally(markRendered);
       } else {
