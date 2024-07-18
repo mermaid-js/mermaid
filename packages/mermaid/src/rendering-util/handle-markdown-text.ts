@@ -81,6 +81,8 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return `<em>${node.tokens?.map(output).join('')}</em>`;
     } else if (node.type === 'paragraph') {
       return `<p>${node.tokens?.map(output).join('')}</p>`;
+    } else if (node.type === 'space') {
+      return '';
     } else if (node.type === 'html') {
       return `${node.text}`;
     }
