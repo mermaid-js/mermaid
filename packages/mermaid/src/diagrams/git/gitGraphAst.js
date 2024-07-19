@@ -12,8 +12,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 
-let mainBranchName = getConfig().gitGraph.mainBranchName;
-let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
+let { mainBranchName, mainBranchOrder } = getConfig().gitGraph;
 let commits = new Map();
 let head = null;
 let branchesConfig = new Map();
@@ -103,17 +102,18 @@ export const getOptions = function () {
   return options;
 };
 
-export const commit = function (msg, id, type, tag) {
-  log.debug('Entering commit:', msg, id, type, tag);
-  id = common.sanitizeText(id, getConfig());
-  msg = common.sanitizeText(msg, getConfig());
-  tag = common.sanitizeText(tag, getConfig());
+export const commit = function (msg, id, type, tags) {
+  log.debug('Entering commit:', msg, id, type, tags);
+  const config = getConfig();
+  id = common.sanitizeText(id, config);
+  msg = common.sanitizeText(msg, config);
+  tags = tags?.map((tag) => common.sanitizeText(tag, config));
   const commit = {
     id: id ? id : seq + '-' + getId(),
     message: msg,
     seq: seq++,
     type: type ? type : commitType.NORMAL,
-    tag: tag ? tag : '',
+    tags: tags ?? [],
     parents: head == null ? [] : [head.id],
     branch: curBranch,
   };
@@ -147,9 +147,10 @@ export const branch = function (name, order) {
   }
 };
 
-export const merge = function (otherBranch, custom_id, override_type, custom_tag) {
-  otherBranch = common.sanitizeText(otherBranch, getConfig());
-  custom_id = common.sanitizeText(custom_id, getConfig());
+export const merge = function (otherBranch, custom_id, override_type, custom_tags) {
+  const config = getConfig();
+  otherBranch = common.sanitizeText(otherBranch, config);
+  custom_id = common.sanitizeText(custom_id, config);
 
   const currentCommit = commits.get(branches.get(curBranch));
   const otherCommit = commits.get(branches.get(otherBranch));
@@ -216,12 +217,12 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
         ' already exists, use different custom Id'
     );
     error.hash = {
-      text: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
-      token: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
+      text: 'merge ' + otherBranch + custom_id + override_type + custom_tags?.join(','),
+      token: 'merge ' + otherBranch + custom_id + override_type + custom_tags?.join(','),
       line: '1',
       loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [
-        'merge ' + otherBranch + ' ' + custom_id + '_UNIQUE ' + override_type + ' ' + custom_tag,
+        `merge ${otherBranch} ${custom_id}_UNIQUE ${override_type} ${custom_tags?.join(',')}`,
       ],
     };
 
@@ -245,7 +246,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
     type: commitType.MERGE,
     customType: override_type,
     customId: custom_id ? true : false,
-    tag: custom_tag ? custom_tag : '',
+    tags: custom_tags ? custom_tags : [],
   };
   head = commit;
   commits.set(commit.id, commit);
@@ -255,12 +256,13 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
   log.debug('in mergeBranch');
 };
 
-export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
-  log.debug('Entering cherryPick:', sourceId, targetId, tag);
-  sourceId = common.sanitizeText(sourceId, getConfig());
-  targetId = common.sanitizeText(targetId, getConfig());
-  tag = common.sanitizeText(tag, getConfig());
-  parentCommitId = common.sanitizeText(parentCommitId, getConfig());
+export const cherryPick = function (sourceId, targetId, tags, parentCommitId) {
+  log.debug('Entering cherryPick:', sourceId, targetId, tags);
+  const config = getConfig();
+  sourceId = common.sanitizeText(sourceId, config);
+  targetId = common.sanitizeText(targetId, config);
+  tags = tags?.map((tag) => common.sanitizeText(tag, config));
+  parentCommitId = common.sanitizeText(parentCommitId, config);
 
   if (!sourceId || !commits.has(sourceId)) {
     let error = new Error(
@@ -329,11 +331,13 @@ export const cherryPick = function (sourceId, targetId, tag, parentCommitId) {
       parents: [head == null ? null : head.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
-      tag:
-        tag ??
-        `cherry-pick:${sourceCommit.id}${
-          sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
-        }`,
+      tags: tags
+        ? tags.filter(Boolean)
+        : [
+            `cherry-pick:${sourceCommit.id}${
+              sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
+            }`,
+          ],
     };
     head = commit;
     commits.set(commit.id, commit);
@@ -356,8 +360,6 @@ export const checkout = function (branch) {
       expected: ['"branch ' + branch + '"'],
     };
     throw error;
-    //branches[branch] = head != null ? head.id : null;
-    //log.debug('in createBranch');
   } else {
     curBranch = branch;
     const id = branches.get(curBranch);
@@ -444,13 +446,12 @@ export const prettyPrint = function () {
 export const clear = function () {
   commits = new Map();
   head = null;
-  let mainBranch = getConfig().gitGraph.mainBranchName;
-  let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
+  const { mainBranchName, mainBranchOrder } = getConfig().gitGraph;
   branches = new Map();
-  branches.set(mainBranch, null);
+  branches.set(mainBranchName, null);
   branchesConfig = new Map();
-  branchesConfig.set(mainBranch, { name: mainBranch, order: mainBranchOrder });
-  curBranch = mainBranch;
+  branchesConfig.set(mainBranchName, { name: mainBranchName, order: mainBranchOrder });
+  curBranch = mainBranchName;
   seq = 0;
   commonClear();
 };

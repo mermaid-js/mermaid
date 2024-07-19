@@ -567,7 +567,7 @@ export const wrapLabel: (label: string, maxWidth: number, config: WrapLabelConfi
       if (common.lineBreakRegex.test(label)) {
         return label;
       }
-      const words = label.split(' ');
+      const words = label.split(' ').filter(Boolean);
       const completedLines: string[] = [];
       let nextLine = '';
       words.forEach((word, index) => {
