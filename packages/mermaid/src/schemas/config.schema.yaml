@@ -101,21 +101,24 @@ properties:
     type: integer
     default: 500
     minimum: 0
-  elk.mergeEdges:
-    description: |
-      Elk specific option that allows egdes to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
-    type: boolean
-    default: false
-  elk.nodePlacement.strategy:
-    description: |
-      Elk specific option affedcting how nodes are placed.
-    type: string
-    enum:
-      - SIMPLE
-      - NETWORK_SIMPLEX
-      - LINEAR_SEGMENTS
-      - BRANDES_KOEPF
-    default: SIMPLE
+  elk:
+    type: object
+    properties:
+      mergeEdges:
+        description: |
+          Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+        type: boolean
+        default: false
+      nodePlacementStrategy:
+        description: |
+          Elk specific option affecting how nodes are placed.
+        type: string
+        enum:
+          - SIMPLE
+          - NETWORK_SIMPLEX
+          - LINEAR_SEGMENTS
+          - BRANDES_KOEPF
+        default: SIMPLE
   darkMode:
     type: boolean
     default: false

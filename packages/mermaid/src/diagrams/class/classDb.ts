@@ -113,6 +113,7 @@ export const clear = function () {
   functions.push(setupToolTips);
   namespaces = new Map();
   namespaceCounter = 0;
+  direction = 'TB';
   commonClear();
 };
 

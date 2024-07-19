@@ -154,7 +154,6 @@ export const positionEdgeLabel = (edge, paths) => {
     let x = edge.x;
     let y = edge.y;
     if (path) {
-      //   // debugger;
       const pos = utils.calcLabelPosition(path);
       log.debug(
         'Moving label ' + edge.label + ' from (',
@@ -175,13 +174,11 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
   }
 
-  //let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.startLabelLeft) {
     const el = terminalLabels.get(edge.id).startLeft;
     let x = edge.x;
     let y = edge.y;
     if (path) {
-      // debugger;
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
       x = pos.x;
       y = pos.y;
@@ -193,7 +190,6 @@ export const positionEdgeLabel = (edge, paths) => {
     let x = edge.x;
     let y = edge.y;
     if (path) {
-      // debugger;
       const pos = utils.calcTerminalLabelPosition(
         edge.arrowTypeStart ? 10 : 0,
         'start_right',
@@ -209,7 +205,6 @@ export const positionEdgeLabel = (edge, paths) => {
     let x = edge.x;
     let y = edge.y;
     if (path) {
-      // debugger;
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
       x = pos.x;
       y = pos.y;
@@ -275,21 +270,18 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       res.y = outsidePoint.y;
     }
 
-    log.debug(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res); // cspell: disable-line
+    log.debug(`abc89 top/bottom calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
 
     return res;
   } else {
-    // Intersection onn sides of rect
+    // Intersection on sides of rect
     if (insidePoint.x < outsidePoint.x) {
       r = outsidePoint.x - w - x;
     } else {
       r = x - w - outsidePoint.x;
     }
     let q = (Q * r) / R;
-    //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
-    // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
     let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
-    // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
     let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
     log.debug(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
     if (r === 0) {
@@ -306,49 +298,34 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     return { x: _x, y: _y };
   }
 };
-/**
- * This function will page a path and node where the last point(s) in the path is inside the node
- * and return an update path ending by the border of the node.
- *
- * @param {Array} _points
- * @param {any} boundaryNode
- * @returns {Array} Points
- */
+
 const cutPathAtIntersect = (_points, boundaryNode) => {
   log.warn('abc88 cutPathAtIntersect', _points, boundaryNode);
   let points = [];
   let lastPointOutside = _points[0];
   let isInside = false;
   _points.forEach((point) => {
-    // const node = clusterDb[edge.toCluster].node;
     log.info('abc88 checking point', point, boundaryNode);
 
-    // check if point is inside the boundary rect
     if (!outsideNode(boundaryNode, point) && !isInside) {
-      // First point inside the rect found
-      // Calc the intersection coord between the point anf the last point outside the rect
       const inter = intersection(boundaryNode, lastPointOutside, point);
       log.debug('abc88 inside', point, lastPointOutside, inter);
       log.debug('abc88 intersection', inter, boundaryNode);
 
-      // // Check case where the intersection is the same as the last point
       let pointPresent = false;
       points.forEach((p) => {
         pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
       });
-      // // if (!pointPresent) {
+
       if (!points.some((e) => e.x === inter.x && e.y === inter.y)) {
         points.push(inter);
       } else {
         log.warn('abc88 no intersect', inter, points);
       }
-      // points.push(inter);
       isInside = true;
     } else {
-      // Outside
       log.warn('abc88 outside', point, lastPointOutside);
       lastPointOutside = point;
-      // points.push(point);
       if (!isInside) {
         points.push(point);
       }
@@ -358,13 +335,6 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
   return points;
 };
 
-/**
- * Given an edge, this function will return the corner points of the edge. This is defined as:
- * one point that has a previous point and a next point such as the angle between the previous
- * point and the next point is 90 degrees. Meaning that the previous point has the same x coordinate
- * as the center point and at the same time the next point has the same y coordinate or vice versa.
- * @param points
- */
 function extractCornerPoints(points) {
   const cornerPoints = [];
   const cornerPointPositions = [];
@@ -401,11 +371,6 @@ const findAdjacentPoint = function (pointA, pointB, distance) {
   return { x: pointB.x - ratio * xDiff, y: pointB.y - ratio * yDiff };
 };
 
-/**
- * Given an array of points, this function will return a new array of points where the corners have been removed and replaced with
- * adjacent points in each direction. SO a corder will be replaced with a point before and the point after the corner.
- */
-
 const fixCorners = function (lineData) {
   const { cornerPointPositions } = extractCornerPoints(lineData);
   const newLineData = [];
@@ -415,7 +380,6 @@ const fixCorners = function (lineData) {
       const nextPoint = lineData[i + 1];
       const cornerPoint = lineData[i];
 
-      // Find a new point on the line point 5 points back and push it to the new array
       const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, 5);
       const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, 5);
 
@@ -466,9 +430,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   var head = endNode;
 
   if (head.intersect && tail.intersect) {
-    // log.info('abc88 InsertEdge: 0.5', edge.start, '-->', edge.end, JSON.stringify(points));
     points = points.slice(1, edge.points.length - 1);
-    // log.info('abc88 InsertEdge APA12: 0.7', edge.start, '-->', edge.end,   JSON.stringify(points));
     points.unshift(tail.intersect(points[0]));
     log.debug(
       'Last point APA12',
@@ -481,59 +443,43 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     );
     points.push(head.intersect(points[points.length - 1]));
   }
-  // log.info('abc88 InsertEdge 2 SPLIT: ', points);
   if (edge.toCluster) {
-    log.info('to cluster abc88', clusterDb[edge.toCluster]);
-    points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node);
+    log.info('to cluster abc88', clusterDb.get(edge.toCluster));
+    points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
 
     pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
-    log.debug('from cluster abc88', clusterDb[edge.fromCluster], JSON.stringify(points, null, 2));
-    points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse();
-    // log.info('from cluster abc88 fixed', JSON.stringify(points, null, 2));
+    log.debug(
+      'from cluster abc88',
+      clusterDb.get(edge.fromCluster),
+      JSON.stringify(points, null, 2)
+    );
+    points = cutPathAtIntersect(points.reverse(), clusterDb.get(edge.fromCluster).node).reverse();
 
     pointsHasChanged = true;
   }
 
-  // The data for our line
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  // const { cornerPoints, cornerPointPositions } = extractCornerPoints(lineData);
   lineData = fixCorners(lineData);
   let lastPoint = lineData[lineData.length - 1];
   if (lineData.length > 1) {
     lastPoint = lineData[lineData.length - 1];
     const secondLastPoint = lineData[lineData.length - 2];
-    // Calculate the mid point of the last two points
     const diffX = (lastPoint.x - secondLastPoint.x) / 2;
     const diffY = (lastPoint.y - secondLastPoint.y) / 2;
     const midPoint = { x: secondLastPoint.x + diffX, y: secondLastPoint.y + diffY };
     lineData.splice(-1, 0, midPoint);
   }
-  // This is the accessor function we talked about above
   let curve = curveBasis;
-  // curve = curveCardinal;
-  // curve = curveLinear;
-  // curve = curveNatural;
-  // curve = curveCatmullRom.alpha(0.5);
-  // curve = curveCatmullRom;
-  // curve = curveCardinal.tension(0.7);
-  // curve = curveMonotoneY;
-  // let curve = interpolateToCurve([5], curveNatural, 0.01, 10);
-
-  // Currently only flowcharts get the curve from the settings, perhaps this should
-  // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
-  // have not been thought through
   if (edge.curve) {
     curve = edge.curve;
   }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
-  // const lineFunction = edge.curve ? line().x(x).y(y).curve(curve) : roundedCornersLine;
   const lineFunction = line().x(x).y(y).curve(curve);
 
-  // Construct stroke classes based on properties
   let strokeClasses;
   switch (edge.thickness) {
     case 'normal':
@@ -563,14 +509,11 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
   let svgPath;
   let linePath = lineFunction(lineData);
+  const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   if (edge.look === 'handdrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
-    // const svgPathNode = rc.path(lineFunction(ld.splice(0, ld.length-1)), {
-    // const svgPathNode = rc.path(lineFunction(ld), {
-    //   roughness: 0.3,
-    //   seed: handdrawnSeed,
-    // });
+
     const svgPathNode = rc.path(linePath, {
       roughness: 0.3,
       seed: handdrawnSeed,
@@ -580,10 +523,9 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
     svgPath = select(svgPathNode)
       .select('path')
-      // .attr('d', lineFunction(lineData))
       .attr('id', edge.id)
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-      .attr('style', edge.style);
+      .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
     let d = svgPath.attr('d');
     svgPath.attr('d', d);
     elem.node().appendChild(svgPath.node());
@@ -593,7 +535,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       .attr('d', linePath)
       .attr('id', edge.id)
       .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-      .attr('style', edge.style);
+      .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
   }
 
   // MC Special
@@ -611,18 +553,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   //     .attr('cy', point.y);
   // });
 
-  // lineData.forEach((point) => {
-  //   elem
-  //     .append('circle')
-  //     .style('stroke', 'red')
-  //     .style('fill', 'red')
-  //     .attr('r', 1)
-  //     .attr('cx', point.x)
-  //     .attr('cy', point.y);
-  // });
-
   let url = '';
-  // // TODO: Can we load this config only from the rendered graph type?
   if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
     url =
       window.location.protocol +
@@ -630,8 +561,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       window.location.host +
       window.location.pathname +
       window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    url = url.replace(/\(/g, '\\(').replace(/\)/g, '\\)');
   }
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);

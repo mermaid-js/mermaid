@@ -97,7 +97,7 @@ export const openURLAndVerifyRendering = (
   const name: string = (options.name ?? cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   cy.visit(url);
-  // cy.window().should('have.property', 'rendered', true);
+  cy.window().should('have.property', 'rendered', true);
   cy.get('svg').should('be.visible');
 
   if (validation) {
@@ -124,7 +124,9 @@ export const verifyScreenshot = (name: string): void => {
     cy.log(`Closing eyes ${Cypress.spec.name}`);
     cy.eyesClose();
   } else if (useArgos) {
-    cy.argosScreenshot(name);
+    cy.argosScreenshot(name, {
+      threshold: 0.01,
+    });
   } else {
     cy.matchImageSnapshot(name);
   }

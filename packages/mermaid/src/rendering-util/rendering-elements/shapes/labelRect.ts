@@ -23,8 +23,8 @@ export const labelRect = async (parent: SVGElement, node: Node) => {
   const rect = shapeSvg.insert('rect', ':first-child');
 
   // Hide the rect we are only after the label
-  const totalWidth = 0;
-  const totalHeight = 0;
+  const totalWidth = 0.1;
+  const totalHeight = 0.1;
   rect.attr('width', totalWidth).attr('height', totalHeight);
   shapeSvg.attr('class', 'label edgeLabel');
 
@@ -40,6 +40,8 @@ export const labelRect = async (parent: SVGElement, node: Node) => {
   // }
 
   updateNodeBounds(node, rect);
+  // node.width = 1;
+  // node.height = 1;
 
   node.intersect = function (point) {
     return intersect.rect(node, point);

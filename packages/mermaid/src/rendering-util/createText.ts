@@ -49,8 +49,8 @@ async function addHtmlSpan(element, node, width, classes, addBackground = false)
     bbox = div.node().getBoundingClientRect();
   }
 
-  fo.style('width', bbox.width);
-  fo.style('height', bbox.height);
+  // fo.style('width', bbox.width);
+  // fo.style('height', bbox.height);
 
   return fo.node();
 }
@@ -159,7 +159,7 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
   wrappedLine.forEach((word, index) => {
     const innerTspan = tspan
       .append('tspan')
-      .attr('font-style', word.type === 'emphasis' ? 'italic' : 'normal')
+      .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
       .attr('class', 'text-inner-tspan')
       .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
     if (index === 0) {
@@ -216,28 +216,61 @@ export const createText = async (
 
     const htmlText = markdownToHTML(text, config);
     const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
+
+    //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
+    const inputForKatex = text.replace(/\\\\/g, '\\');
+
     const node = {
       isNode,
-      label: decodedReplacedText,
+      label: hasKatex(text) ? inputForKatex : decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
     const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
-    const structuredText = markdownToLines(text.replace('<br>', '<br/>'), config);
+    //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
+    const sanitizeBR = text.replace(/<br\s*\/?>/g, '<br/>');
+    const structuredText = markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config);
     const svgLabel = createFormattedText(
       width,
       el,
       structuredText,
       text ? addSvgBackground : false
     );
-    if (/stroke:/.exec(style)) {
-      style = style.replace('stroke:', 'lineColor:');
+    if (isNode) {
+      if (/stroke:/.exec(style)) {
+        style = style.replace('stroke:', 'lineColor:');
+      }
+
+      const nodeLabelTextStyle = style
+        .replace(/stroke:[^;]+;?/g, '')
+        .replace(/stroke-width:[^;]+;?/g, '')
+        .replace(/fill:[^;]+;?/g, '')
+        .replace(/color:/g, 'fill:');
+      select(svgLabel).attr('style', nodeLabelTextStyle);
+      // svgLabel.setAttribute('style', style);
+    } else {
+      //On style, assume `stroke`, `stroke-width` are used for edge path, so remove them
+      // remove `fill`
+      //  use  `background` as `fill` for label rect,
+
+      const edgeLabelRectStyle = style
+        .replace(/stroke:[^;]+;?/g, '')
+        .replace(/stroke-width:[^;]+;?/g, '')
+        .replace(/fill:[^;]+;?/g, '')
+        .replace(/background:/g, 'fill:');
+      select(svgLabel)
+        .select('rect')
+        .attr('style', edgeLabelRectStyle.replace(/background:/g, 'fill:'));
+
+      // for text, update fill color with `color`
+      const edgeLabelTextStyle = style
+        .replace(/stroke:[^;]+;?/g, '')
+        .replace(/stroke-width:[^;]+;?/g, '')
+        .replace(/fill:[^;]+;?/g, '')
+        .replace(/color:/g, 'fill:');
+      select(svgLabel).select('text').attr('style', edgeLabelTextStyle);
     }
-    select(svgLabel)
-      .select('text')
-      .attr('style', style.replace(/color:/g, 'fill:'));
-    // svgLabel.setAttribute('style', style);
     return svgLabel;
   }
 };

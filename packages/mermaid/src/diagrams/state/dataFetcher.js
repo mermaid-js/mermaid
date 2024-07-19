@@ -198,9 +198,6 @@ function getClassesFromDbInfo(dbInfoItem) {
  * Get classes from the db for the info item.
  * If there aren't any or if dbInfoItem isn't defined, return an empty string.
  * Else create 1 string from the list of classes found
- *
- * @param {undefined | null | object} dbInfoItem
- * @returns {string}
  */
 function getStylesFromDbInfo(dbInfoItem) {
   if (dbInfoItem === undefined || dbInfoItem === null) {

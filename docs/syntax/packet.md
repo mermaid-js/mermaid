@@ -12,7 +12,7 @@ A packet diagram is a visual representation used to illustrate the structure and
 
 ## Usage
 
-This diagram type is particularly useful for network engineers, educators, and students who require a clear and concise way to represent the structure of network packets.
+This diagram type is particularly useful for developers, network engineers, educators, and students who require a clear and concise way to represent the structure of network packets.
 
 ## Syntax
 

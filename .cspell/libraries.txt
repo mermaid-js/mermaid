@@ -20,6 +20,7 @@ dagre-d3
 Deepdwn
 Docsify
 Docsy
+Doctave
 DokuWiki
 dompurify
 elkjs

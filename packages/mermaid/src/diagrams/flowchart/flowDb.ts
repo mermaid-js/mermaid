@@ -205,6 +205,13 @@ export const updateLink = function (positions: ('default' | number)[], style: st
       //   style.push('fill:none');
       // }
       edges[pos].style = style;
+      // if edges[pos].style does have fill not set, set it to none
+      if (
+        (edges[pos]?.style?.length ?? 0) > 0 &&
+        !edges[pos]?.style?.some((s) => s?.startsWith('fill'))
+      ) {
+        edges[pos]?.style?.push('fill:none');
+      }
     }
   });
 };
