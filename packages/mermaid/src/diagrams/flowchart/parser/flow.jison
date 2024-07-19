@@ -23,6 +23,8 @@
 %x href
 %x callbackname
 %x callbackargs
+%x shapeData
+%x shapeDataEndBracket
 
 %%
 accTitle\s*":"\s*                               { this.begin("acc_title");return 'acc_title'; }
@@ -34,6 +36,16 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
+[@\{]                                   { this.pushState("shapeData"); }
+// <shapeData>[\}][\@]                  { console.log('This is the end: ', yytext); this.popState(); }
+<shapeData>[^}]                         { console.log('End bracket found: ', yytext); this.pushState("shapeDataEndBracket");}
+<shapeDataEndBracket>[@]                { console.log('This is the end: ', yytext); this.popState();this.popState(); }
+<shapeDataEndBracket>[^@]*               { console.log('something else: ', yytext); return 'SHAPE_DATA'; }
+<shapeData>([^}^@])+     { console.log('Parsed data: ', yytext);  }
+
+// [@\{]                  {this.pushState("shapeData");}
+// <shapeData>[\}][\@]        { console.log('This is the end: ', yytext);this.popState(); }
+// <shapeData>^(?!.*\}@).*     { console.log('Parsed data: ', yytext); return 'SHAPE_DATA';}
 /*
 ---interactivity command---
 'call' adds a callback to the specified node. 'call' can only be specified when
@@ -61,6 +73,8 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 "interpolate"           return 'INTERPOLATE';
 "classDef"              return 'CLASSDEF';
 "class"                 return 'CLASS';
+
+
 
 /*
 ---interactivity command---
@@ -357,24 +371,33 @@ statement
 separator: NEWLINE | SEMI | EOF ;
 
 
-vertexStatement: vertexStatement link node
-        { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+vertexStatement: vertexStatement link node SHAPE_DATA
+        { console.warn('vs SHAPE_DATA',$vertexStatement.stmt,$node); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+    | vertexStatement link node
+        { console.warn('vs',$vertexStatement.stmt,$node); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |  vertexStatement link node spaceList
         { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
-    |node spaceList {/*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
-    |node { /*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
+    |node spaceList {console.warn('vertexStatement: node spaceList', $node); $$ = {stmt: $node, nodes:$node }}
+    |node SHAPE_DATA {
+        console.warn('vertexStatement: node SHAPE_DATA', $node[0], $SHAPE_DATA);
+        yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$SHAPE_DATA+'\n}\n');
+        $$ = {stmt: $node, nodes:$node, shapeData: $SHAPE_DATA+'\n}'}
+    }
+    |node { console.warn('vertexStatement: single node', $node); $$ = {stmt: $node, nodes:$node }}
     ;
 
 node: styledVertex
-        { /* console.warn('nod', $styledVertex); */ $$ = [$styledVertex];}
+        { /*console.warn('nod', $styledVertex);*/ $$ = [$styledVertex];}
     | node spaceList AMP spaceList styledVertex
         { $$ = $node.concat($styledVertex); /* console.warn('pip', $node[0], $styledVertex, $$); */ }
     ;
 
 styledVertex: vertex
-        { /* console.warn('nod', $vertex); */ $$ = $vertex;}
+        { /* console.warn('nodc', $vertex);*/ $$ = $vertex;}
     | vertex STYLE_SEPARATOR idString
         {$$ = $vertex;yy.setClass($vertex,$idString)}
+    | vertex idString
+        { yy.setClass($vertex,$idString)}
     ;
 
 vertex:  idString SQS text SQE

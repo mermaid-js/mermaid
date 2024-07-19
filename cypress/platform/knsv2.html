@@ -54,71 +54,49 @@
           10px 10px;
         background-repeat: repeat; */
       }
-      .malware {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 150px;
-        background: red;
-        color: black;
-        display: flex;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: monospace;
-        font-size: 72px;
-      }
-      /* tspan {
-              font-size: 6px !important;
-            } */
     </style>
   </head>
   <body>
-    <pre id="diagram" class="mermaid">
-flowchart
-   a_a(Aftonbladet) --> b_b[gorilla]:::apa --> c_c{chimp}:::apa -->a_a
-        a_a --> c --> d_d --> c_c
-        classDef apa fill:#f9f,stroke:#333,stroke-width:4px;
-        class a_a apa;
-        click a_a "http://www.aftonbladet.se" "bookmark"
-        click c_c callback "new tooltip"
-      </pre
-    >
-    <pre id="diagram2" class="mermaid">
-flowchart LR
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-
-      
-    </pre>
-
-    <pre id="diagram3" class="mermaid">
-      flowchart LR
-    A:::foo & B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    classDef ash color:red
-    class C ash
-    style C stroke:#00f, fill:black
-
-    </pre>
-
     <pre id="diagram4" class="mermaid">
-      stateDiagram
-    A:::foo 
-    B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    style C stroke:#00f, fill:black, color:white
+flowchart
+      A --> D@{ shape: roundedRect
+      }@
 
-    </pre>
+      A --> D@{ shape: roundedRect, icon: car }@
+
+      D@{ shape: roundedRect }@ --> B
+      A@{
+        shape: hexagon,
+        icon: car
+      }@ --> B
+  </pre
+    >
+    <pre id="diagram4" class="mermaid">
+flowchart
+
+      A{"This is a label"}@{
+        shape: document,
+        icon: car,
+        labelAlt: "This is another label
+        **bit**",
+        path: [1,2,3]
+      }@
+      D@{ shape: roundedRect, icon: car
+      }@
+
+      A --> B & D
+      A@{
+        label: "This is the final label {}"
+        icon: car
+      }@ --> B
+      A(This is a label)
+  </pre
+    >
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      // import { layouts } from './mermaid-layout-elk.esm.mjs';
-      // mermaid.registerLayoutLoaders(layouts);
+      import { layouts } from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
@@ -128,15 +106,18 @@ flowchart LR
       mermaid.initialize({
         // theme: 'base',
         // handdrawnSeed: 12,
-        // look: 'handdrawn',
+        look: 'classic',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        'elk.nodePlacement.strategy': 'SIMPLE',
+        // 'elk.nodePlacement.strategy': 'LAYERED',
+        // 'elk.mergeEdges': true,
         // layout: 'dagre',
-        // layout: 'elk',
+        layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
-        flowchart: { titleTopMargin: 10 },
+        flowchart: { titleTopMargin: 10, padding: 8 },
         // fontFamily: 'Caveat',
-        // fontFamily: 'Kalam',
+        fontFamily: 'Kalam',
         // fontFamily: 'courier',
         sequence: {
           actorFontFamily: 'courier',

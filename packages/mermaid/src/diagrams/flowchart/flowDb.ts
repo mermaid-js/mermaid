@@ -4,6 +4,7 @@ import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
+import * as yaml from 'js-yaml';
 import {
   setAccTitle,
   getAccTitle,
@@ -60,8 +61,10 @@ export const addVertex = function (
   style: string[],
   classes: string[],
   dir: string,
-  props = {}
+  props = {},
+  shapeData: any
 ) {
+  console.log('addVertex', id, shapeData);
   if (!id || id.trim().length === 0) {
     return;
   }
@@ -114,6 +117,13 @@ export const addVertex = function (
     vertex.props = props;
   } else if (props !== undefined) {
     Object.assign(vertex.props, props);
+  }
+
+  if (shapeData !== undefined) {
+    console.log('HERE - shapeData: ', shapeData);
+    // const doc = yaml.load(shapeData);
+    // console.log('doc', doc);
+    // vertex.type = shapeData?.shape || 'roundedRect';
   }
 };
 
