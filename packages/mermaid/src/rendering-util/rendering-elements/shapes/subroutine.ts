@@ -37,11 +37,10 @@ export const createSubroutinePathD = (
 
 export const subroutine = async (parent: SVGAElement, node: Node) => {
   const { themeVariables } = getConfig();
-  const { useGradient, mainBkg } = themeVariables;
+  const { useGradient } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const halfPadding = (node?.padding || 8) / 2;
   const nodePadding = node?.padding || 8;
   // const labelPaddingX = node.padding;
   // const labelPaddingY = node.padding;
@@ -51,8 +50,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   const h = bbox.height + labelPaddingY;
   const x = -bbox.width / 2 - labelPaddingX / 2;
   const y = -bbox.height / 2 - labelPaddingY / 2;
-  let rect;
-  const { cssStyles } = node;
+
   const points = [
     { x: 0, y: 0 },
     { x: w, y: 0 },
@@ -78,7 +76,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
       // options.strokeWidth = 0
     }
 
-    const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
+    rc.rectangle(x - 8, y, w + 16, h, options);
     const l1 = rc.line(x, y, x, y + h, options);
     const l2 = rc.line(x + w, y, x + w, y + h, options);
 
@@ -86,7 +84,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     const l2El = shapeSvg.insert(() => l2, ':first-child');
     l1El.attr('class', 'neo-line');
     l2El.attr('class', 'neo-line');
-    rect = shapeSvg.insert(() => roughNode, ':first-child');
+    // rect = shapeSvg.insert(() => roughNode, ':first-child');
 
     // rect.attr('class', 'basic label-container').attr('style', cssStyles);
   } else {

@@ -1,6 +1,5 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import { select } from 'd3';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import {

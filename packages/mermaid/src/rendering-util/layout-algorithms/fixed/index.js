@@ -1,21 +1,5 @@
-import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
-import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
-import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import insertMarkers from '../../rendering-elements/markers.js';
-import { updateNodeBounds } from '../../rendering-elements/shapes/util.js';
-// import {
-//   clear as clearGraphlib,
-//   clusterDb,
-//   adjustClustersAndEdges,
-//   findNonClusterChild,
-//   sortNodesByHierarchy,
-// } from './mermaid-graphlib.js';
-import {
-  insertNode,
-  positionNode,
-  clear as clearNodes,
-  setNodeElem,
-} from '../../rendering-elements/nodes.js';
+import { insertNode, positionNode, clear as clearNodes } from '../../rendering-elements/nodes.js';
 import {
   insertCluster,
   clear as clearClusters,
@@ -27,13 +11,9 @@ import {
   insertEdge,
   clear as clearEdges,
 } from '../../rendering-elements/edges.js';
-import { log } from '$root/logger.js';
-import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 const fixInterSections = (points, startNode, endNode) => {
-  console.log('Fixing intersections - ', points, startNode, endNode);
-
   // Get the intersections
   const startIntersection = startNode.intersect(points[1]);
   const endIntersection = endNode.intersect(points[points.length - 2]);
@@ -46,14 +26,14 @@ const fixInterSections = (points, startNode, endNode) => {
 
 const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   const elem = _elem.insert('g').attr('class', 'root');
-  const clusters = elem.insert('g').attr('class', 'clusters');
+  elem.insert('g').attr('class', 'clusters');
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
   const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
   const nodes = elem.insert('g').attr('class', 'nodes');
 
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
-  let freePos = 0;
+
   const nodeDB = {};
   await Promise.all(
     data4Layout.nodes.map(async function (node) {
@@ -83,30 +63,31 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
     })
   );
 
-  data4Layout.edges.forEach(function (edge) {
-    edge.x = edge?.x || 0;
-    edge.y = edge?.y || 0;
-    insertEdgeLabel(edgeLabels, edge);
-  });
+  await Promise.all(
+    data4Layout.edges.forEach(async function (edge) {
+      edge.x = edge?.x || 0;
+      edge.y = edge?.y || 0;
+      await insertEdgeLabel(edgeLabels, edge);
+    })
+  );
 
   // log.info('############################################# XXX');
   // log.info('###                Layout                 ### XXX');
   // log.info('############################################# XXX');
 
   // Position the nodes
-  await Promise.all(
-    data4Layout.nodes.map(async function (node) {
-      if (node.isGroup) {
-        positionCluster(node);
-      } else {
-        positionNode(node);
-      }
-    })
-  );
+
+  data4Layout.nodes.map((node) => {
+    if (node.isGroup) {
+      positionCluster(node);
+    } else {
+      positionNode(node);
+    }
+  });
 
   // Insert the edges and position the edge labels
   data4Layout.edges.forEach(function (edge) {
-    console.log('Edge: ', edge, nodes[edge.start]);
+    // console.log('Edge: ', edge, nodes[edge.start]);
     //   log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     edge.points = fixInterSections(
@@ -123,7 +104,6 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
       data4Layout.diagramId
     );
     paths.updatedPath = paths.originalPath;
-    console.log('Paths = ', paths);
     positionEdgeLabel(edge, paths);
   });
 
@@ -239,15 +219,8 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
  * ###############################################################
  * Render the graph
  * ###############################################################
- * @param data4Layout
- * @param svg
- * @param element
- * @param algoritm
- * @param algorithm
- * @param positions
  */
 export const render = async (data4Layout, svg, element, algorithm, positions) => {
-  console.log('Graph in render, positions: ', positions);
   // Org
   insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
   clearNodes();
