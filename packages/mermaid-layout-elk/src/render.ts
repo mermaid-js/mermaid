@@ -684,32 +684,32 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
       edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
       positionEdgeLabel(edge, paths);
     }
-    const src = edge.sections[0].startPoint;
-    const dest = edge.sections[0].endPoint;
-    const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+    // const src = edge.sections[0].startPoint;
+    // const dest = edge.sections[0].endPoint;
+    // const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
 
-    const segPoints = segments.map((segment) => {
-      return { x: segment.x + offset.x, y: segment.y + offset.y };
-    });
-    edge.points = [
-      { x: src.x + offset.x, y: src.y + offset.y },
-      ...segPoints,
-      { x: dest.x + offset.x, y: dest.y + offset.y },
-    ];
-    const paths = insertEdge(
-      edgesEl,
-      edge,
-      clusterDb,
-      data4Layout.type,
-      startNode,
-      endNode,
-      data4Layout.diagramId
-    );
-    log.info('APA12 edge points after insert', JSON.stringify(edge.points));
+    // const segPoints = segments.map((segment) => {
+    //   return { x: segment.x + offset.x, y: segment.y + offset.y };
+    // });
+    // edge.points = [
+    //   { x: src.x + offset.x, y: src.y + offset.y },
+    //   ...segPoints,
+    //   { x: dest.x + offset.x, y: dest.y + offset.y },
+    // ];
+    // const paths = insertEdge(
+    //   edgesEl,
+    //   edge,
+    //   clusterDb,
+    //   data4Layout.type,
+    //   startNode,
+    //   endNode,
+    //   data4Layout.diagramId
+    // );
+    // log.info('APA12 edge points after insert', JSON.stringify(edge.points));
 
-    edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
-    edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
-    positionEdgeLabel(edge, paths);
+    // edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
+    // edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
+    // positionEdgeLabel(edge, paths);
   });
 };
 
@@ -766,7 +766,7 @@ function intersectLine(p1, p2, q1, q2) {
   // The denom/2 is to get rounding instead of truncating. It
   // is added or subtracted to the numerator, depending upon the
   // sign of the numerator.
-  num = b1 * c2 - b2 * c1;
+  let num = b1 * c2 - b2 * c1;
   const x = num < 0 ? (num - offset) / denom : (num + offset) / denom;
 
   num = a2 * c1 - a1 * c2;
@@ -925,7 +925,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   }
 };
 const outsideNode = (node, point) => {
-  log.debug('Checking bounds ', node, point);
+  console.log('Checking bounds ', node, point);
   const x = node.x;
   const y = node.y;
   const dx = Math.abs(point.x - x);
