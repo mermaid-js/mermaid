@@ -465,8 +465,8 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config['elk.nodePlacement.strategy'],
-      'elk.layered.mergeEdges': data4Layout.config['elk.mergeEdges'],
+      'nodePlacement.strategy': data4Layout.config.elk.nodePlacementStrategy,
+      'elk.layered.mergeEdges': data4Layout.config.elk.mergeEdges,
       'elk.direction': 'DOWN',
       'spacing.baseValue': 30,
       // 'spacing.nodeNode': 40,
