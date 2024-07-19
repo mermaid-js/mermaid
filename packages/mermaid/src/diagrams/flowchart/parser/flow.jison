@@ -36,8 +36,7 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
-[@\{]                                   { this.pushState("shapeData"); }
-// <shapeData>[\}][\@]                  { console.log('This is the end: ', yytext); this.popState(); }
+\@\{                                   { console.log('Pushing state shapeData!'); this.pushState("shapeData");  }
 <shapeData>[^}]                         { console.log('End bracket found: ', yytext); this.pushState("shapeDataEndBracket");}
 <shapeDataEndBracket>[@]                { console.log('This is the end: ', yytext); this.popState();this.popState(); }
 <shapeDataEndBracket>[^@]*               { console.log('something else: ', yytext); return 'SHAPE_DATA'; }
@@ -372,18 +371,18 @@ separator: NEWLINE | SEMI | EOF ;
 
 
 vertexStatement: vertexStatement link node SHAPE_DATA
-        { console.warn('vs SHAPE_DATA',$vertexStatement.stmt,$node); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+        { /* console.warn('vs SHAPE_DATA',$vertexStatement.stmt,$node, $SHAPE_DATA);*/ yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$SHAPE_DATA); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     | vertexStatement link node
-        { console.warn('vs',$vertexStatement.stmt,$node); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+        { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |  vertexStatement link node spaceList
         { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
-    |node spaceList {console.warn('vertexStatement: node spaceList', $node); $$ = {stmt: $node, nodes:$node }}
+    |node spaceList { /*console.warn('vertexStatement: node spaceList', $node);*/ $$ = {stmt: $node, nodes:$node }}
     |node SHAPE_DATA {
-        console.warn('vertexStatement: node SHAPE_DATA', $node[0], $SHAPE_DATA);
-        yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$SHAPE_DATA+'\n}\n');
-        $$ = {stmt: $node, nodes:$node, shapeData: $SHAPE_DATA+'\n}'}
+        /*console.warn('vertexStatement: node SHAPE_DATA', $node[0], $SHAPE_DATA);*/
+        yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$SHAPE_DATA);
+        $$ = {stmt: $node, nodes:$node, shapeData: $SHAPE_DATA}
     }
-    |node { console.warn('vertexStatement: single node', $node); $$ = {stmt: $node, nodes:$node }}
+    |node { /* console.warn('vertexStatement: single node', $node); */ $$ = {stmt: $node, nodes:$node }}
     ;
 
 node: styledVertex
@@ -396,8 +395,6 @@ styledVertex: vertex
         { /* console.warn('nodc', $vertex);*/ $$ = $vertex;}
     | vertex STYLE_SEPARATOR idString
         {$$ = $vertex;yy.setClass($vertex,$idString)}
-    | vertex idString
-        { yy.setClass($vertex,$idString)}
     ;
 
 vertex:  idString SQS text SQE

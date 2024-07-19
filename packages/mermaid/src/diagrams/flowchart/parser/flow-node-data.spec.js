@@ -20,6 +20,8 @@ describe('when parsing directions', function () {
     const data4Layout = flow.parser.yy.getData();
     console.log(data4Layout.nodes);
     expect(data4Layout.nodes.length).toBe(1);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
   });
   it('should be possible to link to a node with more data', function () {
     const res = flow.parser.parse(`flowchart TB
@@ -31,10 +33,16 @@ describe('when parsing directions', function () {
       `);
 
     const data4Layout = flow.parser.yy.getData();
-    console.log(data4Layout.nodes);
+    console.log(data4Layout.edges);
     expect(data4Layout.nodes.length).toBe(2);
+    expect(data4Layout.nodes[0].shape).toEqual('squareRect');
+    expect(data4Layout.nodes[0].label).toEqual('A');
+    expect(data4Layout.nodes[1].label).toEqual('D');
+    expect(data4Layout.nodes[1].shape).toEqual('circle');
+
+    expect(data4Layout.edges.length).toBe(1);
   });
-  it('should use default direction from top level', function () {
+  it('should not disturb adding multiple nodes after each other', function () {
     const res = flow.parser.parse(`flowchart TB
       A[hello]
       B@{
@@ -45,14 +53,18 @@ describe('when parsing directions', function () {
         shape: circle,
         icon: "clock"
       }@
-
       `);
 
     const data4Layout = flow.parser.yy.getData();
-    console.log(data4Layout.nodes);
     expect(data4Layout.nodes.length).toBe(3);
+    expect(data4Layout.nodes[0].shape).toEqual('squareRect');
+    expect(data4Layout.nodes[0].label).toEqual('hello');
+    expect(data4Layout.nodes[1].shape).toEqual('circle');
+    expect(data4Layout.nodes[1].label).toEqual('B');
+    expect(data4Layout.nodes[2].shape).toEqual('circle');
+    expect(data4Layout.nodes[2].label).toEqual('Hello');
   });
-  it('should use handle } character inside the shape data', function () {
+  it('should use handle bracket end (}) character inside the shape data', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
         label: "This is }",
@@ -61,7 +73,19 @@ describe('when parsing directions', function () {
       `);
 
     const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(1);
+    expect(data4Layout.nodes[0].shape).toEqual('squareRect');
+    expect(data4Layout.nodes[0].label).toEqual('This is }');
+  });
+  it('Diamond shapes should work as usual', function () {
+    const res = flow.parser.parse(`flowchart TB
+      A{This is a label}
+`);
+
+    const data4Layout = flow.parser.yy.getData();
     console.log(data4Layout.nodes);
     expect(data4Layout.nodes.length).toBe(1);
+    expect(data4Layout.nodes[0].shape).toEqual('diamond');
+    expect(data4Layout.nodes[0].label).toEqual('This is a label');
   });
 });
