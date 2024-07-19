@@ -320,7 +320,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
         domId: specialId1,
         id: specialId1,
         labelStyle: '',
-        label: edge.label,
+        label: '',
         padding: 0,
         shape: 'labelRect',
         style: '',
@@ -342,14 +342,16 @@ export const adjustClustersAndEdges = (graph, depth) => {
       const edge2 = structuredClone(edge);
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
+      edge1.id = e.name + '-cyclic-special-1';
       edgeMid.arrowTypeEnd = 'none';
+      edgeMid.id = e.name + '-cyclic-special-mid';
       edge2.label = '';
       edge1.fromCluster = e.v;
       edge2.toCluster = e.v;
-
-      graph.setEdge(v, specialId1, edge1, e.name + '-cyclic-special');
-      graph.setEdge(specialId1, specialId2, edgeMid, e.name + '-cyclic-special');
-      graph.setEdge(specialId2, w, edge2, e.name + '-cyclic-special');
+      edge2.id = e.name + '-cyclic-special-2';
+      graph.setEdge(v, specialId1, edge1, e.name + '-cyclic-special-0');
+      graph.setEdge(specialId1, specialId2, edgeMid, e.name + '-cyclic-special-1');
+      graph.setEdge(specialId2, w, edge2, e.name + '-cyclic-special-2');
     } else if (clusterDb[e.v] || clusterDb[e.w]) {
       log.warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
@@ -375,7 +377,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
   log.trace(clusterDb);
 
   // Remove references to extracted cluster
-  // graph.edges().forEach(edge => {
+  // graph.edges().forEach((edge) => {
   //   if (isDescendant(edge.v, clusterId) || isDescendant(edge.w, clusterId)) {
   //     graph.removeEdge(edge);
   //   }

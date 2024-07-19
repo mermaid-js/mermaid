@@ -216,15 +216,21 @@ export const createText = async (
 
     const htmlText = markdownToHTML(text, config);
     const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
+
+    //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
+    const inputForKatex = text.replace(/\\\\/g, '\\');
+
     const node = {
       isNode,
-      label: decodedReplacedText,
+      label: hasKatex(text) ? inputForKatex : decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
     const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
-    const structuredText = markdownToLines(text.replace('<br>', '<br/>'), config);
+    //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
+    const sanitizeBR = text.replace(/<br\s*\/?>/g, '<br/>');
+    const structuredText = markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config);
     const svgLabel = createFormattedText(
       width,
       el,
@@ -235,9 +241,13 @@ export const createText = async (
       if (/stroke:/.exec(style)) {
         style = style.replace('stroke:', 'lineColor:');
       }
-      select(svgLabel)
-        .select('text')
-        .attr('style', style.replace(/color:/g, 'fill:'));
+
+      const nodeLabelTextStyle = style
+        .replace(/stroke:[^;]+;?/g, '')
+        .replace(/stroke-width:[^;]+;?/g, '')
+        .replace(/fill:[^;]+;?/g, '')
+        .replace(/color:/g, 'fill:');
+      select(svgLabel).attr('style', nodeLabelTextStyle);
       // svgLabel.setAttribute('style', style);
     } else {
       //On style, assume `stroke`, `stroke-width` are used for edge path, so remove them

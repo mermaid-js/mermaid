@@ -88,16 +88,18 @@ export interface MermaidConfig {
    *
    */
   maxEdges?: number;
-  /**
-   * Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
-   *
-   */
-  'elk.mergeEdges'?: boolean;
-  /**
-   * Elk specific option affecting how nodes are placed.
-   *
-   */
-  'elk.nodePlacement.strategy'?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
+  elk?: {
+    /**
+     * Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+     *
+     */
+    mergeEdges?: boolean;
+    /**
+     * Elk specific option affecting how nodes are placed.
+     *
+     */
+    nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
+  };
   darkMode?: boolean;
   htmlLabels?: boolean;
   /**
