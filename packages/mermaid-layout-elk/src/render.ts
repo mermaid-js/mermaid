@@ -925,7 +925,6 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   }
 };
 const outsideNode = (node, point) => {
-  console.log('Checking bounds ', node, point);
   const x = node.x;
   const y = node.y;
   const dx = Math.abs(point.x - x);
