@@ -121,7 +121,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
             graph
           );
           log.info(findNonClusterChild(node.id, graph));
-          clusterDb[node.id] = { id: findNonClusterChild(node.id, graph), node };
+          clusterDb.set(node.id, { id: findNonClusterChild(node.id, graph), node });
           // insertCluster(clusters, graph.node(v));
         } else {
           log.trace('Node - the non recursive path XAX', v, node.id, node);
@@ -138,7 +138,16 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       log.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
 
       // Check if link is either from or to a cluster
-      log.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translating: ', clusterDb[e.v], clusterDb[e.w]);
+      log.info(
+        'Fix',
+        clusterDb,
+        'ids:',
+        e.v,
+        e.w,
+        'Translating: ',
+        clusterDb.get(e.v),
+        clusterDb.get(e.w)
+      );
       await insertEdgeLabel(edgeLabels, edge);
     });
 
@@ -146,20 +155,6 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   };
 
   await processEdges();
-
-  // // Insert labels, this will insert them into the dom so that the width can be calculated
-  // // Also figure out which edges point to/from clusters and adjust them accordingly
-  // // Edges from/to clusters really points to the first child in the cluster.
-  // // TODO: pick optimal child in the cluster to us as link anchor
-  // await graph.edges().forEach(async function (e) {
-  //   const edge = graph.edge(e.v, e.w, e.name);
-  //   log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-  //   log.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
-
-  //   // Check if link is either from or to a cluster
-  //   log.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translating: ', clusterDb[e.v], clusterDb[e.w]);
-  //   await insertEdgeLabel(edgeLabels, edge);
-  // });
 
   log.info('Graph before layout:', JSON.stringify(graphlibJson.write(graph)));
 
@@ -198,7 +193,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           node.y,
           graph.parent(v)
         );
-        clusterDb[node.id].node = node;
+        clusterDb.get(node.id).node = node;
         positionNode(node);
       } else {
         // A tainted cluster node
@@ -222,7 +217,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           await insertCluster(clusters, node);
 
           // A cluster in the non-recursive way
-          clusterDb[node.id].node = node;
+          clusterDb.get(node.id).node = node;
         } else {
           // Regular node
           const parent = graph.node(node.parentId);
@@ -255,7 +250,6 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
     const edge = graph.edge(e);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
-    // OBS HERE
     edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
     const startNode = graph.node(e.v);
     var endNode = graph.node(e.w);
@@ -273,17 +267,8 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   log.warn('Returning from recursive render XAX', elem, diff);
   return { elem, diff };
 };
-/**
- * ###############################################################
- * Render the graph
- * ###############################################################
- * @param data4Layout
- * @param svg
- * @param element
- */
+
 export const render = async (data4Layout, svg, element) => {
-  // Create the input mermaid.graph
-  // console.log('XYZ data4Layout', data4Layout);
   const graph = new graphlib.Graph({
     multigraph: true,
     compound: true,
@@ -305,15 +290,12 @@ export const render = async (data4Layout, svg, element) => {
       return {};
     });
 
-  // Org
-
   insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
   clearNodes();
   clearEdges();
   clearClusters();
   clearGraphlib();
 
-  // Add the nodes and edges to the graph
   data4Layout.nodes.forEach((node) => {
     graph.setNode(node.id, { ...node });
     if (node.parentId) {

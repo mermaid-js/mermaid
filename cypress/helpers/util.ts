@@ -97,7 +97,7 @@ export const openURLAndVerifyRendering = (
   const name: string = (options.name ?? cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   cy.visit(url);
-  // cy.window().should('have.property', 'rendered', true);
+  cy.window().should('have.property', 'rendered', true);
   cy.get('svg').should('be.visible');
 
   if (validation) {
