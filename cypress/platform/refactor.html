@@ -235,26 +235,30 @@ ${shape.code}
         </template>
       </tr>
       <template x-for="shape in shapes">
-      <tr>
-        <th class="vertical-header">
-          <button class="collapsible" x-text="shape.descr">Sub-Routine shape</button>
-          <div class="content">
-            <div class="pre-scrollable">
-              <pre x-text="shape.code"></pre>
+        <tr>
+          <th class="vertical-header">
+            <button class="collapsible" x-text="shape.descr">Sub-Routine shape</button>
+            <div class="content">
+              <div class="pre-scrollable">
+                <pre x-text="shape.code"></pre>
+              </div>
             </div>
-          </div>
-        </th>
+          </th>
           <template x-for="layout in layouts">
             <template x-for="look in looks">
               <template x-for="theme in themes">
                 <td>
-                  <pre id="diagram6" class="mermaid" x-text="generateMermaidCode(layout, look, theme, shape)"></pre>
+                  <pre
+                    id="diagram6"
+                    class="mermaid"
+                    x-text="generateMermaidCode(layout, look, theme, shape)"
+                  ></pre>
                 </td>
               </template>
             </template>
           </template>
-        </template>
-      </tr>
+        </tr>
+      </template>
     </table>
 
     <script type="module">
