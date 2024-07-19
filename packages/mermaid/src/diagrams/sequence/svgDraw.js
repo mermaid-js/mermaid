@@ -329,7 +329,6 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
 const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + 5;
 
   const boxplusLineGroup = elem.append('g').lower();
   var g = boxplusLineGroup;
