@@ -76,7 +76,7 @@ describe('Class diagram V2', () => {
     );
   });
 
-  it('should render a simple class diagram with different visibilities', () => {
+  it('2.1 should render a simple class diagram with different visibilities', () => {
     imgSnapshotTest(
       `
     classDiagram-v2
@@ -93,7 +93,7 @@ describe('Class diagram V2', () => {
     );
   });
 
-  it('should render multiple class diagrams', () => {
+  it('3: should render multiple class diagrams', () => {
     imgSnapshotTest(
       [
         `

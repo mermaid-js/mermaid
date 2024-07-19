@@ -1,7 +1,8 @@
 import { select } from 'd3';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
+import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
 import {
   setAccTitle,
@@ -200,10 +201,17 @@ export const updateLink = function (positions: ('default' | number)[], style: st
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
-      if (utils.isSubstringInArray('fill', style) === -1) {
-        style.push('fill:none');
-      }
+      // if (utils.isSubstringInArray('fill', style) === -1) {
+      //   style.push('fill:none');
+      // }
       edges[pos].style = style;
+      // if edges[pos].style does have fill not set, set it to none
+      if (
+        (edges[pos]?.style?.length ?? 0) > 0 &&
+        !edges[pos]?.style?.some((s) => s?.startsWith('fill'))
+      ) {
+        edges[pos]?.style?.push('fill:none');
+      }
     }
   });
 };
@@ -219,7 +227,7 @@ export const addClass = function (ids: string, style: string[]) {
     if (style !== undefined && style !== null) {
       style.forEach(function (s) {
         if (/color/.exec(s)) {
-          const newStyle = s.replace('fill', 'bgFill').replace('color', 'fill');
+          const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
           classNode.textStyles.push(newStyle);
         }
         classNode.styles.push(s);
@@ -728,14 +736,12 @@ export const destructLink = (_str: string, _startStr: string) => {
 
 // Todo optimizer this by caching existing nodes
 const exists = (allSgs: FlowSubGraph[], _id: string) => {
-  let res = false;
-  allSgs.forEach((sg) => {
-    const pos = sg.nodes.indexOf(_id);
-    if (pos >= 0) {
-      res = true;
+  for (const sg of allSgs) {
+    if (sg.nodes.includes(_id)) {
+      return true;
     }
-  });
-  return res;
+  }
+  return false;
 };
 /**
  * Deletes an id from all subgraphs
@@ -755,11 +761,174 @@ export const lex = {
   firstGraph,
 };
 
+const getTypeFromVertex = (vertex: FlowVertex) => {
+  if (vertex.type === 'square') {
+    return 'squareRect';
+  }
+  if (vertex.type === 'round') {
+    return 'roundedRect';
+  }
+
+  return vertex.type ?? 'squareRect';
+};
+
+const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
+const destructEdgeType = (type: string | undefined) => {
+  let arrowTypeStart = 'none';
+  let arrowTypeEnd = 'arrow_point';
+  switch (type) {
+    case 'arrow_point':
+    case 'arrow_circle':
+    case 'arrow_cross':
+      arrowTypeEnd = type;
+      break;
+
+    case 'double_arrow_point':
+    case 'double_arrow_circle':
+    case 'double_arrow_cross':
+      arrowTypeStart = type.replace('double_', '');
+      arrowTypeEnd = arrowTypeStart;
+      break;
+  }
+  return { arrowTypeStart, arrowTypeEnd };
+};
+
+const addNodeFromVertex = (
+  vertex: FlowVertex,
+  nodes: Node[],
+  parentDB: Map<string, string>,
+  subGraphDB: Map<string, boolean>,
+  config: any,
+  look: string
+) => {
+  const parentId = parentDB.get(vertex.id);
+  const isGroup = subGraphDB.get(vertex.id) ?? false;
+
+  const node = findNode(nodes, vertex.id);
+  if (node) {
+    node.cssStyles = vertex.styles;
+    node.cssCompiledStyles = getCompiledStyles(vertex.classes);
+    node.cssClasses = vertex.classes.join(' ');
+  } else {
+    nodes.push({
+      id: vertex.id,
+      label: vertex.text,
+      labelStyle: '',
+      parentId,
+      padding: config.flowchart?.padding || 8,
+      cssStyles: vertex.styles,
+      cssCompiledStyles: getCompiledStyles(['default', 'node', ...vertex.classes]),
+      cssClasses: 'default ' + vertex.classes.join(' '),
+      shape: getTypeFromVertex(vertex),
+      dir: vertex.dir,
+      domId: vertex.domId,
+      isGroup,
+      look,
+      link: vertex.link,
+      linkTarget: vertex.linkTarget,
+      tooltip: getTooltip(vertex.id),
+    });
+  }
+};
+
+function getCompiledStyles(classDefs: string[]) {
+  let compiledStyles: string[] = [];
+  for (const customClass of classDefs) {
+    const cssClass = classes.get(customClass);
+    if (cssClass?.styles) {
+      compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
+    }
+    if (cssClass?.textStyles) {
+      compiledStyles = [...compiledStyles, ...(cssClass.textStyles ?? [])].map((s) => s.trim());
+    }
+  }
+  return compiledStyles;
+}
+
+export const getData = () => {
+  const config = getConfig();
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  const subGraphs = getSubGraphs();
+  const parentDB = new Map<string, string>();
+  const subGraphDB = new Map<string, boolean>();
+
+  // Setup the subgraph data for adding nodes
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
+    if (subGraph.nodes.length > 0) {
+      subGraphDB.set(subGraph.id, true);
+    }
+    for (const id of subGraph.nodes) {
+      parentDB.set(id, subGraph.id);
+    }
+  }
+
+  // Data is setup, add the nodes
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
+    nodes.push({
+      id: subGraph.id,
+      label: subGraph.title,
+      labelStyle: '',
+      parentId: parentDB.get(subGraph.id),
+      padding: 8,
+      cssCompiledStyles: getCompiledStyles(subGraph.classes),
+      cssClasses: subGraph.classes.join(' '),
+      shape: 'rect',
+      dir: subGraph.dir,
+      isGroup: true,
+      look: config.look,
+    });
+  }
+
+  const n = getVertices();
+  n.forEach((vertex) => {
+    addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
+  });
+
+  const e = getEdges();
+  e.forEach((rawEdge, index) => {
+    const { arrowTypeStart, arrowTypeEnd } = destructEdgeType(rawEdge.type);
+    const styles = [...(e.defaultStyle ?? [])];
+
+    if (rawEdge.style) {
+      styles.push(...rawEdge.style);
+    }
+    const edge: Edge = {
+      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }),
+      start: rawEdge.start,
+      end: rawEdge.end,
+      type: rawEdge.type ?? 'normal',
+      label: rawEdge.text,
+      labelpos: 'c',
+      thickness: rawEdge.stroke,
+      minlen: rawEdge.length,
+      classes:
+        rawEdge?.stroke === 'invisible'
+          ? ''
+          : 'edge-thickness-normal edge-pattern-solid flowchart-link',
+      arrowTypeStart: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeStart,
+      arrowTypeEnd: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeEnd,
+      arrowheadStyle: 'fill: #333',
+      labelStyle: styles,
+      style: styles,
+      pattern: rawEdge.stroke,
+      look: config.look,
+    };
+    edges.push(edge);
+  });
+
+  return { nodes, edges, other: {}, config };
+};
+
 export default {
   defaultConfig: () => defaultConfig.flowchart,
   setAccTitle,
   getAccTitle,
   getAccDescription,
+  getData,
   setAccDescription,
   addVertex,
   lookUpDomId,

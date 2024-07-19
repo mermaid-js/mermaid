@@ -11,12 +11,15 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { dataFetcher, reset as resetDataFetching } from './dataFetcher.js';
+import { getDir } from './stateRenderer-v3-unified.js';
 
 import {
   DEFAULT_DIAGRAM_DIRECTION,
   STMT_STATE,
   STMT_RELATION,
   STMT_CLASSDEF,
+  STMT_STYLEDEF,
   STMT_APPLYCLASS,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
@@ -43,9 +46,14 @@ function newClassesList() {
   return new Map();
 }
 
+let nodes = [];
+let edges = [];
+
 let direction = DEFAULT_DIAGRAM_DIRECTION;
 let rootDoc = [];
 let classes = newClassesList(); // style classes defined by a classDef
+
+// --------------------------------------
 
 const newDoc = () => {
   return {
@@ -165,9 +173,10 @@ const extract = (_doc) => {
   log.info(doc);
   clear(true);
 
-  log.info('Extract', doc);
+  log.info('Extract initial document:', doc);
 
   doc.forEach((item) => {
+    log.warn('Statement', item.stmt);
     switch (item.stmt) {
       case STMT_STATE:
         addState(
@@ -187,9 +196,45 @@ const extract = (_doc) => {
       case STMT_CLASSDEF:
         addStyleClass(item.id.trim(), item.classes);
         break;
+      case STMT_STYLEDEF:
+        {
+          const ids = item.id.trim().split(',');
+          const styles = item.styleClass.split(',');
+          ids.forEach((id) => {
+            let foundState = getState(id);
+            if (foundState === undefined) {
+              const trimmedId = id.trim();
+              addState(trimmedId);
+              foundState = getState(trimmedId);
+            }
+            foundState.styles = styles.map((s) => s.replace(/;/g, '')?.trim());
+          });
+        }
+        break;
       case STMT_APPLYCLASS:
         setCssClass(item.id.trim(), item.styleClass);
         break;
+    }
+  });
+
+  const diagramStates = getStates();
+  const config = getConfig();
+  const look = config.look;
+  resetDataFetching();
+  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look, classes);
+  nodes.forEach((node) => {
+    if (Array.isArray(node.label)) {
+      // add the rest as description
+      node.description = node.label.slice(1);
+      if (node.isGroup && node.description.length > 0) {
+        throw new Error(
+          'Group nodes can only have label. Remove the additional description for node [' +
+            node.id +
+            ']'
+        );
+      }
+      // add first description as label
+      node.label = node.label[0];
     }
   });
 };
@@ -276,6 +321,8 @@ export const addState = function (
 };
 
 export const clear = function (saveCommon) {
+  nodes = [];
+  edges = [];
   documents = {
     root: newDoc(),
   };
@@ -516,7 +563,7 @@ export const setCssClass = function (itemIds, cssClassName) {
 export const setStyle = function (itemId, styleText) {
   const item = getState(itemId);
   if (item !== undefined) {
-    item.textStyles.push(styleText);
+    item.styles.push(styleText);
   }
 };
 
@@ -540,8 +587,14 @@ const setDirection = (dir) => {
 
 const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
+export const getData = () => {
+  const config = getConfig();
+  return { nodes, edges, other: {}, config, direction: getDir(getRootDocV2()) };
+};
+
 export default {
   getConfig: () => getConfig().state,
+  getData,
   addState,
   clear,
   getState,

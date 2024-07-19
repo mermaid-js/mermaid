@@ -9,7 +9,7 @@ const markerOffsets = {
   composition: 18,
   dependency: 6,
   lollipop: 13.5,
-  arrow_point: 5.3,
+  arrow_point: 4,
 } as const;
 
 /**

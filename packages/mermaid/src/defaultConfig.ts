@@ -20,6 +20,10 @@ const config: RequiredDeep<MermaidConfig> = {
   // Set, even though they're `undefined` so that `configKeys` finds these keys
   // TODO: Should we replace these with `null` so that they can go in the JSON Schema?
   deterministicIDSeed: undefined,
+  elk: {
+    mergeEdges: false,
+    nodePlacementStrategy: 'SIMPLE',
+  },
   themeCSS: undefined,
 
   // add non-JSON default config values

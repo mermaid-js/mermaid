@@ -61,7 +61,7 @@
     ]
   },
   "devDependencies": {
-    "@applitools/eyes-cypress": "^3.42.3",
+    "@applitools/eyes-cypress": "^3.44.4",
     "@argos-ci/cypress": "^2.1.0",
     "@cspell/eslint-plugin": "^8.8.4",
     "@cypress/code-coverage": "^3.12.30",
@@ -84,7 +84,7 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "cspell": "^8.6.0",
-    "cypress": "^13.7.1",
+    "cypress": "^13.11.0",
     "cypress-image-snapshot": "^4.0.1",
     "esbuild": "^0.21.5",
     "eslint": "^9.4.0",

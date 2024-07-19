@@ -55,6 +55,7 @@ presetAttributify
 pyplot
 redmine
 rehype
+roughjs
 rscratch
 shiki
 sparkline

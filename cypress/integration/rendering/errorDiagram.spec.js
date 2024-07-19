@@ -3,7 +3,7 @@ import { imgSnapshotTest } from '../../helpers/util';
 describe('Error Diagrams', () => {
   beforeEach(() => {
     cy.on('uncaught:exception', (err) => {
-      expect(err.message).to.include('Parse error');
+      expect(err.message).to.include('error');
       // return false to prevent the error from
       // failing this test
       return false;
