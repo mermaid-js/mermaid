@@ -2,7 +2,6 @@ import type { LangiumParser, ParseResult } from 'langium';
 
 import type { Info, Packet, Pie, Architecture, GitGraph, ContextMap } from './index.js';
 
-
 export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | ContextMap;
 
 const parsers: Record<string, LangiumParser> = {};
