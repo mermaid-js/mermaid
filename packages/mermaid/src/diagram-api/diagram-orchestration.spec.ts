@@ -31,6 +31,7 @@ describe('diagram-orchestration', () => {
       { text: 'info', expected: 'info' },
       { text: 'sequenceDiagram', expected: 'sequence' },
       { text: 'mindmap', expected: 'mindmap' },
+      { text: 'context-map-beta', expected: 'context-map-beta' },
       { text: 'timeline', expected: 'timeline' },
       { text: 'gitGraph', expected: 'gitGraph' },
       { text: 'stateDiagram', expected: 'state' },

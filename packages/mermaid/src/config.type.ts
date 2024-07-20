@@ -194,6 +194,7 @@ export interface MermaidConfig {
   architecture?: ArchitectureDiagramConfig;
   mindmap?: MindmapDiagramConfig;
   kanban?: KanbanDiagramConfig;
+  contextMap?: ContextMapLanguageDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
@@ -1035,6 +1036,41 @@ export interface KanbanDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   sectionWidth?: number;
   ticketBaseUrl?: string;
+}
+/**
+ * The object containing configurations specific for context map language diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "ContextMapDiagramConfig".
+ */
+export interface ContextMapLanguageDiagramConfig extends BaseDiagramConfig {
+  width?: number;
+  height?: number;
+  nodeMargin?: ContextMapNodeMargin;
+  nodePadding?: ContextMapNodePadding;
+  font?: ContextMapFont;
+}
+/**
+ * margins of nodes
+ */
+export interface ContextMapNodeMargin {
+  horizontal?: number;
+  vertical?: number;
+}
+/**
+ * padding of nodes
+ */
+export interface ContextMapNodePadding {
+  horizontal?: number;
+  vertical?: number;
+}
+/**
+ * Font of all Context Map texts
+ */
+export interface ContextMapFont {
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
