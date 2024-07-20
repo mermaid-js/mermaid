@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Context Map Language Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Context Map demo</h1>
+    <pre class="mermaid">
+context-map-beta
+
+ContextMap DDDSampleMap {
+  contains CargoBookingContext
+  contains VoyagePlanningContext
+  contains LocationContext
+
+  CargoBookingContext [SK]<->[SK] VoyagePlanningContext
+  CargoBookingContext [D]<-[U,OHS,PL] LocationContext
+  VoyagePlanningContext [D]<-[U,OHS,PL] LocationContext
+}
+   </pre
+    >
+
+    <pre class="mermaid">
+context-map-beta
+
+ContextMap InsuranceContextMap {
+  contains CustomerManagementContext
+  contains CustomerSelfServiceContext
+  contains PrintingContext
+  contains PolicyManagementContext
+  contains RiskManagementContext
+  contains DebtCollection
+
+  CustomerSelfServiceContext [D,C]<-[U,S] CustomerManagementContext
+  CustomerManagementContext [D,ACL]<-[U,OHS,PL] PrintingContext
+  PrintingContext [U,OHS,PL]->[D,ACL] PolicyManagementContext
+  RiskManagementContext [P]<->[P] PolicyManagementContext
+  PolicyManagementContext [D,CF]<-[U,OHS,PL] CustomerManagementContext
+  DebtCollection [D,ACL]<-[U,OHS,PL] PrintingContext
+  PolicyManagementContext [SK]<->[SK] DebtCollection
+}
+   </pre
+    >
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'base',
+        logLevel: 0,
+        useMaxWidth: false,
+      });
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+</html>

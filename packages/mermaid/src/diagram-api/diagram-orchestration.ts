@@ -6,6 +6,7 @@ import git from '../diagrams/git/gitGraphDetector.js';
 import gantt from '../diagrams/gantt/ganttDetector.js';
 import { info } from '../diagrams/info/infoDetector.js';
 import { pie } from '../diagrams/pie/pieDetector.js';
+import { contextMap } from '../diagrams/context-map/contextMapDetector.js';
 import quadrantChart from '../diagrams/quadrant-chart/quadrantDetector.js';
 import xychart from '../diagrams/xychart/xychartDetector.js';
 import requirement from '../diagrams/requirement/requirementDetector.js';
@@ -84,6 +85,7 @@ export const addDiagrams = () => {
     flowchartV2,
     flowchart,
     mindmap,
+    contextMap,
     timeline,
     git,
     stateV2,
