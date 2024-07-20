@@ -2,7 +2,11 @@ import { parse } from '../src/parse.js';
 import { describe, expect, it } from 'vitest';
 import { expandToString as s } from 'langium/generate';
 import { isContextMap as isModel } from '../src/language/generated/ast.js';
-import type { ContextMap as Model, ContextMapNode, ContextMapLink} from '../src/language/generated/ast.js';
+import type {
+  ContextMap as Model,
+  ContextMapNode,
+  ContextMapLink,
+} from '../src/language/generated/ast.js';
 
 describe('contextMap parsing', () => {
   const exampleGrammar = `
@@ -69,7 +73,7 @@ context-map-beta
         ${ast.blocks[0].body
           ?.filter((n) => n.$type === 'ContextMapNode')
           .map((rawNode) => {
-            const node = rawNode as ContextMapNode
+            const node = rawNode as ContextMapNode;
             return s`
         Node:
           name: ${node.name}
@@ -80,7 +84,7 @@ context-map-beta
         ${ast.blocks[0].body
           ?.filter((n) => n.$type === 'ContextMapLink')
           .map((rawLink) => {
-            const link = rawLink as ContextMapLink
+            const link = rawLink as ContextMapLink;
             return s`
             Edge:
               direction: ${link.direction}

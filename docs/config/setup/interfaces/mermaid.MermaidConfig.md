@@ -73,6 +73,16 @@ This matters if you are using base tag settings.
 
 ---
 
+### contextMap
+
+• `Optional` **contextMap**: `ContextMapLanguageDiagramConfig`
+
+#### Defined in
+
+[packages/mermaid/src/config.type.ts:158](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L158)
+
+---
+
 ### darkMode
 
 • `Optional` **darkMode**: `boolean`
