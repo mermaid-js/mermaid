@@ -138,6 +138,7 @@ mergeStatement
     | MERGE ref commitTags COMMIT_ID STR COMMIT_TYPE commitType {yy.merge($2, $5, $7, $3)}
     ;
 
+
 commitStatement
     : COMMIT commit_arg {yy.commit($2)}
     | COMMIT commitTags {yy.commit('','',yy.commitType.NORMAL,$2)}
