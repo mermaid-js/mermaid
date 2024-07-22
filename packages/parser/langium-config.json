@@ -15,6 +15,11 @@
       "id": "pie",
       "grammar": "src/language/pie/pie.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "architecture",
+      "grammar": "src/language/architecture/architecture.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",

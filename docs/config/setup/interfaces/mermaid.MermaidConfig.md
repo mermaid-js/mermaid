@@ -20,6 +20,16 @@
 
 ---
 
+### architecture
+
+• `Optional` **architecture**: `ArchitectureDiagramConfig`
+
+#### Defined in
+
+[packages/mermaid/src/config.type.ts:163](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L163)
+
+---
+
 ### arrowMarkerAbsolute
 
 • `Optional` **arrowMarkerAbsolute**: `boolean`
@@ -39,7 +49,7 @@ This matters if you are using base tag settings.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:162](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L162)
+[packages/mermaid/src/config.type.ts:169](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L169)
 
 ---
 
@@ -49,7 +59,7 @@ This matters if you are using base tag settings.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:159](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L159)
+[packages/mermaid/src/config.type.ts:166](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L166)
 
 ---
 
@@ -59,7 +69,7 @@ This matters if you are using base tag settings.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:150](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L150)
+[packages/mermaid/src/config.type.ts:156](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L156)
 
 ---
 
@@ -83,7 +93,7 @@ You can set this attribute to base the seed on a static string.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:144](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L144)
+[packages/mermaid/src/config.type.ts:150](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L150)
 
 ---
 
@@ -101,7 +111,7 @@ should not change unless content is changed.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:137](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L137)
+[packages/mermaid/src/config.type.ts:143](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L143)
 
 ---
 
@@ -111,7 +121,7 @@ should not change unless content is changed.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:163](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L163)
+[packages/mermaid/src/config.type.ts:170](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L170)
 
 ---
 
@@ -121,7 +131,7 @@ should not change unless content is changed.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:152](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L152)
+[packages/mermaid/src/config.type.ts:158](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L158)
 
 ---
 
@@ -131,7 +141,7 @@ should not change unless content is changed.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:145](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L145)
+[packages/mermaid/src/config.type.ts:151](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L151)
 
 ---
 
@@ -155,7 +165,7 @@ See <https://developer.mozilla.org/en-US/docs/Web/CSS/font-family>
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:165](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L165)
+[packages/mermaid/src/config.type.ts:172](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L172)
 
 ---
 
@@ -169,7 +179,7 @@ If set to true, ignores legacyMathML.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:126](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L126)
+[packages/mermaid/src/config.type.ts:132](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L132)
 
 ---
 
@@ -179,7 +189,7 @@ If set to true, ignores legacyMathML.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:147](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L147)
+[packages/mermaid/src/config.type.ts:153](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L153)
 
 ---
 
@@ -189,7 +199,7 @@ If set to true, ignores legacyMathML.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:158](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L158)
+[packages/mermaid/src/config.type.ts:165](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L165)
 
 ---
 
@@ -203,13 +213,26 @@ If set to true, ignores legacyMathML.
 
 ---
 
+### iconLibraries
+
+• `Optional` **iconLibraries**: ([`IconLibrary`](../modules/mermaid.md#iconlibrary) | `"aws:full"`)\[]
+
+This option specifies an object contianing a mappig of SVG icon names to a resolver that returns the svg code.
+For supported diagrams (i.e., Architecture), their syntax allows refering to key names in this object to display the corresponding SVG icon in the rendered diagram.
+
+#### Defined in
+
+[packages/mermaid/src/config.type.ts:125](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L125)
+
+---
+
 ### journey
 
 • `Optional` **journey**: `JourneyDiagramConfig`
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:148](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L148)
+[packages/mermaid/src/config.type.ts:154](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L154)
 
 ---
 
@@ -246,7 +269,7 @@ This option decides the amount of logging to be used by mermaid.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:166](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L166)
+[packages/mermaid/src/config.type.ts:173](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L173)
 
 ---
 
@@ -280,7 +303,7 @@ The maximum allowed size of the users text diagram
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:157](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L157)
+[packages/mermaid/src/config.type.ts:164](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L164)
 
 ---
 
@@ -290,7 +313,7 @@ The maximum allowed size of the users text diagram
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:161](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L161)
+[packages/mermaid/src/config.type.ts:168](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L168)
 
 ---
 
@@ -300,7 +323,7 @@ The maximum allowed size of the users text diagram
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:153](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L153)
+[packages/mermaid/src/config.type.ts:159](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L159)
 
 ---
 
@@ -310,7 +333,7 @@ The maximum allowed size of the users text diagram
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:154](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L154)
+[packages/mermaid/src/config.type.ts:160](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L160)
 
 ---
 
@@ -320,7 +343,7 @@ The maximum allowed size of the users text diagram
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:156](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L156)
+[packages/mermaid/src/config.type.ts:162](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L162)
 
 ---
 
@@ -330,7 +353,7 @@ The maximum allowed size of the users text diagram
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:160](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L160)
+[packages/mermaid/src/config.type.ts:167](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L167)
 
 ---
 
@@ -366,7 +389,7 @@ Level of trust for parsed diagram
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L146)
+[packages/mermaid/src/config.type.ts:152](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L152)
 
 ---
 
@@ -388,7 +411,7 @@ Dictates whether mermaid starts on Page load
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:151](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L151)
+[packages/mermaid/src/config.type.ts:157](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L157)
 
 ---
 
@@ -401,7 +424,7 @@ This is useful when you want to control how to handle syntax errors in your appl
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:172](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L172)
+[packages/mermaid/src/config.type.ts:179](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L179)
 
 ---
 
@@ -444,7 +467,7 @@ You may also use `themeCSS` to override this value.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:149](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L149)
+[packages/mermaid/src/config.type.ts:155](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L155)
 
 ---
 
@@ -454,7 +477,7 @@ You may also use `themeCSS` to override this value.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:164](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L164)
+[packages/mermaid/src/config.type.ts:171](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L171)
 
 ---
 
@@ -464,4 +487,4 @@ You may also use `themeCSS` to override this value.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:155](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L155)
+[packages/mermaid/src/config.type.ts:161](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L161)

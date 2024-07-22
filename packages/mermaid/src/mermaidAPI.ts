@@ -23,6 +23,8 @@ import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
+import { registerIcons } from './rendering-util/svgRegister.js';
+import defaultIconLibrary from './rendering-util/svg/index.js';
 import { toBase64 } from './utils/base64.js';
 import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 
@@ -482,6 +484,22 @@ function initialize(options: MermaidConfig = {}) {
 
   // Set default options
   configApi.saveConfigFromInitialize(options);
+
+  registerIcons(defaultIconLibrary);
+  if (options?.iconLibraries) {
+    // TODO: find a better way to handle this, assumed to be resolved by the time diagrams are being generated
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    options.iconLibraries.forEach(async (library) => {
+      if (typeof library === 'string') {
+        if (library === 'aws:full') {
+          const { default: awsFull } = await import('./rendering-util/svg/aws/awsFull.js');
+          registerIcons(awsFull);
+        }
+      } else {
+        registerIcons(library);
+      }
+    });
+  }
 
   if (options?.theme && options.theme in theme) {
     // Todo merge with user options

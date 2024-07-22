@@ -15,6 +15,8 @@ import { isDetailedError } from './utils.js';
 import type { DetailedError } from './utils.js';
 import type { ExternalDiagramDefinition } from './diagram-api/types.js';
 import type { UnknownDiagramError } from './errors.js';
+import type { IconLibrary, IconResolver } from './rendering-util/svgRegister.js';
+import { createIcon } from './rendering-util/svgRegister.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 
 export type {
@@ -26,7 +28,11 @@ export type {
   ParseOptions,
   ParseResult,
   UnknownDiagramError,
+  IconLibrary,
+  IconResolver,
 };
+
+export { createIcon };
 
 export interface RunOptions {
   /**
