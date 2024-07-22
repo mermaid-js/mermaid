@@ -1,24 +1,23 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Architecture Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Architecture Mermaid Quick Test Page</title>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
-  <style>
-    div.mermaid {
-      /* font-family: 'trebuchet ms', verdana, arial; */
-      font-family: 'Courier New', Courier, monospace !important;
-    }
-  </style>
-</head>
-
-<body>
-  <h1>Architecture diagram demo</h1>
-  <h2>Simple diagram with groups</h2>
-  <pre class="mermaid">
-      architecture
+  <body>
+    <h1>Architecture diagram demo</h1>
+    <h2>Simple diagram with groups</h2>
+    <pre class="mermaid">
+      architecture-beta
         group api(cloud)[API]
 
         service db(database)[Database] in api
@@ -32,11 +31,11 @@
         disk2 T--B db
         server T--B gateway
     </pre>
-  <hr />
+    <hr />
 
-  <h2>Groups within groups</h2>
-  <pre class="mermaid">
-      architecture
+    <h2>Groups within groups</h2>
+    <pre class="mermaid">
+      architecture-beta
         group api[API]
         group public[Public API] in api
         group private[Private API] in api
@@ -56,18 +55,18 @@
 
         serv1 L--R gateway
     </pre>
-  <hr />
+    <hr />
 
-  <h2>Default icon (?) from unknown icon name</h2>
-  <pre class="mermaid">
-      architecture
+    <h2>Default icon (?) from unknown icon name</h2>
+    <pre class="mermaid">
+      architecture-beta
         service unknown(iconnamedoesntexist)[Unknown Icon]
     </pre>
-  <hr />
+    <hr />
 
-  <h2>Split Direction</h2>
-  <pre class="mermaid">
-      architecture
+    <h2>Split Direction</h2>
+    <pre class="mermaid">
+      architecture-beta
         service db(database)[Database]
         service s3(disk)[Storage]
         service serv1(server)[Server 1]
@@ -79,11 +78,11 @@
         serv2 L--B s3
         serv1 T--B disk
     </pre>
-  <hr />
+    <hr />
 
-  <h2>Arrow Tests</h2>
-  <pre class="mermaid">
-      architecture
+    <h2>Arrow Tests</h2>
+    <pre class="mermaid">
+      architecture-beta
         service servC(server)[Server 1]
         service servL(server)[Server 2]
         service servR(server)[Server 3]
@@ -100,8 +99,8 @@
         servR (T--R) servT
         servR (B--R) servB
     </pre>
-  <pre class="mermaid">
-      architecture
+    <pre class="mermaid">
+      architecture-beta
         service servC(server)[Server 1]
         service servL(server)[Server 2]
         service servR(server)[Server 3]
@@ -118,11 +117,11 @@
         servT (R--T) servR
         servB (R--B) servR
     </pre>
-  <hr />
+    <hr />
 
-  <h2>Group Edges</h2>
-  <pre class="mermaid">
-      architecture
+    <h2>Group Edges</h2>
+    <pre class="mermaid">
+      architecture-beta
         group left_group(cloud)[Left]
         group right_group(cloud)[Right]
         group top_group(cloud)[Top]
@@ -139,12 +138,13 @@
         right_disk{group} (L--R) center_disk{group}
         top_disk{group} (B--T) center_disk{group}
         bottom_disk{group} (T--B) center_disk{group}
-  </pre>
-  <hr />
+  </pre
+    >
+    <hr />
 
-  <h2>Edge Label Test</h2>
-  <pre class="mermaid">
-      architecture
+    <h2>Edge Label Test</h2>
+    <pre class="mermaid">
+      architecture-beta
         service servC(server)[Server 1]
         service servL(server)[Server 2]
         service servR(server)[Server 3]
@@ -161,8 +161,8 @@
         servR T-[Label]-R servT
         servR B-[Label]-R servB
     </pre>
-  <pre class="mermaid">
-      architecture
+    <pre class="mermaid">
+      architecture-beta
         service servC(server)[Server 1]
         service servL(server)[Server 2]
         service servR(server)[Server 3]
@@ -180,10 +180,10 @@
         servR B-[Label that is Long]-R servB
     </pre>
 
-  <hr />
-  <h2>Junction Demo</h2>
-  <pre class="mermaid">
-      architecture
+    <hr />
+    <h2>Junction Demo</h2>
+    <pre class="mermaid">
+      architecture-beta
         service left_disk(disk)[Disk]
         service top_disk(disk)[Disk]
         service bottom_disk(disk)[Disk]
@@ -199,11 +199,11 @@
         top_gateway B--T juncR
         bottom_gateway T--B juncR
     </pre>
-  <hr />
+    <hr />
 
-  <h2>Junction Demo Groups</h2>
-  <pre class="mermaid">
-      architecture
+    <h2>Junction Demo Groups</h2>
+    <pre class="mermaid">
+      architecture-beta
         group left
         group right
         service left_disk(disk)[Disk] in left
@@ -224,87 +224,87 @@
 
         juncC{group} R--L) juncR{group}
     </pre>
-  <hr />
+    <hr />
 
-  <h2>AWS Icon Demo</h2>
-  <pre class="mermaid">
-    architecture
-      service s3(s3)[Cloud Store]
-      service ec2(ec2)[Server]
-      service wave(wavelength)[Wave]
+    <h2>AWS Icon Demo</h2>
+    <pre class="mermaid">
+    architecture-beta
+      service s3(aws:s3)[Cloud Store]
+      service ec2(aws:ec2)[Server]
+      service wave(aws:wavelength)[Wave]
 
       s3 L--R ec2
       s3 T--B wave
-  </pre>
+  </pre
+    >
 
-  <script type="module">
-    import mermaid from './mermaid.esm.mjs';
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
 
-    const ALLOWED_TAGS = [
-      'a',
-      'b',
-      'blockquote',
-      'br',
-      'dd',
-      'div',
-      'dl',
-      'dt',
-      'em',
-      'foreignObject',
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'h5',
-      'h6',
-      'h7',
-      'h8',
-      'hr',
-      'i',
-      'li',
-      'ul',
-      'ol',
-      'p',
-      'pre',
-      'span',
-      'strike',
-      'strong',
-      'table',
-      'tbody',
-      'td',
-      'tfoot',
-      'th',
-      'thead',
-      'tr',
-    ];
-    mermaid.parseError = function (err, hash) {
-      // console.error('Mermaid error: ', err);
-    };
-    mermaid.initialize({
-      theme: 'base',
-      startOnLoad: true,
-      logLevel: 0,
-      flowchart: {
+      const ALLOWED_TAGS = [
+        'a',
+        'b',
+        'blockquote',
+        'br',
+        'dd',
+        'div',
+        'dl',
+        'dt',
+        'em',
+        'foreignObject',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'h7',
+        'h8',
+        'hr',
+        'i',
+        'li',
+        'ul',
+        'ol',
+        'p',
+        'pre',
+        'span',
+        'strike',
+        'strong',
+        'table',
+        'tbody',
+        'td',
+        'tfoot',
+        'th',
+        'thead',
+        'tr',
+      ];
+      mermaid.parseError = function (err, hash) {
+        // console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize({
+        theme: 'base',
+        startOnLoad: true,
+        logLevel: 0,
+        flowchart: {
+          useMaxWidth: false,
+          htmlLabels: true,
+        },
+        gantt: {
+          useMaxWidth: false,
+        },
+        architecture: {
+          iconSize: 80,
+        },
         useMaxWidth: false,
-        htmlLabels: true,
-      },
-      gantt: {
-        useMaxWidth: false,
-      },
-      architecture: {
-        iconSize: 80,
-      },
-      useMaxWidth: false,
-      iconLibraries: ['aws:full']
-    });
-    function callback() {
-      alert('It worked');
-    }
-    mermaid.parseError = function (err, hash) {
-      console.error('In parse error:');
-      console.error(err);
-    };
-  </script>
-</body>
-
+        iconLibraries: ['aws:full'],
+      });
+      function callback() {
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
 </html>

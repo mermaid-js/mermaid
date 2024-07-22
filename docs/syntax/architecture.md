@@ -11,7 +11,7 @@
 ## Example
 
 ```mermaid-example
-architecture
+architecture-beta
     group api(cloud)[API]
 
     service db(database)[Database] in api
@@ -25,7 +25,7 @@ architecture
 ```
 
 ```mermaid
-architecture
+architecture-beta
     group api(cloud)[API]
 
     service db(database)[Database] in api
@@ -44,7 +44,7 @@ The building blocks of an architecture are `groups`, `services`, `edges`, and `j
 
 For supporting components, icons are declared by surrounding the icon name with `()`, while labels are declared by surrounding the text with `[]`.
 
-To begin an architecture diagram, use the keyword `architecture`, followed by your groups, services, edges, and junctions. While each of the 3 building blocks can be declared in any order, care must be taken to ensure the identifier was previously declared by another component.
+To begin an architecture diagram, use the keyword `architecture-beta`, followed by your groups, services, edges, and junctions. While each of the 3 building blocks can be declared in any order, care must be taken to ensure the identifier was previously declared by another component.
 
 ### Groups
 
@@ -156,7 +156,7 @@ junction {junction id} (in {parent id})?
 ```
 
 ```mermaid-example
-architecture
+architecture-beta
     service left_disk(disk)[Disk]
     service top_disk(disk)[Disk]
     service bottom_disk(disk)[Disk]
@@ -174,7 +174,7 @@ architecture
 ```
 
 ```mermaid
-architecture
+architecture-beta
     service left_disk(disk)[Disk]
     service top_disk(disk)[Disk]
     service bottom_disk(disk)[Disk]

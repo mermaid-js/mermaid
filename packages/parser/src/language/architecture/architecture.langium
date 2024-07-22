@@ -3,7 +3,7 @@ import "../common/common";
 
 entry Architecture:
     NEWLINE*
-    "architecture"
+    "architecture-beta"
     (
     NEWLINE* TitleAndAccessibilities
     | NEWLINE* Statement*
