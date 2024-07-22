@@ -5,6 +5,7 @@ import { getThemeVariables as forestThemeVariables } from './theme-forest.js';
 import { getThemeVariables as neutralThemeVariables } from './theme-neutral.js';
 import { getThemeVariables as neoThemeVariables } from './theme-neo.js';
 import { getThemeVariables as neoDarkThemeVariables } from './theme-neo-dark.js';
+import { getThemeVariables as mcThemeVariables } from './theme-mc.js';
 
 export default {
   base: {
@@ -27,5 +28,8 @@ export default {
   },
   'neo-dark': {
     getThemeVariables: neoDarkThemeVariables,
+  },
+  mc: {
+    getThemeVariables: mcThemeVariables,
   },
 };
