@@ -17,6 +17,10 @@ import { doublecircle } from './shapes/doubleCircle.js';
 import { rect_left_inv_arrow } from './shapes/rectLeftInvArrow.js';
 import { question } from './shapes/question.js';
 import { hexagon } from './shapes/hexagon.js';
+import { text } from './shapes/text.js';
+import { card } from './shapes/card.js';
+import { shadedProcess } from './shapes/shadedProcess.js';
+import { anchor } from './shapes/anchor.js';
 import { lean_right } from './shapes/leanRight.js';
 import { lean_left } from './shapes/leanLeft.js';
 import { trapezoid } from './shapes/trapezoid.js';
@@ -47,6 +51,10 @@ const shapes = {
   trapezoid,
   inv_trapezoid,
   labelRect,
+  text,
+  card,
+  shadedProcess,
+  anchor,
 };
 
 const nodeElems = new Map();

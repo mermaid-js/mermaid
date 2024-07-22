@@ -134,3 +134,9 @@ export function insertPolygonShape(parent, w, h, points) {
 
 export const getNodeClasses = (node, extra) =>
   (node.look === 'handdrawn' ? 'rough-node' : 'node') + ' ' + node.cssClasses + ' ' + (extra || '');
+
+export function createPathFromPoints(points) {
+  const pointStrings = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`);
+  pointStrings.push('Z');
+  return pointStrings.join(' ');
+}
