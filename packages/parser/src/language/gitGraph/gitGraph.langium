@@ -1,6 +1,7 @@
 grammar GitGraph
 
 import "../common/common";
+
 entry GitGraph:
   NEWLINE*
   'gitGraph' Direction? ':'?
@@ -23,60 +24,43 @@ Statement
 ;
 
 
-Options:
-    'options' '{' rawOptions+=STRING* '}' EOL;
-
 Direction:
     dir=('LR' | 'TB' | 'BT') EOL;
 
+Options:
+    'options' '{' rawOptions+=STRING* '}' EOL;
+
 Commit:
-    'commit' properties+=CommitProperty* EOL;
-
-CommitProperty
-: CommitId
-| CommitMessage
-| Tags
-| CommitType
-;
-
-CommitId:
-    'id:' id=STRING;
-
-CommitMessage:
-    'msg:'? message=STRING;
-
-Tags:
-    'tag:' tags=STRING;
-
-CommitType:
-    'type:' name=('NORMAL' | 'REVERSE' | 'HIGHLIGHT');
-
+    'commit' 
+    (
+        'id:' id=STRING 
+        |'msg:'? message=STRING
+        |'tag:' tags=STRING
+        |'type:' name=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
+    )* EOL;
 Branch:
-    'branch' name=(ID|STRING) ('order:' order=INT)? EOL;
+    'branch' name=(ID|STRING)
+    ('order:' order=INT)?
+    EOL;
 
 Merge:
-    'merge' name=(ID|STRING) properties+=MergeProperties*  EOL;
-
-MergeProperties
-: CommitId
-| Tags
-| CommitType
-;
+    'merge' branch=(ID|STRING)
+    (
+        'id:' id=STRING
+        |'tag:' tags=STRING
+        |'type:' name=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
+    )* EOL;
 
 Checkout:
-    ('checkout'|'switch') id=(ID|STRING) EOL;
+    ('checkout'|'switch') branch=(ID|STRING) EOL;
 
 CherryPicking:
-    'cherry-pick' properties+=CherryPickProperties* EOL;
-
-CherryPickProperties
-: CommitId
-| Tags
-| ParentCommit
-;
-
-ParentCommit:
-    'parent:' id=STRING;
+    'cherry-pick' 
+    (
+        'id:' id=STRING
+        |'tag:' tags=STRING
+        |'parent:' id=STRING
+    )* EOL;
 
 terminal INT returns number: /[0-9]+(?=\s)/;
 terminal ID returns string: /\w([-\./\w]*[-\w])?/;

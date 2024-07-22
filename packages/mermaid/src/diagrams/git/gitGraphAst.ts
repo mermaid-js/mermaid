@@ -11,16 +11,20 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import defaultConfig from '../../defaultConfig.js';
+import type { DiagramOrientation, Commit } from './gitGraphTypes.js';
 
-let { mainBranchName, mainBranchOrder } = getConfig().gitGraph;
-let commits = new Map();
-let head = null;
-let branchesConfig = new Map();
+const mainBranchName = defaultConfig.gitGraph.mainBranchName;
+const mainBranchOrder = defaultConfig.gitGraph.mainBranchOrder;
+
+let commits = new Map<string, Commit>();
+let head: Commit | null = null;
+let branchesConfig = new Map<string, { name: string; order: number }>();
 branchesConfig.set(mainBranchName, { name: mainBranchName, order: mainBranchOrder });
-let branches = new Map();
-branches.set(mainBranchName, head);
+let branches = new Map<string, string | null>();
+branches.set(mainBranchName, null);
 let curBranch = mainBranchName;
-let direction = 'LR';
+let direction: DiagramOrientation = 'LR';
 let seq = 0;
 
 /**
@@ -57,8 +61,8 @@ function getId() {
 // }
 
 /**
- * @param currentCommit
- * @param otherCommit
+ * @param currentCommit - current commit
+ * @param otherCommit - other commit
  */
 // function isReachableFrom(currentCommit, otherCommit) {
 //   const currentSeq = currentCommit.seq;
@@ -68,10 +72,10 @@ function getId() {
 // }
 
 /**
- * @param list
- * @param fn
+ * @param list - list of items
+ * @param fn -  function to get the key
  */
-function uniqBy(list, fn) {
+function uniqBy(list: any[], fn: (item: any) => any) {
   const recordMap = Object.create(null);
   return list.reduce((out, item) => {
     const key = fn(item);
@@ -83,17 +87,18 @@ function uniqBy(list, fn) {
   }, []);
 }
 
-export const setDirection = function (dir) {
+export const setDirection = function (dir: DiagramOrientation) {
   direction = dir;
 };
+
 let options = {};
-export const setOptions = function (rawOptString) {
+export const setOptions = function (rawOptString: string) {
   log.debug('options str', rawOptString);
   rawOptString = rawOptString?.trim();
   rawOptString = rawOptString || '{}';
   try {
     options = JSON.parse(rawOptString);
-  } catch (e) {
+  } catch (e: any) {
     log.error('error while parsing gitGraph options', e.message);
   }
 };
@@ -102,60 +107,65 @@ export const getOptions = function () {
   return options;
 };
 
-export const commit = function (msg, id, type, tags) {
-  log.debug('Entering commit:', msg, id, type, tags);
-  const config = getConfig();
-  id = common.sanitizeText(id, config);
-  msg = common.sanitizeText(msg, config);
-  tags = tags?.map((tag) => common.sanitizeText(tag, config));
-  const commit = {
+export const commit = function (msg: string, id: string, type: number, tag: string) {
+  log.info('commit', msg, id, type, tag);
+  log.debug('Entering commit:', msg, id, type, tag);
+  id = common.sanitizeText(id, getConfig());
+  msg = common.sanitizeText(msg, getConfig());
+  tag = common.sanitizeText(tag, getConfig());
+  const newCommit: Commit = {
     id: id ? id : seq + '-' + getId(),
     message: msg,
     seq: seq++,
-    type: type ? type : commitType.NORMAL,
-    tags: tags ?? [],
+    type: type,
+    tag: tag ? tag : '',
     parents: head == null ? [] : [head.id],
     branch: curBranch,
   };
-  head = commit;
-  commits.set(commit.id, commit);
-  branches.set(curBranch, commit.id);
-  log.debug('in pushCommit ' + commit.id);
+  head = newCommit;
+  log.info('main branch', mainBranchName);
+  commits.set(newCommit.id, newCommit);
+  branches.set(curBranch, newCommit.id);
+  log.debug('in pushCommit ' + newCommit.id);
 };
 
-export const branch = function (name, order) {
+export const branch = function (name: string, order: number) {
   name = common.sanitizeText(name, getConfig());
   if (!branches.has(name)) {
     branches.set(name, head != null ? head.id : null);
-    branchesConfig.set(name, { name, order: order ? parseInt(order, 10) : null });
+    branchesConfig.set(name, { name, order });
     checkout(name);
     log.debug('in createBranch');
   } else {
-    let error = new Error(
-      'Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ' +
-        name +
-        '")'
+    throw new Error(
+      `Trying to create an existing branch: ${name}. Use 'checkout ${name}' instead.`
     );
-    error.hash = {
-      text: 'branch ' + name,
-      token: 'branch ' + name,
-      line: '1',
-      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
-      expected: ['"checkout ' + name + '"'],
-    };
-    throw error;
   }
 };
 
-export const merge = function (otherBranch, custom_id, override_type, custom_tags) {
-  const config = getConfig();
-  otherBranch = common.sanitizeText(otherBranch, config);
-  custom_id = common.sanitizeText(custom_id, config);
-
-  const currentCommit = commits.get(branches.get(curBranch));
-  const otherCommit = commits.get(branches.get(otherBranch));
+export const merge = (
+  otherBranch: string,
+  custom_id?: string,
+  override_type?: number,
+  custom_tag?: string
+): void => {
+  otherBranch = common.sanitizeText(otherBranch, getConfig());
+  if (custom_id) {
+    custom_id = common.sanitizeText(custom_id, getConfig());
+  }
+  const currentBranchCheck: string | null | undefined = branches.get(curBranch);
+  const otherBranchCheck: string | null | undefined = branches.get(otherBranch);
+  const currentCommit: Commit | undefined = currentBranchCheck
+    ? commits.get(currentBranchCheck)
+    : undefined;
+  const otherCommit: Commit | undefined = otherBranchCheck
+    ? commits.get(otherBranchCheck)
+    : undefined;
+  if (currentCommit && otherCommit && currentCommit.branch === otherBranch) {
+    throw new Error(`Cannot merge branch '${otherBranch}' into itself.`);
+  }
   if (curBranch === otherBranch) {
-    let error = new Error('Incorrect usage of "merge". Cannot merge a branch to itself');
+    const error: any = new Error('Incorrect usage of "merge". Cannot merge a branch to itself');
     error.hash = {
       text: 'merge ' + otherBranch,
       token: 'merge ' + otherBranch,
@@ -165,7 +175,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
     };
     throw error;
   } else if (currentCommit === undefined || !currentCommit) {
-    let error = new Error(
+    const error: any = new Error(
       'Incorrect usage of "merge". Current branch (' + curBranch + ')has no commits'
     );
     error.hash = {
@@ -177,7 +187,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
     };
     throw error;
   } else if (!branches.has(otherBranch)) {
-    let error = new Error(
+    const error: any = new Error(
       'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') does not exist'
     );
     error.hash = {
@@ -189,7 +199,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
     };
     throw error;
   } else if (otherCommit === undefined || !otherCommit) {
-    let error = new Error(
+    const error: any = new Error(
       'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') has no commits'
     );
     error.hash = {
@@ -201,7 +211,7 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
     };
     throw error;
   } else if (currentCommit === otherCommit) {
-    let error = new Error('Incorrect usage of "merge". Both branches have same head');
+    const error: any = new Error('Incorrect usage of "merge". Both branches have same head');
     error.hash = {
       text: 'merge ' + otherBranch,
       token: 'merge ' + otherBranch,
@@ -211,23 +221,24 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
     };
     throw error;
   } else if (custom_id && commits.has(custom_id)) {
-    let error = new Error(
+    const error: any = new Error(
       'Incorrect usage of "merge". Commit with id:' +
         custom_id +
         ' already exists, use different custom Id'
     );
     error.hash = {
-      text: 'merge ' + otherBranch + custom_id + override_type + custom_tags?.join(','),
-      token: 'merge ' + otherBranch + custom_id + override_type + custom_tags?.join(','),
+      text: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
+      token: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
       line: '1',
       loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [
-        `merge ${otherBranch} ${custom_id}_UNIQUE ${override_type} ${custom_tags?.join(',')}`,
+        'merge ' + otherBranch + ' ' + custom_id + '_UNIQUE ' + override_type + ' ' + custom_tag,
       ],
     };
 
     throw error;
   }
+
   // if (isReachableFrom(currentCommit, otherCommit)) {
   //   log.debug('Already merged');
   //   return;
@@ -237,16 +248,19 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
   //   head = commits.get(branches.get(curBranch));
   // } else {
   // create merge commit
-  const commit = {
+
+  const verifiedBranch: string = otherBranchCheck ? otherBranchCheck : ''; //figure out a cleaner way to do this
+
+  const commit: Commit = {
     id: custom_id ? custom_id : seq + '-' + getId(),
     message: 'merged branch ' + otherBranch + ' into ' + curBranch,
     seq: seq++,
-    parents: [head == null ? null : head.id, branches.get(otherBranch)],
+    parents: [head == null ? null : head.id, verifiedBranch],
     branch: curBranch,
     type: commitType.MERGE,
-    customType: override_type,
-    customId: custom_id ? true : false,
-    tags: custom_tags ? custom_tags : [],
+    customType: override_type, //TODO - need to make customType optional
+    customId: custom_id, //TODO - need to make customId optional as well as tag
+    tag: custom_tag ? custom_tag : '',
   };
   head = commit;
   commits.set(commit.id, commit);
@@ -256,16 +270,20 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
   log.debug('in mergeBranch');
 };
 
-export const cherryPick = function (sourceId, targetId, tags, parentCommitId) {
-  log.debug('Entering cherryPick:', sourceId, targetId, tags);
-  const config = getConfig();
-  sourceId = common.sanitizeText(sourceId, config);
-  targetId = common.sanitizeText(targetId, config);
-  tags = tags?.map((tag) => common.sanitizeText(tag, config));
-  parentCommitId = common.sanitizeText(parentCommitId, config);
+export const cherryPick = function (
+  sourceId: string,
+  targetId: string,
+  tag: string,
+  parentCommitId: string
+) {
+  log.debug('Entering cherryPick:', sourceId, targetId, tag);
+  sourceId = common.sanitizeText(sourceId, getConfig());
+  targetId = common.sanitizeText(targetId, getConfig());
+  tag = common.sanitizeText(tag, getConfig());
+  parentCommitId = common.sanitizeText(parentCommitId, getConfig());
 
   if (!sourceId || !commits.has(sourceId)) {
-    let error = new Error(
+    const error: any = new Error(
       'Incorrect usage of "cherryPick". Source commit id should exist and provided'
     );
     error.hash = {
@@ -277,19 +295,22 @@ export const cherryPick = function (sourceId, targetId, tags, parentCommitId) {
     };
     throw error;
   }
-  let sourceCommit = commits.get(sourceId);
-  let sourceCommitBranch = sourceCommit.branch;
+
+  const sourceCommit = commits.get(sourceId);
+
   if (
-    parentCommitId &&
-    !(Array.isArray(sourceCommit.parents) && sourceCommit.parents.includes(parentCommitId))
+    !sourceCommit ||
+    !parentCommitId ||
+    !Array.isArray(sourceCommit.parents) ||
+    !sourceCommit.parents.includes(parentCommitId)
   ) {
-    let error = new Error(
+    throw new Error(
       'Invalid operation: The specified parent commit is not an immediate parent of the cherry-picked commit.'
     );
-    throw error;
   }
+  const sourceCommitBranch = sourceCommit.branch;
   if (sourceCommit.type === commitType.MERGE && !parentCommitId) {
-    let error = new Error(
+    const error = new Error(
       'Incorrect usage of cherry-pick: If the source commit is a merge commit, an immediate parent commit must be specified.'
     );
     throw error;
@@ -298,7 +319,7 @@ export const cherryPick = function (sourceId, targetId, tags, parentCommitId) {
     // cherry-pick source commit to current branch
 
     if (sourceCommitBranch === curBranch) {
-      let error = new Error(
+      const error: any = new Error(
         'Incorrect usage of "cherryPick". Source commit is already on current branch'
       );
       error.hash = {
@@ -310,9 +331,24 @@ export const cherryPick = function (sourceId, targetId, tags, parentCommitId) {
       };
       throw error;
     }
-    const currentCommit = commits.get(branches.get(curBranch));
+    const currentCommitId = branches.get(curBranch);
+    if (currentCommitId === undefined || !currentCommitId) {
+      const error: any = new Error(
+        'Incorrect usage of "cherry-pick". Current branch (' + curBranch + ')has no commits'
+      );
+      error.hash = {
+        text: 'cherryPick ' + sourceId + ' ' + targetId,
+        token: 'cherryPick ' + sourceId + ' ' + targetId,
+        line: '1',
+        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+        expected: ['cherry-pick abc'],
+      };
+      throw error;
+    }
+
+    const currentCommit = commits.get(currentCommitId);
     if (currentCommit === undefined || !currentCommit) {
-      let error = new Error(
+      const error: any = new Error(
         'Incorrect usage of "cherry-pick". Current branch (' + curBranch + ')has no commits'
       );
       error.hash = {
@@ -326,18 +362,16 @@ export const cherryPick = function (sourceId, targetId, tags, parentCommitId) {
     }
     const commit = {
       id: seq + '-' + getId(),
-      message: 'cherry-picked ' + sourceCommit + ' into ' + curBranch,
+      message: 'cherry-picked ' + sourceCommit?.message + ' into ' + curBranch,
       seq: seq++,
       parents: [head == null ? null : head.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
-      tags: tags
-        ? tags.filter(Boolean)
-        : [
-            `cherry-pick:${sourceCommit.id}${
-              sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
-            }`,
-          ],
+      tag:
+        tag ??
+        `cherry-pick:${sourceCommit.id}${
+          sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
+        }`,
     };
     head = commit;
     commits.set(commit.id, commit);
@@ -346,10 +380,10 @@ export const cherryPick = function (sourceId, targetId, tags, parentCommitId) {
     log.debug('in cherryPick');
   }
 };
-export const checkout = function (branch) {
+export const checkout = function (branch: string) {
   branch = common.sanitizeText(branch, getConfig());
   if (!branches.has(branch)) {
-    let error = new Error(
+    const error: any = new Error(
       'Trying to checkout branch which is not yet created. (Help try using "branch ' + branch + '")'
     );
     error.hash = {
@@ -360,10 +394,19 @@ export const checkout = function (branch) {
       expected: ['"branch ' + branch + '"'],
     };
     throw error;
+    //branches[branch] = head != null ? head.id : null;
+    //log.debug('in createBranch');
   } else {
     curBranch = branch;
     const id = branches.get(curBranch);
-    head = commits.get(id);
+
+    if (id === null || id === undefined) {
+      throw new Error('Branch ' + branch + ' has no commits');
+    }
+    if (commits.get(id) === undefined) {
+      throw new Error('Branch ' + branch + ' has no commits');
+    }
+    head = commits.get(id) ?? null;
   }
 };
 
@@ -387,11 +430,11 @@ export const checkout = function (branch) {
 // };
 
 /**
- * @param arr
- * @param key
- * @param newVal
+ * @param arr - array
+ * @param key - key
+ * @param newVal - new value
  */
-function upsert(arr, key, newVal) {
+function upsert(arr: any[], key: any, newVal: any) {
   const index = arr.indexOf(key);
   if (index === -1) {
     arr.push(newVal);
@@ -400,8 +443,8 @@ function upsert(arr, key, newVal) {
   }
 }
 
-/** @param commitArr */
-function prettyPrintCommitHistory(commitArr) {
+/** @param commitArr  - array */
+function prettyPrintCommitHistory(commitArr: Commit[]) {
   const commit = commitArr.reduce((out, commit) => {
     if (out.seq > commit.seq) {
       return out;
@@ -417,21 +460,25 @@ function prettyPrintCommitHistory(commitArr) {
     }
   });
   const label = [line, commit.id, commit.seq];
-  for (let branch in branches) {
+  for (const branch in branches) {
     if (branches.get(branch) === commit.id) {
       label.push(branch);
     }
   }
   log.debug(label.join(' '));
-  if (commit.parents && commit.parents.length == 2) {
+  if (commit.parents && commit.parents.length == 2 && commit.parents[0] && commit.parents[1]) {
     const newCommit = commits.get(commit.parents[0]);
     upsert(commitArr, commit, newCommit);
-    commitArr.push(commits.get(commit.parents[1]));
+    if (commit.parents[1]) {
+      commitArr.push(commits.get(commit.parents[1])!);
+    }
   } else if (commit.parents.length == 0) {
     return;
   } else {
-    const nextCommit = commits.get(commit.parents);
-    upsert(commitArr, commit, nextCommit);
+    if (commit.parents[0]) {
+      const newCommit = commits.get(commit.parents[0]);
+      upsert(commitArr, commit, newCommit);
+    }
   }
   commitArr = uniqBy(commitArr, (c) => c.id);
   prettyPrintCommitHistory(commitArr);
@@ -446,12 +493,13 @@ export const prettyPrint = function () {
 export const clear = function () {
   commits = new Map();
   head = null;
-  const { mainBranchName, mainBranchOrder } = getConfig().gitGraph;
+  const mainBranch = defaultConfig.gitGraph.mainBranchName;
+  const mainBranchOrder = defaultConfig.gitGraph.mainBranchOrder;
   branches = new Map();
-  branches.set(mainBranchName, null);
+  branches.set(mainBranch, null);
   branchesConfig = new Map();
-  branchesConfig.set(mainBranchName, { name: mainBranchName, order: mainBranchOrder });
-  curBranch = mainBranchName;
+  branchesConfig.set(mainBranch, { name: mainBranch, order: mainBranchOrder });
+  curBranch = mainBranch;
   seq = 0;
   commonClear();
 };
@@ -464,7 +512,7 @@ export const getBranchesAsObjArray = function () {
       }
       return {
         ...branchConfig,
-        order: parseFloat(`0.${i}`, 10),
+        order: parseFloat(`0.${i}`),
       };
     })
     .sort((a, b) => a.order - b.order)
@@ -531,5 +579,4 @@ export default {
   setAccDescription,
   setDiagramTitle,
   getDiagramTitle,
-  commitType,
 };
