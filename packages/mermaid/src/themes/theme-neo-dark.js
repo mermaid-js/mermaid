@@ -29,7 +29,7 @@ class Theme {
     this.darkTextColor = lighten(invert('#323D47'), 10);
     this.border1 = '#ccc';
     this.border2 = rgba(255, 255, 255, 0.25);
-    this.arrowheadColor = 'calculated';
+    this.arrowheadColor = invert(this.background);
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
     this.labelBackground = '#181818';
