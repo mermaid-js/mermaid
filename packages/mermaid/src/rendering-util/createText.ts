@@ -153,7 +153,7 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
   wrappedLine.forEach((word, index) => {
     const innerTspan = tspan
       .append('tspan')
-      .attr('font-style', word.type === 'emphasis' ? 'italic' : 'normal')
+      .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
       .attr('class', 'text-inner-tspan')
       .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
     if (index === 0) {

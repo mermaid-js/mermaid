@@ -102,7 +102,8 @@ function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
 
 function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
   edges.forEach((parsedEdge) => {
-    const { lhsId, rhsId, lhsInto, lhsGroup, rhsInto, lhsDir, rhsDir, rhsGroup, title } = parsedEdge;
+    const { lhsId, rhsId, lhsInto, lhsGroup, rhsInto, lhsDir, rhsDir, rhsGroup, title } =
+      parsedEdge;
     const edgeType = isArchitectureDirectionXY(parsedEdge.lhsDir, parsedEdge.rhsDir)
       ? 'segments'
       : 'straight';
