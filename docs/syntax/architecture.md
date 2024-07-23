@@ -19,9 +19,9 @@ architecture-beta
     service disk2(disk)[Storage] in api
     service server(server)[Server] in api
 
-    db L--R server
-    disk1 T--B server
-    disk2 T--B db
+    db:L -- R:server
+    disk1:T -- B:server
+    disk2:T -- B:db
 ```
 
 ```mermaid
@@ -33,9 +33,9 @@ architecture-beta
     service disk2(disk)[Storage] in api
     service server(server)[Server] in api
 
-    db L--R server
-    disk1 T--B server
-    disk2 T--B db
+    db:L -- R:server
+    disk1:T -- B:server
+    disk2:T -- B:db
 ```
 
 ## Syntax
@@ -95,35 +95,35 @@ service database(db)[Database] in private_api
 The syntax for declaring an edge is:
 
 ```
-{serviceId}{{group}}? {(}?{T|B|L|R}--{T|B|L|R}{)}? {serviceId}{{group}}?
+{serviceId}{{group}}?:{T|B|L|R} {<}?--{>}? {T|B|L|R}:{serviceId}{{group}}?
 ```
 
 #### Edge Direction
 
-The side of the service the edge comes out of is specified by adding `L|R|T|B` to each end of `--`.
+The side of the service the edge comes out of is specified by adding a colon (`:`) to the side of the service connecting to the arrow and adding `L|R|T|B`
 
 For example:
 
 ```
-db R--L server
+db:R -- L:server
 ```
 
 creates an edge between the services `db` and `server`, with the edge coming out of the right of `db` and the left of `server`.
 
 ```
-db T--L server
+db:T -- L:server
 ```
 
 creates a 90 degree edge between the services `db` and `server`, with the edge coming out of the top of `db` and the left of `server`.
 
 #### Arrows
 
-Arrows can be added to each side of an edge by adding `(` before the direction on the left, and/or `)` after the direction on the right.
+Arrows can be added to each side of an edge by adding `<` before the direction on the left, and/or `>` after the direction on the right.
 
 For example:
 
 ```
-subnet R--L) gateway
+subnet:R --> L:gateway
 ```
 
 creates an edge with the arrow going into the `gateway` service
@@ -138,7 +138,7 @@ For example:
 service server[Server] in groupOne
 service subnet[Subnet] in groupTwo
 
-server{group} B--T) subnet{group}
+server{group}:B --> T:subnet{group}
 ```
 
 creates an edge going out of `groupOne`, adjacent to `server`, and into `groupTwo`, adjacent to `subnet`.
@@ -165,12 +165,12 @@ architecture-beta
     junction junctionCenter
     junction junctionRight
 
-    left_disk R--L junctionCenter
-    top_disk B--T junctionCenter
-    bottom_disk T--B junctionCenter
-    junctionCenter R--L junctionRight
-    top_gateway B--T junctionRight
-    bottom_gateway T--B junctionRight
+    left_disk:R -- L:junctionCenter
+    top_disk:B -- T:junctionCenter
+    bottom_disk:T -- B:junctionCenter
+    junctionCenter:R -- L:junctionRight
+    top_gateway:B -- T:junctionRight
+    bottom_gateway:T -- B:junctionRight
 ```
 
 ```mermaid
@@ -183,12 +183,12 @@ architecture-beta
     junction junctionCenter
     junction junctionRight
 
-    left_disk R--L junctionCenter
-    top_disk B--T junctionCenter
-    bottom_disk T--B junctionCenter
-    junctionCenter R--L junctionRight
-    top_gateway B--T junctionRight
-    bottom_gateway T--B junctionRight
+    left_disk:R -- L:junctionCenter
+    top_disk:B -- T:junctionCenter
+    bottom_disk:T -- B:junctionCenter
+    junctionCenter:R -- L:junctionRight
+    top_gateway:B -- T:junctionRight
+    bottom_gateway:T -- B:junctionRight
 ```
 
 ## Configuration

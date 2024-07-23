@@ -26,10 +26,10 @@
         service server(server)[Server] in api
         service gateway(internet)[Gateway] 
 
-        db L--R server
-        disk1 T--B server
-        disk2 T--B db
-        server T--B gateway
+        db:L -- R:server
+        disk1:T -- B:server
+        disk2:T -- B:db
+        server:T -- B:gateway
     </pre>
     <hr />
 
@@ -49,11 +49,11 @@
 
         service gateway(internet)[Gateway] in api
 
-        serv1 B--T serv2
+        serv1:B -- T:serv2
 
-        serv2 L--R db
+        serv2:L -- R:db
 
-        serv1 L--R gateway
+        serv1:L -- R:gateway
     </pre>
     <hr />
 
@@ -73,10 +73,10 @@
         service serv2(server)[Server 2]
         service disk(disk)[Disk]
 
-        db L--R s3
-        serv1 L--T s3
-        serv2 L--B s3
-        serv1 T--B disk
+        db:L -- R:s3
+        serv1:L -- T:s3
+        serv2:L -- B:s3
+        serv1:T -- B:disk
     </pre>
     <hr />
 
@@ -89,15 +89,15 @@
         service servT(server)[Server 4]
         service servB(server)[Server 5]
 
-        servC (L--R) servL
-        servC (R--L) servR
-        servC (T--B) servT
-        servC (B--T) servB
+        servC:L <--> R:servL
+        servC:R <--> L:servR
+        servC:T <--> B:servT
+        servC:B <--> T:servB
 
-        servL (T--L) servT
-        servL (B--L) servB
-        servR (T--R) servT
-        servR (B--R) servB
+        servL:T <--> L:servT
+        servL:B <--> L:servB
+        servR:T <--> R:servT
+        servR:B <--> R:servB
     </pre>
     <pre class="mermaid">
       architecture-beta
@@ -107,15 +107,15 @@
         service servT(server)[Server 4]
         service servB(server)[Server 5]
 
-        servC (L--R) servL
-        servC (R--L) servR
-        servC (T--B) servT
-        servC (B--T) servB
+        servC:L <--> R:servL
+        servC:R <--> L:servR
+        servC:T <--> B:servT
+        servC:B <--> T:servB
 
-        servT (L--T) servL
-        servB (L--B) servL
-        servT (R--T) servR
-        servB (R--B) servR
+        servT:L <--> T:servL
+        servB:L <--> B:servL
+        servT:R <--> T:servR
+        servB:R <--> B:servR
     </pre>
     <hr />
 
@@ -134,10 +134,10 @@
         service bottom_disk(disk)[Disk] in bottom_group
         service center_disk(disk)[Disk] in center_group
 
-        left_disk{group} (R--L) center_disk{group}
-        right_disk{group} (L--R) center_disk{group}
-        top_disk{group} (B--T) center_disk{group}
-        bottom_disk{group} (T--B) center_disk{group}
+        left_disk{group}:R <--> L:center_disk{group}
+        right_disk{group}:L <--> R:center_disk{group}
+        top_disk{group}:B <--> T:center_disk{group}
+        bottom_disk{group}:T <--> B:center_disk{group}
   </pre
     >
     <hr />
@@ -151,15 +151,15 @@
         service servT(server)[Server 4]
         service servB(server)[Server 5]
 
-        servC L-[Label]-R servL
-        servC R-[Label]-L servR
-        servC T-[Label]-B servT
-        servC B-[Label]-T servB
+        servC:L -[Label]- R:servL
+        servC:R -[Label]- L:servR
+        servC:T -[Label]- B:servT
+        servC:B -[Label]- T:servB
 
-        servL T-[Label]-L servT
-        servL B-[Label]-L servB
-        servR T-[Label]-R servT
-        servR B-[Label]-R servB
+        servL:T -[Label]- L:servT
+        servL:B -[Label]- L:servB
+        servR:T -[Label]- R:servT
+        servR:B -[Label]- R:servB
     </pre>
     <pre class="mermaid">
       architecture-beta
@@ -169,15 +169,15 @@
         service servT(server)[Server 4]
         service servB(server)[Server 5]
 
-        servC L-[Label that is Long]-R servL
-        servC R-[Label that is Long]-L servR
-        servC T-[Label that is Long]-B servT
-        servC B-[Label that is Long]-T servB
+        servC:L -[Label that is Long]- R:servL
+        servC:R -[Label that is Long]- L:servR
+        servC:T -[Label that is Long]- B:servT
+        servC:B -[Label that is Long]- T:servB
 
-        servL T-[Label that is Long]-L servT
-        servL B-[Label that is Long]-L servB
-        servR T-[Label that is Long]-R servT
-        servR B-[Label that is Long]-R servB
+        servL:T -[Label that is Long]- L:servT
+        servL:B -[Label that is Long]- L:servB
+        servR:T -[Label that is Long]- R:servT
+        servR:B -[Label that is Long]- R:servB
     </pre>
 
     <hr />
@@ -192,12 +192,12 @@
         junction juncC
         junction juncR
 
-        left_disk R--L juncC
-        top_disk B--T juncC
-        bottom_disk T--B juncC
-        juncC R--L juncR
-        top_gateway B--T juncR
-        bottom_gateway T--B juncR
+        left_disk:R -- L:juncC
+        top_disk:B -- T:juncC
+        bottom_disk:T -- B:juncC
+        juncC:R -- L:juncR
+        top_gateway:B -- T:juncR
+        bottom_gateway:T -- B:juncR
     </pre>
     <hr />
 
@@ -214,15 +214,15 @@
         junction juncC in left
         junction juncR in right
 
-        left_disk R--L juncC
-        top_disk B--T juncC
-        bottom_disk T--B juncC
+        left_disk:R -- L:juncC
+        top_disk:B -- T:juncC
+        bottom_disk:T -- B:juncC
 
 
-        top_gateway (B--T juncR
-        bottom_gateway (T--B juncR
+        top_gateway:B <-- T:juncR
+        bottom_gateway:T <-- B:juncR
 
-        juncC{group} R--L) juncR{group}
+        juncC{group}:R --> L:juncR{group}
     </pre>
     <hr />
 
@@ -233,8 +233,8 @@
       service ec2(aws:ec2)[Server]
       service wave(aws:wavelength)[Wave]
 
-      s3 L--R ec2
-      s3 T--B wave
+      s3:L -- R:ec2
+      s3:T -- B:wave
   </pre
     >
 

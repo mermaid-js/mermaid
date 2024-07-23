@@ -18,8 +18,16 @@ fragment Statement:
     | edges+=Edge
 ;
 
+fragment LeftPort:
+    ':'lhsDir=ARROW_DIRECTION
+;
+
+fragment RightPort:
+    rhsDir=ARROW_DIRECTION':'
+;
+
 fragment Arrow:
-    lhsInto?=ARROW_INTO? lhsDir=ARROW_DIRECTION ('--' | '-' title=ARCH_TITLE '-') rhsDir=ARROW_DIRECTION rhsInto?=ARROW_INTO?
+    LeftPort lhsInto?=ARROW_INTO? ('--' | '-' title=ARCH_TITLE '-') rhsInto?=ARROW_INTO? RightPort
 ;
 
 Group:
@@ -44,4 +52,4 @@ terminal ARCH_TEXT_ICON: /\("[^"]+"\)/;
 terminal ARCH_ICON: /\([\w:]+\)/;
 terminal ARCH_TITLE: /\[[\w ]+\]/;
 terminal ARROW_GROUP: /\{group\}/;
-terminal ARROW_INTO: /\(|\)/;
+terminal ARROW_INTO: /<|>/;
