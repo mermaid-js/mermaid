@@ -139,7 +139,7 @@ export const branch = function (name: string, order: number | undefined) {
     log.debug('in createBranch');
   } else {
     throw new Error(
-      `Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ${name}" to switch to an existing branch)`
+      `Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ${name}")`
     );
   }
 };
@@ -306,16 +306,17 @@ export const cherryPick = function (
   }
 
   const sourceCommit = commits.get(sourceId);
-
+  if (sourceCommit === undefined || !sourceCommit) {
+    throw new Error('Incorrect usage of "cherryPick". Source commit id should exist and provided');
+  }
   if (
-    !sourceCommit ||
-    !parentCommitId ||
-    !Array.isArray(sourceCommit.parents) ||
-    !sourceCommit.parents.includes(parentCommitId)
+    parentCommitId &&
+    !(Array.isArray(sourceCommit.parents) && sourceCommit.parents.includes(parentCommitId))
   ) {
-    throw new Error(
+    const error = new Error(
       'Invalid operation: The specified parent commit is not an immediate parent of the cherry-picked commit.'
     );
+    throw error;
   }
   const sourceCommitBranch = sourceCommit.branch;
   if (sourceCommit.type === commitType.MERGE && !parentCommitId) {
