@@ -5,11 +5,11 @@ export interface Commit {
   message: string;
   seq: number;
   type: number;
-  tag: string;
+  tags: string[] | undefined;
   parents: (string | null)[];
   branch: string;
   customType?: number;
-  customId?: string;
+  customId?: boolean;
 }
 
 export interface GitGraph {

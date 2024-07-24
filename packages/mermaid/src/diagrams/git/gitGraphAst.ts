@@ -19,7 +19,7 @@ const mainBranchOrder = defaultConfig.gitGraph.mainBranchOrder;
 
 let commits = new Map<string, Commit>();
 let head: Commit | null = null;
-let branchesConfig = new Map<string, { name: string; order: number }>();
+let branchesConfig = new Map<string, { name: string; order: number | undefined }>();
 branchesConfig.set(mainBranchName, { name: mainBranchName, order: mainBranchOrder });
 let branches = new Map<string, string | null>();
 branches.set(mainBranchName, null);
@@ -107,18 +107,19 @@ export const getOptions = function () {
   return options;
 };
 
-export const commit = function (msg: string, id: string, type: number, tag: string) {
-  log.info('commit', msg, id, type, tag);
-  log.debug('Entering commit:', msg, id, type, tag);
+export const commit = function (msg: string, id: string, type: number, tags: string[] | undefined) {
+  log.info('commit', msg, id, type, tags);
+  log.debug('Entering commit:', msg, id, type, tags);
   id = common.sanitizeText(id, getConfig());
   msg = common.sanitizeText(msg, getConfig());
-  tag = common.sanitizeText(tag, getConfig());
+  const config = getConfig();
+  tags = tags?.map((tag) => common.sanitizeText(tag, config));
   const newCommit: Commit = {
     id: id ? id : seq + '-' + getId(),
     message: msg,
     seq: seq++,
-    type: type,
-    tag: tag ? tag : '',
+    type: type ? type : commitType.NORMAL,
+    tags: tags ? tags : [],
     parents: head == null ? [] : [head.id],
     branch: curBranch,
   };
@@ -129,7 +130,7 @@ export const commit = function (msg: string, id: string, type: number, tag: stri
   log.debug('in pushCommit ' + newCommit.id);
 };
 
-export const branch = function (name: string, order: number) {
+export const branch = function (name: string, order: number | undefined) {
   name = common.sanitizeText(name, getConfig());
   if (!branches.has(name)) {
     branches.set(name, head != null ? head.id : null);
@@ -138,7 +139,7 @@ export const branch = function (name: string, order: number) {
     log.debug('in createBranch');
   } else {
     throw new Error(
-      `Trying to create an existing branch: ${name}. Use 'checkout ${name}' instead.`
+      `Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ${name}" to switch to an existing branch)`
     );
   }
 };
@@ -147,7 +148,7 @@ export const merge = (
   otherBranch: string,
   custom_id?: string,
   override_type?: number,
-  custom_tag?: string
+  custom_tags?: string[]
 ): void => {
   otherBranch = common.sanitizeText(otherBranch, getConfig());
   if (custom_id) {
@@ -227,12 +228,19 @@ export const merge = (
         ' already exists, use different custom Id'
     );
     error.hash = {
-      text: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
-      token: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
+      text: 'merge ' + otherBranch + custom_id + override_type + custom_tags?.join(' '),
+      token: 'merge ' + otherBranch + custom_id + override_type + custom_tags?.join(' '),
       line: '1',
       loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [
-        'merge ' + otherBranch + ' ' + custom_id + '_UNIQUE ' + override_type + ' ' + custom_tag,
+        'merge ' +
+          otherBranch +
+          ' ' +
+          custom_id +
+          '_UNIQUE ' +
+          override_type +
+          ' ' +
+          custom_tags?.join(' '),
       ],
     };
 
@@ -258,9 +266,9 @@ export const merge = (
     parents: [head == null ? null : head.id, verifiedBranch],
     branch: curBranch,
     type: commitType.MERGE,
-    customType: override_type, //TODO - need to make customType optional
-    customId: custom_id, //TODO - need to make customId optional as well as tag
-    tag: custom_tag ? custom_tag : '',
+    customType: override_type,
+    customId: custom_id ? true : false,
+    tags: custom_tags ? custom_tags : [],
   };
   head = commit;
   commits.set(commit.id, commit);
@@ -273,13 +281,14 @@ export const merge = (
 export const cherryPick = function (
   sourceId: string,
   targetId: string,
-  tag: string,
+  tags: string[],
   parentCommitId: string
 ) {
-  log.debug('Entering cherryPick:', sourceId, targetId, tag);
+  log.debug('Entering cherryPick:', sourceId, targetId, tags);
   sourceId = common.sanitizeText(sourceId, getConfig());
   targetId = common.sanitizeText(targetId, getConfig());
-  tag = common.sanitizeText(tag, getConfig());
+  const config = getConfig();
+  tags = tags?.map((tag) => common.sanitizeText(tag, config));
   parentCommitId = common.sanitizeText(parentCommitId, getConfig());
 
   if (!sourceId || !commits.has(sourceId)) {
@@ -367,11 +376,13 @@ export const cherryPick = function (
       parents: [head == null ? null : head.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
-      tag:
-        tag ??
-        `cherry-pick:${sourceCommit.id}${
-          sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
-        }`,
+      tags: tags
+        ? tags.filter(Boolean)
+        : [
+            `cherry-pick:${sourceCommit.id}${
+              sourceCommit.type === commitType.MERGE ? `|parent:${parentCommitId}` : ''
+            }`,
+          ],
     };
     head = commit;
     commits.set(commit.id, commit);
@@ -504,7 +515,7 @@ export const clear = function () {
 export const getBranchesAsObjArray = function () {
   const branchesArray = [...branchesConfig.values()]
     .map((branchConfig, i) => {
-      if (branchConfig.order !== null) {
+      if (branchConfig.order !== null && branchConfig.order !== undefined) {
         return branchConfig;
       }
       return {
@@ -512,7 +523,7 @@ export const getBranchesAsObjArray = function () {
         order: parseFloat(`0.${i}`),
       };
     })
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .map(({ name }) => ({ name }));
 
   return branchesArray;
@@ -551,6 +562,7 @@ export const commitType = {
 };
 
 export default {
+  commitType,
   getConfig: () => getConfig().gitGraph,
   setDirection,
   setOptions,
