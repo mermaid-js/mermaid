@@ -399,14 +399,11 @@ export const checkout = function (branch: string) {
   } else {
     curBranch = branch;
     const id = branches.get(curBranch);
-
-    if (id === null || id === undefined) {
-      throw new Error('Branch ' + branch + ' has no commits');
+    if (id === undefined || !id) {
+      head = null;
+    } else {
+      head = commits.get(id) ?? null;
     }
-    if (commits.get(id) === undefined) {
-      throw new Error('Branch ' + branch + ' has no commits');
-    }
-    head = commits.get(id) ?? null;
   }
 };
 
