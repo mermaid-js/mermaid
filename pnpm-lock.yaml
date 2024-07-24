@@ -480,67 +480,6 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
 
-  packages/mermaid/src/vitepress:
-    dependencies:
-      '@mdi/font':
-        specifier: ^6.9.96
-        version: 6.9.96
-      '@vueuse/core':
-        specifier: ^10.1.0
-        version: 10.9.0(vue@3.4.21)
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
-      jiti:
-        specifier: ^1.18.2
-        version: 1.21.0
-      mermaid:
-        specifier: workspace:^
-        version: link:../..
-      vue:
-        specifier: ^3.3
-        version: 3.4.21(typescript@5.3.3)
-    devDependencies:
-      '@iconify-json/carbon':
-        specifier: ^1.1.16
-        version: 1.1.31
-      '@unocss/reset':
-        specifier: ^0.58.0
-        version: 0.58.5
-      '@vite-pwa/vitepress':
-        specifier: ^0.4.0
-        version: 0.4.0(vite-plugin-pwa@0.19.2)
-      '@vitejs/plugin-vue':
-        specifier: ^4.2.1
-        version: 4.6.2(vite@4.5.2)(vue@3.4.21)
-      fast-glob:
-        specifier: ^3.2.12
-        version: 3.3.2
-      https-localhost:
-        specifier: ^4.7.1
-        version: 4.7.1
-      pathe:
-        specifier: ^1.1.0
-        version: 1.1.2
-      unocss:
-        specifier: ^0.58.0
-        version: 0.58.5(postcss@8.4.35)(rollup@2.79.1)(vite@4.5.2)
-      unplugin-vue-components:
-        specifier: ^0.26.0
-        version: 0.26.0(rollup@2.79.1)(vue@3.4.21)
-      vite:
-        specifier: ^4.5.2
-        version: 4.5.2(@types/node@20.11.24)
-      vite-plugin-pwa:
-        specifier: ^0.19.0
-        version: 0.19.2(vite@4.5.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
-      vitepress:
-        specifier: 1.0.0-rc.44
-        version: 1.0.0-rc.44(@algolia/client-search@4.22.1)(@types/node@20.11.24)(postcss@8.4.35)(search-insights@2.13.0)(typescript@5.3.3)
-      workbox-window:
-        specifier: ^7.0.0
-        version: 7.0.0
-
   tests/webpack:
     dependencies:
       '@mermaid-js/mermaid-example-diagram':
@@ -1338,7 +1277,7 @@ packages:
     resolution: {integrity: sha512-OErEqsrxjZTJciZ4Oo+eoZqeW9UIiOcuYKRJA4ZAgV9myA+pOXhhmpfNCKjEH/auVfEYVFJ6y1Tc4r0eIApqiw==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/template': 7.24.0
+      '@babel/template': 7.23.9
       '@babel/types': 7.24.0
     dev: true
 
@@ -1521,8 +1460,8 @@ packages:
     resolution: {integrity: sha512-87ICKgU5t5SzOT7sBMfCOZQ2rHjRU+Pcb9BoILMYz600W6DkVRLFBPwQ18gwUVvggqXivaUakpnxWQGbpywbBQ==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/template': 7.24.0
-      '@babel/traverse': 7.24.0
+      '@babel/template': 7.23.9
+      '@babel/traverse': 7.23.9
       '@babel/types': 7.24.0
     transitivePeerDependencies:
       - supports-color
@@ -4544,7 +4483,7 @@ packages:
       tslib:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.1.0
+      '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
       resolve: 1.22.8
       typescript: 5.3.3
     dev: true
@@ -4561,20 +4500,6 @@ packages:
       rollup: 2.79.1
     dev: true
 
-  /@rollup/pluginutils@5.1.0:
-    resolution: {integrity: sha512-XTIWOPPcpvyKI6L1NHo0lFlCyznUEyPmPY1mc3KpPVDYulHSTvyeLNVW00QTLIAFNhR3kYnJTQHeGqU4M3n09g==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@types/estree': 1.0.1
-      estree-walker: 2.0.2
-      picomatch: 2.3.1
-    dev: true
-
   /@rollup/pluginutils@5.1.0(rollup@2.79.1):
     resolution: {integrity: sha512-XTIWOPPcpvyKI6L1NHo0lFlCyznUEyPmPY1mc3KpPVDYulHSTvyeLNVW00QTLIAFNhR3kYnJTQHeGqU4M3n09g==}
     engines: {node: '>=14.0.0'}
@@ -4584,7 +4509,7 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.1
       estree-walker: 2.0.2
       picomatch: 2.3.1
       rollup: 2.79.1
@@ -5473,6 +5398,10 @@ packages:
 
   /@types/tough-cookie@4.0.5:
     resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
+    dev: true
+
+  /@types/trusted-types@2.0.3:
+    resolution: {integrity: sha512-NfQ4gyz38SL8sDNrSixxU2Os1a5xcdFxipAFxYEuLUlvU2uDwS4NUpsImcf1//SlWItCVMMLiylsxbmNMToV/g==}
     dev: true
 
   /@types/trusted-types@2.0.7:
@@ -10850,7 +10779,7 @@ packages:
       appdata-path: 1.0.0
       compression: 1.7.4
       cors: 2.8.5
-      express: 4.18.3
+      express: 4.18.2
       spdy: 4.0.2
       uglify-js: 3.17.4
     transitivePeerDependencies:
@@ -13989,6 +13918,15 @@ packages:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
     dev: false
 
+  /postcss@8.4.33:
+    resolution: {integrity: sha512-Kkpbhhdjw2qQs2O2DGX+8m5OVqEcbB9HRBvuYM9pgrjEFUg30A9LmXNlTAUj4S9kgtGyrMbTzVjH7E+s5Re2yg==}
+    engines: {node: ^10 || ^12 || >=14}
+    dependencies:
+      nanoid: 3.3.7
+      picocolors: 1.0.0
+      source-map-js: 1.0.2
+    dev: true
+
   /postcss@8.4.35:
     resolution: {integrity: sha512-u5U8qYpBCpN13BsiEB0CbR1Hhh4Gc0zLFuedrHJKMctHCHAGrMdG0PRM/KErzAL3CU6/eckEtmHNB3x6e3c0vA==}
     engines: {node: ^10 || ^12 || >=14}
@@ -14284,7 +14222,7 @@ packages:
     resolution: {integrity: sha512-/njmZ8s1wVeR6pjTZ+0nCnv8SpZNRMT2D1RLOJQESlYFDBvwpTA4KWJpZ+sBJ4+vhjILRcK7JIFdGCdxEAAitg==}
     engines: {node: '>= 0.10'}
     dependencies:
-      resolve: 1.22.8
+      resolve: 1.22.4
     dev: true
 
   /redent@3.0.0:
@@ -16503,7 +16441,7 @@ packages:
     dependencies:
       '@types/node': 20.11.24
       esbuild: 0.18.20
-      postcss: 8.4.35
+      postcss: 8.4.33
       rollup: 3.28.0
     optionalDependencies:
       fsevents: 2.3.3
@@ -17312,7 +17250,7 @@ packages:
   /workbox-window@7.0.0:
     resolution: {integrity: sha512-j7P/bsAWE/a7sxqTzXo3P2ALb1reTfZdvVp6OJ/uLr/C2kZAMvjeWGm8V4htQhor7DOvYg0sSbFN2+flT5U0qA==}
     dependencies:
-      '@types/trusted-types': 2.0.7
+      '@types/trusted-types': 2.0.3
       workbox-core: 7.0.0
     dev: true
 
