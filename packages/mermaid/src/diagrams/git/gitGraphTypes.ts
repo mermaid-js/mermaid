@@ -16,7 +16,7 @@ export interface GitGraph {
   statements: Statement[];
 }
 
-export type Statement = CommitAst | Branch | Merge | Checkout | CherryPicking;
+export type Statement = CommitAst | BranchAst | MergeAst | CheckoutAst | CherryPickingAst;
 
 export interface CommitAst {
   $type: 'Commit';
@@ -26,13 +26,13 @@ export interface CommitAst {
   type?: 'NORMAL' | 'REVERSE' | 'HIGHLIGHT';
 }
 
-export interface Branch {
+export interface BranchAst {
   $type: 'Branch';
   name: string;
   order?: number;
 }
 
-export interface Merge {
+export interface MergeAst {
   $type: 'Merge';
   branch: string;
   id?: string;
@@ -40,12 +40,12 @@ export interface Merge {
   type?: 'NORMAL' | 'REVERSE' | 'HIGHLIGHT';
 }
 
-export interface Checkout {
+export interface CheckoutAst {
   $type: 'Checkout';
   branch: string;
 }
 
-export interface CherryPicking {
+export interface CherryPickingAst {
   $type: 'CherryPicking';
   id: string;
   tags?: string[];
