@@ -47,7 +47,7 @@ Statement
 
 
 Direction:
-    dir=('LR' | 'TB' | 'BT') EOL;
+    dir=('LR' | 'TB' | 'BT');
 
 Options:
     'options' '{' rawOptions+=STRING* '}' EOL;
