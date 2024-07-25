@@ -7,7 +7,7 @@
 
 // \%\%[^\n]*\n                             /* skip comments */
 "treeView"    return "TREE_VIEW";
-[0-9a-zA-Z.]+       return "TEXT";
+[\S]+       return "TEXT";
 [\s]+       return "SPACELIST";
 [\n]+    return "NL";
 <<EOF>>     return "EOF";
