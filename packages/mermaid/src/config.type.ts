@@ -160,6 +160,7 @@ export interface MermaidConfig {
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
+  treeView?: TreeViewDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1459,6 +1460,30 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+}
+/**
+ * The object containing configurations specific for treeView diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "TreeViewDiagramConfig".
+ */
+export interface TreeViewDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Horizontal distance between rows differing by one level
+   */
+  rowIndent?: number;
+  /**
+   * Horizontal padding of label
+   */
+  paddingX?: number;
+  /**
+   * Vertical padding of label
+   */
+  paddingY?: number;
+  /**
+   * Thickness of the line
+   */
+  lineThickness?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

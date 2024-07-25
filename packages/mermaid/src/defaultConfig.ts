@@ -260,6 +260,10 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  treeView: {
+    ...defaultConfigJson.treeView,
+    useWidth: undefined,
+  },
 };
 
 const keyify = (obj: any, prefix = ''): string[] =>
