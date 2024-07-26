@@ -26,6 +26,7 @@ import { lean_left } from './shapes/leanLeft.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
 import { labelRect } from './shapes/labelRect.js';
+import { triangle } from './shapes/triangle.js';
 
 const shapes = {
   state,
@@ -55,6 +56,7 @@ const shapes = {
   card,
   shadedProcess,
   anchor,
+  triangle,
 };
 
 const nodeElems = new Map();
