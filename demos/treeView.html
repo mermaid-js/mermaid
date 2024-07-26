@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>TreeView Diagram Demo</h1>
+
+    <div class="diagrams">
+      <pre class="mermaid">
+        treeView-beta
+            packages
+                mermaid
+                    src
+                parser
+    </pre
+      >
+
+      <pre class="mermaid">
+        ---
+        config:
+            treeView:
+                rowIndent: 40
+                lineThickness: 2
+            themeVariables:
+                treeView:
+                    fontSize: '30px'
+        ---
+        treeView-beta
+            packages
+                mermaid
+                    src
+                parser
+
+    </pre
+      >
+    </div>
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.initialize({
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+
+    <style>
+      .diagrams {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      pre {
+        width: 45vw;
+        padding: 2em;
+      }
+    </style>
+  </body>
+</html>
