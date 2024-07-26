@@ -1,5 +1,5 @@
 import type { TreeViewDiagramConfig } from '../../config.type.js';
-import type { TreeViewDb, Node } from './types.js';
+import type { TreeViewDB, Node } from './types.js';
 import { getConfig as getCommonConfig } from '../../config.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import {
@@ -55,7 +55,7 @@ const addNode = (level: number, name: string) => {
   stack.push(node);
 };
 
-const db: TreeViewDb = {
+const db: TreeViewDB = {
   clear,
   addNode,
   getRoot,

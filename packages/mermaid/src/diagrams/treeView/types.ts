@@ -17,7 +17,7 @@ export interface Node {
   children: Node[];
 }
 
-export interface TreeViewDb extends DiagramDBBase<TreeViewDiagramConfig> {
+export interface TreeViewDB extends DiagramDBBase<TreeViewDiagramConfig> {
   addNode: (level: number, name: string) => void;
   getRoot: () => Node;
   getCount: () => number;

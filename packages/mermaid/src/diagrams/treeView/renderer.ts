@@ -1,7 +1,7 @@
 import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import type { D3SVGElement, TreeViewDb } from './types.js';
+import type { D3SVGElement, TreeViewDB } from './types.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { TreeViewDiagramConfig } from '../../config.type.js';
 import type { Node } from './types.js';
@@ -104,7 +104,7 @@ const drawTree = (
 const draw: DrawDefinition = (text, id, _ver, diagObj) => {
   log.debug('Rendering treeView diagram\n' + text);
 
-  const db = diagObj.db as TreeViewDb;
+  const db = diagObj.db as TreeViewDB;
   const root = db.getRoot();
   const config = db.getConfig();
 
