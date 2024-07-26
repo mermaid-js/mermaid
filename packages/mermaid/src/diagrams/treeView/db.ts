@@ -3,6 +3,7 @@ import type { TreeViewDB, Node } from './types.js';
 import { getConfig as getCommonConfig } from '../../config.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import {
+  clear as commonClear,
   getAccDescription,
   getAccTitle,
   getDiagramTitle,
@@ -11,29 +12,35 @@ import {
   setDiagramTitle,
 } from '../common/commonDb.js';
 import { cleanAndMerge } from '../../utils.js';
-let cnt = 0;
+import { ImperativeState } from '../../utils/imperativeState.js';
 
-const auxRoot: Node = {
-  id: cnt++,
-  level: -1,
-  name: '/',
-  children: [],
-};
+interface TreeViewState {
+  cnt: number;
+  stack: Node[];
+}
 
-let stack = [auxRoot];
+const state = new ImperativeState<TreeViewState>(() => ({
+  cnt: 1,
+  stack: [
+    {
+      id: 0,
+      level: -1,
+      name: '/',
+      children: [],
+    },
+  ],
+}));
 
 const clear = () => {
-  cnt = 0;
-  stack = [auxRoot];
-  auxRoot.children = [];
-  auxRoot.id = cnt++;
+  state.reset();
+  commonClear();
 };
 
 const getRoot = () => {
-  return auxRoot;
+  return state.records.stack[0];
 };
 
-const getCount = () => cnt;
+const getCount = () => state.records.cnt;
 
 const defaultConfig: Required<TreeViewDiagramConfig> = DEFAULT_CONFIG.treeView;
 
@@ -42,17 +49,17 @@ const getConfig = (): Required<TreeViewDiagramConfig> => {
 };
 
 const addNode = (level: number, name: string) => {
-  while (level <= stack[stack.length - 1].level) {
-    stack.pop();
+  while (level <= state.records.stack[state.records.stack.length - 1].level) {
+    state.records.stack.pop();
   }
   const node = {
-    id: cnt++,
+    id: state.records.cnt++,
     level,
     name,
     children: [],
   };
-  stack[stack.length - 1].children.push(node);
-  stack.push(node);
+  state.records.stack[state.records.stack.length - 1].children.push(node);
+  state.records.stack.push(node);
 };
 
 const db: TreeViewDB = {
