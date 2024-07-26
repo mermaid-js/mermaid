@@ -5,7 +5,6 @@ import type { TreeViewDiagramStyles } from './types.js';
 const defaultTreeViewDiagramStyles: Required<TreeViewDiagramStyles> = {
   fontSize: '16px',
   lineColor: 'black',
-  fontFamily: 'trebuchet ms",verdana,arial,sans-serif',
 };
 
 const styles: DiagramStylesProvider = ({
@@ -13,11 +12,10 @@ const styles: DiagramStylesProvider = ({
 }: {
   treeView?: TreeViewDiagramStyles;
 }): string => {
-  const { fontSize, lineColor, fontFamily } = cleanAndMerge(defaultTreeViewDiagramStyles, treeView);
+  const { fontSize, lineColor } = cleanAndMerge(defaultTreeViewDiagramStyles, treeView);
   return `
     .treeView-node-label {
         font-size: ${fontSize};
-        font-family: ${fontFamily};
     }
     .treeView-node-line {
         stroke: ${lineColor};
