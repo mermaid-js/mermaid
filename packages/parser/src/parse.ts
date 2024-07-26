@@ -1,8 +1,8 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
-import type { Info, Packet, Pie } from './index.js';
+import type { Info, Packet, Pie, TreeView } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie;
+export type DiagramAST = Info | Packet | Pie | TreeView;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -21,11 +21,17 @@ const initializers = {
     const parser = createPieServices().Pie.parser.LangiumParser;
     parsers.pie = parser;
   },
+  treeView: async () => {
+    const { createTreeViewServices } = await import('./language/treeView/index.js');
+    const parser = createTreeViewServices().TreeView.parser.LangiumParser;
+    parsers.treeView = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
 export async function parse(diagramType: 'packet', text: string): Promise<Packet>;
 export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
+export async function parse(diagramType: 'treeView', text: string): Promise<TreeView>;
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
   text: string
