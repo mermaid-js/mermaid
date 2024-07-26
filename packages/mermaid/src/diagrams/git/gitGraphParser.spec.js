@@ -36,7 +36,7 @@ describe('when parsing a gitGraph', function () {
 
     parser.parse(str);
     const commits = parser.yy.getCommits();
-    expect(parser.yy.getOptions()['key']).toBe('value');
+    expect(parser.yy.getOptions().key).toBe('value');
     expect(commits.size).toBe(1);
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('LR');

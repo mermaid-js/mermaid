@@ -1,11 +1,12 @@
-import express from 'express';
-import type { NextFunction, Request, Response } from 'express';
-import cors from 'cors';
-import { getBuildConfig, defaultOptions } from './util.js';
-import { context } from 'esbuild';
+/* eslint-disable no-console */
 import chokidar from 'chokidar';
-import { generateLangium } from '../.build/generateLangium.js';
+import cors from 'cors';
+import { context } from 'esbuild';
+import type { Request, Response } from 'express';
+import express from 'express';
 import { packageOptions } from '../.build/common.js';
+import { generateLangium } from '../.build/generateLangium.js';
+import { defaultOptions, getBuildConfig } from './util.js';
 
 const configs = Object.values(packageOptions).map(({ packageName }) =>
   getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: packageName })
@@ -19,16 +20,28 @@ const mermaidIIFEConfig = getBuildConfig({
 });
 configs.push(mermaidIIFEConfig);
 
-const contexts = await Promise.all(configs.map((config) => context(config)));
+const contexts = await Promise.all(
+  configs.map(async (config) => ({ config, context: await context(config) }))
+);
 
+let rebuildCounter = 1;
 const rebuildAll = async () => {
-  console.time('Rebuild time');
-  await Promise.all(contexts.map((ctx) => ctx.rebuild())).catch((e) => console.error(e));
-  console.timeEnd('Rebuild time');
+  const buildNumber = rebuildCounter++;
+  const timeLabel = `Rebuild ${buildNumber} Time (total)`;
+  console.time(timeLabel);
+  await Promise.all(
+    contexts.map(async ({ config, context }) => {
+      const buildVariant = `Rebuild ${buildNumber} Time (${Object.keys(config.entryPoints!)[0]} ${config.format})`;
+      console.time(buildVariant);
+      await context.rebuild();
+      console.timeEnd(buildVariant);
+    })
+  ).catch((e) => console.error(e));
+  console.timeEnd(timeLabel);
 };
 
 let clients: { id: number; response: Response }[] = [];
-function eventsHandler(request: Request, response: Response, next: NextFunction) {
+function eventsHandler(request: Request, response: Response) {
   const headers = {
     'Content-Type': 'text/event-stream',
     Connection: 'keep-alive',
@@ -45,19 +58,20 @@ function eventsHandler(request: Request, response: Response, next: NextFunction)
   });
 }
 
-let timeoutId: NodeJS.Timeout | undefined = undefined;
+let timeoutID: NodeJS.Timeout | undefined = undefined;
 
 /**
  * Debounce file change events to avoid rebuilding multiple times.
  */
 function handleFileChange() {
-  if (timeoutId !== undefined) {
-    clearTimeout(timeoutId);
+  if (timeoutID !== undefined) {
+    clearTimeout(timeoutID);
   }
-  timeoutId = setTimeout(async () => {
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  timeoutID = setTimeout(async () => {
     await rebuildAll();
     sendEventsToAll();
-    timeoutId = undefined;
+    timeoutID = undefined;
   }, 100);
 }
 
@@ -74,15 +88,16 @@ async function createServer() {
       ignoreInitial: true,
       ignored: [/node_modules/, /dist/, /docs/, /coverage/],
     })
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     .on('all', async (event, path) => {
       // Ignore other events.
       if (!['add', 'change'].includes(event)) {
         return;
       }
-      if (/\.langium$/.test(path)) {
+      console.log(`${path} changed. Rebuilding...`);
+      if (path.endsWith('.langium')) {
         await generateLangium();
       }
-      console.log(`${path} changed. Rebuilding...`);
       handleFileChange();
     });
 
@@ -99,4 +114,4 @@ async function createServer() {
   });
 }
 
-createServer();
+void createServer();

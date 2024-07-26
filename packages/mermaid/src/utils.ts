@@ -32,8 +32,7 @@ import type { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
 import { directiveRegex } from './diagram-api/regexes.js';
-import type { D3Element } from './mermaidAPI.js';
-import type { Point, TextDimensionConfig, TextDimensions } from './types.js';
+import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -178,11 +177,7 @@ export const detectDirective = function (
       if (match.index === directiveRegex.lastIndex) {
         directiveRegex.lastIndex++;
       }
-      if (
-        (match && !type) ||
-        (type && match[1] && match[1].match(type)) ||
-        (type && match[2] && match[2].match(type))
-      ) {
+      if ((match && !type) || (type && match[1]?.match(type)) || (type && match[2]?.match(type))) {
         const type = match[1] ? match[1] : match[2];
         const args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
         result.push({ type, args });
@@ -572,7 +567,7 @@ export const wrapLabel: (label: string, maxWidth: number, config: WrapLabelConfi
       if (common.lineBreakRegex.test(label)) {
         return label;
       }
-      const words = label.split(' ');
+      const words = label.split(' ').filter(Boolean);
       const completedLines: string[] = [];
       let nextLine = '';
       words.forEach((word, index) => {
@@ -778,7 +773,7 @@ export const entityDecode = function (html: string): string {
   // Escape HTML before decoding for HTML Entities
   html = escape(html).replace(/%26/g, '&').replace(/%23/g, '#').replace(/%3B/g, ';');
   decoder.innerHTML = html;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
   return unescape(decoder.textContent!);
 };
 

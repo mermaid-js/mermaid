@@ -190,9 +190,9 @@ export const addVertices = async function (vert, g, svgId, root, doc, diagObj) {
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
- * @param diagObj
+ * @param _diagObj
  */
-export const addEdges = async function (edges, g, diagObj) {
+export const addEdges = async function (edges, g, _diagObj) {
   log.info('abc78 edges = ', edges);
   let cnt = 0;
   let linkIdCnt = {};
@@ -378,8 +378,8 @@ export const draw = async function (text, id, _version, diagObj) {
   }
 
   const { securityLevel, flowchart: conf } = getConfig();
-  const nodeSpacing = conf.nodeSpacing || 50;
-  const rankSpacing = conf.rankSpacing || 50;
+  const nodeSpacing = conf.nodeSpacing ?? 50;
+  const rankSpacing = conf.rankSpacing ?? 50;
 
   // Handle root and document for when rendering in sandbox mode
   let sandboxElement;
@@ -432,14 +432,13 @@ export const draw = async function (text, id, _version, diagObj) {
   log.info('Edges', edges);
   let i = 0;
   for (i = subGraphs.length - 1; i >= 0; i--) {
-    // for (let i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i];
 
     selectAll('cluster').append('text');
 
-    for (let j = 0; j < subG.nodes.length; j++) {
-      log.info('Setting up subgraphs', subG.nodes[j], subG.id);
-      g.setParent(subG.nodes[j], subG.id);
+    for (const node of subG.nodes) {
+      log.info('Setting up subgraphs', node, subG.id);
+      g.setParent(node, subG.id);
     }
   }
   await addVertices(vert, g, id, root, doc, diagObj);
