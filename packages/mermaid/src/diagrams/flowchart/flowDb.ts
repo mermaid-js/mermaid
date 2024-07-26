@@ -140,6 +140,10 @@ export const addVertex = function (
     const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA });
     console.log('yamlData doc', doc);
     if (doc?.shape) {
+      //check if shape has a trailing `,` and remove it
+      if (doc.shape.endsWith(',')) {
+        doc.shape = doc.shape.slice(0, -1);
+      }
       vertex.type = doc?.shape;
     }
     if (doc?.label) {
