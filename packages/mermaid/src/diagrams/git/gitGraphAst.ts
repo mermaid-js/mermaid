@@ -103,7 +103,7 @@ export const commit = function (msg: string, id: string, type: number, tags: str
   log.debug('in pushCommit ' + newCommit.id);
 };
 
-export const branch = function (name: string, order: number | undefined) {
+export const branch = function (name: string, order?: number) {
   name = common.sanitizeText(name, getConfig());
   if (!state.records.branches.has(name)) {
     state.records.branches.set(name, state.records.head != null ? state.records.head.id : null);
