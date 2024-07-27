@@ -9,6 +9,7 @@ export {
   Branch,
   Commit,
   Merge,
+  Statement,
   isCommon,
   isInfo,
   isPacket,
