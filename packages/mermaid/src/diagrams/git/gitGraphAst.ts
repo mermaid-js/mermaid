@@ -44,33 +44,6 @@ function getID() {
   return random({ length: 7 });
 }
 
-// function isFastForwardable(currentCommit, otherCommit) {
-//   log.debug('Entering isFastForwardable:', currentCommit.id, otherCommit.id);
-//   let cnt = 0;
-//   while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit && cnt < 1000) {
-//     cnt++;
-//     // only if other branch has more commits
-//     if (otherCommit.parent == null) break;
-//     if (Array.isArray(otherCommit.parent)) {
-//       log.debug('In merge commit:', otherCommit.parent);
-//       return (
-//         isFastForwardable(currentCommit, commits.get(otherCommit.parent[0])) ||
-//         isFastForwardable(currentCommit, commits.get(otherCommit.parent[1]))
-//       );
-//     } else {
-//       otherCommit = commits.get(otherCommit.parent);
-//     }
-//   }
-//   log.debug(currentCommit.id, otherCommit.id);
-//   return currentCommit.id === otherCommit.id;
-// }
-
-// function isReachableFrom(currentCommit, otherCommit) {
-//   const currentSeq = currentCommit.seq;
-//   const otherSeq = otherCommit.seq;
-//   if (currentSeq > otherSeq) return isFastForwardable(otherCommit, currentCommit);
-//   return false;
-// }
 
 /**
  * @param list - list of items
