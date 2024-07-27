@@ -11,7 +11,6 @@ import {
   createDefaultSharedCoreModule,
   EmptyFileSystem,
 } from 'langium';
-
 import { CommonValueConverter } from '../common/valueConverter.js';
 import { MermaidGeneratedSharedModule, GitGraphGeneratedModule } from '../generated/module.js';
 import { GitGraphTokenBuilder } from './tokenBuilder.js';
