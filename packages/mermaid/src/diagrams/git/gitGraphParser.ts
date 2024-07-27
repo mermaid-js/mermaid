@@ -51,7 +51,7 @@ const parseCommit = (commit: CommitAst) => {
   const id = commit.id;
   const message = commit.message ?? '';
   const tags = commit.tags ?? undefined;
-  const type = commit.type !== undefined ? commitType[commit.type] : 0;
+  const type = commit.type !== undefined ? commitType[commit.type] : commitType.NORMAL;
   db.commit(message, id, type, tags);
 };
 
