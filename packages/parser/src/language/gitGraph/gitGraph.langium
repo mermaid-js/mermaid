@@ -57,7 +57,7 @@ Commit:
         'id:' id=STRING 
         |'msg:'? message=STRING
         |'tag:' tags+=STRING
-        |'type:' name=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
+        |'type:' type=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
     )* EOL;
 Branch:
     'branch' name=(ID|STRING)
