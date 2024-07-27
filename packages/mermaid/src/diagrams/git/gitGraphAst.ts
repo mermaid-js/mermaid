@@ -231,7 +231,6 @@ export const merge = (
   state.records.head = commit;
   state.records.commits.set(commit.id, commit);
   state.records.branches.set(state.records.currBranch, commit.id);
-  // }
   log.debug(state.records.branches);
   log.debug('in mergeBranch');
 };
