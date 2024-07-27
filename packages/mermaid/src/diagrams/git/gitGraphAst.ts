@@ -279,7 +279,7 @@ export const merge = (
 export const cherryPick = function (
   sourceId: string,
   targetId: string,
-  tags: string[],
+  tags: string[] | undefined,
   parentCommitId: string
 ) {
   log.debug('Entering cherryPick:', sourceId, targetId, tags);

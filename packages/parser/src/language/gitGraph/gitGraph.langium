@@ -45,7 +45,6 @@ Statement
 | CherryPicking
 ;
 
-
 Direction:
     dir=('LR' | 'TB' | 'BT');
 
@@ -57,7 +56,7 @@ Commit:
     (
         'id:' id=STRING 
         |'msg:'? message=STRING
-        |'tag:' tags=STRING
+        |'tag:' tags+=STRING
         |'type:' name=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
     )* EOL;
 Branch:
@@ -69,7 +68,7 @@ Merge:
     'merge' branch=(ID|STRING)
     (
         'id:' id=STRING
-        |'tag:' tags=STRING
+        |'tag:' tags+=STRING
         |'type:' name=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
     )* EOL;
 
@@ -80,7 +79,7 @@ CherryPicking:
     'cherry-pick' 
     (
         'id:' id=STRING
-        |'tag:' tags=STRING
+        |'tag:' tags+=STRING
         |'parent:' id=STRING
     )* EOL;
 

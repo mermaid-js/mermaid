@@ -5,7 +5,7 @@ export interface Commit {
   message: string;
   seq: number;
   type: number;
-  tags: string[] | undefined;
+  tags: string[];
   parents: (string | null)[];
   branch: string;
   customType?: number;

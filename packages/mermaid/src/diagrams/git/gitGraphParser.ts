@@ -45,8 +45,9 @@ const parseStatement = (statement: any) => {
 const parseCommit = (commit: CommitAst) => {
   const id = commit.id;
   const message = commit.message ?? '';
-  const tags = commit.tags ?? [];
+  const tags = commit.tags ?? undefined;
   const type = commit.type !== undefined ? commitType[commit.type] : 0;
+  log.info(`Commit: ${id} ${message} ${type}`);
   db.commit(message, id, type, tags);
 };
 
@@ -59,7 +60,7 @@ const parseBranch = (branch: BranchAst) => {
 const parseMerge = (merge: MergeAst) => {
   const branch = merge.branch;
   const id = merge.id ?? '';
-  const tags = merge.tags ?? [];
+  const tags = merge.tags ?? undefined;
   const type = merge.type !== undefined ? commitType[merge.type] : 0;
   db.merge(branch, id, type, tags);
 };
@@ -71,7 +72,7 @@ const parseCheckout = (checkout: CheckoutAst) => {
 
 const parseCherryPicking = (cherryPicking: CherryPickingAst) => {
   const id = cherryPicking.id;
-  const tags = cherryPicking.tags ?? [];
+  const tags = cherryPicking.tags ?? undefined;
   const parent = cherryPicking.parent;
   db.cherryPick(id, '', tags, parent);
 };
