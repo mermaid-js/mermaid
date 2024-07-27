@@ -215,16 +215,6 @@ export const merge = (
     throw error;
   }
 
-  // if (isReachableFrom(currentCommit, otherCommit)) {
-  //   log.debug('Already merged');
-  //   return;
-  // }
-  // if (isFastForwardable(currentCommit, otherCommit)) {
-  //   branches.set(curBranch, branches.get(otherBranch));
-  //   head = commits.get(branches.get(curBranch));
-  // } else {
-  // create merge commit
-
   const verifiedBranch: string = otherBranchCheck ? otherBranchCheck : ''; //figure out a cleaner way to do this
 
   const commit: Commit = {
