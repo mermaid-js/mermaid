@@ -43,7 +43,7 @@ const parseStatement = (statement: any) => {
       parseCherryPicking(statement);
       break;
     default:
-      log.warn(`Unknown statement type`);
+      log.error(`Unknown statement type`);
   }
 };
 
