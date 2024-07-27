@@ -40,10 +40,7 @@ const state = new ImperativeState<GitGraphState>(() => ({
   options: {},
 }));
 
-/**
- *
- */
-function getId() {
+function getID() {
   return random({ length: 7 });
 }
 
