@@ -35,7 +35,7 @@ const state = new ImperativeState<GitGraphState>(() => ({
   branchConfig: new Map([[mainBranchName, { name: mainBranchName, order: mainBranchOrder }]]),
   branches: new Map([[mainBranchName, null]]),
   currBranch: mainBranchName,
-  direction: 'TB',
+  direction: 'LR',
   seq: 0,
   options: {},
 }));

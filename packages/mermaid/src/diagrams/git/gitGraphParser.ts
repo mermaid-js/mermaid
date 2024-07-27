@@ -15,6 +15,11 @@ import type {
 
 const populate = (ast: GitGraph) => {
   populateCommonDb(ast, db);
+  // @ts-ignore: this wont exist if the direction is not specified
+  if (ast.dir) {
+    // @ts-ignore: this wont exist if the direction is not specified
+    db.setDirection(ast.dir);
+  }
   for (const statement of ast.statements) {
     parseStatement(statement);
   }
@@ -46,9 +51,7 @@ const parseCommit = (commit: CommitAst) => {
   const id = commit.id;
   const message = commit.message ?? '';
   const tags = commit.tags ?? undefined;
-  log.info(`Commit type`, commit.type);
   const type = commit.type !== undefined ? commitType[commit.type] : 0;
-  log.info(`Commit: ${id} ${message} ${type}`);
   db.commit(message, id, type, tags);
 };
 

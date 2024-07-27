@@ -29,7 +29,6 @@ entry GitGraph:
   'gitGraph' Direction? ':'?
   NEWLINE*
   (
-    Options?
     NEWLINE*
     (TitleAndAccessibilities |
     statements+=Statement |
@@ -47,9 +46,6 @@ Statement
 
 Direction:
     dir=('LR' | 'TB' | 'BT');
-
-Options:
-    'options' '{' rawOptions+=STRING* '}' EOL;
 
 Commit:
     'commit' 
