@@ -105,16 +105,16 @@ export const commit = function (msg: string, id: string, type: number, tags?: st
 
 export const branch = function (name: string, order?: number) {
   name = common.sanitizeText(name, getConfig());
-  if (!state.records.branches.has(name)) {
+  if (state.records.branches.has(name)) {
+    throw new Error(
+      `Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ${name}")`
+    );
+  } 
+  
     state.records.branches.set(name, state.records.head != null ? state.records.head.id : null);
     state.records.branchConfig.set(name, { name, order });
     checkout(name);
     log.debug('in createBranch');
-  } else {
-    throw new Error(
-      `Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ${name}")`
-    );
-  }
 };
 
 export const merge = (
