@@ -83,9 +83,9 @@ export const getOptions = function () {
 export const commit = function (msg: string, id: string, type: number, tags: string[] | undefined) {
   log.info('commit', msg, id, type, tags);
   log.debug('Entering commit:', msg, id, type, tags);
-  id = common.sanitizeText(id, getConfig());
-  msg = common.sanitizeText(msg, getConfig());
   const config = getConfig();
+  id = common.sanitizeText(id, config);
+  msg = common.sanitizeText(msg, config);
   tags = tags?.map((tag) => common.sanitizeText(tag, config));
   const newCommit: Commit = {
     id: id ? id : state.records.seq + '-' + getId(),
