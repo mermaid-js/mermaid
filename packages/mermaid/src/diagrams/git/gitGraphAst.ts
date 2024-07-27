@@ -80,7 +80,7 @@ export const getOptions = function () {
   return state.records.options;
 };
 
-export const commit = function (msg: string, id: string, type: number, tags: string[] | undefined) {
+export const commit = function (msg: string, id: string, type: number, tags?: string[]) {
   log.info('commit', msg, id, type, tags);
   log.debug('Entering commit:', msg, id, type, tags);
   const config = getConfig();
