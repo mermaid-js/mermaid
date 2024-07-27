@@ -65,7 +65,7 @@ const parseMerge = (merge: MergeAst) => {
   const branch = merge.branch;
   const id = merge.id ?? '';
   const tags = merge.tags ?? undefined;
-  const type = merge.type !== undefined ? commitType[merge.type] : 0;
+  const type = merge.type !== undefined ? commitType[merge.type] : undefined;
   db.merge(branch, id, type, tags);
 };
 
