@@ -76,7 +76,7 @@ const parseCheckout = (checkout: CheckoutAst) => {
 
 const parseCherryPicking = (cherryPicking: CherryPickingAst) => {
   const id = cherryPicking.id;
-  const tags = cherryPicking.tags ?? undefined;
+  const tags = cherryPicking.tags?.length === 0 ? undefined : cherryPicking.tags;
   const parent = cherryPicking.parent;
   db.cherryPick(id, '', tags, parent);
 };

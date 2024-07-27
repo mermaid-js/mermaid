@@ -287,6 +287,7 @@ export const cherryPick = function (
   targetId = common.sanitizeText(targetId, getConfig());
   const config = getConfig();
   tags = tags?.map((tag) => common.sanitizeText(tag, config));
+
   parentCommitId = common.sanitizeText(parentCommitId, getConfig());
 
   if (!sourceId || !state.records.commits.has(sourceId)) {
@@ -383,6 +384,7 @@ export const cherryPick = function (
             }`,
           ],
     };
+
     state.records.head = commit;
     state.records.commits.set(commit.id, commit);
     state.records.branches.set(state.records.currBranch, commit.id);

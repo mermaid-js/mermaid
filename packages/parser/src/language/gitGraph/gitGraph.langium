@@ -65,7 +65,7 @@ Merge:
     (
         'id:' id=STRING
         |'tag:' tags+=STRING
-        |'type:' name=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
+        |'type:' type=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
     )* EOL;
 
 Checkout:
@@ -76,7 +76,7 @@ CherryPicking:
     (
         'id:' id=STRING
         |'tag:' tags+=STRING
-        |'parent:' id=STRING
+        |'parent:' parent=STRING
     )* EOL;
 
 
