@@ -198,10 +198,10 @@ export const dataFetcher = (
 
   if (itemId !== 'root') {
     let shape = SHAPE_STATE;
+    // The if === true / false can be removed if we can guarantee that the parsedItem.start is always a boolean
     if (parsedItem.start === true) {
       shape = SHAPE_START;
-    }
-    if (parsedItem.start === false) {
+    } else if (parsedItem.start === false) {
       shape = SHAPE_END;
     }
     if (parsedItem.type !== DEFAULT_STATE_TYPE) {
