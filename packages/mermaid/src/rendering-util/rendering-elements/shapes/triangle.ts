@@ -1,3 +1,4 @@
+import { log } from '$root/logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
@@ -6,64 +7,39 @@ import {
   userNodeOverrides,
 } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
 import rough from 'roughjs';
-
-import { insertPolygonShape } from './insertPolygonShape.js';
-
-export const createHexagonPathD = (
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  m: number
-): string => {
-  return [
-    `M${x + m},${y}`,
-    `L${x + width - m},${y}`,
-    `L${x + width},${y - height / 2}`,
-    `L${x + width - m},${y - height}`,
-    `L${x + m},${y - height}`,
-    `L${x},${y - height / 2}`,
-    'Z',
-  ].join(' ');
-};
+import { createPathFromPoints } from './util.js';
 
 export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const f = 4;
-  const h = bbox.height + node.padding;
-  const m = h / f;
-  const w = bbox.width + 2 * m + node.padding;
+  const w = bbox.width + node.padding + 20;
+  const h = (Math.sqrt(3) / 2) * w + (node.padding ?? 0);
   const points = [
-    { x: m, y: 0 },
-    { x: w - m, y: 0 },
-    { x: w, y: -h / 2 },
-    { x: w - m, y: -h },
-    { x: m, y: -h },
-    { x: 0, y: -h / 2 },
+    { x: 0, y: 0 },
+    { x: w, y: 0 },
+    { x: w / 2, y: -h },
   ];
 
-  let polygon: d3.Selection<SVGPolygonElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
-  if (node.look === 'handdrawn') {
-    // @ts-ignore - rough is not typed
-    const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {});
-    const pathData = createHexagonPathD(0, 0, w, h, m);
-    const roughNode = rc.path(pathData, options);
+  // @ts-ignore - rough is not typed
+  const rc = rough.svg(shapeSvg);
+  const options = userNodeOverrides(node, {});
+  if (node.look !== 'handdrawn') {
+    options.roughness = 0;
+    options.fillStyle = 'solid';
+  }
+  const pathData = createPathFromPoints(points);
+  const roughNode = rc.path(pathData, options);
 
-    polygon = shapeSvg
-      .insert(() => roughNode, ':first-child')
-      .attr('transform', `translate(${-w / 2}, ${h / 2})`);
+  const polygon = shapeSvg
+    .insert(() => roughNode, ':first-child')
+    .attr('transform', `translate(${-w / 2}, ${h / 2})`);
 
-    if (cssStyles) {
-      polygon.attr('style', cssStyles);
-    }
-  } else {
-    polygon = insertPolygonShape(shapeSvg, w, h, points);
+  if (cssStyles) {
+    polygon.attr('style', cssStyles);
   }
 
   if (nodeStyles) {
@@ -75,7 +51,10 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   updateNodeBounds(node, polygon);
 
+  label.attr('transform', `translate(${-bbox.width / 2}, ${h / 2 - bbox.height})`);
+
   node.intersect = function (point) {
+    log.info('Triangle intersect', node, points, point);
     return intersect.polygon(node, points, point);
   };
 
