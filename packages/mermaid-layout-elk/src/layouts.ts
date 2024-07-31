@@ -1,4 +1,4 @@
-import type { LayoutLoaderDefinition } from 'mermaid';
+import type { LayoutLoaderDefinition } from '@mermaid-chart/mermaid';
 
 const loader = async () => await import(`./render.js`);
 const algos = ['elk.stress', 'elk.force', 'elk.mrtree', 'elk.sporeOverlap'];
