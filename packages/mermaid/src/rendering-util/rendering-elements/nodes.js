@@ -27,6 +27,7 @@ import { trapezoid } from './shapes/trapezoid.js';
 import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
 import { labelRect } from './shapes/labelRect.js';
 import { triangle } from './shapes/triangle.js';
+import { halfRoundedRectangle } from './shapes/halfRoundedRectangle.js';
 
 const shapes = {
   state,
@@ -57,6 +58,7 @@ const shapes = {
   shadedProcess,
   anchor,
   triangle,
+  halfRoundedRectangle,
 };
 
 const nodeElems = new Map();
