@@ -503,7 +503,7 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
   // we will position the nodes when we get the layout from elkjs
   elkGraph = await addVertices(nodeEl, data4Layout.nodes, elkGraph);
   // Time for the edges, we start with adding an element in the node to hold the edges
-  const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
+  const edgesEl = svg.insert('g').attr('class', 'edges edgePaths');
 
   // Add the edges to the elk graph, this will entail creating the actual edges
   elkGraph = await addEdges(data4Layout, elkGraph, svg);
@@ -638,13 +638,18 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
           x: startNode.x + startNode.width / 2 + offset.x,
           y: startNode.y + startNode.height / 2 + offset.y,
         });
-      }
-      if (startNode.shape === 'diamond') {
         edge.points.push({
           x: endNode.x + endNode.width / 2 + offset.x,
           y: endNode.y + endNode.height / 2 + offset.y,
         });
       }
+      if (endNode.shape === 'diamond') {
+        edge.points.push({
+          x: endNode.x + endNode.width / 2 + offset.x,
+          y: endNode.y + endNode.height / 2 + offset.y,
+        });
+      }
+
       edge.points = cutPathAtIntersect(
         edge.points.reverse(),
         {
