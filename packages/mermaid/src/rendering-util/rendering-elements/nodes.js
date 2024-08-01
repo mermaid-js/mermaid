@@ -28,6 +28,7 @@ import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
 import { labelRect } from './shapes/labelRect.js';
 import { triangle } from './shapes/triangle.js';
 import { halfRoundedRectangle } from './shapes/halfRoundedRectangle.js';
+import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
 
 const shapes = {
   state,
@@ -59,6 +60,7 @@ const shapes = {
   anchor,
   triangle,
   halfRoundedRectangle,
+  curvedTrapezoid,
 };
 
 const nodeElems = new Map();
