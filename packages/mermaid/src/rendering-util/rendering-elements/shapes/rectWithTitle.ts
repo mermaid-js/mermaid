@@ -134,6 +134,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
     innerLine = g.insert('line');
     rect
       .attr('class', 'outer title-state')
+      .attr('style', nodeStyles)
       .attr('x', -bbox.width / 2 - halfPadding)
       .attr('y', -bbox.height / 2 - halfPadding)
       .attr('width', bbox.width + (node.padding || 0))
