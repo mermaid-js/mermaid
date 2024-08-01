@@ -6,10 +6,13 @@
 
 # Block Diagrams Documentation
 
-**Icons:**
+## Icons
 
-- 🔥: Indicates newly added diagrams.
-- `-beta`: Marks diagrams with experimental syntax that might change over time.
+Here is a brief explanation of the icons used in the documentation:
+
+> **Note**
+> 🔥: Indicates newly added diagrams.<br>
+> -beta: Marks diagrams with experimental syntax that might change over time.
 
 ## Introduction to Block Diagrams
 
