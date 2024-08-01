@@ -5,6 +5,11 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 # Block Diagrams Documentation
 
+**Icons:**
+
+- 🔥: Indicates newly added diagrams.
+- `-beta`: Marks diagrams with experimental syntax that might change over time.
+
 ## Introduction to Block Diagrams
 
 ```mermaid
