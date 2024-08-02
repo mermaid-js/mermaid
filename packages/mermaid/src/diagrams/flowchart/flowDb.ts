@@ -777,6 +777,7 @@ const destructEdgeType = (type: string | undefined) => {
   let arrowTypeStart = 'none';
   let arrowTypeEnd = 'arrow_point';
   switch (type) {
+    case 'arrow_open':
     case 'arrow_point':
     case 'arrow_circle':
     case 'arrow_cross':
