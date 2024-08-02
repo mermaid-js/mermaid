@@ -44,7 +44,7 @@ class Theme {
 
     /* Main */
     this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#eee' : '#333'); // invert(this.primaryColor);
-    this.secondaryColor = this.secondaryColor;
+    //this.secondaryColor = this.secondaryColor;
     this.tertiaryColor = this.tertiaryColor || adjust(this.primaryColor, { h: 180, l: 5 });
 
     this.primaryBorderColor = this.primaryBorderColor || '#BCBCFB';
