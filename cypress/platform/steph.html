@@ -1,0 +1,168 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background: #333; */
+        font-family: 'Arial';
+        /* font-size: 18px !important; */
+      }
+      h1 {
+        color: grey;
+      }
+      .mermaid2 {
+        display: none;
+      }
+      .mermaid svg {
+        /* font-size: 18px !important; */
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
+      }
+    </style>
+  </head>
+  <body>
+    <pre id="diagram" class="mermaid2">
+      %%{init: {"look": "neo", "theme": "neo","fontFamily": "Arial"} }%%
+flowchart
+      A[A really really really super long node] --> B & C
+      subgraph apa
+        D --> E
+      end
+      </pre
+    >
+    <pre id="diagram" class="mermaid2">
+%%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial",         "themeVariables": {
+          "useGradient": true,
+          "gradientStart": '#fff',
+          "gradientStop": '#ccc'
+        }} }%%
+stateDiagram-v2
+    stateId
+      </pre
+    >
+    <pre id="diagram2" class="mermaid2">
+flowchart LR
+    id1(Start)-->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+
+
+    </pre>
+
+    <pre id="diagram3" class="mermaid2">
+      flowchart LR
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef ash color:red
+    class C ash
+    style C stroke:#00f, fill:black
+
+    </pre>
+    <!-- Flowchart with subgraph-->
+    <pre id="diagram3" class="mermaid">
+flowchart TB
+    c1-->a2
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+    </pre>
+
+    <pre id="diagram4" class="mermaid">
+stateDiagram-v2
+    [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import { layouts } from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
+      mermaid.initialize({
+        theme: 'neo',
+
+        // handdrawnSeed: 12,
+        look: 'neo',
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        // layout: 'dagre',
+        // layout: 'elk',
+        // layout: 'fixed',
+        // htmlLabels: false,
+        flowchart: { titleTopMargin: 10 },
+
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        // fontFamily: 'courier',
+        fontFamily: 'arial',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        fontSize: 12,
+        logLevel: 0,
+        securityLevel: 'loose',
+      });
+      function callback() {
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+</html>
