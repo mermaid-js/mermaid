@@ -94,16 +94,18 @@ class Theme {
     this.sequenceNumberColor = this.sequenceNumberColor || invert(this.lineColor);
 
     /* Gantt chart variables */
-
-    this.sectionBkgColor = this.sectionBkgColor || this.tertiaryColor;
+    const primaryColor = '#ECECFE';
+    const secondaryColor = '#E9E9F1';
+    const tertiaryColor = adjust(primaryColor, { h: 180, l: 5 });
+    this.sectionBkgColor = this.sectionBkgColor || tertiaryColor;
     this.altSectionBkgColor = this.altSectionBkgColor || 'white';
-    this.sectionBkgColor = this.sectionBkgColor || this.secondaryColor;
-    this.sectionBkgColor2 = this.sectionBkgColor2 || this.primaryColor;
+    this.sectionBkgColor = this.sectionBkgColor || secondaryColor;
+    this.sectionBkgColor2 = this.sectionBkgColor2 || primaryColor;
     this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
     this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
-    this.taskBkgColor = this.taskBkgColor || this.primaryColor;
-    this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;
-    this.activeTaskBkgColor = this.activeTaskBkgColor || lighten(this.primaryColor, 23);
+    this.taskBkgColor = this.taskBkgColor || primaryColor;
+    this.activeTaskBorderColor = this.activeTaskBorderColor || primaryColor;
+    this.activeTaskBkgColor = this.activeTaskBkgColor || lighten(primaryColor, 23);
     this.gridColor = this.gridColor || 'lightgrey';
     this.doneTaskBkgColor = this.doneTaskBkgColor || 'lightgrey';
     this.doneTaskBorderColor = this.doneTaskBorderColor || 'grey';
@@ -142,9 +144,7 @@ class Theme {
 
     /* Color Scale */
     /* Each color-set will have a background, a foreground and a border color */
-    const primaryColor = '#ECECFE';
-    const secondaryColor = '#E9E9F1';
-    const tertiaryColor = adjust(primaryColor, { h: 180, l: 5 });
+
     this.cScale0 = this.cScale0 || primaryColor;
     this.cScale1 = this.cScale1 || secondaryColor;
     this.cScale2 = this.cScale2 || tertiaryColor;
