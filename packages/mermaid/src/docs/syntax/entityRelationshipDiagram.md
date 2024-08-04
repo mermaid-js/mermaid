@@ -188,6 +188,31 @@ erDiagram
     MANUFACTURER only one to zero or more CAR : makes
 ```
 
+## Setting the direction of the diagram
+
+With entity relationship diagrams you can use the direction statement to set the direction in which the diagram will render:
+
+```mermaid-example
+erDiagram
+    direction LR
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER ||--|{ LINE-ITEM : contains
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    LINE-ITEM {
+        string productCode
+        int quantity
+        float pricePerUnit
+    }
+```
+
 ### Other Things
 
 - If you want the relationship label to be more than one word, you must use double quotes around the phrase

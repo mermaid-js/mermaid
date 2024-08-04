@@ -803,4 +803,13 @@ describe('when parsing ER diagram it...', function () {
       }
     );
   });
+
+  it('should have the default direction TB', function () {
+    erDiagram.parser.parse('erDiagram\nA ||--|{ B : has');
+    expect(erDb.getDirection()).toBe('TB');
+  });
+
+  it('should handle the direction statement', function () {
+    erDiagram.parser.parse('erDiagram\ndirection LR\nA ||--|{ B : has');
+  });
 });
