@@ -219,6 +219,11 @@ g.stateGroup line {
 .statediagram-note .nodeLabel {
   color: ${options.noteTextColor};
 }
+
+.node.statediagram-note rect {
+  stroke: ${options.noteBorderColor} !important;
+}
+
 .statediagram .edgeLabel {
   color: red; // ${options.noteTextColor};
 }
