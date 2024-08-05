@@ -26,7 +26,7 @@ hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
 
 entry GitGraph:
   NEWLINE*
-  'gitGraph' Direction? ':'?
+  ('gitGraph' | 'gitGraph' ':' | 'gitGraph:' | ('gitGraph' Direction ':'))
   NEWLINE*
   (
     NEWLINE*

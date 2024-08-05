@@ -1,22 +1,21 @@
-import gitGraphAst from './gitGraphAst.js';
-import { parser } from './parser/gitGraph.jison';
+import db from './gitGraphAst.js';
+import { parser } from './gitGraphParser.js';
 
 describe('when parsing a gitGraph', function () {
   beforeEach(function () {
-    parser.yy = gitGraphAst;
-    parser.yy.clear();
+    db.clear();
   });
-  it('should handle a gitGraph commit with NO pararms, get auto-generated reandom ID', function () {
+  it('should handle a gitGraph commit with NO params, get auto-generated read-only ID', async () => {
     const str = `gitGraph:
     commit
     `;
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     //console.info(commits);
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
@@ -24,16 +23,16 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(0);
   });
 
-  it('should handle a gitGraph commit with custom commit id only', function () {
+  it('should handle a gitGraph commit with custom commit id only', async () => {
     const str = `gitGraph:
     commit id:"1111"
     `;
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).toBe('1111');
@@ -41,17 +40,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(0);
   });
 
-  it('should handle a gitGraph commit with custom commit tag only', function () {
+  it('should handle a gitGraph commit with custom commit tag only', async () => {
     const str = `gitGraph:
     commit tag:"test"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
@@ -59,17 +58,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(0);
   });
 
-  it('should handle a gitGraph commit with custom commit type HIGHLIGHT only', function () {
+  it('should handle a gitGraph commit with custom commit type HIGHLIGHT only', async () => {
     const str = `gitGraph:
     commit type: HIGHLIGHT
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
@@ -77,17 +76,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(2);
   });
 
-  it('should handle a gitGraph commit with custom commit type REVERSE only', function () {
+  it('should handle a gitGraph commit with custom commit type REVERSE only', async () => {
     const str = `gitGraph:
     commit type: REVERSE
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
@@ -95,17 +94,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(1);
   });
 
-  it('should handle a gitGraph commit with custom commit type NORMAL only', function () {
+  it('should handle a gitGraph commit with custom commit type NORMAL only', async () => {
     const str = `gitGraph:
     commit type: NORMAL
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
@@ -113,17 +112,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(0);
   });
 
-  it('should handle a gitGraph commit with custom commit msg only', function () {
+  it('should handle a gitGraph commit with custom commit msg only', async () => {
     const str = `gitGraph:
     commit "test commit"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test commit');
     expect(commits.get(key).id).not.toBeNull();
@@ -131,17 +130,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(0);
   });
 
-  it('should handle a gitGraph commit with custom commit "msg:" key only', function () {
+  it('should handle a gitGraph commit with custom commit "msg:" key only', async () => {
     const str = `gitGraph:
     commit msg: "test commit"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test commit');
     expect(commits.get(key).id).not.toBeNull();
@@ -149,17 +148,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(0);
   });
 
-  it('should handle a gitGraph commit with custom commit id, tag  only', function () {
+  it('should handle a gitGraph commit with custom commit id, tag  only', async () => {
     const str = `gitGraph:
     commit id:"1111" tag: "test tag"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).toBe('1111');
@@ -167,17 +166,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(0);
   });
 
-  it('should handle a gitGraph commit with custom commit type, tag  only', function () {
+  it('should handle a gitGraph commit with custom commit type, tag  only', async () => {
     const str = `gitGraph:
     commit type:HIGHLIGHT tag: "test tag"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
@@ -185,17 +184,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(2);
   });
 
-  it('should handle a gitGraph commit with custom commit tag and type only', function () {
+  it('should handle a gitGraph commit with custom commit tag and type only', async () => {
     const str = `gitGraph:
     commit tag: "test tag" type:HIGHLIGHT
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
@@ -203,17 +202,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(2);
   });
 
-  it('should handle a gitGraph commit with custom commit id, type and tag only', function () {
+  it('should handle a gitGraph commit with custom commit id, type and tag only', async () => {
     const str = `gitGraph:
     commit id:"1111" type:REVERSE tag: "test tag"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).toBe('1111');
@@ -221,17 +220,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(1);
   });
 
-  it('should handle a gitGraph commit with custom commit id, type,  tag and msg', function () {
+  it('should handle a gitGraph commit with custom commit id, type,  tag and msg', async () => {
     const str = `gitGraph:
     commit id:"1111" type:REVERSE tag: "test tag" msg:"test msg"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test msg');
     expect(commits.get(key).id).toBe('1111');
@@ -239,18 +238,18 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(1);
   });
 
-  it('should handle a gitGraph commit with custom  type,tag, msg, commit id,', function () {
+  it('should handle a gitGraph commit with custom  type,tag, msg, commit id,', async () => {
     const str = `gitGraph:
     commit type:REVERSE tag: "test tag" msg: "test msg" id: "1111"
 
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test msg');
     expect(commits.get(key).id).toBe('1111');
@@ -258,17 +257,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(1);
   });
 
-  it('should handle a gitGraph commit with custom  tag, msg, commit id, type,', function () {
+  it('should handle a gitGraph commit with custom  tag, msg, commit id, type,', async () => {
     const str = `gitGraph:
     commit  tag: "test tag" msg:"test msg" id:"1111" type:REVERSE
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test msg');
     expect(commits.get(key).id).toBe('1111');
@@ -276,17 +275,17 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(1);
   });
 
-  it('should handle a gitGraph commit with custom msg, commit id, type,tag', function () {
+  it('should handle a gitGraph commit with custom msg, commit id, type,tag', async () => {
     const str = `gitGraph:
     commit msg:"test msg" id:"1111" type:REVERSE tag: "test tag"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test msg');
     expect(commits.get(key).id).toBe('1111');
@@ -294,36 +293,36 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(key).type).toBe(1);
   });
 
-  it('should handle 3 straight commits', function () {
+  it('should handle 3 straight commits', async () => {
     const str = `gitGraph:
     commit
     commit
     commit
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(3);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(1);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(1);
   });
 
-  it('should handle new branch creation', function () {
+  it('should handle new branch creation', async () => {
     const str = `gitGraph:
     commit
     branch testBranch
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('testBranch');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('testBranch');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
   });
 
-  it('should allow quoted branch names', function () {
+  it('should allow quoted branch names', async () => {
     const str = `gitGraph:
     commit
     branch "branch"
@@ -333,49 +332,49 @@ describe('when parsing a gitGraph', function () {
     merge "branch"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(3);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
     const [commit1, commit2, commit3] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit2).branch).toBe('branch');
     expect(commits.get(commit3).branch).toBe('main');
-    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([{ name: 'main' }, { name: 'branch' }]);
+    expect(db.getBranchesAsObjArray()).toStrictEqual([{ name: 'main' }, { name: 'branch' }]);
   });
 
-  it('should allow _-./ characters in branch names', function () {
+  it('should allow _-./ characters in branch names', async () => {
     const str = `gitGraph:
     commit
     branch azAZ_-./test
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('azAZ_-./test');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('azAZ_-./test');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
   });
 
-  it('should allow branch names starting with numbers', function () {
+  it('should allow branch names starting with numbers', async () => {
     const str = `gitGraph:
     commit
     %% branch names starting with numbers are not recommended, but are supported by git
     branch 1.0.1
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('1.0.1');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('1.0.1');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
   });
 
-  it('should allow branch names starting with unusual prefixes', function () {
+  it('should allow branch names starting with unusual prefixes', async () => {
     const str = `gitGraph:
     commit
     %% branch names starting with numbers are not recommended, but are supported by git
@@ -388,13 +387,13 @@ describe('when parsing a gitGraph', function () {
     branch A
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('A');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(7);
-    expect([...parser.yy.getBranches().keys()]).toEqual(
+    expect(db.getCurrentBranch()).toBe('A');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(7);
+    expect([...db.getBranches().keys()]).toEqual(
       expect.arrayContaining([
         'branch01',
         'checkout02',
@@ -406,21 +405,21 @@ describe('when parsing a gitGraph', function () {
     );
   });
 
-  it('should handle new branch checkout', function () {
+  it('should handle new branch checkout', async () => {
     const str = `gitGraph:
     commit
     branch testBranch
     checkout testBranch
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('testBranch');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('testBranch');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
   });
-  it('should handle new branch checkout with order', function () {
+  it('should handle new branch checkout with order', async () => {
     const str = `gitGraph:
     commit
     branch test1 order: 3
@@ -428,19 +427,19 @@ describe('when parsing a gitGraph', function () {
     branch test3 order: 1
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('test3');
-    expect(parser.yy.getBranches().size).toBe(4);
-    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
+    expect(db.getCurrentBranch()).toBe('test3');
+    expect(db.getBranches().size).toBe(4);
+    expect(db.getBranchesAsObjArray()).toStrictEqual([
       { name: 'main' },
       { name: 'test3' },
       { name: 'test2' },
       { name: 'test1' },
     ]);
   });
-  it('should handle new branch checkout with and without order', function () {
+  it('should handle new branch checkout with and without order', async () => {
     const str = `gitGraph:
     commit
     branch test1 order: 1
@@ -448,12 +447,12 @@ describe('when parsing a gitGraph', function () {
     branch test3
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('test3');
-    expect(parser.yy.getBranches().size).toBe(4);
-    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
+    expect(db.getCurrentBranch()).toBe('test3');
+    expect(db.getBranches().size).toBe(4);
+    expect(db.getBranchesAsObjArray()).toStrictEqual([
       { name: 'main' },
       { name: 'test2' },
       { name: 'test3' },
@@ -461,7 +460,7 @@ describe('when parsing a gitGraph', function () {
     ]);
   });
 
-  it('should handle new branch checkout & commit', function () {
+  it('should handle new branch checkout & commit', async () => {
     const str = `gitGraph:
     commit
     branch testBranch
@@ -469,12 +468,12 @@ describe('when parsing a gitGraph', function () {
     commit
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(2);
-    expect(parser.yy.getCurrentBranch()).toBe('testBranch');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('testBranch');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
     const [commit1, commit2] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
@@ -482,7 +481,7 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(commit2).parents).toStrictEqual([commit1]);
   });
 
-  it('should handle new branch checkout & commit and merge', function () {
+  it('should handle new branch checkout & commit and merge', async () => {
     const str = `gitGraph:
     commit
     branch testBranch
@@ -493,12 +492,12 @@ describe('when parsing a gitGraph', function () {
     merge testBranch
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(4);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
     const [commit1, commit2, commit3, commit4] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
@@ -511,28 +510,25 @@ describe('when parsing a gitGraph', function () {
       commits.get(commit1).id,
       commits.get(commit3).id,
     ]);
-    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
-      { name: 'main' },
-      { name: 'testBranch' },
-    ]);
+    expect(db.getBranchesAsObjArray()).toStrictEqual([{ name: 'main' }, { name: 'testBranch' }]);
   });
 
-  it('should handle new branch switch', function () {
+  it('should handle new branch switch', async () => {
     const str = `gitGraph:
     commit
     branch testBranch
     switch testBranch
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('testBranch');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('testBranch');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
   });
 
-  it('should handle new branch switch & commit', function () {
+  it('should handle new branch switch & commit', async () => {
     const str = `gitGraph:
     commit
     branch testBranch
@@ -540,12 +536,12 @@ describe('when parsing a gitGraph', function () {
     commit
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(2);
-    expect(parser.yy.getCurrentBranch()).toBe('testBranch');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('testBranch');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
     const [commit1, commit2] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
@@ -553,7 +549,7 @@ describe('when parsing a gitGraph', function () {
     expect(commits.get(commit2).parents).toStrictEqual([commit1]);
   });
 
-  it('should handle new branch switch & commit and merge', function () {
+  it('should handle new branch switch & commit and merge', async () => {
     const str = `gitGraph:
     commit
     branch testBranch
@@ -564,12 +560,12 @@ describe('when parsing a gitGraph', function () {
     merge testBranch
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(4);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
     const [commit1, commit2, commit3, commit4] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
@@ -582,13 +578,10 @@ describe('when parsing a gitGraph', function () {
       commits.get(commit1).id,
       commits.get(commit3).id,
     ]);
-    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
-      { name: 'main' },
-      { name: 'testBranch' },
-    ]);
+    expect(db.getBranchesAsObjArray()).toStrictEqual([{ name: 'main' }, { name: 'testBranch' }]);
   });
 
-  it('should handle merge tags', function () {
+  it('should handle merge tags', async () => {
     const str = `gitGraph:
     commit
     branch testBranch
@@ -598,12 +591,12 @@ describe('when parsing a gitGraph', function () {
     merge testBranch tag: "merge-tag"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(3);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
-    expect(parser.yy.getBranches().size).toBe(2);
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
+    expect(db.getBranches().size).toBe(2);
     const [commit1, commit2, commit3] = commits.keys();
     expect(commits.get(commit1).branch).toBe('main');
     expect(commits.get(commit1).parents).toStrictEqual([]);
@@ -617,13 +610,10 @@ describe('when parsing a gitGraph', function () {
       commits.get(commit2).id,
     ]);
     expect(commits.get(commit3).tags).toStrictEqual(['merge-tag']);
-    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
-      { name: 'main' },
-      { name: 'testBranch' },
-    ]);
+    expect(db.getBranchesAsObjArray()).toStrictEqual([{ name: 'main' }, { name: 'testBranch' }]);
   });
 
-  it('should handle merge with custom ids, tags and typr', function () {
+  it('should handle merge with custom ids, tags and type', async () => {
     const str = `gitGraph:
       commit
       branch testBranch
@@ -646,11 +636,11 @@ describe('when parsing a gitGraph', function () {
       merge testBranch3 id: "6-666"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     expect(commits.size).toBe(7);
-    expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getDirection()).toBe('LR');
+    expect(db.getCurrentBranch()).toBe('main');
+    expect(db.getDirection()).toBe('LR');
 
     // The order of these commits is in alphabetical order of IDs
     const [
@@ -685,7 +675,7 @@ describe('when parsing a gitGraph', function () {
     expect(testBranch3Merge.parents).toStrictEqual([testBranch2Merge.id, testBranch3Commit.id]);
     expect(testBranch3Merge.id).toBe('6-666');
 
-    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
+    expect(db.getBranchesAsObjArray()).toStrictEqual([
       { name: 'main' },
       { name: 'testBranch' },
       { name: 'testBranch2' },
@@ -693,7 +683,7 @@ describe('when parsing a gitGraph', function () {
     ]);
   });
 
-  it('should support cherry-picking commits', function () {
+  it('should support cherry-picking commits', async () => {
     const str = `gitGraph
     commit id: "ZERO"
     branch develop
@@ -702,14 +692,14 @@ describe('when parsing a gitGraph', function () {
     cherry-pick id:"A"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     const cherryPickCommitID = [...commits.keys()][2];
     expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['cherry-pick:A']);
     expect(commits.get(cherryPickCommitID).branch).toBe('main');
   });
 
-  it('should support cherry-picking commits with custom tag', function () {
+  it('should support cherry-picking commits with custom tag', async () => {
     const str = `gitGraph
     commit id: "ZERO"
     branch develop
@@ -718,14 +708,14 @@ describe('when parsing a gitGraph', function () {
     cherry-pick id:"A" tag:"MyTag"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     const cherryPickCommitID = [...commits.keys()][2];
     expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['MyTag']);
     expect(commits.get(cherryPickCommitID).branch).toBe('main');
   });
 
-  it('should support cherry-picking commits with no tag', function () {
+  it('should support cherry-picking commits with no tag', async () => {
     const str = `gitGraph
     commit id: "ZERO"
     branch develop
@@ -734,14 +724,14 @@ describe('when parsing a gitGraph', function () {
     cherry-pick id:"A" tag:""
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     const cherryPickCommitID = [...commits.keys()][2];
     expect(commits.get(cherryPickCommitID).tags).toStrictEqual([]);
     expect(commits.get(cherryPickCommitID).branch).toBe('main');
   });
 
-  it('should support cherry-picking of merge commits', function () {
+  it('should support cherry-picking of merge commits', async () => {
     const str = `gitGraph
     commit id: "ZERO"
     branch feature
@@ -755,14 +745,14 @@ describe('when parsing a gitGraph', function () {
     cherry-pick id: "M" parent:"B"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     const cherryPickCommitID = [...commits.keys()][4];
     expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['cherry-pick:M|parent:B']);
     expect(commits.get(cherryPickCommitID).branch).toBe('release');
   });
 
-  it('should support cherry-picking of merge commits with tag', function () {
+  it('should support cherry-picking of merge commits with tag', async () => {
     const str = `gitGraph
     commit id: "ZERO"
     branch feature
@@ -776,14 +766,14 @@ describe('when parsing a gitGraph', function () {
     cherry-pick id: "M" parent:"ZERO" tag: "v1.0"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     const cherryPickCommitID = [...commits.keys()][4];
     expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['v1.0']);
     expect(commits.get(cherryPickCommitID).branch).toBe('release');
   });
 
-  it('should support cherry-picking of merge commits with additional commit', function () {
+  it('should support cherry-picking of merge commits with additional commit', async () => {
     const str = `gitGraph
     commit id: "ZERO"
     branch feature
@@ -799,14 +789,14 @@ describe('when parsing a gitGraph', function () {
     commit id: "D"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     const cherryPickCommitID = [...commits.keys()][5];
     expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['v2.1:ZERO']);
     expect(commits.get(cherryPickCommitID).branch).toBe('release');
   });
 
-  it('should support cherry-picking of merge commits with empty tag', function () {
+  it('should support cherry-picking of merge commits with empty tag', async () => {
     const str = `gitGraph
     commit id: "ZERO"
     branch feature
@@ -823,8 +813,8 @@ describe('when parsing a gitGraph', function () {
     cherry-pick id:"M" tag:"" parent: "B"
     `;
 
-    parser.parse(str);
-    const commits = parser.yy.getCommits();
+    await parser.parse(str);
+    const commits = db.getCommits();
     const cherryPickCommitID = [...commits.keys()][5];
     const cherryPickCommitID2 = [...commits.keys()][7];
     expect(commits.get(cherryPickCommitID).tags).toStrictEqual([]);
@@ -833,10 +823,11 @@ describe('when parsing a gitGraph', function () {
   });
 
   it('should fail cherry-picking of merge commits if the parent of merge commits is not specified', function () {
-    expect(() =>
-      parser
-        .parse(
-          `gitGraph
+    expect(
+      async () =>
+        await parser
+          .parse(
+            `gitGraph
     commit id: "ZERO"
     branch feature
     branch release
@@ -849,18 +840,19 @@ describe('when parsing a gitGraph', function () {
     commit id: "C"
     cherry-pick id:"M"
     `
-        )
-        .toThrow(
-          'Incorrect usage of cherry-pick: If the source commit is a merge commit, an immediate parent commit must be specified.'
-        )
+          )
+          .toThrow(
+            'Incorrect usage of cherry-pick: If the source commit is a merge commit, an immediate parent commit must be specified.'
+          )
     );
   });
 
   it('should fail cherry-picking of merge commits when the parent provided is not an immediate parent of cherry picked commit', function () {
-    expect(() =>
-      parser
-        .parse(
-          `gitGraph
+    expect(
+      async () =>
+        await parser
+          .parse(
+            `gitGraph
     commit id: "ZERO"
     branch feature
     branch release
@@ -873,14 +865,14 @@ describe('when parsing a gitGraph', function () {
     commit id: "C"
     cherry-pick id:"M" parent: "A"
     `
-        )
-        .toThrow(
-          'Invalid operation: The specified parent commit is not an immediate parent of the cherry-picked commit.'
-        )
+          )
+          .toThrow(
+            'Invalid operation: The specified parent commit is not an immediate parent of the cherry-picked commit.'
+          )
     );
   });
 
-  it('should throw error when try to branch existing branch: main', function () {
+  it('should throw error when try to branch existing branch: main', async () => {
     const str = `gitGraph
     commit
     branch testBranch
@@ -892,7 +884,7 @@ describe('when parsing a gitGraph', function () {
     `;
 
     try {
-      parser.parse(str);
+      await parser.parse(str);
       // Fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (e) {
@@ -901,7 +893,7 @@ describe('when parsing a gitGraph', function () {
       );
     }
   });
-  it('should throw error when try to branch existing branch: testBranch', function () {
+  it('should throw error when try to branch existing branch: testBranch', async () => {
     const str = `gitGraph
     commit
     branch testBranch
@@ -913,7 +905,7 @@ describe('when parsing a gitGraph', function () {
     `;
 
     try {
-      parser.parse(str);
+      await parser.parse(str);
       // Fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (e) {
@@ -922,7 +914,7 @@ describe('when parsing a gitGraph', function () {
       );
     }
   });
-  it('should throw error when try to checkout unknown branch: testBranch', function () {
+  it('should throw error when try to checkout unknown branch: testBranch', async () => {
     const str = `gitGraph
     commit
     checkout testBranch
@@ -934,7 +926,7 @@ describe('when parsing a gitGraph', function () {
     `;
 
     try {
-      parser.parse(str);
+      await parser.parse(str);
       // Fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (e) {
@@ -943,7 +935,7 @@ describe('when parsing a gitGraph', function () {
       );
     }
   });
-  it('should throw error when trying to merge, when current branch has no commits', function () {
+  it('should throw error when trying to merge, when current branch has no commits', async () => {
     const str = `gitGraph
     merge testBranch
     commit
@@ -956,14 +948,14 @@ describe('when parsing a gitGraph', function () {
     `;
 
     try {
-      parser.parse(str);
+      await parser.parse(str);
       // Fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (e) {
       expect(e.message).toBe('Incorrect usage of "merge". Current branch (main)has no commits');
     }
   });
-  it('should throw error when trying to merge unknown branch', function () {
+  it('should throw error when trying to merge unknown branch', async () => {
     const str = `gitGraph
     commit
     merge testBranch
@@ -977,7 +969,7 @@ describe('when parsing a gitGraph', function () {
     `;
 
     try {
-      parser.parse(str);
+      await parser.parse(str);
       // Fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (e) {
@@ -986,7 +978,7 @@ describe('when parsing a gitGraph', function () {
       );
     }
   });
-  it('should throw error when trying to merge branch to itself', function () {
+  it('should throw error when trying to merge branch to itself', async () => {
     const str = `gitGraph
     commit
     branch testBranch
@@ -994,7 +986,7 @@ describe('when parsing a gitGraph', function () {
     `;
 
     try {
-      parser.parse(str);
+      await parser.parse(str);
       // Fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (e) {
@@ -1002,7 +994,7 @@ describe('when parsing a gitGraph', function () {
     }
   });
 
-  it('should throw error when using existing id as merge ID', function () {
+  it('should throw error when using existing id as merge ID', async () => {
     const str = `gitGraph
     commit id: "1-111"
     branch testBranch
@@ -1013,7 +1005,7 @@ describe('when parsing a gitGraph', function () {
     `;
 
     try {
-      parser.parse(str);
+      await parser.parse(str);
       // Fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (e) {
@@ -1022,7 +1014,7 @@ describe('when parsing a gitGraph', function () {
       );
     }
   });
-  it('should throw error when trying to merge branches having same heads', function () {
+  it('should throw error when trying to merge branches having same heads', async () => {
     const str = `gitGraph
     commit
     branch testBranch
@@ -1031,14 +1023,14 @@ describe('when parsing a gitGraph', function () {
     `;
 
     try {
-      parser.parse(str);
+      await parser.parse(str);
       // Fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (e) {
       expect(e.message).toBe('Incorrect usage of "merge". Both branches have same head');
     }
   });
-  it('should throw error when trying to merge branch which has no commits', function () {
+  it('should throw error when trying to merge branch which has no commits', async () => {
     const str = `gitGraph
     branch test1
 
@@ -1048,7 +1040,7 @@ describe('when parsing a gitGraph', function () {
     `;
 
     try {
-      parser.parse(str);
+      await parser.parse(str);
       // Fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (e) {
@@ -1058,17 +1050,17 @@ describe('when parsing a gitGraph', function () {
     }
   });
   describe('accessibility', () => {
-    it('should handle a title and a description (accDescr)', () => {
+    it('should handle a title and a description (accDescr)', async () => {
       const str = `gitGraph:
       accTitle: This is a title
       accDescr: This is a description
     commit
     `;
-      parser.parse(str);
-      expect(parser.yy.getAccTitle()).toBe('This is a title');
-      expect(parser.yy.getAccDescription()).toBe('This is a description');
+      await parser.parse(str);
+      expect(db.getAccTitle()).toBe('This is a title');
+      expect(db.getAccDescription()).toBe('This is a description');
     });
-    it('should handle a title and a multiline description (accDescr)', () => {
+    it('should handle a title and a multiline description (accDescr)', async () => {
       const str = `gitGraph:
       accTitle: This is a title
       accDescr {
@@ -1077,15 +1069,15 @@ describe('when parsing a gitGraph', function () {
       }
     commit
     `;
-      parser.parse(str);
-      expect(parser.yy.getAccTitle()).toBe('This is a title');
-      expect(parser.yy.getAccDescription()).toBe('This is a description\nusing multiple lines');
+      await parser.parse(str);
+      expect(db.getAccTitle()).toBe('This is a title');
+      expect(db.getAccDescription()).toBe('This is a description\nusing multiple lines');
     });
   });
 
   describe('unsafe properties', () => {
     for (const prop of ['__proto__', 'constructor']) {
-      it(`should work with custom commit id or branch name ${prop}`, () => {
+      it(`should work with custom commit id or branch name ${prop}`, async () => {
         const str = `gitGraph
     commit id:"${prop}"
     branch ${prop}
@@ -1094,13 +1086,13 @@ describe('when parsing a gitGraph', function () {
     checkout main
     merge ${prop}
     `;
-        parser.parse(str);
-        const commits = parser.yy.getCommits();
+        await parser.parse(str);
+        const commits = db.getCommits();
         expect(commits.size).toBe(3);
         expect(commits.keys().next().value).toBe(prop);
-        expect(parser.yy.getCurrentBranch()).toBe('main');
-        expect(parser.yy.getBranches().size).toBe(2);
-        expect(parser.yy.getBranchesAsObjArray()[1].name).toBe(prop);
+        expect(db.getCurrentBranch()).toBe('main');
+        expect(db.getBranches().size).toBe(2);
+        expect(db.getBranchesAsObjArray()[1].name).toBe(prop);
       });
     }
   });

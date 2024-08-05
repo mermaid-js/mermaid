@@ -44,7 +44,6 @@ function getID() {
   return random({ length: 7 });
 }
 
-
 /**
  * @param list - list of items
  * @param fn -  function to get the key
@@ -88,7 +87,7 @@ export const commit = function (msg: string, id: string, type: number, tags?: st
   msg = common.sanitizeText(msg, config);
   tags = tags?.map((tag) => common.sanitizeText(tag, config));
   const newCommit: Commit = {
-    id: id ? id : state.records.seq + '-' + getId(),
+    id: id ? id : state.records.seq + '-' + getID(),
     message: msg,
     seq: state.records.seq++,
     type: type ?? commitType.NORMAL,
@@ -109,12 +108,12 @@ export const branch = function (name: string, order?: number) {
     throw new Error(
       `Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ${name}")`
     );
-  } 
-  
-    state.records.branches.set(name, state.records.head != null ? state.records.head.id : null);
-    state.records.branchConfig.set(name, { name, order });
-    checkout(name);
-    log.debug('in createBranch');
+  }
+
+  state.records.branches.set(name, state.records.head != null ? state.records.head.id : null);
+  state.records.branchConfig.set(name, { name, order });
+  checkout(name);
+  log.debug('in createBranch');
 };
 
 export const merge = (
@@ -123,9 +122,10 @@ export const merge = (
   overrideType?: number,
   customTags?: string[]
 ): void => {
-  otherBranch = common.sanitizeText(otherBranch, getConfig());
+  const config = getConfig();
+  otherBranch = common.sanitizeText(otherBranch, config);
   if (customId) {
-    customId = common.sanitizeText(customId, getConfig());
+    customId = common.sanitizeText(customId, config);
   }
   const currentBranchCheck: string | null | undefined = state.records.branches.get(
     state.records.currBranch
@@ -150,7 +150,8 @@ export const merge = (
       expected: ['branch abc'],
     };
     throw error;
-  } else if (currentCommit === undefined || !currentCommit) {
+  }
+  if (currentCommit === undefined || !currentCommit) {
     const error: any = new Error(
       `Incorrect usage of "merge". Current branch (${state.records.currBranch})has no commits`
     );
@@ -162,7 +163,8 @@ export const merge = (
       expected: ['commit'],
     };
     throw error;
-  } else if (!state.records.branches.has(otherBranch)) {
+  }
+  if (!state.records.branches.has(otherBranch)) {
     const error: any = new Error(
       'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') does not exist'
     );
@@ -174,7 +176,8 @@ export const merge = (
       expected: [`branch ${otherBranch}`],
     };
     throw error;
-  } else if (otherCommit === undefined || !otherCommit) {
+  }
+  if (otherCommit === undefined || !otherCommit) {
     const error: any = new Error(
       'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') has no commits'
     );
@@ -186,7 +189,8 @@ export const merge = (
       expected: ['"commit"'],
     };
     throw error;
-  } else if (currentCommit === otherCommit) {
+  }
+  if (currentCommit === otherCommit) {
     const error: any = new Error('Incorrect usage of "merge". Both branches have same head');
     error.hash = {
       text: `merge ${otherBranch}`,
@@ -196,7 +200,8 @@ export const merge = (
       expected: ['branch abc'],
     };
     throw error;
-  } else if (customId && state.records.commits.has(customId)) {
+  }
+  if (customId && state.records.commits.has(customId)) {
     const error: any = new Error(
       'Incorrect usage of "merge". Commit with id:' +
         customId +
@@ -218,7 +223,7 @@ export const merge = (
   const verifiedBranch: string = otherBranchCheck ? otherBranchCheck : ''; //figure out a cleaner way to do this
 
   const commit: Commit = {
-    id: customId ? customId : state.records.seq + '-' + getId(),
+    id: customId ? customId : state.records.seq + '-' + getID(),
     message: `merged branch ${otherBranch} into ${state.records.currBranch}`,
     seq: state.records.seq++,
     parents: [state.records.head == null ? null : state.records.head.id, verifiedBranch],
@@ -242,12 +247,13 @@ export const cherryPick = function (
   parentCommitId: string
 ) {
   log.debug('Entering cherryPick:', sourceId, targetId, tags);
-  sourceId = common.sanitizeText(sourceId, getConfig());
-  targetId = common.sanitizeText(targetId, getConfig());
   const config = getConfig();
+  sourceId = common.sanitizeText(sourceId, config);
+  targetId = common.sanitizeText(targetId, config);
+
   tags = tags?.map((tag) => common.sanitizeText(tag, config));
 
-  parentCommitId = common.sanitizeText(parentCommitId, getConfig());
+  parentCommitId = common.sanitizeText(parentCommitId, config);
 
   if (!sourceId || !state.records.commits.has(sourceId)) {
     const error: any = new Error(
@@ -293,8 +299,6 @@ export const cherryPick = function (
       error.hash = {
         text: `cherryPick ${sourceId} ${targetId}`,
         token: `cherryPick ${sourceId} ${targetId}`,
-        line: '1',
-        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
         expected: ['cherry-pick abc'],
       };
       throw error;
@@ -307,8 +311,6 @@ export const cherryPick = function (
       error.hash = {
         text: `cherryPick ${sourceId} ${targetId}`,
         token: `cherryPick ${sourceId} ${targetId}`,
-        line: '1',
-        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
         expected: ['cherry-pick abc'],
       };
       throw error;
@@ -323,13 +325,12 @@ export const cherryPick = function (
         text: `cherryPick ${sourceId} ${targetId}`,
         token: `cherryPick ${sourceId} ${targetId}`,
         line: '1',
-        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
         expected: ['cherry-pick abc'],
       };
       throw error;
     }
     const commit = {
-      id: state.records.seq + '-' + getId(),
+      id: state.records.seq + '-' + getID(),
       message: `cherry-picked ${sourceCommit?.message} into ${state.records.currBranch}`,
       seq: state.records.seq++,
       parents: [state.records.head == null ? null : state.records.head.id, sourceCommit.id],
@@ -365,8 +366,6 @@ export const checkout = function (branch: string) {
       expected: [`branch ${branch}`],
     };
     throw error;
-    //branches[branch] = head != null ? head.id : null;
-    //log.debug('in createBranch');
   } else {
     state.records.currBranch = branch;
     const id = state.records.branches.get(state.records.currBranch);
@@ -377,25 +376,6 @@ export const checkout = function (branch: string) {
     }
   }
 };
-
-// export const reset = function (commitRef) {
-//   log.debug('in reset', commitRef);
-//   const ref = commitRef.split(':')[0];
-//   let parentCount = parseInt(commitRef.split(':')[1]);
-//   let commit = ref === 'HEAD' ? head : commits.get(branches.get(ref));
-//   log.debug(commit, parentCount);
-//   while (parentCount > 0) {
-//     commit = commits.get(commit.parent);
-//     parentCount--;
-//     if (!commit) {
-//       const err = 'Critical error - unique parent commit not found during reset';
-//       log.error(err);
-//       throw err;
-//     }
-//   }
-//   head = commit;
-//   branches[curBranch] = commit.id;
-// };
 
 /**
  * @param arr - array
