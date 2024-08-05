@@ -67,6 +67,7 @@ properties:
       - neutral
       - neo
       - neo-dark
+      - mc
       - 'null' # should this be a `null`-type?
     meta:enum:
       'null': Can be set to disable any pre-defined mermaid theme
