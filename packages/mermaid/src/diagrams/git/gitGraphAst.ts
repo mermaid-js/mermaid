@@ -145,8 +145,6 @@ export const merge = (
     error.hash = {
       text: `merge ${otherBranch}`,
       token: `merge ${otherBranch}`,
-      line: '1',
-      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: ['branch abc'],
     };
     throw error;
@@ -158,8 +156,6 @@ export const merge = (
     error.hash = {
       text: `merge ${otherBranch}`,
       token: `merge ${otherBranch}`,
-      line: '1',
-      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: ['commit'],
     };
     throw error;
@@ -171,8 +167,6 @@ export const merge = (
     error.hash = {
       text: `merge ${otherBranch}`,
       token: `merge ${otherBranch}`,
-      line: '1',
-      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [`branch ${otherBranch}`],
     };
     throw error;
@@ -184,8 +178,6 @@ export const merge = (
     error.hash = {
       text: `merge ${otherBranch}`,
       token: `merge ${otherBranch}`,
-      line: '1',
-      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: ['"commit"'],
     };
     throw error;
@@ -195,8 +187,6 @@ export const merge = (
     error.hash = {
       text: `merge ${otherBranch}`,
       token: `merge ${otherBranch}`,
-      line: '1',
-      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: ['branch abc'],
     };
     throw error;
@@ -210,8 +200,6 @@ export const merge = (
     error.hash = {
       text: `merge ${otherBranch} ${customId} ${overrideType} ${customTags?.join(' ')}`,
       token: `merge ${otherBranch} ${customId} ${overrideType} ${customTags?.join(' ')}`,
-      line: '1',
-      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [
         `merge ${otherBranch} ${customId}_UNIQUE ${overrideType} ${customTags?.join(' ')}`,
       ],
@@ -262,8 +250,6 @@ export const cherryPick = function (
     error.hash = {
       text: `cherryPick ${sourceId} ${targetId}`,
       token: `cherryPick ${sourceId} ${targetId}`,
-      line: '1',
-      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: ['cherry-pick abc'],
     };
     throw error;
@@ -324,7 +310,6 @@ export const cherryPick = function (
       error.hash = {
         text: `cherryPick ${sourceId} ${targetId}`,
         token: `cherryPick ${sourceId} ${targetId}`,
-        line: '1',
         expected: ['cherry-pick abc'],
       };
       throw error;
@@ -361,8 +346,6 @@ export const checkout = function (branch: string) {
     error.hash = {
       text: `checkout ${branch}`,
       token: `checkout ${branch}`,
-      line: '1',
-      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
       expected: [`branch ${branch}`],
     };
     throw error;
