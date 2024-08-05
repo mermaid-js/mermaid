@@ -620,7 +620,7 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
       }
       if (endNode.isGroup) {
         const bbox = endNode.domId.node().getBBox();
-        ew = Math.max(startNode.width, endNode.labels[0].width + endNode.padding);
+        ew = Math.max(endNode.width, endNode.labels[0].width + endNode.padding);
 
         log.debug(
           'UIO width',
@@ -637,10 +637,6 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
         edge.points.unshift({
           x: startNode.x + startNode.width / 2 + offset.x,
           y: startNode.y + startNode.height / 2 + offset.y,
-        });
-        edge.points.push({
-          x: endNode.x + endNode.width / 2 + offset.x,
-          y: endNode.y + endNode.height / 2 + offset.y,
         });
       }
       if (endNode.shape === 'diamond') {
@@ -665,8 +661,8 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
       edge.points = cutPathAtIntersect(
         edge.points,
         {
-          x: endNode.x + ew / 2 + offset.x,
-          y: endNode.y + endNode.height / 2 + offset.y,
+          x: endNode.x + ew / 2 + endNode.offset.x,
+          y: endNode.y + endNode.height / 2 + endNode.offset.y,
           width: ew,
           height: endNode.height,
           padding: endNode.padding,
