@@ -6,6 +6,12 @@
 
 # Packet Diagram (v\<MERMAID_RELEASE_VERSION>+)
 
+<script setup>
+import IconsNote from './icons-note.md'
+</script>
+
+<IconsNote />
+
 ## Introduction
 
 A packet diagram is a visual representation used to illustrate the structure and contents of a network packet. Network packets are the fundamental units of data transferred over a network.

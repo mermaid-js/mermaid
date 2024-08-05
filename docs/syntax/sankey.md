@@ -6,6 +6,12 @@
 
 # Sankey diagram (v10.3.0+)
 
+<script setup>
+import IconsNote from './icons-note.md' 
+</script>
+
+<IconsNote />
+
 > A sankey diagram is a visualization used to depict a flow from one set of values to another.
 
 > **Warning**

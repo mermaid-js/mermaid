@@ -6,13 +6,11 @@
 
 # Block Diagrams Documentation
 
-## Icons
+<script setup>
+import IconsNote from './icons-note.md' 
+</script>
 
-Here is a brief explanation of the icons used in the documentation:
-
-> **Note**
-> 🔥: Indicates newly added diagrams.<br>
-> -beta: Marks diagrams with experimental syntax that might change over time.
+<IconsNote />
 
 ## Introduction to Block Diagrams
 

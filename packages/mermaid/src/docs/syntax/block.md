@@ -5,14 +5,11 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 # Block Diagrams Documentation
 
-## Icons
+<script setup>
+import IconsNote from './icons-note.md' 
+</script>
 
-Here is a brief explanation of the icons used in the documentation:
-
-```note
-🔥: Indicates newly added diagrams.<br>
--beta: Marks diagrams with experimental syntax that might change over time.
-```
+<IconsNote />
 
 ## Introduction to Block Diagrams
 

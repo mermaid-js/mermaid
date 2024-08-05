@@ -1,13 +1,10 @@
 # XY Chart
 
-## Icons
+<script setup>
+import IconsNote from './icons-note.md'
+</script>
 
-Here is a brief explanation of the icons used in the documentation:
-
-```note
-🔥: Indicates newly added diagrams.<br>
--beta: Marks diagrams with experimental syntax that might change over time.
-```
+<IconsNote />
 
 > In the context of mermaid-js, the XY chart is a comprehensive charting module that encompasses various types of charts that utilize both x-axis and y-axis for data representation. Presently, it includes two fundamental chart types: the bar chart and the line chart. These charts are designed to visually display and analyze data that involve two numerical variables.
 
