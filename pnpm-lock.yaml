@@ -19,7 +19,7 @@ importers:
         version: 8.12.1(eslint@9.8.0)
       '@cypress/code-coverage':
         specifier: ^3.12.30
-        version: 3.12.41(@babel/core@7.24.7)(@babel/preset-env@7.25.0(@babel/core@7.24.7))(babel-loader@9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5)))(cypress@13.7.3)(webpack@5.91.0(esbuild@0.21.5))
+        version: 3.12.41(@babel/core@7.24.7)(@babel/preset-env@7.25.3(@babel/core@7.24.7))(babel-loader@9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5)))(cypress@13.7.3)(webpack@5.91.0(esbuild@0.21.5))
       '@eslint/js':
         specifier: ^9.4.0
         version: 9.8.0
@@ -120,8 +120,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0
       eslint-plugin-unicorn:
-        specifier: ^54.0.0
-        version: 54.0.0(eslint@9.8.0)
+        specifier: ^55.0.0
+        version: 55.0.0(eslint@9.8.0)
       express:
         specifier: ^4.19.1
         version: 4.19.2
@@ -1483,12 +1483,6 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0
-
-  '@babel/preset-env@7.25.0':
-    resolution: {integrity: sha512-vYAA8PrCOeZfG4D87hmw1KJ1BPubghXP1e2MacRFwECGNKL76dkA38JEwYllbvQCpf/kLxsTtir0b8MtxKoVCw==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
 
   '@babel/preset-env@7.25.3':
     resolution: {integrity: sha512-QsYW7UeAaXvLPX9tdVliMJE7MD7M6MLYVTovRTIwhoYQVFHR1rM4wO8wqAezYi3/BpSD+NzVCZ69R6smWiIi8g==}
@@ -5248,8 +5242,8 @@ packages:
   eslint-plugin-tsdoc@0.3.0:
     resolution: {integrity: sha512-0MuFdBrrJVBjT/gyhkP2BqpD0np1NxNLfQ38xXDlSs/KVVpKI2A6vN7jx2Rve/CyUsvOsMGwp9KKrinv7q9g3A==}
 
-  eslint-plugin-unicorn@54.0.0:
-    resolution: {integrity: sha512-XxYLRiYtAWiAjPv6z4JREby1TAE2byBC7wlh0V4vWDCpccOSU1KovWV//jqPXF6bq3WKxqX9rdjoRQ1EhdmNdQ==}
+  eslint-plugin-unicorn@55.0.0:
+    resolution: {integrity: sha512-n3AKiVpY2/uDcGrS3+QsYDkjPfaOrNrsfQxU9nt5nitd9KuvVXrfAvgCO9DYPSfap+Gqjw9EOrXIsBp5tlHZjA==}
     engines: {node: '>=18.18'}
     peerDependencies:
       eslint: '>=8.56.0'
@@ -5292,10 +5286,6 @@ packages:
     resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
     engines: {node: '>=4'}
     hasBin: true
-
-  esquery@1.5.0:
-    resolution: {integrity: sha512-YQLXUplAwJgCydQ78IMJywZCceoqk1oH01OERdSAJc/7U2AylwjhSCLDEtqwg811idIS/9fIU5GjG73IgjKMVg==}
-    engines: {node: '>=0.10'}
 
   esquery@1.6.0:
     resolution: {integrity: sha512-ca9pw9fomFcKPvFLXhBKUK90ZvGibiGOvRJNbjljY7s7uq/5YO4BOzcYtJqExdx99rF6aAcnRxHmcUHcz6sQsg==}
@@ -5796,6 +5786,10 @@ packages:
 
   globals@15.6.0:
     resolution: {integrity: sha512-UzcJi88Hw//CurUIRa9Jxb0vgOCcuD/MNjwmXp633cyaRKkCWACkoqHCtfZv43b1kqXGg/fpOa8bwgacCeXsVg==}
+    engines: {node: '>=18'}
+
+  globals@15.9.0:
+    resolution: {integrity: sha512-SmSKyLLKFbSr6rptvP8izbyxJL4ILwqO9Jg23UA0sDlGlu58V59D1//I3vlc0KJphVdUR7vMjHIplYnzBxorQA==}
     engines: {node: '>=18'}
 
   globalthis@1.0.4:
@@ -8025,11 +8019,6 @@ packages:
 
   semver@7.6.0:
     resolution: {integrity: sha512-EnwXhrlwXMk9gKu5/flx5sv/an57AkRplG3hTK68W7FRDN+k+OWBj65M7719OkA82XLBxrcX0KSHj+X5COhOVg==}
-    engines: {node: '>=10'}
-    hasBin: true
-
-  semver@7.6.2:
-    resolution: {integrity: sha512-FNAIBWCx9qcRhoHcgcJ0gvU7SN1lYU2ZXuSfl04bSC5OpvDHFyJCjdNHomPXxjQlCBU67YW64PzY7/VIEH7F2w==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -11248,7 +11237,7 @@ snapshots:
       '@babel/helper-create-regexp-features-plugin': 7.25.2(@babel/core@7.25.2)
       '@babel/helper-plugin-utils': 7.24.8
 
-  '@babel/preset-env@7.25.0(@babel/core@7.24.7)':
+  '@babel/preset-env@7.25.3(@babel/core@7.24.7)':
     dependencies:
       '@babel/compat-data': 7.25.2
       '@babel/core': 7.24.7
@@ -11881,11 +11870,11 @@ snapshots:
 
   '@cspell/url@8.12.1': {}
 
-  '@cypress/code-coverage@3.12.41(@babel/core@7.24.7)(@babel/preset-env@7.25.0(@babel/core@7.24.7))(babel-loader@9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5)))(cypress@13.7.3)(webpack@5.91.0(esbuild@0.21.5))':
+  '@cypress/code-coverage@3.12.41(@babel/core@7.24.7)(@babel/preset-env@7.25.3(@babel/core@7.24.7))(babel-loader@9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5)))(cypress@13.7.3)(webpack@5.91.0(esbuild@0.21.5))':
     dependencies:
       '@babel/core': 7.24.7
-      '@babel/preset-env': 7.25.0(@babel/core@7.24.7)
-      '@cypress/webpack-preprocessor': 6.0.2(@babel/core@7.24.7)(@babel/preset-env@7.25.0(@babel/core@7.24.7))(babel-loader@9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5)))(webpack@5.91.0(esbuild@0.21.5))
+      '@babel/preset-env': 7.25.3(@babel/core@7.24.7)
+      '@cypress/webpack-preprocessor': 6.0.2(@babel/core@7.24.7)(@babel/preset-env@7.25.3(@babel/core@7.24.7))(babel-loader@9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5)))(webpack@5.91.0(esbuild@0.21.5))
       babel-loader: 9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5))
       chalk: 4.1.2
       cypress: 13.7.3
@@ -11921,10 +11910,10 @@ snapshots:
       tunnel-agent: 0.6.0
       uuid: 8.3.2
 
-  '@cypress/webpack-preprocessor@6.0.2(@babel/core@7.24.7)(@babel/preset-env@7.25.0(@babel/core@7.24.7))(babel-loader@9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5)))(webpack@5.91.0(esbuild@0.21.5))':
+  '@cypress/webpack-preprocessor@6.0.2(@babel/core@7.24.7)(@babel/preset-env@7.25.3(@babel/core@7.24.7))(babel-loader@9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5)))(webpack@5.91.0(esbuild@0.21.5))':
     dependencies:
       '@babel/core': 7.24.7
-      '@babel/preset-env': 7.25.0(@babel/core@7.24.7)
+      '@babel/preset-env': 7.25.3(@babel/core@7.24.7)
       babel-loader: 9.1.3(@babel/core@7.24.7)(webpack@5.91.0(esbuild@0.21.5))
       bluebird: 3.7.1
       debug: 4.3.4(supports-color@8.1.1)
@@ -15741,16 +15730,16 @@ snapshots:
       '@microsoft/tsdoc': 0.15.0
       '@microsoft/tsdoc-config': 0.17.0
 
-  eslint-plugin-unicorn@54.0.0(eslint@9.8.0):
+  eslint-plugin-unicorn@55.0.0(eslint@9.8.0):
     dependencies:
       '@babel/helper-validator-identifier': 7.24.7
       '@eslint-community/eslint-utils': 4.4.0(eslint@9.8.0)
-      '@eslint/eslintrc': 3.1.0
       ci-info: 4.0.0
       clean-regexp: 1.0.0
       core-js-compat: 3.37.1
       eslint: 9.8.0
-      esquery: 1.5.0
+      esquery: 1.6.0
+      globals: 15.9.0
       indent-string: 4.0.0
       is-builtin-module: 3.2.1
       jsesc: 3.0.2
@@ -15758,10 +15747,8 @@ snapshots:
       read-pkg-up: 7.0.1
       regexp-tree: 0.1.27
       regjsparser: 0.10.0
-      semver: 7.6.2
+      semver: 7.6.3
       strip-indent: 3.0.0
-    transitivePeerDependencies:
-      - supports-color
 
   eslint-scope@5.1.1:
     dependencies:
@@ -15832,10 +15819,6 @@ snapshots:
   esprima@1.1.1: {}
 
   esprima@4.0.1: {}
-
-  esquery@1.5.0:
-    dependencies:
-      estraverse: 5.3.0
 
   esquery@1.6.0:
     dependencies:
@@ -16095,7 +16078,7 @@ snapshots:
       proxy-addr: 2.0.7
       rfdc: 1.4.1
       secure-json-parse: 2.7.0
-      semver: 7.5.4
+      semver: 7.6.3
       tiny-lru: 8.0.2
     transitivePeerDependencies:
       - supports-color
@@ -16440,6 +16423,8 @@ snapshots:
   globals@14.0.0: {}
 
   globals@15.6.0: {}
+
+  globals@15.9.0: {}
 
   globalthis@1.0.4:
     dependencies:
@@ -19065,8 +19050,6 @@ snapshots:
   semver@7.6.0:
     dependencies:
       lru-cache: 6.0.0
-
-  semver@7.6.2: {}
 
   semver@7.6.3: {}
 
