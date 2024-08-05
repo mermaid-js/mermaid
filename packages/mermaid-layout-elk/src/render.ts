@@ -280,18 +280,22 @@ export const addEdges = async function (dataForLayout, graph, svg) {
 
   await Promise.all(
     edges.map(async function (edge) {
-      // Identify Link
-      const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
-      // count the links from+to the same node to give unique id
-      if (linkIdCnt[linkIdBase] === undefined) {
-        linkIdCnt[linkIdBase] = 0;
-        log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
-      } else {
-        linkIdCnt[linkIdBase]++;
-        log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+
+      if (!edge.id) {
+          // Identify Link
+        const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
+        // count the links from+to the same node to give unique id
+        if (linkIdCnt[linkIdBase] === undefined) {
+          linkIdCnt[linkIdBase] = 0;
+          log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+        } else {
+          linkIdCnt[linkIdBase]++;
+          log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+        }
+        const linkId = linkIdBase + '_' + linkIdCnt[linkIdBase];
+        edge.id = linkId;
       }
-      const linkId = linkIdBase + '_' + linkIdCnt[linkIdBase];
-      edge.id = linkId;
+      
       log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
       const linkNameStart = 'LS_' + edge.start;
       const linkNameEnd = 'LE_' + edge.end;
