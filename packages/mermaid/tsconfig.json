@@ -5,5 +5,5 @@
     "outDir": "./dist",
     "types": ["vitest/importMeta", "vitest/globals"]
   },
-  "include": ["./src/**/*.ts", "./package.json"]
+  "include": ["./src/**/*.ts", "./package.json", "src/diagrams/gantt/ganttDb.js"]
 }

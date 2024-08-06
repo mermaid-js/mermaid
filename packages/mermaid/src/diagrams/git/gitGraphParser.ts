@@ -50,8 +50,9 @@ const parseStatement = (statement: any) => {
 const parseCommit = (commit: CommitAst) => {
   const id = commit.id;
   const message = commit.message ?? '';
-  const tags = commit.tags ?? undefined;
   const type = commit.type !== undefined ? commitType[commit.type] : commitType.NORMAL;
+  const tags = commit.tags ?? undefined;
+
   db.commit(message, id, type, tags);
 };
 
@@ -64,8 +65,8 @@ const parseBranch = (branch: BranchAst) => {
 const parseMerge = (merge: MergeAst) => {
   const branch = merge.branch;
   const id = merge.id ?? '';
-  const tags = merge.tags ?? undefined;
   const type = merge.type !== undefined ? commitType[merge.type] : undefined;
+  const tags = merge.tags ?? undefined;
   db.merge(branch, id, type, tags);
 };
 
