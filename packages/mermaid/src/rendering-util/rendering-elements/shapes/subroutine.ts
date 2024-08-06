@@ -76,7 +76,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
       // options.strokeWidth = 0
     }
 
-    rc.rectangle(x - 8, y, w + 16, h, options);
+    const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
     const l1 = rc.line(x, y, x, y + h, options);
     const l2 = rc.line(x + w, y, x + w, y + h, options);
 
@@ -84,9 +84,9 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     const l2El = shapeSvg.insert(() => l2, ':first-child');
     l1El.attr('class', 'neo-line');
     l2El.attr('class', 'neo-line');
-    // rect = shapeSvg.insert(() => roughNode, ':first-child');
-
-    // rect.attr('class', 'basic label-container').attr('style', cssStyles);
+    let rect = shapeSvg.insert(() => roughNode, ':first-child');
+    const { cssStyles } = node;
+    rect.attr('class', 'basic label-container').attr('style', cssStyles);
   } else {
     const el = insertPolygonShape(shapeSvg, w, h, points);
     if (nodeStyles) {
