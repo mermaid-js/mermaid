@@ -494,7 +494,7 @@ function initialize(options: MermaidConfig = {}) {
       options.themeVariables
     );
   } else if (options) {
-    options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
+    options.themeVariables = theme.neo.getThemeVariables(options.themeVariables);
   }
 
   const config =

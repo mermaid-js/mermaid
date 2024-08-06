@@ -71,7 +71,7 @@ properties:
       - 'null' # should this be a `null`-type?
     meta:enum:
       'null': Can be set to disable any pre-defined mermaid theme
-    default: 'default'
+    default: 'neo'
   themeVariables:
     tsType: any
   themeCSS:
@@ -84,7 +84,7 @@ properties:
       - classic
       - handdrawn
       - neo
-    default: 'classic'
+    default: 'neo'
   handdrawnSeed:
     description: |
       Defines the seed to be used when using handdrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
