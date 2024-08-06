@@ -460,7 +460,7 @@ This is useful when you want to control how to handle syntax errors in your appl
 
 ### theme
 
-• `Optional` **theme**: `"default"` | `"forest"` | `"dark"` | `"neutral"` | `"null"`
+• `Optional` **theme**: `"default"` | `"base"` | `"dark"` | `"forest"` | `"neutral"` | `"null"`
 
 Theme, the CSS style sheet.
 You may also use `themeCSS` to override this value.
