@@ -65,6 +65,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   ];
 
   if (node.look === 'handdrawn' || (node.look === 'neo' && !useGradient)) {
+    console.log('OXE points 1', points);
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
@@ -72,8 +73,6 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     if (node.look === 'neo') {
       options.roughness = 0;
       options.fillStyle = 'solid';
-      // options.stroke = 'none';
-      // options.strokeWidth = 0
     }
 
     const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
@@ -87,7 +86,9 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     let rect = shapeSvg.insert(() => roughNode, ':first-child');
     const { cssStyles } = node;
     rect.attr('class', 'basic label-container').attr('style', cssStyles);
+    updateNodeBounds(node, rect);
   } else {
+    console.log('OXE points 2', points);
     const el = insertPolygonShape(shapeSvg, w, h, points);
     if (nodeStyles) {
       el.attr('style', nodeStyles);
