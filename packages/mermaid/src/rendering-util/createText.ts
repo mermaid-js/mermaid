@@ -40,11 +40,14 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
-    bbox = div.node().getBoundingClientRect();
+    const newBbox = div.node().getBoundingClientRect();
+    if (newBbox.height > 0) {
+      bbox = newBbox;
+    }
   }
 
-  fo.style('width', bbox.width);
-  fo.style('height', bbox.height);
+  fo.style('width', bbox.width + 'px');
+  fo.style('height', bbox.height + 'px');
 
   return fo.node();
 }
