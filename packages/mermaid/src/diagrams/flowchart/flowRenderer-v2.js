@@ -265,6 +265,16 @@ export const addEdges = async function (edges, g, _diagObj) {
 
     let style = '';
     let labelStyle = '';
+    let isAnimatedProducerNode = g.node(edge.start).class.split(' ').includes('producer');
+    let isAnimatedConsumerNode = g.node(edge.end).class.split(' ').includes('consumer');
+
+    let linkAnimatedDashClass =
+      edge.stroke === 'dotted' &&
+      edge.type === 'arrow_point' &&
+      isAnimatedProducerNode &&
+      isAnimatedConsumerNode
+        ? 'animated'
+        : '';
 
     switch (edge.stroke) {
       case 'normal':
@@ -329,7 +339,9 @@ export const addEdges = async function (edges, g, _diagObj) {
     edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
 
     edgeData.id = linkId;
-    edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
+    edgeData.classes = ['flowchart-link', linkAnimatedDashClass, linkNameStart, linkNameEnd].join(
+      ' '
+    );
 
     // Add the edge to the graph
     g.setEdge(edge.start, edge.end, edgeData, cnt);
