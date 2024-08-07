@@ -31,6 +31,7 @@ import { halfRoundedRectangle } from './shapes/halfRoundedRectangle.js';
 import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
 import { slopedRect } from './shapes/slopedRect.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
+import { dividedRect } from './shapes/dividedRect.js';
 
 const shapes = {
   state,
@@ -65,6 +66,7 @@ const shapes = {
   curvedTrapezoid,
   slopedRect,
   bowTieRect,
+  dividedRect,
 };
 
 const nodeElems = new Map();
