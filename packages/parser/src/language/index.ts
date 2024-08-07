@@ -11,6 +11,8 @@ export {
   isPacketBlock,
   isPie,
   isPieSection,
+  TreeView,
+  TreeNode,
 } from './generated/ast.js';
 export {
   InfoGeneratedModule,
@@ -23,3 +25,4 @@ export * from './common/index.js';
 export * from './info/index.js';
 export * from './packet/index.js';
 export * from './pie/index.js';
+export * from './treeView/index.js';

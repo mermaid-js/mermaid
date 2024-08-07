@@ -15,6 +15,11 @@
       "id": "pie",
       "grammar": "src/language/pie/pie.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "treeView",
+      "grammar": "src/language/treeView/treeView.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",
