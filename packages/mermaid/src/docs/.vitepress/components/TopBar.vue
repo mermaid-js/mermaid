@@ -37,12 +37,10 @@ onMounted(() => {
           :key="index"
           href="{{ taglines[index].url }}"
           target="_blank"
-          class="unstyled flex justify-center items-center gap-4 tracking-wide plausible-event-name=bannerClick"
+          class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
         >
-          <span class="text-primary-50 font-semibold">{{ taglines[index].label }}</span>
-          <button
-            class="rounded bg-[#111113] p-1 px-2 text-sm font-semibold tracking-wide text-white"
-          >
+          <span class="font-semibold">{{ taglines[index].label }}</span>
+          <button class="rounded bg-[#111113] p-1 px-2 text-sm font-semibold tracking-wide">
             Try it now
           </button>
         </a>
