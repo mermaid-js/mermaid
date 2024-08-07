@@ -193,6 +193,39 @@ It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&
       State4 --> [*]
 ```
 
+## History (v11.0.0+)
+
+It is possible to add (deep) history nodes in the diagram using &lt;&lt;history&gt;&gt; &lt;&lt;deephistory&gt;&gt;.
+
+```mermaid-example
+   stateDiagram-v2
+      state "A" as A {
+        state "B" as B
+        state "C" as C
+        state A_History <<history>>
+
+        B --> C
+        C --> B
+      }
+      state "D" as D {
+        state "E" as E {
+          state "F" as F
+          state "G" as G
+
+          F --> G
+          G --> F
+        }
+        state "I" as I
+        state D_History <<deephistory>>
+
+        E --> I
+        I --> E
+      }
+
+      G --> A_History
+      A --> D_History
+```
+
 ## Notes
 
 Sometimes nothing says it better than a Post-it note. That is also the case in state diagrams.
