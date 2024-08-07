@@ -32,6 +32,7 @@ import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
 import { slopedRect } from './shapes/slopedRect.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
 import { dividedRect } from './shapes/dividedRect.js';
+import { crossedCircle } from './shapes/crossedCircle.js';
 
 const shapes = {
   state,
@@ -67,6 +68,7 @@ const shapes = {
   slopedRect,
   bowTieRect,
   dividedRect,
+  crossedCircle,
 };
 
 const nodeElems = new Map();
