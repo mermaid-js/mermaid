@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
 interface Taglines {
   label: string;
   url: string;
@@ -19,27 +21,47 @@ const taglines: Taglines[] = [
   },
 ];
 
-const index = Math.floor(Math.random() * taglines.length);
-const currentTagline = taglines[index];
+let index = ref(Math.floor(Math.random() * taglines.length));
+onMounted(() => {
+  setInterval(() => {
+    index.value = (index.value + 1) % taglines.length;
+  }, 60_000);
+});
 </script>
 
 <template>
-  <div
-    class="mb-4 w-full top-bar bg-gradient-to-r from-[#bd34fe] to-[#ff3670] flex items-center text-center justify-center p-1 text-white"
-  >
-    <p class="flex-grow text-center tracking-wide text-text">
-      <a
-        href="{{ currentTagline.url }}"
-        target="_blank"
-        class="unstyled flex-grow tracking-wide plausible-event-name=bannerClick"
-      >
-        <span class="text-primary-50 font-semibold">{{ currentTagline.label }}</span>
-        <button
-          class="ml-4 rounded bg-[#111113] p-1 px-2 text-sm font-semibold tracking-wide text-white"
+  <div class="mb-4 w-full top-bar bg-gradient-to-r from-[#bd34fe] to-[#ff3670] flex p-1">
+    <p class="w-full tracking-wide fade-text">
+      <transition name="fade" mode="out-in">
+        <a
+          :key="index"
+          href="{{ taglines[index].url }}"
+          target="_blank"
+          class="unstyled flex justify-center items-center gap-4 tracking-wide plausible-event-name=bannerClick"
         >
-          Try it now
-        </button>
-      </a>
+          <span class="text-primary-50 font-semibold">{{ taglines[index].label }}</span>
+          <button
+            class="rounded bg-[#111113] p-1 px-2 text-sm font-semibold tracking-wide text-white"
+          >
+            Try it now
+          </button>
+        </a>
+      </transition>
     </p>
   </div>
 </template>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+</style>
