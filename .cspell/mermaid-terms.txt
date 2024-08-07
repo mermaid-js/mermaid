@@ -5,6 +5,7 @@ bmatrix
 braintree
 catmull
 compositTitleSize
+deephistory
 doublecircle
 elems
 gantt

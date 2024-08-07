@@ -108,6 +108,12 @@ g.stateGroup line {
   stroke: ${options.background};
   stroke-width: 1.5
 }
+
+.node .history {
+  fill: #fff;
+  stroke: #000;
+}
+
 .end-state-inner {
   fill: ${options.compositeBackground || options.background};
   // stroke: ${options.background};

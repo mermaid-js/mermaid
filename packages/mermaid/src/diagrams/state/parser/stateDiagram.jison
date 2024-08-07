@@ -92,9 +92,13 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 <INITIAL,struct>"state"\s+  { /* console.log('Starting STATE '); */ this.pushState('STATE'); }
 
+<STATE>.*"<<history>>"                {this.popState();yytext=yytext.slice(0,-11).trim(); /*console.warn('History: ',yytext);*/return 'HISTORY';}
+<STATE>.*"<<deephistory>>"            {this.popState();yytext=yytext.slice(0,-15).trim(); /*console.warn('Deep History: ',yytext);*/return 'DEEPHISTORY';}
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
 <STATE>.*"<<choice>>"                 {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
+<STATE>.*"[[history]]"                {this.popState();yytext=yytext.slice(0,-11).trim(); /*console.warn('History: ',yytext);*/return 'HISTORY';}
+<STATE>.*"[[deephistory]]"            {this.popState();yytext=yytext.slice(0,-15).trim(); /*console.warn('Deep History: ',yytext);*/return 'DEEPHISTORY';}
 <STATE>.*"[[fork]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
 <STATE>.*"[[choice]]"                 {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
@@ -236,6 +240,12 @@ statement
     }
     | CONCURRENT {
         $$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
+    }
+    | HISTORY {
+        $$={ stmt: 'state', id: $1, type: 'history' }
+    }
+    | DEEPHISTORY {
+        $$={ stmt: 'state', id: $1, type: 'deephistory' }
     }
     | note notePosition ID NOTE_TEXT
     {

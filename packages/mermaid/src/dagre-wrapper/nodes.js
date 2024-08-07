@@ -87,6 +87,47 @@ const choice = (parent, node) => {
   return shapeSvg;
 };
 
+const historyBase = async (parent, node) => {
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(
+    parent,
+    node,
+    getClassesFromNode(node, undefined),
+    true
+  );
+  const circle = shapeSvg.insert('circle', ':first-child');
+
+  // center the circle around its coordinate
+  circle
+    .attr('class', 'history')
+    .attr('style', node.style)
+    .attr('rx', node.rx)
+    .attr('ry', node.ry)
+    .attr('r', 16)
+    .attr('width', 34)
+    .attr('height', 34);
+
+  log.info('History main');
+
+  updateNodeBounds(node, circle);
+
+  node.intersect = function (point) {
+    log.info('History intersect', node, bbox.width / 2 + halfPadding, point);
+    return intersect.circle(node, bbox.width / 2 + halfPadding, point);
+  };
+
+  return shapeSvg;
+};
+
+const history = async (parent, node) => {
+  node.labelText = 'H';
+  return await historyBase(parent, node);
+};
+
+const deephistory = async (parent, node) => {
+  node.labelText = 'H*';
+  return await historyBase(parent, node);
+};
+
 const hexagon = async (parent, node) => {
   const { shapeSvg, bbox } = await labelHelper(
     parent,
@@ -1126,6 +1167,8 @@ const shapes = {
   subroutine,
   fork: forkJoin,
   join: forkJoin,
+  history,
+  deephistory,
   class_box,
 };
 
