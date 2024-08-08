@@ -63,13 +63,11 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
     })
   );
 
-  await Promise.all(
-    data4Layout.edges.forEach(async function (edge) {
-      edge.x = edge?.x || 0;
-      edge.y = edge?.y || 0;
-      await insertEdgeLabel(edgeLabels, edge);
-    })
-  );
+  for (const edge of data4Layout.edges) {
+    edge.x = edge?.x || 0;
+    edge.y = edge?.y || 0;
+    await insertEdgeLabel(edgeLabels, edge);
+  }
 
   // log.info('############################################# XXX');
   // log.info('###                Layout                 ### XXX');
@@ -86,8 +84,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   });
 
   // Insert the edges and position the edge labels
-  data4Layout.edges.forEach(function (edge) {
-    // console.log('Edge: ', edge, nodes[edge.start]);
+  for (const edge of data4Layout.edges) {
     //   log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     edge.points = fixInterSections(
@@ -105,114 +102,8 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
     );
     paths.updatedPath = paths.originalPath;
     positionEdgeLabel(edge, paths);
-  });
+  }
 
-  // log.info('Graph after layout:', graphlibJson.write(graph));
-  // // Move the nodes to the correct place
-  // let diff = 0;
-  // log.info('Need the size here XAX', graph.node('T1')?.height);
-  // let { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
-  // subGraphTitleTotalMargin = 0;
-  // sortNodesByHierarchy(graph).forEach(function (v) {
-  //   const node = graph.node(v);
-  //   const p = graph.node(node?.parentId);
-  //   subGraphTitleTotalMargin = p?.offsetY || subGraphTitleTotalMargin;
-
-  //   log.info(
-  //     'Position XAX' + v + ': (' + node.x,
-  //     ',' + node.y,
-  //     ') width: ',
-  //     node.width,
-  //     ' height: ',
-  //     node.height
-  //   );
-  //   if (node && node.clusterNode) {
-  //     const parentId = graph.parent(v);
-  //     // Adjust for padding when on root level
-  //     node.y = parentId ? node.y + 2 : node.y - 8;
-  //     node.x -= 8;
-
-  //     log.info(
-  //       'A tainted cluster node XBX',
-  //       v,
-  //       node.id,
-  //       node.width,
-  //       node.height,
-  //       node.x,
-  //       node.y,
-  //       graph.parent(v)
-  //     );
-  //     clusterDb[node.id].node = node;
-  //     // node.y += subGraphTitleTotalMargin - 10;
-  //     node.y -= (node.offsetY || 0) / 2;
-  //     positionNode(node);
-  //   } else {
-  //     // Non cluster node
-  //     if (graph.children(v).length > 0) {
-  //       node.height += 0;
-  //       const parent = graph.node(node.parentId);
-  //       const halfPadding = node?.padding / 2 || 0;
-  //       const labelHeight = node?.labelBBox?.height || 0;
-  //       const offsetY = labelHeight - halfPadding || 0;
-  //       node.y += offsetY / 2 + 2;
-  //       insertCluster(clusters, node);
-
-  //       // A cluster in the non-recursive way
-  //       log.info(
-  //         'A pure cluster node with children XBX',
-  //         v,
-  //         node.id,
-  //         node.width,
-  //         node.height,
-  //         node.x,
-  //         node.y,
-  //         'offset',
-  //         parent?.offsetY
-  //       );
-  //       clusterDb[node.id].node = node;
-  //     } else {
-  //       const parent = graph.node(node.parentId);
-  //       node.y += (parent?.offsetY || 0) / 2;
-  //       log.info(
-  //         'A regular node XBX - using the padding',
-  //         v,
-  //         node.id,
-  //         'parent',
-  //         node.parentId,
-  //         node.width,
-  //         node.height,
-  //         node.x,
-  //         node.y,
-  //         'offsetY',
-  //         node.offsetY,
-  //         'parent',
-  //         parent,
-  //         node
-  //       );
-
-  //       positionNode(node);
-  //     }
-  //   }
-  // });
-
-  // // Move the edge labels to the correct place after layout
-  // graph.edges().forEach(function (e) {
-  //   const edge = graph.edge(e);
-  //   log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
-
-  //   edge.points.forEach((point) => (point.y += subGraphTitleTotalMargin / 2));
-  //   const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, graph, id);
-  //   positionEdgeLabel(edge, paths);
-  // });
-
-  // graph.nodes().forEach(function (v) {
-  //   const n = graph.node(v);
-  //   log.info(v, n.type, n.diff);
-  //   if (n.isGroup) {
-  //     diff = n.diff;
-  //   }
-  // });
-  // log.trace('Returning from recursive render XAX', elem, diff);
   return { elem, diff: 0 };
 };
 /**

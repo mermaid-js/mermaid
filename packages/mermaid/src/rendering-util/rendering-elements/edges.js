@@ -54,6 +54,7 @@ export const insertEdgeLabel = async (elem, edge) => {
   label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
 
   // Make element accessible by id for positioning
+  log.debug('Inserting edge label abc88', edge.id, edge.label, edgeLabels.get(edge.id));
   edgeLabels.set(edge.id, edgeLabel);
 
   // Update the abstract data of the edge with the new information about its width and height

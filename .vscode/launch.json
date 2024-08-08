@@ -12,7 +12,7 @@
       "args": ["run", "${relativeFile}"],
       "smartStep": true,
       "console": "integratedTerminal"
-    },
+    }
     // {
     //   "name": "Docs generation",
     //   "type": "node",

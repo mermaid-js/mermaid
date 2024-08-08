@@ -82,7 +82,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     const l2El = shapeSvg.insert(() => l2, ':first-child');
     l1El.attr('class', 'neo-line');
     l2El.attr('class', 'neo-line');
-    let rect = shapeSvg.insert(() => roughNode, ':first-child');
+    const rect = shapeSvg.insert(() => roughNode, ':first-child');
     const { cssStyles } = node;
     rect.attr('class', 'basic label-container').attr('style', cssStyles);
     updateNodeBounds(node, rect);

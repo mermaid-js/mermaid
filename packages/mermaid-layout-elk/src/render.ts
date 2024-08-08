@@ -280,7 +280,7 @@ export const addEdges = async function (dataForLayout, graph, svg) {
 
   await Promise.all(
     edges.map(async function (edge) {
-      let linkId = edge.id;
+      const linkId = edge.id;
       if (!edge.id) {
         // Identify Link
         const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
