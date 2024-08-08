@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { parser } from './gitGraphParser.js';
-import db from './gitGraphAst.js';
-import { parse } from 'path';
+import { db } from './gitGraphAst.js';
 
 const parseInput = async (input: string) => {
   await parser.parse(input);

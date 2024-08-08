@@ -12,9 +12,8 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import defaultConfig from '../../defaultConfig.js';
-import type { DiagramOrientation, Commit } from './gitGraphTypes.js';
+import type { DiagramOrientation, Commit, GitGraphDB, CommitType } from './gitGraphTypes.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
-
 interface GitGraphState {
   commits: Map<string, Commit>;
   head: Commit | null;
@@ -467,7 +466,7 @@ export const getHead = function () {
   return state.records.head;
 };
 
-export const commitType = {
+export const commitType: CommitType = {
   NORMAL: 0,
   REVERSE: 1,
   HIGHLIGHT: 2,
@@ -475,7 +474,7 @@ export const commitType = {
   CHERRY_PICK: 4,
 };
 
-export default {
+export const db: GitGraphDB = {
   commitType,
   getConfig: () => getConfig().gitGraph,
   setDirection,

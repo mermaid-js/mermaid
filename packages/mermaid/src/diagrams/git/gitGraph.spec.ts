@@ -1,5 +1,5 @@
 import { rejects } from 'assert';
-import db from './gitGraphAst.js';
+import { db } from './gitGraphAst.js';
 import { parser } from './gitGraphParser.js';
 
 describe('when parsing a gitGraph', function () {

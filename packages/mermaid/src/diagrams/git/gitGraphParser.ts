@@ -3,7 +3,7 @@ import { parse } from '@mermaid-js/parser';
 import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
-import db from './gitGraphAst.js';
+import { db } from './gitGraphAst.js';
 import { commitType } from './gitGraphAst.js';
 import type {
   CheckoutAst,

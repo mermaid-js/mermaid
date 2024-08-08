@@ -5,5 +5,10 @@
     "outDir": "./dist",
     "types": ["vitest/importMeta", "vitest/globals"]
   },
-  "include": ["./src/**/*.ts", "./package.json", "src/diagrams/gantt/ganttDb.js"]
+  "include": [
+    "./src/**/*.ts",
+    "./package.json",
+    "src/diagrams/gantt/ganttDb.js",
+    "src/diagrams/git/gitGraphRenderer.js"
+  ]
 }
