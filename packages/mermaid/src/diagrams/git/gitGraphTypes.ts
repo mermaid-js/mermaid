@@ -15,7 +15,7 @@ export interface Commit {
   seq: number;
   type: number;
   tags: string[];
-  parents: (string | null)[];
+  parents: string[];
   branch: string;
   customType?: number;
   customId?: boolean;
@@ -109,4 +109,4 @@ export interface GitGraphDB extends DiagramDB {
   getHead: () => Commit | null;
 }
 
-export type DiagramOrientation = 'LR' | 'TB';
+export type DiagramOrientation = 'LR' | 'TB' | 'BT';

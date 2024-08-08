@@ -213,7 +213,7 @@ export const merge = (
     id: customId ? customId : state.records.seq + '-' + getID(),
     message: `merged branch ${otherBranch} into ${state.records.currBranch}`,
     seq: state.records.seq++,
-    parents: [state.records.head == null ? null : state.records.head.id, verifiedBranch],
+    parents: state.records.head == null ? [] : [state.records.head.id, verifiedBranch],
     branch: state.records.currBranch,
     type: commitType.MERGE,
     customType: overrideType,
@@ -317,7 +317,7 @@ export const cherryPick = function (
       id: state.records.seq + '-' + getID(),
       message: `cherry-picked ${sourceCommit?.message} into ${state.records.currBranch}`,
       seq: state.records.seq++,
-      parents: [state.records.head == null ? null : state.records.head.id, sourceCommit.id],
+      parents: state.records.head == null ? [] : [state.records.head.id, sourceCommit.id],
       branch: state.records.currBranch,
       type: commitType.CHERRY_PICK,
       tags: tags
