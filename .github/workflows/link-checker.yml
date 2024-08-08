@@ -36,7 +36,7 @@ jobs:
           restore-keys: cache-lychee-
 
       - name: Link Checker
-        uses: lycheeverse/lychee-action@v1.9.3
+        uses: lycheeverse/lychee-action@v1.10.0
         with:
           args: >-
             --config .github/lychee.toml
