@@ -36,12 +36,15 @@
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
+
       h1 {
         color: grey;
       }
+
       .mermaid2 {
         display: none;
       }
+
       .mermaid svg {
         /* font-size: 18px !important; */
 
@@ -54,6 +57,7 @@
           10px 10px;
         background-repeat: repeat; */
       }
+
       .malware {
         position: fixed;
         bottom: 0;
@@ -69,13 +73,19 @@
         font-family: monospace;
         font-size: 72px;
       }
+
       /* tspan {
               font-size: 6px !important;
             } */
     </style>
   </head>
+
   <body>
     <pre id="diagram" class="mermaid">
+---
+config:
+  look: handDrawn
+---
 flowchart
    a_a(Aftonbladet) --> b_b[gorilla]:::apa --> c_c{chimp}:::apa -->a_a
         a_a --> c --> d_d --> c_c
@@ -85,7 +95,7 @@ flowchart
         click c_c callback "new tooltip"
       </pre
     >
-    <pre id="diagram2" class="mermaid">
+    <pre id="diagram2" class="mermaid2">
 flowchart LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
@@ -94,7 +104,7 @@ flowchart LR
       
     </pre>
 
-    <pre id="diagram3" class="mermaid">
+    <pre id="diagram3" class="mermaid2">
       flowchart LR
     A:::foo & B:::bar --> C:::foobar
     classDef foo stroke:#f00
@@ -105,7 +115,7 @@ flowchart LR
 
     </pre>
 
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       stateDiagram
     A:::foo 
     B:::bar --> C:::foobar
@@ -127,8 +137,8 @@ flowchart LR
       };
       mermaid.initialize({
         // theme: 'base',
-        // handdrawnSeed: 12,
-        // look: 'handdrawn',
+        // handDrawnSeed: 12,
+        // look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
         // layout: 'elk',

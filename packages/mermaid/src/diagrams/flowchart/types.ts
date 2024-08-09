@@ -23,7 +23,7 @@ export interface FlowEdge {
   end: string;
   interpolate?: string;
   type?: string;
-  stroke?: 'normal' | 'thick' | 'invisible';
+  stroke?: 'normal' | 'thick' | 'invisible' | 'dotted';
   style?: string[];
   length?: number;
   text: string;

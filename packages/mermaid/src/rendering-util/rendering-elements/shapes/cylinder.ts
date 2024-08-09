@@ -4,7 +4,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnStyles.js';
 import rough from 'roughjs';
 
 export const createCylinderPathD = (
@@ -63,7 +63,7 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);

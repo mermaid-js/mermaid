@@ -11,12 +11,12 @@ import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnStyles.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
-  const { themeVariables, handdrawnSeed } = siteConfig;
+  const { themeVariables, handDrawnSeed } = siteConfig;
   const { clusterBkg, clusterBorder } = themeVariables;
 
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -63,7 +63,7 @@ const rect = async (parent, node) => {
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
@@ -72,7 +72,7 @@ const rect = async (parent, node) => {
       // fill: 'red',
       stroke: clusterBorder,
       fillWeight: 3,
-      seed: handdrawnSeed,
+      seed: handDrawnSeed,
     });
     const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, 0), options);
     rect = shapeSvg.insert(() => {
@@ -162,7 +162,7 @@ const noteGroup = (parent, node) => {
 const roundedWithTitle = async (parent, node) => {
   const siteConfig = getConfig();
 
-  const { themeVariables, handdrawnSeed } = siteConfig;
+  const { themeVariables, handDrawnSeed } = siteConfig;
   const { altBackground, compositeBackground, compositeTitleBackground, nodeBorder } =
     themeVariables;
 
@@ -218,7 +218,7 @@ const roundedWithTitle = async (parent, node) => {
 
   // add the rect
   let rect;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     const isAlt = node.cssClasses.includes('statediagram-cluster-alt');
     const rc = rough.svg(shapeSvg);
     const roughOuterNode =
@@ -228,16 +228,16 @@ const roundedWithTitle = async (parent, node) => {
             fill: compositeTitleBackground,
             fillStyle: 'solid',
             stroke: nodeBorder,
-            seed: handdrawnSeed,
+            seed: handDrawnSeed,
           })
-        : rc.rectangle(x, y, width, height, { seed: handdrawnSeed });
+        : rc.rectangle(x, y, width, height, { seed: handDrawnSeed });
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
     const roughInnerNode = rc.rectangle(x, innerY, width, innerHeight, {
       fill: isAlt ? altBackground : compositeBackground,
       fillStyle: isAlt ? 'hachure' : 'solid',
       stroke: nodeBorder,
-      seed: handdrawnSeed,
+      seed: handDrawnSeed,
     });
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
@@ -283,7 +283,7 @@ const roundedWithTitle = async (parent, node) => {
 const divider = (parent, node) => {
   const siteConfig = getConfig();
 
-  const { themeVariables, handdrawnSeed } = siteConfig;
+  const { themeVariables, handDrawnSeed } = siteConfig;
   const { nodeBorder } = themeVariables;
 
   // Add outer g element
@@ -310,14 +310,14 @@ const divider = (parent, node) => {
 
   // add the rect
   let rect;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     const rc = rough.svg(shapeSvg);
     const roughOuterNode = rc.rectangle(x, y, width, height, {
       fill: 'lightgrey',
       roughness: 0.5,
       strokeLineDash: [5],
       stroke: nodeBorder,
-      seed: handdrawnSeed,
+      seed: handDrawnSeed,
     });
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');

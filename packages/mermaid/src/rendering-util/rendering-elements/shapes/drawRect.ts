@@ -5,7 +5,7 @@ import { createRoundedRectPathD } from './roundedRectPath.js';
 import {
   userNodeOverrides,
   styles2String,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnStyles.js';
 import rough from 'roughjs';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
@@ -31,7 +31,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     ry = options.ry;
   }
 
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
