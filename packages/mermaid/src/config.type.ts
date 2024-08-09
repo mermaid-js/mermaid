@@ -62,7 +62,7 @@ export interface MermaidConfig {
    *
    */
   theme?: 'default' | 'forest' | 'dark' | 'neutral' | 'null';
-  themeVariables?: any;
+  themeVariables?: ThemeVariables;
   themeCSS?: string;
   /**
    * The maximum allowed size of the users text diagram
@@ -170,6 +170,205 @@ export interface MermaidConfig {
    *
    */
   suppressErrorRendering?: boolean;
+}
+/**
+ * Theme variables to create a custom theme.
+ *
+ */
+export interface ThemeVariables {
+  /**
+   * The CSS `font-family` to use.
+   */
+  fontFamily?: string;
+  /**
+   * The font size to use.
+   */
+  fontSize?: number;
+  /**
+   * The font weight to use.
+   */
+  fontWeight?: number;
+  /**
+   * The primary color to use.
+   */
+  primaryColor?: string;
+  /**
+   * The primary text color to use.
+   */
+  primaryTextColor?: string;
+  /**
+   * The note background color to use.
+   */
+  noteBkgColor?: string;
+  /**
+   * The note text color to use.
+   */
+  noteTextColor?: string;
+  /**
+   * The color to use for the first pie chart color.
+   */
+  pie1?: string;
+  /**
+   * The color to use for the second pie chart color.
+   */
+  pie2?: string;
+  /**
+   * The color to use for the third pie chart color.
+   */
+  pie3?: string;
+  /**
+   * The color to use for the fourth pie chart color.
+   */
+  pie4?: string;
+  /**
+   * The color to use for the fifth pie chart color.
+   */
+  pie5?: string;
+  /**
+   * The color to use for the sixth pie chart color.
+   */
+  pie6?: string;
+  /**
+   * The color to use for the seventh pie chart color.
+   */
+  pie7?: string;
+  /**
+   * The color to use for the eighth pie chart color.
+   */
+  pie8?: string;
+  /**
+   * The color to use for the ninth pie chart color.
+   */
+  pie9?: string;
+  /**
+   * The color to use for the tenth pie chart color.
+   */
+  pie10?: string;
+  /**
+   * The color to use for the eleventh pie chart color.
+   */
+  pie11?: string;
+  /**
+   * The color to use for the twelfth pie chart color.
+   */
+  pie12?: string;
+  /**
+   * The width of the stroke around the pie chart.
+   */
+  pieOuterStrokeWidth?: number;
+  /**
+   * The color to use for the first quadrant fill.
+   */
+  quadrant1Fill?: string;
+  /**
+   * The color to use for the second quadrant fill.
+   */
+  quadrant2Fill?: string;
+  /**
+   * The color to use for the third quadrant fill.
+   */
+  quadrant3Fill?: string;
+  /**
+   * The color to use for the fourth quadrant fill.
+   */
+  quadrant4Fill?: string;
+  /**
+   * The color to use for the first quadrant text fill.
+   */
+  quadrant1TextFill?: string;
+  /**
+   * The color to use for the second quadrant text fill.
+   */
+  quadrant2TextFill?: string;
+  /**
+   * The color to use for the third quadrant text fill.
+   */
+  quadrant3TextFill?: string;
+  /**
+   * The color to use for the fourth quadrant text fill.
+   */
+  quadrant4TextFill?: string;
+  /**
+   * The color to use for the quadrant point fill.
+   */
+  quadrantPointFill?: string;
+  /**
+   * The color to use for the quadrant point text fill.
+   */
+  quadrantPointTextFill?: string;
+  /**
+   * The color to use for the quadrant x-axis text fill.
+   */
+  quadrantXAxisTextFill?: string;
+  /**
+   * The color to use for the quadrant y-axis text fill.
+   */
+  quadrantYAxisTextFill?: string;
+  /**
+   * The color to use for the quadrant internal border stroke fill.
+   */
+  quadrantInternalBorderStrokeFill?: string;
+  /**
+   * The color to use for the quadrant external border stroke fill.
+   */
+  quadrantExternalBorderStrokeFill?: string;
+  /**
+   * The color to use for the quadrant title fill.
+   */
+  quadrantTitleFill?: string;
+  /**
+   * The color to use for the xy chart.
+   */
+  xyChart?: {
+    /**
+     * The color to use for the xy chart background.
+     */
+    backgroundColor?: string;
+    /**
+     * The color to use for the xy chart title.
+     */
+    titleColor?: string;
+    /**
+     * The color to use for the xy chart x-axis title.
+     */
+    xAxisTitleColor?: string;
+    /**
+     * The color to use for the xy chart x-axis label.
+     */
+    xAxisLabelColor?: string;
+    /**
+     * The color to use for the xy chart x-axis tick.
+     */
+    xAxisTickColor?: string;
+    /**
+     * The color to use for the xy chart x-axis line.
+     */
+    xAxisLineColor?: string;
+    /**
+     * The color to use for the xy chart y-axis title.
+     */
+    yAxisTitleColor?: string;
+    /**
+     * The color to use for the xy chart y-axis label.
+     */
+    yAxisLabelColor?: string;
+    /**
+     * The color to use for the xy chart y-axis tick.
+     */
+    yAxisTickColor?: string;
+    /**
+     * The color to use for the xy chart y-axis line.
+     */
+    yAxisLineColor?: string;
+    /**
+     * The color to use for the xy chart plot color palette.
+     */
+    plotColorPalette?: string;
+  };
+  /**
+   * The maximum number of colors allowed in the theme.
+   */
+  THEME_COLOR_LIMIT?: number;
 }
 /**
  * The object containing configurations specific for flowcharts
