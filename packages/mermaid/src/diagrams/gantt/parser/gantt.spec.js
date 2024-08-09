@@ -49,6 +49,14 @@ describe('when parsing a gantt diagram it', function () {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(ganttDb.setTodayMarker).toHaveBeenCalledWith('off');
   });
+  it('should handle a today definition', function () {
+    spyOn(ganttDb, 'setToday');
+    const str =
+      'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid\nexcludes weekdays 2019-02-01\ntoday 2019-02-04';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.setToday).toHaveBeenCalledWith('2019-02-04');
+  });
   it('should handle a section definition', function () {
     const str =
       'gantt\n' +

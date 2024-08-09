@@ -77,6 +77,7 @@ that id.
 "includes"\s[^#\n;]+            return 'includes';
 "excludes"\s[^#\n;]+            return 'excludes';
 "todayMarker"\s[^\n;]+          return 'todayMarker';
+"today"\s[^\n;]+                return 'today';
 weekday\s+monday                return 'weekday_monday'
 weekday\s+tuesday               return 'weekday_tuesday'
 weekday\s+wednesday             return 'weekday_wednesday'
@@ -144,6 +145,7 @@ statement
   | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
   | includes {yy.setIncludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
+  | today {yy.setToday($1.substr(6));$$=$1.substr(6);}
   | weekday
   | weekend
   | title {yy.setDiagramTitle($1.substr(6));$$=$1.substr(6);}
