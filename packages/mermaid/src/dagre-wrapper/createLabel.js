@@ -3,6 +3,7 @@ import { log } from '../logger.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import { evaluate } from '../diagrams/common/common.js';
 import { decodeEntities } from '../utils.js';
+import { replaceIconSubstring } from '../rendering-util/createText.js';
 
 /**
  * @param dom
@@ -24,15 +25,10 @@ function addHtmlLabel(node) {
 
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  div.html(
-    '<span class="' +
-      labelClass +
-      '" ' +
-      (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
-      '>' +
-      label +
-      '</span>'
-  );
+  const span = div.append('span');
+  span.html(label);
+  applyStyle(span, node.labelStyle);
+  span.attr('class', labelClass);
 
   applyStyle(div, node.labelStyle);
   div.style('display', 'inline-block');
@@ -59,10 +55,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
     log.debug('vertexText' + vertexText);
     const node = {
       isNode,
-      label: decodeEntities(vertexText).replace(
-        /fa[blrs]?:fa-[\w-]+/g, // cspell: disable-line
-        (s) => `<i class='${s.replace(':', ' ')}'></i>`
-      ),
+      label: replaceIconSubstring(decodeEntities(vertexText)),
       labelStyle: style.replace('fill:', 'color:'),
     };
     let vertexNode = addHtmlLabel(node);

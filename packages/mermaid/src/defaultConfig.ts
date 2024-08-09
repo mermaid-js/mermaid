@@ -23,7 +23,7 @@ const config: RequiredDeep<MermaidConfig> = {
   themeCSS: undefined,
 
   // add non-JSON default config values
-  themeVariables: theme['default'].getThemeVariables(),
+  themeVariables: theme.default.getThemeVariables(),
   sequence: {
     ...defaultConfigJson.sequence,
     messageFont: function () {
@@ -272,5 +272,5 @@ const keyify = (obj: any, prefix = ''): string[] =>
     return [...res, prefix + el];
   }, []);
 
-export const configKeys: Set<string> = new Set(keyify(config, ''));
+export const configKeys = new Set<string>(keyify(config, ''));
 export default config;

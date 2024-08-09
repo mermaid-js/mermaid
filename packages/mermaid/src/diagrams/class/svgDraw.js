@@ -315,10 +315,10 @@ export const getClassTitleString = function (classDef) {
  * @param {SVGSVGElement} elem The element to draw it into
  * @param {{id: string; text: string; class: string;}} note
  * @param conf
- * @param diagObj
+ * @param _diagObj
  * @todo Add more information in the JSDOC here
  */
-export const drawNote = function (elem, note, conf, diagObj) {
+export const drawNote = function (elem, note, conf, _diagObj) {
   log.debug('Rendering note ', note, conf);
 
   const id = note.id;

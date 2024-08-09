@@ -21,7 +21,7 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: Mermaid
   let sumOfDirectives: MermaidConfig = {};
   for (const d of _directives) {
     sanitize(d);
-    // Apply the data from the directive where the the overrides the themeVariables
+    // Apply the data from the directive where the overrides the themeVariables
     sumOfDirectives = assignWithDepth(sumOfDirectives, d);
   }
 
@@ -189,7 +189,7 @@ export const addDirective = (directive: MermaidConfig) => {
   sanitizeDirective(directive);
 
   // If the directive has a fontFamily, but no themeVariables, add the fontFamily to the themeVariables
-  if (directive.fontFamily && (!directive.themeVariables || !directive.themeVariables.fontFamily)) {
+  if (directive.fontFamily && !directive.themeVariables?.fontFamily) {
     directive.themeVariables = { fontFamily: directive.fontFamily };
   }
 

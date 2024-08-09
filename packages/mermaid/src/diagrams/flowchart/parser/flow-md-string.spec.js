@@ -19,12 +19,12 @@ A["\`The cat in **the** hat\`"]-- "\`The *bat* in the chat\`" -->B["The dog in t
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['A'].text).toBe('The cat in **the** hat');
-    expect(vert['A'].labelType).toBe('markdown');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['B'].text).toBe('The dog in the hog');
-    expect(vert['B'].labelType).toBe('string');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('A').text).toBe('The cat in **the** hat');
+    expect(vert.get('A').labelType).toBe('markdown');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('B').text).toBe('The dog in the hog');
+    expect(vert.get('B').labelType).toBe('string');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');

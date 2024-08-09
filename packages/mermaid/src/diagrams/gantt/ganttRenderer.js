@@ -466,14 +466,14 @@ export const draw = function (text, id, version, diagObj) {
 
       rectangles
         .filter(function (d) {
-          return links[d.id] !== undefined;
+          return links.has(d.id);
         })
         .each(function (o) {
           var taskRect = doc.querySelector('#' + o.id);
           var taskText = doc.querySelector('#' + o.id + '-text');
           const oldParent = taskRect.parentNode;
           var Link = doc.createElement('a');
-          Link.setAttribute('xlink:href', links[o.id]);
+          Link.setAttribute('xlink:href', links.get(o.id));
           Link.setAttribute('target', '_top');
           oldParent.appendChild(Link);
           Link.appendChild(taskRect);

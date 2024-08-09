@@ -405,7 +405,7 @@ describe('state diagram V2, ', function () {
       stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
       const states = stateDb.getStates();
-      expect(states['Active'].doc[0].id).toEqual('Idle');
+      expect(states.get('Active').doc[0].id).toEqual('Idle');
 
       const rels = stateDb.getRelations();
       const rel_Inactive_Idle = rels.find((rel) => rel.id1 === 'Inactive' && rel.id2 === 'Idle');

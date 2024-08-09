@@ -20,6 +20,7 @@ const mockDB: Record<string, Mock<any, any>> = {
   setYAxisBottomText: vi.fn(),
   setDiagramTitle: vi.fn(),
   addPoint: vi.fn(),
+  addClass: vi.fn(),
 };
 
 function clearMocks() {
@@ -212,20 +213,34 @@ describe('Testing quadrantChart jison file', () => {
   it('should be able to parse points', () => {
     let str = 'quadrantChart\npoint1: [0.1, 0.4]';
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.addPoint).toHaveBeenCalledWith({ text: 'point1', type: 'text' }, '0.1', '0.4');
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'point1', type: 'text' },
+      '',
+      '0.1',
+      '0.4',
+      []
+    );
 
     clearMocks();
     str = 'QuadRantChart   \n     Point1      : [0.1, 0.4]   ';
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(mockDB.addPoint).toHaveBeenCalledWith({ text: 'Point1', type: 'text' }, '0.1', '0.4');
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Point1', type: 'text' },
+      '',
+      '0.1',
+      '0.4',
+      []
+    );
 
     clearMocks();
     str = 'QuadRantChart   \n     "Point1 : (* +=[❤": [1, 0]   ';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.addPoint).toHaveBeenCalledWith(
       { text: 'Point1 : (* +=[❤', type: 'text' },
+      '',
       '1',
-      '0'
+      '0',
+      []
     );
 
     clearMocks();
@@ -264,15 +279,158 @@ describe('Testing quadrantChart jison file', () => {
     expect(mockDB.setQuadrant4Text).toHaveBeenCalledWith({ text: 'Visionaries', type: 'text' });
     expect(mockDB.addPoint).toHaveBeenCalledWith(
       { text: 'Microsoft', type: 'text' },
+      '',
       '0.75',
-      '0.75'
+      '0.75',
+      []
     );
     expect(mockDB.addPoint).toHaveBeenCalledWith(
       { text: 'Salesforce', type: 'text' },
+      '',
       '0.55',
-      '0.60'
+      '0.60',
+      []
     );
-    expect(mockDB.addPoint).toHaveBeenCalledWith({ text: 'IBM', type: 'text' }, '0.51', '0.40');
-    expect(mockDB.addPoint).toHaveBeenCalledWith({ text: 'Incorta', type: 'text' }, '0.20', '0.30');
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'IBM', type: 'text' },
+      '',
+      '0.51',
+      '0.40',
+      []
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Incorta', type: 'text' },
+      '',
+      '0.20',
+      '0.30',
+      []
+    );
+  });
+
+  it('should be able to parse the whole chart with point styling with all params or some params', () => {
+    const str = `quadrantChart
+      title Analytics and Business Intelligence Platforms
+      x-axis "Completeness of Vision ❤" --> "x-axis-2"
+      y-axis Ability to Execute --> "y-axis-2"
+      quadrant-1 Leaders
+      quadrant-2 Challengers
+      quadrant-3 Niche
+      quadrant-4 Visionaries
+      Microsoft: [0.75, 0.75] radius: 10
+      Salesforce: [0.55, 0.60] radius: 10, color: #ff0000
+      IBM: [0.51, 0.40] radius: 10, color: #ff0000, stroke-color: #ff00ff
+      Incorta: [0.20, 0.30] radius: 10 ,color: #ff0000 ,stroke-color: #ff00ff ,stroke-width: 10px`;
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
+      text: 'Completeness of Vision ❤',
+      type: 'text',
+    });
+    expect(mockDB.setXAxisRightText).toHaveBeenCalledWith({ text: 'x-axis-2', type: 'text' });
+    expect(mockDB.setYAxisTopText).toHaveBeenCalledWith({ text: 'y-axis-2', type: 'text' });
+    expect(mockDB.setYAxisBottomText).toHaveBeenCalledWith({
+      text: 'Ability to Execute',
+      type: 'text',
+    });
+    expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({ text: 'Leaders', type: 'text' });
+    expect(mockDB.setQuadrant2Text).toHaveBeenCalledWith({ text: 'Challengers', type: 'text' });
+    expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({ text: 'Niche', type: 'text' });
+    expect(mockDB.setQuadrant4Text).toHaveBeenCalledWith({ text: 'Visionaries', type: 'text' });
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Microsoft', type: 'text' },
+      '',
+      '0.75',
+      '0.75',
+      ['radius: 10']
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Salesforce', type: 'text' },
+      '',
+      '0.55',
+      '0.60',
+      ['radius: 10', 'color: #ff0000']
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'IBM', type: 'text' },
+      '',
+      '0.51',
+      '0.40',
+      ['radius: 10', 'color: #ff0000', 'stroke-color: #ff00ff']
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Incorta', type: 'text' },
+      '',
+      '0.20',
+      '0.30',
+      ['radius: 10', 'color: #ff0000', 'stroke-color: #ff00ff', 'stroke-width: 10px']
+    );
+  });
+
+  it('should be able to parse the whole chart with point styling with params in a random order + class names', () => {
+    const str = `quadrantChart
+      title Analytics and Business Intelligence Platforms
+      x-axis "Completeness of Vision ❤" --> "x-axis-2"
+      y-axis Ability to Execute --> "y-axis-2"
+      quadrant-1 Leaders
+      quadrant-2 Challengers
+      quadrant-3 Niche
+      quadrant-4 Visionaries
+      Microsoft: [0.75, 0.75] stroke-color: #ff00ff ,stroke-width: 10px, color: #ff0000, radius: 10
+      Salesforce:::class1: [0.55, 0.60] radius: 10, color: #ff0000
+      IBM: [0.51, 0.40] stroke-color: #ff00ff ,stroke-width: 10px
+      Incorta: [0.20, 0.30] stroke-width: 10px`;
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
+      text: 'Completeness of Vision ❤',
+      type: 'text',
+    });
+    expect(mockDB.setXAxisRightText).toHaveBeenCalledWith({ text: 'x-axis-2', type: 'text' });
+    expect(mockDB.setYAxisTopText).toHaveBeenCalledWith({ text: 'y-axis-2', type: 'text' });
+    expect(mockDB.setYAxisBottomText).toHaveBeenCalledWith({
+      text: 'Ability to Execute',
+      type: 'text',
+    });
+    expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({ text: 'Leaders', type: 'text' });
+    expect(mockDB.setQuadrant2Text).toHaveBeenCalledWith({ text: 'Challengers', type: 'text' });
+    expect(mockDB.setQuadrant3Text).toHaveBeenCalledWith({ text: 'Niche', type: 'text' });
+    expect(mockDB.setQuadrant4Text).toHaveBeenCalledWith({ text: 'Visionaries', type: 'text' });
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Microsoft', type: 'text' },
+      '',
+      '0.75',
+      '0.75',
+      ['stroke-color: #ff00ff', 'stroke-width: 10px', 'color: #ff0000', 'radius: 10']
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Salesforce', type: 'text' },
+      'class1',
+      '0.55',
+      '0.60',
+      ['radius: 10', 'color: #ff0000']
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'IBM', type: 'text' },
+      '',
+      '0.51',
+      '0.40',
+      ['stroke-color: #ff00ff', 'stroke-width: 10px']
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Incorta', type: 'text' },
+      '',
+      '0.20',
+      '0.30',
+      ['stroke-width: 10px']
+    );
+  });
+
+  it('should be able to handle constructor as a className', () => {
+    const str = `quadrantChart
+    classDef constructor fill:#ff0000
+    Microsoft:::constructor: [0.75, 0.75]
+    `;
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.addClass).toHaveBeenCalledWith('constructor', ['fill:#ff0000']);
   });
 });

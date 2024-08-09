@@ -31,7 +31,7 @@ let tickInterval = undefined;
 let todayMarker = '';
 let includes = [];
 let excludes = [];
-let links = {};
+let links = new Map();
 let sections = [];
 let tasks = [];
 let currentSection = '';
@@ -68,7 +68,7 @@ export const clear = function () {
   inclusiveEndDates = false;
   topAxis = false;
   lastOrder = 0;
-  links = {};
+  links = new Map();
   commonClear();
   weekday = 'sunday';
   weekend = 'saturday';
@@ -699,7 +699,7 @@ export const setLink = function (ids, _linkStr) {
       pushFun(id, () => {
         window.open(linkStr, '_self');
       });
-      links[id] = linkStr;
+      links.set(id, linkStr);
     }
   });
   setClass(ids, 'clickable');
@@ -736,7 +736,7 @@ const setClickFun = function (id, functionName, functionArgs) {
       let item = argList[i].trim();
       /* Removes all double quotes at the start and end of an argument */
       /* This preserves all starting and ending whitespace inside */
-      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+      if (item.startsWith('"') && item.endsWith('"')) {
         item = item.substr(1, item.length - 2);
       }
       argList[i] = item;

@@ -193,7 +193,7 @@ await mermaid.run({
 ### Calling `mermaid.init` - Deprecated
 
 > **Warning**
-> mermaid.init is deprecated in v10 and will be removed in v11. Please use mermaid.run instead.
+> mermaid.init is deprecated in v10 and will be removed in a future release. Please use mermaid.run instead.
 
 By default, `mermaid.init` will be called when the document is ready, finding all elements with
 `class="mermaid"`. If you are adding content after mermaid is loaded, or otherwise need
@@ -216,9 +216,6 @@ Or with no config object, and a jQuery selection:
 ```javascript
 mermaid.init(undefined, $('#someId .yetAnotherClass'));
 ```
-
-> **Warning**
-> This type of integration is deprecated. Instead the preferred way of handling more complex integration is to use the mermaidAPI instead.
 
 ## Usage with webpack
 

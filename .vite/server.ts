@@ -23,8 +23,9 @@ async function createServer() {
   app.use(express.static('cypress/platform'));
 
   app.listen(9000, () => {
+    // eslint-disable-next-line no-console
     console.log(`Listening on http://localhost:9000`);
   });
 }
 
-createServer();
+void createServer();

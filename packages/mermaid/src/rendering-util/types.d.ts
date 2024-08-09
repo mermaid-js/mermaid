@@ -1,4 +1,4 @@
-export type MarkdownWordType = 'normal' | 'strong' | 'emphasis';
+export type MarkdownWordType = 'normal' | 'strong' | 'em';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;

@@ -52,7 +52,7 @@ The following commands must be sufficient enough to start with:
 
 ```bash
 curl -fsSL https://get.pnpm.io/install.sh | sh -
-pnpm env use --global 18
+pnpm env use --global 20
 ```
 
 You may also need to reload `.shrc` or `.bashrc` afterwards.

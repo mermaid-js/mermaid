@@ -136,7 +136,7 @@ Cardinality is a property that describes how many elements of another entity can
 |      1+      |      1+       | One or more  |
 | zero or more | zero or more  | Zero or more |
 | zero or many | zero or many  | Zero or more |
-|   many(0)    |    many(1)    | Zero or more |
+|   many(0)    |    many(0)    | Zero or more |
 |      0+      |      0+       | Zero or more |
 |   only one   |   only one    | Exactly one  |
 |      1       |       1       | Exactly one  |

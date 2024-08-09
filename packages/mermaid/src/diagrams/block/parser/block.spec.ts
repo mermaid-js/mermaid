@@ -1,9 +1,6 @@
 // @ts-ignore: jison doesn't export types
 import block from './block.jison';
 import db from '../blockDB.js';
-import { cleanupComments } from '../../../diagram-api/comments.js';
-import { prepareTextForParsing } from '../blockUtils.js';
-import { setConfig } from '../../../config.js';
 
 describe('Block diagram', function () {
   describe('when parsing an block diagram graph it should handle > ', function () {
@@ -13,7 +10,7 @@ describe('Block diagram', function () {
       block.parser.yy.getLogger = () => console;
     });
 
-    it('a diagram with a node', async () => {
+    it('a diagram with a node', () => {
       const str = `block-beta
           id
       `;
@@ -24,7 +21,7 @@ describe('Block diagram', function () {
       expect(blocks[0].id).toBe('id');
       expect(blocks[0].label).toBe('id');
     });
-    it('a node with a square shape and a label', async () => {
+    it('a node with a square shape and a label', () => {
       const str = `block-beta
           id["A label"]
           `;
@@ -36,7 +33,7 @@ describe('Block diagram', function () {
       expect(blocks[0].label).toBe('A label');
       expect(blocks[0].type).toBe('square');
     });
-    it('a diagram with multiple nodes', async () => {
+    it('a diagram with multiple nodes', () => {
       const str = `block-beta
           id1
           id2
@@ -52,7 +49,7 @@ describe('Block diagram', function () {
       expect(blocks[1].label).toBe('id2');
       expect(blocks[1].type).toBe('na');
     });
-    it('a diagram with multiple nodes', async () => {
+    it('a diagram with multiple nodes', () => {
       const str = `block-beta
           id1
           id2
@@ -73,7 +70,7 @@ describe('Block diagram', function () {
       expect(blocks[2].type).toBe('na');
     });
 
-    it('a node with a square shape and a label', async () => {
+    it('a node with a square shape and a label', () => {
       const str = `block-beta
           id["A label"]
           id2`;
@@ -88,7 +85,7 @@ describe('Block diagram', function () {
       expect(blocks[1].label).toBe('id2');
       expect(blocks[1].type).toBe('na');
     });
-    it('a diagram with multiple nodes with edges abc123', async () => {
+    it('a diagram with multiple nodes with edges abc123', () => {
       const str = `block-beta
           id1["first"]  -->   id2["second"]
       `;
@@ -102,7 +99,7 @@ describe('Block diagram', function () {
       expect(edges[0].end).toBe('id2');
       expect(edges[0].arrowTypeEnd).toBe('arrow_point');
     });
-    it('a diagram with multiple nodes with edges abc123', async () => {
+    it('a diagram with multiple nodes with edges abc123', () => {
       const str = `block-beta
           id1["first"]  -- "a label" -->   id2["second"]
       `;
@@ -117,7 +114,7 @@ describe('Block diagram', function () {
       expect(edges[0].arrowTypeEnd).toBe('arrow_point');
       expect(edges[0].label).toBe('a label');
     });
-    it('a diagram with column statements', async () => {
+    it('a diagram with column statements', () => {
       const str = `block-beta
           columns 2
           block1["Block 1"]
@@ -128,7 +125,7 @@ describe('Block diagram', function () {
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(1);
     });
-    it('a diagram withput column statements', async () => {
+    it('a diagram withput column statements', () => {
       const str = `block-beta
           block1["Block 1"]
       `;
@@ -138,7 +135,7 @@ describe('Block diagram', function () {
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(1);
     });
-    it('a diagram with auto column statements', async () => {
+    it('a diagram with auto column statements', () => {
       const str = `block-beta
           columns auto
           block1["Block 1"]
@@ -150,7 +147,7 @@ describe('Block diagram', function () {
       expect(blocks.length).toBe(1);
     });
 
-    it('blocks next to each other', async () => {
+    it('blocks next to each other', () => {
       const str = `block-beta
           columns 2
           block1["Block 1"]
@@ -164,7 +161,7 @@ describe('Block diagram', function () {
       expect(blocks.length).toBe(2);
     });
 
-    it('blocks on top of each other', async () => {
+    it('blocks on top of each other', () => {
       const str = `block-beta
           columns 1
           block1["Block 1"]
@@ -178,7 +175,7 @@ describe('Block diagram', function () {
       expect(blocks.length).toBe(2);
     });
 
-    it('compound blocks 2', async () => {
+    it('compound blocks 2', () => {
       const str = `block-beta
           block
             aBlock["ABlock"]
@@ -206,7 +203,7 @@ describe('Block diagram', function () {
       expect(bBlock.label).toBe('BBlock');
       expect(bBlock.type).toBe('square');
     });
-    it('compound blocks of compound blocks', async () => {
+    it('compound blocks of compound blocks', () => {
       const str = `block-beta
           block
             aBlock["ABlock"]
@@ -241,7 +238,7 @@ describe('Block diagram', function () {
       expect(bBlock.label).toBe('BBlock');
       expect(bBlock.type).toBe('square');
     });
-    it('compound blocks with title', async () => {
+    it('compound blocks with title', () => {
       const str = `block-beta
           block:compoundBlock["Compound block"]
             columns 1
@@ -266,7 +263,7 @@ describe('Block diagram', function () {
       expect(block2.label).toBe('Block 2');
       expect(block2.type).toBe('square');
     });
-    it('blocks mixed with compound blocks', async () => {
+    it('blocks mixed with compound blocks', () => {
       const str = `block-beta
           columns 1
           block1["Block 1"]
@@ -293,7 +290,7 @@ describe('Block diagram', function () {
       expect(block2.type).toBe('square');
     });
 
-    it('Arrow blocks', async () => {
+    it('Arrow blocks', () => {
       const str = `block-beta
         columns 3
         block1["Block 1"]
@@ -317,7 +314,7 @@ describe('Block diagram', function () {
       expect(blockArrow.type).toBe('block_arrow');
       expect(blockArrow.directions).toContain('right');
     });
-    it('Arrow blocks with multiple points', async () => {
+    it('Arrow blocks with multiple points', () => {
       const str = `block-beta
         columns 1
         A
@@ -340,7 +337,7 @@ describe('Block diagram', function () {
       expect(blockArrow.directions).toContain('down');
       expect(blockArrow.directions).not.toContain('right');
     });
-    it('blocks with different widths', async () => {
+    it('blocks with different widths', () => {
       const str = `block-beta
         columns 3
         one["One Slot"]
@@ -355,7 +352,7 @@ describe('Block diagram', function () {
       const two = blocks[1];
       expect(two.widthInColumns).toBe(2);
     });
-    it('empty blocks', async () => {
+    it('empty blocks', () => {
       const str = `block-beta
         columns 3
         space
@@ -374,7 +371,7 @@ describe('Block diagram', function () {
       expect(sp2.type).toBe('space');
       expect(middle.label).toBe('In the middle');
     });
-    it('classDef statements applied to a block', async () => {
+    it('classDef statements applied to a block', () => {
       const str = `block-beta
         classDef black color:#ffffff, fill:#000000;
 
@@ -388,11 +385,11 @@ describe('Block diagram', function () {
       const mc = blocks[0];
       expect(mc.classes).toContain('black');
       const classes = db.getClasses();
-      const black = classes.black;
+      const black = classes.get('black')!;
       expect(black.id).toBe('black');
       expect(black.styles[0]).toEqual('color:#ffffff');
     });
-    it('style statements applied to a block', async () => {
+    it('style statements applied to a block', () => {
       const str = `block-beta
 columns 1
     B["A wide one in the middle"]
@@ -404,6 +401,23 @@ columns 1
       expect(blocks.length).toBe(1);
       const B = blocks[0];
       expect(B.styles).toContain('fill:#f9F');
+    });
+  });
+
+  describe('prototype properties', function () {
+    function validateProperty(prop: string) {
+      expect(() => block.parse(`block-beta\n${prop}`)).not.toThrow();
+      expect(() =>
+        block.parse(`block-beta\nA; classDef ${prop} color:#ffffff,fill:#000000; class A ${prop}`)
+      ).not.toThrow();
+    }
+
+    it('should work with a __proto__ property', function () {
+      validateProperty('__proto__');
+    });
+
+    it('should work with a constructor property', function () {
+      validateProperty('constructor');
     });
   });
 });
