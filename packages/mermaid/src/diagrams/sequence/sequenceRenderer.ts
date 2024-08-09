@@ -1088,6 +1088,19 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   const { bounds: box } = bounds.getBounds();
 
+  if (box.startx === undefined) {
+    box.startx = 0;
+  }
+  if (box.starty === undefined) {
+    box.starty = 0;
+  }
+  if (box.stopx === undefined) {
+    box.stopx = 0;
+  }
+  if (box.stopy === undefined) {
+    box.stopy = 0;
+  }
+
   // Make sure the height of the diagram supports long menus.
   let boxHeight = box.stopy - box.starty;
   if (boxHeight < requiredBoxSize.maxHeight) {
