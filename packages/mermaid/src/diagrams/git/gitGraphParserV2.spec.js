@@ -20,7 +20,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
-    expect(commits.get(key).tag).toBe('');
+    expect(commits.get(key).tags).toStrictEqual([]);
     expect(commits.get(key).type).toBe(0);
   });
 
@@ -37,7 +37,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).toBe('1111');
-    expect(commits.get(key).tag).toBe('');
+    expect(commits.get(key).tags).toStrictEqual([]);
     expect(commits.get(key).type).toBe(0);
   });
 
@@ -55,7 +55,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
-    expect(commits.get(key).tag).toBe('test');
+    expect(commits.get(key).tags).toStrictEqual(['test']);
     expect(commits.get(key).type).toBe(0);
   });
 
@@ -73,7 +73,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
-    expect(commits.get(key).tag).toBe('');
+    expect(commits.get(key).tags).toStrictEqual([]);
     expect(commits.get(key).type).toBe(2);
   });
 
@@ -91,7 +91,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
-    expect(commits.get(key).tag).toBe('');
+    expect(commits.get(key).tags).toStrictEqual([]);
     expect(commits.get(key).type).toBe(1);
   });
 
@@ -109,7 +109,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
-    expect(commits.get(key).tag).toBe('');
+    expect(commits.get(key).tags).toStrictEqual([]);
     expect(commits.get(key).type).toBe(0);
   });
 
@@ -127,7 +127,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test commit');
     expect(commits.get(key).id).not.toBeNull();
-    expect(commits.get(key).tag).toBe('');
+    expect(commits.get(key).tags).toStrictEqual([]);
     expect(commits.get(key).type).toBe(0);
   });
 
@@ -145,7 +145,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test commit');
     expect(commits.get(key).id).not.toBeNull();
-    expect(commits.get(key).tag).toBe('');
+    expect(commits.get(key).tags).toStrictEqual([]);
     expect(commits.get(key).type).toBe(0);
   });
 
@@ -163,7 +163,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).toBe('1111');
-    expect(commits.get(key).tag).toBe('test tag');
+    expect(commits.get(key).tags).toStrictEqual(['test tag']);
     expect(commits.get(key).type).toBe(0);
   });
 
@@ -181,7 +181,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
-    expect(commits.get(key).tag).toBe('test tag');
+    expect(commits.get(key).tags).toStrictEqual(['test tag']);
     expect(commits.get(key).type).toBe(2);
   });
 
@@ -199,7 +199,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).not.toBeNull();
-    expect(commits.get(key).tag).toBe('test tag');
+    expect(commits.get(key).tags).toStrictEqual(['test tag']);
     expect(commits.get(key).type).toBe(2);
   });
 
@@ -217,7 +217,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('');
     expect(commits.get(key).id).toBe('1111');
-    expect(commits.get(key).tag).toBe('test tag');
+    expect(commits.get(key).tags).toStrictEqual(['test tag']);
     expect(commits.get(key).type).toBe(1);
   });
 
@@ -235,7 +235,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test msg');
     expect(commits.get(key).id).toBe('1111');
-    expect(commits.get(key).tag).toBe('test tag');
+    expect(commits.get(key).tags).toStrictEqual(['test tag']);
     expect(commits.get(key).type).toBe(1);
   });
 
@@ -254,7 +254,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test msg');
     expect(commits.get(key).id).toBe('1111');
-    expect(commits.get(key).tag).toBe('test tag');
+    expect(commits.get(key).tags).toStrictEqual(['test tag']);
     expect(commits.get(key).type).toBe(1);
   });
 
@@ -272,7 +272,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test msg');
     expect(commits.get(key).id).toBe('1111');
-    expect(commits.get(key).tag).toBe('test tag');
+    expect(commits.get(key).tags).toStrictEqual(['test tag']);
     expect(commits.get(key).type).toBe(1);
   });
 
@@ -290,7 +290,7 @@ describe('when parsing a gitGraph', function () {
     const key = commits.keys().next().value;
     expect(commits.get(key).message).toBe('test msg');
     expect(commits.get(key).id).toBe('1111');
-    expect(commits.get(key).tag).toBe('test tag');
+    expect(commits.get(key).tags).toStrictEqual(['test tag']);
     expect(commits.get(key).type).toBe(1);
   });
 
@@ -616,7 +616,7 @@ describe('when parsing a gitGraph', function () {
       commits.get(commit1).id,
       commits.get(commit2).id,
     ]);
-    expect(commits.get(commit3).tag).toBe('merge-tag');
+    expect(commits.get(commit3).tags).toStrictEqual(['merge-tag']);
     expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
       { name: 'main' },
       { name: 'testBranch' },
@@ -671,12 +671,12 @@ describe('when parsing a gitGraph', function () {
 
     expect(testBranchMerge.branch).toBe('main');
     expect(testBranchMerge.parents).toStrictEqual([mainCommit.id, testBranchCommit.id]);
-    expect(testBranchMerge.tag).toBe('merge-tag');
+    expect(testBranchMerge.tags).toStrictEqual(['merge-tag']);
     expect(testBranchMerge.id).toBe('2-222');
 
     expect(testBranch2Merge.branch).toBe('main');
     expect(testBranch2Merge.parents).toStrictEqual([testBranchMerge.id, testBranch2Commit.id]);
-    expect(testBranch2Merge.tag).toBe('merge-tag2');
+    expect(testBranch2Merge.tags).toStrictEqual(['merge-tag2']);
     expect(testBranch2Merge.id).toBe('4-444');
     expect(testBranch2Merge.customType).toBe(2);
     expect(testBranch2Merge.customId).toBe(true);
@@ -705,7 +705,7 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
     const cherryPickCommitID = [...commits.keys()][2];
-    expect(commits.get(cherryPickCommitID).tag).toBe('cherry-pick:A');
+    expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['cherry-pick:A']);
     expect(commits.get(cherryPickCommitID).branch).toBe('main');
   });
 
@@ -721,7 +721,7 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
     const cherryPickCommitID = [...commits.keys()][2];
-    expect(commits.get(cherryPickCommitID).tag).toBe('MyTag');
+    expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['MyTag']);
     expect(commits.get(cherryPickCommitID).branch).toBe('main');
   });
 
@@ -737,7 +737,7 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
     const cherryPickCommitID = [...commits.keys()][2];
-    expect(commits.get(cherryPickCommitID).tag).toBe('');
+    expect(commits.get(cherryPickCommitID).tags).toStrictEqual([]);
     expect(commits.get(cherryPickCommitID).branch).toBe('main');
   });
 
@@ -758,7 +758,7 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
     const cherryPickCommitID = [...commits.keys()][4];
-    expect(commits.get(cherryPickCommitID).tag).toBe('cherry-pick:M|parent:B');
+    expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['cherry-pick:M|parent:B']);
     expect(commits.get(cherryPickCommitID).branch).toBe('release');
   });
 
@@ -779,7 +779,7 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
     const cherryPickCommitID = [...commits.keys()][4];
-    expect(commits.get(cherryPickCommitID).tag).toBe('v1.0');
+    expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['v1.0']);
     expect(commits.get(cherryPickCommitID).branch).toBe('release');
   });
 
@@ -802,7 +802,7 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
     const cherryPickCommitID = [...commits.keys()][5];
-    expect(commits.get(cherryPickCommitID).tag).toBe('v2.1:ZERO');
+    expect(commits.get(cherryPickCommitID).tags).toStrictEqual(['v2.1:ZERO']);
     expect(commits.get(cherryPickCommitID).branch).toBe('release');
   });
 
@@ -827,8 +827,8 @@ describe('when parsing a gitGraph', function () {
     const commits = parser.yy.getCommits();
     const cherryPickCommitID = [...commits.keys()][5];
     const cherryPickCommitID2 = [...commits.keys()][7];
-    expect(commits.get(cherryPickCommitID).tag).toBe('');
-    expect(commits.get(cherryPickCommitID2).tag).toBe('');
+    expect(commits.get(cherryPickCommitID).tags).toStrictEqual([]);
+    expect(commits.get(cherryPickCommitID2).tags).toStrictEqual([]);
     expect(commits.get(cherryPickCommitID).branch).toBe('release');
   });
 
