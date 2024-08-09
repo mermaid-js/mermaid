@@ -1,7 +1,7 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
-describe('Graph', () => {
-  it('1: should render a simple flowchart no htmlLabels', () => {
+describe('Flowchart HandDrawn', () => {
+  it('FHD1: should render a simple flowchart no htmlLabels', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -19,7 +19,7 @@ describe('Graph', () => {
     );
   });
 
-  it('2: should render a simple flowchart with htmlLabels', () => {
+  it('FHD2: should render a simple flowchart with htmlLabels', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -37,7 +37,7 @@ describe('Graph', () => {
     );
   });
 
-  it('3: should render a simple flowchart with line breaks', () => {
+  it('FHD3: should render a simple flowchart with line breaks', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -51,7 +51,7 @@ describe('Graph', () => {
     );
   });
 
-  it('4: should render a simple flowchart with trapezoid and inverse trapezoid vertex options.', () => {
+  it('FHD4: should render a simple flowchart with trapezoid and inverse trapezoid vertex options.', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -66,7 +66,7 @@ describe('Graph', () => {
     );
   });
 
-  it('5: should style nodes via a class.', () => {
+  it('FHD5: should style nodes via a class.', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -82,7 +82,7 @@ describe('Graph', () => {
     );
   });
 
-  it('6: should render a flowchart full of circles', () => {
+  it('FHD6: should render a flowchart full of circles', () => {
     imgSnapshotTest(
       `
     graph LR
@@ -111,7 +111,7 @@ describe('Graph', () => {
     );
   });
 
-  it('7: should render a flowchart full of icons', () => {
+  it('FHD7: should render a flowchart full of icons', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -182,7 +182,7 @@ describe('Graph', () => {
     );
   });
 
-  it('8: should render labels with numbers at the start', () => {
+  it('FHD8: should render labels with numbers at the start', () => {
     imgSnapshotTest(
       `
     graph TB;subgraph "number as labels";1;end;
@@ -191,7 +191,7 @@ describe('Graph', () => {
     );
   });
 
-  it('9: should render subgraphs', () => {
+  it('FHD9: should render subgraphs', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -203,7 +203,7 @@ describe('Graph', () => {
     );
   });
 
-  it('10: should render subgraphs with a title starting with a digit', () => {
+  it('FHD10: should render subgraphs with a title starting with a digit', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -215,7 +215,7 @@ describe('Graph', () => {
     );
   });
 
-  it('11: should render styled subgraphs', () => {
+  it('FHD11: should render styled subgraphs', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -250,7 +250,7 @@ describe('Graph', () => {
     );
   });
 
-  it('12: should render a flowchart with long names and class definitions', () => {
+  it('FHD12: should render a flowchart with long names and class definitions', () => {
     imgSnapshotTest(
       `graph LR
       sid-B3655226-6C29-4D00-B685-3D5C734DC7E1["
@@ -352,7 +352,7 @@ describe('Graph', () => {
     );
   });
 
-  it('13: should render color of styled nodes', () => {
+  it('FHD13: should render color of styled nodes', () => {
     imgSnapshotTest(
       `
       graph LR
@@ -373,7 +373,7 @@ describe('Graph', () => {
     );
   });
 
-  it('14: should render hexagons', () => {
+  it('FHD14: should render hexagons', () => {
     imgSnapshotTest(
       `
       graph TD
@@ -399,7 +399,7 @@ describe('Graph', () => {
     );
   });
 
-  it('15: should render a simple flowchart with comments', () => {
+  it('FHD15: should render a simple flowchart with comments', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -418,7 +418,7 @@ describe('Graph', () => {
     );
   });
 
-  it('16: Render Stadium shape', () => {
+  it('FHD16: Render Stadium shape', () => {
     imgSnapshotTest(
       ` graph TD
       A([stadium shape test])
@@ -442,7 +442,7 @@ describe('Graph', () => {
     );
   });
 
-  it('17: Render multiline texts', () => {
+  it('FHD17: Render multiline texts', () => {
     imgSnapshotTest(
       `graph LR
         A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
@@ -464,7 +464,7 @@ describe('Graph', () => {
     );
   });
 
-  it('18: Chaining of nodes', () => {
+  it('FHD18: Chaining of nodes', () => {
     imgSnapshotTest(
       `graph LR
         a --> b --> c
@@ -478,7 +478,7 @@ describe('Graph', () => {
     );
   });
 
-  it('19: Multiple nodes and chaining in one statement', () => {
+  it('FHD19: Multiple nodes and chaining in one statement', () => {
     imgSnapshotTest(
       `graph LR
         a --> b & c--> d
@@ -492,7 +492,7 @@ describe('Graph', () => {
     );
   });
 
-  it('20: Multiple nodes and chaining in one statement', () => {
+  it('FHD20: Multiple nodes and chaining in one statement', () => {
     imgSnapshotTest(
       `graph TD
       A[ h ] -- hello --> B[" test "]:::exClass & C --> D;
@@ -507,7 +507,7 @@ describe('Graph', () => {
     );
   });
 
-  it('21: Render cylindrical shape', () => {
+  it('FDH21: Render cylindrical shape', () => {
     imgSnapshotTest(
       `graph LR
       A[(cylindrical<br />shape<br />test)]
@@ -534,7 +534,7 @@ describe('Graph', () => {
     );
   });
 
-  it('22: Render a simple flowchart with nodeSpacing set to 100', () => {
+  it('FDH22: Render a simple flowchart with nodeSpacing set to 100', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -548,7 +548,7 @@ describe('Graph', () => {
     );
   });
 
-  it('23: Render a simple flowchart with rankSpacing set to 100', () => {
+  it('FDH23: Render a simple flowchart with rankSpacing set to 100', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -567,7 +567,7 @@ describe('Graph', () => {
     );
   });
 
-  it('24: Keep node label text (if already defined) when a style is applied', () => {
+  it('FDH24: Keep node label text (if already defined) when a style is applied', () => {
     imgSnapshotTest(
       `graph LR
       A(( )) -->|step 1| B(( ))
@@ -585,7 +585,7 @@ describe('Graph', () => {
     );
   });
 
-  it('25: Handle link click events (link, anchor, mailto, other protocol, script)', () => {
+  it('FDH25: Handle link click events (link, anchor, mailto, other protocol, script)', () => {
     imgSnapshotTest(
       `graph TB
       TITLE["Link Click Events<br>(click the nodes below)"]
@@ -607,7 +607,7 @@ describe('Graph', () => {
     );
   });
 
-  it('26: Set text color of nodes and links according to styles when html labels are enabled', () => {
+  it('FDH26: Set text color of nodes and links according to styles when html labels are enabled', () => {
     imgSnapshotTest(
       `graph LR
       A[red<br>text] -->|red<br>text| B(blue<br>text)
@@ -627,7 +627,7 @@ describe('Graph', () => {
     );
   });
 
-  it('27: Set text color of nodes and links according to styles when html labels are disabled', () => {
+  it('FDH27: Set text color of nodes and links according to styles when html labels are disabled', () => {
     imgSnapshotTest(
       `graph LR
       A[red<br>text] -->|red<br>text| B(blue<br>text)
@@ -652,7 +652,7 @@ describe('Graph', () => {
     );
   });
 
-  it('28: Apply default class to all nodes which do not have another class assigned (htmlLabels enabled)', () => {
+  it('FDH28: Apply default class to all nodes which do not have another class assigned (htmlLabels enabled)', () => {
     imgSnapshotTest(
       `graph TD
       A[myClass1] --> B[default] & C[default]
@@ -668,7 +668,7 @@ describe('Graph', () => {
     );
   });
 
-  it('29: Apply default class to all nodes which do not have another class assigned (htmlLabels disabled)', () => {
+  it('FDH29: Apply default class to all nodes which do not have another class assigned (htmlLabels disabled)', () => {
     imgSnapshotTest(
       `graph TD
       A[myClass1] --> B[default] & C[default]
@@ -689,7 +689,7 @@ describe('Graph', () => {
     );
   });
 
-  it('30: Possibility to style text color of nodes and subgraphs as well as apply classes to subgraphs', () => {
+  it('FDH30: Possibility to style text color of nodes and subgraphs as well as apply classes to subgraphs', () => {
     imgSnapshotTest(
       `graph LR
       subgraph id1 [title is set]
@@ -718,7 +718,7 @@ describe('Graph', () => {
     );
   });
 
-  it('31: should not slice off edges that are to the left of the left-most vertex', () => {
+  it('FDH31: should not slice off edges that are to the left of the left-most vertex', () => {
     imgSnapshotTest(
       `graph TD
       work --> sleep
@@ -735,7 +735,7 @@ describe('Graph', () => {
     );
   });
 
-  it('32: Render Subroutine shape', () => {
+  it('FDH32: Render Subroutine shape', () => {
     imgSnapshotTest(
       `graph LR
       A[[subroutine shape test]]
@@ -759,7 +759,7 @@ describe('Graph', () => {
     );
   });
 
-  it('33: should render a simple flowchart with diagramPadding set to 0', () => {
+  it('FDH33: should render a simple flowchart with diagramPadding set to 0', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -773,7 +773,7 @@ describe('Graph', () => {
     );
   });
 
-  it('34: testing the label width in percy', () => {
+  it('FDH34: testing the label width in percy', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas]
@@ -782,7 +782,7 @@ describe('Graph', () => {
     );
   });
 
-  it('35: should honor minimum edge length as specified by the user', () => {
+  it('FDH35: should honor minimum edge length as specified by the user', () => {
     imgSnapshotTest(
       `graph TD
       L1 --- L2
@@ -799,7 +799,7 @@ describe('Graph', () => {
       { look: 'handDrawn', handDrawnSeed: 0 }
     );
   });
-  it('36: should render escaped without html labels', () => {
+  it('FDH36: should render escaped without html labels', () => {
     imgSnapshotTest(
       `graph TD
         a["<strong>Haiya</strong>"]-->b
@@ -807,7 +807,7 @@ describe('Graph', () => {
       { look: 'handDrawn', handDrawnSeed: 0, htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
-  it('37: should render non-escaped with html labels', () => {
+  it('FDH37: should render non-escaped with html labels', () => {
     imgSnapshotTest(
       `graph TD
         a["<strong>Haiya</strong>"]-->b
@@ -821,7 +821,7 @@ describe('Graph', () => {
       }
     );
   });
-  it('38: should render a flowchart when useMaxWidth is true (default)', () => {
+  it('FDH38: should render a flowchart when useMaxWidth is true (default)', () => {
     renderGraph(
       `flowchart TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -844,7 +844,7 @@ describe('Graph', () => {
       expect(maxWidthValue).to.be.within(446 * 0.9, 446 * 1.1);
     });
   });
-  it('39: should render a flowchart when useMaxWidth is false', () => {
+  it('FDH39: should render a flowchart when useMaxWidth is false', () => {
     renderGraph(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -864,7 +864,7 @@ describe('Graph', () => {
       expect(svg).to.not.have.attr('style');
     });
   });
-  it('58: handle styling with style expressions', () => {
+  it('FDH40: handle styling with style expressions', () => {
     imgSnapshotTest(
       `
     graph LR
@@ -881,7 +881,7 @@ describe('Graph', () => {
       }
     );
   });
-  it('60: handle styling for all node shapes', () => {
+  it('FDH41: handle styling for all node shapes', () => {
     imgSnapshotTest(
       `
       graph LR
@@ -911,7 +911,7 @@ describe('Graph', () => {
       }
     );
   });
-  it('61: fontawesome icons in edge labels', () => {
+  it('FDH42: fontawesome icons in edge labels', () => {
     imgSnapshotTest(
       `
 graph TD
@@ -926,7 +926,7 @@ graph TD
       }
     );
   });
-  it('62: fontawesome icons in edge labels', () => {
+  it('FDH43: fontawesome icons in edge labels', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -944,7 +944,7 @@ graph TD
       }
     );
   });
-  it('63: fontawesome icons in edge labels', () => {
+  it('FDH44: fontawesome icons in edge labels', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -984,7 +984,7 @@ graph TD
       }
     );
   });
-  it('64: fontawesome icons in edge labels', () => {
+  it('FDH45: fontawesome icons in edge labels', () => {
     imgSnapshotTest(
       `
     %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
@@ -1006,7 +1006,7 @@ graph TD
       }
     );
   });
-  it('65: text-color from classes', () => {
+  it('FDH46: text-color from classes', () => {
     imgSnapshotTest(
       `
       flowchart LR
@@ -1023,7 +1023,7 @@ graph TD
       }
     );
   });
-  it('66: apply class called default on node called default', () => {
+  it('FDH47: apply class called default on node called default', () => {
     imgSnapshotTest(
       `
       graph TD
@@ -1040,7 +1040,7 @@ graph TD
     );
   });
 
-  it('67: should be able to style default node independently', () => {
+  it('FDH48: should be able to style default node independently', () => {
     imgSnapshotTest(
       `
       flowchart TD
