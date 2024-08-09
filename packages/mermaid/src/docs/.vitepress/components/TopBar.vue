@@ -9,15 +9,15 @@ interface Taglines {
 const taglines: Taglines[] = [
   {
     label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
-    url: 'https://www.mermaidchart.com/landing?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=visual_editor',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=visual_editor',
   },
   {
     label: 'Diagram live with teammates in Mermaid Chart',
-    url: 'https://www.mermaidchart.com/landing?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=teams',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=teams',
   },
   {
     label: 'Skip the rough draft with Mermaid AI in Mermaid Chart',
-    url: 'https://www.mermaidchart.com/mermaid-ai?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=mermaid_ai',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=mermaid_ai',
   },
 ];
 
