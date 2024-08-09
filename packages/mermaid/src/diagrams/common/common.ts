@@ -3,10 +3,8 @@ import hljs from 'highlight.js';
 import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import type { MermaidConfig } from '../../config.type.js';
-import { parseFontSize } from '../../utils.js';
-
-// Remove and ignore br:s
-export const lineBreakRegex = /<br\s*\/?>/gi;
+import { parseFontSize, lineBreakRegex } from '../../utils.js';
+import type { TextDimensionConfig } from '../../types.js';
 
 /**
  * Gets the rows of lines in a string
@@ -440,7 +438,7 @@ export const renderMarkdown = async (text: string): Promise<string> => {
 export const calculateMarkdownDimensions = async (text: string, config: TextDimensionConfig) => {
   const { fontSize = 12, fontFamily = 'Arial', fontWeight = 400 } = config;
   const [, _fontSizePx = '12px'] = parseFontSize(fontSize);
-  text = await renderMarkdown(text, config);
+  text = await renderMarkdown(text);
   const divElem = document.createElement('div');
   divElem.innerHTML = text;
   divElem.id = 'markdown-temp';
