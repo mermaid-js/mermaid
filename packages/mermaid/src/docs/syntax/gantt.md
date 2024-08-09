@@ -253,6 +253,7 @@ gantt
 
 ````warning
 `millisecond` and `second` support was added in v10.3.0
+```
 
 ### Changing Today (v\<MERMAID_RELEASE_VERSION>+)
 
