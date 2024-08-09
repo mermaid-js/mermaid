@@ -7,7 +7,7 @@ import intersect from '../intersect/index.js';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
