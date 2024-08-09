@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify';
 import hljs from 'highlight.js';
+import type { Token, Tokens } from 'marked';
 import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import type { MermaidConfig } from '../../config.type.js';
@@ -379,6 +380,10 @@ export const markdownRegex = /(```((.|\n)*)```)|(`(.*)`)/g;
  */
 export const hasMarkdown = (text: string): boolean => (text.match(markdownRegex)?.length ?? 0) > 0;
 
+function isCodeToken(animal: Token): animal is Tokens.Code {
+  return (animal as Tokens.Code).lang !== undefined;
+}
+
 /**
  * Attempts to render and return the markdown portion of a string with Marked
  *
@@ -405,21 +410,22 @@ export const renderMarkdown = async (text: string): Promise<string> => {
   marked.use({
     hooks: {
       processAllTokens: (tokens) =>
-        tokens.map((token) =>
-          token?.lang
-            ? token
-            : {
-                ...token,
-                lang: hljs.highlightAuto(token.text, [
-                  'json',
-                  'javascript',
-                  'typescript',
-                  'html',
-                  'xml',
-                  'java',
-                ]).language,
-              }
-        ),
+        tokens.map((token) => {
+          if (isCodeToken(token)) {
+            return {
+              ...token,
+              lang: hljs.highlightAuto(token.text, [
+                'json',
+                'javascript',
+                'typescript',
+                'html',
+                'xml',
+                'java',
+              ]).language,
+            };
+          }
+          return token;
+        }),
     },
   });
 

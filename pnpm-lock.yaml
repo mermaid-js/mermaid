@@ -131,9 +131,6 @@ importers:
       globby:
         specifier: ^14.0.1
         version: 14.0.2
-      highlight.js:
-        specifier: ^11.10.0
-        version: 11.10.0
       husky:
         specifier: ^9.0.11
         version: 9.0.11
@@ -158,12 +155,6 @@ importers:
       markdown-table:
         specifier: ^3.0.3
         version: 3.0.3
-      marked:
-        specifier: ^14.0.0
-        version: 14.0.0
-      marked-highlight:
-        specifier: ^2.1.4
-        version: 2.1.4(marked@14.0.0)
       nyc:
         specifier: ^15.1.0
         version: 15.1.0
@@ -236,6 +227,9 @@ importers:
       dompurify:
         specifier: ^3.0.11
         version: 3.1.6
+      highlight.js:
+        specifier: ^11.10.0
+        version: 11.10.0
       katex:
         specifier: ^0.16.9
         version: 0.16.11
@@ -246,8 +240,11 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       marked:
-        specifier: ^13.0.2
-        version: 13.0.2
+        specifier: ^14.0.0
+        version: 14.0.0
+      marked-highlight:
+        specifier: ^2.1.4
+        version: 2.1.4(marked@14.0.0)
       stylis:
         specifier: ^4.3.1
         version: 4.3.2
@@ -6857,11 +6854,6 @@ packages:
     resolution: {integrity: sha512-D1GOkcdzP+1dzjoColL7umojefFrASDuLeyaHS0Zr/Uo9jkr1V6vpLRCzfi1djmEaWyK0SYMFtHnpkZ+cwFT1w==}
     peerDependencies:
       marked: '>=4 <15'
-
-  marked@13.0.2:
-    resolution: {integrity: sha512-J6CPjP8pS5sgrRqxVRvkCIkZ6MFdRIjDkwUwgJ9nL2fbmM6qGQeB2C16hi8Cc9BOzj6xXzy0jyi0iPIfnMHYzA==}
-    engines: {node: '>= 18'}
-    hasBin: true
 
   marked@14.0.0:
     resolution: {integrity: sha512-uIj4+faQ+MgHgwUW1l2PsPglZLOLOT1uErt06dAPtx2kjteLAkbsd/0FiYg/MGS+i7ZKLb7w2WClxHkzOOuryQ==}
@@ -17722,8 +17714,6 @@ snapshots:
   marked-highlight@2.1.4(marked@14.0.0):
     dependencies:
       marked: 14.0.0
-
-  marked@13.0.2: {}
 
   marked@14.0.0: {}
 

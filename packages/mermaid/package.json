@@ -77,10 +77,12 @@
     "dagre-d3-es": "7.0.10",
     "dayjs": "^1.11.10",
     "dompurify": "^3.0.11",
+    "highlight.js": "^11.10.0",
     "katex": "^0.16.9",
     "khroma": "^2.1.0",
     "lodash-es": "^4.17.21",
-    "marked": "^13.0.2",
+    "marked": "^14.0.0",
+    "marked-highlight": "^2.1.4",
     "stylis": "^4.3.1",
     "ts-dedent": "^2.2.0",
     "uuid": "^9.0.1"
