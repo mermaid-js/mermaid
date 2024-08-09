@@ -35,7 +35,7 @@ onMounted(() => {
       <transition name="fade" mode="out-in">
         <a
           :key="index"
-          href="{{ taglines[index].url }}"
+          :href="taglines[index].url"
           target="_blank"
           class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
         >
