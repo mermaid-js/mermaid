@@ -8,15 +8,15 @@ import {
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 
-function createLine(cx: number, cy: number, r: number) {
+function createLine(r: number) {
   const xAxis45 = Math.cos(Math.PI / 4); // cosine of 45 degrees
   const yAxis45 = Math.sin(Math.PI / 4); // sine of 45 degrees
   const lineLength = r * 2;
 
-  const pointQ1 = { x: cx + (lineLength / 2) * xAxis45, y: cy + (lineLength / 2) * yAxis45 }; // Quadrant I
-  const pointQ2 = { x: cx - (lineLength / 2) * xAxis45, y: cy + (lineLength / 2) * yAxis45 }; // Quadrant II
-  const pointQ3 = { x: cx - (lineLength / 2) * xAxis45, y: cy - (lineLength / 2) * yAxis45 }; // Quadrant III
-  const pointQ4 = { x: cx + (lineLength / 2) * xAxis45, y: cy - (lineLength / 2) * yAxis45 }; // Quadrant IV
+  const pointQ1 = { x: (lineLength / 2) * xAxis45, y: (lineLength / 2) * yAxis45 }; // Quadrant I
+  const pointQ2 = { x: -(lineLength / 2) * xAxis45, y: (lineLength / 2) * yAxis45 }; // Quadrant II
+  const pointQ3 = { x: -(lineLength / 2) * xAxis45, y: -(lineLength / 2) * yAxis45 }; // Quadrant III
+  const pointQ4 = { x: (lineLength / 2) * xAxis45, y: -(lineLength / 2) * yAxis45 }; // Quadrant IV
 
   return `M ${pointQ2.x},${pointQ2.y} L ${pointQ4.x},${pointQ4.y}
                    M ${pointQ1.x},${pointQ1.y} L ${pointQ3.x},${pointQ3.y}`;
@@ -26,8 +26,6 @@ export const crossedCircle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
-  const cy = 0;
-  const cx = 0;
   const radius = Math.max(bbox.width, bbox.height) / 2 + halfPadding;
   const { cssStyles } = node;
 
@@ -40,8 +38,8 @@ export const crossedCircle = async (parent: SVGAElement, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const circleNode = rc.circle(cx, cy, radius * 2, options);
-  const linePath = createLine(cx, -cy, radius);
+  const circleNode = rc.circle(0, 0, radius * 2, options);
+  const linePath = createLine(radius);
   const lineNode = rc.path(linePath, options);
 
   const crossedCircle = shapeSvg.insert('g', ':first-child');
