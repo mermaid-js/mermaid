@@ -4,7 +4,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 
@@ -42,7 +42,7 @@ export const lean_right = async (parent: SVGAElement, node: Node): Promise<SVGAE
   let polygon: d3.Selection<SVGPolygonElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});

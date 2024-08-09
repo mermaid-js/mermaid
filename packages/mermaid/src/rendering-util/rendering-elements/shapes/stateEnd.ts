@@ -3,7 +3,7 @@ import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
-import { solidStateFill } from './handdrawnStyles.js';
+import { solidStateFill } from './handDrawnStyles.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const stateEnd = (parent: SVG, node: Node) => {
@@ -16,7 +16,7 @@ export const stateEnd = (parent: SVG, node: Node) => {
 
   let circle;
   let innerCircle;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.circle(0, 0, 14, { ...solidStateFill(lineColor), roughness: 0.5 });

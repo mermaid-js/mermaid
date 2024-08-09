@@ -36,12 +36,15 @@
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
+
       h1 {
         color: grey;
       }
+
       .mermaid2 {
         display: none;
       }
+
       .mermaid svg {
         /* font-size: 18px !important; */
 
@@ -54,26 +57,40 @@
           10px 10px;
         background-repeat: repeat; */
       }
+
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+
+      /* tspan {
+              font-size: 6px !important;
+            } */
     </style>
   </head>
+
   <body>
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"look": "neo", "theme": "neo","fontFamily": "Arial"} }%%
+    <pre id="diagram" class="mermaid">
+---
+config:
+  look: handDrawn
+---
 flowchart
       A[A really really really super long node] --> B & C
       subgraph apa
         D --> E
       end
-      </pre
-    >
-    <pre id="diagram" class="mermaid2">
-%%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial",         "themeVariables": {
-          "useGradient": true,
-          "gradientStart": '#fff',
-          "gradientStop": '#ccc'
-        }} }%%
-stateDiagram-v2
-    stateId
       </pre
     >
     <pre id="diagram2" class="mermaid2">
@@ -110,13 +127,13 @@ flowchart TB
     end
     </pre>
 
-    <pre id="diagram4" class="mermaid">
-stateDiagram-v2
-    [*] --> First
-    state First {
-        [*] --> second
-        second --> [*]
-    }
+    <pre id="diagram4" class="mermaid2">
+      stateDiagram
+    A:::foo 
+    B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    style C stroke:#00f, fill:black, color:white
 
 
     </pre>
@@ -132,10 +149,9 @@ stateDiagram-v2
         alert('A callback was triggered');
       };
       mermaid.initialize({
-        theme: 'forest',
-
-        // handdrawnSeed: 12,
-        look: 'neo',
+        // theme: 'base',
+        // handDrawnSeed: 12,
+        // look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
         // layout: 'elk',

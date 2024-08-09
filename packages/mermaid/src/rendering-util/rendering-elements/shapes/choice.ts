@@ -3,7 +3,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 // @ts-ignore TODO: Fix rough typings
 import rough from 'roughjs';
-import { solidStateFill, styles2String } from './handdrawnStyles.js';
+import { solidStateFill, styles2String } from './handDrawnStyles.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const choice = (parent: SVG, node: Node) => {
@@ -25,7 +25,7 @@ export const choice = (parent: SVG, node: Node) => {
   ];
 
   let choice;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const pointArr = points.map(function (d) {

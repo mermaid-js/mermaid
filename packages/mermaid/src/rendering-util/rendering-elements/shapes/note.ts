@@ -6,7 +6,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import rough from 'roughjs';
 
 export const note = async (parent: SVGAElement, node: Node) => {
-  const { themeVariables, handdrawnSeed } = getConfig();
+  const { themeVariables, handDrawnSeed } = getConfig();
   const { noteBorderColor, noteBkgColor } = themeVariables;
 
   const useHtmlLabels = node.useHtmlLabels;
@@ -23,7 +23,7 @@ export const note = async (parent: SVGAElement, node: Node) => {
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // add the rect
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
@@ -31,7 +31,7 @@ export const note = async (parent: SVGAElement, node: Node) => {
       roughness: 0.7,
       fill: noteBkgColor,
       fillWeight: 3,
-      seed: handdrawnSeed,
+      seed: handDrawnSeed,
       // fillStyle: 'solid', // solid fill'
       stroke: noteBorderColor,
     });

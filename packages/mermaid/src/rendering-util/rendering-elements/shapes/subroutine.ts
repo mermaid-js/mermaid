@@ -5,7 +5,7 @@ import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 
@@ -64,7 +64,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     { x: -8, y: 0 },
   ];
 
-  if (node.look === 'handdrawn' || (node.look === 'neo' && !useGradient)) {
+  if (node.look === 'handDrawn' || (node.look === 'neo' && !useGradient)) {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});

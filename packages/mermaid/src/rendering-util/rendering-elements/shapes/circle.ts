@@ -5,7 +5,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnStyles.js';
 import rough from 'roughjs';
 
 export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
@@ -18,7 +18,7 @@ export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAEleme
   let circleElem;
   const { cssStyles } = node;
 
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
