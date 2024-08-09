@@ -357,12 +357,12 @@ const shapes = {
   divider,
 };
 
-let clusterElems = {};
+let clusterElems = new Map();
 
 export const insertCluster = (elem, node) => {
   const shape = node.shape || 'rect';
   const cluster = shapes[shape](elem, node);
-  clusterElems[node.id] = cluster;
+  clusterElems.set(node.id, cluster);
   return cluster;
 };
 export const getClusterTitleWidth = (elem, node) => {
@@ -374,7 +374,7 @@ export const getClusterTitleWidth = (elem, node) => {
 };
 
 export const clear = () => {
-  clusterElems = {};
+  clusterElems = new Map();
 };
 
 export const positionCluster = (node) => {
@@ -390,8 +390,8 @@ export const positionCluster = (node) => {
       ', ' +
       node?.height +
       ')',
-    clusterElems[node.id]
+    clusterElems.get(node.id)
   );
-  const el = clusterElems[node.id];
+  const el = clusterElems.get(node.id);
   el.cluster.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };
