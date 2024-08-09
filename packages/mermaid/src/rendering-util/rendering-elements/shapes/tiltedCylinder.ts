@@ -35,23 +35,23 @@ export const titledCylinder = async (parent: SVGAElement, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const linePath = createCylinderPathD(rx, ry, w, h);
-  const lineNode = rc.path(linePath, options);
+  const cylinderPath = createCylinderPathD(rx, ry, w, h);
+  const cylinderNode = rc.path(cylinderPath, options);
 
-  const crossedCircle = shapeSvg.insert('g', ':first-child');
-  crossedCircle.insert(() => lineNode, ':first-child');
+  const titledCylinder = shapeSvg.insert('g', ':first-child');
+  titledCylinder.insert(() => cylinderNode, ':first-child');
 
-  crossedCircle.attr('class', 'basic label-container');
+  titledCylinder.attr('class', 'basic label-container');
 
   if (cssStyles) {
-    crossedCircle.attr('style', cssStyles);
+    titledCylinder.attr('style', cssStyles);
   }
 
   if (nodeStyles) {
-    crossedCircle.attr('style', nodeStyles);
+    titledCylinder.attr('style', nodeStyles);
   }
 
-  updateNodeBounds(node, crossedCircle);
+  updateNodeBounds(node, titledCylinder);
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);

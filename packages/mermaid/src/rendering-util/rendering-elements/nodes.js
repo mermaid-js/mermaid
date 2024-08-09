@@ -36,6 +36,7 @@ import { crossedCircle } from './shapes/crossedCircle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { titledCylinder } from './shapes/tiltedCylinder.js';
 import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
+import { flippedTriangle } from './shapes/flippedTriangle.js';
 
 const shapes = {
   state,
@@ -75,6 +76,7 @@ const shapes = {
   waveRectangle,
   titledCylinder,
   trapezoidalPentagon,
+  flippedTriangle,
 };
 
 const nodeElems = new Map();
