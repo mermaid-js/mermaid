@@ -841,6 +841,26 @@ end
           { flowchart: { titleTopMargin: 0 } }
         );
       });
+      it('Sub graphs and markdown strings', () => {
+        imgSnapshotTest(
+          `---
+config:
+  layout: elk
+---
+
+flowchart LR
+ subgraph subgraph_ko6czgs5u["Untitled subgraph"]
+        D["Option 1"]
+  end
+    C{"Evaluate"} -- One --> D
+    C -- Two --> E(("Option 2"))
+    D --> E
+      A["A"]
+
+`,
+          { flowchart: { titleTopMargin: 0 } }
+        );
+      });
     });
   });
 });
