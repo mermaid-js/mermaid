@@ -11,7 +11,7 @@ import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -368,12 +368,12 @@ const shapes = {
   divider,
 };
 
-let clusterElems = new Map();
+let clusterElems = {};
 
-export const insertCluster = async (elem, node) => {
+export const insertCluster = (elem, node) => {
   const shape = node.shape || 'rect';
-  const cluster = await shapes[shape](elem, node);
-  clusterElems.set(node.id, cluster);
+  const cluster = shapes[shape](elem, node);
+  clusterElems[node.id] = cluster;
   return cluster;
 };
 export const getClusterTitleWidth = (elem, node) => {
@@ -385,7 +385,7 @@ export const getClusterTitleWidth = (elem, node) => {
 };
 
 export const clear = () => {
-  clusterElems = new Map();
+  clusterElems = {};
 };
 
 export const positionCluster = (node) => {
@@ -401,8 +401,8 @@ export const positionCluster = (node) => {
       ', ' +
       node?.height +
       ')',
-    clusterElems.get(node.id)
+    clusterElems[node.id]
   );
-  const el = clusterElems.get(node.id);
+  const el = clusterElems[node.id];
   el.cluster.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };

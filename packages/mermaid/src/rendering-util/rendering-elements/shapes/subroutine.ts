@@ -5,7 +5,7 @@ import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 
