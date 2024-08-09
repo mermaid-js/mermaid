@@ -338,6 +338,8 @@ gantt
 
 > **Warning** > `millisecond` and `second` support was added in v10.3.0
 >
+> ````
+>
 > ### Changing Today (v\<MERMAID_RELEASE_VERSION>+)
 >
 > By default, the today marker uses the current date. Use `today` to set a custom date, using the `dateFormat`.
@@ -350,7 +352,7 @@ gantt
 >     section Section
 >         A task          :a1, 2024-01-01, 30d
 >         Another task    :after a1, 20d
-> ```
+> ````
 
 You can also use a duration:
 
