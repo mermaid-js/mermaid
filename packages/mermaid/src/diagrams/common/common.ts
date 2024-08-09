@@ -1,5 +1,9 @@
 import DOMPurify from 'dompurify';
+import hljs from 'highlight.js';
+import { Marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
 import type { MermaidConfig } from '../../config.type.js';
+import { parseFontSize } from '../../utils.js';
 
 // Remove and ignore br:s
 export const lineBreakRegex = /<br\s*\/?>/gi;
@@ -365,6 +369,93 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
         .replace(/\n/g, ' ')
         .replace(/<annotation.*<\/annotation>/g, '')
     );
+};
+
+export const markdownRegex = /(```((.|\n)*)```)|(`(.*)`)/g;
+
+/**
+ * Whether or not a text has markdown delimiters
+ *
+ * @param text - The text to test
+ * @returns Whether or not the text has markdown delimiters
+ */
+export const hasMarkdown = (text: string): boolean => (text.match(markdownRegex)?.length ?? 0) > 0;
+
+/**
+ * Attempts to render and return the markdown portion of a string with Marked
+ *
+ * @param text - The text to test
+ * @param config - Configuration for Mermaid
+ * @returns String containing markdown rendered as html, or an error message if it is not and stylesheets aren't present
+ */
+export const renderMarkdown = async (text: string): Promise<string> => {
+  if (!hasMarkdown(text)) {
+    return text;
+  }
+
+  const marked = new Marked(
+    markedHighlight({
+      langPrefix: 'hljs language-',
+      highlight(code, lang) {
+        const language = hljs.getLanguage(lang);
+        const highlighted = hljs.highlight(code, { language: language?.name ?? 'plaintext' });
+        return highlighted.value;
+      },
+    })
+  );
+
+  marked.use({
+    hooks: {
+      processAllTokens: (tokens) =>
+        tokens.map((token) =>
+          token?.lang
+            ? token
+            : {
+                ...token,
+                lang: hljs.highlightAuto(token.text, [
+                  'json',
+                  'javascript',
+                  'typescript',
+                  'html',
+                  'xml',
+                  'java',
+                ]).language,
+              }
+        ),
+    },
+  });
+
+  return marked.parse(text);
+};
+
+/**
+ * This calculates the dimensions of the given text, font size, font family, font weight, and
+ * margins.
+ *
+ * @param text - The text to calculate the width of
+ * @param config - The config for fontSize, fontFamily, fontWeight, and margin all impacting
+ *   the resulting size
+ * @returns The dimensions for the given text
+ */
+export const calculateMarkdownDimensions = async (text: string, config: TextDimensionConfig) => {
+  const { fontSize = 12, fontFamily = 'Arial', fontWeight = 400 } = config;
+  const [, _fontSizePx = '12px'] = parseFontSize(fontSize);
+  text = await renderMarkdown(text, config);
+  const divElem = document.createElement('div');
+  divElem.innerHTML = text;
+  divElem.id = 'markdown-temp';
+  divElem.style.visibility = 'hidden';
+  divElem.style.position = 'absolute';
+  divElem.style.padding = '1em';
+  divElem.style.fontSize = _fontSizePx;
+  divElem.style.fontFamily = fontFamily;
+  divElem.style.fontWeight = '' + fontWeight;
+  divElem.style.top = '0';
+  const body = document.querySelector('body');
+  body?.insertAdjacentElement('beforeend', divElem);
+  const dim = { width: divElem.clientWidth, height: divElem.clientHeight };
+  divElem.remove();
+  return dim;
 };
 
 export default {

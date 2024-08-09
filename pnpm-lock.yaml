@@ -131,6 +131,9 @@ importers:
       globby:
         specifier: ^14.0.1
         version: 14.0.2
+      highlight.js:
+        specifier: ^11.10.0
+        version: 11.10.0
       husky:
         specifier: ^9.0.11
         version: 9.0.11
@@ -155,6 +158,12 @@ importers:
       markdown-table:
         specifier: ^3.0.3
         version: 3.0.3
+      marked:
+        specifier: ^14.0.0
+        version: 14.0.0
+      marked-highlight:
+        specifier: ^2.1.4
+        version: 2.1.4(marked@14.0.0)
       nyc:
         specifier: ^15.1.0
         version: 15.1.0
@@ -5878,6 +5887,10 @@ packages:
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
 
+  highlight.js@11.10.0:
+    resolution: {integrity: sha512-SYVnVFswQER+zu1laSya563s+F8VDGt7o35d4utbamowvUNLLMovFqwCLSocpZTz3MgaSRA1IbqRWZv97dtErQ==}
+    engines: {node: '>=12.0.0'}
+
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
 
@@ -6840,8 +6853,18 @@ packages:
   markdown-table@3.0.3:
     resolution: {integrity: sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==}
 
+  marked-highlight@2.1.4:
+    resolution: {integrity: sha512-D1GOkcdzP+1dzjoColL7umojefFrASDuLeyaHS0Zr/Uo9jkr1V6vpLRCzfi1djmEaWyK0SYMFtHnpkZ+cwFT1w==}
+    peerDependencies:
+      marked: '>=4 <15'
+
   marked@13.0.2:
     resolution: {integrity: sha512-J6CPjP8pS5sgrRqxVRvkCIkZ6MFdRIjDkwUwgJ9nL2fbmM6qGQeB2C16hi8Cc9BOzj6xXzy0jyi0iPIfnMHYzA==}
+    engines: {node: '>= 18'}
+    hasBin: true
+
+  marked@14.0.0:
+    resolution: {integrity: sha512-uIj4+faQ+MgHgwUW1l2PsPglZLOLOT1uErt06dAPtx2kjteLAkbsd/0FiYg/MGS+i7ZKLb7w2WClxHkzOOuryQ==}
     engines: {node: '>= 18'}
     hasBin: true
 
@@ -9959,7 +9982,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.25.2
       '@babel/helper-validator-option': 7.24.8
-      browserslist: 4.23.1
+      browserslist: 4.23.3
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -16518,6 +16541,8 @@ snapshots:
 
   highlight.js@10.7.3: {}
 
+  highlight.js@11.10.0: {}
+
   hookable@5.5.3: {}
 
   hosted-git-info@2.8.9: {}
@@ -17694,7 +17719,13 @@ snapshots:
 
   markdown-table@3.0.3: {}
 
+  marked-highlight@2.1.4(marked@14.0.0):
+    dependencies:
+      marked: 14.0.0
+
   marked@13.0.2: {}
+
+  marked@14.0.0: {}
 
   marked@4.3.0: {}
 

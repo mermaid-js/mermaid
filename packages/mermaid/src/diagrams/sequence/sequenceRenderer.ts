@@ -1,8 +1,19 @@
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
-import svgDraw, { drawKatex, ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDraw.js';
+import svgDraw, {
+  drawKatex,
+  drawMarkdown,
+  ACTOR_TYPE_WIDTH,
+  drawText,
+  fixLifeLineHeights,
+} from './svgDraw.js';
 import { log } from '../../logger.js';
-import common, { calculateMathMLDimensions, hasKatex } from '../common/common.js';
+import common, {
+  calculateMathMLDimensions,
+  hasKatex,
+  hasMarkdown,
+  calculateMarkdownDimensions,
+} from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import assignWithDepth from '../../assignWithDepth.js';
@@ -263,7 +274,11 @@ const drawNote = async function (elem: any, noteModel: NoteModel) {
   textObj.textMargin = conf.noteMargin;
   textObj.valign = 'center';
 
-  const textElem = hasKatex(textObj.text) ? await drawKatex(g, textObj) : drawText(g, textObj);
+  const textElem = hasKatex(textObj.text)
+    ? await drawKatex(g, textObj)
+    : hasMarkdown(textObj.text)
+      ? await drawMarkdown(g, textObj)
+      : drawText(g, textObj);
 
   const textHeight = Math.round(
     textElem
@@ -1354,10 +1369,12 @@ const buildNoteModel = async function (msg, actors, diagObj) {
 
   let textDimensions: { width: number; height: number; lineHeight?: number } = hasKatex(msg.message)
     ? await calculateMathMLDimensions(msg.message, getConfig())
-    : utils.calculateTextDimensions(
-        shouldWrap ? utils.wrapLabel(msg.message, conf.width, noteFont(conf)) : msg.message,
-        noteFont(conf)
-      );
+    : hasMarkdown(msg.message)
+      ? await calculateMarkdownDimensions(msg.message, getConfig())
+      : utils.calculateTextDimensions(
+          shouldWrap ? utils.wrapLabel(msg.message, conf.width, noteFont(conf)) : msg.message,
+          noteFont(conf)
+        );
   const noteModel = {
     width: shouldWrap
       ? conf.width

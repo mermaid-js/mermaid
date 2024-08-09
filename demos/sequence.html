@@ -249,6 +249,55 @@
       Alice<<->>Bob: Wow, we said that at the same time!
       Bob<<-->>Alice: Bidirectional Arrows are so cool
     </pre>
+
+    <hr />
+
+    <pre class="mermaid">
+    sequenceDiagram
+      actor Alice
+      actor John
+      Alice-xJohn: Hello John, how are you?
+      note over Alice,John: [ This is some `markdown` text
+      ```json
+      {
+        "title": "This is a note",
+        "description": "This is a note with a description"
+      }
+      ```
+      ]
+      John--xAlice: Great!
+      note left of Alice: [ This is some `markdown` text
+      ```json
+      {
+        "title": "This is a note",
+        from: "Alice",
+        to: "John",
+        "subtitle": "A very pretty one note",
+        "description": "This is a note with a description"
+      }
+      ```
+      ]
+      Alice--xJohn: Awesome!
+      note right of John: [ This is some `markdown` text
+      ```json
+      {
+        "title": "This is a note",
+        "subtitle": "A very pretty one",
+        "description": "This is a note with a description"
+      }
+      ```
+      There can even be `more markdown`:
+      ```
+        const note = "pretty";
+        if (note === "pretty") {
+          console.log("This is a note with a description");
+        } else {
+          // do something else
+        }
+      ```
+      ]
+    </pre>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
