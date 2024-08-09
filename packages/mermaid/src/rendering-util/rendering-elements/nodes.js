@@ -34,6 +34,7 @@ import { bowTieRect } from './shapes/bowTieRect.js';
 import { dividedRect } from './shapes/dividedRect.js';
 import { crossedCircle } from './shapes/crossedCircle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
+import { titledCylinder } from './shapes/tiltedCylinder.js';
 
 const shapes = {
   state,
@@ -71,6 +72,7 @@ const shapes = {
   dividedRect,
   crossedCircle,
   waveRectangle,
+  titledCylinder,
 };
 
 const nodeElems = new Map();

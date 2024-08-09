@@ -63,14 +63,10 @@
   <body>
     <pre id="diagram4" class="mermaid">
 flowchart
-     
-      A@{ shape: stateStart }@
-      B@{ shape: crossedCircle, label: "This is crossed circle"  }@
-      C
-      D
-      A ---> B
-      C --> B
-      B --> D
+      A@{ shape: titledCylinder, label: "title"  }@ --> B@{ shape: titledCylinder, label: "title B"  }@
+
+      C@{ shape: titledCylinder, label: "title with very long text but on single line"  }@ -->  D@{ shape: titledCylinder, label: "title \n with \n multiple \n lines \n of n text"  }@
+     A --> D
      
       
   </pre
@@ -91,7 +87,7 @@ flowchart
         // handdrawnSeed: 12,
         look: 'classic',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
-        'elk.nodePlacement.strategy': 'SIMPLE',
+        // 'elk.nodePlacement.strategy': 'SIMPLE',
         // 'elk.nodePlacement.strategy': 'LAYERED',
         // 'elk.mergeEdges': true,
         // layout: 'dagre',
