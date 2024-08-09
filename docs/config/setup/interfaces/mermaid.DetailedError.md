@@ -16,7 +16,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/utils.ts:785](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L785)
+[packages/mermaid/src/utils.ts:787](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L787)
 
 ---
 
@@ -26,7 +26,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/utils.ts:783](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L783)
+[packages/mermaid/src/utils.ts:785](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L785)
 
 ---
 
@@ -36,7 +36,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/utils.ts:786](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L786)
+[packages/mermaid/src/utils.ts:788](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L788)
 
 ---
 
@@ -46,4 +46,4 @@
 
 #### Defined in
 
-[packages/mermaid/src/utils.ts:781](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L781)
+[packages/mermaid/src/utils.ts:783](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/utils.ts#L783)

@@ -23,7 +23,6 @@ import {
   curveStepBefore,
   select,
 } from 'd3';
-import common from './diagrams/common/common.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
 import { log } from './logger.js';
 import { detectType } from './diagram-api/detectType.js';
@@ -33,6 +32,9 @@ import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
 import { directiveRegex } from './diagram-api/regexes.js';
 import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
+
+// Remove and ignore br:s
+export const lineBreakRegex = /<br\s*\/?>/gi;
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -522,7 +524,7 @@ export const drawSimpleText = function (
   }
 ): SVGTextElement {
   // Remove and ignore br:s
-  const nText = textData.text.replace(common.lineBreakRegex, ' ');
+  const nText = textData.text.replace(lineBreakRegex, ' ');
 
   const [, _fontSizePx] = parseFontSize(textData.fontSize);
 
@@ -564,7 +566,7 @@ export const wrapLabel: (label: string, maxWidth: number, config: WrapLabelConfi
         { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
         config
       );
-      if (common.lineBreakRegex.test(label)) {
+      if (lineBreakRegex.test(label)) {
         return label;
       }
       const words = label.split(' ').filter(Boolean);
@@ -696,7 +698,7 @@ export const calculateTextDimensions: (
     // thus, we'll take the max width between the user supplied font family, and a default
     // of sans-serif.
     const fontFamilies = ['sans-serif', fontFamily];
-    const lines = text.split(common.lineBreakRegex);
+    const lines = text.split(lineBreakRegex);
     const dims = [];
 
     const body = select('body');
