@@ -18,12 +18,22 @@ describe('newShapes', () => {
       {}
     );
   });
-  it('3: should render new FlowChart for New Shapes', () => {
+  it('3: should render new tiltedCylinder shape', () => {
+    imgSnapshotTest(
+      `flowchart
+          KS --> AC@{ shape: tiltedCylinder, label:"This is Final Label" }@
+          RE --> AC
+        `,
+      {}
+    );
+  });
+  it('4: should render new FlowChart for New Shapes', () => {
     renderGraph(
       `
     flowchart
     A@{ shape: stateStart }@
     B@{ shape: crossedCircle, label: "Start Defining Test Case" }@
+    C@{ shape: tiltedCylinder, label: "write your Test Case"}@
     E@{ shape: waveRectangle, label: "Execute Test Case" }@
     F@{ shape: slopedRect, label: "Test Passed?" }@
     G@{ shape: bowTieRect, label: "Pass" }@
@@ -31,7 +41,8 @@ describe('newShapes', () => {
     I@{ shape: curvedTrapezoid, label: "End" }@
     
     A --> B
-    B --> E
+    B --> C
+    C --> E
     E --> F
     F -->|Yes| G
     F -->|No| H
