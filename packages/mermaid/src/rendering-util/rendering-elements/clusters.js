@@ -33,9 +33,6 @@ const rect = async (parent, node) => {
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
-  // const text = label
-  //   .node()
-  //   .appendChild(createLabel(node.label, node.labelStyle, undefined, true));
   const text = await createText(labelEl, node.label, {
     style: node.labelStyle,
     useHtmlLabels,
@@ -53,10 +50,7 @@ const rect = async (parent, node) => {
     dv.attr('height', bbox.height);
   }
 
-  const padding = 0 * node.padding;
-
-  const width =
-    (node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width) + padding;
+  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
   if (node.width <= bbox.width + node.padding) {
     node.diff = (width - node.width) / 2 - node.padding;
   } else {
@@ -66,7 +60,6 @@ const rect = async (parent, node) => {
   const height = node.height;
   const x = node.x - width / 2;
   const y = node.y - height / 2;
-  // console.log('UIO diff 2', node.id, node.diff, 'totalWidth: ', width);
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
@@ -82,7 +75,6 @@ const rect = async (parent, node) => {
       seed: handdrawnSeed,
     });
     const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, 0), options);
-    // console.log('Rough node insert CXC', roughNode);
     rect = shapeSvg.insert(() => {
       log.debug('Rough node insert CXC', roughNode);
       return roughNode;
