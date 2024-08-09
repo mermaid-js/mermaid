@@ -373,7 +373,7 @@ let clusterElems = new Map();
 export const insertCluster = async (elem, node) => {
   const shape = node.shape || 'rect';
   const cluster = await shapes[shape](elem, node);
-  clusterElems[node.id] = cluster;
+  clusterElems.set(node.id, cluster);
   return cluster;
 };
 export const getClusterTitleWidth = (elem, node) => {
