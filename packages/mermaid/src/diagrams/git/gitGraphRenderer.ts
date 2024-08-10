@@ -988,7 +988,6 @@ if (import.meta.vitest) {
   });
 
   describe('commitPosition', () => {
-    dir = 'TB';
     const commits = new Map<string, Commit>([
       [
         'commitZero',
@@ -1088,28 +1087,69 @@ if (import.meta.vitest) {
         },
       ],
     ]);
-
-    const expectedCommitPos = new Map<string, CommitPositionOffset>([
-      ['commitZero', { x: 0, y: 40, posWithOffset: 40 }],
-      ['commitA', { x: 107.49609375, y: 90, posWithOffset: 90 }],
-      ['commitB', { x: 107.49609375, y: 140, posWithOffset: 140 }],
-      ['commitM', { x: 0, y: 190, posWithOffset: 190 }],
-      ['commitC', { x: 224.03515625, y: 240, posWithOffset: 240 }],
-      ['commit5_8928ea0', { x: 224.03515625, y: 290, posWithOffset: 290 }],
-      ['commitD', { x: 224.03515625, y: 340, posWithOffset: 340 }],
-      ['commit7_ed848ba', { x: 224.03515625, y: 390, posWithOffset: 390 }],
-    ]);
-
+    let pos = 0;
     branchPos.set('main', { pos: 0, index: 0 });
     branchPos.set('feature', { pos: 107.49609375, index: 1 });
     branchPos.set('release', { pos: 224.03515625, index: 2 });
 
-    let pos = 30;
-    commits.forEach((commit, key) => {
-      it(`should give the correct position for commit ${key}`, () => {
-        const position = getCommitPosition(commit, pos, false);
-        expect(position).toEqual(expectedCommitPos.get(key));
-        pos += 50;
+    describe('TB', () => {
+      pos = 30;
+      dir = 'TB';
+      const expectedCommitPositionTB = new Map<string, CommitPositionOffset>([
+        ['commitZero', { x: 0, y: 40, posWithOffset: 40 }],
+        ['commitA', { x: 107.49609375, y: 90, posWithOffset: 90 }],
+        ['commitB', { x: 107.49609375, y: 140, posWithOffset: 140 }],
+        ['commitM', { x: 0, y: 190, posWithOffset: 190 }],
+        ['commitC', { x: 224.03515625, y: 240, posWithOffset: 240 }],
+        ['commit5_8928ea0', { x: 224.03515625, y: 290, posWithOffset: 290 }],
+        ['commitD', { x: 224.03515625, y: 340, posWithOffset: 340 }],
+        ['commit7_ed848ba', { x: 224.03515625, y: 390, posWithOffset: 390 }],
+      ]);
+      commits.forEach((commit, key) => {
+        it(`should give the correct position for commit ${key}`, () => {
+          const position = getCommitPosition(commit, pos, false);
+          expect(position).toEqual(expectedCommitPositionTB.get(key));
+          pos += 50;
+        });
+      });
+    });
+    describe('LR', () => {
+      let pos = 30;
+      dir = 'LR';
+      const expectedCommitPositionLR = new Map<string, CommitPositionOffset>([
+        ['commitZero', { x: 0, y: 40, posWithOffset: 40 }],
+        ['commitA', { x: 107.49609375, y: 90, posWithOffset: 90 }],
+        ['commitB', { x: 107.49609375, y: 140, posWithOffset: 140 }],
+        ['commitM', { x: 0, y: 190, posWithOffset: 190 }],
+        ['commitC', { x: 224.03515625, y: 240, posWithOffset: 240 }],
+        ['commit5_8928ea0', { x: 224.03515625, y: 290, posWithOffset: 290 }],
+        ['commitD', { x: 224.03515625, y: 340, posWithOffset: 340 }],
+        ['commit7_ed848ba', { x: 224.03515625, y: 390, posWithOffset: 390 }],
+      ]);
+      commits.forEach((commit, key) => {
+        it(`should give the correct position for commit ${key}`, () => {
+          const position = getCommitPosition(commit, pos, false);
+          expect(position).toEqual(expectedCommitPositionLR.get(key));
+          pos += 50;
+        });
+      });
+    });
+    describe('getCommitClassType', () => {
+      const expectedCommitClassType = new Map<string, string>([
+        ['commitZero', 'commit-normal'],
+        ['commitA', 'commit-normal'],
+        ['commitB', 'commit-normal'],
+        ['commitM', 'commit-merge'],
+        ['commitC', 'commit-normal'],
+        ['commit5_8928ea0', 'commit-cherry-pick'],
+        ['commitD', 'commit-normal'],
+        ['commit7_ed848ba', 'commit-cherry-pick'],
+      ]);
+      commits.forEach((commit, key) => {
+        it(`should give the correct class type for commit ${key}`, () => {
+          const classType = getCommitClassType(commit);
+          expect(classType).toBe(expectedCommitClassType.get(key));
+        });
       });
     });
   });

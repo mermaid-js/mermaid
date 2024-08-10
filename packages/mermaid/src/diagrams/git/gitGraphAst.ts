@@ -1,6 +1,5 @@
 import { log } from '../../logger.js';
 import { random } from '../../utils.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import {
   setAccTitle,
@@ -11,9 +10,11 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import defaultConfig from '../../defaultConfig.js';
 import type { DiagramOrientation, Commit, GitGraphDB, CommitType } from './gitGraphTypes.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
+
+import DEFAULT_CONFIG from '../../defaultConfig.js';
+import type { GitGraphDiagramConfig } from '../../config.type.js';
 interface GitGraphState {
   commits: Map<string, Commit>;
   head: Commit | null;
@@ -25,8 +26,13 @@ interface GitGraphState {
   options: any;
 }
 
-const mainBranchName = defaultConfig.gitGraph.mainBranchName;
-const mainBranchOrder = defaultConfig.gitGraph.mainBranchOrder;
+const DEFAULT_GITGRAPH_CONFIG: Required<GitGraphDiagramConfig> = DEFAULT_CONFIG.gitGraph;
+
+const mainBranchName = DEFAULT_GITGRAPH_CONFIG.mainBranchName;
+const mainBranchOrder = DEFAULT_GITGRAPH_CONFIG.mainBranchOrder;
+const config: Required<GitGraphDiagramConfig> = structuredClone(DEFAULT_GITGRAPH_CONFIG);
+
+const getConfig = (): Required<GitGraphDiagramConfig> => structuredClone(config);
 
 const state = new ImperativeState<GitGraphState>(() => ({
   commits: new Map(),
@@ -476,7 +482,7 @@ export const commitType: CommitType = {
 
 export const db: GitGraphDB = {
   commitType,
-  getConfig: () => getConfig().gitGraph,
+  getConfig,
   setDirection,
   setOptions,
   getOptions,
