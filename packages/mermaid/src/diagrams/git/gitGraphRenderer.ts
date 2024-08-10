@@ -193,7 +193,7 @@ const drawCommitBullet = (
       .attr('height', 20)
       .attr(
         'class',
-        `commit ${commit.id} commit-highlights${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-outer`
+        `commit ${commit.id} commit-highlight${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-outer`
       );
     gBullets
       .append('rect')
