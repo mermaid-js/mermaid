@@ -1,5 +1,5 @@
-import type { DiagramDB } from '../../diagram-api/types.js';
 import type { GitGraphDiagramConfig } from '../../config.type.js';
+import type { DiagramDBBase } from '../../diagram-api/types.js';
 
 export interface CommitType {
   NORMAL: number;
@@ -66,27 +66,13 @@ export interface CherryPickingAst {
   parent: string;
 }
 
-export interface GitGraphDB extends DiagramDB {
-  // config
-  getConfig: () => GitGraphDiagramConfig | undefined;
-
-  // common db
-  clear: () => void;
-  setDiagramTitle: (title: string) => void;
-  getDiagramTitle: () => string;
-  setAccTitle: (title: string) => void;
-  getAccTitle: () => string;
-  setAccDescription: (description: string) => void;
-  getAccDescription: () => string;
-
-  // diagram db
+export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
   commitType: CommitType;
-  setDirection: (direction: DiagramOrientation) => void;
-  getDirection: () => DiagramOrientation;
-  setOptions: (options: string) => void;
-  getOptions: () => string;
-  commit: (msg: string, id: string, type: number, tags?: string[] | undefined) => void;
-  branch: (name: string, order: number) => void;
+  setDirection: (dir: DiagramOrientation) => void;
+  setOptions: (rawOptString: string) => void;
+  getOptions: () => any;
+  commit: (msg: string, id: string, type: number, tags?: string[]) => void;
+  branch: (name: string, order?: number) => void;
   merge: (
     otherBranch: string,
     customId?: string,
@@ -101,12 +87,47 @@ export interface GitGraphDB extends DiagramDB {
   ) => void;
   checkout: (branch: string) => void;
   prettyPrint: () => void;
+  clear: () => void;
   getBranchesAsObjArray: () => { name: string }[];
   getBranches: () => Map<string, string | null>;
   getCommits: () => Map<string, Commit>;
   getCommitsArray: () => Commit[];
   getCurrentBranch: () => string;
+  getDirection: () => DiagramOrientation;
   getHead: () => Commit | null;
+}
+
+export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
+  commitType: CommitType;
+  setDirection: (dir: DiagramOrientation) => void;
+  commit: (msg: string, id: string, type: number, tags?: string[]) => void;
+  branch: (name: string, order?: number) => void;
+  merge: (
+    otherBranch: string,
+    customId?: string,
+    overrideType?: number,
+    customTags?: string[]
+  ) => void;
+  cherryPick: (
+    sourceId: string,
+    targetId: string,
+    tags: string[] | undefined,
+    parentCommitId: string
+  ) => void;
+  checkout: (branch: string) => void;
+}
+
+export interface GitGraphDBRenderProvider extends Partial<GitGraphDB> {
+  prettyPrint: () => void;
+  clear: () => void;
+  getBranchesAsObjArray: () => { name: string }[];
+  getBranches: () => Map<string, string | null>;
+  getCommits: () => Map<string, Commit>;
+  getCommitsArray: () => Commit[];
+  getCurrentBranch: () => string;
+  getDirection: () => DiagramOrientation;
+  getHead: () => Commit | null;
+  getDiagramTitle: () => string;
 }
 
 export type DiagramOrientation = 'LR' | 'TB' | 'BT';

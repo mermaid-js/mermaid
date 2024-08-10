@@ -4,7 +4,12 @@ import { log } from '../../logger.js';
 import utils from '../../utils.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type d3 from 'd3';
-import type { CommitType, Commit, GitGraphDB, DiagramOrientation } from './gitGraphTypes.js';
+import type {
+  CommitType,
+  Commit,
+  GitGraphDBRenderProvider,
+  DiagramOrientation,
+} from './gitGraphTypes.js';
 import type { GitGraphDiagramConfig } from '../../config.type.js';
 
 let allCommitsDict = new Map();
@@ -770,7 +775,9 @@ const drawArrow = (
       }
     }
   }
-
+  if (lineDef === undefined) {
+    throw new Error('Line definition not found');
+  }
   svg
     .append('path')
     .attr('d', lineDef)
@@ -889,7 +896,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     throw new Error('GitGraph config not found');
   }
   const rotateCommitLabel = gitGraphConfig.rotateCommitLabel ?? false;
-  const db = diagObj.db as GitGraphDB;
+  const db = diagObj.db as GitGraphDBRenderProvider;
   allCommitsDict = db.getCommits();
   const branches = db.getBranchesAsObjArray();
   dir = db.getDirection();
