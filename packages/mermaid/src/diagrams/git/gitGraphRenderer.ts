@@ -248,7 +248,7 @@ const drawCommitBullet = (
     circle.attr('cy', commitPosition.y);
     circle.attr('r', commit.type === commitType.MERGE ? 9 : 10);
     circle.attr('class', `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
-    if (commit.type === commitType.MERGE) {
+    if (commitSymbolType === commitType.MERGE) {
       const circle2 = gBullets.append('circle');
       circle2.attr('cx', commitPosition.x);
       circle2.attr('cy', commitPosition.y);
@@ -266,6 +266,7 @@ const drawCommitBullet = (
           `M ${commitPosition.x - 5},${commitPosition.y - 5}L${commitPosition.x + 5},${commitPosition.y + 5}M${commitPosition.x - 5},${commitPosition.y + 5}L${commitPosition.x + 5},${commitPosition.y - 5}`
         )
         .attr('class', `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
+      log.info();
     }
   }
 };
@@ -543,6 +544,7 @@ const drawCommits = (
     if (modifyGraph) {
       const typeClass = getCommitClassType(commit);
       const commitSymbolType = commit.customType ?? commit.type;
+      log.info('commitSymbolType', commitSymbolType);
       const branchIndex = branchPos.get(commit.branch)?.index ?? 0;
       drawCommitBullet(gBullets, commit, commitPosition, typeClass, branchIndex, commitSymbolType);
       drawCommitLabel(gLabels, commit, commitPosition, pos, gitGraphConfig);
@@ -883,6 +885,9 @@ const setBranchPosition = function (
 ): number {
   branchPos.set(name, { pos, index });
   pos += 50 + (rotateCommitLabel ? 40 : 0) + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
+  log.info('bbox.width', bbox.width);
+  log.info('setBranchPosition', name, pos, index, bbox);
+  log.info('branchPos', branchPos);
   return pos;
 };
 
@@ -908,7 +913,9 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     const g = diagram.append('g');
     const branchLabel = g.insert('g').attr('class', 'branchLabel');
     const label = branchLabel.insert('g').attr('class', 'label branch-label');
+    label.node()?.appendChild(labelElement);
     const bbox = labelElement.getBBox();
+
     pos = setBranchPosition(branch.name, pos, index, bbox, rotateCommitLabel);
     label.remove();
     branchLabel.remove();
