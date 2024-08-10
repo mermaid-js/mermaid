@@ -11,6 +11,8 @@ let allCommitsDict = new Map();
 
 const LAYOUT_OFFSET = 10;
 const COMMIT_STEP = 40;
+const PX = 4;
+const PY = 2;
 
 const commitType: CommitType = {
   NORMAL: 0,
@@ -279,7 +281,7 @@ const drawCommitLabel = (
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
     const text = wrapper
       .append('text')
-      .attr('x', commitPosition.x)
+      .attr('x', pos)
       .attr('y', commitPosition.y + 25)
       .attr('class', 'commit-label')
       .text(commit.id);
@@ -287,16 +289,20 @@ const drawCommitLabel = (
 
     if (bbox) {
       labelBkg
-        .attr('x', commitPosition.posWithOffset - bbox.width / 2 - 2)
+        .attr('x', commitPosition.posWithOffset - bbox.width / 2 - PY)
         .attr('y', commitPosition.y + 13.5)
-        .attr('width', bbox.width + 4)
-        .attr('height', bbox.height + 4);
+        .attr('width', bbox.width + 2 * PY)
+        .attr('height', bbox.height + 2 * PY);
 
       if (dir === 'TB' || dir === 'BT') {
-        labelBkg.attr('x', commitPosition.x - (bbox.width + 4)).attr('y', commitPosition.y - 12);
+        labelBkg
+          .attr('x', commitPosition.x - (bbox.width + 4 * PX + 5))
+          .attr('y', commitPosition.y - 12);
         text
-          .attr('x', commitPosition.x - (bbox.width + 2))
+          .attr('x', commitPosition.x - (bbox.width + 4 * PX))
           .attr('y', commitPosition.y + bbox.height - 12);
+      } else {
+        text.attr('x', commitPosition.posWithOffset - bbox.width / 2);
       }
 
       if (gitGraphConfig.rotateCommitLabel) {
@@ -356,6 +362,7 @@ const drawCommitTags = (
       if (!tagBbox) {
         throw new Error('Tag bbox not found');
       }
+
       maxTagBboxWidth = Math.max(maxTagBboxWidth, tagBbox.width);
       maxTagBboxHeight = Math.max(maxTagBboxHeight, tagBbox.height);
 
@@ -377,17 +384,17 @@ const drawCommitTags = (
       rect.attr('class', 'tag-label-bkg').attr(
         'points',
         `
-      ${pos - maxTagBboxWidth / 2 - 2},${ly + 2}  
-      ${pos - maxTagBboxWidth / 2 - 2},${ly - 2}
-      ${commitPosition.posWithOffset - maxTagBboxWidth / 2 - 4},${ly - h2 - 2}
-      ${commitPosition.posWithOffset + maxTagBboxWidth / 2 + 4},${ly - h2 - 2}
-      ${commitPosition.posWithOffset + maxTagBboxWidth / 2 + 4},${ly + h2 + 2}
-      ${commitPosition.posWithOffset - maxTagBboxWidth / 2 - 4},${ly + h2 + 2}`
+      ${pos - maxTagBboxWidth / 2 - PX / 2},${ly + PY}  
+      ${pos - maxTagBboxWidth / 2 - PX / 2},${ly - PY}
+      ${commitPosition.posWithOffset - maxTagBboxWidth / 2 - PX},${ly - h2 - PY}
+      ${commitPosition.posWithOffset + maxTagBboxWidth / 2 + PX},${ly - h2 - PY}
+      ${commitPosition.posWithOffset + maxTagBboxWidth / 2 + PX},${ly + h2 + PY}
+      ${commitPosition.posWithOffset - maxTagBboxWidth / 2 - PX},${ly + h2 + PY}`
       );
 
       hole
         .attr('cy', ly)
-        .attr('cx', pos - maxTagBboxWidth / 2 + 2)
+        .attr('cx', pos - maxTagBboxWidth / 2 + PX / 2)
         .attr('r', 1.5)
         .attr('class', 'tag-hole');
 
@@ -408,7 +415,7 @@ const drawCommitTags = (
           )
           .attr('transform', 'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')');
         hole
-          .attr('cx', commitPosition.x + 2)
+          .attr('cx', commitPosition.x + PX / 2)
           .attr('cy', yOrigin)
           .attr('transform', 'translate(12,12) rotate(45, ' + commitPosition.x + ',' + pos + ')');
         tag
@@ -580,14 +587,16 @@ const findLane = (y1: number, y2: number, depth = 0): number => {
 };
 
 const drawArrow = (
-  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  svg: d3.Selection<SVGGElement, unknown, HTMLElement, any>,
   commitA: Commit,
   commitB: Commit,
   allCommits: Map<string, Commit>
 ) => {
   const p1 = commitPos.get(commitA.id); // arrowStart
   const p2 = commitPos.get(commitB.id); // arrowEnd
-  // @ts-ignore: TODO Fix ts errors
+  if (p1 === undefined || p2 === undefined) {
+    throw new Error(`Commit positions not found for commits ${commitA.id} and ${commitB.id}`);
+  }
   const arrowNeedsRerouting = shouldRerouteArrow(commitA, commitB, p1, p2, allCommits);
   // log.debug('drawArrow', p1, p2, arrowNeedsRerouting, commitA.id, commitB.id);
 
@@ -597,11 +606,10 @@ const drawArrow = (
   let arc2 = '';
   let radius = 0;
   let offset = 0;
-  // @ts-ignore: TODO Fix ts errors
-  let colorClassNum = branchPos.get(commitB.branch).index;
+
+  let colorClassNum = branchPos.get(commitB.branch)?.index;
   if (commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0]) {
-    // @ts-ignore: TODO Fix ts errors
-    colorClassNum = branchPos.get(commitA.branch).index;
+    colorClassNum = branchPos.get(commitA.branch)?.index;
   }
 
   let lineDef;
@@ -610,66 +618,57 @@ const drawArrow = (
     arc2 = 'A 10 10, 0, 0, 1,';
     radius = 10;
     offset = 10;
-    // @ts-ignore: TODO Fix ts errors
+
     const lineY = p1.y < p2.y ? findLane(p1.y, p2.y) : findLane(p2.y, p1.y);
-    // @ts-ignore: TODO Fix ts errors
+
     const lineX = p1.x < p2.x ? findLane(p1.x, p2.x) : findLane(p2.x, p1.x);
 
     if (dir === 'TB') {
-      // @ts-ignore: TODO Fix ts errors
       if (p1.x < p2.x) {
         // Source commit is on branch position left of destination commit
         // so render arrow rightward with colour of destination branch
-        // @ts-ignore: TODO Fix ts errors
+
         lineDef = `M ${p1.x} ${p1.y} L ${lineX - radius} ${p1.y} ${arc2} ${lineX} ${
-          // @ts-ignore: TODO Fix ts errors
           p1.y + offset
-          // @ts-ignore: TODO Fix ts errors
         } L ${lineX} ${p2.y - radius} ${arc} ${lineX + offset} ${p2.y} L ${p2.x} ${p2.y}`;
       } else {
         // Source commit is on branch position right of destination commit
         // so render arrow leftward with colour of source branch
-        // @ts-ignore: TODO Fix ts errors
-        colorClassNum = branchPos.get(commitA.branch).index;
-        // @ts-ignore: TODO Fix ts errors
+
+        colorClassNum = branchPos.get(commitA.branch)?.index;
+
         lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc} ${lineX} ${p1.y + offset} L ${lineX} ${p2.y - radius} ${arc2} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
       }
     } else if (dir === 'BT') {
-      // @ts-ignore: TODO Fix ts errors
       if (p1.x < p2.x) {
         // Source commit is on branch position left of destination commit
         // so render arrow rightward with colour of destination branch
-        // @ts-ignore: TODO Fix ts errors
+
         lineDef = `M ${p1.x} ${p1.y} L ${lineX - radius} ${p1.y} ${arc} ${lineX} ${p1.y - offset} L ${lineX} ${p2.y + radius} ${arc2} ${lineX + offset} ${p2.y} L ${p2.x} ${p2.y}`;
       } else {
         // Source commit is on branch position right of destination commit
         // so render arrow leftward with colour of source branch
-        // @ts-ignore: TODO Fix ts errors
-        colorClassNum = branchPos.get(commitA.branch).index;
-        // @ts-ignore: TODO Fix ts errors
+
+        colorClassNum = branchPos.get(commitA.branch)?.index;
+
         lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc2} ${lineX} ${p1.y - offset} L ${lineX} ${p2.y + radius} ${arc} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
       }
     } else {
-      // @ts-ignore: TODO Fix ts errors
       if (p1.y < p2.y) {
         // Source commit is on branch positioned above destination commit
         // so render arrow downward with colour of destination branch
-        // @ts-ignore: TODO Fix ts errors
+
         lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY - radius} ${arc} ${
-          // @ts-ignore: TODO Fix ts errors
           p1.x + offset
-          // @ts-ignore: TODO Fix ts errors
         } ${lineY} L ${p2.x - radius} ${lineY} ${arc2} ${p2.x} ${lineY + offset} L ${p2.x} ${p2.y}`;
       } else {
         // Source commit is on branch positioned below destination commit
         // so render arrow upward with colour of source branch
-        // @ts-ignore: TODO Fix ts errors
-        colorClassNum = branchPos.get(commitA.branch).index;
-        // @ts-ignore: TODO Fix ts errors
+
+        colorClassNum = branchPos.get(commitA.branch)?.index;
+
         lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY + radius} ${arc2} ${
-          // @ts-ignore: TODO Fix ts errors
           p1.x + offset
-          // @ts-ignore: TODO Fix ts errors
         } ${lineY} L ${p2.x - radius} ${lineY} ${arc} ${p2.x} ${lineY - offset} L ${p2.x} ${p2.y}`;
       }
     }
@@ -680,71 +679,48 @@ const drawArrow = (
     offset = 20;
 
     if (dir === 'TB') {
-      // @ts-ignore: TODO Fix ts errors
       if (p1.x < p2.x) {
         if (commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0]) {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc} ${p1.x + offset} ${
-            // @ts-ignore: TODO Fix ts errors
             p2.y
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         } else {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc2} ${p2.x} ${
-            // @ts-ignore: TODO Fix ts errors
             p1.y + offset
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         }
       }
-      // @ts-ignore: TODO Fix ts errors
+
       if (p1.x > p2.x) {
         arc = 'A 20 20, 0, 0, 0,';
         arc2 = 'A 20 20, 0, 0, 1,';
         radius = 20;
         offset = 20;
         if (commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0]) {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc2} ${p1.x - offset} ${
-            // @ts-ignore: TODO Fix ts errors
             p2.y
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         } else {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p2.x + radius} ${p1.y} ${arc} ${p2.x} ${
-            // @ts-ignore: TODO Fix ts errors
             p1.y + offset
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         }
       }
-      // @ts-ignore: TODO Fix ts errors
       if (p1.x === p2.x) {
-        // @ts-ignore: TODO Fix ts errors
         lineDef = `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y}`;
       }
     } else if (dir === 'BT') {
-      // @ts-ignore: TODO Fix ts errors
       if (p1.x < p2.x) {
         if (commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0]) {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y + radius} ${arc2} ${p1.x + offset} ${
-            // @ts-ignore: TODO Fix ts errors
             p2.y
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         } else {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc} ${p2.x} ${
-            // @ts-ignore: TODO Fix ts errors
             p1.y - offset
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         }
       }
-      // @ts-ignore: TODO Fix ts errors
       if (p1.x > p2.x) {
         arc = 'A 20 20, 0, 0, 0,';
         arc2 = 'A 20 20, 0, 0, 1,';
@@ -752,74 +728,53 @@ const drawArrow = (
         offset = 20;
 
         if (commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0]) {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y + radius} ${arc} ${p1.x - offset} ${
-            // @ts-ignore: TODO Fix ts errors
             p2.y
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         } else {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc} ${p2.x} ${
-            // @ts-ignore: TODO Fix ts errors
             p1.y - offset
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         }
       }
-      // @ts-ignore: TODO Fix ts errors
+
       if (p1.x === p2.x) {
-        // @ts-ignore: TODO Fix ts errors
         lineDef = `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y}`;
       }
     } else {
-      // @ts-ignore: TODO Fix ts errors
       if (p1.y < p2.y) {
         if (commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0]) {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc2} ${p2.x} ${
-            // @ts-ignore: TODO Fix ts errors
             p1.y + offset
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         } else {
-          // @ts-ignore: TODO Fix ts errors
           lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y - radius} ${arc} ${p1.x + offset} ${
-            // @ts-ignore: TODO Fix ts errors
             p2.y
-            // @ts-ignore: TODO Fix ts errors
-          } L ${p2.x} ${p2.y}`;
-        }
-      } // @ts-ignore: TODO Fix ts errors
-      if (p1.y > p2.y) {
-        if (commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0]) {
-          // @ts-ignore: TODO Fix ts errors
-          lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc} ${p2.x} ${
-            // @ts-ignore: TODO Fix ts errors
-            p1.y - offset
-            // @ts-ignore: TODO Fix ts errors
-          } L ${p2.x} ${p2.y}`;
-        } else {
-          // @ts-ignore: TODO Fix ts errors
-          lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y + radius} ${arc2} ${p1.x + offset} ${
-            // @ts-ignore: TODO Fix ts errors
-            p2.y
-            // @ts-ignore: TODO Fix ts errors
           } L ${p2.x} ${p2.y}`;
         }
       }
-      // @ts-ignore: TODO Fix ts errors
+      if (p1.y > p2.y) {
+        if (commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0]) {
+          lineDef = `M ${p1.x} ${p1.y} L ${p2.x - radius} ${p1.y} ${arc} ${p2.x} ${
+            p1.y - offset
+          } L ${p2.x} ${p2.y}`;
+        } else {
+          lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y + radius} ${arc2} ${p1.x + offset} ${
+            p2.y
+          } L ${p2.x} ${p2.y}`;
+        }
+      }
+
       if (p1.y === p2.y) {
-        // @ts-ignore: TODO Fix ts errors
         lineDef = `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y}`;
       }
     }
   }
+
   svg
     .append('path')
-    // @ts-ignore: TODO Fix ts errors
     .attr('d', lineDef)
-    .attr('class', 'arrow arrow' + (colorClassNum % THEME_COLOR_LIMIT));
+    .attr('class', 'arrow arrow' + (colorClassNum! % THEME_COLOR_LIMIT));
 };
 
 const drawArrows = (
@@ -829,12 +784,10 @@ const drawArrows = (
   const gArrows = svg.append('g').attr('class', 'commit-arrows');
   [...commits.keys()].forEach((key) => {
     const commit = commits.get(key);
-    // @ts-ignore: TODO Fix ts errors
-    if (commit.parents && commit.parents.length > 0) {
-      // @ts-ignore: TODO Fix ts errors
-      commit.parents.forEach((parent) => {
-        // @ts-ignore: TODO Fix ts errors
-        drawArrow(gArrows, commits.get(parent), commit, commits);
+
+    if (commit!.parents && commit!.parents.length > 0) {
+      commit!.parents.forEach((parent) => {
+        drawArrow(gArrows, commits.get(parent)!, commit!, commits);
       });
     }
   });
@@ -847,10 +800,12 @@ const drawBranches = (
   const gitGraphConfig = getConfig().gitGraph;
   const g = svg.append('g');
   branches.forEach((branch, index) => {
-    // @ts-ignore: TODO Fix ts errors
     const adjustIndexForTheme = index % THEME_COLOR_LIMIT;
-    // @ts-ignore: TODO Fix ts errors
-    const pos = branchPos.get(branch.name).pos;
+
+    const pos = branchPos.get(branch.name)?.pos;
+    if (pos === undefined) {
+      throw new Error(`Position not found for branch ${branch.name}`);
+    }
     const line = g.append('line');
     line.attr('x1', 0);
     line.attr('y1', pos);
@@ -881,23 +836,21 @@ const drawBranches = (
 
     // Create inner g, label, this will be positioned now for centering the text
     const label = branchLabel.insert('g').attr('class', 'label branch-label' + adjustIndexForTheme);
-    // @ts-ignore: TODO Fix ts errors
-    label.node().appendChild(labelElement);
+
+    label.node()!.appendChild(labelElement);
     const bbox = labelElement.getBBox();
     bkg
       .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
       .attr('rx', 4)
       .attr('ry', 4)
-      // @ts-ignore: TODO Fix ts errors
-      .attr('x', -bbox.width - 4 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0))
+      .attr('x', -bbox.width - 4 - (gitGraphConfig?.rotateCommitLabel === true ? 30 : 0))
       .attr('y', -bbox.height / 2 + 8)
       .attr('width', bbox.width + 18)
       .attr('height', bbox.height + 4);
     label.attr(
       'transform',
       'translate(' +
-        // @ts-ignore: TODO Fix ts errors
-        (-bbox.width - 14 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0)) +
+        (-bbox.width - 14 - (gitGraphConfig?.rotateCommitLabel === true ? 30 : 0)) +
         ', ' +
         (pos - bbox.height / 2 - 1) +
         ')'
@@ -988,7 +941,7 @@ if (import.meta.vitest) {
     });
   });
 
-  describe('drawBranchPositions', () => {
+  describe('branchPosition', () => {
     const bbox: DOMRect = {
       x: 0,
       y: 0,
@@ -1026,8 +979,8 @@ if (import.meta.vitest) {
       expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
     });
   });
-  /*
-  describe('drawCommits', () => {
+
+  describe('commitPosition', () => {
     dir = 'TB';
     const commits = new Map<string, Commit>([
       [
@@ -1129,42 +1082,28 @@ if (import.meta.vitest) {
       ],
     ]);
 
+    const expectedCommitPos = new Map<string, CommitPositionOffset>([
+      ['commitZero', { x: 0, y: 40, posWithOffset: 40 }],
+      ['commitA', { x: 107.49609375, y: 90, posWithOffset: 90 }],
+      ['commitB', { x: 107.49609375, y: 140, posWithOffset: 140 }],
+      ['commitM', { x: 0, y: 190, posWithOffset: 190 }],
+      ['commitC', { x: 224.03515625, y: 240, posWithOffset: 240 }],
+      ['commit5_8928ea0', { x: 224.03515625, y: 290, posWithOffset: 290 }],
+      ['commitD', { x: 224.03515625, y: 340, posWithOffset: 340 }],
+      ['commit7_ed848ba', { x: 224.03515625, y: 390, posWithOffset: 390 }],
+    ]);
+
     branchPos.set('main', { pos: 0, index: 0 });
     branchPos.set('feature', { pos: 107.49609375, index: 1 });
     branchPos.set('release', { pos: 224.03515625, index: 2 });
 
-    commits.forEach((commit) => {
-      it(`should draw commit ${commit.id}`, () => {
-        const commitPosition = getCommitPosition(commit, 0, false);
-        expect(commitPosition).toBeDefined();
+    let pos = 30;
+    commits.forEach((commit, key) => {
+      it(`should give the correct position for commit ${key}`, () => {
+        const position = getCommitPosition(commit, pos, false);
+        expect(position).toEqual(expectedCommitPos.get(key));
+        pos += 50;
       });
-      it(`should draw commit ${commit.id} with position`, () => {
-        const commitPosition = getCommitPosition(commit, 0, false);
-        expect(commitPosition.x).toBeDefined();
-        expect(commitPosition.y).toBeDefined();
-        expect(commitPosition.posWithOffset).toBeDefined();
-      }
-      it(`should draw commit ${commit.id} bullet`, () => {
-        const gBullets = svg.append('g').attr('class', 'commit-bullets');
-        const typeClass = getCommitClassType(commit);
-        const branchIndex = branchPos.get(commit.branch)?.index ?? 0;
-        drawCommitBullet(gBullets, commit, commitPosition, typeClass, branchIndex, commit.type);
-      }
-      it(`should draw commit ${commit.id} label`, () => {
-        const gLabels = svg.append('g').attr('class', 'commit-labels');
-        drawCommitLabel(gLabels, commit, commitPosition, 0, gitGraphConfig);
-      }
-  });
-*/
-  describe('drawBranches', () => {
-    it('should drawBranches', () => {
-      expect(true).toBe(true);
-    });
-  });
-
-  describe('drawArrows', () => {
-    it('should drawArrows', () => {
-      expect(true).toBe(true);
     });
   });
 
