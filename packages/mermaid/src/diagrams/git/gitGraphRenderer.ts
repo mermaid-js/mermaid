@@ -76,12 +76,11 @@ const drawText = (txt: string | string[]) => {
   return svgLabel;
 };
 
-const findClosestParent = (parents: string[], useBTLogic = false): string | undefined => {
+const findClosestParent = (parents: string[]): string | undefined => {
   let closestParent: string | undefined;
   let comparisonFunc;
   let targetPosition: number;
-
-  if (dir === 'BT' || useBTLogic) {
+  if (dir === 'BT') {
     comparisonFunc = (a: number, b: number) => a <= b;
     targetPosition = Infinity;
   } else {
@@ -91,9 +90,7 @@ const findClosestParent = (parents: string[], useBTLogic = false): string | unde
 
   parents.forEach((parent) => {
     const parentPosition =
-      dir === 'TB' || dir == 'BT' || useBTLogic
-        ? commitPos.get(parent)?.y
-        : commitPos.get(parent)?.x;
+      dir === 'TB' || dir == 'BT' ? commitPos.get(parent)?.y : commitPos.get(parent)?.x;
 
     if (parentPosition !== undefined && comparisonFunc(parentPosition, targetPosition)) {
       closestParent = parent;
@@ -102,6 +99,20 @@ const findClosestParent = (parents: string[], useBTLogic = false): string | unde
   });
 
   return closestParent;
+};
+
+const findClosestParentBT = (parents: string[]) => {
+  let closestParent = '';
+  let maxPosition = Infinity;
+
+  parents.forEach((parent) => {
+    const parentPosition = commitPos.get(parent)!.y;
+    if (parentPosition <= maxPosition) {
+      closestParent = parent;
+      maxPosition = parentPosition;
+    }
+  });
+  return closestParent || undefined;
 };
 
 const setParallelBTPos = (
@@ -119,7 +130,7 @@ const setParallelBTPos = (
       throw new Error(`Commit not found for key ${key}`);
     }
 
-    if (hasParents(commit)) {
+    if (commit.parents.length) {
       curPos = calculateCommitPosition(commit);
       maxPosition = Math.max(curPos, maxPosition);
     } else {
@@ -132,9 +143,21 @@ const setParallelBTPos = (
   roots.forEach((commit) => {
     setRootPosition(commit, curPos, defaultPos);
   });
-};
+  sortedKeys.forEach((key) => {
+    const commit = commits.get(key);
 
-const hasParents = (commit: Commit): boolean => commit.parents?.length > 0;
+    if (commit?.parents.length) {
+      const closestParent = findClosestParentBT(commit.parents)!;
+      curPos = commitPos.get(closestParent)!.y - COMMIT_STEP;
+      if (curPos <= maxPosition) {
+        maxPosition = curPos;
+      }
+      const x = branchPos.get(commit.branch)!.pos;
+      const y = curPos - LAYOUT_OFFSET;
+      commitPos.set(commit.id, { x: x, y: y });
+    }
+  });
+};
 
 const findClosestParentPos = (commit: Commit): number => {
   const closestParent = findClosestParent(commit.parents.filter((p) => p !== null));
@@ -154,8 +177,9 @@ const calculateCommitPosition = (commit: Commit): number => {
   return closestParentPos + COMMIT_STEP;
 };
 
-const setCommitPosition = (commit: Commit, curPos: number) => {
+const setCommitPosition = (commit: Commit, curPos: number): CommitPosition => {
   const branch = branchPos.get(commit.branch);
+
   if (!branch) {
     throw new Error(`Branch not found for commit ${commit.id}`);
   }
@@ -163,6 +187,7 @@ const setCommitPosition = (commit: Commit, curPos: number) => {
   const x = branch.pos;
   const y = curPos + LAYOUT_OFFSET;
   commitPos.set(commit.id, { x, y });
+  return { x, y };
 };
 
 const setRootPosition = (commit: Commit, curPos: number, defaultPos: number) => {
@@ -266,7 +291,6 @@ const drawCommitBullet = (
           `M ${commitPosition.x - 5},${commitPosition.y - 5}L${commitPosition.x + 5},${commitPosition.y + 5}M${commitPosition.x - 5},${commitPosition.y + 5}L${commitPosition.x + 5},${commitPosition.y - 5}`
         )
         .attr('class', `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
-      log.info();
     }
   }
 };
@@ -522,12 +546,13 @@ const drawCommits = (
   };
 
   let sortedKeys = keys.sort(sortKeys);
-
   if (dir === 'BT') {
     if (isParallelCommits) {
       setParallelBTPos(sortedKeys, commits, pos);
+      sortedKeys = sortedKeys.reverse();
+    } else {
+      sortedKeys = sortedKeys.reverse();
     }
-    sortedKeys = sortedKeys.reverse();
   }
 
   sortedKeys.forEach((key) => {
@@ -544,7 +569,6 @@ const drawCommits = (
     if (modifyGraph) {
       const typeClass = getCommitClassType(commit);
       const commitSymbolType = commit.customType ?? commit.type;
-      log.info('commitSymbolType', commitSymbolType);
       const branchIndex = branchPos.get(commit.branch)?.index ?? 0;
       drawCommitBullet(gBullets, commit, commitPosition, typeClass, branchIndex, commitSymbolType);
       drawCommitLabel(gLabels, commit, commitPosition, pos, gitGraphConfig);
@@ -885,9 +909,6 @@ const setBranchPosition = function (
 ): number {
   branchPos.set(name, { pos, index });
   pos += 50 + (rotateCommitLabel ? 40 : 0) + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
-  log.info('bbox.width', bbox.width);
-  log.info('setBranchPosition', name, pos, index, bbox);
-  log.info('branchPos', branchPos);
   return pos;
 };
 
@@ -1157,6 +1178,175 @@ if (import.meta.vitest) {
           const classType = getCommitClassType(commit);
           expect(classType).toBe(expectedCommitClassType.get(key));
         });
+      });
+    });
+  });
+  describe('building BT parallel commit diagram', () => {
+    const commits = new Map<string, Commit>([
+      [
+        '1-abcdefg',
+        {
+          id: '1-abcdefg',
+          message: '',
+          seq: 0,
+          type: 0,
+          tags: [],
+          parents: [],
+          branch: 'main',
+        },
+      ],
+      [
+        '2-abcdefg',
+        {
+          id: '2-abcdefg',
+          message: '',
+          seq: 1,
+          type: 0,
+          tags: [],
+          parents: ['1-abcdefg'],
+          branch: 'main',
+        },
+      ],
+      [
+        '3-abcdefg',
+        {
+          id: '3-abcdefg',
+          message: '',
+          seq: 2,
+          type: 0,
+          tags: [],
+          parents: ['2-abcdefg'],
+          branch: 'develop',
+        },
+      ],
+      [
+        '4-abcdefg',
+        {
+          id: '4-abcdefg',
+          message: '',
+          seq: 3,
+          type: 0,
+          tags: [],
+          parents: ['3-abcdefg'],
+          branch: 'develop',
+        },
+      ],
+      [
+        '5-abcdefg',
+        {
+          id: '5-abcdefg',
+          message: '',
+          seq: 4,
+          type: 0,
+          tags: [],
+          parents: ['2-abcdefg'],
+          branch: 'feature',
+        },
+      ],
+      [
+        '6-abcdefg',
+        {
+          id: '6-abcdefg',
+          message: '',
+          seq: 5,
+          type: 0,
+          tags: [],
+          parents: ['5-abcdefg'],
+          branch: 'feature',
+        },
+      ],
+      [
+        '7-abcdefg',
+        {
+          id: '7-abcdefg',
+          message: '',
+          seq: 6,
+          type: 0,
+          tags: [],
+          parents: ['2-abcdefg'],
+          branch: 'main',
+        },
+      ],
+      [
+        '8-abcdefg',
+        {
+          id: '8-abcdefg',
+          message: '',
+          seq: 7,
+          type: 0,
+          tags: [],
+          parents: ['7-abcdefg'],
+          branch: 'main',
+        },
+      ],
+    ]);
+    const expectedCommitPosition = new Map<string, CommitPosition>([
+      ['1-abcdefg', { x: 0, y: 40 }],
+      ['2-abcdefg', { x: 0, y: 90 }],
+      ['3-abcdefg', { x: 107.49609375, y: 140 }],
+      ['4-abcdefg', { x: 107.49609375, y: 190 }],
+      ['5-abcdefg', { x: 225.70703125, y: 140 }],
+      ['6-abcdefg', { x: 225.70703125, y: 190 }],
+      ['7-abcdefg', { x: 0, y: 140 }],
+      ['8-abcdefg', { x: 0, y: 190 }],
+    ]);
+
+    const expectedCommitPositionAfterParallel = new Map<string, CommitPosition>([
+      ['1-abcdefg', { x: 0, y: 210 }],
+      ['2-abcdefg', { x: 0, y: 160 }],
+      ['3-abcdefg', { x: 107.49609375, y: 110 }],
+      ['4-abcdefg', { x: 107.49609375, y: 60 }],
+      ['5-abcdefg', { x: 225.70703125, y: 110 }],
+      ['6-abcdefg', { x: 225.70703125, y: 60 }],
+      ['7-abcdefg', { x: 0, y: 110 }],
+      ['8-abcdefg', { x: 0, y: 60 }],
+    ]);
+
+    const expectedCommitCurrentPosition = new Map<string, number>([
+      ['1-abcdefg', 30],
+      ['2-abcdefg', 80],
+      ['3-abcdefg', 130],
+      ['4-abcdefg', 180],
+      ['5-abcdefg', 130],
+      ['6-abcdefg', 180],
+      ['7-abcdefg', 130],
+      ['8-abcdefg', 180],
+    ]);
+    const sortedKeys = [...expectedCommitPosition.keys()];
+    it('should get the correct commit position and current position', () => {
+      dir = 'BT';
+      let curPos = 30;
+      commitPos.clear();
+      branchPos.clear();
+      branchPos.set('main', { pos: 0, index: 0 });
+      branchPos.set('develop', { pos: 107.49609375, index: 1 });
+      branchPos.set('feature', { pos: 225.70703125, index: 2 });
+      //TODO: need to make sure you set the parallel commits to true
+
+      commits.forEach((commit, key) => {
+        if (commit.parents.length > 0) {
+          curPos = calculateCommitPosition(commit);
+        }
+        const position = setCommitPosition(commit, curPos);
+        expect(position).toEqual(expectedCommitPosition.get(key));
+        expect(curPos).toEqual(expectedCommitCurrentPosition.get(key));
+      });
+    });
+
+    it('should get the correct commit position after parallel commits', () => {
+      commitPos.clear();
+      branchPos.clear();
+      dir = 'BT';
+      const curPos = 30;
+      commitPos.clear();
+      branchPos.clear();
+      branchPos.set('main', { pos: 0, index: 0 });
+      branchPos.set('develop', { pos: 107.49609375, index: 1 });
+      branchPos.set('feature', { pos: 225.70703125, index: 2 });
+      setParallelBTPos(sortedKeys, commits, curPos);
+      sortedKeys.forEach((commit) => {
+        const position = commitPos.get(commit);
+        expect(position).toEqual(expectedCommitPositionAfterParallel.get(commit));
       });
     });
   });
