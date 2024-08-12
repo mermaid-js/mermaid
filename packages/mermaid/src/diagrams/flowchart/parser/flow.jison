@@ -36,15 +36,11 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
-\@\{                                   { console.log('Pushing state shapeData!'); this.pushState("shapeData");  }
-<shapeData>[^}]                         { console.log('End bracket found: ', yytext); this.pushState("shapeDataEndBracket");}
+\@\{                                    { console.log('Pushing state shapeData!'); this.pushState("shapeData");  }
 <shapeDataEndBracket>[@]                { console.log('This is the end: ', yytext); this.popState();this.popState(); }
-<shapeDataEndBracket>[^@]*               { console.log('something else: ', yytext); return 'SHAPE_DATA'; }
-<shapeData>([^}^@])+     { console.log('Parsed data: ', yytext);  }
+<shapeDataEndBracket>[^@]*              { console.log('SHAPE_DATA: ', yytext); return 'SHAPE_DATA'; }
+<shapeData>@                            { console.log('End bracket found: ', yytext); this.pushState("shapeDataEndBracket");}
 
-// [@\{]                  {this.pushState("shapeData");}
-// <shapeData>[\}][\@]        { console.log('This is the end: ', yytext);this.popState(); }
-// <shapeData>^(?!.*\}@).*     { console.log('Parsed data: ', yytext); return 'SHAPE_DATA';}
 /*
 ---interactivity command---
 'call' adds a callback to the specified node. 'call' can only be specified when
