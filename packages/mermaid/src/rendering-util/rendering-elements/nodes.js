@@ -37,6 +37,7 @@ import { waveRectangle } from './shapes/waveRectangle.js';
 import { titledCylinder } from './shapes/tiltedCylinder.js';
 import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
 import { flippedTriangle } from './shapes/flippedTriangle.js';
+import { hourglass } from './shapes/hourglass.js';
 
 const shapes = {
   state,
@@ -77,6 +78,7 @@ const shapes = {
   titledCylinder,
   trapezoidalPentagon,
   flippedTriangle,
+  hourglass,
 };
 
 const nodeElems = new Map();
