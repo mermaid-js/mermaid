@@ -81,27 +81,59 @@
   </head>
 
   <body>
-    <pre id="diagram" class="mermaid">
+    <div class="flex">
+      <pre id="diagram" class="mermaid">
 ---
 config:
   look: handDrawn
+  flowchart:
+    htmlLabels: false
 ---
 flowchart
-   a_a(Aftonbladet) --> b_b[gorilla]:::apa --> c_c{chimp}:::apa -->a_a
-        a_a --> c --> d_d --> c_c
-        classDef apa fill:#f9f,stroke:#333,stroke-width:4px;
-        class a_a apa;
-        click a_a "http://www.aftonbladet.se" "bookmark"
-        click c_c callback "new tooltip"
-      </pre
-    >
+      A[I am a long text, where do I go??? handdrawn - false]
+</pre
+      >
+      <pre id="diagram" class="mermaid">
+---
+config:
+  look: handdrawn
+  flowchart:
+    htmlLabels: true
+---
+flowchart
+      A[I am a long text, where do I go??? handdrawn - true]
+</pre
+      >
+    </div>
+    <div class="flex">
+      <pre id="diagram" class="mermaid">
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
+flowchart
+      A[I am a long text, where do I go??? classic - false]
+</pre
+      >
+      <pre id="diagram" class="mermaid">
+---
+config:
+  flowchart:
+    htmlLabels: true
+---
+flowchart
+      A[I am a long text, where do I go??? classic - true]
+</pre
+      >
+    </div>
     <pre id="diagram2" class="mermaid2">
 flowchart LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 
-      
+
     </pre>
 
     <pre id="diagram3" class="mermaid2">
@@ -117,7 +149,7 @@ flowchart LR
 
     <pre id="diagram4" class="mermaid2">
       stateDiagram
-    A:::foo 
+    A:::foo
     B:::bar --> C:::foobar
     classDef foo stroke:#f00
     classDef bar stroke:#0f0
