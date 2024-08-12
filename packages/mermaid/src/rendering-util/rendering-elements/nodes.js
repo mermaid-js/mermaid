@@ -39,6 +39,7 @@ import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
 import { flippedTriangle } from './shapes/flippedTriangle.js';
 import { hourglass } from './shapes/hourglass.js';
 import { taggedRect } from './shapes/taggedRect.js';
+import { multiRect } from './shapes/multiRect.js';
 
 const shapes = {
   state,
@@ -81,6 +82,7 @@ const shapes = {
   flippedTriangle,
   hourglass,
   taggedRect,
+  multiRect,
 };
 
 const nodeElems = new Map();
