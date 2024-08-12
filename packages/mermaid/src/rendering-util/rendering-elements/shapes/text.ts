@@ -1,12 +1,12 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
-import { styles2String } from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+import { styles2String } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 
 export async function text(parent: SVGAElement, node: Node): Promise<SVGAElement> {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  // console.log('IPI labelStyles:', labelStyles);
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const totalWidth = Math.max(bbox.width + node.padding, node?.width || 0);
@@ -14,12 +14,7 @@ export async function text(parent: SVGAElement, node: Node): Promise<SVGAElement
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 
-  // log.info('IPI node = ', node);
-
-  let rect;
-  const { cssStyles } = node;
-
-  rect = shapeSvg.insert('rect', ':first-child');
+  const rect = shapeSvg.insert('rect', ':first-child');
 
   rect
     .attr('class', 'text')

@@ -4,7 +4,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 
@@ -43,8 +43,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   const h = bbox.height + node.padding;
   const x = -bbox.width / 2 - halfPadding;
   const y = -bbox.height / 2 - halfPadding;
-  let rect;
-  const { cssStyles } = node;
+
   const points = [
     { x: 0, y: 0 },
     { x: w, y: 0 },
@@ -58,7 +57,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     { x: -8, y: 0 },
   ];
 
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
@@ -69,9 +68,10 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
 
     shapeSvg.insert(() => l1, ':first-child');
     shapeSvg.insert(() => l2, ':first-child');
-    rect = shapeSvg.insert(() => roughNode, ':first-child');
-
+    const rect = shapeSvg.insert(() => roughNode, ':first-child');
+    const { cssStyles } = node;
     rect.attr('class', 'basic label-container').attr('style', cssStyles);
+    updateNodeBounds(node, rect);
   } else {
     const el = insertPolygonShape(shapeSvg, w, h, points);
     if (nodeStyles) {

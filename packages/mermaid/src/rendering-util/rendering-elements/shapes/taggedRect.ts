@@ -3,7 +3,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 
@@ -36,7 +36,7 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
     { x: x + w, y: y + h - tagHeight },
   ];
 
-  if (node.look !== 'handdrawn') {
+  if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }

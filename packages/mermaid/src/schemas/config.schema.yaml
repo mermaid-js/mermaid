@@ -79,11 +79,11 @@ properties:
     type: string
     enum:
       - classic
-      - handdrawn
+      - handDrawn
     default: 'classic'
-  handdrawnSeed:
+  handDrawnSeed:
     description: |
-      Defines the seed to be used when using handdrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+      Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
     type: number
     default: 0
   layout:

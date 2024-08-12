@@ -423,7 +423,7 @@ const fixCorners = function (lineData) {
 };
 
 export const insertEdge = function (elem, edge, clusterDb, diagramType, startNode, endNode, id) {
-  const { handdrawnSeed } = getConfig();
+  const { handDrawnSeed } = getConfig();
   let points = edge.points;
   let pointsHasChanged = false;
   const tail = startNode;
@@ -510,13 +510,13 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let svgPath;
   let linePath = lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
-  if (edge.look === 'handdrawn') {
+  if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
 
     const svgPathNode = rc.path(linePath, {
       roughness: 0.3,
-      seed: handdrawnSeed,
+      seed: handDrawnSeed,
     });
 
     strokeClasses += ' transition';

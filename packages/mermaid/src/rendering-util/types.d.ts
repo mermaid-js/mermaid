@@ -94,7 +94,7 @@ interface Edge {
   labelStyle?: string[];
   minlen?: number;
   pattern?: string;
-  thickness?: 'normal' | 'thick' | 'invisible';
+  thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
 }
 

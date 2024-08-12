@@ -61,19 +61,19 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: 'default' | 'forest' | 'dark' | 'neutral' | 'null';
+  theme?: 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null';
   themeVariables?: any;
   themeCSS?: string;
   /**
    * Defines which main look to use for the diagram.
    *
    */
-  look?: 'classic' | 'handdrawn';
+  look?: 'classic' | 'handDrawn';
   /**
-   * Defines the seed to be used when using handdrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+   * Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
    *
    */
-  handdrawnSeed?: number;
+  handDrawnSeed?: number;
   /**
    * Defines which layout algorithm to use for rendering the diagram.
    *

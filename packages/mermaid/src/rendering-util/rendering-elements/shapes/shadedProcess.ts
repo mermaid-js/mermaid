@@ -4,10 +4,8 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import { insertPolygonShape } from './insertPolygonShape.js';
-import { createPathFromPoints } from './util.js';
 
 export const shadedProcess = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -18,26 +16,13 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
   const h = bbox.height + node.padding;
   const x = -bbox.width / 2 - halfPadding;
   const y = -bbox.height / 2 - halfPadding;
-  let rect;
-  const { cssStyles } = node;
-  const points = [
-    { x: 0, y: 0 },
-    { x: w, y: 0 },
-    { x: w, y: -h },
-    { x: 0, y: -h },
-    { x: 0, y: 0 },
-    { x: -8, y: 0 },
-    { x: w + 8, y: 0 },
-    { x: w + 8, y: -h },
-    { x: -8, y: -h },
-    { x: -8, y: 0 },
-  ];
 
+  const { cssStyles } = node;
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
-  if (node.look !== 'handdrawn') {
+  if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
@@ -46,7 +31,7 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
   const l1 = rc.line(x, y, x, y + h, options);
 
   shapeSvg.insert(() => l1, ':first-child');
-  rect = shapeSvg.insert(() => roughNode, ':first-child');
+  const rect = shapeSvg.insert(() => roughNode, ':first-child');
 
   rect.attr('class', 'basic label-container').attr('style', cssStyles);
 
