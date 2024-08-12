@@ -217,4 +217,50 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
       });
     });
   });
+
+  describe('style statement for a state (style)', () => {
+    describe('defining (style)', () => {
+      it('has "style" as a keyword, an id, and can set a css style attribute', function () {
+        stateDiagram.parser.parse(`stateDiagram-v2
+        id1
+        style id1 background:#bbb`);
+        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+        const data4Layout = stateDiagram.parser.yy.getData();
+
+        expect(data4Layout.nodes[0].cssStyles).toEqual(['background:#bbb']);
+      });
+      it('has "style" as a keyword, an id, and can set a css style attribute', function () {
+        stateDiagram.parser.parse(`stateDiagram-v2
+        id1
+        id2
+        style id1,id2 background:#bbb`);
+        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+        const data4Layout = stateDiagram.parser.yy.getData();
+
+        expect(data4Layout.nodes[0].cssStyles).toEqual(['background:#bbb']);
+        expect(data4Layout.nodes[1].cssStyles).toEqual(['background:#bbb']);
+      });
+
+      it('can define multiple attributes separated by commas', function () {
+        stateDiagram.parser.parse(`stateDiagram-v2
+        id1
+        id2
+        style id1,id2 background:#bbb, font-weight:bold, font-style:italic;`);
+
+        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+        const data4Layout = stateDiagram.parser.yy.getData();
+
+        expect(data4Layout.nodes[0].cssStyles).toEqual([
+          'background:#bbb',
+          'font-weight:bold',
+          'font-style:italic',
+        ]);
+        expect(data4Layout.nodes[1].cssStyles).toEqual([
+          'background:#bbb',
+          'font-weight:bold',
+          'font-style:italic',
+        ]);
+      });
+    });
+  });
 });

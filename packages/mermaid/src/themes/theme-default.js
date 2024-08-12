@@ -34,7 +34,7 @@ class Theme {
     this.arrowheadColor = '#333333';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
-    this.labelBackground = '#e8e8e8';
+    this.labelBackground = 'rgba(232,232,232, 0.8)';
     this.textColor = '#333';
     this.THEME_COLOR_LIMIT = 12;
 

@@ -3,7 +3,11 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "types": ["vitest/importMeta", "vitest/globals"]
+    "types": ["vitest/importMeta", "vitest/globals"],
+    "baseUrl": ".", // This must be set if "paths" is set
+    "paths": {
+      "$root/*": ["src/*"]
+    }
   },
   "include": [
     "./src/**/*.ts",

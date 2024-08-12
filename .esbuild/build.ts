@@ -8,8 +8,8 @@ import { defaultOptions, getBuildConfig } from './util.js';
 const shouldVisualize = process.argv.includes('--visualize');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
-  const commonOptions = { ...defaultOptions, entryName } as const;
-  const buildConfigs = [
+  const commonOptions: MermaidBuildOptions = { ...defaultOptions, entryName } as const;
+  const buildConfigs: MermaidBuildOptions[] = [
     // package.mjs
     { ...commonOptions },
     // package.min.mjs

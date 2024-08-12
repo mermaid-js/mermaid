@@ -81,6 +81,7 @@
     "khroma": "^2.1.0",
     "lodash-es": "^4.17.21",
     "marked": "^13.0.2",
+    "roughjs": "^4.6.6",
     "stylis": "^4.3.1",
     "ts-dedent": "^2.2.0",
     "uuid": "^9.0.1"
@@ -133,7 +134,6 @@
     "dist/",
     "README.md"
   ],
-  "sideEffects": false,
   "publishConfig": {
     "access": "public"
   }
