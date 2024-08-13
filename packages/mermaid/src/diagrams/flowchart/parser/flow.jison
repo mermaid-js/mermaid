@@ -24,6 +24,7 @@
 %x callbackname
 %x callbackargs
 %x shapeData
+%x shapeDataStr
 %x shapeDataEndBracket
 
 %%
@@ -36,10 +37,23 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
-\@\{                                    { console.log('Pushing state shapeData!'); this.pushState("shapeData");  }
-<shapeDataEndBracket>[@]                { console.log('This is the end: ', yytext); this.popState();this.popState(); }
-<shapeDataEndBracket>[^@]*              { console.log('SHAPE_DATA: ', yytext); return 'SHAPE_DATA'; }
-<shapeData>@                            { console.log('End bracket found: ', yytext); this.pushState("shapeDataEndBracket");}
+
+\@\{                                            { this.pushState("shapeData"); yytext=""; return 'SHAPE_DATA' }
+<shapeData>["]                                   {
+                                                    this.pushState("shapeDataStr");
+                                                    return 'SHAPE_DATA';
+                                                }
+<shapeDataStr>["]                                { this.popState(); return 'SHAPE_DATA'}
+<shapeDataStr>[^\"]+                             {
+                                                    const re = /\n\s*/g;
+                                                    yytext = yytext.replace(re,"<br/>");
+                                                    return 'SHAPE_DATA'}
+<shapeData>[^@^"]+                                {
+                                                    return 'SHAPE_DATA';
+                                                }
+<shapeData>\@+                                    {
+                                                    this.popState();
+                                                }
 
 /*
 ---interactivity command---
@@ -56,10 +70,11 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 <callbackargs>\)        this.popState();
 <callbackargs>[^)]*     return 'CALLBACKARGS';
 
+
 <md_string>[^`"]+       { return "MD_STR";}
 <md_string>[`]["]       { this.popState();}
 <*>["][`]               { this.begin("md_string");}
-<string>[^"]+           return "STR";
+<string>[^"]+           { return "STR"; }
 <string>["]             this.popState();
 <*>["]                  this.pushState("string");
 "style"                 return 'STYLE';
@@ -365,18 +380,24 @@ statement
 
 separator: NEWLINE | SEMI | EOF ;
 
+shapeData:
+    shapeData SHAPE_DATA
+    { $$ = $1 + $2; }
+    | SHAPE_DATA
+    { $$ = $1; }
+    ;
 
-vertexStatement: vertexStatement link node SHAPE_DATA
-        { /* console.warn('vs SHAPE_DATA',$vertexStatement.stmt,$node, $SHAPE_DATA);*/ yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$SHAPE_DATA); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+vertexStatement: vertexStatement link node shapeData
+        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     | vertexStatement link node
         { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |  vertexStatement link node spaceList
         { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |node spaceList { /*console.warn('vertexStatement: node spaceList', $node);*/ $$ = {stmt: $node, nodes:$node }}
-    |node SHAPE_DATA {
-        /*console.warn('vertexStatement: node SHAPE_DATA', $node[0], $SHAPE_DATA);*/
-        yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$SHAPE_DATA);
-        $$ = {stmt: $node, nodes:$node, shapeData: $SHAPE_DATA}
+    |node shapeData {
+        /*console.warn('vertexStatement: node shapeData', $node[0], $shapeData);*/
+        yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
+        $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
     }
     |node { /* console.warn('vertexStatement: single node', $node); */ $$ = {stmt: $node, nodes:$node }}
     ;
