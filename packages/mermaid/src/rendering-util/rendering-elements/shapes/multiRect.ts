@@ -13,32 +13,37 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
   const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const rectOffset = 5;
   const x = -w / 2;
   const y = -h / 2;
-  const rectOffset = 5;
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
-  const secondRectPoints = [
-    { x, y },
-    { x: x + w, y },
-    { x: x + w, y: y + h },
-    { x, y: y + h },
-  ];
-  const thirdRectPoints = [
-    { x: x + rectOffset, y: y - rectOffset },
-    { x: x + w + rectOffset, y: y - rectOffset },
-    { x: x + w + rectOffset, y: y + h - rectOffset },
-    { x: x + rectOffset, y: y + h - rectOffset },
-  ];
-  const rectPoints = [
+  const outerPathPoints = [
     { x: x - rectOffset, y: y + rectOffset },
-    { x: x + w - rectOffset, y: y + rectOffset },
-    { x: x + w - rectOffset, y: y + h + rectOffset },
     { x: x - rectOffset, y: y + h + rectOffset },
+    { x: x + w - rectOffset, y: y + h + rectOffset },
+    { x: x + w - rectOffset, y: y + h },
+    { x: x + w, y: y + h },
+    { x: x + w, y: y + h - rectOffset },
+    { x: x + w + rectOffset, y: y + h - rectOffset },
+    { x: x + w + rectOffset, y: y - rectOffset },
+    { x: x + rectOffset, y: y - rectOffset },
+    { x: x + rectOffset, y: y },
+    { x, y },
+    { x, y: y + rectOffset },
+  ];
+
+  const innerPathPoints = [
+    { x, y: y + rectOffset },
+    { x: x + w - rectOffset, y: y + rectOffset },
+    { x: x + w - rectOffset, y: y + h },
+    { x: x + w, y: y + h },
+    { x: x + w, y },
+    { x, y },
   ];
 
   if (node.look !== 'handdrawn') {
@@ -46,19 +51,14 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const rectPath = createPathFromPoints(rectPoints);
-  const rectNode = rc.path(rectPath, options);
-
-  const secondRectPath = createPathFromPoints(secondRectPoints);
-  const secondRectNode = rc.path(secondRectPath, options);
-
-  const thirdRectPath = createPathFromPoints(thirdRectPoints);
-  const thirdRectNode = rc.path(thirdRectPath, options);
+  const outerPath = createPathFromPoints(outerPathPoints);
+  const outerNode = rc.path(outerPath, options);
+  const innerPath = createPathFromPoints(innerPathPoints);
+  const innerNode = rc.path(innerPath, options);
 
   const taggedRect = shapeSvg.insert('g', ':first-child');
-  taggedRect.insert(() => thirdRectNode, ':first-child');
-  taggedRect.insert(() => secondRectNode);
-  taggedRect.insert(() => rectNode);
+  taggedRect.insert(() => innerNode, ':first-child');
+  taggedRect.insert(() => outerNode, ':first-child');
 
   taggedRect.attr('class', 'basic label-container');
 
@@ -78,7 +78,7 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
   updateNodeBounds(node, taggedRect);
 
   node.intersect = function (point) {
-    const pos = intersect.rect(node, point);
+    const pos = intersect.polygon(node, outerPathPoints, point);
     return pos;
   };
 
