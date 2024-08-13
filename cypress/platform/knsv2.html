@@ -81,28 +81,31 @@
   </head>
 
   <body>
-    <pre id="diagram" class="mermaid">
+    <div class="flex">
+      <pre id="diagram" class="mermaid">
 ---
 config:
   look: handDrawn
+  flowchart:
+    htmlLabels: false
 ---
 flowchart
       A[A really really really super long node] --> B & C
       subgraph apa
         D --> E
       end
-      </pre
-    >
-    <pre id="diagram2" class="mermaid2">
+      </pre>
+      <pre id="diagram2" class="mermaid2">
 flowchart LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 
 
-    </pre>
+    </pre
+      >
 
-    <pre id="diagram3" class="mermaid2">
+      <pre id="diagram3" class="mermaid2">
       flowchart LR
     A:::foo & B:::bar --> C:::foobar
     classDef foo stroke:#f00
@@ -111,9 +114,10 @@ flowchart LR
     class C ash
     style C stroke:#00f, fill:black
 
-    </pre>
-    <!-- Flowchart with subgraph-->
-    <pre id="diagram3" class="mermaid">
+    </pre
+      >
+
+      <pre id="diagram3" class="mermaid">
 flowchart TB
     c1-->a2
     subgraph one
@@ -125,18 +129,21 @@ flowchart TB
     subgraph three
     c1-->c2
     end
-    </pre>
+    </pre
+      >
 
-    <pre id="diagram4" class="mermaid2">
+      <pre id="diagram4" class="mermaid2">
       stateDiagram
-    A:::foo 
+    A:::foo
     B:::bar --> C:::foobar
     classDef foo stroke:#f00
     classDef bar stroke:#0f0
     style C stroke:#00f, fill:black, color:white
 
 
-    </pre>
+    </pre
+      >
+    </div>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';

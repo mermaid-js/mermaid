@@ -31,7 +31,7 @@ async function addHtmlLabel(node) {
     '<span class="' +
       labelClass +
       '" ' +
-      (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
+      (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') + // codeql [js/html-constructed-from-input] : false positive
       '>' +
       label +
       '</span>'
