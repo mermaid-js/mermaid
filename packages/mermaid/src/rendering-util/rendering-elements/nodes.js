@@ -40,6 +40,7 @@ import { flippedTriangle } from './shapes/flippedTriangle.js';
 import { hourglass } from './shapes/hourglass.js';
 import { taggedRect } from './shapes/taggedRect.js';
 import { multiRect } from './shapes/multiRect.js';
+import { linedCylinder } from './shapes/linedCylinder.js';
 
 const shapes = {
   state,
@@ -83,6 +84,7 @@ const shapes = {
   hourglass,
   taggedRect,
   multiRect,
+  linedCylinder,
 };
 
 const nodeElems = new Map();
