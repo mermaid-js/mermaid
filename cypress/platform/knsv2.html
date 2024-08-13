@@ -62,10 +62,54 @@
 
   <body>
     <pre id="diagram4" class="mermaid">
+  flowchart TB
+       %% ['triangle', 'slopedRect', 'tiltedCylinder', 'flippedTriangle', 'hourglass'];
+        node_0
+        noed_00 --> node_1@{ shape: triangle, label: "This is **bold** <br>and <strong>strong</strong>" }@
+        style node_1 fill:#f9f,stroke:#333,stroke-width:4px
+
+        node_2@{ shape: slopedRect }@
+        node_3@{ shape: tiltedCylinder }@
+        style node_0 fill:#f9f,stroke:#333,stroke-width:4px
+        style node_3 fill:#f9f,stroke:#333,stroke-width:4px
+        classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+        node_2:::customClazz
+        node_00:::customClazz
+
+
+  </pre>
+    <pre id="diagram4" class="mermaid2">
+    flowchart RL
+    n0 --> n00@{ shape: taggedRect, label: 'new shape' }@
+    style n00 fill:#f9f,stroke:#333,stroke-width:4px
+    n1 --> n11@{ shape: multiRect, label: 'new shape' }@
+    style n11 fill:#f9f,stroke:#333,stroke-width:4px"
+  </pre
+    >
+    <pre id="diagram4" class="mermaid2">
 flowchart
      
+      %% without shape or label
+      node_0
+      %% with shape but no label
       node_3@{ shape: triangle }@
+
+      %% with shape and label
+      node_1@{ shape: triangle, label: "This is a label" }@
+
+      %% with shape and long label
+      node_2@{ shape: triangle, label: "This is a long long long long long long label" }@
      
+      %% with shape and label && htmlLabel true
+      node_4@{ shape: triangle, label: "This is a label", htmlLabel: true }@
+
+      %% with shape and label && htmlLabel false
+      node_5@{ shape: triangle, label: "This is a label", htmlLabel: false }@
+
+      %% with shape and label handDrawn look ON
+      node_6@{ shape: triangle, label: "This is a label", handDrawn: true }@
+
+
       
   </pre
     >

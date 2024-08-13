@@ -34,7 +34,7 @@ import { bowTieRect } from './shapes/bowTieRect.js';
 import { dividedRect } from './shapes/dividedRect.js';
 import { crossedCircle } from './shapes/crossedCircle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
-import { titledCylinder } from './shapes/tiltedCylinder.js';
+import { tiltedCylinder } from './shapes/tiltedCylinder.js';
 import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
 import { flippedTriangle } from './shapes/flippedTriangle.js';
 import { hourglass } from './shapes/hourglass.js';
@@ -79,7 +79,7 @@ const shapes = {
   dividedRect,
   crossedCircle,
   waveRectangle,
-  titledCylinder,
+  tiltedCylinder,
   trapezoidalPentagon,
   flippedTriangle,
   hourglass,

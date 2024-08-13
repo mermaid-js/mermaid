@@ -16,7 +16,7 @@ function createCylinderPathD(rx: number, ry: number, w: number, h: number) {
             A ${rx} ${ry} 0 0 0 ${w / 2} ${h / 2}`;
 }
 
-export const titledCylinder = async (parent: SVGAElement, node: Node) => {
+export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
@@ -38,20 +38,20 @@ export const titledCylinder = async (parent: SVGAElement, node: Node) => {
   const cylinderPath = createCylinderPathD(rx, ry, w, h);
   const cylinderNode = rc.path(cylinderPath, options);
 
-  const titledCylinder = shapeSvg.insert('g', ':first-child');
-  titledCylinder.insert(() => cylinderNode, ':first-child');
+  const tiltedCylinder = shapeSvg.insert('g', ':first-child');
+  tiltedCylinder.insert(() => cylinderNode, ':first-child');
 
-  titledCylinder.attr('class', 'basic label-container');
+  tiltedCylinder.attr('class', 'basic label-container');
 
   if (cssStyles) {
-    titledCylinder.attr('style', cssStyles);
+    tiltedCylinder.attr('style', cssStyles);
   }
 
   if (nodeStyles) {
-    titledCylinder.attr('style', nodeStyles);
+    tiltedCylinder.attr('style', nodeStyles);
   }
 
-  updateNodeBounds(node, titledCylinder);
+  updateNodeBounds(node, tiltedCylinder);
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);
