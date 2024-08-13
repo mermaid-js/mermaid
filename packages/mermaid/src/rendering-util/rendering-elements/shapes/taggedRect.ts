@@ -11,8 +11,8 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const h = bbox.height + node.padding;
-  const w = bbox.width + node.padding;
+  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
+  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
   const x = -w / 2;
   const y = -h / 2;
   const tagWidth = 0.2 * w;

@@ -11,8 +11,8 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const h = bbox.height + node.padding;
-  const w = bbox.width + node.padding;
+  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
+  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
   const x = -w / 2;
   const y = -h / 2;
   const rectOffset = 5;
@@ -22,23 +22,23 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
-  const rectPoints = [
+  const secondRectPoints = [
     { x, y },
     { x: x + w, y },
     { x: x + w, y: y + h },
     { x, y: y + h },
   ];
-  const secondRectPoints = [
+  const thirdRectPoints = [
     { x: x + rectOffset, y: y - rectOffset },
     { x: x + w + rectOffset, y: y - rectOffset },
     { x: x + w + rectOffset, y: y + h - rectOffset },
     { x: x + rectOffset, y: y + h - rectOffset },
   ];
-  const thirdRectPoints = [
-    { x: x + 2 * rectOffset, y: y - 2 * rectOffset },
-    { x: x + w + 2 * rectOffset, y: y - 2 * rectOffset },
-    { x: x + w + 2 * rectOffset, y: y + h - 2 * rectOffset },
-    { x: x + 2 * rectOffset, y: y + h - 2 * rectOffset },
+  const rectPoints = [
+    { x: x - rectOffset, y: y + rectOffset },
+    { x: x + w - rectOffset, y: y + rectOffset },
+    { x: x + w - rectOffset, y: y + h + rectOffset },
+    { x: x - rectOffset, y: y + h + rectOffset },
   ];
 
   if (node.look !== 'handdrawn') {
@@ -70,10 +70,9 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
     taggedRect.attr('style', nodeStyles);
   }
 
-  taggedRect.attr('transform', `translate(-${rectOffset},${rectOffset})`);
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - rectOffset}, ${h / 2 - bbox.height - 4 * rectOffset})`
+    `translate(${-(bbox.width / 2) - rectOffset}, ${-(bbox.height / 2) + rectOffset})`
   );
 
   updateNodeBounds(node, taggedRect);
