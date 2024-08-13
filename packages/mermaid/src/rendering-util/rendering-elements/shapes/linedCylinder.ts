@@ -1,19 +1,17 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
-import {
-  styles2String,
-  userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 
-export const createCylinderPathD = (
+export const createCylinderPathWithInnerArcD = (
   x: number,
   y: number,
   width: number,
   height: number,
   rx: number,
-  ry: number
+  ry: number,
+  outerOffset: number
 ): string => {
   return [
     `M${x},${y + ry}`,
@@ -22,36 +20,12 @@ export const createCylinderPathD = (
     `l0,${height}`,
     `a${rx},${ry} 0,0,0 ${width},0`,
     `l0,${-height}`,
+    `M${x},${y + ry + outerOffset}`, // Move to the start of the offset top arc
+    `a${rx},${ry} 0,0,0 ${width},0`, // Draw the duplicated top ellipse
   ].join(' ');
 };
-export const createOuterCylinderPathD = (
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  rx: number,
-  ry: number
-): string => {
-  return [
-    `M${x},${y + ry}`,
-    `M${x + width},${y + ry}`,
-    `a${rx},${ry} 0,0,0 ${-width},0`,
-    `l0,${height}`,
-    `a${rx},${ry} 0,0,0 ${width},0`,
-    `l0,${-height}`,
-  ].join(' ');
-};
-export const createInnerCylinderPathD = (
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  rx: number,
-  ry: number
-): string => {
-  return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
-};
-export const cylinder = async (parent: SVGAElement, node: Node) => {
+
+export const linedCylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
@@ -59,6 +33,7 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
   const h = bbox.height + ry + node.padding;
+  const outerOffset = h * 0.1; // 10% of height
 
   let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
@@ -66,19 +41,17 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   if (node.look === 'handDrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
-    const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
-    const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
-    const outerNode = rc.path(outerPathData, userNodeOverrides(node, {}));
-    const innerLine = rc.path(innerPathData, userNodeOverrides(node, { fill: 'none' }));
+    const options = userNodeOverrides(node, {});
+    const pathData = createCylinderPathWithInnerArcD(0, ry, w, h, rx, ry, outerOffset);
+    const innerLine = rc.path(pathData, options);
 
     cylinder = shapeSvg.insert(() => innerLine, ':first-child');
-    cylinder = shapeSvg.insert(() => outerNode, ':first-child');
     cylinder.attr('class', 'basic label-container');
     if (cssStyles) {
       cylinder.attr('style', cssStyles);
     }
   } else {
-    const pathData = createCylinderPathD(0, 0, w, h, rx, ry);
+    const pathData = createCylinderPathWithInnerArcD(0, 0, w, h, rx, ry, outerOffset);
     cylinder = shapeSvg
       .insert('path', ':first-child')
       .attr('d', pathData)
@@ -92,7 +65,7 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
 
   updateNodeBounds(node, cylinder);
 
-  label.attr('transform', `translate(${-bbox.width / 2}, ${h / 2 - bbox.height})`);
+  label.attr('transform', `translate(${-bbox.width / 2}, ${h / 2 - bbox.height + outerOffset})`);
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);

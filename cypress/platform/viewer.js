@@ -9,7 +9,6 @@ function b64ToUtf8(str) {
 
 // Adds a rendered flag to window when rendering is done, so cypress can wait for it.
 function markRendered() {
-  console.log('Done rendering');
   if (window.Cypress) {
     window.rendered = true;
   }

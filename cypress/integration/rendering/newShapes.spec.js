@@ -30,13 +30,40 @@ describe('newShapes', () => {
   it('4: should render new flippedTriangle shape', () => {
     imgSnapshotTest(
       `flowchart
-          KS --> AC@{ shape: flippedTriangle, label:"This is Final Label" }@
+          FS --> AD@{ shape: flippedTriangle, label:"This is Final Label" }@
+          FE --> AD
+        `,
+      {}
+    );
+  });
+  it('5: should render new hourGlass shape', () => {
+    imgSnapshotTest(
+      `flowchart
+          MS --> AE@{ shape: hourglass, label:"This is Final Label" }@
+          ME --> AE
+        `,
+      {}
+    );
+  });
+  it('6: should render new taggedRect shape', () => {
+    imgSnapshotTest(
+      `flowchart
+          KS --> AC@{ shape: taggedRect, label:"This is Final Label" }@
           RE --> AC
         `,
       {}
     );
   });
-  it('5: should render new FlowChart for New Shapes', () => {
+  it('7: should render new multiRect shape', () => {
+    imgSnapshotTest(
+      `flowchart
+          DS --> AF@{ shape: multiRect, label:"This is Final Label" }@
+          DE --> AF
+        `,
+      {}
+    );
+  });
+  it('8: should render new FlowChart for New Shapes', () => {
     renderGraph(
       `
     flowchart
@@ -45,10 +72,13 @@ describe('newShapes', () => {
     C@{ shape: tiltedCylinder, label: "write your Test Case"}@
     D@{ shape: flippedTriangle, label: "new Test Case"}@
     E@{ shape: waveRectangle, label: "Execute Test Case" }@
-    F@{ shape: slopedRect, label: "Test Passed?" }@
-    G@{ shape: bowTieRect, label: "Pass" }@
-    H@{ shape: dividedRect, label: "Log Defect" }@
-    I@{ shape: curvedTrapezoid, label: "End" }@
+    F@{ shape: hourglass , label: "add test case"}@
+    G@{ shape: taggedRect, label: "execute new test case"}@
+    H@{ shape: slopedRect, label: "Test Passed?" }@
+    I@{ shape: bowTieRect, label: "Pass" }@
+    J@{ shape: dividedRect, label: "Log Defect" }@
+    K@{ shape: curvedTrapezoid, label: "End" }@
+    L@{ shape: multiRect, label: "coming soon"}@
     
     A --> B
     B --> C
@@ -56,9 +86,11 @@ describe('newShapes', () => {
     D --> E
     E --> F
     F -->|Yes| G
-    F -->|No| H
-    G --> I
+    G -->|No| H
     H --> I
+    I --> J
+    J --> K
+    K --> L
       `,
       { flowchart: { useMaxWidth: true } }
     );

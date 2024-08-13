@@ -8,13 +8,6 @@ import type { BlockDB } from './blockDB.js';
 import { layout } from './layout.js';
 import { calculateBlockSizes, insertBlocks, insertEdges } from './renderHelpers.js';
 
-/**
- * Returns the all the styles from classDef statements in the graph definition.
- *
- * @param text - The text with the classes
- * @param diagObj - The diagram object
- * @returns ClassDef - The styles
- */
 export const getClasses = function (text: any, diagObj: any) {
   return diagObj.db.getClasses();
 };
@@ -45,8 +38,6 @@ export const draw = async function (
   const markers = ['point', 'circle', 'cross'];
 
   // Add the marker definitions to the svg as marker tags
-  // insertMarkers(svg, markers, diagObj.type, diagObj.arrowMarkerAbsolute);
-  // insertMarkers(svg, markers, diagObj.type, true);
   insertMarkers(svg, markers, diagObj.type, id);
 
   const bl = db.getBlocks();
@@ -59,11 +50,7 @@ export const draw = async function (
   await insertBlocks(nodes, bl, db);
   await insertEdges(nodes, edges, blArr, db, id);
 
-  // log.debug('Here', bl);
-
   // Establish svg dimensions and get width and height
-  //
-  // const bounds2 = nodes.node().getBoundingClientRect();
   // Why, oh why ????
   if (bounds) {
     const bounds2 = bounds;

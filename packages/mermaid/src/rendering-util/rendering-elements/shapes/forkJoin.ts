@@ -3,7 +3,7 @@ import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
-import { solidStateFill } from './handdrawnStyles.js';
+import { solidStateFill } from './handDrawnShapeStyles.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const forkJoin = (parent: SVG, node: Node, dir: string) => {
@@ -25,7 +25,7 @@ export const forkJoin = (parent: SVG, node: Node, dir: string) => {
   const y = (-1 * height) / 2;
 
   let shape;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const roughNode = rc.rectangle(x, y, width, height, solidStateFill(lineColor));

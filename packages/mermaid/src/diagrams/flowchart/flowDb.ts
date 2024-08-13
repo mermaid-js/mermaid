@@ -64,7 +64,7 @@ export const addVertex = function (
   props = {},
   shapeData: any
 ) {
-  console.log('addVertex', id, shapeData);
+  // console.log('addVertex', id, shapeData);
   if (!id || id.trim().length === 0) {
     return;
   }
@@ -124,10 +124,10 @@ export const addVertex = function (
     // detect if shapeData contains a newline character
 
     if (!shapeData.includes('\n')) {
-      console.log('yamlData shapeData has no new lines', shapeData);
+      // console.log('yamlData shapeData has no new lines', shapeData);
       yamlData = '{\n' + shapeData + '\n';
     } else {
-      console.log('yamlData shapeData has new lines', shapeData);
+      // console.log('yamlData shapeData has new lines', shapeData);
       yamlData = shapeData + '\n';
       // Find the position of the last } and replace it with a newline
       const lastPos = yamlData.lastIndexOf('}');
@@ -136,9 +136,9 @@ export const addVertex = function (
       }
     }
 
-    console.log('yamlData', yamlData);
+    // console.log('yamlData', yamlData);
     const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA });
-    console.log('yamlData doc', doc);
+    // console.log('yamlData doc', doc);
     if (doc?.shape) {
       //check if shape has a trailing `,` and remove it
       if (doc.shape.endsWith(',')) {

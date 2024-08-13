@@ -38,6 +38,10 @@ import { titledCylinder } from './shapes/tiltedCylinder.js';
 import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
 import { flippedTriangle } from './shapes/flippedTriangle.js';
 import { hourglass } from './shapes/hourglass.js';
+import { taggedRect } from './shapes/taggedRect.js';
+import { multiRect } from './shapes/multiRect.js';
+import { linedCylinder } from './shapes/linedCylinder.js';
+import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 
 const shapes = {
   state,
@@ -79,6 +83,10 @@ const shapes = {
   trapezoidalPentagon,
   flippedTriangle,
   hourglass,
+  taggedRect,
+  multiRect,
+  linedCylinder,
+  waveEdgedRectangle,
 };
 
 const nodeElems = new Map();

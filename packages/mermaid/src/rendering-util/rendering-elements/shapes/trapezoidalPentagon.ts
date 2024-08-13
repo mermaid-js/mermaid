@@ -4,7 +4,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
 function createTrapezoidalPentagonPathD(width = 100, height = 80) {
@@ -35,7 +35,7 @@ export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
-  if (node.look !== 'handdrawn') {
+  if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }

@@ -59,7 +59,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
-  .node .label text {
+  .rough-node .label text , .node .label text {
     text-anchor: middle;
   }
   // .flowchart-label .text-outer-tspan {

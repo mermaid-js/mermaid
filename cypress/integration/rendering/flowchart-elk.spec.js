@@ -841,6 +841,26 @@ end
           { flowchart: { titleTopMargin: 0 } }
         );
       });
+      it('Sub graphs and markdown strings', () => {
+        imgSnapshotTest(
+          `---
+config:
+  layout: elk
+---
+
+flowchart LR
+ subgraph subgraph_ko6czgs5u["Untitled subgraph"]
+        D["Option 1"]
+  end
+    C{"Evaluate"} -- One --> D
+    C -- Two --> E(("Option 2"))
+    D --> E
+      A["A"]
+
+`,
+          { flowchart: { titleTopMargin: 0 } }
+        );
+      });
     });
   });
 });
@@ -875,11 +895,10 @@ describe('Title and arrow styling #4813', () => {
     );
     cy.get('svg').should((svg) => {
       const edges = svg[0].querySelectorAll('.edges path');
-      // console.log(edges);
-      // expect(edges[0]).to.have.attr('pattern', 'solid');
-      // expect(edges[1]).to.have.attr('pattern', 'dotted');
-      // expect(edges[2]).to.have.css('stroke-width', '3.5px');
-      // expect(edges[3]).to.have.css('stroke-width', '1.5px');
+      expect(edges[0].getAttribute('class')).to.contain('edge-pattern-solid');
+      expect(edges[1].getAttribute('class')).to.contain('edge-pattern-dotted');
+      expect(edges[2].getAttribute('class')).to.contain('edge-thickness-thick');
+      expect(edges[3].getAttribute('class')).to.contain('edge-thickness-invisible');
     });
   });
 });

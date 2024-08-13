@@ -18,7 +18,6 @@ describe('when parsing directions', function () {
       D@{ shape: rounded }@`);
 
     const data4Layout = flow.parser.yy.getData();
-    console.log(data4Layout.nodes);
     expect(data4Layout.nodes.length).toBe(1);
     expect(data4Layout.nodes[0].shape).toEqual('rounded');
     expect(data4Layout.nodes[0].label).toEqual('D');
@@ -76,7 +75,6 @@ describe('when parsing directions', function () {
       `);
 
     const data4Layout = flow.parser.yy.getData();
-    console.log(data4Layout.edges);
     expect(data4Layout.nodes.length).toBe(2);
     expect(data4Layout.nodes[0].shape).toEqual('squareRect');
     expect(data4Layout.nodes[0].label).toEqual('A');
@@ -126,7 +124,6 @@ describe('when parsing directions', function () {
 `);
 
     const data4Layout = flow.parser.yy.getData();
-    console.log(data4Layout.nodes);
     expect(data4Layout.nodes.length).toBe(1);
     expect(data4Layout.nodes[0].shape).toEqual('diamond');
     expect(data4Layout.nodes[0].label).toEqual('This is a label');

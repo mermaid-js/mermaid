@@ -210,11 +210,11 @@ If set to true, ignores legacyMathML.
 
 ---
 
-### handdrawnSeed
+### handDrawnSeed
 
-• `Optional` **handdrawnSeed**: `number`
+• `Optional` **handDrawnSeed**: `number`
 
-Defines the seed to be used when using handdrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
 
 #### Defined in
 
@@ -283,7 +283,7 @@ This option decides the amount of logging to be used by mermaid.
 
 ### look
 
-• `Optional` **look**: `"classic"` | `"handdrawn"`
+• `Optional` **look**: `"classic"` | `"handDrawn"`
 
 Defines which main look to use for the diagram.
 
@@ -460,7 +460,7 @@ This is useful when you want to control how to handle syntax errors in your appl
 
 ### theme
 
-• `Optional` **theme**: `"default"` | `"forest"` | `"dark"` | `"neutral"` | `"null"`
+• `Optional` **theme**: `"default"` | `"base"` | `"dark"` | `"forest"` | `"neutral"` | `"null"`
 
 Theme, the CSS style sheet.
 You may also use `themeCSS` to override this value.

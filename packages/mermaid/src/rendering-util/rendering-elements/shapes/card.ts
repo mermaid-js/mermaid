@@ -4,7 +4,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
 import { insertPolygonShape } from './insertPolygonShape.js';
@@ -21,17 +21,13 @@ export async function card(parent: SVGAElement, node: Node): Promise<SVGAElement
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const f = 4;
   const h = bbox.height + node.padding;
-  // const m = h / f;
-  const m = 10;
   const padding = 12;
   const w = bbox.width + node.padding + padding;
   const left = 0;
   const right = w;
   const top = -h;
   const bottom = 0;
-  // const w = bbox.width + 2 * m + node.padding;
   const points = [
     { x: left + padding, y: top },
     { x: right, y: top },
@@ -44,7 +40,7 @@ export async function card(parent: SVGAElement, node: Node): Promise<SVGAElement
   let polygon: d3.Selection<SVGPolygonElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
