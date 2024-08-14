@@ -6,7 +6,6 @@ class Theme {
     this.background = '#333';
     this.primaryColor = '#1f2020';
     this.secondaryColor = lighten(this.primaryColor, 16);
-
     this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
     this.primaryBorderColor = invert(this.background);
     this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
@@ -22,7 +21,7 @@ class Theme {
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
     this.lineColor = 'calculated';
-    this.border1 = '#81B1DB';
+    this.border1 = '#ccc';
     this.border2 = rgba(255, 255, 255, 0.25);
     this.arrowheadColor = 'calculated';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
@@ -344,6 +343,8 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || lighten(this.background, 2);
     /* -------------------------------------------------- */
+
+    this.nodeBorder = this.nodeBorder || '#999';
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

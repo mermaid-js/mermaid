@@ -39,7 +39,7 @@ const getStyles = (
   }
 
   & .edge-thickness-normal {
-    stroke-width: 2px;
+    stroke-width: 1px;
   }
   & .edge-thickness-thick {
     stroke-width: 3.5px
@@ -47,7 +47,10 @@ const getStyles = (
   & .edge-pattern-solid {
     stroke-dasharray: 0;
   }
-
+  & .edge-thickness-invisible {
+    stroke-width: 0;
+    fill: none;
+  }
   & .edge-pattern-dashed{
     stroke-dasharray: 3;
   }

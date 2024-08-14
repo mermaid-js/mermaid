@@ -147,7 +147,11 @@ export const createCssStyles = (
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
       if (!isEmpty(styleClassDef.textStyles)) {
-        cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
+        cssStyles += cssImportantStyles(
+          styleClassDef.id,
+          'tspan',
+          (styleClassDef?.textStyles || []).map((s) => s.replace('color', 'fill'))
+        );
       }
     });
   }

@@ -28,6 +28,7 @@ controly
 CSSCLASS
 CYLINDEREND
 CYLINDERSTART
+DAGA
 datakey
 DEND
 descr
@@ -92,6 +93,7 @@ reqs
 rewritelinks
 rgba
 RIGHTOF
+roughjs
 sankey
 sequencenumber
 shrc
@@ -111,6 +113,7 @@ strikethrough
 stringifying
 struct
 STYLECLASS
+STYLEDEF
 STYLEOPTS
 subcomponent
 subcomponents

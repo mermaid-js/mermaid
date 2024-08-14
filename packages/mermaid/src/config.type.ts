@@ -61,9 +61,24 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: 'default' | 'forest' | 'dark' | 'neutral' | 'null';
+  theme?: 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null';
   themeVariables?: any;
   themeCSS?: string;
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn';
+  /**
+   * Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+   *
+   */
+  handDrawnSeed?: number;
+  /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
   /**
    * The maximum allowed size of the users text diagram
    */
@@ -73,6 +88,18 @@ export interface MermaidConfig {
    *
    */
   maxEdges?: number;
+  elk?: {
+    /**
+     * Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+     *
+     */
+    mergeEdges?: boolean;
+    /**
+     * Elk specific option affecting how nodes are placed.
+     *
+     */
+    nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
+  };
   darkMode?: boolean;
   htmlLabels?: boolean;
   /**
@@ -704,6 +731,8 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
   textHeight?: number;
   titleShift?: number;
   noteMargin?: number;
+  nodeSpacing?: number;
+  rankSpacing?: number;
   forkWidth?: number;
   forkHeight?: number;
   miniPadding?: number;
