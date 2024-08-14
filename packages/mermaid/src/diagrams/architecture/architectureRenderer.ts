@@ -455,13 +455,13 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   const groupElem = svg.append('g');
   groupElem.attr('class', 'architecture-groups');
 
-  drawServices(db, servicesElem, services);
+  await drawServices(db, servicesElem, services);
   drawJunctions(db, servicesElem, junctions);
 
   const cy = await layoutArchitecture(services, junctions, groups, edges, ds);
 
-  drawEdges(edgesElem, cy);
-  drawGroups(groupElem, cy);
+  await drawEdges(edgesElem, cy);
+  await drawGroups(groupElem, cy);
   positionNodes(db, cy);
 
   setupGraphViewbox(undefined, svg, getConfigField('padding'), getConfigField('useMaxWidth'));
