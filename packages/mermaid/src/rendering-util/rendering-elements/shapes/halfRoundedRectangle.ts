@@ -39,6 +39,8 @@ export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
   const w = (bbox.width + node.padding) * 1.2;
   const h = bbox.height + node.padding;
   const radius = h / 2;
+  const rx = radius;
+  const ry = radius;
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed
@@ -72,6 +74,24 @@ export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
   node.intersect = function (point) {
     log.info('Pill intersect', node, { radius, point });
     const pos = intersect.rect(node, point);
+    const y = pos.y - (node.y ?? 0);
+    if (
+      ry != 0 &&
+      (Math.abs(y) < (node.height ?? 0) / 2 ||
+        (Math.abs(y) == (node.height ?? 0) / 2 &&
+          Math.abs(pos.x - (node.x ?? 0)) > (node.width ?? 0) / 2 - rx))
+    ) {
+      let x = rx * rx * (1 - (y * y) / (ry * ry));
+      if (x != 0) {
+        x = Math.sqrt(x);
+      }
+      x = rx - x;
+      if (point.x - (node.x ?? 0) > 0) {
+        x = -x;
+      }
+
+      pos.x += x;
+    }
     return pos;
   };
 
