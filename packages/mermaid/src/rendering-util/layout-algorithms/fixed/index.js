@@ -13,7 +13,11 @@ import {
 } from '../../rendering-elements/edges.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
-const fixInterSections = (points, startNode, endNode) => {
+let nodeDB = new Map();
+
+const fixInterSections = (points, startNodeId, endNodeId) => {
+  const startNode = nodeDB.get(startNodeId);
+  const endNode = nodeDB.get(endNodeId);
   // Get the intersections
   const startIntersection = startNode.intersect(points[1]);
   const endIntersection = endNode.intersect(points[points.length - 2]);
@@ -22,6 +26,16 @@ const fixInterSections = (points, startNode, endNode) => {
   const fixedPoints = [startIntersection, ...points.slice(1, -1), endIntersection];
 
   return fixedPoints;
+};
+
+const calcIntersections = (points, startNodeId, endNodeId) => {
+  const startNode = nodeDB.get(startNodeId);
+  const endNode = nodeDB.get(endNodeId);
+  // Get the intersections
+  const startIntersection = startNode.intersect({ x: endNode.x, y: endNode.y });
+  const endIntersection = endNode.intersect({ x: startNode.x, y: startNode.y });
+
+  return [startIntersection, endIntersection];
 };
 
 const doRender = async (_elem, data4Layout, siteConfig, positions) => {
@@ -34,7 +48,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
 
-  const nodeDB = {};
+  nodeDB = new Map();
   await Promise.all(
     data4Layout.nodes.map(async function (node) {
       let pos;
@@ -59,7 +73,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
         }
         await insertNode(nodes, node, 'TB');
       }
-      nodeDB[node.id] = node;
+      nodeDB.set(node.id, node);
     })
   );
 
@@ -87,11 +101,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   for (const edge of data4Layout.edges) {
     //   log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
-    edge.points = fixInterSections(
-      positions.edges[edge.id].points,
-      nodeDB[edge.start],
-      nodeDB[edge.end]
-    );
+    edge.points = fixInterSections(positions.edges[edge.id].points, edge.start, edge.end);
     const paths = insertEdge(
       edgePaths,
       edge,
@@ -103,7 +113,9 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
     paths.updatedPath = paths.originalPath;
     positionEdgeLabel(edge, paths);
   }
-
+  if (window) {
+    window.calcIntersections = calcIntersections;
+  }
   return { elem, diff: 0 };
 };
 /**

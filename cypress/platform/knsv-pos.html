@@ -101,21 +101,21 @@
         console.error(err);
       };
       let code = `
-stateDiagram
-  S:Stillas
-  T:Tiger
-  U:Ulv
-  state Z {
-    state X {
-      Y:Ypsilon
-    }
-  }
-  A
+      stateDiagram
+        S:Stillas
+        T:Tiger
+        U:Ulv
+        state Z {
+          state X {
+            Y:Ypsilon
+          }
+        }
+        A
 
-  S --> T: angrepp
-  T --> U: Apa
-  T --> V: Varg
-        `;
+        S --> T: angrepp
+        T --> U: Apa
+        T --> V: Varg
+              `;
 
       const positions = {
         nodes: {
@@ -154,6 +154,11 @@ stateDiagram
       };
 
       const { svg } = await mermaid.render('the-id-of-the-svg', code, undefined, positions);
+      if (window?.calcIntersections) {
+        console.log('Intersections', window.calcIntersections(positions, 'S', 'T'));
+      } else {
+        console.error('calcIntersections not found');
+      }
       // console.log(svg);
       const elem = document.querySelector('#diagram');
       elem.innerHTML = svg;
