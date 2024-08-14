@@ -10,7 +10,7 @@ const newShapesSet1 = [
   'flippedTriangle',
   'hourglass',
 ] as const;
-const newShapesSet2 = ['taggedRect', 'multiRect'] as const;
+const newShapesSet2 = ['taggedRect', 'multiRect', 'lightningBolt', 'filledCircle'] as const;
 
 // Aggregate all shape sets into a single array
 const newShapesSets = [newShapesSet1, newShapesSet2] as const;

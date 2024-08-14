@@ -43,6 +43,7 @@ import { multiRect } from './shapes/multiRect.js';
 import { linedCylinder } from './shapes/linedCylinder.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { lightningBolt } from './shapes/lightningBolt.js';
+import { filledCircle } from './shapes/filledCircle.js';
 
 const shapes = {
   state,
@@ -89,6 +90,7 @@ const shapes = {
   linedCylinder,
   waveEdgedRectangle,
   lightningBolt,
+  filledCircle,
 };
 
 const nodeElems = new Map();
