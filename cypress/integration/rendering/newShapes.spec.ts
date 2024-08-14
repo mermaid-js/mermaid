@@ -10,10 +10,16 @@ const newShapesSet1 = [
   'flippedTriangle',
   'hourglass',
 ] as const;
-const newShapesSet2 = ['taggedRect', 'multiRect', 'lightningBolt', 'filledCircle'] as const;
+const newShapesSet2 = [
+  'taggedRect',
+  'multiRect',
+  'lightningBolt',
+  'filledCircle',
+  'windowPane',
+] as const;
 
 // Aggregate all shape sets into a single array
-const newShapesSets = [newShapesSet1, newShapesSet2] as const;
+const newShapesSets = [['windowPane']] as const;
 
 looks.forEach((look) => {
   directions.forEach((direction) => {
@@ -59,7 +65,7 @@ looks.forEach((look) => {
           imgSnapshotTest(flowchartCode, { look, htmlLabels: false });
         });
 
-        it.skip(`with styles`, () => {
+        it(`with styles`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           newShapesSet.forEach((newShape, index) => {
             flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'new shape' }@\n`;
