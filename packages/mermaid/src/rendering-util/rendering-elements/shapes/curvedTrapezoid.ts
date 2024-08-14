@@ -67,6 +67,28 @@ export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);
+    const rx = h / 2;
+    const ry = h / 2;
+    const y = pos.y - (node.y ?? 0);
+
+    if (
+      ry != 0 &&
+      (Math.abs(y) < (node.height ?? 0) / 2 ||
+        (Math.abs(y) == (node.height ?? 0) / 2 &&
+          Math.abs(pos.x - (node.x ?? 0)) > (node.width ?? 0) / 2 - rx))
+    ) {
+      let x = rx * rx * (1 - (y * y) / (ry * ry));
+      if (x != 0) {
+        x = Math.sqrt(x);
+      }
+      x = rx - x;
+      if (point.x - (node.x ?? 0) > 0) {
+        x = -x;
+      }
+
+      pos.x += x;
+    }
+
     return pos;
   };
 
