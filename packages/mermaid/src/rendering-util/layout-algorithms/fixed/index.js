@@ -48,15 +48,15 @@ const calcIntersectionPoint = (node, point) => {
 const calcIntersections = (points, startNodeId, endNodeId, startNodeSize, endNodeSize) => {
   const startNode = nodeDB.get(startNodeId);
   if (startNodeSize) {
-    startNode.x = startNodeSize.width;
-    startNode.y = startNodeSize.width;
+    startNode.x = startNodeSize.x;
+    startNode.y = startNodeSize.y;
     startNode.width = startNodeSize.width;
     startNode.height = startNodeSize.height;
   }
   const endNode = nodeDB.get(endNodeId);
   if (endNodeSize) {
-    endNode.x = endNodeSize.width;
-    endNode.y = endNodeSize.width;
+    endNode.x = endNodeSize.x;
+    endNode.y = endNodeSize.y;
     endNode.width = endNodeSize.width;
     endNode.height = endNodeSize.height;
   }
