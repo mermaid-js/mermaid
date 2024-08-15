@@ -554,6 +554,15 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   //     .attr('cx', point.x)
   //     .attr('cy', point.y);
   // });
+  // lineData.forEach((point) => {
+  //   elem
+  //     .append('circle')
+  //     .style('stroke', 'blue')
+  //     .style('fill', 'blue')
+  //     .attr('r', 3)
+  //     .attr('cx', point.x)
+  //     .attr('cy', point.y);
+  // });
 
   let url = '';
   if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {

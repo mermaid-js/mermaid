@@ -28,12 +28,29 @@ const fixInterSections = (points, startNodeId, endNodeId) => {
   return fixedPoints;
 };
 
+const calcIntersectionPoint = (node, point) => {
+  const intersection = node.intersect(point);
+  const dx = intersection.x - node.x;
+  const dy = intersection.y - node.y;
+
+  let pos = 'l';
+
+  // Determine the position of the intersection relative to the node
+  if (Math.abs(dx) > Math.abs(dy)) {
+    pos = dx > 0 ? 'r' : 'l'; // Right or left
+  } else {
+    pos = dy > 0 ? 'b' : 't'; // Bottom or top
+  }
+
+  return { x: intersection.x, y: intersection.y, pos };
+};
+
 const calcIntersections = (points, startNodeId, endNodeId) => {
   const startNode = nodeDB.get(startNodeId);
   const endNode = nodeDB.get(endNodeId);
   // Get the intersections
-  const startIntersection = startNode.intersect({ x: endNode.x, y: endNode.y });
-  const endIntersection = endNode.intersect({ x: startNode.x, y: startNode.y });
+  const startIntersection = calcIntersectionPoint(startNode, { x: endNode.x, y: endNode.y });
+  const endIntersection = calcIntersectionPoint(endNode, { x: startNode.x, y: startNode.y });
 
   return [startIntersection, endIntersection];
 };
