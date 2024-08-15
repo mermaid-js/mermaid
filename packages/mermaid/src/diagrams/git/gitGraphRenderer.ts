@@ -10,10 +10,9 @@ import type {
   GitGraphDBRenderProvider,
   DiagramOrientation,
 } from './gitGraphTypes.js';
-import type { GitGraphDiagramConfig } from '../../config.type.js';
 
 const DEFAULT_CONFIG = getConfig();
-const DEFAULT_GITGRAPH_CONFIG: Required<GitGraphDiagramConfig> = DEFAULT_CONFIG.gitGraph;
+const DEFAULT_GITGRAPH_CONFIG = DEFAULT_CONFIG?.gitGraph;
 
 let allCommitsDict = new Map();
 
@@ -1324,7 +1323,7 @@ if (import.meta.vitest) {
       branchPos.set('main', { pos: 0, index: 0 });
       branchPos.set('develop', { pos: 107.49609375, index: 1 });
       branchPos.set('feature', { pos: 225.70703125, index: 2 });
-      DEFAULT_GITGRAPH_CONFIG.parallelCommits = true;
+      DEFAULT_GITGRAPH_CONFIG!.parallelCommits = true;
       commits.forEach((commit, key) => {
         if (commit.parents.length > 0) {
           curPos = calculateCommitPosition(commit);
@@ -1352,7 +1351,7 @@ if (import.meta.vitest) {
       });
     });
   });
-  DEFAULT_GITGRAPH_CONFIG.parallelCommits = false;
+  DEFAULT_GITGRAPH_CONFIG!.parallelCommits = false;
   it('add', () => {
     commitPos.set('parent1', { x: 1, y: 1 });
     commitPos.set('parent2', { x: 2, y: 2 });
