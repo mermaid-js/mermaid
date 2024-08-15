@@ -21,6 +21,8 @@ import { registerLayoutLoaders } from './rendering-util/render.js';
 import type { LayoutLoaderDefinition } from './rendering-util/render.js';
 import { internalHelpers } from './internals.js';
 import type { LayoutData } from './rendering-util/types.js';
+import type { Node } from './rendering-util/types.js';
+import type { Edge } from './rendering-util/types.js';
 
 export type {
   MermaidConfig,
@@ -32,6 +34,8 @@ export type {
   UnknownDiagramError,
   LayoutLoaderDefinition,
   LayoutData,
+  Node,
+  Edge,
 };
 
 export interface RunOptions {
