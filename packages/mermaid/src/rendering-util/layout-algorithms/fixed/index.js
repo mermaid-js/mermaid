@@ -45,9 +45,21 @@ const calcIntersectionPoint = (node, point) => {
   return { x: intersection.x, y: intersection.y, pos };
 };
 
-const calcIntersections = (points, startNodeId, endNodeId) => {
+const calcIntersections = (points, startNodeId, endNodeId, startNodeSize, endNodeSize) => {
   const startNode = nodeDB.get(startNodeId);
+  if (startNodeSize) {
+    startNode.x = startNodeSize.width;
+    startNode.y = startNodeSize.width;
+    startNode.width = startNodeSize.width;
+    startNode.height = startNodeSize.height;
+  }
   const endNode = nodeDB.get(endNodeId);
+  if (endNodeSize) {
+    endNode.x = endNodeSize.width;
+    endNode.y = endNodeSize.width;
+    endNode.width = endNodeSize.width;
+    endNode.height = endNodeSize.height;
+  }
   // Get the intersections
   const startIntersection = calcIntersectionPoint(startNode, { x: endNode.x, y: endNode.y });
   const endIntersection = calcIntersectionPoint(endNode, { x: startNode.x, y: startNode.y });
@@ -62,6 +74,15 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
   const nodes = elem.insert('g').attr('class', 'nodes');
 
+  if (!positions?.nodes || !positions?.edges) {
+    positions = {};
+    if (!positions?.nodes) {
+      positions.nodes = {};
+    }
+    if (!positions?.edges) {
+      positions.edges = {};
+    }
+  }
   // Add positions for nodes that lack them
   let maxY = 0;
   data4Layout.nodes.map(function (node) {

@@ -102,9 +102,9 @@
       };
       let code = `
       stateDiagram
-        S:Stillas
-        T:Tiger
-        U:Ulv
+        S:S
+        T:T
+        U:U
         state Z {
           state X {
             Y:Ypsilon
@@ -115,13 +115,21 @@
         S --> T: angrepp
         T --> U: Apa
         T --> V: Varg
+
+        B
+        C
+        D
+              `;
+      code = `
+      stateDiagram
+       A --> B: Hello
               `;
 
-      const positions = {
+      let positions = {
         nodes: {
           S: { x: 0, y: 0 },
           T: { x: 100, y: 100, width: 100, height: 100 },
-          U: { x: 200, y: 200 },
+          U: { x: 250, y: 160 },
           V: { x: 300, y: 120 },
           Z: { x: 300, y: 10, width: 160, height: 100 },
           X: { x: 300, y: 20, width: 80, height: 60 },
@@ -137,9 +145,17 @@
             ],
           },
           edge1: {
+            // points: [
+            //   { x: 100, y: 100 },
+            //   { x: 200, y: 200 },
+            // ],
             points: [
               { x: 100, y: 100 },
-              { x: 200, y: 200 },
+              { x: 150, y: 120 },
+              { x: 190.19453144073486, y: 120 },
+              { x: 190.19453144073486, y: 152.1556251525879 },
+              { x: 230.38906288146973, y: 152.1556251525879 },
+              { x: 250, y: 160 },
             ],
           },
           edge2: {
@@ -153,13 +169,18 @@
         },
       };
 
+      positions = {
+        nodes: {},
+        edges: {},
+      };
+
       const { svg } = await mermaid.render('the-id-of-the-svg', code, undefined, positions);
-      if (window?.calcIntersections) {
-        console.log('Intersections', window.calcIntersections(positions, 'S', 'T'));
-      } else {
-        console.error('calcIntersections not found');
-      }
-      // console.log(svg);
+      // if (window?.calcIntersections) {
+      //   console.log('Intersections', window.calcIntersections(positions, 'T', 'U'));
+      // } else {
+      //   console.error('calcIntersections not found');
+      // }
+      console.log(JSON.stringify(positions));
       const elem = document.querySelector('#diagram');
       elem.innerHTML = svg;
     </script>
