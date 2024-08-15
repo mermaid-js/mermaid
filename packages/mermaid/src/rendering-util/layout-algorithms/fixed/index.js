@@ -62,18 +62,50 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
   const nodes = elem.insert('g').attr('class', 'nodes');
 
+  // Add positions for nodes that lack them
+  let maxY = 0;
+  data4Layout.nodes.map(function (node) {
+    const pos = positions.nodes[node.id];
+    if (pos) {
+      let y = pos.y;
+      if (pos.height) {
+        y += pos.height;
+      } else if (node.height) {
+        y += node.height;
+      }
+
+      maxY = Math.max(y, maxY);
+    }
+  });
+
+  let cnt = 0;
+  data4Layout.nodes.map(function (node) {
+    let pos;
+    if (!positions.nodes[node.id]) {
+      positions.nodes[node.id] = { x: cnt * 75, y: maxY + 20 };
+      cnt = cnt + 1;
+    }
+    // if (node.x === undefined || node.y === undefined) {
+    pos = positions.nodes[node.id] || { x: 0, y: 0, width: 100, height: 100 };
+    node.height = pos?.height || 50;
+    node.width = pos?.width || 50;
+  });
+
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
 
   nodeDB = new Map();
   await Promise.all(
-    data4Layout.nodes.map(async function (node) {
+    data4Layout.nodes.map(async function (node, i) {
       let pos;
-      if (node.x === undefined || node.y === undefined) {
-        pos = positions.nodes[node.id];
-        node.height = pos?.height || 0;
-        node.width = pos?.width || 0;
+      if (!positions.nodes[node.id]) {
+        positions.nodes[node.id] = { x: i * 100, y: maxY + 10, width: 50, height: 50 };
       }
+      // if (node.x === undefined || node.y === undefined) {
+      pos = positions.nodes[node.id] || { x: 0, y: 0, width: 100, height: 100 };
+      node.height = pos?.height || 50;
+      node.width = pos?.width || 50;
+      // }
       if (node.isGroup) {
         node.x = 0;
         node.y = 0;
@@ -116,8 +148,19 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
 
   // Insert the edges and position the edge labels
   for (const edge of data4Layout.edges) {
-    //   log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+    // console.info('Edge : ' + JSON.stringify(edge), edge);
 
+    if (!positions.edges[edge.id]) {
+      const startNode = positions.nodes[edge.start];
+      const endNode = positions.nodes[edge.end];
+      positions.edges[edge.id] = {
+        points: [
+          { x: startNode.x, y: startNode.y },
+          { x: (startNode.x + endNode.x) / 2, y: (startNode.y + endNode.y) / 2 },
+          { x: endNode.x, y: endNode.y },
+        ],
+      };
+    }
     edge.points = fixInterSections(positions.edges[edge.id].points, edge.start, edge.end);
     const paths = insertEdge(
       edgePaths,
