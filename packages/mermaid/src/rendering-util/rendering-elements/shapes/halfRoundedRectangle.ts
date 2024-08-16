@@ -1,5 +1,5 @@
 import { log } from '$root/logger.js';
-import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import {
@@ -8,37 +8,21 @@ import {
 } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
-function createHalfRoundedRectShapePathD(
-  x: number,
-  y: number,
-  totalWidth: number,
-  totalHeight: number,
-  radius: number
-) {
-  const rw = totalWidth - radius;
-  const rh = totalHeight;
-
-  const points = [
-    { x: x + rw, y },
-    { x, y },
-    { x, y: y + rh },
-    { x: x + rw, y: y + rh },
-  ];
-
-  const rectPath = createPathFromPoints(points);
-  const arcPath = `M ${rw},0 A ${rh / 2} ${rh / 2} 0 0 1 ${rw} ${rh}`;
-  const finalPath = `${rectPath} ${arcPath}`.replace('Z', '');
-
-  return finalPath;
+function createHalfRoundedRectShapePathD(h: number, w: number, rx: number, ry: number) {
+  return ` M ${w / 2} ${-h / 2}
+    L ${-w / 2} ${-h / 2}
+    L ${-w / 2} ${h / 2}
+    L ${w / 2} ${h / 2}
+    A ${rx} ${ry} 0 0 0 ${w / 2} ${-h / 2}`;
 }
 
 export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = (bbox.width + node.padding) * 1.2;
-  const h = bbox.height + node.padding;
-  const radius = h / 2;
+  const w = bbox.width + (node.padding ?? 0) * 2;
+  const h = bbox.height + (node.padding ?? 0) * 2;
+  const radius = Math.min(h / 2, w / 2);
   const rx = radius;
   const ry = radius;
   const { cssStyles } = node;
@@ -52,7 +36,7 @@ export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const pathData = createHalfRoundedRectShapePathD(0, 0, w, h, radius);
+  const pathData = createHalfRoundedRectShapePathD(h, w, rx, ry);
   const shapeNode = rc.path(pathData, options);
   const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
   polygon.attr('class', 'basic label-container');
@@ -65,11 +49,13 @@ export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
     polygon.attr('style', nodeStyles);
   }
 
-  polygon.attr('transform', `translate(${-w / 2}, ${-h / 2})`);
+  polygon.attr('transform', `translate(${-rx / 2 - (node.padding ?? 0) * 2}, 0)`);
+  label.attr(
+    'transform',
+    `translate(${-w / 2 - rx / 2 - (node.padding ?? 0)}, ${-h / 2 + (node.padding ?? 0)})`
+  );
 
   updateNodeBounds(node, polygon);
-
-  label.attr('transform', `translate(${-bbox.width / 2}, ${h / 2 - bbox.height})`);
 
   node.intersect = function (point) {
     log.info('Pill intersect', node, { radius, point });
