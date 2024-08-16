@@ -49,7 +49,10 @@ export const slopedRect = async (parent: SVGAElement, node: Node) => {
   }
 
   polygon.attr('transform', `translate(0, ${h / 4})`);
-  label.attr('transform', `translate(${-w / 2 + (node.padding ?? 0)}, ${-(node.padding ?? 0)})`);
+  label.attr(
+    'transform',
+    `translate(${-w / 2 + (node.padding ?? 0)}, ${-h / 4 + (node.padding ?? 0)})`
+  );
 
   updateNodeBounds(node, polygon);
 

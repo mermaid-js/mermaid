@@ -14,12 +14,14 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = bbox.width + node.padding + 20;
-  const h = (Math.sqrt(3) / 2) * w + (node.padding ?? 0);
+  const w = bbox.width + (node.padding ?? 0);
+  const h = w + bbox.height;
+
+  const tw = w + bbox.height;
   const points = [
     { x: 0, y: 0 },
-    { x: w, y: 0 },
-    { x: w / 2, y: -h },
+    { x: tw, y: 0 },
+    { x: tw / 2, y: -h },
   ];
 
   const { cssStyles } = node;
@@ -36,7 +38,7 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   const polygon = shapeSvg
     .insert(() => roughNode, ':first-child')
-    .attr('transform', `translate(${-w / 2}, ${h / 2})`);
+    .attr('transform', `translate(${-h / 2}, ${h / 2})`);
 
   if (cssStyles) {
     polygon.attr('style', cssStyles);
