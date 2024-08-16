@@ -14,12 +14,14 @@ export const flippedTriangle = async (parent: SVGAElement, node: Node): Promise<
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = bbox.width + node.padding + 20;
-  const h = (Math.sqrt(3) / 2) * w + (node.padding ?? 0);
+  const w = bbox.width + (node.padding ?? 0);
+  const h = w + bbox.height;
+
+  const tw = w + bbox.height;
   const points = [
     { x: 0, y: -h },
-    { x: w, y: -h },
-    { x: w / 2, y: 0 },
+    { x: tw, y: -h },
+    { x: tw / 2, y: 0 },
   ];
 
   const { cssStyles } = node;
@@ -34,22 +36,22 @@ export const flippedTriangle = async (parent: SVGAElement, node: Node): Promise<
   const pathData = createPathFromPoints(points);
   const roughNode = rc.path(pathData, options);
 
-  const polygon = shapeSvg
+  const flippedTriangle = shapeSvg
     .insert(() => roughNode, ':first-child')
-    .attr('transform', `translate(${-w / 2}, ${h / 2})`);
+    .attr('transform', `translate(${-h / 2}, ${h / 2})`);
 
-  if (cssStyles) {
-    polygon.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    flippedTriangle.selectChildren('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    polygon.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    flippedTriangle.selectChildren('path').attr('style', nodeStyles);
   }
 
   node.width = w;
   node.height = h;
 
-  updateNodeBounds(node, polygon);
+  updateNodeBounds(node, flippedTriangle);
 
   label.attr('transform', `translate(${-bbox.width / 2}, ${-h / 2})`);
 
