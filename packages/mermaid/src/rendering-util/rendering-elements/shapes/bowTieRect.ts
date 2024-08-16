@@ -21,19 +21,29 @@ export const bowTieRect = async (parent: SVGAElement, node: Node) => {
   let shape: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
+  const points = [
+    { x: 0, y: h },
+    { x: w / 2, y: h },
+    { x: w * 1.1, y: h },
+    { x: w, y: h / 2 },
+    { x: w * 1.1, y: 0 },
+    { x: w / 2, y: 0 },
+    { x: 0, y: 0 },
+  ];
+
+  const pathData = createBowTieRectPathD(w * 0.05, 0, w, h);
+
   if (node.look === 'handDrawn') {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
-    const pathData = createBowTieRectPathD(0, 0, w, h);
-    const shapeNode = rc.path(pathData, userNodeOverrides(node, {}));
-
+    const options = userNodeOverrides(node, {});
+    const shapeNode = rc.path(pathData, options);
     shape = shapeSvg.insert(() => shapeNode, ':first-child');
     shape.attr('class', 'basic label-container');
     if (cssStyles) {
       shape.attr('style', cssStyles);
     }
   } else {
-    const pathData = createBowTieRectPathD(0, 0, w, h);
     shape = shapeSvg
       .insert('path', ':first-child')
       .attr('d', pathData)
@@ -47,7 +57,29 @@ export const bowTieRect = async (parent: SVGAElement, node: Node) => {
   updateNodeBounds(node, shape);
 
   node.intersect = function (point) {
-    const pos = intersect.rect(node, point);
+    const pos = intersect.polygon(node, points, point);
+    const rx = h;
+    const ry = h;
+    const y = pos.y - (node.y ?? 0);
+
+    if (
+      ry != 0 &&
+      (Math.abs(y) < (node.height ?? 0) / 2 ||
+        (Math.abs(y) == (node.height ?? 0) / 2 &&
+          Math.abs(pos.x - (node.x ?? 0)) > (node.width ?? 0) / 2 - rx))
+    ) {
+      let x = rx * rx * (1 - (y * y) / (ry * ry));
+      if (x != 0) {
+        x = Math.sqrt(x);
+      }
+      x = rx - x;
+      if (point.x - (node.x ?? 0) > 0) {
+        x = -x;
+      }
+
+      pos.x += x;
+    }
+
     return pos;
   };
 
