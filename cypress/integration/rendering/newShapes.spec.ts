@@ -18,8 +18,18 @@ const newShapesSet2 = [
   'windowPane',
 ] as const;
 
+const newShapesSet3 = [
+  'halfRoundedRectangle',
+  'curvedTrapezoid',
+  'bowTieRect',
+  'dividedRect',
+  'crossedCircle',
+] as const;
+
+const newShapesSet4 = ['waveRectangle', 'trapezoidalPentagon', 'linedCylinder'] as const;
+
 // Aggregate all shape sets into a single array
-const newShapesSets = [['windowPane']] as const;
+const newShapesSets = [newShapesSet1, newShapesSet2, newShapesSet3, newShapesSet4] as const;
 
 looks.forEach((look) => {
   directions.forEach((direction) => {
