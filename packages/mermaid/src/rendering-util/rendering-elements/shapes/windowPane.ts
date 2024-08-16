@@ -51,20 +51,20 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
   const innerSecondPath = createPathFromPoints(innerSecondPathPoints);
   const innerSecondNode = rc.path(innerSecondPath, options);
 
-  const taggedRect = shapeSvg.insert('g', ':first-child');
-  taggedRect.insert(() => innerNode, ':first-child');
-  taggedRect.insert(() => innerSecondNode, ':first-child');
-  taggedRect.insert(() => outerNode, ':first-child');
-  taggedRect.attr('transform', `translate(${rectOffset / 2}, ${rectOffset / 2})`);
+  const windowPane = shapeSvg.insert('g', ':first-child');
+  windowPane.insert(() => innerNode, ':first-child');
+  windowPane.insert(() => innerSecondNode, ':first-child');
+  windowPane.insert(() => outerNode, ':first-child');
+  windowPane.attr('transform', `translate(${rectOffset / 2}, ${rectOffset / 2})`);
 
-  taggedRect.attr('class', 'basic label-container');
+  windowPane.attr('class', 'basic label-container');
 
   if (cssStyles) {
-    taggedRect.attr('style', cssStyles);
+    windowPane.attr('style', cssStyles);
   }
 
   if (nodeStyles) {
-    taggedRect.attr('style', nodeStyles);
+    windowPane.attr('style', nodeStyles);
   }
 
   label.attr(
@@ -72,7 +72,7 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
     `translate(${-(bbox.width / 2) + rectOffset / 2}, ${-(bbox.height / 2) + rectOffset / 2})`
   );
 
-  updateNodeBounds(node, taggedRect);
+  updateNodeBounds(node, windowPane);
 
   node.intersect = function (point) {
     const pos = intersect.polygon(node, outerPathPoints, point);

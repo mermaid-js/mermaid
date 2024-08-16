@@ -24,10 +24,10 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const options = userNodeOverrides(node, {});
 
   const rectPoints = [
-    { x, y },
+    { x: x - tagWidth, y },
     { x: x + w, y },
     { x: x + w, y: y + h },
-    { x, y: y + h },
+    { x: x - tagWidth, y: y + h },
   ];
 
   const tagPoints = [
@@ -48,8 +48,8 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const tagNode = rc.path(tagPath, options);
 
   const taggedRect = shapeSvg.insert('g', ':first-child');
+  taggedRect.insert(() => tagNode, ':first-child');
   taggedRect.insert(() => rectNode, ':first-child');
-  taggedRect.insert(() => tagNode);
 
   taggedRect.attr('class', 'basic label-container');
 
@@ -60,11 +60,12 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   if (nodeStyles) {
     taggedRect.attr('style', nodeStyles);
   }
+  taggedRect.attr('transform', `translate(${tagWidth / 2}, 0)`);
 
   updateNodeBounds(node, taggedRect);
 
   node.intersect = function (point) {
-    const pos = intersect.rect(node, point);
+    const pos = intersect.polygon(node, rectPoints, point);
 
     return pos;
   };
