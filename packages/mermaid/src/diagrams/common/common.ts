@@ -407,6 +407,7 @@ export const renderMarkdown = async (text: string): Promise<string> => {
     })
   );
 
+  // make sure every code block has a language - design will look bad otherwise
   marked.use({
     hooks: {
       processAllTokens: (tokens) =>

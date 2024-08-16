@@ -22,9 +22,10 @@
 %x text
 %%
 
-<text>"]"                                   										{ this.popState(); return 'SQE'; }
-<text>[^\]]+                                                    { return 'SQC'; }
-<*>(":"\s*[\n\s]*\[)                  													{ this.pushState("text"); return 'SQS'; }
+<text>"]"                                   										{ this.counter--; if (this.counter === 0) {this.popState(); return 'MDE'; } return 'SQE'; }
+<text>"["                                                       { this.counter++; return 'SQS' }
+<text>[^\]\[]+                                                    { return 'MDC'; }
+<INITIAL>(":"\s*[\n\s]*\[)                  													{ this.pushState("text"); this.counter = 1; return 'MDS'; }
 [\n]+                                                           return 'NEWLINE';
 \s+                                                             /* skip all whitespace */
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
@@ -248,23 +249,32 @@ note_statement
 		$2[0] = $2[0].actor;
 		$2[1] = $2[1].actor;
 		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text:$4}];}
-	| 'note' placement actor SQS mdtext SQE 'NEWLINE'
+	| 'note' placement actor MDS mdtext MDE 'NEWLINE'
 	{
-		$$ = [$3, {type:'addNote', placement:$placement, actor:$actor.actor, text:$mdtext }];}
-	| 'note' 'over' actor_pair SQS mdtext SQE 'NEWLINE'
+		$$ = [$3, {type:'addNote', placement:$placement, actor:$actor.actor, text: $mdtext }];}
+	| 'note' 'over' actor_pair MDS mdtext MDE 'NEWLINE'
 	{
 		// Coerce actor_pair into a [to, from, ...] array
 		$2 = [].concat($3, $3).slice(0, 2);
 		$2[0] = $2[0].actor;
 		$2[1] = $2[1].actor;
-		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text:$mdtext}];}
+		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text: $mdtext}];}
 	;
 
 mdtext
-  : SQC
-  { $$ = {type: 'text', text: $SQC} }
+  : mdtext SQS mdtext SQE
+  {
+    $$ = {type: 'text', text: `${$1.text}[${$3.text}]`};
+  }
+  | mdtext MDC
+  {
+    $$ = {type: 'text', text: `${$1.text}${$2}`};
+  }
+  | MDC
+  {
+    $$ = {type: 'text', text: $1};
+  }
   ;
-
 
 links_statement
 	: 'links' actor text2
