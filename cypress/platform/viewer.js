@@ -1,5 +1,5 @@
 import mermaid from './mermaid.esm.mjs';
-import flowchartELK from './mermaid-flowchart-elk.esm.mjs';
+import { layouts } from './mermaid-layout-elk.esm.mjs';
 import externalExample from './mermaid-example-diagram.esm.mjs';
 import zenUml from './mermaid-zenuml.esm.mjs';
 
@@ -46,7 +46,9 @@ const contentLoaded = async function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
-    await mermaid.registerExternalDiagrams([externalExample, zenUml, flowchartELK]);
+    await mermaid.registerExternalDiagrams([externalExample, zenUml]);
+
+    mermaid.registerLayoutLoaders(layouts);
     mermaid.initialize(graphObj.mermaid);
     await mermaid.run();
   }
