@@ -88,12 +88,7 @@ const choice = (parent, node) => {
 };
 
 const historyBase = async (parent, node) => {
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(
-    parent,
-    node,
-    getClassesFromNode(node, undefined),
-    true
-  );
+  const { shapeSvg } = await labelHelper(parent, node, getClassesFromNode(node, undefined), true);
   const circle = shapeSvg.insert('circle', ':first-child');
 
   // center the circle around its coordinate
@@ -111,8 +106,8 @@ const historyBase = async (parent, node) => {
   updateNodeBounds(node, circle);
 
   node.intersect = function (point) {
-    log.info('History intersect', node, bbox.width / 2 + halfPadding, point);
-    return intersect.circle(node, bbox.width / 2 + halfPadding, point);
+    log.info('History intersect', node, 16, point);
+    return intersect.circle(node, 16, point);
   };
 
   return shapeSvg;
