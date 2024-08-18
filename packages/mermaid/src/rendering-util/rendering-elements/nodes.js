@@ -22,6 +22,7 @@ import { lean_left } from './shapes/leanLeft.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
 import { labelRect } from './shapes/labelRect.js';
+import { history, deephistory } from './shapes/history.js';
 
 const shapes = {
   state,
@@ -47,6 +48,8 @@ const shapes = {
   trapezoid,
   inv_trapezoid,
   labelRect,
+  history,
+  deephistory,
 };
 
 const nodeElems = new Map();
