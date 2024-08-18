@@ -115,11 +115,13 @@ const historyBase = async (parent, node) => {
 
 const history = async (parent, node) => {
   node.labelText = 'H';
+  node.labelStyle = 'font-weight: bold;';
   return await historyBase(parent, node);
 };
 
 const deephistory = async (parent, node) => {
   node.labelText = 'H*';
+  node.labelStyle = 'font-weight: bold;';
   return await historyBase(parent, node);
 };
 
