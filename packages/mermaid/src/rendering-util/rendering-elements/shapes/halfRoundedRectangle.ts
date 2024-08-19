@@ -9,20 +9,20 @@ import {
 import rough from 'roughjs';
 
 function createHalfRoundedRectShapePathD(h: number, w: number, rx: number, ry: number) {
-  return ` M ${w / 2} ${-h / 2}
-    L ${-w / 2} ${-h / 2}
-    L ${-w / 2} ${h / 2}
-    L ${w / 2} ${h / 2}
-    A ${rx} ${ry} 0 0 0 ${w / 2} ${-h / 2}`;
+  return ` M ${w} ${h}
+    L ${0} ${h}
+    L ${0} ${0}
+    L ${w} ${0}
+    A ${rx} ${ry} 0 0 1 ${w} ${h}Z`;
 }
 
 export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + (node.padding ?? 0) * 2;
-  const h = bbox.height + (node.padding ?? 0) * 2;
-  const radius = Math.min(h / 2, w / 2);
+  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
+  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const radius = h / 2;
   const rx = radius;
   const ry = radius;
   const { cssStyles } = node;
@@ -49,10 +49,10 @@ export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
     polygon.selectChildren('path').attr('style', nodeStyles);
   }
 
-  polygon.attr('transform', `translate(${-rx / 2 - (node.padding ?? 0) * 2}, 0)`);
+  polygon.attr('transform', `translate(${-w / 2 - h / 4}, ${-h / 2})`);
   label.attr(
     'transform',
-    `translate(${-w / 2 - rx / 2 - (node.padding ?? 0)}, ${-h / 2 + (node.padding ?? 0)})`
+    `translate(${-w / 2 - (node.padding ?? 0) - h / 8}, ${-h / 2 + (node.padding ?? 0)})`
   );
 
   updateNodeBounds(node, polygon);
@@ -63,6 +63,7 @@ export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
     const y = pos.y - (node.y ?? 0);
     if (
       ry != 0 &&
+      pos.x > (node.x ?? 0) &&
       (Math.abs(y) < (node.height ?? 0) / 2 ||
         (Math.abs(y) == (node.height ?? 0) / 2 &&
           Math.abs(pos.x - (node.x ?? 0)) > (node.width ?? 0) / 2 - rx))
