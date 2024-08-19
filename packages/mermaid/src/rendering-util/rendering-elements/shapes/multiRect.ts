@@ -46,7 +46,7 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
     { x, y },
   ];
 
-  if (node.look !== 'handdrawn') {
+  if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
@@ -56,18 +56,17 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
   const innerPath = createPathFromPoints(innerPathPoints);
   const innerNode = rc.path(innerPath, options);
 
-  const taggedRect = shapeSvg.insert('g', ':first-child');
-  taggedRect.insert(() => innerNode, ':first-child');
-  taggedRect.insert(() => outerNode, ':first-child');
+  const multiRect = shapeSvg.insert(() => innerNode, ':first-child');
+  multiRect.insert(() => outerNode, ':first-child');
 
-  taggedRect.attr('class', 'basic label-container');
+  multiRect.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    taggedRect.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    multiRect.selectAll('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    taggedRect.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    multiRect.selectAll('path').attr('style', nodeStyles);
   }
 
   label.attr(
@@ -75,7 +74,7 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
     `translate(${-(bbox.width / 2) - rectOffset}, ${-(bbox.height / 2) + rectOffset})`
   );
 
-  updateNodeBounds(node, taggedRect);
+  updateNodeBounds(node, multiRect);
 
   node.intersect = function (point) {
     const pos = intersect.polygon(node, outerPathPoints, point);

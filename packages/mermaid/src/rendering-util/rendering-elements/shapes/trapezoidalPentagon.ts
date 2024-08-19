@@ -7,21 +7,6 @@ import {
 } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
-function createTrapezoidalPentagonPathD(width = 100, height = 80) {
-  const topOffset = 30,
-    slopeHeight = 15;
-
-  const points = [
-    { x: topOffset, y: 0 },
-    { x: width - topOffset, y: 0 },
-    { x: width, y: slopeHeight },
-    { x: width, y: height },
-    { x: 0, y: height },
-    { x: 0, y: slopeHeight },
-  ];
-  return createPathFromPoints(points);
-}
-
 export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -40,17 +25,30 @@ export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const pathData = createTrapezoidalPentagonPathD(w, h);
+  const topOffset = 30;
+  const slopeHeight = 15;
+
+  const points = [
+    { x: topOffset, y: 0 },
+    { x: w - topOffset, y: 0 },
+    { x: w, y: slopeHeight },
+    { x: w, y: h },
+    { x: 0, y: h },
+    { x: 0, y: slopeHeight },
+  ];
+
+  const pathData = createPathFromPoints(points);
   const shapeNode = rc.path(pathData, options);
 
   const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
   polygon.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    polygon.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    polygon.selectChildren('path').attr('style', cssStyles);
   }
-  if (nodeStyles) {
-    polygon.attr('style', nodeStyles);
+
+  if (nodeStyles && node.look !== 'handDrawn') {
+    polygon.selectChildren('path').attr('style', nodeStyles);
   }
 
   polygon.attr('transform', `translate(${-w / 2}, ${-h / 2})`);
@@ -58,7 +56,7 @@ export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
   updateNodeBounds(node, polygon);
 
   node.intersect = function (point) {
-    const pos = intersect.rect(node, point);
+    const pos = intersect.polygon(node, points, point);
     return pos;
   };
 

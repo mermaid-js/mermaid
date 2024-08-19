@@ -42,7 +42,7 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
     // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
-    const pathData = createCylinderPathWithInnerArcD(0, ry, w, h, rx, ry, outerOffset);
+    const pathData = createCylinderPathWithInnerArcD(0, 0, w, h, rx, ry, outerOffset);
     const innerLine = rc.path(pathData, options);
 
     cylinder = shapeSvg.insert(() => innerLine, ':first-child');

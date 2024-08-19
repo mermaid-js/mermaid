@@ -47,19 +47,20 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const tagPath = createPathFromPoints(tagPoints);
   const tagNode = rc.path(tagPath, options);
 
-  const taggedRect = shapeSvg.insert('g', ':first-child');
-  taggedRect.insert(() => tagNode, ':first-child');
+  const taggedRect = shapeSvg.insert(() => tagNode, ':first-child');
   taggedRect.insert(() => rectNode, ':first-child');
 
   taggedRect.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    taggedRect.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    taggedRect.selectAll('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    taggedRect.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    taggedRect.selectAll('path').attr('style', nodeStyles);
   }
+  taggedRect.attr('transform', `translate(${tagWidth / 2}, 0)`);
+
   taggedRect.attr('transform', `translate(${tagWidth / 2}, 0)`);
 
   updateNodeBounds(node, taggedRect);

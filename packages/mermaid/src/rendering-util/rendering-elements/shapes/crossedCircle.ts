@@ -42,18 +42,17 @@ export const crossedCircle = async (parent: SVGAElement, node: Node) => {
   const linePath = createLine(radius);
   const lineNode = rc.path(linePath, options);
 
-  const crossedCircle = shapeSvg.insert('g', ':first-child');
-  crossedCircle.insert(() => circleNode, ':first-child');
+  const crossedCircle = shapeSvg.insert(() => circleNode, ':first-child');
   crossedCircle.insert(() => lineNode);
 
   crossedCircle.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    crossedCircle.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    crossedCircle.selectAll('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    crossedCircle.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    crossedCircle.selectAll('path').attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, crossedCircle);

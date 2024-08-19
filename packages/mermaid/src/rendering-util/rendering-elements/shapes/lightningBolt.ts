@@ -40,18 +40,18 @@ export const lightningBolt = async (parent: SVGAElement, node: Node) => {
   const linePath = createPathFromPoints(points);
   const lineNode = rc.path(linePath, options);
 
-  const lightningBolt = shapeSvg.insert('g', ':first-child');
-  lightningBolt.insert(() => lineNode, ':first-child');
+  const lightningBolt = shapeSvg.insert(() => lineNode, ':first-child');
 
   lightningBolt.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    lightningBolt.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    lightningBolt.selectAll('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    lightningBolt.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    lightningBolt.selectAll('path').attr('style', nodeStyles);
   }
+
   lightningBolt.attr('transform', `translate(-${width / 2},${-height})`);
 
   updateNodeBounds(node, lightningBolt);

@@ -40,12 +40,12 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
     .insert(() => roughNode, ':first-child')
     .attr('transform', `translate(${-h / 2}, ${h / 2})`);
 
-  if (cssStyles) {
-    polygon.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    polygon.selectChildren('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    polygon.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    polygon.selectChildren('path').attr('style', nodeStyles);
   }
 
   node.width = w;

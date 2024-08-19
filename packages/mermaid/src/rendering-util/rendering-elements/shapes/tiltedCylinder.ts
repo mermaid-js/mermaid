@@ -38,17 +38,16 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const cylinderPath = createCylinderPathD(rx, ry, w, h);
   const cylinderNode = rc.path(cylinderPath, options);
 
-  const tiltedCylinder = shapeSvg.insert('g', ':first-child');
-  tiltedCylinder.insert(() => cylinderNode, ':first-child');
+  const tiltedCylinder = shapeSvg.insert(() => cylinderNode, ':first-child');
 
   tiltedCylinder.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    tiltedCylinder.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    tiltedCylinder.selectChildren('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    tiltedCylinder.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    tiltedCylinder.selectChildren('path').attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, tiltedCylinder);

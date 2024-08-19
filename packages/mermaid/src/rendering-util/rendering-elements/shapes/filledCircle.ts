@@ -27,17 +27,16 @@ export const filledCircle = async (parent: SVGAElement, node: Node) => {
 
   const circleNode = rc.circle(0, 0, radius * 2, options);
 
-  const filledCircle = shapeSvg.insert('g', ':first-child');
-  filledCircle.insert(() => circleNode, ':first-child');
+  const filledCircle = shapeSvg.insert(() => circleNode, ':first-child');
 
   filledCircle.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    filledCircle.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    filledCircle.selectAll('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    filledCircle.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    filledCircle.selectAll('path').attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, filledCircle);

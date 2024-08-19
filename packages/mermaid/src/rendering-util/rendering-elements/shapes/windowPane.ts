@@ -39,7 +39,7 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
     { x, y: y + h },
   ];
 
-  if (node.look !== 'handdrawn') {
+  if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
@@ -51,20 +51,19 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
   const innerSecondPath = createPathFromPoints(innerSecondPathPoints);
   const innerSecondNode = rc.path(innerSecondPath, options);
 
-  const windowPane = shapeSvg.insert('g', ':first-child');
-  windowPane.insert(() => innerNode, ':first-child');
+  const windowPane = shapeSvg.insert(() => innerNode, ':first-child');
   windowPane.insert(() => innerSecondNode, ':first-child');
   windowPane.insert(() => outerNode, ':first-child');
   windowPane.attr('transform', `translate(${rectOffset / 2}, ${rectOffset / 2})`);
 
   windowPane.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    windowPane.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    windowPane.selectAll('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    windowPane.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    windowPane.selectAll('path').attr('style', nodeStyles);
   }
 
   label.attr(

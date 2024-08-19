@@ -40,12 +40,12 @@ export const slopedRect = async (parent: SVGAElement, node: Node) => {
   const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
   polygon.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    polygon.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    polygon.selectChildren('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    polygon.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    polygon.selectChildren('path').attr('style', nodeStyles);
   }
 
   polygon.attr('transform', `translate(0, ${h / 4})`);
