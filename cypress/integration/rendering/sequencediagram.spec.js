@@ -242,6 +242,33 @@ describe('Sequence diagram', () => {
       `
     );
   });
+  it('should render a sequence diagram with markdown notes', () => {
+    imgSnapshotTest(
+      `
+        sequenceDiagram
+        participant a as Alice
+        participant j as John
+        a->>j: Hello John, how are you?
+        note over a, j: [ This is a **bold** note
+          \`\`\`json
+          {
+            "name": "Alice",
+            "age": 30
+          }
+          \`\`\`
+        ]
+        j-->>a: Great!
+        note right of a:
+        [
+          This is another \`markdown\` note
+        ]
+      `,
+      {
+        logLevel: 0,
+        sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' },
+      }
+    );
+  });
   describe('font settings', () => {
     it('should render different note fonts when configured', () => {
       imgSnapshotTest(
