@@ -58,7 +58,7 @@ importers:
         version: 4.2.4
       '@vitest/coverage-v8':
         specifier: ^1.4.0
-        version: 1.6.0(vitest@1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.3))
+        version: 1.6.0(vitest@1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.6))
       '@vitest/spy':
         specifier: ^1.4.0
         version: 1.6.0
@@ -199,13 +199,13 @@ importers:
         version: 8.0.0(eslint@9.8.0)(typescript@5.4.5)
       vite:
         specifier: ^5.2.3
-        version: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
+        version: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
       vite-plugin-istanbul:
         specifier: ^6.0.0
-        version: 6.0.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))
+        version: 6.0.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))
       vitest:
         specifier: ^1.4.0
-        version: 1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.3)
+        version: 1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.6)
 
   packages/mermaid:
     dependencies:
@@ -462,10 +462,10 @@ importers:
         version: 0.59.4
       '@vite-pwa/vitepress':
         specifier: ^0.4.0
-        version: 0.4.0(vite-plugin-pwa@0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))
+        version: 0.4.0(vite-plugin-pwa@0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))
       '@vitejs/plugin-vue':
         specifier: ^5.0.0
-        version: 5.1.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(vue@3.4.35(typescript@5.4.5))
+        version: 5.1.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))(vue@3.4.35(typescript@5.4.5))
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
@@ -477,19 +477,19 @@ importers:
         version: 1.1.2
       unocss:
         specifier: ^0.59.0
-        version: 0.59.4(postcss@8.4.40)(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))
+        version: 0.59.4(postcss@8.4.40)(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))
       unplugin-vue-components:
         specifier: ^0.26.0
         version: 0.26.0(@babel/parser@7.25.3)(rollup@2.79.1)(vue@3.4.35(typescript@5.4.5))
       vite:
         specifier: ^5.0.0
-        version: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
+        version: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
       vite-plugin-pwa:
         specifier: ^0.19.7
-        version: 0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
+        version: 0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
       vitepress:
         specifier: 1.1.4
-        version: 1.1.4(@algolia/client-search@4.24.0)(@types/node@20.14.14)(axios@1.7.3)(postcss@8.4.40)(search-insights@2.15.0)(terser@5.31.3)(typescript@5.4.5)
+        version: 1.1.4(@algolia/client-search@4.24.0)(@types/node@20.14.14)(axios@1.7.3)(postcss@8.4.40)(search-insights@2.15.0)(terser@5.31.6)(typescript@5.4.5)
       workbox-window:
         specifier: ^7.0.0
         version: 7.1.0
@@ -7845,6 +7845,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  terser@5.31.6:
+    resolution: {integrity: sha512-PQ4DAriWzKj+qgehQ7LK5bQqCFNMmlhjR2PFFLuqGCpuCAauxemVBWwWOxo3UIwWQx8+Pr61Df++r76wDmkQBg==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   test-exclude@6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
     engines: {node: '>=8'}
@@ -10978,7 +10983,7 @@ snapshots:
     dependencies:
       serialize-javascript: 6.0.2
       smob: 1.5.0
-      terser: 5.31.3
+      terser: 5.31.6
     optionalDependencies:
       rollup: 2.79.1
 
@@ -11608,13 +11613,13 @@ snapshots:
       '@typescript-eslint/types': 8.0.0
       eslint-visitor-keys: 3.4.3
 
-  '@unocss/astro@0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))':
+  '@unocss/astro@0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))':
     dependencies:
       '@unocss/core': 0.59.4
       '@unocss/reset': 0.59.4
-      '@unocss/vite': 0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))
+      '@unocss/vite': 0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))
     optionalDependencies:
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
+      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
     transitivePeerDependencies:
       - rollup
 
@@ -11745,7 +11750,7 @@ snapshots:
     dependencies:
       '@unocss/core': 0.59.4
 
-  '@unocss/vite@0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))':
+  '@unocss/vite@0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
@@ -11757,20 +11762,25 @@ snapshots:
       chokidar: 3.6.0
       fast-glob: 3.3.2
       magic-string: 0.30.11
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
+      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
     transitivePeerDependencies:
       - rollup
 
-  '@vite-pwa/vitepress@0.4.0(vite-plugin-pwa@0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))':
+  '@vite-pwa/vitepress@0.4.0(vite-plugin-pwa@0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))':
     dependencies:
-      vite-plugin-pwa: 0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
+      vite-plugin-pwa: 0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
 
   '@vitejs/plugin-vue@5.1.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(vue@3.4.35(typescript@5.4.5))':
     dependencies:
       vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
       vue: 3.4.35(typescript@5.4.5)
 
-  '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.3))':
+  '@vitejs/plugin-vue@5.1.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))(vue@3.4.35(typescript@5.4.5))':
+    dependencies:
+      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
+      vue: 3.4.35(typescript@5.4.5)
+
+  '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.6))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -11785,7 +11795,7 @@ snapshots:
       std-env: 3.7.0
       strip-literal: 2.1.0
       test-exclude: 6.0.0
-      vitest: 1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.3)
+      vitest: 1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.6)
     transitivePeerDependencies:
       - supports-color
 
@@ -11820,7 +11830,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.0.1
       sirv: 2.0.4
-      vitest: 1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.3)
+      vitest: 1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.6)
 
   '@vitest/utils@1.6.0':
     dependencies:
@@ -17679,6 +17689,13 @@ snapshots:
       commander: 2.20.3
       source-map-support: 0.5.21
 
+  terser@5.31.6:
+    dependencies:
+      '@jridgewell/source-map': 0.3.6
+      acorn: 8.12.1
+      commander: 2.20.3
+      source-map-support: 0.5.21
+
   test-exclude@6.0.0:
     dependencies:
       '@istanbuljs/schema': 0.1.3
@@ -17970,9 +17987,9 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss@0.59.4(postcss@8.4.40)(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3)):
+  unocss@0.59.4(postcss@8.4.40)(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6)):
     dependencies:
-      '@unocss/astro': 0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))
+      '@unocss/astro': 0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))
       '@unocss/cli': 0.59.4(rollup@2.79.1)
       '@unocss/core': 0.59.4
       '@unocss/extractor-arbitrary-variants': 0.59.4
@@ -17991,9 +18008,9 @@ snapshots:
       '@unocss/transformer-compile-class': 0.59.4
       '@unocss/transformer-directives': 0.59.4
       '@unocss/transformer-variant-group': 0.59.4
-      '@unocss/vite': 0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))
+      '@unocss/vite': 0.59.4(rollup@2.79.1)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))
     optionalDependencies:
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
+      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -18084,13 +18101,13 @@ snapshots:
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
 
-  vite-node@1.6.0(@types/node@20.14.14)(terser@5.31.3):
+  vite-node@1.6.0(@types/node@20.14.14)(terser@5.31.6):
     dependencies:
       cac: 6.7.14
       debug: 4.3.6(supports-color@8.1.1)
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
+      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -18101,7 +18118,7 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-istanbul@6.0.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3)):
+  vite-plugin-istanbul@6.0.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6)):
     dependencies:
       '@istanbuljs/load-nyc-config': 1.1.0
       espree: 10.1.0
@@ -18109,16 +18126,16 @@ snapshots:
       picocolors: 1.0.1
       source-map: 0.7.4
       test-exclude: 6.0.0
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
+      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-pwa@0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0):
+  vite-plugin-pwa@0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0):
     dependencies:
       debug: 4.3.6(supports-color@8.1.1)
       fast-glob: 3.3.2
       pretty-bytes: 6.1.1
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
+      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
       workbox-build: 7.1.1(@types/babel__core@7.20.5)
       workbox-window: 7.1.0
     transitivePeerDependencies:
@@ -18133,6 +18150,16 @@ snapshots:
       '@types/node': 20.14.14
       fsevents: 2.3.3
       terser: 5.31.3
+
+  vite@5.3.5(@types/node@20.14.14)(terser@5.31.6):
+    dependencies:
+      esbuild: 0.21.5
+      postcss: 8.4.40
+      rollup: 4.20.0
+    optionalDependencies:
+      '@types/node': 20.14.14
+      fsevents: 2.3.3
+      terser: 5.31.6
 
   vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.1.4(@algolia/client-search@4.24.0)(@types/node@20.14.14)(axios@1.7.3)(postcss@8.4.40)(search-insights@2.15.0)(terser@5.31.3)(typescript@5.4.5))(vue@3.4.35(typescript@5.4.5)):
     dependencies:
@@ -18190,7 +18217,53 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitest@1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.3):
+  vitepress@1.1.4(@algolia/client-search@4.24.0)(@types/node@20.14.14)(axios@1.7.3)(postcss@8.4.40)(search-insights@2.15.0)(terser@5.31.6)(typescript@5.4.5):
+    dependencies:
+      '@docsearch/css': 3.6.1
+      '@docsearch/js': 3.6.1(@algolia/client-search@4.24.0)(search-insights@2.15.0)
+      '@shikijs/core': 1.12.1
+      '@shikijs/transformers': 1.12.1
+      '@types/markdown-it': 14.1.2
+      '@vitejs/plugin-vue': 5.1.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.6))(vue@3.4.35(typescript@5.4.5))
+      '@vue/devtools-api': 7.3.7
+      '@vueuse/core': 10.11.0(vue@3.4.35(typescript@5.4.5))
+      '@vueuse/integrations': 10.11.0(axios@1.7.3)(focus-trap@7.5.4)(vue@3.4.35(typescript@5.4.5))
+      focus-trap: 7.5.4
+      mark.js: 8.11.1
+      minisearch: 6.3.0
+      shiki: 1.12.1
+      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
+      vue: 3.4.35(typescript@5.4.5)
+    optionalDependencies:
+      postcss: 8.4.40
+    transitivePeerDependencies:
+      - '@algolia/client-search'
+      - '@types/node'
+      - '@types/react'
+      - '@vue/composition-api'
+      - async-validator
+      - axios
+      - change-case
+      - drauu
+      - fuse.js
+      - idb-keyval
+      - jwt-decode
+      - less
+      - lightningcss
+      - nprogress
+      - qrcode
+      - react
+      - react-dom
+      - sass
+      - search-insights
+      - sortablejs
+      - stylus
+      - sugarss
+      - terser
+      - typescript
+      - universal-cookie
+
+  vitest@1.6.0(@types/node@20.14.14)(@vitest/ui@1.6.0)(jsdom@24.1.1)(terser@5.31.6):
     dependencies:
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
@@ -18209,8 +18282,8 @@ snapshots:
       strip-literal: 2.1.0
       tinybench: 2.9.0
       tinypool: 0.8.4
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
-      vite-node: 1.6.0(@types/node@20.14.14)(terser@5.31.3)
+      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.6)
+      vite-node: 1.6.0(@types/node@20.14.14)(terser@5.31.6)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.14.14
