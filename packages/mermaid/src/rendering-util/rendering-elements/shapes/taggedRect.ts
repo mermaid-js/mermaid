@@ -24,16 +24,16 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const options = userNodeOverrides(node, {});
 
   const rectPoints = [
-    { x: x - tagWidth, y },
-    { x: x + w, y },
-    { x: x + w, y: y + h },
-    { x: x - tagWidth, y: y + h },
+    { x: x - tagWidth / 2, y },
+    { x: x + w + tagWidth / 2, y },
+    { x: x + w + tagWidth / 2, y: y + h },
+    { x: x - tagWidth / 2, y: y + h },
   ];
 
   const tagPoints = [
-    { x: x + w - tagWidth, y: y + h },
-    { x: x + w, y: y + h },
-    { x: x + w, y: y + h - tagHeight },
+    { x: x + w - tagWidth / 2, y: y + h },
+    { x: x + w + tagWidth / 2, y: y + h },
+    { x: x + w + tagWidth / 2, y: y + h - tagHeight },
   ];
 
   if (node.look !== 'handDrawn') {
@@ -59,9 +59,6 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   if (nodeStyles && node.look !== 'handDrawn') {
     taggedRect.selectAll('path').attr('style', nodeStyles);
   }
-  taggedRect.attr('transform', `translate(${tagWidth / 2}, 0)`);
-
-  taggedRect.attr('transform', `translate(${tagWidth / 2}, 0)`);
 
   updateNodeBounds(node, taggedRect);
 
