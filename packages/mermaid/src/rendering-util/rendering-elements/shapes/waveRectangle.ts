@@ -1,4 +1,10 @@
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
+import {
+  labelHelper,
+  updateNodeBounds,
+  getNodeClasses,
+  createPathFromPoints,
+  generateFullSineWavePoints,
+} from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import {
@@ -7,58 +13,50 @@ import {
 } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
-function createWaveRectanglePathD(x: number, y: number, width: number, height: number) {
-  const halfWidth = width / 2;
-  const halfHeight = height / 2;
-
-  const pathData = `M ${x} ${y}
-    Q ${x + halfWidth / 2} ${y + halfHeight}, ${x + halfWidth} ${y}
-    Q ${x + (3 * halfWidth) / 2} ${y - halfHeight}, ${x + width} ${y}
-    L ${x + width} ${y + height}
-    Q ${x + (3 * halfWidth) / 2} ${y + halfHeight}, ${x + halfWidth} ${y + height}
-    Q ${x + halfWidth / 2} ${y + 3 * halfHeight}, ${x} ${y + height}
-    L ${x} ${y}
-    Z`;
-  return pathData;
-}
-
 export const waveRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding + 20;
-
-  let shape: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
+  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
+  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const waveAmplitude = h / 4;
+  const finalH = h + waveAmplitude;
   const { cssStyles } = node;
 
-  if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
-    const rc = rough.svg(shapeSvg);
-    const pathData = createWaveRectanglePathD(0, 0, w, h);
-    const shapeNode = rc.path(pathData, userNodeOverrides(node, {}));
+  // @ts-ignore - rough is not typed
+  const rc = rough.svg(shapeSvg);
+  const options = userNodeOverrides(node, {});
 
-    shape = shapeSvg.insert(() => shapeNode, ':first-child');
-    shape.attr('class', 'basic label-container');
-    if (cssStyles) {
-      shape.attr('style', cssStyles);
-    }
-  } else {
-    const pathData = createWaveRectanglePathD(0, 0, w, h);
-    shape = shapeSvg
-      .insert('path', ':first-child')
-      .attr('d', pathData)
-      .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
-      .attr('style', nodeStyles);
+  if (node.look !== 'handDrawn') {
+    options.roughness = 0;
+    options.fillStyle = 'solid';
   }
 
-  shape.attr('transform', `translate(${-w / 2}, ${-h / 2})`);
+  const points = [
+    { x: -w / 2, y: finalH / 2 },
+    ...generateFullSineWavePoints(-w / 2, finalH / 2, w / 2, finalH / 2, waveAmplitude, 1),
+    { x: w / 2, y: -finalH / 2 },
+    ...generateFullSineWavePoints(w / 2, -finalH / 2, -w / 2, -finalH / 2, waveAmplitude, -1),
+  ];
 
-  updateNodeBounds(node, shape);
+  const waveRectPath = createPathFromPoints(points);
+  const waveRectNode = rc.path(waveRectPath, options);
 
+  const waveRect = shapeSvg.insert(() => waveRectNode, ':first-child');
+
+  waveRect.attr('class', 'basic label-container');
+
+  if (cssStyles && node.look !== 'handDrawn') {
+    waveRect.selectAll('path').attr('style', cssStyles);
+  }
+
+  if (nodeStyles && node.look !== 'handDrawn') {
+    waveRect.selectAll('path').attr('style', nodeStyles);
+  }
+
+  updateNodeBounds(node, waveRect);
   node.intersect = function (point) {
-    const pos = intersect.polygon(node, point);
+    const pos = intersect.polygon(node, points, point);
     return pos;
   };
 
