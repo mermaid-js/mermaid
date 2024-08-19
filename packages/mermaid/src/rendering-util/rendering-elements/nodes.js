@@ -47,6 +47,7 @@ import { filledCircle } from './shapes/filledCircle.js';
 import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
+import { taggedWaveEdgedRectangle } from './shapes/taggedWaveEdgedRectangle.js';
 
 const shapes = {
   state,
@@ -97,6 +98,7 @@ const shapes = {
   multiWaveEdgedRectangle,
   windowPane,
   linedWaveEdgedRect,
+  taggedWaveEdgedRectangle,
 };
 
 const nodeElems = new Map();
