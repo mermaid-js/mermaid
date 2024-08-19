@@ -23,6 +23,7 @@ import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
+import type { IconLibrary } from './rendering-util/svgRegister.js';
 import { registerIcons } from './rendering-util/svgRegister.js';
 import defaultIconLibrary from './rendering-util/svg/index.js';
 import { toBase64 } from './utils/base64.js';
@@ -495,10 +496,17 @@ function initialize(options: MermaidConfig = {}) {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     options.iconLibraries.forEach(async (library) => {
       if (typeof library === 'string') {
-        if (library === 'aws:full') {
-          const { default: awsFull } = await import('./rendering-util/svg/aws/awsFull.js');
-          registerIcons(awsFull);
+        let lib: IconLibrary = {};
+        if (library === 'aws:common') {
+          lib = (await import('./rendering-util/svg/aws/awsCommon.js')).default;
+        } else if (library === 'aws:full') {
+          lib = (await import('./rendering-util/svg/aws/awsFull.js')).default;
+        } else if (library === 'digital-ocean') {
+          lib = (await import('./rendering-util/svg/digital-ocean/digitalOcean.js')).default;
+        } else if (library === 'github') {
+          lib = (await import('./rendering-util/svg/github/github.js')).default;
         }
+        registerIcons(lib);
       } else {
         registerIcons(library);
       }

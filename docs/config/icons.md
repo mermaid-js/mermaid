@@ -23,9 +23,15 @@ SVG Icons can be used with supported diagrams. Alongside the icon packs included
 | Digital Ocean | `do:`  |
 | GitHub        | `gh:`  |
 
-### Extended AWS Icons
+Note that in order to use non-generic icons that are provided with Mermaid, the packs must be explicitly loaded when on initialization initialized.
 
-Due to the large number of icons available to represent AWS services, only the most important ones are enabled by default. For full access, add `'aws:full'` to the `iconLibraries` field when initializing mermaid.
+```js
+import sampleIconPack from 'sample-icon-pack';
+
+mermaid.initialize({
+  iconLibraries: ['aws:common', 'aws:full', 'github', 'digital-ocean'],
+});
+```
 
 ## Using Custom Icon Packs
 
@@ -35,7 +41,7 @@ Custom icon packs can be used by including them in the `iconLibraries` array on 
 import sampleIconPack from 'sample-icon-pack';
 
 mermaid.initialize({
-  iconLibraries: [sampleIconPack, 'aws:full'],
+  iconLibraries: [sampleIconPack, 'aws:full', ...],
 });
 ```
 
