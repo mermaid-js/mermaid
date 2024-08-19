@@ -57,7 +57,7 @@ export const dividedRect = async (parent: SVGAElement, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${x + (node.padding ?? 0) / 2}, ${y + rectOffset + (node.padding ?? 0) / 2})`
+    `translate(${x + (node.padding ?? 0) / 2 - (bbox.x - (bbox.left ?? 0))}, ${y + rectOffset + (node.padding ?? 0) / 2 - 4 * (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, polygon);

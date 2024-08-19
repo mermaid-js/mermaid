@@ -53,7 +53,10 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   updateNodeBounds(node, polygon);
 
-  label.attr('transform', `translate(${-bbox.width / 2}, ${h / 2 - bbox.height})`);
+  label.attr(
+    'transform',
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - bbox.height - 4 * (bbox.y - (bbox.top ?? 0))})`
+  );
 
   node.intersect = function (point) {
     log.info('Triangle intersect', node, points, point);

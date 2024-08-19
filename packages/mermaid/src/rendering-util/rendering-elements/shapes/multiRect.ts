@@ -71,7 +71,7 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - rectOffset}, ${-(bbox.height / 2) + rectOffset})`
+    `translate(${-(bbox.width / 2) - rectOffset - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + rectOffset - 4 * (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, multiRect);
