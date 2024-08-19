@@ -46,6 +46,7 @@ import { lightningBolt } from './shapes/lightningBolt.js';
 import { filledCircle } from './shapes/filledCircle.js';
 import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
+import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
 
 const shapes = {
   state,
@@ -95,6 +96,7 @@ const shapes = {
   filledCircle,
   multiWaveEdgedRectangle,
   windowPane,
+  linedWaveEdgedRect,
 };
 
 const nodeElems = new Map();
