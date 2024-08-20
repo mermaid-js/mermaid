@@ -9,13 +9,31 @@ export const commitType = {
   CHERRY_PICK: 4,
 } as const;
 
-export const gitcommitType = {
-  NORMAL: 0,
-  REVERSE: 1,
-  HIGHLIGHT: 2,
-  MERGE: 3,
-  CHERRY_PICK: 4,
-} as const;
+export interface CommitDB {
+  message: string;
+  id: string;
+  type: typeof commitType;
+  tags?: string[];
+}
+
+export interface BranchDB {
+  name: string;
+  order: number;
+}
+
+export interface MergeDB {
+  branch: string;
+  id: string;
+  type?: typeof commitType;
+  tags?: string[];
+}
+
+export interface CherryPickDB {
+  id: string;
+  targetId: string;
+  parent: string;
+  tags?: string[];
+}
 
 export interface Commit {
   id: string;

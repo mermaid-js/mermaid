@@ -15,6 +15,7 @@ import { commitType } from './gitGraphTypes.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 
 import DEFAULT_CONFIG from '../../defaultConfig.js';
+
 import type { GitGraphDiagramConfig } from '../../config.type.js';
 interface GitGraphState {
   commits: Map<string, Commit>;
