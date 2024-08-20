@@ -248,13 +248,6 @@ const config: RequiredDeep<MermaidConfig> = {
     ...defaultConfigJson.requirement,
     useWidth: undefined,
   },
-  gitGraph: {
-    ...defaultConfigJson.gitGraph,
-    // TODO: This is a temporary override for `gitGraph`, since every other
-    //       diagram does have `useMaxWidth`, but instead sets it to `true`.
-    //       Should we set this to `true` instead?
-    useMaxWidth: false,
-  },
   sankey: {
     ...defaultConfigJson.sankey,
     // this is false, unlike every other diagram (other than gitGraph)
