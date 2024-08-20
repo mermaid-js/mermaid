@@ -10,9 +10,9 @@ export const commitType = {
 } as const;
 
 export interface CommitDB {
-  message: string;
+  msg: string;
   id: string;
-  type: typeof commitType;
+  type: number;
   tags?: string[];
 }
 
@@ -24,7 +24,7 @@ export interface BranchDB {
 export interface MergeDB {
   branch: string;
   id: string;
-  type?: typeof commitType;
+  type?: number;
   tags?: string[];
 }
 
@@ -92,20 +92,10 @@ export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
   setDirection: (dir: DiagramOrientation) => void;
   setOptions: (rawOptString: string) => void;
   getOptions: () => any;
-  commit: (msg: string, id: string, type: number, tags?: string[]) => void;
-  branch: (name: string, order?: number) => void;
-  merge: (
-    otherBranch: string,
-    customId?: string,
-    overrideType?: number,
-    customTags?: string[]
-  ) => void;
-  cherryPick: (
-    sourceId: string,
-    targetId: string,
-    tags: string[] | undefined,
-    parentCommitId: string
-  ) => void;
+  commit: (commitDB: CommitDB) => void;
+  branch: (branchDB: BranchDB) => void;
+  merge: (mergeDB: MergeDB) => void;
+  cherryPick: (cherryPickDB: CherryPickDB) => void;
   checkout: (branch: string) => void;
   prettyPrint: () => void;
   clear: () => void;
@@ -121,20 +111,10 @@ export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
 export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
   commitType: typeof commitType;
   setDirection: (dir: DiagramOrientation) => void;
-  commit: (msg: string, id: string, type: number, tags?: string[]) => void;
-  branch: (name: string, order?: number) => void;
-  merge: (
-    otherBranch: string,
-    customId?: string,
-    overrideType?: number,
-    customTags?: string[]
-  ) => void;
-  cherryPick: (
-    sourceId: string,
-    targetId: string,
-    tags: string[] | undefined,
-    parentCommitId: string
-  ) => void;
+  commit: (commitDB: CommitDB) => void;
+  branch: (branchDB: BranchDB) => void;
+  merge: (mergeDB: MergeDB) => void;
+  cherryPick: (cherryPickDB: CherryPickDB) => void;
   checkout: (branch: string) => void;
 }
 

@@ -10,7 +10,15 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import type { DiagramOrientation, Commit, GitGraphDB } from './gitGraphTypes.js';
+import type {
+  DiagramOrientation,
+  Commit,
+  GitGraphDB,
+  CommitDB,
+  MergeDB,
+  BranchDB,
+  CherryPickDB,
+} from './gitGraphTypes.js';
 import { commitType } from './gitGraphTypes.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 
@@ -86,7 +94,12 @@ export const getOptions = function () {
   return state.records.options;
 };
 
-export const commit = function (msg: string, id: string, type: number, tags?: string[]) {
+export const commit = function (commitDB: CommitDB) {
+  let msg = commitDB.msg;
+  let id = commitDB.id;
+  const type = commitDB.type;
+  let tags = commitDB.tags;
+
   log.info('commit', msg, id, type, tags);
   log.debug('Entering commit:', msg, id, type, tags);
   const config = getConfig();
@@ -109,7 +122,9 @@ export const commit = function (msg: string, id: string, type: number, tags?: st
   log.debug('in pushCommit ' + newCommit.id);
 };
 
-export const branch = function (name: string, order?: number) {
+export const branch = function (branchDB: BranchDB) {
+  let name = branchDB.name;
+  const order = branchDB.order;
   name = common.sanitizeText(name, getConfig());
   if (state.records.branches.has(name)) {
     throw new Error(
@@ -123,12 +138,11 @@ export const branch = function (name: string, order?: number) {
   log.debug('in createBranch');
 };
 
-export const merge = (
-  otherBranch: string,
-  customId?: string,
-  overrideType?: number,
-  customTags?: string[]
-): void => {
+export const merge = (mergeDB: MergeDB): void => {
+  let otherBranch = mergeDB.branch;
+  let customId = mergeDB.id;
+  const overrideType = mergeDB.type;
+  const customTags = mergeDB.tags;
   const config = getConfig();
   otherBranch = common.sanitizeText(otherBranch, config);
   if (customId) {
@@ -233,12 +247,11 @@ export const merge = (
   log.debug('in mergeBranch');
 };
 
-export const cherryPick = function (
-  sourceId: string,
-  targetId: string,
-  tags: string[] | undefined,
-  parentCommitId: string
-) {
+export const cherryPick = function (cherryPickDB: CherryPickDB) {
+  let sourceId = cherryPickDB.id;
+  let targetId = cherryPickDB.targetId;
+  let tags = cherryPickDB.tags;
+  let parentCommitId = cherryPickDB.parent;
   log.debug('Entering cherryPick:', sourceId, targetId, tags);
   const config = getConfig();
   sourceId = common.sanitizeText(sourceId, config);

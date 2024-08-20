@@ -12,6 +12,10 @@ import type {
   CommitAst,
   BranchAst,
   GitGraphDBParseProvider,
+  CommitDB,
+  BranchDB,
+  MergeDB,
+  CherryPickDB,
 } from './gitGraphTypes.js';
 
 const populate = (ast: GitGraph, db: GitGraphDBParseProvider) => {
@@ -28,11 +32,11 @@ const populate = (ast: GitGraph, db: GitGraphDBParseProvider) => {
 
 const parseStatement = (statement: any, db: GitGraphDBParseProvider) => {
   const parsers: Record<string, (stmt: any) => void> = {
-    Commit: (stmt) => db.commit(...parseCommit(stmt)),
-    Branch: (stmt) => db.branch(...parseBranch(stmt)),
-    Merge: (stmt) => db.merge(...parseMerge(stmt)),
+    Commit: (stmt) => db.commit(parseCommit(stmt)),
+    Branch: (stmt) => db.branch(parseBranch(stmt)),
+    Merge: (stmt) => db.merge(parseMerge(stmt)),
     Checkout: (stmt) => db.checkout(parseCheckout(stmt)),
-    CherryPicking: (stmt) => db.cherryPick(...parseCherryPicking(stmt)),
+    CherryPicking: (stmt) => db.cherryPick(parseCherryPicking(stmt)),
   };
 
   const parser = parsers[statement.$type];
@@ -43,29 +47,32 @@ const parseStatement = (statement: any, db: GitGraphDBParseProvider) => {
   }
 };
 
-const parseCommit = (commit: CommitAst): [string, string, number, string[] | undefined] => {
-  const id = commit.id;
-  const message = commit.message ?? '';
-  const type = commit.type !== undefined ? commitType[commit.type] : commitType.NORMAL;
-  const tags = commit.tags ?? undefined;
-
-  return [message, id, type, tags];
+const parseCommit = (commit: CommitAst): CommitDB => {
+  const commitDB: CommitDB = {
+    id: commit.id,
+    msg: commit.message ?? '',
+    type: commit.type !== undefined ? commitType[commit.type] : commitType.NORMAL,
+    tags: commit.tags ?? undefined,
+  };
+  return commitDB;
 };
 
-const parseBranch = (branch: BranchAst): [string, number] => {
-  const name = branch.name;
-  const order = branch.order ?? 0;
-  return [name, order];
+const parseBranch = (branch: BranchAst): BranchDB => {
+  const branchDB: BranchDB = {
+    name: branch.name,
+    order: branch.order ?? 0,
+  };
+  return branchDB;
 };
 
-const parseMerge = (
-  merge: MergeAst
-): [string, string, number | undefined, string[] | undefined] => {
-  const branch = merge.branch;
-  const id = merge.id ?? '';
-  const type = merge.type !== undefined ? commitType[merge.type] : undefined;
-  const tags = merge.tags ?? undefined;
-  return [branch, id, type, tags];
+const parseMerge = (merge: MergeAst): MergeDB => {
+  const mergeDB: MergeDB = {
+    branch: merge.branch,
+    id: merge.id ?? '',
+    type: merge.type !== undefined ? commitType[merge.type] : commitType.NORMAL,
+    tags: merge.tags ?? undefined,
+  };
+  return mergeDB;
 };
 
 const parseCheckout = (checkout: CheckoutAst): string => {
@@ -73,13 +80,14 @@ const parseCheckout = (checkout: CheckoutAst): string => {
   return branch;
 };
 
-const parseCherryPicking = (
-  cherryPicking: CherryPickingAst
-): [string, string, string[] | undefined, string] => {
-  const id = cherryPicking.id;
-  const tags = cherryPicking.tags?.length === 0 ? undefined : cherryPicking.tags;
-  const parent = cherryPicking.parent;
-  return [id, '', tags, parent];
+const parseCherryPicking = (cherryPicking: CherryPickingAst): CherryPickDB => {
+  const cherryPickDB: CherryPickDB = {
+    id: cherryPicking.id,
+    targetId: '',
+    tags: cherryPicking.tags?.length === 0 ? undefined : cherryPicking.tags,
+    parent: cherryPicking.parent,
+  };
+  return cherryPickDB;
 };
 
 export const parser: ParserDefinition = {
@@ -113,7 +121,12 @@ if (import.meta.vitest) {
         type: 'NORMAL',
       };
       parseStatement(commit, mockDB);
-      expect(mockDB.commit).toHaveBeenCalledWith('test', '1', 0, ['tag1', 'tag2']);
+      expect(mockDB.commit).toHaveBeenCalledWith({
+        id: '1',
+        msg: 'test',
+        tags: ['tag1', 'tag2'],
+        type: 0,
+      });
     });
     it('should parse a branch statement', () => {
       const branch = {
@@ -122,7 +135,7 @@ if (import.meta.vitest) {
         order: 1,
       };
       parseStatement(branch, mockDB);
-      expect(mockDB.branch).toHaveBeenCalledWith('newBranch', 1);
+      expect(mockDB.branch).toHaveBeenCalledWith({ name: 'newBranch', order: 1 });
     });
     it('should parse a checkout statement', () => {
       const checkout = {
@@ -141,7 +154,12 @@ if (import.meta.vitest) {
         type: 'NORMAL',
       };
       parseStatement(merge, mockDB);
-      expect(mockDB.merge).toHaveBeenCalledWith('newBranch', '1', 0, ['tag1', 'tag2']);
+      expect(mockDB.merge).toHaveBeenCalledWith({
+        branch: 'newBranch',
+        id: '1',
+        tags: ['tag1', 'tag2'],
+        type: 0,
+      });
     });
     it('should parse a cherry picking statement', () => {
       const cherryPick = {
@@ -151,7 +169,12 @@ if (import.meta.vitest) {
         parent: '2',
       };
       parseStatement(cherryPick, mockDB);
-      expect(mockDB.cherryPick).toHaveBeenCalledWith('1', '', ['tag1', 'tag2'], '2');
+      expect(mockDB.cherryPick).toHaveBeenCalledWith({
+        id: '1',
+        targetId: '',
+        parent: '2',
+        tags: ['tag1', 'tag2'],
+      });
     });
 
     it('should parse a langium generated gitGraph ast', () => {
@@ -201,9 +224,19 @@ if (import.meta.vitest) {
 
       populate(gitGraphAst, mockDB);
 
-      expect(mockDB.commit).toHaveBeenCalledWith('test', '1', 0, ['tag1', 'tag2']);
-      expect(mockDB.branch).toHaveBeenCalledWith('newBranch', 1);
-      expect(mockDB.merge).toHaveBeenCalledWith('newBranch', '1', 0, ['tag1', 'tag2']);
+      expect(mockDB.commit).toHaveBeenCalledWith({
+        id: '1',
+        msg: 'test',
+        tags: ['tag1', 'tag2'],
+        type: 0,
+      });
+      expect(mockDB.branch).toHaveBeenCalledWith({ name: 'newBranch', order: 1 });
+      expect(mockDB.merge).toHaveBeenCalledWith({
+        branch: 'newBranch',
+        id: '1',
+        tags: ['tag1', 'tag2'],
+        type: 0,
+      });
       expect(mockDB.checkout).toHaveBeenCalledWith('newBranch');
     });
   });
