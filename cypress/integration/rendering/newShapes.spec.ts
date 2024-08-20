@@ -26,10 +26,24 @@ const newShapesSet3 = [
   'crossedCircle',
 ] as const;
 
-const newShapesSet4 = ['waveRectangle', 'trapezoidalPentagon', 'linedCylinder'] as const;
+const newShapesSet4 = [
+  'waveRectangle',
+  'trapezoidalPentagon',
+  'linedCylinder',
+  'waveEdgedRectangle',
+  'multiWaveEdgedRectangle',
+] as const;
+
+const newShapesSet5 = ['linedWaveEdgedRect', 'taggedWaveEdgedRectangle'];
 
 // Aggregate all shape sets into a single array
-const newShapesSets = [newShapesSet1, newShapesSet2, newShapesSet3, newShapesSet4] as const;
+const newShapesSets = [
+  newShapesSet1,
+  newShapesSet2,
+  newShapesSet3,
+  newShapesSet4,
+  newShapesSet5,
+] as const;
 
 looks.forEach((look) => {
   directions.forEach((direction) => {
@@ -72,7 +86,11 @@ looks.forEach((look) => {
           newShapesSet.forEach((newShape, index) => {
             flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'This is **bold** </br>and <strong>strong</strong>' }@\n`;
           });
-          imgSnapshotTest(flowchartCode, { look, htmlLabels: false });
+          imgSnapshotTest(flowchartCode, {
+            look,
+            htmlLabels: false,
+            flowchart: { htmlLabels: false },
+          });
         });
 
         it(`with styles`, () => {
