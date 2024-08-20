@@ -2,6 +2,8 @@ name: autofix.ci # needed to securely identify the workflow
 
 on:
   pull_request:
+    branches-ignore:
+      - 'renovate/**'
 permissions:
   contents: read
 
