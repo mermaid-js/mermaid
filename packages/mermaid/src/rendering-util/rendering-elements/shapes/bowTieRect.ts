@@ -1,4 +1,4 @@
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import {
@@ -7,8 +7,70 @@ import {
 } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
-function createBowTieRectPathD(x: number, y: number, totalWidth: number, totalHeight: number) {
-  return `M ${x},${y + totalHeight} A ${totalHeight} ${totalHeight} 0 0 1 ${x} ${y} H${x + totalWidth} A ${totalHeight} ${totalHeight} 0 0 0 ${x + totalWidth} ${y + totalHeight}Z`;
+function generateArcPoints(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  rx: number,
+  ry: number,
+  clockwise: boolean
+) {
+  const numPoints = 20;
+  // Calculate midpoint
+  const midX = (x1 + x2) / 2;
+  const midY = (y1 + y2) / 2;
+
+  // Calculate the angle of the line connecting the points
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+
+  // Calculate transformed coordinates for the ellipse
+  const dx = (x2 - x1) / 2;
+  const dy = (y2 - y1) / 2;
+
+  // Scale to unit circle
+  const transformedX = dx / rx;
+  const transformedY = dy / ry;
+
+  // Calculate the distance between points on the unit circle
+  const distance = Math.sqrt(transformedX ** 2 + transformedY ** 2);
+
+  // Check if the ellipse can be drawn with the given radii
+  if (distance > 1) {
+    throw new Error('The given radii are too small to create an arc between the points.');
+  }
+
+  // Calculate the distance from the midpoint to the center of the ellipse
+  const scaledCenterDistance = Math.sqrt(1 - distance ** 2);
+
+  // Calculate the center of the ellipse
+  const centerX = midX + scaledCenterDistance * ry * Math.sin(angle) * (clockwise ? -1 : 1);
+  const centerY = midY - scaledCenterDistance * rx * Math.cos(angle) * (clockwise ? -1 : 1);
+
+  // Calculate the start and end angles on the ellipse
+  const startAngle = Math.atan2((y1 - centerY) / ry, (x1 - centerX) / rx);
+  const endAngle = Math.atan2((y2 - centerY) / ry, (x2 - centerX) / rx);
+
+  // Adjust angles for clockwise/counterclockwise
+  let angleRange = endAngle - startAngle;
+  if (clockwise && angleRange < 0) {
+    angleRange += 2 * Math.PI;
+  }
+  if (!clockwise && angleRange > 0) {
+    angleRange -= 2 * Math.PI;
+  }
+
+  // Generate points
+  const points = [];
+  for (let i = 0; i < numPoints; i++) {
+    const t = i / (numPoints - 1);
+    const angle = startAngle + t * angleRange;
+    const x = centerX + rx * Math.cos(angle);
+    const y = centerY + ry * Math.sin(angle);
+    points.push({ x, y });
+  }
+
+  return points;
 }
 
 export const bowTieRect = async (parent: SVGAElement, node: Node) => {
@@ -18,68 +80,48 @@ export const bowTieRect = async (parent: SVGAElement, node: Node) => {
   const w = bbox.width + node.padding + 20;
   const h = bbox.height + node.padding;
 
-  let shape: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
+  const ry = h / 2;
+  const rx = ry / (2.5 + h / 50);
+
+  // let shape: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
   const points = [
-    { x: 0, y: h },
-    { x: w / 2, y: h },
-    { x: w * 1.1, y: h },
-    { x: w, y: h / 2 },
-    { x: w * 1.1, y: 0 },
-    { x: w / 2, y: 0 },
-    { x: 0, y: 0 },
+    { x: w / 2, y: -h / 2 },
+    { x: -w / 2, y: -h / 2 },
+    ...generateArcPoints(-w / 2, -h / 2, -w / 2, h / 2, rx, ry, false),
+    { x: w / 2, y: h / 2 },
+    ...generateArcPoints(w / 2, h / 2, w / 2, -h / 2, rx, ry, true),
   ];
 
-  const pathData = createBowTieRectPathD(w * 0.05, 0, w, h);
+  // @ts-ignore - rough is not typed
+  const rc = rough.svg(shapeSvg);
+  const options = userNodeOverrides(node, {});
 
-  if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
-    const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {});
-    const shapeNode = rc.path(pathData, options);
-    shape = shapeSvg.insert(() => shapeNode, ':first-child');
-    shape.attr('class', 'basic label-container');
-    if (cssStyles) {
-      shape.attr('style', cssStyles);
-    }
-  } else {
-    shape = shapeSvg
-      .insert('path', ':first-child')
-      .attr('d', pathData)
-      .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
-      .attr('style', nodeStyles);
+  if (node.look !== 'handDrawn') {
+    options.roughness = 0;
+    options.fillStyle = 'solid';
+  }
+  const bowTieRectPath = createPathFromPoints(points);
+  const bowTieRectShapePath = rc.path(bowTieRectPath, options);
+  const bowTieRectShape = shapeSvg.insert(() => bowTieRectShapePath, ':first-child');
+
+  bowTieRectShape.attr('class', 'basic label-container');
+
+  if (cssStyles && node.look !== 'handDrawn') {
+    bowTieRectShape.selectAll('path').attr('style', cssStyles);
   }
 
-  shape.attr('transform', `translate(${-w / 2}, ${-h / 2})`);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    bowTieRectShape.selectAll('path').attr('style', nodeStyles);
+  }
 
-  updateNodeBounds(node, shape);
+  bowTieRectShape.attr('transform', `translate(${rx / 2}, 0)`);
+
+  updateNodeBounds(node, bowTieRectShape);
 
   node.intersect = function (point) {
     const pos = intersect.polygon(node, points, point);
-    const rx = h;
-    const ry = h;
-    const y = pos.y - (node.y ?? 0);
-
-    if (
-      ry != 0 &&
-      (Math.abs(y) < (node.height ?? 0) / 2 ||
-        (Math.abs(y) == (node.height ?? 0) / 2 &&
-          Math.abs(pos.x - (node.x ?? 0)) > (node.width ?? 0) / 2 - rx))
-    ) {
-      let x = rx * rx * (1 - (y * y) / (ry * ry));
-      if (x != 0) {
-        x = Math.sqrt(x);
-      }
-      x = rx - x;
-      if (point.x - (node.x ?? 0) > 0) {
-        x = -x;
-      }
-
-      pos.x += x;
-    }
-
     return pos;
   };
 
