@@ -1,6 +1,7 @@
 import jison from 'jison';
 
 export const transformJison = (src: string): string => {
+  // @ts-ignore - Jison is not typed properly
   const parser = new jison.Generator(src, {
     moduleType: 'js',
     'token-stack': true,

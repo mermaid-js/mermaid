@@ -46,10 +46,10 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
   const group = svg.append('g').attr('class', 'main');
 
-  const width = conf.quadrantChart?.chartWidth || 500;
-  const height = conf.quadrantChart?.chartHeight || 500;
+  const width = conf.quadrantChart?.chartWidth ?? 500;
+  const height = conf.quadrantChart?.chartHeight ?? 500;
 
-  configureSvgSize(svg, height, width, conf.quadrantChart?.useMaxWidth || true);
+  configureSvgSize(svg, height, width, conf.quadrantChart?.useMaxWidth ?? true);
 
   svg.attr('viewBox', '0 0 ' + width + ' ' + height);
 
@@ -152,7 +152,9 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
     .attr('cx', (data: QuadrantPointType) => data.x)
     .attr('cy', (data: QuadrantPointType) => data.y)
     .attr('r', (data: QuadrantPointType) => data.radius)
-    .attr('fill', (data: QuadrantPointType) => data.fill);
+    .attr('fill', (data: QuadrantPointType) => data.fill)
+    .attr('stroke', (data: QuadrantPointType) => data.strokeColor)
+    .attr('stroke-width', (data: QuadrantPointType) => data.strokeWidth);
 
   dataPoints
     .append('text')

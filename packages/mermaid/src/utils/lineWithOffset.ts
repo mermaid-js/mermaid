@@ -9,7 +9,7 @@ const markerOffsets = {
   composition: 18,
   dependency: 6,
   lollipop: 13.5,
-  arrow_point: 5.3,
+  arrow_point: 4,
 } as const;
 
 /**
@@ -45,7 +45,12 @@ export const getLineFunctionsWithOffset = (
   edge: Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'>
 ) => {
   return {
-    x: function (d: Point | [number, number], i: number, data: (Point | [number, number])[]) {
+    x: function (
+      this: void,
+      d: Point | [number, number],
+      i: number,
+      data: (Point | [number, number])[]
+    ) {
       let offset = 0;
       if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
         // Handle first point
@@ -70,7 +75,12 @@ export const getLineFunctionsWithOffset = (
       }
       return pointTransformer(d).x + offset;
     },
-    y: function (d: Point | [number, number], i: number, data: (Point | [number, number])[]) {
+    y: function (
+      this: void,
+      d: Point | [number, number],
+      i: number,
+      data: (Point | [number, number])[]
+    ) {
       // Same handling as X above
       let offset = 0;
       if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {

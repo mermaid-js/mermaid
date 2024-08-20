@@ -1,5 +1,5 @@
-import type { Content } from 'mdast';
-import { fromMarkdown } from 'mdast-util-from-markdown';
+import type { MarkedToken, Token } from 'marked';
+import { marked } from 'marked';
 import { dedent } from 'ts-dedent';
 import type { MarkdownLine, MarkdownWordType } from './types.js';
 import type { MermaidConfig } from '../config.type.js';
@@ -9,8 +9,10 @@ import type { MermaidConfig } from '../config.type.js';
  * @returns processed markdown
  */
 function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfig): string {
+  //Replace <br/>with \n
+  const withoutBR = markdown.replace(/<br\/>/g, '\n');
   // Replace multiple newlines with a single newline
-  const withoutMultipleNewlines = markdown.replace(/\n{2,}/g, '\n');
+  const withoutMultipleNewlines = withoutBR.replace(/\n{2,}/g, '\n');
   // Remove extra spaces at the beginning of each line
   const withoutExtraSpaces = dedent(withoutMultipleNewlines);
   if (markdownAutoWrap === false) {
@@ -24,13 +26,13 @@ function preprocessMarkdown(markdown: string, { markdownAutoWrap }: MermaidConfi
  */
 export function markdownToLines(markdown: string, config: MermaidConfig = {}): MarkdownLine[] {
   const preprocessedMarkdown = preprocessMarkdown(markdown, config);
-  const { children } = fromMarkdown(preprocessedMarkdown);
+  const nodes = marked.lexer(preprocessedMarkdown);
   const lines: MarkdownLine[] = [[]];
   let currentLine = 0;
 
-  function processNode(node: Content, parentType: MarkdownWordType = 'normal') {
+  function processNode(node: MarkedToken, parentType: MarkdownWordType = 'normal') {
     if (node.type === 'text') {
-      const textLines = node.value.split('\n');
+      const textLines = node.text.split('\n');
       textLines.forEach((textLine, index) => {
         if (index !== 0) {
           currentLine++;
@@ -42,18 +44,22 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
           }
         });
       });
-    } else if (node.type === 'strong' || node.type === 'emphasis') {
-      node.children.forEach((contentNode) => {
-        processNode(contentNode, node.type);
+    } else if (node.type === 'strong' || node.type === 'em') {
+      node.tokens.forEach((contentNode) => {
+        processNode(contentNode as MarkedToken, node.type);
       });
+    } else if (node.type === 'html') {
+      lines[currentLine].push({ content: node.text, type: 'normal' });
     }
   }
 
-  children.forEach((treeNode) => {
+  nodes.forEach((treeNode) => {
     if (treeNode.type === 'paragraph') {
-      treeNode.children.forEach((contentNode) => {
-        processNode(contentNode);
+      treeNode.tokens?.forEach((contentNode) => {
+        processNode(contentNode as MarkedToken);
       });
+    } else if (treeNode.type === 'html') {
+      lines[currentLine].push({ content: treeNode.text, type: 'normal' });
     }
   });
 
@@ -61,23 +67,27 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
 }
 
 export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidConfig = {}) {
-  const { children } = fromMarkdown(markdown);
+  const nodes = marked.lexer(markdown);
 
-  function output(node: Content): string {
+  function output(node: Token): string {
     if (node.type === 'text') {
       if (markdownAutoWrap === false) {
-        return node.value.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
+        return node.text.replace(/\n */g, '<br/>').replace(/ /g, '&nbsp;');
       }
-      return node.value.replace(/\n/g, '<br/>');
+      return node.text.replace(/\n */g, '<br/>');
     } else if (node.type === 'strong') {
-      return `<strong>${node.children.map(output).join('')}</strong>`;
-    } else if (node.type === 'emphasis') {
-      return `<em>${node.children.map(output).join('')}</em>`;
+      return `<strong>${node.tokens?.map(output).join('')}</strong>`;
+    } else if (node.type === 'em') {
+      return `<em>${node.tokens?.map(output).join('')}</em>`;
     } else if (node.type === 'paragraph') {
-      return `<p>${node.children.map(output).join('')}</p>`;
+      return `<p>${node.tokens?.map(output).join('')}</p>`;
+    } else if (node.type === 'space') {
+      return '';
+    } else if (node.type === 'html') {
+      return `${node.text}`;
     }
     return `Unsupported markdown: ${node.type}`;
   }
 
-  return children.map(output).join('');
+  return nodes.map(output).join('');
 }

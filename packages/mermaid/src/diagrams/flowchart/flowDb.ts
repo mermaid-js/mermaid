@@ -1,7 +1,8 @@
 import { select } from 'd3';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
+import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
 import {
   setAccTitle,
@@ -17,12 +18,12 @@ import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
 let config = getConfig();
-let vertices: Record<string, FlowVertex> = {};
+let vertices = new Map<string, FlowVertex>();
 let edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
-let classes: Record<string, FlowClass> = {};
+let classes = new Map<string, FlowClass>();
 let subGraphs: FlowSubGraph[] = [];
-let subGraphLookup: Record<string, FlowSubGraph> = {};
-let tooltips: Record<string, string> = {};
+let subGraphLookup = new Map<string, FlowSubGraph>();
+let tooltips = new Map<string, string>();
 let subCount = 0;
 let firstGraphFlag = true;
 let direction: string;
@@ -40,10 +41,9 @@ const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
  * @param id - id of the node
  */
 export const lookUpDomId = function (id: string) {
-  const vertexKeys = Object.keys(vertices);
-  for (const vertexKey of vertexKeys) {
-    if (vertices[vertexKey].id === id) {
-      return vertices[vertexKey].domId;
+  for (const vertex of vertices.values()) {
+    if (vertex.id === id) {
+      return vertex.domId;
     }
   }
   return id;
@@ -67,50 +67,53 @@ export const addVertex = function (
   }
   let txt;
 
-  if (vertices[id] === undefined) {
-    vertices[id] = {
+  let vertex = vertices.get(id);
+  if (vertex === undefined) {
+    vertex = {
       id,
       labelType: 'text',
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
       styles: [],
       classes: [],
     };
+    vertices.set(id, vertex);
   }
   vertexCounter++;
+
   if (textObj !== undefined) {
     config = getConfig();
     txt = sanitizeText(textObj.text.trim());
-    vertices[id].labelType = textObj.type;
+    vertex.labelType = textObj.type;
     // strip quotes if string starts and ends with a quote
-    if (txt[0] === '"' && txt[txt.length - 1] === '"') {
+    if (txt.startsWith('"') && txt.endsWith('"')) {
       txt = txt.substring(1, txt.length - 1);
     }
-    vertices[id].text = txt;
+    vertex.text = txt;
   } else {
-    if (vertices[id].text === undefined) {
-      vertices[id].text = id;
+    if (vertex.text === undefined) {
+      vertex.text = id;
     }
   }
   if (type !== undefined) {
-    vertices[id].type = type;
+    vertex.type = type;
   }
   if (style !== undefined && style !== null) {
     style.forEach(function (s) {
-      vertices[id].styles.push(s);
+      vertex.styles.push(s);
     });
   }
   if (classes !== undefined && classes !== null) {
     classes.forEach(function (s) {
-      vertices[id].classes.push(s);
+      vertex.classes.push(s);
     });
   }
   if (dir !== undefined) {
-    vertices[id].dir = dir;
+    vertex.dir = dir;
   }
-  if (vertices[id].props === undefined) {
-    vertices[id].props = props;
+  if (vertex.props === undefined) {
+    vertex.props = props;
   } else if (props !== undefined) {
-    Object.assign(vertices[id].props, props);
+    Object.assign(vertex.props, props);
   }
 };
 
@@ -130,7 +133,7 @@ export const addSingleLink = function (_start: string, _end: string, type: any) 
     edge.text = sanitizeText(linkTextObj.text.trim());
 
     // strip quotes if string starts and ends with a quote
-    if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
+    if (edge.text.startsWith('"') && edge.text.endsWith('"')) {
       edge.text = edge.text.substring(1, edge.text.length - 1);
     }
     edge.labelType = linkTextObj.type;
@@ -198,27 +201,36 @@ export const updateLink = function (positions: ('default' | number)[], style: st
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
-      if (utils.isSubstringInArray('fill', style) === -1) {
-        style.push('fill:none');
-      }
+      // if (utils.isSubstringInArray('fill', style) === -1) {
+      //   style.push('fill:none');
+      // }
       edges[pos].style = style;
+      // if edges[pos].style does have fill not set, set it to none
+      if (
+        (edges[pos]?.style?.length ?? 0) > 0 &&
+        !edges[pos]?.style?.some((s) => s?.startsWith('fill'))
+      ) {
+        edges[pos]?.style?.push('fill:none');
+      }
     }
   });
 };
 
 export const addClass = function (ids: string, style: string[]) {
   ids.split(',').forEach(function (id) {
-    if (classes[id] === undefined) {
-      classes[id] = { id, styles: [], textStyles: [] };
+    let classNode = classes.get(id);
+    if (classNode === undefined) {
+      classNode = { id, styles: [], textStyles: [] };
+      classes.set(id, classNode);
     }
 
     if (style !== undefined && style !== null) {
       style.forEach(function (s) {
-        if (s.match('color')) {
-          const newStyle = s.replace('fill', 'bgFill').replace('color', 'fill');
-          classes[id].textStyles.push(newStyle);
+        if (/color/.exec(s)) {
+          const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
+          classNode.textStyles.push(newStyle);
         }
-        classes[id].styles.push(s);
+        classNode.styles.push(s);
       });
     }
   });
@@ -230,16 +242,16 @@ export const addClass = function (ids: string, style: string[]) {
  */
 export const setDirection = function (dir: string) {
   direction = dir;
-  if (direction.match(/.*</)) {
+  if (/.*</.exec(direction)) {
     direction = 'RL';
   }
-  if (direction.match(/.*\^/)) {
+  if (/.*\^/.exec(direction)) {
     direction = 'BT';
   }
-  if (direction.match(/.*>/)) {
+  if (/.*>/.exec(direction)) {
     direction = 'LR';
   }
-  if (direction.match(/.*v/)) {
+  if (/.*v/.exec(direction)) {
     direction = 'TB';
   }
   if (direction === 'TD') {
@@ -255,11 +267,13 @@ export const setDirection = function (dir: string) {
  */
 export const setClass = function (ids: string, className: string) {
   for (const id of ids.split(',')) {
-    if (vertices[id]) {
-      vertices[id].classes.push(className);
+    const vertex = vertices.get(id);
+    if (vertex) {
+      vertex.classes.push(className);
     }
-    if (subGraphLookup[id]) {
-      subGraphLookup[id].classes.push(className);
+    const subGraph = subGraphLookup.get(id);
+    if (subGraph) {
+      subGraph.classes.push(className);
     }
   }
 };
@@ -270,7 +284,7 @@ const setTooltip = function (ids: string, tooltip: string) {
   }
   tooltip = sanitizeText(tooltip);
   for (const id of ids.split(',')) {
-    tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = tooltip;
+    tooltips.set(version === 'gen-1' ? lookUpDomId(id) : id, tooltip);
   }
 };
 
@@ -291,7 +305,7 @@ const setClickFun = function (id: string, functionName: string, functionArgs: st
       let item = argList[i].trim();
       /* Removes all double quotes at the start and end of an argument */
       /* This preserves all starting and ending whitespace inside */
-      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+      if (item.startsWith('"') && item.endsWith('"')) {
         item = item.substr(1, item.length - 2);
       }
       argList[i] = item;
@@ -303,8 +317,9 @@ const setClickFun = function (id: string, functionName: string, functionArgs: st
     argList.push(id);
   }
 
-  if (vertices[id] !== undefined) {
-    vertices[id].haveCallback = true;
+  const vertex = vertices.get(id);
+  if (vertex) {
+    vertex.haveCallback = true;
     funs.push(function () {
       const elem = document.querySelector(`[id="${domId}"]`);
       if (elem !== null) {
@@ -329,19 +344,17 @@ const setClickFun = function (id: string, functionName: string, functionArgs: st
  */
 export const setLink = function (ids: string, linkStr: string, target: string) {
   ids.split(',').forEach(function (id) {
-    if (vertices[id] !== undefined) {
-      vertices[id].link = utils.formatUrl(linkStr, config);
-      vertices[id].linkTarget = target;
+    const vertex = vertices.get(id);
+    if (vertex !== undefined) {
+      vertex.link = utils.formatUrl(linkStr, config);
+      vertex.linkTarget = target;
     }
   });
   setClass(ids, 'clickable');
 };
 
 export const getTooltip = function (id: string) {
-  if (tooltips.hasOwnProperty(id)) {
-    return tooltips[id];
-  }
-  return undefined;
+  return tooltips.get(id);
 };
 
 /**
@@ -435,14 +448,14 @@ funs.push(setupToolTips);
  *
  */
 export const clear = function (ver = 'gen-1') {
-  vertices = {};
-  classes = {};
+  vertices = new Map();
+  classes = new Map();
   edges = [];
   funs = [setupToolTips];
   subGraphs = [];
-  subGraphLookup = {};
+  subGraphLookup = new Map();
   subCount = 0;
-  tooltips = {};
+  tooltips = new Map();
   firstGraphFlag = true;
   version = ver;
   config = getConfig();
@@ -464,7 +477,7 @@ export const addSubGraph = function (
 ) {
   let id: string | undefined = _id.text.trim();
   let title = _title.text;
-  if (_id === _title && _title.text.match(/\s/)) {
+  if (_id === _title && /\s/.exec(_title.text)) {
     id = undefined;
   }
 
@@ -498,7 +511,7 @@ export const addSubGraph = function (
     }
   }
 
-  id = id || 'subGraph' + subCount;
+  id = id ?? 'subGraph' + subCount;
   title = title || '';
   title = sanitizeText(title);
   subCount = subCount + 1;
@@ -516,7 +529,7 @@ export const addSubGraph = function (
   // Remove the members in the new subgraph if they already belong to another subgraph
   subGraph.nodes = makeUniq(subGraph, subGraphs).nodes;
   subGraphs.push(subGraph);
-  subGraphLookup[id] = subGraph;
+  subGraphLookup.set(id, subGraph);
   return id;
 };
 
@@ -646,21 +659,21 @@ const destructEndLink = (_str: string) => {
   switch (str.slice(-1)) {
     case 'x':
       type = 'arrow_cross';
-      if (str[0] === 'x') {
+      if (str.startsWith('x')) {
         type = 'double_' + type;
         line = line.slice(1);
       }
       break;
     case '>':
       type = 'arrow_point';
-      if (str[0] === '<') {
+      if (str.startsWith('<')) {
         type = 'double_' + type;
         line = line.slice(1);
       }
       break;
     case 'o':
       type = 'arrow_circle';
-      if (str[0] === 'o') {
+      if (str.startsWith('o')) {
         type = 'double_' + type;
         line = line.slice(1);
       }
@@ -670,11 +683,11 @@ const destructEndLink = (_str: string) => {
   let stroke = 'normal';
   let length = line.length - 1;
 
-  if (line[0] === '=') {
+  if (line.startsWith('=')) {
     stroke = 'thick';
   }
 
-  if (line[0] === '~') {
+  if (line.startsWith('~')) {
     stroke = 'invisible';
   }
 
@@ -723,14 +736,12 @@ export const destructLink = (_str: string, _startStr: string) => {
 
 // Todo optimizer this by caching existing nodes
 const exists = (allSgs: FlowSubGraph[], _id: string) => {
-  let res = false;
-  allSgs.forEach((sg) => {
-    const pos = sg.nodes.indexOf(_id);
-    if (pos >= 0) {
-      res = true;
+  for (const sg of allSgs) {
+    if (sg.nodes.includes(_id)) {
+      return true;
     }
-  });
-  return res;
+  }
+  return false;
 };
 /**
  * Deletes an id from all subgraphs
@@ -750,11 +761,174 @@ export const lex = {
   firstGraph,
 };
 
+const getTypeFromVertex = (vertex: FlowVertex) => {
+  if (vertex.type === 'square') {
+    return 'squareRect';
+  }
+  if (vertex.type === 'round') {
+    return 'roundedRect';
+  }
+
+  return vertex.type ?? 'squareRect';
+};
+
+const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
+const destructEdgeType = (type: string | undefined) => {
+  let arrowTypeStart = 'none';
+  let arrowTypeEnd = 'arrow_point';
+  switch (type) {
+    case 'arrow_point':
+    case 'arrow_circle':
+    case 'arrow_cross':
+      arrowTypeEnd = type;
+      break;
+
+    case 'double_arrow_point':
+    case 'double_arrow_circle':
+    case 'double_arrow_cross':
+      arrowTypeStart = type.replace('double_', '');
+      arrowTypeEnd = arrowTypeStart;
+      break;
+  }
+  return { arrowTypeStart, arrowTypeEnd };
+};
+
+const addNodeFromVertex = (
+  vertex: FlowVertex,
+  nodes: Node[],
+  parentDB: Map<string, string>,
+  subGraphDB: Map<string, boolean>,
+  config: any,
+  look: string
+) => {
+  const parentId = parentDB.get(vertex.id);
+  const isGroup = subGraphDB.get(vertex.id) ?? false;
+
+  const node = findNode(nodes, vertex.id);
+  if (node) {
+    node.cssStyles = vertex.styles;
+    node.cssCompiledStyles = getCompiledStyles(vertex.classes);
+    node.cssClasses = vertex.classes.join(' ');
+  } else {
+    nodes.push({
+      id: vertex.id,
+      label: vertex.text,
+      labelStyle: '',
+      parentId,
+      padding: config.flowchart?.padding || 8,
+      cssStyles: vertex.styles,
+      cssCompiledStyles: getCompiledStyles(['default', 'node', ...vertex.classes]),
+      cssClasses: 'default ' + vertex.classes.join(' '),
+      shape: getTypeFromVertex(vertex),
+      dir: vertex.dir,
+      domId: vertex.domId,
+      isGroup,
+      look,
+      link: vertex.link,
+      linkTarget: vertex.linkTarget,
+      tooltip: getTooltip(vertex.id),
+    });
+  }
+};
+
+function getCompiledStyles(classDefs: string[]) {
+  let compiledStyles: string[] = [];
+  for (const customClass of classDefs) {
+    const cssClass = classes.get(customClass);
+    if (cssClass?.styles) {
+      compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
+    }
+    if (cssClass?.textStyles) {
+      compiledStyles = [...compiledStyles, ...(cssClass.textStyles ?? [])].map((s) => s.trim());
+    }
+  }
+  return compiledStyles;
+}
+
+export const getData = () => {
+  const config = getConfig();
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  const subGraphs = getSubGraphs();
+  const parentDB = new Map<string, string>();
+  const subGraphDB = new Map<string, boolean>();
+
+  // Setup the subgraph data for adding nodes
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
+    if (subGraph.nodes.length > 0) {
+      subGraphDB.set(subGraph.id, true);
+    }
+    for (const id of subGraph.nodes) {
+      parentDB.set(id, subGraph.id);
+    }
+  }
+
+  // Data is setup, add the nodes
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
+    nodes.push({
+      id: subGraph.id,
+      label: subGraph.title,
+      labelStyle: '',
+      parentId: parentDB.get(subGraph.id),
+      padding: 8,
+      cssCompiledStyles: getCompiledStyles(subGraph.classes),
+      cssClasses: subGraph.classes.join(' '),
+      shape: 'rect',
+      dir: subGraph.dir,
+      isGroup: true,
+      look: config.look,
+    });
+  }
+
+  const n = getVertices();
+  n.forEach((vertex) => {
+    addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
+  });
+
+  const e = getEdges();
+  e.forEach((rawEdge, index) => {
+    const { arrowTypeStart, arrowTypeEnd } = destructEdgeType(rawEdge.type);
+    const styles = [...(e.defaultStyle ?? [])];
+
+    if (rawEdge.style) {
+      styles.push(...rawEdge.style);
+    }
+    const edge: Edge = {
+      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }),
+      start: rawEdge.start,
+      end: rawEdge.end,
+      type: rawEdge.type ?? 'normal',
+      label: rawEdge.text,
+      labelpos: 'c',
+      thickness: rawEdge.stroke,
+      minlen: rawEdge.length,
+      classes:
+        rawEdge?.stroke === 'invisible'
+          ? ''
+          : 'edge-thickness-normal edge-pattern-solid flowchart-link',
+      arrowTypeStart: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeStart,
+      arrowTypeEnd: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeEnd,
+      arrowheadStyle: 'fill: #333',
+      labelStyle: styles,
+      style: styles,
+      pattern: rawEdge.stroke,
+      look: config.look,
+    };
+    edges.push(edge);
+  });
+
+  return { nodes, edges, other: {}, config };
+};
+
 export default {
   defaultConfig: () => defaultConfig.flowchart,
   setAccTitle,
   getAccTitle,
   getAccDescription,
+  getData,
   setAccDescription,
   addVertex,
   lookUpDomId,

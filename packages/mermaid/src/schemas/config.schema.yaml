@@ -24,7 +24,7 @@
 #   you may need to add it to `.build/jsonSchema.ts`, `src/docs.mts`
 #   and `scripts/create-types-from-json-schema.mjs`
 #   to get the default values/docs/types to generate properly.
-$id: https://mermaid-js.github.io/schemas/config.schema.json
+$id: https://mermaid.js.org/schemas/config.schema.json
 $schema: https://json-schema.org/draft/2019-09/schema
 title: Mermaid Config
 type: object
@@ -52,6 +52,7 @@ required:
   - sankey
   - packet
   - block
+  - look
 properties:
   theme:
     description: |
@@ -60,8 +61,9 @@ properties:
     type: string
     enum:
       - default
-      - forest
+      - base
       - dark
+      - forest
       - neutral
       - 'null' # should this be a `null`-type?
     meta:enum:
@@ -71,6 +73,24 @@ properties:
     tsType: any
   themeCSS:
     type: string
+  look:
+    description: |
+      Defines which main look to use for the diagram.
+    type: string
+    enum:
+      - classic
+      - handDrawn
+    default: 'classic'
+  handDrawnSeed:
+    description: |
+      Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+    type: number
+    default: 0
+  layout:
+    description: |
+      Defines which layout algorithm to use for rendering the diagram.
+    type: string
+    default: 'dagre'
   maxTextSize:
     description: The maximum allowed size of the users text diagram
     type: number
@@ -81,6 +101,24 @@ properties:
     type: integer
     default: 500
     minimum: 0
+  elk:
+    type: object
+    properties:
+      mergeEdges:
+        description: |
+          Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+        type: boolean
+        default: false
+      nodePlacementStrategy:
+        description: |
+          Elk specific option affecting how nodes are placed.
+        type: string
+        enum:
+          - SIMPLE
+          - NETWORK_SIMPLEX
+          - LINEAR_SEGMENTS
+          - BRANDES_KOEPF
+        default: SIMPLE
   darkMode:
     type: boolean
     default: false
@@ -154,10 +192,7 @@ properties:
   secure:
     description: |
       This option controls which `currentConfig` keys are considered secure and
-      can only be changed via call to `mermaidAPI.initialize`.
-      Calls to `mermaidAPI.reinitialize` cannot make changes to the secure keys
-      in the current `currentConfig`.
-
+      can only be changed via call to `mermaid.initialize`.
       This prevents malicious graph directives from overriding a site's default security.
     default:
       [
@@ -178,6 +213,13 @@ properties:
       without their own MathML implementation. If this option is disabled and MathML is not supported, the math
       equations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will
       fall back to legacy rendering for KaTeX.
+    type: boolean
+    default: false
+  forceLegacyMathML:
+    description: |
+      This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS
+      fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
+      If set to true, ignores legacyMathML.
     type: boolean
     default: false
   deterministicIds:
@@ -1251,6 +1293,16 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       noteMargin:
         type: number
         default: 10
+      nodeSpacing:
+        type: integer
+        minimum: 0
+        # should the default value be 50?
+        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L258
+      rankSpacing:
+        type: integer
+        minimum: 0
+        # should the default value be 50?
+        # see https://github.com/mermaid-js/mermaid/blob/7647ae317a7b2130e32777248d25a9c4d24b8f9f/packages/mermaid/src/diagrams/class/classRenderer-v2.ts#L259
       forkWidth:
         type: number
         default: 70

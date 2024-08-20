@@ -9,7 +9,14 @@ import {
   setAccDescription,
   clear as commonClear,
 } from '../common/commonDb.js';
+import type { StylesObject } from './quadrantBuilder.js';
 import { QuadrantBuilder } from './quadrantBuilder.js';
+import {
+  validateHexCode,
+  validateSizeInPixels,
+  validateNumber,
+  InvalidStyleError,
+} from './utils.js';
 
 const config = getConfig();
 
@@ -17,7 +24,10 @@ function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
 
-type LexTextObj = { text: string; type: 'text' | 'markdown' };
+interface LexTextObj {
+  text: string;
+  type: 'text' | 'markdown';
+}
 
 const quadrantBuilder = new QuadrantBuilder();
 
@@ -53,8 +63,52 @@ function setYAxisBottomText(textObj: LexTextObj) {
   quadrantBuilder.setData({ yAxisBottomText: textSanitizer(textObj.text) });
 }
 
-function addPoint(textObj: LexTextObj, x: number, y: number) {
-  quadrantBuilder.addPoints([{ x, y, text: textSanitizer(textObj.text) }]);
+function parseStyles(styles: string[]): StylesObject {
+  const stylesObject: StylesObject = {};
+  for (const style of styles) {
+    const [key, value] = style.trim().split(/\s*:\s*/);
+    if (key === 'radius') {
+      if (validateNumber(value)) {
+        throw new InvalidStyleError(key, value, 'number');
+      }
+      stylesObject.radius = parseInt(value);
+    } else if (key === 'color') {
+      if (validateHexCode(value)) {
+        throw new InvalidStyleError(key, value, 'hex code');
+      }
+      stylesObject.color = value;
+    } else if (key === 'stroke-color') {
+      if (validateHexCode(value)) {
+        throw new InvalidStyleError(key, value, 'hex code');
+      }
+      stylesObject.strokeColor = value;
+    } else if (key === 'stroke-width') {
+      if (validateSizeInPixels(value)) {
+        throw new InvalidStyleError(key, value, 'number of pixels (eg. 10px)');
+      }
+      stylesObject.strokeWidth = value;
+    } else {
+      throw new Error(`style named ${key} is not supported.`);
+    }
+  }
+  return stylesObject;
+}
+
+function addPoint(textObj: LexTextObj, className: string, x: number, y: number, styles: string[]) {
+  const stylesObject = parseStyles(styles);
+  quadrantBuilder.addPoints([
+    {
+      x,
+      y,
+      text: textSanitizer(textObj.text),
+      className,
+      ...stylesObject,
+    },
+  ]);
+}
+
+function addClass(className: string, styles: string[]) {
+  quadrantBuilder.addClass(className, parseStyles(styles));
 }
 
 function setWidth(width: number) {
@@ -108,7 +162,9 @@ export default {
   setXAxisRightText,
   setYAxisTopText,
   setYAxisBottomText,
+  parseStyles,
   addPoint,
+  addClass,
   getQuadrantData,
   clear,
   setAccTitle,

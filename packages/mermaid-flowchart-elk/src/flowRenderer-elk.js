@@ -41,12 +41,12 @@ let nodeDb = {};
 export const addVertices = async function (vert, svgId, root, doc, diagObj, parentLookupDb, graph) {
   const svg = root.select(`[id="${svgId}"]`);
   const nodes = svg.insert('g').attr('class', 'nodes');
-  const keys = Object.keys(vert);
+  const keys = [...vert.keys()];
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   await Promise.all(
     keys.map(async function (id) {
-      const vertex = vert[id];
+      const vertex = vert.get(id);
 
       /**
        * Variable for storing the classes for the vertex
@@ -64,7 +64,6 @@ export const addVertices = async function (vert, svgId, root, doc, diagObj, pare
       let vertexText = vertex.text !== undefined ? vertex.text : vertex.id;
 
       // We create a SVG label, either by delegating to addHtmlLabel or manually
-      let vertexNode;
       const labelData = { width: 0, height: 0 };
 
       const ports = [
@@ -188,19 +187,6 @@ export const addVertices = async function (vert, svgId, root, doc, diagObj, pare
         nodeEl = await insertNode(nodes, node, vertex.dir);
         boundingBox = nodeEl.node().getBBox();
       } else {
-        const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
-        // svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-        // const rows = vertexText.split(common.lineBreakRegex);
-        // for (const row of rows) {
-        //   const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-        //   tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-        //   tspan.setAttribute('dy', '1em');
-        //   tspan.setAttribute('x', '1');
-        //   tspan.textContent = row;
-        //   svgLabel.appendChild(tspan);
-        // }
-        // vertexNode = svgLabel;
-        // const bbox = vertexNode.getBBox();
         const { shapeSvg, bbox } = await labelHelper(nodes, node, undefined, true);
         labelData.width = bbox.width;
         labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
@@ -595,7 +581,7 @@ const addMarkersToEdge = function (svgPath, edgeData, diagramType, arrowMarkerAb
  *
  * @param text
  * @param diagObj
- * @returns {Record<string, import('../../mermaid/src/diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
+ * @returns {Map<string, import('../../mermaid/src/diagram-api/types.js').DiagramStyleClassDef>} ClassDef styles
  */
 export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');
@@ -677,7 +663,6 @@ const insertEdge = function (edgesEl, edge, edgeData, diagObj, parentLookupDb, i
 /**
  * Recursive function that iterates over an array of nodes and inserts the children of each node.
  * It also recursively populates the inserts the children of the children and so on.
- * @param {*} graph
  * @param nodeArray
  * @param parentLookupDb
  */

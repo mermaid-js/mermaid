@@ -1,21 +1,26 @@
 import clone from 'lodash-es/clone.js';
 import * as configApi from '../../config.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
+import common from '../common/common.js';
 import { clear as commonClear } from '../common/commonDb.js';
 import type { Block, ClassDef } from './blockTypes.js';
 
 // Initialize the node database for simple lookups
-let blockDatabase: Record<string, Block> = {};
+let blockDatabase = new Map<string, Block>();
 let edgeList: Block[] = [];
-let edgeCount: Record<string, number> = {};
+let edgeCount = new Map<string, number>();
 
 const COLOR_KEYWORD = 'color';
 const FILL_KEYWORD = 'fill';
 const BG_FILL = 'bgFill';
 const STYLECLASS_SEP = ',';
+const config = getConfig();
 
-let classes = {} as Record<string, ClassDef>;
+let classes = new Map<string, ClassDef>();
+
+const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
 
 /**
  * Called when the parser comes across a (style) class definition
@@ -26,17 +31,18 @@ let classes = {} as Record<string, ClassDef>;
  */
 export const addStyleClass = function (id: string, styleAttributes = '') {
   // create a new style class object with this id
-  if (classes[id] === undefined) {
-    classes[id] = { id: id, styles: [], textStyles: [] }; // This is a classDef
+  let foundClass = classes.get(id);
+  if (!foundClass) {
+    foundClass = { id: id, styles: [], textStyles: [] };
+    classes.set(id, foundClass); // This is a classDef
   }
-  const foundClass = classes[id];
   if (styleAttributes !== undefined && styleAttributes !== null) {
     styleAttributes.split(STYLECLASS_SEP).forEach((attrib) => {
       // remove any trailing ;
       const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
 
       // replace some style keywords
-      if (attrib.match(COLOR_KEYWORD)) {
+      if (RegExp(COLOR_KEYWORD).exec(attrib)) {
         const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
         const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
         foundClass.textStyles.push(newStyle2);
@@ -54,7 +60,7 @@ export const addStyleClass = function (id: string, styleAttributes = '') {
  * @param styles - the string with 1 or more style attributes (each separated by a comma)
  */
 export const addStyle2Node = function (id: string, styles = '') {
-  const foundBlock = blockDatabase[id];
+  const foundBlock = blockDatabase.get(id)!;
   if (styles !== undefined && styles !== null) {
     foundBlock.styles = styles.split(STYLECLASS_SEP);
   }
@@ -70,11 +76,11 @@ export const addStyle2Node = function (id: string, styles = '') {
  */
 export const setCssClass = function (itemIds: string, cssClassName: string) {
   itemIds.split(',').forEach(function (id: string) {
-    let foundBlock = blockDatabase[id];
+    let foundBlock = blockDatabase.get(id);
     if (foundBlock === undefined) {
       const trimmedId = id.trim();
-      blockDatabase[trimmedId] = { id: trimmedId, type: 'na', children: [] } as Block;
-      foundBlock = blockDatabase[trimmedId];
+      foundBlock = { id: trimmedId, type: 'na', children: [] } as Block;
+      blockDatabase.set(trimmedId, foundBlock);
     }
     if (!foundBlock.classes) {
       foundBlock.classes = [];
@@ -83,16 +89,19 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
   });
 };
 
-const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): void => {
+const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
   for (const block of blockList) {
+    if (block.label) {
+      block.label = sanitizeText(block.label);
+    }
     if (block.type === 'classDef') {
       addStyleClass(block.id, block.css);
       continue;
     }
     if (block.type === 'applyClass') {
-      setCssClass(block.id, block?.styleClass || '');
+      setCssClass(block.id, block?.styleClass ?? '');
       continue;
     }
     if (block.type === 'applyStyles') {
@@ -102,14 +111,11 @@ const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): 
       continue;
     }
     if (block.type === 'column-setting') {
-      parent.columns = block.columns || -1;
+      parent.columns = block.columns ?? -1;
     } else if (block.type === 'edge') {
-      if (edgeCount[block.id]) {
-        edgeCount[block.id]++;
-      } else {
-        edgeCount[block.id] = 1;
-      }
-      block.id = edgeCount[block.id] + '-' + block.id;
+      const count = (edgeCount.get(block.id) ?? 0) + 1;
+      edgeCount.set(block.id, count);
+      block.id = count + '-' + block.id;
       edgeList.push(block);
     } else {
       if (!block.label) {
@@ -120,16 +126,17 @@ const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): 
           block.label = block.id;
         }
       }
-      const newBlock = !blockDatabase[block.id];
-      if (newBlock) {
-        blockDatabase[block.id] = block;
+      const existingBlock = blockDatabase.get(block.id);
+
+      if (existingBlock === undefined) {
+        blockDatabase.set(block.id, block);
       } else {
         // Add newer relevant data to aggregated node
         if (block.type !== 'na') {
-          blockDatabase[block.id].type = block.type;
+          existingBlock.type = block.type;
         }
         if (block.label !== block.id) {
-          blockDatabase[block.id].label = block.label;
+          existingBlock.label = block.label;
         }
       }
 
@@ -138,14 +145,14 @@ const populateBlockDatabase = (_blockList: Block[] | Block[][], parent: Block): 
       }
       if (block.type === 'space') {
         // log.debug('abc95 space', block);
-        const w = block.width || 1;
+        const w = block.width ?? 1;
         for (let j = 0; j < w; j++) {
           const newBlock = clone(block);
           newBlock.id = newBlock.id + '-' + j;
-          blockDatabase[newBlock.id] = newBlock;
+          blockDatabase.set(newBlock.id, newBlock);
           children.push(newBlock);
         }
-      } else if (newBlock) {
+      } else if (existingBlock === undefined) {
         children.push(block);
       }
     }
@@ -160,12 +167,12 @@ const clear = (): void => {
   log.debug('Clear called');
   commonClear();
   rootBlock = { id: 'root', type: 'composite', children: [], columns: -1 } as Block;
-  blockDatabase = { root: rootBlock };
-  blocks = [] as Block[];
-  classes = {} as Record<string, ClassDef>;
+  blockDatabase = new Map([['root', rootBlock]]);
+  blocks = [];
+  classes = new Map();
 
   edgeList = [];
-  edgeCount = {};
+  edgeCount = new Map();
 };
 
 export function typeStr2Type(typeStr: string) {
@@ -241,7 +248,7 @@ const setHierarchy = (block: Block[]): void => {
 };
 
 const getColumns = (blockId: string): number => {
-  const block = blockDatabase[blockId];
+  const block = blockDatabase.get(blockId);
   if (!block) {
     return -1;
   }
@@ -259,10 +266,10 @@ const getColumns = (blockId: string): number => {
  * @returns
  */
 const getBlocksFlat = () => {
-  return [...Object.values(blockDatabase)];
+  return [...blockDatabase.values()];
 };
 /**
- * Returns the the hierarchy of blocks
+ * Returns the hierarchy of blocks
  * @returns
  */
 const getBlocks = () => {
@@ -273,11 +280,11 @@ const getEdges = () => {
   return edgeList;
 };
 const getBlock = (id: string) => {
-  return blockDatabase[id];
+  return blockDatabase.get(id);
 };
 
 const setBlock = (block: Block) => {
-  blockDatabase[block.id] = block;
+  blockDatabase.set(block.id, block);
 };
 
 const getLogger = () => console;

@@ -8,7 +8,7 @@ import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-export interface MermaidBuildOptions {
+export interface MermaidBuildOptions extends BuildOptions {
   minify: boolean;
   core: boolean;
   metafile: boolean;
@@ -56,7 +56,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   const external: string[] = ['require', 'fs', 'path'];
   const { name, file, packageName } = packageOptions[entryName];
   const outFileName = getFileName(name, options);
-  let output: BuildOptions = buildOptions({
+  const output: BuildOptions = buildOptions({
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
     entryPoints: {
       [outFileName]: `src/${file}`,
