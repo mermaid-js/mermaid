@@ -1,5 +1,6 @@
 import { log } from '../../logger.js';
-import { random } from '../../utils.js';
+import { cleanAndMerge, random } from '../../utils.js';
+import { getConfig as commonGetConfig } from '../../config.js';
 import common from '../common/common.js';
 import {
   setAccTitle,
@@ -37,12 +38,16 @@ interface GitGraphState {
 }
 
 const DEFAULT_GITGRAPH_CONFIG: Required<GitGraphDiagramConfig> = DEFAULT_CONFIG.gitGraph;
-
-const mainBranchName = DEFAULT_GITGRAPH_CONFIG.mainBranchName;
-const mainBranchOrder = DEFAULT_GITGRAPH_CONFIG.mainBranchOrder;
-const config: Required<GitGraphDiagramConfig> = structuredClone(DEFAULT_GITGRAPH_CONFIG);
-
-const getConfig = (): Required<GitGraphDiagramConfig> => structuredClone(config);
+const getConfig = (): Required<GitGraphDiagramConfig> => {
+  const config = cleanAndMerge({
+    ...DEFAULT_GITGRAPH_CONFIG,
+    ...commonGetConfig().gitGraph,
+  });
+  return config;
+};
+const config = getConfig();
+const mainBranchName = config.mainBranchName;
+const mainBranchOrder = config.mainBranchOrder;
 
 const state = new ImperativeState<GitGraphState>(() => ({
   commits: new Map(),
