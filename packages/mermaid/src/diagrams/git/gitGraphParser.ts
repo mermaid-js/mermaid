@@ -4,7 +4,7 @@ import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { db } from './gitGraphAst.js';
-import { commitType } from './gitGraphAst.js';
+import { commitType } from './gitGraphTypes.js';
 import type {
   CheckoutAst,
   CherryPickingAst,

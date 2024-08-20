@@ -1,13 +1,21 @@
 import type { GitGraphDiagramConfig } from '../../config.type.js';
 import type { DiagramDBBase } from '../../diagram-api/types.js';
 
-export interface CommitType {
-  NORMAL: number;
-  REVERSE: number;
-  HIGHLIGHT: number;
-  MERGE: number;
-  CHERRY_PICK: number;
-}
+export const commitType = {
+  NORMAL: 0,
+  REVERSE: 1,
+  HIGHLIGHT: 2,
+  MERGE: 3,
+  CHERRY_PICK: 4,
+} as const;
+
+export const gitcommitType = {
+  NORMAL: 0,
+  REVERSE: 1,
+  HIGHLIGHT: 2,
+  MERGE: 3,
+  CHERRY_PICK: 4,
+} as const;
 
 export interface Commit {
   id: string;
@@ -23,11 +31,6 @@ export interface Commit {
 
 export interface GitGraph {
   statements: Statement[];
-}
-
-export interface Position {
-  x: number;
-  y: number;
 }
 
 export type Statement = CommitAst | BranchAst | MergeAst | CheckoutAst | CherryPickingAst;
@@ -62,12 +65,12 @@ export interface CheckoutAst {
 export interface CherryPickingAst {
   $type: 'CherryPicking';
   id: string;
-  tags?: string[];
   parent: string;
+  tags?: string[];
 }
 
 export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
-  commitType: CommitType;
+  commitType: typeof commitType;
   setDirection: (dir: DiagramOrientation) => void;
   setOptions: (rawOptString: string) => void;
   getOptions: () => any;
@@ -98,7 +101,7 @@ export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
 }
 
 export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
-  commitType: CommitType;
+  commitType: typeof commitType;
   setDirection: (dir: DiagramOrientation) => void;
   commit: (msg: string, id: string, type: number, tags?: string[]) => void;
   branch: (name: string, order?: number) => void;

@@ -6,8 +6,8 @@ import gitGraphStyles from './styles.js';
 import type { DiagramDefinition } from '../../diagram-api/types.js';
 
 export const diagram: DiagramDefinition = {
-  parser: parser,
-  db: db,
+  parser,
+  db,
   renderer: gitGraphRenderer,
   styles: gitGraphStyles,
 };

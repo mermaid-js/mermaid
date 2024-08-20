@@ -4,32 +4,8 @@ import { log } from '../../logger.js';
 import utils from '../../utils.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type d3 from 'd3';
-import type {
-  CommitType,
-  Commit,
-  GitGraphDBRenderProvider,
-  DiagramOrientation,
-} from './gitGraphTypes.js';
-
-const DEFAULT_CONFIG = getConfig();
-const DEFAULT_GITGRAPH_CONFIG = DEFAULT_CONFIG?.gitGraph;
-
-let allCommitsDict = new Map();
-
-const LAYOUT_OFFSET = 10;
-const COMMIT_STEP = 40;
-const PX = 4;
-const PY = 2;
-
-const commitType: CommitType = {
-  NORMAL: 0,
-  REVERSE: 1,
-  HIGHLIGHT: 2,
-  MERGE: 3,
-  CHERRY_PICK: 4,
-};
-
-const THEME_COLOR_LIMIT = 8;
+import type { Commit, GitGraphDBRenderProvider, DiagramOrientation } from './gitGraphTypes.js';
+import { commitType } from './gitGraphTypes.js';
 
 interface BranchPosition {
   pos: number;
@@ -45,12 +21,22 @@ interface CommitPositionOffset extends CommitPosition {
   posWithOffset: number;
 }
 
+const DEFAULT_CONFIG = getConfig();
+const DEFAULT_GITGRAPH_CONFIG = DEFAULT_CONFIG?.gitGraph;
+const LAYOUT_OFFSET = 10;
+const COMMIT_STEP = 40;
+const PX = 4;
+const PY = 2;
+
+const THEME_COLOR_LIMIT = 8;
 const branchPos = new Map<string, BranchPosition>();
 const commitPos = new Map<string, CommitPosition>();
+const defaultPos = 30;
+
+let allCommitsDict = new Map();
 let lanes: number[] = [];
 let maxPos = 0;
 let dir: DiagramOrientation = 'LR';
-const defaultPos = 30;
 
 const clear = () => {
   branchPos.clear();
@@ -306,7 +292,7 @@ const drawCommitLabel = (
   if (
     commit.type !== commitType.CHERRY_PICK &&
     ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE) &&
-    DEFAULT_GITGRAPH_CONFIG.showCommitLabel
+    DEFAULT_GITGRAPH_CONFIG?.showCommitLabel
   ) {
     const wrapper = gLabels.append('g');
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
@@ -549,10 +535,8 @@ const drawCommits = (
   if (dir === 'BT') {
     if (isParallelCommits) {
       setParallelBTPos(sortedKeys, commits, pos);
-      sortedKeys = sortedKeys.reverse();
-    } else {
-      sortedKeys = sortedKeys.reverse();
     }
+    sortedKeys = sortedKeys.reverse();
   }
 
   sortedKeys.forEach((key) => {

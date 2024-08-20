@@ -10,7 +10,8 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import type { DiagramOrientation, Commit, GitGraphDB, CommitType } from './gitGraphTypes.js';
+import type { DiagramOrientation, Commit, GitGraphDB } from './gitGraphTypes.js';
+import { commitType } from './gitGraphTypes.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 
 import DEFAULT_CONFIG from '../../defaultConfig.js';
@@ -132,11 +133,9 @@ export const merge = (
   if (customId) {
     customId = common.sanitizeText(customId, config);
   }
-  const currentBranchCheck: string | null | undefined = state.records.branches.get(
-    state.records.currBranch
-  );
-  const otherBranchCheck: string | null | undefined = state.records.branches.get(otherBranch);
-  const currentCommit: Commit | undefined = currentBranchCheck
+  const currentBranchCheck = state.records.branches.get(state.records.currBranch);
+  const otherBranchCheck = state.records.branches.get(otherBranch);
+  const currentCommit = currentBranchCheck
     ? state.records.commits.get(currentBranchCheck)
     : undefined;
   const otherCommit: Commit | undefined = otherBranchCheck
@@ -215,8 +214,8 @@ export const merge = (
 
   const verifiedBranch: string = otherBranchCheck ? otherBranchCheck : ''; //figure out a cleaner way to do this
 
-  const commit: Commit = {
-    id: customId ? customId : state.records.seq + '-' + getID(),
+  const commit = {
+    id: customId ?? `${state.records.seq}-${getID()}`,
     message: `merged branch ${otherBranch} into ${state.records.currBranch}`,
     seq: state.records.seq++,
     parents: state.records.head == null ? [] : [state.records.head.id, verifiedBranch],
@@ -224,8 +223,8 @@ export const merge = (
     type: commitType.MERGE,
     customType: overrideType,
     customId: customId ? true : false,
-    tags: customTags ? customTags : [],
-  };
+    tags: customTags ?? [],
+  } satisfies Commit;
   state.records.head = commit;
   state.records.commits.set(commit.id, commit);
   state.records.branches.set(state.records.currBranch, commit.id);
@@ -379,7 +378,6 @@ function upsert(arr: any[], key: any, newVal: any) {
   }
 }
 
-/** @param commitArr  - array */
 function prettyPrintCommitHistory(commitArr: Commit[]) {
   const commit = commitArr.reduce((out, commit) => {
     if (out.seq > commit.seq) {
@@ -470,14 +468,6 @@ export const getDirection = function () {
 };
 export const getHead = function () {
   return state.records.head;
-};
-
-export const commitType: CommitType = {
-  NORMAL: 0,
-  REVERSE: 1,
-  HIGHLIGHT: 2,
-  MERGE: 3,
-  CHERRY_PICK: 4,
 };
 
 export const db: GitGraphDB = {
