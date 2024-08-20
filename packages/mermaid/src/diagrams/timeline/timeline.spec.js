@@ -1,5 +1,6 @@
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
+import * as commonDb from '../common/commonDb.js';
 import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 
 describe('when parsing a timeline ', function () {
@@ -97,6 +98,21 @@ describe('when parsing a timeline ', function () {
             break;
         }
       });
+    });
+
+    it('TL-6 should handle a title, section, task, and events with hashtags', function () {
+      let str = `timeline
+      title #my#title#
+      section #a#bc-123#
+      task1: #ev#ent1# : #ev#ent2# : #ev#ent3#
+   `;
+      timeline.parse(str);
+      expect(commonDb.getDiagramTitle()).equal('#my#title#');
+      expect(timelineDB.getSections()).to.deep.equal(['#a#bc-123#']);
+      expect(timelineDB.getTasks()[0].task).equal('task1');
+      expect(timelineDB.getTasks()[0].events[0]).equal('#ev#ent1# ');
+      expect(timelineDB.getTasks()[0].events[1]).equal('#ev#ent2# ');
+      expect(timelineDB.getTasks()[0].events[2]).equal('#ev#ent3#');
     });
   });
 });
