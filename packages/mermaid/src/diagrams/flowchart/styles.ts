@@ -38,11 +38,14 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .cluster-label text {
     fill: ${options.titleColor};
   }
-  .cluster-label span,p {
+  .cluster-label span {
     color: ${options.titleColor};
   }
+  .cluster-label span p {
+    background-color: transparent;
+  }
 
-  .label text,span,p {
+  .label text,span {
     fill: ${options.nodeTextColor || options.textColor};
     color: ${options.nodeTextColor || options.textColor};
   }
@@ -56,7 +59,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
-  .flowchart-label text {
+  .rough-node .label text , .node .label text {
     text-anchor: middle;
   }
   // .flowchart-label .text-outer-tspan {
@@ -95,6 +98,9 @@ const getStyles = (options: FlowChartStyleOptions) =>
 
   .edgeLabel {
     background-color: ${options.edgeLabelBackground};
+    p {
+      background-color: ${options.edgeLabelBackground};
+    }
     rect {
       opacity: 0.5;
       background-color: ${options.edgeLabelBackground};
@@ -106,7 +112,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
   /* For html labels only */
   .labelBkg {
     background-color: ${fade(options.edgeLabelBackground, 0.5)};
-    // background-color: 
+    // background-color:
   }
 
   .cluster rect {
@@ -119,7 +125,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     fill: ${options.titleColor};
   }
 
-  .cluster span,p {
+  .cluster span {
     color: ${options.titleColor};
   }
   /* .cluster div {

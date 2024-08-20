@@ -12,10 +12,10 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
 
-    expect(Object.keys(commits).length).toBe(1);
+    expect(commits.size).toBe(1);
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('LR');
-    expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    expect(parser.yy.getBranches().size).toBe(1);
   });
 
   it('should handle a gitGraph definition with empty options', function () {
@@ -25,10 +25,10 @@ describe('when parsing a gitGraph', function () {
     const commits = parser.yy.getCommits();
 
     expect(parser.yy.getOptions()).toEqual({});
-    expect(Object.keys(commits).length).toBe(1);
+    expect(commits.size).toBe(1);
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('LR');
-    expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    expect(parser.yy.getBranches().size).toBe(1);
   });
 
   it('should handle a gitGraph definition with valid options', function () {
@@ -36,11 +36,11 @@ describe('when parsing a gitGraph', function () {
 
     parser.parse(str);
     const commits = parser.yy.getCommits();
-    expect(parser.yy.getOptions()['key']).toBe('value');
-    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getOptions().key).toBe('value');
+    expect(commits.size).toBe(1);
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('LR');
-    expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    expect(parser.yy.getBranches().size).toBe(1);
   });
 
   it('should not fail on a gitGraph with malformed json', function () {
@@ -48,10 +48,10 @@ describe('when parsing a gitGraph', function () {
 
     parser.parse(str);
     const commits = parser.yy.getCommits();
-    expect(Object.keys(commits).length).toBe(1);
+    expect(commits.size).toBe(1);
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('LR');
-    expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    expect(parser.yy.getBranches().size).toBe(1);
   });
 
   it('should handle set direction top to bottom', function () {
@@ -60,10 +60,10 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
 
-    expect(Object.keys(commits).length).toBe(1);
+    expect(commits.size).toBe(1);
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('TB');
-    expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    expect(parser.yy.getBranches().size).toBe(1);
   });
 
   it('should handle set direction bottom to top', function () {
@@ -72,10 +72,10 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
 
-    expect(Object.keys(commits).length).toBe(1);
+    expect(commits.size).toBe(1);
     expect(parser.yy.getCurrentBranch()).toBe('main');
     expect(parser.yy.getDirection()).toBe('BT');
-    expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    expect(parser.yy.getBranches().size).toBe(1);
   });
 
   it('should checkout a branch', function () {
@@ -84,7 +84,17 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
 
-    expect(Object.keys(commits).length).toBe(0);
+    expect(commits.size).toBe(0);
+    expect(parser.yy.getCurrentBranch()).toBe('new');
+  });
+
+  it('should switch a branch', function () {
+    const str = 'gitGraph:\n' + 'branch new\n' + 'switch new\n';
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+
+    expect(commits.size).toBe(0);
     expect(parser.yy.getCurrentBranch()).toBe('new');
   });
 
@@ -94,11 +104,11 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
 
-    expect(Object.keys(commits).length).toBe(2);
+    expect(commits.size).toBe(2);
     expect(parser.yy.getCurrentBranch()).toBe('new');
-    const branchCommit = parser.yy.getBranches()['new'];
+    const branchCommit = parser.yy.getBranches().get('new');
     expect(branchCommit).not.toBeNull();
-    expect(commits[branchCommit].parent).not.toBeNull();
+    expect(commits.get(branchCommit).parent).not.toBeNull();
   });
   it('should handle commit with args', function () {
     const str = 'gitGraph:\n' + 'commit "a commit"\n';
@@ -106,9 +116,9 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
     const commits = parser.yy.getCommits();
 
-    expect(Object.keys(commits).length).toBe(1);
-    const key = Object.keys(commits)[0];
-    expect(commits[key].message).toBe('a commit');
+    expect(commits.size).toBe(1);
+    const key = commits.keys().next().value;
+    expect(commits.get(key).message).toBe('a commit');
     expect(parser.yy.getCurrentBranch()).toBe('main');
   });
 
@@ -126,10 +136,10 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
 
     const commits = parser.yy.getCommits();
-    expect(Object.keys(commits).length).toBe(3);
+    expect(commits.size).toBe(3);
     expect(parser.yy.getCurrentBranch()).toBe('newbranch');
-    expect(parser.yy.getBranches()['newbranch']).toEqual(parser.yy.getBranches()['main']);
-    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['newbranch']);
+    expect(parser.yy.getBranches().get('newbranch')).toEqual(parser.yy.getBranches().get('main'));
+    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches().get('newbranch'));
   });
 
   it.skip('reset can take an argument', function () {
@@ -145,9 +155,9 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
 
     const commits = parser.yy.getCommits();
-    expect(Object.keys(commits).length).toBe(3);
+    expect(commits.size).toBe(3);
     expect(parser.yy.getCurrentBranch()).toBe('newbranch');
-    const main = commits[parser.yy.getBranches()['main']];
+    const main = commits.get(parser.yy.getBranches().get('main'));
     expect(parser.yy.getHead().id).toEqual(main.parent);
   });
 
@@ -165,10 +175,10 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
 
     const commits = parser.yy.getCommits();
-    expect(Object.keys(commits).length).toBe(4);
+    expect(commits.size).toBe(4);
     expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getBranches()['newbranch']).toEqual(parser.yy.getBranches()['main']);
-    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['newbranch']);
+    expect(parser.yy.getBranches().get('newbranch')).toEqual(parser.yy.getBranches().get('main'));
+    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches().get('newbranch'));
   });
 
   it('should handle cases when merge is a noop', function () {
@@ -184,10 +194,12 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
 
     const commits = parser.yy.getCommits();
-    expect(Object.keys(commits).length).toBe(4);
+    expect(commits.size).toBe(4);
     expect(parser.yy.getCurrentBranch()).toBe('newbranch');
-    expect(parser.yy.getBranches()['newbranch']).not.toEqual(parser.yy.getBranches()['main']);
-    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['newbranch']);
+    expect(parser.yy.getBranches().get('newbranch')).not.toEqual(
+      parser.yy.getBranches().get('main')
+    );
+    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches().get('newbranch'));
   });
 
   it('should handle merge with 2 parents', function () {
@@ -205,10 +217,12 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
 
     const commits = parser.yy.getCommits();
-    expect(Object.keys(commits).length).toBe(5);
+    expect(commits.size).toBe(5);
     expect(parser.yy.getCurrentBranch()).toBe('main');
-    expect(parser.yy.getBranches()['newbranch']).not.toEqual(parser.yy.getBranches()['main']);
-    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['main']);
+    expect(parser.yy.getBranches().get('newbranch')).not.toEqual(
+      parser.yy.getBranches().get('main')
+    );
+    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches().get('main'));
   });
 
   it.skip('should handle ff merge when history walk has two parents (merge commit)', function () {
@@ -229,10 +243,10 @@ describe('when parsing a gitGraph', function () {
     parser.parse(str);
 
     const commits = parser.yy.getCommits();
-    expect(Object.keys(commits).length).toBe(7);
+    expect(commits.size).toBe(7);
     expect(parser.yy.getCurrentBranch()).toBe('newbranch');
-    expect(parser.yy.getBranches()['newbranch']).toEqual(parser.yy.getBranches()['main']);
-    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['main']);
+    expect(parser.yy.getBranches().get('newbranch')).toEqual(parser.yy.getBranches().get('main'));
+    expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches().get('main'));
 
     parser.yy.prettyPrint();
   });

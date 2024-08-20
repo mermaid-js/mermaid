@@ -77,7 +77,7 @@ export class ClassMember {
 
     if (this.memberType === 'method') {
       const methodRegEx = /([#+~-])?(.+)\((.*)\)([\s$*])?(.*)([$*])?/;
-      const match = input.match(methodRegEx);
+      const match = methodRegEx.exec(input);
       if (match) {
         const detectedVisibility = match[1] ? match[1].trim() : '';
 
@@ -92,7 +92,7 @@ export class ClassMember {
 
         if (potentialClassifier === '') {
           const lastChar = this.returnType.substring(this.returnType.length - 1);
-          if (lastChar.match(/[$*]/)) {
+          if (/[$*]/.exec(lastChar)) {
             potentialClassifier = lastChar;
             this.returnType = this.returnType.substring(0, this.returnType.length - 1);
           }
@@ -107,7 +107,7 @@ export class ClassMember {
         this.visibility = firstChar as Visibility;
       }
 
-      if (lastChar.match(/[$*]/)) {
+      if (/[$*]/.exec(lastChar)) {
         potentialClassifier = lastChar;
       }
 
@@ -138,7 +138,7 @@ export interface ClassNote {
   text: string;
 }
 
-export type ClassRelation = {
+export interface ClassRelation {
   id1: string;
   id2: string;
   relationTitle1: string;
@@ -152,7 +152,7 @@ export type ClassRelation = {
     type2: number;
     lineType: number;
   };
-};
+}
 
 export interface NamespaceNode {
   id: string;
@@ -161,5 +161,5 @@ export interface NamespaceNode {
   children: NamespaceMap;
 }
 
-export type ClassMap = Record<string, ClassNode>;
-export type NamespaceMap = Record<string, NamespaceNode>;
+export type ClassMap = Map<string, ClassNode>;
+export type NamespaceMap = Map<string, NamespaceNode>;

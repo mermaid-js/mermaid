@@ -160,7 +160,7 @@ In a real world use of state diagrams you often end up with diagrams that are mu
 have several internal states. These are called composite states in this terminology.
 
 In order to define a composite state you need to use the state keyword followed by an id and the body of the composite
-state between {}. See the example below:
+state between {}. You can name a composite state on a separate line just like a simple state. See the example below:
 
 ```mermaid-example
 stateDiagram-v2
@@ -168,6 +168,14 @@ stateDiagram-v2
     state First {
         [*] --> second
         second --> [*]
+    }
+
+    [*] --> NamedComposite
+    NamedComposite: Another Composite
+    state NamedComposite {
+        [*] --> namedSimple
+        namedSimple --> [*]
+        namedSimple: Another simple
     }
 ```
 
@@ -177,6 +185,14 @@ stateDiagram-v2
     state First {
         [*] --> second
         second --> [*]
+    }
+
+    [*] --> NamedComposite
+    NamedComposite: Another Composite
+    state NamedComposite {
+        [*] --> namedSimple
+        namedSimple --> [*]
+        namedSimple: Another simple
     }
 ```
 
@@ -467,8 +483,8 @@ a _[valid CSS property name](https://www.w3.org/TR/CSS/#properties)_ followed by
 
 Here is an example of a classDef with just one property-value pair:
 
-```
-    classDef movement font-style:italic;
+```txt
+classDef movement font-style:italic;
 ```
 
 where
@@ -480,8 +496,8 @@ If you want to have more than one _property-value pair_ then you put a comma (`,
 
 Here is an example with three property-value pairs:
 
-```
-    classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
+```txt
+classDef badBadEvent fill:#f00,color:white,font-weight:bold,stroke-width:2px,stroke:yellow
 ```
 
 where
@@ -506,7 +522,7 @@ There are two ways to apply a `classDef` style to a state:
 A `class` statement tells Mermaid to apply the named classDef to one or more classes. The form is:
 
 ```txt
-    class [one or more state names, separated by commas] [name of a style defined with classDef]
+class [one or more state names, separated by commas] [name of a style defined with classDef]
 ```
 
 Here is an example applying the `badBadEvent` style to a state named `Crash`:

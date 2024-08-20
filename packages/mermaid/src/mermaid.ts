@@ -6,7 +6,7 @@ import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { log } from './logger.js';
 import utils from './utils.js';
-import type { ParseOptions, ParseResult, RenderResult } from './mermaidAPI.js';
+import type { ParseOptions, ParseResult, RenderResult } from './types.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
@@ -16,6 +16,10 @@ import type { DetailedError } from './utils.js';
 import type { ExternalDiagramDefinition } from './diagram-api/types.js';
 import type { UnknownDiagramError } from './errors.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { registerLayoutLoaders } from './rendering-util/render.js';
+import type { LayoutLoaderDefinition } from './rendering-util/render.js';
+import { internalHelpers } from './internals.js';
+import type { LayoutData } from './rendering-util/types.js';
 
 export type {
   MermaidConfig,
@@ -26,6 +30,8 @@ export type {
   ParseOptions,
   ParseResult,
   UnknownDiagramError,
+  LayoutLoaderDefinition,
+  LayoutData,
 };
 
 export interface RunOptions {
@@ -277,7 +283,7 @@ if (typeof document !== 'undefined') {
  * ## setParseErrorHandler  Alternative to directly setting parseError using:
  *
  * ```js
- * mermaid.parseError = function(err,hash){=
+ * mermaid.parseError = function(err,hash) {
  *   forExampleDisplayErrorInGui(err);  // do something with the error
  * };
  * ```
@@ -408,16 +414,29 @@ const render: typeof mermaidAPI.render = (id, text, container) => {
 export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
+  /**
+   * @deprecated Use {@link parse} and {@link render} instead. Please [open a discussion](https://github.com/mermaid-js/mermaid/discussions) if your use case does not fit the new API.
+   * @internal
+   */
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
   render: typeof render;
+  /**
+   * @deprecated Use {@link initialize} and {@link run} instead.
+   */
   init: typeof init;
   run: typeof run;
+  registerLayoutLoaders: typeof registerLayoutLoaders;
   registerExternalDiagrams: typeof registerExternalDiagrams;
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
+  /**
+   * Internal helpers for mermaid
+   * @deprecated - This should not be used by external packages, as the definitions will change without notice.
+   */
+  internalHelpers: typeof internalHelpers;
 }
 
 const mermaid: Mermaid = {
@@ -428,11 +447,13 @@ const mermaid: Mermaid = {
   init,
   run,
   registerExternalDiagrams,
+  registerLayoutLoaders,
   initialize,
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
   detectType,
+  internalHelpers,
 };
 
 export default mermaid;

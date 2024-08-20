@@ -60,7 +60,7 @@ export class MockedD3 {
     if (beforeSelector === undefined) {
       this._children.push(newMock);
     } else {
-      const idOnly = beforeSelector[0] == '#' ? beforeSelector.substring(1) : beforeSelector;
+      const idOnly = beforeSelector.startsWith('#') ? beforeSelector.substring(1) : beforeSelector;
       const foundIndex = this._children.findIndex((child) => child.id === idOnly);
       if (foundIndex < 0) {
         this._children.push(newMock);
@@ -104,7 +104,10 @@ export class MockedD3 {
   // This allows different tests to succeed -- some need a top level 'svg' and some need a 'svg' element to be the firstChild
   // Real implementation returns an HTML Element
   public node = vi.fn().mockImplementation(() => {
+    //create a top level svg element
     const topElem = this._containingHTMLdoc.createElement('svg');
+    //@ts-ignore - this is a mock SVG element
+    topElem.getBBox = this.getBBox;
     const elem_svgChild = this._containingHTMLdoc.createElement('svg'); // another svg element
     topElem.appendChild(elem_svgChild);
     return topElem;

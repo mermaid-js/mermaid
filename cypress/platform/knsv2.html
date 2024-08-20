@@ -4,7 +4,7 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
@@ -14,34 +14,50 @@
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        background: #333;
+        /* background: #333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
+
       h1 {
         color: grey;
       }
-      .mermaid {
-        border: 1px solid #ddd;
-        margin: 10px;
-      }
+
       .mermaid2 {
         display: none;
       }
+
       .mermaid svg {
         /* font-size: 18px !important; */
-        /* background-color: #efefef; */
-        background-color: #333;
-        background-image: radial-gradient(#333 51%, transparent 91%),
-          radial-gradient(#333 51%, transparent 91%);
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
         background-size: 20px 20px;
-        background-position: 0 0, 10px 10px;
-        background-repeat: repeat;
-        border: 2px solid rgb(131, 142, 205);
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
       }
+
       .malware {
         position: fixed;
         bottom: 0;
@@ -57,546 +73,121 @@
         font-family: monospace;
         font-size: 72px;
       }
+
       /* tspan {
-        font-size: 6px !important;
-      } */
+              font-size: 6px !important;
+            } */
     </style>
   </head>
+
   <body>
-    <pre id="diagram" class="mermaid">
-      block-beta
-  blockArrowId<["Label"]>(right)
-  blockArrowId2<["Label"]>(left)
-  blockArrowId3<["Label"]>(up)
-  blockArrowId4<["Label"]>(down)
-  blockArrowId5<["Label"]>(x)
-  blockArrowId6<["Label"]>(y)
-  blockArrowId6<["Label"]>(x, down)
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  block:e:4
-    columns 2
-      f
-      g
-  end
-
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  block:e:4
-    columns 2
-      f
-      g
-      h
-  end
-
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  columns 4
-  a b c d
-  block:e:4
-    columns 2
-      f
-      g
-      h
-  end
-  i:4
-
-    </pre>
-    <pre id="diagram" class="mermaid2">
-flowchart LR
-  X-- "y" -->z
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-columns 5
-   A space B
-   A --x B
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-columns 3
-  a["A wide one"] b:2 c:2 d
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  block:e
-      f
-  end
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  columns 3
-  a:3
-  block:e:3
-      f
-  end
-  g
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  columns 3
-  a:3
-  block:e:3
-      f
-      g
-  end
-  h
-  i
-  j
-
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-columns 3
-  a b:2
-  block:e:3
-      f
-  end
-  g h i
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-columns 3
-  a b c
-  e:3
-  f g h
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-columns 1
-  db(("DB"))
-  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
-  block:ID
-    A
-    B["A wide one in the middle"]
-    C
-  end
-  space
-  D
-  ID --> D
-  C --> D
-  style B fill:#f9F,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  columns 5
-  A1:3
-  A2:1
-  A3
-  B1 B2 B3:3
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  block
-    D
-    E
-  end
-  db("This is the text in the box")
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-
-      block
-        D
-      end
-      A["A: I am a wide one"]
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    A["square"]
-    B("rounded")
-    C(("circle"))
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    A>"rect_left_inv_arrow"]
-    B{"diamond"}
-    C{{"hexagon"}}
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    A(["stadium"])
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    %% A[["subroutine"]]
-    %% B[("cylinder")]
-    C>"surprise"]
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    A[/"lean right"/]
-    B[\"lean left"\]
-    C[/"trapezoid"\]
-    D[\"trapezoid"/]
-    </pre>
-
-    <pre id="diagram" class="mermaid2">
+    <div class="flex">
+      <pre id="diagram" class="mermaid">
+---
+config:
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+---
 flowchart
-      B
-      style B fill:#f9F,stroke:#333,stroke-width:4px
-    </pre>
-
-    <pre id="diagram" class="mermaid2">
-      flowchart LR
-      a1 -- apa --> b1
-    </pre>
-
-    <pre id="diagram" class="mermaid2">
-flowchart RL
-  subgraph "`one`"
-    id
-  end
-    </pre>
-    <pre id="diagram" class="mermaid2">
-flowchart RL
-    subgraph "`one`"
-      a1 -- l1 --> a2
-      a1 -- l2 --> a2
-    end
-    </pre>
-    <pre id="diagram" class="mermaid2">
+      A[I am a long text, where do I go??? handdrawn - false]
+</pre
+      >
+      <pre id="diagram" class="mermaid">
+---
+config:
+  look: handdrawn
+  flowchart:
+    htmlLabels: true
+---
 flowchart
-id["`A root with a long text that wraps to keep the node size in check. A root with a long text that wraps to keep the node size in check`"]</pre
-    >
-    <pre id="diagram" class="mermaid2">
+      A[I am a long text, where do I go??? handdrawn - true]
+</pre
+      >
+    </div>
+    <div class="flex">
+      <pre id="diagram" class="mermaid">
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
+flowchart
+      A[I am a long text, where do I go??? classic - false]
+</pre
+      >
+      <pre id="diagram" class="mermaid">
+---
+config:
+  flowchart:
+    htmlLabels: true
+---
+flowchart
+      A[I am a long text, where do I go??? classic - true]
+</pre
+      >
+    </div>
+    <pre id="diagram2" class="mermaid2">
 flowchart LR
-    A[A text that needs to be wrapped wraps to another line]
-    B[A text that needs to be<br/>wrapped wraps to another line]
-    C["`A text that needs to be wrapped to another line`"]</pre>
-    <pre id="diagram" class="mermaid2">
-flowchart LR
-    C["`A text
-        that needs
-        to be wrapped
-        in another
-        way`"]
-  </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      classDiagram-v2
-        note "I love this diagram!\nDo you love it?"
-    </pre>
-    <pre id="diagram" class="mermaid2">
-    stateDiagram-v2
-    State1: The state with a note with minus - and plus + in it
-    note left of State1
-      Important information! You can write
-      notes with . and  in them.
-    end note    </pre
-    >
-    <pre id="diagram" class="mermaid2">
-mindmap
-root
-  Child3(A node with an icon and with a long text that wraps to keep the node size in check)
-</pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"theme": "forest"} }%%
-mindmap
-    id1[**Start2**<br/>end]
-      id2[**Start2**<br />end]
-      %% Another comment
-      id3[**Start2**<br>end] %% Comment
-      id4[**Start2**<br >end<br    >the very end]
-    </pre>
-    <pre id="diagram" class="mermaid2">
-mindmap
-    id1["`**Start2**
-    second line 😎 with long text that is wrapping to the next line`"]
-      id2["`Child **with bold** text`"]
-      id3["`Children of which some
-      is using *italic type of* text`"]
-      id4[Child]
-      id5["`Child
-      Row
-      and another
-      `"]
-    </pre>
-    <pre id="diagram" class="mermaid2">
-mindmap
-    id1("`**Root**`"]
-      id2["`A formatted text... with **bold** and *italics*`"]
-      id3[Regular labels works as usual]
-      id4["`Emojis and unicode works too: 🤓
-      शान्तिः سلام  和平 `"]
+    id1(Start)-->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+
 
     </pre>
-    <pre id="diagram" class="mermaid2">
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-flowchart TB
-  %% I could not figure out how to use double quotes in labels in Mermaid
-  subgraph ibm[IBM Espresso CPU]
-    core0[IBM PowerPC Broadway Core 0]
-    core1[IBM PowerPC Broadway Core 1]
-    core2[IBM PowerPC Broadway Core 2]
 
-    rom[16 KB ROM]
-
-    core0 --- core2
-
-    rom --> core2
-  end
-
-  subgraph amd["`**AMD** Latte GPU`"]
-    mem[Memory & I/O Bridge]
-    dram[DRAM Controller]
-    edram[32 MB EDRAM MEM1]
-    rom[512 B SEEPROM]
-
-    sata[SATA IF]
-    exi[EXI]
-
-    subgraph gx[GX]
-      sram[3 MB 1T-SRAM]
-    end
-
-    radeon[AMD Radeon R7xx GX2]
-
-    mem --- gx
-    mem --- radeon
-
-    rom --- mem
-
-    mem --- sata
-    mem --- exi
-
-    dram --- sata
-    dram --- exi
-  end
-
-  ddr3[2 GB DDR3 RAM MEM2]
-
-  mem --- ddr3
-  dram --- ddr3
-  edram --- ddr3
-
-  core1 --- mem
-
-  exi --- rtc
-  rtc{{rtc}}
-</pre
-    >
-    <pre id="diagram" class="mermaid2">
-%%{init: {"flowchart": {"defaultRenderer": "elk", "htmlLabels": false}} }%%
-flowchart TB
-  %% I could not figure out how to use double quotes in labels in Mermaid
-  subgraph ibm[IBM Espresso CPU]
-    core0[IBM PowerPC Broadway Core 0]
-    core1[IBM PowerPC Broadway Core 1]
-    core2[IBM PowerPC Broadway Core 2]
-
-    rom[16 KB ROM]
-
-    core0 --- core2
-
-    rom --> core2
-  end
-
-  subgraph amd["`**AMD** Latte GPU`"]
-    mem[Memory & I/O Bridge]
-    dram[DRAM Controller]
-    edram[32 MB EDRAM MEM1]
-    rom[512 B SEEPROM]
-
-    sata[SATA IF]
-    exi[EXI]
-
-    subgraph gx[GX]
-      sram[3 MB 1T-SRAM]
-    end
-
-    radeon[AMD Radeon R7xx GX2]
-
-    mem --- gx
-    mem --- radeon
-
-    rom --- mem
-
-    mem --- sata
-    mem --- exi
-
-    dram --- sata
-    dram --- exi
-  end
-
-  ddr3[2 GB DDR3 RAM MEM2]
-
-  mem --- ddr3
-  dram --- ddr3
-  edram --- ddr3
-
-  core1 --- mem
-
-  exi --- rtc
-  rtc{{rtc}}
-</pre
-    >
-
-    <br />
-    <pre id="diagram" class="mermaid2">
-flowchart TB
-  %% I could not figure out how to use double quotes in labels in Mermaid
-  subgraph ibm[IBM Espresso CPU]
-    core0[IBM PowerPC Broadway Core 0]
-    core1[IBM PowerPC Broadway Core 1]
-    core2[IBM PowerPC Broadway Core 2]
-
-    rom[16 KB ROM]
-
-    core0 --- core2
-
-    rom --> core2
-  end
-
-  subgraph amd[AMD Latte GPU]
-    mem[Memory & I/O Bridge]
-    dram[DRAM Controller]
-    edram[32 MB EDRAM MEM1]
-    rom[512 B SEEPROM]
-
-    sata[SATA IF]
-    exi[EXI]
-
-    subgraph gx[GX]
-      sram[3 MB 1T-SRAM]
-    end
-
-    radeon[AMD Radeon R7xx GX2]
-
-    mem --- gx
-    mem --- radeon
-
-    rom --- mem
-
-    mem --- sata
-    mem --- exi
-
-    dram --- sata
-    dram --- exi
-  end
-
-  ddr3[2 GB DDR3 RAM MEM2]
-
-  mem --- ddr3
-  dram --- ddr3
-  edram --- ddr3
-
-  core1 --- mem
-
-  exi --- rtc
-  rtc{{rtc}}
-</pre
-    >
-    <br />
-    &nbsp;
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram3" class="mermaid2">
       flowchart LR
-  B1 --be be--x B2
-  B1 --bo bo--o B3
-  subgraph Ugge
-      B2
-      B3
-      subgraph inner
-          B4
-          B5
-      end
-      subgraph inner2
-        subgraph deeper
-          C4
-          C5
-        end
-        C6
-      end
+    A:::foo & B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef ash color:red
+    class C ash
+    style C stroke:#00f, fill:black
 
-      B4 --> C4
-
-      B3 -- X --> B4
-      B2 --> inner
-
-      C4 --> C5
-  end
-
-  subgraph outer
-      B6
-  end
-  B6 --> B5
-  </pre
-    >
-    <pre id="diagram" class="mermaid2">
-sequenceDiagram
-    Customer->>+Stripe: Makes a payment request
-    Stripe->>+Bank: Forwards the payment request to the bank
-    Bank->>+Customer: Asks for authorization
-    Customer->>+Bank: Provides authorization
-    Bank->>+Stripe: Sends a response with payment details
-    Stripe->>+Merchant: Sends a notification of payment receipt
-    Merchant->>+Stripe: Confirms the payment
-    Stripe->>+Customer: Sends a confirmation of payment
-    Customer->>+Merchant: Receives goods or services
-        </pre
-    >
-    <pre id="diagram" class="mermaid2">
-mindmap
-  root((mindmap))
-    Origins
-      Long history
-      ::icon(fa fa-book)
-      Popularisation
-        British popular psychology author Tony Buzan
-    Research
-      On effectiveness<br/>and features
-      On Automatic creation
-        Uses
-            Creative techniques
-            Strategic planning
-            Argument mapping
-    Tools
-      Pen and paper
-      Mermaid
-    </pre>
-    <br />
-    <pre id="diagram" class="mermaid2">
-  example-diagram
     </pre>
 
-    <!-- <div id="cy"></div> -->
-    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
-    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
-    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
-    <!-- <script src="./mermaid.js"></script> -->
+    <pre id="diagram4" class="mermaid2">
+      stateDiagram
+    A:::foo
+    B:::bar --> C:::foobar
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    style C stroke:#00f, fill:black, color:white
+
+    </pre>
 
     <script type="module">
-      // import mindmap from '../../packages/mermaid-mindmap/src/detector';
-      // import example from '../../packages/mermaid-example-diagram/src/mermaid-example-diagram.core.mjs';
       import mermaid from './mermaid.esm.mjs';
-      // await mermaid.registerExternalDiagrams([example]);
+      // import { layouts } from './mermaid-layout-elk.esm.mjs';
+      // mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
-        // console.error('Mermaid error: ', err);
+        console.error('Mermaid error: ', err);
       };
-      // mermaid.initialize({
-      //   // theme: 'forest',
-      //   startOnLoad: true,
-      //   logLevel: 0,
-      //   flowchart: {
-      //     // defaultRenderer: 'elk',
-      //     useMaxWidth: false,
-      //     // htmlLabels: false,
-      //     htmlLabels: true,
-      //   },
-      //   // htmlLabels: false,
-      //   gantt: {
-      //     useMaxWidth: false,
-      //   },
-      //   useMaxWidth: false,
-      // });
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
       mermaid.initialize({
-        theme: 'dark',
-        startOnLoad: true,
+        // theme: 'base',
+        // handDrawnSeed: 12,
+        // look: 'handDrawn',
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        // layout: 'dagre',
+        // layout: 'elk',
+        // layout: 'fixed',
+        // htmlLabels: false,
+        flowchart: { titleTopMargin: 10 },
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        // fontFamily: 'courier',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        fontSize: 12,
         logLevel: 0,
+        securityLevel: 'loose',
       });
       function callback() {
         alert('It worked');
@@ -605,10 +196,6 @@ mindmap
         console.error('In parse error:');
         console.error(err);
       };
-      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
-      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
-      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
-      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>
