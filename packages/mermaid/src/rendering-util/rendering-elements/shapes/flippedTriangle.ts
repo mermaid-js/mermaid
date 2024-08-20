@@ -55,7 +55,7 @@ export const flippedTriangle = async (parent: SVGAElement, node: Node): Promise<
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${-h / 2 + 4 * (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${-h / 2 + (bbox.y - (bbox.top ?? 0))})`
   );
 
   node.intersect = function (point) {

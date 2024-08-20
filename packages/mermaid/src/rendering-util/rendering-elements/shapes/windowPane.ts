@@ -68,7 +68,7 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) + rectOffset / 2 - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + rectOffset / 2 - 4 * (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) + rectOffset / 2 - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + rectOffset / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, windowPane);

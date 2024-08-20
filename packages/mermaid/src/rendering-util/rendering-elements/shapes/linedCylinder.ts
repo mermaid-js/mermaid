@@ -67,7 +67,7 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - bbox.height + outerOffset - 4 * (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - bbox.height + outerOffset - (bbox.y - (bbox.top ?? 0))})`
   );
 
   node.intersect = function (point) {
