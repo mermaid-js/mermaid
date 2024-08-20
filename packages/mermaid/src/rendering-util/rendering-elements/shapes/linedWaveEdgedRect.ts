@@ -47,8 +47,8 @@ export const linedWaveEdgedRect = async (parent: SVGAElement, node: Node) => {
   const y = -finalH / 2;
 
   const innerPathPoints = [
-    { y: y * 1.2, x: x },
-    { y: -y * 0.9, x: x },
+    { x: x, y: y },
+    { x: x, y: -y * 1.1 },
   ];
 
   const waveEdgeRectPath = createPathFromPoints(points);
@@ -57,9 +57,8 @@ export const linedWaveEdgedRect = async (parent: SVGAElement, node: Node) => {
   const innerSecondPath = createPathFromPoints(innerPathPoints);
   const innerSecondNode = rc.path(innerSecondPath, options);
 
-  const waveEdgeRect = shapeSvg
-    .insert(() => innerSecondNode, ':first-child')
-    .insert(() => waveEdgeRectNode, ':first-child');
+  const waveEdgeRect = shapeSvg.insert(() => innerSecondNode, ':first-child');
+  waveEdgeRect.insert(() => waveEdgeRectNode, ':first-child');
 
   waveEdgeRect.attr('class', 'basic label-container');
 
@@ -74,7 +73,7 @@ export const linedWaveEdgedRect = async (parent: SVGAElement, node: Node) => {
   waveEdgeRect.attr('transform', `translate(0,${-waveAmplitude / 2})`);
   label.attr(
     'transform',
-    `translate(${-w / 2 + (w / 2) * 0.05 + (node.padding ?? 0)},${-h / 2 + (node.padding ?? 0) - waveAmplitude / 2})`
+    `translate(${-w / 2 + (node.padding ?? 0) + ((w / 2) * 0.1) / 2 - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (node.padding ?? 0) - waveAmplitude / 2 - 4 * (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, waveEdgeRect);
