@@ -11,12 +11,12 @@ import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
-  const { themeVariables, handdrawnSeed } = siteConfig;
+  const { themeVariables, handDrawnSeed } = siteConfig;
   const { clusterBkg, clusterBorder } = themeVariables;
 
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -33,9 +33,6 @@ const rect = async (parent, node) => {
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
-  // const text = label
-  //   .node()
-  //   .appendChild(createLabel(node.label, node.labelStyle, undefined, true));
   const text = await createText(labelEl, node.label, {
     style: node.labelStyle,
     useHtmlLabels,
@@ -53,10 +50,7 @@ const rect = async (parent, node) => {
     dv.attr('height', bbox.height);
   }
 
-  const padding = 0 * node.padding;
-
-  const width =
-    (node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width) + padding;
+  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
   if (node.width <= bbox.width + node.padding) {
     node.diff = (width - node.width) / 2 - node.padding;
   } else {
@@ -66,11 +60,10 @@ const rect = async (parent, node) => {
   const height = node.height;
   const x = node.x - width / 2;
   const y = node.y - height / 2;
-  // console.log('UIO diff 2', node.id, node.diff, 'totalWidth: ', width);
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {
@@ -79,10 +72,9 @@ const rect = async (parent, node) => {
       // fill: 'red',
       stroke: clusterBorder,
       fillWeight: 3,
-      seed: handdrawnSeed,
+      seed: handDrawnSeed,
     });
     const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, 0), options);
-    // console.log('Rough node insert CXC', roughNode);
     rect = shapeSvg.insert(() => {
       log.debug('Rough node insert CXC', roughNode);
       return roughNode;
@@ -170,7 +162,7 @@ const noteGroup = (parent, node) => {
 const roundedWithTitle = async (parent, node) => {
   const siteConfig = getConfig();
 
-  const { themeVariables, handdrawnSeed } = siteConfig;
+  const { themeVariables, handDrawnSeed } = siteConfig;
   const { altBackground, compositeBackground, compositeTitleBackground, nodeBorder } =
     themeVariables;
 
@@ -226,7 +218,7 @@ const roundedWithTitle = async (parent, node) => {
 
   // add the rect
   let rect;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     const isAlt = node.cssClasses.includes('statediagram-cluster-alt');
     const rc = rough.svg(shapeSvg);
     const roughOuterNode =
@@ -236,16 +228,16 @@ const roundedWithTitle = async (parent, node) => {
             fill: compositeTitleBackground,
             fillStyle: 'solid',
             stroke: nodeBorder,
-            seed: handdrawnSeed,
+            seed: handDrawnSeed,
           })
-        : rc.rectangle(x, y, width, height, { seed: handdrawnSeed });
+        : rc.rectangle(x, y, width, height, { seed: handDrawnSeed });
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
     const roughInnerNode = rc.rectangle(x, innerY, width, innerHeight, {
       fill: isAlt ? altBackground : compositeBackground,
       fillStyle: isAlt ? 'hachure' : 'solid',
       stroke: nodeBorder,
-      seed: handdrawnSeed,
+      seed: handDrawnSeed,
     });
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
@@ -291,7 +283,7 @@ const roundedWithTitle = async (parent, node) => {
 const divider = (parent, node) => {
   const siteConfig = getConfig();
 
-  const { themeVariables, handdrawnSeed } = siteConfig;
+  const { themeVariables, handDrawnSeed } = siteConfig;
   const { nodeBorder } = themeVariables;
 
   // Add outer g element
@@ -318,14 +310,14 @@ const divider = (parent, node) => {
 
   // add the rect
   let rect;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     const rc = rough.svg(shapeSvg);
     const roughOuterNode = rc.rectangle(x, y, width, height, {
       fill: 'lightgrey',
       roughness: 0.5,
       strokeLineDash: [5],
       stroke: nodeBorder,
-      seed: handdrawnSeed,
+      seed: handDrawnSeed,
     });
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
@@ -365,14 +357,15 @@ const shapes = {
   divider,
 };
 
-let clusterElems = {};
+let clusterElems = new Map();
 
-export const insertCluster = (elem, node) => {
+export const insertCluster = async (elem, node) => {
   const shape = node.shape || 'rect';
-  const cluster = shapes[shape](elem, node);
-  clusterElems[node.id] = cluster;
+  const cluster = await shapes[shape](elem, node);
+  clusterElems.set(node.id, cluster);
   return cluster;
 };
+
 export const getClusterTitleWidth = (elem, node) => {
   const label = createLabel(node.label, node.labelStyle, undefined, true);
   elem.node().appendChild(label);
@@ -382,7 +375,7 @@ export const getClusterTitleWidth = (elem, node) => {
 };
 
 export const clear = () => {
-  clusterElems = {};
+  clusterElems = new Map();
 };
 
 export const positionCluster = (node) => {
@@ -398,8 +391,8 @@ export const positionCluster = (node) => {
       ', ' +
       node?.height +
       ')',
-    clusterElems[node.id]
+    clusterElems.get(node.id)
   );
-  const el = clusterElems[node.id];
+  const el = clusterElems.get(node.id);
   el.cluster.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };

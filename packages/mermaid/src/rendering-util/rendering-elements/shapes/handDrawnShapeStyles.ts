@@ -3,7 +3,7 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 
 // Striped fill like start or fork nodes in state diagrams
 export const solidStateFill = (color: string) => {
-  const { handdrawnSeed } = getConfig();
+  const { handDrawnSeed } = getConfig();
   return {
     fill: color,
     hachureAngle: 120, // angle of hachure,
@@ -11,7 +11,7 @@ export const solidStateFill = (color: string) => {
     fillWeight: 2,
     roughness: 0.7,
     stroke: color,
-    seed: handdrawnSeed,
+    seed: handDrawnSeed,
   };
 };
 
@@ -72,7 +72,7 @@ export const styles2String = (node: Node) => {
 // Striped fill like start or fork nodes in state diagrams
 // TODO remove any
 export const userNodeOverrides = (node: Node, options: any) => {
-  const { themeVariables, handdrawnSeed } = getConfig();
+  const { themeVariables, handDrawnSeed } = getConfig();
   const { nodeBorder, mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
 
@@ -84,7 +84,7 @@ export const userNodeOverrides = (node: Node, options: any) => {
       fillStyle: 'hachure', // solid fill
       fillWeight: 4,
       stroke: stylesMap.get('stroke') || nodeBorder,
-      seed: handdrawnSeed,
+      seed: handDrawnSeed,
       strokeWidth: 1.3,
     },
     options

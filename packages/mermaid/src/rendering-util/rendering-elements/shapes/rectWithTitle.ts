@@ -7,7 +7,7 @@ import intersect from '../intersect/index.js';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handdrawnStyles.js';
+} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
@@ -104,7 +104,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   const y = -bbox.height / 2 - halfPadding;
   let rect;
   let innerLine;
-  if (node.look === 'handdrawn') {
+  if (node.look === 'handDrawn') {
     // @ts-ignore No typings for rough
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
@@ -134,6 +134,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
     innerLine = g.insert('line');
     rect
       .attr('class', 'outer title-state')
+      .attr('style', nodeStyles)
       .attr('x', -bbox.width / 2 - halfPadding)
       .attr('y', -bbox.height / 2 - halfPadding)
       .attr('width', bbox.width + (node.padding || 0))

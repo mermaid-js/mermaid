@@ -131,12 +131,6 @@ const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   return dir;
 };
 
-/**
- *
- * @param nodes
- * @param nodeData
- * @param classes
- */
 function insertOrUpdateNode(nodes, nodeData, classes) {
   if (!nodeData.id || nodeData.id === '</join></fork>' || nodeData.id === '</choice>') {
     return;
