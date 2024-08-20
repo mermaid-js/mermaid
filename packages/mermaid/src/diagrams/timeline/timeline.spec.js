@@ -109,10 +109,13 @@ describe('when parsing a timeline ', function () {
       timeline.parse(str);
       expect(commonDb.getDiagramTitle()).equal(';my;title;');
       expect(timelineDB.getSections()).to.deep.equal([';a;bc-123;']);
-      expect(timelineDB.getTasks()[0].task).equal(';ta;sk1;');
-      expect(timelineDB.getTasks()[0].events[0]).equal(';ev;ent1; ');
-      expect(timelineDB.getTasks()[0].events[1]).equal(';ev;ent2; ');
-      expect(timelineDB.getTasks()[0].events[2]).equal(';ev;ent3;');
+      expect(timelineDB.getTasks()[0].events).toMatchInlineSnapshot(`
+        [
+          ";ev;ent1; ",
+          ";ev;ent2; ",
+          ";ev;ent3;",
+        ]
+      `);
     });
 
     it('should handle a title, section, task, and events with hashtags', function () {
@@ -125,9 +128,13 @@ describe('when parsing a timeline ', function () {
       expect(commonDb.getDiagramTitle()).equal('#my#title#');
       expect(timelineDB.getSections()).to.deep.equal(['#a#bc-123#']);
       expect(timelineDB.getTasks()[0].task).equal('task1');
-      expect(timelineDB.getTasks()[0].events[0]).equal('#ev#ent1# ');
-      expect(timelineDB.getTasks()[0].events[1]).equal('#ev#ent2# ');
-      expect(timelineDB.getTasks()[0].events[2]).equal('#ev#ent3#');
+      expect(timelineDB.getTasks()[0].events).toMatchInlineSnapshot(`
+        [
+          "#ev#ent1# ",
+          "#ev#ent2# ",
+          "#ev#ent3#",
+        ]
+      `);
     });
   });
 });
