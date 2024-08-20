@@ -45,20 +45,23 @@ const getConfig = (): Required<GitGraphDiagramConfig> => {
   });
   return config;
 };
-const config = getConfig();
-const mainBranchName = config.mainBranchName;
-const mainBranchOrder = config.mainBranchOrder;
 
-const state = new ImperativeState<GitGraphState>(() => ({
-  commits: new Map(),
-  head: null,
-  branchConfig: new Map([[mainBranchName, { name: mainBranchName, order: mainBranchOrder }]]),
-  branches: new Map([[mainBranchName, null]]),
-  currBranch: mainBranchName,
-  direction: 'LR',
-  seq: 0,
-  options: {},
-}));
+const state = new ImperativeState<GitGraphState>(() => {
+  const config = getConfig();
+  const mainBranchName = config.mainBranchName;
+  const mainBranchOrder = config.mainBranchOrder;
+  return {
+    mainBranchName,
+    commits: new Map(),
+    head: null,
+    branchConfig: new Map([[mainBranchName, { name: mainBranchName, order: mainBranchOrder }]]),
+    branches: new Map([[mainBranchName, null]]),
+    currBranch: mainBranchName,
+    direction: 'LR',
+    seq: 0,
+    options: {},
+  };
+});
 
 function getID() {
   return random({ length: 7 });
@@ -121,7 +124,7 @@ export const commit = function (commitDB: CommitDB) {
     branch: state.records.currBranch,
   };
   state.records.head = newCommit;
-  log.info('main branch', mainBranchName);
+  log.info('main branch', config.mainBranchName);
   state.records.commits.set(newCommit.id, newCommit);
   state.records.branches.set(state.records.currBranch, newCommit.id);
   log.debug('in pushCommit ' + newCommit.id);
