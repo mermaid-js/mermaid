@@ -215,7 +215,7 @@ export const merge = (
   const verifiedBranch: string = otherBranchCheck ? otherBranchCheck : ''; //figure out a cleaner way to do this
 
   const commit = {
-    id: customId ?? `${state.records.seq}-${getID()}`,
+    id: customId || `${state.records.seq}-${getID()}`,
     message: `merged branch ${otherBranch} into ${state.records.currBranch}`,
     seq: state.records.seq++,
     parents: state.records.head == null ? [] : [state.records.head.id, verifiedBranch],
