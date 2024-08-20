@@ -19,8 +19,13 @@
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
+%x text
 %%
 
+<text>"]"                                   										{ this.counter--; if (this.counter === 0) {this.popState(); return 'MDE'; } return 'SQE'; }
+<text>"["                                                       { this.counter++; return 'SQS' }
+<text>[^\]\[]+                                                    { return 'MDC'; }
+<INITIAL>(":"\s*[\n\s]*\[)                  													{ this.pushState("text"); this.counter = 1; return 'MDS'; }
 [\n]+                                                           return 'NEWLINE';
 \s+                                                             /* skip all whitespace */
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
@@ -84,11 +89,12 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \-\-[x]                                                         return 'DOTTED_CROSS';
 \-[\)]                                                          return 'SOLID_POINT';
 \-\-[\)]                                                        return 'DOTTED_POINT';
-":"(?:(?:no)?wrap:)?[^#\n;]+                                    return 'TXT';
+":"(?![\n\s]*\[)(?:(?:no)?wrap:)?[^#\n;]+                       return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
 <<EOF>>                                                         return 'NEWLINE';
 .                                                               return 'INVALID';
+
 
 /lex
 
@@ -142,7 +148,7 @@ statement
 	| autonumber 'NEWLINE'  {$$ = {type:'sequenceIndex', sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER}; }
 	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2.actor};}
 	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2.actor};}
-	| note_statement 'NEWLINE'
+	| note_statement
 	| links_statement 'NEWLINE'
 	| link_statement 'NEWLINE'
 	| properties_statement 'NEWLINE'
@@ -243,7 +249,32 @@ note_statement
 		$2[0] = $2[0].actor;
 		$2[1] = $2[1].actor;
 		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text:$4}];}
+	| 'note' placement actor MDS mdtext MDE 'NEWLINE'
+	{
+		$$ = [$3, {type:'addNote', placement:$placement, actor:$actor.actor, text: $mdtext }];}
+	| 'note' 'over' actor_pair MDS mdtext MDE 'NEWLINE'
+	{
+		// Coerce actor_pair into a [to, from, ...] array
+		$2 = [].concat($3, $3).slice(0, 2);
+		$2[0] = $2[0].actor;
+		$2[1] = $2[1].actor;
+		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text: $mdtext}];}
 	;
+
+mdtext
+  : mdtext SQS mdtext SQE
+  {
+    $$ = {type: 'text', text: `${$1.text}[${$3.text}]`};
+  }
+  | mdtext MDC
+  {
+    $$ = {type: 'text', text: `${$1.text}${$2}`};
+  }
+  | MDC
+  {
+    $$ = {type: 'text', text: $1};
+  }
+  ;
 
 links_statement
 	: 'links' actor text2

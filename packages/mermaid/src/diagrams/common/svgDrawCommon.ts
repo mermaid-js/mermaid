@@ -11,7 +11,7 @@ import type {
   TextData,
   TextObject,
 } from './commonTypes.js';
-import { lineBreakRegex } from './common.js';
+import { lineBreakRegex } from '../../utils.js';
 
 export const drawRect = (element: SVG | Group, rectData: RectData): D3RectElement => {
   const rectElement: D3RectElement = element.append('rect');

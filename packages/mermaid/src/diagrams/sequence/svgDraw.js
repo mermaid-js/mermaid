@@ -1,4 +1,9 @@
-import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
+import common, {
+  calculateMathMLDimensions,
+  hasKatex,
+  renderKatex,
+  renderMarkdown,
+} from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
@@ -124,6 +129,51 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
     }
   }
 
+  return [textElem];
+};
+
+export const drawMarkdown = async function (elem, textData, msgModel = null) {
+  let textElem = elem.append('foreignObject');
+  const lines = await renderMarkdown(textData.text, configApi.getConfig());
+
+  const divElem = textElem
+    .append('xhtml:div')
+    .attr('xmlns', 'http://www.w3.org/1999/xhtml')
+    .attr('style', 'width: fit-content; padding-bottom: 0.05em;')
+    .html(lines);
+  const dim = divElem.node().getBoundingClientRect();
+  divElem.attr('class', 'mermaid-markdown-note');
+
+  const widthToUse = textData.width;
+  const heightToUse = dim.height;
+
+  textElem.attr('height', Math.round(heightToUse)).attr('width', Math.round(widthToUse));
+
+  if (textData.class === 'noteText') {
+    const rectElem = elem.node().firstChild;
+
+    rectElem.setAttribute('height', heightToUse + 2 * textData.textMargin);
+    const rectDim = rectElem.getBBox();
+
+    textElem
+      .attr('x', Math.round(rectDim.x + rectDim.width / 2 - widthToUse / 2))
+      .attr('y', Math.round(rectDim.y + rectDim.height / 2 - heightToUse / 2));
+  } else if (msgModel) {
+    let { startx, stopx, starty } = msgModel;
+    if (startx > stopx) {
+      const temp = startx;
+      startx = stopx;
+      stopx = temp;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - widthToUse / 2));
+    if (textData.class === 'loopText') {
+      textElem.attr('y', Math.round(starty));
+    } else {
+      textElem.attr('y', Math.round(starty - heightToUse));
+    }
+  }
   return [textElem];
 };
 

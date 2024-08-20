@@ -207,6 +207,29 @@ sequenceDiagram
     Note over Alice,John: A typical interaction
 ```
 
+## Markdown Notes (v10.8.0+)
+
+It is possible to use markdown in notes on sequence diagrams. This is done by the notation
+Note [ right of | left of | over ] [Actor]: [ Markdown Text ]
+
+See the example below:
+
+````mermaid-example
+sequenceDiagram
+    participant John
+    Note right of John: [
+        This is some text which *will* be handled by _marked_ to support `markdown syntax`
+        ```json
+        {
+            "status": 200,
+            "data": [
+                { name: "John", age: 28 }
+            ]
+        }
+        ```
+    ]
+````
+
 ## Line breaks
 
 Line break can be added to Note and Message:
