@@ -122,7 +122,14 @@
               `;
       code = `
       stateDiagram
-       A --> B: Hello
+       A0
+       state subbe {
+        subState
+        B
+       }
+       C
+       D
+       E
               `;
 
       let positions = {

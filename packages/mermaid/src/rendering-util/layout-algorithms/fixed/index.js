@@ -83,7 +83,17 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
       positions.edges = {};
     }
   }
-  // Add positions for nodes that lack them
+  // Extract children info
+  const childDB = new Map();
+  data4Layout.nodes.map(function (node) {
+    if (node.parentId) {
+      const children = childDB.get(node.parentId) || [];
+      children.push(node);
+      childDB.set(node.parentId, children);
+    }
+  });
+
+  // calculate next available position
   let maxY = 0;
   data4Layout.nodes.map(function (node) {
     const pos = positions.nodes[node.id];
@@ -99,17 +109,49 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
     }
   });
 
-  let cnt = 0;
-  data4Layout.nodes.map(function (node) {
-    let pos;
-    if (!positions.nodes[node.id]) {
-      positions.nodes[node.id] = { x: cnt * 75, y: maxY + 20 };
-      cnt = cnt + 1;
+  // Add positions for nodes that lack them
+  let xPos = 0;
+  function calculatePosition(node, positions, childDB) {
+    const children = childDB.get(node.id) || [];
+    // log.info('STO calculatePosition', node.id, children.length);
+    // We have a subgraph without position
+    if (children.length > 0) {
+      let minX = 10000;
+      let maxX = -10000;
+      let minYP = 10000;
+      let maxYP = -10000;
+      for (const child of children) {
+        const width = child.width || 50;
+        const height = child.height || 50;
+        // log.info('STO node child 1', child.id, width, height);
+        calculatePosition(child, positions, childDB);
+        // log.info(
+        //   'STO node child 2',
+        //   child.id,
+        //   positions.nodes[child.id].x,
+        //   positions.nodes[child.id].y
+        // );
+        minX = Math.min(positions.nodes[child.id].x - width / 2, minX);
+        maxX = Math.max(positions.nodes[child.id].x + width / 2, maxX);
+        minYP = Math.min(positions.nodes[child.id].y - height / 2, minYP);
+        maxYP = Math.max(positions.nodes[child.id].y + height / 2, maxYP);
+      }
+      positions.nodes[node.id] = {
+        x: minX + (maxX - minX) / 2 - 5,
+        y: maxY + 15,
+        width: maxX - minX + 20,
+        height: maxYP - minYP + 30,
+      };
+    } else {
+      // Simple case
+      positions.nodes[node.id] = { x: xPos, y: maxY + 20 };
+      xPos = xPos + 75;
     }
-    // if (node.x === undefined || node.y === undefined) {
-    pos = positions.nodes[node.id] || { x: 0, y: 0, width: 100, height: 100 };
-    node.height = pos?.height || 50;
-    node.width = pos?.width || 50;
+  }
+  data4Layout.nodes.map(function (node) {
+    if (!node.parentId) {
+      calculatePosition(node, positions, childDB);
+    }
   });
 
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
@@ -117,16 +159,11 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
 
   nodeDB = new Map();
   await Promise.all(
-    data4Layout.nodes.map(async function (node, i) {
-      let pos;
-      if (!positions.nodes[node.id]) {
-        positions.nodes[node.id] = { x: i * 100, y: maxY + 10, width: 50, height: 50 };
-      }
-      // if (node.x === undefined || node.y === undefined) {
-      pos = positions.nodes[node.id] || { x: 0, y: 0, width: 100, height: 100 };
+    data4Layout.nodes.map(async function (node) {
+      let pos = positions.nodes[node.id];
       node.height = pos?.height || 50;
       node.width = pos?.width || 50;
-      // }
+
       if (node.isGroup) {
         node.x = 0;
         node.y = 0;
