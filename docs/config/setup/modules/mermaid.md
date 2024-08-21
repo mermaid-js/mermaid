@@ -25,6 +25,16 @@
 
 ## Type Aliases
 
+### InternalHelpers
+
+Ƭ **InternalHelpers**: typeof `internalHelpers`
+
+#### Defined in
+
+[packages/mermaid/src/mermaid.ts:23](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L23)
+
+---
+
 ### ParseErrorFunction
 
 Ƭ **ParseErrorFunction**: (`err`: `string` | [`DetailedError`](../interfaces/mermaid.DetailedError.md) | `unknown`, `hash?`: `any`) => `void`
@@ -56,4 +66,4 @@
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:442](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L442)
+[packages/mermaid/src/mermaid.ts:438](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L438)
