@@ -4,38 +4,37 @@
  */
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
-import { log } from './logger.js';
-import utils from './utils.js';
-import type { ParseOptions, RenderResult } from './types.js';
-import { mermaidAPI } from './mermaidAPI.js';
-import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
-import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
-import type { Diagram } from './Diagram.js';
-import type { ParseErrorFunction } from './Diagram.js';
-import { isDetailedError } from './utils.js';
-import type { DetailedError } from './utils.js';
-import type { ExternalDiagramDefinition } from './diagram-api/types.js';
-import type { UnknownDiagramError } from './errors.js';
+import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
+import type { ExternalDiagramDefinition, SVG, SVGGroup } from './diagram-api/types.js';
+import type { Diagram, ParseErrorFunction } from './Diagram.js';
+import type { UnknownDiagramError } from './errors.js';
+import type { InternalHelpers } from './internals.js';
+import { log } from './logger.js';
+import { mermaidAPI } from './mermaidAPI.js';
+import type { LayoutLoaderDefinition, RenderOptions } from './rendering-util/render.js';
 import { registerLayoutLoaders } from './rendering-util/render.js';
-import type { LayoutLoaderDefinition } from './rendering-util/render.js';
-import { internalHelpers } from './internals.js';
 import type { LayoutData } from './rendering-util/types.js';
-import type { Node } from './rendering-util/types.js';
-import type { Edge } from './rendering-util/types.js';
+import type { ParseOptions, ParseResult, RenderResult } from './types.js';
+import type { DetailedError } from './utils.js';
+import utils, { isDetailedError } from './utils.js';
 
 export type {
-  MermaidConfig,
   DetailedError,
   ExternalDiagramDefinition,
-  ParseErrorFunction,
-  RenderResult,
-  ParseOptions,
-  UnknownDiagramError,
-  LayoutLoaderDefinition,
+  InternalHelpers,
   LayoutData,
-  Node,
-  Edge,
+  LayoutLoaderDefinition,
+  MermaidConfig,
+  ParseErrorFunction,
+  ParseOptions,
+  ParseResult,
+  RenderOptions,
+  RenderResult,
+  SVG,
+  SVGGroup,
+  UnknownDiagramError,
 };
 
 export interface RunOptions {
@@ -178,7 +177,7 @@ const runThrowsErrors = async function (
       log.debug('Detected early reinit: ', init);
     }
     try {
-      const { svg, bindFunctions } = await render(id, txt, element);
+      const { svg, bindFunctions } = await render(id, txt, element, undefined);
       element.innerHTML = svg;
       if (postRenderCallback) {
         await postRenderCallback(id);
@@ -446,11 +445,6 @@ export interface Mermaid {
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
-  /**
-   * Internal helpers for mermaid
-   * @deprecated - This should not be used by external packages, as the definitions will change without notice.
-   */
-  internalHelpers: typeof internalHelpers;
 }
 
 const mermaid: Mermaid = {
@@ -467,7 +461,6 @@ const mermaid: Mermaid = {
   contentLoaded,
   setParseErrorHandler,
   detectType,
-  internalHelpers,
 };
 
 export default mermaid;

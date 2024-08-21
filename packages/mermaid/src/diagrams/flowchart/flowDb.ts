@@ -15,6 +15,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
+import type { NodeMetaData } from '$root/types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -135,7 +136,7 @@ export const addVertex = function (
         yamlData = yamlData.substring(0, lastPos) + '\n';
       }
     }
-    const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA });
+    const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
     // console.log('yamlData doc', doc);
     if (doc?.shape) {
       vertex.type = doc?.shape;

@@ -122,7 +122,7 @@ properties:
           - NETWORK_SIMPLEX
           - LINEAR_SEGMENTS
           - BRANDES_KOEPF
-        default: SIMPLE
+        default: BRANDES_KOEPF
   darkMode:
     type: boolean
     default: false

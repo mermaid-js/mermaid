@@ -1,7 +1,22 @@
+import type { SVG } from '$root/diagram-api/types.js';
+import type { InternalHelpers } from '$root/internals.js';
+import { internalHelpers } from '$root/internals.js';
 import { log } from '$root/logger.js';
+import type { LayoutData } from './types.js';
+
+export interface RenderOptions {
+  algorithm?: string;
+}
 
 export interface LayoutAlgorithm {
-  render(data4Layout: any, svg: any, element: any, algorithm?: string, positions: any): any;
+  render(
+    layoutData: LayoutData,
+    svg: SVG,
+    element: any,
+    helpers: InternalHelpers,
+    options?: RenderOptions,
+    positions: any
+  ): Promise<void>;
 }
 
 export type LayoutLoader = () => Promise<LayoutAlgorithm>;
@@ -69,7 +84,16 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
       .attr('stop-color', gradientStop)
       .attr('stop-opacity', 1);
   }
-  return layoutRenderer.render(data4Layout, svg, element, layoutDefinition.algorithm, positions);
+  return layoutRenderer.render(
+    data4Layout,
+    svg,
+    element,
+    internalHelpers,
+    {
+      algorithm: layoutDefinition.algorithm,
+    },
+    positions
+  );
 };
 
 /**
