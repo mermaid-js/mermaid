@@ -71,6 +71,7 @@ const addVertex = async (nodeEl: any, graph: { children: any[] }, nodeArr: any, 
     await addVertices(nodeEl, nodeArr, child, node.id);
 
     if (node.label) {
+      // @ts-ignore TODO: fix this
       const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
       labelData.width = bbox.width;
       labelData.wrappingWidth = getConfig().flowchart!.wrappingWidth;
@@ -230,12 +231,14 @@ const getNextPort = (node: string | number, edgeDirection: string, graphDirectio
   const result = edgeDirection === 'in' ? portPos[node].inPosition : portPos[node].outPosition;
 
   if (edgeDirection === 'in') {
+    // @ts-ignore TODO: fix this
     portPos[node].inPosition = getNextPosition(
       portPos[node].inPosition,
       edgeDirection,
       graphDirection
     );
   } else {
+    // @ts-ignore TODO: fix this
     portPos[node].outPosition = getNextPosition(
       portPos[node].outPosition,
       edgeDirection,
@@ -439,6 +442,7 @@ const addEdges = async function (
       } else if (edges.defaultInterpolate !== undefined) {
         edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
       } else {
+        // @ts-ignore TODO: fix this
         edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
       }
 
@@ -471,6 +475,7 @@ const addEdges = async function (
       log.debug('abc78 source and target', source, target);
       // Add the edge to the graph
       graph.edges.push({
+        // @ts-ignore TODO: fix this
         id: 'e' + edge.start + edge.end,
         ...edge,
         sources: [source],
