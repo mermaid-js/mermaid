@@ -1,3 +1,5 @@
+import { log } from '$root/logger.js';
+
 export interface LayoutAlgorithm {
   render(data4Layout: any, svg: any, element: any, algorithm?: string): any;
 }
@@ -24,10 +26,6 @@ const registerDefaultLayoutLoaders = () => {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
     },
-    // {
-    //   name: 'elk',
-    //   loader: async () => await import('../../../mermaid-layout-elk/src/render.js'),
-    // },
   ]);
 };
 
@@ -41,4 +39,18 @@ export const render = async (data4Layout: any, svg: any, element: any) => {
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
   return layoutRenderer.render(data4Layout, svg, element, layoutDefinition.algorithm);
+};
+
+/**
+ * Get the registered layout algorithm. If the algorithm is not registered, use the fallback algorithm.
+ */
+export const getRegisteredLayoutAlgorithm = (algorithm = '', { fallback = 'dagre' } = {}) => {
+  if (algorithm in layoutAlgorithms) {
+    return algorithm;
+  }
+  if (fallback in layoutAlgorithms) {
+    log.warn(`Layout algorithm ${algorithm} is not registered. Using ${fallback} as fallback.`);
+    return fallback;
+  }
+  throw new Error(`Both layout algorithms ${algorithm} and ${fallback} are not registered.`);
 };
