@@ -3,7 +3,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { getDiagramElements } from '../../rendering-util/insertElementsForSize.js';
-import { render } from '../../rendering-util/render.js';
+import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
@@ -40,7 +40,12 @@ export const draw = async function (text: string, id: string, _version: string, 
   const direction = getDirection();
 
   data4Layout.type = diag.type;
-  data4Layout.layoutAlgorithm = layout;
+  data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
+  if (data4Layout.layoutAlgorithm === 'dagre' && layout === 'elk') {
+    log.warn(
+      'flowchart-elk was moved to an external package in Mermaid v11. Please refer [release notes](https://github.com/mermaid-js/mermaid/releases/tag/v11.0.0) for more details. This diagram will be rendered using `dagre` layout as a fallback.'
+    );
+  }
   data4Layout.direction = direction;
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
   data4Layout.rankSpacing = conf?.rankSpacing || 50;

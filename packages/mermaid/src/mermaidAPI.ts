@@ -28,6 +28,7 @@ import { registerIcons } from './rendering-util/svgRegister.js';
 import defaultIconLibrary from './rendering-util/svg/index.js';
 import { toBase64 } from './utils/base64.js';
 import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
+import assignWithDepth from './assignWithDepth.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -476,9 +477,10 @@ const render = async function (
 };
 
 /**
- * @param  options - Initial Mermaid options
+ * @param  userOptions - Initial Mermaid options
  */
-function initialize(options: MermaidConfig = {}) {
+function initialize(userOptions: MermaidConfig = {}) {
+  const options: MermaidConfig = assignWithDepth({}, userOptions);
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
     if (!options.themeVariables) {

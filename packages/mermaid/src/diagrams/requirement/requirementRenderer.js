@@ -1,11 +1,11 @@
 import { line, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
 import markers from './requirementMarkers.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 let conf = {};
 let relCnt = 0;

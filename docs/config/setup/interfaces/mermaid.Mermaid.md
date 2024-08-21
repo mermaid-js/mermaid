@@ -28,7 +28,7 @@ page.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:438](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L438)
+[packages/mermaid/src/mermaid.ts:442](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L442)
 
 ---
 
@@ -59,7 +59,7 @@ A graph definition key
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:440](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L440)
+[packages/mermaid/src/mermaid.ts:444](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L444)
 
 ---
 
@@ -89,7 +89,7 @@ Use [initialize](mermaid.Mermaid.md#initialize) and [run](mermaid.Mermaid.md#run
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:433](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L433)
+[packages/mermaid/src/mermaid.ts:437](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L437)
 
 ---
 
@@ -116,56 +116,13 @@ This function should be called before the run function.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:437](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L437)
-
----
-
-### internalHelpers
-
-• **internalHelpers**: `Object`
-
-Internal helpers for mermaid
-
-**`Deprecated`**
-
-- This should not be used by external packages, as the definitions will change without notice.
-
-#### Type declaration
-
-| Name                         | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| :--------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `common`                     | { `evaluate`: (`val?`: `string` \| `boolean`) => `boolean` ; `getMax`: (...`values`: `number`\[]) => `number` ; `getMin`: (...`values`: `number`\[]) => `number` ; `getRows`: (`s?`: `string`) => `string`\[] ; `getUrl`: (`useAbsolute`: `boolean`) => `string` ; `hasBreaks`: (`text`: `string`) => `boolean` ; `lineBreakRegex`: `RegExp` ; `removeScript`: (`txt`: `string`) => `string` ; `sanitizeText`: (`text`: `string`, `config`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `string` ; `sanitizeTextOrArray`: (`a`: `string` \| `string`\[] \| `string`\[]\[], `config`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `string` \| `string`\[] ; `splitBreaks`: (`text`: `string`) => `string`\[] } |
-| `common.evaluate`            | (`val?`: `string` \| `boolean`) => `boolean`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `common.getMax`              | (...`values`: `number`\[]) => `number`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `common.getMin`              | (...`values`: `number`\[]) => `number`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `common.getRows`             | (`s?`: `string`) => `string`\[]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| `common.getUrl`              | (`useAbsolute`: `boolean`) => `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `common.hasBreaks`           | (`text`: `string`) => `boolean`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| `common.lineBreakRegex`      | `RegExp`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| `common.removeScript`        | (`txt`: `string`) => `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `common.sanitizeText`        | (`text`: `string`, `config`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `common.sanitizeTextOrArray` | (`a`: `string` \| `string`\[] \| `string`\[]\[], `config`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `string` \| `string`\[]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `common.splitBreaks`         | (`text`: `string`) => `string`\[]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `getConfig`                  | () => [`MermaidConfig`](mermaid.MermaidConfig.md)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `insertCluster`              | (`elem`: `any`, `node`: `any`) => `Promise`<`any`>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `insertEdge`                 | (`elem`: `any`, `edge`: `any`, `clusterDb`: `any`, `diagramType`: `any`, `startNode`: `any`, `endNode`: `any`, `id`: `any`) => { `originalPath`: `any` ; `updatedPath`: `any` }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| `insertEdgeLabel`            | (`elem`: `any`, `edge`: `any`) => `Promise`<`any`>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `insertMarkers`              | (`elem`: `any`, `markerArray`: `any`, `type`: `any`, `id`: `any`) => `void`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `insertNode`                 | (`elem`: `any`, `node`: `any`, `dir`: `any`) => `Promise`<`any`>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| `interpolateToCurve`         | (`interpolate`: `undefined` \| `string`, `defaultCurve`: `CurveFactory`) => `CurveFactory`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `labelHelper`                | (`parent`: `any`, `node`: `any`, `_classes`: `any`) => `Promise`<{ `bbox`: `any` ; `halfPadding`: `number` ; `label`: `any` = labelEl; `shapeSvg`: `any` }>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `log`                        | `Record`<`LogLevel`, (...`data`: `any`\[]) => `void`(`message?`: `any`, ...`optionalParams`: `any`\[]) => `void`>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `positionEdgeLabel`          | (`edge`: `any`, `paths`: `any`) => `void`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-
-#### Defined in
-
-[packages/mermaid/src/mermaid.ts:445](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L445)
+[packages/mermaid/src/mermaid.ts:441](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L441)
 
 ---
 
 ### mermaidAPI
 
-• **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.defaultConfig; `getConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](mermaid.ParseResult.md) | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<[`ParseResult`](mermaid.ParseResult.md)> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.setConfig; `updateSiteConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.updateSiteConfig }>
+• **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.defaultConfig; `getConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`userOptions`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](mermaid.ParseResult.md) | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<[`ParseResult`](mermaid.ParseResult.md)> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.setConfig; `updateSiteConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.updateSiteConfig }>
 
 **`Deprecated`**
 
@@ -173,7 +130,7 @@ Use [parse](mermaid.Mermaid.md#parse) and [render](mermaid.Mermaid.md#render) in
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:427](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L427)
+[packages/mermaid/src/mermaid.ts:431](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L431)
 
 ---
 
@@ -223,7 +180,7 @@ Error if the diagram is invalid and parseOptions.suppressErrors is false or not 
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:428](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L428)
+[packages/mermaid/src/mermaid.ts:432](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L432)
 
 ---
 
@@ -233,7 +190,7 @@ Error if the diagram is invalid and parseOptions.suppressErrors is false or not 
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:422](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L422)
+[packages/mermaid/src/mermaid.ts:426](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L426)
 
 ---
 
@@ -261,7 +218,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:436](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L436)
+[packages/mermaid/src/mermaid.ts:440](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L440)
 
 ---
 
@@ -285,7 +242,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:435](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L435)
+[packages/mermaid/src/mermaid.ts:439](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L439)
 
 ---
 
@@ -311,7 +268,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:429](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L429)
+[packages/mermaid/src/mermaid.ts:433](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L433)
 
 ---
 
@@ -359,7 +316,7 @@ Renders the mermaid diagrams
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:434](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L434)
+[packages/mermaid/src/mermaid.ts:438](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L438)
 
 ---
 
@@ -394,7 +351,7 @@ to it (eg. dart interop wrapper). (Initially there is no parseError member of me
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:439](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L439)
+[packages/mermaid/src/mermaid.ts:443](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L443)
 
 ---
 
@@ -404,4 +361,4 @@ to it (eg. dart interop wrapper). (Initially there is no parseError member of me
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:421](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L421)
+[packages/mermaid/src/mermaid.ts:425](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L425)
