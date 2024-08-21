@@ -1,13 +1,13 @@
-import type { Group } from '../../../../diagram-api/types.js';
+import type { SVGGroup } from '../../../../diagram-api/types.js';
 import type {
   BoundingRect,
   ChartComponent,
   Dimension,
   DrawableElem,
   Point,
+  XYChartConfig,
   XYChartData,
   XYChartThemeConfig,
-  XYChartConfig,
 } from '../interfaces.js';
 import type { TextDimensionCalculator } from '../textDimensionCalculator.js';
 import { TextDimensionCalculatorWithFont } from '../textDimensionCalculator.js';
@@ -84,7 +84,7 @@ export function getChartTitleComponent(
   chartConfig: XYChartConfig,
   chartData: XYChartData,
   chartThemeConfig: XYChartThemeConfig,
-  tmpSVGGroup: Group
+  tmpSVGGroup: SVGGroup
 ): ChartComponent {
   const textDimensionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGroup);
   return new ChartTitle(textDimensionCalculator, chartConfig, chartData, chartThemeConfig);

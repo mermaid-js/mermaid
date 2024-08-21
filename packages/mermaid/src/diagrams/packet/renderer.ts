@@ -1,6 +1,6 @@
 import type { Diagram } from '../../Diagram.js';
 import type { PacketDiagramConfig } from '../../config.type.js';
-import type { DiagramRenderer, DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
+import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { PacketDB, PacketWord } from './types.js';
@@ -39,7 +39,7 @@ const drawWord = (
   rowNumber: number,
   { rowHeight, paddingX, paddingY, bitWidth, bitsPerRow, showBits }: Required<PacketDiagramConfig>
 ) => {
-  const group: Group = svg.append('g');
+  const group: SVGGroup = svg.append('g');
   const wordY = rowNumber * (rowHeight + paddingY) + paddingY;
   for (const block of word) {
     const blockX = (block.start % bitsPerRow) * bitWidth + 1;

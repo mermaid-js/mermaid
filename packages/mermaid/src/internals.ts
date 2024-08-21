@@ -29,3 +29,5 @@ export const internalHelpers = {
   log,
   positionEdgeLabel,
 };
+
+export type InternalHelpers = typeof internalHelpers;

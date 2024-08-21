@@ -86,14 +86,20 @@
 ---
 config:
   look: handDrawn
-  flowchart:
-    htmlLabels: false
+  layout: elk
+  elk:
+        nodePlacementStrategy: BRANDES_KOEPF
 ---
-flowchart
-      A[I am a long text, where do I go??? handdrawn - false]
+flowchart TB
+    %% A --> C
+    B -- sdf sdf --> C{"Evaluate"}
+    C --> n4["salkdfjh akljd lkasdjf lkashj lksjadf klasdh"]
+    C --> F
+
+
 </pre
       >
-      <pre id="diagram" class="mermaid">
+      <pre id="diagram" class="mermaid2">
 ---
 config:
   look: handdrawn
@@ -106,7 +112,7 @@ flowchart
       >
     </div>
     <div class="flex">
-      <pre id="diagram" class="mermaid">
+      <pre id="diagram" class="mermaid2">
 ---
 config:
   flowchart:
@@ -116,7 +122,7 @@ flowchart
       A[I am a long text, where do I go??? classic - false]
 </pre
       >
-      <pre id="diagram" class="mermaid">
+      <pre id="diagram" class="mermaid2">
 ---
 config:
   flowchart:
@@ -159,8 +165,8 @@ flowchart LR
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      // import layouts from './mermaid-layout-elk.esm.mjs';
-      // mermaid.registerLayoutLoaders(layouts);
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
