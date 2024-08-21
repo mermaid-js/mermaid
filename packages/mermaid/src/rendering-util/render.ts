@@ -1,14 +1,21 @@
+import type { SVG } from '$root/diagram-api/types.js';
+import type { InternalHelpers } from '$root/internals.js';
 import { internalHelpers } from '$root/internals.js';
 import { log } from '$root/logger.js';
+import type { LayoutData } from './types.js';
+
+export interface RenderOptions {
+  algorithm?: string;
+}
 
 export interface LayoutAlgorithm {
   render(
-    data4Layout: any,
-    svg: any,
+    layoutData: LayoutData,
+    svg: SVG,
     element: any,
-    helpers: typeof internalHelpers,
-    algorithm?: string
-  ): any;
+    helpers: InternalHelpers,
+    options?: RenderOptions
+  ): Promise<void>;
 }
 
 export type LayoutLoader = () => Promise<LayoutAlgorithm>;
@@ -38,20 +45,16 @@ const registerDefaultLayoutLoaders = () => {
 
 registerDefaultLayoutLoaders();
 
-export const render = async (data4Layout: any, svg: any, element: any) => {
+export const render = async (data4Layout: LayoutData, svg: SVG, element: any) => {
   if (!(data4Layout.layoutAlgorithm in layoutAlgorithms)) {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
   }
 
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
-  return layoutRenderer.render(
-    data4Layout,
-    svg,
-    element,
-    internalHelpers,
-    layoutDefinition.algorithm
-  );
+  return layoutRenderer.render(data4Layout, svg, element, internalHelpers, {
+    algorithm: layoutDefinition.algorithm,
+  });
 };
 
 /**

@@ -1,17 +1,11 @@
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
-import type { InternalHelpers, LayoutData } from 'mermaid';
+import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
 export const render = async (
   data4Layout: LayoutData,
-  svg: {
-    insert: (arg0: string) => {
-      (): any;
-      new (): any;
-      attr: { (arg0: string, arg1: string): any; new (): any };
-    };
-  },
+  svg: SVG,
   element: any,
   {
     common,
@@ -26,7 +20,7 @@ export const render = async (
     log,
     positionEdgeLabel,
   }: InternalHelpers,
-  algorithm: any
+  { algorithm }: RenderOptions
 ) => {
   const nodeDb: Record<string, any> = {};
   const portPos: Record<string, any> = {};
@@ -135,13 +129,7 @@ export const render = async (
     relY: number,
     nodeArray: any[],
     svg: any,
-    subgraphsEl: {
-      insert: (arg0: string) => {
-        (): any;
-        new (): any;
-        attr: { (arg0: string, arg1: string): any; new (): any };
-      };
-    },
+    subgraphsEl: SVGGroup,
     depth: number
   ) => {
     await Promise.all(
@@ -338,13 +326,7 @@ export const render = async (
       children?: never[];
       edges: any;
     },
-    svg: {
-      insert: (arg0: string) => {
-        (): any;
-        new (): any;
-        attr: { (arg0: string, arg1: string): any; new (): any };
-      };
-    }
+    svg: SVG
   ) {
     log.info('abc78 DAGA edges = ', dataForLayout);
     const edges = dataForLayout.edges;
