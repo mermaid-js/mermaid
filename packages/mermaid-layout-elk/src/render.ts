@@ -28,37 +28,10 @@ export const render = async (
 
   const addVertex = async (nodeEl: any, graph: { children: any[] }, nodeArr: any, node: any) => {
     const labelData: any = { width: 0, height: 0 };
-    // const ports = [
-    //   {
-    //     id: node.id + '-west',
-    //     layoutOptions: {
-    //       'port.side': 'WEST',
-    //     },
-    //   },
-    //   {
-    //     id: node.id + '-east',
-    //     layoutOptions: {
-    //       'port.side': 'EAST',
-    //     },
-    //   },
-    //   {
-    //     id: node.id + '-south',
-    //     layoutOptions: {
-    //       'port.side': 'SOUTH',
-    //     },
-    //   },
-    //   {
-    //     id: node.id + '-north',
-    //     layoutOptions: {
-    //       'port.side': 'NORTH',
-    //     },
-    //   },
-    // ];
 
     let boundingBox;
     const child = {
       ...node,
-      // ports: node.shape === 'diamond' ? ports : [],
     };
     graph.children.push(child);
     nodeDb[node.id] = child;
@@ -229,21 +202,6 @@ export const render = async (
     }
     const result = edgeDirection === 'in' ? portPos[node].inPosition : portPos[node].outPosition;
 
-    if (edgeDirection === 'in') {
-      // @ts-ignore TODO: fix this
-      portPos[node].inPosition = getNextPosition(
-        portPos[node].inPosition,
-        edgeDirection,
-        graphDirection
-      );
-    } else {
-      // @ts-ignore TODO: fix this
-      portPos[node].outPosition = getNextPosition(
-        portPos[node].outPosition,
-        edgeDirection,
-        graphDirection
-      );
-    }
     return result;
   };
 
@@ -1067,32 +1025,6 @@ export const render = async (
         edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
         positionEdgeLabel(edge, paths);
       }
-      // const src = edge.sections[0].startPoint;
-      // const dest = edge.sections[0].endPoint;
-      // const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
-
-      // const segPoints = segments.map((segment) => {
-      //   return { x: segment.x + offset.x, y: segment.y + offset.y };
-      // });
-      // edge.points = [
-      //   { x: src.x + offset.x, y: src.y + offset.y },
-      //   ...segPoints,
-      //   { x: dest.x + offset.x, y: dest.y + offset.y },
-      // ];
-      // const paths = insertEdge(
-      //   edgesEl,
-      //   edge,
-      //   clusterDb,
-      //   data4Layout.type,
-      //   startNode,
-      //   endNode,
-      //   data4Layout.diagramId
-      // );
-      // log.info('APA12 edge points after insert', JSON.stringify(edge.points));
-
-      // edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
-      // edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
-      // positionEdgeLabel(edge, paths);
     }
   );
 };
