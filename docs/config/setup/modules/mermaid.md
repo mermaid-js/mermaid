@@ -20,6 +20,7 @@
 - [MermaidConfig](../interfaces/mermaid.MermaidConfig.md)
 - [ParseOptions](../interfaces/mermaid.ParseOptions.md)
 - [ParseResult](../interfaces/mermaid.ParseResult.md)
+- [RenderOptions](../interfaces/mermaid.RenderOptions.md)
 - [RenderResult](../interfaces/mermaid.RenderResult.md)
 - [RunOptions](../interfaces/mermaid.RunOptions.md)
 
@@ -31,7 +32,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:23](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L23)
+[packages/mermaid/src/internals.ts:33](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/internals.ts#L33)
 
 ---
 
@@ -58,6 +59,26 @@
 
 [packages/mermaid/src/Diagram.ts:10](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/Diagram.ts#L10)
 
+---
+
+### SVG
+
+Ƭ **SVG**: `d3.Selection`<`SVGSVGElement`, `unknown`, `Element` | `null`, `unknown`>
+
+#### Defined in
+
+[packages/mermaid/src/diagram-api/types.ts:130](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L130)
+
+---
+
+### SVGGroup
+
+Ƭ **SVGGroup**: `d3.Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>
+
+#### Defined in
+
+[packages/mermaid/src/diagram-api/types.ts:132](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L132)
+
 ## Variables
 
 ### default
@@ -66,4 +87,4 @@
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:438](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L438)
+[packages/mermaid/src/mermaid.ts:440](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L440)

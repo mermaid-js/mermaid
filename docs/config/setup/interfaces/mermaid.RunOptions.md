@@ -18,7 +18,7 @@ The nodes to render. If this is set, `querySelector` will be ignored.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:46](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L46)
+[packages/mermaid/src/mermaid.ts:48](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L48)
 
 ---
 
@@ -44,7 +44,7 @@ A callback to call after each diagram is rendered.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:50](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L50)
+[packages/mermaid/src/mermaid.ts:52](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L52)
 
 ---
 
@@ -56,7 +56,7 @@ The query selector to use when finding elements to render. Default: `".mermaid"`
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:42](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L42)
+[packages/mermaid/src/mermaid.ts:44](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L44)
 
 ---
 
@@ -68,4 +68,4 @@ If `true`, errors will be logged to the console, but not thrown. Default: `false
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:54](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L54)
+[packages/mermaid/src/mermaid.ts:56](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L56)
