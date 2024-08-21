@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
-import type { MermaidConfig } from '../config.type.js';
-import type { Group } from '../diagram-api/types.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
+import common, { hasKatex, renderKatex } from '$root/diagrams/common/common.js';
 import { select } from 'd3';
+import type { MermaidConfig } from '../config.type.js';
+import type { SVGGroup } from '../diagram-api/types.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
-import common, { hasKatex, renderKatex } from '$root/diagrams/common/common.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {
@@ -82,7 +82,7 @@ function computeWidthOfText(parentNode: any, lineHeight: number, line: MarkdownL
 }
 
 export function computeDimensionOfText(
-  parentNode: Group,
+  parentNode: SVGGroup,
   lineHeight: number,
   text: string
 ): DOMRect | undefined {
