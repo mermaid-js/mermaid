@@ -16,7 +16,7 @@ const {
   log,
   positionEdgeLabel,
 } = mermaid.internalHelpers;
-// import { insertEdge } from '../../mermaid/src/rendering-util/rendering-elements/edges.js';
+
 const nodeDb: Record<string, any> = {};
 const portPos: Record<string, any> = {};
 const clusterDb: Record<string, any> = {};
@@ -533,291 +533,6 @@ function setIncludeChildrenPolicy(nodeId: string, ancestorId: string) {
   }
 }
 
-export const render = async (
-  data4Layout: LayoutData,
-  svg: {
-    insert: (arg0: string) => {
-      (): any;
-      new (): any;
-      attr: { (arg0: string, arg1: string): any; new (): any };
-    };
-  },
-  element: any,
-  algorithm: any
-) => {
-  // @ts-ignore - ELK is not typed
-  const elk = new ELK();
-
-  // Add the arrowheads to the svg
-  insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
-
-  // Setup the graph with the layout options and the data for the layout
-  let elkGraph: any = {
-    id: 'root',
-    layoutOptions: {
-      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config.elk.nodePlacementStrategy,
-      'elk.layered.mergeEdges': data4Layout.config.elk.mergeEdges,
-      'elk.direction': 'DOWN',
-      'spacing.baseValue': 30,
-      // 'spacing.nodeNode': 40,
-      // 'spacing.nodeNodeBetweenLayers': 45,
-      // 'spacing.edgeNode': 40,
-      // 'spacing.edgeNodeBetweenLayers': 30,
-      // 'spacing.edgeEdge': 30,
-      // 'spacing.edgeEdgeBetweenLayers': 40,
-      // 'spacing.nodeSelfLoop': 50,
-    },
-    children: [],
-    edges: [],
-  };
-
-  log.info('Drawing flowchart using v4 renderer', elk);
-
-  // Set the direction of the graph based on the parsed information
-  const dir = data4Layout.direction || 'DOWN';
-  elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
-
-  // Create the lookup db for the subgraphs and their children to used when creating
-  // the tree structured graph
-  const parentLookupDb: any = addSubGraphs(data4Layout.nodes);
-
-  // Add elements in the svg to be used to hold the subgraphs container
-  // elements and the nodes
-  const subGraphsEl = svg.insert('g').attr('class', 'subgraphs');
-
-  const nodeEl = svg.insert('g').attr('class', 'nodes');
-
-  // Add the nodes to the graph, this will entail creating the actual nodes
-  // in order to get the size of the node. You can't get the size of a node
-  // that is not in the dom so we need to add it to the dom, get the size
-  // we will position the nodes when we get the layout from elkjs
-  elkGraph = await addVertices(nodeEl, data4Layout.nodes, elkGraph);
-  // Time for the edges, we start with adding an element in the node to hold the edges
-  const edgesEl = svg.insert('g').attr('class', 'edges edgePaths');
-
-  // Add the edges to the elk graph, this will entail creating the actual edges
-  elkGraph = await addEdges(data4Layout, elkGraph, svg);
-
-  // Iterate through all nodes and add the top level nodes to the graph
-  const nodes = data4Layout.nodes;
-  nodes.forEach((n: { id: string | number }) => {
-    const node = nodeDb[n.id];
-
-    // Subgraph
-    if (parentLookupDb.childrenById[node.id] !== undefined) {
-      node.labels = [
-        {
-          text: node.label,
-          width: node?.labelData?.width || 50,
-          height: node?.labelData?.height || 50,
-        },
-        (node.width = node.width + 2 * node.padding),
-        log.debug('UIO node label', node?.labelData?.width, node.padding),
-      ];
-      node.layoutOptions = {
-        'spacing.baseValue': 30,
-        'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
-      };
-      if (node.dir) {
-        node.layoutOptions = {
-          ...node.layoutOptions,
-          'elk.algorithm': algorithm,
-          'elk.direction': dir2ElkDirection(node.dir),
-          'nodePlacement.strategy': data4Layout.config['elk.nodePlacement.strategy'],
-          'elk.layered.mergeEdges': data4Layout.config['elk.mergeEdges'],
-          'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
-        };
-      }
-      delete node.x;
-      delete node.y;
-      delete node.width;
-      delete node.height;
-    }
-  });
-  elkGraph.edges.forEach((edge: any) => {
-    const source = edge.sources[0];
-    const target = edge.targets[0];
-
-    if (nodeDb[source].parentId !== nodeDb[target].parentId) {
-      const ancestorId = findCommonAncestor(source, target, parentLookupDb);
-      // an edge that breaks a subgraph has been identified, set configuration accordingly
-      setIncludeChildrenPolicy(source, ancestorId);
-      setIncludeChildrenPolicy(target, ancestorId);
-    }
-  });
-
-  const g = await elk.layout(elkGraph);
-
-  // debugger;
-  await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
-  g.edges?.map(
-    (edge: {
-      sources: (string | number)[];
-      targets: (string | number)[];
-      start: any;
-      end: any;
-      sections: { startPoint: any; endPoint: any; bendPoints: any }[];
-      points: any[];
-      x: any;
-      labels: { height: number; width: number; x: number; y: number }[];
-      y: any;
-    }) => {
-      // (elem, edge, clusterDb, diagramType, graph, id)
-      const startNode = nodeDb[edge.sources[0]];
-      const startCluster = parentLookupDb[edge.sources[0]];
-      const endNode = nodeDb[edge.targets[0]];
-      const sourceId = edge.start;
-      const targetId = edge.end;
-
-      const offset = calcOffset(sourceId, targetId, parentLookupDb);
-      log.debug(
-        'offset',
-        offset,
-        sourceId,
-        ' ==> ',
-        targetId,
-        'edge:',
-        edge,
-        'cluster:',
-        startCluster,
-        startNode
-      );
-      if (edge.sections) {
-        const src = edge.sections[0].startPoint;
-        const dest = edge.sections[0].endPoint;
-        const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
-
-        const segPoints = segments.map((segment: { x: any; y: any }) => {
-          return { x: segment.x + offset.x, y: segment.y + offset.y };
-        });
-        edge.points = [
-          { x: src.x + offset.x, y: src.y + offset.y },
-          ...segPoints,
-          { x: dest.x + offset.x, y: dest.y + offset.y },
-        ];
-
-        let sw = startNode.width;
-        let ew = endNode.width;
-        if (startNode.isGroup) {
-          const bbox = startNode.domId.node().getBBox();
-          // sw = Math.max(bbox.width, startNode.width, startNode.labels[0].width);
-          sw = Math.max(startNode.width, startNode.labels[0].width + startNode.padding);
-          // sw = startNode.width;
-          log.debug(
-            'UIO width',
-            startNode.id,
-            startNode.with,
-            'bbox.width=',
-            bbox.width,
-            'lw=',
-            startNode.labels[0].width,
-            'node:',
-            startNode.width,
-            'SW = ',
-            sw
-            // 'HTML:',
-            // startNode.domId.node().innerHTML
-          );
-        }
-        if (endNode.isGroup) {
-          const bbox = endNode.domId.node().getBBox();
-          ew = Math.max(endNode.width, endNode.labels[0].width + endNode.padding);
-
-          log.debug(
-            'UIO width',
-            startNode.id,
-            startNode.with,
-            bbox.width,
-            'EW = ',
-            ew,
-            'HTML:',
-            startNode.innerHTML
-          );
-        }
-        if (startNode.shape === 'diamond') {
-          edge.points.unshift({
-            x: startNode.x + startNode.width / 2 + offset.x,
-            y: startNode.y + startNode.height / 2 + offset.y,
-          });
-        }
-        if (endNode.shape === 'diamond') {
-          edge.points.push({
-            x: endNode.x + endNode.width / 2 + offset.x,
-            y: endNode.y + endNode.height / 2 + offset.y,
-          });
-        }
-
-        edge.points = cutPathAtIntersect(
-          edge.points.reverse(),
-          {
-            x: startNode.x + startNode.width / 2 + offset.x,
-            y: startNode.y + startNode.height / 2 + offset.y,
-            width: sw,
-            height: startNode.height,
-            padding: startNode.padding,
-          },
-          startNode.shape === 'diamond'
-        ).reverse();
-
-        edge.points = cutPathAtIntersect(
-          edge.points,
-          {
-            x: endNode.x + ew / 2 + endNode.offset.x,
-            y: endNode.y + endNode.height / 2 + endNode.offset.y,
-            width: ew,
-            height: endNode.height,
-            padding: endNode.padding,
-          },
-          endNode.shape === 'diamond'
-        );
-
-        const paths = insertEdge(
-          edgesEl,
-          edge,
-          clusterDb,
-          data4Layout.type,
-          startNode,
-          endNode,
-          data4Layout.diagramId
-        );
-        log.info('APA12 edge points after insert', JSON.stringify(edge.points));
-
-        edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
-        edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
-        positionEdgeLabel(edge, paths);
-      }
-      // const src = edge.sections[0].startPoint;
-      // const dest = edge.sections[0].endPoint;
-      // const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
-
-      // const segPoints = segments.map((segment) => {
-      //   return { x: segment.x + offset.x, y: segment.y + offset.y };
-      // });
-      // edge.points = [
-      //   { x: src.x + offset.x, y: src.y + offset.y },
-      //   ...segPoints,
-      //   { x: dest.x + offset.x, y: dest.y + offset.y },
-      // ];
-      // const paths = insertEdge(
-      //   edgesEl,
-      //   edge,
-      //   clusterDb,
-      //   data4Layout.type,
-      //   startNode,
-      //   endNode,
-      //   data4Layout.diagramId
-      // );
-      // log.info('APA12 edge points after insert', JSON.stringify(edge.points));
-
-      // edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
-      // edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
-      // positionEdgeLabel(edge, paths);
-    }
-  );
-};
-
 function intersectLine(
   p1: { y: number; x: number },
   p2: { y: number; x: number },
@@ -1114,4 +829,289 @@ const cutPathAtIntersect = (
   });
   log.debug('returning points', points);
   return points;
+};
+
+export const render = async (
+  data4Layout: LayoutData,
+  svg: {
+    insert: (arg0: string) => {
+      (): any;
+      new (): any;
+      attr: { (arg0: string, arg1: string): any; new (): any };
+    };
+  },
+  element: any,
+  algorithm: any
+) => {
+  // @ts-ignore - ELK is not typed
+  const elk = new ELK();
+
+  // Add the arrowheads to the svg
+  insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
+
+  // Setup the graph with the layout options and the data for the layout
+  let elkGraph: any = {
+    id: 'root',
+    layoutOptions: {
+      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      'elk.algorithm': algorithm,
+      'nodePlacement.strategy': data4Layout.config.elk.nodePlacementStrategy,
+      'elk.layered.mergeEdges': data4Layout.config.elk.mergeEdges,
+      'elk.direction': 'DOWN',
+      'spacing.baseValue': 30,
+      // 'spacing.nodeNode': 40,
+      // 'spacing.nodeNodeBetweenLayers': 45,
+      // 'spacing.edgeNode': 40,
+      // 'spacing.edgeNodeBetweenLayers': 30,
+      // 'spacing.edgeEdge': 30,
+      // 'spacing.edgeEdgeBetweenLayers': 40,
+      // 'spacing.nodeSelfLoop': 50,
+    },
+    children: [],
+    edges: [],
+  };
+
+  log.info('Drawing flowchart using v4 renderer', elk);
+
+  // Set the direction of the graph based on the parsed information
+  const dir = data4Layout.direction || 'DOWN';
+  elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
+
+  // Create the lookup db for the subgraphs and their children to used when creating
+  // the tree structured graph
+  const parentLookupDb: any = addSubGraphs(data4Layout.nodes);
+
+  // Add elements in the svg to be used to hold the subgraphs container
+  // elements and the nodes
+  const subGraphsEl = svg.insert('g').attr('class', 'subgraphs');
+
+  const nodeEl = svg.insert('g').attr('class', 'nodes');
+
+  // Add the nodes to the graph, this will entail creating the actual nodes
+  // in order to get the size of the node. You can't get the size of a node
+  // that is not in the dom so we need to add it to the dom, get the size
+  // we will position the nodes when we get the layout from elkjs
+  elkGraph = await addVertices(nodeEl, data4Layout.nodes, elkGraph);
+  // Time for the edges, we start with adding an element in the node to hold the edges
+  const edgesEl = svg.insert('g').attr('class', 'edges edgePaths');
+
+  // Add the edges to the elk graph, this will entail creating the actual edges
+  elkGraph = await addEdges(data4Layout, elkGraph, svg);
+
+  // Iterate through all nodes and add the top level nodes to the graph
+  const nodes = data4Layout.nodes;
+  nodes.forEach((n: { id: string | number }) => {
+    const node = nodeDb[n.id];
+
+    // Subgraph
+    if (parentLookupDb.childrenById[node.id] !== undefined) {
+      node.labels = [
+        {
+          text: node.label,
+          width: node?.labelData?.width || 50,
+          height: node?.labelData?.height || 50,
+        },
+        (node.width = node.width + 2 * node.padding),
+        log.debug('UIO node label', node?.labelData?.width, node.padding),
+      ];
+      node.layoutOptions = {
+        'spacing.baseValue': 30,
+        'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
+      };
+      if (node.dir) {
+        node.layoutOptions = {
+          ...node.layoutOptions,
+          'elk.algorithm': algorithm,
+          'elk.direction': dir2ElkDirection(node.dir),
+          'nodePlacement.strategy': data4Layout.config['elk.nodePlacement.strategy'],
+          'elk.layered.mergeEdges': data4Layout.config['elk.mergeEdges'],
+          'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
+        };
+      }
+      delete node.x;
+      delete node.y;
+      delete node.width;
+      delete node.height;
+    }
+  });
+  elkGraph.edges.forEach((edge: any) => {
+    const source = edge.sources[0];
+    const target = edge.targets[0];
+
+    if (nodeDb[source].parentId !== nodeDb[target].parentId) {
+      const ancestorId = findCommonAncestor(source, target, parentLookupDb);
+      // an edge that breaks a subgraph has been identified, set configuration accordingly
+      setIncludeChildrenPolicy(source, ancestorId);
+      setIncludeChildrenPolicy(target, ancestorId);
+    }
+  });
+
+  const g = await elk.layout(elkGraph);
+
+  // debugger;
+  await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
+  g.edges?.map(
+    (edge: {
+      sources: (string | number)[];
+      targets: (string | number)[];
+      start: any;
+      end: any;
+      sections: { startPoint: any; endPoint: any; bendPoints: any }[];
+      points: any[];
+      x: any;
+      labels: { height: number; width: number; x: number; y: number }[];
+      y: any;
+    }) => {
+      // (elem, edge, clusterDb, diagramType, graph, id)
+      const startNode = nodeDb[edge.sources[0]];
+      const startCluster = parentLookupDb[edge.sources[0]];
+      const endNode = nodeDb[edge.targets[0]];
+      const sourceId = edge.start;
+      const targetId = edge.end;
+
+      const offset = calcOffset(sourceId, targetId, parentLookupDb);
+      log.debug(
+        'offset',
+        offset,
+        sourceId,
+        ' ==> ',
+        targetId,
+        'edge:',
+        edge,
+        'cluster:',
+        startCluster,
+        startNode
+      );
+      if (edge.sections) {
+        const src = edge.sections[0].startPoint;
+        const dest = edge.sections[0].endPoint;
+        const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+
+        const segPoints = segments.map((segment: { x: any; y: any }) => {
+          return { x: segment.x + offset.x, y: segment.y + offset.y };
+        });
+        edge.points = [
+          { x: src.x + offset.x, y: src.y + offset.y },
+          ...segPoints,
+          { x: dest.x + offset.x, y: dest.y + offset.y },
+        ];
+
+        let sw = startNode.width;
+        let ew = endNode.width;
+        if (startNode.isGroup) {
+          const bbox = startNode.domId.node().getBBox();
+          // sw = Math.max(bbox.width, startNode.width, startNode.labels[0].width);
+          sw = Math.max(startNode.width, startNode.labels[0].width + startNode.padding);
+          // sw = startNode.width;
+          log.debug(
+            'UIO width',
+            startNode.id,
+            startNode.with,
+            'bbox.width=',
+            bbox.width,
+            'lw=',
+            startNode.labels[0].width,
+            'node:',
+            startNode.width,
+            'SW = ',
+            sw
+            // 'HTML:',
+            // startNode.domId.node().innerHTML
+          );
+        }
+        if (endNode.isGroup) {
+          const bbox = endNode.domId.node().getBBox();
+          ew = Math.max(endNode.width, endNode.labels[0].width + endNode.padding);
+
+          log.debug(
+            'UIO width',
+            startNode.id,
+            startNode.with,
+            bbox.width,
+            'EW = ',
+            ew,
+            'HTML:',
+            startNode.innerHTML
+          );
+        }
+        if (startNode.shape === 'diamond') {
+          edge.points.unshift({
+            x: startNode.x + startNode.width / 2 + offset.x,
+            y: startNode.y + startNode.height / 2 + offset.y,
+          });
+        }
+        if (endNode.shape === 'diamond') {
+          edge.points.push({
+            x: endNode.x + endNode.width / 2 + offset.x,
+            y: endNode.y + endNode.height / 2 + offset.y,
+          });
+        }
+
+        edge.points = cutPathAtIntersect(
+          edge.points.reverse(),
+          {
+            x: startNode.x + startNode.width / 2 + offset.x,
+            y: startNode.y + startNode.height / 2 + offset.y,
+            width: sw,
+            height: startNode.height,
+            padding: startNode.padding,
+          },
+          startNode.shape === 'diamond'
+        ).reverse();
+
+        edge.points = cutPathAtIntersect(
+          edge.points,
+          {
+            x: endNode.x + ew / 2 + endNode.offset.x,
+            y: endNode.y + endNode.height / 2 + endNode.offset.y,
+            width: ew,
+            height: endNode.height,
+            padding: endNode.padding,
+          },
+          endNode.shape === 'diamond'
+        );
+
+        const paths = insertEdge(
+          edgesEl,
+          edge,
+          clusterDb,
+          data4Layout.type,
+          startNode,
+          endNode,
+          data4Layout.diagramId
+        );
+        log.info('APA12 edge points after insert', JSON.stringify(edge.points));
+
+        edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
+        edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
+        positionEdgeLabel(edge, paths);
+      }
+      // const src = edge.sections[0].startPoint;
+      // const dest = edge.sections[0].endPoint;
+      // const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+
+      // const segPoints = segments.map((segment) => {
+      //   return { x: segment.x + offset.x, y: segment.y + offset.y };
+      // });
+      // edge.points = [
+      //   { x: src.x + offset.x, y: src.y + offset.y },
+      //   ...segPoints,
+      //   { x: dest.x + offset.x, y: dest.y + offset.y },
+      // ];
+      // const paths = insertEdge(
+      //   edgesEl,
+      //   edge,
+      //   clusterDb,
+      //   data4Layout.type,
+      //   startNode,
+      //   endNode,
+      //   data4Layout.diagramId
+      // );
+      // log.info('APA12 edge points after insert', JSON.stringify(edge.points));
+
+      // edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
+      // edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
+      // positionEdgeLabel(edge, paths);
+    }
+  );
 };
