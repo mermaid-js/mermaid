@@ -10,30 +10,30 @@ This package provides a layout engine for Mermaid based on the [ELK](https://www
 
 ```
 flowchart-elk TD
-	A --> B
-	A --> C
+  A --> B
+  A --> C
 ```
 
 ```
 ---
 config:
-	layout: elk
+  layout: elk
 ---
 
 flowchart TD
-	A --> B
-	A --> C
+  A --> B
+  A --> C
 ```
 
 ```
 ---
 config:
-	layout: elk.stress
+  layout: elk.stress
 ---
 
 flowchart TD
-	A --> B
-	A --> C
+  A --> B
+  A --> C
 ```
 
 ### With bundlers
