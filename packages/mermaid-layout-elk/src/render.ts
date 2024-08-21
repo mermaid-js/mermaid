@@ -1,4 +1,3 @@
-// @ts-nocheck File not ready to check types
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import mermaid, { type LayoutData } from 'mermaid';
@@ -18,12 +17,12 @@ const {
   positionEdgeLabel,
 } = mermaid.internalHelpers;
 // import { insertEdge } from '../../mermaid/src/rendering-util/rendering-elements/edges.js';
-const nodeDb = {};
-const portPos = {};
-const clusterDb = {};
+const nodeDb: Record<string, any> = {};
+const portPos: Record<string, any> = {};
+const clusterDb: Record<string, any> = {};
 
-export const addVertex = async (nodeEl, graph, nodeArr, node) => {
-  const labelData = { width: 0, height: 0 };
+const addVertex = async (nodeEl: any, graph: { children: any[]; }, nodeArr: any, node: any) => {
+  const labelData: any = { width: 0, height: 0 };
   // const ports = [
   //   {
   //     id: node.id + '-west',
@@ -74,7 +73,7 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
     if (node.label) {
       const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
       labelData.width = bbox.width;
-      labelData.wrappingWidth = getConfig().flowchart.wrappingWidth;
+      labelData.wrappingWidth = getConfig().flowchart!.wrappingWidth;
       // Give some padding for elk
       labelData.height = bbox.height - 2;
       labelData.labelNode = shapeSvg.node();
@@ -90,21 +89,21 @@ export const addVertex = async (nodeEl, graph, nodeArr, node) => {
   }
 };
 
-export const addVertices = async function (nodeEl, nodeArr, graph, parentId) {
-  const siblings = nodeArr.filter((node) => node.parentId === parentId);
+const addVertices = async function (nodeEl: any, nodeArr: any[], graph: { id: string; layoutOptions: { 'elk.hierarchyHandling': string; 'elk.algorithm': any; 'nodePlacement.strategy': any; 'elk.layered.mergeEdges': any; 'elk.direction': string; 'spacing.baseValue': number; }; children: never[]; edges: never[]; }, parentId?: undefined) {
+  const siblings = nodeArr.filter((node: { parentId: any; }) => node.parentId === parentId);
   log.info('addVertices APA12', siblings, parentId);
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   await Promise.all(
-    siblings.map(async (node) => {
+    siblings.map(async (node: any) => {
       await addVertex(nodeEl, graph, nodeArr, node);
     })
   );
   return graph;
 };
 
-const drawNodes = async (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
+const drawNodes = async (relX: number, relY: number, nodeArray: any[], svg: any, subgraphsEl: { insert: (arg0: string) => { (): any; new(): any; attr: { (arg0: string, arg1: string): any; new(): any; }; }; }, depth: number) => {
   await Promise.all(
-    nodeArray.map(async function (node) {
+    nodeArray.map(async function (node: { id: string | number; x: any; y: any; width: number; labels: { width: any; }[]; height: number; isGroup: any; labelData: any; offset: { posX: number; posY: number; }; shape: any; domId: { node: () => any; attr: (arg0: string, arg1: string) => void; }; }) {
       if (node) {
         nodeDb[node.id] = node;
         nodeDb[node.id].offset = {
@@ -147,7 +146,7 @@ const drawNodes = async (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
   );
 
   await Promise.all(
-    nodeArray.map(async function (node) {
+    nodeArray.map(async function (node: { isGroup: any; x: any; y: any; children: any; }) {
       if (node?.isGroup) {
         await drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, depth + 1);
       }
@@ -155,7 +154,7 @@ const drawNodes = async (relX, relY, nodeArray, svg, subgraphsEl, depth) => {
   );
 };
 
-const getNextPort = (node, edgeDirection, graphDirection) => {
+const getNextPort = (node: string | number, edgeDirection: string, graphDirection: any) => {
   log.info('getNextPort abc88', { node, edgeDirection, graphDirection });
   if (!portPos[node]) {
     switch (graphDirection) {
@@ -204,13 +203,13 @@ const getNextPort = (node, edgeDirection, graphDirection) => {
   return result;
 };
 
-const addSubGraphs = (nodeArr): TreeData => {
+const addSubGraphs = (nodeArr: any[]): TreeData => {
   const parentLookupDb: TreeData = { parentById: {}, childrenById: {} };
-  const subgraphs = nodeArr.filter((node) => node.isGroup);
+  const subgraphs = nodeArr.filter((node: { isGroup: any; }) => node.isGroup);
   log.info('Subgraphs - ', subgraphs);
-  subgraphs.forEach((subgraph) => {
-    const children = nodeArr.filter((node) => node.parentId === subgraph.id);
-    children.forEach((node) => {
+  subgraphs.forEach((subgraph: { id: string; }) => {
+    const children = nodeArr.filter((node: { parentId: any; }) => node.parentId === subgraph.id);
+    children.forEach((node: any) => {
       parentLookupDb.parentById[node.id] = subgraph.id;
       if (parentLookupDb.childrenById[subgraph.id] === undefined) {
         parentLookupDb.childrenById[subgraph.id] = [];
@@ -219,8 +218,8 @@ const addSubGraphs = (nodeArr): TreeData => {
     });
   });
 
-  subgraphs.forEach(function (subgraph) {
-    const data = { id: subgraph.id };
+  subgraphs.forEach(function (subgraph: { id: string | number; }) {
+    const data: any = { id: subgraph.id };
     if (parentLookupDb.parentById[subgraph.id] !== undefined) {
       data.parent = parentLookupDb.parentById[subgraph.id];
     }
@@ -228,9 +227,9 @@ const addSubGraphs = (nodeArr): TreeData => {
   return parentLookupDb;
 };
 
-const getEdgeStartEndPoint = (edge, dir) => {
-  let source = edge.start;
-  let target = edge.end;
+const getEdgeStartEndPoint = (edge: any, dir: any) => {
+  let source: any = edge.start;
+  let target: any = edge.end;
 
   // Save the original source and target
   const sourceId = source;
@@ -268,17 +267,17 @@ const calcOffset = function (src: string, dest: string, parentLookupDb: TreeData
 /**
  * Add edges to graph based on parsed graph definition
  */
-export const addEdges = async function (dataForLayout, graph, svg) {
+const addEdges = async function (dataForLayout: { edges: any; direction: string; }, graph: { id?: string; layoutOptions?: { 'elk.hierarchyHandling': string; 'elk.algorithm': any; 'nodePlacement.strategy': any; 'elk.layered.mergeEdges': any; 'elk.direction': string; 'spacing.baseValue': number; }; children?: never[]; edges: any; }, svg: { insert: (arg0: string) => { (): any; new(): any; attr: { (arg0: string, arg1: string): any; new(): any; }; }; }) {
   log.info('abc78 DAGA edges = ', dataForLayout);
   const edges = dataForLayout.edges;
   const labelsEl = svg.insert('g').attr('class', 'edgeLabels');
-  const linkIdCnt = {};
+  const linkIdCnt: any = {};
   const dir = dataForLayout.direction || 'DOWN';
-  let defaultStyle;
-  let defaultLabelStyle;
+  let defaultStyle: string | undefined;
+  let defaultLabelStyle: string | undefined;
 
   await Promise.all(
-    edges.map(async function (edge) {
+    edges.map(async function (edge: { id: string; start: string; end: string; length: number; text: undefined; label: any; type: string; stroke: any; interpolate: undefined; style: undefined; labelType: any; }) {
       // Identify Link
       const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
       // count the links from+to the same node to give unique id
@@ -295,7 +294,7 @@ export const addEdges = async function (dataForLayout, graph, svg) {
       const linkNameStart = 'LS_' + edge.start;
       const linkNameEnd = 'LE_' + edge.end;
 
-      const edgeData = { style: '', labelStyle: '' };
+      const edgeData: any = { style: '', labelStyle: '' };
       edgeData.minlen = edge.length || 1;
       edge.text = edge.label;
       // Set link type for rendering
@@ -423,7 +422,7 @@ export const addEdges = async function (dataForLayout, graph, svg) {
   return graph;
 };
 
-function dir2ElkDirection(dir) {
+function dir2ElkDirection(dir: any) {
   switch (dir) {
     case 'LR':
       return 'RIGHT';
@@ -453,14 +452,15 @@ function setIncludeChildrenPolicy(nodeId: string, ancestorId: string) {
   }
 }
 
-export const render = async (data4Layout: LayoutData, svg, element, algorithm) => {
+export const render = async (data4Layout: LayoutData, svg: { insert: (arg0: string) => { (): any; new(): any; attr: { (arg0: string, arg1: string): any; new(): any; }; }; }, element: any, algorithm: any) => {
+  // @ts-ignore - ELK is not typed
   const elk = new ELK();
 
   // Add the arrowheads to the svg
   insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
 
   // Setup the graph with the layout options and the data for the layout
-  let elkGraph = {
+  let elkGraph: any = {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
@@ -489,7 +489,7 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
 
   // Create the lookup db for the subgraphs and their children to used when creating
   // the tree structured graph
-  const parentLookupDb = addSubGraphs(data4Layout.nodes);
+  const parentLookupDb: any = addSubGraphs(data4Layout.nodes);
 
   // Add elements in the svg to be used to hold the subgraphs container
   // elements and the nodes
@@ -510,7 +510,7 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
 
   // Iterate through all nodes and add the top level nodes to the graph
   const nodes = data4Layout.nodes;
-  nodes.forEach((n) => {
+  nodes.forEach((n: { id: string | number; }) => {
     const node = nodeDb[n.id];
 
     // Subgraph
@@ -544,7 +544,7 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
       delete node.height;
     }
   });
-  elkGraph.edges.forEach((edge) => {
+  elkGraph.edges.forEach((edge: any) => {
     const source = edge.sources[0];
     const target = edge.targets[0];
 
@@ -560,7 +560,7 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
 
   // debugger;
   await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
-  g.edges?.map((edge) => {
+  g.edges?.map((edge: { sources: (string | number)[]; targets: (string | number)[]; start: any; end: any; sections: { startPoint: any, endPoint: any, bendPoints: any; }[]; points: any[]; x: any; labels: { height: number; width: number, x: number, y: number }[]; y: any; }) => {
     // (elem, edge, clusterDb, diagramType, graph, id)
     const startNode = nodeDb[edge.sources[0]];
     const startCluster = parentLookupDb[edge.sources[0]];
@@ -586,7 +586,7 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
       const dest = edge.sections[0].endPoint;
       const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
 
-      const segPoints = segments.map((segment) => {
+      const segPoints = segments.map((segment: { x: any; y: any; }) => {
         return { x: segment.x + offset.x, y: segment.y + offset.y };
       });
       edge.points = [
@@ -714,7 +714,7 @@ export const render = async (data4Layout: LayoutData, svg, element, algorithm) =
   });
 };
 
-function intersectLine(p1, p2, q1, q2) {
+function intersectLine(p1: { y: number; x: number; }, p2: { y: number; x: number; }, q1: { x: any; y: any; }, q2: { x: any; y: any; }) {
   log.debug('UIO intersectLine', p1, p2, q1, q2);
   // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
   // p7 and p473.
@@ -776,10 +776,10 @@ function intersectLine(p1, p2, q1, q2) {
   return { x: x, y: y };
 }
 
-function sameSign(r1, r2) {
+function sameSign(r1: number, r2: number) {
   return r1 * r2 > 0;
 }
-const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
+const diamondIntersection = (bounds: { x: any; y: any; width: any; height: any; }, outsidePoint: { x: number; y: number; }, insidePoint: any) => {
   const x1 = bounds.x;
   const y1 = bounds.y;
 
@@ -804,15 +804,12 @@ const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
 
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
-  if (typeof polyPoints.forEach === 'function') {
+
     polyPoints.forEach(function (entry) {
       minX = Math.min(minX, entry.x);
       minY = Math.min(minY, entry.y);
     });
-  } else {
-    minX = Math.min(minX, polyPoints.x);
-    minY = Math.min(minY, polyPoints.y);
-  }
+  
 
   // const left = x1 - w / 2;
   // const top = y1 + h / 2;
@@ -856,7 +853,7 @@ const diamondIntersection = (bounds, outsidePoint, insidePoint) => {
   return intersections[0];
 };
 
-export const intersection = (node, outsidePoint, insidePoint) => {
+const intersection = (node: { x: any; y: any; width: number; height: number; }, outsidePoint: { x: number; y: number; }, insidePoint: { x: number; y: number; }) => {
   log.debug(`intersection calc abc89:
   outsidePoint: ${JSON.stringify(outsidePoint)}
   insidePoint : ${JSON.stringify(insidePoint)}
@@ -925,7 +922,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     return { x: _x, y: _y };
   }
 };
-const outsideNode = (node, point) => {
+const outsideNode = (node: { x: any; y: any; width: number; height: number; }, point: { x: number; y: number; }) => {
   const x = node.x;
   const y = node.y;
   const dx = Math.abs(point.x - x);
@@ -941,12 +938,12 @@ const outsideNode = (node, point) => {
  * This function will page a path and node where the last point(s) in the path is inside the node
  * and return an update path ending by the border of the node.
  */
-const cutPathAtIntersect = (_points, bounds, isDiamond: boolean) => {
+const cutPathAtIntersect = (_points: any[], bounds: { x: any; y: any; width: any; height: any; padding: any; }, isDiamond: boolean) => {
   log.debug('UIO cutPathAtIntersect Points:', _points, 'node:', bounds, 'isDiamond', isDiamond);
-  const points = [];
+  const points: any[] = [];
   let lastPointOutside = _points[0];
   let isInside = false;
-  _points.forEach((point) => {
+  _points.forEach((point: any) => {
     // const node = clusterDb[edge.toCluster].node;
     log.debug(' checking point', point, bounds);
 
