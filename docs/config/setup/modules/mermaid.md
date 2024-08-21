@@ -122,7 +122,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:447](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L447)
+[packages/mermaid/src/mermaid.ts:446](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L446)
 
 ## Functions
 
