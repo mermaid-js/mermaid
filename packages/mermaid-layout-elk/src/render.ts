@@ -21,7 +21,7 @@ const nodeDb: Record<string, any> = {};
 const portPos: Record<string, any> = {};
 const clusterDb: Record<string, any> = {};
 
-const addVertex = async (nodeEl: any, graph: { children: any[]; }, nodeArr: any, node: any) => {
+const addVertex = async (nodeEl: any, graph: { children: any[] }, nodeArr: any, node: any) => {
   const labelData: any = { width: 0, height: 0 };
   // const ports = [
   //   {
@@ -89,8 +89,25 @@ const addVertex = async (nodeEl: any, graph: { children: any[]; }, nodeArr: any,
   }
 };
 
-const addVertices = async function (nodeEl: any, nodeArr: any[], graph: { id: string; layoutOptions: { 'elk.hierarchyHandling': string; 'elk.algorithm': any; 'nodePlacement.strategy': any; 'elk.layered.mergeEdges': any; 'elk.direction': string; 'spacing.baseValue': number; }; children: never[]; edges: never[]; }, parentId?: undefined) {
-  const siblings = nodeArr.filter((node: { parentId: any; }) => node.parentId === parentId);
+const addVertices = async function (
+  nodeEl: any,
+  nodeArr: any[],
+  graph: {
+    id: string;
+    layoutOptions: {
+      'elk.hierarchyHandling': string;
+      'elk.algorithm': any;
+      'nodePlacement.strategy': any;
+      'elk.layered.mergeEdges': any;
+      'elk.direction': string;
+      'spacing.baseValue': number;
+    };
+    children: never[];
+    edges: never[];
+  },
+  parentId?: undefined
+) {
+  const siblings = nodeArr.filter((node: { parentId: any }) => node.parentId === parentId);
   log.info('addVertices APA12', siblings, parentId);
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   await Promise.all(
@@ -101,9 +118,34 @@ const addVertices = async function (nodeEl: any, nodeArr: any[], graph: { id: st
   return graph;
 };
 
-const drawNodes = async (relX: number, relY: number, nodeArray: any[], svg: any, subgraphsEl: { insert: (arg0: string) => { (): any; new(): any; attr: { (arg0: string, arg1: string): any; new(): any; }; }; }, depth: number) => {
+const drawNodes = async (
+  relX: number,
+  relY: number,
+  nodeArray: any[],
+  svg: any,
+  subgraphsEl: {
+    insert: (arg0: string) => {
+      (): any;
+      new (): any;
+      attr: { (arg0: string, arg1: string): any; new (): any };
+    };
+  },
+  depth: number
+) => {
   await Promise.all(
-    nodeArray.map(async function (node: { id: string | number; x: any; y: any; width: number; labels: { width: any; }[]; height: number; isGroup: any; labelData: any; offset: { posX: number; posY: number; }; shape: any; domId: { node: () => any; attr: (arg0: string, arg1: string) => void; }; }) {
+    nodeArray.map(async function (node: {
+      id: string | number;
+      x: any;
+      y: any;
+      width: number;
+      labels: { width: any }[];
+      height: number;
+      isGroup: any;
+      labelData: any;
+      offset: { posX: number; posY: number };
+      shape: any;
+      domId: { node: () => any; attr: (arg0: string, arg1: string) => void };
+    }) {
       if (node) {
         nodeDb[node.id] = node;
         nodeDb[node.id].offset = {
@@ -146,7 +188,7 @@ const drawNodes = async (relX: number, relY: number, nodeArray: any[], svg: any,
   );
 
   await Promise.all(
-    nodeArray.map(async function (node: { isGroup: any; x: any; y: any; children: any; }) {
+    nodeArray.map(async function (node: { isGroup: any; x: any; y: any; children: any }) {
       if (node?.isGroup) {
         await drawNodes(relX + node.x, relY + node.y, node.children, svg, subgraphsEl, depth + 1);
       }
@@ -205,10 +247,10 @@ const getNextPort = (node: string | number, edgeDirection: string, graphDirectio
 
 const addSubGraphs = (nodeArr: any[]): TreeData => {
   const parentLookupDb: TreeData = { parentById: {}, childrenById: {} };
-  const subgraphs = nodeArr.filter((node: { isGroup: any; }) => node.isGroup);
+  const subgraphs = nodeArr.filter((node: { isGroup: any }) => node.isGroup);
   log.info('Subgraphs - ', subgraphs);
-  subgraphs.forEach((subgraph: { id: string; }) => {
-    const children = nodeArr.filter((node: { parentId: any; }) => node.parentId === subgraph.id);
+  subgraphs.forEach((subgraph: { id: string }) => {
+    const children = nodeArr.filter((node: { parentId: any }) => node.parentId === subgraph.id);
     children.forEach((node: any) => {
       parentLookupDb.parentById[node.id] = subgraph.id;
       if (parentLookupDb.childrenById[subgraph.id] === undefined) {
@@ -218,7 +260,7 @@ const addSubGraphs = (nodeArr: any[]): TreeData => {
     });
   });
 
-  subgraphs.forEach(function (subgraph: { id: string | number; }) {
+  subgraphs.forEach(function (subgraph: { id: string | number }) {
     const data: any = { id: subgraph.id };
     if (parentLookupDb.parentById[subgraph.id] !== undefined) {
       data.parent = parentLookupDb.parentById[subgraph.id];
@@ -267,7 +309,29 @@ const calcOffset = function (src: string, dest: string, parentLookupDb: TreeData
 /**
  * Add edges to graph based on parsed graph definition
  */
-const addEdges = async function (dataForLayout: { edges: any; direction: string; }, graph: { id?: string; layoutOptions?: { 'elk.hierarchyHandling': string; 'elk.algorithm': any; 'nodePlacement.strategy': any; 'elk.layered.mergeEdges': any; 'elk.direction': string; 'spacing.baseValue': number; }; children?: never[]; edges: any; }, svg: { insert: (arg0: string) => { (): any; new(): any; attr: { (arg0: string, arg1: string): any; new(): any; }; }; }) {
+const addEdges = async function (
+  dataForLayout: { edges: any; direction: string },
+  graph: {
+    id?: string;
+    layoutOptions?: {
+      'elk.hierarchyHandling': string;
+      'elk.algorithm': any;
+      'nodePlacement.strategy': any;
+      'elk.layered.mergeEdges': any;
+      'elk.direction': string;
+      'spacing.baseValue': number;
+    };
+    children?: never[];
+    edges: any;
+  },
+  svg: {
+    insert: (arg0: string) => {
+      (): any;
+      new (): any;
+      attr: { (arg0: string, arg1: string): any; new (): any };
+    };
+  }
+) {
   log.info('abc78 DAGA edges = ', dataForLayout);
   const edges = dataForLayout.edges;
   const labelsEl = svg.insert('g').attr('class', 'edgeLabels');
@@ -277,7 +341,19 @@ const addEdges = async function (dataForLayout: { edges: any; direction: string;
   let defaultLabelStyle: string | undefined;
 
   await Promise.all(
-    edges.map(async function (edge: { id: string; start: string; end: string; length: number; text: undefined; label: any; type: string; stroke: any; interpolate: undefined; style: undefined; labelType: any; }) {
+    edges.map(async function (edge: {
+      id: string;
+      start: string;
+      end: string;
+      length: number;
+      text: undefined;
+      label: any;
+      type: string;
+      stroke: any;
+      interpolate: undefined;
+      style: undefined;
+      labelType: any;
+    }) {
       // Identify Link
       const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
       // count the links from+to the same node to give unique id
@@ -452,7 +528,18 @@ function setIncludeChildrenPolicy(nodeId: string, ancestorId: string) {
   }
 }
 
-export const render = async (data4Layout: LayoutData, svg: { insert: (arg0: string) => { (): any; new(): any; attr: { (arg0: string, arg1: string): any; new(): any; }; }; }, element: any, algorithm: any) => {
+export const render = async (
+  data4Layout: LayoutData,
+  svg: {
+    insert: (arg0: string) => {
+      (): any;
+      new (): any;
+      attr: { (arg0: string, arg1: string): any; new (): any };
+    };
+  },
+  element: any,
+  algorithm: any
+) => {
   // @ts-ignore - ELK is not typed
   const elk = new ELK();
 
@@ -510,7 +597,7 @@ export const render = async (data4Layout: LayoutData, svg: { insert: (arg0: stri
 
   // Iterate through all nodes and add the top level nodes to the graph
   const nodes = data4Layout.nodes;
-  nodes.forEach((n: { id: string | number; }) => {
+  nodes.forEach((n: { id: string | number }) => {
     const node = nodeDb[n.id];
 
     // Subgraph
@@ -560,161 +647,178 @@ export const render = async (data4Layout: LayoutData, svg: { insert: (arg0: stri
 
   // debugger;
   await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
-  g.edges?.map((edge: { sources: (string | number)[]; targets: (string | number)[]; start: any; end: any; sections: { startPoint: any, endPoint: any, bendPoints: any; }[]; points: any[]; x: any; labels: { height: number; width: number, x: number, y: number }[]; y: any; }) => {
-    // (elem, edge, clusterDb, diagramType, graph, id)
-    const startNode = nodeDb[edge.sources[0]];
-    const startCluster = parentLookupDb[edge.sources[0]];
-    const endNode = nodeDb[edge.targets[0]];
-    const sourceId = edge.start;
-    const targetId = edge.end;
+  g.edges?.map(
+    (edge: {
+      sources: (string | number)[];
+      targets: (string | number)[];
+      start: any;
+      end: any;
+      sections: { startPoint: any; endPoint: any; bendPoints: any }[];
+      points: any[];
+      x: any;
+      labels: { height: number; width: number; x: number; y: number }[];
+      y: any;
+    }) => {
+      // (elem, edge, clusterDb, diagramType, graph, id)
+      const startNode = nodeDb[edge.sources[0]];
+      const startCluster = parentLookupDb[edge.sources[0]];
+      const endNode = nodeDb[edge.targets[0]];
+      const sourceId = edge.start;
+      const targetId = edge.end;
 
-    const offset = calcOffset(sourceId, targetId, parentLookupDb);
-    log.debug(
-      'offset',
-      offset,
-      sourceId,
-      ' ==> ',
-      targetId,
-      'edge:',
-      edge,
-      'cluster:',
-      startCluster,
-      startNode
-    );
-    if (edge.sections) {
-      const src = edge.sections[0].startPoint;
-      const dest = edge.sections[0].endPoint;
-      const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
-
-      const segPoints = segments.map((segment: { x: any; y: any; }) => {
-        return { x: segment.x + offset.x, y: segment.y + offset.y };
-      });
-      edge.points = [
-        { x: src.x + offset.x, y: src.y + offset.y },
-        ...segPoints,
-        { x: dest.x + offset.x, y: dest.y + offset.y },
-      ];
-
-      let sw = startNode.width;
-      let ew = endNode.width;
-      if (startNode.isGroup) {
-        const bbox = startNode.domId.node().getBBox();
-        // sw = Math.max(bbox.width, startNode.width, startNode.labels[0].width);
-        sw = Math.max(startNode.width, startNode.labels[0].width + startNode.padding);
-        // sw = startNode.width;
-        log.debug(
-          'UIO width',
-          startNode.id,
-          startNode.with,
-          'bbox.width=',
-          bbox.width,
-          'lw=',
-          startNode.labels[0].width,
-          'node:',
-          startNode.width,
-          'SW = ',
-          sw
-          // 'HTML:',
-          // startNode.domId.node().innerHTML
-        );
-      }
-      if (endNode.isGroup) {
-        const bbox = endNode.domId.node().getBBox();
-        ew = Math.max(endNode.width, endNode.labels[0].width + endNode.padding);
-
-        log.debug(
-          'UIO width',
-          startNode.id,
-          startNode.with,
-          bbox.width,
-          'EW = ',
-          ew,
-          'HTML:',
-          startNode.innerHTML
-        );
-      }
-      if (startNode.shape === 'diamond') {
-        edge.points.unshift({
-          x: startNode.x + startNode.width / 2 + offset.x,
-          y: startNode.y + startNode.height / 2 + offset.y,
-        });
-      }
-      if (endNode.shape === 'diamond') {
-        edge.points.push({
-          x: endNode.x + endNode.width / 2 + offset.x,
-          y: endNode.y + endNode.height / 2 + offset.y,
-        });
-      }
-
-      edge.points = cutPathAtIntersect(
-        edge.points.reverse(),
-        {
-          x: startNode.x + startNode.width / 2 + offset.x,
-          y: startNode.y + startNode.height / 2 + offset.y,
-          width: sw,
-          height: startNode.height,
-          padding: startNode.padding,
-        },
-        startNode.shape === 'diamond'
-      ).reverse();
-
-      edge.points = cutPathAtIntersect(
-        edge.points,
-        {
-          x: endNode.x + ew / 2 + endNode.offset.x,
-          y: endNode.y + endNode.height / 2 + endNode.offset.y,
-          width: ew,
-          height: endNode.height,
-          padding: endNode.padding,
-        },
-        endNode.shape === 'diamond'
-      );
-
-      const paths = insertEdge(
-        edgesEl,
+      const offset = calcOffset(sourceId, targetId, parentLookupDb);
+      log.debug(
+        'offset',
+        offset,
+        sourceId,
+        ' ==> ',
+        targetId,
+        'edge:',
         edge,
-        clusterDb,
-        data4Layout.type,
-        startNode,
-        endNode,
-        data4Layout.diagramId
+        'cluster:',
+        startCluster,
+        startNode
       );
-      log.info('APA12 edge points after insert', JSON.stringify(edge.points));
+      if (edge.sections) {
+        const src = edge.sections[0].startPoint;
+        const dest = edge.sections[0].endPoint;
+        const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
 
-      edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
-      edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
-      positionEdgeLabel(edge, paths);
+        const segPoints = segments.map((segment: { x: any; y: any }) => {
+          return { x: segment.x + offset.x, y: segment.y + offset.y };
+        });
+        edge.points = [
+          { x: src.x + offset.x, y: src.y + offset.y },
+          ...segPoints,
+          { x: dest.x + offset.x, y: dest.y + offset.y },
+        ];
+
+        let sw = startNode.width;
+        let ew = endNode.width;
+        if (startNode.isGroup) {
+          const bbox = startNode.domId.node().getBBox();
+          // sw = Math.max(bbox.width, startNode.width, startNode.labels[0].width);
+          sw = Math.max(startNode.width, startNode.labels[0].width + startNode.padding);
+          // sw = startNode.width;
+          log.debug(
+            'UIO width',
+            startNode.id,
+            startNode.with,
+            'bbox.width=',
+            bbox.width,
+            'lw=',
+            startNode.labels[0].width,
+            'node:',
+            startNode.width,
+            'SW = ',
+            sw
+            // 'HTML:',
+            // startNode.domId.node().innerHTML
+          );
+        }
+        if (endNode.isGroup) {
+          const bbox = endNode.domId.node().getBBox();
+          ew = Math.max(endNode.width, endNode.labels[0].width + endNode.padding);
+
+          log.debug(
+            'UIO width',
+            startNode.id,
+            startNode.with,
+            bbox.width,
+            'EW = ',
+            ew,
+            'HTML:',
+            startNode.innerHTML
+          );
+        }
+        if (startNode.shape === 'diamond') {
+          edge.points.unshift({
+            x: startNode.x + startNode.width / 2 + offset.x,
+            y: startNode.y + startNode.height / 2 + offset.y,
+          });
+        }
+        if (endNode.shape === 'diamond') {
+          edge.points.push({
+            x: endNode.x + endNode.width / 2 + offset.x,
+            y: endNode.y + endNode.height / 2 + offset.y,
+          });
+        }
+
+        edge.points = cutPathAtIntersect(
+          edge.points.reverse(),
+          {
+            x: startNode.x + startNode.width / 2 + offset.x,
+            y: startNode.y + startNode.height / 2 + offset.y,
+            width: sw,
+            height: startNode.height,
+            padding: startNode.padding,
+          },
+          startNode.shape === 'diamond'
+        ).reverse();
+
+        edge.points = cutPathAtIntersect(
+          edge.points,
+          {
+            x: endNode.x + ew / 2 + endNode.offset.x,
+            y: endNode.y + endNode.height / 2 + endNode.offset.y,
+            width: ew,
+            height: endNode.height,
+            padding: endNode.padding,
+          },
+          endNode.shape === 'diamond'
+        );
+
+        const paths = insertEdge(
+          edgesEl,
+          edge,
+          clusterDb,
+          data4Layout.type,
+          startNode,
+          endNode,
+          data4Layout.diagramId
+        );
+        log.info('APA12 edge points after insert', JSON.stringify(edge.points));
+
+        edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
+        edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
+        positionEdgeLabel(edge, paths);
+      }
+      // const src = edge.sections[0].startPoint;
+      // const dest = edge.sections[0].endPoint;
+      // const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+
+      // const segPoints = segments.map((segment) => {
+      //   return { x: segment.x + offset.x, y: segment.y + offset.y };
+      // });
+      // edge.points = [
+      //   { x: src.x + offset.x, y: src.y + offset.y },
+      //   ...segPoints,
+      //   { x: dest.x + offset.x, y: dest.y + offset.y },
+      // ];
+      // const paths = insertEdge(
+      //   edgesEl,
+      //   edge,
+      //   clusterDb,
+      //   data4Layout.type,
+      //   startNode,
+      //   endNode,
+      //   data4Layout.diagramId
+      // );
+      // log.info('APA12 edge points after insert', JSON.stringify(edge.points));
+
+      // edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
+      // edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
+      // positionEdgeLabel(edge, paths);
     }
-    // const src = edge.sections[0].startPoint;
-    // const dest = edge.sections[0].endPoint;
-    // const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
-
-    // const segPoints = segments.map((segment) => {
-    //   return { x: segment.x + offset.x, y: segment.y + offset.y };
-    // });
-    // edge.points = [
-    //   { x: src.x + offset.x, y: src.y + offset.y },
-    //   ...segPoints,
-    //   { x: dest.x + offset.x, y: dest.y + offset.y },
-    // ];
-    // const paths = insertEdge(
-    //   edgesEl,
-    //   edge,
-    //   clusterDb,
-    //   data4Layout.type,
-    //   startNode,
-    //   endNode,
-    //   data4Layout.diagramId
-    // );
-    // log.info('APA12 edge points after insert', JSON.stringify(edge.points));
-
-    // edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
-    // edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
-    // positionEdgeLabel(edge, paths);
-  });
+  );
 };
 
-function intersectLine(p1: { y: number; x: number; }, p2: { y: number; x: number; }, q1: { x: any; y: any; }, q2: { x: any; y: any; }) {
+function intersectLine(
+  p1: { y: number; x: number },
+  p2: { y: number; x: number },
+  q1: { x: any; y: any },
+  q2: { x: any; y: any }
+) {
   log.debug('UIO intersectLine', p1, p2, q1, q2);
   // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
   // p7 and p473.
@@ -779,7 +883,11 @@ function intersectLine(p1: { y: number; x: number; }, p2: { y: number; x: number
 function sameSign(r1: number, r2: number) {
   return r1 * r2 > 0;
 }
-const diamondIntersection = (bounds: { x: any; y: any; width: any; height: any; }, outsidePoint: { x: number; y: number; }, insidePoint: any) => {
+const diamondIntersection = (
+  bounds: { x: any; y: any; width: any; height: any },
+  outsidePoint: { x: number; y: number },
+  insidePoint: any
+) => {
   const x1 = bounds.x;
   const y1 = bounds.y;
 
@@ -805,11 +913,10 @@ const diamondIntersection = (bounds: { x: any; y: any; width: any; height: any; 
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
 
-    polyPoints.forEach(function (entry) {
-      minX = Math.min(minX, entry.x);
-      minY = Math.min(minY, entry.y);
-    });
-  
+  polyPoints.forEach(function (entry) {
+    minX = Math.min(minX, entry.x);
+    minY = Math.min(minY, entry.y);
+  });
 
   // const left = x1 - w / 2;
   // const top = y1 + h / 2;
@@ -853,7 +960,11 @@ const diamondIntersection = (bounds: { x: any; y: any; width: any; height: any; 
   return intersections[0];
 };
 
-const intersection = (node: { x: any; y: any; width: number; height: number; }, outsidePoint: { x: number; y: number; }, insidePoint: { x: number; y: number; }) => {
+const intersection = (
+  node: { x: any; y: any; width: number; height: number },
+  outsidePoint: { x: number; y: number },
+  insidePoint: { x: number; y: number }
+) => {
   log.debug(`intersection calc abc89:
   outsidePoint: ${JSON.stringify(outsidePoint)}
   insidePoint : ${JSON.stringify(insidePoint)}
@@ -922,7 +1033,10 @@ const intersection = (node: { x: any; y: any; width: number; height: number; }, 
     return { x: _x, y: _y };
   }
 };
-const outsideNode = (node: { x: any; y: any; width: number; height: number; }, point: { x: number; y: number; }) => {
+const outsideNode = (
+  node: { x: any; y: any; width: number; height: number },
+  point: { x: number; y: number }
+) => {
   const x = node.x;
   const y = node.y;
   const dx = Math.abs(point.x - x);
@@ -938,7 +1052,11 @@ const outsideNode = (node: { x: any; y: any; width: number; height: number; }, p
  * This function will page a path and node where the last point(s) in the path is inside the node
  * and return an update path ending by the border of the node.
  */
-const cutPathAtIntersect = (_points: any[], bounds: { x: any; y: any; width: any; height: any; padding: any; }, isDiamond: boolean) => {
+const cutPathAtIntersect = (
+  _points: any[],
+  bounds: { x: any; y: any; width: any; height: any; padding: any },
+  isDiamond: boolean
+) => {
   log.debug('UIO cutPathAtIntersect Points:', _points, 'node:', bounds, 'isDiamond', isDiamond);
   const points: any[] = [];
   let lastPointOutside = _points[0];
