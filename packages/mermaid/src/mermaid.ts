@@ -7,20 +7,19 @@ import type { MermaidConfig } from './config.type.js';
 import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
-import type { ExternalDiagramDefinition } from './diagram-api/types.js';
+import type { ExternalDiagramDefinition, SVG, SVGGroup } from './diagram-api/types.js';
 import type { ParseErrorFunction } from './Diagram.js';
 import type { UnknownDiagramError } from './errors.js';
-import type { internalHelpers } from './internals.js';
+import type { InternalHelpers } from './internals.js';
 import { log } from './logger.js';
 import { mermaidAPI } from './mermaidAPI.js';
-import type { LayoutLoaderDefinition } from './rendering-util/render.js';
+import type { LayoutLoaderDefinition, RenderOptions } from './rendering-util/render.js';
 import { registerLayoutLoaders } from './rendering-util/render.js';
 import type { LayoutData } from './rendering-util/types.js';
 import type { ParseOptions, ParseResult, RenderResult } from './types.js';
 import type { DetailedError } from './utils.js';
 import utils, { isDetailedError } from './utils.js';
 
-type InternalHelpers = typeof internalHelpers;
 export type {
   DetailedError,
   ExternalDiagramDefinition,
@@ -31,7 +30,10 @@ export type {
   ParseErrorFunction,
   ParseOptions,
   ParseResult,
+  RenderOptions,
   RenderResult,
+  SVG,
+  SVGGroup,
   UnknownDiagramError,
 };
 
