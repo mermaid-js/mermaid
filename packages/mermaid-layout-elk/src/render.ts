@@ -23,7 +23,6 @@ export const render = async (
   { algorithm }: RenderOptions
 ) => {
   const nodeDb: Record<string, any> = {};
-  const portPos: Record<string, any> = {};
   const clusterDb: Record<string, any> = {};
 
   const addVertex = async (nodeEl: any, graph: { children: any[] }, nodeArr: any, node: any) => {
@@ -169,42 +168,6 @@ export const render = async (
     );
   };
 
-  const getNextPort = (node: string | number, edgeDirection: string, graphDirection: any) => {
-    log.info('getNextPort abc88', { node, edgeDirection, graphDirection });
-    if (!portPos[node]) {
-      switch (graphDirection) {
-        case 'TB':
-        case 'TD':
-          portPos[node] = {
-            inPosition: 'north',
-            outPosition: 'south',
-          };
-          break;
-        case 'BT':
-          portPos[node] = {
-            inPosition: 'south',
-            outPosition: 'north',
-          };
-          break;
-        case 'RL':
-          portPos[node] = {
-            inPosition: 'east',
-            outPosition: 'west',
-          };
-          break;
-        case 'LR':
-          portPos[node] = {
-            inPosition: 'west',
-            outPosition: 'east',
-          };
-          break;
-      }
-    }
-    const result = edgeDirection === 'in' ? portPos[node].inPosition : portPos[node].outPosition;
-
-    return result;
-  };
-
   const addSubGraphs = (nodeArr: any[]): TreeData => {
     const parentLookupDb: TreeData = { parentById: {}, childrenById: {} };
     const subgraphs = nodeArr.filter((node: { isGroup: any }) => node.isGroup);
@@ -229,9 +192,9 @@ export const render = async (
     return parentLookupDb;
   };
 
-  const getEdgeStartEndPoint = (edge: any, dir: any) => {
-    let source: any = edge.start;
-    let target: any = edge.end;
+  const getEdgeStartEndPoint = (edge: any) => {
+    const source: any = edge.start;
+    const target: any = edge.end;
 
     // Save the original source and target
     const sourceId = source;
@@ -242,14 +205,6 @@ export const render = async (
 
     if (!startNode || !endNode) {
       return { source, target };
-    }
-
-    if (startNode.shape === 'diamond') {
-      source = `${source}-${getNextPort(source, 'out', dir)}`;
-    }
-
-    if (endNode.shape === 'diamond') {
-      target = `${target}-${getNextPort(target, 'in', dir)}`;
     }
 
     // Add the edge to the graph
@@ -980,10 +935,17 @@ export const render = async (
           });
         }
         if (endNode.shape === 'diamond') {
-          edge.points.push({
-            x: endNode.x + endNode.width / 2 + offset.x,
-            y: endNode.y + endNode.height / 2 + offset.y,
-          });
+          const x = endNode.x + endNode.width / 2 + offset.x;
+          // Add a point at the center of the diamond
+          if (
+            Math.abs(edge.points[edge.points.length - 1].y - endNode.y - offset.y) > 0.001 ||
+            Math.abs(edge.points[edge.points.length - 1].x - x) > 0.001
+          ) {
+            edge.points.push({
+              x: endNode.x + endNode.width / 2 + offset.x,
+              y: endNode.y + endNode.height / 2 + offset.y,
+            });
+          }
         }
 
         edge.points = cutPathAtIntersect(
