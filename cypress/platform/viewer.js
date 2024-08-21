@@ -1,7 +1,7 @@
-import mermaid from './mermaid.esm.mjs';
-import { layouts } from './mermaid-layout-elk.esm.mjs';
 import externalExample from './mermaid-example-diagram.esm.mjs';
+import layouts from './mermaid-layout-elk.esm.mjs';
 import zenUml from './mermaid-zenuml.esm.mjs';
+import mermaid from './mermaid.esm.mjs';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));
