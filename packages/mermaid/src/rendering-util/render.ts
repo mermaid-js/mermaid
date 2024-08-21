@@ -1,7 +1,14 @@
+import { internalHelpers } from '$root/internals.js';
 import { log } from '$root/logger.js';
 
 export interface LayoutAlgorithm {
-  render(data4Layout: any, svg: any, element: any, algorithm?: string): any;
+  render(
+    data4Layout: any,
+    svg: any,
+    element: any,
+    helpers: typeof internalHelpers,
+    algorithm?: string
+  ): any;
 }
 
 export type LayoutLoader = () => Promise<LayoutAlgorithm>;
@@ -38,7 +45,13 @@ export const render = async (data4Layout: any, svg: any, element: any) => {
 
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
-  return layoutRenderer.render(data4Layout, svg, element, layoutDefinition.algorithm);
+  return layoutRenderer.render(
+    data4Layout,
+    svg,
+    element,
+    internalHelpers,
+    layoutDefinition.algorithm
+  );
 };
 
 /**
