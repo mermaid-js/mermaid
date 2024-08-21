@@ -1,13 +1,13 @@
-import type { Dimension } from './interfaces.js';
+import type { SVGGroup } from '../../../diagram-api/types.js';
 import { computeDimensionOfText } from '../../../rendering-util/createText.js';
-import type { Group } from '../../../diagram-api/types.js';
+import type { Dimension } from './interfaces.js';
 
 export interface TextDimensionCalculator {
   getMaxDimension(texts: string[], fontSize: number): Dimension;
 }
 
 export class TextDimensionCalculatorWithFont implements TextDimensionCalculator {
-  constructor(private parentGroup: Group) {}
+  constructor(private parentGroup: SVGGroup) {}
   getMaxDimension(texts: string[], fontSize: number): Dimension {
     if (!this.parentGroup) {
       return {
