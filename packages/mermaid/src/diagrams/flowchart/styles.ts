@@ -75,11 +75,18 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-width: 1px;
   }
 
-  .node .label {
+  .rough-node .label,.node .label {
     text-align: center;
   }
   .node.clickable {
     cursor: pointer;
+  }
+
+
+  .root .anchor path {
+    fill: ${options.lineColor} !important;
+    stroke-width: 0;
+    stroke: ${options.lineColor};
   }
 
   .arrowheadPath {
@@ -150,6 +157,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
     text-anchor: middle;
     font-size: 18px;
     fill: ${options.textColor};
+  }
+
+  rect.text {
+    fill: none;
+    stroke-width: 0;
   }
 `;
 

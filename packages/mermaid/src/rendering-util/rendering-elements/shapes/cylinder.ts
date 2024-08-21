@@ -57,7 +57,7 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { useGradient } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const labelPaddingX = node.look === 'neo' ? node.padding * 2 : node.padding;
   const labelPaddingY = node.look === 'neo' ? node.padding * 1 : node.padding;
   const w = bbox.width + labelPaddingY;
@@ -108,6 +108,8 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   cylinder.attr('transform', `translate(${-w / 2}, ${-(h / 2 + ry)})`);
 
   updateNodeBounds(node, cylinder);
+
+  label.attr('transform', `translate(${-bbox.width / 2}, ${h / 2 - bbox.height})`);
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);

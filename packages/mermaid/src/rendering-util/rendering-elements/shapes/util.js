@@ -134,3 +134,31 @@ export function insertPolygonShape(parent, w, h, points) {
 
 export const getNodeClasses = (node, extra) =>
   (node.look === 'handDrawn' ? 'rough-node' : 'node') + ' ' + node.cssClasses + ' ' + (extra || '');
+
+export function createPathFromPoints(points) {
+  const pointStrings = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`);
+  pointStrings.push('Z');
+  return pointStrings.join(' ');
+}
+
+export function generateFullSineWavePoints(x1, y1, x2, y2, amplitude, numCycles) {
+  const points = [];
+  const steps = 50; // Number of segments to create a smooth curve
+  const deltaX = x2 - x1;
+  const deltaY = y2 - y1;
+  const cycleLength = deltaX / numCycles;
+
+  // Calculate frequency and phase shift
+  const frequency = (2 * Math.PI) / cycleLength;
+  const midY = y1 + deltaY / 2;
+
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const x = x1 + t * deltaX;
+    const y = midY + amplitude * Math.sin(frequency * (x - x1));
+
+    points.push({ x, y });
+  }
+
+  return points;
+}

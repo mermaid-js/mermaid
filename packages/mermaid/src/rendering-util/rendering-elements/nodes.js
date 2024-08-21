@@ -17,35 +17,203 @@ import { doublecircle } from './shapes/doubleCircle.js';
 import { rect_left_inv_arrow } from './shapes/rectLeftInvArrow.js';
 import { question } from './shapes/question.js';
 import { hexagon } from './shapes/hexagon.js';
+import { text } from './shapes/text.js';
+import { card } from './shapes/card.js';
+import { shadedProcess } from './shapes/shadedProcess.js';
+import { anchor } from './shapes/anchor.js';
 import { lean_right } from './shapes/leanRight.js';
 import { lean_left } from './shapes/leanLeft.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
 import { labelRect } from './shapes/labelRect.js';
+import { triangle } from './shapes/triangle.js';
+import { halfRoundedRectangle } from './shapes/halfRoundedRectangle.js';
+import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
+import { slopedRect } from './shapes/slopedRect.js';
+import { bowTieRect } from './shapes/bowTieRect.js';
+import { dividedRectangle } from './shapes/dividedRect.js';
+import { crossedCircle } from './shapes/crossedCircle.js';
+import { waveRectangle } from './shapes/waveRectangle.js';
+import { tiltedCylinder } from './shapes/tiltedCylinder.js';
+import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
+import { flippedTriangle } from './shapes/flippedTriangle.js';
+import { hourglass } from './shapes/hourglass.js';
+import { taggedRect } from './shapes/taggedRect.js';
+import { multiRect } from './shapes/multiRect.js';
+import { linedCylinder } from './shapes/linedCylinder.js';
+import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
+import { lightningBolt } from './shapes/lightningBolt.js';
+import { filledCircle } from './shapes/filledCircle.js';
+import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
+import { windowPane } from './shapes/windowPane.js';
+import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
+import { taggedWaveEdgedRectangle } from './shapes/taggedWaveEdgedRectangle.js';
 
+//Use these names as the left side to render shapes.
 const shapes = {
+  // States
   state,
   stateStart,
+  'small-circle': stateStart,
+  'sm-circ': stateStart,
+  start: stateStart,
   stateEnd,
+  'framed-circle': stateEnd,
+  stop: stateEnd,
+
+  // Rectangles
+  rectWithTitle,
+  rect: rectWithTitle,
+  process: rectWithTitle,
+  proc: rectWithTitle,
+  roundedRect,
+  rounded: roundedRect,
+  event: roundedRect,
+  squareRect,
+  stadium,
+  pill: stadium,
+  term: stadium,
+  windowPane,
+  'win-pane': windowPane,
+  'internal-storage': windowPane,
+  dividedRectangle,
+  'divided-rectangle': dividedRectangle,
+  'div-rect': dividedRectangle,
+  'div-proc': dividedRectangle,
+  taggedRect,
+  'tagged-rect': taggedRect,
+  'tag-rect': taggedRect,
+  'tag-proc': taggedRect,
+  multiRect,
+  'multi-rect': multiRect,
+  'mul-rect': multiRect,
+  'mul-proc': multiRect,
+
+  // Subroutine
+  subroutine,
+  'framed-rectangle': subroutine,
+  fr: subroutine,
+  subproc: subroutine,
+
+  // Cylinders
+  cylinder,
+  cyl: cylinder,
+  db: cylinder,
+  tiltedCylinder,
+  'tilted-cylinder': tiltedCylinder,
+  't-cyl': tiltedCylinder,
+  das: tiltedCylinder,
+  linedCylinder,
+  'lined-cylinder': linedCylinder,
+  'l-cyl': linedCylinder,
+  disk: linedCylinder,
+
+  // Circles
+  circle,
+  doublecircle,
+  dc: doublecircle,
+  crossedCircle,
+  'crossed-circ': crossedCircle,
+  'cross-circ': crossedCircle,
+  summary: crossedCircle,
+  filledCircle,
+  'filled-circle': filledCircle,
+  fc: filledCircle,
+  junction: filledCircle,
+  shadedProcess,
+  'lined-proc': shadedProcess,
+  'lined-rect': shadedProcess,
+
+  // Trapezoids
+  trapezoid,
+  trapezoidBaseBottom: trapezoid,
+  'trapezoid-bottom': trapezoid,
+  'trap-b': trapezoid,
+  priority: trapezoid,
+  inv_trapezoid,
+  'trapezoid-top': inv_trapezoid,
+  'trap-t': inv_trapezoid,
+  manual: inv_trapezoid,
+  curvedTrapezoid,
+  'curved-trapezoid': curvedTrapezoid,
+  'cur-trap': curvedTrapezoid,
+  disp: curvedTrapezoid,
+
+  // Hexagons & Misc Geometric
+  hexagon,
+  hex: hexagon,
+  prepare: hexagon,
+  triangle,
+  'small-triangle': triangle,
+  'sm-tri': triangle,
+  extract: triangle,
+  flippedTriangle,
+  'flipped-triangle': flippedTriangle,
+  'flip-tria': flippedTriangle,
+  'manual-file': flippedTriangle,
+  trapezoidalPentagon,
+  'notched-pentagon': trapezoidalPentagon,
+  'not-pen': trapezoidalPentagon,
+  'loop-limit': trapezoidalPentagon,
+
+  //wave Edged Rectangles
+  waveRectangle,
+  'wave-rectangle': waveRectangle,
+  'w-rect': waveRectangle,
+  flag: waveRectangle,
+  'paper-tape': waveRectangle,
+  waveEdgedRectangle,
+  'wave-rect': waveEdgedRectangle,
+  'we-rect': waveEdgedRectangle,
+  doc: waveEdgedRectangle,
+  multiWaveEdgedRectangle,
+  'multi-wave-edged-rectangle': multiWaveEdgedRectangle,
+  'mul-we-rect': multiWaveEdgedRectangle,
+  'mul-doc': multiWaveEdgedRectangle,
+  linedWaveEdgedRect,
+  'lined-wave-edged-rect': linedWaveEdgedRect,
+  'lin-we-rect': linedWaveEdgedRect,
+  'lin-doc': linedWaveEdgedRect,
+  taggedWaveEdgedRectangle,
+  'tagged-wave-edged-rect': taggedWaveEdgedRectangle,
+  'tag-we-rect': taggedWaveEdgedRectangle,
+
+  // Custom Rectangles
+  bowTieRect,
+  'bow-tie-rect': bowTieRect,
+  'bt-rect': bowTieRect,
+  'stored-data': bowTieRect,
+  slopedRect,
+  'sloped-rectangle': slopedRect,
+  'sloped-rect': slopedRect,
+  'manual-input': slopedRect,
+  halfRoundedRectangle,
+  'half-rounded-rect': halfRoundedRectangle,
+  delay: halfRoundedRectangle,
+  card,
+  'notched-rect': card,
+  'notch-rect': card,
+  lean_right,
+  'l-r': lean_right,
+  'in-out': lean_right,
+  lean_left,
+  'l-l': lean_left,
+  'out-in': lean_left,
+
+  // Miscellaneous
+  forkJoin,
   fork: forkJoin,
   join: forkJoin,
   choice,
   note,
-  roundedRect,
-  rectWithTitle,
-  squareRect,
-  stadium,
-  subroutine,
-  cylinder,
-  circle,
-  doublecircle,
-  odd: rect_left_inv_arrow,
+  text,
+  anchor,
   diamond: question,
-  hexagon,
-  lean_right,
-  lean_left,
-  trapezoid,
-  inv_trapezoid,
+  lightningBolt,
+  bolt: lightningBolt,
+  'com-link': lightningBolt,
+  hourglass,
+  odd: rect_left_inv_arrow,
   labelRect,
 };
 

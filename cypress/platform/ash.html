@@ -36,12 +36,15 @@
         font-family: 'Arial';
         /* font-size: 18px !important; */
       }
+
       h1 {
         color: grey;
       }
+
       .mermaid2 {
         display: none;
       }
+
       .mermaid svg {
         /* font-size: 18px !important; */
 
@@ -54,6 +57,7 @@
           10px 10px;
         background-repeat: repeat; */
       }
+
       .malware {
         position: fixed;
         bottom: 0;
@@ -69,11 +73,13 @@
         font-family: monospace;
         font-size: 72px;
       }
+
       /* tspan {
               font-size: 6px !important;
             } */
     </style>
   </head>
+
   <body>
     <pre id="diagram" class="mermaid">
 flowchart
@@ -171,7 +177,7 @@ flowchart LR
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      import { layouts } from './mermaid-layout-elk.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
       mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);

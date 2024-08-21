@@ -4,6 +4,7 @@ import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
+import * as yaml from 'js-yaml';
 import {
   setAccTitle,
   getAccTitle,
@@ -60,8 +61,10 @@ export const addVertex = function (
   style: string[],
   classes: string[],
   dir: string,
-  props = {}
+  props = {},
+  shapeData: any
 ) {
+  // console.log('addVertex', id, shapeData);
   if (!id || id.trim().length === 0) {
     return;
   }
@@ -114,6 +117,32 @@ export const addVertex = function (
     vertex.props = props;
   } else if (props !== undefined) {
     Object.assign(vertex.props, props);
+  }
+
+  if (shapeData !== undefined) {
+    let yamlData;
+    // detect if shapeData contains a newline character
+
+    if (!shapeData.includes('\n')) {
+      // console.log('yamlData shapeData has no new lines', shapeData);
+      yamlData = '{\n' + shapeData + '\n';
+    } else {
+      // console.log('yamlData shapeData has new lines', shapeData);
+      yamlData = shapeData + '\n';
+      // Find the position of the last } and replace it with a newline
+      const lastPos = yamlData.lastIndexOf('}');
+      if (lastPos !== -1) {
+        yamlData = yamlData.substring(0, lastPos) + '\n';
+      }
+    }
+    const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA });
+    // console.log('yamlData doc', doc);
+    if (doc?.shape) {
+      vertex.type = doc?.shape;
+    }
+    if (doc?.label) {
+      vertex.text = doc?.label;
+    }
   }
 };
 

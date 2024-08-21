@@ -72,6 +72,9 @@ const getStyles = (
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
   }
+   & p {
+    margin: 0
+   }
 
   ${diagramStyles}
   .node .neo-node {

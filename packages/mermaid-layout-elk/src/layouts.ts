@@ -3,7 +3,7 @@ import type { LayoutLoaderDefinition } from '@mermaid-chart/mermaid';
 const loader = async () => await import(`./render.js`);
 const algos = ['elk.stress', 'elk.force', 'elk.mrtree', 'elk.sporeOverlap'];
 
-export const layouts: LayoutLoaderDefinition[] = [
+const layouts: LayoutLoaderDefinition[] = [
   {
     name: 'elk',
     loader,
@@ -15,3 +15,5 @@ export const layouts: LayoutLoaderDefinition[] = [
     algorithm: algo,
   })),
 ];
+
+export default layouts;

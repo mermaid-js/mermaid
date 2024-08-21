@@ -166,43 +166,11 @@ function insertOrUpdateNode(nodes, nodeData, classes) {
  * @returns {string}
  */
 function getClassesFromDbInfo(dbInfoItem) {
-  if (dbInfoItem === undefined || dbInfoItem === null) {
-    return '';
-  } else {
-    if (dbInfoItem.classes) {
-      let classStr = '';
-      // for each class in classes, add it to the string as comma separated
-      for (let i = 0; i < dbInfoItem.classes.length; i++) {
-        //do not add comma for the last class
-        if (i === dbInfoItem.classes.length - 1) {
-          classStr += dbInfoItem.classes[i];
-        }
-        //add comma for all other classes
-        else {
-          classStr += dbInfoItem.classes[i] + ' ';
-        }
-      }
-      return classStr;
-    } else {
-      return '';
-    }
-  }
+  return dbInfoItem?.classes?.join(' ') ?? '';
 }
-/**
- * Get classes from the db for the info item.
- * If there aren't any or if dbInfoItem isn't defined, return an empty string.
- * Else create 1 string from the list of classes found
- */
+
 function getStylesFromDbInfo(dbInfoItem) {
-  if (dbInfoItem === undefined || dbInfoItem === null) {
-    return;
-  } else {
-    if (dbInfoItem.styles) {
-      return dbInfoItem.styles;
-    } else {
-      return [];
-    }
-  }
+  return dbInfoItem?.styles ?? [];
 }
 
 export const dataFetcher = (
@@ -224,10 +192,10 @@ export const dataFetcher = (
 
   if (itemId !== 'root') {
     let shape = SHAPE_STATE;
+    // The if === true / false can be removed if we can guarantee that the parsedItem.start is always a boolean
     if (parsedItem.start === true) {
       shape = SHAPE_START;
-    }
-    if (parsedItem.start === false) {
+    } else if (parsedItem.start === false) {
       shape = SHAPE_END;
     }
     if (parsedItem.type !== DEFAULT_STATE_TYPE) {
