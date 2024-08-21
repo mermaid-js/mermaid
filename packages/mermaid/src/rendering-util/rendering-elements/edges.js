@@ -538,6 +538,27 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
   }
 
+  // DEBUG code, DO NOT REMOVE
+  // adds a red circle at each edge coordinate
+  // cornerPoints.forEach((point) => {
+  //   elem
+  //     .append('circle')
+  //     .style('stroke', 'blue')
+  //     .style('fill', 'blue')
+  //     .attr('r', 3)
+  //     .attr('cx', point.x)
+  //     .attr('cy', point.y);
+  // });
+  // lineData.forEach((point) => {
+  //   elem
+  //     .append('circle')
+  //     .style('stroke', 'blue')
+  //     .style('fill', 'blue')
+  //     .attr('r', 3)
+  //     .attr('cx', point.x)
+  //     .attr('cy', point.y);
+  // });
+
   let url = '';
   if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
     url =
