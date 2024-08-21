@@ -78,12 +78,12 @@ export const multiWaveEdgedRectangle = async (parent: SVGAElement, node: Node) =
 
   shape.attr('class', 'basic label-container');
 
-  if (cssStyles) {
-    shape.attr('style', cssStyles);
+  if (cssStyles && node.look !== 'handDrawn') {
+    shape.selectAll('path').attr('style', cssStyles);
   }
 
-  if (nodeStyles) {
-    shape.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    shape.selectAll('path').attr('style', nodeStyles);
   }
 
   shape.attr('transform', `translate(0,${-waveAmplitude / 2})`);
