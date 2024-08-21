@@ -13,6 +13,11 @@ function createCylinderPathD(rx: number, ry: number, w: number, h: number) {
             A ${rx} ${ry} 0 0 0 ${-w / 2} ${h / 2}
             L ${w / 2} ${h / 2}
             A ${rx} ${ry} 0 0 0 ${w / 2} ${-h / 2}
+            `;
+}
+
+function createInnerPathD(rx: number, ry: number, w: number, h: number) {
+  return `M${w / 2} ${-h / 2}
             A ${rx} ${ry} 0 0 0 ${w / 2} ${h / 2}`;
 }
 
@@ -38,7 +43,11 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const cylinderPath = createCylinderPathD(rx, ry, w, h);
   const cylinderNode = rc.path(cylinderPath, options);
 
-  const tiltedCylinder = shapeSvg.insert(() => cylinderNode, ':first-child');
+  const innerPath = createInnerPathD(rx, ry, w, h);
+  const innerNode = rc.path(innerPath, options);
+
+  let tiltedCylinder = shapeSvg.insert(() => innerNode, ':first-child');
+  tiltedCylinder = shapeSvg.insert(() => cylinderNode, ':first-child');
 
   tiltedCylinder.attr('class', 'basic label-container');
 
