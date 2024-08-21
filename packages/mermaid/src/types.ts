@@ -1,3 +1,7 @@
+export interface NodeMetaData {
+  shape?: string;
+  label?: string;
+}
 export interface Point {
   x: number;
   y: number;
