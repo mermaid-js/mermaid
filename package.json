@@ -24,7 +24,8 @@
     "dev": "tsx .esbuild/server.ts",
     "dev:vite": "tsx .vite/server.ts",
     "dev:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm dev:vite",
-    "release": "pnpm build && pnpm --filter mermaid run docs:release-version && pnpm --filter mermaid run docs:build && changeset publish",
+    "changeset:version": "changeset version && pnpm build && pnpm --filter mermaid run docs:release-version && pnpm --filter mermaid run docs:build && git add --all",
+    "changeset:publish": "changeset publish",
     "lint": "eslint --quiet --stats --cache --cache-strategy content . && pnpm lint:jison && prettier --cache --check .",
     "lint:fix": "eslint --cache --cache-strategy content --fix . && prettier --write . && tsx scripts/fixCSpell.ts",
     "lint:jison": "tsx ./scripts/jison/lint.mts",
@@ -40,7 +41,6 @@
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "prepublishOnly": "pnpm build && pnpm test",
     "prepare": "husky install && pnpm build",
     "pre-commit": "lint-staged"
   },
