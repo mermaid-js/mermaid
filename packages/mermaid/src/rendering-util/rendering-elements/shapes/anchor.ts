@@ -17,6 +17,7 @@ export const anchor = (parent: SVGAElement, node: Node): Promise<SVGAElement> =>
     cssClasses = 'anchor';
   }
   const shapeSvg = parent
+    // @ts-ignore - SVGElement is not typed
     .insert('g')
     .attr('class', cssClasses)
     .attr('id', node.domId || node.id);
