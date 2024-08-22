@@ -415,13 +415,13 @@ importers:
       elkjs:
         specifier: ^0.9.3
         version: 0.9.3
-      mermaid:
-        specifier: workspace:^
-        version: link:../mermaid
     devDependencies:
       '@types/d3':
         specifier: ^7.4.3
         version: 7.4.3
+      mermaid:
+        specifier: workspace:^
+        version: link:../mermaid
 
   packages/mermaid-zenuml:
     dependencies:

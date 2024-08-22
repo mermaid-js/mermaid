@@ -32,11 +32,13 @@
     "d3": "^7.9.0",
     "elkjs": "^0.9.3"
   },
+  "peerDependencies": {
+    "mermaid": "workspace:^"
+  },
   "files": [
     "dist"
   ],
   "devDependencies": {
-    "@types/d3": "^7.4.3",
-    "mermaid": "workspace:^"
+    "@types/d3": "^7.4.3"
   }
 }
