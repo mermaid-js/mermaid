@@ -376,6 +376,7 @@ export const render = async (
 
         // calculate start and end points of the edge, note that the source and target
         // can be modified for shapes that have ports
+        // @ts-ignore TODO: fix this
         const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge, dir);
         log.debug('abc78 source and target', source, target);
         // Add the edge to the graph
