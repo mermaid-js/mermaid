@@ -47,7 +47,8 @@
     "docs:verify-version": "tsx scripts/update-release-version.mts --verify",
     "types:build-config": "tsx scripts/create-types-from-json-schema.mts",
     "types:verify-config": "tsx scripts/create-types-from-json-schema.mts --verify",
-    "checkCircle": "npx madge --circular ./src"
+    "checkCircle": "npx madge --circular ./src",
+    "prepublishOnly": "pnpm docs:verify-version"
   },
   "repository": {
     "type": "git",
