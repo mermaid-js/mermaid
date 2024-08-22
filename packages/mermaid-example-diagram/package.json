@@ -1,6 +1,7 @@
 {
   "name": "@mermaid-js/mermaid-example-diagram",
   "version": "9.3.0",
+  "private": true,
   "description": "Example of external diagram module for MermaidJS.",
   "module": "dist/mermaid-example-diagram.core.mjs",
   "types": "dist/detector.d.ts",
