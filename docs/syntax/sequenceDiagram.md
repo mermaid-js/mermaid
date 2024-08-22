@@ -214,7 +214,7 @@ There are ten types of arrows currently supported:
 | `-->`    | Dotted line without arrow                                                |
 | `->>`    | Solid line with arrowhead                                                |
 | `-->>`   | Dotted line with arrowhead                                               |
-| `<<->>`  | Solid line with bidirectional arrowheads (v\<MERMAID_RELEASE_VERSION>+)  |
+| `<<->>`  | Solid line with bidirectional arrowheads (v11.0.0+)                      |
 | `<<-->>` | Dotted line with bidirectional arrowheads (v\<MERMAID_RELEASE_VERSION>+) |
 | `-x`     | Solid line with a cross at the end                                       |
 | `--x`    | Dotted line with a cross at the end.                                     |
