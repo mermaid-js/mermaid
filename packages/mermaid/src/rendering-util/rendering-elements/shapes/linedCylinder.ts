@@ -4,25 +4,33 @@ import type { Node } from '$root/rendering-util/types.d.ts';
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 
-export const createCylinderPathWithInnerArcD = (
-  x: number,
-  y: number,
-  width: number,
-  height: number,
+export const createCylinderPathWithoutInnerArcD = (
+  w: number,
+  h: number,
+  rx: number,
+  ry: number
+) => {
+  return `M ${-w / 2} ${-h / 2}
+    L ${-w / 2} ${h / 2}
+    A ${rx} ${ry} 0 0 0 ${w / 2},${h / 2}
+    L ${w / 2} ${-h / 2}
+    A ${rx} ${ry} 0 0 0 ${-w / 2},${-h / 2}`;
+};
+
+export const createCylinderUpperArcPathD = (w: number, h: number, rx: number, ry: number) => {
+  return `M ${-w / 2} ${-h / 2}
+    A ${rx} ${ry} 0 0 0 ${w / 2} ${-h / 2}`;
+};
+
+export const createCylinderLowerArcPathD = (
+  w: number,
+  h: number,
   rx: number,
   ry: number,
   outerOffset: number
-): string => {
-  return [
-    `M${x},${y + ry}`,
-    `a${rx},${ry} 0,0,0 ${width},0`,
-    `a${rx},${ry} 0,0,0 ${-width},0`,
-    `l0,${height}`,
-    `a${rx},${ry} 0,0,0 ${width},0`,
-    `l0,${-height}`,
-    `M${x},${y + ry + outerOffset}`, // Move to the start of the offset top arc
-    `a${rx},${ry} 0,0,0 ${width},0`, // Draw the duplicated top ellipse
-  ].join(' ');
+) => {
+  return `M ${w / 2} ${-h / 2 + outerOffset}
+    A ${rx} ${ry} 0 0 1 ${-w / 2} ${-h / 2 + outerOffset}`;
 };
 
 export const linedCylinder = async (parent: SVGAElement, node: Node) => {
@@ -35,39 +43,47 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
   const h = bbox.height + ry + node.padding;
   const outerOffset = h * 0.1; // 10% of height
 
-  let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
-  if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
-    const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {});
-    const pathData = createCylinderPathWithInnerArcD(0, 0, w, h, rx, ry, outerOffset);
-    const innerLine = rc.path(pathData, options);
+  // @ts-ignore - rough is not typed
+  const rc = rough.svg(shapeSvg);
+  const options = userNodeOverrides(node, {});
 
-    cylinder = shapeSvg.insert(() => innerLine, ':first-child');
-    cylinder.attr('class', 'basic label-container');
-    if (cssStyles) {
-      cylinder.attr('style', cssStyles);
-    }
-  } else {
-    const pathData = createCylinderPathWithInnerArcD(0, 0, w, h, rx, ry, outerOffset);
-    cylinder = shapeSvg
-      .insert('path', ':first-child')
-      .attr('d', pathData)
-      .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
-      .attr('style', nodeStyles);
+  if (node.look !== 'handDrawn') {
+    options.roughness = 0;
+    options.fillStyle = 'solid';
   }
 
-  cylinder.attr('label-offset-y', ry);
-  cylinder.attr('transform', `translate(${-w / 2}, ${-(h / 2 + ry)})`);
+  const cylinderPath = createCylinderPathWithoutInnerArcD(w, h, rx, ry);
+  const cylinderNode = rc.path(cylinderPath, options);
 
-  updateNodeBounds(node, cylinder);
+  const UpperArcPath = createCylinderUpperArcPathD(w, h, rx, ry);
+  const UpperArcPathNode = rc.path(UpperArcPath, { ...options, fill: 'none' });
+
+  const lowerArcPath = createCylinderLowerArcPathD(w, h, rx, ry, outerOffset);
+  const lowerArcPathNode = rc.path(lowerArcPath, { ...options, fill: 'none' });
+
+  const linedCylinder = shapeSvg.insert(() => cylinderNode, ':first-child');
+  linedCylinder.insert(() => lowerArcPathNode);
+  linedCylinder.insert(() => UpperArcPathNode);
+
+  linedCylinder.attr('class', 'basic label-container');
+
+  if (cssStyles && node.look !== 'handDrawn') {
+    linedCylinder.selectAll('path').attr('style', cssStyles);
+  }
+
+  if (nodeStyles && node.look !== 'handDrawn') {
+    linedCylinder.selectAll('path').attr('style', nodeStyles);
+  }
+
+  linedCylinder.attr('label-offset-y', ry);
+
+  updateNodeBounds(node, linedCylinder);
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - bbox.height + outerOffset - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - bbox.height})`
   );
 
   node.intersect = function (point) {
