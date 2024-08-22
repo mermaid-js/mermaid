@@ -6,7 +6,6 @@ import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 export const render = async (
   data4Layout: LayoutData,
   svg: SVG,
-  element: any,
   {
     common,
     getConfig,
@@ -377,6 +376,7 @@ export const render = async (
 
         // calculate start and end points of the edge, note that the source and target
         // can be modified for shapes that have ports
+        // @ts-ignore TODO: fix this
         const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge, dir);
         log.debug('abc78 source and target', source, target);
         // Add the edge to the graph
@@ -739,7 +739,7 @@ export const render = async (
 
   // @ts-ignore - ELK is not typed
   const elk = new ELK();
-
+  const element = svg.select('g');
   // Add the arrowheads to the svg
   insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
 
