@@ -33,7 +33,7 @@
     "elkjs": "^0.9.3"
   },
   "peerDependencies": {
-    "mermaid": ">=11.0.0"
+    "mermaid": "^11.0.0"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
