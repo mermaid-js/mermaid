@@ -50,7 +50,11 @@ export const drawRect = (element: SVG | SVGGroup, rectData: RectData): D3RectEle
  * @param element - Diagram (reference for bounds)
  * @param bounds - Shape of the rectangle
  */
-export const drawBackgroundRect = (element: SVG | SVGGroup, bounds: Bound, customClass?: string): void => {
+export const drawBackgroundRect = (
+  element: SVG | SVGGroup,
+  bounds: Bound,
+  customClass?: string
+): void => {
   const rectData: RectData = {
     x: bounds.startx,
     y: bounds.starty,

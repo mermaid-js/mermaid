@@ -157,8 +157,8 @@ export const drawText = function (elem, textData) {
         yfunc = () =>
           Math.round(
             textData.y +
-            (prevTextHeight + textHeight + 2 * textData.textMargin) -
-            textData.textMargin
+              (prevTextHeight + textHeight + 2 * textData.textMargin) -
+              textData.textMargin
           );
         break;
     }
@@ -518,7 +518,7 @@ export const drawActor = async function (elem, actor, conf, isFooter) {
 export const drawBox = function (elem, box, conf) {
   const boxplusTextGroup = elem.append('g');
   const g = boxplusTextGroup;
-  
+
   drawBackgroundRect(g, box);
   if (box.name) {
     _drawTextCandidateFunc(conf)(
