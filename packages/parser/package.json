@@ -19,8 +19,7 @@
   "scripts": {
     "clean": "rimraf dist src/language/generated",
     "langium:generate": "langium generate",
-    "langium:watch": "langium generate --watch",
-    "prepublishOnly": "pnpm -w run build"
+    "langium:watch": "langium generate --watch"
   },
   "repository": {
     "type": "git",

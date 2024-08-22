@@ -19,9 +19,7 @@
     "example",
     "mermaid"
   ],
-  "scripts": {
-    "prepublishOnly": "pnpm -w run build"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/mermaid-js/mermaid"
