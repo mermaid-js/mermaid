@@ -54,7 +54,7 @@ class Theme {
     this.edgeLabelBackground = 'white';
 
     /* Sequence Diagram variables */
-
+    this.boxBorder = (this.darkMode ? 'white' : 'black');
     this.actorBorder = 'calculated';
     this.actorBkg = 'calculated';
     this.actorTextColor = 'calculated';

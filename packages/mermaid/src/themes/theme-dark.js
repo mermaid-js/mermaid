@@ -40,7 +40,7 @@ class Theme {
     this.edgeLabelBackground = 'calculated';
 
     /* Sequence Diagram variables */
-
+    this.boxBorder = 'white';
     this.actorBorder = 'calculated';
     this.actorBkg = 'calculated';
     this.actorTextColor = 'calculated';
@@ -104,7 +104,7 @@ class Theme {
     this.edgeLabelBackground = lighten(this.labelBackground, 25);
 
     /* Sequence Diagram variables */
-
+    this.boxBorder = mainContrastColor;
     this.actorBorder = this.border1;
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.mainContrastColor;

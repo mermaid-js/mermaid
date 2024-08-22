@@ -67,6 +67,7 @@ class Theme {
     /* Sequence Diagram variables */
 
     // this.actorBorder = lighten(this.border1, 0.5);
+    this.boxBorder = (this.darkMode ? 'white' : 'black');
     this.actorBorder = this.actorBorder || this.primaryBorderColor;
     this.actorBkg = this.actorBkg || this.mainBkg;
     this.actorTextColor = this.actorTextColor || this.primaryTextColor;

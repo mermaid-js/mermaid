@@ -1075,7 +1075,6 @@ export const draw = async function (_text: string, id: string, _version: string,
     box.starty = box.y;
     box.stopx = box.startx + box.width;
     box.stopy = box.starty + box.height;
-    box.stroke = 'rgb(0,0,0, 0.5)';
     svgDraw.drawBox(diagram, box, conf);
   }
 
