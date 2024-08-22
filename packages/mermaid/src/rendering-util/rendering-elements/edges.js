@@ -429,19 +429,22 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   const tail = startNode;
   var head = endNode;
 
-  if (head.intersect && tail.intersect) {
-    points = points.slice(1, edge.points.length - 1);
-    points.unshift(tail.intersect(points[0]));
-    log.debug(
-      'Last point APA12',
-      edge.start,
-      '-->',
-      edge.end,
-      points[points.length - 1],
-      head,
-      head.intersect(points[points.length - 1])
-    );
-    points.push(head.intersect(points[points.length - 1]));
+  if (head.intersect && tail.intersect && points.length > 2) {
+    const initialStartPoint = Object.assign({}, points[0]);
+    const newEnd = head.intersect(points[points.length - 2]);
+
+    const newStart = tail.intersect(points[1]);
+    if (newStart.x && newStart.y) {
+      points.unshift(newStart);
+    } else {
+      points.unshift(initialStartPoint);
+    }
+    if (newEnd.x && newEnd.y) {
+      const lastPoint = points[points.length - 1];
+      if (lastPoint.x !== newEnd.x && lastPoint.y !== newEnd.y) {
+        points.push(newEnd);
+      }
+    }
   }
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
