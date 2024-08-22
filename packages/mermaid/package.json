@@ -47,9 +47,7 @@
     "docs:verify-version": "tsx scripts/update-release-version.mts --verify",
     "types:build-config": "tsx scripts/create-types-from-json-schema.mts",
     "types:verify-config": "tsx scripts/create-types-from-json-schema.mts --verify",
-    "checkCircle": "npx madge --circular ./src",
-    "release": "pnpm build",
-    "prepublishOnly": "cpy '../../README.*' ./ --cwd=. && pnpm docs:release-version && pnpm -w run build"
+    "checkCircle": "npx madge --circular ./src"
   },
   "repository": {
     "type": "git",
@@ -106,7 +104,6 @@
     "ajv": "^8.12.0",
     "chokidar": "^3.6.0",
     "concurrently": "^8.2.2",
-    "cpy-cli": "^5.0.0",
     "csstree-validator": "^3.0.0",
     "globby": "^14.0.1",
     "jison": "^0.4.18",

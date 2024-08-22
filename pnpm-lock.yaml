@@ -74,6 +74,9 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.5
+      cpy-cli:
+        specifier: ^5.0.0
+        version: 5.0.0
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -312,9 +315,6 @@ importers:
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
-      cpy-cli:
-        specifier: ^5.0.0
-        version: 5.0.0
       csstree-validator:
         specifier: ^3.0.0
         version: 3.0.0
