@@ -7,5 +7,6 @@
   "access": "public",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
+  "bumpVersionsWithWorkspaceProtocolOnly": true,
   "ignore": ["@mermaid-js/docs", "@mermaid-js/webpack-test", "@mermaid-js/mermaid-example-diagram"]
 }
