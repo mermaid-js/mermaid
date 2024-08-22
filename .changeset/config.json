@@ -4,7 +4,7 @@
   "commit": false,
   "fixed": [],
   "linked": [],
-  "access": "restricted",
+  "access": "public",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
   "ignore": ["@mermaid-js/docs", "@mermaid-js/webpack-test", "@mermaid-js/mermaid-example-diagram"]
