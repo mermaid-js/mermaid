@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import { insertNode } from '../dagre-wrapper/nodes.js';
 
-export const getDiagramElements = (id, securityLevel) => {
+export const getDiagramElement = (id, securityLevel) => {
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -15,9 +15,7 @@ export const getDiagramElements = (id, securityLevel) => {
 
   // Run the renderer. This is what draws the final graph.
 
-  // @ts-ignore todo: fix this
-  const element = root.select('#' + id + ' g');
-  return { svg, element };
+  return svg;
 };
 
 export function insertElementsForSize(el, data) {
