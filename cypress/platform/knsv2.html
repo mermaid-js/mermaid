@@ -84,17 +84,20 @@
     <div class="flex">
       <pre id="diagram" class="mermaid">
 ---
-config:
-  look: handDrawn
-  layout: elk
-  elk:
+  title: hello2
+  config:
+    look: handDrawn
+    layout: elk
+    elk:
         nodePlacementStrategy: BRANDES_KOEPF
 ---
-flowchart TB
-    %% A --> C
-    B -- sdf sdf --> C{"Evaluate"}
-    C --> n4["salkdfjh akljd lkasdjf lkashj lksjadf klasdh"]
-    C --> F
+flowchart LR
+  A[Start] --Some text--> B(Continue)
+  B --> C{Evaluate}
+  C -- One --> D[Option 1]
+  C -- Two --> E[Option 2]
+  C -- Three --> F[fa:fa-car Option 3]
+
 
 
 </pre

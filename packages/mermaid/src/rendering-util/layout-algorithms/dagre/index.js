@@ -268,7 +268,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   return { elem, diff };
 };
 
-export const render = async (data4Layout, svg, element) => {
+export const render = async (data4Layout, svg) => {
   const graph = new graphlib.Graph({
     multigraph: true,
     compound: true,
@@ -289,7 +289,7 @@ export const render = async (data4Layout, svg, element) => {
     .setDefaultEdgeLabel(function () {
       return {};
     });
-
+  const element = svg.select('g');
   insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
   clearNodes();
   clearEdges();

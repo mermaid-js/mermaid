@@ -6,6 +6,30 @@
 
 # Blog
 
+## [Mermaid AI Is Here to Change the Game For Diagram Creation](https://www.mermaidchart.com/blog/posts/mermaid-ai-is-here-to-change-the-game-for-diagram-creation/)
+
+22 July 2024 · 5 mins
+
+The Mermaid AI chat interface
+
+## [How to Make a Sequence Diagram with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-make-a-sequence-diagram-in-mermaid-chart-step-by-step-guide/)
+
+8 July 2024 · 6 mins
+
+Sequence diagrams are important for communicating complex systems in a clear and concise manner.
+
+## [How to Use the New “Comments” Feature in Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-use-the-new-comments-feature-in-mermaid-chart/)
+
+2 July 2024 · 3 mins
+
+How to Use the New Comments Feature in Mermaid Chart
+
+## [How to Use the official Mermaid Chart for Confluence app](https://www.mermaidchart.com/blog/posts/how-to-use-the-official-mermaid-chart-for-confluence-app/)
+
+21 May 2024 · 4 mins
+
+It doesn’t matter if you’re a data enthusiast, software engineer, or visual storyteller; our Confluence app can allow you to embed Mermaid Chart diagrams — and dynamically edit them — within your Confluence pages.
+
 ## [How to Choose the Right Documentation Software](https://www.mermaidchart.com/blog/posts/how-to-choose-the-right-documentation-software/)
 
 7 May 2024 · 5 mins
