@@ -24,7 +24,7 @@
     "dev": "tsx .esbuild/server.ts",
     "dev:vite": "tsx .vite/server.ts",
     "dev:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm dev:vite",
-    "release": "pnpm build",
+    "release": "pnpm build && changeset publish",
     "lint": "eslint --quiet --stats --cache --cache-strategy content . && pnpm lint:jison && prettier --cache --check .",
     "lint:fix": "eslint --cache --cache-strategy content --fix . && prettier --write . && tsx scripts/fixCSpell.ts",
     "lint:jison": "tsx ./scripts/jison/lint.mts",
