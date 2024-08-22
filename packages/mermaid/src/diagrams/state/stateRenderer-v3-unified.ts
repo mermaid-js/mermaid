@@ -1,7 +1,7 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import { getDiagramElements } from '../../rendering-util/insertElementsForSize.js';
+import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
 import { render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
@@ -55,7 +55,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   const data4Layout = diag.db.getData() as LayoutData;
 
   // Create the root SVG - the element is the div containing the SVG element
-  const { element, svg } = getDiagramElements(id, securityLevel);
+  const svg = getDiagramElement(id, securityLevel);
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = layout;
@@ -67,10 +67,10 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
   // console.log('REF1:', data4Layout);
-  await render(data4Layout, svg, element);
+  await render(data4Layout, svg);
   const padding = 8;
   utils.insertTitle(
-    element,
+    svg,
     'statediagramTitleText',
     conf?.titleTopMargin ?? 25,
     diag.db.getDiagramTitle()
