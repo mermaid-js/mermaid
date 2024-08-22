@@ -7,8 +7,6 @@
   "access": "public",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
-    "onlyUpdatePeerDependentsWhenOutOfRange": true
-  },
+  "bumpVersionsWithWorkspaceProtocolOnly": true,
   "ignore": ["@mermaid-js/docs", "@mermaid-js/webpack-test", "@mermaid-js/mermaid-example-diagram"]
 }
