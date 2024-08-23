@@ -8,7 +8,7 @@ We are trying to make our guidelines for you as explicit and detailed as possibl
 
 Initial setup consists of 3 main steps:
 
-```mermaid-nocode
+```mermaid
 flowchart LR
   source --> requirements --> setup
 
@@ -23,9 +23,7 @@ In GitHub, you first [**fork a mermaid repository**](https://github.com/mermaid-
 
 Then you **clone** a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
 
-```tip
-[Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
-```
+> [!TIP] > [Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
 
 ```bash
 git clone git@github.com/your-fork/mermaid
@@ -90,11 +88,10 @@ Make sure that `./run` script is executable:
 chmod +x run
 ```
 
-```tip
-To get detailed help simply type `./run` or `./run help`.
-
-It also has short _Development quick start guide_ embedded.
-```
+> [!TIP]
+> To get detailed help simply type `./run` or `./run help`.
+>
+> It also has short _Development quick start guide_ embedded.
 
 Then install packages:
 
@@ -124,15 +121,14 @@ The `test` script and others are in the top-level `package.json` file.
 
 All tests should run successfully without any errors or failures.
 
-```note
-You might see _lint_ or _formatting_ warnings. Those are ok during this step.
-```
+> [!NOTE]
+> You might see _lint_ or _formatting_ warnings. Those are ok during this step.
 
 ## Workflow
 
 Contributing process is very simple and straightforward:
 
-```mermaid-nocode
+```mermaid
   flowchart LR
 
   branch --> changes --> submit
@@ -145,7 +141,7 @@ Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/)–inspir
 
 Development is done in the `develop` branch.
 
-```mermaid-nocode
+```mermaid
 ---
 config:
   gitGraph:
@@ -167,9 +163,8 @@ To prepare a new version for release the maintainers create a `release/vX.X.X` b
 
 ## Checkout a New Branch
 
-```tip
-All new work should be based on the `develop` branch.
-```
+> [!TIP]
+> All new work should be based on the `develop` branch.
 
 Make sure you have the most up-to-date version of the `develop` branch.
 
@@ -200,7 +195,7 @@ You can always check current [configuration of labelling and branch prefixes](ht
 - followed by an **underscore** (`_`)
 - followed by a **short description** with dashes (`-`) or underscores (`_`) instead of spaces
 
-```mermaid-nocode
+```mermaid
 flowchart LR
   feature --> slash
   bug --> slash
@@ -220,17 +215,15 @@ flowchart LR
 
 If your work is specific to a single diagram type, it is a good idea to put the diagram type at the start of the description. This will help us keep release notes organized by a diagram type.
 
-```note
-A new feature described in issue 2945 that adds a new arrow type called 'florbs' to state diagrams
+> [!NOTE]
+> A new feature described in issue 2945 that adds a new arrow type called 'florbs' to state diagrams
+>
+> `feature/2945_state-diagram-new-arrow-florbs`
 
-`feature/2945_state-diagram-new-arrow-florbs`
-```
-
-```tip
-A bug described in issue 1123 that causes random ugly red text in multiple diagram types
-
-`bug/1123_fix_random_ugly_red_text`
-```
+> [!TIP]
+> A bug described in issue 1123 that causes random ugly red text in multiple diagram types
+>
+> `bug/1123_fix_random_ugly_red_text`
 
 ## Contributing Code
 
@@ -363,9 +356,8 @@ it('should render forks and joins', () => {
 
 ### Update Documentation
 
-```tip
-Our documentation is managed in `packages/mermaid/src/docs`. Details on how to edit is in the [documentation section](#contributing-documentation)
-```
+> [!TIP]
+> Our documentation is managed in `packages/mermaid/src/docs`. Details on how to edit is in the [documentation section](#contributing-documentation)
 
 If the users have no way to know that things have changed, then you haven't really _fixed_ anything for the users; you've just added to making Mermaid feel broken.
 Likewise, if users don't know that there is a new feature that you've implemented, it will forever remain unknown and unused.
@@ -389,11 +381,10 @@ If it is not in the documentation, it's like it never happened. Wouldn't that be
 
 ### Where is the Documentation Located?
 
-```warning
-DO NOT CHANGE FILES IN `/docs`
-
-The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and **should not** be edited manually.
-```
+> [!WARNING]
+> DO NOT CHANGE FILES IN `/docs`
+>
+> The `docs` folder will be automatically generated when committing to `packages/mermaid/src/docs` and **should not** be edited manually.
 
 Documentation is located in the [`packages/mermaid/src/docs`](https://github.com/mermaid-js/mermaid/tree/develop/packages/mermaid/src/docs) folder. Just pick the right section and start typing.
 
@@ -437,46 +428,30 @@ Open [http://localhost:3333/](http://localhost:3333/) in your browser.
 
 The documentation is written in Markdown. To get acquainted with its syntax [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
-You can use `note`, `tip`, `warning` and `danger` in triple backticks to add a note, tip, warning or danger box.
+You can use `[!NOTE]`, `[!TIP]`, `[!WARNING]` and `[!CAUTION]` to add a note, tip, warning or danger box.
 
-```danger
-Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
-```
+> [!NOTE] > [See syntax references](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#alerts)
+
+> [!CAUTION]
+> Do not use vitepress specific markdown syntax `::: warning` as it will not be processed correctly.
 
 Here are a few examples:
 
-````markdown
-```note
-This is a note
 ```
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
 
-```tip
-This is a tip
-```
+> [!TIP]
+> Helpful advice for doing things better or more easily.
 
-```warning
-This is a warning
-```
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
 
-```danger
-This is a danger alert
-```
-````
+> [!WARNING]
+> Urgent info that needs immediate user attention to avoid problems.
 
-```note
-This is a note
-```
-
-```tip
-This is a tip
-```
-
-```warning
-This is a warning
-```
-
-```danger
-This is a danger alert
+> [!CAUTION]
+> Advises about risks or negative outcomes of certain actions.
 ```
 
 ### Navigation
@@ -487,19 +462,17 @@ If you want to propose changes to how the documentation is _organized_, such as 
 
 The content of `/docs` folder is built with Github Actions.
 
-```warning
-So as to allow automatic compilation of documentation pages you have to enable Github Actions on your fork first
-```
+> [!WARNING]
+> So as to allow automatic compilation of documentation pages you have to enable Github Actions on your fork first
 
 ## Submit your pull request
 
-````note
-Do not forget to push your changes
+> [!NOTE]
+> Do not forget to push your changes
 
 ```bash
 git push -u origin docs/2910_update-guidelines
 ```
-````
 
 We make all changes via Pull Requests (PRs). Open a new one.
 
