@@ -147,7 +147,7 @@ You can specify the layout algorithm directly in the metadata section of your Me
 config:
   layout: elk
   look: handdrawn
-  theme: forest
+  theme: dark
 ---
 flowchart TB
   A[Start] --> B{Decision}
@@ -160,7 +160,7 @@ flowchart TB
 config:
   layout: elk
   look: handdrawn
-  theme: forest
+  theme: dark
 ---
 flowchart TB
   A[Start] --> B{Decision}
@@ -176,14 +176,14 @@ When using the ELK layout, you can further refine the diagram’s configuration,
 
 - To combine parallel edges, use mergeEdges: true | false.
 - To configure node placement, use nodePlacementStrategy with the following options:
-  o SIMPLE
-  o NETWORK_SIMPLEX
-  o LINEAR_SEGMENTS
-  o BRANDES_KOEPF (default)
+  - SIMPLE
+  - NETWORK_SIMPLEX
+  - LINEAR_SEGMENTS
+  - BRANDES_KOEPF (default)
 
 **Example configuration:**
 
-```mermaid-example
+```
 ---
 config:
   layout: elk
@@ -199,40 +199,23 @@ flowchart LR
 #### Using Dagre Layout with Classic Look:
 ```
 
-```mermaid
----
-config:
-  layout: elk
-  elk:
-    mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
----
-flowchart LR
-  A[Start] --> B{Choose Path}
-  B -->|Option 1| C[Path 1]
-  B -->|Option 2| D[Path 2]
+Another example:
 
-#### Using Dagre Layout with Classic Look:
 ```
-
 ---
-
 config:
-layout: dagre
-look: classic
-theme: default
-
+  layout: dagre
+  look: classic
+  theme: default
 ---
 
 flowchart LR
-A\[Start] --> B{Choose Path}
-B -->|Option 1| C\[Path 1]
-B -->|Option 2| D\[Path 2]
+A[Start] --> B{Choose Path}
+B -->|Option 1| C[Path 1]
+B -->|Option 2| D[Path 2]
 
 ```
 
 These options give you the flexibility to create diagrams that not only look great but are also arranged to best suit your data’s structure and flow.
 
 When integrating Mermaid, you can include look and layout configuration with the initialize call. This is also where you add the loading of elk.
-
-```
