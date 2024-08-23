@@ -680,7 +680,7 @@ export const insertDatabaseIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', id + '_database')
+    .attr('id', id + '-database')
     .attr('class', 'mermaid-marker-seq-database')
     .attr('fill-rule', 'evenodd')
     .attr('clip-rule', 'evenodd')
@@ -696,7 +696,7 @@ export const insertComputerIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', id + '_computer')
+    .attr('id', id + '-computer')
     .attr('class', 'mermaid-marker-seq-computer')
     .attr('width', '24')
     .attr('height', '24')
@@ -712,7 +712,7 @@ export const insertClockIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', id + '_clock')
+    .attr('id', id + '-clock')
     .attr('class', 'mermaid-marker-seq-clock')
     .attr('width', '24')
     .attr('height', '24')
@@ -733,7 +733,7 @@ export const insertArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', id + '_arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('class', 'mermaid-marker-seq-arrowhead')
     .attr('refX', 7.9)
     .attr('refY', 5)
@@ -754,7 +754,7 @@ export const insertArrowFilledHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', id + '_filled-head')
+    .attr('id', id + '-filled-head')
     .attr('class', 'mermaid-marker-seq-filled-head')
     .attr('refX', 15.5)
     .attr('refY', 7)
@@ -774,7 +774,7 @@ export const insertSequenceNumber = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', id + '_sequencenumber')
+    .attr('id', id + '-sequencenumber')
     .attr('class', 'mermaid-marker-seq-sequencenumber')
     .attr('refX', 15)
     .attr('refY', 15)
@@ -797,7 +797,7 @@ export const insertArrowCrossHead = function (elem, id) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
-    .attr('id', id + '_crosshead')
+    .attr('id', id + '-crosshead')
     .attr('class', 'mermaid-marker-seq-crosshead')
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)

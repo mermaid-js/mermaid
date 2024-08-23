@@ -112,7 +112,7 @@ export const draw = function (text, id, version, diagObj) {
     .attr('y2', conf.height * 4)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
-    .attr('marker-end', 'url(#' + id + '_arrowhead)');
+    .attr('marker-end', 'url(#' + id + '-arrowhead)');
 
   const extraVertForTitle = title ? 70 : 0;
   diagram.attr('viewBox', `${box.startx} -25 ${width} ${height + extraVertForTitle}`);

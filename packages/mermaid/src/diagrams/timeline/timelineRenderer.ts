@@ -222,7 +222,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     .attr('y2', depthY)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
-    .attr('marker-end', 'url(#' + id + '_arrowhead)');
+    .attr('marker-end', 'url(#' + id + '-arrowhead)');
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(
@@ -300,7 +300,7 @@ export const drawTasks = function (
         )
         .attr('stroke-width', 2)
         .attr('stroke', 'black')
-        .attr('marker-end', 'url(#' + id + '_arrowhead)')
+        .attr('marker-end', 'url(#' + id + '-arrowhead)')
         .attr('stroke-dasharray', '5,5');
     }
 

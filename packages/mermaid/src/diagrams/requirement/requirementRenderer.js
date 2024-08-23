@@ -175,7 +175,7 @@ const drawRelationshipFromLayout = function (svg, id, rel, g, insert, diagObj) {
         common.getUrl(conf.arrowMarkerAbsolute) +
         '#' +
         id +
-        '_' +
+        '-' +
         rel.type +
         '_line_ending' +
         ')'
@@ -188,7 +188,7 @@ const drawRelationshipFromLayout = function (svg, id, rel, g, insert, diagObj) {
         common.getUrl(conf.arrowMarkerAbsolute) +
         '#' +
         id +
-        '_' +
+        '-' +
         markers.ReqMarkers.ARROW +
         '_line_ending' +
         ')'

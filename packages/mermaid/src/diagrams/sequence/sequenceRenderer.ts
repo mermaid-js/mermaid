@@ -464,26 +464,26 @@ const drawMessage = async function (diagram, id, msgModel, lineStartY: number, d
   line.attr('stroke', 'none'); // handled by theme/css anyway
   line.style('fill', 'none'); // remove any fill colour
   if (type === diagObj.db.LINETYPE.SOLID || type === diagObj.db.LINETYPE.DOTTED) {
-    line.attr('marker-end', 'url(' + url + '#' + id + '_arrowhead)');
+    line.attr('marker-end', 'url(' + url + '#' + id + '-arrowhead)');
   }
   if (
     type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID ||
     type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED
   ) {
-    line.attr('marker-start', 'url(' + url + '#' + id + '_arrowhead)');
-    line.attr('marker-end', 'url(' + url + '#' + id + '_arrowhead)');
+    line.attr('marker-start', 'url(' + url + '#' + id + '-arrowhead)');
+    line.attr('marker-end', 'url(' + url + '#' + id + '-arrowhead)');
   }
   if (type === diagObj.db.LINETYPE.SOLID_POINT || type === diagObj.db.LINETYPE.DOTTED_POINT) {
-    line.attr('marker-end', 'url(' + url + '#' + id + '_filled-head)');
+    line.attr('marker-end', 'url(' + url + '#' + id + '-filled-head)');
   }
 
   if (type === diagObj.db.LINETYPE.SOLID_CROSS || type === diagObj.db.LINETYPE.DOTTED_CROSS) {
-    line.attr('marker-end', 'url(' + url + '#' + id + '_crosshead)');
+    line.attr('marker-end', 'url(' + url + '#' + id + '-crosshead)');
   }
 
   // add node number
   if (sequenceVisible || conf.showSequenceNumbers) {
-    line.attr('marker-start', 'url(' + url + '#' + id + '_sequencenumber)');
+    line.attr('marker-start', 'url(' + url + '#' + id + '-sequencenumber)');
     diagram
       .append('text')
       .attr('x', startx)

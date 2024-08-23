@@ -469,31 +469,31 @@ const drawRelationshipFromLayout = function (svg, id, rel, g, insert, diagObj) {
     case diagObj.db.Cardinality.ZERO_OR_ONE:
       svgPath.attr(
         'marker-end',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')'
       );
       break;
     case diagObj.db.Cardinality.ZERO_OR_MORE:
       svgPath.attr(
         'marker-end',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')'
       );
       break;
     case diagObj.db.Cardinality.ONE_OR_MORE:
       svgPath.attr(
         'marker-end',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')'
       );
       break;
     case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr(
         'marker-end',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ONLY_ONE_END + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.ONLY_ONE_END + ')'
       );
       break;
     case diagObj.db.Cardinality.MD_PARENT:
       svgPath.attr(
         'marker-end',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.MD_PARENT_END + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.MD_PARENT_END + ')'
       );
       break;
   }
@@ -502,31 +502,31 @@ const drawRelationshipFromLayout = function (svg, id, rel, g, insert, diagObj) {
     case diagObj.db.Cardinality.ZERO_OR_ONE:
       svgPath.attr(
         'marker-start',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
       );
       break;
     case diagObj.db.Cardinality.ZERO_OR_MORE:
       svgPath.attr(
         'marker-start',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
       );
       break;
     case diagObj.db.Cardinality.ONE_OR_MORE:
       svgPath.attr(
         'marker-start',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
       );
       break;
     case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr(
         'marker-start',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ONLY_ONE_START + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.ONLY_ONE_START + ')'
       );
       break;
     case diagObj.db.Cardinality.MD_PARENT:
       svgPath.attr(
         'marker-start',
-        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.MD_PARENT_START + ')'
+        'url(' + url + '#' + id + '-' + erMarkers.ERMarkers.MD_PARENT_START + ')'
       );
       break;
   }

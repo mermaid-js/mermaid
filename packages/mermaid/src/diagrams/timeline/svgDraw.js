@@ -437,7 +437,7 @@ const initGraphics = function (graphics, id) {
   graphics
     .append('defs')
     .append('marker')
-    .attr('id', id + '_arrowhead')
+    .attr('id', id + '-arrowhead')
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)
