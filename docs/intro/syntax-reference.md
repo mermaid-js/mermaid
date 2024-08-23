@@ -146,7 +146,7 @@ You can specify the layout algorithm directly in the metadata section of your Me
 ---
 config:
   layout: elk
-  look: handdrawn
+  look: handDrawn
   theme: dark
 ---
 flowchart TB
@@ -159,7 +159,7 @@ flowchart TB
 ---
 config:
   layout: elk
-  look: handdrawn
+  look: handDrawn
   theme: dark
 ---
 flowchart TB
@@ -168,7 +168,7 @@ flowchart TB
   B -->|No| D[Stop]
 ```
 
-In this example, the `layout: elk` line configures the diagram to use the ELK layout algorithm, along with the handdrawn look and forest theme.
+In this example, the `layout: elk` line configures the diagram to use the ELK layout algorithm, along with the hand drawn look and forest theme.
 
 #### Customizing ELK Layout:
 
