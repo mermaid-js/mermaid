@@ -16,7 +16,7 @@ export const drawImage = function (elem, width, height, x, y, link) {
   imageElem.attr('xlink:href', sanitizedLink);
 };
 
-export const drawRels = (elem, rels, conf) => {
+export const drawRels = (elem, id, rels, conf) => {
   const relsElem = elem.append('g');
   let i = 0;
   for (let rel of rels) {
@@ -25,7 +25,6 @@ export const drawRels = (elem, rels, conf) => {
     let offsetX = rel.offsetX ? parseInt(rel.offsetX) : 0;
     let offsetY = rel.offsetY ? parseInt(rel.offsetY) : 0;
 
-    let url = '';
     if (i === 0) {
       let line = relsElem.append('line');
       line.attr('x1', rel.startPoint.x);
@@ -37,10 +36,10 @@ export const drawRels = (elem, rels, conf) => {
       line.attr('stroke', strokeColor);
       line.style('fill', 'none');
       if (rel.type !== 'rel_b') {
-        line.attr('marker-end', 'url(' + url + '#arrowhead)');
+        line.attr('marker-end', 'url(#' + id + '_arrowhead)');
       }
       if (rel.type === 'birel' || rel.type === 'rel_b') {
-        line.attr('marker-start', 'url(' + url + '#arrowend)');
+        line.attr('marker-start', 'url(#' + id + '_arrowend)');
       }
       i = -1;
     } else {
@@ -65,10 +64,10 @@ export const drawRels = (elem, rels, conf) => {
             .replaceAll('stopy', rel.endPoint.y)
         );
       if (rel.type !== 'rel_b') {
-        line.attr('marker-end', 'url(' + url + '#arrowhead)');
+        line.attr('marker-end', 'url(#' + id + '_arrowhead)');
       }
       if (rel.type === 'birel' || rel.type === 'rel_b') {
-        line.attr('marker-start', 'url(' + url + '#arrowend)');
+        line.attr('marker-start', 'url(#' + id + '_arrowend)');
       }
     }
 
@@ -397,11 +396,11 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   return c4Shape.height;
 };
 
-export const insertDatabaseIcon = function (elem) {
+export const insertDatabaseIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'database')
+    .attr('id', id + '_database')
     .attr('fill-rule', 'evenodd')
     .attr('clip-rule', 'evenodd')
     .append('path')
@@ -412,11 +411,11 @@ export const insertDatabaseIcon = function (elem) {
     );
 };
 
-export const insertComputerIcon = function (elem) {
+export const insertComputerIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'computer')
+    .attr('id', id + '_computer')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -427,11 +426,11 @@ export const insertComputerIcon = function (elem) {
     );
 };
 
-export const insertClockIcon = function (elem) {
+export const insertClockIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'clock')
+    .attr('id', id + '_clock')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -447,11 +446,11 @@ export const insertClockIcon = function (elem) {
  *
  * @param elem
  */
-export const insertArrowHead = function (elem) {
+export const insertArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '_arrowhead')
     .attr('refX', 9)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -462,11 +461,11 @@ export const insertArrowHead = function (elem) {
     .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
 
-export const insertArrowEnd = function (elem) {
+export const insertArrowEnd = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowend')
+    .attr('id', id + '_arrowend')
     .attr('refX', 1)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -482,11 +481,11 @@ export const insertArrowEnd = function (elem) {
  *
  * @param {any} elem
  */
-export const insertArrowFilledHead = function (elem) {
+export const insertArrowFilledHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'filled-head')
+    .attr('id', id + '_filled-head')
     .attr('refX', 18)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -522,12 +521,13 @@ export const insertDynamicNumber = function (elem) {
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
  * @param {any} elem
+ * @param {any} id
  */
-export const insertArrowCrossHead = function (elem) {
+export const insertArrowCrossHead = function (elem, id) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
-    .attr('id', 'crosshead')
+    .attr('id', id + '_crosshead')
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)
     .attr('orient', 'auto')
