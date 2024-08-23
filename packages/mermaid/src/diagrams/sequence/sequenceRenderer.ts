@@ -361,11 +361,12 @@ async function boundMessage(_diagram, msgModel): Promise<number> {
  * Draws a message. Note that the bounds have previously been updated by boundMessage.
  *
  * @param diagram - The parent of the message element
+ * @param id - id of the diagram
  * @param msgModel - The model containing fields describing a message
  * @param lineStartY - The Y coordinate at which the message line starts
  * @param diagObj - The diagram object.
  */
-const drawMessage = async function (diagram, msgModel, lineStartY: number, diagObj: Diagram) {
+const drawMessage = async function (diagram, id, msgModel, lineStartY: number, diagObj: Diagram) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDrawCommon.getTextObj();
@@ -463,26 +464,26 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   line.attr('stroke', 'none'); // handled by theme/css anyway
   line.style('fill', 'none'); // remove any fill colour
   if (type === diagObj.db.LINETYPE.SOLID || type === diagObj.db.LINETYPE.DOTTED) {
-    line.attr('marker-end', 'url(' + url + '#arrowhead)');
+    line.attr('marker-end', 'url(' + url + '#' + id + '_arrowhead)');
   }
   if (
     type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID ||
     type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED
   ) {
-    line.attr('marker-start', 'url(' + url + '#arrowhead)');
-    line.attr('marker-end', 'url(' + url + '#arrowhead)');
+    line.attr('marker-start', 'url(' + url + '#' + id + '_arrowhead)');
+    line.attr('marker-end', 'url(' + url + '#' + id + '_arrowhead)');
   }
   if (type === diagObj.db.LINETYPE.SOLID_POINT || type === diagObj.db.LINETYPE.DOTTED_POINT) {
-    line.attr('marker-end', 'url(' + url + '#filled-head)');
+    line.attr('marker-end', 'url(' + url + '#' + id + '_filled-head)');
   }
 
   if (type === diagObj.db.LINETYPE.SOLID_CROSS || type === diagObj.db.LINETYPE.DOTTED_CROSS) {
-    line.attr('marker-end', 'url(' + url + '#crosshead)');
+    line.attr('marker-end', 'url(' + url + '#' + id + '_crosshead)');
   }
 
   // add node number
   if (sequenceVisible || conf.showSequenceNumbers) {
-    line.attr('marker-start', 'url(' + url + '#sequencenumber)');
+    line.attr('marker-start', 'url(' + url + '#' + id + '_sequencenumber)');
     diagram
       .append('text')
       .attr('x', startx)
@@ -802,9 +803,9 @@ export const draw = async function (_text: string, id: string, _version: string,
   const maxMessageWidthPerActor = await getMaxMessageWidthPerActor(actors, messages, diagObj);
   conf.height = await calculateActorMargins(actors, maxMessageWidthPerActor, boxes);
 
-  svgDraw.insertComputerIcon(diagram);
-  svgDraw.insertDatabaseIcon(diagram);
-  svgDraw.insertClockIcon(diagram);
+  svgDraw.insertComputerIcon(diagram, id);
+  svgDraw.insertDatabaseIcon(diagram, id);
+  svgDraw.insertClockIcon(diagram, id);
 
   if (hasBoxes) {
     bounds.bumpVerticalPos(conf.boxMargin);
@@ -826,10 +827,10 @@ export const draw = async function (_text: string, id: string, _version: string,
   const loopWidths = await calculateLoopBounds(messages, actors, maxMessageWidthPerActor, diagObj);
 
   // The arrow head definition is attached to the svg once
-  svgDraw.insertArrowHead(diagram);
-  svgDraw.insertArrowCrossHead(diagram);
-  svgDraw.insertArrowFilledHead(diagram);
-  svgDraw.insertSequenceNumber(diagram);
+  svgDraw.insertArrowHead(diagram, id);
+  svgDraw.insertArrowCrossHead(diagram, id);
+  svgDraw.insertArrowFilledHead(diagram, id);
+  svgDraw.insertSequenceNumber(diagram, id);
 
   /**
    * @param msg - The message to draw.
@@ -1060,7 +1061,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   await drawActors(diagram, actors, actorKeys, false);
 
   for (const e of messagesToDraw) {
-    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj);
+    await drawMessage(diagram, id, e.messageModel, e.lineStartY, diagObj);
   }
   if (conf.mirrorActors) {
     await drawActors(diagram, actors, actorKeys, true);

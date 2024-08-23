@@ -676,11 +676,11 @@ export const drawBackgroundRect = function (elem, bounds) {
   svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
 
-export const insertDatabaseIcon = function (elem) {
+export const insertDatabaseIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'database')
+    .attr('id', id + '_database')
     .attr('fill-rule', 'evenodd')
     .attr('clip-rule', 'evenodd')
     .append('path')
@@ -691,11 +691,11 @@ export const insertDatabaseIcon = function (elem) {
     );
 };
 
-export const insertComputerIcon = function (elem) {
+export const insertComputerIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'computer')
+    .attr('id', id + '_computer')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -706,11 +706,11 @@ export const insertComputerIcon = function (elem) {
     );
 };
 
-export const insertClockIcon = function (elem) {
+export const insertClockIcon = function (elem, id) {
   elem
     .append('defs')
     .append('symbol')
-    .attr('id', 'clock')
+    .attr('id', id + '_clock')
     .attr('width', '24')
     .attr('height', '24')
     .append('path')
@@ -726,11 +726,11 @@ export const insertClockIcon = function (elem) {
  *
  * @param elem
  */
-export const insertArrowHead = function (elem) {
+export const insertArrowHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '_arrowhead')
     .attr('refX', 7.9)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -746,11 +746,11 @@ export const insertArrowHead = function (elem) {
  *
  * @param {any} elem
  */
-export const insertArrowFilledHead = function (elem) {
+export const insertArrowFilledHead = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'filled-head')
+    .attr('id', id + '_filled-head')
     .attr('refX', 15.5)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -765,11 +765,11 @@ export const insertArrowFilledHead = function (elem) {
  *
  * @param {any} elem
  */
-export const insertSequenceNumber = function (elem) {
+export const insertSequenceNumber = function (elem, id) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'sequencenumber')
+    .attr('id', id + '_sequencenumber')
     .attr('refX', 15)
     .attr('refY', 15)
     .attr('markerWidth', 60)
@@ -787,11 +787,11 @@ export const insertSequenceNumber = function (elem) {
  *
  * @param {any} elem
  */
-export const insertArrowCrossHead = function (elem) {
+export const insertArrowCrossHead = function (elem, id) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
-    .attr('id', 'crosshead')
+    .attr('id', id + '_crosshead')
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)
     .attr('orient', 'auto')
