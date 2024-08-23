@@ -65,7 +65,7 @@ export const styles2String = (node: Node) => {
       labelStyles.push(style.join(':') + ' !important');
     } else {
       nodeStyles.push(style.join(':') + ' !important');
-      if (key === 'stroke' || key === 'stroke-width') {
+      if (key.includes('stroke')) {
         borderStyles.push(style.join(':') + ' !important');
       }
       if (key === 'fill') {
