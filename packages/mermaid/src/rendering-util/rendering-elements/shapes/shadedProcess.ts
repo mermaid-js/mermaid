@@ -35,8 +35,12 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
 
   rect.attr('class', 'basic label-container').attr('style', cssStyles);
 
-  if (nodeStyles) {
-    rect.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    rect.selectAll('path').attr('style', nodeStyles);
+  }
+
+  if (cssStyles && node.look !== 'handDrawn') {
+    rect.selectAll('path').attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, rect);
