@@ -54,7 +54,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.diagramId = id;
   log.debug('REF1:', data4Layout);
   await render(data4Layout, svg);
-  const padding = data4Layout.config.flowchart?.padding ?? 8;
+  const padding = data4Layout.config.flowchart?.diagramPadding ?? 8;
   utils.insertTitle(
     svg,
     'flowchartTitleText',
