@@ -393,6 +393,7 @@ const initGraphics = function (graphics, id) {
     .append('defs')
     .append('marker')
     .attr('id', id + '-arrowhead')
+    .attr('class', 'mermaid-marker-journey-arrowhead')
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)
