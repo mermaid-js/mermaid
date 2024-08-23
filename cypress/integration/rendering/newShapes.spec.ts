@@ -21,7 +21,7 @@ const newShapesSet3 = [
   'halfRoundedRectangle',
   'curvedTrapezoid',
   'bowTieRect',
-  'dividedRect',
+  'dividedRectangle',
   'crossedCircle',
 ] as const;
 
