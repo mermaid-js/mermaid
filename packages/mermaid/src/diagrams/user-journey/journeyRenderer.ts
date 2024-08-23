@@ -65,7 +65,7 @@ export const draw = function (text, id, version, diagObj) {
   bounds.init();
   const diagram = root.select('#' + id);
 
-  svgDraw.initGraphics(diagram);
+  svgDraw.initGraphics(diagram, id);
 
   const tasks = diagObj.db.getTasks();
   const title = diagObj.db.getDiagramTitle();
@@ -112,7 +112,7 @@ export const draw = function (text, id, version, diagObj) {
     .attr('y2', conf.height * 4)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
-    .attr('marker-end', 'url(#arrowhead)');
+    .attr('marker-end', 'url(#' + id + '_arrowhead)');
 
   const extraVertForTitle = title ? 70 : 0;
   diagram.attr('viewBox', `${box.startx} -25 ${width} ${height + extraVertForTitle}`);

@@ -388,11 +388,11 @@ const _drawTextCandidateFunc = (function () {
   };
 })();
 
-const initGraphics = function (graphics) {
+const initGraphics = function (graphics, id) {
   graphics
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', id + '_arrowhead')
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)
