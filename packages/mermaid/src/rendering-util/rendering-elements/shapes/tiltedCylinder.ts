@@ -52,11 +52,11 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   tiltedCylinder.attr('class', 'basic label-container');
 
   if (cssStyles && node.look !== 'handDrawn') {
-    tiltedCylinder.selectChildren('path').attr('style', cssStyles);
+    tiltedCylinder.selectAll('path').attr('style', cssStyles);
   }
 
   if (nodeStyles && node.look !== 'handDrawn') {
-    tiltedCylinder.selectChildren('path').attr('style', nodeStyles);
+    tiltedCylinder.selectAll('path').attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, tiltedCylinder);
