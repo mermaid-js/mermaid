@@ -30,8 +30,8 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
   const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
   const l1 = rc.line(x, y, x, y + h, options);
 
-  shapeSvg.insert(() => l1, ':first-child');
-  const rect = shapeSvg.insert(() => roughNode, ':first-child');
+  const rect = shapeSvg.insert(() => l1, ':first-child');
+  rect.insert(() => roughNode, ':first-child');
 
   rect.attr('class', 'basic label-container').attr('style', cssStyles);
 
