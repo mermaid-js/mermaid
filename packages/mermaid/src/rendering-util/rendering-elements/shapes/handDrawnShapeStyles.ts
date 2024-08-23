@@ -86,6 +86,7 @@ export const userNodeOverrides = (node: Node, options: any) => {
       stroke: stylesMap.get('stroke') || nodeBorder,
       seed: handDrawnSeed,
       strokeWidth: 1.3,
+      fillLineDash: [0, 0],
     },
     options
   );
