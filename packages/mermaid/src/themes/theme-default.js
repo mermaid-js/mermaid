@@ -34,7 +34,7 @@ class Theme {
     this.arrowheadColor = '#333333';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
-    this.labelBackground = '#e8e8e8';
+    this.labelBackground = 'rgba(232,232,232, 0.8)';
     this.textColor = '#333';
     this.THEME_COLOR_LIMIT = 12;
 
@@ -53,7 +53,7 @@ class Theme {
     this.actorBorder = 'calculated';
     this.actorBkg = 'calculated';
     this.actorTextColor = 'black';
-    this.actorLineColor = 'grey';
+    this.actorLineColor = 'calculated';
     this.signalColor = 'calculated';
     this.signalTextColor = 'calculated';
     this.labelBoxBkgColor = 'calculated';
@@ -187,6 +187,7 @@ class Theme {
     this.loopTextColor = this.actorTextColor;
     this.noteBorderColor = this.border2;
     this.noteTextColor = this.actorTextColor;
+    this.actorLineColor = this.actorBorder;
 
     /* Gantt chart variables */
 

@@ -1,29 +1,23 @@
-import { getStylesFromArray } from '../../utils.js';
-import { insertNode, positionNode } from '../../dagre-wrapper/nodes.js';
-import { insertEdge, insertEdgeLabel, positionEdgeLabel } from '../../dagre-wrapper/edges.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import { getConfig } from '../../config.js';
-import type { ContainerElement } from 'd3';
-import type { Block } from './blockTypes.js';
+import { insertEdge, insertEdgeLabel, positionEdgeLabel } from '../../dagre-wrapper/edges.js';
+import { insertNode, positionNode } from '../../dagre-wrapper/nodes.js';
+import { getStylesFromArray } from '../../utils.js';
 import type { BlockDB } from './blockDB.js';
-
-interface Node {
-  classes: string;
-}
+import type { Block } from './blockTypes.js';
 
 function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   const vertex = block;
 
   let classStr = 'default';
   if ((vertex?.classes?.length || 0) > 0) {
-    classStr = (vertex?.classes || []).join(' ');
+    classStr = (vertex?.classes ?? []).join(' ');
   }
   classStr = classStr + ' flowchart-label';
 
   // We create a SVG label, either by delegating to addHtmlLabel or manually
   let radius = 0;
   let shape = '';
-  let layoutOptions = {};
   let padding;
   // Set the shape based parameters
   switch (vertex.type) {
@@ -41,9 +35,6 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
       break;
     case 'diamond':
       shape = 'question';
-      layoutOptions = {
-        portConstraints: 'FIXED_SIDE',
-      };
       break;
     case 'hexagon':
       shape = 'hexagon';
@@ -94,12 +85,12 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
       shape = 'rect';
   }
 
-  const styles = getStylesFromArray(vertex?.styles || []);
+  const styles = getStylesFromArray(vertex?.styles ?? []);
 
   // Use vertex id as text in the box if no text is provided by the graph definition
   const vertexText = vertex.label;
 
-  const bounds = vertex.size || { width: 0, height: 0, x: 0, y: 0 };
+  const bounds = vertex.size ?? { width: 0, height: 0, x: 0, y: 0 };
   // Add the node
   const node = {
     labelStyle: styles.labelStyle,
@@ -118,7 +109,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     positioned,
     intersect: undefined,
     type: vertex.type,
-    padding: padding ?? (getConfig()?.block?.padding || 0),
+    padding: padding ?? getConfig()?.block?.padding ?? 0,
   };
   return node;
 }
@@ -147,7 +138,7 @@ export async function insertBlockPositioned(elem: any, block: Block, db: any) {
   // Add the element to the DOM to size it
   const obj = db.getBlock(node.id);
   if (obj.type !== 'space') {
-    const nodeEl = await insertNode(elem, node);
+    await insertNode(elem, node);
     block.intersect = node?.intersect;
     positionNode(node);
   }
@@ -223,7 +214,7 @@ export async function insertEdges(
           { x: end.x, y: end.y },
         ];
         // edge.points = points;
-        await insertEdge(
+        insertEdge(
           elem,
           { v: edge.start, w: edge.end, name: edge.id },
           {
@@ -248,7 +239,7 @@ export async function insertEdges(
             points,
             classes: 'edge-thickness-normal edge-pattern-solid flowchart-link LS-a1 LE-b1',
           });
-          await positionEdgeLabel(
+          positionEdgeLabel(
             { ...edge, x: points[1].x, y: points[1].y },
             {
               originalPath: points,

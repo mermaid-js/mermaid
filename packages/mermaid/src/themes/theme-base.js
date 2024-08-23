@@ -1,9 +1,9 @@
-import { darken, lighten, adjust, invert, isDark, toRgba } from 'khroma';
-import { mkBorder } from './theme-helpers.js';
+import { adjust, darken, invert, isDark, lighten } from 'khroma';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
+import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -70,7 +70,7 @@ class Theme {
     this.actorBorder = this.actorBorder || this.primaryBorderColor;
     this.actorBkg = this.actorBkg || this.mainBkg;
     this.actorTextColor = this.actorTextColor || this.primaryTextColor;
-    this.actorLineColor = this.actorLineColor || 'grey';
+    this.actorLineColor = this.actorLineColor || this.actorBorder;
     this.labelBoxBkgColor = this.labelBoxBkgColor || this.actorBkg;
     this.signalColor = this.signalColor || this.textColor;
     this.signalTextColor = this.signalTextColor || this.textColor;

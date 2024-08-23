@@ -1,0 +1,1271 @@
+<html>
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Arial';
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border: 1px solid black;
+      padding: 10px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .separator {
+      height: 20px;
+      background-color: #f0f0f0;
+    }
+
+    .vertical-header {
+      text-align: center;
+    }
+
+    .collapsible {
+      background-color: #f9f9f9;
+      color: #444;
+      cursor: pointer;
+      padding: 18px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .active,
+    .collapsible:hover {
+      background-color: #ccc;
+    }
+
+    .collapsible:after {
+      content: '\002B';
+      color: #777;
+      font-weight: bold;
+      float: right;
+      margin-left: 2px;
+    }
+
+    .active:after {
+      content: "\2212";
+    }
+
+    .content {
+      padding: 0 5px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease-out;
+      background-color: #f1f1f1;
+    }
+
+    .content .pre-scrollable {
+      max-height: 200px;
+      overflow-y: scroll;
+    }
+  </style>
+</head>
+
+<body>
+  <table>
+    <tr>
+      <th></th> <!-- Placeholder for the top left corner -->
+      <th>Dagre</th>
+      <th>Dagre with rough</th>
+      <th>ELK</th>
+      <th>ELK with rough</th>
+    </tr>
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">Simple State (only id)</button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+      stateId
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+stateDiagram-v2
+    stateId
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+stateDiagram-v2
+    stateId
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    stateId
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+stateDiagram-v2
+    stateId
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">State with description with `as` keyword</button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+
+    state "description text" as s2
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+stateDiagram-v2
+    state "This is a state description" as s2
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+stateDiagram-v2
+    state "This is a state description" as s3
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    state "This is a state description" as s4
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+stateDiagram-v2
+    state "This is a state description" as s5
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">State with description with `:` syntax</button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+
+    s2 :  description text
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+stateDiagram-v2
+    s21 : This is a state description
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+stateDiagram-v2
+    s22 : This is a state description
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    s23 : This is a state description
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+stateDiagram-v2
+    s24 : This is a state description
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          State with transition
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+
+    s1 --> s2
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    s31 --> s32
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+
+   stateDiagram-v2
+    s41 --> s42
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    s51 --> s52
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+stateDiagram-v2
+    s61 --> s62
+
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+    </tr>
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          State transition with label
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+
+    s1 --> s2: A transition
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    a1 --> a2: A transition
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+
+   stateDiagram-v2
+    a3 --> a4: A transition
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+    a5 --> a6: A transition
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+stateDiagram-v2
+   a7 --> a8: A transition
+
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+    </tr>
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          Start & End
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+
+      [*] --> test
+    test --> [*]
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+       [*] --> test
+    test --> [*]
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+
+   stateDiagram-v2
+       [*] --> test
+    test --> [*]
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+       [*] --> test
+    test --> [*]
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+stateDiagram-v2
+      [*] --> test
+    test --> [*]
+
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+    </tr>
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          Composite state
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+
+      [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+       [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+
+   stateDiagram-v2
+       [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+stateDiagram-v2
+       [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+stateDiagram-v2
+      [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+
+    </tr>
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          Nested Composite state
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+
+
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+
+   stateDiagram-v2
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+ stateDiagram-v2
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+ stateDiagram-v2
+    [*] --> Level1
+
+    state Level1 {
+        [*] --> Level2
+
+        state Level2 {
+            [*] --> level2
+            level2 --> Level3
+
+            state Level3 {
+                [*] --> level3
+                level3 --> [*]
+            }
+        }
+    }
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          Composite state with transition
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+    [*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+
+
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    [*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+
+   stateDiagram-v2
+   [*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+ stateDiagram-v2
+  [*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+ stateDiagram-v2
+[*] --> B1
+    B1 --> B2
+    B1 --> B3
+
+    state B1 {
+        [*] --> B11
+        B11 --> [*]
+    }
+    state B2 {
+        [*] --> B22
+        B22 --> [*]
+    }
+    state B3 {
+        [*] --> B33
+        B33 --> [*]
+    }
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+
+          Choice
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+    state if_state &lt;&lt;choice&gt;&gt;
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+
+
+
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+
+    stateDiagram-v2
+    state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+
+   stateDiagram-v2
+   state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+ stateDiagram-v2
+   state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+ stateDiagram-v2
+ state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          Fork & Join
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+    state fork_state &lt;&lt;fork&gt;&gt;
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state &lt;&lt;join&gt;&gt;
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+   stateDiagram-v2
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+   stateDiagram-v2
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+   stateDiagram-v2
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+   stateDiagram-v2
+    state fork_state <<fork>>
+      [*] --> fork_state
+      fork_state --> State2
+      fork_state --> State3
+
+      state join_state <<join>>
+      State2 --> join_state
+      State3 --> join_state
+      join_state --> State4
+      State4 --> [*]
+
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          Notes
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+
+  TN1: The state with a note
+  note right of TN1
+      note text
+  end note
+  TN1 --> TN2
+  note left of TN2 : note text
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+   stateDiagram-v2
+     TN1: The state with a note
+        note right of TN1
+            Important information! You can write
+            notes.
+        end note
+        TN1 --> TN2
+        note left of TN2 : This is the note to the left.
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+   stateDiagram-v2
+     TN3: The state with a note
+        note right of TN3
+            Important information! You can write
+            notes.
+        end note
+        TN3 --> TN4
+        note left of TN4 : This is the note to the left.
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+   stateDiagram-v2
+     TN5: The state with a note
+        note right of TN5
+            Important information! You can write
+            notes.
+        end note
+        TN5 --> TN6
+        note left of TN6 : This is the note to the left.
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+   stateDiagram-v2
+     TN7: The state with a note
+        note right of TN7
+            Important information! You can write
+            notes.
+        end note
+        TN7 --> TN8
+        note left of TN8 : This is the note to the left.
+      </pre>
+      </td>
+    </tr>
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          Concurrent states
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+[*] --> Active
+
+state Active {
+    [*] --> NumLockOff
+    NumLockOff --> NumLockOn : EvNumLockPressed
+    NumLockOn --> NumLockOff : EvNumLockPressed
+    --
+    [*] --> CapsLockOff
+    CapsLockOff --> CapsLockOn : EvCapsLockPressed
+    CapsLockOn --> CapsLockOff : EvCapsLockPressed
+    --
+    [*] --> ScrollLockOff
+    ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
+    ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
+}
+
+
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+     stateDiagram-v2
+    [*] --> Active
+
+    state Active {
+        [*] --> NumLockOff
+        NumLockOff --> NumLockOn : EvNumLockPressed
+        NumLockOn --> NumLockOff : EvNumLockPressed
+        --
+        [*] --> CapsLockOff
+        CapsLockOff --> CapsLockOn : EvCapsLockPressed
+        CapsLockOn --> CapsLockOff : EvCapsLockPressed
+        --
+        [*] --> ScrollLockOff
+        ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
+        ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
+    }
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+     stateDiagram-v2
+    [*] --> Active
+
+    state Active {
+        [*] --> NumLockOff
+        NumLockOff --> NumLockOn : EvNumLockPressed
+        NumLockOn --> NumLockOff : EvNumLockPressed
+        --
+        [*] --> CapsLockOff
+        CapsLockOff --> CapsLockOn : EvCapsLockPressed
+        CapsLockOn --> CapsLockOff : EvCapsLockPressed
+        --
+        [*] --> ScrollLockOff
+        ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
+        ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
+    }
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+     stateDiagram-v2
+    [*] --> Active
+
+    state Active {
+        [*] --> NumLockOff
+        NumLockOff --> NumLockOn : EvNumLockPressed
+        NumLockOn --> NumLockOff : EvNumLockPressed
+        --
+        [*] --> CapsLockOff
+        CapsLockOff --> CapsLockOn : EvCapsLockPressed
+        CapsLockOn --> CapsLockOff : EvCapsLockPressed
+        --
+        [*] --> ScrollLockOff
+        ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
+        ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
+    }
+
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+     stateDiagram-v2
+    [*] --> Active
+
+    state Active {
+        [*] --> NumLockOff
+        NumLockOff --> NumLockOn : EvNumLockPressed
+        NumLockOn --> NumLockOff : EvNumLockPressed
+        --
+        [*] --> CapsLockOff
+        CapsLockOff --> CapsLockOn : EvCapsLockPressed
+        CapsLockOn --> CapsLockOff : EvCapsLockPressed
+        --
+        [*] --> ScrollLockOff
+        ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
+        ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
+    }
+      </pre>
+      </td>
+    </tr>
+
+
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+
+    <tr>
+      <th class="vertical-header">
+        <button class="collapsible">
+          Directions
+        </button>
+        <div class="content">
+          <div class="pre-scrollable">
+            <pre>
+direction LR
+    [*] --> D1
+    D1 --> D2
+    D2 --> D3
+    state D3 {
+      direction TB
+      D11 --> D22
+    }
+    D2 --> D4
+  </pre>
+          </div>
+        </div>
+      </th>
+      <td>
+        <pre id="diagram1" class="mermaid">
+     stateDiagram-v2
+    direction LR
+    [*] --> D1
+    D1 --> D2
+    D2 --> D3
+    state D3 {
+      direction TB
+      D11 --> D22
+    }
+    D2 --> D4
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+     stateDiagram-v2
+   direction LR
+    [*] --> D1
+    D1 --> D2
+    D2 --> D3
+    state D3 {
+      direction TB
+      D11 --> D22
+    }
+    D2 --> D4
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram3" class="mermaid">
+%%{init: {"handDrawn": false, "layout": "elk"} }%%
+     stateDiagram-v2
+    direction LR
+    [*] --> D1
+    D1 --> D2
+    D2 --> D3
+    state D3 {
+      direction TB
+      D11 --> D22
+    }
+    D2 --> D4
+      </pre>
+      </td>
+      <td>
+        <pre id="diagram4" class="mermaid">
+%%{init: {"look": "handDrawn", "layout": "elk"} }%%
+     stateDiagram-v2
+    direction LR
+    [*] --> D1
+    D1 --> D2
+    D2 --> D3
+    state D3 {
+      direction TB
+      D11 --> D22
+    }
+    D2 --> D4
+      </pre>
+      </td>
+    </tr>
+
+
+    <!-- Separator row -->
+    <tr class="separator">
+      <td colspan="5"></td> <!-- This cell spans all columns including the vertical header -->
+    </tr>
+    <!-- New row -->
+    <tr>
+      <th class="vertical-header">Additional Content</th>
+      <td>New content 1</td>
+      <td>New content 2</td>
+      <td>New content 3</td>
+      <td>New content 4</td>
+    </tr>
+  </table>
+
+
+  <script type="module">
+    import mermaid from './mermaid.esm.mjs';
+    import layouts from './mermaid-layout-elk.esm.mjs';
+    mermaid.registerLayoutLoaders(layouts);
+    mermaid.parseError = function (err, hash) {
+
+    };
+
+    mermaid.initialize({
+      handDrawn: false,
+      mergeEdges: true,
+      layout: 'dagre',
+      flowchart: { titleTopMargin: 10 },
+      // fontFamily: 'Caveat',
+      fontFamily: 'Kalam',
+      sequence: {
+        actorFontFamily: 'courier',
+        noteFontFamily: 'courier',
+        messageFontFamily: 'courier',
+      },
+      fontSize: 16,
+      logLevel: 0,
+    });
+    function callback() {
+      alert('It worked');
+    }
+    mermaid.parseError = function (err, hash) {
+      console.error('In parse error:');
+      console.error(err);
+    };
+
+
+    let coll = document.getElementsByClassName("collapsible");
+    for (const element of coll) {
+      element.addEventListener("click", function () {
+        this.classList.toggle("active");
+        let content = this.nextElementSibling;
+        if (content.style.maxHeight) {
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    }
+
+  </script>
+</body>
+
+</html>

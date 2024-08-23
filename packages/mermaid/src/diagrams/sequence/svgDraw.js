@@ -1,6 +1,5 @@
 import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import { addFunction } from '../../interactionDb.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
@@ -8,6 +7,8 @@ import * as configApi from '../../config.js';
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
 const BOTTOM_ACTOR_CLASS = 'actor-bottom';
+const ACTOR_BOX_CLASS = 'actor-box';
+const ACTOR_MAN_FIGURE_CLASS = 'actor-man';
 
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
@@ -114,6 +115,7 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
       stopx = temp;
     }
 
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     textElem.attr('x', Math.round(startx + Math.abs(startx - stopx) / 2 - dim.width / 2));
     if (textData.class === 'loopText') {
       textElem.attr('y', Math.round(starty));
@@ -306,7 +308,7 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
     return;
   }
   actorKeys.forEach((actorKey) => {
-    const actor = actors[actorKey];
+    const actor = actors.get(actorKey);
     const actorDOM = diagram.select('#actor' + actor.actorCnt);
     if (!conf.mirrorActors && actor.stopy) {
       actorDOM.attr('y2', actor.stopy + actor.height / 2);
@@ -324,7 +326,7 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
  * @param {any} conf - DrawText implementation discriminator object
  * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
+const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 5;
@@ -343,10 +345,10 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
       .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
-      .attr('class', 'actor-line')
-      .attr('class', '200')
+      .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
-      .attr('stroke', '#999');
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
 
     g = boxplusLineGroup.append('g');
     actor.actorCnt = actorCnt;
@@ -358,8 +360,8 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
 
   const rect = svgDrawCommon.getNoteRect();
   var cssclass = 'actor';
-  if (actor.properties != null && actor.properties['class']) {
-    cssclass = actor.properties['class'];
+  if (actor.properties?.class) {
+    cssclass = actor.properties.class;
   } else {
     rect.fill = '#eaeaea';
   }
@@ -379,8 +381,8 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   const rectElem = drawRect(g, rect);
   actor.rectData = rect;
 
-  if (actor.properties != null && actor.properties['icon']) {
-    const iconSrc = actor.properties['icon'].trim();
+  if (actor.properties?.icon) {
+    const iconSrc = actor.properties.icon.trim();
     if (iconSrc.charAt(0) === '@') {
       svgDrawCommon.drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
     } else {
@@ -388,14 +390,14 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
     }
   }
 
-  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
     rect.y,
     rect.width,
     rect.height,
-    { class: 'actor' },
+    { class: `actor ${ACTOR_BOX_CLASS}` },
     conf
   );
 
@@ -409,31 +411,31 @@ const drawActorTypeParticipant = async function (elem, actor, conf, isFooter) {
   return height;
 };
 
-const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
+const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
 
-  elem.lower();
+  const line = elem.append('g').lower();
 
   if (!isFooter) {
     actorCnt++;
-    elem
+    line
       .append('line')
       .attr('id', 'actor' + actorCnt)
       .attr('x1', center)
       .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
-      .attr('class', 'actor-line')
-      .attr('class', '200')
+      .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
-      .attr('stroke', '#999');
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
 
     actor.actorCnt = actorCnt;
   }
   const actElem = elem.append('g');
-  let cssClass = 'actor-man';
+  let cssClass = ACTOR_MAN_FIGURE_CLASS;
   if (isFooter) {
     cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
   } else {
@@ -490,14 +492,14 @@ const drawActorTypeActor = async function (elem, actor, conf, isFooter) {
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height;
 
-  await _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
     rect.y + 35,
     rect.width,
     rect.height,
-    { class: 'actor' },
+    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
     conf
   );
 
@@ -513,12 +515,12 @@ export const drawActor = async function (elem, actor, conf, isFooter) {
   }
 };
 
-export const drawBox = async function (elem, box, conf) {
+export const drawBox = function (elem, box, conf) {
   const boxplusTextGroup = elem.append('g');
   const g = boxplusTextGroup;
   drawBackgroundRect(g, box);
   if (box.name) {
-    await _drawTextCandidateFunc(conf)(
+    _drawTextCandidateFunc(conf)(
       box.name,
       g,
       box.x,
@@ -734,9 +736,9 @@ export const insertArrowHead = function (elem) {
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 12)
     .attr('markerHeight', 12)
-    .attr('orient', 'auto')
+    .attr('orient', 'auto-start-reverse')
     .append('path')
-    .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
+    .attr('d', 'M -1 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
 
 /**

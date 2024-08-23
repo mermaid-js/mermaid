@@ -109,7 +109,7 @@ describe('when using the ganttDb', function () {
       ganttDb.addTask(taskName2, taskData2);
       const tasks = ganttDb.getTasks();
       expect(tasks[1].startTime).toEqual(expStartDate2);
-      if (!expEndDate2 === undefined) {
+      if (expEndDate2) {
         expect(tasks[1].endTime).toEqual(expEndDate2);
       }
       expect(tasks[1].id).toEqual(expId2);
@@ -265,6 +265,21 @@ describe('when using the ganttDb', function () {
     expect(tasks[6].endTime).toEqual(dayjs('2019-02-19', 'YYYY-MM-DD').toDate());
     expect(tasks[6].id).toEqual('id7');
     expect(tasks[6].task).toEqual('test7');
+  });
+
+  it('should ignore weekends starting on friday', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends');
+    ganttDb.setWeekend('friday');
+    ganttDb.addSection('friday-saturday weekends skip test');
+    ganttDb.addTask('test1', 'id1,2024-02-28, 3d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(dayjs('2024-02-28', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2024-03-04', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].id).toEqual('id1');
+    expect(tasks[0].task).toEqual('test1');
   });
 
   it('should maintain the order in which tasks are created', function () {

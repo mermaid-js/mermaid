@@ -9,6 +9,7 @@ elems
 gantt
 gitgraph
 gzipped
+handDrawn
 knsv
 Knut
 marginx
@@ -17,6 +18,7 @@ Markdownish
 mermaidjs
 mindmap
 mindmaps
+mrtree
 multigraph
 nodesep
 NOTEGROUP

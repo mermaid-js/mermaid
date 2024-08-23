@@ -109,6 +109,27 @@ gantt
 
 The `title` is an _optional_ string to be displayed at the top of the Gantt chart to describe the chart as a whole.
 
+### Excludes
+
+The `excludes` is an _optional_ attribute that accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".
+These date will be marked on the graph, and be excluded from the duration calculation of tasks. Meaning that if there are excluded dates during a task interval, the number of 'skipped' days will be added to the end of the task to ensure the duration is as specified in the code.
+
+#### Weekend (v\11.0.0+)
+
+When excluding weekends, it is possible to configure the weekends to be either Friday and Saturday or Saturday and Sunday. By default weekends are Saturday and Sunday.
+To define the weekend start day, there is an _optional_ attribute `weekend` that can be added in a new line followed by either `friday` or `saturday`.
+
+```mermaid-example
+gantt
+    title A Gantt Diagram Excluding Fri - Sat weekends
+    dateFormat YYYY-MM-DD
+    excludes weekends
+    weekend friday
+    section Section
+        A task          :a1, 2024-01-01, 30d
+        Another task    :after a1, 20d
+```
+
 ### Section statements
 
 You can divide the chart into various sections, for example to separate different parts of a project like development and documentation.

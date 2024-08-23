@@ -99,7 +99,7 @@ describe('Flowchart v2', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.be.within(290 * 0.95 - 1, 290 * 1.05);
+      expect(maxWidthValue).to.be.within(446 * 0.95 - 1, 446 * 1.05);
     });
   });
   it('8: should render a flowchart when useMaxWidth is false', () => {
@@ -118,7 +118,7 @@ describe('Flowchart v2', () => {
       const width = parseFloat(svg.attr('width'));
       // use within because the absolute value can be slightly different depending on the environment ±5%
       // expect(height).to.be.within(446 * 0.95, 446 * 1.05);
-      expect(width).to.be.within(290 * 0.95 - 1, 290 * 1.05);
+      expect(width).to.be.within(446 * 0.95 - 1, 446 * 1.05);
       expect(svg).to.not.have.attr('style');
     });
   });
@@ -760,6 +760,51 @@ A ~~~ B
     );
   });
 
+  it('3258: Should render subgraphs with main graph nodeSpacing and rankSpacing', () => {
+    imgSnapshotTest(
+      `---
+      title: Subgraph nodeSpacing and rankSpacing example
+      ---
+      flowchart LR
+        X --> Y
+        subgraph X
+          direction LR
+          A
+          C
+        end
+        subgraph Y
+          B
+          D
+        end
+      `,
+      { flowchart: { nodeSpacing: 1, rankSpacing: 1 } }
+    );
+  });
+
+  it('3258: Should render subgraphs with large nodeSpacing and rankSpacing', () => {
+    imgSnapshotTest(
+      `---
+      title: Subgraph nodeSpacing and rankSpacing example
+      config:
+        flowchart: 
+          nodeSpacing: 250
+          rankSpacing: 250
+      ---
+      flowchart LR
+        X --> Y
+        subgraph X
+          direction LR
+          A
+          C
+        end
+        subgraph Y
+          B
+          D
+        end
+      `
+    );
+  });
+
   describe('Markdown strings flowchart (#4220)', () => {
     describe('html labels', () => {
       it('With styling and classes', () => {
@@ -904,6 +949,18 @@ end
         );
       });
     });
+
+    it('should not auto wrap when markdownAutoWrap is false', () => {
+      imgSnapshotTest(
+        `flowchart TD
+    angular_velocity["\`**angular_velocity**
+      *angular_displacement / duration*
+      [rad/s, 1/s]
+      {vector}\`"]
+    frequency["frequency\n(1 / period_duration)\n[Hz, 1/s]"]`,
+        { markdownAutoWrap: false }
+      );
+    });
   });
   describe('Subgraph title margins', () => {
     it('Should render subgraphs with title margins set (LR)', () => {
@@ -990,7 +1047,9 @@ end
           A --lb3--> TOP --lb4--> B
           B1 --lb5--> B2
         `,
-        { flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } } }
+        {
+          flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } },
+        }
       );
     });
   });

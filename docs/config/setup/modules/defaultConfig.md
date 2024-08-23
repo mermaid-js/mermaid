@@ -14,13 +14,13 @@
 
 #### Defined in
 
-[defaultConfig.ts:272](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L272)
+[packages/mermaid/src/defaultConfig.ts:266](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L266)
 
 ---
 
 ### default
 
-• `Const` **default**: `RequiredDeep`<`MermaidConfig`>
+• `Const` **default**: `RequiredDeep`<[`MermaidConfig`](../interfaces/mermaid.MermaidConfig.md)>
 
 Default mermaid configuration options.
 
@@ -30,4 +30,4 @@ Non-JSON JS default values are listed in this file, e.g. functions, or
 
 #### Defined in
 
-[defaultConfig.ts:18](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L18)
+[packages/mermaid/src/defaultConfig.ts:18](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L18)

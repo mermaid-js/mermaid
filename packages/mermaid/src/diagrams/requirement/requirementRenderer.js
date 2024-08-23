@@ -1,11 +1,11 @@
 import { line, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
 import markers from './requirementMarkers.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 let conf = {};
 let relCnt = 0;
@@ -191,9 +191,13 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   return;
 };
 
+/**
+ * @param {Map<string, any>} reqs
+ * @param graph
+ * @param svgNode
+ */
 export const drawReqs = (reqs, graph, svgNode) => {
-  Object.keys(reqs).forEach((reqName) => {
-    let req = reqs[reqName];
+  reqs.forEach((req, reqName) => {
     reqName = elementString(reqName);
     log.info('Added new requirement: ', reqName);
 
@@ -236,9 +240,13 @@ export const drawReqs = (reqs, graph, svgNode) => {
   });
 };
 
+/**
+ * @param {Map<string, any>} els
+ * @param graph
+ * @param svgNode
+ */
 export const drawElements = (els, graph, svgNode) => {
-  Object.keys(els).forEach((elName) => {
-    let el = els[elName];
+  els.forEach((el, elName) => {
     const id = elementString(elName);
 
     const groupNode = svgNode.append('g').attr('id', id);

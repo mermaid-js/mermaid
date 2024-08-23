@@ -3,7 +3,21 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     // ensure that nobody can accidentally use this config for a build
-    "noEmit": true
+    "noEmit": true,
+    "allowJs": true
   },
-  "include": ["packages", "tests", "scripts", "cypress", "__mocks__", "./.eslintrc.cjs", "./*"]
+  "include": [
+    "./.build/*.ts",
+    "./.esbuild/*.ts",
+    "./.vite/*.ts",
+    "./cypress.config.ts",
+    "./tests",
+    "./scripts",
+    "./cypress",
+    "./__mocks__",
+    "./demos/dev",
+    "./vite.config.ts",
+    "./vitest.workspace.js",
+    "eslint.config.js"
+  ]
 }

@@ -1,4 +1,4 @@
-import { invert, lighten, darken, rgba, adjust, isDark } from 'khroma';
+import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
 import { mkBorder } from './theme-helpers.js';
 
 class Theme {
@@ -6,7 +6,6 @@ class Theme {
     this.background = '#333';
     this.primaryColor = '#1f2020';
     this.secondaryColor = lighten(this.primaryColor, 16);
-
     this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
     this.primaryBorderColor = invert(this.background);
     this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
@@ -22,7 +21,7 @@ class Theme {
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
     this.lineColor = 'calculated';
-    this.border1 = '#81B1DB';
+    this.border1 = '#ccc';
     this.border2 = rgba(255, 255, 255, 0.25);
     this.arrowheadColor = 'calculated';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
@@ -109,7 +108,7 @@ class Theme {
     this.actorBorder = this.border1;
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.mainContrastColor;
-    this.actorLineColor = this.mainContrastColor;
+    this.actorLineColor = this.actorBorder;
     this.signalColor = this.mainContrastColor;
     this.signalTextColor = this.mainContrastColor;
     this.labelBoxBkgColor = this.actorBkg;
@@ -268,6 +267,15 @@ class Theme {
         '#3498db,#2ecc71,#e74c3c,#f1c40f,#bdc3c7,#ffffff,#34495e,#9b59b6,#1abc9c,#e67e22',
     };
 
+    this.packet = {
+      startByteColor: this.primaryTextColor,
+      endByteColor: this.primaryTextColor,
+      labelColor: this.primaryTextColor,
+      titleColor: this.primaryTextColor,
+      blockStrokeColor: this.primaryTextColor,
+      blockFillColor: this.background,
+    };
+
     /* class */
     this.classText = this.primaryTextColor;
 
@@ -324,6 +332,8 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || lighten(this.background, 2);
     /* -------------------------------------------------- */
+
+    this.nodeBorder = this.nodeBorder || '#999';
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

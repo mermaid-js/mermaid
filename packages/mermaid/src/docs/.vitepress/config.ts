@@ -1,6 +1,7 @@
+import type { MarkdownOptions } from 'vitepress';
+import { defineConfig } from 'vitepress';
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all.js';
-import { defineConfig, MarkdownOptions } from 'vitepress';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -8,8 +9,9 @@ const allMarkdownTransformers: MarkdownOptions = {
     light: 'github-light',
     dark: 'github-dark',
   },
-  config: async (md) => {
-    await MermaidExample(md);
+
+  config: (md) => {
+    MermaidExample(md);
   },
 };
 
@@ -150,10 +152,11 @@ function sidebarSyntax() {
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps', link: '/syntax/mindmap' },
         { text: 'Timeline', link: '/syntax/timeline' },
-        { text: 'Zenuml', link: '/syntax/zenuml' },
-        { text: 'Sankey', link: '/syntax/sankey' },
-        { text: 'XYChart 🔥', link: '/syntax/xyChart' },
+        { text: 'ZenUML', link: '/syntax/zenuml' },
+        { text: 'Sankey 🔥', link: '/syntax/sankey' },
+        { text: 'XY Chart 🔥', link: '/syntax/xyChart' },
         { text: 'Block Diagram 🔥', link: '/syntax/block' },
+        { text: 'Packet 🔥', link: '/syntax/packet' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -227,8 +230,6 @@ function sidebarNews() {
 
 /**
  * Return a string that puts together the pagePage, a '#', then the given id
- * @param  pagePath
- * @param  id
  * @returns  the fully formed path
  */
 function pathToId(pagePath: string, id = ''): string {

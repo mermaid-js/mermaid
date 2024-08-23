@@ -26,10 +26,10 @@ import type {
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 
 let relations: ClassRelation[] = [];
-let classes: ClassMap = {};
+let classes = new Map<string, ClassNode>();
 let notes: ClassNote[] = [];
 let classCounter = 0;
-let namespaces: NamespaceMap = {};
+let namespaces = new Map<string, NamespaceNode>();
 let namespaceCounter = 0;
 
 let functions: any[] = [];
@@ -57,7 +57,7 @@ export const setClassLabel = function (_id: string, label: string) {
   }
 
   const { className } = splitClassNameAndType(id);
-  classes[className].label = label;
+  classes.get(className)!.label = label;
 };
 
 /**
@@ -70,13 +70,13 @@ export const addClass = function (_id: string) {
   const id = common.sanitizeText(_id, getConfig());
   const { className, type } = splitClassNameAndType(id);
   // Only add class if not exists
-  if (Object.hasOwn(classes, className)) {
+  if (classes.has(className)) {
     return;
   }
   // alert('Adding class: ' + className);
   const name = common.sanitizeText(className, getConfig());
   // alert('Adding class after: ' + name);
-  classes[name] = {
+  classes.set(name, {
     id: name,
     type: type,
     label: name,
@@ -86,7 +86,7 @@ export const addClass = function (_id: string) {
     annotations: [],
     styles: [],
     domId: MERMAID_DOM_ID_PREFIX + name + '-' + classCounter,
-  } as ClassNode;
+  } as ClassNode);
 
   classCounter++;
 };
@@ -99,25 +99,26 @@ export const addClass = function (_id: string) {
  */
 export const lookUpDomId = function (_id: string): string {
   const id = common.sanitizeText(_id, getConfig());
-  if (id in classes) {
-    return classes[id].domId;
+  if (classes.has(id)) {
+    return classes.get(id)!.domId;
   }
   throw new Error('Class not found: ' + id);
 };
 
 export const clear = function () {
   relations = [];
-  classes = {};
+  classes = new Map();
   notes = [];
   functions = [];
   functions.push(setupToolTips);
-  namespaces = {};
+  namespaces = new Map();
   namespaceCounter = 0;
+  direction = 'TB';
   commonClear();
 };
 
 export const getClass = function (id: string): ClassNode {
-  return classes[id];
+  return classes.get(id)!;
 };
 
 export const getClasses = function (): ClassMap {
@@ -157,7 +158,7 @@ export const addRelation = function (relation: ClassRelation) {
  */
 export const addAnnotation = function (className: string, annotation: string) {
   const validatedClassName = splitClassNameAndType(className).className;
-  classes[validatedClassName].annotations.push(annotation);
+  classes.get(validatedClassName)!.annotations.push(annotation);
 };
 
 /**
@@ -173,7 +174,7 @@ export const addMember = function (className: string, member: string) {
   addClass(className);
 
   const validatedClassName = splitClassNameAndType(className).className;
-  const theClass = classes[validatedClassName];
+  const theClass = classes.get(validatedClassName)!;
 
   if (typeof member === 'string') {
     // Member can contain white spaces, we trim them out
@@ -223,11 +224,12 @@ export const cleanupLabel = function (label: string) {
 export const setCssClass = function (ids: string, className: string) {
   ids.split(',').forEach(function (_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) {
+    if (/\d/.exec(_id[0])) {
       id = MERMAID_DOM_ID_PREFIX + id;
     }
-    if (classes[id] !== undefined) {
-      classes[id].cssClasses.push(className);
+    const classNode = classes.get(id);
+    if (classNode) {
+      classNode.cssClasses.push(className);
     }
   });
 };
@@ -241,17 +243,17 @@ export const setCssClass = function (ids: string, className: string) {
 const setTooltip = function (ids: string, tooltip?: string) {
   ids.split(',').forEach(function (id) {
     if (tooltip !== undefined) {
-      classes[id].tooltip = sanitizeText(tooltip);
+      classes.get(id)!.tooltip = sanitizeText(tooltip);
     }
   });
 };
 
 export const getTooltip = function (id: string, namespace?: string) {
-  if (namespace) {
-    return namespaces[namespace].classes[id].tooltip;
+  if (namespace && namespaces.has(namespace)) {
+    return namespaces.get(namespace)!.classes.get(id)!.tooltip;
   }
 
-  return classes[id].tooltip;
+  return classes.get(id)!.tooltip;
 };
 
 /**
@@ -265,17 +267,18 @@ export const setLink = function (ids: string, linkStr: string, target: string) {
   const config = getConfig();
   ids.split(',').forEach(function (_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) {
+    if (/\d/.exec(_id[0])) {
       id = MERMAID_DOM_ID_PREFIX + id;
     }
-    if (classes[id] !== undefined) {
-      classes[id].link = utils.formatUrl(linkStr, config);
+    const theClass = classes.get(id);
+    if (theClass) {
+      theClass.link = utils.formatUrl(linkStr, config);
       if (config.securityLevel === 'sandbox') {
-        classes[id].linkTarget = '_top';
+        theClass.linkTarget = '_top';
       } else if (typeof target === 'string') {
-        classes[id].linkTarget = sanitizeText(target);
+        theClass.linkTarget = sanitizeText(target);
       } else {
-        classes[id].linkTarget = '_blank';
+        theClass.linkTarget = '_blank';
       }
     }
   });
@@ -292,7 +295,7 @@ export const setLink = function (ids: string, linkStr: string, target: string) {
 export const setClickEvent = function (ids: string, functionName: string, functionArgs: string) {
   ids.split(',').forEach(function (id) {
     setClickFunc(id, functionName, functionArgs);
-    classes[id].haveCallback = true;
+    classes.get(id)!.haveCallback = true;
   });
   setCssClass(ids, 'clickable');
 };
@@ -308,7 +311,7 @@ const setClickFunc = function (_domId: string, functionName: string, functionArg
   }
 
   const id = domId;
-  if (classes[id] !== undefined) {
+  if (classes.has(id)) {
     const elemId = lookUpDomId(id);
     let argList: string[] = [];
     if (typeof functionArgs === 'string') {
@@ -318,7 +321,7 @@ const setClickFunc = function (_domId: string, functionName: string, functionArg
         let item = argList[i].trim();
         /* Removes all double quotes at the start and end of an argument */
         /* This preserves all starting and ending whitespace inside */
-        if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+        if (item.startsWith('"') && item.endsWith('"')) {
           item = item.substr(1, item.length - 2);
         }
         argList[i] = item;
@@ -417,22 +420,22 @@ const setDirection = (dir: string) => {
  * @public
  */
 export const addNamespace = function (id: string) {
-  if (namespaces[id] !== undefined) {
+  if (namespaces.has(id)) {
     return;
   }
 
-  namespaces[id] = {
+  namespaces.set(id, {
     id: id,
-    classes: {},
+    classes: new Map(),
     children: {},
     domId: MERMAID_DOM_ID_PREFIX + id + '-' + namespaceCounter,
-  } as NamespaceNode;
+  } as NamespaceNode);
 
   namespaceCounter++;
 };
 
 const getNamespace = function (name: string): NamespaceNode {
-  return namespaces[name];
+  return namespaces.get(name)!;
 };
 
 const getNamespaces = function (): NamespaceMap {
@@ -447,18 +450,18 @@ const getNamespaces = function (): NamespaceMap {
  * @public
  */
 export const addClassesToNamespace = function (id: string, classNames: string[]) {
-  if (namespaces[id] === undefined) {
+  if (!namespaces.has(id)) {
     return;
   }
   for (const name of classNames) {
     const { className } = splitClassNameAndType(name);
-    classes[className].parent = id;
-    namespaces[id].classes[className] = classes[className];
+    classes.get(className)!.parent = id;
+    namespaces.get(id)!.classes.set(className, classes.get(className)!);
   }
 };
 
 export const setCssStyle = function (id: string, styles: string[]) {
-  const thisClass = classes[id];
+  const thisClass = classes.get(id);
   if (!styles || !thisClass) {
     return;
   }

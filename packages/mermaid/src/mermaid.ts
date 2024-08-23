@@ -4,25 +4,36 @@
  */
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
-import { log } from './logger.js';
-import utils from './utils.js';
-import type { ParseOptions, RenderResult } from './mermaidAPI.js';
-import { mermaidAPI } from './mermaidAPI.js';
-import { registerLazyLoadedDiagrams, detectType } from './diagram-api/detectType.js';
+import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
+import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
+import type { ExternalDiagramDefinition, SVG, SVGGroup } from './diagram-api/types.js';
 import type { ParseErrorFunction } from './Diagram.js';
-import { isDetailedError } from './utils.js';
-import type { DetailedError } from './utils.js';
-import type { ExternalDiagramDefinition } from './diagram-api/types.js';
 import type { UnknownDiagramError } from './errors.js';
+import type { InternalHelpers } from './internals.js';
+import { log } from './logger.js';
+import { mermaidAPI } from './mermaidAPI.js';
+import type { LayoutLoaderDefinition, RenderOptions } from './rendering-util/render.js';
+import { registerLayoutLoaders } from './rendering-util/render.js';
+import type { LayoutData } from './rendering-util/types.js';
+import type { ParseOptions, ParseResult, RenderResult } from './types.js';
+import type { DetailedError } from './utils.js';
+import utils, { isDetailedError } from './utils.js';
 
 export type {
-  MermaidConfig,
   DetailedError,
   ExternalDiagramDefinition,
+  InternalHelpers,
+  LayoutData,
+  LayoutLoaderDefinition,
+  MermaidConfig,
   ParseErrorFunction,
-  RenderResult,
   ParseOptions,
+  ParseResult,
+  RenderOptions,
+  RenderResult,
+  SVG,
+  SVGGroup,
   UnknownDiagramError,
 };
 
@@ -243,6 +254,7 @@ const registerExternalDiagrams = async (
     lazyLoad?: boolean;
   } = {}
 ) => {
+  addDiagrams();
   registerLazyLoadedDiagrams(...diagrams);
   if (lazyLoad === false) {
     await loadRegisteredDiagrams();
@@ -274,7 +286,7 @@ if (typeof document !== 'undefined') {
  * ## setParseErrorHandler  Alternative to directly setting parseError using:
  *
  * ```js
- * mermaid.parseError = function(err,hash){=
+ * mermaid.parseError = function(err,hash) {
  *   forExampleDisplayErrorInGui(err);  // do something with the error
  * };
  * ```
@@ -311,11 +323,23 @@ const executeQueue = async () => {
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
- * @param parseOptions - Options for parsing.
- * @returns true if the diagram is valid, false otherwise if parseOptions.suppressErrors is true.
- * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false.
+ * @param parseOptions - Options for parsing. @see {@link ParseOptions}
+ * @returns If valid, {@link ParseResult} otherwise `false` if parseOptions.suppressErrors is `true`.
+ * @throws Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
+ *
+ * @example
+ * ```js
+ * console.log(await mermaid.parse('flowchart \n a --> b'));
+ * // { diagramType: 'flowchart-v2' }
+ * console.log(await mermaid.parse('wrong \n a --> b', { suppressErrors: true }));
+ * // false
+ * console.log(await mermaid.parse('wrong \n a --> b', { suppressErrors: false }));
+ * // throws Error
+ * console.log(await mermaid.parse('wrong \n a --> b'));
+ * // throws Error
+ * ```
  */
-const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean | void> => {
+const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
@@ -364,7 +388,7 @@ const parse = async (text: string, parseOptions?: ParseOptions): Promise<boolean
  *   element will be removed when rendering is completed.
  * @returns Returns the SVG Definition and BindFunctions.
  */
-const render = (id: string, text: string, container?: Element): Promise<RenderResult> => {
+const render: typeof mermaidAPI.render = (id, text, container) => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the mermaidAPI.render call is done.
     // It will be queued first and will be executed when it is first in line
@@ -393,11 +417,19 @@ const render = (id: string, text: string, container?: Element): Promise<RenderRe
 export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
+  /**
+   * @deprecated Use {@link parse} and {@link render} instead. Please [open a discussion](https://github.com/mermaid-js/mermaid/discussions) if your use case does not fit the new API.
+   * @internal
+   */
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
   render: typeof render;
+  /**
+   * @deprecated Use {@link initialize} and {@link run} instead.
+   */
   init: typeof init;
   run: typeof run;
+  registerLayoutLoaders: typeof registerLayoutLoaders;
   registerExternalDiagrams: typeof registerExternalDiagrams;
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
@@ -413,6 +445,7 @@ const mermaid: Mermaid = {
   init,
   run,
   registerExternalDiagrams,
+  registerLayoutLoaders,
   initialize,
   parseError: undefined,
   contentLoaded,

@@ -256,4 +256,15 @@ row2`;
       expect(ganttDb.getWeekday()).toBe(day);
     }
   );
+
+  it.each(['__proto__', 'constructor'])('should allow for a link to %s id', (prop) => {
+    expect(() =>
+      parser.parse(`gantt
+    dateFormat YYYY-MM-DD
+    section Section
+    A task :${prop}, 2024-10-01, 3d
+    click ${prop} href "https://mermaid.js.org/"
+    `)
+    ).not.toThrow();
+  });
 });

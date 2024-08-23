@@ -20,6 +20,7 @@ dagre-d3
 Deepdwn
 Docsify
 Docsy
+Doctave
 DokuWiki
 dompurify
 elkjs
@@ -54,7 +55,9 @@ presetAttributify
 pyplot
 redmine
 rehype
+roughjs
 rscratch
+shiki
 Slidev
 sparkline
 sphinxcontrib
@@ -62,6 +65,7 @@ ssim
 stylis
 Swimm
 tsbuildinfo
+tseslint
 Tuleap
 Typora
 unocss

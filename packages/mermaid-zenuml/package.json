@@ -19,6 +19,7 @@
     "mermaid"
   ],
   "scripts": {
+    "clean": "rimraf dist",
     "prepublishOnly": "pnpm -w run build"
   },
   "repository": {
@@ -33,13 +34,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@zenuml/core": "^3.17.2"
+    "@zenuml/core": "^3.23.27"
   },
   "devDependencies": {
     "mermaid": "workspace:^"
   },
   "peerDependencies": {
-    "mermaid": "workspace:>=10.0.0"
+    "mermaid": "^10 || ^11"
   },
   "files": [
     "dist"

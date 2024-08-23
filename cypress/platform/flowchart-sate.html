@@ -1,0 +1,191 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: 'Arial';
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      th,
+      td {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .separator {
+        height: 20px;
+        background-color: #f0f0f0;
+      }
+
+      .vertical-header {
+        text-align: center;
+      }
+
+      .collapsible {
+        background-color: #f9f9f9;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+      }
+
+      .active,
+      .collapsible:hover {
+        background-color: #ccc;
+      }
+
+      .collapsible:after {
+        content: '\002B';
+        color: #777;
+        font-weight: bold;
+        float: right;
+        margin-left: 2px;
+      }
+
+      .active:after {
+        content: '\2212';
+      }
+
+      .content {
+        padding: 0 5px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+        background-color: #f1f1f1;
+      }
+
+      .content .pre-scrollable {
+        max-height: 200px;
+        overflow-y: scroll;
+      }
+    </style>
+  </head>
+
+  <body>
+    <table>
+      <tr>
+        <th></th>
+        <!-- Placeholder for the top left corner -->
+        <th>State rough</th>
+        <th>Flowchart rough</th>
+      </tr>
+      <tr>
+        <th class="vertical-header">
+          <button class="collapsible">Stadium shape</button>
+          <div class="content">
+            <div class="pre-scrollable">
+              <pre>
+      flowchart LR
+    id1([This is the text in the box])
+
+  </pre
+              >
+            </div>
+          </div>
+        </th>
+        <td>
+          <pre id="diagram1" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+stateDiagram-v2
+    stateA
+
+      </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram2" class="mermaid">
+%%{init: {"look": "handDrawn"} }%%
+flowchart LR
+    id1[[This is the text in the box]]
+
+
+      </pre
+          >
+        </td>
+      </tr>
+    </table>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {};
+
+      mermaid.initialize({
+        handDrawn: false,
+        mergeEdges: true,
+        layout: 'dagre',
+        flowchart: { titleTopMargin: 10 },
+        // fontFamily: 'Caveat',
+        fontFamily: 'Kalam',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        fontSize: 16,
+        logLevel: 0,
+      });
+      function callback() {
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+
+      let coll = document.getElementsByClassName('collapsible');
+      for (const element of coll) {
+        element.addEventListener('click', function () {
+          this.classList.toggle('active');
+          let content = this.nextElementSibling;
+          if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+          } else {
+            content.style.maxHeight = content.scrollHeight + 'px';
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

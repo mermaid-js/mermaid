@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   mermaid:
     build:
@@ -8,7 +7,7 @@ services:
     tty: true
     working_dir: /mermaid
     mem_limit: '8G'
-    entrypoint: docker-entrypoint.sh
+    entrypoint: ./docker-entrypoint.sh
     environment:
       - NODE_OPTIONS=--max_old_space_size=8192
     volumes:
@@ -16,11 +15,12 @@ services:
       - root_cache:/root/.cache
       - root_local:/root/.local
       - root_npm:/root/.npm
+      - /tmp:/tmp
     ports:
       - 9000:9000
       - 3333:3333
   cypress:
-    image: cypress/included:12.17.4
+    image: cypress/included:13.7.3
     stdin_open: true
     tty: true
     working_dir: /mermaid

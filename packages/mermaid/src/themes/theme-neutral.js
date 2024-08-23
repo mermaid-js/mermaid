@@ -58,7 +58,7 @@ class Theme {
     this.actorBorder = 'calculated';
     this.actorBkg = 'calculated';
     this.actorTextColor = 'calculated';
-    this.actorLineColor = 'calculated';
+    this.actorLineColor = this.actorBorder;
     this.signalColor = 'calculated';
     this.signalTextColor = 'calculated';
     this.labelBoxBkgColor = 'calculated';
@@ -113,7 +113,7 @@ class Theme {
     this.actorBorder = lighten(this.border1, 23);
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.text;
-    this.actorLineColor = this.lineColor;
+    this.actorLineColor = this.actorBorder;
     this.signalColor = this.text;
     this.signalTextColor = this.text;
     this.labelBoxBkgColor = this.actorBkg;
@@ -156,8 +156,8 @@ class Theme {
     // Setup the label color for the set
     this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
 
-    this['cScaleLabel0'] = this['cScaleLabel0'] || this.cScale1;
-    this['cScaleLabel2'] = this['cScaleLabel2'] || this.cScale1;
+    this.cScaleLabel0 = this.cScaleLabel0 || this.cScale1;
+    this.cScaleLabel2 = this.cScaleLabel2 || this.cScale1;
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
       this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
     }
