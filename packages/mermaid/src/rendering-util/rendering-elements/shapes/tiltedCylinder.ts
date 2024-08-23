@@ -24,7 +24,7 @@ function createInnerPathD(rx: number, ry: number, w: number, h: number) {
 export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const h = bbox.height + node.padding;
   const ry = h / 2;
   const rx = ry / (2.5 + h / 50);
@@ -58,6 +58,11 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   if (nodeStyles && node.look !== 'handDrawn') {
     tiltedCylinder.selectAll('path').attr('style', nodeStyles);
   }
+
+  label.attr(
+    'transform',
+    `translate(${-(bbox.width / 2) - rx - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
+  );
 
   updateNodeBounds(node, tiltedCylinder);
 
