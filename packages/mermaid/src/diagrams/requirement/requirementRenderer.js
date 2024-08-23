@@ -148,7 +148,7 @@ const addEdgeLabel = (parentNode, svgPath, conf, txt) => {
     .attr('fill-opacity', '85%');
 };
 
-const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
+const drawRelationshipFromLayout = function (svg, id, rel, g, insert, diagObj) {
   // Find the edge relating to this relationship
   const edge = g.edge(elementString(rel.src), elementString(rel.dst));
 
@@ -171,7 +171,14 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   if (rel.type == diagObj.db.Relationships.CONTAINS) {
     svgPath.attr(
       'marker-start',
-      'url(' + common.getUrl(conf.arrowMarkerAbsolute) + '#' + rel.type + '_line_ending' + ')'
+      'url(' +
+        common.getUrl(conf.arrowMarkerAbsolute) +
+        '#' +
+        id +
+        '_' +
+        rel.type +
+        '_line_ending' +
+        ')'
     );
   } else {
     svgPath.attr('stroke-dasharray', '10,7');
@@ -180,6 +187,8 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
       'url(' +
         common.getUrl(conf.arrowMarkerAbsolute) +
         '#' +
+        id +
+        '_' +
         markers.ReqMarkers.ARROW +
         '_line_ending' +
         ')'
@@ -327,7 +336,7 @@ export const draw = (text, id, _version, diagObj) => {
       : select('body');
 
   const svg = root.select(`[id='${id}']`);
-  markers.insertLineEndings(svg, conf);
+  markers.insertLineEndings(svg, id, conf);
 
   const g = new graphlib.Graph({
     multigraph: false,
@@ -357,7 +366,7 @@ export const draw = (text, id, _version, diagObj) => {
   adjustEntities(svg, g);
 
   relationships.forEach(function (rel) {
-    drawRelationshipFromLayout(svg, rel, g, id, diagObj);
+    drawRelationshipFromLayout(svg, id, rel, g, id, diagObj);
   });
 
   const padding = conf.rect_padding;

@@ -3,11 +3,11 @@ const ReqMarkers = {
   ARROW: 'arrow',
 };
 
-const insertLineEndings = (parentNode, conf) => {
+const insertLineEndings = (parentNode, id, conf) => {
   let containsNode = parentNode
     .append('defs')
     .append('marker')
-    .attr('id', ReqMarkers.CONTAINS + '_line_ending')
+    .attr('id', id + '_' + ReqMarkers.CONTAINS + '_line_ending')
     .attr('refX', 0)
     .attr('refY', conf.line_height / 2)
     .attr('markerWidth', conf.line_height)
@@ -45,7 +45,7 @@ const insertLineEndings = (parentNode, conf) => {
   parentNode
     .append('defs')
     .append('marker')
-    .attr('id', ReqMarkers.ARROW + '_line_ending')
+    .attr('id', id + '_' + ReqMarkers.ARROW + '_line_ending')
     .attr('refX', conf.line_height)
     .attr('refY', 0.5 * conf.line_height)
     .attr('markerWidth', conf.line_height)
