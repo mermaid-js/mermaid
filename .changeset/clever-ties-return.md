@@ -1,0 +1,5 @@
+---
+'mermaid': patch
+---
+
+test changeset
