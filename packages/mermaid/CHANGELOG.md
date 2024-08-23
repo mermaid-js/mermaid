@@ -1,5 +1,11 @@
 # mermaid
 
+## 11.0.1
+
+### Patch Changes
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`bf05d87`](https://github.com/mermaid-js/mermaid/commit/bf05d8781edacb580fdb053da167e968b7570117) Thanks [@calvinvette](https://github.com/calvinvette)! - test changeset
+
 ## 11.0.2
 
 ### Patch Changes
