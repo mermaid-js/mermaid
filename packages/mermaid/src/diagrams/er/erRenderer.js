@@ -415,7 +415,7 @@ let relCnt = 0;
  *   sit 'behind' opaque entity boxes)
  * @param diagObj
  */
-const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
+const drawRelationshipFromLayout = function (svg, id, rel, g, insert, diagObj) {
   relCnt++;
 
   // Find the edge relating to this relationship
@@ -467,19 +467,34 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   // Note that the 'A' entity's marker is at the end of the relationship and the 'B' entity's marker is at the start
   switch (rel.relSpec.cardA) {
     case diagObj.db.Cardinality.ZERO_OR_ONE:
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')'
+      );
       break;
     case diagObj.db.Cardinality.ZERO_OR_MORE:
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')'
+      );
       break;
     case diagObj.db.Cardinality.ONE_OR_MORE:
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')'
+      );
       break;
     case diagObj.db.Cardinality.ONLY_ONE:
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ONLY_ONE_END + ')'
+      );
       break;
     case diagObj.db.Cardinality.MD_PARENT:
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.MD_PARENT_END + ')');
+      svgPath.attr(
+        'marker-end',
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.MD_PARENT_END + ')'
+      );
       break;
   }
 
@@ -487,26 +502,32 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     case diagObj.db.Cardinality.ZERO_OR_ONE:
       svgPath.attr(
         'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
       );
       break;
     case diagObj.db.Cardinality.ZERO_OR_MORE:
       svgPath.attr(
         'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
       );
       break;
     case diagObj.db.Cardinality.ONE_OR_MORE:
       svgPath.attr(
         'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
       );
       break;
     case diagObj.db.Cardinality.ONLY_ONE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.ONLY_ONE_START + ')'
+      );
       break;
     case diagObj.db.Cardinality.MD_PARENT:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.MD_PARENT_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + id + '_' + erMarkers.ERMarkers.MD_PARENT_START + ')'
+      );
       break;
   }
 
@@ -571,7 +592,7 @@ export const draw = function (text, id, _version, diagObj) {
   const svg = root.select(`[id='${id}']`);
 
   // Add cardinality marker definitions to the svg
-  erMarkers.insertMarkers(svg, conf);
+  erMarkers.insertMarkers(svg, conf, id);
 
   // Now we have to construct the diagram in a specific way:
   // ---
@@ -628,7 +649,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   // Draw the relationships
   relationships.forEach(function (rel) {
-    drawRelationshipFromLayout(svg, rel, g, firstEntity, diagObj);
+    drawRelationshipFromLayout(svg, id, rel, g, firstEntity, diagObj);
   });
 
   const padding = conf.diagramPadding;
