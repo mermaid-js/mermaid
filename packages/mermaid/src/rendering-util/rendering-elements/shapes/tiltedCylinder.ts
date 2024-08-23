@@ -44,10 +44,10 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const cylinderNode = rc.path(cylinderPath, options);
 
   const innerPath = createInnerPathD(rx, ry, w, h);
-  const innerNode = rc.path(innerPath, options);
+  const innerNode = rc.path(innerPath, { ...options, fill: 'none' });
 
-  let tiltedCylinder = shapeSvg.insert(() => innerNode, ':first-child');
-  tiltedCylinder = shapeSvg.insert(() => cylinderNode, ':first-child');
+  const tiltedCylinder = shapeSvg.insert(() => innerNode, ':first-child');
+  tiltedCylinder.insert(() => cylinderNode, ':first-child');
 
   tiltedCylinder.attr('class', 'basic label-container');
 
