@@ -4,11 +4,9 @@ on:
   push:
   merge_group:
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - ready_for_review
   workflow_dispatch:
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: write

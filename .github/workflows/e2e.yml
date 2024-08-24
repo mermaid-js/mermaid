@@ -9,6 +9,8 @@ on:
   pull_request:
   merge_group:
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 permissions:
   contents: read
 
