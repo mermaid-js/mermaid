@@ -1,5 +1,11 @@
 # @mermaid-js/layout-elk
 
+## 0.1.2
+
+### Patch Changes
+
+- [#5761](https://github.com/mermaid-js/mermaid/pull/5761) [`b34dfe8`](https://github.com/mermaid-js/mermaid/commit/b34dfe8f45eded31da10965ced7ea40fde1ca76c) Thanks [@sidharthv96](https://github.com/sidharthv96)! - Fix type file path
+
 ## 0.1.1
 
 ### Patch Changes
