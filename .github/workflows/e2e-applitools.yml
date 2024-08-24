@@ -11,6 +11,8 @@ on:
         default: master
         description: 'Parent branch to use for PRs'
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 permissions:
   contents: read
 

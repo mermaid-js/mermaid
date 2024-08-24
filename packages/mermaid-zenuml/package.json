@@ -19,8 +19,7 @@
     "mermaid"
   ],
   "scripts": {
-    "clean": "rimraf dist",
-    "prepublishOnly": "pnpm -w run build"
+    "clean": "rimraf dist"
   },
   "repository": {
     "type": "git",
@@ -40,7 +39,7 @@
     "mermaid": "workspace:^"
   },
   "peerDependencies": {
-    "mermaid": "workspace:>=10.0.0"
+    "mermaid": "^10 || ^11"
   },
   "files": [
     "dist"
