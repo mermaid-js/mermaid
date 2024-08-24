@@ -1,5 +1,14 @@
 # mermaid
 
+## 11.0.2
+
+### Patch Changes
+
+- [#5664](https://github.com/mermaid-js/mermaid/pull/5664) [`5deaef4`](https://github.com/mermaid-js/mermaid/commit/5deaef456e74d796866431c26f69360e4e74dbff) Thanks [@Austin-Fulbright](https://github.com/Austin-Fulbright)! - chore: Migrate git graph to langium, use typescript for internals
+
+- Updated dependencies [[`5deaef4`](https://github.com/mermaid-js/mermaid/commit/5deaef456e74d796866431c26f69360e4e74dbff)]:
+  - @mermaid-js/parser@0.2.0
+
 ## 11.0.1
 
 ### Patch Changes
