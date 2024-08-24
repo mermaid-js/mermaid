@@ -42,7 +42,7 @@
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "prepare": "husky install && pnpm build",
+    "prepare": "husky && pnpm build",
     "pre-commit": "lint-staged"
   },
   "repository": {
