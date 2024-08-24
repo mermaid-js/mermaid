@@ -1,7 +1,7 @@
+import type { DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
@@ -16,7 +16,7 @@ const draw: DrawDefinition = (text, id, version) => {
   const svg: SVG = selectSvgElement(id);
   configureSvgSize(svg, 100, 400, true);
 
-  const group: Group = svg.append('g');
+  const group: SVGGroup = svg.append('g');
   group
     .append('text')
     .attr('x', 100)

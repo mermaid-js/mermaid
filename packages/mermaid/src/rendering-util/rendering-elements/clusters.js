@@ -19,7 +19,7 @@ const rect = async (parent, node) => {
   const { themeVariables, handDrawnSeed } = siteConfig;
   const { clusterBkg, clusterBorder } = themeVariables;
 
-  const { labelStyles, nodeStyles } = styles2String(node);
+  const { labelStyles, nodeStyles, borderStyles, backgroundStyles } = styles2String(node);
 
   // Add outer g element
   const shapeSvg = parent
@@ -79,6 +79,9 @@ const rect = async (parent, node) => {
       log.debug('Rough node insert CXC', roughNode);
       return roughNode;
     }, ':first-child');
+    // Should we affect the options instead of doing this?
+    rect.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
+    rect.select('path').attr('style', backgroundStyles.join(';').replace('fill', 'stroke'));
   } else {
     // add the rect
     rect = shapeSvg.insert('rect', ':first-child');
@@ -357,14 +360,15 @@ const shapes = {
   divider,
 };
 
-let clusterElems = {};
+let clusterElems = new Map();
 
-export const insertCluster = (elem, node) => {
+export const insertCluster = async (elem, node) => {
   const shape = node.shape || 'rect';
-  const cluster = shapes[shape](elem, node);
-  clusterElems[node.id] = cluster;
+  const cluster = await shapes[shape](elem, node);
+  clusterElems.set(node.id, cluster);
   return cluster;
 };
+
 export const getClusterTitleWidth = (elem, node) => {
   const label = createLabel(node.label, node.labelStyle, undefined, true);
   elem.node().appendChild(label);
@@ -374,7 +378,7 @@ export const getClusterTitleWidth = (elem, node) => {
 };
 
 export const clear = () => {
-  clusterElems = {};
+  clusterElems = new Map();
 };
 
 export const positionCluster = (node) => {
@@ -390,8 +394,8 @@ export const positionCluster = (node) => {
       ', ' +
       node?.height +
       ')',
-    clusterElems[node.id]
+    clusterElems.get(node.id)
   );
-  const el = clusterElems[node.id];
+  const el = clusterElems.get(node.id);
   el.cluster.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };

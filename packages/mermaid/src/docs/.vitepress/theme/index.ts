@@ -11,11 +11,11 @@ import HomePage from '../components/HomePage.vue';
 import TopBar from '../components/TopBar.vue';
 import { getRedirect } from './redirect.js';
 // @ts-ignore Type not available
-import { h } from 'vue';
-import Theme from 'vitepress/theme';
-import '../style/main.css';
 import 'uno.css';
 import type { EnhanceAppContext } from 'vitepress';
+import Theme from 'vitepress/theme';
+import { h } from 'vue';
+import '../style/main.css';
 
 export default {
   ...DefaultTheme,
@@ -24,6 +24,7 @@ export default {
       // Keeping this as comment as it took a lot of time to figure out how to add a component to the top bar.
       'home-hero-before': () => h(TopBar),
       'home-features-after': () => h(HomePage),
+      'doc-before': () => h(TopBar),
     });
   },
   enhanceApp({ app, router }: EnhanceAppContext) {
