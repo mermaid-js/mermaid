@@ -1,14 +1,14 @@
 {
   "name": "@mermaid-js/layout-elk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "ELK layout engine for mermaid",
   "module": "dist/mermaid-layout-elk.core.mjs",
-  "types": "dist/layout.d.ts",
+  "types": "dist/layouts.d.ts",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/mermaid-layout-elk.core.mjs",
-      "types": "./dist/layout.d.ts"
+      "types": "./dist/layouts.d.ts"
     },
     "./*": "./*"
   },
