@@ -135,7 +135,7 @@ Communication tools and platforms
 ### Wikis
 
 - [DokuWiki](https://dokuwiki.org)
-  - [ComboStrap](https://combostrap.com/mermaid)
+  - [ComboStrap](https://combostrap.com/utility/create-diagram-with-mermaid-vh3ab9yj)
   - [Mermaid Plugin](https://www.dokuwiki.org/plugin:mermaid)
 - [Foswiki](https://foswiki.org)
   - [Mermaid Plugin](https://foswiki.org/Extensions/MermaidPlugin)

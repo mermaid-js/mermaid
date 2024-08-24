@@ -918,7 +918,7 @@ Usage example:
        commit
 ```
 
-### Bottom to Top (`BT:`) (v\<MERMAID_RELEASE_VERSION>+)
+### Bottom to Top (`BT:`) (v11.0.0+)
 
 In `BT` (**Bottom-to-Top**) orientation, the commits run from bottom to top of the graph and branches are arranged side-by-side.
 
