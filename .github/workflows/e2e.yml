@@ -2,10 +2,14 @@ name: E2E
 
 on:
   push:
-    branches-ignore:
-      - 'gh-readonly-queue/**'
+    branches:
+      - develop
+      - master
+      - release/**
   pull_request:
   merge_group:
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: read
