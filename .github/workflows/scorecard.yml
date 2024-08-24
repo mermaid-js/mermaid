@@ -3,7 +3,7 @@ on:
   branch_protection_rule:
   push:
     branches:
-      - main
+      - develop
   schedule:
     - cron: 29 15 * * 0
 permissions: read-all
