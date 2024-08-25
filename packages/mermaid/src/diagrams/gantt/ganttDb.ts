@@ -442,14 +442,14 @@ const compileData = function (prevTask: any, dataStr: any) {
       // @ts-ignore TODO: Fix type
       task.id = parseId();
       // @ts-ignore TODO: Fix type
-      task.startTime = getStartDate(undefined, dateFormat, data[0]);
+      task.startTime = getStartDate(undefined, state.records.dateFormat, data[0]);
       endTimeData = data[1];
       break;
     case 3:
       // @ts-ignore TODO: Fix type
       task.id = parseId(data[0]);
       // @ts-ignore TODO: Fix type
-      task.startTime = getStartDate(undefined, dateFormat, data[1]);
+      task.startTime = getStartDate(undefined, state.records.dateFormat, data[1]);
       endTimeData = data[2];
       break;
     default:
@@ -627,7 +627,12 @@ const compileTasks = function () {
       }
       case 'getStartDate':
         // @ts-ignore TODO: Fix type
-        startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime.startData);
+        startTime = getStartDate(
+          undefined,
+          state.records.dateFormat,
+          // @ts-ignore TODO: Fix type
+          state.records.rawTasks[pos].raw.startTime.startData
+        );
         if (startTime) {
           // @ts-ignore TODO: Fix type
           state.records.rawTasks[pos].startTime = startTime;
