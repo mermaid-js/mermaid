@@ -1,5 +1,32 @@
 import type { Dayjs } from 'dayjs';
 
+export interface GanttState {
+  dateFormat: string;
+  axisFormat: string;
+  tickInterval: string;
+  todayMarker: string;
+  includes: string[];
+  excludes: string[];
+  links: Map<string, URL>;
+  sections: string[];
+  tasks: Task[];
+  currentSection: string;
+  displayMode: string;
+  tags: ValidTag[];
+  funs: CallableFunction[];
+  inclusiveEndDates: boolean;
+  topAxis: boolean;
+  weekday: Weekday;
+  weekend: Weekend;
+  lastOrder: number;
+  rawTasks: RawTask[];
+  lastTask: Task | null;
+  lastTaskID: string | null;
+  taskDbPositionMap: Map<string, number>;
+  taskDb: any;
+  taskCount: number;
+}
+
 export type Weekday =
   | 'sunday'
   | 'monday'
@@ -21,12 +48,12 @@ interface BaseTask {
   description: string;
   task: string;
   renderEndTime: Date | Dayjs | null;
+  classes: string[];
   manualEndTime?: boolean;
   active?: boolean;
   done?: boolean;
   crit?: boolean;
   milestone?: boolean;
-  classes: string[];
 }
 
 export interface Task extends BaseTask {
@@ -44,8 +71,8 @@ export interface RawTask extends BaseTask {
 
 export interface TaskInfo extends BaseTask {
   prevTaskId: string | null;
-  startTime: StartTime;
-  endTime: EndTime;
+  startTime: Date | Dayjs | null;
+  endTime: Date | Dayjs | null;
 }
 
 interface StartTime {

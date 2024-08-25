@@ -18,7 +18,16 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
-import type { Weekday, Weekend, WeekendStartMap, Task, ValidTag, RawTask } from './ganttTypes.js';
+import type {
+  Weekday,
+  Weekend,
+  WeekendStartMap,
+  Task,
+  ValidTag,
+  RawTask,
+  GanttState,
+  TaskInfo,
+} from './ganttTypes.js';
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
@@ -26,33 +35,6 @@ dayjs.extend(dayjsAdvancedFormat);
 export const tagTypes: ValidTag[] = ['active', 'done', 'crit', 'milestone'];
 
 const WEEKEND_START_DAY: WeekendStartMap = { friday: 5, saturday: 6 };
-
-interface GanttState {
-  dateFormat: string;
-  axisFormat: string;
-  tickInterval: string;
-  todayMarker: string;
-  includes: string[];
-  excludes: string[];
-  links: Map<string, URL>;
-  sections: string[];
-  tasks: Task[];
-  currentSection: string;
-  displayMode: string;
-  tags: ValidTag[];
-  funs: CallableFunction[];
-  inclusiveEndDates: boolean;
-  topAxis: boolean;
-  weekday: Weekday;
-  weekend: Weekend;
-  lastOrder: number;
-  rawTasks: RawTask[];
-  lastTask: Task | null;
-  lastTaskID: string | null;
-  taskDbPositionMap: Map<string, number>;
-  taskDb: any;
-  taskCount: number;
-}
 
 const state = new ImperativeState<GanttState>(() => ({
   dateFormat: '',
@@ -182,7 +164,7 @@ export const getTasks = function () {
 
   // @ts-ignore TODO: Fix type
   state.records.tasks = state.records.rawTasks;
-
+  log.info('Tasks:', state.records.tasks);
   return state.records.tasks;
 };
 
@@ -398,16 +380,6 @@ const parseId = function (idStr: string | undefined): string {
   }
   return idStr;
 };
-// id, startDate, endDate
-// id, startDate, length
-// id, after x, endDate
-// id, after x, length
-// startDate, endDate
-// startDate, length
-// after x, endDate
-// after x, length
-// endDate
-// length
 
 const compileData = function (prevTask: any, dataStr: any) {
   let ds;
@@ -420,7 +392,22 @@ const compileData = function (prevTask: any, dataStr: any) {
 
   const data = ds.split(',');
 
-  const task = {};
+  const task: TaskInfo = {
+    renderEndTime: null,
+    classes: [],
+    id: '',
+    section: state.records.currentSection,
+    type: state.records.currentSection,
+    description: '',
+    task: '',
+    startTime: null,
+    endTime: null,
+    prevTaskId: null,
+    active: false,
+    done: false,
+    crit: false,
+    milestone: false,
+  };
 
   // Get tags like active, done, crit and milestone
   getTaskTags(data, task, state.records.tags);
@@ -578,10 +565,7 @@ export const addTask = function (descr: string, data: string) {
   rawTask.order = state.records.lastOrder;
 
   state.records.lastOrder++;
-  log.info('Adding task', rawTask);
-  log.info('Adding task', taskInfo);
-  log.info('Adding task', state.records.lastTaskID);
-  log.info('Adding task', state.records.lastOrder);
+
   const pos = state.records.rawTasks.push(rawTask);
 
   state.records.lastTaskID = rawTask.id;
@@ -595,31 +579,32 @@ export const findTaskById = function (id: string) {
 };
 
 export const addTaskOrg = function (descr: string, data: string) {
-  const newTask = {
+  const newTask: Task = {
+    id: '',
+    renderEndTime: null,
     section: state.records.currentSection,
     type: state.records.currentSection,
     description: descr,
     task: descr,
     classes: [],
+    active: false,
+    done: false,
+    crit: false,
+    milestone: false,
+    startTime: null,
+    endTime: null,
+    links: [],
   };
   const taskInfo = compileData(state.records.lastTask, data);
-  // @ts-ignore TODO: Fix type
+
   newTask.startTime = taskInfo.startTime;
-  // @ts-ignore TODO: Fix type
   newTask.endTime = taskInfo.endTime;
-  // @ts-ignore TODO: Fix type
   newTask.id = taskInfo.id;
-  // @ts-ignore TODO: Fix type
   newTask.active = taskInfo.active;
-  // @ts-ignore TODO: Fix type
   newTask.done = taskInfo.done;
-  // @ts-ignore TODO: Fix type
   newTask.crit = taskInfo.crit;
-  // @ts-ignore TODO: Fix type
   newTask.milestone = taskInfo.milestone;
-  // @ts-ignore TODO: Fix type
   state.records.lastTask = newTask;
-  // @ts-ignore TODO: Fix type
   state.records.tasks.push(newTask);
 };
 
