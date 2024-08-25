@@ -84,16 +84,25 @@
     <div class="flex">
       <pre id="diagram" class="mermaid">
 ---
-config:
-  look: handDrawn
-  flowchart:
-    htmlLabels: false
+  title: hello2
+  config:
+    look: handDrawn
+    layout: elk
+    elk:
+        nodePlacementStrategy: BRANDES_KOEPF
 ---
-flowchart
-      A[I am a long text, where do I go??? handdrawn - false]
+flowchart LR
+  A[Start] --Some text--> B(Continue)
+  B --> C{Evaluate}
+  C -- One --> D[Option 1]
+  C -- Two --> E[Option 2]
+  C -- Three --> F[fa:fa-car Option 3]
+
+
+
 </pre
       >
-      <pre id="diagram" class="mermaid">
+      <pre id="diagram" class="mermaid2">
 ---
 config:
   look: handdrawn
@@ -106,7 +115,7 @@ flowchart
       >
     </div>
     <div class="flex">
-      <pre id="diagram" class="mermaid">
+      <pre id="diagram" class="mermaid2">
 ---
 config:
   flowchart:
@@ -116,7 +125,7 @@ flowchart
       A[I am a long text, where do I go??? classic - false]
 </pre
       >
-      <pre id="diagram" class="mermaid">
+      <pre id="diagram" class="mermaid2">
 ---
 config:
   flowchart:
@@ -159,8 +168,8 @@ flowchart LR
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      // import { layouts } from './mermaid-layout-elk.esm.mjs';
-      // mermaid.registerLayoutLoaders(layouts);
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
