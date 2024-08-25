@@ -23,16 +23,14 @@ import type {
   Weekend,
   WeekendStartMap,
   Task,
-  ValidTag,
   RawTask,
   GanttState,
   TaskInfo,
 } from './ganttTypes.js';
+import { tagTypes } from './ganttTypes.js';
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
-
-export const tagTypes: ValidTag[] = ['active', 'done', 'crit', 'milestone'];
 
 const WEEKEND_START_DAY: WeekendStartMap = { friday: 5, saturday: 6 };
 
