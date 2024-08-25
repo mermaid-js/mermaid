@@ -203,7 +203,7 @@ export const setWeekend = function (startDay: Weekend) {
 };
 
 const checkTaskDates = function (
-  task: Task,
+  task: Task | TaskInfo,
   dateFormat: string,
   excludes: string[],
   includes: string[]
@@ -379,7 +379,7 @@ const parseId = function (idStr: string | undefined): string {
   return idStr;
 };
 
-const compileData = function (prevTask: any, dataStr: any) {
+const compileData = function (prevTask: any, dataStr: string) {
   let ds;
 
   if (dataStr.substr(0, 1) === ':') {
@@ -417,23 +417,17 @@ const compileData = function (prevTask: any, dataStr: any) {
   let endTimeData = '';
   switch (data.length) {
     case 1:
-      // @ts-ignore TODO: Fix type
-      task.id = parseId();
-      // @ts-ignore TODO: Fix type
+      task.id = parseId(undefined);
       task.startTime = prevTask.endTime;
       endTimeData = data[0];
       break;
     case 2:
-      // @ts-ignore TODO: Fix type
-      task.id = parseId();
-      // @ts-ignore TODO: Fix type
+      task.id = parseId(undefined);
       task.startTime = getStartDate(undefined, state.records.dateFormat, data[0]);
       endTimeData = data[1];
       break;
     case 3:
-      // @ts-ignore TODO: Fix type
       task.id = parseId(data[0]);
-      // @ts-ignore TODO: Fix type
       task.startTime = getStartDate(undefined, state.records.dateFormat, data[1]);
       endTimeData = data[2];
       break;
@@ -441,25 +435,23 @@ const compileData = function (prevTask: any, dataStr: any) {
   }
 
   if (endTimeData) {
-    // @ts-ignore TODO: Fix type
     task.endTime = getEndDate(
-      // @ts-ignore TODO: Fix type
-      task.startTime,
+      task.startTime!,
       state.records.dateFormat,
       endTimeData,
-      // @ts-ignore TODO: Fix type
-      inclusiveEndDates
+      state.records.inclusiveEndDates
     );
-    // @ts-ignore TODO: Fix type
     task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
-    // @ts-ignore TODO: Fix type
-    checkTaskDates(task, state.records.dateFormat, excludes, includes);
+
+    checkTaskDates(task, state.records.dateFormat, state.records.excludes, state.records.includes);
   }
 
   return task;
 };
 
-const parseData = function (prevTaskId: any, dataStr: any) {
+// TODO: This process of having start and end time be either an object or a string is confusing. We can add a separate variable into task info for this I think
+
+const parseData = function (prevTaskId: string, dataStr: string) {
   let ds;
   if (dataStr.substr(0, 1) === ':') {
     ds = dataStr.substr(1, dataStr.length);
@@ -544,7 +536,9 @@ export const addTask = function (descr: string, data: string) {
     prevTaskId: null,
     description: descr,
   };
-  const taskInfo = parseData(state.records.lastTaskID, data);
+
+  // TODO: Need to make sure that lastTaskID is always set before reaching this point
+  const taskInfo = parseData(state.records.lastTaskID!, data);
   // @ts-ignore TODO: Fix type
   rawTask.raw.startTime = taskInfo.startTime;
   // @ts-ignore TODO: Fix type
