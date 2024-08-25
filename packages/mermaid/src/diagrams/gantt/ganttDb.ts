@@ -51,6 +51,7 @@ interface GanttState {
   lastTaskID: string | null;
   taskDbPositionMap: Map<string, number>;
   taskDb: any;
+  taskCount: number;
 }
 
 const state = new ImperativeState<GanttState>(() => ({
@@ -78,6 +79,7 @@ const state = new ImperativeState<GanttState>(() => ({
   lastTaskID: null,
   taskDbPositionMap: new Map(),
   taskDb: {},
+  taskCount: 0,
 }));
 
 export const clear = function () {
@@ -389,11 +391,10 @@ const getEndDate = function (
   return endTime.toDate();
 };
 
-let taskCnt = 0;
 const parseId = function (idStr: string | undefined): string {
   if (idStr === undefined) {
-    taskCnt = taskCnt + 1;
-    return 'task' + taskCnt;
+    state.records.taskCount = state.records.taskCount + 1;
+    return 'task' + state.records.taskCount;
   }
   return idStr;
 };
@@ -457,9 +458,11 @@ const compileData = function (prevTask: any, dataStr: any) {
   if (endTimeData) {
     // @ts-ignore TODO: Fix type
     task.endTime = getEndDate(
+      // @ts-ignore TODO: Fix type
       task.startTime,
       state.records.dateFormat,
       endTimeData,
+      // @ts-ignore TODO: Fix type
       inclusiveEndDates
     );
     // @ts-ignore TODO: Fix type
@@ -575,6 +578,10 @@ export const addTask = function (descr: string, data: string) {
   rawTask.order = state.records.lastOrder;
 
   state.records.lastOrder++;
+  log.info('Adding task', rawTask);
+  log.info('Adding task', taskInfo);
+  log.info('Adding task', state.records.lastTaskID);
+  log.info('Adding task', state.records.lastOrder);
   const pos = state.records.rawTasks.push(rawTask);
 
   state.records.lastTaskID = rawTask.id;
