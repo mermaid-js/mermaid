@@ -279,7 +279,6 @@ const fixTaskDates = (
 const getStartDate = function (prevTime: Date | undefined, dateFormat: string, str: string) {
   str = str.trim();
 
-  // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
   const afterStatement = afterRePattern.exec(str);
 
@@ -457,11 +456,16 @@ const compileData = function (prevTask: any, dataStr: any) {
 
   if (endTimeData) {
     // @ts-ignore TODO: Fix type
-    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
+    task.endTime = getEndDate(
+      task.startTime,
+      state.records.dateFormat,
+      endTimeData,
+      inclusiveEndDates
+    );
     // @ts-ignore TODO: Fix type
     task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
     // @ts-ignore TODO: Fix type
-    checkTaskDates(task, dateFormat, excludes, includes);
+    checkTaskDates(task, state.records.dateFormat, excludes, includes);
   }
 
   return task;
