@@ -750,7 +750,7 @@ const setClickFun = function (id, functionName, functionArgs) {
 // @ts-ignore TODO: Fix type
 const pushFun = function (id, callbackFunction) {
   // @ts-ignore TODO: Fix type
-  funs.push(
+  state.records.funs.push(
     function () {
       // const elem = d3.select(element).select(`[id="${id}"]`)
       const elem = document.querySelector(`[id="${id}"]`);
@@ -784,7 +784,7 @@ export const setClickEvent = function (ids, functionName, functionArgs) {
 // @ts-ignore TODO: Fix type
 export const bindFunctions = function (element) {
   // @ts-ignore TODO: Fix type
-  funs.forEach(function (fun) {
+  state.records.funs.forEach(function (fun) {
     fun(element);
   });
 };
