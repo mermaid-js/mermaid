@@ -1,5 +1,6 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import dayjs from 'dayjs';
+import type { Dayjs, ManipulateType } from 'dayjs';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
@@ -16,140 +17,156 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-
+import { ImperativeState } from '../../utils/imperativeState.js';
+import type { Weekday, Weekend, WeekendStartMap, Task, ValidTag, RawTask } from './ganttTypes.js';
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
-const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
-let dateFormat = '';
-let axisFormat = '';
-let tickInterval = undefined;
-let todayMarker = '';
-let includes = [];
-let excludes = [];
-let links = new Map();
-let sections = [];
-let tasks = [];
-let currentSection = '';
-let displayMode = '';
-const tags = ['active', 'done', 'crit', 'milestone'];
-let funs = [];
-let inclusiveEndDates = false;
-let topAxis = false;
-let weekday = 'sunday';
-let weekend = 'saturday';
+export const tagTypes: ValidTag[] = ['active', 'done', 'crit', 'milestone'];
 
-// The serial order of the task in the script
-let lastOrder = 0;
+const WEEKEND_START_DAY: WeekendStartMap = { friday: 5, saturday: 6 };
+
+interface GanttState {
+  dateFormat: string;
+  axisFormat: string;
+  tickInterval: string;
+  todayMarker: string;
+  includes: string[];
+  excludes: string[];
+  links: Map<string, URL>;
+  sections: string[];
+  tasks: Task[];
+  currentSection: string;
+  displayMode: string;
+  tags: ValidTag[];
+  funs: CallableFunction[];
+  inclusiveEndDates: boolean;
+  topAxis: boolean;
+  weekday: Weekday;
+  weekend: Weekend;
+  lastOrder: number;
+  rawTasks: RawTask[];
+  lastTask: Task | null;
+  lastTaskID: string | null;
+  taskDbPositionMap: Map<string, number>;
+  taskDb: any;
+}
+
+const state = new ImperativeState<GanttState>(() => ({
+  dateFormat: '',
+  axisFormat: '',
+  tickInterval: '',
+  todayMarker: '',
+  includes: [],
+  excludes: [],
+  links: new Map(),
+  sections: [],
+  tasks: [],
+  currentSection: '',
+  displayMode: '',
+  tags: tagTypes,
+  funs: [],
+  inclusiveEndDates: false,
+  topAxis: false,
+  weekday: 'sunday',
+  weekend: 'saturday',
+  weekdayStart: 'saturday',
+  lastOrder: 0,
+  rawTasks: [],
+  lastTask: null,
+  lastTaskID: null,
+  taskDbPositionMap: new Map(),
+  taskDb: {},
+}));
 
 export const clear = function () {
-  sections = [];
-  tasks = [];
-  currentSection = '';
-  funs = [];
-  taskCnt = 0;
-  lastTask = undefined;
-  lastTaskID = undefined;
-  rawTasks = [];
-  dateFormat = '';
-  axisFormat = '';
-  displayMode = '';
-  tickInterval = undefined;
-  todayMarker = '';
-  includes = [];
-  excludes = [];
-  inclusiveEndDates = false;
-  topAxis = false;
-  lastOrder = 0;
-  links = new Map();
+  state.reset();
   commonClear();
-  weekday = 'sunday';
-  weekend = 'saturday';
 };
 
-export const setAxisFormat = function (txt) {
-  axisFormat = txt;
+export const setAxisFormat = function (txt: string) {
+  state.records.axisFormat = txt;
 };
 
-export const getAxisFormat = function () {
-  return axisFormat;
+export const getAxisFormat = function (): string {
+  return state.records.axisFormat;
 };
 
-export const setTickInterval = function (txt) {
-  tickInterval = txt;
+export const setTickInterval = function (txt: string) {
+  state.records.axisFormat = txt;
 };
 
-export const getTickInterval = function () {
-  return tickInterval;
+export const getTickInterval = function (): string {
+  return state.records.tickInterval;
 };
 
-export const setTodayMarker = function (txt) {
-  todayMarker = txt;
+export const setTodayMarker = function (txt: string) {
+  state.records.todayMarker = txt;
 };
 
-export const getTodayMarker = function () {
-  return todayMarker;
+export const getTodayMarker = function (): string {
+  return state.records.todayMarker;
 };
 
-export const setDateFormat = function (txt) {
-  dateFormat = txt;
+export const setDateFormat = function (txt: string) {
+  state.records.dateFormat = txt;
 };
 
 export const enableInclusiveEndDates = function () {
-  inclusiveEndDates = true;
+  state.records.inclusiveEndDates = true;
 };
 
-export const endDatesAreInclusive = function () {
-  return inclusiveEndDates;
+export const endDatesAreInclusive = function (): boolean {
+  return state.records.inclusiveEndDates;
 };
 
 export const enableTopAxis = function () {
-  topAxis = true;
+  state.records.topAxis = true;
 };
 
-export const topAxisEnabled = function () {
-  return topAxis;
+export const topAxisEnabled = function (): boolean {
+  return state.records.topAxis;
 };
 
-export const setDisplayMode = function (txt) {
-  displayMode = txt;
+export const setDisplayMode = function (txt: string) {
+  state.records.displayMode = txt;
 };
 
-export const getDisplayMode = function () {
-  return displayMode;
+export const getDisplayMode = function (): string {
+  return state.records.displayMode;
 };
 
-export const getDateFormat = function () {
-  return dateFormat;
+export const getDateFormat = function (): string {
+  return state.records.dateFormat;
 };
 
-export const setIncludes = function (txt) {
-  includes = txt.toLowerCase().split(/[\s,]+/);
+export const setIncludes = function (txt: string) {
+  state.records.includes = txt.toLowerCase().split(/[\s,]+/);
 };
 
-export const getIncludes = function () {
-  return includes;
+export const getIncludes = function (): string[] {
+  return state.records.includes;
 };
-export const setExcludes = function (txt) {
-  excludes = txt.toLowerCase().split(/[\s,]+/);
-};
-
-export const getExcludes = function () {
-  return excludes;
+export const setExcludes = function (txt: string) {
+  state.records.excludes = txt.toLowerCase().split(/[\s,]+/);
 };
 
-export const getLinks = function () {
-  return links;
+export const getExcludes = function (): string[] {
+  return state.records.excludes;
 };
 
-export const addSection = function (txt) {
-  currentSection = txt;
-  sections.push(txt);
+export const getLinks = function (): Map<string, URL> {
+  return state.records.links;
 };
 
-export const getSections = function () {
-  return sections;
+export const addSection = function (txt: string) {
+  state.records.currentSection = txt;
+  state.records.sections.push(txt);
+};
+
+export const getSections = function (): string[] {
+  return state.records.sections;
 };
 
 export const getTasks = function () {
@@ -161,53 +178,54 @@ export const getTasks = function () {
     iterationCount++;
   }
 
-  tasks = rawTasks;
+  // @ts-ignore TODO: Fix type
+  state.records.tasks = state.records.rawTasks;
 
-  return tasks;
+  return state.records.tasks;
 };
 
-export const isInvalidDate = function (date, dateFormat, excludes, includes) {
+export const isInvalidDate = function (
+  date: Dayjs,
+  dateFormat: string,
+  excludes: string[],
+  includes: string[]
+): boolean {
   if (includes.includes(date.format(dateFormat.trim()))) {
     return false;
   }
+
   if (
     excludes.includes('weekends') &&
-    (date.isoWeekday() === WEEKEND_START_DAY[weekend] ||
-      date.isoWeekday() === WEEKEND_START_DAY[weekend] + 1)
+    (date.isoWeekday() === WEEKEND_START_DAY[state.records.weekend] ||
+      date.isoWeekday() === WEEKEND_START_DAY[state.records.weekend] + 1)
   ) {
     return true;
   }
+
   if (excludes.includes(date.format('dddd').toLowerCase())) {
     return true;
   }
   return excludes.includes(date.format(dateFormat.trim()));
 };
 
-export const setWeekday = function (txt) {
-  weekday = txt;
+export const setWeekday = function (weekday: Weekday) {
+  state.records.weekday = weekday;
 };
 
-export const getWeekday = function () {
-  return weekday;
+export const getWeekday = (): Weekday => {
+  return state.records.weekday;
 };
 
-export const setWeekend = function (startDay) {
-  weekend = startDay;
+export const setWeekend = function (startDay: Weekend) {
+  state.records.weekend = startDay;
 };
 
-/**
- * TODO: fully document what this function does and what types it accepts
- *
- * @param {object} task - The task to check.
- * @param {string | Date} task.startTime - Might be a `Date` or a `string`.
- * TODO: is this always a Date?
- * @param {string | Date} task.endTime - Might be a `Date` or a `string`.
- * TODO: is this always a Date?
- * @param {string} dateFormat - Dayjs date format string.
- * @param {*} excludes
- * @param {*} includes
- */
-const checkTaskDates = function (task, dateFormat, excludes, includes) {
+const checkTaskDates = function (
+  task: Task,
+  dateFormat: string,
+  excludes: string[],
+  includes: string[]
+) {
   if (!excludes.length || task.manualEndTime) {
     return;
   }
@@ -236,18 +254,13 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
   task.renderEndTime = renderEndTime;
 };
 
-/**
- * TODO: what does this function do?
- *
- * @param {dayjs.Dayjs} startTime - The start time.
- * @param {dayjs.Dayjs} endTime - The original end time (will return a different end time if it's invalid).
- * @param {string} dateFormat - Dayjs date format string.
- * @param {*} excludes
- * @param {*} includes
- * @returns {[endTime: dayjs.Dayjs, renderEndTime: Date | null]} The new `endTime`, and the end time to render.
- * `renderEndTime` may be `null` if `startTime` is newer than `endTime`.
- */
-const fixTaskDates = function (startTime, endTime, dateFormat, excludes, includes) {
+const fixTaskDates = (
+  startTime: Dayjs,
+  endTime: Dayjs,
+  dateFormat: string,
+  excludes: string[],
+  includes: string[]
+): [Dayjs, Date | null] => {
   let invalid = false;
   let renderEndTime = null;
   while (startTime <= endTime) {
@@ -263,24 +276,26 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
   return [endTime, renderEndTime];
 };
 
-const getStartDate = function (prevTime, dateFormat, str) {
+const getStartDate = function (prevTime: Date | undefined, dateFormat: string, str: string) {
   str = str.trim();
 
   // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
   const afterStatement = afterRePattern.exec(str);
 
-  if (afterStatement !== null) {
+  if (afterStatement?.groups !== undefined) {
     // check all after ids and take the latest
     let latestTask = null;
     for (const id of afterStatement.groups.ids.split(' ')) {
-      let task = findTaskById(id);
+      const task = findTaskById(id);
+      // @ts-ignore TODO: Fix type
       if (task !== undefined && (!latestTask || task.endTime > latestTask.endTime)) {
         latestTask = task;
       }
     }
 
     if (latestTask) {
+      // @ts-ignore TODO: Fix type
       return latestTask.endTime;
     }
     const today = new Date();
@@ -289,7 +304,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
   }
 
   // Check for actual date set
-  let mDate = dayjs(str, dateFormat.trim(), true);
+  const mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
     return mDate.toDate();
   } else {
@@ -313,56 +328,41 @@ const getStartDate = function (prevTime, dateFormat, str) {
   }
 };
 
-/**
- * Parse a string into the args for `dayjs.add()`.
- *
- * The string have to be compound by a value and a shorthand duration unit. For example `5d`
- * represents 5 days.
- *
- * Please be aware that 1 day may be 23 or 25 hours, if the user lives in an area
- * that has daylight savings time (or even 23.5/24.5 hours in Lord Howe Island!)
- *
- * Shorthand unit supported are:
- *
- * - `y` for years
- * - `M` for months
- * - `w` for weeks
- * - `d` for days
- * - `h` for hours
- * - `s` for seconds
- * - `ms` for milliseconds
- *
- * @param {string} str - A string representing the duration.
- * @returns {[value: number, unit: dayjs.ManipulateType]} Arguments to pass to `dayjs.add()`
- */
-const parseDuration = function (str) {
+const parseDuration = function (str: string): [number, ManipulateType] {
   // cspell:disable-next-line
   const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
   if (statement !== null) {
-    return [Number.parseFloat(statement[1]), statement[2]];
+    return [Number.parseFloat(statement[1]), statement[2] as ManipulateType];
   }
   // NaN means an invalid duration
   return [NaN, 'ms'];
 };
 
-const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
+const getEndDate = function (
+  prevTime: Date | Dayjs,
+  dateFormat: string,
+  str: string,
+  inclusive = false
+) {
   str = str.trim();
 
   // test for until
   const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
   const untilStatement = untilRePattern.exec(str);
 
-  if (untilStatement !== null) {
+  if (untilStatement?.groups !== undefined) {
     // check all until ids and take the earliest
     let earliestTask = null;
     for (const id of untilStatement.groups.ids.split(' ')) {
-      let task = findTaskById(id);
+      const task = findTaskById(id);
+      // @ts-ignore TODO: Fix type
       if (task !== undefined && (!earliestTask || task.startTime < earliestTask.startTime)) {
         earliestTask = task;
       }
     }
 
     if (earliestTask) {
+      // @ts-ignore TODO: Fix type
       return earliestTask.startTime;
     }
     const today = new Date();
@@ -391,7 +391,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
 };
 
 let taskCnt = 0;
-const parseId = function (idStr) {
+const parseId = function (idStr: string | undefined): string {
   if (idStr === undefined) {
     taskCnt = taskCnt + 1;
     return 'task' + taskCnt;
@@ -409,7 +409,7 @@ const parseId = function (idStr) {
 // endDate
 // length
 
-const compileData = function (prevTask, dataStr) {
+const compileData = function (prevTask: any, dataStr: any) {
   let ds;
 
   if (dataStr.substr(0, 1) === ':') {
@@ -423,7 +423,7 @@ const compileData = function (prevTask, dataStr) {
   const task = {};
 
   // Get tags like active, done, crit and milestone
-  getTaskTags(data, task, tags);
+  getTaskTags(data, task, state.records.tags);
 
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim();
@@ -432,17 +432,23 @@ const compileData = function (prevTask, dataStr) {
   let endTimeData = '';
   switch (data.length) {
     case 1:
+      // @ts-ignore TODO: Fix type
       task.id = parseId();
+      // @ts-ignore TODO: Fix type
       task.startTime = prevTask.endTime;
       endTimeData = data[0];
       break;
     case 2:
+      // @ts-ignore TODO: Fix type
       task.id = parseId();
+      // @ts-ignore TODO: Fix type
       task.startTime = getStartDate(undefined, dateFormat, data[0]);
       endTimeData = data[1];
       break;
     case 3:
+      // @ts-ignore TODO: Fix type
       task.id = parseId(data[0]);
+      // @ts-ignore TODO: Fix type
       task.startTime = getStartDate(undefined, dateFormat, data[1]);
       endTimeData = data[2];
       break;
@@ -450,15 +456,18 @@ const compileData = function (prevTask, dataStr) {
   }
 
   if (endTimeData) {
+    // @ts-ignore TODO: Fix type
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
+    // @ts-ignore TODO: Fix type
     task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
+    // @ts-ignore TODO: Fix type
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
   return task;
 };
 
-const parseData = function (prevTaskId, dataStr) {
+const parseData = function (prevTaskId: any, dataStr: any) {
   let ds;
   if (dataStr.substr(0, 1) === ':') {
     ds = dataStr.substr(1, dataStr.length);
@@ -471,7 +480,7 @@ const parseData = function (prevTaskId, dataStr) {
   const task = {};
 
   // Get tags like active, done, crit and milestone
-  getTaskTags(data, task, tags);
+  getTaskTags(data, task, state.records.tags);
 
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim();
@@ -479,31 +488,40 @@ const parseData = function (prevTaskId, dataStr) {
 
   switch (data.length) {
     case 1:
+      // @ts-ignore TODO: Fix type
       task.id = parseId();
+      // @ts-ignore TODO: Fix type
       task.startTime = {
         type: 'prevTaskEnd',
         id: prevTaskId,
       };
+      // @ts-ignore TODO: Fix type
       task.endTime = {
         data: data[0],
       };
       break;
     case 2:
+      // @ts-ignore TODO: Fix type
       task.id = parseId();
+      // @ts-ignore TODO: Fix type
       task.startTime = {
         type: 'getStartDate',
         startData: data[0],
       };
+      // @ts-ignore TODO: Fix type
       task.endTime = {
         data: data[1],
       };
       break;
     case 3:
+      // @ts-ignore TODO: Fix type
       task.id = parseId(data[0]);
+      // @ts-ignore TODO: Fix type
       task.startTime = {
         type: 'getStartDate',
         startData: data[1],
       };
+      // @ts-ignore TODO: Fix type
       task.endTime = {
         data: data[2],
       };
@@ -514,107 +532,143 @@ const parseData = function (prevTaskId, dataStr) {
   return task;
 };
 
-let lastTask;
-let lastTaskID;
-let rawTasks = [];
-const taskDb = {};
-export const addTask = function (descr, data) {
-  const rawTask = {
-    section: currentSection,
-    type: currentSection,
+export const addTask = function (descr: string, data: string) {
+  const rawTask: RawTask = {
+    id: '',
+    section: state.records.currentSection,
+    type: state.records.currentSection,
     processed: false,
     manualEndTime: false,
     renderEndTime: null,
+    // @ts-ignore TODO: Fix type
     raw: { data: data },
     task: descr,
     classes: [],
+    active: false,
+    done: false,
+    crit: false,
+    milestone: false,
+    order: 0,
+    prevTaskId: null,
+    description: descr,
   };
-  const taskInfo = parseData(lastTaskID, data);
+  const taskInfo = parseData(state.records.lastTaskID, data);
+  // @ts-ignore TODO: Fix type
   rawTask.raw.startTime = taskInfo.startTime;
+  // @ts-ignore TODO: Fix type
   rawTask.raw.endTime = taskInfo.endTime;
+  // @ts-ignore TODO: Fix type
   rawTask.id = taskInfo.id;
-  rawTask.prevTaskId = lastTaskID;
+  rawTask.prevTaskId = state.records.lastTaskID;
+  // @ts-ignore TODO: Fix type
   rawTask.active = taskInfo.active;
+  // @ts-ignore TODO: Fix type
   rawTask.done = taskInfo.done;
+  // @ts-ignore TODO: Fix type
   rawTask.crit = taskInfo.crit;
+  // @ts-ignore TODO: Fix type
   rawTask.milestone = taskInfo.milestone;
-  rawTask.order = lastOrder;
+  rawTask.order = state.records.lastOrder;
 
-  lastOrder++;
+  state.records.lastOrder++;
+  const pos = state.records.rawTasks.push(rawTask);
 
-  const pos = rawTasks.push(rawTask);
-
-  lastTaskID = rawTask.id;
+  state.records.lastTaskID = rawTask.id;
   // Store cross ref
-  taskDb[rawTask.id] = pos - 1;
+  state.records.taskDb[rawTask.id] = pos - 1;
 };
 
-export const findTaskById = function (id) {
-  const pos = taskDb[id];
-  return rawTasks[pos];
+export const findTaskById = function (id: string) {
+  const pos = state.records.taskDb[id];
+  return state.records.rawTasks[pos];
 };
 
-export const addTaskOrg = function (descr, data) {
+export const addTaskOrg = function (descr: string, data: string) {
   const newTask = {
-    section: currentSection,
-    type: currentSection,
+    section: state.records.currentSection,
+    type: state.records.currentSection,
     description: descr,
     task: descr,
     classes: [],
   };
-  const taskInfo = compileData(lastTask, data);
+  const taskInfo = compileData(state.records.lastTask, data);
+  // @ts-ignore TODO: Fix type
   newTask.startTime = taskInfo.startTime;
+  // @ts-ignore TODO: Fix type
   newTask.endTime = taskInfo.endTime;
+  // @ts-ignore TODO: Fix type
   newTask.id = taskInfo.id;
+  // @ts-ignore TODO: Fix type
   newTask.active = taskInfo.active;
+  // @ts-ignore TODO: Fix type
   newTask.done = taskInfo.done;
+  // @ts-ignore TODO: Fix type
   newTask.crit = taskInfo.crit;
+  // @ts-ignore TODO: Fix type
   newTask.milestone = taskInfo.milestone;
-  lastTask = newTask;
-  tasks.push(newTask);
+  // @ts-ignore TODO: Fix type
+  state.records.lastTask = newTask;
+  // @ts-ignore TODO: Fix type
+  state.records.tasks.push(newTask);
 };
 
 const compileTasks = function () {
+  // @ts-ignore TODO: Fix type
   const compileTask = function (pos) {
-    const task = rawTasks[pos];
+    const task = state.records.rawTasks[pos];
     let startTime = '';
-    switch (rawTasks[pos].raw.startTime.type) {
+    switch (state.records.rawTasks[pos].raw.startTime.type) {
       case 'prevTaskEnd': {
+        // @ts-ignore TODO: Fix type
         const prevTask = findTaskById(task.prevTaskId);
+        // @ts-ignore TODO: Fix type
         task.startTime = prevTask.endTime;
         break;
       }
       case 'getStartDate':
+        // @ts-ignore TODO: Fix type
         startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime.startData);
         if (startTime) {
-          rawTasks[pos].startTime = startTime;
+          // @ts-ignore TODO: Fix type
+          state.records.rawTasks[pos].startTime = startTime;
         }
         break;
     }
-
-    if (rawTasks[pos].startTime) {
-      rawTasks[pos].endTime = getEndDate(
-        rawTasks[pos].startTime,
-        dateFormat,
-        rawTasks[pos].raw.endTime.data,
-        inclusiveEndDates
+    // @ts-ignore TODO: Fix type
+    if (state.records.rawTasks[pos].startTime) {
+      // @ts-ignore TODO: Fix type
+      state.records.rawTasks[pos].endTime = getEndDate(
+        // @ts-ignore TODO: Fix type
+        state.records.rawTasks[pos].startTime,
+        state.records.dateFormat,
+        // @ts-ignore TODO: Fix type
+        state.records.rawTasks[pos].raw.endTime.data,
+        state.records.inclusiveEndDates
       );
-      if (rawTasks[pos].endTime) {
-        rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
+      // @ts-ignore TODO: Fix type
+      if (state.records.rawTasks[pos].endTime) {
+        state.records.rawTasks[pos].processed = true;
+        state.records.rawTasks[pos].manualEndTime = dayjs(
+          // @ts-ignore TODO: Fix type
+          state.records.rawTasks[pos].raw.endTime.data,
           'YYYY-MM-DD',
           true
         ).isValid();
-        checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
+        // @ts-ignore TODO: Fix type
+        checkTaskDates(
+          state.records.rawTasks[pos],
+          state.records.dateFormat,
+          state.records.excludes,
+          state.records.includes
+        );
       }
     }
 
-    return rawTasks[pos].processed;
+    return state.records.rawTasks[pos].processed;
   };
 
   let allProcessed = true;
-  for (const [i, rawTask] of rawTasks.entries()) {
+  for (const [i, rawTask] of state.records.rawTasks.entries()) {
     compileTask(i);
 
     allProcessed = allProcessed && rawTask.processed;
@@ -622,44 +676,34 @@ const compileTasks = function () {
   return allProcessed;
 };
 
-/**
- * Called by parser when a link is found. Adds the URL to the vertex data.
- *
- * @param ids Comma separated list of ids
- * @param _linkStr URL to create a link for
- */
-export const setLink = function (ids, _linkStr) {
+export const setLink = function (ids: any, _linkStr: any) {
   let linkStr = _linkStr;
   if (getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
+  // @ts-ignore TODO: Fix type
   ids.split(',').forEach(function (id) {
-    let rawTask = findTaskById(id);
+    const rawTask = findTaskById(id);
     if (rawTask !== undefined) {
       pushFun(id, () => {
         window.open(linkStr, '_self');
       });
-      links.set(id, linkStr);
+      state.records.links.set(id, linkStr);
     }
   });
   setClass(ids, 'clickable');
 };
 
-/**
- * Called by parser when a special node is found, e.g. a clickable element.
- *
- * @param ids Comma separated list of ids
- * @param className Class to add
- */
-export const setClass = function (ids, className) {
+export const setClass = function (ids: any, className: any) {
+  // @ts-ignore TODO: Fix type
   ids.split(',').forEach(function (id) {
-    let rawTask = findTaskById(id);
+    const rawTask = findTaskById(id);
     if (rawTask !== undefined) {
       rawTask.classes.push(className);
     }
   });
 };
-
+// @ts-ignore TODO: Fix type
 const setClickFun = function (id, functionName, functionArgs) {
   if (getConfig().securityLevel !== 'loose') {
     return;
@@ -668,9 +712,10 @@ const setClickFun = function (id, functionName, functionArgs) {
     return;
   }
 
-  let argList = [];
+  const argList: any = [];
   if (typeof functionArgs === 'string') {
     /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
+    // @ts-ignore TODO: Fix type
     argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
     for (let i = 0; i < argList.length; i++) {
       let item = argList[i].trim();
@@ -688,7 +733,7 @@ const setClickFun = function (id, functionName, functionArgs) {
     argList.push(id);
   }
 
-  let rawTask = findTaskById(id);
+  const rawTask = findTaskById(id);
   if (rawTask !== undefined) {
     pushFun(id, () => {
       utils.runFunc(functionName, ...argList);
@@ -696,14 +741,9 @@ const setClickFun = function (id, functionName, functionArgs) {
   }
 };
 
-/**
- * The callbackFunction is executed in a click event bound to the task with the specified id or the
- * task's assigned text
- *
- * @param id The task's id
- * @param callbackFunction A function to be executed when clicked on the task or the task's text
- */
+// @ts-ignore TODO: Fix type
 const pushFun = function (id, callbackFunction) {
+  // @ts-ignore TODO: Fix type
   funs.push(
     function () {
       // const elem = d3.select(element).select(`[id="${id}"]`)
@@ -726,26 +766,18 @@ const pushFun = function (id, callbackFunction) {
   );
 };
 
-/**
- * Called by parser when a click definition is found. Registers an event handler.
- *
- * @param ids Comma separated list of ids
- * @param functionName Function to be called on click
- * @param functionArgs Function args the function should be called with
- */
+// @ts-ignore TODO: Fix type
 export const setClickEvent = function (ids, functionName, functionArgs) {
+  // @ts-ignore TODO: Fix type
   ids.split(',').forEach(function (id) {
     setClickFun(id, functionName, functionArgs);
   });
   setClass(ids, 'clickable');
 };
 
-/**
- * Binds all functions previously added to fun (specified through click) to the element
- *
- * @param element
- */
+// @ts-ignore TODO: Fix type
 export const bindFunctions = function (element) {
+  // @ts-ignore TODO: Fix type
   funs.forEach(function (fun) {
     fun(element);
   });
@@ -795,15 +827,12 @@ export default {
   setWeekend,
 };
 
-/**
- * @param data
- * @param task
- * @param tags
- */
+// @ts-ignore TODO: Fix type
 function getTaskTags(data, task, tags) {
   let matchFound = true;
   while (matchFound) {
     matchFound = false;
+    // @ts-ignore TODO: Fix type
     tags.forEach(function (t) {
       const pattern = '^\\s*' + t + '\\s*$';
       const regex = new RegExp(pattern);
