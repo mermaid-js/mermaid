@@ -656,6 +656,7 @@ const compileTasks = function () {
         ).isValid();
         // @ts-ignore TODO: Fix type
         checkTaskDates(
+          // @ts-ignore TODO: Fix type
           state.records.rawTasks[pos],
           state.records.dateFormat,
           state.records.excludes,
@@ -712,7 +713,7 @@ const setClickFun = function (id, functionName, functionArgs) {
     return;
   }
 
-  const argList: any = [];
+  let argList: any = [];
   if (typeof functionArgs === 'string') {
     /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
     // @ts-ignore TODO: Fix type
