@@ -28,7 +28,7 @@ jobs:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Install Json
-        run: npm i json --global
+        run: npm i json@11.0.0 --global
 
       - name: Publish
         working-directory: ./packages/mermaid
