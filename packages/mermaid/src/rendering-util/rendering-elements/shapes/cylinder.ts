@@ -92,7 +92,10 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
 
   updateNodeBounds(node, cylinder);
 
-  label.attr('transform', `translate(${-bbox.width / 2}, ${h / 2 - bbox.height})`);
+  label.attr(
+    'transform',
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - bbox.height - (bbox.y - (bbox.top ?? 0))})`
+  );
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);
