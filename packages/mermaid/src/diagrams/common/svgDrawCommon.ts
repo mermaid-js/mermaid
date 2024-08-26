@@ -129,6 +129,7 @@ export const getTextObj = (): TextObject => {
     'text-anchor': 'start',
     style: '#666',
     textMargin: 0,
+    wrapPadding: 0,
     rx: 0,
     ry: 0,
     tspan: true,

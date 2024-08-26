@@ -101,7 +101,7 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
   if (textData.class === 'noteText') {
     const rectElem = elem.node().firstChild;
 
-    rectElem.setAttribute('height', dim.height + 2 * textData.textMargin);
+    rectElem.setAttribute('height', dim.height + 2 * textData.wrapPadding);
     const rectDim = rectElem.getBBox();
 
     textElem
@@ -139,26 +139,26 @@ export const drawText = function (elem, textData) {
   let yfunc = () => textData.y;
   if (
     textData.valign !== undefined &&
-    textData.textMargin !== undefined &&
-    textData.textMargin > 0
+    textData.wrapPadding !== undefined &&
+    textData.wrapPadding > 0
   ) {
     switch (textData.valign) {
       case 'top':
       case 'start':
-        yfunc = () => Math.round(textData.y + textData.textMargin);
+        yfunc = () => Math.round(textData.y + textData.wrapPadding);
         break;
       case 'middle':
       case 'center':
         yfunc = () =>
-          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
+          Math.round(textData.y + (prevTextHeight + textHeight + textData.wrapPadding) / 2);
         break;
       case 'bottom':
       case 'end':
         yfunc = () =>
           Math.round(
             textData.y +
-              (prevTextHeight + textHeight + 2 * textData.textMargin) -
-              textData.textMargin
+              (prevTextHeight + textHeight + 2 * textData.wrapPadding) -
+              textData.wrapPadding
           );
         break;
     }
@@ -166,13 +166,13 @@ export const drawText = function (elem, textData) {
 
   if (
     textData.anchor !== undefined &&
-    textData.textMargin !== undefined &&
+    textData.wrapPadding !== undefined &&
     textData.width !== undefined
   ) {
     switch (textData.anchor) {
       case 'left':
       case 'start':
-        textData.x = Math.round(textData.x + textData.textMargin);
+        textData.x = Math.round(textData.x + textData.wrapPadding);
         textData.anchor = 'start';
         textData.dominantBaseline = 'middle';
         textData.alignmentBaseline = 'middle';
@@ -186,7 +186,7 @@ export const drawText = function (elem, textData) {
         break;
       case 'right':
       case 'end':
-        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
+        textData.x = Math.round(textData.x + textData.width - textData.wrapPadding);
         textData.anchor = 'end';
         textData.dominantBaseline = 'middle';
         textData.alignmentBaseline = 'middle';
@@ -196,8 +196,8 @@ export const drawText = function (elem, textData) {
 
   for (let [i, line] of lines.entries()) {
     if (
-      textData.textMargin !== undefined &&
-      textData.textMargin === 0 &&
+      textData.wrapPadding !== undefined &&
+      textData.wrapPadding === 0 &&
       _textFontSize !== undefined
     ) {
       dy = i * _textFontSize;
@@ -246,8 +246,8 @@ export const drawText = function (elem, textData) {
     }
     if (
       textData.valign !== undefined &&
-      textData.textMargin !== undefined &&
-      textData.textMargin > 0
+      textData.wrapPadding !== undefined &&
+      textData.wrapPadding > 0
     ) {
       textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
       prevTextHeight = textHeight;
@@ -258,6 +258,153 @@ export const drawText = function (elem, textData) {
 
   return textElems;
 };
+
+/* Function to draw text with margin - wrapping fails */
+
+// export const drawText = function (elem, textData) {
+//   let textElems = [];
+//   let prevTextHeight = 0;
+//   let textHeight = 0;
+//   const lines = textData.text.split(common.lineBreakRegex);
+ 
+//   const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
+ 
+//   // Calculate the y position based on vertical alignment
+//   let yfunc = (lineIndex) => {
+//     let yOffset = 0;
+ 
+//     switch (textData.valign) {
+//       case 'top':
+//       case 'start':
+//         yOffset = textData.y + textData.textMargin;
+//         break;
+//       case 'middle':
+//       case 'center':
+//         yOffset =
+//           textData.y +
+//           (lineIndex === 0
+//             ? (lines.length * _textFontSize) / 2
+//             : prevTextHeight + textData.textMargin / 2);
+//         break;
+//       case 'bottom':
+//       case 'end':
+//         yOffset =
+//           textData.y +
+//           textData.textMargin +
+//           (lineIndex === lines.length - 1
+//             ? (lines.length * _textFontSize)
+//             : prevTextHeight + textData.textMargin);
+//         break;
+//       default:
+//         yOffset = textData.y;
+//         break;
+//     }
+//     return Math.round(yOffset);
+//   };
+ 
+//   // Adjust the x position and alignment based on the anchor
+//   if (
+//     textData.anchor !== undefined &&
+//     textData.textMargin !== undefined &&
+//     textData.width !== undefined
+//   ) {
+//     switch (textData.anchor) {
+//       case 'left':
+//       case 'start':
+//         textData.x = Math.round(textData.x + textData.textMargin);
+//         textData.anchor = 'start';
+//         textData.dominantBaseline = 'middle';
+//         textData.alignmentBaseline = 'middle';
+//         break;
+//       case 'middle':
+//       case 'center':
+//         textData.x = Math.round(textData.x + textData.width / 2);
+//         textData.anchor = 'middle';
+//         textData.dominantBaseline = 'middle';
+//         textData.alignmentBaseline = 'middle';
+//         break;
+//       case 'right':
+//       case 'end':
+//         textData.x = Math.round(
+//           textData.x + textData.width - textData.textMargin
+//         );
+//         textData.anchor = 'end';
+//         textData.dominantBaseline = 'middle';
+//         textData.alignmentBaseline = 'middle';
+//         break;
+//     }
+//   }
+ 
+//   // Draw each line of text
+//   lines.forEach((line, i) => {
+//     let dy = 0;
+//     if (
+//       textData.textMargin !== undefined &&
+//       textData.textMargin === 0 &&
+//       _textFontSize !== undefined
+//     ) {
+//       dy = i * _textFontSize;
+//     }
+ 
+//     const textElem = elem.append('text');
+//     textElem.attr('x', textData.x);
+//     textElem.attr('y', yfunc(i));
+ 
+//     // Set text attributes
+//     if (textData.anchor !== undefined) {
+//       textElem
+//         .attr('text-anchor', textData.anchor)
+//         .attr('dominant-baseline', textData.dominantBaseline)
+//         .attr('alignment-baseline', textData.alignmentBaseline);
+//     }
+//     if (textData.fontFamily !== undefined) {
+//       textElem.style('font-family', textData.fontFamily);
+//     }
+//     if (_textFontSizePx !== undefined) {
+//       textElem.style('font-size', _textFontSizePx);
+//     }
+//     if (textData.fontWeight !== undefined) {
+//       textElem.style('font-weight', textData.fontWeight);
+//     }
+//     if (textData.fill !== undefined) {
+//       textElem.attr('fill', textData.fill);
+//     }
+//     if (textData.class !== undefined) {
+//       textElem.attr('class', textData.class);
+//     }
+//     if (textData.dy !== undefined) {
+//       textElem.attr('dy', textData.dy);
+//     } else if (dy !== 0) {
+//       textElem.attr('dy', dy);
+//     }
+ 
+//     const text = line || ZERO_WIDTH_SPACE;
+//     if (textData.tspan) {
+//       const span = textElem.append('tspan');
+//       span.attr('x', textData.x);
+//       if (textData.fill !== undefined) {
+//         span.attr('fill', textData.fill);
+//       }
+//       span.text(text);
+//     } else {
+//       textElem.text(text);
+//     }
+ 
+//     // Calculate the height after rendering
+//     if (
+//       textData.valign !== undefined &&
+//       textData.textMargin !== undefined &&
+//       textData.textMargin > 0
+//     ) {
+//       textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+//       prevTextHeight = textHeight;
+//     }
+ 
+//     textElems.push(textElem);
+//   });
+ 
+//   return textElems;
+// };
 
 export const drawLabel = function (elem, txtObject) {
   /**

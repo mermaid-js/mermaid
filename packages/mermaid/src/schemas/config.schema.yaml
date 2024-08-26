@@ -1842,7 +1842,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default: 10
       messageMargin:
         $ref: '#/$defs/JourneyDiagramConfig/properties/messageMargin'
-        default: 35
+        default: 10
       messageAlign:
         $ref: '#/$defs/JourneyDiagramConfig/properties/messageAlign'
         default: center
