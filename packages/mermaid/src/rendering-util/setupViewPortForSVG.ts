@@ -22,7 +22,7 @@ export const setupViewPortForSVG = (
   svg.attr('viewBox', viewBox);
 
   // Log the viewBox configuration for debugging
-  log.debug(`viewBox configured: ${viewBox}`);
+  log.debug(`viewBox configured: ${viewBox} with padding: ${padding}`);
 };
 
 const calculateDimensionsWithPadding = (svg: SVG, padding: number) => {

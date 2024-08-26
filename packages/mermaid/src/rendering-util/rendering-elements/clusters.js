@@ -19,7 +19,7 @@ const rect = async (parent, node) => {
   const { themeVariables, handDrawnSeed } = siteConfig;
   const { clusterBkg, clusterBorder } = themeVariables;
 
-  const { labelStyles, nodeStyles } = styles2String(node);
+  const { labelStyles, nodeStyles, borderStyles, backgroundStyles } = styles2String(node);
 
   // Add outer g element
   const shapeSvg = parent
@@ -81,6 +81,9 @@ const rect = async (parent, node) => {
       log.debug('Rough node insert CXC', roughNode);
       return roughNode;
     }, ':first-child');
+    // Should we affect the options instead of doing this?
+    rect.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
+    rect.select('path').attr('style', backgroundStyles.join(';').replace('fill', 'stroke'));
   } else {
     // add the rect
     rect = shapeSvg.insert('rect', ':first-child');

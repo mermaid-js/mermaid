@@ -12,7 +12,6 @@ export interface LayoutAlgorithm {
   render(
     layoutData: LayoutData,
     svg: SVG,
-    element: any,
     helpers: InternalHelpers,
     options?: RenderOptions,
     positions: any
@@ -50,7 +49,7 @@ const registerDefaultLayoutLoaders = () => {
 
 registerDefaultLayoutLoaders();
 
-export const render = async (data4Layout: any, svg: any, element: any, positions?: any) => {
+export const render = async (data4Layout: LayoutData, svg: SVG, positions?: any) => {
   if (!(data4Layout.layoutAlgorithm in layoutAlgorithms)) {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
   }
@@ -87,7 +86,6 @@ export const render = async (data4Layout: any, svg: any, element: any, positions
   return layoutRenderer.render(
     data4Layout,
     svg,
-    element,
     internalHelpers,
     {
       algorithm: layoutDefinition.algorithm,

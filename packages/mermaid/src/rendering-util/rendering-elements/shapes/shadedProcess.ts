@@ -30,13 +30,17 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
   const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
   const l1 = rc.line(x, y, x, y + h, options);
 
-  shapeSvg.insert(() => l1, ':first-child');
-  const rect = shapeSvg.insert(() => roughNode, ':first-child');
+  const rect = shapeSvg.insert(() => l1, ':first-child');
+  rect.insert(() => roughNode, ':first-child');
 
   rect.attr('class', 'basic label-container').attr('style', cssStyles);
 
-  if (nodeStyles) {
-    rect.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    rect.selectAll('path').attr('style', nodeStyles);
+  }
+
+  if (cssStyles && node.look !== 'handDrawn') {
+    rect.selectAll('path').attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, rect);

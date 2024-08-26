@@ -1,4 +1,4 @@
-# Packet Diagram (v11.0.0-beta.1+)
+# Packet Diagram (v11.0.0+)
 
 ## Introduction
 

@@ -36,6 +36,7 @@ async function addHtmlSpan(element, node, width, classes, addBackground = false)
   div.style('white-space', 'nowrap');
   div.style('line-height', '1.5');
   div.style('max-width', width + 'px');
+  div.style('text-align', 'center');
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
   if (addBackground) {
     div.attr('class', 'labelBkg');

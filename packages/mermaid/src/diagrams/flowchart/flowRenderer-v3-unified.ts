@@ -2,7 +2,7 @@ import { select } from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import { getDiagramElements } from '../../rendering-util/insertElementsForSize.js';
+import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
 import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
@@ -35,8 +35,8 @@ export const draw = async function (text: string, id: string, _version: string, 
   log.debug('Before getData: ');
   const data4Layout = diag.db.getData() as LayoutData;
   log.debug('Data: ', data4Layout);
-  // Create the root SVG - the element is the div containing the SVG element
-  const { element, svg } = getDiagramElements(id, securityLevel);
+  // Create the root SVG
+  const svg = getDiagramElement(id, securityLevel);
   const direction = getDirection();
 
   data4Layout.type = diag.type;
@@ -53,8 +53,8 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.diagramId = id;
   log.debug('REF1:', data4Layout);
-  await render(data4Layout, svg, element);
-  const padding = data4Layout.config.flowchart?.padding ?? 8;
+  await render(data4Layout, svg);
+  const padding = data4Layout.config.flowchart?.diagramPadding ?? 8;
   utils.insertTitle(
     svg,
     'flowchartTitleText',

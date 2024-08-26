@@ -1,14 +1,14 @@
 {
-  "name": "@mermaid-chart/layout-elk",
-  "version": "0.0.17",
+  "name": "@mermaid-js/layout-elk",
+  "version": "0.1.2",
   "description": "ELK layout engine for mermaid",
   "module": "dist/mermaid-layout-elk.core.mjs",
-  "types": "dist/packages/mermaid-layout-elk/src/index.d.ts",
+  "types": "dist/layouts.d.ts",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/mermaid-layout-elk.core.mjs",
-      "types": "./dist/packages/mermaid-layout-elk/src/index.d.ts"
+      "types": "./dist/layouts.d.ts"
     },
     "./*": "./*"
   },
@@ -18,9 +18,7 @@
     "elk",
     "mermaid"
   ],
-  "scripts": {
-    "prepublishOnly": "pnpm -w run build"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/mermaid-js/mermaid"
@@ -34,13 +32,14 @@
     "d3": "^7.9.0",
     "elkjs": "^0.9.3"
   },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "mermaid": "workspace:^"
+  },
   "peerDependencies": {
-    "@mermaid-chart/mermaid": "workspace:^"
+    "mermaid": "^11.0.0"
   },
   "files": [
     "dist"
-  ],
-  "devDependencies": {
-    "@types/d3": "^7.4.3"
-  }
+  ]
 }

@@ -37,6 +37,8 @@ export const styles2String = (node: Node) => {
   const { stylesArray } = compileStyles(node);
   const labelStyles: string[] = [];
   const nodeStyles: string[] = [];
+  const borderStyles: string[] = [];
+  const backgroundStyles: string[] = [];
 
   stylesArray.forEach((style) => {
     const key = style[0];
@@ -63,10 +65,22 @@ export const styles2String = (node: Node) => {
       labelStyles.push(style.join(':') + ' !important');
     } else {
       nodeStyles.push(style.join(':') + ' !important');
+      if (key.includes('stroke')) {
+        borderStyles.push(style.join(':') + ' !important');
+      }
+      if (key === 'fill') {
+        backgroundStyles.push(style.join(':') + ' !important');
+      }
     }
   });
 
-  return { labelStyles: labelStyles.join(';'), nodeStyles: nodeStyles.join(';') };
+  return {
+    labelStyles: labelStyles.join(';'),
+    nodeStyles: nodeStyles.join(';'),
+    stylesArray,
+    borderStyles,
+    backgroundStyles,
+  };
 };
 
 // Striped fill like start or fork nodes in state diagrams
@@ -86,6 +100,7 @@ export const userNodeOverrides = (node: Node, options: any) => {
       stroke: stylesMap.get('stroke') || nodeBorder,
       seed: handDrawnSeed,
       strokeWidth: 1.3,
+      fillLineDash: [0, 0],
     },
     options
   );

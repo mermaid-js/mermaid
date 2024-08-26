@@ -13,13 +13,18 @@ function createCylinderPathD(rx: number, ry: number, w: number, h: number) {
             A ${rx} ${ry} 0 0 0 ${-w / 2} ${h / 2}
             L ${w / 2} ${h / 2}
             A ${rx} ${ry} 0 0 0 ${w / 2} ${-h / 2}
+            `;
+}
+
+function createInnerPathD(rx: number, ry: number, w: number, h: number) {
+  return `M${w / 2} ${-h / 2}
             A ${rx} ${ry} 0 0 0 ${w / 2} ${h / 2}`;
 }
 
 export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const h = bbox.height + node.padding;
   const ry = h / 2;
   const rx = ry / (2.5 + h / 50);
@@ -38,17 +43,26 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const cylinderPath = createCylinderPathD(rx, ry, w, h);
   const cylinderNode = rc.path(cylinderPath, options);
 
-  const tiltedCylinder = shapeSvg.insert(() => cylinderNode, ':first-child');
+  const innerPath = createInnerPathD(rx, ry, w, h);
+  const innerNode = rc.path(innerPath, { ...options, fill: 'none' });
+
+  const tiltedCylinder = shapeSvg.insert(() => innerNode, ':first-child');
+  tiltedCylinder.insert(() => cylinderNode, ':first-child');
 
   tiltedCylinder.attr('class', 'basic label-container');
 
   if (cssStyles && node.look !== 'handDrawn') {
-    tiltedCylinder.selectChildren('path').attr('style', cssStyles);
+    tiltedCylinder.selectAll('path').attr('style', cssStyles);
   }
 
   if (nodeStyles && node.look !== 'handDrawn') {
-    tiltedCylinder.selectChildren('path').attr('style', nodeStyles);
+    tiltedCylinder.selectAll('path').attr('style', nodeStyles);
   }
+
+  label.attr(
+    'transform',
+    `translate(${-(bbox.width / 2) - rx - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
+  );
 
   updateNodeBounds(node, tiltedCylinder);
 

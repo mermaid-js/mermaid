@@ -84,8 +84,28 @@
     <div class="flex">
       <pre id="diagram" class="mermaid">
 ---
+  title: hello2
+  config:
+    look: handDrawn
+    layout: elk
+    elk:
+        nodePlacementStrategy: BRANDES_KOEPF
+---
+flowchart LR
+  A[Start] --Some text--> B(Continue)
+  B --> C{Evaluate}
+  C -- One --> D[Option 1]
+  C -- Two --> E[Option 2]
+  C -- Three --> F[fa:fa-car Option 3]
+
+
+
+</pre
+      >
+      <pre id="diagram" class="mermaid2">
+---
 config:
-  look: handDrawn
+  look: handdrawn
   flowchart:
     htmlLabels: false
 ---
