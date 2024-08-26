@@ -266,13 +266,13 @@ export const drawText = function (elem, textData) {
 //   let prevTextHeight = 0;
 //   let textHeight = 0;
 //   const lines = textData.text.split(common.lineBreakRegex);
- 
+
 //   const [_textFontSize, _textFontSizePx] = parseFontSize(textData.fontSize);
- 
+
 //   // Calculate the y position based on vertical alignment
 //   let yfunc = (lineIndex) => {
 //     let yOffset = 0;
- 
+
 //     switch (textData.valign) {
 //       case 'top':
 //       case 'start':
@@ -301,7 +301,7 @@ export const drawText = function (elem, textData) {
 //     }
 //     return Math.round(yOffset);
 //   };
- 
+
 //   // Adjust the x position and alignment based on the anchor
 //   if (
 //     textData.anchor !== undefined &&
@@ -334,7 +334,7 @@ export const drawText = function (elem, textData) {
 //         break;
 //     }
 //   }
- 
+
 //   // Draw each line of text
 //   lines.forEach((line, i) => {
 //     let dy = 0;
@@ -345,11 +345,11 @@ export const drawText = function (elem, textData) {
 //     ) {
 //       dy = i * _textFontSize;
 //     }
- 
+
 //     const textElem = elem.append('text');
 //     textElem.attr('x', textData.x);
 //     textElem.attr('y', yfunc(i));
- 
+
 //     // Set text attributes
 //     if (textData.anchor !== undefined) {
 //       textElem
@@ -377,7 +377,7 @@ export const drawText = function (elem, textData) {
 //     } else if (dy !== 0) {
 //       textElem.attr('dy', dy);
 //     }
- 
+
 //     const text = line || ZERO_WIDTH_SPACE;
 //     if (textData.tspan) {
 //       const span = textElem.append('tspan');
@@ -389,7 +389,7 @@ export const drawText = function (elem, textData) {
 //     } else {
 //       textElem.text(text);
 //     }
- 
+
 //     // Calculate the height after rendering
 //     if (
 //       textData.valign !== undefined &&
@@ -399,10 +399,10 @@ export const drawText = function (elem, textData) {
 //       textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
 //       prevTextHeight = textHeight;
 //     }
- 
+
 //     textElems.push(textElem);
 //   });
- 
+
 //   return textElems;
 // };
 
