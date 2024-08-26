@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/parser",
-  "version": "0.1.0-rc.2",
+  "version": "0.2.0",
   "description": "MermaidJS parser",
   "author": "Yokozuna59",
   "contributors": [
@@ -19,8 +19,7 @@
   "scripts": {
     "clean": "rimraf dist src/language/generated",
     "langium:generate": "langium generate",
-    "langium:watch": "langium generate --watch",
-    "prepublishOnly": "pnpm -w run build"
+    "langium:watch": "langium generate --watch"
   },
   "repository": {
     "type": "git",

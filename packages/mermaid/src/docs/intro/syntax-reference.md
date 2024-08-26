@@ -65,3 +65,110 @@ Allows for the limited reconfiguration of a diagram just before it is rendered. 
 ### [Theme Manipulation](../config/theming.md)
 
 An application of using Directives to change [Themes](../config/theming.md). `Theme` is a value within Mermaid's configuration that dictates the color scheme for diagrams.
+
+### Layout and look
+
+We've restructured how Mermaid renders diagrams, enabling new features like selecting layout and look. **Currently, this is supported for flowcharts and state diagrams**, with plans to extend support to all diagram types.
+
+### Selecting Diagram Looks
+
+Mermaid offers a variety of styles or “looks” for your diagrams, allowing you to tailor the visual appearance to match your specific needs or preferences. Whether you prefer a hand-drawn or classic style, you can easily customize your diagrams.
+
+**Available Looks:**
+
+    •	Hand-Drawn Look: For a more personal, creative touch, the hand-drawn look brings a sketch-like quality to your diagrams. This style is perfect for informal settings or when you want to add a bit of personality to your diagrams.
+    •	Classic Look: If you prefer the traditional Mermaid style, the classic look maintains the original appearance that many users are familiar with. It’s great for consistency across projects or when you want to keep the familiar aesthetic.
+
+**How to Select a Look:**
+
+You can select a look by adding the look parameter in the metadata section of your Mermaid diagram code. Here’s an example:
+
+```mermaid
+---
+config:
+  look: handDrawn
+  theme: neutral
+---
+flowchart LR
+  A[Start] --> B{Decision}
+  B -->|Yes| C[Continue]
+  B -->|No| D[Stop]
+```
+
+#### Selecting Layout Algorithms
+
+In addition to customizing the look of your diagrams, Mermaid Chart now allows you to choose different layout algorithms to better organize and present your diagrams, especially when dealing with more complex structures. The layout algorithm dictates how nodes and edges are arranged on the page.
+
+#### Supported Layout Algorithms:
+
+    •	Dagre (default): This is the classic layout algorithm that has been used in Mermaid for a long time. It provides a good balance of simplicity and visual clarity, making it ideal for most diagrams.
+    •	ELK: For those who need more sophisticated layout capabilities, especially when working with large or intricate diagrams, the ELK (Eclipse Layout Kernel) layout offers advanced options. It provides a more optimized arrangement, potentially reducing overlapping and improving readability. This is not included out the box but needs to be added when integrating mermaid for sites/applications that want to have elk support.
+
+#### How to Select a Layout Algorithm:
+
+You can specify the layout algorithm directly in the metadata section of your Mermaid diagram code. Here’s an example:
+
+```mermaid
+---
+config:
+  layout: elk
+  look: handDrawn
+  theme: dark
+---
+flowchart TB
+  A[Start] --> B{Decision}
+  B -->|Yes| C[Continue]
+  B -->|No| D[Stop]
+```
+
+In this example, the `layout: elk` line configures the diagram to use the ELK layout algorithm, along with the hand drawn look and forest theme.
+
+#### Customizing ELK Layout:
+
+When using the ELK layout, you can further refine the diagram’s configuration, such as how nodes are placed and whether parallel edges should be combined:
+
+- To combine parallel edges, use mergeEdges: true | false.
+- To configure node placement, use nodePlacementStrategy with the following options:
+  - SIMPLE
+  - NETWORK_SIMPLEX
+  - LINEAR_SEGMENTS
+  - BRANDES_KOEPF (default)
+
+**Example configuration:**
+
+```
+---
+config:
+  layout: elk
+  elk:
+    mergeEdges: true
+    nodePlacementStrategy: LINEAR_SEGMENTS
+---
+flowchart LR
+  A[Start] --> B{Choose Path}
+  B -->|Option 1| C[Path 1]
+  B -->|Option 2| D[Path 2]
+
+#### Using Dagre Layout with Classic Look:
+```
+
+Another example:
+
+```
+---
+config:
+  layout: dagre
+  look: classic
+  theme: default
+---
+
+flowchart LR
+A[Start] --> B{Choose Path}
+B -->|Option 1| C[Path 1]
+B -->|Option 2| D[Path 2]
+
+```
+
+These options give you the flexibility to create diagrams that not only look great but are also arranged to best suit your data’s structure and flow.
+
+When integrating Mermaid, you can include look and layout configuration with the initialize call. This is also where you add the loading of elk.

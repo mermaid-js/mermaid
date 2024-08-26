@@ -63,7 +63,14 @@ export const question = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   updateNodeBounds(node, polygon);
 
   node.intersect = function (point) {
-    log.info('Intersect called SPLIT');
+    log.debug(
+      'APA12 Intersect called SPLIT\npoint:',
+      point,
+      '\nnode:\n',
+      node,
+      '\nres:',
+      intersect.polygon(node, points, point)
+    );
     return intersect.polygon(node, points, point);
   };
 
