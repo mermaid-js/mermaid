@@ -28,8 +28,9 @@ export const inv_trapezoid = async (parent: SVGAElement, node: Node): Promise<SV
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
+  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+
   const points = [
     { x: 0, y: 0 },
     { x: w, y: 0 },
