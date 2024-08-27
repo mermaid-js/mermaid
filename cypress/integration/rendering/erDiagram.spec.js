@@ -321,4 +321,37 @@ ORDER ||--|{ LINE-ITEM : contains
       { logLevel: 1 }
     );
   });
+
+  it('should render relationship labels with line breaks', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+      p[Person] {
+          string firstName
+          string lastName
+      }
+      a["Customer Account"] {
+          string email
+      }
+
+      b["Customer Account Secondary"] {
+        string email
+      }
+      
+      c["Customer Account Tertiary"] {
+        string email
+      }
+      
+      d["Customer Account Nth"] {
+        string email
+      }
+
+      p ||--o| a : "has<br />one"
+      p ||--o| b : "has<br />one<br />two"
+      p ||--o| c : "has<br />one<br/>two<br />three"
+      p ||--o| d : "has<br />one<br />two<br/>three<br />...<br/>Nth"
+      `,
+      { logLevel: 1 }
+    );
+  });
 });

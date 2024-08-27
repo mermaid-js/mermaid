@@ -99,6 +99,16 @@ export interface MermaidConfig {
      *
      */
     nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
+    /**
+     * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
+     *
+     */
+    cycleBreakingStrategy?:
+      | 'GREEDY'
+      | 'DEPTH_FIRST'
+      | 'INTERACTIVE'
+      | 'MODEL_ORDER'
+      | 'GREEDY_MODEL_ORDER';
   };
   darkMode?: boolean;
   htmlLabels?: boolean;
