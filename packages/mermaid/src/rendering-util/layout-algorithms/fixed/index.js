@@ -241,7 +241,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
  * Render the graph
  * ###############################################################
  */
-export const render = async (data4Layout, svg, positions) => {
+export const render = async (data4Layout, svg, _internalHelpers, _algorithm, positions) => {
   const element = svg.select('g');
   // Org
   insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
