@@ -15,8 +15,8 @@ export const rect_left_inv_arrow = async (
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+  const w = Math.max(bbox.width + (node.padding ?? 0), node?.width ?? 0);
+  const h = Math.max(bbox.height + (node.padding ?? 0), node?.height ?? 0);
 
   const x = -w / 2;
   const y = -h / 2;
@@ -45,17 +45,19 @@ export const rect_left_inv_arrow = async (
 
   const polygon = shapeSvg.insert(() => roughNode, ':first-child');
 
-  if (cssStyles) {
-    polygon.attr('style', cssStyles);
+  polygon.attr('class', 'basic label-container');
+
+  if (cssStyles && node.look !== 'handDrawn') {
+    polygon.selectAll('path').attr('style', cssStyles);
   }
-  if (nodeStyles) {
-    polygon.attr('style', nodeStyles);
+  if (nodeStyles && node.look !== 'handDrawn') {
+    polygon.selectAll('path').attr('style', nodeStyles);
   }
 
   polygon.attr('transform', `translate(${-notch / 2},0)`);
   label.attr(
     'transform',
-    `translate(${-w / 2 + -notch / 2 + (node.padding ?? 0) / 2},${-h / 2 + (node.padding ?? 0) / 2})`
+    `translate(${-w / 2 + -notch / 2 + (node.padding ?? 0) / 2 - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (node.padding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
   updateNodeBounds(node, polygon);
 
