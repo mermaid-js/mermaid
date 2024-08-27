@@ -12,12 +12,12 @@ export const lean_right = async (parent: SVGAElement, node: Node): Promise<SVGAE
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
 
-  const labelPaddingX = node.look === 'neo' ? node.padding * 3 : node.padding;
-  const labelPaddingY = node.look === 'neo' ? node.padding * 1.5 : node.padding;
-
-  const w = Math.max(bbox.width + (labelPaddingY ?? 0), node?.width ?? 0);
-  const h = Math.max(bbox.height + (labelPaddingX ?? 0), node?.height ?? 0);
+  const w = Math.max(bbox.width + labelPaddingY, node?.width ?? 0);
+  const h = Math.max(bbox.height + labelPaddingX, node?.height ?? 0);
   const points = [
     { x: (-3 * h) / 6, y: 0 },
     { x: w, y: 0 },

@@ -58,8 +58,9 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const labelPaddingX = node.look === 'neo' ? node.padding * 2 : node.padding;
-  const labelPaddingY = node.look === 'neo' ? node.padding * 1 : node.padding;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
   const w = bbox.width + labelPaddingY;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);

@@ -27,8 +27,9 @@ export const trapezoid = async (parent: SVGAElement, node: Node): Promise<SVGAEl
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const labelPaddingX = node.look === 'neo' ? node.padding * 3 : node.padding;
-  const labelPaddingY = node.look === 'neo' ? node.padding * 1.5 : node.padding;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
   const w = bbox.width + labelPaddingY;
   const h = bbox.height + labelPaddingX;
   const points = [

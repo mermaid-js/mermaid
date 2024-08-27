@@ -67,7 +67,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/diagram-api/types.ts:130](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L130)
+[packages/mermaid/src/diagram-api/types.ts:153](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L153)
 
 ---
 
@@ -77,7 +77,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/diagram-api/types.ts:132](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L132)
+[packages/mermaid/src/diagram-api/types.ts:155](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L155)
 
 ## Variables
 
@@ -87,4 +87,4 @@
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:440](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L440)
+[packages/mermaid/src/mermaid.ts:450](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L450)

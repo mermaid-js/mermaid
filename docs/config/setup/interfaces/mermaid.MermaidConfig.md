@@ -284,7 +284,7 @@ This option decides the amount of logging to be used by mermaid.
 
 ### look
 
-• `Optional` **look**: `"classic"` | `"handDrawn"`
+• `Optional` **look**: `"neo"` | `"classic"` | `"handDrawn"`
 
 Defines which main look to use for the diagram.
 
@@ -461,7 +461,7 @@ This is useful when you want to control how to handle syntax errors in your appl
 
 ### theme
 
-• `Optional` **theme**: `"default"` | `"base"` | `"dark"` | `"forest"` | `"neutral"` | `"null"`
+• `Optional` **theme**: `"default"` | `"base"` | `"dark"` | `"forest"` | `"neutral"` | `"neo"` | `"neo-dark"` | `"mc"` | `"null"`
 
 Theme, the CSS style sheet.
 You may also use `themeCSS` to override this value.
