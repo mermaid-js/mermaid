@@ -34,10 +34,10 @@
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
-    "mermaid": "workspace:^"
+    "@mermaid-chart/mermaid": "workspace:^"
   },
   "peerDependencies": {
-    "mermaid": "^11.0.0"
+    "@mermaid-chart/mermaid": "^11.0.0"
   },
   "files": [
     "dist"
