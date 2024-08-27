@@ -207,9 +207,11 @@ To ensure the robustness of the flowchart shapes, there are implementation of co
 To run the Cypress tests, follow these steps:
 
 1. Ensure you have all dependencies installed by running:
+
    ```bash
    npm install
    ```
+
 2. Start the Cypress test runner:
 
    ```bash
