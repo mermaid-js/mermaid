@@ -121,22 +121,22 @@
         S --> T: angrepp
         T --> U: Apa
         T --> V: Varg
+      C
+      D
+      E
 
-        B
-        C
-        D
               `;
-      code = `
-      stateDiagram
-       A0
-       state subbe {
-        subState
-        B
-       }
-       C
-       D
-       E
-              `;
+      // code = `
+      // stateDiagram
+      //  A0
+      //  state subbe {
+      //   subState
+      //   B
+      //  }
+      //  C
+      //  D
+      //  E
+      //         `;
 
       let positions = {
         nodes: {
@@ -182,10 +182,10 @@
         },
       };
 
-      positions = {
-        nodes: {},
-        edges: {},
-      };
+      // positions = {
+      //   nodes: {},
+      //   edges: {},
+      // };
 
       const { svg } = await mermaid.render('the-id-of-the-svg', code, undefined, positions);
       // if (window?.calcIntersections) {

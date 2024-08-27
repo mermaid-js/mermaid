@@ -123,10 +123,10 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
       for (const child of children) {
         const width = child.width || 50;
         const height = child.height || 50;
-        // log.info('STO node child 1', child.id, width, height);
+        // log.info('BBB node child 1', child.id, width, height);
         calculatePosition(child, positions, childDB);
         // log.info(
-        //   'STO node child 2',
+        //   'BBB node child 2',
         //   child.id,
         //   positions.nodes[child.id].x,
         //   positions.nodes[child.id].y
@@ -136,16 +136,20 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
         minYP = Math.min(positions.nodes[child.id].y - height / 2, minYP);
         maxYP = Math.max(positions.nodes[child.id].y + height / 2, maxYP);
       }
-      positions.nodes[node.id] = {
-        x: minX + (maxX - minX) / 2 - 5,
-        y: maxY + 15,
-        width: maxX - minX + 20,
-        height: maxYP - minYP + 30,
-      };
+      if (!positions.nodes[node.id]) {
+        positions.nodes[node.id] = {
+          x: minX + (maxX - minX) / 2,
+          y: maxY + 15,
+          width: maxX - minX + 20,
+          height: maxYP - minYP + 30,
+        };
+      }
     } else {
-      // Simple case
-      positions.nodes[node.id] = { x: xPos, y: maxY + 20 };
-      xPos = xPos + 75;
+      if (!positions.nodes[node.id]) {
+        // Simple case
+        positions.nodes[node.id] = { x: xPos, y: maxY + 20 };
+        xPos = xPos + 75;
+      }
     }
   }
   data4Layout.nodes.map(function (node) {
