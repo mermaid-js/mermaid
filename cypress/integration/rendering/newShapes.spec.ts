@@ -40,7 +40,28 @@ const newShapesSet5 = [
   'card',
   'shadedProcess',
 ] as const;
-const newShapesSet6 = ['curlyBraces'];
+
+const newShapesSet6 = ['roundedRect', 'squareRect', 'stateStart', 'stateEnd', 'labelRect'] as const;
+
+const newShapesSet7 = ['forkJoin', 'choice', 'note', 'stadium'] as const;
+
+const newShapesSet8 = [
+  'question',
+  'hexagon',
+  'curlyBraces',
+  'multiRect',
+  'waveEdgedRectangle',
+] as const;
+
+const newShapesSet9 = ['anchor', 'lean_right', 'lean_left', 'trapezoid', 'inv_trapezoid'] as const;
+
+const newShapesSet10 = [
+  'subroutine',
+  'cylinder',
+  'circle',
+  'doublecircle',
+  'rect_left_inv_arrow',
+] as const;
 
 // Aggregate all shape sets into a single array
 const newShapesSets = [
@@ -50,6 +71,10 @@ const newShapesSets = [
   newShapesSet4,
   newShapesSet5,
   newShapesSet6,
+  newShapesSet7,
+  newShapesSet8,
+  newShapesSet9,
+  newShapesSet10,
 ] as const;
 
 looks.forEach((look) => {
@@ -67,7 +92,7 @@ looks.forEach((look) => {
         it(`with label`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           newShapesSet.forEach((newShape, index) => {
-            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'This is a label' }@\n`;
+            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'This is a label for ${newShape} shape' }@\n`;
           });
           imgSnapshotTest(flowchartCode, { look });
         });
@@ -75,7 +100,7 @@ looks.forEach((look) => {
         it(`connect all shapes with each other`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           newShapesSet.forEach((newShape, index) => {
-            flowchartCode += `  n${index}${index}@{ shape: ${newShape}, label: 'This is a label' }@\n`;
+            flowchartCode += `  n${index}${index}@{ shape: ${newShape}, label: 'This is a label for ${newShape} shape' }@\n`;
           });
           for (let i = 0; i < newShapesSet.length; i++) {
             for (let j = i + 1; j < newShapesSet.length; j++) {
@@ -88,7 +113,7 @@ looks.forEach((look) => {
         it(`with very long label`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           newShapesSet.forEach((newShape, index) => {
-            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'This is a very very very very very long long long label' }@\n`;
+            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'This is a very very very very very long long long label for ${newShape} shape' }@\n`;
           });
           imgSnapshotTest(flowchartCode, { look });
         });
@@ -96,7 +121,7 @@ looks.forEach((look) => {
         it(`with markdown htmlLabels:true`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           newShapesSet.forEach((newShape, index) => {
-            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'This is **bold** </br>and <strong>strong</strong>' }@\n`;
+            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'This is **bold** </br>and <strong>strong</strong> for ${newShape} shape' }@\n`;
           });
           imgSnapshotTest(flowchartCode, { look });
         });
@@ -104,7 +129,7 @@ looks.forEach((look) => {
         it(`with markdown htmlLabels:false`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           newShapesSet.forEach((newShape, index) => {
-            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'This is **bold** </br>and <strong>strong</strong>' }@\n`;
+            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'This is **bold** </br>and <strong>strong</strong> for ${newShape} shape' }@\n`;
           });
           imgSnapshotTest(flowchartCode, {
             look,
@@ -116,7 +141,7 @@ looks.forEach((look) => {
         it(`with styles`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           newShapesSet.forEach((newShape, index) => {
-            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'new shape' }@\n`;
+            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'new ${newShape} shape' }@\n`;
             flowchartCode += `  style n${index}${index} fill:#f9f,stroke:#333,stroke-width:4px \n`;
           });
           imgSnapshotTest(flowchartCode, { look });
@@ -126,7 +151,7 @@ looks.forEach((look) => {
           let flowchartCode = `flowchart ${direction}\n`;
           flowchartCode += `  classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n`;
           newShapesSet.forEach((newShape, index) => {
-            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'new shape' }@\n`;
+            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape}, label: 'new ${newShape} shape' }@\n`;
             flowchartCode += `  n${index}${index}:::customClazz\n`;
           });
           imgSnapshotTest(flowchartCode, { look });
