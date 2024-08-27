@@ -26,8 +26,8 @@ import type {
   RawTask,
   GanttState,
   TaskInfo,
-} from './ganttTypes.js';
-import { tagTypes } from './ganttTypes.js';
+} from './gantt.type.js';
+import { tagTypes } from './gantt.type.js';
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
@@ -138,7 +138,7 @@ export const getExcludes = function (): string[] {
   return state.records.excludes;
 };
 
-export const getLinks = function (): Map<string, URL> {
+export const getLinks = function (): Map<string, string> {
   return state.records.links;
 };
 
@@ -203,7 +203,7 @@ export const setWeekend = function (startDay: Weekend) {
 };
 
 const checkTaskDates = function (
-  task: Task | TaskInfo,
+  task: Task | RawTask,
   dateFormat: string,
   excludes: string[],
   includes: string[]
@@ -379,7 +379,7 @@ const parseId = function (idStr: string | undefined): string {
   return idStr;
 };
 
-const compileData = function (prevTask: any, dataStr: string) {
+const compileData = function (prevTask: Task, dataStr: string) {
   let ds;
 
   if (dataStr.substr(0, 1) === ':') {
@@ -390,7 +390,7 @@ const compileData = function (prevTask: any, dataStr: string) {
 
   const data = ds.split(',');
 
-  const task: TaskInfo = {
+  const task: Task = {
     renderEndTime: null,
     classes: [],
     id: '',
@@ -400,11 +400,11 @@ const compileData = function (prevTask: any, dataStr: string) {
     task: '',
     startTime: null,
     endTime: null,
-    prevTaskId: null,
     active: false,
     done: false,
     crit: false,
     milestone: false,
+    links: [],
   };
 
   // Get tags like active, done, crit and milestone
@@ -461,7 +461,28 @@ const parseData = function (prevTaskId: string, dataStr: string) {
 
   const data = ds.split(',');
 
-  const task = {};
+  const task: TaskInfo = {
+    id: '',
+    section: state.records.currentSection,
+    type: state.records.currentSection,
+    description: '',
+    task: '',
+    renderEndTime: null,
+    classes: [],
+    manualEndTime: false,
+    active: false,
+    done: false,
+    crit: false,
+    milestone: false,
+    prevTaskId: null,
+    startTime: {
+      type: 'prevTaskEnd',
+      id: prevTaskId,
+    },
+    endTime: {
+      data: '',
+    },
+  };
 
   // Get tags like active, done, crit and milestone
   getTaskTags(data, task, state.records.tags);
@@ -472,40 +493,37 @@ const parseData = function (prevTaskId: string, dataStr: string) {
 
   switch (data.length) {
     case 1:
-      // @ts-ignore TODO: Fix type
-      task.id = parseId();
-      // @ts-ignore TODO: Fix type
+      task.id = parseId(undefined);
+
       task.startTime = {
         type: 'prevTaskEnd',
         id: prevTaskId,
       };
-      // @ts-ignore TODO: Fix type
+
       task.endTime = {
         data: data[0],
       };
       break;
     case 2:
-      // @ts-ignore TODO: Fix type
-      task.id = parseId();
-      // @ts-ignore TODO: Fix type
+      task.id = parseId(undefined);
+
       task.startTime = {
         type: 'getStartDate',
         startData: data[0],
       };
-      // @ts-ignore TODO: Fix type
+
       task.endTime = {
         data: data[1],
       };
       break;
     case 3:
-      // @ts-ignore TODO: Fix type
       task.id = parseId(data[0]);
-      // @ts-ignore TODO: Fix type
+
       task.startTime = {
         type: 'getStartDate',
         startData: data[1],
       };
-      // @ts-ignore TODO: Fix type
+
       task.endTime = {
         data: data[2],
       };
@@ -537,22 +555,21 @@ export const addTask = function (descr: string, data: string) {
     description: descr,
   };
 
-  // TODO: Need to make sure that lastTaskID is always set before reaching this point
   const taskInfo = parseData(state.records.lastTaskID!, data);
-  // @ts-ignore TODO: Fix type
+
   rawTask.raw.startTime = taskInfo.startTime;
-  // @ts-ignore TODO: Fix type
+
   rawTask.raw.endTime = taskInfo.endTime;
-  // @ts-ignore TODO: Fix type
+
   rawTask.id = taskInfo.id;
   rawTask.prevTaskId = state.records.lastTaskID;
-  // @ts-ignore TODO: Fix type
+
   rawTask.active = taskInfo.active;
-  // @ts-ignore TODO: Fix type
+
   rawTask.done = taskInfo.done;
-  // @ts-ignore TODO: Fix type
+
   rawTask.crit = taskInfo.crit;
-  // @ts-ignore TODO: Fix type
+
   rawTask.milestone = taskInfo.milestone;
   rawTask.order = state.records.lastOrder;
 
@@ -587,7 +604,7 @@ export const addTaskOrg = function (descr: string, data: string) {
     endTime: null,
     links: [],
   };
-  const taskInfo = compileData(state.records.lastTask, data);
+  const taskInfo = compileData(state.records.lastTask!, data);
 
   newTask.startTime = taskInfo.startTime;
   newTask.endTime = taskInfo.endTime;
@@ -601,55 +618,46 @@ export const addTaskOrg = function (descr: string, data: string) {
 };
 
 const compileTasks = function () {
-  // @ts-ignore TODO: Fix type
-  const compileTask = function (pos) {
+  const compileTask = function (pos: number) {
     const task = state.records.rawTasks[pos];
-    let startTime = '';
+    let startTime: Date | null | Dayjs = null;
     switch (state.records.rawTasks[pos].raw.startTime.type) {
       case 'prevTaskEnd': {
-        // @ts-ignore TODO: Fix type
-        const prevTask = findTaskById(task.prevTaskId);
-        // @ts-ignore TODO: Fix type
+        const prevTask = findTaskById(task.prevTaskId!);
+
         task.startTime = prevTask.endTime;
         break;
       }
       case 'getStartDate':
-        // @ts-ignore TODO: Fix type
         startTime = getStartDate(
           undefined,
           state.records.dateFormat,
-          // @ts-ignore TODO: Fix type
-          state.records.rawTasks[pos].raw.startTime.startData
+
+          state.records.rawTasks[pos].raw.startTime.startData!
         );
         if (startTime) {
-          // @ts-ignore TODO: Fix type
           state.records.rawTasks[pos].startTime = startTime;
         }
         break;
     }
-    // @ts-ignore TODO: Fix type
+
     if (state.records.rawTasks[pos].startTime) {
-      // @ts-ignore TODO: Fix type
       state.records.rawTasks[pos].endTime = getEndDate(
-        // @ts-ignore TODO: Fix type
-        state.records.rawTasks[pos].startTime,
+        state.records.rawTasks[pos].startTime!,
         state.records.dateFormat,
-        // @ts-ignore TODO: Fix type
         state.records.rawTasks[pos].raw.endTime.data,
         state.records.inclusiveEndDates
       );
-      // @ts-ignore TODO: Fix type
+
       if (state.records.rawTasks[pos].endTime) {
         state.records.rawTasks[pos].processed = true;
         state.records.rawTasks[pos].manualEndTime = dayjs(
-          // @ts-ignore TODO: Fix type
           state.records.rawTasks[pos].raw.endTime.data,
           'YYYY-MM-DD',
           true
         ).isValid();
-        // @ts-ignore TODO: Fix type
+
         checkTaskDates(
-          // @ts-ignore TODO: Fix type
           state.records.rawTasks[pos],
           state.records.dateFormat,
           state.records.excludes,
@@ -670,12 +678,12 @@ const compileTasks = function () {
   return allProcessed;
 };
 
-export const setLink = function (ids: any, _linkStr: any) {
+export const setLink = function (ids: string, _linkStr: string) {
   let linkStr = _linkStr;
   if (getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
-  // @ts-ignore TODO: Fix type
+
   ids.split(',').forEach(function (id) {
     const rawTask = findTaskById(id);
     if (rawTask !== undefined) {
@@ -688,8 +696,7 @@ export const setLink = function (ids: any, _linkStr: any) {
   setClass(ids, 'clickable');
 };
 
-export const setClass = function (ids: any, className: any) {
-  // @ts-ignore TODO: Fix type
+export const setClass = function (ids: string, className: string) {
   ids.split(',').forEach(function (id) {
     const rawTask = findTaskById(id);
     if (rawTask !== undefined) {
@@ -697,8 +704,8 @@ export const setClass = function (ids: any, className: any) {
     }
   });
 };
-// @ts-ignore TODO: Fix type
-const setClickFun = function (id, functionName, functionArgs) {
+
+const setClickFun = function (id: string, functionName: string, functionArgs: string) {
   if (getConfig().securityLevel !== 'loose') {
     return;
   }
@@ -735,9 +742,7 @@ const setClickFun = function (id, functionName, functionArgs) {
   }
 };
 
-// @ts-ignore TODO: Fix type
-const pushFun = function (id, callbackFunction) {
-  // @ts-ignore TODO: Fix type
+const pushFun = function (id: string, callbackFunction: any) {
   state.records.funs.push(
     function () {
       // const elem = d3.select(element).select(`[id="${id}"]`)
@@ -760,18 +765,14 @@ const pushFun = function (id, callbackFunction) {
   );
 };
 
-// @ts-ignore TODO: Fix type
-export const setClickEvent = function (ids, functionName, functionArgs) {
-  // @ts-ignore TODO: Fix type
+export const setClickEvent = function (ids: string, functionName: string, functionArgs: string) {
   ids.split(',').forEach(function (id) {
     setClickFun(id, functionName, functionArgs);
   });
   setClass(ids, 'clickable');
 };
 
-// @ts-ignore TODO: Fix type
-export const bindFunctions = function (element) {
-  // @ts-ignore TODO: Fix type
+export const bindFunctions = function (element: any) {
   state.records.funs.forEach(function (fun) {
     fun(element);
   });

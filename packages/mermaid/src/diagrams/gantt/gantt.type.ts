@@ -7,12 +7,12 @@ export interface GanttState {
   todayMarker: string;
   includes: string[];
   excludes: string[];
-  links: Map<string, URL>;
+  links: Map<string, string>;
   sections: string[];
   tasks: Task[];
   currentSection: string;
   displayMode: string;
-  tags: ValidTag[];
+  tags: typeof tagTypes;
   funs: CallableFunction[];
   inclusiveEndDates: boolean;
   topAxis: boolean;
@@ -67,12 +67,14 @@ export interface RawTask extends BaseTask {
   processed: boolean;
   prevTaskId: string | null;
   raw: RawData;
+  startTime: Date | Dayjs | null;
+  endTime: Date | Dayjs | null;
 }
 
 export interface TaskInfo extends BaseTask {
   prevTaskId: string | null;
-  startTime: Date | Dayjs | null;
-  endTime: Date | Dayjs | null;
+  startTime: StartTime;
+  endTime: EndTime;
 }
 
 interface StartTime {
@@ -82,7 +84,7 @@ interface StartTime {
 }
 
 interface EndTime {
-  endData: string;
+  data: string;
 }
 
 export interface RawData {
@@ -90,9 +92,8 @@ export interface RawData {
   endTime: EndTime;
 }
 
-export type ValidTag = 'active' | 'done' | 'crit' | 'milestone';
-
-export const tagTypes: ValidTag[] = ['active', 'done', 'crit', 'milestone'];
+export const tagTypes = ['active', 'done', 'crit', 'milestone'] as const;
+export type ValidTag = (typeof tagTypes)[number];
 
 export interface TaskTime {
   startTime: Date | string;
