@@ -80,6 +80,8 @@ export const addClass = function (_id: string) {
     id: name,
     type: type,
     label: name,
+    text: `<strong>${name}${type ? `&lt;${type}&gt;` : ''}</strong>`,
+    shape: 'classBox',
     cssClasses: [],
     methods: [],
     members: [],
@@ -472,6 +474,11 @@ export const setCssStyle = function (id: string, styles: string[]) {
   }
 };
 
+export const getData = () => {
+  const config = getConfig();
+  return { nodes: classes, edges: relations, other: {}, config, direction: getDirection() };
+};
+
 export default {
   setAccTitle,
   getAccTitle,
@@ -509,4 +516,5 @@ export default {
   getNamespace,
   getNamespaces,
   setCssStyle,
+  getData,
 };

@@ -5,6 +5,7 @@ export interface ClassNode {
   id: string;
   type: string;
   label: string;
+  text: string;
   cssClasses: string[];
   methods: ClassMember[];
   members: ClassMember[];
@@ -30,6 +31,7 @@ export class ClassMember {
   cssStyle!: string;
   memberType!: 'method' | 'attribute';
   visibility!: Visibility;
+  text: string;
   /**
    * denote if static or to determine which css class to apply to the node
    * @defaultValue ''
@@ -50,6 +52,7 @@ export class ClassMember {
     this.memberType = memberType;
     this.visibility = '';
     this.classifier = '';
+    this.text = '';
     const sanitizedInput = sanitizeText(input, getConfig());
     this.parseMember(sanitizedInput);
   }
@@ -118,6 +121,21 @@ export class ClassMember {
     }
 
     this.classifier = potentialClassifier;
+    this.text = `${this.visibility}${this.id}${this.memberType === 'method' ? `(${this.parameters})${this.returnType ? ' : ' + this.returnType : ''}` : ''}`; //.replaceAll('~', '<');
+    const combinedText = `${this.visibility}${this.id}${this.memberType === 'method' ? `(${this.parameters})${this.returnType ? ' : ' + this.returnType : ''}` : ''}`;
+    if (combinedText.includes('~')) {
+      let count = (combinedText.match(/~/g) ?? []).length;
+
+      // Replace all '~' with '>'
+      let replacedRaw = combinedText.replaceAll('~', '&gt;');
+
+      // Replace the first half of '>' with '<'
+      while (count > 0) {
+        replacedRaw = replacedRaw.replace('&gt;', '&lt;');
+        count -= 2; // Each iteration replaces one '>' with '<', so reduce count by 2
+      }
+      this.text = replacedRaw;
+    }
   }
 
   parseClassifier() {

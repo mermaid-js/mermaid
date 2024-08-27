@@ -1,0 +1,32 @@
+<html>
+  <body>
+    <pre id="diagram" class="mermaid">
+      classDiagram
+      class Square~Shape~{
+        int id
+        List~int~ position
+        setPoints(List~int~ points)
+        getPoints() List~int~
+      }
+
+Square : -List~string~ messages
+Square : +setMessages(List~string~ messages)
+Square : +getMessages() List~string~
+Square : +getDistanceMatrix() List~List~int~~
+    </pre>
+
+    <div id="d2" class="mermaid">classDiagram class Duck{ +String beakColor +swim() +quack() }</div>
+
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize();
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+</html>
