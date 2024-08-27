@@ -15,6 +15,9 @@ const getStyles = (
     errorTextColor: string;
     lineColor: string;
     useGradient: boolean;
+    dropShadow: string;
+    primaryBorderColor: string;
+    compositeTitleBackground: string;
   } & FlowChartStyleOptions,
   svgId: string
 ) => {

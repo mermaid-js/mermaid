@@ -105,6 +105,26 @@ export interface ExternalDiagramDefinition {
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
 
+/* Types for the positions used in the free layout engine */
+interface Point {
+  x: number;
+  y: number;
+}
+
+interface NodePosition extends Point {
+  width?: number;
+  height?: number;
+}
+
+export interface EdgePoints {
+  points: Point[];
+}
+
+export interface Positions {
+  nodes: Record<string, NodePosition>;
+  edges: Record<string, EdgePoints>;
+}
+
 /**
  * Type for function draws diagram in the tag with id: id based on the graph definition in text.
  *

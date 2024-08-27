@@ -13,7 +13,7 @@ export const rect_left_inv_arrow = async (
 ): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : node.padding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : node.padding;

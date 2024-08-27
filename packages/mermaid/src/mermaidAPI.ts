@@ -20,7 +20,7 @@ import type { MermaidConfig } from './config.type.js';
 import { evaluate } from './diagrams/common/common.js';
 import isEmpty from 'lodash-es/isEmpty.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
+import type { DiagramMetadata, DiagramStyleClassDef, Positions } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
@@ -307,7 +307,7 @@ const render = async function (
   id: string,
   text: string,
   svgContainingElement?: Element,
-  positions: any
+  positions?: Positions
 ): Promise<RenderResult> {
   addDiagrams();
 

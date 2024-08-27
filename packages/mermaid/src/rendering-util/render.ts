@@ -1,4 +1,4 @@
-import type { SVG } from '$root/diagram-api/types.js';
+import type { Positions, SVG } from '$root/diagram-api/types.js';
 import type { InternalHelpers } from '$root/internals.js';
 import { internalHelpers } from '$root/internals.js';
 import { log } from '$root/logger.js';
@@ -14,7 +14,7 @@ export interface LayoutAlgorithm {
     svg: SVG,
     helpers: InternalHelpers,
     options?: RenderOptions,
-    positions: any
+    positions?: Positions
   ): Promise<void>;
 }
 
