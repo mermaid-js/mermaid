@@ -1,62 +1,50 @@
-import { updateNodeBounds } from './util.js';
+import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
-import { solidStateFill } from './handDrawnShapeStyles.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 
-export const forkJoin = (parent: SVG, node: Node, dir: string) => {
-  const { themeVariables } = getConfig();
-  const { lineColor } = themeVariables;
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', 'node default')
-    .attr('id', node.domId || node.id);
+export const forkJoin = async (parent: SVG, node: Node, dir: string) => {
+  const { nodeStyles } = styles2String(node);
+  node.label = '';
+  const { shapeSvg } = await labelHelper(parent, node, getNodeClasses(node));
 
-  let width = 70;
-  let height = 10;
+  const { cssStyles } = node;
+  let width = Math.max(70, node?.width ?? 0);
+  let height = Math.max(10, node?.height ?? 0);
 
   if (dir === 'LR') {
-    width = 10;
-    height = 70;
+    width = Math.max(10, node?.width ?? 0);
+    height = Math.max(70, node?.height ?? 0);
   }
+
   const x = (-1 * width) / 2;
   const y = (-1 * height) / 2;
 
-  let shape;
-  if (node.look === 'handDrawn') {
-    // @ts-ignore TODO: Fix rough typings
-    const rc = rough.svg(shapeSvg);
-    const roughNode = rc.rectangle(x, y, width, height, solidStateFill(lineColor));
-    shape = shapeSvg.insert(() => roughNode);
-  } else {
-    shape = shapeSvg
-      .append('rect')
-      .attr('x', x)
-      .attr('y', y)
-      .attr('width', width)
-      .attr('height', height)
-      .attr('class', 'fork-join');
+  // @ts-ignore TODO: Fix rough typings
+  const rc = rough.svg(shapeSvg);
+  const options = userNodeOverrides(node, {});
+
+  if (node.look !== 'handDrawn') {
+    options.roughness = 0;
+    options.fillStyle = 'solid';
+  }
+
+  const roughNode = rc.rectangle(x, y, width, height, options);
+
+  const shape = shapeSvg.insert(() => roughNode, ':first-child');
+
+  if (cssStyles && node.look !== 'handDrawn') {
+    shape.selectAll('path').attr('style', cssStyles);
+  }
+
+  if (nodeStyles && node.look !== 'handDrawn') {
+    shape.selectAll('path').attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, shape);
-  let nodeHeight = 0;
-  let nodeWidth = 0;
-  let nodePadding = 10;
-  if (node.height) {
-    nodeHeight = node.height;
-  }
-  if (node.width) {
-    nodeWidth = node.width;
-  }
 
-  if (node.padding) {
-    nodePadding = node.padding;
-  }
-
-  node.height = nodeHeight + nodePadding / 2;
-  node.width = nodeWidth + nodePadding / 2;
   node.intersect = function (point) {
     return intersect.rect(node, point);
   };
