@@ -123,6 +123,17 @@ properties:
           - LINEAR_SEGMENTS
           - BRANDES_KOEPF
         default: BRANDES_KOEPF
+      cycleBreakingStrategy:
+        description: |
+          This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
+        type: string
+        enum:
+          - GREEDY
+          - DEPTH_FIRST
+          - INTERACTIVE
+          - MODEL_ORDER
+          - GREEDY_MODEL_ORDER
+        default: GREEDY_MODEL_ORDER
   darkMode:
     type: boolean
     default: false

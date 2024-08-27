@@ -1,4 +1,4 @@
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import {
@@ -6,18 +6,6 @@ import {
   userNodeOverrides,
 } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import { insertPolygonShape } from './insertPolygonShape.js';
-
-export const createPolygonPathD = (x: number, y: number, width: number, height: number): string => {
-  return [
-    `M${x - height / 2},${y}`,
-    `L${x + width},${y}`,
-    `L${x + width},${y - height}`,
-    `L${x - height / 2},${y - height}`,
-    `L${x},${y - height / 2}`,
-    'Z',
-  ].join(' ');
-};
 
 export const rect_left_inv_arrow = async (
   parent: SVGAElement,
@@ -28,42 +16,53 @@ export const rect_left_inv_arrow = async (
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const labelPaddingX = node.look === 'neo' ? node.padding * 3 : node.padding;
   const labelPaddingY = node.look === 'neo' ? node.padding * 1.5 : node.padding;
-  const w = bbox.width + labelPaddingY;
-  const h = bbox.height + labelPaddingX;
+
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const w = Math.max(bbox.width + (labelPaddingY ?? 0), node?.width ?? 0);
+  const h = Math.max(bbox.height + (labelPaddingX ?? 0), node?.height ?? 0);
+
+  const x = -w / 2;
+  const y = -h / 2;
+  const notch = y / 2;
+
   const points = [
-    { x: -h / 2, y: 0 },
-    { x: w, y: 0 },
-    { x: w, y: -h },
-    { x: -h / 2, y: -h },
-    { x: 0, y: -h / 2 },
+    { x: x + notch, y },
+    { x: x, y: 0 },
+    { x: x + notch, y: -y },
+    { x: -x, y: -y },
+    { x: -x, y },
   ];
 
-  let polygon;
   const { cssStyles } = node;
+  // @ts-ignore - rough is not typed
+  const rc = rough.svg(shapeSvg);
+  const options = userNodeOverrides(node, {});
 
-  if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
-    const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {});
-    const pathData = createPolygonPathD(0, 0, w, h);
-    const roughNode = rc.path(pathData, options);
-
-    polygon = shapeSvg
-      .insert(() => roughNode, ':first-child')
-      .attr('transform', `translate(${-w / 2}, ${h / 2})`);
-    if (cssStyles) {
-      polygon.attr('style', cssStyles);
-    }
-  } else {
-    polygon = insertPolygonShape(shapeSvg, w, h, points);
+  if (node.look !== 'handDrawn') {
+    options.roughness = 0;
+    options.fillStyle = 'solid';
   }
 
-  if (nodeStyles) {
-    polygon.attr('style', nodeStyles);
-  }
-  node.width = w + h;
-  node.height = h;
+  const pathData = createPathFromPoints(points);
+  const roughNode = rc.path(pathData, options);
 
+  const polygon = shapeSvg.insert(() => roughNode, ':first-child');
+
+  polygon.attr('class', 'basic label-container');
+
+  if (cssStyles && node.look !== 'handDrawn') {
+    polygon.selectAll('path').attr('style', cssStyles);
+  }
+  if (nodeStyles && node.look !== 'handDrawn') {
+    polygon.selectAll('path').attr('style', nodeStyles);
+  }
+
+  polygon.attr('transform', `translate(${-notch / 2},0)`);
+  label.attr(
+    'transform',
+    `translate(${-w / 2 + -notch / 2 + (node.padding ?? 0) / 2 - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (node.padding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0))})`
+  );
   updateNodeBounds(node, polygon);
 
   node.intersect = function (point) {
