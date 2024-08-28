@@ -23,6 +23,9 @@ import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.
 import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { preprocessDiagram } from './preprocess.js';
 import { decodeEntities } from './utils.js';
+import type { IconLibrary } from './rendering-util/svgRegister.js';
+import { registerIcons } from './rendering-util/svgRegister.js';
+import defaultIconLibrary from './rendering-util/svg/index.js';
 import { toBase64 } from './utils/base64.js';
 import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 import assignWithDepth from './assignWithDepth.js';
@@ -477,7 +480,7 @@ const render = async function (
  * @param  userOptions - Initial Mermaid options
  */
 function initialize(userOptions: MermaidConfig = {}) {
-  const options = assignWithDepth({}, userOptions);
+  const options: MermaidConfig = assignWithDepth({}, userOptions);
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
     if (!options.themeVariables) {
@@ -488,6 +491,29 @@ function initialize(userOptions: MermaidConfig = {}) {
 
   // Set default options
   configApi.saveConfigFromInitialize(options);
+
+  registerIcons(defaultIconLibrary);
+  if (options?.iconLibraries) {
+    // TODO: find a better way to handle this, assumed to be resolved by the time diagrams are being generated
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    options.iconLibraries.forEach(async (library) => {
+      if (typeof library === 'string') {
+        let lib: IconLibrary = {};
+        if (library === 'aws:common') {
+          lib = (await import('./rendering-util/svg/aws/awsCommon.js')).default;
+        } else if (library === 'aws:full') {
+          lib = (await import('./rendering-util/svg/aws/awsFull.js')).default;
+        } else if (library === 'digital-ocean') {
+          lib = (await import('./rendering-util/svg/digital-ocean/digitalOcean.js')).default;
+        } else if (library === 'github') {
+          lib = (await import('./rendering-util/svg/github/github.js')).default;
+        }
+        registerIcons(lib);
+      } else {
+        registerIcons(library);
+      }
+    });
+  }
 
   if (options?.theme && options.theme in theme) {
     // Todo merge with user options

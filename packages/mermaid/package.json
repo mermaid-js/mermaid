@@ -71,6 +71,7 @@
     "@mermaid-js/parser": "workspace:^",
     "cytoscape": "^3.29.2",
     "cytoscape-cose-bilkent": "^4.1.0",
+    "cytoscape-fcose": "^2.2.0",
     "d3": "^7.9.0",
     "d3-sankey": "^0.12.3",
     "dagre-d3-es": "7.0.10",
@@ -87,6 +88,7 @@
   },
   "devDependencies": {
     "@adobe/jsonschema2md": "^8.0.0",
+    "@types/cytoscape-fcose": "^2.2.4",
     "@types/cytoscape": "^3.21.4",
     "@types/d3": "^7.4.3",
     "@types/d3-sankey": "^0.12.4",
