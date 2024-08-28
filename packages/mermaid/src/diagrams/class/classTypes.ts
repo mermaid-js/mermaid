@@ -121,20 +121,45 @@ export class ClassMember {
     }
 
     this.classifier = potentialClassifier;
-    this.text = `${this.visibility}${this.id}${this.memberType === 'method' ? `(${this.parameters})${this.returnType ? ' : ' + this.returnType : ''}` : ''}`; //.replaceAll('~', '<');
+    this.text = `${this.visibility}${this.id}${this.memberType === 'method' ? `(${this.parameters})${this.returnType ? ' : ' + this.returnType : ''}` : ''}`;
     const combinedText = `${this.visibility}${this.id}${this.memberType === 'method' ? `(${this.parameters})${this.returnType ? ' : ' + this.returnType : ''}` : ''}`;
     if (combinedText.includes('~')) {
-      let count = (combinedText.match(/~/g) ?? []).length;
+      const numOfTildes = (combinedText.substring(1).match(/~/g) ?? []).length;
+      let count = numOfTildes;
+      if (count !== 1) {
+        const odd = count % 2 > 0;
 
-      // Replace all '~' with '>'
-      let replacedRaw = combinedText.replaceAll('~', '&gt;');
+        // Replace all '~' with '>'
+        let replacedRaw = combinedText.substring(1).replaceAll('~', '&gt;');
 
-      // Replace the first half of '>' with '<'
-      while (count > 0) {
-        replacedRaw = replacedRaw.replace('&gt;', '&lt;');
-        count -= 2; // Each iteration replaces one '>' with '<', so reduce count by 2
+        // Replace the first half of '>' with '<'
+        while (count > 0) {
+          replacedRaw = replacedRaw.replace('&gt;', '&lt;');
+          count -= 2; // Each iteration replaces one '>' with '<', so reduce count by 2
+        }
+        if (odd) {
+          if (this.memberType === 'method') {
+            replacedRaw = replacedRaw.replace('&lt;', '~');
+          } else {
+            // Replace the middle occurrence of '&lt;' with '~'
+            const ltOccurrences = replacedRaw.match(/&lt;/g) ?? [];
+            if (ltOccurrences.length > 1) {
+              let ltCount = 0;
+
+              replacedRaw = replacedRaw.replace(/&lt;/g, (match) => {
+                ltCount++;
+                return ltCount === ltOccurrences.length ? '~' : match;
+              });
+            }
+          }
+        }
+        this.text = this.text.charAt(0) + replacedRaw;
+        if (this.visibility === '~') {
+          this.text = this.text.replace('~', '\\~');
+        }
+      } else if (count === 1 && this.visibility === '~') {
+        this.text = this.text.replace('~', '\\~');
       }
-      this.text = replacedRaw;
     }
   }
 
