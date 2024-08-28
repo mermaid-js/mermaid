@@ -23,6 +23,7 @@ const config: RequiredDeep<MermaidConfig> = {
   elk: {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
+    nodePlacementStrategy: 'BRANDES_KOEPF',
   },
   themeCSS: undefined,
 
