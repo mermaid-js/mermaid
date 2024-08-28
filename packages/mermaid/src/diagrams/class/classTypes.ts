@@ -161,6 +161,12 @@ export class ClassMember {
         this.text = this.text.replace('~', '\\~');
       }
     }
+
+    if (this.classifier === '$') {
+      this.text = `<u>${this.text}</u>`;
+    } else if (this.classifier === '*') {
+      this.text = `<i>${this.text}</i>`;
+    }
   }
 
   parseClassifier() {
