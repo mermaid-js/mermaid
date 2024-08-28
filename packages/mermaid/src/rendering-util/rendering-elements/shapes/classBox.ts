@@ -1,21 +1,18 @@
-import { getNodeClasses } from './util.js';
+import { getNodeClasses, updateNodeBounds } from './util.js';
 import { getConfig } from '$root/diagram-api/diagramAPI.js';
 import { createText } from '../../createText.js';
 import { select } from 'd3';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import { evaluate } from '$root/diagrams/common/common.js';
 import { calculateTextDimensions, calculateTextWidth } from '$root/utils.js';
-import { styles2String } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 
 export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
-  const { labelStyles, nodeStyles } = styles2String(node);
-  node.labelStyle = labelStyles;
+  const styles = node.styles.join(';');
 
   const mainGroup = parent
     .insert('g')
-    .attr('class', getNodeClasses(node))
-    .attr('style', nodeStyles)
-    .attr('id', node.domId || node.id);
+    .attr('class', getNodeClasses(node)) // 'styleClass'
+    .attr('id', node.domId ?? node.id);
   let labelGroup = null;
   let membersGroup = null;
   let methodsGroup = null;
@@ -25,12 +22,11 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   const config = getConfig();
 
-  const PADDING = config.class.padding;
+  const PADDING = config.class!.padding;
   const GAP = PADDING;
 
   if (node.label) {
     labelGroup = mainGroup.insert('g').attr('class', 'label-group');
-    // TODO: Add Padding
     await helper(labelGroup, node, 0);
     const labelGroupBBox = labelGroup.node().getBBox();
     labelGroupHeight = labelGroupBBox.height;
@@ -54,7 +50,7 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
       await helper(methodsGroup, method, methodsYOffset);
       methodsYOffset += calculateTextDimensions(method.text, config).height;
     }
-    // TODO: Update transform
+
     methodsGroup.attr(
       'transform',
       `translate(0, ${labelGroupHeight + (membersGroupHeight ? membersGroupHeight + GAP * 5 : GAP * 3)})`
@@ -72,8 +68,7 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   // Insert the rectangle around the main group
   mainGroup
     .insert('rect', ':first-child')
-    .attr('class', 'basic label-container')
-    .attr('style', nodeStyles)
+    .attr('style', styles)
     .attr('data-id', 'abc')
     .attr('data-et', 'node')
     .attr('x', mainGroupBBox.x - PADDING)
@@ -82,7 +77,7 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
     .attr('height', mainGroupBBox.height + 2 * PADDING);
 
   // Render separating lines.
-  if (node.label) {
+  if (node.label && (node.members.length > 0 || node.methods.length > 0)) {
     mainGroup
       .insert('line')
       .attr('x1', 0 - PADDING)
@@ -102,6 +97,7 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
       .attr('class', 'divider');
   }
 
+  updateNodeBounds(node, mainGroup);
   return mainGroup;
 };
 
