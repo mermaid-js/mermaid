@@ -15,7 +15,7 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
   const x = -w / 2;
   const y = -h / 2;
-  const tagWidth = 0.2 * w;
+  const tagWidth = 0.2 * h;
   const tagHeight = 0.2 * h;
   const { cssStyles } = node;
 
