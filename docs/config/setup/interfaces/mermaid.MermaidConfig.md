@@ -20,6 +20,16 @@
 
 ---
 
+### architecture
+
+• `Optional` **architecture**: `ArchitectureDiagramConfig`
+
+#### Defined in
+
+[packages/mermaid/src/config.type.ts:193](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L193)
+
+---
+
 ### arrowMarkerAbsolute
 
 • `Optional` **arrowMarkerAbsolute**: `boolean`
@@ -58,6 +68,7 @@ This matters if you are using base tag settings.
 • `Optional` **class**: `ClassDiagramConfig`
 
 #### Defined in
+
 
 [packages/mermaid/src/config.type.ts:187](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L187)
 
@@ -230,6 +241,19 @@ Defines the seed to be used when using handDrawn look. This is important for the
 #### Defined in
 
 [packages/mermaid/src/config.type.ts:114](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L114)
+
+---
+
+### iconLibraries
+
+• `Optional` **iconLibraries**: ([`IconLibrary`](../modules/mermaid.md#iconlibrary) | `"aws:common"` | `"aws:full"` | `"github"` | `"digital-ocean"`)\[]
+
+This option specifies an object contianing a mappig of SVG icon names to a resolver that returns the svg code.
+For supported diagrams (i.e., Architecture), their syntax allows refering to key names in this object to display the corresponding SVG icon in the rendered diagram.
+
+#### Defined in
+
+[packages/mermaid/src/config.type.ts:152](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L152)
 
 ---
 

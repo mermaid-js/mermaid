@@ -46,6 +46,7 @@ required:
   - quadrantChart
   - xyChart
   - requirement
+  - architecture
   - mindmap
   - gitGraph
   - c4
@@ -226,6 +227,11 @@ properties:
       fall back to legacy rendering for KaTeX.
     type: boolean
     default: false
+  iconLibraries:
+    description: |
+      This option specifies an object contianing a mappig of SVG icon names to a resolver that returns the svg code.
+      For supported diagrams (i.e., Architecture), their syntax allows refering to key names in this object to display the corresponding SVG icon in the rendered diagram.
+    tsType: Array<import('./rendering-util/svgRegister.js').IconLibrary | import('./rendering-util/svg/index.js').IconNamespaceKeys>
   forceLegacyMathML:
     description: |
       This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS
@@ -274,6 +280,8 @@ properties:
     $ref: '#/$defs/XYChartConfig'
   requirement:
     $ref: '#/$defs/RequirementDiagramConfig'
+  architecture:
+    $ref: '#/$defs/ArchitectureDiagramConfig'
   mindmap:
     $ref: '#/$defs/MindmapDiagramConfig'
   gitGraph:
@@ -920,6 +928,28 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       line_height:
         type: number
         default: 20
+
+  ArchitectureDiagramConfig:
+    title: Architecture Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for architecture diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+      - padding
+      - iconSize
+      - fontSize
+    properties:
+      padding:
+        type: number
+        default: 40
+      iconSize:
+        type: number
+        default: 80
+      fontSize:
+        type: number
+        default: 16
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config
