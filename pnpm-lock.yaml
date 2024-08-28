@@ -217,7 +217,7 @@ importers:
         version: link:../parser
       cytoscape:
         specifier: ^3.29.2
-        version: 3.30.2
+        version: 3.30.1
       cytoscape-cose-bilkent:
         specifier: ^4.1.0
         version: 4.1.0(cytoscape@3.30.1)
@@ -495,68 +495,7 @@ importers:
         version: 0.19.8(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
       vitepress:
         specifier: 1.1.4
-        version: 1.3.4(@algolia/client-search@4.24.0)(@types/node@22.5.1)(axios@1.7.5)(postcss@8.4.41)(search-insights@2.15.0)(terser@5.31.6)(typescript@5.4.5)
-      workbox-window:
-        specifier: ^7.0.0
-        version: 7.1.0
-
-  packages/mermaid/src/vitepress:
-    dependencies:
-      '@mdi/font':
-        specifier: ^7.0.0
-        version: 7.4.47
-      '@vueuse/core':
-        specifier: ^10.9.0
-        version: 10.11.0(vue@3.4.35(typescript@5.4.5))
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
-      jiti:
-        specifier: ^1.21.0
-        version: 1.21.6
-      mermaid:
-        specifier: workspace:^
-        version: link:../..
-      vue:
-        specifier: ^3.4.21
-        version: 3.4.35(typescript@5.4.5)
-    devDependencies:
-      '@iconify-json/carbon':
-        specifier: ^1.1.31
-        version: 1.1.37
-      '@unocss/reset':
-        specifier: ^0.59.0
-        version: 0.59.4
-      '@vite-pwa/vitepress':
-        specifier: ^0.4.0
-        version: 0.4.0(vite-plugin-pwa@0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))
-      '@vitejs/plugin-vue':
-        specifier: ^5.0.0
-        version: 5.1.2(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(vue@3.4.35(typescript@5.4.5))
-      fast-glob:
-        specifier: ^3.3.2
-        version: 3.3.2
-      https-localhost:
-        specifier: ^4.7.1
-        version: 4.7.1
-      pathe:
-        specifier: ^1.1.2
-        version: 1.1.2
-      unocss:
-        specifier: ^0.59.0
-        version: 0.59.4(postcss@8.4.40)(rollup@4.20.0)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))
-      unplugin-vue-components:
-        specifier: ^0.26.0
-        version: 0.26.0(@babel/parser@7.25.3)(rollup@4.20.0)(vue@3.4.35(typescript@5.4.5))
-      vite:
-        specifier: ^5.0.0
-        version: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
-      vite-plugin-pwa:
-        specifier: ^0.19.7
-        version: 0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
-      vitepress:
-        specifier: 1.1.4
-        version: 1.1.4(@algolia/client-search@4.24.0)(@types/node@20.14.14)(axios@1.7.3)(postcss@8.4.40)(search-insights@2.15.0)(terser@5.31.3)(typescript@5.4.5)
+        version: 1.1.4(@algolia/client-search@4.24.0)(@types/node@22.5.1)(axios@1.7.5)(postcss@8.4.41)(search-insights@2.15.0)(terser@5.31.6)(typescript@5.4.5)
       workbox-window:
         specifier: ^7.0.0
         version: 7.1.0
@@ -3306,6 +3245,47 @@ packages:
 
   '@vueuse/core@11.0.3':
     resolution: {integrity: sha512-RENlh64+SYA9XMExmmH1a3TPqeIuJBNNB/63GT35MZI+zpru3oMRUA6cEFr9HmGqEgUisurwGwnIieF6qu3aXw==}
+
+  '@vueuse/integrations@10.11.1':
+    resolution: {integrity: sha512-Y5hCGBguN+vuVYTZmdd/IMXLOdfS60zAmDmFYc4BKBcMUPZH1n4tdyDECCPjXm0bNT3ZRUy1xzTLGaUje8Xyaw==}
+    peerDependencies:
+      async-validator: ^4
+      axios: ^1
+      change-case: ^4
+      drauu: ^0.3
+      focus-trap: ^7
+      fuse.js: ^6
+      idb-keyval: ^6
+      jwt-decode: ^3
+      nprogress: ^0.2
+      qrcode: ^1.5
+      sortablejs: ^1
+      universal-cookie: ^6
+    peerDependenciesMeta:
+      async-validator:
+        optional: true
+      axios:
+        optional: true
+      change-case:
+        optional: true
+      drauu:
+        optional: true
+      focus-trap:
+        optional: true
+      fuse.js:
+        optional: true
+      idb-keyval:
+        optional: true
+      jwt-decode:
+        optional: true
+      nprogress:
+        optional: true
+      qrcode:
+        optional: true
+      sortablejs:
+        optional: true
+      universal-cookie:
+        optional: true
 
   '@vueuse/integrations@11.0.3':
     resolution: {integrity: sha512-w6CDisaxs19S5Fd+NPPLFaA3GoX5gxuxrbTTBu0EYap7oH13w75L6C/+7e9mcoF9akhcR6GyYajwVMQEjdapJg==}
@@ -6851,6 +6831,9 @@ packages:
     resolution: {integrity: sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==}
     engines: {node: '>=16 || 14 >=14.17'}
 
+  minisearch@6.3.0:
+    resolution: {integrity: sha512-ihFnidEeU8iXzcVHy74dhkxh/dn8Dc08ERl0xwoMMGqp4+LvRSCgicb+zGqWthVokQKvCSxITlh3P08OzdTYCQ==}
+
   minisearch@7.1.0:
     resolution: {integrity: sha512-tv7c/uefWdEhcu6hvrfTihflgeEi2tN6VV7HJnCjK6VxM75QQJh4t9FwJCsA2EsRS8LCnu3W87CuGPWMocOLCA==}
 
@@ -8718,6 +8701,18 @@ packages:
       flexsearch: ^0.7.31
       vitepress: ^1.0.0-rc.35
       vue: '3'
+
+  vitepress@1.1.4:
+    resolution: {integrity: sha512-bWIzFZXpPB6NIDBuWnS20aMADH+FcFKDfQNYFvbOWij03PR29eImTceQHIzCKordjXYBhM/TjE5VKFTUJ3EheA==}
+    hasBin: true
+    peerDependencies:
+      markdown-it-mathjax3: ^4
+      postcss: ^8
+    peerDependenciesMeta:
+      markdown-it-mathjax3:
+        optional: true
+      postcss:
+        optional: true
 
   vitepress@1.3.4:
     resolution: {integrity: sha512-I1/F6OW1xl3kW4PaIMC6snxjWgf3qfziq2aqsDoFc/Gt41WbcRv++z8zjw8qGRIJ+I4bUW7ZcKFDHHN/jkH9DQ==}
@@ -12306,38 +12301,10 @@ snapshots:
     transitivePeerDependencies:
       - rollup
 
-  '@unocss/astro@0.59.4(rollup@4.20.0)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))':
-    dependencies:
-      '@unocss/core': 0.59.4
-      '@unocss/reset': 0.59.4
-      '@unocss/vite': 0.59.4(rollup@4.20.0)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))
-    optionalDependencies:
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
-    transitivePeerDependencies:
-      - rollup
-
   '@unocss/cli@0.59.4(rollup@2.79.1)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
-      '@unocss/config': 0.59.4
-      '@unocss/core': 0.59.4
-      '@unocss/preset-uno': 0.59.4
-      cac: 6.7.14
-      chokidar: 3.6.0
-      colorette: 2.0.20
-      consola: 3.2.3
-      fast-glob: 3.3.2
-      magic-string: 0.30.11
-      pathe: 1.1.2
-      perfect-debounce: 1.0.0
-    transitivePeerDependencies:
-      - rollup
-
-  '@unocss/cli@0.59.4(rollup@4.20.0)':
-    dependencies:
-      '@ampproject/remapping': 2.3.0
-      '@rollup/pluginutils': 5.1.0(rollup@4.20.0)
       '@unocss/config': 0.59.4
       '@unocss/core': 0.59.4
       '@unocss/preset-uno': 0.59.4
@@ -12477,23 +12444,7 @@ snapshots:
     transitivePeerDependencies:
       - rollup
 
-  '@unocss/vite@0.59.4(rollup@4.20.0)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))':
-    dependencies:
-      '@ampproject/remapping': 2.3.0
-      '@rollup/pluginutils': 5.1.0(rollup@4.20.0)
-      '@unocss/config': 0.59.4
-      '@unocss/core': 0.59.4
-      '@unocss/inspector': 0.59.4
-      '@unocss/scope': 0.59.4
-      '@unocss/transformer-directives': 0.59.4
-      chokidar: 3.6.0
-      fast-glob: 3.3.2
-      magic-string: 0.30.11
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
-    transitivePeerDependencies:
-      - rollup
-
-  '@vite-pwa/vitepress@0.4.0(vite-plugin-pwa@0.19.8(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))':
+  '@vite-pwa/vitepress@0.4.0(vite-plugin-pwa@0.19.8(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))':
     dependencies:
       vite-plugin-pwa: 0.19.8(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
 
@@ -12658,6 +12609,18 @@ snapshots:
       '@vueuse/metadata': 11.0.3
       '@vueuse/shared': 11.0.3(vue@3.4.38(typescript@5.4.5))
       vue-demi: 0.14.10(vue@3.4.38(typescript@5.4.5))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
+  '@vueuse/integrations@10.11.1(axios@1.7.5)(focus-trap@7.5.4)(vue@3.4.38(typescript@5.4.5))':
+    dependencies:
+      '@vueuse/core': 10.11.1(vue@3.4.38(typescript@5.4.5))
+      '@vueuse/shared': 10.11.1(vue@3.4.38(typescript@5.4.5))
+      vue-demi: 0.14.10(vue@3.4.38(typescript@5.4.5))
+    optionalDependencies:
+      axios: 1.7.5(debug@4.3.6)
+      focus-trap: 7.5.4
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -13969,10 +13932,10 @@ snapshots:
       untildify: 4.0.0
       yauzl: 2.10.0
 
-  cytoscape-cose-bilkent@4.1.0(cytoscape@3.30.2):
+  cytoscape-cose-bilkent@4.1.0(cytoscape@3.30.1):
     dependencies:
       cose-base: 1.0.3
-      cytoscape: 3.30.2
+      cytoscape: 3.30.1
 
   cytoscape-fcose@2.2.0(cytoscape@3.30.1):
     dependencies:
@@ -17023,6 +16986,8 @@ snapshots:
 
   minipass@7.1.2: {}
 
+  minisearch@6.3.0: {}
+
   minisearch@7.1.0: {}
 
   mitt@3.0.1: {}
@@ -18878,35 +18843,6 @@ snapshots:
       - rollup
       - supports-color
 
-  unocss@0.59.4(postcss@8.4.40)(rollup@4.20.0)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3)):
-    dependencies:
-      '@unocss/astro': 0.59.4(rollup@4.20.0)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))
-      '@unocss/cli': 0.59.4(rollup@4.20.0)
-      '@unocss/core': 0.59.4
-      '@unocss/extractor-arbitrary-variants': 0.59.4
-      '@unocss/postcss': 0.59.4(postcss@8.4.40)
-      '@unocss/preset-attributify': 0.59.4
-      '@unocss/preset-icons': 0.59.4
-      '@unocss/preset-mini': 0.59.4
-      '@unocss/preset-tagify': 0.59.4
-      '@unocss/preset-typography': 0.59.4
-      '@unocss/preset-uno': 0.59.4
-      '@unocss/preset-web-fonts': 0.59.4
-      '@unocss/preset-wind': 0.59.4
-      '@unocss/reset': 0.59.4
-      '@unocss/transformer-attributify-jsx': 0.59.4
-      '@unocss/transformer-attributify-jsx-babel': 0.59.4
-      '@unocss/transformer-compile-class': 0.59.4
-      '@unocss/transformer-directives': 0.59.4
-      '@unocss/transformer-variant-group': 0.59.4
-      '@unocss/vite': 0.59.4(rollup@4.20.0)(vite@5.3.5(@types/node@20.14.14)(terser@5.31.3))
-    optionalDependencies:
-      vite: 5.3.5(@types/node@20.14.14)(terser@5.31.3)
-    transitivePeerDependencies:
-      - postcss
-      - rollup
-      - supports-color
-
   unpipe@1.0.0: {}
 
   unplugin-vue-components@0.26.0(@babel/parser@7.25.4)(rollup@2.79.1)(vue@3.4.38(typescript@5.4.5)):
@@ -18924,25 +18860,6 @@ snapshots:
       vue: 3.4.38(typescript@5.4.5)
     optionalDependencies:
       '@babel/parser': 7.25.4
-    transitivePeerDependencies:
-      - rollup
-      - supports-color
-
-  unplugin-vue-components@0.26.0(@babel/parser@7.25.3)(rollup@4.20.0)(vue@3.4.35(typescript@5.4.5)):
-    dependencies:
-      '@antfu/utils': 0.7.10
-      '@rollup/pluginutils': 5.1.0(rollup@4.20.0)
-      chokidar: 3.6.0
-      debug: 4.3.6(supports-color@8.1.1)
-      fast-glob: 3.3.2
-      local-pkg: 0.4.3
-      magic-string: 0.30.11
-      minimatch: 9.0.5
-      resolve: 1.22.8
-      unplugin: 1.12.0
-      vue: 3.4.35(typescript@5.4.5)
-    optionalDependencies:
-      '@babel/parser': 7.25.3
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -19081,6 +18998,53 @@ snapshots:
       markdown-it: 13.0.2
       vitepress: 1.3.4(@algolia/client-search@4.24.0)(@types/node@22.5.1)(axios@1.7.5)(postcss@8.4.41)(search-insights@2.15.0)(terser@5.31.6)(typescript@5.4.5)
       vue: 3.4.38(typescript@5.4.5)
+
+  vitepress@1.1.4(@algolia/client-search@4.24.0)(@types/node@22.5.1)(axios@1.7.5)(postcss@8.4.41)(search-insights@2.15.0)(terser@5.31.6)(typescript@5.4.5):
+    dependencies:
+      '@docsearch/css': 3.6.1
+      '@docsearch/js': 3.6.1(@algolia/client-search@4.24.0)(search-insights@2.15.0)
+      '@shikijs/core': 1.14.1
+      '@shikijs/transformers': 1.14.1
+      '@types/markdown-it': 14.1.2
+      '@vitejs/plugin-vue': 5.1.2(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(vue@3.4.38(typescript@5.4.5))
+      '@vue/devtools-api': 7.3.9
+      '@vueuse/core': 10.11.1(vue@3.4.38(typescript@5.4.5))
+      '@vueuse/integrations': 10.11.1(axios@1.7.5)(focus-trap@7.5.4)(vue@3.4.38(typescript@5.4.5))
+      focus-trap: 7.5.4
+      mark.js: 8.11.1
+      minisearch: 6.3.0
+      shiki: 1.14.1
+      vite: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
+      vue: 3.4.38(typescript@5.4.5)
+    optionalDependencies:
+      postcss: 8.4.41
+    transitivePeerDependencies:
+      - '@algolia/client-search'
+      - '@types/node'
+      - '@types/react'
+      - '@vue/composition-api'
+      - async-validator
+      - axios
+      - change-case
+      - drauu
+      - fuse.js
+      - idb-keyval
+      - jwt-decode
+      - less
+      - lightningcss
+      - nprogress
+      - qrcode
+      - react
+      - react-dom
+      - sass
+      - sass-embedded
+      - search-insights
+      - sortablejs
+      - stylus
+      - sugarss
+      - terser
+      - typescript
+      - universal-cookie
 
   vitepress@1.3.4(@algolia/client-search@4.24.0)(@types/node@22.5.1)(axios@1.7.5)(postcss@8.4.41)(search-insights@2.15.0)(terser@5.31.6)(typescript@5.4.5):
     dependencies:
