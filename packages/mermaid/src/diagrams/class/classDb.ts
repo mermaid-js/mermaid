@@ -58,6 +58,8 @@ export const setClassLabel = function (_id: string, label: string) {
 
   const { className } = splitClassNameAndType(id);
   classes.get(className)!.label = label;
+  classes.get(className)!.text =
+    `<strong>${label}${classes.get(className)!.type ? `&lt;${classes.get(className)!.type}&gt;` : ''}</strong>`;
 };
 
 /**
