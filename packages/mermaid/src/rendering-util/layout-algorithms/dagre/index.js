@@ -111,7 +111,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         if (graph.children(v).length > 0) {
           // This is a cluster but not to be rendered recursively
           // Render as before
-          log.info(
+          log.trace(
             'Cluster - the non recursive path XBX',
             v,
             node.id,
@@ -120,11 +120,11 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
             'Graph:',
             graph
           );
-          log.info(findNonClusterChild(node.id, graph));
+          log.trace(findNonClusterChild(node.id, graph));
           clusterDb.set(node.id, { id: findNonClusterChild(node.id, graph), node });
           // insertCluster(clusters, graph.node(v));
         } else {
-          log.warn('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
+          log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
           await insertNode(nodes, graph.node(v), dir);
         }
       }
