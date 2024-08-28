@@ -25,8 +25,9 @@ function createLine(r: number) {
 export const crossedCircle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
-  const radius = Math.max(bbox.width, bbox.height) / 2 + halfPadding;
+  node.label = '';
+  const { shapeSvg } = await labelHelper(parent, node, getNodeClasses(node));
+  const radius = Math.max(30, node?.width ?? 0);
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed
