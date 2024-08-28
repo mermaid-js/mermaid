@@ -1,21 +1,261 @@
 <html>
   <body>
-    <pre id="diagram" class="mermaid">
-      classDiagram
-      class Square~Shape~{
-        int id
-        List~int~ position
-        setPoints(List~int~ points)
-        getPoints() List~int~
-      }
-
-Square : -List~string~ messages
-Square : +setMessages(List~string~ messages)
-Square : +getMessages() List~string~
-Square : +getDistanceMatrix() List~List~int~~
-    </pre>
-
-    <div id="d2" class="mermaid">classDiagram class Duck{ +String beakColor +swim() +quack() }</div>
+    <h1 class="header">Class Nodes</h1>
+    <div class="node-showcase">
+      <div class="test">
+        <h2>Basic Class</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Complex Class</h2>
+        <pre class="mermaid">
+                classDiagram
+                class Square~Shape~{
+                  int id
+                  List~int~ position
+                  setPoints(List~int~ points)
+                  getPoints() List~int~
+                }
+          
+          Square : -List~string~ messages
+          Square : +setMessages(List~string~ messages)
+          Square : +getMessages() List~string~
+          Square : +getDistanceMatrix() List~List~int~~
+              </pre
+        >
+      </div>
+      <div class="test">
+        <h2>No Attributes</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>No Methods</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            +String beakColor
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Only Class Name</h2>
+        <p>Empty line as attribute</p>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Visibility and Types</h2>
+        <p>(Further tilde testing)</p>
+        <div class="mermaid">
+          classDiagram class Duck{ ~interface~~~ +String beakColor #swim() ~quack()~~~
+          -test()~~~~~~~ +deposit(amount) bool }
+        </div>
+      </div>
+      <div class="test">
+        <h2>Label</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Animal~test~["Animal with a label"]
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Link</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Shape
+          link Shape "https://www.github.com" "This is a tooltip for a link"
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Click</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Shape
+          click Shape href "https://www.github.com" "This is a tooltip for a link"
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Neutral Theme</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            theme: neutral
+          ---
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Dark Theme</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            theme: dark
+          ---
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Forest Theme</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            theme: forest
+          ---
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Base Theme</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            theme: base
+          ---
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Custom Theme</h2>
+        <pre class="mermaid">
+          %%{
+            init: {
+              'theme': 'base',
+              'themeVariables': {
+                'primaryColor': '#BB2528',
+                'primaryTextColor': '#fff',
+                'primaryBorderColor': '#7C0000',
+                'lineColor': '#F8B229',
+                'secondaryColor': '#006100',
+                'tertiaryColor': '#fff'
+              }
+            }
+          }%%
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Styling within Diagram</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+          style Duck fill:#f9f,stroke:#333,stroke-width:8px
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Styling with Class</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+          class Duck:::styleClass
+        </pre>
+      </div>
+    </div>
+    <h1 class="header">Diagram Testing</h1>
+    <div class="diagram-showcase">
+      <div class="test">
+        <h2>Class Nodes Only</h2>
+        <pre class="mermaid">
+          ---
+          title: Animal example
+          ---
+          classDiagram
+              Animal : +int age
+              Animal : +String gender
+              Animal: +isMammal()
+              Animal: +mate()
+              class Duck{
+                  +String beakColor
+                  +swim()
+                  +quack()
+              }
+              class Fish{
+                  -int sizeInFeet
+                  -canEat()
+              }
+              class Zebra{
+                  +bool is_wild
+                  +run()
+              }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Class Nodes LR</h2>
+        <pre class="mermaid">
+          ---
+          title: Animal example
+          ---
+          classDiagram
+              direction LR
+              Animal : +int age
+              Animal : +String gender
+              Animal: +isMammal()
+              Animal: +mate()
+              class Duck{
+                  +String beakColor
+                  +swim()
+                  +quack()
+              }
+              class Fish{
+                  -int sizeInFeet
+                  -canEat()
+              }
+              class Zebra{
+                  +bool is_wild
+                  +run()
+              }
+        </pre>
+      </div>
+    </div>
 
     <script type="module">
       import mermaid from '/mermaid.esm.mjs';
@@ -29,4 +269,40 @@ Square : +getDistanceMatrix() List~List~int~~
       };
     </script>
   </body>
+  <style>
+    .header {
+      text-decoration: underline;
+      text-align: center;
+    }
+    .node-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .test {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .test > h2 {
+      margin: 0;
+      text-align: center;
+    }
+    .test > p {
+      margin-top: -6px;
+      color: gray;
+    }
+
+    .diagram-showcase {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .styleClass > rect {
+      fill: #ff0000;
+      stroke: #ffff00;
+      stroke-width: 4px;
+    }
+  </style>
 </html>
