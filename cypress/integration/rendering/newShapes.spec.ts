@@ -18,9 +18,9 @@ const newShapesSet2 = [
 ] as const;
 
 const newShapesSet3 = [
-  'halfRoundedRectangle',
   'curvedTrapezoid',
   'bowTieRect',
+  'waveEdgedRectangle',
   'dividedRectangle',
   'crossedCircle',
 ] as const;
@@ -29,38 +29,16 @@ const newShapesSet4 = [
   'waveRectangle',
   'trapezoidalPentagon',
   'linedCylinder',
-  'waveEdgedRectangle',
   'multiWaveEdgedRectangle',
+  'halfRoundedRectangle',
 ] as const;
 
 const newShapesSet5 = [
   'linedWaveEdgedRect',
   'taggedWaveEdgedRectangle',
-  'text',
-  'card',
-  'shadedProcess',
-] as const;
-
-const newShapesSet6 = ['roundedRect', 'squareRect', 'stateStart', 'stateEnd', 'labelRect'] as const;
-
-const newShapesSet7 = ['forkJoin', 'choice', 'note', 'stadium'] as const;
-
-const newShapesSet8 = [
-  'question',
-  'hexagon',
   'curlyBraces',
-  'multiRect',
-  'waveEdgedRectangle',
-] as const;
-
-const newShapesSet9 = ['anchor', 'lean_right', 'lean_left', 'trapezoid', 'inv_trapezoid'] as const;
-
-const newShapesSet10 = [
-  'subroutine',
-  'cylinder',
-  'circle',
-  'doublecircle',
-  'rect_left_inv_arrow',
+  'curvedTrapezoid',
+  'waveRectangle',
 ] as const;
 
 // Aggregate all shape sets into a single array
@@ -70,11 +48,6 @@ const newShapesSets = [
   newShapesSet3,
   newShapesSet4,
   newShapesSet5,
-  newShapesSet6,
-  newShapesSet7,
-  newShapesSet8,
-  newShapesSet9,
-  newShapesSet10,
 ] as const;
 
 looks.forEach((look) => {
