@@ -69,7 +69,6 @@ This matters if you are using base tag settings.
 
 #### Defined in
 
-
 [packages/mermaid/src/config.type.ts:187](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L187)
 
 ---
