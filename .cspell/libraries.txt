@@ -59,6 +59,7 @@ rehype
 roughjs
 rscratch
 shiki
+Slidev
 sparkline
 sphinxcontrib
 ssim

@@ -54,6 +54,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [MonsterWriter](https://www.monsterwriter.com/) ✅
 - [Joplin](https://joplinapp.org) ✅
 - [LiveBook](https://livebook.dev) ✅
+- [Slidev](https://sli.dev) ✅
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) ✅
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
 - [Mermerd](https://github.com/KarnerTh/mermerd)
@@ -129,7 +130,7 @@ Communication tools and platforms
 ### Wikis
 
 - [DokuWiki](https://dokuwiki.org)
-  - [ComboStrap](https://combostrap.com/mermaid)
+  - [ComboStrap](https://combostrap.com/utility/create-diagram-with-mermaid-vh3ab9yj)
   - [Mermaid Plugin](https://www.dokuwiki.org/plugin:mermaid)
 - [Foswiki](https://foswiki.org)
   - [Mermaid Plugin](https://foswiki.org/Extensions/MermaidPlugin)

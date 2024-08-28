@@ -1,7 +1,18 @@
 import type { LangiumParser, ParseResult } from 'langium';
 import { expect, vi } from 'vitest';
-import type { Info, InfoServices, Pie, PieServices } from '../src/language/index.js';
-import { createInfoServices, createPieServices } from '../src/language/index.js';
+import type {
+  Info,
+  InfoServices,
+  Pie,
+  PieServices,
+  GitGraph,
+  GitGraphServices,
+} from '../src/language/index.js';
+import {
+  createInfoServices,
+  createPieServices,
+  createGitGraphServices,
+} from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
@@ -40,3 +51,14 @@ export function createPieTestServices() {
   return { services: pieServices, parse };
 }
 export const pieParse = createPieTestServices().parse;
+
+const gitGraphServices: GitGraphServices = createGitGraphServices().GitGraph;
+const gitGraphParser: LangiumParser = gitGraphServices.parser.LangiumParser;
+export function createGitGraphTestServices() {
+  const parse = (input: string) => {
+    return gitGraphParser.parse<GitGraph>(input);
+  };
+
+  return { services: gitGraphServices, parse };
+}
+export const gitGraphParse = createGitGraphTestServices().parse;

@@ -6,6 +6,11 @@ export {
   Pie,
   PieSection,
   Architecture,
+  GitGraph,
+  Branch,
+  Commit,
+  Merge,
+  Statement,
   isCommon,
   isInfo,
   isPacket,
@@ -13,6 +18,10 @@ export {
   isPie,
   isPieSection,
   isArchitecture,
+  isGitGraph,
+  isBranch,
+  isCommit,
+  isMerge,
 } from './generated/ast.js';
 
 export {
@@ -21,8 +30,10 @@ export {
   PacketGeneratedModule,
   PieGeneratedModule,
   ArchitectureGeneratedModule,
+  GitGraphGeneratedModule,
 } from './generated/module.js';
 
+export * from './gitGraph/index.js';
 export * from './common/index.js';
 export * from './info/index.js';
 export * from './packet/index.js';

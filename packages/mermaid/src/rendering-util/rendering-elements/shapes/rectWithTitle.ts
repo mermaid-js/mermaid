@@ -62,13 +62,13 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
       )
     );
 
-  if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
-    const div = descr.children[0];
-    const dv = select(descr);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  }
+  //if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
+  const div = descr.children[0];
+  const dv = select(descr);
+  bbox = div.getBoundingClientRect();
+  dv.attr('width', bbox.width);
+  dv.attr('height', bbox.height);
+  // }
 
   const halfPadding = (node.padding || 0) / 2;
   select(descr).attr(

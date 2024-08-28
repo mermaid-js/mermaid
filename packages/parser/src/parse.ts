@@ -1,8 +1,8 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
-import type { Info, Packet, Pie, Architecture } from './index.js';
+import type { Info, Packet, Pie, Architecture, GitGraph } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture;
+export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -26,12 +26,19 @@ const initializers = {
     const parser = createArchitectureServices().Architecture.parser.LangiumParser;
     parsers.architecture = parser;
   },
+  gitGraph: async () => {
+    const { createGitGraphServices } = await import('./language/gitGraph/index.js');
+    const parser = createGitGraphServices().GitGraph.parser.LangiumParser;
+    parsers.gitGraph = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
 export async function parse(diagramType: 'packet', text: string): Promise<Packet>;
 export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
+export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
+
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
   text: string

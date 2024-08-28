@@ -28,7 +28,7 @@ import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js'
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
-  log.info('Graph in recursive render: XXX', graphlibJson.write(graph), parentCluster);
+  log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
 
@@ -111,7 +111,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         if (graph.children(v).length > 0) {
           // This is a cluster but not to be rendered recursively
           // Render as before
-          log.info(
+          log.trace(
             'Cluster - the non recursive path XBX',
             v,
             node.id,
@@ -120,11 +120,11 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
             'Graph:',
             graph
           );
-          log.info(findNonClusterChild(node.id, graph));
+          log.trace(findNonClusterChild(node.id, graph));
           clusterDb.set(node.id, { id: findNonClusterChild(node.id, graph), node });
           // insertCluster(clusters, graph.node(v));
         } else {
-          log.trace('Node - the non recursive path XAX', v, node.id, node);
+          log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
           await insertNode(nodes, graph.node(v), dir);
         }
       }
@@ -268,7 +268,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   return { elem, diff };
 };
 
-export const render = async (data4Layout, svg, element) => {
+export const render = async (data4Layout, svg) => {
   const graph = new graphlib.Graph({
     multigraph: true,
     compound: true,
@@ -289,7 +289,7 @@ export const render = async (data4Layout, svg, element) => {
     .setDefaultEdgeLabel(function () {
       return {};
     });
-
+  const element = svg.select('g');
   insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
   clearNodes();
   clearEdges();
@@ -305,12 +305,64 @@ export const render = async (data4Layout, svg, element) => {
 
   log.debug('Edges:', data4Layout.edges);
   data4Layout.edges.forEach((edge) => {
-    graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
+    // Handle self-loops
+    if (edge.start === edge.end) {
+      const nodeId = edge.start;
+      const specialId1 = nodeId + '---' + nodeId + '---1';
+      const specialId2 = nodeId + '---' + nodeId + '---2';
+      const node = graph.node(nodeId);
+      graph.setNode(specialId1, {
+        domId: specialId1,
+        id: specialId1,
+        parentId: node.parentId,
+        labelStyle: '',
+        label: '',
+        padding: 0,
+        shape: 'labelRect',
+        // shape: 'rect',
+        style: '',
+        width: 10,
+        height: 10,
+      });
+      graph.setParent(specialId1, node.parentId);
+      graph.setNode(specialId2, {
+        domId: specialId2,
+        id: specialId2,
+        parentId: node.parentId,
+        labelStyle: '',
+        padding: 0,
+        // shape: 'rect',
+        shape: 'labelRect',
+        label: '',
+        style: '',
+        width: 10,
+        height: 10,
+      });
+      graph.setParent(specialId2, node.parentId);
+
+      const edge1 = structuredClone(edge);
+      const edgeMid = structuredClone(edge);
+      const edge2 = structuredClone(edge);
+      edge1.label = '';
+      edge1.arrowTypeEnd = 'none';
+      edge1.id = nodeId + '-cyclic-special-1';
+      edgeMid.arrowTypeEnd = 'none';
+      edgeMid.id = nodeId + '-cyclic-special-mid';
+      edge2.label = '';
+      edge1.fromCluster = nodeId;
+      edge2.toCluster = nodeId;
+      edge2.id = nodeId + '-cyclic-special-2';
+      graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
+      graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
+      graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyc<lic-special-2');
+    } else {
+      graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
+    }
   });
 
   log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
   adjustClustersAndEdges(graph);
-  log.warn('Graph after:', JSON.stringify(graphlibJson.write(graph)));
+  log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
   const siteConfig = getConfig();
   await recursiveRender(
     element,

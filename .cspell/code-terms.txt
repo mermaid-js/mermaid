@@ -122,6 +122,8 @@ SUBROUTINEEND
 SUBROUTINESTART
 Subschemas
 substr
+SVGG
+SVGSVG
 TAGEND
 TAGSTART
 techn
@@ -138,6 +140,7 @@ tsdoc
 typeof
 typestr
 unshift
+urlsafe
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH
