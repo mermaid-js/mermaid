@@ -1,18 +1,29 @@
-// TODO remove no-console
-/* eslint-disable no-console */
-import type {
-  ArchitectureState,
-  ArchitectureDB,
-  ArchitectureService,
-  ArchitectureGroup,
-  ArchitectureEdge,
-  ArchitectureDirectionPairMap,
-  ArchitectureDirectionPair,
-  ArchitectureSpatialMap,
-  ArchitectureNode,
-  ArchitectureJunction,
-} from './architectureTypes.js';
+import type { ArchitectureDiagramConfig } from '../../config.type.js';
+import DEFAULT_CONFIG from '../../defaultConfig.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { D3Element } from '../../types.js';
+import { ImperativeState } from '../../utils/imperativeState.js';
+import {
+  clear as commonClear,
+  getAccDescription,
+  getAccTitle,
+  getDiagramTitle,
+  setAccDescription,
+  setAccTitle,
+  setDiagramTitle,
+} from '../common/commonDb.js';
+import type {
+  ArchitectureDB,
+  ArchitectureDirectionPair,
+  ArchitectureDirectionPairMap,
+  ArchitectureEdge,
+  ArchitectureGroup,
+  ArchitectureJunction,
+  ArchitectureNode,
+  ArchitectureService,
+  ArchitectureSpatialMap,
+  ArchitectureState,
+} from './architectureTypes.js';
 import {
   getArchitectureDirectionPair,
   isArchitectureDirection,
@@ -20,19 +31,6 @@ import {
   isArchitectureService,
   shiftPositionByArchitectureDirectionPair,
 } from './architectureTypes.js';
-import {
-  setAccTitle,
-  getAccTitle,
-  setDiagramTitle,
-  getDiagramTitle,
-  getAccDescription,
-  setAccDescription,
-  clear as commonClear,
-} from '../common/commonDb.js';
-import type { ArchitectureDiagramConfig } from '../../config.type.js';
-import DEFAULT_CONFIG from '../../defaultConfig.js';
-import type { D3Element } from '../../types.js';
-import { ImperativeState } from '../../utils/imperativeState.js';
 
 const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
   DEFAULT_CONFIG.architecture;
@@ -286,7 +284,6 @@ const getDataStructures = () => {
       adjList,
       spatialMaps,
     };
-    console.log(state.records.dataStructures);
   }
   return state.records.dataStructures;
 };

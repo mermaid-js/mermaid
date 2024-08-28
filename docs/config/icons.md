@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/config/icons.md](../../packages/mermaid/src/docs/config/icons.md).
 
-# SVG Icons (v???+)
+# SVG Icons (v\<MERMAID_RELEASE_VERSION>+)
 
 SVG Icons can be used with supported diagrams. Alongside the icon packs included with Mermaid, 3rd party libraries can be included in the configuration to cover additional use-cases.
 

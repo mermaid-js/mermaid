@@ -1,3 +1,4 @@
+import { log } from '$root/logger.js';
 import type { Selection } from 'd3-selection';
 
 export type IconResolver = (
@@ -31,16 +32,12 @@ export const isIconNameInUse = (name: string): boolean => {
   return icons[name] !== undefined;
 };
 
-export const registerIcon = (name: string, resolver: IconResolver) => {
-  if (!isIconNameInUse(name)) {
-    icons[name] = resolver;
-  }
-};
-
-export const registerIcons = (library: IconLibrary) => {
+export const registerIconLibrary = (library: IconLibrary) => {
   Object.entries(library).forEach(([name, resolver]) => {
     if (!isIconNameInUse(name)) {
       icons[name] = resolver;
+    } else {
+      log.warn(`Icon with name ${name} already exists. Skipping registration.`);
     }
   });
 };

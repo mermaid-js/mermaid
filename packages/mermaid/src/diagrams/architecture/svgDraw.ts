@@ -1,26 +1,26 @@
 // TODO remove no-console
 /* eslint-disable no-console */
-import type { D3Element } from '../../types.js';
+import type cytoscape from 'cytoscape';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';
+import type { D3Element } from '../../types.js';
+import { db, getConfigField } from './architectureDb.js';
 import {
   ArchitectureDirectionArrow,
-  type ArchitectureDB,
-  type ArchitectureService,
   ArchitectureDirectionArrowShift,
-  isArchitectureDirectionX,
-  isArchitectureDirectionY,
   edgeData,
-  nodeData,
-  isArchitectureDirectionXY,
   getArchitectureDirectionPair,
   getArchitectureDirectionXYFactors,
+  isArchitectureDirectionX,
+  isArchitectureDirectionXY,
+  isArchitectureDirectionY,
   isArchitecturePairXY,
+  nodeData,
+  type ArchitectureDB,
   type ArchitectureJunction,
+  type ArchitectureService,
 } from './architectureTypes.js';
-import type cytoscape from 'cytoscape';
-import { getIcon } from '../../rendering-util/svgRegister.js';
-import { db, getConfigField } from './architectureDb.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getIcon } from './icons/svgRegister.js';
 
 export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core) {
   const padding = getConfigField('padding');
