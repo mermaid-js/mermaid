@@ -3,19 +3,13 @@ import { imgSnapshotTest } from '../../helpers/util';
 const looks = ['classic', 'handDrawn'] as const;
 const directions = ['TB', 'BT', 'LR', 'RL'] as const;
 
-const shapesSet1 = ['text', 'card', 'shadedProcess', 'question', 'hexagon'] as const;
+const shapesSet1 = ['text', 'card', 'shadedProcess', 'diamond', 'hexagon'] as const;
 
 const shapesSet2 = ['roundedRect', 'squareRect', 'stateStart', 'stateEnd', 'labelRect'] as const;
 
-const shapesSet3 = ['forkJoin', 'choice', 'note', 'stadium', 'rect_left_inv_arrow'] as const;
+const shapesSet3 = ['forkJoin', 'choice', 'note', 'stadium', 'odd'] as const;
 
-const shapesSet4 = [
-  'subroutine',
-  'cylinder',
-  'circle',
-  'doublecircle',
-  'rect_left_inv_arrow',
-] as const;
+const shapesSet4 = ['subroutine', 'cylinder', 'circle', 'doublecircle', 'odd'] as const;
 
 const shapesSet5 = ['anchor', 'lean_right', 'lean_left', 'trapezoid', 'inv_trapezoid'] as const;
 
