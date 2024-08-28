@@ -17,10 +17,29 @@ export const waveRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
-  const waveAmplitude = h / 4;
-  const finalH = h + waveAmplitude;
+
+  const minWidth = 100; // Minimum width
+  const minHeight = 50; // Minimum height
+
+  const baseWidth = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
+  const baseHeight = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+
+  const aspectRatio = baseWidth / baseHeight;
+
+  let w = baseWidth;
+  let h = baseHeight;
+
+  if (w > h * aspectRatio) {
+    h = w / aspectRatio;
+  } else {
+    w = h * aspectRatio;
+  }
+
+  w = Math.max(w, minWidth);
+  h = Math.max(h, minHeight);
+
+  const waveAmplitude = Math.min(h * 0.2, h / 4);
+  const finalH = h + waveAmplitude * 2;
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed
