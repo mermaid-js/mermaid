@@ -64,8 +64,18 @@
         <h2>Visibility and Types</h2>
         <p>(Further tilde testing)</p>
         <div class="mermaid">
-          classDiagram class Duck{ ~interface~~~ +String beakColor #swim() ~quack()~~~
+          classDiagram class Duck { ~interface~~~ +String beakColor #swim() ~quack()~~~
           -test()~~~~~~~ +deposit(amount) bool }
+        </div>
+      </div>
+      <div class="test">
+        <h2>Additional Classifiers</h2>
+        <p>(* Abstract | $ Static)</p>
+        <div class="mermaid">
+          classDiagram class Square~Shape~{ int id* List~int~ position* setPoints(List~int~ points)*
+          getPoints()* List~int~ } Square : -List~string~ messages* Square :
+          +setMessages(List~string~ messages)* Square : +getMessages()$ List~string~ Square :
+          +getDistanceMatrix() List~List~int~~ int$
         </div>
       </div>
       <div class="test">
