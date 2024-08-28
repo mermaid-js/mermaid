@@ -45,7 +45,7 @@ const calcIntersectionPoint = (node, point) => {
   return { x: intersection.x, y: intersection.y, pos };
 };
 
-const calcIntersections = (points, startNodeId, endNodeId, startNodeSize, endNodeSize) => {
+const calcIntersections = (startNodeId, endNodeId, startNodeSize, endNodeSize) => {
   const startNode = nodeDB.get(startNodeId);
   if (startNodeSize) {
     startNode.x = startNodeSize.x;
@@ -53,18 +53,29 @@ const calcIntersections = (points, startNodeId, endNodeId, startNodeSize, endNod
     startNode.width = startNodeSize.width;
     startNode.height = startNodeSize.height;
   }
+
+  // If no end node it provided but you have an endNode size
+  // We are adding an edge to a new node
+  if (!endNodeId && endNodeSize) {
+    const startIntersection = calcIntersectionPoint(startNode, {
+      x: endNodeSize.x,
+      y: endNodeSize.y,
+    });
+    const endIntersection = { x: endNodeSize.x, y: endNodeSize.x, pos: 'c' };
+    return [startIntersection, endIntersection];
+  }
   const endNode = nodeDB.get(endNodeId);
-  if (endNodeSize) {
+  if (endNodeSize && endNode) {
     endNode.x = endNodeSize.x;
     endNode.y = endNodeSize.y;
     endNode.width = endNodeSize.width;
     endNode.height = endNodeSize.height;
+    // Get the intersections
+    const startIntersection = calcIntersectionPoint(startNode, { x: endNode.x, y: endNode.y });
+    const endIntersection = calcIntersectionPoint(endNode, { x: startNode.x, y: startNode.y });
+    return [startIntersection, endIntersection];
   }
-  // Get the intersections
-  const startIntersection = calcIntersectionPoint(startNode, { x: endNode.x, y: endNode.y });
-  const endIntersection = calcIntersectionPoint(endNode, { x: startNode.x, y: startNode.y });
-
-  return [startIntersection, endIntersection];
+  return [];
 };
 
 const doRender = async (_elem, data4Layout, siteConfig, positions) => {

@@ -188,12 +188,15 @@
       // };
 
       const { svg } = await mermaid.render('the-id-of-the-svg', code, undefined, positions);
-      // if (window?.calcIntersections) {
-      //   console.log('Intersections', window.calcIntersections(positions, 'T', 'U'));
-      // } else {
-      //   console.error('calcIntersections not found');
-      // }
-      console.log(JSON.stringify(positions));
+      if (window?.calcIntersections) {
+        console.log(
+          'Intersections',
+          calcIntersections('T', undefined, positions.nodes['T'], { x: 200, y: 200 })
+        );
+      } else {
+        console.error('calcIntersections not found');
+      }
+      // console.log(JSON.stringify(positions));
       const elem = document.querySelector('#diagram');
       elem.innerHTML = svg;
     </script>
