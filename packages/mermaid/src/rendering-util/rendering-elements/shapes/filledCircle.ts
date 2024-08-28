@@ -13,7 +13,7 @@ export const filledCircle = async (parent: SVGAElement, node: Node) => {
   node.label = '';
   node.labelStyle = labelStyles;
   const { shapeSvg } = await labelHelper(parent, node, getNodeClasses(node));
-  const radius = 4;
+  const radius = 7;
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed

@@ -55,6 +55,7 @@ GENERICTYPE
 getBoundarys
 grammr
 graphtype
+halign
 iife
 interp
 introdcued
@@ -66,6 +67,7 @@ Kaufmann
 keyify
 LABELPOS
 LABELTYPE
+layoutstop
 lcov
 LEFTOF
 Lexa

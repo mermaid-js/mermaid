@@ -19,6 +19,8 @@ import type { LayoutData } from './rendering-util/types.js';
 import type { ParseOptions, ParseResult, RenderResult } from './types.js';
 import type { DetailedError } from './utils.js';
 import utils, { isDetailedError } from './utils.js';
+import type { IconLibrary, IconResolver } from './rendering-util/svgRegister.js';
+import { createIcon } from './rendering-util/svgRegister.js';
 
 export type {
   DetailedError,
@@ -35,7 +37,11 @@ export type {
   SVG,
   SVGGroup,
   UnknownDiagramError,
+  IconLibrary,
+  IconResolver,
 };
+
+export { createIcon };
 
 export interface RunOptions {
   /**

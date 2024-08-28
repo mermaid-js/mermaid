@@ -222,6 +222,13 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* architecture */
+    this.archEdgeColor = this.archEdgeColor || '#777';
+    this.archEdgeArrowColor = this.archEdgeArrowColor || '#777';
+    this.archEdgeWidth = this.archEdgeWidth || '3';
+    this.archGroupBorderColor = this.archGroupBorderColor || '#000';
+    this.archGroupBorderWidth = this.archGroupBorderWidth || '2px';
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(this.primaryColor, { r: 5, g: 5, b: 5 });
