@@ -16,7 +16,7 @@ export const roundedRect = async (parent: SVGAElement, node: Node) => {
 };
 
 export const labelRect = async (parent: SVGElement, node: Node) => {
-  const { shapeSvg } = await labelHelper(parent, node, 'label');
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'label');
 
   // log.trace('Classes = ', node.class);
   // add the rect
@@ -27,6 +27,10 @@ export const labelRect = async (parent: SVGElement, node: Node) => {
   const totalHeight = 0.1;
   rect.attr('width', totalWidth).attr('height', totalHeight);
   shapeSvg.attr('class', 'label edgeLabel');
+  label.attr(
+    'transform',
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
+  );
 
   // if (node.props) {
   //   const propKeys = new Set(Object.keys(node.props));
