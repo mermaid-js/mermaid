@@ -1,4 +1,4 @@
-# Architecture Diagrams Documentation (v<MERMAID_RELEASE_VERSION>+)
+# Architecture Diagrams Documentation (v11.0.2-b.7+)
 
 > In the context of mermaid-js, the architecture diagram is used to show the relationship between services and resources commonly found within the Cloud or CI/CD deployments. In an architecture diagram, services (nodes) are connected by edges. Related services can be placed within groups to better illustrate how they are organized.
 

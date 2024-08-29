@@ -272,7 +272,7 @@ export const render = async (
           linkIdCnt[linkIdBase]++;
           log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
         }
-        const linkId = linkIdBase + '_' + linkIdCnt[linkIdBase];
+        const linkId = linkIdBase; // + '_' + linkIdCnt[linkIdBase];
         edge.id = linkId;
         log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
         const linkNameStart = 'LS_' + edge.start;
@@ -517,8 +517,8 @@ export const render = async (
     const x1 = bounds.x;
     const y1 = bounds.y;
 
-    const w = bounds.width; //+ bounds.padding;
-    const h = bounds.height; // + bounds.padding;
+    const w = bounds.width - 0.1; //+ bounds.padding;
+    const h = bounds.height - 0.1; // + bounds.padding;
 
     const polyPoints = [
       { x: x1, y: y1 - h / 2 },
@@ -675,7 +675,22 @@ export const render = async (
     return false;
   };
   /**
-   * This function will page a path and node where the last point(s) in the path is inside the node
+   * This function will take a path and node where the last point(s) in the path is inside the node
+   * and return an update path ending by the border of the node.
+   */
+  // const cutPathAtIntersect2 = (node: any, _points: any[], offset: any, bounds: any) => {
+  //   // Iterate over the points in the path and check if the point is inside the node
+  //   const points: any[] = [];
+  //   let lastPointOutside = _points[0];
+  //   let isInside = false;
+  //   _points.forEach((point: any) => {
+  //     const int = node.intersect(point);
+  //     // console.log('UIO cutPathAtIntersect2 Points:', point, 'int', int);
+  //   });
+  //   return points;
+  // };
+  /**
+   * This function will take a path and node where the last point(s) in the path is inside the node
    * and return an update path ending by the border of the node.
    */
   const cutPathAtIntersect = (
@@ -967,6 +982,22 @@ export const render = async (
             });
           }
         }
+
+        // edge.points = cutPathAtIntersect2(startNode, edge.points.reverse(), offset, {
+        //   x: startNode.x + startNode.width / 2 + offset.x,
+        //   y: startNode.y + startNode.height / 2 + offset.y,
+        //   width: sw,
+        //   height: startNode.height,
+        //   padding: startNode.padding,
+        // }).reverse();
+
+        // edge.points = cutPathAtIntersect2(endNode, edge.points, offset, {
+        //   x: endNode.x + ew / 2 + endNode.offset.x,
+        //   y: endNode.y + endNode.height / 2 + endNode.offset.y,
+        //   width: ew,
+        //   height: endNode.height,
+        //   padding: endNode.padding,
+        // });
 
         edge.points = cutPathAtIntersect(
           edge.points.reverse(),
