@@ -49,7 +49,7 @@ Edge:
 terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';
 terminal ARCH_ID: /[\w]+/;
 terminal ARCH_TEXT_ICON: /\("[^"]+"\)/;
-terminal ARCH_ICON: /\([\w:]+\)/;
+terminal ARCH_ICON: /\([\w-:]+\)/;
 terminal ARCH_TITLE: /\[[\w ]+\]/;
 terminal ARROW_GROUP: /\{group\}/;
 terminal ARROW_INTO: /<|>/;
