@@ -1,14 +1,17 @@
-import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import { getNodeClasses, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 
-export const forkJoin = async (parent: SVG, node: Node, dir: string) => {
+export const forkJoin = (parent: SVG, node: Node, dir: string) => {
   const { nodeStyles } = styles2String(node);
   node.label = '';
-  const { shapeSvg } = await labelHelper(parent, node, getNodeClasses(node));
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', getNodeClasses(node))
+    .attr('id', node.domId ?? node.id);
 
   const { cssStyles } = node;
   let width = Math.max(70, node?.width ?? 0);

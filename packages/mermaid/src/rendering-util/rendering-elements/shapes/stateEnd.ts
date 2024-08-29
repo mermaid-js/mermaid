@@ -39,8 +39,6 @@ export const stateEnd = (parent: SVG, node: Node) => {
   const circle = shapeSvg.insert(() => roughNode, ':first-child');
   circle.insert(() => roughInnerNode);
 
-  circle.attr('class', 'basic label-container');
-
   if (cssStyles) {
     circle.selectAll('path').attr('style', cssStyles);
   }
