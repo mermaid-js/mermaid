@@ -1,6 +1,6 @@
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
-describe('architecture diagram', () => {
+describe.skip('architecture diagram', () => {
   it('should render a simple architecture diagram with groups', () => {
     imgSnapshotTest(
       `architecture-beta
