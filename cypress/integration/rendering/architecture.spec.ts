@@ -1,9 +1,9 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('architecture diagram', () => {
   it('should render a simple architecture diagram with groups', () => {
     imgSnapshotTest(
-      `architecture
+      `architecture-beta
                 group api(cloud)[API]
 
                 service db(database)[Database] in api
@@ -21,7 +21,7 @@ describe('architecture diagram', () => {
   });
   it('should render an architecture diagram with groups within groups', () => {
     imgSnapshotTest(
-      `architecture
+      `architecture-beta
                 group api[API]
                 group public[Public API] in api
                 group private[Private API] in api
@@ -41,14 +41,14 @@ describe('architecture diagram', () => {
   });
   it('should render an architecture diagram with the fallback icon', () => {
     imgSnapshotTest(
-      `architecture
+      `architecture-beta
                 service unknown(iconnamedoesntexist)[Unknown Icon]
             `
     );
   });
   it('should render an architecture diagram with split directioning', () => {
     imgSnapshotTest(
-      `architecture
+      `architecture-beta
                 service db(database)[Database]
                 service s3(disk)[Storage]
                 service serv1(server)[Server 1]
@@ -64,7 +64,7 @@ describe('architecture diagram', () => {
   });
   it('should render an architecture diagram with directional arrows', () => {
     imgSnapshotTest(
-      `architecture
+      `architecture-beta
                 service servC(server)[Server 1]
                 service servL(server)[Server 2]
                 service servR(server)[Server 3]
@@ -85,7 +85,7 @@ describe('architecture diagram', () => {
   });
   it('should render an architecture diagram with group edges', () => {
     imgSnapshotTest(
-      `architecture
+      `architecture-beta
                 group left_group(cloud)[Left]
                 group right_group(cloud)[Right]
                 group top_group(cloud)[Top]
@@ -107,7 +107,7 @@ describe('architecture diagram', () => {
   });
   it('should render an architecture diagram with edge labels', () => {
     imgSnapshotTest(
-      `architecture
+      `architecture-beta
                 service servC(server)[Server 1]
                 service servL(server)[Server 2]
                 service servR(server)[Server 3]
@@ -128,7 +128,7 @@ describe('architecture diagram', () => {
   });
   it('should render an architecture diagram with simple junction edges', () => {
     imgSnapshotTest(
-      `architecture
+      `architecture-beta
                 service left_disk(disk)[Disk]
                 service top_disk(disk)[Disk]
                 service bottom_disk(disk)[Disk]
@@ -148,7 +148,7 @@ describe('architecture diagram', () => {
   });
   it('should render an architecture diagram with complex junction edges', () => {
     imgSnapshotTest(
-      `architecture
+      `architecture-beta
                 group left
                 group right
                 service left_disk(disk)[Disk] in left
