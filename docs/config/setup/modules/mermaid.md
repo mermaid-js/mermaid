@@ -26,41 +26,6 @@
 
 ## Type Aliases
 
-### IconLibrary
-
-Ƭ **IconLibrary**: `Record`<`string`, [`IconResolver`](mermaid.md#iconresolver)>
-
-#### Defined in
-
-[packages/mermaid/src/rendering-util/svgRegister.ts:7](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/svgRegister.ts#L7)
-
----
-
-### IconResolver
-
-Ƭ **IconResolver**: (`parent`: `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>, `width?`: `number`) => `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>
-
-#### Type declaration
-
-▸ (`parent`, `width?`): `Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>
-
-##### Parameters
-
-| Name     | Type                                                                  |
-| :------- | :-------------------------------------------------------------------- |
-| `parent` | `Selection`<`SVGGElement`, `unknown`, `Element` \| `null`, `unknown`> |
-| `width?` | `number`                                                              |
-
-##### Returns
-
-`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>
-
-#### Defined in
-
-[packages/mermaid/src/rendering-util/svgRegister.ts:3](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/svgRegister.ts#L3)
-
----
-
 ### InternalHelpers
 
 Ƭ **InternalHelpers**: typeof `internalHelpers`
@@ -122,29 +87,4 @@
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:446](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L446)
-
-## Functions
-
-### createIcon
-
-▸ **createIcon**(`icon`, `originalSize`): [`IconResolver`](mermaid.md#iconresolver)
-
-Converts an SVG Icon passed as a string into a properly formatted IconResolver
-
-#### Parameters
-
-| Name           | Type     | Description                                                                 |
-| :------------- | :------- | :-------------------------------------------------------------------------- |
-| `icon`         | `string` | html code for the svg icon as a string (the SVG tag should not be included) |
-| `originalSize` | `number` | the original size of the SVG Icon in pixels                                 |
-
-#### Returns
-
-[`IconResolver`](mermaid.md#iconresolver)
-
-IconResolver
-
-#### Defined in
-
-[packages/mermaid/src/rendering-util/svgRegister.ts:15](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/svgRegister.ts#L15)
+[packages/mermaid/src/mermaid.ts:440](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L440)

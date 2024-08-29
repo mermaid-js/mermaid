@@ -6,29 +6,26 @@
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
+import DOMPurify from 'dompurify';
+import isEmpty from 'lodash-es/isEmpty.js';
 import { version } from '../package.json';
+import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
+import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
+import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
+import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
+import { preprocessDiagram } from './preprocess.js';
 import getStyles from './styles.js';
 import theme from './themes/index.js';
-import DOMPurify from 'dompurify';
-import type { MermaidConfig } from './config.type.js';
-import { evaluate } from './diagrams/common/common.js';
-import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
-import { preprocessDiagram } from './preprocess.js';
-import { decodeEntities } from './utils.js';
-import type { IconLibrary } from './rendering-util/svgRegister.js';
-import { registerIcons } from './rendering-util/svgRegister.js';
-import defaultIconLibrary from './rendering-util/svg/index.js';
-import { toBase64 } from './utils/base64.js';
 import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
-import assignWithDepth from './assignWithDepth.js';
+import { decodeEntities } from './utils.js';
+import { toBase64 } from './utils/base64.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -491,29 +488,6 @@ function initialize(userOptions: MermaidConfig = {}) {
 
   // Set default options
   configApi.saveConfigFromInitialize(options);
-
-  registerIcons(defaultIconLibrary);
-  if (options?.iconLibraries) {
-    // TODO: find a better way to handle this, assumed to be resolved by the time diagrams are being generated
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    options.iconLibraries.forEach(async (library) => {
-      if (typeof library === 'string') {
-        let lib: IconLibrary = {};
-        if (library === 'aws:common') {
-          lib = (await import('./rendering-util/svg/aws/awsCommon.js')).default;
-        } else if (library === 'aws:full') {
-          lib = (await import('./rendering-util/svg/aws/awsFull.js')).default;
-        } else if (library === 'digital-ocean') {
-          lib = (await import('./rendering-util/svg/digital-ocean/digitalOcean.js')).default;
-        } else if (library === 'github') {
-          lib = (await import('./rendering-util/svg/github/github.js')).default;
-        }
-        registerIcons(lib);
-      } else {
-        registerIcons(library);
-      }
-    });
-  }
 
   if (options?.theme && options.theme in theme) {
     // Todo merge with user options

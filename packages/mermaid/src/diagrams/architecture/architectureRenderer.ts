@@ -1,39 +1,40 @@
-// TODO remove no-console
-/* eslint-disable no-console */
 import type { Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
-import type { Diagram } from '../../Diagram.js';
 import type { FcoseLayoutOptions } from 'cytoscape-fcose';
 import fcose from 'cytoscape-fcose';
+import { select } from 'd3';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
+import type { Diagram } from '../../Diagram.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import { getConfigField } from './architectureDb.js';
 import type {
   ArchitectureDataStructures,
-  ArchitectureSpatialMap,
-  EdgeSingularData,
-  EdgeSingular,
   ArchitectureJunction,
+  ArchitectureSpatialMap,
+  EdgeSingular,
+  EdgeSingularData,
   NodeSingularData,
 } from './architectureTypes.js';
 import {
   type ArchitectureDB,
   type ArchitectureDirection,
-  type ArchitectureGroup,
   type ArchitectureEdge,
+  type ArchitectureGroup,
   type ArchitectureService,
   ArchitectureDirectionName,
+  edgeData,
   getOppositeArchitectureDirection,
   isArchitectureDirectionXY,
   isArchitectureDirectionY,
   nodeData,
-  edgeData,
 } from './architectureTypes.js';
-import { select } from 'd3';
-import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import { defaultIconLibrary } from './icons/default.js';
+import { registerIconLibrary } from './icons/svgRegister.js';
 import { drawEdges, drawGroups, drawJunctions, drawServices } from './svgDraw.js';
-import { getConfigField } from './architectureDb.js';
 
+registerIconLibrary(defaultIconLibrary);
 cytoscape.use(fcose);
 
 function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
@@ -319,13 +320,6 @@ function layoutArchitecture(
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
     const relativePlacementConstraint = getRelativeConstraints(spatialMaps);
 
-    console.log(`Horizontal Alignments:`);
-    console.log(alignmentConstraint.horizontal);
-    console.log(`Vertical Alignments:`);
-    console.log(alignmentConstraint.vertical);
-    console.log(`Relative Alignments:`);
-    console.log(relativePlacementConstraint);
-
     const layout = cy.layout({
       name: 'fcose',
       quality: 'proof',
@@ -440,9 +434,6 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   const groups = db.getGroups();
   const edges = db.getEdges();
   const ds = db.getDataStructures();
-  console.log('Services: ', services);
-  console.log('Edges: ', edges);
-  console.log('Groups: ', groups);
 
   const svg: SVG = selectSvgElement(id);
 
@@ -465,8 +456,6 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   positionNodes(db, cy);
 
   setupGraphViewbox(undefined, svg, getConfigField('padding'), getConfigField('useMaxWidth'));
-
-  console.log('==============================================================');
 };
 
 export const renderer = { draw };
