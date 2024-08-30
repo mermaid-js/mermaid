@@ -754,7 +754,7 @@ export const render = async (
       'elk.direction': 'DOWN',
       'spacing.baseValue': 35,
       'elk.layered.unnecessaryBendpoints': true,
-      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk.cycleBreakingStrategy,
+      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
       // 'spacing.nodeNode': 20,
       // 'spacing.nodeNodeBetweenLayers': 25,
       // 'spacing.edgeNode': 20,
