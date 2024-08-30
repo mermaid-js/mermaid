@@ -6,6 +6,24 @@
 
 # Blog
 
+## [Mermaid v11 is out!](https://www.mermaidchart.com/blog/posts/mermaid-v11/)
+
+23 August 2024 · 2 mins
+
+Mermaid v11 introduces advanced layout options, new diagram types, and enhanced customization features, thanks to the incredible contributions from our community.
+
+## [Mermaid Innovation - Introducing New Looks for Mermaid Diagrams](https://www.mermaidchart.com/blog/posts/mermaid-innovation-introducing-new-looks-for-mermaid-diagrams/)
+
+6 August 2024 ·3 mins
+
+Discover the fresh new and unique Neo and Hand-Drawn looks for Mermaid Diagrams, while still offering the classic look you love.
+
+## [The Mermaid Chart Plugin for Jira: A How-To User Guide](https://www.mermaidchart.com/blog/posts/the-mermaid-chart-plugin-for-jira-a-how-to-user-guide/)
+
+31 July 2024 · 5 mins
+
+The Mermaid Chart plugin for Jira has arrived!
+
 ## [Mermaid AI Is Here to Change the Game For Diagram Creation](https://www.mermaidchart.com/blog/posts/mermaid-ai-is-here-to-change-the-game-for-diagram-creation/)
 
 22 July 2024 · 5 mins
