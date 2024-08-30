@@ -4,26 +4,32 @@ on:
   push:
   merge_group:
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - ready_for_review
   workflow_dispatch:
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: write
 
 jobs:
+  docker-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
+        with:
+          verbose: true
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
         # uses version from "packageManager" field in package.json
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           cache: pnpm
           node-version-file: '.node-version'
@@ -82,3 +88,10 @@ jobs:
         working-directory: ./packages/mermaid
         continue-on-error: ${{ github.event_name == 'push' }}
         run: pnpm run docs:verify
+
+      - uses: testomatio/check-tests@0ea638fcec1820cf2e7b9854fdbdd04128a55bd4 # stable
+        with:
+          framework: cypress
+          tests: './cypress/e2e/**/**.spec.js'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          has-tests-label: true

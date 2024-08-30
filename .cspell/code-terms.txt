@@ -55,6 +55,7 @@ GENERICTYPE
 getBoundarys
 grammr
 graphtype
+halign
 iife
 interp
 introdcued
@@ -66,6 +67,7 @@ Kaufmann
 keyify
 LABELPOS
 LABELTYPE
+layoutstop
 lcov
 LEFTOF
 Lexa
@@ -138,6 +140,7 @@ tsdoc
 typeof
 typestr
 unshift
+urlsafe
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH
