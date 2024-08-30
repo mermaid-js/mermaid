@@ -1,5 +1,5 @@
 export type MarkdownWordType = 'normal' | 'strong' | 'em';
-import type { MermaidConfig } from '../../dist/config.type.js';
+import type { MermaidConfig } from '../config.type.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
