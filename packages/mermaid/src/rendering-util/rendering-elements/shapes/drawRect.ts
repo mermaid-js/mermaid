@@ -1,11 +1,11 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
+import type { Node, RectOptions } from 'mermaid/dist/rendering-util/types.d.ts';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import {
   userNodeOverrides,
   styles2String,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+} from 'mermaid/dist/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {

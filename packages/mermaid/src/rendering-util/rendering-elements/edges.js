@@ -1,10 +1,10 @@
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import { evaluate } from '$root/diagrams/common/common.js';
-import { log } from '$root/logger.js';
-import { createText } from '$root/rendering-util/createText.ts';
-import utils from '$root/utils.js';
-import { getLineFunctionsWithOffset } from '$root/utils/lineWithOffset.js';
-import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
+import { getConfig } from 'mermaid/dist/diagram-api/diagramAPI.js';
+import { evaluate } from 'mermaid/dist/diagrams/common/common.js';
+import { log } from 'mermaid/dist/logger.js';
+import { createText } from 'mermaid/dist/rendering-util/createText.ts';
+import utils from 'mermaid/dist/utils.js';
+import { getLineFunctionsWithOffset } from 'mermaid/dist/utils/lineWithOffset.js';
+import { getSubGraphTitleMargins } from 'mermaid/dist/utils/subGraphTitleMargins.js';
 import { curveBasis, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';

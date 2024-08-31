@@ -1,7 +1,6 @@
-import type { SVG } from '$root/diagram-api/types.js';
-import type { InternalHelpers } from '$root/internals.js';
-import { internalHelpers } from '$root/internals.js';
-import { log } from '$root/logger.js';
+import type { SVG } from 'mermaid/dist/diagram-api/types.js';
+import type { InternalHelpers, internalHelpers } from 'mermaid/dist/internals.js';
+import { log } from 'mermaid/dist/logger.js';
 import type { LayoutData } from './types.js';
 
 export interface RenderOptions {

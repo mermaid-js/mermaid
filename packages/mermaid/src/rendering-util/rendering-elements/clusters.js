@@ -1,7 +1,7 @@
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import { evaluate } from '$root/diagrams/common/common.js';
-import { log } from '$root/logger.js';
-import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
+import { getConfig } from 'mermaid/dist/diagram-api/diagramAPI.js';
+import { evaluate } from 'mermaid/dist/diagrams/common/common.js';
+import { log } from 'mermaid/dist/logger.js';
+import { getSubGraphTitleMargins } from 'mermaid/dist/utils/subGraphTitleMargins.js';
 import { select } from 'd3';
 import rough from 'roughjs';
 import { createText } from '../createText.ts';
@@ -11,7 +11,7 @@ import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+} from 'mermaid/dist/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);

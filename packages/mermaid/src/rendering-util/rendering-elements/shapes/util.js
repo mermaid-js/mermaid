@@ -1,8 +1,8 @@
-import { createText } from '$root/rendering-util/createText.ts';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
+import { createText } from 'mermaid/dist/rendering-util/createText.ts';
+import { getConfig } from 'mermaid/dist/diagram-api/diagramAPI.js';
 import { select } from 'd3';
-import { evaluate, sanitizeText } from '$root/diagrams/common/common.js';
-import { decodeEntities } from '$root/utils.js';
+import { evaluate, sanitizeText } from 'mermaid/dist/diagrams/common/common.js';
+import { decodeEntities } from 'mermaid/dist/utils.js';
 
 export const labelHelper = async (parent, node, _classes) => {
   let cssClasses;

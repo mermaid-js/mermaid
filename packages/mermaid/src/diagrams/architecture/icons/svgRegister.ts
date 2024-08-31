@@ -1,4 +1,4 @@
-import { log } from '$root/logger.js';
+import { log } from 'mermaid/dist/logger.js';
 import type { Selection } from 'd3-selection';
 
 export type IconResolver = (

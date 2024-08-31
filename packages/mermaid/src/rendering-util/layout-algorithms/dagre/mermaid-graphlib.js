@@ -1,5 +1,5 @@
 /** Decorates with functions required by mermaids dagre-wrapper. */
-import { log } from '$root/logger.js';
+import { log } from 'mermaid/dist/logger.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 

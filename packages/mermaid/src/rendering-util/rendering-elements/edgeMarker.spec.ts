@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import type { SVG } from '$root/diagram-api/types.js';
+import type { SVG } from 'mermaid/dist/diagram-api/types.js';
 import type { Mocked } from 'vitest';
 import { addEdgeMarkers } from './edgeMarker.js';
 

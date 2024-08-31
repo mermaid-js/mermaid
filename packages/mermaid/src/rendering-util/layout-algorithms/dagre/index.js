@@ -23,7 +23,7 @@ import {
   insertEdge,
   clear as clearEdges,
 } from '../../rendering-elements/edges.js';
-import { log } from '$root/logger.js';
+import { log } from 'mermaid/dist/logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 

@@ -1,10 +1,10 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
+import type { Node } from 'mermaid/dist/rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+} from 'mermaid/dist/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 

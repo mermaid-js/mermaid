@@ -1,10 +1,10 @@
 import { updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
-import type { SVG } from '$root/diagram-api/types.js';
+import type { Node } from 'mermaid/dist/rendering-util/types.d.ts';
+import type { SVG } from 'mermaid/dist/diagram-api/types.js';
 import rough from 'roughjs';
 import { solidStateFill } from './handDrawnShapeStyles.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
+import { getConfig } from 'mermaid/dist/diagram-api/diagramAPI.js';
 
 export const stateEnd = (parent: SVG, node: Node) => {
   const { themeVariables } = getConfig();

@@ -1,5 +1,5 @@
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
+import { getConfig } from 'mermaid/dist/diagram-api/diagramAPI.js';
+import type { Node } from 'mermaid/dist/rendering-util/types.d.ts';
 
 // Striped fill like start or fork nodes in state diagrams
 export const solidStateFill = (color: string) => {

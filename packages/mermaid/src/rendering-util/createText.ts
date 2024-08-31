@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import common, { hasKatex, renderKatex } from '$root/diagrams/common/common.js';
+import { getConfig } from 'mermaid/dist/diagram-api/diagramAPI.js';
+import common, { hasKatex, renderKatex } from 'mermaid/dist/diagrams/common/common.js';
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
 import type { SVGGroup } from '../diagram-api/types.js';
