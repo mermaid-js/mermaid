@@ -580,6 +580,12 @@ sequenceDiagram
 
 It is possible to highlight flows by providing colored background rects. This is done by the notation
 
+```
+rect COLOR
+... content ...
+end
+```
+
 The colors are defined using rgb and rgba syntax.
 
 ```
