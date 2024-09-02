@@ -4,13 +4,13 @@
 
 ### Minor Changes
 
-- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - New Diagram: Architecture
+- [#5452](https://github.com/mermaid-js/mermaid/pull/5452) [`256a148`](https://github.com/mermaid-js/mermaid/commit/256a148bbf484fc7db6c19f94dd69d5d268ee048) Thanks [@NicolasNewman](https://github.com/NicolasNewman)! - New Diagram: Architecture
 
   Adds architecture diagrams which allows users to show relations between services.
 
 ### Patch Changes
 
-- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - feat: Support - in architecture icons
+- [#5793](https://github.com/mermaid-js/mermaid/pull/5793) [`7d8143b`](https://github.com/mermaid-js/mermaid/commit/7d8143b917ee3562149a0e0a821ed2d6f29cc05d) Thanks [@sidharthv96](https://github.com/sidharthv96)! - feat: Support - in architecture icons
 
 ## 0.2.0
 
