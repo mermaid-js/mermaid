@@ -224,17 +224,17 @@ Used to register external diagram types.
 
 ### registerIconPacks
 
-• **registerIconPacks**: (...`iconPacks`: `IconifyJSON`\[]) => `void`
+• **registerIconPacks**: (`iconLoaders`: `IconLoader`\[]) => `void`
 
 #### Type declaration
 
-▸ (`...iconPacks`): `void`
+▸ (`iconLoaders`): `void`
 
 ##### Parameters
 
-| Name           | Type             |
-| :------------- | :--------------- |
-| `...iconPacks` | `IconifyJSON`\[] |
+| Name          | Type            |
+| :------------ | :-------------- |
+| `iconLoaders` | `IconLoader`\[] |
 
 ##### Returns
 

@@ -159,42 +159,56 @@ By default, architecture diagram supports the following icons: `cloud`, `databas
 Users can use any of the 200,000+ icons available in iconify.design, or add their own custom icons, by following the steps below.
 
 The icon packs available can be found at [icones.js.org](https://icones.js.org/).
+We use the name defined when registering the icon pack, to override the prefix field of the iconify pack. This allows the user to use shorter names for the icons. It also allows us to load a particular pack only when it is used in a diagram.
 
 Using JSON file directly from CDN:
 
 ```js
 import mermaid from 'CDN/mermaid.esm.mjs';
-
-// You have to call `initialize` with startOnLoad:false before calling `registerIconPacks`,
-// to prevent mermaid from starting before the icons are loaded
-mermaid.initialize({
-  startOnLoad: false,
-  logLevel: 0,
-});
-const logos = await fetch('https://unpkg.com/@iconify-json/logos/icons.json');
-mermaid.registerIconPacks(await logos.json());
-mermaid.init();
+mermaid.registerIconPacks([
+  {
+    name: 'logos',
+    loader: () =>
+      fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+  },
+]);
 ```
 
 Using packages and a bundler:
 
-```js
-import mermaid from 'mermaid';
-// npm install @iconify-json/logos
-import { icons as logos } from '@iconify-json/logos';
-
-mermaid.initialize({
-  startOnLoad: false,
-  logLevel: 0,
-});
-mermaid.registerIconPacks(logos);
-mermaid.init();
+```bash
+npm install @iconify-json/logos
 ```
 
-After the icons are installed, they can be used in the architecture diagram by using the format "prefix:icon-name", where prefix comes from the icon pack you selected.
+With lazy loading
 
-````
-```mermaid
+```js
+import mermaid from 'mermaid';
+
+mermaid.registerIconPacks([
+  {
+    name: 'logos',
+    loader: () => import('@iconify-json/logos').then((module) => module.icons),
+  },
+]);
+```
+
+Without lazy loading
+
+```js
+import mermaid from 'mermaid';
+import { icons } from '@iconify-json/logos';
+mermaid.registerIconPacks([
+  {
+    name: icons.prefix, // To use the prefix defined in the icon pack
+    icons,
+  },
+]);
+```
+
+After the icons are installed, they can be used in the architecture diagram by using the format "name:icon-name", where name is the value used when registering the icon pack.
+
+```mermaid-example
 architecture-beta
     group api(logos:aws-lambda)[API]
 
@@ -207,29 +221,3 @@ architecture-beta
     disk1:T -- B:server
     disk2:T -- B:db
 ```
-````
-
-<div id="arch-example">loading...</div>
-
-<script>
-const main = async () => {
-  const logos = await fetch('https://unpkg.com/@iconify-json/logos/icons.json');
-  mermaid.registerIconPacks(await logos.json());
-  const svg = await window.render('d'+Date.now().toString(), `architecture-beta
-      group api(logos:aws-api-gateway)[API]
-
-      service db(logos:aws-aurora)[Database] in api
-      service disk1(logos:aws-glacier)[Storage] in api
-      service disk2(logos:aws-s3)[Storage] in api
-      service server(logos:aws-ec2)[Server] in api
-
-      db:L -- R:server
-      disk1:T -- B:server
-      disk2:T -- B:db`, {});
-  document.getElementById('arch-example').innerHTML = svg;
-};
-
-if (!import.meta.env.SSR) {
-  setTimeout(main, 100);
-}
-</script>

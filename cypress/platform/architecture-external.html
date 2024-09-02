@@ -28,8 +28,13 @@
         startOnLoad: false,
         logLevel: 0,
       });
-      const logos = await fetch('https://unpkg.com/@iconify-json/logos/icons.json');
-      mermaid.registerIconPacks(await logos.json());
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+        },
+      ]);
       await mermaid.run();
       if (window.Cypress) {
         window.rendered = true;

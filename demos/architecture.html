@@ -232,17 +232,25 @@
       service s3(logos:aws-s3)[Cloud Store]
       service ec2(logos:aws-ec2)[Server]
       service api(logos:aws-api-gateway)[Api Gateway]
+      service fa(fa:image)[Font Awesome Icon]
     </pre>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      mermaid.initialize({
-        startOnLoad: false,
-        logLevel: 0,
-      });
-      const logos = await fetch('https://unpkg.com/@iconify-json/logos/icons.json');
-      mermaid.registerIconPacks(await logos.json());
-      mermaid.init();
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/fa6-regular/icons.json').then((res) =>
+              res.json()
+            ),
+        },
+      ]);
     </script>
   </body>
 </html>

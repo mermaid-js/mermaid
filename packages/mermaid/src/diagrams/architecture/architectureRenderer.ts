@@ -34,7 +34,12 @@ import {
 } from './architectureTypes.js';
 import { drawEdges, drawGroups, drawJunctions, drawServices } from './svgDraw.js';
 
-registerIconPacks(architectureIcons);
+registerIconPacks([
+  {
+    name: architectureIcons.prefix,
+    icons: architectureIcons,
+  },
+]);
 cytoscape.use(fcose);
 
 function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
