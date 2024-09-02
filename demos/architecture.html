@@ -226,27 +226,23 @@
     </pre>
     <hr />
 
-    <!-- <h2>AWS Icon Demo</h2>
+    <h2>External Icons Demo</h2>
     <pre class="mermaid">
     architecture-beta
-      service s3(aws:s3)[Cloud Store]
-      service ec2(aws:ec2)[Server]
-      service wave(aws:wavelength)[Wave]
-      service droplet(do:droplet)[Droplet]
-      service repo(gh:github)[Repository]
-  </pre> -->
+      service s3(logos:aws-s3)[Cloud Store]
+      service ec2(logos:aws-ec2)[Server]
+      service api(logos:aws-api-gateway)[Api Gateway]
+    </pre>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
-        theme: 'base',
-        startOnLoad: true,
+        startOnLoad: false,
         logLevel: 0,
-        architecture: {
-          iconSize: 80,
-        },
-        // iconLibraries: ['aws:common', 'aws:full', 'github', 'digital-ocean'],
       });
+      const logos = await fetch('https://unpkg.com/@iconify-json/logos/icons.json');
+      mermaid.registerIconPacks(await logos.json());
+      mermaid.init();
     </script>
   </body>
 </html>
