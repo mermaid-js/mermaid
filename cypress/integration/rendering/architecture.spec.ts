@@ -1,4 +1,4 @@
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest, urlSnapshotTest } from '../../helpers/util.ts';
 
 describe.skip('architecture diagram', () => {
   it('should render a simple architecture diagram with groups', () => {
@@ -171,4 +171,8 @@ describe.skip('architecture diagram', () => {
             `
     );
   });
+});
+
+it('should allow adding external icons', () => {
+  urlSnapshotTest('http://localhost:9000/architecture-external.html');
 });
