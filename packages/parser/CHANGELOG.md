@@ -1,5 +1,17 @@
 # @mermaid-js/parser
 
+## 0.3.0
+
+### Minor Changes
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - New Diagram: Architecture
+
+  Adds architecture diagrams which allows users to show relations between services.
+
+### Patch Changes
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - feat: Support - in architecture icons
+
 ## 0.2.0
 
 ### Minor Changes
