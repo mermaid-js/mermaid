@@ -192,7 +192,7 @@ erDiagram
 
 - If you want the relationship label to be more than one word, you must use double quotes around the phrase
 - If you don't want a label at all on a relationship, you must use an empty double-quoted string
-- (v11.1.0+) If you want a multi-line label on a relationship, use `<br />` between the two lines (`"first line<br />second line"`)
+- (v<MERMAID_RELEASE_VERSION>+) If you want a multi-line label on a relationship, use `<br />` between the two lines (`"first line<br />second line"`)
 
 ## Styling
 
