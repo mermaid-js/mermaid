@@ -132,7 +132,7 @@ export const getRelations = function (): ClassRelation[] {
 export const getNote = function (id: string | number) {
   const key = typeof id === 'number' ? `note${id}` : id;
   return notes.get(key)!;
-}
+};
 
 export const getNotes = function () {
   return notes;
@@ -458,14 +458,24 @@ const getNamespaces = function (): NamespaceMap {
  * @param classNames - Ids of the class to add
  * @public
  */
-export const addClassesToNamespace = function (id: string, classNames: string[]) {
+export const addClassesToNamespace = function (
+  id: string,
+  classNames: string[],
+  noteNames: string[]
+) {
   if (!namespaces.has(id)) {
     return;
   }
   for (const name of classNames) {
     const { className } = splitClassNameAndType(name);
-    classes.get(className)!.parent = id;
-    namespaces.get(id)!.classes.set(className, classes.get(className)!);
+    const classNode = getClass(className);
+    classNode.parent = id;
+    namespaces.get(id)!.classes.set(className, classNode);
+  }
+  for (const noteName of noteNames) {
+    const noteNode = getNote(noteName);
+    noteNode.parent = id;
+    namespaces.get(id)!.notes.set(noteName, noteNode);
   }
 };
 

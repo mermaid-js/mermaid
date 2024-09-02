@@ -137,6 +137,7 @@ export interface ClassNote {
   class: string;
   text: string;
   index: number;
+  parent?: string;
 }
 
 export interface ClassRelation {

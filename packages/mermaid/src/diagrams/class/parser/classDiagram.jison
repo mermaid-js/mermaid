@@ -270,8 +270,8 @@ statement
     ;
 
 namespaceStatement
-    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          {yy.addClassesToNamespace($1, $3);}
-    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  {yy.addClassesToNamespace($1, $4);}
+    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          {yy.addClassesToNamespace($1, $3[0], $3[1]);}
+    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  {yy.addClassesToNamespace($1, $4[0], $4[1]);}
     ;
 
 namespaceIdentifier
@@ -279,9 +279,12 @@ namespaceIdentifier
     ;
 
 classStatements
-    : classStatement                            {$$=[$1]}
-    | classStatement NEWLINE                    {$$=[$1]}
-    | classStatement NEWLINE classStatements    {$3.unshift($1); $$=$3}
+    : classStatement                            {$$=[[$1], []]}
+    | classStatement NEWLINE                    {$$=[[$1], []]}
+    | classStatement NEWLINE classStatements    {$3[0].unshift($1); $$=$3}
+    | noteStatement                             {$$=[[], [$1]]}
+    | noteStatement NEWLINE                     {$$=[[], [$1]]}
+    | noteStatement NEWLINE classStatements     {$3[1].unshift($1); $$=$3}
     ;
 
 classStatement
@@ -320,8 +323,8 @@ relationStatement
     ;
 
 noteStatement
-    : NOTE_FOR className noteText  { yy.addNote($3, $2); }
-    | NOTE noteText                { yy.addNote($2); }
+    : NOTE_FOR className noteText  { $$=yy.addNote($3, $2); }
+    | NOTE noteText                { $$=yy.addNote($2); }
     ;
 
 direction

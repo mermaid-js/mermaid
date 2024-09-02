@@ -65,6 +65,9 @@ export const addNamespaces = function (
 
     g.setNode(vertex.id, node);
     addClasses(vertex.classes, g, _id, diagObj, vertex.id);
+    const classes: ClassMap = diagObj.db.getClasses();
+    const relations: ClassRelation[] = diagObj.db.getRelations();
+    addNotes(vertex.notes, g, relations.length + 1, classes, vertex.id);
 
     log.info('setNode', node);
   });
@@ -147,66 +150,71 @@ export const addNotes = function (
   notes: ClassNoteMap,
   g: graphlib.Graph,
   startEdgeId: number,
-  classes: ClassMap
+  classes: ClassMap,
+  parent?: string
 ) {
   log.info(notes);
 
-  notes.forEach(function (note, i) {
-    const vertex = note;
+  [...notes.values()]
+    .filter((note) => note.parent === parent)
+    .forEach(function (vertex) {
+      const cssNoteStr = '';
 
-    const cssNoteStr = '';
+      const styles = { labelStyle: '', style: '' };
 
-    const styles = { labelStyle: '', style: '' };
+      const vertexText = vertex.text;
 
-    const vertexText = vertex.text;
+      const radius = 0;
+      const shape = 'note';
+      const node = {
+        labelStyle: styles.labelStyle,
+        shape: shape,
+        labelText: sanitizeText(vertexText),
+        noteData: vertex,
+        rx: radius,
+        ry: radius,
+        class: cssNoteStr,
+        style: styles.style,
+        id: vertex.id,
+        domId: vertex.id,
+        tooltip: '',
+        type: 'note',
+        // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
+        padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
+      };
+      g.setNode(vertex.id, node);
+      log.info('setNode', node);
 
-    const radius = 0;
-    const shape = 'note';
-    const node = {
-      labelStyle: styles.labelStyle,
-      shape: shape,
-      labelText: sanitizeText(vertexText),
-      noteData: vertex,
-      rx: radius,
-      ry: radius,
-      class: cssNoteStr,
-      style: styles.style,
-      id: vertex.id,
-      domId: vertex.id,
-      tooltip: '',
-      type: 'note',
-      // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
-      padding: getConfig().flowchart?.padding ?? getConfig().class?.padding,
-    };
-    g.setNode(vertex.id, node);
-    log.info('setNode', node);
+      if (parent) {
+        g.setParent(vertex.id, parent);
+      }
 
-    if (!vertex.class || !classes.has(vertex.class)) {
-      return;
-    }
-    const edgeId = startEdgeId + i;
+      if (!vertex.class || !classes.has(vertex.class)) {
+        return;
+      }
+      const edgeId = startEdgeId + vertex.index;
 
-    const edgeData: EdgeData = {
-      id: `edgeNote${edgeId}`,
-      //Set relationship style and line type
-      classes: 'relation',
-      pattern: 'dotted',
-      // Set link type for rendering
-      arrowhead: 'none',
-      //Set edge extra labels
-      startLabelRight: '',
-      endLabelLeft: '',
-      //Set relation arrow types
-      arrowTypeStart: 'none',
-      arrowTypeEnd: 'none',
-      style: 'fill:none',
-      labelStyle: '',
-      curve: interpolateToCurve(conf.curve, curveLinear),
-    };
+      const edgeData: EdgeData = {
+        id: `edgeNote${edgeId}`,
+        //Set relationship style and line type
+        classes: 'relation',
+        pattern: 'dotted',
+        // Set link type for rendering
+        arrowhead: 'none',
+        //Set edge extra labels
+        startLabelRight: '',
+        endLabelLeft: '',
+        //Set relation arrow types
+        arrowTypeStart: 'none',
+        arrowTypeEnd: 'none',
+        style: 'fill:none',
+        labelStyle: '',
+        curve: interpolateToCurve(conf.curve, curveLinear),
+      };
 
-    // Add the edge to the graph
-    g.setEdge(vertex.id, vertex.class, edgeData, edgeId);
-  });
+      // Add the edge to the graph
+      g.setEdge(vertex.id, vertex.class, edgeData, edgeId);
+    });
 };
 
 /**
