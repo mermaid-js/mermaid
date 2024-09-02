@@ -8,7 +8,7 @@ import utils, { getEdgeId } from '../../utils.js';
 import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import common from '../common/common.js';
-import type { ClassRelation, ClassNote, ClassMap, NamespaceMap } from './classTypes.js';
+import type { ClassRelation, ClassMap, ClassNoteMap, NamespaceMap } from './classTypes.js';
 import type { EdgeData } from '../../types.js';
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
@@ -144,7 +144,7 @@ export const addClasses = function (
  * @param classes - Classes
  */
 export const addNotes = function (
-  notes: ClassNote[],
+  notes: ClassNoteMap,
   g: graphlib.Graph,
   startEdgeId: number,
   classes: ClassMap
@@ -329,7 +329,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   const namespaces: NamespaceMap = diagObj.db.getNamespaces();
   const classes: ClassMap = diagObj.db.getClasses();
   const relations: ClassRelation[] = diagObj.db.getRelations();
-  const notes: ClassNote[] = diagObj.db.getNotes();
+  const notes: ClassNoteMap = diagObj.db.getNotes();
   log.info(relations);
   addNamespaces(namespaces, g, id, diagObj);
   addClasses(classes, g, id, diagObj);

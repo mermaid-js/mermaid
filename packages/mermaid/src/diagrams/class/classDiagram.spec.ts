@@ -327,7 +327,7 @@ class C13["With Città foreign language"]
                      note "This is a keyword: ${keyword}. It truly is."
                   `;
       parser.parse(str);
-      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+      expect(classDb.getNote(0).text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
     });
 
     it.each(keywords)(
@@ -337,7 +337,7 @@ class C13["With Città foreign language"]
                       note "${keyword}"`;
 
         parser.parse(str);
-        expect(classDb.getNotes()[0].text).toEqual(`${keyword}`);
+        expect(classDb.getNote(0).text).toEqual(`${keyword}`);
       }
     );
 
@@ -351,7 +351,7 @@ class C13["With Città foreign language"]
                    `;
 
       parser.parse(str);
-      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+      expect(classDb.getNote(0).text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
     });
 
     it.each(keywords)(
@@ -366,7 +366,7 @@ class C13["With Città foreign language"]
                     `;
 
         parser.parse(str);
-        expect(classDb.getNotes()[0].text).toEqual(`${keyword}`);
+        expect(classDb.getNote(0).text).toEqual(`${keyword}`);
       }
     );
 
