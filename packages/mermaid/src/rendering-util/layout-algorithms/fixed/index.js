@@ -235,14 +235,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
       };
     }
     edge.points = fixInterSections(positions.edges[edge.id].points, edge.start, edge.end);
-    const paths = insertEdge(
-      edgePaths,
-      edge,
-      {},
-      data4Layout.type,
-      undefined,
-      data4Layout.diagramId
-    );
+    const paths = insertEdge(edgePaths, edge, {}, data4Layout.type, {}, {}, data4Layout.diagramId);
     paths.updatedPath = paths.originalPath;
     positionEdgeLabel(edge, paths);
   }
