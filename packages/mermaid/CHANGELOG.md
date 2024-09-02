@@ -1,5 +1,27 @@
 # mermaid
 
+## 11.1.0
+
+### Minor Changes
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - feat: Add support for iconify icons
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - feat(er): allow multi-line relationship labels
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - New Diagram: Architecture
+
+  Adds architecture diagrams which allows users to show relations between services.
+
+### Patch Changes
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - Fix for self loops in cluster
+  Supporting legacy defaultRenderer directive
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - chore: Move icons to architecture, remove full icon sets to reduce bundle size
+
+- Updated dependencies [[`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989), [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989)]:
+  - @mermaid-js/parser@0.3.0
+
 ## 11.0.2
 
 ### Patch Changes

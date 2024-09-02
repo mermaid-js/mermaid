@@ -1,5 +1,14 @@
 # @mermaid-js/layout-elk
 
+## 0.1.3
+
+### Patch Changes
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989) Thanks [@calvinvette](https://github.com/calvinvette)! - fix: Updates to the default elk configuration
+  feat: exposing cycleBreakingStrategy to the configuration so that it can be modified suing the configuration.
+- Updated dependencies [[`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989), [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989), [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989), [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989), [`10795b1`](https://github.com/mermaid-js/mermaid/commit/10795b1d89ecdf43a6414baa2cb37f585549b989)]:
+  - mermaid@11.1.0
+
 ## 0.1.2
 
 ### Patch Changes
