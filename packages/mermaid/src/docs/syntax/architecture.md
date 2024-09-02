@@ -208,3 +208,26 @@ architecture-beta
     disk2:T -- B:db
 ```
 ````
+
+<div id="arch-example">loading...</div>
+
+<script>
+const main = async () => {
+  const logos = await fetch('https://unpkg.com/@iconify-json/logos/icons.json');
+  mermaid.registerIconPacks(await logos.json());
+  const svg = await window.render('d'+Date.now().toString(), `architecture-beta
+      group api(logos:aws-api-gateway)[API]
+
+      service db(logos:aws-aurora)[Database] in api
+      service disk1(logos:aws-glacier)[Storage] in api
+      service disk2(logos:aws-s3)[Storage] in api
+      service server(logos:aws-ec2)[Server] in api
+
+      db:L -- R:server
+      disk1:T -- B:server
+      disk2:T -- B:db`, {});
+  document.getElementById('arch-example').innerHTML = svg;
+};
+
+setTimeout(main, 100)
+</script>

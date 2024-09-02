@@ -5,7 +5,19 @@ const init = mermaid.registerExternalDiagrams([zenuml]);
 
 export const render = async (id: string, code: string, config: MermaidConfig): Promise<string> => {
   await init;
-  mermaid.initialize(config);
+  const hasDarkClass = document.documentElement.classList.contains('dark');
+  const theme = hasDarkClass ? 'dark' : 'default';
+  mermaid.initialize({ ...config, theme });
   const { svg } = await mermaid.render(id, code);
   return svg;
 };
+
+declare global {
+  interface Window {
+    mermaid: typeof mermaid;
+    render: typeof render;
+  }
+}
+
+window.mermaid = mermaid;
+window.render = render;
