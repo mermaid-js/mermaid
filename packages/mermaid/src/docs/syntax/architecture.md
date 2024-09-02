@@ -229,5 +229,7 @@ const main = async () => {
   document.getElementById('arch-example').innerHTML = svg;
 };
 
-setTimeout(main, 100)
+if (!import.meta.env.SSR) {
+  setTimeout(main, 100);
+}
 </script>

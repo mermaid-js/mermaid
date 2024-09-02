@@ -17,7 +17,14 @@ declare global {
     mermaid: typeof mermaid;
     render: typeof render;
   }
-}
 
-window.mermaid = mermaid;
-window.render = render;
+  interface ImportMeta {
+    env: {
+      SSR: boolean;
+    };
+  }
+}
+if (!import.meta.env.SSR) {
+  window.mermaid = mermaid;
+  window.render = render;
+}
