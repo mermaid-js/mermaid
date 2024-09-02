@@ -62,22 +62,18 @@
 
   <body>
     <pre id="diagram4" class="mermaid">
-flowchart
-A
-      B@{ shape: multiRect, label: "title aduwab whgdawhbd wajhdbawj"  }@
-      F@{ shape: multiRect, label: "title "  }@
-      G@{ shape: multiRect, label: "title \n duawd \n duawd \n duawd \n duawd"  }@
-      C
-      D 
-      E 
-      C -->B
-      B --> D
-      B --> E
-      F --> A
-      A --> F
+      ---
+        config:
+          flowchart:
+            htmlLabels: true
+      ---
+      flowchart
+      classDef customClazz fill:#bbf,stroke:#f66,stroke-width:4px,color:#000,stroke-dasharray: 5 5
+      A1 --> B1@{ shape: taggedWaveEdgedRectangle, label: "test augfuyfavf yafuabffaev ydvaubfuac" }@ --> C1
+      A2 --> B2@{ shape: taggedRect, label: "test augfuyfavf yafuabffaev ydvaubfuac" }@ --> C2
+      B1:::customClazz
   </pre
     >
-
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';
@@ -91,7 +87,7 @@ A
       mermaid.initialize({
         // theme: 'base',
         // handdrawnSeed: 12,
-        look: 'classic',
+        look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // 'elk.nodePlacement.strategy': 'SIMPLE',
         // 'elk.nodePlacement.strategy': 'LAYERED',
@@ -100,7 +96,7 @@ A
         // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
-        flowchart: { titleTopMargin: 100, padding: 50 },
+        flowchart: { titleTopMargin: 10, padding: 5 },
         // fontFamily: 'Caveat',
         fontFamily: 'Kalam',
         // fontFamily: 'courier',

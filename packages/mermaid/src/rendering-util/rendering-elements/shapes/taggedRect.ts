@@ -45,7 +45,7 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const rectNode = rc.path(rectPath, options);
 
   const tagPath = createPathFromPoints(tagPoints);
-  const tagNode = rc.path(tagPath, options);
+  const tagNode = rc.path(tagPath, { ...options, fillStyle: 'solid' });
 
   const taggedRect = shapeSvg.insert(() => tagNode, ':first-child');
   taggedRect.insert(() => rectNode, ':first-child');

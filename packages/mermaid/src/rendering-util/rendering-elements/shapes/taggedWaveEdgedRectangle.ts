@@ -67,7 +67,10 @@ export const taggedWaveEdgedRectangle = async (parent: SVGAElement, node: Node) 
   const waveEdgeRectNode = rc.path(waveEdgeRectPath, options);
 
   const taggedWaveEdgeRectPath = createPathFromPoints(tagPoints);
-  const taggedWaveEdgeRectNode = rc.path(taggedWaveEdgeRectPath, options);
+  const taggedWaveEdgeRectNode = rc.path(taggedWaveEdgeRectPath, {
+    ...options,
+    fillStyle: 'solid',
+  });
 
   const waveEdgeRect = shapeSvg.insert(() => taggedWaveEdgeRectNode, ':first-child');
   waveEdgeRect.insert(() => waveEdgeRectNode, ':first-child');
