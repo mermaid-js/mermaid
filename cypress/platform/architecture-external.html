@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Architecture Mermaid Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>External Icons Demo</h2>
+    <pre class="mermaid">
+    architecture-beta
+      service s3(logos:aws-s3)[Cloud Store]
+      service ec2(logos:aws-ec2)[Server]
+      service api(logos:aws-api-gateway)[Api Gateway]
+      service fa(fa:image)[Font Awesome Icon]
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        startOnLoad: false,
+        logLevel: 0,
+      });
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/fa6-regular/icons.json').then((res) =>
+              res.json()
+            ),
+        },
+      ]);
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>

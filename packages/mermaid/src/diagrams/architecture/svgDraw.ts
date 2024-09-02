@@ -1,10 +1,10 @@
-// TODO remove no-console
-/* eslint-disable no-console */
+import { getIconSVG } from '$root/rendering-util/icons.js';
 import type cytoscape from 'cytoscape';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';
 import type { D3Element } from '../../types.js';
 import { db, getConfigField } from './architectureDb.js';
+import { architectureIcons } from './architectureIcons.js';
 import {
   ArchitectureDirectionArrow,
   ArchitectureDirectionArrowShift,
@@ -20,7 +20,6 @@ import {
   type ArchitectureJunction,
   type ArchitectureService,
 } from './architectureTypes.js';
-import { getIcon } from './icons/svgRegister.js';
 
 export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core) {
   const padding = getConfigField('padding');
@@ -198,7 +197,6 @@ export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Cor
       const data = nodeData(node);
       if (data.type === 'group') {
         const { h, w, x1, y1 } = node.boundingBox();
-        console.log(`Draw group (${data.id}): pos=(${x1}, ${y1}), dim=(${w}, ${h})`);
 
         groupsEl
           .append('rect')
@@ -213,7 +211,9 @@ export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Cor
         let shiftedY1 = y1;
         if (data.icon) {
           const bkgElem = groupLabelContainer.append('g');
-          getIcon(data.icon)?.(bkgElem, groupIconSize);
+          bkgElem.html(
+            `<g>${await getIconSVG(data.icon, { height: groupIconSize, width: groupIconSize, fallbackPrefix: architectureIcons.prefix })}</g>`
+          );
           bkgElem.attr(
             'transform',
             'translate(' +
@@ -290,15 +290,19 @@ export const drawServices = async function (
       textElem.attr('transform', 'translate(' + iconSize / 2 + ', ' + iconSize + ')');
     }
 
-    let bkgElem = serviceElem.append('g');
+    const bkgElem = serviceElem.append('g');
     if (service.icon) {
       // TODO: should a warning be given to end-users saying which icon names are available?
       // if (!isIconNameInUse(service.icon)) {
       //   throw new Error(`Invalid SVG Icon name: "${service.icon}"`);
       // }
-      bkgElem = getIcon(service.icon)?.(bkgElem, iconSize);
+      bkgElem.html(
+        `<g>${await getIconSVG(service.icon, { height: iconSize, width: iconSize, fallbackPrefix: architectureIcons.prefix })}</g>`
+      );
     } else if (service.iconText) {
-      bkgElem = getIcon('blank')?.(bkgElem, iconSize);
+      bkgElem.html(
+        `<g>${await getIconSVG('blank', { height: iconSize, width: iconSize, fallbackPrefix: architectureIcons.prefix })}</g>`
+      );
       const textElemContainer = bkgElem.append('g');
       const fo = textElemContainer
         .append('foreignObject')
