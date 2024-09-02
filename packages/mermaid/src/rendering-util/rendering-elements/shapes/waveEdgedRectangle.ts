@@ -14,8 +14,11 @@ export const waveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const w = Math.max(bbox.width + (labelPaddingX ?? 0) * 2, node?.width ?? 0);
+  const h = Math.max(bbox.height + (labelPaddingY ?? 0) * 2, node?.height ?? 0);
   const waveAmplitude = h / 4;
   const finalH = h + waveAmplitude;
   const { cssStyles } = node;
@@ -54,7 +57,7 @@ export const waveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   waveEdgeRect.attr('transform', `translate(0,${-waveAmplitude / 2})`);
   label.attr(
     'transform',
-    `translate(${-w / 2 + (node.padding ?? 0) - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (node.padding ?? 0) - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-w / 2 + (labelPaddingX ?? 0) - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (labelPaddingY ?? 0) - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, waveEdgeRect);
