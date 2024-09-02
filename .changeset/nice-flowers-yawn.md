@@ -1,6 +1,5 @@
 ---
 'mermaid': minor
-'@mermaid-js/docs': patch
 '@mermaid-js/parser': minor
 ---
 
