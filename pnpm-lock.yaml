@@ -503,67 +503,6 @@ importers:
         specifier: ^7.0.0
         version: 7.1.0
 
-  packages/mermaid/src/vitepress:
-    dependencies:
-      '@mdi/font':
-        specifier: ^7.0.0
-        version: 7.4.47
-      '@vueuse/core':
-        specifier: ^10.9.0
-        version: 10.11.1(vue@3.4.38(typescript@5.4.5))
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
-      jiti:
-        specifier: ^1.21.0
-        version: 1.21.6
-      mermaid:
-        specifier: workspace:^
-        version: link:../..
-      vue:
-        specifier: ^3.4.21
-        version: 3.4.38(typescript@5.4.5)
-    devDependencies:
-      '@iconify-json/carbon':
-        specifier: ^1.1.31
-        version: 1.1.37
-      '@unocss/reset':
-        specifier: ^0.59.0
-        version: 0.59.4
-      '@vite-pwa/vitepress':
-        specifier: ^0.4.0
-        version: 0.4.0(vite-plugin-pwa@0.19.8(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))
-      '@vitejs/plugin-vue':
-        specifier: ^5.0.0
-        version: 5.1.2(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(vue@3.4.38(typescript@5.4.5))
-      fast-glob:
-        specifier: ^3.3.2
-        version: 3.3.2
-      https-localhost:
-        specifier: ^4.7.1
-        version: 4.7.1
-      pathe:
-        specifier: ^1.1.2
-        version: 1.1.2
-      unocss:
-        specifier: ^0.59.0
-        version: 0.59.4(postcss@8.4.41)(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
-      unplugin-vue-components:
-        specifier: ^0.26.0
-        version: 0.26.0(@babel/parser@7.25.4)(rollup@4.21.1)(vue@3.4.38(typescript@5.4.5))
-      vite:
-        specifier: ^5.0.0
-        version: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
-      vite-plugin-pwa:
-        specifier: ^0.19.7
-        version: 0.19.8(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
-      vitepress:
-        specifier: 1.1.4
-        version: 1.1.4(@algolia/client-search@4.24.0)(@types/node@22.5.1)(axios@1.7.5)(postcss@8.4.41)(search-insights@2.15.0)(terser@5.31.6)(typescript@5.4.5)
-      workbox-window:
-        specifier: ^7.0.0
-        version: 7.1.0
-
   packages/parser:
     dependencies:
       langium:
@@ -12389,38 +12328,10 @@ snapshots:
     transitivePeerDependencies:
       - rollup
 
-  '@unocss/astro@0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))':
-    dependencies:
-      '@unocss/core': 0.59.4
-      '@unocss/reset': 0.59.4
-      '@unocss/vite': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
-    optionalDependencies:
-      vite: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
-    transitivePeerDependencies:
-      - rollup
-
   '@unocss/cli@0.59.4(rollup@2.79.1)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
-      '@unocss/config': 0.59.4
-      '@unocss/core': 0.59.4
-      '@unocss/preset-uno': 0.59.4
-      cac: 6.7.14
-      chokidar: 3.6.0
-      colorette: 2.0.20
-      consola: 3.2.3
-      fast-glob: 3.3.2
-      magic-string: 0.30.11
-      pathe: 1.1.2
-      perfect-debounce: 1.0.0
-    transitivePeerDependencies:
-      - rollup
-
-  '@unocss/cli@0.59.4(rollup@4.21.1)':
-    dependencies:
-      '@ampproject/remapping': 2.3.0
-      '@rollup/pluginutils': 5.1.0(rollup@4.21.1)
       '@unocss/config': 0.59.4
       '@unocss/core': 0.59.4
       '@unocss/preset-uno': 0.59.4
@@ -12548,22 +12459,6 @@ snapshots:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
-      '@unocss/config': 0.59.4
-      '@unocss/core': 0.59.4
-      '@unocss/inspector': 0.59.4
-      '@unocss/scope': 0.59.4
-      '@unocss/transformer-directives': 0.59.4
-      chokidar: 3.6.0
-      fast-glob: 3.3.2
-      magic-string: 0.30.11
-      vite: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
-    transitivePeerDependencies:
-      - rollup
-
-  '@unocss/vite@0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))':
-    dependencies:
-      '@ampproject/remapping': 2.3.0
-      '@rollup/pluginutils': 5.1.0(rollup@4.21.1)
       '@unocss/config': 0.59.4
       '@unocss/core': 0.59.4
       '@unocss/inspector': 0.59.4
@@ -18977,60 +18872,12 @@ snapshots:
       - rollup
       - supports-color
 
-  unocss@0.59.4(postcss@8.4.41)(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6)):
-    dependencies:
-      '@unocss/astro': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
-      '@unocss/cli': 0.59.4(rollup@4.21.1)
-      '@unocss/core': 0.59.4
-      '@unocss/extractor-arbitrary-variants': 0.59.4
-      '@unocss/postcss': 0.59.4(postcss@8.4.41)
-      '@unocss/preset-attributify': 0.59.4
-      '@unocss/preset-icons': 0.59.4
-      '@unocss/preset-mini': 0.59.4
-      '@unocss/preset-tagify': 0.59.4
-      '@unocss/preset-typography': 0.59.4
-      '@unocss/preset-uno': 0.59.4
-      '@unocss/preset-web-fonts': 0.59.4
-      '@unocss/preset-wind': 0.59.4
-      '@unocss/reset': 0.59.4
-      '@unocss/transformer-attributify-jsx': 0.59.4
-      '@unocss/transformer-attributify-jsx-babel': 0.59.4
-      '@unocss/transformer-compile-class': 0.59.4
-      '@unocss/transformer-directives': 0.59.4
-      '@unocss/transformer-variant-group': 0.59.4
-      '@unocss/vite': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
-    optionalDependencies:
-      vite: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
-    transitivePeerDependencies:
-      - postcss
-      - rollup
-      - supports-color
-
   unpipe@1.0.0: {}
 
   unplugin-vue-components@0.26.0(@babel/parser@7.25.4)(rollup@2.79.1)(vue@3.4.38(typescript@5.4.5)):
     dependencies:
       '@antfu/utils': 0.7.10
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
-      chokidar: 3.6.0
-      debug: 4.3.6(supports-color@8.1.1)
-      fast-glob: 3.3.2
-      local-pkg: 0.4.3
-      magic-string: 0.30.11
-      minimatch: 9.0.5
-      resolve: 1.22.8
-      unplugin: 1.12.0
-      vue: 3.4.38(typescript@5.4.5)
-    optionalDependencies:
-      '@babel/parser': 7.25.4
-    transitivePeerDependencies:
-      - rollup
-      - supports-color
-
-  unplugin-vue-components@0.26.0(@babel/parser@7.25.4)(rollup@4.21.1)(vue@3.4.38(typescript@5.4.5)):
-    dependencies:
-      '@antfu/utils': 0.7.10
-      '@rollup/pluginutils': 5.1.0(rollup@4.21.1)
       chokidar: 3.6.0
       debug: 4.3.6(supports-color@8.1.1)
       fast-glob: 3.3.2

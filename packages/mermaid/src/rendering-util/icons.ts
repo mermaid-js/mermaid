@@ -1,4 +1,4 @@
-import { log } from '$root/logger.js';
+import { log } from 'mermaid/dist/logger.js';
 import type { ExtendedIconifyIcon, IconifyIcon, IconifyJSON } from '@iconify/types';
 import type { IconifyIconCustomisations } from '@iconify/utils';
 import { getIconData, iconToHTML, iconToSVG, replaceIDs, stringToIcon } from '@iconify/utils';
