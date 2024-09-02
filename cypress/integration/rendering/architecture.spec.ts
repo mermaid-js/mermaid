@@ -173,6 +173,8 @@ describe.skip('architecture diagram', () => {
   });
 });
 
-it('should allow adding external icons', () => {
-  urlSnapshotTest('http://localhost:9000/architecture-external.html');
+describe('architecture - external', () => {
+  it('should allow adding external icons', () => {
+    urlSnapshotTest('http://localhost:9000/architecture-external.html');
+  });
 });
