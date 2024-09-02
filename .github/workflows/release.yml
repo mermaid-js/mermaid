@@ -12,7 +12,7 @@ permissions: # added using https://github.com/step-security/secure-repo
 
 jobs:
   release:
-    if: github.repository == 'sveltejs/kit'
+    if: github.repository == 'mermaid-js/mermaid'
     permissions:
       contents: write # to create release (changesets/action)
       id-token: write # OpenID Connect token needed for provenance
