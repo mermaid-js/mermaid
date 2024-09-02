@@ -6,26 +6,26 @@
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
+import DOMPurify from 'dompurify';
+import isEmpty from 'lodash-es/isEmpty.js';
 import { version } from '../package.json';
+import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
+import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
+import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
+import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
+import { preprocessDiagram } from './preprocess.js';
 import getStyles from './styles.js';
 import theme from './themes/index.js';
-import DOMPurify from 'dompurify';
-import type { MermaidConfig } from './config.type.js';
-import { evaluate } from './diagrams/common/common.js';
-import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
-import { preprocessDiagram } from './preprocess.js';
+import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
-import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
-import assignWithDepth from './assignWithDepth.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -477,7 +477,7 @@ const render = async function (
  * @param  userOptions - Initial Mermaid options
  */
 function initialize(userOptions: MermaidConfig = {}) {
-  const options = assignWithDepth({}, userOptions);
+  const options: MermaidConfig = assignWithDepth({}, userOptions);
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
     if (!options.themeVariables) {

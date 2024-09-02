@@ -24,11 +24,13 @@ Doctave
 DokuWiki
 dompurify
 elkjs
+fcose
 fontawesome
 Foswiki
 Gitea
 graphlib
 Grav
+icones
 iconify
 Inkdrop
 jiti
