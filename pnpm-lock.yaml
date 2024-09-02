@@ -13,7 +13,7 @@ importers:
         version: 3.44.7(encoding@0.1.13)(typescript@5.4.5)
       '@argos-ci/cypress':
         specifier: ^2.1.0
-        version: 2.1.2(cypress@13.14.0)
+        version: 2.1.2(cypress@13.14.1)
       '@changesets/changelog-github':
         specifier: ^0.5.0
         version: 0.5.0(encoding@0.1.13)
@@ -25,7 +25,7 @@ importers:
         version: 8.13.3(eslint@9.8.0)
       '@cypress/code-coverage':
         specifier: ^3.12.30
-        version: 3.12.45(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(babel-loader@9.1.3(@babel/core@7.25.2)(webpack@5.93.0(esbuild@0.21.5)))(cypress@13.14.0)(webpack@5.93.0(esbuild@0.21.5))
+        version: 3.12.45(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(babel-loader@9.1.3(@babel/core@7.25.2)(webpack@5.93.0(esbuild@0.21.5)))(cypress@13.14.1)(webpack@5.93.0(esbuild@0.21.5))
       '@eslint/js':
         specifier: ^9.4.0
         version: 9.8.0
@@ -87,11 +87,11 @@ importers:
         specifier: ^8.6.0
         version: 8.14.2
       cypress:
-        specifier: ^13.11.0
-        version: 13.14.0
+        specifier: ^13.14.1
+        version: 13.14.1
       cypress-image-snapshot:
         specifier: ^4.0.1
-        version: 4.0.1(cypress@13.14.0)(jest@29.7.0(@types/node@20.16.2))
+        version: 4.0.1(cypress@13.14.1)(jest@29.7.0(@types/node@20.16.2))
       esbuild:
         specifier: ^0.21.5
         version: 0.21.5
@@ -484,6 +484,67 @@ importers:
       unplugin-vue-components:
         specifier: ^0.26.0
         version: 0.26.0(@babel/parser@7.25.4)(rollup@2.79.1)(vue@3.4.38(typescript@5.4.5))
+      vite:
+        specifier: ^5.0.0
+        version: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
+      vite-plugin-pwa:
+        specifier: ^0.19.7
+        version: 0.19.8(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
+      vitepress:
+        specifier: 1.1.4
+        version: 1.1.4(@algolia/client-search@4.24.0)(@types/node@22.5.1)(axios@1.7.5)(postcss@8.4.41)(search-insights@2.15.0)(terser@5.31.6)(typescript@5.4.5)
+      workbox-window:
+        specifier: ^7.0.0
+        version: 7.1.0
+
+  packages/mermaid/src/vitepress:
+    dependencies:
+      '@mdi/font':
+        specifier: ^7.0.0
+        version: 7.4.47
+      '@vueuse/core':
+        specifier: ^10.9.0
+        version: 10.11.1(vue@3.4.38(typescript@5.4.5))
+      font-awesome:
+        specifier: ^4.7.0
+        version: 4.7.0
+      jiti:
+        specifier: ^1.21.0
+        version: 1.21.6
+      mermaid:
+        specifier: workspace:^
+        version: link:../..
+      vue:
+        specifier: ^3.4.21
+        version: 3.4.38(typescript@5.4.5)
+    devDependencies:
+      '@iconify-json/carbon':
+        specifier: ^1.1.31
+        version: 1.1.37
+      '@unocss/reset':
+        specifier: ^0.59.0
+        version: 0.59.4
+      '@vite-pwa/vitepress':
+        specifier: ^0.4.0
+        version: 0.4.0(vite-plugin-pwa@0.19.8(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))
+      '@vitejs/plugin-vue':
+        specifier: ^5.0.0
+        version: 5.1.2(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))(vue@3.4.38(typescript@5.4.5))
+      fast-glob:
+        specifier: ^3.3.2
+        version: 3.3.2
+      https-localhost:
+        specifier: ^4.7.1
+        version: 4.7.1
+      pathe:
+        specifier: ^1.1.2
+        version: 1.1.2
+      unocss:
+        specifier: ^0.59.0
+        version: 0.59.4(postcss@8.4.41)(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
+      unplugin-vue-components:
+        specifier: ^0.26.0
+        version: 0.26.0(@babel/parser@7.25.4)(rollup@4.21.1)(vue@3.4.38(typescript@5.4.5))
       vite:
         specifier: ^5.0.0
         version: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
@@ -4351,8 +4412,8 @@ packages:
   cypress-wait-until@3.0.2:
     resolution: {integrity: sha512-iemies796dD5CgjG5kV0MnpEmKSH+s7O83ZoJLVzuVbZmm4lheMsZqAVT73hlMx4QlkwhxbyUzhOBUOZwoOe0w==}
 
-  cypress@13.14.0:
-    resolution: {integrity: sha512-r0+nhd033x883YL6068futewUsl02Q7rWiinyAAIBDW/OOTn+UMILWgNuCiY3vtJjd53efOqq5R9dctQk/rKiw==}
+  cypress@13.14.1:
+    resolution: {integrity: sha512-Wo+byPmjps66hACEH5udhXINEiN3qS3jWNGRzJOjrRJF3D0+YrcP2LVB1T7oYaVQM/S+eanqEvBWYc8cf7Vcbg==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
 
@@ -9546,12 +9607,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/cypress@2.1.2(cypress@13.14.0)':
+  '@argos-ci/cypress@2.1.2(cypress@13.14.1)':
     dependencies:
       '@argos-ci/browser': 2.1.3
       '@argos-ci/core': 2.5.0
       '@argos-ci/util': 2.1.1
-      cypress: 13.14.0
+      cypress: 13.14.1
       cypress-wait-until: 3.0.2
     transitivePeerDependencies:
       - supports-color
@@ -10898,14 +10959,14 @@ snapshots:
 
   '@cspell/url@8.14.2': {}
 
-  '@cypress/code-coverage@3.12.45(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(babel-loader@9.1.3(@babel/core@7.25.2)(webpack@5.93.0(esbuild@0.21.5)))(cypress@13.14.0)(webpack@5.93.0(esbuild@0.21.5))':
+  '@cypress/code-coverage@3.12.45(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(babel-loader@9.1.3(@babel/core@7.25.2)(webpack@5.93.0(esbuild@0.21.5)))(cypress@13.14.1)(webpack@5.93.0(esbuild@0.21.5))':
     dependencies:
       '@babel/core': 7.25.2
       '@babel/preset-env': 7.25.4(@babel/core@7.25.2)
       '@cypress/webpack-preprocessor': 6.0.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(babel-loader@9.1.3(@babel/core@7.25.2)(webpack@5.93.0(esbuild@0.21.5)))(webpack@5.93.0(esbuild@0.21.5))
       babel-loader: 9.1.3(@babel/core@7.25.2)(webpack@5.93.0(esbuild@0.21.5))
       chalk: 4.1.2
-      cypress: 13.14.0
+      cypress: 13.14.1
       dayjs: 1.11.12
       debug: 4.3.6(supports-color@8.1.1)
       execa: 4.1.0
@@ -12293,10 +12354,38 @@ snapshots:
     transitivePeerDependencies:
       - rollup
 
+  '@unocss/astro@0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))':
+    dependencies:
+      '@unocss/core': 0.59.4
+      '@unocss/reset': 0.59.4
+      '@unocss/vite': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
+    optionalDependencies:
+      vite: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
+    transitivePeerDependencies:
+      - rollup
+
   '@unocss/cli@0.59.4(rollup@2.79.1)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
+      '@unocss/config': 0.59.4
+      '@unocss/core': 0.59.4
+      '@unocss/preset-uno': 0.59.4
+      cac: 6.7.14
+      chokidar: 3.6.0
+      colorette: 2.0.20
+      consola: 3.2.3
+      fast-glob: 3.3.2
+      magic-string: 0.30.11
+      pathe: 1.1.2
+      perfect-debounce: 1.0.0
+    transitivePeerDependencies:
+      - rollup
+
+  '@unocss/cli@0.59.4(rollup@4.21.1)':
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@rollup/pluginutils': 5.1.0(rollup@4.21.1)
       '@unocss/config': 0.59.4
       '@unocss/core': 0.59.4
       '@unocss/preset-uno': 0.59.4
@@ -12424,6 +12513,22 @@ snapshots:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
+      '@unocss/config': 0.59.4
+      '@unocss/core': 0.59.4
+      '@unocss/inspector': 0.59.4
+      '@unocss/scope': 0.59.4
+      '@unocss/transformer-directives': 0.59.4
+      chokidar: 3.6.0
+      fast-glob: 3.3.2
+      magic-string: 0.30.11
+      vite: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
+    transitivePeerDependencies:
+      - rollup
+
+  '@unocss/vite@0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))':
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@rollup/pluginutils': 5.1.0(rollup@4.21.1)
       '@unocss/config': 0.59.4
       '@unocss/core': 0.59.4
       '@unocss/inspector': 0.59.4
@@ -13865,10 +13970,10 @@ snapshots:
 
   cuint@0.2.2: {}
 
-  cypress-image-snapshot@4.0.1(cypress@13.14.0)(jest@29.7.0(@types/node@20.16.2)):
+  cypress-image-snapshot@4.0.1(cypress@13.14.1)(jest@29.7.0(@types/node@20.16.2)):
     dependencies:
       chalk: 2.4.2
-      cypress: 13.14.0
+      cypress: 13.14.1
       fs-extra: 7.0.1
       glob: 7.2.3
       jest-image-snapshot: 4.2.0(jest@29.7.0(@types/node@20.16.2))
@@ -13879,7 +13984,7 @@ snapshots:
 
   cypress-wait-until@3.0.2: {}
 
-  cypress@13.14.0:
+  cypress@13.14.1:
     dependencies:
       '@cypress/request': 3.0.1
       '@cypress/xvfb': 1.2.4(supports-color@8.1.1)
@@ -14915,7 +15020,7 @@ snapshots:
       proxy-addr: 2.0.7
       rfdc: 1.4.1
       secure-json-parse: 2.7.0
-      semver: 7.6.2
+      semver: 7.6.3
       tiny-lru: 8.0.2
     transitivePeerDependencies:
       - supports-color
@@ -18833,12 +18938,60 @@ snapshots:
       - rollup
       - supports-color
 
+  unocss@0.59.4(postcss@8.4.41)(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6)):
+    dependencies:
+      '@unocss/astro': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
+      '@unocss/cli': 0.59.4(rollup@4.21.1)
+      '@unocss/core': 0.59.4
+      '@unocss/extractor-arbitrary-variants': 0.59.4
+      '@unocss/postcss': 0.59.4(postcss@8.4.41)
+      '@unocss/preset-attributify': 0.59.4
+      '@unocss/preset-icons': 0.59.4
+      '@unocss/preset-mini': 0.59.4
+      '@unocss/preset-tagify': 0.59.4
+      '@unocss/preset-typography': 0.59.4
+      '@unocss/preset-uno': 0.59.4
+      '@unocss/preset-web-fonts': 0.59.4
+      '@unocss/preset-wind': 0.59.4
+      '@unocss/reset': 0.59.4
+      '@unocss/transformer-attributify-jsx': 0.59.4
+      '@unocss/transformer-attributify-jsx-babel': 0.59.4
+      '@unocss/transformer-compile-class': 0.59.4
+      '@unocss/transformer-directives': 0.59.4
+      '@unocss/transformer-variant-group': 0.59.4
+      '@unocss/vite': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.31.6))
+    optionalDependencies:
+      vite: 5.4.2(@types/node@22.5.1)(terser@5.31.6)
+    transitivePeerDependencies:
+      - postcss
+      - rollup
+      - supports-color
+
   unpipe@1.0.0: {}
 
   unplugin-vue-components@0.26.0(@babel/parser@7.25.4)(rollup@2.79.1)(vue@3.4.38(typescript@5.4.5)):
     dependencies:
       '@antfu/utils': 0.7.10
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
+      chokidar: 3.6.0
+      debug: 4.3.6(supports-color@8.1.1)
+      fast-glob: 3.3.2
+      local-pkg: 0.4.3
+      magic-string: 0.30.11
+      minimatch: 9.0.5
+      resolve: 1.22.8
+      unplugin: 1.12.0
+      vue: 3.4.38(typescript@5.4.5)
+    optionalDependencies:
+      '@babel/parser': 7.25.4
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+
+  unplugin-vue-components@0.26.0(@babel/parser@7.25.4)(rollup@4.21.1)(vue@3.4.38(typescript@5.4.5)):
+    dependencies:
+      '@antfu/utils': 0.7.10
+      '@rollup/pluginutils': 5.1.0(rollup@4.21.1)
       chokidar: 3.6.0
       debug: 4.3.6(supports-color@8.1.1)
       fast-glob: 3.3.2
