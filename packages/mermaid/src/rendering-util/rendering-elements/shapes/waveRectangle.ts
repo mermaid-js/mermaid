@@ -21,8 +21,11 @@ export const waveRectangle = async (parent: SVGAElement, node: Node) => {
   const minWidth = 100; // Minimum width
   const minHeight = 50; // Minimum height
 
-  const baseWidth = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const baseHeight = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const baseWidth = Math.max(bbox.width + labelPaddingX * 2, node?.width ?? 0);
+  const baseHeight = Math.max(bbox.height + labelPaddingY * 2, node?.height ?? 0);
 
   const aspectRatio = baseWidth / baseHeight;
 
