@@ -28,7 +28,7 @@ page.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:441](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L441)
+[packages/mermaid/src/mermaid.ts:436](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L436)
 
 ---
 
@@ -59,7 +59,7 @@ A graph definition key
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:443](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L443)
+[packages/mermaid/src/mermaid.ts:438](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L438)
 
 ---
 
@@ -89,7 +89,7 @@ Use [initialize](mermaid.Mermaid.md#initialize) and [run](mermaid.Mermaid.md#run
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:436](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L436)
+[packages/mermaid/src/mermaid.ts:431](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L431)
 
 ---
 
@@ -116,7 +116,7 @@ This function should be called before the run function.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:440](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L440)
+[packages/mermaid/src/mermaid.ts:435](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L435)
 
 ---
 
@@ -130,7 +130,7 @@ Use [parse](mermaid.Mermaid.md#parse) and [render](mermaid.Mermaid.md#render) in
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:430](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L430)
+[packages/mermaid/src/mermaid.ts:425](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L425)
 
 ---
 
@@ -180,7 +180,7 @@ Error if the diagram is invalid and parseOptions.suppressErrors is false or not 
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:431](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L431)
+[packages/mermaid/src/mermaid.ts:426](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L426)
 
 ---
 
@@ -190,7 +190,7 @@ Error if the diagram is invalid and parseOptions.suppressErrors is false or not 
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:425](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L425)
+[packages/mermaid/src/mermaid.ts:420](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L420)
 
 ---
 
@@ -218,6 +218,30 @@ Used to register external diagram types.
 
 #### Defined in
 
+[packages/mermaid/src/mermaid.ts:434](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L434)
+
+---
+
+### registerIconPacks
+
+• **registerIconPacks**: (`iconLoaders`: `IconLoader`\[]) => `void`
+
+#### Type declaration
+
+▸ (`iconLoaders`): `void`
+
+##### Parameters
+
+| Name          | Type            |
+| :------------ | :-------------- |
+| `iconLoaders` | `IconLoader`\[] |
+
+##### Returns
+
+`void`
+
+#### Defined in
+
 [packages/mermaid/src/mermaid.ts:439](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L439)
 
 ---
@@ -242,7 +266,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:438](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L438)
+[packages/mermaid/src/mermaid.ts:433](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L433)
 
 ---
 
@@ -268,7 +292,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:432](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L432)
+[packages/mermaid/src/mermaid.ts:427](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L427)
 
 ---
 
@@ -316,7 +340,7 @@ Renders the mermaid diagrams
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:437](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L437)
+[packages/mermaid/src/mermaid.ts:432](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L432)
 
 ---
 
@@ -351,7 +375,7 @@ to it (eg. dart interop wrapper). (Initially there is no parseError member of me
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:442](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L442)
+[packages/mermaid/src/mermaid.ts:437](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L437)
 
 ---
 
@@ -361,4 +385,4 @@ to it (eg. dart interop wrapper). (Initially there is no parseError member of me
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:424](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L424)
+[packages/mermaid/src/mermaid.ts:419](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L419)

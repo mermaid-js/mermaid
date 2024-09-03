@@ -2,6 +2,7 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
+import { registerIconPacks } from '$root/rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
@@ -19,8 +20,6 @@ import type { LayoutData } from './rendering-util/types.js';
 import type { ParseOptions, ParseResult, RenderResult } from './types.js';
 import type { DetailedError } from './utils.js';
 import utils, { isDetailedError } from './utils.js';
-import type { IconLibrary, IconResolver } from './rendering-util/svgRegister.js';
-import { createIcon } from './rendering-util/svgRegister.js';
 
 export type {
   DetailedError,
@@ -37,11 +36,7 @@ export type {
   SVG,
   SVGGroup,
   UnknownDiagramError,
-  IconLibrary,
-  IconResolver,
 };
-
-export { createIcon };
 
 export interface RunOptions {
   /**
@@ -441,6 +436,7 @@ export interface Mermaid {
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
+  registerIconPacks: typeof registerIconPacks;
 }
 
 const mermaid: Mermaid = {
@@ -457,6 +453,7 @@ const mermaid: Mermaid = {
   contentLoaded,
   setParseErrorHandler,
   detectType,
+  registerIconPacks,
 };
 
 export default mermaid;

@@ -227,11 +227,6 @@ properties:
       fall back to legacy rendering for KaTeX.
     type: boolean
     default: false
-  iconLibraries:
-    description: |
-      This option specifies an object contianing a mappig of SVG icon names to a resolver that returns the svg code.
-      For supported diagrams (i.e., Architecture), their syntax allows refering to key names in this object to display the corresponding SVG icon in the rendered diagram.
-    tsType: Array<import('./rendering-util/svgRegister.js').IconLibrary | import('./rendering-util/svg/index.js').IconNamespaceKeys>
   forceLegacyMathML:
     description: |
       This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS

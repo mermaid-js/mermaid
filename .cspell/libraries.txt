@@ -30,6 +30,7 @@ Foswiki
 Gitea
 graphlib
 Grav
+icones
 iconify
 Inkdrop
 jiti

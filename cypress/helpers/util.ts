@@ -73,7 +73,7 @@ export const imgSnapshotTest = (
 
 export const urlSnapshotTest = (
   url: string,
-  options: CypressMermaidConfig,
+  options: CypressMermaidConfig = {},
   _api = false,
   validation?: any
 ): void => {
