@@ -24,11 +24,16 @@ function createInnerPathD(rx: number, ry: number, w: number, h: number) {
 export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const h = bbox.height + node.padding;
+  const { shapeSvg, bbox, label, halfPadding } = await labelHelper(
+    parent,
+    node,
+    getNodeClasses(node)
+  );
+  const labelPadding = node.look === 'neo' ? halfPadding * 2 : halfPadding;
+  const h = bbox.height + labelPadding;
   const ry = h / 2;
   const rx = ry / (2.5 + h / 50);
-  const w = bbox.width + rx + node.padding;
+  const w = bbox.width + rx + labelPadding;
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed
