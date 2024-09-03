@@ -14,8 +14,10 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = bbox.width + (node.padding ?? 0);
-  const h = w + bbox.height;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  const w = Math.max(bbox.width + (labelPaddingX ?? 0), node?.width ?? 0);
+  const h = Math.max(w + bbox.height, node?.height ?? 0);
 
   const tw = w + bbox.height;
   const points = [
