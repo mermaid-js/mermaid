@@ -14,8 +14,11 @@ export const flippedTriangle = async (parent: SVGAElement, node: Node): Promise<
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = bbox.width + (node.padding ?? 0);
-  const h = w + bbox.height;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const w = Math.max(bbox.width + (labelPaddingX ?? 0), node?.width ?? 0);
+  const h = Math.max(w + bbox.height, node?.width ?? 0);
 
   const tw = w + bbox.height;
   const points = [
@@ -55,7 +58,7 @@ export const flippedTriangle = async (parent: SVGAElement, node: Node): Promise<
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${-h / 2 + (node.padding ?? 0) / 2 + (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${-h / 2 + (labelPaddingY ?? 0) / 2 + (bbox.y - (bbox.top ?? 0))})`
   );
 
   node.intersect = function (point) {
