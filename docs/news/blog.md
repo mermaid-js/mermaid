@@ -6,6 +6,12 @@
 
 # Blog
 
+## [Introducing Architecture Diagrams in Mermaid](https://www.mermaidchart.com/blog/posts/mermaid-supports-architecture-diagrams/)
+
+2 September 2024 · 2 mins
+
+Discover the fresh new and unique Neo and Hand-Drawn looks for Mermaid Diagrams, while still offering the classic look you love.
+
 ## [Mermaid AI Is Here to Change the Game For Diagram Creation](https://www.mermaidchart.com/blog/posts/mermaid-ai-is-here-to-change-the-game-for-diagram-creation/)
 
 22 July 2024 · 5 mins
