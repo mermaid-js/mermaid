@@ -5,23 +5,34 @@
  * So contributors adding new features will only have to add the placeholder and not worry about updating the version number.
  *
  */
+import { readFile, writeFile } from 'fs/promises';
 import { posix } from 'path';
 import {
-  getGlobs,
   getFilesFromGlobs,
-  SOURCE_DOCS_DIR,
-  readSyncedUTF8file,
+  getGlobs,
   MERMAID_RELEASE_VERSION,
+  readSyncedUTF8file,
+  SOURCE_DOCS_DIR,
 } from './docs.mjs';
-import { writeFile } from 'fs/promises';
 
 const verifyOnly: boolean = process.argv.includes('--verify');
 const versionPlaceholder = '<MERMAID_RELEASE_VERSION>';
 
+const verifyDocumentation = async () => {
+  const fileContent = await readFile('./src/docs/community/contributing.md', 'utf-8');
+  if (!fileContent.includes(versionPlaceholder)) {
+    console.error(
+      `The placeholder ${versionPlaceholder} is not present in the contributing.md file.`
+    );
+    process.exit(1);
+  }
+};
+
 const main = async () => {
+  await verifyDocumentation();
   const sourceDirGlob = posix.join('.', SOURCE_DOCS_DIR, '**');
   const mdFileGlobs = getGlobs([posix.join(sourceDirGlob, '*.md')]);
-  mdFileGlobs.push('!**/community/development.md', '!**/community/code.md');
+  mdFileGlobs.push('!**/community/contributing.md');
   const mdFiles = await getFilesFromGlobs(mdFileGlobs);
   mdFiles.sort();
   const mdFilesWithPlaceholder: string[] = [];

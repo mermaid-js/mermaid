@@ -4,7 +4,7 @@
   "version": "10.2.4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "type": "module",
-  "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247",
+  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1",
   "keywords": [
     "diagram",
     "markdown",
@@ -42,7 +42,7 @@
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "prepare": "husky install && pnpm build",
+    "prepare": "husky && pnpm build",
     "pre-commit": "lint-staged"
   },
   "repository": {
@@ -88,7 +88,7 @@
     "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
     "cspell": "^8.6.0",
-    "cypress": "^13.11.0",
+    "cypress": "^13.14.1",
     "cypress-image-snapshot": "^4.0.1",
     "esbuild": "^0.21.5",
     "eslint": "^9.4.0",
@@ -116,7 +116,6 @@
     "markdown-table": "^3.0.3",
     "nyc": "^15.1.0",
     "path-browserify": "^1.0.1",
-    "pnpm": "^8.15.5",
     "prettier": "^3.2.5",
     "prettier-plugin-jsdoc": "^1.3.0",
     "rimraf": "^5.0.5",

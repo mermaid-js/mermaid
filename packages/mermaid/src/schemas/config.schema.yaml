@@ -46,6 +46,7 @@ required:
   - quadrantChart
   - xyChart
   - requirement
+  - architecture
   - mindmap
   - gitGraph
   - c4
@@ -119,6 +120,17 @@ properties:
           - LINEAR_SEGMENTS
           - BRANDES_KOEPF
         default: BRANDES_KOEPF
+      cycleBreakingStrategy:
+        description: |
+          This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
+        type: string
+        enum:
+          - GREEDY
+          - DEPTH_FIRST
+          - INTERACTIVE
+          - MODEL_ORDER
+          - GREEDY_MODEL_ORDER
+        default: GREEDY_MODEL_ORDER
   darkMode:
     type: boolean
     default: false
@@ -263,6 +275,8 @@ properties:
     $ref: '#/$defs/XYChartConfig'
   requirement:
     $ref: '#/$defs/RequirementDiagramConfig'
+  architecture:
+    $ref: '#/$defs/ArchitectureDiagramConfig'
   mindmap:
     $ref: '#/$defs/MindmapDiagramConfig'
   gitGraph:
@@ -909,6 +923,28 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       line_height:
         type: number
         default: 20
+
+  ArchitectureDiagramConfig:
+    title: Architecture Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for architecture diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+      - padding
+      - iconSize
+      - fontSize
+    properties:
+      padding:
+        type: number
+        default: 40
+      iconSize:
+        type: number
+        default: 80
+      fontSize:
+        type: number
+        default: 16
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config
