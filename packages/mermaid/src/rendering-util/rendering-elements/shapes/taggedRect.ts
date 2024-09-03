@@ -15,7 +15,7 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
   const x = -w / 2;
   const y = -h / 2;
-  const tagWidth = 0.2 * w;
+  const tagWidth = 0.2 * h;
   const tagHeight = 0.2 * h;
   const { cssStyles } = node;
 
@@ -45,7 +45,7 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const rectNode = rc.path(rectPath, options);
 
   const tagPath = createPathFromPoints(tagPoints);
-  const tagNode = rc.path(tagPath, options);
+  const tagNode = rc.path(tagPath, { ...options, fillStyle: 'solid' });
 
   const taggedRect = shapeSvg.insert(() => tagNode, ':first-child');
   taggedRect.insert(() => rectNode, ':first-child');

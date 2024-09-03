@@ -155,15 +155,6 @@ export interface MermaidConfig {
    */
   legacyMathML?: boolean;
   /**
-   * This option specifies an object contianing a mappig of SVG icon names to a resolver that returns the svg code.
-   * For supported diagrams (i.e., Architecture), their syntax allows refering to key names in this object to display the corresponding SVG icon in the rendered diagram.
-   *
-   */
-  iconLibraries?: Array<
-    | import('./rendering-util/svgRegister.js').IconLibrary
-    | import('./rendering-util/svg/index.js').IconNamespaceKeys
-  >;
-  /**
    * This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS
    * fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
    * If set to true, ignores legacyMathML.

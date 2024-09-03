@@ -4,12 +4,15 @@ import type { SVG } from '$root/diagram-api/types.js';
 // @ts-ignore TODO: Fix rough typings
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { createPathFromPoints, getNodeClasses, labelHelper } from './util.js';
+import { createPathFromPoints, getNodeClasses } from './util.js';
 
-export const choice = async (parent: SVG, node: Node) => {
+export const choice = (parent: SVG, node: Node) => {
   const { nodeStyles } = styles2String(node);
   node.label = '';
-  const { shapeSvg } = await labelHelper(parent, node, getNodeClasses(node));
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', getNodeClasses(node))
+    .attr('id', node.domId ?? node.id);
   const { cssStyles } = node;
 
   const s = Math.max(28, node.width ?? 0);
@@ -33,8 +36,6 @@ export const choice = async (parent: SVG, node: Node) => {
   const choicePath = createPathFromPoints(points);
   const roughNode = rc.path(choicePath, options);
   const choiceShape = shapeSvg.insert(() => roughNode, ':first-child');
-
-  choiceShape.attr('class', 'basic label-container');
 
   if (cssStyles && node.look !== 'handDrawn') {
     choiceShape.selectAll('path').attr('style', cssStyles);

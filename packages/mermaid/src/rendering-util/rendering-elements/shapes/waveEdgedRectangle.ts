@@ -19,9 +19,14 @@ export const waveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
   const w = Math.max(bbox.width + (labelPaddingX ?? 0) * 2, node?.width ?? 0);
   const h = Math.max(bbox.height + (labelPaddingY ?? 0) * 2, node?.height ?? 0);
-  const waveAmplitude = h / 4;
+  const waveAmplitude = h / 8;
   const finalH = h + waveAmplitude;
   const { cssStyles } = node;
+
+  // To maintain minimum width
+  const minWidth = 70;
+  const widthDif = minWidth - w;
+  const extraW = widthDif > 0 ? widthDif / 2 : 0;
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
@@ -33,10 +38,17 @@ export const waveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   }
 
   const points = [
-    { x: -w / 2, y: finalH / 2 },
-    ...generateFullSineWavePoints(-w / 2, finalH / 2, w / 2, finalH / 2, waveAmplitude, 0.8),
-    { x: w / 2, y: -finalH / 2 },
-    { x: -w / 2, y: -finalH / 2 },
+    { x: -w / 2 - extraW, y: finalH / 2 },
+    ...generateFullSineWavePoints(
+      -w / 2 - extraW,
+      finalH / 2,
+      w / 2 + extraW,
+      finalH / 2,
+      waveAmplitude,
+      0.8
+    ),
+    { x: w / 2 + extraW, y: -finalH / 2 },
+    { x: -w / 2 - extraW, y: -finalH / 2 },
   ];
 
   const waveEdgeRectPath = createPathFromPoints(points);

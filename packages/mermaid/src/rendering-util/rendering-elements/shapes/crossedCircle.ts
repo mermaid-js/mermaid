@@ -1,5 +1,6 @@
 import { log } from '$root/logger.js';
-import { labelHelper, getNodeClasses, updateNodeBounds } from './util.js';
+import { getNodeClasses, updateNodeBounds } from './util.js';
+import type { SVG } from '$root/diagram-api/types.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import {
   styles2String,
@@ -22,11 +23,14 @@ function createLine(r: number) {
                    M ${pointQ1.x},${pointQ1.y} L ${pointQ3.x},${pointQ3.y}`;
 }
 
-export const crossedCircle = async (parent: SVGAElement, node: Node) => {
+export const crossedCircle = (parent: SVG, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   node.label = '';
-  const { shapeSvg } = await labelHelper(parent, node, getNodeClasses(node));
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', getNodeClasses(node))
+    .attr('id', node.domId ?? node.id);
   const radius = Math.max(30, node?.width ?? 0);
   const { cssStyles } = node;
 
@@ -45,8 +49,6 @@ export const crossedCircle = async (parent: SVGAElement, node: Node) => {
 
   const crossedCircle = shapeSvg.insert(() => circleNode, ':first-child');
   crossedCircle.insert(() => lineNode);
-
-  crossedCircle.attr('class', 'basic label-container');
 
   if (cssStyles && node.look !== 'handDrawn') {
     crossedCircle.selectAll('path').attr('style', cssStyles);

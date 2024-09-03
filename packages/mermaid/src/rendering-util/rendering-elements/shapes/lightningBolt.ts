@@ -1,6 +1,7 @@
 import { log } from '$root/logger.js';
-import { labelHelper, getNodeClasses, updateNodeBounds } from './util.js';
+import { getNodeClasses, updateNodeBounds } from './util.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
+import type { SVG } from '$root/diagram-api/types.js';
 import {
   styles2String,
   userNodeOverrides,
@@ -9,11 +10,14 @@ import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { createPathFromPoints } from './util.js';
 
-export const lightningBolt = async (parent: SVGAElement, node: Node) => {
+export const lightningBolt = (parent: SVG, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';
   node.labelStyle = labelStyles;
-  const { shapeSvg } = await labelHelper(parent, node, getNodeClasses(node));
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', getNodeClasses(node))
+    .attr('id', node.domId ?? node.id);
   const { cssStyles } = node;
   const height = 80;
   const width = 80;
@@ -41,8 +45,6 @@ export const lightningBolt = async (parent: SVGAElement, node: Node) => {
   const lineNode = rc.path(linePath, options);
 
   const lightningBolt = shapeSvg.insert(() => lineNode, ':first-child');
-
-  lightningBolt.attr('class', 'basic label-container');
 
   if (cssStyles && node.look !== 'handDrawn') {
     lightningBolt.selectAll('path').attr('style', cssStyles);
