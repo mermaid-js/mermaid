@@ -77,8 +77,11 @@ export const bowTieRect = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + node.padding + 20;
-  const h = bbox.height + node.padding;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const w = Math.max(bbox.width + labelPaddingX + 20, node?.width ?? 0);
+  const h = Math.max(bbox.height + labelPaddingY, node?.height ?? 0);
 
   const ry = h / 2;
   const rx = ry / (2.5 + h / 50);
