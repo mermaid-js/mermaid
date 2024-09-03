@@ -213,8 +213,8 @@ importers:
         specifier: ^2.1.32
         version: 2.1.32
       '@mermaid-js/parser':
-        specifier: workspace:^
-        version: link:../parser
+        specifier: ^0.3.0
+        version: 0.3.0
       cytoscape:
         specifier: ^3.29.2
         version: 3.30.1
@@ -2392,6 +2392,9 @@ packages:
 
   '@mermaid-js/parser@0.2.0':
     resolution: {integrity: sha512-33dyFdhwsX9n4+E8SRj1ulxwAgwCj9RyCMtoqXD5cDfS9F6y9xmvmjFjHoPaViH4H7I7BXD8yP/XEWig5XrHSQ==}
+
+  '@mermaid-js/parser@0.3.0':
+    resolution: {integrity: sha512-HsvL6zgE5sUPGgkIDlmAWR1HTNHz2Iy11BAWPTa4Jjabkpguy4Ze2gzfLrg6pdRuBvFwgUYyxiaNqZwrEEXepA==}
 
   '@microsoft/tsdoc-config@0.17.0':
     resolution: {integrity: sha512-v/EYRXnCAIHxOHW+Plb6OWuUoMotxTN0GLatnpOb1xq0KuTNw/WI3pamJx/UbsoJP5k9MCw1QxvvhPcF9pH3Zg==}
@@ -11610,6 +11613,10 @@ snapshots:
   '@mdi/font@7.4.47': {}
 
   '@mermaid-js/parser@0.2.0':
+    dependencies:
+      langium: 3.0.0
+
+  '@mermaid-js/parser@0.3.0':
     dependencies:
       langium: 3.0.0
 

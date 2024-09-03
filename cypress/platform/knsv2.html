@@ -73,9 +73,11 @@
         font-family: monospace;
         font-size: 72px;
       }
+
       pre {
         width: 100%;
       }
+
       /* tspan {
               font-size: 6px !important;
             } */
@@ -354,8 +356,8 @@ flowchart TB
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
-      // import layouts from './mermaid-layout-elk.esm.mjs';
-      // mermaid.registerLayoutLoaders(layouts);
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
