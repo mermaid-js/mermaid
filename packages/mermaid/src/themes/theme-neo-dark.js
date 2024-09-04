@@ -36,6 +36,7 @@ class Theme {
     this.textColor = '#ccc';
     this.THEME_COLOR_LIMIT = 12;
     this.radius = 3;
+    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
@@ -53,6 +54,13 @@ class Theme {
     this.gradientStart = '#0042eb';
     this.gradientStop = '#eb0042';
     this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,0.5))';
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = 'calculated';
+    this.archEdgeArrowColor = 'calculated';
+    this.archEdgeWidth = '3';
+    this.archGroupBorderColor = this.primaryBorderColor;
+    this.archGroupBorderWidth = '2px';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
@@ -132,6 +140,10 @@ class Theme {
     this.taskTextColor = this.taskTextColor || this.primaryTextColor;
     this.taskTextDarkColor = this.taskTextDarkColor || this.textColor;
     this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = this.lineColor;
+    this.archEdgeArrowColor = this.lineColor;
 
     /* Sequence Diagram variables */
 
