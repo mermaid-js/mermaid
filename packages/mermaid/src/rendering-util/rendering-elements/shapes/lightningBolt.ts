@@ -19,9 +19,9 @@ export const lightningBolt = (parent: SVG, node: Node) => {
     .attr('class', getNodeClasses(node))
     .attr('id', node.domId ?? node.id);
   const { cssStyles } = node;
-  const height = 80;
-  const width = 80;
-  const gap = 16;
+  const width = Math.max(35, node?.width ?? 0);
+  const height = Math.max(35, node?.height ?? 0);
+  const gap = 7;
 
   const points = [
     { x: width, y: 0 },
