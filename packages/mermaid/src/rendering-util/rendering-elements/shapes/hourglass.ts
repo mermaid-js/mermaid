@@ -14,8 +14,8 @@ export const hourglass = async (parent: SVGAElement, node: Node) => {
   node.labelStyle = labelStyles;
   const { shapeSvg } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = 100;
-  const h = 100;
+  const w = Math.max(30, node?.width ?? 0);
+  const h = Math.max(30, node?.height ?? 0);
 
   const { cssStyles } = node;
 
