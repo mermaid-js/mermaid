@@ -91,7 +91,7 @@ export const taggedWaveEdgedRectangle = async (parent: SVGAElement, node: Node) 
   waveEdgeRect.attr('transform', `translate(0,${-waveAmplitude / 2})`);
   label.attr(
     'transform',
-    `translate(${-w / 2 + (labelPaddingX ?? 0) - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (labelPaddingY ?? 0) - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, waveEdgeRect);
