@@ -48,7 +48,7 @@ import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
 import { taggedWaveEdgedRectangle } from './shapes/taggedWaveEdgedRectangle.js';
-import { curlyBraces } from './shapes/curlyBraces.js';
+import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 
 //Use these names as the left side to render shapes.
 const shapes = {
@@ -213,9 +213,9 @@ const shapes = {
   lightningBolt,
   bolt: lightningBolt,
   'com-link': lightningBolt,
-  curlyBraces,
-  brace: curlyBraces,
-  comment: curlyBraces,
+  curlyBraceLeft,
+  brace: curlyBraceLeft,
+  comment: curlyBraceLeft,
   hourglass,
   odd: rect_left_inv_arrow,
   labelRect,

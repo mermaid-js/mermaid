@@ -31,13 +31,13 @@ function generateCirclePoints(
     const angle = startAngleRad + i * angleStep;
     const x = centerX + radius * Math.cos(angle);
     const y = centerY + radius * Math.sin(angle);
-    points.push({ x, y });
+    points.push({ x: -x, y: -y });
   }
 
   return points;
 }
 
-export const curlyBraces = async (parent: SVGAElement, node: Node) => {
+export const curlyBraceLeft = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
@@ -48,25 +48,25 @@ export const curlyBraces = async (parent: SVGAElement, node: Node) => {
   const { cssStyles } = node;
 
   const points = [
-    ...generateCirclePoints(w / 2, -h / 2, radius, 20, -90, 0),
-    { x: w / 2 + radius, y: -radius },
+    ...generateCirclePoints(w / 2, -h / 2, 10, 30, -90, 0),
+    { x: -w / 2 - radius, y: radius },
     ...generateCirclePoints(w / 2 + w * 0.1, -radius, radius, 20, -180, -270),
     ...generateCirclePoints(w / 2 + w * 0.1, radius, radius, 20, -90, -180),
-    { x: w / 2 + radius, y: h / 2 },
+    { x: -w / 2 - radius, y: -h / 2 },
     ...generateCirclePoints(w / 2, h / 2, radius, 20, 0, 90),
   ];
 
   const rectPoints = [
-    { x: -w / 2, y: -h / 2 - radius },
     { x: w / 2, y: -h / 2 - radius },
+    { x: -w / 2, y: -h / 2 - radius },
     ...generateCirclePoints(w / 2, -h / 2, radius, 20, -90, 0),
-    { x: w / 2 + radius, y: -radius },
+    { x: -w / 2 - radius, y: -radius },
     ...generateCirclePoints(w / 2 + w * 0.1, -radius, radius, 20, -180, -270),
     ...generateCirclePoints(w / 2 + w * 0.1, radius, radius, 20, -90, -180),
-    { x: w / 2 + radius, y: h / 2 },
+    { x: -w / 2 - radius, y: h / 2 },
     ...generateCirclePoints(w / 2, h / 2, radius, 20, 0, 90),
-    { x: w / 2, y: h / 2 + radius },
     { x: -w / 2, y: h / 2 + radius },
+    { x: w / 2, y: h / 2 + radius },
   ];
 
   // @ts-ignore - rough is not typed
@@ -95,11 +95,11 @@ export const curlyBraces = async (parent: SVGAElement, node: Node) => {
     bowTieRectShape.selectAll('path').attr('style', nodeStyles);
   }
 
-  bowTieRectShape.attr('transform', `translate(${-radius}, 0)`);
+  bowTieRectShape.attr('transform', `translate(${radius}, 0)`);
 
   label.attr(
     'transform',
-    `translate(${-w / 2 - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (node.padding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-w / 2 + radius - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (node.padding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, bowTieRectShape);

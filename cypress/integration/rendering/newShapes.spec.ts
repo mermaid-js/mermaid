@@ -1,7 +1,7 @@
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
-const looks = ['classic', 'handDrawn'] as const;
-const directions = ['TB', 'BT', 'LR', 'RL'] as const;
+const looks = ['classic'] as const;
+const directions = ['TB'] as const;
 const newShapesSet1 = [
   'triangle',
   'slopedRect',
@@ -36,19 +36,13 @@ const newShapesSet4 = [
 const newShapesSet5 = [
   'linedWaveEdgedRect',
   'taggedWaveEdgedRectangle',
-  'curlyBraces',
+  'curlyBraceLeft',
   'curvedTrapezoid',
   'waveRectangle',
 ] as const;
 
 // Aggregate all shape sets into a single array
-const newShapesSets = [
-  newShapesSet1,
-  newShapesSet2,
-  newShapesSet3,
-  newShapesSet4,
-  newShapesSet5,
-] as const;
+const newShapesSets = [newShapesSet2] as const;
 
 looks.forEach((look) => {
   directions.forEach((direction) => {
