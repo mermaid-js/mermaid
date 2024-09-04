@@ -11,9 +11,12 @@ export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
   const widthMultiplier = bbox.width < 40 ? 3 : 1.25;
-  const w = (bbox.width + node.padding) * widthMultiplier;
-  const h = bbox.height + node.padding;
+  const w = Math.max((bbox.width + labelPaddingX) * widthMultiplier, node?.width ?? 0);
+  const h = Math.max(bbox.height + labelPaddingY, node?.height ?? 0);
 
   const { cssStyles } = node;
   // @ts-ignore - rough is not typed
