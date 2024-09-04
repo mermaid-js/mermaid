@@ -22,6 +22,7 @@ class Theme {
 
     this.THEME_COLOR_LIMIT = 12;
     this.radius = 3;
+    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
@@ -37,6 +38,13 @@ class Theme {
     // this.dropShadow = 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));';
     this.dropShadow = 'drop-shadow( 0px 1px 2px rgba(0, 0, 0, 0.25));';
     this.tertiaryColor = '#ffffff';
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = 'calculated';
+    this.archEdgeArrowColor = 'calculated';
+    this.archEdgeWidth = '3';
+    this.archGroupBorderColor = this.primaryBorderColor;
+    this.archGroupBorderWidth = '2px';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
