@@ -1062,7 +1062,12 @@ end
           subgraph C
             subgraph C1
               C2 --> C2
+              subgraph D
+                D1 --> D1
+              end
+              D --> D
             end
+            C1 --> C1
           end
         `,
         {
