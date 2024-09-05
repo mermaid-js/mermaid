@@ -8,6 +8,7 @@ import {
 } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
+import { getConfig } from '$root/config.js';
 
 export const filledCircle = (parent: SVG, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -22,20 +23,21 @@ export const filledCircle = (parent: SVG, node: Node) => {
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, {});
+  const { themeVariables } = getConfig();
+  const { nodeBorder } = themeVariables;
+  const options = userNodeOverrides(node, { fillStyle: 'solid' });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
-    options.fillStyle = 'solid';
   }
 
   const circleNode = rc.circle(0, 0, radius * 2, options);
 
   const filledCircle = shapeSvg.insert(() => circleNode, ':first-child');
 
-  // filledCircle.attr('class', 'basic label-container');
+  filledCircle.selectAll('path').attr('style', `fill: ${nodeBorder} !important;`);
 
-  if (cssStyles && node.look !== 'handDrawn') {
+  if (cssStyles && cssStyles.length > 0 && node.look !== 'handDrawn') {
     filledCircle.selectAll('path').attr('style', cssStyles);
   }
 
