@@ -202,9 +202,11 @@ const shapes = {
   'notched-rect': card,
   'notch-rect': card,
   'lean-right': lean_right,
+  lean_right: lean_right,
   'l-r': lean_right,
   'in-out': lean_right,
   'lean-left': lean_left,
+  lean_left: lean_left,
   'l-l': lean_left,
   'out-in': lean_left,
 
