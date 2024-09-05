@@ -62,22 +62,28 @@
 
   <body>
     <pre id="diagram4" class="mermaid">
-      ---
-        config:
-          flowchart:
-            htmlLabels: true
-      ---
       flowchart
-      classDef customClazz fill:#bbf,stroke:#f66,stroke-width:4px,color:#000,stroke-dasharray: 5 5
-      A1 --> B1@{ shape: taggedWaveEdgedRectangle, label: "test augfuyfavf yafuabffaev ydvaubfuac" }@ --> C1
-      A2 --> B2@{ shape: taggedRect, label: "test augfuyfavf yafuabffaev ydvaubfuac" }@ --> C2
-      B1:::customClazz
+       B2@{ icon: "fa:image", label: "test augfuyfavf yafuabffaev ydvaubfuac" }@ 
   </pre
     >
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';
       mermaid.registerLayoutLoaders(layouts);
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/fa6-regular/icons.json').then((res) =>
+              res.json()
+            ),
+        },
+      ]);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };

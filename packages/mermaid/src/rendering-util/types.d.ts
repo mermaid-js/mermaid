@@ -65,6 +65,7 @@ interface Node {
   y?: number;
 
   look?: string;
+  icon?: string;
 }
 
 // Common properties for any edge in the system

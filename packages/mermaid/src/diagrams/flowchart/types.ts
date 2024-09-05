@@ -11,6 +11,9 @@ export interface FlowVertex {
   styles: string[];
   text?: string;
   type?: string;
+  icon?: string;
+  form?: string;
+  pos?: 't';
 }
 
 export interface FlowText {

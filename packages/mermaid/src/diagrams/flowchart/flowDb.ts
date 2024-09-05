@@ -144,6 +144,9 @@ export const addVertex = function (
     if (doc?.label) {
       vertex.text = doc?.label;
     }
+    if (doc?.icon) {
+      vertex.icon = doc?.icon;
+    }
   }
 };
 
@@ -792,6 +795,9 @@ export const lex = {
 };
 
 const getTypeFromVertex = (vertex: FlowVertex) => {
+  if (vertex?.icon) {
+    return 'iconSquare';
+  }
   if (vertex.type === 'square') {
     return 'squareRect';
   }
@@ -857,6 +863,7 @@ const addNodeFromVertex = (
       link: vertex.link,
       linkTarget: vertex.linkTarget,
       tooltip: getTooltip(vertex.id),
+      icon: vertex.icon,
     });
   }
 };

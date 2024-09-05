@@ -1,6 +1,7 @@
 export interface NodeMetaData {
   shape?: string;
   label?: string;
+  icon?: string;
 }
 export interface Point {
   x: number;
