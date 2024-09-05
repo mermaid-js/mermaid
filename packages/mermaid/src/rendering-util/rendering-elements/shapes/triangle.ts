@@ -8,11 +8,14 @@ import {
 } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { createPathFromPoints } from './util.js';
+import { evaluate } from '$root/diagrams/common/common.js';
+import { getConfig } from '$root/diagram-api/diagramAPI.js';
 
 export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+  const useHtmlLabels = evaluate(getConfig().flowchart?.htmlLabels);
 
   const w = bbox.width + (node.padding ?? 0);
   const h = w + bbox.height;
@@ -55,7 +58,7 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - (bbox.height + (node.padding ?? 0) - (bbox.y - (bbox.top ?? 0)))})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - (bbox.height + (node.padding ?? 0) / (useHtmlLabels ? 2 : 1) - (bbox.y - (bbox.top ?? 0)))})`
   );
 
   node.intersect = function (point) {
