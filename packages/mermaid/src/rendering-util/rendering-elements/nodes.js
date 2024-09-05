@@ -230,7 +230,7 @@ const shapes = {
   labelRect,
   curlyBraceRight,
   'brace-r': curlyBraceRight,
-  curlyBraces,
+  braces: curlyBraces,
 };
 
 const nodeElems = new Map();
