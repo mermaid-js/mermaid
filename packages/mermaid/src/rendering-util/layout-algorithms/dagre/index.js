@@ -349,8 +349,10 @@ export const render = async (data4Layout, svg) => {
       edgeMid.arrowTypeEnd = 'none';
       edgeMid.id = nodeId + '-cyclic-special-mid';
       edge2.label = '';
-      edge1.fromCluster = nodeId;
-      edge2.toCluster = nodeId;
+      if (node.isGroup) {
+        edge1.fromCluster = nodeId;
+        edge2.toCluster = nodeId;
+      }
       edge2.id = nodeId + '-cyclic-special-2';
       graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
