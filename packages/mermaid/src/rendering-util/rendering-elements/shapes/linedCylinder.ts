@@ -97,7 +97,7 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
           Math.abs(pos.y - (node.y ?? 0)) > (node.height ?? 0) / 2 - ry))
     ) {
       let y = ry * ry * (1 - (x * x) / (rx * rx));
-      if (y != 0) {
+      if (y > 0) {
         y = Math.sqrt(y);
       }
       y = ry - y;

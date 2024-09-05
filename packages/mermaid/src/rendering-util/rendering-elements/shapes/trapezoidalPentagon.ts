@@ -14,9 +14,11 @@ export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-  const widthMultiplier = bbox.width < 40 ? 3 : 1.25;
-  const w = Math.max((bbox.width + labelPaddingX) * widthMultiplier, node?.width ?? 0);
-  const h = Math.max(bbox.height + labelPaddingY, node?.height ?? 0);
+
+  const minWidth = 60,
+    minHeight = 20;
+  const w = Math.max(minWidth, bbox.width + (labelPaddingX ?? 0) * 2, node?.width ?? 0);
+  const h = Math.max(minHeight, bbox.height + (labelPaddingY ?? 0) * 2, node?.height ?? 0);
 
   const { cssStyles } = node;
   // @ts-ignore - rough is not typed
@@ -28,16 +30,13 @@ export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const topOffset = 30;
-  const slopeHeight = 15;
-
   const points = [
-    { x: topOffset, y: 0 },
-    { x: w - topOffset, y: 0 },
-    { x: w, y: slopeHeight },
-    { x: w, y: h },
-    { x: 0, y: h },
-    { x: 0, y: slopeHeight },
+    { x: (-w / 2) * 0.8, y: -h / 2 },
+    { x: (w / 2) * 0.8, y: -h / 2 },
+    { x: w / 2, y: (-h / 2) * 0.6 },
+    { x: w / 2, y: h / 2 },
+    { x: -w / 2, y: h / 2 },
+    { x: -w / 2, y: (-h / 2) * 0.6 },
   ];
 
   const pathData = createPathFromPoints(points);
@@ -53,8 +52,6 @@ export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
   if (nodeStyles && node.look !== 'handDrawn') {
     polygon.selectChildren('path').attr('style', nodeStyles);
   }
-
-  polygon.attr('transform', `translate(${-w / 2}, ${-h / 2})`);
 
   updateNodeBounds(node, polygon);
 

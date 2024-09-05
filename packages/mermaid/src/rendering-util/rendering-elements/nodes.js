@@ -48,6 +48,8 @@ import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
 import { taggedWaveEdgedRectangle } from './shapes/taggedWaveEdgedRectangle.js';
+import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
+import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
 
 //Use these names as the left side to render shapes.
@@ -64,17 +66,19 @@ const shapes = {
 
   // Rectangles
   rectWithTitle,
-  rect: rectWithTitle,
-  process: rectWithTitle,
-  proc: rectWithTitle,
   roundedRect,
   rounded: roundedRect,
   event: roundedRect,
   squareRect,
+  rectangle: squareRect,
+  rect: squareRect,
+  process: squareRect,
+  proc: squareRect,
   stadium,
   pill: stadium,
   term: stadium,
   windowPane,
+  'window-pane': windowPane,
   'win-pane': windowPane,
   'internal-storage': windowPane,
   dividedRectangle,
@@ -112,10 +116,11 @@ const shapes = {
   // Circles
   circle,
   doublecircle,
+  'double-circle': doublecircle,
   dc: doublecircle,
   crossedCircle,
-  'crossed-circ': crossedCircle,
-  'cross-circ': crossedCircle,
+  'crossed-circle': crossedCircle,
+  'cross-circle': crossedCircle,
   summary: crossedCircle,
   filledCircle,
   'filled-circle': filledCircle,
@@ -154,7 +159,7 @@ const shapes = {
   'manual-file': flippedTriangle,
   trapezoidalPentagon,
   'notched-pentagon': trapezoidalPentagon,
-  'not-pen': trapezoidalPentagon,
+  'not-pent': trapezoidalPentagon,
   'loop-limit': trapezoidalPentagon,
 
   //wave Edged Rectangles
@@ -164,6 +169,7 @@ const shapes = {
   flag: waveRectangle,
   'paper-tape': waveRectangle,
   waveEdgedRectangle,
+  'wave-edge-rect': waveEdgedRectangle,
   'wave-rect': waveEdgedRectangle,
   'we-rect': waveEdgedRectangle,
   doc: waveEdgedRectangle,
@@ -176,8 +182,9 @@ const shapes = {
   'lin-we-rect': linedWaveEdgedRect,
   'lin-doc': linedWaveEdgedRect,
   taggedWaveEdgedRectangle,
-  'tagged-wave-edged-rect': taggedWaveEdgedRectangle,
+  'tagged-wave-edged-rectangle': taggedWaveEdgedRectangle,
   'tag-we-rect': taggedWaveEdgedRectangle,
+  'tag-doc': taggedWaveEdgedRectangle,
 
   // Custom Rectangles
   bowTieRect,
@@ -194,15 +201,16 @@ const shapes = {
   card,
   'notched-rect': card,
   'notch-rect': card,
-  lean_right,
+  'lean-right': lean_right,
   'l-r': lean_right,
   'in-out': lean_right,
-  lean_left,
+  'lean-left': lean_left,
   'l-l': lean_left,
   'out-in': lean_left,
 
   // Miscellaneous
   forkJoin,
+  'long-rect': forkJoin,
   fork: forkJoin,
   join: forkJoin,
   choice,
@@ -211,14 +219,18 @@ const shapes = {
   anchor,
   diamond: question,
   lightningBolt,
+  'lightning-bolt': lightningBolt,
   bolt: lightningBolt,
   'com-link': lightningBolt,
-  curlyBraces,
-  brace: curlyBraces,
-  comment: curlyBraces,
+  curlyBraceLeft,
+  'brace-l': curlyBraceLeft,
+  comment: curlyBraceLeft,
   hourglass,
   odd: rect_left_inv_arrow,
   labelRect,
+  curlyBraceRight,
+  'brace-r': curlyBraceRight,
+  curlyBraces,
 };
 
 const nodeElems = new Map();
