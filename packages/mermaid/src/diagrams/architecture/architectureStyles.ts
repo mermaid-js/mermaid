@@ -20,10 +20,10 @@ const getStyles: DiagramStylesProvider = (options: ArchitectureStyleOptions) =>
     stroke-dasharray: 8;
   }
   .node-icon-text {
-    display: flex; 
+    display: flex;
     align-items: center;
   }
-  
+
   .node-icon-text > div {
     color: #fff;
     margin: 1px;
@@ -32,6 +32,9 @@ const getStyles: DiagramStylesProvider = (options: ArchitectureStyleOptions) =>
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
+  }
+  .architecture-services, .architecture-edges, .architecture-groups {
+    font-size: 16px;
   }
 `;
 

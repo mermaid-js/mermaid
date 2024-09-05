@@ -36,7 +36,6 @@ class Theme {
     this.textColor = '#ccc';
     this.THEME_COLOR_LIMIT = 12;
     this.radius = 3;
-    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
