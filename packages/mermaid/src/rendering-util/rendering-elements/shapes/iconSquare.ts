@@ -1,5 +1,5 @@
 import { log } from '$root/logger.js';
-import { getNodeClasses, updateNodeBounds } from './util.js';
+import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 import type { Node } from '$root/rendering-util/types.d.ts';
 import type { SVG } from '$root/diagram-api/types.js';
 import {
@@ -9,27 +9,33 @@ import {
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { createPathFromPoints } from './util.js';
+import { getIconSVG } from '$root/rendering-util/icons.js';
 
-export const iconSquare = (parent: SVG, node: Node) => {
+export const iconSquare = async (parent: SVG, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
-  node.label = '';
   node.labelStyle = labelStyles;
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', getNodeClasses(node))
-    .attr('id', node.domId ?? node.id);
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
   const { cssStyles } = node;
-  const width = Math.max(35, node?.width ?? 0);
-  const height = Math.max(35, node?.height ?? 0);
-  const gap = 7;
+
+  let width = Math.max(bbox.width + (node.padding ?? 0));
+  let height = Math.max(bbox.height + (node.padding ?? 0));
+
+  if (node.width) {
+    width = node.width + (node.padding ?? 0);
+  }
+
+  if (node.height) {
+    height = node.height + (node.padding ?? 0);
+  }
+
+  const iconSize = Math.min(width, height);
 
   const points = [
+    { x: 0, y: 0 },
     { x: width, y: 0 },
-    { x: 0, y: height + gap / 2 },
-    { x: width - 2 * gap, y: height + gap / 2 },
-    { x: 0, y: 2 * height },
-    { x: width, y: height - gap / 2 },
-    { x: 2 * gap, y: height - gap / 2 },
+    { x: width, y: height + iconSize + bbox.height + 5 },
+    { x: 0, y: height + iconSize + bbox.height + 5 },
   ];
 
   // @ts-ignore - rough is not typed
@@ -44,24 +50,33 @@ export const iconSquare = (parent: SVG, node: Node) => {
   const linePath = createPathFromPoints(points);
   const lineNode = rc.path(linePath, options);
 
-  const lightningBolt = shapeSvg.insert(() => lineNode, ':first-child');
+  const iconShape = shapeSvg.insert(() => lineNode, ':first-child');
 
   if (cssStyles && node.look !== 'handDrawn') {
-    lightningBolt.selectAll('path').attr('style', cssStyles);
+    iconShape.selectAll('path').attr('style', cssStyles);
   }
 
   if (nodeStyles && node.look !== 'handDrawn') {
-    lightningBolt.selectAll('path').attr('style', nodeStyles);
+    iconShape.selectAll('path').attr('style', nodeStyles);
   }
 
-  lightningBolt.attr('transform', `translate(-${width / 2},${-height})`);
+  iconShape.attr('transform', `translate(${-width / 2},${-height / 2})`);
 
-  updateNodeBounds(node, lightningBolt);
+  label.attr('transform', `translate(${-width / 2},${-height / 2})`);
+
+  updateNodeBounds(node, iconShape);
+
+  if (node.icon) {
+    const iconElem = shapeSvg.append('g');
+    iconElem.html(
+      `<g>${await getIconSVG(node.icon, { height: height + iconSize, fallbackPrefix: '' })}</g>`
+    );
+    iconElem.attr('transform', `translate(${-iconSize}, ${-iconSize / 2 + bbox.height})`);
+  }
 
   node.intersect = function (point) {
-    log.info('lightningBolt intersect', node, point);
+    log.info('iconSquare intersect', node, point);
     const pos = intersect.polygon(node, points, point);
-
     return pos;
   };
 

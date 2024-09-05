@@ -52,12 +52,14 @@ import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
 import { iconSquare } from './shapes/iconSquare.js';
+import { iconCircle } from './shapes/iconCircle.js';
 
 //Use these names as the left side to render shapes.
 const shapes = {
   // States
   state,
   stateStart,
+  iconCircle,
   'small-circle': stateStart,
   'sm-circ': stateStart,
   start: stateStart,

@@ -796,7 +796,7 @@ export const lex = {
 
 const getTypeFromVertex = (vertex: FlowVertex) => {
   if (vertex?.icon) {
-    return 'iconSquare';
+    return 'iconCircle';
   }
   if (vertex.type === 'square') {
     return 'squareRect';
