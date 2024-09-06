@@ -156,6 +156,12 @@ export const addVertex = function (
     if (doc?.pos) {
       vertex.pos = doc?.pos;
     }
+    if (doc?.img) {
+      vertex.img = doc?.img;
+    }
+    if (doc?.pos) {
+      vertex.pos = doc?.pos;
+    }
   }
 };
 
@@ -804,6 +810,9 @@ export const lex = {
 };
 
 const getTypeFromVertex = (vertex: FlowVertex) => {
+  if (vertex?.img) {
+    return 'imageSquare';
+  }
   if (vertex?.icon) {
     if (vertex.form === 'circle') {
       return 'iconCircle';
@@ -880,6 +889,7 @@ const addNodeFromVertex = (
       tooltip: getTooltip(vertex.id),
       icon: vertex.icon,
       pos: vertex.pos,
+      img: vertex.img,
     });
   }
 };

@@ -54,6 +54,7 @@ import { curlyBraces } from './shapes/curlyBraces.js';
 import { iconSquare } from './shapes/iconSquare.js';
 import { iconCircle } from './shapes/iconCircle.js';
 import { icon } from './shapes/icon.js';
+import { imageSquare } from './shapes/imageSquare.js';
 
 //Use these names as the left side to render shapes.
 const shapes = {
@@ -230,6 +231,7 @@ const shapes = {
   iconSquare,
   iconCircle,
   icon,
+  imageSquare,
 };
 
 const nodeElems = new Map();
