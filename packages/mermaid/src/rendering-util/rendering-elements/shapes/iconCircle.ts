@@ -25,7 +25,8 @@ export const iconCircle = async (parent: SVG, node: Node) => {
   const labelHeight = Math.max(bbox.height + halfPadding * 2, node?.height ?? 0);
 
   const iconSize = Math.max(labelHeight - halfPadding * 2, labelWidth - halfPadding * 2, 48);
-  const radius = iconSize / 2 + Math.max(labelHeight / 2, labelWidth / 4) + halfPadding * 2;
+  const radius =
+    iconSize / 2 + Math.max(labelHeight / 2, labelWidth / 4) + halfPadding * 2 + iconSize / 5;
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
