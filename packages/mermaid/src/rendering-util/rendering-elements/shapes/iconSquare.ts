@@ -27,13 +27,15 @@ export const iconSquare = async (parent: SVG, node: Node) => {
 
   const iconSize = Math.max(labelHeight - halfPadding, labelWidth - halfPadding, 48);
   const width = Math.max(labelWidth, iconSize);
-  const height = labelHeight + iconSize + halfPadding * 2;
+  const height = labelHeight + iconSize;
+  const dx = bbox.x;
+  const dy = bbox.y;
 
   const points = [
-    { x: 0, y: 0 },
-    { x: 0, y: height },
-    { x: width, y: height },
-    { x: width, y: 0 },
+    { x: dx - width / 2, y: dy - height / 2 },
+    { x: dx - width / 2, y: dy + height / 2 },
+    { x: dx + width / 2, y: dy + height / 2 },
+    { x: dx + width / 2, y: dy - height / 2 },
   ];
 
   // @ts-ignore - rough is not typed
@@ -53,11 +55,11 @@ export const iconSquare = async (parent: SVG, node: Node) => {
   if (node.icon) {
     const iconElem = shapeSvg.append('g');
     iconElem.html(
-      `<g>${await getIconSVG(node.icon, { height: iconSize, width: iconSize, fallbackPrefix: '' })}</g>`
+      `<g>${await getIconSVG(node.icon, { height: iconSize - 4 * halfPadding, fallbackPrefix: '' })}</g>`
     );
     iconElem.attr(
       'transform',
-      `translate(${0}, ${topLabel ? labelHeight - halfPadding : 0 + halfPadding * 2})`
+      `translate(${dx - width / 2 + halfPadding * 2}, ${dy - height / 2 + (topLabel ? labelHeight : 0)})`
     );
   }
 
@@ -71,7 +73,7 @@ export const iconSquare = async (parent: SVG, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${width / 2 - labelWidth / 2 + halfPadding - (bbox.x - (bbox.left ?? 0))},${(topLabel ? 0 : iconSize) + halfPadding * 2})`
+    `translate(${dx - width / 2 + halfPadding},${dy - height / 2 + iconSize + halfPadding - (topLabel ? iconSize : 0)})`
   );
   updateNodeBounds(node, iconShape);
 
