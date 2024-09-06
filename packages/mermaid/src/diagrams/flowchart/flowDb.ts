@@ -158,6 +158,9 @@ export const addVertex = function (
     }
     if (doc?.img) {
       vertex.img = doc?.img;
+      if (vertex.text === id) {
+        vertex.text = '';
+      }
     }
   }
 };

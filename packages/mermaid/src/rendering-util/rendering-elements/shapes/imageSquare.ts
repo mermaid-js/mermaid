@@ -16,22 +16,19 @@ export const imageSquare = async (parent: SVG, node: Node) => {
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const { cssStyles } = node;
 
-  const imageWidth = node.width ?? 50;
-  const imageHeight = node.height ?? 50;
+  const imageWidth = node?.width ?? 100;
+  const imageHeight = node?.height ?? 100;
 
-  // Ensure width and height accommodate the text (bbox) and image
   const width = Math.max(bbox.width + (node.padding ?? 0), imageWidth);
   const height = Math.max(bbox.height + (node.padding ?? 0), imageHeight);
 
   // const imageSizeWidth = width / 2;   // Image will be smaller than the full width
-  const imageSizeHeight = height / 2; // Image will be smaller than the full height
+  const imageSizeHeight = height * 0.1; // Image will be smaller than the full height
 
-  const skeletonWidth = width; // The shape's width matches the text width
-  const skeletonHeight = height + imageSizeHeight + bbox.height; // The height includes space for the label and image
+  const skeletonWidth = width + (node?.padding ?? 0);
+  const skeletonHeight = height + imageSizeHeight + bbox.height;
 
   const imagePosition = node?.pos ?? 'b';
-
-  // Define the points for the rectangle (shape)
   const points = [
     { x: 0, y: 0 },
     { x: skeletonWidth, y: 0 },
@@ -48,7 +45,6 @@ export const imageSquare = async (parent: SVG, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  // Create the path for the rectangle shape
   const linePath = createPathFromPoints(points);
   const lineNode = rc.path(linePath, options);
 
@@ -58,19 +54,14 @@ export const imageSquare = async (parent: SVG, node: Node) => {
 
     // Set the image attributes
     image.attr('href', node.img);
-    image.attr('width', width);
-    image.attr('height', height);
+    image.attr('width', imageWidth);
+    image.attr('height', imageHeight);
 
-    // Center the image horizontally and position it at the bottom
-    // image.attr('x', -(skeletonWidth / 2 ));
-    // image.attr('y', -(skeletonHeight / 2 - height - imageSizeHeight /2));  // Position at the bottom
-
-    // Apply transformation if needed to fine-tune
     const yPos =
       imagePosition === 't'
         ? -(skeletonHeight / 2 - imageSizeHeight / 2)
         : skeletonHeight / 2 - height - imageSizeHeight / 2;
-    image.attr('transform', `translate(${-(skeletonWidth / 2)}, ${yPos})`);
+    image.attr('transform', `translate(${-imageWidth / 2}, ${yPos})`);
   }
 
   // Apply styles for the shape
@@ -87,13 +78,13 @@ export const imageSquare = async (parent: SVG, node: Node) => {
 
   // Position the label at the top center of the shape
   const yPos =
-    imagePosition === 't' ? imageSizeHeight / 2 : -skeletonHeight / 2 + (node?.padding ?? 0) / 2;
+    imagePosition === 't'
+      ? skeletonHeight / 2 - bbox.height
+      : -skeletonHeight / 2 + (node?.padding ?? 0) / 2;
 
-  label.attr('transform', `translate(${-bbox.width / 2},${yPos})`);
+  label.attr('transform', `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${yPos})`);
 
   updateNodeBounds(node, iconShape);
-
-  // Add the image inside the shape
 
   node.intersect = function (point) {
     log.info('iconSquare intersect', node, point);
