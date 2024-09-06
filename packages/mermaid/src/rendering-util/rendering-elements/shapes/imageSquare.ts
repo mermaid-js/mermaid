@@ -79,8 +79,8 @@ export const imageSquare = async (parent: SVG, node: Node) => {
   // Position the label at the top center of the shape
   const yPos =
     imagePosition === 't'
-      ? skeletonHeight / 2 - bbox.height
-      : -skeletonHeight / 2 + (node?.padding ?? 0) / 2;
+      ? skeletonHeight / 2 - bbox.height - (bbox.y - (bbox.top ?? 0))
+      : -skeletonHeight / 2 + (node?.padding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0));
 
   label.attr('transform', `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${yPos})`);
 
