@@ -20,12 +20,12 @@ export const iconCircle = async (parent: SVG, node: Node) => {
   );
 
   const { cssStyles } = node;
-  // const topLabel = node.pos === 't';
+  const topLabel = node.pos === 't';
   const labelWidth = Math.max(bbox.width + halfPadding * 2, node?.width ?? 0);
   const labelHeight = Math.max(bbox.height + halfPadding * 2, node?.height ?? 0);
 
-  const iconSize = Math.max(labelHeight - halfPadding, labelWidth - halfPadding, 48);
-  const radius = iconSize * 1.5 + halfPadding * 2;
+  const iconSize = Math.max(labelHeight - halfPadding * 2, labelWidth - halfPadding * 2, 48);
+  const radius = iconSize / 2 + Math.max(labelHeight / 2, labelWidth / 4) + halfPadding * 2;
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
@@ -36,11 +36,9 @@ export const iconCircle = async (parent: SVG, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const roughNode = rc.circle(0, 0, radius, options);
-  const point = rc.circle(0, 0, 2, options);
+  const roughNode = rc.circle(0, 0, radius * 2, options);
 
   const iconShape = shapeSvg.insert(() => roughNode, ':first-child');
-  iconShape.insert(() => point);
 
   if (node.icon) {
     const iconElem = shapeSvg.append('g');
@@ -49,7 +47,7 @@ export const iconCircle = async (parent: SVG, node: Node) => {
     );
     iconElem.attr(
       'transform',
-      `translate(${-iconElem.node().getBBox().width / 2}, ${-iconElem.node().getBBox().height / 2 - labelHeight / 2 + halfPadding})`
+      `translate(${-iconElem.node().getBBox().width / 2}, ${-iconElem.node().getBBox().height / 2 - labelHeight / 2 + (topLabel ? labelHeight - halfPadding * 2 : 0)})`
     );
   }
 
@@ -63,7 +61,7 @@ export const iconCircle = async (parent: SVG, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${-label.node().getBBox().width / 2},${iconSize / 2 - label.node().getBBox().height / 2 - halfPadding})`
+    `translate(${-labelWidth / 2},${iconSize / 2 - labelHeight / 2 + halfPadding - (topLabel ? iconSize : 0)})`
   );
   updateNodeBounds(node, iconShape);
 
