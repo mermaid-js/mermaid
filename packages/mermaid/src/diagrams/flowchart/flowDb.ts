@@ -159,9 +159,6 @@ export const addVertex = function (
     if (doc?.img) {
       vertex.img = doc?.img;
     }
-    if (doc?.pos) {
-      vertex.pos = doc?.pos;
-    }
   }
 };
 
