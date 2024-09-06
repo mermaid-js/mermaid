@@ -14,8 +14,7 @@ permissions:
 
 jobs:
   preview:
-    if: |
-      ${{ github.repository_owner == 'mermaid-js' && github.event.issue.pull_request && contains(github.event.pull_request.labels.*.name, 'pr: preview') }}
+    if: ${{ github.repository_owner == 'mermaid-js' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
