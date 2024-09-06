@@ -45,9 +45,11 @@ export const iconCircle = async (parent: SVG, node: Node) => {
     iconElem.html(
       `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
     );
+    const iconWidth = iconElem.node().getBBox().width;
+    const iconHeight = iconElem.node().getBBox().height;
     iconElem.attr(
       'transform',
-      `translate(${-iconElem.node().getBBox().width / 2}, ${-iconElem.node().getBBox().height / 2 - labelHeight / 2 + (topLabel ? labelHeight - halfPadding * 2 : 0)})`
+      `translate(${-iconWidth / 2}, ${-iconHeight / 2 - labelHeight / 2 + (topLabel ? labelHeight : 0)})`
     );
   }
 
@@ -61,7 +63,7 @@ export const iconCircle = async (parent: SVG, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${-labelWidth / 2},${iconSize / 2 - labelHeight / 2 + halfPadding - (topLabel ? iconSize : 0)})`
+    `translate(${-labelWidth / 2 + halfPadding - (bbox.x - (bbox.left ?? 0))},${iconSize / 2 - labelHeight / 2 + halfPadding - (topLabel ? iconSize : 0) - (bbox.y - (bbox.top ?? 0))})`
   );
   updateNodeBounds(node, iconShape);
 
