@@ -2,6 +2,8 @@ export interface NodeMetaData {
   shape?: string;
   label?: string;
   icon?: string;
+  form?: string;
+  pos?: 't' | 'b';
 }
 export interface Point {
   x: number;

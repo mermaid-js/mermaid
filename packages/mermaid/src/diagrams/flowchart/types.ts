@@ -13,7 +13,7 @@ export interface FlowVertex {
   type?: string;
   icon?: string;
   form?: string;
-  pos?: 't';
+  pos?: 't' | 'b';
 }
 
 export interface FlowText {

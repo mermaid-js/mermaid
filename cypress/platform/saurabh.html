@@ -63,7 +63,17 @@
   <body>
     <pre id="diagram4" class="mermaid">
       flowchart
-       B2@{ icon: "fa:image", label: "test augfuyfavf ydvaubfuac" }@ 
+       A --> B2@{ icon: "fa:image", form: "square", label: "test augfuyfavf ydvaubfuac" }@ --> C
+  </pre
+    >
+    <pre id="diagram5" class="mermaid">
+      flowchart
+       A --> B2@{ icon: "fa:image", form: "circle", label: "test augfuyfavf ydvaubfuac" }@ --> C
+  </pre
+    >
+    <pre id="diagram6" class="mermaid">
+      flowchart
+       A --> B2@{ icon: "fa:image", label: "test augfuyfavf ydvaubfuac" }@ --> C
   </pre
     >
     <script type="module">
@@ -93,7 +103,7 @@
       mermaid.initialize({
         // theme: 'base',
         // handdrawnSeed: 12,
-        look: 'handDrawn',
+        // look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // 'elk.nodePlacement.strategy': 'SIMPLE',
         // 'elk.nodePlacement.strategy': 'LAYERED',
@@ -102,7 +112,7 @@
         // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
-        flowchart: { titleTopMargin: 10, padding: 5 },
+        flowchart: { titleTopMargin: 10, padding: 5, htmlLables: true },
         // fontFamily: 'Caveat',
         fontFamily: 'Kalam',
         // fontFamily: 'courier',

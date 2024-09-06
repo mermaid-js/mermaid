@@ -146,6 +146,15 @@ export const addVertex = function (
     }
     if (doc?.icon) {
       vertex.icon = doc?.icon;
+      if (vertex.text === id) {
+        vertex.text = '';
+      }
+    }
+    if (doc?.form) {
+      vertex.form = doc?.form;
+    }
+    if (doc?.pos) {
+      vertex.pos = doc?.pos;
     }
   }
 };
@@ -796,7 +805,13 @@ export const lex = {
 
 const getTypeFromVertex = (vertex: FlowVertex) => {
   if (vertex?.icon) {
-    return 'iconCircle';
+    if (vertex.form === 'circle') {
+      return 'iconCircle';
+    }
+    if (vertex.form === 'square') {
+      return 'iconSquare';
+    }
+    return 'icon';
   }
   if (vertex.type === 'square') {
     return 'squareRect';
@@ -864,6 +879,7 @@ const addNodeFromVertex = (
       linkTarget: vertex.linkTarget,
       tooltip: getTooltip(vertex.id),
       icon: vertex.icon,
+      pos: vertex.pos,
     });
   }
 };

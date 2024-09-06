@@ -53,13 +53,13 @@ import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
 import { iconSquare } from './shapes/iconSquare.js';
 import { iconCircle } from './shapes/iconCircle.js';
+import { icon } from './shapes/icon.js';
 
 //Use these names as the left side to render shapes.
 const shapes = {
   // States
   state,
   stateStart,
-  iconCircle,
   'small-circle': stateStart,
   'sm-circ': stateStart,
   start: stateStart,
@@ -228,6 +228,8 @@ const shapes = {
   'brace-r': curlyBraceRight,
   curlyBraces,
   iconSquare,
+  iconCircle,
+  icon,
 };
 
 const nodeElems = new Map();
