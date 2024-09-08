@@ -1,5 +1,11 @@
 # mermaid
 
+## 11.1.1
+
+### Patch Changes
+
+- [#5828](https://github.com/mermaid-js/mermaid/pull/5828) [`4c43d21`](https://github.com/mermaid-js/mermaid/commit/4c43d21196f784b6f483ae635fc462329f3d176f) Thanks [@knsv](https://github.com/knsv)! - fix: Fix for issue where self-loops in the root of diagrams break the rendering
+
 ## 11.1.0
 
 ### Minor Changes
