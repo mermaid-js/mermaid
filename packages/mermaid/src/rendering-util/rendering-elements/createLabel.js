@@ -1,8 +1,8 @@
 import { select } from 'd3';
-import { log } from 'mermaid/dist/logger.js';
-import { getConfig } from 'mermaid/dist/diagram-api/diagramAPI.js';
-import common, { evaluate, renderKatex, hasKatex } from 'mermaid/dist/diagrams/common/common.js';
-import { decodeEntities } from 'mermaid/dist/utils.js';
+import { log } from '../../logger.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+import common, { evaluate, renderKatex, hasKatex } from '../../diagrams/common/common.js';
+import { decodeEntities } from '../../utils.js';
 
 /**
  * @param dom

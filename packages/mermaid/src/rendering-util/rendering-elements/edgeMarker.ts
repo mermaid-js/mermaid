@@ -1,6 +1,6 @@
-import type { SVG } from 'mermaid/dist/diagram-api/types.js';
-import { log } from 'mermaid/dist/logger.js';
-import type { EdgeData } from 'mermaid/dist/types.js';
+import type { SVG } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
+import type { EdgeData } from '../../types.js';
 /**
  * Adds SVG markers to a path element based on the arrow types specified in the edge.
  *

@@ -2,16 +2,10 @@ import jison from './.vite/jisonPlugin.js';
 import jsonSchemaPlugin from './.vite/jsonSchemaPlugin.js';
 import typescript from '@rollup/plugin-typescript';
 import { defaultExclude, defineConfig } from 'vitest/config';
-import path from 'path';
 
 export default defineConfig({
   resolve: {
-    extensions: ['.js'],
-    alias: {
-      // Define your alias here
-      'mermaid/dist': path.resolve(__dirname, 'packages/mermaid/src'),
-    },
-  },
+    extensions: ['.js']  },
   plugins: [
     jison(),
     jsonSchemaPlugin(), // handles .schema.yaml JSON Schema files

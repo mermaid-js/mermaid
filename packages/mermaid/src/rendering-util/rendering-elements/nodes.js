@@ -1,4 +1,4 @@
-import { log } from 'mermaid/dist/logger.js';
+import { log } from '../../logger.js';
 import { state } from './shapes/state.ts';
 import { roundedRect } from './shapes/roundedRect.ts';
 import { squareRect } from './shapes/squareRect.ts';
@@ -9,7 +9,7 @@ import { choice } from './shapes/choice.ts';
 import { note } from './shapes/note.ts';
 import { stadium } from './shapes/stadium.js';
 import { rectWithTitle } from './shapes/rectWithTitle.js';
-import { getConfig } from 'mermaid/dist/diagram-api/diagramAPI.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { subroutine } from './shapes/subroutine.js';
 import { cylinder } from './shapes/cylinder.js';
 import { circle } from './shapes/circle.js';

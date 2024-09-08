@@ -1,4 +1,4 @@
-import { getIconSVG } from 'mermaid/dist/rendering-util/icons.js';
+import { getIconSVG } from '../../rendering-util/icons.js';
 import type cytoscape from 'cytoscape';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';

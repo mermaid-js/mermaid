@@ -1,6 +1,6 @@
-import { configureSvgSize } from 'mermaid/dist/setupGraphViewbox.js';
-import type { SVG } from 'mermaid/dist/diagram-api/types.js';
-import { log } from 'mermaid/dist/logger.js';
+import { configureSvgSize } from '../setupGraphViewbox.js';
+import type { SVG } from '../diagram-api/types.js';
+import { log } from '../logger.js';
 
 export const setupViewPortForSVG = (
   svg: SVG,

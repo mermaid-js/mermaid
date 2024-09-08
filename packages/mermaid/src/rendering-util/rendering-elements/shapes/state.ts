@@ -1,4 +1,4 @@
-import type { Node, RectOptions } from 'mermaid/dist/rendering-util/types.d.ts';
+import type { Node, RectOptions } from '../../types.js';
 import { drawRect } from './drawRect.js';
 
 export const state = async (parent: SVGAElement, node: Node) => {

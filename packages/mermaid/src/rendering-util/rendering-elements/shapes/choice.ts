@@ -1,10 +1,10 @@
 import intersect from '../intersect/index.js';
-import type { Node } from 'mermaid/dist/rendering-util/types.d.ts';
-import type { SVG } from 'mermaid/dist/diagram-api/types.js';
+import type { Node } from '../../types.js';
+import type { SVG } from '../../../diagram-api/types.js';
 // @ts-ignore TODO: Fix rough typings
 import rough from 'roughjs';
 import { solidStateFill, styles2String } from './handDrawnShapeStyles.js';
-import { getConfig } from 'mermaid/dist/diagram-api/diagramAPI.js';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 export const choice = (parent: SVG, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
