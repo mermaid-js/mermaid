@@ -1,10 +1,7 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
-import {
-  styles2String,
-  userNodeOverrides,
-} from './handDrawnShapeStyles.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 

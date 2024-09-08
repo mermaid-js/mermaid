@@ -5,7 +5,8 @@ import { defaultExclude, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
-    extensions: ['.js']  },
+    extensions: ['.js'],
+  },
   plugins: [
     jison(),
     jsonSchemaPlugin(), // handles .schema.yaml JSON Schema files

@@ -4,10 +4,7 @@ import { evaluate } from '../../../diagrams/common/common.js';
 import { updateNodeBounds } from './util.js';
 import createLabel from '../createLabel.js';
 import intersect from '../intersect/index.js';
-import {
-  styles2String,
-  userNodeOverrides,
-} from './handDrawnShapeStyles.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';

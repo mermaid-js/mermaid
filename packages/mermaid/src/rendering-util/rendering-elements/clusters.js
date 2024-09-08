@@ -8,10 +8,7 @@ import { createText } from '../createText.ts';
 import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
-import {
-  styles2String,
-  userNodeOverrides,
-} from './shapes/handDrawnShapeStyles.js';
+import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
