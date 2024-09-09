@@ -24,8 +24,14 @@ export const iconSquare = async (parent: SVG, node: Node) => {
   const topLabel = node.pos === 't';
   const labelWidth = Math.max(bbox.width + halfPadding * 2, node?.width ?? 0);
   const labelHeight = Math.max(bbox.height + halfPadding * 2, node?.height ?? 0);
+  const iconHeight = node.assetHeight ?? 48;
+  const iconWidth = node.assetWidth ?? 48;
 
-  const iconSize = Math.max(labelHeight - halfPadding, labelWidth - halfPadding, 48);
+  const iconSize = Math.max(
+    labelHeight - halfPadding,
+    labelWidth - halfPadding,
+    Math.max(iconHeight, iconWidth)
+  );
   const width = Math.max(labelWidth, iconSize);
   const height = labelHeight + iconSize;
 

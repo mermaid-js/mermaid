@@ -23,8 +23,15 @@ export const iconCircle = async (parent: SVG, node: Node) => {
   const topLabel = node.pos === 't';
   const labelWidth = Math.max(bbox.width + halfPadding * 2, node?.width ?? 0);
   const labelHeight = Math.max(bbox.height + halfPadding * 2, node?.height ?? 0);
+  const iconHeight = node.assetHeight ?? 48;
+  const iconWidth = node.assetWidth ?? 48;
 
-  const iconSize = Math.max(labelHeight - halfPadding * 2, labelWidth - halfPadding * 2, 48);
+  const iconSize = Math.max(
+    labelHeight - halfPadding * 2,
+    labelWidth - halfPadding * 2,
+    Math.max(iconHeight, iconWidth)
+  );
+
   const radius =
     iconSize / 2 + Math.max(labelHeight / 2, labelWidth / 4) + halfPadding * 2 + iconSize / 5;
 
