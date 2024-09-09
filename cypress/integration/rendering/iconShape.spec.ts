@@ -109,3 +109,13 @@ looks.forEach((look) => {
     });
   });
 });
+
+describe('Test iconShape with different h', () => {
+  it('with different h', () => {
+    let flowchartCode = `flowchart TB\n`;
+    const icon = 'fa:bell';
+    const iconHeight = 64;
+    flowchartCode += `  nA --> nAA@{ icon: '${icon}', label: 'icon with different h', h: ${iconHeight} }@\n`;
+    imgSnapshotTest(flowchartCode);
+  });
+});
