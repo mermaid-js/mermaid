@@ -1,4 +1,4 @@
-import { unknownIcon } from '$root/rendering-util/icons.js';
+import { unknownIcon } from '../../rendering-util/icons.js';
 import type { IconifyJSON } from '@iconify/types';
 
 const wrapIcon = (icon: string) => {
