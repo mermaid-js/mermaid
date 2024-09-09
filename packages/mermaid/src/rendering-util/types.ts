@@ -1,5 +1,5 @@
 export type MarkdownWordType = 'normal' | 'strong' | 'em';
-import type { MermaidConfig } from '../../dist/config.type';
+import type { MermaidConfig } from '../config.type.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
@@ -9,7 +9,7 @@ export type MarkdownLine = MarkdownWord[];
 export type CheckFitFunction = (text: MarkdownLine) => boolean;
 
 // Common properties for any node in the system
-interface Node {
+export interface Node {
   id: string;
   label?: string;
   description?: string[];
@@ -38,7 +38,6 @@ interface Node {
   tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
   shape?: string;
-  tooltip?: string;
   isGroup: boolean;
   width?: number;
   height?: number;
@@ -71,7 +70,7 @@ interface Node {
 }
 
 // Common properties for any edge in the system
-interface Edge {
+export interface Edge {
   id: string;
   label?: string;
   classes?: string;
@@ -101,7 +100,7 @@ interface Edge {
   look?: string;
 }
 
-interface RectOptions {
+export interface RectOptions {
   rx: number;
   ry: number;
   labelPaddingX: number;
@@ -110,7 +109,7 @@ interface RectOptions {
 }
 
 // Extending the Node interface for specific types if needed
-interface ClassDiagramNode extends Node {
+export interface ClassDiagramNode extends Node {
   memberData: any; // Specific property for class diagram nodes
 }
 

@@ -140,7 +140,7 @@ Communication tools and platforms
   - [Mermaid Extension](https://www.mediawiki.org/wiki/Extension:Mermaid)
 - [PmWiki](https://www.pmwiki.org)
   - [MermaidJs Cookbook recipe](https://www.pmwiki.org/wiki/Cookbook/MermaidJs)
-- [Semantic Media Wiki](https://semantic-mediawiki.org)
+- [Semantic Media Wiki](https://www.semantic-mediawiki.org)
   - [Mermaid Plugin](https://github.com/SemanticMediaWiki/Mermaid)
 - [TiddlyWiki](https://tiddlywiki.com/)
   - [mermaid-tw5: wrapper for Mermaid Live](https://github.com/efurlanm/mermaid-tw5)
