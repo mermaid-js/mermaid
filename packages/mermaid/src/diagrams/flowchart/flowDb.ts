@@ -162,6 +162,12 @@ export const addVertex = function (
         vertex.text = '';
       }
     }
+    if (doc.w) {
+      vertex.assetWidth = Number(doc.w);
+    }
+    if (doc.h) {
+      vertex.assetHeight = Number(doc.h);
+    }
   }
 };
 
@@ -890,6 +896,8 @@ const addNodeFromVertex = (
       icon: vertex.icon,
       pos: vertex.pos,
       img: vertex.img,
+      assetWidth: vertex.assetWidth,
+      assetHeight: vertex.assetHeight,
     });
   }
 };

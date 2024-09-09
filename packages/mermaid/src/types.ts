@@ -5,6 +5,8 @@ export interface NodeMetaData {
   form?: string;
   pos?: 't' | 'b';
   img?: string;
+  w?: string;
+  h?: string;
 }
 export interface Point {
   x: number;
