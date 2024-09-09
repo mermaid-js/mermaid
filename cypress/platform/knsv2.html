@@ -83,8 +83,7 @@
   </head>
 
   <body>
-    <div class="flex">
-      <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid">
 ---
   title: hello2
   config:
@@ -243,115 +242,7 @@ stateDiagram-v2
 
 
 
-</pre>
-      <pre id="diagram" class="mermaid2">
----
-  title: hello2
-  config:
-    look: handDrawn
-    layout: dagre
-    elk:
-        nodePlacementStrategy: BRANDES_KOEPF
----
-stateDiagram-v2
-  A --> A
-  state A {
-    B --> D
-    state B {
-      C
-    }
-    state D {
-      E
-    }
-  }
-
-
-</pre
-      >
-      <pre id="diagram" class="mermaid2">
----
-  title: hello2
-  config:
-    look: handDrawn
-    layout: dagre
-    elk:
-        nodePlacementStrategy: BRANDES_KOEPF
----
-flowchart
-  A --> A
-  subgraph A
-    B --> B
-    subgraph B
-      C
-    end
-  end
-
-
-</pre
-      >
-      <pre id="diagram" class="mermaid2">
----
-config:
-  look: handdrawn
-  flowchart:
-    htmlLabels: true
----
-flowchart
-      A[I am a long text, where do I go??? handdrawn - true]
-</pre
-      >
-    </div>
-    <div class="flex">
-      <pre id="diagram" class="mermaid2">
----
-config:
-  flowchart:
-    htmlLabels: false
----
-flowchart
-      A[I am a long text, where do I go??? classic - false]
-</pre
-      >
-      <pre id="diagram" class="mermaid2">
----
-config:
-  flowchart:
-    htmlLabels: true
----
-flowchart
-      A[I am a long text, where do I go??? classic - true]
-</pre
-      >
-    </div>
-    <pre id="diagram2" class="mermaid2">
-flowchart LR
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-
-
-    </pre>
-
-    <pre id="diagram3" class="mermaid2">
-      flowchart LR
-    A:::foo & B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    classDef ash color:red
-    class C ash
-    style C stroke:#00f, fill:black
-
-    </pre>
-
-    <pre id="diagram4" class="mermaid2">
-      stateDiagram
-    A:::foo
-    B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    style C stroke:#00f, fill:black, color:white
-
-    </pre>
+      </pre>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
