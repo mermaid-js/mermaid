@@ -19,27 +19,26 @@ export const icon = async (parent: SVG, node: Node) => {
   const topLabel = node.pos === 't';
   const labelWidth = Math.max(bbox.width + halfPadding * 2, node?.width ?? 0);
   const labelHeight = Math.max(bbox.height + halfPadding * 2, node?.height ?? 0);
-  const iconHeight = node.assetHeight ?? 48;
-  const iconWidth = node.assetWidth ?? 48;
+  const iconHeight = node.assetHeight ?? 0;
+  const iconWidth = node.assetWidth ?? 0;
 
-  const iconSize = Math.max(
-    labelHeight - halfPadding,
-    labelWidth - halfPadding,
-    Math.max(iconHeight, iconWidth)
-  );
+  const iconSize =
+    iconWidth || iconHeight
+      ? Math.max(iconHeight, iconWidth)
+      : Math.max(labelHeight - halfPadding, labelWidth - halfPadding, 48);
   // const width = Math.max(labelWidth, iconSize);
   const height = labelHeight + iconSize;
 
   if (node.icon) {
     const iconElem = shapeSvg.append('g');
     iconElem.html(
-      `<g>${await getIconSVG(node.icon, { height: iconSize - 4 * halfPadding, fallbackPrefix: '' })}</g>`
+      `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
     );
     const iconWidth = iconElem.node().getBBox().width;
     const iconHeight = iconElem.node().getBBox().height;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2}, ${-iconHeight / 2 - labelHeight / 2 + halfPadding + (topLabel ? labelHeight : 0)})`
+      `translate(${-iconWidth / 2}, ${-iconHeight / 2 - labelHeight / 2 - halfPadding + (topLabel ? labelHeight : halfPadding * 2)})`
     );
   }
 
@@ -53,7 +52,7 @@ export const icon = async (parent: SVG, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${-labelWidth / 2 + halfPadding - (bbox.x - (bbox.left ?? 0))},${-height / 2 + iconSize - (topLabel ? iconSize - halfPadding : 0) - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-labelWidth / 2 + halfPadding - (bbox.x - (bbox.left ?? 0))},${-height / 2 + iconSize - (topLabel ? iconSize - halfPadding : -halfPadding) - (bbox.y - (bbox.top ?? 0))})`
   );
   updateNodeBounds(node, shapeSvg);
 
