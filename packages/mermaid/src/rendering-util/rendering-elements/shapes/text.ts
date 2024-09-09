@@ -1,7 +1,7 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
-import { styles2String } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+import type { Node } from '../../types.d.ts';
+import { styles2String } from './handDrawnShapeStyles.js';
 
 export async function text(parent: SVGAElement, node: Node): Promise<SVGAElement> {
   const { labelStyles, nodeStyles } = styles2String(node);

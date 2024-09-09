@@ -15,7 +15,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
-import type { NodeMetaData } from '$root/types.js';
+import type { NodeMetaData } from '../../types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;

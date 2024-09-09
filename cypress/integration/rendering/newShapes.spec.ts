@@ -4,45 +4,53 @@ const looks = ['classic'] as const;
 const directions = ['TB'] as const;
 const newShapesSet1 = [
   'triangle',
-  'slopedRect',
-  'tiltedCylinder',
-  'flippedTriangle',
+  'sloped-rect',
+  'tilted-cylinder',
+  'flipped-triangle',
   'hourglass',
 ] as const;
 const newShapesSet2 = [
-  'taggedRect',
-  'multiRect',
-  'lightningBolt',
-  'filledCircle',
-  'windowPane',
+  'tagged-rect',
+  'multi-rect',
+  'lightning-bolt',
+  'filled-circle',
+  'window-pane',
 ] as const;
 
 const newShapesSet3 = [
-  'curvedTrapezoid',
-  'bowTieRect',
-  'waveEdgedRectangle',
-  'dividedRectangle',
-  'crossedCircle',
+  'curved-trapezoid',
+  'bow-tie-rect',
+  'wave-edge-rect',
+  'divided-rectangle',
+  'crossed-circle',
 ] as const;
 
 const newShapesSet4 = [
-  'waveRectangle',
-  'trapezoidalPentagon',
-  'linedCylinder',
-  'multiWaveEdgedRectangle',
-  'halfRoundedRectangle',
+  'wave-rectangle',
+  'notched-pentagon',
+  'lined-cylinder',
+  'multi-wave-edged-rectangle',
+  'half-rounded-rect',
 ] as const;
 
 const newShapesSet5 = [
-  'linedWaveEdgedRect',
-  'taggedWaveEdgedRectangle',
-  'curlyBraceLeft',
-  'curvedTrapezoid',
-  'waveRectangle',
+  'lined-wave-edged-rect',
+  'tagged-wave-edged-rectangle',
+  'brace-l',
+  'curved-trapezoid',
+  'wave-rectangle',
 ] as const;
 
+const newShapesSet6 = ['brace-r', 'braces'] as const;
 // Aggregate all shape sets into a single array
-const newShapesSets = [newShapesSet2] as const;
+const newShapesSets = [
+  newShapesSet1,
+  newShapesSet2,
+  newShapesSet3,
+  newShapesSet4,
+  newShapesSet5,
+  newShapesSet6,
+];
 
 looks.forEach((look) => {
   directions.forEach((direction) => {
