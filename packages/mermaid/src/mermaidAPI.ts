@@ -73,9 +73,9 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
   addDiagrams();
   try {
-    const { code } = processAndSetConfigs(text);
+    const { code, config } = processAndSetConfigs(text);
     const diagram = await getDiagramFromText(code);
-    return { diagramType: diagram.type };
+    return { diagramType: diagram.type, config };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;

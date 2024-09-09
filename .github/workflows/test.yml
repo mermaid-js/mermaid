@@ -38,6 +38,10 @@ jobs:
         run: |
           pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts --coverage
 
+      - name: Verify out-of-tree build with TypeScript
+        run: |
+          pnpm test:check:tsc
+
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
         # Run step only pushes to develop and pull_requests
