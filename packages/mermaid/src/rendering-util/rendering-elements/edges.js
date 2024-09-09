@@ -1,13 +1,13 @@
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import { evaluate } from '$root/diagrams/common/common.js';
-import { log } from '$root/logger.js';
-import { createText } from '$root/rendering-util/createText.ts';
-import utils from '$root/utils.js';
-import { getLineFunctionsWithOffset } from '$root/utils/lineWithOffset.js';
-import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
 // import { curveBasis, curveLinear, curveCardinal, line, select } from 'd3';
 import { curveBasis, line, select } from 'd3';
 import rough from 'roughjs';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { evaluate } from '../../diagrams/common/common.js';
+import { log } from '../../logger.js';
+import utils from '../../utils.js';
+import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
+import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
+import { createText } from '../createText.js';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 

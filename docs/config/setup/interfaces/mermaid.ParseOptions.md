@@ -19,4 +19,4 @@ The `parseError` function will not be called.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:47](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L47)
+[packages/mermaid/src/types.ts:45](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L45)

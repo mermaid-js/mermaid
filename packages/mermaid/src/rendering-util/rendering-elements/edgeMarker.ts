@@ -1,6 +1,6 @@
-import type { SVG } from '$root/diagram-api/types.js';
-import { log } from '$root/logger.js';
-import type { EdgeData } from '$root/types.js';
+import type { SVG } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
+import type { EdgeData } from '../../types.js';
 /**
  * Adds SVG markers to a path element based on the arrow types specified in the edge.
  *
