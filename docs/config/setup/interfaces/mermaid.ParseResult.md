@@ -12,7 +12,7 @@
 
 ### config
 
-• `Optional` **config**: [`MermaidConfig`](mermaid.MermaidConfig.md)
+• **config**: [`MermaidConfig`](mermaid.MermaidConfig.md)
 
 The config passed as YAML frontmatter or directives
 
