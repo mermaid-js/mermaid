@@ -53,7 +53,7 @@ export interface ParseResult {
   /**
    * The config passed as YAML frontmatter or directives
    */
-  config?: MermaidConfig;
+  config: MermaidConfig;
 }
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
