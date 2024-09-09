@@ -96,7 +96,7 @@
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-html": "^8.1.1",
     "eslint-plugin-jest": "^28.6.0",
-    "eslint-plugin-jsdoc": "^48.2.9",
+    "eslint-plugin-jsdoc": "^50.0.0",
     "eslint-plugin-json": "^4.0.0",
     "eslint-plugin-lodash": "^8.0.0",
     "eslint-plugin-markdown": "^5.0.0",
