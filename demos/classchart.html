@@ -159,30 +159,89 @@
       class People List~List~Person~~
     </pre>
     <hr />
-
     <pre class="mermaid">
-    classDiagram
-      A1 --> B1
-      namespace A {
-        class A1 {
-          +foo : string
-        }
-        class A2 {
-          +bar : int
-        }
-      }
-      namespace B {
-        class B1 {
-          +foo : bool
-        }
-        class B2 {
-          +bar : float
-        }
-      }
-      A2 --> B2
+      classDiagram
+            namespace Company.Project.Module {
+              class GenericClass~T~ {
+                +addItem(item: T)
+                +getItem() T
+              }
+            }
     </pre>
     <hr />
-
+    <pre class="mermaid">
+      classDiagram
+        namespace Company.Project.Module.SubModule {
+          class Report {
+            +generatePDF(data: List)
+            +generateCSV(data: List)
+          }
+        }
+        namespace Company.Project.Module {
+          class Admin {
+            +generateReport()
+          }
+        }
+        Admin --> Report : generates
+    </pre>
+    <pre class="mermaid">
+    classDiagram
+      namespace Company.Project.Module {
+        class User {
+          +login(username: String, password: String)
+          +logout()
+        }
+        class Admin {
+          +addUser(user: User)
+          +removeUser(user: User)
+          +generateReport()
+        }
+        class Report {
+          +generatePDF(reportData: List)
+          +generateCSV(reportData: List)
+        }
+      
+      }
+      Admin --> User : manages
+      Admin --> Report : generates
+    </pre>
+    <hr />
+    <pre class="mermaid">
+      classDiagram
+      namespace Shapes {
+          class Shape {
+            +calculateArea() double
+          }
+          class Circle {
+            +double radius
+          }
+          class Square {
+            +double side
+          }
+      }
+      
+      Shape <|-- Circle
+      Shape <|-- Square
+      
+      namespace Vehicles {
+          class Vehicle {
+            +String brand
+          }
+          class Car {
+            +int horsepower
+          }
+          class Bike {
+            +boolean hasGears
+          }
+      }
+      
+      Vehicle <|-- Car
+      Vehicle <|-- Bike
+      
+      Car --> Circle : "Logo Shape"
+      Bike --> Square : "Logo Shape"
+                  
+    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
