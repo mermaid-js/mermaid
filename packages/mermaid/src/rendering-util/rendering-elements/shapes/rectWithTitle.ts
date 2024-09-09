@@ -1,17 +1,14 @@
-import type { Node } from '$root/rendering-util/types.d.ts';
+import type { Node } from '../../types.js';
 import { select } from 'd3';
-import { evaluate } from '$root/diagrams/common/common.js';
+import { evaluate } from '../../../diagrams/common/common.js';
 import { updateNodeBounds } from './util.js';
 import createLabel from '../createLabel.js';
 import intersect from '../intersect/index.js';
-import {
-  styles2String,
-  userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
-import { log } from '$root/logger.js';
+import { log } from '../../../logger.js';
 
 export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);

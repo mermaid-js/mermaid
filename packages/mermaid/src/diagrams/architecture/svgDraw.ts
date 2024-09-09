@@ -1,4 +1,4 @@
-import { getIconSVG } from '$root/rendering-util/icons.js';
+import { getIconSVG } from '../../rendering-util/icons.js';
 import type cytoscape from 'cytoscape';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';
@@ -170,8 +170,8 @@ export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core)
               textElem.attr(
                 'transform',
                 `
-                translate(${midX}, ${midY - bboxOrig.height / 2}) 
-                translate(${(x * bboxNew.width) / 2}, ${(y * bboxNew.height) / 2}) 
+                translate(${midX}, ${midY - bboxOrig.height / 2})
+                translate(${(x * bboxNew.width) / 2}, ${(y * bboxNew.height) / 2})
                 rotate(${-1 * x * y * 45}, 0, ${bboxOrig.height / 2})
               `
               );
