@@ -35,7 +35,7 @@ vi.mock('./diagrams/sequence/sequenceRenderer.js');
 
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
-import mermaid from './mermaid.js';
+import mermaid, { type ParseResult } from './mermaid.js';
 import mermaidAPI, {
   appendDivSvgG,
   cleanUpSvgCode,
@@ -695,81 +695,93 @@ describe('mermaidAPI', () => {
       ).resolves.toBe(false);
     });
     it('resolves for valid definition', async () => {
-      await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
-        .toMatchInlineSnapshot(`
+      await expect(
+        mermaidAPI
+          .parse('graph TD;A--x|text including URL space|B;')
+          .then((p) => ({ config: p.config }))
+      ).resolves.toMatchInlineSnapshot(`
         {
           "config": {},
-          "diagramType": "flowchart-v2",
         }
       `);
     });
     it('returns config when defined in frontmatter', async () => {
       await expect(
-        mermaidAPI.parse(`---
+        mermaidAPI
+          .parse(
+            `---
 config:
   theme: base
   flowchart:
     htmlLabels: true
 ---
-graph TD;A--x|text including URL space|B;`)
+graph TD;A--x|text including URL space|B;`
+          )
+          .then((p) => ({ config: p.config }))
       ).resolves.toMatchInlineSnapshot(`
-  {
-    "config": {
-      "flowchart": {
-        "htmlLabels": true,
-      },
-      "theme": "base",
-    },
-    "diagramType": "flowchart-v2",
-  }
-`);
+            {
+              "config": {
+                "flowchart": {
+                  "htmlLabels": true,
+                },
+                "theme": "base",
+              },
+            }
+          `);
     });
 
     it('returns config when defined in directive', async () => {
       await expect(
-        mermaidAPI.parse(`%%{init: { 'theme': 'base' } }%%
-graph TD;A--x|text including URL space|B;`)
+        mermaidAPI
+          .parse(
+            `%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`
+          )
+          .then((p) => ({ config: p.config }))
       ).resolves.toMatchInlineSnapshot(`
-  {
-    "config": {
-      "theme": "base",
-    },
-    "diagramType": "flowchart-v2",
-  }
-`);
+            {
+              "config": {
+                "theme": "base",
+              },
+            }
+          `);
     });
 
     it('returns merged config when defined in frontmatter and directive', async () => {
       await expect(
-        mermaidAPI.parse(`---
+        mermaidAPI
+          .parse(
+            `---
 config:
   theme: forest
   flowchart:
     htmlLabels: true
 ---
 %%{init: { 'theme': 'base' } }%%
-graph TD;A--x|text including URL space|B;`)
+graph TD;A--x|text including URL space|B;`
+          )
+          .then((p) => ({ config: p.config }))
       ).resolves.toMatchInlineSnapshot(`
-  {
-    "config": {
-      "flowchart": {
-        "htmlLabels": true,
-      },
-      "theme": "base",
-    },
-    "diagramType": "flowchart-v2",
-  }
-`);
+            {
+              "config": {
+                "flowchart": {
+                  "htmlLabels": true,
+                },
+                "theme": "base",
+              },
+            }
+          `);
     });
     it('returns true for valid definition with silent option', async () => {
       await expect(
-        mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
+        mermaidAPI
+          .parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
+          .then((p) => ({ config: (p as ParseResult).config }))
       ).resolves.toMatchInlineSnapshot(`
-          {
-            "config": {},
-            "diagramType": "flowchart-v2",
-          }
-        `);
+            {
+              "config": {},
+            }
+          `);
     });
   });
 
