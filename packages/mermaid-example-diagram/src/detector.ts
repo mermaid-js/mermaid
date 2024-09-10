@@ -1,4 +1,4 @@
-import type { ExternalDiagramDefinition } from 'mermaid';
+import type { ExternalDiagramDefinition } from '@mermaid-chart/mermaid';
 
 const id = 'example-diagram';
 
