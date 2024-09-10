@@ -1,0 +1,306 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background: #333; */
+        font-family: 'Arial';
+        /* font-size: 18px !important; */
+      }
+
+      h1 {
+        color: grey;
+      }
+
+      .mermaid2 {
+        display: none;
+      }
+
+      .mermaid svg {
+        /* font-size: 18px !important; */
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
+      }
+
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+
+      /* tspan {
+              font-size: 6px !important;
+            } */
+    </style>
+  </head>
+
+  <body>
+    <pre id="diagram" class="mermaid"></pre>
+    <pre id="diagram2" class="mermaid"></pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+      let code = `
+      stateDiagram
+        S:S
+        T:T
+        U:U
+        state Z {
+          state X {
+            Y:Ypsilon
+          }
+        }
+        A
+
+        S --> T: angrepp
+        S --> T: angrepp
+        T --> U
+        Y --> V
+      C
+      D
+      E
+
+              `;
+      code = `
+flowchart TB
+    c1-->a2
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+
+              `;
+      //       code = `
+      // flowchart BT
+      // A
+      //     subgraph one
+      //     a1 --> a2
+      //     end
+      //     subgraph two
+      //       a3
+      //     end
+
+      //               `;
+      //       code = `
+      // flowchart TB
+      //     subgraph one
+      //     a1-->a2
+      //     end`;
+      // let positions = JSON.parse(
+      //   '{"nodes":{"S":{"x":30.78125,"y":43.5},"Y":{"x":127.94140625,"y":50}},"edges":{}}'
+      // );
+
+      function exctractPositions(svg) {
+        const positions = { nodes: {}, edges: {} };
+
+        // Extract the viewbox paddings - TOSDO: update in collab
+        const viewBox = svg.getAttribute('viewBox').split(' ');
+        const viewBoxX = parseFloat(viewBox[0]);
+        const viewBoxY = parseFloat(viewBox[1]);
+        // console.log('viewBox:', viewBoxX, viewBoxY);
+        svg.querySelectorAll('[data-et="node"]').forEach((node) => {
+          if (node.tagName === 'g') {
+            // console.log('node:', node);
+            const id = node.dataset.id;
+            const bbox = node.getBBox();
+            const transform = node.getAttribute('transform');
+            const x = parseFloat(transform.split(',')[0].split('(')[1]);
+            const y = parseFloat(transform.split(',')[1].split(')')[0]);
+
+            // Get the bounding rectangle of the element
+            const rect = node.getBoundingClientRect();
+
+            // Get the absolute position relative to the document
+            const absoluteX = rect.left + window.pageXOffset + viewBoxX;
+            const absoluteY = rect.top + window.pageYOffset + viewBoxY;
+
+            positions.nodes[id] = {
+              x: absoluteX + rect.width / 2,
+              y: absoluteY + rect.height / 2,
+              width: rect.width,
+              height: rect.height,
+            };
+          }
+        });
+        svg.querySelectorAll('[data-et="cluster"]').forEach((node) => {
+          // console.log('cluster:', node);
+          if (node.tagName === 'g') {
+            const id = node.dataset.id;
+            // console.log('cluster:', node);
+
+            const transform = node.getAttribute('transform');
+            const rect = node.getBoundingClientRect();
+
+            // Get the absolute position relative to the document
+            const absoluteX = rect.left + window.pageXOffset + viewBoxX;
+            const absoluteY = rect.top + window.pageYOffset + viewBoxY;
+
+            positions.nodes[id] = {
+              x: absoluteX + rect.width / 2,
+              y: absoluteY + rect.height / 2,
+              width: rect.width,
+              height: rect.height,
+            };
+          }
+        });
+        svg.querySelectorAll('[data-et="edge"]').forEach((edge) => {
+          // if (node.tagName === 'g') {
+          const path = edge.getBoundingClientRect();
+
+          // Get the absolute position relative to the document
+          const absoluteX = path.left + window.pageXOffset + viewBoxX;
+          const absoluteY = path.top + window.pageYOffset + viewBoxY;
+          console.log(
+            'absoluteX:',
+            absoluteX,
+            'absoluteY:',
+            absoluteY,
+            'offset',
+            window.pageXOffset
+          );
+          const id = edge.dataset.id;
+          const points = JSON.parse(atob(edge.dataset.points));
+          console.log('edge:', points, absoluteX, absoluteY);
+          let minX = 10000;
+          let minY = 10000;
+          points.forEach((point) => {
+            if (point.x < minX) {
+              minX = point.x;
+            }
+            if (point.y < minY) {
+              minY = point.y;
+            }
+          });
+          let dx = absoluteX - minX;
+          let dy = absoluteY - minY;
+          if (dx < 1) {
+            dx = 0;
+          }
+          if (dy < 1) {
+            dy = 0;
+          }
+          positions.edges[id] = {
+            points: points.map((point) => {
+              console.log('point:', point.y, absoluteY);
+              return {
+                x: point.x + dx,
+                y: point.y + dy,
+              };
+            }),
+          };
+          // }
+        });
+        return positions;
+      }
+
+      const mode = 'reset';
+      if (mode === 'reset') {
+        mermaid.initialize({
+          startOnLoad: false,
+          layout: 'elk',
+          fontFamily: 'Kalam',
+          sequence: {
+            actorFontFamily: 'courier',
+            noteFontFamily: 'courier',
+            messageFontFamily: 'courier',
+          },
+          logLevel: 5,
+        });
+        const { svg } = await mermaid.render('the-id-of-the-svg', code);
+        const elem = document.querySelector('#diagram');
+        elem.innerHTML = svg;
+        elem.classList.remove('mermaid');
+        const positions = exctractPositions(elem.firstChild);
+        // console.log('Positions:', JSON.stringify(positions));
+        const { svg: svg2 } = await mermaid.render(
+          'the-id-of-the-svg2',
+          '---\n  config:\n    layout: fixed\n---' + code,
+          undefined,
+          positions
+        );
+        // console.log('svg2', svg2);
+        const elem2 = document.querySelector('#diagram2');
+        elem2.innerHTML = svg2;
+      } else {
+        mermaid.initialize({
+          startOnLoad: false,
+          // look: 'handdrawn',
+          layout: 'fixed',
+          fontFamily: 'Kalam',
+          sequence: {
+            actorFontFamily: 'courier',
+            noteFontFamily: 'courier',
+            messageFontFamily: 'courier',
+          },
+          logLevel: 0,
+        });
+        const { svg } = await mermaid.render('the-id-of-the-svg', code, undefined, positions);
+
+        // console.log(JSON.stringify(positions));
+        const elem = document.querySelector('#diagram');
+        elem.innerHTML = svg;
+      }
+    </script>
+  </body>
+</html>
