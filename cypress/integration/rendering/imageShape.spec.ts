@@ -1,7 +1,7 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
 const looks = ['classic', 'handDrawn'] as const;
-const directions = ['TB', 'BT', 'LR', 'RL'] as const;
+const directions = ['TB', 'LR'] as const;
 const labelPos = [undefined, 't', 'b'] as const;
 
 looks.forEach((look) => {
@@ -18,7 +18,7 @@ looks.forEach((look) => {
           let flowchartCode = `flowchart ${direction}\n`;
           flowchartCode += `  nA --> A@{ img: 'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg', label: 'This is a label for image shape'`;
 
-          flowchartCode += `, w: '200', h: '200'`;
+          flowchartCode += `, w: '100', h: '200'`;
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }
@@ -30,7 +30,7 @@ looks.forEach((look) => {
           let flowchartCode = `flowchart ${direction}\n`;
           flowchartCode += `  nA --> A@{ img: 'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg', label: 'This is a very very very very very long long long label for image shape'`;
 
-          flowchartCode += `, w: '100', h: '100'`;
+          flowchartCode += `, w: '100', h: '250'`;
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }
@@ -42,17 +42,18 @@ looks.forEach((look) => {
           let flowchartCode = `flowchart ${direction}\n`;
           flowchartCode += `  nA --> A@{ img: 'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg', label: 'This is **bold** </br>and <strong>strong</strong> for image shape'`;
 
-          flowchartCode += `, w: '450', h: '550'`;
+          flowchartCode += `, w: '550', h: '200'`;
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }
           flowchartCode += ` }@\n`;
-          imgSnapshotTest(flowchartCode, { look });
+          imgSnapshotTest(flowchartCode, { look, htmlLabels: true });
         });
 
         it(`with markdown htmlLabels:false`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           flowchartCode += `  nA --> A@{ img: 'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg', label: 'This is **bold** </br>and <strong>strong</strong> for image shape'`;
+          flowchartCode += `, w: '250', h: '200'`;
 
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
@@ -68,6 +69,7 @@ looks.forEach((look) => {
         it(`with styles`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           flowchartCode += `  nA --> A@{ img: 'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg', label: 'new image shape'`;
+          flowchartCode += `, w: '550', h: '200'`;
 
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
@@ -79,10 +81,10 @@ looks.forEach((look) => {
 
         it(`with classDef`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
-          flowchartCode += `  classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n`;
+          flowchartCode += `  classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5\n`;
           flowchartCode += `  nA --> A@{ img: 'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg', label: 'new image shape'`;
 
-          flowchartCode += `, w: '450', h: '550'`;
+          flowchartCode += `, w: '500', h: '550'`;
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }

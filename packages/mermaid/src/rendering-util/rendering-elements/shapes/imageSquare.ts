@@ -6,12 +6,11 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { createPathFromPoints } from './util.js';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 export const imageSquare = async (parent: SVG, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const { cssStyles } = node;
 
   const img = new Image();
   img.src = node?.img ?? '';
@@ -22,15 +21,22 @@ export const imageSquare = async (parent: SVG, node: Node) => {
 
   const imageWidth = node?.assetWidth ?? imageNaturalWidth;
   const imageHeight = node?.assetHeight ?? imageNaturalHeight;
+  const defaultWidth = getConfig().flowchart?.wrappingWidth;
+  // const htmlLabels = getConfig().flowchart?.htmlLabels
+
+  node.width = Math.max(node.width ?? 0, node.label ? (defaultWidth ?? 0) : 0, imageWidth);
+
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const { cssStyles } = node;
+  const defaultHeight = bbox.height;
+  node.height = Math.max(node.height ?? 0, node.label ? (defaultHeight ?? 0) : 0, imageHeight);
 
   const width = Math.max(bbox.width + (node.padding ?? 0), imageWidth, node?.width ?? 0);
   const height = Math.max(bbox.height + (node.padding ?? 0), imageHeight, node?.height ?? 0);
 
-  // const imageSizeWidth = width / 2;
-  const imageSizeHeight = height * 0.1;
-
-  const skeletonWidth = width + (node?.padding ?? 0);
-  const skeletonHeight = height + imageSizeHeight + bbox.height;
+  const skeletonWidth = width + (node?.padding ?? 0) / 2;
+  const skeletonHeight = height + bbox.height;
 
   const imagePosition = node?.pos ?? 'b';
   const points = [
@@ -52,31 +58,32 @@ export const imageSquare = async (parent: SVG, node: Node) => {
   const linePath = createPathFromPoints(points);
   const lineNode = rc.path(linePath, options);
 
-  const iconShape = shapeSvg.insert(() => lineNode, ':first-child');
+  const imageShape = shapeSvg.insert(() => lineNode, ':first-child').attr('opacity', 0);
   if (node.img) {
     const image = shapeSvg.append('image');
 
     // Set the image attributes
     image.attr('href', node.img);
-    image.attr('width', imageWidth);
-    image.attr('height', imageHeight);
+    image.attr('width', node.width);
+    image.attr('height', node.height);
+    image.attr('preserveAspectRatio', 'none');
 
     const yPos =
       imagePosition === 'b'
-        ? -(skeletonHeight / 2 - imageSizeHeight / 2)
-        : skeletonHeight / 2 - height - imageSizeHeight / 2;
-    image.attr('transform', `translate(${-imageWidth / 2}, ${yPos})`);
+        ? -(skeletonHeight / 2)
+        : skeletonHeight / 2 - height + (bbox.y + (bbox.top ?? 0)) * 2;
+    image.attr('transform', `translate(${-node.width / 2}, ${yPos})`);
   }
 
   if (cssStyles && node.look !== 'handDrawn') {
-    iconShape.selectAll('path').attr('style', cssStyles);
+    imageShape.selectAll('path').attr('style', cssStyles);
   }
 
   if (nodeStyles && node.look !== 'handDrawn') {
-    iconShape.selectAll('path').attr('style', nodeStyles);
+    imageShape.selectAll('path').attr('style', nodeStyles);
   }
 
-  iconShape.attr('transform', `translate(${-skeletonWidth / 2},${-skeletonHeight / 2})`);
+  imageShape.attr('transform', `translate(${-skeletonWidth / 2},${-skeletonHeight / 2})`);
 
   const yPos =
     imagePosition === 'b'
@@ -85,7 +92,7 @@ export const imageSquare = async (parent: SVG, node: Node) => {
 
   label.attr('transform', `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${yPos})`);
 
-  updateNodeBounds(node, iconShape);
+  updateNodeBounds(node, imageShape);
 
   node.intersect = function (point) {
     log.info('iconSquare intersect', node, point);
