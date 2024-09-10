@@ -1,68 +1,70 @@
 import { log } from '../../../logger.js';
-import { createPathFromPoints, getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import { labelHelper, updateNodeBounds } from './util.js';
 import type { Node } from '../../types.d.ts';
 import type { SVG } from '../../../diagram-api/types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 export const iconSquare = async (parent: SVG, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const assetHeight = node.assetHeight ?? 48;
+  const assetWidth = node.assetWidth ?? 48;
+  const iconSize = Math.max(assetHeight, assetWidth);
+  const defaultWidth = getConfig()?.flowchart?.wrappingWidth;
+  node.width = Math.max(iconSize, defaultWidth ?? 0);
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
     node,
-    getNodeClasses(node)
+    'icon-square default'
   );
-
   const { cssStyles } = node;
+
   const topLabel = node.pos === 't';
-  const labelWidth = Math.max(bbox.width + halfPadding * 2, node?.width ?? 0);
-  const labelHeight = Math.max(bbox.height + halfPadding * 2, node?.height ?? 0);
-  const iconHeight = node.assetHeight ?? 0;
-  const iconWidth = node.assetWidth ?? 0;
 
-  const iconSize =
-    iconWidth || iconHeight
-      ? Math.max(iconHeight, iconWidth)
-      : Math.max(labelHeight - halfPadding, labelWidth - halfPadding, 48);
-  const width = Math.max(labelWidth, iconSize);
-  const height = labelHeight + iconSize;
+  const height = (node.label ? iconSize + bbox.height : iconSize) + halfPadding * 2;
+  const width = Math.max(iconSize, bbox.width) + halfPadding * 2;
+  const { themeVariables } = getConfig();
+  const { mainBkg } = themeVariables;
+  const { stylesMap } = compileStyles(node);
 
-  const points = [
-    { x: -width / 2, y: -height / 2 },
-    { x: -width / 2, y: height / 2 },
-    { x: width / 2, y: height / 2 },
-    { x: width / 2, y: -height / 2 },
-  ];
+  const x = -width / 2;
+  const y = -height / 2;
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, {});
+  const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') || mainBkg });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
 
-  const linePath = createPathFromPoints(points);
-  const lineNode = rc.path(linePath, options);
+  const iconNode = rc.rectangle(x, y, width, height, options);
 
-  const iconShape = shapeSvg.insert(() => lineNode, ':first-child');
+  const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
 
   if (node.icon) {
     const iconElem = shapeSvg.append('g');
     iconElem.html(
       `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
     );
-    const iconWidth = iconElem.node().getBBox().width;
-    const iconHeight = iconElem.node().getBBox().height;
+    const iconBBox = iconElem.node().getBBox();
+    const iconWidth = iconBBox.width;
+    const iconHeight = iconBBox.height;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2}, ${-iconHeight / 2 - labelHeight / 2 - halfPadding + (topLabel ? labelHeight : halfPadding * 2)})`
+      `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight - halfPadding / 2 : -height / 2 + halfPadding / 2})`
     );
   }
+
+  label.attr(
+    'transform',
+    `translate(${-width / 2 + width / 2 - bbox.width / 2},${topLabel ? -height / 2 + halfPadding / 2 : -height / 2 + halfPadding * 1.5 + iconSize})`
+  );
 
   if (cssStyles && node.look !== 'handDrawn') {
     iconShape.selectAll('path').attr('style', cssStyles);
@@ -72,15 +74,11 @@ export const iconSquare = async (parent: SVG, node: Node) => {
     iconShape.selectAll('path').attr('style', nodeStyles);
   }
 
-  label.attr(
-    'transform',
-    `translate(${-labelWidth / 2 + halfPadding - (bbox.x - (bbox.left ?? 0))},${-height / 2 + iconSize - (topLabel ? iconSize - halfPadding : -halfPadding) - (bbox.y - (bbox.top ?? 0))})`
-  );
   updateNodeBounds(node, iconShape);
 
   node.intersect = function (point) {
     log.info('iconSquare intersect', node, point);
-    const pos = intersect.polygon(node, points, point);
+    const pos = intersect.rect(node, point);
     return pos;
   };
 
