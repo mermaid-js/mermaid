@@ -30,7 +30,7 @@ export type {
   MermaidConfig,
   ParseErrorFunction,
   ParseOptions,
-  ParseResult,
+  ParseResultWithConfigs as ParseResult,
   RenderOptions,
   RenderResult,
   SVG,
