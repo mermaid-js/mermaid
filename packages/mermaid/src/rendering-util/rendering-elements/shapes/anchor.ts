@@ -1,11 +1,11 @@
-import { log } from '$root/logger.js';
+import { log } from '../../../logger.js';
 import { updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
+import type { Node } from '../../../rendering-util/types.d.ts';
 import {
   styles2String,
   userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+} from '../../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
 export const anchor = (parent: SVGAElement, node: Node): Promise<SVGAElement> => {

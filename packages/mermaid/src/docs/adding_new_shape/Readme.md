@@ -95,7 +95,7 @@ To add a new shape:
 - **Example**:
 
   ```typescript
-  import { Node } from '$root/rendering-util/types.d.ts';
+  import { Node } from '../../../rendering-util/types.d.ts';
 
   export const myNewShape = async (parent: SVGAElement, node: Node) => {
     // Create your shape here
