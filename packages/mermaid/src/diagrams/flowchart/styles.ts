@@ -163,6 +163,13 @@ const getStyles = (options: FlowChartStyleOptions) =>
     fill: none;
     stroke-width: 0;
   }
+
+  .icon-shape {
+    p {
+      background-color: ${options.edgeLabelBackground};
+      padding: 2px;
+    }
+  }
 `;
 
 export default getStyles;

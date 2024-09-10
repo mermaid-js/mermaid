@@ -8,7 +8,8 @@ import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
-export const iconSquare = async (parent: SVG, node: Node) => {
+export const iconSquare = async (parent: SVG, node: Node, dir: string) => {
+  const translateHorizontal = dir === 'TB' || dir === 'BT' || dir === 'TD' || dir === 'DT';
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
@@ -19,14 +20,14 @@ export const iconSquare = async (parent: SVG, node: Node) => {
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
     node,
-    'icon-square default'
+    'icon-shape default'
   );
   const { cssStyles } = node;
 
   const topLabel = node.pos === 't';
 
-  const height = (node.label ? iconSize + bbox.height : iconSize) + halfPadding * 2;
-  const width = Math.max(iconSize, bbox.width) + halfPadding * 2;
+  const height = iconSize + halfPadding * 2;
+  const width = iconSize + halfPadding * 2;
   const { themeVariables } = getConfig();
   const { mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
@@ -57,14 +58,18 @@ export const iconSquare = async (parent: SVG, node: Node) => {
     const iconHeight = iconBBox.height;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight - halfPadding / 2 : -height / 2 + halfPadding / 2})`
+      `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight - halfPadding + (translateHorizontal ? bbox.height / 2 : 0) : -height / 2 + halfPadding - (translateHorizontal ? bbox.height / 2 : 0)})`
     );
   }
 
   label.attr(
     'transform',
-    `translate(${-width / 2 + width / 2 - bbox.width / 2},${topLabel ? -height / 2 + halfPadding / 2 : -height / 2 + halfPadding * 1.5 + iconSize})`
+    `translate(${-width / 2 + width / 2 - bbox.width / 2},${topLabel ? -height / 2 - 2.5 - (translateHorizontal ? bbox.height / 2 : bbox.height) : height / 2 + 5 - (translateHorizontal ? bbox.height / 2 : 0)})`
   );
+
+  if (translateHorizontal) {
+    iconShape.attr('transform', `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2})`);
+  }
 
   if (cssStyles && node.look !== 'handDrawn') {
     iconShape.selectAll('path').attr('style', cssStyles);
@@ -74,7 +79,7 @@ export const iconSquare = async (parent: SVG, node: Node) => {
     iconShape.selectAll('path').attr('style', nodeStyles);
   }
 
-  updateNodeBounds(node, iconShape);
+  updateNodeBounds(node, shapeSvg);
 
   node.intersect = function (point) {
     log.info('iconSquare intersect', node, point);

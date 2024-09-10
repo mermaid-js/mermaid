@@ -60,15 +60,29 @@
     </style>
   </head>
 
-  <body>
+  <body style="display: flex; gap: 2rem; flex-direction: row">
     <pre id="diagram4" class="mermaid">
-      flowchart LR
-       A --> B2@{ icon: "fa:bell", form: "square", label: "B2", pos: "t", h: 400, w: 50 }@ --> C
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", form: "square", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }@
+       B2 --test--> C
   </pre
     >
-    <pre id="diagram5" class="mermaid2">
-      flowchart
-       A --> B2@{ icon: "fa:bell", form: "circle", label: "test awbd dauwdug wdgauyd yagyua aygua", pos: "t", w: 50, h: 50 }@ --> C
+    <pre id="diagram43" class="mermaid">
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", form: "square", label: "B2", pos: "t", h: 40, w: 30 }@
+       B2 --test--> C
+  </pre
+    >
+    <pre id="diagram4" class="mermaid">
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", label: "B2", pos: "b", h: 40, w: 30 }@
+       B2 --test--> C
+  </pre
+    >
+    <pre id="diagram43" class="mermaid">
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", label: "B2", pos: "t", h: 40, w: 30 }@
+       B2 --test--> C
   </pre
     >
     <pre id="diagram6" class="mermaid2">
@@ -89,9 +103,7 @@
         {
           name: 'fa',
           loader: () =>
-            fetch('https://unpkg.com/@iconify-json/fa6-regular/icons.json').then((res) =>
-              res.json()
-            ),
+            fetch('https://unpkg.com/@iconify-json/fa6-solid/icons.json').then((res) => res.json()),
         },
       ]);
       mermaid.parseError = function (err, hash) {
