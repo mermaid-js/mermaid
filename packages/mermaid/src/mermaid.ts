@@ -2,18 +2,18 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
 import type { ExternalDiagramDefinition, SVG, SVGGroup } from './diagram-api/types.js';
-import type { Diagram, ParseErrorFunction } from './Diagram.js';
+import type { ParseErrorFunction } from './Diagram.js';
 import type { UnknownDiagramError } from './errors.js';
 import type { InternalHelpers } from './internals.js';
 import { log } from './logger.js';
 import { mermaidAPI } from './mermaidAPI.js';
+import { registerIconPacks } from './rendering-util/icons.js';
 import type { LayoutLoaderDefinition, RenderOptions } from './rendering-util/render.js';
 import { registerLayoutLoaders } from './rendering-util/render.js';
 import type { LayoutData } from './rendering-util/types.js';
@@ -321,7 +321,9 @@ const executeQueue = async () => {
   executionQueueRunning = false;
 };
 
-interface ConfigTuple {
+interface ParseResultWithConfigs extends Omit<ParseResult, 'config'> {
+  /** Config the user has defined in the text as frontmatter or directives */
+  userConfig: MermaidConfig;
   defaultConfig: MermaidConfig;
   config: MermaidConfig;
 }
@@ -347,7 +349,7 @@ interface ConfigTuple {
 const parse = async (
   text: string,
   parseOptions?: ParseOptions
-): Promise<boolean | void | (Diagram & ConfigTuple)> => {
+): Promise<boolean | void | ParseResultWithConfigs> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
@@ -355,9 +357,12 @@ const parse = async (
       new Promise((res, rej) => {
         mermaidAPI.parse(text, parseOptions).then(
           (r) => {
-            const result = r as Diagram & ConfigTuple;
-            result.defaultConfig = mermaidAPI.defaultConfig;
-            result.config = mermaidAPI.getConfig();
+            const result = {
+              diagram: r.diagram,
+              userConfig: r.config,
+              defaultConfig: mermaidAPI.defaultConfig,
+              config: mermaidAPI.getConfig(),
+            } satisfies ParseResultWithConfigs;
             // This resolves for the promise for the queue handling
             res(result);
             // This fulfills the promise sent to the value back to the original caller
