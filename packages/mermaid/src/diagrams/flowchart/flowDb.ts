@@ -146,7 +146,7 @@ export const addVertex = function (
     }
     if (doc?.icon) {
       vertex.icon = doc?.icon;
-      if (vertex.text === id) {
+      if (!doc.label) {
         vertex.text = '';
       }
     }
@@ -158,7 +158,7 @@ export const addVertex = function (
     }
     if (doc?.img) {
       vertex.img = doc?.img;
-      if (vertex.text === id) {
+      if (!doc.label) {
         vertex.text = '';
       }
     }
