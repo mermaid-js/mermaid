@@ -62,18 +62,19 @@
 
   <body style="display: flex; gap: 2rem; flex-direction: row">
     <pre id="diagram4" class="mermaid">
-      flowchart LR
-       B2@{ icon: "fa:bell", form: "square", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "t" }@
+      flowchart TD
+       B2@{ icon: "fa:bell", form: "square", label: "B2 agsyua duadu", pos: "t", h: 80 }@
        
 
        W --> B2
        X --> B2
        Y --> B2
        Z --> B2
+       B2 --<strong>sas</strong>--> C
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       flowchart TB
        A --test2--> B2@{ icon: "fa:bell", form: "rounded", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }@
        B2 --test--> C
@@ -145,7 +146,7 @@
         // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
-        flowchart: { titleTopMargin: 10, htmlLables: true },
+        flowchart: { titleTopMargin: 10, htmlLabels: true },
         // fontFamily: 'Caveat',
         fontFamily: 'Kalam',
         // fontFamily: 'courier',

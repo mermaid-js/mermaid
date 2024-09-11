@@ -8,8 +8,7 @@ import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
-export const icon = async (parent: SVG, node: Node, dir: string) => {
-  const translateHorizontal = dir === 'TB' || dir === 'BT' || dir === 'TD' || dir === 'DT';
+export const icon = async (parent: SVG, node: Node) => {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
@@ -50,25 +49,71 @@ export const icon = async (parent: SVG, node: Node, dir: string) => {
     const iconHeight = iconBBox.height;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight + (translateHorizontal ? bbox.height / 2 : 0) : -height / 2 - (translateHorizontal ? bbox.height / 2 : 0)})`
+      `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight + bbox.height / 2 : -height / 2 - bbox.height / 2})`
     );
   }
 
   label.attr(
     'transform',
-    `translate(${-width / 2 + width / 2 - bbox.width / 2},${topLabel ? -height / 2 - 2.5 - (translateHorizontal ? bbox.height / 2 : bbox.height) : height / 2 + 2.5 - (translateHorizontal ? bbox.height / 2 : 0)})`
+    `translate(${-width / 2 + width / 2 - bbox.width / 2},${topLabel ? -height / 2 - 5 - bbox.height / 2 : height / 2 - bbox.height / 2})`
   );
 
-  if (translateHorizontal) {
-    iconShape.attr('transform', `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2})`);
-  }
+  iconShape.attr('transform', `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2})`);
 
   updateNodeBounds(node, shapeSvg);
 
   node.intersect = function (point) {
     log.info('iconSquare intersect', node, point);
-    const pos = intersect.rect(node, point);
-    return pos;
+    if (!node.label) {
+      return intersect.rect(node, point);
+    }
+    const dx = node.x ?? 0;
+    const dy = node.y ?? 0;
+    const nodeWidth = node.width ?? 0;
+    const nodeHeight = node.height ?? 0;
+
+    if (topLabel) {
+      const points = [
+        { x: dx - nodeWidth / 2, y: dy - nodeHeight / 2 - bbox.height / 2 },
+        { x: dx + nodeWidth / 2, y: dy - nodeHeight / 2 - bbox.height / 2 },
+        { x: dx + nodeWidth / 2, y: dy - nodeHeight / 2 + bbox.height - bbox.height / 2 },
+        {
+          x: dx + nodeWidth / 2 - (bbox.width - width) / 2,
+          y: dy - nodeHeight / 2 + bbox.height - bbox.height / 2,
+        },
+        {
+          x: dx + nodeWidth / 2 - (bbox.width - width) / 2,
+          y: dy + nodeHeight / 2 - bbox.height / 2,
+        },
+        {
+          x: dx + nodeWidth / 2 - (bbox.width - width) / 2 - width,
+          y: dy + nodeHeight / 2 - bbox.height / 2,
+        },
+        {
+          x: dx + nodeWidth / 2 - (bbox.width - width) / 2 - width,
+          y: dy - nodeHeight / 2 + bbox.height - bbox.height / 2,
+        },
+        { x: dx - nodeWidth / 2, y: dy - nodeHeight / 2 + bbox.height - bbox.height / 2 },
+      ];
+      const pos = intersect.polygon(node, points, point);
+      return pos;
+    } else {
+      const points = [
+        { x: dx - nodeWidth / 2 + (bbox.width - width) / 2, y: dy - nodeHeight / 2 },
+        { x: dx - nodeWidth / 2 + (bbox.width - width) / 2 + width, y: dy - nodeHeight / 2 },
+        {
+          x: dx - nodeWidth / 2 + (bbox.width - width) / 2 + width,
+          y: dy - nodeHeight / 2 + height,
+        },
+        { x: dx + nodeWidth / 2, y: dy - nodeHeight / 2 + height },
+        { x: dx + nodeWidth / 2, y: dy + nodeHeight / 2 },
+        { x: dx - nodeWidth / 2, y: dy + nodeHeight / 2 },
+        { x: dx - nodeWidth / 2, y: dy + nodeHeight / 2 - bbox.height },
+        { x: dx - nodeWidth / 2 + (bbox.width - width) / 2, y: dy + nodeHeight / 2 - bbox.height },
+      ];
+      const pos = intersect.polygon(node, points, point);
+      return pos;
+    }
   };
 
   return shapeSvg;
