@@ -826,6 +826,9 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
     if (vertex.form === 'square') {
       return 'iconSquare';
     }
+    if (vertex.form === 'rounded') {
+      return 'iconRounded';
+    }
     return 'icon';
   }
   if (vertex.type === 'square') {
