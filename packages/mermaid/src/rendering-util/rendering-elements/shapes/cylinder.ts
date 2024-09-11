@@ -1,11 +1,8 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import {
-  styles2String,
-  userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+import type { Node } from '../../types.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { getConfig } from '../../../config.js';
 import rough from 'roughjs';
 
 export const createCylinderPathD = (

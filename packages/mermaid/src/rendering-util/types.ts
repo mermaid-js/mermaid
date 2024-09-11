@@ -1,5 +1,5 @@
 export type MarkdownWordType = 'normal' | 'strong' | 'em';
-import type { MermaidConfig } from '../../dist/config.type';
+import type { MermaidConfig } from '../config.type.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
@@ -38,7 +38,6 @@ export interface Node {
   tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
   shape?: string;
-  tooltip?: string;
   isGroup: boolean;
   width?: number;
   height?: number;
@@ -65,6 +64,11 @@ export interface Node {
   y?: number;
 
   look?: string;
+  icon?: string;
+  pos?: 't' | 'b';
+  img?: string;
+  assetWidth?: number;
+  assetHeight?: number;
 }
 
 // Common properties for any edge in the system

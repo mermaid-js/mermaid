@@ -1,9 +1,6 @@
 import { labelHelper, getNodeClasses, updateNodeBounds } from './util.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
-import {
-  styles2String,
-  userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+import type { Node } from '../../types.d.ts';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 

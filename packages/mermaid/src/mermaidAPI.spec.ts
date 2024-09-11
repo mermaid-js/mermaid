@@ -1,4 +1,4 @@
-import { vi, it, expect, describe, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -66,8 +66,8 @@ vi.mock('stylis', () => {
 });
 
 import { compile, serialize } from 'stylis';
-import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
+import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 
 /**

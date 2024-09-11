@@ -1,8 +1,8 @@
-import { log } from '$root/logger.js';
-import { getNodeClasses, updateNodeBounds, createPathFromPoints } from './util.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
-import type { SVG } from '$root/diagram-api/types.js';
-import { userNodeOverrides } from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+import { log } from '../../../logger.js';
+import { createPathFromPoints, getNodeClasses, updateNodeBounds } from './util.js';
+import type { Node } from '../../types.d.ts';
+import type { SVG } from '../../../diagram-api/types.js';
+import { userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 

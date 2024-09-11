@@ -2,7 +2,7 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import { registerIconPacks } from '$root/rendering-util/icons.js';
+import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
@@ -321,10 +321,10 @@ const executeQueue = async () => {
   executionQueueRunning = false;
 };
 
-interface ConfigTuple {
-  defaultConfig: MermaidConfig;
-  config: MermaidConfig;
-}
+// interface ConfigTuple {
+//   defaultConfig: MermaidConfig;
+//   config: MermaidConfig;
+// }
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
@@ -347,7 +347,7 @@ interface ConfigTuple {
 const parse = async (
   text: string,
   parseOptions?: ParseOptions
-): Promise<boolean | void | (Diagram & ConfigTuple)> => {
+): Promise<boolean | void | ParseResult> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
@@ -355,7 +355,7 @@ const parse = async (
       new Promise((res, rej) => {
         mermaidAPI.parse(text, parseOptions).then(
           (r) => {
-            const result = r as Diagram & ConfigTuple;
+            const result = r;
             result.defaultConfig = mermaidAPI.defaultConfig;
             result.config = mermaidAPI.getConfig();
             // This resolves for the promise for the queue handling

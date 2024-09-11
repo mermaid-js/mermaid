@@ -1,4 +1,4 @@
-import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
+import type { Node, RectOptions } from '../../types.js';
 import { drawRect } from './drawRect.js';
 
 export const squareRect = async (parent: SVGAElement, node: Node) => {
