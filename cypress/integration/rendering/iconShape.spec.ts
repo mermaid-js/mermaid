@@ -1,8 +1,8 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
-const looks = ['classic'] as const;
-const directions = ['TB'] as const;
-const forms = [undefined, 'square', 'circle'] as const;
+const looks = ['classic', 'handDrawn'] as const;
+const directions = ['TB', 'BT', 'LR', 'RL'] as const;
+const forms = [undefined, 'square', 'circle', 'rounded'] as const;
 const labelPos = [undefined, 't', 'b'] as const;
 
 looks.forEach((look) => {
