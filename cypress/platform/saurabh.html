@@ -60,24 +60,74 @@
     </style>
   </head>
 
-  <body>
+  <body style="display: flex; gap: 2rem; flex-direction: row">
     <pre id="diagram4" class="mermaid">
-      ---
-        config:
-          flowchart:
-            htmlLabels: true
-      ---
-      flowchart
-      classDef customClazz fill:#bbf,stroke:#f66,stroke-width:4px,color:#000,stroke-dasharray: 5 5
-      A1 --> B1@{ shape: taggedWaveEdgedRectangle, label: "test augfuyfavf yafuabffaev ydvaubfuac" }@ --> C1
-      A2 --> B2@{ shape: taggedRect, label: "test augfuyfavf yafuabffaev ydvaubfuac" }@ --> C2
-      B1:::customClazz
+      flowchart TD
+       B2@{ icon: "fa:bell", form: "square", label: "B2 agsyua duadu", pos: "t", h: 80 }@
+       
+
+       W --> B2
+       X --> B2
+       Y --> B2
+       Z --> B2
+       B2 --<strong>sas</strong>--> C
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+      flowchart TB
+       A --test2--> B2@{ icon: "fa:bell", form: "rounded", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }@
+       B2 --test--> C
+       D --> B2 --> E
+       style B2 fill:#f9f,stroke:#333,stroke-width:4px
+  </pre
+    >
+    <pre id="diagram43" class="mermaid2">
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", form: "square", label: "B2", pos: "t", h: 40, w: 30 }@
+       B2 --test--> C
+       D --> B2 --> E
+  </pre
+    >
+    <pre id="diagram4" class="mermaid2">
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", label: "B2 awiugdawu uydgayuiwd wuydguy", pos: "b", h: 40, w: 30 }@
+       B2 --test--> C
+  </pre
+    >
+    <pre id="diagram43" class="mermaid2">
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", label: "B2 dawuygd ayuwgd uy", pos: "t", h: 40, w: 30 }@
+       B2 --test--> C
+  </pre
+    >
+    <pre id="diagram6" class="mermaid2">
+      flowchart TB
+       A --> B2@{ icon: "fa:bell", form: "circle", label: "test augfuyfavf ydvaubfuac", pos: "t", w: 200, h: 100 }@ --> C
+  </pre
+    >
+    <pre id="diagram6" class="mermaid2">
+      flowchart TB
+       A --> B2@{ icon: "fa:bell", form: "circle", label: "test augfuyfavf ydvaubfuac", pos: "b", w: 200, h: 100 }@ --> C
+       D --> B2 --> E
   </pre
     >
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';
       mermaid.registerLayoutLoaders(layouts);
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/fa6-solid/icons.json').then((res) => res.json()),
+        },
+      ]);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
@@ -87,7 +137,7 @@
       mermaid.initialize({
         // theme: 'base',
         // handdrawnSeed: 12,
-        look: 'handDrawn',
+        look: 'classic',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // 'elk.nodePlacement.strategy': 'SIMPLE',
         // 'elk.nodePlacement.strategy': 'LAYERED',
@@ -96,7 +146,7 @@
         // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
-        flowchart: { titleTopMargin: 10, padding: 5 },
+        flowchart: { titleTopMargin: 10, htmlLabels: true },
         // fontFamily: 'Caveat',
         fontFamily: 'Kalam',
         // fontFamily: 'courier',

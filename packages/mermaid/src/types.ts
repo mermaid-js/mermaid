@@ -1,6 +1,12 @@
 export interface NodeMetaData {
   shape?: string;
   label?: string;
+  icon?: string;
+  form?: string;
+  pos?: 't' | 'b';
+  img?: string;
+  w?: string;
+  h?: string;
 }
 import type { MermaidConfig } from './config.type.js';
 

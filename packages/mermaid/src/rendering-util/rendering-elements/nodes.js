@@ -51,6 +51,11 @@ import { taggedWaveEdgedRectangle } from './shapes/taggedWaveEdgedRectangle.js';
 import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
+import { iconSquare } from './shapes/iconSquare.js';
+import { iconCircle } from './shapes/iconCircle.js';
+import { icon } from './shapes/icon.js';
+import { imageSquare } from './shapes/imageSquare.js';
+import { iconRounded } from './shapes/iconRounded.js';
 
 //Use these names as the left side to render shapes.
 export const shapes = {
@@ -215,6 +220,11 @@ export const shapes = {
   labelRect,
   'brace-r': curlyBraceRight,
   braces: curlyBraces,
+  iconSquare,
+  iconCircle,
+  icon,
+  iconRounded,
+  imageSquare,
 };
 
 const nodeElems = new Map();
@@ -222,6 +232,8 @@ const nodeElems = new Map();
 export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
+
+  // console.log("node is ", node.icon, node.shape)
 
   //special check for rect shape (with or without rounded corners)
   if (node.shape === 'rect') {

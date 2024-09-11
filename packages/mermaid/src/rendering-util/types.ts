@@ -64,6 +64,11 @@ export interface Node {
   y?: number;
 
   look?: string;
+  icon?: string;
+  pos?: 't' | 'b';
+  img?: string;
+  assetWidth?: number;
+  assetHeight?: number;
 }
 
 // Common properties for any edge in the system

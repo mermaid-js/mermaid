@@ -36,6 +36,7 @@ export const labelHelper = async (parent, node, _classes) => {
     width: node.width || getConfig().flowchart.wrappingWidth,
     cssClasses: 'markdown-node-label',
     style: node.labelStyle,
+    addSvgBackground: !!node.icon || !!node.img,
   });
   // Get the size of the label
   let bbox = text.getBBox();
