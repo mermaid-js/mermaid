@@ -177,6 +177,19 @@ const getStyles = (options: FlowChartStyleOptions) =>
     }
     text-align: center;
   }
+  .image-shape {
+    background-color: ${options.edgeLabelBackground};
+    p {
+      background-color: ${options.edgeLabelBackground};
+      padding: 2px;
+    }
+    rect {
+      opacity: 0.5;
+      background-color: ${options.edgeLabelBackground};
+      fill: ${options.edgeLabelBackground};
+    }
+    text-align: center;
+  }
 `;
 
 export default getStyles;

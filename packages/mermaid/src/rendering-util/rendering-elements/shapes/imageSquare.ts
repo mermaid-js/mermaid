@@ -1,5 +1,5 @@
 import { log } from '../../../logger.js';
-import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import { labelHelper, updateNodeBounds } from './util.js';
 import type { Node } from '../../types.js';
 import type { SVG } from '../../../diagram-api/types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
@@ -23,7 +23,6 @@ export const imageSquare = async (parent: SVG, node: Node) => {
     node?.assetWidth ?? imageNaturalWidth
   );
   const imageHeight = node?.assetHeight ?? imageNaturalHeight;
-  // const htmlLabels = getConfig().flowchart?.htmlLabels
 
   const imagePoints = [
     { x: -imageWidth / 2, y: -imageHeight },
@@ -47,7 +46,7 @@ export const imageSquare = async (parent: SVG, node: Node) => {
   // node.height = Math.max(node.height ?? 0, node.label ? (defaultHeight ?? 0) : 0, imageHeight);
   const labelWidth = Math.max(node.width ?? 0, node.label ? (defaultWidth ?? 0) : 0, imageWidth);
   node.width = node.label ? labelWidth : 0;
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'image-shape default');
 
   // const width = Math.max(bbox.width + (node.padding ?? 0), node?.width ?? 0);
   const height = Math.max(bbox.height + (node.padding ?? 0), node?.height ?? 0);
@@ -65,7 +64,6 @@ export const imageSquare = async (parent: SVG, node: Node) => {
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
-  // const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') || mainBkg });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -93,11 +91,6 @@ export const imageSquare = async (parent: SVG, node: Node) => {
     image.attr('height', imageHeight);
     image.attr('preserveAspectRatio', 'none');
 
-    // const yPos =
-    //   imagePosition === 'b'
-    //     ? -(imageHeight / 2)
-    //     : labelHeight / 2 - height + (bbox.y + (bbox.top ?? 0)) * 2;
-    // image.attr('transform', `translate(${-imageWidth / 2}, ${-imageHeight/2 -labelHeight/2})`);
     const yPos =
       imagePosition === 'b' ? -imageHeight / 2 - labelHeight / 2 : (-imageHeight + labelHeight) / 2;
     image.attr('transform', `translate(${-imageWidth / 2}, ${yPos})`);
@@ -123,10 +116,8 @@ export const imageSquare = async (parent: SVG, node: Node) => {
   node.intersect = function (point) {
     log.info('imageSquare intersect', node, point);
 
-    // Combine image and label points into a single shape
     const combinedPoints = [...imagePoints, ...labelPoints];
 
-    // Use the polygon intersection with the translated points
     const pos = intersect.polygon(node, combinedPoints, point);
     return pos;
   };

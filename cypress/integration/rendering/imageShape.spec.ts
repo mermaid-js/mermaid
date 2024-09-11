@@ -1,7 +1,7 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
 const looks = ['classic', 'handDrawn'] as const;
-const directions = ['TB', 'LR'] as const;
+const directions = ['TB', 'BT', 'LR', 'RL'] as const;
 const labelPos = [undefined, 't', 'b'] as const;
 
 looks.forEach((look) => {
