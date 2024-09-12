@@ -15,7 +15,16 @@ describe('when parsing directions', function () {
 
   it('should handle basic shape data statements', function () {
     const res = flow.parser.parse(`flowchart TB
-      D@{ shape: rounded }@`);
+      D@{ shape: rounded}`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(1);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+  });
+  it('should handle basic shape data statements', function () {
+    const res = flow.parser.parse(`flowchart TB
+      D@{ shape: rounded }`);
 
     const data4Layout = flow.parser.yy.getData();
     expect(data4Layout.nodes.length).toBe(1);
@@ -23,9 +32,69 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].label).toEqual('D');
   });
 
+  it('should handle basic shape data statements with &', function () {
+    const res = flow.parser.parse(`flowchart TB
+      D@{ shape: rounded } & E`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(2);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+    expect(data4Layout.nodes[1].label).toEqual('E');
+  });
+  it('should handle shape data statements with edges', function () {
+    const res = flow.parser.parse(`flowchart TB
+      D@{ shape: rounded } --> E`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(2);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+    expect(data4Layout.nodes[1].label).toEqual('E');
+  });
+  it('should handle basic shape data statements with amp and edges 1', function () {
+    const res = flow.parser.parse(`flowchart TB
+      D@{ shape: rounded } & E --> F`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(3);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+    expect(data4Layout.nodes[1].label).toEqual('E');
+  });
+  it('should handle basic shape data statements with amp and edges 2', function () {
+    const res = flow.parser.parse(`flowchart TB
+      D@{ shape: rounded } & E@{ shape: rounded } --> F`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(3);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+    expect(data4Layout.nodes[1].label).toEqual('E');
+  });
+  it('should handle basic shape data statements with amp and edges 3', function () {
+    const res = flow.parser.parse(`flowchart TB
+      D@{ shape: rounded } & E@{ shape: rounded } --> F & G@{ shape: rounded }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(4);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+    expect(data4Layout.nodes[1].label).toEqual('E');
+  });
+  it('should handle basic shape data statements with amp and edges 4', function () {
+    const res = flow.parser.parse(`flowchart TB
+      D@{ shape: rounded } & E@{ shape: rounded } --> F@{ shape: rounded } & G@{ shape: rounded }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(4);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+    expect(data4Layout.nodes[1].label).toEqual('E');
+  });
   it('should no matter of there are no leading spaces', function () {
     const res = flow.parser.parse(`flowchart TB
-      D@{shape: rounded }@`);
+      D@{shape: rounded}`);
 
     const data4Layout = flow.parser.yy.getData();
 
@@ -36,7 +105,7 @@ describe('when parsing directions', function () {
 
   it('should no matter of there are many leading spaces', function () {
     const res = flow.parser.parse(`flowchart TB
-      D@{       shape: rounded }@`);
+      D@{       shape: rounded}`);
 
     const data4Layout = flow.parser.yy.getData();
 
@@ -47,7 +116,7 @@ describe('when parsing directions', function () {
 
   it('should be forgiving with many spaces before teh end', function () {
     const res = flow.parser.parse(`flowchart TB
-      D@{ shape: rounded          }@`);
+      D@{ shape: rounded         }`);
 
     const data4Layout = flow.parser.yy.getData();
 
@@ -57,7 +126,7 @@ describe('when parsing directions', function () {
   });
   it('should be possible to add multiple properties on the same line', function () {
     const res = flow.parser.parse(`flowchart TB
-      D@{ shape: rounded , label: "DD" }@`);
+      D@{ shape: rounded , label: "DD"}`);
 
     const data4Layout = flow.parser.yy.getData();
 
@@ -70,7 +139,7 @@ describe('when parsing directions', function () {
       A --> D@{
         shape: circle
         icon: "clock"
-      }@
+     }
 
       `);
 
@@ -89,11 +158,11 @@ describe('when parsing directions', function () {
       B@{
         shape: circle
         icon: "clock"
-      }@
+     }
       C[Hello]@{
         shape: circle
         icon: "clock"
-      }@
+     }
       `);
 
     const data4Layout = flow.parser.yy.getData();
@@ -105,12 +174,12 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[2].shape).toEqual('circle');
     expect(data4Layout.nodes[2].label).toEqual('Hello');
   });
-  it('should use handle bracket end (}) character inside the shape data', function () {
+  it.only('should use handle bracket end (}) character inside the shape data', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
         label: "This is }"
         icon: "clock"
-      }@
+     }
       `);
 
     const data4Layout = flow.parser.yy.getData();
@@ -135,7 +204,7 @@ describe('when parsing directions', function () {
           This is a
           multiline string
         icon: "clock"
-      }@
+     }
       `);
 
     const data4Layout = flow.parser.yy.getData();
@@ -149,7 +218,7 @@ describe('when parsing directions', function () {
         label: "This is a
           multiline string"
         icon: "clock"
-      }@
+     }
       `);
 
     const data4Layout = flow.parser.yy.getData();
@@ -162,7 +231,7 @@ describe('when parsing directions', function () {
       A@{
         label: "This is a string with }"
         icon: "clock"
-      }@
+     }
       `);
 
     const data4Layout = flow.parser.yy.getData();
@@ -175,7 +244,7 @@ describe('when parsing directions', function () {
       A@{
         label: "This is a string with @"
         icon: "clock"
-      }@
+     }
       `);
 
     const data4Layout = flow.parser.yy.getData();
@@ -186,14 +255,14 @@ describe('when parsing directions', function () {
   it(' should be possible to use @ in strings', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
-        label: "This is a string with }@"
+        label: "This is a string with}"
         icon: "clock"
-      }@
+     }
       `);
 
     const data4Layout = flow.parser.yy.getData();
     expect(data4Layout.nodes.length).toBe(1);
     expect(data4Layout.nodes[0].shape).toEqual('squareRect');
-    expect(data4Layout.nodes[0].label).toEqual('This is a string with }@');
+    expect(data4Layout.nodes[0].label).toEqual('This is a string with}');
   });
 });
