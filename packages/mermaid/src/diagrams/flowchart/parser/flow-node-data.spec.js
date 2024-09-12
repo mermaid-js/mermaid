@@ -92,6 +92,16 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].label).toEqual('D');
     expect(data4Layout.nodes[1].label).toEqual('E');
   });
+  it('should handle basic shape data statements with amp and edges 5, trailing space', function () {
+    const res = flow.parser.parse(`flowchart TB
+         D@{ shape: rounded } & E@{ shape: rounded } --> F{ shape: rounded } & G{ shape: rounded }    `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(4);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+    expect(data4Layout.nodes[1].label).toEqual('E');
+  });
   it('should no matter of there are no leading spaces', function () {
     const res = flow.parser.parse(`flowchart TB
       D@{shape: rounded}`);
@@ -138,7 +148,7 @@ describe('when parsing directions', function () {
     const res = flow.parser.parse(`flowchart TB
       A --> D@{
         shape: circle
-        icon: "clock"
+        other: "clock"
      }
 
       `);
@@ -157,11 +167,11 @@ describe('when parsing directions', function () {
       A[hello]
       B@{
         shape: circle
-        icon: "clock"
+        other: "clock"
      }
       C[Hello]@{
         shape: circle
-        icon: "clock"
+        other: "clock"
      }
       `);
 
@@ -174,11 +184,11 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[2].shape).toEqual('circle');
     expect(data4Layout.nodes[2].label).toEqual('Hello');
   });
-  it.only('should use handle bracket end (}) character inside the shape data', function () {
+  it('should use handle bracket end (}) character inside the shape data', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
         label: "This is }"
-        icon: "clock"
+        other: "clock"
      }
       `);
 
@@ -203,7 +213,7 @@ describe('when parsing directions', function () {
         label: |
           This is a
           multiline string
-        icon: "clock"
+        other: "clock"
      }
       `);
 
@@ -217,7 +227,7 @@ describe('when parsing directions', function () {
       A@{
         label: "This is a
           multiline string"
-        icon: "clock"
+        other: "clock"
      }
       `);
 
@@ -230,7 +240,7 @@ describe('when parsing directions', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
         label: "This is a string with }"
-        icon: "clock"
+        other: "clock"
      }
       `);
 
@@ -243,7 +253,7 @@ describe('when parsing directions', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
         label: "This is a string with @"
-        icon: "clock"
+        other: "clock"
      }
       `);
 
@@ -256,7 +266,7 @@ describe('when parsing directions', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
         label: "This is a string with}"
-        icon: "clock"
+        other: "clock"
      }
       `);
 
