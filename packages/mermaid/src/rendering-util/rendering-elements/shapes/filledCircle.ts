@@ -1,14 +1,11 @@
-import { log } from '$root/logger.js';
+import { log } from '../../../logger.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
-import type { SVG } from '$root/diagram-api/types.js';
-import {
-  styles2String,
-  userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+import type { Node } from '../../types.d.ts';
+import type { SVG } from '../../../diagram-api/types.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
-import { getConfig } from '$root/config.js';
+import { getConfig } from '../../../config.js';
 
 export const filledCircle = (parent: SVG, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);

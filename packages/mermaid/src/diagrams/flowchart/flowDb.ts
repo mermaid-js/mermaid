@@ -15,7 +15,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
-import type { NodeMetaData } from '$root/types.js';
+import type { NodeMetaData } from '../../types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -144,6 +144,30 @@ export const addVertex = function (
     }
     if (doc?.label) {
       vertex.text = doc?.label;
+    }
+    if (doc?.icon) {
+      vertex.icon = doc?.icon;
+      if (!doc.label) {
+        vertex.text = '';
+      }
+    }
+    if (doc?.form) {
+      vertex.form = doc?.form;
+    }
+    if (doc?.pos) {
+      vertex.pos = doc?.pos;
+    }
+    if (doc?.img) {
+      vertex.img = doc?.img;
+      if (!doc.label) {
+        vertex.text = '';
+      }
+    }
+    if (doc.w) {
+      vertex.assetWidth = Number(doc.w);
+    }
+    if (doc.h) {
+      vertex.assetHeight = Number(doc.h);
     }
   }
 };
@@ -793,6 +817,21 @@ export const lex = {
 };
 
 const getTypeFromVertex = (vertex: FlowVertex) => {
+  if (vertex?.img) {
+    return 'imageSquare';
+  }
+  if (vertex?.icon) {
+    if (vertex.form === 'circle') {
+      return 'iconCircle';
+    }
+    if (vertex.form === 'square') {
+      return 'iconSquare';
+    }
+    if (vertex.form === 'rounded') {
+      return 'iconRounded';
+    }
+    return 'icon';
+  }
   if (vertex.type === 'square') {
     return 'squareRect';
   }
@@ -858,6 +897,11 @@ const addNodeFromVertex = (
       link: vertex.link,
       linkTarget: vertex.linkTarget,
       tooltip: getTooltip(vertex.id),
+      icon: vertex.icon,
+      pos: vertex.pos,
+      img: vertex.img,
+      assetWidth: vertex.assetWidth,
+      assetHeight: vertex.assetHeight,
     });
   }
 };

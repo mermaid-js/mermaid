@@ -212,53 +212,53 @@ This syntax creates a node A as a rectangle. It renders in the same way as `A["A
 
 Below is a comprehensive list of the newly introduced shapes and their corresponding semantic meanings, short names, and aliases:
 
-| **Semantic Name**                     | **Shape Name**              | **Short Name**  | **Description**                | **Alias Supported**                      |
-| ------------------------------------- | --------------------------- | --------------- | ------------------------------ | ---------------------------------------- |
-| **Process**                           | Rectangle                   | `rect`          | Standard process shape         | `proc`, `process`                        |
-| **Event**                             | Rounded Rectangle           | `rounded`       | Represents an event            | `event`                                  |
-| **Terminal Point**                    | Stadium                     | `stadium`       | Terminal point                 | `term`, `pill`                           |
-| **Subprocess**                        | Framed Rectangle            | `fr`            | Subprocess                     | `subproc`, `framed-rectangle`            |
-| **Database**                          | Cylinder                    | `cyl`           | Database storage               | `db`, `cylinder`                         |
-| **Start**                             | Circle                      | `circle`        | Starting point                 |                                          |
-| **Odd**                               | Odd                         | `odd`           | Odd shape                      |                                          |
-| **Decision**                          | Diamond                     | `diam`          | Decision-making step           | `decision`, `diamond`                    |
-| **Prepare Conditional**               | Hexagon                     | `hex`           | Preparation or condition step  | `hexagon`, `prepare`                     |
-| **Data Input/Output**                 | Lean Right                  | `l-r`           | Represents input or output     | `lean-right`, `in-out`                   |
-| **Data Input/Output**                 | Lean Left                   | `l-l`           | Represents output or input     | `lean-left`, `out-in`                    |
-| **Priority Action**                   | Trapezoid Base Bottom       | `trap-b`        | Priority action                | `priority`, `trapezoid-bottom`           |
-| **Manual Operation**                  | Trapezoid Base Top          | `trap-t`        | Represents a manual task       | `manual`, `trapezoid-top`                |
-| **Stop**                              | Double Circle               | `dc`            | Represents a stop point        | `double-circle`                          |
-| **Text Block**                        | Text Block                  | `text`          | Text block                     | -                                        |
-| **Card**                              | Notched Rectangle           | `notched-rect`  | Represents a card              | `card`, `notch-rect`                     |
-| **Lined/Shaded Process**              | Lined Rectangle             | `lined-rect`    | Lined process shape            | `lined-proc`                             |
-| **Start**                             | Small Circle                | `sm-circ`       | Small starting point           | `start`, `small-circle`                  |
-| **Stop**                              | Framed Circle               | `framed-circle` | Stop point                     | `stop`, `framed-circle`                  |
-| **Fork/Join**                         | Long Rectangle              | `fork`          | Fork or join in process flow   | `join`, `long-rect`                      |
-| **Collate**                           | Hourglass                   | `hourglass`     | Represents a collate operation | -                                        |
-| **Comment**                           | Curly Brace                 | `brace`         | Adds a comment                 | `comment`, `brace-l`                     |
-| **Comment Right**                     | Curly Brace                 | `brace-r`       | Adds a comment                 | -                                        |
-| **Comment with braces on both sides** | Curly Braces                | `braces`        | Adds a comment                 | -                                        |
-| **Com Link**                          | Lightning Bolt              | `bolt`          | Communication link             | `com-link`, `lightning-bolt`             |
-| **Document**                          | Wave-Edged Rectangle        | `we-rect`       | Represents a document          | `doc`, `wave-edge-rect`                  |
-| **Delay**                             | Half-Rounded Rectangle      | `delay`         | Represents a delay             | `half-rounded-rect`                      |
-| **Direct Access Storage**             | Tilted Cylinder             | `t-cyl`         | Direct access storage          | `das`, `tilted-cylinder`                 |
-| **Disk Storage**                      | Lined Cylinder              | `l-cyl`         | Disk storage                   | `disk`, `lined-cylinder`                 |
-| **Display**                           | Curved Trapezoid            | `cur-trap`      | Represents a display           | `disp`, `curved-trapezoid`               |
-| **Divided Process**                   | Divided Rectangle           | `div-rect`      | Divided process shape          | `div-proc`, `divided-rectangle`          |
-| **Extract**                           | Small Triangle              | `sm-tri`        | Extraction process             | `extract`, `small-triangle`              |
-| **Internal Storage**                  | Window Pane                 | `win-pane`      | Internal storage               | `internal-storage`, `window-pane`        |
-| **Junction**                          | Filled Circle               | `fc`            | Junction point                 | `junction`, `filled-circle`              |
-| **Lined Document**                    | Lined Wave-Edged Rectangle  | `lin-we-rect`   | Lined document                 | `lin-doc`, `lined-wave-edged-rect`       |
-| **Loop Limit**                        | Trapezoidal Pentagon        | `not-pent`      | Loop limit step                | `loop-limit`, `notched-pentagon`         |
-| **Manual File**                       | Flipped Triangle            | `flip-tria`     | Manual file operation          | `manual-file`, `flipped-triangle`        |
-| **Manual Input**                      | Sloped Rectangle            | `sloped-rect`   | Manual input step              | `manual-input`, `sloped-rectangle`       |
-| **Multi-Document**                    | Multi-Wave-Edged Rectangle  | `mul-we-rect`   | Multiple documents             | `mul-doc`, `multi-wave-edged-rectangle`  |
-| **Multi-Process**                     | Multi-Rect                  | `mul-rect`      | Multiple processes             | `mul-proc`, `multi-rect`                 |
-| **Paper Tape**                        | Flag                        | `flag`          | Paper tape                     | `paper-tape`, ``                         |
-| **Stored Data**                       | Bow Tie Rectangle           | `bt-rect`       | Stored data                    | `stored-data`, `bow-tie-rect`            |
-| **Summary**                           | Crossed Circle              | `cross-circle`  | Summary                        | `summary`, `crossed-circle`              |
-| **Tagged Document**                   | Tagged Wave-Edged Rectangle | `tag-we-rect`   | Tagged document                | `tag-doc`, `tagged-wave-edged-rectangle` |
-| **Tagged Process**                    | Tagged Rectangle            | `tag-rect`      | Tagged process                 | `tag-proc`, `tagged-rect`                |
+| **Semantic Name**                     | **Shape Name**              | **Short Name**  | **Description**                | **Alias Supported**                         |
+| ------------------------------------- | --------------------------- | --------------- | ------------------------------ | ------------------------------------------- |
+| **Process**                           | Rectangle                   | `rect`          | Standard process shape         | `proc`, `process`, `rectangle`              |
+| **Event**                             | Rounded Rectangle           | `rounded`       | Represents an event            | `event`                                     |
+| **Terminal Point**                    | Stadium                     | `stadium`       | Terminal point                 | `term`, `pill`                              |
+| **Subprocess**                        | Framed Rectangle            | `fr`            | Subprocess                     | `subproc`, `framed-rectangle`, `subroutine` |
+| **Database**                          | Cylinder                    | `cyl`           | Database storage               | `db`, `cylinder`                            |
+| **Start**                             | Circle                      | `circle`        | Starting point                 |                                             |
+| **Odd**                               | Odd                         | `odd`           | Odd shape                      |                                             |
+| **Decision**                          | Diamond                     | `diam`          | Decision-making step           | `decision`, `diamond`                       |
+| **Prepare Conditional**               | Hexagon                     | `hex`           | Preparation or condition step  | `hexagon`, `prepare`                        |
+| **Data Input/Output**                 | Lean Right                  | `l-r`           | Represents input or output     | `lean-right`, `in-out`                      |
+| **Data Input/Output**                 | Lean Left                   | `l-l`           | Represents output or input     | `lean-left`, `out-in`                       |
+| **Priority Action**                   | Trapezoid Base Bottom       | `trap-b`        | Priority action                | `priority`, `trapezoid-bottom`, `trapezoid` |
+| **Manual Operation**                  | Trapezoid Base Top          | `trap-t`        | Represents a manual task       | `manual`, `trapezoid-top`, `inv-trapezoid`  |
+| **Stop**                              | Double Circle               | `dc`            | Represents a stop point        | `double-circle`                             |
+| **Text Block**                        | Text Block                  | `text`          | Text block                     | -                                           |
+| **Card**                              | Notched Rectangle           | `notched-rect`  | Represents a card              | `card`, `notch-rect`, `notched-rect`        |
+| **Lined/Shaded Process**              | Lined Rectangle             | `lined-rect`    | Lined process shape            | `lined-proc`, `shaded-proc`                 |
+| **Start**                             | Small Circle                | `sm-circ`       | Small starting point           | `start`, `small-circle`                     |
+| **Stop**                              | Framed Circle               | `framed-circle` | Stop point                     | `stop`, `framed-circle`                     |
+| **Fork/Join**                         | Long Rectangle              | `fork`          | Fork or join in process flow   | `join`, `long-rect`                         |
+| **Collate**                           | Hourglass                   | `hourglass`     | Represents a collate operation | -                                           |
+| **Comment**                           | Curly Brace                 | `brace`         | Adds a comment                 | `comment`, `brace-l`                        |
+| **Comment Right**                     | Curly Brace                 | `brace-r`       | Adds a comment                 | -                                           |
+| **Comment with braces on both sides** | Curly Braces                | `braces`        | Adds a comment                 | -                                           |
+| **Com Link**                          | Lightning Bolt              | `bolt`          | Communication link             | `com-link`, `lightning-bolt`                |
+| **Document**                          | Wave-Edged Rectangle        | `we-rect`       | Represents a document          | `doc`, `wave-edge-rect`                     |
+| **Delay**                             | Half-Rounded Rectangle      | `delay`         | Represents a delay             | `half-rounded-rect`                         |
+| **Direct Access Storage**             | Tilted Cylinder             | `t-cyl`         | Direct access storage          | `das`, `tilted-cylinder`                    |
+| **Disk Storage**                      | Lined Cylinder              | `l-cyl`         | Disk storage                   | `disk`, `lined-cylinder`                    |
+| **Display**                           | Curved Trapezoid            | `cur-trap`      | Represents a display           | `disp`, `curved-trapezoid`, `display`       |
+| **Divided Process**                   | Divided Rectangle           | `div-rect`      | Divided process shape          | `div-proc`, `divided-rectangle`             |
+| **Extract**                           | Small Triangle              | `sm-tri`        | Extraction process             | `extract`, `small-triangle`                 |
+| **Internal Storage**                  | Window Pane                 | `win-pane`      | Internal storage               | `internal-storage`, `window-pane`           |
+| **Junction**                          | Filled Circle               | `fc`            | Junction point                 | `junction`, `filled-circle`                 |
+| **Lined Document**                    | Lined Wave-Edged Rectangle  | `lin-we-rect`   | Lined document                 | `lin-doc`, `lined-wave-edged-rect`          |
+| **Loop Limit**                        | Trapezoidal Pentagon        | `notch-pent`    | Loop limit step                | `loop-limit`, `notched-pentagon`            |
+| **Manual File**                       | Flipped Triangle            | `flip-tri`      | Manual file operation          | `manual-file`, `flipped-triangle`           |
+| **Manual Input**                      | Sloped Rectangle            | `sloped-rect`   | Manual input step              | `manual-input`, `sloped-rectangle`          |
+| **Multi-Document**                    | Multi-Wave-Edged Rectangle  | `mul-we-rect`   | Multiple documents             | `mul-doc`, `multi-wave-edged-rectangle`     |
+| **Multi-Process**                     | Multi-Rect                  | `mul-rect`      | Multiple processes             | `mul-proc`, `multi-rect`                    |
+| **Paper Tape**                        | Flag                        | `flag`          | Paper tape                     | `paper-tape`                                |
+| **Stored Data**                       | Bow Tie Rectangle           | `bt-rect`       | Stored data                    | `stored-data`, `bow-tie-rect`               |
+| **Summary**                           | Crossed Circle              | `cross-circle`  | Summary                        | `summary`, `crossed-circle`                 |
+| **Tagged Document**                   | Tagged Wave-Edged Rectangle | `tag-we-rect`   | Tagged document                | `tag-doc`, `tagged-wave-edged-rectangle`    |
+| **Tagged Process**                    | Tagged Rectangle            | `tag-rect`      | Tagged process                 | `tag-proc`, `tagged-rect`                   |
 
 ### Example Flowchart with New Shapes
 

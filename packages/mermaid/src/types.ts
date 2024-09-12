@@ -1,7 +1,15 @@
 export interface NodeMetaData {
   shape?: string;
   label?: string;
+  icon?: string;
+  form?: string;
+  pos?: 't' | 'b';
+  img?: string;
+  w?: string;
+  h?: string;
 }
+import type { MermaidConfig } from './config.type.js';
+
 export interface Point {
   x: number;
   y: number;
@@ -52,6 +60,10 @@ export interface ParseResult {
    * The diagram type, e.g. 'flowchart', 'sequence', etc.
    */
   diagramType: string;
+  /**
+   * The config passed as YAML frontmatter or directives
+   */
+  config: MermaidConfig;
 }
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
