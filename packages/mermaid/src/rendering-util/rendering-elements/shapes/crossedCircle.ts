@@ -1,10 +1,10 @@
-import { log } from '../../../logger.js';
-import { getNodeClasses, updateNodeBounds } from './util.js';
-import type { SVG } from '../../../diagram-api/types.js';
-import type { Node } from '../../../rendering-util/types.d.ts';
-import { userNodeOverrides } from '../../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { SVG } from '../../../diagram-api/types.js';
+import { log } from '../../../logger.js';
+import type { Node } from '../../types.d.ts';
 import intersect from '../intersect/index.js';
+import { userNodeOverrides } from './handDrawnShapeStyles.js';
+import { getNodeClasses, updateNodeBounds } from './util.js';
 
 function createLine(r: number) {
   const xAxis45 = Math.cos(Math.PI / 4); // cosine of 45 degrees

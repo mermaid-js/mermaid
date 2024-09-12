@@ -376,14 +376,15 @@ const findAdjacentPoint = function (pointA, pointB, distance) {
 const fixCorners = function (lineData) {
   const { cornerPointPositions } = extractCornerPoints(lineData);
   const newLineData = [];
+  const r = 4;
   for (let i = 0; i < lineData.length; i++) {
     if (cornerPointPositions.includes(i)) {
       const prevPoint = lineData[i - 1];
       const nextPoint = lineData[i + 1];
       const cornerPoint = lineData[i];
 
-      const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, 5);
-      const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, 5);
+      const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, r);
+      const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, r);
 
       const xDiff = newNextPoint.x - newPrevPoint.x;
       const yDiff = newNextPoint.y - newPrevPoint.y;
@@ -397,7 +398,7 @@ const fixCorners = function (lineData) {
           Math.abs(nextPoint.x - prevPoint.x),
           Math.abs(nextPoint.y - prevPoint.y)
         );
-        const r = 5;
+
         if (cornerPoint.x === newPrevPoint.x) {
           newCornerPoint = {
             x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
@@ -430,6 +431,8 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let pointsHasChanged = false;
   const tail = startNode;
   var head = endNode;
+
+  const pointsStr = btoa(JSON.stringify(points));
 
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
@@ -475,13 +478,16 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     lineData.splice(-1, 0, midPoint);
   }
   let curve = curveBasis;
+  // let curve = curveLinear;
+  // let curve = curveCardinal;
   if (edge.curve) {
     curve = edge.curve;
   }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
   const lineFunction = line().x(x).y(y).curve(curve);
-
+  // const pointsStr = btoa(JSON.stringify(lineData));
+  // console.log('Line data', lineData);
   let strokeClasses;
   switch (edge.thickness) {
     case 'normal':
@@ -544,6 +550,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   svgPath.attr('data-edge', true);
   svgPath.attr('data-et', 'edge');
   svgPath.attr('data-id', edge.id);
+  svgPath.attr('data-points', pointsStr);
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem
@@ -557,9 +564,9 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   // lineData.forEach((point) => {
   //   elem
   //     .append('circle')
-  //     .style('stroke', 'blue')
-  //     .style('fill', 'blue')
-  //     .attr('r', 3)
+  //     .style('stroke', 'red')
+  //     .style('fill', 'red')
+  //     .attr('r', 1)
   //     .attr('cx', point.x)
   //     .attr('cy', point.y);
   // });

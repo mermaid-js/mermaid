@@ -338,6 +338,39 @@ flowchart TD
 
 
 </pre>
+      <pre id="diagram" class="mermaid">
+---
+  title: hello2
+  config:
+    look: neo
+    layout: dagre
+    elk:
+        nodePlacementStrategy: BRANDES_KOEPF
+---
+flowchart
+        S
+        T
+        U
+        subgraph Z
+          subgraph X
+            Y[Ypsilon]
+          end
+        end
+        subgraph Q
+          Q1[Quintus]
+        end
+        A
+
+        S -- angrepp --> T
+        T -- Apa --> U
+        T -- Varge --> V
+      C
+      D
+      E
+
+
+</pre
+      >
       <pre id="diagram" class="mermaid2">
 ---
   title: hello2
@@ -394,7 +427,7 @@ flowchart LR
     </pre
       >
 
-      <pre id="diagram3" class="mermaid">
+      <pre id="diagram3" class="mermaid2">
 flowchart TB
     c1-->a2
     subgraph one
@@ -432,7 +465,10 @@ flowchart TB
       window.callback = function () {
         alert('A callback was triggered');
       };
-      mermaid.initialize({
+      function callback() {
+        alert('It worked');
+      }
+      await mermaid.initialize({
         // theme: 'base',
         // handDrawnSeed: 12,
         // look: 'handDrawn',
@@ -455,10 +491,9 @@ flowchart TB
         fontSize: 12,
         logLevel: 3,
         securityLevel: 'loose',
+        callback,
       });
-      function callback() {
-        alert('It worked');
-      }
+
       mermaid.parseError = function (err, hash) {
         console.error('In parse error:');
         console.error(err);

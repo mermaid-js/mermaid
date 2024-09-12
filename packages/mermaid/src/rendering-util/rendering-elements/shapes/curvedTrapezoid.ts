@@ -1,11 +1,8 @@
-import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node } from '../../../rendering-util/types.d.ts';
-import {
-  styles2String,
-  userNodeOverrides,
-} from '../../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { Node } from '../../types.d.ts';
+import intersect from '../intersect/index.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { createPathFromPoints, getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
 function createCurvedTrapezoidPathD(
   x: number,
@@ -34,8 +31,11 @@ export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const widthMultiplier = bbox.width < 15 ? 2 : 1.25;
-  const w = (bbox.width + node.padding) * widthMultiplier;
-  const h = bbox.height + node.padding;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const w = Math.max((bbox.width + labelPaddingX) * widthMultiplier, node?.width ?? 500);
+  const h = Math.max(bbox.height + labelPaddingY, node?.height ?? 100);
   const radius = h / 2;
 
   const { cssStyles } = node;

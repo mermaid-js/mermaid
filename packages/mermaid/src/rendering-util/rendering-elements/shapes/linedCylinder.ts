@@ -1,8 +1,8 @@
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node } from '../../../rendering-util/types.d.ts';
 import rough from 'roughjs';
+import type { Node } from '../../types.d.ts';
+import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
 export const createCylinderPathWithoutInnerArcD = (
   w: number,
@@ -37,10 +37,13 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + node.padding;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const w = Math.max(bbox.width + labelPaddingX, node?.width ?? 0);
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = bbox.height + ry + node.padding;
+  const h = Math.max(bbox.height + ry + labelPaddingY, node?.height ?? 0);
   const outerOffset = h * 0.1; // 10% of height
 
   const { cssStyles } = node;
@@ -83,7 +86,7 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - bbox.height})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + ry - (bbox.y - (bbox.top ?? 0))})`
   );
 
   node.intersect = function (point) {

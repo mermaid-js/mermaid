@@ -15,18 +15,18 @@ import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 let nodeDB = new Map();
 
-const fixInterSections = (points, startNodeId, endNodeId) => {
-  const startNode = nodeDB.get(startNodeId);
-  const endNode = nodeDB.get(endNodeId);
-  // Get the intersections
-  const startIntersection = startNode.intersect(points[1]);
-  const endIntersection = endNode.intersect(points[points.length - 2]);
+// const fixInterSections = (points, startNodeId, endNodeId) => {
+//   const startNode = nodeDB.get(startNodeId);
+//   const endNode = nodeDB.get(endNodeId);
+//   // Get the intersections
+//   const startIntersection = startNode.intersect(points[1]);
+//   const endIntersection = endNode.intersect(points[points.length - 2]);
 
-  // Replace the first and last points with their respective intersections
-  const fixedPoints = [startIntersection, ...points.slice(1, -1), endIntersection];
+//   // Replace the first and last points with their respective intersections
+//   const fixedPoints = [startIntersection, ...points.slice(1, -1), endIntersection];
 
-  return fixedPoints;
-};
+//   return points;
+// };
 
 const calcIntersectionPoint = (node, point) => {
   const intersection = node.intersect(point);
@@ -81,9 +81,9 @@ const calcIntersections = (startNodeId, endNodeId, startNodeSize, endNodeSize) =
 const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   const elem = _elem.insert('g').attr('class', 'root');
   elem.insert('g').attr('class', 'clusters');
+  const nodes = elem.insert('g').attr('class', 'nodes');
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
   const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
-  const nodes = elem.insert('g').attr('class', 'nodes');
 
   if (!positions?.nodes || !positions?.edges) {
     positions = {};
@@ -234,7 +234,8 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
         ],
       };
     }
-    edge.points = fixInterSections(positions.edges[edge.id].points, edge.start, edge.end);
+    // edge.points = fixInterSections(positions.edges[edge.id].points, edge.start, edge.end);
+    edge.points = positions.edges[edge.id].points;
     const paths = insertEdge(edgePaths, edge, {}, data4Layout.type, {}, {}, data4Layout.diagramId);
     paths.updatedPath = paths.originalPath;
     positionEdgeLabel(edge, paths);

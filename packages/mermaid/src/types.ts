@@ -4,6 +4,12 @@ import type { Diagram } from './Diagram.js';
 export interface NodeMetaData {
   shape?: string;
   label?: string;
+  icon?: string;
+  form?: string;
+  pos?: 't' | 'b';
+  img?: string;
+  w?: string;
+  h?: string;
 }
 
 export interface Point {
@@ -53,13 +59,17 @@ export interface ParseOptions {
 
 export interface ParseResult {
   /**
-   * The diagram
-   */
-  diagram: Diagram;
-  /**
    * The config passed as YAML frontmatter or directives
    */
   config: MermaidConfig;
+
+  defaultConfig?: MermaidConfig;
+
+  /**
+   * The diagram AST
+   *
+   */
+  diagram: Diagram;
 }
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;

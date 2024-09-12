@@ -1,6 +1,6 @@
 import rough from 'roughjs';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
-import type { SVG } from '../../../diagram-api/types.js';
+import type { SVG } from '../../../mermaid.js';
 import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { solidStateFill, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';

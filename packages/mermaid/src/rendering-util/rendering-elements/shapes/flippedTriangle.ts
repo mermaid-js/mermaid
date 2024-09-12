@@ -1,13 +1,9 @@
-import { log } from '../../../logger.js';
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node } from '../../../rendering-util/types.d.ts';
-import {
-  styles2String,
-  userNodeOverrides,
-} from '../../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import { createPathFromPoints } from './util.js';
+import { log } from '../../../logger.js';
+import type { Node } from '../../types.d.ts';
+import intersect from '../intersect/index.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { createPathFromPoints, getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
 export const flippedTriangle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);

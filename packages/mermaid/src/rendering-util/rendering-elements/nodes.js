@@ -51,9 +51,14 @@ import { taggedWaveEdgedRectangle } from './shapes/taggedWaveEdgedRectangle.js';
 import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
+import { iconSquare } from './shapes/iconSquare.js';
+import { iconCircle } from './shapes/iconCircle.js';
+import { icon } from './shapes/icon.js';
+import { imageSquare } from './shapes/imageSquare.js';
+import { iconRounded } from './shapes/iconRounded.js';
 
 //Use these names as the left side to render shapes.
-const shapes = {
+export const shapes = {
   // States
   state,
   stateStart,
@@ -77,19 +82,15 @@ const shapes = {
   stadium,
   pill: stadium,
   term: stadium,
-  windowPane,
   'window-pane': windowPane,
   'win-pane': windowPane,
   'internal-storage': windowPane,
-  dividedRectangle,
   'divided-rectangle': dividedRectangle,
   'div-rect': dividedRectangle,
   'div-proc': dividedRectangle,
-  taggedRect,
   'tagged-rect': taggedRect,
   'tag-rect': taggedRect,
   'tag-proc': taggedRect,
-  multiRect,
   'multi-rect': multiRect,
   'mul-rect': multiRect,
   'mul-proc': multiRect,
@@ -104,46 +105,41 @@ const shapes = {
   cylinder,
   cyl: cylinder,
   db: cylinder,
-  tiltedCylinder,
   'tilted-cylinder': tiltedCylinder,
   't-cyl': tiltedCylinder,
   das: tiltedCylinder,
-  linedCylinder,
   'lined-cylinder': linedCylinder,
   'l-cyl': linedCylinder,
   disk: linedCylinder,
 
   // Circles
   circle,
-  doublecircle,
   'double-circle': doublecircle,
   dc: doublecircle,
-  crossedCircle,
   'crossed-circle': crossedCircle,
   'cross-circle': crossedCircle,
   summary: crossedCircle,
-  filledCircle,
   'filled-circle': filledCircle,
   fc: filledCircle,
   junction: filledCircle,
-  shadedProcess,
   'lined-proc': shadedProcess,
   'lined-rect': shadedProcess,
+  'shaded-proc': shadedProcess,
 
   // Trapezoids
   trapezoid,
-  trapezoidBaseBottom: trapezoid,
   'trapezoid-bottom': trapezoid,
   'trap-b': trapezoid,
   priority: trapezoid,
   inv_trapezoid,
+  'inv-trapezoid': inv_trapezoid,
   'trapezoid-top': inv_trapezoid,
   'trap-t': inv_trapezoid,
   manual: inv_trapezoid,
-  curvedTrapezoid,
   'curved-trapezoid': curvedTrapezoid,
   'cur-trap': curvedTrapezoid,
   disp: curvedTrapezoid,
+  display: curvedTrapezoid,
 
   // Hexagons & Misc Geometric
   hexagon,
@@ -153,49 +149,40 @@ const shapes = {
   'small-triangle': triangle,
   'sm-tri': triangle,
   extract: triangle,
-  flippedTriangle,
   'flipped-triangle': flippedTriangle,
-  'flip-tria': flippedTriangle,
+  'flip-tri': flippedTriangle,
   'manual-file': flippedTriangle,
-  trapezoidalPentagon,
   'notched-pentagon': trapezoidalPentagon,
-  'not-pent': trapezoidalPentagon,
+  'notch-pent': trapezoidalPentagon,
   'loop-limit': trapezoidalPentagon,
 
   //wave Edged Rectangles
-  waveRectangle,
   'wave-rectangle': waveRectangle,
   'w-rect': waveRectangle,
   flag: waveRectangle,
   'paper-tape': waveRectangle,
-  waveEdgedRectangle,
   'wave-edge-rect': waveEdgedRectangle,
+  'wave-edged-rectangle': waveEdgedRectangle,
   'wave-rect': waveEdgedRectangle,
   'we-rect': waveEdgedRectangle,
   doc: waveEdgedRectangle,
-  multiWaveEdgedRectangle,
   'multi-wave-edged-rectangle': multiWaveEdgedRectangle,
   'mul-we-rect': multiWaveEdgedRectangle,
   'mul-doc': multiWaveEdgedRectangle,
-  linedWaveEdgedRect,
   'lined-wave-edged-rect': linedWaveEdgedRect,
   'lin-we-rect': linedWaveEdgedRect,
   'lin-doc': linedWaveEdgedRect,
-  taggedWaveEdgedRectangle,
   'tagged-wave-edged-rectangle': taggedWaveEdgedRectangle,
   'tag-we-rect': taggedWaveEdgedRectangle,
   'tag-doc': taggedWaveEdgedRectangle,
 
   // Custom Rectangles
-  bowTieRect,
   'bow-tie-rect': bowTieRect,
   'bt-rect': bowTieRect,
   'stored-data': bowTieRect,
-  slopedRect,
   'sloped-rectangle': slopedRect,
   'sloped-rect': slopedRect,
   'manual-input': slopedRect,
-  halfRoundedRectangle,
   'half-rounded-rect': halfRoundedRectangle,
   delay: halfRoundedRectangle,
   card,
@@ -220,19 +207,24 @@ const shapes = {
   text,
   anchor,
   diamond: question,
-  lightningBolt,
+  diam: question,
+  decision: question,
   'lightning-bolt': lightningBolt,
   bolt: lightningBolt,
   'com-link': lightningBolt,
-  curlyBraceLeft,
   'brace-l': curlyBraceLeft,
+  brace: curlyBraceLeft,
   comment: curlyBraceLeft,
   hourglass,
   odd: rect_left_inv_arrow,
   labelRect,
-  curlyBraceRight,
   'brace-r': curlyBraceRight,
   braces: curlyBraces,
+  iconSquare,
+  iconCircle,
+  icon,
+  iconRounded,
+  imageSquare,
 };
 
 const nodeElems = new Map();
@@ -240,6 +232,8 @@ const nodeElems = new Map();
 export const insertNode = async (elem, node, dir) => {
   let newEl;
   let el;
+
+  // console.log("node is ", node.icon, node.shape)
 
   //special check for rect shape (with or without rounded corners)
   if (node.shape === 'rect') {
