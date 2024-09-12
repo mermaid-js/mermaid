@@ -203,7 +203,7 @@ New Syntax for Shape Definition
 Mermaid now supports a general syntax for defining shape types to accommodate the growing number of shapes. This syntax allows you to assign specific shapes to nodes using a clear and flexible format:
 
 ```
-A@{ shape: rect }@
+A@{ shape: rect }
 ```
 
 This syntax creates a node A as a rectangle. It renders in the same way as `A["A"]`, or `A`.
@@ -266,326 +266,326 @@ Here’s an example flowchart that utilizes some of the newly introduced shapes:
 
 ```mermaid-example
 flowchart RL
-    A5@{ shape: manual-file, label: "File Handling"}@
-    B5@{ shape: manual-input, label: "User Input"}@
-    C5@{ shape: mul-doc, label: "Multiple Documents"}@
-    D5@{ shape: mul-proc, label: "Process Automation"}@
-    E5@{ shape: paper-tape, label: "Paper Records"}@
+    A5@{ shape: manual-file, label: "File Handling"}
+    B5@{ shape: manual-input, label: "User Input"}
+    C5@{ shape: mul-doc, label: "Multiple Documents"}
+    D5@{ shape: mul-proc, label: "Process Automation"}
+    E5@{ shape: paper-tape, label: "Paper Records"}
 ```
 
 ### Process
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: rect, label: "This is a process" }@
+    A@{ shape: rect, label: "This is a process" }
 ```
 
 ### Event
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: rounded, label: "This is an event" }@
+    A@{ shape: rounded, label: "This is an event" }
 ```
 
 ### Terminal Point (Stadium)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: stadium, label: "Terminal point" }@
+    A@{ shape: stadium, label: "Terminal point" }
 ```
 
 ### Subprocess
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: fr, label: "This is a subprocess" }@
+    A@{ shape: fr, label: "This is a subprocess" }
 ```
 
 ### Database (Cylinder)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: cyl, label: "Database" }@
+    A@{ shape: cyl, label: "Database" }
 ```
 
 ### Start (Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: circle, label: "Start" }@
+    A@{ shape: circle, label: "Start" }
 ```
 
 ### Odd
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: odd, label: "Odd shape" }@
+    A@{ shape: odd, label: "Odd shape" }
 ```
 
 ### Decision (Diamond)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: diamond, label: "Decision" }@
+    A@{ shape: diamond, label: "Decision" }
 ```
 
 ### Prepare Conditional (Hexagon)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: hex, label: "Prepare conditional" }@
+    A@{ shape: hex, label: "Prepare conditional" }
 ```
 
 ### Data Input/Output (Lean Right)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: l-r, label: "Input/Output" }@
+    A@{ shape: l-r, label: "Input/Output" }
 ```
 
 ### Data Input/Output (Lean Left)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: l-l, label: "Output/Input" }@
+    A@{ shape: l-l, label: "Output/Input" }
 ```
 
 ### Priority Action (Trapezoid Base Bottom)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: trap-b, label: "Priority action" }@
+    A@{ shape: trap-b, label: "Priority action" }
 ```
 
 ### Manual Operation (Trapezoid Base Top)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: trap-t, label: "Manual operation" }@
+    A@{ shape: trap-t, label: "Manual operation" }
 ```
 
 ### Stop (Double Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: dc, label: "Stop" }@
+    A@{ shape: dc, label: "Stop" }
 ```
 
 ### Text Block
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: text, label: "This is a text block" }@
+    A@{ shape: text, label: "This is a text block" }
 ```
 
 ### Card (Notched Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: notched-rect, label: "Card" }@
+    A@{ shape: notched-rect, label: "Card" }
 ```
 
 ### Lined/Shaded Process
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: lined-rect, label: "Lined process" }@
+    A@{ shape: lined-rect, label: "Lined process" }
 ```
 
 ### Start (Small Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: sm-circ, label: "Small start" }@
+    A@{ shape: sm-circ, label: "Small start" }
 ```
 
 ### Stop (Framed Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: framed-circle, label: "Stop" }@
+    A@{ shape: framed-circle, label: "Stop" }
 ```
 
 ### Fork/Join (Long Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: fork, label: "Fork or Join" }@
+    A@{ shape: fork, label: "Fork or Join" }
 ```
 
 ### Collate (Hourglass)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: hourglass, label: "Collate" }@
+    A@{ shape: hourglass, label: "Collate" }
 ```
 
 ### Comment (Curly Brace)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: comment, label: "Comment" }@
+    A@{ shape: comment, label: "Comment" }
 ```
 
 ### Comment Right (Curly Brace Right)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: brace-r, label: "Comment" }@
+    A@{ shape: brace-r, label: "Comment" }
 ```
 
 ### Comment with braces on both sides
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: braces, label: "Comment" }@
+    A@{ shape: braces, label: "Comment" }
 ```
 
 ### Com Link (Lightning Bolt)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: bolt, label: "Communication link" }@
+    A@{ shape: bolt, label: "Communication link" }
 ```
 
 ### Document (Wave-Edged Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: we-rect, label: "Document" }@
+    A@{ shape: we-rect, label: "Document" }
 ```
 
 ### Delay (Half-Rounded Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: delay, label: "Delay" }@
+    A@{ shape: delay, label: "Delay" }
 ```
 
 ### Direct Access Storage (Tilted Cylinder)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: t-cyl, label: "Direct access storage" }@
+    A@{ shape: t-cyl, label: "Direct access storage" }
 ```
 
 ### Disk Storage (Lined Cylinder)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: l-cyl, label: "Disk storage" }@
+    A@{ shape: l-cyl, label: "Disk storage" }
 ```
 
 ### Display (Curved Trapezoid)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: cur-trap, label: "Display" }@
+    A@{ shape: cur-trap, label: "Display" }
 ```
 
 ### Divided Process (Divided Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: div-rect, label: "Divided process" }@
+    A@{ shape: div-rect, label: "Divided process" }
 ```
 
 ### Extract (Small Triangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: sm-tri, label: "Extract" }@
+    A@{ shape: sm-tri, label: "Extract" }
 ```
 
 ### Internal Storage (Window Pane)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: win-pane, label: "Internal storage" }@
+    A@{ shape: win-pane, label: "Internal storage" }
 ```
 
 ### Junction (Filled Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: fc, label: "Junction" }@
+    A@{ shape: fc, label: "Junction" }
 ```
 
 ### Lined Document (Lined Wave-Edged Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: lin-we-rect, label: "Lined document" }@
+    A@{ shape: lin-we-rect, label: "Lined document" }
 ```
 
 ### Loop Limit (Trapezoidal Pentagon)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: not-pent, label: "Loop limit" }@
+    A@{ shape: not-pent, label: "Loop limit" }
 ```
 
 ### Manual File (Flipped Triangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: flip-tria, label: "Manual file" }@
+    A@{ shape: flip-tria, label: "Manual file" }
 ```
 
 ### Manual Input (Sloped Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: sloped-rect, label: "Manual input" }@
+    A@{ shape: sloped-rect, label: "Manual input" }
 ```
 
 ### Multi-Document (Multi-Wave-Edged Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: mul-we-rect, label: "Multiple documents" }@
+    A@{ shape: mul-we-rect, label: "Multiple documents" }
 ```
 
 ### Multi-Process (Multi-Rect)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: mul-rect, label: "Multiple processes" }@
+    A@{ shape: mul-rect, label: "Multiple processes" }
 ```
 
 ### Paper Tape (Flag)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: flag, label: "Paper tape" }@
+    A@{ shape: flag, label: "Paper tape" }
 ```
 
 ### Stored Data (Bow Tie Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: bt-rect, label: "Stored data" }@
+    A@{ shape: bt-rect, label: "Stored data" }
 ```
 
 ### Summary (Crossed Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: cross-circle, label: "Summary" }@
+    A@{ shape: cross-circle, label: "Summary" }
 ```
 
 ### Tagged Document (Tagged Wave-Edged Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: tag-we-rect, label: "Tagged document" }@
+    A@{ shape: tag-we-rect, label: "Tagged document" }
 ```
 
 ### Tagged Process (Tagged Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: tag-rect, label: "Tagged process" }@
+    A@{ shape: tag-rect, label: "Tagged process" }
 ```
 
 ## Links between nodes

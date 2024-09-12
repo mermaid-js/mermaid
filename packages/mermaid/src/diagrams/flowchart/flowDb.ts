@@ -123,19 +123,15 @@ export const addVertex = function (
   if (shapeData !== undefined) {
     let yamlData;
     // detect if shapeData contains a newline character
-
+    // console.log('shapeData', shapeData);
     if (!shapeData.includes('\n')) {
       // console.log('yamlData shapeData has no new lines', shapeData);
-      yamlData = '{\n' + shapeData + '\n';
+      yamlData = '{\n' + shapeData + '\n}';
     } else {
       // console.log('yamlData shapeData has new lines', shapeData);
       yamlData = shapeData + '\n';
-      // Find the position of the last } and replace it with a newline
-      const lastPos = yamlData.lastIndexOf('}');
-      if (lastPos !== -1) {
-        yamlData = yamlData.substring(0, lastPos) + '\n';
-      }
     }
+    // console.log('yamlData', yamlData);
     const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
     // console.log('yamlData doc', doc);
     if (doc?.shape) {

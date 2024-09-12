@@ -252,40 +252,40 @@ config:
 ---
 flowchart RL
     subgraph "   "
-        A5@{ shape: manual-file, label: "a label"}@
-        B5@{ shape: manual-input, label: "a label" }@
-        C5@{ shape: mul-doc, label: "a label" }@
-        D5@{ shape: mul-proc, label: "a label" }@
-        E5@{ shape: paper-tape, label: "a label" }@
-        B3@{ shape: das, label: "a label" }@
-        C3@{ shape: disk, label: "a label" }@
-        D4@{ shape: lin-doc, label: "a label" }@
-        E4@{ shape: loop-limit, label: "a label" }@
+        A5@{ shape: manual-file, label: "a label"}
+        B5@{ shape: manual-input, label: "a label" }
+        C5@{ shape: mul-doc, label: "a label" }
+        D5@{ shape: mul-proc, label: "a label" }
+        E5@{ shape: paper-tape, label: "a label" }
+        B3@{ shape: das, label: "a label" }
+        C3@{ shape: disk, label: "a label" }
+        D4@{ shape: lin-doc, label: "a label" }
+        E4@{ shape: loop-limit, label: "a label" }
     end
     subgraph "   "
-        B6@{ shape: summary, label: "a label" }@
-        C6@{ shape: tag-we-rect, label: "a label" }@
-        D6@{ shape: tag-rect, label: "a label" }@
-        A2@{ shape: fork}@
-        B2@{ shape: hourglass }@
-        C2@{ shape: comment, label: "I am a comment" }@
-        D2@{ shape: bolt }@
-        D3@{ shape: disp, label: "a label" }@
-        C4@{ shape: junction, label: "a label" }@
-        A4@{ shape: extract, label: "a label"}@
-        B52[a fr]@{ shape: fr }@
+        B6@{ shape: summary, label: "a label" }
+        C6@{ shape: tag-we-rect, label: "a label" }
+        D6@{ shape: tag-rect, label: "a label" }
+        A2@{ shape: fork}
+        B2@{ shape: hourglass }
+        C2@{ shape: comment, label: "I am a comment" }
+        D2@{ shape: bolt }
+        D3@{ shape: disp, label: "a label" }
+        C4@{ shape: junction, label: "a label" }
+        A4@{ shape: extract, label: "a label"}
+        B52[a fr]@{ shape: fr }
     end
     subgraph " "
-        A1@{ shape: text, label: This is a textblock}@
-        B1@{ shape: card, label: "a label" }@
-        C1@{ shape: lined-proc, label: "a label" }@
-        D1@{ shape: start, label: "a label" }@
-        E1@{ shape: stop, label: "a label" }@
-        E2@{ shape: doc, label: "a label" }@
-        A6@{ shape: stored-data, label: "a label"}@
-        A3@{ shape: delay, label: "a label" }@
-        E3@{ shape: div-proc, label: "a label" }@
-        B4[a label]@{ shape: win-pane }@
+        A1@{ shape: text, label: This is a textblock}
+        B1@{ shape: card, label: "a label" }
+        C1@{ shape: lined-proc, label: "a label" }
+        D1@{ shape: start, label: "a label" }
+        E1@{ shape: stop, label: "a label" }
+        E2@{ shape: doc, label: "a label" }
+        A6@{ shape: stored-data, label: "a label"}
+        A3@{ shape: delay, label: "a label" }
+        E3@{ shape: div-proc, label: "a label" }
+        B4[a label]@{ shape: win-pane }
     end
       </pre>
       <pre id="diagram" class="mermaid2">
@@ -421,6 +421,12 @@ flowchart LR
 
     </pre>
 
+    <pre id="diagram4" class="mermaid">
+flowchart TB
+  A@{
+    label: "aksljhf kasjdh"
+  }
+    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';

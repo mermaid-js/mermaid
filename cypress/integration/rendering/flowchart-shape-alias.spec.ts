@@ -126,7 +126,7 @@ aliasSets.forEach((aliasSet) => {
     it(`All ${aliasSet.join(',')} should render same shape`, () => {
       let flowchartCode = `flowchart \n`;
       aliasSet.forEach((alias, index) => {
-        flowchartCode += ` n${index}@{ shape: ${alias}, label: "${alias}" }@\n`;
+        flowchartCode += ` n${index}@{ shape: ${alias}, label: "${alias}" }\n`;
       });
       imgSnapshotTest(flowchartCode);
     });

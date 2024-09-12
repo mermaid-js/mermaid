@@ -16,7 +16,7 @@ looks.forEach((look) => {
             if (form) {
               flowchartCode += `, form: '${form}'`;
             }
-            flowchartCode += ` }@\n`;
+            flowchartCode += ` }\n`;
             imgSnapshotTest(flowchartCode, { look });
           });
 
@@ -29,7 +29,7 @@ looks.forEach((look) => {
             if (pos) {
               flowchartCode += `, pos: '${pos}'`;
             }
-            flowchartCode += ` }@\n`;
+            flowchartCode += ` }\n`;
             imgSnapshotTest(flowchartCode, { look });
           });
 
@@ -42,7 +42,7 @@ looks.forEach((look) => {
             if (pos) {
               flowchartCode += `, pos: '${pos}'`;
             }
-            flowchartCode += ` }@\n`;
+            flowchartCode += ` }\n`;
             imgSnapshotTest(flowchartCode, { look });
           });
 
@@ -55,7 +55,7 @@ looks.forEach((look) => {
             if (pos) {
               flowchartCode += `, pos: '${pos}'`;
             }
-            flowchartCode += ` }@\n`;
+            flowchartCode += ` }\n`;
             imgSnapshotTest(flowchartCode, { look });
           });
 
@@ -68,7 +68,7 @@ looks.forEach((look) => {
             if (pos) {
               flowchartCode += `, pos: '${pos}'`;
             }
-            flowchartCode += ` }@\n`;
+            flowchartCode += ` }\n`;
             imgSnapshotTest(flowchartCode, {
               look,
               htmlLabels: false,
@@ -85,7 +85,7 @@ looks.forEach((look) => {
             if (pos) {
               flowchartCode += `, pos: '${pos}'`;
             }
-            flowchartCode += ` }@\n`;
+            flowchartCode += ` }\n`;
             flowchartCode += `  style nAA fill:#f9f,stroke:#333,stroke-width:4px \n`;
             imgSnapshotTest(flowchartCode, { look });
           });
@@ -100,7 +100,7 @@ looks.forEach((look) => {
             if (pos) {
               flowchartCode += `, pos: '${pos}'`;
             }
-            flowchartCode += ` }@\n`;
+            flowchartCode += ` }\n`;
             flowchartCode += `  nAA:::customClazz\n`;
             imgSnapshotTest(flowchartCode, { look });
           });
@@ -115,7 +115,7 @@ describe('Test iconShape with different h', () => {
     let flowchartCode = `flowchart TB\n`;
     const icon = 'fa:bell';
     const iconHeight = 64;
-    flowchartCode += `  nA --> nAA@{ icon: '${icon}', label: 'icon with different h', h: ${iconHeight} }@\n`;
+    flowchartCode += `  nA --> nAA@{ icon: '${icon}', label: 'icon with different h', h: ${iconHeight} }\n`;
     imgSnapshotTest(flowchartCode);
   });
 });
