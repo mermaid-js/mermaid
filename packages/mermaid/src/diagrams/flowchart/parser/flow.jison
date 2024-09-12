@@ -48,10 +48,10 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
                                                     const re = /\n\s*/g;
                                                     yytext = yytext.replace(re,"<br/>");
                                                     return 'SHAPE_DATA'}
-<shapeData>[^@^"]+                                {
+<shapeData>[^}]+                                {
                                                     return 'SHAPE_DATA';
                                                 }
-<shapeData>\@+                                    {
+<shapeData>"}"                                    {
                                                     this.popState();
                                                 }
 
