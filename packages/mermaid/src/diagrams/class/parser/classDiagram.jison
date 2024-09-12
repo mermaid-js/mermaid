@@ -247,7 +247,7 @@ namespaceName
 
 className
     : alphaNumToken { $$=$1; }
-    | alphaNumToken DOT className { $$=$1+'.'+$3; }  // Allow class names with dots
+    | alphaNumToken DOT className { $$=$1+'.'+$3; }
     | classLiteralName { $$=$1; }
     | alphaNumToken className { $$=$1+$2; }
     | alphaNumToken GENERICTYPE { $$=$1+'~'+$2+'~'; }
