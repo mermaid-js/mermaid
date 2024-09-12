@@ -160,29 +160,29 @@
     </pre>
     <hr />
     <pre class="mermaid">
-      classDiagram
-            namespace Company.Project.Module {
-              class GenericClass~T~ {
-                +addItem(item: T)
-                +getItem() T
-              }
-            }
+    classDiagram
+      namespace Company.Project.Module {
+        class GenericClass~T~ {
+          +addItem(item: T)
+          +getItem() T
+        }
+      }
     </pre>
     <hr />
     <pre class="mermaid">
-      classDiagram
-        namespace Company.Project.Module.SubModule {
-          class Report {
-            +generatePDF(data: List)
-            +generateCSV(data: List)
-          }
+    classDiagram
+      namespace Company.Project.Module.SubModule {
+        class Report {
+          +generatePDF(data: List)
+          +generateCSV(data: List)
         }
-        namespace Company.Project.Module {
-          class Admin {
-            +generateReport()
-          }
+      }
+      namespace Company.Project.Module {
+        class Admin {
+          +generateReport()
         }
-        Admin --> Report : generates
+      }
+      Admin --> Report : generates
     </pre>
     <pre class="mermaid">
     classDiagram
@@ -200,44 +200,42 @@
           +generatePDF(reportData: List)
           +generateCSV(reportData: List)
         }
-      
       }
       Admin --> User : manages
       Admin --> Report : generates
     </pre>
     <hr />
     <pre class="mermaid">
-      classDiagram
+    classDiagram
       namespace Shapes {
-          class Shape {
-            +calculateArea() double
-          }
-          class Circle {
-            +double radius
-          }
-          class Square {
-            +double side
-          }
+        class Shape {
+          +calculateArea() double
+        }
+        class Circle {
+          +double radius
+        }
+        class Square {
+          +double side
+        }
       }
       
       Shape <|-- Circle
       Shape <|-- Square
       
       namespace Vehicles {
-          class Vehicle {
-            +String brand
-          }
-          class Car {
-            +int horsepower
-          }
-          class Bike {
-            +boolean hasGears
-          }
+        class Vehicle {
+          +String brand
+        }
+        class Car {
+          +int horsepower
+        }
+        class Bike {
+          +boolean hasGears
+        }
       }
       
       Vehicle <|-- Car
       Vehicle <|-- Bike
-      
       Car --> Circle : "Logo Shape"
       Bike --> Square : "Logo Shape"
                   
