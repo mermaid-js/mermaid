@@ -1,9 +1,9 @@
-import rough from 'roughjs';
-import { getConfig } from '../../../config.js';
-import type { Node } from '../../types.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import { getConfig } from '../../../config.js';
+import rough from 'roughjs';
 
 export const createCylinderPathD = (
   x: number,

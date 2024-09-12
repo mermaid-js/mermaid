@@ -1,8 +1,8 @@
-import rough from 'roughjs';
+import { labelHelper, getNodeClasses, updateNodeBounds, createPathFromPoints } from './util.js';
 import type { Node } from '../../types.d.ts';
-import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { createPathFromPoints, getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import rough from 'roughjs';
+import intersect from '../intersect/index.js';
 
 export const windowPane = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);

@@ -1,10 +1,10 @@
-import rough from 'roughjs';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
-import type { SVG } from '../../../mermaid.js';
-import type { Node } from '../../types.js';
-import intersect from '../intersect/index.js';
-import { solidStateFill, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { updateNodeBounds } from './util.js';
+import intersect from '../intersect/index.js';
+import type { Node } from '../../types.js';
+import type { SVG } from '../../../diagram-api/types.js';
+import rough from 'roughjs';
+import { solidStateFill, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 export const stateEnd = (parent: SVG, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);

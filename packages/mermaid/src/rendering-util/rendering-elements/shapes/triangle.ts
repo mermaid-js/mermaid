@@ -1,11 +1,12 @@
-import rough from 'roughjs';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
-import { evaluate } from '../../../diagrams/common/common.js';
 import { log } from '../../../logger.js';
-import type { Node } from '../../types.d.ts';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
+import type { Node } from '../../types.d.ts';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { createPathFromPoints, getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import rough from 'roughjs';
+import { createPathFromPoints } from './util.js';
+import { evaluate } from '../../../diagrams/common/common.js';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);

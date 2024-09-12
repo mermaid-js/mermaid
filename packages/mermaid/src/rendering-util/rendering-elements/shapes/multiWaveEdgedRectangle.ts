@@ -1,14 +1,14 @@
-import rough from 'roughjs';
-import type { Node } from '../../types.d.ts';
-import intersect from '../intersect/index.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import {
-  createPathFromPoints,
-  generateFullSineWavePoints,
-  getNodeClasses,
   labelHelper,
   updateNodeBounds,
+  getNodeClasses,
+  createPathFromPoints,
+  generateFullSineWavePoints,
 } from './util.js';
+import intersect from '../intersect/index.js';
+import type { Node } from '../../types.d.ts';
+import rough from 'roughjs';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 
 export const multiWaveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);

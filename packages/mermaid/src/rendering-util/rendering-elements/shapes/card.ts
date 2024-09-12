@@ -1,8 +1,8 @@
-import rough from 'roughjs';
-import type { Node } from '../../types.d.ts';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
+import type { Node } from '../../types.d.ts';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import rough from 'roughjs';
 
 import { insertPolygonShape } from './insertPolygonShape.js';
 import { createPathFromPoints } from './util.js';

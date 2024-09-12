@@ -1,10 +1,10 @@
-import rough from 'roughjs';
-import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
-import type { Node } from '../../types.d.ts';
-import intersect from '../intersect/index.js';
-import { userNodeOverrides } from './handDrawnShapeStyles.js';
 import { createPathFromPoints, getNodeClasses, updateNodeBounds } from './util.js';
+import type { Node } from '../../types.d.ts';
+import type { SVG } from '../../../diagram-api/types.js';
+import { userNodeOverrides } from './handDrawnShapeStyles.js';
+import rough from 'roughjs';
+import intersect from '../intersect/index.js';
 
 export const lightningBolt = (parent: SVG, node: Node) => {
   node.label = '';

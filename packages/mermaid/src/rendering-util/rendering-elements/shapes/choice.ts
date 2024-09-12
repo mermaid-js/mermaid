@@ -1,6 +1,6 @@
-import type { SVG } from '../../../diagram-api/types.js';
-import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
+import type { Node } from '../../types.js';
+import type { SVG } from '../../../diagram-api/types.js';
 // @ts-ignore TODO: Fix rough typings
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';

@@ -1,8 +1,8 @@
-import rough from 'roughjs';
+import { labelHelper, getNodeClasses, updateNodeBounds } from './util.js';
 import type { Node } from '../../types.d.ts';
-import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import rough from 'roughjs';
+import intersect from '../intersect/index.js';
 
 function createCylinderPathD(rx: number, ry: number, w: number, h: number) {
   return `M ${w / 2} ${-h / 2}

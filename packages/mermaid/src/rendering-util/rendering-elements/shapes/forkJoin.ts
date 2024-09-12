@@ -1,9 +1,9 @@
-import rough from 'roughjs';
-import type { SVG } from '../../../diagram-api/types.js';
-import type { Node } from '../../types.d.ts';
-import intersect from '../intersect/index.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
+import intersect from '../intersect/index.js';
+import type { Node } from '../../types.js';
+import type { SVG } from '../../../diagram-api/types.js';
+import rough from 'roughjs';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 
 export const forkJoin = (parent: SVG, node: Node, dir: string) => {
   const { nodeStyles } = styles2String(node);
