@@ -321,6 +321,9 @@ export const insertNode = async (elem, node, renderOptions) => {
   if (!shapes[node.shape]) {
     throw new Error(`No such shape: ${node.shape}. Please check your syntax.`);
   }
+  if (node.shape !== node.shape.toLowerCase()) {
+    throw new Error(`No such shape: ${node.shape}. Shape names should be lowercase.`);
+  }
   if (node.link) {
     // Add link when appropriate
     let target;
