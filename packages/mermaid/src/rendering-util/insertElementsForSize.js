@@ -22,8 +22,8 @@ export const getDiagramElement = (id, securityLevel) => {
 export function insertElementsForSize(el, data) {
   const nodesElem = el.insert('g').attr('class', 'nodes');
   el.insert('g').attr('class', 'edges');
+  const config = getConfig();
   data.nodes.forEach(async (item) => {
-    const config = getConfig();
     item.shape = 'rect';
     await insertNode(
       nodesElem,

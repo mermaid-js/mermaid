@@ -1,15 +1,14 @@
 import { updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.js';
+import type { Node, RenderOptions } from '../../types.js';
 import type { SVG } from '../../../diagram-api/types.js';
 import rough from 'roughjs';
 import { solidStateFill } from './handDrawnShapeStyles.js';
-import type { MermaidConfig } from '../../../config.type.js';
 
 export const stateStart = (
   parent: SVG,
   node: Node,
-  { config: { themeVariables } }: { config: MermaidConfig }
+  { config: { themeVariables } }: RenderOptions
 ) => {
   const { lineColor } = themeVariables;
 

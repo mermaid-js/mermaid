@@ -1,16 +1,15 @@
 import { log } from '../../../logger.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.d.ts';
+import type { Node, RenderOptions } from '../../types.d.ts';
 import type { SVG } from '../../../diagram-api/types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
-import type { MermaidConfig } from '../../../config.type.js';
 
 export const filledCircle = (
   parent: SVG,
   node: Node,
-  { config: { themeVariables } }: { config: MermaidConfig }
+  { config: { themeVariables } }: RenderOptions
 ) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';

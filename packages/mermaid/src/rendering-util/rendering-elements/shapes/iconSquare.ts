@@ -1,17 +1,16 @@
 import { log } from '../../../logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.d.ts';
+import type { Node, RenderOptions } from '../../types.d.ts';
 import type { SVG } from '../../../diagram-api/types.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
-import type { MermaidConfig } from '../../../config.type.js';
 
 export const iconSquare = async (
   parent: SVG,
   node: Node,
-  { config: { themeVariables, flowchart } }: { config: MermaidConfig }
+  { config: { themeVariables, flowchart } }: RenderOptions
 ) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;

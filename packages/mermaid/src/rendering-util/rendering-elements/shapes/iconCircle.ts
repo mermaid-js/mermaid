@@ -1,20 +1,17 @@
 import { log } from '../../../logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.d.ts';
+import type { Node, RenderOptions } from '../../types.d.ts';
 import type { SVG } from '../../../diagram-api/types.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
-import type { MermaidConfig } from '../../../config.type.js';
 
 export const iconCircle = async (
   parent: SVG,
   node: Node,
-  { config: { themeVariables, flowchart } }: { config: MermaidConfig }
+  { config: { themeVariables, flowchart } }: RenderOptions
 ) => {
-  const translateHorizontal =
-    node.dir === 'TB' || node.dir === 'BT' || node.dir === 'TD' || node.dir === 'DT';
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
@@ -58,18 +55,16 @@ export const iconCircle = async (
     const iconHeight = iconBBox.height;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2},${topLabel ? diameter / 2 - iconHeight - halfPadding + (translateHorizontal ? bbox.height / 2 : 0) : -diameter / 2 + halfPadding - (translateHorizontal ? bbox.height / 2 : 0)})`
+      `translate(${-iconWidth / 2},${topLabel ? diameter / 2 - iconHeight - halfPadding + bbox.height / 2 : -diameter / 2 + halfPadding - bbox.height / 2})`
     );
   }
 
   label.attr(
     'transform',
-    `translate(${-diameter / 2 + diameter / 2 - bbox.width / 2},${topLabel ? -diameter / 2 - 2.5 - (translateHorizontal ? bbox.height / 2 : bbox.height) : diameter / 2 + 5 - (translateHorizontal ? bbox.height / 2 : 0)})`
+    `translate(${-diameter / 2 + diameter / 2 - bbox.width / 2},${topLabel ? -diameter / 2 - bbox.height / 2 : diameter / 2 - bbox.height / 2})`
   );
 
-  if (translateHorizontal) {
-    iconShape.attr('transform', `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2})`);
-  }
+  iconShape.attr('transform', `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2})`);
 
   if (cssStyles && node.look !== 'handDrawn') {
     iconShape.selectAll('path').attr('style', cssStyles);

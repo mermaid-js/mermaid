@@ -228,7 +228,7 @@ export const shapes = {
 
 const nodeElems = new Map();
 
-export const insertNode = async (elem, node, config) => {
+export const insertNode = async (elem, node, renderOptions) => {
   let newEl;
   let el;
 
@@ -249,15 +249,15 @@ export const insertNode = async (elem, node, config) => {
   if (node.link) {
     // Add link when appropriate
     let target;
-    if (config.securityLevel === 'sandbox') {
+    if (renderOptions.config.securityLevel === 'sandbox') {
       target = '_top';
     } else if (node.linkTarget) {
       target = node.linkTarget || '_blank';
     }
     newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
-    el = await shapes[node.shape](newEl, node, config);
+    el = await shapes[node.shape](newEl, node, renderOptions);
   } else {
-    el = await shapes[node.shape](elem, node, config);
+    el = await shapes[node.shape](elem, node, renderOptions);
     newEl = el;
   }
   if (node.tooltip) {
