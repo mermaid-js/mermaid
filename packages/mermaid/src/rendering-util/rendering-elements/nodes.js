@@ -244,8 +244,11 @@ export const insertNode = async (elem, node, dir) => {
     }
   }
 
-  // Add link when appropriate
+  if (!shapes[node.shape]) {
+    throw new Error(`No such shape: ${node.shape}. Please check your syntax.`);
+  }
   if (node.link) {
+    // Add link when appropriate
     let target;
     if (getConfig().securityLevel === 'sandbox') {
       target = '_top';
