@@ -5,6 +5,7 @@ export interface ClassNode {
   id: string;
   type: string;
   label: string;
+  shape: string;
   text: string;
   cssClasses: string[];
   methods: ClassMember[];
@@ -17,6 +18,7 @@ export interface ClassNode {
   linkTarget?: string;
   haveCallback?: boolean;
   tooltip?: string;
+  look?: string;
 }
 
 export type Visibility = '#' | '+' | '~' | '-' | '';
@@ -88,7 +90,7 @@ export class ClassMember {
           this.visibility = detectedVisibility as Visibility;
         }
 
-        this.id = match[2].trim();
+        this.id = match[2];
         this.parameters = match[3] ? match[3].trim() : '';
         potentialClassifier = match[4] ? match[4].trim() : '';
         this.returnType = match[5] ? match[5].trim() : '';
@@ -121,8 +123,9 @@ export class ClassMember {
     }
 
     this.classifier = potentialClassifier;
-    this.text = `${this.visibility}${this.id}${this.memberType === 'method' ? `(${this.parameters})${this.returnType ? ' : ' + this.returnType : ''}` : ''}`;
+    // TODO: Right now getting rid of spacing in id / name, TODO: Add optional spacing
     const combinedText = `${this.visibility}${this.id}${this.memberType === 'method' ? `(${this.parameters})${this.returnType ? ' : ' + this.returnType : ''}` : ''}`;
+    this.text = combinedText;
     if (combinedText.includes('~')) {
       const numOfTildes = (combinedText.substring(1).match(/~/g) ?? []).length;
       let count = numOfTildes;
@@ -138,15 +141,16 @@ export class ClassMember {
           count -= 2; // Each iteration replaces one '>' with '<', so reduce count by 2
         }
         if (odd) {
+          // Replace first occurrence.
           if (this.memberType === 'method') {
             replacedRaw = replacedRaw.replace('&lt;', '~');
           } else {
-            // Replace the middle occurrence of '&lt;' with '~'
+            // Replace middle occurrence.
             const ltOccurrences = replacedRaw.match(/&lt;/g) ?? [];
             if (ltOccurrences.length > 1) {
               let ltCount = 0;
 
-              replacedRaw = replacedRaw.replace(/&lt;/g, (match) => {
+              replacedRaw = replacedRaw.replace('&lt;', (match) => {
                 ltCount++;
                 return ltCount === ltOccurrences.length ? '~' : match;
               });
@@ -154,18 +158,13 @@ export class ClassMember {
           }
         }
         this.text = this.text.charAt(0) + replacedRaw;
+
         if (this.visibility === '~') {
           this.text = this.text.replace('~', '\\~');
         }
       } else if (count === 1 && this.visibility === '~') {
         this.text = this.text.replace('~', '\\~');
       }
-    }
-
-    if (this.classifier === '$') {
-      this.text = `<u>${this.text}</u>`;
-    } else if (this.classifier === '*') {
-      this.text = `<i>${this.text}</i>`;
     }
   }
 
@@ -208,6 +207,12 @@ export interface NamespaceNode {
   domId: string;
   classes: ClassMap;
   children: NamespaceMap;
+}
+
+export interface StyleClass {
+  id: string;
+  styles: string[];
+  textStyles: string[];
 }
 
 export type ClassMap = Map<string, ClassNode>;
