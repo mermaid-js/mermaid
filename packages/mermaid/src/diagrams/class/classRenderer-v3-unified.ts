@@ -1,8 +1,8 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import { getDiagramElements } from '../../rendering-util/insertElementsForSize.js';
-import { render } from '../../rendering-util/render.js';
+import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
+import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
@@ -16,7 +16,7 @@ import utils from '../../utils.js';
  * @param defaultDir - the direction to use if none is found
  * @returns The direction to use
  */
-export const getDir = (parsedItem: any, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
+export const getDir = (parsedItem: any, defaultDir = 'TB') => {
   if (!parsedItem.doc) {
     return defaultDir;
   }
@@ -36,7 +36,6 @@ export const getClasses = function (
   text: string,
   diagramObj: any
 ): Map<string, DiagramStyleClassDef> {
-  // diagramObj.db.extract(diagramObj.db.getRootDocV2());
   return diagramObj.db.getClasses();
 };
 
@@ -48,29 +47,25 @@ export const draw = async function (text: string, id: string, _version: string, 
   // Not related to the refactoring, but this is the first step in the rendering process
   // diag.db.extract(diag.db.getRootDocV2());
 
-  //const DIR = getDir(diag.db.getRootDocV2());
-
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
   const data4Layout = diag.db.getData() as LayoutData;
 
   // Create the root SVG - the element is the div containing the SVG element
-  const { element, svg } = getDiagramElements(id, securityLevel);
+  const svg = getDiagramElement(id, securityLevel);
 
   data4Layout.type = diag.type;
-  data4Layout.layoutAlgorithm = layout;
-
-  // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
+  data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
 
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
-  data4Layout.markers = ['barb'];
+  data4Layout.markers = ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'];
   data4Layout.diagramId = id;
-  await render(data4Layout, svg, element);
+  await render(data4Layout, svg);
   const padding = 8;
   utils.insertTitle(
-    element,
-    'statediagramTitleText',
+    svg,
+    'classDiagramTitleText',
     conf?.titleTopMargin ?? 25,
     diag.db.getDiagramTitle()
   );
