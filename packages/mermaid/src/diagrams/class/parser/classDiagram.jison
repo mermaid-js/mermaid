@@ -61,6 +61,7 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <string>[^"]*                   return "STR";
 <*>["]                          this.begin("string");
 "style"                         return 'STYLE';
+"classDef"                      return 'CLASSDEF';
 
 <INITIAL,namespace>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
 <namespace>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
@@ -263,6 +264,7 @@ statement
     | styleStatement
     | cssClassStatement
     | noteStatement
+    | classDefStatement
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -322,6 +324,15 @@ relationStatement
 noteStatement
     : NOTE_FOR className noteText  { yy.addNote($3, $2); }
     | NOTE noteText                { yy.addNote($2); }
+    ;
+
+classDefStatement
+    : CLASSDEF classList stylesOpt {$$ = $CLASSDEF;yy.defineClass($classList,$stylesOpt);}
+    ;
+
+classList
+    : ALPHA { $$ = [$ALPHA]; }
+    | classList COMMA ALPHA = { $$ = $classList.concat([$ALPHA]); }
     ;
 
 direction

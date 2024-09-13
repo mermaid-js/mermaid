@@ -69,5 +69,47 @@ describe('class diagram, ', function () {
       expect(styleElements[1]).toBe('stroke:#333');
       expect(styleElements[2]).toBe('stroke-width:4px');
     });
+    it('should be possible to define and assign a class inside the diagram', function () {
+      const str =
+        'classDiagram\n' + 'class Class01\n cssClass "Class01" pink\n classDef pink fill:#f9f';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Class01').cssClasses[0]).toBe('pink');
+    });
+    it('should be possible to define and assign a class using shorthand inside the diagram', function () {
+      const str = 'classDiagram\n' + 'class Class01:::pink\n classDef pink fill:#f9f';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Class01').cssClasses[0]).toBe('pink');
+    });
+    it('should properly assign styles from a class defined inside the diagram', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class01:::pink\n classDef pink fill:#f9f,stroke:#333,stroke-width:6px';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Class01').styles).toStrictEqual([
+        'fill:#f9f',
+        'stroke:#333',
+        'stroke-width:6px',
+      ]);
+    });
+    it('should properly assign multiple classes and styles from classes defined inside the diagram', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class01:::pink\n cssClass "Class01" bold\n classDef pink fill:#f9f\n classDef bold stroke:#333,stroke-width:6px';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Class01').styles).toStrictEqual([
+        'fill:#f9f',
+        'stroke:#333',
+        'stroke-width:6px',
+      ]);
+      expect(parser.yy.getClass('Class01').cssClasses).toStrictEqual(['pink', 'bold']);
+    });
   });
 });
