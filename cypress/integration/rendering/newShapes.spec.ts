@@ -4,14 +4,14 @@ const looks = ['classic'] as const;
 const directions = ['TB'] as const;
 const newShapesSet1 = [
   'triangle',
-  'sloped-rect',
-  'tilted-cylinder',
+  'sloped-rectangle',
+  'horizontal-cylinder',
   'flipped-triangle',
   'hourglass',
 ] as const;
 const newShapesSet2 = [
-  'tagged-rect',
-  'multi-rect',
+  'tagged-rectangle',
+  'documents',
   'lightning-bolt',
   'filled-circle',
   'window-pane',
@@ -19,26 +19,27 @@ const newShapesSet2 = [
 
 const newShapesSet3 = [
   'curved-trapezoid',
-  'bow-tie-rect',
-  'wave-edge-rect',
+  'bow-rect',
+  'tagged-document',
   'divided-rectangle',
   'crossed-circle',
 ] as const;
 
 const newShapesSet4 = [
-  'wave-rectangle',
+  'document',
   'notched-pentagon',
   'lined-cylinder',
-  'multi-wave-edged-rectangle',
-  'half-rounded-rect',
+  'stacked-document',
+  'half-rounded-rectangle',
 ] as const;
 
 const newShapesSet5 = [
-  'lined-wave-edged-rect',
-  'tagged-wave-edged-rectangle',
+  'lined-document',
+  'tagged-document',
   'brace-l',
-  'curved-trapezoid',
-  'wave-rectangle',
+  'comment',
+  'braces',
+  'brace-r',
 ] as const;
 
 const newShapesSet6 = ['brace-r', 'braces'] as const;
