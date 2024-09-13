@@ -30,7 +30,7 @@ export type {
   MermaidConfig,
   ParseErrorFunction,
   ParseOptions,
-  ParseResultWithConfigs as ParseResult,
+  ParseResult,
   RenderOptions,
   RenderResult,
   SVG,
@@ -321,12 +321,6 @@ const executeQueue = async () => {
   executionQueueRunning = false;
 };
 
-interface ParseResultWithConfigs extends Omit<ParseResult, 'config'> {
-  /** Config the user has defined in the text as frontmatter or directives */
-  userConfig: MermaidConfig;
-  defaultConfig: MermaidConfig;
-  config: MermaidConfig;
-}
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
@@ -349,20 +343,14 @@ interface ParseResultWithConfigs extends Omit<ParseResult, 'config'> {
 const parse = async (
   text: string,
   parseOptions?: ParseOptions
-): Promise<boolean | void | ParseResultWithConfigs> => {
+): Promise<boolean | void | ParseResult> => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
     const performCall = () =>
       new Promise((res, rej) => {
         mermaidAPI.parse(text, parseOptions).then(
-          (r) => {
-            const result = {
-              diagram: r.diagram,
-              userConfig: r.config,
-              defaultConfig: mermaidAPI.defaultConfig,
-              config: mermaidAPI.getConfig(),
-            } satisfies ParseResultWithConfigs;
+          (result) => {
             // This resolves for the promise for the queue handling
             res(result);
             // This fulfills the promise sent to the value back to the original caller
