@@ -30,16 +30,21 @@ let nodeDB = new Map();
 
 const calcIntersectionPoint = (node, point) => {
   const intersection = node.intersect(point);
-  const dx = intersection.x - node.x;
-  const dy = intersection.y - node.y;
 
-  let pos = 'l';
+  const dx = point.x - node.x;
+  const dy = point.y - node.y;
 
-  // Determine the position of the intersection relative to the node
-  if (Math.abs(dx) > Math.abs(dy)) {
-    pos = dx > 0 ? 'r' : 'l'; // Right or left
+  const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+  let pos;
+  if (angle > -30 && angle <= 30) {
+    pos = 'r'; // Right
+  } else if (angle > 30 && angle <= 150) {
+    pos = 'b'; // Bottom
+  } else if (angle <= -30 && angle > -150) {
+    pos = 't'; // Top
   } else {
-    pos = dy > 0 ? 'b' : 't'; // Bottom or top
+    pos = 'l'; // Left
   }
 
   return { x: intersection.x, y: intersection.y, pos };
