@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-chart/mermaid",
-  "version": "11.1.0-b.7",
+  "version": "11.2.0-a.4",
   "description": "Markdown-ish syntax for generating flowcharts, mindmaps, sequence diagrams, class diagrams, gantt charts, git graphs and more.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
