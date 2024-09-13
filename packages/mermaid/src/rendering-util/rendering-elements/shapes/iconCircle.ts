@@ -12,7 +12,7 @@ export const iconCircle = async (
   node: Node,
   { config: { themeVariables, flowchart } }: RenderOptions
 ) => {
-  const { labelStyles, nodeStyles } = styles2String(node);
+  const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
   const assetWidth = node.assetWidth ?? 48;
@@ -24,14 +24,12 @@ export const iconCircle = async (
     node,
     'icon-shape default'
   );
-  const { cssStyles } = node;
 
   const topLabel = node.pos === 't';
 
   const diameter = iconSize + halfPadding * 2;
-  const { mainBkg } = themeVariables;
+  const { nodeBorder, mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
-
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') || mainBkg });
@@ -44,9 +42,8 @@ export const iconCircle = async (
   const iconNode = rc.circle(0, 0, diameter, options);
 
   const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
-
+  const iconElem = shapeSvg.append('g');
   if (node.icon) {
-    const iconElem = shapeSvg.append('g');
     iconElem.html(
       `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
     );
@@ -57,6 +54,7 @@ export const iconCircle = async (
       'transform',
       `translate(${-iconWidth / 2},${topLabel ? diameter / 2 - iconHeight - halfPadding + bbox.height / 2 : -diameter / 2 + halfPadding - bbox.height / 2})`
     );
+    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   }
 
   label.attr(
@@ -65,14 +63,6 @@ export const iconCircle = async (
   );
 
   iconShape.attr('transform', `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2})`);
-
-  if (cssStyles && node.look !== 'handDrawn') {
-    iconShape.selectAll('path').attr('style', cssStyles);
-  }
-
-  if (nodeStyles && node.look !== 'handDrawn') {
-    iconShape.selectAll('path').attr('style', nodeStyles);
-  }
 
   updateNodeBounds(node, shapeSvg);
 
