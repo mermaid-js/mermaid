@@ -87,6 +87,8 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return `${node.text}`;
     } else if (node.type === 'escape') {
       return node.text;
+    } else if (node.type === 'list') {
+      return node.raw;
     }
     return `Unsupported markdown: ${node.type}`;
   }
