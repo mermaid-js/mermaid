@@ -6,16 +6,21 @@ import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShap
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import type { MermaidConfig } from '../../../config.type.js';
 
-export const iconCircle = async (parent: SVG, node: Node, dir: string) => {
-  const translateHorizontal = dir === 'TB' || dir === 'BT' || dir === 'TD' || dir === 'DT';
+export const iconCircle = async (
+  parent: SVG,
+  node: Node,
+  { config: { themeVariables, flowchart } }: { config: MermaidConfig }
+) => {
+  const translateHorizontal =
+    node.dir === 'TB' || node.dir === 'BT' || node.dir === 'TD' || node.dir === 'DT';
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
   const assetWidth = node.assetWidth ?? 48;
   const iconSize = Math.max(assetHeight, assetWidth);
-  const defaultWidth = getConfig()?.flowchart?.wrappingWidth;
+  const defaultWidth = flowchart?.wrappingWidth;
   node.width = Math.max(iconSize, defaultWidth ?? 0);
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
@@ -27,7 +32,6 @@ export const iconCircle = async (parent: SVG, node: Node, dir: string) => {
   const topLabel = node.pos === 't';
 
   const diameter = iconSize + halfPadding * 2;
-  const { themeVariables } = getConfig();
   const { mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
 

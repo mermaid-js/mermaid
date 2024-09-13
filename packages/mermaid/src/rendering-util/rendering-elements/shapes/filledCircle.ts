@@ -5,9 +5,13 @@ import type { SVG } from '../../../diagram-api/types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
-import { getConfig } from '../../../config.js';
+import type { MermaidConfig } from '../../../config.type.js';
 
-export const filledCircle = (parent: SVG, node: Node) => {
+export const filledCircle = (
+  parent: SVG,
+  node: Node,
+  { config: { themeVariables } }: { config: MermaidConfig }
+) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';
   node.labelStyle = labelStyles;
@@ -20,7 +24,6 @@ export const filledCircle = (parent: SVG, node: Node) => {
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
-  const { themeVariables } = getConfig();
   const { nodeBorder } = themeVariables;
   const options = userNodeOverrides(node, { fillStyle: 'solid' });
 

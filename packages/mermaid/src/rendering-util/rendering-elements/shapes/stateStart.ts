@@ -4,10 +4,13 @@ import type { Node } from '../../types.js';
 import type { SVG } from '../../../diagram-api/types.js';
 import rough from 'roughjs';
 import { solidStateFill } from './handDrawnShapeStyles.js';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import type { MermaidConfig } from '../../../config.type.js';
 
-export const stateStart = (parent: SVG, node: Node) => {
-  const { themeVariables } = getConfig();
+export const stateStart = (
+  parent: SVG,
+  node: Node,
+  { config: { themeVariables } }: { config: MermaidConfig }
+) => {
   const { lineColor } = themeVariables;
 
   const shapeSvg = parent
