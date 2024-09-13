@@ -9,7 +9,6 @@ import { choice } from './shapes/choice.ts';
 import { note } from './shapes/note.ts';
 import { stadium } from './shapes/stadium.js';
 import { rectWithTitle } from './shapes/rectWithTitle.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { subroutine } from './shapes/subroutine.js';
 import { cylinder } from './shapes/cylinder.js';
 import { circle } from './shapes/circle.js';
@@ -229,7 +228,7 @@ export const shapes = {
 
 const nodeElems = new Map();
 
-export const insertNode = async (elem, node, dir) => {
+export const insertNode = async (elem, node, config) => {
   let newEl;
   let el;
 
@@ -250,15 +249,15 @@ export const insertNode = async (elem, node, dir) => {
   if (node.link) {
     // Add link when appropriate
     let target;
-    if (getConfig().securityLevel === 'sandbox') {
+    if (config.securityLevel === 'sandbox') {
       target = '_top';
     } else if (node.linkTarget) {
       target = node.linkTarget || '_blank';
     }
     newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
-    el = await shapes[node.shape](newEl, node, dir);
+    el = await shapes[node.shape](newEl, node, config);
   } else {
-    el = await shapes[node.shape](elem, node, dir);
+    el = await shapes[node.shape](elem, node, config);
     newEl = el;
   }
   if (node.tooltip) {

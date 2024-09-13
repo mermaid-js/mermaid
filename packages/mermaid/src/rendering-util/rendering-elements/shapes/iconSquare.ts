@@ -6,15 +6,19 @@ import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShap
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import type { MermaidConfig } from '../../../config.type.js';
 
-export const iconSquare = async (parent: SVG, node: Node) => {
+export const iconSquare = async (
+  parent: SVG,
+  node: Node,
+  { config: { themeVariables, flowchart } }: { config: MermaidConfig }
+) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
   const assetWidth = node.assetWidth ?? 48;
   const iconSize = Math.max(assetHeight, assetWidth);
-  const defaultWidth = getConfig()?.flowchart?.wrappingWidth;
+  const defaultWidth = flowchart?.wrappingWidth;
   node.width = Math.max(iconSize, defaultWidth ?? 0);
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
@@ -27,7 +31,6 @@ export const iconSquare = async (parent: SVG, node: Node) => {
 
   const height = iconSize + halfPadding * 2;
   const width = iconSize + halfPadding * 2;
-  const { themeVariables } = getConfig();
   const { mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
 

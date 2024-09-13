@@ -6,16 +6,20 @@ import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShap
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
+import type { MermaidConfig } from '../../../config.type.js';
 
-export const iconRounded = async (parent: SVG, node: Node) => {
+export const iconRounded = async (
+  parent: SVG,
+  node: Node,
+  { config: { themeVariables, flowchart } }: { config: MermaidConfig }
+) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
   const assetWidth = node.assetWidth ?? 48;
   const iconSize = Math.max(assetHeight, assetWidth);
-  const defaultWidth = getConfig()?.flowchart?.wrappingWidth;
+  const defaultWidth = flowchart?.wrappingWidth;
   node.width = Math.max(iconSize, defaultWidth ?? 0);
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
@@ -28,7 +32,6 @@ export const iconRounded = async (parent: SVG, node: Node) => {
 
   const height = iconSize + halfPadding * 2;
   const width = iconSize + halfPadding * 2;
-  const { themeVariables } = getConfig();
   const { mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
 
@@ -58,7 +61,7 @@ export const iconRounded = async (parent: SVG, node: Node) => {
     const iconHeight = iconBBox.height;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight + bbox.height / 2 : -height / 2 - bbox.height / 2})`
+      `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight - halfPadding + bbox.height / 2 : -height / 2 + halfPadding - bbox.height / 2})`
     );
   }
 
