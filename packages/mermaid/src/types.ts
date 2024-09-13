@@ -63,14 +63,13 @@ export interface ParseResult {
    */
   config: MermaidConfig;
 
-  defaultConfig?: MermaidConfig;
-
   /**
    * The diagram AST
    *
    */
   diagram: Diagram;
 }
+
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
 
