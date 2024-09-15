@@ -330,6 +330,41 @@ describe('State diagram', () => {
       }
     );
   });
+  it('v2 it should be possible to use a (deep) history node', () => {
+    imgSnapshotTest(
+      `
+  stateDiagram-v2
+      state "A" as A {
+        state "B" as B
+        state "C" as C
+        state A_History [[history]]
+
+        B --> C
+        C --> B
+      }
+      state "D" as D {
+        state "E" as E {
+          state "F" as F
+          state "G" as G
+
+          F --> G
+          G --> F
+        }
+        state "I" as I
+        state D_History [[deephistory]]
+
+        E --> I
+        I --> E
+      }
+
+      G --> A_History
+      A --> D_History
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
   it('v2 A compound state should be able to link to itself', () => {
     imgSnapshotTest(
       `
