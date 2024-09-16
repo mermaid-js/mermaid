@@ -12,6 +12,14 @@ permissions:
   contents: write
 
 jobs:
+  docker-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
+        with:
+          verbose: true
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -81,7 +89,7 @@ jobs:
         continue-on-error: ${{ github.event_name == 'push' }}
         run: pnpm run docs:verify
 
-      - uses: testomatio/check-tests@stable
+      - uses: testomatio/check-tests@0ea638fcec1820cf2e7b9854fdbdd04128a55bd4 # stable
         with:
           framework: cypress
           tests: './cypress/e2e/**/**.spec.js'

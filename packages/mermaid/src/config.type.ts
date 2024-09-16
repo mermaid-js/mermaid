@@ -99,6 +99,16 @@ export interface MermaidConfig {
      *
      */
     nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
+    /**
+     * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
+     *
+     */
+    cycleBreakingStrategy?:
+      | 'GREEDY'
+      | 'DEPTH_FIRST'
+      | 'INTERACTIVE'
+      | 'MODEL_ORDER'
+      | 'GREEDY_MODEL_ORDER';
   };
   darkMode?: boolean;
   htmlLabels?: boolean;
@@ -181,6 +191,7 @@ export interface MermaidConfig {
   quadrantChart?: QuadrantChartConfig;
   xyChart?: XYChartConfig;
   requirement?: RequirementDiagramConfig;
+  architecture?: ArchitectureDiagramConfig;
   mindmap?: MindmapDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
@@ -990,6 +1001,17 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
   fontSize?: number;
   rect_padding?: number;
   line_height?: number;
+}
+/**
+ * The object containing configurations specific for architecture diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "ArchitectureDiagramConfig".
+ */
+export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  iconSize?: number;
+  fontSize?: number;
 }
 /**
  * The object containing configurations specific for mindmap diagrams

@@ -224,7 +224,7 @@ export const render = async (
    * Add edges to graph based on parsed graph definition
    */
   const addEdges = async function (
-    dataForLayout: { edges: any; direction: string },
+    dataForLayout: { edges: any; direction?: string },
     graph: {
       id?: string;
       layoutOptions?: {
@@ -749,17 +749,37 @@ export const render = async (
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config.elk.nodePlacementStrategy,
-      'elk.layered.mergeEdges': data4Layout.config.elk.mergeEdges,
+      'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+      'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
-      'spacing.baseValue': 30,
-      // 'spacing.nodeNode': 40,
-      // 'spacing.nodeNodeBetweenLayers': 45,
-      // 'spacing.edgeNode': 40,
-      // 'spacing.edgeNodeBetweenLayers': 30,
-      // 'spacing.edgeEdge': 30,
-      // 'spacing.edgeEdgeBetweenLayers': 40,
-      // 'spacing.nodeSelfLoop': 50,
+      'spacing.baseValue': 35,
+      'elk.layered.unnecessaryBendpoints': true,
+      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
+      // 'spacing.nodeNode': 20,
+      // 'spacing.nodeNodeBetweenLayers': 25,
+      // 'spacing.edgeNode': 20,
+      // 'spacing.edgeNodeBetweenLayers': 10,
+      // 'spacing.edgeEdge': 10,
+      // 'spacing.edgeEdgeBetweenLayers': 20,
+      // 'spacing.nodeSelfLoop': 20,
+
+      // Tweaking options
+      // 'elk.layered.nodePlacement.favorStraightEdges': true,
+      // 'nodePlacement.feedbackEdges': true,
+      // 'elk.layered.wrapping.multiEdge.improveCuts': true,
+      // 'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
+      // 'elk.layered.wrapping.strategy': 'MULTI_EDGE',
+      // 'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
+      // 'elk.layered.mergeHierarchyEdges': true,
+      // 'elk.layered.feedbackEdges': true,
+      // 'elk.layered.crossingMinimization.semiInteractive': true,
+      // 'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
+      // 'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
+      // 'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
+      // 'elk.insideSelfLoops.activate': true,
+      // 'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
+      // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES', // NODES_AND_EDGES
+      // 'elk.layered.wrapping.cutting.strategy': 'ARD', // NODES_AND_EDGES
     },
     children: [],
     edges: [],
@@ -817,8 +837,8 @@ export const render = async (
           ...node.layoutOptions,
           'elk.algorithm': algorithm,
           'elk.direction': dir2ElkDirection(node.dir),
-          'nodePlacement.strategy': data4Layout.config['elk.nodePlacement.strategy'],
-          'elk.layered.mergeEdges': data4Layout.config['elk.mergeEdges'],
+          'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+          'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
           'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
         };
       }

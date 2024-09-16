@@ -1,5 +1,5 @@
 /** Decorates with functions required by mermaids dagre-wrapper. */
-import { log } from '$root/logger.js';
+import { log } from '../../../logger.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 
@@ -267,51 +267,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
       ' --- ',
       clusterDb.get(e.w)
     );
-    if (clusterDb.get(e.v) && clusterDb.get(e.w) && clusterDb.get(e.v) === clusterDb.get(e.w)) {
-      log.warn('Fixing and trying link to self - removing XXX', e.v, e.w, e.name);
-      log.warn('Fixing and trying - removing XXX', e.v, e.w, e.name);
-      v = getAnchorId(e.v);
-      w = getAnchorId(e.w);
-      graph.removeEdge(e.v, e.w, e.name);
-      const specialId1 = e.w + '---' + e.v + '---1';
-      const specialId2 = e.w + '---' + e.v + '---2';
-      graph.setNode(specialId1, {
-        domId: specialId1,
-        id: specialId1,
-        labelStyle: '',
-        label: '',
-        padding: 0,
-        shape: 'labelRect',
-        style: '',
-        width: 10,
-        height: 10,
-      });
-      graph.setNode(specialId2, {
-        domId: specialId2,
-        id: specialId2,
-        labelStyle: '',
-        padding: 0,
-        shape: 'labelRect',
-        style: '',
-        width: 10,
-        height: 10,
-      });
-      const edge1 = structuredClone(edge);
-      const edgeMid = structuredClone(edge);
-      const edge2 = structuredClone(edge);
-      edge1.label = '';
-      edge1.arrowTypeEnd = 'none';
-      edge1.id = e.name + '-cyclic-special-1';
-      edgeMid.arrowTypeEnd = 'none';
-      edgeMid.id = e.name + '-cyclic-special-mid';
-      edge2.label = '';
-      edge1.fromCluster = e.v;
-      edge2.toCluster = e.v;
-      edge2.id = e.name + '-cyclic-special-2';
-      graph.setEdge(v, specialId1, edge1, e.name + '-cyclic-special-0');
-      graph.setEdge(specialId1, specialId2, edgeMid, e.name + '-cyclic-special-1');
-      graph.setEdge(specialId2, w, edge2, e.name + '-cyclic-special-2');
-    } else if (clusterDb.get(e.v) || clusterDb.get(e.w)) {
+    if (clusterDb.get(e.v) || clusterDb.get(e.w)) {
       log.warn('Fixing and trying - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
@@ -334,13 +290,6 @@ export const adjustClustersAndEdges = (graph, depth) => {
   extractor(graph, 0);
 
   log.trace(clusterDb);
-
-  // Remove references to extracted cluster
-  // graph.edges().forEach((edge) => {
-  //   if (isDescendant(edge.v, clusterId) || isDescendant(edge.w, clusterId)) {
-  //     graph.removeEdge(edge);
-  //   }
-  // });
 };
 
 export const extractor = (graph, depth) => {
@@ -441,7 +390,7 @@ export const extractor = (graph, depth) => {
   for (const node of nodes) {
     const data = graph.node(node);
     log.warn(' Now next level', node, data);
-    if (data.clusterNode) {
+    if (data?.clusterNode) {
       extractor(data.graph, depth + 1);
     }
   }

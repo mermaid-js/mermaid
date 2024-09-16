@@ -73,7 +73,9 @@
         font-family: monospace;
         font-size: 72px;
       }
-
+      pre {
+        width: 100%;
+      }
       /* tspan {
               font-size: 6px !important;
             } */
@@ -81,90 +83,166 @@
   </head>
 
   <body>
-    <div class="flex">
-      <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid">
 ---
   title: hello2
   config:
     look: handDrawn
     layout: elk
     elk:
-        nodePlacementStrategy: BRANDES_KOEPF
+        <!-- nodePlacementStrategy: INTERACTIVE -->
+        <!-- mergeEdges: true -->
 ---
-flowchart LR
-  A[Start] --Some text--> B(Continue)
-  B --> C{Evaluate}
-  C -- One --> D[Option 1]
-  C -- Two --> E[Option 2]
-  C -- Three --> F[fa:fa-car Option 3]
+stateDiagram-v2
+    direction LR
+    accTitle: An idealized Open Source supply-chain graph
+
+    %%
+    state "🟦 Importer" as author_importer
+    state "🟥 Supplier, Owner" as author_owner
+    state "🟨🟥 Maintainer, Author\n🟨 Custodian" as author
+    state "🟩 Distributor" as repository_distributor
+    state "🟦 Importer" as language_importer
+    state "🟦🟨 Packager" as language_packager
+    state "🟦🟨 OSS Steward" as language_steward
+    state "🟨 Curator" as language_curator
+    state "🟩 Distributor" as language_distributor
+    state "🟦 Contributor" as contributor
+    state "🟦 Importer" as package_importer
+    state "🟨 Patcher" as package_patcher
+    state "🟨🟦 Builder\n🟨🟦 Packager\n🟨🟦 Containerizer" as package_packager
+    state "🟨 Curator" as package_curator
+    state "🟩 Distributor" as package_distributor
+    state "🟦 Importer" as integrator_importer
+    state "🟥 Supplier, Manufacturer, Owner" as integrator_owner
+    state "🟦🟨🟥 Integrator, Developer" as integrator_developer
+    state "🟩🟨 SBOM Redactor\n🟩 Publisher" as integrator_publisher
+    state "🟦🟨 Builder" as integrator_builder
+    state "🟨 Deployer" as deployer
+    state "🟦 Vuln. Checker" as integrator_checker
+    state "🟩🟨 SBOM Redactor" as redactor
+    state "🟦 Consumer\n🟦  User" as consumer
+    state "🟦 Auditor" as auditor_internal
+    state "🟦 Auditor" as auditor_external
+
+    %%
+    classDef createsSBOM stroke:red,stroke-width:3px;
+    classDef updatesSBOM stroke:yellow,stroke-width:3px;
+    classDef assemblesSBOM stroke:yellow,stroke-width:3px;
+    classDef distributesSBOM stroke:green,stroke-width:3px;
+    classDef verifiesSBOM stroke:#07f,stroke-width:3px;
+
+    %%
+    class author_importer verifiesSBOM
+    class author_owner createsSBOM
+    class manufacturer_owner createsSBOM
+    class author assemblesSBOM
+    class package_importer verifiesSBOM
+    class package_patcher updatesSBOM
+    class package_packager assemblesSBOM
+    class package_curator distributesSBOM
+    class package_distributor distributesSBOM
+    class language_importer verifiesSBOM
+    class language_packager assemblesSBOM
+    class language_steward updatesSBOM
+    class language_curator distributesSBOM
+    class language_distributor distributesSBOM
+    class repository_distributor distributesSBOM
+    class integrator_importer verifiesSBOM
+    class integrator_owner createsSBOM
+    class integrator_developer assemblesSBOM
+    class integrator_publisher distributesSBOM
+    class integrator_builder assemblesSBOM
+    class integrator_checker verifiesSBOM
+    class deployer assemblesSBOM
+    class redactor distributesSBOM
+    class auditor_internal verifiesSBOM
+    class auditor_external verifiesSBOM
+
+    state "Maintainer Environment" as environment_maintainer {
+        [*] --> author_importer
+        [*] --> author
+        author_importer --> author
+        author_owner --> author
+        author       --> language_packager
+    }
+
+    [*] --> environment_maintainer
+
+    state "Language Ecosystem" as ecosystem_lang {
+        [*] --> language_importer
+        [*] --> language_steward
+        [*] --> language_curator
+        [*] --> language_distributor
+        language_importer --> language_distributor
+        language_importer --> language_curator
+        language_steward --> language_curator
+        language_curator --> language_distributor
+    }
+
+    language_packager --> ecosystem_lang
+    ecosystem_lang    --> ecosystem_lang
+
+    state "Public Collaboration Ecosystem" as ecosystem_repo {
+        [*] --> repository_distributor
+    }
+
+    author         --> ecosystem_repo
+    ecosystem_repo --> author
+
+    repository_distributor --> contributor
+    contributor            --> repository_distributor
+
+    state "Package Ecosystem" as ecosystem_package {
+        [*] --> package_importer
+        [*] --> package_packager
+        [*] --> package_patcher
+        package_importer --> package_patcher
+        package_importer --> package_packager
+        package_patcher  --> package_packager
+        package_packager --> package_curator
+        package_packager --> package_distributor
+        package_curator  --> package_distributor
+    }
+
+    repository_distributor --> ecosystem_package
+    language_distributor   --> ecosystem_package
+    ecosystem_package      --> ecosystem_package
+
+    state "Integrator Environment" as environment_integrator {
+        [*] --> integrator_developer
+        [*] --> integrator_importer
+        integrator_importer  --> integrator_developer
+        integrator_owner     --> integrator_developer
+        integrator_builder   --> integrator_publisher
+        integrator_developer --> integrator_checker
+        integrator_checker   --> integrator_developer
+        auditor_internal     --> integrator_developer
+        integrator_developer --> integrator_builder
+        integrator_developer --> auditor_internal
+    }
+
+    repository_distributor --> environment_integrator
+    language_distributor   --> environment_integrator
+    package_distributor    --> environment_integrator
+
+    state "Production Environment" as environment_prod {
+        [*] --> deployer
+        deployer --> redactor
+    }
+
+    integrator_publisher --> [*]
+    integrator_developer --> environment_prod
+    integrator_builder   --> environment_prod
+    integrator_publisher --> environment_prod
+
+    deployer --> auditor_external
+    deployer --> consumer
+    redactor --> consumer
 
 
 
-</pre
-      >
-      <pre id="diagram" class="mermaid2">
----
-config:
-  look: handdrawn
-  flowchart:
-    htmlLabels: true
----
-flowchart
-      A[I am a long text, where do I go??? handdrawn - true]
-</pre
-      >
-    </div>
-    <div class="flex">
-      <pre id="diagram" class="mermaid2">
----
-config:
-  flowchart:
-    htmlLabels: false
----
-flowchart
-      A[I am a long text, where do I go??? classic - false]
-</pre
-      >
-      <pre id="diagram" class="mermaid2">
----
-config:
-  flowchart:
-    htmlLabels: true
----
-flowchart
-      A[I am a long text, where do I go??? classic - true]
-</pre
-      >
-    </div>
-    <pre id="diagram2" class="mermaid2">
-flowchart LR
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-
-
-    </pre>
-
-    <pre id="diagram3" class="mermaid2">
-      flowchart LR
-    A:::foo & B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    classDef ash color:red
-    class C ash
-    style C stroke:#00f, fill:black
-
-    </pre>
-
-    <pre id="diagram4" class="mermaid2">
-      stateDiagram
-    A:::foo
-    B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    style C stroke:#00f, fill:black, color:white
-
-    </pre>
+      </pre>
 
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
@@ -195,7 +273,7 @@ flowchart LR
           messageFontFamily: 'courier',
         },
         fontSize: 12,
-        logLevel: 0,
+        logLevel: 3,
         securityLevel: 'loose',
       });
       function callback() {
