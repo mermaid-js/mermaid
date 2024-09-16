@@ -11,6 +11,7 @@ import {
   insertEdge,
   clear as clearEdges,
 } from '../../rendering-elements/edges.js';
+import { select } from 'd3';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 let nodeDB = new Map();
@@ -53,11 +54,27 @@ const calcIntersectionPoint = (node, point) => {
     pos = 'l'; // Left
   }
 
-  // console.log('angleDeg', angleDeg, 'pos', pos, criticalAngleDeg);
-
   return { x: intersection.x, y: intersection.y, pos };
 };
+const calcNodeIntersections = async (_node1, _node2) => {
+  // CReate new nodes in order not to require a rendered diagram
+  const fakeParent = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  const parent = select(fakeParent);
+  const node1 = Object.assign({}, _node1);
+  const node2 = Object.assign({}, _node2);
+  await insertNode(parent, node1, 'TB');
+  await insertNode(parent, node2, 'TB');
 
+  // Insert node will not give any widths as the element is not in the DOM
+  node1.width = _node1.width || 50;
+  node1.height = _node1.height || 50;
+  node2.width = _node2.width || 50;
+  node2.height = _node2.height || 50;
+
+  const startIntersection = calcIntersectionPoint(node1, { x: node2.x, y: node2.y });
+  const endIntersection = calcIntersectionPoint(node2, { x: node1.x, y: node1.y });
+  return [startIntersection, endIntersection];
+};
 const calcIntersections = (startNodeId, endNodeId, startNodeSize, endNodeSize) => {
   const startNode = nodeDB.get(startNodeId);
   if (startNodeSize) {
@@ -234,8 +251,6 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
 
   // Insert the edges and position the edge labels
   for (const edge of data4Layout.edges) {
-    // console.info('Edge : ' + JSON.stringify(edge), edge);
-
     if (!positions.edges[edge.id]) {
       const startNode = positions.nodes[edge.start];
       const endNode = positions.nodes[edge.end];
@@ -255,6 +270,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   }
   if (window) {
     window.calcIntersections = calcIntersections;
+    window.calcNodeIntersections = calcNodeIntersections;
   }
   return { elem, diff: 0 };
 };
