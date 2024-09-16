@@ -59,20 +59,20 @@ export interface ParseOptions {
 
 export interface ParseResult {
   success: boolean;
-
+  /**
+   * The mermaid code after extracting the config.
+   */
   code: string;
-
   /**
    * The config passed as YAML frontmatter or directives
    */
   config: MermaidConfig;
-
   title?: string;
-  /**
-   * The diagram AST
-   *
-   */
   diagram?: Diagram;
+  /**
+   * The error that occurred during parsing, if any.
+   */
+  error?: unknown;
 }
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
