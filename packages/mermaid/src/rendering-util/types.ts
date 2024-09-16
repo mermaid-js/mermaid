@@ -140,3 +140,7 @@ export type LayoutMethod =
   | 'fdp'
   | 'osage'
   | 'grid';
+
+export interface RenderOptions {
+  config: MermaidConfig;
+}

@@ -1,21 +1,26 @@
 import { log } from '../../../logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.d.ts';
+import type { Node, RenderOptions } from '../../types.d.ts';
 import type { SVG } from '../../../diagram-api/types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
-export const icon = async (parent: SVG, node: Node) => {
+export const icon = async (
+  parent: SVG,
+  node: Node,
+  { config: { themeVariables, flowchart } }: RenderOptions
+) => {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
   const assetWidth = node.assetWidth ?? 48;
   const iconSize = Math.max(assetHeight, assetWidth);
-  const defaultWidth = getConfig()?.flowchart?.wrappingWidth;
+  const defaultWidth = flowchart?.wrappingWidth;
   node.width = Math.max(iconSize, defaultWidth ?? 0);
+  const { nodeBorder } = themeVariables;
+  const { stylesMap } = compileStyles(node);
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'icon-shape default');
 
   const topLabel = node.pos === 't';
@@ -51,6 +56,7 @@ export const icon = async (parent: SVG, node: Node) => {
       'transform',
       `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight + bbox.height / 2 : -height / 2 - bbox.height / 2})`
     );
+    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   }
 
   label.attr(

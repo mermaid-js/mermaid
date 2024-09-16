@@ -1,13 +1,17 @@
 import { log } from '../../../logger.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.d.ts';
+import type { Node, RenderOptions } from '../../types.d.ts';
 import type { SVG } from '../../../diagram-api/types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
-import { getConfig } from '../../../config.js';
 
-export const filledCircle = (parent: SVG, node: Node) => {
+export const filledCircle = (
+  parent: SVG,
+  node: Node,
+  { config: { themeVariables } }: RenderOptions
+) => {
+  const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';
   const shapeSvg = parent
     .insert('g')
@@ -18,7 +22,6 @@ export const filledCircle = (parent: SVG, node: Node) => {
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
-  const { themeVariables } = getConfig();
   const { nodeBorder } = themeVariables;
   const options = userNodeOverrides(node, { fillStyle: 'solid' });
 

@@ -1,5 +1,6 @@
 import { select } from 'd3';
 import { insertNode } from '../dagre-wrapper/nodes.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 
 export const getDiagramElement = (id, securityLevel) => {
   let sandboxElement;
@@ -21,21 +22,26 @@ export const getDiagramElement = (id, securityLevel) => {
 export function insertElementsForSize(el, data) {
   const nodesElem = el.insert('g').attr('class', 'nodes');
   el.insert('g').attr('class', 'edges');
+  const config = getConfig();
   data.nodes.forEach(async (item) => {
     item.shape = 'rect';
-    await insertNode(nodesElem, {
-      ...item,
-      class: 'default flowchart-label',
-      labelStyle: '',
-      x: 0,
-      y: 0,
-      width: 100,
-      rx: 0,
-      ry: 0,
-      height: 100,
-      shape: 'rect',
-      padding: 8,
-    });
+    await insertNode(
+      nodesElem,
+      {
+        ...item,
+        class: 'default flowchart-label',
+        labelStyle: '',
+        x: 0,
+        y: 0,
+        width: 100,
+        rx: 0,
+        ry: 0,
+        height: 100,
+        shape: 'rect',
+        padding: 8,
+      },
+      { config }
+    );
     // Create a new DOM element
     // const element = document.createElement('div');
 
