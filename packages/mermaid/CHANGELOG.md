@@ -1,5 +1,11 @@
 # mermaid
 
+## 11.2.1
+
+### Patch Changes
+
+- [#5856](https://github.com/mermaid-js/mermaid/pull/5856) [`bfd8c63`](https://github.com/mermaid-js/mermaid/commit/bfd8c63daaa8420e57da9953922b9f0c94123064) Thanks [@knsv](https://github.com/knsv)! - Fix for issue with calculation of label width when using in firefox
+
 ## 11.2.0
 
 ### Minor Changes
