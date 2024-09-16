@@ -34,18 +34,26 @@ const calcIntersectionPoint = (node, point) => {
   const dx = point.x - node.x;
   const dy = point.y - node.y;
 
-  const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+  const angleRad = Math.atan2(dy, dx);
+  const angleDeg = angleRad * (180 / Math.PI);
+
+  const halfWidth = node.width / 2;
+  const halfHeight = node.height / 2;
+  const criticalAngleRad = Math.atan2(halfHeight, halfWidth);
+  const criticalAngleDeg = criticalAngleRad * (180 / Math.PI);
 
   let pos;
-  if (angle > -30 && angle <= 30) {
+  if (angleDeg >= -criticalAngleDeg && angleDeg <= criticalAngleDeg) {
     pos = 'r'; // Right
-  } else if (angle > 30 && angle <= 150) {
+  } else if (angleDeg > criticalAngleDeg && angleDeg <= 180 - criticalAngleDeg) {
     pos = 'b'; // Bottom
-  } else if (angle <= -30 && angle > -150) {
+  } else if (angleDeg < -criticalAngleDeg && angleDeg >= -180 + criticalAngleDeg) {
     pos = 't'; // Top
   } else {
     pos = 'l'; // Left
   }
+
+  // console.log('angleDeg', angleDeg, 'pos', pos, criticalAngleDeg);
 
   return { x: intersection.x, y: intersection.y, pos };
 };
