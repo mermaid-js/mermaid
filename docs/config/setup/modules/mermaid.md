@@ -87,4 +87,4 @@
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:452](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L452)
+[packages/mermaid/src/mermaid.ts:457](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L457)

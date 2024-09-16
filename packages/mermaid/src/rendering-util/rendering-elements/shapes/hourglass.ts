@@ -1,9 +1,9 @@
-import { log } from '../../../logger.js';
-import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node } from '../../types.d.ts';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import { log } from '../../../logger.js';
+import type { Node } from '../../types.d.ts';
+import intersect from '../intersect/index.js';
+import { userNodeOverrides } from './handDrawnShapeStyles.js';
+import { createPathFromPoints, getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
 export const hourglass = async (parent: SVGAElement, node: Node) => {
   node.label = '';

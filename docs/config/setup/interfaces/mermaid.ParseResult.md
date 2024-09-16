@@ -8,26 +8,60 @@
 
 [mermaid](../modules/mermaid.md).ParseResult
 
+## Hierarchy
+
+- `Omit`<`ParseResult`, `"config"`>
+
+  ↳ **`ParseResult`**
+
 ## Properties
 
 ### config
 
 • **config**: [`MermaidConfig`](mermaid.MermaidConfig.md)
 
-The config passed as YAML frontmatter or directives
-
 #### Defined in
 
-[packages/mermaid/src/types.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L66)
+[packages/mermaid/src/mermaid.ts:328](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L328)
 
 ---
 
-### diagramType
+### defaultConfig
 
-• **diagramType**: `string`
+• **defaultConfig**: [`MermaidConfig`](mermaid.MermaidConfig.md)
 
-The diagram type, e.g. 'flowchart', 'sequence', etc.
+#### Overrides
+
+Omit.defaultConfig
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:62](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L62)
+[packages/mermaid/src/mermaid.ts:327](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L327)
+
+---
+
+### diagram
+
+• **diagram**: `Diagram`
+
+The diagram AST
+
+#### Inherited from
+
+Omit.diagram
+
+#### Defined in
+
+[packages/mermaid/src/types.ts:72](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L72)
+
+---
+
+### userConfig
+
+• **userConfig**: [`MermaidConfig`](mermaid.MermaidConfig.md)
+
+Config the user has defined in the text as frontmatter or directives
+
+#### Defined in
+
+[packages/mermaid/src/mermaid.ts:326](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L326)

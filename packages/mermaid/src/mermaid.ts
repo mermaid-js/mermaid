@@ -2,18 +2,18 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
 import type { ExternalDiagramDefinition, SVG, SVGGroup } from './diagram-api/types.js';
-import type { Diagram, ParseErrorFunction } from './Diagram.js';
+import type { ParseErrorFunction } from './Diagram.js';
 import type { UnknownDiagramError } from './errors.js';
 import type { InternalHelpers } from './internals.js';
 import { log } from './logger.js';
 import { mermaidAPI } from './mermaidAPI.js';
+import { registerIconPacks } from './rendering-util/icons.js';
 import type { LayoutLoaderDefinition, RenderOptions } from './rendering-util/render.js';
 import { registerLayoutLoaders } from './rendering-util/render.js';
 import type { LayoutData } from './rendering-util/types.js';
@@ -321,10 +321,6 @@ const executeQueue = async () => {
   executionQueueRunning = false;
 };
 
-// interface ConfigTuple {
-//   defaultConfig: MermaidConfig;
-//   config: MermaidConfig;
-// }
 /**
  * Parse the text and validate the syntax.
  * @param text - The mermaid diagram definition.
@@ -354,10 +350,7 @@ const parse = async (
     const performCall = () =>
       new Promise((res, rej) => {
         mermaidAPI.parse(text, parseOptions).then(
-          (r) => {
-            const result = r;
-            result.defaultConfig = mermaidAPI.defaultConfig;
-            result.config = mermaidAPI.getConfig();
+          (result) => {
             // This resolves for the promise for the queue handling
             res(result);
             // This fulfills the promise sent to the value back to the original caller

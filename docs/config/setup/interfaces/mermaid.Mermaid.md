@@ -28,7 +28,7 @@ page.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:446](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L446)
+[packages/mermaid/src/mermaid.ts:451](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L451)
 
 ---
 
@@ -59,7 +59,7 @@ A graph definition key
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:448](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L448)
+[packages/mermaid/src/mermaid.ts:453](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L453)
 
 ---
 
@@ -89,7 +89,7 @@ Use [initialize](mermaid.Mermaid.md#initialize) and [run](mermaid.Mermaid.md#run
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:441](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L441)
+[packages/mermaid/src/mermaid.ts:446](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L446)
 
 ---
 
@@ -116,13 +116,13 @@ This function should be called before the run function.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:445](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L445)
+[packages/mermaid/src/mermaid.ts:450](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L450)
 
 ---
 
 ### mermaidAPI
 
-• **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.defaultConfig; `getConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`userOptions`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<`Diagram` | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<`Diagram`> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`, `positions?`: `Positions`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.setConfig; `updateSiteConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.updateSiteConfig }>
+• **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.defaultConfig; `getConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`userOptions`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<`ParseResult` | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<`ParseResult`> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`, `positions?`: `Positions`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.setConfig; `updateSiteConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.updateSiteConfig }>
 
 **`Deprecated`**
 
@@ -130,17 +130,17 @@ Use [parse](mermaid.Mermaid.md#parse) and [render](mermaid.Mermaid.md#render) in
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:435](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L435)
+[packages/mermaid/src/mermaid.ts:440](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L440)
 
 ---
 
 ### parse
 
-• **parse**: (`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<`boolean` | `void` | `Diagram` & `ConfigTuple`>
+• **parse**: (`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<`boolean` | `void` | [`ParseResult`](mermaid.ParseResult.md)>
 
 #### Type declaration
 
-▸ (`text`, `parseOptions?`): `Promise`<`boolean` | `void` | `Diagram` & `ConfigTuple`>
+▸ (`text`, `parseOptions?`): `Promise`<`boolean` | `void` | [`ParseResult`](mermaid.ParseResult.md)>
 
 Parse the text and validate the syntax.
 
@@ -153,7 +153,7 @@ Parse the text and validate the syntax.
 
 ##### Returns
 
-`Promise`<`boolean` | `void` | `Diagram` & `ConfigTuple`>
+`Promise`<`boolean` | `void` | [`ParseResult`](mermaid.ParseResult.md)>
 
 If valid, Diagram otherwise `false` if parseOptions.suppressErrors is `true`.
 
@@ -180,7 +180,7 @@ console.log(await mermaid.parse('wrong \n a --> b'));
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:436](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L436)
+[packages/mermaid/src/mermaid.ts:441](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L441)
 
 ---
 
@@ -190,7 +190,7 @@ console.log(await mermaid.parse('wrong \n a --> b'));
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:430](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L430)
+[packages/mermaid/src/mermaid.ts:435](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L435)
 
 ---
 
@@ -218,7 +218,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:444](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L444)
+[packages/mermaid/src/mermaid.ts:449](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L449)
 
 ---
 
@@ -242,7 +242,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:449](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L449)
+[packages/mermaid/src/mermaid.ts:454](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L454)
 
 ---
 
@@ -266,7 +266,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:443](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L443)
+[packages/mermaid/src/mermaid.ts:448](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L448)
 
 ---
 
@@ -293,7 +293,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:437](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L437)
+[packages/mermaid/src/mermaid.ts:442](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L442)
 
 ---
 
@@ -341,7 +341,7 @@ Renders the mermaid diagrams
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:442](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L442)
+[packages/mermaid/src/mermaid.ts:447](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L447)
 
 ---
 
@@ -376,7 +376,7 @@ to it (eg. dart interop wrapper). (Initially there is no parseError member of me
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:447](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L447)
+[packages/mermaid/src/mermaid.ts:452](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L452)
 
 ---
 
@@ -386,4 +386,4 @@ to it (eg. dart interop wrapper). (Initially there is no parseError member of me
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:429](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L429)
+[packages/mermaid/src/mermaid.ts:434](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L434)

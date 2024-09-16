@@ -1,5 +1,3 @@
-import { curveLinear } from 'd3';
-import ELK from 'elkjs/lib/elk.bundled.js';
 import type {
   InternalHelpers,
   LayoutData,
@@ -7,6 +5,9 @@ import type {
   SVG,
   SVGGroup,
 } from '@mermaid-chart/mermaid';
+// @ts-ignore TODO: Investigate D3 issue
+import { curveLinear } from 'd3';
+import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
 export const render = async (

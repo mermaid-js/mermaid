@@ -68,17 +68,23 @@ function processAndSetConfigs(text: string) {
 async function parse(
   text: string,
   parseOptions: ParseOptions & { suppressErrors: true }
-): Promise<ParseResult | false>;
+): Promise<ParseResult & { error?: unknown }>;
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult>;
-async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
+async function parse(
+  text: string,
+  parseOptions?: ParseOptions
+): Promise<ParseResult & { error?: unknown }> {
   addDiagrams();
+  let code = '';
+  let title = undefined;
+  let config: MermaidConfig = {};
   try {
-    const { code, config } = processAndSetConfigs(text);
+    ({ code, config, title } = processAndSetConfigs(text));
     const diagram = await getDiagramFromText(code);
-    return { diagram, config, diagramType: diagram.type };
+    return { diagram, code, config, title, success: true };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
-      return false;
+      return { code, config, title, success: false, error };
     }
     throw error;
   }
