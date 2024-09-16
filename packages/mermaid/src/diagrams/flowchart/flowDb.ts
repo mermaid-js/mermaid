@@ -820,13 +820,13 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
     return 'imageSquare';
   }
   if (vertex?.icon) {
-    if (vertex.form === 'circle') {
+    if (vertex?.form === 'circle') {
       return 'iconCircle';
     }
-    if (vertex.form === 'square') {
+    if (vertex?.form === 'square') {
       return 'iconSquare';
     }
-    if (vertex.form === 'rounded') {
+    if (vertex?.form === 'rounded') {
       return 'iconRounded';
     }
     return 'icon';
