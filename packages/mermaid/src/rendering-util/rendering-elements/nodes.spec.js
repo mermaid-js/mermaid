@@ -18,14 +18,14 @@ describe('Test Alias for shapes', function () {
   // stadium | pill | term
   it('should support alias for stadium shape ', function () {
     expect(shapes.pill).toBe(shapes.stadium);
-    expect(shapes.term).toBe(shapes.stadium);
+    expect(shapes.terminal).toBe(shapes.stadium);
   });
 
-  // fr | subproc | framed-rectangle | subroutine
+  // fr-rect | subproc | framed-rectangle | subroutine
   it('should support alias for subroutine shape ', function () {
-    expect(shapes['framed-rectangle']).toBe(shapes.fr);
-    expect(shapes.subproc).toBe(shapes.fr);
-    expect(shapes.subroutine).toBe(shapes.fr);
+    expect(shapes['framed-rectangle']).toBe(shapes['fr-rect']);
+    expect(shapes.subproc).toBe(shapes['fr-rect']);
+    expect(shapes.subroutine).toBe(shapes['fr-rect']);
   });
 
   // cyl | db | cylinder
@@ -48,13 +48,13 @@ describe('Test Alias for shapes', function () {
 
   // l-r | lean-right | in-out
   it('should support alias for lean-right shape ', function () {
-    expect(shapes['l-r']).toBe(shapes['lean-right']);
+    expect(shapes['lean-r']).toBe(shapes['lean-right']);
     expect(shapes['in-out']).toBe(shapes['lean-right']);
   });
 
   // l-l | lean-left | out-in
   it('should support alias for lean-left shape ', function () {
-    expect(shapes['l-l']).toBe(shapes['lean-left']);
+    expect(shapes['lean-l']).toBe(shapes['lean-left']);
     expect(shapes['out-in']).toBe(shapes['lean-left']);
   });
 
@@ -72,15 +72,15 @@ describe('Test Alias for shapes', function () {
     expect(shapes['inv-trapezoid']).toBe(shapes['trap-t']);
   });
 
-  // dc | double-circle
+  // dbl-circ| double-circle
   it('should support alias for doublecircle shape ', function () {
-    expect(shapes['double-circle']).toBe(shapes.dc);
+    expect(shapes['double-circle']).toBe(shapes['dbl-circ']);
   });
 
-  // notched-rect | card | notch-rect
+  // notched-rectangle | card | notch-rect
   it('should support alias for notched-rectangle shape ', function () {
-    expect(shapes.card).toBe(shapes['notched-rect']);
-    expect(shapes['notch-rect']).toBe(shapes['notched-rect']);
+    expect(shapes.card).toBe(shapes['notched-rectangle']);
+    expect(shapes['notch-rect']).toBe(shapes['notched-rectangle']);
   });
 
   // lined-rect | lined-proc | shaded-proc
@@ -100,10 +100,9 @@ describe('Test Alias for shapes', function () {
     expect(shapes.stop).toBe(shapes['framed-circle']);
   });
 
-  // fork | join | long-rect
+  // fork | join
   it('should support alias for fork shape ', function () {
     expect(shapes.join).toBe(shapes.fork);
-    expect(shapes['long-rect']).toBe(shapes.fork);
   });
 
   // brace | comment | brace-l
@@ -118,35 +117,32 @@ describe('Test Alias for shapes', function () {
     expect(shapes['lightning-bolt']).toBe(shapes.bolt);
   });
 
-  // we-rect | doc | wave-edge-rect | wave-edged-rectangle
+  // document | doc
   it('should support alias for waveEdgedRectangle shape ', function () {
-    expect(shapes.doc).toBe(shapes['we-rect']);
-    expect(shapes['wave-edge-rect']).toBe(shapes['we-rect']);
-    expect(shapes['wave-edged-rectangle']).toBe(shapes['we-rect']);
+    expect(shapes.doc).toBe(shapes.document);
   });
 
-  // delay | half-rounded-rect
+  // delay | half-rounded-rectangle
   it('should support alias for halfRoundedRectangle shape ', function () {
-    expect(shapes.delay).toBe(shapes['half-rounded-rect']);
+    expect(shapes.delay).toBe(shapes['half-rounded-rectangle']);
   });
 
-  // t-cyl | das | titled-cylinder
-  it('should support alias for tilted-cylinder shape ', function () {
-    expect(shapes.das).toBe(shapes['t-cyl']);
-    expect(shapes['tilted-cylinder']).toBe(shapes['t-cyl']);
+  // h-cyl | das | horizontal-cylinder
+  it('should support alias for horizontal-cylinder shape ', function () {
+    expect(shapes.das).toBe(shapes['h-cyl']);
+    expect(shapes['horizontal-cylinder']).toBe(shapes['h-cyl']);
   });
 
-  // l-cyl | disk | lined-cylinder
+  // lin-cyl | disk | lined-cylinder
   it('should support alias for linedCylinder shape ', function () {
-    expect(shapes.disk).toBe(shapes['l-cyl']);
-    expect(shapes['lined-cylinder']).toBe(shapes['l-cyl']);
+    expect(shapes.disk).toBe(shapes['lin-cyl']);
+    expect(shapes['lined-cylinder']).toBe(shapes['lin-cyl']);
   });
 
-  // cur-trap | disp | display | curved-trapezoid
+  // curv-trap | display | curved-trapezoid
   it('should support alias for curvedTrapezoid shape ', function () {
-    expect(shapes.disp).toBe(shapes['cur-trap']);
-    expect(shapes['curved-trapezoid']).toBe(shapes['cur-trap']);
-    expect(shapes.display).toBe(shapes['cur-trap']);
+    expect(shapes.display).toBe(shapes['curv-trap']);
+    expect(shapes['curved-trapezoid']).toBe(shapes['curv-trap']);
   });
 
   // div-rect | div-proc | divided-rectangle
@@ -157,9 +153,8 @@ describe('Test Alias for shapes', function () {
 
   // sm-tri | extract | small-triangle | triangle
   it('should support alias for smallTriangle shape ', function () {
-    expect(shapes.extract).toBe(shapes['sm-tri']);
-    expect(shapes['small-triangle']).toBe(shapes['sm-tri']);
-    expect(shapes.triangle).toBe(shapes['sm-tri']);
+    expect(shapes.extract).toBe(shapes.tri);
+    expect(shapes.triangle).toBe(shapes.tri);
   });
 
   // win-pane | internal-storage | window-pane
@@ -170,14 +165,13 @@ describe('Test Alias for shapes', function () {
 
   // fc | junction | filled-circle
   it('should support alias for filledCircle shape ', function () {
-    expect(shapes.junction).toBe(shapes.fc);
-    expect(shapes['filled-circle']).toBe(shapes.fc);
+    expect(shapes.junction).toBe(shapes['f-circ']);
+    expect(shapes['filled-circle']).toBe(shapes['f-circ']);
   });
 
-  //lin-we-rect | lin-doc | lined-wave-edged-rect
+  // | lin-doc | lined-document
   it('should support alias for linedWaveEdgedRectangle shape ', function () {
-    expect(shapes['lin-doc']).toBe(shapes['lin-we-rect']);
-    expect(shapes['lined-wave-edged-rect']).toBe(shapes['lin-we-rect']);
+    expect(shapes['lin-doc']).toBe(shapes['lined-document']);
   });
 
   // notch-pent | loop-limit | notched-pentagon
@@ -192,22 +186,22 @@ describe('Test Alias for shapes', function () {
     expect(shapes['flipped-triangle']).toBe(shapes['flip-tri']);
   });
 
-  //sloped-rect | manual-input | sloped-rectangle
+  //sl-rect | manual-input | sloped-rectangle
   it('should support alias for slopedRectangle shape ', function () {
-    expect(shapes['manual-input']).toBe(shapes['sloped-rect']);
-    expect(shapes['sloped-rectangle']).toBe(shapes['sloped-rect']);
+    expect(shapes['manual-input']).toBe(shapes['sl-rect']);
+    expect(shapes['sloped-rectangle']).toBe(shapes['sl-rect']);
   });
 
-  // mul-we-rect | mul-doc | multi-wave-edged-rectangle
+  // docs | documents | st-doc | stacked-document
   it('should support alias for multiWaveEdgedRectangle shape ', function () {
-    expect(shapes['mul-doc']).toBe(shapes['mul-we-rect']);
-    expect(shapes['multi-wave-edged-rectangle']).toBe(shapes['mul-we-rect']);
+    expect(shapes.docs).toBe(shapes.documents);
+    expect(shapes['st-doc']).toBe(shapes['stacked-document']);
   });
 
-  // mul-rect | mul-proc | multi-rect
+  // procs | processes | st-rect | stacked-rectangle
   it('should support alias for multiRect shape ', function () {
-    expect(shapes['mul-proc']).toBe(shapes['mul-rect']);
-    expect(shapes['multi-rect']).toBe(shapes['mul-rect']);
+    expect(shapes.procs).toBe(shapes.processes);
+    expect(shapes['st-rect']).toBe(shapes['stacked-rectangle']);
   });
 
   // flag | paper-tape
@@ -215,27 +209,27 @@ describe('Test Alias for shapes', function () {
     expect(shapes['paper-tape']).toBe(shapes.flag);
   });
 
-  // bt-rect| stored-data | bow-tie-rect
+  // bow-rect| stored-data | bow-tie-rectangle
   it('should support alias for bowTieRect shape ', function () {
-    expect(shapes['stored-data']).toBe(shapes['bt-rect']);
-    expect(shapes['bow-tie-rect']).toBe(shapes['bt-rect']);
+    expect(shapes['stored-data']).toBe(shapes['bow-rect']);
+    expect(shapes['bow-tie-rectangle']).toBe(shapes['bow-rect']);
   });
 
-  // cross-circle | summary | crossed-circle
+  // cross-circ | summary | crossed-circle
   it('should support alias for crossedCircle shape ', function () {
-    expect(shapes.summary).toBe(shapes['cross-circle']);
-    expect(shapes['crossed-circle']).toBe(shapes['cross-circle']);
+    expect(shapes.summary).toBe(shapes['cross-circ']);
+    expect(shapes['crossed-circle']).toBe(shapes['cross-circ']);
   });
 
-  // tag-we-rect | tag-doc | tagged-wave-edged-rectangle
-  it('should support alias for taggedWaveEdgedRectangle shape ', function () {
-    expect(shapes['tag-doc']).toBe(shapes['tag-we-rect']);
-    expect(shapes['tagged-wave-edged-rectangle']).toBe(shapes['tag-we-rect']);
+  // tag-doc| tag-document
+  it('should support alias for taggedDocument shape ', function () {
+    expect(shapes['tag-doc']).toBe(shapes['tagged-document']);
   });
 
-  // tag-rect | tag-proc | tagged-rect
+  // tag-rect | tag-proc | tagged-rectangle | tagged-process
   it('should support alias for taggedRect shape ', function () {
     expect(shapes['tag-proc']).toBe(shapes['tag-rect']);
-    expect(shapes['tagged-rect']).toBe(shapes['tag-rect']);
+    expect(shapes['tagged-rectangle']).toBe(shapes['tag-rect']);
+    expect(shapes['tagged-process']).toBe(shapes['tag-rect']);
   });
 });

@@ -38,20 +38,28 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
 
-\@\{                                            { this.pushState("shapeData"); yytext=""; return 'SHAPE_DATA' }
-<shapeData>["]                                   {
+\@\{                                            {
+                                                    // console.log('=> shapeData', yytext);
+                                                    this.pushState("shapeData"); yytext=""; return 'SHAPE_DATA' }
+<shapeData>["]                                  {
+                                                    // console.log('=> shapeDataStr', yytext);
                                                     this.pushState("shapeDataStr");
                                                     return 'SHAPE_DATA';
                                                 }
-<shapeDataStr>["]                                { this.popState(); return 'SHAPE_DATA'}
-<shapeDataStr>[^\"]+                             {
+<shapeDataStr>["]                               {
+                                                    // console.log('shapeData <==', yytext);
+                                                    this.popState(); return 'SHAPE_DATA'}
+<shapeDataStr>[^\"]+                            {
+                                                    // console.log('shapeData', yytext);
                                                     const re = /\n\s*/g;
                                                     yytext = yytext.replace(re,"<br/>");
                                                     return 'SHAPE_DATA'}
-<shapeData>[^@^"]+                                {
+<shapeData>[^}^"]+                                {
+                                                    // console.log('shapeData', yytext);
                                                     return 'SHAPE_DATA';
                                                 }
-<shapeData>\@+                                    {
+<shapeData>"}"                                    {
+                                                    // console.log('<== root', yytext)
                                                     this.popState();
                                                 }
 
@@ -404,8 +412,10 @@ vertexStatement: vertexStatement link node shapeData
 
 node: styledVertex
         { /*console.warn('nod', $styledVertex);*/ $$ = [$styledVertex];}
+    | node shapeData spaceList AMP spaceList styledVertex
+        {  yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); $$ = $node.concat($styledVertex); /*console.warn('pip2', $node[0], $styledVertex, $$);*/  }
     | node spaceList AMP spaceList styledVertex
-        { $$ = $node.concat($styledVertex); /* console.warn('pip', $node[0], $styledVertex, $$); */ }
+        { $$ = $node.concat($styledVertex); /*console.warn('pip', $node[0], $styledVertex, $$);*/  }
     ;
 
 styledVertex: vertex
