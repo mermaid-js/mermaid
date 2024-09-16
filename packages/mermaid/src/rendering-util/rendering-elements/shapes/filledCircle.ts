@@ -3,7 +3,7 @@ import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
 import type { Node, RenderOptions } from '../../types.d.ts';
 import intersect from '../intersect/index.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
 
 export const filledCircle = (
@@ -11,7 +11,6 @@ export const filledCircle = (
   node: Node,
   { config: { themeVariables } }: RenderOptions
 ) => {
-  const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';
   const shapeSvg = parent
     .insert('g')
