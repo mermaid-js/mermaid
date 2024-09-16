@@ -39,10 +39,11 @@ export const render = async (
     };
     graph.children.push(child);
     nodeDb[node.id] = child;
+    const config = getConfig();
 
     // Add the element to the DOM
     if (!node.isGroup) {
-      const childNodeEl = await insertNode(nodeEl, node, node.dir);
+      const childNodeEl = await insertNode(nodeEl, node, { config });
       boundingBox = childNodeEl.node().getBBox();
       child.domId = childNodeEl;
       child.width = boundingBox.width;
@@ -56,7 +57,7 @@ export const render = async (
         // @ts-ignore TODO: fix this
         const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
         labelData.width = bbox.width;
-        labelData.wrappingWidth = getConfig().flowchart!.wrappingWidth;
+        labelData.wrappingWidth = config.flowchart!.wrappingWidth;
         // Give some padding for elk
         labelData.height = bbox.height - 2;
         labelData.labelNode = shapeSvg.node();

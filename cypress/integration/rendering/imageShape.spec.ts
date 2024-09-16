@@ -10,7 +10,7 @@ looks.forEach((look) => {
       describe(`Test imageShape in ${look} look and dir ${direction} with label position ${pos ? pos : 'not defined'}`, () => {
         it(`without label`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
-          flowchartCode += `  nA --> A@{ img: 'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg', w: '100', h: '100' }@\n`;
+          flowchartCode += `  nA --> A@{ img: 'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg', w: '100', h: '100' }\n`;
           imgSnapshotTest(flowchartCode, { look });
         });
 
@@ -22,7 +22,7 @@ looks.forEach((look) => {
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }
-          flowchartCode += ` }@\n`;
+          flowchartCode += ` }\n`;
           imgSnapshotTest(flowchartCode, { look });
         });
 
@@ -34,7 +34,7 @@ looks.forEach((look) => {
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }
-          flowchartCode += ` }@\n`;
+          flowchartCode += ` }\n`;
           imgSnapshotTest(flowchartCode, { look });
         });
 
@@ -46,7 +46,7 @@ looks.forEach((look) => {
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }
-          flowchartCode += ` }@\n`;
+          flowchartCode += ` }\n`;
           imgSnapshotTest(flowchartCode, { look, htmlLabels: true });
         });
 
@@ -58,7 +58,7 @@ looks.forEach((look) => {
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }
-          flowchartCode += ` }@\n`;
+          flowchartCode += ` }\n`;
           imgSnapshotTest(flowchartCode, {
             look,
             htmlLabels: false,
@@ -74,7 +74,7 @@ looks.forEach((look) => {
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }
-          flowchartCode += ` }@\n`;
+          flowchartCode += ` }\n`;
           flowchartCode += `  style A fill:#f9f,stroke:#333,stroke-width:4px \n`;
           imgSnapshotTest(flowchartCode, { look });
         });
@@ -88,7 +88,7 @@ looks.forEach((look) => {
           if (pos) {
             flowchartCode += `, pos: '${pos}'`;
           }
-          flowchartCode += ` }@\n`;
+          flowchartCode += ` }\n`;
           flowchartCode += `  A:::customClazz\n`;
           imgSnapshotTest(flowchartCode, { look });
         });

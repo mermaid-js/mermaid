@@ -124,7 +124,8 @@ async function calculateBlockSize(
   }
 
   // Add the element to the DOM to size it
-  const nodeEl = await insertNode(elem, node);
+  const config = getConfig();
+  const nodeEl = await insertNode(elem, node, { config });
   const boundingBox = nodeEl.node().getBBox();
   const obj = db.getBlock(node.id);
   obj.size = { width: boundingBox.width, height: boundingBox.height, x: 0, y: 0, node: nodeEl };
@@ -138,7 +139,8 @@ export async function insertBlockPositioned(elem: any, block: Block, db: any) {
   // Add the element to the DOM to size it
   const obj = db.getBlock(node.id);
   if (obj.type !== 'space') {
-    await insertNode(elem, node);
+    const config = getConfig();
+    await insertNode(elem, node, { config });
     block.intersect = node?.intersect;
     positionNode(node);
   }

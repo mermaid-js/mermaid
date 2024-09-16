@@ -123,23 +123,18 @@ export const addVertex = function (
   if (shapeData !== undefined) {
     let yamlData;
     // detect if shapeData contains a newline character
-
+    // console.log('shapeData', shapeData);
     if (!shapeData.includes('\n')) {
       // console.log('yamlData shapeData has no new lines', shapeData);
-      yamlData = '{\n' + shapeData + '\n';
+      yamlData = '{\n' + shapeData + '\n}';
     } else {
       // console.log('yamlData shapeData has new lines', shapeData);
       yamlData = shapeData + '\n';
-      // Find the position of the last } and replace it with a newline
-      const lastPos = yamlData.lastIndexOf('}');
-      if (lastPos !== -1) {
-        yamlData = yamlData.substring(0, lastPos) + '\n';
-      }
     }
+    // console.log('yamlData', yamlData);
     const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
-
     if (doc.shape && doc.shape !== doc.shape.toLowerCase()) {
-      throw new Error(`No such shape: ${node.shape}. Shape names should be lowercase.`);
+      throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
     }
 
     // console.log('yamlData doc', doc);
@@ -825,13 +820,13 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
     return 'imageSquare';
   }
   if (vertex?.icon) {
-    if (vertex.form === 'circle') {
+    if (vertex?.form === 'circle') {
       return 'iconCircle';
     }
-    if (vertex.form === 'square') {
+    if (vertex?.form === 'square') {
       return 'iconSquare';
     }
-    if (vertex.form === 'rounded') {
+    if (vertex?.form === 'rounded') {
       return 'iconRounded';
     }
     return 'icon';

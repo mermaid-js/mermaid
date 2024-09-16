@@ -5,6 +5,7 @@ bmatrix
 braintree
 catmull
 compositTitleSize
+curv
 doublecircle
 elems
 gantt
@@ -24,6 +25,7 @@ multigraph
 nodesep
 NOTEGROUP
 Pinterest
+procs
 rankdir
 ranksep
 rect

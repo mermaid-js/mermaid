@@ -1,35 +1,36 @@
 import { log } from '../../../logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.js';
+import type { Node, RenderOptions } from '../../types.js';
 import type { SVG } from '../../../diagram-api/types.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { getIconSVG } from '../../icons.js';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 
-export const iconRounded = async (parent: SVG, node: Node) => {
-  const { labelStyles, nodeStyles } = styles2String(node);
+export const iconRounded = async (
+  parent: SVG,
+  node: Node,
+  { config: { themeVariables, flowchart } }: RenderOptions
+) => {
+  const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
   const assetWidth = node.assetWidth ?? 48;
   const iconSize = Math.max(assetHeight, assetWidth);
-  const defaultWidth = getConfig()?.flowchart?.wrappingWidth;
+  const defaultWidth = flowchart?.wrappingWidth;
   node.width = Math.max(iconSize, defaultWidth ?? 0);
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
     node,
     'icon-shape default'
   );
-  const { cssStyles } = node;
 
   const topLabel = node.pos === 't';
 
   const height = iconSize + halfPadding * 2;
   const width = iconSize + halfPadding * 2;
-  const { themeVariables } = getConfig();
-  const { mainBkg } = themeVariables;
+  const { nodeBorder, mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
 
   const x = -width / 2;
@@ -58,8 +59,9 @@ export const iconRounded = async (parent: SVG, node: Node) => {
     const iconHeight = iconBBox.height;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight + bbox.height / 2 : -height / 2 - bbox.height / 2})`
+      `translate(${-iconWidth / 2},${topLabel ? height / 2 - iconHeight - halfPadding + bbox.height / 2 : -height / 2 + halfPadding - bbox.height / 2})`
     );
+    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   }
 
   label.attr(
@@ -68,14 +70,6 @@ export const iconRounded = async (parent: SVG, node: Node) => {
   );
 
   iconShape.attr('transform', `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2})`);
-
-  if (cssStyles && node.look !== 'handDrawn') {
-    iconShape.selectAll('path').attr('style', cssStyles);
-  }
-
-  if (nodeStyles && node.look !== 'handDrawn') {
-    iconShape.selectAll('path').attr('style', nodeStyles);
-  }
 
   updateNodeBounds(node, shapeSvg);
 

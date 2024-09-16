@@ -9,7 +9,6 @@ import { choice } from './shapes/choice.ts';
 import { note } from './shapes/note.ts';
 import { stadium } from './shapes/stadium.js';
 import { rectWithTitle } from './shapes/rectWithTitle.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { subroutine } from './shapes/subroutine.js';
 import { cylinder } from './shapes/cylinder.js';
 import { circle } from './shapes/circle.js';
@@ -62,161 +61,236 @@ export const shapes = {
   // States
   state,
   stateStart,
-  'small-circle': stateStart,
-  'sm-circ': stateStart,
-  start: stateStart,
   stateEnd,
-  'framed-circle': stateEnd,
-  stop: stateEnd,
+  forkJoin,
+  choice,
+  note,
 
   // Rectangles
   rectWithTitle,
   roundedRect,
-  rounded: roundedRect,
-  event: roundedRect,
   squareRect,
+
+  // Rectangle with alias: 'process', 'rect', 'proc', 'rectangle'
   rectangle: squareRect,
   rect: squareRect,
   process: squareRect,
   proc: squareRect,
+
+  // Rounded Rectangle with alias: 'event', 'rounded'
+  rounded: roundedRect,
+  event: roundedRect,
+
+  // Stadium with alias: 'terminal','pill', 'stadium'
   stadium,
   pill: stadium,
-  term: stadium,
-  'window-pane': windowPane,
-  'win-pane': windowPane,
-  'internal-storage': windowPane,
-  'divided-rectangle': dividedRectangle,
-  'div-rect': dividedRectangle,
-  'div-proc': dividedRectangle,
-  'tagged-rect': taggedRect,
-  'tag-rect': taggedRect,
-  'tag-proc': taggedRect,
-  'multi-rect': multiRect,
-  'mul-rect': multiRect,
-  'mul-proc': multiRect,
+  terminal: stadium,
 
-  // Subroutine
+  // Subprocess with alias: 'fr-rect', 'subproc', 'subprocess', 'framed-rectangle', 'subroutine'
   subroutine,
   'framed-rectangle': subroutine,
-  fr: subroutine,
+  'fr-rect': subroutine,
+  subprocess: subroutine,
   subproc: subroutine,
 
-  // Cylinders
+  // Cylinder with alias: 'db', 'database', 'cylinder', 'cyl'
   cylinder,
-  cyl: cylinder,
   db: cylinder,
-  'tilted-cylinder': tiltedCylinder,
-  't-cyl': tiltedCylinder,
-  das: tiltedCylinder,
-  'lined-cylinder': linedCylinder,
-  'l-cyl': linedCylinder,
-  disk: linedCylinder,
+  cyl: cylinder,
+  database: cylinder,
 
-  // Circles
-  circle,
-  'double-circle': doublecircle,
-  dc: doublecircle,
-  'crossed-circle': crossedCircle,
-  'cross-circle': crossedCircle,
-  summary: crossedCircle,
-  'filled-circle': filledCircle,
-  fc: filledCircle,
-  junction: filledCircle,
-  'lined-proc': shadedProcess,
-  'lined-rect': shadedProcess,
-  'shaded-proc': shadedProcess,
+  // Diamond with alias: 'diam', 'decision', 'diamond'
+  question,
+  diam: question,
+  diamond: question,
+  decision: question,
 
-  // Trapezoids
-  trapezoid,
-  'trapezoid-bottom': trapezoid,
+  // Hexagon with alias: 'hex', 'hexagon', 'prepare'
+  hexagon,
+  hex: hexagon,
+  prepare: hexagon,
+
+  // Lean Right with alias: 'lean-r', 'lean-right', 'in-out'
+  lean_right, // used in old syntax for flowchart
+  'lean-r': lean_right,
+  'lean-right': lean_right,
+  'in-out': lean_right,
+
+  // Lean Left with alias: 'lean-l', 'lean-left', 'out-in'
+  lean_left, // used in old syntax for flowchart
+  'lean-l': lean_left,
+  'lean-left': lean_left,
+  'out-in': lean_left,
+
+  // Trapezoid with alias: 'trap-b', 'trapezoid-bottom', 'priority'
+  trapezoid, // used in old syntax for flowchart
   'trap-b': trapezoid,
+  'trapezoid-bottom': trapezoid,
   priority: trapezoid,
-  inv_trapezoid,
+
+  // Inverted Trapezoid with alias: 'inv-trapezoid', 'trapezoid-top', 'trap-t', 'manual'
+  inv_trapezoid, // used in old syntax for flowchart
   'inv-trapezoid': inv_trapezoid,
   'trapezoid-top': inv_trapezoid,
   'trap-t': inv_trapezoid,
   manual: inv_trapezoid,
+
+  // Double Circle with alias: 'dbl-circ', 'double-circle'
+  doublecircle, // used in old syntax for flowchart
+  'dbl-circ': doublecircle,
+  'double-circle': doublecircle,
+
+  // circle with alias: 'circ', 'circle'
+  circle,
+  circ: circle,
+
+  // Rect Left Inv Arrow with alias: 'odd', 'rect-left-inv-arrow'
+  rect_left_inv_arrow,
+  odd: rect_left_inv_arrow,
+
+  // Notched Rectangle with alias: 'notched-rectangle', 'notch-rect', 'card'
+  card,
+  'notched-rectangle': card,
+  'notch-rect': card,
+
+  // Lined rectangle with alias: 'lin-rect', 'lined-rectangle', 'lin-proc', lined-process', 'shaded-process'
+  'lined-rectangle': shadedProcess,
+  'lin-rect': shadedProcess,
+  'lin-proc': shadedProcess,
+  'lined-process': shadedProcess,
+  'shaded-process': shadedProcess,
+
+  //  Small circle with alias: 'sm-circ', 'small-circle', 'start'
+  'small-circle': stateStart,
+  'sm-circ': stateStart,
+  start: stateStart,
+
+  // framed circle with alias: 'stop', 'framed-circle', 'fr-circ'
+  stop: stateEnd,
+  'framed-circle': stateEnd,
+  'fr-circ': stateEnd,
+
+  // fork with alias: 'join', 'fork'
+  join: forkJoin,
+  fork: forkJoin,
+
+  // comment with alias: 'comment', 'brace-l'
+  comment: curlyBraceLeft,
+  'brace-l': curlyBraceLeft,
+
+  // lightening bolt with alias: 'bolt', 'com-link', 'lightning-bolt'
+  bolt: lightningBolt,
+  'com-link': lightningBolt,
+  'lightning-bolt': lightningBolt,
+
+  // document with alias: 'doc', 'document'
+  doc: waveEdgedRectangle,
+  document: waveEdgedRectangle,
+
+  // delay with alias: 'delay', 'half-rounded-rectangle'
+  delay: halfRoundedRectangle,
+  'half-rounded-rectangle': halfRoundedRectangle,
+
+  // horizontal cylinder with alias: 'h-cyl', 'das', 'horizontal-cylinder'
+  'horizontal-cylinder': tiltedCylinder,
+  'h-cyl': tiltedCylinder,
+  das: tiltedCylinder,
+
+  // lined cylinder with alias: 'lin-cyl', 'lined-cylinder', 'disk'
+  'lined-cylinder': linedCylinder,
+  'lin-cyl': linedCylinder,
+  disk: linedCylinder,
+
+  // curved trapezoid with alias: 'curv-trap', 'curved-trapezoid', 'display'
   'curved-trapezoid': curvedTrapezoid,
-  'cur-trap': curvedTrapezoid,
-  disp: curvedTrapezoid,
+  'curv-trap': curvedTrapezoid,
   display: curvedTrapezoid,
 
-  // Hexagons & Misc Geometric
-  hexagon,
-  hex: hexagon,
-  prepare: hexagon,
+  // divided rectangle with alias: 'div-rect', 'divided-rectangle', 'div-proc', 'divided-process'
+  'divided-rectangle': dividedRectangle,
+  'div-rect': dividedRectangle,
+  'div-proc': dividedRectangle,
+  'divided-process': dividedRectangle,
+
+  // triangle with alias: 'tri', 'triangle', 'extract'
   triangle,
-  'small-triangle': triangle,
-  'sm-tri': triangle,
+  tri: triangle,
   extract: triangle,
-  'flipped-triangle': flippedTriangle,
-  'flip-tri': flippedTriangle,
-  'manual-file': flippedTriangle,
+
+  // window pane with alias: 'window-pane', 'win-pane', 'internal-storage'
+  'window-pane': windowPane,
+  'win-pane': windowPane,
+  'internal-storage': windowPane,
+
+  // filled circle with alias: 'f-circ', 'filled-circle', 'junction'
+  'f-circ': filledCircle,
+  junction: filledCircle,
+  'filled-circle': filledCircle,
+
+  // lined document with alias: 'lin-doc', 'lined-document'
+  'lin-doc': linedWaveEdgedRect,
+  'lined-document': linedWaveEdgedRect,
+
+  // notched pentagon with alias: 'notch-pent', 'notched-pentagon', 'loop-limit'
   'notched-pentagon': trapezoidalPentagon,
   'notch-pent': trapezoidalPentagon,
   'loop-limit': trapezoidalPentagon,
 
-  //wave Edged Rectangles
-  'wave-rectangle': waveRectangle,
-  'w-rect': waveRectangle,
+  // flipped triangle with alias: 'flip-tri', 'flipped-triangle', 'manual-file'
+  'flipped-triangle': flippedTriangle,
+  'flip-tri': flippedTriangle,
+  'manual-file': flippedTriangle,
+
+  // sloped rectangle with alias: 'sl-rect', 'sloped-rectangle', 'manual-input'
+  'sloped-rectangle': slopedRect,
+  'sl-rect': slopedRect,
+  'manual-input': slopedRect,
+
+  // documents with alias: 'docs', 'documents', 'st-doc', 'stacked-document'
+  docs: multiWaveEdgedRectangle,
+  documents: multiWaveEdgedRectangle,
+  'st-doc': multiWaveEdgedRectangle,
+  'stacked-document': multiWaveEdgedRectangle,
+
+  // 'processes' with alias: 'procs', 'processes', 'st-rect', 'stacked-rectangle'
+  processes: multiRect,
+  procs: multiRect,
+  'stacked-rectangle': multiRect,
+  'st-rect': multiRect,
+
+  // flag with alias: 'flag', 'paper-tape'
   flag: waveRectangle,
   'paper-tape': waveRectangle,
-  'wave-edge-rect': waveEdgedRectangle,
-  'wave-edged-rectangle': waveEdgedRectangle,
-  'wave-rect': waveEdgedRectangle,
-  'we-rect': waveEdgedRectangle,
-  doc: waveEdgedRectangle,
-  'multi-wave-edged-rectangle': multiWaveEdgedRectangle,
-  'mul-we-rect': multiWaveEdgedRectangle,
-  'mul-doc': multiWaveEdgedRectangle,
-  'lined-wave-edged-rect': linedWaveEdgedRect,
-  'lin-we-rect': linedWaveEdgedRect,
-  'lin-doc': linedWaveEdgedRect,
-  'tagged-wave-edged-rectangle': taggedWaveEdgedRectangle,
-  'tag-we-rect': taggedWaveEdgedRectangle,
-  'tag-doc': taggedWaveEdgedRectangle,
 
-  // Custom Rectangles
-  'bow-tie-rect': bowTieRect,
-  'bt-rect': bowTieRect,
+  // bow tie rectangle with alias: 'bow-rect', 'bow-tie-rectangle', 'stored-data'
+  'bow-tie-rectangle': bowTieRect,
+  'bow-rect': bowTieRect,
   'stored-data': bowTieRect,
-  'sloped-rectangle': slopedRect,
-  'sloped-rect': slopedRect,
-  'manual-input': slopedRect,
-  'half-rounded-rect': halfRoundedRectangle,
-  delay: halfRoundedRectangle,
-  card,
-  'notched-rect': card,
-  'notch-rect': card,
-  'lean-right': lean_right,
-  lean_right: lean_right,
-  'l-r': lean_right,
-  'in-out': lean_right,
-  'lean-left': lean_left,
-  lean_left: lean_left,
-  'l-l': lean_left,
-  'out-in': lean_left,
 
-  // Miscellaneous
-  forkJoin,
-  'long-rect': forkJoin,
-  fork: forkJoin,
-  join: forkJoin,
-  choice,
-  note,
+  // crossed circle with alias: 'cross-circ', 'crossed-circle', 'summary'
+  'crossed-circle': crossedCircle,
+  'cross-circ': crossedCircle,
+  summary: crossedCircle,
+
+  // tagged document with alias: 'tag-doc', 'tagged-document'
+  'tag-doc': taggedWaveEdgedRectangle,
+  'tagged-document': taggedWaveEdgedRectangle,
+
+  // tagged rectangle with alias: 'tag-rect', 'tagged-rectangle', 'tag-proc', 'tagged-process'
+  'tag-rect': taggedRect,
+  'tagged-rectangle': taggedRect,
+  'tag-proc': taggedRect,
+  'tagged-process': taggedRect,
+
+  // hourglass with alias: 'hourglass', 'collate'
+  hourglass,
+  collate: hourglass,
+
   text,
   anchor,
-  diamond: question,
-  diam: question,
-  decision: question,
-  'lightning-bolt': lightningBolt,
-  bolt: lightningBolt,
-  'com-link': lightningBolt,
-  'brace-l': curlyBraceLeft,
+
   brace: curlyBraceLeft,
-  comment: curlyBraceLeft,
-  hourglass,
-  odd: rect_left_inv_arrow,
+
   labelRect,
   'brace-r': curlyBraceRight,
   braces: curlyBraces,
@@ -229,7 +303,7 @@ export const shapes = {
 
 const nodeElems = new Map();
 
-export const insertNode = async (elem, node, dir) => {
+export const insertNode = async (elem, node, renderOptions) => {
   let newEl;
   let el;
 
@@ -244,18 +318,22 @@ export const insertNode = async (elem, node, dir) => {
     }
   }
 
-  // Add link when appropriate
+  if (!shapes[node.shape]) {
+    throw new Error(`No such shape: ${node.shape}. Please check your syntax.`);
+  }
+
   if (node.link) {
+    // Add link when appropriate
     let target;
-    if (getConfig().securityLevel === 'sandbox') {
+    if (renderOptions.config.securityLevel === 'sandbox') {
       target = '_top';
     } else if (node.linkTarget) {
       target = node.linkTarget || '_blank';
     }
     newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
-    el = await shapes[node.shape](newEl, node, dir);
+    el = await shapes[node.shape](newEl, node, renderOptions);
   } else {
-    el = await shapes[node.shape](elem, node, dir);
+    el = await shapes[node.shape](elem, node, renderOptions);
     newEl = el;
   }
   // MC Special

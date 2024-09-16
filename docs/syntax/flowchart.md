@@ -307,7 +307,7 @@ New Syntax for Shape Definition
 Mermaid now supports a general syntax for defining shape types to accommodate the growing number of shapes. This syntax allows you to assign specific shapes to nodes using a clear and flexible format:
 
 ```
-A@{ shape: rect }@
+A@{ shape: rect }
 ```
 
 This syntax creates a node A as a rectangle. It renders in the same way as `A["A"]`, or `A`.
@@ -316,53 +316,53 @@ This syntax creates a node A as a rectangle. It renders in the same way as `A["A
 
 Below is a comprehensive list of the newly introduced shapes and their corresponding semantic meanings, short names, and aliases:
 
-| **Semantic Name**                     | **Shape Name**              | **Short Name**  | **Description**                | **Alias Supported**                         |
-| ------------------------------------- | --------------------------- | --------------- | ------------------------------ | ------------------------------------------- |
-| **Process**                           | Rectangle                   | `rect`          | Standard process shape         | `proc`, `process`, `rectangle`              |
-| **Event**                             | Rounded Rectangle           | `rounded`       | Represents an event            | `event`                                     |
-| **Terminal Point**                    | Stadium                     | `stadium`       | Terminal point                 | `term`, `pill`                              |
-| **Subprocess**                        | Framed Rectangle            | `fr`            | Subprocess                     | `subproc`, `framed-rectangle`, `subroutine` |
-| **Database**                          | Cylinder                    | `cyl`           | Database storage               | `db`, `cylinder`                            |
-| **Start**                             | Circle                      | `circle`        | Starting point                 |                                             |
-| **Odd**                               | Odd                         | `odd`           | Odd shape                      |                                             |
-| **Decision**                          | Diamond                     | `diam`          | Decision-making step           | `decision`, `diamond`                       |
-| **Prepare Conditional**               | Hexagon                     | `hex`           | Preparation or condition step  | `hexagon`, `prepare`                        |
-| **Data Input/Output**                 | Lean Right                  | `l-r`           | Represents input or output     | `lean-right`, `in-out`                      |
-| **Data Input/Output**                 | Lean Left                   | `l-l`           | Represents output or input     | `lean-left`, `out-in`                       |
-| **Priority Action**                   | Trapezoid Base Bottom       | `trap-b`        | Priority action                | `priority`, `trapezoid-bottom`, `trapezoid` |
-| **Manual Operation**                  | Trapezoid Base Top          | `trap-t`        | Represents a manual task       | `manual`, `trapezoid-top`, `inv-trapezoid`  |
-| **Stop**                              | Double Circle               | `dc`            | Represents a stop point        | `double-circle`                             |
-| **Text Block**                        | Text Block                  | `text`          | Text block                     | -                                           |
-| **Card**                              | Notched Rectangle           | `notched-rect`  | Represents a card              | `card`, `notch-rect`, `notched-rect`        |
-| **Lined/Shaded Process**              | Lined Rectangle             | `lined-rect`    | Lined process shape            | `lined-proc`, `shaded-proc`                 |
-| **Start**                             | Small Circle                | `sm-circ`       | Small starting point           | `start`, `small-circle`                     |
-| **Stop**                              | Framed Circle               | `framed-circle` | Stop point                     | `stop`, `framed-circle`                     |
-| **Fork/Join**                         | Long Rectangle              | `fork`          | Fork or join in process flow   | `join`, `long-rect`                         |
-| **Collate**                           | Hourglass                   | `hourglass`     | Represents a collate operation | -                                           |
-| **Comment**                           | Curly Brace                 | `brace`         | Adds a comment                 | `comment`, `brace-l`                        |
-| **Comment Right**                     | Curly Brace                 | `brace-r`       | Adds a comment                 | -                                           |
-| **Comment with braces on both sides** | Curly Braces                | `braces`        | Adds a comment                 | -                                           |
-| **Com Link**                          | Lightning Bolt              | `bolt`          | Communication link             | `com-link`, `lightning-bolt`                |
-| **Document**                          | Wave-Edged Rectangle        | `we-rect`       | Represents a document          | `doc`, `wave-edge-rect`                     |
-| **Delay**                             | Half-Rounded Rectangle      | `delay`         | Represents a delay             | `half-rounded-rect`                         |
-| **Direct Access Storage**             | Tilted Cylinder             | `t-cyl`         | Direct access storage          | `das`, `tilted-cylinder`                    |
-| **Disk Storage**                      | Lined Cylinder              | `l-cyl`         | Disk storage                   | `disk`, `lined-cylinder`                    |
-| **Display**                           | Curved Trapezoid            | `cur-trap`      | Represents a display           | `disp`, `curved-trapezoid`, `display`       |
-| **Divided Process**                   | Divided Rectangle           | `div-rect`      | Divided process shape          | `div-proc`, `divided-rectangle`             |
-| **Extract**                           | Small Triangle              | `sm-tri`        | Extraction process             | `extract`, `small-triangle`                 |
-| **Internal Storage**                  | Window Pane                 | `win-pane`      | Internal storage               | `internal-storage`, `window-pane`           |
-| **Junction**                          | Filled Circle               | `fc`            | Junction point                 | `junction`, `filled-circle`                 |
-| **Lined Document**                    | Lined Wave-Edged Rectangle  | `lin-we-rect`   | Lined document                 | `lin-doc`, `lined-wave-edged-rect`          |
-| **Loop Limit**                        | Trapezoidal Pentagon        | `notch-pent`    | Loop limit step                | `loop-limit`, `notched-pentagon`            |
-| **Manual File**                       | Flipped Triangle            | `flip-tri`      | Manual file operation          | `manual-file`, `flipped-triangle`           |
-| **Manual Input**                      | Sloped Rectangle            | `sloped-rect`   | Manual input step              | `manual-input`, `sloped-rectangle`          |
-| **Multi-Document**                    | Multi-Wave-Edged Rectangle  | `mul-we-rect`   | Multiple documents             | `mul-doc`, `multi-wave-edged-rectangle`     |
-| **Multi-Process**                     | Multi-Rect                  | `mul-rect`      | Multiple processes             | `mul-proc`, `multi-rect`                    |
-| **Paper Tape**                        | Flag                        | `flag`          | Paper tape                     | `paper-tape`                                |
-| **Stored Data**                       | Bow Tie Rectangle           | `bt-rect`       | Stored data                    | `stored-data`, `bow-tie-rect`               |
-| **Summary**                           | Crossed Circle              | `cross-circle`  | Summary                        | `summary`, `crossed-circle`                 |
-| **Tagged Document**                   | Tagged Wave-Edged Rectangle | `tag-we-rect`   | Tagged document                | `tag-doc`, `tagged-wave-edged-rectangle`    |
-| **Tagged Process**                    | Tagged Rectangle            | `tag-rect`      | Tagged process                 | `tag-proc`, `tagged-rect`                   |
+| **Semantic Name**                     | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                         |
+| ------------------------------------- | ---------------------- | -------------- | ------------------------------ | ----------------------------------------------------------- |
+| **Process**                           | Rectangle              | `rect`         | Standard process shape         | `proc`, `process`, `rectangle`                              |
+| **Event**                             | Rounded Rectangle      | `rounded`      | Represents an event            | `event`                                                     |
+| **Terminal Point**                    | Stadium                | `stadium`      | Terminal point                 | `terminal`, `pill`                                          |
+| **Subprocess**                        | Framed Rectangle       | `fr-rect`      | Subprocess                     | `subprocess`,`subproc`, `framed-rectangle`, `subroutine`    |
+| **Database**                          | Cylinder               | `cyl`          | Database storage               | `db`, `database`, `cylinder`                                |
+| **Start**                             | Circle                 | `circle`       | Starting point                 | `circ`                                                      |
+| **Odd**                               | Odd                    | `odd`          | Odd shape                      |                                                             |
+| **Decision**                          | Diamond                | `diam`         | Decision-making step           | `decision`, `diamond`                                       |
+| **Prepare Conditional**               | Hexagon                | `hex`          | Preparation or condition step  | `hexagon`, `prepare`                                        |
+| **Data Input/Output**                 | Lean Right             | `lean-r`       | Represents input or output     | `lean-right`, `in-out`                                      |
+| **Data Input/Output**                 | Lean Left              | `lean-l`       | Represents output or input     | `lean-left`, `out-in`                                       |
+| **Priority Action**                   | Trapezoid Base Bottom  | `trap-b`       | Priority action                | `priority`, `trapezoid-bottom`                              |
+| **Manual Operation**                  | Trapezoid Base Top     | `trap-t`       | Represents a manual task       | `manual`, `trapezoid-top`                                   |
+| **Stop**                              | Double Circle          | `dbl-circ`     | Represents a stop point        | `double-circle`                                             |
+| **Text Block**                        | Text Block             | `text`         | Text block                     | -                                                           |
+| **Card**                              | Notched Rectangle      | `notch-rect`   | Represents a card              | `card`, `notched-rectangle`                                 |
+| **Lined/Shaded Process**              | Lined Rectangle        | `lin-rect`     | Lined process shape            | `lined-rectangle`,`lined-proc`, `lin-proc`,`shaded-process` |
+| **Start**                             | Small Circle           | `sm-circ`      | Small starting point           | `start`, `small-circle`                                     |
+| **Stop**                              | Framed Circle          | `fr-circ`      | Stop point                     | `stop`, `framed-circle`                                     |
+| **Fork/Join**                         | Filled Rectangle       | `fork`         | Fork or join in process flow   | `join`                                                      |
+| **Collate**                           | Hourglass              | `hourglass`    | Represents a collate operation | `hourglass`                                                 |
+| **Comment**                           | Curly Brace            | `brace`        | Adds a comment                 | `comment`, `brace-l`                                        |
+| **Comment Right**                     | Curly Brace            | `brace-r`      | Adds a comment                 | -                                                           |
+| **Comment with braces on both sides** | Curly Braces           | `braces`       | Adds a comment                 | -                                                           |
+| **Com Link**                          | Lightning Bolt         | `bolt`         | Communication link             | `com-link`, `lightning-bolt`                                |
+| **Document**                          | Document               | `doc`          | Represents a document          | `doc`, `document`                                           |
+| **Delay**                             | Half-Rounded Rectangle | `delay`        | Represents a delay             | `half-rounded-rectangle`                                    |
+| **Direct Access Storage**             | Horizontal Cylinder    | `h-cyl`        | Direct access storage          | `das`, `horizontal-cylinder`                                |
+| **Disk Storage**                      | Lined Cylinder         | `lin-cyl`      | Disk storage                   | `disk`, `lined-cylinder`                                    |
+| **Display**                           | Curved Trapezoid       | `curv-trap`    | Represents a display           | `curved-trapezoid`, `display`                               |
+| **Divided Process**                   | Divided Rectangle      | `div-rect`     | Divided process shape          | `div-proc`, `divided-rectangle`, `divided-process`          |
+| **Extract**                           | Triangle               | `tri`          | Extraction process             | `extract`, `triangle`                                       |
+| **Internal Storage**                  | Window Pane            | `win-pane`     | Internal storage               | `internal-storage`, `window-pane`                           |
+| **Junction**                          | Filled Circle          | `f-circ`       | Junction point                 | `junction`, `filled-circle`                                 |
+| **Lined Document**                    | Lined Document         | `lin-doc`      | Lined document                 | `lined-document`                                            |
+| **Loop Limit**                        | Trapezoidal Pentagon   | `notch-pent`   | Loop limit step                | `loop-limit`, `notched-pentagon`                            |
+| **Manual File**                       | Flipped Triangle       | `flip-tri`     | Manual file operation          | `manual-file`, `flipped-triangle`                           |
+| **Manual Input**                      | Sloped Rectangle       | `sl-rect`      | Manual input step              | `manual-input`, `sloped-rectangle`                          |
+| **Multi-Document**                    | Stacked Document       | `docs`         | Multiple documents             | `documents`, `st-doc`, `stacked-document`                   |
+| **Multi-Process**                     | Stacked Rectangle      | `st-rect`      | Multiple processes             | `procs`, `processes`, `stacked-rect`                        |
+| **Paper Tape**                        | Flag                   | `flag`         | Paper tape                     | `paper-tape`                                                |
+| **Stored Data**                       | Bow Tie Rectangle      | `bow-rect`     | Stored data                    | `stored-data`, `bow-tie-rectangle`                          |
+| **Summary**                           | Crossed Circle         | `cross-circ`   | Summary                        | `summary`, `crossed-circle`                                 |
+| **Tagged Document**                   | Tagged Document        | `tag-doc`      | Tagged document                | `tag-doc`, `tagged-document`                                |
+| **Tagged Process**                    | Tagged Rectangle       | `tag-rect`     | Tagged process                 | `tagged-rectangle`,`tag-proc`, `tagged-process`             |
 
 ### Example Flowchart with New Shapes
 
@@ -370,560 +370,560 @@ Here’s an example flowchart that utilizes some of the newly introduced shapes:
 
 ```mermaid-example
 flowchart RL
-    A5@{ shape: manual-file, label: "File Handling"}@
-    B5@{ shape: manual-input, label: "User Input"}@
-    C5@{ shape: mul-doc, label: "Multiple Documents"}@
-    D5@{ shape: mul-proc, label: "Process Automation"}@
-    E5@{ shape: paper-tape, label: "Paper Records"}@
+    A@{ shape: manual-file, label: "File Handling"}
+    B@{ shape: manual-input, label: "User Input"}
+    C@{ shape: docs, label: "Multiple Documents"}
+    D@{ shape: procs, label: "Process Automation"}
+    E@{ shape: paper-tape, label: "Paper Records"}
 ```
 
 ```mermaid
 flowchart RL
-    A5@{ shape: manual-file, label: "File Handling"}@
-    B5@{ shape: manual-input, label: "User Input"}@
-    C5@{ shape: mul-doc, label: "Multiple Documents"}@
-    D5@{ shape: mul-proc, label: "Process Automation"}@
-    E5@{ shape: paper-tape, label: "Paper Records"}@
+    A@{ shape: manual-file, label: "File Handling"}
+    B@{ shape: manual-input, label: "User Input"}
+    C@{ shape: docs, label: "Multiple Documents"}
+    D@{ shape: procs, label: "Process Automation"}
+    E@{ shape: paper-tape, label: "Paper Records"}
 ```
 
 ### Process
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: rect, label: "This is a process" }@
+    A@{ shape: rect, label: "This is a process" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: rect, label: "This is a process" }@
+    A@{ shape: rect, label: "This is a process" }
 ```
 
 ### Event
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: rounded, label: "This is an event" }@
+    A@{ shape: rounded, label: "This is an event" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: rounded, label: "This is an event" }@
+    A@{ shape: rounded, label: "This is an event" }
 ```
 
 ### Terminal Point (Stadium)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: stadium, label: "Terminal point" }@
+    A@{ shape: stadium, label: "Terminal point" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: stadium, label: "Terminal point" }@
+    A@{ shape: stadium, label: "Terminal point" }
 ```
 
 ### Subprocess
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: fr, label: "This is a subprocess" }@
+    A@{ shape: fr, label: "This is a subprocess" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: fr, label: "This is a subprocess" }@
+    A@{ shape: fr, label: "This is a subprocess" }
 ```
 
 ### Database (Cylinder)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: cyl, label: "Database" }@
+    A@{ shape: cyl, label: "Database" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: cyl, label: "Database" }@
+    A@{ shape: cyl, label: "Database" }
 ```
 
 ### Start (Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: circle, label: "Start" }@
+    A@{ shape: circle, label: "Start" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: circle, label: "Start" }@
+    A@{ shape: circle, label: "Start" }
 ```
 
 ### Odd
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: odd, label: "Odd shape" }@
+    A@{ shape: odd, label: "Odd shape" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: odd, label: "Odd shape" }@
+    A@{ shape: odd, label: "Odd shape" }
 ```
 
 ### Decision (Diamond)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: diamond, label: "Decision" }@
+    A@{ shape: diamond, label: "Decision" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: diamond, label: "Decision" }@
+    A@{ shape: diamond, label: "Decision" }
 ```
 
 ### Prepare Conditional (Hexagon)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: hex, label: "Prepare conditional" }@
+    A@{ shape: hex, label: "Prepare conditional" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: hex, label: "Prepare conditional" }@
+    A@{ shape: hex, label: "Prepare conditional" }
 ```
 
 ### Data Input/Output (Lean Right)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: l-r, label: "Input/Output" }@
+    A@{ shape: lean-r, label: "Input/Output" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: l-r, label: "Input/Output" }@
+    A@{ shape: lean-r, label: "Input/Output" }
 ```
 
 ### Data Input/Output (Lean Left)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: l-l, label: "Output/Input" }@
+    A@{ shape: lean-l, label: "Output/Input" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: l-l, label: "Output/Input" }@
+    A@{ shape: lean-l, label: "Output/Input" }
 ```
 
 ### Priority Action (Trapezoid Base Bottom)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: trap-b, label: "Priority action" }@
+    A@{ shape: trap-b, label: "Priority action" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: trap-b, label: "Priority action" }@
+    A@{ shape: trap-b, label: "Priority action" }
 ```
 
 ### Manual Operation (Trapezoid Base Top)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: trap-t, label: "Manual operation" }@
+    A@{ shape: trap-t, label: "Manual operation" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: trap-t, label: "Manual operation" }@
+    A@{ shape: trap-t, label: "Manual operation" }
 ```
 
 ### Stop (Double Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: dc, label: "Stop" }@
+    A@{ shape: dbl-circ, label: "Stop" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: dc, label: "Stop" }@
+    A@{ shape: dbl-circ, label: "Stop" }
 ```
 
 ### Text Block
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: text, label: "This is a text block" }@
+    A@{ shape: text, label: "This is a text block" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: text, label: "This is a text block" }@
+    A@{ shape: text, label: "This is a text block" }
 ```
 
 ### Card (Notched Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: notched-rect, label: "Card" }@
+    A@{ shape: notch-rect, label: "Card" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: notched-rect, label: "Card" }@
+    A@{ shape: notch-rect, label: "Card" }
 ```
 
 ### Lined/Shaded Process
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: lined-rect, label: "Lined process" }@
+    A@{ shape: lin-rect, label: "Lined process" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: lined-rect, label: "Lined process" }@
+    A@{ shape: lin-rect, label: "Lined process" }
 ```
 
 ### Start (Small Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: sm-circ, label: "Small start" }@
+    A@{ shape: sm-circ, label: "Small start" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: sm-circ, label: "Small start" }@
+    A@{ shape: sm-circ, label: "Small start" }
 ```
 
 ### Stop (Framed Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: framed-circle, label: "Stop" }@
+    A@{ shape: framed-circle, label: "Stop" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: framed-circle, label: "Stop" }@
+    A@{ shape: framed-circle, label: "Stop" }
 ```
 
 ### Fork/Join (Long Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: fork, label: "Fork or Join" }@
+    A@{ shape: fork, label: "Fork or Join" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: fork, label: "Fork or Join" }@
+    A@{ shape: fork, label: "Fork or Join" }
 ```
 
 ### Collate (Hourglass)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: hourglass, label: "Collate" }@
+    A@{ shape: hourglass, label: "Collate" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: hourglass, label: "Collate" }@
+    A@{ shape: hourglass, label: "Collate" }
 ```
 
 ### Comment (Curly Brace)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: comment, label: "Comment" }@
+    A@{ shape: comment, label: "Comment" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: comment, label: "Comment" }@
+    A@{ shape: comment, label: "Comment" }
 ```
 
 ### Comment Right (Curly Brace Right)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: brace-r, label: "Comment" }@
+    A@{ shape: brace-r, label: "Comment" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: brace-r, label: "Comment" }@
+    A@{ shape: brace-r, label: "Comment" }
 ```
 
 ### Comment with braces on both sides
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: braces, label: "Comment" }@
+    A@{ shape: braces, label: "Comment" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: braces, label: "Comment" }@
+    A@{ shape: braces, label: "Comment" }
 ```
 
 ### Com Link (Lightning Bolt)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: bolt, label: "Communication link" }@
+    A@{ shape: bolt, label: "Communication link" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: bolt, label: "Communication link" }@
+    A@{ shape: bolt, label: "Communication link" }
 ```
 
-### Document (Wave-Edged Rectangle)
+### Document
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: we-rect, label: "Document" }@
+    A@{ shape: doc, label: "Document" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: we-rect, label: "Document" }@
+    A@{ shape: doc, label: "Document" }
 ```
 
 ### Delay (Half-Rounded Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: delay, label: "Delay" }@
+    A@{ shape: delay, label: "Delay" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: delay, label: "Delay" }@
+    A@{ shape: delay, label: "Delay" }
 ```
 
-### Direct Access Storage (Tilted Cylinder)
+### Direct Access Storage (Horizontal Cylinder)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: t-cyl, label: "Direct access storage" }@
+    A@{ shape: das, label: "Direct access storage" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: t-cyl, label: "Direct access storage" }@
+    A@{ shape: das, label: "Direct access storage" }
 ```
 
 ### Disk Storage (Lined Cylinder)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: l-cyl, label: "Disk storage" }@
+    A@{ shape: lin-cyl, label: "Disk storage" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: l-cyl, label: "Disk storage" }@
+    A@{ shape: lin-cyl, label: "Disk storage" }
 ```
 
 ### Display (Curved Trapezoid)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: cur-trap, label: "Display" }@
+    A@{ shape: curv-trap, label: "Display" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: cur-trap, label: "Display" }@
+    A@{ shape: curv-trap, label: "Display" }
 ```
 
 ### Divided Process (Divided Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: div-rect, label: "Divided process" }@
+    A@{ shape: div-rect, label: "Divided process" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: div-rect, label: "Divided process" }@
+    A@{ shape: div-rect, label: "Divided process" }
 ```
 
 ### Extract (Small Triangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: sm-tri, label: "Extract" }@
+    A@{ shape: tri, label: "Extract" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: sm-tri, label: "Extract" }@
+    A@{ shape: tri, label: "Extract" }
 ```
 
 ### Internal Storage (Window Pane)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: win-pane, label: "Internal storage" }@
+    A@{ shape: win-pane, label: "Internal storage" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: win-pane, label: "Internal storage" }@
+    A@{ shape: win-pane, label: "Internal storage" }
 ```
 
 ### Junction (Filled Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: fc, label: "Junction" }@
+    A@{ shape: f-circ, label: "Junction" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: fc, label: "Junction" }@
+    A@{ shape: f-circ, label: "Junction" }
 ```
 
-### Lined Document (Lined Wave-Edged Rectangle)
+### Lined Document
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: lin-we-rect, label: "Lined document" }@
+    A@{ shape: lin-doc, label: "Lined document" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: lin-we-rect, label: "Lined document" }@
+    A@{ shape: lin-doc, label: "Lined document" }
 ```
 
-### Loop Limit (Trapezoidal Pentagon)
+### Loop Limit (Notched Pentagon)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: not-pent, label: "Loop limit" }@
+    A@{ shape: notch-pent, label: "Loop limit" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: not-pent, label: "Loop limit" }@
+    A@{ shape: notch-pent, label: "Loop limit" }
 ```
 
 ### Manual File (Flipped Triangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: flip-tria, label: "Manual file" }@
+    A@{ shape: flip-tri, label: "Manual file" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: flip-tria, label: "Manual file" }@
+    A@{ shape: flip-tri, label: "Manual file" }
 ```
 
 ### Manual Input (Sloped Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: sloped-rect, label: "Manual input" }@
+    A@{ shape: sl-rect, label: "Manual input" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: sloped-rect, label: "Manual input" }@
+    A@{ shape: sl-rect, label: "Manual input" }
 ```
 
-### Multi-Document (Multi-Wave-Edged Rectangle)
+### Multi-Document (Stacked Document)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: mul-we-rect, label: "Multiple documents" }@
+    A@{ shape: docs, label: "Multiple documents" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: mul-we-rect, label: "Multiple documents" }@
+    A@{ shape: docs, label: "Multiple documents" }
 ```
 
-### Multi-Process (Multi-Rect)
+### Multi-Process (Stacked Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: mul-rect, label: "Multiple processes" }@
+    A@{ shape: processes, label: "Multiple processes" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: mul-rect, label: "Multiple processes" }@
+    A@{ shape: processes, label: "Multiple processes" }
 ```
 
 ### Paper Tape (Flag)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: flag, label: "Paper tape" }@
+    A@{ shape: flag, label: "Paper tape" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: flag, label: "Paper tape" }@
+    A@{ shape: flag, label: "Paper tape" }
 ```
 
 ### Stored Data (Bow Tie Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: bt-rect, label: "Stored data" }@
+    A@{ shape: bow-rect, label: "Stored data" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: bt-rect, label: "Stored data" }@
+    A@{ shape: bow-rect, label: "Stored data" }
 ```
 
 ### Summary (Crossed Circle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: cross-circle, label: "Summary" }@
+    A@{ shape: cross-circ, label: "Summary" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: cross-circle, label: "Summary" }@
+    A@{ shape: cross-circ, label: "Summary" }
 ```
 
-### Tagged Document (Tagged Wave-Edged Rectangle)
+### Tagged Document
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: tag-we-rect, label: "Tagged document" }@
+    A@{ shape: tag-doc, label: "Tagged document" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: tag-we-rect, label: "Tagged document" }@
+    A@{ shape: tag-doc, label: "Tagged document" }
 ```
 
 ### Tagged Process (Tagged Rectangle)
 
 ```mermaid-example
 flowchart TD
-    A@{ shape: tag-rect, label: "Tagged process" }@
+    A@{ shape: tag-rect, label: "Tagged process" }
 ```
 
 ```mermaid
 flowchart TD
-    A@{ shape: tag-rect, label: "Tagged process" }@
+    A@{ shape: tag-rect, label: "Tagged process" }
 ```
 
 ## Links between nodes
