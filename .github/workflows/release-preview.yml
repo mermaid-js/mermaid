@@ -39,5 +39,8 @@ jobs:
       - name: Install Packages
         run: pnpm install --frozen-lockfile
 
+      - name: Trim maps
+        run: rm -rf ./**/dist/**/*.map
+
       - name: Publish packages
         run: pnpx pkg-pr-new publish --pnpm './packages/*'
