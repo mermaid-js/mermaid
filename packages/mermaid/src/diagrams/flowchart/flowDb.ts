@@ -814,17 +814,17 @@ export const lex = {
 };
 
 const getTypeFromVertex = (vertex: FlowVertex) => {
-  if (vertex?.img) {
+  if (vertex.img) {
     return 'imageSquare';
   }
-  if (vertex?.icon) {
-    if (vertex?.form === 'circle') {
+  if (vertex.icon) {
+    if (vertex.form === 'circle') {
       return 'iconCircle';
     }
-    if (vertex?.form === 'square') {
+    if (vertex.form === 'square') {
       return 'iconSquare';
     }
-    if (vertex?.form === 'rounded') {
+    if (vertex.form === 'rounded') {
       return 'iconRounded';
     }
     return 'icon';
