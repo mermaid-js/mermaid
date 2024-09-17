@@ -1,5 +1,11 @@
 # @mermaid-js/layout-elk
 
+## 0.1.4
+
+### Patch Changes
+
+- [#5847](https://github.com/mermaid-js/mermaid/pull/5847) [`dd03043`](https://github.com/mermaid-js/mermaid/commit/dd0304387e85fc57a9ebb666f89ef788c012c2c5) Thanks [@sidharthv96](https://github.com/sidharthv96)! - chore: fix render types
+
 ## 0.1.3
 
 ### Patch Changes
