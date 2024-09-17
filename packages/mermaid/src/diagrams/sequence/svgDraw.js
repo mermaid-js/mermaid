@@ -329,6 +329,7 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
 const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
+  const centerY = actorY + actor.height;
 
   const boxplusLineGroup = elem.append('g').lower();
   var g = boxplusLineGroup;
@@ -340,10 +341,8 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     }
     g.append('line')
       .attr('id', 'actor' + actorCnt)
-      .attr('data-et', 'life-line')
-      .attr('data-id', actor.name)
       .attr('x1', center)
-      .attr('y1', actor.starty || 0 + actor.height)
+      .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
       .attr('class', 'actor-line 200')
@@ -391,11 +390,6 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     }
   }
 
-  if (!isFooter) {
-    g.attr('data-et', 'participant');
-    g.attr('data-id', actor.name);
-  }
-
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
@@ -433,8 +427,6 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
       .attr('y1', centerY)
       .attr('x2', center)
       .attr('y2', 2000)
-      .attr('data-et', 'life-line')
-      .attr('data-id', actor.name)
       .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
       .attr('stroke', '#999')
@@ -451,10 +443,6 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   }
   actElem.attr('class', cssClass);
   actElem.attr('name', actor.name);
-
-  if (!isFooter) {
-    actElem.attr('data-et', 'participant').attr('data-id', actor.name);
-  }
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
@@ -577,10 +565,9 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
  * @param {any} loopModel - LoopModel of the given loop.
  * @param {any} labelText - Text within the loop.
  * @param {any} conf - Diagram configuration
- * @param msg
  * @returns {any}
  */
-export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
+export const drawLoop = async function (elem, loopModel, labelText, conf) {
   const {
     boxMargin,
     boxTextMargin,
@@ -590,11 +577,7 @@ export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
     messageFontSize: fontSize,
     messageFontWeight: fontWeight,
   } = conf;
-  const g = elem
-    .append('g')
-    .attr('data-et', 'control-structure')
-    .attr('data-id', 'i' + msg.id);
-
+  const g = elem.append('g');
   const drawLoopLine = function (startx, starty, stopx, stopy) {
     return g
       .append('line')
