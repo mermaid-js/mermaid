@@ -479,7 +479,6 @@ const setupToolTips = function (element: Element) {
       }
       const rect = (this as Element)?.getBoundingClientRect();
 
-      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
         .text(el.attr('title'))
@@ -489,7 +488,6 @@ const setupToolTips = function (element: Element) {
       el.classed('hover', true);
     })
     .on('mouseout', function () {
-      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(500).style('opacity', 0);
       const el = select(this);
       el.classed('hover', false);
