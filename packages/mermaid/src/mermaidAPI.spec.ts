@@ -691,7 +691,9 @@ describe('mermaidAPI', () => {
     });
     it('returns false for invalid definition with silent option', async () => {
       await expect(
-        mermaidAPI.parse('this is not a mermaid diagram definition', { suppressErrors: true })
+        mermaidAPI
+          .parse('this is not a mermaid diagram definition', { suppressErrors: true })
+          .then((result) => result.success)
       ).resolves.toBe(false);
     });
     it('resolves for valid definition', async () => {
