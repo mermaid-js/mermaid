@@ -1,0 +1,7 @@
+graph TD;
+    A[Stakeholders] --> B[Consultants]
+    A --> C[External Provider]
+    A --> D[Internal Teams]
+    D --> E[Finance Department]
+    D --> F[HR Department]
+    D --> G[Operations Department]
