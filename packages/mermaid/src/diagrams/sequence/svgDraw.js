@@ -348,7 +348,9 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
       .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
       .attr('stroke', '#999')
-      .attr('name', actor.name);
+      .attr('name', actor.name)
+      .attr('data-et', 'life-line')
+      .attr('data-id', actor.name);
 
     g = boxplusLineGroup.append('g');
     actor.actorCnt = actorCnt;
@@ -388,6 +390,11 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
     } else {
       svgDrawCommon.drawImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc);
     }
+  }
+
+  if (!isFooter) {
+    g.attr('data-et', 'participant');
+    g.attr('data-id', actor.name);
   }
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
@@ -430,7 +437,9 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
       .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
       .attr('stroke', '#999')
-      .attr('name', actor.name);
+      .attr('name', actor.name)
+      .attr('data-et', 'life-line')
+      .attr('data-id', actor.name);
 
     actor.actorCnt = actorCnt;
   }
@@ -443,6 +452,10 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   }
   actElem.attr('class', cssClass);
   actElem.attr('name', actor.name);
+
+  if (!isFooter) {
+    actElem.attr('data-et', 'participant').attr('data-id', actor.name);
+  }
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
@@ -567,7 +580,7 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
  * @param {any} conf - Diagram configuration
  * @returns {any}
  */
-export const drawLoop = async function (elem, loopModel, labelText, conf) {
+export const drawLoop = async function (elem, loopModel, labelText, conf, msg) {
   const {
     boxMargin,
     boxTextMargin,
@@ -577,7 +590,10 @@ export const drawLoop = async function (elem, loopModel, labelText, conf) {
     messageFontSize: fontSize,
     messageFontWeight: fontWeight,
   } = conf;
-  const g = elem.append('g');
+  const g = elem
+    .append('g')
+    .attr('data-et', 'control-structure')
+    .attr('data-id', 'i' + msg.id);
   const drawLoopLine = function (startx, starty, stopx, stopy) {
     return g
       .append('line')

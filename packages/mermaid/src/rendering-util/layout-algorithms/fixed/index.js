@@ -188,8 +188,8 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
     } else {
       if (!positions.nodes[node.id]) {
         // Simple case
-        positions.nodes[node.id] = { x: xPos, y: maxY + 20 };
-        xPos = xPos + 75;
+        positions.nodes[node.id] = { x: xPos, y: maxY + 120 };
+        xPos = xPos + 175;
       }
     }
   }
