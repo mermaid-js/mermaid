@@ -6,7 +6,6 @@ import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/rende
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
-// import { CSS_DIAGRAM, DEFAULT_NESTED_DOC_DIR } from './stateCommon.js';
 
 /**
  * Get the direction from the statement items.
@@ -70,9 +69,7 @@ export const draw = async function (text: string, id: string, _version: string, 
     diag.db.getDiagramTitle()
   );
 
-  const CSS_DIAGRAM = 'classDiagram';
-
-  setupViewPortForSVG(svg, padding, CSS_DIAGRAM, conf?.useMaxWidth ?? true);
+  setupViewPortForSVG(svg, padding, 'classDiagram', conf?.useMaxWidth ?? true);
 };
 
 export default {
