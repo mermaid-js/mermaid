@@ -574,7 +574,7 @@ export const getData = () => {
     cnt++;
     const noteNode: Node = {
       id: note.id,
-      label: note.text.replaceAll('\\n', '<br>'), // 'rect' shape label sanitizes these newlines so must change to <br> manually
+      label: note.text,
       isGroup: false,
       shape: 'rect',
       padding: config.class!.padding ?? 6,
