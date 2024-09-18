@@ -3,7 +3,7 @@ import intersect from '../intersect/index.js';
 import type { Node, RenderOptions } from '../../types.js';
 import type { SVG } from '../../../diagram-api/types.js';
 import rough from 'roughjs';
-import { solidStateFill, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 
 export const stateEnd = (
   parent: SVG,
@@ -13,7 +13,7 @@ export const stateEnd = (
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { cssStyles } = node;
-  const { lineColor } = themeVariables;
+  const { lineColor, stateBorder, nodeBorder } = themeVariables;
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
@@ -29,14 +29,17 @@ export const stateEnd = (
   }
 
   const roughNode = rc.circle(0, 0, 14, {
-    ...solidStateFill(lineColor),
-    roughness: 0.5,
     ...options,
+    stroke: lineColor,
+    strokeWidth: 2,
   });
+  const innerFill = stateBorder ?? nodeBorder;
   const roughInnerNode = rc.circle(0, 0, 5, {
-    ...solidStateFill(lineColor),
-    fillStyle: 'solid',
     ...options,
+    fill: innerFill,
+    stroke: innerFill,
+    strokeWidth: 2,
+    fillStyle: 'solid',
   });
   const circle = shapeSvg.insert(() => roughNode, ':first-child');
   circle.insert(() => roughInnerNode);
