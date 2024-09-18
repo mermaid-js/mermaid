@@ -62,15 +62,17 @@
 
   <body style="display: flex; gap: 2rem; flex-direction: row">
     <pre id="diagram4" class="mermaid">
-      flowchart TD
-       B2@{ icon: "fa:bell", form: "square", pos: "t", h: 80 }
+      flowchart LR
+       B2@{ icon: "fa:address-book",  form: "square", pos: "b", h: 80 }
 
 
-       W --> B2
-       X --> B2
-       Y --> B2
-       Z --> B2
+       W --> B2 --> x1
+       X --> B2 --> x2
+       Y --> B2 --> x3
+       Z --> B2 --> x4 
        B2 --<strong>sas</strong>--> C
+
+       A --> B2
 
 
     </pre>
