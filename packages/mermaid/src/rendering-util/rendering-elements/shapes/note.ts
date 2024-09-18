@@ -3,7 +3,7 @@ import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import type { RenderOptions } from '../../types';
+import type { RenderOptions } from '../../types.js';
 
 export const note = async (
   parent: SVGAElement,
