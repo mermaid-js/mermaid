@@ -79,7 +79,7 @@ export const iconSquare = async (
 
   label.attr(
     'transform',
-    `translate(${-width / 2 + width / 2 - bbox.width / 2},${topLabel ? -height / 2 - bbox.height / 2 - labelPadding / 2 : height / 2 - bbox.height / 2 + labelPadding / 2})`
+    `translate(${-bbox.width / 2},${topLabel ? -height / 2 - bbox.height / 2 - labelPadding / 2 : height / 2 - bbox.height / 2 + labelPadding / 2})`
   );
 
   iconShape.attr(
