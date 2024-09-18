@@ -84,7 +84,7 @@ export const addClass = function (_id: string) {
     id: name,
     type: type,
     label: name,
-    text: `${name}${type ? `<${type}>` : ''}`,
+    text: `${name}${type ? `&lt;${type}&gt;` : ''}`,
     shape: 'classBox',
     cssClasses: [],
     methods: [],
@@ -564,6 +564,7 @@ export const getData = () => {
     if (classNode) {
       const node = classNode as unknown as Node;
       node.parentId = classNode.parent;
+      node.look = config.look;
       nodes.push(node);
     }
   }
