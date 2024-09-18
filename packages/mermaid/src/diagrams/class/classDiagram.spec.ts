@@ -406,14 +406,14 @@ class C13["With Città foreign language"]
               "classifier": "",
               "id": "idCard : IdCard",
               "memberType": "attribute",
-              "text": "-idCard : IdCard",
+              "text": "\\-idCard : IdCard",
               "visibility": "-",
             },
           ],
           "methods": [],
           "shape": "classBox",
           "styles": [],
-          "text": "<strong>Student</strong>",
+          "text": "Student",
           "type": "",
         }
       `);
