@@ -158,12 +158,6 @@ export class ClassMember {
           }
         }
         this.text = this.text.charAt(0) + replacedRaw;
-
-        if (this.visibility === '~') {
-          this.text = this.text.replace('~', '\\~');
-        }
-      } else if (count === 1 && this.visibility === '~') {
-        this.text = this.text.replace('~', '\\~');
       }
     }
   }
