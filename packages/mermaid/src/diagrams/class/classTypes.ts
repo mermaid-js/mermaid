@@ -123,42 +123,13 @@ export class ClassMember {
     }
 
     this.classifier = potentialClassifier;
-    // TODO: Right now getting rid of spacing in id / name, TODO: Add optional spacing
-    const combinedText = `${this.visibility}${this.id}${this.memberType === 'method' ? `(${this.parameters})${this.returnType ? ' : ' + this.returnType : ''}` : ''}`;
-    this.text = combinedText;
-    if (combinedText.includes('~')) {
-      const numOfTildes = (combinedText.substring(1).match(/~/g) ?? []).length;
-      let count = numOfTildes;
-      if (count !== 1) {
-        const odd = count % 2 > 0;
+    // Preserve one space only
+    this.id = this.id.startsWith(' ') ? ' ' + this.id.trim() : this.id.trim();
 
-        // Replace all '~' with '>'
-        let replacedRaw = combinedText.substring(1).replaceAll('~', '&gt;');
-
-        // Replace the first half of '>' with '<'
-        while (count > 0) {
-          replacedRaw = replacedRaw.replace('&gt;', '&lt;');
-          count -= 2; // Each iteration replaces one '>' with '<', so reduce count by 2
-        }
-        if (odd) {
-          // Replace first occurrence.
-          if (this.memberType === 'method') {
-            replacedRaw = replacedRaw.replace('&lt;', '~');
-          } else {
-            // Replace middle occurrence.
-            const ltOccurrences = replacedRaw.match(/&lt;/g) ?? [];
-            if (ltOccurrences.length > 1) {
-              let ltCount = 0;
-
-              replacedRaw = replacedRaw.replace('&lt;', (match) => {
-                ltCount++;
-                return ltCount === ltOccurrences.length ? '~' : match;
-              });
-            }
-          }
-        }
-        this.text = this.text.charAt(0) + replacedRaw;
-      }
+    const combinedText = `${this.visibility ? '\\' + this.visibility : ''}${parseGenericTypes(this.id)}${this.memberType === 'method' ? `(${parseGenericTypes(this.parameters)})${this.returnType ? ' : ' + parseGenericTypes(this.returnType) : ''}` : ''}`;
+    this.text = combinedText.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+    if (this.text.startsWith('\\&lt;')) {
+      this.text = this.text.replace('\\&lt;', '~');
     }
   }
 

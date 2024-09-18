@@ -109,6 +109,12 @@ const addText = async (
     textContent = node.label!;
   }
 
+  // createText() will cause unwanted behavior because of classDiagram syntax so workarounds are needed
+
+  if (!useHtmlLabels && textContent.startsWith('\\')) {
+    textContent = textContent.substring(1);
+  }
+
   if (hasKatex(textContent)) {
     useHtmlLabels = true;
   }
@@ -126,7 +132,6 @@ const addText = async (
   let bbox;
   let numberOfLines = 1;
 
-  // createText() creates unwanted behavior because of syntax, so fix
   if (!useHtmlLabels) {
     // Undo font-weight
     select(text).selectAll('tspan').attr('font-weight', '');
