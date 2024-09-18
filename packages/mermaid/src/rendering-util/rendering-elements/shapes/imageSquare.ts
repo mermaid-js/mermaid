@@ -1,15 +1,16 @@
 import { log } from '../../../logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.js';
+import type { Node, RenderOptions } from '../../types.d.ts';
 import type { SVG } from '../../../diagram-api/types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
-import { createPathFromPoints } from './util.js';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
-export const imageSquare = async (parent: SVG, node: Node) => {
-  //image dimensions
+export const imageSquare = async (
+  parent: SVG,
+  node: Node,
+  { config: { flowchart } }: RenderOptions
+) => {
   const img = new Image();
   img.src = node?.img ?? '';
   await img.decode();
@@ -17,49 +18,26 @@ export const imageSquare = async (parent: SVG, node: Node) => {
   const imageNaturalWidth = Number(img.naturalWidth.toString().replace('px', ''));
   const imageNaturalHeight = Number(img.naturalHeight.toString().replace('px', ''));
 
-  const defaultWidth = getConfig().flowchart?.wrappingWidth;
+  const { labelStyles } = styles2String(node);
+
+  node.labelStyle = labelStyles;
+
+  const defaultWidth = flowchart?.wrappingWidth;
+
   const imageWidth = Math.max(
     node.label ? (defaultWidth ?? 0) : 0,
     node?.assetWidth ?? imageNaturalWidth
   );
   const imageHeight = node?.assetHeight ?? imageNaturalHeight;
-
-  const imagePoints = [
-    { x: -imageWidth / 2, y: -imageHeight },
-    { x: imageWidth / 2, y: -imageHeight },
-    { x: imageWidth / 2, y: 0 },
-    { x: -imageWidth / 2, y: 0 },
-  ];
-
-  //label dimensions
-  const { labelStyles, nodeStyles } = styles2String(node);
-  node.labelStyle = labelStyles;
-
-  // const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
-  //   parent,
-  //   node,
-  //   'icon-shape default'
-  // );
-
-  const { cssStyles } = node;
-  // const defaultHeight = bbox.height;
-  // node.height = Math.max(node.height ?? 0, node.label ? (defaultHeight ?? 0) : 0, imageHeight);
-  const labelWidth = Math.max(node.width ?? 0, node.label ? (defaultWidth ?? 0) : 0, imageWidth);
-  node.width = node.label ? labelWidth : 0;
+  node.width = Math.max(imageWidth, defaultWidth ?? 0);
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'image-shape default');
 
-  // const width = Math.max(bbox.width + (node.padding ?? 0), node?.width ?? 0);
-  const height = Math.max(bbox.height + (node.padding ?? 0), node?.height ?? 0);
-  const labelHeight = node.label ? height : 0;
+  const topLabel = node.pos === 't';
 
-  const imagePosition = node?.pos ?? 'b';
+  const x = -imageWidth / 2;
+  const y = -imageHeight / 2;
 
-  const labelPoints = [
-    { x: -labelWidth / 2, y: 0 },
-    { x: labelWidth / 2, y: 0 },
-    { x: labelWidth / 2, y: labelHeight },
-    { x: -labelWidth / 2, y: labelHeight },
-  ];
+  const labelPadding = node.label ? 8 : 0;
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
@@ -70,18 +48,20 @@ export const imageSquare = async (parent: SVG, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const imagePath = createPathFromPoints(imagePoints);
-  const imagePathNode = rc.path(imagePath, options);
+  const imageNode = rc.rectangle(x, y, imageWidth, imageHeight, options);
 
-  const linePath = createPathFromPoints(labelPoints);
-  const lineNode = rc.path(linePath, { ...options });
+  const outerWidth = Math.max(imageWidth, bbox.width);
+  const outerHeight = imageHeight + bbox.height + labelPadding;
 
-  const imageShape = shapeSvg.insert(() => lineNode, ':first-child').attr('opacity', 0);
-  imageShape.insert(() => imagePathNode, ':first-child');
+  const outerNode = rc.rectangle(-outerWidth / 2, -outerHeight / 2, outerWidth, outerHeight, {
+    ...options,
+    fill: 'none',
+    stroke: 'none',
+  });
 
-  imageShape.attr('transform', `translate(${0},${(imageHeight - labelHeight) / 2})`);
+  const iconShape = shapeSvg.insert(() => imageNode, ':first-child');
+  const outerShape = shapeSvg.insert(() => outerNode);
 
-  // Image operations
   if (node.img) {
     const image = shapeSvg.append('image');
 
@@ -91,34 +71,58 @@ export const imageSquare = async (parent: SVG, node: Node) => {
     image.attr('height', imageHeight);
     image.attr('preserveAspectRatio', 'none');
 
-    const yPos =
-      imagePosition === 'b' ? -imageHeight / 2 - labelHeight / 2 : (-imageHeight + labelHeight) / 2;
-    image.attr('transform', `translate(${-imageWidth / 2}, ${yPos})`);
+    image.attr(
+      'transform',
+      `translate(${-imageWidth / 2},${topLabel ? outerHeight / 2 - imageHeight : -outerHeight / 2})`
+    );
   }
 
-  if (cssStyles && node.look !== 'handDrawn') {
-    imageShape.selectAll('path').attr('style', cssStyles);
-  }
+  label.attr(
+    'transform',
+    `translate(${-bbox.width / 2},${topLabel ? -imageHeight / 2 - bbox.height / 2 - labelPadding / 2 : imageHeight / 2 - bbox.height / 2 + labelPadding / 2})`
+  );
 
-  if (nodeStyles && node.look !== 'handDrawn') {
-    imageShape.selectAll('path').attr('style', nodeStyles);
-  }
+  iconShape.attr(
+    'transform',
+    `translate(${0},${topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2})`
+  );
 
-  const yPos =
-    imagePosition === 'b'
-      ? (imageHeight + labelHeight) / 2 - bbox.height - (bbox.y - (bbox.top ?? 0))
-      : -(imageHeight + labelHeight) / 2 + (node?.padding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0));
-
-  label.attr('transform', `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${yPos})`);
-
-  updateNodeBounds(node, imageShape);
+  updateNodeBounds(node, outerShape);
 
   node.intersect = function (point) {
-    log.info('imageSquare intersect', node, point);
+    log.info('iconSquare intersect', node, point);
+    if (!node.label) {
+      return intersect.rect(node, point);
+    }
+    const dx = node.x ?? 0;
+    const dy = node.y ?? 0;
+    const nodeHeight = node.height ?? 0;
+    let points = [];
+    if (topLabel) {
+      points = [
+        { x: dx - bbox.width / 2, y: dy - nodeHeight / 2 },
+        { x: dx + bbox.width / 2, y: dy - nodeHeight / 2 },
+        { x: dx + bbox.width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
+        { x: dx + imageWidth / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
+        { x: dx + imageWidth / 2, y: dy + nodeHeight / 2 },
+        { x: dx - imageWidth / 2, y: dy + nodeHeight / 2 },
+        { x: dx - imageWidth / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
+        { x: dx - bbox.width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
+      ];
+    } else {
+      points = [
+        { x: dx - imageWidth / 2, y: dy - nodeHeight / 2 },
+        { x: dx + imageWidth / 2, y: dy - nodeHeight / 2 },
+        { x: dx + imageWidth / 2, y: dy - nodeHeight / 2 + imageHeight },
+        { x: dx + bbox.width / 2, y: dy - nodeHeight / 2 + imageHeight },
+        { x: dx + bbox.width / 2 / 2, y: dy + nodeHeight / 2 },
+        { x: dx - bbox.width / 2, y: dy + nodeHeight / 2 },
+        { x: dx - bbox.width / 2, y: dy - nodeHeight / 2 + imageHeight },
+        { x: dx - imageWidth / 2, y: dy - nodeHeight / 2 + imageHeight },
+      ];
+    }
 
-    const combinedPoints = [...imagePoints, ...labelPoints];
-
-    const pos = intersect.polygon(node, combinedPoints, point);
+    const pos = intersect.polygon(node, points, point);
     return pos;
   };
 
