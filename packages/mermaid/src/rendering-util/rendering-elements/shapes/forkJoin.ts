@@ -5,7 +5,11 @@ import type { SVG } from '../../../diagram-api/types.js';
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 
-export const forkJoin = (parent: SVG, node: Node, { dir }: RenderOptions) => {
+export const forkJoin = (
+  parent: SVG,
+  node: Node,
+  { dir, config: { state, themeVariables } }: RenderOptions
+) => {
   const { nodeStyles } = styles2String(node);
   node.label = '';
   const shapeSvg = parent
@@ -27,7 +31,10 @@ export const forkJoin = (parent: SVG, node: Node, { dir }: RenderOptions) => {
 
   // @ts-ignore TODO: Fix rough typings
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, {});
+  const options = userNodeOverrides(node, {
+    stroke: themeVariables.lineColor,
+    fill: themeVariables.lineColor,
+  });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -47,7 +54,11 @@ export const forkJoin = (parent: SVG, node: Node, { dir }: RenderOptions) => {
   }
 
   updateNodeBounds(node, shape);
-
+  const padding = state?.padding ?? 0;
+  if (node.width && node.height) {
+    node.width += padding / 2 || 0;
+    node.height += padding / 2 || 0;
+  }
   node.intersect = function (point) {
     return intersect.rect(node, point);
   };
