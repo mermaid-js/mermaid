@@ -1,11 +1,11 @@
 import { getNodeClasses, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.js';
+import type { Node, RenderOptions } from '../../types.js';
 import type { SVG } from '../../../diagram-api/types.js';
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 
-export const forkJoin = (parent: SVG, node: Node, dir: string) => {
+export const forkJoin = (parent: SVG, node: Node, { dir }: RenderOptions) => {
   const { nodeStyles } = styles2String(node);
   node.label = '';
   const shapeSvg = parent

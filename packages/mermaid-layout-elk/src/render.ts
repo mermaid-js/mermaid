@@ -37,7 +37,7 @@ export const render = async (
 
     // Add the element to the DOM
     if (!node.isGroup) {
-      const childNodeEl = await insertNode(nodeEl, node, { config });
+      const childNodeEl = await insertNode(nodeEl, node, { config, dir: node.dir });
       boundingBox = childNodeEl.node().getBBox();
       child.domId = childNodeEl;
       child.width = boundingBox.width;

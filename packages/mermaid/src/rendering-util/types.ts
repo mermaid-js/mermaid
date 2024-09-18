@@ -143,4 +143,5 @@ export type LayoutMethod =
 
 export interface RenderOptions {
   config: MermaidConfig;
+  dir: string;
 }
