@@ -336,41 +336,41 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
   return points;
 };
 
-function extractCornerPoints(points) {
-  const cornerPoints = [];
-  const cornerPointPositions = [];
-  for (let i = 1; i < points.length - 1; i++) {
-    const prev = points[i - 1];
-    const curr = points[i];
-    const next = points[i + 1];
-    if (
-      prev.x === curr.x &&
-      curr.y === next.y &&
-      Math.abs(curr.x - next.x) > 5 &&
-      Math.abs(curr.y - prev.y) > 5
-    ) {
-      cornerPoints.push(curr);
-      cornerPointPositions.push(i);
-    } else if (
-      prev.y === curr.y &&
-      curr.x === next.x &&
-      Math.abs(curr.x - prev.x) > 5 &&
-      Math.abs(curr.y - next.y) > 5
-    ) {
-      cornerPoints.push(curr);
-      cornerPointPositions.push(i);
-    }
-  }
-  return { cornerPoints, cornerPointPositions };
-}
+// function extractCornerPoints(points) {
+//   const cornerPoints = [];
+//   const cornerPointPositions = [];
+//   for (let i = 1; i < points.length - 1; i++) {
+//     const prev = points[i - 1];
+//     const curr = points[i];
+//     const next = points[i + 1];
+//     if (
+//       prev.x === curr.x &&
+//       curr.y === next.y &&
+//       Math.abs(curr.x - next.x) > 5 &&
+//       Math.abs(curr.y - prev.y) > 5
+//     ) {
+//       cornerPoints.push(curr);
+//       cornerPointPositions.push(i);
+//     } else if (
+//       prev.y === curr.y &&
+//       curr.x === next.x &&
+//       Math.abs(curr.x - prev.x) > 5 &&
+//       Math.abs(curr.y - next.y) > 5
+//     ) {
+//       cornerPoints.push(curr);
+//       cornerPointPositions.push(i);
+//     }
+//   }
+//   return { cornerPoints, cornerPointPositions };
+// }
 
-const findAdjacentPoint = function (pointA, pointB, distance) {
-  const xDiff = pointB.x - pointA.x;
-  const yDiff = pointB.y - pointA.y;
-  const length = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-  const ratio = distance / length;
-  return { x: pointB.x - ratio * xDiff, y: pointB.y - ratio * yDiff };
-};
+// const findAdjacentPoint = function (pointA, pointB, distance) {
+//   const xDiff = pointB.x - pointA.x;
+//   const yDiff = pointB.y - pointA.y;
+//   const length = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+//   const ratio = distance / length;
+//   return { x: pointB.x - ratio * xDiff, y: pointB.y - ratio * yDiff };
+// };
 
 // const fixCorners = function (lineData) {
 //   const { cornerPointPositions } = extractCornerPoints(lineData);
@@ -479,7 +479,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let curve = curveBasis;
   curve = curveLinear;
   // let curve = curveCardinal;
-  console.log('BBB edge.curve', edge.curve);
   switch (edge.curve) {
     case 'linear':
       curve = curveLinear;

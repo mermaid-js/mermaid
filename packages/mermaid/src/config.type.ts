@@ -260,7 +260,12 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Defines how mermaid renders curves for flowcharts.
    *
    */
-  curve?: 'basis' | 'linear' | 'cardinal';
+  curve?: 'basis' | 'linear' | 'cardinal' | 'rounded';
+  /**
+   * Highlights the points in an edge for debugging.
+   *
+   */
+  edgeDebug?: boolean;
   /**
    * Represents the padding between the labels and the shape
    *
