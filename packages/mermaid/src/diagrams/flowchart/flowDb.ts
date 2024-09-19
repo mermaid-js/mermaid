@@ -989,6 +989,8 @@ export const getData = () => {
       style: styles,
       pattern: rawEdge.stroke,
       look: config.look,
+      curve: config.flowchart?.curve,
+      showPoints: config.flowchart?.edgeDebug,
     };
     edges.push(edge);
   });

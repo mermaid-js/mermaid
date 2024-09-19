@@ -3,9 +3,9 @@ import { evaluate } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
 import utils from '../../utils.js';
-import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
+import { getLineFunctionsWithOffset, markerOffsets } from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
-import { curveBasis, curveLinear, line, select } from 'd3';
+import { curveBasis, curveLinear, curveCardinal, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
@@ -372,57 +372,57 @@ const findAdjacentPoint = function (pointA, pointB, distance) {
   return { x: pointB.x - ratio * xDiff, y: pointB.y - ratio * yDiff };
 };
 
-const fixCorners = function (lineData) {
-  const { cornerPointPositions } = extractCornerPoints(lineData);
-  const newLineData = [];
-  const r = 4;
-  for (let i = 0; i < lineData.length; i++) {
-    if (cornerPointPositions.includes(i)) {
-      const prevPoint = lineData[i - 1];
-      const nextPoint = lineData[i + 1];
-      const cornerPoint = lineData[i];
+// const fixCorners = function (lineData) {
+//   const { cornerPointPositions } = extractCornerPoints(lineData);
+//   const newLineData = [];
+//   const r = 4;
+//   for (let i = 0; i < lineData.length; i++) {
+//     if (cornerPointPositions.includes(i)) {
+//       const prevPoint = lineData[i - 1];
+//       const nextPoint = lineData[i + 1];
+//       const cornerPoint = lineData[i];
 
-      const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, r);
-      const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, r);
+//       const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, r);
+//       const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, r);
 
-      const xDiff = newNextPoint.x - newPrevPoint.x;
-      const yDiff = newNextPoint.y - newPrevPoint.y;
-      newLineData.push(newPrevPoint);
+//       const xDiff = newNextPoint.x - newPrevPoint.x;
+//       const yDiff = newNextPoint.y - newPrevPoint.y;
+//       newLineData.push(newPrevPoint);
 
-      const a = Math.sqrt(2) * 2;
-      let newCornerPoint = { x: cornerPoint.x, y: cornerPoint.y };
-      if (Math.abs(nextPoint.x - prevPoint.x) > 10 && Math.abs(nextPoint.y - prevPoint.y) >= 10) {
-        log.debug(
-          'Corner point fixing',
-          Math.abs(nextPoint.x - prevPoint.x),
-          Math.abs(nextPoint.y - prevPoint.y)
-        );
+//       const a = Math.sqrt(2) * 2;
+//       let newCornerPoint = { x: cornerPoint.x, y: cornerPoint.y };
+//       if (Math.abs(nextPoint.x - prevPoint.x) > 10 && Math.abs(nextPoint.y - prevPoint.y) >= 10) {
+//         log.debug(
+//           'Corner point fixing',
+//           Math.abs(nextPoint.x - prevPoint.x),
+//           Math.abs(nextPoint.y - prevPoint.y)
+//         );
 
-        if (cornerPoint.x === newPrevPoint.x) {
-          newCornerPoint = {
-            x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
-            y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
-          };
-        } else {
-          newCornerPoint = {
-            x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
-            y: yDiff < 0 ? newPrevPoint.y - r + a : newPrevPoint.y + r - a,
-          };
-        }
-      } else {
-        log.debug(
-          'Corner point skipping fixing',
-          Math.abs(nextPoint.x - prevPoint.x),
-          Math.abs(nextPoint.y - prevPoint.y)
-        );
-      }
-      newLineData.push(newCornerPoint, newNextPoint);
-    } else {
-      newLineData.push(lineData[i]);
-    }
-  }
-  return newLineData;
-};
+//         if (cornerPoint.x === newPrevPoint.x) {
+//           newCornerPoint = {
+//             x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
+//             y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
+//           };
+//         } else {
+//           newCornerPoint = {
+//             x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
+//             y: yDiff < 0 ? newPrevPoint.y - r + a : newPrevPoint.y + r - a,
+//           };
+//         }
+//       } else {
+//         log.debug(
+//           'Corner point skipping fixing',
+//           Math.abs(nextPoint.x - prevPoint.x),
+//           Math.abs(nextPoint.y - prevPoint.y)
+//         );
+//       }
+//       newLineData.push(newCornerPoint, newNextPoint);
+//     } else {
+//       newLineData.push(lineData[i]);
+//     }
+//   }
+//   return newLineData;
+// };
 
 export const insertEdge = function (elem, edge, clusterDb, diagramType, startNode, endNode, id) {
   const { handDrawnSeed } = getConfig();
@@ -479,13 +479,26 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let curve = curveBasis;
   curve = curveLinear;
   // let curve = curveCardinal;
-  // console.log('edge.curve', edge.curve);
+  console.log('BBB edge.curve', edge.curve);
+  switch (edge.curve) {
+    case 'linear':
+      curve = curveLinear;
+      break;
+    case 'basis':
+      curve = curveBasis;
+      break;
+    case 'cardinal':
+      curve = curveCardinal;
+      break;
+    default:
+      curve = curveLinear;
+  }
+
   // if (edge.curve) {
   //   curve = edge.curve;
   // }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
-  console.log('BBB offset', x, y);
   const lineFunction = line().x(x).y(y).curve(curve);
   // const pointsStr = btoa(JSON.stringify(lineData));
   // console.log('Line data', lineData);
@@ -517,10 +530,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       strokeClasses += ' edge-pattern-solid';
   }
   let svgPath;
-  console.log('BBB lineData', lineData);
-  // console.log('BBB lineFunction - lineData', lineFunction(lineData));
-  let linePath = lineFunction(lineData);
-  linePath = generateRoundedPath(lineData, 5);
+  let linePath =
+    edge.curve === 'rounded'
+      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+      : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
@@ -565,15 +578,17 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   //     .attr('cx', point.x)
   //     .attr('cy', point.y);
   // });
-  lineData.forEach((point) => {
-    elem
-      .append('circle')
-      .style('stroke', 'red')
-      .style('fill', 'red')
-      .attr('r', 1)
-      .attr('cx', point.x)
-      .attr('cy', point.y);
-  });
+  if (edge.showPoints) {
+    lineData.forEach((point) => {
+      elem
+        .append('circle')
+        .style('stroke', 'red')
+        .style('fill', 'red')
+        .attr('r', 1)
+        .attr('cx', point.x)
+        .attr('cy', point.y);
+    });
+  }
 
   let url = '';
   if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
@@ -676,4 +691,55 @@ function generateRoundedPath(points, radius) {
   }
 
   return path;
+}
+// Helper function to calculate delta and angle between two points
+function calculateDeltaAndAngle(point1, point2) {
+  if (!point1 || !point2) {
+    return { angle: 0, deltaX: 0, deltaY: 0 };
+  }
+  const deltaX = point2.x - point1.x;
+  const deltaY = point2.y - point1.y;
+  const angle = Math.atan2(deltaY, deltaX);
+  return { angle, deltaX, deltaY };
+}
+
+// Function to adjust the first and last points of the points array
+function applyMarkerOffsetsToPoints(points, edge) {
+  // Copy the points array to avoid mutating the original data
+  const newPoints = points.map((point) => ({ ...point }));
+
+  // Handle the first point (start of the edge)
+  if (points.length >= 2 && markerOffsets[edge.arrowTypeStart]) {
+    const offsetValue = markerOffsets[edge.arrowTypeStart];
+
+    const point1 = points[0];
+    const point2 = points[1];
+
+    const { angle } = calculateDeltaAndAngle(point1, point2);
+
+    const offsetX = offsetValue * Math.cos(angle);
+    const offsetY = offsetValue * Math.sin(angle);
+
+    newPoints[0].x = point1.x + offsetX;
+    newPoints[0].y = point1.y + offsetY;
+  }
+
+  // Handle the last point (end of the edge)
+  const n = points.length;
+  if (n >= 2 && markerOffsets[edge.arrowTypeEnd]) {
+    const offsetValue = markerOffsets[edge.arrowTypeEnd];
+
+    const point1 = points[n - 1];
+    const point2 = points[n - 2];
+
+    const { angle } = calculateDeltaAndAngle(point2, point1);
+
+    const offsetX = offsetValue * Math.cos(angle);
+    const offsetY = offsetValue * Math.sin(angle);
+
+    newPoints[n - 1].x = point1.x - offsetX;
+    newPoints[n - 1].y = point1.y - offsetY;
+  }
+
+  return newPoints;
 }
