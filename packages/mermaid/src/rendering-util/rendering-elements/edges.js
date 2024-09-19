@@ -5,7 +5,7 @@ import { createText } from '../createText.js';
 import utils from '../../utils.js';
 import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
-import { curveBasis, line, select } from 'd3';
+import { curveBasis, curveLinear, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
@@ -466,7 +466,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  lineData = fixCorners(lineData);
+  // lineData = fixCorners(lineData);
   let lastPoint = lineData[lineData.length - 1];
   if (lineData.length > 1) {
     lastPoint = lineData[lineData.length - 1];
@@ -477,13 +477,15 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     lineData.splice(-1, 0, midPoint);
   }
   let curve = curveBasis;
-  // let curve = curveLinear;
+  curve = curveLinear;
   // let curve = curveCardinal;
-  if (edge.curve) {
-    curve = edge.curve;
-  }
+  // console.log('edge.curve', edge.curve);
+  // if (edge.curve) {
+  //   curve = edge.curve;
+  // }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
+  console.log('BBB offset', x, y);
   const lineFunction = line().x(x).y(y).curve(curve);
   // const pointsStr = btoa(JSON.stringify(lineData));
   // console.log('Line data', lineData);
@@ -515,7 +517,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       strokeClasses += ' edge-pattern-solid';
   }
   let svgPath;
+  console.log('BBB lineData', lineData);
+  // console.log('BBB lineFunction - lineData', lineFunction(lineData));
   let linePath = lineFunction(lineData);
+  linePath = generateRoundedPath(lineData, 5);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
@@ -560,15 +565,15 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   //     .attr('cx', point.x)
   //     .attr('cy', point.y);
   // });
-  // lineData.forEach((point) => {
-  //   elem
-  //     .append('circle')
-  //     .style('stroke', 'red')
-  //     .style('fill', 'red')
-  //     .attr('r', 1)
-  //     .attr('cx', point.x)
-  //     .attr('cy', point.y);
-  // });
+  lineData.forEach((point) => {
+    elem
+      .append('circle')
+      .style('stroke', 'red')
+      .style('fill', 'red')
+      .attr('r', 1)
+      .attr('cx', point.x)
+      .attr('cy', point.y);
+  });
 
   let url = '';
   if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
@@ -592,3 +597,83 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   paths.originalPath = edge.points;
   return paths;
 };
+
+/**
+ * Generates SVG path data with rounded corners from an array of points.
+ * @param {Array} points - Array of points in the format [{x: Number, y: Number}, ...]
+ * @param {Number} radius - The radius of the rounded corners
+ * @returns {String} - SVG path data string
+ */
+function generateRoundedPath(points, radius) {
+  if (points.length < 2) {
+    return '';
+  }
+
+  let path = '';
+  const size = points.length;
+  const epsilon = 1e-5;
+
+  for (let i = 0; i < size; i++) {
+    const currPoint = points[i];
+    const prevPoint = points[i - 1];
+    const nextPoint = points[i + 1];
+
+    if (i === 0) {
+      // Move to the first point
+      path += `M${currPoint.x},${currPoint.y}`;
+    } else if (i === size - 1) {
+      // Last point, draw a straight line to the final point
+      path += `L${currPoint.x},${currPoint.y}`;
+    } else {
+      // Calculate vectors for incoming and outgoing segments
+      const dx1 = currPoint.x - prevPoint.x;
+      const dy1 = currPoint.y - prevPoint.y;
+      const dx2 = nextPoint.x - currPoint.x;
+      const dy2 = nextPoint.y - currPoint.y;
+
+      const len1 = Math.hypot(dx1, dy1);
+      const len2 = Math.hypot(dx2, dy2);
+
+      // Prevent division by zero
+      if (len1 < epsilon || len2 < epsilon) {
+        path += `L${currPoint.x},${currPoint.y}`;
+        continue;
+      }
+
+      // Normalize the vectors
+      const nx1 = dx1 / len1;
+      const ny1 = dy1 / len1;
+      const nx2 = dx2 / len2;
+      const ny2 = dy2 / len2;
+
+      // Calculate the angle between the vectors
+      const dot = nx1 * nx2 + ny1 * ny2;
+      // Clamp the dot product to avoid numerical issues with acos
+      const clampedDot = Math.max(-1, Math.min(1, dot));
+      const angle = Math.acos(clampedDot);
+
+      // Skip rounding if the angle is too small or too close to 180 degrees
+      if (angle < epsilon || Math.abs(Math.PI - angle) < epsilon) {
+        path += `L${currPoint.x},${currPoint.y}`;
+        continue;
+      }
+
+      // Calculate the distance to offset the control point
+      const cutLen = Math.min(radius / Math.sin(angle / 2), len1 / 2, len2 / 2);
+
+      // Calculate the start and end points of the curve
+      const startX = currPoint.x - nx1 * cutLen;
+      const startY = currPoint.y - ny1 * cutLen;
+      const endX = currPoint.x + nx2 * cutLen;
+      const endY = currPoint.y + ny2 * cutLen;
+
+      // Draw the line to the start of the curve
+      path += `L${startX},${startY}`;
+
+      // Draw the quadratic Bezier curve
+      path += `Q${currPoint.x},${currPoint.y} ${endX},${endY}`;
+    }
+  }
+
+  return path;
+}
