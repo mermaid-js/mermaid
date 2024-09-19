@@ -1,11 +1,11 @@
 import { select } from 'd3';
 import { getConfig } from '../../config.js';
 import { getNodeClasses } from '../../rendering-util/rendering-elements/shapes/util.js';
-import { calculateTextHeight, calculateTextWidth, decodeEntities } from '../../utils.js';
+import { calculateTextWidth, decodeEntities } from '../../utils.js';
 import type { ClassMember, ClassNode } from './classTypes.js';
 import { sanitizeText } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';
-import { hasKatex } from '../common/common.js';
+import { evaluate, hasKatex } from '../common/common.js';
 import type { Node } from '../../rendering-util/types.js';
 import type { MermaidConfig } from '../../config.type.js';
 
@@ -14,15 +14,15 @@ export const textHelper = async (
   parent: SVGAElement,
   node: any,
   config: MermaidConfig,
+  useHtmlLabels: boolean,
   GAP = config.class!.padding ?? 12
 ) => {
+  const TEXT_PADDING = !useHtmlLabels ? 3 : 0;
   const shapeSvg = parent
     // @ts-ignore: Ignore error for using .insert on SVGAElement
     .insert('g')
     .attr('class', getNodeClasses(node))
     .attr('id', node.domId || node.id);
-
-  const TEXT_PADDING = 6;
 
   let annotationGroup = null;
   let labelGroup = null;
@@ -50,16 +50,16 @@ export const textHelper = async (
   membersGroup = shapeSvg.insert('g').attr('class', 'members-group text');
   let yOffset = 0;
   for (const member of node.members) {
-    await addText(membersGroup, member, yOffset, [member.parseClassifier()]);
-    yOffset += calculateTextHeight(member.text, config) + TEXT_PADDING;
+    const height = await addText(membersGroup, member, yOffset, [member.parseClassifier()]);
+    yOffset += height + TEXT_PADDING;
   }
   membersGroupHeight = membersGroup.node().getBBox().height;
 
   methodsGroup = shapeSvg.insert('g').attr('class', 'methods-group text');
   let methodsYOffset = 0;
   for (const method of node.methods) {
-    await addText(methodsGroup, method, methodsYOffset, [method.parseClassifier()]);
-    methodsYOffset += calculateTextHeight(method.text, config) + TEXT_PADDING;
+    const height = await addText(methodsGroup, method, methodsYOffset, [method.parseClassifier()]);
+    methodsYOffset += height + TEXT_PADDING;
   }
 
   let bbox = shapeSvg.node().getBBox();
@@ -99,7 +99,8 @@ const addText = async (
 ) => {
   const textEl = parentGroup.insert('g').attr('class', 'label').attr('style', styles.join('; '));
   const config = getConfig();
-  let useHtmlLabels = config.class?.htmlLabels ?? config.htmlLabels ?? true;
+  let useHtmlLabels =
+    'useHtmlLabels' in node ? node.useHtmlLabels : (evaluate(config.htmlLabels) ?? true);
 
   let textContent = '';
   // Support regular node type (.label) and classNodes (.text)
@@ -133,8 +134,10 @@ const addText = async (
   let numberOfLines = 1;
 
   if (!useHtmlLabels) {
-    // Undo font-weight
-    select(text).selectAll('tspan').attr('font-weight', '');
+    // Undo font-weight normal
+    if (styles.includes('font-weight: bolder')) {
+      select(text).selectAll('tspan').attr('font-weight', '');
+    }
 
     numberOfLines = text.children.length;
 
@@ -212,4 +215,5 @@ const addText = async (
 
   // Center text and offset by yOffset
   textEl.attr('transform', 'translate(0,' + (-bbox.height / (2 * numberOfLines) + yOffset) + ')');
+  return bbox.height;
 };

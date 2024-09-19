@@ -7,19 +7,20 @@ import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import intersect from '../intersect/index.js';
 import { textHelper } from '../../../diagrams/class/shapeUtil.js';
+import { evaluate } from '../../../diagrams/common/common.js';
 
 export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const config = getConfig();
   const PADDING = config.class!.padding ?? 12;
   const GAP = PADDING;
-  const useHtmlLabels = config.class?.htmlLabels ?? config.htmlLabels ?? true;
+  const useHtmlLabels = node.useHtmlLabels ?? evaluate(config.htmlLabels) ?? true;
   // Treat node as classNode
   const classNode = node as unknown as ClassNode;
   classNode.annotations = classNode.annotations ?? [];
   classNode.members = classNode.members ?? [];
   classNode.methods = classNode.methods ?? [];
 
-  const { shapeSvg, bbox } = await textHelper(parent, node, config, GAP);
+  const { shapeSvg, bbox } = await textHelper(parent, node, config, useHtmlLabels, GAP);
 
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
