@@ -60,7 +60,7 @@ looks.forEach((look) => {
         it(`without label`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           newShapesSet.forEach((newShape, index) => {
-            flowchartCode += `  n${index} --> n${index}${index}{ shape: ${newShape} }\n`;
+            flowchartCode += `  n${index} --> n${index}${index}@{ shape: ${newShape} }\n`;
           });
           imgSnapshotTest(flowchartCode, { look });
         });
