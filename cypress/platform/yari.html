@@ -5,11 +5,31 @@
       <div class="test">
         <h2>Basic Class</h2>
         <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: false
+          ---
           classDiagram
-          class Duck {
+          class _Duck_ {
             +String beakColor
-            +swim()
-            +quack()
+            _+_swim_()a_
+            __+quack() test__
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Class</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            htmlLabels: false
+          ---
+          classDiagram
+          class Class10:::exClass2 {
+            int[] id
+            List~int~ ids
+            test(List~int~ ids) List~bool~
+            testArray() bool[]
           }
         </pre>
       </div>
@@ -79,8 +99,8 @@
         <h2>Additional Classifiers</h2>
         <p>(* Abstract | $ Static)</p>
         <div class="mermaid">
-          classDiagram class Square~Shape~ { int id* List~int~ position* setPoints(List~int~
-          points)* getPoints()* List~int~ } Square : -List~string~ messages$ Square :
+          classDiagram class Square~Shape~ { int id* List~int~ position* setPoints(List~int~points)*
+          getPoints()* List~int~ } Square : -List~string~ messages$ Square :
           +setMessages(List~string~ messages)* Square : +getMessages()$ List~string~ Square :
           +getDistanceMatrix() List~List~int~~$
         </div>
@@ -253,7 +273,7 @@
                 'primaryColor': '#BB2528',
                 'primaryTextColor': '#fff',
                 'primaryBorderColor': '#7C0000',
-                'lineColor': '#F8B229',
+                'lineColor': '#F83d29',
                 'secondaryColor': '#006100',
                 'tertiaryColor': '#fff'
               }
@@ -265,6 +285,7 @@
             +swim()
             +quack()
           }
+          Duck--Dog
         </pre>
       </div>
       <div class="test">
@@ -468,11 +489,13 @@
         <pre class="mermaid">
           ---
           title: Animal example
+          config:
+            layout: dagre
           ---
           classDiagram
               note "From Duck till Zebra"
               Animal <|--|> Duck
-              note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
+              note for Duck "can fly<br>can swim<br>can dive<br>can help in debugging"
               Animal <|-- Fish
               Animal <|--|> Zebra
               Animal : +int age
@@ -562,7 +585,7 @@
       grid-template-columns: 1fr;
     }
 
-    #classId-Duck-22.styleClass > * > path {
+    #classId-Duck-24.styleClass > * > path {
       fill: #ff0000;
       stroke: #ffff00;
       stroke-width: 4px;

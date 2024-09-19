@@ -11,7 +11,7 @@ describe('Class diagram V3', () => {
         classB -- classD
 
         `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -44,7 +44,40 @@ describe('Class diagram V3', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+
+  it('1.1: should render a simple class diagram without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 *-- Class04
+      Class05 o-- Class06
+      Class07 .. Class08
+      Class09 --> C2 : Where am i?
+      Class09 --* C3
+      Class09 --|> Class07
+      Class12 <|.. Class08
+      Class11 ..>Class12
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      Class08 <--> C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      `,
+      { logLevel: 1, htmlLabels: false }
     );
   });
 
@@ -72,11 +105,39 @@ describe('Class diagram V3', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
-  it('2.1 should render a simple class diagram with different visibilities', () => {
+  it('2.1: should render a simple class diagrams with cardinality without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      Class01 "1" <|--|> "*" AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 "1" *-- "*" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 "1" .. "*" Class08
+      Class09 "1" --> "*" C2 : Where am i?
+      Class09 "*" --* "*" C3
+      Class09 "1" --|> "1" Class07
+      Class07  : equals()
+      Class07  : Object[] elementData
+      Class01  : size()
+      Class01  : int chimp
+      Class01  : int gorilla
+      Class08 "1" <--> "*" C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      `,
+      { logLevel: 1, htmlLabels: false }
+    );
+  });
+
+  it('2.2 should render a simple class diagram with different visibilities', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -89,7 +150,23 @@ describe('Class diagram V3', () => {
       Class01 : +int publicGorilla
       Class01 : #int protectedMarmoset
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+  it('2.3 should render a simple class diagram with different visibilities without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class01 : -privateMethod()
+      Class01 : +publicMethod()
+      Class01 : #protectedMethod()
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      `,
+      { logLevel: 1, htmlLabels: false }
     );
   });
 
@@ -141,7 +218,7 @@ describe('Class diagram V3', () => {
       }
       `,
       ],
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -170,7 +247,7 @@ describe('Class diagram V3', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -181,7 +258,18 @@ describe('Class diagram V3', () => {
       Class01 <|-- AveryLongClass : Cool
       Class01 : someMethod()*
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+
+  it('5.1: should render a simple class diagram with abstract method without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      Class01 : someMethod()*
+      `,
+      { logLevel: 1, htmlLabels: false }
     );
   });
 
@@ -192,7 +280,18 @@ describe('Class diagram V3', () => {
       Class01 <|-- AveryLongClass : Cool
       Class01 : someMethod()$
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+
+  it('6.1: should render a simple class diagram with static method without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      Class01 : someMethod()$
+      `,
+      { logLevel: 1, htmlLabels: false }
     );
   });
 
@@ -211,7 +310,26 @@ describe('Class diagram V3', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+
+  it('7.1: should render a simple class diagram with Generic class without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+    class Class01~T~
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class08 <--> C2: Cool label
+      class Class10~T~ {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      `,
+      { logLevel: 1, htmlLabels: false }
     );
   });
 
@@ -231,7 +349,7 @@ describe('Class diagram V3', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -252,7 +370,7 @@ describe('Class diagram V3', () => {
       }
       link Class01 "google.com" "A Tooltip"
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -273,7 +391,7 @@ describe('Class diagram V3', () => {
       }
       callback Class01 "functionCall" "A Tooltip"
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -287,7 +405,21 @@ describe('Class diagram V3', () => {
         testArray() bool[]
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+
+  it('11.1: should render a simple class diagram with return type on method without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      class Class10~T~ {
+        int[] id
+        test(int[] ids) bool
+        testArray() bool[]
+      }
+      `,
+      { logLevel: 1, htmlLabels: false }
     );
   });
 
@@ -302,7 +434,22 @@ describe('Class diagram V3', () => {
         testArray() bool[]
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+
+  it('12.1: should render a simple class diagram with generic types without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      class Class10~T~ {
+        int[] id
+        List~int~ ids
+        test(List~int~ ids) List~bool~
+        testArray() bool[]
+      }
+      `,
+      { logLevel: 1, htmlLabels: false }
     );
   });
 
@@ -319,7 +466,7 @@ describe('Class diagram V3', () => {
 
       cssClass "Class10" exClass2
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -334,7 +481,7 @@ describe('Class diagram V3', () => {
         testArray() bool[]
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -347,7 +494,7 @@ describe('Class diagram V3', () => {
 
       cssClass "Class10, class20" exClass2
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -359,7 +506,7 @@ describe('Class diagram V3', () => {
         +String bar$
       }
             `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -383,7 +530,7 @@ describe('Class diagram V3', () => {
         Student "1" --o "1" Bike : rides
 
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
   it('17a: should handle the direction statement with BT', () => {
@@ -406,7 +553,7 @@ describe('Class diagram V3', () => {
         Student "1" --o "1" Bike : rides
 
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
   it('17b: should handle the direction statement with RL', () => {
@@ -429,7 +576,7 @@ describe('Class diagram V3', () => {
         Student "1" --o "1" Bike : rides
 
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -453,7 +600,7 @@ describe('Class diagram V3', () => {
         Student "1" --o "1" Bike : rides
 
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -469,7 +616,7 @@ describe('Class diagram V3', () => {
         note for Class10 "Cool class\nI said it's very cool class!"
 
         `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
     );
   });
 
@@ -568,7 +715,39 @@ class C13["With Città foreign language"]
       classDiagram
         class Class10
         `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+  it('should render a simple class diagram with no members if hideEmptyMembersBox is enabled', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10
+        `,
+      { logLevel: 1, class: { htmlLabels: true, hideEmptyMembersBox: true } }
+    );
+  });
+  it('should render a simple class diagram with no attributes, only methods', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Duck {
+          +swim()
+          +quack()
+        }
+      `
+    );
+  });
+  it('should render a simple class diagram with no methods, only attributes', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Duck {
+          +String beakColor
+          +int age
+          +float weight
+        }
+      `
     );
   });
   it('should render a simple class diagram with style definition', () => {
@@ -578,7 +757,237 @@ class C13["With Città foreign language"]
         class Class10
         style Class10 fill:#f9f,stroke:#333,stroke-width:4px
         `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+  it('should render a simple class diagram with style definition without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10
+        style Class10 fill:#f9f,stroke:#333,stroke-width:4px
+        `,
+      { logLevel: 1, htmlLabels: false }
+    );
+  });
+  it('should render a simple class diagram with classDef definitions', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10
+        classDef pink fill:#f9f
+        classDef bold stroke:#333,stroke-width:6px,color:#fff
+        `,
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+  it('should render a simple class diagram with classDefs being applied', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10:::pink
+        cssClass "Class10" bold
+        classDef pink fill:#f9f
+        classDef bold stroke:#333,stroke-width:6px,color:#fff
+        `,
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+  it('should render a simple class diagram with classDefs being applied without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10:::pink
+        cssClass "Class10" bold
+        classDef pink fill:#f9f
+        classDef bold stroke:#333,stroke-width:6px,color:#fff
+        `,
+      { logLevel: 1, htmlLabels: false }
+    );
+  });
+  it('should render a simple class diagram with markdown styling', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10 {
+          +attribute *italic**
+          ~attribute **bold***
+          _italicmethod_()
+          __boldmethod__()
+          _+_swim_()a_
+          __+quack() test__
+        }
+        `,
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+  it('should render a simple class diagram with markdown styling without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10 {
+          +attribute *italic**
+          ~attribute **bold***
+          _italicmethod_()
+          __boldmethod__()
+          _+_swim_()a_
+          __+quack() test__
+        }
+        `,
+      { logLevel: 1, htmlLabels: false }
+    );
+  });
+  it('should render a simple class diagram with the handDrawn look', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10
+        `,
+      { logLevel: 1, htmlLabels: true, look: 'handDrawn' }
+    );
+  });
+  it('should render a simple class diagram with styles and the handDrawn look', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10
+        style Class10 fill:#f9f,stroke:#333,stroke-width:4px,color:white
+        `,
+      { logLevel: 1, htmlLabels: true, look: 'handDrawn' }
+    );
+  });
+  it('should render a simple class diagram with styles and the handDrawn look without htmlLabels', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+        class Class10
+        style Class10 fill:#f9f,stroke:#333,stroke-width:4px,color:white
+        `,
+      { logLevel: 1, htmlLabels: false, look: 'handDrawn' }
+    );
+  });
+  it('should render a full class diagram with the handDrawn look', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      note "I love this diagram!\nDo you love it?"
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 "1" *-- "*" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 "1" .. "*" Class08
+      Class09 "1" --> "*" C2 : Where am i?
+      Class09 "*" --* "*" C3
+      Class09 "1" --|> "1" Class07
+      Class12 <|.. Class08
+      Class11 ..>Class12
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      Class08 <--> C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      note for Class10 "Cool class\nI said it's very cool class!"
+      `,
+      { logLevel: 1, htmlLabels: true, look: 'handDrawn' }
+    );
+  });
+  it('should render a simple class diagram with a custom theme', () => {
+    imgSnapshotTest(
+      `
+    %%{
+      init: {
+        'theme': 'base',
+        'themeVariables': {
+          'primaryColor': '#BB2528',
+          'primaryTextColor': '#fff',
+          'primaryBorderColor': '#7C0000',
+          'lineColor': '#F83d29',
+          'secondaryColor': '#006100',
+          'tertiaryColor': '#fff'
+        }
+      }
+    }%%
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 *-- Class04
+      Class05 o-- Class06
+      Class07 .. Class08
+      Class09 --> C2 : Where am i?
+      Class09 --* C3
+      Class09 --|> Class07
+      Class12 <|.. Class08
+      Class11 ..>Class12
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      Class08 <--> C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      `,
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
+  it('should render a simple class diagram with a custom theme and the handDrawn look', () => {
+    imgSnapshotTest(
+      `
+    %%{
+      init: {
+        'theme': 'base',
+        'themeVariables': {
+          'primaryColor': '#BB2528',
+          'primaryTextColor': '#fff',
+          'primaryBorderColor': '#7C0000',
+          'lineColor': '#F83d29',
+          'secondaryColor': '#006100',
+          'tertiaryColor': '#fff'
+        }
+      }
+    }%%
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 *-- Class04
+      Class05 o-- Class06
+      Class07 .. Class08
+      Class09 --> C2 : Where am i?
+      Class09 --* C3
+      Class09 --|> Class07
+      Class12 <|.. Class08
+      Class11 ..>Class12
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      Class08 <--> C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      `,
+      { logLevel: 1, htmlLabels: true, look: 'handDrawn' }
     );
   });
 });
