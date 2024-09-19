@@ -19,15 +19,13 @@ export const iconCircle = async (
   const iconSize = Math.max(assetHeight, assetWidth);
   const defaultWidth = flowchart?.wrappingWidth;
   node.width = Math.max(iconSize, defaultWidth ?? 0);
-  const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
-    parent,
-    node,
-    'icon-shape default'
-  );
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'icon-shape default');
+
+  const padding = 20;
+  const labelPadding = node.label ? 8 : 0;
 
   const topLabel = node.pos === 't';
 
-  const diameter = iconSize + halfPadding * 2;
   const { nodeBorder, mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
   // @ts-ignore - rough is not typed
@@ -39,32 +37,48 @@ export const iconCircle = async (
     options.fillStyle = 'solid';
   }
 
-  const iconNode = rc.circle(0, 0, diameter, options);
-
-  const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
   const iconElem = shapeSvg.append('g');
   if (node.icon) {
     iconElem.html(
       `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
     );
-    const iconBBox = iconElem.node().getBBox();
-    const iconWidth = iconBBox.width;
-    const iconHeight = iconBBox.height;
-    iconElem.attr(
-      'transform',
-      `translate(${-iconWidth / 2},${topLabel ? diameter / 2 - iconHeight - halfPadding + bbox.height / 2 : -diameter / 2 + halfPadding - bbox.height / 2})`
-    );
-    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   }
+  const iconBBox = iconElem.node().getBBox();
+  const iconWidth = iconBBox.width;
+  const iconHeight = iconBBox.height;
+  const iconX = iconBBox.x;
+  const iconY = iconBBox.y;
 
+  const diameter = Math.max(iconWidth, iconHeight) + padding * 2;
+  const iconNode = rc.circle(0, 0, diameter, options);
+
+  const outerWidth = Math.max(diameter, bbox.width);
+  const outerHeight = diameter + bbox.height + labelPadding;
+
+  const outerNode = rc.rectangle(-outerWidth / 2, -outerHeight / 2, outerWidth, outerHeight, {
+    ...options,
+    fill: 'none',
+    stroke: 'none',
+  });
+
+  const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
+  const outerShape = shapeSvg.insert(() => outerNode);
+  iconElem.attr(
+    'transform',
+    `translate(${-iconWidth / 2 - iconX},${topLabel ? diameter / 2 - iconHeight - padding + bbox.height / 2 - iconY : -diameter / 2 + padding - bbox.height / 2 - labelPadding / 2 - iconY})`
+  );
+  iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   label.attr(
     'transform',
-    `translate(${-diameter / 2 + diameter / 2 - bbox.width / 2},${topLabel ? -diameter / 2 - bbox.height / 2 : diameter / 2 - bbox.height / 2})`
+    `translate(${-bbox.width / 2},${topLabel ? -diameter / 2 - bbox.height / 2 : diameter / 2 - bbox.height / 2 + labelPadding / 2})`
   );
 
-  iconShape.attr('transform', `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2})`);
+  iconShape.attr(
+    'transform',
+    `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2 - labelPadding / 2})`
+  );
 
-  updateNodeBounds(node, shapeSvg);
+  updateNodeBounds(node, outerShape);
 
   node.intersect = function (point) {
     log.info('iconSquare intersect', node, point);
