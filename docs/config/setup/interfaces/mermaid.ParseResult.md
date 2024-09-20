@@ -36,7 +36,7 @@ Omit.defaultConfig
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:327](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L327)
+[packages/mermaid/src/types.ts:67](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L67)
 
 ---
 
@@ -52,7 +52,7 @@ Omit.diagram
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:72](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L72)
+[packages/mermaid/src/types.ts:63](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L63)
 
 ---
 
