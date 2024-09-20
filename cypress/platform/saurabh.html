@@ -63,23 +63,21 @@
   <body style="display: flex; gap: 2rem; flex-direction: row">
     <pre id="diagram4" class="mermaid">
       flowchart TD
-       B2@{ icon: "fa:bell", form: "square", label: "B2 agsyua duadu", pos: "t", h: 80 }@
-       
-
-       W --> B2
-       X --> B2
-       Y --> B2
-       Z --> B2
-       B2 --<strong>sas</strong>--> C
-
-
+       B2@{ icon: "fa:bell", form: "square", label: "B2 agsyua duadu", pos: "b" }
     </pre>
-    <pre id="diagram4" class="mermaid2">
-      flowchart TB
-       A --test2--> B2@{ icon: "fa:bell", form: "rounded", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }@
-       B2 --test--> C
-       D --> B2 --> E
-       style B2 fill:#f9f,stroke:#333,stroke-width:4px
+    <pre id="diagram4" class="mermaid">
+      flowchart TD
+        B2@{ icon: "fa:bell", form: "rounded", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }
+  </pre
+    >
+    <pre id="diagram4" class="mermaid">
+      flowchart TD
+        B2@{ icon: "fa:bell", form: "circle", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }
+  </pre
+    >
+    <pre id="diagram4" class="mermaid">
+      flowchart TD
+        B2@{ icon: "fa:bell", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }
   </pre
     >
     <pre id="diagram43" class="mermaid2">
@@ -125,7 +123,9 @@
         {
           name: 'fa',
           loader: () =>
-            fetch('https://unpkg.com/@iconify-json/fa6-solid/icons.json').then((res) => res.json()),
+            fetch('https://unpkg.com/@iconify-json/fa6-regular/icons.json').then((res) =>
+              res.json()
+            ),
         },
       ]);
       mermaid.parseError = function (err, hash) {
@@ -137,7 +137,7 @@
       mermaid.initialize({
         // theme: 'base',
         // handdrawnSeed: 12,
-        look: 'classic',
+        // look: 'classic',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // 'elk.nodePlacement.strategy': 'SIMPLE',
         // 'elk.nodePlacement.strategy': 'LAYERED',

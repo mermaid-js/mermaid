@@ -17,18 +17,22 @@ export const imageSquare = async (
 
   const imageNaturalWidth = Number(img.naturalWidth.toString().replace('px', ''));
   const imageNaturalHeight = Number(img.naturalHeight.toString().replace('px', ''));
+  node.imageAspectRatio = imageNaturalWidth / imageNaturalHeight;
 
   const { labelStyles } = styles2String(node);
 
   node.labelStyle = labelStyles;
 
   const defaultWidth = flowchart?.wrappingWidth;
+  node.defaultWidth = flowchart?.wrappingWidth;
 
   const imageWidth = Math.max(
     node.label ? (defaultWidth ?? 0) : 0,
     node?.assetWidth ?? imageNaturalWidth
   );
-  const imageHeight = node?.assetHeight ?? imageNaturalHeight;
+  const imageHeight = node.constrainedImage
+    ? imageWidth / node.imageAspectRatio
+    : (node?.assetHeight ?? imageNaturalHeight);
   node.width = Math.max(imageWidth, defaultWidth ?? 0);
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'image-shape default');
 

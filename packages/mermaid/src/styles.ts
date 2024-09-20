@@ -115,6 +115,16 @@ const getStyles = (
     stroke-width: 1px;
   }
 
+  [data-look="neo"].icon-shape .icon path {
+    fill: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow};
+  }
+
+    [data-look="neo"].icon-shape path {
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+    filter: ${options.dropShadow};
+  }
+
   ${userStyles}
 `;
 };

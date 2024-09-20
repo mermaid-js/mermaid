@@ -21,7 +21,7 @@ export const iconCircle = async (
   node.width = Math.max(iconSize, defaultWidth ?? 0);
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'icon-shape default');
 
-  const padding = 20;
+  const padding = node.look === 'neo' ? 30 : 20;
   const labelPadding = node.label ? 8 : 0;
 
   const topLabel = node.pos === 't';
@@ -65,18 +65,27 @@ export const iconCircle = async (
   const outerShape = shapeSvg.insert(() => outerNode);
   iconElem.attr(
     'transform',
-    `translate(${-iconWidth / 2 - iconX},${topLabel ? diameter / 2 - iconHeight - padding + bbox.height / 2 - iconY : -diameter / 2 + padding - bbox.height / 2 - labelPadding / 2 - iconY})`
+    `translate(${-iconWidth / 2 - iconX},${topLabel ? diameter / 2 - iconHeight - padding + bbox.height / 2 - iconY + labelPadding / 2 : -diameter / 2 + padding - bbox.height / 2 - labelPadding / 2 - iconY})`
   );
   iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
+  iconElem.attr('class', 'icon');
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2},${topLabel ? -diameter / 2 - bbox.height / 2 : diameter / 2 - bbox.height / 2 + labelPadding / 2})`
+    `translate(${-bbox.width / 2},${topLabel ? -diameter / 2 - bbox.height / 2 - labelPadding / 2 : diameter / 2 - bbox.height / 2 + labelPadding / 2})`
   );
 
   iconShape.attr(
     'transform',
-    `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2 - labelPadding / 2})`
+    `translate(${0},${topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2})`
   );
+
+  if (stylesMap.get('stroke')) {
+    iconElem.selectAll('path').attr('style', `fill: ${stylesMap.get('stroke')}`);
+  }
+
+  if (stylesMap.get('fill')) {
+    iconShape.selectAll('path').attr('style', `stroke: ${stylesMap.get('fill')}`);
+  }
 
   updateNodeBounds(node, outerShape);
 

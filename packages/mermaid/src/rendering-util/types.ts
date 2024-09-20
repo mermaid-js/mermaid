@@ -69,6 +69,9 @@ export interface Node {
   img?: string;
   assetWidth?: number;
   assetHeight?: number;
+  defaultWidth?: number;
+  imageAspectRatio?: number;
+  constrainedImage?: boolean;
 }
 
 // Common properties for any edge in the system
@@ -100,6 +103,7 @@ export interface Edge {
   pattern?: string;
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
+  showPoints?: boolean;
 }
 
 export interface RectOptions {
