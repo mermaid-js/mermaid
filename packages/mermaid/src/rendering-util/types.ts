@@ -69,6 +69,9 @@ export interface Node {
   img?: string;
   assetWidth?: number;
   assetHeight?: number;
+  defaultWidth?: number;
+  imageAspectRatio?: number;
+  constrainedImage?: boolean;
 }
 
 // Common properties for any edge in the system
