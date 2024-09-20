@@ -55,9 +55,9 @@ export const icon = async (
 
   const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
   const outerShape = shapeSvg.insert(() => outerNode);
+  const iconElem = shapeSvg.append('g');
 
   if (node.icon) {
-    const iconElem = shapeSvg.append('g');
     iconElem.html(
       `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
     );
@@ -71,6 +71,7 @@ export const icon = async (
       `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY : -outerHeight / 2 - iconY})`
     );
     iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
+    iconElem.attr('class', 'icon');
   }
 
   label.attr(
@@ -82,6 +83,14 @@ export const icon = async (
     'transform',
     `translate(${0},${topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2})`
   );
+
+  if (stylesMap.get('stroke')) {
+    iconElem.selectAll('path').attr('style', `fill: ${stylesMap.get('stroke')}`);
+  }
+
+  if (stylesMap.get('fill')) {
+    iconShape.selectAll('path').attr('style', `stroke: ${stylesMap.get('fill')}`);
+  }
 
   updateNodeBounds(node, outerShape);
 
