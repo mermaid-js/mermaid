@@ -65,17 +65,17 @@ export const iconCircle = async (
   const outerShape = shapeSvg.insert(() => outerNode);
   iconElem.attr(
     'transform',
-    `translate(${-iconWidth / 2 - iconX},${topLabel ? diameter / 2 - iconHeight - padding + bbox.height / 2 - iconY : -diameter / 2 + padding - bbox.height / 2 - labelPadding / 2 - iconY})`
+    `translate(${-iconWidth / 2 - iconX},${topLabel ? diameter / 2 - iconHeight - padding + bbox.height / 2 - iconY + labelPadding / 2 : -diameter / 2 + padding - bbox.height / 2 - labelPadding / 2 - iconY})`
   );
   iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2},${topLabel ? -diameter / 2 - bbox.height / 2 : diameter / 2 - bbox.height / 2 + labelPadding / 2})`
+    `translate(${-bbox.width / 2},${topLabel ? -diameter / 2 - bbox.height / 2 - labelPadding / 2 : diameter / 2 - bbox.height / 2 + labelPadding / 2})`
   );
 
   iconShape.attr(
     'transform',
-    `translate(${0},${topLabel ? bbox.height / 2 : -bbox.height / 2 - labelPadding / 2})`
+    `translate(${0},${topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2})`
   );
 
   updateNodeBounds(node, outerShape);
