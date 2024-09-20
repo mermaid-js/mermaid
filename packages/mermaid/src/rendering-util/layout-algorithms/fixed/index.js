@@ -212,7 +212,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
       if (node.isGroup) {
         node.x = 0;
         node.y = 0;
-        await insertCluster(nodes, node, 'TB');
+        await insertCluster(nodes, node, { config: siteConfig, dir: 'TB' });
         // Don't set the coordinates before they "layout", this will mess up the positioning
         if (pos) {
           node.x = pos?.x || 0;
@@ -223,7 +223,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
           node.x = pos?.x || 0;
           node.y = pos?.y || 0;
         }
-        await insertNode(nodes, node, 'TB');
+        await insertNode(nodes, node, { config: siteConfig, dir: 'TB' });
       }
       nodeDB.set(node.id, node);
     })
