@@ -80,7 +80,7 @@ jobs:
         working-directory: ./packages/mermaid
         continue-on-error: "${{ github.event_name == 'push' }}"
         run: 'pnpm run docs:verify'
-      - uses: testomatio/check-tests@4002d772f03f907ae2b3d76a4a603795c07a1d06
+      - uses: testomatio/check-tests@00cb5c05fa47ce1d54ed97b2f14eb6d650333a39
         with:
           framework: cypress
           tests: ./cypress/e2e/**/**.spec.js
