@@ -163,3 +163,33 @@ export function generateFullSineWavePoints(x1, y1, x2, y2, amplitude, numCycles)
 
   return points;
 }
+
+export function generateCirclePoints(
+  centerX, // x-coordinate of center of circle
+  centerY, // x-coordinate of center of circle
+  radius, // radius of circle
+  numPoints, // total points required
+  startAngle, //  angle where arc will start
+  endAngle // angle where arc will end
+) {
+  const points = [];
+
+  // Convert angles to radians
+  const startAngleRad = (startAngle * Math.PI) / 180;
+  const endAngleRad = (endAngle * Math.PI) / 180;
+
+  // Calculate the angle range in radians
+  const angleRange = endAngleRad - startAngleRad;
+
+  // Calculate the angle step
+  const angleStep = angleRange / (numPoints - 1);
+
+  for (let i = 0; i < numPoints; i++) {
+    const angle = startAngleRad + i * angleStep;
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
+    points.push({ x: -x, y: -y });
+  }
+
+  return points;
+}
