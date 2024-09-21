@@ -7,6 +7,7 @@ export interface NodeMetaData {
   img?: string;
   w?: string;
   h?: string;
+  constrainedImage?: boolean;
 }
 import type { MermaidConfig } from './config.type.js';
 

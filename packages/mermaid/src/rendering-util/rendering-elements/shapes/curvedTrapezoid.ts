@@ -1,38 +1,23 @@
-import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
+import {
+  labelHelper,
+  updateNodeBounds,
+  getNodeClasses,
+  createPathFromPoints,
+  generateCirclePoints,
+} from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.d.ts';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
-function createCurvedTrapezoidPathD(
-  x: number,
-  y: number,
-  totalWidth: number,
-  totalHeight: number,
-  radius: number
-) {
-  const w = totalWidth - radius;
-  const tw = totalHeight / 4;
-  const points = [
-    { x: x + w, y },
-    { x: x + tw, y },
-    { x: x, y: y + totalHeight / 2 },
-    { x: x + tw, y: y + totalHeight },
-    { x: x + w, y: y + totalHeight },
-  ];
-  const rectPath = createPathFromPoints(points);
-  const arcPath = `M ${w},0 A ${totalHeight / 2} ${totalHeight / 2} 0 0 1 ${w} ${totalHeight}`;
-  const finalPath = `${rectPath} ${arcPath}`.replace('Z', '');
-  return finalPath;
-}
-
 export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const widthMultiplier = bbox.width < 15 ? 2 : 1.25;
-  const w = (bbox.width + node.padding) * widthMultiplier;
-  const h = bbox.height + node.padding;
+  const minWidth = 80,
+    minHeight = 20;
+  const w = Math.max(minWidth, (bbox.width + (node.padding ?? 0) * 2) * 1.25, node?.width ?? 0);
+  const h = Math.max(minHeight, bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
   const radius = h / 2;
 
   const { cssStyles } = node;
@@ -45,7 +30,21 @@ export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const pathData = createCurvedTrapezoidPathD(0, 0, w, h, radius);
+  const totalWidth = w,
+    totalHeight = h;
+  const rw = totalWidth - radius;
+  const tw = totalHeight / 4;
+
+  const points = [
+    { x: rw, y: 0 },
+    { x: tw, y: 0 },
+    { x: 0, y: totalHeight / 2 },
+    { x: tw, y: totalHeight },
+    { x: rw, y: totalHeight },
+    ...generateCirclePoints(-rw, -totalHeight / 2, radius, 50, 270, 90),
+  ];
+
+  const pathData = createPathFromPoints(points);
   const shapeNode = rc.path(pathData, options);
 
   const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
@@ -64,29 +63,7 @@ export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
   updateNodeBounds(node, polygon);
 
   node.intersect = function (point) {
-    const pos = intersect.rect(node, point);
-    const rx = h / 2;
-    const ry = h / 2;
-    const y = pos.y - (node.y ?? 0);
-
-    if (
-      ry != 0 &&
-      (Math.abs(y) < (node.height ?? 0) / 2 ||
-        (Math.abs(y) == (node.height ?? 0) / 2 &&
-          Math.abs(pos.x - (node.x ?? 0)) > (node.width ?? 0) / 2 - rx))
-    ) {
-      let x = rx * rx * (1 - (y * y) / (ry * ry));
-      if (x != 0) {
-        x = Math.sqrt(x);
-      }
-      x = rx - x;
-      if (point.x - (node.x ?? 0) > 0) {
-        x = -x;
-      }
-
-      pos.x += x;
-    }
-
+    const pos = intersect.polygon(node, points, point);
     return pos;
   };
 
