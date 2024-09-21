@@ -63,16 +63,10 @@
   <body style="display: flex; gap: 2rem; flex-direction: row">
     <pre id="diagram4" class="mermaid">
       flowchart LR
-       B2@{ icon: "fa:address-book",  form: "square", pos: "b", h: 80 }
-
-
-       W --> B2 --> x1
-       X --> B2 --> x2
-       Y --> B2 --> x3
-       Z --> B2 --> x4 
-       B2 --<strong>sas</strong>--> C
-
-       A --> B2
+      n21@{ shape: subproc,label: "Untitled Node"}
+      n52@{ shape: internal-storage,label: "Untitled Node"}
+      n53@{ shape: div-rect,label: "Untitled Node"}
+      n54@{ shape: lin-doc,label: "Untitled Node"}
 
 
     </pre>
@@ -150,14 +144,17 @@
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10, htmlLabels: true },
         // fontFamily: 'Caveat',
-        fontFamily: 'Kalam',
-        // fontFamily: 'courier',
+        // fontFamily: 'Kalam',
+        fontFamily: 'courier',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
           messageFontFamily: 'courier',
         },
-        fontSize: 12,
+        themeVariables: {
+          fontSize: 50,
+          fontFamily: 'courier',
+        },
         logLevel: 0,
         securityLevel: 'loose',
       });
