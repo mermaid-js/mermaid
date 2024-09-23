@@ -4,19 +4,50 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 
-function createCylinderPathD(rx: number, ry: number, w: number, h: number) {
-  return `M ${w / 2} ${-h / 2}
-            L ${-w / 2} ${-h / 2}
-            A ${rx} ${ry} 0 0 0 ${-w / 2} ${h / 2}
-            L ${w / 2} ${h / 2}
-            A ${rx} ${ry} 0 0 0 ${w / 2} ${-h / 2}
-            `;
-}
+export const createCylinderPathD = (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  rx: number,
+  ry: number
+): string => {
+  return `M${x},${y}
+    a${rx},${ry} 0,0,1 ${0},${-height}
+    l${width},${0}
+    a${rx},${ry} 0,0,1 ${0},${height}
+    M${width},${-height}
+    a${rx},${ry} 0,0,0 ${0},${height}
+    l${-width},${0}`;
+};
 
-function createInnerPathD(rx: number, ry: number, w: number, h: number) {
-  return `M${w / 2} ${-h / 2}
-            A ${rx} ${ry} 0 0 0 ${w / 2} ${h / 2}`;
-}
+export const createOuterCylinderPathD = (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  rx: number,
+  ry: number
+): string => {
+  return [
+    `M${x},${y}`,
+    `M${x + width},${y}`,
+    `a${rx},${ry} 0,0,0 ${0},${-height}`,
+    `l${-width},0`,
+    `a${rx},${ry} 0,0,0 ${0},${height}`,
+    `l${width},0`,
+  ].join(' ');
+};
+export const createInnerCylinderPathD = (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  rx: number,
+  ry: number
+): string => {
+  return [`M${x + width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 0,${height}`].join(' ');
+};
 
 export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -33,40 +64,49 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const w = bbox.width + rx + labelPadding;
   const { cssStyles } = node;
 
-  // @ts-ignore - rough is not typed
-  const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, {});
+  let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
 
-  if (node.look !== 'handDrawn') {
-    options.roughness = 0;
-    options.fillStyle = 'solid';
+  if (node.look === 'handDrawn') {
+    // @ts-ignore - rough is not typed
+    const rc = rough.svg(shapeSvg);
+    const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
+    const innerPathData = createInnerCylinderPathD(0, 0, w, h, rx, ry);
+    const outerNode = rc.path(outerPathData, userNodeOverrides(node, {}));
+    const innerLine = rc.path(innerPathData, userNodeOverrides(node, { fill: 'none' }));
+    cylinder = shapeSvg.insert(() => innerLine, ':first-child');
+    cylinder = shapeSvg.insert(() => outerNode, ':first-child');
+    cylinder.attr('class', 'basic label-container');
+    if (cssStyles) {
+      cylinder.attr('style', cssStyles);
+    }
+  } else {
+    const pathData = createCylinderPathD(0, 0, w, h, rx, ry);
+    cylinder = shapeSvg
+      .insert('path', ':first-child')
+      .attr('d', pathData)
+      .attr('class', 'basic label-container')
+      .attr('style', cssStyles)
+      .attr('style', nodeStyles);
   }
 
-  const cylinderPath = createCylinderPathD(rx, ry, w, h);
-  const cylinderNode = rc.path(cylinderPath, options);
-
-  const innerPath = createInnerPathD(rx, ry, w, h);
-  const innerNode = rc.path(innerPath, { ...options, fill: 'none' });
-
-  const tiltedCylinder = shapeSvg.insert(() => innerNode, ':first-child');
-  tiltedCylinder.insert(() => cylinderNode, ':first-child');
-
-  tiltedCylinder.attr('class', 'basic label-container');
+  cylinder.attr('class', 'basic label-container');
 
   if (cssStyles && node.look !== 'handDrawn') {
-    tiltedCylinder.selectAll('path').attr('style', cssStyles);
+    cylinder.selectAll('path').attr('style', cssStyles);
   }
 
   if (nodeStyles && node.look !== 'handDrawn') {
-    tiltedCylinder.selectAll('path').attr('style', nodeStyles);
+    cylinder.selectAll('path').attr('style', nodeStyles);
   }
+  cylinder.attr('label-offset-x', rx);
+  cylinder.attr('transform', `translate(${-w / 2}, ${h / 2} )`);
 
   label.attr(
     'transform',
     `translate(${-(bbox.width / 2) - rx - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
   );
 
-  updateNodeBounds(node, tiltedCylinder);
+  updateNodeBounds(node, cylinder);
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);

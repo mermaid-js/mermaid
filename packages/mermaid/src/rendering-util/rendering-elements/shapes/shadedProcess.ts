@@ -24,11 +24,22 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
-  const l1 = rc.line(x, y, x, y + h, options);
+  const points = [
+    { x, y },
+    { x: x + w + 8, y },
+    { x: x + w + 8, y: y + h },
+    { x: x - 8, y: y + h },
+    { x: x - 8, y: y },
+    { x, y },
+    { x, y: y + h },
+  ];
 
-  const rect = shapeSvg.insert(() => l1, ':first-child');
-  rect.insert(() => roughNode, ':first-child');
+  const roughNode = rc.polygon(
+    points.map((p) => [p.x, p.y]),
+    options
+  );
+
+  const rect = shapeSvg.insert(() => roughNode, ':first-child');
 
   rect.attr('class', 'basic label-container').attr('style', cssStyles);
 
