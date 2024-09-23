@@ -38,8 +38,10 @@ export const curlyBraces = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + (node.padding ?? 0);
-  const h = bbox.height + (node.padding ?? 0);
+  const paddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
+  const paddingY = node.look === 'neo' ? (node.padding ?? 0) * 1 : (node.padding ?? 0);
+  const w = Math.max(bbox.width + paddingX, node.width ?? 0);
+  const h = Math.max(bbox.height + paddingY, node.height ?? 0);
   const radius = Math.max(5, h * 0.1);
 
   const { cssStyles } = node;
@@ -83,7 +85,7 @@ export const curlyBraces = async (parent: SVGAElement, node: Node) => {
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { fill: 'none' });
+  const options = userNodeOverrides(node, { fill: 'transparent' });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -115,7 +117,7 @@ export const curlyBraces = async (parent: SVGAElement, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${-w / 2 + (node.padding ?? 0) / 2 - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (node.padding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-w / 2 + paddingX / 2 - (bbox.x - (bbox.left ?? 0))},${-h / 2 + paddingY / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, curlyBracesShape);
