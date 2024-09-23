@@ -167,6 +167,11 @@ export interface ClassRelation {
   };
 }
 
+export interface Interface {
+  label: string;
+  classId: string;
+}
+
 export interface NamespaceNode {
   id: string;
   domId: string;

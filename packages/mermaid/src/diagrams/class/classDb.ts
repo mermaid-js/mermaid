@@ -21,6 +21,7 @@ import type {
   NamespaceMap,
   NamespaceNode,
   StyleClass,
+  Interface,
 } from './classTypes.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 
@@ -30,6 +31,7 @@ let relations: ClassRelation[] = [];
 let classes = new Map<string, ClassNode>();
 const styleClasses = new Map<string, StyleClass>();
 let notes: ClassNote[] = [];
+let interfaces: Interface[] = [];
 let classCounter = 0;
 let namespaces = new Map<string, NamespaceNode>();
 let namespaceCounter = 0;
@@ -97,6 +99,15 @@ export const addClass = function (_id: string) {
   classCounter++;
 };
 
+const addInterface = function (label: string, classId: string) {
+  const _interface: Interface = {
+    label,
+    classId,
+  };
+
+  interfaces.push(_interface);
+};
+
 /**
  * Function to lookup domId from id in the graph definition.
  *
@@ -115,6 +126,7 @@ export const clear = function () {
   relations = [];
   classes = new Map();
   notes = [];
+  interfaces = [];
   functions = [];
   functions.push(setupToolTips);
   namespaces = new Map();
@@ -141,8 +153,40 @@ export const getNotes = function () {
 
 export const addRelation = function (relation: ClassRelation) {
   log.debug('Adding relation: ' + JSON.stringify(relation));
-  addClass(relation.id1);
-  addClass(relation.id2);
+  // Due to relationType cannot just check if it is equal to 'none' or it complains, can fix this later
+  if (
+    relation.relation.type1 === relationType.LOLLIPOP &&
+    relation.relation.type2 !==
+      (relationType.LOLLIPOP ||
+        relationType.AGGREGATION ||
+        relationType.COMPOSITION ||
+        relationType.DEPENDENCY ||
+        relationType.EXTENSION)
+  ) {
+    addClass(relation.id1);
+    addInterface(relation.id2, relation.id1);
+    relation.id2 = `interface ${relation.id2}`;
+    // Also can't set the type to 'none'
+    relation.relation.type1 = -1;
+    relation.relation.type2 = relationType.LOLLIPOP;
+  } else if (
+    relation.relation.type2 === relationType.LOLLIPOP &&
+    relation.relation.type1 !==
+      (relationType.LOLLIPOP ||
+        relationType.AGGREGATION ||
+        relationType.COMPOSITION ||
+        relationType.DEPENDENCY ||
+        relationType.EXTENSION)
+  ) {
+    addClass(relation.id2);
+    addInterface(relation.id1, relation.id2);
+    relation.id1 = `interface ${relation.id1}`;
+    relation.relation.type1 = relationType.LOLLIPOP;
+    relation.relation.type2 = -1;
+  } else {
+    addClass(relation.id1);
+    addClass(relation.id2);
+  }
 
   relation.id1 = splitClassNameAndType(relation.id1).className;
   relation.id2 = splitClassNameAndType(relation.id2).className;
@@ -603,6 +647,18 @@ export const getData = () => {
       };
       edges.push(edge);
     }
+  }
+
+  for (const _interface of interfaces) {
+    const interfaceNode: Node = {
+      id: `interface ${_interface.label}`,
+      label: _interface.label,
+      isGroup: false,
+      shape: 'rect',
+      cssStyles: ['opacity: 0;'],
+      look: config.look,
+    };
+    nodes.push(interfaceNode);
   }
 
   cnt = 0;
