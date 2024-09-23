@@ -251,6 +251,9 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  eventModel: {
+    ...defaultConfigJson.eventModel,
+  }
 };
 
 const keyify = (obj: any, prefix = ''): string[] =>

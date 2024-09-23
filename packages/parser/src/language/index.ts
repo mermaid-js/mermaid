@@ -23,6 +23,10 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  EdgeSet,
+  System,
+  Pattern,
+  Role,
 } from './generated/ast.js';
 
 export {

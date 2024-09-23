@@ -104,11 +104,11 @@ export interface MermaidConfig {
      *
      */
     cycleBreakingStrategy?:
-      | 'GREEDY'
-      | 'DEPTH_FIRST'
-      | 'INTERACTIVE'
-      | 'MODEL_ORDER'
-      | 'GREEDY_MODEL_ORDER';
+    | 'GREEDY'
+    | 'DEPTH_FIRST'
+    | 'INTERACTIVE'
+    | 'MODEL_ORDER'
+    | 'GREEDY_MODEL_ORDER';
   };
   darkMode?: boolean;
   htmlLabels?: boolean;
@@ -197,6 +197,7 @@ export interface MermaidConfig {
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
+  eventModel?: EventModelDiagramConfig;
   block?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
@@ -1510,6 +1511,15 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+}
+/**
+ * The object containing configurations specific for gantt diagrams
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "EventModelDiagramConfig".
+ */
+export interface EventModelDiagramConfig extends BaseDiagramConfig {
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
