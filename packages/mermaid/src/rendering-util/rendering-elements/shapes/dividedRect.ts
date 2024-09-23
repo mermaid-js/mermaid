@@ -1,4 +1,4 @@
-import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.d.ts';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
@@ -25,23 +25,22 @@ export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
     options.fillStyle = 'solid';
   }
 
-  const outerPathPoints = [
-    { x, y: y },
-    { x, y: -y },
+  const pts = [
+    { x, y: y + rectOffset },
+    { x: -x, y: y + rectOffset },
     { x: -x, y: -y },
-    { x: -x, y: y },
-  ];
-  const innerPathPoints = [
-    { x: x, y: y + rectOffset },
+    { x, y: -y },
+    { x, y },
+    { x: -x, y },
     { x: -x, y: y + rectOffset },
   ];
-  const outerPathData = createPathFromPoints(outerPathPoints);
-  const outerNode = rc.path(outerPathData, options);
-  const innerPathData = createPathFromPoints(innerPathPoints);
-  const innerNode = rc.path(innerPathData, options);
 
-  const polygon = shapeSvg.insert(() => outerNode, ':first-child');
-  polygon.insert(() => innerNode);
+  const poly = rc.polygon(
+    pts.map((p) => [p.x, p.y]),
+    options
+  );
+
+  const polygon = shapeSvg.insert(() => poly, ':first-child');
   polygon.attr('class', 'basic label-container');
 
   if (cssStyles && node.look !== 'handDrawn') {
@@ -60,7 +59,7 @@ export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
   updateNodeBounds(node, polygon);
 
   node.intersect = function (point) {
-    const pos = intersect.polygon(node, outerPathPoints, point);
+    const pos = intersect.rect(node, point);
     return pos;
   };
 

@@ -3,7 +3,6 @@ import {
   updateNodeBounds,
   getNodeClasses,
   generateFullSineWavePoints,
-  createPathFromPoints,
 } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.d.ts';
@@ -30,6 +29,7 @@ export const linedWaveEdgedRect = async (parent: SVGAElement, node: Node) => {
   }
 
   const points = [
+    { x: -w / 2 - (w / 2) * 0.1, y: -finalH / 2 },
     { x: -w / 2 - (w / 2) * 0.1, y: finalH / 2 },
     ...generateFullSineWavePoints(
       -w / 2 - (w / 2) * 0.1,
@@ -41,24 +41,17 @@ export const linedWaveEdgedRect = async (parent: SVGAElement, node: Node) => {
     ),
     { x: w / 2 + (w / 2) * 0.1, y: -finalH / 2 },
     { x: -w / 2 - (w / 2) * 0.1, y: -finalH / 2 },
+    { x: -w / 2, y: -finalH / 2 },
+    { x: -w / 2, y: (finalH / 2) * 1.1 },
+    { x: -w / 2, y: -finalH / 2 },
   ];
 
-  const x = -w / 2;
-  const y = -finalH / 2;
+  const poly = rc.polygon(
+    points.map((p) => [p.x, p.y]),
+    options
+  );
 
-  const innerPathPoints = [
-    { x: x, y: y },
-    { x: x, y: -y * 1.1 },
-  ];
-
-  const waveEdgeRectPath = createPathFromPoints(points);
-  const waveEdgeRectNode = rc.path(waveEdgeRectPath, options);
-
-  const innerSecondPath = createPathFromPoints(innerPathPoints);
-  const innerSecondNode = rc.path(innerSecondPath, options);
-
-  const waveEdgeRect = shapeSvg.insert(() => innerSecondNode, ':first-child');
-  waveEdgeRect.insert(() => waveEdgeRectNode, ':first-child');
+  const waveEdgeRect = shapeSvg.insert(() => poly, ':first-child');
 
   waveEdgeRect.attr('class', 'basic label-container');
 

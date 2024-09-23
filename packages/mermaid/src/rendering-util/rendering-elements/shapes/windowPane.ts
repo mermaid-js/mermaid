@@ -1,4 +1,4 @@
-import { labelHelper, getNodeClasses, updateNodeBounds, createPathFromPoints } from './util.js';
+import { labelHelper, getNodeClasses, updateNodeBounds } from './util.js';
 import type { Node } from '../../types.d.ts';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
@@ -26,31 +26,18 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
     { x: x + w, y: y - rectOffset },
   ];
 
-  const innerPathPoints = [
-    { x: x - rectOffset, y },
-    { x: x + w, y },
-  ];
-
-  const innerSecondPathPoints = [
-    { x, y: y - rectOffset },
-    { x, y: y + h },
-  ];
+  const path = `M${x - rectOffset},${y - rectOffset} L${x + w},${y - rectOffset} L${x + w},${y + h} L${x - rectOffset},${y + h} L${x - rectOffset},${y - rectOffset}
+                M${x - rectOffset},${y} L${x + w},${y}
+                M${x},${y - rectOffset} L${x},${y + h}`;
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
 
-  const outerPath = createPathFromPoints(outerPathPoints);
-  const outerNode = rc.path(outerPath, options);
-  const innerPath = createPathFromPoints(innerPathPoints);
-  const innerNode = rc.path(innerPath, options);
-  const innerSecondPath = createPathFromPoints(innerSecondPathPoints);
-  const innerSecondNode = rc.path(innerSecondPath, options);
+  const no = rc.path(path, options);
 
-  const windowPane = shapeSvg.insert(() => innerNode, ':first-child');
-  windowPane.insert(() => innerSecondNode, ':first-child');
-  windowPane.insert(() => outerNode, ':first-child');
+  const windowPane = shapeSvg.insert(() => no, ':first-child');
   windowPane.attr('transform', `translate(${rectOffset / 2}, ${rectOffset / 2})`);
 
   windowPane.attr('class', 'basic label-container');

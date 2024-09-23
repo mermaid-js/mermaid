@@ -30,7 +30,7 @@ export const iconCircle = async (
   const { stylesMap } = compileStyles(node);
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') || mainBkg });
+  const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') ?? mainBkg });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -57,7 +57,7 @@ export const iconCircle = async (
 
   const outerNode = rc.rectangle(-outerWidth / 2, -outerHeight / 2, outerWidth, outerHeight, {
     ...options,
-    fill: 'none',
+    fill: 'transparent',
     stroke: 'none',
   });
 
@@ -65,9 +65,9 @@ export const iconCircle = async (
   const outerShape = shapeSvg.insert(() => outerNode);
   iconElem.attr(
     'transform',
-    `translate(${-iconWidth / 2 - iconX},${topLabel ? diameter / 2 - iconHeight - padding + bbox.height / 2 - iconY + labelPadding / 2 : -diameter / 2 + padding - bbox.height / 2 - labelPadding / 2 - iconY})`
+    `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - padding : outerHeight / 2 - iconHeight - iconY - padding - bbox.height - labelPadding})`
   );
-  iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
+  iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') ?? nodeBorder);
   iconElem.attr('class', 'icon');
   label.attr(
     'transform',
