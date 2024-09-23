@@ -27,8 +27,8 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
   ];
 
   const path = `M${x - rectOffset},${y - rectOffset} L${x + w},${y - rectOffset} L${x + w},${y + h} L${x - rectOffset},${y + h} L${x - rectOffset},${y - rectOffset}
-                M${x - rectOffset},${y} L${x + w},${y}
-                M${x},${y - rectOffset} L${x},${y + h}`;
+                M${x - rectOffset},${y} L${x + w},${y} L${x + w},${y + h} L${x - rectOffset},${y + h} L${x - rectOffset},${y}
+                M${x},${y - rectOffset} L${x + w},${y - rectOffset} L${x + w},${y + h} L${x},${y + h} L${x},${y - rectOffset}`;
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
