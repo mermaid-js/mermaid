@@ -56,8 +56,8 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
   const innerPath = createPathFromPoints(innerPathPoints);
   const innerNode = rc.path(innerPath, { ...options, fill: 'none' });
 
-  const multiRect = shapeSvg.insert(() => innerNode, ':first-child');
-  multiRect.insert(() => outerNode, ':first-child');
+  const multiRect = shapeSvg.insert(() => outerNode, ':first-child');
+  multiRect.insert(() => innerNode);
 
   multiRect.attr('class', 'basic label-container');
 
