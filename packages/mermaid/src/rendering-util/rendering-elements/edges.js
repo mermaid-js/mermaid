@@ -478,7 +478,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
   let curve = curveBasis;
   curve = curveLinear;
-  // let curve = curveCardinal;
   switch (edge.curve) {
     case 'linear':
       curve = curveLinear;

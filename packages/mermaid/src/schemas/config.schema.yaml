@@ -1375,6 +1375,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       radius:
         type: number
         default: 5
+      curve:
+        description: |
+          Defines how mermaid renders curves for flowcharts.
+        type: string
+        enum: ['basis', 'linear', 'cardinal', 'rounded']
+        default: 'rounded'
       defaultRenderer:
         description: |
           Decides which rendering engine that is to be used for the rendering.
