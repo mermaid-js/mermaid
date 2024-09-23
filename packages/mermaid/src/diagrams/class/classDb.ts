@@ -86,7 +86,7 @@ export const addClass = function (_id: string) {
     label: name,
     text: `${name}${type ? `&lt;${type}&gt;` : ''}`,
     shape: 'classBox',
-    cssClasses: [],
+    cssClasses: ['default'],
     methods: [],
     members: [],
     annotations: [],
