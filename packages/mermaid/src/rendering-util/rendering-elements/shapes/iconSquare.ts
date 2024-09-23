@@ -53,7 +53,7 @@ export const iconSquare = async (
 
   const outerNode = rc.rectangle(-outerWidth / 2, -outerHeight / 2, outerWidth, outerHeight, {
     ...options,
-    fill: 'none',
+    fill: 'transparent',
     stroke: 'none',
   });
 
@@ -72,7 +72,7 @@ export const iconSquare = async (
     const iconY = iconBBox.y;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - halfPadding - iconY : -outerHeight / 2 + halfPadding - iconY})`
+      `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - halfPadding : outerHeight / 2 - iconHeight - iconY - halfPadding - bbox.height - labelPadding})`
     );
     iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   }

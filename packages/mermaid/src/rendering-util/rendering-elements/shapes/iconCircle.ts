@@ -57,7 +57,7 @@ export const iconCircle = async (
 
   const outerNode = rc.rectangle(-outerWidth / 2, -outerHeight / 2, outerWidth, outerHeight, {
     ...options,
-    fill: 'none',
+    fill: 'transparent',
     stroke: 'none',
   });
 
@@ -65,7 +65,7 @@ export const iconCircle = async (
   const outerShape = shapeSvg.insert(() => outerNode);
   iconElem.attr(
     'transform',
-    `translate(${-iconWidth / 2 - iconX},${topLabel ? diameter / 2 - iconHeight - padding + bbox.height / 2 - iconY + labelPadding / 2 : -diameter / 2 + padding - bbox.height / 2 - labelPadding / 2 - iconY})`
+    `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - padding : outerHeight / 2 - iconHeight - iconY - padding - bbox.height - labelPadding})`
   );
   iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   label.attr(

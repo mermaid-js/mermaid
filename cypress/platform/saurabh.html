@@ -63,10 +63,14 @@
   <body style="display: flex; gap: 2rem; flex-direction: row">
     <pre id="diagram4" class="mermaid">
       flowchart LR
-      n21@{ shape: subproc,label: "Untitled Node"}
-      n52@{ shape: internal-storage,label: "Untitled Node"}
-      n53@{ shape: div-rect,label: "Untitled Node"}
-      n54@{ shape: lin-doc,label: "Untitled Node"}
+      A@{ icon: "fa:window-minimize", form: circle }
+      E@{ icon: "fa:window-minimize", form: circle }
+      B@{ icon: "fa:bell", form: circle }
+      B2@{ icon: "fa:bell", form: circle }
+      C@{ icon: "fa:address-book",  form: square  }
+      D@{ icon: "fa:star-half",  form: square  }
+      A --> E
+      B --> B2
 
 
     </pre>
@@ -142,7 +146,7 @@
         // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
-        flowchart: { titleTopMargin: 10, htmlLabels: true },
+        flowchart: { titleTopMargin: 10, padding: 0, htmlLabels: true },
         // fontFamily: 'Caveat',
         // fontFamily: 'Kalam',
         fontFamily: 'courier',
