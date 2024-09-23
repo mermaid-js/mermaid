@@ -1,0 +1,36 @@
+graph TD
+    A[Tipos de Energía en la Vida Diaria] --> B[Energía Solar]
+    A --> C[Energía Eólica]
+    A --> D[Energía Hidroeléctrica]
+    A --> E[Energía Química]
+    A --> F[Energía Eléctrica]
+    A --> G[Energía Térmica]
+    A --> H[Energía Nuclear]
+    A --> I[Energía Mecánica]
+
+    B --> B1[Fotosíntesis en plantas]
+    B --> B2[Paneles solares]
+    B --> B3[Calentamiento natural]
+
+    C --> C1[Molinos de viento]
+    C --> C2[Turbinas eólicas]
+
+    D --> D1[Presas hidroeléctricas]
+    D --> D2[Corrientes marinas]
+
+    E --> E1[Alimentos]
+    E --> E2[Combustibles fósiles]
+    E --> E3[Baterías]
+
+    F --> F1[Electrodomésticos]
+    F --> F2[Iluminación]
+    F --> F3[Dispositivos electrónicos]
+
+    G --> G1[Calefacción]
+    G --> G2[Cocción de alimentos]
+
+    H --> H1[Centrales nucleares]
+    H --> H2[Aplicaciones médicas]
+
+    I --> I1[Transporte]
+    I --> I2[Maquinaria industrial]
