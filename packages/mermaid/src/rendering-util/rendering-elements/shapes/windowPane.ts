@@ -8,8 +8,10 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const paddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
+  const paddingY = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
+  const w = Math.max(bbox.width + paddingX * 2, node?.width ?? 0);
+  const h = Math.max(bbox.height + paddingY * 2, node?.height ?? 0);
   const rectOffset = 5;
   const x = -w / 2;
   const y = -h / 2;
@@ -27,8 +29,8 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
   ];
 
   const path = `M${x - rectOffset},${y - rectOffset} L${x + w},${y - rectOffset} L${x + w},${y + h} L${x - rectOffset},${y + h} L${x - rectOffset},${y - rectOffset}
-                M${x - rectOffset},${y} L${x + w},${y}
-                M${x},${y - rectOffset} L${x},${y + h}`;
+                M${x - rectOffset},${y} L${x + w},${y} L${x + w},${y + h} L${x - rectOffset},${y + h} L${x - rectOffset},${y}
+                M${x},${y - rectOffset} L${x + w},${y - rectOffset} L${x + w},${y + h} L${x},${y + h} L${x},${y - rectOffset}`;
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
