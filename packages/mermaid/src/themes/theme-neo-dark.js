@@ -46,8 +46,8 @@ class Theme {
     this.fontSize = '10px';
 
     // Neo-specific
-    this.nodeBorder = 'none';
-    this.stateBorder = 'none';
+    // this.nodeBorder = 'none';
+    // this.stateBorder = 'none';
 
     this.useGradient = true;
     this.gradientStart = '#0042eb';
@@ -90,7 +90,7 @@ class Theme {
     /* Flowchart variables */
     this.nodeBkg = this.nodeBkg || this.primaryColor;
     this.mainBkg = this.mainBkg || this.primaryColor;
-    this.nodeBorder = this.nodeBorder || this.primaryBorderColor;
+    this.nodeBorder = this.nodeBorder || this.border1;
     this.clusterBkg = this.clusterBkg || this.tertiaryColor;
     this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
     this.defaultLinkColor = this.defaultLinkColor || this.lineColor;
