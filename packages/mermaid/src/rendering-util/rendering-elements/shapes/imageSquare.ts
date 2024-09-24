@@ -30,9 +30,10 @@ export const imageSquare = async (
     node.label ? (defaultWidth ?? 0) : 0,
     node?.assetWidth ?? imageNaturalWidth
   );
-  const imageHeight = node.constrainedImage
-    ? imageWidth / node.imageAspectRatio
-    : (node?.assetHeight ?? imageNaturalHeight);
+  const imageHeight =
+    node.constraint === 'on'
+      ? imageWidth / node.imageAspectRatio
+      : (node?.assetHeight ?? imageNaturalHeight);
   node.width = Math.max(imageWidth, defaultWidth ?? 0);
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'image-shape default');
 

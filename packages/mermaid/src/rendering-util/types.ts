@@ -71,7 +71,7 @@ export interface Node {
   assetHeight?: number;
   defaultWidth?: number;
   imageAspectRatio?: number;
-  constrainedImage?: boolean;
+  constraint?: 'on' | 'off';
 }
 
 // Common properties for any edge in the system

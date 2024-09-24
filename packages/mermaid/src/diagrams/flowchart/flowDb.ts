@@ -161,7 +161,11 @@ export const addVertex = function (
       if (!doc.label?.trim() && vertex.text === id) {
         vertex.text = '';
       }
-      vertex.constrainedImage = !!doc.constrainedImage;
+      if (doc?.constraint) {
+        vertex.constraint = doc.constraint;
+      } else {
+        vertex.constraint = 'off';
+      }
     }
     if (doc.w) {
       vertex.assetWidth = Number(doc.w);
@@ -900,9 +904,7 @@ const addNodeFromVertex = (
       img: vertex.img,
       assetWidth: vertex.assetWidth,
       assetHeight: vertex.assetHeight,
-      imageAspectRatio: vertex.imageAspectRatio,
-      defaultWidth: vertex.defaultWidth,
-      constrainedImage: vertex.constrainedImage,
+      constraint: vertex.constraint,
     });
   }
 };
