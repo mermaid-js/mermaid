@@ -26,10 +26,18 @@ export const imageSquare = async (
   const defaultWidth = flowchart?.wrappingWidth;
   node.defaultWidth = flowchart?.wrappingWidth;
 
-  const imageWidth = Math.max(
+  const imageRawWidth = Math.max(
     node.label ? (defaultWidth ?? 0) : 0,
     node?.assetWidth ?? imageNaturalWidth
   );
+
+  const imageWidth =
+    node.constraint === 'on'
+      ? node?.assetHeight
+        ? node.assetHeight * node.imageAspectRatio
+        : imageRawWidth
+      : imageRawWidth;
+
   const imageHeight =
     node.constraint === 'on'
       ? imageWidth / node.imageAspectRatio
