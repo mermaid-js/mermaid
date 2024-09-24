@@ -168,6 +168,7 @@ export interface ClassRelation {
 }
 
 export interface Interface {
+  id: string;
   label: string;
   classId: string;
 }

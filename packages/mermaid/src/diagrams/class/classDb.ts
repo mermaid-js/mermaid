@@ -101,6 +101,7 @@ export const addClass = function (_id: string) {
 
 const addInterface = function (label: string, classId: string) {
   const _interface: Interface = {
+    id: `interface${interfaces.length}`,
     label,
     classId,
   };
@@ -163,12 +164,12 @@ export const addRelation = function (relation: ClassRelation) {
         relationType.DEPENDENCY ||
         relationType.EXTENSION)
   ) {
-    addClass(relation.id1);
-    addInterface(relation.id2, relation.id1);
-    relation.id2 = `interface ${relation.id2}`;
+    addClass(relation.id2);
+    addInterface(relation.id1, relation.id2);
+    relation.id1 = `interface${interfaces.length - 1}`;
     // Also can't set the type to 'none'
-    relation.relation.type1 = -1;
-    relation.relation.type2 = relationType.LOLLIPOP;
+    // relation.relation.type1 = -1;
+    // relation.relation.type2 = relationType.LOLLIPOP;
   } else if (
     relation.relation.type2 === relationType.LOLLIPOP &&
     relation.relation.type1 !==
@@ -178,11 +179,11 @@ export const addRelation = function (relation: ClassRelation) {
         relationType.DEPENDENCY ||
         relationType.EXTENSION)
   ) {
-    addClass(relation.id2);
-    addInterface(relation.id1, relation.id2);
-    relation.id1 = `interface ${relation.id1}`;
-    relation.relation.type1 = relationType.LOLLIPOP;
-    relation.relation.type2 = -1;
+    addClass(relation.id1);
+    addInterface(relation.id2, relation.id1);
+    relation.id2 = `interface${interfaces.length - 1}`;
+    // relation.relation.type1 = relationType.LOLLIPOP;
+    // relation.relation.type2 = -1;
   } else {
     addClass(relation.id1);
     addClass(relation.id2);
@@ -651,7 +652,7 @@ export const getData = () => {
 
   for (const _interface of interfaces) {
     const interfaceNode: Node = {
-      id: `interface ${_interface.label}`,
+      id: _interface.id,
       label: _interface.label,
       isGroup: false,
       shape: 'rect',
