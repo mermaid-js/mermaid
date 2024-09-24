@@ -19,7 +19,7 @@ export interface FlowVertex {
   assetHeight?: number;
   defaultWidth?: number;
   imageAspectRatio?: number;
-  constrainedImage?: boolean;
+  constraint?: 'on' | 'off';
 }
 
 export interface FlowText {

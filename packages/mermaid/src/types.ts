@@ -10,7 +10,7 @@ export interface NodeMetaData {
   img?: string;
   w?: string;
   h?: string;
-  constrainedImage?: boolean;
+  constraint?: 'on' | 'off';
 }
 
 export interface Point {
