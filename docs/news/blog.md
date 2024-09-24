@@ -6,6 +6,12 @@
 
 # Blog
 
+## [Expanding the Horizons of Mermaid Flowcharts: Introducing 30 New Shapes!](https://www.mermaidchart.com/blog/posts/new-mermaid-flowchart-shapes/)
+
+24 September 2024 · 5 mins
+
+Discover 30 new shapes in Mermaid flowcharts, offering enhanced clarity, customization, and versatility for more dynamic and expressive visualizations.
+
 ## [Introducing Architecture Diagrams in Mermaid](https://www.mermaidchart.com/blog/posts/mermaid-supports-architecture-diagrams/)
 
 2 September 2024 · 2 mins
