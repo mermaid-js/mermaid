@@ -133,7 +133,7 @@ export const addVertex = function (
     }
     // console.log('yamlData', yamlData);
     const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
-    if (doc.shape && doc.shape !== doc.shape.toLowerCase()) {
+    if (doc.shape && (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_'))) {
       throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
     }
 
