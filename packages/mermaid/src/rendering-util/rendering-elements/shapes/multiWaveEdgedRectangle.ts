@@ -77,7 +77,8 @@ export const multiWaveEdgedRectangle = async (parent: SVGAElement, node: Node) =
   const innerPath = createPathFromPoints(innerPathPoints);
   const innerNode = rc.path(innerPath, options);
 
-  const shape = shapeSvg.insert(() => outerNode, ':first-child');
+  const shape = shapeSvg.insert('g', ':first-child');
+  shape.insert(() => outerNode);
   shape.insert(() => innerNode);
 
   shape.attr('class', 'basic label-container');

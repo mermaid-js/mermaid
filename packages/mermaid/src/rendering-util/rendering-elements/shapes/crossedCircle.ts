@@ -42,7 +42,8 @@ export const crossedCircle = (parent: SVG, node: Node) => {
   const linePath = createLine(radius);
   const lineNode = rc.path(linePath, options);
 
-  const crossedCircle = shapeSvg.insert(() => circleNode, ':first-child');
+  const crossedCircle = shapeSvg.insert('g', ':first-child');
+  crossedCircle.insert(() => circleNode);
   crossedCircle.insert(() => lineNode);
 
   if (cssStyles && node.look !== 'handDrawn') {

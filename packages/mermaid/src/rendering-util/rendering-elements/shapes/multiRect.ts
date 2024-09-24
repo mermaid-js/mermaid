@@ -13,7 +13,7 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
   const w = Math.max(bbox.width + (labelPaddingX ?? 0) * 2, node?.width ?? 0);
   const h = Math.max(bbox.height + (labelPaddingY ?? 0) * 2, node?.height ?? 0);
-  const rectOffset = 5;
+  const rectOffset = node.look === 'neo' ? 10 : 5;
   const x = -w / 2;
   const y = -h / 2;
   const { cssStyles } = node;
@@ -54,9 +54,10 @@ export const multiRect = async (parent: SVGAElement, node: Node) => {
   const outerPath = createPathFromPoints(outerPathPoints);
   const outerNode = rc.path(outerPath, options);
   const innerPath = createPathFromPoints(innerPathPoints);
-  const innerNode = rc.path(innerPath, { ...options, fill: 'none' });
+  const innerNode = rc.path(innerPath, options);
 
-  const multiRect = shapeSvg.insert(() => outerNode, ':first-child');
+  const multiRect = shapeSvg.insert('g', ':first-child');
+  multiRect.insert(() => outerNode);
   multiRect.insert(() => innerNode);
 
   multiRect.attr('class', 'basic label-container');
