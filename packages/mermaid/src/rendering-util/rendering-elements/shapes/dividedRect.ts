@@ -55,7 +55,7 @@ export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${x + paddingX / 2 - (bbox.x - (bbox.left ?? 0))}, ${y + rectOffset + paddingY / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${x + paddingX - (bbox.x - (bbox.left ?? 0))}, ${y + rectOffset + paddingY - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, polygon);
