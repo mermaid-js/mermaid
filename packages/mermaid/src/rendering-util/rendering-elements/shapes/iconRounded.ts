@@ -75,7 +75,7 @@ export const iconRounded = async (
     const iconY = iconBBox.y;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - halfPadding : outerHeight / 2 - iconHeight - iconY - halfPadding - bbox.height - labelPadding})`
+      `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - padding : outerHeight / 2 - iconHeight - iconY - padding - bbox.height - labelPadding})`
     );
     iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') ?? nodeBorder);
     iconElem.attr('class', 'icon');
