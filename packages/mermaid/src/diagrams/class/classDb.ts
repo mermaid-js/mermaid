@@ -155,35 +155,28 @@ export const getNotes = function () {
 export const addRelation = function (relation: ClassRelation) {
   log.debug('Adding relation: ' + JSON.stringify(relation));
   // Due to relationType cannot just check if it is equal to 'none' or it complains, can fix this later
+  const invalidTypes = [
+    relationType.LOLLIPOP,
+    relationType.AGGREGATION,
+    relationType.COMPOSITION,
+    relationType.DEPENDENCY,
+    relationType.EXTENSION,
+  ];
+
   if (
     relation.relation.type1 === relationType.LOLLIPOP &&
-    relation.relation.type2 !==
-      (relationType.LOLLIPOP ||
-        relationType.AGGREGATION ||
-        relationType.COMPOSITION ||
-        relationType.DEPENDENCY ||
-        relationType.EXTENSION)
+    !invalidTypes.includes(relation.relation.type2)
   ) {
     addClass(relation.id2);
     addInterface(relation.id1, relation.id2);
     relation.id1 = `interface${interfaces.length - 1}`;
-    // Also can't set the type to 'none'
-    // relation.relation.type1 = -1;
-    // relation.relation.type2 = relationType.LOLLIPOP;
   } else if (
     relation.relation.type2 === relationType.LOLLIPOP &&
-    relation.relation.type1 !==
-      (relationType.LOLLIPOP ||
-        relationType.AGGREGATION ||
-        relationType.COMPOSITION ||
-        relationType.DEPENDENCY ||
-        relationType.EXTENSION)
+    !invalidTypes.includes(relation.relation.type1)
   ) {
     addClass(relation.id1);
     addInterface(relation.id2, relation.id1);
     relation.id2 = `interface${interfaces.length - 1}`;
-    // relation.relation.type1 = relationType.LOLLIPOP;
-    // relation.relation.type2 = -1;
   } else {
     addClass(relation.id1);
     addClass(relation.id2);
