@@ -161,11 +161,9 @@ export const addVertex = function (
       if (!doc.label?.trim() && vertex.text === id) {
         vertex.text = '';
       }
-      if (doc?.constraint) {
-        vertex.constraint = doc.constraint;
-      } else {
-        vertex.constraint = 'off';
-      }
+    }
+    if (doc?.constraint) {
+      vertex.constraint = doc.constraint;
     }
     if (doc.w) {
       vertex.assetWidth = Number(doc.w);
