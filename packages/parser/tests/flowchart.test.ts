@@ -25,7 +25,24 @@ describe('flowchart', () => {
     }
   );
 
-  it('parses basic example', () => {
+  it.each([`flowchart`, `graph`, `flowchart-elk`])(
+    'should handle flowchart types',
+    (context: string) => {
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.type).toBe(context);
+    }
+  );
+
+  it.each([`flowchart ; A`, `flowchart\nA`, `flowchart;A`, `flowchart;\nA`])(
+    'should handle delimiters',
+    (context: string) => {
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+    }
+  );
+
+  it('parses basic example: edges', () => {
     const result = parse('flowchart\nA --> B');
     expectNoErrorsOrAlternatives(result);
     expect(result.value.edges).toHaveLength(1);
@@ -33,7 +50,7 @@ describe('flowchart', () => {
     expect(result.value.edges[0].end.id).toBe('B');
   });
 
-  it('parses basic example', () => {
+  it('parses basic example: nodes', () => {
     const result = parse('flowchart\nA[test]');
     expectNoErrorsOrAlternatives(result);
     expect(result.value.nodes).toHaveLength(1);

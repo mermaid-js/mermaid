@@ -26,7 +26,7 @@ FlowchartNodeRound:
 FlowchartEdge:
   start=FlowchartNode "-->" end=FlowchartNode;
 
-terminal ID: /\w+/;
+terminal ID: /[a-zA-Z0-9]+/;
 
 fragment DELIMITER returns string:
   ";" NEWLINE* | NEWLINE+ | EOF
