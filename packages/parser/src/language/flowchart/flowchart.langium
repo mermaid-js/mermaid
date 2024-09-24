@@ -18,15 +18,14 @@ FlowchartNode:
   FlowchartNodeSquare | FlowchartNodeRound;
 
 FlowchartNodeSquare:
-  id=ID ("["label=ID"]")? shape="square";
+  id=ID ("["label=ID"]")?;
 
 FlowchartNodeRound:
-  id=ID "("label=ID")" shape="round";
+  id=ID "("label=ID")";
 
 FlowchartEdge:
   start=FlowchartNode "-->" end=FlowchartNode;
 
-// terminal SPACES: /\s/;
 terminal ID: /\w+/;
 
 fragment DELIMITER returns string:

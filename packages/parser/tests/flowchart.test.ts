@@ -39,6 +39,6 @@ describe('flowchart', () => {
     expect(result.value.nodes).toHaveLength(1);
     expect(result.value.nodes[0].id).toBe('A');
     expect(result.value.nodes[0].label).toBe('test');
-    expect(result.value.nodes[0].shape).toBe('square');
+    expect(result.value.nodes[0].$type).toBe('FlowchartNodeSquare');
   });
 });
