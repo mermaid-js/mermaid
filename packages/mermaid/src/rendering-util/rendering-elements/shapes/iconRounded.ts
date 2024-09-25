@@ -64,7 +64,7 @@ export const iconRounded = async (
   if (node.icon) {
     const iconElem = shapeSvg.append('g');
     iconElem.html(
-      `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
+      `<g>${await getIconSVG(node.icon, { height: iconSize, width: iconSize, fallbackPrefix: '' })}</g>`
     );
     const iconBBox = iconElem.node().getBBox();
     const iconWidth = iconBBox.width;
@@ -73,14 +73,14 @@ export const iconRounded = async (
     const iconY = iconBBox.y;
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - halfPadding : outerHeight / 2 - iconHeight - iconY - halfPadding - bbox.height - labelPadding})`
+      `translate(${-iconWidth / 2 - iconX},${topLabel ? bbox.height / 2 + labelPadding / 2 - iconHeight / 2 - iconY : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY})`
     );
-    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
+    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') ?? nodeBorder);
   }
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2},${topLabel ? -height / 2 - bbox.height / 2 - labelPadding / 2 : height / 2 - bbox.height / 2 + labelPadding / 2})`
+    `translate(${-bbox.width / 2},${topLabel ? -outerHeight / 2 : outerHeight / 2 - bbox.height})`
   );
 
   iconShape.attr(

@@ -40,7 +40,7 @@ export const iconCircle = async (
   const iconElem = shapeSvg.append('g');
   if (node.icon) {
     iconElem.html(
-      `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
+      `<g>${await getIconSVG(node.icon, { height: iconSize, width: iconSize, fallbackPrefix: '' })}</g>`
     );
   }
   const iconBBox = iconElem.node().getBBox();
@@ -49,7 +49,7 @@ export const iconCircle = async (
   const iconX = iconBBox.x;
   const iconY = iconBBox.y;
 
-  const diameter = Math.max(iconWidth, iconHeight) + padding * 2;
+  const diameter = Math.max(iconWidth, iconHeight) * Math.SQRT2 + padding * 2;
   const iconNode = rc.circle(0, 0, diameter, options);
 
   const outerWidth = Math.max(diameter, bbox.width);
@@ -65,12 +65,12 @@ export const iconCircle = async (
   const outerShape = shapeSvg.insert(() => outerNode);
   iconElem.attr(
     'transform',
-    `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - padding : outerHeight / 2 - iconHeight - iconY - padding - bbox.height - labelPadding})`
+    `translate(${-iconWidth / 2 - iconX},${topLabel ? bbox.height / 2 + labelPadding / 2 - iconHeight / 2 - iconY : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY})`
   );
   iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2},${topLabel ? -diameter / 2 - bbox.height / 2 - labelPadding / 2 : diameter / 2 - bbox.height / 2 + labelPadding / 2})`
+    `translate(${-bbox.width / 2},${topLabel ? -outerHeight / 2 : outerHeight / 2 - bbox.height})`
   );
 
   iconShape.attr(
