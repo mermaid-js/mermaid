@@ -56,15 +56,15 @@
         logLevel: 1,
       });
 
-      let shape = 'rect';
+      let shape = 'pill';
 
       let code = `
       flowchart TB
           n81["APA ksldj hfaskljdh aklsjdhf klasjdhf klasjhf klsajdh klasjdhf klasjdhf klasjdh klasjhf klasjdh klajsdhfklasjdhf kljadh fklasjdhf klajsdhf lkasdhf klajsdhf klasjdhfklasjdh klasjhf klasdfh klasdfh aklsjfh akjshkasldfh klasdfh klasjh fklsjhf klasdhf kljasdhf klasdhf klj"]
-          n82["APA"]
+          n82["A single line of text"]
           n81@{ shape: '${shape}'}
           n82@{ shape: '${shape}'}
-          n83@{ shape: '${shape}'}
+          n83@{ label: "A single line of text", shape: '${shape}'}
             `;
 
       let positions = {

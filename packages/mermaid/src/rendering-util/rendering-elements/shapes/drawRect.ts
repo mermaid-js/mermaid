@@ -11,6 +11,9 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   // console.log('IPI labelStyles:', labelStyles);
   node.width = (node?.width ?? 0) - options.labelPaddingX * 2;
   node.height = (node?.height ?? 0) - options.labelPaddingY * 2;
+  if (node.width < 100) {
+    node.width = 100;
+  }
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const totalWidth = Math.max(bbox.width, node?.width || 0) + options.labelPaddingX * 2;
   const totalHeight = Math.max(bbox.height, node?.height || 0) + options.labelPaddingY * 2;
