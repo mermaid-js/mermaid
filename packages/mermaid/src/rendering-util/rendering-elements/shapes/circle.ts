@@ -11,7 +11,7 @@ export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAEleme
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
 
   const labelPadding = node.look === 'neo' ? halfPadding * 2 : halfPadding;
-  const radius = bbox.width / 2 + labelPadding;
+  const radius = Math.max(bbox.width / 2 + labelPadding, (node?.width ?? 0) / 2);
   let circleElem;
   const { cssStyles } = node;
 
@@ -34,7 +34,6 @@ export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAEleme
   }
 
   updateNodeBounds(node, circleElem);
-
   node.intersect = function (point) {
     log.info('Circle intersect', node, radius, point);
     return intersect.circle(node, radius, point);
