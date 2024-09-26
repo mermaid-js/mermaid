@@ -3,6 +3,7 @@ import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { select } from 'd3';
 import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities } from '../../../utils.js';
+import { log } from '../../../logger.js';
 
 export const labelHelper = async (parent, node, _classes) => {
   let cssClasses;
@@ -110,6 +111,9 @@ export const updateNodeBounds = (node, element) => {
   const bbox = element.node().getBBox();
   node.width = bbox.width;
   node.height = bbox.height;
+  log.debug('updateNodeBounds: #####################################');
+  log.debug('updateNodeBounds:', node.id, node.width, node.height);
+  log.debug('updateNodeBounds: #####################################');
 };
 
 /**
