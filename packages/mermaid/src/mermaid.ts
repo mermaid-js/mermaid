@@ -340,10 +340,7 @@ const executeQueue = async () => {
  * // throws Error
  * ```
  */
-const parse = async (
-  text: string,
-  parseOptions?: ParseOptions
-): Promise<boolean | void | ParseResult> => {
+const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
   return new Promise((resolve, reject) => {
     // This promise will resolve when the render call is done.
     // It will be queued first and will be executed when it is first in line
