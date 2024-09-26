@@ -38,7 +38,8 @@ async function addHtmlSpan(element, node, width, classes, addBackground = false)
 
   applyStyle(div, node.labelStyle);
   div.style('display', 'table-cell');
-  div.style('white-space', 'nowrap');
+  // KS: Why is this here?
+  // div.style('white-space', 'nowrap');
   div.style('line-height', '1.5');
   div.style('max-width', width + 'px');
   div.style('text-align', 'center');

@@ -9,8 +9,11 @@ export async function text(parent: SVGAElement, node: Node): Promise<SVGAElement
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width + node.padding, node?.width || 0);
-  const totalHeight = Math.max(bbox.height + node.padding, node?.height || 0);
+  // width > labelWidth
+
+  // labelWidth > width
+  const totalWidth = node?.width ?? bbox.width;
+  const totalHeight = Math.max(bbox.height, node?.height ?? 0);
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 
