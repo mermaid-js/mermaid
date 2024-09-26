@@ -33,9 +33,9 @@ export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElem
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
-  const h = bbox.height + labelPaddingX;
+  const h = Math.max(bbox.height + labelPaddingX, node?.height ?? 0);
   const m = h / f;
-  const w = bbox.width + 2 * m + labelPaddingY;
+  const w = Math.max(bbox.width + 2 * m + labelPaddingY, node?.width ?? 0);
   const points = [
     { x: m, y: 0 },
     { x: w - m, y: 0 },
