@@ -9,10 +9,11 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   // console.log('IPI labelStyles:', labelStyles);
+  node.width = (node?.width ?? 0) - options.labelPaddingX * 2;
+  node.height = (node?.height ?? 0) - options.labelPaddingY * 2;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-
-  const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
-  const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
+  const totalWidth = Math.max(bbox.width, node?.width || 0) + options.labelPaddingX * 2;
+  const totalHeight = Math.max(bbox.height, node?.height || 0) + options.labelPaddingY * 2;
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 

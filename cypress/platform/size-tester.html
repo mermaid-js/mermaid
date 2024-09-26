@@ -32,6 +32,7 @@
     <style>
       body {
         font-family: 'Arial';
+        background-color: #333;
       }
     </style>
   </head>
@@ -49,24 +50,41 @@
         startOnLoad: false,
         // look: 'handdrawn',
         layout: 'fixed',
+        theme: 'neo-dark',
         // layout: 'elk',
         fontFamily: 'Kalam',
         logLevel: 1,
       });
+
+      let shape = 'rect';
+
       let code = `
       flowchart TB
           n81["APA ksldj hfaskljdh aklsjdhf klasjdhf klasjhf klsajdh klasjdhf klasjdhf klasjdh klasjhf klasjdh klajsdhfklasjdhf kljadh fklasjdhf klajsdhf lkasdhf klajsdhf klasjdhfklasjdh klasjhf klasdfh klasdfh aklsjfh akjshkasldfh klasdfh klasjh fklsjhf klasdhf kljasdhf klasdhf klj"]
-          n81@{ shape: 'rect'}
+          n82["APA"]
+          n81@{ shape: '${shape}'}
+          n82@{ shape: '${shape}'}
+          n83@{ shape: '${shape}'}
             `;
 
       let positions = {
         edges: {},
         nodes: {
           n81: {
-            x: 10.5520477294922,
-            y: 10.0867919921875,
+            x: 0,
+            y: 10,
             width: 300,
             height: 200,
+          },
+          n82: {
+            x: 400,
+            y: 10,
+            width: 300,
+            height: 200,
+          },
+          n83: {
+            x: 800,
+            y: 10,
           },
         },
       };
