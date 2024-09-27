@@ -32,21 +32,37 @@ export const createSubroutinePathD = (
   ].join(' ');
 };
 
+// width of the frame on the left and right side of the shape
+const FRAME_WIDTH = 8;
+
 export const subroutine = async (parent: SVGAElement, node: Node) => {
   const { themeVariables } = getConfig();
   const { useGradient } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
   const nodePadding = node?.padding || 8;
-  // const labelPaddingX = node.padding;
-  // const labelPaddingY = node.padding;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
-  const w = bbox.width + labelPaddingX;
-  const h = bbox.height + labelPaddingY;
-  const x = -bbox.width / 2 - labelPaddingX / 2;
-  const y = -bbox.height / 2 - labelPaddingY / 2;
+
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.width = Math.max((node?.width ?? 0) - labelPaddingX - 2 * FRAME_WIDTH, 50);
+    node.height = Math.max((node?.height ?? 0) - labelPaddingY, 50);
+  }
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const totalWidth = Math.max(bbox.width, node?.width || 0) + 2 * FRAME_WIDTH + labelPaddingX;
+  const totalHeight = Math.max(bbox.height, node?.height || 0) + labelPaddingY;
+
+  const w = totalWidth - 2 * FRAME_WIDTH;
+  const h = totalHeight;
+  const x = -totalWidth / 2;
+  const y = -totalHeight / 2;
 
   const points = [
     { x: 0, y: 0 },
@@ -54,11 +70,11 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     { x: w, y: -h },
     { x: 0, y: -h },
     { x: 0, y: 0 },
-    { x: -8, y: 0 },
-    { x: w + 8, y: 0 },
-    { x: w + 8, y: -h },
-    { x: -8, y: -h },
-    { x: -8, y: 0 },
+    { x: -FRAME_WIDTH, y: 0 },
+    { x: w + FRAME_WIDTH, y: 0 },
+    { x: w + FRAME_WIDTH, y: -h },
+    { x: -FRAME_WIDTH, y: -h },
+    { x: -FRAME_WIDTH, y: 0 },
   ];
 
   if (node.look === 'handDrawn' || (node.look === 'neo' && !useGradient)) {
@@ -71,7 +87,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
       options.fillStyle = 'solid';
     }
 
-    const roughNode = rc.rectangle(x - 8, y, w + 16, h, options);
+    const roughNode = rc.rectangle(x - FRAME_WIDTH, y, w + 2 * FRAME_WIDTH, h, options);
     const l1 = rc.line(x, y, x, y + h, options);
     const l2 = rc.line(x + w, y, x + w, y + h, options);
 
