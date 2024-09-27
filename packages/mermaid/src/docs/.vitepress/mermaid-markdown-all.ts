@@ -13,10 +13,10 @@ const MermaidExample = (md: MarkdownRenderer) => {
     if (language.startsWith('mermaid')) {
       const key = index;
       return `
-      <Suspense> 
+      <Suspense>
       <template #default>
       <Mermaid id="mermaid-${key}" :showCode="${
-        language === 'mermaid-example'
+        language === 'mmd'
       }" graph="${encodeURIComponent(token.content)}"></Mermaid>
       </template>
         <!-- loading state via #fallback slot -->
