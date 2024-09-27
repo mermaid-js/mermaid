@@ -7,13 +7,28 @@ import rough from 'roughjs';
 export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
   const paddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
   const paddingY = node.look === 'neo' ? (node.padding ?? 0) * 1 : (node.padding ?? 0);
-  const w = Math.max(bbox.width + paddingX * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + paddingY * 2, node?.height ?? 0);
-  const rectOffset = h * 0.2;
 
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.width = Math.max((node?.width ?? 0) - paddingX * 2, 50);
+    node.height = Math.max((node?.height ?? 0) - paddingY * 2, 50);
+  }
+
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const totalWidth = Math.max(bbox.width, node?.width ?? 0) + paddingX * 2;
+  const totalHeight = Math.max(bbox.height, node?.height ?? 0) + paddingY * 2;
+
+  const rectOffset = totalHeight * 0.2;
+
+  const w = totalWidth;
+  const h = totalHeight - rectOffset;
   const x = -w / 2;
   const y = -h / 2 - rectOffset / 2;
 
