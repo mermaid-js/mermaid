@@ -24,20 +24,6 @@ architecture-beta
     disk2:T -- B:db
 ```
 
-```mermaid
-architecture-beta
-    group api(cloud)[API]
-
-    service db(database)[Database] in api
-    service disk1(disk)[Storage] in api
-    service disk2(disk)[Storage] in api
-    service server(server)[Server] in api
-
-    db:L -- R:server
-    disk1:T -- B:server
-    disk2:T -- B:db
-```
-
 ## Syntax
 
 The building blocks of an architecture are `groups`, `services`, `edges`, and `junctions`.
@@ -173,24 +159,6 @@ architecture-beta
     bottom_gateway:T -- B:junctionRight
 ```
 
-```mermaid
-architecture-beta
-    service left_disk(disk)[Disk]
-    service top_disk(disk)[Disk]
-    service bottom_disk(disk)[Disk]
-    service top_gateway(internet)[Gateway]
-    service bottom_gateway(internet)[Gateway]
-    junction junctionCenter
-    junction junctionRight
-
-    left_disk:R -- L:junctionCenter
-    top_disk:B -- T:junctionCenter
-    bottom_disk:T -- B:junctionCenter
-    junctionCenter:R -- L:junctionRight
-    top_gateway:B -- T:junctionRight
-    bottom_gateway:T -- B:junctionRight
-```
-
 ## Icons
 
 By default, architecture diagram supports the following icons: `cloud`, `database`, `disk`, `internet`, `server`.
@@ -247,20 +215,6 @@ mermaid.registerIconPacks([
 After the icons are installed, they can be used in the architecture diagram by using the format "name:icon-name", where name is the value used when registering the icon pack.
 
 ```mermaid-example
-architecture-beta
-    group api(logos:aws-lambda)[API]
-
-    service db(logos:aws-aurora)[Database] in api
-    service disk1(logos:aws-glacier)[Storage] in api
-    service disk2(logos:aws-s3)[Storage] in api
-    service server(logos:aws-ec2)[Server] in api
-
-    db:L -- R:server
-    disk1:T -- B:server
-    disk2:T -- B:db
-```
-
-```mermaid
 architecture-beta
     group api(logos:aws-lambda)[API]
 

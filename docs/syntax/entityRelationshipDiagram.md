@@ -22,16 +22,6 @@ erDiagram
     CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
 ```
 
-```mermaid
----
-title: Order example
----
-erDiagram
-    CUSTOMER ||--o{ ORDER : places
-    ORDER ||--|{ LINE-ITEM : contains
-    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
-```
-
 Entity names are often capitalised, although there is no accepted standard on this, and it is not required in Mermaid.
 
 Relationships between entities are represented by lines with end markers representing cardinality. Mermaid uses the most popular crow's foot notation. The crow's foot intuitively conveys the possibility of many instances of the entity that it connects to.
@@ -39,26 +29,6 @@ Relationships between entities are represented by lines with end markers represe
 ER diagrams can be used for various purposes, ranging from abstract logical models devoid of any implementation details, through to physical models of relational database tables. It can be useful to include attribute definitions on ER diagrams to aid comprehension of the purpose and meaning of entities. These do not necessarily need to be exhaustive; often a small subset of attributes is enough. Mermaid allows them to be defined in terms of their _type_ and _name_.
 
 ```mermaid-example
-erDiagram
-    CUSTOMER ||--o{ ORDER : places
-    CUSTOMER {
-        string name
-        string custNumber
-        string sector
-    }
-    ORDER ||--|{ LINE-ITEM : contains
-    ORDER {
-        int orderNumber
-        string deliveryAddress
-    }
-    LINE-ITEM {
-        string productCode
-        int quantity
-        float pricePerUnit
-    }
-```
-
-```mermaid
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     CUSTOMER {
@@ -152,7 +122,7 @@ Relationships may be classified as either _identifying_ or _non-identifying_ and
 |      to       |   _identifying_   |
 | optionally to | _non-identifying_ |
 
-```mermaid-example
+```mmd
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     PERSON ||--o{ NAMED-DRIVER : is
@@ -169,22 +139,6 @@ erDiagram
 Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. The attributes are rendered inside the entity boxes. For example:
 
 ```mermaid-example
-erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    CAR {
-        string registrationNumber
-        string make
-        string model
-    }
-    PERSON ||--o{ NAMED-DRIVER : is
-    PERSON {
-        string firstName
-        string lastName
-        int age
-    }
-```
-
-```mermaid
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
@@ -218,47 +172,11 @@ erDiagram
     p ||--o| a : has
 ```
 
-```mermaid
-erDiagram
-    p[Person] {
-        string firstName
-        string lastName
-    }
-    a["Customer Account"] {
-        string email
-    }
-    p ||--o| a : has
-```
-
 #### Attribute Keys and Comments
 
 Attributes may also have a `key` or comment defined. Keys can be `PK`, `FK` or `UK`, for Primary Key, Foreign Key or Unique Key. To specify multiple key constraints on a single attribute, separate them with a comma (e.g., `PK, FK`). A `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
 
 ```mermaid-example
-erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    CAR {
-        string registrationNumber PK
-        string make
-        string model
-        string[] parts
-    }
-    PERSON ||--o{ NAMED-DRIVER : is
-    PERSON {
-        string driversLicense PK "The license #"
-        string(99) firstName "Only 99 characters are allowed"
-        string lastName
-        string phone UK
-        int age
-    }
-    NAMED-DRIVER {
-        string carRegistrationNumber PK, FK
-        string driverLicence PK, FK
-    }
-    MANUFACTURER only one to zero or more CAR : makes
-```
-
-```mermaid
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {

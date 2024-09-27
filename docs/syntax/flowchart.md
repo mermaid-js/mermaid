@@ -28,14 +28,6 @@ flowchart LR
     id
 ```
 
-```mermaid
----
-title: Node
----
-flowchart LR
-    id
-```
-
 > **Note**
 > The id is what is displayed in the box.
 
@@ -56,14 +48,6 @@ flowchart LR
     id1[This is the text in the box]
 ```
 
-```mermaid
----
-title: Node with text
----
-flowchart LR
-    id1[This is the text in the box]
-```
-
 #### Unicode text
 
 Use `"` to enclose the unicode text.
@@ -73,26 +57,11 @@ flowchart LR
     id["This ❤ Unicode"]
 ```
 
-```mermaid
-flowchart LR
-    id["This ❤ Unicode"]
-```
-
 #### Markdown formatting
 
 Use double quotes and backticks "\` text \`" to enclose the markdown text.
 
 ```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
-flowchart LR
-    markdown["`This **is** _Markdown_`"]
-    newLines["`Line1
-    Line 2
-    Line 3`"]
-    markdown --> newLines
-```
-
-```mermaid
 %%{init: {"flowchart": {"htmlLabels": false}} }%%
 flowchart LR
     markdown["`This **is** _Markdown_`"]
@@ -113,19 +82,9 @@ flowchart TD
     Start --> Stop
 ```
 
-```mermaid
-flowchart TD
-    Start --> Stop
-```
-
 This declares the flowchart is oriented from left to right (`LR`).
 
 ```mermaid-example
-flowchart LR
-    Start --> Stop
-```
-
-```mermaid
 flowchart LR
     Start --> Stop
 ```
@@ -147,19 +106,9 @@ flowchart LR
     id1(This is the text in the box)
 ```
 
-```mermaid
-flowchart LR
-    id1(This is the text in the box)
-```
-
 ### A stadium-shaped node
 
 ```mermaid-example
-flowchart LR
-    id1([This is the text in the box])
-```
-
-```mermaid
 flowchart LR
     id1([This is the text in the box])
 ```
@@ -171,19 +120,9 @@ flowchart LR
     id1[[This is the text in the box]]
 ```
 
-```mermaid
-flowchart LR
-    id1[[This is the text in the box]]
-```
-
 ### A node in a cylindrical shape
 
 ```mermaid-example
-flowchart LR
-    id1[(Database)]
-```
-
-```mermaid
 flowchart LR
     id1[(Database)]
 ```
@@ -195,19 +134,9 @@ flowchart LR
     id1((This is the text in the circle))
 ```
 
-```mermaid
-flowchart LR
-    id1((This is the text in the circle))
-```
-
 ### A node in an asymmetric shape
 
 ```mermaid-example
-flowchart LR
-    id1>This is the text in the box]
-```
-
-```mermaid
 flowchart LR
     id1>This is the text in the box]
 ```
@@ -221,19 +150,9 @@ flowchart LR
     id1{This is the text in the box}
 ```
 
-```mermaid
-flowchart LR
-    id1{This is the text in the box}
-```
-
 ### A hexagon node
 
 ```mermaid-example
-flowchart LR
-    id1{{This is the text in the box}}
-```
-
-```mermaid
 flowchart LR
     id1{{This is the text in the box}}
 ```
@@ -245,19 +164,9 @@ flowchart TD
     id1[/This is the text in the box/]
 ```
 
-```mermaid
-flowchart TD
-    id1[/This is the text in the box/]
-```
-
 ### Parallelogram alt
 
 ```mermaid-example
-flowchart TD
-    id1[\This is the text in the box\]
-```
-
-```mermaid
 flowchart TD
     id1[\This is the text in the box\]
 ```
@@ -269,11 +178,6 @@ flowchart TD
     A[/Christmas\]
 ```
 
-```mermaid
-flowchart TD
-    A[/Christmas\]
-```
-
 ### Trapezoid alt
 
 ```mermaid-example
@@ -281,19 +185,9 @@ flowchart TD
     B[\Go shopping/]
 ```
 
-```mermaid
-flowchart TD
-    B[\Go shopping/]
-```
-
 ### Double circle
 
 ```mermaid-example
-flowchart TD
-    id1(((This is the text in the circle)))
-```
-
-```mermaid
 flowchart TD
     id1(((This is the text in the circle)))
 ```
@@ -309,19 +203,9 @@ flowchart LR
     A-->B
 ```
 
-```mermaid
-flowchart LR
-    A-->B
-```
-
 ### An open link
 
 ```mermaid-example
-flowchart LR
-    A --- B
-```
-
-```mermaid
 flowchart LR
     A --- B
 ```
@@ -333,19 +217,9 @@ flowchart LR
     A-- This is the text! ---B
 ```
 
-```mermaid
-flowchart LR
-    A-- This is the text! ---B
-```
-
 or
 
 ```mermaid-example
-flowchart LR
-    A---|This is the text|B
-```
-
-```mermaid
 flowchart LR
     A---|This is the text|B
 ```
@@ -357,19 +231,9 @@ flowchart LR
     A-->|text|B
 ```
 
-```mermaid
-flowchart LR
-    A-->|text|B
-```
-
 or
 
 ```mermaid-example
-flowchart LR
-    A-- text -->B
-```
-
-```mermaid
 flowchart LR
     A-- text -->B
 ```
@@ -381,19 +245,9 @@ flowchart LR
    A-.->B;
 ```
 
-```mermaid
-flowchart LR
-   A-.->B;
-```
-
 ### Dotted link with text
 
 ```mermaid-example
-flowchart LR
-   A-. text .-> B
-```
-
-```mermaid
 flowchart LR
    A-. text .-> B
 ```
@@ -405,19 +259,9 @@ flowchart LR
    A ==> B
 ```
 
-```mermaid
-flowchart LR
-   A ==> B
-```
-
 ### Thick link with text
 
 ```mermaid-example
-flowchart LR
-   A == text ==> B
-```
-
-```mermaid
 flowchart LR
    A == text ==> B
 ```
@@ -431,21 +275,11 @@ flowchart LR
     A ~~~ B
 ```
 
-```mermaid
-flowchart LR
-    A ~~~ B
-```
-
 ### Chaining of links
 
 It is possible declare many links in the same line as per below:
 
 ```mermaid-example
-flowchart LR
-   A -- text --> B -- text2 --> C
-```
-
-```mermaid
 flowchart LR
    A -- text --> B -- text2 --> C
 ```
@@ -457,19 +291,9 @@ flowchart LR
    a --> b & c--> d
 ```
 
-```mermaid
-flowchart LR
-   a --> b & c--> d
-```
-
 You can then describe dependencies in a very expressive way. Like the one-liner below:
 
 ```mermaid-example
-flowchart TB
-    A & B--> C & D
-```
-
-```mermaid
 flowchart TB
     A & B--> C & D
 ```
@@ -479,7 +303,7 @@ word of warning, one could go overboard with this making the flowchart harder to
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
 
-```mermaid-example
+```mmd
 flowchart TB
     A --> C
     A --> D
@@ -509,19 +333,9 @@ flowchart LR
     A --o B
 ```
 
-```mermaid
-flowchart LR
-    A --o B
-```
-
 ### Cross edge example
 
 ```mermaid-example
-flowchart LR
-    A --x B
-```
-
-```mermaid
 flowchart LR
     A --x B
 ```
@@ -531,13 +345,6 @@ flowchart LR
 There is the possibility to use multidirectional arrows.
 
 ```mermaid-example
-flowchart LR
-    A o--o B
-    B <--> C
-    C x--x D
-```
-
-```mermaid
 flowchart LR
     A o--o B
     B <--> C
@@ -564,15 +371,6 @@ flowchart TD
     B ---->|No| E[End]
 ```
 
-```mermaid
-flowchart TD
-    A[Start] --> B{Is it?}
-    B -->|Yes| C[OK]
-    C --> D[Rethink]
-    D --> B
-    B ---->|No| E[End]
-```
-
 > **Note** Links may still be made longer than the requested number of ranks
 > by the rendering engine to accommodate other requests.
 
@@ -581,15 +379,6 @@ be added on the right side of the link. The following example is equivalent to
 the previous one:
 
 ```mermaid-example
-flowchart TD
-    A[Start] --> B{Is it?}
-    B -- Yes --> C[OK]
-    C --> D[Rethink]
-    D --> B
-    B -- No ----> E[End]
-```
-
-```mermaid
 flowchart TD
     A[Start] --> B{Is it?}
     B -- Yes --> C[OK]
@@ -619,21 +408,11 @@ flowchart LR
     id1["This is the (text) in the box"]
 ```
 
-```mermaid
-flowchart LR
-    id1["This is the (text) in the box"]
-```
-
 ### Entity codes to escape characters
 
 It is possible to escape characters using the syntax exemplified here.
 
 ```mermaid-example
-    flowchart LR
-        A["A double quote:#quot;"] --> B["A dec char:#9829;"]
-```
-
-```mermaid
     flowchart LR
         A["A double quote:#quot;"] --> B["A dec char:#9829;"]
 ```
@@ -664,31 +443,9 @@ flowchart TB
     end
 ```
 
-```mermaid
-flowchart TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
-```
-
 You can also set an explicit id for the subgraph.
 
 ```mermaid-example
-flowchart TB
-    c1-->a2
-    subgraph ide1 [one]
-    a1-->a2
-    end
-```
-
-```mermaid
 flowchart TB
     c1-->a2
     subgraph ide1 [one]
@@ -717,45 +474,11 @@ flowchart TB
     two --> c2
 ```
 
-```mermaid
-flowchart TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
-    one --> two
-    three --> two
-    two --> c2
-```
-
 ### Direction in subgraphs
 
 With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
 
 ```mermaid-example
-flowchart LR
-  subgraph TOP
-    direction TB
-    subgraph B1
-        direction RL
-        i1 -->f1
-    end
-    subgraph B2
-        direction BT
-        i2 -->f2
-    end
-  end
-  A --> TOP --> B
-  B1 --> B2
-```
-
-```mermaid
 flowchart LR
   subgraph TOP
     direction TB
@@ -795,43 +518,11 @@ flowchart LR
     outside ---> top2
 ```
 
-```mermaid
-flowchart LR
-    subgraph subgraph1
-        direction TB
-        top1[top] --> bottom1[bottom]
-    end
-    subgraph subgraph2
-        direction TB
-        top2[top] --> bottom2[bottom]
-    end
-    %% ^ These subgraphs are identical, except for the links to them:
-
-    %% Link *to* subgraph1: subgraph1 direction is maintained
-    outside --> subgraph1
-    %% Link *within* subgraph2:
-    %% subgraph2 inherits the direction of the top-level graph (LR)
-    outside ---> top2
-```
-
 ## Markdown Strings
 
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
 
 ```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
-flowchart LR
-subgraph "One"
-  a("`The **cat**
-  in the hat`") -- "edge label" --> b{{"`The **dog** in the hog`"}}
-end
-subgraph "`**Two**`"
-  c("`The **cat**
-  in the hat`") -- "`Bold **edge label**`" --> d("The dog in the hog")
-end
-```
-
-```mermaid
 %%{init: {"flowchart": {"htmlLabels": false}} }%%
 flowchart LR
 subgraph "One"
@@ -900,17 +591,6 @@ flowchart LR
     click D href "https://www.github.com" "This is a tooltip for a link"
 ```
 
-```mermaid
-flowchart LR
-    A-->B
-    B-->C
-    C-->D
-    click A callback "Tooltip for a callback"
-    click B "https://www.github.com" "This is a tooltip for a link"
-    click C call callback() "Tooltip for a callback"
-    click D href "https://www.github.com" "This is a tooltip for a link"
-```
-
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
 ?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/yk4h7qou/2/).
@@ -918,18 +598,6 @@ flowchart LR
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
 
 ```mermaid-example
-flowchart LR
-    A-->B
-    B-->C
-    C-->D
-    D-->E
-    click A "https://www.github.com" _blank
-    click B "https://www.github.com" "Open this in a new tab" _blank
-    click C href "https://www.github.com" _blank
-    click D href "https://www.github.com" "Open this in a new tab" _blank
-```
-
-```mermaid
 flowchart LR
     A-->B
     B-->C
@@ -974,7 +642,7 @@ Beginner's tip—a full example using interactive links in a html context:
 
 Comments can be entered within a flow diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
 
-```mermaid-example
+```mmd
 flowchart LR
 %% this is a comment A -- text --> B{node}
    A -- text --> B -- text2 --> C
@@ -1033,13 +701,6 @@ flowchart LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-```mermaid
-flowchart LR
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-```
-
 #### Classes
 
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
@@ -1077,23 +738,9 @@ flowchart LR
     classDef someclass fill:#f96
 ```
 
-```mermaid
-flowchart LR
-    A:::someclass --> B
-    classDef someclass fill:#f96
-```
-
 This form can be used when declaring multiple links between nodes:
 
 ```mermaid-example
-flowchart LR
-    A:::foo & B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    classDef foobar stroke:#00f
-```
-
-```mermaid
 flowchart LR
     A:::foo & B:::bar --> C:::foobar
     classDef foo stroke:#f00
@@ -1127,13 +774,6 @@ flowchart LR
     class A cssClass
 ```
 
-```mermaid
-flowchart LR
-    A-->B[AAA<span>BBB</span>]
-    B-->D
-    class A cssClass
-```
-
 ### Default class
 
 If a class is named default it will be assigned to all classes without specific class definitions.
@@ -1149,14 +789,6 @@ It is possible to add icons from fontawesome.
 The icons are accessed via the syntax fa:#icon class name#.
 
 ```mermaid-example
-flowchart TD
-    B["fa:fa-twitter for peace"]
-    B-->C[fa:fa-ban forbidden]
-    B-->D(fa:fa-spinner)
-    B-->E(A fa:fa-camera-retro perhaps?)
-```
-
-```mermaid
 flowchart TD
     B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
@@ -1202,12 +834,6 @@ flowchart TD
     B-->C["fab:fa-truck-bold a custom icon"]
 ```
 
-```mermaid
-flowchart TD
-    B["fa:fa-twitter for peace"]
-    B-->C["fab:fa-truck-bold a custom icon"]
-```
-
 ## Graph declarations with spaces between vertices and link and without semicolon
 
 - In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
@@ -1217,14 +843,6 @@ flowchart TD
 Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
 
 ```mermaid-example
-flowchart LR
-    A[Hard edge] -->|Link text| B(Round edge)
-    B --> C{Decision}
-    C -->|One| D[Result one]
-    C -->|Two| E[Result two]
-```
-
-```mermaid
 flowchart LR
     A[Hard edge] -->|Link text| B(Round edge)
     B --> C{Decision}

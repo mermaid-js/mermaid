@@ -29,23 +29,6 @@ gitGraph
    commit
 ```
 
-```mermaid
----
-title: Example Git diagram
----
-gitGraph
-   commit
-   commit
-   branch develop
-   checkout develop
-   commit
-   commit
-   checkout main
-   merge develop
-   commit
-   commit
-```
-
 In Mermaid, we support the basic git operations like:
 
 - _commit_ : Representing a new commit on the current branch.
@@ -77,13 +60,6 @@ A simple gitgraph showing three commits on the default (**_main_**) branch:
        commit
 ```
 
-```mermaid
-    gitGraph
-       commit
-       commit
-       commit
-```
-
 If you look closely at the previous example, you can see the default branch `main` along with three commits. Also, notice that by default each commit has been given a unique & random ID. What if you wanted to give your own custom ID to a commit? Yes, it is possible to do that with Mermaid.
 
 ### Adding custom commit id
@@ -93,13 +69,6 @@ For a given commit you may specify a custom ID at the time of declaring it using
 Let us see how this works with the help of the following diagram:
 
 ```mermaid-example
-    gitGraph
-       commit id: "Alpha"
-       commit id: "Beta"
-       commit id: "Gamma"
-```
-
-```mermaid
     gitGraph
        commit id: "Alpha"
        commit id: "Beta"
@@ -132,16 +101,6 @@ Let us see how these different commit type look with the help of the following d
        commit
 ```
 
-```mermaid
-    gitGraph
-       commit id: "Normal"
-       commit
-       commit id: "Reverse" type: REVERSE
-       commit
-       commit id: "Highlight" type: HIGHLIGHT
-       commit
-```
-
 In this example, we have specified different types to each commit. Also, see how we have included both `id` and `type` together at the time of declaring our commits.
 
 ### Adding Tags
@@ -152,17 +111,6 @@ You can attach a custom tag at the time of declaring a commit using the `tag` at
 Let us see how this works with the help of the following diagram:
 
 ```mermaid-example
-    gitGraph
-       commit
-       commit id: "Normal" tag: "v1.0.0"
-       commit
-       commit id: "Reverse" type: REVERSE tag: "RC_1"
-       commit
-       commit id: "Highlight" type: HIGHLIGHT tag: "8.8.4"
-       commit
-```
-
-```mermaid
     gitGraph
        commit
        commit id: "Normal" tag: "v1.0.0"
@@ -184,16 +132,6 @@ When Mermaid, reads the `branch` keyword, it creates a new branch and sets it as
 Let see this in an example:
 
 ```mermaid-example
-    gitGraph
-       commit
-       commit
-       branch develop
-       commit
-       commit
-       commit
-```
-
-```mermaid
     gitGraph
        commit
        commit
@@ -227,19 +165,6 @@ Let see modify our previous example:
        commit
 ```
 
-```mermaid
-    gitGraph
-       commit
-       commit
-       branch develop
-       commit
-       commit
-       commit
-       checkout main
-       commit
-       commit
-```
-
 In this example, see how we started with default `main` branch, and pushed two commits on that.
 Then we created the `develop` branch, and all three commits afterwards are put on the `develop` branch as it became the current branch.
 After this we made use of the `checkout` keyword to set the current branch as `main`, and all commit that follow are registered against the current branch, i.e. `main`.
@@ -255,22 +180,6 @@ When Mermaid, reads the `merge` keyword, it finds the given branch and its head 
 Let us modify our previous example to merge our two branches:
 
 ```mermaid-example
-    gitGraph
-       commit
-       commit
-       branch develop
-       commit
-       commit
-       commit
-       checkout main
-       commit
-       commit
-       merge develop
-       commit
-       commit
-```
-
-```mermaid
     gitGraph
        commit
        commit
@@ -328,31 +237,6 @@ Let us see how this works with the help of the following diagram:
        commit id: "9"
 ```
 
-```mermaid
-    gitGraph
-       commit id: "1"
-       commit id: "2"
-       branch nice_feature
-       checkout nice_feature
-       commit id: "3"
-       checkout main
-       commit id: "4"
-       checkout nice_feature
-       branch very_nice_feature
-       checkout very_nice_feature
-       commit id: "5"
-       checkout main
-       commit id: "6"
-       checkout nice_feature
-       commit id: "7"
-       checkout main
-       merge nice_feature id: "customID" tag: "customTag" type: REVERSE
-       checkout very_nice_feature
-       commit id: "8"
-       checkout main
-       commit id: "9"
-```
-
 ### Cherry Pick commit from another branch
 
 Similar to how 'git' allows you to cherry-pick a commit from **another branch** onto the **current** branch, Mermaid also supports this functionality. You can also cherry-pick a commit from another branch using the `cherry-pick` keyword.
@@ -374,26 +258,6 @@ A few important rules to note here are:
 Let see an example:
 
 ```mermaid-example
-    gitGraph
-        commit id: "ZERO"
-        branch develop
-        branch release
-        commit id:"A"
-        checkout main
-        commit id:"ONE"
-        checkout develop
-        commit id:"B"
-        checkout main
-        merge develop id:"MERGE"
-        commit id:"TWO"
-        checkout release
-        cherry-pick id:"MERGE" parent:"B"
-        commit id:"THREE"
-        checkout develop
-        commit id:"C"
-```
-
-```mermaid
     gitGraph
         commit id: "ZERO"
         branch develop
@@ -477,52 +341,6 @@ Usage example:
         merge release
 ```
 
-```mermaid
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': false}} }%%
-      gitGraph
-        commit
-        branch hotfix
-        checkout hotfix
-        commit
-        branch develop
-        checkout develop
-        commit id:"ash" tag:"abc"
-        branch featureB
-        checkout featureB
-        commit type:HIGHLIGHT
-        checkout main
-        checkout hotfix
-        commit type:NORMAL
-        checkout develop
-        commit type:REVERSE
-        checkout featureB
-        commit
-        checkout main
-        merge hotfix
-        checkout featureB
-        commit
-        checkout develop
-        branch featureA
-        commit
-        checkout develop
-        merge hotfix
-        checkout featureA
-        commit
-        checkout featureB
-        commit
-        checkout develop
-        merge featureA
-        branch release
-        checkout release
-        commit
-        checkout main
-        commit
-        checkout release
-        merge main
-        checkout develop
-        merge release
-```
-
 ## Commit labels Layout: Rotated or Horizontal
 
 Mermaid supports two types of commit labels layout. The default layout is **rotated**, which means the labels are placed below the commit circle, rotated at 45 degrees for better readability. This is particularly useful for commits with long labels.
@@ -534,25 +352,6 @@ You can change the layout of the commit labels by using the `rotateCommitLabel` 
 Usage example: Rotated commit labels
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'rotateCommitLabel': true}} }%%
-gitGraph
-  commit id: "feat(api): ..."
-  commit id: "a"
-  commit id: "b"
-  commit id: "fix(client): .extra long label.."
-  branch c2
-  commit id: "feat(modules): ..."
-  commit id: "test(client): ..."
-  checkout main
-  commit id: "fix(api): ..."
-  commit id: "ci: ..."
-  branch b1
-  commit
-  branch b2
-  commit
-```
-
-```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'rotateCommitLabel': true}} }%%
 gitGraph
   commit id: "feat(api): ..."
@@ -592,25 +391,6 @@ gitGraph
   commit
 ```
 
-```mermaid
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'rotateCommitLabel': false}} }%%
-gitGraph
-  commit id: "feat(api): ..."
-  commit id: "a"
-  commit id: "b"
-  commit id: "fix(client): .extra long label.."
-  branch c2
-  commit id: "feat(modules): ..."
-  commit id: "test(client): ..."
-  checkout main
-  commit id: "fix(api): ..."
-  commit id: "ci: ..."
-  branch b1
-  commit
-  branch b2
-  commit
-```
-
 ## Hiding commit labels
 
 Sometimes you may want to hide the commit labels from the diagram. You can do this by using the `showCommitLabel` keyword. By default its value is `true`. You can set it to `false` using directives.
@@ -618,52 +398,6 @@ Sometimes you may want to hide the commit labels from the diagram. You can do th
 Usage example:
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': false,'showCommitLabel': false}} }%%
-      gitGraph
-        commit
-        branch hotfix
-        checkout hotfix
-        commit
-        branch develop
-        checkout develop
-        commit id:"ash"
-        branch featureB
-        checkout featureB
-        commit type:HIGHLIGHT
-        checkout main
-        checkout hotfix
-        commit type:NORMAL
-        checkout develop
-        commit type:REVERSE
-        checkout featureB
-        commit
-        checkout main
-        merge hotfix
-        checkout featureB
-        commit
-        checkout develop
-        branch featureA
-        commit
-        checkout develop
-        merge hotfix
-        checkout featureA
-        commit
-        checkout featureB
-        commit
-        checkout develop
-        merge featureA
-        branch release
-        checkout release
-        commit
-        checkout main
-        commit
-        checkout release
-        merge main
-        checkout develop
-        merge release
-```
-
-```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': false,'showCommitLabel': false}} }%%
       gitGraph
         commit
@@ -739,30 +473,6 @@ Usage example:
         commit type:REVERSE id:"SanFrancisco"
 ```
 
-```mermaid
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true,'mainBranchName': 'MetroLine1'}} }%%
-      gitGraph
-        commit id:"NewYork"
-        commit id:"Dallas"
-        branch MetroLine2
-        commit id:"LosAngeles"
-        commit id:"Chicago"
-        commit id:"Houston"
-        branch MetroLine3
-        commit id:"Phoenix"
-        commit type: HIGHLIGHT id:"Denver"
-        commit id:"Boston"
-        checkout MetroLine1
-        commit id:"Atlanta"
-        merge MetroLine3
-        commit id:"Miami"
-        commit id:"Washington"
-        merge MetroLine2 tag:"MY JUNCTION"
-        commit id:"Boston"
-        commit id:"Detroit"
-        commit type:REVERSE id:"SanFrancisco"
-```
-
 Look at the imaginary railroad map created using Mermaid. Here, we have changed the default main branch name to `MetroLine1`.
 
 ## Customizing branch ordering
@@ -791,32 +501,11 @@ Usage example:
 
 ```
 
-```mermaid
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true}} }%%
-      gitGraph
-      commit
-      branch test1 order: 3
-      branch test2 order: 2
-      branch test3 order: 1
-
-```
-
 Look at the diagram, all the branches are following the order defined.
 
 Usage example:
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true,'mainBranchOrder': 2}} }%%
-      gitGraph
-      commit
-      branch test1 order: 3
-      branch test2
-      branch test3
-      branch test4 order: 1
-
-```
-
-```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true,'mainBranchOrder': 2}} }%%
       gitGraph
       commit
@@ -865,21 +554,6 @@ Usage example:
        commit
 ```
 
-```mermaid
-    gitGraph LR:
-       commit
-       commit
-       branch develop
-       commit
-       commit
-       checkout main
-       commit
-       commit
-       merge develop
-       commit
-       commit
-```
-
 ### Top to Bottom (`TB:`)
 
 In `TB` (**Top-to-Bottom**) orientation, the commits run from top to bottom of the graph and branches are arranged side-by-side.
@@ -889,21 +563,6 @@ To orient the graph this way, you need to add `TB:` after gitGraph.
 Usage example:
 
 ```mermaid-example
-    gitGraph TB:
-       commit
-       commit
-       branch develop
-       commit
-       commit
-       checkout main
-       commit
-       commit
-       merge develop
-       commit
-       commit
-```
-
-```mermaid
     gitGraph TB:
        commit
        commit
@@ -941,21 +600,6 @@ Usage example:
        commit
 ```
 
-```mermaid
-    gitGraph BT:
-       commit
-       commit
-       branch develop
-       commit
-       commit
-       checkout main
-       commit
-       commit
-       merge develop
-       commit
-       commit
-```
-
 ## Parallel commits (v10.8.0+)
 
 Commits in Mermaid display temporal information in gitgraph by default. For example if two commits are one commit away from its parent, the commit that was made earlier is rendered closer to its parent. You can turn this off by enabling the `parallelCommits` flag.
@@ -963,22 +607,6 @@ Commits in Mermaid display temporal information in gitgraph by default. For exam
 ### Temporal Commits (default, `parallelCommits: false`)
 
 ```mermaid-example
----
-config:
-  gitGraph:
-    parallelCommits: false
----
-gitGraph:
-  commit
-  branch develop
-  commit
-  commit
-  checkout main
-  commit
-  commit
-```
-
-```mermaid
 ---
 config:
   gitGraph:
@@ -1012,22 +640,6 @@ gitGraph:
   commit
 ```
 
-```mermaid
----
-config:
-  gitGraph:
-    parallelCommits: true
----
-gitGraph:
-  commit
-  branch develop
-  commit
-  commit
-  checkout main
-  commit
-  commit
-```
-
 ## Themes
 
 Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](../config/theming.md).
@@ -1046,52 +658,6 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Base Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base' } }%%
-      gitGraph
-        commit
-        branch hotfix
-        checkout hotfix
-        commit
-        branch develop
-        checkout develop
-        commit id:"ash" tag:"abc"
-        branch featureB
-        checkout featureB
-        commit type:HIGHLIGHT
-        checkout main
-        checkout hotfix
-        commit type:NORMAL
-        checkout develop
-        commit type:REVERSE
-        checkout featureB
-        commit
-        checkout main
-        merge hotfix
-        checkout featureB
-        commit
-        checkout develop
-        branch featureA
-        commit
-        checkout develop
-        merge hotfix
-        checkout featureA
-        commit
-        checkout featureB
-        commit
-        checkout develop
-        merge featureA
-        branch release
-        checkout release
-        commit
-        checkout main
-        commit
-        checkout release
-        merge main
-        checkout develop
-        merge release
-```
-
-```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'base' } }%%
       gitGraph
         commit
@@ -1185,101 +751,9 @@ Let's put them to use, and see how our sample diagram looks in different themes:
         merge release
 ```
 
-```mermaid
-%%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
-      gitGraph
-        commit
-        branch hotfix
-        checkout hotfix
-        commit
-        branch develop
-        checkout develop
-        commit id:"ash" tag:"abc"
-        branch featureB
-        checkout featureB
-        commit type:HIGHLIGHT
-        checkout main
-        checkout hotfix
-        commit type:NORMAL
-        checkout develop
-        commit type:REVERSE
-        checkout featureB
-        commit
-        checkout main
-        merge hotfix
-        checkout featureB
-        commit
-        checkout develop
-        branch featureA
-        commit
-        checkout develop
-        merge hotfix
-        checkout featureA
-        commit
-        checkout featureB
-        commit
-        checkout develop
-        merge featureA
-        branch release
-        checkout release
-        commit
-        checkout main
-        commit
-        checkout release
-        merge main
-        checkout develop
-        merge release
-```
-
 ### Default Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
-      gitGraph
-        commit type:HIGHLIGHT
-        branch hotfix
-        checkout hotfix
-        commit
-        branch develop
-        checkout develop
-        commit id:"ash" tag:"abc"
-        branch featureB
-        checkout featureB
-        commit type:HIGHLIGHT
-        checkout main
-        checkout hotfix
-        commit type:NORMAL
-        checkout develop
-        commit type:REVERSE
-        checkout featureB
-        commit
-        checkout main
-        merge hotfix
-        checkout featureB
-        commit
-        checkout develop
-        branch featureA
-        commit
-        checkout develop
-        merge hotfix
-        checkout featureA
-        commit
-        checkout featureB
-        commit
-        checkout develop
-        merge featureA
-        branch release
-        checkout release
-        commit
-        checkout main
-        commit
-        checkout release
-        merge main
-        checkout develop
-        merge release
-```
-
-```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
       gitGraph
         commit type:HIGHLIGHT
@@ -1373,101 +847,9 @@ Let's put them to use, and see how our sample diagram looks in different themes:
         merge release
 ```
 
-```mermaid
-%%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
-      gitGraph
-        commit
-        branch hotfix
-        checkout hotfix
-        commit
-        branch develop
-        checkout develop
-        commit id:"ash" tag:"abc"
-        branch featureB
-        checkout featureB
-        commit type:HIGHLIGHT
-        checkout main
-        checkout hotfix
-        commit type:NORMAL
-        checkout develop
-        commit type:REVERSE
-        checkout featureB
-        commit
-        checkout main
-        merge hotfix
-        checkout featureB
-        commit
-        checkout develop
-        branch featureA
-        commit
-        checkout develop
-        merge hotfix
-        checkout featureA
-        commit
-        checkout featureB
-        commit
-        checkout develop
-        merge featureA
-        branch release
-        checkout release
-        commit
-        checkout main
-        commit
-        checkout release
-        merge main
-        checkout develop
-        merge release
-```
-
 ### Neutral Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
-      gitGraph
-        commit
-        branch hotfix
-        checkout hotfix
-        commit
-        branch develop
-        checkout develop
-        commit id:"ash" tag:"abc"
-        branch featureB
-        checkout featureB
-        commit type:HIGHLIGHT
-        checkout main
-        checkout hotfix
-        commit type:NORMAL
-        checkout develop
-        commit type:REVERSE
-        checkout featureB
-        commit
-        checkout main
-        merge hotfix
-        checkout featureB
-        commit
-        checkout develop
-        branch featureA
-        commit
-        checkout develop
-        merge hotfix
-        checkout featureA
-        commit
-        checkout featureB
-        commit
-        checkout develop
-        merge featureA
-        branch release
-        checkout release
-        commit
-        checkout main
-        commit
-        checkout release
-        merge main
-        checkout develop
-        merge release
-```
-
-```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
       gitGraph
         commit
@@ -1537,22 +919,6 @@ See how the default theme is used to set the colors for the branches:
        commit
 ```
 
-```mermaid
-%%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
-       gitGraph
-       commit
-       branch develop
-       commit tag:"v1.0.0"
-       commit
-       checkout main
-       commit type: HIGHLIGHT
-       commit
-       merge develop
-       commit
-       branch featureA
-       commit
-```
-
 > #### IMPORTANT:
 >
 > Mermaid supports the theme variables to override the default values for **up to 8 branches**, i.e., you can set the color/styling of up to 8 branches using theme variables. After this threshold of 8 branches, the theme variables are reused in the cyclic manner, i.e. the 9th branch will use the color/styling of the 1st branch, or the branch at index position '8' will use the color/styling of the branch at index position '0'.
@@ -1569,32 +935,6 @@ Example:
 Now let's override the default values for the `git0` to `git3` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'git0': '#ff0000',
-              'git1': '#00ff00',
-              'git2': '#0000ff',
-              'git3': '#ff00ff',
-              'git4': '#00ffff',
-              'git5': '#ffff00',
-              'git6': '#ff00ff',
-              'git7': '#00ffff'
-       } } }%%
-       gitGraph
-       commit
-       branch develop
-       commit tag:"v1.0.0"
-       commit
-       checkout main
-       commit type: HIGHLIGHT
-       commit
-       merge develop
-       commit
-       branch featureA
-       commit
-
-```
-
-```mermaid
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
               'git0': '#ff0000',
               'git1': '#00ff00',
@@ -1658,34 +998,6 @@ Now let's override the default values for the `gitBranchLabel0` to `gitBranchLab
     commit
 ```
 
-```mermaid
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-        'gitBranchLabel0': '#ffffff',
-        'gitBranchLabel1': '#ffffff',
-        'gitBranchLabel2': '#ffffff',
-        'gitBranchLabel3': '#ffffff',
-        'gitBranchLabel4': '#ffffff',
-        'gitBranchLabel5': '#ffffff',
-        'gitBranchLabel6': '#ffffff',
-        'gitBranchLabel7': '#ffffff',
-        'gitBranchLabel8': '#ffffff',
-        'gitBranchLabel9': '#ffffff'
-  } } }%%
-  gitGraph
-    checkout main
-    branch branch1
-    branch branch2
-    branch branch3
-    branch branch4
-    branch branch5
-    branch branch6
-    branch branch7
-    branch branch8
-    branch branch9
-    checkout branch1
-    commit
-```
-
 Here, you can see that `branch8` and `branch9` colors and the styles are being picked from branch at index position `0` (`main`) and `1`(`branch1`) respectively, i.e., **branch themeVariables are repeated cyclically**.
 
 ### Customizing Commit colors
@@ -1715,26 +1027,6 @@ Now let's override the default values for the `commitLabelColor` to `commitLabel
 
 ```
 
-```mermaid
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'commitLabelColor': '#ff0000',
-              'commitLabelBackground': '#00ff00'
-       } } }%%
-       gitGraph
-       commit
-       branch develop
-       commit tag:"v1.0.0"
-       commit
-       checkout main
-       commit type: HIGHLIGHT
-       commit
-       merge develop
-       commit
-       branch featureA
-       commit
-
-```
-
 See how the commit label color and background color are changed to the values specified in the theme variables.
 
 ### Customizing Commit Label Font Size
@@ -1745,27 +1037,6 @@ Example:
 Now let's override the default values for the `commitLabelFontSize` variable:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'commitLabelColor': '#ff0000',
-              'commitLabelBackground': '#00ff00',
-              'commitLabelFontSize': '16px'
-       } } }%%
-       gitGraph
-       commit
-       branch develop
-       commit tag:"v1.0.0"
-       commit
-       checkout main
-       commit type: HIGHLIGHT
-       commit
-       merge develop
-       commit
-       branch featureA
-       commit
-
-```
-
-```mermaid
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
               'commitLabelColor': '#ff0000',
               'commitLabelBackground': '#00ff00',
@@ -1816,27 +1087,6 @@ Now let's override the default values for the `tagLabelFontSize` variable:
 
 ```
 
-```mermaid
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'commitLabelColor': '#ff0000',
-              'commitLabelBackground': '#00ff00',
-              'tagLabelFontSize': '16px'
-       } } }%%
-       gitGraph
-       commit
-       branch develop
-       commit tag:"v1.0.0"
-       commit
-       checkout main
-       commit type: HIGHLIGHT
-       commit
-       merge develop
-       commit
-       branch featureA
-       commit
-
-```
-
 See how the tag label font size changed.
 
 ### Customizing Tag colors
@@ -1846,27 +1096,6 @@ Example:
 Now let's override the default values for the `tagLabelColor`, `tagLabelBackground` and to `tagLabelBorder` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'tagLabelColor': '#ff0000',
-              'tagLabelBackground': '#00ff00',
-              'tagLabelBorder': '#0000ff'
-       } } }%%
-       gitGraph
-       commit
-       branch develop
-       commit tag:"v1.0.0"
-       commit
-       checkout main
-       commit type: HIGHLIGHT
-       commit
-       merge develop
-       commit
-       branch featureA
-       commit
-
-```
-
-```mermaid
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
               'tagLabelColor': '#ff0000',
               'tagLabelBackground': '#00ff00',
@@ -1898,25 +1127,6 @@ Example:
 Now let's override the default values for the `git0` to `git3` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'gitInv0': '#ff0000'
-       } } }%%
-       gitGraph
-       commit
-       branch develop
-       commit tag:"v1.0.0"
-       commit
-       checkout main
-       commit type: HIGHLIGHT
-       commit
-       merge develop
-       commit
-       branch featureA
-       commit
-
-```
-
-```mermaid
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
               'gitInv0': '#ff0000'
        } } }%%

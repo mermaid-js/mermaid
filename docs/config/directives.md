@@ -88,17 +88,11 @@ graph LR
 A-->B
 ```
 
-```mermaid
-%%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
-graph LR
-A-->B
-```
-
 Here the directive declaration will set the `logLevel` to `debug` and the `theme` to `dark` for a rendered mermaid diagram, changing the appearance of the diagram itself.
 
 Note: You can use 'init' or 'initialize' as both are acceptable as init directives. Also note that `%%init%%` and `%%initialize%%` directives will be grouped together after they are parsed.
 
-```mermaid-example
+```mmd
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 %%{initialize: { 'logLevel': 'fatal', "theme":'dark', 'startOnLoad': true } }%%
 ...
@@ -149,18 +143,6 @@ A --> C[End]
 
 ```
 
-```mermaid
-%%{init: { "theme": "forest" } }%%
-graph TD
-A(Forest) --> B[/Another/]
-A --> C[End]
-  subgraph section
-  B
-  C
-  end
-
-```
-
 ### Changing fontFamily via directive
 
 The following code snippet changes fontFamily to Trebuchet MS, Verdana, Arial, Sans-Serif:
@@ -170,18 +152,6 @@ The following code snippet changes fontFamily to Trebuchet MS, Verdana, Arial, S
 Example:
 
 ```mermaid-example
-%%{init: { "fontFamily": "Trebuchet MS, Verdana, Arial, Sans-Serif" } }%%
-graph TD
-A(Forest) --> B[/Another/]
-A --> C[End]
-  subgraph section
-  B
-  C
-  end
-
-```
-
-```mermaid
 %%{init: { "fontFamily": "Trebuchet MS, Verdana, Arial, Sans-Serif" } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -222,17 +192,6 @@ A --> C[End]
   end
 ```
 
-```mermaid
-%%{init: { "logLevel": 2 } }%%
-graph TD
-A(Forest) --> B[/Another/]
-A --> C[End]
-  subgraph section
-  B
-  C
-  end
-```
-
 ### Changing flowchart config via directive
 
 Some common flowchart configurations are:
@@ -252,17 +211,6 @@ The following code snippet changes flowchart config:
 Here we are overriding only the flowchart config, and not the general config, setting `htmlLabels` to `true` and `curve` to `linear`.
 
 ```mermaid-example
-%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
-graph TD
-A(Forest) --> B[/Another/]
-A --> C[End]
-  subgraph section
-  B
-  C
-  end
-```
-
-```mermaid
 %%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -302,15 +250,6 @@ Alice->Bob: Good.
 Bob->Alice: Cool
 ```
 
-```mermaid
-sequenceDiagram
-
-Alice->Bob: Hello Bob, how are you?
-Bob->Alice: Fine, how did your mother like the book I suggested? And did you catch the new book about alien invasion?
-Alice->Bob: Good.
-Bob->Alice: Cool
-```
-
 Now let us enable wrap for sequence diagrams.
 
 The following code snippet changes sequence diagram config for `wrap` to `true`:
@@ -320,15 +259,6 @@ The following code snippet changes sequence diagram config for `wrap` to `true`:
 By applying that snippet to the diagram above, `wrap` will be enabled:
 
 ```mermaid-example
-%%{init: { "sequence": { "wrap": true, "width":300 } } }%%
-sequenceDiagram
-Alice->Bob: Hello Bob, how are you?
-Bob->Alice: Fine, how did your mother like the book I suggested? And did you catch the new book about alien invasion?
-Alice->Bob: Good.
-Bob->Alice: Cool
-```
-
-```mermaid
 %%{init: { "sequence": { "wrap": true, "width":300 } } }%%
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?

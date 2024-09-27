@@ -43,35 +43,6 @@ classDiagram
     }
 ```
 
-```mermaid
----
-title: Animal example
----
-classDiagram
-    note "From Duck till Zebra"
-    Animal <|-- Duck
-    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
-    Animal <|-- Fish
-    Animal <|-- Zebra
-    Animal : +int age
-    Animal : +String gender
-    Animal: +isMammal()
-    Animal: +mate()
-    class Duck{
-        +String beakColor
-        +swim()
-        +quack()
-    }
-    class Fish{
-        -int sizeInFeet
-        -canEat()
-    }
-    class Zebra{
-        +bool is_wild
-        +run()
-    }
-```
-
 ## Syntax
 
 ### Class
@@ -84,19 +55,6 @@ A single instance of a class in the diagram contains three compartments:
 - The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
 ```mermaid-example
----
-title: Bank example
----
-classDiagram
-    class BankAccount
-    BankAccount : +String owner
-    BankAccount : +Bigdecimal balance
-    BankAccount : +deposit(amount)
-    BankAccount : +withdrawal(amount)
-
-```
-
-```mermaid
 ---
 title: Bank example
 ---
@@ -122,12 +80,6 @@ classDiagram
     Vehicle <|-- Car
 ```
 
-```mermaid
-classDiagram
-    class Animal
-    Vehicle <|-- Car
-```
-
 Naming convention: a class name should be composed only of alphanumeric characters (including unicode), underscores, and dashes (-).
 
 ### Class labels
@@ -141,23 +93,9 @@ classDiagram
     Animal --> Car
 ```
 
-```mermaid
-classDiagram
-    class Animal["Animal with a label"]
-    class Car["Car with *! symbols"]
-    Animal --> Car
-```
-
 You can also use backticks to escape special characters in the label:
 
 ```mermaid-example
-classDiagram
-    class `Animal Class!`
-    class `Car Class`
-    `Animal Class!` --> `Car Class`
-```
-
-```mermaid
 classDiagram
     class `Animal Class!`
     class `Car Class`
@@ -183,28 +121,9 @@ BankAccount : +deposit(amount)
 BankAccount : +withdrawal(amount)
 ```
 
-```mermaid
-classDiagram
-class BankAccount
-BankAccount : +String owner
-BankAccount : +BigDecimal balance
-BankAccount : +deposit(amount)
-BankAccount : +withdrawal(amount)
-```
-
 - Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
 
 ```mermaid-example
-classDiagram
-class BankAccount{
-    +String owner
-    +BigDecimal balance
-    +deposit(amount)
-    +withdrawal(amount)
-}
-```
-
-```mermaid
 classDiagram
 class BankAccount{
     +String owner
@@ -228,16 +147,6 @@ class BankAccount{
 }
 ```
 
-```mermaid
-classDiagram
-class BankAccount{
-    +String owner
-    +BigDecimal balance
-    +deposit(amount) bool
-    +withdrawal(amount) int
-}
-```
-
 #### Generic Types
 
 Generics can be represented as part of a class definition, and for class members/return types. In order to denote an item as generic, you enclose that type within `~` (**tilde**). **Nested** type declarations such as `List<List<int>>` are supported, though generics that include a comma are currently not supported. (such as `List<List<K, V>>`)
@@ -245,21 +154,6 @@ Generics can be represented as part of a class definition, and for class members
 > _note_ when a generic is used within a class definition, the generic type is NOT considered part of the class name. i.e.: for any syntax which required you to reference the class name, you need to drop the type part of the definition. This also means that mermaid does not currently support having two classes with the same name, but different generic types.
 
 ```mermaid-example
-classDiagram
-class Square~Shape~{
-    int id
-    List~int~ position
-    setPoints(List~int~ points)
-    getPoints() List~int~
-}
-
-Square : -List~string~ messages
-Square : +setMessages(List~string~ messages)
-Square : +getMessages() List~string~
-Square : +getDistanceMatrix() List~List~int~~
-```
-
-```mermaid
 classDiagram
 class Square~Shape~{
     int id
@@ -326,35 +220,9 @@ classO .. classP
 
 ```
 
-```mermaid
-classDiagram
-classA <|-- classB
-classC *-- classD
-classE o-- classF
-classG <-- classH
-classI -- classJ
-classK <.. classL
-classM <|.. classN
-classO .. classP
-
-```
-
 We can use the labels to describe the nature of the relation between two classes. Also, arrowheads can be used in the opposite direction as well:
 
 ```mermaid-example
-classDiagram
-classA --|> classB : Inheritance
-classC --* classD : Composition
-classE --o classF : Aggregation
-classG --> classH : Association
-classI -- classJ : Link(Solid)
-classK ..> classL : Dependency
-classM ..|> classN : Realization
-classO .. classP : Link(Dashed)
-
-```
-
-```mermaid
 classDiagram
 classA --|> classB : Inheritance
 classC --* classD : Composition
@@ -382,18 +250,11 @@ classC *-- classD : composition
 classE o-- classF : aggregation
 ```
 
-```mermaid
-classDiagram
-classA <|-- classB : implements
-classC *-- classD : composition
-classE o-- classF : aggregation
-```
-
 ### Two-way relations
 
 Relations can logically represent an N:M association:
 
-```mermaid-example
+```mmd
 classDiagram
     Animal <|--|> Zebra
 ```
@@ -442,17 +303,6 @@ namespace BaseShapes {
 }
 ```
 
-```mermaid
-classDiagram
-namespace BaseShapes {
-    class Triangle
-    class Rectangle {
-      double width
-      double height
-    }
-}
-```
-
 ## Cardinality / Multiplicity on relations
 
 Multiplicity or cardinality in class diagrams indicates the number of instances of one class that can be linked to an instance of the other class. For example, each company will have one or more employees (not zero), and each employee currently works for zero or one companies.
@@ -482,13 +332,6 @@ classDiagram
     Galaxy --> "many" Star : Contains
 ```
 
-```mermaid
-classDiagram
-    Customer "1" --> "*" Ticket
-    Student "1" --> "1..*" Course
-    Galaxy --> "many" Star : Contains
-```
-
 ## Annotations on classes
 
 It is possible to annotate classes with markers to provide additional metadata about the class. This can give a clearer indication about its nature. Some common annotations include:
@@ -503,14 +346,6 @@ Annotations are defined within the opening `<<` and closing `>>`. There are two 
 - In a **_separate line_** after a class is defined:
 
 ```mermaid-example
-classDiagram
-class Shape
-<<interface>> Shape
-Shape : noOfVertices
-Shape : draw()
-```
-
-```mermaid
 classDiagram
 class Shape
 <<interface>> Shape
@@ -538,29 +373,11 @@ class Color{
 
 ```
 
-```mermaid
-classDiagram
-class Shape{
-    <<interface>>
-    noOfVertices
-    draw()
-}
-class Color{
-    <<enumeration>>
-    RED
-    BLUE
-    GREEN
-    WHITE
-    BLACK
-}
-
-```
-
 ## Comments
 
 Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including any class diagram syntax.
 
-```mermaid-example
+```mmd
 classDiagram
 %% This whole line is a comment classDiagram class Shape <<interface>>
 class Shape{
@@ -602,24 +419,6 @@ classDiagram
   Student "1" --o "1" Bike : rides
 ```
 
-```mermaid
-classDiagram
-  direction RL
-  class Student {
-    -idCard : IdCard
-  }
-  class IdCard{
-    -id : int
-    -name : string
-  }
-  class Bike{
-    -id : int
-    -name : string
-  }
-  Student "1" --o "1" IdCard : carries
-  Student "1" --o "1" Bike : rides
-```
-
 ## Interaction
 
 It is possible to bind a click event to a node. The click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
@@ -644,7 +443,7 @@ It is possible to add notes on the diagram using `note "line1\nline2"`. A note c
 
 ### Examples
 
-```mermaid-example
+```mmd
 classDiagram
     note "This is a general note"
     note for MyClass "This is a note for a class"
@@ -662,7 +461,7 @@ classDiagram
 
 _URL Link:_
 
-```mermaid-example
+```mmd
 classDiagram
 class Shape
 link Shape "https://www.github.com" "This is a tooltip for a link"
@@ -680,7 +479,7 @@ click Shape2 href "https://www.github.com" "This is a tooltip for a link"
 
 _Callback:_
 
-```mermaid-example
+```mmd
 classDiagram
 class Shape
 callback Shape "callbackFunction" "This is a tooltip for a callback"
@@ -704,7 +503,7 @@ click Shape2 call callbackFunction() "This is a tooltip for a callback"
 </script>
 ```
 
-```mermaid-example
+```mmd
 classDiagram
     class Class01
     class Class02
@@ -788,14 +587,6 @@ classDiagram
   style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-```mermaid
-classDiagram
-  class Animal
-  class Mineral
-  style Animal fill:#f9f,stroke:#333,stroke-width:4px
-  style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-```
-
 #### Classes
 
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
@@ -830,22 +621,9 @@ classDiagram
     class Animal:::styleClass
 ```
 
-```mermaid
-classDiagram
-    class Animal:::styleClass
-```
-
 Or:
 
 ```mermaid-example
-classDiagram
-    class Animal:::styleClass {
-        -int sizeInFeet
-        -canEat()
-    }
-```
-
-```mermaid
 classDiagram
     class Animal:::styleClass {
         -int sizeInFeet
