@@ -19,10 +19,22 @@ export const createDecisionBoxPathD = (x: number, y: number, size: number): stri
 export const question = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const padding = node.padding ?? 0;
+  if (node.width || node.height) {
+    node.width = (node?.width ?? 0) - padding * 8;
+    if (node.width < 50) {
+      node.width = 50;
+    }
 
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+    node.height = (node?.height ?? 0) - padding * 8;
+    if (node.height < 50) {
+      node.height = 50;
+    }
+  }
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const w = (Math.max(bbox.width, node?.width ?? 0) + padding * 8) / 2;
+  const h = w;
   const s = w + h;
 
   const points = [
