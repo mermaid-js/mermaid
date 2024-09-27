@@ -206,8 +206,8 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   await Promise.all(
     data4Layout.nodes.map(async function (node) {
       let pos = positions.nodes[node.id];
-      node.height = pos?.height || 50;
-      node.width = pos?.width || 50;
+      node.height = pos?.height;
+      node.width = pos?.width;
 
       if (node.isGroup) {
         node.x = 0;
