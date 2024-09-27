@@ -13,17 +13,19 @@ export const lightningBolt = (parent: SVG, node: Node) => {
     .attr('class', getNodeClasses(node))
     .attr('id', node.domId ?? node.id);
   const { cssStyles } = node;
-  const gap = Math.max(4, (node.height ?? 0) * 0.1);
-  const width = Math.max(20, node?.width ?? 0 - gap);
-  const height = Math.max(40, node?.height ?? 0 - gap);
+
+  const gapX = Math.max(5, (node.width ?? 0) * 0.1);
+  const gapY = Math.max(5, (node.height ?? 0) * 0.1);
+  const width = Math.max(50, node?.width ?? 0 - gapX);
+  const height = Math.max(50, node?.height ?? 0 - gapY);
 
   const points = [
     { x: width, y: 0 },
-    { x: 0, y: height / 2 + gap / 2 },
-    { x: width - 2 * gap, y: height / 2 + gap / 2 },
+    { x: 0, y: height / 2 + gapY / 2 },
+    { x: width - 4 * gapX, y: height / 2 + gapY / 2 },
     { x: 0, y: height },
-    { x: width, y: height / 2 - gap / 2 },
-    { x: 2 * gap, y: height / 2 - gap / 2 },
+    { x: width, y: height / 2 - gapY / 2 },
+    { x: 4 * gapX, y: height / 2 - gapY / 2 },
   ];
 
   // @ts-ignore - rough is not typed
