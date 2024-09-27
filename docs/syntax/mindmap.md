@@ -12,7 +12,7 @@
 
 ### An example of a mindmap.
 
-```mermaid-example
+```mmd
 mindmap
   root((mindmap))
     Origins
@@ -70,7 +70,7 @@ mindmap
 
 In summary is a simple text outline where there is one node at the root level called `Root` which has one child `A`. `A` in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
 
-```mermaid-example
+```mmd
 mindmap
 Root
     A
@@ -101,19 +101,9 @@ mindmap
     id[I am a square]
 ```
 
-```mermaid
-mindmap
-    id[I am a square]
-```
-
 ### Rounded square
 
 ```mermaid-example
-mindmap
-    id(I am a rounded square)
-```
-
-```mermaid
 mindmap
     id(I am a rounded square)
 ```
@@ -125,19 +115,9 @@ mindmap
     id((I am a circle))
 ```
 
-```mermaid
-mindmap
-    id((I am a circle))
-```
-
 ### Bang
 
 ```mermaid-example
-mindmap
-    id))I am a bang((
-```
-
-```mermaid
 mindmap
     id))I am a bang((
 ```
@@ -149,11 +129,6 @@ mindmap
     id)I am a cloud(
 ```
 
-```mermaid
-mindmap
-    id)I am a cloud(
-```
-
 ### Hexagon
 
 ```mermaid-example
@@ -161,19 +136,9 @@ mindmap
     id{{I am a hexagon}}
 ```
 
-```mermaid
-mindmap
-    id{{I am a hexagon}}
-```
-
 ### Default
 
 ```mermaid-example
-mindmap
-    I am the default shape
-```
-
-```mermaid
 mindmap
     I am the default shape
 ```
@@ -195,29 +160,11 @@ mindmap
         ::icon(mdi mdi-skull-outline)
 ```
 
-```mermaid
-mindmap
-    Root
-        A
-        ::icon(fa fa-book)
-        B(B)
-        ::icon(mdi mdi-skull-outline)
-```
-
 ## Classes
 
 Again the syntax for adding classes is similar to flowcharts. You can add classes using a triple colon following a number of css classes separated by space. In the following example one of the nodes has two custom classes attached urgent turning the background red and the text white and large increasing the font size:
 
 ```mermaid-example
-mindmap
-    Root
-        A[A]
-        :::urgent large
-        B(B)
-        C
-```
-
-```mermaid
 mindmap
     Root
         A[A]
@@ -242,7 +189,7 @@ mindmap
 
 This outline is unclear as `B` clearly is a child of `A` but when we move on to `C` the clarity is lost. `C` is not a child of `B` with a higher indentation nor does it have the same indentation as `B`. The only thing that is clear is that the first node with smaller indentation, indicating a parent, is A. Then Mermaid relies on this known truth and compensates for the unclear indentation and selects `A` as a parent of `C` leading till the same diagram with `B` and `C` as siblings.
 
-```mermaid-example
+```mmd
 mindmap
 Root
     A
@@ -263,15 +210,6 @@ Root
 The "Markdown Strings" feature enhances mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
 
 ```mermaid-example
-mindmap
-    id1["`**Root** with
-a second line
-Unicode works too: 🤓`"]
-      id2["`The dog in **the** hog... a *very long text* that wraps to a new line`"]
-      id3[Regular labels still works]
-```
-
-```mermaid
 mindmap
     id1["`**Root** with
 a second line

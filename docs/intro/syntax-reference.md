@@ -30,18 +30,6 @@ erDiagram
           PRODUCT ||--o{ ORDER-ITEM : "ordered in"
 ```
 
-```mermaid
-erDiagram
-          CUSTOMER }|..|{ DELIVERY-ADDRESS : has
-          CUSTOMER ||--o{ ORDER : places
-          CUSTOMER ||--o{ INVOICE : "liable for"
-          DELIVERY-ADDRESS ||--o{ ORDER : receives
-          INVOICE ||--|{ ORDER : covers
-          ORDER ||--|{ ORDER-ITEM : includes
-          PRODUCT-CATEGORY ||--|{ PRODUCT : contains
-          PRODUCT ||--o{ ORDER-ITEM : "ordered in"
-```
-
 The [Getting Started](./getting-started.md) section can also provide some practical examples of mermaid syntax.
 
 ## Diagram Breaking
@@ -103,7 +91,7 @@ Mermaid offers a variety of styles or “looks” for your diagrams, allowing yo
 
 You can select a look by adding the look parameter in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid-example
+```mmd
 ---
 config:
   look: handDrawn
@@ -142,7 +130,7 @@ In addition to customizing the look of your diagrams, Mermaid Chart now allows y
 
 You can specify the layout algorithm directly in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid-example
+```mmd
 ---
 config:
   layout: elk

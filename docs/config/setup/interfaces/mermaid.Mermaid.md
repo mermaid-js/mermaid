@@ -312,7 +312,7 @@ The function tags the processed attributes with the attribute data-processed and
 elements with the attribute already set. This way the init function can be triggered several
 times.
 
-```mermaid-example
+```mmd
 graph LR;
  a(Find elements)-->b{Processed}
  b-->|Yes|c(Leave element)

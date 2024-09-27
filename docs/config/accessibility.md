@@ -101,14 +101,6 @@ See [the accTitle and accDescr usage examples](#acctitle-and-accdescr-usage-exam
       B --> D[Be done]
 ```
 
-```mermaid
-  graph LR
-      accTitle: Big Decisions
-      accDescr: Bob's Burgers process for making big decisions
-      A[Identify Big Decision] --> B{Make Big Decision}
-      B --> D[Be done]
-```
-
 Here is the HTML generated for the SVG element: _(Note that some of the SVG attributes and the SVG contents are omitted for clarity.):_
 
 ```html
@@ -130,18 +122,6 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
   This is actually a very simple flow: identify the big decision and then make the big decision."
 
 ```mermaid-example
-  graph LR
-      accTitle: Bob's Burger's Making Big Decisions
-      accDescr {
-        The official Bob's Burgers corporate processes that are used
-        for making very, very big decisions.
-        This is actually a very simple flow: identify the big decision and then make the big decision.
-         }
-      A[Identify Big Decision] --> B{Make Big Decision}
-      B --> D[Be done]
-```
-
-```mermaid
   graph LR
       accTitle: Bob's Burger's Making Big Decisions
       accDescr {
@@ -185,14 +165,6 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
       Vehicle <|-- Car
 ```
 
-```mermaid
-   classDiagram
-      accTitle: My Class Diagram
-      accDescr: My Class Diagram Description
-
-      Vehicle <|-- Car
-```
-
 ##### Entity Relationship Diagram
 
 ```mermaid-example
@@ -206,36 +178,9 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
-   erDiagram
-      accTitle: My Entity Relationship Diagram
-      accDescr: My Entity Relationship Diagram Description
-
-    CUSTOMER ||--o{ ORDER : places
-    ORDER ||--|{ LINE-ITEM : contains
-    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
-
-```
-
 ##### Gantt Chart
 
 ```mermaid-example
-   gantt
-      accTitle: My Gantt Chart Accessibility Title
-      accDescr: My Gantt Chart Accessibility Description
-
-    title A Gantt Diagram
-    dateFormat  YYYY-MM-DD
-    section Section
-    A task           :a1, 2014-01-01, 30d
-    Another task     :after a1  , 20d
-    section Another
-    Task in sec      :2014-01-12  , 12d
-    another task      : 24d
-
-```
-
-```mermaid
    gantt
       accTitle: My Gantt Chart Accessibility Title
       accDescr: My Gantt Chart Accessibility Description
@@ -271,40 +216,9 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
-  gitGraph
-      accTitle: My Gitgraph Accessibility Title
-      accDescr: My Gitgraph Accessibility Description
-
-     commit
-     commit
-     branch develop
-     checkout develop
-     commit
-     commit
-     checkout main
-     merge develop
-     commit
-     commit
-
-```
-
 ##### Pie Chart
 
 ```mermaid-example
-   pie
-      accTitle: My Pie Chart Accessibility Title
-      accDescr: My Pie Chart Accessibility Description
-
-    title Key elements in Product X
-    "Calcium" : 42.96
-    "Potassium" : 50.05
-    "Magnesium" : 10.01
-    "Iron" :  5
-
-```
-
-```mermaid
    pie
       accTitle: My Pie Chart Accessibility Title
       accDescr: My Pie Chart Accessibility Description
@@ -339,39 +253,9 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
-  requirementDiagram
-      accTitle: My Requirement Diagram
-      accDescr: My Requirement Diagram Description
-
-       requirement test_req {
-  id: 1
-  text: the test text.
-  risk: high
-  verifymethod: test
-  }
-
-  element test_entity {
-  type: simulation
-  }
-
-  test_entity - satisfies -> test_req
-
-```
-
 ##### Sequence Diagram
 
 ```mermaid-example
-   sequenceDiagram
-      accTitle: My Sequence Diagram
-      accDescr: My Sequence Diagram Description
-
-      Alice->>John: Hello John, how are you?
-      John-->>Alice: Great!
-      Alice-)John: See you later!
-```
-
-```mermaid
    sequenceDiagram
       accTitle: My Sequence Diagram
       accDescr: My Sequence Diagram Description
@@ -392,34 +276,9 @@ Here is the HTML generated for the SVG element: _(Note that some of the SVG attr
 
 ```
 
-```mermaid
-   stateDiagram
-      accTitle: My State Diagram
-      accDescr: My State Diagram Description
-
-       s1 --> s2
-
-```
-
 ##### User Journey Diagram
 
 ```mermaid-example
-  journey
-      accTitle: My User Journey Diagram
-      accDescr: My User Journey Diagram Description
-
-      title My working day
-      section Go to work
-        Make tea: 5: Me
-        Go upstairs: 3: Me
-        Do work: 1: Me, Cat
-      section Go home
-        Go downstairs: 5: Me
-        Sit down: 5: Me
-
-```
-
-```mermaid
   journey
       accTitle: My User Journey Diagram
       accDescr: My User Journey Diagram Description

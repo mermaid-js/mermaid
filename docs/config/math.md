@@ -16,7 +16,7 @@ Note that at the moment, the only supported diagrams are below:
 
 ### Flowcharts
 
-```mermaid-example
+```mmd
  graph LR
       A["$$x^2$$"] -->|"$$\sqrt{x+3}$$"| B("$$\frac{1}{2}$$")
       A -->|"$$\overbrace{a+b+c}^{\text{note}}$$"| C("$$\pi r^2$$")
@@ -34,7 +34,7 @@ Note that at the moment, the only supported diagrams are below:
 
 ### Sequence
 
-```mermaid-example
+```mmd
 sequenceDiagram
     autonumber
     participant 1 as $$\alpha$$

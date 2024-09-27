@@ -224,6 +224,6 @@ _Mermaid was created by Knut Sveidqvist for easier documentation._
   }
 
   .dark #VPContent > div > div > div.content > div > main > div > div > img {
-    filter: invert(1) hue-rotate(217deg)  contrast(0.72);
+    filter: invert(1) hue-rotate(217deg)  contrast(0.785);
   }
 </style>

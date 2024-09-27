@@ -397,7 +397,7 @@ Documentation is located in the [`packages/mermaid/src/docs`](https://github.com
 
 The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
-```mermaid-example
+```mmd
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
 

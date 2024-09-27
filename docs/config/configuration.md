@@ -32,24 +32,11 @@ flowchart
 
 ```
 
-```mermaid
----
-title: Hello Title
-config:
-  theme: base
-  themeVariables:
-    primaryColor: "#00ff00"
----
-flowchart
-	Hello --> World
-
-```
-
 ## Theme configuration
 
 ## Starting mermaid
 
-```mermaid-example
+```mmd
 sequenceDiagram
 	Site->>mermaid: initialize
 	Site->>mermaid: content loaded
