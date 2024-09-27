@@ -12,13 +12,29 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 export const linedWaveEdgedRect = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : (node.padding ?? 0);
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 2 : (node.padding ?? 0);
+
+  let adjustFinalHeight = true;
+  if (node.width || node.height) {
+    adjustFinalHeight = false;
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    if (node.width < 50) {
+      node.width = 50;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 2;
+    if (node.height < 50) {
+      node.height = 50;
+    }
+  }
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const paddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
-  const paddingY = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
-  const w = Math.max(bbox.width + paddingX * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + paddingY * 2, node?.height ?? 0);
-  const waveAmplitude = h / 4;
-  const finalH = h + waveAmplitude;
+  const w = Math.max(bbox.width, node?.width ?? 0) + (labelPaddingX ?? 0) * 2;
+  const h = Math.max(bbox.height, node?.height ?? 0) + (labelPaddingY ?? 0) * 2;
+  const waveAmplitude = h / 6;
+  const finalH = h + (adjustFinalHeight ? waveAmplitude : -waveAmplitude);
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed
@@ -68,7 +84,7 @@ export const linedWaveEdgedRect = async (parent: SVGAElement, node: Node) => {
   waveEdgeRect.attr('transform', `translate(0,${-waveAmplitude / 2})`);
   label.attr(
     'transform',
-    `translate(${-w / 2 + paddingX + ((w / 2) * 0.1) / 2 - (bbox.x - (bbox.left ?? 0))},${-h / 2 + paddingY - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))},${-(bbox.height / 2) - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, waveEdgeRect);
