@@ -8,20 +8,28 @@ import rough from 'roughjs';
 export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  // console.log('IPI labelStyles:', labelStyles);
-  node.width = (node?.width ?? 0) - options.labelPaddingX * 2;
-  node.height = (node?.height ?? 0) - options.labelPaddingY * 2;
-  if (node.width < 100) {
-    node.width = 100;
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.width = (node?.width ?? 0) - options.labelPaddingX * 2;
+    if (node.width < 50) {
+      node.width = 50;
+    }
+
+    node.height = (node?.height ?? 0) - options.labelPaddingY * 2;
+    if (node.height < 50) {
+      node.height = 50;
+    }
   }
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
   const totalWidth = Math.max(bbox.width, node?.width || 0) + options.labelPaddingX * 2;
   const totalHeight = Math.max(bbox.height, node?.height || 0) + options.labelPaddingY * 2;
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
-
-  // log.info('IPI node = ', node);
-
   let rect;
   let { rx, ry } = node;
   const { cssStyles } = node;

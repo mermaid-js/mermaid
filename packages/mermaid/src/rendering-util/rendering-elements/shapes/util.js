@@ -91,6 +91,9 @@ export const labelHelper = async (parent, node, _classes) => {
 
     bbox = div.getBoundingClientRect();
     dv.attr('width', bbox.width);
+    if (node.height && node.height < bbox.height) {
+      bbox.height = node.height;
+    }
     dv.attr('height', bbox.height);
   }
 
