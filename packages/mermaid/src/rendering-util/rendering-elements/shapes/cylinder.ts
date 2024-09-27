@@ -50,7 +50,7 @@ export const createInnerCylinderPathD = (
   return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
 };
 
-const MIN_HEIGHT = 50;
+const MIN_HEIGHT = 25;
 const MIN_WIDTH = 25;
 export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { themeVariables } = getConfig();
@@ -70,7 +70,7 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
 
     // based on this width, height is calculated
     const ry = node.width / 2 / (2.5 + node.width / 50);
-    node.height = (node.height ?? 0) - labelPaddingX - ry * 3;
+    node.height = (node.height ?? 0) - labelPaddingX - (ry + ry * 0.05) * 3;
     if (node.height < MIN_HEIGHT) {
       node.height = MIN_HEIGHT;
     }
