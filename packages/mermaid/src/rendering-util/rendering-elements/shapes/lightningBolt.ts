@@ -13,17 +13,17 @@ export const lightningBolt = (parent: SVG, node: Node) => {
     .attr('class', getNodeClasses(node))
     .attr('id', node.domId ?? node.id);
   const { cssStyles } = node;
-  const width = Math.max(35, node?.width ?? 0);
-  const height = Math.max(35, node?.height ?? 0);
-  const gap = 7;
+  const gap = Math.max(4, (node.height ?? 0) * 0.1);
+  const width = Math.max(20, node?.width ?? 0 - gap);
+  const height = Math.max(40, node?.height ?? 0 - gap);
 
   const points = [
     { x: width, y: 0 },
-    { x: 0, y: height + gap / 2 },
-    { x: width - 2 * gap, y: height + gap / 2 },
-    { x: 0, y: 2 * height },
-    { x: width, y: height - gap / 2 },
-    { x: 2 * gap, y: height - gap / 2 },
+    { x: 0, y: height / 2 + gap / 2 },
+    { x: width - 2 * gap, y: height / 2 + gap / 2 },
+    { x: 0, y: height },
+    { x: width, y: height / 2 - gap / 2 },
+    { x: 2 * gap, y: height / 2 - gap / 2 },
   ];
 
   // @ts-ignore - rough is not typed
@@ -44,7 +44,7 @@ export const lightningBolt = (parent: SVG, node: Node) => {
     lightningBolt.selectAll('path').attr('style', cssStyles);
   }
 
-  lightningBolt.attr('transform', `translate(-${width / 2},${-height})`);
+  lightningBolt.attr('transform', `translate(-${width / 2},${-height / 2})`);
 
   updateNodeBounds(node, lightningBolt);
 
