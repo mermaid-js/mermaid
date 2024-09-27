@@ -7,14 +7,13 @@ import { userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
 
 function createLine(r: number) {
-  const xAxis45 = Math.cos(Math.PI / 4); // cosine of 45 degrees
-  const yAxis45 = Math.sin(Math.PI / 4); // sine of 45 degrees
+  const axis45 = Math.SQRT1_2; // cosine of 45 degrees = 1/sqrt(2)
   const lineLength = r * 2;
 
-  const pointQ1 = { x: (lineLength / 2) * xAxis45, y: (lineLength / 2) * yAxis45 }; // Quadrant I
-  const pointQ2 = { x: -(lineLength / 2) * xAxis45, y: (lineLength / 2) * yAxis45 }; // Quadrant II
-  const pointQ3 = { x: -(lineLength / 2) * xAxis45, y: -(lineLength / 2) * yAxis45 }; // Quadrant III
-  const pointQ4 = { x: (lineLength / 2) * xAxis45, y: -(lineLength / 2) * yAxis45 }; // Quadrant IV
+  const pointQ1 = { x: (lineLength / 2) * axis45, y: (lineLength / 2) * axis45 }; // Quadrant I
+  const pointQ2 = { x: -(lineLength / 2) * axis45, y: (lineLength / 2) * axis45 }; // Quadrant II
+  const pointQ3 = { x: -(lineLength / 2) * axis45, y: -(lineLength / 2) * axis45 }; // Quadrant III
+  const pointQ4 = { x: (lineLength / 2) * axis45, y: -(lineLength / 2) * axis45 }; // Quadrant IV
 
   return `M ${pointQ2.x},${pointQ2.y} L ${pointQ4.x},${pointQ4.y}
                    M ${pointQ1.x},${pointQ1.y} L ${pointQ3.x},${pointQ3.y}`;
@@ -26,7 +25,7 @@ export const crossedCircle = (parent: SVG, node: Node) => {
     .insert('g')
     .attr('class', getNodeClasses(node))
     .attr('id', node.domId ?? node.id);
-  const radius = Math.max(30, node?.width ?? 0);
+  const radius = Math.max(25, (node?.width ?? 0) / 2, (node?.height ?? 0) / 2);
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed
