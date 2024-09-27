@@ -16,11 +16,26 @@ export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
   node.labelStyle = labelStyles;
   const minWidth = 80,
     minHeight = 50;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
   const paddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
   const paddingY = node.look === 'neo' ? (node.padding ?? 0) * 1 : (node.padding ?? 0);
-  const w = Math.max(minWidth, bbox.width + paddingX * 2, node?.width ?? 0);
-  const h = Math.max(minHeight, bbox.height + paddingY * 2, node?.height ?? 0);
+
+  if (node.width || node.height) {
+    node.height = (node?.height ?? 0) - paddingY * 2;
+    if (node.height < minHeight) {
+      node.height = minHeight;
+    }
+
+    node.width = (node?.width ?? 0) - paddingX * 2;
+    if (node.width < minWidth) {
+      node.width = minWidth;
+    }
+  }
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const w = Math.max(minWidth, bbox.width, node?.width ?? 0) + paddingX * 2;
+  const h = Math.max(minHeight, bbox.height, node?.height ?? 0) + paddingY * 2;
   const radius = h / 2;
   const { cssStyles } = node;
 
