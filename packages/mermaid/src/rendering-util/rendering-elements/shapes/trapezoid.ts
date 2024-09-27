@@ -23,12 +23,27 @@ import { insertPolygonShape } from './insertPolygonShape.js';
 export const trapezoid = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
-  const w = bbox.width + labelPaddingY;
-  const h = bbox.height + labelPaddingX;
+
+  if (node.width || node.height) {
+    node.width = node?.width ?? 0;
+    if (node.width < 50) {
+      node.width = 50;
+    }
+
+    node.height = node?.height ?? 0;
+    if (node.height < 50) {
+      node.height = 50;
+    }
+    const _dx = (3 * node.height) / 6;
+    node.height = node.height - labelPaddingY;
+    node.width = node.width - 2 * _dx;
+  }
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const h = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY;
+  const w = Math.max(bbox.width, node?.width ?? 0);
+
   const points = [
     { x: (-3 * h) / 6, y: 0 },
     { x: w + (3 * h) / 6, y: 0 },
