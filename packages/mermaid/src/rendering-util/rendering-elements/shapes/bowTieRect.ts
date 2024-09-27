@@ -13,7 +13,9 @@ function generateArcPoints(
   ry: number,
   clockwise: boolean
 ) {
-  const numPoints = 20;
+  // this must be an odd number, so that the midpoint is included
+  // otherwise the width of the bowtie will be off
+  const numPoints = 21;
   // Calculate midpoint
   const midX = (x1 + x2) / 2;
   const midY = (y1 + y2) / 2;
@@ -70,19 +72,55 @@ function generateArcPoints(
   return points;
 }
 
+/**
+ * Calculates the sagitta of an arc of an ellipse given its chord and radii.
+ *
+ * @param chord - The chord of the arc (e.g. the line connecting the two points on the circle)
+ * @param radiusX - The x-radius of the ellipse.
+ * @param radiusY - The y-radius of the ellipse.
+ */
+function calculateArcSagitta(chord: number, radiusX: number, radiusY: number) {
+  const [semiMajorAxis, semiMinorAxis] = [radiusX, radiusY].sort((a, b) => b - a);
+  return semiMinorAxis * (1 - Math.sqrt(1 - (chord / semiMajorAxis / 2) ** 2));
+}
+
 export const bowTieRect = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-  const w = Math.max(bbox.width + labelPaddingX + 20, node?.width ?? 0);
-  const h = Math.max(bbox.height + labelPaddingY, node?.height ?? 0);
 
-  const ry = h / 2;
-  const rx = ry / (2.5 + h / 50);
+  const calcTotalHeight = (labelHeight: number) => labelHeight + labelPaddingY * 2;
+  const calcEllipseRadius = (totalHeight: number) => {
+    const ry = totalHeight / 2;
+    const rx = ry / (2.5 + totalHeight / 50);
+    return [rx, ry];
+  };
 
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.height = Math.max((node?.height ?? 0) - labelPaddingY * 2, 50);
+    const totalHeight = calcTotalHeight(node.height);
+    const [rx, ry] = calcEllipseRadius(totalHeight);
+    node.width = Math.max(
+      (node?.width ?? 0) - labelPaddingX * 2 - calculateArcSagitta(totalHeight, rx, ry),
+      50
+    );
+  }
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const totalHeight = calcTotalHeight(Math.max(bbox.height, node?.height ?? 0));
+  const [rx, ry] = calcEllipseRadius(totalHeight);
+  const sagitta = calculateArcSagitta(totalHeight, rx, ry);
+  const totalWidth = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2 + sagitta;
+
+  const w = totalWidth - sagitta;
+  const h = totalHeight;
   // let shape: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
