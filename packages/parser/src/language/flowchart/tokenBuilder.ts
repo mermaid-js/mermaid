@@ -1,7 +1,3 @@
-import { AbstractMermaidTokenBuilder } from '../common/index.js';
+import { DefaultTokenBuilder } from 'langium';
 
-export class FlowchartTokenBuilder extends AbstractMermaidTokenBuilder {
-  public constructor() {
-    super(['flowchart']);
-  }
-}
+export class FlowchartTokenBuilder extends DefaultTokenBuilder {}

@@ -1,9 +1,3 @@
-interface Common {
-  accDescr?: string;
-  accTitle?: string;
-  title?: string;
-}
-
 fragment TitleAndAccessibilities:
   ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) EOL)+
 ;
