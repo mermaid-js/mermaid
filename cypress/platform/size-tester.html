@@ -56,17 +56,18 @@
         logLevel: 1,
       });
 
-      let shape = 'rect';
+      let shape = 'dbl-circ';
 
       let code = `
       flowchart TB
+          n80["APA ksldj hfaskljdh aklsjdhf klasjdhf klasjhf klsajdh klasjdhf klasjdhf klasjdh klasjhf klasjdh klajsdhfklasjdhf kljadh fklasjdhf klajsdhf lkasdhf klajsdhf klasjdhfklasjdh klasjhf klasdfh klasdfh aklsjfh akjshkasldfh klasdfh klasjh fklsjhf klasdhf kljasdhf klasdhf klj"]
+          n80@{ shape: '${shape}'}
           n81["APA ksldj hfaskljdh aklsjdhf klasjdhf klasjhf klsajdh klasjdhf klasjdhf klasjdh klasjhf klasjdh klajsdhfklasjdhf kljadh fklasjdhf klajsdhf lkasdhf klajsdhf klasjdhfklasjdh klasjhf klasdfh klasdfh aklsjfh akjshkasldfh klasdfh klasjh fklsjhf klasdhf kljasdhf klasdhf klj"]
           n82["A single line of text"]
           n81@{ shape: '${shape}'}
           n82@{ shape: '${shape}'}
           n83@{ label: "A single line of text", shape: '${shape}'}
-          n80["APA ksldj hfaskljdh aklsjdhf klasjdhf klasjhf klsajdh klasjdhf klasjdhf klasjdh klasjhf klasjdh klajsdhfklasjdhf kljadh fklasjdhf klajsdhf lkasdhf klajsdhf klasjdhfklasjdh klasjhf klasdfh klasdfh aklsjfh akjshkasldfh klasdfh klasjh fklsjhf klasdhf kljasdhf klasdhf klj"]
-           n84@{ shape: '${shape}'}
+          n84@{ shape: '${shape}'}
           `;
 
       let positions = {
