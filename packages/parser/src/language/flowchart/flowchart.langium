@@ -104,7 +104,7 @@ terminal fragment ArrowEnd: ">" | "x" | "o";
 terminal fragment DottedArrowEnd:  "."* ".-" ArrowEnd?;
 
 terminal DottedArrowWithLabel: ArrowStart? "-." -> DottedArrowEnd;
-terminal DottedArrow: ArrowStart? "-" DottedArrowEnd;
+terminal DottedArrow: ArrowStart? "-"? DottedArrowEnd;
 
 terminal RegularArrowWithLabel: ArrowStart? "--" -> "-" "-"+ ('-' |ArrowEnd);
 terminal RegularArrow: (ArrowStart "-" "-"+ ArrowEnd?) | ("-" "-"+ ('-' |ArrowEnd));

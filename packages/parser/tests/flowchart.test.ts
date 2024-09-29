@@ -150,7 +150,9 @@ describe('flowchart', () => {
     'x-.-',
     'o-.-',
     '<-.->',
-    // '.-', '.->', '<-.' 👈 not implemented yet
+    '.-',
+    '<.-',
+    '.->',
   ])('should handle arrow end and start types', (context: string) => {
     const result = parse(`flowchart;A ${context} B;`);
     expectNoErrorsOrAlternatives(result);
