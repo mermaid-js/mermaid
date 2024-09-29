@@ -16,7 +16,7 @@ export const filledCircle = (
     .insert('g')
     .attr('class', getNodeClasses(node))
     .attr('id', node.domId ?? node.id);
-  const radius = 7;
+  const radius = (node.width ?? 0) / 2;
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed

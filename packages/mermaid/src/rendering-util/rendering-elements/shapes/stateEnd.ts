@@ -28,13 +28,14 @@ export const stateEnd = (
     options.fillStyle = 'solid';
   }
 
-  const roughNode = rc.circle(0, 0, 14, {
+  const roughNode = rc.circle(0, 0, node.width, {
     ...options,
     stroke: lineColor,
     strokeWidth: 2,
   });
   const innerFill = stateBorder ?? nodeBorder;
-  const roughInnerNode = rc.circle(0, 0, 5, {
+  const innerNodeRadius = ((node.width ?? 0) * 5) / 14;
+  const roughInnerNode = rc.circle(0, 0, innerNodeRadius, {
     ...options,
     fill: innerFill,
     stroke: innerFill,
@@ -55,7 +56,7 @@ export const stateEnd = (
   updateNodeBounds(node, circle);
 
   node.intersect = function (point) {
-    return intersect.circle(node, 7, point);
+    return intersect.circle(node, (node.width ?? 0) / 2, point);
   };
 
   return shapeSvg;
