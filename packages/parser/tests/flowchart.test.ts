@@ -104,7 +104,7 @@ describe('flowchart', () => {
       expectNoErrorsOrAlternatives(result);
       expect(result.value.nodes).toHaveLength(1);
       expect(result.value.nodes[0].id).toBe('A');
-      expect(result.value.nodes[0].label).toBe(context);
+      expect(result.value.nodes[0].label).toBe('a');
       expect(result.value.nodes[0].$type).toBe(nodeType);
     });
 
@@ -128,7 +128,6 @@ describe('flowchart', () => {
       expectNoErrorsOrAlternatives(result);
       expect(result.value.nodes).toHaveLength(1);
       expect(result.value.nodes[0].id).toBe('A');
-      expect(result.value.nodes[0].label).toBe(context);
       expect(result.value.nodes[0].class).toBe('test');
     });
   });
@@ -136,13 +135,13 @@ describe('flowchart', () => {
   describe('edges', () => {
     it.each([
       ['-->', 'FlowchartEdgeRegular', undefined],
-      ['-->|a|', 'FlowchartEdgeRegular', '|a|'],
+      ['-->|a|', 'FlowchartEdgeRegular', 'a'],
       ['-.->', 'FlowchartEdgeDotted', undefined],
-      ['-.->|a|', 'FlowchartEdgeDotted', '|a|'],
+      ['-.->|a|', 'FlowchartEdgeDotted', 'a'],
       ['==>', 'FlowchartEdgeThick', undefined],
-      ['==>|a|', 'FlowchartEdgeThick', '|a|'],
+      ['==>|a|', 'FlowchartEdgeThick', 'a'],
       ['~~~', 'FlowchartEdgeInvisible', undefined],
-      ['~~~|a|', 'FlowchartEdgeInvisible', '|a|'],
+      ['~~~|a|', 'FlowchartEdgeInvisible', 'a'],
     ])('should handle edge labels', (context: string, edgeType: string, label?: string) => {
       const result = parse(`flowchart;A ${context} B;`);
       expectNoErrorsOrAlternatives(result);

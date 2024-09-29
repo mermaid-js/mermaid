@@ -155,7 +155,7 @@ fragment FlowchartInteractionCall:
 FlowchartInteraction:
   "click" id=ID (FlowchartInteractionLink | FlowchartInteractionFunction | FlowchartInteractionCall);
 
-terminal ID: /[a-zA-Z0-9]+/;
+terminal ID: /\w[_\-\w]*/;
 
 fragment DELIMITER returns string:
   ";" NEWLINE* | EOL
