@@ -278,15 +278,46 @@ describe('flowchart', () => {
     });
   });
 
-  // describe('style', () => {
-  //   // style Q background:#fff
-  //   // style R background:#fff,border:1px solid red
-  // });
+  describe('style', () => {
+    it.each(['style A background:#fff', 'style A background:#fff,border:1px solid red'])(
+      'should handle styles',
+      (context: string) => {
+        const result = parse(`flowchart;${context}`);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.styles).toHaveLength(1);
+        expect(result.value.styles[0].id).toBe('A');
+      }
+    );
+  });
 
-  // describe('interaction', () => {
-  //   // click A href "click.html" "tooltip" _blank
-  //   // click A call callback("test0", test1, test2)
-  // });
+  describe('interaction', () => {
+    it.each([
+      'click A "click.html"',
+      'click A "click.html" "tooltip"',
+      'click A "click.html" _blank',
+      'click A "click.html" "tooltip" _blank',
+      'click A href "click.html" "tooltip" _blank',
+    ])('should handle links', (context: string) => {
+      const result = parse(`flowchart;${context}`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.interactions).toHaveLength(1);
+      expect(result.value.interactions[0].id).toBe('A');
+      expect(result.value.interactions[0].href).toBe('click.html');
+    });
+
+    it.each([
+      'click A callback',
+      'click A callback "tooltip"',
+      'click A call callback("test0", test1, test2)',
+      'click A call callback("test0", test1, test2) "tooltip"',
+    ])('should handle callbacks', (context: string) => {
+      const result = parse(`flowchart;${context}`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.interactions).toHaveLength(1);
+      expect(result.value.interactions[0].id).toBe('A');
+      expect(result.value.interactions[0].callback).toBe('callback');
+    });
+  });
 
   // describe('chaining', () => {
   //   // chaining: A -- text --> B -- text2 --> C
@@ -296,5 +327,10 @@ describe('flowchart', () => {
   //   // conjunction: a --> b & c--> d, A & B--> C & D
   // });
 
-  // TODO: change nodes to vertices
+  // TODO: string (current mermaid doesn't support escape chars), markdown string, html escapes
+  // TODO: extract label, start, end and length from arrows
+  // TODO: DIRECTIVE, YAML, TITLE, ACC_TITLE, ACC_DESCR
+  // TODO: rename nodes to vertices
+  // TODO: normalize direction 'v', 'TD' -> 'TB' etc.
+  // TODO: cross-references for node ids (for renaming)
 });

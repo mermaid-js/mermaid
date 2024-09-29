@@ -150,12 +150,13 @@ fragment FlowchartInteractionFunction:
   callback=ID (tooltip=String)?;
 
 fragment FlowchartInteractionCall:
+  // RoundLabel is a temp solution
   "call" callback=ID arguments=RoundLabel (tooltip=String)?;
 
 FlowchartInteraction:
   "click" id=ID (FlowchartInteractionLink | FlowchartInteractionFunction | FlowchartInteractionCall);
 
-terminal ID: /\w[_\-\w]*/;
+terminal ID: /[_\-\w#]+/;
 
 fragment DELIMITER returns string:
   ";" NEWLINE* | EOL

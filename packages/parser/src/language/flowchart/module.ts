@@ -11,7 +11,6 @@ import {
   createDefaultSharedCoreModule,
   EmptyFileSystem,
 } from 'langium';
-// import { CommonValueConverter } from '../common/valueConverter.js';
 import { FlowchartValueConverter } from './valueConverter.js';
 import { MermaidGeneratedSharedModule, FlowchartGeneratedModule } from '../generated/module.js';
 import { FlowchartTokenBuilder } from './tokenBuilder.js';
