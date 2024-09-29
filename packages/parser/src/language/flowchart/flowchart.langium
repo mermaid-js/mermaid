@@ -12,76 +12,76 @@ entry Flowchart:
   NEWLINE*
   FlowchartType FlowchartDirection?
   DELIMITER
-  ((nodes+=FlowchartNode | edges+=FlowchartEdge | subgraphs+=FlowchartSubgraph) DELIMITER)*
+  ((nodes+=FlowchartNode | edges+=FlowchartEdge | subgraphs+=FlowchartSubgraph | styles+=FlowchartStyle | interactions+=FlowchartInteraction) DELIMITER)*
 ;
 
-FlowchartDirection:
+fragment FlowchartDirection:
   dir=("TD" | "TB"| "v" | "BT" | "^" | "LR" | ">" | "RL" | "<");
 
-FlowchartType:
+fragment FlowchartType:
   type=("flowchart-elk" | "graph" | "flowchart");
 
 FlowchartSubgraph:
-  "subgraph" label=ID DELIMITER
+  "subgraph" id=ID DELIMITER
     ("direction" FlowchartDirection DELIMITER)?
-    ((nodes+=FlowchartNode | edges+=FlowchartEdge) DELIMITER)*
+    ((nodes+=FlowchartNode | edges+=FlowchartEdge | subgraphs+=FlowchartSubgraph) DELIMITER)*
   "end";
 
 terminal EllipseLabel: "(-" -> "-)";
 FlowchartNodeEllipse:
-  id=ID label=EllipseLabel;
+  id=ID label=EllipseLabel (":::" class=ID)?;
 
 terminal StadiumLabel: "([" -> "])";
 FlowchartNodeStadium:
-  id=ID label=StadiumLabel;
+  id=ID label=StadiumLabel (":::" class=ID)?;
 
 terminal OddLabel: ">" -> "]";
 FlowchartNodeOdd:
-  id=ID label=OddLabel;
+  id=ID label=OddLabel (":::" class=ID)?;
 
 terminal CylinderLabel: "[(" -> ")]";
 FlowchartNodeCylinder:
-  id=ID label=CylinderLabel;
+  id=ID label=CylinderLabel (":::" class=ID)?;
 
 terminal DoublecircleLabel: "(((" -> ")))";
 FlowchartNodeDoublecircle:
-  id=ID label=DoublecircleLabel;
+  id=ID label=DoublecircleLabel (":::" class=ID)?;
 
 terminal TrapezoidLabel: "[/" -> "\\]";
 FlowchartNodeTrapezoid:
-  id=ID label=TrapezoidLabel;
+  id=ID label=TrapezoidLabel (":::" class=ID)?;
 
 terminal InvTrapezoidLabel: "[\\" -> "/]";
 FlowchartNodeInvTrapezoid:
-  id=ID label=InvTrapezoidLabel;
+  id=ID label=InvTrapezoidLabel (":::" class=ID)?;
 
 terminal LeanRightLabel: "[/" -> "/]";
 FlowchartNodeLeanRight:
-  id=ID label=LeanRightLabel;
+  id=ID label=LeanRightLabel (":::" class=ID)?;
 
 terminal LeanLeftLabel: "[\\" -> "\\]";
 FlowchartNodeLeanLeft:
-  id=ID label=LeanLeftLabel;
+  id=ID label=LeanLeftLabel (":::" class=ID)?;
 
 terminal SubroutineLabel: "[[" -> "]]";
 FlowchartNodeSubroutine:
-  id=ID label=SubroutineLabel;
+  id=ID label=SubroutineLabel (":::" class=ID)?;
 
 terminal HexagonLabel: "{{" -> "}}";
 FlowchartNodeHexagon:
-  id=ID label=HexagonLabel;
+  id=ID label=HexagonLabel (":::" class=ID)?;
 
 terminal SquareLabel: "[" -> "]";
 FlowchartNodeSquare:
-  id=ID (label=SquareLabel)?;
+  id=ID (label=SquareLabel)? (":::" class=ID)?;
 
 terminal RoundLabel: "(" -> ")";
 FlowchartNodeRound:
-  id=ID label=RoundLabel;
+  id=ID label=RoundLabel (":::" class=ID)?;
 
 terminal DiamondLabel: "{" -> "}";
 FlowchartNodeDiamond:
-  id=ID label=DiamondLabel;
+  id=ID label=DiamondLabel (":::" class=ID)?;
 
 FlowchartNode:
   FlowchartNodeSquare | 
@@ -133,6 +133,27 @@ FlowchartEdgeThick:
 
 FlowchartEdgeInvisible:
   start=FlowchartNode arrow=(InvisibleArrow) (label=EdgeLabel)? end=FlowchartNode;
+
+FlowchartStyle:
+  "style" id=ID items+=FlowchartStylePair ("," items+=FlowchartStylePair)*;
+
+FlowchartStylePair:
+  key=ID ":" (value+=ID)+;
+
+terminal Target: "_self" | "_blank" | "_parent" | "_top";
+terminal String: "\"" -> "\"";
+
+fragment FlowchartInteractionLink:
+  "href"? href=String (tooltip=String)? (targe=Target)?;
+
+fragment FlowchartInteractionFunction:
+  callback=ID (tooltip=String)?;
+
+fragment FlowchartInteractionCall:
+  "call" callback=ID arguments=RoundLabel (tooltip=String)?;
+
+FlowchartInteraction:
+  "click" id=ID (FlowchartInteractionLink | FlowchartInteractionFunction | FlowchartInteractionCall);
 
 terminal ID: /[a-zA-Z0-9]+/;
 
