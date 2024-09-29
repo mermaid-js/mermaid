@@ -18,10 +18,32 @@ export const multiWaveEdgedRectangle = async (parent: SVGAElement, node: Node) =
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-  const w = Math.max(bbox.width + labelPaddingX * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + labelPaddingY * 2, node?.height ?? 0);
-  const waveAmplitude = h / 4;
-  const finalH = h + waveAmplitude;
+  let adjustFinalHeight = true;
+
+  if (node.width || node.height) {
+    adjustFinalHeight = false;
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    if (node.width < 50) {
+      node.width = 50;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 3;
+    if (node.height < 50) {
+      node.height = 50;
+    }
+
+    // Adjustments for wave amplitude
+    const waveAmplitude = 30;
+    const waveMultiplier = 0.3319;
+
+    node.height = Math.round(node.height - labelPaddingY - waveAmplitude * waveMultiplier);
+    node.width = node.width - labelPaddingX;
+  }
+
+  const w = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2;
+  const h = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY * 3;
+  const waveAmplitude = 30;
+  const finalH = h + (adjustFinalHeight ? waveAmplitude / 2 : -waveAmplitude / 2);
   const x = -w / 2;
   const y = -finalH / 2;
   const rectOffset = 5;

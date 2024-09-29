@@ -49,20 +49,39 @@ export const createInnerCylinderPathD = (
 ): string => {
   return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
 };
+
+const MIN_HEIGHT = 25;
+const MIN_WIDTH = 25;
 export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { themeVariables } = getConfig();
   const { useGradient } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-  const w = Math.max(bbox.width + labelPaddingY, node.width ?? 0);
+
+  if (node.width || node.height) {
+    node.width = (node.width ?? 0) - labelPaddingY;
+    if (node.width < MIN_WIDTH) {
+      node.width = MIN_WIDTH;
+    }
+
+    // based on this width, height is calculated
+    const ry = node.width / 2 / (2.5 + node.width / 50);
+    node.height = (node.height ?? 0) - labelPaddingX - (ry + ry * 0.05) * 3;
+    if (node.height < MIN_HEIGHT) {
+      node.height = MIN_HEIGHT;
+    }
+  }
+
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const w = Math.max(bbox.width, node.width ?? 0) + labelPaddingY;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = Math.max(bbox.height + ry + labelPaddingX, node.height ?? 0);
+  const h = Math.max(bbox.height, node.height ?? 0) + labelPaddingX + ry;
 
   let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;

@@ -13,16 +13,32 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 export const taggedWaveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-  const w = Math.max(bbox.width + labelPaddingX * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + labelPaddingY * 2, node?.height ?? 0);
+
+  let adjustFinalHeight = true;
+  if (node.width || node.height) {
+    adjustFinalHeight = false;
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    if (node.width < 50) {
+      node.width = 50;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 3;
+    if (node.height < 50) {
+      node.height = 50;
+    }
+  }
+
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+  const w = Math.max(bbox.width, node?.width ?? 0) + (labelPaddingX ?? 0) * 2;
+  const h = Math.max(bbox.height, node?.height ?? 0) + (labelPaddingY ?? 0) * 3;
   const waveAmplitude = h / 4;
   const tagWidth = 0.2 * w;
   const tagHeight = 0.2 * h;
-  const finalH = h + waveAmplitude;
+  const finalH = h + (adjustFinalHeight ? waveAmplitude : -waveAmplitude);
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed
@@ -50,7 +66,9 @@ export const taggedWaveEdgedRectangle = async (parent: SVGAElement, node: Node) 
   ];
 
   const x = -w / 2 + (w / 2) * 0.1;
-  const y = -finalH / 2 - tagHeight * 0.4;
+  const y = !adjustFinalHeight
+    ? -finalH / 2 - 1.25 * waveAmplitude - 1 * tagHeight
+    : -finalH / 2 - 0.4 * tagHeight;
 
   const tagPoints = [
     { x: x + w - tagWidth, y: (y + h) * 1.4 },

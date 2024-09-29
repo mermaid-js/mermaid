@@ -56,15 +56,28 @@ export const stadium = async (parent: SVGAElement, node: Node) => {
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
-  node.width = (node?.width ?? 0) - labelPaddingX;
-  node.height = (node?.height ?? 0) - labelPaddingY;
-  if (node.width < 100) {
-    node.width = 100;
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    if (node.width < 50) {
+      node.width = 50;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 2;
+    if (node.height < 50) {
+      node.height = 50;
+    }
   }
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const h = Math.max(bbox.height, node?.height || 0) + labelPaddingY;
-  const w = Math.max(bbox.width + h / 4, node?.width || 0, 150) + labelPaddingX;
+  // const h = Math.max(bbox.height, node?.height || 0) + labelPaddingY;
+  // const w = Math.max(bbox.width + h / 4, node?.width || 0, 150) + labelPaddingX;
+
+  const w = Math.max(bbox.width, node?.width || 0) + labelPaddingX * 2;
+  const h = Math.max(bbox.height, node?.height || 0) + labelPaddingY * 2;
 
   let rect;
   const { cssStyles } = node;

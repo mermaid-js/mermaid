@@ -13,14 +13,27 @@ import rough from 'roughjs';
 export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const minWidth = 80,
-    minHeight = 20;
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-  const w = Math.max(minWidth, (bbox.width + (labelPaddingX ?? 0) * 2) * 1.25, node?.width ?? 0);
-  const h = Math.max(minHeight, bbox.height + (labelPaddingY ?? 0) * 2, node?.height ?? 0);
+  const minWidth = 80,
+    minHeight = 20;
+  if (node.width || node.height) {
+    node.width = (node?.width ?? 0) - labelPaddingX * 2 * 1.25;
+    if (node.width < minWidth) {
+      node.width = minWidth;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 2;
+    if (node.height < minHeight) {
+      node.height = minHeight;
+    }
+  }
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const w = Math.max(minWidth, bbox.width, node?.width ?? 0) + (labelPaddingX ?? 0) * 2 * 1.25;
+  const h = Math.max(minHeight, bbox.height, node?.height ?? 0) + (labelPaddingY ?? 0) * 2;
   const radius = h / 2;
 
   const { cssStyles } = node;

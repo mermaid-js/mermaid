@@ -4,19 +4,41 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 
+/// The width/height of the tag in comparison to the height of the node
+const TAG_RATIO = 0.2;
+
 export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-  const w = Math.max(bbox.width + (labelPaddingX ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (labelPaddingY ?? 0) * 2, node?.height ?? 0);
+
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.height = Math.max((node?.height ?? 0) - labelPaddingY * 2, 50);
+    node.width = Math.max(
+      (node?.width ?? 0) - labelPaddingX * 2 - TAG_RATIO * (node.height + labelPaddingY * 2),
+      50
+    );
+  }
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const totalHeight = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY * 2;
+  const tagWidth = TAG_RATIO * totalHeight;
+  const tagHeight = TAG_RATIO * totalHeight;
+  const totalWidth = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2 + tagWidth;
+
+  const w = totalWidth - tagWidth;
+  const h = totalHeight;
   const x = -w / 2;
   const y = -h / 2;
-  const tagWidth = 0.2 * h;
-  const tagHeight = 0.2 * h;
+
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed

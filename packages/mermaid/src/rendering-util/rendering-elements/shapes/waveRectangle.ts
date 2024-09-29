@@ -13,30 +13,31 @@ import rough from 'roughjs';
 export const waveRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-
-  const minWidth = 100; // Minimum width
-  const minHeight = 50; // Minimum height
-
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-  const baseWidth = Math.max(bbox.width + labelPaddingX * 2, node?.width ?? 0);
-  const baseHeight = Math.max(bbox.height + labelPaddingY * 2, node?.height ?? 0);
+  const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
 
-  const aspectRatio = baseWidth / baseHeight;
+  if (node.width || node.height) {
+    node.width = node?.width ?? 0;
+    if (node.width < 100) {
+      node.width = 100;
+    }
 
-  let w = baseWidth;
-  let h = baseHeight;
+    node.height = node?.height ?? 0;
+    if (node.height < 50) {
+      node.height = 50;
+    }
 
-  if (w > h * aspectRatio) {
-    h = w / aspectRatio;
-  } else {
-    w = h * aspectRatio;
+    // Adjust for wave amplitude
+    const waveAmplitude = Math.min(node.height * 0.2, node.height / 4);
+    node.height = Math.ceil(node.height - labelPaddingY - waveAmplitude * (20 / 9));
+    node.width = node.width - labelPaddingX * 2;
   }
 
-  w = Math.max(w, minWidth);
-  h = Math.max(h, minHeight);
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const w = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2;
+  const h = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY;
 
   const waveAmplitude = Math.min(h * 0.2, h / 4);
   const finalH = h + waveAmplitude * 2;
@@ -72,6 +73,9 @@ export const waveRectangle = async (parent: SVGAElement, node: Node) => {
   if (nodeStyles && node.look !== 'handDrawn') {
     waveRect.selectAll('path').attr('style', nodeStyles);
   }
+
+  node.width = w;
+  node.height = finalH;
 
   updateNodeBounds(node, waveRect);
   node.intersect = function (point) {
