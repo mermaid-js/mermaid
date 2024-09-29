@@ -113,7 +113,9 @@ describe('flowchart', () => {
     ['-.->|a|', 'FlowchartEdgeDotted', '|a|'],
     ['==>', 'FlowchartEdgeThick', undefined],
     ['==>|a|', 'FlowchartEdgeThick', '|a|'],
-  ])('should handle line styles', (context: string, edgeType: string, label?: string) => {
+    ['~~~', 'FlowchartEdgeInvisible', undefined],
+    ['~~~|a|', 'FlowchartEdgeInvisible', '|a|'],
+  ])('should handle edge labels', (context: string, edgeType: string, label?: string) => {
     const result = parse(`flowchart;A ${context} B;`);
     expectNoErrorsOrAlternatives(result);
     expect(result.value.edges).toHaveLength(1);
@@ -122,4 +124,89 @@ describe('flowchart', () => {
     expect(result.value.edges[0].$type).toBe(edgeType);
     expect(result.value.edges[0].label).toBe(label);
   });
+
+  it.each([
+    '---',
+    '-->',
+    '--x',
+    '--o',
+    '<--',
+    'x--',
+    'o--',
+    '<-->',
+    '===',
+    '==>',
+    '==x',
+    '==o',
+    '<==',
+    'x==',
+    'o==',
+    '<==>',
+    '-.-',
+    '-.->',
+    '-.-x',
+    '-.-o',
+    '<-.-',
+    'x-.-',
+    'o-.-',
+    '<-.->',
+    // '.-', '.->', '<-.' 👈 not implemented yet
+  ])('should handle arrow end and start types', (context: string) => {
+    const result = parse(`flowchart;A ${context} B;`);
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.edges).toHaveLength(1);
+    expect(result.value.edges[0].start.id).toBe('A');
+    expect(result.value.edges[0].end.id).toBe('B');
+  });
+
+  it.each([
+    '---',
+    '----',
+    '-----',
+    '-->',
+    '--->',
+    '---->',
+    '===',
+    '====',
+    '=====',
+    '==>',
+    '===>',
+    '====>',
+    '-.-',
+    '-..-',
+    '-...-',
+    '-.->',
+    '-..->',
+    '-...->',
+  ])('should handle arrow lengths', (context: string) => {
+    const result = parse(`flowchart;A ${context} B;`);
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.edges).toHaveLength(1);
+    expect(result.value.edges[0].start.id).toBe('A');
+    expect(result.value.edges[0].end.id).toBe('B');
+  });
+
+  it.each([
+    '--a---',
+    '--a-->',
+    '<--a-->',
+    '<--a---', // 👈 last one doesn't work in playground
+    '==a===',
+    '==a==>',
+    '<==a==>',
+    '<==a===', // 👈 last one doesn't work in playground
+    '-.a.-',
+    '-.a.->',
+    '<-.a.-',
+  ])('should handle arrow labels', (context: string) => {
+    const result = parse(`flowchart;A ${context} B;`);
+    expectNoErrorsOrAlternatives(result);
+    expect(result.value.edges).toHaveLength(1);
+    expect(result.value.edges[0].start.id).toBe('A');
+    expect(result.value.edges[0].end.id).toBe('B');
+  });
+
+  // subgraph: subgraph, direction, end
+  // chaining: A -- text --> B -- text2 --> C
+  // conjunction: a --> b & c--> d, A & B--> C & D
 });

@@ -12,7 +12,7 @@ entry Flowchart:
   NEWLINE*
   FlowchartType FlowchartDirection?
   DELIMITER
-  ((nodes+=FlowchartNode | edges+=FlowchartEdge) DELIMITER)*
+  ((nodes+=FlowchartNode | edges+=FlowchartEdge | subgraphs+=FlowchartSubgraph) DELIMITER)*
 ;
 
 FlowchartDirection:
@@ -20,6 +20,12 @@ FlowchartDirection:
 
 FlowchartType:
   type=("flowchart-elk" | "graph" | "flowchart");
+
+FlowchartSubgraph:
+  "subgraph" label=ID DELIMITER
+    ("direction" FlowchartDirection DELIMITER)?
+    ((nodes+=FlowchartNode | edges+=FlowchartEdge) DELIMITER)*
+  "end";
 
 terminal EllipseLabel: "(-" -> "-)";
 FlowchartNodeEllipse:
@@ -93,19 +99,40 @@ FlowchartNode:
   FlowchartNodeSubroutine |
   FlowchartNodeHexagon;
 
+terminal fragment ArrowStart: "<" | "x" | "o";
+terminal fragment ArrowEnd: ">" | "x" | "o";
+terminal fragment DottedArrowEnd:  "."* ".-" ArrowEnd?;
+
+terminal DottedArrowWithLabel: ArrowStart? "-." -> DottedArrowEnd;
+terminal DottedArrow: ArrowStart? "-" DottedArrowEnd;
+
+terminal RegularArrowWithLabel: ArrowStart? "--" -> "-" "-"+ ('-' |ArrowEnd);
+terminal RegularArrow: (ArrowStart "-" "-"+ ArrowEnd?) | ("-" "-"+ ('-' |ArrowEnd));
+
+terminal ThickArrowWithLabel: ArrowStart? "==" -> "=" "="+ ("=" | ArrowEnd);
+terminal ThickArrow: (ArrowStart "=" "="+ ArrowEnd?) | ("=" "="+ ("=" | ArrowEnd));
+
+terminal InvisibleArrow: "~~" "~"+;
+
 terminal EdgeLabel: "|" -> "|";
 
 FlowchartEdge:
-  FlowchartEdgeRegular | FlowchartEdgeDotted | FlowchartEdgeThick;
-
-FlowchartEdgeRegular:
-  start=FlowchartNode "-->" (label=EdgeLabel)? end=FlowchartNode;
+  FlowchartEdgeRegular | FlowchartEdgeDotted | FlowchartEdgeThick | FlowchartEdgeInvisible;
 
 FlowchartEdgeDotted:
-  start=FlowchartNode "-.->" (label=EdgeLabel)? end=FlowchartNode;
+  (start=FlowchartNode arrow=DottedArrow (label=EdgeLabel)? end=FlowchartNode) |
+  (start=FlowchartNode arrow=DottedArrowWithLabel end=FlowchartNode);
+
+FlowchartEdgeRegular:
+  (start=FlowchartNode arrow=RegularArrow (label=EdgeLabel)? end=FlowchartNode) |
+  (start=FlowchartNode arrow=RegularArrowWithLabel end=FlowchartNode);
 
 FlowchartEdgeThick:
-  start=FlowchartNode "==>" (label=EdgeLabel)? end=FlowchartNode;
+  (start=FlowchartNode arrow=ThickArrow (label=EdgeLabel)? end=FlowchartNode) |
+  (start=FlowchartNode arrow=ThickArrowWithLabel end=FlowchartNode);
+
+FlowchartEdgeInvisible:
+  start=FlowchartNode arrow=(InvisibleArrow) (label=EdgeLabel)? end=FlowchartNode;
 
 terminal ID: /[a-zA-Z0-9]+/;
 
