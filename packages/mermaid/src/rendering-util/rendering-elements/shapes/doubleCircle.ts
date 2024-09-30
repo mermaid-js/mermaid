@@ -9,24 +9,26 @@ export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVG
   const { labelStyles, nodeStyles } = styles2String(node);
   const gap = 5;
   node.labelStyle = labelStyles;
-  const padding = node.padding ?? 0;
-
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
   if (node.width || node.height) {
-    node.width = (node?.width ?? 0) - padding * 2 - gap * 2;
+    const padding = node.padding ?? 0;
+    node.width = (node?.width ?? 0) - padding * 2;
     if (node.width < 50) {
       node.width = 50;
     }
 
-    node.height = (node?.height ?? 0) - padding * 2 - gap * 2;
+    node.height = (node?.height ?? 0) - (node.padding ?? 0) * 2;
     if (node.height < 50) {
       node.height = 50;
     }
   }
 
-  const { shapeSvg, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
-  const labelPadding = node.look === 'neo' ? halfPadding * 2 : halfPadding;
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const outerRadius = (node.width ?? 0) / 2 + labelPadding + gap;
+  const outerRadius = Math.max(bbox.width / 2, (node?.width ?? 0) / 2) + (node.padding ?? 0);
   const innerRadius = outerRadius - gap;
 
   let circleGroup;
