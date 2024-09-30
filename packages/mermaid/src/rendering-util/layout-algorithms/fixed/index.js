@@ -153,6 +153,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   // Add positions for nodes that lack them
   let xPos = 0;
   function calculatePosition(node, positions, childDB) {
+    // console.log('STO calculatePosition', node.id, maxY);
     const children = childDB.get(node.id) || [];
     // log.info('STO calculatePosition', node.id, children.length);
     // We have a subgraph without position
@@ -162,15 +163,16 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
       let minYP = 10000;
       let maxYP = -10000;
       for (const child of children) {
-        const width = child.width || 50;
+        const width = child.width || 150;
         const height = child.height || 50;
         // log.info('BBB node child 1', child.id, width, height);
         calculatePosition(child, positions, childDB);
-        // log.info(
-        //   'BBB node child 2',
+        // console.log(
+        //   'STO node child 2',
         //   child.id,
         //   positions.nodes[child.id].x,
-        //   positions.nodes[child.id].y
+        //   positions.nodes[child.id].y,
+        //   positions.nodes[child.id].width
         // );
         minX = Math.min(positions.nodes[child.id].x - width / 2, minX);
         maxX = Math.max(positions.nodes[child.id].x + width / 2, maxX);
@@ -178,9 +180,19 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
         maxYP = Math.max(positions.nodes[child.id].y + height / 2, maxYP);
       }
       if (!positions.nodes[node.id]) {
+        // console.log(
+        //   'STO calculatePosition SUBGRAPH SIZE',
+        //   node.id,
+        //   'y:',
+        //   maxY - 10,
+        //   'minX:',
+        //   minX,
+        //   'maxX:',
+        //   maxX
+        // );
         positions.nodes[node.id] = {
           x: minX + (maxX - minX) / 2,
-          y: maxY + 15,
+          y: maxY + 120,
           width: maxX - minX + 20,
           height: maxYP - minYP + 30,
         };
@@ -188,6 +200,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
     } else {
       if (!positions.nodes[node.id]) {
         // Simple case
+        // console.log('STO calculatePosition NODE SIZE', node.id, xPos, maxY, 'y:', maxY + 120);
         positions.nodes[node.id] = { x: xPos, y: maxY + 120 };
         xPos = xPos + 175;
       }
