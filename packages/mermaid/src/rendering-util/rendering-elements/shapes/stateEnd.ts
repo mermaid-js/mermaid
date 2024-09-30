@@ -14,6 +14,29 @@ export const stateEnd = (
   node.labelStyle = labelStyles;
   const { cssStyles } = node;
   const { lineColor, stateBorder, nodeBorder } = themeVariables;
+
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    if ((node.width ?? 0) < 50) {
+      node.width = 50;
+    }
+
+    if ((node.height ?? 0) < 50) {
+      node.height = 50;
+    }
+  }
+
+  if (!node.width) {
+    node.width = 50;
+  }
+
+  if (!node.height) {
+    node.width = 50;
+  }
+
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
@@ -28,13 +51,14 @@ export const stateEnd = (
     options.fillStyle = 'solid';
   }
 
-  const roughNode = rc.circle(0, 0, 14, {
+  const roughNode = rc.circle(0, 0, node.width, {
     ...options,
     stroke: lineColor,
     strokeWidth: 2,
   });
   const innerFill = stateBorder ?? nodeBorder;
-  const roughInnerNode = rc.circle(0, 0, 5, {
+  const innerNodeRadius = ((node.width ?? 0) * 5) / 14;
+  const roughInnerNode = rc.circle(0, 0, innerNodeRadius, {
     ...options,
     fill: innerFill,
     stroke: innerFill,
@@ -55,7 +79,7 @@ export const stateEnd = (
   updateNodeBounds(node, circle);
 
   node.intersect = function (point) {
-    return intersect.circle(node, 7, point);
+    return intersect.circle(node, (node.width ?? 0) / 2, point);
   };
 
   return shapeSvg;
