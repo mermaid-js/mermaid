@@ -18,20 +18,20 @@ export const stateStart = (
   // if so set it to min value
   if (node.width || node.height) {
     if ((node.width ?? 0) < 50) {
-      node.width = 50;
+      node.width = 14;
     }
 
     if ((node.height ?? 0) < 50) {
-      node.height = 50;
+      node.height = 14;
     }
   }
 
   if (!node.width) {
-    node.width = 50;
+    node.width = 14;
   }
 
   if (!node.height) {
-    node.width = 50;
+    node.width = 14;
   }
 
   const shapeSvg = parent
