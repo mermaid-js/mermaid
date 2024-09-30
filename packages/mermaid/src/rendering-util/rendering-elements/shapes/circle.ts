@@ -15,13 +15,13 @@ export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAEleme
   if (node.width || node.height) {
     const padding = node.padding ?? 0;
     node.width = (node?.width ?? 0) - padding * 2;
-    if (node.width < 50) {
-      node.width = 50;
+    if (node.width < 20) {
+      node.width = 20;
     }
 
     node.height = (node?.height ?? 0) - (node.padding ?? 0) * 2;
-    if (node.height < 50) {
-      node.height = 50;
+    if (node.height < 10) {
+      node.height = 10;
     }
   }
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
