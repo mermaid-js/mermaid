@@ -62,13 +62,13 @@ export const stadium = async (parent: SVGAElement, node: Node) => {
   // if so set it to min value
   if (node.width || node.height) {
     node.width = (node?.width ?? 0) - labelPaddingX * 2;
-    if (node.width < 50) {
-      node.width = 50;
+    if (node.width < 20) {
+      node.width = 20;
     }
 
     node.height = (node?.height ?? 0) - labelPaddingY * 2;
-    if (node.height < 50) {
-      node.height = 50;
+    if (node.height < 10) {
+      node.height = 10;
     }
   }
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));

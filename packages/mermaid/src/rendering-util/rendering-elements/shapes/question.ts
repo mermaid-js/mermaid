@@ -22,13 +22,13 @@ export const question = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   const padding = node.padding ?? 0;
   if (node.width || node.height) {
     node.width = (node?.width ?? 0) - padding * 8;
-    if (node.width < 50) {
-      node.width = 50;
+    if (node.width < 20) {
+      node.width = 20;
     }
 
     node.height = (node?.height ?? 0) - padding * 8;
-    if (node.height < 50) {
-      node.height = 50;
+    if (node.height < 10) {
+      node.height = 10;
     }
   }
 
