@@ -7,12 +7,29 @@ import rough from 'roughjs';
 
 export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);
-  node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
   const gap = 5;
-  const labelPadding = node.look === 'neo' ? halfPadding * 2 : halfPadding;
-  const outerRadius = bbox.width / 2 + labelPadding + gap;
-  const innerRadius = bbox.width / 2 + labelPadding;
+  node.labelStyle = labelStyles;
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    const padding = node.padding ?? 0;
+    node.width = (node?.width ?? 0) - padding * 2;
+    if (node.width < 50) {
+      node.width = 50;
+    }
+
+    node.height = (node?.height ?? 0) - (node.padding ?? 0) * 2;
+    if (node.height < 50) {
+      node.height = 50;
+    }
+  }
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const outerRadius = Math.max(bbox.width / 2, (node?.width ?? 0) / 2) + (node.padding ?? 0);
+  const innerRadius = outerRadius - gap;
 
   let circleGroup;
   const { cssStyles } = node;
