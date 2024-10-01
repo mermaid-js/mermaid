@@ -59,7 +59,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
-  .rough-node .label text , .node .label text {
+  .rough-node .label text , .node .label text, .image-shape .label, .icon-shape .label {
     text-anchor: middle;
   }
   // .flowchart-label .text-outer-tspan {
@@ -75,7 +75,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-width: 1px;
   }
 
-  .rough-node .label,.node .label {
+  .rough-node .label,.node .label, .image-shape .label, .icon-shape .label {
     text-align: center;
   }
   .node.clickable {
@@ -164,20 +164,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-width: 0;
   }
 
-  .icon-shape {
-    background-color: ${options.edgeLabelBackground};
-    p {
-      background-color: ${options.edgeLabelBackground};
-      padding: 2px;
-    }
-    rect {
-      opacity: 0.5;
-      background-color: ${options.edgeLabelBackground};
-      fill: ${options.edgeLabelBackground};
-    }
-    text-align: center;
-  }
-  .image-shape {
+  .icon-shape, .image-shape {
     background-color: ${options.edgeLabelBackground};
     p {
       background-color: ${options.edgeLabelBackground};

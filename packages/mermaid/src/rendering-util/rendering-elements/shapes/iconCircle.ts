@@ -70,7 +70,7 @@ export const iconCircle = async (
   iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2},${topLabel ? -outerHeight / 2 : outerHeight / 2 - bbox.height})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${topLabel ? -outerHeight / 2 : outerHeight / 2 - bbox.height})`
   );
 
   iconShape.attr(
