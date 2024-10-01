@@ -49,8 +49,8 @@ export const createInnerCylinderPathD = (
   return [`M${x + width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 0,${height}`].join(' ');
 };
 
-const MIN_HEIGHT = 25;
-const MIN_WIDTH = 50;
+const MIN_HEIGHT = 5;
+const MIN_WIDTH = 10;
 
 export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -58,13 +58,14 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const nodePadding = node.padding ?? 0;
   const labelPadding = node.look === 'neo' ? nodePadding : nodePadding / 2;
   if (node.width || node.height) {
+    const originalHeight = node.height ?? 0;
     node.height = (node.height ?? 0) - labelPadding;
     if (node.height < MIN_HEIGHT) {
       node.height = MIN_HEIGHT;
     }
-    const ry = node.height / 2;
+    const ry = originalHeight / 2;
     // based on this height, width is calculated
-    const rx = ry / (2.5 + node.height / 50);
+    const rx = ry / (2.5 + originalHeight / 50);
 
     node.width = (node.width ?? 0) - labelPadding - rx * 3;
     if (node.width < MIN_WIDTH) {
@@ -73,10 +74,10 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   }
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const h = Math.max(bbox.height, node.height ?? 0) + labelPadding;
+  const h = (node.height ? node.height : bbox.height) + labelPadding;
   const ry = h / 2;
   const rx = ry / (2.5 + h / 50);
-  const w = Math.max(bbox.width, node.width ?? 0) + rx + labelPadding;
+  const w = (node.width ? node.width : bbox.width) + rx + labelPadding;
   const { cssStyles } = node;
 
   let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;

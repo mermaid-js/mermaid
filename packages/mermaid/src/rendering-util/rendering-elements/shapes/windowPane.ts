@@ -19,14 +19,14 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   if (node.width || node.height) {
-    node.width = Math.max((node?.width ?? 0) - paddingX * 2 - rectOffset, 50);
-    node.height = Math.max((node?.height ?? 0) - paddingY * 2 - rectOffset, 50);
+    node.width = Math.max((node?.width ?? 0) - paddingX * 2 - rectOffset, 10);
+    node.height = Math.max((node?.height ?? 0) - paddingY * 2 - rectOffset, 10);
   }
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width, node?.width ?? 0) + paddingX * 2 + rectOffset;
-  const totalHeight = Math.max(bbox.height, node?.height ?? 0) + paddingY * 2 + rectOffset;
+  const totalWidth = (node?.width ? node?.width : bbox.width) + paddingX * 2 + rectOffset;
+  const totalHeight = (node?.height ? node?.height : bbox.height) + paddingY * 2 + rectOffset;
 
   const w = totalWidth - rectOffset;
   const h = totalHeight - rectOffset;

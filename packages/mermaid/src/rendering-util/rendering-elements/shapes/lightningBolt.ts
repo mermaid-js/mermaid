@@ -16,8 +16,8 @@ export const lightningBolt = (parent: SVG, node: Node) => {
 
   const gapX = Math.max(5, (node.width ?? 0) * 0.1);
   const gapY = Math.max(5, (node.height ?? 0) * 0.1);
-  const width = Math.max(50, node?.width ?? 0);
-  const height = Math.max(50, node?.height ?? 0);
+  const width = node?.width ? node?.width : 50;
+  const height = node?.height ? node?.height : 50;
 
   const points = [
     { x: width, y: 0 },

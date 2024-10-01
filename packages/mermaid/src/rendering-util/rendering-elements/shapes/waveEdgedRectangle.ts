@@ -22,25 +22,25 @@ export const waveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   if (node.width || node.height) {
     adjustFinalHeight = false;
     node.width = (node?.width ?? 0) - labelPaddingX * 2;
-    if (node.width < 50) {
-      node.width = 50;
+    if (node.width < 10) {
+      node.width = 10;
     }
 
     node.height = (node?.height ?? 0) - labelPaddingY * 2;
-    if (node.height < 50) {
-      node.height = 50;
+    if (node.height < 10) {
+      node.height = 10;
     }
   }
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width, node?.width ?? 0) + (labelPaddingX ?? 0) * 2;
-  const h = Math.max(bbox.height, node?.height ?? 0) + (labelPaddingY ?? 0) * 2;
+  const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0) * 2;
+  const h = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0) * 2;
   const waveAmplitude = h / 8;
   const finalH = h + (adjustFinalHeight ? waveAmplitude : -waveAmplitude);
   const { cssStyles } = node;
 
   // To maintain minimum width
-  const minWidth = 70;
+  const minWidth = 14;
   const widthDif = minWidth - w;
   const extraW = widthDif > 0 ? widthDif / 2 : 0;
 

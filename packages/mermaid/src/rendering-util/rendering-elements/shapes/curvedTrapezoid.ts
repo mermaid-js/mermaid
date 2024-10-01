@@ -16,8 +16,8 @@ export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-  const minWidth = 80,
-    minHeight = 20;
+  const minWidth = 20,
+    minHeight = 5;
   if (node.width || node.height) {
     node.width = (node?.width ?? 0) - labelPaddingX * 2 * 1.25;
     if (node.width < minWidth) {
@@ -32,8 +32,10 @@ export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = Math.max(minWidth, bbox.width, node?.width ?? 0) + (labelPaddingX ?? 0) * 2 * 1.25;
-  const h = Math.max(minHeight, bbox.height, node?.height ?? 0) + (labelPaddingY ?? 0) * 2;
+  const w =
+    (node?.width ? node?.width : Math.max(minWidth, bbox.width)) + (labelPaddingX ?? 0) * 2 * 1.25;
+  const h =
+    (node?.height ? node?.height : Math.max(minHeight, bbox.height)) + (labelPaddingY ?? 0) * 2;
   const radius = h / 2;
 
   const { cssStyles } = node;

@@ -14,8 +14,8 @@ import rough from 'roughjs';
 export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const minWidth = 80,
-    minHeight = 50;
+  const minWidth = 15,
+    minHeight = 10;
 
   const paddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
   const paddingY = node.look === 'neo' ? (node.padding ?? 0) * 1 : (node.padding ?? 0);
@@ -34,8 +34,8 @@ export const halfRoundedRectangle = async (parent: SVGAElement, node: Node) => {
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = Math.max(minWidth, bbox.width, node?.width ?? 0) + paddingX * 2;
-  const h = Math.max(minHeight, bbox.height, node?.height ?? 0) + paddingY * 2;
+  const w = (node?.width ? node?.width : Math.max(minWidth, bbox.width)) + paddingX * 2;
+  const h = (node?.height ? node?.height : Math.max(minHeight, bbox.height)) + paddingY * 2;
   const radius = h / 2;
   const { cssStyles } = node;
 

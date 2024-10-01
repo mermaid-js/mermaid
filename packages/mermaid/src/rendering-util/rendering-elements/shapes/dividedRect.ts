@@ -16,14 +16,14 @@ export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   if (node.width || node.height) {
-    node.width = Math.max((node?.width ?? 0) - paddingX * 2, 50);
-    node.height = Math.max((node?.height ?? 0) - paddingY * 2, 50);
+    node.width = Math.max((node?.width ?? 0) - paddingX * 2, 10);
+    node.height = Math.max((node?.height ?? 0) - paddingY * 2, 10);
   }
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width, node?.width ?? 0) + paddingX * 2;
-  const totalHeight = Math.max(bbox.height, node?.height ?? 0) + paddingY * 2;
+  const totalWidth = (node?.width ? node?.width : Math.max(bbox.width)) + paddingX * 2;
+  const totalHeight = (node?.height ? node?.height : Math.max(bbox.height)) + paddingY * 2;
 
   const rectOffset = totalHeight * 0.2;
 

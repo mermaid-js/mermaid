@@ -8,21 +8,19 @@ import { createPathFromPoints } from './util.js';
 import { evaluate } from '../../../diagrams/common/common.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
-const MIN_HEIGHT = 25;
-const MIN_WIDTH = 25;
+const MIN_HEIGHT = 10;
+const MIN_WIDTH = 10;
 
 export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-
   if (node.width || node.height) {
-    node.width = (node?.width ?? 0) - labelPaddingX * 4;
+    node.width = ((node?.width ?? 0) - labelPaddingX) / 2;
     if (node.width < MIN_WIDTH) {
       node.width = MIN_WIDTH;
     }
-
     node.height = node?.height ?? 0;
     if (node.height < MIN_HEIGHT) {
       node.height = MIN_HEIGHT;
@@ -31,10 +29,8 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const useHtmlLabels = evaluate(getConfig().flowchart?.htmlLabels);
-
-  const w = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX;
-  const h = Math.max(w + bbox.height, node?.height ?? 0);
-
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX;
+  const h = node?.height ? node?.height : w + bbox.height;
   const tw = w + bbox.height;
   const points = [
     { x: 0, y: 0 },
