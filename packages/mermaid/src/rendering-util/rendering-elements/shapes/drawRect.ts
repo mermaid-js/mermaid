@@ -13,21 +13,15 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   if (node.width || node.height) {
-    node.width = (node?.width ?? 0) - options.labelPaddingX * 2;
-    if (node.width < 20) {
-      node.width = 20;
-    }
-
-    node.height = (node?.height ?? 0) - options.labelPaddingY * 2;
-    if (node.height < 10) {
-      node.height = 10;
-    }
+    node.width = (node?.width ?? 10) - options.labelPaddingX * 2;
+    node.height = (node?.height ?? 10) - options.labelPaddingY * 2;
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width, node?.width || 0) + options.labelPaddingX * 2;
-  const totalHeight = Math.max(bbox.height, node?.height || 0) + options.labelPaddingY * 2;
+  const totalWidth = (node?.width ? node?.width : bbox.width) + options.labelPaddingX * 2;
+  const totalHeight = (node?.height ? node?.height : bbox.height) + options.labelPaddingY * 2;
+
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
   let rect;

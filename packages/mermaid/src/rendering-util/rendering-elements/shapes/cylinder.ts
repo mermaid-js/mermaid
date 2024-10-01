@@ -50,8 +50,8 @@ export const createInnerCylinderPathD = (
   return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
 };
 
-const MIN_HEIGHT = 25;
-const MIN_WIDTH = 25;
+const MIN_HEIGHT = 8;
+const MIN_WIDTH = 8;
 export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { themeVariables } = getConfig();
   const { useGradient } = themeVariables;

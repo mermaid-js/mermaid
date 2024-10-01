@@ -15,20 +15,13 @@ export const rect_left_inv_arrow = async (
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : (node.padding ?? 0);
 
   if (node.width || node.height) {
-    node.width = (node?.width ?? 0) - labelPaddingX * 2;
-    if (node.width < 50) {
-      node.width = 50;
-    }
-
-    node.height = (node?.height ?? 0) - labelPaddingY * 2;
-    if (node.height < 50) {
-      node.height = 50;
-    }
+    node.width = (node?.width ?? 10) - labelPaddingX * 2;
+    node.height = (node?.height ?? 10) - labelPaddingY * 2;
   }
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2;
-  const h = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY * 2;
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
 
   const x = -w / 2;
   const y = -h / 2;

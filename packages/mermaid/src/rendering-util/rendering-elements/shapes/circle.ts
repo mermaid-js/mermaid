@@ -12,21 +12,14 @@ export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAEleme
   // as labelHelper does not take padding into account
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
+  const padding = node.padding ?? 0;
   if (node.width || node.height) {
-    const padding = node.padding ?? 0;
-    node.width = (node?.width ?? 0) - padding * 2;
-    if (node.width < 20) {
-      node.width = 20;
-    }
-
-    node.height = (node?.height ?? 0) - (node.padding ?? 0) * 2;
-    if (node.height < 10) {
-      node.height = 10;
-    }
+    node.width = (node.width ?? 6) - padding * 2;
+    node.height = node.width;
   }
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const radius = Math.max(bbox.width / 2, (node?.width ?? 0) / 2) + (node.padding ?? 0);
+  const radius = (node?.width ? node?.width / 2 : bbox.width / 2) + padding;
   let circleElem;
   const { cssStyles } = node;
 
@@ -49,6 +42,7 @@ export const circle = async (parent: SVGAElement, node: Node): Promise<SVGAEleme
   }
 
   updateNodeBounds(node, circleElem);
+
   node.intersect = function (point) {
     log.info('Circle intersect', node, radius, point);
     return intersect.circle(node, radius, point);
