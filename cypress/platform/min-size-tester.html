@@ -1,0 +1,170 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: 'Arial';
+        background-color: #333;
+      }
+      h3 {
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="flex">
+      <h3>Fixed</h3>
+      <div id="diagram-fixed"></div>
+      <div id="diagram-normal"></div>
+      <h3>Non fixed</h3>
+    </div>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize({
+        startOnLoad: false,
+        //look: 'handdrawn',
+        // layout: 'fixed',
+        theme: 'neo-dark',
+        //layout: 'elk',
+        fontFamily: 'Kalam',
+        logLevel: 1,
+      });
+
+      // let shape = 'rect';
+      // let shape = 'rounded';
+      // let shape = 'stadium';
+      // let shape = 'fr-rect';
+      // let shape = 'cyl';
+      let shape = 'circle';
+      // let shape = 'odd';
+      // let shape = 'diam';
+      // let shape = 'hex';
+      // let shape = 'lean-r';
+      // let shape = 'lean-l';
+      // let shape = 'trap-b';
+      // let shape = 'trap-t';
+      // let shape = 'dbl-circ';
+      // let shape = 'text';
+      // let shape = 'notch-rect';
+      // let shape = 'lin-rect';
+      // let shape = 'sm-circ';
+      // let shape = 'fr-circ';
+      // let shape = 'fork';
+      // let shape = 'hourglass';
+      // let shape = 'brace';
+      // let shape = 'brace-r';
+      // let shape = 'braces';
+      // let shape = 'bolt';
+      // let shape = 'doc';
+      // let shape = 'delay';
+      // let shape = 'h-cyl';
+      // let shape = 'lin-cyl';
+      // let shape = 'curv-trap';
+      // let shape = 'div-rect';
+      // let shape = 'tri';
+      // let shape = 'win-pane';
+      // let shape = 'f-circ';
+      // let shape = 'lin-doc';
+      // let shape = 'notch-pent';
+      // let shape = 'flip-tri';
+      // let shape = 'sl-rect';
+      // let shape = 'docs';
+      // let shape = 'st-rect';
+      // let shape = 'flag';
+      // let shape = 'bow-rect';
+      // let shape = 'cross-circ';
+      // let shape = 'tag-doc';
+
+      let configFixed = `---
+config:
+  layout: fixed
+---
+      `;
+      let code = `flowchart TB
+                %% n80["APA ksldj hfaskljdh aklsjdhf klasjdhf klasjhf klsajdh klasjdhf klasjdhf klasjdh klasjhf klasjdh klajsdhfklasjdhf kljadh fklasjdhf klajsdhf lkasdhf klajsdhf klasjdhfklasjdh klasjhf klasdfh klasdfh aklsjfh akjshkasldfh klasdfh klasjh fklsjhf klasdhf kljasdhf klasdhf klj"]
+                %% n80@{ shape: '${shape}'}
+                n81@{ label: "X", shape: '${shape}'}
+                n82@{ label: "X", shape: '${shape}'}
+                n83@{ label: "Y", shape: '${shape}'}
+                `;
+
+      let positions = {
+        edges: {},
+        nodes: {
+          n81: {
+            x: 0,
+            y: 10,
+            width: 37.2,
+            height: 10,
+          },
+          n80: {
+            x: -400,
+            y: 10,
+            width: 1,
+            height: 1,
+          },
+          n82: {
+            x: 0,
+            y: 110,
+          },
+          n83: {
+            x: 80,
+            y: 10,
+          },
+          n84: {
+            x: 1200,
+            y: 10,
+            width: 300,
+            height: 200,
+          },
+        },
+      };
+      console.log(configFixed + code);
+      const { svg } = await mermaid.render(
+        'the-id-of-the-svg-1',
+        configFixed + code,
+        undefined,
+        positions
+      );
+      const elem = document.querySelector('#diagram-fixed');
+      elem.innerHTML = svg;
+      const { svg: svg2 } = await mermaid.render('the-id-of-the-svg-2', code, undefined, positions);
+      const elem2 = document.querySelector('#diagram-normal');
+      elem2.innerHTML = svg2;
+    </script>
+  </body>
+</html>
