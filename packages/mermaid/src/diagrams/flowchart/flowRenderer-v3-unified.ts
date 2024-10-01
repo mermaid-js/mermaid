@@ -101,7 +101,7 @@ export const draw = async function (text: string, id: string, _version: string, 
         // Look for all gradient styles, ensuring that nested parentheses due to color functions are handled properly
         const linearGradientStyles = vertex.cssCompiledStyles
           ?.join('')
-          ?.match(/fill\s*:\s*linear-gradient\(([^()]*(\([^()]*\))*[^()]*)+\)/g);
+          ?.match(/fill\s*:\s*linear-gradient\([^()]*?(?:\([^()]*?\)[^()]*)*\)/g);
 
         if (linearGradientStyles) {
           shapeElement.style('fill', null); // Clear any existing fill
