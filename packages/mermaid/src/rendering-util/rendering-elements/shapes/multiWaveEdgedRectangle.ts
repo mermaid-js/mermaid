@@ -37,7 +37,6 @@ export const multiWaveEdgedRectangle = async (parent: SVGAElement, node: Node) =
     const waveMultiplier = 0.3319;
 
     node.height = Math.round(node.height - labelPaddingY - waveAmplitude * waveMultiplier);
-    node.width = node.width - labelPaddingX;
   }
 
   const w = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2;
