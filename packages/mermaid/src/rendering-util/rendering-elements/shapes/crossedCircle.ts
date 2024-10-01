@@ -25,7 +25,7 @@ export const crossedCircle = (parent: SVG, node: Node) => {
     .insert('g')
     .attr('class', getNodeClasses(node))
     .attr('id', node.domId ?? node.id);
-  const radius = Math.max(25, (node?.width ?? 0) / 2, (node?.height ?? 0) / 2);
+  const radius = node?.width ? node?.width / 2 : node?.height ? node?.height / 2 : 25;
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed

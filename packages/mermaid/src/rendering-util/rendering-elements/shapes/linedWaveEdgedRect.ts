@@ -16,25 +16,25 @@ export const linedWaveEdgedRect = async (parent: SVGAElement, node: Node) => {
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : (node.padding ?? 0);
   const labelPaddingY = node.look === 'neo' ? nodePadding * 2 : (node.padding ?? 0);
-
-  let adjustFinalHeight = true;
   if (node.width || node.height) {
-    adjustFinalHeight = false;
-    node.width = (node?.width ?? 0) - labelPaddingX * 2;
-    if (node.width < 50) {
-      node.width = 50;
+    const originalWidth = node.width;
+    node.width = ((originalWidth ?? 0) * 10) / 11 - labelPaddingX * 2;
+    if (node.width < 10) {
+      node.width = 10;
     }
+    const originalHeight = node.height;
 
-    node.height = (node?.height ?? 0) - labelPaddingY * 2;
-    if (node.height < 50) {
-      node.height = 50;
+    node.height = ((originalHeight ?? 0) * 3) / 4 - labelPaddingY * 2;
+    //node.height = (node?.height ?? 0) - labelPaddingY * 2;
+    if (node.height < 10) {
+      node.height = 10;
     }
   }
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width, node?.width ?? 0) + (labelPaddingX ?? 0) * 2;
-  const h = Math.max(bbox.height, node?.height ?? 0) + (labelPaddingY ?? 0) * 2;
+  const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0) * 2;
+  const h = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0) * 2;
   const waveAmplitude = h / 6;
-  const finalH = h + (adjustFinalHeight ? waveAmplitude : -waveAmplitude);
+  const finalH = h + waveAmplitude;
   const { cssStyles } = node;
 
   // @ts-ignore - rough is not typed

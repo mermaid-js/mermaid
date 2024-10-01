@@ -103,21 +103,21 @@ export const bowTieRect = async (parent: SVGAElement, node: Node) => {
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   if (node.width || node.height) {
-    node.height = Math.max((node?.height ?? 0) - labelPaddingY * 2, 50);
+    node.height = Math.max((node?.height ?? 0) - labelPaddingY * 2, 10);
     const totalHeight = calcTotalHeight(node.height);
     const [rx, ry] = calcEllipseRadius(totalHeight);
     node.width = Math.max(
       (node?.width ?? 0) - labelPaddingX * 2 - calculateArcSagitta(totalHeight, rx, ry),
-      50
+      10
     );
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalHeight = calcTotalHeight(Math.max(bbox.height, node?.height ?? 0));
+  const totalHeight = calcTotalHeight(node?.height ? node?.height : bbox.height);
   const [rx, ry] = calcEllipseRadius(totalHeight);
   const sagitta = calculateArcSagitta(totalHeight, rx, ry);
-  const totalWidth = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2 + sagitta;
+  const totalWidth = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2 + sagitta;
 
   const w = totalWidth - sagitta;
   const h = totalHeight;

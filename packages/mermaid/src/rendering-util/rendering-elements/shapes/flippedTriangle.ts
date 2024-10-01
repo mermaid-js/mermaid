@@ -6,8 +6,8 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { createPathFromPoints } from './util.js';
 
-const MIN_HEIGHT = 25;
-const MIN_WIDTH = 25;
+const MIN_HEIGHT = 10;
+const MIN_WIDTH = 10;
 export const flippedTriangle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -15,24 +15,24 @@ export const flippedTriangle = async (parent: SVGAElement, node: Node): Promise<
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
-
   if (node.width || node.height) {
     node.height = node?.height ?? 0;
     if (node.height < MIN_HEIGHT) {
       node.height = MIN_HEIGHT;
     }
 
-    node.width = node?.width ?? 0 - labelPaddingX * 4;
+    node.width = (node?.width ?? 0) - labelPaddingX - labelPaddingX / 2;
     if (node.width < MIN_WIDTH) {
       node.width = MIN_WIDTH;
     }
   }
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = Math.max(bbox.width, node?.width ?? 0) + (labelPaddingX ?? 0);
-  const h = Math.max(w + bbox.height, node?.width ?? 0);
+  const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0);
+  const h = node?.height ? node?.height : w + bbox.height;
 
   const tw = w + bbox.height;
+
   const points = [
     { x: 0, y: -h },
     { x: tw, y: -h },

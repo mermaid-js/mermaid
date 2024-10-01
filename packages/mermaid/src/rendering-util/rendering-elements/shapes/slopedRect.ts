@@ -16,14 +16,14 @@ export const slopedRect = async (parent: SVGAElement, node: Node) => {
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   if (node.width || node.height) {
-    node.width = Math.max((node?.width ?? 0) - labelPaddingX * 2, 50);
-    node.height = Math.max((node?.height ?? 0) / 1.5 - labelPaddingY * 2, 50);
+    node.width = Math.max((node?.width ?? 0) - labelPaddingX * 2, 10);
+    node.height = Math.max((node?.height ?? 0) / 1.5 - labelPaddingY * 2, 10);
   }
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2;
-  const totalHeight = (Math.max(bbox.height, node?.height ?? 0) + labelPaddingY * 2) * 1.5;
+  const totalWidth = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
+  const totalHeight = ((node?.height ? node?.height : bbox.height) + labelPaddingY * 2) * 1.5;
 
   const w = totalWidth;
   const h = totalHeight / 1.5;
