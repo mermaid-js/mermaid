@@ -26,16 +26,24 @@ export const createHexagonPathD = (
 
 export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
   const { labelStyles, nodeStyles } = styles2String(node);
-  node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-
   const f = 4;
+  node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
-  const h = Math.max(bbox.height + labelPaddingX, node?.height ?? 0);
+  if (node.width || node.height) {
+    const originalHeight = node.height ?? 0;
+    const m = originalHeight / f;
+    node.width = (node?.width ?? 0) - 2 * m - labelPaddingY;
+    node.height = (node.height ?? 0) - labelPaddingX;
+  }
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingX;
   const m = h / f;
-  const w = Math.max(bbox.width + 2 * m + labelPaddingY, node?.width ?? 0);
+
+  const w = (node?.width ? node?.width : bbox.width) + 2 * m + labelPaddingY;
   const points = [
     { x: m, y: 0 },
     { x: w - m, y: 0 },

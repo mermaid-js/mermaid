@@ -34,6 +34,7 @@
         font-family: 'Arial';
         background-color: #333;
       }
+
       h3 {
         color: white;
       }
@@ -41,11 +42,9 @@
   </head>
 
   <body>
-    <div class="flex">
-      <h3>Fixed</h3>
+    <div class="flex w-full">
       <div id="diagram-fixed"></div>
       <div id="diagram-normal"></div>
-      <h3>Non fixed</h3>
     </div>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
@@ -64,27 +63,27 @@
         logLevel: 1,
       });
 
-      // let shape = 'rect';
-      // let shape = 'rounded';
-      // let shape = 'stadium';
-      // let shape = 'fr-rect';
-      // let shape = 'cyl';
-      let shape = 'circle';
-      // let shape = 'odd';
-      // let shape = 'diam';
-      // let shape = 'hex';
-      // let shape = 'lean-r';
-      // let shape = 'lean-l';
-      // let shape = 'trap-b';
-      // let shape = 'trap-t';
-      // let shape = 'dbl-circ';
-      // let shape = 'text';
-      // let shape = 'notch-rect';
-      // let shape = 'lin-rect';
-      // let shape = 'sm-circ';
-      // let shape = 'fr-circ';
-      // let shape = 'fork';
-      // let shape = 'hourglass';
+      // let shape = 'rect';    // Done
+      //let shape = 'rounded';  // Done
+      //let shape = 'stadium';  // Done
+      // let shape = 'fr-rect'; // Done
+      // let shape = 'cyl'; // Done
+      //let shape = 'circle'; // Done
+      // let shape = 'odd'; // Done
+      // let shape = 'diam'; //Done
+      // let shape = 'hex'; // Done
+      // let shape = 'lean-r'; // Done
+      // let shape = 'lean-l'; // Done
+      // let shape = 'trap-b'; // Done
+      // let shape = 'trap-t'; // Done
+      // let shape = 'dbl-circ'; // Done
+      // let shape = 'text'; // Done
+      // let shape = 'notch-rect'; // Done
+      // let shape = 'lin-rect'; // Done
+      //let shape = 'sm-circ'; // Done
+      // let shape = 'fr-circ'; //Done
+      //let shape = 'fork'; // Done
+      //let shape = 'hourglass'; //Done
       // let shape = 'brace';
       // let shape = 'brace-r';
       // let shape = 'braces';
@@ -117,9 +116,9 @@ config:
       let code = `flowchart TB
                 %% n80["APA ksldj hfaskljdh aklsjdhf klasjdhf klasjhf klsajdh klasjdhf klasjdhf klasjdh klasjhf klasjdh klajsdhfklasjdhf kljadh fklasjdhf klajsdhf lkasdhf klajsdhf klasjdhfklasjdh klasjhf klasdfh klasdfh aklsjfh akjshkasldfh klasdfh klasjh fklsjhf klasdhf kljasdhf klasdhf klj"]
                 %% n80@{ shape: '${shape}'}
-                n81@{ label: "X", shape: '${shape}'}
-                n82@{ label: "X", shape: '${shape}'}
-                n83@{ label: "Y", shape: '${shape}'}
+                n81@{ label: "n81", shape: '${shape}'}
+                %%n82@{ label: "n82", shape: '${shape}'}
+                %%n83@{ label: "n83", shape: '${shape}'}
                 `;
 
       let positions = {
@@ -128,8 +127,8 @@ config:
           n81: {
             x: 0,
             y: 10,
-            width: 37.2,
-            height: 10,
+            width: 30,
+            height: 30,
           },
           n80: {
             x: -400,

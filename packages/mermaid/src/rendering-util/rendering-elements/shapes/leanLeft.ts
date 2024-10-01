@@ -13,13 +13,13 @@ export const lean_left = async (parent: SVGAElement, node: Node): Promise<SVGAEl
 
   if (node.width || node.height) {
     node.width = node?.width ?? 0;
-    if (node.width < 50) {
-      node.width = 50;
+    if (node.width < 10) {
+      node.width = 10;
     }
 
     node.height = node?.height ?? 0;
-    if (node.height < 50) {
-      node.height = 50;
+    if (node.height < 10) {
+      node.height = 10;
     }
     const _dx = (3 * node.height) / 6;
     node.height = node.height - labelPaddingY;
@@ -27,8 +27,8 @@ export const lean_left = async (parent: SVGAElement, node: Node): Promise<SVGAEl
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const h = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY;
-  const w = Math.max(bbox.width, node?.width ?? 0);
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY;
+  const w = node?.width ? node?.width : bbox.width;
   const points = [
     { x: 0, y: 0 },
     { x: w + (3 * h) / 6, y: 0 },

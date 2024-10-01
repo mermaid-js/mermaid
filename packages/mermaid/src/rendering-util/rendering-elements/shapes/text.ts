@@ -12,8 +12,8 @@ export async function text(parent: SVGAElement, node: Node): Promise<SVGAElement
   // width > labelWidth
 
   // labelWidth > width
-  const totalWidth = node?.width ?? bbox.width;
-  const totalHeight = Math.max(bbox.height, node?.height ?? 0);
+  const totalWidth = node?.width ? node?.width : bbox.width;
+  const totalHeight = node?.height ? node?.height : bbox.height;
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 

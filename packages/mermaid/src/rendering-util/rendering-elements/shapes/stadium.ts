@@ -76,8 +76,8 @@ export const stadium = async (parent: SVGAElement, node: Node) => {
   // const h = Math.max(bbox.height, node?.height || 0) + labelPaddingY;
   // const w = Math.max(bbox.width + h / 4, node?.width || 0, 150) + labelPaddingX;
 
-  const w = Math.max(bbox.width, node?.width || 0) + labelPaddingX * 2;
-  const h = Math.max(bbox.height, node?.height || 0) + labelPaddingY * 2;
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
 
   let rect;
   const { cssStyles } = node;

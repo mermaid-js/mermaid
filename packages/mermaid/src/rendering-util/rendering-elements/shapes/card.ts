@@ -25,14 +25,14 @@ export async function card(parent: SVGAElement, node: Node): Promise<SVGAElement
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   if (node.width || node.height) {
-    node.width = Math.max(node?.width ?? 0 - (node.padding ?? 0), 50);
-    node.height = Math.max(node?.height ?? 0 - (node.padding ?? 0), 50);
+    node.width = Math.max((node?.width ?? 0) - (node.padding ?? 0), 10);
+    node.height = Math.max((node?.height ?? 0) - (node.padding ?? 0), 10);
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width, node?.width || 0) + (node.padding ?? 0);
-  const totalHeight = Math.max(bbox.height, node?.height || 0) + (node.padding ?? 0);
+  const totalWidth = (node?.width ? node?.width : bbox.width) + (node.padding ?? 0);
+  const totalHeight = (node?.height ? node?.height : bbox.height) + (node.padding ?? 0);
 
   const h = totalHeight;
   const w = totalWidth;

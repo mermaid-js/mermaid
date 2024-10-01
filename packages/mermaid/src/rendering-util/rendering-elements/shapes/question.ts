@@ -22,8 +22,8 @@ export const question = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   const padding = node.padding ?? 0;
   if (node.width || node.height) {
     node.width = (node?.width ?? 0) - padding * 8;
-    if (node.width < 20) {
-      node.width = 20;
+    if (node.width < 10) {
+      node.width = 10;
     }
 
     node.height = (node?.height ?? 0) - padding * 8;
@@ -33,7 +33,7 @@ export const question = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = (Math.max(bbox.width, node?.width ?? 0) + padding * 8) / 2;
+  const w = ((node?.width ? node?.width : bbox.width) + padding * 8) / 2;
   const h = w;
   const s = w + h;
 

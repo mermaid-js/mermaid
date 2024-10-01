@@ -15,20 +15,15 @@ export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVG
   // if so set it to min value
   if (node.width || node.height) {
     const padding = node.padding ?? 0;
-    node.width = (node?.width ?? 0) - padding * 2;
-    if (node.width < 50) {
-      node.width = 50;
-    }
-
-    node.height = (node?.height ?? 0) - (node.padding ?? 0) * 2;
-    if (node.height < 50) {
-      node.height = 50;
+    if (node.width || node.height) {
+      node.width = (node.width ?? 6) - padding * 2;
+      node.height = node.width;
     }
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const outerRadius = Math.max(bbox.width / 2, (node?.width ?? 0) / 2) + (node.padding ?? 0);
+  const outerRadius = (node?.width ? node?.width / 2 : bbox.width / 2) + (node.padding ?? 0);
   const innerRadius = outerRadius - gap;
 
   let circleGroup;

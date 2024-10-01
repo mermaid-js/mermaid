@@ -16,17 +16,17 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
 
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account
-  // also check if the width or height is less than minimum default values (50),
+  // also check if the width or height is less than minimum default values (10),
   // if so set it to min value
   if (node.width || node.height) {
-    node.width = Math.max((node?.width ?? 0) - paddingX * 2 - FRAME_WIDTH, 50);
-    node.height = Math.max((node?.height ?? 0) - paddingY * 2, 50);
+    node.width = Math.max((node?.width ?? 0) - paddingX * 2 - FRAME_WIDTH, 10);
+    node.height = Math.max((node?.height ?? 0) - paddingY * 2, 10);
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width, node?.width ?? 0) + paddingX * 2 + FRAME_WIDTH;
-  const totalHeight = Math.max(bbox.height, node?.height ?? 0) + paddingY * 2;
+  const totalWidth = (node?.width ? node?.width : bbox.width) + paddingX * 2 + FRAME_WIDTH;
+  const totalHeight = (node?.height ? node?.height : bbox.height) + paddingY * 2;
   const w = totalWidth - FRAME_WIDTH;
   const h = totalHeight;
   const x = -(totalWidth - FRAME_WIDTH) / 2;

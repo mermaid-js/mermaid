@@ -20,11 +20,11 @@ export const stateEnd = (
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   if (node.width || node.height) {
-    if ((node.width ?? 0) < 50) {
+    if ((node.width ?? 0) < 14) {
       node.width = 14;
     }
 
-    if ((node.height ?? 0) < 50) {
+    if ((node.height ?? 0) < 14) {
       node.height = 14;
     }
   }
@@ -40,7 +40,7 @@ export const stateEnd = (
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
-    .attr('id', node.domId || node.id);
+    .attr('id', node.domId ?? node.id);
 
   // @ts-ignore TODO: Fix rough typings
   const rc = rough.svg(shapeSvg);

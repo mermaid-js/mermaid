@@ -15,24 +15,24 @@ export const filledCircle = (
 
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account
-  // also check if the width or height is less than minimum default values (50),
+  // also check if the width or height is less than minimum default values (10),
   // if so set it to min value
   if (node.width || node.height) {
-    if ((node.width ?? 0) < 50) {
-      node.width = 50;
+    if ((node.width ?? 0) < 10) {
+      node.width = 10;
     }
 
-    if ((node.height ?? 0) < 50) {
-      node.height = 50;
+    if ((node.height ?? 0) < 10) {
+      node.height = 10;
     }
   }
 
   if (!node.width) {
-    node.width = 50;
+    node.width = 10;
   }
 
   if (!node.height) {
-    node.width = 50;
+    node.width = 10;
   }
 
   const shapeSvg = parent

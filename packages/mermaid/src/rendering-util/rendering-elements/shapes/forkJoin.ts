@@ -18,12 +18,12 @@ export const forkJoin = (
     .attr('id', node.domId ?? node.id);
 
   const { cssStyles } = node;
-  let width = Math.max(70, node?.width ?? 0);
-  let height = Math.max(10, node?.height ?? 0);
+  let width = node?.width ? node?.width : 70;
+  let height = node?.height ? node?.height : 10;
 
   if (dir === 'LR') {
-    width = Math.max(10, node?.width ?? 0);
-    height = Math.max(70, node?.height ?? 0);
+    width = node?.width ? node?.width : 10;
+    height = node?.height ? node?.height : 70;
   }
 
   const x = (-1 * width) / 2;
