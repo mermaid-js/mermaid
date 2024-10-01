@@ -7,6 +7,7 @@
 /* lexical grammar */
 %lex
 %x string
+%x linearGradientText
 %x md_string
 %x acc_title
 %x acc_descr
@@ -132,6 +133,16 @@ that id.
 
 
 <*>\s*\~\~[\~]+\s*              return 'LINK';
+
+
+/*
+Capture linear-gradient(...).
+This includes `linear-gradient(-...)` which otherwise conflicts with `(-` in ellipseText.
+*/
+<*>"linear-gradient"[\s]*\(\s*               { this.pushState("linearGradientText"); return 'LINEAR_GRADIENT_START'; }
+<linearGradientText>([^()]|(\([^()]*\)))+    { return 'LINEAR_GRADIENT_CONTENT'; }  // Handles text, commas, and nested parentheses
+<linearGradientText>\)                       { this.popState(); return 'LINEAR_GRADIENT_END'; }
+
 
 <ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
 <ellipseText>[^\(\)\[\]\{\}]|-\!\)+       return "TEXT"
@@ -535,7 +546,12 @@ style: styleComponent
     {$$ = $style + $styleComponent;}
     ;
 
-styleComponent: NUM | NODE_STRING| COLON | UNIT | SPACE | BRKT | STYLE | PCT ;
+styleComponent: NUM | NODE_STRING | COLON | UNIT | SPACE | BRKT | STYLE | PS | TEXT | PE | LINGRAD;
+
+LINGRAD
+    : LINEAR_GRADIENT_START LINEAR_GRADIENT_CONTENT LINEAR_GRADIENT_END
+        { $$ = 'linear-gradient(' + $2 + ')'; }
+    ;
 
 /* Token lists */
 idStringToken  :  NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT | UNICODE_TEXT;
