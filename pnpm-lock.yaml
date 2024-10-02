@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  roughjs:
+    hash: vxb6t6fqvzyhwhtjiliqr25jyq
+    path: patches/roughjs.patch
+
 importers:
 
   .:
@@ -253,7 +258,7 @@ importers:
         version: 13.0.3
       roughjs:
         specifier: ^4.6.6
-        version: 4.6.6
+        version: 4.6.6(patch_hash=vxb6t6fqvzyhwhtjiliqr25jyq)
       stylis:
         specifier: ^4.3.1
         version: 4.3.4
@@ -17959,7 +17964,7 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.21.1
       fsevents: 2.3.3
 
-  roughjs@4.6.6:
+  roughjs@4.6.6(patch_hash=vxb6t6fqvzyhwhtjiliqr25jyq):
     dependencies:
       hachure-fill: 0.5.2
       path-data-parser: 0.1.0
