@@ -19,13 +19,13 @@ export const waveRectangle = async (parent: SVGAElement, node: Node) => {
 
   if (node.width || node.height) {
     node.width = node?.width ?? 0;
-    if (node.width < 100) {
-      node.width = 100;
+    if (node.width < 20) {
+      node.width = 20;
     }
 
     node.height = node?.height ?? 0;
-    if (node.height < 50) {
-      node.height = 50;
+    if (node.height < 10) {
+      node.height = 10;
     }
 
     // Adjust for wave amplitude
@@ -36,8 +36,8 @@ export const waveRectangle = async (parent: SVGAElement, node: Node) => {
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2;
-  const h = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY;
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY;
 
   const waveAmplitude = Math.min(h * 0.2, h / 4);
   const finalH = h + waveAmplitude * 2;
