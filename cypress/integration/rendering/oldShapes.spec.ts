@@ -8,15 +8,16 @@ const directions = [
   //'RL'
 ] as const;
 
-const shapesSet1 = ['text', 'card', 'shadedProcess', 'diamond', 'hexagon'] as const;
+const shapesSet1 = ['text', 'card', 'lin-rect', 'diamond', 'hexagon'] as const;
 
-const shapesSet2 = ['roundedRect', 'squareRect', 'stateStart', 'stateEnd', 'labelRect'] as const;
+// removing labelRect, need have alias for it
+const shapesSet2 = ['rounded', 'rect', 'start', 'stop'] as const;
 
-const shapesSet3 = ['forkJoin', 'choice', 'note', 'stadium', 'odd'] as const;
+const shapesSet3 = ['fork', 'choice', 'note', 'stadium', 'odd'] as const;
 
 const shapesSet4 = ['subroutine', 'cylinder', 'circle', 'doublecircle', 'odd'] as const;
 
-const shapesSet5 = ['anchor', 'lean_right', 'lean_left', 'trapezoid', 'inv_trapezoid'] as const;
+const shapesSet5 = ['anchor', 'lean-r', 'lean-l', 'trap-t', 'trap-b'] as const;
 
 // Aggregate all shape sets into a single array
 const shapesSets = [shapesSet1, shapesSet2, shapesSet3, shapesSet4, shapesSet5] as const;
