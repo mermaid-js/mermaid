@@ -133,11 +133,7 @@ export const curlyBraces = async (parent: SVGAElement, node: Node) => {
 
   curlyBracesShape.attr('transform', `translate(${radius - radius / 4}, 0)`);
 
-  label.attr(
-    'transform',
-    `translate(${-w / 2 + labelPaddingX / 2 - (bbox.x - (bbox.left ?? 0))},${-(labelPaddingY / 2) - (bbox.y - (bbox.top ?? 0))})`
-  );
-
+  label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
   updateNodeBounds(node, curlyBracesShape);
 
   node.intersect = function (point) {
