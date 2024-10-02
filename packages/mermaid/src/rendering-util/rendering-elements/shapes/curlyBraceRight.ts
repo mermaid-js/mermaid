@@ -42,22 +42,25 @@ export const curlyBraceRight = async (parent: SVGAElement, node: Node) => {
   const labelPaddingY = node.look === 'neo' ? (node.padding ?? 0) * 1 : (node.padding ?? 0);
 
   if (node.width || node.height) {
-    node.width = (node?.width ?? 0) - labelPaddingX * 2;
-    if (node.width < 50) {
-      node.width = 50;
+    let radius = 5;
+    const cal_height = (((node?.height ?? 0) - labelPaddingY * 2) * 10) / 11;
+    if (cal_height / 10 > 5) {
+      radius = cal_height / 10;
     }
 
-    // Adjustments for circular arc
-    const radiusAdjustment = Math.max(5, (node.height ?? 0) * 0.16667);
+    node.width = (node?.width ?? 0) - labelPaddingX * 2 - radius * 2;
+    if (node.width < 10) {
+      node.width = 10;
+    }
 
-    node.height = (node?.height ?? 0) - labelPaddingY * 2 - radiusAdjustment;
-    if (node.height < 50) {
-      node.height = 50;
+    node.height = (node?.height ?? 0) - labelPaddingY * 2 - radius * 2;
+    if (node.height < 10) {
+      node.height = 10;
     }
   }
 
-  const w = Math.max(bbox.width, node.width ?? 0) + (labelPaddingX ?? 0) * 2;
-  const h = Math.max(bbox.height, node.height ?? 0) + (labelPaddingY ?? 0) * 2;
+  const w = (node.width ? node.width : bbox.width) + (labelPaddingX ?? 0) * 2;
+  const h = (node.height ? node.height : bbox.height) + (labelPaddingY ?? 0) * 2;
   const radius = Math.max(5, h * 0.1);
 
   const { cssStyles } = node;
