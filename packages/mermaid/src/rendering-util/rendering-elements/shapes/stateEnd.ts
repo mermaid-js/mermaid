@@ -1,14 +1,14 @@
-import { updateNodeBounds } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node, RenderOptions } from '../../types.js';
-import type { SVG } from '../../../diagram-api/types.js';
 import rough from 'roughjs';
+import type { SVG } from '../../../diagram-api/types.js';
+import type { Node, ShapeRenderOptions } from '../../types.js';
+import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { updateNodeBounds } from './util.js';
 
 export const stateEnd = (
   parent: SVG,
   node: Node,
-  { config: { themeVariables } }: RenderOptions
+  { config: { themeVariables } }: ShapeRenderOptions
 ) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;

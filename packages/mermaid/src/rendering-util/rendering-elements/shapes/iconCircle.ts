@@ -1,16 +1,16 @@
-import { log } from '../../../logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node, RenderOptions } from '../../types.d.ts';
-import type { SVG } from '../../../diagram-api/types.js';
-import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import intersect from '../intersect/index.js';
+import type { SVG } from '../../../diagram-api/types.js';
+import { log } from '../../../logger.js';
 import { getIconSVG } from '../../icons.js';
+import type { Node, ShapeRenderOptions } from '../../types.d.ts';
+import intersect from '../intersect/index.js';
+import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { labelHelper, updateNodeBounds } from './util.js';
 
 export const iconCircle = async (
   parent: SVG,
   node: Node,
-  { config: { themeVariables, flowchart } }: RenderOptions
+  { config: { themeVariables, flowchart } }: ShapeRenderOptions
 ) => {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -40,7 +40,11 @@ export const iconCircle = async (
   const iconElem = shapeSvg.append('g');
   if (node.icon) {
     iconElem.html(
-      `<g>${await getIconSVG(node.icon, { height: iconSize, width: iconSize, fallbackPrefix: '' })}</g>`
+      `<g>${await getIconSVG(node.icon, {
+        height: iconSize,
+        width: iconSize,
+        fallbackPrefix: '',
+      })}</g>`
     );
   }
   const iconBBox = iconElem.node().getBBox();
@@ -65,17 +69,25 @@ export const iconCircle = async (
   const outerShape = shapeSvg.insert(() => outerNode);
   iconElem.attr(
     'transform',
-    `translate(${-iconWidth / 2 - iconX},${topLabel ? bbox.height / 2 + labelPadding / 2 - iconHeight / 2 - iconY : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY})`
+    `translate(${-iconWidth / 2 - iconX},${
+      topLabel
+        ? bbox.height / 2 + labelPadding / 2 - iconHeight / 2 - iconY
+        : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY
+    })`
   );
   iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${topLabel ? -outerHeight / 2 : outerHeight / 2 - bbox.height})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${
+      topLabel ? -outerHeight / 2 : outerHeight / 2 - bbox.height
+    })`
   );
 
   iconShape.attr(
     'transform',
-    `translate(${0},${topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2})`
+    `translate(${0},${
+      topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2
+    })`
   );
 
   updateNodeBounds(node, outerShape);

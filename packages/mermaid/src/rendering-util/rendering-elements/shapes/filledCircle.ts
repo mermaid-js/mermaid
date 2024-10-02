@@ -1,15 +1,15 @@
-import { log } from '../../../logger.js';
-import { getNodeClasses, updateNodeBounds } from './util.js';
-import type { Node, RenderOptions } from '../../types.d.ts';
-import type { SVG } from '../../../diagram-api/types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { SVG } from '../../../diagram-api/types.js';
+import { log } from '../../../logger.js';
+import type { Node, ShapeRenderOptions } from '../../types.d.ts';
 import intersect from '../intersect/index.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { getNodeClasses, updateNodeBounds } from './util.js';
 
 export const filledCircle = (
   parent: SVG,
   node: Node,
-  { config: { themeVariables } }: RenderOptions
+  { config: { themeVariables } }: ShapeRenderOptions
 ) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';

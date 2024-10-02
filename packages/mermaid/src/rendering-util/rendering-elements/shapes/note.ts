@@ -1,14 +1,13 @@
-import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node } from '../../types.js';
 import rough from 'roughjs';
+import type { Node, ShapeRenderOptions } from '../../types.js';
+import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import type { RenderOptions } from '../../types.js';
+import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
 export const note = async (
   parent: SVGAElement,
   node: Node,
-  { config: { themeVariables } }: RenderOptions
+  { config: { themeVariables } }: ShapeRenderOptions
 ) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;

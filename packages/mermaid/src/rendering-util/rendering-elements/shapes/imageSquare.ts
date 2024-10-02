@@ -1,15 +1,15 @@
-import { log } from '../../../logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node, RenderOptions } from '../../types.d.ts';
-import type { SVG } from '../../../diagram-api/types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { SVG } from '../../../diagram-api/types.js';
+import { log } from '../../../logger.js';
+import type { Node, ShapeRenderOptions } from '../../types.d.ts';
 import intersect from '../intersect/index.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { labelHelper, updateNodeBounds } from './util.js';
 
 export const imageSquare = async (
   parent: SVG,
   node: Node,
-  { config: { flowchart } }: RenderOptions
+  { config: { flowchart } }: ShapeRenderOptions
 ) => {
   const img = new Image();
   img.src = node?.img ?? '';
@@ -92,12 +92,18 @@ export const imageSquare = async (
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${topLabel ? -imageHeight / 2 - bbox.height / 2 - labelPadding / 2 : imageHeight / 2 - bbox.height / 2 + labelPadding / 2})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${
+      topLabel
+        ? -imageHeight / 2 - bbox.height / 2 - labelPadding / 2
+        : imageHeight / 2 - bbox.height / 2 + labelPadding / 2
+    })`
   );
 
   iconShape.attr(
     'transform',
-    `translate(${0},${topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2})`
+    `translate(${0},${
+      topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2
+    })`
   );
 
   updateNodeBounds(node, outerShape);
