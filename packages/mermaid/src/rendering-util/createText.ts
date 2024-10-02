@@ -143,8 +143,8 @@ function createFormattedText(
     const bbox = textElement.node().getBBox();
     const padding = 2;
     bkg
-      .attr('x', -padding)
-      .attr('y', -padding)
+      .attr('x', bbox.x - padding)
+      .attr('y', bbox.y - padding)
       .attr('width', bbox.width + 2 * padding)
       .attr('height', bbox.height + 2 * padding);
 

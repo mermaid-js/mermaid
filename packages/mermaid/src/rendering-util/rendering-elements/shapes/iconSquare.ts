@@ -65,7 +65,7 @@ export const iconSquare = async (
 
   if (node.icon) {
     iconElem.html(
-      `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
+      `<g>${await getIconSVG(node.icon, { height: iconSize, width: iconSize, fallbackPrefix: '' })}</g>`
     );
     const iconBBox = iconElem.node().getBBox();
     const iconWidth = iconBBox.width;
@@ -82,7 +82,7 @@ export const iconSquare = async (
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2},${topLabel ? -height / 2 - bbox.height / 2 - labelPadding / 2 : height / 2 - bbox.height / 2 + labelPadding / 2})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${topLabel ? -outerHeight / 2 : outerHeight / 2 - bbox.height})`
   );
 
   iconShape.attr(
