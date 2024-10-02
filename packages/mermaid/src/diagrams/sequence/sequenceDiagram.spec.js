@@ -2063,8 +2063,8 @@ participant Alice`;
     });
   });
 
-  it.each(['__proto__', 'constructor'])('should allow %s as an actor name', function (prop) {
-    expect(
+  it.each(['__proto__', 'constructor'])('should allow %s as an actor name', async function (prop) {
+    await expect(
       mermaidAPI.parse(`
 sequenceDiagram
 ${prop}-->>A: Hello, how are you?`)
