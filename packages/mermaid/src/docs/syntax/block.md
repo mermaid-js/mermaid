@@ -85,15 +85,6 @@ block-beta
 
 This syntax instructs Mermaid to arrange the blocks 'a', 'b', 'c', and 'd' across three columns, wrapping to the next row as needed. This feature is particularly useful for representing layered or multi-tiered systems, such as network layers or hierarchical structures.
 
-**Merging Blocks Horizontally:**
-In scenarios where you need to stack blocks horizontally, you can use column width to accomplish the task. Blocks can be arranged vertically by putting them in a single column. Here is how you can create a block diagram in which 4 blocks are stacked on top of each other:
-
-```mermaid-example
-block-beta
-  columns 1
-  a["A label"] b c d
-```
-
 These basic building blocks of Mermaid's block diagrams provide a foundation for more complex diagramming. The simplicity of the syntax allows for quick creation and iteration of diagrams, making it an efficient tool for visualizing ideas and concepts. In the next section, we'll explore advanced block configuration options, including setting block widths and creating composite blocks.
 
 ## 3. Advanced Block Configuration
@@ -161,6 +152,18 @@ block-beta
 ```
 
 This example demonstrates how Mermaid dynamically adjusts the width of the columns to accommodate the widest block, in this case, 'a' and the composite block 'e'. This dynamic adjustment is essential for creating visually balanced and easy-to-understand diagrams.
+
+**Merging Blocks Horizontally:**
+In scenarios where you need to stack blocks horizontally, you can use column width to accomplish the task. Blocks can be arranged vertically by putting them in a single column. Here is how you can create a block diagram in which 4 blocks are stacked on top of each other:
+
+```mermaid-example
+block-beta
+  block
+    columns 1
+    a["A label"] b c d
+  end
+```
+In this example, the width of the merged block dynamically adjusts to the width of the largest child block.
 
 With these advanced configuration options, Mermaid's block diagrams can be tailored to represent a wide array of complex systems and structures. The flexibility offered by these features enables users to create diagrams that are both informative and visually appealing. In the following sections, we will explore further capabilities, including different block shapes and linking options.
 
