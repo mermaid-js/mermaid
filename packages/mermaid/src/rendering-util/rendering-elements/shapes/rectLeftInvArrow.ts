@@ -59,11 +59,11 @@ export const rect_left_inv_arrow = async (
     polygon.selectAll('path').attr('style', nodeStyles);
   }
 
-  polygon.attr('transform', `translate(${-notch / 2},0)`);
+  // polygon.attr('transform', `translate(${-notch / 2},0)`);
 
   label.attr(
     'transform',
-    `translate(${bbox.x - bbox.width / 2}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${bbox.x - bbox.width / 2 + notch / 2}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
   );
   updateNodeBounds(node, polygon);
 
