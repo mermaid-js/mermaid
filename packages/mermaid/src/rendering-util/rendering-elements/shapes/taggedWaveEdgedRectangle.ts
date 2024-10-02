@@ -21,18 +21,30 @@ export const taggedWaveEdgedRectangle = async (parent: SVGAElement, node: Node) 
   let adjustFinalHeight = true;
   if (node.width || node.height) {
     adjustFinalHeight = false;
-    node.width = (node?.width ?? 10) - labelPaddingX * 2;
-    node.height = (node?.height ?? 10) - labelPaddingY * 2;
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    if (node.width < 10) {
+      node.width = 10;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 2;
+    if (node.height < 10) {
+      node.height = 10;
+    }
   }
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0) * 2;
-  const h = (node?.height ? node?.height : bbox.width) + (labelPaddingY ?? 0) * 3;
-  const waveAmplitude = h / 4;
+  const h = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0) * 2;
+  const waveAmplitude = h / 8;
   const tagWidth = 0.2 * w;
   const tagHeight = 0.2 * h;
   const finalH = h + (adjustFinalHeight ? waveAmplitude : -waveAmplitude);
   const { cssStyles } = node;
+
+  // To maintain minimum width
+  const minWidth = 14;
+  const widthDif = minWidth - w;
+  const extraW = widthDif > 0 ? widthDif / 2 : 0;
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
@@ -44,29 +56,26 @@ export const taggedWaveEdgedRectangle = async (parent: SVGAElement, node: Node) 
   }
 
   const points = [
-    { x: -w / 2 - (w / 2) * 0.1, y: finalH / 2 },
+    { x: -w / 2 - extraW, y: finalH / 2 },
     ...generateFullSineWavePoints(
-      -w / 2 - (w / 2) * 0.1,
+      -w / 2 - extraW,
       finalH / 2,
-      w / 2 + (w / 2) * 0.1,
+      w / 2 + extraW,
       finalH / 2,
       waveAmplitude,
       0.8
     ),
-
-    { x: w / 2 + (w / 2) * 0.1, y: -finalH / 2 },
-    { x: -w / 2 - (w / 2) * 0.1, y: -finalH / 2 },
+    { x: w / 2 + extraW, y: -finalH / 2 },
+    { x: -w / 2 - extraW, y: -finalH / 2 },
   ];
 
-  const x = -w / 2 + (w / 2) * 0.1;
-  const y = !adjustFinalHeight
-    ? -finalH / 2 - 1.25 * waveAmplitude - 1 * tagHeight
-    : -finalH / 2 - 0.4 * tagHeight;
+  const x = -w / 2;
+  const y = !adjustFinalHeight ? -finalH / 2 - 1.6 * tagHeight : -finalH / 2 - 0.4 * tagHeight;
 
   const tagPoints = [
-    { x: x + w - tagWidth, y: (y + h) * 1.4 },
-    { x: x + w, y: y + h - tagHeight },
-    { x: x + w, y: (y + h) * 0.9 },
+    { x: x + w - extraW - tagWidth, y: (y + h) * 1.4 },
+    { x: x + w - extraW, y: y + h - tagHeight },
+    { x: x + w - extraW, y: (y + h) * 0.9 },
     ...generateFullSineWavePoints(
       x + w,
       (y + h) * 1.3,
