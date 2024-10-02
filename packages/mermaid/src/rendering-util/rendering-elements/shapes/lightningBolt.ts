@@ -29,6 +29,7 @@ export const lightningBolt = (parent: SVG, node: Node) => {
     { x: 2 * gap, y: height - gap / 2 },
   ];
 
+  // @ts-expect-error shapeSvg d3 class is incorrect?
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

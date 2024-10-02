@@ -21,6 +21,7 @@ export const filledCircle = (
   const radius = 7;
   const { cssStyles } = node;
 
+  // @ts-expect-error shapeSvg d3 class is incorrect?
   const rc = rough.svg(shapeSvg);
   const { nodeBorder } = themeVariables;
   const options = userNodeOverrides(node, { fillStyle: 'solid' });
