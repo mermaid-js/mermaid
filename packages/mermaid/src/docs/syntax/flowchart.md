@@ -194,7 +194,8 @@ flowchart TD
     id1(((This is the text in the circle)))
 ```
 
-## Expanded Node Shapes in Mermaid Flowcharts
+## Expanded Node Shapes in Mermaid Flowcharts (v<MERMAID_RELEASE_VERSION>+)
+
 
 Mermaid introduces 30 new shapes to enhance the flexibility and precision of flowchart creation. These new shapes provide more options to represent processes, decisions, events, data storage visually, and other elements within your flowcharts, improving clarity and semantic meaning.
 
