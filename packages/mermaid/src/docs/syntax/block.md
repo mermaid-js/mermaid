@@ -163,6 +163,7 @@ block-beta
     a["A label"] b c d
   end
 ```
+
 In this example, the width of the merged block dynamically adjusts to the width of the largest child block.
 
 With these advanced configuration options, Mermaid's block diagrams can be tailored to represent a wide array of complex systems and structures. The flexibility offered by these features enables users to create diagrams that are both informative and visually appealing. In the following sections, we will explore further capabilities, including different block shapes and linking options.
