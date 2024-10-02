@@ -82,5 +82,3 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
 
   return shapeSvg;
 };
-
-export default subroutine;

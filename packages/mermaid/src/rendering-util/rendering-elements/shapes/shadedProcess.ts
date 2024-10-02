@@ -63,5 +63,3 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
 
   return shapeSvg;
 };
-
-export default shadedProcess;
