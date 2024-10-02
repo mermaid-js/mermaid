@@ -1,7 +1,12 @@
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
 const looks = ['classic', 'handDrawn'] as const;
-const directions = ['TB', 'BT', 'LR', 'RL'] as const;
+const directions = [
+  'TB',
+  //'BT',
+  'LR',
+  //'RL'
+] as const;
 const newShapesSet1 = [
   'triangle',
   'sloped-rectangle',

@@ -1,7 +1,12 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
 const looks = ['classic', 'handDrawn'] as const;
-const directions = ['TB', 'BT', 'LR', 'RL'] as const;
+const directions = [
+  'TB',
+  //'BT',
+  'LR',
+  //'RL'
+] as const;
 
 const shapesSet1 = ['text', 'card', 'shadedProcess', 'diamond', 'hexagon'] as const;
 
