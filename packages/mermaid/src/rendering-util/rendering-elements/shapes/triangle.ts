@@ -31,7 +31,7 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   const useHtmlLabels = evaluate(getConfig().flowchart?.htmlLabels);
   const w = (node?.width ? node?.width : bbox.width) + labelPaddingX;
   const h = node?.height ? node?.height : w + bbox.height;
-  const tw = w + bbox.height;
+  const tw = h;
   const points = [
     { x: 0, y: 0 },
     { x: tw, y: 0 },

@@ -31,7 +31,7 @@ export const flippedTriangle = async (parent: SVGAElement, node: Node): Promise<
   const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0);
   const h = node?.height ? node?.height : w + bbox.height;
 
-  const tw = w + bbox.height;
+  const tw = h;
 
   const points = [
     { x: 0, y: -h },
