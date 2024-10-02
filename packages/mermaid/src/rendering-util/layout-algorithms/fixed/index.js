@@ -94,6 +94,21 @@ const calcIntersections = (startNodeId, endNodeId, startNodeSize, endNodeSize) =
     const endIntersection = { x: endNodeSize.x, y: endNodeSize.x, pos: 'c' };
     return [startIntersection, endIntersection];
   }
+
+  // Check for self loop
+  if (startNodeId === endNodeId) {
+    const intersection = calcIntersectionPoint(startNode, {
+      x: startNode.x + startNode.width / 2 + 20,
+      y: startNode.y + startNode.height / 2,
+    });
+
+    const forthY = startNode.height / 4;
+    return [
+      { x: intersection.x, y: startNode.y - forthY, pos: 'r' },
+      { x: intersection.x, y: startNode.y + forthY, pos: 'r' },
+    ];
+  }
+
   const endNode = nodeDB.get(endNodeId);
   if (endNodeSize && endNode) {
     endNode.x = endNodeSize.x;
