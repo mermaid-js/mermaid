@@ -59,7 +59,6 @@ export const multiWaveEdgedRectangle = async (parent: SVGAElement, node: Node) =
     { x, y },
   ];
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

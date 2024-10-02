@@ -67,7 +67,6 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
 
   if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, 0, w, h, rx, ry);

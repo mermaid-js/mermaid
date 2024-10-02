@@ -52,7 +52,6 @@ export const imageSquare = async (
 
   const labelPadding = node.label ? 8 : 0;
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

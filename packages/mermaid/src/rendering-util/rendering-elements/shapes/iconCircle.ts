@@ -28,7 +28,6 @@ export const iconCircle = async (
 
   const { nodeBorder, mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') || mainBkg });
 

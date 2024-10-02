@@ -61,7 +61,6 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);

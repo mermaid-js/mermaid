@@ -21,7 +21,6 @@ export const filledCircle = (
   const radius = 7;
   const { cssStyles } = node;
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const { nodeBorder } = themeVariables;
   const options = userNodeOverrides(node, { fillStyle: 'solid' });

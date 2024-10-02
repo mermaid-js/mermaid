@@ -25,7 +25,6 @@ export const waveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   const widthDif = minWidth - w;
   const extraW = widthDif > 0 ? widthDif / 2 : 0;
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

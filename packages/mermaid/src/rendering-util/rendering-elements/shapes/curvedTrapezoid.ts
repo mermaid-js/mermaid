@@ -21,7 +21,6 @@ export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
   const radius = h / 2;
 
   const { cssStyles } = node;
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

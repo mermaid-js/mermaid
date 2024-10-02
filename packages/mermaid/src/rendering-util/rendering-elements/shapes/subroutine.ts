@@ -55,7 +55,6 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   ];
 
   if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
 

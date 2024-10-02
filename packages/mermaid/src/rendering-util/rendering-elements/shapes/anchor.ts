@@ -23,7 +23,6 @@ export const anchor = (parent: SVGAElement, node: Node): Promise<SVGAElement> =>
 
   const { cssStyles } = node;
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, { fill: 'black', stroke: 'none', fillStyle: 'solid' });
 

@@ -15,7 +15,6 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
   const y = -h / 2;
   const { cssStyles } = node;
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

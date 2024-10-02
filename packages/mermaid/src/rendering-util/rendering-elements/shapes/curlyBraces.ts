@@ -81,7 +81,6 @@ export const curlyBraces = async (parent: SVGAElement, node: Node) => {
     ...generateCirclePoints(-w / 2 + radius + radius / 2, h / 2, radius, 30, -180, -270),
   ];
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, { fill: 'none' });
 

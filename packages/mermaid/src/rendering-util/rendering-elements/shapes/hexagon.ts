@@ -46,7 +46,6 @@ export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElem
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createHexagonPathD(0, 0, w, h, m);

@@ -91,7 +91,6 @@ export const bowTieRect = async (parent: SVGAElement, node: Node) => {
     ...generateArcPoints(w / 2, h / 2, w / 2, -h / 2, rx, ry, true),
   ];
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

@@ -29,7 +29,6 @@ export const lightningBolt = (parent: SVG, node: Node) => {
     { x: 2 * gap, y: height - gap / 2 },
   ];
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

@@ -15,7 +15,6 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
   const y = -bbox.height / 2 - halfPadding;
 
   const { cssStyles } = node;
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

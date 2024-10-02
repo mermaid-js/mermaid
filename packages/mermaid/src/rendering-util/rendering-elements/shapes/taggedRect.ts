@@ -16,7 +16,6 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   const tagHeight = 0.2 * h;
   const { cssStyles } = node;
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

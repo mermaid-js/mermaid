@@ -14,7 +14,6 @@ export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
   const h = Math.max(minHeight, bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
 
   const { cssStyles } = node;
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

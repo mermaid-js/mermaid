@@ -39,7 +39,6 @@ export const inv_trapezoid = async (parent: SVGAElement, node: Node): Promise<SV
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createPathFromPoints(points);

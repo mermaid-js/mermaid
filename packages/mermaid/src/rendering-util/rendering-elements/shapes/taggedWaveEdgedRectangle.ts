@@ -22,7 +22,6 @@ export const taggedWaveEdgedRectangle = async (parent: SVGAElement, node: Node) 
   const finalH = h + waveAmplitude;
   const { cssStyles } = node;
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

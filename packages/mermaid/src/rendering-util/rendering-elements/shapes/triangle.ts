@@ -26,7 +26,6 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   const { cssStyles } = node;
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
   if (node.look !== 'handDrawn') {

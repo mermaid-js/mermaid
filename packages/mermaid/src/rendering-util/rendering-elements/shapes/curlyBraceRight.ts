@@ -66,7 +66,6 @@ export const curlyBraceRight = async (parent: SVGAElement, node: Node) => {
     { x: -w / 2, y: h / 2 + radius },
   ];
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, { fill: 'none' });
 
