@@ -17,11 +17,11 @@ export const stateStart = (
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   if (node.width || node.height) {
-    if ((node.width ?? 0) < 50) {
+    if ((node.width ?? 0) < 14) {
       node.width = 14;
     }
 
-    if ((node.height ?? 0) < 50) {
+    if ((node.height ?? 0) < 14) {
       node.height = 14;
     }
   }
@@ -53,14 +53,14 @@ export const stateStart = (
   // @ts-ignore TODO: Fix typings
   circle
     .attr('class', 'state-start')
-    .attr('r', (node.width ?? 0) / 2)
-    .attr('width', node.width ?? 0)
-    .attr('height', node.height ?? 0);
+    .attr('r', (node.width ?? 7) / 2)
+    .attr('width', node.width ?? 14)
+    .attr('height', node.height ?? 14);
 
   updateNodeBounds(node, circle);
 
   node.intersect = function (point) {
-    return intersect.circle(node, 7, point);
+    return intersect.circle(node, (node.width ?? 7) / 2, point);
   };
 
   return shapeSvg;
