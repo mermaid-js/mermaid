@@ -20,19 +20,19 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   if (node.width || node.height) {
-    node.height = Math.max((node?.height ?? 0) - labelPaddingY * 2, 50);
+    node.height = Math.max((node?.height ?? 0) - labelPaddingY * 2, 10);
     node.width = Math.max(
       (node?.width ?? 0) - labelPaddingX * 2 - TAG_RATIO * (node.height + labelPaddingY * 2),
-      50
+      10
     );
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalHeight = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY * 2;
+  const totalHeight = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
   const tagWidth = TAG_RATIO * totalHeight;
   const tagHeight = TAG_RATIO * totalHeight;
-  const totalWidth = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2 + tagWidth;
+  const totalWidth = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2 + tagWidth;
 
   const w = totalWidth - tagWidth;
   const h = totalHeight;
