@@ -22,8 +22,8 @@ export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = (node?.width ? node?.width : Math.max(bbox.width)) + paddingX * 2;
-  const totalHeight = (node?.height ? node?.height : Math.max(bbox.height)) + paddingY * 2;
+  const totalWidth = (node?.width ? node?.width : bbox.width) + paddingX * 2;
+  const totalHeight = (node?.height ? node?.height : bbox.height) + paddingY * 2;
 
   const rectOffset = totalHeight * 0.2;
 
@@ -68,9 +68,10 @@ export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
     polygon.selectAll('path').attr('style', nodeStyles);
   }
 
+  // place the label in the center of the lower half of the divided rectangle
   label.attr(
     'transform',
-    `translate(${x + paddingX - (bbox.x - (bbox.left ?? 0))}, ${y + rectOffset + paddingY - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-bbox.width / 2}, ${-bbox.height / 2 - rectOffset / 2 + rectOffset})`
   );
 
   updateNodeBounds(node, polygon);
