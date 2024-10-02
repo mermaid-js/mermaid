@@ -83,10 +83,11 @@ describe('Test Alias for shapes', function () {
     expect(shapes['notch-rect']).toBe(shapes['notched-rectangle']);
   });
 
-  // lined-rect | lined-proc | shaded-proc
   it('should support alias for shadedProcess shape ', function () {
-    expect(shapes['lined-proc']).toBe(shapes['lined-rect']);
-    expect(shapes['shaded-proc']).toBe(shapes['lined-rect']);
+    const aliases = ['lined-process', 'lined-rectangle', 'lin-proc', 'lin-rect'];
+    for (const alias of aliases) {
+      expect(shapes[alias]).toBe(shapes['shaded-process']);
+    }
   });
 
   // sm-circ | small-circle | start
