@@ -29,6 +29,7 @@ export const mermaidUrl = (
   options: CypressMermaidConfig,
   api: boolean
 ): string => {
+  options.handDrawnSeed = 1;
   const codeObject: CodeObject = {
     code: graphStr,
     mermaid: options,
@@ -65,7 +66,6 @@ export const imgSnapshotTest = (
         : 'courier',
       messageFontFamily: 'courier',
     },
-    handDrawnSeed: 1,
   };
 
   const url: string = mermaidUrl(graphStr, options, api);
