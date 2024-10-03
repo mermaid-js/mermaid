@@ -59,7 +59,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
-  .rough-node .label text , .node .label text {
+  .rough-node .label text , .node .label text, .image-shape .label, .icon-shape .label {
     text-anchor: middle;
   }
   // .flowchart-label .text-outer-tspan {
@@ -75,11 +75,18 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke-width: 1px;
   }
 
-  .node .label {
+  .rough-node .label,.node .label, .image-shape .label, .icon-shape .label {
     text-align: center;
   }
   .node.clickable {
     cursor: pointer;
+  }
+
+
+  .root .anchor path {
+    fill: ${options.lineColor} !important;
+    stroke-width: 0;
+    stroke: ${options.lineColor};
   }
 
   .arrowheadPath {
@@ -150,6 +157,25 @@ const getStyles = (options: FlowChartStyleOptions) =>
     text-anchor: middle;
     font-size: 18px;
     fill: ${options.textColor};
+  }
+
+  rect.text {
+    fill: none;
+    stroke-width: 0;
+  }
+
+  .icon-shape, .image-shape {
+    background-color: ${options.edgeLabelBackground};
+    p {
+      background-color: ${options.edgeLabelBackground};
+      padding: 2px;
+    }
+    rect {
+      opacity: 0.5;
+      background-color: ${options.edgeLabelBackground};
+      fill: ${options.edgeLabelBackground};
+    }
+    text-align: center;
   }
 `;
 

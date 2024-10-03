@@ -125,7 +125,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           // insertCluster(clusters, graph.node(v));
         } else {
           log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
-          await insertNode(nodes, graph.node(v), dir);
+          await insertNode(nodes, graph.node(v), { config: siteConfig, dir });
         }
       }
     })

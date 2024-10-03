@@ -87,7 +87,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           // insertCluster(clusters, graph.node(v));
         } else {
           log.info('Node - the non recursive path', v, node.id, node);
-          await insertNode(nodes, graph.node(v), dir);
+          await insertNode(nodes, graph.node(v), { config: siteConfig, dir });
         }
       }
     })
