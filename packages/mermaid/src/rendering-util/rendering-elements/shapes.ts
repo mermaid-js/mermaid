@@ -434,7 +434,7 @@ export const shapesDefs: ShapeDefinition[] = [
 ];
 
 const generateShapeMap = () => {
-  // These are the shapes that didn't have documentation present.
+  // These are the shapes that didn't have documentation present
   const shapeMap: Record<string, ShapeHandler> = {
     // States
     state,
