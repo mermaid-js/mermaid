@@ -1,3 +1,4 @@
+import { registerIconPacks } from '../../rendering-util/icons.js';
 import type { Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
 import type { FcoseLayoutOptions } from 'cytoscape-fcose';
@@ -9,6 +10,7 @@ import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import { getConfigField } from './architectureDb.js';
+import { architectureIcons } from './architectureIcons.js';
 import type {
   ArchitectureDataStructures,
   ArchitectureJunction,
@@ -30,11 +32,14 @@ import {
   isArchitectureDirectionY,
   nodeData,
 } from './architectureTypes.js';
-import { defaultIconLibrary } from './icons/default.js';
-import { registerIconLibrary } from './icons/svgRegister.js';
 import { drawEdges, drawGroups, drawJunctions, drawServices } from './svgDraw.js';
 
-registerIconLibrary(defaultIconLibrary);
+registerIconPacks([
+  {
+    name: architectureIcons.prefix,
+    icons: architectureIcons,
+  },
+]);
 cytoscape.use(fcose);
 
 function addServices(services: ArchitectureService[], cy: cytoscape.Core) {

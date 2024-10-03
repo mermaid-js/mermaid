@@ -224,7 +224,7 @@ export const render = async (
    * Add edges to graph based on parsed graph definition
    */
   const addEdges = async function (
-    dataForLayout: { edges: any; direction: string },
+    dataForLayout: { edges: any; direction?: string },
     graph: {
       id?: string;
       layoutOptions?: {
@@ -749,12 +749,12 @@ export const render = async (
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config.elk.nodePlacementStrategy,
-      'elk.layered.mergeEdges': data4Layout.config.elk.mergeEdges,
+      'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+      'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
       'spacing.baseValue': 35,
       'elk.layered.unnecessaryBendpoints': true,
-      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk.cycleBreakingStrategy,
+      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
       // 'spacing.nodeNode': 20,
       // 'spacing.nodeNodeBetweenLayers': 25,
       // 'spacing.edgeNode': 20,
@@ -837,8 +837,8 @@ export const render = async (
           ...node.layoutOptions,
           'elk.algorithm': algorithm,
           'elk.direction': dir2ElkDirection(node.dir),
-          'nodePlacement.strategy': data4Layout.config['elk.nodePlacement.strategy'],
-          'elk.layered.mergeEdges': data4Layout.config['elk.mergeEdges'],
+          'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+          'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
           'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
         };
       }

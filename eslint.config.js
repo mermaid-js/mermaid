@@ -23,6 +23,7 @@ export default tseslint.config(
       '**/generated/',
       '**/coverage/',
       'packages/mermaid/src/config.type.ts',
+      'packages/mermaid/src/docs/.vitepress/components.d.ts',
     ],
   },
   {
