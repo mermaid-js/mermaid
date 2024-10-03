@@ -1,4 +1,4 @@
-name: E2E
+name: E2E - Generate Timings
 
 on:
   # run this workflow every night at 3am
