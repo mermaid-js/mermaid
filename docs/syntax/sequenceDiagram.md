@@ -155,6 +155,9 @@ end
 box rgb(33,66,99)
 ... actors ...
 end
+box rgba(33,66,99,0.5)
+... actors ...
+end
 ```
 
 > **Note**
