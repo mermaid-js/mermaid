@@ -65,6 +65,7 @@ export const imgSnapshotTest = (
         : 'courier',
       messageFontFamily: 'courier',
     },
+    handDrawnSeed: 1,
   };
 
   const url: string = mermaidUrl(graphStr, options, api);
