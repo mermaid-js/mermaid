@@ -18,8 +18,9 @@ function applyStyle(dom, styleFn) {
   }
 }
 
-async function addHtmlSpan(element, node, width, classes, addBackground = false) {
+async function addHtmlSpan(element, node, _width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
+  const width = _width < 0 ? 0 : _width;
   // This is not the final width but used in order to make sure the foreign
   // object in firefox gets a width at all. The final width is fetched from the div
   fo.attr('width', `${10 * width}px`);

@@ -34,7 +34,7 @@ export const labelHelper = async (parent, node, _classes) => {
   let text;
   text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
     useHtmlLabels,
-    width: node.width || getConfig().flowchart.wrappingWidth,
+    width: node.width < 0 ? 0 : node.width || getConfig().flowchart.wrappingWidth,
     cssClasses: 'markdown-node-label',
     style: node.labelStyle,
     addSvgBackground: !!node.icon || !!node.img,
@@ -88,11 +88,10 @@ export const labelHelper = async (parent, node, _classes) => {
         )
       );
     }
-
     bbox = div.getBoundingClientRect();
     dv.attr('width', bbox.width);
     if (node.height && node.height < bbox.height) {
-      bbox.height = node.height;
+      bbox.height = node.height < 0 ? 0 : node.height;
     }
     dv.attr('height', bbox.height);
   }

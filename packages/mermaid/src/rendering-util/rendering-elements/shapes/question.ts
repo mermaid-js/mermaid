@@ -21,15 +21,15 @@ export const question = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   node.labelStyle = labelStyles;
   const padding = node.padding ?? 0;
   if (node.width || node.height) {
-    node.width = (node?.width ?? 0) - padding * 8;
-    if (node.width < 10) {
+    if ((node.width ?? 10) < 10) {
       node.width = 10;
     }
+    node.width = (node?.width ?? 0) - padding * 8;
 
-    node.height = (node?.height ?? 0) - padding * 8;
-    if (node.height < 10) {
+    if ((node.height ?? 10) < 10) {
       node.height = 10;
     }
+    node.height = (node?.height ?? 0) - padding * 8;
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
