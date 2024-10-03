@@ -28,6 +28,9 @@ dictionaryDefinitions:
   - name: suggestions
     words:
       - none
+      - disp
+      - subproc
+      - tria
     suggestWords:
       - seperator:separator
       - vertice:vertex

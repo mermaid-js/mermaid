@@ -97,9 +97,11 @@ export const userNodeOverrides = (node: Node, options: any) => {
       fill: stylesMap.get('fill') || mainBkg,
       fillStyle: 'hachure', // solid fill
       fillWeight: 4,
+      hachureGap: 5.2,
       stroke: stylesMap.get('stroke') || nodeBorder,
       seed: handDrawnSeed,
-      strokeWidth: 1.3,
+      strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1.3,
+      fillLineDash: [0, 0],
     },
     options
   );

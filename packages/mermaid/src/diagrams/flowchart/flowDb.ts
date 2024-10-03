@@ -4,6 +4,7 @@ import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
+import * as yaml from 'js-yaml';
 import {
   setAccTitle,
   getAccTitle,
@@ -14,6 +15,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
+import type { NodeMetaData } from '../../types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -60,8 +62,10 @@ export const addVertex = function (
   style: string[],
   classes: string[],
   dir: string,
-  props = {}
+  props = {},
+  shapeData: any
 ) {
+  // console.log('addVertex', id, shapeData);
   if (!id || id.trim().length === 0) {
     return;
   }
@@ -114,6 +118,59 @@ export const addVertex = function (
     vertex.props = props;
   } else if (props !== undefined) {
     Object.assign(vertex.props, props);
+  }
+
+  if (shapeData !== undefined) {
+    let yamlData;
+    // detect if shapeData contains a newline character
+    // console.log('shapeData', shapeData);
+    if (!shapeData.includes('\n')) {
+      // console.log('yamlData shapeData has no new lines', shapeData);
+      yamlData = '{\n' + shapeData + '\n}';
+    } else {
+      // console.log('yamlData shapeData has new lines', shapeData);
+      yamlData = shapeData + '\n';
+    }
+    // console.log('yamlData', yamlData);
+    const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+    if (doc.shape && (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_'))) {
+      throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
+    }
+
+    // console.log('yamlData doc', doc);
+    if (doc?.shape) {
+      vertex.type = doc?.shape;
+    }
+    if (doc?.label) {
+      vertex.text = doc?.label;
+    }
+    if (doc?.icon) {
+      vertex.icon = doc?.icon;
+      if (!doc.label?.trim() && vertex.text === id) {
+        vertex.text = '';
+      }
+    }
+    if (doc?.form) {
+      vertex.form = doc?.form;
+    }
+    if (doc?.pos) {
+      vertex.pos = doc?.pos;
+    }
+    if (doc?.img) {
+      vertex.img = doc?.img;
+      if (!doc.label?.trim() && vertex.text === id) {
+        vertex.text = '';
+      }
+    }
+    if (doc?.constraint) {
+      vertex.constraint = doc.constraint;
+    }
+    if (doc.w) {
+      vertex.assetWidth = Number(doc.w);
+    }
+    if (doc.h) {
+      vertex.assetHeight = Number(doc.h);
+    }
   }
 };
 
@@ -425,7 +482,6 @@ const setupToolTips = function (element: Element) {
       }
       const rect = (this as Element)?.getBoundingClientRect();
 
-      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
         .text(el.attr('title'))
@@ -435,7 +491,6 @@ const setupToolTips = function (element: Element) {
       el.classed('hover', true);
     })
     .on('mouseout', function () {
-      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(500).style('opacity', 0);
       const el = select(this);
       el.classed('hover', false);
@@ -762,6 +817,21 @@ export const lex = {
 };
 
 const getTypeFromVertex = (vertex: FlowVertex) => {
+  if (vertex.img) {
+    return 'imageSquare';
+  }
+  if (vertex.icon) {
+    if (vertex.form === 'circle') {
+      return 'iconCircle';
+    }
+    if (vertex.form === 'square') {
+      return 'iconSquare';
+    }
+    if (vertex.form === 'rounded') {
+      return 'iconRounded';
+    }
+    return 'icon';
+  }
   if (vertex.type === 'square') {
     return 'squareRect';
   }
@@ -827,6 +897,12 @@ const addNodeFromVertex = (
       link: vertex.link,
       linkTarget: vertex.linkTarget,
       tooltip: getTooltip(vertex.id),
+      icon: vertex.icon,
+      pos: vertex.pos,
+      img: vertex.img,
+      assetWidth: vertex.assetWidth,
+      assetHeight: vertex.assetHeight,
+      constraint: vertex.constraint,
     });
   }
 };
