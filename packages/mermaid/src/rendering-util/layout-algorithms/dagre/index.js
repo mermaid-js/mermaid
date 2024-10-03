@@ -10,12 +10,7 @@ import {
   findNonClusterChild,
   sortNodesByHierarchy,
 } from './mermaid-graphlib.js';
-import {
-  insertNode,
-  positionNode,
-  clear as clearNodes,
-  setNodeElem,
-} from '../../rendering-elements/nodes.js';
+import { Nodes } from '../../rendering-elements/nodes.js';
 import { insertCluster, clear as clearClusters } from '../../rendering-elements/clusters.js';
 import {
   insertEdgeLabel,
@@ -27,8 +22,16 @@ import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
-const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
-  log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
+const recursiveRender = async (
+  _elem,
+  graph,
+  diagramType,
+  id,
+  parentCluster,
+  siteConfig,
+  nodeData
+) => {
+  log.debug('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
 
@@ -89,7 +92,8 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           diagramType,
           id,
           graph.node(v),
-          siteConfig
+          siteConfig,
+          nodeData
         );
         const newEl = o.elem;
         updateNodeBounds(node, newEl);
@@ -106,7 +110,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           // node.x,
           // node.y
         );
-        setNodeElem(newEl, node);
+        nodeData.setNodeElem(newEl, node);
       } else {
         if (graph.children(v).length > 0) {
           // This is a cluster but not to be rendered recursively
@@ -125,7 +129,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           // insertCluster(clusters, graph.node(v));
         } else {
           log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
-          await insertNode(nodes, graph.node(v), { config: siteConfig, dir });
+          await nodeData.insertNode(nodes, graph.node(v), { config: siteConfig, dir });
         }
       }
     })
@@ -194,7 +198,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
           graph.parent(v)
         );
         clusterDb.get(node.id).node = node;
-        positionNode(node);
+        nodeData.positionNode(node);
       } else {
         // A tainted cluster node
         if (graph.children(v).length > 0) {
@@ -239,7 +243,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
             node
           );
 
-          positionNode(node);
+          nodeData.positionNode(node);
         }
       }
     })
@@ -264,7 +268,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
       diff = n.diff;
     }
   });
-  log.warn('Returning from recursive render XAX', elem, diff);
+  log.debug('Returning from recursive render XAX', elem, diff);
   return { elem, diff };
 };
 
@@ -291,7 +295,6 @@ export const render = async (data4Layout, svg) => {
     });
   const element = svg.select('g');
   insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
-  clearNodes();
   clearEdges();
   clearClusters();
   clearGraphlib();
@@ -362,16 +365,18 @@ export const render = async (data4Layout, svg) => {
     }
   });
 
-  log.warn('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
+  log.debug('Graph at first:', JSON.stringify(graphlibJson.write(graph)));
   adjustClustersAndEdges(graph);
-  log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
+  log.debug('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
   const siteConfig = getConfig();
+  const nodeData = new Nodes();
   await recursiveRender(
     element,
     graph,
     data4Layout.type,
     data4Layout.diagramId,
     undefined,
-    siteConfig
+    siteConfig,
+    nodeData
   );
 };
