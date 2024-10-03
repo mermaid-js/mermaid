@@ -1,5 +1,5 @@
 ---
-'@mermaid': patch
+'mermaid': patch
 ---
 
 Fixed an issue when the mermaid classdiagram crashes when adding a . to the namespace.
