@@ -91,6 +91,7 @@
     "cspell": "^8.6.0",
     "cypress": "^13.14.1",
     "cypress-image-snapshot": "^4.0.1",
+    "cypress-split": "^1.24.0",
     "esbuild": "^0.21.5",
     "eslint": "^9.4.0",
     "eslint-config-prettier": "^9.1.0",
