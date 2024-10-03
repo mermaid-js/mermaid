@@ -16,7 +16,7 @@ export const insertNode = async (elem, node, renderOptions) => {
     }
   }
 
-  const shapeHandler = shapes.get(node.shape);
+  const shapeHandler = shapes[node.shape];
 
   if (!shapeHandler) {
     throw new Error(`No such shape: ${node.shape}. Please check your syntax.`);

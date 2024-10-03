@@ -434,33 +434,31 @@ export const shapesDefs: ShapeDefinition[] = [
 ];
 
 const generateShapeMap = () => {
-  const shapeMap = new Map<string, ShapeHandler>(
-    // These are the shapes that didn't have documentation present.
-    Object.entries({
-      // States
-      state,
-      stateStart,
-      stateEnd,
-      forkJoin,
-      choice,
-      note,
+  // These are the shapes that didn't have documentation present.
+  const shapeMap: Record<string, ShapeHandler> = {
+    // States
+    state,
+    stateStart,
+    stateEnd,
+    forkJoin,
+    choice,
+    note,
 
-      // Rectangles
-      rectWithTitle,
-      roundedRect,
-      squareRect,
-      labelRect,
+    // Rectangles
+    rectWithTitle,
+    roundedRect,
+    squareRect,
+    labelRect,
 
-      // Icons
-      iconSquare,
-      iconCircle,
-      icon,
-      iconRounded,
-      imageSquare,
+    // Icons
+    iconSquare,
+    iconCircle,
+    icon,
+    iconRounded,
+    imageSquare,
 
-      anchor,
-    })
-  );
+    anchor,
+  };
 
   for (const shape of shapesDefs) {
     for (const alias of [
@@ -468,7 +466,7 @@ const generateShapeMap = () => {
       ...(shape.aliases ?? []),
       ...(shape.legacyAliases ?? []),
     ]) {
-      shapeMap.set(alias, shape.handler);
+      shapeMap[alias] = shape.handler;
     }
   }
   return shapeMap;

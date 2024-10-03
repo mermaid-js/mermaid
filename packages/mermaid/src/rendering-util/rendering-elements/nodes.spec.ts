@@ -1,5 +1,5 @@
-import exp from 'constants';
-import { shapes } from './nodes.js';
+import { shapes } from './shapes.js';
+import { describe, it, expect } from 'vitest';
 
 describe('Test Alias for shapes', function () {
   // for each shape in docs/syntax/flowchart.md, along with its semantic name, short name, and alias name, add a test case
