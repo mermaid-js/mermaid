@@ -1,8 +1,8 @@
-import { log } from '$root/logger.js';
+import { log } from '../../../logger.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import type { Node } from '../../types.js';
 import rough from 'roughjs';
 
 export const note = async (parent: SVGAElement, node: Node) => {

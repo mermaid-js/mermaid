@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "11.0.2",
+  "version": "11.2.0",
   "description": "Markdown-ish syntax for generating flowcharts, mindmaps, sequence diagrams, class diagrams, gantt charts, git graphs and more.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -68,6 +68,7 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.0.1",
+    "@iconify/utils": "^2.1.32",
     "@mermaid-js/parser": "workspace:^",
     "cytoscape": "^3.29.2",
     "cytoscape-cose-bilkent": "^4.1.0",
@@ -76,7 +77,7 @@
     "d3-sankey": "^0.12.3",
     "dagre-d3-es": "7.0.10",
     "dayjs": "^1.11.10",
-    "dompurify": "^3.0.11",
+    "dompurify": "^3.0.11 <3.1.7",
     "katex": "^0.16.9",
     "khroma": "^2.1.0",
     "lodash-es": "^4.17.21",
@@ -88,8 +89,9 @@
   },
   "devDependencies": {
     "@adobe/jsonschema2md": "^8.0.0",
-    "@types/cytoscape-fcose": "^2.2.4",
+    "@iconify/types": "^2.0.0",
     "@types/cytoscape": "^3.21.4",
+    "@types/cytoscape-fcose": "^2.2.4",
     "@types/d3": "^7.4.3",
     "@types/d3-sankey": "^0.12.4",
     "@types/d3-scale": "^4.0.8",

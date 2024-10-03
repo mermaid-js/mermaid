@@ -1,4 +1,4 @@
-import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
+import type { Node, RectOptions } from '../../types.js';
 import { drawRect } from './drawRect.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';

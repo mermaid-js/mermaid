@@ -1,17 +1,14 @@
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import { evaluate } from '$root/diagrams/common/common.js';
-import { log } from '$root/logger.js';
-import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { evaluate } from '../../diagrams/common/common.js';
+import { log } from '../../logger.js';
+import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 import { select } from 'd3';
 import rough from 'roughjs';
 import { createText } from '../createText.ts';
 import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
-import {
-  styles2String,
-  userNodeOverrides,
-} from '$root/rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
+import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);

@@ -1,10 +1,10 @@
 import { updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
-import type { SVG } from '$root/diagram-api/types.js';
+import type { Node } from '../../types.js';
+import type { SVG } from '../../../diagram-api/types.js';
 import rough from 'roughjs';
 import { solidStateFill } from './handDrawnShapeStyles.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
 export const forkJoin = (parent: SVG, node: Node, dir: string) => {
   const { themeVariables } = getConfig();
