@@ -1,3 +1,9 @@
+export interface PackageOptions {
+  name: string;
+  packageName: string;
+  file: string;
+}
+
 /**
  * Shared common options for both ESBuild and Vite
  */
@@ -27,4 +33,4 @@ export const packageOptions = {
     packageName: 'mermaid-layout-elk',
     file: 'layouts.ts',
   },
-} as const;
+} as const satisfies Record<string, PackageOptions>;

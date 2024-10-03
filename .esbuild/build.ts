@@ -8,7 +8,10 @@ import { defaultOptions, getBuildConfig } from './util.js';
 const shouldVisualize = process.argv.includes('--visualize');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
-  const commonOptions: MermaidBuildOptions = { ...defaultOptions, entryName } as const;
+  const commonOptions: MermaidBuildOptions = {
+    ...defaultOptions,
+    options: packageOptions[entryName],
+  } as const;
   const buildConfigs: MermaidBuildOptions[] = [
     // package.mjs
     { ...commonOptions },
@@ -40,7 +43,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
         continue;
       }
       const fileName = Object.keys(metafile.outputs)
-        .find((file) => !file.includes('chunks') && file.endsWith('js'))
+        .find((file) => !file.includes('chunks') && file.endsWith('js'))!
         .replace('dist/', '');
       // Upload metafile into https://esbuild.github.io/analyze/
       await writeFile(`stats/${fileName}.meta.json`, JSON.stringify(metafile));
