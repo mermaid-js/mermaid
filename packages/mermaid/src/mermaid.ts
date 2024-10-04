@@ -457,3 +457,8 @@ const mermaid: Mermaid = {
 };
 
 export default mermaid;
+
+export {
+  calcIntersections,
+  calcNodeIntersections,
+} from './rendering-util/layout-algorithms/fixed/index.js';
