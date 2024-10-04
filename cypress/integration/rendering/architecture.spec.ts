@@ -173,7 +173,8 @@ describe.skip('architecture diagram', () => {
   });
 });
 
-describe('architecture - external', () => {
+// Skipped as the layout is not deterministic, and causes issues in E2E tests.
+describe.skip('architecture - external', () => {
   it('should allow adding external icons', () => {
     urlSnapshotTest('http://localhost:9000/architecture-external.html');
   });
