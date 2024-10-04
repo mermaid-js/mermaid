@@ -255,6 +255,26 @@ gantt
 `millisecond` and `second` support was added in v10.3.0
 ```
 
+### Date Ranges (v<MERMAID_RELEASE_VERSION>+)
+
+The default behavior is to set the x range to include all of the data in the chart. You can override
+the range by specifying `dateRange`. Any tasks falling outside the specified range will be removed
+from the plot, and tasks overlapping with the boundaries will be truncated. The `dateRange` command
+should follow the `dateFormat` and use the same format.
+
+```mermaid-example
+gantt
+    dateFormat HH:mm
+    dateRange  13:00, 14:00
+    axisFormat %H:%M
+    Task A  : 13:24, 13:39
+    Task B  : 13:50, 14:35
+    Dropped : 14:01, 14:20
+```
+
+It is also possible to specify only a lower bound using `dateRange <date>` or only an upper bound
+using `dateRange ,<date>`.
+
 ## Output in compact mode
 
 The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceding YAML settings.

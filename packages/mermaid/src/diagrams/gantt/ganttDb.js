@@ -22,7 +22,10 @@ dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
 const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
-let dateFormat = '';
+let dateFormat = 'YYYY-MM-DD';
+let dateRange = '';
+let startDateRange = '';
+let endDateRange = '';
 let axisFormat = '';
 let tickInterval = undefined;
 let todayMarker = '';
@@ -53,6 +56,9 @@ export const clear = function () {
   lastTaskID = undefined;
   rawTasks = [];
   dateFormat = '';
+  dateRange = '';
+  startDateRange = '';
+  endDateRange = '';
   axisFormat = '';
   displayMode = '';
   tickInterval = undefined;
@@ -104,6 +110,22 @@ export const endDatesAreInclusive = function () {
   return inclusiveEndDates;
 };
 
+export const setDateRange = function (txt) {
+  dateRange = txt;
+
+  if (!dateRange) {
+    return;
+  }
+  const [startStr, endStr] = dateRange.split(',');
+
+  if (startStr) {
+    startDateRange = getStartDate(undefined, dateFormat, startStr);
+  }
+  if (endStr) {
+    endDateRange = getEndDate(undefined, dateFormat, endStr);
+  }
+};
+
 export const enableTopAxis = function () {
   topAxis = true;
 };
@@ -122,6 +144,34 @@ export const getDisplayMode = function () {
 
 export const getDateFormat = function () {
   return dateFormat;
+};
+
+export const getDateRange = function () {
+  return dateRange;
+};
+
+export const getStartRange = function () {
+  if (startDateRange) {
+    return startDateRange;
+  }
+  if (getTasks().length > 0) {
+    return getTasks().reduce((min, task) => {
+      return task.startTime < min ? task.startTime : min;
+    }, Infinity);
+  }
+  return '';
+};
+
+export const getEndRange = function () {
+  if (endDateRange) {
+    return endDateRange;
+  }
+  if (getTasks().length > 0) {
+    return getTasks().reduce((max, task) => {
+      return task.endTime > max ? task.endTime : max;
+    }, -Infinity);
+  }
+  return '';
 };
 
 export const setIncludes = function (txt) {
@@ -161,7 +211,25 @@ export const getTasks = function () {
     iterationCount++;
   }
 
-  tasks = rawTasks;
+  if (dateRange === '') {
+    return rawTasks;
+  }
+
+  const filteredTasks = rawTasks.filter(function (task) {
+    if (
+      (startDateRange && task.endTime <= startDateRange) ||
+      (endDateRange && task.startTime >= endDateRange)
+    ) {
+      return false;
+    }
+    return true;
+  });
+
+  tasks = filteredTasks.map((task) => ({
+    ...task,
+    startTime: startDateRange && task.startTime < startDateRange ? startDateRange : task.startTime,
+    endTime: endDateRange && task.endTime > endDateRange ? endDateRange : task.endTime,
+  }));
 
   return tasks;
 };
@@ -288,6 +356,12 @@ const getStartDate = function (prevTime, dateFormat, str) {
     return today;
   }
 
+  if (str === '') {
+    // If only an end-only dateRange is provided, we determine the start date
+    // by comparing the start times of the tasks.
+    return getStartRange();
+  }
+
   // Check for actual date set
   let mDate = dayjs(str, dateFormat.trim(), true);
   if (mDate.isValid()) {
@@ -295,21 +369,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
   } else {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
-    const d = new Date(str);
-    if (
-      d === undefined ||
-      isNaN(d.getTime()) ||
-      // WebKit browsers can mis-parse invalid dates to be ridiculously
-      // huge numbers, e.g. new Date('202304') gets parsed as January 1, 202304.
-      // This can cause virtually infinite loops while rendering, so for the
-      // purposes of Gantt charts we'll just treat any date beyond 10,000 AD/BC as
-      // invalid.
-      d.getFullYear() < -10000 ||
-      d.getFullYear() > 10000
-    ) {
-      throw new Error('Invalid date:' + str);
-    }
-    return d;
+    throw new Error(`Invalid date: '${str}' with date format: '${dateFormat}'`);
   }
 };
 
@@ -757,6 +817,10 @@ export default {
   setDateFormat,
   getDateFormat,
   enableInclusiveEndDates,
+  setDateRange,
+  getDateRange,
+  getStartRange,
+  getEndRange,
   endDatesAreInclusive,
   enableTopAxis,
   topAxisEnabled,
