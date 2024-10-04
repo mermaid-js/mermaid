@@ -141,7 +141,7 @@ block-beta
   a["A label"] b:2 c:2 d
 ```
 
-In this example, the block labeled "A wide one" spans two columns, while blocks 'b', 'c', and 'd' are allocated their own columns. This flexibility in block sizing is crucial for accurately representing systems with components of varying significance or size.
+In this example, the block labeled "A labels" spans one column, while blocks 'b', 'c' span 2 columns, and 'd' is again allocated its own column. This flexibility in block sizing is crucial for accurately representing systems with components of varying significance or size.
 
 ### Creating Composite Blocks
 
