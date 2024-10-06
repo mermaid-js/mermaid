@@ -50,7 +50,6 @@ const getSection = function (level: number) {
 };
 
 const getSections = function () {
-  console.log('sections', sections);
   return sections;
 };
 
@@ -58,13 +57,29 @@ const getData = function () {
   const edges = [] as Edge[];
   const nodes: Node[] = [];
 
+  const sections = getSections();
+  const conf = getConfig();
   // const id: string = sanitizeText(id, conf) || 'identifier' + cnt++;
 
-  // const node = {
-  //   id,
-  //   label: sanitizeText(descr, conf),
-  //   isGroup,
-  // } satisfies Node;
+  for (const section of sections) {
+    const node = {
+      id: section.nodeId,
+      label: sanitizeText(section.descr, conf),
+      isGroup: true,
+      shape: 'kanbanSection',
+    } satisfies Node;
+    nodes.push(node);
+    for (const item of section.children) {
+      const childNode = {
+        id: item.nodeId,
+        parentId: section.nodeId,
+        label: sanitizeText(item.descr, conf),
+        isGroup: false,
+        shape: 'kanbanItem',
+      } satisfies Node;
+      nodes.push(childNode);
+    }
+  }
 
   return { nodes, edges, other: {}, config: getConfig() };
 };

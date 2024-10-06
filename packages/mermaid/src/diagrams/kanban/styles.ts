@@ -46,6 +46,16 @@ const genSections: DiagramStylesProvider = (options) => {
     .disabled text {
       fill: #efefef;
     }
+
+  .node rect,
+  .node circle,
+  .node ellipse,
+  .node polygon,
+  .node path {
+    fill: ${options.mainBkg};
+    stroke: ${options.nodeBorder};
+    stroke-width: 1px;
+  }
     `;
   }
   return sections;
