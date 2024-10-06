@@ -326,7 +326,7 @@ const kanbanSection = async (parent, node) => {
 
   const height = node.height;
   const x = node.x - width / 2;
-  const y = node.y;
+  const y = node.y - height / 2;
 
   log.trace('Data ', node, JSON.stringify(node));
   let rect;

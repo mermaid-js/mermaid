@@ -106,13 +106,13 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   const padding = 10;
 
   for (const section of sections) {
-    let y = 0;
+    const WIDTH = 200;
+    let y = (-WIDTH * 3) / 2 + 40;
     cnt = cnt + 1;
-    const WIDTH = 300;
     section.x = WIDTH * cnt + ((cnt - 1) * padding) / 2;
     section.width = WIDTH;
     section.y = 0;
-    section.height = WIDTH;
+    section.height = WIDTH * 3;
     section.rx = 5;
     section.ry = 5;
 
@@ -123,14 +123,15 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
     // positionCluster(section);
     for (const item of sectionItems) {
       item.x = section.x;
-      item.width = WIDTH - padding * 2;
+      item.width = WIDTH - 2 * padding;
       // item.height = 100;
       const nodeEl = await insertNode(nodesElem, item);
       console.log('ITEM', item, 'bbox=', nodeEl.node().getBBox());
-      item.y = y;
-      item.height = 150;
+      const bbox = nodeEl.node().getBBox();
+      item.y = y + bbox.height / 2;
+      // item.height = 150;
       await positionNode(item);
-      y = y + 1.5 * nodeEl.node().getBBox().height + padding / 2;
+      y = item.y + bbox.height / 2 + padding;
     }
   }
 

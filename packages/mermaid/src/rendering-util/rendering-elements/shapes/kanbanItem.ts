@@ -9,10 +9,14 @@ export const kanbanItem = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   // console.log('IPI labelStyles:', labelStyles);
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const labelPaddingX = 10;
+  const orgWidth = node.width;
+  node.width = (node.width ?? 200) - 2 * labelPaddingX;
+  console.log('APA123 kanbanItem', node.labelStyle);
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  node.width = orgWidth;
   const labelPaddingY = 10;
-  const totalWidth = Math.max(bbox.width + labelPaddingX * 2, node?.width || 0);
+  const totalWidth = node?.width || 0;
   const totalHeight = Math.max(bbox.height + labelPaddingY * 2, node?.height || 0);
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;

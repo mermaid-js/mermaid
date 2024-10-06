@@ -89,12 +89,13 @@ kanban
     id2[Create JISON]
     id3[Update DB function]
     id4[Create parsing tests]
-    id5[define getData]
-    id6[Create renderer so that it works in all cases]
+    id6[Create renderer so that it works in all cases. We also add som extra text here for testing purposes.]
+    id66[last item]
   id7[In progress]
     id8[Design grammar]
   id9[Ready for deploy]
   id10[Ready for test]
+    id5[define getData]
   id11[Done]
   id12[Can't reproduce]
     </pre>
@@ -116,7 +117,7 @@ kanban
         // layout: 'dagre',
         // layout: 'elk',
         // layout: 'fixed',
-        // htmlLabels: false,
+        htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
         // fontFamily: 'Caveat',
         // fontFamily: 'Kalam',
@@ -125,6 +126,9 @@ kanban
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
           messageFontFamily: 'courier',
+        },
+        kanban: {
+          htmlLabels: false,
         },
         fontSize: 12,
         logLevel: 0,

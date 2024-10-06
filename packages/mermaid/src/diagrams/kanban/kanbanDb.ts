@@ -76,6 +76,8 @@ const getData = function () {
         label: sanitizeText(item.descr, conf),
         isGroup: false,
         shape: 'kanbanItem',
+        rx: 5,
+        cssStyles: ['text-align: left'],
       } satisfies Node;
       nodes.push(childNode);
     }

@@ -52,7 +52,7 @@ const genSections: DiagramStylesProvider = (options) => {
   .node ellipse,
   .node polygon,
   .node path {
-    fill: ${options.mainBkg};
+    fill: ${options.background};
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
   }
