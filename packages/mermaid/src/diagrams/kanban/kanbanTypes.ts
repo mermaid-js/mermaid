@@ -1,13 +1,13 @@
 import type { RequiredDeep } from 'type-fest';
-import type mindmapDb from './kanbanDb.js';
+import type kanbanDb from './kanbanDb.js';
 
-export interface MindmapNode {
+export interface KanbanNode {
   id: number;
   nodeId: string;
   level: number;
   descr: string;
   type: number;
-  children: MindmapNode[];
+  children: KanbanNode[];
   width: number;
   padding: number;
   section?: number;
@@ -18,5 +18,5 @@ export interface MindmapNode {
   y?: number;
 }
 
-export type FilledMindMapNode = RequiredDeep<MindmapNode>;
-export type MindmapDB = typeof mindmapDb;
+export type FilledKanbanNode = RequiredDeep<KanbanNode>;
+export type KanbanDB = typeof kanbanDb;

@@ -2,35 +2,75 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
-import type { MindmapNode } from './kanbanTypes.js';
+import type { KanbanNode } from './kanbanTypes.js';
+import type { Node, Edge } from '../../rendering-util/types.js';
 import defaultConfig from '../../defaultConfig.js';
 
-let nodes: MindmapNode[] = [];
+let nodes: KanbanNode[] = [];
+let sections: KanbanNode[] = [];
 let cnt = 0;
 let elements: Record<number, D3Element> = {};
 
 const clear = () => {
   nodes = [];
+  sections = [];
   cnt = 0;
   elements = {};
 };
-
-const getParent = function (level: number) {
+/*
+ * if your level is the section level return null - then you do not belong to a level
+ * otherwise return the current section
+ */
+const getSection = function (level: number) {
+  if (nodes.length === 0) {
+    // console.log('No nodes');
+    return null;
+  }
+  const sectionLevel = nodes[0].level;
+  let lastSection = null;
   for (let i = nodes.length - 1; i >= 0; i--) {
-    if (nodes[i].level < level) {
-      return nodes[i];
+    if (nodes[i].level === sectionLevel && !lastSection) {
+      lastSection = nodes[i];
+      // console.log('lastSection found', lastSection);
+    }
+    // console.log('HERE', nodes[i].id, level, nodes[i].level, sectionLevel);
+    if (nodes[i].level < sectionLevel) {
+      throw new Error('Items without section detected, found section ("' + nodes[i].descr + '")');
     }
   }
-  // No parent found
-  return null;
+  // if (!lastSection) {
+  //   // console.log('No last section');
+  // }
+  if (level === lastSection?.level) {
+    return null;
+  }
+
+  // No found
+  return lastSection;
 };
 
-const getMindmap = () => {
-  return nodes.length > 0 ? nodes[0] : null;
+const getSections = function () {
+  console.log('sections', sections);
+  return sections;
+};
+
+const getData = function () {
+  const edges = [] as Edge[];
+  const nodes: Node[] = [];
+
+  // const id: string = sanitizeText(id, conf) || 'identifier' + cnt++;
+
+  // const node = {
+  //   id,
+  //   label: sanitizeText(descr, conf),
+  //   isGroup,
+  // } satisfies Node;
+
+  return { nodes, edges, other: {}, config: getConfig() };
 };
 
 const addNode = (level: number, id: string, descr: string, type: number) => {
-  log.info('addNode', level, id, descr, type);
+  // log.info('addNode level=', level, 'id=', id, 'descr=', descr, 'type=', type);
   const conf = getConfig();
   let padding: number = conf.mindmap?.padding ?? defaultConfig.mindmap.padding;
   switch (type) {
@@ -49,24 +89,17 @@ const addNode = (level: number, id: string, descr: string, type: number) => {
     children: [],
     width: conf.mindmap?.maxNodeWidth ?? defaultConfig.mindmap.maxNodeWidth,
     padding,
-  } satisfies MindmapNode;
-
-  const parent = getParent(level);
-  if (parent) {
-    parent.children.push(node);
+  } satisfies KanbanNode;
+  const section = getSection(level);
+  console.log('Node ', node.descr, ' section', section?.descr);
+  if (section) {
+    section.children.push(node);
     // Keep all nodes in the list
     nodes.push(node);
   } else {
-    if (nodes.length === 0) {
-      // First node, the root
-      nodes.push(node);
-    } else {
-      // Syntax error ... there can only bee one root
-      throw new Error(
-        'There can be only one root. No parent could be found for ("' + node.descr + '")'
-      );
-    }
+    sections.push(node);
   }
+  nodes.push(node);
 };
 
 const nodeType = {
@@ -146,7 +179,8 @@ const getElementById = (id: number) => elements[id];
 const db = {
   clear,
   addNode,
-  getMindmap,
+  getSections,
+  getData,
   nodeType,
   getType,
   setElementForId,

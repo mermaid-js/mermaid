@@ -1,5 +1,5 @@
 // @ts-ignore: JISON doesn't support types
-import parser from './parser/mindmap.jison';
+import parser from './parser/kanban.jison';
 import db from './kanbanDb.js';
 import renderer from './kanbanRenderer.js';
 import styles from './styles.js';

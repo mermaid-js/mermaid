@@ -20,7 +20,7 @@
 
 \s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
-"kanban"		       return 'MINDMAP';
+"kanban"		       return 'KANBAN';
 ":::"              { this.begin('CLASS'); }
 <CLASS>.+			     { this.popState();return 'CLASS'; }
 <CLASS>\n				   { this.popState();}
@@ -80,8 +80,8 @@ spaceLines
   ;
 
 mindMap
-  : MINDMAP document  { return yy; }
-  | MINDMAP NL document  { return yy; }
+  : KANBAN document  { return yy; }
+  | KANBAN NL document  { return yy; }
   ;
 
 stop

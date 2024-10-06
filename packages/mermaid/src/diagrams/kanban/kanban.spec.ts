@@ -16,8 +16,9 @@ describe('when parsing a kanban ', function () {
     root`;
 
       kanban.parse(str);
-      // console.log('Time for checks', kanban.yy.getMindmap().descr);
-      expect(kanban.yy.getMindmap().descr).toEqual('root');
+      const sections = kanban.yy.getSections();
+      expect(sections.length).toEqual(1);
+      expect(sections[0].descr).toEqual('root');
     });
     it('KNBN-2 should handle a hierachial kanban definition', function () {
       const str = `kanban
@@ -27,45 +28,59 @@ describe('when parsing a kanban ', function () {
  `;
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.descr).toEqual('root');
-      expect(mm.children.length).toEqual(2);
-      expect(mm.children[0].descr).toEqual('child1');
-      expect(mm.children[1].descr).toEqual('child2');
+      const sections = kanban.yy.getSections();
+      expect(sections.length).toEqual(1);
+      expect(sections[0].descr).toEqual('root');
+      expect(sections[0].children.length).toEqual(2);
+      expect(sections[0].children[0].descr).toEqual('child1');
+      expect(sections[0].children[1].descr).toEqual('child2');
     });
+
+    /** CATCH case when a lower level comes later, should throw
+     *    a
+     *   b
+     *    c
+     */
 
     it('3 should handle a simple root definition with a shape and without an id abc123', function () {
       const str = `kanban
     (root)`;
 
       kanban.parse(str);
-      // console.log('Time for checks', kanban.yy.getMindmap().descr);
-      expect(kanban.yy.getMindmap().descr).toEqual('root');
+      const sections = kanban.yy.getSections();
+      expect(sections[0].descr).toEqual('root');
     });
 
-    it('KNBN-4 should handle a deeper hierachial kanban definition', function () {
+    it('KNBN-4 should not dsitinguis between deeper hierachial levels in thr kanban definition', function () {
       const str = `kanban
     root
       child1
         leaf1
       child2`;
 
-      kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.descr).toEqual('root');
-      expect(mm.children.length).toEqual(2);
-      expect(mm.children[0].descr).toEqual('child1');
-      expect(mm.children[0].children[0].descr).toEqual('leaf1');
-      expect(mm.children[1].descr).toEqual('child2');
-    });
-    it('5 Multiple roots are illegal', function () {
-      const str = `kanban
-    root
-    fakeRoot`;
+      // less picky is better
+      //       expect(() => kanban.parse(str)).toThrow(
+      //   'There can be only one root. No parent could be found for ("fakeRoot")'
+      // );
 
-      expect(() => kanban.parse(str)).toThrow(
-        'There can be only one root. No parent could be found for ("fakeRoot")'
-      );
+      kanban.parse(str);
+      const sections = kanban.yy.getSections();
+      expect(sections.length).toBe(1);
+      expect(sections[0].children.length).toBe(3);
+    });
+    it('5 Multiple sections are ok', function () {
+      const str = `kanban
+    section1
+    section2`;
+      kanban.parse(str);
+      const sections = kanban.yy.getSections();
+      expect(sections.length).toBe(2);
+      expect(sections[0].descr).toBe('section1');
+      expect(sections[1].descr).toBe('section2');
+
+      // expect(() => kanban.parse(str)).toThrow(
+      //   'There can be only one root. No parent could be found for ("fakeRoot")'
+      // );
     });
     it('KNBN-6 real root in wrong place', function () {
       const str = `kanban
@@ -73,7 +88,7 @@ describe('when parsing a kanban ', function () {
         fakeRoot
     realRootWrongPlace`;
       expect(() => kanban.parse(str)).toThrow(
-        'There can be only one root. No parent could be found for ("fakeRoot")'
+        'Items without section detected, found section ("fakeRoot")'
       );
     });
   });
@@ -84,10 +99,10 @@ describe('when parsing a kanban ', function () {
       `;
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.nodeId).toEqual('root');
-      expect(mm.descr).toEqual('The root');
-      expect(mm.type).toEqual(kanban.yy.nodeType.RECT);
+      const sections = kanban.yy.getSections();
+      expect(sections[0].nodeId).toEqual('root');
+      expect(sections[0].descr).toEqual('The root');
+      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
     });
     it('KNBN-8 should handle an id and type for a node definition', function () {
       const str = `kanban
@@ -95,10 +110,10 @@ describe('when parsing a kanban ', function () {
       theId(child1)`;
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.descr).toEqual('root');
-      expect(mm.children.length).toEqual(1);
-      const child = mm.children[0];
+      const sections = kanban.yy.getSections();
+      expect(sections[0].descr).toEqual('root');
+      expect(sections[0].children.length).toEqual(1);
+      const child = sections[0].children[0];
       expect(child.descr).toEqual('child1');
       expect(child.nodeId).toEqual('theId');
       expect(child.type).toEqual(kanban.yy.nodeType.ROUNDED_RECT);
@@ -109,10 +124,10 @@ root
       theId(child1)`;
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.descr).toEqual('root');
-      expect(mm.children.length).toEqual(1);
-      const child = mm.children[0];
+      const sections = kanban.yy.getSections();
+      expect(sections[0].descr).toEqual('root');
+      expect(sections[0].children.length).toEqual(1);
+      const child = sections[0].children[0];
       expect(child.descr).toEqual('child1');
       expect(child.nodeId).toEqual('theId');
       expect(child.type).toEqual(kanban.yy.nodeType.ROUNDED_RECT);
@@ -123,10 +138,10 @@ root
  `;
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.descr).toEqual('the root');
-      expect(mm.children.length).toEqual(0);
-      expect(mm.type).toEqual(kanban.yy.nodeType.CIRCLE);
+      const sections = kanban.yy.getSections();
+      expect(sections[0].descr).toEqual('the root');
+      expect(sections[0].children.length).toEqual(0);
+      expect(sections[0].type).toEqual(kanban.yy.nodeType.CIRCLE);
     });
 
     it('KNBN-11 multiple types (cloud)', function () {
@@ -135,10 +150,10 @@ root
 `;
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.descr).toEqual('the root');
-      expect(mm.children.length).toEqual(0);
-      expect(mm.type).toEqual(kanban.yy.nodeType.CLOUD);
+      const sections = kanban.yy.getSections();
+      expect(sections[0].descr).toEqual('the root');
+      expect(sections[0].children.length).toEqual(0);
+      expect(sections[0].type).toEqual(kanban.yy.nodeType.CLOUD);
     });
     it('KNBN-12 multiple types (bang)', function () {
       const str = `kanban
@@ -146,10 +161,10 @@ root
 `;
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.descr).toEqual('the root');
-      expect(mm.children.length).toEqual(0);
-      expect(mm.type).toEqual(kanban.yy.nodeType.BANG);
+      const sections = kanban.yy.getSections();
+      expect(sections[0].descr).toEqual('the root');
+      expect(sections[0].children.length).toEqual(0);
+      expect(sections[0].type).toEqual(kanban.yy.nodeType.BANG);
     });
 
     it('KNBN-12-a multiple types (hexagon)', function () {
@@ -158,10 +173,10 @@ root
 `;
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.type).toEqual(kanban.yy.nodeType.HEXAGON);
-      expect(mm.descr).toEqual('the root');
-      expect(mm.children.length).toEqual(0);
+      const sections = kanban.yy.getSections();
+      expect(sections[0].type).toEqual(kanban.yy.nodeType.HEXAGON);
+      expect(sections[0].descr).toEqual('the root');
+      expect(sections[0].children.length).toEqual(0);
     });
   });
   describe('decorations', function () {
@@ -173,11 +188,11 @@ root
       // ::class1 class2
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.nodeId).toEqual('root');
-      expect(mm.descr).toEqual('The root');
-      expect(mm.type).toEqual(kanban.yy.nodeType.RECT);
-      expect(mm.icon).toEqual('bomb');
+      const sections = kanban.yy.getSections();
+      expect(sections[0].nodeId).toEqual('root');
+      expect(sections[0].descr).toEqual('The root');
+      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
+      expect(sections[0].icon).toEqual('bomb');
     });
     it('KNBN-14 should be possible to set classes for the node', function () {
       const str = `kanban
@@ -187,11 +202,11 @@ root
       // ::class1 class2
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.nodeId).toEqual('root');
-      expect(mm.descr).toEqual('The root');
-      expect(mm.type).toEqual(kanban.yy.nodeType.RECT);
-      expect(mm.class).toEqual('m-4 p-8');
+      const sections = kanban.yy.getSections();
+      expect(sections[0].nodeId).toEqual('root');
+      expect(sections[0].descr).toEqual('The root');
+      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
+      expect(sections[0].class).toEqual('m-4 p-8');
     });
     it('KNBN-15 should be possible to set both classes and icon for the node', function () {
       const str = `kanban
@@ -202,12 +217,12 @@ root
       // ::class1 class2
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.nodeId).toEqual('root');
-      expect(mm.descr).toEqual('The root');
-      expect(mm.type).toEqual(kanban.yy.nodeType.RECT);
-      expect(mm.class).toEqual('m-4 p-8');
-      expect(mm.icon).toEqual('bomb');
+      const sections = kanban.yy.getSections();
+      expect(sections[0].nodeId).toEqual('root');
+      expect(sections[0].descr).toEqual('The root');
+      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
+      expect(sections[0].class).toEqual('m-4 p-8');
+      expect(sections[0].icon).toEqual('bomb');
     });
     it('KNBN-16 should be possible to set both classes and icon for the node', function () {
       const str = `kanban
@@ -218,12 +233,12 @@ root
       // ::class1 class2
 
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.nodeId).toEqual('root');
-      expect(mm.descr).toEqual('The root');
-      expect(mm.type).toEqual(kanban.yy.nodeType.RECT);
-      expect(mm.class).toEqual('m-4 p-8');
-      expect(mm.icon).toEqual('bomb');
+      const sections = kanban.yy.getSections();
+      expect(sections[0].nodeId).toEqual('root');
+      expect(sections[0].descr).toEqual('The root');
+      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
+      expect(sections[0].class).toEqual('m-4 p-8');
+      expect(sections[0].icon).toEqual('bomb');
     });
   });
   describe('descriptions', function () {
@@ -232,9 +247,9 @@ root
     root["String containing []"]
 `;
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.nodeId).toEqual('root');
-      expect(mm.descr).toEqual('String containing []');
+      const sections = kanban.yy.getSections();
+      expect(sections[0].nodeId).toEqual('root');
+      expect(sections[0].descr).toEqual('String containing []');
     });
     it('KNBN-18 should be possible to use node syntax in the descriptions in children', function () {
       const str = `kanban
@@ -242,11 +257,11 @@ root
       child1["String containing ()"]
 `;
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.nodeId).toEqual('root');
-      expect(mm.descr).toEqual('String containing []');
-      expect(mm.children.length).toEqual(1);
-      expect(mm.children[0].descr).toEqual('String containing ()');
+      const sections = kanban.yy.getSections();
+      expect(sections[0].nodeId).toEqual('root');
+      expect(sections[0].descr).toEqual('String containing []');
+      expect(sections[0].children.length).toEqual(1);
+      expect(sections[0].children[0].descr).toEqual('String containing ()');
     });
     it('KNBN-19 should be possible to have a child after a class assignment', function () {
       const str = `kanban
@@ -256,16 +271,17 @@ root
       a(a)
       b[New Stuff]`;
       kanban.parse(str);
-      const mm = kanban.yy.getMindmap();
-      expect(mm.nodeId).toEqual('root');
-      expect(mm.descr).toEqual('Root');
-      expect(mm.children.length).toEqual(1);
+      const sections = kanban.yy.getSections();
+      expect(sections[0].nodeId).toEqual('root');
+      expect(sections[0].descr).toEqual('Root');
+      expect(sections[0].children.length).toEqual(3);
 
-      const child = mm.children[0];
-      expect(child.nodeId).toEqual('Child');
-      expect(child.children[0].nodeId).toEqual('a');
-      expect(child.children.length).toEqual(2);
-      expect(child.children[1].nodeId).toEqual('b');
+      const item1 = sections[0].children[0];
+      const item2 = sections[0].children[1];
+      const item3 = sections[0].children[2];
+      expect(item1.nodeId).toEqual('Child');
+      expect(item2.nodeId).toEqual('a');
+      expect(item3.nodeId).toEqual('b');
     });
   });
   it('KNBN-20 should be possible to have meaningless empty rows in a kanban abc124', function () {
@@ -276,16 +292,17 @@ root
 
       b[New Stuff]`;
     kanban.parse(str);
-    const mm = kanban.yy.getMindmap();
-    expect(mm.nodeId).toEqual('root');
-    expect(mm.descr).toEqual('Root');
-    expect(mm.children.length).toEqual(1);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].descr).toEqual('Root');
+    expect(sections[0].children.length).toEqual(3);
 
-    const child = mm.children[0];
-    expect(child.nodeId).toEqual('Child');
-    expect(child.children[0].nodeId).toEqual('a');
-    expect(child.children.length).toEqual(2);
-    expect(child.children[1].nodeId).toEqual('b');
+    const item1 = sections[0].children[0];
+    const item2 = sections[0].children[1];
+    const item3 = sections[0].children[2];
+    expect(item1.nodeId).toEqual('Child');
+    expect(item2.nodeId).toEqual('a');
+    expect(item3.nodeId).toEqual('b');
   });
   it('KNBN-21 should be possible to have comments in a kanban', function () {
     const str = `kanban
@@ -296,16 +313,15 @@ root
       %% This is a comment
       b[New Stuff]`;
     kanban.parse(str);
-    const mm = kanban.yy.getMindmap();
-    expect(mm.nodeId).toEqual('root');
-    expect(mm.descr).toEqual('Root');
-    expect(mm.children.length).toEqual(1);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].descr).toEqual('Root');
 
-    const child = mm.children[0];
+    const child = sections[0].children[0];
     expect(child.nodeId).toEqual('Child');
-    expect(child.children[0].nodeId).toEqual('a');
-    expect(child.children.length).toEqual(2);
-    expect(child.children[1].nodeId).toEqual('b');
+    expect(sections[0].children[1].nodeId).toEqual('a');
+    expect(sections[0].children[2].nodeId).toEqual('b');
+    expect(sections[0].children.length).toEqual(3);
   });
 
   it('KNBN-22 should be possible to have comments at the end of a line', function () {
@@ -315,51 +331,52 @@ root
       a(a) %% This is a comment
       b[New Stuff]`;
     kanban.parse(str);
-    const mm = kanban.yy.getMindmap();
-    expect(mm.nodeId).toEqual('root');
-    expect(mm.descr).toEqual('Root');
-    expect(mm.children.length).toEqual(1);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].descr).toEqual('Root');
+    expect(sections[0].children.length).toEqual(3);
 
-    const child = mm.children[0];
-    expect(child.nodeId).toEqual('Child');
-    expect(child.children[0].nodeId).toEqual('a');
-    expect(child.children.length).toEqual(2);
-    expect(child.children[1].nodeId).toEqual('b');
+    const child1 = sections[0].children[0];
+    expect(child1.nodeId).toEqual('Child');
+    const child2 = sections[0].children[1];
+    expect(child2.nodeId).toEqual('a');
+    const child3 = sections[0].children[2];
+    expect(child3.nodeId).toEqual('b');
   });
   it('KNBN-23 Rows with only spaces should not interfere', function () {
     const str = 'kanban\nroot\n A\n \n\n B';
     kanban.parse(str);
-    const mm = kanban.yy.getMindmap();
-    expect(mm.nodeId).toEqual('root');
-    expect(mm.children.length).toEqual(2);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].children.length).toEqual(2);
 
-    const child = mm.children[0];
+    const child = sections[0].children[0];
     expect(child.nodeId).toEqual('A');
-    const child2 = mm.children[1];
+    const child2 = sections[0].children[1];
     expect(child2.nodeId).toEqual('B');
   });
   it('KNBN-24 Handle rows above the kanban declarations', function () {
     const str = '\n \nkanban\nroot\n A\n \n\n B';
     kanban.parse(str);
-    const mm = kanban.yy.getMindmap();
-    expect(mm.nodeId).toEqual('root');
-    expect(mm.children.length).toEqual(2);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].children.length).toEqual(2);
 
-    const child = mm.children[0];
+    const child = sections[0].children[0];
     expect(child.nodeId).toEqual('A');
-    const child2 = mm.children[1];
+    const child2 = sections[0].children[1];
     expect(child2.nodeId).toEqual('B');
   });
   it('KNBN-25 Handle rows above the kanban declarations, no space', function () {
     const str = '\n\n\nkanban\nroot\n A\n \n\n B';
     kanban.parse(str);
-    const mm = kanban.yy.getMindmap();
-    expect(mm.nodeId).toEqual('root');
-    expect(mm.children.length).toEqual(2);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].children.length).toEqual(2);
 
-    const child = mm.children[0];
+    const child = sections[0].children[0];
     expect(child.nodeId).toEqual('A');
-    const child2 = mm.children[1];
+    const child2 = sections[0].children[1];
     expect(child2.nodeId).toEqual('B');
   });
 });

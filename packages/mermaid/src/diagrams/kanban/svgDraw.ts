@@ -1,5 +1,5 @@
 import { createText } from '../../rendering-util/createText.js';
-import type { FilledMindMapNode, MindmapDB } from './kanbanTypes.js';
+import type { FilledKanbanNode, KanbanDB } from './kanbanTypes.js';
 import type { Point, D3Element } from '../../types.js';
 import { parseFontSize } from '../../utils.js';
 import type { MermaidConfig } from '../../config.type.js';
@@ -7,9 +7,9 @@ import type { MermaidConfig } from '../../config.type.js';
 const MAX_SECTIONS = 12;
 
 type ShapeFunction = (
-  db: MindmapDB,
+  db: KanbanDB,
   elem: D3Element,
-  node: FilledMindMapNode,
+  node: FilledKanbanNode,
   section?: number
 ) => void;
 
@@ -120,7 +120,7 @@ function insertPolygonShape(
   w: number,
   h: number,
   points: Point[],
-  node: FilledMindMapNode
+  node: FilledKanbanNode
 ) {
   return parent
     .insert('polygon', ':first-child')
@@ -136,9 +136,9 @@ function insertPolygonShape(
 }
 
 const hexagonBkg: ShapeFunction = function (
-  _db: MindmapDB,
+  _db: KanbanDB,
   elem: D3Element,
-  node: FilledMindMapNode
+  node: FilledKanbanNode
 ) {
   const h = node.height;
   const f = 4;
@@ -175,9 +175,9 @@ const roundedRectBkg: ShapeFunction = function (db, elem, node) {
  * @returns The height nodes dom element
  */
 export const drawNode = async function (
-  db: MindmapDB,
+  db: KanbanDB,
   elem: D3Element,
-  node: FilledMindMapNode,
+  node: FilledKanbanNode,
   fullSection: number,
   conf: MermaidConfig
 ): Promise<number> {
@@ -298,7 +298,7 @@ export const drawNode = async function (
   return node.height;
 };
 
-export const positionNode = function (db: MindmapDB, node: FilledMindMapNode) {
+export const positionNode = function (db: KanbanDB, node: FilledKanbanNode) {
   const nodeElem = db.getElementById(node.id);
 
   const x = node.x || 0;

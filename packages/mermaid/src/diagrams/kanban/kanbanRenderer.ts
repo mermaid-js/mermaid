@@ -9,29 +9,13 @@ import { log } from '../../logger.js';
 import type { D3Element } from '../../types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import type { FilledMindMapNode, MindmapDB, MindmapNode } from './kanbanTypes.js';
+import type { FilledKanbanNode, KanbanDB, KanbanNode } from './kanbanTypes.js';
 import { drawNode, positionNode } from './svgDraw.js';
 import defaultConfig from '../../defaultConfig.js';
 
 // Inject the layout algorithm into cytoscape
-cytoscape.use(coseBilkent);
 
-async function drawNodes(
-  db: MindmapDB,
-  svg: D3Element,
-  mindmap: FilledMindMapNode,
-  section: number,
-  conf: MermaidConfig
-) {
-  await drawNode(db, svg, mindmap, section, conf);
-  if (mindmap.children) {
-    await Promise.all(
-      mindmap.children.map((child, index) =>
-        drawNodes(db, svg, child, section < 0 ? index : section, conf)
-      )
-    );
-  }
-}
+async function drawSection(section: FilledKanbanNode, svg: D3Element, conf: MermaidConfig) {}
 
 declare module 'cytoscape' {
   interface EdgeSingular {
@@ -66,7 +50,7 @@ function drawEdges(edgesEl: D3Element, cy: cytoscape.Core) {
   });
 }
 
-function addNodes(mindmap: MindmapNode, cy: cytoscape.Core, conf: MermaidConfig, level: number) {
+function addNodes(mindmap: KanbanNode, cy: cytoscape.Core, conf: MermaidConfig, level: number) {
   cy.add({
     group: 'nodes',
     data: {
@@ -101,7 +85,7 @@ function addNodes(mindmap: MindmapNode, cy: cytoscape.Core, conf: MermaidConfig,
   }
 }
 
-function layoutMindmap(node: MindmapNode, conf: MermaidConfig): Promise<cytoscape.Core> {
+function layoutMindmap(node: KanbanNode, conf: MermaidConfig): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -142,7 +126,7 @@ function layoutMindmap(node: MindmapNode, conf: MermaidConfig): Promise<cytoscap
   });
 }
 
-function positionNodes(db: MindmapDB, cy: cytoscape.Core) {
+function positionNodes(db: KanbanDB, cy: cytoscape.Core) {
   cy.nodes().map((node, id) => {
     const data = node.data();
     data.x = node.position().x;
@@ -161,9 +145,10 @@ function positionNodes(db: MindmapDB, cy: cytoscape.Core) {
 export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   log.debug('Rendering mindmap diagram\n' + text);
 
-  const db = diagObj.db as MindmapDB;
-  const mm = db.getMindmap();
-  if (!mm) {
+  const db = diagObj.db as KanbanDB;
+  const sections = db.getSections();
+  // const sections = db.getData();
+  if (!sections) {
     return;
   }
 
@@ -176,14 +161,14 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   // this gives us the size of the nodes and we can set the positions later
 
   const edgesElem = svg.append('g');
-  edgesElem.attr('class', 'mindmap-edges');
+  edgesElem.attr('class', 'sections');
   const nodesElem = svg.append('g');
-  nodesElem.attr('class', 'mindmap-nodes');
-  await drawNodes(db, nodesElem, mm as FilledMindMapNode, -1, conf);
+  nodesElem.attr('class', 'items');
+  await drawSections(db, nodesElem, sections as FilledKanbanNode, -1, conf);
 
   // Next step is to layout the mindmap, giving each node a position
 
-  const cy = await layoutMindmap(mm, conf);
+  const cy = await layoutMindmap(sections, conf);
 
   // After this we can draw, first the edges and the then nodes with the correct position
   drawEdges(edgesElem, cy);
