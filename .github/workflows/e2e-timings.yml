@@ -3,7 +3,7 @@ name: E2E - Generate Timings
 on:
   # run this workflow every night at 3am
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '28 3 * * *'
   # or when the user triggers it from GitHub Actions page
   workflow_dispatch:
 
@@ -48,6 +48,6 @@ jobs:
         uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9.1.4
         with:
           add: 'cypress/timings.json'
-          author_name: ${{ github.actor }}
-          author_email: ${{ github.actor }}@users.noreply.github.com
+          author_name: 'github-actions[bot]'
+          author_email: '41898282+github-actions[bot]@users.noreply.github.com'
           message: 'chore: update E2E timings'
