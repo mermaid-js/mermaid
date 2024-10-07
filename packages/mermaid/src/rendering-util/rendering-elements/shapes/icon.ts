@@ -77,7 +77,7 @@ export const icon = async (
           : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY
       })`
     );
-    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
+    iconElem.attr('style', `color: ${stylesMap.get('stroke') ?? nodeBorder};`);
   }
 
   label.attr(
