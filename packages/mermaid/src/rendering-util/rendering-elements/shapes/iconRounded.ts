@@ -51,17 +51,17 @@ export const iconRounded = async (
 
   const iconNode = rc.path(createRoundedRectPathD(x, y, width, height, 5), options);
 
-  const outerWidth = Math.max(width, bbox.width);
-  const outerHeight = height + bbox.height + labelPadding;
+  // const outerWidth = Math.max(width, bbox.width);
+  // const outerHeight = height + bbox.height + labelPadding;
 
-  const outerNode = rc.rectangle(-outerWidth / 2, -outerHeight / 2, outerWidth, outerHeight, {
-    ...options,
-    fill: 'transparent',
-    stroke: 'none',
-  });
+  // const outerNode = rc.rectangle(-outerWidth / 2, -outerHeight / 2, outerWidth, outerHeight, {
+  //   ...options,
+  //   fill: 'transparent',
+  //   stroke: 'none',
+  // });
 
   const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
-  const outerShape = shapeSvg.insert(() => outerNode);
+  // const outerShape = shapeSvg.insert(() => outerNode);
   const iconElem = shapeSvg.append('g');
 
   if (node.icon) {
@@ -70,12 +70,17 @@ export const iconRounded = async (
     );
     const iconBBox = iconElem.node().getBBox();
     const iconWidth = iconBBox.width;
-    const iconHeight = iconBBox.height;
+    // const iconHeight = iconBBox.height;
     const iconX = iconBBox.x;
-    const iconY = iconBBox.y;
+    // const iconY = iconBBox.y;
+
+    // iconElem.attr(
+    //   'transform',
+    //   `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - padding : outerHeight / 2 - iconHeight - iconY - padding - bbox.height - labelPadding})`
+    // );
     iconElem.attr(
       'transform',
-      `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - padding : outerHeight / 2 - iconHeight - iconY - padding - bbox.height - labelPadding})`
+      `translate(${-iconWidth / 2 - iconX},${topLabel ? -iconSize / 2 : -iconSize / 2})`
     );
     iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') ?? nodeBorder);
     iconElem.attr('class', 'icon');
@@ -83,13 +88,12 @@ export const iconRounded = async (
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${topLabel ? -outerHeight / 2 : outerHeight / 2 - bbox.height})`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${topLabel ? -height / 2 - bbox.height - labelPadding : height / 2 + labelPadding})`
   );
-
-  iconShape.attr(
-    'transform',
-    `translate(${0},${topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2})`
-  );
+  // iconShape.attr(
+  //   'transform',
+  //   `translate(${0},${topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2})`
+  // );
 
   if (stylesMap.get('stroke')) {
     iconElem.selectAll('path').attr('style', `fill: ${stylesMap.get('stroke')}`);
@@ -99,43 +103,43 @@ export const iconRounded = async (
     iconShape.selectAll('path').attr('style', `stroke: ${stylesMap.get('fill')}`);
   }
 
-  updateNodeBounds(node, outerShape);
+  updateNodeBounds(node, iconShape);
 
   node.intersect = function (point) {
     log.info('iconSquare intersect', node, point);
-    if (!node.label) {
-      return intersect.rect(node, point);
-    }
-    const dx = node.x ?? 0;
-    const dy = node.y ?? 0;
-    const nodeHeight = node.height ?? 0;
-    let points = [];
-    if (topLabel) {
-      points = [
-        { x: dx - bbox.width / 2, y: dy - nodeHeight / 2 },
-        { x: dx + bbox.width / 2, y: dy - nodeHeight / 2 },
-        { x: dx + bbox.width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
-        { x: dx + width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
-        { x: dx + width / 2, y: dy + nodeHeight / 2 },
-        { x: dx - width / 2, y: dy + nodeHeight / 2 },
-        { x: dx - width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
-        { x: dx - bbox.width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
-      ];
-    } else {
-      points = [
-        { x: dx - width / 2, y: dy - nodeHeight / 2 },
-        { x: dx + width / 2, y: dy - nodeHeight / 2 },
-        { x: dx + width / 2, y: dy - nodeHeight / 2 + height },
-        { x: dx + bbox.width / 2, y: dy - nodeHeight / 2 + height },
-        { x: dx + bbox.width / 2 / 2, y: dy + nodeHeight / 2 },
-        { x: dx - bbox.width / 2, y: dy + nodeHeight / 2 },
-        { x: dx - bbox.width / 2, y: dy - nodeHeight / 2 + height },
-        { x: dx - width / 2, y: dy - nodeHeight / 2 + height },
-      ];
-    }
+    // if (!node.label) {
+    return intersect.rect(node, point);
+    // }
+    // const dx = node.x ?? 0;
+    // const dy = node.y ?? 0;
+    // const nodeHeight = node.height ?? 0;
+    // let points = [];
+    // if (topLabel) {
+    //   points = [
+    //     { x: dx - bbox.width / 2, y: dy - nodeHeight / 2 },
+    //     { x: dx + bbox.width / 2, y: dy - nodeHeight / 2 },
+    //     { x: dx + bbox.width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
+    //     { x: dx + width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
+    //     { x: dx + width / 2, y: dy + nodeHeight / 2 },
+    //     { x: dx - width / 2, y: dy + nodeHeight / 2 },
+    //     { x: dx - width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
+    //     { x: dx - bbox.width / 2, y: dy - nodeHeight / 2 + bbox.height + labelPadding },
+    //   ];
+    // } else {
+    //   points = [
+    //     { x: dx - width / 2, y: dy - nodeHeight / 2 },
+    //     { x: dx + width / 2, y: dy - nodeHeight / 2 },
+    //     { x: dx + width / 2, y: dy - nodeHeight / 2 + height },
+    //     { x: dx + bbox.width / 2, y: dy - nodeHeight / 2 + height },
+    //     { x: dx + bbox.width / 2 / 2, y: dy + nodeHeight / 2 },
+    //     { x: dx - bbox.width / 2, y: dy + nodeHeight / 2 },
+    //     { x: dx - bbox.width / 2, y: dy - nodeHeight / 2 + height },
+    //     { x: dx - width / 2, y: dy - nodeHeight / 2 + height },
+    //   ];
+    // }
 
-    const pos = intersect.polygon(node, points, point);
-    return pos;
+    // const pos = intersect.polygon(node, points, point);
+    // return pos;
   };
 
   return shapeSvg;
