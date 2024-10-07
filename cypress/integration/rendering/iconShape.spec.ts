@@ -124,3 +124,20 @@ describe('Test iconShape with different h', () => {
     imgSnapshotTest(flowchartCode);
   });
 });
+
+describe('Test colored iconShape', () => {
+  it('with no styles', () => {
+    let flowchartCode = `flowchart TB\n`;
+    const icon = 'logos:aws';
+    flowchartCode += `  nA --> nAA@{ icon: '${icon}', form: 'square', label: 'icon with color' }\n`;
+    imgSnapshotTest(flowchartCode);
+  });
+
+  it('with styles', () => {
+    let flowchartCode = `flowchart TB\n`;
+    const icon = 'logos:aws';
+    flowchartCode += `  nA --> nAA@{ icon: '${icon}', form: 'square', label: 'icon with color' }\n`;
+    flowchartCode += `  style nAA fill:#f9f,stroke:#333,stroke-width:4px \n`;
+    imgSnapshotTest(flowchartCode);
+  });
+});
