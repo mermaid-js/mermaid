@@ -23,7 +23,7 @@ export function splitLineToWords(text: string): string[] {
       (s) => s.segment // Change: Locale-aware word splitting.
     );
   }
-  
+
   // Fallback: Split by spaces, adding back spaces manually.
   const words = text.split(' ');
   const wordsWithSpaces = words.flatMap((s) => [s, ' ']).filter((s) => s);
@@ -62,7 +62,7 @@ function splitWordToFitWidthRecursion(
   }
   const [nextChar, ...rest] = remainingChars;
   const newWord = [...usedChars, nextChar];
-  
+
   // Check if the word with the next character still fits.
   if (checkFit([{ content: newWord.join(''), type }])) {
     return splitWordToFitWidthRecursion(checkFit, newWord, rest, type); // Continue recursion.
@@ -122,7 +122,7 @@ function splitLineToFitWidthRecursion(
 
   const nextWord: MarkdownWord = words.shift() ?? { content: ' ', type: 'normal' };
   const lineWithNextWord: MarkdownLine = [...newLine];
-  
+
   // Handle spaces between words.
   if (joiner !== '') {
     lineWithNextWord.push({ content: joiner, type: 'normal' });
