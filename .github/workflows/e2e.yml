@@ -28,7 +28,6 @@ env:
       ) || 
       github.event.before
     }}
-  shouldRunParallel: ${{ secrets.CYPRESS_RECORD_KEY != '' && !(github.event_name == 'push' && github.ref == 'refs/heads/develop') }}
 jobs:
   cache:
     runs-on: ubuntu-latest
@@ -80,7 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2, 3, 4]
+        containers: [1, 2, 3, 4, 5]
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
@@ -119,9 +118,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@df7484c5ba85def7eef30db301afa688187bc378 # v6.7.2
         id: cypress
-        # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
-        # Otherwise (e.g. if running from fork), we run on a single container only
-        if: ${{ env.shouldRunParallel == 'true' || ( matrix.containers == 1 ) }}
         with:
           install: false
           start: pnpm run dev:coverage
@@ -129,16 +125,18 @@ jobs:
           browser: chrome
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
-          record: ${{ env.shouldRunParallel == 'true' }}
-          parallel: ${{ env.shouldRunParallel == 'true' }}
+          record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           VITEST_COVERAGE: true
           CYPRESS_COMMIT: ${{ github.sha }}
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-          ARGOS_PARALLEL: ${{ env.shouldRunParallel == 'true' }}
-          ARGOS_PARALLEL_TOTAL: 4
-          ARGOS_PARALLEL_INDEX: ${{ matrix.containers }}
+          ARGOS_PARALLEL: true
+          ARGOS_PARALLEL_TOTAL: ${{ strategy.job-total }}
+          ARGOS_PARALLEL_INDEX: ${{ strategy.job-index }}
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}
+          SPLIT_FILE: 'cypress/timings.json'
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
