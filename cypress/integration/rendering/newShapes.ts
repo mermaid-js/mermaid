@@ -1,6 +1,5 @@
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
-const looks = ['classic', 'handDrawn'] as const;
 const directions = [
   'TB',
   //'BT',
@@ -58,7 +57,7 @@ const newShapesSets = [
   newShapesSet6,
 ];
 
-looks.forEach((look) => {
+export const newShapeTest = (look: 'classic' | 'handDrawn') => {
   directions.forEach((direction) => {
     newShapesSets.forEach((newShapesSet) => {
       describe(`Test ${newShapesSet.join(', ')} in ${look} look and dir ${direction}`, () => {
@@ -143,4 +142,6 @@ looks.forEach((look) => {
       });
     });
   });
-});
+};
+
+// cspell:ignore clazz
