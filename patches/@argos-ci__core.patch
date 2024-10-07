@@ -1,0 +1,14 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 749b5d65546011b9d87d0a28dd86c1de091efe47..47a8ba5ed143787dc761e12d670d3eb8f7004311 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -722,6 +722,9 @@ const createArgosLegacyAPIClient = (options)=>{
+             });
+             return response.data;
+         } catch (error) {
++            console.error(error);
++            console.error(error.response);
++            console.error(JSON.stringify(error.response, null, 2));
+             if (error?.response?.data?.error?.message) {
+                 // @ts-ignore
+                 throw new Error(error.response.data.error.message, {
