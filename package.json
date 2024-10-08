@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.44.4",
-    "@argos-ci/cypress": "^2.2.2",
+    "@argos-ci/cypress": "^2.2.3",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.7",
     "@cspell/eslint-plugin": "^8.8.4",
@@ -135,9 +135,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "roughjs": "patches/roughjs.patch",
-      "@argos-ci/core": "patches/@argos-ci__core.patch",
-      "@argos-ci/api-client": "patches/@argos-ci__api-client.patch"
+      "roughjs": "patches/roughjs.patch"
     }
   }
 }
