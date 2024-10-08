@@ -64,6 +64,14 @@ export interface Node {
   y?: number;
 
   look?: string;
+  icon?: string;
+  pos?: 't' | 'b';
+  img?: string;
+  assetWidth?: number;
+  assetHeight?: number;
+  defaultWidth?: number;
+  imageAspectRatio?: number;
+  constraint?: 'on' | 'off';
 }
 
 // Common properties for any edge in the system
@@ -138,3 +146,8 @@ export type LayoutMethod =
   | 'fdp'
   | 'osage'
   | 'grid';
+
+export interface ShapeRenderOptions {
+  config: MermaidConfig;
+  dir: string;
+}

@@ -1,8 +1,9 @@
-import { defineConfig } from 'cypress';
-import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin';
-import coverage from '@cypress/code-coverage/task';
 import eyesPlugin from '@applitools/eyes-cypress';
 import { registerArgosTask } from '@argos-ci/cypress/task';
+import coverage from '@cypress/code-coverage/task';
+import { defineConfig } from 'cypress';
+import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin';
+import cypressSplit from 'cypress-split';
 
 export default eyesPlugin(
   defineConfig({
@@ -13,6 +14,7 @@ export default eyesPlugin(
       specPattern: 'cypress/integration/**/*.{js,ts}',
       setupNodeEvents(on, config) {
         coverage(on, config);
+        cypressSplit(on, config);
         on('before:browser:launch', (browser, launchOptions) => {
           if (browser.name === 'chrome' && browser.isHeadless) {
             launchOptions.args.push('--window-size=1440,1024', '--force-device-scale-factor=1');
