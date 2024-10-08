@@ -1,14 +1,39 @@
 diff --git a/dist/index.mjs b/dist/index.mjs
-index 749b5d65546011b9d87d0a28dd86c1de091efe47..c6630f190eb371a5727f1b37325e848f96c02bd0 100644
+index 5cbaad945826960a6b77b44bf9661e1c2523c16d..6df2474578cdcf2b6d26330bd23dbb48a24ecafe 100644
 --- a/dist/index.mjs
 +++ b/dist/index.mjs
-@@ -722,6 +722,9 @@ const createArgosLegacyAPIClient = (options)=>{
-             });
-             return response.data;
-         } catch (error) {
-+            console.error(error.response);
-+            console.error(error.response.details);
-+            console.error(JSON.stringify(error.response.details, null, 2));
-             if (error?.response?.data?.error?.message) {
-                 // @ts-ignore
-                 throw new Error(error.response.data.error.message, {
+@@ -914,13 +914,7 @@ async function uploadFilesToS3(files) {
+     await uploadFilesToS3(uploadFiles);
+     // Update build
+     debug("Updating build");
+-    const uploadBuildResponse = await apiClient.PUT("/builds/{buildId}", {
+-        params: {
+-            path: {
+-                buildId: result.build.id
+-            }
+-        },
+-        body: {
++    const body = {
+             screenshots: screenshots.map((screenshot)=>({
+                     key: screenshot.hash,
+                     name: screenshot.name,
+@@ -933,9 +927,18 @@ async function uploadFilesToS3(files) {
+             parallelTotal: config.parallelTotal,
+             parallelIndex: config.parallelIndex,
+             metadata: params.metadata
+-        }
++        };
++    const uploadBuildResponse = await apiClient.PUT("/builds/{buildId}", {
++        params: {
++            path: {
++                buildId: result.build.id
++            }
++        },
++        body
+     });
+     if (uploadBuildResponse.error) {
++        console.error(JSON.stringify({body, buildId: result.build.id}, null, 2))
++        console.error(JSON.stringify(uploadBuildResponse, null, 2))
+         throwAPIError(uploadBuildResponse);
+     }
+     return {
