@@ -36,8 +36,8 @@ const getStyles = (options) =>
   .node rect,
   .node circle,
   .node ellipse,
-  .node polygon,
-  .node path {
+  .node polygon
+  {
     fill: ${options.mainBkg};
     stroke: ${options.nodeBorder};
     stroke-width: 1px;

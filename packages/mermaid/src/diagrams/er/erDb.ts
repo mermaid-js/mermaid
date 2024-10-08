@@ -45,7 +45,7 @@ const addEntity = function (name: string, alias = ''): EntityNode {
       alias,
       shape: 'erBox',
       look: getConfig().look || 'default',
-      cssClasses: [],
+      cssClasses: ['default'],
       cssStyles: [],
     });
     log.info('Added new entity :', name);
