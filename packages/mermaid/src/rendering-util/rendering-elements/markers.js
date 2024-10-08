@@ -277,6 +277,128 @@ const barb = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
 };
+// erDiagram specific markers
+const only_one = (elem, type, id) => {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-onlyOneStart')
+    .attr('class', 'marker onlyOne ' + type)
+    .attr('refX', 0)
+    .attr('refY', 9)
+    .attr('markerWidth', 18)
+    .attr('markerHeight', 18)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M9,0 L9,18 M15,0 L15,18');
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-onlyOneEnd')
+    .attr('class', 'marker onlyOne ' + type)
+    .attr('refX', 18)
+    .attr('refY', 9)
+    .attr('markerWidth', 18)
+    .attr('markerHeight', 18)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M3,0 L3,18 M9,0 L9,18');
+};
+
+const zero_or_one = (elem, type, id) => {
+  const startMarker = elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-zeroOrOneStart')
+    .attr('class', 'marker zeroOrOne ' + type)
+    .attr('refX', 0)
+    .attr('refY', 9)
+    .attr('markerWidth', 30)
+    .attr('markerHeight', 18)
+    .attr('orient', 'auto');
+  startMarker
+    .append('circle')
+    .attr('fill', 'white') // Fill white for now?
+    .attr('cx', 21)
+    .attr('cy', 9)
+    .attr('r', 6);
+  startMarker.append('path').attr('d', 'M9,0 L9,18');
+
+  const endMarker = elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-zeroOrOneEnd')
+    .attr('class', 'marker zeroOrOne ' + type)
+    .attr('refX', 30)
+    .attr('refY', 9)
+    .attr('markerWidth', 30)
+    .attr('markerHeight', 18)
+    .attr('orient', 'auto');
+  endMarker
+    .append('circle')
+    .attr('fill', 'white') // Fill white for now?
+    .attr('cx', 9)
+    .attr('cy', 9)
+    .attr('r', 6);
+  endMarker.append('path').attr('d', 'M21,0 L21,18');
+};
+
+const one_or_more = (elem, type, id) => {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-oneOrMoreStart')
+    .attr('class', 'marker oneOrMore ' + type)
+    .attr('refX', 18)
+    .attr('refY', 18)
+    .attr('markerWidth', 45)
+    .attr('markerHeight', 36)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M0,18 Q 18,0 36,18 Q 18,36 0,18 M42,9 L42,27');
+
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-oneOrMoreEnd')
+    .attr('class', 'marker oneOrMore ' + type)
+    .attr('refX', 27)
+    .attr('refY', 18)
+    .attr('markerWidth', 45)
+    .attr('markerHeight', 36)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M3,9 L3,27 M9,18 Q27,0 45,18 Q27,36 9,18');
+};
+
+const zero_or_more = (elem, type, id) => {
+  const startMarker = elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-zeroOrMoreStart')
+    .attr('class', 'marker zeroOrMore ' + type)
+    .attr('refX', 18)
+    .attr('refY', 18)
+    .attr('markerWidth', 57)
+    .attr('markerHeight', 36)
+    .attr('orient', 'auto');
+  startMarker.append('circle').attr('fill', 'white').attr('cx', 48).attr('cy', 18).attr('r', 6);
+  startMarker.append('path').attr('d', 'M0,18 Q18,0 36,18 Q18,36 0,18');
+
+  const endMarker = elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-zeroOrMoreEnd')
+    .attr('class', 'marker zeroOrMore ' + type)
+    .attr('refX', 39)
+    .attr('refY', 18)
+    .attr('markerWidth', 57)
+    .attr('markerHeight', 36)
+    .attr('orient', 'auto');
+  endMarker.append('circle').attr('fill', 'white').attr('cx', 9).attr('cy', 18).attr('r', 6);
+  endMarker.append('path').attr('d', 'M21,18 Q39,0 57,18 Q39,36 21,18');
+};
 
 // TODO rename the class diagram markers to something shape descriptive and semantic free
 const markers = {
@@ -289,5 +411,9 @@ const markers = {
   circle,
   cross,
   barb,
+  only_one,
+  zero_or_one,
+  one_or_more,
+  zero_or_more,
 };
 export default insertMarkers;
