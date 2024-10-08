@@ -64,8 +64,14 @@ export interface ShapeDefinition {
   name: string;
   shortName: string;
   description: string;
+  /**
+   * Aliases can include descriptive names, other short names, etc.
+   */
   aliases?: string[];
-  legacyAliases?: string[];
+  /**
+   * These are names used by mermaid before the introduction of new shapes. These will not be in standard formats, and shouldn't be used by the users
+   */
+  internalAliases?: string[];
   handler: ShapeHandler;
 }
 
@@ -140,7 +146,7 @@ export const shapesDefs: ShapeDefinition[] = [
     shortName: 'lean-r',
     description: 'Represents input or output',
     aliases: ['lean-right', 'in-out'],
-    legacyAliases: ['lean_right'],
+    internalAliases: ['lean_right'],
     handler: lean_right,
   },
   {
@@ -149,7 +155,7 @@ export const shapesDefs: ShapeDefinition[] = [
     shortName: 'lean-l',
     description: 'Represents output or input',
     aliases: ['lean-left', 'out-in'],
-    legacyAliases: ['lean_left'],
+    internalAliases: ['lean_left'],
     handler: lean_left,
   },
   {
@@ -166,7 +172,7 @@ export const shapesDefs: ShapeDefinition[] = [
     shortName: 'trap-t',
     description: 'Represents a manual task',
     aliases: ['manual', 'trapezoid-top', 'inv-trapezoid'],
-    legacyAliases: ['inv_trapezoid'],
+    internalAliases: ['inv_trapezoid'],
     handler: inv_trapezoid,
   },
   {
@@ -175,7 +181,7 @@ export const shapesDefs: ShapeDefinition[] = [
     shortName: 'dbl-circ',
     description: 'Represents a stop point',
     aliases: ['double-circle'],
-    legacyAliases: ['doublecircle'],
+    internalAliases: ['doublecircle'],
     handler: doublecircle,
   },
   {
@@ -420,7 +426,7 @@ export const shapesDefs: ShapeDefinition[] = [
     name: 'Odd',
     shortName: 'odd',
     description: 'Odd shape',
-    legacyAliases: ['rect_left_inv_arrow'],
+    internalAliases: ['rect_left_inv_arrow'],
     handler: rect_left_inv_arrow,
   },
   {
@@ -438,16 +444,11 @@ const generateShapeMap = () => {
   const shapeMap: Record<string, ShapeHandler> = {
     // States
     state,
-    stateStart,
-    stateEnd,
-    forkJoin,
     choice,
     note,
 
     // Rectangles
     rectWithTitle,
-    roundedRect,
-    squareRect,
     labelRect,
 
     // Icons
@@ -464,7 +465,7 @@ const generateShapeMap = () => {
     for (const alias of [
       shape.shortName,
       ...(shape.aliases ?? []),
-      ...(shape.legacyAliases ?? []),
+      ...(shape.internalAliases ?? []),
     ]) {
       shapeMap[alias] = shape.handler;
     }
