@@ -25,6 +25,7 @@ import { lean_left } from './shapes/leanLeft.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
 import { labelRect } from './shapes/labelRect.js';
+import { classBox } from './shapes/classBox.js';
 import { triangle } from './shapes/triangle.js';
 import { halfRoundedRectangle } from './shapes/halfRoundedRectangle.js';
 import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
@@ -292,6 +293,7 @@ export const shapes = {
   brace: curlyBraceLeft,
 
   labelRect,
+  classBox,
   'brace-r': curlyBraceRight,
   braces: curlyBraces,
   iconSquare,

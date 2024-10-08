@@ -824,6 +824,7 @@ export const insertTitle = (
   parent
     .append('text')
     .text(title)
+    .attr('text-anchor', 'middle')
     .attr('x', bounds.x + bounds.width / 2)
     .attr('y', -titleTopMargin)
     .attr('class', cssClass);

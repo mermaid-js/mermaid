@@ -716,6 +716,7 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
    */
   diagramPadding?: number;
   htmlLabels?: boolean;
+  hideEmptyMembersBox?: boolean;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
