@@ -24,9 +24,36 @@ const getStyles = (options) =>
       }
   }
 
-    .relationshipLine {
-      stroke: ${options.lineColor};
-    }
+  .edgeLabel .label {
+    fill: ${options.nodeBorder};
+    font-size: 14px;
+  }
+
+  .edgeLabel .label .labelBkg {
+    background: ${options.mainBkg};
+  }
+
+  .node rect,
+  .node circle,
+  .node ellipse,
+  .node polygon,
+  .node path {
+    fill: ${options.mainBkg};
+    stroke: ${options.nodeBorder};
+    stroke-width: 1px;
+  }
+
+  .relationshipLine {
+    stroke: ${options.lineColor};
+    stroke-width: 1;
+    fill: none;
+  }
+
+  .marker {
+    fill: none !important;
+    stroke: ${options.lineColor} !important;
+    stroke-width: 1;
+  }
 
   .entityTitleText {
     text-anchor: middle;
