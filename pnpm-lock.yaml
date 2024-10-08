@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@argos-ci/core':
-    hash: uo5hizdipvukv3j7uqzpz6vn3u
+    hash: h747yhlouzzcfgu7wmk6ozsy54
     path: patches/@argos-ci__core.patch
   roughjs:
     hash: vxb6t6fqvzyhwhtjiliqr25jyq
@@ -9949,7 +9949,7 @@ snapshots:
 
   '@argos-ci/browser@2.1.3': {}
 
-  '@argos-ci/core@2.5.0(patch_hash=uo5hizdipvukv3j7uqzpz6vn3u)':
+  '@argos-ci/core@2.5.0(patch_hash=h747yhlouzzcfgu7wmk6ozsy54)':
     dependencies:
       '@argos-ci/api-client': 0.2.0
       '@argos-ci/util': 2.1.1
@@ -9965,7 +9965,7 @@ snapshots:
   '@argos-ci/cypress@2.1.2(cypress@13.14.1)':
     dependencies:
       '@argos-ci/browser': 2.1.3
-      '@argos-ci/core': 2.5.0(patch_hash=uo5hizdipvukv3j7uqzpz6vn3u)
+      '@argos-ci/core': 2.5.0(patch_hash=h747yhlouzzcfgu7wmk6ozsy54)
       '@argos-ci/util': 2.1.1
       cypress: 13.14.1
       cypress-wait-until: 3.0.2
