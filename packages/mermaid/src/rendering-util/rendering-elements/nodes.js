@@ -22,6 +22,7 @@ import { lean_left } from './shapes/leanLeft.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
 import { labelRect } from './shapes/labelRect.js';
+import { erBox } from './shapes/erBox.js';
 
 const shapes = {
   state,
@@ -47,6 +48,7 @@ const shapes = {
   trapezoid,
   inv_trapezoid,
   labelRect,
+  erBox,
 };
 
 const nodeElems = new Map();
