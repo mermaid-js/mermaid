@@ -1,23 +1,29 @@
 {
-  // extend your base config to share compilerOptions, etc
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    // ensure that nobody can accidentally use this config for a build
     "noEmit": true,
-    "allowJs": true
+    "allowJs": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true
   },
   "include": [
     "./.build/*.ts",
     "./.esbuild/*.ts",
     "./.vite/*.ts",
     "./cypress.config.ts",
-    "./tests",
-    "./scripts",
-    "./cypress",
-    "./__mocks__",
-    "./demos/dev",
+    "./tests/**/*.ts",
+    "./scripts/**/*.ts",
+    "./cypress/**/*.ts",
+    "./__mocks__/**/*.ts",
+    "./demos/dev/**/*.ts",
     "./vite.config.ts",
     "./vitest.workspace.js",
     "eslint.config.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.test.ts"
   ]
 }

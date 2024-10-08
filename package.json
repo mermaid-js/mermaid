@@ -89,7 +89,7 @@
     "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
     "cspell": "^8.6.0",
-    "cypress": "^13.14.1",
+    "cypress": "^4.12.1",
     "cypress-image-snapshot": "^4.0.1",
     "cypress-split": "^1.24.0",
     "esbuild": "^0.21.5",
@@ -128,7 +128,7 @@
     "typescript-eslint": "^8.0.0-alpha.34",
     "vite": "^5.2.3",
     "vite-plugin-istanbul": "^6.0.0",
-    "vitest": "^1.4.0"
+    "vitest": "^1.6.0"
   },
   "nyc": {
     "report-dir": "coverage/cypress"
