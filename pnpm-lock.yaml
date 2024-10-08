@@ -226,6 +226,12 @@ importers:
       '@mermaid-js/parser':
         specifier: workspace:^
         version: link:../parser
+      '@types/d3':
+        specifier: ^7.4.3
+        version: 7.4.3
+      '@types/dompurify':
+        specifier: ^3.0.5
+        version: 3.0.5
       cytoscape:
         specifier: ^3.29.2
         version: 3.30.1
@@ -287,9 +293,6 @@ importers:
       '@types/cytoscape-fcose':
         specifier: ^2.2.4
         version: 2.2.4
-      '@types/d3':
-        specifier: ^7.4.3
-        version: 7.4.3
       '@types/d3-sankey':
         specifier: ^0.12.4
         version: 0.12.4
@@ -305,9 +308,6 @@ importers:
       '@types/d3-shape':
         specifier: ^3.1.6
         version: 3.1.6
-      '@types/dompurify':
-        specifier: ^3.0.5
-        version: 3.0.5
       '@types/jsdom':
         specifier: ^21.1.6
         version: 21.1.7
