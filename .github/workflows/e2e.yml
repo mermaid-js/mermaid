@@ -133,7 +133,7 @@ jobs:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
           ARGOS_PARALLEL: true
           ARGOS_PARALLEL_TOTAL: ${{ strategy.job-total }}
-          ARGOS_PARALLEL_INDEX: ${{ matrix.containers }}
+          ARGOS_PARALLEL_INDEX: ${{ strategy.job-index }}
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: 'cypress/timings.json'

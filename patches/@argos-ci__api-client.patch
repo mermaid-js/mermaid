@@ -1,0 +1,15 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 121ed29385ceca37f7cb6b7188709d7ec506dfa6..41092962ccde5177a261b816cffb55f6a1615d6e 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -25,6 +25,10 @@ class APIError extends Error {
+  */ function throwAPIError(fetchResponse) {
+     const { error, response } = fetchResponse;
+     if (error && typeof error === "object" && "error" in error && typeof error.error === "string") {
++        const message = error.details?.[0]?.message;
++        if (message) {
++            throw new APIError(`${error.error}: ${message}`);
++        }
+         throw new APIError(error.error);
+     }
+     throw new APIError(`API error: ${response.status} ${response.statusText}`);

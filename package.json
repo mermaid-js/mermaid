@@ -136,7 +136,8 @@
   "pnpm": {
     "patchedDependencies": {
       "roughjs": "patches/roughjs.patch",
-      "@argos-ci/core": "patches/@argos-ci__core.patch"
+      "@argos-ci/core": "patches/@argos-ci__core.patch",
+      "@argos-ci/api-client": "patches/@argos-ci__api-client.patch"
     }
   }
 }

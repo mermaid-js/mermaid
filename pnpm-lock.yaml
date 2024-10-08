@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  '@argos-ci/api-client':
+    hash: gzf7rvzoe5uw7phud3jvxl3h2u
+    path: patches/@argos-ci__api-client.patch
   '@argos-ci/core':
     hash: ew23wb5pwcjiy5eope7s6dj3ty
     path: patches/@argos-ci__core.patch
@@ -9943,7 +9946,7 @@ snapshots:
 
   '@applitools/utils@1.7.4': {}
 
-  '@argos-ci/api-client@0.5.0':
+  '@argos-ci/api-client@0.5.0(patch_hash=gzf7rvzoe5uw7phud3jvxl3h2u)':
     dependencies:
       openapi-fetch: 0.11.1
 
@@ -9951,7 +9954,7 @@ snapshots:
 
   '@argos-ci/core@2.8.1(patch_hash=ew23wb5pwcjiy5eope7s6dj3ty)':
     dependencies:
-      '@argos-ci/api-client': 0.5.0
+      '@argos-ci/api-client': 0.5.0(patch_hash=gzf7rvzoe5uw7phud3jvxl3h2u)
       '@argos-ci/util': 2.1.1
       axios: 1.7.5(debug@4.3.7)
       convict: 6.2.4
