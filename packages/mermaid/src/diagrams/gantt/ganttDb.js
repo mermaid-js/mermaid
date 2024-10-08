@@ -26,6 +26,7 @@ let dateFormat = '';
 let axisFormat = '';
 let tickInterval = undefined;
 let todayMarker = '';
+let today = '';
 let includes = [];
 let excludes = [];
 let links = new Map();
@@ -57,6 +58,7 @@ export const clear = function () {
   displayMode = '';
   tickInterval = undefined;
   todayMarker = '';
+  today = '';
   includes = [];
   excludes = [];
   inclusiveEndDates = false;
@@ -90,6 +92,14 @@ export const setTodayMarker = function (txt) {
 
 export const getTodayMarker = function () {
   return todayMarker;
+};
+
+export const setToday = function (txt) {
+  today = txt;
+};
+
+export const getToday = function () {
+  return today;
 };
 
 export const setDateFormat = function (txt) {
@@ -766,6 +776,8 @@ export default {
   getTickInterval,
   setTodayMarker,
   getTodayMarker,
+  setToday,
+  getToday,
   setAccTitle,
   getAccTitle,
   setDiagramTitle,
