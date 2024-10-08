@@ -15,30 +15,41 @@ export const iconRounded = async (
 ) => {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const defaultWidth = flowchart?.wrappingWidth;
+  const labelPadding = node.label ? 8 : 0;
+  const padding = node.height ? node.height * 0.05 : 15;
   const assetHeight = node.assetHeight ?? 48;
   const assetWidth = node.assetWidth ?? 48;
-  const iconSize = Math.max(assetHeight, assetWidth);
-  const defaultWidth = flowchart?.wrappingWidth;
-  node.width = Math.max(iconSize, defaultWidth ?? 0);
-  const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
-    parent,
-    node,
-    'icon-shape default'
-  );
+  let iconSize = Math.max(assetHeight, assetWidth);
+  let height = iconSize + padding * 2;
+  let width = iconSize + padding * 2;
 
+  let adjustDimensions = false;
+  if (node.width || node.height) {
+    adjustDimensions = true;
+    node.width = (node?.width ?? 10) - labelPadding * 2;
+    node.height = (node?.height ?? 10) - labelPadding * 2;
+    width = node.width;
+    height = node.height;
+  } else {
+    node.width = Math.max(width, defaultWidth ?? 0);
+  }
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'icon-shape default');
   const topLabel = node.pos === 't';
 
-  const padding = node.look === 'neo' ? halfPadding * 2 : halfPadding;
+  if (adjustDimensions) {
+    node.width = node.width + labelPadding * 2;
+    node.height = (node.height ?? 10) + labelPadding * 2;
+    width = node.width;
+    height = node.height;
+    iconSize = Math.max(node.width - padding * 2, node.height - padding * 2);
+  }
 
-  const height = iconSize + padding * 2;
-  const width = iconSize + padding * 2;
   const { nodeBorder, mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
 
   const x = -width / 2;
   const y = -height / 2;
-
-  const labelPadding = node.label ? 8 : 0;
 
   // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
@@ -66,18 +77,13 @@ export const iconRounded = async (
 
   if (node.icon) {
     iconElem.html(
-      `<g>${await getIconSVG(node.icon, { height: iconSize, width: iconSize, fallbackPrefix: '' })}</g>`
+      `<g>${await getIconSVG(node.icon, { height: iconSize, fallbackPrefix: '' })}</g>`
     );
     const iconBBox = iconElem.node().getBBox();
     const iconWidth = iconBBox.width;
     // const iconHeight = iconBBox.height;
     const iconX = iconBBox.x;
     // const iconY = iconBBox.y;
-
-    // iconElem.attr(
-    //   'transform',
-    //   `translate(${-iconWidth / 2 - iconX},${topLabel ? outerHeight / 2 - iconHeight - iconY - padding : outerHeight / 2 - iconHeight - iconY - padding - bbox.height - labelPadding})`
-    // );
     iconElem.attr(
       'transform',
       `translate(${-iconWidth / 2 - iconX},${topLabel ? -iconSize / 2 : -iconSize / 2})`
