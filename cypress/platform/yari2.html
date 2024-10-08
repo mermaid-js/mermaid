@@ -1,0 +1,174 @@
+<html>
+  <body>
+    <h1 class="header">Nodes</h1>
+    <div class="node-showcase">
+      <div class="test">
+        <h2>Basic ErNode</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: false
+              look: handDrawn
+              theme: forest
+          ---
+          erDiagram
+            _**hiØ**_[*test*] {
+              *__List~List~int~~sdfds__* __driversLicense__ PK "***The l😀icense #***"
+              *string(99)~T~~~~~~* firstName "Only 99 <br>characters are a<br>llowed dsfsdfsdfsdfs"
+              string lastName
+              string phone UK
+              int age
+            }
+            style PERSON color:red, stroke:blue,fill:#f9f
+            classDef test,test2 stroke:red
+            class PERSON test,test2
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic ErNode</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: true
+              look: handDrawn
+          ---
+          erDiagram
+            c[CUST😀OMER]
+            p[__PERSON__]
+            style c,p fill:#f9f,stroke:blue, color:grey, font-size:24px,font-weight:bold
+        </pre>
+      </div>
+    </div>
+    <h1 class="header">Diagram Testing</h1>
+    <div class="diagram-showcase">
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: false
+              look:
+          ---
+          erDiagram
+            "hi" }o..o{ ORDER : places
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: false
+              look:
+          ---
+          erDiagram
+            CAR ||--|{ NAMED-DRIVER : allows
+            PERSON ||..o{ NAMED-DRIVER : is
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: true
+          ---
+          erDiagram
+            CAR ||--o{ NAMED-DRIVER : allows
+            CAR {
+                test test PK "comment"
+                string make
+                string model
+                string[] parts
+            }
+            PERSON ||--o{ NAMED-DRIVER : is
+            PERSON ||--o{ CAR : is
+            PERSON {
+                string driversLicense PK "The license #"
+                string(99) firstName "Only 99 characters are allowed"
+                string lastName
+                string phone UK
+                int age
+            }
+            NAMED-DRIVER {
+                string carRegistrationNumber PK, FK
+                string driverLicence PK, FK
+            }
+            MANUFACTURER only one to zero or more CAR : makes      
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            title: simple ER diagram
+            config:
+              theme: forest
+          ---
+          erDiagram
+          direction TB
+          p[Pers😀on] {
+              string firstName
+              string lastName
+          }
+          a["Customer Account"] {
+              string email
+          }
+          p ||--o| a : has
+           
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          erDiagram
+            CUSTOMER ||--o{ CUSTOMER : refers
+            CUSTOMER ||--o{ ORDER : places
+            ORDER ||--|{ LINE-ITEM : contains
+        </pre>
+      </div>
+    </div>
+
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize();
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+  <style>
+    .header {
+      text-decoration: underline;
+      text-align: center;
+    }
+    .node-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .test {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .test > h2 {
+      margin: 0;
+      text-align: center;
+    }
+    .test > p {
+      margin-top: -6px;
+      color: gray;
+    }
+
+    .diagram-showcase {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+  </style>
+</html>
