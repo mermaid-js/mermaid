@@ -82,6 +82,7 @@ export const shapesDefs: ShapeDefinition[] = [
     shortName: 'rect',
     description: 'Standard process shape',
     aliases: ['proc', 'process', 'rectangle'],
+    internalAliases: ['squareRect'],
     handler: squareRect,
   },
   {
@@ -90,6 +91,7 @@ export const shapesDefs: ShapeDefinition[] = [
     shortName: 'rounded',
     description: 'Represents an event',
     aliases: ['event'],
+    internalAliases: ['roundedRect'],
     handler: roundedRect,
   },
   {
@@ -213,6 +215,7 @@ export const shapesDefs: ShapeDefinition[] = [
     shortName: 'sm-circ',
     description: 'Small starting point',
     aliases: ['start', 'small-circle'],
+    internalAliases: ['stateStart'],
     handler: stateStart,
   },
   {
@@ -221,6 +224,7 @@ export const shapesDefs: ShapeDefinition[] = [
     shortName: 'fr-circ',
     description: 'Stop point',
     aliases: ['stop', 'framed-circle'],
+    internalAliases: ['stateEnd'],
     handler: stateEnd,
   },
   {
@@ -229,6 +233,7 @@ export const shapesDefs: ShapeDefinition[] = [
     shortName: 'fork',
     description: 'Fork or join in process flow',
     aliases: ['join'],
+    internalAliases: ['forkJoin'],
     handler: forkJoin,
   },
   {
