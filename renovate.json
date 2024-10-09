@@ -35,6 +35,10 @@
     {
       "groupName": "eslint",
       "matchPackagePatterns": ["eslint"]
+    },
+    {
+      "groupName": "dompurify",
+      "matchPackagePatterns": ["dompurify"]
     }
   ],
   "dependencyDashboard": false,
