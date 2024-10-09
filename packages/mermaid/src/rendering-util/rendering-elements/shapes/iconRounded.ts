@@ -30,7 +30,7 @@ export const iconRounded = async (
 
   const height = iconSize + halfPadding * 2;
   const width = iconSize + halfPadding * 2;
-  const { nodeBorder, mainBkg } = themeVariables;
+  const { nodeBorder } = themeVariables;
   const { stylesMap } = compileStyles(node);
 
   const x = -width / 2;
@@ -39,7 +39,7 @@ export const iconRounded = async (
   const labelPadding = node.label ? 8 : 0;
 
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') || mainBkg });
+  const options = userNodeOverrides(node, { stroke: 'transparent' });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -82,7 +82,7 @@ export const iconRounded = async (
           : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY
       })`
     );
-    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') ?? nodeBorder);
+    iconElem.attr('style', `color: ${stylesMap.get('stroke') ?? nodeBorder};`);
   }
 
   label.attr(
