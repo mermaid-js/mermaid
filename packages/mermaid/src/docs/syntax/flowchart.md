@@ -542,6 +542,56 @@ flowchart TD
     A@{ shape: tag-rect, label: "Tagged process" }
 ```
 
+## Special shapes in Mermaid Flowcharts (v11.3.0+)
+
+Mermaid also introduces 2 special shapes to enhance your flowcharts: **icon** and **image**. These shapes allow you to include icons and images directly within your flowcharts, providing more visual context and clarity.
+
+### Icon Shape
+
+You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions provided [here](https://mermaid.js.org/syntax/architecture.html#icons). The syntax for defining an icon shape is as follows:
+
+```mermaid-example
+flowchart TD
+    A@{ icon: "fa:user", form: "square", label: "User Icon", pos: "t", h: 60 }
+```
+
+### Parameters
+
+- **icon**: The name of the icon from the registered icon pack.
+- **form**: Specifies the background shape of the icon. If not defined there will be no background to icon. Options include:
+  - `square`
+  - `circle`
+  - `rounded`
+- **label**: The text label associated with the icon. This can be any string. If not defined, no label will be displayed.
+- **pos**: The position of the label. If not defined label will default to bottom of icon. Possible values are:
+  - `t`
+  - `b`
+- **h**: The height of the icon. If not defined this will default to 48 which is minimum.
+
+### Image Shape
+
+You can use the `image` shape to include an image in your flowchart. The syntax for defining an image shape is as follows:
+
+```mermaid-example
+flowchart TD
+    A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
+```
+
+### Parameters
+
+- **img**: The URL of the image to be displayed.
+- **label**: The text label associated with the image. This can be any string. If not defined, no label will be displayed.
+- **pos**: The position of the label. If not defined, the label will default to the bottom of the image. Possible values are:
+  - `t`
+  - `b`
+- **w**: The width of the image. If not defined, this will default to the natural width of the image.
+- **h**: The height of the image. If not defined, this will default to the natural height of the image.
+- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the height (`h`) accordingly to the width (`w`). If not defined, this will default to `off` Possible values are:
+  - `on`
+  - `off`
+
+These new shapes provide additional flexibility and visual appeal to your flowcharts, making them more informative and engaging.
+
 ## Links between nodes
 
 Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.
