@@ -52,6 +52,7 @@ required:
   - c4
   - sankey
   - packet
+  - eventModel
   - block
   - look
 properties:
@@ -287,6 +288,8 @@ properties:
     $ref: '#/$defs/SankeyDiagramConfig'
   packet:
     $ref: '#/$defs/PacketDiagramConfig'
+  eventModel:
+    $ref: '#/$defs/EventModelDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
   dompurifyConfig:
@@ -2164,6 +2167,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 5
+
+  EventModelDiagramConfig:
+    title: Event Model Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for event model diagrams.
+    type: object
+    unevaluatedProperties: false
 
   BlockDiagramConfig:
     title: Block Diagram Config
