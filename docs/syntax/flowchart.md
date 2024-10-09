@@ -316,8 +316,6 @@ This syntax creates a node A as a rectangle. It renders in the same way as `A["A
 
 Below is a comprehensive list of the newly introduced shapes and their corresponding semantic meanings, short names, and aliases:
 
-<!-- Will be auto generated with `pnpm --filter mermaid docs:shapes` -->
-
 | **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
 | --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
 | Card                              | Notched Rectangle      | `notch-rect`   | Represents a card              | `card`, `notched-rectangle`                                      |
