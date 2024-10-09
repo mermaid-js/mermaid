@@ -39,6 +39,7 @@ jobs:
           pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts --coverage
 
       - name: Verify out-of-tree build with TypeScript
+        if: ${{ github.repository == 'mermaid-js/mermaid' }}
         run: |
           pnpm test:check:tsc
 
