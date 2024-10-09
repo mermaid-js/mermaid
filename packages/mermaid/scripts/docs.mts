@@ -58,9 +58,8 @@ import { visit } from 'unist-util-visit';
 register('./loadHook.mjs', import.meta.url);
 const { shapesDefs } = await import('../src/rendering-util/rendering-elements/shapes.js');
 
-export const MERMAID_RELEASE_VERSION = JSON.parse(
-  readFileSync(join(__dirname, '../../mermaid/package.json'), 'utf8')
-).version as string;
+export const MERMAID_RELEASE_VERSION = JSON.parse(readFileSync('../mermaid/package.json', 'utf8'))
+  .version as string;
 const MERMAID_MAJOR_VERSION = MERMAID_RELEASE_VERSION.split('.')[0];
 const CDN_URL = 'https://cdn.jsdelivr.net/npm'; // 'https://unpkg.com';
 
