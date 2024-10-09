@@ -28,7 +28,7 @@ page.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:451](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L451)
+[packages/mermaid/src/mermaid.ts:436](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L436)
 
 ---
 
@@ -59,7 +59,7 @@ A graph definition key
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:453](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L453)
+[packages/mermaid/src/mermaid.ts:438](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L438)
 
 ---
 
@@ -89,7 +89,7 @@ Use [initialize](mermaid.Mermaid.md#initialize) and [run](mermaid.Mermaid.md#run
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:446](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L446)
+[packages/mermaid/src/mermaid.ts:431](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L431)
 
 ---
 
@@ -116,13 +116,13 @@ This function should be called before the run function.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:450](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L450)
+[packages/mermaid/src/mermaid.ts:435](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L435)
 
 ---
 
 ### mermaidAPI
 
-• **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.defaultConfig; `getConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`userOptions`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<`ParseResult` | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<`ParseResult`> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`, `positions?`: `Positions`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.setConfig; `updateSiteConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.updateSiteConfig }>
+• **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.defaultConfig; `getConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`userOptions`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](mermaid.ParseResult.md) & { `error?`: `unknown` }>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<[`ParseResult`](mermaid.ParseResult.md)> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`, `positions?`: `Positions`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.setConfig; `updateSiteConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.updateSiteConfig }>
 
 **`Deprecated`**
 
@@ -130,32 +130,32 @@ Use [parse](mermaid.Mermaid.md#parse) and [render](mermaid.Mermaid.md#render) in
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:440](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L440)
+[packages/mermaid/src/mermaid.ts:425](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L425)
 
 ---
 
 ### parse
 
-• **parse**: (`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<`boolean` | `void` | [`ParseResult`](mermaid.ParseResult.md)>
+• **parse**: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](mermaid.ParseResult.md) & { `error?`: `unknown` }>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<[`ParseResult`](mermaid.ParseResult.md)>
 
 #### Type declaration
 
-▸ (`text`, `parseOptions?`): `Promise`<`boolean` | `void` | [`ParseResult`](mermaid.ParseResult.md)>
+▸ (`text`, `parseOptions`): `Promise`<[`ParseResult`](mermaid.ParseResult.md) & { `error?`: `unknown` }>
 
 Parse the text and validate the syntax.
 
 ##### Parameters
 
-| Name            | Type                                      | Description                     |
-| :-------------- | :---------------------------------------- | :------------------------------ |
-| `text`          | `string`                                  | The mermaid diagram definition. |
-| `parseOptions?` | [`ParseOptions`](mermaid.ParseOptions.md) | Options for parsing.            |
+| Name           | Type                                                                     | Description                     |
+| :------------- | :----------------------------------------------------------------------- | :------------------------------ |
+| `text`         | `string`                                                                 | The mermaid diagram definition. |
+| `parseOptions` | [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` } | Options for parsing.            |
 
 ##### Returns
 
-`Promise`<`boolean` | `void` | [`ParseResult`](mermaid.ParseResult.md)>
+`Promise`<[`ParseResult`](mermaid.ParseResult.md) & { `error?`: `unknown` }>
 
-If valid, Diagram otherwise `false` if parseOptions.suppressErrors is `true`.
+An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
 
 **`See`**
 
@@ -165,22 +165,22 @@ If valid, Diagram otherwise `false` if parseOptions.suppressErrors is `true`.
 
 Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
 
-**`Example`**
+▸ (`text`, `parseOptions?`): `Promise`<[`ParseResult`](mermaid.ParseResult.md)>
 
-```js
-console.log(await mermaid.parse('flowchart \n a --> b'));
-// { diagramType: 'flowchart-v2' }
-console.log(await mermaid.parse('wrong \n a --> b', { suppressErrors: true }));
-// false
-console.log(await mermaid.parse('wrong \n a --> b', { suppressErrors: false }));
-// throws Error
-console.log(await mermaid.parse('wrong \n a --> b'));
-// throws Error
-```
+##### Parameters
+
+| Name            | Type                                      |
+| :-------------- | :---------------------------------------- |
+| `text`          | `string`                                  |
+| `parseOptions?` | [`ParseOptions`](mermaid.ParseOptions.md) |
+
+##### Returns
+
+`Promise`<[`ParseResult`](mermaid.ParseResult.md)>
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:441](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L441)
+[packages/mermaid/src/mermaid.ts:426](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L426)
 
 ---
 
@@ -190,7 +190,7 @@ console.log(await mermaid.parse('wrong \n a --> b'));
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:435](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L435)
+[packages/mermaid/src/mermaid.ts:420](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L420)
 
 ---
 
@@ -218,7 +218,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:449](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L449)
+[packages/mermaid/src/mermaid.ts:434](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L434)
 
 ---
 
@@ -242,7 +242,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:454](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L454)
+[packages/mermaid/src/mermaid.ts:439](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L439)
 
 ---
 
@@ -266,7 +266,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:448](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L448)
+[packages/mermaid/src/mermaid.ts:433](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L433)
 
 ---
 
@@ -293,7 +293,7 @@ Used to register external diagram types.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:442](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L442)
+[packages/mermaid/src/mermaid.ts:427](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L427)
 
 ---
 
@@ -341,7 +341,7 @@ Renders the mermaid diagrams
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:447](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L447)
+[packages/mermaid/src/mermaid.ts:432](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L432)
 
 ---
 
@@ -376,7 +376,7 @@ to it (eg. dart interop wrapper). (Initially there is no parseError member of me
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:452](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L452)
+[packages/mermaid/src/mermaid.ts:437](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L437)
 
 ---
 
@@ -386,4 +386,4 @@ to it (eg. dart interop wrapper). (Initially there is no parseError member of me
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:434](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L434)
+[packages/mermaid/src/mermaid.ts:419](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L419)

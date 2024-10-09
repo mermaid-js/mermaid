@@ -145,7 +145,7 @@ export type LayoutMethod =
   | 'osage'
   | 'grid';
 
-export interface RenderOptions {
+export interface ShapeRenderOptions {
   config: MermaidConfig;
   dir: string;
 }

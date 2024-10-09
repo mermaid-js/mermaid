@@ -8,60 +8,68 @@
 
 [mermaid](../modules/mermaid.md).ParseResult
 
-## Hierarchy
-
-- `Omit`<`ParseResult`, `"config"`>
-
-  ↳ **`ParseResult`**
-
 ## Properties
+
+### code
+
+• **code**: `string`
+
+The mermaid code after extracting the config.
+
+#### Defined in
+
+[packages/mermaid/src/types.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L66)
+
+---
 
 ### config
 
 • **config**: [`MermaidConfig`](mermaid.MermaidConfig.md)
 
-#### Defined in
-
-[packages/mermaid/src/mermaid.ts:328](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L328)
-
----
-
-### defaultConfig
-
-• **defaultConfig**: [`MermaidConfig`](mermaid.MermaidConfig.md)
-
-#### Overrides
-
-Omit.defaultConfig
+The config passed as YAML frontmatter or directives
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:67](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L67)
+[packages/mermaid/src/types.ts:70](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L70)
 
 ---
 
 ### diagram
 
-• **diagram**: `Diagram`
-
-The diagram AST
-
-#### Inherited from
-
-Omit.diagram
+• `Optional` **diagram**: `Diagram`
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:63](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L63)
+[packages/mermaid/src/types.ts:72](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L72)
 
 ---
 
-### userConfig
+### error
 
-• **userConfig**: [`MermaidConfig`](mermaid.MermaidConfig.md)
+• `Optional` **error**: `unknown`
 
-Config the user has defined in the text as frontmatter or directives
+The error that occurred during parsing, if any.
 
 #### Defined in
 
-[packages/mermaid/src/mermaid.ts:326](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L326)
+[packages/mermaid/src/types.ts:76](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L76)
+
+---
+
+### success
+
+• **success**: `boolean`
+
+#### Defined in
+
+[packages/mermaid/src/types.ts:62](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L62)
+
+---
+
+### title
+
+• `Optional` **title**: `string`
+
+#### Defined in
+
+[packages/mermaid/src/types.ts:71](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L71)

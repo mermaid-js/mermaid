@@ -1,16 +1,16 @@
-import { log } from '../../../logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node, RenderOptions } from '../../types.d.ts';
-import type { SVG } from '../../../diagram-api/types.js';
-import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import intersect from '../intersect/index.js';
+import type { SVG } from '../../../diagram-api/types.js';
+import { log } from '../../../logger.js';
 import { getIconSVG } from '../../icons.js';
+import type { Node, ShapeRenderOptions } from '../../types.ts';
+import intersect from '../intersect/index.js';
+import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { labelHelper, updateNodeBounds } from './util.js';
 
 export const iconSquare = async (
   parent: SVG,
   node: Node,
-  { config: { themeVariables, flowchart } }: RenderOptions
+  { config: { themeVariables, flowchart } }: ShapeRenderOptions
 ) => {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -54,7 +54,6 @@ export const iconSquare = async (
   const x = -width / 2;
   const y = -height / 2;
 
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') ?? mainBkg });
 

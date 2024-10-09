@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.44.4",
-    "@argos-ci/cypress": "^2.1.0",
+    "@argos-ci/cypress": "^2.2.2",
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.7",
     "@cspell/eslint-plugin": "^8.8.4",
@@ -91,6 +91,7 @@
     "cspell": "^8.6.0",
     "cypress": "^13.14.1",
     "cypress-image-snapshot": "^4.0.1",
+    "cypress-split": "^1.24.0",
     "esbuild": "^0.21.5",
     "eslint": "^9.4.0",
     "eslint-config-prettier": "^9.1.0",
@@ -103,7 +104,7 @@
     "eslint-plugin-markdown": "^5.0.0",
     "eslint-plugin-no-only-tests": "^3.1.0",
     "eslint-plugin-tsdoc": "^0.3.0",
-    "eslint-plugin-unicorn": "^55.0.0",
+    "eslint-plugin-unicorn": "^56.0.0",
     "express": "^4.19.1",
     "globals": "^15.4.0",
     "globby": "^14.0.1",
@@ -131,5 +132,10 @@
   },
   "nyc": {
     "report-dir": "coverage/cypress"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "roughjs": "patches/roughjs.patch"
+    }
   }
 }

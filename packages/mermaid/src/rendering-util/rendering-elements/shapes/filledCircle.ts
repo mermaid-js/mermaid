@@ -1,7 +1,7 @@
 import rough from 'roughjs';
 import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
-import type { Node, RenderOptions } from '../../types.d.ts';
+import type { Node, ShapeRenderOptions } from '../../types.ts';
 import intersect from '../intersect/index.js';
 import { userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
@@ -9,7 +9,7 @@ import { getNodeClasses, updateNodeBounds } from './util.js';
 export const filledCircle = (
   parent: SVG,
   node: Node,
-  { config: { themeVariables } }: RenderOptions
+  { config: { themeVariables } }: ShapeRenderOptions
 ) => {
   node.label = '';
 
@@ -42,7 +42,7 @@ export const filledCircle = (
   const radius = (node.width ?? 0) / 2;
   const { cssStyles } = node;
 
-  // @ts-ignore - rough is not typed
+  // @ts-expect-error shapeSvg d3 class is incorrect?
   const rc = rough.svg(shapeSvg);
   const { nodeBorder } = themeVariables;
   const options = userNodeOverrides(node, { fillStyle: 'solid' });

@@ -105,6 +105,9 @@ end
 box rgb(33,66,99)
 ... actors ...
 end
+box rgba(33,66,99,0.5)
+... actors ...
+end
 ```
 
 ```note
@@ -393,6 +396,12 @@ sequenceDiagram
 ## Background Highlighting
 
 It is possible to highlight flows by providing colored background rects. This is done by the notation
+
+```
+rect COLOR
+... content ...
+end
+```
 
 The colors are defined using rgb and rgba syntax.
 

@@ -28,7 +28,7 @@ export const crossedCircle = (parent: SVG, node: Node) => {
   const radius = node?.width ? node?.width / 2 : node?.height ? node?.height / 2 : 25;
   const { cssStyles } = node;
 
-  // @ts-ignore - rough is not typed
+  // @ts-expect-error shapeSvg d3 class is incorrect?
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

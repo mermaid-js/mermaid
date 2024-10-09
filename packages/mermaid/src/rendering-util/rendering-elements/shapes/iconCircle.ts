@@ -1,16 +1,16 @@
-import { log } from '../../../logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node, RenderOptions } from '../../types.d.ts';
-import type { SVG } from '../../../diagram-api/types.js';
-import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import intersect from '../intersect/index.js';
+import type { SVG } from '../../../diagram-api/types.js';
+import { log } from '../../../logger.js';
 import { getIconSVG } from '../../icons.js';
+import type { Node, ShapeRenderOptions } from '../../types.ts';
+import intersect from '../intersect/index.js';
+import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { labelHelper, updateNodeBounds } from './util.js';
 
 export const iconCircle = async (
   parent: SVG,
   node: Node,
-  { config: { themeVariables, flowchart } }: RenderOptions
+  { config: { themeVariables, flowchart } }: ShapeRenderOptions
 ) => {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -26,11 +26,11 @@ export const iconCircle = async (
 
   const topLabel = node.pos === 't';
 
-  const { nodeBorder, mainBkg } = themeVariables;
+  const { nodeBorder } = themeVariables;
   const { stylesMap } = compileStyles(node);
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') ?? mainBkg });
+  const options = userNodeOverrides(node, { stroke: 'transparent' });
+  // const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') ?? mainBkg });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -40,7 +40,11 @@ export const iconCircle = async (
   const iconElem = shapeSvg.append('g');
   if (node.icon) {
     iconElem.html(
-      `<g>${await getIconSVG(node.icon, { height: iconSize, width: iconSize, fallbackPrefix: '' })}</g>`
+      `<g>${await getIconSVG(node.icon, {
+        height: iconSize,
+        width: iconSize,
+        fallbackPrefix: '',
+      })}</g>`
     );
   }
   const iconBBox = iconElem.node().getBBox();
