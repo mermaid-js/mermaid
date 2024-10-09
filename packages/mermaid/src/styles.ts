@@ -115,7 +115,7 @@ const getStyles = (
     stroke-width: 1px;
   }
 
-  [data-look="neo"].icon-shape .icon path {
+  [data-look="neo"].icon-shape .icon {
     fill: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow};
   }

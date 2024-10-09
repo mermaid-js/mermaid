@@ -45,14 +45,14 @@ export const iconRounded = async (
     iconSize = Math.max(node.width - padding * 2, node.height - padding * 2);
   }
 
-  const { nodeBorder, mainBkg } = themeVariables;
+  const { nodeBorder } = themeVariables;
   const { stylesMap } = compileStyles(node);
 
   const x = -width / 2;
   const y = -height / 2;
 
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') ?? mainBkg });
+  const options = userNodeOverrides(node, { stroke: 'transparent' });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -87,8 +87,15 @@ export const iconRounded = async (
       'transform',
       `translate(${-iconWidth / 2 - iconX},${topLabel ? -iconSize / 2 : -iconSize / 2})`
     );
-    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') ?? nodeBorder);
-    iconElem.attr('class', 'icon');
+    iconElem.attr('style', `color : ${stylesMap.get('stroke') ?? nodeBorder};`);
+    iconElem
+      .selectAll('path')
+      .nodes()
+      .forEach((path: SVGPathElement) => {
+        if (path.getAttribute('fill') === 'currentColor') {
+          path.setAttribute('class', 'icon');
+        }
+      });
   }
 
   label.attr(

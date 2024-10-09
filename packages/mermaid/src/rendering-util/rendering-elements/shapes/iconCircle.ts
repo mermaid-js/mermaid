@@ -75,8 +75,15 @@ export const iconCircle = async (
     'transform',
     `translate(${-iconWidth / 2 - iconX},${topLabel ? -iconSize / 2 : -iconSize / 2})`
   );
-  iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') ?? nodeBorder);
-  iconElem.attr('class', 'icon');
+  iconElem.attr('style', `color : ${stylesMap.get('stroke') ?? nodeBorder};`);
+  iconElem
+    .selectAll('path')
+    .nodes()
+    .forEach((path: SVGPathElement) => {
+      if (path.getAttribute('fill') === 'currentColor') {
+        path.setAttribute('class', 'icon');
+      }
+    });
   // label.attr(
   //   'transform',
   //   `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${topLabel ? -outerHeight / 2 : outerHeight / 2 - bbox.height})`

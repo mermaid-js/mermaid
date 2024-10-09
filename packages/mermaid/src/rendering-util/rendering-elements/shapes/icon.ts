@@ -77,8 +77,15 @@ export const icon = async (
           : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY
       })`
     );
-    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') ?? nodeBorder);
-    iconElem.attr('class', 'icon');
+    iconElem.attr('style', `color : ${stylesMap.get('stroke') ?? nodeBorder};`);
+    iconElem
+      .selectAll('path')
+      .nodes()
+      .forEach((path: SVGPathElement) => {
+        if (path.getAttribute('fill') === 'currentColor') {
+          path.setAttribute('class', 'icon');
+        }
+      });
   }
 
   label.attr(
