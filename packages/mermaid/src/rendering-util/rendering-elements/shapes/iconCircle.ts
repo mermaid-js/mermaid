@@ -26,10 +26,10 @@ export const iconCircle = async (
 
   const topLabel = node.pos === 't';
 
-  const { nodeBorder, mainBkg } = themeVariables;
+  const { nodeBorder } = themeVariables;
   const { stylesMap } = compileStyles(node);
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') || mainBkg });
+  const options = userNodeOverrides(node, { stroke: 'transparent' });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -74,7 +74,7 @@ export const iconCircle = async (
         : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY
     })`
   );
-  iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
+  iconElem.attr('style', `color: ${stylesMap.get('stroke') ?? nodeBorder};`);
   label.attr(
     'transform',
     `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${
