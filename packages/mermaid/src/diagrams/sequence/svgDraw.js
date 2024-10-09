@@ -518,6 +518,7 @@ export const drawActor = async function (elem, actor, conf, isFooter) {
 export const drawBox = function (elem, box, conf) {
   const boxplusTextGroup = elem.append('g');
   const g = boxplusTextGroup;
+
   drawBackgroundRect(g, box);
   if (box.name) {
     _drawTextCandidateFunc(conf)(
@@ -673,7 +674,7 @@ export const drawLoop = async function (elem, loopModel, labelText, conf) {
  * @param {any} bounds Shape of the rectangle
  */
 export const drawBackgroundRect = function (elem, bounds) {
-  svgDrawCommon.drawBackgroundRect(elem, bounds);
+  svgDrawCommon.drawBackgroundRect(elem, bounds, 'box');
 };
 
 export const insertDatabaseIcon = function (elem) {
