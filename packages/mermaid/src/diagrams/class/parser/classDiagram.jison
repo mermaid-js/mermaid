@@ -241,11 +241,13 @@ classLabel
 
 namespaceName
     : alphaNumToken { $$=$1; }
+    | alphaNumToken DOT namespaceName { $$=$1+'.'+$3; }
     | alphaNumToken namespaceName { $$=$1+$2; }
     ;
 
 className
     : alphaNumToken { $$=$1; }
+    | alphaNumToken DOT className { $$=$1+'.'+$3; }
     | classLiteralName { $$=$1; }
     | alphaNumToken className { $$=$1+$2; }
     | alphaNumToken GENERICTYPE { $$=$1+'~'+$2+'~'; }
@@ -270,12 +272,12 @@ statement
     ;
 
 namespaceStatement
-    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          {yy.addClassesToNamespace($1, $3);}
-    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  {yy.addClassesToNamespace($1, $4);}
+    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          { yy.addClassesToNamespace($1, $3); }
+    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  { yy.addClassesToNamespace($1, $4); }
     ;
 
 namespaceIdentifier
-    : NAMESPACE namespaceName   {$$=$2; yy.addNamespace($2);}
+    : NAMESPACE namespaceName { $$=$2; yy.addNamespace($2); }
     ;
 
 classStatements

@@ -101,7 +101,7 @@ To add a new shape:
 - **Example**:
 
   ```typescript
-  import { Node, RenderOptions } from '../../types.d.ts';
+  import { Node, RenderOptions } from '../../types.ts';
 
   export const myNewShape = async (
     parent: SVGAElement,
@@ -117,7 +117,7 @@ To add a new shape:
 
 ### 2. Register the Shape
 
-- **Register the shape**: Add your shape to the `shapes` object in the main shapes module. This allows your shape to be recognized and used within the system.
+- **Register the shape**: Add your shape to the `shapes` object in the [main shapes module](../rendering-util/rendering-elements/shapes.ts). This allows your shape to be recognized and used within the system.
 
 - **Example**:
 
@@ -126,9 +126,14 @@ To add a new shape:
 
   const shapes = {
     ...,
-    'my-new-shape': myNewShape,
-    // Shortened alias (if any).
-    'm-nsh': myNewShape
+    {
+      semanticName: 'My Shape',
+      name: 'Shape Name',
+      shortName: '<short-name>',
+      description: '<Description for the shape>',
+      aliases: ['<alias-one>', '<al-on>', '<alias-two>', '<al-two>'],
+      handler: myNewShape,
+    },
   };
   ```
 

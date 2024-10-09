@@ -1,6 +1,6 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.d.ts';
+import type { Node } from '../../types.ts';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
@@ -53,7 +53,6 @@ export async function card(parent: SVGAElement, node: Node): Promise<SVGAElement
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createPathFromPoints(points);

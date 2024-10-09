@@ -1,9 +1,9 @@
 import rough from 'roughjs';
 import { log } from '../../../logger.js';
-import type { Node } from '../../types.d.ts';
+import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
 import intersect from '../intersect/index.js';
+import type { Node } from '../../types.ts';
 import { userNodeOverrides } from './handDrawnShapeStyles.js';
-import { createPathFromPoints, getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
 export const hourglass = async (parent: SVGAElement, node: Node) => {
   node.label = '';
@@ -13,7 +13,7 @@ export const hourglass = async (parent: SVGAElement, node: Node) => {
   const h = node?.height ? node?.height : 30;
 
   const { cssStyles } = node;
-  // @ts-ignore - rough is not typed
+
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

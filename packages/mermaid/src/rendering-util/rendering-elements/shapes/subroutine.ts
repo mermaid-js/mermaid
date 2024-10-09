@@ -78,7 +78,6 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   ];
 
   if (node.look === 'handDrawn' || (node.look === 'neo' && !useGradient)) {
-    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
 
@@ -113,5 +112,3 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
 
   return shapeSvg;
 };
-
-export default subroutine;

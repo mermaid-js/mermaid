@@ -1,15 +1,14 @@
-import { log } from '../../../logger.js';
-import { labelHelper, updateNodeBounds } from './util.js';
-import type { Node, RenderOptions } from '../../types.d.ts';
 import type { SVG } from '../../../diagram-api/types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-// import rough from 'roughjs';
+import { log } from '../../../logger.js';
+import type { Node, ShapeRenderOptions } from '../../types.ts';
 import intersect from '../intersect/index.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { labelHelper, updateNodeBounds } from './util.js';
 
 export const imageSquare = async (
   parent: SVG,
   node: Node,
-  { config: { flowchart } }: RenderOptions
+  { config: { flowchart } }: ShapeRenderOptions
 ) => {
   const img = new Image();
   img.src = node?.img ?? '';
@@ -69,7 +68,6 @@ export const imageSquare = async (
   // const x = -imageWidth / 2;
   // const y = -imageHeight / 2;
 
-  // @ts-ignore - rough is not typed
   // const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

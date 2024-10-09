@@ -1,6 +1,6 @@
 import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.d.ts';
+import type { Node } from '../../types.ts';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
@@ -31,7 +31,6 @@ export const trapezoidalPentagon = async (parent: SVGAElement, node: Node) => {
     (node?.height ? node?.height : Math.max(minHeight, bbox.height)) + (labelPaddingY ?? 0) * 2;
 
   const { cssStyles } = node;
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

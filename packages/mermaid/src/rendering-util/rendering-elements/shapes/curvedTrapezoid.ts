@@ -6,7 +6,7 @@ import {
   generateCirclePoints,
 } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.d.ts';
+import type { Node } from '../../types.ts';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
@@ -39,7 +39,6 @@ export const curvedTrapezoid = async (parent: SVGAElement, node: Node) => {
   const radius = h / 2;
 
   const { cssStyles } = node;
-  // @ts-ignore - rough is not typed
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

@@ -1,5 +1,5 @@
-import exp from 'constants';
-import { shapes } from './nodes.js';
+import { shapes } from './shapes.js';
+import { describe, it, expect } from 'vitest';
 
 describe('Test Alias for shapes', function () {
   // for each shape in docs/syntax/flowchart.md, along with its semantic name, short name, and alias name, add a test case
@@ -83,10 +83,11 @@ describe('Test Alias for shapes', function () {
     expect(shapes['notch-rect']).toBe(shapes['notched-rectangle']);
   });
 
-  // lined-rect | lined-proc | shaded-proc
   it('should support alias for shadedProcess shape ', function () {
-    expect(shapes['lined-proc']).toBe(shapes['lined-rect']);
-    expect(shapes['shaded-proc']).toBe(shapes['lined-rect']);
+    const aliases = ['lined-process', 'lined-rectangle', 'lin-proc', 'lin-rect'];
+    for (const alias of aliases) {
+      expect(shapes[alias]).toBe(shapes['shaded-process']);
+    }
   });
 
   // sm-circ | small-circle | start
