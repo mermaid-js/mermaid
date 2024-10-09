@@ -111,7 +111,11 @@ interface Point {
   y: number;
 }
 
-interface NodePosition extends Point {
+export interface IntersectionPoint extends Point {
+  pos: 't' | 'b' | 'l' | 'r';
+}
+
+export interface NodePosition extends Point {
   width?: number;
   height?: number;
 }

@@ -14,6 +14,14 @@ import {
 import { select } from 'd3';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
+/**
+ * @typedef {import('../../types.js').Node} Node
+ * @typedef {import('../../../types.js').Point} Point
+ * @typedef {import('../../../diagram-api/types.js').NodePosition} NodePosition
+ * @typedef {import('../../../diagram-api/types.js').IntersectionPoint} IntersectionPoint
+ */
+
+/** @type {Map<string, Node>} */
 let nodeDB = new Map();
 
 // const fixInterSections = (points, startNodeId, endNodeId) => {
@@ -29,6 +37,11 @@ let nodeDB = new Map();
 //   return points;
 // };
 
+/**
+ * @param {Pick<Node, 'shape' | 'id' | 'intersect' | 'x' | 'y' | 'width' | 'height'>} node
+ * @param {Point} point
+ * @returns {IntersectionPoint}
+ */
 const calcIntersectionPoint = (node, point) => {
   const intersection = node.intersect(point);
 
@@ -56,7 +69,13 @@ const calcIntersectionPoint = (node, point) => {
 
   return { x: intersection.x, y: intersection.y, pos };
 };
-const calcNodeIntersections = async (_node1, _node2) => {
+
+/**
+ * @param {Pick<Node, 'shape' | 'id' | 'intersect' | 'x' | 'y' | 'width' | 'height'>} _node1
+ * @param {Pick<Node, 'shape' | 'id' | 'intersect' | 'x' | 'y' | 'width' | 'height'>} _node2
+ * @returns {Promise<IntersectionPoint[]> | IntersectionPoint[]}
+ */
+export const calcNodeIntersections = async (_node1, _node2) => {
   // CReate new nodes in order not to require a rendered diagram
   const fakeParent = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   const parent = select(fakeParent);
@@ -75,8 +94,20 @@ const calcNodeIntersections = async (_node1, _node2) => {
   const endIntersection = calcIntersectionPoint(node2, { x: node1.x, y: node1.y });
   return [startIntersection, endIntersection];
 };
-const calcIntersections = (startNodeId, endNodeId, startNodeSize, endNodeSize) => {
+
+/**
+ * @param {string} startNodeId
+ * @param {string | undefined} endNodeId
+ * @param {NodePosition} startNodeSize
+ * @param {{width?: number, height?: number, x: number, y: number}} endNodeSize
+ * @returns {IntersectionPoint[]}
+ * @throws {Error} If the start node doesn't exist in the nodeDB (e.g. `render` hasn't been called yet)
+ */
+export const calcIntersections = (startNodeId, endNodeId, startNodeSize, endNodeSize) => {
   const startNode = nodeDB.get(startNodeId);
+  if (!startNode) {
+    throw new Error("Start node doesn't exist in the nodeDB");
+  }
   if (startNodeSize) {
     startNode.x = startNodeSize.x;
     startNode.y = startNodeSize.y;
@@ -297,6 +328,8 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
     positionEdgeLabel(edge, paths);
   }
   if (window) {
+    // TODO: Remove this now that we can do:
+    // import { calcIntersections, calcNodeIntersections } from '@mermaid-chart/mermaid';
     window.calcIntersections = calcIntersections;
     window.calcNodeIntersections = calcNodeIntersections;
   }
