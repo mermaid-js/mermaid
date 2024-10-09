@@ -2,7 +2,7 @@ import rough from 'roughjs';
 import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
 import { getIconSVG } from '../../icons.js';
-import type { Node, ShapeRenderOptions } from '../../types.d.ts';
+import type { Node, ShapeRenderOptions } from '../../types.ts';
 import intersect from '../intersect/index.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
