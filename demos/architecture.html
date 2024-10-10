@@ -24,7 +24,7 @@
         service disk1(disk)[Storage] in api
         service disk2(disk)[Storage] in api
         service server(server)[Server] in api
-        service gateway(internet)[Gateway] 
+        service gateway(internet)[Gateway]
 
         db:L -- R:server
         disk1:T -- B:server
@@ -226,6 +226,40 @@
     </pre>
     <hr />
 
+    <h2>Unicode</h2>
+    <pre class="mermaid">
+      architecture-beta
+        service left_disk(disk)["someone@example.com"]
+        service right_disk(disk)["❤ Disk"]
+
+        left_disk:R -- L:right_disk
+    </pre>
+    <hr />
+
+    <h2>Markdown</h2>
+    <pre class="mermaid">
+      architecture-beta
+        service left_disk(disk)["`This **is** _Markdown_`"]
+        service right_disk(disk)["`Line1
+                Line 2
+                Line 3`"]
+
+        left_disk:R -- L:right_disk
+    </pre>
+    <hr />
+
+    <h2>Katex</h2>
+    <pre class="mermaid">
+      architecture-beta
+        service left_disk(disk)["`$$f(\relax{x}) = \int_{-\infty}^\infty \hat{f}(\xi)\,e^{2 \pi i \xi x}\,d\xi$$`"]
+        service center_disk(disk)["`$$\Bigg(\bigg(\Big(\big((\frac{-b\pm\sqrt{b^2-4ac}}{2a})\big)\Big)\bigg)\Bigg)$$`"]
+        service right_disk(disk)["`$$1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}} {1+\frac{e^{-6\pi}} {1+\frac{e^{-8\pi}} {1+\cdots}}}}$$`"]
+
+        left_disk:R -- L:center_disk
+        center_disk:R -- L:right_disk
+    </pre>
+    <hr />
+
     <h2>External Icons Demo</h2>
     <pre class="mermaid">
     architecture-beta
@@ -233,6 +267,11 @@
       service ec2(logos:aws-ec2)[Server]
       service api(logos:aws-api-gateway)[Api Gateway]
       service fa(fa:image)[Font Awesome Icon]
+
+      api:L -- R:ec2
+      api:B -- T:s3
+      fa:L -- R:s3
+      fa:T -- B:ec2
     </pre>
 
     <script type="module">
