@@ -11,7 +11,7 @@ mermaid.registerIconPacks([
   {
     name: 'logos',
     loader: () =>
-      fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+      fetch('https://unpkg.com/@iconify-json/logos@1/icons.json').then((res) => res.json()),
   },
 ]);
 ```
@@ -19,7 +19,7 @@ mermaid.registerIconPacks([
 Using packages and a bundler:
 
 ```bash
-npm install @iconify-json/logos
+npm install @iconify-json/logos@1
 ```
 
 With lazy loading
