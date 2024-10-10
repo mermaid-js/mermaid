@@ -58,12 +58,6 @@ const config: RequiredDeep<MermaidConfig> = {
     tickInterval: undefined,
     useWidth: undefined, // can probably be removed since `configKeys` already includes this
   },
-  kanban: {
-    ticketBaseUrl: '', // can probably be removed since `configKeys` already includes this
-    padding: 8,
-    sectionWidth: 200,
-    ...defaultConfigJson.kanban,
-  },
   c4: {
     ...defaultConfigJson.c4,
     useWidth: undefined,

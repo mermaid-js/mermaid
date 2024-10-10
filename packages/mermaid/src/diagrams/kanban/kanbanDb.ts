@@ -2,14 +2,13 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
-import type { KanbanInternalNode } from './kanbanTypes.js';
-import type { Node, Edge, KanbanNode } from '../../rendering-util/types.js';
+import type { Edge, KanbanNode } from '../../rendering-util/types.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { NodeMetaData } from '../../types.js';
 import * as yaml from 'js-yaml';
 
-let nodes: KanbanInternalNode[] = [];
-let sections: KanbanInternalNode[] = [];
+let nodes: KanbanNode[] = [];
+let sections: KanbanNode[] = [];
 let cnt = 0;
 let elements: Record<number, D3Element> = {};
 
@@ -23,7 +22,7 @@ const clear = () => {
  * if your level is the section level return null - then you do not belong to a level
  * otherwise return the current section
  */
-const getSection = function (level: number) {
+const getSection = (level: number) => {
   if (nodes.length === 0) {
     // console.log('No nodes');
     return null;
@@ -37,7 +36,7 @@ const getSection = function (level: number) {
     }
     // console.log('HERE', nodes[i].id, level, nodes[i].level, sectionLevel);
     if (nodes[i].level < sectionLevel) {
-      throw new Error('Items without section detected, found section ("' + nodes[i].descr + '")');
+      throw new Error('Items without section detected, found section ("' + nodes[i].label + '")');
     }
   }
   if (level === lastSection?.level) {
@@ -54,43 +53,46 @@ const getSections = function () {
 
 const getData = function () {
   const edges = [] as Edge[];
-  const nodes: Node[] = [];
+  const _nodes: KanbanNode[] = [];
 
   const sections = getSections();
   const conf = getConfig();
 
   for (const section of sections) {
     const node = {
-      id: section.nodeId,
-      label: sanitizeText(section.descr, conf),
+      id: section.id,
+      label: sanitizeText(section.label ?? '', conf),
       isGroup: true,
       ticket: section.ticket,
       shape: 'kanbanSection',
+      level: section.level,
     } satisfies KanbanNode;
-    nodes.push(node);
-    for (const item of section.children) {
+    _nodes.push(node);
+    const children = nodes.filter((n) => n.parentId === section.id);
+
+    for (const item of children) {
       const childNode = {
-        id: item.nodeId,
-        parentId: section.nodeId,
-        label: sanitizeText(item.descr, conf),
+        id: item.id,
+        parentId: section.id,
+        label: sanitizeText(item.label ?? '', conf),
         isGroup: false,
         ticket: item?.ticket,
         priority: item?.priority,
         assigned: item?.assigned,
         icon: item?.icon,
         shape: 'kanbanItem',
+        level: item.level,
         rx: 5,
         cssStyles: ['text-align: left'],
       } satisfies KanbanNode;
-      nodes.push(childNode);
+      _nodes.push(childNode);
     }
   }
 
-  return { nodes, edges, other: {}, config: getConfig() };
+  return { nodes: _nodes, edges, other: {}, config: getConfig() };
 };
 
 const addNode = (level: number, id: string, descr: string, type: number, shapeData: string) => {
-  // log.info('addNode level=', level, 'id=', id, 'descr=', descr, 'type=', type);
   const conf = getConfig();
   let padding: number = conf.mindmap?.padding ?? defaultConfig.mindmap.padding;
   switch (type) {
@@ -100,16 +102,14 @@ const addNode = (level: number, id: string, descr: string, type: number, shapeDa
       padding *= 2;
   }
 
-  const node = {
-    id: cnt++,
-    nodeId: sanitizeText(id, conf),
+  const node: KanbanNode = {
+    id: sanitizeText(id, conf) || 'kbn' + cnt++,
     level,
-    descr: sanitizeText(descr, conf),
-    type,
-    children: [],
+    label: sanitizeText(descr, conf),
     width: conf.mindmap?.maxNodeWidth ?? defaultConfig.mindmap.maxNodeWidth,
     padding,
-  } satisfies KanbanInternalNode;
+    isGroup: false,
+  } satisfies KanbanNode;
 
   if (shapeData !== undefined) {
     let yamlData;
@@ -129,10 +129,10 @@ const addNode = (level: number, id: string, descr: string, type: number, shapeDa
     }
 
     if (doc?.shape) {
-      node.type = doc?.shape;
+      node.shape = doc?.shape;
     }
     if (doc?.label) {
-      node.descr = doc?.label;
+      node.label = doc?.label;
     }
     if (doc?.icon) {
       node.icon = doc?.icon;
@@ -151,9 +151,8 @@ const addNode = (level: number, id: string, descr: string, type: number, shapeDa
 
   const section = getSection(level);
   if (section) {
-    section.children.push(node);
-    // Keep all nodes in the list
-    nodes.push(node);
+    // @ts-ignore false positive for section.id
+    node.parentId = section.id || 'kbn' + cnt++;
   } else {
     sections.push(node);
   }
@@ -205,7 +204,7 @@ const decorateNode = (decoration?: { class?: string; icon?: string }) => {
     node.icon = sanitizeText(decoration.icon, config);
   }
   if (decoration.class) {
-    node.class = sanitizeText(decoration.class, config);
+    node.cssClasses = sanitizeText(decoration.class, config);
   }
 };
 

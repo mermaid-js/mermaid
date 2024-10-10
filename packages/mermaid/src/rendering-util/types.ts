@@ -155,4 +155,5 @@ export interface KanbanNode extends Node {
   ticket?: string;
   assigned?: string;
   icon?: string;
+  level: number;
 }

@@ -4,6 +4,7 @@ import type { KanbanNode } from '../../types.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { MermaidConfig } from '../../../config.type.js';
 const colorFromPriority = (priority: KanbanNode['priority']) => {
   switch (priority) {
     case 'Very High':
@@ -16,7 +17,11 @@ const colorFromPriority = (priority: KanbanNode['priority']) => {
       return 'lightblue';
   }
 };
-export const kanbanItem = async (parent: SVGAElement, node: KanbanNode, { config }) => {
+export const kanbanItem = async (
+  parent: SVGAElement,
+  node: KanbanNode,
+  { config }: { config: MermaidConfig }
+) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   // console.log('IPI labelStyles:', labelStyles);
@@ -37,8 +42,8 @@ export const kanbanItem = async (parent: SVGAElement, node: KanbanNode, { config
   let ticketUrl = '';
   let link;
   // console.log('STO ticket:', node.ticket);
-  if (node.ticket && config.kanban.ticketBaseUrl) {
-    ticketUrl = config.kanban.ticketBaseUrl.replace('#TICKET#', node.ticket);
+  if (node.ticket && config?.kanban?.ticketBaseUrl) {
+    ticketUrl = config?.kanban?.ticketBaseUrl.replace('#TICKET#', node.ticket);
     link = shapeSvg
       .insert('svg:a', ':first-child')
       .attr('class', 'kanban-ticket-link')

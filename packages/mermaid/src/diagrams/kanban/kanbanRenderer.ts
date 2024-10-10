@@ -1,4 +1,3 @@
-// @ts-expect-error No types available
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
