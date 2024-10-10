@@ -14,23 +14,42 @@ export const iconCircle = async (
 ) => {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const defaultWidth = flowchart?.wrappingWidth;
+  const padding = node.height ? node.height * 0.05 : 15;
+  const labelPadding = node.label ? 8 : 0;
   const assetHeight = node.assetHeight ?? 48;
   const assetWidth = node.assetWidth ?? 48;
-  const iconSize = Math.max(assetHeight, assetWidth);
-  const defaultWidth = flowchart?.wrappingWidth;
-  node.width = Math.max(iconSize, defaultWidth ?? 0);
+  let iconSize = Math.max(assetHeight, assetWidth) / Math.SQRT2 - padding;
+  let height = Math.max(assetHeight, assetWidth);
+  let width = Math.max(assetHeight, assetWidth);
+  // node.width = Math.max(iconSize, defaultWidth ?? 0);
+
+  let adjustDimensions = false;
+  if (node.width || node.height) {
+    adjustDimensions = true;
+    node.width = ((node?.width ?? 10) - labelPadding * 2) / Math.SQRT2 - padding;
+    node.height = ((node?.height ?? 10) - labelPadding * 2) / Math.SQRT2 - padding;
+    width = node.width;
+    height = node.height;
+  } else {
+    node.width = Math.max(width, defaultWidth ?? 0);
+  }
+
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'icon-shape default');
-
-  const padding = node.look === 'neo' ? 30 : 20;
-  const labelPadding = node.label ? 8 : 0;
-
   const topLabel = node.pos === 't';
+
+  if (adjustDimensions) {
+    node.width = (node.width + padding) * Math.SQRT2 + labelPadding * 2;
+    node.height = ((node.height ?? 10) + padding) * Math.SQRT2 + labelPadding * 2;
+    width = node.width; // / Math.SQRT2 - padding ;
+    height = node.height; // / Math.SQRT2 - padding;
+    iconSize = (Math.max(node.width, node.height) - padding) / Math.SQRT2;
+  }
 
   const { nodeBorder } = themeVariables;
   const { stylesMap } = compileStyles(node);
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, { stroke: 'transparent' });
-  // const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') ?? mainBkg });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -49,11 +68,11 @@ export const iconCircle = async (
   }
   const iconBBox = iconElem.node().getBBox();
   const iconWidth = iconBBox.width;
-  const iconHeight = iconBBox.height;
+  // const iconHeight = iconBBox.height;
   const iconX = iconBBox.x;
   // const iconY = iconBBox.y;
 
-  const diameter = Math.max(iconWidth, iconHeight) * Math.SQRT2 + padding * 2;
+  const diameter = Math.max(height, width);
   const iconNode = rc.circle(0, 0, diameter, options);
 
   // const outerWidth = Math.max(diameter, bbox.width);
