@@ -14,13 +14,16 @@ const genSections: DiagramStylesProvider = (options) => {
     }
   }
 
+  const adjuster = (color: string, level: number) =>
+    options.darkMode ? darken(color, level) : lighten(color, level);
+
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
     const sw = '' + (17 - 3 * i);
     sections += `
     .section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${
       i - 1
     } polygon, .section-${i - 1} path  {
-      fill: ${options['cScale' + i]};
+      fill: ${adjuster(options['cScale' + i], 10)};
     }
     .section-${i - 1} text {
      fill: ${options['cScaleLabel' + i]};
@@ -55,6 +58,12 @@ const genSections: DiagramStylesProvider = (options) => {
     fill: ${options.background};
     stroke: ${options.nodeBorder};
     stroke-width: 1px;
+  }
+
+  .kanban-ticket-link {
+    fill: ${options.background};
+    stroke: ${options.nodeBorder};
+    text-decoration: underline;
   }
     `;
   }

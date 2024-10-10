@@ -380,3 +380,89 @@ root
     expect(child2.nodeId).toEqual('B');
   });
 });
+describe('item data data', function () {
+  beforeEach(function () {
+    kanban.yy = kanbanDB;
+    kanban.yy.clear();
+    setLogLevel('trace');
+  });
+  it('KNBN-30 should be possible to set the priority', function () {
+    let str = `kanban
+    root
+  `;
+    str = `kanban
+        root@{ priority: high }
+    `;
+    kanban.parse(str);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].priority).toEqual('high');
+  });
+  it('KNBN-31 should be possible to set the assignment', function () {
+    const str = `kanban
+        root@{ assigned: knsv }
+    `;
+    kanban.parse(str);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].assigned).toEqual('knsv');
+  });
+  it('KNBN-32 should be possible to set the icon', function () {
+    const str = `kanban
+        root@{ icon: star }
+    `;
+    kanban.parse(str);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].icon).toEqual('star');
+  });
+  it('KNBN-33 should be possible to set the icon', function () {
+    const str = `kanban
+        root@{ icon: star }
+    `;
+    kanban.parse(str);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].icon).toEqual('star');
+  });
+  it('KNBN-34 should be possible to set the metadata using multiple lines', function () {
+    const str = `kanban
+        root@{
+          icon: star
+          assigned: knsv
+        }
+    `;
+    kanban.parse(str);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].icon).toEqual('star');
+    expect(sections[0].assigned).toEqual('knsv');
+  });
+  it('KNBN-35 should be possible to set the metadata using one line', function () {
+    const str = `kanban
+        root@{ icon: star, assigned: knsv }
+    `;
+    kanban.parse(str);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].icon).toEqual('star');
+    expect(sections[0].assigned).toEqual('knsv');
+  });
+  it('KNBN-36 should be possible to set the label using the new syntax', function () {
+    const str = `kanban
+        root@{ icon: star, label: 'fix things' }
+    `;
+    kanban.parse(str);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].descr).toEqual('fix things');
+  });
+  it('KNBN-37 should be possible to set the external id', function () {
+    const str = `kanban
+        root@{ ticket: MC-1234 }
+    `;
+    kanban.parse(str);
+    const sections = kanban.yy.getSections();
+    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].ticket).toEqual('MC-1234');
+  });
+});

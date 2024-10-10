@@ -8,6 +8,7 @@ export interface NodeMetaData {
   w?: string;
   h?: string;
   constraint?: 'on' | 'off';
+  priority: 'Very High' | 'High' | 'Medium' | 'Low' | 'Very Low';
 }
 import type { MermaidConfig } from './config.type.js';
 

@@ -1,86 +1,13 @@
-import type cytoscape from 'cytoscape';
 // @ts-expect-error No types available
-import coseBilkent from 'cytoscape-cose-bilkent';
-import { select } from 'd3';
-import type { MermaidConfig } from '../../config.type.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import type { D3Element } from '../../types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import type { KanbanDB, KanbanNode } from './kanbanTypes.js';
+import type { KanbanDB } from './kanbanTypes.js';
 import defaultConfig from '../../defaultConfig.js';
-import { insertCluster, positionCluster } from '../../rendering-util/rendering-elements/clusters';
-import { insertNode, positionNode } from '../../rendering-util/rendering-elements/nodes';
-
-declare module 'cytoscape' {
-  interface EdgeSingular {
-    _private: {
-      bodyBounds: unknown;
-      rscratch: {
-        startX: number;
-        startY: number;
-        midX: number;
-        midY: number;
-        endX: number;
-        endY: number;
-      };
-    };
-  }
-}
-
-function drawEdges(edgesEl: D3Element, cy: cytoscape.Core) {
-  cy.edges().map((edge, id) => {
-    const data = edge.data();
-    if (edge[0]._private.bodyBounds) {
-      const bounds = edge[0]._private.rscratch;
-      log.trace('Edge: ', id, data);
-      edgesEl
-        .insert('path')
-        .attr(
-          'd',
-          `M ${bounds.startX},${bounds.startY} L ${bounds.midX},${bounds.midY} L${bounds.endX},${bounds.endY} `
-        )
-        .attr('class', 'edge section-edge-' + data.section + ' edge-depth-' + data.depth);
-    }
-  });
-}
-
-function addNodes(mindmap: KanbanNode, cy: cytoscape.Core, conf: MermaidConfig, level: number) {
-  cy.add({
-    group: 'nodes',
-    data: {
-      id: mindmap.id.toString(),
-      labelText: mindmap.descr,
-      height: mindmap.height,
-      width: mindmap.width,
-      level: level,
-      nodeId: mindmap.id,
-      padding: mindmap.padding,
-      type: mindmap.type,
-    },
-    position: {
-      x: mindmap.x!,
-      y: mindmap.y!,
-    },
-  });
-  if (mindmap.children) {
-    mindmap.children.forEach((child) => {
-      addNodes(child, cy, conf, level + 1);
-      cy.add({
-        group: 'edges',
-        data: {
-          id: `${mindmap.id}_${child.id}`,
-          source: mindmap.id,
-          target: child.id,
-          depth: level,
-          section: child.section,
-        },
-      });
-    });
-  }
-}
+import { insertCluster } from '../../rendering-util/rendering-elements/clusters.js';
+import { insertNode, positionNode } from '../../rendering-util/rendering-elements/nodes.js';
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   log.debug('Rendering mindmap diagram\n' + text);
@@ -106,8 +33,9 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   const padding = 10;
 
   for (const section of sections) {
-    const WIDTH = 200;
-    let y = (-WIDTH * 3) / 2 + 40;
+    const WIDTH = conf?.kanban?.sectionWidth || 200;
+    const top = (-WIDTH * 3) / 2 + 25;
+    let y = top;
     cnt = cnt + 1;
     section.x = WIDTH * cnt + ((cnt - 1) * padding) / 2;
     section.width = WIDTH;
@@ -118,21 +46,21 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
 
     // Todo, use theme variable THEME_COLOR_LIMIT instead of 10
     section.cssClasses = section.cssClasses + ' section-' + cnt;
-    const cluster = await insertCluster(sectionsElem, section);
+    const sectionObj = await insertCluster(sectionsElem, section);
     const sectionItems = data4Layout.nodes.filter((node) => node.parentId === section.id);
-    // positionCluster(section);
+
     for (const item of sectionItems) {
       item.x = section.x;
-      item.width = WIDTH - 2 * padding;
-      // item.height = 100;
-      const nodeEl = await insertNode(nodesElem, item);
-      console.log('ITEM', item, 'bbox=', nodeEl.node().getBBox());
+      item.width = WIDTH - 1.5 * padding;
+      const nodeEl = await insertNode(nodesElem, item, { config: conf });
       const bbox = nodeEl.node().getBBox();
       item.y = y + bbox.height / 2;
-      // item.height = 150;
       await positionNode(item);
-      y = item.y + bbox.height / 2 + padding;
+      y = item.y + bbox.height / 2 + padding / 2;
     }
+    const rect = sectionObj.cluster.select('rect');
+    const height = Math.max(y - top + 3 * padding, 50);
+    rect.attr('height', height);
   }
 
   // Setup the view box and size of the svg element

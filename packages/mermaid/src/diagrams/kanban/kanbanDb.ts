@@ -2,12 +2,14 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
-import type { KanbanNode } from './kanbanTypes.js';
-import type { Node, Edge } from '../../rendering-util/types.js';
+import type { KanbanInternalNode } from './kanbanTypes.js';
+import type { Node, Edge, KanbanNode } from '../../rendering-util/types.js';
 import defaultConfig from '../../defaultConfig.js';
+import type { NodeMetaData } from '../../types.js';
+import * as yaml from 'js-yaml';
 
-let nodes: KanbanNode[] = [];
-let sections: KanbanNode[] = [];
+let nodes: KanbanInternalNode[] = [];
+let sections: KanbanInternalNode[] = [];
 let cnt = 0;
 let elements: Record<number, D3Element> = {};
 
@@ -38,9 +40,6 @@ const getSection = function (level: number) {
       throw new Error('Items without section detected, found section ("' + nodes[i].descr + '")');
     }
   }
-  // if (!lastSection) {
-  //   // console.log('No last section');
-  // }
   if (level === lastSection?.level) {
     return null;
   }
@@ -59,15 +58,15 @@ const getData = function () {
 
   const sections = getSections();
   const conf = getConfig();
-  // const id: string = sanitizeText(id, conf) || 'identifier' + cnt++;
 
   for (const section of sections) {
     const node = {
       id: section.nodeId,
       label: sanitizeText(section.descr, conf),
       isGroup: true,
+      ticket: section.ticket,
       shape: 'kanbanSection',
-    } satisfies Node;
+    } satisfies KanbanNode;
     nodes.push(node);
     for (const item of section.children) {
       const childNode = {
@@ -75,10 +74,14 @@ const getData = function () {
         parentId: section.nodeId,
         label: sanitizeText(item.descr, conf),
         isGroup: false,
+        ticket: item?.ticket,
+        priority: item?.priority,
+        assigned: item?.assigned,
+        icon: item?.icon,
         shape: 'kanbanItem',
         rx: 5,
         cssStyles: ['text-align: left'],
-      } satisfies Node;
+      } satisfies KanbanNode;
       nodes.push(childNode);
     }
   }
@@ -86,7 +89,7 @@ const getData = function () {
   return { nodes, edges, other: {}, config: getConfig() };
 };
 
-const addNode = (level: number, id: string, descr: string, type: number) => {
+const addNode = (level: number, id: string, descr: string, type: number, shapeData: string) => {
   // log.info('addNode level=', level, 'id=', id, 'descr=', descr, 'type=', type);
   const conf = getConfig();
   let padding: number = conf.mindmap?.padding ?? defaultConfig.mindmap.padding;
@@ -106,9 +109,47 @@ const addNode = (level: number, id: string, descr: string, type: number) => {
     children: [],
     width: conf.mindmap?.maxNodeWidth ?? defaultConfig.mindmap.maxNodeWidth,
     padding,
-  } satisfies KanbanNode;
+  } satisfies KanbanInternalNode;
+
+  if (shapeData !== undefined) {
+    let yamlData;
+    // detect if shapeData contains a newline character
+    // console.log('shapeData', shapeData);
+    if (!shapeData.includes('\n')) {
+      // console.log('yamlData shapeData has no new lines', shapeData);
+      yamlData = '{\n' + shapeData + '\n}';
+    } else {
+      // console.log('yamlData shapeData has new lines', shapeData);
+      yamlData = shapeData + '\n';
+    }
+    const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+    // console.log('yamlData', doc);
+    if (doc.shape && (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_'))) {
+      throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
+    }
+
+    if (doc?.shape) {
+      node.type = doc?.shape;
+    }
+    if (doc?.label) {
+      node.descr = doc?.label;
+    }
+    if (doc?.icon) {
+      node.icon = doc?.icon;
+    }
+    if (doc?.assigned) {
+      node.assigned = doc?.assigned;
+    }
+    if (doc?.ticket) {
+      node.ticket = doc?.ticket;
+    }
+
+    if (doc?.priority) {
+      node.priority = doc?.priority;
+    }
+  }
+
   const section = getSection(level);
-  console.log('Node ', node.descr, ' section', section?.descr);
   if (section) {
     section.children.push(node);
     // Keep all nodes in the list

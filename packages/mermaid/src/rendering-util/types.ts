@@ -148,3 +148,11 @@ export interface ShapeRenderOptions {
   config: MermaidConfig;
   dir: string;
 }
+
+export interface KanbanNode extends Node {
+  // Kanban specif data
+  priority?: 'Very High' | 'High' | 'Medium' | 'Low' | 'Very Low';
+  ticket?: string;
+  assigned?: string;
+  icon?: string;
+}

@@ -15,12 +15,39 @@
 %x NSTR2
 %x ICON
 %x CLASS
+%x shapeData
+%x shapeDataStr
+%x shapeDataEndBracket
 
 %%
 
+\@\{                                            {
+                                                    // console.log('=> shapeData', yytext);
+                                                    this.pushState("shapeData"); yytext=""; return 'SHAPE_DATA' }
+<shapeData>["]                                  {
+                                                    // console.log('=> shapeDataStr', yytext);
+                                                    this.pushState("shapeDataStr");
+                                                    return 'SHAPE_DATA';
+                                                }
+<shapeDataStr>["]                               {
+                                                    // console.log('shapeData <==', yytext);
+                                                    this.popState(); return 'SHAPE_DATA'}
+<shapeDataStr>[^\"]+                            {
+                                                    // console.log('shapeData', yytext);
+                                                    const re = /\n\s*/g;
+                                                    yytext = yytext.replace(re,"<br/>");
+                                                    return 'SHAPE_DATA'}
+<shapeData>[^}^"]+                                {
+                                                    // console.log('shapeData', yytext);
+                                                    return 'SHAPE_DATA';
+                                                }
+<shapeData>"}"                                    {
+                                                    // console.log('<== root', yytext)
+                                                    this.popState();
+                                                }
 \s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
-"kanban"		       return 'KANBAN';
+"kanban"		       {return 'KANBAN';}
 ":::"              { this.begin('CLASS'); }
 <CLASS>.+			     { this.popState();return 'CLASS'; }
 <CLASS>\n				   { this.popState();}
@@ -40,7 +67,7 @@
 "["                { this.begin('NODE');return 'NODE_DSTART'; }
 [\s]+              return 'SPACELIST'                 /* skip all whitespace */    ;
 // !(-\()            return 'NODE_ID';
-[^\(\[\n\)\{\}]+         return 'NODE_ID';
+[^\(\[\n\)\{\}@]+         {return 'NODE_ID';}
 <<EOF>>            return 'EOF';
 <NODE>["][`]          { this.begin("NSTR2");}
 <NSTR2>[^`"]+        { return "NODE_DESCR";}
@@ -97,10 +124,12 @@ document
 	;
 
 statement
-	: SPACELIST node       { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
+	: SPACELIST node shapeData      { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type, $3);  }
+	| SPACELIST node      { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
 	| SPACELIST ICON       { yy.getLogger().trace('Icon: ',$2);yy.decorateNode({icon: $2}); }
 	| SPACELIST CLASS      { yy.decorateNode({class: $2}); }
   | SPACELINE { yy.getLogger().trace('SPACELIST');}
+	| node shapeData       { yy.getLogger().trace('Node: ',$1.id);yy.addNode(0, $1.id, $1.descr, $1.type, $2);  }
 	| node					       { yy.getLogger().trace('Node: ',$1.id);yy.addNode(0, $1.id, $1.descr, $1.type);  }
 	| ICON                 { yy.decorateNode({icon: $1}); }
 	| CLASS                { yy.decorateNode({class: $1}); }
@@ -120,8 +149,18 @@ nodeWithoutId
   ;
 
 nodeWithId
-	:  NODE_ID             { $$ = { id: $1, descr: $1, type: yy.nodeType.DEFAULT }; }
+	:  NODE_ID             { $$ = { id: $1, descr: $1, type: 0 }; }
 	|  NODE_ID NODE_DSTART NODE_DESCR NODE_DEND
 	                       { yy.getLogger().trace("node found ..", $1); $$ = { id: $1, descr: $3, type: yy.getType($2, $4) }; }
 	;
+
+shapeData:
+    shapeData SHAPE_DATA
+    { $$ = $1 + $2; }
+    | SHAPE_DATA
+    { $$ = $1; }
+    ;
+
+
+
 %%
