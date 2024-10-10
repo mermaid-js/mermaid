@@ -79,15 +79,15 @@ service {service id}({icon name})[{title}] (in {parent id})?
 Put together:
 
 ```
-service database1(database)[My Database]
+service database(db)[Database]
 ```
 
-creates the service identified as `database1`, using the icon `database`, with the label `My Database`.
+creates the service identified as `database`, using the icon `db`, with the label `Database`.
 
 If the service belongs to a group, it can be placed inside it through the optional `in` keyword
 
 ```
-service database1(database)[My Database] in private_api
+service database(db)[Database] in private_api
 ```
 
 ### Edges
