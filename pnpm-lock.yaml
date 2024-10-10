@@ -228,7 +228,7 @@ importers:
         version: 1.11.10
       dompurify:
         specifier: ^3.0.5 <3.1.7
-        version: 3.0.9
+        version: 3.1.6
       elkjs:
         specifier: ^0.9.0
         version: 0.9.2
@@ -8833,8 +8833,8 @@ packages:
       domelementtype: 2.3.0
     dev: true
 
-  /dompurify@3.0.9:
-    resolution: {integrity: sha512-uyb4NDIvQ3hRn6NiC+SIFaP4mJ/MdXlvtunaqK9Bn6dD3RuB/1S/gasEjDHD8eiaqdSael2vBv+hOs7Y+jhYOQ==}
+  /dompurify@3.1.6:
+    resolution: {integrity: sha512-cTOAhc36AalkjtBpfG6O8JimdTMWNXjiePT2xQH/ppBGi/4uIpmj8eKyIkMJErXWARyINV/sB38yf8JCLF5pbQ==}
     dev: false
 
   /domutils@3.1.0:
