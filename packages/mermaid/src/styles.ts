@@ -120,7 +120,7 @@ const getStyles = (
     filter: ${options.dropShadow};
   }
 
-    [data-look="neo"].icon-shape path {
+    [data-look="neo"].icon-shape .icon-neo path {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow};
   }

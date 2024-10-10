@@ -115,6 +115,8 @@ export const iconRounded = async (
     iconShape.selectAll('path').attr('style', `stroke: ${stylesMap.get('fill')}`);
   }
 
+  iconShape.attr('class', 'icon-neo');
+
   updateNodeBounds(node, iconShape);
 
   node.intersect = function (point) {
