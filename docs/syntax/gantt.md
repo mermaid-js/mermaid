@@ -6,6 +6,12 @@
 
 # Gantt diagrams
 
+<script setup>
+import IconsNote from './icons-note.md'
+</script>
+
+<IconsNote />
+
 > A Gantt chart is a type of bar chart, first developed by Karol Adamiecki in 1896, and independently by Henry Gantt in the 1910s, that illustrates a project schedule and the amount of time it would take for any one project to finish. Gantt charts illustrate number of days between the start and finish dates of the terminal elements and summary elements of a project.
 
 ## A note to users
