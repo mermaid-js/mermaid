@@ -155,7 +155,7 @@ There are ten types of arrows currently supported:
 | `<<->>`  | Solid line with bidirectional arrowheads (v11.0.0+)  |
 | `<<-->>` | Dotted line with bidirectional arrowheads (v11.0.0+) |
 | `-x`     | Solid line with a cross at the end                   |
-| `--x`    | Dotted line with a cross at the end.                 |
+| `--x`    | Dotted line with a cross at the end                  |
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
 
