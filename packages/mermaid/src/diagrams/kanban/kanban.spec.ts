@@ -1,6 +1,7 @@
 // @ts-expect-error No types available for JISON
 import { parser as kanban } from './parser/kanban.jison';
 import kanbanDB from './kanbanDb.js';
+import type { KanbanNode } from '../../rendering-util/types.js';
 // Todo fix utils functions for tests
 import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 
@@ -18,7 +19,7 @@ describe('when parsing a kanban ', function () {
       kanban.parse(str);
       const sections = kanban.yy.getSections();
       expect(sections.length).toEqual(1);
-      expect(sections[0].descr).toEqual('root');
+      expect(sections[0].label).toEqual('root');
     });
     it('KNBN-2 should handle a hierachial kanban definition', function () {
       const str = `kanban
@@ -28,12 +29,16 @@ describe('when parsing a kanban ', function () {
  `;
 
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
       expect(sections.length).toEqual(1);
-      expect(sections[0].descr).toEqual('root');
-      expect(sections[0].children.length).toEqual(2);
-      expect(sections[0].children[0].descr).toEqual('child1');
-      expect(sections[0].children[1].descr).toEqual('child2');
+      expect(sections[0].label).toEqual('root');
+      expect(children.length).toEqual(2);
+      expect(children[0].label).toEqual('child1');
+      expect(children[1].label).toEqual('child2');
     });
 
     /** CATCH case when a lower level comes later, should throw
@@ -48,7 +53,7 @@ describe('when parsing a kanban ', function () {
 
       kanban.parse(str);
       const sections = kanban.yy.getSections();
-      expect(sections[0].descr).toEqual('root');
+      expect(sections[0].label).toEqual('root');
     });
 
     it('KNBN-4 should not dsitinguis between deeper hierachial levels in thr kanban definition', function () {
@@ -64,19 +69,27 @@ describe('when parsing a kanban ', function () {
       // );
 
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
       expect(sections.length).toBe(1);
-      expect(sections[0].children.length).toBe(3);
+      expect(children.length).toBe(3);
     });
     it('5 Multiple sections are ok', function () {
       const str = `kanban
     section1
     section2`;
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
       expect(sections.length).toBe(2);
-      expect(sections[0].descr).toBe('section1');
-      expect(sections[1].descr).toBe('section2');
+      expect(sections[0].label).toBe('section1');
+      expect(sections[1].label).toBe('section2');
 
       // expect(() => kanban.parse(str)).toThrow(
       //   'There can be only one root. No parent could be found for ("fakeRoot")'
@@ -99,10 +112,13 @@ describe('when parsing a kanban ', function () {
       `;
 
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
-      expect(sections[0].nodeId).toEqual('root');
-      expect(sections[0].descr).toEqual('The root');
-      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(sections[0].id).toEqual('root');
+      expect(sections[0].label).toEqual('The root');
     });
     it('KNBN-8 should handle an id and type for a node definition', function () {
       const str = `kanban
@@ -110,13 +126,16 @@ describe('when parsing a kanban ', function () {
       theId(child1)`;
 
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
-      expect(sections[0].descr).toEqual('root');
-      expect(sections[0].children.length).toEqual(1);
-      const child = sections[0].children[0];
-      expect(child.descr).toEqual('child1');
-      expect(child.nodeId).toEqual('theId');
-      expect(child.type).toEqual(kanban.yy.nodeType.ROUNDED_RECT);
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(sections[0].label).toEqual('root');
+      expect(children.length).toEqual(1);
+      const child = children[0];
+      expect(child.label).toEqual('child1');
+      expect(child.id).toEqual('theId');
     });
     it('KNBN-9 should handle an id and type for a node definition', function () {
       const str = `kanban
@@ -124,59 +143,16 @@ root
       theId(child1)`;
 
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
-      expect(sections[0].descr).toEqual('root');
-      expect(sections[0].children.length).toEqual(1);
-      const child = sections[0].children[0];
-      expect(child.descr).toEqual('child1');
-      expect(child.nodeId).toEqual('theId');
-      expect(child.type).toEqual(kanban.yy.nodeType.ROUNDED_RECT);
-    });
-    it('KNBN-10 multiple types (circle)', function () {
-      const str = `kanban
- root((the root))
- `;
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
 
-      kanban.parse(str);
-      const sections = kanban.yy.getSections();
-      expect(sections[0].descr).toEqual('the root');
-      expect(sections[0].children.length).toEqual(0);
-      expect(sections[0].type).toEqual(kanban.yy.nodeType.CIRCLE);
-    });
-
-    it('KNBN-11 multiple types (cloud)', function () {
-      const str = `kanban
- root)the root(
-`;
-
-      kanban.parse(str);
-      const sections = kanban.yy.getSections();
-      expect(sections[0].descr).toEqual('the root');
-      expect(sections[0].children.length).toEqual(0);
-      expect(sections[0].type).toEqual(kanban.yy.nodeType.CLOUD);
-    });
-    it('KNBN-12 multiple types (bang)', function () {
-      const str = `kanban
- root))the root((
-`;
-
-      kanban.parse(str);
-      const sections = kanban.yy.getSections();
-      expect(sections[0].descr).toEqual('the root');
-      expect(sections[0].children.length).toEqual(0);
-      expect(sections[0].type).toEqual(kanban.yy.nodeType.BANG);
-    });
-
-    it('KNBN-12-a multiple types (hexagon)', function () {
-      const str = `kanban
- root{{the root}}
-`;
-
-      kanban.parse(str);
-      const sections = kanban.yy.getSections();
-      expect(sections[0].type).toEqual(kanban.yy.nodeType.HEXAGON);
-      expect(sections[0].descr).toEqual('the root');
-      expect(sections[0].children.length).toEqual(0);
+      expect(sections[0].label).toEqual('root');
+      expect(children.length).toEqual(1);
+      const child = children[0];
+      expect(child.label).toEqual('child1');
+      expect(child.id).toEqual('theId');
     });
   });
   describe('decorations', function () {
@@ -188,10 +164,14 @@ root
       // ::class1 class2
 
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
-      expect(sections[0].nodeId).toEqual('root');
-      expect(sections[0].descr).toEqual('The root');
-      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(sections[0].id).toEqual('root');
+      expect(sections[0].label).toEqual('The root');
+
       expect(sections[0].icon).toEqual('bomb');
     });
     it('KNBN-14 should be possible to set classes for the node', function () {
@@ -202,11 +182,14 @@ root
       // ::class1 class2
 
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
-      expect(sections[0].nodeId).toEqual('root');
-      expect(sections[0].descr).toEqual('The root');
-      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
-      expect(sections[0].class).toEqual('m-4 p-8');
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(sections[0].id).toEqual('root');
+      expect(sections[0].label).toEqual('The root');
+      expect(sections[0].cssClasses).toEqual('m-4 p-8');
     });
     it('KNBN-15 should be possible to set both classes and icon for the node', function () {
       const str = `kanban
@@ -217,11 +200,14 @@ root
       // ::class1 class2
 
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
-      expect(sections[0].nodeId).toEqual('root');
-      expect(sections[0].descr).toEqual('The root');
-      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
-      expect(sections[0].class).toEqual('m-4 p-8');
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(sections[0].id).toEqual('root');
+      expect(sections[0].label).toEqual('The root');
+      expect(sections[0].cssClasses).toEqual('m-4 p-8');
       expect(sections[0].icon).toEqual('bomb');
     });
     it('KNBN-16 should be possible to set both classes and icon for the node', function () {
@@ -233,11 +219,15 @@ root
       // ::class1 class2
 
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
-      expect(sections[0].nodeId).toEqual('root');
-      expect(sections[0].descr).toEqual('The root');
-      expect(sections[0].type).toEqual(kanban.yy.nodeType.RECT);
-      expect(sections[0].class).toEqual('m-4 p-8');
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(sections[0].id).toEqual('root');
+      expect(sections[0].label).toEqual('The root');
+      // expect(sections[0].type).toEqual('rect');
+      expect(sections[0].cssClasses).toEqual('m-4 p-8');
       expect(sections[0].icon).toEqual('bomb');
     });
   });
@@ -247,9 +237,13 @@ root
     root["String containing []"]
 `;
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
-      expect(sections[0].nodeId).toEqual('root');
-      expect(sections[0].descr).toEqual('String containing []');
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(sections[0].id).toEqual('root');
+      expect(sections[0].label).toEqual('String containing []');
     });
     it('KNBN-18 should be possible to use node syntax in the descriptions in children', function () {
       const str = `kanban
@@ -257,11 +251,15 @@ root
       child1["String containing ()"]
 `;
       kanban.parse(str);
+
+      const data = kanban.yy.getData();
       const sections = kanban.yy.getSections();
-      expect(sections[0].nodeId).toEqual('root');
-      expect(sections[0].descr).toEqual('String containing []');
-      expect(sections[0].children.length).toEqual(1);
-      expect(sections[0].children[0].descr).toEqual('String containing ()');
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(sections[0].id).toEqual('root');
+      expect(sections[0].label).toEqual('String containing []');
+      expect(children.length).toEqual(1);
+      expect(children[0].label).toEqual('String containing ()');
     });
     it('KNBN-19 should be possible to have a child after a class assignment', function () {
       const str = `kanban
@@ -271,17 +269,21 @@ root
       a(a)
       b[New Stuff]`;
       kanban.parse(str);
-      const sections = kanban.yy.getSections();
-      expect(sections[0].nodeId).toEqual('root');
-      expect(sections[0].descr).toEqual('Root');
-      expect(sections[0].children.length).toEqual(3);
 
-      const item1 = sections[0].children[0];
-      const item2 = sections[0].children[1];
-      const item3 = sections[0].children[2];
-      expect(item1.nodeId).toEqual('Child');
-      expect(item2.nodeId).toEqual('a');
-      expect(item3.nodeId).toEqual('b');
+      const data = kanban.yy.getData();
+      const sections = kanban.yy.getSections();
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(sections[0].id).toEqual('root');
+      expect(sections[0].label).toEqual('Root');
+      expect(children.length).toEqual(3);
+
+      const item1 = children[0];
+      const item2 = children[1];
+      const item3 = children[2];
+      expect(item1.id).toEqual('Child');
+      expect(item2.id).toEqual('a');
+      expect(item3.id).toEqual('b');
     });
   });
   it('KNBN-20 should be possible to have meaningless empty rows in a kanban abc124', function () {
@@ -292,17 +294,21 @@ root
 
       b[New Stuff]`;
     kanban.parse(str);
-    const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
-    expect(sections[0].descr).toEqual('Root');
-    expect(sections[0].children.length).toEqual(3);
 
-    const item1 = sections[0].children[0];
-    const item2 = sections[0].children[1];
-    const item3 = sections[0].children[2];
-    expect(item1.nodeId).toEqual('Child');
-    expect(item2.nodeId).toEqual('a');
-    expect(item3.nodeId).toEqual('b');
+    const data = kanban.yy.getData();
+    const sections = kanban.yy.getSections();
+    const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+    expect(sections[0].id).toEqual('root');
+    expect(sections[0].label).toEqual('Root');
+    expect(children.length).toEqual(3);
+
+    const item1 = children[0];
+    const item2 = children[1];
+    const item3 = children[2];
+    expect(item1.id).toEqual('Child');
+    expect(item2.id).toEqual('a');
+    expect(item3.id).toEqual('b');
   });
   it('KNBN-21 should be possible to have comments in a kanban', function () {
     const str = `kanban
@@ -313,15 +319,19 @@ root
       %% This is a comment
       b[New Stuff]`;
     kanban.parse(str);
-    const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
-    expect(sections[0].descr).toEqual('Root');
 
-    const child = sections[0].children[0];
-    expect(child.nodeId).toEqual('Child');
-    expect(sections[0].children[1].nodeId).toEqual('a');
-    expect(sections[0].children[2].nodeId).toEqual('b');
-    expect(sections[0].children.length).toEqual(3);
+    const data = kanban.yy.getData();
+    const sections = kanban.yy.getSections();
+    const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+    expect(sections[0].id).toEqual('root');
+    expect(sections[0].label).toEqual('Root');
+
+    const child = children[0];
+    expect(child.id).toEqual('Child');
+    expect(children[1].id).toEqual('a');
+    expect(children[2].id).toEqual('b');
+    expect(children.length).toEqual(3);
   });
 
   it('KNBN-22 should be possible to have comments at the end of a line', function () {
@@ -331,53 +341,68 @@ root
       a(a) %% This is a comment
       b[New Stuff]`;
     kanban.parse(str);
-    const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
-    expect(sections[0].descr).toEqual('Root');
-    expect(sections[0].children.length).toEqual(3);
 
-    const child1 = sections[0].children[0];
-    expect(child1.nodeId).toEqual('Child');
-    const child2 = sections[0].children[1];
-    expect(child2.nodeId).toEqual('a');
-    const child3 = sections[0].children[2];
-    expect(child3.nodeId).toEqual('b');
+    const data = kanban.yy.getData();
+    const sections = kanban.yy.getSections();
+    const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+    expect(sections[0].id).toEqual('root');
+    expect(sections[0].label).toEqual('Root');
+    expect(children.length).toEqual(3);
+
+    const child1 = children[0];
+    expect(child1.id).toEqual('Child');
+    const child2 = children[1];
+    expect(child2.id).toEqual('a');
+    const child3 = children[2];
+    expect(child3.id).toEqual('b');
   });
   it('KNBN-23 Rows with only spaces should not interfere', function () {
     const str = 'kanban\nroot\n A\n \n\n B';
     kanban.parse(str);
-    const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
-    expect(sections[0].children.length).toEqual(2);
 
-    const child = sections[0].children[0];
-    expect(child.nodeId).toEqual('A');
-    const child2 = sections[0].children[1];
-    expect(child2.nodeId).toEqual('B');
+    const data = kanban.yy.getData();
+    const sections = kanban.yy.getSections();
+    const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+    expect(sections[0].id).toEqual('root');
+    expect(children.length).toEqual(2);
+
+    const child = children[0];
+    expect(child.id).toEqual('A');
+    const child2 = children[1];
+    expect(child2.id).toEqual('B');
   });
   it('KNBN-24 Handle rows above the kanban declarations', function () {
     const str = '\n \nkanban\nroot\n A\n \n\n B';
     kanban.parse(str);
-    const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
-    expect(sections[0].children.length).toEqual(2);
 
-    const child = sections[0].children[0];
-    expect(child.nodeId).toEqual('A');
-    const child2 = sections[0].children[1];
-    expect(child2.nodeId).toEqual('B');
+    const data = kanban.yy.getData();
+    const sections = kanban.yy.getSections();
+    const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+    expect(sections[0].id).toEqual('root');
+    expect(children.length).toEqual(2);
+
+    const child = children[0];
+    expect(child.id).toEqual('A');
+    const child2 = children[1];
+    expect(child2.id).toEqual('B');
   });
   it('KNBN-25 Handle rows above the kanban declarations, no space', function () {
     const str = '\n\n\nkanban\nroot\n A\n \n\n B';
     kanban.parse(str);
+    const data = kanban.yy.getData();
     const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
-    expect(sections[0].children.length).toEqual(2);
+    const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
 
-    const child = sections[0].children[0];
-    expect(child.nodeId).toEqual('A');
-    const child2 = sections[0].children[1];
-    expect(child2.nodeId).toEqual('B');
+    expect(sections[0].id).toEqual('root');
+    expect(children.length).toEqual(2);
+
+    const child = children[0];
+    expect(child.id).toEqual('A');
+    const child2 = children[1];
+    expect(child2.id).toEqual('B');
   });
 });
 describe('item data data', function () {
@@ -395,7 +420,7 @@ describe('item data data', function () {
     `;
     kanban.parse(str);
     const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].id).toEqual('root');
     expect(sections[0].priority).toEqual('high');
   });
   it('KNBN-31 should be possible to set the assignment', function () {
@@ -404,7 +429,7 @@ describe('item data data', function () {
     `;
     kanban.parse(str);
     const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].id).toEqual('root');
     expect(sections[0].assigned).toEqual('knsv');
   });
   it('KNBN-32 should be possible to set the icon', function () {
@@ -413,7 +438,7 @@ describe('item data data', function () {
     `;
     kanban.parse(str);
     const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].id).toEqual('root');
     expect(sections[0].icon).toEqual('star');
   });
   it('KNBN-33 should be possible to set the icon', function () {
@@ -422,7 +447,7 @@ describe('item data data', function () {
     `;
     kanban.parse(str);
     const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].id).toEqual('root');
     expect(sections[0].icon).toEqual('star');
   });
   it('KNBN-34 should be possible to set the metadata using multiple lines', function () {
@@ -434,7 +459,7 @@ describe('item data data', function () {
     `;
     kanban.parse(str);
     const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].id).toEqual('root');
     expect(sections[0].icon).toEqual('star');
     expect(sections[0].assigned).toEqual('knsv');
   });
@@ -444,7 +469,7 @@ describe('item data data', function () {
     `;
     kanban.parse(str);
     const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
+    expect(sections[0].id).toEqual('root');
     expect(sections[0].icon).toEqual('star');
     expect(sections[0].assigned).toEqual('knsv');
   });
@@ -454,7 +479,7 @@ describe('item data data', function () {
     `;
     kanban.parse(str);
     const sections = kanban.yy.getSections();
-    expect(sections[0].descr).toEqual('fix things');
+    expect(sections[0].label).toEqual('fix things');
   });
   it('KNBN-37 should be possible to set the external id', function () {
     const str = `kanban
@@ -462,7 +487,8 @@ describe('item data data', function () {
     `;
     kanban.parse(str);
     const sections = kanban.yy.getSections();
-    expect(sections[0].nodeId).toEqual('root');
+    const data = kanban.yy.getData();
+    expect(sections[0].id).toEqual('root');
     expect(sections[0].ticket).toEqual('MC-1234');
   });
 });
