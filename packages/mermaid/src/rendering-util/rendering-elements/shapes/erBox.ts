@@ -280,29 +280,27 @@ async function addText(
     labelText = labelText.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
   }
 
-  const text = label
-    .node()
-    .appendChild(
-      await createText(
-        label,
-        labelText,
-        {
-          width: calculateTextWidth(labelText, config) + 100,
-          style,
-          useHtmlLabels: config.htmlLabels,
-        },
-        config
-      )
-    );
+  const text = label.node().appendChild(
+    await createText(
+      label,
+      labelText,
+      {
+        width: calculateTextWidth(labelText, config) + 100,
+        style,
+        useHtmlLabels: config.htmlLabels,
+      },
+      config
+    )
+  );
   // Undo work around now that text passed through correctly
-  if (labelText.includes('&lt;')) {
+  if (labelText.includes('&lt;') || labelText.includes('&gt;')) {
     let child = text.children[0];
-    // Get last child
+    child.textContent = child.textContent.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
     while (child.childNodes[0]) {
       child = child.childNodes[0];
+      // Replace its text content
+      child.textContent = child.textContent.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
     }
-    // Replace its text content
-    child.textContent = child.textContent.replaceAll('&lt;', '<').replaceAll('&gt;', '>');
   }
 
   let bbox = text.getBBox();
