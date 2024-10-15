@@ -43,7 +43,7 @@ jobs:
       - if: ${{ env.USE_APPLI }}
         name: Notify applitools of new batch
         # Copied from docs https://applitools.com/docs/topics/integrations/github-integration-ci-setup.html
-        run: curl -L -d '' -X POST "$APPLITOOLS_SERVER_URL/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$GITHUB_SHA&BranchName=${APPLITOOLS_BRANCH}$&ParentBranchName=$APPLITOOLS_PARENT_BRANCH"
+        run: wget --post-data '' --header 'accept:*/*' --output-document=- "$APPLITOOLS_SERVER_URL/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$GITHUB_SHA&BranchName=${APPLITOOLS_BRANCH}$&ParentBranchName=$APPLITOOLS_PARENT_BRANCH"
         env:
           # e.g. mermaid-js/mermaid/my-branch
           APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
