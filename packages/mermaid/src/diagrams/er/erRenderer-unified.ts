@@ -4,7 +4,7 @@ import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js
 import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
-import db from './erDb.js';
+import { getDirection } from './erDb.js';
 import utils from '../../utils.js';
 
 export const draw = async function (text: string, id: string, _version: string, diag: any) {
@@ -25,7 +25,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   // Workaround as when rendering and setting up the graph it uses flowchart spacing before data4Layout spacing?
   data4Layout.config.flowchart!.nodeSpacing = conf?.nodeSpacing || 140;
   data4Layout.config.flowchart!.rankSpacing = conf?.rankSpacing || 80;
-  data4Layout.direction = db.getDirection();
+  data4Layout.direction = getDirection();
 
   data4Layout.markers = ['only_one', 'zero_or_one', 'one_or_more', 'zero_or_more'];
   data4Layout.diagramId = id;

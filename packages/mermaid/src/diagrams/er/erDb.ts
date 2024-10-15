@@ -110,7 +110,7 @@ const addRelationship = function (entA: string, rolA: string, entB: string, rSpe
 
 const getRelationships = () => relationships;
 
-const getDirection = () => direction;
+export const getDirection = () => direction;
 const setDirection = (dir: string) => {
   direction = dir;
 };
