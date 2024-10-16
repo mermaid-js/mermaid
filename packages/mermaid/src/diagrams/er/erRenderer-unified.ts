@@ -30,6 +30,13 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.markers = ['only_one', 'zero_or_one', 'one_or_more', 'zero_or_more'];
   data4Layout.diagramId = id;
   await render(data4Layout, svg);
+  // Elk layout algorithm displays markers above nodes, so cut off the half that covers the node for the larger markers.
+  if (data4Layout.layoutAlgorithm === 'elk') {
+    svg.selectAll('*[id*="oneOrMoreStart"]').attr('viewBox', '18 0 38.5 36');
+    svg.selectAll('*[id*="oneOrMoreEnd"]').attr('viewBox', '0 0 27 36');
+    svg.selectAll('*[id*="zeroOrMoreStart"]').attr('viewBox', '18 0 38.5 36');
+    svg.selectAll('*[id*="zeroOrMoreEnd"]').attr('viewBox', '0 0 38.5 36');
+  }
   const padding = 8;
   utils.insertTitle(
     svg,
