@@ -19,7 +19,7 @@ class Theme {
     this.border2 = '#6eaa49';
     this.arrowheadColor = 'green';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    this.fontSize = '14px';
 
     this.tertiaryColor = lighten('#cde498', 10);
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);

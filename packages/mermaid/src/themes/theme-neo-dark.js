@@ -31,7 +31,7 @@ class Theme {
     this.border2 = rgba(255, 255, 255, 0.25);
     this.arrowheadColor = invert(this.background);
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    this.fontSize = '14px';
     this.labelBackground = '#181818';
     this.textColor = '#ccc';
     this.THEME_COLOR_LIMIT = 12;
@@ -43,7 +43,7 @@ class Theme {
     this.THEME_COLOR_LIMIT = 12;
     // dark
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '10px';
+    this.fontSize = '14px';
 
     // Neo-specific
     // this.nodeBorder = 'none';

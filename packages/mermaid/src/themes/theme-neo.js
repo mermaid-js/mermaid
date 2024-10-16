@@ -26,7 +26,7 @@ class Theme {
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '10px';
+    this.fontSize = '14px';
 
     // Neo-specific
     this.nodeBorder = '#000000';
