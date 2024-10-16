@@ -2,7 +2,7 @@ import rough from 'roughjs';
 import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
 import { getIconSVG } from '../../icons.js';
-import type { Node, ShapeRenderOptions } from '../../types.d.ts';
+import type { Node, ShapeRenderOptions } from '../../types.ts';
 import intersect from '../intersect/index.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { labelHelper, updateNodeBounds } from './util.js';
@@ -26,10 +26,10 @@ export const iconCircle = async (
 
   const topLabel = node.pos === 't';
 
-  const { nodeBorder, mainBkg } = themeVariables;
+  const { nodeBorder } = themeVariables;
   const { stylesMap } = compileStyles(node);
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') || mainBkg });
+  const options = userNodeOverrides(node, { stroke: 'transparent' });
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
@@ -74,7 +74,7 @@ export const iconCircle = async (
         : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY
     })`
   );
-  iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') || nodeBorder);
+  iconElem.attr('style', `color: ${stylesMap.get('stroke') ?? nodeBorder};`);
   label.attr(
     'transform',
     `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${

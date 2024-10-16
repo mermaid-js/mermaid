@@ -1,6 +1,6 @@
 import { log } from '../../../logger.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.d.ts';
+import type { Node } from '../../types.ts';
 import type { SVG } from '../../../diagram-api/types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
