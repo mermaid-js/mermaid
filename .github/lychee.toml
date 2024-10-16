@@ -44,7 +44,10 @@ exclude = [
 "https://chromewebstore.google.com",
 
 # Drupal 403
-"https://(www.)?drupal.org"
+"https://(www.)?drupal.org",
+
+# Swimm returns 404, eventhough the link is valid
+"https://docs.swimm.io"
 ]
 
 # Exclude all private IPs from checking.

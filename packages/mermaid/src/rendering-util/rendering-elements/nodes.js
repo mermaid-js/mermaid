@@ -1,59 +1,9 @@
 import { log } from '../../logger.js';
-import { state } from './shapes/state.ts';
-import { roundedRect } from './shapes/roundedRect.ts';
-import { squareRect } from './shapes/squareRect.ts';
-import { stateStart } from './shapes/stateStart.ts';
-import { stateEnd } from './shapes/stateEnd.ts';
-import { forkJoin } from './shapes/forkJoin.ts';
-import { choice } from './shapes/choice.ts';
-import { note } from './shapes/note.ts';
-import { stadium } from './shapes/stadium.js';
-import { rectWithTitle } from './shapes/rectWithTitle.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { subroutine } from './shapes/subroutine.js';
-import { cylinder } from './shapes/cylinder.js';
-import { circle } from './shapes/circle.js';
-import { doublecircle } from './shapes/doubleCircle.js';
-import { rect_left_inv_arrow } from './shapes/rectLeftInvArrow.js';
-import { question } from './shapes/question.js';
-import { hexagon } from './shapes/hexagon.js';
-import { lean_right } from './shapes/leanRight.js';
-import { lean_left } from './shapes/leanLeft.js';
-import { trapezoid } from './shapes/trapezoid.js';
-import { inv_trapezoid } from './shapes/invertedTrapezoid.js';
-import { labelRect } from './shapes/labelRect.js';
-import { erBox } from './shapes/erBox.js';
-
-const shapes = {
-  state,
-  stateStart,
-  stateEnd,
-  fork: forkJoin,
-  join: forkJoin,
-  choice,
-  note,
-  roundedRect,
-  rectWithTitle,
-  squareRect,
-  stadium,
-  subroutine,
-  cylinder,
-  circle,
-  doublecircle,
-  odd: rect_left_inv_arrow,
-  diamond: question,
-  hexagon,
-  lean_right,
-  lean_left,
-  trapezoid,
-  inv_trapezoid,
-  labelRect,
-  erBox,
-};
+import { shapes } from './shapes.js';
 
 const nodeElems = new Map();
 
-export const insertNode = async (elem, node, dir) => {
+export const insertNode = async (elem, node, renderOptions) => {
   let newEl;
   let el;
 
@@ -66,18 +16,24 @@ export const insertNode = async (elem, node, dir) => {
     }
   }
 
-  // Add link when appropriate
+  const shapeHandler = shapes[node.shape];
+
+  if (!shapeHandler) {
+    throw new Error(`No such shape: ${node.shape}. Please check your syntax.`);
+  }
+
   if (node.link) {
+    // Add link when appropriate
     let target;
-    if (getConfig().securityLevel === 'sandbox') {
+    if (renderOptions.config.securityLevel === 'sandbox') {
       target = '_top';
     } else if (node.linkTarget) {
       target = node.linkTarget || '_blank';
     }
     newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
-    el = await shapes[node.shape](newEl, node, dir);
+    el = await shapeHandler(newEl, node, renderOptions);
   } else {
-    el = await shapes[node.shape](elem, node, dir);
+    el = await shapeHandler(elem, node, renderOptions);
     newEl = el;
   }
   if (node.tooltip) {
@@ -91,9 +47,11 @@ export const insertNode = async (elem, node, dir) => {
   }
   return newEl;
 };
+
 export const setNodeElem = (elem, node) => {
   nodeElems.set(node.id, elem);
 };
+
 export const clear = () => {
   nodeElems.clear();
 };

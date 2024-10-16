@@ -64,7 +64,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
 - [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
-- [Swimm](https://docs.swimm.io/features/diagrams-and-charts/#mermaid--swimm--up-to-date-diagrams-) ✅
+- [Swimm](https://docs.swimm.io/features/diagrams-and-charts) ✅
 - [NotesHub](https://noteshub.app) ✅
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅

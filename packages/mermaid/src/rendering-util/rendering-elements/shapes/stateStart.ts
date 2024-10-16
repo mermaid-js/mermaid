@@ -1,13 +1,15 @@
-import { updateNodeBounds } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node } from '../../types.js';
-import type { SVG } from '../../../diagram-api/types.js';
 import rough from 'roughjs';
+import type { SVG } from '../../../diagram-api/types.js';
+import type { Node, ShapeRenderOptions } from '../../types.js';
+import intersect from '../intersect/index.js';
 import { solidStateFill } from './handDrawnShapeStyles.js';
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { updateNodeBounds } from './util.js';
 
-export const stateStart = (parent: SVG, node: Node) => {
-  const { themeVariables } = getConfig();
+export const stateStart = (
+  parent: SVG,
+  node: Node,
+  { config: { themeVariables } }: ShapeRenderOptions
+) => {
   const { lineColor } = themeVariables;
 
   const shapeSvg = parent
