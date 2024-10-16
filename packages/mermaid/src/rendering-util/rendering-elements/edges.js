@@ -431,8 +431,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   const tail = startNode;
   var head = endNode;
 
-  const pointsStr = btoa(JSON.stringify(points));
-
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
@@ -447,6 +445,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     );
     points.push(head.intersect(points[points.length - 1]));
   }
+  const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
     points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
