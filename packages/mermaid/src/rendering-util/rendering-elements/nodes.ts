@@ -1,10 +1,21 @@
 import { log } from '../../logger.js';
 import { shapes } from './shapes.js';
+import type { Node } from '../types.js';
+import type { MermaidConfig, SVGGroup } from '../../mermaid.js';
+import type { D3Selection } from '../../types.js';
+import type { graphlib } from 'dagre-d3-es';
 
-const nodeElems = new Map();
+type ShapeHandler = (typeof shapes)[keyof typeof shapes];
+type NodeElement = D3Selection<SVGAElement> | Awaited<ReturnType<ShapeHandler>>;
 
-export const insertNode = async (elem, node, renderOptions) => {
-  let newEl;
+const nodeElems = new Map<string, NodeElement>();
+
+export async function insertNode(
+  elem: SVGGroup,
+  node: Node,
+  renderOptions: { config: MermaidConfig; dir: Node['dir'] }
+) {
+  let newEl: NodeElement | undefined;
   let el;
 
   //special check for rect shape (with or without rounded corners)
@@ -16,7 +27,7 @@ export const insertNode = async (elem, node, renderOptions) => {
     }
   }
 
-  const shapeHandler = shapes[node.shape];
+  const shapeHandler = shapes[(node.shape ?? 'undefined') as keyof typeof shapes];
 
   if (!shapeHandler) {
     throw new Error(`No such shape: ${node.shape}. Please check your syntax.`);
@@ -30,7 +41,10 @@ export const insertNode = async (elem, node, renderOptions) => {
     } else if (node.linkTarget) {
       target = node.linkTarget || '_blank';
     }
-    newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
+    newEl = elem
+      .insert<SVGAElement>('svg:a')
+      .attr('xlink:href', node.link)
+      .attr('target', target ?? null);
     el = await shapeHandler(newEl, node, renderOptions);
   } else {
     el = await shapeHandler(elem, node, renderOptions);
@@ -43,12 +57,12 @@ export const insertNode = async (elem, node, renderOptions) => {
   nodeElems.set(node.id, newEl);
 
   if (node.haveCallback) {
-    nodeElems.get(node.id).attr('class', nodeElems.get(node.id).attr('class') + ' clickable');
+    newEl.attr('class', newEl.attr('class') + ' clickable');
   }
   return newEl;
-};
+}
 
-export const setNodeElem = (elem, node) => {
+export const setNodeElem = (elem: NodeElement, node: Pick<Node, 'id'>) => {
   nodeElems.set(node.id, elem);
 };
 
@@ -56,8 +70,8 @@ export const clear = () => {
   nodeElems.clear();
 };
 
-export const positionNode = (node) => {
-  const el = nodeElems.get(node.id);
+export const positionNode = (node: ReturnType<graphlib.Graph['node']>) => {
+  const el = nodeElems.get(node.id)!;
   log.trace(
     'Transforming node',
     node.diff,
