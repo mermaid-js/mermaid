@@ -494,7 +494,7 @@ class C13["With Città foreign language"]
         ],
         methods: [],
         annotations: [],
-        cssClasses: [],
+        cssClasses: ['default'],
       });
 
       expect(classDb.getClasses().size).toBe(3);
@@ -504,7 +504,7 @@ class C13["With Città foreign language"]
           "cssClasses": [
             "default",
           ],
-          "domId": "classId-Student-134",
+          "domId": "classId-Student-141",
           "id": "Student",
           "label": "Student",
           "members": [

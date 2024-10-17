@@ -990,4 +990,42 @@ class C13["With Città foreign language"]
       { logLevel: 1, htmlLabels: true, look: 'handDrawn' }
     );
   });
+  it('should render a full class diagram using elk', () => {
+    imgSnapshotTest(
+      `
+---
+  config:
+    layout: elk
+---
+    classDiagram
+      note "I love this diagram!\nDo you love it?"
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 "1" *-- "*" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 "1" .. "*" Class08
+      Class09 "1" --> "*" C2 : Where am i?
+      Class09 "*" --* "*" C3
+      Class09 "1" --|> "1" Class07
+      Class12 <|.. Class08
+      Class11 ..>Class12
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      Class08 <--> C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      note for Class10 "Cool class\nI said it's very cool class!"
+      `,
+      { logLevel: 1, htmlLabels: true }
+    );
+  });
 });
