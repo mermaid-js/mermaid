@@ -200,6 +200,8 @@ Communication tools and platforms
 - [Vim](https://www.vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
   - [Official Vim Syntax and ft plugin](https://github.com/craigmac/vim-mermaid)
+- [Zed](https://zed.dev)
+  - [zed-mermaid](https://github.com/gabeidx/zed-mermaid)
 
 ### Document Generation
 
