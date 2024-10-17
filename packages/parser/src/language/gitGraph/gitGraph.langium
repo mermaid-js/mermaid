@@ -39,8 +39,8 @@ entry GitGraph:
 Statement
 : Commit
 | Branch
-| Merge 
-| Checkout 
+| Merge
+| Checkout
 | CherryPicking
 ;
 
@@ -48,12 +48,13 @@ Direction:
     dir=('LR' | 'TB' | 'BT');
 
 Commit:
-    'commit' 
+    'commit'
     (
-        'id:' id=STRING 
+        'id:' id=STRING
         |'msg:'? message=STRING
         |'tag:' tags+=STRING
         |'type:' type=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
+        |'color:' color=('RED' | 'GREEN' | 'BLUE' | 'BLACK')
     )* EOL;
 Branch:
     'branch' name=(ID|STRING)
@@ -72,7 +73,7 @@ Checkout:
     ('checkout'|'switch') branch=(ID|STRING) EOL;
 
 CherryPicking:
-    'cherry-pick' 
+    'cherry-pick'
     (
         'id:' id=STRING
         |'tag:' tags+=STRING
