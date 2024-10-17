@@ -1,3 +1,4 @@
+import type { Entries } from 'type-fest';
 import type { Node, ShapeRenderOptions } from '../types.js';
 import { anchor } from './shapes/anchor.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
@@ -75,7 +76,7 @@ export interface ShapeDefinition {
   handler: ShapeHandler;
 }
 
-export const shapesDefs: ShapeDefinition[] = [
+export const shapesDefs = [
   {
     semanticName: 'Process',
     name: 'Rectangle',
@@ -442,11 +443,11 @@ export const shapesDefs: ShapeDefinition[] = [
     aliases: ['lined-document'],
     handler: linedWaveEdgedRect,
   },
-];
+] as const satisfies ShapeDefinition[];
 
 const generateShapeMap = () => {
   // These are the shapes that didn't have documentation present
-  const shapeMap: Record<string, ShapeHandler> = {
+  const undocumentedShapes = {
     // States
     state,
     choice,
@@ -464,18 +465,25 @@ const generateShapeMap = () => {
     imageSquare,
 
     anchor,
-  };
+  } as const;
 
-  for (const shape of shapesDefs) {
-    for (const alias of [
-      shape.shortName,
-      ...(shape.aliases ?? []),
-      ...(shape.internalAliases ?? []),
-    ]) {
-      shapeMap[alias] = shape.handler;
-    }
-  }
-  return shapeMap;
+  const entries = [
+    ...(Object.entries(undocumentedShapes) as Entries<typeof undocumentedShapes>),
+    ...shapesDefs.flatMap((shape) => {
+      const aliases = [
+        shape.shortName,
+        ...('aliases' in shape ? shape.aliases : []),
+        ...('internalAliases' in shape ? shape.internalAliases : []),
+      ];
+      return aliases.map((alias) => [alias, shape.handler] as const);
+    }),
+  ];
+  return Object.fromEntries(entries) as Record<
+    (typeof entries)[number][0],
+    (typeof entries)[number][1]
+  > satisfies Record<string, ShapeHandler>;
 };
 
 export const shapes = generateShapeMap();
+
+export type ShapeID = keyof typeof shapes;
