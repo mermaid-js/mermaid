@@ -100,13 +100,13 @@ export const addClass = function (_id: string) {
 };
 
 const addInterface = function (label: string, classId: string) {
-  const _interface: Interface = {
+  const classInterface: Interface = {
     id: `interface${interfaces.length}`,
     label,
     classId,
   };
 
-  interfaces.push(_interface);
+  interfaces.push(classInterface);
 };
 
 /**
@@ -152,8 +152,8 @@ export const getNotes = function () {
   return notes;
 };
 
-export const addRelation = function (relation: ClassRelation) {
-  log.debug('Adding relation: ' + JSON.stringify(relation));
+export const addRelation = function (classRelation: ClassRelation) {
+  log.debug('Adding relation: ' + JSON.stringify(classRelation));
   // Due to relationType cannot just check if it is equal to 'none' or it complains, can fix this later
   const invalidTypes = [
     relationType.LOLLIPOP,
@@ -164,32 +164,38 @@ export const addRelation = function (relation: ClassRelation) {
   ];
 
   if (
-    relation.relation.type1 === relationType.LOLLIPOP &&
-    !invalidTypes.includes(relation.relation.type2)
+    classRelation.relation.type1 === relationType.LOLLIPOP &&
+    !invalidTypes.includes(classRelation.relation.type2)
   ) {
-    addClass(relation.id2);
-    addInterface(relation.id1, relation.id2);
-    relation.id1 = `interface${interfaces.length - 1}`;
+    addClass(classRelation.id2);
+    addInterface(classRelation.id1, classRelation.id2);
+    classRelation.id1 = `interface${interfaces.length - 1}`;
   } else if (
-    relation.relation.type2 === relationType.LOLLIPOP &&
-    !invalidTypes.includes(relation.relation.type1)
+    classRelation.relation.type2 === relationType.LOLLIPOP &&
+    !invalidTypes.includes(classRelation.relation.type1)
   ) {
-    addClass(relation.id1);
-    addInterface(relation.id2, relation.id1);
-    relation.id2 = `interface${interfaces.length - 1}`;
+    addClass(classRelation.id1);
+    addInterface(classRelation.id2, classRelation.id1);
+    classRelation.id2 = `interface${interfaces.length - 1}`;
   } else {
-    addClass(relation.id1);
-    addClass(relation.id2);
+    addClass(classRelation.id1);
+    addClass(classRelation.id2);
   }
 
-  relation.id1 = splitClassNameAndType(relation.id1).className;
-  relation.id2 = splitClassNameAndType(relation.id2).className;
+  classRelation.id1 = splitClassNameAndType(classRelation.id1).className;
+  classRelation.id2 = splitClassNameAndType(classRelation.id2).className;
 
-  relation.relationTitle1 = common.sanitizeText(relation.relationTitle1.trim(), getConfig());
+  classRelation.relationTitle1 = common.sanitizeText(
+    classRelation.relationTitle1.trim(),
+    getConfig()
+  );
 
-  relation.relationTitle2 = common.sanitizeText(relation.relationTitle2.trim(), getConfig());
+  classRelation.relationTitle2 = common.sanitizeText(
+    classRelation.relationTitle2.trim(),
+    getConfig()
+  );
 
-  relations.push(relation);
+  relations.push(classRelation);
 };
 
 /**
@@ -286,7 +292,7 @@ export const defineClass = function (ids: string[], style: string[]) {
       styleClasses.set(id, styleClass);
     }
 
-    if (style !== undefined && style !== null) {
+    if (style) {
       style.forEach(function (s) {
         if (/color/.exec(s)) {
           const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
@@ -296,15 +302,11 @@ export const defineClass = function (ids: string[], style: string[]) {
       });
     }
 
-    for (const [, value] of classes) {
+    classes.forEach((value) => {
       if (value.cssClasses.includes(id)) {
-        for (const s of style) {
-          for (const k of s.split(',')) {
-            value.styles.push(k);
-          }
-        }
+        value.styles.push(...style.flatMap((s) => s.split(',')));
       }
-    }
+    });
   }
 };
 
@@ -587,7 +589,7 @@ export const getData = () => {
       const node: Node = {
         id: namespace.id,
         label: namespace.id,
-        isGroup: false,
+        isGroup: true,
         // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
         shape: 'rect',
         cssStyles: ['fill: none', 'stroke: black'],
@@ -614,9 +616,13 @@ export const getData = () => {
       id: note.id,
       label: note.text,
       isGroup: false,
-      shape: 'rect',
+      shape: 'note',
       padding: config.class!.padding ?? 6,
-      cssStyles: ['text-align: left'],
+      cssStyles: [
+        'text-align: left',
+        `fill: ${config.themeVariables.noteBkgColor}`,
+        `stroke: ${config.themeVariables.noteBorderColor}`,
+      ],
       look: config.look,
     };
     nodes.push(noteNode);
@@ -656,28 +662,28 @@ export const getData = () => {
   }
 
   cnt = 0;
-  for (const relation of relations) {
+  for (const classRelation of relations) {
     cnt++;
     const edge: Edge = {
-      id: getEdgeId(relation.id1, relation.id2, {
+      id: getEdgeId(classRelation.id1, classRelation.id2, {
         prefix: 'id',
         counter: cnt,
       }),
-      start: relation.id1,
-      end: relation.id2,
+      start: classRelation.id1,
+      end: classRelation.id2,
       type: 'normal',
-      label: relation.title,
+      label: classRelation.title,
       labelpos: 'c',
       thickness: 'normal',
       classes: 'relation',
-      arrowTypeStart: getArrowMarker(relation.relation.type1),
-      arrowTypeEnd: getArrowMarker(relation.relation.type2),
-      startLabelRight: relation.relationTitle1 === 'none' ? '' : relation.relationTitle1,
-      endLabelLeft: relation.relationTitle2 === 'none' ? '' : relation.relationTitle2,
+      arrowTypeStart: getArrowMarker(classRelation.relation.type1),
+      arrowTypeEnd: getArrowMarker(classRelation.relation.type2),
+      startLabelRight: classRelation.relationTitle1 === 'none' ? '' : classRelation.relationTitle1,
+      endLabelLeft: classRelation.relationTitle2 === 'none' ? '' : classRelation.relationTitle2,
       arrowheadStyle: '',
       labelStyle: ['display: inline-block'],
-      style: relation.style || '',
-      pattern: relation.relation.lineType == 1 ? 'dashed' : 'solid',
+      style: classRelation.style || '',
+      pattern: classRelation.relation.lineType == 1 ? 'dashed' : 'solid',
       look: config.look,
     };
     edges.push(edge);
