@@ -1,4 +1,5 @@
 import type { Entries } from 'type-fest';
+import type { D3Selection } from '../../types.js';
 import type { Node, ShapeRenderOptions } from '../types.js';
 import { anchor } from './shapes/anchor.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
@@ -57,8 +58,12 @@ import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ShapeHandler = (parent: any, node: Node, options: ShapeRenderOptions) => unknown;
+type MaybePromise<T> = T | Promise<T>;
+type ShapeHandler = <T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node,
+  options: ShapeRenderOptions
+) => MaybePromise<D3Selection<SVGGElement>>;
 
 export interface ShapeDefinition {
   semanticName: string;

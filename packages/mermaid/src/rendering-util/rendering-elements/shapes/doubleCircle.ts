@@ -4,8 +4,13 @@ import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
-export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
+export async function doublecircle<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
@@ -17,6 +22,7 @@ export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVG
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const outerOptions = userNodeOverrides(node, { roughness: 0.2, strokeWidth: 2.5 });
 
@@ -26,7 +32,9 @@ export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVG
 
     circleGroup = shapeSvg.insert('g', ':first-child');
     // circleGroup = circleGroup.insert(() => outerRoughNode, ':first-child');
-    circleGroup.attr('class', node.cssClasses).attr('style', cssStyles);
+    circleGroup
+      .attr('class', handleUndefinedAttr(node.cssClasses))
+      .attr('style', handleUndefinedAttr(cssStyles));
 
     circleGroup.node()?.appendChild(outerRoughNode);
     circleGroup.node()?.appendChild(innerRoughNode);
@@ -60,4 +68,4 @@ export const doublecircle = async (parent: SVGAElement, node: Node): Promise<SVG
   };
 
   return shapeSvg;
-};
+}

@@ -1,10 +1,10 @@
 import { log } from '../../../logger.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
-import type { SVG } from '../../../diagram-api/types.js';
-import type { Node } from '../../types.ts';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
+import type { D3Selection } from '../../../types.js';
 
 function createLine(r: number) {
   const xAxis45 = Math.cos(Math.PI / 4); // cosine of 45 degrees
@@ -20,7 +20,7 @@ function createLine(r: number) {
                    M ${pointQ1.x},${pointQ1.y} L ${pointQ3.x},${pointQ3.y}`;
 }
 
-export const crossedCircle = (parent: SVG, node: Node) => {
+export function crossedCircle<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   node.label = '';
@@ -31,7 +31,7 @@ export const crossedCircle = (parent: SVG, node: Node) => {
   const radius = Math.max(30, node?.width ?? 0);
   const { cssStyles } = node;
 
-  // @ts-expect-error shapeSvg d3 class is incorrect?
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
@@ -64,4 +64,4 @@ export const crossedCircle = (parent: SVG, node: Node) => {
   };
 
   return shapeSvg;
-};
+}
