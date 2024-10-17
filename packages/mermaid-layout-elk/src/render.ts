@@ -10,6 +10,14 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
+type Node = LayoutData['nodes'][0];
+
+interface NodeWithVertex extends Omit<Node, 'domId'> {
+  children?: unknown[];
+  labelData?: any;
+  domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
+}
+
 export const render = async (
   data4Layout: LayoutData,
   svg: SVG,
@@ -31,27 +39,37 @@ export const render = async (
   const nodeDb: Record<string, any> = {};
   const clusterDb: Record<string, any> = {};
 
-  const addVertex = async (nodeEl: any, graph: { children: any[] }, nodeArr: any, node: any) => {
+  const addVertex = async (
+    nodeEl: SVGGroup,
+    graph: { children: NodeWithVertex[] },
+    nodeArr: Node[],
+    node: Node
+  ) => {
     const labelData: any = { width: 0, height: 0 };
 
-    let boundingBox;
-    const child = {
-      ...node,
-    };
-    graph.children.push(child);
-    nodeDb[node.id] = child;
     const config = getConfig();
 
     // Add the element to the DOM
     if (!node.isGroup) {
+      const child: NodeWithVertex = {
+        ...node,
+      };
+      graph.children.push(child);
+      nodeDb[node.id] = child;
+
       const childNodeEl = await insertNode(nodeEl, node, { config, dir: node.dir });
-      boundingBox = childNodeEl.node().getBBox();
+      const boundingBox = childNodeEl.node()!.getBBox();
       child.domId = childNodeEl;
       child.width = boundingBox.width;
       child.height = boundingBox.height;
     } else {
       // A subgraph
-      child.children = [];
+      const child: NodeWithVertex & { children: NodeWithVertex[] } = {
+        ...node,
+        children: [],
+      };
+      graph.children.push(child);
+      nodeDb[node.id] = child;
       await addVertices(nodeEl, nodeArr, child, node.id);
 
       if (node.label) {
@@ -75,28 +93,16 @@ export const render = async (
   };
 
   const addVertices = async function (
-    nodeEl: any,
-    nodeArr: any[],
-    graph: {
-      id: string;
-      layoutOptions: {
-        'elk.hierarchyHandling': string;
-        'elk.algorithm': any;
-        'nodePlacement.strategy': any;
-        'elk.layered.mergeEdges': any;
-        'elk.direction': string;
-        'spacing.baseValue': number;
-      };
-      children: never[];
-      edges: never[];
-    },
-    parentId?: undefined
+    nodeEl: SVGGroup,
+    nodeArr: Node[],
+    graph: { children: NodeWithVertex[] },
+    parentId?: string
   ) {
-    const siblings = nodeArr.filter((node: { parentId: any }) => node.parentId === parentId);
+    const siblings = nodeArr.filter((node) => node?.parentId === parentId);
     log.info('addVertices APA12', siblings, parentId);
     // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
     await Promise.all(
-      siblings.map(async (node: any) => {
+      siblings.map(async (node) => {
         await addVertex(nodeEl, graph, nodeArr, node);
       })
     );

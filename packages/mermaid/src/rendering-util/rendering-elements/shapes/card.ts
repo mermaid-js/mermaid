@@ -1,11 +1,12 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.ts';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 
 import { insertPolygonShape } from './insertPolygonShape.js';
 import { createPathFromPoints } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
 // const createPathFromPoints = (points: { x: number; y: number }[]): string => {
 //   const pointStrings = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`);
@@ -16,7 +17,7 @@ import { createPathFromPoints } from './util.js';
 /// Size of the notch on the top left corner
 const NOTCH_SIZE = 12;
 
-export async function card(parent: SVGAElement, node: Node): Promise<SVGAElement> {
+export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
 
@@ -49,10 +50,11 @@ export async function card(parent: SVGAElement, node: Node): Promise<SVGAElement
     { x: left + NOTCH_SIZE, y: top },
   ];
 
-  let polygon: d3.Selection<SVGPolygonElement | SVGGElement, unknown, null, undefined>;
+  let polygon: D3Selection<SVGGElement> | Awaited<ReturnType<typeof insertPolygonShape>>;
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createPathFromPoints(points);

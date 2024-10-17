@@ -4,6 +4,8 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { createRoundedRectPathD } from './roundedRectPath.js';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
 export const createStadiumPathD = (
   x: number,
@@ -50,7 +52,7 @@ export const createStadiumPathD = (
   ].join(' ');
 };
 
-export const stadium = async (parent: SVGAElement, node: Node) => {
+export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
@@ -82,6 +84,7 @@ export const stadium = async (parent: SVGAElement, node: Node) => {
   let rect;
   const { cssStyles } = node;
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
 
@@ -89,7 +92,7 @@ export const stadium = async (parent: SVGAElement, node: Node) => {
     const roughNode = rc.path(pathData, options);
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
-    rect.attr('class', 'basic label-container').attr('style', cssStyles);
+    rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 
@@ -111,4 +114,4 @@ export const stadium = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

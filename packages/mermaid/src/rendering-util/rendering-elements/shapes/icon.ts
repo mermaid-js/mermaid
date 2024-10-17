@@ -1,17 +1,17 @@
 import rough from 'roughjs';
-import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
 import { getIconSVG } from '../../icons.js';
-import type { Node, ShapeRenderOptions } from '../../types.ts';
+import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { labelHelper, updateNodeBounds } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const icon = async (
-  parent: SVG,
+export async function icon<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   node: Node,
   { config: { themeVariables, flowchart } }: ShapeRenderOptions
-) => {
+) {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
@@ -33,6 +33,7 @@ export const icon = async (
 
   const labelPadding = node.label ? 8 : 0;
 
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, { stroke: 'none', fill: 'none' });
 
@@ -64,7 +65,7 @@ export const icon = async (
         fallbackPrefix: '',
       })}</g>`
     );
-    const iconBBox = iconElem.node().getBBox();
+    const iconBBox = iconElem.node()!.getBBox();
     const iconWidth = iconBBox.width;
     const iconHeight = iconBBox.height;
     const iconX = iconBBox.x;
@@ -79,9 +80,9 @@ export const icon = async (
     );
     iconElem.attr('style', `color : ${stylesMap.get('stroke') ?? nodeBorder};`);
     iconElem
-      .selectAll('path')
+      .selectAll<SVGPathElement, unknown>('path')
       .nodes()
-      .forEach((path: SVGPathElement) => {
+      .forEach((path) => {
         if (path.getAttribute('fill') === 'currentColor') {
           path.setAttribute('class', 'icon');
         }
@@ -150,4 +151,4 @@ export const icon = async (
   };
 
   return shapeSvg;
-};
+}
