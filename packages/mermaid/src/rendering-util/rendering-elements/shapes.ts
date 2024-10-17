@@ -55,6 +55,7 @@ import { triangle } from './shapes/triangle.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
+import { classBox } from './shapes/classBox.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ShapeHandler = (parent: any, node: Node, options: ShapeRenderOptions) => unknown;
@@ -441,6 +442,14 @@ export const shapesDefs: ShapeDefinition[] = [
     description: 'Lined document',
     aliases: ['lined-document'],
     handler: linedWaveEdgedRect,
+  },
+  {
+    semanticName: 'Class Box',
+    name: 'Class Box',
+    shortName: 'classBox',
+    description: 'Class Box',
+    aliases: ['class-box'],
+    handler: classBox,
   },
 ];
 

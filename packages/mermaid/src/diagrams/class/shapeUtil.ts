@@ -54,6 +54,9 @@ export const textHelper = async (
     yOffset += height + TEXT_PADDING;
   }
   membersGroupHeight = membersGroup.node().getBBox().height;
+  if (membersGroupHeight <= 0) {
+    membersGroupHeight = GAP / 2;
+  }
 
   methodsGroup = shapeSvg.insert('g').attr('class', 'methods-group text');
   let methodsYOffset = 0;

@@ -49,16 +49,33 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   }
 
   const w = bbox.width;
-  const h = bbox.height;
+  let h = bbox.height;
+  if (classNode.members.length === 0 && classNode.methods.length === 0) {
+    h += GAP;
+  } else if (classNode.members.length > 0 && classNode.methods.length === 0) {
+    h += GAP * 2;
+  }
   const x = -w / 2;
   const y = -h / 2;
 
   // Create and center rectangle
   const roughRect = rc.rectangle(
     x - PADDING,
-    y - PADDING - (renderExtraBox ? PADDING : 0),
+    y -
+      PADDING -
+      (renderExtraBox
+        ? PADDING
+        : classNode.members.length === 0 && classNode.methods.length === 0
+          ? -PADDING / 2
+          : 0),
     w + 2 * PADDING,
-    h + 2 * PADDING + (renderExtraBox ? PADDING * 2 : 0),
+    h +
+      2 * PADDING +
+      (renderExtraBox
+        ? PADDING * 2
+        : classNode.members.length === 0 && classNode.methods.length === 0
+          ? -PADDING
+          : 0),
     options
   );
 
@@ -83,7 +100,20 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
       }
     }
     // Add to the y value
-    const newTranslateY = translateY + y + PADDING - (renderExtraBox ? PADDING : 0);
+    let newTranslateY =
+      translateY +
+      y +
+      PADDING -
+      (renderExtraBox
+        ? PADDING
+        : classNode.members.length === 0 && classNode.methods.length === 0
+          ? -PADDING / 2
+          : 0);
+    if (!useHtmlLabels) {
+      // Fix so non html labels are better centered.
+      // BBox of text seems to be slightly different when calculated so we offset
+      newTranslateY -= 4;
+    }
     let newTranslateX = x;
     if (
       text.attr('class').includes('label-group') ||
@@ -124,7 +154,7 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   }
 
   // Second line (under members)
-  if (classNode.members.length > 0 && classNode.methods.length > 0) {
+  if (renderExtraBox || classNode.members.length > 0 || classNode.methods.length > 0) {
     const roughLine = rc.line(
       rectBBox.x,
       annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + GAP * 2 + PADDING,
