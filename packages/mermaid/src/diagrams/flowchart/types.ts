@@ -1,3 +1,5 @@
+import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
+
 /**
  * Valid `type` args to `yy.addVertex` taken from
  * `packages/mermaid/src/diagrams/flowchart/parser/flow.jison`
@@ -33,7 +35,7 @@ export interface FlowVertex {
   props?: any;
   styles: string[];
   text?: string;
-  type?: string;
+  type?: ShapeID | FlowVertexTypeParam;
   icon?: string;
   form?: string;
   pos?: 't' | 'b';

@@ -1,5 +1,6 @@
 export type MarkdownWordType = 'normal' | 'strong' | 'em';
 import type { MermaidConfig } from '../config.type.js';
+import type { ShapeID } from './rendering-elements/shapes.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
@@ -37,7 +38,7 @@ export interface Node {
   linkTarget?: string;
   tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
-  shape?: string;
+  shape?: ShapeID;
   isGroup: boolean;
   width?: number;
   height?: number;

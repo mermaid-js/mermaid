@@ -2,6 +2,7 @@ import { select } from 'd3';
 import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
+import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
 import * as yaml from 'js-yaml';
@@ -140,14 +141,15 @@ export const addVertex = function (
     }
     // console.log('yamlData', yamlData);
     const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
-    if (doc.shape && (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_'))) {
-      throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
-    }
-
-    // console.log('yamlData doc', doc);
-    if (doc?.shape) {
+    if (doc.shape) {
+      if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
+        throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
+      } else if (!isValidShape(doc.shape)) {
+        throw new Error(`No such shape: ${doc.shape}.`);
+      }
       vertex.type = doc?.shape;
     }
+
     if (doc?.label) {
       vertex.text = doc?.label;
     }
@@ -823,7 +825,7 @@ export const lex = {
   firstGraph,
 };
 
-const getTypeFromVertex = (vertex: FlowVertex) => {
+const getTypeFromVertex = (vertex: FlowVertex): ShapeID => {
   if (vertex.img) {
     return 'imageSquare';
   }
@@ -845,6 +847,9 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
       return 'squareRect';
     case 'round':
       return 'roundedRect';
+    case 'ellipse':
+      // @ts-expect-error -- Ellipses are broken, see https://github.com/mermaid-js/mermaid/issues/5976
+      return 'ellipse';
     default:
       return vertex.type;
   }
