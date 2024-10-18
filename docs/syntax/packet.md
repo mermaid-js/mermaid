@@ -83,7 +83,9 @@ title UDP Packet
 48-63: "Checksum"
 64-95: "Data (variable length)"
 ```
+
 Or you can write this as
+
 ```mermaid-example
 packet-beta
 title UDP Packet
