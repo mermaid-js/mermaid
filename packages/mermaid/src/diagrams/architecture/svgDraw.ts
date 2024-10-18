@@ -212,7 +212,11 @@ export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Cor
         if (data.icon) {
           const bkgElem = groupLabelContainer.append('g');
           bkgElem.html(
-            `<g>${await getIconSVG(data.icon, { height: groupIconSize, width: groupIconSize, fallbackPrefix: architectureIcons.prefix })}</g>`
+            `<g>${await getIconSVG(data.icon, {
+              height: groupIconSize,
+              width: groupIconSize,
+              fallbackPrefix: architectureIcons.prefix,
+            })}</g>`
           );
           bkgElem.attr(
             'transform',
@@ -297,11 +301,19 @@ export const drawServices = async function (
       //   throw new Error(`Invalid SVG Icon name: "${service.icon}"`);
       // }
       bkgElem.html(
-        `<g>${await getIconSVG(service.icon, { height: iconSize, width: iconSize, fallbackPrefix: architectureIcons.prefix })}</g>`
+        `<g>${await getIconSVG(service.icon, {
+          height: iconSize,
+          width: iconSize,
+          fallbackPrefix: architectureIcons.prefix,
+        })}</g>`
       );
     } else if (service.iconText) {
       bkgElem.html(
-        `<g>${await getIconSVG('blank', { height: iconSize, width: iconSize, fallbackPrefix: architectureIcons.prefix })}</g>`
+        `<g>${await getIconSVG('blank', {
+          height: iconSize,
+          width: iconSize,
+          fallbackPrefix: architectureIcons.prefix,
+        })}</g>`
       );
       const textElemContainer = bkgElem.append('g');
       const fo = textElemContainer

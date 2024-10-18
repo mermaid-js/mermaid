@@ -25,7 +25,9 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
     { x: x + w, y: y - rectOffset },
   ];
 
-  const path = `M${x - rectOffset},${y - rectOffset} L${x + w},${y - rectOffset} L${x + w},${y + h} L${x - rectOffset},${y + h} L${x - rectOffset},${y - rectOffset}
+  const path = `M${x - rectOffset},${y - rectOffset} L${x + w},${y - rectOffset} L${x + w},${
+    y + h
+  } L${x - rectOffset},${y + h} L${x - rectOffset},${y - rectOffset}
                 M${x - rectOffset},${y} L${x + w},${y}
                 M${x},${y - rectOffset} L${x},${y + h}`;
 
@@ -51,7 +53,9 @@ export const windowPane = async (parent: SVGAElement, node: Node) => {
 
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) + rectOffset / 2 - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + rectOffset / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) + rectOffset / 2 - (bbox.x - (bbox.left ?? 0))}, ${
+      -(bbox.height / 2) + rectOffset / 2 - (bbox.y - (bbox.top ?? 0))
+    })`
   );
 
   updateNodeBounds(node, windowPane);

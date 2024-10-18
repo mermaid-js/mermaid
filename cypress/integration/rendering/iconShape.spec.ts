@@ -14,7 +14,11 @@ looks.forEach((look) => {
   directions.forEach((direction) => {
     forms.forEach((form) => {
       labelPos.forEach((pos) => {
-        describe(`Test iconShape in ${form ? `${form} form,` : ''} ${look} look and dir ${direction} with label position ${pos ? pos : 'not defined'}`, () => {
+        describe(`Test iconShape in ${
+          form ? `${form} form,` : ''
+        } ${look} look and dir ${direction} with label position ${
+          pos ? pos : 'not defined'
+        }`, () => {
           it(`without label`, () => {
             let flowchartCode = `flowchart ${direction}\n`;
             flowchartCode += `  nA --> nAA@{ icon: 'fa:bell'`;

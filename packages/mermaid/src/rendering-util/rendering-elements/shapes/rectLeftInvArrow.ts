@@ -54,7 +54,9 @@ export const rect_left_inv_arrow = async (
 
   label.attr(
     'transform',
-    `translate(${-notch / 2 - bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-notch / 2 - bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${
+      -(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))
+    })`
   );
   updateNodeBounds(node, polygon);
 

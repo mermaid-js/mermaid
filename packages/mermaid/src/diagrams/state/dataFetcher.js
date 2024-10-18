@@ -258,7 +258,9 @@ export const dataFetcher = (
       newNode.isGroup = true;
       newNode.dir = getDir(parsedItem);
       newNode.shape = parsedItem.type === DIVIDER_TYPE ? SHAPE_DIVIDER : SHAPE_GROUP;
-      newNode.cssClasses = `${newNode.cssClasses} ${CSS_DIAGRAM_CLUSTER} ${altFlag ? CSS_DIAGRAM_CLUSTER_ALT : ''}`;
+      newNode.cssClasses = `${newNode.cssClasses} ${CSS_DIAGRAM_CLUSTER} ${
+        altFlag ? CSS_DIAGRAM_CLUSTER_ALT : ''
+      }`;
     }
 
     // This is what will be added to the graph

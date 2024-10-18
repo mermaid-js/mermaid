@@ -264,7 +264,9 @@ const roundedWithTitle = async (parent, node) => {
 
   label.attr(
     'transform',
-    `translate(${node.x - bbox.width / 2}, ${y + 1 - (evaluate(siteConfig.flowchart.htmlLabels) ? 0 : 3)})`
+    `translate(${node.x - bbox.width / 2}, ${
+      y + 1 - (evaluate(siteConfig.flowchart.htmlLabels) ? 0 : 3)
+    })`
   );
 
   const rectBox = rect.node().getBBox();

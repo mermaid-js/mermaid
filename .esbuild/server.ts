@@ -36,7 +36,9 @@ const rebuildAll = async () => {
   console.time(timeLabel);
   await Promise.all(
     contexts.map(async ({ config, context }) => {
-      const buildVariant = `Rebuild ${buildNumber} Time (${Object.keys(config.entryPoints!)[0]} ${config.format})`;
+      const buildVariant = `Rebuild ${buildNumber} Time (${Object.keys(config.entryPoints!)[0]} ${
+        config.format
+      })`;
       console.time(buildVariant);
       await context.rebuild();
       console.timeEnd(buildVariant);

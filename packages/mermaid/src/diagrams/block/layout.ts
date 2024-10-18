@@ -105,7 +105,9 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
     for (const child of block.children) {
       if (child.size) {
         log.debug(
-          `abc95 Setting size of children of ${block.id} id=${child.id} ${maxWidth} ${maxHeight} ${JSON.stringify(child.size)}`
+          `abc95 Setting size of children of ${block.id} id=${
+            child.id
+          } ${maxWidth} ${maxHeight} ${JSON.stringify(child.size)}`
         );
         child.size.width =
           maxWidth * (child.widthInColumns ?? 1) + padding * ((child.widthInColumns ?? 1) - 1);
