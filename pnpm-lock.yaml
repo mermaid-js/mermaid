@@ -251,7 +251,7 @@ importers:
         specifier: ^1.11.10
         version: 1.11.13
       dompurify:
-        specifier: ^3.0.11 <3.1.7
+        specifier: ^3.0.11 <3.1.8
         version: 3.1.6
       katex:
         specifier: ^0.16.9
