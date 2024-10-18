@@ -84,7 +84,7 @@ describe('Test Alias for shapes', function () {
   });
 
   it('should support alias for shadedProcess shape ', function () {
-    const aliases = ['lined-process', 'lined-rectangle', 'lin-proc', 'lin-rect'];
+    const aliases = ['lined-process', 'lined-rectangle', 'lin-proc', 'lin-rect'] as const;
     for (const alias of aliases) {
       expect(shapes[alias]).toBe(shapes['shaded-process']);
     }

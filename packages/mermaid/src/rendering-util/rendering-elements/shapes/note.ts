@@ -3,12 +3,13 @@ import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const note = async (
-  parent: SVGAElement,
+export async function note<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   node: Node,
   { config: { themeVariables } }: ShapeRenderOptions
-) => {
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
@@ -55,4 +56,4 @@ export const note = async (
   };
 
   return shapeSvg;
-};
+}

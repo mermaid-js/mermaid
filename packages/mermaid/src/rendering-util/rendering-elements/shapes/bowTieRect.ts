@@ -1,8 +1,9 @@
 import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.ts';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
 
 function generateArcPoints(
   x1: number,
@@ -70,7 +71,7 @@ function generateArcPoints(
   return points;
 }
 
-export const bowTieRect = async (parent: SVGAElement, node: Node) => {
+export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
@@ -91,6 +92,7 @@ export const bowTieRect = async (parent: SVGAElement, node: Node) => {
     ...generateArcPoints(w / 2, h / 2, w / 2, -h / 2, rx, ry, true),
   ];
 
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
@@ -122,4 +124,4 @@ export const bowTieRect = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}
