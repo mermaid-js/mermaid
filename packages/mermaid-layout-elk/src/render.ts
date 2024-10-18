@@ -262,6 +262,8 @@ export const render = async (
         interpolate: undefined;
         style: undefined;
         labelType: any;
+        startLabelRight?: string;
+        endLabelLeft?: string;
       }) {
         // Identify Link
         const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
@@ -314,6 +316,9 @@ export const render = async (
 
         let style = '';
         let labelStyle = '';
+
+        edgeData.startLabelRight = edge.startLabelRight;
+        edgeData.endLabelLeft = edge.endLabelLeft;
 
         switch (edge.stroke) {
           case 'normal':
