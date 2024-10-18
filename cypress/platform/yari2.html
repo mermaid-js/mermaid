@@ -55,7 +55,7 @@
           ---
             config:
               htmlLabels: false
-              look:
+              layout: elk
           ---
           erDiagram
             "hi" }o..o{ ORDER : places
@@ -124,6 +124,24 @@
           }
           p ||--o| a : has
            
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              layout: elk
+          ---
+          erDiagram
+          CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+          CUSTOMER ||--o{ ORDER : places
+          CUSTOMER ||--o{ INVOICE : "liable for"
+          DELIVERY-ADDRESS ||--o{ ORDER : receives
+          INVOICE ||--|{ ORDER : covers
+          ORDER ||--|{ ORDER-ITEM : includes
+          PRODUCT-CATEGORY ||--|{ PRODUCT : contains
+          PRODUCT ||--o{ ORDER-ITEM : "ordered in"
         </pre>
       </div>
       <div class="test">
@@ -267,7 +285,9 @@
     </div>
 
     <script type="module">
-      import mermaid from '/mermaid.esm.mjs';
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
