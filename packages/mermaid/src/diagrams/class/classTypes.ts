@@ -7,7 +7,7 @@ export interface ClassNode {
   label: string;
   shape: string;
   text: string;
-  cssClasses: string[];
+  cssClasses: string;
   methods: ClassMember[];
   members: ClassMember[];
   annotations: string[];

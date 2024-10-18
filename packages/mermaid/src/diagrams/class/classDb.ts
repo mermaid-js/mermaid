@@ -88,7 +88,7 @@ export const addClass = function (_id: string) {
     label: name,
     text: `${name}${type ? `&lt;${type}&gt;` : ''}`,
     shape: 'classBox',
-    cssClasses: ['default'],
+    cssClasses: 'default',
     methods: [],
     members: [],
     annotations: [],
@@ -279,7 +279,7 @@ export const setCssClass = function (ids: string, className: string) {
     }
     const classNode = classes.get(id);
     if (classNode) {
-      classNode.cssClasses.push(className);
+      classNode.cssClasses += ' ' + className;
     }
   });
 };
