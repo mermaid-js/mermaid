@@ -51,17 +51,16 @@ export const createInnerCylinderPathD = (
 export const cylinder = async (parent: SVGAElement, node: Node) => {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = bbox.width + node.padding;
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+  const w = Math.max(bbox.width + node.padding, node.width ?? 0);
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = bbox.height + ry + node.padding;
+  const h = Math.max(bbox.height + ry + node.padding, node.height ?? 0);
 
   let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
-    // @ts-ignore - rough is not typed
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
@@ -88,6 +87,11 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   cylinder.attr('transform', `translate(${-w / 2}, ${-(h / 2 + ry)})`);
 
   updateNodeBounds(node, cylinder);
+
+  label.attr(
+    'transform',
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + (node.padding ?? 0) / 1.5 - (bbox.y - (bbox.top ?? 0))})`
+  );
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);

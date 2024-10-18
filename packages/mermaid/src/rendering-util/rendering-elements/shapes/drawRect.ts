@@ -47,8 +47,6 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
       .attr('class', 'basic label-container')
       .attr('style', nodeStyles)
       .attr('rx', rx)
-      .attr('data-id', 'abc')
-      .attr('data-et', 'node')
       .attr('ry', ry)
       .attr('x', x)
       .attr('y', y)
