@@ -832,14 +832,15 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
     }
     return 'icon';
   }
-  if (vertex.type === 'square') {
-    return 'squareRect';
+  switch (vertex.type) {
+    case 'square':
+    case undefined:
+      return 'squareRect';
+    case 'round':
+      return 'roundedRect';
+    default:
+      return vertex.type;
   }
-  if (vertex.type === 'round') {
-    return 'roundedRect';
-  }
-
-  return vertex.type ?? 'squareRect';
 };
 
 const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
