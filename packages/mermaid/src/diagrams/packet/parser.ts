@@ -5,7 +5,6 @@ import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { db } from './db.js';
 import type { PacketBlock, PacketWord } from './types.js';
-import assert from 'node:assert';
 
 const maxPacketSize = 10_000;
 
