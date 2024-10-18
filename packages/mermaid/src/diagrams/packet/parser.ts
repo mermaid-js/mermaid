@@ -10,26 +10,39 @@ const maxPacketSize = 10_000;
 
 const populate = (ast: Packet) => {
   populateCommonDb(ast, db);
-  let lastByte = -1;
+  let lastBit = -1;
   let word: PacketWord = [];
   let row = 1;
   const { bitsPerRow } = db.getConfig();
-  for (let { start, end, label } of ast.blocks) {
-    if (end && end < start) {
+
+  for (let { start, end, bits, label } of ast.blocks) {
+    if (start !== undefined && end !== undefined && end < start) {
       throw new Error(`Packet block ${start} - ${end} is invalid. End must be greater than start.`);
     }
-    if (start !== lastByte + 1) {
+    if (start == undefined) {
+      start = lastBit + 1;
+    }
+    if (start !== lastBit + 1) {
       throw new Error(
         `Packet block ${start} - ${end ?? start} is not contiguous. It should start from ${
-          lastByte + 1
+          lastBit + 1
         }.`
       );
     }
-    lastByte = end ?? start;
-    log.debug(`Packet block ${start} - ${lastByte} with label ${label}`);
+    if (bits === 0) {
+      throw new Error(`Packet block ${start} is invalid. Cannot have a zero bit field.`);
+    }
+    if (end == undefined) {
+      end = start + (bits ?? 1) - 1;
+    }
+    if (bits == undefined) {
+      bits = end - start + 1;
+    }
+    lastBit = end;
+    log.debug(`Packet block ${start} - ${lastBit} with label ${label}`);
 
     while (word.length <= bitsPerRow + 1 && db.getPacket().length < maxPacketSize) {
-      const [block, nextBlock] = getNextFittingBlock({ start, end, label }, row, bitsPerRow);
+      const [block, nextBlock] = getNextFittingBlock({ start, end, bits, label }, row, bitsPerRow);
       word.push(block);
       if (block.end + 1 === row * bitsPerRow) {
         db.pushWord(word);
@@ -39,7 +52,7 @@ const populate = (ast: Packet) => {
       if (!nextBlock) {
         break;
       }
-      ({ start, end, label } = nextBlock);
+      ({ start, end, bits, label } = nextBlock);
     }
   }
   db.pushWord(word);
@@ -50,9 +63,8 @@ const getNextFittingBlock = (
   row: number,
   bitsPerRow: number
 ): [Required<PacketBlock>, PacketBlock | undefined] => {
-  if (block.end === undefined) {
-    block.end = block.start;
-  }
+  assert(block.start !== undefined, 'start should have been set during first phase');
+  assert(block.end !== undefined, 'end should have been set during first phase');
 
   if (block.start > block.end) {
     throw new Error(`Block start ${block.start} is greater than block end ${block.end}.`);
@@ -62,16 +74,20 @@ const getNextFittingBlock = (
     return [block as Required<PacketBlock>, undefined];
   }
 
+  const rowEnd = row * bitsPerRow - 1;
+  const rowStart = row * bitsPerRow;
   return [
     {
       start: block.start,
-      end: row * bitsPerRow - 1,
+      end: rowEnd,
       label: block.label,
+      bits: rowEnd - block.start,
     },
     {
-      start: row * bitsPerRow,
+      start: rowStart,
       end: block.end,
       label: block.label,
+      bits: block.end - rowStart,
     },
   ];
 };
