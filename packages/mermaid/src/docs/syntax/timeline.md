@@ -42,7 +42,7 @@ or
               : {event}
 ```
 
-**NOTE**: Both time period and event are simple text, and not limited to numbers.
+**NOTE**: Both time period and event are simple text, and not limited to numbers. You also cannot use `:` characters on their own in the title, time period, section, or event elements because they are used as tokens by the parser. If you want to have a token in your text use `ESC_COLON`. This will be transformed into a `:` when rendered (this will not work for titles).
 
 Let us look at the syntax for the example above.
 
