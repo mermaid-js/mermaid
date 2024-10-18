@@ -63,8 +63,12 @@ const getNextFittingBlock = (
   row: number,
   bitsPerRow: number
 ): [Required<PacketBlock>, PacketBlock | undefined] => {
-  assert(block.start !== undefined, 'start should have been set during first phase');
-  assert(block.end !== undefined, 'end should have been set during first phase');
+  if (block.start === undefined) {
+    throw new Error('start should have been set during first phase');
+  }
+  if (block.end === undefined) {
+    throw new Error('end should have been set during first phase');
+  }
 
   if (block.start > block.end) {
     throw new Error(`Block start ${block.start} is greater than block end ${block.end}.`);
