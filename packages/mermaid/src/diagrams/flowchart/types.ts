@@ -1,3 +1,26 @@
+/**
+ * Valid `type` args to `yy.addVertex` taken from
+ * `packages/mermaid/src/diagrams/flowchart/parser/flow.jison`
+ */
+export type FlowVertexTypeParam =
+  | undefined
+  | 'square'
+  | 'doublecircle'
+  | 'circle'
+  | 'ellipse'
+  | 'stadium'
+  | 'subroutine'
+  | 'rect'
+  | 'cylinder'
+  | 'round'
+  | 'diamond'
+  | 'hexagon'
+  | 'odd'
+  | 'trapezoid'
+  | 'inv_trapezoid'
+  | 'lean_right'
+  | 'lean_left';
+
 export interface FlowVertex {
   classes: string[];
   dir?: string;

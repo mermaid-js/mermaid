@@ -14,7 +14,15 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
+import type {
+  FlowVertex,
+  FlowClass,
+  FlowSubGraph,
+  FlowText,
+  FlowEdge,
+  FlowLink,
+  FlowVertexTypeParam,
+} from './types.js';
 import type { NodeMetaData } from '../../types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
@@ -53,12 +61,11 @@ export const lookUpDomId = function (id: string) {
 
 /**
  * Function called by parser when a node definition has been found
- *
  */
 export const addVertex = function (
   id: string,
   textObj: FlowText,
-  type: 'group',
+  type: FlowVertexTypeParam,
   style: string[],
   classes: string[],
   dir: string,
