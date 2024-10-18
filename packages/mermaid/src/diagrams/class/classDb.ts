@@ -620,6 +620,7 @@ export const getData = () => {
       padding: config.class!.padding ?? 6,
       cssStyles: [
         'text-align: left',
+        'white-space: nowrap',
         `fill: ${config.themeVariables.noteBkgColor}`,
         `stroke: ${config.themeVariables.noteBorderColor}`,
       ],
