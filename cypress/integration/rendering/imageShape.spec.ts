@@ -12,9 +12,7 @@ const labelPos = [undefined, 't', 'b'] as const;
 looks.forEach((look) => {
   directions.forEach((direction) => {
     labelPos.forEach((pos) => {
-      describe(`Test imageShape in ${look} look and dir ${direction} with label position ${
-        pos ? pos : 'not defined'
-      }`, () => {
+      describe(`Test imageShape in ${look} look and dir ${direction} with label position ${pos ? pos : 'not defined'}`, () => {
         it(`without label`, () => {
           let flowchartCode = `flowchart ${direction}\n`;
           flowchartCode += `  nA --> A@{ img: 'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg', w: '100', h: '100' }\n`;

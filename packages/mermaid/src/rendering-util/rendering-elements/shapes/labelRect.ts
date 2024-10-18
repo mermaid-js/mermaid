@@ -29,9 +29,7 @@ export const labelRect = async (parent: SVGElement, node: Node) => {
   shapeSvg.attr('class', 'label edgeLabel');
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${
-      -(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))
-    })`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
   );
 
   // if (node.props) {

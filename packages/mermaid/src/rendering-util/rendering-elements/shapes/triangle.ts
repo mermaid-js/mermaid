@@ -54,10 +54,7 @@ export const triangle = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${
-      h / 2 -
-      (bbox.height + (node.padding ?? 0) / (useHtmlLabels ? 2 : 1) - (bbox.y - (bbox.top ?? 0)))
-    })`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - (bbox.height + (node.padding ?? 0) / (useHtmlLabels ? 2 : 1) - (bbox.y - (bbox.top ?? 0)))})`
   );
 
   node.intersect = function (point) {

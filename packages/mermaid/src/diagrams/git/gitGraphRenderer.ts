@@ -276,11 +276,7 @@ const drawCommitBullet = (
       cross
         .attr(
           'd',
-          `M ${commitPosition.x - 5},${commitPosition.y - 5}L${commitPosition.x + 5},${
-            commitPosition.y + 5
-          }M${commitPosition.x - 5},${commitPosition.y + 5}L${commitPosition.x + 5},${
-            commitPosition.y - 5
-          }`
+          `M ${commitPosition.x - 5},${commitPosition.y - 5}L${commitPosition.x + 5},${commitPosition.y + 5}M${commitPosition.x - 5},${commitPosition.y + 5}L${commitPosition.x + 5},${commitPosition.y - 5}`
         )
         .attr('class', `commit ${typeClass} ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
     }
@@ -656,27 +652,21 @@ const drawArrow = (
 
         colorClassNum = branchPos.get(commitA.branch)?.index;
 
-        lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc} ${lineX} ${
-          p1.y + offset
-        } L ${lineX} ${p2.y - radius} ${arc2} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
+        lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc} ${lineX} ${p1.y + offset} L ${lineX} ${p2.y - radius} ${arc2} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
       }
     } else if (dir === 'BT') {
       if (p1.x < p2.x) {
         // Source commit is on branch position left of destination commit
         // so render arrow rightward with colour of destination branch
 
-        lineDef = `M ${p1.x} ${p1.y} L ${lineX - radius} ${p1.y} ${arc} ${lineX} ${
-          p1.y - offset
-        } L ${lineX} ${p2.y + radius} ${arc2} ${lineX + offset} ${p2.y} L ${p2.x} ${p2.y}`;
+        lineDef = `M ${p1.x} ${p1.y} L ${lineX - radius} ${p1.y} ${arc} ${lineX} ${p1.y - offset} L ${lineX} ${p2.y + radius} ${arc2} ${lineX + offset} ${p2.y} L ${p2.x} ${p2.y}`;
       } else {
         // Source commit is on branch position right of destination commit
         // so render arrow leftward with colour of source branch
 
         colorClassNum = branchPos.get(commitA.branch)?.index;
 
-        lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc2} ${lineX} ${
-          p1.y - offset
-        } L ${lineX} ${p2.y + radius} ${arc} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
+        lineDef = `M ${p1.x} ${p1.y} L ${lineX + radius} ${p1.y} ${arc2} ${lineX} ${p1.y - offset} L ${lineX} ${p2.y + radius} ${arc} ${lineX - offset} ${p2.y} L ${p2.x} ${p2.y}`;
       }
     } else {
       if (p1.y < p2.y) {
