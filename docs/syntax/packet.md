@@ -20,7 +20,6 @@ This diagram type is particularly useful for developers, network engineers, educ
 packet-beta
 start: "Block name" %% Single-bit block
 start-end: "Block name" %% Multi-bit blocks
-16bits: "Block name" %% Auto appends to previous block without specifying start
 ... More Fields ...
 ```
 
@@ -81,18 +80,6 @@ title UDP Packet
 16-31: "Destination Port"
 32-47: "Length"
 48-63: "Checksum"
-64-95: "Data (variable length)"
-```
-
-Or you can write this as
-
-```mermaid-example
-packet-beta
-title UDP Packet
-16bits: "Source Port"
-16bits: "Destination Port"
-16bits: "Length"
-16bits: "Checksum"
 64-95: "Data (variable length)"
 ```
 
