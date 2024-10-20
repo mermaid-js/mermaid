@@ -50,6 +50,10 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
       });
     } else if (node.type === 'html') {
       lines[currentLine].push({ content: node.text, type: 'normal' });
+    } else if (node.type === 'link') {
+      node.tokens.forEach((contentNode) => {
+        processNode(contentNode as MarkedToken, parentType);
+      });
     }
   }
 
@@ -85,8 +89,11 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return '';
     } else if (node.type === 'html') {
       return `${node.text}`;
+    } else if (node.type === 'link') {
+      return node.tokens?.map(output).join('') ?? node.text;
+    } else {
+      return `Unsupported markdown: ${node.type}`;
     }
-    return `Unsupported markdown: ${node.type}`;
   }
 
   return nodes.map(output).join('');
