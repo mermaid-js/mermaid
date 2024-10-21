@@ -6,11 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency: '${{ github.workflow }}-${{ github.ref }}'
 
 permissions:
   contents: write
-
 jobs:
   docker-lint:
     runs-on: ubuntu-latest
@@ -22,17 +21,19 @@ jobs:
           verbose: true
   lint:
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
-        # uses version from "packageManager" field in package.json
 
       - name: Setup Node.js
         uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6 # v4.0.4
         with:
           cache: pnpm
-          node-version-file: '.node-version'
+          node-version-file: .node-version
 
       - name: Install Packages
         run: |
@@ -86,12 +87,12 @@ jobs:
       - name: Verify Docs
         id: verifyDocs
         working-directory: ./packages/mermaid
-        continue-on-error: ${{ github.event_name == 'push' }}
-        run: pnpm run docs:verify
+        continue-on-error: "${{ github.event_name == 'push' }}"
+        run: 'pnpm run docs:verify'
 
-      - uses: testomatio/check-tests@0ea638fcec1820cf2e7b9854fdbdd04128a55bd4 # stable
+      - uses: testomatio/check-tests@b969b09b9d7f400b12e7a3db02fe51a5ce27fb54
         with:
           framework: cypress
-          tests: './cypress/e2e/**/**.spec.js'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          tests: ./cypress/e2e/**/**.spec.js
+          token: '${{ secrets.GITHUB_TOKEN }}'
           has-tests-label: true
