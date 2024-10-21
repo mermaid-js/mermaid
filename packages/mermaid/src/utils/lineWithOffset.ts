@@ -52,18 +52,15 @@ export const getLineFunctionsWithOffset = (
       data: (Point | [number, number])[]
     ) {
       let offset = 0;
+      const DIRECTION =
+        pointTransformer(data[0]).x < pointTransformer(data[data.length - 1]).x ? 'left' : 'right';
       if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
-        // Handle first point
-        // Calculate the angle and delta between the first two points
         const { angle, deltaX } = calculateDeltaAndAngle(data[0], data[1]);
-        // Calculate the offset based on the angle and the marker's dimensions
         offset =
           markerOffsets[edge.arrowTypeStart as keyof typeof markerOffsets] *
           Math.cos(angle) *
           (deltaX >= 0 ? 1 : -1);
       } else if (i === data.length - 1 && Object.hasOwn(markerOffsets, edge.arrowTypeEnd)) {
-        // Handle last point
-        // Calculate the angle and delta between the last two points
         const { angle, deltaX } = calculateDeltaAndAngle(
           data[data.length - 1],
           data[data.length - 2]
@@ -73,6 +70,41 @@ export const getLineFunctionsWithOffset = (
           Math.cos(angle) *
           (deltaX >= 0 ? 1 : -1);
       }
+
+      const differenceToEnd = Math.abs(
+        pointTransformer(d).x - pointTransformer(data[data.length - 1]).x
+      );
+      const differenceInYEnd = Math.abs(
+        pointTransformer(d).y - pointTransformer(data[data.length - 1]).y
+      );
+      const differenceToStart = Math.abs(pointTransformer(d).x - pointTransformer(data[0]).x);
+      const differenceInYStart = Math.abs(pointTransformer(d).y - pointTransformer(data[0]).y);
+      const startMarkerHeight = markerOffsets[edge.arrowTypeStart as keyof typeof markerOffsets];
+      const endMarkerHeight = markerOffsets[edge.arrowTypeEnd as keyof typeof markerOffsets];
+      const extraRoom = 1;
+
+      // Adjust the offset if the difference is smaller than the marker height
+      if (
+        differenceToEnd < endMarkerHeight &&
+        differenceToEnd > 0 &&
+        differenceInYEnd < endMarkerHeight
+      ) {
+        let adjustment = endMarkerHeight + extraRoom - differenceToEnd;
+        adjustment *= DIRECTION === 'right' ? -1 : 1;
+        // Adjust the offset by the amount needed to fit the marker
+        offset -= adjustment;
+      }
+
+      if (
+        differenceToStart < startMarkerHeight &&
+        differenceToStart > 0 &&
+        differenceInYStart < startMarkerHeight
+      ) {
+        let adjustment = startMarkerHeight + extraRoom - differenceToStart;
+        adjustment *= DIRECTION === 'right' ? -1 : 1;
+        offset += adjustment;
+      }
+
       return pointTransformer(d).x + offset;
     },
     y: function (
@@ -81,8 +113,9 @@ export const getLineFunctionsWithOffset = (
       i: number,
       data: (Point | [number, number])[]
     ) {
-      // Same handling as X above
       let offset = 0;
+      const DIRECTION =
+        pointTransformer(data[0]).y < pointTransformer(data[data.length - 1]).y ? 'down' : 'up';
       if (i === 0 && Object.hasOwn(markerOffsets, edge.arrowTypeStart)) {
         const { angle, deltaY } = calculateDeltaAndAngle(data[0], data[1]);
         offset =
@@ -98,6 +131,40 @@ export const getLineFunctionsWithOffset = (
           markerOffsets[edge.arrowTypeEnd as keyof typeof markerOffsets] *
           Math.abs(Math.sin(angle)) *
           (deltaY >= 0 ? 1 : -1);
+      }
+
+      const differenceToEnd = Math.abs(
+        pointTransformer(d).y - pointTransformer(data[data.length - 1]).y
+      );
+      const differenceInXEnd = Math.abs(
+        pointTransformer(d).x - pointTransformer(data[data.length - 1]).x
+      );
+      const differenceToStart = Math.abs(pointTransformer(d).y - pointTransformer(data[0]).y);
+      const differenceInXStart = Math.abs(pointTransformer(d).x - pointTransformer(data[0]).x);
+      const startMarkerHeight = markerOffsets[edge.arrowTypeStart as keyof typeof markerOffsets];
+      const endMarkerHeight = markerOffsets[edge.arrowTypeEnd as keyof typeof markerOffsets];
+      const extraRoom = 1;
+
+      // Adjust the offset if the difference is smaller than the marker height
+      if (
+        differenceToEnd < endMarkerHeight &&
+        differenceToEnd > 0 &&
+        differenceInXEnd < endMarkerHeight
+      ) {
+        let adjustment = endMarkerHeight + extraRoom - differenceToEnd;
+        adjustment *= DIRECTION === 'up' ? -1 : 1;
+        // Adjust the offset by the amount needed to fit the marker
+        offset -= adjustment;
+      }
+
+      if (
+        differenceToStart < startMarkerHeight &&
+        differenceToStart > 0 &&
+        differenceInXStart < startMarkerHeight
+      ) {
+        let adjustment = startMarkerHeight + extraRoom - differenceToStart;
+        adjustment *= DIRECTION === 'up' ? -1 : 1;
+        offset += adjustment;
       }
       return pointTransformer(d).y + offset;
     },
