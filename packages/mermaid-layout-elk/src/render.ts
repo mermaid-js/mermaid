@@ -5,9 +5,16 @@ import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
 type Node = LayoutData['nodes'][number];
 
+interface LabelData {
+  width: number;
+  height: number;
+  wrappingWidth?: number;
+  labelNode?: SVGGElement | null;
+}
+
 interface NodeWithVertex extends Omit<Node, 'domId'> {
   children?: unknown[];
-  labelData?: any;
+  labelData?: LabelData;
   domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
 }
 
@@ -38,7 +45,7 @@ export const render = async (
     nodeArr: Node[],
     node: Node
   ) => {
-    const labelData: any = { width: 0, height: 0 };
+    const labelData: LabelData = { width: 0, height: 0 };
 
     const config = getConfig();
 
