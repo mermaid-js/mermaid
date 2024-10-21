@@ -449,7 +449,8 @@
           ---
           config:
             theme: forest
-            look: handDrawn
+            look: handDrawns
+            layout: elk
           ---
           classDiagram
             direction RL
@@ -464,8 +465,8 @@
               -id : int
               -name : string
             }
-            Student "1" --o "1" IdCard : carries
-            Student "1" --o "1" Bike : rides
+            Student "1" o--o "1" IdCard : carries
+            Student "1" o--o "1" Bike : rides
         </pre>
       </div>
       <div class="test">
@@ -488,6 +489,23 @@
                   double height
                 }
             }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Namespaces</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              layout: elk
+          ---
+          classDiagram
+          namespace Namespace1 {
+            class C1
+            class C2
+          }
+          C1 --> C2
+          class C3
+          class C4
         </pre>
       </div>
       <div class="test">
@@ -555,6 +573,7 @@
           ---
             config:
               look: handDrawn
+              layout: elk
           ---
           classDiagram
             Class01 "1" <|--|> "*" AveryLongClass : Cool
@@ -591,7 +610,9 @@
     </div>
 
     <script type="module">
-      import mermaid from '/mermaid.esm.mjs';
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
       };
@@ -632,11 +653,11 @@
       grid-template-columns: 1fr;
     }
 
-    #classId-Duck-24.styleClass > * > path {
-      fill: #ff0000;
-      stroke: #ffff00;
-      stroke-width: 4px;
-      stroke-dasharray: 2;
+    .styleClass > * > path {
+      fill: #ff0000 !important;
+      stroke: #ffff00 !important;
+      stroke-width: 4px !important;
+      stroke-dasharray: 2 !important;
     }
   </style>
 </html>
