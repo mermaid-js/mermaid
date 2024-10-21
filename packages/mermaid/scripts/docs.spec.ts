@@ -181,6 +181,7 @@ This Markdown should be kept.
         | Data Input/Output                 | Lean Left              | \`lean-l\`       | Represents output or input     | \`lean-left\`, \`out-in\`                                            |
         | Database                          | Cylinder               | \`cyl\`          | Database storage               | \`cylinder\`, \`database\`, \`db\`                                     |
         | Decision                          | Diamond                | \`diam\`         | Decision-making step           | \`decision\`, \`diamond\`, \`question\`                                |
+        | Deep History                      | Circle with an H\\*     | \`deephistory\`  | Deep history entrance          |                                                                  |
         | Delay                             | Half-Rounded Rectangle | \`delay\`        | Represents a delay             | \`half-rounded-rectangle\`                                         |
         | Direct Access Storage             | Horizontal Cylinder    | \`h-cyl\`        | Direct access storage          | \`das\`, \`horizontal-cylinder\`                                     |
         | Disk Storage                      | Lined Cylinder         | \`lin-cyl\`      | Disk storage                   | \`disk\`, \`lined-cylinder\`                                         |
@@ -190,6 +191,7 @@ This Markdown should be kept.
         | Event                             | Rounded Rectangle      | \`rounded\`      | Represents an event            | \`event\`                                                          |
         | Extract                           | Triangle               | \`tri\`          | Extraction process             | \`extract\`, \`triangle\`                                            |
         | Fork/Join                         | Filled Rectangle       | \`fork\`         | Fork or join in process flow   | \`join\`                                                           |
+        | History                           | Circle with an H       | \`history\`      | History entrance               |                                                                  |
         | Internal Storage                  | Window Pane            | \`win-pane\`     | Internal storage               | \`internal-storage\`, \`window-pane\`                                |
         | Junction                          | Filled Circle          | \`f-circ\`       | Junction point                 | \`filled-circle\`, \`junction\`                                      |
         | Lined Document                    | Lined Document         | \`lin-doc\`      | Lined document                 | \`lined-document\`                                                 |

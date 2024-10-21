@@ -55,6 +55,7 @@ import { triangle } from './shapes/triangle.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
+import { history, deephistory } from './shapes/history.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ShapeHandler = (parent: any, node: Node, options: ShapeRenderOptions) => unknown;
@@ -235,6 +236,20 @@ export const shapesDefs: ShapeDefinition[] = [
     aliases: ['join'],
     internalAliases: ['forkJoin'],
     handler: forkJoin,
+  },
+  {
+    semanticName: 'History',
+    name: 'Circle with an H',
+    shortName: 'history',
+    description: 'History entrance',
+    handler: history,
+  },
+  {
+    semanticName: 'Deep History',
+    name: 'Circle with an H*',
+    shortName: 'deephistory',
+    description: 'Deep history entrance',
+    handler: deephistory,
   },
   {
     semanticName: 'Collate',
