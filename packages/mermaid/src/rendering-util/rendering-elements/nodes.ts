@@ -1,7 +1,7 @@
 import { log } from '../../logger.js';
 import { shapes } from './shapes.js';
-import type { Node } from '../types.js';
-import type { MermaidConfig, SVGGroup } from '../../mermaid.js';
+import type { Node, ShapeRenderOptions } from '../types.js';
+import type { SVGGroup } from '../../mermaid.js';
 import type { D3Selection } from '../../types.js';
 import type { graphlib } from 'dagre-d3-es';
 
@@ -10,11 +10,7 @@ type NodeElement = D3Selection<SVGAElement> | Awaited<ReturnType<ShapeHandler>>;
 
 const nodeElems = new Map<string, NodeElement>();
 
-export async function insertNode(
-  elem: SVGGroup,
-  node: Node,
-  renderOptions: { config: MermaidConfig; dir: Node['dir'] }
-) {
+export async function insertNode(elem: SVGGroup, node: Node, renderOptions: ShapeRenderOptions) {
   let newEl: NodeElement | undefined;
   let el;
 

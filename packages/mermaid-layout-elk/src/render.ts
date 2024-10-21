@@ -3,7 +3,7 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
-type Node = LayoutData['nodes'][0];
+type Node = LayoutData['nodes'][number];
 
 interface NodeWithVertex extends Omit<Node, 'domId'> {
   children?: unknown[];
