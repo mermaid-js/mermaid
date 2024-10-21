@@ -590,6 +590,7 @@ export const getData = () => {
         id: namespace.id,
         label: namespace.id,
         isGroup: true,
+        padding: config.class!.padding ?? 16,
         // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
         shape: 'rect',
         cssStyles: ['fill: none', 'stroke: black'],

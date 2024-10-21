@@ -136,6 +136,7 @@ export const render = async (
             const clusterNode = JSON.parse(JSON.stringify(node));
             clusterNode.x = node.offset.posX + node.width / 2;
             clusterNode.y = node.offset.posY + node.height / 2;
+            clusterNode.width = Math.max(clusterNode.width, node.labelData.width);
             await insertCluster(subgraphEl, clusterNode);
 
             log.debug('Id (UIO)= ', node.id, node.width, node.shape, node.labels);
