@@ -8,6 +8,10 @@ interface Taglines {
 
 const taglines: Taglines[] = [
   {
+    label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
+    url: 'https://docs.mermaidchart.com/guides/whiteboard?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=whiteboard',
+  },
+  {
     label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
     url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=visual_editor',
   },
@@ -16,8 +20,8 @@ const taglines: Taglines[] = [
     url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=teams',
   },
   {
-    label: 'Skip the rough draft with Mermaid AI in Mermaid Chart',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=mermaid_ai',
+    label: 'Replace ChatGPT Pro, Mermaid.live, and LucidChart with Mermaid Pro',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=AIbundle',
   },
 ];
 
@@ -25,7 +29,7 @@ let index = ref(Math.floor(Math.random() * taglines.length));
 onMounted(() => {
   setInterval(() => {
     index.value = (index.value + 1) % taglines.length;
-  }, 60_000);
+  }, 40_000);
 });
 </script>
 
@@ -41,7 +45,7 @@ onMounted(() => {
         >
           <span class="font-semibold">{{ taglines[index].label }}</span>
           <button class="rounded bg-[#111113] p-1 px-2 text-sm font-semibold tracking-wide">
-            Try it now
+            Try now
           </button>
         </a>
       </transition>
