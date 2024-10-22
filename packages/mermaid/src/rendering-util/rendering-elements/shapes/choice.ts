@@ -1,12 +1,11 @@
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
-import type { SVG } from '../../../diagram-api/types.js';
-// @ts-ignore TODO: Fix rough typings
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { createPathFromPoints, getNodeClasses } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const choice = (parent: SVG, node: Node) => {
+export function choice<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { nodeStyles } = styles2String(node);
   node.label = '';
   const shapeSvg = parent
@@ -24,7 +23,7 @@ export const choice = (parent: SVG, node: Node) => {
     { x: -s / 2, y: 0 },
   ];
 
-  // @ts-ignore TODO: Fix rough typings
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
@@ -53,4 +52,4 @@ export const choice = (parent: SVG, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

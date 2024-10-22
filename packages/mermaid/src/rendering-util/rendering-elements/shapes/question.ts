@@ -5,6 +5,7 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
+import type { D3Selection } from '../../../types.js';
 
 export const createDecisionBoxPathD = (x: number, y: number, size: number): string => {
   return [
@@ -16,7 +17,7 @@ export const createDecisionBoxPathD = (x: number, y: number, size: number): stri
   ].join(' ');
 };
 
-export const question = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
+export async function question<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
@@ -32,10 +33,11 @@ export const question = async (parent: SVGAElement, node: Node): Promise<SVGAEle
     { x: 0, y: -s / 2 },
   ];
 
-  let polygon: d3.Selection<SVGPolygonElement | SVGGElement, unknown, null, undefined>;
+  let polygon: typeof shapeSvg | ReturnType<typeof insertPolygonShape>;
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createDecisionBoxPathD(0, 0, s);
@@ -71,4 +73,4 @@ export const question = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   };
 
   return shapeSvg;
-};
+}

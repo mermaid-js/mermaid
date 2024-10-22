@@ -1,5 +1,7 @@
-export function insertPolygonShape(
-  parent: any,
+import type { D3Selection } from '../../../types.js';
+
+export function insertPolygonShape<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   w: number,
   h: number,
   points: { x: number; y: number }[]

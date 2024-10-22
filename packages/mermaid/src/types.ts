@@ -69,6 +69,11 @@ export interface ParseResult {
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
 
+/**
+ * Helper type for d3 selections.
+ */
+export type D3Selection<T extends SVGElement> = d3.Selection<T, unknown, Element | null, unknown>;
+
 export interface RenderResult {
   /**
    * The svg code for the rendered graph.
@@ -89,3 +94,10 @@ export interface RenderResult {
    */
   bindFunctions?: (element: Element) => void;
 }
+
+/**
+ * Can be converted back to `T` by awaiting/`Awaited<T>`.
+ *
+ * This is useful for function types that may be either synchronous or asynchronous.
+ */
+export type MaybePromise<T> = T | Promise<T>;
