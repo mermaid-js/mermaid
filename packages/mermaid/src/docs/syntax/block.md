@@ -5,6 +5,12 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 # Block Diagrams Documentation
 
+<script setup>
+import IconsNote from './icons-note.md' 
+</script>
+
+<IconsNote />
+
 ## Introduction to Block Diagrams
 
 ```mermaid
