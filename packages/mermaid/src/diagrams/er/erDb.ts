@@ -135,10 +135,10 @@ export const getData = function () {
     }
   }
 
-  let cnt = 0;
+  let count = 0;
   for (const relationship of relationships) {
     const edge: Edge = {
-      id: getEdgeId(relationship.entityA, relationship.entityB, { prefix: 'id', counter: cnt++ }),
+      id: getEdgeId(relationship.entityA, relationship.entityB, { prefix: 'id', counter: count++ }),
       type: 'normal',
       start: relationship.entityA,
       end: relationship.entityB,
@@ -179,7 +179,7 @@ export const addClass = function (ids: string[], style: string[]) {
     if (style) {
       style.forEach(function (s) {
         if (/color/.exec(s)) {
-          const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
+          const newStyle = s.replace('fill', 'bgFill');
           classNode.textStyles.push(newStyle);
         }
         classNode.styles.push(s);
