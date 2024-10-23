@@ -5,6 +5,7 @@
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
+%x style
 
 %%
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
@@ -41,8 +42,13 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "["                             return 'SQS';
 "]"                             return 'SQE';
 
-"style"                         return 'STYLE';
-"classDef"                      return 'CLASSDEF';
+"style"                         { this.begin("style"); return 'STYLE'; }
+<style>[\n]+                    { this.popState(); return 'NEWLINE'; }
+<style>\s+                      /* skip whitespace in block */
+<style>":"                      return 'COLON';
+<style>","                      return 'COMMA';
+<style>"#"                      return 'BRKT';
+"classDef"                      { this.begin("style"); return 'CLASSDEF'; }
 "class"                         return 'CLASS';
 "one or zero"                   return 'ZERO_OR_ONE';
 "one or more"                   return 'ONE_OR_MORE';
@@ -72,7 +78,9 @@ o\{                             return 'ZERO_OR_MORE';
 "optionally to"                 return 'NON_IDENTIFYING';
 \.\-                            return 'NON_IDENTIFYING';
 \-\.                            return 'NON_IDENTIFYING';
-([^\x00-\x7F]|\w|\-|\*)+          return 'UNICODE_TEXT';
+<style>([^\x00-\x7F]|\w|\-|\*)+ return 'STYLE_TEXT';
+<style>';'                      return 'SEMI';
+([^\x00-\x7F]|\w|\-|\*)+        return 'UNICODE_TEXT';
 [0-9]                           return 'NUM';
 .                               return yytext[0];
 <<EOF>>                         return 'EOF';
@@ -181,12 +189,14 @@ direction
     ;
 
 classDefStatement
-    : CLASSDEF idList stylesOpt {$$ = $CLASSDEF;yy.addClass($idList,$stylesOpt);}
+    : CLASSDEF idList stylesOpt separator {$$ = $CLASSDEF;yy.addClass($idList,$stylesOpt);}
     ;
 
 idList
     : UNICODE_TEXT { $$ = [$UNICODE_TEXT]; }
+    | STYLE_TEXT { $$ = [$STYLE_TEXT]; }
     | idList COMMA UNICODE_TEXT = { $$ = $idList.concat([$UNICODE_TEXT]); }
+    | idList COMMA STYLE_TEXT = { $$ = $idList.concat([$STYLE_TEXT]); }
     ;
 
 classStatement
@@ -194,7 +204,7 @@ classStatement
     ;
 
 styleStatement
-    : STYLE idList stylesOpt                              {$$ = $STYLE;yy.addCssStyles($2,$stylesOpt);}
+    : STYLE idList stylesOpt separator                           {;$$ = $STYLE;yy.addCssStyles($2,$stylesOpt);}
     ;
 
 stylesOpt
@@ -207,7 +217,13 @@ style
     | style styleComponent { $$ = $style + $styleComponent; }
     ;
 
-styleComponent: UNICODE_TEXT | NUM | COLON | BRKT | STYLE;
+separator
+    : SEMI
+    | NEWLINE
+    | EOF
+    ;
+
+styleComponent: STYLE_TEXT | NUM | COLON | BRKT;
 
 entityName
     : 'ENTITY_NAME'      { $$ = $1.replace(/"/g, ''); }
