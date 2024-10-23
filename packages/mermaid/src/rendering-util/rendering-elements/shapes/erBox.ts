@@ -18,6 +18,21 @@ export const erBox = async (parent: SVGAElement, node: Node) => {
   if (entityNode.alias) {
     node.label = entityNode.alias;
   }
+
+  // Background shapes are drawn to fill in the background color and cover up the ER diagram edge markers.
+  // Draw background shape once.
+  if (node.look === 'handDrawn') {
+    const { themeVariables } = getConfig();
+    const { background } = themeVariables;
+    const backgroundNode = {
+      ...node,
+      id: node.id + '-background',
+      look: 'default',
+      cssStyles: ['stroke: none', `fill: ${background}`],
+    };
+    await erBox(parent, backgroundNode);
+  }
+
   const config = getConfig();
   node.useHtmlLabels = config.htmlLabels;
   let PADDING = config.er?.diagramPadding ?? 10;
@@ -61,8 +76,6 @@ export const erBox = async (parent: SVGAElement, node: Node) => {
     .insert('g')
     .attr('class', cssClasses)
     .attr('id', node.domId || node.id);
-
-  // TODO: Make padding better
 
   const nameBBox = await addText(shapeSvg, node.label ?? '', config, 0, 0, ['name'], labelStyles);
   nameBBox.height += TEXT_PADDING;
@@ -203,7 +216,7 @@ export const erBox = async (parent: SVGAElement, node: Node) => {
     .select('.name')
     .attr('transform', 'translate(' + -nameBBox.width / 2 + ', ' + (y + TEXT_PADDING / 2) + ')');
 
-  // Draw rect
+  // Draw shape
   const roughRect = rc.rectangle(x, y, w, h, options);
   const rect = shapeSvg.insert(() => roughRect, ':first-child').attr('style', cssStyles);
 

@@ -6,6 +6,7 @@ import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js
 import type { LayoutData } from '../../rendering-util/types.js';
 import { getDirection } from './erDb.js';
 import utils from '../../utils.js';
+import { select } from 'd3';
 
 export const draw = async function (text: string, id: string, _version: string, diag: any) {
   log.info('REF0:');
@@ -34,6 +35,26 @@ export const draw = async function (text: string, id: string, _version: string, 
   if (data4Layout.layoutAlgorithm === 'elk') {
     svg.select('.edges').lower();
   }
+
+  // Sets the background nodes to the same position as their original counterparts.
+  // Background nodes are created when the look is handDrawn so the ER diagram markers do not show underneath.
+  const backgroundNodes = svg.selectAll('[id*="-background"]');
+  // eslint-disable-next-line unicorn/prefer-spread
+  if (Array.from(backgroundNodes).length > 0) {
+    backgroundNodes.each(function (this: SVGElement) {
+      const backgroundNode = select(this);
+      const backgroundId = backgroundNode.attr('id');
+
+      const nonBackgroundId = backgroundId.replace('-background', '');
+      const nonBackgroundNode = svg.select(`#${CSS.escape(nonBackgroundId)}`);
+
+      if (!nonBackgroundNode.empty()) {
+        const transform = nonBackgroundNode.attr('transform');
+        backgroundNode.attr('transform', transform);
+      }
+    });
+  }
+
   const padding = 8;
   utils.insertTitle(
     svg,

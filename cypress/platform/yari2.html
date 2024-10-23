@@ -56,9 +56,12 @@
             config:
               htmlLabels: false
               layout: elk
+              look: handDrawn
+              theme: forest
           ---
           erDiagram
             "hi" }o..o{ ORDER : places
+            style hi fill:lightblue
         </pre>
       </div>
       <div class="test">
@@ -67,7 +70,8 @@
           ---
             config:
               htmlLabels: false
-              look: 
+              look: handDrawn
+              layout: elk
           ---
           erDiagram
             CAR ||--|{ NAMED-DRIVER : allows
@@ -80,6 +84,8 @@
           ---
             config:
               htmlLabels: true
+              look: handDrawn
+              theme: forest
           ---
           erDiagram
             CAR ||--o{ NAMED-DRIVER : allows
