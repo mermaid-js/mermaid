@@ -766,7 +766,10 @@ describe('when parsing ER diagram it...', function () {
 
   it('should be possible to apply a style to an entity', function () {
     const entityName = 'CUSTOMER';
-    erDiagram.parser.parse(`erDiagram\n${entityName}\nstyle ${entityName} color:red`);
+    erDiagram.parser.parse(`erDiagram
+        ${entityName}
+        style ${entityName} color:red
+      `);
 
     expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red']);
   });
@@ -774,7 +777,10 @@ describe('when parsing ER diagram it...', function () {
   it('should be possible to apply multiple styles to an entity at the same time', function () {
     const entityName = 'CUSTOMER';
     erDiagram.parser.parse(
-      `erDiagram\n${entityName}\nstyle ${entityName} color:red,stroke:blue,fill:#f9f`
+      `erDiagram
+        ${entityName}
+        style ${entityName} color:red,stroke:blue,fill:#f9f
+      `
     );
 
     expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red', 'stroke:blue', 'fill:#f9f']);
@@ -783,7 +789,11 @@ describe('when parsing ER diagram it...', function () {
   it('should be possible to apply multiple separately defined styles', function () {
     const entityName = 'CUSTOMER';
     erDiagram.parser.parse(
-      `erDiagram\n${entityName}\nstyle ${entityName} color:red\nstyle ${entityName} fill:#f9f`
+      `erDiagram
+        ${entityName}
+        style ${entityName} color:red
+        style ${entityName} fill:#f9f
+      `
     );
 
     expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red', 'fill:#f9f']);
@@ -823,7 +833,11 @@ describe('when parsing ER diagram it...', function () {
     const firstEntity = 'ENTITY1';
     const secondEntity = 'ENTITY2';
     erDiagram.parser.parse(
-      `erDiagram\n${firstEntity}\n${secondEntity}\nclassDef default fill:#f9f`
+      `erDiagram
+        ${firstEntity}
+        ${secondEntity}
+        classDef default fill:#f9f
+      `
     );
 
     const expectedOutput = new Map([
@@ -845,7 +859,11 @@ describe('when parsing ER diagram it...', function () {
   it('should be possible to define a class with styles', function () {
     const className = 'myClass';
     const styles = 'fill:#f9f, stroke: red, color: pink';
-    erDiagram.parser.parse(`erDiagram\nclassDef ${className} ${styles}`);
+    erDiagram.parser.parse(
+      `erDiagram
+        classDef ${className} ${styles}
+      `
+    );
 
     const expectedOutput = new Map([
       [
@@ -865,7 +883,11 @@ describe('when parsing ER diagram it...', function () {
     const firstClass = 'firstClass';
     const secondClass = 'secondClass';
     const styles = 'fill:#f9f, stroke: red, color: pink';
-    erDiagram.parser.parse(`erDiagram\nclassDef ${firstClass},${secondClass} ${styles}`);
+    erDiagram.parser.parse(
+      `erDiagram
+        classDef ${firstClass},${secondClass} ${styles}
+       `
+    );
 
     const expectedOutput = new Map([
       [
