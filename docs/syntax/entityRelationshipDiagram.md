@@ -575,6 +575,12 @@ Similar to the class statement, the shorthand syntax can also apply multiple cla
 
 If a class is named default it will be assigned to all classes without specific class definitions.
 
+```
+    classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+> **Note:** Custom styles from style or other class statements take priority and will overwrite the default styles. (e.g. The `default` class gives nodes a background color of pink but the `blue` class will give that node a background color of blue if applied.)
+
 ```mermaid-example
 erDiagram
     CAR {

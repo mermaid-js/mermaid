@@ -45,7 +45,7 @@ const addEntity = function (name: string, alias = ''): EntityNode {
       alias,
       shape: 'erBox',
       look: getConfig().look || 'default',
-      cssClasses: ['default'],
+      cssClasses: 'default',
       cssStyles: [],
     });
     log.info('Added new entity :', name);
@@ -130,7 +130,7 @@ export const getData = function () {
   for (const entityKey of entities.keys()) {
     const entityNode = entities.get(entityKey);
     if (entityNode) {
-      entityNode.cssCompiledStyles = getCompiledStyles(entityNode.cssClasses!);
+      entityNode.cssCompiledStyles = getCompiledStyles(entityNode.cssClasses!.split(' '));
       nodes.push(entityNode as unknown as Node);
     }
   }
@@ -193,7 +193,7 @@ export const setClass = function (ids: string[], classNames: string[]) {
     const entity = entities.get(id);
     if (entity) {
       for (const className of classNames) {
-        entity.cssClasses!.push(className);
+        entity.cssClasses += ' ' + className;
       }
     }
   }

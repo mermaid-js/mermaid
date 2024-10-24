@@ -803,7 +803,7 @@ describe('when parsing ER diagram it...', function () {
     const entityName = 'CUSTOMER';
     erDiagram.parser.parse(`erDiagram\n${entityName}\nclass ${entityName} myClass`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toEqual(['default', 'myClass']);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign multiple classes to an entity at the same time', function () {
@@ -812,12 +812,7 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entityName}\nclass ${entityName} firstClass, secondClass, thirdClass`
     );
 
-    expect(erDb.getEntity(entityName).cssClasses).toEqual([
-      'default',
-      'firstClass',
-      'secondClass',
-      'thirdClass',
-    ]);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default firstClass secondClass thirdClass');
   });
 
   it('should be possible to assign multiple separately defined classes to an entity', function () {
@@ -826,7 +821,7 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entityName}\nclass ${entityName} firstClass\nclass ${entityName} secondClass`
     );
 
-    expect(erDb.getEntity(entityName).cssClasses).toEqual(['default', 'firstClass', 'secondClass']);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default firstClass secondClass');
   });
 
   it('should be possible to configure the default class and have it apply to each entity', function () {
@@ -851,8 +846,8 @@ describe('when parsing ER diagram it...', function () {
       ],
     ]);
 
-    expect(erDb.getEntity(firstEntity).cssClasses).toEqual(['default']);
-    expect(erDb.getEntity(secondEntity).cssClasses).toEqual(['default']);
+    expect(erDb.getEntity(firstEntity).cssClasses).toBe('default');
+    expect(erDb.getEntity(secondEntity).cssClasses).toBe('default');
     expect(erDb.getClasses()).toEqual(expectedOutput);
   });
 
@@ -916,7 +911,7 @@ describe('when parsing ER diagram it...', function () {
     const className = 'myClass';
     erDiagram.parser.parse(`erDiagram\n${entityName}:::${className}`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toEqual(['default', 'myClass']);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign a class using the shorthand syntax with empty block', function () {
@@ -924,7 +919,7 @@ describe('when parsing ER diagram it...', function () {
     const className = 'myClass';
     erDiagram.parser.parse(`erDiagram\n${entityName}:::${className} {}`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toEqual(['default', 'myClass']);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign a class using the shorthand syntax with block of attributes', function () {
@@ -932,7 +927,7 @@ describe('when parsing ER diagram it...', function () {
     const className = 'myClass';
     erDiagram.parser.parse(`erDiagram\n${entityName}:::${className} {\nstring name\n}`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toEqual(['default', 'myClass']);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign multiple classes using the shorthand syntax', function () {
@@ -941,7 +936,7 @@ describe('when parsing ER diagram it...', function () {
     const secondClass = 'secondClass';
     erDiagram.parser.parse(`erDiagram\n${entityName}:::${firstClass},${secondClass}`);
 
-    expect(erDb.getEntity(entityName).cssClasses).toEqual(['default', 'firstClass', 'secondClass']);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default firstClass secondClass');
   });
 
   it('should be possible to assign classes using the shorthand syntax after defining an alias', function () {
@@ -951,7 +946,7 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse(`erDiagram\n${entityName}[${entityAlias}]:::${myClass}`);
 
     expect(erDb.getEntity(entityName).alias).toBe(entityAlias);
-    expect(erDb.getEntity(entityName).cssClasses).toEqual(['default', 'myClass']);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
   });
 
   it('should be possible to assign classes using the shorthand syntax while defining a relationship', function () {
@@ -962,8 +957,8 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entityName}:::${myClass} ||--o{ ${otherEntity}:::${myClass} : allows`
     );
 
-    expect(erDb.getEntity(entityName).cssClasses).toEqual(['default', 'myClass']);
-    expect(erDb.getEntity(otherEntity).cssClasses).toEqual(['default', 'myClass']);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+    expect(erDb.getEntity(otherEntity).cssClasses).toBe('default myClass');
   });
 
   describe('relationship labels', function () {

@@ -634,5 +634,19 @@ describe('Entity Relationship Diagram Unified', () => {
         { ...options, htmlLabels: false }
       );
     });
+
+    it(`${description}should render entities with styles applied from the default class and other styles`, () => {
+      imgSnapshotTest(
+        `
+            erDiagram
+              c[CUSTOMER]
+              p[PERSON]:::blue
+              classDef blue stroke:lightblue, color: #0000FF
+              classDef default fill:pink
+              style c color:green
+        `,
+        { ...options }
+      );
+    });
   });
 });

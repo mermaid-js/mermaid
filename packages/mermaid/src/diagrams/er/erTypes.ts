@@ -5,7 +5,7 @@ export interface EntityNode {
   alias: string;
   shape: string;
   look?: string;
-  cssClasses?: string[];
+  cssClasses?: string;
   cssStyles?: string[];
   cssCompiledStyles?: string[];
 }
