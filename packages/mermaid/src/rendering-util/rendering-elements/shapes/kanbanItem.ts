@@ -1,10 +1,11 @@
 import { labelHelper, insertLabel, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { KanbanNode } from '../../types.js';
+import type { SVG } from '../../../diagram-api/types.js';
+import type { Node, KanbanNode, ShapeRenderOptions } from '../../types.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import type { MermaidConfig } from '../../../config.type.js';
+
 const colorFromPriority = (priority: KanbanNode['priority']) => {
   switch (priority) {
     case 'Very High':
@@ -17,33 +18,28 @@ const colorFromPriority = (priority: KanbanNode['priority']) => {
       return 'lightblue';
   }
 };
-export const kanbanItem = async (
-  parent: SVGAElement,
-  node: KanbanNode,
-  { config }: { config: MermaidConfig }
-) => {
-  const { labelStyles, nodeStyles } = styles2String(node);
-  node.labelStyle = labelStyles;
-  // console.log('IPI labelStyles:', labelStyles);
-  // const labelPaddingX = 10;
+export const kanbanItem = async (parent: SVG, node: Node, { config }: ShapeRenderOptions) => {
+  const unknownNode = node as unknown;
+  const kanbanNode = unknownNode as KanbanNode;
+  const { labelStyles, nodeStyles } = styles2String(kanbanNode);
+  kanbanNode.labelStyle = labelStyles;
+
   const labelPaddingX = 10;
-  const orgWidth = node.width;
-  node.width = (node.width ?? 200) - 10;
-  // console.log('APA123 kanbanItem priority', node?.priority);
+  const orgWidth = kanbanNode.width;
+  kanbanNode.width = (kanbanNode.width ?? 200) - 10;
+
   const {
     shapeSvg,
     bbox,
     label: labelElTitle,
-  } = await labelHelper(parent, node, getNodeClasses(node));
-  const padding = node.padding || 10;
+  } = await labelHelper(parent, kanbanNode, getNodeClasses(kanbanNode));
+  const padding = kanbanNode.padding || 10;
 
-  // elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
-  // console.log('STO node config.kanban:', config.kanban, config.kanban);
   let ticketUrl = '';
   let link;
-  // console.log('STO ticket:', node.ticket);
-  if (node.ticket && config?.kanban?.ticketBaseUrl) {
-    ticketUrl = config?.kanban?.ticketBaseUrl.replace('#TICKET#', node.ticket);
+
+  if (kanbanNode.ticket && config?.kanban?.ticketBaseUrl) {
+    ticketUrl = config?.kanban?.ticketBaseUrl.replace('#TICKET#', kanbanNode.ticket);
     link = shapeSvg
       .insert('svg:a', ':first-child')
       .attr('class', 'kanban-ticket-link')
@@ -52,29 +48,30 @@ export const kanbanItem = async (
   }
 
   const options = {
-    useHtmlLabels: node.useHtmlLabels,
-    labelStyle: node.labelStyle,
-    width: node.width,
-    icon: node.icon,
-    img: node.img,
-    padding: node.padding,
+    useHtmlLabels: kanbanNode.useHtmlLabels,
+    labelStyle: kanbanNode.labelStyle,
+    width: kanbanNode.width,
+    icon: kanbanNode.icon,
+    img: kanbanNode.img,
+    padding: kanbanNode.padding,
     centerLabel: false,
   };
   const { label: labelEl, bbox: bbox2 } = await insertLabel(
     link ? link : shapeSvg,
-    node.ticket || '',
+    kanbanNode.ticket || '',
     options
   );
   const { label: labelElAssigned, bbox: bboxAssigned } = await insertLabel(
     shapeSvg,
-    node.assigned || '',
+    kanbanNode.assigned || '',
     options
   );
-  node.width = orgWidth;
+  kanbanNode.width = orgWidth;
   const labelPaddingY = 10;
-  const totalWidth = node?.width || 0;
+  const totalWidth = kanbanNode?.width || 0;
   const heightAdj = Math.max(bbox2.height, bboxAssigned.height) / 2;
-  const totalHeight = Math.max(bbox.height + labelPaddingY * 2, node?.height || 0) + heightAdj;
+  const totalHeight =
+    Math.max(bbox.height + labelPaddingY * 2, kanbanNode?.height || 0) + heightAdj;
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
   labelElTitle.attr(
@@ -93,17 +90,16 @@ export const kanbanItem = async (
       (-heightAdj + bbox.height / 2) +
       ')'
   );
-  // log.info('IPI node = ', node);
 
   let rect;
 
-  const { rx, ry } = node;
-  const { cssStyles } = node;
+  const { rx, ry } = kanbanNode;
+  const { cssStyles } = kanbanNode;
 
-  if (node.look === 'handDrawn') {
+  if (kanbanNode.look === 'handDrawn') {
     // @ts-ignore TODO: Fix rough typings
     const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {});
+    const options = userNodeOverrides(kanbanNode, {});
 
     const roughNode =
       rx || ry
@@ -124,7 +120,7 @@ export const kanbanItem = async (
       .attr('y', y)
       .attr('width', totalWidth)
       .attr('height', totalHeight);
-    if (node.priority) {
+    if (kanbanNode.priority) {
       const line = shapeSvg.append('line', ':first-child');
       const lineX = x + 2;
 
@@ -137,15 +133,15 @@ export const kanbanItem = async (
         .attr('y2', y2)
 
         .attr('stroke-width', '4')
-        .attr('stroke', colorFromPriority(node.priority));
+        .attr('stroke', colorFromPriority(kanbanNode.priority));
     }
   }
 
-  updateNodeBounds(node, rect);
-  node.height = totalHeight;
+  updateNodeBounds(kanbanNode, rect);
+  kanbanNode.height = totalHeight;
 
-  node.intersect = function (point) {
-    return intersect.rect(node, point);
+  kanbanNode.intersect = function (point) {
+    return intersect.rect(kanbanNode, point);
   };
 
   return shapeSvg;

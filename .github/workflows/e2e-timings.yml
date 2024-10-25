@@ -1,0 +1,53 @@
+name: E2E - Generate Timings
+
+on:
+  # run this workflow every night at 3am
+  schedule:
+    - cron: '28 3 * * *'
+  # or when the user triggers it from GitHub Actions page
+  workflow_dispatch:
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+
+jobs:
+  timings:
+    runs-on: ubuntu-latest
+    container:
+      image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
+      - name: Setup Node.js
+        uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6 # v4.0.4
+        with:
+          node-version-file: '.node-version'
+      - name: Install dependencies
+        uses: cypress-io/github-action@0da3c06ed8217b912deea9d8ee69630baed1737e # v6.7.6
+        with:
+          runTests: false
+      - name: Cypress run
+        uses: cypress-io/github-action@0da3c06ed8217b912deea9d8ee69630baed1737e # v6.7.6
+        id: cypress
+        with:
+          install: false
+          start: pnpm run dev:coverage
+          wait-on: 'http://localhost:9000'
+          browser: chrome
+          publish-summary: false
+        env:
+          VITEST_COVERAGE: true
+          CYPRESS_COMMIT: ${{ github.sha }}
+          SPLIT: 1
+          SPLIT_INDEX: 0
+          SPLIT_FILE: 'cypress/timings.json'
+      - name: Commit changes
+        uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9.1.4
+        with:
+          add: 'cypress/timings.json'
+          author_name: 'github-actions[bot]'
+          author_email: '41898282+github-actions[bot]@users.noreply.github.com'
+          message: 'chore: update E2E timings'
