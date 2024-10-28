@@ -79,15 +79,15 @@ service {service id}({icon name})[{title}] (in {parent id})?
 Put together:
 
 ```
-service database(db)[Database]
+service database1(database)[My Database]
 ```
 
-creates the service identified as `database`, using the icon `db`, with the label `Database`.
+creates the service identified as `database1`, using the icon `database`, with the label `My Database`.
 
 If the service belongs to a group, it can be placed inside it through the optional `in` keyword
 
 ```
-service database(db)[Database] in private_api
+service database1(database)[My Database] in private_api
 ```
 
 ### Edges
@@ -194,55 +194,7 @@ architecture-beta
 ## Icons
 
 By default, architecture diagram supports the following icons: `cloud`, `database`, `disk`, `internet`, `server`.
-Users can use any of the 200,000+ icons available in iconify.design, or add their own custom icons, by following the steps below.
-
-The icon packs available can be found at [icones.js.org](https://icones.js.org/).
-We use the name defined when registering the icon pack, to override the prefix field of the iconify pack. This allows the user to use shorter names for the icons. It also allows us to load a particular pack only when it is used in a diagram.
-
-Using JSON file directly from CDN:
-
-```js
-import mermaid from 'CDN/mermaid.esm.mjs';
-mermaid.registerIconPacks([
-  {
-    name: 'logos',
-    loader: () =>
-      fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
-  },
-]);
-```
-
-Using packages and a bundler:
-
-```bash
-npm install @iconify-json/logos
-```
-
-With lazy loading
-
-```js
-import mermaid from 'mermaid';
-
-mermaid.registerIconPacks([
-  {
-    name: 'logos',
-    loader: () => import('@iconify-json/logos').then((module) => module.icons),
-  },
-]);
-```
-
-Without lazy loading
-
-```js
-import mermaid from 'mermaid';
-import { icons } from '@iconify-json/logos';
-mermaid.registerIconPacks([
-  {
-    name: icons.prefix, // To use the prefix defined in the icon pack
-    icons,
-  },
-]);
-```
+Users can use any of the 200,000+ icons available in iconify.design, or add their own custom icons, by following the steps [here](../config/icons.md).
 
 After the icons are installed, they can be used in the architecture diagram by using the format "name:icon-name", where name is the value used when registering the icon pack.
 
