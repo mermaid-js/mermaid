@@ -32,8 +32,9 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background: #333; */
+        background: #333;
         font-family: 'Arial';
+        /* color: white; */
         /* font-size: 18px !important; */
       }
 
@@ -83,29 +84,36 @@
   </head>
 
   <body>
+    <pre id="diagram4" class="mermaid2">
+kanban
+  id2[In progress]
+    docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
+    </pre>
     <pre id="diagram4" class="mermaid">
 ---
 config:
   kanban:
     ticketBaseUrl: 'https://mermaidchart.atlassian.net/browse/#TICKET#'
+    # sectionWidth: 300
 ---
 kanban
-  id1[Todo]
-    docs[Create Documentation]
+  Todo
+    [Create Documentation]
     docs[Create Blog about the new diagram]
   id7[In progress]
     id6[Create renderer so that it works in all cases. We also add som extra text here for testing purposes. And some more just for the extra flare.]
-    id8[Design grammar]@{ assigned: 'knsv' }
   id9[Ready for deploy]
+    id8[Design grammar]@{ assigned: 'knsv' }
   id10[Ready for test]
+    id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }
+    id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
   id11[Done]
     id5[define getData]
     id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}
     id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }
-    id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }
-    id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
 
   id12[Can't reproduce]
+    id3[Weird flickering in Firefox]
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
@@ -119,8 +127,9 @@ kanban
       };
       mermaid.initialize({
         // theme: 'base',
+        theme: 'default',
         // handDrawnSeed: 12,
-        // look: 'handDrawn',
+        look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
         // layout: 'elk',

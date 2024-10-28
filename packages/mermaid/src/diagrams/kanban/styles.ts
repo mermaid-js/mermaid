@@ -92,7 +92,11 @@ const getStyles: DiagramStylesProvider = (options) =>
   .edge {
     fill: none;
   }
-  .mindmap-node-label {
+  .cluster-label, .label {
+    color: ${options.textColor};
+    fill: ${options.textColor};
+    }
+  .kanban-label {
     dy: 1em;
     alignment-baseline: middle;
     text-anchor: middle;
