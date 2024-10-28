@@ -24,6 +24,8 @@ const genSections: DiagramStylesProvider = (options) => {
       i - 1
     } polygon, .section-${i - 1} path  {
       fill: ${adjuster(options['cScale' + i], 10)};
+      stroke: ${adjuster(options['cScale' + i], 10)};
+
     }
     .section-${i - 1} text {
      fill: ${options['cScaleLabel' + i]};

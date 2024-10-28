@@ -66,6 +66,7 @@ const getData = function () {
       ticket: section.ticket,
       shape: 'kanbanSection',
       level: section.level,
+      look: conf.look,
     } satisfies KanbanNode;
     _nodes.push(node);
     const children = nodes.filter((n) => n.parentId === section.id);

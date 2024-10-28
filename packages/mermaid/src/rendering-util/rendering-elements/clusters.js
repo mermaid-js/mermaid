@@ -339,7 +339,7 @@ const kanbanSection = async (parent, node) => {
       fill: clusterBkg,
       // fill: 'red',
       stroke: clusterBorder,
-      fillWeight: 3,
+      fillWeight: 4,
       seed: handDrawnSeed,
     });
     const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, node.rx), options);
