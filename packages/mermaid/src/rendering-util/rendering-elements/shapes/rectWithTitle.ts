@@ -9,8 +9,12 @@ import rough from 'roughjs';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { log } from '../../../logger.js';
+import type { D3Selection } from '../../../types.js';
 
-export const rectWithTitle = async (parent: SVGElement, node: Node) => {
+export async function rectWithTitle<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   let classes;
@@ -36,7 +40,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
 
   const title = node.label;
 
-  const text = label.node().appendChild(await createLabel(title, node.labelStyle, true, true));
+  const text = label.node()!.appendChild(await createLabel(title, node.labelStyle, true, true));
   let bbox = { width: 0, height: 0 };
   if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
     const div = text.children[0];
@@ -49,7 +53,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   const textRows = description || [];
   const titleBox = text.getBBox();
   const descr = label
-    .node()
+    .node()!
     .appendChild(
       await createLabel(
         textRows.join ? textRows.join('<br/>') : textRows,
@@ -87,7 +91,7 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   // Get the size of the label
 
   // Bounding box for title and text
-  bbox = label.node().getBBox();
+  bbox = label.node()!.getBBox();
 
   // Center the label
   label.attr(
@@ -151,4 +155,4 @@ export const rectWithTitle = async (parent: SVGElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

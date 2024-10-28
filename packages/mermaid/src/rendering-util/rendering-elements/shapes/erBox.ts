@@ -11,8 +11,9 @@ import { evaluate, parseGenericTypes } from '../../../diagrams/common/common.js'
 import { select } from 'd3';
 import { calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
+import type { D3Selection } from '../../../types.js';
 
-export const erBox = async (parent: SVGAElement, node: Node) => {
+export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   // Treat node as entityNode for certain entityNode checks
   const entityNode = node as unknown as EntityNode;
   if (entityNode.alias) {
@@ -149,7 +150,7 @@ export const erBox = async (parent: SVGAElement, node: Node) => {
     totalWidthSections--;
   }
 
-  const shapeBBox = shapeSvg.node().getBBox();
+  const shapeBBox = shapeSvg.node()!.getBBox();
   // Add extra padding to attribute components to accommodate for difference in width
   if (
     nameBBox.width + PADDING * 2 - (maxTypeWidth + maxNameWidth + maxKeysWidth + maxCommentWidth) >
@@ -218,7 +219,7 @@ export const erBox = async (parent: SVGAElement, node: Node) => {
 
   // Draw shape
   const roughRect = rc.rectangle(x, y, w, h, options);
-  const rect = shapeSvg.insert(() => roughRect, ':first-child').attr('style', cssStyles);
+  const rect = shapeSvg.insert(() => roughRect, ':first-child').attr('style', cssStyles!.join(''));
 
   // Draw divider lines
   // Name line
@@ -268,11 +269,11 @@ export const erBox = async (parent: SVGAElement, node: Node) => {
     return intersect.rect(node, point);
   };
   return shapeSvg;
-};
+}
 
 // Helper function to add label text g with translate position and style
-async function addText(
-  shapeSvg: any,
+async function addText<T extends SVGGraphicsElement>(
+  shapeSvg: D3Selection<T>,
   labelText: string,
   config: MermaidConfig,
   translateX = 0,
@@ -293,7 +294,7 @@ async function addText(
     labelText = labelText.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
   }
 
-  const text = label.node().appendChild(
+  const text = label.node()!.appendChild(
     await createText(
       label,
       labelText,
