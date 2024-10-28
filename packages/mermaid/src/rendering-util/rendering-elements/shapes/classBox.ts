@@ -8,8 +8,9 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import intersect from '../intersect/index.js';
 import { textHelper } from '../../../diagrams/class/shapeUtil.js';
 import { evaluate } from '../../../diagrams/common/common.js';
+import type { D3Selection } from '../../../types.js';
 
-export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
+export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const config = getConfig();
   const PADDING = config.class!.padding ?? 12;
   const GAP = PADDING;
@@ -81,7 +82,7 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   const rect = shapeSvg.insert(() => roughRect, ':first-child');
   rect.attr('class', 'basic label-container');
-  const rectBBox = rect.node().getBBox();
+  const rectBBox = rect.node()!.getBBox();
 
   // Rect is centered so now adjust labels.
   // TODO: Fix types
@@ -132,13 +133,13 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
 
   // Render divider lines.
   const annotationGroupHeight =
-    shapeSvg.select('.annotation-group').node().getBBox().height -
+    (shapeSvg.select('.annotation-group').node() as SVGGraphicsElement).getBBox().height -
       (renderExtraBox ? PADDING / 2 : 0) || 0;
   const labelGroupHeight =
-    shapeSvg.select('.label-group').node().getBBox().height - (renderExtraBox ? PADDING / 2 : 0) ||
-    0;
+    (shapeSvg.select('.label-group').node() as SVGGraphicsElement).getBBox().height -
+      (renderExtraBox ? PADDING / 2 : 0) || 0;
   const membersGroupHeight =
-    shapeSvg.select('.members-group').node().getBBox().height -
+    (shapeSvg.select('.members-group').node() as SVGGraphicsElement).getBBox().height -
       (renderExtraBox ? PADDING / 2 : 0) || 0;
   // First line (under label)
   if (classNode.members.length > 0 || classNode.methods.length > 0 || renderExtraBox) {
@@ -150,7 +151,7 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
       options
     );
     const line = shapeSvg.insert(() => roughLine);
-    line.attr('class', 'divider', 'style', styles);
+    line.attr('class', 'divider').attr('style', styles);
   }
 
   // Second line (under members)
@@ -163,7 +164,7 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
       options
     );
     const line = shapeSvg.insert(() => roughLine);
-    line.attr('class', 'divider', 'style', styles);
+    line.attr('class', 'divider').attr('style', styles);
   }
 
   /// Apply styles ///
@@ -203,4 +204,4 @@ export const classBox = async (parent: SVGAElement, node: Node): Promise<SVGAEle
   };
 
   return shapeSvg;
-};
+}

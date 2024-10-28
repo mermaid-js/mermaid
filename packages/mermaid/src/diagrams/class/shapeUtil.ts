@@ -8,15 +8,16 @@ import { createText } from '../../rendering-util/createText.js';
 import { evaluate, hasKatex } from '../common/common.js';
 import type { Node } from '../../rendering-util/types.js';
 import type { MermaidConfig } from '../../config.type.js';
+import type { D3Selection } from '../../types.js';
 
 // Creates the shapeSvg and inserts text
-export const textHelper = async (
-  parent: SVGAElement,
+export async function textHelper<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   node: any,
   config: MermaidConfig,
   useHtmlLabels: boolean,
   GAP = config.class!.padding ?? 12
-) => {
+) {
   const TEXT_PADDING = !useHtmlLabels ? 3 : 0;
   const shapeSvg = parent
     // @ts-ignore: Ignore error for using .insert on SVGAElement
@@ -38,13 +39,13 @@ export const textHelper = async (
     const annotation = node.annotations[0];
     await addText(annotationGroup, { text: `«${annotation}»` } as unknown as ClassMember, 0);
 
-    const annotationGroupBBox = annotationGroup.node().getBBox();
+    const annotationGroupBBox = annotationGroup.node()!.getBBox();
     annotationGroupHeight = annotationGroupBBox.height;
   }
 
   labelGroup = shapeSvg.insert('g').attr('class', 'label-group text');
   await addText(labelGroup, node, 0, ['font-weight: bolder']);
-  const labelGroupBBox = labelGroup.node().getBBox();
+  const labelGroupBBox = labelGroup.node()!.getBBox();
   labelGroupHeight = labelGroupBBox.height;
 
   membersGroup = shapeSvg.insert('g').attr('class', 'members-group text');
@@ -53,7 +54,7 @@ export const textHelper = async (
     const height = await addText(membersGroup, member, yOffset, [member.parseClassifier()]);
     yOffset += height + TEXT_PADDING;
   }
-  membersGroupHeight = membersGroup.node().getBBox().height;
+  membersGroupHeight = membersGroup.node()!.getBBox().height;
   if (membersGroupHeight <= 0) {
     membersGroupHeight = GAP / 2;
   }
@@ -65,41 +66,41 @@ export const textHelper = async (
     methodsYOffset += height + TEXT_PADDING;
   }
 
-  let bbox = shapeSvg.node().getBBox();
+  let bbox = shapeSvg.node()!.getBBox();
 
   // Center annotation
   if (annotationGroup !== null) {
-    const annotationGroupBBox = annotationGroup.node().getBBox();
+    const annotationGroupBBox = annotationGroup.node()!.getBBox();
     annotationGroup.attr('transform', `translate(${-annotationGroupBBox.width / 2})`);
   }
 
   // Adjust label
   labelGroup.attr('transform', `translate(${-labelGroupBBox.width / 2}, ${annotationGroupHeight})`);
 
-  bbox = shapeSvg.node().getBBox();
+  bbox = shapeSvg.node()!.getBBox();
 
   membersGroup.attr(
     'transform',
     `translate(${0}, ${annotationGroupHeight + labelGroupHeight + GAP * 2})`
   );
-  bbox = shapeSvg.node().getBBox();
+  bbox = shapeSvg.node()!.getBBox();
   methodsGroup.attr(
     'transform',
     `translate(${0}, ${annotationGroupHeight + labelGroupHeight + (membersGroupHeight ? membersGroupHeight + GAP * 4 : GAP * 2)})`
   );
 
-  bbox = shapeSvg.node().getBBox();
+  bbox = shapeSvg.node()!.getBBox();
 
   return { shapeSvg, bbox };
-};
+}
 
 // Modified version of labelHelper() to help create and place text for classes
-const addText = async (
-  parentGroup: d3.Selection<SVGGElement, unknown, null, undefined>,
+async function addText<T extends SVGGraphicsElement>(
+  parentGroup: D3Selection<T>,
   node: Node | ClassNode | ClassMember,
   yOffset: number,
   styles: string[] = []
-) => {
+) {
   const textEl = parentGroup.insert('g').attr('class', 'label').attr('style', styles.join('; '));
   const config = getConfig();
   let useHtmlLabels =
@@ -219,4 +220,4 @@ const addText = async (
   // Center text and offset by yOffset
   textEl.attr('transform', 'translate(0,' + (-bbox.height / (2 * numberOfLines) + yOffset) + ')');
   return bbox.height;
-};
+}
