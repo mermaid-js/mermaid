@@ -339,7 +339,6 @@ Below is a comprehensive list of the newly introduced shapes and their correspon
 | Fork/Join                         | Filled Rectangle       | `fork`         | Fork or join in process flow   | `join`                                                           |
 | Internal Storage                  | Window Pane            | `win-pane`     | Internal storage               | `internal-storage`, `window-pane`                                |
 | Junction                          | Filled Circle          | `f-circ`       | Junction point                 | `filled-circle`, `junction`                                      |
-| Kanban Item                       | Kanban Item            | `kanbanItem`   | Item on a kanban board         | `kanban-item`                                                    |
 | Lined Document                    | Lined Document         | `lin-doc`      | Lined document                 | `lined-document`                                                 |
 | Lined/Shaded Process              | Lined Rectangle        | `lin-rect`     | Lined process shape            | `lin-proc`, `lined-process`, `lined-rectangle`, `shaded-process` |
 | Loop Limit                        | Trapezoidal Pentagon   | `notch-pent`   | Loop limit step                | `loop-limit`, `notched-pentagon`                                 |
