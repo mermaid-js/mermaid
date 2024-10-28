@@ -1,5 +1,5 @@
 import type { Entries } from 'type-fest';
-import type { D3Selection } from '../../types.js';
+import type { D3Selection, MaybePromise } from '../../types.js';
 import type { Node, ShapeRenderOptions } from '../types.js';
 import { anchor } from './shapes/anchor.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
@@ -58,7 +58,6 @@ import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 
-type MaybePromise<T> = T | Promise<T>;
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,

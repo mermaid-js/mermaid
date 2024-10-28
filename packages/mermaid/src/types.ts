@@ -104,3 +104,10 @@ export interface RenderResult {
    */
   bindFunctions?: (element: Element) => void;
 }
+
+/**
+ * Can be converted back to `T` by awaiting/`Awaited<T>`.
+ *
+ * This is useful for function types that may be either synchronous or asynchronous.
+ */
+export type MaybePromise<T> = T | Promise<T>;

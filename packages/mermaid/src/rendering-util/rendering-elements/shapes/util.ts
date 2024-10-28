@@ -2,9 +2,10 @@ import { createText } from '../../createText.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { select } from 'd3';
+import defaultConfig from '../../../defaultConfig.js';
 import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
 import { log } from '../../../logger.js';
-import { decodeEntities, handleUndefinedAttr } from '../../../utils.js';
+import { decodeEntities, handleUndefinedAttr, parseFontSize } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
@@ -78,10 +79,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
                     ? getConfig().fontSize
                     : window.getComputedStyle(document.body).fontSize;
                   const enlargingFactor = 5;
-                  const parsedBodyFontSize =
-                    typeof bodyFontSize === 'number'
-                      ? bodyFontSize
-                      : parseInt(bodyFontSize ?? '', 10);
+                  const [parsedBodyFontSize = defaultConfig.fontSize] = parseFontSize(bodyFontSize);
                   const width = parsedBodyFontSize * enlargingFactor + 'px';
                   img.style.minWidth = width;
                   img.style.maxWidth = width;
