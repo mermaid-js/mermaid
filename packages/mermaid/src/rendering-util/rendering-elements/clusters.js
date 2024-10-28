@@ -304,6 +304,7 @@ const kanbanSection = async (parent, node) => {
     style: node.labelStyle,
     useHtmlLabels,
     isNode: true,
+    width: node.width,
   });
 
   // Get the size of the label

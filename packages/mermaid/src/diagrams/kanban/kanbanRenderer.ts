@@ -9,7 +9,7 @@ import { insertCluster } from '../../rendering-util/rendering-elements/clusters.
 import { insertNode, positionNode } from '../../rendering-util/rendering-elements/nodes.js';
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
-  log.debug('Rendering mindmap diagram\n' + text);
+  log.debug('Rendering kanban diagram\n' + text);
 
   const db = diagObj.db as KanbanDB;
   const data4Layout = db.getData();
@@ -31,10 +31,12 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   // TODO set padding
   const padding = 10;
 
+  const sectionObjects = [];
+  let maxLabelHeight = 25;
   for (const section of sections) {
     const WIDTH = conf?.kanban?.sectionWidth || 200;
-    const top = (-WIDTH * 3) / 2 + 25;
-    let y = top;
+    // const top = (-WIDTH * 3) / 2 + 25;
+    // let y = top;
     cnt = cnt + 1;
     section.x = WIDTH * cnt + ((cnt - 1) * padding) / 2;
     section.width = WIDTH;
@@ -46,8 +48,17 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
     // Todo, use theme variable THEME_COLOR_LIMIT instead of 10
     section.cssClasses = section.cssClasses + ' section-' + cnt;
     const sectionObj = await insertCluster(sectionsElem, section);
+    maxLabelHeight = Math.max(maxLabelHeight, sectionObj?.labelBBox?.height);
+    sectionObjects.push(sectionObj);
+  }
+  let i = 0;
+  for (const section of sections) {
+    const sectionObj = sectionObjects[i];
+    i = i + 1;
+    const WIDTH = conf?.kanban?.sectionWidth || 200;
+    const top = (-WIDTH * 3) / 2 + maxLabelHeight;
+    let y = top;
     const sectionItems = data4Layout.nodes.filter((node) => node.parentId === section.id);
-
     for (const item of sectionItems) {
       item.x = section.x;
       item.width = WIDTH - 1.5 * padding;
@@ -58,7 +69,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
       y = item.y + bbox.height / 2 + padding / 2;
     }
     const rect = sectionObj.cluster.select('rect');
-    const height = Math.max(y - top + 3 * padding, 50);
+    const height = Math.max(y - top + 3 * padding, 50) + (maxLabelHeight - 25);
     rect.attr('height', height);
   }
 
@@ -66,8 +77,8 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   setupGraphViewbox(
     undefined,
     svg,
-    conf.mindmap?.padding ?? defaultConfig.mindmap.padding,
-    conf.mindmap?.useMaxWidth ?? defaultConfig.mindmap.useMaxWidth
+    conf.mindmap?.padding ?? defaultConfig.kanban.padding,
+    conf.mindmap?.useMaxWidth ?? defaultConfig.kanban.useMaxWidth
   );
 };
 
