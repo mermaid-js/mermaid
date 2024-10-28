@@ -146,7 +146,8 @@ export type LayoutMethod =
 
 export interface ShapeRenderOptions {
   config: MermaidConfig;
-  dir: string;
+  /** Some shapes render differently if a diagram has a direction `LR` */
+  dir?: Node['dir'];
 }
 
 export interface KanbanNode extends Node {

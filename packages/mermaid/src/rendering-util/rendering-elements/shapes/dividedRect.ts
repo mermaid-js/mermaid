@@ -1,10 +1,14 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.ts';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
 
-export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
+export async function dividedRectangle<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
@@ -17,6 +21,7 @@ export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
 
   const { cssStyles } = node;
 
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
   if (node.look !== 'handDrawn') {
@@ -63,4 +68,4 @@ export const dividedRectangle = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

@@ -1,15 +1,15 @@
 import rough from 'roughjs';
-import type { SVG } from '../../../diagram-api/types.js';
 import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { updateNodeBounds } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const stateEnd = (
-  parent: SVG,
+export function stateEnd<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   node: Node,
   { config: { themeVariables } }: ShapeRenderOptions
-) => {
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { cssStyles } = node;
@@ -59,4 +59,4 @@ export const stateEnd = (
   };
 
   return shapeSvg;
-};
+}
