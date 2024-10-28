@@ -364,14 +364,6 @@ export const shapesDefs: ShapeDefinition[] = [
     handler: flippedTriangle,
   },
   {
-    semanticName: 'Kanban Item',
-    name: 'Kanban Item',
-    shortName: 'kanbanItem',
-    description: 'Item on a kanban board',
-    aliases: ['kanban-item'],
-    handler: kanbanItem,
-  },
-  {
     semanticName: 'Manual Input',
     name: 'Sloped Rectangle',
     shortName: 'sl-rect',
@@ -471,7 +463,7 @@ const generateShapeMap = () => {
     icon,
     iconRounded,
     imageSquare,
-
+    kanbanItem,
     anchor,
   };
 
