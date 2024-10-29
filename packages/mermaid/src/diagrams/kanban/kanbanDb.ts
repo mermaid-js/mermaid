@@ -129,8 +129,8 @@ const addNode = (level: number, id: string, descr: string, type: number, shapeDa
       throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
     }
 
-    // if shape is defined in the yaml data, use it if it is a valid shape kanbanItem or kanbanSection
-    if (doc?.shape && (doc.shape === 'kanbanItem' || doc.shape === 'kanbanSection')) {
+    // if shape is defined in the yaml data, use it if it is a valid shape kanbanItem
+    if (doc?.shape && doc.shape === 'kanbanItem') {
       node.shape = doc?.shape;
     }
     if (doc?.label) {
