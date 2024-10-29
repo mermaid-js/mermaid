@@ -1,0 +1,663 @@
+<html>
+  <body>
+    <h1 class="header">Class Nodes</h1>
+    <div class="node-showcase">
+      <div class="test">
+        <h2>Basic Class</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: false
+          ---
+          classDiagram
+          class _Duck_ {
+            +String beakColor
+            _+_swim_()a_
+            __+quack() test__
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Class</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            htmlLabels: false
+          ---
+          classDiagram
+          class Class10:::exClass2 {
+            int[] id
+            List~int~ ids
+            test(List~int~ ids) List~bool~
+            testArray() bool[]
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Class</h2>
+        <pre class="mermaid">
+          flowchart TD
+            Start --> Stop
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Complex Class</h2>
+        <pre class="mermaid">
+                classDiagram
+                class Square~Shape~{
+                  int id
+                  List~int~ position
+                  setPoints(List~int~ points)
+                  getPoints() List~int~
+                }
+          
+          Square : -List~string~ messages
+          Square : +setMessages(List~string~ messages)
+          Square : +getMessages() List~string~
+          Square : +getDistanceMatrix() List~List~int~~
+              </pre
+        >
+      </div>
+      <div class="test">
+        <h2>No Attributes</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>No Methods</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            +String beakColor
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Only Class Name</h2>
+        <p>Empty line as attribute</p>
+        <pre class="mermaid">
+          ---
+            config:
+              class:
+                hideEmptyMembersBox: false
+          ---
+          classDiagram
+          class Duck {
+            
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Visibility and Types</h2>
+        <p>(Further tilde testing)</p>
+        <div class="mermaid">
+          classDiagram class Duck { ~interface~~~ +String beakColor #swim() ~quack()~~~
+          -test()~~~~~~~ +deposit(amount) bool }
+        </div>
+      </div>
+      <div class="test">
+        <h2>Additional Classifiers</h2>
+        <p>(* Abstract | $ Static)</p>
+        <div class="mermaid">
+          classDiagram class Square~Shape~ { int id* List~int~ position* setPoints(List~int~points)*
+          getPoints()* List~int~ } Square : -List~string~ messages$ Square :
+          +setMessages(List~string~ messages)* Square : +getMessages()$ List~string~ Square :
+          +getDistanceMatrix() List~List~int~~$
+        </div>
+      </div>
+      <div class="test">
+        <h2>Label</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Animal~test~["Animal with a label"]
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Spacing</h2>
+        <p>(Fix ensures consistent spacing rules)</p>
+        <p>(No space or single space?)</p>
+        <pre class="mermaid">
+          classDiagram
+          class ClassName {
+          -attribute:type
+          -            attribute : type
+               test
+          
+          + GetAttribute() type                 
+          +     GetAttribute() type
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Annotation</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Shape
+          &lt;&lt;interface&gt;&gt; Shape
+          Shape : noOfVertices
+          Shape : draw()
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Long Class Name Text</h2>
+        <pre class="mermaid">
+          classDiagram
+          class ThisIsATestForALongClassName {
+            &lt;&lt;interface&gt;&gt;
+            noOfLetters
+            delete()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Long Annotation Text</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Shape
+          &lt;&lt;superlongannotationtext&gt;&gt; Shape
+          Shape : noOfVertices
+          Shape : draw()
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Long Member Text</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Shape
+          &lt;&lt;interface&gt;&gt; Shape
+          Shape : noOfVertices
+          Shape : longtexttestkeepgoingandgoing
+          Shape : draw()
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Link</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Shape
+          link Shape "https://www.github.com" "This is a tooltip for a link"
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Click</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Shape
+          click Shape href "https://www.github.com" "This is a tooltip for a link"
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Hand Drawn</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            look: handDrawn
+            htmlLabels: true
+          ---
+          classDiagram
+          class Hand {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+          style Hand fill:#f9f,stroke:#29f,stroke-width:2px
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Neutral Theme</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            theme: neutral
+          ---
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Dark Theme</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            theme: dark
+          ---
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Forest Theme</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            theme: forest
+          ---
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Base Theme</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            theme: base
+          ---
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Custom Theme</h2>
+        <pre class="mermaid">
+          %%{
+            init: {
+              'theme': 'base',
+              'themeVariables': {
+                'primaryColor': '#BB2528',
+                'primaryTextColor': '#fff',
+                'primaryBorderColor': '#7C0000',
+                'lineColor': '#F83d29',
+                'secondaryColor': '#006100',
+                'tertiaryColor': '#fff'
+              }
+            }
+          }%%
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+          Duck--Dog
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Styling within Diagram</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+          style Duck fill:#f9f,stroke:#333,stroke-width:8px
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Styling with classDef Statement</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck:::bold {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+
+          class Dog {
+            +int numTeeth
+            +bark()
+          }
+
+          cssClass "Duck,Dog" pink
+
+          classDef pink fill:#f9f
+          classDef default color:#f1e
+          classDef bold stroke:#333,stroke-width:6px,color:#fff
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Styling with Class in Stylesheet</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Duck {
+            +String beakColor
+            +swim()
+            +quack()
+          }
+          class Duck:::styleClass
+        </pre>
+      </div>
+    </div>
+    <h1 class="header">Diagram Testing</h1>
+    <div class="diagram-showcase">
+      <div class="test">
+        <h2>Class Nodes Only</h2>
+        <pre class="mermaid">
+          ---
+          title: Animal example
+          ---
+          classDiagram
+              Animal : +int age
+              Animal : +String gender
+              Animal: +isMammal()
+              Animal: +mate()
+              class Duck{
+                  +String beakColor
+                  +swim()
+                  +quack()
+              }
+              class Fish{
+                  -int sizeInFeet
+                  -canEat()
+              }
+              class Zebra{
+                  +bool is_wild
+                  +run()
+              }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Class Nodes LR</h2>
+        <pre class="mermaid">
+          ---
+          title: Animal example
+          ---
+          classDiagram
+              direction LR
+              Animal : +int age
+              Animal : +String gender
+              Animal: +isMammal()
+              Animal: +mate()
+              class Duck{
+                  +String beakColor
+                  +swim()
+                  +quack()
+              }
+              class Fish{
+                  -int sizeInFeet
+                  -canEat()
+              }
+              class Zebra{
+                  +bool is_wild
+                  +run()
+              }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Relations</h2>
+        <pre class="mermaid">
+          classDiagram
+            classA <|-- classB
+            classC *-- classD
+            classE o-- classF
+            classG <-- classH
+            classI -- classJ
+            classK <.. classL
+            classM <|.. classN
+            classO .. classP
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Two Way Relation</h2>
+        <pre class="mermaid">
+          classDiagram
+          class Animal {
+            int size
+            walk()
+          }
+          class Zebra {
+            int size
+            walk()
+          }
+            Animal o--|> Zebra
+
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Relations with Labels</h2>
+        <pre class="mermaid">
+          classDiagram
+            classA <|-- classB : implements
+            classC *-- classD : composition
+            classE o-- classF : aggregation
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Cardinality / Multiplicity</h2>
+        <pre class="mermaid">
+          classDiagram
+            Customer "1" --> "*" Ticket
+            Student "1" --> "1..*" Course
+            Galaxy --> "many" Star : Contains
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Complex Relations with Theme</h2>
+        <pre class="mermaid">
+          ---
+          config:
+            theme: forest
+            look: handDrawns
+            layout: elk
+          ---
+          classDiagram
+            direction RL
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" o--o "1" IdCard : carries
+            Student "1" o--o "1" Bike : rides
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Notes</h2>
+        <pre class="mermaid">
+          classDiagram
+            note "This is a general note"
+            note for MyClass "This is a note for a class"
+            class MyClass
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Namespaces</h2>
+        <pre class="mermaid">
+          classDiagram
+            namespace BaseShapes {
+                class Triangle
+                class Rectangle {
+                  double width
+                  double height
+                }
+            }
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Namespaces</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              layout: elk
+          ---
+          classDiagram
+          namespace Namespace1 {
+            class C1
+            class C2
+          }
+          C1 --> C2
+          class C3
+          class C4
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Full Example</h2>
+        <pre class="mermaid">
+          ---
+          title: Animal example
+          config:
+            layout: dagre
+          ---
+          classDiagram
+              note "From Duck till Zebra"
+              Animal <|--|> Duck
+              note for Duck "can fly<br>can swim<br>can dive<br>can help in debugging"
+              Animal <|-- Fish
+              Animal <|--|> Zebra
+              Animal : +int age
+              Animal : +String gender
+              Animal: +isMammal()
+              Animal: +mate()
+              class Duck{
+                  +String beakColor
+                  +swim()
+                  +quack()
+              }
+              class Fish{
+                  -int sizeInFeet
+                  -canEat()
+              }
+              class Zebra{
+                  +bool is_wild
+                  +run()
+              }
+              cssClass "Duck" test
+              classDef test fill:#f71
+              %%classDef default fill:#f93
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Full Example</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              theme: forest
+              look: handDrawn
+          ---
+          classDiagram
+          note for Outside "Note testing"
+          namespace Test {
+              class Outside
+          }
+          namespace BaseShapes {
+              class Triangle
+              class Rectangle {
+                double width
+                double height
+              }
+          }
+          Outside <|--|> Rectangle
+          style Triangle fill:#f9f,stroke:#333,stroke-width:4px
+        </pre>
+      </div>
+      <div class="test">
+        <pre class="mermaid">
+          ---
+            config:
+              look: handDrawn
+              layout: elk
+          ---
+          classDiagram
+            Class01 "1" <|--|> "*" AveryLongClass : Cool
+            &lt;&lt;interface&gt;&gt; Class01
+            Class03 "1" *-- "*" Class04
+            Class05 "1" o-- "many" Class06
+            Class07 "1" .. "*" Class08
+            Class09 "1" --> "*" C2 : Where am i?
+            Class09 "*" --* "*" C3
+            Class09 "1" --|> "1" Class07
+            NewClass ()--() Class04
+            Class09 <|--|> AveryLongClass
+            Class07  : equals()
+            Class07  : Object[] elementData
+            Class01  : size()
+            Class01  : int chimp
+            Class01  : int gorilla
+            Class08 "1" <--> "*" C2: Cool label
+            class Class10 {
+              &lt;&lt;service&gt;&gt;
+              int id
+              test()
+            }
+            Class10 o--o AveryLongClass
+            Class10 <--> Class07
+        </pre>
+      </div>
+      <div class="test">
+        <pre class="mermaid">
+          classDiagram
+            test ()--() test2
+        </pre>
+      </div>
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize();
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+  <style>
+    .header {
+      text-decoration: underline;
+      text-align: center;
+    }
+    .node-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .test {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .test > h2 {
+      margin: 0;
+      text-align: center;
+    }
+    .test > p {
+      margin-top: -6px;
+      color: gray;
+    }
+
+    .diagram-showcase {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .styleClass > * > path {
+      fill: #ff0000 !important;
+      stroke: #ffff00 !important;
+      stroke-width: 4px !important;
+      stroke-dasharray: 2 !important;
+    }
+  </style>
+</html>

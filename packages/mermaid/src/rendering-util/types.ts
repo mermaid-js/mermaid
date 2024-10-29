@@ -95,6 +95,9 @@ export interface Edge {
   stroke?: string;
   text?: string;
   type: string;
+  // Class Diagram specific properties
+  startLabelRight?: string;
+  endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;

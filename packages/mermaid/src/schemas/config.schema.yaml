@@ -1448,6 +1448,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       htmlLabels:
         type: boolean
         default: false
+      hideEmptyMembersBox:
+        type: boolean
+        default: false
 
   JourneyDiagramConfig:
     title: Journey Diagram Config

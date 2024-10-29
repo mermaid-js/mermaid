@@ -57,6 +57,7 @@ import { triangle } from './shapes/triangle.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
+import { classBox } from './shapes/classBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
@@ -447,6 +448,14 @@ export const shapesDefs = [
     description: 'Lined document',
     aliases: ['lined-document'],
     handler: linedWaveEdgedRect,
+  },
+  {
+    semanticName: 'Class Box',
+    name: 'Class Box',
+    shortName: 'classBox',
+    description: 'Class Box',
+    aliases: ['class-box'],
+    handler: classBox,
   },
 ] as const satisfies ShapeDefinition[];
 
