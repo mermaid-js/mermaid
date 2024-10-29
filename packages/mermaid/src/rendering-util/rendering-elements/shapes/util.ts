@@ -10,8 +10,7 @@ import type { D3Selection, Point } from '../../../types.js';
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  _classes?: string,
-  _shapeSvg?: D3Selection<T>
+  _classes?: string
 ) => {
   let cssClasses;
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.flowchart?.htmlLabels);
@@ -22,12 +21,10 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   }
 
   // Add outer g element
-  const shapeSvg = _shapeSvg
-    ? _shapeSvg
-    : parent
-        .insert('g')
-        .attr('class', cssClasses)
-        .attr('id', node.domId || node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', cssClasses)
+    .attr('id', node.domId || node.id);
 
   // Create the label and insert it after the rect
   const labelEl = shapeSvg
