@@ -116,7 +116,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   labelEl.insert('rect', ':first-child');
   return { shapeSvg, bbox, halfPadding, label: labelEl };
 };
-export const insertLabel = async (
+export const insertLabel = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   label: string,
   options: {
