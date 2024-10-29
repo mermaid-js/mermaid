@@ -6,25 +6,26 @@ import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 
-const colorFromPriority = (priority: KanbanNode['priority']) => {
+const colorFromPriority = (priority: NonNullable<KanbanNode['priority']>) => {
   switch (priority) {
     case 'Very High':
       return 'red';
     case 'High':
       return 'orange';
+    case 'Medium':
+      return null; // no stroke
     case 'Low':
       return 'blue';
     case 'Very Low':
       return 'lightblue';
   }
 };
-export const kanbanItem = async <T extends SVGGraphicsElement>(
+export async function kanbanItem<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
-  node: Node,
+  // Omit the 'shape' prop since otherwise, it causes a TypeScript circular dependency error
+  kanbanNode: Omit<Node, 'shape'> | Omit<KanbanNode, 'level' | 'shape'>,
   { config }: ShapeRenderOptions
-) => {
-  const unknownNode = node as unknown;
-  const kanbanNode = unknownNode as KanbanNode;
+) {
   const { labelStyles, nodeStyles } = styles2String(kanbanNode);
   kanbanNode.labelStyle = labelStyles;
 
@@ -42,7 +43,7 @@ export const kanbanItem = async <T extends SVGGraphicsElement>(
   let ticketUrl = '';
   let link;
 
-  if (kanbanNode.ticket && config?.kanban?.ticketBaseUrl) {
+  if ('ticket' in kanbanNode && kanbanNode.ticket && config?.kanban?.ticketBaseUrl) {
     ticketUrl = config?.kanban?.ticketBaseUrl.replace('#TICKET#', kanbanNode.ticket);
     link = shapeSvg
       .insert<SVGAElement>('svg:a', ':first-child')
@@ -62,17 +63,21 @@ export const kanbanItem = async <T extends SVGGraphicsElement>(
   };
   let labelEl, bbox2;
   if (link) {
-    ({ label: labelEl, bbox: bbox2 } = await insertLabel(link, kanbanNode.ticket || '', options));
+    ({ label: labelEl, bbox: bbox2 } = await insertLabel(
+      link,
+      ('ticket' in kanbanNode && kanbanNode.ticket) || '',
+      options
+    ));
   } else {
     ({ label: labelEl, bbox: bbox2 } = await insertLabel(
       shapeSvg,
-      kanbanNode.ticket || '',
+      ('ticket' in kanbanNode && kanbanNode.ticket) || '',
       options
     ));
   }
   const { label: labelElAssigned, bbox: bboxAssigned } = await insertLabel(
     shapeSvg,
-    kanbanNode.assigned || '',
+    ('assigned' in kanbanNode && kanbanNode.assigned) || '',
     options
   );
   kanbanNode.width = orgWidth;
@@ -129,7 +134,9 @@ export const kanbanItem = async <T extends SVGGraphicsElement>(
       .attr('y', y)
       .attr('width', totalWidth)
       .attr('height', totalHeight);
-    if (kanbanNode.priority) {
+
+    const priority = 'priority' in kanbanNode && kanbanNode.priority;
+    if (priority) {
       const line = shapeSvg.append('line', ':first-child');
       const lineX = x + 2;
 
@@ -142,7 +149,7 @@ export const kanbanItem = async <T extends SVGGraphicsElement>(
         .attr('y2', y2)
 
         .attr('stroke-width', '4')
-        .attr('stroke', colorFromPriority(kanbanNode.priority));
+        .attr('stroke', colorFromPriority(priority));
     }
   }
 
@@ -154,4 +161,4 @@ export const kanbanItem = async <T extends SVGGraphicsElement>(
   };
 
   return shapeSvg;
-};
+}
