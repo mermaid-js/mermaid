@@ -96,6 +96,9 @@ export interface Edge {
   stroke?: string;
   text?: string;
   type: string;
+  // Class Diagram specific properties
+  startLabelRight?: string;
+  endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;
@@ -149,4 +152,13 @@ export interface ShapeRenderOptions {
   config: MermaidConfig;
   /** Some shapes render differently if a diagram has a direction `LR` */
   dir?: Node['dir'];
+}
+
+export interface KanbanNode extends Node {
+  // Kanban specif data
+  priority?: 'Very High' | 'High' | 'Medium' | 'Low' | 'Very Low';
+  ticket?: string;
+  assigned?: string;
+  icon?: string;
+  level: number;
 }

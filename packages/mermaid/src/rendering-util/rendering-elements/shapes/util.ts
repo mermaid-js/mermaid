@@ -10,7 +10,8 @@ import type { D3Selection, Point } from '../../../types.js';
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  _classes?: string
+  _classes?: string,
+  _shapeSvg?: D3Selection<T>
 ) => {
   let cssClasses;
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.flowchart?.htmlLabels);
@@ -21,10 +22,12 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   }
 
   // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', cssClasses)
-    .attr('id', node.domId || node.id);
+  const shapeSvg = _shapeSvg
+    ? _shapeSvg
+    : parent
+        .insert('g')
+        .attr('class', cssClasses)
+        .attr('id', node.domId || node.id);
 
   // Create the label and insert it after the rect
   const labelEl = shapeSvg
@@ -116,7 +119,56 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   labelEl.insert('rect', ':first-child');
   return { shapeSvg, bbox, halfPadding, label: labelEl };
 };
+export const insertLabel = async (
+  parent: D3Selection<T>,
+  label: string,
+  options: {
+    labelStyle?: string | undefined;
+    icon?: boolean | undefined;
+    img?: string | undefined;
+    useHtmlLabels?: boolean | undefined;
+    padding: number;
+    width?: number | undefined;
+    centerLabel?: boolean | undefined;
+    addSvgBackground?: boolean | undefined;
+  }
+) => {
+  const useHtmlLabels = options.useHtmlLabels || evaluate(getConfig()?.flowchart?.htmlLabels);
 
+  // Create the label and insert it after the rect
+  const labelEl = parent.insert('g').attr('class', 'label').attr('style', options.labelStyle);
+
+  const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
+    useHtmlLabels,
+    width: options.width || getConfig()?.flowchart?.wrappingWidth,
+    style: options.labelStyle,
+    addSvgBackground: !!options.icon || !!options.img,
+  });
+  // Get the size of the label
+  let bbox = text.getBBox();
+  const halfPadding = options.padding / 2;
+
+  if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
+    const div = text.children[0];
+    const dv = select(text);
+
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+
+  // Center the label
+  if (useHtmlLabels) {
+    labelEl.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  } else {
+    labelEl.attr('transform', 'translate(' + 0 + ', ' + -bbox.height / 2 + ')');
+  }
+  if (options.centerLabel) {
+    labelEl.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  }
+  labelEl.insert('rect', ':first-child');
+  return { shapeSvg: parent, bbox, halfPadding, label: labelEl };
+};
 export const updateNodeBounds = <T extends SVGGraphicsElement>(
   node: Node,
   // D3Selection<SVGGElement> is for the roughjs case, D3Selection<T> is for the non-roughjs case

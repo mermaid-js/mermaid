@@ -149,6 +149,7 @@ export const render = async (
             const clusterNode = JSON.parse(JSON.stringify(node));
             clusterNode.x = node.offset.posX + node.width / 2;
             clusterNode.y = node.offset.posY + node.height / 2;
+            clusterNode.width = Math.max(clusterNode.width, node.labelData.width);
             await insertCluster(subgraphEl, clusterNode);
 
             log.debug('Id (UIO)= ', node.id, node.width, node.shape, node.labels);
@@ -275,6 +276,8 @@ export const render = async (
         interpolate: undefined;
         style: undefined;
         labelType: any;
+        startLabelRight?: string;
+        endLabelLeft?: string;
       }) {
         // Identify Link
         const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
@@ -327,6 +330,9 @@ export const render = async (
 
         let style = '';
         let labelStyle = '';
+
+        edgeData.startLabelRight = edge.startLabelRight;
+        edgeData.endLabelLeft = edge.endLabelLeft;
 
         switch (edge.stroke) {
           case 'normal':
