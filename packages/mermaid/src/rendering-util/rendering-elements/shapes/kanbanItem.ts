@@ -20,11 +20,12 @@ const colorFromPriority = (priority: NonNullable<KanbanNode['priority']>) => {
       return 'lightblue';
   }
 };
-export const kanbanItem = async <T extends SVGGraphicsElement>(
+export async function kanbanItem<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
-  kanbanNode: Node | Omit<KanbanNode, 'level'>,
+  // Omit the 'shape' prop since otherwise, it causes a TypeScript circular dependency error
+  kanbanNode: Omit<Node, 'shape'> | Omit<KanbanNode, 'level' | 'shape'>,
   { config }: ShapeRenderOptions
-) => {
+) {
   const { labelStyles, nodeStyles } = styles2String(kanbanNode);
   kanbanNode.labelStyle = labelStyles;
 
@@ -160,4 +161,4 @@ export const kanbanItem = async <T extends SVGGraphicsElement>(
   };
 
   return shapeSvg;
-};
+}
