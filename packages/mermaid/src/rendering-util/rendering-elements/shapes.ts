@@ -58,6 +58,7 @@ import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 import { classBox } from './shapes/classBox.js';
+import { kanbanItem } from './shapes/kanbanItem.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -476,7 +477,7 @@ const generateShapeMap = () => {
     icon,
     iconRounded,
     imageSquare,
-
+    kanbanItem,
     anchor,
   } as const;
 

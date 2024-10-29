@@ -152,3 +152,12 @@ export interface ShapeRenderOptions {
   /** Some shapes render differently if a diagram has a direction `LR` */
   dir?: Node['dir'];
 }
+
+export interface KanbanNode extends Node {
+  // Kanban specif data
+  priority?: 'Very High' | 'High' | 'Medium' | 'Low' | 'Very Low';
+  ticket?: string;
+  assigned?: string;
+  icon?: string;
+  level: number;
+}
