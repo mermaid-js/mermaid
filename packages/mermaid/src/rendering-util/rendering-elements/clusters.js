@@ -280,7 +280,7 @@ const roundedWithTitle = async (parent, node) => {
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
-const kanbanSection = async (parent, node) => {
+export const kanbanSection = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
   const { themeVariables, handDrawnSeed } = siteConfig;
