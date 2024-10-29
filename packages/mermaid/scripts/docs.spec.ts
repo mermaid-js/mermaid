@@ -172,6 +172,7 @@ This Markdown should be kept.
         "| **Semantic Name**                 | **Shape Name**          | **Short Name** | **Description**                | **Alias Supported**                                              |
         | --------------------------------- | ----------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
         | Card                              | Notched Rectangle       | \`notch-rect\`   | Represents a card              | \`card\`, \`notched-rectangle\`                                      |
+        | Class Box                         | Class Box               | \`classBox\`     | Class Box                      | \`class-box\`                                                      
         | Collate                           | Hourglass               | \`hourglass\`    | Represents a collate operation | \`collate\`, \`hourglass\`                                           |
         | Com Link                          | Lightning Bolt          | \`bolt\`         | Communication link             | \`com-link\`, \`lightning-bolt\`                                     |
         | Comment                           | Curly Brace             | \`brace\`        | Adds a comment                 | \`brace-l\`, \`comment\`                                             |

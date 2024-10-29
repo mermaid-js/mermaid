@@ -58,6 +58,8 @@ import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 import { erBox } from './shapes/erBox.js';
+import { classBox } from './shapes/classBox.js';
+import { kanbanItem } from './shapes/kanbanItem.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -456,6 +458,13 @@ export const shapesDefs = [
     aliases: ['er-box'],
     handler: erBox,
   },
+    semanticName: 'Class Box',
+    name: 'Class Box',
+    shortName: 'classBox',
+    description: 'Class Box',
+    aliases: ['class-box'],
+    handler: classBox,
+  },
 ] as const satisfies ShapeDefinition[];
 
 const generateShapeMap = () => {
@@ -476,7 +485,7 @@ const generateShapeMap = () => {
     icon,
     iconRounded,
     imageSquare,
-
+    kanbanItem,
     anchor,
   } as const;
 
@@ -498,5 +507,9 @@ const generateShapeMap = () => {
 };
 
 export const shapes = generateShapeMap();
+
+export function isValidShape(shape: string): shape is ShapeID {
+  return shape in shapes;
+}
 
 export type ShapeID = keyof typeof shapes;

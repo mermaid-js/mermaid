@@ -1,5 +1,6 @@
 export type MarkdownWordType = 'normal' | 'strong' | 'em';
 import type { MermaidConfig } from '../config.type.js';
+import type { ShapeID } from './rendering-elements/shapes.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
@@ -37,7 +38,7 @@ export interface Node {
   linkTarget?: string;
   tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
-  shape?: string;
+  shape?: ShapeID;
   isGroup: boolean;
   width?: number;
   height?: number;
@@ -95,6 +96,9 @@ export interface Edge {
   stroke?: string;
   text?: string;
   type: string;
+  // Class Diagram specific properties
+  startLabelRight?: string;
+  endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;
@@ -148,4 +152,13 @@ export interface ShapeRenderOptions {
   config: MermaidConfig;
   /** Some shapes render differently if a diagram has a direction `LR` */
   dir?: Node['dir'];
+}
+
+export interface KanbanNode extends Node {
+  // Kanban specif data
+  priority?: 'Very High' | 'High' | 'Medium' | 'Low' | 'Very Low';
+  ticket?: string;
+  assigned?: string;
+  icon?: string;
+  level: number;
 }

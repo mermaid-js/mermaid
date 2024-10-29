@@ -280,6 +280,117 @@ const roundedWithTitle = async (parent, node) => {
 
   return { cluster: shapeSvg, labelBBox: bbox };
 };
+const kanbanSection = async (parent, node) => {
+  log.info('Creating subgraph rect for ', node.id, node);
+  const siteConfig = getConfig();
+  const { themeVariables, handDrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder } = themeVariables;
+
+  const { labelStyles, nodeStyles, borderStyles, backgroundStyles } = styles2String(node);
+
+  // Add outer g element
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'cluster ' + node.cssClasses)
+    .attr('id', node.id)
+    .attr('data-look', node.look);
+
+  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
+
+  // Create the label and insert it after the rect
+  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
+
+  const text = await createText(labelEl, node.label, {
+    style: node.labelStyle,
+    useHtmlLabels,
+    isNode: true,
+    width: node.width,
+  });
+
+  // Get the size of the label
+  let bbox = text.getBBox();
+
+  if (evaluate(siteConfig.flowchart.htmlLabels)) {
+    const div = text.children[0];
+    const dv = select(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+
+  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
+  if (node.width <= bbox.width + node.padding) {
+    node.diff = (width - node.width) / 2 - node.padding;
+  } else {
+    node.diff = -node.padding;
+  }
+
+  const height = node.height;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+
+  log.trace('Data ', node, JSON.stringify(node));
+  let rect;
+  if (node.look === 'handDrawn') {
+    // @ts-ignore TODO: Fix rough typings
+    const rc = rough.svg(shapeSvg);
+    const options = userNodeOverrides(node, {
+      roughness: 0.7,
+      fill: clusterBkg,
+      // fill: 'red',
+      stroke: clusterBorder,
+      fillWeight: 4,
+      seed: handDrawnSeed,
+    });
+    const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, node.rx), options);
+    rect = shapeSvg.insert(() => {
+      log.debug('Rough node insert CXC', roughNode);
+      return roughNode;
+    }, ':first-child');
+    // Should we affect the options instead of doing this?
+    rect.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
+    rect.select('path').attr('style', backgroundStyles.join(';').replace('fill', 'stroke'));
+  } else {
+    // add the rect
+    rect = shapeSvg.insert('rect', ':first-child');
+    // center the rect around its coordinate
+    rect
+      .attr('style', nodeStyles)
+      .attr('rx', node.rx)
+      .attr('ry', node.ry)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', height);
+  }
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  labelEl.attr(
+    'transform',
+    // This puts the label on top of the box instead of inside it
+    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+  );
+
+  if (labelStyles) {
+    const span = labelEl.select('span');
+    if (span) {
+      span.attr('style', labelStyles);
+    }
+  }
+  // Center the label
+
+  const rectBox = rect.node().getBBox();
+  node.offsetX = 0;
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+  // Used by layout engine to position subgraph in parent
+  node.offsetY = bbox.height - node.padding / 2;
+
+  node.intersect = function (point) {
+    return intersectRect(node, point);
+  };
+
+  return { cluster: shapeSvg, labelBBox: bbox };
+};
 const divider = (parent, node) => {
   const siteConfig = getConfig();
 
@@ -355,6 +466,7 @@ const shapes = {
   roundedWithTitle,
   noteGroup,
   divider,
+  kanbanSection,
 };
 
 let clusterElems = new Map();
