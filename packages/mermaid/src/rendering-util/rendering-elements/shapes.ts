@@ -458,6 +458,7 @@ export const shapesDefs = [
     aliases: ['er-box'],
     handler: erBox,
   },
+  {
     semanticName: 'Class Box',
     name: 'Class Box',
     shortName: 'classBox',
