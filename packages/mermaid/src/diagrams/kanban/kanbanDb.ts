@@ -84,6 +84,7 @@ const getData = function () {
         shape: 'kanbanItem',
         level: item.level,
         rx: 5,
+        ry: 5,
         cssStyles: ['text-align: left'],
       } satisfies KanbanNode;
       _nodes.push(childNode);

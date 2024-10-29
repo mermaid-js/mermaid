@@ -26,16 +26,18 @@ export async function iconCircle<T extends SVGGraphicsElement>(
 
   const topLabel = node.pos === 't';
 
-  const { nodeBorder } = themeVariables;
+  const { nodeBorder, mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: 'transparent' });
+  const options = userNodeOverrides(node, {});
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
+  const stroke = stylesMap.get('stroke');
+  options.stroke = stroke ? stylesMap.get('stroke') : mainBkg;
 
   const iconElem = shapeSvg.append('g');
   if (node.icon) {

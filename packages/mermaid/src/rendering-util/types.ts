@@ -161,4 +161,6 @@ export interface KanbanNode extends Node {
   assigned?: string;
   icon?: string;
   level: number;
+  rx: number;
+  ry: number;
 }
