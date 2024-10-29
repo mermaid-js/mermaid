@@ -36,8 +36,8 @@ export async function iconCircle<T extends SVGGraphicsElement>(
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
-  const stroke = stylesMap.get('stroke');
-  options.stroke = stroke ? stylesMap.get('stroke') : mainBkg;
+  const fill = stylesMap.get('fill');
+  options.stroke = fill ?? mainBkg;
 
   const iconElem = shapeSvg.append('g');
   if (node.icon) {

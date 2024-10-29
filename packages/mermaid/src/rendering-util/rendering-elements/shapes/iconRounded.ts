@@ -46,8 +46,8 @@ export async function iconRounded<T extends SVGGraphicsElement>(
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
-  const stroke = stylesMap.get('stroke');
-  options.stroke = stroke ? stylesMap.get('stroke') : mainBkg;
+  const fill = stylesMap.get('fill');
+  options.stroke = fill ?? mainBkg;
 
   const iconNode = rc.path(createRoundedRectPathD(x, y, width, height, 5), options);
 
