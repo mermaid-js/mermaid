@@ -1,10 +1,10 @@
 import { labelHelper, insertLabel, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { SVG } from '../../../diagram-api/types.js';
 import type { Node, KanbanNode, ShapeRenderOptions } from '../../types.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
 
 const colorFromPriority = (priority: KanbanNode['priority']) => {
   switch (priority) {
@@ -18,7 +18,11 @@ const colorFromPriority = (priority: KanbanNode['priority']) => {
       return 'lightblue';
   }
 };
-export const kanbanItem = async (parent: SVG, node: Node, { config }: ShapeRenderOptions) => {
+export const kanbanItem = async <T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node,
+  { config }: ShapeRenderOptions
+) => {
   const unknownNode = node as unknown;
   const kanbanNode = unknownNode as KanbanNode;
   const { labelStyles, nodeStyles } = styles2String(kanbanNode);
@@ -41,7 +45,7 @@ export const kanbanItem = async (parent: SVG, node: Node, { config }: ShapeRende
   if (kanbanNode.ticket && config?.kanban?.ticketBaseUrl) {
     ticketUrl = config?.kanban?.ticketBaseUrl.replace('#TICKET#', kanbanNode.ticket);
     link = shapeSvg
-      .insert('svg:a', ':first-child')
+      .insert<SVGAElement>('svg:a', ':first-child')
       .attr('class', 'kanban-ticket-link')
       .attr('xlink:href', ticketUrl)
       .attr('target', '_blank');
@@ -56,11 +60,16 @@ export const kanbanItem = async (parent: SVG, node: Node, { config }: ShapeRende
     padding: kanbanNode.padding,
     centerLabel: false,
   };
-  const { label: labelEl, bbox: bbox2 } = await insertLabel(
-    link ? link : shapeSvg,
-    kanbanNode.ticket || '',
-    options
-  );
+  let labelEl, bbox2;
+  if (link) {
+    ({ label: labelEl, bbox: bbox2 } = await insertLabel(link, kanbanNode.ticket || '', options));
+  } else {
+    ({ label: labelEl, bbox: bbox2 } = await insertLabel(
+      shapeSvg,
+      kanbanNode.ticket || '',
+      options
+    ));
+  }
   const { label: labelElAssigned, bbox: bboxAssigned } = await insertLabel(
     shapeSvg,
     kanbanNode.assigned || '',
