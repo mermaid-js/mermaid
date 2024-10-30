@@ -1,8 +1,10 @@
 import { labelHelper, getNodeClasses, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.d.ts';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
 export const createCylinderPathD = (
   x: number,
@@ -49,7 +51,10 @@ export const createInnerCylinderPathD = (
   return [`M${x + width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 0,${height}`].join(' ');
 };
 
-export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
+export async function tiltedCylinder<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label, halfPadding } = await labelHelper(
@@ -64,9 +69,10 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   const w = bbox.width + rx + labelPadding;
   const { cssStyles } = node;
 
-  let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
+  let cylinder: D3Selection<SVGGElement> | D3Selection<SVGPathElement>;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, 0, w, h, rx, ry);
@@ -84,19 +90,19 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
       .insert('path', ':first-child')
       .attr('d', pathData)
       .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
+      .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
+    cylinder.attr('class', 'basic label-container');
+
+    if (cssStyles) {
+      cylinder.selectAll('path').attr('style', cssStyles);
+    }
+
+    if (nodeStyles) {
+      cylinder.selectAll('path').attr('style', nodeStyles);
+    }
   }
 
-  cylinder.attr('class', 'basic label-container');
-
-  if (cssStyles && node.look !== 'handDrawn') {
-    cylinder.selectAll('path').attr('style', cssStyles);
-  }
-
-  if (nodeStyles && node.look !== 'handDrawn') {
-    cylinder.selectAll('path').attr('style', nodeStyles);
-  }
   cylinder.attr('label-offset-x', rx);
   cylinder.attr('transform', `translate(${-w / 2}, ${h / 2} )`);
 
@@ -133,4 +139,4 @@ export const tiltedCylinder = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

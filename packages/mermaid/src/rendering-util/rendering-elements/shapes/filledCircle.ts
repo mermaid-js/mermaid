@@ -1,16 +1,16 @@
 import rough from 'roughjs';
-import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
-import type { Node, ShapeRenderOptions } from '../../types.d.ts';
+import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const filledCircle = (
-  parent: SVG,
+export function filledCircle<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   node: Node,
   { config: { themeVariables } }: ShapeRenderOptions
-) => {
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';
   node.labelStyle = labelStyles;
@@ -21,7 +21,7 @@ export const filledCircle = (
   const radius = 7;
   const { cssStyles } = node;
 
-  // @ts-expect-error shapeSvg d3 class is incorrect?
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const { nodeBorder } = themeVariables;
   const options = userNodeOverrides(node, { fillStyle: 'solid' });
@@ -53,4 +53,4 @@ export const filledCircle = (
   };
 
   return shapeSvg;
-};
+}

@@ -1,11 +1,13 @@
 import { log } from '../../../logger.js';
 import { updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.d.ts';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import { handleUndefinedAttr } from '../../../utils.js';
+import type { D3Selection } from '../../../types.js';
 
-export const anchor = (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
+export function anchor<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const classes = getNodeClasses(node);
@@ -14,7 +16,6 @@ export const anchor = (parent: SVGAElement, node: Node): Promise<SVGAElement> =>
     cssClasses = 'anchor';
   }
   const shapeSvg = parent
-    // @ts-ignore - SVGElement is not typed
     .insert('g')
     .attr('class', cssClasses)
     .attr('id', node.domId || node.id);
@@ -23,6 +24,7 @@ export const anchor = (parent: SVGAElement, node: Node): Promise<SVGAElement> =>
 
   const { cssStyles } = node;
 
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, { fill: 'black', stroke: 'none', fillStyle: 'solid' });
 
@@ -31,7 +33,7 @@ export const anchor = (parent: SVGAElement, node: Node): Promise<SVGAElement> =>
   }
   const roughNode = rc.circle(0, 0, radius * 2, options);
   const circleElem = shapeSvg.insert(() => roughNode, ':first-child');
-  circleElem.attr('class', 'anchor').attr('style', cssStyles);
+  circleElem.attr('class', 'anchor').attr('style', handleUndefinedAttr(cssStyles));
 
   updateNodeBounds(node, circleElem);
 
@@ -41,4 +43,4 @@ export const anchor = (parent: SVGAElement, node: Node): Promise<SVGAElement> =>
   };
 
   return shapeSvg;
-};
+}

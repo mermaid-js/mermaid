@@ -1,5 +1,5 @@
-import exp from 'constants';
-import { shapes } from './nodes.js';
+import { shapes } from './shapes.js';
+import { describe, it, expect } from 'vitest';
 
 describe('Test Alias for shapes', function () {
   // for each shape in docs/syntax/flowchart.md, along with its semantic name, short name, and alias name, add a test case
@@ -84,7 +84,7 @@ describe('Test Alias for shapes', function () {
   });
 
   it('should support alias for shadedProcess shape ', function () {
-    const aliases = ['lined-process', 'lined-rectangle', 'lin-proc', 'lin-rect'];
+    const aliases = ['lined-process', 'lined-rectangle', 'lin-proc', 'lin-rect'] as const;
     for (const alias of aliases) {
       expect(shapes[alias]).toBe(shapes['shaded-process']);
     }

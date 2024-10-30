@@ -1,9 +1,10 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.d.ts';
+import type { Node } from '../../types.js';
 import { styles2String } from './handDrawnShapeStyles.js';
+import type { D3Selection } from '../../../types.js';
 
-export async function text(parent: SVGAElement, node: Node): Promise<SVGAElement> {
+export async function text<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
 

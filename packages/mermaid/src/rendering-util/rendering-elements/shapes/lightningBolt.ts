@@ -1,13 +1,13 @@
 import { log } from '../../../logger.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
-import type { Node } from '../../types.d.ts';
-import type { SVG } from '../../../diagram-api/types.js';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { createPathFromPoints } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const lightningBolt = (parent: SVG, node: Node) => {
+export function lightningBolt<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';
   node.labelStyle = labelStyles;
@@ -63,4 +63,4 @@ export const lightningBolt = (parent: SVG, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

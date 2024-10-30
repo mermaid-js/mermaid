@@ -1,18 +1,18 @@
 import rough from 'roughjs';
-import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
 import { getIconSVG } from '../../icons.js';
-import type { Node, ShapeRenderOptions } from '../../types.d.ts';
+import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { labelHelper, updateNodeBounds } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const iconRounded = async (
-  parent: SVG,
+export async function iconRounded<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   node: Node,
   { config: { themeVariables, flowchart } }: ShapeRenderOptions
-) => {
+) {
   const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const assetHeight = node.assetHeight ?? 48;
@@ -38,13 +38,16 @@ export const iconRounded = async (
 
   const labelPadding = node.label ? 8 : 0;
 
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: stylesMap.get('fill') || mainBkg });
+  const options = userNodeOverrides(node, {});
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
+  const fill = stylesMap.get('fill');
+  options.stroke = fill ?? mainBkg;
 
   const iconNode = rc.path(createRoundedRectPathD(x, y, width, height, 5), options);
 
@@ -57,7 +60,7 @@ export const iconRounded = async (
     stroke: 'none',
   });
 
-  const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
+  const iconShape = shapeSvg.insert(() => iconNode, ':first-child').attr('class', 'icon-shape2');
   const outerShape = shapeSvg.insert(() => outerNode);
 
   if (node.icon) {
@@ -69,7 +72,7 @@ export const iconRounded = async (
         fallbackPrefix: '',
       })}</g>`
     );
-    const iconBBox = iconElem.node().getBBox();
+    const iconBBox = iconElem.node()!.getBBox();
     const iconWidth = iconBBox.width;
     const iconHeight = iconBBox.height;
     const iconX = iconBBox.x;
@@ -82,7 +85,7 @@ export const iconRounded = async (
           : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY
       })`
     );
-    iconElem.selectAll('path').attr('fill', stylesMap.get('stroke') ?? nodeBorder);
+    iconElem.attr('style', `color: ${stylesMap.get('stroke') ?? nodeBorder};`);
   }
 
   label.attr(
@@ -139,4 +142,4 @@ export const iconRounded = async (
   };
 
   return shapeSvg;
-};
+}

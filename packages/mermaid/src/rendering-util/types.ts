@@ -1,5 +1,7 @@
 export type MarkdownWordType = 'normal' | 'strong' | 'em';
 import type { MermaidConfig } from '../config.type.js';
+import type { ClusterShapeID } from './rendering-elements/clusters.js';
+import type { ShapeID } from './rendering-elements/shapes.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
@@ -8,8 +10,7 @@ export type MarkdownLine = MarkdownWord[];
 /** Returns `true` if the line fits a constraint (e.g. it's under 𝑛 chars) */
 export type CheckFitFunction = (text: MarkdownLine) => boolean;
 
-// Common properties for any node in the system
-export interface Node {
+interface BaseNode {
   id: string;
   label?: string;
   description?: string[];
@@ -37,7 +38,6 @@ export interface Node {
   linkTarget?: string;
   tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
-  shape?: string;
   isGroup: boolean;
   width?: number;
   height?: number;
@@ -74,6 +74,22 @@ export interface Node {
   constraint?: 'on' | 'off';
 }
 
+/**
+ * Group/cluster nodes, e.g. nodes that contain other nodes.
+ */
+export interface ClusterNode extends BaseNode {
+  shape?: ClusterShapeID;
+  isGroup: true;
+}
+
+export interface NonClusterNode extends BaseNode {
+  shape?: ShapeID;
+  isGroup: false;
+}
+
+// Common properties for any node in the system
+export type Node = ClusterNode | NonClusterNode;
+
 // Common properties for any edge in the system
 export interface Edge {
   id: string;
@@ -95,6 +111,9 @@ export interface Edge {
   stroke?: string;
   text?: string;
   type: string;
+  // Class Diagram specific properties
+  startLabelRight?: string;
+  endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;
@@ -114,9 +133,9 @@ export interface RectOptions {
 }
 
 // Extending the Node interface for specific types if needed
-export interface ClassDiagramNode extends Node {
+export type ClassDiagramNode = Node & {
   memberData: any; // Specific property for class diagram nodes
-}
+};
 
 // Specific interfaces for layout and render data
 export interface LayoutData {
@@ -146,5 +165,15 @@ export type LayoutMethod =
 
 export interface ShapeRenderOptions {
   config: MermaidConfig;
-  dir: string;
+  /** Some shapes render differently if a diagram has a direction `LR` */
+  dir?: Node['dir'];
 }
+
+export type KanbanNode = Node & {
+  // Kanban specif data
+  priority?: 'Very High' | 'High' | 'Medium' | 'Low' | 'Very Low';
+  ticket?: string;
+  assigned?: string;
+  icon?: string;
+  level: number;
+};

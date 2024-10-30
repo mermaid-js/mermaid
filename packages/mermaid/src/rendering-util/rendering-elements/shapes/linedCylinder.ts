@@ -3,6 +3,8 @@ import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
 export const createCylinderPathD = (
   x: number,
@@ -54,7 +56,10 @@ export const createInnerCylinderPathD = (
 ): string => {
   return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
 };
-export const linedCylinder = async (parent: SVGAElement, node: Node) => {
+export async function linedCylinder<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
@@ -64,10 +69,11 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
   const h = Math.max(bbox.height + ry + (node.padding ?? 0), node.height ?? 0);
   const outerOffset = h * 0.1; // 10% of height
 
-  let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
+  let cylinder: typeof shapeSvg | D3Selection<SVGPathElement>;
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry, outerOffset);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
@@ -89,7 +95,7 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
       .insert('path', ':first-child')
       .attr('d', pathData)
       .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
+      .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
   }
 
@@ -130,4 +136,4 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}
