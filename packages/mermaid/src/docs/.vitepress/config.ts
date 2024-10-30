@@ -174,6 +174,7 @@ function sidebarConfig() {
         { text: 'API-Usage', link: '/config/usage' },
         { text: 'Mermaid API Configuration', link: '/config/setup/README' },
         { text: 'Mermaid Configuration Options', link: '/config/schema-docs/config' },
+        { text: 'Registering icons', link: '/config/icons' },
         { text: 'Directives', link: '/config/directives' },
         { text: 'Theming', link: '/config/theming' },
         { text: 'Math', link: '/config/math' },
