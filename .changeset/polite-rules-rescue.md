@@ -13,3 +13,5 @@ Class diagram changes:
   - support for styling the default class,
   - support lollipop interfaces.
 - Includes fixes / additions for #5562 #3139 and #4037
+
+pr: 5880
