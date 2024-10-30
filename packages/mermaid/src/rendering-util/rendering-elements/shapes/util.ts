@@ -14,7 +14,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   _shapeSvg?: D3Selection<T>
 ) => {
   let cssClasses;
-  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.flowchart?.htmlLabels);
+  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
   if (!_classes) {
     cssClasses = 'node default';
   } else {
@@ -55,7 +55,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   let bbox = text.getBBox();
   const halfPadding = (node?.padding ?? 0) / 2;
 
-  if (evaluate(getConfig().flowchart?.htmlLabels)) {
+  if (useHtmlLabels) {
     const div = text.children[0];
     const dv = select(text);
 
