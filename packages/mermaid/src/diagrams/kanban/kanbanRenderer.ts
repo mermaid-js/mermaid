@@ -63,7 +63,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
       item.x = section.x;
       item.width = WIDTH - 1.5 * padding;
       const nodeEl = await insertNode(nodesElem, item, { config: conf });
-      const bbox = nodeEl.node().getBBox();
+      const bbox = nodeEl.node()!.getBBox();
       item.y = y + bbox.height / 2;
       await positionNode(item);
       y = item.y + bbox.height / 2 + padding / 2;
