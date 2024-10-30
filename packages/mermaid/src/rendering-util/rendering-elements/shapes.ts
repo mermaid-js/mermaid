@@ -57,6 +57,7 @@ import { triangle } from './shapes/triangle.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
+import { erBox } from './shapes/erBox.js';
 import { classBox } from './shapes/classBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
 
@@ -448,6 +449,14 @@ export const shapesDefs = [
     description: 'Lined document',
     aliases: ['lined-document'],
     handler: linedWaveEdgedRect,
+  },
+  {
+    semanticName: 'Entity Relationship Box',
+    name: 'Entity Relationship Box',
+    shortName: 'erBox',
+    description: 'Entity Relationship Box',
+    aliases: ['er-box'],
+    handler: erBox,
   },
   {
     semanticName: 'Class Box',
