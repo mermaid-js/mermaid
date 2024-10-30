@@ -27,7 +27,7 @@ export async function kanbanItem<T extends SVGGraphicsElement>(
   { config }: ShapeRenderOptions
 ) {
   const { labelStyles, nodeStyles } = styles2String(kanbanNode);
-  kanbanNode.labelStyle = labelStyles;
+  kanbanNode.labelStyle = labelStyles || '';
 
   const labelPaddingX = 10;
   const orgWidth = kanbanNode.width;
@@ -54,11 +54,10 @@ export async function kanbanItem<T extends SVGGraphicsElement>(
 
   const options = {
     useHtmlLabels: kanbanNode.useHtmlLabels,
-    labelStyle: kanbanNode.labelStyle,
+    labelStyle: kanbanNode.labelStyle || '',
     width: kanbanNode.width,
-    icon: kanbanNode.icon,
     img: kanbanNode.img,
-    padding: kanbanNode.padding,
+    padding: kanbanNode.padding || 8,
     centerLabel: false,
   };
   let labelEl, bbox2;
@@ -121,15 +120,15 @@ export async function kanbanItem<T extends SVGGraphicsElement>(
         : rc.rectangle(x, y, totalWidth, totalHeight, options);
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
-    rect.attr('class', 'basic label-container').attr('style', cssStyles);
+    rect.attr('class', 'basic label-container').attr('style', cssStyles ? cssStyles : null);
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 
     rect
       .attr('class', 'basic label-container __APA__')
       .attr('style', nodeStyles)
-      .attr('rx', rx)
-      .attr('ry', ry)
+      .attr('rx', rx ?? 5)
+      .attr('ry', ry ?? 5)
       .attr('x', x)
       .attr('y', y)
       .attr('width', totalWidth)
@@ -137,7 +136,7 @@ export async function kanbanItem<T extends SVGGraphicsElement>(
 
     const priority = 'priority' in kanbanNode && kanbanNode.priority;
     if (priority) {
-      const line = shapeSvg.append('line', ':first-child');
+      const line = shapeSvg.append('line');
       const lineX = x + 2;
 
       const y1 = y + Math.floor((rx ?? 0) / 2);

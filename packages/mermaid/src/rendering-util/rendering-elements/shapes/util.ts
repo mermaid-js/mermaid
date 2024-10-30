@@ -133,7 +133,10 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
   const useHtmlLabels = options.useHtmlLabels || evaluate(getConfig()?.flowchart?.htmlLabels);
 
   // Create the label and insert it after the rect
-  const labelEl = parent.insert('g').attr('class', 'label').attr('style', options.labelStyle);
+  const labelEl = parent
+    .insert('g')
+    .attr('class', 'label')
+    .attr('style', options.labelStyle || '');
 
   const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
     useHtmlLabels,
