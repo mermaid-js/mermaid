@@ -893,7 +893,7 @@ const addNodeFromVertex = (
     node.cssCompiledStyles = getCompiledStyles(vertex.classes);
     node.cssClasses = vertex.classes.join(' ');
   } else {
-    nodes.push({
+    const baseNode = {
       id: vertex.id,
       label: vertex.text,
       labelStyle: '',
@@ -902,10 +902,8 @@ const addNodeFromVertex = (
       cssStyles: vertex.styles,
       cssCompiledStyles: getCompiledStyles(['default', 'node', ...vertex.classes]),
       cssClasses: 'default ' + vertex.classes.join(' '),
-      shape: getTypeFromVertex(vertex),
       dir: vertex.dir,
       domId: vertex.domId,
-      isGroup,
       look,
       link: vertex.link,
       linkTarget: vertex.linkTarget,
@@ -916,7 +914,20 @@ const addNodeFromVertex = (
       assetWidth: vertex.assetWidth,
       assetHeight: vertex.assetHeight,
       constraint: vertex.constraint,
-    });
+    };
+    if (isGroup) {
+      nodes.push({
+        ...baseNode,
+        isGroup: true,
+        shape: 'rect',
+      });
+    } else {
+      nodes.push({
+        ...baseNode,
+        isGroup: false,
+        shape: getTypeFromVertex(vertex),
+      });
+    }
   }
 };
 
