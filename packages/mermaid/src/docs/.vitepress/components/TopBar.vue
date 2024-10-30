@@ -9,7 +9,7 @@ interface Taglines {
 const taglines: Taglines[] = [
   {
     label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-    url: 'https://mermaidchart.com/whiteboard?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=whiteboard',
+    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=whiteboard',
   },
   {
     label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
