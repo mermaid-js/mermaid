@@ -89,7 +89,7 @@ export const draw = async function (text: string, id: string, _version: string, 
       );
 
       if (!shapeElement.empty() && shapeElement.node() !== null) {
-        log.debug(`Working of node ${vertex.id}->${vertex.domId}`);
+        log.debug(`Working on node ${vertex.id}->${vertex.domId}`);
 
         // Log all cssCompiledStyles for the node if available
         if (vertex.cssCompiledStyles) {
@@ -104,11 +104,15 @@ export const draw = async function (text: string, id: string, _version: string, 
           ?.match(/fill\s*:\s*linear-gradient\([^()]*?(?:\([^()]*?\)[^()]*)*\)/g);
 
         if (linearGradientStyles) {
-          shapeElement.style('fill', null); // Clear any existing fill
+          // Clear any existing fill otherwise the theme's color bleeds through (semi-)transparent areas
+          shapeElement.style('fill', 'none');
+          shapeElement.style('mix-blend-mode', 'normal');
+
+          // Apply gradient style to the node's shape through a cloned element
           linearGradientStyles.forEach((style, index) => {
             log.debug(`Found gradient style ${index + 1} for node ${vertex.id}: "${style}"`);
 
-            // Remove the 'fill: linear-gradient()' wrapper to get the gradient definition
+            // Remove the 'fill: linear-gradient()' wrapper to get the gradient definition only
             const linearGradientStyle = style.replace(/fill\s*:\s*linear-gradient\((.+)\)/, '$1');
             const gradientId = `gradient-${vertex.id}-${index}`;
 
