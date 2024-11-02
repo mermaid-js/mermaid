@@ -60,6 +60,7 @@ import { windowPane } from './shapes/windowPane.js';
 import { classBox } from './shapes/classBox.js';
 import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
+import { history, deephistory } from './shapes/history.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -243,6 +244,22 @@ export const shapesDefs = [
     aliases: ['join'],
     internalAliases: ['forkJoin'],
     handler: forkJoin,
+  },
+  {
+    semanticName: 'History',
+    name: 'Circle with an H',
+    shortName: 'history',
+    description: 'History entrance',
+    aliases: ['H'],
+    handler: history,
+  },
+  {
+    semanticName: 'Deep History',
+    name: 'Circle with an H*',
+    shortName: 'deephistory',
+    description: 'Deep history entrance',
+    aliases: ['H*'],
+    handler: deephistory,
   },
   {
     semanticName: 'Collate',
