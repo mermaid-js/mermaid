@@ -103,6 +103,11 @@ g.stateGroup line {
   stroke: ${options.specialStateColor};
 }
 
+.node .history {
+  fill: ${options.background};
+  stroke: ${options.specialStateColor};
+}
+
 .node circle.state-end {
   fill: ${options.innerEndBackground};
   stroke: ${options.background};
