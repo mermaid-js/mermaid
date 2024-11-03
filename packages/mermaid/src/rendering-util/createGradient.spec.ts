@@ -515,7 +515,7 @@ describe('Gradient application on different shapes', () => {
   });
 });
 
-describe('Basic gradient creation and attributes', () => {
+describe('Basic gradient creation and attributes with in-depth checks', () => {
   it('should create a linear gradient with two color stops', () => {
     // Call the function to test
     createLinearGradient(
@@ -559,21 +559,21 @@ describe('Basic gradient creation and attributes', () => {
     const gradientLineLength =
       Math.abs(nodeWidth * Math.sin(angleRad)) + Math.abs(nodeHeight * Math.cos(angleRad));
 
-    // Define the minimum and maximum stops for the gradient
+    // Define the minimum and maximum stops set for the gradient
     const minStop = 0;
     const maxStop = 100;
 
     // SVG linear gradient coordinates
     const xc = bbox.x + nodeWidth / 2;
     const yc = bbox.y + nodeHeight / 2;
-    const dmin = (gradientLineLength * Math.abs(minStop - 50)) / 100;
-    const dmax = (gradientLineLength * Math.abs(maxStop - 50)) / 100;
+    const d1 = (gradientLineLength * (50 - minStop)) / 100;
+    const d2 = (gradientLineLength * (50 - maxStop)) / 100;
 
-    // Verify gradient attributes
+    // Verify gradient coordinates and angle
     expect(+gradient.attr('x1')).toBeCloseTo(xc, 8);
-    expect(+gradient.attr('y1')).toBeCloseTo(yc + dmax, 8);
+    expect(+gradient.attr('y1')).toBeCloseTo(yc + d1, 8);
     expect(+gradient.attr('x2')).toBeCloseTo(xc, 8);
-    expect(+gradient.attr('y2')).toBeCloseTo(yc - dmin, 8);
+    expect(+gradient.attr('y2')).toBeCloseTo(yc + d2, 8);
     expect(parsedAngle).toBeCloseTo(expectedAngle, 8);
 
     // Check that there are two color stops
@@ -733,7 +733,7 @@ describe('Basic gradient creation and attributes', () => {
     });
   }
 
-  it('should handle gradient without direction and default to 180deg', () => {
+  it('should handle gradient without angle/direction and default to 180deg', () => {
     createLinearGradient(svg, shapeElement, 'red, blue', 'test-gradient-no-direction');
 
     const gradient = svg.select('defs').select('linearGradient');
@@ -744,13 +744,13 @@ describe('Basic gradient creation and attributes', () => {
     const h = bbox.height;
     const xc = bbox.x + w / 2;
     const yc = bbox.y + h / 2;
-    const dmax = h * 0.5;
-    const dmin = h * 0.5;
+    const d1 = h * 0.5;
+    const d2 = -h * 0.5;
 
     expect(+gradient.attr('x1')).toBeCloseTo(xc, 8);
-    expect(+gradient.attr('y1')).toBeCloseTo(yc + dmax, 8);
+    expect(+gradient.attr('y1')).toBeCloseTo(yc + d1, 8);
     expect(+gradient.attr('x2')).toBeCloseTo(xc, 8);
-    expect(+gradient.attr('y2')).toBeCloseTo(yc - dmin, 8);
+    expect(+gradient.attr('y2')).toBeCloseTo(yc + d2, 8);
     expect(parsedAngle).toBeCloseTo(180, 8);
   });
 
@@ -963,8 +963,36 @@ describe('Special cases for color stops and positions', () => {
       'test-gradient-out-of-bounds-renorm-interpolation'
     );
 
-    const stops = svg.select('defs').select('linearGradient').selectAll('stop') as any;
+    const gradient = svg.select('defs').select('linearGradient');
+    const stops = gradient.selectAll('stop') as any;
 
+    // Get the node's dimensions
+    const bbox = shapeElement.node()!.getBBox();
+    const nodeWidth = bbox.width;
+    const nodeHeight = bbox.height;
+
+    // Calculate the gradient line length applied to a rectangle
+    const angleRad = deg2rad(35);
+    const gradientLineLength =
+      Math.abs(nodeWidth * Math.sin(angleRad)) + Math.abs(nodeHeight * Math.cos(angleRad));
+
+    // Define the minimum and maximum stops set for the gradient
+    const minStop = -50;
+    const maxStop = 115;
+
+    // SVG linear gradient coordinates
+    const xc = bbox.x + nodeWidth / 2;
+    const yc = bbox.y + nodeHeight / 2;
+    const d1 = (gradientLineLength * (50 - minStop)) / 100;
+    const d2 = (gradientLineLength * (50 - maxStop)) / 100;
+
+    // Verify gradient coordinates
+    expect(+gradient.attr('x1')).toBeCloseTo(xc, 8);
+    expect(+gradient.attr('y1')).toBeCloseTo(yc + d1, 8);
+    expect(+gradient.attr('x2')).toBeCloseTo(xc, 8);
+    expect(+gradient.attr('y2')).toBeCloseTo(yc + d2, 8);
+
+    // Verify color stops positions
     expect(stops[0].attr('offset')).toBe('-50%');
     expect(parseFloat(stops[1].attr('offset'))).toBeCloseTo(27.27272727272727, 8);
     expect(parseFloat(stops[2].attr('offset'))).toBeCloseTo(54.54545454545454, 8);
@@ -1257,4 +1285,4 @@ describe('Error handling', () => {
   });
 });
 
-// cspell:ignore renorm vmin vmax oklab oklch dmin dmax
+// cspell:ignore renorm vmin vmax oklab oklch d2 d1

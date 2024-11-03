@@ -713,9 +713,9 @@ export function createLinearGradient(
   // Setup SVG coordinates
   const xc = bbox.x + nodeWidth / 2;
   const yc = bbox.y + nodeHeight / 2;
-  const dmin = (gradientLineLength * Math.abs(minStop - 50)) / 100; // cspell:ignore dmin
-  const dmax = (gradientLineLength * Math.abs(maxStop - 50)) / 100; // cspell:ignore dmax
-  const { x1, y1, x2, y2 } = { x1: xc, y1: yc + dmax, x2: xc, y2: yc - dmin }; // Vertical gradient @ 0deg (bottom to top)
+  const d1 = (gradientLineLength * (50 - minStop)) / 100;
+  const d2 = (gradientLineLength * (50 - maxStop)) / 100;
+  const { x1, y1, x2, y2 } = { x1: xc, y1: yc + d1, x2: xc, y2: yc + d2 }; // Vertical gradient @ 0deg (bottom to top)
 
   // Apply SVG coordinates to the linear gradient element
   linearGradient.attr('x1', `${x1}`).attr('y1', `${y1}`).attr('x2', `${x2}`).attr('y2', `${y2}`);
