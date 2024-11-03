@@ -63,7 +63,7 @@ export function getGradientLineLength(
     // Rectangle
     log.debug('Calculating gradient line length for a rectangle...');
     const bbox = node.getBBox();
-    const w = bbox.width; // node.getAttribute('width') does not reflect the width property set in classDefs
+    const w = bbox.width; // node.getAttribute('width') does not reflect the width property set in styles/classDefs
     const h = bbox.height; // Same as above for height
     return Math.abs(w * Math.sin(angleRad)) + Math.abs(h * Math.cos(angleRad));
   } else if (node instanceof SVGCircleElement) {
@@ -133,6 +133,7 @@ const getRGBA = (color: string) => {
   // Create a temporary <option> element to parse the color
   const option = new Option();
   option.style.color = color;
+  option.style.display = 'none';
   document.body.appendChild(option);
   const computedColor = getComputedStyle(option).color;
   document.body.removeChild(option);
