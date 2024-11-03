@@ -12,7 +12,9 @@ import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import { getConfigField } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import type {
+  ArchitectureAlignment,
   ArchitectureDataStructures,
+  ArchitectureGroupAlignments,
   ArchitectureJunction,
   ArchitectureSpatialMap,
   EdgeSingular,
@@ -149,25 +151,80 @@ function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
   });
 }
 
-function getAlignments(spatialMaps: ArchitectureSpatialMap[]): fcose.FcoseAlignmentConstraint {
+function getAlignments(
+  db: ArchitectureDB,
+  spatialMaps: ArchitectureSpatialMap[],
+  groupAlignments: ArchitectureGroupAlignments
+): fcose.FcoseAlignmentConstraint {
+  /**
+   * Flattens the alignment object so nodes in different groups will be in the same alignment array IFF their groups don't connect in a conflicting alignment
+   *
+   * i.e., two groups which connect horizontally should not have vertical alignments with one another
+   *
+   * See: #5952
+   *
+   * @param alignmentObj - alignment object with the outer key being the row/col and the inner key being the group name
+   * @param alignmentDir - alignment direction
+   * @returns flattened alignment object with an arbitrary key mapping to nodes in the same row/col
+   */
+  const flattenAlignments = (
+    alignmentObj: Record<number, Record<string, string[]>>,
+    alignmentDir: ArchitectureAlignment
+  ): Record<string, string[]> => {
+    return Object.entries(alignmentObj).reduce(
+      (prev, [dir, alignments]) => {
+        let cnt = 0;
+        const arr = Object.entries(alignments);
+        if (arr.length === 1) {
+          prev[dir] = arr[0][1];
+          return prev;
+        }
+        for (let i = 0; i < arr.length - 1; i += 1) {
+          const [aGroupId, aNodeIds] = arr[i];
+          const [bGroupId, bNodeIds] = arr[i + 1];
+          const alignment = groupAlignments[aGroupId][bGroupId];
+          if (alignment === alignmentDir) {
+            prev[dir] ??= [];
+            prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds];
+          } else {
+            const keyA = `${dir}-${cnt++}`;
+            prev[keyA] = aNodeIds;
+            const keyB = `${dir}-${cnt++}`;
+            prev[keyB] = bNodeIds;
+          }
+        }
+
+        return prev;
+      },
+      {} as Record<string, string[]>
+    );
+  };
+
   const alignments = spatialMaps.map((spatialMap) => {
-    const horizontalAlignments: Record<number, string[]> = {};
-    const verticalAlignments: Record<number, string[]> = {};
+    const horizontalAlignments: Record<number, Record<string, string[]>> = {};
+    const verticalAlignments: Record<number, Record<string, string[]>> = {};
+
     // Group service ids in an object with their x and y coordinate as the key
     Object.entries(spatialMap).forEach(([id, [x, y]]) => {
-      if (!horizontalAlignments[y]) {
-        horizontalAlignments[y] = [];
-      }
-      if (!verticalAlignments[x]) {
-        verticalAlignments[x] = [];
-      }
-      horizontalAlignments[y].push(id);
-      verticalAlignments[x].push(id);
+      const nodeGroup = db.getNode(id)?.in ?? 'default';
+
+      horizontalAlignments[y] ??= {};
+      horizontalAlignments[y][nodeGroup] ??= [];
+      horizontalAlignments[y][nodeGroup].push(id);
+
+      verticalAlignments[x] ??= {};
+      verticalAlignments[x][nodeGroup] ??= [];
+      verticalAlignments[x][nodeGroup].push(id);
     });
+
     // Merge the values of each object into a list if the inner list has at least 2 elements
     return {
-      horiz: Object.values(horizontalAlignments).filter((arr) => arr.length > 1),
-      vert: Object.values(verticalAlignments).filter((arr) => arr.length > 1),
+      horiz: Object.values(flattenAlignments(horizontalAlignments, 'horizontal')).filter(
+        (arr) => arr.length > 1
+      ),
+      vert: Object.values(flattenAlignments(verticalAlignments, 'vertical')).filter(
+        (arr) => arr.length > 1
+      ),
     };
   });
 
@@ -244,7 +301,8 @@ function layoutArchitecture(
   junctions: ArchitectureJunction[],
   groups: ArchitectureGroup[],
   edges: ArchitectureEdge[],
-  { spatialMaps }: ArchitectureDataStructures
+  db: ArchitectureDB,
+  { spatialMaps, groupAlignments }: ArchitectureDataStructures
 ): Promise<cytoscape.Core> {
   return new Promise((resolve) => {
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
@@ -320,7 +378,7 @@ function layoutArchitecture(
     addEdges(edges, cy);
 
     // Use the spatial map to create alignment arrays for fcose
-    const alignmentConstraint = getAlignments(spatialMaps);
+    const alignmentConstraint = getAlignments(db, spatialMaps, groupAlignments);
 
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
     const relativePlacementConstraint = getRelativeConstraints(spatialMaps);
@@ -454,7 +512,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   await drawServices(db, servicesElem, services);
   drawJunctions(db, servicesElem, junctions);
 
-  const cy = await layoutArchitecture(services, junctions, groups, edges, ds);
+  const cy = await layoutArchitecture(services, junctions, groups, edges, db, ds);
 
   await drawEdges(edgesElem, cy);
   await drawGroups(groupElem, cy);
