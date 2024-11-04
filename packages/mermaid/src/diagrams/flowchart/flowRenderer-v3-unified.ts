@@ -91,16 +91,21 @@ export const draw = async function (text: string, id: string, _version: string, 
       if (!shapeElement.empty() && shapeElement.node() !== null) {
         log.debug(`Working on node ${vertex.id}->${vertex.domId}`);
 
+        // Combine style arrays, defaulting to empty arrays if missing
+        // Note that `cssCompiledStyles` (from `classDef`) apply first, with `cssStyles` (from `style`)
+        // rendered on top, allowing layered effects like multiple semi-transparent backgrounds
+        const styles = [...(vertex.cssCompiledStyles || []), ...(vertex.cssStyles || [])];
+
         // Log all cssCompiledStyles for the node if available
-        if (vertex.cssCompiledStyles) {
-          log.debug(`Compiled styles for node ${vertex.id}:`, vertex.cssCompiledStyles);
+        if (styles) {
+          log.debug(`CSS styles for node ${vertex.id}:`, styles);
         } else {
-          log.debug(`No compiled styles found for node ${vertex.id}.`);
+          log.debug(`No CSS styles found for node ${vertex.id}.`);
         }
 
         // Look for all gradient styles, ensuring that nested parentheses due to color functions are handled properly
-        const linearGradientStyles = vertex.cssCompiledStyles
-          ?.join('')
+        const linearGradientStyles = styles
+          .join('')
           ?.match(/fill\s*:\s*linear-gradient\([^()]*?(?:\([^()]*?\)[^()]*)*\)/g);
 
         if (linearGradientStyles) {
@@ -151,12 +156,12 @@ export const draw = async function (text: string, id: string, _version: string, 
       continue; // Skip to the next iteration if no node was found
     }
 
-    // If the node selected by ID has a link, wrap it in an anchor SVG object.
+    // If the node selected by ID has a link, wrap it in an anchor SVG object
     log.debug(`Attempting to select node using ID with query: #${id} [id="${vertex.id}"]`);
     // We already selected nodeSvg based on domId; would it work if use it here instead of node?
     const node = select(`#${id} [id="${vertex.domId}"]`);
     if (!node || !vertex.link) {
-      continue; // Skip if the node does not exist or does not have a link property.
+      continue; // Skip if the node does not exist or does not have a link property
     }
     const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
     link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.cssClasses);
