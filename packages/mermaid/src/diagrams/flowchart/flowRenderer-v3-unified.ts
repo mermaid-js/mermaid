@@ -108,9 +108,21 @@ export const draw = async function (text: string, id: string, _version: string, 
           .join('')
           ?.match(/fill\s*:\s*linear-gradient\([^()]*?(?:\([^()]*?\)[^()]*)*\)/g);
 
+        // Look for all non-gradient "fill" styles (e.g., "fill: magenta", "fill: rgb(255,0,0,0.3)")
+        const solidFillStyles = styles.join('')?.match(/fill\s*:\s*(?!linear-gradient\()[^;]+/g);
+
         if (linearGradientStyles) {
-          // Clear any existing fill otherwise the theme's color bleeds through (semi-)transparent areas
-          shapeElement.style('fill', 'none');
+          if (solidFillStyles) {
+            solidFillStyles.forEach((s) => {
+              const color = s.replace(/fill\s*:\s*/, '');
+              shapeElement.style('fill', color);
+              log.debug(`Applied solid fill color "${color}" to node ${vertex.id}`);
+            });
+          } else {
+            // Remove any existing fill (e.g. from the theme) that might unexpectedly bleed through (semi-)transparent areas
+            shapeElement.style('fill', 'none');
+          }
+
           shapeElement.style('mix-blend-mode', 'normal');
 
           // Apply gradient style to the node's shape through a cloned element
