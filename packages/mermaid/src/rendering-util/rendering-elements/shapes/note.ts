@@ -4,6 +4,7 @@ import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
+import { getConfig } from '../../../config.js';
 
 export async function note<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -12,16 +13,16 @@ export async function note<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const useHtmlLabels = node.useHtmlLabels || getConfig().htmlLabels;
+  if (!useHtmlLabels) {
+    node.centerLabel = true;
+  }
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const totalWidth = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
   const totalHeight = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
   const { cssStyles } = node;
-  const useHtmlLabels = node.useHtmlLabels;
-  if (!useHtmlLabels) {
-    node.centerLabel = true;
-  }
 
   // add the rect
   // @ts-ignore TODO: Fix rough typings
