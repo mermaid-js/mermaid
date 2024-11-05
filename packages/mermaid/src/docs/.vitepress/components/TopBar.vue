@@ -13,7 +13,7 @@ const taglines: Taglines[] = [
   },
   {
     label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js_editor&utm_medium=banner_ad&utm_campaign=visual_editor',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor',
   },
   {
     label: 'Diagram live with teammates in Mermaid Chart',
