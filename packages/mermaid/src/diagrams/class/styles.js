@@ -11,6 +11,30 @@ const getStyles = (options) =>
 
 }
 
+  .cluster-label text {
+    fill: ${options.titleColor};
+  }
+  .cluster-label span {
+    color: ${options.titleColor};
+  }
+  .cluster-label span p {
+    background-color: transparent;
+  }
+
+  .cluster rect {
+    fill: ${options.clusterBkg};
+    stroke: ${options.clusterBorder};
+    stroke-width: 1px;
+  }
+
+  .cluster text {
+    fill: ${options.titleColor};
+  }
+
+  .cluster span {
+    color: ${options.titleColor};
+  }
+
 .nodeLabel, .edgeLabel {
   color: ${options.classText};
 }
