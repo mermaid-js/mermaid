@@ -9,19 +9,19 @@ interface Taglines {
 const taglines: Taglines[] = [
   {
     label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-    url: 'https://docs.mermaidchart.com/guides/whiteboard?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=whiteboard',
+    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard',
   },
   {
     label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=visual_editor',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor',
   },
   {
     label: 'Diagram live with teammates in Mermaid Chart',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=teams',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams',
   },
   {
     label: 'Replace ChatGPT Pro, Mermaid.live, and LucidChart with Mermaid Pro',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_live_editor&utm_medium=banner_ad&utm_campaign=AIbundle',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle',
   },
 ];
 
