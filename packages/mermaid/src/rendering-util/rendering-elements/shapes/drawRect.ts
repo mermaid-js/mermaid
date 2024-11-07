@@ -4,8 +4,14 @@ import type { Node, RectOptions } from '../../types.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
-export const drawRect = async (parent: SVGAElement, node: Node, options: RectOptions) => {
+export async function drawRect<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node,
+  options: RectOptions
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   // If incoming height & width are present, subtract the padding from them
@@ -45,7 +51,7 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
         : rc.rectangle(x, y, totalWidth, totalHeight, options);
 
     rect = shapeSvg.insert(() => roughNode, ':first-child');
-    rect.attr('class', 'basic label-container').attr('style', cssStyles);
+    rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 
@@ -54,9 +60,9 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
     rect
       .attr('class', rectClass)
       .attr('style', nodeStyles)
-      .attr('rx', rx)
+      .attr('rx', handleUndefinedAttr(rx))
       .attr('data-id', node.id)
-      .attr('ry', ry)
+      .attr('ry', handleUndefinedAttr(ry))
       .attr('x', x)
       .attr('y', y)
       .attr('width', totalWidth)
@@ -71,4 +77,4 @@ export const drawRect = async (parent: SVGAElement, node: Node, options: RectOpt
   };
 
   return shapeSvg;
-};
+}

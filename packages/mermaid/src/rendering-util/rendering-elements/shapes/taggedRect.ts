@@ -1,13 +1,14 @@
 import { labelHelper, getNodeClasses, updateNodeBounds, createPathFromPoints } from './util.js';
-import type { Node } from '../../types.ts';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
+import type { D3Selection } from '../../../types.js';
 
 /// The width/height of the tag in comparison to the height of the node
 const TAG_RATIO = 0.2;
 
-export const taggedRect = async (parent: SVGAElement, node: Node) => {
+export async function taggedRect<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
 
@@ -41,6 +42,7 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
 
   const { cssStyles } = node;
 
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
@@ -90,4 +92,4 @@ export const taggedRect = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

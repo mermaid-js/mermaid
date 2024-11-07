@@ -3,11 +3,12 @@ import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
 
-export const rect_left_inv_arrow = async (
-  parent: SVGAElement,
+export async function rect_left_inv_arrow<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   node: Node
-): Promise<SVGAElement> => {
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
@@ -36,6 +37,7 @@ export const rect_left_inv_arrow = async (
   ];
 
   const { cssStyles } = node;
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
@@ -71,4 +73,4 @@ export const rect_left_inv_arrow = async (
   };
 
   return shapeSvg;
-};
+}

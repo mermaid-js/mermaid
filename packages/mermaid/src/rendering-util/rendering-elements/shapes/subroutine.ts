@@ -5,6 +5,8 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 import { getConfig } from '../../../config.js';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
 export const createSubroutinePathD = (
   x: number,
@@ -35,7 +37,7 @@ export const createSubroutinePathD = (
 // width of the frame on the left and right side of the shape
 const FRAME_WIDTH = 8;
 
-export const subroutine = async (parent: SVGAElement, node: Node) => {
+export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { themeVariables } = getConfig();
   const { useGradient } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -78,6 +80,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   ];
 
   if (node.look === 'handDrawn' || (node.look === 'neo' && !useGradient)) {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
 
@@ -96,7 +99,7 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
     l2El.attr('class', 'neo-line');
     const rect = shapeSvg.insert(() => roughNode, ':first-child');
     const { cssStyles } = node;
-    rect.attr('class', 'basic label-container').attr('style', cssStyles);
+    rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
     updateNodeBounds(node, rect);
   } else {
     const el = insertPolygonShape(shapeSvg, w, h, points);
@@ -111,4 +114,4 @@ export const subroutine = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

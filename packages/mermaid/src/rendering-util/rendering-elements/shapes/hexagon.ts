@@ -3,8 +3,8 @@ import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-
 import { insertPolygonShape } from './insertPolygonShape.js';
+import type { D3Selection } from '../../../types.js';
 
 export const createHexagonPathD = (
   x: number,
@@ -24,7 +24,7 @@ export const createHexagonPathD = (
   ].join(' ');
 };
 
-export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElement> => {
+export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   const f = 4;
   node.labelStyle = labelStyles;
@@ -53,10 +53,11 @@ export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElem
     { x: 0, y: -h / 2 },
   ];
 
-  let polygon: d3.Selection<SVGPolygonElement | SVGGElement, unknown, null, undefined>;
+  let polygon: D3Selection<SVGGElement> | Awaited<ReturnType<typeof insertPolygonShape>>;
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const pathData = createHexagonPathD(0, 0, w, h, m);
@@ -87,4 +88,4 @@ export const hexagon = async (parent: SVGAElement, node: Node): Promise<SVGAElem
   };
 
   return shapeSvg;
-};
+}

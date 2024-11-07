@@ -1,13 +1,18 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.ts';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
 /// Width of the frame on the left of the shape
 const FRAME_WIDTH = 8;
 
-export const shadedProcess = async (parent: SVGAElement, node: Node) => {
+export async function shadedProcess<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
 
@@ -33,6 +38,7 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
   const y = -totalHeight / 2;
 
   const { cssStyles } = node;
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
@@ -58,7 +64,7 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
 
   const rect = shapeSvg.insert(() => roughNode, ':first-child');
 
-  rect.attr('class', 'basic label-container').attr('style', cssStyles);
+  rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
 
   if (nodeStyles && node.look !== 'handDrawn') {
     rect.selectAll('path').attr('style', nodeStyles);
@@ -75,4 +81,4 @@ export const shadedProcess = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}
