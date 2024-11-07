@@ -1,0 +1,26 @@
+flowchart TD
+    A["Bioinsecticida en el Local"] --> B["1. Exhibición y Posicionamiento"]
+    B --> C["Producto colocado en zonas estratégicas"]
+    B --> D["Empaque y etiquetado atractivo"]
+    B --> E["Materiales visuales: carteles y folletos"]
+    
+    A --> F["2. Capacitación y Preparación del Personal"]
+    F --> G["Capacitación sobre producto y beneficios"]
+    F --> H["Técnicas de venta y respuestas a preguntas"]
+    
+    A --> I["3. Atención y Asesoramiento al Cliente"]
+    I --> J["Información detallada sobre el producto"]
+    I --> K["Diferenciación de pesticidas convencionales"]
+    I --> L["Ofrecimiento de muestras y promociones"]
+    
+    A --> M["4. Gestión y Registro de Ventas"]
+    M --> N["Control de inventario y pedidos"]
+    M --> O["Registro de datos de clientes"]
+    
+    A --> P["5. Seguimiento Post-Venta y Fidelización"]
+    P --> Q["Verificación de satisfacción del cliente"]
+    P --> R["Promociones de fidelización y recompra"]
+    
+    A --> S["6. Retroalimentación y Análisis de Ventas"]
+    S --> T["Encuestas y retroalimentación del cliente"]
+    S --> U["Análisis de datos para ajustes estratégicos"]
