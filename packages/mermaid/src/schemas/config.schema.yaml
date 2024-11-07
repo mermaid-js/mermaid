@@ -48,6 +48,7 @@ required:
   - requirement
   - architecture
   - mindmap
+  - kanban
   - gitGraph
   - c4
   - sankey
@@ -283,6 +284,8 @@ properties:
     $ref: '#/$defs/ArchitectureDiagramConfig'
   mindmap:
     $ref: '#/$defs/MindmapDiagramConfig'
+  kanban:
+    $ref: '#/$defs/KanbanDiagramConfig'
   gitGraph:
     $ref: '#/$defs/GitGraphDiagramConfig'
   c4:
@@ -968,6 +971,23 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         default: 200
 
+  KanbanDiagramConfig:
+    title: Kanban Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for kanban diagrams
+    type: object
+    unevaluatedProperties: false
+    properties:
+      padding:
+        type: number
+        default: 8
+      sectionWidth:
+        type: number
+        default: 200
+      ticketBaseUrl:
+        type: string
+        default: ''
+
   PieDiagramConfig:
     title: Pie Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -1436,6 +1456,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       diagramPadding:
         $ref: '#/$defs/ErDiagramConfig/properties/diagramPadding'
       htmlLabels:
+        type: boolean
+        default: false
+      hideEmptyMembersBox:
         type: boolean
         default: false
 
