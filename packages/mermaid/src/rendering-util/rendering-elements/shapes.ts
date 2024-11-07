@@ -490,4 +490,8 @@ const generateShapeMap = () => {
 
 export const shapes = generateShapeMap();
 
+export function isValidShape(shape: string): shape is ShapeID {
+  return shape in shapes;
+}
+
 export type ShapeID = keyof typeof shapes;
