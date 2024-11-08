@@ -1,6 +1,6 @@
-import { configureSvgSize } from '$root/setupGraphViewbox.js';
-import type { SVG } from '$root/diagram-api/types.js';
-import { log } from '$root/logger.js';
+import { configureSvgSize } from '../setupGraphViewbox.js';
+import type { SVG } from '../diagram-api/types.js';
+import { log } from '../logger.js';
 
 export const setupViewPortForSVG = (
   svg: SVG,

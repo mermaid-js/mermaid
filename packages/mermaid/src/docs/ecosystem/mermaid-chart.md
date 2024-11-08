@@ -16,17 +16,20 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
 
 - **Editor** - A web based editor for creating and editing Mermaid diagrams.
 
-- **Visual Editor** - The Visual Editor enables users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
+- **Mermaid AI** - Use our embedded AI Chat to generate diagrams from natural language descriptions.
 
-- **AI Chat** - Use our embedded AI Chat to generate diagrams from natural language descriptions.
+- **Whiteboard** - A virtual whiteboard for creating and editing Mermaid diagrams.
 
 - **Plugins** - A plugin system for extending the functionality of Mermaid.
 
   Official Mermaid Chart plugins:
 
   - [Mermaid Chart GPT](https://chat.openai.com/g/g-1IRFKwq4G-mermaid-chart)
+  - [Confluence](https://marketplace.atlassian.com/apps/1234056/mermaid-chart-for-confluence?hosting=cloud&tab=overview)
+  - [Jira](https://marketplace.atlassian.com/apps/1234810/mermaid-chart-for-jira?tab=overview&hosting=cloud)
   - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart)
   - [JetBrains IDE](https://plugins.jetbrains.com/plugin/23043-mermaid-chart)
+  - [Google Docs](https://gsuite.google.com/marketplace/app/mermaidchart/947683068472)
   - [Microsoft PowerPoint and Word](https://appsource.microsoft.com/en-us/product/office/WA200006214?tab=Overview)
 
   Visit our [Plugins](https://www.mermaidchart.com/plugins) page for more information.

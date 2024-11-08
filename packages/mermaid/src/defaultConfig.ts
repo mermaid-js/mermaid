@@ -21,8 +21,9 @@ const config: RequiredDeep<MermaidConfig> = {
   // TODO: Should we replace these with `null` so that they can go in the JSON Schema?
   deterministicIDSeed: undefined,
   elk: {
+    // mergeEdges is needed here to be considered
     mergeEdges: false,
-    nodePlacementStrategy: 'SIMPLE',
+    nodePlacementStrategy: 'BRANDES_KOEPF',
   },
   themeCSS: undefined,
 
@@ -51,6 +52,9 @@ const config: RequiredDeep<MermaidConfig> = {
         fontWeight: this.actorFontWeight,
       };
     },
+  },
+  class: {
+    hideEmptyMembersBox: false,
   },
   gantt: {
     ...defaultConfigJson.gantt,

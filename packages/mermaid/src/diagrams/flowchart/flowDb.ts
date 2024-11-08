@@ -2,8 +2,10 @@ import { select } from 'd3';
 import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
+import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
+import * as yaml from 'js-yaml';
 import {
   setAccTitle,
   getAccTitle,
@@ -13,7 +15,16 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
+import type {
+  FlowVertex,
+  FlowClass,
+  FlowSubGraph,
+  FlowText,
+  FlowEdge,
+  FlowLink,
+  FlowVertexTypeParam,
+} from './types.js';
+import type { NodeMetaData } from '../../types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -51,17 +62,18 @@ export const lookUpDomId = function (id: string) {
 
 /**
  * Function called by parser when a node definition has been found
- *
  */
 export const addVertex = function (
   id: string,
   textObj: FlowText,
-  type: 'group',
+  type: FlowVertexTypeParam,
   style: string[],
   classes: string[],
   dir: string,
-  props = {}
+  props = {},
+  shapeData: any
 ) {
+  // console.log('addVertex', id, shapeData);
   if (!id || id.trim().length === 0) {
     return;
   }
@@ -114,6 +126,60 @@ export const addVertex = function (
     vertex.props = props;
   } else if (props !== undefined) {
     Object.assign(vertex.props, props);
+  }
+
+  if (shapeData !== undefined) {
+    let yamlData;
+    // detect if shapeData contains a newline character
+    // console.log('shapeData', shapeData);
+    if (!shapeData.includes('\n')) {
+      // console.log('yamlData shapeData has no new lines', shapeData);
+      yamlData = '{\n' + shapeData + '\n}';
+    } else {
+      // console.log('yamlData shapeData has new lines', shapeData);
+      yamlData = shapeData + '\n';
+    }
+    // console.log('yamlData', yamlData);
+    const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+    if (doc.shape) {
+      if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
+        throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
+      } else if (!isValidShape(doc.shape)) {
+        throw new Error(`No such shape: ${doc.shape}.`);
+      }
+      vertex.type = doc?.shape;
+    }
+
+    if (doc?.label) {
+      vertex.text = doc?.label;
+    }
+    if (doc?.icon) {
+      vertex.icon = doc?.icon;
+      if (!doc.label?.trim() && vertex.text === id) {
+        vertex.text = '';
+      }
+    }
+    if (doc?.form) {
+      vertex.form = doc?.form;
+    }
+    if (doc?.pos) {
+      vertex.pos = doc?.pos;
+    }
+    if (doc?.img) {
+      vertex.img = doc?.img;
+      if (!doc.label?.trim() && vertex.text === id) {
+        vertex.text = '';
+      }
+    }
+    if (doc?.constraint) {
+      vertex.constraint = doc.constraint;
+    }
+    if (doc.w) {
+      vertex.assetWidth = Number(doc.w);
+    }
+    if (doc.h) {
+      vertex.assetHeight = Number(doc.h);
+    }
   }
 };
 
@@ -425,7 +491,6 @@ const setupToolTips = function (element: Element) {
       }
       const rect = (this as Element)?.getBoundingClientRect();
 
-      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
         .text(el.attr('title'))
@@ -435,7 +500,6 @@ const setupToolTips = function (element: Element) {
       el.classed('hover', true);
     })
     .on('mouseout', function () {
-      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(500).style('opacity', 0);
       const el = select(this);
       el.classed('hover', false);
@@ -761,15 +825,34 @@ export const lex = {
   firstGraph,
 };
 
-const getTypeFromVertex = (vertex: FlowVertex) => {
-  if (vertex.type === 'square') {
-    return 'squareRect';
+const getTypeFromVertex = (vertex: FlowVertex): ShapeID => {
+  if (vertex.img) {
+    return 'imageSquare';
   }
-  if (vertex.type === 'round') {
-    return 'roundedRect';
+  if (vertex.icon) {
+    if (vertex.form === 'circle') {
+      return 'iconCircle';
+    }
+    if (vertex.form === 'square') {
+      return 'iconSquare';
+    }
+    if (vertex.form === 'rounded') {
+      return 'iconRounded';
+    }
+    return 'icon';
   }
-
-  return vertex.type ?? 'squareRect';
+  switch (vertex.type) {
+    case 'square':
+    case undefined:
+      return 'squareRect';
+    case 'round':
+      return 'roundedRect';
+    case 'ellipse':
+      // @ts-expect-error -- Ellipses are broken, see https://github.com/mermaid-js/mermaid/issues/5976
+      return 'ellipse';
+    default:
+      return vertex.type;
+  }
 };
 
 const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
@@ -810,7 +893,7 @@ const addNodeFromVertex = (
     node.cssCompiledStyles = getCompiledStyles(vertex.classes);
     node.cssClasses = vertex.classes.join(' ');
   } else {
-    nodes.push({
+    const baseNode = {
       id: vertex.id,
       label: vertex.text,
       labelStyle: '',
@@ -819,15 +902,32 @@ const addNodeFromVertex = (
       cssStyles: vertex.styles,
       cssCompiledStyles: getCompiledStyles(['default', 'node', ...vertex.classes]),
       cssClasses: 'default ' + vertex.classes.join(' '),
-      shape: getTypeFromVertex(vertex),
       dir: vertex.dir,
       domId: vertex.domId,
-      isGroup,
       look,
       link: vertex.link,
       linkTarget: vertex.linkTarget,
       tooltip: getTooltip(vertex.id),
-    });
+      icon: vertex.icon,
+      pos: vertex.pos,
+      img: vertex.img,
+      assetWidth: vertex.assetWidth,
+      assetHeight: vertex.assetHeight,
+      constraint: vertex.constraint,
+    };
+    if (isGroup) {
+      nodes.push({
+        ...baseNode,
+        isGroup: true,
+        shape: 'rect',
+      });
+    } else {
+      nodes.push({
+        ...baseNode,
+        isGroup: false,
+        shape: getTypeFromVertex(vertex),
+      });
+    }
   }
 };
 

@@ -1131,7 +1131,7 @@ const shapes = {
 
 let nodeElems = {};
 
-export const insertNode = async (elem, node, dir) => {
+export const insertNode = async (elem, node, renderOptions) => {
   let newEl;
   let el;
 
@@ -1144,9 +1144,9 @@ export const insertNode = async (elem, node, dir) => {
       target = node.linkTarget || '_blank';
     }
     newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
-    el = await shapes[node.shape](newEl, node, dir);
+    el = await shapes[node.shape](newEl, node, renderOptions);
   } else {
-    el = await shapes[node.shape](elem, node, dir);
+    el = await shapes[node.shape](elem, node, renderOptions);
     newEl = el;
   }
   if (node.tooltip) {

@@ -1,4 +1,4 @@
-import { vi, it, expect, describe, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -66,8 +66,8 @@ vi.mock('stylis', () => {
 });
 
 import { compile, serialize } from 'stylis';
-import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
+import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 
 /**
@@ -693,18 +693,79 @@ describe('mermaidAPI', () => {
       await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
         .toMatchInlineSnapshot(`
         {
+          "config": {},
           "diagramType": "flowchart-v2",
         }
       `);
     });
+    it('returns config when defined in frontmatter', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  theme: base
+  flowchart:
+    htmlLabels: true
+---
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "flowchart": {
+        "htmlLabels": true,
+      },
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
+    it('returns config when defined in directive', async () => {
+      await expect(
+        mermaidAPI.parse(`%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
+    it('returns merged config when defined in frontmatter and directive', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  theme: forest
+  flowchart:
+    htmlLabels: true
+---
+%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "flowchart": {
+        "htmlLabels": true,
+      },
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
     it('returns true for valid definition with silent option', async () => {
       await expect(
         mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
       ).resolves.toMatchInlineSnapshot(`
-        {
-          "diagramType": "flowchart-v2",
-        }
-      `);
+          {
+            "config": {},
+            "diagramType": "flowchart-v2",
+          }
+        `);
     });
   });
 
@@ -718,7 +779,7 @@ describe('mermaidAPI', () => {
     // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different than was is put in the diagram text (ex: in -v2 diagrams)
     const diagramTypesAndExpectations = [
       { textDiagramType: 'C4Context', expectedType: 'c4' },
-      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
+      { textDiagramType: 'classDiagram', expectedType: 'class' },
       { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
       { textDiagramType: 'erDiagram', expectedType: 'er' },
       { textDiagramType: 'graph', expectedType: 'flowchart-v2' },

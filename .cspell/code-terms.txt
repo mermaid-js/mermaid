@@ -26,6 +26,7 @@ concat
 controlx
 controly
 CSSCLASS
+curv
 CYLINDEREND
 CYLINDERSTART
 DAGA

@@ -61,6 +61,7 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <string>[^"]*                   return "STR";
 <*>["]                          this.begin("string");
 "style"                         return 'STYLE';
+"classDef"                      return 'CLASSDEF';
 
 <INITIAL,namespace>"namespace"  { this.begin('namespace'); return 'NAMESPACE'; }
 <namespace>\s*(\r?\n)+          { this.popState(); return 'NEWLINE'; }
@@ -241,11 +242,13 @@ classLabel
 
 namespaceName
     : alphaNumToken { $$=$1; }
+    | alphaNumToken DOT namespaceName { $$=$1+'.'+$3; }
     | alphaNumToken namespaceName { $$=$1+$2; }
     ;
 
 className
     : alphaNumToken { $$=$1; }
+    | alphaNumToken DOT className { $$=$1+'.'+$3; }
     | classLiteralName { $$=$1; }
     | alphaNumToken className { $$=$1+$2; }
     | alphaNumToken GENERICTYPE { $$=$1+'~'+$2+'~'; }
@@ -263,6 +266,7 @@ statement
     | styleStatement
     | cssClassStatement
     | noteStatement
+    | classDefStatement
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -270,12 +274,12 @@ statement
     ;
 
 namespaceStatement
-    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          {yy.addClassesToNamespace($1, $3[0], $3[1]);}
-    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  {yy.addClassesToNamespace($1, $4[0], $4[1]);}
+    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          { yy.addClassesToNamespace($1, $3[0], $3[1]); }
+    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  { yy.addClassesToNamespace($1, $4[0], $4[1]); }
     ;
 
 namespaceIdentifier
-    : NAMESPACE namespaceName   {$$=$2; yy.addNamespace($2);}
+    : NAMESPACE namespaceName { $$=$2; yy.addNamespace($2); }
     ;
 
 classStatements
@@ -323,8 +327,17 @@ relationStatement
     ;
 
 noteStatement
-    : NOTE_FOR className noteText  { $$=yy.addNote($3, $2); }
-    | NOTE noteText                { $$=yy.addNote($2); }
+    : NOTE_FOR className noteText  { $$ = yy.addNote($3, $2); }
+    | NOTE noteText                { $$ = yy.addNote($2); }
+    ;
+
+classDefStatement
+    : CLASSDEF classList stylesOpt {$$ = $CLASSDEF;yy.defineClass($classList,$stylesOpt);}
+    ;
+
+classList
+    : ALPHA { $$ = [$ALPHA]; }
+    | classList COMMA ALPHA = { $$ = $classList.concat([$ALPHA]); }
     ;
 
 direction

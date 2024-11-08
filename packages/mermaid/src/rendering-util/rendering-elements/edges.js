@@ -1,10 +1,10 @@
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import { evaluate } from '$root/diagrams/common/common.js';
-import { log } from '$root/logger.js';
-import { createText } from '$root/rendering-util/createText.ts';
-import utils from '$root/utils.js';
-import { getLineFunctionsWithOffset } from '$root/utils/lineWithOffset.js';
-import { getSubGraphTitleMargins } from '$root/utils/subGraphTitleMargins.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { evaluate } from '../../diagrams/common/common.js';
+import { log } from '../../logger.js';
+import { createText } from '../createText.js';
+import utils from '../../utils.js';
+import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
+import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 import { curveBasis, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
@@ -463,15 +463,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   lineData = fixCorners(lineData);
-  let lastPoint = lineData[lineData.length - 1];
-  if (lineData.length > 1) {
-    lastPoint = lineData[lineData.length - 1];
-    const secondLastPoint = lineData[lineData.length - 2];
-    const diffX = (lastPoint.x - secondLastPoint.x) / 2;
-    const diffY = (lastPoint.y - secondLastPoint.y) / 2;
-    const midPoint = { x: secondLastPoint.x + diffX, y: secondLastPoint.y + diffY };
-    lineData.splice(-1, 0, midPoint);
-  }
   let curve = curveBasis;
   if (edge.curve) {
     curve = edge.curve;

@@ -155,6 +155,9 @@ end
 box rgb(33,66,99)
 ... actors ...
 end
+box rgba(33,66,99,0.5)
+... actors ...
+end
 ```
 
 > **Note**
@@ -217,7 +220,7 @@ There are ten types of arrows currently supported:
 | `<<->>`  | Solid line with bidirectional arrowheads (v11.0.0+)  |
 | `<<-->>` | Dotted line with bidirectional arrowheads (v11.0.0+) |
 | `-x`     | Solid line with a cross at the end                   |
-| `--x`    | Dotted line with a cross at the end.                 |
+| `--x`    | Dotted line with a cross at the end                  |
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
 
@@ -579,6 +582,12 @@ sequenceDiagram
 ## Background Highlighting
 
 It is possible to highlight flows by providing colored background rects. This is done by the notation
+
+```
+rect COLOR
+... content ...
+end
+```
 
 The colors are defined using rgb and rgba syntax.
 

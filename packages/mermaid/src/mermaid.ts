@@ -2,7 +2,7 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import { registerIconPacks } from '$root/rendering-util/icons.js';
+import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';

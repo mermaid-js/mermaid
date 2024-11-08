@@ -39,7 +39,7 @@ bindFunctions?.(div); // To call bindFunctions only if it's present.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:73](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L73)
+[packages/mermaid/src/types.ts:98](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L98)
 
 ---
 
@@ -51,7 +51,7 @@ The diagram type, e.g. 'flowchart', 'sequence', etc.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:63](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L63)
+[packages/mermaid/src/types.ts:88](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L88)
 
 ---
 
@@ -63,4 +63,4 @@ The svg code for the rendered graph.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:59](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L59)
+[packages/mermaid/src/types.ts:84](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L84)

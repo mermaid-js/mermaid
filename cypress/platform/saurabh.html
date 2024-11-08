@@ -1,0 +1,174 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background: #333; */
+        font-family: 'Arial';
+        /* font-size: 18px !important; */
+      }
+
+      h1 {
+        color: grey;
+      }
+
+      .mermaid2 {
+        display: none;
+      }
+
+      .mermaid svg {
+        /* font-size: 18px !important; */
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
+      }
+    </style>
+  </head>
+
+  <body style="display: flex; gap: 2rem; flex-direction: row">
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+      A@{ icon: "fa:window-minimize", form: circle }
+      E@{ icon: "fa:window-minimize", form: circle }
+      B@{ icon: "fa:bell", form: circle }
+      B2@{ icon: "fa:bell", form: circle }
+      C@{ icon: "fa:address-book",  form: square  }
+      D@{ icon: "fa:star-half",  form: square  }
+      A --> E
+      B --> B2
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+      flowchart TB
+       A --test2--> B2@{ icon: "fa:bell", form: "rounded", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }
+       B2 --test--> C
+       D --> B2 --> E
+       style B2 fill:#f9f,stroke:#333,stroke-width:4px
+  </pre
+    >
+    <pre id="diagram43" class="mermaid2">
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", form: "square", label: "B2", pos: "t", h: 40, w: 30 }
+       B2 --test--> C
+       D --> B2 --> E
+  </pre
+    >
+    <pre id="diagram4" class="mermaid2">
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", label: "B2 awiugdawu uydgayuiwd wuydguy", pos: "b", h: 40, w: 30 }
+       B2 --test--> C
+  </pre
+    >
+    <pre id="diagram43" class="mermaid2">
+      flowchart BT
+       A --test2--> B2@{ icon: "fa:bell", label: "B2 dawuygd ayuwgd uy", pos: "t", h: 40, w: 30 }
+       B2 --test--> C
+  </pre
+    >
+    <pre id="diagram6" class="mermaid2">
+      flowchart TB
+       A --> B2@{ icon: "fa:bell", form: "circle", label: "test augfuyfavf ydvaubfuac", pos: "t", w: 200, h: 100 } --> C
+  </pre
+    >
+    <pre id="diagram6" class="mermaid2">
+      flowchart TB
+       A --> B2@{ icon: "fa:bell", form: "circle", label: "test augfuyfavf ydvaubfuac", pos: "b", w: 200, h: 100 } --> C
+       D --> B2 --> E
+  </pre
+    >
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/fa6-solid/icons.json').then((res) => res.json()),
+        },
+      ]);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
+      mermaid.initialize({
+        // theme: 'base',
+        // handdrawnSeed: 12,
+        look: 'classic',
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        // 'elk.nodePlacement.strategy': 'SIMPLE',
+        // 'elk.nodePlacement.strategy': 'LAYERED',
+        // 'elk.mergeEdges': true,
+        // layout: 'dagre',
+        // layout: 'elk',
+        // layout: 'fixed',
+        // htmlLabels: false,
+        flowchart: { titleTopMargin: 10, padding: 0, htmlLabels: true },
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        fontFamily: 'courier',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        themeVariables: {
+          fontSize: 50,
+          fontFamily: 'courier',
+        },
+        logLevel: 0,
+        securityLevel: 'loose',
+      });
+      function callback() {
+        alert('It worked');
+      }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+</html>

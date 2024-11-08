@@ -1,5 +1,5 @@
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import type { Node } from '../../types.js';
 
 // Striped fill like start or fork nodes in state diagrams
 export const solidStateFill = (color: string) => {
@@ -97,9 +97,11 @@ export const userNodeOverrides = (node: Node, options: any) => {
       fill: stylesMap.get('fill') || mainBkg,
       fillStyle: 'hachure', // solid fill
       fillWeight: 4,
+      hachureGap: 5.2,
       stroke: stylesMap.get('stroke') || nodeBorder,
       seed: handDrawnSeed,
-      strokeWidth: 1.3,
+      strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1.3,
+      fillLineDash: [0, 0],
     },
     options
   );

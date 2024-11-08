@@ -3,6 +3,21 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
+type Node = LayoutData['nodes'][number];
+
+interface LabelData {
+  width: number;
+  height: number;
+  wrappingWidth?: number;
+  labelNode?: SVGGElement | null;
+}
+
+interface NodeWithVertex extends Omit<Node, 'domId'> {
+  children?: unknown[];
+  labelData?: LabelData;
+  domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
+}
+
 export const render = async (
   data4Layout: LayoutData,
   svg: SVG,
@@ -24,33 +39,44 @@ export const render = async (
   const nodeDb: Record<string, any> = {};
   const clusterDb: Record<string, any> = {};
 
-  const addVertex = async (nodeEl: any, graph: { children: any[] }, nodeArr: any, node: any) => {
-    const labelData: any = { width: 0, height: 0 };
+  const addVertex = async (
+    nodeEl: SVGGroup,
+    graph: { children: NodeWithVertex[] },
+    nodeArr: Node[],
+    node: Node
+  ) => {
+    const labelData: LabelData = { width: 0, height: 0 };
 
-    let boundingBox;
-    const child = {
-      ...node,
-    };
-    graph.children.push(child);
-    nodeDb[node.id] = child;
+    const config = getConfig();
 
     // Add the element to the DOM
     if (!node.isGroup) {
-      const childNodeEl = await insertNode(nodeEl, node, node.dir);
-      boundingBox = childNodeEl.node().getBBox();
+      const child: NodeWithVertex = {
+        ...node,
+      };
+      graph.children.push(child);
+      nodeDb[node.id] = child;
+
+      const childNodeEl = await insertNode(nodeEl, node, { config, dir: node.dir });
+      const boundingBox = childNodeEl.node()!.getBBox();
       child.domId = childNodeEl;
       child.width = boundingBox.width;
       child.height = boundingBox.height;
     } else {
       // A subgraph
-      child.children = [];
+      const child: NodeWithVertex & { children: NodeWithVertex[] } = {
+        ...node,
+        children: [],
+      };
+      graph.children.push(child);
+      nodeDb[node.id] = child;
       await addVertices(nodeEl, nodeArr, child, node.id);
 
       if (node.label) {
         // @ts-ignore TODO: fix this
         const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
         labelData.width = bbox.width;
-        labelData.wrappingWidth = getConfig().flowchart!.wrappingWidth;
+        labelData.wrappingWidth = config.flowchart!.wrappingWidth;
         // Give some padding for elk
         labelData.height = bbox.height - 2;
         labelData.labelNode = shapeSvg.node();
@@ -67,28 +93,16 @@ export const render = async (
   };
 
   const addVertices = async function (
-    nodeEl: any,
-    nodeArr: any[],
-    graph: {
-      id: string;
-      layoutOptions: {
-        'elk.hierarchyHandling': string;
-        'elk.algorithm': any;
-        'nodePlacement.strategy': any;
-        'elk.layered.mergeEdges': any;
-        'elk.direction': string;
-        'spacing.baseValue': number;
-      };
-      children: never[];
-      edges: never[];
-    },
-    parentId?: undefined
+    nodeEl: SVGGroup,
+    nodeArr: Node[],
+    graph: { children: NodeWithVertex[] },
+    parentId?: string
   ) {
-    const siblings = nodeArr.filter((node: { parentId: any }) => node.parentId === parentId);
+    const siblings = nodeArr.filter((node) => node?.parentId === parentId);
     log.info('addVertices APA12', siblings, parentId);
     // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
     await Promise.all(
-      siblings.map(async (node: any) => {
+      siblings.map(async (node) => {
         await addVertex(nodeEl, graph, nodeArr, node);
       })
     );
@@ -135,6 +149,7 @@ export const render = async (
             const clusterNode = JSON.parse(JSON.stringify(node));
             clusterNode.x = node.offset.posX + node.width / 2;
             clusterNode.y = node.offset.posY + node.height / 2;
+            clusterNode.width = Math.max(clusterNode.width, node.labelData.width);
             await insertCluster(subgraphEl, clusterNode);
 
             log.debug('Id (UIO)= ', node.id, node.width, node.shape, node.labels);
@@ -224,7 +239,7 @@ export const render = async (
    * Add edges to graph based on parsed graph definition
    */
   const addEdges = async function (
-    dataForLayout: { edges: any; direction: string },
+    dataForLayout: { edges: any; direction?: string },
     graph: {
       id?: string;
       layoutOptions?: {
@@ -261,6 +276,8 @@ export const render = async (
         interpolate: undefined;
         style: undefined;
         labelType: any;
+        startLabelRight?: string;
+        endLabelLeft?: string;
       }) {
         // Identify Link
         const linkIdBase = edge.id; // 'L-' + edge.start + '-' + edge.end;
@@ -313,6 +330,9 @@ export const render = async (
 
         let style = '';
         let labelStyle = '';
+
+        edgeData.startLabelRight = edge.startLabelRight;
+        edgeData.endLabelLeft = edge.endLabelLeft;
 
         switch (edge.stroke) {
           case 'normal':
@@ -749,12 +769,12 @@ export const render = async (
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config.elk.nodePlacementStrategy,
-      'elk.layered.mergeEdges': data4Layout.config.elk.mergeEdges,
+      'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+      'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
       'spacing.baseValue': 35,
       'elk.layered.unnecessaryBendpoints': true,
-      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk.cycleBreakingStrategy,
+      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
       // 'spacing.nodeNode': 20,
       // 'spacing.nodeNodeBetweenLayers': 25,
       // 'spacing.edgeNode': 20,
@@ -837,8 +857,8 @@ export const render = async (
           ...node.layoutOptions,
           'elk.algorithm': algorithm,
           'elk.direction': dir2ElkDirection(node.dir),
-          'nodePlacement.strategy': data4Layout.config['elk.nodePlacement.strategy'],
-          'elk.layered.mergeEdges': data4Layout.config['elk.mergeEdges'],
+          'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+          'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
           'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
         };
       }

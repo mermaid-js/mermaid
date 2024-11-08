@@ -5,12 +5,14 @@ bmatrix
 braintree
 catmull
 compositTitleSize
+curv
 doublecircle
 elems
 gantt
 gitgraph
 gzipped
 handDrawn
+kanban
 knsv
 Knut
 marginx
@@ -24,6 +26,7 @@ multigraph
 nodesep
 NOTEGROUP
 Pinterest
+procs
 rankdir
 ranksep
 rect

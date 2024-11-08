@@ -786,7 +786,7 @@ A ~~~ B
       `---
       title: Subgraph nodeSpacing and rankSpacing example
       config:
-        flowchart: 
+        flowchart:
           nodeSpacing: 250
           rankSpacing: 250
       ---
@@ -1046,6 +1046,29 @@ end
           end
           A --lb3--> TOP --lb4--> B
           B1 --lb5--> B2
+        `,
+        {
+          flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } },
+        }
+      );
+    });
+    it('Should render self-loops', () => {
+      imgSnapshotTest(
+        `flowchart
+          A --> A
+          subgraph B
+            B1 --> B1
+          end
+          subgraph C
+            subgraph C1
+              C2 --> C2
+              subgraph D
+                D1 --> D1
+              end
+              D --> D
+            end
+            C1 --> C1
+          end
         `,
         {
           flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } },

@@ -1,4 +1,4 @@
-import { registerIconPacks } from '$root/rendering-util/icons.js';
+import { registerIconPacks } from '../../rendering-util/icons.js';
 import type { Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
 import type { FcoseLayoutOptions } from 'cytoscape-fcose';

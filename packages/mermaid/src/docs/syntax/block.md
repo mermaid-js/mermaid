@@ -106,7 +106,7 @@ block-beta
   a["A label"] b:2 c:2 d
 ```
 
-In this example, the block labeled "A wide one" spans two columns, while blocks 'b', 'c', and 'd' are allocated their own columns. This flexibility in block sizing is crucial for accurately representing systems with components of varying significance or size.
+In this example, the block labeled "A labels" spans one column, while blocks 'b', 'c' span 2 columns, and 'd' is again allocated its own column. This flexibility in block sizing is crucial for accurately representing systems with components of varying significance or size.
 
 ### Creating Composite Blocks
 
@@ -152,6 +152,19 @@ block-beta
 ```
 
 This example demonstrates how Mermaid dynamically adjusts the width of the columns to accommodate the widest block, in this case, 'a' and the composite block 'e'. This dynamic adjustment is essential for creating visually balanced and easy-to-understand diagrams.
+
+**Merging Blocks Horizontally:**
+In scenarios where you need to stack blocks horizontally, you can use column width to accomplish the task. Blocks can be arranged vertically by putting them in a single column. Here is how you can create a block diagram in which 4 blocks are stacked on top of each other:
+
+```mermaid-example
+block-beta
+  block
+    columns 1
+    a["A label"] b c d
+  end
+```
+
+In this example, the width of the merged block dynamically adjusts to the width of the largest child block.
 
 With these advanced configuration options, Mermaid's block diagrams can be tailored to represent a wide array of complex systems and structures. The flexibility offered by these features enables users to create diagrams that are both informative and visually appealing. In the following sections, we will explore further capabilities, including different block shapes and linking options.
 

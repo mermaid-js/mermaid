@@ -10,6 +10,18 @@
 
 ## Properties
 
+### config
+
+• **config**: [`MermaidConfig`](mermaid.MermaidConfig.md)
+
+The config passed as YAML frontmatter or directives
+
+#### Defined in
+
+[packages/mermaid/src/types.ts:70](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L70)
+
+---
+
 ### diagramType
 
 • **diagramType**: `string`
@@ -18,4 +30,4 @@ The diagram type, e.g. 'flowchart', 'sequence', etc.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:50](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L50)
+[packages/mermaid/src/types.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L66)

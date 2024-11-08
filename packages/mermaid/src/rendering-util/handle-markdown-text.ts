@@ -39,6 +39,7 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
           lines.push([]);
         }
         textLine.split(' ').forEach((word) => {
+          word = word.replace(/&#39;/g, `'`);
           if (word) {
             lines[currentLine].push({ content: word, type: parentType });
           }
@@ -85,6 +86,8 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return '';
     } else if (node.type === 'html') {
       return `${node.text}`;
+    } else if (node.type === 'escape') {
+      return node.text;
     }
     return `Unsupported markdown: ${node.type}`;
   }

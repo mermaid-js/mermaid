@@ -3,16 +3,13 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "types": ["vitest/importMeta", "vitest/globals"],
-    "baseUrl": ".", // This must be set if "paths" is set
-    "paths": {
-      "$root/*": ["src/*"]
-    }
+    "types": ["vitest/importMeta", "vitest/globals"]
   },
   "include": [
     "./src/**/*.ts",
     "./package.json",
     "src/diagrams/gantt/ganttDb.js",
-    "src/diagrams/git/gitGraphRenderer.js"
+    "src/diagrams/git/gitGraphRenderer.js",
+    "src/diagrams/class/classRenderer.js"
   ]
 }

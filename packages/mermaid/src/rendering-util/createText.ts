@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
-import common, { hasKatex, renderKatex } from '$root/diagrams/common/common.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
+import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
 import type { SVGGroup } from '../diagram-api/types.js';
@@ -20,6 +20,11 @@ function applyStyle(dom, styleFn) {
 
 async function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
+  // This is not the final width but used in order to make sure the foreign
+  // object in firefox gets a width at all. The final width is fetched from the div
+  fo.attr('width', `${10 * width}px`);
+  fo.attr('height', `${10 * width}px`);
+
   const div = fo.append('xhtml:div');
   let label = node.label;
   if (node.label && hasKatex(node.label)) {
@@ -136,8 +141,8 @@ function createFormattedText(
     const bbox = textElement.node().getBBox();
     const padding = 2;
     bkg
-      .attr('x', -padding)
-      .attr('y', -padding)
+      .attr('x', bbox.x - padding)
+      .attr('y', bbox.y - padding)
       .attr('width', bbox.width + 2 * padding)
       .attr('height', bbox.height + 2 * padding);
 
@@ -199,9 +204,9 @@ export const createText = async (
     width = 200,
     addSvgBackground = false,
   } = {},
-  config: MermaidConfig
+  config?: MermaidConfig
 ) => {
-  log.info(
+  log.debug(
     'XYZ createText',
     text,
     style,

@@ -1,9 +1,8 @@
-import type { Selection } from 'd3';
-import { select } from 'd3';
+import { select, type Selection } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -21,13 +20,18 @@ import type {
   ClassMap,
   NamespaceMap,
   NamespaceNode,
+  StyleClass,
+  Interface,
 } from './classTypes.js';
+import type { Node, Edge } from '../../rendering-util/types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 
 let relations: ClassRelation[] = [];
 let classes = new Map<string, ClassNode>();
+const styleClasses = new Map<string, StyleClass>();
 let notes = new Map<string, ClassNote>();
+let interfaces: Interface[] = [];
 let classCounter = 0;
 let namespaces = new Map<string, NamespaceNode>();
 let namespaceCounter = 0;
@@ -58,6 +62,8 @@ export const setClassLabel = function (_id: string, label: string) {
 
   const { className } = splitClassNameAndType(id);
   classes.get(className)!.label = label;
+  classes.get(className)!.text =
+    `${label}${classes.get(className)!.type ? `<${classes.get(className)!.type}>` : ''}`;
 };
 
 /**
@@ -80,7 +86,9 @@ export const addClass = function (_id: string) {
     id: name,
     type: type,
     label: name,
-    cssClasses: [],
+    text: `${name}${type ? `&lt;${type}&gt;` : ''}`,
+    shape: 'classBox',
+    cssClasses: 'default',
     methods: [],
     members: [],
     annotations: [],
@@ -89,6 +97,16 @@ export const addClass = function (_id: string) {
   } as ClassNode);
 
   classCounter++;
+};
+
+const addInterface = function (label: string, classId: string) {
+  const classInterface: Interface = {
+    id: `interface${interfaces.length}`,
+    label,
+    classId,
+  };
+
+  interfaces.push(classInterface);
 };
 
 /**
@@ -108,7 +126,8 @@ export const lookUpDomId = function (_id: string): string {
 export const clear = function () {
   relations = [];
   classes = new Map();
-  notes = new Map();
+  notes = [];
+  interfaces = [];
   functions = [];
   functions.push(setupToolTips);
   namespaces = new Map();
@@ -138,19 +157,50 @@ export const getNotes = function () {
   return notes;
 };
 
-export const addRelation = function (relation: ClassRelation) {
-  log.debug('Adding relation: ' + JSON.stringify(relation));
-  addClass(relation.id1);
-  addClass(relation.id2);
+export const addRelation = function (classRelation: ClassRelation) {
+  log.debug('Adding relation: ' + JSON.stringify(classRelation));
+  // Due to relationType cannot just check if it is equal to 'none' or it complains, can fix this later
+  const invalidTypes = [
+    relationType.LOLLIPOP,
+    relationType.AGGREGATION,
+    relationType.COMPOSITION,
+    relationType.DEPENDENCY,
+    relationType.EXTENSION,
+  ];
 
-  relation.id1 = splitClassNameAndType(relation.id1).className;
-  relation.id2 = splitClassNameAndType(relation.id2).className;
+  if (
+    classRelation.relation.type1 === relationType.LOLLIPOP &&
+    !invalidTypes.includes(classRelation.relation.type2)
+  ) {
+    addClass(classRelation.id2);
+    addInterface(classRelation.id1, classRelation.id2);
+    classRelation.id1 = `interface${interfaces.length - 1}`;
+  } else if (
+    classRelation.relation.type2 === relationType.LOLLIPOP &&
+    !invalidTypes.includes(classRelation.relation.type1)
+  ) {
+    addClass(classRelation.id1);
+    addInterface(classRelation.id2, classRelation.id1);
+    classRelation.id2 = `interface${interfaces.length - 1}`;
+  } else {
+    addClass(classRelation.id1);
+    addClass(classRelation.id2);
+  }
 
-  relation.relationTitle1 = common.sanitizeText(relation.relationTitle1.trim(), getConfig());
+  classRelation.id1 = splitClassNameAndType(classRelation.id1).className;
+  classRelation.id2 = splitClassNameAndType(classRelation.id2).className;
 
-  relation.relationTitle2 = common.sanitizeText(relation.relationTitle2.trim(), getConfig());
+  classRelation.relationTitle1 = common.sanitizeText(
+    classRelation.relationTitle1.trim(),
+    getConfig()
+  );
 
-  relations.push(relation);
+  classRelation.relationTitle2 = common.sanitizeText(
+    classRelation.relationTitle2.trim(),
+    getConfig()
+  );
+
+  relations.push(classRelation);
 };
 
 /**
@@ -237,9 +287,35 @@ export const setCssClass = function (ids: string, className: string) {
     }
     const classNode = classes.get(id);
     if (classNode) {
-      classNode.cssClasses.push(className);
+      classNode.cssClasses += ' ' + className;
     }
   });
+};
+
+export const defineClass = function (ids: string[], style: string[]) {
+  for (const id of ids) {
+    let styleClass = styleClasses.get(id);
+    if (styleClass === undefined) {
+      styleClass = { id, styles: [], textStyles: [] };
+      styleClasses.set(id, styleClass);
+    }
+
+    if (style) {
+      style.forEach(function (s) {
+        if (/color/.exec(s)) {
+          const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
+          styleClass.textStyles.push(newStyle);
+        }
+        styleClass.styles.push(s);
+      });
+    }
+
+    classes.forEach((value) => {
+      if (value.cssClasses.includes(id)) {
+        value.styles.push(...style.flatMap((s) => s.split(',')));
+      }
+    });
+  }
 };
 
 /**
@@ -397,7 +473,6 @@ const setupToolTips = function (element: Element) {
       // @ts-ignore - getBoundingClientRect is not part of the d3 type definition
       const rect = this.getBoundingClientRect();
 
-      // @ts-expect-error - Incorrect types
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
         .text(el.attr('title'))
@@ -407,7 +482,6 @@ const setupToolTips = function (element: Element) {
       el.classed('hover', true);
     })
     .on('mouseout', function () {
-      // @ts-expect-error - Incorrect types
       tooltipElem.transition().duration(500).style('opacity', 0);
       const el = select(this);
       el.classed('hover', false);
@@ -493,6 +567,152 @@ export const setCssStyle = function (id: string, styles: string[]) {
   }
 };
 
+/**
+ * Gets the arrow marker for a type index
+ *
+ * @param type - The type to look for
+ * @returns The arrow marker
+ */
+function getArrowMarker(type: number) {
+  let marker;
+  switch (type) {
+    case 0:
+      marker = 'aggregation';
+      break;
+    case 1:
+      marker = 'extension';
+      break;
+    case 2:
+      marker = 'composition';
+      break;
+    case 3:
+      marker = 'dependency';
+      break;
+    case 4:
+      marker = 'lollipop';
+      break;
+    default:
+      marker = 'none';
+  }
+  return marker;
+}
+
+export const getData = () => {
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  const config = getConfig();
+
+  for (const namespaceKey of namespaces.keys()) {
+    const namespace = namespaces.get(namespaceKey);
+    if (namespace) {
+      const node: Node = {
+        id: namespace.id,
+        label: namespace.id,
+        isGroup: true,
+        padding: config.class!.padding ?? 16,
+        // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
+        shape: 'rect',
+        cssStyles: ['fill: none', 'stroke: black'],
+        look: config.look,
+      };
+      nodes.push(node);
+    }
+  }
+
+  for (const classKey of classes.keys()) {
+    const classNode = classes.get(classKey);
+    if (classNode) {
+      const node = classNode as unknown as Node;
+      node.parentId = classNode.parent;
+      node.look = config.look;
+      nodes.push(node);
+    }
+  }
+
+  let cnt = 0;
+  for (const note of notes) {
+    cnt++;
+    const noteNode: Node = {
+      id: note.id,
+      label: note.text,
+      isGroup: false,
+      shape: 'note',
+      padding: config.class!.padding ?? 6,
+      cssStyles: [
+        'text-align: left',
+        'white-space: nowrap',
+        `fill: ${config.themeVariables.noteBkgColor}`,
+        `stroke: ${config.themeVariables.noteBorderColor}`,
+      ],
+      look: config.look,
+    };
+    nodes.push(noteNode);
+
+    const noteClassId = classes.get(note.class)?.id ?? '';
+
+    if (noteClassId) {
+      const edge: Edge = {
+        id: `edgeNote${cnt}`,
+        start: note.id,
+        end: noteClassId,
+        type: 'normal',
+        thickness: 'normal',
+        classes: 'relation',
+        arrowTypeStart: 'none',
+        arrowTypeEnd: 'none',
+        arrowheadStyle: '',
+        labelStyle: [''],
+        style: ['fill: none'],
+        pattern: 'dotted',
+        look: config.look,
+      };
+      edges.push(edge);
+    }
+  }
+
+  for (const _interface of interfaces) {
+    const interfaceNode: Node = {
+      id: _interface.id,
+      label: _interface.label,
+      isGroup: false,
+      shape: 'rect',
+      cssStyles: ['opacity: 0;'],
+      look: config.look,
+    };
+    nodes.push(interfaceNode);
+  }
+
+  cnt = 0;
+  for (const classRelation of relations) {
+    cnt++;
+    const edge: Edge = {
+      id: getEdgeId(classRelation.id1, classRelation.id2, {
+        prefix: 'id',
+        counter: cnt,
+      }),
+      start: classRelation.id1,
+      end: classRelation.id2,
+      type: 'normal',
+      label: classRelation.title,
+      labelpos: 'c',
+      thickness: 'normal',
+      classes: 'relation',
+      arrowTypeStart: getArrowMarker(classRelation.relation.type1),
+      arrowTypeEnd: getArrowMarker(classRelation.relation.type2),
+      startLabelRight: classRelation.relationTitle1 === 'none' ? '' : classRelation.relationTitle1,
+      endLabelLeft: classRelation.relationTitle2 === 'none' ? '' : classRelation.relationTitle2,
+      arrowheadStyle: '',
+      labelStyle: ['display: inline-block'],
+      style: classRelation.style || '',
+      pattern: classRelation.relation.lineType == 1 ? 'dashed' : 'solid',
+      look: config.look,
+    };
+    edges.push(edge);
+  }
+
+  return { nodes, edges, other: {}, config, direction: getDirection() };
+};
+
 export default {
   setAccTitle,
   getAccTitle,
@@ -519,6 +739,7 @@ export default {
   relationType,
   setClickEvent,
   setCssClass,
+  defineClass,
   setLink,
   getTooltip,
   setTooltip,
@@ -531,4 +752,5 @@ export default {
   getNamespace,
   getNamespaces,
   setCssStyle,
+  getData,
 };
