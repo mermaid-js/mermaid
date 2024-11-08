@@ -950,8 +950,8 @@ const class_box = (parent, node) => {
     maxWidth = classTitleBBox.width;
   }
   const classAttributes = [];
-  node.classData.members.forEach((member) => {
-    const parsedInfo = member.getDisplayDetails();
+  node.classData.attributes.forEach((attribute) => {
+    const parsedInfo = attribute.getDisplayDetails();
     let parsedText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
       parsedText = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -984,8 +984,8 @@ const class_box = (parent, node) => {
   maxHeight += lineHeight;
 
   const classMethods = [];
-  node.classData.methods.forEach((member) => {
-    const parsedInfo = member.getDisplayDetails();
+  node.classData.methods.forEach((method) => {
+    const parsedInfo = method.getDisplayDetails();
     let displayText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
       displayText = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -1059,9 +1059,9 @@ const class_box = (parent, node) => {
         ((-1 * maxHeight) / 2 + verticalPos + lineHeight / 2) +
         ')'
     );
-    //get the height of the bounding box of each member if exists
-    const memberBBox = lbl?.getBBox();
-    verticalPos += (memberBBox?.height ?? 0) + rowPadding;
+    //get the height of the bounding box of each attribute if exists
+    const fieldBBox = lbl?.getBBox();
+    verticalPos += (fieldBBox?.height ?? 0) + rowPadding;
   });
 
   verticalPos += lineHeight;
@@ -1079,8 +1079,8 @@ const class_box = (parent, node) => {
       'transform',
       'translate( ' + -maxWidth / 2 + ', ' + ((-1 * maxHeight) / 2 + verticalPos) + ')'
     );
-    const memberBBox = lbl?.getBBox();
-    verticalPos += (memberBBox?.height ?? 0) + rowPadding;
+    const methodBBox = lbl?.getBBox();
+    verticalPos += (methodBBox?.height ?? 0) + rowPadding;
   });
 
   rect

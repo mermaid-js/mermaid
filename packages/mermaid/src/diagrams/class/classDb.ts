@@ -40,30 +40,18 @@ let functions: any[] = [];
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
-const splitClassNameAndType = function (_id: string) {
-  const id = common.sanitizeText(_id, getConfig());
+const splitClassIdAndType = function (_id: string) {
+  const id = sanitizeText(_id);
   let genericType = '';
-  let className = id;
+  let classId = id;
 
   if (id.indexOf('~') > 0) {
     const split = id.split('~');
-    className = sanitizeText(split[0]);
+    classId = sanitizeText(split[0]);
     genericType = sanitizeText(split[1]);
   }
 
-  return { className: className, type: genericType };
-};
-
-export const setClassLabel = function (_id: string, label: string) {
-  const id = common.sanitizeText(_id, getConfig());
-  if (label) {
-    label = sanitizeText(label);
-  }
-
-  const { className } = splitClassNameAndType(id);
-  classes.get(className)!.label = label;
-  classes.get(className)!.text =
-    `${label}${classes.get(className)!.type ? `<${classes.get(className)!.type}>` : ''}`;
+  return { classId: classId, type: genericType };
 };
 
 /**
@@ -72,28 +60,33 @@ export const setClassLabel = function (_id: string, label: string) {
  * @param id - Id of the class to add
  * @public
  */
-export const addClass = function (_id: string) {
-  const id = common.sanitizeText(_id, getConfig());
-  const { className, type } = splitClassNameAndType(id);
-  // Only add class if not exists
-  if (classes.has(className)) {
+export const addClass = function (_id: string, label?: string) {
+  const id = sanitizeText(_id);
+  const { classId, type } = splitClassIdAndType(id);
+  let newLabel = classId;
+
+  if (classes.has(classId)) {
     return;
   }
-  // alert('Adding class: ' + className);
-  const name = common.sanitizeText(className, getConfig());
-  // alert('Adding class after: ' + name);
-  classes.set(name, {
-    id: name,
+
+  if (label) {
+    newLabel = sanitizeText(label);
+  }
+
+  const text = `${newLabel}${type ? `&lt;${type}&gt;` : ''}`;
+
+  classes.set(classId, {
+    id: classId,
     type: type,
-    label: name,
-    text: `${name}${type ? `&lt;${type}&gt;` : ''}`,
+    label: newLabel,
+    text: text,
     shape: 'classBox',
     cssClasses: 'default',
     methods: [],
-    members: [],
+    attributes: [],
     annotations: [],
     styles: [],
-    domId: MERMAID_DOM_ID_PREFIX + name + '-' + classCounter,
+    domId: MERMAID_DOM_ID_PREFIX + classId + '-' + classCounter,
   } as ClassNode);
 
   classCounter++;
@@ -116,7 +109,7 @@ const addInterface = function (label: string, classId: string) {
  * @public
  */
 export const lookUpDomId = function (_id: string): string {
-  const id = common.sanitizeText(_id, getConfig());
+  const id = sanitizeText(_id);
   if (classes.has(id)) {
     return classes.get(id)!.domId;
   }
@@ -182,18 +175,12 @@ export const addRelation = function (classRelation: ClassRelation) {
     addClass(classRelation.id2);
   }
 
-  classRelation.id1 = splitClassNameAndType(classRelation.id1).className;
-  classRelation.id2 = splitClassNameAndType(classRelation.id2).className;
+  classRelation.id1 = splitClassIdAndType(classRelation.id1).classId;
+  classRelation.id2 = splitClassIdAndType(classRelation.id2).classId;
 
-  classRelation.relationTitle1 = common.sanitizeText(
-    classRelation.relationTitle1.trim(),
-    getConfig()
-  );
+  classRelation.relationTitle1 = sanitizeText(classRelation.relationTitle1.trim());
 
-  classRelation.relationTitle2 = common.sanitizeText(
-    classRelation.relationTitle2.trim(),
-    getConfig()
-  );
+  classRelation.relationTitle2 = sanitizeText(classRelation.relationTitle2.trim());
 
   relations.push(classRelation);
 };
@@ -202,29 +189,29 @@ export const addRelation = function (classRelation: ClassRelation) {
  * Adds an annotation to the specified class Annotations mark special properties of the given type
  * (like 'interface' or 'service')
  *
- * @param className - The class name
+ * @param classId - The class name
  * @param annotation - The name of the annotation without any brackets
  * @public
  */
 export const addAnnotation = function (className: string, annotation: string) {
-  const validatedClassName = splitClassNameAndType(className).className;
+  const validatedClassName = splitClassIdAndType(className).classId;
   classes.get(validatedClassName)!.annotations.push(annotation);
 };
 
 /**
  * Adds a member to the specified class
  *
- * @param className - The class name
+ * @param classId - The class name
  * @param member - The full name of the member. If the member is enclosed in `<<brackets>>` it is
  *   treated as an annotation If the member is ending with a closing bracket ) it is treated as a
  *   method Otherwise the member will be treated as a normal property
  * @public
  */
-export const addMember = function (className: string, member: string) {
-  addClass(className);
+export const addMember = function (classId: string, member: string) {
+  addClass(classId);
 
-  const validatedClassName = splitClassNameAndType(className).className;
-  const theClass = classes.get(validatedClassName)!;
+  const validatedClassId = splitClassIdAndType(classId).classId;
+  const theClass = classes.get(validatedClassId)!;
 
   if (typeof member === 'string') {
     // Member can contain white spaces, we trim them out
@@ -237,7 +224,7 @@ export const addMember = function (className: string, member: string) {
       //its a method
       theClass.methods.push(new ClassMember(memberString, 'method'));
     } else if (memberString) {
-      theClass.members.push(new ClassMember(memberString, 'attribute'));
+      theClass.attributes.push(new ClassMember(memberString, 'attribute'));
     }
   }
 };
@@ -377,7 +364,7 @@ export const setClickEvent = function (ids: string, functionName: string, functi
 };
 
 const setClickFunc = function (_domId: string, functionName: string, functionArgs: string) {
-  const domId = common.sanitizeText(_domId, getConfig());
+  const domId = sanitizeText(_domId);
   const config = getConfig();
   if (config.securityLevel !== 'loose') {
     return;
@@ -520,17 +507,15 @@ const getNamespaces = function (): NamespaceMap {
  * Function called by parser when a namespace definition has been found.
  *
  * @param id - Id of the namespace to add
- * @param classNames - Ids of the class to add
+ * @param classIds - Ids of the class to add
  * @public
  */
-export const addClassesToNamespace = function (id: string, classNames: string[]) {
-  if (!namespaces.has(id)) {
-    return;
-  }
-  for (const name of classNames) {
-    const { className } = splitClassNameAndType(name);
-    classes.get(className)!.parent = id;
-    namespaces.get(id)!.classes.set(className, classes.get(className)!);
+export const addClassesToNamespace = function (_id: string, classIds: string[]) {
+  addNamespace(_id);
+  for (const id of classIds) {
+    const { classId } = splitClassIdAndType(id);
+    classes.get(classId)!.parent = _id;
+    namespaces.get(_id)!.classes.set(classId, classes.get(classId)!);
   }
 };
 
@@ -726,7 +711,6 @@ export default {
   lookUpDomId,
   setDiagramTitle,
   getDiagramTitle,
-  setClassLabel,
   addNamespace,
   addClassesToNamespace,
   getNamespace,

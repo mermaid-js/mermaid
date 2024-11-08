@@ -430,7 +430,7 @@ describe('Class diagram', () => {
       class \`This\nTitle\nHas\nMany\nNewlines\` {
         +String Also
         -Stirng Many
-        #int Members
+        #int attribute
         +And()
         -Many()
         #Methods()
@@ -444,7 +444,7 @@ describe('Class diagram', () => {
       class \`This\nTitle\nHas\nMany\nNewlines\` {
         +String Also
         -Stirng Many
-        #int Members
+        #int attribute
         +And()
         -Many()
         #Methods()
@@ -460,7 +460,7 @@ describe('Class diagram', () => {
       class \`This\nTitle\nHas\nMany\nNewlines\` {
         +String Also
         -Stirng Many
-        #int Members
+        #int attribute
         +And()
         -Many()
         #Methods()

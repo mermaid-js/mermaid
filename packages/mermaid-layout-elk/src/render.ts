@@ -15,6 +15,7 @@ interface LabelData {
 interface NodeWithVertex extends Omit<Node, 'domId'> {
   children?: unknown[];
   labelData?: LabelData;
+
   domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
 }
 

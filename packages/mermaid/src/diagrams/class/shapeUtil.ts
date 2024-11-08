@@ -27,12 +27,12 @@ export async function textHelper<T extends SVGGraphicsElement>(
 
   let annotationGroup = null;
   let labelGroup = null;
-  let membersGroup = null;
+  let attributeGroup = null;
   let methodsGroup = null;
 
   let annotationGroupHeight = 0;
   let labelGroupHeight = 0;
-  let membersGroupHeight = 0;
+  let attributeGroupHeight = 0;
 
   annotationGroup = shapeSvg.insert('g').attr('class', 'annotation-group text');
   if (node.annotations.length > 0) {
@@ -48,15 +48,15 @@ export async function textHelper<T extends SVGGraphicsElement>(
   const labelGroupBBox = labelGroup.node()!.getBBox();
   labelGroupHeight = labelGroupBBox.height;
 
-  membersGroup = shapeSvg.insert('g').attr('class', 'members-group text');
+  attributeGroup = shapeSvg.insert('g').attr('class', 'attribute-group text');
   let yOffset = 0;
-  for (const member of node.members) {
-    const height = await addText(membersGroup, member, yOffset, [member.parseClassifier()]);
+  for (const attribute of node.attributes) {
+    const height = await addText(attributeGroup, attribute, yOffset, [attribute.parseClassifier()]);
     yOffset += height + TEXT_PADDING;
   }
-  membersGroupHeight = membersGroup.node()!.getBBox().height;
-  if (membersGroupHeight <= 0) {
-    membersGroupHeight = GAP / 2;
+  attributeGroupHeight = attributeGroup.node()!.getBBox().height;
+  if (attributeGroupHeight <= 0) {
+    attributeGroupHeight = GAP / 2;
   }
 
   methodsGroup = shapeSvg.insert('g').attr('class', 'methods-group text');
@@ -79,14 +79,14 @@ export async function textHelper<T extends SVGGraphicsElement>(
 
   bbox = shapeSvg.node()!.getBBox();
 
-  membersGroup.attr(
+  attributeGroup.attr(
     'transform',
     `translate(${0}, ${annotationGroupHeight + labelGroupHeight + GAP * 2})`
   );
   bbox = shapeSvg.node()!.getBBox();
   methodsGroup.attr(
     'transform',
-    `translate(${0}, ${annotationGroupHeight + labelGroupHeight + (membersGroupHeight ? membersGroupHeight + GAP * 4 : GAP * 2)})`
+    `translate(${0}, ${annotationGroupHeight + labelGroupHeight + (attributeGroupHeight ? attributeGroupHeight + GAP * 4 : GAP * 2)})`
   );
 
   bbox = shapeSvg.node()!.getBBox();
