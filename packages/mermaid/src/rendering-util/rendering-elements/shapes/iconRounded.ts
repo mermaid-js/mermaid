@@ -45,7 +45,7 @@ export async function iconRounded<T extends SVGGraphicsElement>(
     iconSize = Math.max(node.width - padding * 2, node.height - padding * 2);
   }
 
-  const { nodeBorder } = themeVariables;
+  const { nodeBorder, mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
 
   const x = -width / 2;
@@ -53,12 +53,14 @@ export async function iconRounded<T extends SVGGraphicsElement>(
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: 'transparent' });
+  const options = userNodeOverrides(node, {});
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
+  const fill = stylesMap.get('fill');
+  options.stroke = fill ?? mainBkg;
 
   const iconNode = rc.path(createRoundedRectPathD(x, y, width, height, 5), options);
 
@@ -71,6 +73,8 @@ export async function iconRounded<T extends SVGGraphicsElement>(
   //   stroke: 'none',
   // });
 
+  // const iconShape = shapeSvg.insert(() => iconNode, ':first-child').attr('class', 'icon-shape2');
+  //   const outerShape = shapeSvg.insert(() => outerNode);
   const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
   // const outerShape = shapeSvg.insert(() => outerNode);
   const iconElem = shapeSvg.append('g');

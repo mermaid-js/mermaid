@@ -797,7 +797,7 @@ graph TD;A--x|text including URL space|B;`
     // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different than was is put in the diagram text (ex: in -v2 diagrams)
     const diagramTypesAndExpectations = [
       { textDiagramType: 'C4Context', expectedType: 'c4' },
-      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
+      { textDiagramType: 'classDiagram', expectedType: 'class' },
       { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
       { textDiagramType: 'erDiagram', expectedType: 'er' },
       { textDiagramType: 'graph', expectedType: 'flowchart-v2' },

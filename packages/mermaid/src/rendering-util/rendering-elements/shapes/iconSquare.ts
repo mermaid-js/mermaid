@@ -3,6 +3,7 @@ import { log } from '../../../logger.js';
 import { getIconSVG } from '../../icons.js';
 import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
+import { createRoundedRectPathD } from './roundedRectPath.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
@@ -48,7 +49,7 @@ export async function iconSquare<T extends SVGGraphicsElement>(
 
   //const height = iconSize + padding * 2;
   //const width = iconSize + padding * 2;
-  const { nodeBorder } = themeVariables;
+  const { nodeBorder, mainBkg } = themeVariables;
   const { stylesMap } = compileStyles(node);
 
   const x = -width / 2;
@@ -56,14 +57,16 @@ export async function iconSquare<T extends SVGGraphicsElement>(
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, { stroke: 'transparent' });
+  const options = userNodeOverrides(node, {});
 
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
   }
+  const fill = stylesMap.get('fill');
+  options.stroke = fill ?? mainBkg;
 
-  const iconNode = rc.rectangle(x, y, width, height, options);
+  const iconNode = rc.path(createRoundedRectPathD(x, y, width, height, 0.1), options);
 
   // const outerWidth = Math.max(width, bbox.width);
   // const outerHeight = height + bbox.height + labelPadding;
