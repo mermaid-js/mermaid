@@ -13,7 +13,7 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
 
-      expect(parser.yy.getClass('Class01').cssClasses[0]).toBe('exClass');
+      expect(parser.yy.getClass('Class01').cssClasses).toBe('default exClass');
     });
 
     it('should be possible to apply a css class to a class directly with struct', function () {
@@ -28,7 +28,7 @@ describe('class diagram, ', function () {
       parser.parse(str);
 
       const testClass = parser.yy.getClass('Class1');
-      expect(testClass.cssClasses[0]).toBe('exClass');
+      expect(testClass.cssClasses).toBe('default exClass');
     });
 
     it('should be possible to apply a css class to a class with relations', function () {
@@ -36,7 +36,7 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
 
-      expect(parser.yy.getClass('Class01').cssClasses[0]).toBe('exClass');
+      expect(parser.yy.getClass('Class01').cssClasses).toBe('default exClass');
     });
 
     it('should be possible to apply a cssClass to a class', function () {
@@ -44,7 +44,7 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
 
-      expect(parser.yy.getClass('Class01').cssClasses[0]).toBe('exClass');
+      expect(parser.yy.getClass('Class01').cssClasses).toBe('default exClass');
     });
 
     it('should be possible to apply a cssClass to a comma separated list of classes', function () {
@@ -53,8 +53,8 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
 
-      expect(parser.yy.getClass('Class01').cssClasses[0]).toBe('exClass');
-      expect(parser.yy.getClass('Class02').cssClasses[0]).toBe('exClass');
+      expect(parser.yy.getClass('Class01').cssClasses).toBe('default exClass');
+      expect(parser.yy.getClass('Class02').cssClasses).toBe('default exClass');
     });
     it('should be possible to apply a style to an individual node', function () {
       const str =
@@ -68,6 +68,48 @@ describe('class diagram, ', function () {
       expect(styleElements[0]).toBe('fill:#f9f');
       expect(styleElements[1]).toBe('stroke:#333');
       expect(styleElements[2]).toBe('stroke-width:4px');
+    });
+    it('should be possible to define and assign a class inside the diagram', function () {
+      const str =
+        'classDiagram\n' + 'class Class01\n cssClass "Class01" pink\n classDef pink fill:#f9f';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Class01').cssClasses).toBe('default pink');
+    });
+    it('should be possible to define and assign a class using shorthand inside the diagram', function () {
+      const str = 'classDiagram\n' + 'class Class01:::pink\n classDef pink fill:#f9f';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Class01').cssClasses).toBe('default pink');
+    });
+    it('should properly assign styles from a class defined inside the diagram', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class01:::pink\n classDef pink fill:#f9f,stroke:#333,stroke-width:6px';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Class01').styles).toStrictEqual([
+        'fill:#f9f',
+        'stroke:#333',
+        'stroke-width:6px',
+      ]);
+    });
+    it('should properly assign multiple classes and styles from classes defined inside the diagram', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class01:::pink\n cssClass "Class01" bold\n classDef pink fill:#f9f\n classDef bold stroke:#333,stroke-width:6px';
+
+      parser.parse(str);
+
+      expect(parser.yy.getClass('Class01').styles).toStrictEqual([
+        'fill:#f9f',
+        'stroke:#333',
+        'stroke-width:6px',
+      ]);
+      expect(parser.yy.getClass('Class01').cssClasses).toBe('default pink bold');
     });
   });
 });

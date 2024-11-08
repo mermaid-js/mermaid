@@ -3,6 +3,8 @@ import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
 export const createCylinderPathD = (
   x: number,
@@ -58,7 +60,10 @@ export const createInnerCylinderPathD = (
 const MIN_HEIGHT = 10;
 const MIN_WIDTH = 10;
 
-export const linedCylinder = async (parent: SVGAElement, node: Node) => {
+export async function linedCylinder<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
@@ -89,10 +94,11 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
   const h = (node?.height ? node?.height : bbox.height) + ry + labelPaddingY;
   const outerOffset = h * 0.1; // 10% of height
 
-  let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
+  let cylinder: typeof shapeSvg | D3Selection<SVGPathElement>;
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry, outerOffset);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
@@ -114,7 +120,7 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
       .insert('path', ':first-child')
       .attr('d', pathData)
       .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
+      .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
   }
 
@@ -155,4 +161,4 @@ export const linedCylinder = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

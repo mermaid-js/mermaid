@@ -1,5 +1,5 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import type { CurveFactory } from 'd3';
+import type { BaseType, CurveFactory } from 'd3';
 import {
   curveBasis,
   curveBasisClosed,
@@ -824,6 +824,7 @@ export const insertTitle = (
   parent
     .append('text')
     .text(title)
+    .attr('text-anchor', 'middle')
     .attr('x', bounds.x + bounds.width / 2)
     .attr('y', -titleTopMargin)
     .attr('class', cssClass);
@@ -940,3 +941,15 @@ export const getEdgeId = (
 ) => {
   return `${prefix ? `${prefix}_` : ''}${from}_${to}_${counter}${suffix ? `_${suffix}` : ''}`;
 };
+
+/**
+ * D3's `selection.attr` method doesn't officially support `undefined`.
+ *
+ * However, it seems if you do pass `undefined`, it seems to be treated as `null`
+ * (e.g. it removes the attribute).
+ */
+export function handleUndefinedAttr(
+  attrValue: Parameters<d3.Selection<BaseType, unknown, HTMLElement, any>['attr']>[1] | undefined
+) {
+  return attrValue ?? null;
+}

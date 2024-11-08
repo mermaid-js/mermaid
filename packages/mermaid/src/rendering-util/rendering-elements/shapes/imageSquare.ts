@@ -1,15 +1,15 @@
-import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
-import type { Node, ShapeRenderOptions } from '../../types.ts';
+import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { labelHelper, updateNodeBounds } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const imageSquare = async (
-  parent: SVG,
+export async function imageSquare<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   node: Node,
   { config: { flowchart } }: ShapeRenderOptions
-) => {
+) {
   const img = new Image();
   img.src = node?.img ?? '';
   await img.decode();
@@ -161,4 +161,4 @@ export const imageSquare = async (
   };
 
   return shapeSvg;
-};
+}

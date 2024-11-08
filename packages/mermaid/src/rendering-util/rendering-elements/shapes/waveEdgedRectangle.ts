@@ -6,11 +6,15 @@ import {
   createPathFromPoints,
 } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.ts';
+import type { Node } from '../../types.js';
 import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import type { D3Selection } from '../../../types.js';
 
-export const waveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
+export async function waveEdgedRectangle<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
 
@@ -44,6 +48,7 @@ export const waveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   const widthDif = minWidth - w;
   const extraW = widthDif > 0 ? widthDif / 2 : 0;
 
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
@@ -94,4 +99,4 @@ export const waveEdgedRectangle = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

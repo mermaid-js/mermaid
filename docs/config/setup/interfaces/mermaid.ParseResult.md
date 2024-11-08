@@ -18,7 +18,7 @@ The mermaid code after extracting the config.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L66)
+[packages/mermaid/src/types.ts:69](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L69)
 
 ---
 
@@ -30,7 +30,7 @@ The config passed as YAML frontmatter or directives
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:70](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L70)
+[packages/mermaid/src/types.ts:73](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L73)
 
 ---
 
@@ -40,7 +40,7 @@ The config passed as YAML frontmatter or directives
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:72](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L72)
+[packages/mermaid/src/types.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L75)
 
 ---
 
@@ -52,7 +52,7 @@ The error that occurred during parsing, if any.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:76](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L76)
+[packages/mermaid/src/types.ts:79](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L79)
 
 ---
 
@@ -62,7 +62,7 @@ The error that occurred during parsing, if any.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:62](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L62)
+[packages/mermaid/src/types.ts:65](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L65)
 
 ---
 
@@ -72,4 +72,4 @@ The error that occurred during parsing, if any.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:71](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L71)
+[packages/mermaid/src/types.ts:74](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L74)

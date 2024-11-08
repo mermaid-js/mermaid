@@ -1,10 +1,10 @@
-import rough from 'roughjs';
-import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
-import type { Node } from '../../types.d.ts';
+import { getNodeClasses, updateNodeBounds } from './util.js';
+import type { Node } from '../../types.js';
+import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { userNodeOverrides } from './handDrawnShapeStyles.js';
-import { getNodeClasses, updateNodeBounds } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
 function createLine(r: number) {
   const axis45 = Math.SQRT1_2; // cosine of 45 degrees = 1/sqrt(2)
@@ -19,7 +19,7 @@ function createLine(r: number) {
                    M ${pointQ1.x},${pointQ1.y} L ${pointQ3.x},${pointQ3.y}`;
 }
 
-export const crossedCircle = (parent: SVG, node: Node) => {
+export function crossedCircle<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   node.label = '';
   const shapeSvg = parent
     .insert('g')
@@ -28,7 +28,7 @@ export const crossedCircle = (parent: SVG, node: Node) => {
   const radius = node?.width ? node?.width / 2 : node?.height ? node?.height / 2 : 25;
   const { cssStyles } = node;
 
-  // @ts-expect-error shapeSvg d3 class is incorrect?
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
@@ -58,4 +58,4 @@ export const crossedCircle = (parent: SVG, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

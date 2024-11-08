@@ -2,6 +2,7 @@ import { select } from 'd3';
 import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
+import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
 import * as yaml from 'js-yaml';
@@ -14,7 +15,15 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
+import type {
+  FlowVertex,
+  FlowClass,
+  FlowSubGraph,
+  FlowText,
+  FlowEdge,
+  FlowLink,
+  FlowVertexTypeParam,
+} from './types.js';
 import type { NodeMetaData } from '../../types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
@@ -53,12 +62,11 @@ export const lookUpDomId = function (id: string) {
 
 /**
  * Function called by parser when a node definition has been found
- *
  */
 export const addVertex = function (
   id: string,
   textObj: FlowText,
-  type: 'group',
+  type: FlowVertexTypeParam,
   style: string[],
   classes: string[],
   dir: string,
@@ -133,14 +141,15 @@ export const addVertex = function (
     }
     // console.log('yamlData', yamlData);
     const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
-    if (doc.shape && (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_'))) {
-      throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
-    }
-
-    // console.log('yamlData doc', doc);
-    if (doc?.shape) {
+    if (doc.shape) {
+      if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
+        throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
+      } else if (!isValidShape(doc.shape)) {
+        throw new Error(`No such shape: ${doc.shape}.`);
+      }
       vertex.type = doc?.shape;
     }
+
     if (doc?.label) {
       vertex.text = doc?.label;
     }
@@ -816,7 +825,7 @@ export const lex = {
   firstGraph,
 };
 
-const getTypeFromVertex = (vertex: FlowVertex) => {
+const getTypeFromVertex = (vertex: FlowVertex): ShapeID => {
   if (vertex.img) {
     return 'imageSquare';
   }
@@ -832,14 +841,18 @@ const getTypeFromVertex = (vertex: FlowVertex) => {
     }
     return 'icon';
   }
-  if (vertex.type === 'square') {
-    return 'squareRect';
+  switch (vertex.type) {
+    case 'square':
+    case undefined:
+      return 'squareRect';
+    case 'round':
+      return 'roundedRect';
+    case 'ellipse':
+      // @ts-expect-error -- Ellipses are broken, see https://github.com/mermaid-js/mermaid/issues/5976
+      return 'ellipse';
+    default:
+      return vertex.type;
   }
-  if (vertex.type === 'round') {
-    return 'roundedRect';
-  }
-
-  return vertex.type ?? 'squareRect';
 };
 
 const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
@@ -881,7 +894,7 @@ const addNodeFromVertex = (
     node.cssCompiledStyles = getCompiledStyles(vertex.classes);
     node.cssClasses = vertex.classes.join(' ');
   } else {
-    nodes.push({
+    const baseNode = {
       id: vertex.id,
       label: vertex.text,
       labelStyle: '',
@@ -890,10 +903,8 @@ const addNodeFromVertex = (
       cssStyles: vertex.styles,
       cssCompiledStyles: getCompiledStyles(['default', 'node', ...vertex.classes]),
       cssClasses: 'default ' + vertex.classes.join(' '),
-      shape: getTypeFromVertex(vertex),
       dir: vertex.dir,
       domId: vertex.domId,
-      isGroup,
       look,
       link: vertex.link,
       linkTarget: vertex.linkTarget,
@@ -904,7 +915,20 @@ const addNodeFromVertex = (
       assetWidth: vertex.assetWidth,
       assetHeight: vertex.assetHeight,
       constraint: vertex.constraint,
-    });
+    };
+    if (isGroup) {
+      nodes.push({
+        ...baseNode,
+        isGroup: true,
+        shape: 'rect',
+      });
+    } else {
+      nodes.push({
+        ...baseNode,
+        isGroup: false,
+        shape: getTypeFromVertex(vertex),
+      });
+    }
   }
 };
 

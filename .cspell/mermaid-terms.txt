@@ -12,6 +12,7 @@ gantt
 gitgraph
 gzipped
 handDrawn
+kanban
 knsv
 Knut
 marginx

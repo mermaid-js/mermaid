@@ -460,7 +460,7 @@ stateDiagram-v2
     [*] --> State1
     State1 --> [*]
       `,
-      { state: { useMaxWidth: true } }
+      { state: { useMaxWidth: true }, look: 'classic' }
     );
     cy.get('svg').should((svg) => {
       expect(svg).to.have.attr('width', '100%');
@@ -482,7 +482,7 @@ stateDiagram-v2
     [*] --> State1
     State1 --> [*]
       `,
-      { state: { useMaxWidth: false } }
+      { state: { useMaxWidth: false }, look: 'classic' }
     );
     cy.get('svg').should((svg) => {
       // const height = parseFloat(svg.attr('height'));

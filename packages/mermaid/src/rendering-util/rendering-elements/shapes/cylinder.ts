@@ -4,6 +4,8 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getConfig } from '../../../config.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
+import { handleUndefinedAttr } from '../../../utils.js';
 
 export const createCylinderPathD = (
   x: number,
@@ -52,7 +54,7 @@ export const createInnerCylinderPathD = (
 
 const MIN_HEIGHT = 8;
 const MIN_WIDTH = 8;
-export const cylinder = async (parent: SVGAElement, node: Node) => {
+export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { themeVariables } = getConfig();
   const { useGradient } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -85,10 +87,11 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   const ry = rx / (2.5 + w / 50);
   const h = (node.height ? node.height : bbox.height) + labelPaddingX + ry;
 
-  let cylinder: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
+  let cylinder: D3Selection<SVGPathElement> | D3Selection<SVGGElement>;
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn' || (node.look === 'neo' && !useGradient)) {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
@@ -118,7 +121,7 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
       .insert('path', ':first-child')
       .attr('d', pathData)
       .attr('class', 'basic label-container')
-      .attr('style', cssStyles)
+      .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
   }
 
@@ -159,4 +162,4 @@ export const cylinder = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

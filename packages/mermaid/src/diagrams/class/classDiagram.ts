@@ -3,7 +3,7 @@ import type { DiagramDefinition } from '../../diagram-api/types.js';
 import parser from './parser/classDiagram.jison';
 import db from './classDb.js';
 import styles from './styles.js';
-import renderer from './classRenderer.js';
+import renderer from './classRenderer-v3-unified.js';
 
 export const diagram: DiagramDefinition = {
   parser,

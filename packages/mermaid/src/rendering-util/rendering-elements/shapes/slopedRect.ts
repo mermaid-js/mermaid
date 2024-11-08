@@ -1,10 +1,11 @@
 import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
 import intersect from '../intersect/index.js';
-import type { Node } from '../../types.ts';
+import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import type { D3Selection } from '../../../types.js';
 
-export const slopedRect = async (parent: SVGAElement, node: Node) => {
+export async function slopedRect<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
@@ -32,6 +33,7 @@ export const slopedRect = async (parent: SVGAElement, node: Node) => {
 
   const { cssStyles } = node;
 
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
@@ -75,4 +77,4 @@ export const slopedRect = async (parent: SVGAElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}
