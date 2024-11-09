@@ -126,7 +126,7 @@ export const lookUpDomId = function (_id: string): string {
 export const clear = function () {
   relations = [];
   classes = new Map();
-  notes = [];
+  notes = new Map<string, ClassNote>();
   interfaces = [];
   functions = [];
   functions.push(setupToolTips);
@@ -629,9 +629,7 @@ export const getData = () => {
     }
   }
 
-  let cnt = 0;
-  for (const note of notes) {
-    cnt++;
+  for (const note of notes.values()) {
     const noteNode: Node = {
       id: note.id,
       label: note.text,
@@ -645,14 +643,15 @@ export const getData = () => {
         `stroke: ${config.themeVariables.noteBorderColor}`,
       ],
       look: config.look,
+      parentId: note.parent,
     };
     nodes.push(noteNode);
 
-    const noteClassId = classes.get(note.class)?.id ?? '';
+    const noteClassId = classes.get(note.class)?.id;
 
     if (noteClassId) {
       const edge: Edge = {
-        id: `edgeNote${cnt}`,
+        id: `edgeNote${note.index}`,
         start: note.id,
         end: noteClassId,
         type: 'normal',
@@ -682,7 +681,7 @@ export const getData = () => {
     nodes.push(interfaceNode);
   }
 
-  cnt = 0;
+  let cnt = 0;
   for (const classRelation of relations) {
     cnt++;
     const edge: Edge = {
