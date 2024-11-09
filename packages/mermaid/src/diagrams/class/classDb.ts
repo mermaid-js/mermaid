@@ -36,7 +36,8 @@ let classCounter = 0;
 let namespaces = new Map<string, NamespaceNode>();
 let namespaceCounter = 0;
 
-let functions: any[] = [];
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+let functions: Function[] = [];
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
@@ -125,12 +126,12 @@ export const lookUpDomId = function (_id: string): string {
 
 export const clear = function () {
   relations = [];
-  classes = new Map();
+  classes = new Map<string, ClassNode>();
   notes = new Map<string, ClassNote>();
   interfaces = [];
   functions = [];
   functions.push(setupToolTips);
-  namespaces = new Map();
+  namespaces = new Map<string, NamespaceNode>();
   namespaceCounter = 0;
   direction = 'TB';
   commonClear();
@@ -602,31 +603,25 @@ export const getData = () => {
   const edges: Edge[] = [];
   const config = getConfig();
 
-  for (const namespaceKey of namespaces.keys()) {
-    const namespace = namespaces.get(namespaceKey);
-    if (namespace) {
-      const node: Node = {
-        id: namespace.id,
-        label: namespace.id,
-        isGroup: true,
-        padding: config.class!.padding ?? 16,
-        // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
-        shape: 'rect',
-        cssStyles: ['fill: none', 'stroke: black'],
-        look: config.look,
-      };
-      nodes.push(node);
-    }
+  for (const namespace of namespaces.values()) {
+    const node: Node = {
+      id: namespace.id,
+      label: namespace.id,
+      isGroup: true,
+      padding: config.class!.padding ?? 16,
+      // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
+      shape: 'rect',
+      cssStyles: ['fill: none', 'stroke: black'],
+      look: config.look,
+    };
+    nodes.push(node);
   }
 
-  for (const classKey of classes.keys()) {
-    const classNode = classes.get(classKey);
-    if (classNode) {
-      const node = classNode as unknown as Node;
-      node.parentId = classNode.parent;
-      node.look = config.look;
-      nodes.push(node);
-    }
+  for (const classNode of classes.values()) {
+    const node = classNode as unknown as Node;
+    node.parentId = classNode.parent;
+    node.look = config.look;
+    nodes.push(node);
   }
 
   for (const note of notes.values()) {
