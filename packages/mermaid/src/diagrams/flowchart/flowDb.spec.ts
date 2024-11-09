@@ -65,3 +65,17 @@ describe('flow db addClass', () => {
     expect(classes.get('a')?.styles).toEqual(['stroke-width: 8px']);
   });
 });
+
+describe('flow db getData', () => {
+  beforeEach(() => {
+    flowDb.clear();
+  });
+
+  it('should support arrow_open as an edge end arrow type', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', undefined, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', undefined, undefined);
+    flowDb.addLink(['A'], ['B'], { type: 'arrow_open' });
+    const data = flowDb.getData();
+    expect(data.edges[0].arrowTypeEnd).toEqual('arrow_open');
+  });
+});
