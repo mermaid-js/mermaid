@@ -109,7 +109,7 @@ async function addText<T extends SVGGraphicsElement>(
   let textContent = '';
   // Support regular node type (.label) and classNodes (.text)
   if ('text' in node) {
-    textContent = node.text;
+    textContent = node.text ?? '';
   } else {
     textContent = node.label!;
   }
