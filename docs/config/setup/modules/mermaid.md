@@ -118,20 +118,21 @@ If the start node doesn't exist in the nodeDB (e.g. `render` hasn't been called 
 
 #### Defined in
 
-[packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js:106](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js#L106)
+[packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js:115](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js#L115)
 
 ---
 
 ### calcNodeIntersections
 
-▸ **calcNodeIntersections**(`_node1`, `_node2`): `IntersectionPoint`\[] | `Promise`<`IntersectionPoint`\[]>
+▸ **calcNodeIntersections**(`targetNodeId`, `_node1`, `_node2`): `IntersectionPoint`\[] | `Promise`<`IntersectionPoint`\[]>
 
 #### Parameters
 
-| Name     | Type                                                                                              |
-| :------- | :------------------------------------------------------------------------------------------------ |
-| `_node1` | `Pick`<`Node`, `"width"` \| `"height"` \| `"x"` \| `"y"` \| `"id"` \| `"shape"` \| `"intersect"`> |
-| `_node2` | `Pick`<`Node`, `"width"` \| `"height"` \| `"x"` \| `"y"` \| `"id"` \| `"shape"` \| `"intersect"`> |
+| Name           | Type                                                                                              |
+| :------------- | :------------------------------------------------------------------------------------------------ |
+| `targetNodeId` | `any`                                                                                             |
+| `_node1`       | `Pick`<`Node`, `"width"` \| `"height"` \| `"x"` \| `"y"` \| `"id"` \| `"shape"` \| `"intersect"`> |
+| `_node2`       | `Pick`<`Node`, `"width"` \| `"height"` \| `"x"` \| `"y"` \| `"id"` \| `"shape"` \| `"intersect"`> |
 
 #### Returns
 

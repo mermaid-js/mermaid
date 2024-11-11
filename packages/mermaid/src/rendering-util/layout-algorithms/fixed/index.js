@@ -75,14 +75,23 @@ const calcIntersectionPoint = (node, point) => {
  * @param {Pick<Node, 'shape' | 'id' | 'intersect' | 'x' | 'y' | 'width' | 'height'>} _node2
  * @returns {Promise<IntersectionPoint[]> | IntersectionPoint[]}
  */
-export const calcNodeIntersections = async (_node1, _node2) => {
+export const calcNodeIntersections = async (targetNodeId, _node1, _node2) => {
   // CReate new nodes in order not to require a rendered diagram
   const fakeParent = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   const parent = select(fakeParent);
-  const node1 = Object.assign({}, _node1);
-  const node2 = Object.assign({}, _node2);
-  await insertNode(parent, node1, 'TB');
-  await insertNode(parent, node2, 'TB');
+  let node1 = Object.assign({}, _node1);
+  let node2 = Object.assign({}, _node2);
+
+  if (!targetNodeId || targetNodeId === _node1.id) {
+    await insertNode(parent, node1, 'TB');
+  } else {
+    node1 = Object.assign({}, nodeDB.get(_node1.id));
+  }
+  if (!targetNodeId || targetNodeId === _node2.id) {
+    await insertNode(parent, node2, 'TB');
+  } else {
+    node2 = Object.assign({}, nodeDB.get(_node2.id));
+  }
 
   // Insert node will not give any widths as the element is not in the DOM
   node1.width = _node1.width || 50;
