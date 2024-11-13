@@ -1329,14 +1329,14 @@ describe('Error handling', () => {
       expect(stops[6].attr('stop-color')).toBe('#0df20d33');
     });
 
-    it('should respect the number of transition stops specified', () => {
+    it('should respect the number of transition stops specified, rounding up if needed', () => {
       createLinearGradient(
         svg,
         shapeElement,
         'to bottom, rgba(70, 20, 56, 0.4), 25%, rgba(110, 230, 8, 0.8)',
         'test-gradient-n-transition-stops',
         false,
-        11
+        10 // Will be rounded up to 11 for symmetry around the hint
       );
 
       const stops = svg.select('defs').select('linearGradient').selectAll('stop') as any;

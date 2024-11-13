@@ -248,12 +248,8 @@ export function createLinearGradient(
     throw new Error('Found consecutive commas (,,) in the gradient string.');
   }
 
-  // Ensure that the total number of transition stops is positive and odd
-  if (numTransitionStops < 0 && numTransitionStops % 2 === 0) {
-    throw new Error(
-      'Total number of stops (excluding start and end) must be positive and odd for symmetry.'
-    );
-  }
+  // Round to the nearest odd integer, minimum 3, for symmetry around the hint
+  numTransitionStops = Math.max(Math.round(numTransitionStops) | 1, 3);
 
   if (!linearInterpOnly) {
     log.debug(
