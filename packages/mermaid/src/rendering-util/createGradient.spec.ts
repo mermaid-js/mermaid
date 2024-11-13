@@ -1,6 +1,7 @@
 import { createLinearGradient, directionMap, getGradientLineLength } from './createGradient.js';
 import { select, type Selection } from 'd3';
 import { JSDOM } from 'jsdom';
+import { expect } from 'vitest';
 
 /* Global declarations for all describe blocks */
 
@@ -235,7 +236,7 @@ const calculatePolygonBBox = (points: number[][]) => {
 const calculatePathBBox = (path: SVGPathElement, nsteps = 100) => {
   const length = path.getTotalLength();
   const step = length / nsteps;
-  const points = [];
+  const points: number[][] = [];
   for (let i = 0; i <= length; i += step) {
     const point = path.getPointAtLength(i);
     points.push([point.x, point.y]);
@@ -859,7 +860,7 @@ describe('Length units and conversions', () => {
 
     // Note: the positions are in increasing order, so no replacement will occur
     expect(stops[0].attr('offset')).toBe('0%');
-    expect(stops[1].attr('offset'), 4); // 12pt -> 4% of 400px
+    expect(stops[1].attr('offset')).toBe('4%'); // 12pt -> 4% of 400px
     expect(parseFloat(stops[2].attr('offset'))).toBeCloseTo(9.448818897637796, 8); // 10mm -> ~9.4% of 400px
     expect(stops[3].attr('offset')).toBe('12.5%'); // 50px -> 12.5% of 400px
     expect(stops[4].attr('offset')).toBe('16%'); // 4pc -> 16% of 400px
