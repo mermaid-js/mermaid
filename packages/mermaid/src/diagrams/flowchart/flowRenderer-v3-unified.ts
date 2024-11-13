@@ -82,6 +82,7 @@ export const draw = async function (text: string, id: string, _version: string, 
 
     if (!nodeSvg.empty()) {
       log.debug(`Found SVG element for node: ${vertex.domId}`);
+
       // Get the bounding box of the node's shape to extract dimensions
       // Assuming shapeElement is a selection of various SVG elements
       const shapeElement: Selection<SVGGraphicsElement, unknown, HTMLElement, any> = nodeSvg.select(
@@ -103,42 +104,59 @@ export const draw = async function (text: string, id: string, _version: string, 
           log.debug(`No CSS styles found for node ${vertex.id}.`);
         }
 
-        // Look for all gradient styles, ensuring that nested parentheses due to color functions are handled properly
-        const linearGradientStyles = styles
-          .join('')
-          ?.match(/fill\s*:\s*linear-gradient\([^()]*?(?:\([^()]*?\)[^()]*)*\)/g);
+        // Separate out linear-gradient and solid fill styles in their original order
+        const allFillStyles = styles.flatMap(
+          (style) =>
+            style.match(/fill\s*:\s*(linear-gradient\([^()]*?(?:\([^()]*?\)[^()]*)*\)|[^;]+)/g) ||
+            []
+        );
 
-        // Look for all non-gradient "fill" styles (e.g., "fill: magenta", "fill: rgb(255,0,0,0.3)")
-        const solidFillStyles = styles.join('')?.match(/fill\s*:\s*(?!linear-gradient\()[^;]+/g);
+        // Get the user-defined number of transition stops (first match) for non-linear interpolation
+        const regex = /num-transition-stops\s*:\s*(\d+)/;
+        const numTransitionStops = parseInt(
+          styles.find((s) => regex.exec(s))?.match(regex)?.[1] || '5',
+          10
+        );
 
-        if (linearGradientStyles) {
-          if (solidFillStyles) {
-            solidFillStyles.forEach((s) => {
-              const color = s.replace(/fill\s*:\s*/, '');
-              shapeElement.style('fill', color);
-              log.debug(`Applied solid fill color "${color}" to node ${vertex.id}`);
-            });
-          } else {
-            // Remove any existing fill (e.g. from the theme) that might unexpectedly bleed through (semi-)transparent areas
-            shapeElement.style('fill', 'none');
-          }
+        if (allFillStyles) {
+          // Remove any existing or default fill (e.g. from the theme) that might unexpectedly
+          // bleed through (semi-)transparent areas of the fills
+          shapeElement.style('fill', 'none');
 
-          shapeElement.style('mix-blend-mode', 'normal');
-
-          // Apply gradient style to the node's shape through a cloned element
-          linearGradientStyles.forEach((style, index) => {
-            log.debug(`Found gradient style ${index + 1} for node ${vertex.id}: "${style}"`);
-
-            // Remove the 'fill: linear-gradient()' wrapper to get the gradient definition only
-            const linearGradientStyle = style.replace(/fill\s*:\s*linear-gradient\((.+)\)/, '$1');
-            const gradientId = `gradient-${vertex.id}-${index}`;
-
-            // Create the linear gradient for each occurrence
-            createLinearGradient(svg, shapeElement, linearGradientStyle, gradientId);
-
-            // Clone the shape element to apply each gradient as an overlay
+          // Iterate over each fill style in the order it appears
+          allFillStyles.forEach((style, index) => {
+            // Clone the shape element to apply each fill as an overlay
             const shapeClone = shapeElement.clone(true);
-            shapeClone.style('fill', `url(#${gradientId})`);
+
+            if (style.includes('linear-gradient(')) {
+              // It's a gradient style
+              const linearGradientStyle = style.replace(/fill\s*:\s*linear-gradient\((.+)\)/, '$1');
+              const gradientId = `gradient-${vertex.id}-${index}`;
+              log.debug(`Found gradient style ${index + 1} for node ${vertex.id}: "${style}"`);
+
+              // Create the linear gradient for each occurrence
+              createLinearGradient(
+                svg,
+                shapeElement,
+                linearGradientStyle,
+                gradientId,
+                false,
+                numTransitionStops
+              );
+
+              // Apply the gradient fill to the cloned shape
+              shapeClone.style('fill', `url(#${gradientId})`);
+              log.debug(
+                `Applied gradient ID "${gradientId}" to node ${vertex.id} with URL url(#${gradientId})`
+              );
+            } else {
+              // It's a solid fill style
+              const color = style.replace(/fill\s*:\s*/, '');
+
+              // Apply the solid fill to the cloned shape
+              shapeClone.style('fill', color);
+              log.debug(`Applied solid fill color "${color}" to node ${vertex.id}`);
+            }
 
             // Insert the cloned element before the original shape to keep the text/labels on top
             const parentNode = shapeElement.node()?.parentNode;
@@ -153,15 +171,16 @@ export const draw = async function (text: string, id: string, _version: string, 
             } else {
               log.error(`Parent or clone node not found for shape element: ${vertex.domId}`);
             }
-            // Apply the gradient fill to the node
-            log.debug(
-              `Applying gradient ID "${gradientId}" to node: ${vertex.id} with URL: url(#${gradientId})`
-            );
-            log.debug(`Underlying SVG element: `, shapeElement.node());
           });
         } else {
-          log.debug(`No gradient style found for node ${vertex.id}->${vertex.domId}.`);
+          log.debug(
+            `No gradient or solid fill style found for node ${vertex.id}->${vertex.domId}. Using the default fill color from the theme.`
+          );
         }
+
+        // Set blend mode for layered styles
+        shapeElement.style('mix-blend-mode', 'normal');
+        log.debug(`Underlying SVG element for node ${vertex.id}: `, shapeElement.node());
       } else {
         log.debug(`Could not find a shape element for node: ${vertex.id}->${vertex.domId}`);
       }

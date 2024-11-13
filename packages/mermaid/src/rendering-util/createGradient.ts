@@ -197,15 +197,10 @@ const generateStops = (
   start: number,
   hint: number,
   end: number,
-  n: number,
+  n: number, // must be odd for symmetry!
   includeStart = false,
   includeEnd = false
 ): number[] => {
-  if (n < 0 && n % 2 === 0) {
-    throw new Error(
-      'Total number of stops (excluding start and end) must be positive and odd for symmetry.'
-    );
-  }
   const half = (n - 1) / 2; // Number of stops between start->hint and hint->end
   return [
     // Conditionally include start
@@ -230,6 +225,7 @@ const generateStops = (
  * @param linearGradientStyle - A CSS-like linear-gradient string specifying the gradient angle/direction (optional) and color stops (color and position).
  * @param gradientId - The unique ID for the created linear gradient in the SVG's <defs> section.
  * @param linearInterpOnly - Restricts to linear interpolation, skipping transition hints and opacity gradients between stops (default: false).
+ * @param numTransitionStops - The number of stops to generate around a transition hint for color interpolation including the hint itself. 5 is tested to be optimal for most cases (default: 5).
  * @returns void - The function does not return a value. In-place modifications are made to the SVG element.
  */
 export function createLinearGradient(
@@ -237,7 +233,8 @@ export function createLinearGradient(
   shapeElement: Selection<SVGGraphicsElement, unknown, HTMLElement, any>,
   linearGradientStyle: string,
   gradientId: string,
-  linearInterpOnly = false
+  linearInterpOnly = false,
+  numTransitionStops = 5
 ): void {
   log.debug(`Creating linear gradient for ${gradientId}: ${linearGradientStyle}`);
 
@@ -249,6 +246,19 @@ export function createLinearGradient(
   // Test if the double comma pattern exists in the input string to avoid user errors
   if (/,\s*,/.test(linearGradientStyle)) {
     throw new Error('Found consecutive commas (,,) in the gradient string.');
+  }
+
+  // Ensure that the total number of transition stops is positive and odd
+  if (numTransitionStops < 0 && numTransitionStops % 2 === 0) {
+    throw new Error(
+      'Total number of stops (excluding start and end) must be positive and odd for symmetry.'
+    );
+  }
+
+  if (!linearInterpOnly) {
+    log.debug(
+      `Will be using ${numTransitionStops} transition stops for ${gradientId} if non-linear interpolation is needed.`
+    );
   }
 
   // Calculate the dimensions of the node's bounding box
@@ -489,9 +499,23 @@ export function createLinearGradient(
     );
   }
 
-  // Get the minimum and maximum stop positions
+  // Enforce ascending order of stop positions
+  for (let i = 1; i < colorStops.length; i++) {
+    const prevPos = colorStops[i - 1].position!;
+
+    if (colorStops[i].position !== null && colorStops[i].position! < prevPos) {
+      // Adjust the current position to the previous position to maintain ascending order
+      log.debug(
+        `Adjusted position of stop #${i + 1} ['${colorStops[i].color}'] from ${colorStops[i].position}% to ${prevPos}% to maintain ascending order.`
+      );
+      colorStops[i].position = prevPos;
+    }
+  }
+
+  // Get the minimum and maximum stop positions (they're guaranteed to be in ascending order at this point)
   const minStop = Math.min(colorStops[0].position ?? 0, 0);
   const maxStop = Math.max(colorStops[colorStops.length - 1].position ?? 100, 100);
+  log.debug(`Finalized min and max stop positions: ${minStop}%, ${maxStop}%`);
 
   // Normalize all explicit stop positions when gradient bounds exceed 0-100%, except for the first and last stops
   if (minStop < 0 || maxStop > 100) {
@@ -508,7 +532,7 @@ export function createLinearGradient(
     });
   }
 
-  // Enforce ascending order and interpolate missing positions between stops
+  // Interpolate missing positions between stops
   for (let i = 1; i < colorStops.length; i++) {
     const prevPos = colorStops[i - 1].position!;
     const prevPosCapped = Math.max(0, Math.min(100, prevPos)); // Cap for CSS-like interpolation
@@ -534,12 +558,6 @@ export function createLinearGradient(
         );
       }
       i = j - 1; // Skip to the next defined position
-    } else if (Number(colorStops[i].position) < prevPos) {
-      // This ensures monotonically increasing positions
-      log.debug(
-        `Adjusted position of stop #${i + 1} ['${colorStops[i].color}'] from ${colorStops[i].position}% to ${prevPos}% to maintain ascending order.`
-      );
-      colorStops[i].position = prevPos;
     }
   }
 
@@ -591,9 +609,6 @@ export function createLinearGradient(
       (startColor.a !== endColor.a || currentStop.color === 'HINT')
     ) {
       const prevStop = colorStops[index - 1];
-
-      // Number of interpolated stops around the transition hint including the hint itself
-      const nTransitionStops = 5; // 5 is tested to be optimal
 
       // Defaults for opacity-gradient-based interpolation
       let relativeHint = 0.5;
@@ -662,12 +677,12 @@ export function createLinearGradient(
         0,
         relativeHint,
         1,
-        nTransitionStops,
+        numTransitionStops,
         includeStart,
         false
       );
       log.debug(
-        `Generated ${nTransitionStops + (includeStart ? 1 : 0)} interpolated relative positions around the relative transition hint at ${relativeHint} between colors ${currentStop.color === 'HINT' ? prevStop.color : currentStop.color} and ${nextStop.color}: ${interpolatedRelativePositions.join(', ')}`
+        `Generated ${numTransitionStops + (includeStart ? 1 : 0)} interpolated relative positions around the relative transition hint at ${relativeHint} between colors ${currentStop.color === 'HINT' ? prevStop.color : currentStop.color} and ${nextStop.color}: ${interpolatedRelativePositions.join(', ')}`
       );
 
       // Append interpolated stops to the gradient
@@ -683,7 +698,7 @@ export function createLinearGradient(
           .attr('stop-color', interpolatedColor);
         if (currentStop.color === 'HINT') {
           log.debug(
-            `Added interpolated transition stop ${hintIndex + 1}/${nTransitionStops} for transition hint between colors ${prevStop.color} and ${nextStop.color} to <linearGradient>: color (interpolated) = '${interpolatedColor}', position = '${absolutePos}%'`
+            `Added interpolated transition stop ${hintIndex + 1}/${numTransitionStops} for transition hint between colors ${prevStop.color} and ${nextStop.color} to <linearGradient>: color (interpolated) = '${interpolatedColor}', position = '${absolutePos}%'`
           );
         } else {
           if (hintIndex === 0) {
@@ -693,7 +708,7 @@ export function createLinearGradient(
             );
           } else {
             log.debug(
-              `Added interpolated transition stop ${hintIndex}/${nTransitionStops} for opacity gradient between colors ${currentStop.color} and ${nextStop.color} to <linearGradient>: color (interpolated) = '${interpolatedColor}', position = '${absolutePos}%'`
+              `Added interpolated transition stop ${hintIndex}/${numTransitionStops} for opacity gradient between colors ${currentStop.color} and ${nextStop.color} to <linearGradient>: color (interpolated) = '${interpolatedColor}', position = '${absolutePos}%'`
             );
           }
         }

@@ -51,6 +51,7 @@ afterEach(() => {
 
 // Functions for converting angles
 const deg2rad = (deg: number) => deg * (Math.PI / 180);
+const turn2rad = (turn: number) => turn * 2 * Math.PI;
 const rad2deg = (rad: number) => rad * (180 / Math.PI);
 const turn2deg = (turn: number) => turn * 360;
 const grad2deg = (grad: number) => (grad * 180) / 200;
@@ -994,7 +995,7 @@ describe('Special cases for color stops and positions', () => {
 
     // Verify color stops positions
     expect(stops[0].attr('offset')).toBe('-50%');
-    expect(parseFloat(stops[1].attr('offset'))).toBeCloseTo(27.27272727272727, 8);
+    expect(parseFloat(stops[1].attr('offset'))).toBeCloseTo(27.2727272727272, 8);
     expect(parseFloat(stops[2].attr('offset'))).toBeCloseTo(54.54545454545454, 8);
     expect(parseFloat(stops[3].attr('offset'))).toBeCloseTo(77.27272727272727, 8);
     expect(stops[4].attr('offset')).toBe('115%');
@@ -1012,6 +1013,51 @@ describe('Special cases for color stops and positions', () => {
 
     expect(stops[1].attr('offset')).toBe('60%'); // Keep 60% as is
     expect(stops[2].attr('offset')).toBe('60%'); // Replace 40% with 60% to maintain order
+  });
+
+  it('should interpolate and renorm correctly for out-of-bounds gradients with overlapping stop positions', () => {
+    createLinearGradient(
+      svg,
+      shapeElement,
+      '0.58turn, orchid -8%, steelblue, rgb(246, 235, 200) 120%, lavender 90%, orange',
+      'test-gradient-out-of-bounds-renorm-interpolation-overlap-adjust'
+    );
+
+    const gradient = svg.select('defs').select('linearGradient');
+    const stops = gradient.selectAll('stop') as any;
+
+    // Get the node's dimensions
+    const bbox = shapeElement.node()!.getBBox();
+    const nodeWidth = bbox.width;
+    const nodeHeight = bbox.height;
+
+    // Calculate the gradient line length applied to a rectangle
+    const angleRad = turn2rad(0.58);
+    const gradientLineLength =
+      Math.abs(nodeWidth * Math.sin(angleRad)) + Math.abs(nodeHeight * Math.cos(angleRad));
+
+    // Define the minimum and maximum stops set for the gradient
+    const minStop = -8;
+    const maxStop = 120;
+
+    // SVG linear gradient coordinates
+    const xc = bbox.x + nodeWidth / 2;
+    const yc = bbox.y + nodeHeight / 2;
+    const d1 = (gradientLineLength * (50 - minStop)) / 100;
+    const d2 = (gradientLineLength * (50 - maxStop)) / 100;
+
+    // Verify gradient coordinates
+    expect(+gradient.attr('x1')).toBeCloseTo(xc, 8);
+    expect(+gradient.attr('y1')).toBeCloseTo(yc + d1, 8);
+    expect(+gradient.attr('x2')).toBeCloseTo(xc, 8);
+    expect(+gradient.attr('y2')).toBeCloseTo(yc + d2, 8);
+
+    // Verify color stops positions
+    expect(stops[0].attr('offset')).toBe('-8%');
+    expect(stops[1].attr('offset')).toBe('50%');
+    expect(stops[2].attr('offset')).toBe('100%');
+    expect(stops[3].attr('offset')).toBe('100%');
+    expect(stops[4].attr('offset')).toBe('120%');
   });
 
   it('should handle gradients with all color stops beyond 100%', () => {
@@ -1281,6 +1327,22 @@ describe('Error handling', () => {
       expect(stops[4].attr('stop-color')).toBe('rgba(75, 241, 29, 0.44466061728917605)');
       expect(stops[5].attr('stop-color')).toBe('rgba(57, 241, 25, 0.32786016467038714)');
       expect(stops[6].attr('stop-color')).toBe('#0df20d33');
+    });
+
+    it('should respect the number of transition stops specified', () => {
+      createLinearGradient(
+        svg,
+        shapeElement,
+        'to bottom, rgba(70, 20, 56, 0.4), 25%, rgba(110, 230, 8, 0.8)',
+        'test-gradient-n-transition-stops',
+        false,
+        11
+      );
+
+      const stops = svg.select('defs').select('linearGradient').selectAll('stop') as any;
+
+      // Should have 2 original + 11 transition stops
+      expect(stops).toHaveLength(13);
     });
   });
 });
