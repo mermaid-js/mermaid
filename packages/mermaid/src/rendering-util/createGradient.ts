@@ -349,11 +349,16 @@ export function createLinearGradient(
   // Parse color stops, convert units to %, and map to color and position
   const colorStops = linearGradientStyle
     .split(/,(?![^()]*\))/)
-    .map((stop): ColorStop | null => {
+    .map((stop, index, stopsArray): ColorStop | null => {
       stop = stop.trim();
-      if (/^[+-]?\d+(\.\d+)?[%A-Za-z]+$/.test(stop)) {
-        // Stops containing just a number with % or units (e.g., px, em) serve as transition hints
-        if (linearGradientStyle.startsWith(stop) || linearGradientStyle.endsWith(stop)) {
+
+      // Check if this is a standalone transition hint, i.e. a number (followed by % or a unit) without an associated color
+      const isTransitionHint = /^[+-]?\d+(\.\d+)?[%A-Za-z]+$/.test(stop);
+      const isFirstStop = index === 0;
+      const isLastStop = index === stopsArray.length - 1;
+
+      if (isTransitionHint) {
+        if (isFirstStop || isLastStop) {
           throw new Error(`The transition hint '${stop}' does not have surrounding color stops`);
         } else {
           log.debug(
@@ -366,6 +371,7 @@ export function createLinearGradient(
           }
         }
       }
+
       // Capture color (hex, named, or function) followed by optional position and units
       const regex = new RegExp(
         `(#[0-9a-fA-F]{3,8}|[a-zA-Z]+\\([^)]+\\)|[a-zA-Z]+)\\s*([-+]?\\d*\\.?\\d*)([a-zA-Z%]*)?$`
