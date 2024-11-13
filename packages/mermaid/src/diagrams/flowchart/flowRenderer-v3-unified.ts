@@ -104,7 +104,7 @@ export const draw = async function (text: string, id: string, _version: string, 
           log.debug(`No CSS styles found for node ${vertex.id}.`);
         }
 
-        // Separate out linear-gradient and solid fill styles in their original order
+        // Separate out linear-gradient and simple fill styles in their original order
         const allFillStyles = styles.flatMap(
           (style) =>
             style.match(/fill\s*:\s*(linear-gradient\([^()]*?(?:\([^()]*?\)[^()]*)*\)|[^;]+)/g) ||
@@ -150,12 +150,12 @@ export const draw = async function (text: string, id: string, _version: string, 
                 `Applied gradient ID "${gradientId}" to node ${vertex.id} with URL url(#${gradientId})`
               );
             } else {
-              // It's a solid fill style
+              // It's a simple fill style
               const color = style.replace(/fill\s*:\s*/, '');
 
-              // Apply the solid fill to the cloned shape
+              // Apply the simple fill to the cloned shape
               shapeClone.style('fill', color);
-              log.debug(`Applied solid fill color "${color}" to node ${vertex.id}`);
+              log.debug(`Applied simple fill color "${color}" to node ${vertex.id}`);
             }
 
             // Insert the cloned element before the original shape to keep the text/labels on top
@@ -174,7 +174,7 @@ export const draw = async function (text: string, id: string, _version: string, 
           });
         } else {
           log.debug(
-            `No gradient or solid fill style found for node ${vertex.id}->${vertex.domId}. Using the default fill color from the theme.`
+            `No gradient or simple fill style found for node ${vertex.id}->${vertex.domId}. Using the default fill color from the theme.`
           );
         }
 
