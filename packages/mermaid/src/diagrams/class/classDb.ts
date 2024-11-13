@@ -86,7 +86,7 @@ export const addClass = function (_id: string, label?: string) {
     attributes: [],
     annotations: [],
     styles: [],
-    domId: MERMAID_DOM_ID_PREFIX + classId + '-' + classCounter,
+    domId: `${MERMAID_DOM_ID_PREFIX}${classId}-${classCounter}`,
   } as ClassNode);
 
   classCounter++;
