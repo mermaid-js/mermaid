@@ -51,7 +51,7 @@ const splitClassIdAndType = function (_id: string) {
     genericType = sanitizeText(split[1]);
   }
 
-  return { classId: classId, type: genericType };
+  return { classId, type: genericType };
 };
 
 /**
