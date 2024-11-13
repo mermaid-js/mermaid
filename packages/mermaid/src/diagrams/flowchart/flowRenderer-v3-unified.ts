@@ -93,7 +93,7 @@ export const draw = async function (text: string, id: string, _version: string, 
         log.debug(`Working on node ${vertex.id}->${vertex.domId}`);
 
         // Combine style arrays, defaulting to empty arrays if missing
-        // Note that `cssCompiledStyles` (from `classDef`) apply first, with `cssStyles` (from `style`)
+        // Note that `cssCompiledStyles` (from `classDef`) applies first, with `cssStyles` (from `style`)
         // rendered on top, allowing layered effects like multiple semi-transparent backgrounds
         const styles = [...(vertex.cssCompiledStyles || []), ...(vertex.cssStyles || [])];
 
@@ -111,19 +111,19 @@ export const draw = async function (text: string, id: string, _version: string, 
             []
         );
 
-        // Get the user-defined number of transition stops (first match) for non-linear interpolation
-        const regex = /num-transition-stops\s*:\s*(\d+)/;
-        const numTransitionStops = parseInt(
-          styles.find((s) => regex.exec(s))?.match(regex)?.[1] || '5',
-          10
-        );
+        // Filter out 'none' from fill styles
+        const effectiveFillStyles = allFillStyles.filter((style) => style !== 'none');
 
-        if (allFillStyles) {
+        // Layer fill styles if there’s more than one given or if any are gradients
+        if (
+          effectiveFillStyles.length > 1 ||
+          effectiveFillStyles.some((style) => style.includes('linear-gradient('))
+        ) {
           // Remove any existing or default fill (e.g. from the theme) that might unexpectedly
-          // bleed through (semi-)transparent areas of the fills
+          // bleed through (semi-)transparent areas of the fill layers
           shapeElement.style('fill', 'none');
 
-          // Iterate over each fill style in the order it appears
+          // Iterate over fill styles in the order they were defined
           allFillStyles.forEach((style, index) => {
             // Clone the shape element to apply each fill as an overlay
             const shapeClone = shapeElement.clone(true);
@@ -133,6 +133,13 @@ export const draw = async function (text: string, id: string, _version: string, 
               const linearGradientStyle = style.replace(/fill\s*:\s*linear-gradient\((.+)\)/, '$1');
               const gradientId = `gradient-${vertex.id}-${index}`;
               log.debug(`Found gradient style ${index + 1} for node ${vertex.id}: "${style}"`);
+
+              // Get the user-defined number of transition stops (first match) for non-linear interpolation
+              const transitionRegex = /num-transition-stops\s*:\s*(\d+)/;
+              const numTransitionStops = parseInt(
+                styles.find((s) => transitionRegex.exec(s))?.match(transitionRegex)?.[1] || '5',
+                10
+              );
 
               // Create the linear gradient for each occurrence
               createLinearGradient(
@@ -174,12 +181,9 @@ export const draw = async function (text: string, id: string, _version: string, 
           });
         } else {
           log.debug(
-            `No gradient or simple fill style found for node ${vertex.id}->${vertex.domId}. Using the default fill color from the theme.`
+            `No layered fill styles found for node ${vertex.id}->${vertex.domId}. Reverting to theme's default fill color.`
           );
         }
-
-        // Set blend mode for layered styles
-        shapeElement.style('mix-blend-mode', 'normal');
         log.debug(`Underlying SVG element for node ${vertex.id}: `, shapeElement.node());
       } else {
         log.debug(`Could not find a shape element for node: ${vertex.id}->${vertex.domId}`);
@@ -188,9 +192,8 @@ export const draw = async function (text: string, id: string, _version: string, 
     }
 
     // If the node selected by ID has a link, wrap it in an anchor SVG object
-    log.debug(`Attempting to select node using ID with query: #${id} [id="${vertex.id}"]`);
-    // We already selected nodeSvg based on domId; would it work if use it here instead of node?
-    const node = select(`#${id} [id="${vertex.domId}"]`);
+    const node = select(`#${id} [id="${vertex.id}"]`); // vertex.domId works fine as well
+    log.debug(`Select node using ID with query: #${id} [id="${vertex.id}"]`);
     if (!node || !vertex.link) {
       continue; // Skip if the node does not exist or does not have a link property
     }
