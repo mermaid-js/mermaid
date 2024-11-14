@@ -54,6 +54,9 @@
         //layout: 'elk',
         fontFamily: 'Kalam',
         logLevel: 1,
+        class: {
+          hideEmptyMembersBox: true,
+        },
       });
 
       let shape = 'circle';
@@ -69,6 +72,41 @@
           n83@{ label: "A single line of text", shape: '${shape}'}
           n84@{ shape: '${shape}'}
           `;
+
+      let code2 = `
+      classDiagram
+        class class1 {
+          int num
+          string test
+          string test
+          string test
+          string test
+          string test
+          method()
+        }
+        class class2 {
+          int num
+          string test
+          string test
+          string test
+          string test
+          string test
+          method()
+          method()
+        }
+        class class3 {
+          int test
+        }
+        <<interface>> class3
+        class class4 {
+          int[] id
+          method()
+          method()
+          method()
+          method()
+        }
+        <<interface>> class4
+      `;
 
       let positions = {
         edges: {},
@@ -104,7 +142,37 @@
         },
       };
 
-      const { svg } = await mermaid.render('the-id-of-the-svg', code, undefined, positions);
+      let positions2 = {
+        edges: {},
+        nodes: {
+          class1: {
+            x: 0,
+            y: 10,
+            width: 100,
+            height: 400,
+          },
+          class2: {
+            x: -300,
+            y: 100,
+            width: 100,
+            height: 0,
+          },
+          class3: {
+            x: 400,
+            y: 10,
+            width: 0,
+            height: 0,
+          },
+          class4: {
+            x: 800,
+            y: 10,
+            width: 0,
+            height: 0,
+          },
+        },
+      };
+
+      const { svg } = await mermaid.render('the-id-of-the-svg', code2, undefined, positions2);
       const elem = document.querySelector('#diagram');
       elem.innerHTML = svg;
     </script>

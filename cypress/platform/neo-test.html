@@ -115,6 +115,402 @@
       </tr>
       <tr>
         <th class="vertical-header">
+          <button class="collapsible">Simple classNode</button>
+          <div class="content">
+            <div class="pre-scrollable">
+              <pre>
+              classNode
+            </pre
+              >
+            </div>
+          </div>
+        </th>
+        <td>
+          <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "neo", "fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode
+          </pre>
+        </td>
+        <td>
+          <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "dark","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "handDrawn", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "classic", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode
+        </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <th class="vertical-header">
+          <button class="collapsible">Filled classNode</button>
+          <div class="content">
+            <div class="pre-scrollable">
+              <pre>
+              Filled classNode
+            </pre
+              >
+            </div>
+          </div>
+        </th>
+        <td>
+          <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "neo", "fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode {
+              +int number
+              method()
+            }
+          </pre>
+        </td>
+        <td>
+          <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "dark","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode {
+              +int number
+              method()
+            }
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode {
+              +int number
+              method()
+            }
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode {
+              +int number
+              method()
+            }
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "handDrawn", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode {
+              +int number
+              method()
+            }
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "classic", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            class classNode {
+              +int number
+              method()
+            }
+        </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <th class="vertical-header">
+          <button class="collapsible">Class with relation</button>
+          <div class="content">
+            <div class="pre-scrollable">
+              <pre>
+              classA --> classB
+            </pre
+              >
+            </div>
+          </div>
+        </th>
+        <td>
+          <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "neo", "fontFamily": "Arial"} }%%
+          classDiagram
+            class classA {
+              +int number
+              method()
+            }
+            class classB {
+              +int number
+              -string text
+              method()
+              another_method()
+            }
+            classA --> classB
+          </pre>
+        </td>
+        <td>
+          <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "dark","fontFamily": "Arial"} }%%
+          classDiagram
+            class classA {
+              +int number
+              method()
+            }
+            class classB {
+              +int number
+              -string text
+              method()
+              another_method()
+            }
+            classA --> classB
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            class classA {
+              +int number
+              method()
+            }
+            class classB {
+              +int number
+              -string text
+              method()
+              another_method()
+            }
+            classA --> classB
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial"} }%%
+          classDiagram
+            class classA {
+              +int number
+              method()
+            }
+            class classB {
+              +int number
+              -string text
+              method()
+              another_method()
+            }
+            classA --> classB
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "handDrawn", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            class classA {
+              +int number
+              method()
+            }
+            class classB {
+              +int number
+              -string text
+              method()
+              another_method()
+            }
+            classA --> classB
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "classic", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            class classA {
+              +int number
+              method()
+            }
+            class classB {
+              +int number
+              -string text
+              method()
+              another_method()
+            }
+            classA --> classB
+        </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <th class="vertical-header">
+          <button class="collapsible">Full class diagram</button>
+          <div class="content">
+            <div class="pre-scrollable">
+              <pre>
+              nameSpace { classA --> classB } note
+            </pre
+              >
+            </div>
+          </div>
+        </th>
+        <td>
+          <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "neo", "fontFamily": "Arial"} }%%
+          classDiagram
+            namespace myNamespace {
+              class classA {
+                +int number
+                method()
+              }
+              class classB {
+                +int number
+                -string text
+                method()
+                another_method()
+              }
+            }
+            classA "1" o--> "*" classB : label
+            note for classB "This is a note for classB"
+          </pre>
+        </td>
+        <td>
+          <pre id="diagram1" class="mermaid">
+          %%{init: {"look": "neo", "theme": "dark","fontFamily": "Arial"} }%%
+          classDiagram
+            namespace myNamespace {
+              class classA {
+                +int number
+                method()
+              }
+              class classB {
+                +int number
+                -string text
+                method()
+                another_method()
+              }
+            }
+            classA "1" o--> "*" classB : label
+            note for classB "This is a note for classB"
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            namespace myNamespace {
+              class classA {
+                +int number
+                method()
+              }
+              class classB {
+                +int number
+                -string text
+                method()
+                another_method()
+              }
+            }
+            classA "1" o--> "*" classB : label
+            note for classB "This is a note for classB"
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram2" class="mermaid">
+          %%{init: {"look": "neo", "theme": "forest","fontFamily": "Arial"} }%%
+          classDiagram
+            namespace myNamespace {
+              class classA {
+                +int number
+                method()
+              }
+              class classB {
+                +int number
+                -string text
+                method()
+                another_method()
+              }
+            }
+            classA "1" o--> "*" classB : label
+            note for classB "This is a note for classB"
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "handDrawn", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            namespace myNamespace {
+              class classA {
+                +int number
+                method()
+              }
+              class classB {
+                +int number
+                -string text
+                method()
+                another_method()
+              }
+            }
+            classA "1" o--> "*" classB : label
+            note for classB "This is a note for classB"
+        </pre
+          >
+        </td>
+        <td>
+          <pre id="diagram3" class="mermaid">
+          %%{init: {"look": "classic", "theme": "default","fontFamily": "Arial"} }%%
+          classDiagram
+            namespace myNamespace {
+              class classA {
+                +int number
+                method()
+              }
+              class classB {
+                +int number
+                -string text
+                method()
+                another_method()
+              }
+            }
+            classA "1" o--> "*" classB : label
+            note for classB "This is a note for classB"
+        </pre
+          >
+        </td>
+      </tr>
+      <tr>
+        <th class="vertical-header">
           <button class="collapsible">Simple State (only id)</button>
           <div class="content">
             <div class="pre-scrollable">
