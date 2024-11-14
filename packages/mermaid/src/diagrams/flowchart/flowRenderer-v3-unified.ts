@@ -112,7 +112,7 @@ export const draw = async function (text: string, id: string, _version: string, 
         );
 
         // Filter out 'none' from fill styles
-        const effectiveFillStyles = allFillStyles.filter((style) => style !== 'none');
+        const effectiveFillStyles = allFillStyles.filter((style) => !/fill\s*:\s*none/.test(style));
 
         // Layer fill styles if there’s more than one given or if any are gradients
         if (
@@ -124,7 +124,7 @@ export const draw = async function (text: string, id: string, _version: string, 
           shapeElement.style('fill', 'none');
 
           // Iterate over fill styles in the order they were defined
-          allFillStyles.forEach((style, index) => {
+          effectiveFillStyles.forEach((style, index) => {
             // Clone the shape element to apply each fill as an overlay
             const shapeClone = shapeElement.clone(true);
 

@@ -1137,7 +1137,7 @@ flowchart LR
 
 #### Linear gradient style
 
-Mermaid allows for linear gradient styling on nodes by leveraging the [<linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient) element in SVG paired with CSS [linear-gradient()](https://www.w3.org/TR/css-images-4/#gradients) syntax, to design more visually distinct flowcharts. You can define gradients in much the same way as in CSS, specifying directions, multiple color stops, transition hints, and transparency to achieve unique effects. Color interpolation is done in `sRGB` space, as commonly supported by browsers. A linear gradient can be set as the fill property in a node’s `style` or `classDef` using the following syntax:
+Mermaid allows for linear gradient styling on nodes by leveraging the [linearGradient](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient) element in SVG paired with CSS [linear-gradient()](https://www.w3.org/TR/css-images-4/#gradients) syntax, to design more visually distinct flowcharts. You can define gradients in much the same way as in CSS, specifying directions, multiple color stops, transition hints, and transparency to achieve unique effects. Color interpolation is done in `sRGB` space, as commonly supported by browsers. A linear gradient can be set as the fill property in a node’s `style` or `classDef` using the following syntax:
 
 ```
     style nodeId fill:linear-gradient(direction, colorStop1, colorStop2, ...);
@@ -1164,7 +1164,6 @@ A comprehensive collection of side-by-side examples comparing Mermaid and CSS li
 ##### Linear gradient examples
 
 **1. Basic gradient**
-
 Create a basic gradient from red to blue, flowing from top to bottom (default direction):
 
 ```mermaid-example
@@ -1184,7 +1183,6 @@ flowchart
 In this example, the gradient starts with red at the top and transitions to blue at the bottom.
 
 **2. Gradient with directional keywords**
-
 Use directional keywords to define the gradient's direction:
 
 ```mermaid-example
@@ -1196,7 +1194,6 @@ flowchart LR
 This gradient moves from the top-right corner to the bottom-left corner, starting with pink and ending with cyan.
 
 **3. Gradient with angle**
-
 Specify the gradient angle to control the direction:
 
 ```mermaid-example
@@ -1208,7 +1205,6 @@ flowchart BT
 The gradient line is tilted at a 35-degree angle, starting with orange and transitioning to purple.
 
 **4. Multiple color stops**
-
 Include multiple color stops at specific positions:
 
 ```mermaid-example
@@ -1220,7 +1216,6 @@ flowchart LR
 Here, the gradient starts with red at the top, transitions to yellow at 30%, green at 60%, brown at 90%, and ends with Deep Sky Blue at the bottom.
 
 **5. Length Units for color stops**
-
 Use length units for color stop positions (physical units like `cm` are calculated assuming _96dpi_):
 
 ```mermaid-example
@@ -1232,7 +1227,6 @@ flowchart LR
 This gradient moves from left to right, using specific lengths and percentages to control where colors change.
 
 **6. Gradients with opacity**
-
 Apply gradients using colors with opacity:
 
 ```mermaid-example
@@ -1244,7 +1238,6 @@ flowchart TD
 The gradient transitions from semi-transparent red to semi-transparent blue diagonally.
 
 **7. Automatic positioning**
-
 If positions for color stops are not specified, they are distributed evenly:
 
 ```mermaid-example
@@ -1256,7 +1249,6 @@ flowchart LR
 In this example, the gradient begins with red from 0% to 10% (specified), transitions smoothly to green at 30%, then to orange at 50%, blue at 70%, and finally reaches cyan at 90% (specified), remaining cyan until the end, distributing the colors with missing positions evenly throughout.
 
 **8. Overlapping positions**
-
 If color stops have overlapping positions, Mermaid adjusts them to maintain the correct order:
 
 ```mermaid-example
@@ -1268,8 +1260,7 @@ flowchart RL
 Here, since 40% comes after 60%, the white color stop at 40% is adjusted to 60% to keep positions ascending.
 
 **9. Out-of-bounds positions**
-
-Color stops set outside the 0% to 100% range cause the gradient to stretch beyond the edges.
+Color stops set outside the 0% to 100% range cause the gradient calculation to stretch beyond the node's shape while keeping all rendered content contained within.
 
 ```mermaid-example
 flowchart TD
@@ -1280,7 +1271,6 @@ flowchart TD
 In this gradient, red at -20% blends toward yellow and appears as a red-yellow mix at 0%. Likewise, green at 145% blends with yellow near 100%, creating a yellow-green mix rather than pure green at the end. Yellow is centered because the 50% stop is explicitly defined.
 
 **10. Sharp color transition**
-
 Specifying two identical positions for consecutive colors creates a sharp transition:
 
 ```mermaid-example
@@ -1292,8 +1282,7 @@ flowchart LR
 This results in a sharp change from red to blue exactly at the 50% mark.
 
 **11. Double color stops**
-
-Using double positions for a color creates a solid zone with that colors:
+Using double positions for a color creates an unvarying zone with that color:
 
 ```mermaid-example
 flowchart LR
@@ -1309,10 +1298,9 @@ flowchart TD
     style A fill:linear-gradient(45deg, yellow, red 30%, red 50%, blue);
 ```
 
-In this example, the gradient transitions from yellow to red between 0% and 30%, remains solid red between 30% and 50%, and then transitions from red to blue after 50%.
+In this example, the gradient transitions from yellow to red between 0% and 30%, remains uniformly red between 30% and 50%, and then transitions from red to blue after 50%.
 
 **12. Color functions**
-
 Mermaid supports CSS color functions, provided they are supported by the browser:
 
 ```mermaid-example
@@ -1322,7 +1310,6 @@ flowchart LR
 ```
 
 **13. Applying gradients to different shapes**
-
 Gradients adjust based on the node's shape and dimensions:
 
 ```mermaid-example
@@ -1331,7 +1318,7 @@ flowchart TD
     B --> E[/Parallelogram/]
     C --> F([Stadium])
     E --> G[[Subroutine]]
-    classDef default fill:linear-gradient(135deg, #FF000080, #FFA50080, #FFFF0080, #00800080, #0000FF80, #4B008280, #EE82EE80);
+    classDef default fill:linear-gradient(135deg, #ff000080, #ffa50080, #ffff0080, #00800080, #0000ff80, #4b008280, #ee82ee80);
 ```
 
 ```note
@@ -1343,7 +1330,6 @@ The gradient line length is determined by projecting a shape's dimensions along 
 Non-linear color transitions occur when using transition hints or colors with varying opacity. See the two scenarios below.
 
 **Scenario I: interpolating between colors with color transition hint**
-
 Transition hints are positional markers that can be placed between color stops to guide the gradient's interpolation.
 
 ```mermaid-example
@@ -1369,7 +1355,6 @@ You are allowed to have both transition hints and opacity variations in the same
 ```
 
 **Fine-tuning non-linear interpolation with custom transition stops**
-
 You can specify `num-transition-stops` directly in the `style` or `classDef` to customize the number of segments that make up the gradient transition. The default is `5`, which provides a decent transition, but adjusting this number allows for finer control. This value must be odd to align with the symmetry logic used for interpolation. Here is an example:
 
 ```mermaid-example
@@ -1393,29 +1378,37 @@ flowchart TD
 
 In this example, red, green, and blue gradients are angled differently and fade out around 70%, creating a layered, blended effect within the node.
 
-**Adding a solid background**
-To add single-color layers to the gradients, you can specify an explicit `fill` color, to establish a uniform background layer. Without this, no background fill will appear—even the theme’s default background color won’t apply—leaving only the gradient and any transparent areas visible. This allows the color or content of the underlying container element to show through, which can be useful for designs that embrace transparency. For example:
+**Combining simple fills and linear gradients for layered node styling**
+When styling a node with a linear gradient, the theme’s default background color is ignored. This means that if you don’t specify a simple fill color, no background or foreground color will be applied to the gradient layers. This allows the color or content of the underlying container to show through (semi-)transparent areas of the gradient, if any, which can be useful for designs that embrace transparency.
+
+To include simple, single-colored layers alongside gradient layers, use the fill property to define a color. This fill doesn’t need to be fully opaque and creates a uniform, single-colored layer in the stack. The placement of this simple fill property in the style or class definition determines its influence on the final outcome when combined with other layers. Earlier fills take precedence and overlay subsequent layers.
 
 ```mermaid-example
-flowchart TD
-    E[No Background Fill] --> F[Solid Background Fill]
-    style E fill:linear-gradient(to left, rgba(255,0,0,0.4), rgba(0,0,255,0.4))
-    style F fill:linear-gradient(to left, rgba(255,0,0,0.4), rgba(0,0,255,0.4)), fill:yellow
+flowchart LR
+    A[No Yellow] --> B[Yellow First]
+    A --> C[Yellow Last]
+    B --> D[Transparent Yellow First]
+    C --> E[Transparent Yellow Last]
+    style A fill:linear-gradient(to left, rgba(255,0,0,0.8), rgba(0,0,255,0.3))
+    style B fill:yellow, fill:linear-gradient(to left, rgba(255,0,0,0.8), rgba(0,0,255,0.3))
+    style C fill:linear-gradient(to left, rgba(255,0,0,0.8), rgba(0,0,255,0.3)), fill:yellow
+    style D fill:rgba(255,255,0,0.6), fill:linear-gradient(to left, rgba(255,0,0,0.8), rgba(0,0,255,0.3))
+    style E fill:linear-gradient(to left, rgba(255,0,0,0.8), rgba(0,0,255,0.3)), fill:rgba(255,255,0,0.6)
 ```
 
-In this example, node E has only a gradient fill, allowing the web page background to show through transparent areas, while node F includes a light gray (`#f2f2f2`) background beneath the gradient for a more opaque, cohesive look.
+In the example above, node A uses only a gradient fill, allowing the page background to show through its transparent areas. The other nodes include a yellow layer—either opaque or transparent—in addition to the gradient. The order in which the fill properties are defined impacts how the layers blend visually.
 
 **Combining gradients from class definition and style**
-You can also set a default gradient in `classDef`—which can apply to multiple nodes—and then layer additional gradients on specific nodes directly using `style`. This is especially useful when you have a default look for all nodes but want to add unique overlays on some for emphasis or distinction. Each gradient can be semi-transparent, allowing for blended visuals. For example:
+You can also set a default gradient in `classDef`—which can apply to multiple nodes—and then layer additional gradients on top of specific nodes directly using `style`. This is especially useful when you have a default look for all nodes but want to add unique overlays on some for emphasis or distinction. Each gradient can be semi-transparent, allowing for blended visuals. For example:
 
 ```mermaid-example
-flowchart TD
-    A[Layered Gradient from both classDef and style] --> B((Default)) & C[/Default\]
-    classDef default fill:linear-gradient(45deg, rgba(0,0,150,0.3), rgba(255,255,0,0.3))
-    style A fill:linear-gradient(to top, rgb(240,0,0,0.8), 5%, transparent 15% 85%, 95%, rgb(240,0,0,0.8))
+ flowchart TD
+    A[Northern Lights] --> B((Default)) & C[/Default\]
+    classDef default fill:linear-gradient(to top, rgba(23, 10, 113, 0.9), 40%, transparent), fill:white
+    style A fill:linear-gradient(to right, rgba(0, 255, 127, 0.3) 10%, rgba(0, 191, 255, 0.3) 30%, transparent 50%, rgba(138, 43, 226, 0.2) 70%, rgba(19, 24, 98, 0.3) 90%)
 ```
 
-Here, a default pink-to-yellow gradient in `classDef` applies to all nodes, while an additional red-transparent-red gradient in `style` overlays only node A.
+Here, the default gradient in `classDef` features a twilight indigo base that transitions into white from a simple fill. On top of this, node A adds a vibrant northern-lights-inspired gradient, allowing traces of the default background to show through.
 
 ### CSS classes
 
