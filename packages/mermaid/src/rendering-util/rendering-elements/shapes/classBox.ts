@@ -15,6 +15,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   const PADDING = config.class!.padding ?? 12;
   const GAP = PADDING;
   const useHtmlLabels = node.useHtmlLabels ?? evaluate(config.htmlLabels) ?? true;
+
   // Treat node as classNode
   const classNode = node as unknown as ClassNode;
   classNode.annotations = classNode.annotations ?? [];
@@ -49,15 +50,25 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
     options.fillStyle = 'solid';
   }
 
-  const w = bbox.width;
-  let h = bbox.height;
+  const w = Math.max(node.width ?? 0, bbox.width);
+  let h = Math.max(node.height ?? 0, bbox.height);
+  const nodeHeightGreater = (node.height ?? 0) > bbox.height;
   if (classNode.members.length === 0 && classNode.methods.length === 0) {
     h += GAP;
   } else if (classNode.members.length > 0 && classNode.methods.length === 0) {
     h += GAP * 2;
   }
+
   const x = -w / 2;
   const y = -h / 2;
+  let extraHeight = renderExtraBox
+    ? PADDING * 2
+    : classNode.members.length === 0 && classNode.methods.length === 0
+      ? -PADDING
+      : 0;
+  if (nodeHeightGreater) {
+    extraHeight = PADDING * 2;
+  }
 
   // Create and center rectangle
   const roughRect = rc.rectangle(
@@ -70,13 +81,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
           ? -PADDING / 2
           : 0),
     w + 2 * PADDING,
-    h +
-      2 * PADDING +
-      (renderExtraBox
-        ? PADDING * 2
-        : classNode.members.length === 0 && classNode.methods.length === 0
-          ? -PADDING
-          : 0),
+    h + 2 * PADDING + extraHeight,
     options
   );
 
@@ -85,6 +90,30 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   const rectBBox = rect.node()!.getBBox();
 
   // Rect is centered so now adjust labels.
+  const annotationGroupHeight =
+    (shapeSvg.select('.annotation-group').node() as SVGGraphicsElement).getBBox().height -
+      (renderExtraBox ? PADDING / 2 : 0) || 0;
+  const labelGroupHeight =
+    (shapeSvg.select('.label-group').node() as SVGGraphicsElement).getBBox().height -
+      (renderExtraBox ? PADDING / 2 : 0) || 0;
+  const membersGroupHeight =
+    (shapeSvg.select('.members-group').node() as SVGGraphicsElement).getBBox().height -
+      (renderExtraBox ? PADDING / 2 : 0) || 0;
+  // Y value in the middle of the first line and remaining space.
+  const membersAreaPlacement =
+    (annotationGroupHeight +
+      labelGroupHeight +
+      y +
+      PADDING -
+      (y -
+        PADDING -
+        (renderExtraBox
+          ? PADDING
+          : classNode.members.length === 0 && classNode.methods.length === 0
+            ? -PADDING / 2
+            : 0))) /
+    2;
+
   // TODO: Fix types
   shapeSvg.selectAll('.text').each((_: any, i: number, nodes: any) => {
     const text = select<any, unknown>(nodes[i]);
@@ -110,6 +139,25 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
         : classNode.members.length === 0 && classNode.methods.length === 0
           ? -PADDING / 2
           : 0);
+    if (text.attr('class').includes('methods-group')) {
+      if (nodeHeightGreater) {
+        newTranslateY = membersAreaPlacement + GAP * 2;
+      } else {
+        newTranslateY =
+          annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + GAP * 4 + PADDING;
+      }
+    }
+    if (
+      classNode.members.length === 0 &&
+      classNode.methods.length === 0 &&
+      config.class?.hideEmptyMembersBox
+    ) {
+      if (classNode.annotations.length > 0) {
+        newTranslateY = translateY - GAP;
+      } else {
+        newTranslateY = translateY;
+      }
+    }
     if (!useHtmlLabels) {
       // Fix so non html labels are better centered.
       // BBox of text seems to be slightly different when calculated so we offset
@@ -132,22 +180,16 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   });
 
   // Render divider lines.
-  const annotationGroupHeight =
-    (shapeSvg.select('.annotation-group').node() as SVGGraphicsElement).getBBox().height -
-      (renderExtraBox ? PADDING / 2 : 0) || 0;
-  const labelGroupHeight =
-    (shapeSvg.select('.label-group').node() as SVGGraphicsElement).getBBox().height -
-      (renderExtraBox ? PADDING / 2 : 0) || 0;
-  const membersGroupHeight =
-    (shapeSvg.select('.members-group').node() as SVGGraphicsElement).getBBox().height -
-      (renderExtraBox ? PADDING / 2 : 0) || 0;
+  // Line y-values are offset by 0.001 so gradient stroke can apply.
+  // If y-values are the same then the height of the bounding box is zero and it doesn't work.
   // First line (under label)
   if (classNode.members.length > 0 || classNode.methods.length > 0 || renderExtraBox) {
+    const firstLineY = annotationGroupHeight + labelGroupHeight + y + PADDING;
     const roughLine = rc.line(
       rectBBox.x,
-      annotationGroupHeight + labelGroupHeight + y + PADDING,
+      firstLineY,
       rectBBox.x + rectBBox.width,
-      annotationGroupHeight + labelGroupHeight + y + PADDING,
+      firstLineY + 0.001,
       options
     );
     const line = shapeSvg.insert(() => roughLine);
@@ -156,11 +198,13 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
 
   // Second line (under members)
   if (renderExtraBox || classNode.members.length > 0 || classNode.methods.length > 0) {
+    const secondLineY =
+      annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + GAP * 2 + PADDING;
     const roughLine = rc.line(
       rectBBox.x,
-      annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + GAP * 2 + PADDING,
+      nodeHeightGreater ? membersAreaPlacement : secondLineY,
       rectBBox.x + rectBBox.width,
-      annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + PADDING + GAP * 2,
+      (nodeHeightGreater ? membersAreaPlacement : secondLineY) + 0.001,
       options
     );
     const line = shapeSvg.insert(() => roughLine);
