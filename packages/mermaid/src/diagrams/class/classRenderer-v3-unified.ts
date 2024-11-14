@@ -38,7 +38,13 @@ export const getClasses = function (
   return diagramObj.db.getClasses();
 };
 
-export const draw = async function (text: string, id: string, _version: string, diag: any) {
+export const draw = async function (
+  text: string,
+  id: string,
+  _version: string,
+  diag: any,
+  positions: any
+) {
   log.info('REF0:');
   log.info('Drawing class diagram (v3)', id);
   const { securityLevel, state: conf, layout } = getConfig();
@@ -60,7 +66,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
   data4Layout.markers = ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'];
   data4Layout.diagramId = id;
-  await render(data4Layout, svg);
+  await render(data4Layout, svg, positions);
   const padding = 8;
   utils.insertTitle(
     svg,
