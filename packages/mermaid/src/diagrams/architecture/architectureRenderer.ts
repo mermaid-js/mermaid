@@ -159,11 +159,11 @@ function getAlignments(
   /**
    * Flattens the alignment object so nodes in different groups will be in the same alignment array IFF their groups don't connect in a conflicting alignment
    *
-   * i.e., two groups which connect horizontally should not have vertical alignments with one another
+   * i.e., two groups which connect horizontally should not have nodes with vertical alignments to one another
    *
    * See: #5952
    *
-   * @param alignmentObj - alignment object with the outer key being the row/col and the inner key being the group name
+   * @param alignmentObj - alignment object with the outer key being the row/col # and the inner key being the group name mapped to the nodes on that axis in the group
    * @param alignmentDir - alignment direction
    * @returns flattened alignment object with an arbitrary key mapping to nodes in the same row/col
    */
@@ -173,24 +173,36 @@ function getAlignments(
   ): Record<string, string[]> => {
     return Object.entries(alignmentObj).reduce(
       (prev, [dir, alignments]) => {
+        // prev is the mapping of x/y coordinate to an array of the nodes in that row/column
         let cnt = 0;
-        const arr = Object.entries(alignments);
+        const arr = Object.entries(alignments); // [group name, array of nodes within the group on axis dir]
         if (arr.length === 1) {
+          // If only one group exists in the row/column, we don't need to do anything else
           prev[dir] = arr[0][1];
           return prev;
         }
-        for (let i = 0; i < arr.length - 1; i += 1) {
-          const [aGroupId, aNodeIds] = arr[i];
-          const [bGroupId, bNodeIds] = arr[i + 1];
-          const alignment = groupAlignments[aGroupId][bGroupId];
-          if (alignment === alignmentDir) {
-            prev[dir] ??= [];
-            prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds];
-          } else {
-            const keyA = `${dir}-${cnt++}`;
-            prev[keyA] = aNodeIds;
-            const keyB = `${dir}-${cnt++}`;
-            prev[keyB] = bNodeIds;
+        for (let i = 0; i < arr.length - 1; i++) {
+          for (let j = i + 1; j < arr.length; j++) {
+            // Not optimal but arr will not grow large enough to be a concern
+            const [aGroupId, aNodeIds] = arr[i];
+            const [bGroupId, bNodeIds] = arr[j];
+            const alignment = groupAlignments[aGroupId]?.[bGroupId]; // Get how the two groups are intended to align (undefined if they aren't)
+
+            if (alignment === alignmentDir) {
+              // If the intended alignment between the two groups is the same as the alignment we are parsing
+              prev[dir] ??= [];
+              prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds]; // add the node ids of both groups to the axis array in prev
+            } else if (aGroupId === 'default' || bGroupId === 'default') {
+              // If either of the groups are in the default space (not in a group), use the same behavior as above
+              prev[dir] ??= [];
+              prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds];
+            } else {
+              // Otherwise, the nodes in the two groups are not intended to align
+              const keyA = `${dir}-${cnt++}`;
+              prev[keyA] = aNodeIds;
+              const keyB = `${dir}-${cnt++}`;
+              prev[keyB] = bNodeIds;
+            }
           }
         }
 
@@ -376,7 +388,6 @@ function layoutArchitecture(
     addServices(services, cy);
     addJunctions(junctions, cy);
     addEdges(edges, cy);
-
     // Use the spatial map to create alignment arrays for fcose
     const alignmentConstraint = getAlignments(db, spatialMaps, groupAlignments);
 

@@ -219,13 +219,15 @@ const getEdges = (): ArchitectureEdge[] => state.records.edges;
  */
 const getDataStructures = () => {
   if (state.records.dataStructures === undefined) {
-    // Create an adjacency list of the diagram to perform BFS on
-    // Outer reduce applied on all services
-    // Inner reduce applied on the edges for a service
+    // Tracks how groups are aligned with one another. Generated while creating the adj list
     const groupAlignments: Record<
       string,
       Record<string, Exclude<ArchitectureAlignment, 'bend'>>
     > = {};
+
+    // Create an adjacency list of the diagram to perform BFS on
+    // Outer reduce applied on all services
+    // Inner reduce applied on the edges for a service
     const adjList = Object.entries(state.records.nodes).reduce<
       Record<string, ArchitectureDirectionPairMap>
     >((prevOuter, [id, service]) => {
