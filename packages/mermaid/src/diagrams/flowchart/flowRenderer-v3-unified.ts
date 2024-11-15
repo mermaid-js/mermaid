@@ -95,7 +95,7 @@ export const draw = async function (text: string, id: string, _version: string, 
         // Combine style arrays, defaulting to empty arrays if missing
         // Note that `cssCompiledStyles` (from `classDef`) applies first, with `cssStyles` (from `style`)
         // rendered on top, allowing layered effects like multiple semi-transparent backgrounds
-        const styles = [...(vertex.cssCompiledStyles || []), ...(vertex.cssStyles || [])];
+        const styles = [...(vertex.cssStyles || []), ...(vertex.cssCompiledStyles || [])];
 
         // Log all cssCompiledStyles for the node if available
         if (styles) {
@@ -119,9 +119,12 @@ export const draw = async function (text: string, id: string, _version: string, 
           effectiveFillStyles.length > 1 ||
           effectiveFillStyles.some((style) => style.includes('linear-gradient('))
         ) {
+          // Note: the `!important` flag is added directly to all the inline fill styles below to prevent overrides by
+          // cssImportantStyles in src/mermaidAPI.ts, ensuring classDef-based fill properties don’t block our fills
+
           // Remove any existing or default fill (e.g. from the theme) that might unexpectedly
           // bleed through (semi-)transparent areas of the fill layers
-          shapeElement.style('fill', 'none');
+          shapeElement.style('fill', 'none', 'important');
 
           // Iterate over fill styles in the order they were defined
           effectiveFillStyles.forEach((style, index) => {
@@ -152,7 +155,7 @@ export const draw = async function (text: string, id: string, _version: string, 
               );
 
               // Apply the gradient fill to the cloned shape
-              shapeClone.style('fill', `url(#${gradientId})`);
+              shapeClone.style('fill', `url(#${gradientId})`, 'important');
               log.debug(
                 `Applied gradient ID "${gradientId}" to node ${vertex.id} with URL url(#${gradientId})`
               );
@@ -161,7 +164,7 @@ export const draw = async function (text: string, id: string, _version: string, 
               const color = style.replace(/fill\s*:\s*/, '');
 
               // Apply the simple fill to the cloned shape
-              shapeClone.style('fill', color);
+              shapeClone.style('fill', color, 'important');
               log.debug(`Applied simple fill color "${color}" to node ${vertex.id}`);
             }
 
