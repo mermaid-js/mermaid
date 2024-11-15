@@ -30,13 +30,21 @@ importers:
         version: 8.14.4(eslint@9.12.0(jiti@1.21.6))
       '@cypress/code-coverage':
         specifier: ^3.12.30
+<<<<<<< HEAD
         version: 3.13.4(@babel/core@7.25.7)(@babel/preset-env@7.25.7(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(cypress@13.15.0)(webpack@5.95.0(esbuild@0.21.5))
+=======
+        version: 3.12.45(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(babel-loader@9.2.1(@babel/core@7.25.2)(webpack@5.94.0(esbuild@0.21.5)))(cypress@13.14.1)(webpack@5.94.0(esbuild@0.21.5))
+>>>>>>> 02984908a (bump langium version)
       '@eslint/js':
         specifier: ^9.4.0
         version: 9.12.0
       '@rollup/plugin-typescript':
         specifier: ^11.1.6
+<<<<<<< HEAD
         version: 11.1.6(rollup@4.24.0)(tslib@2.7.0)(typescript@5.4.5)
+=======
+        version: 11.1.6(rollup@4.22.4)(tslib@2.7.0)(typescript@5.4.5)
+>>>>>>> 02984908a (bump langium version)
       '@types/cors':
         specifier: ^2.8.17
         version: 2.8.17
@@ -63,7 +71,11 @@ importers:
         version: 4.2.4
       '@vitest/coverage-v8':
         specifier: ^1.4.0
+<<<<<<< HEAD
         version: 1.6.0(vitest@1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.34.1))
+=======
+        version: 1.6.0(vitest@1.6.0(@types/node@20.16.2)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.33.0))
+>>>>>>> 02984908a (bump langium version)
       '@vitest/spy':
         specifier: ^1.4.0
         version: 1.6.0
@@ -117,7 +129,11 @@ importers:
         version: 8.1.2
       eslint-plugin-jest:
         specifier: ^28.6.0
+<<<<<<< HEAD
         version: 28.8.3(@typescript-eslint/eslint-plugin@8.8.1(@typescript-eslint/parser@8.8.1(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.12.0(jiti@1.21.6))(jest@29.7.0(@types/node@20.16.11))(typescript@5.4.5)
+=======
+        version: 28.8.3(@typescript-eslint/eslint-plugin@8.7.0(@typescript-eslint/parser@8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.6))(jest@29.7.0(@types/node@20.16.2))(typescript@5.4.5)
+>>>>>>> 02984908a (bump langium version)
       eslint-plugin-jsdoc:
         specifier: ^50.0.0
         version: 50.3.1(eslint@9.12.0(jiti@1.21.6))
@@ -189,7 +205,11 @@ importers:
         version: 5.0.10
       rollup-plugin-visualizer:
         specifier: ^5.12.0
+<<<<<<< HEAD
         version: 5.12.0(rollup@4.24.0)
+=======
+        version: 5.12.0(rollup@4.22.4)
+>>>>>>> 02984908a (bump langium version)
       start-server-and-test:
         specifier: ^2.0.3
         version: 2.0.8
@@ -204,6 +224,7 @@ importers:
         version: 8.8.1(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5)
       vite:
         specifier: ^5.2.3
+<<<<<<< HEAD
         version: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
       vite-plugin-istanbul:
         specifier: ^6.0.0
@@ -211,6 +232,15 @@ importers:
       vitest:
         specifier: ^1.4.0
         version: 1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.34.1)
+=======
+        version: 5.4.2(@types/node@20.16.2)(terser@5.33.0)
+      vite-plugin-istanbul:
+        specifier: ^6.0.0
+        version: 6.0.2(vite@5.4.2(@types/node@20.16.2)(terser@5.33.0))
+      vitest:
+        specifier: ^1.4.0
+        version: 1.6.0(@types/node@20.16.2)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.33.0)
+>>>>>>> 02984908a (bump langium version)
 
   packages/mermaid:
     dependencies:
@@ -397,10 +427,17 @@ importers:
         version: 5.0.0
       vitepress:
         specifier: ^1.0.1
+<<<<<<< HEAD
         version: 1.1.4(@algolia/client-search@4.24.0)(@types/node@20.16.11)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.34.1)(typescript@5.4.5)
       vitepress-plugin-search:
         specifier: 1.0.4-alpha.22
         version: 1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.1.4(@algolia/client-search@4.24.0)(@types/node@20.16.11)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.34.1)(typescript@5.4.5))(vue@3.5.11(typescript@5.4.5))
+=======
+        version: 1.3.4(@algolia/client-search@5.5.3)(@types/node@22.6.1)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.33.0)(typescript@5.4.5)
+      vitepress-plugin-search:
+        specifier: 1.0.4-alpha.22
+        version: 1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.3.4(@algolia/client-search@5.5.3)(@types/node@22.6.1)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.33.0)(typescript@5.4.5))(vue@3.4.38(typescript@5.4.5))
+>>>>>>> 02984908a (bump langium version)
 
   packages/mermaid-example-diagram:
     dependencies:
@@ -444,7 +481,11 @@ importers:
     dependencies:
       '@zenuml/core':
         specifier: ^3.23.27
+<<<<<<< HEAD
         version: 3.24.12(typescript@5.6.2)
+=======
+        version: 3.24.3(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
     devDependencies:
       mermaid:
         specifier: workspace:^
@@ -457,7 +498,11 @@ importers:
         version: 7.4.47
       '@vueuse/core':
         specifier: ^10.9.0
+<<<<<<< HEAD
         version: 10.11.1(vue@3.5.11(typescript@5.6.2))
+=======
+        version: 10.11.1(vue@3.4.38(typescript@5.6.2))
+>>>>>>> 02984908a (bump langium version)
       font-awesome:
         specifier: ^4.7.0
         version: 4.7.0
@@ -469,7 +514,11 @@ importers:
         version: link:../..
       vue:
         specifier: ^3.4.21
+<<<<<<< HEAD
         version: 3.5.11(typescript@5.6.2)
+=======
+        version: 3.4.38(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
     devDependencies:
       '@iconify-json/carbon':
         specifier: ^1.1.31
@@ -479,10 +528,17 @@ importers:
         version: 0.59.4
       '@vite-pwa/vitepress':
         specifier: ^0.4.0
+<<<<<<< HEAD
         version: 0.4.0(vite-plugin-pwa@0.19.8(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))
       '@vitejs/plugin-vue':
         specifier: ^5.0.0
         version: 5.1.4(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1))(vue@3.5.11(typescript@5.6.2))
+=======
+        version: 0.4.0(vite-plugin-pwa@0.19.8(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))
+      '@vitejs/plugin-vue':
+        specifier: ^5.0.0
+        version: 5.1.2(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(vue@3.4.38(typescript@5.6.2))
+>>>>>>> 02984908a (bump langium version)
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
@@ -494,6 +550,7 @@ importers:
         version: 1.1.2
       unocss:
         specifier: ^0.59.0
+<<<<<<< HEAD
         version: 0.59.4(postcss@8.4.47)(rollup@2.79.2)(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1))
       unplugin-vue-components:
         specifier: ^0.26.0
@@ -507,6 +564,21 @@ importers:
       vitepress:
         specifier: 1.1.4
         version: 1.1.4(@algolia/client-search@4.24.0)(@types/node@20.16.11)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.34.1)(typescript@5.6.2)
+=======
+        version: 0.59.4(postcss@8.4.47)(rollup@2.79.1)(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))
+      unplugin-vue-components:
+        specifier: ^0.26.0
+        version: 0.26.0(@babel/parser@7.25.6)(rollup@2.79.1)(vue@3.4.38(typescript@5.6.2))
+      vite:
+        specifier: ^5.0.0
+        version: 5.4.2(@types/node@22.6.1)(terser@5.33.0)
+      vite-plugin-pwa:
+        specifier: ^0.19.7
+        version: 0.19.8(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
+      vitepress:
+        specifier: 1.1.4
+        version: 1.1.4(@algolia/client-search@5.5.3)(@types/node@22.6.1)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.33.0)(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
       workbox-window:
         specifier: ^7.0.0
         version: 7.1.0
@@ -514,8 +586,8 @@ importers:
   packages/parser:
     dependencies:
       langium:
-        specifier: 3.0.0
-        version: 3.0.0
+        specifier: 3.2.0
+        version: 3.2.0
     devDependencies:
       chevrotain:
         specifier: ^11.0.3
@@ -597,11 +669,19 @@ packages:
   '@algolia/client-common@4.24.0':
     resolution: {integrity: sha512-bc2ROsNL6w6rqpl5jj/UywlIYC21TwSSoFHKl01lYirGMW+9Eek6r02Tocg4gZ8HAw3iBvu6XQiM3BEbmEMoiA==}
 
+  '@algolia/client-common@5.5.3':
+    resolution: {integrity: sha512-3rdSdreBL2LGYu4DWmUGlMhaGy1vy36Xp42LdbTFsW/y3bhW5viptMHI5A3PKT0hPEMZUn+te1iM/EWvLUuVGQ==}
+    engines: {node: '>= 14.0.0'}
+
   '@algolia/client-personalization@4.24.0':
     resolution: {integrity: sha512-l5FRFm/yngztweU0HdUzz1rC4yoWCFo3IF+dVIVTfEPg906eZg5BOd1k0K6rZx5JzyyoP4LdmOikfkfGsKVE9w==}
 
   '@algolia/client-search@4.24.0':
     resolution: {integrity: sha512-uRW6EpNapmLAD0mW47OXqTP8eiIx5F6qN9/x/7HHO6owL3N1IXqydGwW5nhDFBrV+ldouro2W1VX3XlcUXEFCA==}
+
+  '@algolia/client-search@5.5.3':
+    resolution: {integrity: sha512-qrokD+uoNxchbiF9aP8niQd/9SZ6BgYg4WaesFaubHhr9DFvwGm4IePEMha8vQcc3fSsY6uL+gOtKB3J6RF0NQ==}
+    engines: {node: '>= 14.0.0'}
 
   '@algolia/logger-common@4.24.0':
     resolution: {integrity: sha512-LLUNjkahj9KtKYrQhFKCzMx0BY3RnNP4FEtO+sBybCjJ73E8jNdaKJ/Dd8A/VA4imVHP5tADZ8pn5B8Ga/wTMA==}
@@ -615,11 +695,23 @@ packages:
   '@algolia/requester-browser-xhr@4.24.0':
     resolution: {integrity: sha512-Z2NxZMb6+nVXSjF13YpjYTdvV3032YTBSGm2vnYvYPA6mMxzM3v5rsCiSspndn9rzIW4Qp1lPHBvuoKJV6jnAA==}
 
+  '@algolia/requester-browser-xhr@5.5.3':
+    resolution: {integrity: sha512-LsfUPokiXEpvlYF7SwNjyyjkUX7IoW7oIhH6WkDUD4PCfEZkFbVplGQA0UrCiWOAbpb25P7mmP6+ldwjwqW6Kg==}
+    engines: {node: '>= 14.0.0'}
+
   '@algolia/requester-common@4.24.0':
     resolution: {integrity: sha512-k3CXJ2OVnvgE3HMwcojpvY6d9kgKMPRxs/kVohrwF5WMr2fnqojnycZkxPoEg+bXm8fi5BBfFmOqgYztRtHsQA==}
 
+  '@algolia/requester-fetch@5.5.3':
+    resolution: {integrity: sha512-RKaliEFHtVeD/fMxwrApkcI6ZxR+mU6pZna29r3NwVMpCXTJWWtlMpQmbr1RHzUsaAlpfv9pfGJN4nYPE8XWEg==}
+    engines: {node: '>= 14.0.0'}
+
   '@algolia/requester-node-http@4.24.0':
     resolution: {integrity: sha512-JF18yTjNOVYvU/L3UosRcvbPMGT9B+/GQWNWnenIImglzNVGpyzChkXLnrSf6uxwVNO6ESGu6oN8MqcGQcjQJw==}
+
+  '@algolia/requester-node-http@5.5.3':
+    resolution: {integrity: sha512-2wU+HlTVrVce7BMW2b3Gd62btk8B0jBbuKYYzu3OFeBD/aZa88eHABtjcjQCdw3x+wvkIPEc56UsZx9eHYLebg==}
+    engines: {node: '>= 14.0.0'}
 
   '@algolia/transporter@4.24.0':
     resolution: {integrity: sha512-86nI7w6NzWxd1Zp9q3413dRshDqAzSbsQjhcDhPIatEFiZrL1/TjnHL8S7jVKFePlIMzDsZWXAXwXzcok9c5oA==}
@@ -2478,6 +2570,7 @@ packages:
       rollup:
         optional: true
 
+<<<<<<< HEAD
   '@rollup/rollup-android-arm-eabi@4.24.0':
     resolution: {integrity: sha512-Q6HJd7Y6xdB48x8ZNVDOqsbh2uByBhgK8PiQgPhwkIw/HC/YX5Ghq2mQY5sRMZWHb3VsFkWooUVOZHKr7DmDIA==}
     cpu: [arm]
@@ -2560,6 +2653,179 @@ packages:
 
   '@shikijs/core@1.22.0':
     resolution: {integrity: sha512-S8sMe4q71TJAW+qG93s5VaiihujRK6rqDFqBnxqvga/3LvqHEnxqBIOPkt//IdXVtHkQWKu4nOQNk0uBGicU7Q==}
+=======
+  '@rollup/pluginutils@5.1.2':
+    resolution: {integrity: sha512-/FIdS3PyZ39bjZlwqFnWqCOVnW7o963LtKMwQOD0NhQqw22gSr2YY1afu3FxRip4ZCZNsD5jq6Aaz6QV3D/Njw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/rollup-android-arm-eabi@4.21.1':
+    resolution: {integrity: sha512-2thheikVEuU7ZxFXubPDOtspKn1x0yqaYQwvALVtEcvFhMifPADBrgRPyHV0TF3b+9BgvgjgagVyvA/UqPZHmg==}
+    cpu: [arm]
+    os: [android]
+
+  '@rollup/rollup-android-arm-eabi@4.22.4':
+    resolution: {integrity: sha512-Fxamp4aEZnfPOcGA8KSNEohV8hX7zVHOemC8jVBoBUHu5zpJK/Eu3uJwt6BMgy9fkvzxDaurgj96F/NiLukF2w==}
+    cpu: [arm]
+    os: [android]
+
+  '@rollup/rollup-android-arm64@4.21.1':
+    resolution: {integrity: sha512-t1lLYn4V9WgnIFHXy1d2Di/7gyzBWS8G5pQSXdZqfrdCGTwi1VasRMSS81DTYb+avDs/Zz4A6dzERki5oRYz1g==}
+    cpu: [arm64]
+    os: [android]
+
+  '@rollup/rollup-android-arm64@4.22.4':
+    resolution: {integrity: sha512-VXoK5UMrgECLYaMuGuVTOx5kcuap1Jm8g/M83RnCHBKOqvPPmROFJGQaZhGccnsFtfXQ3XYa4/jMCJvZnbJBdA==}
+    cpu: [arm64]
+    os: [android]
+
+  '@rollup/rollup-darwin-arm64@4.21.1':
+    resolution: {integrity: sha512-AH/wNWSEEHvs6t4iJ3RANxW5ZCK3fUnmf0gyMxWCesY1AlUj8jY7GC+rQE4wd3gwmZ9XDOpL0kcFnCjtN7FXlA==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@rollup/rollup-darwin-arm64@4.22.4':
+    resolution: {integrity: sha512-xMM9ORBqu81jyMKCDP+SZDhnX2QEVQzTcC6G18KlTQEzWK8r/oNZtKuZaCcHhnsa6fEeOBionoyl5JsAbE/36Q==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@rollup/rollup-darwin-x64@4.21.1':
+    resolution: {integrity: sha512-dO0BIz/+5ZdkLZrVgQrDdW7m2RkrLwYTh2YMFG9IpBtlC1x1NPNSXkfczhZieOlOLEqgXOFH3wYHB7PmBtf+Bg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@rollup/rollup-darwin-x64@4.22.4':
+    resolution: {integrity: sha512-aJJyYKQwbHuhTUrjWjxEvGnNNBCnmpHDvrb8JFDbeSH3m2XdHcxDd3jthAzvmoI8w/kSjd2y0udT+4okADsZIw==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@rollup/rollup-linux-arm-gnueabihf@4.21.1':
+    resolution: {integrity: sha512-sWWgdQ1fq+XKrlda8PsMCfut8caFwZBmhYeoehJ05FdI0YZXk6ZyUjWLrIgbR/VgiGycrFKMMgp7eJ69HOF2pQ==}
+    cpu: [arm]
+    os: [linux]
+
+  '@rollup/rollup-linux-arm-gnueabihf@4.22.4':
+    resolution: {integrity: sha512-j63YtCIRAzbO+gC2L9dWXRh5BFetsv0j0va0Wi9epXDgU/XUi5dJKo4USTttVyK7fGw2nPWK0PbAvyliz50SCQ==}
+    cpu: [arm]
+    os: [linux]
+
+  '@rollup/rollup-linux-arm-musleabihf@4.21.1':
+    resolution: {integrity: sha512-9OIiSuj5EsYQlmwhmFRA0LRO0dRRjdCVZA3hnmZe1rEwRk11Jy3ECGGq3a7RrVEZ0/pCsYWx8jG3IvcrJ6RCew==}
+    cpu: [arm]
+    os: [linux]
+
+  '@rollup/rollup-linux-arm-musleabihf@4.22.4':
+    resolution: {integrity: sha512-dJnWUgwWBX1YBRsuKKMOlXCzh2Wu1mlHzv20TpqEsfdZLb3WoJW2kIEsGwLkroYf24IrPAvOT/ZQ2OYMV6vlrg==}
+    cpu: [arm]
+    os: [linux]
+
+  '@rollup/rollup-linux-arm64-gnu@4.21.1':
+    resolution: {integrity: sha512-0kuAkRK4MeIUbzQYu63NrJmfoUVicajoRAL1bpwdYIYRcs57iyIV9NLcuyDyDXE2GiZCL4uhKSYAnyWpjZkWow==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@rollup/rollup-linux-arm64-gnu@4.22.4':
+    resolution: {integrity: sha512-AdPRoNi3NKVLolCN/Sp4F4N1d98c4SBnHMKoLuiG6RXgoZ4sllseuGioszumnPGmPM2O7qaAX/IJdeDU8f26Aw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@rollup/rollup-linux-arm64-musl@4.21.1':
+    resolution: {integrity: sha512-/6dYC9fZtfEY0vozpc5bx1RP4VrtEOhNQGb0HwvYNwXD1BBbwQ5cKIbUVVU7G2d5WRE90NfB922elN8ASXAJEA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@rollup/rollup-linux-arm64-musl@4.22.4':
+    resolution: {integrity: sha512-Gl0AxBtDg8uoAn5CCqQDMqAx22Wx22pjDOjBdmG0VIWX3qUBHzYmOKh8KXHL4UpogfJ14G4wk16EQogF+v8hmA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@rollup/rollup-linux-powerpc64le-gnu@4.21.1':
+    resolution: {integrity: sha512-ltUWy+sHeAh3YZ91NUsV4Xg3uBXAlscQe8ZOXRCVAKLsivGuJsrkawYPUEyCV3DYa9urgJugMLn8Z3Z/6CeyRQ==}
+    cpu: [ppc64]
+    os: [linux]
+
+  '@rollup/rollup-linux-powerpc64le-gnu@4.22.4':
+    resolution: {integrity: sha512-3aVCK9xfWW1oGQpTsYJJPF6bfpWfhbRnhdlyhak2ZiyFLDaayz0EP5j9V1RVLAAxlmWKTDfS9wyRyY3hvhPoOg==}
+    cpu: [ppc64]
+    os: [linux]
+
+  '@rollup/rollup-linux-riscv64-gnu@4.21.1':
+    resolution: {integrity: sha512-BggMndzI7Tlv4/abrgLwa/dxNEMn2gC61DCLrTzw8LkpSKel4o+O+gtjbnkevZ18SKkeN3ihRGPuBxjaetWzWg==}
+    cpu: [riscv64]
+    os: [linux]
+
+  '@rollup/rollup-linux-riscv64-gnu@4.22.4':
+    resolution: {integrity: sha512-ePYIir6VYnhgv2C5Xe9u+ico4t8sZWXschR6fMgoPUK31yQu7hTEJb7bCqivHECwIClJfKgE7zYsh1qTP3WHUA==}
+    cpu: [riscv64]
+    os: [linux]
+
+  '@rollup/rollup-linux-s390x-gnu@4.21.1':
+    resolution: {integrity: sha512-z/9rtlGd/OMv+gb1mNSjElasMf9yXusAxnRDrBaYB+eS1shFm6/4/xDH1SAISO5729fFKUkJ88TkGPRUh8WSAA==}
+    cpu: [s390x]
+    os: [linux]
+
+  '@rollup/rollup-linux-s390x-gnu@4.22.4':
+    resolution: {integrity: sha512-GqFJ9wLlbB9daxhVlrTe61vJtEY99/xB3C8e4ULVsVfflcpmR6c8UZXjtkMA6FhNONhj2eA5Tk9uAVw5orEs4Q==}
+    cpu: [s390x]
+    os: [linux]
+
+  '@rollup/rollup-linux-x64-gnu@4.21.1':
+    resolution: {integrity: sha512-kXQVcWqDcDKw0S2E0TmhlTLlUgAmMVqPrJZR+KpH/1ZaZhLSl23GZpQVmawBQGVhyP5WXIsIQ/zqbDBBYmxm5w==}
+    cpu: [x64]
+    os: [linux]
+
+  '@rollup/rollup-linux-x64-gnu@4.22.4':
+    resolution: {integrity: sha512-87v0ol2sH9GE3cLQLNEy0K/R0pz1nvg76o8M5nhMR0+Q+BBGLnb35P0fVz4CQxHYXaAOhE8HhlkaZfsdUOlHwg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@rollup/rollup-linux-x64-musl@4.21.1':
+    resolution: {integrity: sha512-CbFv/WMQsSdl+bpX6rVbzR4kAjSSBuDgCqb1l4J68UYsQNalz5wOqLGYj4ZI0thGpyX5kc+LLZ9CL+kpqDovZA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@rollup/rollup-linux-x64-musl@4.22.4':
+    resolution: {integrity: sha512-UV6FZMUgePDZrFjrNGIWzDo/vABebuXBhJEqrHxrGiU6HikPy0Z3LfdtciIttEUQfuDdCn8fqh7wiFJjCNwO+g==}
+    cpu: [x64]
+    os: [linux]
+
+  '@rollup/rollup-win32-arm64-msvc@4.21.1':
+    resolution: {integrity: sha512-3Q3brDgA86gHXWHklrwdREKIrIbxC0ZgU8lwpj0eEKGBQH+31uPqr0P2v11pn0tSIxHvcdOWxa4j+YvLNx1i6g==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@rollup/rollup-win32-arm64-msvc@4.22.4':
+    resolution: {integrity: sha512-BjI+NVVEGAXjGWYHz/vv0pBqfGoUH0IGZ0cICTn7kB9PyjrATSkX+8WkguNjWoj2qSr1im/+tTGRaY+4/PdcQw==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@rollup/rollup-win32-ia32-msvc@4.21.1':
+    resolution: {integrity: sha512-tNg+jJcKR3Uwe4L0/wY3Ro0H+u3nrb04+tcq1GSYzBEmKLeOQF2emk1whxlzNqb6MMrQ2JOcQEpuuiPLyRcSIw==}
+    cpu: [ia32]
+    os: [win32]
+
+  '@rollup/rollup-win32-ia32-msvc@4.22.4':
+    resolution: {integrity: sha512-SiWG/1TuUdPvYmzmYnmd3IEifzR61Tragkbx9D3+R8mzQqDBz8v+BvZNDlkiTtI9T15KYZhP0ehn3Dld4n9J5g==}
+    cpu: [ia32]
+    os: [win32]
+
+  '@rollup/rollup-win32-x64-msvc@4.21.1':
+    resolution: {integrity: sha512-xGiIH95H1zU7naUyTKEyOA/I0aexNMUdO9qRv0bLKN3qu25bBdrxZHqA3PTJ24YNN/GdMzG4xkDcd/GvjuhfLg==}
+    cpu: [x64]
+    os: [win32]
+
+  '@rollup/rollup-win32-x64-msvc@4.22.4':
+    resolution: {integrity: sha512-j8pPKp53/lq9lMXN57S8cFz0MynJk8OWNuUnXct/9KCpKU7DgU3bYMJhwWmcqC0UU29p8Lr0/7KEVcaM6bf47Q==}
+    cpu: [x64]
+    os: [win32]
+
+  '@shikijs/core@1.14.1':
+    resolution: {integrity: sha512-KyHIIpKNaT20FtFPFjCQB5WVSTpLR/n+jQXhWHWVUMm9MaOaG9BGOG0MSyt7yA4+Lm+4c9rTc03tt3nYzeYSfw==}
+>>>>>>> 02984908a (bump langium version)
 
   '@shikijs/engine-javascript@1.22.0':
     resolution: {integrity: sha512-AeEtF4Gcck2dwBqCFUKYfsCq0s+eEbCEbkUuFou53NZ0sTGnJnJ/05KHQFZxpii5HMXbocV9URYVowOP2wH5kw==}
@@ -2777,11 +3043,19 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
+<<<<<<< HEAD
   '@types/express-serve-static-core@4.19.6':
     resolution: {integrity: sha512-N4LZ2xG7DatVqhCZzOGb1Yi5lMbXSZcmdLDe9EzSndPV2HpWYWzRbaerl2n27irrm94EPpprqa8KpskPT085+A==}
 
   '@types/express-serve-static-core@5.0.0':
     resolution: {integrity: sha512-AbXMTZGt40T+KON9/Fdxx0B2WK5hsgxcfXJLr5bFpZ7b4JCex2WyQPTEKdXqfHiY5nKKBScZ7yCoO6Pvgxfvnw==}
+=======
+  '@types/estree@1.0.6':
+    resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
+
+  '@types/express-serve-static-core@4.19.5':
+    resolution: {integrity: sha512-y6W03tvrACO72aijJ5uF02FRq5cgDR9lUxddQ8vyF+GvmjJQqbzDcJngEjURc+ZsG31VI3hODNZJ2URj86pzmg==}
+>>>>>>> 02984908a (bump langium version)
 
   '@types/express@4.17.21':
     resolution: {integrity: sha512-ejlPM315qwLpaQlQDTjPdsUFSc6ZsP4AN6AlWnogPjQ7CVi7PYF3YVz+CY3jE2pwYf7E/7HlDAN0rV2GxTG0HQ==}
@@ -2885,6 +3159,9 @@ packages:
   '@types/node@20.16.11':
     resolution: {integrity: sha512-y+cTCACu92FyA5fgQSAI8A1H429g7aSK2HsO7K4XYUWc4dY5IUz55JSDIYT6/VsOLfGy8vmvQYC2hfb0iF16Uw==}
 
+  '@types/node@22.6.1':
+    resolution: {integrity: sha512-V48tCfcKb/e6cVUigLAaJDAILdMP0fUW6BidkPK4GpGjXcfbnoHasCZDwz3N3yVt5we2RHm4XTQCpv0KJz9zqw==}
+
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
@@ -2984,8 +3261,24 @@ packages:
       typescript:
         optional: true
 
+<<<<<<< HEAD
   '@typescript-eslint/parser@8.8.1':
     resolution: {integrity: sha512-hQUVn2Lij2NAxVFEdvIGxT9gP1tq2yM83m+by3whWFsWC+1y8pxxxHUFE1UqDu2VsGi2i6RLcv4QvouM84U+ow==}
+=======
+  '@typescript-eslint/eslint-plugin@8.7.0':
+    resolution: {integrity: sha512-RIHOoznhA3CCfSTFiB6kBGLQtB/sox+pJ6jeFu6FxJvqL8qRxq/FfGO/UhsGgQM9oGdXkV4xUgli+dt26biB6A==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      '@typescript-eslint/parser': ^8.0.0 || ^8.0.0-alpha.0
+      eslint: ^8.57.0 || ^9.0.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@typescript-eslint/parser@8.5.0':
+    resolution: {integrity: sha512-gF77eNv0Xz2UJg/NbpWJ0kqAm35UMsvZf1GHj8D9MRFTj/V3tAciIWXfmPLsAAF/vUlpWPvUDyH1jjsr0cMVWw==}
+>>>>>>> 02984908a (bump langium version)
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
@@ -2998,8 +3291,17 @@ packages:
     resolution: {integrity: sha512-X4JdU+66Mazev/J0gfXlcC/dV6JI37h+93W9BRYXrSn0hrE64IoWgVkO9MSJgEzoWkxONgaQpICWg8vAN74wlA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+<<<<<<< HEAD
   '@typescript-eslint/type-utils@8.8.1':
     resolution: {integrity: sha512-qSVnpcbLP8CALORf0za+vjLYj1Wp8HSoiI8zYU5tHxRVj30702Z1Yw4cLwfNKhTPWp5+P+k1pjmD5Zd1nhxiZA==}
+=======
+  '@typescript-eslint/scope-manager@8.7.0':
+    resolution: {integrity: sha512-87rC0k3ZlDOuz82zzXRtQ7Akv3GKhHs0ti4YcbAJtaomllXoSO8hi7Ix3ccEvCd824dy9aIX+j3d2UMAfCtVpg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/type-utils@8.5.0':
+    resolution: {integrity: sha512-N1K8Ix+lUM+cIDhL2uekVn/ZD7TZW+9/rwz8DclQpcQ9rk4sIL5CAlBC0CugWKREmDjBzI/kQqU4wkg46jWLYA==}
+>>>>>>> 02984908a (bump langium version)
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       typescript: '*'
@@ -3007,6 +3309,7 @@ packages:
       typescript:
         optional: true
 
+<<<<<<< HEAD
   '@typescript-eslint/types@7.18.0':
     resolution: {integrity: sha512-iZqi+Ds1y4EDYUtlOOC+aUmxnE9xS/yCigkjA7XpTKV6nCBd3Hp/PRGGmdwnfkV2ThMyYldP1wRpm/id99spTQ==}
     engines: {node: ^18.18.0 || >=20.0.0}
@@ -3026,6 +3329,9 @@ packages:
 
   '@typescript-eslint/typescript-estree@8.8.1':
     resolution: {integrity: sha512-A5d1R9p+X+1js4JogdNilDuuq+EHZdsH9MjTVxXOdVFfTJXunKJR/v+fNNyO4TnoOn5HqobzfRlc70NC6HTcdg==}
+=======
+  '@typescript-eslint/type-utils@8.7.0':
+    resolution: {integrity: sha512-tl0N0Mj3hMSkEYhLkjREp54OSb/FI6qyCzfiiclvJvOqre6hsZTGSnHtmFLDU8TIM62G7ygEa1bI08lcuRwEnQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       typescript: '*'
@@ -3033,12 +3339,45 @@ packages:
       typescript:
         optional: true
 
+  '@typescript-eslint/types@8.5.0':
+    resolution: {integrity: sha512-qjkormnQS5wF9pjSi6q60bKUHH44j2APxfh9TQRXK8wbYVeDYYdYJGIROL87LGZZ2gz3Rbmjc736qyL8deVtdw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/types@8.7.0':
+    resolution: {integrity: sha512-LLt4BLHFwSfASHSF2K29SZ+ZCsbQOM+LuarPjRUuHm+Qd09hSe3GCeaQbcCr+Mik+0QFRmep/FyZBO6fJ64U3w==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/typescript-estree@8.5.0':
+    resolution: {integrity: sha512-vEG2Sf9P8BPQ+d0pxdfndw3xIXaoSjliG0/Ejk7UggByZPKXmJmw3GW5jV2gHNQNawBUyfahoSiCFVov0Ruf7Q==}
+>>>>>>> 02984908a (bump langium version)
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+<<<<<<< HEAD
   '@typescript-eslint/utils@8.8.1':
     resolution: {integrity: sha512-/QkNJDbV0bdL7H7d0/y0qBbV2HTtf0TIyjSDTvvmQEzeVx8jEImEbLuOA4EsvE8gIgqMitns0ifb5uQhMj8d9w==}
+=======
+  '@typescript-eslint/typescript-estree@8.7.0':
+    resolution: {integrity: sha512-MC8nmcGHsmfAKxwnluTQpNqceniT8SteVwd2voYlmiSWGOtjvGXdPl17dYu2797GVscK30Z04WRM28CrKS9WOg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@typescript-eslint/utils@8.5.0':
+    resolution: {integrity: sha512-6yyGYVL0e+VzGYp60wvkBHiqDWOpT63pdMV2CVG4LVDd5uR6q1qQN/7LafBZtAtNIn/mqXjsSeS5ggv/P0iECw==}
+>>>>>>> 02984908a (bump langium version)
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
+<<<<<<< HEAD
   '@typescript-eslint/visitor-keys@7.18.0':
     resolution: {integrity: sha512-cDF0/Gf81QpY3xYyJKDV14Zwdmid5+uuENhjH2EqFaF0ni+yAyq/LzMaIJdhNJXZI7uLzwIlA+V7oWoyn6Curg==}
     engines: {node: ^18.18.0 || >=20.0.0}
@@ -3049,6 +3388,21 @@ packages:
 
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
+=======
+  '@typescript-eslint/utils@8.7.0':
+    resolution: {integrity: sha512-ZbdUdwsl2X/s3CiyAu3gOlfQzpbuG3nTWKPoIvAu1pu5r8viiJvv2NPN2AqArL35NCYtw/lrPPfM4gxrMLNLPw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+
+  '@typescript-eslint/visitor-keys@8.5.0':
+    resolution: {integrity: sha512-yTPqMnbAZJNy2Xq2XU8AdtOW9tJIr+UQb64aXB9f3B1498Zx9JorVgFJcZpEc9UBuCCrdzKID2RGAMkYcDtZOw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/visitor-keys@8.7.0':
+    resolution: {integrity: sha512-b1tx0orFCCh/THWPQa2ZwWzvOeyzzp36vkJYOpVg0u8UVOIsfVrnuC9FqAw9gRKn+rG2VmWQ/zDJZzkxUnj/XQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+>>>>>>> 02984908a (bump langium version)
 
   '@unocss/astro@0.59.4':
     resolution: {integrity: sha512-DU3OR5MMR1Uvvec4/wB9EetDASHRg19Moy6z/MiIhn8JWJ0QzWYgSeJcfUX8exomMYv6WUEQJL+CyLI34Wmn8w==}
@@ -3637,6 +3991,9 @@ packages:
 
   aws4@1.13.2:
     resolution: {integrity: sha512-lHe62zvbTB5eEABUVi/AwVh0ZKY9rMMDhmm+eeyuuUQbQ3+J+fONVQOZyj+DdrvD4BY33uYniyRJ4UJIaSKAfw==}
+
+  axios@1.7.7:
+    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
 
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
@@ -5336,6 +5693,15 @@ packages:
       debug:
         optional: true
 
+  follow-redirects@1.15.9:
+    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
   font-awesome@4.7.0:
     resolution: {integrity: sha512-U6kGnykA/6bFmg1M/oT9EkFeIYv7JlX3bozwQJWiiLz6L0w3F5vBVPxHlwyX/vtNq1ckcpRKOB9f2Qal/VtFpg==}
     engines: {node: '>=0.10.3'}
@@ -6452,8 +6818,17 @@ packages:
     resolution: {integrity: sha512-+Ez9EoiByeoTu/2BXmEaZ06iPNXM6thWJp02KfBO/raSMyCJ4jw7AkWWa+zBCTm0+Tw1Fj9FOxdqSskyN5nAwg==}
     engines: {node: '>=16.0.0'}
 
+<<<<<<< HEAD
   launch-editor@2.9.1:
     resolution: {integrity: sha512-Gcnl4Bd+hRO9P9icCP/RVVT2o8SFlPXofuCxvA2SaZuH45whSvf5p8x5oih5ftLiVhEI4sp5xDY+R+b3zJBh5w==}
+=======
+  langium@3.2.0:
+    resolution: {integrity: sha512-HxAPgCVC7X+dCN99QKlZMEoaLW4s/mt0IImYrP6ooEBOMh8lJYdFNNSpJ5NIOE+WFwQd3xa2phTJDmJhOWVR7A==}
+    engines: {node: '>=16.0.0'}
+
+  launch-editor@2.8.0:
+    resolution: {integrity: sha512-vJranOAJrI/llyWGRQqiDM+adrw+k83fvmmx3+nV47g3+36xM15jE+zyZ6Ffel02+xSvuM0b2GDRosXZkbb6wA==}
+>>>>>>> 02984908a (bump langium version)
 
   layout-base@1.0.2:
     resolution: {integrity: sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg==}
@@ -7357,6 +7732,9 @@ packages:
   picocolors@1.1.0:
     resolution: {integrity: sha512-TQ92mBOW0l3LeMeyLV6mzy/kWr8lkd/hp3mTg7wYK7zJhuBStmGMBG0BdeDZS/dZx1IukaX6Bk11zcln25o1Aw==}
 
+  picocolors@1.1.0:
+    resolution: {integrity: sha512-TQ92mBOW0l3LeMeyLV6mzy/kWr8lkd/hp3mTg7wYK7zJhuBStmGMBG0BdeDZS/dZx1IukaX6Bk11zcln25o1Aw==}
+
   picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
@@ -7494,8 +7872,17 @@ packages:
     resolution: {integrity: sha512-56rxCq7G/XfB4EkXq9Egn5GCqugWvDFjafDOThIdMBsI15iqPqR5r15TfSr1YPYeEI19YeaXMCbY6u88Y76GLQ==}
     engines: {node: ^10 || ^12 || >=14}
 
+<<<<<<< HEAD
   preact@10.24.2:
     resolution: {integrity: sha512-1cSoF0aCC8uaARATfrlz4VCBqE8LwZwRfLgkxJOQwAlQt6ayTmi0D9OF7nXid1POI5SZidFuG9CnlXbDfLqY/Q==}
+=======
+  postcss@8.4.47:
+    resolution: {integrity: sha512-56rxCq7G/XfB4EkXq9Egn5GCqugWvDFjafDOThIdMBsI15iqPqR5r15TfSr1YPYeEI19YeaXMCbY6u88Y76GLQ==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  preact@10.23.2:
+    resolution: {integrity: sha512-kKYfePf9rzKnxOAKDpsWhg/ysrHPqT+yQ7UW4JjdnqjFIeNUnNcEJvhuA8fDenxAGWzUqtd51DfVg7xp/8T9NA==}
+>>>>>>> 02984908a (bump langium version)
 
   precinct@12.1.2:
     resolution: {integrity: sha512-x2qVN3oSOp3D05ihCd8XdkIPuEQsyte7PSxzLqiRgktu79S5Dr1I75/S+zAup8/0cwjoiJTQztE9h0/sWp9bJQ==}
@@ -7859,6 +8246,11 @@ packages:
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
+  rollup@4.22.4:
+    resolution: {integrity: sha512-vD8HJ5raRcWOyymsR6Z3o6+RzfEPCnVLMFJ6vRslO1jt4LO6dUo5Qnpg7y4RkZFM2DMe3WUirkI5c16onjrc6A==}
+    engines: {node: '>=18.0.0', npm: '>=8.0.0'}
+    hasBin: true
+
   roughjs@4.6.6:
     resolution: {integrity: sha512-ZUz/69+SYpFN/g/lUlo2FXcIjRkSu3nDarreVdGGndHEBJ6cXPdKguS8JGxwj5HA5xIbVKSmLgr5b3AWxtRfvQ==}
 
@@ -8092,6 +8484,10 @@ packages:
 
   source-map-js@1.0.1:
     resolution: {integrity: sha512-4+TN2b3tqOCd/kaGRJ/sTYA0tR0mdXx26ipdolxcwtJVqEnqNYvlCAt1q3ypy4QMlYus+Zh34RNtYLoq2oQ4IA==}
+    engines: {node: '>=0.10.0'}
+
+  source-map-js@1.2.1:
+    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
   source-map-js@1.2.1:
@@ -8402,8 +8798,18 @@ packages:
       uglify-js:
         optional: true
 
+<<<<<<< HEAD
   terser@5.34.1:
     resolution: {integrity: sha512-FsJZ7iZLd/BXkz+4xrRTGJ26o/6VTjQytUk8b8OxkwcD2I+79VPJlz7qss1+zE7h8GNIScFqXcDyJ/KqBYZFVA==}
+=======
+  terser@5.31.3:
+    resolution: {integrity: sha512-pAfYn3NIZLyZpa83ZKigvj6Rn9c/vd5KfYGX7cN1mnzqgDcxWvrU5ZtAfIKhEXz9nRecw4z3LXkjaq96/qZqAA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
+  terser@5.33.0:
+    resolution: {integrity: sha512-JuPVaB7s1gdFKPKTelwUyRq5Sid2A3Gko2S0PncwdBq7kN9Ti9HPWDQ06MPsEDGsZeVESjKEnyGy68quBk1w6g==}
+>>>>>>> 02984908a (bump langium version)
     engines: {node: '>=10'}
     hasBin: true
 
@@ -9010,6 +9416,10 @@ packages:
     resolution: {integrity: sha512-TnbFSbcOCcDgjZ4piURLCbJ3nJhznVh9kw6F6iokjiFPl8ONxe9A6nMDVXDiNbrSfLILs6vB07F7wLBrwPYzJw==}
     engines: {node: '>=10.13.0'}
 
+  watchpack@2.4.2:
+    resolution: {integrity: sha512-TnbFSbcOCcDgjZ4piURLCbJ3nJhznVh9kw6F6iokjiFPl8ONxe9A6nMDVXDiNbrSfLILs6vB07F7wLBrwPYzJw==}
+    engines: {node: '>=10.13.0'}
+
   wbuf@1.7.3:
     resolution: {integrity: sha512-O84QOnr0icsbFGLS0O3bI5FswxzRr8/gHwWkDlQFskhSPryQXvrTMxjxGP4+iWYoauLoBvfDpkrOauZ+0iZpDA==}
 
@@ -9086,6 +9496,16 @@ packages:
 
   webpack@5.95.0:
     resolution: {integrity: sha512-2t3XstrKULz41MNMBF+cJ97TyHdyQ8HCt//pqErqDvNjU9YQBnZxIHa11VXsi7F3mb5/aO2tuDxdeTPdU7xu9Q==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    peerDependencies:
+      webpack-cli: '*'
+    peerDependenciesMeta:
+      webpack-cli:
+        optional: true
+
+  webpack@5.94.0:
+    resolution: {integrity: sha512-KcsGn50VT+06JH/iunZJedYGUJS5FGjow8wb9c0v5n1Om8O1g4L6LjtfxwlXIATopoQu+vOXXa7gYisWxCoPyg==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     peerDependencies:
@@ -9371,32 +9791,45 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+<<<<<<< HEAD
   '@algolia/autocomplete-core@1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)(search-insights@2.17.2)':
     dependencies:
       '@algolia/autocomplete-plugin-algolia-insights': 1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)(search-insights@2.17.2)
       '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)
+=======
+  '@algolia/autocomplete-core@1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)(search-insights@2.17.2)':
+    dependencies:
+      '@algolia/autocomplete-plugin-algolia-insights': 1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)(search-insights@2.17.2)
+      '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@algolia/client-search'
       - algoliasearch
       - search-insights
 
+<<<<<<< HEAD
   '@algolia/autocomplete-plugin-algolia-insights@1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)(search-insights@2.17.2)':
     dependencies:
       '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)
+=======
+  '@algolia/autocomplete-plugin-algolia-insights@1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)(search-insights@2.17.2)':
+    dependencies:
+      '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)
+>>>>>>> 02984908a (bump langium version)
       search-insights: 2.17.2
     transitivePeerDependencies:
       - '@algolia/client-search'
       - algoliasearch
 
-  '@algolia/autocomplete-preset-algolia@1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)':
+  '@algolia/autocomplete-preset-algolia@1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)':
     dependencies:
-      '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)
-      '@algolia/client-search': 4.24.0
+      '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)
+      '@algolia/client-search': 5.5.3
       algoliasearch: 4.24.0
 
-  '@algolia/autocomplete-shared@1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)':
+  '@algolia/autocomplete-shared@1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)':
     dependencies:
-      '@algolia/client-search': 4.24.0
+      '@algolia/client-search': 5.5.3
       algoliasearch: 4.24.0
 
   '@algolia/cache-browser-local-storage@4.24.0':
@@ -9427,6 +9860,8 @@ snapshots:
       '@algolia/requester-common': 4.24.0
       '@algolia/transporter': 4.24.0
 
+  '@algolia/client-common@5.5.3': {}
+
   '@algolia/client-personalization@4.24.0':
     dependencies:
       '@algolia/client-common': 4.24.0
@@ -9438,6 +9873,13 @@ snapshots:
       '@algolia/client-common': 4.24.0
       '@algolia/requester-common': 4.24.0
       '@algolia/transporter': 4.24.0
+
+  '@algolia/client-search@5.5.3':
+    dependencies:
+      '@algolia/client-common': 5.5.3
+      '@algolia/requester-browser-xhr': 5.5.3
+      '@algolia/requester-fetch': 5.5.3
+      '@algolia/requester-node-http': 5.5.3
 
   '@algolia/logger-common@4.24.0': {}
 
@@ -9463,11 +9905,23 @@ snapshots:
     dependencies:
       '@algolia/requester-common': 4.24.0
 
+  '@algolia/requester-browser-xhr@5.5.3':
+    dependencies:
+      '@algolia/client-common': 5.5.3
+
   '@algolia/requester-common@4.24.0': {}
+
+  '@algolia/requester-fetch@5.5.3':
+    dependencies:
+      '@algolia/client-common': 5.5.3
 
   '@algolia/requester-node-http@4.24.0':
     dependencies:
       '@algolia/requester-common': 4.24.0
+
+  '@algolia/requester-node-http@5.5.3':
+    dependencies:
+      '@algolia/client-common': 5.5.3
 
   '@algolia/transporter@4.24.0':
     dependencies:
@@ -11045,12 +11499,21 @@ snapshots:
 
   '@cspell/url@8.14.4': {}
 
+<<<<<<< HEAD
   '@cypress/code-coverage@3.13.4(@babel/core@7.25.7)(@babel/preset-env@7.25.7(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(cypress@13.15.0)(webpack@5.95.0(esbuild@0.21.5))':
     dependencies:
       '@babel/core': 7.25.7
       '@babel/preset-env': 7.25.7(@babel/core@7.25.7)
       '@cypress/webpack-preprocessor': 6.0.2(@babel/core@7.25.7)(@babel/preset-env@7.25.7(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(webpack@5.95.0(esbuild@0.21.5))
       babel-loader: 9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5))
+=======
+  '@cypress/code-coverage@3.12.45(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(babel-loader@9.2.1(@babel/core@7.25.2)(webpack@5.94.0(esbuild@0.21.5)))(cypress@13.14.1)(webpack@5.94.0(esbuild@0.21.5))':
+    dependencies:
+      '@babel/core': 7.25.2
+      '@babel/preset-env': 7.25.4(@babel/core@7.25.2)
+      '@cypress/webpack-preprocessor': 6.0.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(babel-loader@9.2.1(@babel/core@7.25.2)(webpack@5.94.0(esbuild@0.21.5)))(webpack@5.94.0(esbuild@0.21.5))
+      babel-loader: 9.2.1(@babel/core@7.25.2)(webpack@5.94.0(esbuild@0.21.5))
+>>>>>>> 02984908a (bump langium version)
       chalk: 4.1.2
       cypress: 13.15.0
       dayjs: 1.11.13
@@ -11060,7 +11523,11 @@ snapshots:
       istanbul-lib-coverage: 3.2.2
       js-yaml: 4.1.0
       nyc: 15.1.0
+<<<<<<< HEAD
       webpack: 5.95.0(esbuild@0.21.5)
+=======
+      webpack: 5.94.0(esbuild@0.21.5)
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - supports-color
 
@@ -11085,15 +11552,27 @@ snapshots:
       tunnel-agent: 0.6.0
       uuid: 8.3.2
 
+<<<<<<< HEAD
   '@cypress/webpack-preprocessor@6.0.2(@babel/core@7.25.7)(@babel/preset-env@7.25.7(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(webpack@5.95.0(esbuild@0.21.5))':
     dependencies:
       '@babel/core': 7.25.7
       '@babel/preset-env': 7.25.7(@babel/core@7.25.7)
       babel-loader: 9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5))
+=======
+  '@cypress/webpack-preprocessor@6.0.2(@babel/core@7.25.2)(@babel/preset-env@7.25.4(@babel/core@7.25.2))(babel-loader@9.2.1(@babel/core@7.25.2)(webpack@5.94.0(esbuild@0.21.5)))(webpack@5.94.0(esbuild@0.21.5))':
+    dependencies:
+      '@babel/core': 7.25.2
+      '@babel/preset-env': 7.25.4(@babel/core@7.25.2)
+      babel-loader: 9.2.1(@babel/core@7.25.2)(webpack@5.94.0(esbuild@0.21.5))
+>>>>>>> 02984908a (bump langium version)
       bluebird: 3.7.1
       debug: 4.3.7(supports-color@8.1.1)
       lodash: 4.17.21
+<<<<<<< HEAD
       webpack: 5.95.0(esbuild@0.21.5)
+=======
+      webpack: 5.94.0(esbuild@0.21.5)
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - supports-color
 
@@ -11113,10 +11592,17 @@ snapshots:
 
   '@docsearch/css@3.6.2': {}
 
+<<<<<<< HEAD
   '@docsearch/js@3.6.2(@algolia/client-search@4.24.0)(search-insights@2.17.2)':
     dependencies:
       '@docsearch/react': 3.6.2(@algolia/client-search@4.24.0)(search-insights@2.17.2)
       preact: 10.24.2
+=======
+  '@docsearch/js@3.6.1(@algolia/client-search@5.5.3)(search-insights@2.17.2)':
+    dependencies:
+      '@docsearch/react': 3.6.1(@algolia/client-search@5.5.3)(search-insights@2.17.2)
+      preact: 10.23.2
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@algolia/client-search'
       - '@types/react'
@@ -11124,11 +11610,19 @@ snapshots:
       - react-dom
       - search-insights
 
+<<<<<<< HEAD
   '@docsearch/react@3.6.2(@algolia/client-search@4.24.0)(search-insights@2.17.2)':
     dependencies:
       '@algolia/autocomplete-core': 1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)(search-insights@2.17.2)
       '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@4.24.0)(algoliasearch@4.24.0)
       '@docsearch/css': 3.6.2
+=======
+  '@docsearch/react@3.6.1(@algolia/client-search@5.5.3)(search-insights@2.17.2)':
+    dependencies:
+      '@algolia/autocomplete-core': 1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)(search-insights@2.17.2)
+      '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@5.5.3)(algoliasearch@4.24.0)
+      '@docsearch/css': 3.6.1
+>>>>>>> 02984908a (bump langium version)
       algoliasearch: 4.24.0
     optionalDependencies:
       search-insights: 2.17.2
@@ -11344,6 +11838,7 @@ snapshots:
     dependencies:
       fast-deep-equal: 3.1.3
 
+<<<<<<< HEAD
   '@floating-ui/core@1.6.8':
     dependencies:
       '@floating-ui/utils': 0.2.8
@@ -11360,6 +11855,15 @@ snapshots:
       '@floating-ui/dom': 1.6.11
       '@floating-ui/utils': 0.2.8
       vue-demi: 0.14.10(vue@3.5.11(typescript@5.6.2))
+=======
+  '@floating-ui/utils@0.2.7': {}
+
+  '@floating-ui/vue@1.1.4(vue@3.4.38(typescript@5.6.2))':
+    dependencies:
+      '@floating-ui/dom': 1.6.10
+      '@floating-ui/utils': 0.2.7
+      vue-demi: 0.14.10(vue@3.4.38(typescript@5.6.2))
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -11370,6 +11874,7 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
+<<<<<<< HEAD
   '@headlessui-float/vue@0.14.4(@headlessui/vue@1.7.23(vue@3.5.11(typescript@5.6.2)))(vue@3.5.11(typescript@5.6.2))':
     dependencies:
       '@floating-ui/core': 1.6.8
@@ -11377,6 +11882,15 @@ snapshots:
       '@floating-ui/vue': 1.1.5(vue@3.5.11(typescript@5.6.2))
       '@headlessui/vue': 1.7.23(vue@3.5.11(typescript@5.6.2))
       vue: 3.5.11(typescript@5.6.2)
+=======
+  '@headlessui-float/vue@0.14.3(@headlessui/vue@1.7.22(vue@3.4.38(typescript@5.6.2)))(vue@3.4.38(typescript@5.6.2))':
+    dependencies:
+      '@floating-ui/core': 1.6.7
+      '@floating-ui/dom': 1.6.10
+      '@floating-ui/vue': 1.1.4(vue@3.4.38(typescript@5.6.2))
+      '@headlessui/vue': 1.7.22(vue@3.4.38(typescript@5.6.2))
+      vue: 3.4.38(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@vue/composition-api'
 
@@ -11384,6 +11898,7 @@ snapshots:
     dependencies:
       tailwindcss: 3.4.13
 
+<<<<<<< HEAD
   '@headlessui/vue@1.7.23(vue@3.5.11(typescript@5.6.2))':
     dependencies:
       '@tanstack/vue-virtual': 3.10.8(vue@3.5.11(typescript@5.6.2))
@@ -11395,6 +11910,12 @@ snapshots:
     dependencies:
       '@humanfs/core': 0.19.0
       '@humanwhocodes/retry': 0.3.1
+=======
+  '@headlessui/vue@1.7.22(vue@3.4.38(typescript@5.6.2))':
+    dependencies:
+      '@tanstack/vue-virtual': 3.10.4(vue@3.4.38(typescript@5.6.2))
+      vue: 3.4.38(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
 
   '@humanwhocodes/module-importer@1.0.1': {}
 
@@ -11757,9 +12278,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+<<<<<<< HEAD
   '@rollup/plugin-node-resolve@15.3.0(rollup@2.79.2)':
     dependencies:
       '@rollup/pluginutils': 5.1.2(rollup@2.79.2)
+=======
+  '@rollup/plugin-node-resolve@15.3.0(rollup@2.79.1)':
+    dependencies:
+      '@rollup/pluginutils': 5.1.2(rollup@2.79.1)
+>>>>>>> 02984908a (bump langium version)
       '@types/resolve': 1.20.2
       deepmerge: 4.3.1
       is-module: 1.0.0
@@ -11777,10 +12304,15 @@ snapshots:
     dependencies:
       serialize-javascript: 6.0.2
       smob: 1.5.0
+<<<<<<< HEAD
       terser: 5.34.1
+=======
+      terser: 5.33.0
+>>>>>>> 02984908a (bump langium version)
     optionalDependencies:
       rollup: 2.79.2
 
+<<<<<<< HEAD
   '@rollup/plugin-typescript@11.1.6(rollup@4.24.0)(tslib@2.7.0)(typescript@5.4.5)':
     dependencies:
       '@rollup/pluginutils': 5.1.2(rollup@4.24.0)
@@ -11788,6 +12320,15 @@ snapshots:
       typescript: 5.4.5
     optionalDependencies:
       rollup: 4.24.0
+=======
+  '@rollup/plugin-typescript@11.1.6(rollup@4.22.4)(tslib@2.7.0)(typescript@5.4.5)':
+    dependencies:
+      '@rollup/pluginutils': 5.1.0(rollup@4.22.4)
+      resolve: 1.22.8
+      typescript: 5.4.5
+    optionalDependencies:
+      rollup: 4.22.4
+>>>>>>> 02984908a (bump langium version)
       tslib: 2.7.0
 
   '@rollup/pluginutils@3.1.0(rollup@2.79.2)':
@@ -11805,17 +12346,34 @@ snapshots:
     optionalDependencies:
       rollup: 2.79.2
 
+<<<<<<< HEAD
   '@rollup/pluginutils@5.1.2(rollup@4.24.0)':
+=======
+  '@rollup/pluginutils@5.1.0(rollup@4.22.4)':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@types/estree': 1.0.6
       estree-walker: 2.0.2
       picomatch: 2.3.1
     optionalDependencies:
+<<<<<<< HEAD
       rollup: 4.24.0
+=======
+      rollup: 4.22.4
+
+  '@rollup/pluginutils@5.1.2(rollup@2.79.1)':
+    dependencies:
+      '@types/estree': 1.0.6
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+    optionalDependencies:
+      rollup: 2.79.1
+>>>>>>> 02984908a (bump langium version)
 
   '@rollup/rollup-android-arm-eabi@4.24.0':
     optional: true
 
+<<<<<<< HEAD
   '@rollup/rollup-android-arm64@4.24.0':
     optional: true
 
@@ -11862,6 +12420,102 @@ snapshots:
     optional: true
 
   '@shikijs/core@1.22.0':
+=======
+  '@rollup/rollup-android-arm-eabi@4.22.4':
+    optional: true
+
+  '@rollup/rollup-android-arm64@4.21.1':
+    optional: true
+
+  '@rollup/rollup-android-arm64@4.22.4':
+    optional: true
+
+  '@rollup/rollup-darwin-arm64@4.21.1':
+    optional: true
+
+  '@rollup/rollup-darwin-arm64@4.22.4':
+    optional: true
+
+  '@rollup/rollup-darwin-x64@4.21.1':
+    optional: true
+
+  '@rollup/rollup-darwin-x64@4.22.4':
+    optional: true
+
+  '@rollup/rollup-linux-arm-gnueabihf@4.21.1':
+    optional: true
+
+  '@rollup/rollup-linux-arm-gnueabihf@4.22.4':
+    optional: true
+
+  '@rollup/rollup-linux-arm-musleabihf@4.21.1':
+    optional: true
+
+  '@rollup/rollup-linux-arm-musleabihf@4.22.4':
+    optional: true
+
+  '@rollup/rollup-linux-arm64-gnu@4.21.1':
+    optional: true
+
+  '@rollup/rollup-linux-arm64-gnu@4.22.4':
+    optional: true
+
+  '@rollup/rollup-linux-arm64-musl@4.21.1':
+    optional: true
+
+  '@rollup/rollup-linux-arm64-musl@4.22.4':
+    optional: true
+
+  '@rollup/rollup-linux-powerpc64le-gnu@4.21.1':
+    optional: true
+
+  '@rollup/rollup-linux-powerpc64le-gnu@4.22.4':
+    optional: true
+
+  '@rollup/rollup-linux-riscv64-gnu@4.21.1':
+    optional: true
+
+  '@rollup/rollup-linux-riscv64-gnu@4.22.4':
+    optional: true
+
+  '@rollup/rollup-linux-s390x-gnu@4.21.1':
+    optional: true
+
+  '@rollup/rollup-linux-s390x-gnu@4.22.4':
+    optional: true
+
+  '@rollup/rollup-linux-x64-gnu@4.21.1':
+    optional: true
+
+  '@rollup/rollup-linux-x64-gnu@4.22.4':
+    optional: true
+
+  '@rollup/rollup-linux-x64-musl@4.21.1':
+    optional: true
+
+  '@rollup/rollup-linux-x64-musl@4.22.4':
+    optional: true
+
+  '@rollup/rollup-win32-arm64-msvc@4.21.1':
+    optional: true
+
+  '@rollup/rollup-win32-arm64-msvc@4.22.4':
+    optional: true
+
+  '@rollup/rollup-win32-ia32-msvc@4.21.1':
+    optional: true
+
+  '@rollup/rollup-win32-ia32-msvc@4.22.4':
+    optional: true
+
+  '@rollup/rollup-win32-x64-msvc@4.21.1':
+    optional: true
+
+  '@rollup/rollup-win32-x64-msvc@4.22.4':
+    optional: true
+
+  '@shikijs/core@1.14.1':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@shikijs/engine-javascript': 1.22.0
       '@shikijs/engine-oniguruma': 1.22.0
@@ -11927,10 +12581,17 @@ snapshots:
 
   '@tanstack/virtual-core@3.10.8': {}
 
+<<<<<<< HEAD
   '@tanstack/vue-virtual@3.10.8(vue@3.5.11(typescript@5.6.2))':
     dependencies:
       '@tanstack/virtual-core': 3.10.8
       vue: 3.5.11(typescript@5.6.2)
+=======
+  '@tanstack/vue-virtual@3.10.4(vue@3.4.38(typescript@5.6.2))':
+    dependencies:
+      '@tanstack/virtual-core': 3.10.4
+      vue: 3.4.38(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
 
   '@tootallnate/once@2.0.0': {}
 
@@ -12133,7 +12794,13 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
+<<<<<<< HEAD
   '@types/express-serve-static-core@4.19.6':
+=======
+  '@types/estree@1.0.6': {}
+
+  '@types/express-serve-static-core@4.19.5':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@types/node': 20.16.11
       '@types/qs': 6.9.16
@@ -12262,6 +12929,11 @@ snapshots:
     dependencies:
       undici-types: 6.19.8
 
+  '@types/node@22.6.1':
+    dependencies:
+      undici-types: 6.19.8
+    optional: true
+
   '@types/normalize-package-data@2.4.4': {}
 
   '@types/prettier@2.7.3': {}
@@ -12366,7 +13038,30 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+<<<<<<< HEAD
   '@typescript-eslint/parser@8.8.1(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5)':
+=======
+  '@typescript-eslint/eslint-plugin@8.7.0(@typescript-eslint/parser@8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)':
+    dependencies:
+      '@eslint-community/regexpp': 4.11.1
+      '@typescript-eslint/parser': 8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)
+      '@typescript-eslint/scope-manager': 8.7.0
+      '@typescript-eslint/type-utils': 8.7.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)
+      '@typescript-eslint/utils': 8.7.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)
+      '@typescript-eslint/visitor-keys': 8.7.0
+      eslint: 9.10.0(jiti@1.21.6)
+      graphemer: 1.4.0
+      ignore: 5.3.2
+      natural-compare: 1.4.0
+      ts-api-utils: 1.3.0(typescript@5.4.5)
+    optionalDependencies:
+      typescript: 5.4.5
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
+  '@typescript-eslint/parser@8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@typescript-eslint/scope-manager': 8.8.1
       '@typescript-eslint/types': 8.8.1
@@ -12384,7 +13079,17 @@ snapshots:
       '@typescript-eslint/types': 8.8.1
       '@typescript-eslint/visitor-keys': 8.8.1
 
+<<<<<<< HEAD
   '@typescript-eslint/type-utils@8.8.1(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5)':
+=======
+  '@typescript-eslint/scope-manager@8.7.0':
+    dependencies:
+      '@typescript-eslint/types': 8.7.0
+      '@typescript-eslint/visitor-keys': 8.7.0
+    optional: true
+
+  '@typescript-eslint/type-utils@8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@typescript-eslint/typescript-estree': 8.8.1(typescript@5.4.5)
       '@typescript-eslint/utils': 8.8.1(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5)
@@ -12396,11 +13101,33 @@ snapshots:
       - eslint
       - supports-color
 
+<<<<<<< HEAD
   '@typescript-eslint/types@7.18.0': {}
 
   '@typescript-eslint/types@8.8.1': {}
 
   '@typescript-eslint/typescript-estree@7.18.0(typescript@5.6.2)':
+=======
+  '@typescript-eslint/type-utils@8.7.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)':
+    dependencies:
+      '@typescript-eslint/typescript-estree': 8.7.0(typescript@5.4.5)
+      '@typescript-eslint/utils': 8.7.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)
+      debug: 4.3.7
+      ts-api-utils: 1.3.0(typescript@5.4.5)
+    optionalDependencies:
+      typescript: 5.4.5
+    transitivePeerDependencies:
+      - eslint
+      - supports-color
+    optional: true
+
+  '@typescript-eslint/types@8.5.0': {}
+
+  '@typescript-eslint/types@8.7.0':
+    optional: true
+
+  '@typescript-eslint/typescript-estree@8.5.0(typescript@5.4.5)':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@typescript-eslint/types': 7.18.0
       '@typescript-eslint/visitor-keys': 7.18.0
@@ -12430,7 +13157,27 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+<<<<<<< HEAD
   '@typescript-eslint/utils@8.8.1(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5)':
+=======
+  '@typescript-eslint/typescript-estree@8.7.0(typescript@5.4.5)':
+    dependencies:
+      '@typescript-eslint/types': 8.7.0
+      '@typescript-eslint/visitor-keys': 8.7.0
+      debug: 4.3.7
+      fast-glob: 3.3.2
+      is-glob: 4.0.3
+      minimatch: 9.0.5
+      semver: 7.6.3
+      ts-api-utils: 1.3.0(typescript@5.4.5)
+    optionalDependencies:
+      typescript: 5.4.5
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
+  '@typescript-eslint/utils@8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@9.12.0(jiti@1.21.6))
       '@typescript-eslint/scope-manager': 8.8.1
@@ -12441,11 +13188,28 @@ snapshots:
       - supports-color
       - typescript
 
+<<<<<<< HEAD
   '@typescript-eslint/visitor-keys@7.18.0':
+=======
+  '@typescript-eslint/utils@8.7.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.4.0(eslint@9.10.0(jiti@1.21.6))
+      '@typescript-eslint/scope-manager': 8.7.0
+      '@typescript-eslint/types': 8.7.0
+      '@typescript-eslint/typescript-estree': 8.7.0(typescript@5.4.5)
+      eslint: 9.10.0(jiti@1.21.6)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    optional: true
+
+  '@typescript-eslint/visitor-keys@8.5.0':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@typescript-eslint/types': 7.18.0
       eslint-visitor-keys: 3.4.3
 
+<<<<<<< HEAD
   '@typescript-eslint/visitor-keys@8.8.1':
     dependencies:
       '@typescript-eslint/types': 8.8.1
@@ -12460,6 +13224,21 @@ snapshots:
       '@unocss/vite': 0.59.4(rollup@2.79.2)(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1))
     optionalDependencies:
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
+=======
+  '@typescript-eslint/visitor-keys@8.7.0':
+    dependencies:
+      '@typescript-eslint/types': 8.7.0
+      eslint-visitor-keys: 3.4.3
+    optional: true
+
+  '@unocss/astro@0.59.4(rollup@2.79.1)(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))':
+    dependencies:
+      '@unocss/core': 0.59.4
+      '@unocss/reset': 0.59.4
+      '@unocss/vite': 0.59.4(rollup@2.79.1)(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))
+    optionalDependencies:
+      vite: 5.4.2(@types/node@22.6.1)(terser@5.33.0)
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - rollup
 
@@ -12590,7 +13369,11 @@ snapshots:
     dependencies:
       '@unocss/core': 0.59.4
 
+<<<<<<< HEAD
   '@unocss/vite@0.59.4(rollup@2.79.2)(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1))':
+=======
+  '@unocss/vite@0.59.4(rollup@2.79.1)(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@rollup/pluginutils': 5.1.2(rollup@2.79.2)
@@ -12602,6 +13385,7 @@ snapshots:
       chokidar: 3.6.0
       fast-glob: 3.3.2
       magic-string: 0.30.11
+<<<<<<< HEAD
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
     transitivePeerDependencies:
       - rollup
@@ -12621,6 +13405,27 @@ snapshots:
       vue: 3.5.11(typescript@5.6.2)
 
   '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.34.1))':
+=======
+      vite: 5.4.2(@types/node@22.6.1)(terser@5.33.0)
+    transitivePeerDependencies:
+      - rollup
+
+  '@vite-pwa/vitepress@0.4.0(vite-plugin-pwa@0.19.8(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0))':
+    dependencies:
+      vite-plugin-pwa: 0.19.8(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0)
+
+  '@vitejs/plugin-vue@5.1.2(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(vue@3.4.38(typescript@5.4.5))':
+    dependencies:
+      vite: 5.4.2(@types/node@22.6.1)(terser@5.33.0)
+      vue: 3.4.38(typescript@5.4.5)
+
+  '@vitejs/plugin-vue@5.1.2(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(vue@3.4.38(typescript@5.6.2))':
+    dependencies:
+      vite: 5.4.2(@types/node@22.6.1)(terser@5.33.0)
+      vue: 3.4.38(typescript@5.6.2)
+
+  '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.16.2)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.33.0))':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -12635,7 +13440,11 @@ snapshots:
       std-env: 3.7.0
       strip-literal: 2.1.0
       test-exclude: 6.0.0
+<<<<<<< HEAD
       vitest: 1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.34.1)
+=======
+      vitest: 1.6.0(@types/node@20.16.2)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.33.0)
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - supports-color
 
@@ -12670,7 +13479,11 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.1.0
       sirv: 2.0.4
+<<<<<<< HEAD
       vitest: 1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.34.1)
+=======
+      vitest: 1.6.0(@types/node@20.16.2)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.33.0)
+>>>>>>> 02984908a (bump langium version)
 
   '@vitest/utils@1.6.0':
     dependencies:
@@ -12679,12 +13492,21 @@ snapshots:
       loupe: 2.3.7
       pretty-format: 29.7.0
 
+<<<<<<< HEAD
   '@vue/compat@3.5.11(vue@3.5.11(typescript@5.6.2))':
+=======
+  '@vue/compat@3.4.38(vue@3.4.38(typescript@5.6.2))':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@babel/parser': 7.25.7
       estree-walker: 2.0.2
+<<<<<<< HEAD
       source-map-js: 1.2.1
       vue: 3.5.11(typescript@5.6.2)
+=======
+      source-map-js: 1.2.0
+      vue: 3.4.38(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
 
   '@vue/compiler-core@3.5.11':
     dependencies:
@@ -12758,6 +13580,7 @@ snapshots:
       '@vue/shared': 3.5.11
       vue: 3.5.11(typescript@5.4.5)
 
+<<<<<<< HEAD
   '@vue/server-renderer@3.5.11(vue@3.5.11(typescript@5.6.2))':
     dependencies:
       '@vue/compiler-ssr': 3.5.11
@@ -12772,6 +13595,22 @@ snapshots:
       '@vueuse/metadata': 10.11.1
       '@vueuse/shared': 10.11.1(vue@3.5.11(typescript@5.4.5))
       vue-demi: 0.14.10(vue@3.5.11(typescript@5.4.5))
+=======
+  '@vue/server-renderer@3.4.38(vue@3.4.38(typescript@5.6.2))':
+    dependencies:
+      '@vue/compiler-ssr': 3.4.38
+      '@vue/shared': 3.4.38
+      vue: 3.4.38(typescript@5.6.2)
+
+  '@vue/shared@3.4.38': {}
+
+  '@vueuse/core@10.11.1(vue@3.4.38(typescript@5.6.2))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.20
+      '@vueuse/metadata': 10.11.1
+      '@vueuse/shared': 10.11.1(vue@3.4.38(typescript@5.6.2))
+      vue-demi: 0.14.10(vue@3.4.38(typescript@5.6.2))
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -12786,6 +13625,7 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
+<<<<<<< HEAD
   '@vueuse/integrations@10.11.1(axios@1.7.7)(focus-trap@7.6.0)(vue@3.5.11(typescript@5.4.5))':
     dependencies:
       '@vueuse/core': 10.11.1(vue@3.5.11(typescript@5.4.5))
@@ -12794,27 +13634,54 @@ snapshots:
     optionalDependencies:
       axios: 1.7.7(debug@4.3.7)
       focus-trap: 7.6.0
+=======
+  '@vueuse/integrations@10.11.1(axios@1.7.7)(focus-trap@7.5.4)(vue@3.4.38(typescript@5.6.2))':
+    dependencies:
+      '@vueuse/core': 10.11.1(vue@3.4.38(typescript@5.6.2))
+      '@vueuse/shared': 10.11.1(vue@3.4.38(typescript@5.6.2))
+      vue-demi: 0.14.10(vue@3.4.38(typescript@5.6.2))
+    optionalDependencies:
+      axios: 1.7.7
+      focus-trap: 7.5.4
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
 
+<<<<<<< HEAD
   '@vueuse/integrations@10.11.1(axios@1.7.7)(focus-trap@7.6.0)(vue@3.5.11(typescript@5.6.2))':
+=======
+  '@vueuse/integrations@11.0.3(axios@1.7.7)(focus-trap@7.5.4)(vue@3.4.38(typescript@5.4.5))':
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@vueuse/core': 10.11.1(vue@3.5.11(typescript@5.6.2))
       '@vueuse/shared': 10.11.1(vue@3.5.11(typescript@5.6.2))
       vue-demi: 0.14.10(vue@3.5.11(typescript@5.6.2))
     optionalDependencies:
+<<<<<<< HEAD
       axios: 1.7.7(debug@4.3.7)
       focus-trap: 7.6.0
+=======
+      axios: 1.7.7
+      focus-trap: 7.5.4
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
 
   '@vueuse/metadata@10.11.1': {}
 
+<<<<<<< HEAD
   '@vueuse/shared@10.11.1(vue@3.5.11(typescript@5.4.5))':
     dependencies:
       vue-demi: 0.14.10(vue@3.5.11(typescript@5.4.5))
+=======
+  '@vueuse/metadata@11.0.3': {}
+
+  '@vueuse/shared@10.11.1(vue@3.4.38(typescript@5.6.2))':
+    dependencies:
+      vue-demi: 0.14.10(vue@3.4.38(typescript@5.6.2))
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -12959,6 +13826,7 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
+<<<<<<< HEAD
   '@zenuml/core@3.24.12(typescript@5.6.2)':
     dependencies:
       '@headlessui-float/vue': 0.14.4(@headlessui/vue@1.7.23(vue@3.5.11(typescript@5.6.2)))(vue@3.5.11(typescript@5.6.2))
@@ -12967,6 +13835,16 @@ snapshots:
       '@types/assert': 1.5.10
       '@types/ramda': 0.28.25
       '@vue/compat': 3.5.11(vue@3.5.11(typescript@5.6.2))
+=======
+  '@zenuml/core@3.24.3(typescript@5.6.2)':
+    dependencies:
+      '@headlessui-float/vue': 0.14.3(@headlessui/vue@1.7.22(vue@3.4.38(typescript@5.6.2)))(vue@3.4.38(typescript@5.6.2))
+      '@headlessui/tailwindcss': 0.2.1(tailwindcss@3.4.10)
+      '@headlessui/vue': 1.7.22(vue@3.4.38(typescript@5.6.2))
+      '@types/assert': 1.5.10
+      '@types/ramda': 0.28.25
+      '@vue/compat': 3.4.38(vue@3.4.38(typescript@5.6.2))
+>>>>>>> 02984908a (bump langium version)
       antlr4: 4.11.0
       color-string: 1.9.1
       dom-to-image-more: 2.16.0
@@ -12979,9 +13857,15 @@ snapshots:
       pino: 8.21.0
       postcss: 8.4.47
       ramda: 0.28.0
+<<<<<<< HEAD
       tailwindcss: 3.4.13
       vue: 3.5.11(typescript@5.6.2)
       vuex: 4.1.0(vue@3.5.11(typescript@5.6.2))
+=======
+      tailwindcss: 3.4.10
+      vue: 3.4.38(typescript@5.6.2)
+      vuex: 4.1.0(vue@3.4.38(typescript@5.6.2))
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - ts-node
@@ -13237,7 +14121,28 @@ snapshots:
 
   babel-jest@29.7.0(@babel/core@7.25.7):
     dependencies:
+<<<<<<< HEAD
       '@babel/core': 7.25.7
+=======
+      follow-redirects: 1.15.6(debug@4.3.7)
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
+  axios@1.7.7:
+    dependencies:
+      follow-redirects: 1.15.9
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    optional: true
+
+  babel-jest@29.7.0(@babel/core@7.25.2):
+    dependencies:
+      '@babel/core': 7.25.2
+>>>>>>> 02984908a (bump langium version)
       '@jest/transform': 29.7.0
       '@types/babel__core': 7.20.5
       babel-plugin-istanbul: 6.1.1
@@ -13248,12 +14153,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+<<<<<<< HEAD
   babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)):
+=======
+  babel-loader@9.2.1(@babel/core@7.25.2)(webpack@5.94.0(esbuild@0.21.5)):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@babel/core': 7.25.7
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
+<<<<<<< HEAD
       webpack: 5.95.0(esbuild@0.21.5)
+=======
+      webpack: 5.94.0(esbuild@0.21.5)
+>>>>>>> 02984908a (bump langium version)
 
   babel-plugin-istanbul@6.1.1:
     dependencies:
@@ -14798,13 +15711,22 @@ snapshots:
     dependencies:
       htmlparser2: 9.1.0
 
+<<<<<<< HEAD
   eslint-plugin-jest@28.8.3(@typescript-eslint/eslint-plugin@8.8.1(@typescript-eslint/parser@8.8.1(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.12.0(jiti@1.21.6))(jest@29.7.0(@types/node@20.16.11))(typescript@5.4.5):
+=======
+  eslint-plugin-jest@28.8.3(@typescript-eslint/eslint-plugin@8.7.0(@typescript-eslint/parser@8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.6))(jest@29.7.0(@types/node@20.16.2))(typescript@5.4.5):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@typescript-eslint/utils': 8.8.1(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5)
       eslint: 9.12.0(jiti@1.21.6)
     optionalDependencies:
+<<<<<<< HEAD
       '@typescript-eslint/eslint-plugin': 8.8.1(@typescript-eslint/parser@8.8.1(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.12.0(jiti@1.21.6))(typescript@5.4.5)
       jest: 29.7.0(@types/node@20.16.11)
+=======
+      '@typescript-eslint/eslint-plugin': 8.7.0(@typescript-eslint/parser@8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5))(eslint@9.10.0(jiti@1.21.6))(typescript@5.4.5)
+      jest: 29.7.0(@types/node@20.16.2)
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -15372,6 +16294,9 @@ snapshots:
     optionalDependencies:
       debug: 4.3.7(supports-color@8.1.1)
 
+  follow-redirects@1.15.9:
+    optional: true
+
   font-awesome@4.7.0: {}
 
   for-each@0.3.3:
@@ -15793,7 +16718,11 @@ snapshots:
   http-proxy@1.18.1:
     dependencies:
       eventemitter3: 4.0.7
+<<<<<<< HEAD
       follow-redirects: 1.15.9(debug@4.3.7)
+=======
+      follow-redirects: 1.15.6(debug@4.3.6)
+>>>>>>> 02984908a (bump langium version)
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -16701,7 +17630,19 @@ snapshots:
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.0.8
 
+<<<<<<< HEAD
   launch-editor@2.9.1:
+=======
+  langium@3.2.0:
+    dependencies:
+      chevrotain: 11.0.3
+      chevrotain-allstar: 0.3.1(chevrotain@11.0.3)
+      vscode-languageserver: 9.0.1
+      vscode-languageserver-textdocument: 1.0.12
+      vscode-uri: 3.0.8
+
+  launch-editor@2.8.0:
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       picocolors: 1.1.0
       shell-quote: 1.8.1
@@ -17764,6 +18705,8 @@ snapshots:
 
   picocolors@1.1.0: {}
 
+  picocolors@1.1.0: {}
+
   picomatch@2.3.1: {}
 
   picomatch@4.0.2: {}
@@ -17902,7 +18845,17 @@ snapshots:
       picocolors: 1.1.0
       source-map-js: 1.2.1
 
+<<<<<<< HEAD
   preact@10.24.2: {}
+=======
+  postcss@8.4.47:
+    dependencies:
+      nanoid: 3.3.7
+      picocolors: 1.1.0
+      source-map-js: 1.2.1
+
+  preact@10.23.2: {}
+>>>>>>> 02984908a (bump langium version)
 
   precinct@12.1.2:
     dependencies:
@@ -18266,14 +19219,22 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
+<<<<<<< HEAD
   rollup-plugin-visualizer@5.12.0(rollup@4.24.0):
+=======
+  rollup-plugin-visualizer@5.12.0(rollup@4.22.4):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       open: 8.4.2
       picomatch: 2.3.1
       source-map: 0.7.4
       yargs: 17.7.2
     optionalDependencies:
+<<<<<<< HEAD
       rollup: 4.24.0
+=======
+      rollup: 4.22.4
+>>>>>>> 02984908a (bump langium version)
 
   rollup@2.79.2:
     optionalDependencies:
@@ -18301,7 +19262,34 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.24.0
       fsevents: 2.3.3
 
+<<<<<<< HEAD
   roughjs@4.6.6(patch_hash=vxb6t6fqvzyhwhtjiliqr25jyq):
+=======
+  rollup@4.22.4:
+    dependencies:
+      '@types/estree': 1.0.5
+    optionalDependencies:
+      '@rollup/rollup-android-arm-eabi': 4.22.4
+      '@rollup/rollup-android-arm64': 4.22.4
+      '@rollup/rollup-darwin-arm64': 4.22.4
+      '@rollup/rollup-darwin-x64': 4.22.4
+      '@rollup/rollup-linux-arm-gnueabihf': 4.22.4
+      '@rollup/rollup-linux-arm-musleabihf': 4.22.4
+      '@rollup/rollup-linux-arm64-gnu': 4.22.4
+      '@rollup/rollup-linux-arm64-musl': 4.22.4
+      '@rollup/rollup-linux-powerpc64le-gnu': 4.22.4
+      '@rollup/rollup-linux-riscv64-gnu': 4.22.4
+      '@rollup/rollup-linux-s390x-gnu': 4.22.4
+      '@rollup/rollup-linux-x64-gnu': 4.22.4
+      '@rollup/rollup-linux-x64-musl': 4.22.4
+      '@rollup/rollup-win32-arm64-msvc': 4.22.4
+      '@rollup/rollup-win32-ia32-msvc': 4.22.4
+      '@rollup/rollup-win32-x64-msvc': 4.22.4
+      fsevents: 2.3.3
+    optional: true
+
+  roughjs@4.6.6:
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       hachure-fill: 0.5.2
       path-data-parser: 0.1.0
@@ -18592,6 +19580,8 @@ snapshots:
       atomic-sleep: 1.0.0
 
   source-map-js@1.0.1: {}
+
+  source-map-js@1.2.1: {}
 
   source-map-js@1.2.1: {}
 
@@ -18968,18 +19958,38 @@ snapshots:
     optionalDependencies:
       esbuild: 0.21.5
 
+<<<<<<< HEAD
   terser-webpack-plugin@5.3.10(esbuild@0.21.5)(webpack@5.95.0(esbuild@0.21.5)):
+=======
+  terser-webpack-plugin@5.3.10(esbuild@0.21.5)(webpack@5.94.0(esbuild@0.21.5)):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
+<<<<<<< HEAD
       terser: 5.34.1
       webpack: 5.95.0(esbuild@0.21.5)
     optionalDependencies:
       esbuild: 0.21.5
 
   terser@5.34.1:
+=======
+      terser: 5.31.3
+      webpack: 5.94.0(esbuild@0.21.5)
+    optionalDependencies:
+      esbuild: 0.21.5
+
+  terser@5.31.3:
+    dependencies:
+      '@jridgewell/source-map': 0.3.6
+      acorn: 8.12.1
+      commander: 2.20.3
+      source-map-support: 0.5.21
+
+  terser@5.33.0:
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@jridgewell/source-map': 0.3.6
       acorn: 8.12.1
@@ -19207,7 +20217,12 @@ snapshots:
 
   typescript@5.4.5: {}
 
+<<<<<<< HEAD
   typescript@5.6.2: {}
+=======
+  typescript@5.6.2:
+    optional: true
+>>>>>>> 02984908a (bump langium version)
 
   uc.micro@1.0.6: {}
 
@@ -19314,10 +20329,17 @@ snapshots:
 
   universalify@2.0.1: {}
 
+<<<<<<< HEAD
   unocss@0.59.4(postcss@8.4.47)(rollup@2.79.2)(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1)):
     dependencies:
       '@unocss/astro': 0.59.4(rollup@2.79.2)(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1))
       '@unocss/cli': 0.59.4(rollup@2.79.2)
+=======
+  unocss@0.59.4(postcss@8.4.47)(rollup@2.79.1)(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0)):
+    dependencies:
+      '@unocss/astro': 0.59.4(rollup@2.79.1)(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))
+      '@unocss/cli': 0.59.4(rollup@2.79.1)
+>>>>>>> 02984908a (bump langium version)
       '@unocss/core': 0.59.4
       '@unocss/extractor-arbitrary-variants': 0.59.4
       '@unocss/postcss': 0.59.4(postcss@8.4.47)
@@ -19335,9 +20357,15 @@ snapshots:
       '@unocss/transformer-compile-class': 0.59.4
       '@unocss/transformer-directives': 0.59.4
       '@unocss/transformer-variant-group': 0.59.4
+<<<<<<< HEAD
       '@unocss/vite': 0.59.4(rollup@2.79.2)(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1))
     optionalDependencies:
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
+=======
+      '@unocss/vite': 0.59.4(rollup@2.79.1)(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))
+    optionalDependencies:
+      vite: 5.4.2(@types/node@22.6.1)(terser@5.33.0)
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -19345,7 +20373,11 @@ snapshots:
 
   unpipe@1.0.0: {}
 
+<<<<<<< HEAD
   unplugin-vue-components@0.26.0(@babel/parser@7.25.7)(rollup@2.79.2)(vue@3.5.11(typescript@5.6.2))(webpack-sources@3.2.3):
+=======
+  unplugin-vue-components@0.26.0(@babel/parser@7.25.6)(rollup@2.79.1)(vue@3.4.38(typescript@5.6.2)):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@antfu/utils': 0.7.10
       '@rollup/pluginutils': 5.1.2(rollup@2.79.2)
@@ -19356,8 +20388,13 @@ snapshots:
       magic-string: 0.30.11
       minimatch: 9.0.5
       resolve: 1.22.8
+<<<<<<< HEAD
       unplugin: 1.14.1(webpack-sources@3.2.3)
       vue: 3.5.11(typescript@5.6.2)
+=======
+      unplugin: 1.12.0
+      vue: 3.4.38(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
     optionalDependencies:
       '@babel/parser': 7.25.7
     transitivePeerDependencies:
@@ -19428,13 +20465,22 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
+<<<<<<< HEAD
   vite-node@1.6.0(@types/node@20.16.11)(terser@5.34.1):
+=======
+  vite-node@1.6.0(@types/node@20.16.2)(terser@5.33.0):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       cac: 6.7.14
       debug: 4.3.7(supports-color@8.1.1)
       pathe: 1.1.2
+<<<<<<< HEAD
       picocolors: 1.1.0
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
+=======
+      picocolors: 1.0.1
+      vite: 5.4.2(@types/node@20.16.2)(terser@5.33.0)
+>>>>>>> 02984908a (bump langium version)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -19446,7 +20492,11 @@ snapshots:
       - supports-color
       - terser
 
+<<<<<<< HEAD
   vite-plugin-istanbul@6.0.2(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1)):
+=======
+  vite-plugin-istanbul@6.0.2(vite@5.4.2(@types/node@20.16.2)(terser@5.33.0)):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@istanbuljs/load-nyc-config': 1.1.0
       espree: 10.2.0
@@ -19454,22 +20504,38 @@ snapshots:
       picocolors: 1.1.0
       source-map: 0.7.4
       test-exclude: 6.0.0
+<<<<<<< HEAD
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
     transitivePeerDependencies:
       - supports-color
 
   vite-plugin-pwa@0.19.8(vite@5.4.8(@types/node@20.16.11)(terser@5.34.1))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0):
+=======
+      vite: 5.4.2(@types/node@20.16.2)(terser@5.33.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  vite-plugin-pwa@0.19.8(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.1.0):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       debug: 4.3.7(supports-color@8.1.1)
       fast-glob: 3.3.2
       pretty-bytes: 6.1.1
+<<<<<<< HEAD
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
+=======
+      vite: 5.4.2(@types/node@22.6.1)(terser@5.33.0)
+>>>>>>> 02984908a (bump langium version)
       workbox-build: 7.1.1(@types/babel__core@7.20.5)
       workbox-window: 7.1.0
     transitivePeerDependencies:
       - supports-color
 
+<<<<<<< HEAD
   vite@5.4.8(@types/node@20.16.11)(terser@5.34.1):
+=======
+  vite@5.4.2(@types/node@20.16.2)(terser@5.33.0):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.47
@@ -19477,15 +20543,32 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.16.11
       fsevents: 2.3.3
+<<<<<<< HEAD
       terser: 5.34.1
 
   vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.1.4(@algolia/client-search@4.24.0)(@types/node@20.16.11)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.34.1)(typescript@5.4.5))(vue@3.5.11(typescript@5.4.5)):
+=======
+      terser: 5.33.0
+
+  vite@5.4.2(@types/node@22.6.1)(terser@5.33.0):
+    dependencies:
+      esbuild: 0.21.5
+      postcss: 8.4.41
+      rollup: 4.21.1
+    optionalDependencies:
+      '@types/node': 22.6.1
+      fsevents: 2.3.3
+      terser: 5.33.0
+
+  vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.3.4(@algolia/client-search@5.5.3)(@types/node@22.6.1)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.33.0)(typescript@5.4.5))(vue@3.4.38(typescript@5.4.5)):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@types/flexsearch': 0.7.6
       '@types/markdown-it': 12.2.3
       flexsearch: 0.7.43
       glob-to-regexp: 0.4.1
       markdown-it: 13.0.2
+<<<<<<< HEAD
       vitepress: 1.1.4(@algolia/client-search@4.24.0)(@types/node@20.16.11)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.34.1)(typescript@5.4.5)
       vue: 3.5.11(typescript@5.4.5)
 
@@ -19506,6 +20589,28 @@ snapshots:
       shiki: 1.22.0
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
       vue: 3.5.11(typescript@5.4.5)
+=======
+      vitepress: 1.3.4(@algolia/client-search@5.5.3)(@types/node@22.6.1)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.33.0)(typescript@5.4.5)
+      vue: 3.4.38(typescript@5.4.5)
+
+  vitepress@1.1.4(@algolia/client-search@5.5.3)(@types/node@22.6.1)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.33.0)(typescript@5.6.2):
+    dependencies:
+      '@docsearch/css': 3.6.1
+      '@docsearch/js': 3.6.1(@algolia/client-search@5.5.3)(search-insights@2.17.2)
+      '@shikijs/core': 1.14.1
+      '@shikijs/transformers': 1.14.1
+      '@types/markdown-it': 14.1.2
+      '@vitejs/plugin-vue': 5.1.2(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(vue@3.4.38(typescript@5.6.2))
+      '@vue/devtools-api': 7.3.9
+      '@vueuse/core': 10.11.1(vue@3.4.38(typescript@5.6.2))
+      '@vueuse/integrations': 10.11.1(axios@1.7.7)(focus-trap@7.5.4)(vue@3.4.38(typescript@5.6.2))
+      focus-trap: 7.5.4
+      mark.js: 8.11.1
+      minisearch: 6.3.0
+      shiki: 1.14.1
+      vite: 5.4.2(@types/node@22.6.1)(terser@5.33.0)
+      vue: 3.4.38(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
     optionalDependencies:
       postcss: 8.4.47
     transitivePeerDependencies:
@@ -19536,6 +20641,7 @@ snapshots:
       - typescript
       - universal-cookie
 
+<<<<<<< HEAD
   vitepress@1.1.4(@algolia/client-search@4.24.0)(@types/node@20.16.11)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.34.1)(typescript@5.6.2):
     dependencies:
       '@docsearch/css': 3.6.2
@@ -19553,6 +20659,26 @@ snapshots:
       shiki: 1.22.0
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
       vue: 3.5.11(typescript@5.6.2)
+=======
+  vitepress@1.3.4(@algolia/client-search@5.5.3)(@types/node@22.6.1)(axios@1.7.7)(postcss@8.4.47)(search-insights@2.17.2)(terser@5.33.0)(typescript@5.4.5):
+    dependencies:
+      '@docsearch/css': 3.6.1
+      '@docsearch/js': 3.6.1(@algolia/client-search@5.5.3)(search-insights@2.17.2)
+      '@shikijs/core': 1.14.1
+      '@shikijs/transformers': 1.14.1
+      '@types/markdown-it': 14.1.2
+      '@vitejs/plugin-vue': 5.1.2(vite@5.4.2(@types/node@22.6.1)(terser@5.33.0))(vue@3.4.38(typescript@5.4.5))
+      '@vue/devtools-api': 7.3.9
+      '@vue/shared': 3.4.38
+      '@vueuse/core': 11.0.3(vue@3.4.38(typescript@5.4.5))
+      '@vueuse/integrations': 11.0.3(axios@1.7.7)(focus-trap@7.5.4)(vue@3.4.38(typescript@5.4.5))
+      focus-trap: 7.5.4
+      mark.js: 8.11.1
+      minisearch: 7.1.0
+      shiki: 1.14.1
+      vite: 5.4.2(@types/node@22.6.1)(terser@5.33.0)
+      vue: 3.4.38(typescript@5.4.5)
+>>>>>>> 02984908a (bump langium version)
     optionalDependencies:
       postcss: 8.4.47
     transitivePeerDependencies:
@@ -19583,7 +20709,11 @@ snapshots:
       - typescript
       - universal-cookie
 
+<<<<<<< HEAD
   vitest@1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.34.1):
+=======
+  vitest@1.6.0(@types/node@20.16.2)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.33.0):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
@@ -19602,8 +20732,13 @@ snapshots:
       strip-literal: 2.1.0
       tinybench: 2.9.0
       tinypool: 0.8.4
+<<<<<<< HEAD
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
       vite-node: 1.6.0(@types/node@20.16.11)(terser@5.34.1)
+=======
+      vite: 5.4.2(@types/node@20.16.2)(terser@5.33.0)
+      vite-node: 1.6.0(@types/node@20.16.2)(terser@5.33.0)
+>>>>>>> 02984908a (bump langium version)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.16.11
@@ -19654,7 +20789,15 @@ snapshots:
     dependencies:
       vue: 3.5.11(typescript@5.4.5)
 
+<<<<<<< HEAD
   vue-demi@0.14.10(vue@3.5.11(typescript@5.6.2)):
+=======
+  vue-demi@0.14.10(vue@3.4.38(typescript@5.6.2)):
+    dependencies:
+      vue: 3.4.38(typescript@5.6.2)
+
+  vue@3.4.38(typescript@5.4.5):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       vue: 3.5.11(typescript@5.6.2)
 
@@ -19668,6 +20811,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
+<<<<<<< HEAD
   vue@3.5.11(typescript@5.6.2):
     dependencies:
       '@vue/compiler-dom': 3.5.11
@@ -19682,6 +20826,22 @@ snapshots:
     dependencies:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.11(typescript@5.6.2)
+=======
+  vue@3.4.38(typescript@5.6.2):
+    dependencies:
+      '@vue/compiler-dom': 3.4.38
+      '@vue/compiler-sfc': 3.4.38
+      '@vue/runtime-dom': 3.4.38
+      '@vue/server-renderer': 3.4.38(vue@3.4.38(typescript@5.6.2))
+      '@vue/shared': 3.4.38
+    optionalDependencies:
+      typescript: 5.6.2
+
+  vuex@4.1.0(vue@3.4.38(typescript@5.6.2)):
+    dependencies:
+      '@vue/devtools-api': 6.6.3
+      vue: 3.4.38(typescript@5.6.2)
+>>>>>>> 02984908a (bump langium version)
 
   w3c-xmlserializer@5.0.0:
     dependencies:
@@ -19700,6 +20860,11 @@ snapshots:
   walker@1.0.8:
     dependencies:
       makeerror: 1.0.12
+
+  watchpack@2.4.2:
+    dependencies:
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
 
   watchpack@2.4.2:
     dependencies:
@@ -19815,6 +20980,7 @@ snapshots:
 
   webpack-virtual-modules@0.6.2: {}
 
+<<<<<<< HEAD
   webpack@5.95.0(esbuild@0.21.5):
     dependencies:
       '@types/estree': 1.0.6
@@ -19846,6 +21012,9 @@ snapshots:
       - uglify-js
 
   webpack@5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0):
+=======
+  webpack@5.93.0(esbuild@0.21.5)(webpack-cli@4.10.0):
+>>>>>>> 02984908a (bump langium version)
     dependencies:
       '@types/estree': 1.0.6
       '@webassemblyjs/ast': 1.12.1
@@ -19872,6 +21041,36 @@ snapshots:
       webpack-sources: 3.2.3
     optionalDependencies:
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0)
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
+
+  webpack@5.94.0(esbuild@0.21.5):
+    dependencies:
+      '@types/estree': 1.0.6
+      '@webassemblyjs/ast': 1.12.1
+      '@webassemblyjs/wasm-edit': 1.12.1
+      '@webassemblyjs/wasm-parser': 1.12.1
+      acorn: 8.12.1
+      acorn-import-attributes: 1.9.5(acorn@8.12.1)
+      browserslist: 4.23.3
+      chrome-trace-event: 1.0.4
+      enhanced-resolve: 5.17.1
+      es-module-lexer: 1.5.4
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      json-parse-even-better-errors: 2.3.1
+      loader-runner: 4.3.0
+      mime-types: 2.1.35
+      neo-async: 2.6.2
+      schema-utils: 3.3.0
+      tapable: 2.2.1
+      terser-webpack-plugin: 5.3.10(esbuild@0.21.5)(webpack@5.94.0(esbuild@0.21.5))
+      watchpack: 2.4.2
+      webpack-sources: 3.2.3
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild
@@ -19967,6 +21166,7 @@ snapshots:
   workbox-build@7.1.1(@types/babel__core@7.20.5):
     dependencies:
       '@apideck/better-ajv-errors': 0.3.6(ajv@8.17.1)
+<<<<<<< HEAD
       '@babel/core': 7.25.7
       '@babel/preset-env': 7.25.7(@babel/core@7.25.7)
       '@babel/runtime': 7.25.7
@@ -19974,6 +21174,15 @@ snapshots:
       '@rollup/plugin-node-resolve': 15.3.0(rollup@2.79.2)
       '@rollup/plugin-replace': 2.4.2(rollup@2.79.2)
       '@rollup/plugin-terser': 0.4.4(rollup@2.79.2)
+=======
+      '@babel/core': 7.25.2
+      '@babel/preset-env': 7.25.4(@babel/core@7.25.2)
+      '@babel/runtime': 7.25.6
+      '@rollup/plugin-babel': 5.3.1(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@2.79.1)
+      '@rollup/plugin-node-resolve': 15.3.0(rollup@2.79.1)
+      '@rollup/plugin-replace': 2.4.2(rollup@2.79.1)
+      '@rollup/plugin-terser': 0.4.4(rollup@2.79.1)
+>>>>>>> 02984908a (bump langium version)
       '@surma/rollup-plugin-off-main-thread': 2.2.3
       ajv: 8.17.1
       common-tags: 1.8.2
