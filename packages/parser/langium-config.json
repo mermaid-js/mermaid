@@ -25,6 +25,11 @@
       "id": "gitGraph",
       "grammar": "src/language/gitGraph/gitGraph.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "flowchart",
+      "grammar": "src/language/flowchart/flowchart.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",

@@ -7,11 +7,14 @@ import type {
   PieServices,
   GitGraph,
   GitGraphServices,
+  Flowchart,
+  FlowchartServices,
 } from '../src/language/index.js';
 import {
   createInfoServices,
   createPieServices,
   createGitGraphServices,
+  createFlowchartServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -23,8 +26,8 @@ const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined)
  * @param result - the result `parse` function.
  */
 export function expectNoErrorsOrAlternatives(result: ParseResult) {
-  expect(result.lexerErrors).toHaveLength(0);
-  expect(result.parserErrors).toHaveLength(0);
+  expect(result.lexerErrors).toEqual([]);
+  expect(result.parserErrors).toEqual([]);
 
   expect(consoleMock).not.toHaveBeenCalled();
   consoleMock.mockReset();
@@ -62,3 +65,14 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const flowchartServices: FlowchartServices = createFlowchartServices().Flowchart;
+const flowchartParser: LangiumParser = flowchartServices.parser.LangiumParser;
+export function createFlowchartTestServices() {
+  const parse = (input: string) => {
+    return flowchartParser.parse<Flowchart>(input);
+  };
+
+  return { services: flowchartServices, parse };
+}
+export const flowchartParse = createFlowchartTestServices().parse;
