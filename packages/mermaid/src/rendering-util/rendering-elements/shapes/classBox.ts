@@ -99,8 +99,9 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   const membersGroupHeight =
     (shapeSvg.select('.members-group').node() as SVGGraphicsElement).getBBox().height -
       (renderExtraBox ? PADDING / 2 : 0) || 0;
+
   // Y value in the middle of the first line and remaining space.
-  const membersAreaPlacement =
+  const methodsAreaPlacement =
     (annotationGroupHeight +
       labelGroupHeight +
       y +
@@ -141,7 +142,12 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
           : 0);
     if (text.attr('class').includes('methods-group')) {
       if (nodeHeightGreater) {
-        newTranslateY = membersAreaPlacement + GAP * 2;
+        newTranslateY =
+          Math.max(
+            methodsAreaPlacement,
+            annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + GAP * 2 + PADDING
+          ) +
+          GAP * 2;
       } else {
         newTranslateY =
           annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + GAP * 4 + PADDING;
@@ -202,9 +208,9 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
       annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + GAP * 2 + PADDING;
     const roughLine = rc.line(
       rectBBox.x,
-      nodeHeightGreater ? membersAreaPlacement : secondLineY,
+      nodeHeightGreater ? Math.max(methodsAreaPlacement, secondLineY) : secondLineY,
       rectBBox.x + rectBBox.width,
-      (nodeHeightGreater ? membersAreaPlacement : secondLineY) + 0.001,
+      (nodeHeightGreater ? Math.max(methodsAreaPlacement, secondLineY) : secondLineY) + 0.001,
       options
     );
     const line = shapeSvg.insert(() => roughLine);
