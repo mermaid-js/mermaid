@@ -354,9 +354,25 @@ describe('flowchart', () => {
     });
   });
 
-  // describe('conjunction', () => {
-  //   // conjunction: a --> b & c--> d, A & B--> C & D
-  // });
+  describe('conjunction', () => {
+    it('should handle nodes conjunction', () => {
+      const result = parse(`flowchart; A & B --> C & D;`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.edges).toHaveLength(1);
+      expect(result.value.edges[0].start.nodes).toHaveLength(2);
+      expect(result.value.edges[0].start.nodes[0].id).toBe('A');
+      expect(result.value.edges[0].start.nodes[1].id).toBe('B');
+      expect(result.value.edges[0].ends[0].end.nodes[0].id).toBe('C');
+      expect(result.value.edges[0].ends[0].end.nodes[1].id).toBe('D');
+    });
+
+    it.skip('should handle edges conjunction', () => {
+      const result = parse(`flowchart; A --> B & C --> D;`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.edges).toHaveLength(1);
+      expect(result.value.edges[0].edges).toHaveLength(2);
+    });
+  });
 
   // TODO: string (current mermaid doesn't support escape chars), markdown string, html escapes
   // TODO: extract label, start, end and length from arrows

@@ -12,7 +12,7 @@ entry Flowchart:
   NEWLINE*
   FlowchartType FlowchartDirection?
   DELIMITER
-  ((nodes+=FlowchartNode | edges+=FlowchartEdge | subgraphs+=FlowchartSubgraph | styles+=FlowchartStyle | interactions+=FlowchartInteraction) DELIMITER)*
+  ((nodes+=FlowchartNode | edges+=(FlowchartEdge) | subgraphs+=FlowchartSubgraph | styles+=FlowchartStyle | interactions+=FlowchartInteraction) DELIMITER)*
 ;
 
 fragment FlowchartDirection:
@@ -24,7 +24,7 @@ fragment FlowchartType:
 FlowchartSubgraph:
   "subgraph" id=ID DELIMITER
     ("direction" FlowchartDirection DELIMITER)?
-    ((nodes+=FlowchartNode | edges+=FlowchartEdge | subgraphs+=FlowchartSubgraph) DELIMITER)*
+    ((nodes+=FlowchartNode | edges+=(FlowchartEdge) | subgraphs+=FlowchartSubgraph) DELIMITER)*
   "end";
 
 terminal EllipseLabel: "(-" -> "-)";
@@ -99,6 +99,11 @@ FlowchartNode:
   FlowchartNodeSubroutine |
   FlowchartNodeHexagon;
 
+terminal AMP: "&";
+
+FlowchartNodeConjunction:
+  nodes+=FlowchartNode (AMP nodes+=FlowchartNode)+;
+
 terminal fragment ArrowStart: "<" | "x" | "o";
 terminal fragment ArrowEnd: ">" | "x" | "o";
 terminal fragment DottedArrowEnd:  "."* ".-" ArrowEnd?;
@@ -119,22 +124,25 @@ terminal InvisibleArrow: "~~" "~"+;
 terminal EdgeLabel: "|" -> "|";
 
 FlowchartEdge:
-  start=FlowchartNode ends+=(FlowchartEdgeRegular | FlowchartEdgeDotted | FlowchartEdgeThick | FlowchartEdgeInvisible)+;
+  start=(FlowchartNode|FlowchartNodeConjunction) ends+=(FlowchartEdgeRegular | FlowchartEdgeDotted | FlowchartEdgeThick | FlowchartEdgeInvisible)+;
+
+// FlowchartEdgeConjunction:
+//   edges+=FlowchartEdge (AMP edges+=FlowchartEdge)+;
 
 FlowchartEdgeDotted:
-  (arrow=DottedArrow (label=EdgeLabel)? end=FlowchartNode) |
-  (arrow=DottedArrowWithLabel end=FlowchartNode);
+  (arrow=DottedArrow (label=EdgeLabel)? end=(FlowchartNode|FlowchartNodeConjunction)) |
+  (arrow=DottedArrowWithLabel end=(FlowchartNode|FlowchartNodeConjunction));
 
 FlowchartEdgeRegular:
-  (arrow=RegularArrow (label=EdgeLabel)? end=FlowchartNode) |
-  (arrow=RegularArrowWithLabel end=FlowchartNode);
+  (arrow=RegularArrow (label=EdgeLabel)? end=(FlowchartNode|FlowchartNodeConjunction)) |
+  (arrow=RegularArrowWithLabel end=(FlowchartNode|FlowchartNodeConjunction));
 
 FlowchartEdgeThick:
-  (arrow=ThickArrow (label=EdgeLabel)? end=FlowchartNode) |
-  (arrow=ThickArrowWithLabel end=FlowchartNode);
+  (arrow=ThickArrow (label=EdgeLabel)? end=(FlowchartNode|FlowchartNodeConjunction)) |
+  (arrow=ThickArrowWithLabel end=(FlowchartNode|FlowchartNodeConjunction));
 
 FlowchartEdgeInvisible:
-  arrow=(InvisibleArrow) (label=EdgeLabel)? end=FlowchartNode;
+  arrow=(InvisibleArrow) (label=EdgeLabel)? end=(FlowchartNode|FlowchartNodeConjunction);
 
 FlowchartStyle:
   "style" id=ID items+=FlowchartStylePair ("," items+=FlowchartStylePair)*;
