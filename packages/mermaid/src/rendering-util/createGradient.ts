@@ -40,14 +40,14 @@ function isValidColor(color: string): boolean {
 }
 
 /**
- * Calculates the distance L between two parallel tangent lines at a given angle for a specified SVG shape.
+ * Calculates the distance L between two encasing parallel lines at a given angle for a specified SVG shape.
  * Replicates the behavior of CSS linear gradients based on https://www.w3.org/TR/css-images-4/#linear-gradients
  * @see {@link https://www.w3.org/TR/css-images-4/#linear-gradients|CSS linear-gradient() notation} for the formal syntax.
  *
  * @param shapeElement - The D3 selection of the SVG shape.
  * @param angleDeg - The clockwise angle in degrees between the upward vertical axis and the gradient line.
  * @param numSamplePoints - The number of points to sample along the shape's path for path elements (default: 150).
- * @returns - The distance between the two parallel tangent lines to the shape at the given angle.
+ * @returns - The distance between the two encasing parallel lines to the shape at the given angle.
  */
 export function getGradientLineLength(
   shapeElement: Selection<SVGGraphicsElement, unknown, HTMLElement, any>,
