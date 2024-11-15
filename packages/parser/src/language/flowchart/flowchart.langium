@@ -106,10 +106,12 @@ terminal fragment DottedArrowEnd:  "."* ".-" ArrowEnd?;
 terminal DottedArrowWithLabel: ArrowStart? "-." -> DottedArrowEnd;
 terminal DottedArrow: ArrowStart? "-"? DottedArrowEnd;
 
-terminal RegularArrowWithLabel: ArrowStart? "--" -> "-" "-"+ ('-' |ArrowEnd);
+terminal RegularArrowWithLabel: /[<xo]?--(?![>xo])[\s\S]*?--+[->xo]/ ;
+// terminal RegularArrowWithLabel: ArrowStart? "--" -> "-" "-"+ ('-' |ArrowEnd);
 terminal RegularArrow: (ArrowStart "-" "-"+ ArrowEnd?) | ("-" "-"+ ('-' |ArrowEnd));
 
-terminal ThickArrowWithLabel: ArrowStart? "==" -> "=" "="+ ("=" | ArrowEnd);
+terminal ThickArrowWithLabel: /[<xo]?==(?![>xo])[\s\S]*?==+[=>xo]/ ;
+// terminal ThickArrowWithLabel: ArrowStart? "==" -> "=" "="+ ("=" | ArrowEnd);
 terminal ThickArrow: (ArrowStart "=" "="+ ArrowEnd?) | ("=" "="+ ("=" | ArrowEnd));
 
 terminal InvisibleArrow: "~~" "~"+;
@@ -117,22 +119,22 @@ terminal InvisibleArrow: "~~" "~"+;
 terminal EdgeLabel: "|" -> "|";
 
 FlowchartEdge:
-  FlowchartEdgeRegular | FlowchartEdgeDotted | FlowchartEdgeThick | FlowchartEdgeInvisible;
+  start=FlowchartNode ends+=(FlowchartEdgeRegular | FlowchartEdgeDotted | FlowchartEdgeThick | FlowchartEdgeInvisible)+;
 
 FlowchartEdgeDotted:
-  (start=FlowchartNode arrow=DottedArrow (label=EdgeLabel)? end=FlowchartNode) |
-  (start=FlowchartNode arrow=DottedArrowWithLabel end=FlowchartNode);
+  (arrow=DottedArrow (label=EdgeLabel)? end=FlowchartNode) |
+  (arrow=DottedArrowWithLabel end=FlowchartNode);
 
 FlowchartEdgeRegular:
-  (start=FlowchartNode arrow=RegularArrow (label=EdgeLabel)? end=FlowchartNode) |
-  (start=FlowchartNode arrow=RegularArrowWithLabel end=FlowchartNode);
+  (arrow=RegularArrow (label=EdgeLabel)? end=FlowchartNode) |
+  (arrow=RegularArrowWithLabel end=FlowchartNode);
 
 FlowchartEdgeThick:
-  (start=FlowchartNode arrow=ThickArrow (label=EdgeLabel)? end=FlowchartNode) |
-  (start=FlowchartNode arrow=ThickArrowWithLabel end=FlowchartNode);
+  (arrow=ThickArrow (label=EdgeLabel)? end=FlowchartNode) |
+  (arrow=ThickArrowWithLabel end=FlowchartNode);
 
 FlowchartEdgeInvisible:
-  start=FlowchartNode arrow=(InvisibleArrow) (label=EdgeLabel)? end=FlowchartNode;
+  arrow=(InvisibleArrow) (label=EdgeLabel)? end=FlowchartNode;
 
 FlowchartStyle:
   "style" id=ID items+=FlowchartStylePair ("," items+=FlowchartStylePair)*;

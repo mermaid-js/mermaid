@@ -147,9 +147,9 @@ describe('flowchart', () => {
       expectNoErrorsOrAlternatives(result);
       expect(result.value.edges).toHaveLength(1);
       expect(result.value.edges[0].start.id).toBe('A');
-      expect(result.value.edges[0].end.id).toBe('B');
-      expect(result.value.edges[0].$type).toBe(edgeType);
-      expect(result.value.edges[0].label).toBe(label);
+      expect(result.value.edges[0].ends[0].end.id).toBe('B');
+      expect(result.value.edges[0].ends[0].$type).toBe(edgeType);
+      expect(result.value.edges[0].ends[0].label).toBe(label);
     });
 
     it.each([
@@ -185,7 +185,7 @@ describe('flowchart', () => {
       expectNoErrorsOrAlternatives(result);
       expect(result.value.edges).toHaveLength(1);
       expect(result.value.edges[0].start.id).toBe('A');
-      expect(result.value.edges[0].end.id).toBe('B');
+      expect(result.value.edges[0].ends[0].end.id).toBe('B');
     });
 
     it.each([
@@ -212,7 +212,7 @@ describe('flowchart', () => {
       expectNoErrorsOrAlternatives(result);
       expect(result.value.edges).toHaveLength(1);
       expect(result.value.edges[0].start.id).toBe('A');
-      expect(result.value.edges[0].end.id).toBe('B');
+      expect(result.value.edges[0].ends[0].end.id).toBe('B');
     });
 
     it.each([
@@ -232,7 +232,7 @@ describe('flowchart', () => {
       expectNoErrorsOrAlternatives(result);
       expect(result.value.edges).toHaveLength(1);
       expect(result.value.edges[0].start.id).toBe('A');
-      expect(result.value.edges[0].end.id).toBe('B');
+      expect(result.value.edges[0].ends[0].end.id).toBe('B');
     });
   });
 
@@ -266,7 +266,7 @@ describe('flowchart', () => {
       expect(result.value.subgraphs).toHaveLength(1);
       expect(result.value.subgraphs[0].id).toBe('A');
       expect(result.value.subgraphs[0].edges[0].start.id).toBe('X');
-      expect(result.value.subgraphs[0].edges[0].end.id).toBe('Y');
+      expect(result.value.subgraphs[0].edges[0].ends[0].end.id).toBe('Y');
     });
 
     it('subgraphs', () => {
@@ -319,9 +319,40 @@ describe('flowchart', () => {
     });
   });
 
-  // describe('chaining', () => {
-  //   // chaining: A -- text --> B -- text2 --> C
-  // });
+  describe('chaining', () => {
+    it('should handle simple chaining', () => {
+      const result = parse(`flowchart; A --> B --> C;`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.edges[0].ends).toHaveLength(2);
+      expect(result.value.edges[0].start.id).toBe('A');
+      expect(result.value.edges[0].ends[0].end.id).toBe('B');
+      expect(result.value.edges[0].ends[1].end.id).toBe('C');
+    });
+
+    it('should handle chaining with labels', () => {
+      const result = parse(`flowchart; A -- text --> B -- text2 --> C;`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.edges[0].ends).toHaveLength(2);
+      expect(result.value.edges[0].start.id).toBe('A');
+      expect(result.value.edges[0].ends[0].end.id).toBe('B');
+      expect(result.value.edges[0].ends[0].arrow).toBe('-- text -->');
+      expect(result.value.edges[0].ends[1].end.id).toBe('C');
+      expect(result.value.edges[0].ends[1].arrow).toBe('-- text2 -->');
+    });
+
+    it('should handle chaining with different edges', () => {
+      const result = parse(`flowchart; A --> B ==> C -.-> D;`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.edges[0].ends).toHaveLength(3);
+      expect(result.value.edges[0].start.id).toBe('A');
+      expect(result.value.edges[0].ends[0].end.id).toBe('B');
+      expect(result.value.edges[0].ends[0].arrow).toBe('-->');
+      expect(result.value.edges[0].ends[1].end.id).toBe('C');
+      expect(result.value.edges[0].ends[1].arrow).toBe('==>');
+      expect(result.value.edges[0].ends[2].end.id).toBe('D');
+      expect(result.value.edges[0].ends[2].arrow).toBe('-.->');
+    });
+  });
 
   // describe('conjunction', () => {
   //   // conjunction: a --> b & c--> d, A & B--> C & D
