@@ -183,7 +183,6 @@ function getAlignments(
         }
         for (let i = 0; i < arr.length - 1; i++) {
           for (let j = i + 1; j < arr.length; j++) {
-            // Not optimal but arr will not grow large enough to be a concern
             const [aGroupId, aNodeIds] = arr[i];
             const [bGroupId, bNodeIds] = arr[j];
             const alignment = groupAlignments[aGroupId]?.[bGroupId]; // Get how the two groups are intended to align (undefined if they aren't)
