@@ -471,6 +471,13 @@ const shapes = {
 
 let clusterElems = new Map();
 
+/**
+ * @typedef {keyof typeof shapes} ClusterShapeID
+ */
+
+/**
+ * @param {import('../types.js').ClusterNode} node - Shape defaults to 'rect'
+ */
 export const insertCluster = async (elem, node) => {
   const shape = node.shape || 'rect';
   const cluster = await shapes[shape](elem, node);

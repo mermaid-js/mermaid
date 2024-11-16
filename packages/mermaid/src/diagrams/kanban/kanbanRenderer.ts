@@ -7,6 +7,7 @@ import type { KanbanDB } from './kanbanTypes.js';
 import defaultConfig from '../../defaultConfig.js';
 import { insertCluster } from '../../rendering-util/rendering-elements/clusters.js';
 import { insertNode, positionNode } from '../../rendering-util/rendering-elements/nodes.js';
+import type { ClusterNode } from '../../rendering-util/types.js';
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   log.debug('Rendering kanban diagram\n' + text);
@@ -26,7 +27,10 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   sectionsElem.attr('class', 'sections');
   const nodesElem = svg.append('g');
   nodesElem.attr('class', 'items');
-  const sections = data4Layout.nodes.filter((node) => node.isGroup);
+  const sections = data4Layout.nodes.filter(
+    // TODO: TypeScript 5.5 will infer this predicate automatically
+    (node): node is typeof node & ClusterNode => node.isGroup
+  );
   let cnt = 0;
   // TODO set padding
   const padding = 10;
@@ -60,10 +64,15 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
     let y = top;
     const sectionItems = data4Layout.nodes.filter((node) => node.parentId === section.id);
     for (const item of sectionItems) {
+      if (item.isGroup) {
+        // Kanban diagrams should not have groups within groups
+        // this should never happen
+        throw new Error('Groups within groups are not allowed in Kanban diagrams');
+      }
       item.x = section.x;
       item.width = WIDTH - 1.5 * padding;
       const nodeEl = await insertNode(nodesElem, item, { config: conf });
-      const bbox = nodeEl.node().getBBox();
+      const bbox = nodeEl.node()!.getBBox();
       item.y = y + bbox.height / 2;
       await positionNode(item);
       y = item.y + bbox.height / 2 + padding / 2;

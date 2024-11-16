@@ -125,7 +125,7 @@ export async function tiltedCylinder<T extends SVGGraphicsElement>(
     ) {
       let x = rx * rx * (1 - (y * y) / (ry * ry));
       if (x != 0) {
-        x = Math.sqrt(x);
+        x = Math.sqrt(Math.abs(x));
       }
       x = rx - x;
       if (point.x - (node.x ?? 0) > 0) {

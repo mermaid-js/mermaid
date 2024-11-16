@@ -10,8 +10,7 @@ import type { D3Selection, Point } from '../../../types.js';
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  _classes?: string,
-  _shapeSvg?: D3Selection<T>
+  _classes?: string
 ) => {
   let cssClasses;
   const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
@@ -22,12 +21,10 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   }
 
   // Add outer g element
-  const shapeSvg = _shapeSvg
-    ? _shapeSvg
-    : parent
-        .insert('g')
-        .attr('class', cssClasses)
-        .attr('id', node.domId || node.id);
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', cssClasses)
+    .attr('id', node.domId || node.id);
 
   // Create the label and insert it after the rect
   const labelEl = shapeSvg
@@ -119,7 +116,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   labelEl.insert('rect', ':first-child');
   return { shapeSvg, bbox, halfPadding, label: labelEl };
 };
-export const insertLabel = async (
+export const insertLabel = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   label: string,
   options: {
@@ -136,7 +133,10 @@ export const insertLabel = async (
   const useHtmlLabels = options.useHtmlLabels || evaluate(getConfig()?.flowchart?.htmlLabels);
 
   // Create the label and insert it after the rect
-  const labelEl = parent.insert('g').attr('class', 'label').attr('style', options.labelStyle);
+  const labelEl = parent
+    .insert('g')
+    .attr('class', 'label')
+    .attr('style', options.labelStyle || '');
 
   const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
     useHtmlLabels,
