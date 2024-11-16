@@ -1135,7 +1135,7 @@ flowchart LR
     classDef foobar stroke:#00f
 ```
 
-#### Linear gradient style
+#### Linear gradient style (v<MERMAID_RELEASE_VERSION>+)
 
 Mermaid allows for linear gradient styling on nodes by leveraging the [linearGradient](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient) element in SVG paired with CSS [linear-gradient()](https://www.w3.org/TR/css-images-4/#gradients) syntax, to design more visually distinct flowcharts. You can define gradients in much the same way as in CSS, specifying directions, multiple color stops, transition hints, and transparency to achieve unique effects. Color interpolation is done in `sRGB` space, as commonly supported by browsers. A linear gradient can be set as the fill property in a node’s `style` or `classDef` using the following syntax:
 
@@ -1153,8 +1153,8 @@ or
 - _direction_ _(Optional)_: Defines the direction of the gradient line. It can be specified using directional keywords (e.g., `to right`, `to bottom`, `to top left`) or angles (e.g., `45deg`, `1.57rad`, `0.25turn`, `100grad`) measured clockwise from `to top` or `0deg`. If unspecified, it defaults to `to bottom` or `180deg`.
 - _colorStop1, colorStop2, ..._: A list of colors separated by commas where each color can have an optional position (e.g., `red 20%, blue 50px`). Positions can be given in percentage (`%`) or length units like `px`, `em`, `rem`, `ex`, `ch`, `vw`, `vh`, `vmin`, `vmax`, `cm`, `mm`, `in`, `pt`, and `pc`. Backward positions will be adjusted to the previous maximum. Missing positions are automatically set by assigning the first color stop to 0%, the last to 100%, and by evenly spacing any remaining unpositioned stops between the preceding and following color stops with positions. See [Color Stop Fixup](https://www.w3.org/TR/css-images-4/#color-stop-fixup).
 
-```note
-You may also add transition hints as position-only markers in between the color stops to control interpolation and adjust the flow of colors in the gradient. See an example of it in the non-linear interpolation section below.
+```tip
+You may also add the _transition hints_ as position-only markers between the color stops to control interpolation and adjust the flow of colors in the gradient. See an example in the non-linear interpolation section below.
 ```
 
 ```note
@@ -1186,7 +1186,7 @@ In this example, the gradient starts with red at the top and transitions to blue
 Use directional keywords to define the gradient's direction:
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Directional Gradient]
     style A fill:linear-gradient(to bottom left, pink, cyan)
 ```
@@ -1197,7 +1197,7 @@ This gradient moves from the top-right corner to the bottom-left corner, startin
 Specify the gradient angle to control the direction:
 
 ```mermaid-example
-flowchart BT
+flowchart
     A[Angle Gradient]
     style A fill:linear-gradient(35deg, orange, purple);
 ```
@@ -1208,7 +1208,7 @@ The gradient line is tilted at a 35-degree angle, starting with orange and trans
 Include multiple color stops at specific positions:
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Color Stops]
     style A fill:linear-gradient(to bottom, red, yellow 30%, green 60%, brown 90%, #00BFFF);
 ```
@@ -1219,7 +1219,7 @@ Here, the gradient starts with red at the top, transitions to yellow at 30%, gre
 Use length units for color stop positions (physical units like `cm` are calculated assuming _96dpi_):
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Length Units]
     style A fill:linear-gradient(to right, #FF5733 10px, #FFC300 20%, #DAF7A6 2cm, #900C3F);
 ```
@@ -1230,7 +1230,7 @@ This gradient moves from left to right, using specific lengths and percentages t
 Apply gradients using colors with opacity:
 
 ```mermaid-example
-flowchart TD
+flowchart
     A[Opacity Gradient]:::opacity
     classDef opacity fill:linear-gradient(to bottom right, rgba(255,0,0,0.8), rgba(0,0,255,0.2));
 ```
@@ -1241,7 +1241,7 @@ The gradient transitions from semi-transparent red to semi-transparent blue diag
 If positions for color stops are not specified, they are distributed evenly:
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Automatic Positions]
     style A fill:linear-gradient(to right, red 10%, green, orange, blue, cyan 90%);
 ```
@@ -1252,7 +1252,7 @@ In this example, the gradient begins with red from 0% to 10% (specified), transi
 If color stops have overlapping positions, Mermaid adjusts them to maintain the correct order:
 
 ```mermaid-example
-flowchart RL
+flowchart
     A[Overlapping Positions]
     style A fill:linear-gradient(to bottom, black 60%, white 40%);
 ```
@@ -1263,7 +1263,7 @@ Here, since 40% comes after 60%, the white color stop at 40% is adjusted to 60% 
 Color stops set outside the 0% to 100% range cause the gradient calculation to stretch beyond the node's shape while keeping all rendered content contained within.
 
 ```mermaid-example
-flowchart TD
+flowchart
     A[Out-of-Bounds Positions]
     style A fill:linear-gradient(to right, red -20%, yellow 50%, green 145%);
 ```
@@ -1274,7 +1274,7 @@ In this gradient, red at -20% blends toward yellow and appears as a red-yellow m
 Specifying two identical positions for consecutive colors creates a sharp transition:
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Sharp Color Transition]
     style A fill:linear-gradient(45deg, red 50%, blue 50%);
 ```
@@ -1285,7 +1285,7 @@ This results in a sharp change from red to blue exactly at the 50% mark.
 Using double positions for a color creates an unvarying zone with that color:
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Double Color Stops]
     style A fill:linear-gradient(45deg, yellow, red 30% 50%, blue);
 ```
@@ -1293,7 +1293,7 @@ flowchart LR
 This is equivalent to:
 
 ```mermaid-example
-flowchart TD
+flowchart
     A[Double Color Stops]
     style A fill:linear-gradient(45deg, yellow, red 30%, red 50%, blue);
 ```
@@ -1304,7 +1304,7 @@ In this example, the gradient transitions from yellow to red between 0% and 30%,
 Mermaid supports CSS color functions, provided they are supported by the browser:
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Color Functions]
     style A fill:linear-gradient(to bottom, rgb(190, 0, 24), hwb(95 23% 50% / 0.4), hsla(30, 81%, 30%, 0.9));
 ```
@@ -1333,7 +1333,7 @@ Non-linear color transitions occur when using transition hints or colors with va
 Transition hints are positional markers that can be placed between color stops to guide the gradient's interpolation.
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Transition Hint]
     style A fill:linear-gradient(to right, red, 20%, blue);
 ```
@@ -1343,22 +1343,22 @@ In this gradient, the midpoint color occurs at 20% of the gradient's length, cau
 **Scenario II: transitioning between neighboring colors with different opacities**
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Opacity Transition]
     style A fill:linear-gradient(to bottom right, rgba(255,0,0,0.9), rgba(0,0,255,0.2));
 ```
 
 In this gradient, the transition is from a semi-transparent red (90% opacity) to a semi-transparent blue (20% opacity), moving diagonally from the top-left to the bottom-right. The gradient leans more heavily toward the side with higher opacity. This gives the more opaque red a stronger presence in the gradient’s interpolation, while the semi-transparent blue appears less dominant.
 
-```note
-You are allowed to have both transition hints and opacity variations in the same gradient.
+```tip
+You can use both transition hints and opacity variations in the same gradient.
 ```
 
 **Fine-tuning non-linear interpolation with custom transition stops**
 You can specify `num-transition-stops` directly in the `style` or `classDef` to customize the number of segments that make up the gradient transition. The default is `5`, which provides a decent transition, but adjusting this number allows for finer control. This value must be odd to align with the symmetry logic used for interpolation. Here is an example:
 
 ```mermaid-example
-flowchart LR
+flowchart
     A[Custom Number of Transition Stops]
     style A fill:linear-gradient(to bottom left, navy, 35%, peachpuff, darkorchid), num-transition-stops: 13;
 ```
