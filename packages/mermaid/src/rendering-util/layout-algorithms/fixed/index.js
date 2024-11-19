@@ -318,18 +318,23 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   });
 
   // Insert the edges and position the edge labels
-  const edgePositionValues = Object.values(positions.edges);
+  const edgePositions = Object.assign({}, positions.edges);
   for (const edge of data4Layout.edges) {
     if (!positions.edges[edge.id]) {
       const startNode = positions.nodes[edge.start];
       const endNode = positions.nodes[edge.end];
-      // Edge Flickering fix
-      const existingEdge = edgePositionValues?.find(
-        (value) => value.start === edge.start && value.end === edge.end
-      );
-      if (existingEdge) {
+      // Edge Flickering fix while deleting node.
+      let existingEdge = {};
+      for (const key in edgePositions) {
+        if (edgePositions[key].start === edge.start && edgePositions[key].end === edge.end) {
+          existingEdge = edgePositions[key];
+          delete edgePositions[key];
+          break;
+        }
+      }
+      if (existingEdge?.points) {
         positions.edges[edge.id] = {
-          ...existingEdge.points,
+          ...existingEdge,
         };
       } else {
         positions.edges[edge.id] = {
