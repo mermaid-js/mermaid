@@ -57,7 +57,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .node path {
     fill: ${options.mainBkg};
     stroke: ${options.nodeBorder};
-    stroke-width: 1px;
+    stroke-width: 10px;
   }
   .rough-node .label text , .node .label text, .image-shape .label, .icon-shape .label {
     text-anchor: middle;
