@@ -318,19 +318,37 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   });
 
   // Insert the edges and position the edge labels
+  const edgePositions = Object.assign({}, positions.edges);
   for (const edge of data4Layout.edges) {
     if (!positions.edges[edge.id]) {
       const startNode = positions.nodes[edge.start];
       const endNode = positions.nodes[edge.end];
-      positions.edges[edge.id] = {
-        points: [
-          { x: startNode.x, y: startNode.y },
-          { x: (startNode.x + endNode.x) / 2, y: (startNode.y + endNode.y) / 2 },
-          { x: endNode.x, y: endNode.y },
-        ],
-      };
+      // Edge Flickering fix while deleting node.
+      let existingEdge = {};
+      for (const key in edgePositions) {
+        if (edgePositions[key].start === edge.start && edgePositions[key].end === edge.end) {
+          existingEdge = edgePositions[key];
+          delete edgePositions[key];
+          break;
+        }
+      }
+      if (existingEdge?.points) {
+        positions.edges[edge.id] = {
+          ...existingEdge,
+        };
+      } else {
+        positions.edges[edge.id] = {
+          points: [
+            { x: startNode.x, y: startNode.y },
+            { x: (startNode.x + endNode.x) / 2, y: (startNode.y + endNode.y) / 2 },
+            { x: endNode.x, y: endNode.y },
+          ],
+          start: edge.start,
+          end: edge.end,
+        };
+      }
     }
-    // edge.points = fixInterSections(positions.edges[edge.id].points, edge.start, edge.end);
+
     edge.points = positions.edges[edge.id].points;
     const paths = insertEdge(edgePaths, edge, {}, data4Layout.type, {}, {}, data4Layout.diagramId);
     paths.updatedPath = paths.originalPath;
