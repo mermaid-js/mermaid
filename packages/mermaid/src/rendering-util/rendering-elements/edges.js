@@ -50,7 +50,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')'); //HERE
 
   // Make element accessible by id for positioning
   edgeLabels.set(edge.id, edgeLabel);
