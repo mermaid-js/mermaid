@@ -90,7 +90,7 @@ jobs:
         continue-on-error: "${{ github.event_name == 'push' }}"
         run: 'pnpm run docs:verify'
 
-      - uses: testomatio/check-tests@b969b09b9d7f400b12e7a3db02fe51a5ce27fb54
+      - uses: testomatio/check-tests@e772b3cde2f31f5609e89930043122c51dd0885a
         with:
           framework: cypress
           tests: ./cypress/e2e/**/**.spec.js
