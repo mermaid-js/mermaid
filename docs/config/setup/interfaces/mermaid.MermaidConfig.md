@@ -522,6 +522,16 @@ You may also use `themeCSS` to override this value.
 
 ---
 
+### venn
+
+• `Optional` **venn**: `VennDiagramConfig`
+
+#### Defined in
+
+[packages/mermaid/src/config.type.ts:201](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L201)
+
+---
+
 ### wrap
 
 • `Optional` **wrap**: `boolean`

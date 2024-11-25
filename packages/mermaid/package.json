@@ -72,6 +72,7 @@
     "@mermaid-js/parser": "workspace:^",
     "@types/d3": "^7.4.3",
     "@types/dompurify": "^3.0.5",
+    "@upsetjs/venn.js": "^1.4.2",
     "cytoscape": "^3.29.2",
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-fcose": "^2.2.0",

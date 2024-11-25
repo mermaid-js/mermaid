@@ -159,6 +159,7 @@ function sidebarSyntax() {
         { text: 'Packet 🔥', link: '/syntax/packet' },
         { text: 'Kanban 🔥', link: '/syntax/kanban' },
         { text: 'Architecture 🔥', link: '/syntax/architecture' },
+        { text: 'Venn 🔥', link: '/syntax/venn' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
