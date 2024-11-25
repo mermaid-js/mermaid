@@ -227,8 +227,8 @@ importers:
         specifier: ^1.11.7
         version: 1.11.10
       dompurify:
-        specifier: ^3.0.5 <3.1.7
-        version: 3.1.6
+        specifier: ^3.2.1
+        version: 3.2.1
       elkjs:
         specifier: ^0.9.0
         version: 0.9.2
@@ -278,9 +278,6 @@ importers:
       '@types/d3-shape':
         specifier: ^3.1.1
         version: 3.1.6
-      '@types/dompurify':
-        specifier: ^3.0.2
-        version: 3.0.5
       '@types/jsdom':
         specifier: ^21.1.1
         version: 21.1.6
@@ -5012,12 +5009,6 @@ packages:
     dependencies:
       '@types/ms': 0.7.34
 
-  /@types/dompurify@3.0.5:
-    resolution: {integrity: sha512-1Wg0g3BtQF7sSb27fJQAKck1HECM6zV1EB66j8JH9i3LCjYabJa0FSdiSgsD5K/RbrsR0SiraKacLB+T8ZVYAg==}
-    dependencies:
-      '@types/trusted-types': 2.0.7
-    dev: true
-
   /@types/eslint-scope@3.7.4:
     resolution: {integrity: sha512-9K4zoImiZc3HlIp6AVUDE4CWYx22a+lhSZMYNpbjW04+YF0KWj4pJXnEMjdnFTiQibFFmElcsasJXDbdI/EPhA==}
     dependencies:
@@ -5406,7 +5397,9 @@ packages:
 
   /@types/trusted-types@2.0.7:
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
-    dev: true
+    requiresBuild: true
+    dev: false
+    optional: true
 
   /@types/unist@2.0.10:
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
@@ -8869,8 +8862,10 @@ packages:
       domelementtype: 2.3.0
     dev: true
 
-  /dompurify@3.1.6:
-    resolution: {integrity: sha512-cTOAhc36AalkjtBpfG6O8JimdTMWNXjiePT2xQH/ppBGi/4uIpmj8eKyIkMJErXWARyINV/sB38yf8JCLF5pbQ==}
+  /dompurify@3.2.1:
+    resolution: {integrity: sha512-NBHEsc0/kzRYQd+AY6HR6B/IgsqzBABrqJbpCDQII/OK6h7B7LXzweZTDsqSW2LkTRpoxf18YUP+YjGySk6B3w==}
+    optionalDependencies:
+      '@types/trusted-types': 2.0.7
     dev: false
 
   /domutils@3.1.0:
