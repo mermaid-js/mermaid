@@ -32,14 +32,14 @@ const setupDompurifyHooksIfNotSetup = (() => {
 function setupDompurifyHooks() {
   const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
 
-  DOMPurify.addHook('beforeSanitizeAttributes', (node: Element) => {
-    if (node.tagName === 'A' && node.hasAttribute('target')) {
+  DOMPurify.addHook('beforeSanitizeAttributes', (node) => {
+    if (node instanceof Element && node.tagName === 'A' && node.hasAttribute('target')) {
       node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') ?? '');
     }
   });
 
-  DOMPurify.addHook('afterSanitizeAttributes', (node: Element) => {
-    if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
+  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    if (node instanceof Element && node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
       node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) ?? '');
       node.removeAttribute(TEMPORARY_ATTRIBUTE);
       if (node.getAttribute('target') === '_blank') {
@@ -83,7 +83,6 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
     return text;
   }
   if (config.dompurifyConfig) {
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
     text = DOMPurify.sanitize(sanitizeMore(text, config), {
