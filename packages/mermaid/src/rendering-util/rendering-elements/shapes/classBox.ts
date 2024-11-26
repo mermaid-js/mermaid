@@ -12,6 +12,9 @@ import type { D3Selection } from '../../../types.js';
 
 export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const config = getConfig();
+  const { themeVariables } = config;
+  const { useGradient } = themeVariables;
+
   const PADDING = config.class!.padding ?? 12;
   const GAP = PADDING;
   const useHtmlLabels = node.useHtmlLabels ?? evaluate(config.htmlLabels) ?? true;
@@ -199,7 +202,9 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
       options
     );
     const line = shapeSvg.insert(() => roughLine);
-    line.attr('class', 'divider').attr('style', styles);
+    line
+      .attr('class', `divider${node.look === 'neo' && !useGradient ? ' neo-line' : ''}`)
+      .attr('style', styles);
   }
 
   // Second line (under members)
@@ -214,7 +219,9 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
       options
     );
     const line = shapeSvg.insert(() => roughLine);
-    line.attr('class', 'divider').attr('style', styles);
+    line
+      .attr('class', `divider${node.look === 'neo' && !useGradient ? ' neo-line' : ''}`)
+      .attr('style', styles);
   }
 
   /// Apply styles ///
