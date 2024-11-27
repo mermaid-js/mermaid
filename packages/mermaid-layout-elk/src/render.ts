@@ -727,14 +727,11 @@ export const render = async (
     bounds: { x: any; y: any; width: any; height: any; padding: any },
     isDiamond: boolean
   ) => {
-    log.debug('UIO cutPathAtIntersect Points:', _points, 'node:', bounds, 'isDiamond', isDiamond);
+    log.debug('APA18 cutPathAtIntersect Points:', _points, 'node:', bounds, 'isDiamond', isDiamond);
     const points: any[] = [];
     let lastPointOutside = _points[0];
     let isInside = false;
     _points.forEach((point: any) => {
-      // const node = clusterDb[edge.toCluster].node;
-      log.debug(' checking point', point, bounds);
-
       // check if point is inside the boundary rect
       if (!outsideNode(bounds, point) && !isInside) {
         // First point inside the rect found
@@ -928,7 +925,7 @@ export const render = async (
 
       const offset = calcOffset(sourceId, targetId, parentLookupDb);
       log.debug(
-        'offset',
+        'APA18 offset',
         offset,
         sourceId,
         ' ==> ',
@@ -993,22 +990,15 @@ export const render = async (
         }
         if (startNode.shape === 'diamond' || startNode.shape === 'diam') {
           edge.points.unshift({
-            x: startNode.x + startNode.width / 2 + offset.x,
-            y: startNode.y + startNode.height / 2 + offset.y,
+            x: startNode.offset.posX + startNode.width / 2,
+            y: startNode.offset.posY + startNode.height / 2,
           });
         }
         if (endNode.shape === 'diamond' || endNode.shape === 'diam') {
-          const x = endNode.x + endNode.width / 2 + offset.x;
-          // Add a point at the center of the diamond
-          if (
-            Math.abs(edge.points[edge.points.length - 1].y - endNode.y - offset.y) > 0.01 ||
-            Math.abs(edge.points[edge.points.length - 1].x - x) > 0.001
-          ) {
-            edge.points.push({
-              x: endNode.x + endNode.width / 2 + offset.x,
-              y: endNode.y + endNode.height / 2 + offset.y,
-            });
-          }
+          edge.points.push({
+            x: endNode.offset.posX + endNode.width / 2,
+            y: endNode.offset.posY + endNode.height / 2,
+          });
         }
 
         // edge.points = cutPathAtIntersect2(startNode, edge.points.reverse(), offset, {
@@ -1030,8 +1020,8 @@ export const render = async (
         edge.points = cutPathAtIntersect(
           edge.points.reverse(),
           {
-            x: startNode.x + startNode.width / 2 + offset.x,
-            y: startNode.y + startNode.height / 2 + offset.y,
+            x: startNode.offset.posX + startNode.width / 2,
+            y: startNode.offset.posY + startNode.height / 2,
             width: sw,
             height: startNode.height,
             padding: startNode.padding,
@@ -1042,8 +1032,8 @@ export const render = async (
         edge.points = cutPathAtIntersect(
           edge.points,
           {
-            x: endNode.x + ew / 2 + endNode.offset.x,
-            y: endNode.y + endNode.height / 2 + endNode.offset.y,
+            x: endNode.offset.posX + endNode.width / 2,
+            y: endNode.offset.posY + endNode.height / 2,
             width: ew,
             height: endNode.height,
             padding: endNode.padding,

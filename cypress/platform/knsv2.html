@@ -90,33 +90,61 @@
   </head>
 
   <body>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
 ---
-flowchart LR
- subgraph s1["Untitled subgraph"]
-        n1["Evaluate"]
-        n2["Option 1"]
-        n3["Option 2"]
-        n4["fa:fa-car Option 3"]
-  end
-    n1 -- One --> n2
-    n1 -- Two --> n3
-    n1 -- Three --> n4
-    n5
-    n1@{ shape: diam}
-    n2@{ shape: rect}
-    n3@{ shape: rect}
-    n4@{ shape: rect}
-    A["Start"] -- Some text --> B("Continue")
-    B --> C{"Evaluate"}
-    C -- One --> D["Option 1"]
-    C -- Two --> E["Option 2"]
-    C -- Three --> F["fa:fa-car Option 3"]
+      flowchart LR
+      subgraph S2
+      subgraph s1["APA"]
+      D{"Use the editor"}
+      end
 
 
+      D -- Mermaid js --> I{"fa:fa-code Text"}
+            D --> I
+            D --> I
+
+      end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
+---
+      flowchart LR
+      a
+      subgraph s0["APA"]
+      subgraph s8["APA"]
+      subgraph s1["APA"]
+        D{"X"}
+        E[Q]
+      end
+      subgraph s3["BAPA"]
+        F[Q]
+        I
+      end
+            D --> I
+            D --> I
+            D --> I
+
+      I{"X"}
+      end
+      end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
+---
+      flowchart LR
+      a
+        D{"Use the editor"}
+
+      D -- Mermaid js --> I{"fa:fa-code Text"}
+      D-->I
+      D-->I
     </pre>
     <pre id="diagram4" class="mermaid">
 ---
@@ -157,7 +185,7 @@ flowchart LR
     n8@{ shape: rect}
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -173,7 +201,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -182,7 +210,19 @@ flowchart LR
     A{A} --> B & C
 </pre
     >
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    A{A} --> B & C
+    subgraph "subbe"
+      A
+    end
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
