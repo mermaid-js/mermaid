@@ -180,8 +180,6 @@ Communication tools and platforms
   - [=Diagram block](https://github.com/zag/podlite/tree/main/packages/podlite-diagrams)
 - [Standard Notes](https://standardnotes.com/)
   - [Mermaid Extension](https://github.com/nienow/sn-mermaid)
-- [Sublime Text 3](https://sublimetext.com)
-  - [Mermaid Package](https://packagecontrol.io/packages/Mermaid)
 - [VS Code](https://code.visualstudio.com/)
   - [Mermaid Editor](https://marketplace.visualstudio.com/items?itemName=tomoyukim.vscode-mermaid-editor)
   - [Mermaid Export](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.mermaid-export)
