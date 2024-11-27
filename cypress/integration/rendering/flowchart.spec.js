@@ -895,7 +895,7 @@ graph TD
     imgSnapshotTest(
       `
       graph TD
-        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff 
+        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff
         hello --> default
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
@@ -910,6 +910,26 @@ graph TD
       hello --> default
 
       style default stroke:#000,stroke-width:4px
+    `,
+      {
+        flowchart: { htmlLabels: true },
+        securityLevel: 'loose',
+      }
+    );
+  });
+  it('68: should be able to string and markdown labels (#5824)', () => {
+    imgSnapshotTest(
+      `
+flowchart TB
+    mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"\`<**1**1\`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["\`How to fix **fix**\`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["\`Github, Gitlab, BitBucket, etc.\`"]
+    a["1."]
+    b["- x"]
     `,
       {
         flowchart: { htmlLabels: true },

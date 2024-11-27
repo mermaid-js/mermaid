@@ -116,7 +116,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -155,21 +155,21 @@ flowchart LR
     n8@{ shape: rect}
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
-config:
-  layout: elk
+title: https://github.com/mermaid-js/mermaid/issues/5824
 ---
-flowchart LR
- subgraph s1["Untitled subgraph"]
-        n1["Evaluate"]
-        n2["Option 1"]
-  end
-    n1 -- One --> n2
-
-
-
-
+%% 6048, 5824
+flowchart TB
+    mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"`<**1**1`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["`How to fix **fix**`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["`Github, Gitlab, BitBucket, etc.`"]
+    a["1."]
+    b["- x"]
     </pre>
     <pre id="diagram4" class="mermaid2">
 ---
