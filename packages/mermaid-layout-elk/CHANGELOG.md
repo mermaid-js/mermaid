@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- [#6090](https://github.com/mermaid-js/mermaid/pull/6090) [`654097c`](https://github.com/mermaid-js/mermaid/commit/654097c43801b2d606bc3d2bef8c6fbc3301e9e4) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: Updated offset calculations for diamond shape when handling intersections
+- [#6090](https://github.com/mermaid-js/mermaid/pull/6090) [`654097c`](https://github.com/mermaid-js/mermaid/commit/654097c43801b2d606bc3d2bef8c6fbc3301e9e4) Thanks [@knsv](https://github.com/knsv)! - fix: Updated offset calculations for diamond shape when handling intersections
 
 ## 0.1.6
 
