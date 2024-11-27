@@ -8,7 +8,8 @@ export class BarPlot {
     private xAxis: Axis,
     private yAxis: Axis,
     private orientation: XYChartConfig['chartOrientation'],
-    private plotIndex: number
+    private plotIndex: number,
+    private customBarWidth: number
   ) {}
 
   getDrawableElement(): DrawableElem[] {
@@ -20,8 +21,10 @@ export class BarPlot {
     const barPaddingPercent = 0.05;
 
     const barWidth =
-      Math.min(this.xAxis.getAxisOuterPadding() * 2, this.xAxis.getTickDistance()) *
-      (1 - barPaddingPercent);
+      this.customBarWidth > 0
+        ? this.customBarWidth
+        : Math.min(this.xAxis.getAxisOuterPadding() * 2, this.xAxis.getTickDistance()) *
+          (1 - barPaddingPercent);
     const barWidthHalf = barWidth / 2;
 
     if (this.orientation === 'horizontal') {
