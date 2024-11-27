@@ -491,6 +491,8 @@ export const render = async (
     const r3 = a1 * q1.x + b1 * q1.y + c1;
     const r4 = a1 * q2.x + b1 * q2.y + c1;
 
+    const epsilon = 1e-6;
+
     // Check signs of r3 and r4. If both point 3 and point 4 lie on
     // same side of line 1, the line segments do not intersect.
     if (r3 !== 0 && r4 !== 0 && sameSign(r3, r4)) {
@@ -509,7 +511,7 @@ export const render = async (
     // Check signs of r1 and r2. If both point 1 and point 2 lie
     // on same side of second line segment, the line segments do
     // not intersect.
-    if (r1 !== 0 && r2 !== 0 && sameSign(r1, r2)) {
+    if (Math.abs(r1) < epsilon && Math.abs(r2) < epsilon && sameSign(r1, r2)) {
       return /*DON'T_INTERSECT*/;
     }
 
@@ -554,11 +556,11 @@ export const render = async (
       { x: x1 - w / 2, y: y1 },
     ];
     log.debug(
-      `UIO diamondIntersection calc abc89:
+      `APA16 diamondIntersection calc abc89:
   outsidePoint: ${JSON.stringify(outsidePoint)}
   insidePoint : ${JSON.stringify(insidePoint)}
-  node        : x:${bounds.x} y:${bounds.y} w:${bounds.width} h:${bounds.height}`,
-      polyPoints
+  node-bounds       : x:${bounds.x} y:${bounds.y} w:${bounds.width} h:${bounds.height}`,
+      JSON.stringify(polyPoints)
     );
 
     const intersections = [];
@@ -571,8 +573,8 @@ export const render = async (
       minY = Math.min(minY, entry.y);
     });
 
-    // const left = x1 - w / 2;
-    // const top = y1 + h / 2;
+    const left = x1 - w / 2 - minX;
+    const top = y1 - h / 2 - minY;
 
     for (let i = 0; i < polyPoints.length; i++) {
       const p1 = polyPoints[i];
@@ -580,8 +582,8 @@ export const render = async (
       const intersect = intersectLine(
         bounds,
         outsidePoint,
-        { x: p1.x, y: p1.y },
-        { x: p2.x, y: p2.y }
+        { x: left + p1.x, y: top + p1.y },
+        { x: left + p2.x, y: top + p2.y }
       );
 
       if (intersect) {
@@ -775,7 +777,6 @@ export const render = async (
         }
       }
     });
-    log.debug('returning points', points);
     return points;
   };
 
@@ -990,17 +991,17 @@ export const render = async (
             startNode.innerHTML
           );
         }
-        if (startNode.shape === 'diamond') {
+        if (startNode.shape === 'diamond' || startNode.shape === 'diam') {
           edge.points.unshift({
             x: startNode.x + startNode.width / 2 + offset.x,
             y: startNode.y + startNode.height / 2 + offset.y,
           });
         }
-        if (endNode.shape === 'diamond') {
+        if (endNode.shape === 'diamond' || endNode.shape === 'diam') {
           const x = endNode.x + endNode.width / 2 + offset.x;
           // Add a point at the center of the diamond
           if (
-            Math.abs(edge.points[edge.points.length - 1].y - endNode.y - offset.y) > 0.001 ||
+            Math.abs(edge.points[edge.points.length - 1].y - endNode.y - offset.y) > 0.01 ||
             Math.abs(edge.points[edge.points.length - 1].x - x) > 0.001
           ) {
             edge.points.push({
@@ -1035,7 +1036,7 @@ export const render = async (
             height: startNode.height,
             padding: startNode.padding,
           },
-          startNode.shape === 'diamond'
+          startNode.shape === 'diamond' || startNode.shape === 'diam'
         ).reverse();
 
         edge.points = cutPathAtIntersect(
@@ -1047,7 +1048,7 @@ export const render = async (
             height: endNode.height,
             padding: endNode.padding,
           },
-          endNode.shape === 'diamond'
+          endNode.shape === 'diamond' || endNode.shape === 'diam'
         );
 
         const paths = insertEdge(

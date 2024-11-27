@@ -462,6 +462,7 @@ const render = async function (
     svgCode = DOMPurify.sanitize(svgCode, {
       ADD_TAGS: DOMPURIFY_TAGS,
       ADD_ATTR: DOMPURIFY_ATTR,
+      HTML_INTEGRATION_POINTS: { foreignobject: true },
     });
   }
 
