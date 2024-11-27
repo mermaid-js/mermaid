@@ -973,4 +973,24 @@ graph TD
       }
     );
   });
+  it('#5824: should be able to string and markdown labels (#5824)', () => {
+    imgSnapshotTest(
+      `
+flowchart TB
+    mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"\`<**1**1\`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["\`How to fix **fix**\`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["\`Github, Gitlab, BitBucket, etc.\`"]
+    a["1."]
+    b["- x"]
+    `,
+      {
+        flowchart: { htmlLabels: true },
+        securityLevel: 'loose',
+      }
+    );
+  });
 });
