@@ -1,3 +1,4 @@
+import createLabel from '../createLabel.js';
 import { createText } from '../../createText.js';
 import type { Node } from '../../types.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
@@ -40,14 +41,26 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     label = typeof node.label === 'string' ? node.label : node.label[0];
   }
 
-  const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
-    useHtmlLabels,
-    width: node.width || getConfig().flowchart?.wrappingWidth,
-    // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
-    cssClasses: 'markdown-node-label',
-    style: node.labelStyle,
-    addSvgBackground: !!node.icon || !!node.img,
-  });
+  let text;
+  if (node.labelType !== 'string') {
+    text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
+      useHtmlLabels,
+      width: node.width || getConfig().flowchart?.wrappingWidth,
+      // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
+      cssClasses: 'markdown-node-label',
+      style: node.labelStyle,
+      addSvgBackground: !!node.icon || !!node.img,
+    });
+  } else {
+    const labelElement = await createLabel(
+      sanitizeText(decodeEntities(label), getConfig()),
+      node.labelStyle,
+      false,
+      true
+    );
+    text = labelEl.node()?.appendChild(labelElement);
+  }
+
   // Get the size of the label
   let bbox = text.getBBox();
   const halfPadding = (node?.padding ?? 0) / 2;
