@@ -84,6 +84,7 @@ const getData = function () {
         shape: 'kanbanItem',
         level: item.level,
         rx: 5,
+        ry: 5,
         cssStyles: ['text-align: left'],
       } satisfies KanbanNode;
       _nodes.push(childNode);
@@ -129,20 +130,21 @@ const addNode = (level: number, id: string, descr: string, type: number, shapeDa
       throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
     }
 
-    if (doc?.shape) {
+    // if shape is defined in the yaml data, use it if it is a valid shape kanbanItem
+    if (doc?.shape && doc.shape === 'kanbanItem') {
       node.shape = doc?.shape;
     }
     if (doc?.label) {
       node.label = doc?.label;
     }
     if (doc?.icon) {
-      node.icon = doc?.icon;
+      node.icon = doc?.icon.toString();
     }
     if (doc?.assigned) {
-      node.assigned = doc?.assigned;
+      node.assigned = doc?.assigned.toString();
     }
     if (doc?.ticket) {
-      node.ticket = doc?.ticket;
+      node.ticket = doc?.ticket.toString();
     }
 
     if (doc?.priority) {
