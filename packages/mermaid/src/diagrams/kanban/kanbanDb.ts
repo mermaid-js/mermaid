@@ -138,13 +138,13 @@ const addNode = (level: number, id: string, descr: string, type: number, shapeDa
       node.label = doc?.label;
     }
     if (doc?.icon) {
-      node.icon = doc?.icon;
+      node.icon = doc?.icon.toString();
     }
     if (doc?.assigned) {
-      node.assigned = doc?.assigned;
+      node.assigned = doc?.assigned.toString();
     }
     if (doc?.ticket) {
-      node.ticket = doc?.ticket;
+      node.ticket = doc?.ticket.toString();
     }
 
     if (doc?.priority) {
