@@ -466,9 +466,11 @@ const render = async function (
   }
 
   removeTempElements();
+  const graph = diag.getGraphData();
 
   return {
     diagramType,
+    graph,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
   };
