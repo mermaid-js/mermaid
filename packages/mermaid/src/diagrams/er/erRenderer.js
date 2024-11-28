@@ -1,4 +1,5 @@
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import { line, curveBasis, select } from 'd3';
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
@@ -656,6 +657,10 @@ export const draw = function (text, id, _version, diagObj) {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
+
+  const jsonData = graphlibJson.write(g);
+  diagObj.setGraphData(JSON.stringify(jsonData));
+
 }; // draw
 
 /**

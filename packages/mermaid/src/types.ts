@@ -78,6 +78,12 @@ export type D3Element = any;
 export type D3Selection<T extends SVGElement> = d3.Selection<T, unknown, Element | null, unknown>;
 
 export interface RenderResult {
+
+  /**
+   *  Graphical stringified JSON representation of the diagram
+   */
+  graph: string | null;
+
   /**
    * The svg code for the rendered graph.
    */

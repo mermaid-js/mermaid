@@ -60,7 +60,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
   data4Layout.markers = ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'];
   data4Layout.diagramId = id;
-  await render(data4Layout, svg);
+  await render(data4Layout, svg, (data) => diag.setGraphData(data));
   const padding = 8;
   utils.insertTitle(
     svg,

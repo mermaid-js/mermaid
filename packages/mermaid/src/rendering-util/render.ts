@@ -13,7 +13,8 @@ export interface LayoutAlgorithm {
     layoutData: LayoutData,
     svg: SVG,
     helpers: InternalHelpers,
-    options?: RenderOptions
+    options?: RenderOptions,
+    setGraphData?: (data: string) => void
   ): Promise<void>;
 }
 
@@ -44,16 +45,19 @@ const registerDefaultLayoutLoaders = () => {
 
 registerDefaultLayoutLoaders();
 
-export const render = async (data4Layout: LayoutData, svg: SVG) => {
+export const render = async (data4Layout: LayoutData, svg: SVG, setGraphData?: (data: string) => void) => {
   if (!(data4Layout.layoutAlgorithm in layoutAlgorithms)) {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
   }
 
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
-  return layoutRenderer.render(data4Layout, svg, internalHelpers, {
-    algorithm: layoutDefinition.algorithm,
-  });
+  return layoutRenderer.render(data4Layout,
+    svg,
+    internalHelpers,
+    { algorithm: layoutDefinition.algorithm },
+    setGraphData
+  );
 };
 
 /**

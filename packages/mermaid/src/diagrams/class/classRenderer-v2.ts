@@ -1,6 +1,7 @@
 // @ts-nocheck - don't check until handle it
 import { select, curveLinear } from 'd3';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { render } from '../../dagre-wrapper/index.js';
@@ -356,6 +357,9 @@ export const draw = async function (text: string, id: string, _version: string, 
     'classDiagram',
     id
   );
+
+  const jsonData = graphlibJson.write(g);
+  diagObj.setGraphData(JSON.stringify(jsonData));
 
   utils.insertTitle(svg, 'classTitleText', conf?.titleTopMargin ?? 5, diagObj.db.getDiagramTitle());
 
