@@ -1,4 +1,3 @@
-import { log } from '../../../logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
@@ -6,6 +5,7 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export const createDecisionBoxPathD = (x: number, y: number, size: number): string => {
   return [
@@ -59,17 +59,28 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
   }
 
   updateNodeBounds(node, polygon);
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    const w = bbox.width + node.padding;
+    const h = bbox.height + node.padding;
+    const s = w + h;
+
+    // Define polygon points
+    const points = [
+      { x: s / 2, y: 0 },
+      { x: s, y: -s / 2 },
+      { x: s / 2, y: -s },
+      { x: 0, y: -s / 2 },
+    ];
+
+    // Calculate the intersection point
+    const res = intersect.polygon(bounds, points, point);
+
+    return { x: res.x - 0.5, y: res.y - 0.5 }; // Adjusted result
+  };
 
   node.intersect = function (point) {
-    log.debug(
-      'APA12 Intersect called SPLIT\npoint:',
-      point,
-      '\nnode:\n',
-      node,
-      '\nres:',
-      intersect.polygon(node, points, point)
-    );
-    return intersect.polygon(node, points, point);
+    // @ts-ignore TODO fix this (KNSV)
+    return this.calcIntersect(node as Bounds, point);
   };
 
   return shapeSvg;
