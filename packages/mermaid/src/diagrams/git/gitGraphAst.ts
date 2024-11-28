@@ -20,7 +20,7 @@ import type {
   BranchDB,
   CherryPickDB,
 } from './gitGraphTypes.js';
-import { commitType } from './gitGraphTypes.js';
+import { commitColor, commitType } from './gitGraphTypes.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 
 import DEFAULT_CONFIG from '../../defaultConfig.js';
@@ -107,6 +107,7 @@ export const commit = function (commitDB: CommitDB) {
   let id = commitDB.id;
   const type = commitDB.type;
   let tags = commitDB.tags;
+  const color = commitDB.color;
 
   log.info('commit', msg, id, type, tags);
   log.debug('Entering commit:', msg, id, type, tags);
@@ -119,6 +120,7 @@ export const commit = function (commitDB: CommitDB) {
     message: msg,
     seq: state.records.seq++,
     type: type ?? commitType.NORMAL,
+    color: color ?? commitColor.BLACK,
     tags: tags ?? [],
     parents: state.records.head == null ? [] : [state.records.head.id],
     branch: state.records.currBranch,
@@ -244,6 +246,7 @@ export const merge = (mergeDB: MergeDB): void => {
     parents: state.records.head == null ? [] : [state.records.head.id, verifiedBranch],
     branch: state.records.currBranch,
     type: commitType.MERGE,
+    color: commitColor.BLACK,
     customType: overrideType,
     customId: customId ? true : false,
     tags: customTags ?? [],
@@ -347,6 +350,7 @@ export const cherryPick = function (cherryPickDB: CherryPickDB) {
       parents: state.records.head == null ? [] : [state.records.head.id, sourceCommit.id],
       branch: state.records.currBranch,
       type: commitType.CHERRY_PICK,
+      color: commitColor.BLACK,
       tags: tags
         ? tags.filter(Boolean)
         : [
@@ -494,6 +498,7 @@ export const getHead = function () {
 
 export const db: GitGraphDB = {
   commitType,
+  commitColor,
   getConfig,
   setDirection,
   setOptions,

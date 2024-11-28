@@ -27,6 +27,9 @@ const getStyles = (options) =>
     stroke-dasharray: 2;
   }
   .commit-label { font-size: ${options.commitLabelFontSize}; fill: ${options.commitLabelColor};}
+  .commit-label-color-red { font-size: ${options.commitLabelFontSize}; fill: red;}
+  .commit-label-color-blue { font-size: ${options.commitLabelFontSize}; fill: blue;}
+  .commit-label-color-green { font-size: ${options.commitLabelFontSize}; fill: green;}
   .commit-label-bkg { font-size: ${options.commitLabelFontSize}; fill: ${
     options.commitLabelBackground
   }; opacity: 0.5; }

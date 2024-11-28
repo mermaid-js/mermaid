@@ -4,7 +4,7 @@ import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { db } from './gitGraphAst.js';
-import { commitType } from './gitGraphTypes.js';
+import { commitColor, commitType } from './gitGraphTypes.js';
 import type {
   CheckoutAst,
   CherryPickingAst,
@@ -53,6 +53,7 @@ const parseCommit = (commit: CommitAst): CommitDB => {
     msg: commit.message ?? '',
     type: commit.type !== undefined ? commitType[commit.type] : commitType.NORMAL,
     tags: commit.tags ?? undefined,
+    color: commit.color !== undefined ? commitColor[commit.color] : commitColor.BLACK,
   };
   return commitDB;
 };
@@ -103,6 +104,7 @@ if (import.meta.vitest) {
 
   const mockDB: GitGraphDBParseProvider = {
     commitType: commitType,
+    commitColor: commitColor,
     setDirection: vi.fn(),
     commit: vi.fn(),
     branch: vi.fn(),
