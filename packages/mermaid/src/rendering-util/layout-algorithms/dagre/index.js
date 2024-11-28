@@ -26,6 +26,7 @@ import {
 import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { getEdgeId } from '../../../utils.js';
 
 const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
   log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
@@ -345,15 +346,21 @@ export const render = async (data4Layout, svg) => {
       const edge2 = structuredClone(edge);
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
-      edge1.id = nodeId + '-cyclic-special-1';
+      edge1.id = getEdgeId(nodeId, nodeId, {
+        counter: 'cyclic-special-1',
+      });
       edgeMid.arrowTypeEnd = 'none';
-      edgeMid.id = nodeId + '-cyclic-special-mid';
+      edgeMid.id = getEdgeId(nodeId, nodeId, {
+        counter: 'cyclic-special-mid',
+      });
       edge2.label = '';
       if (node.isGroup) {
         edge1.fromCluster = nodeId;
         edge2.toCluster = nodeId;
       }
-      edge2.id = nodeId + '-cyclic-special-2';
+      edge2.id = getEdgeId(nodeId, nodeId, {
+        counter: 'cyclic-special-2',
+      });
       graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
       graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyc<lic-special-2');

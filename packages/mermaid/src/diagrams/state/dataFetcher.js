@@ -1,3 +1,4 @@
+import { getEdgeId } from '../../utils.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
@@ -88,7 +89,10 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
             classes
           );
           const edgeData = {
-            id: 'edge' + graphItemCount,
+            id: getEdgeId(item.state1.id, item.state2.id, {
+              counter: graphItemCount,
+              prefix: 'edge',
+            }),
             start: item.state1.id,
             end: item.state2.id,
             arrowhead: 'normal',
@@ -349,7 +353,7 @@ export const dataFetcher = (
       }
 
       edges.push({
-        id: from + '-' + to,
+        id: getEdgeId(from, to, { prefix: 'edge' }),
         start: from,
         end: to,
         arrowhead: 'none',

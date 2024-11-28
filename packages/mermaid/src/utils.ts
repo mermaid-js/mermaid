@@ -939,7 +939,7 @@ export const getEdgeId = (
     suffix?: string;
   }
 ) => {
-  return `${prefix ? `${prefix}_` : ''}${from}_${to}_${counter}${suffix ? `_${suffix}` : ''}`;
+  return `${prefix ? `${prefix}__` : ''}${from}__${to}__${counter}${suffix ? `__${suffix}` : ''}`;
 };
 
 /**
