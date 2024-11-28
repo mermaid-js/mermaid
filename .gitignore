@@ -52,3 +52,6 @@ vite.config.ts.timestamp-*
 
 # autogenereated by langium-cli
 generated/
+
+# translation
+/translation/po/en.pot
