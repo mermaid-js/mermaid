@@ -260,6 +260,7 @@ const drawNote = async function (elem: any, noteModel: NoteModel) {
   textObj.fontSize = conf.noteFontSize;
   textObj.fontWeight = conf.noteFontWeight;
   textObj.anchor = conf.noteAlign;
+  textObj.wrapPadding = conf.wrapPadding;
   textObj.textMargin = conf.noteMargin;
   textObj.valign = 'center';
 
@@ -380,7 +381,8 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   textObj.fontWeight = conf.messageFontWeight;
   textObj.anchor = conf.messageAlign;
   textObj.valign = 'center';
-  textObj.textMargin = conf.wrapPadding;
+  textObj.wrapPadding = conf.wrapPadding;
+  textObj.textMargin = conf.textMargin;
   textObj.tspan = false;
 
   if (hasKatex(textObj.text)) {
