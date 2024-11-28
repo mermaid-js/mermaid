@@ -16,14 +16,16 @@ const ERMarkers = {
  *
  * @param elem
  * @param conf
+ * @param id
  */
-const insertMarkers = function (elem, conf) {
+const insertMarkers = function (elem, conf, id) {
   let marker;
 
   elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.MD_PARENT_START)
+    .attr('id', id + '-' + ERMarkers.MD_PARENT_START)
+    .attr('class', 'mermaid-marker-er-MD_PARENT_START')
     .attr('refX', 0)
     .attr('refY', 7)
     .attr('markerWidth', 190)
@@ -35,7 +37,8 @@ const insertMarkers = function (elem, conf) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.MD_PARENT_END)
+    .attr('id', id + '-' + ERMarkers.MD_PARENT_END)
+    .attr('class', 'mermaid-marker-er-MD_PARENT_END')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -47,7 +50,8 @@ const insertMarkers = function (elem, conf) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.ONLY_ONE_START)
+    .attr('id', id + '-' + ERMarkers.ONLY_ONE_START)
+    .attr('class', 'mermaid-marker-er-ONLY_ONE_START')
     .attr('refX', 0)
     .attr('refY', 9)
     .attr('markerWidth', 18)
@@ -61,7 +65,8 @@ const insertMarkers = function (elem, conf) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.ONLY_ONE_END)
+    .attr('id', id + '-' + ERMarkers.ONLY_ONE_END)
+    .attr('class', 'mermaid-marker-er-ONLY_ONE_END')
     .attr('refX', 18)
     .attr('refY', 9)
     .attr('markerWidth', 18)
@@ -75,7 +80,8 @@ const insertMarkers = function (elem, conf) {
   marker = elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.ZERO_OR_ONE_START)
+    .attr('id', id + '-' + ERMarkers.ZERO_OR_ONE_START)
+    .attr('class', 'mermaid-marker-er-ZERO_OR_ONE_START')
     .attr('refX', 0)
     .attr('refY', 9)
     .attr('markerWidth', 30)
@@ -93,7 +99,8 @@ const insertMarkers = function (elem, conf) {
   marker = elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.ZERO_OR_ONE_END)
+    .attr('id', id + '-' + ERMarkers.ZERO_OR_ONE_END)
+    .attr('class', 'mermaid-marker-er-ZERO_OR_ONE_END')
     .attr('refX', 30)
     .attr('refY', 9)
     .attr('markerWidth', 30)
@@ -111,7 +118,8 @@ const insertMarkers = function (elem, conf) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.ONE_OR_MORE_START)
+    .attr('id', id + '-' + ERMarkers.ONE_OR_MORE_START)
+    .attr('class', 'mermaid-marker-er-ONE_OR_MORE_START')
     .attr('refX', 18)
     .attr('refY', 18)
     .attr('markerWidth', 45)
@@ -125,7 +133,8 @@ const insertMarkers = function (elem, conf) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.ONE_OR_MORE_END)
+    .attr('id', id + '-' + ERMarkers.ONE_OR_MORE_END)
+    .attr('class', 'mermaid-marker-er-ONE_OR_MORE_END')
     .attr('refX', 27)
     .attr('refY', 18)
     .attr('markerWidth', 45)
@@ -139,7 +148,8 @@ const insertMarkers = function (elem, conf) {
   marker = elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.ZERO_OR_MORE_START)
+    .attr('id', id + '-' + ERMarkers.ZERO_OR_MORE_START)
+    .attr('class', 'mermaid-marker-er-ZERO_OR_MORE_START')
     .attr('refX', 18)
     .attr('refY', 18)
     .attr('markerWidth', 57)
@@ -161,7 +171,8 @@ const insertMarkers = function (elem, conf) {
   marker = elem
     .append('defs')
     .append('marker')
-    .attr('id', ERMarkers.ZERO_OR_MORE_END)
+    .attr('id', id + '-' + ERMarkers.ZERO_OR_MORE_END)
+    .attr('class', 'mermaid-marker-er-ZERO_OR_MORE_END')
     .attr('refX', 39)
     .attr('refY', 18)
     .attr('markerWidth', 57)
