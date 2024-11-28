@@ -872,6 +872,9 @@ const destructEdgeType = (type: string | undefined) => {
       arrowTypeStart = type.replace('double_', '');
       arrowTypeEnd = arrowTypeStart;
       break;
+    case 'arrow_open':
+      arrowTypeEnd = 'none';
+      break;
   }
   return { arrowTypeStart, arrowTypeEnd };
 };
