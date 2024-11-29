@@ -4,7 +4,8 @@ import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from '
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
 type Node = LayoutData['nodes'][number];
-
+// Used to calculate distances in order to avoid floating number rounding issues when comparing floating numbers
+const epsilon = 0.0001;
 interface LabelData {
   width: number;
   height: number;
@@ -17,7 +18,16 @@ interface NodeWithVertex extends Omit<Node, 'domId'> {
   labelData?: LabelData;
   domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
 }
-
+interface Point {
+  x: number;
+  y: number;
+}
+function distance(p1?: Point, p2?: Point): number {
+  if (!p1 || !p2) {
+    return 0;
+  }
+  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+}
 export const render = async (
   data4Layout: LayoutData,
   svg: SVG,
@@ -460,80 +470,6 @@ export const render = async (
     }
   }
 
-  const outsideNode = (
-    node: { x: any; y: any; width: number; height: number },
-    point: { x: number; y: number }
-  ) => {
-    const x = node.x;
-    const y = node.y;
-    const dx = Math.abs(point.x - x);
-    const dy = Math.abs(point.y - y);
-    const w = node.width / 2;
-    const h = node.height / 2;
-    if (dx >= w || dy >= h) {
-      return true;
-    }
-    return false;
-  };
-  /**
-   * This function will page a path and node where the last point(s) in the path is inside the node
-   * and return an update path ending by the border of the node.
-   */
-  const cutPathAtIntersect = (
-    _points: any[],
-    bounds: { x: any; y: any; width: any; height: any; padding: any },
-    calcIntersect: any
-  ) => {
-    log.debug('APA18 cutPathAtIntersect Points:', _points, 'node:', bounds);
-    const points: any[] = [];
-    let lastPointOutside = _points[0];
-    let isInside = false;
-    _points.forEach((point: any) => {
-      // check if point is inside the boundary rect
-      if (!outsideNode(bounds, point) && !isInside) {
-        // First point inside the rect found
-        // Calc the intersection coord between the point anf the last point outside the rect
-        const inter = calcIntersect({ ...bounds, ...point }, lastPointOutside);
-        // console.log(
-        //   'APA30 inside',
-        //   '\nbounds',
-        //   { ...bounds, ...point },
-        //   `\npoint`,
-        //   point,
-        //   '\no outside point',
-        //   lastPointOutside,
-        //   '\npoints',
-        //   ...points,
-        //   '\nIntersection',
-        //   inter
-        // );
-
-        // Check case where the intersection is the same as the last point
-        let pointPresent = false;
-        points.forEach((p) => {
-          pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
-        });
-        // if (!pointPresent) {
-        if (!points.some((e) => e.x === inter.x && e.y === inter.y)) {
-          points.push(inter);
-        } else {
-          log.debug('abc88 no intersect', inter, points);
-        }
-        // points.push(inter);
-        isInside = true;
-      } else {
-        // Outside
-        log.debug('abc88 outside', point, lastPointOutside, points);
-        lastPointOutside = point;
-        // points.push(point);
-        if (!isInside) {
-          points.push(point);
-        }
-      }
-    });
-    return points;
-  };
-
   // @ts-ignore - ELK is not typed
   const elk = new ELK();
   const element = svg.select('g');
@@ -747,40 +683,34 @@ export const render = async (
         }
 
         if (startNode.calcIntersect) {
-          edge.points.unshift({
-            x: startNode.offset.posX + startNode.width / 2,
-            y: startNode.offset.posY + startNode.height / 2,
-            width: startNode.width,
-            height: startNode.height,
-          });
-          edge.points = cutPathAtIntersect(
-            edge.points.reverse(),
+          const intersection = startNode.calcIntersect(
             {
               x: startNode.offset.posX + startNode.width / 2,
               y: startNode.offset.posY + startNode.height / 2,
-              width: sw,
+              width: startNode.width,
               height: startNode.height,
-              padding: startNode.padding,
             },
-            startNode.calcIntersect
-          ).reverse();
+            edge.points[0]
+          );
+
+          if (distance(intersection, edge.points[0]) > epsilon) {
+            edge.points.unshift(intersection);
+          }
         }
         if (endNode.calcIntersect) {
-          edge.points.push({
-            x: endNode.offset.posX + endNode.width / 2,
-            y: endNode.offset.posY + endNode.height / 2,
-          });
-          edge.points = cutPathAtIntersect(
-            edge.points,
+          const intersection = endNode.calcIntersect(
             {
               x: endNode.offset.posX + endNode.width / 2,
               y: endNode.offset.posY + endNode.height / 2,
-              width: ew,
+              width: endNode.width,
               height: endNode.height,
-              padding: endNode.padding,
             },
-            endNode.calcIntersect
+            edge.points[edge.points.length - 1]
           );
+
+          if (distance(intersection, edge.points[edge.points.length - 1]) > epsilon) {
+            edge.points.push(intersection);
+          }
         }
 
         const paths = insertEdge(
@@ -792,7 +722,6 @@ export const render = async (
           endNode,
           data4Layout.diagramId
         );
-        log.info('APA12 edge points after insert', JSON.stringify(edge.points));
 
         edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
         edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
