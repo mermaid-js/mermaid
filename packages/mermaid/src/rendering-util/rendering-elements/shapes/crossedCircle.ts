@@ -59,8 +59,7 @@ export function crossedCircle<T extends SVGGraphicsElement>(parent: D3Selection<
   updateNodeBounds(node, crossedCircle);
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
+    const radius = Math.max(30, bounds?.width ?? 0);
     return intersect.circle(bounds, radius, point);
   };
 

@@ -120,9 +120,20 @@ export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selecti
   updateNodeBounds(node, bowTieRectShape);
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    const w = bounds.width;
+    const h = bounds.height;
+
+    const ry = h / 2;
+    const rx = ry / (2.5 + h / 50);
+
+    const points = [
+      { x: w / 2, y: -h / 2 },
+      { x: -w / 2, y: -h / 2 },
+      ...generateArcPoints(-w / 2, -h / 2, -w / 2, h / 2, rx, ry, false),
+      { x: w / 2, y: h / 2 },
+      ...generateArcPoints(w / 2, h / 2, w / 2, -h / 2, rx, ry, true),
+    ];
+    return intersect.polygon(bounds, points, point);
   };
   node.intersect = function (point) {
     const pos = intersect.polygon(node, points, point);

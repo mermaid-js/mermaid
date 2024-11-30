@@ -57,9 +57,22 @@ export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   updateNodeBounds(node, polygon);
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    const h = bounds.height;
+    const padding = 12;
+    const w = bounds.width;
+    const left = 0;
+    const right = w;
+    const top = -h;
+    const bottom = 0;
+    const points = [
+      { x: left + padding, y: top },
+      { x: right, y: top },
+      { x: right, y: bottom },
+      { x: left, y: bottom },
+      { x: left, y: top + padding },
+      { x: left + padding, y: top },
+    ];
+    return intersect.polygon(bounds, points, point);
   };
 
   node.intersect = function (point) {

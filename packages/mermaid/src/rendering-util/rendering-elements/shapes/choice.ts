@@ -49,9 +49,15 @@ export function choice<T extends SVGGraphicsElement>(parent: D3Selection<T>, nod
   node.height = 28;
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    const s = Math.max(28, bounds.width ?? 0);
+
+    const points = [
+      { x: 0, y: s / 2 },
+      { x: s / 2, y: 0 },
+      { x: 0, y: -s / 2 },
+      { x: -s / 2, y: 0 },
+    ];
+    return intersect.circle(bounds, points, point);
   };
 
   node.intersect = function (point) {

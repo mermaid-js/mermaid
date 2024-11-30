@@ -36,6 +36,25 @@ function generateCirclePoints(
   return points;
 }
 
+const getRectPoints = (w: number, h: number, radius: number) => [
+  { x: w / 2, y: -h / 2 - radius },
+  { x: -w / 2, y: -h / 2 - radius },
+  ...generateCirclePoints(w / 2, -h / 2, radius, 20, -90, 0),
+  { x: -w / 2 - radius, y: -radius },
+  ...generateCirclePoints(w / 2 + radius * 2, -radius, radius, 20, -180, -270),
+  ...generateCirclePoints(w / 2 + radius * 2, radius, radius, 20, -90, -180),
+  { x: -w / 2 - radius, y: h / 2 },
+  ...generateCirclePoints(w / 2, h / 2, radius, 20, 0, 90),
+  { x: -w / 2, y: h / 2 + radius },
+  { x: w / 2 - radius - radius / 2, y: h / 2 + radius },
+  ...generateCirclePoints(-w / 2 + radius + radius / 2, -h / 2, radius, 20, -90, -180),
+  { x: w / 2 - radius / 2, y: radius },
+  ...generateCirclePoints(-w / 2 - radius / 2, -radius, radius, 20, 0, 90),
+  ...generateCirclePoints(-w / 2 - radius / 2, radius, radius, 20, -90, 0),
+  { x: w / 2 - radius / 2, y: -radius },
+  ...generateCirclePoints(-w / 2 + radius + radius / 2, h / 2, radius, 30, -180, -270),
+];
+
 export async function curlyBraces<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
@@ -67,24 +86,7 @@ export async function curlyBraces<T extends SVGGraphicsElement>(
     ...generateCirclePoints(-w / 2 + radius + radius / 2, h / 2, radius, 30, -180, -270),
   ];
 
-  const rectPoints = [
-    { x: w / 2, y: -h / 2 - radius },
-    { x: -w / 2, y: -h / 2 - radius },
-    ...generateCirclePoints(w / 2, -h / 2, radius, 20, -90, 0),
-    { x: -w / 2 - radius, y: -radius },
-    ...generateCirclePoints(w / 2 + radius * 2, -radius, radius, 20, -180, -270),
-    ...generateCirclePoints(w / 2 + radius * 2, radius, radius, 20, -90, -180),
-    { x: -w / 2 - radius, y: h / 2 },
-    ...generateCirclePoints(w / 2, h / 2, radius, 20, 0, 90),
-    { x: -w / 2, y: h / 2 + radius },
-    { x: w / 2 - radius - radius / 2, y: h / 2 + radius },
-    ...generateCirclePoints(-w / 2 + radius + radius / 2, -h / 2, radius, 20, -90, -180),
-    { x: w / 2 - radius / 2, y: radius },
-    ...generateCirclePoints(-w / 2 - radius / 2, -radius, radius, 20, 0, 90),
-    ...generateCirclePoints(-w / 2 - radius / 2, radius, radius, 20, -90, 0),
-    { x: w / 2 - radius / 2, y: -radius },
-    ...generateCirclePoints(-w / 2 + radius + radius / 2, h / 2, radius, 30, -180, -270),
-  ];
+  const rectPoints = getRectPoints(w, h, radius);
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
@@ -126,9 +128,12 @@ export async function curlyBraces<T extends SVGGraphicsElement>(
   updateNodeBounds(node, curlyBracesShape);
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    const w = bounds.width;
+    const h = bounds.height;
+    const radius = Math.max(5, h * 0.1);
+
+    const rectPoints = getRectPoints(w, h, radius);
+    return intersect.polygon(bounds, rectPoints, point);
   };
 
   node.intersect = function (point) {
