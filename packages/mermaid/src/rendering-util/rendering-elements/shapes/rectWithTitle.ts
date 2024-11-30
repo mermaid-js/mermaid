@@ -10,6 +10,7 @@ import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { log } from '../../../logger.js';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export async function rectWithTitle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -149,6 +150,12 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
       .attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
   }
   updateNodeBounds(node, rect);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     return intersect.rect(node, point);

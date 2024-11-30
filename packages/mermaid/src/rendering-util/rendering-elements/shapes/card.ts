@@ -3,16 +3,10 @@ import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-
 import { insertPolygonShape } from './insertPolygonShape.js';
 import { createPathFromPoints } from './util.js';
 import type { D3Selection } from '../../../types.js';
-
-// const createPathFromPoints = (points: { x: number; y: number }[]): string => {
-//   const pointStrings = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`);
-//   pointStrings.push('Z');
-//   return pointStrings.join(' ');
-// };
+import type { Bounds, Point } from '../../../types.js';
 
 export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -61,6 +55,12 @@ export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   }
 
   updateNodeBounds(node, polygon);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     return intersect.polygon(node, points, point);

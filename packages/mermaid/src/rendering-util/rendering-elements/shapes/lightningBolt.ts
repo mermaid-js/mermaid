@@ -6,6 +6,7 @@ import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { createPathFromPoints } from './util.js';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export function lightningBolt<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -54,6 +55,12 @@ export function lightningBolt<T extends SVGGraphicsElement>(parent: D3Selection<
   lightningBolt.attr('transform', `translate(-${width / 2},${-height})`);
 
   updateNodeBounds(node, lightningBolt);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     log.info('lightningBolt intersect', node, point);

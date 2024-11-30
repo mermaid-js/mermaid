@@ -4,6 +4,7 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export async function windowPane<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -57,6 +58,12 @@ export async function windowPane<T extends SVGGraphicsElement>(parent: D3Selecti
   );
 
   updateNodeBounds(node, windowPane);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     const pos = intersect.polygon(node, outerPathPoints, point);

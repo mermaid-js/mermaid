@@ -4,6 +4,7 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 function generateCirclePoints(
   centerX: number,
@@ -104,6 +105,12 @@ export async function curlyBraceRight<T extends SVGGraphicsElement>(
   );
 
   updateNodeBounds(node, curlyBraceRightShape);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     const pos = intersect.polygon(node, rectPoints, point);

@@ -5,6 +5,7 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export const createCylinderPathD = (
   x: number,
@@ -109,6 +110,12 @@ export async function linedCylinder<T extends SVGGraphicsElement>(
     'transform',
     `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + ry - (bbox.y - (bbox.top ?? 0))})`
   );
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);

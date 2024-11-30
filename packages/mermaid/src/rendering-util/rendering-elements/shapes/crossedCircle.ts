@@ -5,6 +5,7 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 function createLine(r: number) {
   const xAxis45 = Math.cos(Math.PI / 4); // cosine of 45 degrees
@@ -56,6 +57,12 @@ export function crossedCircle<T extends SVGGraphicsElement>(parent: D3Selection<
   }
 
   updateNodeBounds(node, crossedCircle);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     log.info('crossedCircle intersect', node, { radius, point });

@@ -6,6 +6,7 @@ import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export const createSubroutinePathD = (
   x: number,
@@ -78,6 +79,12 @@ export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selecti
     }
     updateNodeBounds(node, el);
   }
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     return intersect.polygon(node, points, point);

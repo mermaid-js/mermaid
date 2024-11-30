@@ -5,6 +5,7 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export async function hourglass<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -51,6 +52,12 @@ export async function hourglass<T extends SVGGraphicsElement>(parent: D3Selectio
   updateNodeBounds(node, polygon);
 
   // label.attr('transform', `translate(${-bbox.width / 2}, ${(h/2)})`); // To transform text below hourglass shape
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     log.info('Pill intersect', node, { points });

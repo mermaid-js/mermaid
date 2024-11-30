@@ -92,6 +92,12 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
     return { x: res.x - 0.5, y: res.y - 0.5 }; // Adjusted result
   };
 
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
+
   node.intersect = function (point) {
     // @ts-ignore TODO fix this (KNSV)
     return this.calcIntersect(node as Bounds, point);

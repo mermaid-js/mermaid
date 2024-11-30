@@ -3,6 +3,7 @@ import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String } from './handDrawnShapeStyles.js';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export async function text<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -28,6 +29,12 @@ export async function text<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     .attr('height', totalHeight);
 
   updateNodeBounds(node, rect);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     return intersect.rect(node, point);

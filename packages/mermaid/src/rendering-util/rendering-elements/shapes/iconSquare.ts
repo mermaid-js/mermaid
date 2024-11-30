@@ -7,6 +7,7 @@ import { createRoundedRectPathD } from './roundedRectPath.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export async function iconSquare<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -103,6 +104,12 @@ export async function iconSquare<T extends SVGGraphicsElement>(
   );
 
   updateNodeBounds(node, outerShape);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     log.info('iconSquare intersect', node, point);

@@ -3,6 +3,7 @@ import { drawRect } from './drawRect.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export async function roundedRect<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -48,8 +49,12 @@ export async function labelRect<T extends SVGGraphicsElement>(parent: D3Selectio
   // }
 
   updateNodeBounds(node, rect);
-  // node.width = 1;
-  // node.height = 1;
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     return intersect.rect(node, point);

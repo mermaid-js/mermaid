@@ -5,6 +5,7 @@ import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 const colorFromPriority = (priority: NonNullable<KanbanNode['priority']>) => {
   switch (priority) {
@@ -154,6 +155,12 @@ export async function kanbanItem<T extends SVGGraphicsElement>(
 
   updateNodeBounds(kanbanNode, rect);
   kanbanNode.height = totalHeight;
+
+  kanbanNode.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   kanbanNode.intersect = function (point) {
     return intersect.rect(kanbanNode, point);

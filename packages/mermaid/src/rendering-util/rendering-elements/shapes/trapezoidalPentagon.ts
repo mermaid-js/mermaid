@@ -4,6 +4,7 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export async function trapezoidalPentagon<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -51,6 +52,12 @@ export async function trapezoidalPentagon<T extends SVGGraphicsElement>(
   }
 
   updateNodeBounds(node, polygon);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    // TODO: Implement intersect for this shape
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     const pos = intersect.polygon(node, points, point);

@@ -6,6 +6,7 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { handleUndefinedAttr } from '../../../utils.js';
 import type { D3Selection } from '../../../types.js';
+import type { Bounds, Point } from '../../../types.js';
 
 export function anchor<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles } = styles2String(node);
@@ -36,6 +37,11 @@ export function anchor<T extends SVGGraphicsElement>(parent: D3Selection<T>, nod
   circleElem.attr('class', 'anchor').attr('style', handleUndefinedAttr(cssStyles));
 
   updateNodeBounds(node, circleElem);
+
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
 
   node.intersect = function (point) {
     log.info('Circle intersect', node, radius, point);
