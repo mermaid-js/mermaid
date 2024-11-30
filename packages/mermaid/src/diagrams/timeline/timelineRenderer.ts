@@ -322,6 +322,11 @@ export const drawEvents = function (
   let maxEventHeight = 0;
   const eventBeginY = masterY;
   masterY = masterY + 100;
+
+  const DEFAULT_NODE_WIDTH = 150;
+
+  const nodeWidth = conf?.timeline?.width ?? DEFAULT_NODE_WIDTH;
+
   // Draw the events
   for (const event of events) {
     // create node from event
@@ -329,7 +334,7 @@ export const drawEvents = function (
       descr: event,
       section: sectionColor,
       number: sectionColor,
-      width: 150,
+      width: nodeWidth,
       padding: 20,
       maxHeight: 50,
     };
