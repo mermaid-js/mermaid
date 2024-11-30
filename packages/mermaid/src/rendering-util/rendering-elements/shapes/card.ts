@@ -8,6 +8,20 @@ import { createPathFromPoints } from './util.js';
 import type { D3Selection } from '../../../types.js';
 import type { Bounds, Point } from '../../../types.js';
 
+function getPoints(w: number, h: number, padding: number) {
+  const left = 0;
+  const right = w;
+  const top = -h;
+  const bottom = 0;
+  return [
+    { x: left + padding, y: top },
+    { x: right, y: top },
+    { x: right, y: bottom },
+    { x: left, y: bottom },
+    { x: left, y: top + padding },
+    { x: left + padding, y: top },
+  ];
+}
 export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -16,18 +30,8 @@ export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   const h = bbox.height + node.padding;
   const padding = 12;
   const w = bbox.width + node.padding + padding;
-  const left = 0;
-  const right = w;
-  const top = -h;
-  const bottom = 0;
-  const points = [
-    { x: left + padding, y: top },
-    { x: right, y: top },
-    { x: right, y: bottom },
-    { x: left, y: bottom },
-    { x: left, y: top + padding },
-    { x: left + padding, y: top },
-  ];
+
+  const points = getPoints(w, h, padding);
 
   let polygon: D3Selection<SVGGElement> | Awaited<ReturnType<typeof insertPolygonShape>>;
   const { cssStyles } = node;
@@ -60,18 +64,8 @@ export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     const h = bounds.height;
     const padding = 12;
     const w = bounds.width;
-    const left = 0;
-    const right = w;
-    const top = -h;
-    const bottom = 0;
-    const points = [
-      { x: left + padding, y: top },
-      { x: right, y: top },
-      { x: right, y: bottom },
-      { x: left, y: bottom },
-      { x: left, y: top + padding },
-      { x: left + padding, y: top },
-    ];
+
+    const points = getPoints(w, h, padding);
     return intersect.polygon(bounds, points, point);
   };
 

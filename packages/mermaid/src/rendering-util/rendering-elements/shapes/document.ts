@@ -93,34 +93,35 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
   updateNodeBounds(node, cylinder);
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
-  };
-
-  node.intersect = function (point) {
-    const pos = intersect.rect(node, point);
-    const x = pos.x - (node.x ?? 0);
+    const pos = intersect.rect(bounds, point);
+    const x = pos.x - (bounds.x ?? 0);
 
     if (
       rx != 0 &&
-      (Math.abs(x) < (node.width ?? 0) / 2 ||
-        (Math.abs(x) == (node.width ?? 0) / 2 &&
-          Math.abs(pos.y - (node.y ?? 0)) > (node.height ?? 0) / 2 - ry))
+      (Math.abs(x) < (bounds.width ?? 0) / 2 ||
+        (Math.abs(x) == (bounds.width ?? 0) / 2 &&
+          Math.abs(pos.y - (bounds.y ?? 0)) > (bounds.height ?? 0) / 2 - ry))
     ) {
       let y = ry * ry * (1 - (x * x) / (rx * rx));
       if (y != 0) {
         y = Math.sqrt(y);
       }
       y = ry - y;
-      if (point.y - (node.y ?? 0) > 0) {
+      if (point.y - (bounds.y ?? 0) > 0) {
         y = -y;
       }
 
       pos.y += y;
     }
+  };
 
-    return pos;
+  node.intersect = function (point) {
+    return this.calcIntersect
+      ? this.calcIntersect(
+          { x: node.x ?? 0, y: node.y ?? 0, width: node.width ?? 0, height: node.height ?? 0 },
+          point
+        )
+      : { x: 0, y: 0 };
   };
 
   return shapeSvg;

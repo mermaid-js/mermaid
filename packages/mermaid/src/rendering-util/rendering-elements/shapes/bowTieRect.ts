@@ -71,7 +71,15 @@ function generateArcPoints(
 
   return points;
 }
-
+function getPoints(w: number, h: number, rx: number, ry: number) {
+  return [
+    { x: w / 2, y: -h / 2 },
+    { x: -w / 2, y: -h / 2 },
+    ...generateArcPoints(-w / 2, -h / 2, -w / 2, h / 2, rx, ry, false),
+    { x: w / 2, y: h / 2 },
+    ...generateArcPoints(w / 2, h / 2, w / 2, -h / 2, rx, ry, true),
+  ];
+}
 export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -85,13 +93,7 @@ export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selecti
   // let shape: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
-  const points = [
-    { x: w / 2, y: -h / 2 },
-    { x: -w / 2, y: -h / 2 },
-    ...generateArcPoints(-w / 2, -h / 2, -w / 2, h / 2, rx, ry, false),
-    { x: w / 2, y: h / 2 },
-    ...generateArcPoints(w / 2, h / 2, w / 2, -h / 2, rx, ry, true),
-  ];
+  const points = getPoints(w, h, rx, ry);
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
@@ -126,13 +128,7 @@ export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selecti
     const ry = h / 2;
     const rx = ry / (2.5 + h / 50);
 
-    const points = [
-      { x: w / 2, y: -h / 2 },
-      { x: -w / 2, y: -h / 2 },
-      ...generateArcPoints(-w / 2, -h / 2, -w / 2, h / 2, rx, ry, false),
-      { x: w / 2, y: h / 2 },
-      ...generateArcPoints(w / 2, h / 2, w / 2, -h / 2, rx, ry, true),
-    ];
+    const points = getPoints(w, h, rx, ry);
     return intersect.polygon(bounds, points, point);
   };
   node.intersect = function (point) {

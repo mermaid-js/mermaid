@@ -64,7 +64,6 @@ export async function doublecircle<T extends SVGGraphicsElement>(
   updateNodeBounds(node, circleGroup);
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
     const radius = bounds.width / 2;
     return intersect.circle(bounds, radius, point);
   };

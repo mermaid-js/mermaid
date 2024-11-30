@@ -8,6 +8,14 @@ import { createPathFromPoints } from './util.js';
 import type { D3Selection } from '../../../types.js';
 import type { Bounds, Point } from '../../../types.js';
 
+function getPoints(tw: number, h: number) {
+  return [
+    { x: 0, y: -h },
+    { x: tw, y: -h },
+    { x: tw / 2, y: 0 },
+  ];
+}
+
 export async function flippedTriangle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
@@ -20,11 +28,7 @@ export async function flippedTriangle<T extends SVGGraphicsElement>(
   const h = w + bbox.height;
 
   const tw = w + bbox.height;
-  const points = [
-    { x: 0, y: -h },
-    { x: tw, y: -h },
-    { x: tw / 2, y: 0 },
-  ];
+  const points = getPoints(tw, h);
 
   const { cssStyles } = node;
 
@@ -62,8 +66,12 @@ export async function flippedTriangle<T extends SVGGraphicsElement>(
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
     // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    const w = bounds.width;
+    const h = bounds.height;
+
+    const tw = w + bounds.height;
+    const points = getPoints(tw, h);
+    return intersect.polygon(node, points, point);
   };
 
   node.intersect = function (point) {
