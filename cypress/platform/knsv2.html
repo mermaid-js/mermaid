@@ -91,37 +91,171 @@
     <pre id="diagram4" class="mermaid">
 ---
 config:
-    look: handDrawn
-    theme: default
+  layout: elk
 ---
-flowchart LR
-    n00@{ shape: triangle, label: 'This is a label for triangle shape' }
-    n11@{ shape: sloped-rectangle, label: 'This is a label for sloped-rectangle shape' }
-    n22@{ shape: horizontal-cylinder, label: 'This is a label for horizontal-cylinder shape' }
-    n33@{ shape: flipped-triangle, label: 'This is a label for flipped-triangle shape' }
-    n44@{ shape: hourglass, label: 'This is a label for hourglass shape' }
-    n00 --> n11
-    n00 --> n22
-    n00 --> n33
-    n00 --> n44
-    n11 --> n22
-    n11 --> n33
-    n11 --> n44
-    n22 --> n33
-    n22 --> n44
-    n33 --> n44
+      flowchart LR
+      subgraph S2
+      subgraph s1["APA"]
+      D{"Use the editor"}
+      end
+
+
+      D -- Mermaid js --> I{"fa:fa-code Text"}
+            D --> I
+            D --> I
+
+      end
     </pre>
     <pre id="diagram4" class="mermaid">
 ---
 config:
-    look: handDrawn
-    theme: default
+  layout: elk
+---
+      flowchart LR
+      a
+      subgraph s0["APA"]
+      subgraph s8["APA"]
+      subgraph s1["APA"]
+        D{"X"}
+        E[Q]
+      end
+      subgraph s3["BAPA"]
+        F[Q]
+        I
+      end
+            D --> I
+            D --> I
+            D --> I
+
+      I{"X"}
+      end
+      end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
+---
+      flowchart LR
+      a
+        D{"Use the editor"}
+
+      D -- Mermaid js --> I{"fa:fa-code Text"}
+      D-->I
+      D-->I
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
 ---
 flowchart LR
-    n22@{ shape: h-cyl }
-    n00 --> n11
-    n00 --> n22
-    n11 --> n22
+ subgraph s1["Untitled subgraph"]
+        n1["Evaluate"]
+        n2["Option 1"]
+        n3["Option 2"]
+        n4["fa:fa-car Option 3"]
+  end
+ subgraph s2["Untitled subgraph"]
+        n5["Evaluate"]
+        n6["Option 1"]
+        n7["Option 2"]
+        n8["fa:fa-car Option 3"]
+  end
+    A["Start"] -- Some text --> B("Continue")
+    B --> C{"Evaluate"}
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
+    n1 -- One --> n2
+    n1 -- Two --> n3
+    n1 -- Three --> n4
+    n5 -- One --> n6
+    n5 -- Two --> n7
+    n5 -- Three --> n8
+    n1@{ shape: diam}
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: rect}
+    n5@{ shape: diam}
+    n6@{ shape: rect}
+    n7@{ shape: rect}
+    n8@{ shape: rect}
+
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
+---
+flowchart LR
+ subgraph s1["Untitled subgraph"]
+        n1["Evaluate"]
+        n2["Option 1"]
+  end
+    n1 -- One --> n2
+
+
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    A{A} --> B & C
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    A{A} --> B & C
+    subgraph "subbe"
+      A
+    end
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: rect}
+    A["Start"] -- Some text --> B("Continue")
+    B --> C{"Evaluate"}
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
+    %% C@{ shape: hexagon}
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  kanban:
+    ticketBaseUrl: 'https://github.com/your-repo/issues/#TICKET#'
+---
+kanban
+  Backlog
+    task1[📝 Define project requirements]@{ ticket: a101 }
+  To Do
+    task2[🔍 Research technologies]@{ ticket: a102 }
+  Review
+    task4[🔍 Code review for login feature]@{ ticket: a104 }
+  Done
+    task5[✅ Deploy initial version]@{ ticket: a105 }
+  In Progress
+    task3[💻 Develop login feature]@{ ticket: 103 }
+
     </pre>
     <pre id="diagram4" class="mermaid2">
 flowchart LR

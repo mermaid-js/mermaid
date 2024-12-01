@@ -500,7 +500,7 @@ mermaid.ganttConfig = {
   sectionFontSize: 24, // Font size for sections
   numberSectionStyles: 1, // The number of alternating section styles
   axisFormat: '%d/%m', // Date/time format of the axis
-  tickInterval: '1 week', // Axis ticks
+  tickInterval: '1week', // Axis ticks
   topAxis: true, // When this flag is set, date labels will be added to the top of the chart
   displayMode: 'compact', // Turns compact mode on
   weekday: 'sunday', // On which day a week-based interval should start

@@ -64,7 +64,7 @@ todo[Todo]
 
 ## Configuration Options
 
-You can customize the Kanban diagram using a configuration block at the beginning of your markdown file. This is useful for setting global settings like a base URL for tickets. Currently there is one configuration option for kanban diagrams tacketBaseUrl. This can be set as in the the following example:
+You can customize the Kanban diagram using a configuration block at the beginning of your markdown file. This is useful for setting global settings like a base URL for tickets. Currently there is one configuration option for kanban diagrams `ticketBaseUrl`. This can be set as in the the following example:
 
 ```yaml
 ---

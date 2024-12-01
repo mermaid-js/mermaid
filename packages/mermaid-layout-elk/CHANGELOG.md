@@ -1,5 +1,20 @@
 # @mermaid-js/layout-elk
 
+## 0.1.7
+
+### Patch Changes
+
+- [#6090](https://github.com/mermaid-js/mermaid/pull/6090) [`654097c`](https://github.com/mermaid-js/mermaid/commit/654097c43801b2d606bc3d2bef8c6fbc3301e9e4) Thanks [@knsv](https://github.com/knsv)! - fix: Updated offset calculations for diamond shape when handling intersections
+
+## 0.1.6
+
+### Patch Changes
+
+- [#6081](https://github.com/mermaid-js/mermaid/pull/6081) [`68f41f6`](https://github.com/mermaid-js/mermaid/commit/68f41f685d2afe7d12f63aabf3de0c3461898471) Thanks [@knsv](https://github.com/knsv)! - fix: Elk rendering of Diamond shape intersections
+
+- Updated dependencies [[`01b5079`](https://github.com/mermaid-js/mermaid/commit/01b5079562ec8d34ce9964910f168873843c68f8), [`1388662`](https://github.com/mermaid-js/mermaid/commit/1388662132cc829f9820c2e9970ae04e2dd90588), [`fe3cffb`](https://github.com/mermaid-js/mermaid/commit/fe3cffbb673a25b81989aacb06e5d0eda35326db)]:
+  - mermaid@11.4.1
+
 ## 0.1.5
 
 ### Patch Changes
