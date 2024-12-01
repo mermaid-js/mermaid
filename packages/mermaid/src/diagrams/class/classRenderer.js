@@ -206,7 +206,7 @@ export const draw = function (text, id, _version, diagObj) {
     );
   });
 
-  const notes = diagObj.db.getNotes();
+  const notes = diagObj.db.getNotes().values();
   notes.forEach(function (note) {
     log.debug(`Adding note: ${JSON.stringify(note)}`);
     const node = svgDraw.drawNote(diagram, note, conf, diagObj);
