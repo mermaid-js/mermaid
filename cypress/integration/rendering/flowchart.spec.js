@@ -973,7 +973,7 @@ graph TD
       }
     );
   });
-  it('#5824: should be able to string and markdown labels (#5824)', () => {
+  it('#5824: should be able to render string and markdown labels', () => {
     imgSnapshotTest(
       `
 flowchart TB
