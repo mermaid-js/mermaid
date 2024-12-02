@@ -26,12 +26,16 @@ export const getLabelStyles = (styleArray) => {
 export const insertEdgeLabel = async (elem, edge) => {
   let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
 
-  const labelElement = await createText(elem, edge.label, {
-    style: getLabelStyles(edge.labelStyle),
-    useHtmlLabels,
-    addSvgBackground: true,
-    isNode: false,
-  });
+  const labelElement =
+    edge.labelType === 'markdown'
+      ? await createText(elem, edge.label, {
+          style: getLabelStyles(edge.labelStyle),
+          useHtmlLabels,
+          addSvgBackground: true,
+          isNode: false,
+        })
+      : await createLabel(edge.label, getLabelStyles(edge.labelStyle), undefined, false);
+
   log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
