@@ -267,6 +267,5 @@ Communication tools and platforms
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
-- [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 
 <!--- cspell:ignore Blazorade HueHive --->
