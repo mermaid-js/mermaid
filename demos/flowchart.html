@@ -228,6 +228,25 @@
     </pre>
     <hr />
 
+    <h2>Sample Fix</h2>
+    <h3>graph</h3>
+    <pre class="mermaid">
+    ---
+    title: Issue 3183
+    ---
+    graph TD
+      A[Very Important Node]:::em1 --> B
+      B[Less Important Node] --> C[Another Important Node]:::em2
+      D[Also Important Node]:::em3 --> B
+      C --> E[Important Node ReduxImportant Node Redux]:::em4
+      classDef em1 font-size:20px
+      classDef em2 height:75px
+      classDef em3 scale:2 %% scales the node
+      classDef em4 font-size:20px,font-weight:bold
+  </pre
+    >
+    <hr />
+
     <h2>Sample 2</h2>
     <h3>graph</h3>
     <pre class="mermaid">
