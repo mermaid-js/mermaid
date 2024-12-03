@@ -54,9 +54,15 @@ export async function hourglass<T extends SVGGraphicsElement>(parent: D3Selectio
   // label.attr('transform', `translate(${-bbox.width / 2}, ${(h/2)})`); // To transform text below hourglass shape
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    const { width: w, height: h } = bounds;
+    const points = [
+      { x: 0, y: 0 },
+      { x: w, y: 0 },
+      { x: 0, y: h },
+      { x: w, y: h },
+    ];
+    const res = intersect.polygon(bounds, points, point);
+    return { x: res.x - 0.5, y: res.y - 0.5 };
   };
 
   node.intersect = function (point) {

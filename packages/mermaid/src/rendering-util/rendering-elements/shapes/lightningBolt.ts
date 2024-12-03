@@ -7,7 +7,16 @@ import intersect from '../intersect/index.js';
 import { createPathFromPoints } from './util.js';
 import type { D3Selection } from '../../../types.js';
 import type { Bounds, Point } from '../../../types.js';
-
+function getPoints(width: number, height: number, gapX: number, gapY: number) {
+  return [
+    { x: width, y: 0 },
+    { x: 0, y: height / 2 + gapY / 2 },
+    { x: width - 4 * gapX, y: height / 2 + gapY / 2 },
+    { x: 0, y: height },
+    { x: width, y: height / 2 - gapY / 2 },
+    { x: 4 * gapX, y: height / 2 - gapY / 2 },
+  ];
+}
 export function lightningBolt<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';
@@ -57,16 +66,20 @@ export function lightningBolt<T extends SVGGraphicsElement>(parent: D3Selection<
   updateNodeBounds(node, lightningBolt);
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    const { width: w, height: h } = bounds;
+    const gapX = Math.max(5, w * 0.1);
+    const gapY = Math.max(5, h * 0.1);
+    const p = getPoints(w, h, gapX, gapY);
+    const res = intersect.polygon(bounds, p, point);
+
+    return { x: res.x - 0.5, y: res.y - 0.5 };
   };
 
   node.intersect = function (point) {
     log.info('lightningBolt intersect', node, point);
-    const pos = intersect.polygon(node, points, point);
+    const res = intersect.polygon(node, points, point);
 
-    return pos;
+    return res;
   };
 
   return shapeSvg;
