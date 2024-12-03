@@ -72,7 +72,7 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
-  scale?: number; // will be needed later for scaling both node and text
+  // scale?: number;  will be needed later for scaling both node and text together. Not required for scaling nodes as each node has its own in-built scale attribute that could be used.
 }
 
 /**
