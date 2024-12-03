@@ -7,7 +7,7 @@ import intersectLine from './intersect-line.js';
 function intersectPolygon(node, polyPoints, point) {
   let x1 = node.x;
   let y1 = node.y;
-
+  // console.trace('APA14 intersectPolygon', x1, y1, polyPoints, point);
   let intersections = [];
 
   let minX = Number.POSITIVE_INFINITY;
@@ -24,7 +24,7 @@ function intersectPolygon(node, polyPoints, point) {
 
   let left = x1 - node.width / 2 - minX;
   let top = y1 - node.height / 2 - minY;
-
+  // console.log('APA13 intersectPolygon2 ', left, y1);
   for (let i = 0; i < polyPoints.length; i++) {
     let p1 = polyPoints[i];
     let p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
@@ -34,7 +34,9 @@ function intersectPolygon(node, polyPoints, point) {
       { x: left + p1.x, y: top + p1.y },
       { x: left + p2.x, y: top + p2.y }
     );
+    // console.log('APA13 intersectPolygon3 ', intersect);
     if (intersect) {
+      // console.log('APA13 intersectPolygon4 ', intersect);
       intersections.push(intersect);
     }
   }
@@ -42,6 +44,7 @@ function intersectPolygon(node, polyPoints, point) {
   if (!intersections.length) {
     return node;
   }
+  // console.log('APA12 intersectPolygon5 ');
 
   if (intersections.length > 1) {
     // More intersections, find the one nearest to edge end point
@@ -53,6 +56,8 @@ function intersectPolygon(node, polyPoints, point) {
       let qdx = q.x - point.x;
       let qdy = q.y - point.y;
       let distq = Math.sqrt(qdx * qdx + qdy * qdy);
+
+      // console.log('APA12 intersectPolygon6 ');
 
       return distp < distq ? -1 : distp === distq ? 0 : 1;
     });

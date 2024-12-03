@@ -66,7 +66,9 @@ export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     const w = bounds.width;
 
     const points = getPoints(w, h, padding);
-    return intersect.polygon(bounds, points, point);
+
+    const res = intersect.polygon(bounds, points, point);
+    return { x: res.x - 0.5, y: res.y - 0.5 };
   };
 
   node.intersect = function (point) {

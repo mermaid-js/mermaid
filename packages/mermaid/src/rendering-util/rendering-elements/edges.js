@@ -5,7 +5,8 @@ import { createText } from '../createText.js';
 import utils from '../../utils.js';
 import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
-import { curveBasis, line, select } from 'd3';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { curveBasis, curveLinear, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
@@ -335,7 +336,7 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
   return points;
 };
 
-const adjustForArrowHeads = function (lineData, size = 5) {
+const adjustForArrowHeads = function (lineData, size = 5, shouldLog = false) {
   const newLineData = [...lineData];
   const lastPoint = lineData[lineData.length - 1];
   const secondLastPoint = lineData[lineData.length - 2];
@@ -344,6 +345,9 @@ const adjustForArrowHeads = function (lineData, size = 5) {
     (lastPoint.x - secondLastPoint.x) ** 2 + (lastPoint.y - secondLastPoint.y) ** 2
   );
 
+  if (shouldLog) {
+    log.debug('APA14 distanceBetweenLastPoints', distanceBetweenLastPoints);
+  }
   if (distanceBetweenLastPoints < size) {
     // Calculate the direction vector from the last point to the second last point
     const directionX = secondLastPoint.x - lastPoint.x;
@@ -365,6 +369,195 @@ const adjustForArrowHeads = function (lineData, size = 5) {
   }
 
   return newLineData;
+};
+function extractCornerPoints(points) {
+  const cornerPoints = [];
+  const cornerPointPositions = [];
+  for (let i = 1; i < points.length - 1; i++) {
+    const prev = points[i - 1];
+    const curr = points[i];
+    const next = points[i + 1];
+    if (
+      prev.x === curr.x &&
+      curr.y === next.y &&
+      Math.abs(curr.x - next.x) > 5 &&
+      Math.abs(curr.y - prev.y) > 5
+    ) {
+      cornerPoints.push(curr);
+      cornerPointPositions.push(i);
+    } else if (
+      prev.y === curr.y &&
+      curr.x === next.x &&
+      Math.abs(curr.x - prev.x) > 5 &&
+      Math.abs(curr.y - next.y) > 5
+    ) {
+      cornerPoints.push(curr);
+      cornerPointPositions.push(i);
+    }
+  }
+  return { cornerPoints, cornerPointPositions };
+}
+
+const findAdjacentPoint = function (pointA, pointB, distance) {
+  const xDiff = pointB.x - pointA.x;
+  const yDiff = pointB.y - pointA.y;
+  const length = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+  const ratio = distance / length;
+  return { x: pointB.x - ratio * xDiff, y: pointB.y - ratio * yDiff };
+};
+
+const fixCorners = function (lineData) {
+  const { cornerPointPositions } = extractCornerPoints(lineData);
+  const newLineData = [];
+  for (let i = 0; i < lineData.length; i++) {
+    if (cornerPointPositions.includes(i)) {
+      const prevPoint = lineData[i - 1];
+      const nextPoint = lineData[i + 1];
+      const cornerPoint = lineData[i];
+
+      const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, 5);
+      const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, 5);
+
+      const xDiff = newNextPoint.x - newPrevPoint.x;
+      const yDiff = newNextPoint.y - newPrevPoint.y;
+      newLineData.push(newPrevPoint);
+
+      const a = Math.sqrt(2) * 2;
+      let newCornerPoint = { x: cornerPoint.x, y: cornerPoint.y };
+      if (Math.abs(nextPoint.x - prevPoint.x) > 10 && Math.abs(nextPoint.y - prevPoint.y) >= 10) {
+        log.debug(
+          'Corner point fixing',
+          Math.abs(nextPoint.x - prevPoint.x),
+          Math.abs(nextPoint.y - prevPoint.y)
+        );
+        const r = 5;
+        if (cornerPoint.x === newPrevPoint.x) {
+          newCornerPoint = {
+            x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
+            y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
+          };
+        } else {
+          newCornerPoint = {
+            x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
+            y: yDiff < 0 ? newPrevPoint.y - r + a : newPrevPoint.y + r - a,
+          };
+        }
+      } else {
+        log.debug(
+          'Corner point skipping fixing',
+          Math.abs(nextPoint.x - prevPoint.x),
+          Math.abs(nextPoint.y - prevPoint.y)
+        );
+      }
+      newLineData.push(newCornerPoint, newNextPoint);
+    } else {
+      newLineData.push(lineData[i]);
+    }
+  }
+  return newLineData;
+};
+
+export const generateRoundedPath = (points, radius, endPosition) => {
+  if (points.length < 2) {
+    return '';
+  }
+
+  // console.trace('here', points);
+  const path = [];
+  const startPoint = points[0];
+
+  path.push(`M ${startPoint.x},${startPoint.y}`);
+
+  for (let i = 1; i < points.length - 1; i++) {
+    const currPoint = points[i];
+    const nextPoint = points[i + 1];
+    const prevPoint = points[i - 1];
+
+    // Calculate vectors
+    const v1 = { x: currPoint.x - prevPoint.x, y: currPoint.y - prevPoint.y };
+    const v2 = { x: nextPoint.x - currPoint.x, y: nextPoint.y - currPoint.y };
+
+    // Normalize vectors
+    const v1Length = Math.hypot(v1.x, v1.y);
+    const v2Length = Math.hypot(v2.x, v2.y);
+    const v1Normalized = { x: v1.x / v1Length, y: v1.y / v1Length };
+    const v2Normalized = { x: v2.x / v2Length, y: v2.y / v2Length };
+
+    // Calculate tangent points
+    const tangentLength = Math.min(radius, v1Length / 2, v2Length / 2);
+    const tangent1 = {
+      x: currPoint.x - v1Normalized.x * tangentLength,
+      y: currPoint.y - v1Normalized.y * tangentLength,
+    };
+    const tangent2 = {
+      x: currPoint.x + v2Normalized.x * tangentLength,
+      y: currPoint.y + v2Normalized.y * tangentLength,
+    };
+
+    if (endPosition) {
+      const { bottomY, leftX, rightX, topY } = endPosition;
+      if (startPoint.pos === 'b' && tangent1.y > topY) {
+        tangent1.y = topY;
+        tangent2.y = topY;
+        currPoint.y = topY;
+      }
+      if (startPoint.pos === 't' && tangent1.y < bottomY) {
+        tangent1.y = bottomY;
+        tangent2.y = bottomY;
+        currPoint.y = bottomY;
+      }
+      if (startPoint.pos === 'l' && tangent1.x < rightX) {
+        tangent1.x = rightX;
+        tangent2.x = rightX;
+        currPoint.x = rightX;
+      }
+      if (startPoint.pos === 'r' && tangent1.x > leftX) {
+        tangent1.x = leftX;
+        tangent2.x = leftX;
+        currPoint.x = leftX;
+      }
+      if (tangent2.x && tangent2.y && tangent1.x && tangent1.y) {
+        path.push(
+          `L ${tangent1.x},${tangent1.y}`,
+          `Q ${currPoint.x},${currPoint.y} ${tangent2.x},${tangent2.y}`
+        );
+      }
+    } else {
+      if (tangent2.x && tangent2.y && tangent1.x && tangent1.y) {
+        path.push(
+          `L ${tangent1.x},${tangent1.y}`,
+          `Q ${currPoint.x},${currPoint.y} ${tangent2.x},${tangent2.y}`
+        );
+      }
+    }
+  }
+  // Last point
+  const lastPoint = points[points.length - 1];
+  if (endPosition) {
+    if (startPoint.pos === 'b') {
+      if (endPosition?.topY && points[1].y > endPosition?.topY && points[2].y > endPosition?.topY) {
+        points[1].y = endPosition?.topY;
+        points[2].y = endPosition?.topY;
+      }
+      path.push(`L ${lastPoint.x},${endPosition.topY}`);
+    }
+    if (startPoint.pos === 't') {
+      if (points[1].y < endPosition.bottomY) {
+        points[1].y = endPosition.bottomY;
+        points[2].y = endPosition.bottomY;
+      }
+      path.push(`L ${lastPoint.x},${endPosition.bottomY}`);
+    }
+    if (startPoint.pos === 'l') {
+      path.push(`L ${endPosition.rightX},${lastPoint.y}`);
+    }
+    if (startPoint.pos === 'r') {
+      path.push(`L ${endPosition.leftX},${lastPoint.y}`);
+    }
+  } else {
+    path.push(`L ${lastPoint.x},${lastPoint.y}`);
+  }
+  return path.join(' ');
 };
 
 export const insertEdge = function (elem, edge, clusterDb, diagramType, startNode, endNode, id) {
@@ -407,8 +600,12 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  lineData = adjustForArrowHeads(lineData);
-  // lineData = fixCorners(lineData);
+  lineData = adjustForArrowHeads(lineData, 4, edge.id === 'L_n4_C_10_0');
+  lineData = fixCorners(lineData);
+  // if (edge.id === 'L_n4_C_10_0') {
+  //   console.log('APA14 lineData', lineData);
+  // }
+  // lineData = adjustForArrowHeads(lineData);
   let curve = curveBasis;
   // let curve = curveLinear;
   if (edge.curve) {
@@ -417,6 +614,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
   const { x, y } = getLineFunctionsWithOffset(edge);
   const lineFunction = line().x(x).y(y).curve(curve);
+  // const lineFunction = line().curve(curve);
 
   let strokeClasses;
   switch (edge.thickness) {
@@ -447,6 +645,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
   let svgPath;
   let linePath = lineFunction(lineData);
+  // let linePath = generateRoundedPath(lineData, 5);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
@@ -478,16 +677,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
   // DEBUG code, DO NOT REMOVE
   // adds a red circle at each edge coordinate
-  // cornerPoints.forEach((point) => {
-  //   elem
-  //     .append('circle')
-  //     .style('stroke', 'blue')
-  //     .style('fill', 'blue')
-  //     .attr('r', 3)
-  //     .attr('cx', point.x)
-  //     .attr('cy', point.y);
-  // });
-  // lineData.forEach((point) => {
+  // points.forEach((point) => {
   //   elem
   //     .append('circle')
   //     .style('stroke', 'red')

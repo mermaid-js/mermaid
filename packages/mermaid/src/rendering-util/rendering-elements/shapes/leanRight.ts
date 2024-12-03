@@ -51,13 +51,58 @@ export async function lean_right<T extends SVGGraphicsElement>(parent: D3Selecti
   updateNodeBounds(node, polygon);
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    const w = bounds.width;
+    const h = bounds.height;
+    const dx = h / 2;
+    const z = w - h;
+    // (w = dx+z+dx)
+    const points = [
+      { x: -dx, y: 0 },
+      { x: z, y: 0 },
+      { x: z + dx, y: -h },
+      { x: 0, y: -h },
+    ];
+
+    const res = intersect.polygon(bounds, points, point);
+    // if (node.id === 'C') {
+    //   console.log(
+    //     'APA14!',
+    //     bounds.x,
+    //     bounds.x,
+    //     bounds.width,
+    //     '\nw:',
+    //     w,
+    //     points,
+    //     '\nExternal point: ',
+    //     '(',
+    //     point.x,
+    //     point.y,
+    //     ')\nIntersection:',
+    //     res
+    //   );
+    // }
+    return { x: res.x - 0.5, y: res.y - 0.5 };
   };
 
-  node.intersect = function (point) {
-    return intersect.polygon(node, points, point);
+  node.intersect = function (point: Point) {
+    const res = intersect.polygon(node, points, point);
+    // if (node.id === 'C') {
+    //   console.log(
+    //     'APA14!!',
+    //     node.x,
+    //     node.y,
+    //     '\nw:',
+    //     node.width,
+    //     points,
+    //     '\nExternal point: ',
+    //     '(',
+    //     point.x,
+    //     point.y,
+    //     ')\nIntersection:',
+    //     res
+    //   );
+    // }
+    return res;
   };
 
   return shapeSvg;

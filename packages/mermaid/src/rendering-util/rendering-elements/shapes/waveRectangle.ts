@@ -12,6 +12,14 @@ import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import type { Bounds, Point } from '../../../types.js';
 
+function getPoints(w: number, finalH: number, waveAmplitude: number) {
+  return [
+    { x: -w / 2, y: finalH / 2 },
+    ...generateFullSineWavePoints(-w / 2, finalH / 2, w / 2, finalH / 2, waveAmplitude, 1),
+    { x: w / 2, y: -finalH / 2 },
+    ...generateFullSineWavePoints(w / 2, -finalH / 2, -w / 2, -finalH / 2, waveAmplitude, -1),
+  ];
+}
 export async function waveRectangle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
@@ -53,12 +61,7 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
     options.fillStyle = 'solid';
   }
 
-  const points = [
-    { x: -w / 2, y: finalH / 2 },
-    ...generateFullSineWavePoints(-w / 2, finalH / 2, w / 2, finalH / 2, waveAmplitude, 1),
-    { x: w / 2, y: -finalH / 2 },
-    ...generateFullSineWavePoints(w / 2, -finalH / 2, -w / 2, -finalH / 2, waveAmplitude, -1),
-  ];
+  const points = getPoints(w, finalH, waveAmplitude);
 
   const waveRectPath = createPathFromPoints(points);
   const waveRectNode = rc.path(waveRectPath, options);
@@ -78,9 +81,14 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
   updateNodeBounds(node, waveRect);
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    const w = bounds.width;
+    const h = bounds.height;
+
+    const waveAmplitude = Math.min(h * 0.2, h / 4);
+    const finalH = h + waveAmplitude * 2;
+
+    const points = getPoints(w, finalH, waveAmplitude);
+    return intersect.polygon(node, points, point);
   };
 
   node.intersect = function (point) {

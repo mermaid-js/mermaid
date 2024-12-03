@@ -57,7 +57,7 @@ function intersectLine(p1, p2, q1, q2) {
     num = a2 * c1 - a1 * c2;
     const y = num < 0 ? (num - offset) / denom : (num + offset) / denom;
     // console.log(
-    //   'APA30 intersectLine intersection',
+    //   'APA13 intersectLine intersection',
     //   '\np1: (',
     //   p1.x,
     //   p1.y,

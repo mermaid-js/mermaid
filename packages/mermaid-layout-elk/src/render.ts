@@ -592,9 +592,10 @@ export const render = async (
       setIncludeChildrenPolicy(target, ancestorId);
     }
   });
-
+  // const copy = JSON.parse(JSON.stringify({ ...elkGraph }));
+  // console.log('APA13 layout before', copy);
   const g = await elk.layout(elkGraph);
-
+  // console.log('APA13 layout', JSON.parse(JSON.stringify(g)));
   // debugger;
   await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
   g.edges?.map(
@@ -683,6 +684,18 @@ export const render = async (
         }
 
         if (startNode.calcIntersect) {
+          // console.log(
+          //   'APA13 calculating start intersection start node',
+          //   startNode.id,
+          //   startNode.x,
+          //   startNode.y,
+          //   'w:',
+          //   startNode.width,
+          //   'h:',
+          //   startNode.height,
+          //   '\nPos',
+          //   edge.points[0]
+          // );
           const intersection = startNode.calcIntersect(
             {
               x: startNode.offset.posX + startNode.width / 2,
@@ -707,9 +720,18 @@ export const render = async (
             },
             edge.points[edge.points.length - 1]
           );
+          // if (edge.id === 'L_n4_C_10_0') {
+          // console.log('APA14 lineData', edge.points, 'intersection:', intersection);
+          // console.log(
+          //   'APA14! calculating end intersection\ndistance:',
+          //   distance(intersection, edge.points[edge.points.length - 1])
+          // );
+          // }
 
           if (distance(intersection, edge.points[edge.points.length - 1]) > epsilon) {
+            // console.log('APA13! distance ok\nintersection:', intersection);
             edge.points.push(intersection);
+            // console.log('APA13! distance ok\npoints:', edge.points);
           }
         }
 

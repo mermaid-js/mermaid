@@ -61,9 +61,7 @@ export function forkJoin<T extends SVGGraphicsElement>(
     node.height += padding / 2 || 0;
   }
   node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
+    return intersect.rect(bounds, point);
   };
 
   node.intersect = function (point) {
