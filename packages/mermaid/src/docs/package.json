@@ -17,9 +17,9 @@
   },
   "dependencies": {
     "@mdi/font": "^7.0.0",
-    "@vueuse/core": "^10.9.0",
+    "@vueuse/core": "^12.0.0",
     "font-awesome": "^4.7.0",
-    "jiti": "^1.21.0",
+    "jiti": "^2.0.0",
     "mermaid": "workspace:^",
     "vue": "^3.4.21"
   },
@@ -33,7 +33,7 @@
     "pathe": "^1.1.2",
     "unocss": "^0.59.0",
     "unplugin-vue-components": "^0.26.0",
-    "vite": "^5.0.0",
+    "vite": "^6.0.0",
     "vite-plugin-pwa": "^0.19.7",
     "vitepress": "1.1.4",
     "workbox-window": "^7.0.0"
