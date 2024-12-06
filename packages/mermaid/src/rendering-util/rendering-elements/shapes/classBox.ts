@@ -18,7 +18,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   // Treat node as classNode
   const classNode = node as unknown as ClassNode;
   classNode.annotations = classNode.annotations ?? [];
-  classNode.members = classNode.members ?? [];
+  classNode.attributes = classNode.attributes ?? [];
   classNode.methods = classNode.methods ?? [];
 
   const { shapeSvg, bbox } = await textHelper(parent, node, config, useHtmlLabels, GAP);
@@ -35,7 +35,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   }
 
   const renderExtraBox =
-    classNode.members.length === 0 &&
+    classNode.attributes.length === 0 &&
     classNode.methods.length === 0 &&
     !config.class?.hideEmptyMembersBox;
 
@@ -51,9 +51,9 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
 
   const w = bbox.width;
   let h = bbox.height;
-  if (classNode.members.length === 0 && classNode.methods.length === 0) {
+  if (classNode.attributes.length === 0 && classNode.methods.length === 0) {
     h += GAP;
-  } else if (classNode.members.length > 0 && classNode.methods.length === 0) {
+  } else if (classNode.attributes.length > 0 && classNode.methods.length === 0) {
     h += GAP * 2;
   }
   const x = -w / 2;
@@ -66,7 +66,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
       PADDING -
       (renderExtraBox
         ? PADDING
-        : classNode.members.length === 0 && classNode.methods.length === 0
+        : classNode.attributes.length === 0 && classNode.methods.length === 0
           ? -PADDING / 2
           : 0),
     w + 2 * PADDING,
@@ -74,7 +74,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
       2 * PADDING +
       (renderExtraBox
         ? PADDING * 2
-        : classNode.members.length === 0 && classNode.methods.length === 0
+        : classNode.attributes.length === 0 && classNode.methods.length === 0
           ? -PADDING
           : 0),
     options
@@ -107,7 +107,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
       PADDING -
       (renderExtraBox
         ? PADDING
-        : classNode.members.length === 0 && classNode.methods.length === 0
+        : classNode.attributes.length === 0 && classNode.methods.length === 0
           ? -PADDING / 2
           : 0);
     if (!useHtmlLabels) {
@@ -138,11 +138,11 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   const labelGroupHeight =
     (shapeSvg.select('.label-group').node() as SVGGraphicsElement).getBBox().height -
       (renderExtraBox ? PADDING / 2 : 0) || 0;
-  const membersGroupHeight =
-    (shapeSvg.select('.members-group').node() as SVGGraphicsElement).getBBox().height -
+  const attributeGroupHeight =
+    (shapeSvg.select('.attribute-group').node() as SVGGraphicsElement).getBBox().height -
       (renderExtraBox ? PADDING / 2 : 0) || 0;
   // First line (under label)
-  if (classNode.members.length > 0 || classNode.methods.length > 0 || renderExtraBox) {
+  if (classNode.attributes.length > 0 || classNode.methods.length > 0 || renderExtraBox) {
     const roughLine = rc.line(
       rectBBox.x,
       annotationGroupHeight + labelGroupHeight + y + PADDING,
@@ -154,13 +154,13 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
     line.attr('class', 'divider').attr('style', styles);
   }
 
-  // Second line (under members)
-  if (renderExtraBox || classNode.members.length > 0 || classNode.methods.length > 0) {
+  // Second line (under attributes)
+  if (renderExtraBox || classNode.attributes.length > 0 || classNode.methods.length > 0) {
     const roughLine = rc.line(
       rectBBox.x,
-      annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + GAP * 2 + PADDING,
+      annotationGroupHeight + labelGroupHeight + attributeGroupHeight + y + GAP * 2 + PADDING,
       rectBBox.x + rectBBox.width,
-      annotationGroupHeight + labelGroupHeight + membersGroupHeight + y + PADDING + GAP * 2,
+      annotationGroupHeight + labelGroupHeight + attributeGroupHeight + y + PADDING + GAP * 2,
       options
     );
     const line = shapeSvg.insert(() => roughLine);
