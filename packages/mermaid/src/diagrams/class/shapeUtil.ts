@@ -107,6 +107,7 @@ async function addText<T extends SVGGraphicsElement>(
     'useHtmlLabels' in node ? node.useHtmlLabels : (evaluate(config.htmlLabels) ?? true);
 
   let textContent = '';
+
   // Support regular node type (.label) and classNodes (.text)
   if ('text' in node) {
     textContent = node.text ?? '';
