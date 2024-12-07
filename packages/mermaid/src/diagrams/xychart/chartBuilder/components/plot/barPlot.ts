@@ -9,7 +9,8 @@ export class BarPlot {
     private yAxis: Axis,
     private orientation: XYChartConfig['chartOrientation'],
     private plotIndex: number,
-    private customBarWidth: number
+    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+    private customBarWidth: number = 0
   ) {}
 
   getDrawableElement(): DrawableElem[] {
