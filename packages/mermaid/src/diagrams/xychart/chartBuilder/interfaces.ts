@@ -97,6 +97,7 @@ export interface XYChartConfig {
   yAxis: XYChartAxisConfig;
   chartOrientation: 'vertical' | 'horizontal';
   plotReservedSpacePercent: number;
+  customBarWidth?: number;
 }
 
 export interface XYChartData {

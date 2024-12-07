@@ -77,7 +77,8 @@ export class BasePlot implements Plot {
               this.xAxis,
               this.yAxis,
               this.chartConfig.chartOrientation,
-              i
+              i,
+              this.chartConfig.customBarWidth ?? 0
             );
             drawableElem.push(...barPlot.getDrawableElement());
           }
