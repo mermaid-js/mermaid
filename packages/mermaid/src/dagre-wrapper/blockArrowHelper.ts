@@ -42,9 +42,6 @@ export const getArrowPoints = (
   // Padding to use, half of the node padding.
   const padding = node.padding / 2;
 
-  // Initialize an empty array to store points for the arrow.
-  const points = [];
-
   if (
     directions.has('right') &&
     directions.has('left') &&

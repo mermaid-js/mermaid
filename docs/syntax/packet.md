@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/packet.md](../../packages/mermaid/src/docs/syntax/packet.md).
 
-# Packet Diagram (v\<MERMAID_RELEASE_VERSION>+)
+# Packet Diagram (v11.0.0+)
 
 ## Introduction
 
@@ -12,7 +12,7 @@ A packet diagram is a visual representation used to illustrate the structure and
 
 ## Usage
 
-This diagram type is particularly useful for network engineers, educators, and students who require a clear and concise way to represent the structure of network packets.
+This diagram type is particularly useful for developers, network engineers, educators, and students who require a clear and concise way to represent the structure of network packets.
 
 ## Syntax
 

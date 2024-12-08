@@ -4,7 +4,6 @@
     "rootDir": ".",
     "outDir": "./dist",
     "allowJs": false,
-    "preserveSymlinks": false,
     "strictPropertyInitialization": false
   },
   "include": ["./src/**/*.ts", "./tests/**/*.ts"],

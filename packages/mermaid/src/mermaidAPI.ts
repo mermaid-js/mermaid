@@ -1,36 +1,31 @@
 /**
- * This is the API to be used when optionally handling the integration with the web page, instead of
- * using the default integration provided by mermaid.js.
- *
- * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
- * definition as text, renders the graph/diagram and returns an svg element for the graph.
- *
- * It is then up to the user of the API to make use of the svg, either insert it somewhere in the
- * page or do something completely different.
- *
- * In addition to the render function, a number of behavioral configuration options are available.
+ * This file contains functions that are used internally by mermaid
+ * and is not intended to be used by the end user.
  */
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
+import DOMPurify from 'dompurify';
+import isEmpty from 'lodash-es/isEmpty.js';
 import { version } from '../package.json';
+import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
+import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
+import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
+import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
+import { preprocessDiagram } from './preprocess.js';
 import getStyles from './styles.js';
 import theme from './themes/index.js';
-import DOMPurify from 'dompurify';
-import type { MermaidConfig } from './config.type.js';
-import { evaluate } from './diagrams/common/common.js';
-import isEmpty from 'lodash-es/isEmpty.js';
-import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
-import { preprocessDiagram } from './preprocess.js';
+import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 import { decodeEntities } from './utils.js';
+import { toBase64 } from './utils/base64.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -56,44 +51,6 @@ const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your brow
 const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
 
-export interface ParseOptions {
-  /**
-   * If `true`, parse will return `false` instead of throwing error when the diagram is invalid.
-   * The `parseError` function will not be called.
-   */
-  suppressErrors?: boolean;
-}
-
-export interface ParseResult {
-  /**
-   * The diagram type, e.g. 'flowchart', 'sequence', etc.
-   */
-  diagramType: string;
-}
-// This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
-export type D3Element = any;
-
-export interface RenderResult {
-  /**
-   * The svg code for the rendered graph.
-   */
-  svg: string;
-  /**
-   * The diagram type, e.g. 'flowchart', 'sequence', etc.
-   */
-  diagramType: string;
-  /**
-   * Bind function to be called after the svg has been inserted into the DOM.
-   * This is necessary for adding event listeners to the elements in the svg.
-   * ```js
-   * const { svg, bindFunctions } = mermaidAPI.render('id1', 'graph TD;A-->B');
-   * div.innerHTML = svg;
-   * bindFunctions?.(div); // To call bindFunctions only if it's present.
-   * ```
-   */
-  bindFunctions?: (element: Element) => void;
-}
-
 function processAndSetConfigs(text: string) {
   const processed = preprocessDiagram(text);
   configApi.reset();
@@ -116,9 +73,9 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
   addDiagrams();
   try {
-    const { code } = processAndSetConfigs(text);
+    const { code, config } = processAndSetConfigs(text);
     const diagram = await getDiagramFromText(code);
-    return { diagramType: diagram.type };
+    return { diagramType: diagram.type, config };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
@@ -172,7 +129,7 @@ export const createCssStyles = (
 
   // classDefs defined in the diagram text
   if (classDefs instanceof Map) {
-    const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
+    const htmlLabels = config.htmlLabels ?? config.flowchart?.htmlLabels; // TODO why specifically check the Flowchart diagram config?
 
     const cssHtmlElements = ['> *', 'span']; // TODO make a constant
     const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle', 'path']; // TODO make a constant
@@ -189,7 +146,11 @@ export const createCssStyles = (
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
       if (!isEmpty(styleClassDef.textStyles)) {
-        cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
+        cssStyles += cssImportantStyles(
+          styleClassDef.id,
+          'tspan',
+          (styleClassDef?.textStyles || []).map((s) => s.replace('color', 'fill'))
+        );
       }
     });
   }
@@ -248,14 +209,13 @@ export const cleanUpSvgCode = (
  * @param svgCode - the svg code to put inside the iFrame
  * @param svgElement - the d3 node that has the current svgElement so we can get the height from it
  * @returns  - the code with the iFrame that now contains the svgCode
- * TODO replace btoa(). Replace with  buf.toString('base64')?
  */
 export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
   const height = svgElement?.viewBox?.baseVal?.height
     ? svgElement.viewBox.baseVal.height + 'px'
     : IFRAME_HEIGHT;
-  const base64encodedSrc = btoa('<body style="' + IFRAME_BODY_STYLE + '">' + svgCode + '</body>');
-  return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
+  const base64encodedSrc = toBase64(`<body style="${IFRAME_BODY_STYLE}">${svgCode}</body>`);
+  return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
 </iframe>`;
 };
@@ -495,6 +455,7 @@ const render = async function (
     svgCode = DOMPurify.sanitize(svgCode, {
       ADD_TAGS: DOMPURIFY_TAGS,
       ADD_ATTR: DOMPURIFY_ATTR,
+      HTML_INTEGRATION_POINTS: { foreignobject: true },
     });
   }
 
@@ -514,9 +475,10 @@ const render = async function (
 };
 
 /**
- * @param  options - Initial Mermaid options
+ * @param  userOptions - Initial Mermaid options
  */
-function initialize(options: MermaidConfig = {}) {
+function initialize(userOptions: MermaidConfig = {}) {
+  const options: MermaidConfig = assignWithDepth({}, userOptions);
   // Handle legacy location of font-family configuration
   if (options?.fontFamily && !options.themeVariables?.fontFamily) {
     if (!options.themeVariables) {
@@ -568,69 +530,8 @@ function addA11yInfo(
 }
 
 /**
- * ## mermaidAPI configuration defaults
- *
- * ```ts
- *   const config = {
- *     theme: 'default',
- *     logLevel: 'fatal',
- *     securityLevel: 'strict',
- *     startOnLoad: true,
- *     arrowMarkerAbsolute: false,
- *     suppressErrorRendering: false,
- *
- *     er: {
- *       diagramPadding: 20,
- *       layoutDirection: 'TB',
- *       minEntityWidth: 100,
- *       minEntityHeight: 75,
- *       entityPadding: 15,
- *       stroke: 'gray',
- *       fill: 'honeydew',
- *       fontSize: 12,
- *       useMaxWidth: true,
- *     },
- *     flowchart: {
- *       diagramPadding: 8,
- *       htmlLabels: true,
- *       curve: 'basis',
- *     },
- *     sequence: {
- *       diagramMarginX: 50,
- *       diagramMarginY: 10,
- *       actorMargin: 50,
- *       width: 150,
- *       height: 65,
- *       boxMargin: 10,
- *       boxTextMargin: 5,
- *       noteMargin: 10,
- *       messageMargin: 35,
- *       messageAlign: 'center',
- *       mirrorActors: true,
- *       bottomMarginAdj: 1,
- *       useMaxWidth: true,
- *       rightAngles: false,
- *       showSequenceNumbers: false,
- *     },
- *     gantt: {
- *       titleTopMargin: 25,
- *       barHeight: 20,
- *       barGap: 4,
- *       topPadding: 50,
- *       leftPadding: 75,
- *       gridLineStartPadding: 35,
- *       fontSize: 11,
- *       fontFamily: '"Open Sans", sans-serif',
- *       numberSectionStyles: 4,
- *       axisFormat: '%Y-%m-%d',
- *       topAxis: false,
- *       displayMode: '',
- *     },
- *   };
- *   mermaid.initialize(config);
- * ```
+ * @internal - Use mermaid.function instead of mermaid.mermaidAPI.function
  */
-
 export const mermaidAPI = Object.freeze({
   render,
   parse,

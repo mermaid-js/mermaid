@@ -10,7 +10,6 @@ describe('XSS', () => {
     cy.wait(1000).then(() => {
       cy.get('.mermaid').should('exist');
     });
-    cy.get('svg');
   });
 
   it('should not allow tags in the css', () => {

@@ -1,8 +1,11 @@
 import { select } from 'd3';
-import utils from '../../utils.js';
+import utils, { getEdgeId } from '../../utils.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
+import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
+import type { Node, Edge } from '../../rendering-util/types.js';
 import { log } from '../../logger.js';
+import * as yaml from 'js-yaml';
 import {
   setAccTitle,
   getAccTitle,
@@ -12,17 +15,26 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import type { FlowVertex, FlowClass, FlowSubGraph, FlowText, FlowEdge, FlowLink } from './types.js';
+import type {
+  FlowVertex,
+  FlowClass,
+  FlowSubGraph,
+  FlowText,
+  FlowEdge,
+  FlowLink,
+  FlowVertexTypeParam,
+} from './types.js';
+import type { NodeMetaData } from '../../types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
 let config = getConfig();
-let vertices: Map<string, FlowVertex> = new Map();
+let vertices = new Map<string, FlowVertex>();
 let edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
-let classes: Map<string, FlowClass> = new Map();
+let classes = new Map<string, FlowClass>();
 let subGraphs: FlowSubGraph[] = [];
-let subGraphLookup: Map<string, FlowSubGraph> = new Map();
-let tooltips: Map<string, string> = new Map();
+let subGraphLookup = new Map<string, FlowSubGraph>();
+let tooltips = new Map<string, string>();
 let subCount = 0;
 let firstGraphFlag = true;
 let direction: string;
@@ -50,17 +62,18 @@ export const lookUpDomId = function (id: string) {
 
 /**
  * Function called by parser when a node definition has been found
- *
  */
 export const addVertex = function (
   id: string,
   textObj: FlowText,
-  type: 'group',
+  type: FlowVertexTypeParam,
   style: string[],
   classes: string[],
   dir: string,
-  props = {}
+  props = {},
+  shapeData: any
 ) {
+  // console.log('addVertex', id, shapeData);
   if (!id || id.trim().length === 0) {
     return;
   }
@@ -84,7 +97,7 @@ export const addVertex = function (
     txt = sanitizeText(textObj.text.trim());
     vertex.labelType = textObj.type;
     // strip quotes if string starts and ends with a quote
-    if (txt[0] === '"' && txt[txt.length - 1] === '"') {
+    if (txt.startsWith('"') && txt.endsWith('"')) {
       txt = txt.substring(1, txt.length - 1);
     }
     vertex.text = txt;
@@ -114,6 +127,60 @@ export const addVertex = function (
   } else if (props !== undefined) {
     Object.assign(vertex.props, props);
   }
+
+  if (shapeData !== undefined) {
+    let yamlData;
+    // detect if shapeData contains a newline character
+    // console.log('shapeData', shapeData);
+    if (!shapeData.includes('\n')) {
+      // console.log('yamlData shapeData has no new lines', shapeData);
+      yamlData = '{\n' + shapeData + '\n}';
+    } else {
+      // console.log('yamlData shapeData has new lines', shapeData);
+      yamlData = shapeData + '\n';
+    }
+    // console.log('yamlData', yamlData);
+    const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+    if (doc.shape) {
+      if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
+        throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
+      } else if (!isValidShape(doc.shape)) {
+        throw new Error(`No such shape: ${doc.shape}.`);
+      }
+      vertex.type = doc?.shape;
+    }
+
+    if (doc?.label) {
+      vertex.text = doc?.label;
+    }
+    if (doc?.icon) {
+      vertex.icon = doc?.icon;
+      if (!doc.label?.trim() && vertex.text === id) {
+        vertex.text = '';
+      }
+    }
+    if (doc?.form) {
+      vertex.form = doc?.form;
+    }
+    if (doc?.pos) {
+      vertex.pos = doc?.pos;
+    }
+    if (doc?.img) {
+      vertex.img = doc?.img;
+      if (!doc.label?.trim() && vertex.text === id) {
+        vertex.text = '';
+      }
+    }
+    if (doc?.constraint) {
+      vertex.constraint = doc.constraint;
+    }
+    if (doc.w) {
+      vertex.assetWidth = Number(doc.w);
+    }
+    if (doc.h) {
+      vertex.assetHeight = Number(doc.h);
+    }
+  }
 };
 
 /**
@@ -132,7 +199,7 @@ export const addSingleLink = function (_start: string, _end: string, type: any) 
     edge.text = sanitizeText(linkTextObj.text.trim());
 
     // strip quotes if string starts and ends with a quote
-    if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
+    if (edge.text.startsWith('"') && edge.text.endsWith('"')) {
       edge.text = edge.text.substring(1, edge.text.length - 1);
     }
     edge.labelType = linkTextObj.type;
@@ -200,10 +267,17 @@ export const updateLink = function (positions: ('default' | number)[], style: st
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
-      if (utils.isSubstringInArray('fill', style) === -1) {
-        style.push('fill:none');
-      }
+      // if (utils.isSubstringInArray('fill', style) === -1) {
+      //   style.push('fill:none');
+      // }
       edges[pos].style = style;
+      // if edges[pos].style does have fill not set, set it to none
+      if (
+        (edges[pos]?.style?.length ?? 0) > 0 &&
+        !edges[pos]?.style?.some((s) => s?.startsWith('fill'))
+      ) {
+        edges[pos]?.style?.push('fill:none');
+      }
     }
   });
 };
@@ -218,8 +292,8 @@ export const addClass = function (ids: string, style: string[]) {
 
     if (style !== undefined && style !== null) {
       style.forEach(function (s) {
-        if (s.match('color')) {
-          const newStyle = s.replace('fill', 'bgFill').replace('color', 'fill');
+        if (/color/.exec(s)) {
+          const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
           classNode.textStyles.push(newStyle);
         }
         classNode.styles.push(s);
@@ -234,16 +308,16 @@ export const addClass = function (ids: string, style: string[]) {
  */
 export const setDirection = function (dir: string) {
   direction = dir;
-  if (direction.match(/.*</)) {
+  if (/.*</.exec(direction)) {
     direction = 'RL';
   }
-  if (direction.match(/.*\^/)) {
+  if (/.*\^/.exec(direction)) {
     direction = 'BT';
   }
-  if (direction.match(/.*>/)) {
+  if (/.*>/.exec(direction)) {
     direction = 'LR';
   }
-  if (direction.match(/.*v/)) {
+  if (/.*v/.exec(direction)) {
     direction = 'TB';
   }
   if (direction === 'TD') {
@@ -297,7 +371,7 @@ const setClickFun = function (id: string, functionName: string, functionArgs: st
       let item = argList[i].trim();
       /* Removes all double quotes at the start and end of an argument */
       /* This preserves all starting and ending whitespace inside */
-      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+      if (item.startsWith('"') && item.endsWith('"')) {
         item = item.substr(1, item.length - 2);
       }
       argList[i] = item;
@@ -417,7 +491,6 @@ const setupToolTips = function (element: Element) {
       }
       const rect = (this as Element)?.getBoundingClientRect();
 
-      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
         .text(el.attr('title'))
@@ -427,7 +500,6 @@ const setupToolTips = function (element: Element) {
       el.classed('hover', true);
     })
     .on('mouseout', function () {
-      // @ts-ignore TODO: fix this
       tooltipElem.transition().duration(500).style('opacity', 0);
       const el = select(this);
       el.classed('hover', false);
@@ -469,7 +541,7 @@ export const addSubGraph = function (
 ) {
   let id: string | undefined = _id.text.trim();
   let title = _title.text;
-  if (_id === _title && _title.text.match(/\s/)) {
+  if (_id === _title && /\s/.exec(_title.text)) {
     id = undefined;
   }
 
@@ -503,7 +575,7 @@ export const addSubGraph = function (
     }
   }
 
-  id = id || 'subGraph' + subCount;
+  id = id ?? 'subGraph' + subCount;
   title = title || '';
   title = sanitizeText(title);
   subCount = subCount + 1;
@@ -651,21 +723,21 @@ const destructEndLink = (_str: string) => {
   switch (str.slice(-1)) {
     case 'x':
       type = 'arrow_cross';
-      if (str[0] === 'x') {
+      if (str.startsWith('x')) {
         type = 'double_' + type;
         line = line.slice(1);
       }
       break;
     case '>':
       type = 'arrow_point';
-      if (str[0] === '<') {
+      if (str.startsWith('<')) {
         type = 'double_' + type;
         line = line.slice(1);
       }
       break;
     case 'o':
       type = 'arrow_circle';
-      if (str[0] === 'o') {
+      if (str.startsWith('o')) {
         type = 'double_' + type;
         line = line.slice(1);
       }
@@ -675,11 +747,11 @@ const destructEndLink = (_str: string) => {
   let stroke = 'normal';
   let length = line.length - 1;
 
-  if (line[0] === '=') {
+  if (line.startsWith('=')) {
     stroke = 'thick';
   }
 
-  if (line[0] === '~') {
+  if (line.startsWith('~')) {
     stroke = 'invisible';
   }
 
@@ -728,14 +800,12 @@ export const destructLink = (_str: string, _startStr: string) => {
 
 // Todo optimizer this by caching existing nodes
 const exists = (allSgs: FlowSubGraph[], _id: string) => {
-  let res = false;
-  allSgs.forEach((sg) => {
-    const pos = sg.nodes.indexOf(_id);
-    if (pos >= 0) {
-      res = true;
+  for (const sg of allSgs) {
+    if (sg.nodes.includes(_id)) {
+      return true;
     }
-  });
-  return res;
+  }
+  return false;
 };
 /**
  * Deletes an id from all subgraphs
@@ -755,11 +825,210 @@ export const lex = {
   firstGraph,
 };
 
+const getTypeFromVertex = (vertex: FlowVertex): ShapeID => {
+  if (vertex.img) {
+    return 'imageSquare';
+  }
+  if (vertex.icon) {
+    if (vertex.form === 'circle') {
+      return 'iconCircle';
+    }
+    if (vertex.form === 'square') {
+      return 'iconSquare';
+    }
+    if (vertex.form === 'rounded') {
+      return 'iconRounded';
+    }
+    return 'icon';
+  }
+  switch (vertex.type) {
+    case 'square':
+    case undefined:
+      return 'squareRect';
+    case 'round':
+      return 'roundedRect';
+    case 'ellipse':
+      // @ts-expect-error -- Ellipses are broken, see https://github.com/mermaid-js/mermaid/issues/5976
+      return 'ellipse';
+    default:
+      return vertex.type;
+  }
+};
+
+const findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
+const destructEdgeType = (type: string | undefined) => {
+  let arrowTypeStart = 'none';
+  let arrowTypeEnd = 'arrow_point';
+  switch (type) {
+    case 'arrow_point':
+    case 'arrow_circle':
+    case 'arrow_cross':
+      arrowTypeEnd = type;
+      break;
+
+    case 'double_arrow_point':
+    case 'double_arrow_circle':
+    case 'double_arrow_cross':
+      arrowTypeStart = type.replace('double_', '');
+      arrowTypeEnd = arrowTypeStart;
+      break;
+  }
+  return { arrowTypeStart, arrowTypeEnd };
+};
+
+const addNodeFromVertex = (
+  vertex: FlowVertex,
+  nodes: Node[],
+  parentDB: Map<string, string>,
+  subGraphDB: Map<string, boolean>,
+  config: any,
+  look: string
+) => {
+  const parentId = parentDB.get(vertex.id);
+  const isGroup = subGraphDB.get(vertex.id) ?? false;
+
+  const node = findNode(nodes, vertex.id);
+  if (node) {
+    node.cssStyles = vertex.styles;
+    node.cssCompiledStyles = getCompiledStyles(vertex.classes);
+    node.cssClasses = vertex.classes.join(' ');
+  } else {
+    const baseNode = {
+      id: vertex.id,
+      label: vertex.text,
+      labelStyle: '',
+      parentId,
+      padding: config.flowchart?.padding || 8,
+      cssStyles: vertex.styles,
+      cssCompiledStyles: getCompiledStyles(['default', 'node', ...vertex.classes]),
+      cssClasses: 'default ' + vertex.classes.join(' '),
+      dir: vertex.dir,
+      domId: vertex.domId,
+      look,
+      link: vertex.link,
+      linkTarget: vertex.linkTarget,
+      tooltip: getTooltip(vertex.id),
+      icon: vertex.icon,
+      pos: vertex.pos,
+      img: vertex.img,
+      assetWidth: vertex.assetWidth,
+      assetHeight: vertex.assetHeight,
+      constraint: vertex.constraint,
+    };
+    if (isGroup) {
+      nodes.push({
+        ...baseNode,
+        isGroup: true,
+        shape: 'rect',
+      });
+    } else {
+      nodes.push({
+        ...baseNode,
+        isGroup: false,
+        shape: getTypeFromVertex(vertex),
+      });
+    }
+  }
+};
+
+function getCompiledStyles(classDefs: string[]) {
+  let compiledStyles: string[] = [];
+  for (const customClass of classDefs) {
+    const cssClass = classes.get(customClass);
+    if (cssClass?.styles) {
+      compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
+    }
+    if (cssClass?.textStyles) {
+      compiledStyles = [...compiledStyles, ...(cssClass.textStyles ?? [])].map((s) => s.trim());
+    }
+  }
+  return compiledStyles;
+}
+
+export const getData = () => {
+  const config = getConfig();
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  const subGraphs = getSubGraphs();
+  const parentDB = new Map<string, string>();
+  const subGraphDB = new Map<string, boolean>();
+
+  // Setup the subgraph data for adding nodes
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
+    if (subGraph.nodes.length > 0) {
+      subGraphDB.set(subGraph.id, true);
+    }
+    for (const id of subGraph.nodes) {
+      parentDB.set(id, subGraph.id);
+    }
+  }
+
+  // Data is setup, add the nodes
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
+    const subGraph = subGraphs[i];
+    nodes.push({
+      id: subGraph.id,
+      label: subGraph.title,
+      labelStyle: '',
+      parentId: parentDB.get(subGraph.id),
+      padding: 8,
+      cssCompiledStyles: getCompiledStyles(subGraph.classes),
+      cssClasses: subGraph.classes.join(' '),
+      shape: 'rect',
+      dir: subGraph.dir,
+      isGroup: true,
+      look: config.look,
+    });
+  }
+
+  const n = getVertices();
+  n.forEach((vertex) => {
+    addNodeFromVertex(vertex, nodes, parentDB, subGraphDB, config, config.look || 'classic');
+  });
+
+  const e = getEdges();
+  e.forEach((rawEdge, index) => {
+    const { arrowTypeStart, arrowTypeEnd } = destructEdgeType(rawEdge.type);
+    const styles = [...(e.defaultStyle ?? [])];
+
+    if (rawEdge.style) {
+      styles.push(...rawEdge.style);
+    }
+    const edge: Edge = {
+      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }),
+      start: rawEdge.start,
+      end: rawEdge.end,
+      type: rawEdge.type ?? 'normal',
+      label: rawEdge.text,
+      labelpos: 'c',
+      thickness: rawEdge.stroke,
+      minlen: rawEdge.length,
+      classes:
+        rawEdge?.stroke === 'invisible'
+          ? ''
+          : 'edge-thickness-normal edge-pattern-solid flowchart-link',
+      arrowTypeStart: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeStart,
+      arrowTypeEnd: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeEnd,
+      arrowheadStyle: 'fill: #333',
+      labelStyle: styles,
+      style: styles,
+      pattern: rawEdge.stroke,
+      look: config.look,
+    };
+    edges.push(edge);
+  });
+
+  return { nodes, edges, other: {}, config };
+};
+
 export default {
   defaultConfig: () => defaultConfig.flowchart,
   setAccTitle,
   getAccTitle,
   getAccDescription,
+  getData,
   setAccDescription,
   addVertex,
   lookUpDomId,

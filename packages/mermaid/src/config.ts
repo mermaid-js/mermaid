@@ -189,8 +189,11 @@ export const addDirective = (directive: MermaidConfig) => {
   sanitizeDirective(directive);
 
   // If the directive has a fontFamily, but no themeVariables, add the fontFamily to the themeVariables
-  if (directive.fontFamily && (!directive.themeVariables || !directive.themeVariables.fontFamily)) {
-    directive.themeVariables = { fontFamily: directive.fontFamily };
+  if (directive.fontFamily && !directive.themeVariables?.fontFamily) {
+    directive.themeVariables = {
+      ...directive.themeVariables,
+      fontFamily: directive.fontFamily,
+    };
   }
 
   directives.push(directive);

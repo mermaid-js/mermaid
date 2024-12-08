@@ -13,7 +13,7 @@ describe('Sankey diagram', function () {
       sankey.parser.yy.clear();
     });
 
-    it('parses csv', async () => {
+    it('parses csv', () => {
       const csv = path.resolve(__dirname, './energy.csv');
       const data = fs.readFileSync(csv, 'utf8');
       const graphDefinition = prepareTextForParsing(cleanupComments('sankey-beta\n\n ' + data));

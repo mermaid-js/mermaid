@@ -61,9 +61,24 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: 'default' | 'forest' | 'dark' | 'neutral' | 'null';
+  theme?: 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null';
   themeVariables?: any;
   themeCSS?: string;
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn';
+  /**
+   * Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
+   *
+   */
+  handDrawnSeed?: number;
+  /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
   /**
    * The maximum allowed size of the users text diagram
    */
@@ -73,6 +88,28 @@ export interface MermaidConfig {
    *
    */
   maxEdges?: number;
+  elk?: {
+    /**
+     * Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+     *
+     */
+    mergeEdges?: boolean;
+    /**
+     * Elk specific option affecting how nodes are placed.
+     *
+     */
+    nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
+    /**
+     * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
+     *
+     */
+    cycleBreakingStrategy?:
+      | 'GREEDY'
+      | 'DEPTH_FIRST'
+      | 'INTERACTIVE'
+      | 'MODEL_ORDER'
+      | 'GREEDY_MODEL_ORDER';
+  };
   darkMode?: boolean;
   htmlLabels?: boolean;
   /**
@@ -104,10 +141,7 @@ export interface MermaidConfig {
   arrowMarkerAbsolute?: boolean;
   /**
    * This option controls which `currentConfig` keys are considered secure and
-   * can only be changed via call to `mermaidAPI.initialize`.
-   * Calls to `mermaidAPI.reinitialize` cannot make changes to the secure keys
-   * in the current `currentConfig`.
-   *
+   * can only be changed via call to `mermaid.initialize`.
    * This prevents malicious graph directives from overriding a site's default security.
    *
    */
@@ -157,7 +191,9 @@ export interface MermaidConfig {
   quadrantChart?: QuadrantChartConfig;
   xyChart?: XYChartConfig;
   requirement?: RequirementDiagramConfig;
+  architecture?: ArchitectureDiagramConfig;
   mindmap?: MindmapDiagramConfig;
+  kanban?: KanbanDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
@@ -681,6 +717,7 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
    */
   diagramPadding?: number;
   htmlLabels?: boolean;
+  hideEmptyMembersBox?: boolean;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -700,6 +737,8 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
   textHeight?: number;
   titleShift?: number;
   noteMargin?: number;
+  nodeSpacing?: number;
+  rankSpacing?: number;
   forkWidth?: number;
   forkHeight?: number;
   miniPadding?: number;
@@ -966,6 +1005,17 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
   line_height?: number;
 }
 /**
+ * The object containing configurations specific for architecture diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "ArchitectureDiagramConfig".
+ */
+export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  iconSize?: number;
+  fontSize?: number;
+}
+/**
  * The object containing configurations specific for mindmap diagrams
  *
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -974,6 +1024,17 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
 export interface MindmapDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   maxNodeWidth?: number;
+}
+/**
+ * The object containing configurations specific for kanban diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "KanbanDiagramConfig".
+ */
+export interface KanbanDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  sectionWidth?: number;
+  ticketBaseUrl?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

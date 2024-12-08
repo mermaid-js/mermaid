@@ -23,6 +23,9 @@
 %x href
 %x callbackname
 %x callbackargs
+%x shapeData
+%x shapeDataStr
+%x shapeDataEndBracket
 
 %%
 accTitle\s*":"\s*                               { this.begin("acc_title");return 'acc_title'; }
@@ -33,6 +36,32 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
+
+
+\@\{                                            {
+                                                    // console.log('=> shapeData', yytext);
+                                                    this.pushState("shapeData"); yytext=""; return 'SHAPE_DATA' }
+<shapeData>["]                                  {
+                                                    // console.log('=> shapeDataStr', yytext);
+                                                    this.pushState("shapeDataStr");
+                                                    return 'SHAPE_DATA';
+                                                }
+<shapeDataStr>["]                               {
+                                                    // console.log('shapeData <==', yytext);
+                                                    this.popState(); return 'SHAPE_DATA'}
+<shapeDataStr>[^\"]+                            {
+                                                    // console.log('shapeData', yytext);
+                                                    const re = /\n\s*/g;
+                                                    yytext = yytext.replace(re,"<br/>");
+                                                    return 'SHAPE_DATA'}
+<shapeData>[^}^"]+                                {
+                                                    // console.log('shapeData', yytext);
+                                                    return 'SHAPE_DATA';
+                                                }
+<shapeData>"}"                                    {
+                                                    // console.log('<== root', yytext)
+                                                    this.popState();
+                                                }
 
 /*
 ---interactivity command---
@@ -49,10 +78,11 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 <callbackargs>\)        this.popState();
 <callbackargs>[^)]*     return 'CALLBACKARGS';
 
+
 <md_string>[^`"]+       { return "MD_STR";}
 <md_string>[`]["]       { this.popState();}
 <*>["][`]               { this.begin("md_string");}
-<string>[^"]+           return "STR";
+<string>[^"]+           { return "STR"; }
 <string>["]             this.popState();
 <*>["]                  this.pushState("string");
 "style"                 return 'STYLE';
@@ -61,6 +91,8 @@ Function arguments are optional: 'call <callbackname>()' simply executes 'callba
 "interpolate"           return 'INTERPOLATE';
 "classDef"              return 'CLASSDEF';
 "class"                 return 'CLASS';
+
+
 
 /*
 ---interactivity command---
@@ -356,23 +388,38 @@ statement
 
 separator: NEWLINE | SEMI | EOF ;
 
+shapeData:
+    shapeData SHAPE_DATA
+    { $$ = $1 + $2; }
+    | SHAPE_DATA
+    { $$ = $1; }
+    ;
 
-vertexStatement: vertexStatement link node
-        { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+vertexStatement: vertexStatement link node shapeData
+        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+    | vertexStatement link node
+        { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |  vertexStatement link node spaceList
         { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
-    |node spaceList {/*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
-    |node { /*console.warn('noda', $node);*/ $$ = {stmt: $node, nodes:$node }}
+    |node spaceList { /*console.warn('vertexStatement: node spaceList', $node);*/ $$ = {stmt: $node, nodes:$node }}
+    |node shapeData {
+        /*console.warn('vertexStatement: node shapeData', $node[0], $shapeData);*/
+        yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
+        $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
+    }
+    |node { /* console.warn('vertexStatement: single node', $node); */ $$ = {stmt: $node, nodes:$node }}
     ;
 
 node: styledVertex
-        { /* console.warn('nod', $styledVertex); */ $$ = [$styledVertex];}
+        { /*console.warn('nod', $styledVertex);*/ $$ = [$styledVertex];}
+    | node shapeData spaceList AMP spaceList styledVertex
+        {  yy.addVertex($node[0],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); $$ = $node.concat($styledVertex); /*console.warn('pip2', $node[0], $styledVertex, $$);*/  }
     | node spaceList AMP spaceList styledVertex
-        { $$ = $node.concat($styledVertex); /* console.warn('pip', $node[0], $styledVertex, $$); */ }
+        { $$ = $node.concat($styledVertex); /*console.warn('pip', $node[0], $styledVertex, $$);*/  }
     ;
 
 styledVertex: vertex
-        { /* console.warn('nod', $vertex); */ $$ = $vertex;}
+        { /* console.warn('nodc', $vertex);*/ $$ = $vertex;}
     | vertex STYLE_SEPARATOR idString
         {$$ = $vertex;yy.setClass($vertex,$idString)}
     ;

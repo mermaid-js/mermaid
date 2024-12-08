@@ -1,6 +1,7 @@
 {
   "name": "@mermaid-js/mermaid-example-diagram",
   "version": "9.3.0",
+  "private": true,
   "description": "Example of external diagram module for MermaidJS.",
   "module": "dist/mermaid-example-diagram.core.mjs",
   "types": "dist/detector.d.ts",
@@ -18,9 +19,7 @@
     "example",
     "mermaid"
   ],
-  "scripts": {
-    "prepublishOnly": "pnpm -w run build"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/mermaid-js/mermaid"

@@ -33,9 +33,7 @@ const processDirectives = (code: string) => {
   const initDirective = utils.detectInit(code) ?? {};
   const wrapDirectives = utils.detectDirective(code, 'wrap');
   if (Array.isArray(wrapDirectives)) {
-    initDirective.wrap = wrapDirectives.some(({ type }) => {
-      type === 'wrap';
-    });
+    initDirective.wrap = wrapDirectives.some(({ type }) => type === 'wrap');
   } else if (wrapDirectives?.type === 'wrap') {
     initDirective.wrap = true;
   }
@@ -51,7 +49,7 @@ const processDirectives = (code: string) => {
  * @param code - The code to preprocess.
  * @returns The object containing the preprocessed code, title, and configuration.
  */
-export function preprocessDiagram(code: string): DiagramMetadata & { code: string } {
+export function preprocessDiagram(code: string) {
   const cleanedCode = cleanupText(code);
   const frontMatterResult = processFrontmatter(cleanedCode);
   const directiveResult = processDirectives(frontMatterResult.text);
@@ -61,5 +59,5 @@ export function preprocessDiagram(code: string): DiagramMetadata & { code: strin
     code,
     title: frontMatterResult.title,
     config,
-  };
+  } satisfies DiagramMetadata & { code: string };
 }

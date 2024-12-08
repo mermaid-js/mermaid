@@ -115,8 +115,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
     maxEventCount = Math.max(maxEventCount, task.events.length);
     //calculate maxEventLineLength
     let maxEventLineLengthTemp = 0;
-    for (let j = 0; j < task.events.length; j++) {
-      const event = task.events[j];
+    for (const event of task.events) {
       const eventNode = {
         descr: event,
         section: task.section,

@@ -1,4 +1,5 @@
-import { defineConfig, MarkdownOptions } from 'vitepress';
+import type { MarkdownOptions } from 'vitepress';
+import { defineConfig } from 'vitepress';
 import { version } from '../../../package.json';
 import MermaidExample from './mermaid-markdown-all.js';
 
@@ -8,8 +9,9 @@ const allMarkdownTransformers: MarkdownOptions = {
     light: 'github-light',
     dark: 'github-dark',
   },
-  config: async (md) => {
-    await MermaidExample(md);
+
+  config: (md) => {
+    MermaidExample(md);
   },
 };
 
@@ -155,6 +157,8 @@ function sidebarSyntax() {
         { text: 'XY Chart 🔥', link: '/syntax/xyChart' },
         { text: 'Block Diagram 🔥', link: '/syntax/block' },
         { text: 'Packet 🔥', link: '/syntax/packet' },
+        { text: 'Kanban 🔥', link: '/syntax/kanban' },
+        { text: 'Architecture 🔥', link: '/syntax/architecture' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -171,6 +175,7 @@ function sidebarConfig() {
         { text: 'API-Usage', link: '/config/usage' },
         { text: 'Mermaid API Configuration', link: '/config/setup/README' },
         { text: 'Mermaid Configuration Options', link: '/config/schema-docs/config' },
+        { text: 'Registering icons', link: '/config/icons' },
         { text: 'Directives', link: '/config/directives' },
         { text: 'Theming', link: '/config/theming' },
         { text: 'Math', link: '/config/math' },
@@ -228,8 +233,6 @@ function sidebarNews() {
 
 /**
  * Return a string that puts together the pagePage, a '#', then the given id
- * @param  pagePath
- * @param  id
  * @returns  the fully formed path
  */
 function pathToId(pagePath: string, id = ''): string {
