@@ -61,7 +61,7 @@ const getMaxChildSize = (block: Block) => {
       continue;
     }
     if (width > maxWidth) {
-      maxWidth = width / (block.widthInColumns ?? 1);
+      maxWidth = width / (child.widthInColumns ?? 1);
     }
     if (height > maxHeight) {
       maxHeight = height;
