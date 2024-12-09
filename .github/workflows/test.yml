@@ -43,7 +43,7 @@ jobs:
           pnpm test:check:tsc
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
+        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # v5.1.1
         # Run step only pushes to develop and pull_requests
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
         with:
