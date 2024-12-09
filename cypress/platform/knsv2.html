@@ -93,6 +93,39 @@
 config:
   layout: elk
 ---
+flowchart TB
+  %% swimlane 1 - A E
+  %% swimlane 2 - B
+  %% swimlane 3 - C D
+
+ A --> B(I am B, the wide one) --> C
+ C --> D & F
+
+ D --> E
+ A --> E
+
+B@{ shape: diam}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  layout: elk
+---
+flowchart TB
+  %% swimlane 1 - A E
+  %% swimlane 2 - B
+  %% swimlane 3 - C D
+
+ A --> E & B
+ B --> C
+
+B@{ shape: cyl, label: 'Cylinder'}
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
 flowchart LR
  %% subgraph s1["Untitled subgraph"]
         C{"Evaluate"}
@@ -100,7 +133,7 @@ flowchart LR
 
     B --> C
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -111,7 +144,7 @@ flowchart LR
       D --> I((I the Circle))
             D --> I
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -129,7 +162,7 @@ config:
 
       end
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -154,7 +187,7 @@ config:
       end
       end
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -167,7 +200,7 @@ config:
       D-->I
       D-->I
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -206,7 +239,7 @@ flowchart LR
     n8@{ shape: rect}
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -222,7 +255,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -231,7 +264,7 @@ flowchart LR
     A{A} --> B & C
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -243,7 +276,7 @@ flowchart LR
     end
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -261,7 +294,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   kanban:
@@ -280,81 +313,81 @@ kanban
     task3[💻 Develop login feature]@{ ticket: 103 }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'rounded' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'rounded' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'rounded' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'rounded' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'square' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'square' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'square' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'square' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'circle' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'circle' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'circle' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'circle' }
   A:::AClass
   classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Style] --> A@{ icon: 'logos:aws', form: 'circle' }
   style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 kanban
   id2[In progress]
     docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   kanban:

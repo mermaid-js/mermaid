@@ -481,20 +481,30 @@ export const render = async (
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+      'elk.layered.priority.direction': 10,
+      'elk.algorithm': 'elk.layered',
+      // 'elk.algorithm': 'elk.stress',
+      // 'partitioning.activate': true,
+      // 'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+      'elk.layered.nodePlacement.strategy': 'INTERACTIVE',
+      // 'nodePlacement.strategy': 'LINEAR_SEGMENTS',
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
       'spacing.baseValue': 35,
-      'elk.layered.unnecessaryBendpoints': true,
-      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
-      // 'spacing.nodeNode': 20,
-      // 'spacing.nodeNodeBetweenLayers': 25,
-      // 'spacing.edgeNode': 20,
-      // 'spacing.edgeNodeBetweenLayers': 10,
-      // 'spacing.edgeEdge': 10,
-      // 'spacing.edgeEdgeBetweenLayers': 20,
-      // 'spacing.nodeSelfLoop': 20,
+      // 'elk.layered.unnecessaryBendpoints': true,
+      // 'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
+      // 'elk.layered.cycleBreaking.strategy': 'INTERACTIVE',
+      // 'elk.layered.layering.strategy': 'MIN_WIDTH',
+      // 'layering.strategy': 'SIMPLE',
+      // 'layering.nodePromotion.strategy': 'NODECOUNT_PERCENTAGE',
+      // 'elk.topdown.nodeType': 'PARALLEL_NODE',
+      'spacing.nodeNode': 20,
+      'spacing.nodeNodeBetweenLayers': 25,
+      'spacing.edgeNode': 20,
+      'spacing.edgeNodeBetweenLayers': 10,
+      'spacing.edgeEdge': 10,
+      'spacing.edgeEdgeBetweenLayers': 20,
+      'spacing.nodeSelfLoop': 20,
 
       // Tweaking options
       // 'elk.layered.nodePlacement.favorStraightEdges': true,
@@ -505,14 +515,21 @@ export const render = async (
       // 'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
       // 'elk.layered.mergeHierarchyEdges': true,
       // 'elk.layered.feedbackEdges': true,
-      // 'elk.layered.crossingMinimization.semiInteractive': true,
+      // 'elk.layered.crossingMinimization.semiInteractive': false,
+      // 'crossingMinimization.semiInteractive': false,
       // 'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
       // 'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
       // 'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
       // 'elk.insideSelfLoops.activate': true,
       // 'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
       // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES', // NODES_AND_EDGES
+      // 'elk.layered.considerModelOrder.strategy': 'PREFER_NODES',
       // 'elk.layered.wrapping.cutting.strategy': 'ARD', // NODES_AND_EDGES
+      // 'elk.layered.wrapping.cutting.strategy': 'NODES_AND_EDGES',
+      'elk.alignment': 'BOTTOM',
+      // 'elk.layered.nodePlacement.bk.fixedAlignment': 'RIGHTDOWN',
+      // 'elk.edgeRouting': 'UNDEFINED',
+      'elk.layered.crossingMinimization.forceNodeModelOrder': true,
     },
     children: [],
     edges: [],
@@ -547,6 +564,8 @@ export const render = async (
 
   // Iterate through all nodes and add the top level nodes to the graph
   const nodes = data4Layout.nodes;
+  const count = 3;
+
   nodes.forEach((n: { id: string | number }) => {
     const node = nodeDb[n.id];
 
@@ -565,6 +584,7 @@ export const render = async (
         'spacing.baseValue': 30,
         'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
       };
+
       if (node.dir) {
         node.layoutOptions = {
           ...node.layoutOptions,
@@ -575,11 +595,35 @@ export const render = async (
           'elk.hierarchyHandling': 'SEPARATE_CHILDREN',
         };
       }
+
       delete node.x;
       delete node.y;
       delete node.width;
       delete node.height;
     }
+    if (node.id === 'A' || node.id === 'E') {
+      node.layoutOptions = {
+        ...node.layoutOptions,
+        'partitioning.partition': 1,
+      };
+      node.x = 0;
+    }
+    if (node.id === 'B') {
+      node.layoutOptions = {
+        ...node.layoutOptions,
+        'partitioning.partition': 2,
+      };
+      node.x = 300;
+    }
+    if (node.id === 'C' || node.id === 'D' || node.id === 'F') {
+      node.layoutOptions = {
+        ...node.layoutOptions,
+        'partitioning.partition': 3,
+      };
+      node.x = 800;
+    }
+    // count = count - 1;
+    // console.log('APA13 node partition node id=', node.id, 'count = ', count);
   });
   elkGraph.edges.forEach((edge: any) => {
     const source = edge.sources[0];
@@ -592,10 +636,10 @@ export const render = async (
       setIncludeChildrenPolicy(target, ancestorId);
     }
   });
-  // const copy = JSON.parse(JSON.stringify({ ...elkGraph }));
-  // console.log('APA13 layout before', copy);
+  const copy = JSON.parse(JSON.stringify({ ...elkGraph }));
+  console.log('APA13 layout before', copy);
   const g = await elk.layout(elkGraph);
-  // console.log('APA13 layout', JSON.parse(JSON.stringify(g)));
+  console.log('APA13 layout', JSON.parse(JSON.stringify(g)));
   // debugger;
   await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
   g.edges?.map(
