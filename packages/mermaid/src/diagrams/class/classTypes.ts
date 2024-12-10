@@ -3,13 +3,13 @@ import { parseGenericTypes, sanitizeText } from '../common/common.js';
 
 export interface ClassNode {
   id: string;
-  type: string;
-  label: string;
+  type?: string;
+  label?: string;
   shape: string;
-  text: string;
+  text?: string;
   cssClasses: string;
   methods: ClassMember[];
-  members: ClassMember[];
+  attributes: ClassMember[];
   annotations: string[];
   domId: string;
   styles: string[];

@@ -190,8 +190,8 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
 
   // add annotations
   let isFirst = true;
-  classDef.annotations.forEach(function (member) {
-    const titleText2 = title.append('tspan').text('«' + member + '»');
+  classDef.annotations.forEach(function (annotation) {
+    const titleText2 = title.append('tspan').text('«' + annotation + '»');
     if (!isFirst) {
       titleText2.attr('dy', conf.textHeight);
     }
@@ -208,19 +208,19 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   }
 
   const titleHeight = title.node().getBBox().height;
-  let membersLine;
-  let membersBox;
+  let attributesLine;
+  let attributesBox;
   let methodsLine;
 
-  // don't draw box if no members
-  if (classDef.members.length > 0) {
-    membersLine = g
+  // don't draw box if no attributes
+  if (classDef.attributes.length > 0) {
+    attributesLine = g
       .append('line') // text label for the x axis
       .attr('x1', 0)
       .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
       .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2);
 
-    const members = g
+    const attributes = g
       .append('text') // text label for the x axis
       .attr('x', conf.padding)
       .attr('y', titleHeight + conf.dividerMargin + conf.textHeight)
@@ -228,12 +228,12 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
       .attr('class', 'classText');
 
     isFirst = true;
-    classDef.members.forEach(function (member) {
-      addTspan(members, member, isFirst, conf);
+    classDef.attributes.forEach(function (attribute) {
+      addTspan(attributes, attribute, isFirst, conf);
       isFirst = false;
     });
 
-    membersBox = members.node().getBBox();
+    attributesBox = attributes.node().getBBox();
   }
 
   // don't draw box if no methods
@@ -241,13 +241,13 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     methodsLine = g
       .append('line') // text label for the x axis
       .attr('x1', 0)
-      .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
-      .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height);
+      .attr('y1', conf.padding + titleHeight + conf.dividerMargin + attributesBox.height)
+      .attr('y2', conf.padding + titleHeight + conf.dividerMargin + attributesBox.height);
 
     const methods = g
       .append('text') // text label for the x axis
       .attr('x', conf.padding)
-      .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
+      .attr('y', titleHeight + 2 * conf.dividerMargin + attributesBox.height + conf.textHeight)
       .attr('fill', 'white')
       .attr('class', 'classText');
 
@@ -286,8 +286,8 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
     title.insert('title').text(classDef.tooltip);
   }
 
-  if (membersLine) {
-    membersLine.attr('x2', rectWidth);
+  if (attributesLine) {
+    attributesLine.attr('x2', rectWidth);
   }
   if (methodsLine) {
     methodsLine.attr('x2', rectWidth);
