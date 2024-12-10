@@ -19,6 +19,7 @@ import errorDiagram from '../diagrams/error/errorDiagram.js';
 import flowchartElk from '../diagrams/flowchart/elk/detector.js';
 import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
+import kanban from '../diagrams/kanban/detector.js';
 import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
 import block from '../diagrams/block/blockDetector.js';
@@ -70,6 +71,7 @@ export const addDiagrams = () => {
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
     c4,
+    kanban,
     classDiagramV2,
     classDiagram,
     er,
