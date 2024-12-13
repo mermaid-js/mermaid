@@ -39,6 +39,7 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
     .replace(directiveRegex, '')
     .replace(anyCommentRegex, '\n');
   for (const [key, { detector }] of Object.entries(detectors)) {
+    console.log('APA20', key);
     const diagram = detector(text, config);
     if (diagram) {
       return key;

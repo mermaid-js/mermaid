@@ -529,7 +529,7 @@ export const render = async (
       'elk.alignment': 'BOTTOM',
       // 'elk.layered.nodePlacement.bk.fixedAlignment': 'RIGHTDOWN',
       // 'elk.edgeRouting': 'UNDEFINED',
-      'elk.layered.crossingMinimization.forceNodeModelOrder': true,
+      'elk.layered.crossingMinimization.forceNodeModelOrder': false,
     },
     children: [],
     edges: [],
@@ -637,7 +637,7 @@ export const render = async (
     }
   });
   const copy = JSON.parse(JSON.stringify({ ...elkGraph }));
-  console.log('APA13 layout before', copy);
+  console.log('APA13 layout before', JSON.stringify({ ...elkGraph }));
   const g = await elk.layout(elkGraph);
   console.log('APA13 layout', JSON.parse(JSON.stringify(g)));
   // debugger;

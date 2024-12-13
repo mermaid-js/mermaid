@@ -93,11 +93,13 @@
 config:
   layout: elk
 ---
-flowchart TB
+swimlane TB
   %% swimlane 1 - A E
   %% swimlane 2 - B
   %% swimlane 3 - C D
-
+lane First
+ A
+end
  A --> B(I am B, the wide one) --> C
  C --> D & F
 
@@ -106,7 +108,7 @@ flowchart TB
 
 B@{ shape: diam}
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
