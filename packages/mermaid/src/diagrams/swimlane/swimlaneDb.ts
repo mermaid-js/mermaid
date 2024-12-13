@@ -537,7 +537,8 @@ export const defaultStyle = function () {
 export const addSubGraph = function (
   _id: { text: string },
   list: string[],
-  _title: { text: string; type: string }
+  _title: { text: string; type: string },
+  type = 'cluster'
 ) {
   let id: string | undefined = _id.text.trim();
   let title = _title.text;
@@ -586,6 +587,7 @@ export const addSubGraph = function (
     classes: [],
     dir,
     labelType: _title.type,
+    type,
   };
 
   log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);

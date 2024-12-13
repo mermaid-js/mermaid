@@ -374,10 +374,16 @@ statement
     {$$=yy.addSubGraph($textNoTags,$document,$text);}
     | subgraph SPACE textNoTags separator document end
     {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
-    // | subgraph SPACE textNoTags separator document end
-    // {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined);}
+
+    | lane SPACE textNoTags SQS text SQE separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$text, 'lane');}
+    | lane SPACE textNoTags separator document end
+    {$$=yy.addSubGraph($textNoTags,$document,$textNoTags, 'lane');}
+    | lane separator document end
+    {$$=yy.addSubGraph(undefined,$document,undefined, 'lane');}
+
     | direction
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }
