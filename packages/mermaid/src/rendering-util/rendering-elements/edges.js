@@ -50,7 +50,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')'); // HERE
 
   // Make element accessible by id for positioning
   edgeLabels.set(edge.id, edgeLabel);
@@ -155,20 +155,34 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       const pos = utils.calcLabelPosition(path);
+
+      let minimizationX = pos.x;
+      let minimizationY = pos.y;
+      for (const path_ of paths) {
+        let posOther = utils.calcLabelPosition(path_);
+        if (posOther.x == pos.x) {
+          if (minimizationX > posOther.x) {
+            minimizationY = posOther.y;
+          }
+        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+          minimizationX = posOther.x;
+        }
+      }
+
       log.debug(
         'Moving label ' + edge.label + ' from (',
         x,
         ',',
         y,
         ') to (',
-        pos.x,
+        minimizationX,
         ',',
-        pos.y,
+        minimizationY,
         ') abc88'
       );
       if (paths.updatedPath) {
-        x = pos.x;
-        y = pos.y;
+        x = minimizationX;
+        y = minimizationY;
       }
     }
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
@@ -180,8 +194,21 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
-      x = pos.x;
-      y = pos.y;
+
+      let minimizationX = pos.x;
+      let minimizationY = pos.y;
+      for (const path_ of paths) {
+        let posOther = utils.calcLabelPosition(path_);
+        if (posOther.x == pos.x) {
+          if (minimizationX > posOther.x) {
+            minimizationY = posOther.y;
+          }
+        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+          minimizationX = posOther.x;
+        }
+      }
+      x = minimizationX;
+      y = minimizationY;
     }
     el.attr('transform', `translate(${x}, ${y})`);
   }
@@ -195,8 +222,22 @@ export const positionEdgeLabel = (edge, paths) => {
         'start_right',
         path
       );
-      x = pos.x;
-      y = pos.y;
+
+      let minimizationX = pos.x;
+      let minimizationY = pos.y;
+      for (const path_ of paths) {
+        let posOther = utils.calcLabelPosition(path_);
+        if (posOther.x == pos.x) {
+          if (minimizationX > posOther.x) {
+            minimizationY = posOther.y;
+          }
+        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+          minimizationX = posOther.x;
+        }
+      }
+
+      x = minimizationX;
+      y = minimizationY;
     }
     el.attr('transform', `translate(${x}, ${y})`);
   }
@@ -206,8 +247,21 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
-      x = pos.x;
-      y = pos.y;
+
+      let minimizationX = pos.x;
+      let minimizationY = pos.y;
+      for (const path_ of paths) {
+        let posOther = utils.calcLabelPosition(path_);
+        if (posOther.x == pos.x) {
+          if (minimizationX > posOther.x) {
+            minimizationY = posOther.y;
+          }
+        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+          minimizationX = posOther.x;
+        }
+      }
+      x = minimizationX;
+      y = minimizationY;
     }
     el.attr('transform', `translate(${x}, ${y})`);
   }
@@ -217,8 +271,21 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
-      x = pos.x;
-      y = pos.y;
+
+      let minimizationX = pos.x;
+      let minimizationY = pos.y;
+      for (const path_ of paths) {
+        let posOther = utils.calcLabelPosition(path_);
+        if (posOther.x == pos.x) {
+          if (minimizationX > posOther.x) {
+            minimizationY = posOther.y;
+          }
+        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+          minimizationX = posOther.x;
+        }
+      }
+      x = minimizationX;
+      y = minimizationY;
     }
     el.attr('transform', `translate(${x}, ${y})`);
   }
@@ -395,7 +462,7 @@ const fixCorners = function (lineData) {
           Math.abs(nextPoint.x - prevPoint.x),
           Math.abs(nextPoint.y - prevPoint.y)
         );
-        const r = 5;
+        const r = 50000;
         if (cornerPoint.x === newPrevPoint.x) {
           newCornerPoint = {
             x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
@@ -463,15 +530,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   lineData = fixCorners(lineData);
-  let lastPoint = lineData[lineData.length - 1];
-  if (lineData.length > 1) {
-    lastPoint = lineData[lineData.length - 1];
-    const secondLastPoint = lineData[lineData.length - 2];
-    const diffX = (lastPoint.x - secondLastPoint.x) / 2;
-    const diffY = (lastPoint.y - secondLastPoint.y) / 2;
-    const midPoint = { x: secondLastPoint.x + diffX, y: secondLastPoint.y + diffY };
-    lineData.splice(-1, 0, midPoint);
-  }
   let curve = curveBasis;
   if (edge.curve) {
     curve = edge.curve;
