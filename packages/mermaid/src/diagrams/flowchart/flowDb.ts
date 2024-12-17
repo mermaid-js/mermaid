@@ -297,9 +297,6 @@ export const updateLink = function (positions: ('default' | number)[], style: st
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
-      // if (utils.isSubstringInArray('fill', style) === -1) {
-      //   style.push('fill:none');
-      // }
       edges[pos].style = style;
       // if edges[pos].style does have fill not set, set it to none
       if (

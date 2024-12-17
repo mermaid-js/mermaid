@@ -429,7 +429,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let pointsHasChanged = false;
   const tail = startNode;
   var head = endNode;
-
   const edgeClassStyles = [];
   for (const key in edge.cssCompiledStyles) {
     if (isLabelStyle(key)) {
@@ -510,6 +509,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let svgPath;
   let linePath = lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
+
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
@@ -531,7 +531,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     elem.node().appendChild(svgPath.node());
   } else {
     const stylesFromClasses = edgeClassStyles.join(';');
-    const styles = edge.edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '';
+    const styles = edgeStyles ? edgeStyles.reduce((acc, style) => acc + style + ';', '') : '';
     let animationClass = '';
     if (edge.animate) {
       animationClass = ' edge-animation-fast';
@@ -550,7 +550,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
           (edge.classes ? ' ' + edge.classes : '') +
           (animationClass ? animationClass : '')
       )
-      .attr('style', stylesFromClasses + ';' + styles);
+      .attr('style', stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles);
   }
 
   // DEBUG code, DO NOT REMOVE
