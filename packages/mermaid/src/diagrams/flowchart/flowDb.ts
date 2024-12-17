@@ -24,7 +24,7 @@ import type {
   FlowLink,
   FlowVertexTypeParam,
 } from './types.js';
-import type { NodeMetaData } from '../../types.js';
+import type { NodeMetaData, EdgeMetaData } from '../../types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -71,12 +71,38 @@ export const addVertex = function (
   classes: string[],
   dir: string,
   props = {},
-  shapeData: any
+  metadata: any
 ) {
-  // console.log('addVertex', id, shapeData);
   if (!id || id.trim().length === 0) {
     return;
   }
+  // Extract the metadata from the shapeData, the syntax for adding metadata for nodes and edges is the same
+  // so at this point we don't know if it's a node or an edge, but we can still extract the metadata
+  let doc;
+  if (metadata !== undefined) {
+    let yamlData;
+    // detect if shapeData contains a newline character
+    if (!metadata.includes('\n')) {
+      yamlData = '{\n' + metadata + '\n}';
+    } else {
+      yamlData = metadata + '\n';
+    }
+    doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+  }
+
+  // Check if this is an edge
+  const edge = edges.find((e) => e.id === id);
+  if (edge) {
+    const edgeDoc = doc as EdgeMetaData;
+    if (edgeDoc?.animate) {
+      edge.animate = edgeDoc.animate;
+    }
+    if (edgeDoc?.animation) {
+      edge.animation = edgeDoc.animation;
+    }
+    return;
+  }
+
   let txt;
 
   let vertex = vertices.get(id);
@@ -128,19 +154,7 @@ export const addVertex = function (
     Object.assign(vertex.props, props);
   }
 
-  if (shapeData !== undefined) {
-    let yamlData;
-    // detect if shapeData contains a newline character
-    // console.log('shapeData', shapeData);
-    if (!shapeData.includes('\n')) {
-      // console.log('yamlData shapeData has no new lines', shapeData);
-      yamlData = '{\n' + shapeData + '\n}';
-    } else {
-      // console.log('yamlData shapeData has new lines', shapeData);
-      yamlData = shapeData + '\n';
-    }
-    // console.log('yamlData', yamlData);
-    const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+  if (doc !== undefined) {
     if (doc.shape) {
       if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
         throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
@@ -187,11 +201,18 @@ export const addVertex = function (
  * Function called by parser when a link/edge definition has been found
  *
  */
-export const addSingleLink = function (_start: string, _end: string, type: any) {
+export const addSingleLink = function (_start: string, _end: string, type: any, id?: string) {
   const start = _start;
   const end = _end;
 
-  const edge: FlowEdge = { start: start, end: end, type: undefined, text: '', labelType: 'text' };
+  const edge: FlowEdge = {
+    start: start,
+    end: end,
+    type: undefined,
+    text: '',
+    labelType: 'text',
+    classes: [],
+  };
   log.info('abc78 Got edge...', edge);
   const linkTextObj = type.text;
 
@@ -210,6 +231,9 @@ export const addSingleLink = function (_start: string, _end: string, type: any) 
     edge.stroke = type.stroke;
     edge.length = type.length > 10 ? 10 : type.length;
   }
+  if (id) {
+    edge.id = id;
+  }
 
   if (edges.length < (config.maxEdges ?? 500)) {
     log.info('Pushing edge...');
@@ -225,11 +249,17 @@ You have to call mermaid.initialize.`
   }
 };
 
-export const addLink = function (_start: string[], _end: string[], type: unknown) {
-  log.info('addLink', _start, _end, type);
+export const addLink = function (_start: string[], _end: string[], linkData: unknown) {
+  const id =
+    linkData && typeof linkData === 'object' && 'id' in linkData
+      ? linkData.id?.replace('@', '')
+      : undefined;
+
+  log.info('addLink', _start, _end, id);
+
   for (const start of _start) {
     for (const end of _end) {
-      addSingleLink(start, end, type);
+      addSingleLink(start, end, linkData, id);
     }
   }
 };
@@ -282,7 +312,13 @@ export const updateLink = function (positions: ('default' | number)[], style: st
   });
 };
 
-export const addClass = function (ids: string, style: string[]) {
+export const addClass = function (ids: string, _style: string[]) {
+  const style = _style
+    .join()
+    .replace(/\\,/g, '§§§')
+    .replace(/,/g, ';')
+    .replace(/§§§/g, ',')
+    .split(';');
   ids.split(',').forEach(function (id) {
     let classNode = classes.get(id);
     if (classNode === undefined) {
@@ -336,6 +372,10 @@ export const setClass = function (ids: string, className: string) {
     const vertex = vertices.get(id);
     if (vertex) {
       vertex.classes.push(className);
+    }
+    const edge = edges.find((e) => e.id === id);
+    if (edge) {
+      edge.classes.push(className);
     }
     const subGraph = subGraphLookup.get(id);
     if (subGraph) {
@@ -997,7 +1037,7 @@ export const getData = () => {
       styles.push(...rawEdge.style);
     }
     const edge: Edge = {
-      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }),
+      id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
       start: rawEdge.start,
       end: rawEdge.end,
       type: rawEdge.type ?? 'normal',
@@ -1009,14 +1049,20 @@ export const getData = () => {
         rawEdge?.stroke === 'invisible'
           ? ''
           : 'edge-thickness-normal edge-pattern-solid flowchart-link',
-      arrowTypeStart: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeStart,
-      arrowTypeEnd: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeEnd,
+      arrowTypeStart:
+        rawEdge?.stroke === 'invisible' || rawEdge?.type === 'arrow_open' ? 'none' : arrowTypeStart,
+      arrowTypeEnd:
+        rawEdge?.stroke === 'invisible' || rawEdge?.type === 'arrow_open' ? 'none' : arrowTypeEnd,
       arrowheadStyle: 'fill: #333',
+      cssCompiledStyles: getCompiledStyles(rawEdge.classes),
       labelStyle: styles,
       style: styles,
       pattern: rawEdge.stroke,
       look: config.look,
+      animate: rawEdge.animate,
+      animation: rawEdge.animation,
     };
+
     edges.push(edge);
   });
 

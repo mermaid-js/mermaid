@@ -101,6 +101,7 @@ export interface Edge {
   arrowheadStyle?: string;
   arrowTypeEnd?: string;
   arrowTypeStart?: string;
+  cssCompiledStyles?: string[];
   // Flowchart specific properties
   defaultInterpolate?: string;
   end?: string;
