@@ -937,8 +937,12 @@ export const getEdgeId = (
     counter?: number;
     prefix?: string;
     suffix?: string;
-  }
+  },
+  id?: string
 ) => {
+  if (id) {
+    return id;
+  }
   return `${prefix ? `${prefix}_` : ''}${from}_${to}_${counter}${suffix ? `_${suffix}` : ''}`;
 };
 

@@ -141,6 +141,7 @@ that id.
 .*direction\s+RL[^\n]*       return 'direction_rl';
 .*direction\s+LR[^\n]*       return 'direction_lr';
 
+[^\s]+\@(?=[^\{])               { return 'LINK_ID'; }
 [0-9]+                       return 'NUM';
 \#                           return 'BRKT';
 ":::"                        return 'STYLE_SEPARATOR';
@@ -201,7 +202,9 @@ that id.
 "*"                   return 'MULT';
 "#"                   return 'BRKT';
 "&"                   return 'AMP';
-([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  return 'NODE_STRING';
+([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  {
+    return 'NODE_STRING';
+}
 "-"                   return 'MINUS'
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -361,7 +364,7 @@ spaceList
 
 statement
     : vertexStatement separator
-    { /* console.warn('finat vs', $vertexStatement.nodes); */ $$=$vertexStatement.nodes}
+    { $$=$vertexStatement.nodes}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -472,6 +475,8 @@ link: linkStatement arrowText
     {$$ = $linkStatement;}
     | START_LINK edgeText LINK
         {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText};}
+    | LINK_ID START_LINK edgeText LINK
+        {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText, "id": $LINK_ID};}
     ;
 
 edgeText: edgeTextToken
@@ -487,6 +492,8 @@ edgeText: edgeTextToken
 
 linkStatement: LINK
         {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
+    | LINK_ID LINK
+        {var inf = yy.destructLink($LINK);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length, "id": $LINK_ID};}
         ;
 
 arrowText:
