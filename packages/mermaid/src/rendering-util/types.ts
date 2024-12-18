@@ -96,6 +96,8 @@ export interface Edge {
   label?: string;
   classes?: string;
   style?: string[];
+  animate?: boolean;
+  animation?: 'fast' | 'slow';
   // Properties common to both Flowchart and State Diagram edges
   arrowhead?: string;
   arrowheadStyle?: string;

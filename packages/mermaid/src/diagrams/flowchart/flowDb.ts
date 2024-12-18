@@ -249,11 +249,21 @@ You have to call mermaid.initialize.`
   }
 };
 
+interface LinkData {
+  id: string;
+}
+
+function isLinkData(value: unknown): value is LinkData {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'id' in value &&
+    typeof (value as LinkData).id === 'string'
+  );
+}
+
 export const addLink = function (_start: string[], _end: string[], linkData: unknown) {
-  const id =
-    linkData && typeof linkData === 'object' && 'id' in linkData
-      ? linkData.id?.replace('@', '')
-      : undefined;
+  const id = isLinkData(linkData) ? linkData.id.replace('@', '') : undefined;
 
   log.info('addLink', _start, _end, id);
 

@@ -18,7 +18,7 @@ The config passed as YAML frontmatter or directives
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:70](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L70)
+[packages/mermaid/src/types.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L75)
 
 ---
 
@@ -30,4 +30,4 @@ The diagram type, e.g. 'flowchart', 'sequence', etc.
 
 #### Defined in
 
-[packages/mermaid/src/types.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L66)
+[packages/mermaid/src/types.ts:71](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L71)
