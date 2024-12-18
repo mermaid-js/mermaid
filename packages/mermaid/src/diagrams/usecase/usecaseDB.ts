@@ -1,4 +1,6 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { LayoutData, MermaidConfig } from '../../mermaid.js';
+import type { Edge, Node } from '../../rendering-util/types.js';
 import common from '../common/common.js';
 import {
   setAccTitle,
@@ -10,12 +12,12 @@ import {
   clear as commonClear,
 } from '../common/commonDb.js';
 
-class UsecaseDB {
+export class UsecaseDB {
   private aliases = new Map<string, string>();
   private links: UsecaseLink[] = [];
   private nodes: UsecaseNode[] = [];
   private nodesMap = new Map<string, UsecaseNode>();
-  private systemBoundaries: any[] = [];
+  private systemBoundaries: UsecaseSystemBoundary[] = [];
 
   constructor() {
     this.clear();
@@ -35,8 +37,8 @@ class UsecaseDB {
   }
 
   addRelationship(source: string, target: string, arrow: string): void {
-    source = common.sanitizeText(source, this.getConfig());
-    target = common.sanitizeText(target, this.getConfig());
+    source = common.sanitizeText(source, getConfig());
+    target = common.sanitizeText(target, getConfig());
     const sourceNode = this.getNode(source);
     const targetNode = this.getNode(target);
     this.links.push(new UsecaseLink(sourceNode, targetNode, arrow));
@@ -50,12 +52,51 @@ class UsecaseDB {
     return getConfig().usecase!;
   }
 
+  getData(): LayoutData {
+    const edges: Edge[] = this.links.map((link) => ({
+      id: `${link.source.ID}-${link.target.ID}`,
+      type: 'normal',
+    }));
+
+    const nodes: Node[] = [
+      ...this.nodes.map((node) => ({
+        id: node.ID,
+        type: 'normal',
+        label: this.aliases.get(node.ID) ?? node.ID,
+        isGroup: false,
+      })),
+      ...this.systemBoundaries.map((boundary) => ({
+        id: boundary.title ?? 'System Boundary',
+        type: 'normal',
+        label: boundary.title ?? 'System Boundary',
+        isGroup: true,
+        children: boundary.elements.map((element) => ({
+          id: element,
+          type: 'normal',
+          label: this.aliases.get(element) ?? element,
+          isGroup: false,
+        })),
+      })),
+    ];
+
+    const config = this.getConfig() as MermaidConfig;
+
+    return {
+      nodes,
+      edges,
+      config,
+    };
+  }
+
   getRelationships(): UsecaseLink[] {
     return this.links;
   }
 
   getSystemBoundaries() {
-    return this.systemBoundaries;
+    return this.systemBoundaries.map((boundary) => ({
+      useCases: boundary.elements,
+      title: boundary.title,
+    }));
   }
 
   getAccDescription = getAccDescription;
@@ -102,6 +143,7 @@ export default {
   addRelationship: db.addRelationship.bind(db),
   addAlias: db.addAlias.bind(db),
   getConfig: db.getConfig.bind(db),
+  getData: db.getData.bind(db),
   getRelationships: db.getRelationships.bind(db),
   getDiagramTitle: db.getDiagramTitle.bind(db),
   getSystemBoundaries: db.getSystemBoundaries.bind(db),

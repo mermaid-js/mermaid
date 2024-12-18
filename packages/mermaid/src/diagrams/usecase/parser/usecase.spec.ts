@@ -58,7 +58,7 @@ describe('Usecase diagram', function () {
       expect(usecase.yy.getDiagramTitle()).toEqual('Simple use case');
 
       const boundaries = usecase.yy.getSystemBoundaries();
-      expect(boundaries[0].elements).toStrictEqual(['(Start)', '(Use)', '(Another use case)']);
+      expect(boundaries[0].useCases).toStrictEqual(['(Start)', '(Use)', '(Another use case)']);
     });
 
     it('should handle a complex case', function () {
