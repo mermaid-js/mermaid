@@ -25,9 +25,11 @@ export class UsecaseDB {
   }
 
   clear(): void {
+    this.aliases = new Map();
     this.links = [];
     this.nodes = [];
     this.nodesMap = new Map();
+    this.systemBoundaries = [];
     commonClear();
   }
 
@@ -37,12 +39,14 @@ export class UsecaseDB {
     return source;
   }
 
-  addRelationship(source: string, target: string, arrow: string): void {
+  addRelationship(source: string, target: string, token: string): void {
     source = common.sanitizeText(source, getConfig());
     target = common.sanitizeText(target, getConfig());
     const sourceNode = this.getNode(source);
     const targetNode = this.getNode(target);
-    this.links.push(new UsecaseLink(sourceNode, targetNode, arrow));
+    const label = (/--(.+?)(-->|->)/.exec(token)?.[1] ?? '').trim();
+    const arrow = token.includes('-->') ? '-->' : '->';
+    this.links.push(new UsecaseLink(sourceNode, targetNode, arrow, label));
   }
 
   addSystemBoundary(useCases: string[], title?: string) {
@@ -71,9 +75,9 @@ export class UsecaseDB {
       end: link.target.id,
       arrowTypeStart: 'none',
       arrowTypeEnd: 'arrow_point',
-      label: '',
+      label: link.label,
       minlen: 1,
-      pattern: 'normal',
+      pattern: link.arrow == '-->' ? 'dashed' : link.arrow == '->' ? 'solid' : 'dotted',
       thickness: 'normal',
       type: 'arrow_point',
     }));
@@ -178,13 +182,16 @@ export class UsecaseLink {
   constructor(
     public source: UsecaseNode,
     public target: UsecaseNode,
-    public arrow: string
+    public arrow: ArrowType,
+    public label: string
   ) {}
 }
 
 export class UsecaseNode {
   constructor(public id: string) {}
 }
+
+type ArrowType = '->' | '-->';
 
 // Export an instance of the class
 const db = new UsecaseDB();

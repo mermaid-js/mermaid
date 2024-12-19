@@ -22,7 +22,9 @@
 "{"                   return '{';
 "}"                   return '}';
 \,\s*                 return 'COMMA';
+"--"[^(->)]*"-->"     return 'DASHED_ARROW';
 "-->"                 return 'DASHED_ARROW';
+"--"[^(->)]*"->"      return 'SOLID_ARROW';
 "->"                  return 'SOLID_ARROW';
 "-"                   return '-';
 "end"                 return 'END';
