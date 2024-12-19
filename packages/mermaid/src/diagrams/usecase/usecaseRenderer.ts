@@ -1,9 +1,12 @@
 import type { Diagram } from '../../Diagram.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { UsecaseDB } from './usecaseDB.js';
-import * as svgDrawCommon from '../../diagrams/common/svgDrawCommon.js';
-import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
+import { render } from '../../rendering-util/render.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { setLogLevel } from '../../logger.js';
+import type { LayoutData } from '../../mermaid.js';
 
 /**
  * Draws Use Case diagram.
@@ -19,27 +22,46 @@ export const draw = async function (
   _version: string,
   diagObj: Diagram
 ): Promise<void> {
-  // Get Usecase config
-  const { usecase: conf } = getConfig();
+  // setLogLevel('debug');
   const db = diagObj.db as UsecaseDB;
 
   const svg = selectSvgElement(id);
 
-  if (conf?.useMaxWidth) {
+  const { usecase: conf } = getConfig();
+  if (conf!.useMaxWidth) {
     const svg = selectSvgElement(id);
     svg.attr('width', '100%');
   }
 
+  const data4Layout = db.getData();
+  data4Layout.layoutAlgorithm = 'dagre';
+
+  preprocess(db, data4Layout);
+
+  await render(data4Layout, svg);
+
   const title = db.getDiagramTitle();
-  svg.append('g').attr('class', 'title').append('text');
+  if (title) {
+    svg.append('text').attr('text-anchor', 'middle').attr('x', '50%').attr('y', '1em').text(title);
 
-  svgDrawCommon.drawText(svg, { x: 0, y: 100, text: title, textMargin: 5, anchor: 'left' });
+    const extraVertForTitle = 40;
+    svg.select('g').attr('transform', `translate(0, ${extraVertForTitle})`);
+  }
 
-  const layout = db.getData();
-  layout.layoutAlgorithm = getRegisteredLayoutAlgorithm('dagre');
-
-  await render(layout, svg);
+  const padding = 8;
+  setupViewPortForSVG(svg, padding, '', conf?.useMaxWidth ?? true);
 };
+
+function preprocess(db: UsecaseDB, data4Layout: LayoutData) {
+  // assign actor icons
+  const actors = db.getActors();
+  data4Layout.nodes
+    .filter((node) => actors.includes(node.id))
+    .forEach((node) => {
+      node.shape = 'actor';
+      node.cssClasses = 'actor';
+    });
+}
 
 export default {
   draw,

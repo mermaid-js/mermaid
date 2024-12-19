@@ -1,5 +1,6 @@
+import type { BaseDiagramConfig, MermaidConfig } from '../../config.type.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import type { LayoutData, MermaidConfig } from '../../mermaid.js';
+import type { LayoutData } from '../../mermaid.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import common from '../common/common.js';
 import {
@@ -44,47 +45,98 @@ export class UsecaseDB {
     this.links.push(new UsecaseLink(sourceNode, targetNode, arrow));
   }
 
-  addSystemBoundary(elements: string[], title?: string) {
-    this.systemBoundaries.push({ elements, title });
+  addSystemBoundary(useCases: string[], title?: string) {
+    if (title) {
+      title = common.sanitizeText(title.trim(), getConfig());
+      if (title.startsWith('title')) {
+        title = title.slice(5).trim();
+      }
+    }
+    this.systemBoundaries.push({ id: 'boundary-' + this.systemBoundaries.length, useCases, title });
+  }
+
+  getActors() {
+    return this.links.map((link) => link.source.id).filter((source) => !source.startsWith('('));
   }
 
   getConfig() {
-    return getConfig().usecase!;
+    return getConfig() as BaseDiagramConfig;
   }
 
   getData(): LayoutData {
     const edges: Edge[] = this.links.map((link) => ({
-      id: `${link.source.ID}-${link.target.ID}`,
-      type: 'normal',
+      id: `${link.source.id}-${link.target.id}`,
+      classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
+      start: link.source.id,
+      end: link.target.id,
+      arrowTypeStart: 'none',
+      arrowTypeEnd: 'arrow_point',
+      label: '',
+      minlen: 1,
+      pattern: 'normal',
+      thickness: 'normal',
+      type: 'arrow_point',
     }));
 
+    const baseNode = {
+      shape: 'squareRect',
+      cssClasses: 'default',
+      padding: 15,
+      look: 'classic',
+      isGroup: false,
+      styles: [],
+    };
+
+    const parentLookup = new Map(
+      this.getSystemBoundaries().flatMap((boundary) =>
+        boundary.useCases.map((useCase) => [useCase, boundary.id])
+      )
+    );
+
     const nodes: Node[] = [
-      ...this.nodes.map((node) => ({
-        id: node.ID,
-        type: 'normal',
-        label: this.aliases.get(node.ID) ?? node.ID,
-        isGroup: false,
-      })),
-      ...this.systemBoundaries.map((boundary) => ({
-        id: boundary.title ?? 'System Boundary',
-        type: 'normal',
-        label: boundary.title ?? 'System Boundary',
-        isGroup: true,
-        children: boundary.elements.map((element) => ({
-          id: element,
-          type: 'normal',
-          label: this.aliases.get(element) ?? element,
-          isGroup: false,
-        })),
-      })),
+      ...this.nodes.map(
+        (node) =>
+          ({
+            ...baseNode,
+            id: node.id,
+            label: this.aliases.get(node.id) ?? node.id,
+            parentId: parentLookup.get(node.id),
+          }) as Node
+      ),
+      ...this.getSystemBoundaries().map(
+        (boundary) =>
+          ({
+            ...baseNode,
+            id: boundary.id,
+            type: 'normal',
+            label: boundary.title ?? 'System Boundary',
+            shape: 'rect',
+            isGroup: true,
+            styles: [],
+          }) as Node
+      ),
     ];
 
-    const config = this.getConfig() as MermaidConfig;
+    nodes
+      .filter((node) => node.label?.startsWith('(') && node.label.endsWith(')'))
+      .forEach((node) => {
+        node.label = node.label!.slice(1, -1);
+        node.rx = 50;
+        node.ry = 50;
+      });
+
+    // @ts-ignore TODO fix types
+    const config: MermaidConfig = this.getConfig();
 
     return {
       nodes,
       edges,
       config,
+      markers: ['point', 'circle', 'cross'],
+      other: {},
+      direction: 'LR',
+      rankSpacing: 50,
+      type: 'usecase',
     };
   }
 
@@ -93,10 +145,7 @@ export class UsecaseDB {
   }
 
   getSystemBoundaries() {
-    return this.systemBoundaries.map((boundary) => ({
-      useCases: boundary.elements,
-      title: boundary.title,
-    }));
+    return this.systemBoundaries;
   }
 
   getAccDescription = getAccDescription;
@@ -119,7 +168,8 @@ export class UsecaseDB {
 
 export class UsecaseSystemBoundary {
   constructor(
-    public elements: string[],
+    public id: string,
+    public useCases: string[],
     public title?: string
   ) {}
 }
@@ -133,7 +183,7 @@ export class UsecaseLink {
 }
 
 export class UsecaseNode {
-  constructor(public ID: string) {}
+  constructor(public id: string) {}
 }
 
 // Export an instance of the class
@@ -142,11 +192,16 @@ export default {
   clear: db.clear.bind(db),
   addRelationship: db.addRelationship.bind(db),
   addAlias: db.addAlias.bind(db),
+  getAccDescription,
+  getAccTitle,
+  getActors: db.getActors.bind(db),
   getConfig: db.getConfig.bind(db),
   getData: db.getData.bind(db),
   getRelationships: db.getRelationships.bind(db),
   getDiagramTitle: db.getDiagramTitle.bind(db),
   getSystemBoundaries: db.getSystemBoundaries.bind(db),
+  setAccDescription,
+  setAccTitle,
   setDiagramTitle: db.setDiagramTitle.bind(db),
   addSystemBoundary: db.addSystemBoundary.bind(db),
 };

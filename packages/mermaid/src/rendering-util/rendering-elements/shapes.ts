@@ -1,6 +1,7 @@
 import type { Entries } from 'type-fest';
 import type { D3Selection, MaybePromise } from '../../types.js';
 import type { Node, ShapeRenderOptions } from '../types.js';
+import { actor } from './shapes/actor.js';
 import { anchor } from './shapes/anchor.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
 import { card } from './shapes/card.js';
@@ -83,6 +84,13 @@ export interface ShapeDefinition {
 }
 
 export const shapesDefs = [
+  {
+    semanticName: 'Actor',
+    name: 'Actor',
+    shortName: 'actor',
+    description: 'Actor used in Use Cases',
+    handler: actor,
+  },
   {
     semanticName: 'Process',
     name: 'Rectangle',

@@ -1488,7 +1488,11 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
  * via the `definition` "UsecaseDiagramConfig".
  */
-export interface UsecaseDiagramConfig extends BaseDiagramConfig {}
+export interface UsecaseDiagramConfig extends BaseDiagramConfig {
+  diagramMarginX?: number;
+  diagramMarginY?: number;
+}
+
 /**
  * The object containing configurations specific for packet diagrams.
  *
