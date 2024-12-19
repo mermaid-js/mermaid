@@ -58,7 +58,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
       {
         icon: 'discord',
-        link: 'https://discord.gg/AgrbSrBer3',
+        link: 'https://discord.gg/sKeNQX4Wtj',
       },
       {
         icon: {
