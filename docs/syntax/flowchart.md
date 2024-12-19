@@ -318,6 +318,7 @@ Below is a comprehensive list of the newly introduced shapes and their correspon
 
 | **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
 | --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
+| Actor                             | Actor                  | `actor`        | Actor used in Use Cases        |                                                                  |
 | Card                              | Notched Rectangle      | `notch-rect`   | Represents a card              | `card`, `notched-rectangle`                                      |
 | Collate                           | Hourglass              | `hourglass`    | Represents a collate operation | `collate`, `hourglass`                                           |
 | Com Link                          | Lightning Bolt         | `bolt`         | Communication link             | `com-link`, `lightning-bolt`                                     |

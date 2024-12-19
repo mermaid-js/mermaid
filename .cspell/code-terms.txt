@@ -125,6 +125,7 @@ Subschemas
 substr
 SVGG
 SVGSVG
+systemboundary
 TAGEND
 TAGSTART
 techn
@@ -142,6 +143,7 @@ typeof
 typestr
 unshift
 urlsafe
+usecase
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH

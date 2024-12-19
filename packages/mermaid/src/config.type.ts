@@ -197,6 +197,7 @@ export interface MermaidConfig {
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
+  usecase?: UsecaseDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
@@ -1483,6 +1484,11 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    */
   suffix?: string;
 }
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "UsecaseDiagramConfig".
+ */
+export interface UsecaseDiagramConfig extends BaseDiagramConfig {}
 /**
  * The object containing configurations specific for packet diagrams.
  *
