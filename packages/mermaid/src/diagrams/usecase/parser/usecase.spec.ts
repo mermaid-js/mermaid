@@ -28,12 +28,18 @@ describe('Usecase diagram', function () {
 
       const relationships = usecase.yy.getRelationships();
       expect(relationships).toStrictEqual([
-        new UsecaseLink(new UsecaseNode('User'), new UsecaseNode('(Start)'), '->'),
-        new UsecaseLink(new UsecaseNode('User'), new UsecaseNode('(Use the application)'), '-->'),
+        new UsecaseLink(new UsecaseNode('User'), new UsecaseNode('(Start)'), '->', ''),
+        new UsecaseLink(
+          new UsecaseNode('User'),
+          new UsecaseNode('(Use the application)'),
+          '-->',
+          ''
+        ),
         new UsecaseLink(
           new UsecaseNode('(Use the application)'),
           new UsecaseNode('(Another use case)'),
-          '-->'
+          '-->',
+          ''
         ),
       ]);
     });
