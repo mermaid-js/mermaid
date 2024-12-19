@@ -56,9 +56,9 @@
         logLevel: 1,
       });
 
-      let shape = 'card';
-      // let simplified = true;
-      let simplified = false;
+      let shape = 'circle';
+      let simplified = true;
+      // let simplified = false;
       let algorithm = 'elk';
       // let algorithm = 'dagre';
       let code = `---
@@ -86,7 +86,7 @@ config:
   layout: ${algorithm}
 ---
 flowchart LR
-A["Abrakadabra"] --> C["C"] & C & C & C & C
+A["Abrakadabra"] --> C["I am the circle"] & C & C & C & C
 %% A["Abrakadabra"] --> C
     A@{ shape: ${shape}}
     C@{ shape: ${shape}}
