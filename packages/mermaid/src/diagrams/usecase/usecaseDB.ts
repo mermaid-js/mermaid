@@ -73,7 +73,7 @@ export class UsecaseDB {
       classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
       start: link.source.id,
       end: link.target.id,
-      arrowTypeStart: 'none',
+      arrowTypeStart: 'arrow_open',
       arrowTypeEnd: 'arrow_point',
       label: link.label,
       minlen: 1,

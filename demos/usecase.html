@@ -12,10 +12,17 @@
       }
       hr {
         color: black;
+        clear: both;
       }
       div.mermaid {
         /* font-family: 'trebuchet ms', verdana, arial; */
         font-family: 'Courier New', Courier, monospace !important;
+        max-width: 50%;
+      }
+      pre {
+        float: left;
+        max-width: 50%;
+        height: 100%;
       }
     </style>
   </head>
@@ -27,6 +34,13 @@
       User --> (Get Loan)
       (Get Loan) --> (Credit Check)
     </pre>
+    <pre class="mermaid-example">
+      usecase-beta
+        User -> (Open Bank Account)
+        User --> (Get Loan)
+        (Get Loan) --> (Credit Check)
+      </pre
+    >
     <hr />
 
     <h2>Use Case with Title and Aliases</h2>
@@ -43,10 +57,24 @@
           User --> (Use)
           (Use) -- extends --> (Another use case)
     </pre>
+    <pre class="mermaid-example">
+      usecase-beta
+          title  Simple use case
+          systemboundary
+            title Acme System
+            (Start)
+            (Use) as (Use the application)
+            (Another use case)
+          end
+          User -> (Start)
+          User --> (Use)
+          (Use) -- extends --> (Another use case)
+    </pre>
     <hr />
 
     <h2>Complex Use Case</h2>
-    <pre class="mermaid">
+    <pre id="complex" class="mermaid">
+      %% { init: { 'theme': 'forest' } } %%
       usecase-beta
       title Student Management System Use Cases
 
@@ -94,10 +122,59 @@
       Admin -> (Generate Reports) -> Courses, Grades
       Admin -> (View Grades) -> Grades
     </pre>
+    <pre id="complex-example" class="mermaid-example">
+      %% { init: { 'theme': 'forest' } } %%
+      usecase-beta
+      title Student Management System Use Cases
+
+      actor Student
+      actor Admin
+      service Authentication
+      service Grades
+      service Courses
+
+      systemboundary
+        title Student Management System
+        (Login) {
+          - Authenticate
+        }
+        (Submit Assignment) {
+          - Upload Assignment
+        }
+        (View Grades)
+        (Manage Users) {
+          - Add User
+          - Edit User
+          - Delete User
+        }
+        (Manage Courses) {
+          - Add Course
+          - Edit Course
+          - Delete Course
+        }
+        (Generate Reports) {
+          - Generate User Report
+          - Generate Course Report
+        }
+        (View Grades) {
+          - View User Grades
+          - View Course Grades
+        }
+      end
+
+      Student -> (Login) -> Authentication
+      Student -> (Submit Assignment) -> Courses
+      Student -> (View Grades) -> Grades
+      Admin -> (Login) -> Authentication
+      Admin -> (Manage Users) -> Courses
+      Admin -> (Manage Courses) -> Courses
+      Admin -> (Generate Reports) -> Courses, Grades
+      Admin -> (View Grades) -> Grades
+    </pre>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
-        theme: 'forest',
         logLevel: 3,
         securityLevel: 'loose',
         flowchart: { curve: 'basis' },
