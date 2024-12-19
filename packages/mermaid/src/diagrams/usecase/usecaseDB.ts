@@ -39,6 +39,17 @@ export class UsecaseDB {
     return source;
   }
 
+  addParticipants(participant: { service: string } | { actor: string }) {
+    if ('actor' in participant && !this.nodes.some((node) => node.id === participant.actor)) {
+      this.nodes.push(new UsecaseNode(participant.actor));
+    } else if (
+      'service' in participant &&
+      !this.nodes.some((node) => node.id === participant.service)
+    ) {
+      this.nodes.push(new UsecaseNode(participant.service));
+    }
+  }
+
   addRelationship(source: string, target: string, token: string): void {
     source = common.sanitizeText(source, getConfig());
     target = common.sanitizeText(target, getConfig());
@@ -73,7 +84,7 @@ export class UsecaseDB {
       classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
       start: link.source.id,
       end: link.target.id,
-      arrowTypeStart: 'arrow_open',
+      arrowTypeStart: undefined,
       arrowTypeEnd: 'arrow_point',
       label: link.label,
       minlen: 1,
@@ -197,6 +208,7 @@ type ArrowType = '->' | '-->';
 const db = new UsecaseDB();
 export default {
   clear: db.clear.bind(db),
+  addParticipants: db.addParticipants.bind(db),
   addRelationship: db.addRelationship.bind(db),
   addAlias: db.addAlias.bind(db),
   getAccDescription,

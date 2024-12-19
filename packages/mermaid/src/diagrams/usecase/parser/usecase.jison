@@ -61,13 +61,13 @@ optional_sections
     ;
 
 participant_definitions
-    : participant_definitions participant_definition
+    : participant_definitions participant_definition { yy.addParticipants($2); }
     | participant_definition
     ;
 
 participant_definition
-    : 'SERVICE' IDENTIFIER
-    | 'ACTOR' IDENTIFIER
+    : 'SERVICE' IDENTIFIER { $$ = {'service': $2} }
+    | 'ACTOR' IDENTIFIER   { $$ = {'actor'  : $2} }
     ;
 
 systemboundary_definitions
