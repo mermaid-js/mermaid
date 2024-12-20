@@ -95,7 +95,7 @@
       }
 
       .mermaid svg {
-        /* font-size: 18px !important; */
+        font-size: 16px !important;
         font-family: 'Recursive', serif;
         font-optical-sizing: auto;
         font-weight: 500;
@@ -128,10 +128,10 @@ flowchart TD
     A("ss") --- n1["Rectangle"] & n2["Rounded"] & n3(["Stadium"])
     n1 --x n4["Diamond"]
     n2 --o n5["Hexagon"]
-    n3 --> n6["Lean Left"]
+    n3 --> n6["Parallelogram"]
     n5 o--o n7["Trapezoid"]
     n4 x--x n8["Lean Right"]
-    n6 <--> n9["Lined Doc"]
+    n6 <--> n9(("Circle"))
     n8 --> n10["Rose"]
     n7 --> n11["Pine"]
     n9 --> n12["Peach"]
@@ -141,7 +141,6 @@ flowchart TD
     n6@{ shape: lean-l}
     n7@{ shape: trap-b}
     n8@{ shape: lean-r}
-    n9@{ shape: lin-doc}
      n10:::Rose
      n11:::Pine
      n12:::Peach
@@ -217,7 +216,7 @@ flowchart TD
         kanban: {
           htmlLabels: false,
         },
-        fontSize: 12,
+        fontSize: 16,
         logLevel: 0,
         securityLevel: 'loose',
         callback,
