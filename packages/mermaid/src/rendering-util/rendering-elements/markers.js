@@ -162,7 +162,7 @@ const point = (elem, type, id) => {
     .attr('refX', 11.5) // Adjust to position the arrowhead relative to the line
     .attr('refY', 7) // Half of 14 for vertical center
     .attr('markerUnits', 'userSpaceOnUse')
-    .attr('markerWidth', 11.5)
+    .attr('markerWidth', 10.5)
     .attr('markerHeight', 14)
     .attr('orient', 'auto')
     .append('path')
@@ -175,7 +175,7 @@ const point = (elem, type, id) => {
     .attr('id', id + '_' + type + '-pointStart')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 11.5 14')
-    .attr('refX', 0)
+    .attr('refX', 1)
     .attr('refY', 7)
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 11.5)
@@ -193,18 +193,18 @@ const circle = (elem, type, id) => {
     .attr('id', id + '_' + type + '-circleEnd')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', 11)
+    .attr('refX', 12)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
-    .attr('markerWidth', 11)
-    .attr('markerHeight', 11)
+    .attr('markerWidth', 14)
+    .attr('markerHeight', 14)
     .attr('orient', 'auto')
     .append('circle')
     .attr('cx', '5')
     .attr('cy', '5')
     .attr('r', '5')
     .attr('class', 'arrowMarkerPath')
-    .style('stroke-width', 1)
+    .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 
   elem
@@ -212,18 +212,18 @@ const circle = (elem, type, id) => {
     .attr('id', id + '_' + type + '-circleStart')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', -1)
+    .attr('refX', -2)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
-    .attr('markerWidth', 11)
-    .attr('markerHeight', 11)
+    .attr('markerWidth', 14)
+    .attr('markerHeight', 14)
     .attr('orient', 'auto')
     .append('circle')
     .attr('cx', '5')
     .attr('cy', '5')
     .attr('r', '5')
     .attr('class', 'arrowMarkerPath')
-    .style('stroke-width', 1)
+    .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 };
 const cross = (elem, type, id) => {
