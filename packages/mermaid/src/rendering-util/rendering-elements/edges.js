@@ -144,34 +144,73 @@ function setTerminalWidth(fo, value) {
   }
 }
 
+export const calculateEdgeLength = (path) => {
+  if (!path || path.length < 2) {
+    return 0;
+  }
+
+  let length = 0;
+  for (let i = 0; i < path.length - 1; i++) {
+    const dx = path[i + 1].x - path[i].x;
+    const dy = path[i + 1].y - path[i].y;
+    length += Math.sqrt(dx * dx + dy * dy);
+  }
+  return length;
+};
+
 export const positionEdgeLabel = (edge, paths) => {
-  log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
+  log.debug('Adjusting label position for edge', edge.id);
+
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+
   if (edge.label) {
     const el = edgeLabels.get(edge.id);
     let x = edge.x;
     let y = edge.y;
+
     if (path) {
       const pos = utils.calcLabelPosition(path);
-      log.debug(
-        'Moving label ' + edge.label + ' from (',
-        x,
-        ',',
-        y,
-        ') to (',
-        pos.x,
-        ',',
-        pos.y,
-        ') abc88'
-      );
-      if (paths.updatedPath) {
-        x = pos.x;
-        y = pos.y;
-      }
+      x = pos.x;
+      y = pos.y;
+
+      const edgeLength = calculateEdgeLength(path);
+      log.debug(`Edge Length for ${edge.id}:`, edgeLength);
+      const verticalOffset = edgeLength > 200 ? -140 : 0;
+      y += verticalOffset;
     }
-    el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
+    el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 3})`);
+    log.debug(`Updated label transform for edge ${edge.id}: translate(${x}, ${y})`);
+
+    // log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
+    // let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
+    // const siteConfig = getConfig();
+    // const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+    // if (edge.label) {
+    //   const el = edgeLabels.get(edge.id);
+    //   let x = edge.x;
+    //   let y = edge.y;
+
+    //   if (path) {
+    //     const pos = utils.calcLabelPosition(path);
+    //     log.debug(
+    //       'Moving label ' + edge.label + ' from (',
+    //       x,
+    //       ',',
+    //       y,
+    //       ') to (',
+    //       pos.x,
+    //       ',',
+    //       pos.y,
+    //       ') abc88'
+    //     );
+    //     if (paths.updatedPath) {
+    //       x = pos.x;
+    //       y = pos.y;
+    //     }
+    //   }
+    //   el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
   }
 
   if (edge.startLabelLeft) {
