@@ -23,6 +23,7 @@ class Theme {
 
     this.THEME_COLOR_LIMIT = 12;
     this.radius = 3;
+    this.strokeWidth = 1;
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     // dark
 

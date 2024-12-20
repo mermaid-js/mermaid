@@ -21,6 +21,7 @@ class Theme {
 
     this.THEME_COLOR_LIMIT = 12;
     this.radius = 5;
+    this.strokeWidth = 1;
     // dark
 
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';

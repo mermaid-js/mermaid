@@ -23,6 +23,7 @@ class Theme {
     this.THEME_COLOR_LIMIT = 12;
     this.radius = 3;
     this.strokeWidth = 2;
+
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     // dark
 
@@ -32,12 +33,10 @@ class Theme {
     // Neo-specific
     this.nodeBorder = '#000000';
     this.stateBorder = '#000000';
-    this.useGradient = true;
+    this.useGradient = false;
     this.gradientStart = '#0042eb';
     this.gradientStop = '#eb0042';
-    // this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
-    // this.dropShadow = 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.25));';
-    this.dropShadow = 'drop-shadow( 0px 1px 2px rgba(0, 0, 0, 0.25));';
+    this.dropShadow = 'url(#drop-shadow)';
     this.tertiaryColor = '#ffffff';
 
     /* Architecture Diagram variables */

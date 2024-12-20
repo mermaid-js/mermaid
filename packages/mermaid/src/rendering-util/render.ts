@@ -59,7 +59,18 @@ export const render = async (data4Layout: LayoutData, svg: SVG, positions?: any)
 
   const { useGradient, gradientStart, gradientStop } = data4Layout.config.themeVariables;
 
-  // console.log('IPI data4Layout', svg.attr('id'));
+  svg
+    .append('defs')
+    .append('filter')
+    .attr('id', 'drop-shadow')
+    .attr('height', '130%')
+    .attr('width', '130%')
+    .append('feDropShadow')
+    .attr('dx', '4')
+    .attr('dy', '4')
+    .attr('stdDeviation', 0)
+    .attr('flood-opacity', '0.06')
+    .attr('flood-color', '#000000');
 
   if (useGradient) {
     const gradient = svg
