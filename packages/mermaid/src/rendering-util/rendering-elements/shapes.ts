@@ -75,21 +75,22 @@ export interface ShapeDefinition {
   /**
    * Aliases can include descriptive names, other short names, etc.
    */
-  aliases?: string[];
+  readonly aliases?: string[];
   /**
    * These are names used by mermaid before the introduction of new shapes. These will not be in standard formats, and shouldn't be used by the users
    */
-  internalAliases?: string[];
+  readonly internalAliases?: string[];
   handler: ShapeHandler;
 }
 
-export const shapesDefs: ShapeDefinition[] = [
+export const shapesDefs = [
   {
     semanticName: 'Actor',
     name: 'Actor',
     shortName: 'actor',
     description: 'Actor used in Use Cases',
     handler: actor,
+    aliases: ['stickman'],
   },
   {
     semanticName: 'Process',
@@ -457,7 +458,7 @@ export const shapesDefs: ShapeDefinition[] = [
     aliases: ['lined-document'],
     handler: linedWaveEdgedRect,
   },
-] as const satisfies ShapeDefinition[];
+] as const;
 
 const generateShapeMap = () => {
   // These are the shapes that didn't have documentation present
@@ -486,13 +487,15 @@ const generateShapeMap = () => {
     classBox,
   } as const;
 
+  const emptyArray = [] as const;
+
   const entries = [
     ...(Object.entries(undocumentedShapes) as Entries<typeof undocumentedShapes>),
     ...shapesDefs.flatMap((shape) => {
       const aliases = [
         shape.shortName,
-        ...('aliases' in shape ? (shape.aliases ?? []) : []),
-        ...('internalAliases' in shape ? (shape.internalAliases ?? []) : []),
+        ...('aliases' in shape ? (shape.aliases ?? emptyArray) : emptyArray),
+        ...('internalAliases' in shape ? (shape.internalAliases ?? emptyArray) : emptyArray),
       ];
       return aliases.map((alias) => [alias, shape.handler] as const);
     }),

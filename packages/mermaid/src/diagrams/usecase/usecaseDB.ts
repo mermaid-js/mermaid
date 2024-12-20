@@ -1,5 +1,7 @@
 import type { BaseDiagramConfig, MermaidConfig } from '../../config.type.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { log } from '../../logger.js';
 import type { LayoutData } from '../../mermaid.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import common from '../common/common.js';
