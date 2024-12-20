@@ -22,7 +22,7 @@ export const markerOffsets2 = {
   composition: 18,
   dependency: 6,
   lollipop: 13.5,
-  arrow_point: 4,
+  arrow_point: 8,
   arrow_cross: 12.5,
 } as const;
 
