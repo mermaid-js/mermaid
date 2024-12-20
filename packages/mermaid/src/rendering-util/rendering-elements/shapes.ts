@@ -83,7 +83,7 @@ export interface ShapeDefinition {
   handler: ShapeHandler;
 }
 
-export const shapesDefs = [
+export const shapesDefs: ShapeDefinition[] = [
   {
     semanticName: 'Actor',
     name: 'Actor',

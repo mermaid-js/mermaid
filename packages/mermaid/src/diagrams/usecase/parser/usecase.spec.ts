@@ -1,10 +1,12 @@
 // @ts-ignore: jison doesn't export types
 import usecase from './usecase.jison';
-import db, { UsecaseLink, UsecaseNode } from '../usecaseDB.js';
-import { cleanupComments } from '../../../diagram-api/comments.js';
+import db, { type UsecaseDB, UsecaseLink, UsecaseNode } from '../usecaseDB.js';
 import { prepareTextForParsing } from '../usecaseUtils.js';
-import * as fs from 'fs';
-import * as path from 'path';
+import { setConfig } from '../../../config.js';
+
+setConfig({
+  securityLevel: 'strict',
+});
 
 describe('Usecase diagram', function () {
   describe('when parsing a use case it', function () {
@@ -28,16 +30,21 @@ describe('Usecase diagram', function () {
 
       const relationships = usecase.yy.getRelationships();
       expect(relationships).toStrictEqual([
-        new UsecaseLink(new UsecaseNode('User'), new UsecaseNode('(Start)'), '->', ''),
         new UsecaseLink(
-          new UsecaseNode('User'),
-          new UsecaseNode('(Use the application)'),
+          new UsecaseNode('User', 'actor'),
+          new UsecaseNode('(Start)', 'usecase'),
+          '->',
+          ''
+        ),
+        new UsecaseLink(
+          new UsecaseNode('User', 'actor'),
+          new UsecaseNode('(Use the application)', 'usecase'),
           '-->',
           ''
         ),
         new UsecaseLink(
-          new UsecaseNode('(Use the application)'),
-          new UsecaseNode('(Another use case)'),
+          new UsecaseNode('(Use the application)', 'usecase'),
+          new UsecaseNode('(Another use case)', 'usecase'),
           '-->',
           ''
         ),
@@ -119,6 +126,12 @@ describe('Usecase diagram', function () {
       const result = usecase.parse(prepareTextForParsing(input));
       expect(result).toBeTruthy();
       expect(usecase.yy.getDiagramTitle()).toEqual('Arrows in Use Case diagrams');
+
+      const db = usecase.yy as UsecaseDB;
+      expect(
+        db.getRelationships().some((rel) => rel.source.id == 'Admin' && rel.target.id == '(Login)')
+      ).toBeTruthy();
+
       // console.log(usecase.yy.getRelationships());
       // console.log(usecase.yy.getSystemBoundaries());
     });

@@ -13,6 +13,14 @@ import {
   clear as commonClear,
 } from '../common/commonDb.js';
 
+function isUseCaseLabel(label: string | undefined) {
+  if (!label) {
+    return false;
+  }
+  label = label.trim();
+  return label.startsWith('(') && label.endsWith(')');
+}
+
 export class UsecaseDB {
   private aliases = new Map<string, string>();
   private links: UsecaseLink[] = [];
@@ -41,20 +49,20 @@ export class UsecaseDB {
 
   addParticipants(participant: { service: string } | { actor: string }) {
     if ('actor' in participant && !this.nodes.some((node) => node.id === participant.actor)) {
-      this.nodes.push(new UsecaseNode(participant.actor));
+      this.nodes.push(new UsecaseNode(participant.actor, 'actor'));
     } else if (
       'service' in participant &&
       !this.nodes.some((node) => node.id === participant.service)
     ) {
-      this.nodes.push(new UsecaseNode(participant.service));
+      this.nodes.push(new UsecaseNode(participant.service, 'service'));
     }
   }
 
   addRelationship(source: string, target: string, token: string): void {
     source = common.sanitizeText(source, getConfig());
     target = common.sanitizeText(target, getConfig());
-    const sourceNode = this.getNode(source);
-    const targetNode = this.getNode(target);
+    const sourceNode = this.getNode(source, isUseCaseLabel(source) ? 'usecase' : 'actor');
+    const targetNode = this.getNode(target, isUseCaseLabel(target) ? 'usecase' : 'service');
     const label = (/--(.+?)(-->|->)/.exec(token)?.[1] ?? '').trim();
     const arrow = token.includes('-->') ? '-->' : '->';
     this.links.push(new UsecaseLink(sourceNode, targetNode, arrow, label));
@@ -71,7 +79,7 @@ export class UsecaseDB {
   }
 
   getActors() {
-    return this.links.map((link) => link.source.id).filter((source) => !source.startsWith('('));
+    return this.links.map((link) => link.source.id).filter((source) => !isUseCaseLabel(source));
   }
 
   getConfig() {
@@ -133,7 +141,7 @@ export class UsecaseDB {
     ];
 
     nodes
-      .filter((node) => node.label?.startsWith('(') && node.label.endsWith(')'))
+      .filter((node) => isUseCaseLabel(node.label))
       .forEach((node) => {
         node.label = node.label!.slice(1, -1);
         node.rx = 50;
@@ -159,6 +167,16 @@ export class UsecaseDB {
     return this.links;
   }
 
+  getServices(): string[] {
+    const services = [];
+    for (const node of this.nodes) {
+      if (node.nodeType === 'service') {
+        services.push(node.id);
+      }
+    }
+    return services;
+  }
+
   getSystemBoundaries() {
     return this.systemBoundaries;
   }
@@ -171,9 +189,9 @@ export class UsecaseDB {
   setAccDescription = setAccDescription;
   setDiagramTitle = setDiagramTitle;
 
-  private getNode(id: string): UsecaseNode {
+  private getNode(id: string, nodeType: UsecaseNodeType): UsecaseNode {
     if (!this.nodesMap.has(id)) {
-      const node = new UsecaseNode(id);
+      const node = new UsecaseNode(id, nodeType);
       this.nodesMap.set(id, node);
       this.nodes.push(node);
     }
@@ -199,8 +217,13 @@ export class UsecaseLink {
 }
 
 export class UsecaseNode {
-  constructor(public id: string) {}
+  constructor(
+    public id: string,
+    public nodeType: UsecaseNodeType | undefined
+  ) {}
 }
+
+type UsecaseNodeType = 'actor' | 'service' | 'usecase';
 
 type ArrowType = '->' | '-->';
 
