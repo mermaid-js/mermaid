@@ -194,7 +194,7 @@ const circle = (elem, type, id) => {
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 12)
-    .attr('refY', 5)
+    .attr('refY', 4.95) // What!!!??
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 14)
     .attr('markerHeight', 14)
