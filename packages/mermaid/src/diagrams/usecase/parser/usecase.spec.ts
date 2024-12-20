@@ -135,5 +135,27 @@ describe('Usecase diagram', function () {
       // console.log(usecase.yy.getRelationships());
       // console.log(usecase.yy.getSystemBoundaries());
     });
+
+    it('should handle aliases', function () {
+      const input = `
+        usecase-beta
+          actor SU as Student Union
+          actor University Chancellor
+          service PMS as Payment Management System
+          SU -> (Pay Dues) -> PMS
+        `;
+      const result = usecase.parse(prepareTextForParsing(input));
+      const db = usecase.yy as UsecaseDB;
+      expect(result).toBeTruthy();
+      expect(db.getActors()).toStrictEqual(['SU', 'University Chancellor']);
+      expect(db.getServices()).toStrictEqual(['PMS']);
+      expect(db.getData().nodes.find((n) => n.id === 'SU')?.label).toEqual('Student Union');
+      expect(db.getData().nodes.find((n) => n.id === 'University Chancellor')?.label).toEqual(
+        'University Chancellor'
+      );
+      expect(db.getData().nodes.find((n) => n.id === 'PMS')?.label).toEqual(
+        'Payment Management System'
+      );
+    });
   });
 });

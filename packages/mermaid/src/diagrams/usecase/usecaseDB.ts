@@ -1,7 +1,7 @@
 import type { BaseDiagramConfig, MermaidConfig } from '../../config.type.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { log } from '../../logger.js';
+
+import { log, setLogLevel } from '../../logger.js';
 import type { LayoutData } from '../../mermaid.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import common from '../common/common.js';
@@ -26,7 +26,6 @@ function isUseCaseLabel(label: string | undefined) {
 export class UsecaseDB {
   private aliases = new Map<string, string>();
   private links: UsecaseLink[] = [];
-  private nodes: UsecaseNode[] = [];
   private nodesMap = new Map<string, UsecaseNode>();
   private systemBoundaries: UsecaseSystemBoundary[] = [];
 
@@ -37,7 +36,6 @@ export class UsecaseDB {
   clear(): void {
     this.aliases = new Map();
     this.links = [];
-    this.nodes = [];
     this.nodesMap = new Map();
     this.systemBoundaries = [];
     commonClear();
@@ -49,14 +47,14 @@ export class UsecaseDB {
     return source;
   }
 
-  addParticipants(participant: { service: string } | { actor: string }) {
-    if ('actor' in participant && !this.nodes.some((node) => node.id === participant.actor)) {
-      this.nodes.push(new UsecaseNode(participant.actor, 'actor'));
-    } else if (
-      'service' in participant &&
-      !this.nodes.some((node) => node.id === participant.service)
-    ) {
-      this.nodes.push(new UsecaseNode(participant.service, 'service'));
+  addParticipant(participant: { service: string; as?: string } | { actor: string; as?: string }) {
+    setLogLevel('info');
+    log.info('addParticipants', participant);
+    const nodeType = 'actor' in participant ? 'actor' : 'service';
+    const id = 'actor' in participant ? participant.actor.trim() : participant.service.trim();
+    const _ = this.getOrCreateNode(id, nodeType);
+    if (participant.as) {
+      this.addAlias(`${id} as ${participant.as}`);
     }
   }
 
@@ -69,8 +67,8 @@ export class UsecaseDB {
   addRelationship(source: string, target: string, arrowString: string): void {
     source = common.sanitizeText(source, getConfig());
     target = common.sanitizeText(target, getConfig());
-    const sourceNode = this.getNode(source, isUseCaseLabel(source) ? 'usecase' : 'actor');
-    const targetNode = this.getNode(target, isUseCaseLabel(target) ? 'usecase' : 'service');
+    const sourceNode = this.getOrCreateNode(source, isUseCaseLabel(source) ? 'usecase' : 'actor');
+    const targetNode = this.getOrCreateNode(target, isUseCaseLabel(target) ? 'usecase' : 'service');
     const label = (/--(.+?)(-->|->)/.exec(arrowString)?.[1] ?? '').trim();
     const arrow = arrowString.includes('-->') ? '-->' : '->';
     this.links.push(new UsecaseLink(sourceNode, targetNode, arrow, label));
@@ -87,7 +85,9 @@ export class UsecaseDB {
   }
 
   getActors() {
-    return this.links.map((link) => link.source.id).filter((source) => !isUseCaseLabel(source));
+    return [...this.nodesMap.values()]
+      .filter((node) => node.nodeType === 'actor')
+      .map((node) => node.id);
   }
 
   getConfig() {
@@ -125,7 +125,7 @@ export class UsecaseDB {
     );
 
     const nodes: Node[] = [
-      ...this.nodes.map(
+      ...[...this.nodesMap.values()].map(
         (node) =>
           ({
             ...baseNode,
@@ -148,6 +148,8 @@ export class UsecaseDB {
       ),
     ];
 
+    // Remove () from use case labels
+    // and make them rounded.
     nodes
       .filter((node) => isUseCaseLabel(node.label))
       .forEach((node) => {
@@ -176,13 +178,9 @@ export class UsecaseDB {
   }
 
   getServices(): string[] {
-    const services = [];
-    for (const node of this.nodes) {
-      if (node.nodeType === 'service') {
-        services.push(node.id);
-      }
-    }
-    return services;
+    return [...this.nodesMap.values()]
+      .filter((node) => node.nodeType === 'service')
+      .map((node) => node.id);
   }
 
   getSystemBoundaries() {
@@ -190,13 +188,9 @@ export class UsecaseDB {
   }
 
   getUseCases(): string[] {
-    const useCases = [];
-    for (const node of this.nodes) {
-      if (node.nodeType === 'usecase') {
-        useCases.push(node.id);
-      }
-    }
-    return useCases;
+    return [...this.nodesMap.values()]
+      .filter((node) => node.nodeType === 'usecase')
+      .map((node) => node.id);
   }
 
   getAccDescription = getAccDescription;
@@ -207,11 +201,10 @@ export class UsecaseDB {
   setAccDescription = setAccDescription;
   setDiagramTitle = setDiagramTitle;
 
-  private getNode(id: string, nodeType: UsecaseNodeType): UsecaseNode {
+  private getOrCreateNode(id: string, nodeType: UsecaseNodeType): UsecaseNode {
     if (!this.nodesMap.has(id)) {
       const node = new UsecaseNode(id, nodeType);
       this.nodesMap.set(id, node);
-      this.nodes.push(node);
     }
     return this.nodesMap.get(id)!;
   }
@@ -234,6 +227,9 @@ export class UsecaseLink {
   ) {}
 }
 
+/**
+ * can be any of actor, service, or usecase
+ */
 export class UsecaseNode {
   constructor(
     public id: string,
@@ -249,7 +245,7 @@ type ArrowType = '->' | '-->';
 const db = new UsecaseDB();
 export default {
   clear: db.clear.bind(db),
-  addParticipants: db.addParticipants.bind(db),
+  addParticipant: db.addParticipant.bind(db),
   addRelationship: db.addRelationship.bind(db),
   addAlias: db.addAlias.bind(db),
   getAccDescription,

@@ -171,7 +171,7 @@ This Markdown should be kept.
       expect(buildShapeDoc()).toMatchInlineSnapshot(`
         "| **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
         | --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
-        | Actor                             | Actor                  | \`actor\`        | Actor used in Use Cases        |                                                                  |
+        | Actor                             | Actor                  | \`actor\`        | Actor used in Use Cases        | \`stickman\`                                                       |
         | Card                              | Notched Rectangle      | \`notch-rect\`   | Represents a card              | \`card\`, \`notched-rectangle\`                                      |
         | Collate                           | Hourglass              | \`hourglass\`    | Represents a collate operation | \`collate\`, \`hourglass\`                                           |
         | Com Link                          | Lightning Bolt         | \`bolt\`         | Communication link             | \`com-link\`, \`lightning-bolt\`                                     |

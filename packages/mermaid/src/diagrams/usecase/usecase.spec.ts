@@ -6,7 +6,7 @@ describe('Usecase diagram', function () {
     db.clear();
   });
   it('should add node when adding participants', function () {
-    db.addParticipants({ service: 'Authz' });
+    db.addParticipant({ service: 'Authz' });
     expect(db.getServices()).toStrictEqual(['Authz']);
   });
   it('should add actor when adding relationship', function () {

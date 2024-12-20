@@ -8,14 +8,14 @@
 %options case-insensitive
 
 // Special states for recognizing aliases and notes
-%x ALIAS NOTE
+%x ALIAS NOTE ID
 
 %%
 
 \s+                   /* skip whitespace */
 "usecase-beta"        return 'DECLARATION';
-"actor"               return 'ACTOR';
-"service"             return 'SERVICE';
+"actor"               { this.begin('ID'); return 'ACTOR';   }
+"service"             { this.begin('ID'); return 'SERVICE'; }
 "systemboundary"      return 'SYSTEMBOUNDARY';
 "-"\s[^#\n;]+         return 'TASK';
 "title"\s[^#\n;]+     return 'TITLE';
@@ -28,6 +28,18 @@
 "->"                  return 'SOLID_ARROW';
 "-"                   return '-';
 "end"                 return 'END';
+<ID>(.+)\s+as\s+([^\n]+)  {
+    var matches = yytext.match(/\s*(.+)\s+as\s+([^\n]+)/);
+    this.popState();
+    yytext = [matches[1], matches[2]];
+    return 'IDENTIFIER_AS';
+}
+<ID>([^\n]+)  {
+    var matches = yytext.match(/\s*([^\n]+)/);
+    this.popState();
+    yytext = matches[1];
+    return 'IDENTIFIER';
+}
 \([^)\n]*\)\s+as\s+\([^)\n]*\)  return 'USECASE_AS';
 \([^)\n]*\)           return 'USECASE'
 "("                   return '(';
@@ -61,13 +73,15 @@ optional_sections
     ;
 
 participant_definitions
-    : participant_definitions participant_definition { yy.addParticipants($2); }
-    | participant_definition
+    : participant_definitions participant_definition    { yy.addParticipant($2); }
+    | participant_definition                            { yy.addParticipant($1); }
     ;
 
 participant_definition
-    : 'SERVICE' IDENTIFIER { $$ = {'service': $2} }
-    | 'ACTOR' IDENTIFIER   { $$ = {'actor'  : $2} }
+    : SERVICE IDENTIFIER     { $$ = {'service': $2} }
+    | ACTOR   IDENTIFIER     { $$ = {'actor'  : $2} }
+    | SERVICE IDENTIFIER_AS  { $$ = {'service': $2[0], 'as': $2[1]} }
+    | ACTOR   IDENTIFIER_AS  { $$ = {'actor'  : $2[0], 'as': $2[1]} }
     ;
 
 systemboundary_definitions
