@@ -1,4 +1,4 @@
-# Use Case Diagram
+# Use Case Diagram (v<MERMAID_RELEASE_VERSION>+)
 
 > In the context of mermaid-js, the Use Case diagram is a powerful tool for visualizing the interactions between actors and use cases within a system. It helps in understanding the functional requirements and the relationships between different components of the system.
 
