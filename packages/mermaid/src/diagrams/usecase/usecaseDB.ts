@@ -58,13 +58,19 @@ export class UsecaseDB {
     }
   }
 
-  addRelationship(source: string, target: string, token: string): void {
+  /**
+   * Adds an edge to the graph
+   * @param source - id of node
+   * @param target - id of node
+   * @param arrowString - '--&gt;' or '-&gt;' or '-- some text --&gt;'
+   */
+  addRelationship(source: string, target: string, arrowString: string): void {
     source = common.sanitizeText(source, getConfig());
     target = common.sanitizeText(target, getConfig());
     const sourceNode = this.getNode(source, isUseCaseLabel(source) ? 'usecase' : 'actor');
     const targetNode = this.getNode(target, isUseCaseLabel(target) ? 'usecase' : 'service');
-    const label = (/--(.+?)(-->|->)/.exec(token)?.[1] ?? '').trim();
-    const arrow = token.includes('-->') ? '-->' : '->';
+    const label = (/--(.+?)(-->|->)/.exec(arrowString)?.[1] ?? '').trim();
+    const arrow = arrowString.includes('-->') ? '-->' : '->';
     this.links.push(new UsecaseLink(sourceNode, targetNode, arrow, label));
   }
 
@@ -181,6 +187,16 @@ export class UsecaseDB {
     return this.systemBoundaries;
   }
 
+  getUseCases(): string[] {
+    const useCases = [];
+    for (const node of this.nodes) {
+      if (node.nodeType === 'usecase') {
+        useCases.push(node.id);
+      }
+    }
+    return useCases;
+  }
+
   getAccDescription = getAccDescription;
   getAccTitle = getAccTitle;
   getDiagramTitle = getDiagramTitle;
@@ -241,7 +257,9 @@ export default {
   getData: db.getData.bind(db),
   getRelationships: db.getRelationships.bind(db),
   getDiagramTitle: db.getDiagramTitle.bind(db),
+  getServices: db.getServices.bind(db),
   getSystemBoundaries: db.getSystemBoundaries.bind(db),
+  getUseCases: db.getUseCases.bind(db),
   setAccDescription,
   setAccTitle,
   setDiagramTitle: db.setDiagramTitle.bind(db),
