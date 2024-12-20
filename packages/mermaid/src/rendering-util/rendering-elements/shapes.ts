@@ -491,8 +491,8 @@ const generateShapeMap = () => {
     ...shapesDefs.flatMap((shape) => {
       const aliases = [
         shape.shortName,
-        ...('aliases' in shape ? shape.aliases : []),
-        ...('internalAliases' in shape ? shape.internalAliases : []),
+        ...('aliases' in shape ? (shape.aliases ?? []) : []),
+        ...('internalAliases' in shape ? (shape.internalAliases ?? []) : []),
       ];
       return aliases.map((alias) => [alias, shape.handler] as const);
     }),
