@@ -1,9 +1,9 @@
 {
-	"folders": [
-		{
-			"name": "mermaid",
-			"path": "."
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "name": "mermaid",
+      "path": ".",
+    },
+  ],
+  "settings": {},
 }

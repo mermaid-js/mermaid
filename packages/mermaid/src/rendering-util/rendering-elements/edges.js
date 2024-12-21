@@ -50,7 +50,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -(bbox.height ** 1.4) + ')'); // HERE
+  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')'); //HERE
 
   // Make element accessible by id for positioning
   edgeLabels.set(edge.id, edgeLabel);
@@ -180,7 +180,7 @@ export const positionEdgeLabel = (edge, paths) => {
       const verticalOffset = edgeLength > 200 ? -140 : 0;
       y += verticalOffset;
     }
-    el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 3})`);
+    el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
     log.debug(`Updated label transform for edge ${edge.id}: translate(${x}, ${y})`);
 
     // log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
