@@ -53,6 +53,9 @@ const config: RequiredDeep<MermaidConfig> = {
       };
     },
   },
+  class: {
+    hideEmptyMembersBox: false,
+  },
   gantt: {
     ...defaultConfigJson.gantt,
     tickInterval: undefined,

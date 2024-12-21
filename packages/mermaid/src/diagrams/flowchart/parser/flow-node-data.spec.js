@@ -197,6 +197,21 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].shape).toEqual('squareRect');
     expect(data4Layout.nodes[0].label).toEqual('This is }');
   });
+  it('should error on non-existent shape', function () {
+    expect(() => {
+      flow.parser.parse(`flowchart TB
+      A@{ shape: this-shape-does-not-exist }
+      `);
+    }).toThrow('No such shape: this-shape-does-not-exist.');
+  });
+  it('should error on internal-only shape', function () {
+    expect(() => {
+      // this shape does exist, but it's only supposed to be for internal/backwards compatibility use
+      flow.parser.parse(`flowchart TB
+      A@{ shape: rect_left_inv_arrow }
+      `);
+    }).toThrow('No such shape: rect_left_inv_arrow. Shape names should be lowercase.');
+  });
   it('Diamond shapes should work as usual', function () {
     const res = flow.parser.parse(`flowchart TB
       A{This is a label}

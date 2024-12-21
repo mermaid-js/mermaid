@@ -1,15 +1,15 @@
 import rough from 'roughjs';
-import type { SVG } from '../../../diagram-api/types.js';
 import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const forkJoin = (
-  parent: SVG,
+export function forkJoin<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
   node: Node,
   { dir, config: { state, themeVariables } }: ShapeRenderOptions
-) => {
+) {
   const { nodeStyles } = styles2String(node);
   node.label = '';
   const shapeSvg = parent
@@ -29,7 +29,7 @@ export const forkJoin = (
   const x = (-1 * width) / 2;
   const y = (-1 * height) / 2;
 
-  // @ts-ignore TODO: Fix rough typings
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {
     stroke: themeVariables.lineColor,
@@ -63,4 +63,4 @@ export const forkJoin = (
     return intersect.rect(node, point);
   };
   return shapeSvg;
-};
+}

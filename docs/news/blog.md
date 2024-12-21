@@ -6,6 +6,18 @@
 
 # Blog
 
+## [Mermaid 11.4 is out: New Features and Kanban Diagramming](https://www.mermaidchart.com/blog/posts/mermaid-11-4-is-out-new-features-and-kanban-diagramming)
+
+Mermaid 11.4 brings enhanced functionality with the introduction of Kanban diagrams, allowing users to create visual workflows with status columns and task details.
+
+October 31, 2024 · 2 mins
+
+## [How To Build an ER Diagram with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-build-an-er-diagram-with-mermaid-chart)
+
+An entity relationship (ER) diagram acts like a blueprint for your database. This makes ER diagrams effective tools for anyone dealing with complex databases, data modeling, and AI model training.
+
+October 24, 2024 · 4 mins
+
 ## [Expanding the Horizons of Mermaid Flowcharts: Introducing 30 New Shapes!](https://www.mermaidchart.com/blog/posts/new-mermaid-flowchart-shapes/)
 
 24 September 2024 · 5 mins

@@ -49,7 +49,7 @@ This matters if you are using base tag settings.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:200](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L200)
+[packages/mermaid/src/config.type.ts:201](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L201)
 
 ---
 
@@ -59,7 +59,7 @@ This matters if you are using base tag settings.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:197](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L197)
+[packages/mermaid/src/config.type.ts:198](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L198)
 
 ---
 
@@ -121,7 +121,7 @@ should not change unless content is changed.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:201](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L201)
+[packages/mermaid/src/config.type.ts:202](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L202)
 
 ---
 
@@ -183,7 +183,7 @@ See <https://developer.mozilla.org/en-US/docs/Web/CSS/font-family>
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:203](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L203)
+[packages/mermaid/src/config.type.ts:204](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L204)
 
 ---
 
@@ -217,7 +217,7 @@ If set to true, ignores legacyMathML.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:196](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L196)
+[packages/mermaid/src/config.type.ts:197](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L197)
 
 ---
 
@@ -250,6 +250,16 @@ Defines the seed to be used when using handDrawn look. This is important for the
 #### Defined in
 
 [packages/mermaid/src/config.type.ts:185](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L185)
+
+---
+
+### kanban
+
+• `Optional` **kanban**: `KanbanDiagramConfig`
+
+#### Defined in
+
+[packages/mermaid/src/config.type.ts:196](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L196)
 
 ---
 
@@ -310,7 +320,7 @@ Defines which main look to use for the diagram.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:204](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L204)
+[packages/mermaid/src/config.type.ts:205](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L205)
 
 ---
 
@@ -354,7 +364,7 @@ The maximum allowed size of the users text diagram
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:199](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L199)
+[packages/mermaid/src/config.type.ts:200](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L200)
 
 ---
 
@@ -394,7 +404,7 @@ The maximum allowed size of the users text diagram
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:198](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L198)
+[packages/mermaid/src/config.type.ts:199](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L199)
 
 ---
 
@@ -465,7 +475,7 @@ This is useful when you want to control how to handle syntax errors in your appl
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:210](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L210)
+[packages/mermaid/src/config.type.ts:211](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L211)
 
 ---
 
@@ -518,7 +528,7 @@ You may also use `themeCSS` to override this value.
 
 #### Defined in
 
-[packages/mermaid/src/config.type.ts:202](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L202)
+[packages/mermaid/src/config.type.ts:203](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L203)
 
 ---
 
