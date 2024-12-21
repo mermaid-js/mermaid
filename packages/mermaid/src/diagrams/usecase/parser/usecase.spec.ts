@@ -3,6 +3,8 @@ import usecase from './usecase.jison';
 import db, { type UsecaseDB, UsecaseLink, UsecaseNode } from '../usecaseDB.js';
 import { prepareTextForParsing } from '../usecaseUtils.js';
 import { setConfig } from '../../../config.js';
+// @ts-ignore unused variable
+import { log, setLogLevel } from '../../../logger.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -128,12 +130,13 @@ describe('Usecase diagram', function () {
       expect(usecase.yy.getDiagramTitle()).toEqual('Arrows in Use Case diagrams');
 
       const db = usecase.yy as UsecaseDB;
-      expect(
-        db.getRelationships().some((rel) => rel.source.id == 'Admin' && rel.target.id == '(Login)')
-      ).toBeTruthy();
 
-      // console.log(usecase.yy.getRelationships());
-      // console.log(usecase.yy.getSystemBoundaries());
+      expect(db.getRelationships()).toContainEqual({
+        source: { id: 'Admin', nodeType: 'actor' },
+        target: { id: '(Login)', nodeType: 'usecase', extensionPoints: ['Authenticate'] },
+        arrow: '->',
+        label: '',
+      });
     });
 
     it('should handle aliases', function () {
@@ -156,6 +159,44 @@ describe('Usecase diagram', function () {
       expect(db.getData().nodes.find((n) => n.id === 'PMS')?.label).toEqual(
         'Payment Management System'
       );
+    });
+
+    it('should parse system boundary with no extension points', function () {
+      const input = `
+      usecase-beta
+        systemboundary
+          (Repair Car)
+        end
+      `;
+      const result = usecase.parse(prepareTextForParsing(input));
+      expect(result).toBeTruthy();
+      const db = usecase.yy as UsecaseDB;
+      expect(db.getSystemBoundaries()[0].useCases).toStrictEqual(['(Repair Car)']);
+      expect(db.getUseCases()).toStrictEqual(['(Repair Car)']);
+    });
+
+    it('should parse system boundary with extension points', function () {
+      const input = `
+      usecase-beta
+        systemboundary
+          (Repair Device) {
+            - Login with Secure Token
+            -   Run Diagnostics
+            - Logout
+            - Get Help
+          }
+        end
+      `;
+      const result = usecase.parse(prepareTextForParsing(input));
+      expect(result).toBeTruthy();
+      const db = usecase.yy as UsecaseDB;
+      expect(db.getSystemBoundaries()[0].useCases).toStrictEqual(['(Repair Device)']);
+      expect(db.getUseCaseExtensionPoints('(Repair Device)')).toStrictEqual([
+        'Login with Secure Token',
+        'Run Diagnostics',
+        'Logout',
+        'Get Help',
+      ]);
     });
   });
 });

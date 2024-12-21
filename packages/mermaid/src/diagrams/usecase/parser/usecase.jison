@@ -58,17 +58,17 @@
 %% /* language grammar */
 
 start
-    : 'DECLARATION' optional_sections relationships
+    : 'DECLARATION' optional_sections
+    | 'DECLARATION' title_definition optional_sections
     ;
 
 optional_sections
-    : title_definition participant_definitions systemboundary_definitions
-    | participant_definitions systemboundary_definitions
-    | title_definition participant_definitions
-    | title_definition systemboundary_definitions
-    | participant_definitions
+    : participant_definitions
     | systemboundary_definitions
-    | title_definition
+    | relationships
+    | participant_definitions systemboundary_definitions relationships
+    | participant_definitions relationships
+    | systemboundary_definitions relationships
     | /* empty */
     ;
 
@@ -85,8 +85,8 @@ participant_definition
     ;
 
 systemboundary_definitions
-    : 'SYSTEMBOUNDARY' systemboundary_elements 'END' { yy.addSystemBoundary($2); }
-    | 'SYSTEMBOUNDARY' systemboundary_title_definition systemboundary_elements 'END' { yy.addSystemBoundary($3, $2); }
+    : 'SYSTEMBOUNDARY' use_cases 'END' { yy.addSystemBoundary($2); }
+    | 'SYSTEMBOUNDARY' systemboundary_title_definition use_cases 'END' { yy.addSystemBoundary($3, $2); }
     ;
 
 systemboundary_title_definition
@@ -97,24 +97,27 @@ title_definition
     : 'TITLE' {var title = $1.substring(6).trim(); yy.setDiagramTitle(title);$$=title;}
     ;
 
-systemboundary_elements
-    : systemboundary_elements systemboundary_element { $$ = $1.concat($2); }
-    | systemboundary_element { $$ = [$1] }
+use_cases
+    : use_cases use_case               { $$ = $1.concat($2); }
+    | use_case                         { $$ = [$1]           }
     ;
 
-systemboundary_element
-    : 'USECASE' '{' systemboundary_tasks '}'
-    | 'USECASE'
-    | 'USECASE_AS' '{' systemboundary_tasks '}'
-    | 'USECASE_AS'  { $$ = yy.addAlias($1)}
+use_casexx
+    : 'USECASE';
+
+use_case
+    : 'USECASE'    '{' extension_points '}'          { $$ = { type: 'USECASE', id: $1.trim(), extensionPoints: $3 }; }
+    | 'USECASE'                                      { $$ = { type: 'USECASE', id: $1.trim(), extensionPoints: [] }; }
+    | 'USECASE_AS' '{' extension_points '}'          { $$ = { type: 'USECASE', id: yy.addAlias($1), extensionPoints: $3 }; }
+    | 'USECASE_AS'                                   { $$ = { type: 'USECASE', id: yy.addAlias($1), extensionPoints: [] }; }
     ;
 
-systemboundary_tasks
-    : systemboundary_tasks systemboundary_task { $$ = $1.concat($2) }
-    | systemboundary_task { $$ = [$1] }
+extension_points
+    : extension_points extension_point { $$ = $1.concat($2.replace(/^- +/, ''));  }
+    | extension_point                  { $$ = [$1.replace(/^- +/, '')];           }
     ;
 
-systemboundary_task
+extension_point
     : TASK
     ;
 
@@ -144,6 +147,3 @@ note_statement
     : 'NOTE' TEXT NEWLINE { $$ = { type: 'note', text: $2 }; }
     ;
 
-alias_statement
-    : IDENTIFIER 'AS' IDENTIFIER NEWLINE { $$ = { type: 'alias', original: $1, alias: $3 }; }
-    ;

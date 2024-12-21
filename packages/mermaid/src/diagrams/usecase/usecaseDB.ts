@@ -1,7 +1,8 @@
 import type { BaseDiagramConfig, MermaidConfig } from '../../config.type.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { log } from '../../logger.js';
 
-import { log, setLogLevel } from '../../logger.js';
 import type { LayoutData } from '../../mermaid.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import common from '../common/common.js';
@@ -41,6 +42,7 @@ export class UsecaseDB {
     commonClear();
   }
 
+  /** parses an "foo as bar" and returns "foo" */
   addAlias(token: string): string {
     const [source, target] = token.split('as').map((_) => _.trim());
     this.aliases.set(source, target);
@@ -48,8 +50,6 @@ export class UsecaseDB {
   }
 
   addParticipant(participant: { service: string; as?: string } | { actor: string; as?: string }) {
-    setLogLevel('info');
-    log.info('addParticipants', participant);
     const nodeType = 'actor' in participant ? 'actor' : 'service';
     const id = 'actor' in participant ? participant.actor.trim() : participant.service.trim();
     const _ = this.getOrCreateNode(id, nodeType);
@@ -74,14 +74,23 @@ export class UsecaseDB {
     this.links.push(new UsecaseLink(sourceNode, targetNode, arrow, label));
   }
 
-  addSystemBoundary(useCases: string[], title?: string) {
+  addSystemBoundary(useCases: { id: string; extensionPoints?: string[] }[], title?: string) {
     if (title) {
       title = common.sanitizeText(title.trim(), getConfig());
       if (title.startsWith('title')) {
         title = title.slice(5).trim();
       }
     }
-    this.systemBoundaries.push({ id: 'boundary-' + this.systemBoundaries.length, useCases, title });
+    const useCaseIds = useCases.map((useCase) => useCase.id);
+    this.systemBoundaries.push({
+      id: 'boundary-' + this.systemBoundaries.length,
+      useCases: useCaseIds,
+      title,
+    });
+    useCases.forEach((useCase) => {
+      const node = this.getOrCreateNode(useCase.id, 'usecase');
+      node.extensionPoints = useCase.extensionPoints;
+    });
   }
 
   getActors() {
@@ -193,6 +202,12 @@ export class UsecaseDB {
       .map((node) => node.id);
   }
 
+  getUseCaseExtensionPoints(useCaseId: string): string[] | undefined {
+    return [...this.nodesMap.values()].find(
+      (node) => node.nodeType === 'usecase' && node.id === useCaseId
+    )?.extensionPoints;
+  }
+
   getAccDescription = getAccDescription;
   getAccTitle = getAccTitle;
   getDiagramTitle = getDiagramTitle;
@@ -233,7 +248,10 @@ export class UsecaseLink {
 export class UsecaseNode {
   constructor(
     public id: string,
-    public nodeType: UsecaseNodeType | undefined
+    public nodeType: UsecaseNodeType | undefined,
+
+    /** used for 'usecase' nodeType only */
+    public extensionPoints?: string[]
   ) {}
 }
 
@@ -258,6 +276,7 @@ export default {
   getServices: db.getServices.bind(db),
   getSystemBoundaries: db.getSystemBoundaries.bind(db),
   getUseCases: db.getUseCases.bind(db),
+  getUseCaseExtensionPoints: db.getUseCaseExtensionPoints.bind(db),
   setAccDescription,
   setAccTitle,
   setDiagramTitle: db.setDiagramTitle.bind(db),
