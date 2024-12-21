@@ -118,6 +118,22 @@ quadrantChart
     Campaign F: [0.35, 0.78]
 ```
 
+### [Use Case](../syntax/usecase.md)
+
+```mermaid-example
+usecase-beta
+    title Simple Use Case
+    systemboundary
+        title Acme System
+        (Start)
+        (Use) as (Use the application)
+        (Another use case)
+    end
+    User -> (Start)
+    User --> (Use)
+    (Use) --> (Another use case)
+```
+
 ### [XY Chart](../syntax/xyChart.md)
 
 ```mermaid-example
