@@ -8,9 +8,9 @@
 
 ## Mermaid is composed of three parts
 
-1.  Deployment
-2.  Syntax
-3.  Configuration
+1. Deployment
+2. Syntax
+3. Configuration
 
 This section talks about the different ways to **deploy** Mermaid.
 
@@ -21,11 +21,11 @@ If you are a beginner:
 
 ## Ways to use Mermaid
 
-1.  [Using the Mermaid Live Editor](getting-started.md#_1-using-the-mermaid-live-editor)
-2.  [Using the Mermaid Chart Editor](getting-started.md#_2-using-the-mermaid-chart-editor)
-3.  [Using Mermaid Plugins and Integrations](getting-started.md#_3-using-mermaid-plugins)
-4.  [Calling the Mermaid JavaScript API](getting-started.md#_4-calling-the-mermaid-javascript-api)
-5.  [Adding Mermaid as a dependency](getting-started.md#_5-adding-mermaid-as-a-dependency)
+1. [Using the Mermaid Live Editor](getting-started.md#_1-using-the-mermaid-live-editor)
+2. [Using the Mermaid Chart Editor](getting-started.md#_2-using-the-mermaid-chart-editor)
+3. [Using Mermaid Plugins and Integrations](getting-started.md#_3-using-mermaid-plugins)
+4. [Calling the Mermaid JavaScript API](getting-started.md#_4-calling-the-mermaid-javascript-api)
+5. [Adding Mermaid as a dependency](getting-started.md#_5-adding-mermaid-as-a-dependency)
 
 To learn more, visit the [Usage](../config/usage.md) page.
 
@@ -301,22 +301,22 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
 
 Below are the steps for adding Mermaid as a dependency:
 
-1.  Install `node v16`
+1. Install `node v16`
 
 > **Note**
 > To learn more about downloading and installing `Node.js` and `npm`, visit the [npm Docs website](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 
-1.  Install `yarn` using `npm` with this command:
+1. Install `yarn` using `npm` with this command:
 
-    `npm install -g yarn`
+   `npm install -g yarn`
 
-2.  After yarn installs, enter this command:
+2. After yarn installs, enter this command:
 
-    `yarn add mermaid`
+   `yarn add mermaid`
 
-3.  To add Mermaid as a dev dependency, enter this command:
+3. To add Mermaid as a dev dependency, enter this command:
 
-    `yarn add --dev mermaid`
+   `yarn add --dev mermaid`
 
 ## Closing note
 
