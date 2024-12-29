@@ -144,6 +144,8 @@ Messages can be of two displayed either solid or with a dotted line.
 [Actor][Arrow][Actor]:Message text
 ```
 
+### Arrow Types
+
 There are ten types of arrows currently supported:
 
 | Type     | Description                                          |
@@ -158,6 +160,21 @@ There are ten types of arrows currently supported:
 | `--x`    | Dotted line with a cross at the end                  |
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
+
+### Links in Messages (v<MERMAID_RELEASE_VERSION>+)
+
+You can add one or more markdown-style links to messages.
+
+```
+[Actor][Arrow][Actor]:[Label](URL)
+```
+
+Example:
+
+```mermaid-example
+sequenceDiagram
+    Alice->>John: Alice shared [MermaidJS](https://mermaid.js.org/) and [the Getting Started guide](https://mermaid.js.org/intro/getting-started.html) with John
+```
 
 ## Activations
 
