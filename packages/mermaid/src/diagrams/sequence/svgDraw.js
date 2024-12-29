@@ -134,11 +134,13 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
 };
 
 export const drawLink = function (elem, label, url) {
+  const sanitizedUrl = sanitizeUrl(url);
   elem
     .append('a')
-    .attr('xlink:href', sanitizeUrl(url))
-    .attr('xlink:show', 'new')
+    .attr('href', sanitizedUrl)
+    .attr('xlink:href', sanitizedUrl)
     .attr('target', '_blank')
+    .attr('xlink:show', 'new')
     .attr('rel', 'noopener noreferrer')
     .append('tspan')
     .attr('class', 'link')
