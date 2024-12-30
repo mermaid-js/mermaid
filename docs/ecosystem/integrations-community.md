@@ -254,6 +254,7 @@ Communication tools and platforms
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
+- [bugfree.ai: Guided system design and behavior interview practice](https://bugfree.ai?utm_source=git-mermaid) ✅
 - [Codemia: A tool to practice system design problems](https://codemia.io) ✅
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
