@@ -1,4 +1,4 @@
-import flowDb from '../flowDb.js';
+import { FlowDb } from '../flowDb.js';
 import flow from './flow.jison';
 import { setConfig } from '../../../config.js';
 import { vi } from 'vitest';
@@ -9,7 +9,9 @@ setConfig({
 });
 
 describe('[Interactions] when parsing', () => {
+  let flowDb;
   beforeEach(function () {
+    flowDb = new FlowDb();
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
   });

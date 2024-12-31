@@ -1,4 +1,4 @@
-import flowDb from '../flowDb.js';
+import { FlowDb } from '../flowDb.js';
 import flow from './flow.jison';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 import { setConfig } from '../../../config.js';
@@ -9,7 +9,7 @@ setConfig({
 
 describe('parsing a flow chart', function () {
   beforeEach(function () {
-    flow.parser.yy = flowDb;
+    flow.parser.yy = new FlowDb();
     flow.parser.yy.clear();
   });
 
