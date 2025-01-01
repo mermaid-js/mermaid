@@ -3,6 +3,7 @@ import type { InternalHelpers } from '../internals.js';
 import { internalHelpers } from '../internals.js';
 import { log } from '../logger.js';
 import type { LayoutData } from './types.js';
+import { insertElementsForSize } from './insertElementsForSize.js';
 
 export interface RenderOptions {
   algorithm?: string;
@@ -51,6 +52,8 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
 
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
+  // Add the bounding box to the layout so that the render can run
+  await insertElementsForSize(svg, data4Layout);
   return layoutRenderer.render(data4Layout, svg, internalHelpers, {
     algorithm: layoutDefinition.algorithm,
   });

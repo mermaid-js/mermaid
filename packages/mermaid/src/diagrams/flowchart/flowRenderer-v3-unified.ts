@@ -2,7 +2,7 @@ import { select } from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
+import { getDiagramElement } from '../../rendering-util/getDiagramElement.js';
 import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
