@@ -48,7 +48,7 @@ describe('when using the ganttDb', function () {
       ${'getTasks'}             | ${[]}
       ${'getAccTitle'}          | ${''}
       ${'getAccDescription'}    | ${''}
-      ${'getDateFormat'}        | ${''}
+      ${'getDateFormat'}        | ${'YYYY-MM-DD'}
       ${'getAxisFormat'}        | ${''}
       ${'getTodayMarker'}       | ${''}
       ${'getExcludes'}          | ${[]}
@@ -504,5 +504,22 @@ describe('when using the ganttDb', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
     expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
+  });
+
+  it('should parse date with default format YYYY-MM-DD', function () {
+    ganttDb.addTask('test1', 'id1,2025-01-01,2025-01-14');
+    ganttDb.addTask('test2', 'id2,after id1,2025-01-18');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date(2025, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2025, 0, 14));
+    expect(tasks[0].id).toEqual('id1');
+    expect(tasks[0].task).toEqual('test1');
+
+    expect(tasks[1].startTime).toEqual(new Date(2025, 0, 14));
+    expect(tasks[1].endTime).toEqual(new Date(2025, 0, 18));
+    expect(tasks[1].id).toEqual('id2');
+    expect(tasks[1].task).toEqual('test2');
   });
 });
