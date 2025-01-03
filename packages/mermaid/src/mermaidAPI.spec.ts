@@ -832,5 +832,41 @@ graph TD;A--x|text including URL space|B;`)
       expect(diagram).toBeInstanceOf(Diagram);
       expect(diagram.type).toBe('flowchart-v2');
     });
+
+    it('should not fuckup db when rendering different diagrams', async () => {
+      const flwoDiagram1 = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      %% This is a comment A -- text --> B{node}
+      A -- text --> B -- text2 --> C`
+      );
+      const flwoDiagram2 = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      %% This is a comment A -- text --> B{node}
+      A -- text --> B -- text2 --> C`
+      );
+      // Since flowDiagram will return new Db object each time, we can compare the db to be different.
+      expect(flwoDiagram1.db).not.toBe(flwoDiagram2.db);
+
+      const classDiagram1 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]`
+      );
+      const classDiagram2 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]`
+      );
+      // Since sequenceDiagram will return same Db object each time, we can compare the db to be same.
+      expect(classDiagram1.db).toBe(classDiagram2.db);
+    });
   });
 });
