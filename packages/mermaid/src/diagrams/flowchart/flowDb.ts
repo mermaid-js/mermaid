@@ -521,7 +521,7 @@ You have to call mermaid.initialize.`
    * Clears the internal graph db so that a new graph can be parsed.
    *
    */
-  public clear = (ver = 'gen-1') => {
+  public clear = (ver = 'gen-2') => {
     this.vertices = new Map();
     this.classes = new Map();
     this.edges = [];
