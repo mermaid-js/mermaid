@@ -1,7 +1,7 @@
 import type { BaseDiagramConfig, MermaidConfig } from '../../config.type.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { log } from '../../logger.js';
+import { log, setLogLevel } from '../../logger.js';
 
 import type { LayoutData } from '../../mermaid.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
@@ -25,7 +25,6 @@ function isUseCaseLabel(label: string | undefined) {
 }
 
 export class UsecaseDB {
-  private aliases = new Map<string, string>();
   private links: UsecaseLink[] = [];
   private nodesMap = new Map<string, UsecaseNode>();
   private systemBoundaries: UsecaseSystemBoundary[] = [];
@@ -35,7 +34,6 @@ export class UsecaseDB {
   }
 
   clear(): void {
-    this.aliases = new Map();
     this.links = [];
     this.nodesMap = new Map();
     this.systemBoundaries = [];
@@ -43,19 +41,16 @@ export class UsecaseDB {
   }
 
   /** parses an "foo as bar" and returns "foo" */
-  addAlias(token: string): string {
-    const [source, target] = token.split('as').map((_) => _.trim());
-    this.aliases.set(source, target);
+  parseAlias(token: string): string {
+    const [source, _] = token.split('as').map((_) => _.trim());
     return source;
   }
 
   addParticipant(participant: { service: string; as?: string } | { actor: string; as?: string }) {
     const nodeType = 'actor' in participant ? 'actor' : 'service';
     const id = 'actor' in participant ? participant.actor.trim() : participant.service.trim();
-    const _ = this.getOrCreateNode(id, nodeType);
-    if (participant.as) {
-      this.addAlias(`${id} as ${participant.as}`);
-    }
+    const node = this.getOrCreateNode(id, nodeType);
+    node.as = participant.as?.trim() ?? node.as;
   }
 
   /**
@@ -104,6 +99,7 @@ export class UsecaseDB {
   }
 
   getData(): LayoutData {
+    setLogLevel('trace');
     const edges: Edge[] = this.links.map((link) => ({
       id: `${link.source.id}-${link.target.id}`,
       classes: 'edge-thickness-normal edge-pattern-solid flowchart-link',
@@ -133,16 +129,24 @@ export class UsecaseDB {
       )
     );
 
+    const shapeMap: { [K in UsecaseNodeType]: string } = {
+      actor: 'actor',
+      service: 'rect',
+      usecase: 'ellipse',
+    };
+
     const nodes: Node[] = [
-      ...[...this.nodesMap.values()].map(
-        (node) =>
-          ({
-            ...baseNode,
-            id: node.id,
-            label: this.aliases.get(node.id) ?? node.id,
-            parentId: parentLookup.get(node.id),
-          }) as Node
-      ),
+      ...[...this.nodesMap.values()].flatMap((node) => [
+        {
+          ...baseNode,
+          id: node.id,
+          label: node.as ?? node.id,
+          parentId: parentLookup.get(node.id),
+          shape: shapeMap[node.nodeType!],
+          cssClasses: node.nodeType === 'actor' ? 'actor' : '',
+          extra: { extensionPoints: node.extensionPoints },
+        } as Node,
+      ]),
       ...this.getSystemBoundaries().map(
         (boundary) =>
           ({
@@ -253,6 +257,8 @@ export class UsecaseNode {
     /** used for 'usecase' nodeType only */
     public extensionPoints?: string[]
   ) {}
+  /** alias. If present, it'll be used as the label instead of `id` */
+  public as?: string;
 }
 
 type UsecaseNodeType = 'actor' | 'service' | 'usecase';
@@ -265,7 +271,7 @@ export default {
   clear: db.clear.bind(db),
   addParticipant: db.addParticipant.bind(db),
   addRelationship: db.addRelationship.bind(db),
-  addAlias: db.addAlias.bind(db),
+  parseAlias: db.parseAlias.bind(db),
   getAccDescription,
   getAccTitle,
   getActors: db.getActors.bind(db),

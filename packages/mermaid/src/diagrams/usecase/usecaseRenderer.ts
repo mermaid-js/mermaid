@@ -6,7 +6,6 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { setLogLevel } from '../../logger.js';
-import type { LayoutData } from '../../mermaid.js';
 
 /**
  * Draws Use Case diagram.
@@ -36,8 +35,6 @@ export const draw = async function (
   const data4Layout = db.getData();
   data4Layout.layoutAlgorithm = 'dagre';
 
-  preprocess(db, data4Layout);
-
   await render(data4Layout, svg);
 
   const title = db.getDiagramTitle();
@@ -51,17 +48,6 @@ export const draw = async function (
   const padding = 8;
   setupViewPortForSVG(svg, padding, '', conf?.useMaxWidth ?? true);
 };
-
-function preprocess(db: UsecaseDB, data4Layout: LayoutData) {
-  // assign actor icons
-  const actors = db.getActors();
-  data4Layout.nodes
-    .filter((node) => actors.includes(node.id))
-    .forEach((node) => {
-      node.shape = 'actor';
-      node.cssClasses = 'actor';
-    });
-}
 
 export default {
   draw,

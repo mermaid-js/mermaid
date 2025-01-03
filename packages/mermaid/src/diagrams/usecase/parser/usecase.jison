@@ -108,8 +108,8 @@ use_casexx
 use_case
     : 'USECASE'    '{' extension_points '}'          { $$ = { type: 'USECASE', id: $1.trim(), extensionPoints: $3 }; }
     | 'USECASE'                                      { $$ = { type: 'USECASE', id: $1.trim(), extensionPoints: [] }; }
-    | 'USECASE_AS' '{' extension_points '}'          { $$ = { type: 'USECASE', id: yy.addAlias($1), extensionPoints: $3 }; }
-    | 'USECASE_AS'                                   { $$ = { type: 'USECASE', id: yy.addAlias($1), extensionPoints: [] }; }
+    | 'USECASE_AS' '{' extension_points '}'          { $$ = { type: 'USECASE', id: yy.parseAlias($1), extensionPoints: $3 }; }
+    | 'USECASE_AS'                                   { $$ = { type: 'USECASE', id: yy.parseAlias($1), extensionPoints: [] }; }
     ;
 
 extension_points

@@ -55,6 +55,7 @@ import { tiltedCylinder } from './shapes/tiltedCylinder.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
 import { triangle } from './shapes/triangle.js';
+import { ellipse } from './shapes/ellipse.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
@@ -433,6 +434,14 @@ export const shapesDefs = [
     description: 'Tagged process',
     aliases: ['tagged-rectangle', 'tag-proc', 'tagged-process'],
     handler: taggedRect,
+  },
+  {
+    semanticName: 'Ellipse',
+    name: 'Ellipse',
+    shortName: 'ellipse',
+    description: 'Ellipse',
+    aliases: ['use-case'],
+    handler: ellipse,
   },
   {
     semanticName: 'Paper Tape',
