@@ -1,10 +1,12 @@
-import type { UsecaseNode } from '../../../diagrams/usecase/usecaseDB.js';
 import rough from 'roughjs';
+import type { UsecaseNode } from '../../../diagrams/usecase/usecaseDB.js';
 import type { D3Selection } from '../../../types.js';
 import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { updateNodeBounds, getNodeClasses } from './util.js';
 import { userNodeOverrides } from './handDrawnShapeStyles.js';
+
+type NodeEx<T = unknown> = Node & { extra: T };
 
 export function ellipse<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const g = parent.append('g').attr('id', node.id).attr('class', getNodeClasses(node));
@@ -18,7 +20,7 @@ export function ellipse<T extends SVGGraphicsElement>(parent: D3Selection<T>, no
     .style('fill', 'black')
     .text(node.label ?? 'TODO');
 
-  const useCaseNode = node.extra as unknown as UsecaseNode;
+  const useCaseNode = (node as unknown as NodeEx<UsecaseNode>).extra;
   const { shapeSvg: multiline } = drawMultilineTexts(
     g.select('g.labels'),
     node,
@@ -34,12 +36,13 @@ export function ellipse<T extends SVGGraphicsElement>(parent: D3Selection<T>, no
 
   // move them to 0,0
   const labels = g.select('g.labels');
+  // @ts-ignore - TODO: fix this
   const labelsBbox = labels.node()!.getBBox();
   const fontHeight = 16;
   labels.attr('transform', `translate(0, ${(fontHeight - labelsBbox.y - labelsBbox.height) / 2})`);
 
   // Calculate rx and ry to contain the rectangle
-  const { width: rectWidth, height: rectHeight } = g.select('g.labels').node()!.getBBox();
+  const { width: rectWidth, height: rectHeight } = labelsBbox;
   const { rx, ry } = calculateEllipseRadii(rectWidth, rectHeight);
 
   const padding = 5;
@@ -48,6 +51,7 @@ export function ellipse<T extends SVGGraphicsElement>(parent: D3Selection<T>, no
   if (node.look == 'handDrawn') {
     const options = userNodeOverrides(node, {});
     const parentNode = g.node()!;
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(g);
     const firstChild = parentNode.firstChild;
     const newNode = rc.ellipse(0, 0, 2 * (rx + padding), 2 * (ry + padding), options);
@@ -63,8 +67,7 @@ export function ellipse<T extends SVGGraphicsElement>(parent: D3Selection<T>, no
       .attr('cy', 0)
       .attr('rx', rx + padding)
       .attr('ry', ry + padding)
-      .attr('fill', 'white')
-      .attr('stroke', 'black')
+      .attr('class', 'basic label-container')
       .attr('stroke-width', 1);
   }
   updateNodeBounds(node, g);
