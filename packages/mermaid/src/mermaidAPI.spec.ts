@@ -833,7 +833,7 @@ graph TD;A--x|text including URL space|B;`)
       expect(diagram.type).toBe('flowchart-v2');
     });
 
-    it('should not fuckup db when rendering different diagrams', async () => {
+    it('should not modify db when rendering different diagrams', async () => {
       const flowDiagram1 = await mermaidAPI.getDiagramFromText(
         `flowchart LR
       %% This is a comment A -- text --> B{node}
