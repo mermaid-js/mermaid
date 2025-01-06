@@ -834,7 +834,7 @@ graph TD;A--x|text including URL space|B;`)
     });
 
     it('should not fuckup db when rendering different diagrams', async () => {
-      const flwoDiagram1 = await mermaidAPI.getDiagramFromText(
+      const flowDiagram1 = await mermaidAPI.getDiagramFromText(
         `flowchart LR
       %% This is a comment A -- text --> B{node}
       A -- text --> B -- text2 --> C`
