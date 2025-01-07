@@ -25,10 +25,11 @@ import type {
   FlowVertexTypeParam,
 } from './types.js';
 import type { NodeMetaData } from '../../types.js';
+import type { DiagramDB } from '../../diagram-api/types.js';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
-export class FlowDb {
+export class FlowDb implements DiagramDB {
   private vertexCounter = 0;
   private config = getConfig();
   private vertices = new Map<string, FlowVertex>();
