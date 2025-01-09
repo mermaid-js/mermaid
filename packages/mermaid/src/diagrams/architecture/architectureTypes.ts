@@ -259,6 +259,7 @@ export interface ArchitectureState extends Record<string, unknown> {
   groups: Record<string, ArchitectureGroup>;
   edges: ArchitectureEdge[];
   registeredIds: Record<string, 'node' | 'group'>;
+  usedEdges: Record<string, Record<string, boolean>>;
   dataStructures?: ArchitectureDataStructures;
   elements: Record<string, D3Element>;
   config: ArchitectureDiagramConfig;

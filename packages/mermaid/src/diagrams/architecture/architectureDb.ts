@@ -40,6 +40,7 @@ const state = new ImperativeState<ArchitectureState>(() => ({
   groups: {},
   edges: [],
   registeredIds: {},
+  usedEdges: {},
   config: DEFAULT_ARCHITECTURE_CONFIG,
   dataStructures: undefined,
   elements: {},
@@ -200,6 +201,21 @@ const addEdge = function ({
     rhsGroup,
     title,
   };
+
+  state.records.usedEdges[lhsId] ??= {};
+  state.records.usedEdges[rhsId] ??= {};
+  if (state.records.usedEdges[lhsId][lhsDir]) {
+    throw new Error(
+      `There is already an existing edge coming out of side [${lhsDir}] for service [${lhsId}] to [${rhsId}]. Please use junctions to connect multiple services to one side.`
+    );
+  }
+  if (state.records.usedEdges[rhsId][rhsDir]) {
+    throw new Error(
+      `There is already an existing edge coming out of side [${rhsDir}] for service [${rhsId}] to [${lhsId}]. Please use junctions to connect multiple services to one side.`
+    );
+  }
+  state.records.usedEdges[lhsId][lhsDir] = true;
+  state.records.usedEdges[rhsId][rhsDir] = true;
 
   state.records.edges.push(edge);
   if (state.records.nodes[lhsId] && state.records.nodes[rhsId]) {
