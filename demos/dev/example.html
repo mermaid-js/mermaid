@@ -39,8 +39,8 @@ graph TB
 
     <script type="module">
       import mermaid from '/mermaid.esm.mjs';
-      import flowchartELK from '/mermaid-flowchart-elk.esm.mjs';
-      await mermaid.registerExternalDiagrams([flowchartELK]);
+      import layouts from '/mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
       async function render(str) {
         const { svg } = await mermaid.render('dynamic', str);
         document.getElementById('dynamicDiagram').innerHTML = svg;

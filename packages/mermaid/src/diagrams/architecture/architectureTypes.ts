@@ -7,6 +7,8 @@ import type cytoscape from 'cytoscape';
 |       Architecture Diagram Types        |
 \*=======================================*/
 
+export type ArchitectureAlignment = 'vertical' | 'horizontal' | 'bend';
+
 export type ArchitectureDirection = 'L' | 'R' | 'T' | 'B';
 export type ArchitectureDirectionX = Extract<ArchitectureDirection, 'L' | 'R'>;
 export type ArchitectureDirectionY = Extract<ArchitectureDirection, 'T' | 'B'>;
@@ -170,6 +172,18 @@ export const getArchitectureDirectionXYFactors = function (
   }
 };
 
+export const getArchitectureDirectionAlignment = function (
+  a: ArchitectureDirection,
+  b: ArchitectureDirection
+): ArchitectureAlignment {
+  if (isArchitectureDirectionXY(a, b)) {
+    return 'bend';
+  } else if (isArchitectureDirectionX(a)) {
+    return 'horizontal';
+  }
+  return 'vertical';
+};
+
 export interface ArchitectureStyleOptions {
   archEdgeColor: string;
   archEdgeArrowColor: string;
@@ -249,9 +263,27 @@ export interface ArchitectureDB extends DiagramDB {
 
 export type ArchitectureAdjacencyList = Record<string, ArchitectureDirectionPairMap>;
 export type ArchitectureSpatialMap = Record<string, number[]>;
+
+/**
+ * Maps the direction that groups connect from.
+ *
+ * **Outer key**: ID of group A
+ *
+ * **Inner key**: ID of group B
+ *
+ * **Value**: 'vertical' or 'horizontal'
+ *
+ * Note: tmp[groupA][groupB] == tmp[groupB][groupA]
+ */
+export type ArchitectureGroupAlignments = Record<
+  string,
+  Record<string, Exclude<ArchitectureAlignment, 'bend'>>
+>;
+
 export interface ArchitectureDataStructures {
   adjList: ArchitectureAdjacencyList;
   spatialMaps: ArchitectureSpatialMap[];
+  groupAlignments: ArchitectureGroupAlignments;
 }
 
 export interface ArchitectureState extends Record<string, unknown> {
