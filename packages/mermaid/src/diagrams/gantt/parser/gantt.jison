@@ -70,6 +70,8 @@ that id.
 
 "gantt"                         return 'gantt';
 "dateFormat"\s[^#\n;]+          return 'dateFormat';
+"wdStartTime"\s[^#\n;]+         return 'wdStartTime';
+"wdEndTime"\s[^#\n;]+           return 'wdEndTime';
 "inclusiveEndDates"             return 'inclusiveEndDates';
 "topAxis"                       return 'topAxis';
 "axisFormat"\s[^#\n;]+          return 'axisFormat';
@@ -137,6 +139,8 @@ weekend
 
 statement
   : dateFormat {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
+  | wdStartTime {yy.setWDStartTime($1.substr(12));$$=$1.substr(12);}
+  | wdEndTime {yy.setWDEndTime($1.substr(10));$$=$1.substr(10);}
   | inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
   | topAxis {yy.TopAxis();$$=$1.substr(8);}
   | axisFormat {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
