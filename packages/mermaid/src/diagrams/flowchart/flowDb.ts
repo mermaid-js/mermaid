@@ -1,11 +1,13 @@
 import { select } from 'd3';
-import utils, { getEdgeId } from '../../utils.js';
-import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
-import common from '../common/common.js';
-import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
-import type { Node, Edge } from '../../rendering-util/types.js';
-import { log } from '../../logger.js';
 import * as yaml from 'js-yaml';
+import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
+import type { DiagramDB } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
+import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
+import type { Edge, Node } from '../../rendering-util/types.js';
+import type { EdgeMetaData, NodeMetaData } from '../../types.js';
+import utils, { getEdgeId } from '../../utils.js';
+import common from '../common/common.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -16,19 +18,20 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import type {
-  FlowVertex,
   FlowClass,
-  FlowSubGraph,
-  FlowText,
   FlowEdge,
   FlowLink,
+  FlowSubGraph,
+  FlowText,
+  FlowVertex,
   FlowVertexTypeParam,
 } from './types.js';
-import type { NodeMetaData } from '../../types.js';
-import type { DiagramDB } from '../../diagram-api/types.js';
+
+interface LinkData {
+  id: string;
+}
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
-
 export class FlowDb implements DiagramDB {
   private vertexCounter = 0;
   private config = getConfig();
@@ -83,12 +86,38 @@ export class FlowDb implements DiagramDB {
     classes: string[],
     dir: string,
     props = {},
-    shapeData: any
+    metadata: any
   ) => {
-    // console.log('addVertex', id, shapeData);
     if (!id || id.trim().length === 0) {
       return;
     }
+    // Extract the metadata from the shapeData, the syntax for adding metadata for nodes and edges is the same
+    // so at this point we don't know if it's a node or an edge, but we can still extract the metadata
+    let doc;
+    if (metadata !== undefined) {
+      let yamlData;
+      // detect if shapeData contains a newline character
+      if (!metadata.includes('\n')) {
+        yamlData = '{\n' + metadata + '\n}';
+      } else {
+        yamlData = metadata + '\n';
+      }
+      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+    }
+
+    // Check if this is an edge
+    const edge = this.edges.find((e) => e.id === id);
+    if (edge) {
+      const edgeDoc = doc as EdgeMetaData;
+      if (edgeDoc?.animate) {
+        edge.animate = edgeDoc.animate;
+      }
+      if (edgeDoc?.animation) {
+        edge.animation = edgeDoc.animation;
+      }
+      return;
+    }
+
     let txt;
 
     let vertex = this.vertices.get(id);
@@ -140,19 +169,7 @@ export class FlowDb implements DiagramDB {
       Object.assign(vertex.props, props);
     }
 
-    if (shapeData !== undefined) {
-      let yamlData;
-      // detect if shapeData contains a newline character
-      // console.log('shapeData', shapeData);
-      if (!shapeData.includes('\n')) {
-        // console.log('yamlData shapeData has no new lines', shapeData);
-        yamlData = '{\n' + shapeData + '\n}';
-      } else {
-        // console.log('yamlData shapeData has new lines', shapeData);
-        yamlData = shapeData + '\n';
-      }
-      // console.log('yamlData', yamlData);
-      const doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+    if (doc !== undefined) {
       if (doc.shape) {
         if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
           throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
@@ -199,11 +216,18 @@ export class FlowDb implements DiagramDB {
    * Function called by parser when a link/edge definition has been found
    *
    */
-  private addSingleLink = (_start: string, _end: string, type: any) => {
+  public addSingleLink = (_start: string, _end: string, type: any, id?: string) => {
     const start = _start;
     const end = _end;
 
-    const edge: FlowEdge = { start: start, end: end, type: undefined, text: '', labelType: 'text' };
+    const edge: FlowEdge = {
+      start: start,
+      end: end,
+      type: undefined,
+      text: '',
+      labelType: 'text',
+      classes: [],
+    };
     log.info('abc78 Got edge...', edge);
     const linkTextObj = type.text;
 
@@ -222,6 +246,9 @@ export class FlowDb implements DiagramDB {
       edge.stroke = type.stroke;
       edge.length = type.length > 10 ? 10 : type.length;
     }
+    if (id) {
+      edge.id = id;
+    }
 
     if (this.edges.length < (this.config.maxEdges ?? 500)) {
       log.info('Pushing edge...');
@@ -237,11 +264,23 @@ You have to call mermaid.initialize.`
     }
   };
 
-  public addLink = (_start: string[], _end: string[], type: unknown) => {
-    log.info('addLink', _start, _end, type);
+  private readonly isLinkData = (value: unknown): value is LinkData => {
+    return (
+      value !== null &&
+      typeof value === 'object' &&
+      'id' in value &&
+      typeof (value as LinkData).id === 'string'
+    );
+  };
+
+  public addLink = (_start: string[], _end: string[], linkData: unknown) => {
+    const id = this.isLinkData(linkData) ? linkData.id.replace('@', '') : undefined;
+
+    log.info('addLink', _start, _end, id);
+
     for (const start of _start) {
       for (const end of _end) {
-        this.addSingleLink(start, end, type);
+        this.addSingleLink(start, end, linkData, id);
       }
     }
   };
@@ -276,9 +315,6 @@ You have to call mermaid.initialize.`
       if (pos === 'default') {
         this.edges.defaultStyle = style;
       } else {
-        // if (utils.isSubstringInArray('fill', style) === -1) {
-        //   style.push('fill:none');
-        // }
         this.edges[pos].style = style;
         // if edges[pos].style does have fill not set, set it to none
         if (
@@ -291,7 +327,13 @@ You have to call mermaid.initialize.`
     });
   };
 
-  public addClass = (ids: string, style: string[]) => {
+  public addClass = (ids: string, _style: string[]) => {
+    const style = _style
+      .join()
+      .replace(/\\,/g, '§§§')
+      .replace(/,/g, ';')
+      .replace(/§§§/g, ',')
+      .split(';');
     ids.split(',').forEach((id) => {
       let classNode = this.classes.get(id);
       if (classNode === undefined) {
@@ -346,6 +388,10 @@ You have to call mermaid.initialize.`
       if (vertex) {
         vertex.classes.push(className);
       }
+      const edge = this.edges.find((e) => e.id === id);
+      if (edge) {
+        edge.classes.push(className);
+      }
       const subGraph = this.subGraphLookup.get(id);
       if (subGraph) {
         subGraph.classes.push(className);
@@ -363,7 +409,7 @@ You have to call mermaid.initialize.`
     }
   };
 
-  private setClickFun = (id: string, functionName: string, functionArgs: string) => {
+  private readonly setClickFun = (id: string, functionName: string, functionArgs: string) => {
     const domId = this.lookUpDomId(id);
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (getConfig().securityLevel !== 'loose') {
@@ -478,7 +524,7 @@ You have to call mermaid.initialize.`
     return this.classes;
   };
 
-  private setupToolTips = (element: Element) => {
+  private readonly setupToolTips = (element: Element) => {
     let tooltipElem = select('.mermaidTooltip');
     // @ts-ignore TODO: fix this
     if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
@@ -608,7 +654,7 @@ You have to call mermaid.initialize.`
     return id;
   };
 
-  private getPosForId = (id: string) => {
+  private readonly getPosForId = (id: string) => {
     for (const [i, subGraph] of this.subGraphs.entries()) {
       if (subGraph.id === id) {
         return i;
@@ -617,7 +663,7 @@ You have to call mermaid.initialize.`
     return -1;
   };
 
-  private indexNodes2 = (id: string, pos: number): { result: boolean; count: number } => {
+  private readonly indexNodes2 = (id: string, pos: number): { result: boolean; count: number } => {
     const nodes = this.subGraphs[pos].nodes;
     this.secCount = this.secCount + 1;
     if (this.secCount > 2000) {
@@ -682,7 +728,7 @@ You have to call mermaid.initialize.`
     return false;
   };
 
-  private destructStartLink = (_str: string): FlowLink => {
+  private readonly destructStartLink = (_str: string): FlowLink => {
     let str = _str.trim();
     let type = 'arrow_open';
 
@@ -714,7 +760,7 @@ You have to call mermaid.initialize.`
     return { type, stroke };
   };
 
-  private countChar = (char: string, str: string) => {
+  private readonly countChar = (char: string, str: string) => {
     const length = str.length;
     let count = 0;
     for (let i = 0; i < length; ++i) {
@@ -725,7 +771,7 @@ You have to call mermaid.initialize.`
     return count;
   };
 
-  private destructEndLink = (_str: string) => {
+  private readonly destructEndLink = (_str: string) => {
     const str = _str.trim();
     let line = str.slice(0, -1);
     let type = 'arrow_open';
@@ -835,7 +881,7 @@ You have to call mermaid.initialize.`
     firstGraph: this.firstGraph,
   };
 
-  private getTypeFromVertex = (vertex: FlowVertex): ShapeID => {
+  private readonly getTypeFromVertex = (vertex: FlowVertex): ShapeID => {
     if (vertex.img) {
       return 'imageSquare';
     }
@@ -865,8 +911,8 @@ You have to call mermaid.initialize.`
     }
   };
 
-  private findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
-  private destructEdgeType = (type: string | undefined) => {
+  private readonly findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
+  private readonly destructEdgeType = (type: string | undefined) => {
     let arrowTypeStart = 'none';
     let arrowTypeEnd = 'arrow_point';
     switch (type) {
@@ -886,7 +932,7 @@ You have to call mermaid.initialize.`
     return { arrowTypeStart, arrowTypeEnd };
   };
 
-  private addNodeFromVertex = (
+  private readonly addNodeFromVertex = (
     vertex: FlowVertex,
     nodes: Node[],
     parentDB: Map<string, string>,
@@ -941,7 +987,7 @@ You have to call mermaid.initialize.`
     }
   };
 
-  private getCompiledStyles = (classDefs: string[]) => {
+  private readonly getCompiledStyles = (classDefs: string[]) => {
     let compiledStyles: string[] = [];
     for (const customClass of classDefs) {
       const cssClass = this.classes.get(customClass);
@@ -1007,7 +1053,7 @@ You have to call mermaid.initialize.`
         styles.push(...rawEdge.style);
       }
       const edge: Edge = {
-        id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }),
+        id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
         start: rawEdge.start,
         end: rawEdge.end,
         type: rawEdge.type ?? 'normal',
@@ -1019,14 +1065,22 @@ You have to call mermaid.initialize.`
           rawEdge?.stroke === 'invisible'
             ? ''
             : 'edge-thickness-normal edge-pattern-solid flowchart-link',
-        arrowTypeStart: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeStart,
-        arrowTypeEnd: rawEdge?.stroke === 'invisible' ? 'none' : arrowTypeEnd,
+        arrowTypeStart:
+          rawEdge?.stroke === 'invisible' || rawEdge?.type === 'arrow_open'
+            ? 'none'
+            : arrowTypeStart,
+        arrowTypeEnd:
+          rawEdge?.stroke === 'invisible' || rawEdge?.type === 'arrow_open' ? 'none' : arrowTypeEnd,
         arrowheadStyle: 'fill: #333',
+        cssCompiledStyles: this.getCompiledStyles(rawEdge.classes),
         labelStyle: styles,
         style: styles,
         pattern: rawEdge.stroke,
         look: config.look,
+        animate: rawEdge.animate,
+        animation: rawEdge.animation,
       };
+
       edges.push(edge);
     });
 
