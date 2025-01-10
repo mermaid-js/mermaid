@@ -68,3 +68,33 @@ describe('flow db addClass', () => {
     expect(classes.get('a')?.styles).toEqual(['stroke-width: 8px']);
   });
 });
+
+describe('flow db class', () => {
+  let flowDb: FlowDb;
+  beforeEach(() => {
+    flowDb = new FlowDb();
+  });
+  // This is to ensure that functions used in flow JISON are exposed as function from FlowDb
+  it('should have functions used in flow JISON as own property', () => {
+    const functionsUsedInParser = [
+      'setDirection',
+      'addSubGraph',
+      'setAccTitle',
+      'setAccDescription',
+      'addVertex',
+      'addLink',
+      'setClass',
+      'destructLink',
+      'addClass',
+      'setClickEvent',
+      'setTooltip',
+      'setLink',
+      'updateLink',
+      'updateLinkInterpolate',
+    ] as const satisfies (keyof FlowDb)[];
+
+    for (const fun of functionsUsedInParser) {
+      expect(Object.hasOwn(flowDb, fun)).toBe(true);
+    }
+  });
+});
