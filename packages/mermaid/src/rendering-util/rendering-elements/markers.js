@@ -2,9 +2,9 @@
 import { log } from '../../logger.js';
 
 // Only add the number of markers that the diagram needs
-const insertMarkers = (elem, markerArray, type, id) => {
+const insertMarkers = (elem, markerArray, type, id, config) => {
   markerArray.forEach((markerName) => {
-    markers[markerName](elem, type, id);
+    markers[markerName](elem, type, id, config);
   });
 };
 
@@ -153,13 +153,13 @@ const lollipop = (elem, type, id) => {
     .attr('cy', 7)
     .attr('r', 6);
 };
-const point = (elem, type, id) => {
+const point = (elem, type, id, options) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-pointEnd')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 11.5 14')
-    .attr('refX', 11.5) // Adjust to position the arrowhead relative to the line
+    .attr('refX', options?.look === 'neo' ? 11.5 : 7.75) // Adjust to position the arrowhead relative to the line
     .attr('refY', 7) // Half of 14 for vertical center
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 10.5)
@@ -175,7 +175,7 @@ const point = (elem, type, id) => {
     .attr('id', id + '_' + type + '-pointStart')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 11.5 14')
-    .attr('refX', 1)
+    .attr('refX', options?.look === 'neo' ? 1 : 4)
     .attr('refY', 7)
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 11.5)
@@ -187,14 +187,14 @@ const point = (elem, type, id) => {
     .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 };
-const circle = (elem, type, id) => {
+const circle = (elem, type, id, options) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-circleEnd')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', 12)
-    .attr('refY', 4.95) // What!!!??
+    .attr('refY', 5) // What!!!??
+    .attr('refX', options?.look === 'neo' ? 12.25 : 10.75)
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 14)
     .attr('markerHeight', 14)
@@ -212,7 +212,7 @@ const circle = (elem, type, id) => {
     .attr('id', id + '_' + type + '-circleStart')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', -2)
+    .attr('refX', options?.look === 'neo' ? -2 : 0)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
     .attr('markerWidth', 14)

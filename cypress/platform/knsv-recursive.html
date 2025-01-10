@@ -120,19 +120,44 @@
       <pre id="diagram4" class="mermaid">
 ---
 config:
-  look: neo
-  theme: redux
+  theme: neo
   layout: dagre
 ---
-flowchart LR
-    A --> B
-</pre
+flowchart TD
+    A{"Diamond"} --- n1["Rectangle"] & n2["Rounded"] & n3(["Stadium"])
+    n1 --x n4["Rounded"]
+    n2 --o n5["Hexagon"]
+    n3 --> n6["Parallelogram"]
+    n5 o--o n7["Trapezoid"]
+    n4 x--x n8["Lean Right"]
+    n6 <--> n9(("Circle"))
+    n8 --> n10["Rose"]
+    n7 --> n11["Pine"]
+    n9 --> n12["Peach"]
+    n2@{ shape: rounded}
+    n4@{ shape: rounded}
+    n5@{ shape: hex}
+    n6@{ shape: lean-l}
+    n7@{ shape: trap-b}
+    n8@{ shape: lean-r}
+
+     n10:::Rose
+     n11:::Pine
+     n12:::Peach
+    classDef Rose stroke-width:1px, stroke-dasharray:none, stroke:#FF5978, fill:#FFDFE5, color:#8E2236
+    classDef Pine stroke-width:1px, stroke-dasharray:none, stroke:#254336, fill:#27654A, color:#FFFFFF
+    classDef Peach stroke-width:1px, stroke-dasharray:none, stroke:#FBB35A, fill:#FFEFDB, color:#8F632D
+    n10 --x End
+    n11 --x End
+    n12 --x End
+
+    </pre
       >
       <pre id="diagram4" class="mermaid">
 ---
 config:
-  look: neo
-  theme: redux
+  look: classic
+  theme: forest
   layout: dagre
 ---
 flowchart TD

@@ -566,21 +566,13 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     const oValueS = markerOffsets2[edge.arrowTypeStart] || 0;
     const oValueE = markerOffsets2[edge.arrowTypeEnd] || 0;
 
-    // const mOffset = `stroke-dasharray: ${len} ${oValueS + oValueE};stroke-dashoffset: ${oValueS + oValueE}; `;
-    // console.log('APA23 edge', edge, oValueS, oValueE, mOffset);
+    if (edge.look === 'neo') {
+      const dashArray = `0 ${oValueS} ${len - oValueS - oValueE} ${oValueE}`;
 
-    // svgPath.attr('style', mOffset + svgPath.attr('style'));
-
-    // const dashArray = `${oValueS} ${len - oValueS - oValueE} ${oValueE}`;
-
-    // const mOffset = `stroke-dasharray: ${dashArray}; stroke-dashoffset: 14; `;
-
-    // #3
-    const dashArray = `0 ${oValueS} ${len - oValueS - oValueE} ${oValueE}`;
-
-    // No offset needed because we already start with a zero-length dash that effectively sets us up for a gap at the start.
-    const mOffset = `stroke-dasharray: ${dashArray}; stroke-dashoffset: 0;`;
-    svgPath.attr('style', mOffset + svgPath.attr('style'));
+      // No offset needed because we already start with a zero-length dash that effectively sets us up for a gap at the start.
+      const mOffset = `stroke-dasharray: ${dashArray}; stroke-dashoffset: 0;`;
+      svgPath.attr('style', mOffset + svgPath.attr('style'));
+    }
   }
 
   // MC Special
