@@ -17,8 +17,8 @@ const getStyles = (
   } & FlowChartStyleOptions
 ) => {
   let diagramStyles = '';
-  if (type in themes && themes[type as keyof typeof themes]) {
-    diagramStyles = themes[type as keyof typeof themes](options);
+  if (type in themes && themes[type]) {
+    diagramStyles = themes[type](options);
   } else {
     log.warn(`No theme found for ${type}`);
   }
@@ -27,7 +27,28 @@ const getStyles = (
     font-size: ${options.fontSize};
     fill: ${options.textColor}
   }
-
+  @keyframes edge-animation-frame {
+    from {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  & .edge-animation-slow {
+    stroke-dasharray: 9,5 !important;
+    stroke-dashoffset: 900;
+    animation: dash 50s linear infinite;
+    stroke-linecap: round;
+  }
+  & .edge-animation-fast {
+    stroke-dasharray: 9,5 !important;
+    stroke-dashoffset: 900;
+    animation: dash 20s linear infinite;
+    stroke-linecap: round;
+  }
   /* Classes common for multiple diagrams */
 
   & .error-icon {
@@ -39,7 +60,7 @@ const getStyles = (
   }
 
   & .edge-thickness-normal {
-    stroke-width: 2px;
+    stroke-width: 1px;
   }
   & .edge-thickness-thick {
     stroke-width: 3.5px
@@ -47,7 +68,10 @@ const getStyles = (
   & .edge-pattern-solid {
     stroke-dasharray: 0;
   }
-
+  & .edge-thickness-invisible {
+    stroke-width: 0;
+    fill: none;
+  }
   & .edge-pattern-dashed{
     stroke-dasharray: 3;
   }
@@ -67,6 +91,9 @@ const getStyles = (
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
   }
+   & p {
+    margin: 0
+   }
 
   ${diagramStyles}
 

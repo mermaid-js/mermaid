@@ -37,6 +37,8 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [CloudScript.io Mermaid Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
 - [Azure Devops](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
 - [Deepdwn](https://billiam.itch.io/deepdwn) ✅
+- [Doctave](https://www.doctave.com/) ✅
+  - [Mermaid in Markdown code blocks](https://docs.doctave.com/components/mermaid) ✅
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
@@ -49,13 +51,15 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [SVG diagram generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
 - [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
+- [MonsterWriter](https://www.monsterwriter.com/) ✅
 - [Joplin](https://joplinapp.org) ✅
 - [LiveBook](https://livebook.dev) ✅
+- [Slidev](https://sli.dev) ✅
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) ✅
 - [Mermaid Flow Visual Editor](https://www.mermaidflow.app) ✅
 - [Mermerd](https://github.com/KarnerTh/mermerd)
 - [Slab](https://slab.com) ✅
-- [Swimm](https://docs.swimm.io/features/diagrams-and-charts/#mermaid--swimm--up-to-date-diagrams-) ✅
+- [Swimm](https://docs.swimm.io/features/diagrams-and-charts) ✅
 - [NotesHub](https://noteshub.app) ✅
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅
@@ -65,6 +69,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [Markdown for mermaid plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
+- [Microsoft Loop](https://loop.cloud.microsoft) ✅
 
 ### LLM integrations
 
@@ -126,7 +131,7 @@ Communication tools and platforms
 ### Wikis
 
 - [DokuWiki](https://dokuwiki.org)
-  - [ComboStrap](https://combostrap.com/mermaid)
+  - [ComboStrap](https://combostrap.com/utility/create-diagram-with-mermaid-vh3ab9yj)
   - [Mermaid Plugin](https://www.dokuwiki.org/plugin:mermaid)
 - [Foswiki](https://foswiki.org)
   - [Mermaid Plugin](https://foswiki.org/Extensions/MermaidPlugin)
@@ -135,7 +140,7 @@ Communication tools and platforms
   - [Mermaid Extension](https://www.mediawiki.org/wiki/Extension:Mermaid)
 - [PmWiki](https://www.pmwiki.org)
   - [MermaidJs Cookbook recipe](https://www.pmwiki.org/wiki/Cookbook/MermaidJs)
-- [Semantic Media Wiki](https://semantic-mediawiki.org)
+- [Semantic Media Wiki](https://www.semantic-mediawiki.org)
   - [Mermaid Plugin](https://github.com/SemanticMediaWiki/Mermaid)
 - [TiddlyWiki](https://tiddlywiki.com/)
   - [mermaid-tw5: wrapper for Mermaid Live](https://github.com/efurlanm/mermaid-tw5)
@@ -175,8 +180,6 @@ Communication tools and platforms
   - [=Diagram block](https://github.com/zag/podlite/tree/main/packages/podlite-diagrams)
 - [Standard Notes](https://standardnotes.com/)
   - [Mermaid Extension](https://github.com/nienow/sn-mermaid)
-- [Sublime Text 3](https://sublimetext.com)
-  - [Mermaid Package](https://packagecontrol.io/packages/Mermaid)
 - [VS Code](https://code.visualstudio.com/)
   - [Mermaid Editor](https://marketplace.visualstudio.com/items?itemName=tomoyukim.vscode-mermaid-editor)
   - [Mermaid Export](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.mermaid-export)
@@ -190,23 +193,31 @@ Communication tools and platforms
 - [Vim](https://www.vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
   - [Official Vim Syntax and ft plugin](https://github.com/craigmac/vim-mermaid)
+- [Zed](https://zed.dev)
+  - [zed-mermaid](https://github.com/gabeidx/zed-mermaid)
 
 ### Document Generation
 
+- [Astro](https://astro.build/)
+  - [Adding diagrams to your Astro site with MermaidJS and Playwright](https://agramont.net/blog/diagraming-with-mermaidjs-astro/)
 - [Codedoc](https://codedoc.cc/)
   - [codedoc-mermaid-plugin](https://www.npmjs.com/package/codedoc-mermaid-plugin)
 - [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) ✅
 - [Docusaurus](https://docusaurus.io/docs/markdown-features/diagrams) ✅
 - [Gatsby](https://www.gatsbyjs.com/)
   - [gatsby-remark-mermaid](https://github.com/remcohaszing/gatsby-remark-mermaid)
+- [Jekyll](https://jekyllrb.com/)
+  - [jekyll-mermaid](https://rubygems.org/gems/jekyll-mermaid)
+  - [jekyll-mermaid-diagrams](https://github.com/fuzhibo/jekyll-mermaid-diagrams)
 - [JSDoc](https://jsdoc.app/)
   - [jsdoc-mermaid](https://github.com/Jellyvision/jsdoc-mermaid)
+- [Madness](https://madness.dannyb.co/)
 - [mdBook](https://rust-lang.github.io/mdBook/index.html)
   - [mdbook-mermaid](https://github.com/badboy/mdbook-mermaid)
 - [MkDocs](https://www.mkdocs.org)
   - [mkdocs-mermaid2-plugin](https://github.com/fralau/mkdocs-mermaid2-plugin)
   - [mkdocs-material](https://github.com/squidfunk/mkdocs-material), check the [docs](https://squidfunk.github.io/mkdocs-material/reference/diagrams/)
-  - [Quarto](https://quarto.org/)
+- [Quarto](https://quarto.org/) ✅
 - [rehype](https://github.com/rehypejs/rehype)
   - [rehype-mermaid](https://github.com/remcohaszing/rehype-mermaid)
 - [remark](https://remark.js.org/)
@@ -235,17 +246,12 @@ Communication tools and platforms
 
 ### Other
 
-- [Astro](https://astro.build/)
-  - [Adding diagrams to your Astro site with MermaidJS and Playwright](https://agramont.net/blog/diagraming-with-mermaidjs-astro/)
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
 - [Codemia: A tool to practice system design problems](https://codemia.io) ✅
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
-- [Jekyll](https://jekyllrb.com/)
-  - [jekyll-mermaid](https://rubygems.org/gems/jekyll-mermaid)
-  - [jekyll-mermaid-diagrams](https://github.com/fuzhibo/jekyll-mermaid-diagrams)
 - [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)

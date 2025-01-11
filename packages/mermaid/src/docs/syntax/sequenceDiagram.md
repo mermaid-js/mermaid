@@ -105,6 +105,9 @@ end
 box rgb(33,66,99)
 ... actors ...
 end
+box rgba(33,66,99,0.5)
+... actors ...
+end
 ```
 
 ```note
@@ -141,18 +144,20 @@ Messages can be of two displayed either solid or with a dotted line.
 [Actor][Arrow][Actor]:Message text
 ```
 
-There are six types of arrows currently supported:
+There are ten types of arrows currently supported:
 
-| Type   | Description                                      |
-| ------ | ------------------------------------------------ |
-| `->`   | Solid line without arrow                         |
-| `-->`  | Dotted line without arrow                        |
-| `->>`  | Solid line with arrowhead                        |
-| `-->>` | Dotted line with arrowhead                       |
-| `-x`   | Solid line with a cross at the end               |
-| `--x`  | Dotted line with a cross at the end.             |
-| `-)`   | Solid line with an open arrow at the end (async) |
-| `--)`  | Dotted line with a open arrow at the end (async) |
+| Type     | Description                                          |
+| -------- | ---------------------------------------------------- |
+| `->`     | Solid line without arrow                             |
+| `-->`    | Dotted line without arrow                            |
+| `->>`    | Solid line with arrowhead                            |
+| `-->>`   | Dotted line with arrowhead                           |
+| `<<->>`  | Solid line with bidirectional arrowheads (v11.0.0+)  |
+| `<<-->>` | Dotted line with bidirectional arrowheads (v11.0.0+) |
+| `-x`     | Solid line with a cross at the end                   |
+| `--x`    | Dotted line with a cross at the end                  |
+| `-)`     | Solid line with an open arrow at the end (async)     |
+| `--)`    | Dotted line with a open arrow at the end (async)     |
 
 ## Activations
 
@@ -205,11 +210,22 @@ sequenceDiagram
     Note over Alice,John: A typical interaction
 ```
 
-It is also possible to add a line break (applies to text input in general):
+## Line breaks
+
+Line break can be added to Note and Message:
 
 ```mermaid-example
 sequenceDiagram
-    Alice->John: Hello John, how are you?
+    Alice->John: Hello John,<br/>how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
+```
+
+Line breaks in Actor names requires aliases:
+
+```mermaid-example
+sequenceDiagram
+    participant Alice as Alice<br/>Johnson
+    Alice->John: Hello John,<br/>how are you?
     Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
@@ -380,6 +396,12 @@ sequenceDiagram
 ## Background Highlighting
 
 It is possible to highlight flows by providing colored background rects. This is done by the notation
+
+```
+rect COLOR
+... content ...
+end
+```
 
 The colors are defined using rgb and rgba syntax.
 

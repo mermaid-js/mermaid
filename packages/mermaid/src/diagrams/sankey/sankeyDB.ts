@@ -15,7 +15,7 @@ let links: SankeyLink[] = [];
 // Array of nodes guarantees their order
 let nodes: SankeyNode[] = [];
 // We also have to track nodes uniqueness (by ID)
-let nodesMap: Map<string, SankeyNode> = new Map();
+let nodesMap = new Map<string, SankeyNode>();
 
 const clear = (): void => {
   links = [];
@@ -28,7 +28,7 @@ class SankeyLink {
   constructor(
     public source: SankeyNode,
     public target: SankeyNode,
-    public value: number = 0
+    public value = 0
   ) {}
 }
 

@@ -1,6 +1,7 @@
 {
-  "name": "docs",
+  "name": "@mermaid-js/docs",
   "private": true,
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vitepress --port 3333 --open",

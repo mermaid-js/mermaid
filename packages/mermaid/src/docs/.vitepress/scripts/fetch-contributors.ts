@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Adapted from https://github.dev/vitest-dev/vitest/blob/991ff33ab717caee85ef6cbe1c16dc514186b4cc/scripts/update-contributors.ts#L6
 
 import { writeFile } from 'node:fs/promises';

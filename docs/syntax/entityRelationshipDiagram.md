@@ -136,7 +136,7 @@ Cardinality is a property that describes how many elements of another entity can
 |      1+      |      1+       | One or more  |
 | zero or more | zero or more  | Zero or more |
 | zero or many | zero or many  | Zero or more |
-|   many(0)    |    many(1)    | Zero or more |
+|   many(0)    |    many(0)    | Zero or more |
 |      0+      |      0+       | Zero or more |
 |   only one   |   only one    | Exactly one  |
 |      1       |       1       | Exactly one  |
@@ -286,6 +286,7 @@ erDiagram
 
 - If you want the relationship label to be more than one word, you must use double quotes around the phrase
 - If you don't want a label at all on a relationship, you must use an empty double-quoted string
+- (v11.1.0+) If you want a multi-line label on a relationship, use `<br />` between the two lines (`"first line<br />second line"`)
 
 ## Styling
 

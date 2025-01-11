@@ -116,3 +116,5 @@ export const getRedirect = (url: URL): string | undefined => {
     return `${idRedirectMap[path]}.html${id ? `#${id}` : ''}`;
   }
 };
+
+// cspell:ignore mermaidapi, breakingchanges, classdiagram, entityrelationshipdiagram, mermaidapi, mermaidcli, gettingstarted, syntaxreference, newdiagram, requirementdiagram, sequencediagram

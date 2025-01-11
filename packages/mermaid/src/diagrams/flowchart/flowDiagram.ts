@@ -1,24 +1,26 @@
+import type { MermaidConfig } from '../../config.type.js';
+import { setConfig } from '../../diagram-api/diagramAPI.js';
+import flowDb from './flowDb.js';
+import renderer from './flowRenderer-v3-unified.js';
 // @ts-ignore: JISON doesn't support types
 import flowParser from './parser/flow.jison';
-import flowDb from './flowDb.js';
-import flowRenderer from './flowRenderer.js';
-import flowRendererV2 from './flowRenderer-v2.js';
 import flowStyles from './styles.js';
-import type { MermaidConfig } from '../../config.type.js';
 
 export const diagram = {
   parser: flowParser,
   db: flowDb,
-  renderer: flowRendererV2,
+  renderer,
   styles: flowStyles,
   init: (cnf: MermaidConfig) => {
     if (!cnf.flowchart) {
       cnf.flowchart = {};
     }
-    // TODO, broken as of 2022-09-14 (13809b50251845475e6dca65cc395761be38fbd2)
+    if (cnf.layout) {
+      setConfig({ layout: cnf.layout });
+    }
     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-    flowRenderer.setConf(cnf.flowchart);
+    setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
     flowDb.clear();
-    flowDb.setGen('gen-1');
+    flowDb.setGen('gen-2');
   },
 };

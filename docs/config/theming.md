@@ -24,12 +24,12 @@ Themes can now be customized at the site-wide level, or on individual Mermaid di
 
 ## Site-wide Theme
 
-To customize themes site-wide, call the `initialize` method on the `mermaidAPI`.
+To customize themes site-wide, call the `initialize` method on the `mermaid`.
 
 Example of `initialize` call setting `theme` to `base`:
 
 ```javascript
-mermaidAPI.initialize({
+mermaid.initialize({
   securityLevel: 'loose',
   theme: 'base',
 });

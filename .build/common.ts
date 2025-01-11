@@ -1,3 +1,9 @@
+export interface PackageOptions {
+  name: string;
+  packageName: string;
+  file: string;
+}
+
 /**
  * Shared common options for both ESBuild and Vite
  */
@@ -22,9 +28,9 @@ export const packageOptions = {
     packageName: 'mermaid-zenuml',
     file: 'detector.ts',
   },
-  'mermaid-flowchart-elk': {
-    name: 'mermaid-flowchart-elk',
-    packageName: 'mermaid-flowchart-elk',
-    file: 'detector.ts',
+  'mermaid-layout-elk': {
+    name: 'mermaid-layout-elk',
+    packageName: 'mermaid-layout-elk',
+    file: 'layouts.ts',
   },
-} as const;
+} as const satisfies Record<string, PackageOptions>;

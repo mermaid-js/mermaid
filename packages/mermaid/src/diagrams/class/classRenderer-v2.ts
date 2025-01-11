@@ -343,7 +343,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   }
   const root =
     securityLevel === 'sandbox'
-      ? select(sandboxElement!.nodes()[0]!.contentDocument.body)
+      ? select(sandboxElement.nodes()[0]!.contentDocument.body)
       : select('body');
   const svg = root.select(`[id="${id}"]`);
 
@@ -363,8 +363,7 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // Add label rects for non html labels
   if (!conf?.htmlLabels) {
-    const doc =
-      securityLevel === 'sandbox' ? sandboxElement!.nodes()[0]!.contentDocument : document;
+    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0]!.contentDocument : document;
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (const label of labels) {
       // Get dimensions of label

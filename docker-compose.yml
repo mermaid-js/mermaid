@@ -7,6 +7,10 @@ services:
     tty: true
     working_dir: /mermaid
     mem_limit: '8G'
+    ## was removed from development branch, check if it works
+    ## remove docker-entrypoint.sh before merge if not needed
+    ## have not figured out yet, but without entrypoint
+    ## commands in run script such as pnpm are not found
     entrypoint: ./docker-entrypoint.sh
     environment:
       - NODE_OPTIONS=--max_old_space_size=8192
@@ -15,6 +19,7 @@ services:
       - root_cache:/root/.cache
       - root_local:/root/.local
       - root_npm:/root/.npm
+      - /tmp:/tmp
     ports:
       - 9000:9000
       - 3333:3333

@@ -1,5 +1,6 @@
 import contributorUsernamesJson from './contributor-names.json';
-import { CoreTeam, knut, plainTeamMembers } from './teamMembers.js';
+import type { CoreTeam } from './teamMembers.js';
+import { knut, plainTeamMembers } from './teamMembers.js';
 
 const contributorUsernames: string[] = contributorUsernamesJson;
 

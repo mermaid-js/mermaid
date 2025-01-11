@@ -109,7 +109,7 @@ describe('when using the ganttDb', function () {
       ganttDb.addTask(taskName2, taskData2);
       const tasks = ganttDb.getTasks();
       expect(tasks[1].startTime).toEqual(expStartDate2);
-      if (!expEndDate2 === undefined) {
+      if (expEndDate2) {
         expect(tasks[1].endTime).toEqual(expEndDate2);
       }
       expect(tasks[1].id).toEqual(expId2);
