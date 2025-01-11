@@ -5,7 +5,7 @@ import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { beforeAll, describe, it, expect, vi, afterEach } from 'vitest';
 import type { DiagramDefinition } from './diagram-api/types.js';
 
-beforeAll(async () => {
+beforeAll(() => {
   addDiagrams();
 });
 const spyOn = vi.spyOn;
@@ -18,7 +18,7 @@ afterEach(() => {
 
 describe('when using mermaid and ', () => {
   describe('when detecting chart type ', () => {
-    it('should not start rendering with mermaid.startOnLoad set to false', async () => {
+    it('should not start rendering with mermaid.startOnLoad set to false', () => {
       mermaid.startOnLoad = false;
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
       spyOn(mermaid, 'run');
@@ -26,7 +26,7 @@ describe('when using mermaid and ', () => {
       expect(mermaid.run).not.toHaveBeenCalled();
     });
 
-    it('should start rendering with both startOnLoad set', async () => {
+    it('should start rendering with both startOnLoad set', () => {
       mermaid.startOnLoad = true;
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
       spyOn(mermaid, 'run');
@@ -34,7 +34,7 @@ describe('when using mermaid and ', () => {
       expect(mermaid.run).toHaveBeenCalled();
     });
 
-    it('should start rendering with mermaid.startOnLoad', async () => {
+    it('should start rendering with mermaid.startOnLoad', () => {
       mermaid.startOnLoad = true;
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
       spyOn(mermaid, 'run');
@@ -42,7 +42,7 @@ describe('when using mermaid and ', () => {
       expect(mermaid.run).toHaveBeenCalled();
     });
 
-    it('should start rendering as a default with no changes performed', async () => {
+    it('should start rendering as a default with no changes performed', () => {
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
       spyOn(mermaid, 'run');
       mermaid.contentLoaded();
@@ -74,7 +74,7 @@ describe('when using mermaid and ', () => {
           [
             {
               id: 'dummyError',
-              detector: (text) => /dummyError/.test(text),
+              detector: (text) => text.includes('dummyError'),
               loader: () => Promise.reject('dummyError'),
             },
           ],
@@ -104,7 +104,6 @@ describe('when using mermaid and ', () => {
           parse: (_text) => {
             return;
           },
-          parser: { yy: {} },
         },
         styles: () => {
           // do nothing
@@ -115,7 +114,7 @@ describe('when using mermaid and ', () => {
           [
             {
               id: 'dummy',
-              detector: (text) => /dummy/.test(text),
+              detector: (text) => text.includes('dummy'),
               loader: () => {
                 loaded = true;
                 return Promise.resolve({
@@ -134,7 +133,7 @@ describe('when using mermaid and ', () => {
           [
             {
               id: 'dummy2',
-              detector: (text) => /dummy2/.test(text),
+              detector: (text) => text.includes('dummy2'),
               loader: () => {
                 loaded = true;
                 return Promise.resolve({
@@ -161,7 +160,7 @@ describe('when using mermaid and ', () => {
       await expect(
         mermaid.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
+        `[UnknownDiagramError: No diagram type detected matching given configuration for text: this is not a mermaid diagram definition]`
       );
     });
 
@@ -173,9 +172,9 @@ describe('when using mermaid and ', () => {
     it('should throw for an invalid flow definition', async () => {
       await expect(mermaid.parse('graph TQ;A--x|text including URL space|B;')).rejects
         .toThrowErrorMatchingInlineSnapshot(`
-        "Lexical error on line 1. Unrecognized text.
+        [Error: Lexical error on line 1. Unrecognized text.
         graph TQ;A--x|text includ
-        -----^"
+        -----^]
       `);
     });
 
@@ -205,10 +204,10 @@ describe('when using mermaid and ', () => {
         'Bob-->Alice: Feel sick...\n' +
         'end';
       await expect(mermaid.parse(text)).rejects.toThrowErrorMatchingInlineSnapshot(`
-        "Parse error on line 2:
+        [Error: Parse error on line 2:
         ...equenceDiagramAlice:->Bob: Hello Bob, h...
         ----------------------^
-        Expecting 'SOLID_OPEN_ARROW', 'DOTTED_OPEN_ARROW', 'SOLID_ARROW', 'DOTTED_ARROW', 'SOLID_CROSS', 'DOTTED_CROSS', 'SOLID_POINT', 'DOTTED_POINT', got 'TXT'"
+        Expecting 'SOLID_OPEN_ARROW', 'DOTTED_OPEN_ARROW', 'SOLID_ARROW', 'BIDIRECTIONAL_SOLID_ARROW', 'DOTTED_ARROW', 'BIDIRECTIONAL_DOTTED_ARROW', 'SOLID_CROSS', 'DOTTED_CROSS', 'SOLID_POINT', 'DOTTED_POINT', got 'TXT']
       `);
     });
 
@@ -220,7 +219,7 @@ describe('when using mermaid and ', () => {
       await expect(
         mermaid.parse('this is not a mermaid diagram definition')
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        '"No diagram type detected matching given configuration for text: this is not a mermaid diagram definition"'
+        `[UnknownDiagramError: No diagram type detected matching given configuration for text: this is not a mermaid diagram definition]`
       );
       expect(parseErrorWasCalled).toEqual(true);
     });

@@ -1,8 +1,6 @@
-/// <reference types="Cypress" />
-
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
-context('Sequence diagram', () => {
+describe('Sequence diagram', () => {
   it('should render a sequence diagram with boxes', () => {
     renderGraph(
       `
@@ -66,6 +64,19 @@ context('Sequence diagram', () => {
         end
       `,
       { sequence: { actorFontFamily: 'courier' } }
+    );
+  });
+  it('should render bidirectional arrows', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice<<->>John: Hello John, how are you?
+      Alice<<-->>John: Hi Alice, I can hear you!
+      John<<->>Alice: This also works the other way
+      John<<-->>Alice: Yes
+      Alice->John: Test
+      John->>Alice: Still works
+      `
     );
   });
   it('should handle different line breaks', () => {
@@ -231,7 +242,7 @@ context('Sequence diagram', () => {
       `
     );
   });
-  context('font settings', () => {
+  describe('font settings', () => {
     it('should render different note fonts when configured', () => {
       imgSnapshotTest(
         `
@@ -328,7 +339,7 @@ context('Sequence diagram', () => {
       );
     });
   });
-  context('auth width scaling', () => {
+  describe('auth width scaling', () => {
     it('should render long actor descriptions', () => {
       imgSnapshotTest(
         `
@@ -374,6 +385,29 @@ context('Sequence diagram', () => {
       `,
         {}
       );
+    });
+    it('should have actor-top and actor-bottom classes on top and bottom actor box and symbol and actor-box and actor-man classes for text tags', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          actor Bob
+          Alice->>Bob: Hi Bob
+          Bob->>Alice: Hi Alice
+      `,
+        {}
+      );
+      cy.get('.actor').should('have.class', 'actor-top');
+      cy.get('.actor-man').should('have.class', 'actor-top');
+      cy.get('.actor.actor-top').should('not.have.class', 'actor-bottom');
+      cy.get('.actor-man.actor-top').should('not.have.class', 'actor-bottom');
+
+      cy.get('.actor').should('have.class', 'actor-bottom');
+      cy.get('.actor-man').should('have.class', 'actor-bottom');
+      cy.get('.actor.actor-bottom').should('not.have.class', 'actor-top');
+      cy.get('.actor-man.actor-bottom').should('not.have.class', 'actor-top');
+
+      cy.get('text.actor-box').should('include.text', 'Alice');
+      cy.get('text.actor-man').should('include.text', 'Bob');
     });
     it('should render long notes left of actor', () => {
       imgSnapshotTest(
@@ -441,6 +475,18 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should render notes over actors and participant', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        actor Alice
+        participant Charlie
+        note over Alice: some note
+        note over Charlie: other note
+      `,
+        {}
+      );
+    });
     it('should render long messages from an actor to the left to one to the right', () => {
       imgSnapshotTest(
         `
@@ -482,7 +528,7 @@ context('Sequence diagram', () => {
       );
     });
   });
-  context('background rects', () => {
+  describe('background rects', () => {
     it('should render a single and nested rects', () => {
       imgSnapshotTest(
         `
@@ -762,7 +808,7 @@ context('Sequence diagram', () => {
       );
     });
   });
-  context('directives', () => {
+  describe('directives', () => {
     it('should override config with directive settings', () => {
       imgSnapshotTest(
         `
@@ -787,11 +833,42 @@ context('Sequence diagram', () => {
         note left of Alice: config: mirrorActors=true<br/>directive: mirrorActors=false
         Bob->>Alice: Short as well
       `,
-        { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
       );
     });
   });
-  context('links', () => {
+  describe('links', () => {
+    it('should support actor links', () => {
+      renderGraph(
+        `
+      sequenceDiagram
+        link Alice: Dashboard @ https://dashboard.contoso.com/alice
+        link Alice: Wiki @ https://wiki.contoso.com/alice
+        link John: Dashboard @ https://dashboard.contoso.com/john
+        link John: Wiki @ https://wiki.contoso.com/john
+        Alice->>John: Hello John<br/>
+        John-->>Alice: Great<br/><br/>day!
+      `,
+        { securityLevel: 'loose' }
+      );
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        // expect(style).to.undefined;
+      });
+      cy.get('#root-0').click();
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.match(/^display: block;$/);
+      });
+      cy.get('#root-0').click();
+      cy.get('#actor0_popup').should((popupMenu) => {
+        const style = popupMenu.attr('style');
+        expect(style).to.match(/^display: none;$/);
+      });
+    });
     it('should support actor links and properties EXPERIMENTAL: USE WITH CAUTION', () => {
       //Be aware that the syntax for "properties" is likely to be changed.
       imgSnapshotTest(
@@ -810,7 +887,10 @@ context('Sequence diagram', () => {
         a->>j: Hello John, how are you?
         j-->>a: Great!
       `,
-        { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
       );
     });
     it('should support actor links and properties when not mirrored EXPERIMENTAL: USE WITH CAUTION', () => {
@@ -851,7 +931,7 @@ context('Sequence diagram', () => {
       );
     });
   });
-  context('svg size', () => {
+  describe('svg size', () => {
     it('should render a sequence diagram when useMaxWidth is true (default)', () => {
       renderGraph(
         `
@@ -930,7 +1010,7 @@ context('Sequence diagram', () => {
       });
     });
   });
-  context('render after error', () => {
+  describe('render after error', () => {
     it('should render diagram after fixing destroy participant error', () => {
       cy.on('uncaught:exception', (err) => {
         return false;

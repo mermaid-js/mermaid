@@ -32,7 +32,6 @@ describe('Class diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('2: should render a simple class diagrams with cardinality', () => {
@@ -61,7 +60,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('3: should render a simple class diagram with different visibilities', () => {
@@ -79,7 +77,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('4: should render a simple class diagram with comments', () => {
@@ -109,7 +106,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('5: should render a simple class diagram with abstract method', () => {
@@ -121,7 +117,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('6: should render a simple class diagram with static method', () => {
@@ -133,7 +128,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('7: should render a simple class diagram with Generic class', () => {
@@ -153,7 +147,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('8: should render a simple class diagram with Generic class and relations', () => {
@@ -174,7 +167,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('9: should render a simple class diagram with clickable link', () => {
@@ -196,7 +188,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('10: should render a simple class diagram with clickable callback', () => {
@@ -218,7 +209,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('11: should render a simple class diagram with return type on method', () => {
@@ -233,7 +223,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('12: should render a simple class diagram with generic types', () => {
@@ -249,7 +238,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('13: should render a simple class diagram with css classes applied', () => {
@@ -267,7 +255,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('14: should render a simple class diagram with css classes applied directly', () => {
@@ -283,7 +270,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('15: should render a simple class diagram with css classes applied to multiple classes', () => {
@@ -298,7 +284,6 @@ describe('Class diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 
   it('16: should render multiple class diagrams', () => {
@@ -351,7 +336,6 @@ describe('Class diagram', () => {
       ],
       {}
     );
-    cy.get('svg');
   });
 
   // it('17: should render a class diagram when useMaxWidth is true (default)', () => {
@@ -421,7 +405,6 @@ describe('Class diagram', () => {
       `,
       { logLevel: 1 }
     );
-    cy.get('svg');
   });
 
   it('should render class diagram with newlines in title', () => {
@@ -439,7 +422,6 @@ describe('Class diagram', () => {
           +quack()
         }
       `);
-    cy.get('svg');
   });
 
   it('should render class diagram with many newlines in title', () => {

@@ -1,7 +1,7 @@
 import jison from './.vite/jisonPlugin.js';
 import jsonSchemaPlugin from './.vite/jsonSchemaPlugin.js';
 import typescript from '@rollup/plugin-typescript';
-import { defineConfig } from 'vitest/config';
+import { defaultExclude, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
@@ -10,7 +10,6 @@ export default defineConfig({
   plugins: [
     jison(),
     jsonSchemaPlugin(), // handles .schema.yaml JSON Schema files
-    // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
     typescript({ compilerOptions: { declaration: false } }),
   ],
   test: {
@@ -22,7 +21,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage/vitest',
-      exclude: ['**/node_modules/**', '**/tests/**', '**/__mocks__/**'],
+      exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
     },
     includeSource: ['packages/*/src/**/*.{js,ts}'],
   },

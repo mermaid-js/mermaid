@@ -11,7 +11,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 
-let entities = {};
+let entities = new Map();
 let relationships = [];
 
 const Cardinality = {
@@ -26,17 +26,21 @@ const Identification = {
   NON_IDENTIFYING: 'NON_IDENTIFYING',
   IDENTIFYING: 'IDENTIFYING',
 };
-
+/**
+ * Add entity
+ * @param {string} name - The name of the entity
+ * @param {string | undefined} alias - The alias of the entity
+ */
 const addEntity = function (name, alias = undefined) {
-  if (entities[name] === undefined) {
-    entities[name] = { attributes: [], alias: alias };
+  if (!entities.has(name)) {
+    entities.set(name, { attributes: [], alias });
     log.info('Added new entity :', name);
-  } else if (entities[name] && !entities[name].alias && alias) {
-    entities[name].alias = alias;
+  } else if (!entities.get(name).alias && alias) {
+    entities.get(name).alias = alias;
     log.info(`Add alias '${alias}' to entity '${name}'`);
   }
 
-  return entities[name];
+  return entities.get(name);
 };
 
 const getEntities = () => entities;
@@ -75,7 +79,7 @@ const addRelationship = function (entA, rolA, entB, rSpec) {
 const getRelationships = () => relationships;
 
 const clear = function () {
-  entities = {};
+  entities = new Map();
   relationships = [];
   commonClear();
 };

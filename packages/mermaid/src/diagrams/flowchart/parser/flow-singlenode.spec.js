@@ -43,7 +43,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['A'].styles.length).toBe(0);
+    expect(vert.get('A').styles.length).toBe(0);
   });
   it('should handle a single node with white space after it (SN1)', function () {
     // Silly but syntactically correct
@@ -53,7 +53,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['A'].styles.length).toBe(0);
+    expect(vert.get('A').styles.length).toBe(0);
   });
 
   it('should handle a single square node', function () {
@@ -64,8 +64,8 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].styles.length).toBe(0);
-    expect(vert['a'].type).toBe('square');
+    expect(vert.get('a').styles.length).toBe(0);
+    expect(vert.get('a').type).toBe('square');
   });
 
   it('should handle a single round square node', function () {
@@ -76,8 +76,8 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].styles.length).toBe(0);
-    expect(vert['a'].type).toBe('square');
+    expect(vert.get('a').styles.length).toBe(0);
+    expect(vert.get('a').type).toBe('square');
   });
 
   it('should handle a single circle node', function () {
@@ -88,7 +88,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('circle');
+    expect(vert.get('a').type).toBe('circle');
   });
 
   it('should handle a single round node', function () {
@@ -99,7 +99,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('round');
+    expect(vert.get('a').type).toBe('round');
   });
 
   it('should handle a single odd node', function () {
@@ -110,7 +110,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('odd');
+    expect(vert.get('a').type).toBe('odd');
   });
 
   it('should handle a single diamond node', function () {
@@ -121,7 +121,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('diamond');
+    expect(vert.get('a').type).toBe('diamond');
   });
 
   it('should handle a single diamond node with whitespace after it', function () {
@@ -132,7 +132,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('diamond');
+    expect(vert.get('a').type).toBe('diamond');
   });
 
   it('should handle a single diamond node with html in it (SN3)', function () {
@@ -143,8 +143,8 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('diamond');
-    expect(vert['a'].text).toBe('A <br> end');
+    expect(vert.get('a').type).toBe('diamond');
+    expect(vert.get('a').text).toBe('A <br> end');
   });
 
   it('should handle a single hexagon node', function () {
@@ -155,7 +155,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('hexagon');
+    expect(vert.get('a').type).toBe('hexagon');
   });
 
   it('should handle a single hexagon node with html in it', function () {
@@ -166,8 +166,8 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('hexagon');
-    expect(vert['a'].text).toBe('A <br> end');
+    expect(vert.get('a').type).toBe('hexagon');
+    expect(vert.get('a').text).toBe('A <br> end');
   });
 
   it('should handle a single round node with html in it', function () {
@@ -178,8 +178,8 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('round');
-    expect(vert['a'].text).toBe('A <br> end');
+    expect(vert.get('a').type).toBe('round');
+    expect(vert.get('a').text).toBe('A <br> end');
   });
 
   it('should handle a single double circle node', function () {
@@ -190,7 +190,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('doublecircle');
+    expect(vert.get('a').type).toBe('doublecircle');
   });
 
   it('should handle a single double circle node with whitespace after it', function () {
@@ -201,7 +201,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('doublecircle');
+    expect(vert.get('a').type).toBe('doublecircle');
   });
 
   it('should handle a single double circle node with html in it (SN3)', function () {
@@ -212,8 +212,8 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['a'].type).toBe('doublecircle');
-    expect(vert['a'].text).toBe('A <br> end');
+    expect(vert.get('a').type).toBe('doublecircle');
+    expect(vert.get('a').text).toBe('A <br> end');
   });
 
   it('should handle a single node with alphanumerics starting on a char', function () {
@@ -224,7 +224,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['id1'].styles.length).toBe(0);
+    expect(vert.get('id1').styles.length).toBe(0);
   });
 
   it('should handle a single node with a single digit', function () {
@@ -235,7 +235,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['1'].text).toBe('1');
+    expect(vert.get('1').text).toBe('1');
   });
 
   it('should handle a single node with a single digit in a subgraph', function () {
@@ -247,7 +247,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['1'].text).toBe('1');
+    expect(vert.get('1').text).toBe('1');
   });
 
   it('should handle a single node with alphanumerics starting on a num', function () {
@@ -258,7 +258,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['1id'].styles.length).toBe(0);
+    expect(vert.get('1id').styles.length).toBe(0);
   });
 
   it('should handle a single node with alphanumerics containing a minus sign', function () {
@@ -269,7 +269,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['i-d'].styles.length).toBe(0);
+    expect(vert.get('i-d').styles.length).toBe(0);
   });
 
   it('should handle a single node with alphanumerics containing a underscore sign', function () {
@@ -280,33 +280,33 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['i_d'].styles.length).toBe(0);
+    expect(vert.get('i_d').styles.length).toBe(0);
   });
 
   it.each(keywords)('should handle keywords between dashes "-"', function (keyword) {
     const res = flow.parser.parse(`graph TD;a-${keyword}-node;`);
     const vert = flow.parser.yy.getVertices();
-    expect(vert[`a-${keyword}-node`].text).toBe(`a-${keyword}-node`);
+    expect(vert.get(`a-${keyword}-node`).text).toBe(`a-${keyword}-node`);
   });
 
   it.each(keywords)('should handle keywords between periods "."', function (keyword) {
     const res = flow.parser.parse(`graph TD;a.${keyword}.node;`);
     const vert = flow.parser.yy.getVertices();
-    expect(vert[`a.${keyword}.node`].text).toBe(`a.${keyword}.node`);
+    expect(vert.get(`a.${keyword}.node`).text).toBe(`a.${keyword}.node`);
   });
 
   it.each(keywords)('should handle keywords between underscores "_"', function (keyword) {
     const res = flow.parser.parse(`graph TD;a_${keyword}_node;`);
     const vert = flow.parser.yy.getVertices();
-    expect(vert[`a_${keyword}_node`].text).toBe(`a_${keyword}_node`);
+    expect(vert.get(`a_${keyword}_node`).text).toBe(`a_${keyword}_node`);
   });
 
   it.each(keywords)('should handle nodes ending in %s', function (keyword) {
     const res = flow.parser.parse(`graph TD;node_${keyword};node.${keyword};node-${keyword};`);
     const vert = flow.parser.yy.getVertices();
-    expect(vert[`node_${keyword}`].text).toBe(`node_${keyword}`);
-    expect(vert[`node.${keyword}`].text).toBe(`node.${keyword}`);
-    expect(vert[`node-${keyword}`].text).toBe(`node-${keyword}`);
+    expect(vert.get(`node_${keyword}`).text).toBe(`node_${keyword}`);
+    expect(vert.get(`node.${keyword}`).text).toBe(`node.${keyword}`);
+    expect(vert.get(`node-${keyword}`).text).toBe(`node-${keyword}`);
   });
 
   const errorKeywords = [
@@ -337,9 +337,9 @@ describe('[Singlenodes] when parsing', () => {
   it.each(workingKeywords)('should parse node beginning with %s', function (keyword) {
     flow.parser.parse(`graph TD; ${keyword}.node;${keyword}-node;${keyword}/node;`);
     const vert = flow.parser.yy.getVertices();
-    expect(vert[`${keyword}.node`].text).toBe(`${keyword}.node`);
-    expect(vert[`${keyword}-node`].text).toBe(`${keyword}-node`);
-    expect(vert[`${keyword}/node`].text).toBe(`${keyword}/node`);
+    expect(vert.get(`${keyword}.node`).text).toBe(`${keyword}.node`);
+    expect(vert.get(`${keyword}-node`).text).toBe(`${keyword}-node`);
+    expect(vert.get(`${keyword}/node`).text).toBe(`${keyword}/node`);
   });
 
   it.each(specialChars)(
@@ -347,7 +347,7 @@ describe('[Singlenodes] when parsing', () => {
     function (specialChar) {
       flow.parser.parse(`graph TD; ${specialChar} --> A`);
       const vert = flow.parser.yy.getVertices();
-      expect(vert[`${specialChar}`].text).toBe(`${specialChar}`);
+      expect(vert.get(`${specialChar}`).text).toBe(`${specialChar}`);
     }
   );
 
@@ -356,7 +356,7 @@ describe('[Singlenodes] when parsing', () => {
     function (specialChar) {
       flow.parser.parse(`graph TD; ${specialChar}node --> A`);
       const vert = flow.parser.yy.getVertices();
-      expect(vert[`${specialChar}node`].text).toBe(`${specialChar}node`);
+      expect(vert.get(`${specialChar}node`).text).toBe(`${specialChar}node`);
     }
   );
 
@@ -365,7 +365,7 @@ describe('[Singlenodes] when parsing', () => {
     function (specialChar) {
       flow.parser.parse(`graph TD; node${specialChar} --> A`);
       const vert = flow.parser.yy.getVertices();
-      expect(vert[`node${specialChar}`].text).toBe(`node${specialChar}`);
+      expect(vert.get(`node${specialChar}`).text).toBe(`node${specialChar}`);
     }
   );
 });

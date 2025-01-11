@@ -1,11 +1,12 @@
 import { select } from 'd3';
-import { log } from '../logger.js';
-import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
-import intersect from './intersect/index.js';
-import createLabel from './createLabel.js';
-import note from './shapes/note.js';
 import { evaluate } from '../diagrams/common/common.js';
+import { log } from '../logger.js';
+import { getArrowPoints } from './blockArrowHelper.js';
+import createLabel from './createLabel.js';
+import intersect from './intersect/index.js';
+import note from './shapes/note.js';
+import { insertPolygonShape, labelHelper, updateNodeBounds } from './shapes/util.js';
 
 const formatClass = (str) => {
   if (str) {
@@ -30,6 +31,7 @@ const question = async (parent, node) => {
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
   const s = w + h;
+
   const points = [
     { x: s / 2, y: 0 },
     { x: s, y: -s / 2 },
@@ -109,6 +111,27 @@ const hexagon = async (parent, node) => {
   const hex = insertPolygonShape(shapeSvg, w, h, points);
   hex.attr('style', node.style);
   updateNodeBounds(node, hex);
+
+  node.intersect = function (point) {
+    return intersect.polygon(node, points, point);
+  };
+
+  return shapeSvg;
+};
+
+const block_arrow = async (parent, node) => {
+  const { shapeSvg, bbox } = await labelHelper(parent, node, undefined, true);
+
+  const f = 2;
+  const h = bbox.height + 2 * node.padding;
+  const m = h / f;
+  const w = bbox.width + 2 * m + node.padding;
+
+  const points = getArrowPoints(node.directions, bbox, node);
+
+  const blockArrow = insertPolygonShape(shapeSvg, w, h, points);
+  blockArrow.attr('style', node.style);
+  updateNodeBounds(node, blockArrow);
 
   node.intersect = function (point) {
     return intersect.polygon(node, points, point);
@@ -372,19 +395,67 @@ const rect = async (parent, node) => {
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
+  // console.log('Rect node:', node, 'bbox:', bbox, 'halfPadding:', halfPadding, 'node.padding:', node.padding);
   // const totalWidth = bbox.width + node.padding * 2;
   // const totalHeight = bbox.height + node.padding * 2;
-  const totalWidth = bbox.width + node.padding;
-  const totalHeight = bbox.height + node.padding;
+  const totalWidth = node.positioned ? node.width : bbox.width + node.padding;
+  const totalHeight = node.positioned ? node.height : bbox.height + node.padding;
+  const x = node.positioned ? -totalWidth / 2 : -bbox.width / 2 - halfPadding;
+  const y = node.positioned ? -totalHeight / 2 : -bbox.height / 2 - halfPadding;
   rect
     .attr('class', 'basic label-container')
     .attr('style', node.style)
     .attr('rx', node.rx)
     .attr('ry', node.ry)
-    // .attr('x', -bbox.width / 2 - node.padding)
-    // .attr('y', -bbox.height / 2 - node.padding)
-    .attr('x', -bbox.width / 2 - halfPadding)
-    .attr('y', -bbox.height / 2 - halfPadding)
+    .attr('x', x)
+    .attr('y', y)
+    .attr('width', totalWidth)
+    .attr('height', totalHeight);
+
+  if (node.props) {
+    const propKeys = new Set(Object.keys(node.props));
+    if (node.props.borders) {
+      applyNodePropertyBorders(rect, node.props.borders, totalWidth, totalHeight);
+      propKeys.delete('borders');
+    }
+    propKeys.forEach((propKey) => {
+      log.warn(`Unknown node property ${propKey}`);
+    });
+  }
+
+  updateNodeBounds(node, rect);
+
+  node.intersect = function (point) {
+    return intersect.rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+const composite = async (parent, node) => {
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(
+    parent,
+    node,
+    'node ' + node.classes,
+    true
+  );
+
+  // add the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+
+  // const totalWidth = bbox.width + node.padding * 2;
+  // const totalHeight = bbox.height + node.padding * 2;
+  const totalWidth = node.positioned ? node.width : bbox.width + node.padding;
+  const totalHeight = node.positioned ? node.height : bbox.height + node.padding;
+  const x = node.positioned ? -totalWidth / 2 : -bbox.width / 2 - halfPadding;
+  const y = node.positioned ? -totalHeight / 2 : -bbox.height / 2 - halfPadding;
+  rect
+    .attr('class', 'basic cluster composite label-container')
+    .attr('style', node.style)
+    .attr('rx', node.rx)
+    .attr('ry', node.ry)
+    .attr('x', x)
+    .attr('y', y)
     .attr('width', totalWidth)
     .attr('height', totalHeight);
 
@@ -831,7 +902,7 @@ const class_box = (parent, node) => {
 
   const labelContainer = shapeSvg.insert('g').attr('class', 'label');
   let verticalPos = 0;
-  const hasInterface = node.classData.annotations && node.classData.annotations[0];
+  const hasInterface = node.classData.annotations?.[0];
 
   // 1. Create the labels
   const interfaceLabelText = node.classData.annotations[0]
@@ -1031,6 +1102,7 @@ const class_box = (parent, node) => {
 
 const shapes = {
   rhombus: question,
+  composite,
   question,
   rect,
   labelRect,
@@ -1040,6 +1112,7 @@ const shapes = {
   doublecircle,
   stadium,
   hexagon,
+  block_arrow,
   rect_left_inv_arrow,
   lean_right,
   lean_left,
@@ -1058,7 +1131,7 @@ const shapes = {
 
 let nodeElems = {};
 
-export const insertNode = async (elem, node, dir) => {
+export const insertNode = async (elem, node, renderOptions) => {
   let newEl;
   let el;
 
@@ -1071,9 +1144,9 @@ export const insertNode = async (elem, node, dir) => {
       target = node.linkTarget || '_blank';
     }
     newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
-    el = await shapes[node.shape](newEl, node, dir);
+    el = await shapes[node.shape](newEl, node, renderOptions);
   } else {
-    el = await shapes[node.shape](elem, node, dir);
+    el = await shapes[node.shape](elem, node, renderOptions);
     newEl = el;
   }
   if (node.tooltip) {
@@ -1099,7 +1172,6 @@ export const clear = () => {
 
 export const positionNode = (node) => {
   const el = nodeElems[node.id];
-
   log.trace(
     'Transforming node',
     node.diff,

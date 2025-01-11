@@ -2,6 +2,7 @@
 import { parser } from './parser/classDiagram.jison';
 import classDb from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
+import type { ClassMap, NamespaceNode } from './classTypes.js';
 const spyOn = vi.spyOn;
 
 const staticCssStyle = 'text-decoration:underline;';
@@ -13,6 +14,78 @@ describe('given a basic class diagram, ', function () {
       classDb.clear();
       parser.yy = classDb;
     });
+    it('should handle classes within namespaces', () => {
+      const str = `classDiagram
+        namespace Company.Project {
+          class User {
+            +login(username: String, password: String)
+            +logout()
+          }
+        }
+        namespace Company.Project.Module {
+          class Admin {
+            +addUser(user: User)
+            +removeUser(user: User)
+          }
+        }`;
+
+      parser.parse(str);
+
+      const user = classDb.getClass('User');
+      const admin = classDb.getClass('Admin');
+
+      // Check if the classes are correctly registered under their respective namespaces
+      expect(user.parent).toBe('Company.Project');
+      expect(admin.parent).toBe('Company.Project.Module');
+      expect(user.methods.length).toBe(2);
+      expect(admin.methods.length).toBe(2);
+    });
+
+    it('should handle generic classes within namespaces', () => {
+      const str = `classDiagram
+    namespace Company.Project.Module {
+        class GenericClass~T~ {
+            +addItem(item: T)
+            +getItem() T
+        }
+    }`;
+
+      parser.parse(str);
+
+      const genericClass = classDb.getClass('GenericClass');
+      expect(genericClass.type).toBe('T');
+      expect(genericClass.methods[0].getDisplayDetails().displayText).toBe('+addItem(item: T)');
+      expect(genericClass.methods[1].getDisplayDetails().displayText).toBe('+getItem() : T');
+    });
+
+    it('should handle nested namespaces and relationships', () => {
+      const str = `      classDiagram
+        namespace Company.Project.Module.SubModule {
+          class Report {
+            +generatePDF(data: List)
+            +generateCSV(data: List)
+          }
+        }
+        namespace Company.Project.Module {
+          class Admin {
+            +generateReport()
+          }
+        }
+        Admin --> Report : generates`;
+
+      parser.parse(str);
+
+      const report = classDb.getClass('Report');
+      const admin = classDb.getClass('Admin');
+      const relations = classDb.getRelations();
+
+      expect(report.parent).toBe('Company.Project.Module.SubModule');
+      expect(admin.parent).toBe('Company.Project.Module');
+      expect(relations[0].id1).toBe('Admin');
+      expect(relations[0].id2).toBe('Report');
+      expect(relations[0].title).toBe('generates');
+    });
+
     it('should handle accTitle and accDescr', function () {
       const str = `classDiagram
             accTitle: My Title
@@ -45,6 +118,22 @@ describe('given a basic class diagram, ', function () {
       } catch (e) {
         expect(true).toBe(false);
       }
+    });
+
+    it('should handle fully qualified class names in relationships', () => {
+      const str = `classDiagram
+        namespace Company.Project.Module {
+          class User
+          class Admin
+        }
+          Admin --> User : manages`;
+
+      parser.parse(str);
+
+      const relations = classDb.getRelations();
+      expect(relations[0].id1).toBe('Admin');
+      expect(relations[0].id2).toBe('User');
+      expect(relations[0].title).toBe('manages');
     });
 
     it('should handle backquoted class names', function () {
@@ -157,7 +246,7 @@ describe('given a basic class diagram, ', function () {
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.cssClasses[0]).toBe('styleClass');
+      expect(c1.cssClasses).toBe('default styleClass');
     });
 
     it('should parse a class with text label and css class', () => {
@@ -172,7 +261,7 @@ describe('given a basic class diagram, ', function () {
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
       expect(c1.members[0].getDisplayDetails().displayText).toBe('int member1');
-      expect(c1.cssClasses[0]).toBe('styleClass');
+      expect(c1.cssClasses).toBe('default styleClass');
     });
 
     it('should parse two classes with text labels and css classes', () => {
@@ -187,11 +276,11 @@ describe('given a basic class diagram, ', function () {
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.cssClasses[0]).toBe('styleClass');
+      expect(c1.cssClasses).toBe('default styleClass');
 
       const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Long long long long long long long long long long label');
-      expect(c2.cssClasses[0]).toBe('styleClass');
+      expect(c2.cssClasses).toBe('default styleClass');
     });
 
     it('should parse two classes with text labels and css class shorthands', () => {
@@ -204,11 +293,11 @@ describe('given a basic class diagram, ', function () {
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.cssClasses[0]).toBe('styleClass1');
+      expect(c1.cssClasses).toBe('default styleClass1');
 
       const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Class 2 !@#$%^&*() label');
-      expect(c2.cssClasses[0]).toBe('styleClass2');
+      expect(c2.cssClasses).toBe('default styleClass2');
     });
 
     it('should parse multiple classes with same text labels', () => {
@@ -392,12 +481,27 @@ class C13["With Città foreign language"]
           Student "1" --o "1" IdCard : carries
           Student "1" --o "1" Bike : rides`);
 
-      expect(Object.keys(classDb.getClasses()).length).toBe(3);
-      expect(classDb.getClasses().Student).toMatchInlineSnapshot(`
+      const studentClass = classDb.getClasses().get('Student');
+      // Check that the important properties match, but ignore the domId
+      expect(studentClass).toMatchObject({
+        id: 'Student',
+        label: 'Student',
+        members: [
+          expect.objectContaining({
+            id: 'idCard : IdCard',
+            visibility: '-',
+          }),
+        ],
+        methods: [],
+        annotations: [],
+        cssClasses: 'default',
+      });
+
+      expect(classDb.getClasses().get('Student')).toMatchInlineSnapshot(`
         {
           "annotations": [],
-          "cssClasses": [],
-          "domId": "classId-Student-134",
+          "cssClasses": "default",
+          "domId": "classId-Student-141",
           "id": "Student",
           "label": "Student",
           "members": [
@@ -405,11 +509,14 @@ class C13["With Città foreign language"]
               "classifier": "",
               "id": "idCard : IdCard",
               "memberType": "attribute",
+              "text": "\\-idCard : IdCard",
               "visibility": "-",
             },
           ],
           "methods": [],
+          "shape": "classBox",
           "styles": [],
+          "text": "Student",
           "type": "",
         }
       `);
@@ -442,6 +549,17 @@ class C13["With Città foreign language"]
           },
         ]
       `);
+    });
+
+    it('should revert direction to default once direction is removed', () => {
+      parser.parse(`classDiagram
+          direction RL
+          class A`);
+      expect(classDb.getDirection()).toBe('RL');
+      classDb.clear();
+      parser.parse(`classDiagram
+          class B`);
+      expect(classDb.getDirection()).toBe('TB');
     });
   });
 
@@ -642,7 +760,7 @@ foo()
 
       const actual = parser.yy.getClass('Class1');
       expect(actual.link).toBe('google.com');
-      expect(actual.cssClasses[0]).toBe('clickable');
+      expect(actual.cssClasses).toBe('default clickable');
     });
 
     it('should handle href link with tooltip', function () {
@@ -658,7 +776,7 @@ foo()
       const actual = parser.yy.getClass('Class1');
       expect(actual.link).toBe('google.com');
       expect(actual.tooltip).toBe('A Tooltip');
-      expect(actual.cssClasses[0]).toBe('clickable');
+      expect(actual.cssClasses).toBe('default clickable');
     });
 
     it('should handle href link with tooltip and target', function () {
@@ -677,7 +795,7 @@ foo()
       const actual = parser.yy.getClass('Class1');
       expect(actual.link).toBe('google.com');
       expect(actual.tooltip).toBe('A tooltip');
-      expect(actual.cssClasses[0]).toBe('clickable');
+      expect(actual.cssClasses).toBe('default clickable');
     });
 
     it('should handle function call', function () {
@@ -1372,8 +1490,7 @@ describe('given a class diagram with relationships, ', function () {
 
       const testClass = parser.yy.getClass('Class1');
       expect(testClass.link).toBe('google.com');
-      expect(testClass.cssClasses.length).toBe(1);
-      expect(testClass.cssClasses[0]).toBe('clickable');
+      expect(testClass.cssClasses).toBe('default clickable');
     });
 
     it('should associate click and href link and css appropriately', function () {
@@ -1386,8 +1503,7 @@ describe('given a class diagram with relationships, ', function () {
 
       const testClass = parser.yy.getClass('Class1');
       expect(testClass.link).toBe('google.com');
-      expect(testClass.cssClasses.length).toBe(1);
-      expect(testClass.cssClasses[0]).toBe('clickable');
+      expect(testClass.cssClasses).toBe('default clickable');
     });
 
     it('should associate link with tooltip', function () {
@@ -1401,8 +1517,7 @@ describe('given a class diagram with relationships, ', function () {
       const testClass = parser.yy.getClass('Class1');
       expect(testClass.link).toBe('google.com');
       expect(testClass.tooltip).toBe('A tooltip');
-      expect(testClass.cssClasses.length).toBe(1);
-      expect(testClass.cssClasses[0]).toBe('clickable');
+      expect(testClass.cssClasses).toBe('default clickable');
     });
 
     it('should associate click and href link with tooltip', function () {
@@ -1416,8 +1531,7 @@ describe('given a class diagram with relationships, ', function () {
       const testClass = parser.yy.getClass('Class1');
       expect(testClass.link).toBe('google.com');
       expect(testClass.tooltip).toBe('A tooltip');
-      expect(testClass.cssClasses.length).toBe(1);
-      expect(testClass.cssClasses[0]).toBe('clickable');
+      expect(testClass.cssClasses).toBe('default clickable');
     });
 
     it('should associate click and href link with tooltip and target appropriately', function () {
@@ -1539,12 +1653,12 @@ class Class2
 }`;
       parser.parse(str);
 
-      const testNamespace = parser.yy.getNamespace('Namespace1');
-      const testClasses = parser.yy.getClasses();
-      expect(Object.keys(testNamespace.classes).length).toBe(2);
+      const testNamespace: NamespaceNode = parser.yy.getNamespace('Namespace1');
+      const testClasses: ClassMap = parser.yy.getClasses();
+      expect(testNamespace.classes.size).toBe(2);
       expect(Object.keys(testNamespace.children).length).toBe(0);
-      expect(testNamespace.classes['Class1'].id).toBe('Class1');
-      expect(Object.keys(testClasses).length).toBe(2);
+      expect(testNamespace.classes.get('Class1')?.id).toBe('Class1');
+      expect(testClasses.size).toBe(2);
     });
 
     it('should add relations between classes of different namespaces', function () {
@@ -1573,25 +1687,25 @@ class Class2
       const testNamespaceB = parser.yy.getNamespace('B');
       const testClasses = parser.yy.getClasses();
       const testRelations = parser.yy.getRelations();
-      expect(Object.keys(testNamespaceA.classes).length).toBe(2);
-      expect(testNamespaceA.classes['A1'].members[0].getDisplayDetails().displayText).toBe(
+      expect(testNamespaceA.classes.size).toBe(2);
+      expect(testNamespaceA.classes.get('A1').members[0].getDisplayDetails().displayText).toBe(
         '+foo : string'
       );
-      expect(testNamespaceA.classes['A2'].members[0].getDisplayDetails().displayText).toBe(
+      expect(testNamespaceA.classes.get('A2').members[0].getDisplayDetails().displayText).toBe(
         '+bar : int'
       );
-      expect(Object.keys(testNamespaceB.classes).length).toBe(2);
-      expect(testNamespaceB.classes['B1'].members[0].getDisplayDetails().displayText).toBe(
+      expect(testNamespaceB.classes.size).toBe(2);
+      expect(testNamespaceB.classes.get('B1').members[0].getDisplayDetails().displayText).toBe(
         '+foo : bool'
       );
-      expect(testNamespaceB.classes['B2'].members[0].getDisplayDetails().displayText).toBe(
+      expect(testNamespaceB.classes.get('B2').members[0].getDisplayDetails().displayText).toBe(
         '+bar : float'
       );
-      expect(Object.keys(testClasses).length).toBe(4);
-      expect(testClasses['A1'].parent).toBe('A');
-      expect(testClasses['A2'].parent).toBe('A');
-      expect(testClasses['B1'].parent).toBe('B');
-      expect(testClasses['B2'].parent).toBe('B');
+      expect(testClasses.size).toBe(4);
+      expect(testClasses.get('A1').parent).toBe('A');
+      expect(testClasses.get('A2').parent).toBe('A');
+      expect(testClasses.get('B1').parent).toBe('B');
+      expect(testClasses.get('B2').parent).toBe('B');
       expect(testRelations[0].id1).toBe('A1');
       expect(testRelations[0].id2).toBe('B1');
       expect(testRelations[1].id1).toBe('A2');
@@ -1674,8 +1788,7 @@ C1 -->  C2
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.cssClasses.length).toBe(1);
-      expect(c1.cssClasses[0]).toBe('styleClass');
+      expect(c1.cssClasses).toBe('default styleClass');
       const member = c1.members[0];
       expect(member.getDisplayDetails().displayText).toBe('+member1');
     });
@@ -1691,8 +1804,7 @@ cssClass "C1" styleClass
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.cssClasses.length).toBe(1);
-      expect(c1.cssClasses[0]).toBe('styleClass');
+      expect(c1.cssClasses).toBe('default styleClass');
       const member = c1.members[0];
       expect(member.getDisplayDetails().displayText).toBe('+member1');
     });
@@ -1709,13 +1821,11 @@ cssClass "C1,C2" styleClass
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.cssClasses.length).toBe(1);
-      expect(c1.cssClasses[0]).toBe('styleClass');
+      expect(c1.cssClasses).toBe('default styleClass');
 
       const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Long long long long long long long long long long label');
-      expect(c2.cssClasses.length).toBe(1);
-      expect(c2.cssClasses[0]).toBe('styleClass');
+      expect(c2.cssClasses).toBe('default styleClass');
     });
 
     it('should parse two classes with text labels and css class shorthands', () => {
@@ -1729,13 +1839,11 @@ C1 --> C2
 
       const c1 = classDb.getClass('C1');
       expect(c1.label).toBe('Class 1 with text label');
-      expect(c1.cssClasses.length).toBe(1);
-      expect(c1.cssClasses[0]).toBe('styleClass1');
+      expect(c1.cssClasses).toBe('default styleClass1');
 
       const c2 = classDb.getClass('C2');
       expect(c2.label).toBe('Class 2 !@#$%^&*() label');
-      expect(c2.cssClasses.length).toBe(1);
-      expect(c2.cssClasses[0]).toBe('styleClass2');
+      expect(c2.cssClasses).toBe('default styleClass2');
     });
 
     it('should parse multiple classes with same text labels', () => {

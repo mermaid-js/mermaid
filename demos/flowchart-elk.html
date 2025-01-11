@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Flowchart ELK Test Page</title>
+  </head>
+
+  <body>
+    <h1>Flowchart ELK</h1>
+    <pre class="mermaid">
+		flowchart-elk TD
+      A([Start]) ==> B[Step 1]
+      B ==> C{Flow 1}
+      C -- Choice 1.1 --> D[Step 2.1]
+      C -- Choice 1.3 --> I[Step 2.3]
+      C == Choice 1.2 ==> E[Step 2.2]
+      D --> F{Flow 2}
+      E ==> F{Flow 2}
+      F{Flow 2} == Choice 2.1 ==> H[Feedback node]
+      H[Feedback node] ==> B[Step 1]
+      F{Flow 2} == Choice 2.2 ==> G((Finish))
+      
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import flowchartELK from './mermaid-flowchart-elk.esm.mjs';
+      await mermaid.registerExternalDiagrams([flowchartELK]);
+      mermaid.initialize({
+        logLevel: 3,
+      });
+    </script>
+  </body>
+</html>

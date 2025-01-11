@@ -1,3 +1,9 @@
+import * as configApi from '../../config.js';
+import defaultConfig from '../../defaultConfig.js';
+import type { SVGGroup } from '../../diagram-api/types.js';
+import { getThemeVariables } from '../../themes/theme-default.js';
+import { cleanAndMerge } from '../../utils.js';
+import { sanitizeText } from '../common/common.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -7,11 +13,6 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import * as configApi from '../../config.js';
-import defaultConfig from '../../defaultConfig.js';
-import { getThemeVariables } from '../../themes/theme-default.js';
-import { cleanAndMerge } from '../../utils.js';
-import { sanitizeText } from '../common/common.js';
 import { XYChartBuilder } from './chartBuilder/index.js';
 import type {
   DrawableElem,
@@ -21,11 +22,10 @@ import type {
   XYChartThemeConfig,
 } from './chartBuilder/interfaces.js';
 import { isBandAxisData, isLinearAxisData } from './chartBuilder/interfaces.js';
-import type { Group } from '../../diagram-api/types.js';
 
 let plotIndex = 0;
 
-let tmpSVGGroup: Group;
+let tmpSVGGroup: SVGGroup;
 
 let xyChartConfig: XYChartConfig = getChartDefaultConfig();
 let xyChartThemeConfig: XYChartThemeConfig = getChartDefaultThemeConfig();
@@ -75,7 +75,7 @@ function textSanitizer(text: string) {
   return sanitizeText(text.trim(), config);
 }
 
-function setTmpSVGG(SVGG: Group) {
+function setTmpSVGG(SVGG: SVGGroup) {
   tmpSVGGroup = SVGG;
 }
 function setOrientation(orientation: string) {
@@ -143,7 +143,7 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
   if (isLinearAxisData(xyChartData.xAxis)) {
     const min = xyChartData.xAxis.min;
     const max = xyChartData.xAxis.max;
-    const step = (max - min + 1) / data.length;
+    const step = (max - min) / (data.length - 1);
     const categories: string[] = [];
     for (let i = min; i <= max; i += step) {
       categories.push(`${i}`);

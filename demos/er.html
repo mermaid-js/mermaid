@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -122,6 +122,35 @@
           string email
       }
       p ||--o| a : has
+    </pre>
+    <hr />
+
+    <pre class="mermaid">
+    erDiagram
+      p[Person] {
+          string firstName
+          string lastName
+      }
+      a["Customer Account"] {
+          string email
+      }
+
+      b["Customer Account Secondary"] {
+        string email
+      }
+      
+      c["Customer Account Tertiary"] {
+        string email
+      }
+      
+      d["Customer Account Nth"] {
+        string email
+      }
+
+      p ||--o| a : "has<br />one"
+      p ||--o| b : "has<br />one<br />two"
+      p ||--o| c : "has<br />one<br />two<br />three"
+      p ||--o| d : "has<br />one<br />two<br />three<br />...<br />Nth"
     </pre>
     <hr />
 

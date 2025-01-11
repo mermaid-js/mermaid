@@ -104,8 +104,7 @@ const urlRedirectMap: Record<string, string> = {
  * @param link - The old documentation URL.
  * @returns The new documentation path.
  */
-export const getRedirect = (link: string): string | undefined => {
-  const url = new URL(link);
+export const getRedirect = (url: URL): string | undefined => {
   // Redirects for deprecated vitepress URLs
   if (url.pathname in urlRedirectMap) {
     return `${urlRedirectMap[url.pathname]}${url.hash}`;
@@ -117,3 +116,5 @@ export const getRedirect = (link: string): string | undefined => {
     return `${idRedirectMap[path]}.html${id ? `#${id}` : ''}`;
   }
 };
+
+// cspell:ignore mermaidapi, breakingchanges, classdiagram, entityrelationshipdiagram, mermaidapi, mermaidcli, gettingstarted, syntaxreference, newdiagram, requirementdiagram, sequencediagram

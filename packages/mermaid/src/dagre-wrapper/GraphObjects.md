@@ -24,7 +24,7 @@ flowchart
 
 The new nodes C1 and C2 are a special type of nodes, clusterNodes. ClusterNodes have have the nodes in the cluster including the cluster attached in a graph object.
 
-When rendering this diagram it it beeing rendered recursively. The diagram is rendered by the dagre-mermaid:render function which in turn will be used to render the node C1 and the node C2. The result of those renderings will be inserted as nodes in the "root" diagram. With this recursive approach it would be possible to have different layout direction for each cluster.
+When rendering this diagram it is being rendered recursively. The diagram is rendered by the dagre-mermaid:render function which in turn will be used to render the node C1 and the node C2. The result of those renderings will be inserted as nodes in the "root" diagram. With this recursive approach it would be possible to have different layout direction for each cluster.
 
 ```
 { clusterNode: true, graph }
@@ -45,7 +45,7 @@ flowchart
   a --> C2
 ```
 
-To handle this case a special type of edge is inserted. The edge to/from the cluster is replaced with an edge to/from a node in the cluster which is tagged with toCluster/fromCluster. When rendering this edge the intersection between the edge and the border of the cluster is calculated making the edge start/stop there. In practice this renders like an an edge to/from the cluster.
+To handle this case a special type of edge is inserted. The edge to/from the cluster is replaced with an edge to/from a node in the cluster which is tagged with toCluster/fromCluster. When rendering this edge the intersection between the edge and the border of the cluster is calculated making the edge start/stop there. In practice this renders like an edge to/from the cluster.
 
 In the diagram above the root diagram would be rendered with C1 whereas C2 would be rendered recursively.
 

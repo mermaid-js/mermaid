@@ -146,7 +146,7 @@ For a list of Mermaid Plugins and Integrations, visit the [Integrations page](..
 
 Mermaid Chart plugins are available for:
 
-- [ChatGPT](https://docs.mermaidchart.com/plugins/chatgpt)
+- [ChatGPT](https://docs.mermaidchart.com/plugins/mermaid-chart-gpt)
 - [JetBrains IDE](https://docs.mermaidchart.com/plugins/jetbrains-ide)
 - [Microsoft PowerPoint](https://docs.mermaidchart.com/plugins/microsoft-powerpoint)
 - [Microsoft Word](https://docs.mermaidchart.com/plugins/microsoft-word)
@@ -239,18 +239,18 @@ In this example, the `mermaidAPI` is being called through the `CDN`:
   <body>
     Here is one mermaid diagram:
     <pre class="mermaid">
-            graph TD 
-            A[Client] --> B[Load Balancer] 
-            B --> C[Server1] 
+            graph TD
+            A[Client] --> B[Load Balancer]
+            B --> C[Server1]
             B --> D[Server2]
     </pre>
 
     And here is another:
     <pre class="mermaid">
-            graph TD 
+            graph TD
             A[Client] -->|tcp_123| B
-            B(Load Balancer) 
-            B -->|tcp_456| C[Server1] 
+            B(Load Balancer)
+            B -->|tcp_456| C[Server1]
             B -->|tcp_456| D[Server2]
     </pre>
 
@@ -271,15 +271,15 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
   </head>
   <body>
     <pre class="mermaid">
-            graph LR 
-            A --- B 
-            B-->C[fa:fa-ban forbidden] 
+            graph LR
+            A --- B
+            B-->C[fa:fa-ban forbidden]
             B-->D(fa:fa-spinner);
     </pre>
     <pre class="mermaid">
-            graph TD 
-            A[Client] --> B[Load Balancer] 
-            B --> C[Server1] 
+            graph TD
+            A[Client] --> B[Load Balancer]
+            B --> C[Server1]
             B --> D[Server2]
     </pre>
     <script type="module">

@@ -1,13 +1,15 @@
-import { build, InlineConfig, type PluginOption } from 'vite';
+import type { InlineConfig } from 'vite';
+import { build, type PluginOption } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
-import { readFileSync } from 'fs';
 import typescript from '@rollup/plugin-typescript';
 import { visualizer } from 'rollup-plugin-visualizer';
 import type { TemplateType } from 'rollup-plugin-visualizer/dist/plugin/template-types.js';
 import istanbul from 'vite-plugin-istanbul';
+import { packageOptions } from '../.build/common.js';
+import { generateLangium } from '../.build/generateLangium.js';
 
 const visualize = process.argv.includes('--visualize');
 const watch = process.argv.includes('--watch');
@@ -36,24 +38,6 @@ const visualizerOptions = (packageName: string, core = false): PluginOption[] =>
   );
 };
 
-const packageOptions = {
-  mermaid: {
-    name: 'mermaid',
-    packageName: 'mermaid',
-    file: 'mermaid.ts',
-  },
-  'mermaid-example-diagram': {
-    name: 'mermaid-example-diagram',
-    packageName: 'mermaid-example-diagram',
-    file: 'detector.ts',
-  },
-  'mermaid-zenuml': {
-    name: 'mermaid-zenuml',
-    packageName: 'mermaid-zenuml',
-    file: 'detector.ts',
-  },
-};
-
 interface BuildOptions {
   minify: boolean | 'esbuild';
   core?: boolean;
@@ -63,42 +47,17 @@ interface BuildOptions {
 
 export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions): InlineConfig => {
   const external: (string | RegExp)[] = ['require', 'fs', 'path'];
+  // eslint-disable-next-line no-console
   console.log(entryName, packageOptions[entryName]);
   const { name, file, packageName } = packageOptions[entryName];
-  let output: OutputOptions = [
+  const output: OutputOptions = [
     {
       name,
       format: 'esm',
       sourcemap,
       entryFileNames: `${name}.esm${minify ? '.min' : ''}.mjs`,
     },
-    {
-      name,
-      format: 'umd',
-      sourcemap,
-      entryFileNames: `${name}${minify ? '.min' : ''}.js`,
-    },
   ];
-
-  if (core) {
-    const { dependencies } = JSON.parse(
-      readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
-    );
-    // Core build is used to generate file without bundled dependencies.
-    // This is used by downstream projects to bundle dependencies themselves.
-    // Ignore dependencies and any dependencies of dependencies
-    // Adapted from the RegEx used by `rollup-plugin-node`
-    external.push(new RegExp('^(?:' + Object.keys(dependencies).join('|') + ')(?:/.+)?$'));
-    // This needs to be an array. Otherwise vite will build esm & umd with same name and overwrite esm with umd.
-    output = [
-      {
-        name,
-        format: 'esm',
-        sourcemap,
-        entryFileNames: `${name}.core.mjs`,
-      },
-    ];
-  }
 
   const config: InlineConfig = {
     configFile: false,
@@ -126,10 +85,9 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
     plugins: [
       jisonPlugin(),
       jsonSchemaPlugin(), // handles `.schema.yaml` files
-      // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
       typescript({ compilerOptions: { declaration: false } }),
       istanbul({
-        exclude: ['node_modules', 'test/', '__mocks__'],
+        exclude: ['node_modules', 'test/', '__mocks__', 'generated'],
         extension: ['.js', '.ts'],
         requireEnv: true,
         forceBuildInstrument: coverage,
@@ -149,24 +107,28 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
   await build(getBuildConfig({ minify: false, entryName }));
-  await build(getBuildConfig({ minify: 'esbuild', entryName }));
-  await build(getBuildConfig({ minify: false, core: true, entryName }));
 };
 
 const main = async () => {
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
-  for (const pkg of packageNames.filter((pkg) => !mermaidOnly || pkg === 'mermaid')) {
+  for (const pkg of packageNames.filter(
+    (pkg) => !mermaidOnly || pkg === 'mermaid' || pkg === 'parser'
+  )) {
     await buildPackage(pkg);
   }
 };
 
+await generateLangium();
+
 if (watch) {
-  build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
+  await build(getBuildConfig({ minify: false, watch, core: false, entryName: 'parser' }));
+  void build(getBuildConfig({ minify: false, watch, core: false, entryName: 'mermaid' }));
   if (!mermaidOnly) {
-    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
-    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
+    void build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+    void build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
   }
 } else if (visualize) {
+  await build(getBuildConfig({ minify: false, watch, core: false, entryName: 'parser' }));
   await build(getBuildConfig({ minify: false, core: true, entryName: 'mermaid' }));
   await build(getBuildConfig({ minify: false, core: false, entryName: 'mermaid' }));
 } else {

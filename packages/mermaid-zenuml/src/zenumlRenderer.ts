@@ -9,7 +9,7 @@ function createTemporaryZenumlContainer(id: string) {
   container.id = `container-${id}`;
   container.style.display = 'flex';
   container.innerHTML = `<div id="zenUMLApp-${id}"></div>`;
-  const app = container.querySelector(`#zenUMLApp-${id}`) as HTMLElement;
+  const app = container.querySelector(`#zenUMLApp-${id}`)!;
   return { container, app };
 }
 
@@ -56,7 +56,7 @@ export const draw = async function (text: string, id: string) {
   // @ts-expect-error @zenuml/core@3.0.0 exports the wrong type for ZenUml
   const zenuml = new ZenUml(app);
   // default is a theme name. More themes to be added and will be configurable in the future
-  await zenuml.render(text, 'theme-mermaid');
+  await zenuml.render(text, { theme: 'default', mode: 'static' });
 
   const { width, height } = window.getComputedStyle(container);
   log.debug('zenuml diagram size', width, height);

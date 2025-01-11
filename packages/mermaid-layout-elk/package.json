@@ -1,0 +1,45 @@
+{
+  "name": "@mermaid-js/layout-elk",
+  "version": "0.1.7",
+  "description": "ELK layout engine for mermaid",
+  "module": "dist/mermaid-layout-elk.core.mjs",
+  "types": "dist/layouts.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/mermaid-layout-elk.core.mjs",
+      "types": "./dist/layouts.d.ts"
+    },
+    "./*": "./*"
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "elk",
+    "mermaid"
+  ],
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "contributors": [
+    "Knut Sveidqvist",
+    "Sidharth Vinod"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "d3": "^7.9.0",
+    "elkjs": "^0.9.3"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "mermaid": "workspace:^"
+  },
+  "peerDependencies": {
+    "mermaid": "^11.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

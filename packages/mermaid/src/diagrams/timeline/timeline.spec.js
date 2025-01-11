@@ -1,6 +1,7 @@
+import { setLogLevel } from '../../diagram-api/diagramAPI.js';
+import * as commonDb from '../common/commonDb.js';
 import { parser as timeline } from './parser/timeline.jison';
 import * as timelineDB from './timelineDb.js';
-import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 
 describe('when parsing a timeline ', function () {
   beforeEach(function () {
@@ -9,7 +10,7 @@ describe('when parsing a timeline ', function () {
     setLogLevel('trace');
   });
   describe('Timeline', function () {
-    it('TL-1 should handle a simple section definition abc-123', function () {
+    it('should handle a simple section definition abc-123', function () {
       let str = `timeline
     section abc-123`;
 
@@ -17,7 +18,7 @@ describe('when parsing a timeline ', function () {
       expect(timelineDB.getSections()).to.deep.equal(['abc-123']);
     });
 
-    it('TL-2 should handle a simple section and only two tasks', function () {
+    it('should handle a simple section and only two tasks', function () {
       let str = `timeline
     section abc-123
     task1
@@ -29,7 +30,7 @@ describe('when parsing a timeline ', function () {
       });
     });
 
-    it('TL-3 should handle a two section and two coressponding tasks', function () {
+    it('should handle a two section and two coressponding tasks', function () {
       let str = `timeline
     section abc-123
     task1
@@ -50,7 +51,7 @@ describe('when parsing a timeline ', function () {
       });
     });
 
-    it('TL-4 should handle a section, and task and its events', function () {
+    it('should handle a section, and task and its events', function () {
       let str = `timeline
     section abc-123
       task1: event1
@@ -74,7 +75,7 @@ describe('when parsing a timeline ', function () {
       });
     });
 
-    it('TL-5 should handle a section, and task and its multi line events', function () {
+    it('should handle a section, and task and its multi line events', function () {
       let str = `timeline
     section abc-123
       task1: event1
@@ -97,6 +98,43 @@ describe('when parsing a timeline ', function () {
             break;
         }
       });
+    });
+
+    it('should handle a title, section, task, and events with semicolons', function () {
+      let str = `timeline
+      title ;my;title;
+      section ;a;bc-123;
+      ;ta;sk1;: ;ev;ent1; : ;ev;ent2; : ;ev;ent3;
+   `;
+      timeline.parse(str);
+      expect(commonDb.getDiagramTitle()).equal(';my;title;');
+      expect(timelineDB.getSections()).to.deep.equal([';a;bc-123;']);
+      expect(timelineDB.getTasks()[0].events).toMatchInlineSnapshot(`
+        [
+          ";ev;ent1; ",
+          ";ev;ent2; ",
+          ";ev;ent3;",
+        ]
+      `);
+    });
+
+    it('should handle a title, section, task, and events with hashtags', function () {
+      let str = `timeline
+      title #my#title#
+      section #a#bc-123#
+      task1: #ev#ent1# : #ev#ent2# : #ev#ent3#
+   `;
+      timeline.parse(str);
+      expect(commonDb.getDiagramTitle()).equal('#my#title#');
+      expect(timelineDB.getSections()).to.deep.equal(['#a#bc-123#']);
+      expect(timelineDB.getTasks()[0].task).equal('task1');
+      expect(timelineDB.getTasks()[0].events).toMatchInlineSnapshot(`
+        [
+          "#ev#ent1# ",
+          "#ev#ent2# ",
+          "#ev#ent3#",
+        ]
+      `);
     });
   });
 });

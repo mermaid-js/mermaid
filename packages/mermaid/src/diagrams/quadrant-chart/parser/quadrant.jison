@@ -11,6 +11,7 @@
 %x point_start
 %x point_x
 %x point_y
+%x class_name
 %%
 \%\%(?!\{)[^\n]*                         /* skip comments */
 [^\}]\%\%[^\n]*                          /* skip comments */
@@ -35,6 +36,7 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 " "*"quadrant-2"" "*                       return 'QUADRANT_2';
 " "*"quadrant-3"" "*                       return 'QUADRANT_3';
 " "*"quadrant-4"" "*                       return 'QUADRANT_4';
+"classDef"                                 return 'CLASSDEF';
 
 ["][`]                                   { this.begin("md_string");}
 <md_string>[^`"]+                        { return "MD_STR";}
@@ -42,6 +44,9 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 ["]                                      this.begin("string");
 <string>["]                              this.popState();
 <string>[^"]*                            return "STR";
+
+\:\:\:                                   {this.begin('class_name')}
+<class_name>^\w+                           {this.popState(); return 'class_name';}
 
 \s*\:\s*\[\s*                            {this.begin("point_start"); return 'point_start';}
 <point_start>(1)|(0(.\d+)?)              {this.begin('point_x'); return 'point_x';}
@@ -75,6 +80,31 @@ accDescr\s*"{"\s*                        { this.begin("acc_descr_multiline");}
 
 %% /* language grammar */
 
+idStringToken  :  ALPHA | NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT | UNICODE_TEXT;
+styleComponent: ALPHA | NUM | NODE_STRING | COLON | UNIT | SPACE | BRKT | STYLE | PCT | MINUS ;
+
+idString
+  :idStringToken
+  {$$=$idStringToken}
+  | idString idStringToken
+  {$$=$idString+''+$idStringToken}
+  ;
+
+style: styleComponent
+  |style styleComponent
+  {$$ = $style + $styleComponent;}
+  ;
+
+stylesOpt: style
+    {$$ = [$style.trim()]}
+  | stylesOpt COMMA style
+    {$stylesOpt.push($style.trim());$$ = $stylesOpt;}
+  ;
+
+classDefStatement
+  : CLASSDEF SPACE idString SPACE stylesOpt {$$ = $CLASSDEF;yy.addClass($idString,$stylesOpt);}
+  ;
+
 start
   : eol start
   | SPACE start
@@ -92,6 +122,7 @@ line
 
 statement
   :
+  | classDefStatement {$$=[];}
   | SPACE statement
   | axisDetails
   | quadrantDetails
@@ -103,7 +134,10 @@ statement
 	;
 
 points
-  : text point_start point_x point_y {yy.addPoint($1, $3, $4);}
+  : text point_start point_x point_y {yy.addPoint($1, "", $3, $4, []);}
+  | text class_name point_start point_x point_y {yy.addPoint($1, $2, $4, $5, []);}
+  | text point_start point_x point_y stylesOpt {yy.addPoint($1, "", $3, $4, $stylesOpt);}
+  | text class_name point_start point_x point_y stylesOpt {yy.addPoint($1, $2, $4, $5, $stylesOpt);}
   ;
 
 axisDetails

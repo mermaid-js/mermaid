@@ -8,6 +8,6 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-      - uses: Dunning-Kruger/unlock-issues@v1
+      - uses: Dunning-Kruger/unlock-issues@b06b7f7e5c3f2eaa1c6d5d89f40930e4d6d9699e # v1
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'

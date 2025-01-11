@@ -2,11 +2,11 @@
  * Resettable state storage.
  * @example
  * ```
- * const state = new ImperativeState(() => {
+ * const state = new ImperativeState(() => ({
  *   foo: undefined as string | undefined,
  *   bar: [] as number[],
  *   baz: 1 as number | undefined,
- * });
+ * }));
  *
  * state.records.foo = "hi";
  * console.log(state.records.foo); // prints "hi";
@@ -21,7 +21,7 @@
  * // }
  * ```
  */
-export class ImperativeState<S extends Record<string, unknown>> {
+export class ImperativeState<S> {
   public records: S;
 
   /**

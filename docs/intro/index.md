@@ -22,7 +22,7 @@ It is a JavaScript based diagramming and charting tool that renders Markdown-ins
 [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master)
 [![CDN Status](https://img.shields.io/jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)
 [![NPM](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs.com/package/mermaid)
-[![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
+[![Join our Discord!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=discord&label=discord)](https://discord.gg/AgrbSrBer3)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mermaidjs_?style=social)](https://twitter.com/mermaidjs_)
 
 </div>
@@ -54,6 +54,10 @@ For a more detailed introduction to Mermaid and some of its more basic uses, loo
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!!**
 
 **Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project 🙏**
+
+Our PR Visual Regression Testing is powered by [Argos](https://argos-ci.com/?utm_source=mermaid&utm_campaign=oss) with their generous Open Source plan. It makes the process of reviewing PRs with visual changes a breeze.
+
+[![Covered by Argos Visual Testing](https://argos-ci.com/badge-large.svg)](https://argos-ci.com?utm_source=mermaid&utm_campaign=oss)
 
 In our release process we rely heavily on visual regression tests using [applitools](https://applitools.com/). Applitools is a great service which has been easy to use and integrate with our tests.
 
@@ -88,7 +92,7 @@ sequenceDiagram
     participant Alice
     participant Bob
     Alice->>John: Hello John, how are you?
-    loop Healthcheck
+    loop HealthCheck
         John->>John: Fight against hypochondria
     end
     Note right of John: Rational thoughts <br/>prevail!
@@ -102,7 +106,7 @@ sequenceDiagram
     participant Alice
     participant Bob
     Alice->>John: Hello John, how are you?
-    loop Healthcheck
+    loop HealthCheck
         John->>John: Fight against hypochondria
     end
     Note right of John: Rational thoughts <br/>prevail!
@@ -311,23 +315,25 @@ xychart-beta
 
 ### CDN
 
-    https://cdn.jsdelivr.net/npm/mermaid@<version>/dist/
+```
+https://cdn.jsdelivr.net/npm/mermaid@<version>/dist/
+```
 
 To select a version:
 
 Replace `<version>` with the desired version number.
 
-Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@10>
+Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@11>
 
 ## Deploying Mermaid
 
 To Deploy Mermaid:
 
-1.  You will need to install node v16, which would have npm
-2.  Install mermaid
-    - NPM: `npm i mermaid`
-    - Yarn: `yarn add mermaid`
-    - Pnpm: `pnpm add mermaid`
+1. You will need to install node v16, which would have npm
+2. Install mermaid
+   - NPM: `npm i mermaid`
+   - Yarn: `yarn add mermaid`
+   - Pnpm: `pnpm add mermaid`
 
 ### [Mermaid API](../config/setup/README.md):
 
@@ -335,7 +341,7 @@ To Deploy Mermaid:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
 ```

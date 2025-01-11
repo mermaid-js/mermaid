@@ -30,8 +30,8 @@ appearance by doing the following:
 sequenceDiagram
     participant Alice
     participant Bob
-    Alice->>Bob: Hi Bob
     Bob->>Alice: Hi Alice
+    Alice->>Bob: Hi Bob
 ```
 
 ### Actors
@@ -105,6 +105,9 @@ end
 box rgb(33,66,99)
 ... actors ...
 end
+box rgba(33,66,99,0.5)
+... actors ...
+end
 ```
 
 ```note
@@ -129,8 +132,8 @@ end
     end
     A->>J: Hello John, how are you?
     J->>A: Great!
-    A->>B: Hello Bob, how is Charly?
-    B->>C: Hello Charly, how are you?
+    A->>B: Hello Bob, how is Charley?
+    B->>C: Hello Charley, how are you?
 ```
 
 ## Messages
@@ -141,18 +144,20 @@ Messages can be of two displayed either solid or with a dotted line.
 [Actor][Arrow][Actor]:Message text
 ```
 
-There are six types of arrows currently supported:
+There are ten types of arrows currently supported:
 
-| Type   | Description                                      |
-| ------ | ------------------------------------------------ |
-| `->`   | Solid line without arrow                         |
-| `-->`  | Dotted line without arrow                        |
-| `->>`  | Solid line with arrowhead                        |
-| `-->>` | Dotted line with arrowhead                       |
-| `-x`   | Solid line with a cross at the end               |
-| `--x`  | Dotted line with a cross at the end.             |
-| `-)`   | Solid line with an open arrow at the end (async) |
-| `--)`  | Dotted line with a open arrow at the end (async) |
+| Type     | Description                                          |
+| -------- | ---------------------------------------------------- |
+| `->`     | Solid line without arrow                             |
+| `-->`    | Dotted line without arrow                            |
+| `->>`    | Solid line with arrowhead                            |
+| `-->>`   | Dotted line with arrowhead                           |
+| `<<->>`  | Solid line with bidirectional arrowheads (v11.0.0+)  |
+| `<<-->>` | Dotted line with bidirectional arrowheads (v11.0.0+) |
+| `-x`     | Solid line with a cross at the end                   |
+| `--x`    | Dotted line with a cross at the end                  |
+| `-)`     | Solid line with an open arrow at the end (async)     |
+| `--)`    | Dotted line with a open arrow at the end (async)     |
 
 ## Activations
 
@@ -205,11 +210,22 @@ sequenceDiagram
     Note over Alice,John: A typical interaction
 ```
 
-It is also possible to add a line break (applies to text input in general):
+## Line breaks
+
+Line break can be added to Note and Message:
 
 ```mermaid-example
 sequenceDiagram
-    Alice->John: Hello John, how are you?
+    Alice->John: Hello John,<br/>how are you?
+    Note over Alice,John: A typical interaction<br/>But now in two lines
+```
+
+Line breaks in Actor names requires aliases:
+
+```mermaid-example
+sequenceDiagram
+    participant Alice as Alice<br/>Johnson
+    Alice->John: Hello John,<br/>how are you?
     Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
@@ -381,6 +397,12 @@ sequenceDiagram
 
 It is possible to highlight flows by providing colored background rects. This is done by the notation
 
+```
+rect COLOR
+... content ...
+end
+```
+
 The colors are defined using rgb and rgba syntax.
 
 ```
@@ -457,7 +479,7 @@ It can also be turned on via the diagram code as in the diagram:
 sequenceDiagram
     autonumber
     Alice->>John: Hello John, how are you?
-    loop Healthcheck
+    loop HealthCheck
         John->>John: Fight against hypochondria
     end
     Note right of John: Rational thoughts!
@@ -518,20 +540,24 @@ Styling of a sequence diagram is done by defining a number of css classes. Durin
 
 ### Classes used
 
-| Class        | Description                                                 |
-| ------------ | ----------------------------------------------------------- |
-| actor        | Style for the actor box at the top of the diagram.          |
-| text.actor   | Styles for text in the actor box at the top of the diagram. |
-| actor-line   | The vertical line for an actor.                             |
-| messageLine0 | Styles for the solid message line.                          |
-| messageLine1 | Styles for the dotted message line.                         |
-| messageText  | Defines styles for the text on the message arrows.          |
-| labelBox     | Defines styles label to left in a loop.                     |
-| labelText    | Styles for the text in label for loops.                     |
-| loopText     | Styles for the text in the loop box.                        |
-| loopLine     | Defines styles for the lines in the loop box.               |
-| note         | Styles for the note box.                                    |
-| noteText     | Styles for the text on in the note boxes.                   |
+| Class          | Description                                                    |
+| -------------- | -------------------------------------------------------------- |
+| actor          | Styles for the actor box.                                      |
+| actor-top      | Styles for the actor figure/ box at the top of the diagram.    |
+| actor-bottom   | Styles for the actor figure/ box at the bottom of the diagram. |
+| text.actor     | Styles for text of all of the actors.                          |
+| text.actor-box | Styles for text of the actor box.                              |
+| text.actor-man | Styles for text of the actor figure.                           |
+| actor-line     | The vertical line for an actor.                                |
+| messageLine0   | Styles for the solid message line.                             |
+| messageLine1   | Styles for the dotted message line.                            |
+| messageText    | Defines styles for the text on the message arrows.             |
+| labelBox       | Defines styles label to left in a loop.                        |
+| labelText      | Styles for the text in label for loops.                        |
+| loopText       | Styles for the text in the loop box.                           |
+| loopLine       | Defines styles for the lines in the loop box.                  |
+| note           | Styles for the note box.                                       |
+| noteText       | Styles for the text on in the note boxes.                      |
 
 ### Sample stylesheet
 

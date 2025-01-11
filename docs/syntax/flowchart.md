@@ -298,6 +298,694 @@ flowchart TD
     id1(((This is the text in the circle)))
 ```
 
+## Expanded Node Shapes in Mermaid Flowcharts (v11.3.0+)
+
+Mermaid introduces 30 new shapes to enhance the flexibility and precision of flowchart creation. These new shapes provide more options to represent processes, decisions, events, data storage visually, and other elements within your flowcharts, improving clarity and semantic meaning.
+
+New Syntax for Shape Definition
+
+Mermaid now supports a general syntax for defining shape types to accommodate the growing number of shapes. This syntax allows you to assign specific shapes to nodes using a clear and flexible format:
+
+```
+A@{ shape: rect }
+```
+
+This syntax creates a node A as a rectangle. It renders in the same way as `A["A"]`, or `A`.
+
+### Complete List of New Shapes
+
+Below is a comprehensive list of the newly introduced shapes and their corresponding semantic meanings, short names, and aliases:
+
+| **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
+| --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
+| Card                              | Notched Rectangle      | `notch-rect`   | Represents a card              | `card`, `notched-rectangle`                                      |
+| Collate                           | Hourglass              | `hourglass`    | Represents a collate operation | `collate`, `hourglass`                                           |
+| Com Link                          | Lightning Bolt         | `bolt`         | Communication link             | `com-link`, `lightning-bolt`                                     |
+| Comment                           | Curly Brace            | `brace`        | Adds a comment                 | `brace-l`, `comment`                                             |
+| Comment Right                     | Curly Brace            | `brace-r`      | Adds a comment                 |                                                                  |
+| Comment with braces on both sides | Curly Braces           | `braces`       | Adds a comment                 |                                                                  |
+| Data Input/Output                 | Lean Right             | `lean-r`       | Represents input or output     | `in-out`, `lean-right`                                           |
+| Data Input/Output                 | Lean Left              | `lean-l`       | Represents output or input     | `lean-left`, `out-in`                                            |
+| Database                          | Cylinder               | `cyl`          | Database storage               | `cylinder`, `database`, `db`                                     |
+| Decision                          | Diamond                | `diam`         | Decision-making step           | `decision`, `diamond`, `question`                                |
+| Delay                             | Half-Rounded Rectangle | `delay`        | Represents a delay             | `half-rounded-rectangle`                                         |
+| Direct Access Storage             | Horizontal Cylinder    | `h-cyl`        | Direct access storage          | `das`, `horizontal-cylinder`                                     |
+| Disk Storage                      | Lined Cylinder         | `lin-cyl`      | Disk storage                   | `disk`, `lined-cylinder`                                         |
+| Display                           | Curved Trapezoid       | `curv-trap`    | Represents a display           | `curved-trapezoid`, `display`                                    |
+| Divided Process                   | Divided Rectangle      | `div-rect`     | Divided process shape          | `div-proc`, `divided-process`, `divided-rectangle`               |
+| Document                          | Document               | `doc`          | Represents a document          | `doc`, `document`                                                |
+| Event                             | Rounded Rectangle      | `rounded`      | Represents an event            | `event`                                                          |
+| Extract                           | Triangle               | `tri`          | Extraction process             | `extract`, `triangle`                                            |
+| Fork/Join                         | Filled Rectangle       | `fork`         | Fork or join in process flow   | `join`                                                           |
+| Internal Storage                  | Window Pane            | `win-pane`     | Internal storage               | `internal-storage`, `window-pane`                                |
+| Junction                          | Filled Circle          | `f-circ`       | Junction point                 | `filled-circle`, `junction`                                      |
+| Lined Document                    | Lined Document         | `lin-doc`      | Lined document                 | `lined-document`                                                 |
+| Lined/Shaded Process              | Lined Rectangle        | `lin-rect`     | Lined process shape            | `lin-proc`, `lined-process`, `lined-rectangle`, `shaded-process` |
+| Loop Limit                        | Trapezoidal Pentagon   | `notch-pent`   | Loop limit step                | `loop-limit`, `notched-pentagon`                                 |
+| Manual File                       | Flipped Triangle       | `flip-tri`     | Manual file operation          | `flipped-triangle`, `manual-file`                                |
+| Manual Input                      | Sloped Rectangle       | `sl-rect`      | Manual input step              | `manual-input`, `sloped-rectangle`                               |
+| Manual Operation                  | Trapezoid Base Top     | `trap-t`       | Represents a manual task       | `inv-trapezoid`, `manual`, `trapezoid-top`                       |
+| Multi-Document                    | Stacked Document       | `docs`         | Multiple documents             | `documents`, `st-doc`, `stacked-document`                        |
+| Multi-Process                     | Stacked Rectangle      | `st-rect`      | Multiple processes             | `processes`, `procs`, `stacked-rectangle`                        |
+| Odd                               | Odd                    | `odd`          | Odd shape                      |                                                                  |
+| Paper Tape                        | Flag                   | `flag`         | Paper tape                     | `paper-tape`                                                     |
+| Prepare Conditional               | Hexagon                | `hex`          | Preparation or condition step  | `hexagon`, `prepare`                                             |
+| Priority Action                   | Trapezoid Base Bottom  | `trap-b`       | Priority action                | `priority`, `trapezoid`, `trapezoid-bottom`                      |
+| Process                           | Rectangle              | `rect`         | Standard process shape         | `proc`, `process`, `rectangle`                                   |
+| Start                             | Circle                 | `circle`       | Starting point                 | `circ`                                                           |
+| Start                             | Small Circle           | `sm-circ`      | Small starting point           | `small-circle`, `start`                                          |
+| Stop                              | Double Circle          | `dbl-circ`     | Represents a stop point        | `double-circle`                                                  |
+| Stop                              | Framed Circle          | `fr-circ`      | Stop point                     | `framed-circle`, `stop`                                          |
+| Stored Data                       | Bow Tie Rectangle      | `bow-rect`     | Stored data                    | `bow-tie-rectangle`, `stored-data`                               |
+| Subprocess                        | Framed Rectangle       | `fr-rect`      | Subprocess                     | `framed-rectangle`, `subproc`, `subprocess`, `subroutine`        |
+| Summary                           | Crossed Circle         | `cross-circ`   | Summary                        | `crossed-circle`, `summary`                                      |
+| Tagged Document                   | Tagged Document        | `tag-doc`      | Tagged document                | `tag-doc`, `tagged-document`                                     |
+| Tagged Process                    | Tagged Rectangle       | `tag-rect`     | Tagged process                 | `tag-proc`, `tagged-process`, `tagged-rectangle`                 |
+| Terminal Point                    | Stadium                | `stadium`      | Terminal point                 | `pill`, `terminal`                                               |
+| Text Block                        | Text Block             | `text`         | Text block                     |                                                                  |
+
+### Example Flowchart with New Shapes
+
+Here’s an example flowchart that utilizes some of the newly introduced shapes:
+
+```mermaid-example
+flowchart RL
+    A@{ shape: manual-file, label: "File Handling"}
+    B@{ shape: manual-input, label: "User Input"}
+    C@{ shape: docs, label: "Multiple Documents"}
+    D@{ shape: procs, label: "Process Automation"}
+    E@{ shape: paper-tape, label: "Paper Records"}
+```
+
+```mermaid
+flowchart RL
+    A@{ shape: manual-file, label: "File Handling"}
+    B@{ shape: manual-input, label: "User Input"}
+    C@{ shape: docs, label: "Multiple Documents"}
+    D@{ shape: procs, label: "Process Automation"}
+    E@{ shape: paper-tape, label: "Paper Records"}
+```
+
+### Process
+
+```mermaid-example
+flowchart TD
+    A@{ shape: rect, label: "This is a process" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: rect, label: "This is a process" }
+```
+
+### Event
+
+```mermaid-example
+flowchart TD
+    A@{ shape: rounded, label: "This is an event" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: rounded, label: "This is an event" }
+```
+
+### Terminal Point (Stadium)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: stadium, label: "Terminal point" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: stadium, label: "Terminal point" }
+```
+
+### Subprocess
+
+```mermaid-example
+flowchart TD
+    A@{ shape: subproc, label: "This is a subprocess" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: subproc, label: "This is a subprocess" }
+```
+
+### Database (Cylinder)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: cyl, label: "Database" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: cyl, label: "Database" }
+```
+
+### Start (Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: circle, label: "Start" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: circle, label: "Start" }
+```
+
+### Odd
+
+```mermaid-example
+flowchart TD
+    A@{ shape: odd, label: "Odd shape" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: odd, label: "Odd shape" }
+```
+
+### Decision (Diamond)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: diamond, label: "Decision" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: diamond, label: "Decision" }
+```
+
+### Prepare Conditional (Hexagon)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: hex, label: "Prepare conditional" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: hex, label: "Prepare conditional" }
+```
+
+### Data Input/Output (Lean Right)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lean-r, label: "Input/Output" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: lean-r, label: "Input/Output" }
+```
+
+### Data Input/Output (Lean Left)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lean-l, label: "Output/Input" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: lean-l, label: "Output/Input" }
+```
+
+### Priority Action (Trapezoid Base Bottom)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: trap-b, label: "Priority action" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: trap-b, label: "Priority action" }
+```
+
+### Manual Operation (Trapezoid Base Top)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: trap-t, label: "Manual operation" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: trap-t, label: "Manual operation" }
+```
+
+### Stop (Double Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: dbl-circ, label: "Stop" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: dbl-circ, label: "Stop" }
+```
+
+### Text Block
+
+```mermaid-example
+flowchart TD
+    A@{ shape: text, label: "This is a text block" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: text, label: "This is a text block" }
+```
+
+### Card (Notched Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: notch-rect, label: "Card" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: notch-rect, label: "Card" }
+```
+
+### Lined/Shaded Process
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lin-rect, label: "Lined process" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: lin-rect, label: "Lined process" }
+```
+
+### Start (Small Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: sm-circ, label: "Small start" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: sm-circ, label: "Small start" }
+```
+
+### Stop (Framed Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: framed-circle, label: "Stop" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: framed-circle, label: "Stop" }
+```
+
+### Fork/Join (Long Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: fork, label: "Fork or Join" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: fork, label: "Fork or Join" }
+```
+
+### Collate (Hourglass)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: hourglass, label: "Collate" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: hourglass, label: "Collate" }
+```
+
+### Comment (Curly Brace)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: comment, label: "Comment" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: comment, label: "Comment" }
+```
+
+### Comment Right (Curly Brace Right)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: brace-r, label: "Comment" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: brace-r, label: "Comment" }
+```
+
+### Comment with braces on both sides
+
+```mermaid-example
+flowchart TD
+    A@{ shape: braces, label: "Comment" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: braces, label: "Comment" }
+```
+
+### Com Link (Lightning Bolt)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: bolt, label: "Communication link" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: bolt, label: "Communication link" }
+```
+
+### Document
+
+```mermaid-example
+flowchart TD
+    A@{ shape: doc, label: "Document" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: doc, label: "Document" }
+```
+
+### Delay (Half-Rounded Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: delay, label: "Delay" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: delay, label: "Delay" }
+```
+
+### Direct Access Storage (Horizontal Cylinder)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: das, label: "Direct access storage" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: das, label: "Direct access storage" }
+```
+
+### Disk Storage (Lined Cylinder)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lin-cyl, label: "Disk storage" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: lin-cyl, label: "Disk storage" }
+```
+
+### Display (Curved Trapezoid)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: curv-trap, label: "Display" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: curv-trap, label: "Display" }
+```
+
+### Divided Process (Divided Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: div-rect, label: "Divided process" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: div-rect, label: "Divided process" }
+```
+
+### Extract (Small Triangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: tri, label: "Extract" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: tri, label: "Extract" }
+```
+
+### Internal Storage (Window Pane)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: win-pane, label: "Internal storage" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: win-pane, label: "Internal storage" }
+```
+
+### Junction (Filled Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: f-circ, label: "Junction" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: f-circ, label: "Junction" }
+```
+
+### Lined Document
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lin-doc, label: "Lined document" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: lin-doc, label: "Lined document" }
+```
+
+### Loop Limit (Notched Pentagon)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: notch-pent, label: "Loop limit" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: notch-pent, label: "Loop limit" }
+```
+
+### Manual File (Flipped Triangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: flip-tri, label: "Manual file" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: flip-tri, label: "Manual file" }
+```
+
+### Manual Input (Sloped Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: sl-rect, label: "Manual input" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: sl-rect, label: "Manual input" }
+```
+
+### Multi-Document (Stacked Document)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: docs, label: "Multiple documents" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: docs, label: "Multiple documents" }
+```
+
+### Multi-Process (Stacked Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: processes, label: "Multiple processes" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: processes, label: "Multiple processes" }
+```
+
+### Paper Tape (Flag)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: flag, label: "Paper tape" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: flag, label: "Paper tape" }
+```
+
+### Stored Data (Bow Tie Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: bow-rect, label: "Stored data" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: bow-rect, label: "Stored data" }
+```
+
+### Summary (Crossed Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: cross-circ, label: "Summary" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: cross-circ, label: "Summary" }
+```
+
+### Tagged Document
+
+```mermaid-example
+flowchart TD
+    A@{ shape: tag-doc, label: "Tagged document" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: tag-doc, label: "Tagged document" }
+```
+
+### Tagged Process (Tagged Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: tag-rect, label: "Tagged process" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: tag-rect, label: "Tagged process" }
+```
+
+## Special shapes in Mermaid Flowcharts (v11.3.0+)
+
+Mermaid also introduces 2 special shapes to enhance your flowcharts: **icon** and **image**. These shapes allow you to include icons and images directly within your flowcharts, providing more visual context and clarity.
+
+### Icon Shape
+
+You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions provided [here](../config/icons.md). The syntax for defining an icon shape is as follows:
+
+```mermaid-example
+flowchart TD
+    A@{ icon: "fa:user", form: "square", label: "User Icon", pos: "t", h: 60 }
+```
+
+```mermaid
+flowchart TD
+    A@{ icon: "fa:user", form: "square", label: "User Icon", pos: "t", h: 60 }
+```
+
+### Parameters
+
+- **icon**: The name of the icon from the registered icon pack.
+- **form**: Specifies the background shape of the icon. If not defined there will be no background to icon. Options include:
+  - `square`
+  - `circle`
+  - `rounded`
+- **label**: The text label associated with the icon. This can be any string. If not defined, no label will be displayed.
+- **pos**: The position of the label. If not defined label will default to bottom of icon. Possible values are:
+  - `t`
+  - `b`
+- **h**: The height of the icon. If not defined this will default to 48 which is minimum.
+
+### Image Shape
+
+You can use the `image` shape to include an image in your flowchart. The syntax for defining an image shape is as follows:
+
+```mermaid-example
+flowchart TD
+    A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
+```
+
+```mermaid
+flowchart TD
+    A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
+```
+
+### Parameters
+
+- **img**: The URL of the image to be displayed.
+- **label**: The text label associated with the image. This can be any string. If not defined, no label will be displayed.
+- **pos**: The position of the label. If not defined, the label will default to the bottom of the image. Possible values are:
+  - `t`
+  - `b`
+- **w**: The width of the image. If not defined, this will default to the natural width of the image.
+- **h**: The height of the image. If not defined, this will default to the natural height of the image.
+- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the height (`h`) accordingly to the width (`w`). If not defined, this will default to `off` Possible values are:
+  - `on`
+  - `off`
+
+These new shapes provide additional flexibility and visual appeal to your flowcharts, making them more informative and engaging.
+
 ## Links between nodes
 
 Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.
@@ -495,6 +1183,91 @@ flowchart TB
     B --> D
 ```
 
+### Attaching an ID to Edges
+
+Mermaid now supports assigning IDs to edges, similar to how IDs and metadata can be attached to nodes. This feature lays the groundwork for more advanced styling, classes, and animation capabilities on edges.
+
+**Syntax:**
+
+To give an edge an ID, prepend the edge syntax with the ID followed by an `@` character. For example:
+
+```mermaid-example
+flowchart LR
+  A e1@–> B
+```
+
+```mermaid
+flowchart LR
+  A e1@–> B
+```
+
+In this example, `e1` is the ID of the edge connecting `A` to `B`. You can then use this ID in later definitions or style statements, just like with nodes.
+
+### Turning an Animation On
+
+Once you have assigned an ID to an edge, you can turn on animations for that edge by defining the edge’s properties:
+
+```mermaid-example
+flowchart LR
+  A e1@==> B
+  e1@{ animate: true }
+```
+
+```mermaid
+flowchart LR
+  A e1@==> B
+  e1@{ animate: true }
+```
+
+This tells Mermaid that the edge `e1` should be animated.
+
+### Selecting Type of Animation
+
+In the initial version, two animation speeds are supported: `fast` and `slow`. Selecting a specific animation type is a shorthand for enabling animation and setting the animation speed in one go.
+
+**Examples:**
+
+```mermaid-example
+flowchart LR
+  A e1@–> B
+  e1@{ animation: fast }
+```
+
+```mermaid
+flowchart LR
+  A e1@–> B
+  e1@{ animation: fast }
+```
+
+This is equivalent to `{ animate: true, animation: fast }`.
+
+### Using classDef Statements for Animations
+
+You can also animate edges by assigning a class to them and then defining animation properties in a `classDef` statement. For example:
+
+```mermaid-example
+flowchart LR
+  A e1@–> B
+  classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+```
+
+```mermaid
+flowchart LR
+  A e1@–> B
+  classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+```
+
+In this snippet:
+
+- `e1@-->` creates an edge with ID `e1`.
+- `classDef animate` defines a class named `animate` with styling and animation properties.
+- `class e1 animate` applies the `animate` class to the edge `e1`.
+
+**Note on Escaping Commas:**
+When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid’s style definitions.
+
 ## New arrow types
 
 There are new types of arrows supported:
@@ -642,9 +1415,11 @@ Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported
 
 ## Subgraphs
 
-    subgraph title
-        graph definition
-    end
+```
+subgraph title
+    graph definition
+end
+```
 
 An example below:
 
@@ -850,6 +1625,16 @@ Formatting:
 
 This feature is applicable to node labels, edge labels, and subgraph labels.
 
+The auto wrapping can be disabled by using
+
+```
+---
+config:
+  markdownAutoWrap: false
+---
+graph LR
+```
+
 ## Interaction
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
@@ -857,8 +1642,10 @@ It is possible to bind a click event to a node, the click can lead to either a j
 > **Note**
 > This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
-    click nodeId callback
-    click nodeId call callback()
+```
+click nodeId callback
+click nodeId call callback()
+```
 
 - nodeId is the id of the node
 - callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
@@ -867,7 +1654,7 @@ Examples of tooltip usage below:
 
 ```html
 <script>
-  const callback = function () {
+  window.callback = function () {
     alert('A callback was triggered');
   };
 </script>
@@ -899,7 +1686,7 @@ flowchart LR
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
-?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/Ogglas/2o73vdez/7).
+?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/yk4h7qou/2/).
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
 
@@ -943,7 +1730,7 @@ Beginner's tip—a full example using interactive links in a html context:
   </pre>
 
   <script>
-    const callback = function () {
+    window.callback = function () {
       alert('A callback was triggered');
     };
     const config = {
@@ -981,11 +1768,15 @@ have no ids in the same way as nodes, some other way of deciding what style the 
 Instead of ids, the order number of when the link was defined in the graph is used, or use default to apply to all links.
 In the example below the style defined in the linkStyle statement will belong to the fourth link in the graph:
 
-    linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
+```
+linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
+```
 
 It is also possible to add style to multiple links in a single statement, by separating link numbers with commas:
 
-    linkStyle 1,2,7 color:blue;
+```
+linkStyle 1,2,7 color:blue;
+```
 
 ### Styling line curves
 
@@ -995,8 +1786,10 @@ Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRo
 
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
-    %%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
-    graph LR
+```
+%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+graph LR
+```
 
 For a full list of available curves, including an explanation of custom curves, refer to
 the [Shapes](https://github.com/d3/d3-shape/blob/main/README.md#curves) documentation in the
@@ -1027,19 +1820,27 @@ should have a different look.
 
 A class definition looks like the example below:
 
-        classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
+    classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
 
 Also, it is possible to define style to multiple classes in one statement:
 
-        classDef firstClassName,secondClassName font-size:12pt;
+```
+    classDef firstClassName,secondClassName font-size:12pt;
+```
 
 Attachment of a class to a node is done as per below:
 
-        class nodeId1 className;
+```
+    class nodeId1 className;
+```
 
 It is also possible to attach a class to a list of nodes in one statement:
 
-        class nodeId1,nodeId2 className;
+```
+    class nodeId1,nodeId2 className;
+```
 
 A shorter form of adding a class is to attach the classname to the node using the `:::`operator as per below:
 
@@ -1110,7 +1911,9 @@ flowchart LR
 
 If a class is named default it will be assigned to all classes without specific class definitions.
 
-        classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
+    classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
 
 ## Basic support for fontawesome
 
@@ -1134,7 +1937,49 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-Mermaid is compatible with Font Awesome up to version 5, Free icons only. Check that the icons you use are from the [supported set of icons](https://fontawesome.com/v5/search?o=r&m=free).
+Mermaid supports Font Awesome if the CSS is included on the website.
+Mermaid does not have any restriction on the version of Font Awesome that can be used.
+
+Please refer the [Official Font Awesome Documentation](https://fontawesome.com/start) on how to include it in your website.
+
+Adding this snippet in the `<head>` would add support for Font Awesome v6.5.1
+
+```html
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  rel="stylesheet"
+/>
+```
+
+### Custom icons
+
+It is possible to use custom icons served from Font Awesome as long as the website imports the corresponding kit.
+
+Note that this is currently a paid feature from Font Awesome.
+
+For custom icons, you need to use the `fak` prefix.
+
+**Example**
+
+```
+flowchart TD
+    B[fa:fa-twitter] %% standard icon
+    B-->E(fak:fa-custom-icon-name) %% custom icon
+```
+
+And trying to render it
+
+```mermaid-example
+flowchart TD
+    B["fa:fa-twitter for peace"]
+    B-->C["fab:fa-truck-bold a custom icon"]
+```
+
+```mermaid
+flowchart TD
+    B["fa:fa-twitter for peace"]
+    B-->C["fab:fa-truck-bold a custom icon"]
+```
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
@@ -1171,7 +2016,9 @@ Starting with Mermaid version 9.4, you can use an alternate renderer named elk. 
 The _elk_ renderer is an experimental feature.
 You can change the renderer to elk by adding this directive:
 
-    %%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+```
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+```
 
 > **Note**
 > Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
@@ -1188,3 +2035,5 @@ mermaid.flowchartConfig = {
     width: 100%
 }
 ```
+
+<!--- cspell:ignore lagom --->

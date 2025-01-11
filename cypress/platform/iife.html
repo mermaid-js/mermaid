@@ -1,0 +1,29 @@
+<html>
+  <body>
+    <pre id="diagram" class="mermaid">
+graph TB
+      a --> b
+      a --> c
+      b --> d
+      c --> d
+    </pre>
+
+    <div id="d2"></div>
+
+    <script src="/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+      });
+      const value = `graph TD\nHello --> World`;
+      const el = document.getElementById('d2');
+      mermaid.render('did', value).then(({ svg }) => {
+        console.log(svg);
+        el.innerHTML = svg;
+        if (window.Cypress) {
+          window.rendered = true;
+        }
+      });
+    </script>
+  </body>
+</html>

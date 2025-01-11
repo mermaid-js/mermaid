@@ -1,7 +1,6 @@
 import { parser } from './gantt.jison';
 import ganttDb from '../ganttDb.js';
-import { convert } from '../../../tests/util.js';
-import { vi } from 'vitest';
+import { vi, it } from 'vitest';
 const spyOn = vi.spyOn;
 const parserFnConstructor = (str) => {
   return () => {
@@ -28,8 +27,12 @@ describe('when parsing a gantt diagram it', function () {
   });
   it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
+    const semi = 'gantt\ndateFormat yyyy-mm-dd\ntitle ;Gantt diagram titles support semicolons';
+    const hash = 'gantt\ndateFormat yyyy-mm-dd\ntitle #Gantt diagram titles support hashtags';
 
     expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(semi)).not.toThrow();
+    expect(parserFnConstructor(hash)).not.toThrow();
   });
   it('should handle an excludes definition', function () {
     const str =
@@ -53,7 +56,23 @@ describe('when parsing a gantt diagram it', function () {
       'excludes weekdays 2019-02-01\n' +
       'section Documentation';
 
+    const semi =
+      'gantt\n' +
+      'dateFormat yyyy-mm-dd\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'excludes weekdays 2019-02-01\n' +
+      'section ;Documentation';
+
+    const hash =
+      'gantt\n' +
+      'dateFormat yyyy-mm-dd\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'excludes weekdays 2019-02-01\n' +
+      'section #Documentation';
+
     expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(semi)).not.toThrow();
+    expect(parserFnConstructor(hash)).not.toThrow();
   });
   it('should handle multiline section titles with different line breaks', function () {
     const str =
@@ -73,7 +92,23 @@ describe('when parsing a gantt diagram it', function () {
       'section Documentation\n' +
       'Design jison grammar:des1, 2014-01-01, 2014-01-04';
 
+    const semi =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'section Documentation\n' +
+      ';Design jison grammar:des1, 2014-01-01, 2014-01-04';
+
+    const hash =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'section Documentation\n' +
+      '#Design jison grammar:des1, 2014-01-01, 2014-01-04';
+
     expect(parserFnConstructor(str)).not.toThrow();
+    expect(parserFnConstructor(semi)).not.toThrow();
+    expect(parserFnConstructor(hash)).not.toThrow();
 
     const tasks = parser.yy.getTasks();
 
@@ -82,14 +117,46 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[0].id).toEqual('des1');
     expect(tasks[0].task).toEqual('Design jison grammar');
   });
-  it.each(convert`
+  it('should handle a task with start/end time relative to other tasks', function () {
+    const str =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'section Documentation\n' +
+      'task A: a, 2024-01-27, 2024-01-28\n' +
+      'task B: b, after a, 2024-01-30\n' +
+      'task C: c, 2024-01-20, until a\n' +
+      'task D: d, after c, until b';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+
+    expect(tasks[0].startTime).toEqual(new Date(2024, 0, 27));
+    expect(tasks[0].endTime).toEqual(new Date(2024, 0, 28));
+    expect(tasks[0].id).toEqual('a');
+    expect(tasks[0].task).toEqual('task A');
+    expect(tasks[1].startTime).toEqual(new Date(2024, 0, 28));
+    expect(tasks[1].endTime).toEqual(new Date(2024, 0, 30));
+    expect(tasks[1].id).toEqual('b');
+    expect(tasks[1].task).toEqual('task B');
+    expect(tasks[2].startTime).toEqual(new Date(2024, 0, 20));
+    expect(tasks[2].endTime).toEqual(new Date(2024, 0, 27));
+    expect(tasks[2].id).toEqual('c');
+    expect(tasks[2].task).toEqual('task C');
+    expect(tasks[3].startTime).toEqual(new Date(2024, 0, 27));
+    expect(tasks[3].endTime).toEqual(new Date(2024, 0, 28));
+    expect(tasks[3].id).toEqual('d');
+    expect(tasks[3].task).toEqual('task D');
+  });
+  it.each`
     tags                     | milestone | done     | crit     | active
     ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
     ${'done'}                | ${false}  | ${true}  | ${false} | ${false}
     ${'crit'}                | ${false}  | ${false} | ${true}  | ${false}
     ${'active'}              | ${false}  | ${false} | ${false} | ${true}
     ${'crit,milestone,done'} | ${true}   | ${true}  | ${true}  | ${false}
-  `)('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
+  `('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
     const str =
       'gantt\n' +
       'dateFormat YYYY-MM-DD\n' +
@@ -188,4 +255,15 @@ row2`;
       expect(ganttDb.getWeekday()).toBe(day);
     }
   );
+
+  it.each(['__proto__', 'constructor'])('should allow for a link to %s id', (prop) => {
+    expect(() =>
+      parser.parse(`gantt
+    dateFormat YYYY-MM-DD
+    section Section
+    A task :${prop}, 2024-10-01, 3d
+    click ${prop} href "https://mermaid.js.org/"
+    `)
+    ).not.toThrow();
+  });
 });

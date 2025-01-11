@@ -5,20 +5,31 @@
  * (i.e. the root of the Mermaid project).
  */
 
-import { readFileSync, writeFileSync } from 'node:fs';
-import prettier from 'prettier';
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 
-const filepath = './cSpell.json';
-const cSpell: { words: string[] } = JSON.parse(readFileSync(filepath, 'utf8'));
+const cSpellDictionaryDir = './.cspell';
 
-cSpell.words = [...new Set(cSpell.words.map((word) => word.toLowerCase()))];
-cSpell.words.sort((a, b) => a.localeCompare(b));
+function sortWordsInFile(filepath: string) {
+  const words = readFileSync(filepath, 'utf8')
+    .split('\n')
+    .map((word) => word.trim())
+    .filter((word) => word);
+  words.sort((a, b) => a.localeCompare(b));
 
-const prettierConfig = prettier.resolveConfig.sync(filepath) ?? {};
-writeFileSync(
-  filepath,
-  prettier.format(JSON.stringify(cSpell), {
-    ...prettierConfig,
-    filepath,
-  })
-);
+  writeFileSync(filepath, words.join('\n') + '\n', 'utf8');
+}
+
+function findDictionaries() {
+  const files = readdirSync(cSpellDictionaryDir, { withFileTypes: true })
+    .filter((dir) => dir.isFile())
+    .filter((dir) => dir.name.endsWith('.txt'));
+  return files.map((file) => join(cSpellDictionaryDir, file.name));
+}
+
+function main() {
+  const files = findDictionaries();
+  files.forEach(sortWordsInFile);
+}
+
+main();

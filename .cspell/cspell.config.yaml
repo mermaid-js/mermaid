@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
+
+$schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
+
+dictionaryDefinitions:
+  - name: code-terms
+    path: ./code-terms.txt
+    description: A list of coding related terms.
+    addWords: true
+  - name: mermaid-terms
+    path: ./mermaid-terms.txt
+    description: A list of terms related to the mermaid project.
+    addWords: true
+  - name: misc-terms
+    path: ./misc-terms.txt
+    description: A list of miscellaneous terms.
+  - name: 3rd-party-terms
+    path: ./libraries.txt
+    description: A list of 3rd party terms from dependencies.
+    addWords: true
+  - name: contributors
+    path: ./contributors.txt
+    description: A list of contributors to the mermaid project.
+    type: 'W'
+    addWords: true
+
+  # cspell:disable
+  - name: suggestions
+    words:
+      - none
+      - disp
+      - subproc
+      - tria
+    suggestWords:
+      - seperator:separator
+      - vertice:vertex
+  # cspell:enable
+
+patterns:
+  - name: character-set-cyrillic
+    pattern: '/\p{Script_Extensions=Cyrillic}+/gu'
+  - name: svg-block
+    pattern: '<svg[\S\s]+?</svg>'
+  - name: json-property
+    pattern: '/"[\w/@-]+":/g'
+
+dictionaries:
+  - mermaid-terms
+  - suggestions
+  - contributors
+
+ignorePaths:
+  - '*.txt' # do not spell check local dictionaries
+
+# cspell:dictionary misc-terms

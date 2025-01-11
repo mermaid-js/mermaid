@@ -34,7 +34,7 @@ class Theme {
     this.arrowheadColor = '#333333';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
-    this.labelBackground = '#e8e8e8';
+    this.labelBackground = 'rgba(232,232,232, 0.8)';
     this.textColor = '#333';
     this.THEME_COLOR_LIMIT = 12;
 
@@ -53,7 +53,7 @@ class Theme {
     this.actorBorder = 'calculated';
     this.actorBkg = 'calculated';
     this.actorTextColor = 'black';
-    this.actorLineColor = 'grey';
+    this.actorLineColor = 'calculated';
     this.signalColor = 'calculated';
     this.signalTextColor = 'calculated';
     this.labelBoxBkgColor = 'calculated';
@@ -111,6 +111,13 @@ class Theme {
     /* C4 Context Diagram variables */
     this.personBorder = this.primaryBorderColor;
     this.personBkg = this.mainBkg;
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = 'calculated';
+    this.archEdgeArrowColor = 'calculated';
+    this.archEdgeWidth = '3';
+    this.archGroupBorderColor = this.primaryBorderColor;
+    this.archGroupBorderWidth = '2px';
 
     /* state colors */
     this.labelColor = 'black';
@@ -187,11 +194,16 @@ class Theme {
     this.loopTextColor = this.actorTextColor;
     this.noteBorderColor = this.border2;
     this.noteTextColor = this.actorTextColor;
+    this.actorLineColor = this.actorBorder;
 
     /* Gantt chart variables */
 
     this.taskTextColor = this.taskTextLightColor;
     this.taskTextOutsideColor = this.taskTextDarkColor;
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = this.lineColor;
+    this.archEdgeArrowColor = this.lineColor;
 
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;

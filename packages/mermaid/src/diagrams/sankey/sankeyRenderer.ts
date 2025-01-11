@@ -1,12 +1,10 @@
 import type { Diagram } from '../../Diagram.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
-
 import {
   select as d3select,
   scaleOrdinal as d3scaleOrdinal,
   schemeTableau10 as d3schemeTableau10,
 } from 'd3';
-
 import type { SankeyNode as d3SankeyNode } from 'd3-sankey';
 import {
   sankey as d3Sankey,
@@ -42,7 +40,7 @@ const alignmentsMap: Record<
 export const draw = function (text: string, id: string, _version: string, diagObj: Diagram): void {
   // Get Sankey config
   const { securityLevel, sankey: conf } = getConfig();
-  const defaultSankeyConfig = defaultConfig!.sankey!;
+  const defaultSankeyConfig = defaultConfig.sankey!;
 
   // TODO:
   // This code repeats for every diagram
@@ -161,7 +159,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('class', 'link')
     .style('mix-blend-mode', 'multiply');
 
-  const linkColor = conf?.linkColor || 'gradient';
+  const linkColor = conf?.linkColor ?? 'gradient';
 
   if (linkColor === 'gradient') {
     const gradient = link
