@@ -2,7 +2,7 @@ import { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
 import type { DrawDefinition, HTML, SVG } from '../../diagram-api/types.js';
 import { select } from 'd3';
-import { RailroadDB, Node, Rule, NonTerm, Term, ZeroOrMany, ZeroOrOne, OneOrMany, Sequence, Choice, Exception } from './railroadDB.js';
+import { RailroadDB, Node, Rule, NonTerm, Term, ZeroOrMany, ZeroOrOne, OneOrMany, Sequence, Choice, Exception, Epsilon} from './railroadDB.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 // import { configureSvgSize } from '../../setupGraphViewbox.js';
 // import { Uid } from '../../rendering-util/uid.js';
@@ -31,9 +31,23 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 //   return svg;
 // };
 
-const railroadConfig = configApi.getConfig().railroad;
+// interface Params {
+//   config: any,
+//   svg: SVG,
+// }
+
+interface RailroadRendererParams {
+  config?: any,
+  svg?: SVG
+}
 
 abstract class RailroadRenderer<T> {
+  public config: any;
+
+  constructor({ config }: { config: any }) {
+    this.config = config;
+  }
+
   render(node: Node): T {
     if (node instanceof Rule) {
       return this.renderRule(node);
@@ -73,7 +87,7 @@ abstract class RailroadRenderer<T> {
   abstract renderException(node: Exception): T
 }
 
-class EBNFStringRenderer extends RailroadRenderer<string> {
+class StringRenderer extends RailroadRenderer<string> {
   renderBlank(): string {
     return '';
   }
@@ -85,7 +99,11 @@ class EBNFStringRenderer extends RailroadRenderer<string> {
   renderNonTerm(node: NonTerm): string {
     const escaped = node.label.replaceAll(/\\([\\'"<>])/g, "\\$1");
 
-    return '<' + escaped + '>';
+    if (this.config?.format?.forceAngleBrackets) {
+      return '<' + escaped + '>';
+    } else {
+      return escaped;
+    }
   }
 
   renderTerm(node: Term): string {
@@ -107,13 +125,13 @@ class EBNFStringRenderer extends RailroadRenderer<string> {
   }
 
   renderSequence(node: Sequence): string {
-    const delimiter = railroadConfig?.format?.forceComma ? ', ' : ' ';
+    const delimiter = this.config?.format?.forceComma ? ', ' : ' ';
     const content = node.children.map((c) => this.render(c)).join(delimiter);
     return content;
   }
 
   renderChoice(node: Choice): string {
-    const content = node.children.map((c) => this.render(c)).join('|');
+    const content = node.children.map((c) => this.render(c)).join(' | ');
     return '(' + content + ')';
   }
 
@@ -122,6 +140,66 @@ class EBNFStringRenderer extends RailroadRenderer<string> {
   }
 
   renderEpsilon(node: Epsilon): string {
+    return node.label;
+  }
+}
+
+class SVGRenderer extends RailroadRenderer<SVG> {
+  public svg;
+
+  constructor({ config, svg }: {config: any, svg: SVG}) {
+    super({config})
+    this.svg = svg
+  }
+
+  renderRule(node: Rule): SVG {
+    return `${node.label} ::= ${this.render(node.definition)}`;
+  }
+
+  renderNonTerm(node: NonTerm): SVG {
+    const escaped = node.label.replaceAll(/\\([\\'"<>])/g, "\\$1");
+
+    if (this.config?.format?.forceAngleBrackets) {
+      return '<' + escaped + '>';
+    } else {
+      return escaped;
+    }
+  }
+
+  renderTerm(node: Term): SVG {
+    const escaped = node.label.replaceAll(/\\([\\'"])/g, "\\$1");
+
+    return '"' + escaped + '"';
+  }
+
+  renderZeroOrOne(node: ZeroOrOne): SVG {
+    return this.render(node.child) + '?';
+  }
+
+  renderOneOrMany(node: OneOrMany): SVG {
+    return this.render(node.child) + '+';
+  }
+
+  renderZeroOrMany(node: ZeroOrMany): SVG {
+    return this.render(node.child) + '*';
+  }
+
+  renderSequence(node: Sequence): SVG {
+    const delimiter = this.config?.format?.forceComma ? ', ' : ' ';
+    const content = node.children.map((c) => this.render(c)).join(delimiter);
+    return content;
+  }
+
+  renderChoice(node: Choice): SVG {
+    const content = node.children.map((c) => this.render(c)).join(' | ');
+    return '(' + content + ')';
+  }
+
+  renderException(node: Exception): SVG {
+    return `(${this.render(node.base)}) - ${this.render(node.except)}`;
+  }
+
+  renderEpsilon(node: Epsilon): SVG {
     return node.label;
   }
 }
@@ -153,7 +231,8 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj): void => {
 
     const g = svg.append('g').attr('transform', `translate(${0},${10 + index * 20})`);
 
-    const renderer = new EBNFStringRenderer;
+    const railroadConfig = configApi.getConfig().railroad;
+    const renderer = new StringRenderer(railroadConfig);
 
     const text = renderer.render(rule);
     // const body = chunk.traverse<String>((item, index, parent, result) => {

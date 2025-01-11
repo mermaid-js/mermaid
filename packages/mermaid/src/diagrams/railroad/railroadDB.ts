@@ -48,7 +48,6 @@ type Callback<T> = (item: Chunk, index: number, parent: Chunk | undefined, resul
 //
 export abstract class Node {
   abstract traverse<T>(callback: Callback<T>, index?: number, parent?: Node): T;
-  // abstract toEBNF(): string;
 }
 
 // Production Rule or a Rule for simplicity represents a grammar production
@@ -67,19 +66,12 @@ export class Rule implements Node {
 
     return callback(this, index, parent, [nested]);
   }
-
-  // toEBNF() {
-  //   return `${this.label} ::= ${this.definition.toEBNF()}`;
-  // }
 }
 
 // Chunk represents any part of right side of a Rule.
 // We differ it from the Node because grammar does not allow recursive definitions
 //
-export abstract class Chunk extends Node {
-  // static staticMethod(): void;
-  // static display: ((instance: Chunk) => void) | undefined;
-}
+export abstract class Chunk extends Node { }
 
 // Chain is base class for a alternatives or sequences
 //
@@ -94,32 +86,19 @@ abstract class Chain implements Chunk {
 
     return callback(this, index, parent, nested);
   }
-
-  // abstract toEBNF(): string;
 }
 
 // Choice represents list of alternatives - one or another
 //
 // variable | number | string ;
 //
-export class Choice extends Chain {
-  // toEBNF(): string {
-  //   const content = this.children.map((c) => c.toEBNF()).join('|');
-  //   return '(' + content + ')';
-  // }
-}
+export class Choice extends Chain { }
 
 // Sequence is concatenation of elements
 //
 //    expr '+' expr
 //
-export class Sequence extends Chain {
-  // toEBNF(): string {
-  //   const delimiter = railroadConfig?.format?.forceComma ? ', ' : ' ';
-  //   const content = this.children.map((c) => c.toEBNF()).join(delimiter);
-  //   return content;
-  // }
-}
+export class Sequence extends Chain { }
 
 // Element is a primitive - terminal or non-terminal
 //
@@ -130,8 +109,6 @@ abstract class Element implements Chunk {
     index ??= 0;
     return callback(this, index, parent, []);
   }
-
-  // abstract toEBNF(): string;
 }
 
 // Epsilon represents empty transition
@@ -143,21 +120,11 @@ export class Epsilon extends Element {
   constructor() {
     super('ɛ');
   }
-
-  // toEBNF(): string {
-  //   return this.label;
-  // }
 }
 
 // Terminal is just a symbol or a string in a grammar
 //
-export class Term extends Element {
-  // toEBNF(): string {
-  //   const escaped = this.label.replaceAll(/\\([\\'"])/g, "\\$1");
-
-  //   return '"' + escaped + '"';
-  // }
-}
+export class Term extends Element { }
 
 // NonTerm is reference to a rule
 //
@@ -165,13 +132,7 @@ export class Term extends Element {
 //
 // in that case <variable> and <num> are non terminals
 //
-export class NonTerm extends Element {
-  // toEBNF(): string {
-  //   const escaped = this.label.replaceAll(/\\([\\'"<>])/g, "\\$1");
-
-  //   return '<' + escaped + '>';
-  // }
-}
+export class NonTerm extends Element { }
 
 // Something except another something
 //
@@ -223,9 +184,9 @@ const addNonTerm = (label: string): Chunk => {
   return new NonTerm(label);
 };
 
-// a?? => a?
-// a+? => a*
-// a*? => a*
+// (a?)? => a?
+// (a+)? => a*
+// (a*)? => a*
 const addZeroOrOne = (chunk: Chunk): Chunk => {
   if (chunk instanceof ZeroOrOne) {
     return chunk;
@@ -237,9 +198,9 @@ const addZeroOrOne = (chunk: Chunk): Chunk => {
   return new ZeroOrOne(chunk);
 };
 
-// a?+ => a*
-// a++ => a+
-// a*+ => a*
+// (a?)+ => a*
+// (a+)+ => a+
+// (a*)+ => a*
 const addOneOrMany = (chunk: Chunk): Chunk => {
   if (chunk instanceof ZeroOrOne) {
     return new ZeroOrMany(chunk.child);
@@ -251,9 +212,9 @@ const addOneOrMany = (chunk: Chunk): Chunk => {
   return new OneOrMany(chunk);
 };
 
-// a?* => a*
-// a+* => a*
-// a** => a*
+// (a?)* => a*
+// (a+)* => a*
+// (a*)* => a*
 const addZeroOrMany = (chunk: Chunk): Chunk => {
   if (chunk instanceof ZeroOrOne) {
     return new ZeroOrMany(chunk.child);
