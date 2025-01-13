@@ -71,3 +71,10 @@ body:
     attributes:
       label: Additional Context
       description: Anything else to add?
+  - type: checkboxes
+    attributes:
+      label: Confirmation
+      description: Please confirm the following before submitting your issue.
+      options:
+        - label: I have searched for existing issues
+          required: true
