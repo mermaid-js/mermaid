@@ -32,3 +32,21 @@ body:
     attributes:
       label: Screenshots
       description: If applicable, add screenshots to show possible examples of how the theme may look like.
+  - type: textarea
+    attributes:
+      label: Use Cases
+      description: If applicable, give some use cases for where this syntax would be useful.
+      placeholder: The Syntax could be used for ...
+  - type: textarea
+    attributes:
+      label: Syntax
+      description: |-
+        If possible, include a syntax which could be used to write the diagram.
+        Try to add one or two examples of valid use-cases here.
+  - type: checkboxes
+    attributes:
+      label: Confirmation
+      description: Please confirm the following before submitting your issue.
+      options:
+        - label: I have searched for existing issues
+          required: true

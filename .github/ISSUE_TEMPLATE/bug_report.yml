@@ -78,3 +78,43 @@ body:
       options:
         - label: I have searched for existing issues
           required: true
+  - type: checkboxes
+    attributes:
+      label: Confirmation
+      description: Please confirm the following before submitting your issue.
+      options:
+        - label: I have searched for existing issues
+          required: true
+  - type: textarea
+    attributes:
+      label: Environment
+      description: Provide details about your environment, such as operating system, browser, and version.
+      placeholder: |-
+        - Operating System: [Windows, macOS, Linux]
+        - Browser and Version: [Chrome, Edge, Firefox]
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: Describe what you expected to happen.
+      placeholder: I expected ...
+  - type: textarea
+    attributes:
+      label: Actual Behavior
+      description: Describe what actually happened.
+      placeholder: Instead, I saw ...
+  - type: textarea
+    attributes:
+      label: Additional Information
+      description: Provide any additional information that may help us understand the issue.
+      placeholder: Any other relevant information...
+  - type: checkboxes
+    attributes:
+      label: Confirmation
+      description: Please confirm the following before submitting your issue.
+      options:
+        - label: I have searched for existing issues
+          required: true
+        - label: I have checked the [Live Editor - Develop](https://develop.git.mermaid.live) to see if the issue is already fixed
+          required: true
+        - label: I have provided detailed information about the issue
+          required: true
