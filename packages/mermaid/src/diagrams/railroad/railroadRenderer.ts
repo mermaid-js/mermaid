@@ -4,6 +4,7 @@ import type { DrawDefinition, HTML, SVG } from '../../diagram-api/types.js';
 import { select } from 'd3';
 import { RailroadDB, Node, Rule, NonTerm, Term, ZeroOrMany, ZeroOrOne, OneOrMany, Sequence, Choice, Exception, Epsilon} from './railroadDB.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import rr from './railroadLib.js';
 // import { configureSvgSize } from '../../setupGraphViewbox.js';
 // import { Uid } from '../../rendering-util/uid.js';
 
@@ -38,7 +39,7 @@ import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 
 interface RailroadRendererParams {
   config?: any,
-  svg?: SVG
+  // svg?: SVG
 }
 
 abstract class RailroadRenderer<T> {
@@ -84,10 +85,11 @@ abstract class RailroadRenderer<T> {
   abstract renderTerm(node: Term): T;
   abstract renderZeroOrMany(node: ZeroOrMany): T;
   abstract renderZeroOrOne(node: ZeroOrOne): T;
-  abstract renderException(node: Exception): T
+  abstract renderException(node: Exception): T;
 }
 
-class StringRenderer extends RailroadRenderer<string> {
+// converts diagram to ENBF string
+class EBNFStingRenderer extends RailroadRenderer<string> {
   renderBlank(): string {
     return '';
   }
@@ -144,63 +146,66 @@ class StringRenderer extends RailroadRenderer<string> {
   }
 }
 
-class SVGRenderer extends RailroadRenderer<SVG> {
-  public svg;
+// Converts diagram to SVG
+class SVGRenderer extends RailroadRenderer<any> {
+  // public svg;
 
-  constructor({ config, svg }: {config: any, svg: SVG}) {
+  constructor({ config }: {config: any}) {
     super({config})
-    this.svg = svg
+    // this.svg = svg;
   }
 
-  renderRule(node: Rule): SVG {
-    return `${node.label} ::= ${this.render(node.definition)}`;
+  renderRule(node: Rule): any {
+    return rr.Diagram(this.render(node.definition));
+    // return `${node.label} ::= ${this.render(node.definition)}`;
   }
 
-  renderNonTerm(node: NonTerm): SVG {
+  renderNonTerm(node: NonTerm): any {
     const escaped = node.label.replaceAll(/\\([\\'"<>])/g, "\\$1");
-
-    if (this.config?.format?.forceAngleBrackets) {
-      return '<' + escaped + '>';
-    } else {
-      return escaped;
-    }
+    return rr.NonTerminal(escaped);
   }
 
-  renderTerm(node: Term): SVG {
+  renderTerm(node: Term): any {
     const escaped = node.label.replaceAll(/\\([\\'"])/g, "\\$1");
 
-    return '"' + escaped + '"';
+    return rr.Terminal(escaped);
   }
 
-  renderZeroOrOne(node: ZeroOrOne): SVG {
-    return this.render(node.child) + '?';
+  renderZeroOrOne(node: ZeroOrOne): any {
+    // return this.render(node.child) + '?';
+    return rr.Optional(node.child);
   }
 
-  renderOneOrMany(node: OneOrMany): SVG {
-    return this.render(node.child) + '+';
+  renderOneOrMany(node: OneOrMany): any[] {
+    // return this.render(node.child) + '+';
+    return [];
   }
 
-  renderZeroOrMany(node: ZeroOrMany): SVG {
-    return this.render(node.child) + '*';
+  renderZeroOrMany(node: ZeroOrMany): any {
+    return rr.Optional('', this.render(node.child));
   }
 
-  renderSequence(node: Sequence): SVG {
-    const delimiter = this.config?.format?.forceComma ? ', ' : ' ';
-    const content = node.children.map((c) => this.render(c)).join(delimiter);
-    return content;
+  renderSequence(node: Sequence): any {
+    return rr.Sequence(...node.children.map((c) => this.render(c)));
   }
 
-  renderChoice(node: Choice): SVG {
-    const content = node.children.map((c) => this.render(c)).join(' | ');
-    return '(' + content + ')';
+  renderChoice(node: Choice): any {
+    // const content = node.children.map((c) => this.render(c)).join(' | ');
+    return rr.Choice(0, ...node.children.map((c) => this.render(c)));
+    // return '(' + content + ')';
   }
 
-  renderException(node: Exception): SVG {
+  renderException(node: Exception): any {
     return `(${this.render(node.base)}) - ${this.render(node.except)}`;
   }
 
-  renderEpsilon(node: Epsilon): SVG {
-    return node.label;
+  renderEpsilon(node: Epsilon): any[] {
+    // return node.label;
+    return []
+  }
+  
+  renderBlank(): any[] {
+    return [];
   }
 }
 
@@ -232,9 +237,11 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj): void => {
     const g = svg.append('g').attr('transform', `translate(${0},${10 + index * 20})`);
 
     const railroadConfig = configApi.getConfig().railroad;
-    const renderer = new StringRenderer(railroadConfig);
-
-    const text = renderer.render(rule);
+    // const renderer = new EBNFStringRenderer(railroadConfig);
+    // const text = renderer.render(rule);
+    const renderer = new SVGRenderer(railroadConfig, g);
+    
+    const result = renderer.renderRule(rule);
     // const body = chunk.traverse<String>((item, index, parent, result) => {
     //   console.log(item, index, parent);
 
@@ -244,9 +251,16 @@ export const draw: DrawDefinition = (_text, id, _version, diagObj): void => {
     //   // item.toEBNF();
     //   // return nestedDimensions;
     // });
+    const elem = document.getElementById("qq");
+    debugger;
+    const title = document.createElement("h3");
+    title.textContent = rule.label;
+    elem?.appendChild(title);
+    elem.appendChild(result.toSVG());
 
     // const text = label + ':==' + body;
-    g.append('text').text(text);
+    // g.append('text').text(result);
+    // svg.append(result.toString());
 
     const x = g
       .append('rect')
