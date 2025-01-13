@@ -1,4 +1,4 @@
-import stateDb from '../stateDb.js';
+import { StateDb } from '../stateDb.js';
 import stateDiagram from './stateDiagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -7,7 +7,9 @@ setConfig({
 });
 
 describe('state parser can parse...', () => {
+  let stateDb;
   beforeEach(function () {
+    stateDb = new StateDb();
     stateDiagram.parser.yy = stateDb;
     stateDiagram.parser.yy.clear();
   });

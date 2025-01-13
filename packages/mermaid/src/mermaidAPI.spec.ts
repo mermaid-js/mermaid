@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import assert from 'node:assert';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -69,6 +70,7 @@ import { compile, serialize } from 'stylis';
 import { Diagram } from './Diagram.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { StateDb } from './diagrams/state/stateDb.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -832,5 +834,46 @@ graph TD;A--x|text including URL space|B;`)
       expect(diagram).toBeInstanceOf(Diagram);
       expect(diagram.type).toBe('flowchart-v2');
     });
+
+    it('should not modify db when rendering different diagrams', async () => {
+      const classDiagram1 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+    direction LR
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]`
+      );
+      const classDiagram2 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]`
+      );
+      expect(classDiagram1.db).not.toBe(classDiagram2.db);
+      assert(classDiagram1.db instanceof StateDb);
+      assert(classDiagram2.db instanceof StateDb);
+      expect(classDiagram2.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
+    });
+  });
+
+  // Sequence Diagram currently uses a singleton DB, so this test will fail
+  it.fails('should not modify db when rendering different sequence diagrams', async () => {
+    const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
+      `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    Bob-->>John: How about you John?`
+    );
+    const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
+      `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    Bob-->>John: How about you John?`
+    );
+    expect(sequenceDiagram1.db).not.toBe(sequenceDiagram2.db);
   });
 });
