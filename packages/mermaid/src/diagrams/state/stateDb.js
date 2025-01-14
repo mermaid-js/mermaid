@@ -30,11 +30,14 @@ export class StateDb {
   #START_TYPE = 'start';
   #END_NODE = this.#START_NODE;
   #END_TYPE = 'end';
-
   #COLOR_KEYWORD = 'color';
   #FILL_KEYWORD = 'fill';
   #BG_FILL = 'bgFill';
   #STYLECLASS_SEP = ',';
+
+  constructor() {
+    this.clear();
+  }
 
   /**
    * Returns a new list of classes.
@@ -53,10 +56,6 @@ export class StateDb {
   #direction = DEFAULT_DIAGRAM_DIRECTION;
   #rootDoc = [];
   #classes = this.#newClassesList(); // style classes defined by a classDef
-
-  constructor() {
-    this.clear();
-  }
 
   // --------------------------------------
 

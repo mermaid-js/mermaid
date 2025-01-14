@@ -838,27 +838,28 @@ graph TD;A--x|text including URL space|B;`)
     it('should not modify db when rendering different diagrams', async () => {
       const classDiagram1 = await mermaidAPI.getDiagramFromText(
         `stateDiagram
-    direction LR
-    [*] --> Still
-    Still --> [*]
-    Still --> Moving
-    Moving --> Still
-    Moving --> Crash
-    Crash --> [*]`
+            direction LR
+            [*] --> Still
+            Still --> [*]
+            Still --> Moving
+            Moving --> Still
+            Moving --> Crash
+            Crash --> [*]`
       );
       const classDiagram2 = await mermaidAPI.getDiagramFromText(
         `stateDiagram
-    [*] --> Still
-    Still --> [*]
-    Still --> Moving
-    Moving --> Still
-    Moving --> Crash
-    Crash --> [*]`
+          direction TB
+          [*] --> Still
+          Still --> [*]
+          Still --> Moving
+          Moving --> Still
+          Moving --> Crash
+          Crash --> [*]`
       );
       expect(classDiagram1.db).not.toBe(classDiagram2.db);
       assert(classDiagram1.db instanceof StateDb);
       assert(classDiagram2.db instanceof StateDb);
-      expect(classDiagram2.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
+      expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
     });
   });
 
