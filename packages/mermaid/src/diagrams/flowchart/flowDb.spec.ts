@@ -70,11 +70,11 @@ describe('flow db addClass', () => {
 });
 
 describe('flow db class', () => {
-  let flowDb: FlowDb;
+  let flowDb: FlowDB;
   beforeEach(() => {
-    flowDb = new FlowDb();
+    flowDb = new FlowDB();
   });
-  // This is to ensure that functions used in flow JISON are exposed as function from FlowDb
+  // This is to ensure that functions used in flow JISON are exposed as function from FlowDB
   it('should have functions used in flow JISON as own property', () => {
     const functionsUsedInParser = [
       'setDirection',
@@ -91,7 +91,7 @@ describe('flow db class', () => {
       'setLink',
       'updateLink',
       'updateLinkInterpolate',
-    ] as const satisfies (keyof FlowDb)[];
+    ] as const satisfies (keyof FlowDB)[];
 
     for (const fun of functionsUsedInParser) {
       expect(Object.hasOwn(flowDb, fun)).toBe(true);
