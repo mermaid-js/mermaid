@@ -13,7 +13,7 @@ export async function note<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const useHtmlLabels = node.useHtmlLabels || getConfig().htmlLabels;
+  const useHtmlLabels = node.useHtmlLabels || getConfig().flowchart?.htmlLabels !== false;
   if (!useHtmlLabels) {
     node.centerLabel = true;
   }

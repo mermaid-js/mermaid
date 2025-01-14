@@ -62,6 +62,10 @@ export interface FlowEdge {
   length?: number;
   text: string;
   labelType: 'text';
+  classes: string[];
+  id?: string;
+  animation?: 'fast' | 'slow';
+  animate?: boolean;
 }
 
 export interface FlowClass {
