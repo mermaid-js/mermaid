@@ -1,11 +1,11 @@
 import { parser } from './parser/stateDiagram.jison';
-import { StateDb } from './stateDb.js';
+import { StateDB } from './stateDb.js';
 
 describe('state diagram, ', function () {
   describe('when parsing an info graph it', function () {
     let stateDb;
     beforeEach(function () {
-      stateDb = new StateDb();
+      stateDb = new StateDB();
       parser.yy = stateDb;
     });
 

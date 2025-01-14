@@ -1,6 +1,6 @@
 import { line, curveBasis } from 'd3';
 import idCache from './id-cache.js';
-import { StateDb } from './stateDb.js';
+import { StateDB } from './stateDb.js';
 import utils from '../../utils.js';
 import common from '../common/common.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
@@ -412,7 +412,7 @@ export const drawState = function (elem, stateDef) {
 
 let edgeCount = 0;
 export const drawEdge = function (elem, path, relation) {
-  const stateDb = new StateDb();
+  const stateDb = new StateDB();
   const getRelationType = function (type) {
     switch (type) {
       case stateDb.relationType.AGGREGATION:

@@ -25,7 +25,7 @@ import {
   STMT_STYLEDEF,
 } from './stateCommon.js';
 
-export class StateDb {
+export class StateDB {
   #START_NODE = '[*]';
   #START_TYPE = 'start';
   #END_NODE = this.#START_NODE;

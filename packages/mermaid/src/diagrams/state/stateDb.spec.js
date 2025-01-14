@@ -1,9 +1,9 @@
-import { StateDb } from './stateDb.js';
+import { StateDB } from './stateDb.js';
 
 describe('State Diagram stateDb', () => {
   let stateDb;
   beforeEach(() => {
-    stateDb = new StateDb();
+    stateDb = new StateDB();
   });
 
   describe('addStyleClass', () => {
@@ -23,7 +23,7 @@ describe('State Diagram stateDb', () => {
   describe('addDescription to a state', () => {
     let stateDb;
     beforeEach(() => {
-      stateDb = new StateDb();
+      stateDb = new StateDB();
       stateDb.addState('state1');
     });
 
@@ -79,7 +79,7 @@ describe('State Diagram stateDb', () => {
 describe('state db class', () => {
   let stateDb;
   beforeEach(() => {
-    stateDb = new StateDb();
+    stateDb = new StateDB();
   });
   // This is to ensure that functions used in flow JISON are exposed as function from FlowDb
   it('should have functions used in flow JISON as own property', () => {

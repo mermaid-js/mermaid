@@ -1,4 +1,4 @@
-import { StateDb } from '../stateDb.js';
+import { StateDB } from '../stateDb.js';
 import stateDiagram from './stateDiagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -9,7 +9,7 @@ setConfig({
 describe('ClassDefs and classes when parsing a State diagram', () => {
   let stateDb;
   beforeEach(function () {
-    stateDb = new StateDb();
+    stateDb = new StateDB();
     stateDiagram.parser.yy = stateDb;
     stateDiagram.parser.yy.clear();
   });
