@@ -1,4 +1,4 @@
-import { FlowDb } from '../flowDb.js';
+import { FlowDB } from '../flowDb.js';
 import flow from './flow.jison';
 import { setConfig } from '../../../config.js';
 
@@ -31,7 +31,7 @@ const specialChars = ['#', ':', '0', '&', ',', '*', '.', '\\', 'v', '-', '/', '_
 
 describe('[Singlenodes] when parsing', () => {
   beforeEach(function () {
-    flow.parser.yy = new FlowDb();
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
   });
 

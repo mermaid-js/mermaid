@@ -1,11 +1,11 @@
-import { FlowDb } from './flowDb.js';
+import { FlowDB } from './flowDb.js';
 import type { FlowSubGraph } from './types.js';
 
 describe('flow db subgraphs', () => {
-  let flowDb: FlowDb;
+  let flowDb: FlowDB;
   let subgraphs: FlowSubGraph[];
   beforeEach(() => {
-    flowDb = new FlowDb();
+    flowDb = new FlowDB();
     subgraphs = [
       { nodes: ['a', 'b', 'c', 'e'] },
       { nodes: ['f', 'g', 'h'] },
@@ -46,9 +46,9 @@ describe('flow db subgraphs', () => {
 });
 
 describe('flow db addClass', () => {
-  let flowDb: FlowDb;
+  let flowDb: FlowDB;
   beforeEach(() => {
-    flowDb = new FlowDb();
+    flowDb = new FlowDB();
   });
   it('should detect many classes', () => {
     flowDb.addClass('a,b', ['stroke-width: 8px']);

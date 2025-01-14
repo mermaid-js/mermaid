@@ -34,7 +34,7 @@ interface LinkData {
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
-export class FlowDb implements DiagramDB {
+export class FlowDB implements DiagramDB {
   private vertexCounter = 0;
   private config = getConfig();
   private vertices = new Map<string, FlowVertex>();
@@ -46,9 +46,7 @@ export class FlowDb implements DiagramDB {
   private subCount = 0;
   private firstGraphFlag = true;
   private direction: string | undefined;
-
   private version: string | undefined; // As in graph
-
   private secCount = -1;
   private posCrossRef: number[] = [];
 

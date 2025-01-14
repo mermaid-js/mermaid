@@ -1,4 +1,4 @@
-import { FlowDb } from '../flowDb.js';
+import { FlowDB } from '../flowDb.js';
 import flow from './flow.jison';
 import { setConfig } from '../../../config.js';
 
@@ -8,7 +8,7 @@ setConfig({
 
 describe('[Lines] when parsing', () => {
   beforeEach(function () {
-    flow.parser.yy = new FlowDb();
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
   });
 
