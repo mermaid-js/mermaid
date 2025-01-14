@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix: flowchart db was shared between multiple diagrams.
+fix: `mermaidAPI.getDiagramFromText()` now returns a new different db for each flowchart
