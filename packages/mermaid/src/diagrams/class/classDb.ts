@@ -29,7 +29,7 @@ const MERMAID_DOM_ID_PREFIX = 'classId-';
 
 let relations: ClassRelation[] = [];
 let classes = new Map<string, ClassNode>();
-const styleClasses = new Map<string, StyleClass>();
+let styleClasses = new Map<string, StyleClass>();
 let notes: ClassNote[] = [];
 let interfaces: Interface[] = [];
 let classCounter = 0;
@@ -126,6 +126,7 @@ export const lookUpDomId = function (_id: string): string {
 export const clear = function () {
   relations = [];
   classes = new Map();
+  styleClasses = new Map();
   notes = [];
   interfaces = [];
   functions = [];
@@ -578,6 +579,10 @@ function getArrowMarker(type: number) {
   return marker;
 }
 
+export const getClassDefs = () => {
+  return styleClasses;
+};
+
 export const getData = () => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
@@ -732,5 +737,6 @@ export default {
   getNamespace,
   getNamespaces,
   setCssStyle,
+  getClassDefs,
   getData,
 };
