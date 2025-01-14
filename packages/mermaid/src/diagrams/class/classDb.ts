@@ -286,6 +286,7 @@ export const setCssClass = function (ids: string, className: string) {
 };
 
 export const defineClass = function (ids: string[], style: string[]) {
+  const styles = style[0].split(',');
   for (const id of ids) {
     let styleClass = styleClasses.get(id);
     if (styleClass === undefined) {
@@ -293,8 +294,8 @@ export const defineClass = function (ids: string[], style: string[]) {
       styleClasses.set(id, styleClass);
     }
 
-    if (style) {
-      style.forEach(function (s) {
+    if (styles.length > 0) {
+      styles.forEach(function (s: string) {
         if (/color/.exec(s)) {
           const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
           styleClass.textStyles.push(newStyle);
