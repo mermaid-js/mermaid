@@ -3,6 +3,7 @@ import { setSiteConfig } from '../../diagram-api/diagramAPI.js';
 import mermaidAPI from '../../mermaidAPI.js';
 import { Diagram } from '../../Diagram.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
+import { SequenceDB } from './sequenceDb.js';
 
 beforeAll(async () => {
   // Is required to load the sequence diagram
@@ -97,8 +98,8 @@ let diagram;
 describe('more than one sequence diagram', () => {
   it('should not have duplicated messages', async () => {
     const diagram1 = await Diagram.fromText(`
-        sequenceDiagram
-        Alice->Bob:Hello Bob, how are you?
+         sequenceDiagram
+         Alice->Bob:Hello Bob, how are you?
         Bob-->Alice: I am good thanks!`);
     expect(diagram1.db.getMessages()).toMatchInlineSnapshot(`
       [
@@ -2069,5 +2070,29 @@ participant Alice`;
 sequenceDiagram
 ${prop}-->>A: Hello, how are you?`)
     ).resolves.toBeDefined();
+  });
+});
+
+describe('sequence db class', () => {
+  let sequenceDb;
+  beforeEach(() => {
+    sequenceDb = new SequenceDB();
+  });
+  // This is to ensure that functions used in sequence JISON are exposed as function from SequenceDB
+  it('should have functions used in sequence JISON as own property', () => {
+    const functionsUsedInParser = [
+      'apply',
+      'parseBoxData',
+      'LINETYPE',
+      'setDiagramTitle',
+      'setAccTitle',
+      'setAccDescription',
+      'parseMessage',
+      'PLACEMENT',
+    ];
+
+    for (const fun of functionsUsedInParser) {
+      expect(Object.hasOwn(sequenceDb, fun)).toBe(true);
+    }
   });
 });
