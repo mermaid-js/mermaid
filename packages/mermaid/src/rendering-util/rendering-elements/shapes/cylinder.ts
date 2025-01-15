@@ -61,8 +61,8 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
   node.labelStyle = labelStyles;
 
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 24 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 16 : nodePadding;
 
   if (node.width || node.height) {
     const originalWidth = node.width ?? 0;

@@ -25,15 +25,18 @@ export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   // as labelHelper does not take padding into account
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 25 : 0;
+  const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
   if (node.width || node.height) {
-    node.width = Math.max((node?.width ?? 0) - (node.padding ?? 0), 10);
-    node.height = Math.max((node?.height ?? 0) - (node.padding ?? 0), 10);
+    node.width = Math.max((node?.width ?? 0) - (labelPaddingX ?? 0), 10);
+    node.height = Math.max((node?.height ?? 0) - (labelPaddingY ?? 0), 10);
   }
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = (node?.width ? node?.width : bbox.width) + (node.padding ?? 0);
-  const totalHeight = (node?.height ? node?.height : bbox.height) + (node.padding ?? 0);
+  const totalWidth = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0);
+  const totalHeight = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0);
 
   const h = totalHeight;
   const w = totalWidth;

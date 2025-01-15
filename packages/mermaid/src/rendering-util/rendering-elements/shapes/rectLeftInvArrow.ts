@@ -12,9 +12,8 @@ export async function rect_left_inv_arrow<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : (node.padding ?? 0);
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : (node.padding ?? 0);
-
+  const labelPaddingX = node.look === 'neo' ? 21 : (nodePadding ?? 0);
+  const labelPaddingY = node.look === 'neo' ? 12 : (nodePadding ?? 0);
   if (node.width || node.height) {
     node.width = (node?.width ?? 10) - labelPaddingX * 2;
     node.height = (node?.height ?? 10) - labelPaddingY * 2;

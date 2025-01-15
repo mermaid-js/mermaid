@@ -13,8 +13,8 @@ export async function taggedRect<T extends SVGGraphicsElement>(parent: D3Selecti
   node.labelStyle = labelStyles;
 
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
 
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account

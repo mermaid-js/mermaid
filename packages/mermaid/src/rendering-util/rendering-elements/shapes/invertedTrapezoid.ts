@@ -29,7 +29,8 @@ export async function inv_trapezoid<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
 
   const nodePadding = node.padding ?? 0;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding * 2;
+  const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 19 : 0;
   if (node.width || node.height) {
     node.width = node?.width ?? 0;
     if (node.width < 10) {
@@ -46,7 +47,7 @@ export async function inv_trapezoid<T extends SVGGraphicsElement>(
   }
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
   const h = (node?.height ? node?.height : bbox.height) + labelPaddingY;
-  const w = node?.width ? node?.width : bbox.width;
+  const w = node?.width ? node?.width : bbox.width + labelPaddingX * 2;
 
   const points = [
     { x: 0, y: 0 },
