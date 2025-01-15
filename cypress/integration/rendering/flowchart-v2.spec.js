@@ -1103,5 +1103,14 @@ end
         {}
       );
     });
+    it('should be possible to use @  syntax to add labels with trail spaces and edge/link', () => {
+      imgSnapshotTest(
+        `flowchart TD
+    A["A"] --> B["for B"] &    C@{ label: "for c"} & E@{label : "for E"}  
+    D@{label: "for D"}     
+        `,
+        {}
+      );
+    });
   });
 });
