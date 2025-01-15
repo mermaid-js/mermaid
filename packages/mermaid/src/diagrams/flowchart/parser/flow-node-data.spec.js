@@ -1,5 +1,5 @@
 import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -289,5 +289,29 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes.length).toBe(1);
     expect(data4Layout.nodes[0].shape).toEqual('squareRect');
     expect(data4Layout.nodes[0].label).toEqual('This is a string with}');
+  });
+
+  it(' should be possible to use @  syntax to add labels on multi nodes', function () {
+    const res = flow.parser.parse(`flowchart TB
+       n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"}
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(3);
+    expect(data4Layout.nodes[0].label).toEqual('label for n2');
+    expect(data4Layout.nodes[1].label).toEqual('labe for n4');
+    expect(data4Layout.nodes[2].label).toEqual('labe for n5');
+  });
+  it.skip(' should be possible to use @  syntax to add labels with trail spaces', function () {
+    const res = flow.parser.parse(
+      `flowchart TB
+       n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"} `
+    );
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(3);
+    expect(data4Layout.nodes[0].label).toEqual('label for n2');
+    expect(data4Layout.nodes[1].label).toEqual('labe for n4');
+    expect(data4Layout.nodes[2].label).toEqual('labe for n5');
   });
 });

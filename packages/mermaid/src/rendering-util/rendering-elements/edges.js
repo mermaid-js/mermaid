@@ -9,6 +9,7 @@ import { curveBasis, curveLinear, curveCardinal, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
+import { isLabelStyle } from './shapes/handDrawnShapeStyles.js';
 
 const edgeLabels = new Map();
 const terminalLabels = new Map();
@@ -430,6 +431,13 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let pointsHasChanged = false;
   const tail = startNode;
   var head = endNode;
+  const edgeClassStyles = [];
+  for (const key in edge.cssCompiledStyles) {
+    if (isLabelStyle(key)) {
+      continue;
+    }
+    edgeClassStyles.push(edge.cssCompiledStyles[key]);
+  }
 
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
@@ -532,6 +540,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
+
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
@@ -552,12 +561,27 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     svgPath.attr('d', d);
     elem.node().appendChild(svgPath.node());
   } else {
+    const stylesFromClasses = edgeClassStyles.join(';');
+    const styles = edgeStyles ? edgeStyles.reduce((acc, style) => acc + style + ';', '') : '';
+    let animationClass = '';
+    if (edge.animate) {
+      animationClass = ' edge-animation-fast';
+    }
+    if (edge.animation) {
+      animationClass = ' edge-animation-' + edge.animation;
+    }
     svgPath = elem
       .append('path')
       .attr('d', linePath)
       .attr('id', edge.id)
-      .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-      .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
+      .attr(
+        'class',
+        ' ' +
+          strokeClasses +
+          (edge.classes ? ' ' + edge.classes : '') +
+          (animationClass ? animationClass : '')
+      )
+      .attr('style', stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles);
   }
 
   // MC Special
