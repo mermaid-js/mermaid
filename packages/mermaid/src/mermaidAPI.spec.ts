@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import assert from 'node:assert';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -69,6 +70,7 @@ import { compile, serialize } from 'stylis';
 import { Diagram } from './Diagram.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { ClassDB } from './diagrams/class/classDb.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -832,5 +834,47 @@ graph TD;A--x|text including URL space|B;`)
       expect(diagram).toBeInstanceOf(Diagram);
       expect(diagram.type).toBe('flowchart-v2');
     });
+  });
+
+  it('should not modify db when rendering different diagrams', async () => {
+    const classDiagram1 = await mermaidAPI.getDiagramFromText(
+      `classDiagram
+          direction TB
+          class Student {
+            -idCard : IdCard
+          }
+          class IdCard{
+            -id : int
+            -name : string
+          }
+          class Bike{
+            -id : int
+            -name : string
+          }
+          Student "1" --o "1" IdCard : carries
+          Student "1" --o "1" Bike : rides`
+    );
+    const classDiagram2 = await mermaidAPI.getDiagramFromText(
+      `classDiagram
+          direction LR
+          class Student {
+            -idCard : IdCard
+          }
+          class IdCard{
+            -id : int
+            -name : string
+          }
+          class Bike{
+            -id : int
+            -name : string
+          }
+          Student "1" --o "1" IdCard : carries
+          Student "1" --o "1" Bike : rides`
+    );
+    // Since classDiagram will return new Db object each time, we can compare the db to be different.
+    expect(classDiagram1.db).not.toBe(classDiagram2.db);
+    assert(classDiagram1.db instanceof ClassDB);
+    assert(classDiagram2.db instanceof ClassDB);
+    expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
   });
 });
