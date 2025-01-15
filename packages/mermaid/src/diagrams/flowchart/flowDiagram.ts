@@ -3,7 +3,8 @@ import { setConfig } from '../../diagram-api/diagramAPI.js';
 import flowDb from './flowDb.js';
 import renderer from './flowRenderer-v3-unified.js';
 // @ts-ignore: JISON doesn't support types
-import flowParser from './parser/flow.jison';
+//import flowParser from './parser/flow.jison';
+import flowParser from './parser/flowParser.ts';
 import flowStyles from './styles.js';
 
 export const diagram = {
