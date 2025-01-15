@@ -1,5 +1,5 @@
 import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import flow from './flowParser.ts';
 import { cleanupComments } from '../../../diagram-api/comments.js';
 import { setConfig } from '../../../config.js';
 
