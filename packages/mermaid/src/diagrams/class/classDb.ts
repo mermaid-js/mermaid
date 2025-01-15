@@ -286,7 +286,7 @@ export const setCssClass = function (ids: string, className: string) {
 };
 
 export const defineClass = function (ids: string[], style: string[]) {
-  const styles = style[0].split(',');
+  const styles = style.flatMap((s) => s.split(','));
   for (const id of ids) {
     let styleClass = styleClasses.get(id);
     if (styleClass === undefined) {
