@@ -61,7 +61,7 @@ export async function tiltedCylinder<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
-  const labelPadding = node.look === 'neo' ? nodePadding : nodePadding / 2;
+  const labelPadding = node.look === 'neo' ? 12 : nodePadding / 2;
   if (node.width || node.height) {
     const originalHeight = node.height ?? 0;
     node.height = (node.height ?? 0) - labelPadding;
