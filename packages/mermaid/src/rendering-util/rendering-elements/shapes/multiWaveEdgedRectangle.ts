@@ -20,8 +20,8 @@ export async function multiWaveEdgedRectangle<T extends SVGGraphicsElement>(
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
   let adjustFinalHeight = true;
 
   if (node.width || node.height) {
@@ -45,11 +45,11 @@ export async function multiWaveEdgedRectangle<T extends SVGGraphicsElement>(
 
   const w = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2;
   const h = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY * 3;
-  const waveAmplitude = 30;
+  const waveAmplitude = node.look === 'neo' ? h / 4 : h / 8;
   const finalH = h + (adjustFinalHeight ? waveAmplitude / 2 : -waveAmplitude / 2);
   const x = -w / 2;
   const y = -finalH / 2;
-  const rectOffset = 5;
+  const rectOffset = 10;
 
   const { cssStyles } = node;
 
@@ -120,7 +120,7 @@ export async function multiWaveEdgedRectangle<T extends SVGGraphicsElement>(
 
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - rectOffset - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + rectOffset - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - rectOffset - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + rectOffset - waveAmplitude - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, shape);
