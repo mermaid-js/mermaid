@@ -1,5 +1,6 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
+import type { Node, Edge } from '../../rendering-util/types.js';
 
 import {
   setAccTitle,
@@ -7,6 +8,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../common/commonDb.js';
 import type {
   Element,
@@ -170,6 +173,44 @@ const clear = () => {
   commonClear();
 };
 
+const getData = () => {
+  const config = getConfig();
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  for (const requirement of requirements.values()) {
+    const node = requirement as unknown as Node;
+    node.shape = 'requirementBox';
+    node.look = config.look;
+    nodes.push(node);
+  }
+
+  for (const element of elements.values()) {
+    const node = element as unknown as Node;
+    node.shape = 'requirementBox';
+    node.look = config.look;
+
+    nodes.push(node);
+  }
+
+  for (const relation of relations) {
+    let counter = 0;
+    const edge: Edge = {
+      id: `${relation.src}-${relation.dst}-${counter}`,
+      start: requirements.get(relation.src)?.id,
+      end: requirements.get(relation.dst)?.id,
+      type: relation.type,
+      classes: 'relationshipLine',
+      style: ['fill:none'],
+    };
+
+    edges.push(edge);
+    counter++;
+  }
+
+  return { nodes, edges, other: {}, config };
+};
+
 export default {
   Relationships,
   RequirementType,
@@ -186,6 +227,8 @@ export default {
   getAccTitle,
   setAccDescription,
   getAccDescription,
+  setDiagramTitle,
+  getDiagramTitle,
   addElement,
   getElements,
   setNewElementType,
@@ -193,4 +236,5 @@ export default {
   addRelationship,
   getRelationships,
   clear,
+  getData,
 };
