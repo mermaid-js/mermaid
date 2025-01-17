@@ -9,8 +9,8 @@ export async function multiRect<T extends SVGGraphicsElement>(parent: D3Selectio
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
   const rectOffset = node.look === 'neo' ? 10 : 5;
 
   // If incoming height & width are present, subtract the padding from them

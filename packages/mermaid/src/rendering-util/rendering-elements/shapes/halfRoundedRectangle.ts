@@ -21,8 +21,8 @@ export async function halfRoundedRectangle<T extends SVGGraphicsElement>(
   const minWidth = 15,
     minHeight = 10;
 
-  const paddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
-  const paddingY = node.look === 'neo' ? (node.padding ?? 0) * 1 : (node.padding ?? 0);
+  const paddingX = node.look === 'neo' ? 16 : (node.padding ?? 0);
+  const paddingY = node.look === 'neo' ? 12 : (node.padding ?? 0);
 
   if (node.width || node.height) {
     node.height = (node?.height ?? 0) - paddingY * 2;

@@ -6,14 +6,14 @@ import intersect from '../intersect/index.js';
 import type { D3Selection } from '../../../types.js';
 
 /// Width of the frame on the top and left of the shape
-const rectOffset = 5;
+const rectOffset = 10;
 
 export async function windowPane<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
 
-  const paddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
-  const paddingY = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
+  const paddingX = node.look === 'neo' ? 16 : (node.padding ?? 0);
+  const paddingY = node.look === 'neo' ? 12 : (node.padding ?? 0);
 
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account
