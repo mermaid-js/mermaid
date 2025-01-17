@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-Fix for issue #6195 - allowinf @ signs inside node labels
+Fix for issue #6195 - allowing @ signs inside node labels
