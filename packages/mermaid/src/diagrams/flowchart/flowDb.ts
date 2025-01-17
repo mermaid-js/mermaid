@@ -233,6 +233,8 @@ export const addSingleLink = function (_start: string, _end: string, type: any, 
   }
   if (id) {
     edge.id = id;
+  } else {
+    edge.id = `${edge.start}-${edge.end}-${edge.length}`;
   }
 
   if (edges.length < (config.maxEdges ?? 500)) {
