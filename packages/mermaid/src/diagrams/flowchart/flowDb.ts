@@ -234,7 +234,12 @@ export const addSingleLink = function (_start: string, _end: string, type: any, 
   if (id) {
     edge.id = id;
   } else {
-    edge.id = `${edge.start}-${edge.end}-${edge.length}`;
+    const existingLinks = edges.filter((e) => e.start === edge.start && e.end === edge.end);
+    if (existingLinks.length === 0) {
+      edge.id = `${edge.start}-${edge.end}-${edge.length}`;
+    } else {
+      edge.id = `${edge.start}-${edge.end}-${existingLinks.length + 1}`;
+    }
   }
 
   if (edges.length < (config.maxEdges ?? 500)) {
@@ -269,9 +274,11 @@ export const addLink = function (_start: string[], _end: string[], linkData: unk
 
   log.info('addLink', _start, _end, id);
 
+  let idIsUsed = false;
   for (const start of _start) {
     for (const end of _end) {
-      addSingleLink(start, end, linkData, id);
+      addSingleLink(start, end, linkData, !idIsUsed ? id : undefined);
+      idIsUsed = true;
     }
   }
 };
