@@ -1,7 +1,7 @@
 const getStyles = (options) =>
   `
   .mermaid-main-font {
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+        font-family: ${options.fontFamily ? options.fontFamily : 'Trebuchet MS, Verdana, Arial, sans-serif'};
   }
 
   .exclude-range {
@@ -45,7 +45,7 @@ const getStyles = (options) =>
 
   .sectionTitle {
     text-anchor: start;
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+    font-family: ${options.fontFamily ? options.fontFamily : 'Trebuchet MS, Verdana, Arial, sans-serif'};
   }
 
 
@@ -58,7 +58,7 @@ const getStyles = (options) =>
   }
 
   .grid .tick text {
-    font-family: ${options.fontFamily};
+    font-family: ${options.fontFamily ? options.fontFamily : 'Trebuchet MS, Verdana, Arial, sans-serif'};
     fill: ${options.textColor};
   }
 
@@ -86,13 +86,13 @@ const getStyles = (options) =>
 
   .taskText {
     text-anchor: middle;
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+    font-family: ${options.fontFamily ? options.fontFamily : 'Trebuchet MS, Verdana, Arial, sans-serif'};
   }
 
   .taskTextOutsideRight {
     fill: ${options.taskTextDarkColor};
     text-anchor: start;
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+    font-family: ${options.fontFamily ? options.fontFamily : 'Trebuchet MS, Verdana, Arial, sans-serif'};
   }
 
   .taskTextOutsideLeft {
@@ -248,7 +248,7 @@ const getStyles = (options) =>
     text-anchor: middle;
     font-size: 18px;
     fill: ${options.titleColor || options.textColor};
-    font-family: var(--mermaid-font-family, "trebuchet ms", verdana, arial, sans-serif);
+    font-family: ${options.fontFamily ? options.fontFamily : 'Trebuchet MS, Verdana, Arial, sans-serif'};
   }
 `;
 

@@ -1,7 +1,6 @@
 const getStyles = (options) =>
   `.label {
-    font-family: 'trebuchet ms', verdana, arial, sans-serif;
-    font-family: var(--mermaid-font-family);
+    font-family: ${options.fontFamily ? options.fontFamily : 'Trebuchet MS, Verdana, Arial, sans-serif'};
     color: ${options.textColor};
   }
   .mouth {
@@ -79,8 +78,7 @@ const getStyles = (options) =>
     text-align: center;
     max-width: 200px;
     padding: 2px;
-    font-family: 'trebuchet ms', verdana, arial, sans-serif;
-    font-family: var(--mermaid-font-family);
+    font-family: ${options.fontFamily ? options.fontFamily : 'Trebuchet MS, Verdana, Arial, sans-serif'};
     font-size: 12px;
     background: ${options.tertiaryColor};
     border: 1px solid ${options.border2};
