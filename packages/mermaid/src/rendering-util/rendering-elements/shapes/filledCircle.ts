@@ -57,6 +57,10 @@ export function filledCircle<T extends SVGGraphicsElement>(
 
   filledCircle.selectAll('path').attr('style', `fill: ${nodeBorder} !important;`);
 
+  if (node.look !== 'handDrawn') {
+    filledCircle.attr('class', 'outer-path');
+  }
+
   if (cssStyles && cssStyles.length > 0 && node.look !== 'handDrawn') {
     filledCircle.selectAll('path').attr('style', cssStyles);
   }
