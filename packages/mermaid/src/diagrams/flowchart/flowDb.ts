@@ -54,31 +54,53 @@ export class FlowDB implements DiagramDB {
   private funs: ((element: Element) => void)[] = []; // cspell:ignore funs
 
   constructor() {
-    this.funs.push(this.setupToolTips);
+    this.funs.push(this.setupToolTips.bind(this));
+
+    // Needed for JISON since it only supports direct properties
+    this.addVertex = this.addVertex.bind(this);
+    this.firstGraph = this.firstGraph.bind(this);
+    this.setDirection = this.setDirection.bind(this);
+    this.addSubGraph = this.addSubGraph.bind(this);
+    this.addLink = this.addLink.bind(this);
+    this.setLink = this.setLink.bind(this);
+    this.updateLink = this.updateLink.bind(this);
+    this.addClass = this.addClass.bind(this);
+    this.setClass = this.setClass.bind(this);
+    this.destructLink = this.destructLink.bind(this);
+    this.setClickEvent = this.setClickEvent.bind(this);
+    this.setTooltip = this.setTooltip.bind(this);
+    this.updateLinkInterpolate = this.updateLinkInterpolate.bind(this);
+
+    this.lex = {
+      firstGraph: this.firstGraph.bind(this),
+    };
+
     this.clear();
     this.setGen('gen-2');
   }
 
-  private sanitizeText = (txt: string) => common.sanitizeText(txt, this.config);
+  private sanitizeText(txt: string) {
+    return common.sanitizeText(txt, this.config);
+  }
 
   /**
    * Function to lookup domId from id in the graph definition.
    *
    * @param id - id of the node
    */
-  public lookUpDomId = (id: string) => {
+  public lookUpDomId(id: string) {
     for (const vertex of this.vertices.values()) {
       if (vertex.id === id) {
         return vertex.domId;
       }
     }
     return id;
-  };
+  }
 
   /**
    * Function called by parser when a node definition has been found
    */
-  public addVertex = (
+  public addVertex(
     id: string,
     textObj: FlowText,
     type: FlowVertexTypeParam,
@@ -87,7 +109,7 @@ export class FlowDB implements DiagramDB {
     dir: string,
     props = {},
     metadata: any
-  ) => {
+  ) {
     if (!id || id.trim().length === 0) {
       return;
     }
@@ -210,13 +232,13 @@ export class FlowDB implements DiagramDB {
         vertex.assetHeight = Number(doc.h);
       }
     }
-  };
+  }
 
   /**
    * Function called by parser when a link/edge definition has been found
    *
    */
-  public addSingleLink = (_start: string, _end: string, type: any, id?: string) => {
+  public addSingleLink(_start: string, _end: string, type: any, id?: string) {
     const start = _start;
     const end = _end;
 
@@ -262,18 +284,18 @@ You cannot set this config via configuration inside the diagram as it is a secur
 You have to call mermaid.initialize.`
       );
     }
-  };
+  }
 
-  private readonly isLinkData = (value: unknown): value is LinkData => {
+  private isLinkData(value: unknown): value is LinkData {
     return (
       value !== null &&
       typeof value === 'object' &&
       'id' in value &&
       typeof (value as LinkData).id === 'string'
     );
-  };
+  }
 
-  public addLink = (_start: string[], _end: string[], linkData: unknown) => {
+  public addLink(_start: string[], _end: string[], linkData: unknown) {
     const id = this.isLinkData(linkData) ? linkData.id.replace('@', '') : undefined;
 
     log.info('addLink', _start, _end, id);
@@ -283,13 +305,12 @@ You have to call mermaid.initialize.`
         this.addSingleLink(start, end, linkData, id);
       }
     }
-  };
+  }
 
   /**
    * Updates a link's line interpolation algorithm
-   *
    */
-  public updateLinkInterpolate = (positions: ('default' | number)[], interpolate: string) => {
+  public updateLinkInterpolate(positions: ('default' | number)[], interpolate: string) {
     positions.forEach((pos) => {
       if (pos === 'default') {
         this.edges.defaultInterpolate = interpolate;
@@ -297,13 +318,13 @@ You have to call mermaid.initialize.`
         this.edges[pos].interpolate = interpolate;
       }
     });
-  };
+  }
 
   /**
    * Updates a link with a style
    *
    */
-  public updateLink = (positions: ('default' | number)[], style: string[]) => {
+  public updateLink(positions: ('default' | number)[], style: string[]) {
     positions.forEach((pos) => {
       if (typeof pos === 'number' && pos >= this.edges.length) {
         throw new Error(
@@ -325,9 +346,9 @@ You have to call mermaid.initialize.`
         }
       }
     });
-  };
+  }
 
-  public addClass = (ids: string, _style: string[]) => {
+  public addClass(ids: string, _style: string[]) {
     const style = _style
       .join()
       .replace(/\\,/g, '§§§')
@@ -351,13 +372,13 @@ You have to call mermaid.initialize.`
         });
       }
     });
-  };
+  }
 
   /**
    * Called by parser when a graph definition is found, stores the direction of the chart.
    *
    */
-  public setDirection = (dir: string) => {
+  public setDirection(dir: string) {
     this.direction = dir;
     if (/.*</.exec(this.direction)) {
       this.direction = 'RL';
@@ -374,7 +395,7 @@ You have to call mermaid.initialize.`
     if (this.direction === 'TD') {
       this.direction = 'TB';
     }
-  };
+  }
 
   /**
    * Called by parser when a special node is found, e.g. a clickable element.
@@ -382,7 +403,7 @@ You have to call mermaid.initialize.`
    * @param ids - Comma separated list of ids
    * @param className - Class to add
    */
-  public setClass = (ids: string, className: string) => {
+  public setClass(ids: string, className: string) {
     for (const id of ids.split(',')) {
       const vertex = this.vertices.get(id);
       if (vertex) {
@@ -397,9 +418,9 @@ You have to call mermaid.initialize.`
         subGraph.classes.push(className);
       }
     }
-  };
+  }
 
-  public setTooltip = (ids: string, tooltip: string) => {
+  public setTooltip(ids: string, tooltip: string) {
     if (tooltip === undefined) {
       return;
     }
@@ -407,9 +428,9 @@ You have to call mermaid.initialize.`
     for (const id of ids.split(',')) {
       this.tooltips.set(this.version === 'gen-1' ? this.lookUpDomId(id) : id, tooltip);
     }
-  };
+  }
 
-  private readonly setClickFun = (id: string, functionName: string, functionArgs: string) => {
+  private setClickFun(id: string, functionName: string, functionArgs: string) {
     const domId = this.lookUpDomId(id);
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (getConfig().securityLevel !== 'loose') {
@@ -454,7 +475,7 @@ You have to call mermaid.initialize.`
         }
       });
     }
-  };
+  }
 
   /**
    * Called by parser when a link is found. Adds the URL to the vertex data.
@@ -463,7 +484,7 @@ You have to call mermaid.initialize.`
    * @param linkStr - URL to create a link for
    * @param target - Target attribute for the link
    */
-  public setLink = (ids: string, linkStr: string, target: string) => {
+  public setLink(ids: string, linkStr: string, target: string) {
     ids.split(',').forEach((id) => {
       const vertex = this.vertices.get(id);
       if (vertex !== undefined) {
@@ -472,11 +493,11 @@ You have to call mermaid.initialize.`
       }
     });
     this.setClass(ids, 'clickable');
-  };
+  }
 
-  public getTooltip = (id: string) => {
+  public getTooltip(id: string) {
     return this.tooltips.get(id);
-  };
+  }
 
   /**
    * Called by parser when a click definition is found. Registers an event handler.
@@ -485,46 +506,46 @@ You have to call mermaid.initialize.`
    * @param functionName - Function to be called on click
    * @param functionArgs - Arguments to be passed to the function
    */
-  public setClickEvent = (ids: string, functionName: string, functionArgs: string) => {
+  public setClickEvent(ids: string, functionName: string, functionArgs: string) {
     ids.split(',').forEach((id) => {
       this.setClickFun(id, functionName, functionArgs);
     });
     this.setClass(ids, 'clickable');
-  };
+  }
 
-  public bindFunctions = (element: Element) => {
+  public bindFunctions(element: Element) {
     this.funs.forEach((fun) => {
       fun(element);
     });
-  };
-  public getDirection = () => {
+  }
+  public getDirection() {
     return this.direction?.trim();
-  };
+  }
   /**
    * Retrieval function for fetching the found nodes after parsing has completed.
    *
    */
-  public getVertices = () => {
+  public getVertices() {
     return this.vertices;
-  };
+  }
 
   /**
    * Retrieval function for fetching the found links after parsing has completed.
    *
    */
-  public getEdges = () => {
+  public getEdges() {
     return this.edges;
-  };
+  }
 
   /**
    * Retrieval function for fetching the found class definitions after parsing has completed.
    *
    */
-  public getClasses = () => {
+  public getClasses() {
     return this.classes;
-  };
+  }
 
-  private readonly setupToolTips = (element: Element) => {
+  private setupToolTips(element: Element) {
     let tooltipElem = select('.mermaidTooltip');
     // @ts-ignore TODO: fix this
     if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
@@ -562,17 +583,17 @@ You have to call mermaid.initialize.`
         const el = select(e.currentTarget as Element);
         el.classed('hover', false);
       });
-  };
+  }
 
   /**
    * Clears the internal graph db so that a new graph can be parsed.
    *
    */
-  public clear = (ver = 'gen-2') => {
+  public clear(ver = 'gen-2') {
     this.vertices = new Map();
     this.classes = new Map();
     this.edges = [];
-    this.funs = [this.setupToolTips];
+    this.funs = [this.setupToolTips.bind(this)];
     this.subGraphs = [];
     this.subGraphLookup = new Map();
     this.subCount = 0;
@@ -581,21 +602,21 @@ You have to call mermaid.initialize.`
     this.version = ver;
     this.config = getConfig();
     commonClear();
-  };
+  }
 
-  public setGen = (ver: string) => {
+  public setGen(ver: string) {
     this.version = ver || 'gen-2';
-  };
+  }
 
-  public defaultStyle = () => {
+  public defaultStyle() {
     return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
-  };
+  }
 
-  public addSubGraph = (
+  public addSubGraph(
     _id: { text: string },
     list: string[],
     _title: { text: string; type: string }
-  ) => {
+  ) {
     let id: string | undefined = _id.text.trim();
     let title = _title.text;
     if (_id === _title && /\s/.exec(_title.text)) {
@@ -652,18 +673,18 @@ You have to call mermaid.initialize.`
     this.subGraphs.push(subGraph);
     this.subGraphLookup.set(id, subGraph);
     return id;
-  };
+  }
 
-  private readonly getPosForId = (id: string) => {
+  private getPosForId(id: string) {
     for (const [i, subGraph] of this.subGraphs.entries()) {
       if (subGraph.id === id) {
         return i;
       }
     }
     return -1;
-  };
+  }
 
-  private readonly indexNodes2 = (id: string, pos: number): { result: boolean; count: number } => {
+  private indexNodes2(id: string, pos: number): { result: boolean; count: number } {
     const nodes = this.subGraphs[pos].nodes;
     this.secCount = this.secCount + 1;
     if (this.secCount > 2000) {
@@ -704,31 +725,31 @@ You have to call mermaid.initialize.`
       result: false,
       count: posCount,
     };
-  };
+  }
 
-  public getDepthFirstPos = (pos: number) => {
+  public getDepthFirstPos(pos: number) {
     return this.posCrossRef[pos];
-  };
-  public indexNodes = () => {
+  }
+  public indexNodes() {
     this.secCount = -1;
     if (this.subGraphs.length > 0) {
       this.indexNodes2('none', this.subGraphs.length - 1);
     }
-  };
+  }
 
-  public getSubGraphs = () => {
+  public getSubGraphs() {
     return this.subGraphs;
-  };
+  }
 
-  public firstGraph = () => {
+  public firstGraph() {
     if (this.firstGraphFlag) {
       this.firstGraphFlag = false;
       return true;
     }
     return false;
-  };
+  }
 
-  private readonly destructStartLink = (_str: string): FlowLink => {
+  private destructStartLink(_str: string): FlowLink {
     let str = _str.trim();
     let type = 'arrow_open';
 
@@ -758,9 +779,9 @@ You have to call mermaid.initialize.`
     }
 
     return { type, stroke };
-  };
+  }
 
-  private readonly countChar = (char: string, str: string) => {
+  private countChar(char: string, str: string) {
     const length = str.length;
     let count = 0;
     for (let i = 0; i < length; ++i) {
@@ -769,9 +790,9 @@ You have to call mermaid.initialize.`
       }
     }
     return count;
-  };
+  }
 
-  private readonly destructEndLink = (_str: string) => {
+  private destructEndLink(_str: string) {
     const str = _str.trim();
     let line = str.slice(0, -1);
     let type = 'arrow_open';
@@ -819,9 +840,9 @@ You have to call mermaid.initialize.`
     }
 
     return { type, stroke, length };
-  };
+  }
 
-  public destructLink = (_str: string, _startStr: string) => {
+  public destructLink(_str: string, _startStr: string) {
     const info = this.destructEndLink(_str);
     let startInfo;
     if (_startStr) {
@@ -852,22 +873,22 @@ You have to call mermaid.initialize.`
     }
 
     return info;
-  };
+  }
 
   // Todo optimizer this by caching existing nodes
-  public exists = (allSgs: FlowSubGraph[], _id: string) => {
+  public exists(allSgs: FlowSubGraph[], _id: string) {
     for (const sg of allSgs) {
       if (sg.nodes.includes(_id)) {
         return true;
       }
     }
     return false;
-  };
+  }
   /**
    * Deletes an id from all subgraphs
    *
    */
-  public makeUniq = (sg: FlowSubGraph, allSubgraphs: FlowSubGraph[]) => {
+  public makeUniq(sg: FlowSubGraph, allSubgraphs: FlowSubGraph[]) {
     const res: string[] = [];
     sg.nodes.forEach((_id, pos) => {
       if (!this.exists(allSubgraphs, _id)) {
@@ -875,13 +896,11 @@ You have to call mermaid.initialize.`
       }
     });
     return { nodes: res };
-  };
+  }
 
-  public lex = {
-    firstGraph: this.firstGraph,
-  };
+  public lex: { firstGraph: typeof FlowDB.prototype.firstGraph };
 
-  private readonly getTypeFromVertex = (vertex: FlowVertex): ShapeID => {
+  private getTypeFromVertex(vertex: FlowVertex): ShapeID {
     if (vertex.img) {
       return 'imageSquare';
     }
@@ -909,10 +928,12 @@ You have to call mermaid.initialize.`
       default:
         return vertex.type;
     }
-  };
+  }
 
-  private readonly findNode = (nodes: Node[], id: string) => nodes.find((node) => node.id === id);
-  private readonly destructEdgeType = (type: string | undefined) => {
+  private findNode(nodes: Node[], id: string) {
+    return nodes.find((node) => node.id === id);
+  }
+  private destructEdgeType(type: string | undefined) {
     let arrowTypeStart = 'none';
     let arrowTypeEnd = 'arrow_point';
     switch (type) {
@@ -930,16 +951,16 @@ You have to call mermaid.initialize.`
         break;
     }
     return { arrowTypeStart, arrowTypeEnd };
-  };
+  }
 
-  private readonly addNodeFromVertex = (
+  private addNodeFromVertex(
     vertex: FlowVertex,
     nodes: Node[],
     parentDB: Map<string, string>,
     subGraphDB: Map<string, boolean>,
     config: any,
     look: string
-  ) => {
+  ) {
     const parentId = parentDB.get(vertex.id);
     const isGroup = subGraphDB.get(vertex.id) ?? false;
 
@@ -985,9 +1006,9 @@ You have to call mermaid.initialize.`
         });
       }
     }
-  };
+  }
 
-  private readonly getCompiledStyles = (classDefs: string[]) => {
+  private getCompiledStyles(classDefs: string[]) {
     let compiledStyles: string[] = [];
     for (const customClass of classDefs) {
       const cssClass = this.classes.get(customClass);
@@ -999,9 +1020,9 @@ You have to call mermaid.initialize.`
       }
     }
     return compiledStyles;
-  };
+  }
 
-  public getData = () => {
+  public getData() {
     const config = getConfig();
     const nodes: Node[] = [];
     const edges: Edge[] = [];
@@ -1085,9 +1106,11 @@ You have to call mermaid.initialize.`
     });
 
     return { nodes, edges, other: {}, config };
-  };
+  }
 
-  public defaultConfig = () => defaultConfig.flowchart;
+  public defaultConfig() {
+    return defaultConfig.flowchart;
+  }
   public setAccTitle = setAccTitle;
   public setAccDescription = setAccDescription;
   public setDiagramTitle = setDiagramTitle;
