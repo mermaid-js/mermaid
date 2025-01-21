@@ -58,7 +58,7 @@ const getStyles = (options) =>
   }
 
   .grid .tick text {
-    font-family: var(--mermaid-font-family), trebuchet ms, verdana, arial, sans-serif;
+    font-family: ${options.fontFamily};
     fill: ${options.textColor};
   }
 
