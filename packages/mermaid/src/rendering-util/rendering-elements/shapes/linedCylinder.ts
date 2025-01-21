@@ -67,8 +67,8 @@ export async function linedCylinder<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 20 : nodePadding;
 
   if (node.width || node.height) {
     const originalWidth = node.width ?? 0;
@@ -88,10 +88,10 @@ export async function linedCylinder<T extends SVGGraphicsElement>(
   }
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX;
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = (node?.height ? node?.height : bbox.height) + ry + labelPaddingY;
+  const h = (node?.height ? node?.height : bbox.height) + ry + labelPaddingY * 2;
   const outerOffset = h * 0.1; // 10% of height
 
   let cylinder: typeof shapeSvg | D3Selection<SVGPathElement>;
@@ -119,7 +119,7 @@ export async function linedCylinder<T extends SVGGraphicsElement>(
     cylinder = shapeSvg
       .insert('path', ':first-child')
       .attr('d', pathData)
-      .attr('class', 'basic label-container')
+      .attr('class', 'basic label-container outer-path')
       .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
   }
@@ -132,7 +132,7 @@ export async function linedCylinder<T extends SVGGraphicsElement>(
 
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + ry - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + ry / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   node.intersect = function (point) {

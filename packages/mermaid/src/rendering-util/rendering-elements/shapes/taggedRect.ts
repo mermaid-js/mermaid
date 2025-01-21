@@ -73,7 +73,7 @@ export async function taggedRect<T extends SVGGraphicsElement>(parent: D3Selecti
   const taggedRect = shapeSvg.insert(() => tagNode, ':first-child');
   taggedRect.insert(() => rectNode, ':first-child');
 
-  taggedRect.attr('class', 'basic label-container');
+  taggedRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     taggedRect.selectAll('path').attr('style', cssStyles);

@@ -50,7 +50,7 @@ export async function rect_left_inv_arrow<T extends SVGGraphicsElement>(
 
   const polygon = shapeSvg.insert(() => roughNode, ':first-child');
 
-  polygon.attr('class', 'basic label-container');
+  polygon.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     polygon.selectAll('path').attr('style', cssStyles);

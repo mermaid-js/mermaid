@@ -1,4 +1,10 @@
-import { labelHelper, getNodeClasses, updateNodeBounds, createPathFromPoints } from './util.js';
+import {
+  labelHelper,
+  getNodeClasses,
+  updateNodeBounds,
+  createPathFromPoints,
+  mergePaths,
+} from './util.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
@@ -69,15 +75,20 @@ export async function multiRect<T extends SVGGraphicsElement>(parent: D3Selectio
   }
 
   const outerPath = createPathFromPoints(outerPathPoints);
-  const outerNode = rc.path(outerPath, options);
+  let outerNode = rc.path(outerPath, options);
   const innerPath = createPathFromPoints(innerPathPoints);
-  const innerNode = rc.path(innerPath, options);
+  let innerNode = rc.path(innerPath, options);
+
+  if (node.look !== 'handDrawn') {
+    outerNode = mergePaths(outerNode);
+    innerNode = mergePaths(innerNode);
+  }
 
   const multiRect = shapeSvg.insert('g', ':first-child');
   multiRect.insert(() => outerNode);
   multiRect.insert(() => innerNode);
 
-  multiRect.attr('class', 'basic label-container');
+  multiRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     multiRect.selectAll('path').attr('style', cssStyles);

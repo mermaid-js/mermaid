@@ -92,6 +92,9 @@ const getStyles = (
 
   [data-look="neo"].node path {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+  }
+
+  [data-look="neo"].node .outer-path {
     filter: ${options.dropShadow};
   }
 

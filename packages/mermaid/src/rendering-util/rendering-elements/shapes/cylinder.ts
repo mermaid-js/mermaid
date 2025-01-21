@@ -2,7 +2,6 @@ import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { getConfig } from '../../../config.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
@@ -55,8 +54,6 @@ export const createInnerCylinderPathD = (
 const MIN_HEIGHT = 8;
 const MIN_WIDTH = 8;
 export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
-  const { themeVariables } = getConfig();
-  const { useGradient } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
 
@@ -90,20 +87,20 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
   let cylinder: D3Selection<SVGPathElement> | D3Selection<SVGGElement>;
   const { cssStyles } = node;
 
-  if (node.look === 'handDrawn' || (node.look === 'neo' && !useGradient)) {
+  if (node.look === 'handDrawn') {
     // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
     const options = userNodeOverrides(node, {});
-    const overrides =
-      node.look === 'neo'
-        ? {
-            roughness: 0,
-            stroke: 'none',
-            fillStyle: 'solid',
-          }
-        : {};
+    const overrides = {};
+    // node.look === 'neo'
+    //   ? {
+    //       roughness: 0,
+    //       stroke: 'none',
+    //       fillStyle: 'solid',
+    //     }
+    //   : {};
 
     const outerNode = rc.path(outerPathData, { ...options, ...overrides });
     const innerLine = rc.path(innerPathData, { ...options, ...overrides });
@@ -120,7 +117,7 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
     cylinder = shapeSvg
       .insert('path', ':first-child')
       .attr('d', pathData)
-      .attr('class', 'basic label-container')
+      .attr('class', 'basic label-container outer-path')
       .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
   }
