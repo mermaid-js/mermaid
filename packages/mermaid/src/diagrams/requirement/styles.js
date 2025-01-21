@@ -40,6 +40,18 @@ const getStyles = (options) => `
   .relationshipLabel {
     fill: ${options.relationLabelColor};
   }
+  .divider {
+    stroke: ${options.nodeBorder};
+    stroke-width: 1;
+  }
+  .label {
+    font-family: ${options.fontFamily};
+    color: ${options.nodeTextColor || options.textColor};
+  }
+  .label text,span {
+    fill: ${options.nodeTextColor || options.textColor};
+    color: ${options.nodeTextColor || options.textColor};
+  }
 
 `;
 // fill', conf.rect_fill)
