@@ -57,7 +57,8 @@ export async function flippedTriangle<T extends SVGGraphicsElement>(
 
   const flippedTriangle = shapeSvg
     .insert(() => roughNode, ':first-child')
-    .attr('transform', `translate(${-h / 2}, ${h / 2})`);
+    .attr('transform', `translate(${-h / 2}, ${h / 2})`)
+    .attr('class', 'outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     flippedTriangle.selectChildren('path').attr('style', cssStyles);

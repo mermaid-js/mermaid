@@ -4,7 +4,6 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
-import { getConfig } from '../../../config.js';
 import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
 
@@ -38,12 +37,10 @@ export const createSubroutinePathD = (
 const FRAME_WIDTH = 8;
 
 export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
-  const { themeVariables } = getConfig();
-  const { useGradient } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
 
-  const nodePadding = node?.padding || 8;
+  const nodePadding = node?.padding ?? 8;
   const labelPaddingX = node.look === 'neo' ? 28 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
 
@@ -79,15 +76,10 @@ export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selecti
     { x: -FRAME_WIDTH, y: 0 },
   ];
 
-  if (node.look === 'handDrawn' || (node.look === 'neo' && !useGradient)) {
+  if (node.look === 'handDrawn') {
     // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
-
-    if (node.look === 'neo') {
-      options.roughness = 0;
-      options.fillStyle = 'solid';
-    }
 
     const roughNode = rc.rectangle(x - FRAME_WIDTH, y, w + 2 * FRAME_WIDTH, h, options);
     const l1 = rc.line(x, y, x, y + h, options);
@@ -99,7 +91,9 @@ export async function subroutine<T extends SVGGraphicsElement>(parent: D3Selecti
     l2El.attr('class', 'neo-line');
     const rect = shapeSvg.insert(() => roughNode, ':first-child');
     const { cssStyles } = node;
-    rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
+    rect
+      .attr('class', 'basic label-container outer-path')
+      .attr('style', handleUndefinedAttr(cssStyles));
     updateNodeBounds(node, rect);
   } else {
     const el = insertPolygonShape(shapeSvg, w, h, points);

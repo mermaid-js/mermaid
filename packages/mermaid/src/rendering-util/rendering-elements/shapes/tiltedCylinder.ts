@@ -108,7 +108,7 @@ export async function tiltedCylinder<T extends SVGGraphicsElement>(
       .attr('class', 'basic label-container')
       .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
-    cylinder.attr('class', 'basic label-container');
+    cylinder.attr('class', 'basic label-container outer-path');
 
     if (cssStyles) {
       cylinder.selectAll('path').attr('style', cssStyles);

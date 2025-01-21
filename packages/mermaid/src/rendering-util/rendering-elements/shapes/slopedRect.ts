@@ -53,7 +53,7 @@ export async function slopedRect<T extends SVGGraphicsElement>(parent: D3Selecti
   const shapeNode = rc.path(pathData, options);
 
   const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
-  polygon.attr('class', 'basic label-container');
+  polygon.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     polygon.selectChildren('path').attr('style', cssStyles);
