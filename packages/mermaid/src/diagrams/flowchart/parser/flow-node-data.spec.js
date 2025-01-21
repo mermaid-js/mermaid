@@ -317,6 +317,32 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[3].label).toEqual('for E');
     expect(data4Layout.nodes[4].label).toEqual('for D');
   });
+
+  it('should be possible to use @  syntax in labels', function () {
+    const res = flow.parser.parse(`flowchart TD
+    A["@A@"] --> B["@for@ B@"] & C@{ label: "@for@ c@"} & E{"\`@for@ E@\`"} & D(("@for@ D@"))
+      H1{{"@for@ H@"}}
+      H2{{"\`@for@ H@\`"}}
+      Q1{"@for@ Q@"}
+      Q2{"\`@for@ Q@\`"}
+      AS1>"@for@ AS@"]
+      AS2>"\`@for@ AS@\`"]
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(11);
+    expect(data4Layout.nodes[0].label).toEqual('@A@');
+    expect(data4Layout.nodes[1].label).toEqual('@for@ B@');
+    expect(data4Layout.nodes[2].label).toEqual('@for@ c@');
+    expect(data4Layout.nodes[3].label).toEqual('@for@ E@');
+    expect(data4Layout.nodes[4].label).toEqual('@for@ D@');
+    expect(data4Layout.nodes[5].label).toEqual('@for@ H@');
+    expect(data4Layout.nodes[6].label).toEqual('@for@ H@');
+    expect(data4Layout.nodes[7].label).toEqual('@for@ Q@');
+    expect(data4Layout.nodes[8].label).toEqual('@for@ Q@');
+    expect(data4Layout.nodes[9].label).toEqual('@for@ AS@');
+    expect(data4Layout.nodes[10].label).toEqual('@for@ AS@');
+  });
   it.skip(' should be possible to use @  syntax to add labels with trail spaces', function () {
     const res = flow.parser.parse(
       `flowchart TB
