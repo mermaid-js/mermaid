@@ -76,7 +76,7 @@ export async function waveEdgedRectangle<T extends SVGGraphicsElement>(
 
   const waveEdgeRect = shapeSvg.insert(() => waveEdgeRectNode, ':first-child');
 
-  waveEdgeRect.attr('class', 'basic label-container');
+  waveEdgeRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     waveEdgeRect.selectAll('path').attr('style', cssStyles);

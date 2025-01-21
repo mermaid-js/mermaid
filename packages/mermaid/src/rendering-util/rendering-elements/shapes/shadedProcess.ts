@@ -64,7 +64,9 @@ export async function shadedProcess<T extends SVGGraphicsElement>(
 
   const rect = shapeSvg.insert(() => roughNode, ':first-child');
 
-  rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
+  rect
+    .attr('class', 'basic label-container outer-path')
+    .attr('style', handleUndefinedAttr(cssStyles));
 
   if (nodeStyles && node.look !== 'handDrawn') {
     rect.selectAll('path').attr('style', nodeStyles);

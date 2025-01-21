@@ -145,7 +145,7 @@ export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selecti
   const bowTieRectShapePath = rc.path(bowTieRectPath, options);
   const bowTieRectShape = shapeSvg.insert(() => bowTieRectShapePath, ':first-child');
 
-  bowTieRectShape.attr('class', 'basic label-container');
+  bowTieRectShape.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     bowTieRectShape.selectAll('path').attr('style', cssStyles);

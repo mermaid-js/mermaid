@@ -4,6 +4,7 @@ import {
   getNodeClasses,
   createPathFromPoints,
   generateFullSineWavePoints,
+  mergePaths,
 } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
@@ -98,15 +99,20 @@ export async function multiWaveEdgedRectangle<T extends SVGGraphicsElement>(
   }
 
   const outerPath = createPathFromPoints(outerPathPoints);
-  const outerNode = rc.path(outerPath, options);
+  let outerNode = rc.path(outerPath, options);
   const innerPath = createPathFromPoints(innerPathPoints);
-  const innerNode = rc.path(innerPath, options);
+  let innerNode = rc.path(innerPath, options);
+
+  if (node.look !== 'handDrawn') {
+    outerNode = mergePaths(outerNode);
+    innerNode = mergePaths(innerNode);
+  }
 
   const shape = shapeSvg.insert('g', ':first-child');
   shape.insert(() => outerNode);
   shape.insert(() => innerNode);
 
-  shape.attr('class', 'basic label-container');
+  shape.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     shape.selectAll('path').attr('style', cssStyles);
