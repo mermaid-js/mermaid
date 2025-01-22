@@ -22,6 +22,10 @@ accDescr\s*":"\s*                                               { this.begin("ac
 accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
+.*direction\s+TB[^\n]*                       return 'direction_tb';
+.*direction\s+BT[^\n]*                       return 'direction_bt';
+.*direction\s+RL[^\n]*                       return 'direction_rl';
+.*direction\s+LR[^\n]*                       return 'direction_lr';
 (\r?\n)+                               return 'NEWLINE';
 \s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
@@ -101,7 +105,19 @@ diagram
   | elementDef diagram
   | relationshipDef diagram
   | directive diagram
+  | direction diagram
   | NEWLINE diagram;
+
+direction
+    : direction_tb
+    { yy.setDirection('TB');}
+    | direction_bt
+    { yy.setDirection('BT');}
+    | direction_rl
+    { yy.setDirection('RL');}
+    | direction_lr
+    { yy.setDirection('LR');}
+    ;
 
 requirementDef
   : requirementType requirementName STRUCT_START NEWLINE requirementBody

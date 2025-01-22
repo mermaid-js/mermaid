@@ -53,6 +53,12 @@ const Relationships = {
   TRACES: 'traces',
 };
 
+let direction = 'TB';
+const getDirection = () => direction;
+const setDirection = (dir: string) => {
+  direction = dir;
+};
+
 const getInitialRequirement = (): Requirement => ({
   id: '',
   text: '',
@@ -215,7 +221,7 @@ const getData = () => {
     counter++;
   }
 
-  return { nodes, edges, other: {}, config };
+  return { nodes, edges, other: {}, config, direction: getDirection() };
 };
 
 export default {
@@ -236,6 +242,8 @@ export default {
   getAccDescription,
   setDiagramTitle,
   getDiagramTitle,
+  getDirection,
+  setDirection,
   addElement,
   getElements,
   setNewElementType,
