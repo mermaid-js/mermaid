@@ -475,7 +475,7 @@ flowchart TD
       `
 flowchart
   Node1:::class1 --> Node2:::class2
-  Node1:::class1 --> Node3:::class2
+  Node1 --> Node3:::class2
   Node3 --> Node4((I am a circle)):::larger
 
   classDef class1 fill:lightblue
