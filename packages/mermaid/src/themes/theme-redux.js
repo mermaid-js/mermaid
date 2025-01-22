@@ -18,7 +18,7 @@ class Theme {
     this.mainBkg = '#ffffff';
 
     this.noteBkgColor = '#fff5ad';
-    this.noteTextColor = '#333';
+    this.noteTextColor = '#28253D';
 
     this.THEME_COLOR_LIMIT = 12;
     this.radius = 3;
@@ -31,8 +31,8 @@ class Theme {
     this.fontSize = '14px';
 
     // Neo-specific
-    this.nodeBorder = '#000000';
-    this.stateBorder = '#000000';
+    this.nodeBorder = '#28253D';
+    this.stateBorder = '#28253D';
     this.useGradient = false;
     this.gradientStart = '#0042eb';
     this.gradientStop = '#eb0042';
@@ -50,7 +50,7 @@ class Theme {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
 
     /* Main */
-    this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#eee' : '#333'); // invert(this.primaryColor);
+    this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#eee' : '#28253D'); // invert(this.primaryColor);
     this.secondaryColor = this.secondaryColor || adjust(this.primaryColor, { h: -120 });
     this.tertiaryColor = this.tertiaryColor || adjust(this.primaryColor, { h: 180, l: 5 });
 
@@ -61,7 +61,7 @@ class Theme {
       this.tertiaryBorderColor || mkBorder(this.tertiaryColor, this.darkMode);
     this.noteBorderColor = this.noteBorderColor || mkBorder(this.noteBkgColor, this.darkMode);
     this.noteBkgColor = this.noteBkgColor || '#fff5ad';
-    this.noteTextColor = this.noteTextColor || '#333';
+    this.noteTextColor = this.noteTextColor || '#28253D';
 
     this.secondaryTextColor = this.secondaryTextColor || invert(this.secondaryColor);
     this.tertiaryTextColor = this.tertiaryTextColor || invert(this.tertiaryColor);
