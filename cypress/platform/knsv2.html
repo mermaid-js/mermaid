@@ -105,16 +105,20 @@
   </head>
 
   <body>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
       flowchart LR
-        A --> B
+        AB["apa@apa@"] --> B(("`apa@apa`"))
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      flowchart
+        D(("for D"))
     </pre>
     <pre id="diagram4" class="mermaid">
       flowchart LR
         A e1@==> B
         e1@{ animate: true}
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
   A e1@--> B
   classDef animate stroke-width:2,stroke-dasharray:10\,8,stroke-dashoffset:-180,animation: edge-animation-frame 6s linear infinite, stroke-linecap: round
@@ -128,7 +132,7 @@ flowchart LR
   class e1 animate
     </pre>
     <h2>Mermaid - edge-animation-slow</h2>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   A e1@--> B
 e1@{ animation: fast}

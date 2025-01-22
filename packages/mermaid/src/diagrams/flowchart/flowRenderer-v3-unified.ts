@@ -7,7 +7,6 @@ import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/rende
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
-import { getDirection } from './flowDb.js';
 
 export const getClasses = function (
   text: string,
@@ -43,7 +42,7 @@ export const draw = async function (
   log.debug('Data: ', data4Layout);
   // Create the root SVG
   const svg = getDiagramElement(id, securityLevel);
-  const direction = getDirection();
+  const direction = diag.db.getDirection();
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);

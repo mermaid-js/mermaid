@@ -141,7 +141,7 @@ that id.
 .*direction\s+RL[^\n]*       return 'direction_rl';
 .*direction\s+LR[^\n]*       return 'direction_lr';
 
-[^\s]+\@(?=[^\{])               { return 'LINK_ID'; }
+[^\s\"]+\@(?=[^\{\"])               { return 'LINK_ID'; }
 [0-9]+                       return 'NUM';
 \#                           return 'BRKT';
 ":::"                        return 'STYLE_SEPARATOR';
