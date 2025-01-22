@@ -212,6 +212,7 @@ export const addSingleLink = function (_start: string, _end: string, type: any, 
     text: '',
     labelType: 'text',
     classes: [],
+    isUserDefinedId: false,
   };
   log.info('abc78 Got edge...', edge);
   const linkTextObj = type.text;
@@ -233,12 +234,15 @@ export const addSingleLink = function (_start: string, _end: string, type: any, 
   }
   if (id) {
     edge.id = id;
+    edge.isUserDefinedId = true;
   } else {
     const existingLinks = edges.filter((e) => e.start === edge.start && e.end === edge.end);
     if (existingLinks.length === 0) {
-      edge.id = `${edge.start}-${edge.end}-${edge.length}`;
+      edge.id = getEdgeId(edge.start, edge.end, { counter: 0, prefix: 'L' });
+      //edge.id = `${edge.start}-${edge.end}-${edge.length}`;
     } else {
-      edge.id = `${edge.start}-${edge.end}-${existingLinks.length + 1}`;
+      edge.id = getEdgeId(edge.start, edge.end, { counter: existingLinks.length + 1, prefix: 'L' });
+      //edge.id = `${edge.start}-${edge.end}-${existingLinks.length + 1}`;
     }
   }
 
@@ -274,11 +278,13 @@ export const addLink = function (_start: string[], _end: string[], linkData: unk
 
   log.info('addLink', _start, _end, id);
 
-  let idIsUsed = false;
+  // for a group syntax like A e1@--> B & C, only the first edge should have an the userDefined id
+  // the rest of the edges should have auto generated ids
+  let isEdgeConsumed = false;
   for (const start of _start) {
     for (const end of _end) {
-      addSingleLink(start, end, linkData, !idIsUsed ? id : undefined);
-      idIsUsed = true;
+      addSingleLink(start, end, linkData, !isEdgeConsumed ? id : undefined);
+      isEdgeConsumed = true;
     }
   }
 };
@@ -1054,6 +1060,7 @@ export const getData = () => {
     }
     const edge: Edge = {
       id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
+      isUserDefinedId: rawEdge.isUserDefinedId,
       start: rawEdge.start,
       end: rawEdge.end,
       type: rawEdge.type ?? 'normal',
