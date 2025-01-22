@@ -9,6 +9,7 @@ import { curveBasis, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
+import { isLabelStyle } from './shapes/handDrawnShapeStyles.js';
 
 const edgeLabels = new Map();
 const terminalLabels = new Map();
@@ -222,20 +223,20 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
 
-      let minimizationX = pos.x;
-      let minimizationY = pos.y;
-      for (const path_ of paths) {
-        let posOther = utils.calcLabelPosition(path_);
-        if (posOther.x == pos.x) {
-          if (minimizationX > posOther.x) {
-            minimizationY = posOther.y;
-          }
-        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
-          minimizationX = posOther.x;
-        }
-      }
-      x = minimizationX;
-      y = minimizationY;
+      // let minimizationX = pos.x;
+      // let minimizationY = pos.y;
+      // for (const path_ of paths) {
+      //   let posOther = utils.calcLabelPosition(path_);
+      //   if (posOther.x == pos.x) {
+      //     if (minimizationX > posOther.x) {
+      //       minimizationY = posOther.y;
+      //     }
+      //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+      //     minimizationX = posOther.x;
+      //   }
+      // }
+      x = pos.x;
+      y = pos.y;
     }
     el.attr('transform', `translate(${x}, ${y})`);
   }
@@ -250,21 +251,21 @@ export const positionEdgeLabel = (edge, paths) => {
         path
       );
 
-      let minimizationX = pos.x;
-      let minimizationY = pos.y;
-      for (const path_ of paths) {
-        let posOther = utils.calcLabelPosition(path_);
-        if (posOther.x == pos.x) {
-          if (minimizationX > posOther.x) {
-            minimizationY = posOther.y;
-          }
-        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
-          minimizationX = posOther.x;
-        }
-      }
+      // let minimizationX = pos.x;
+      // let minimizationY = pos.y;
+      // for (const path_ of paths) {
+      //   let posOther = utils.calcLabelPosition(path_);
+      //   if (posOther.x == pos.x) {
+      //     if (minimizationX > posOther.x) {
+      //       minimizationY = posOther.y;
+      //     }
+      //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+      //     minimizationX = posOther.x;
+      //   }
+      // }
 
-      x = minimizationX;
-      y = minimizationY;
+      x = pos.x;
+      y = pos.y;
     }
     el.attr('transform', `translate(${x}, ${y})`);
   }
@@ -275,20 +276,20 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
 
-      let minimizationX = pos.x;
-      let minimizationY = pos.y;
-      for (const path_ of paths) {
-        let posOther = utils.calcLabelPosition(path_);
-        if (posOther.x == pos.x) {
-          if (minimizationX > posOther.x) {
-            minimizationY = posOther.y;
-          }
-        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
-          minimizationX = posOther.x;
-        }
-      }
-      x = minimizationX;
-      y = minimizationY;
+      // let minimizationX = pos.x;
+      // let minimizationY = pos.y;
+      // for (const path_ of paths) {
+      //   let posOther = utils.calcLabelPosition(path_);
+      //   if (posOther.x == pos.x) {
+      //     if (minimizationX > posOther.x) {
+      //       minimizationY = posOther.y;
+      //     }
+      //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+      //     minimizationX = posOther.x;
+      //   }
+      // }
+      x = pos.x;
+      y = pos.y;
     }
     el.attr('transform', `translate(${x}, ${y})`);
   }
@@ -299,20 +300,20 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
 
-      let minimizationX = pos.x;
-      let minimizationY = pos.y;
-      for (const path_ of paths) {
-        let posOther = utils.calcLabelPosition(path_);
-        if (posOther.x == pos.x) {
-          if (minimizationX > posOther.x) {
-            minimizationY = posOther.y;
-          }
-        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
-          minimizationX = posOther.x;
-        }
-      }
-      x = minimizationX;
-      y = minimizationY;
+      // let minimizationX = pos.x;
+      // let minimizationY = pos.y;
+      // for (const path_ of paths) {
+      //   let posOther = utils.calcLabelPosition(path_);
+      //   if (posOther.x == pos.x) {
+      //     if (minimizationX > posOther.x) {
+      //       minimizationY = posOther.y;
+      //     }
+      //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+      //     minimizationX = posOther.x;
+      //   }
+      // }
+      x = pos.x;
+      y = pos.y;
     }
     el.attr('transform', `translate(${x}, ${y})`);
   }
@@ -522,6 +523,13 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let pointsHasChanged = false;
   const tail = startNode;
   var head = endNode;
+  const edgeClassStyles = [];
+  for (const key in edge.cssCompiledStyles) {
+    if (isLabelStyle(key)) {
+      continue;
+    }
+    edgeClassStyles.push(edge.cssCompiledStyles[key]);
+  }
 
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
@@ -595,6 +603,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let svgPath;
   let linePath = lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
+
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
@@ -615,12 +624,27 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     svgPath.attr('d', d);
     elem.node().appendChild(svgPath.node());
   } else {
+    const stylesFromClasses = edgeClassStyles.join(';');
+    const styles = edgeStyles ? edgeStyles.reduce((acc, style) => acc + style + ';', '') : '';
+    let animationClass = '';
+    if (edge.animate) {
+      animationClass = ' edge-animation-fast';
+    }
+    if (edge.animation) {
+      animationClass = ' edge-animation-' + edge.animation;
+    }
     svgPath = elem
       .append('path')
       .attr('d', linePath)
       .attr('id', edge.id)
-      .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-      .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
+      .attr(
+        'class',
+        ' ' +
+          strokeClasses +
+          (edge.classes ? ' ' + edge.classes : '') +
+          (animationClass ? animationClass : '')
+      )
+      .attr('style', stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles);
   }
 
   // DEBUG code, DO NOT REMOVE
