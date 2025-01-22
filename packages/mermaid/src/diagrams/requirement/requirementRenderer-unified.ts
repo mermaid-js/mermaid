@@ -19,9 +19,9 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
 
-  data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
-  data4Layout.rankSpacing = conf?.rankSpacing || 50;
-  data4Layout.markers = ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'];
+  data4Layout.nodeSpacing = conf?.nodeSpacing ?? 50;
+  data4Layout.rankSpacing = conf?.rankSpacing ?? 50;
+  data4Layout.markers = ['requirement_contains', 'requirement_arrow'];
   data4Layout.diagramId = id;
   await render(data4Layout, svg);
   const padding = 8;

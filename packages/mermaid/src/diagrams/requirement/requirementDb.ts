@@ -177,7 +177,6 @@ const getData = () => {
   const config = getConfig();
   const nodes: Node[] = [];
   const edges: Edge[] = [];
-
   for (const requirement of requirements.values()) {
     const node = requirement as unknown as Node;
     node.shape = 'requirementBox';
@@ -195,13 +194,20 @@ const getData = () => {
 
   for (const relation of relations) {
     let counter = 0;
+    const isContains = relation.type === Relationships.CONTAINS;
     const edge: Edge = {
       id: `${relation.src}-${relation.dst}-${counter}`,
       start: requirements.get(relation.src)?.id,
       end: requirements.get(relation.dst)?.id,
-      type: relation.type,
+      label: `&lt;&lt;${relation.type}&gt;&gt;`,
       classes: 'relationshipLine',
-      style: ['fill:none'],
+      style: ['fill:none', isContains ? '' : 'stroke-dasharray: 10,7'],
+      labelpos: 'c',
+      thickness: 'normal',
+      type: 'normal',
+      pattern: isContains ? 'normal' : 'dashed',
+      arrowTypeEnd: isContains ? 'requirement_contains' : 'requirement_arrow',
+      look: config.look,
     };
 
     edges.push(edge);

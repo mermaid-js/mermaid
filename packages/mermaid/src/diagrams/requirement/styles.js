@@ -52,6 +52,9 @@ const getStyles = (options) => `
     fill: ${options.nodeTextColor || options.textColor};
     color: ${options.nodeTextColor || options.textColor};
   }
+  .labelBkg {
+    background-color: ${options.edgeLabelBackground};
+  }
 
 `;
 // fill', conf.rect_fill)
