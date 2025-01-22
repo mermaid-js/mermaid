@@ -188,6 +188,7 @@ const getData = () => {
     const node = element as unknown as Node;
     node.shape = 'requirementBox';
     node.look = config.look;
+    node.id = element.name;
 
     nodes.push(node);
   }
@@ -197,8 +198,8 @@ const getData = () => {
     const isContains = relation.type === Relationships.CONTAINS;
     const edge: Edge = {
       id: `${relation.src}-${relation.dst}-${counter}`,
-      start: requirements.get(relation.src)?.id,
-      end: requirements.get(relation.dst)?.id,
+      start: requirements.get(relation.src)?.id ?? elements.get(relation.src)?.name,
+      end: requirements.get(relation.dst)?.id ?? elements.get(relation.dst)?.name,
       label: `&lt;&lt;${relation.type}&gt;&gt;`,
       classes: 'relationshipLine',
       style: ['fill:none', isContains ? '' : 'stroke-dasharray: 10,7'],
