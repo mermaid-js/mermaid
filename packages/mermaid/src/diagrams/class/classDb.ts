@@ -41,14 +41,38 @@ export class ClassDB implements DiagramDB {
 
   private functions: any[] = [];
 
-  private readonly sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
+  private sanitizeText(txt: string) {
+    return common.sanitizeText(txt, getConfig());
+  }
 
   constructor() {
     this.functions.push(this.setupToolTips);
     this.clear();
+
+    // Needed for JISON since it only supports direct properties
+    this.addRelation = this.addRelation.bind(this);
+    this.addClassesToNamespace = this.addClassesToNamespace.bind(this);
+    this.addNamespace = this.addNamespace.bind(this);
+    this.setCssClass = this.setCssClass.bind(this);
+    this.addMembers = this.addMembers.bind(this);
+    this.addClass = this.addClass.bind(this);
+    this.setClassLabel = this.setClassLabel.bind(this);
+    this.addAnnotation = this.addAnnotation.bind(this);
+    this.addMember = this.addMember.bind(this);
+    this.cleanupLabel = this.cleanupLabel.bind(this);
+    this.addNote = this.addNote.bind(this);
+    this.defineClass = this.defineClass.bind(this);
+    this.setDirection = this.setDirection.bind(this);
+    this.setLink = this.setLink.bind(this);
+    this.setTooltip = this.setTooltip.bind(this);
+    this.setClickEvent = this.setClickEvent.bind(this);
+    this.setCssStyle = this.setCssStyle.bind(this);
+    this.setClickFunc = this.setClickFunc.bind(this);
+    this.bindFunctions = this.bindFunctions.bind(this);
+    this.clear = this.clear.bind(this);
   }
 
-  private readonly splitClassNameAndType = (_id: string) => {
+  private splitClassNameAndType(_id: string) {
     const id = common.sanitizeText(_id, getConfig());
     let genericType = '';
     let className = id;
@@ -60,9 +84,9 @@ export class ClassDB implements DiagramDB {
     }
 
     return { className: className, type: genericType };
-  };
+  }
 
-  public setClassLabel = (_id: string, label: string) => {
+  public setClassLabel(_id: string, label: string) {
     const id = common.sanitizeText(_id, getConfig());
     if (label) {
       label = this.sanitizeText(label);
@@ -72,7 +96,7 @@ export class ClassDB implements DiagramDB {
     this.classes.get(className)!.label = label;
     this.classes.get(className)!.text =
       `${label}${this.classes.get(className)!.type ? `<${this.classes.get(className)!.type}>` : ''}`;
-  };
+  }
 
   /**
    * Function called by parser when a node definition has been found.
@@ -80,7 +104,7 @@ export class ClassDB implements DiagramDB {
    * @param id - Id of the class to add
    * @public
    */
-  public addClass = (_id: string) => {
+  public addClass(_id: string) {
     const id = common.sanitizeText(_id, getConfig());
     const { className, type } = this.splitClassNameAndType(id);
     // Only add class if not exists
@@ -105,9 +129,9 @@ export class ClassDB implements DiagramDB {
     } as ClassNode);
 
     classCounter++;
-  };
+  }
 
-  private readonly addInterface = (label: string, classId: string) => {
+  private addInterface(label: string, classId: string) {
     const classInterface: Interface = {
       id: `interface${this.interfaces.length}`,
       label,
@@ -115,7 +139,7 @@ export class ClassDB implements DiagramDB {
     };
 
     this.interfaces.push(classInterface);
-  };
+  }
 
   /**
    * Function to lookup domId from id in the graph definition.
@@ -123,15 +147,15 @@ export class ClassDB implements DiagramDB {
    * @param id - class ID to lookup
    * @public
    */
-  public lookUpDomId = (_id: string): string => {
+  public lookUpDomId(_id: string): string {
     const id = common.sanitizeText(_id, getConfig());
     if (this.classes.has(id)) {
       return this.classes.get(id)!.domId;
     }
     throw new Error('Class not found: ' + id);
-  };
+  }
 
-  public clear = () => {
+  public clear() {
     this.relations = [];
     this.classes = new Map();
     this.notes = [];
@@ -142,25 +166,25 @@ export class ClassDB implements DiagramDB {
     this.namespaceCounter = 0;
     this.direction = 'TB';
     commonClear();
-  };
+  }
 
-  public getClass = (id: string): ClassNode => {
+  public getClass(id: string): ClassNode {
     return this.classes.get(id)!;
-  };
+  }
 
-  public getClasses = (): ClassMap => {
+  public getClasses(): ClassMap {
     return this.classes;
-  };
+  }
 
-  public getRelations = (): ClassRelation[] => {
+  public getRelations(): ClassRelation[] {
     return this.relations;
-  };
+  }
 
-  public getNotes = () => {
+  public getNotes() {
     return this.notes;
-  };
+  }
 
-  public addRelation = (classRelation: ClassRelation) => {
+  public addRelation(classRelation: ClassRelation) {
     log.debug('Adding relation: ' + JSON.stringify(classRelation));
     // Due to relationType cannot just check if it is equal to 'none' or it complains, can fix this later
     const invalidTypes = [
@@ -204,7 +228,7 @@ export class ClassDB implements DiagramDB {
     );
 
     this.relations.push(classRelation);
-  };
+  }
 
   /**
    * Adds an annotation to the specified class Annotations mark special properties of the given type
@@ -214,10 +238,10 @@ export class ClassDB implements DiagramDB {
    * @param annotation - The name of the annotation without any brackets
    * @public
    */
-  public addAnnotation = (className: string, annotation: string) => {
+  public addAnnotation(className: string, annotation: string) {
     const validatedClassName = this.splitClassNameAndType(className).className;
     this.classes.get(validatedClassName)!.annotations.push(annotation);
-  };
+  }
 
   /**
    * Adds a member to the specified class
@@ -228,7 +252,7 @@ export class ClassDB implements DiagramDB {
    *   method Otherwise the member will be treated as a normal property
    * @public
    */
-  public addMember = (className: string, member: string) => {
+  public addMember(className: string, member: string) {
     this.addClass(className);
 
     const validatedClassName = this.splitClassNameAndType(className).className;
@@ -250,30 +274,30 @@ export class ClassDB implements DiagramDB {
         theClass.members.push(new ClassMember(memberString, 'attribute'));
       }
     }
-  };
+  }
 
-  public addMembers = (className: string, members: string[]) => {
+  public addMembers(className: string, members: string[]) {
     if (Array.isArray(members)) {
       members.reverse();
       members.forEach((member) => this.addMember(className, member));
     }
-  };
+  }
 
-  public addNote = (text: string, className: string) => {
+  public addNote(text: string, className: string) {
     const note = {
       id: `note${this.notes.length}`,
       class: className,
       text: text,
     };
     this.notes.push(note);
-  };
+  }
 
-  public cleanupLabel = (label: string) => {
+  public cleanupLabel(label: string) {
     if (label.startsWith(':')) {
       label = label.substring(1);
     }
     return this.sanitizeText(label.trim());
-  };
+  }
 
   /**
    * Called by parser when assigning cssClass to a class
@@ -281,7 +305,7 @@ export class ClassDB implements DiagramDB {
    * @param ids - Comma separated list of ids
    * @param className - Class to add
    */
-  public setCssClass = (ids: string, className: string) => {
+  public setCssClass(ids: string, className: string) {
     ids.split(',').forEach((_id) => {
       let id = _id;
       if (/\d/.exec(_id[0])) {
@@ -292,9 +316,9 @@ export class ClassDB implements DiagramDB {
         classNode.cssClasses += ' ' + className;
       }
     });
-  };
+  }
 
-  public defineClass = (ids: string[], style: string[]) => {
+  public defineClass(ids: string[], style: string[]) {
     for (const id of ids) {
       let styleClass = this.styleClasses.get(id);
       if (styleClass === undefined) {
@@ -318,7 +342,7 @@ export class ClassDB implements DiagramDB {
         }
       });
     }
-  };
+  }
 
   /**
    * Called by parser when a tooltip is found, e.g. a clickable element.
@@ -326,21 +350,21 @@ export class ClassDB implements DiagramDB {
    * @param ids - Comma separated list of ids
    * @param tooltip - Tooltip to add
    */
-  public setTooltip = (ids: string, tooltip?: string) => {
+  public setTooltip(ids: string, tooltip?: string) {
     ids.split(',').forEach((id) => {
       if (tooltip !== undefined) {
         this.classes.get(id)!.tooltip = this.sanitizeText(tooltip);
       }
     });
-  };
+  }
 
-  public getTooltip = (id: string, namespace?: string) => {
+  public getTooltip(id: string, namespace?: string) {
     if (namespace && this.namespaces.has(namespace)) {
       return this.namespaces.get(namespace)!.classes.get(id)!.tooltip;
     }
 
     return this.classes.get(id)!.tooltip;
-  };
+  }
 
   /**
    * Called by parser when a link is found. Adds the URL to the vertex data.
@@ -349,7 +373,7 @@ export class ClassDB implements DiagramDB {
    * @param linkStr - URL to create a link for
    * @param target - Target of the link, _blank by default as originally defined in the svgDraw.js file
    */
-  public setLink = (ids: string, linkStr: string, target: string) => {
+  public setLink(ids: string, linkStr: string, target: string) {
     const config = getConfig();
     ids.split(',').forEach((_id) => {
       let id = _id;
@@ -369,7 +393,7 @@ export class ClassDB implements DiagramDB {
       }
     });
     this.setCssClass(ids, 'clickable');
-  };
+  }
 
   /**
    * Called by parser when a click definition is found. Registers an event handler.
@@ -378,15 +402,15 @@ export class ClassDB implements DiagramDB {
    * @param functionName - Function to be called on click
    * @param functionArgs - Function args the function should be called with
    */
-  public setClickEvent = (ids: string, functionName: string, functionArgs: string) => {
+  public setClickEvent(ids: string, functionName: string, functionArgs: string) {
     ids.split(',').forEach((id) => {
       this.setClickFunc(id, functionName, functionArgs);
       this.classes.get(id)!.haveCallback = true;
     });
     this.setCssClass(ids, 'clickable');
-  };
+  }
 
-  private readonly setClickFunc = (_domId: string, functionName: string, functionArgs: string) => {
+  private setClickFunc(_domId: string, functionName: string, functionArgs: string) {
     const domId = common.sanitizeText(_domId, getConfig());
     const config = getConfig();
     if (config.securityLevel !== 'loose') {
@@ -432,13 +456,13 @@ export class ClassDB implements DiagramDB {
         }
       });
     }
-  };
+  }
 
-  public bindFunctions = (element: Element) => {
+  public bindFunctions(element: Element) {
     this.functions.forEach((fun) => {
       fun(element);
     });
-  };
+  }
 
   public lineType = {
     LINE: 0,
@@ -494,10 +518,12 @@ export class ClassDB implements DiagramDB {
   };
 
   private direction = 'TB';
-  public getDirection = () => this.direction;
-  public setDirection = (dir: string) => {
+  public getDirection() {
+    return this.direction;
+  }
+  public setDirection(dir: string) {
     this.direction = dir;
-  };
+  }
 
   /**
    * Function called by parser when a namespace definition has been found.
@@ -505,7 +531,7 @@ export class ClassDB implements DiagramDB {
    * @param id - Id of the namespace to add
    * @public
    */
-  public addNamespace = (id: string) => {
+  public addNamespace(id: string) {
     if (this.namespaces.has(id)) {
       return;
     }
@@ -518,15 +544,15 @@ export class ClassDB implements DiagramDB {
     } as NamespaceNode);
 
     this.namespaceCounter++;
-  };
+  }
 
-  public getNamespace = (name: string): NamespaceNode => {
+  public getNamespace(name: string): NamespaceNode {
     return this.namespaces.get(name)!;
-  };
+  }
 
-  public getNamespaces = (): NamespaceMap => {
+  public getNamespaces(): NamespaceMap {
     return this.namespaces;
-  };
+  }
 
   /**
    * Function called by parser when a namespace definition has been found.
@@ -535,7 +561,7 @@ export class ClassDB implements DiagramDB {
    * @param classNames - Ids of the class to add
    * @public
    */
-  public addClassesToNamespace = (id: string, classNames: string[]) => {
+  public addClassesToNamespace(id: string, classNames: string[]) {
     if (!this.namespaces.has(id)) {
       return;
     }
@@ -544,9 +570,9 @@ export class ClassDB implements DiagramDB {
       this.classes.get(className)!.parent = id;
       this.namespaces.get(id)!.classes.set(className, this.classes.get(className)!);
     }
-  };
+  }
 
-  public setCssStyle = (id: string, styles: string[]) => {
+  public setCssStyle(id: string, styles: string[]) {
     const thisClass = this.classes.get(id);
     if (!styles || !thisClass) {
       return;
@@ -558,7 +584,7 @@ export class ClassDB implements DiagramDB {
         thisClass.styles.push(s);
       }
     }
-  };
+  }
 
   /**
    * Gets the arrow marker for a type index
@@ -590,7 +616,7 @@ export class ClassDB implements DiagramDB {
     return marker;
   };
 
-  public getData = () => {
+  public getData() {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
     const config = getConfig();
@@ -705,7 +731,7 @@ export class ClassDB implements DiagramDB {
     }
 
     return { nodes, edges, other: {}, config, direction: this.getDirection() };
-  };
+  }
 
   public setAccTitle = setAccTitle;
   public getAccTitle = getAccTitle;
