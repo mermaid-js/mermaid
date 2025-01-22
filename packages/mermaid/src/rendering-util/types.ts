@@ -96,11 +96,14 @@ export interface Edge {
   label?: string;
   classes?: string;
   style?: string[];
+  animate?: boolean;
+  animation?: 'fast' | 'slow';
   // Properties common to both Flowchart and State Diagram edges
   arrowhead?: string;
   arrowheadStyle?: string;
   arrowTypeEnd?: string;
   arrowTypeStart?: string;
+  cssCompiledStyles?: string[];
   // Flowchart specific properties
   defaultInterpolate?: string;
   end?: string;
@@ -122,6 +125,7 @@ export interface Edge {
   pattern?: string;
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
+  isUserDefinedId?: boolean;
 }
 
 export interface RectOptions {

@@ -32,7 +32,28 @@ export const styles2Map = (styles: string[]) => {
   });
   return styleMap;
 };
-
+export const isLabelStyle = (key: string) => {
+  return (
+    key === 'color' ||
+    key === 'font-size' ||
+    key === 'font-family' ||
+    key === 'font-weight' ||
+    key === 'font-style' ||
+    key === 'text-decoration' ||
+    key === 'text-align' ||
+    key === 'text-transform' ||
+    key === 'line-height' ||
+    key === 'letter-spacing' ||
+    key === 'word-spacing' ||
+    key === 'text-shadow' ||
+    key === 'text-overflow' ||
+    key === 'white-space' ||
+    key === 'word-wrap' ||
+    key === 'word-break' ||
+    key === 'overflow-wrap' ||
+    key === 'hyphens'
+  );
+};
 export const styles2String = (node: Node) => {
   const { stylesArray } = compileStyles(node);
   const labelStyles: string[] = [];
@@ -42,26 +63,7 @@ export const styles2String = (node: Node) => {
 
   stylesArray.forEach((style) => {
     const key = style[0];
-    if (
-      key === 'color' ||
-      key === 'font-size' ||
-      key === 'font-family' ||
-      key === 'font-weight' ||
-      key === 'font-style' ||
-      key === 'text-decoration' ||
-      key === 'text-align' ||
-      key === 'text-transform' ||
-      key === 'line-height' ||
-      key === 'letter-spacing' ||
-      key === 'word-spacing' ||
-      key === 'text-shadow' ||
-      key === 'text-overflow' ||
-      key === 'white-space' ||
-      key === 'word-wrap' ||
-      key === 'word-break' ||
-      key === 'overflow-wrap' ||
-      key === 'hyphens'
-    ) {
+    if (isLabelStyle(key)) {
       labelStyles.push(style.join(':') + ' !important');
     } else {
       nodeStyles.push(style.join(':') + ' !important');
