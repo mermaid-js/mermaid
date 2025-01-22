@@ -255,6 +255,9 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  architecture: {
+    ...defaultConfigJson.architecture,
+  },
 };
 
 const keyify = (obj: any, prefix = ''): string[] =>

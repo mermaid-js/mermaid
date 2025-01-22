@@ -44,6 +44,8 @@ registerIconPacks([
 ]);
 cytoscape.use(fcose);
 
+getConfigField('icons').forEach((iconLoader) => iconLoader);
+
 function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
   services.forEach((service) => {
     cy.add({

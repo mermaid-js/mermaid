@@ -13,7 +13,7 @@ interface SyncIconLoader {
   icons: IconifyJSON;
 }
 
-interface UrlIconLoader {
+export interface UrlIconLoader {
   name: string;
   url: string;
 }
@@ -42,8 +42,7 @@ export const registerIconPacks = (iconLoaders: IconLoader[]) => {
     } else if ('icons' in iconLoader) {
       iconsStore.set(iconLoader.name, iconLoader.icons);
     } else if ('url' in iconLoader) {
-      loaderStore.set(iconLoader.name, () =>
-        fetch(iconLoader.url).then((res) => res.json()))
+      loaderStore.set(iconLoader.name, () => fetch(iconLoader.url).then((res) => res.json()));
     } else {
       log.error('Invalid icon loader:', iconLoader);
       throw new Error('Invalid icon loader. Must have either "icons" or "loader" property.');
