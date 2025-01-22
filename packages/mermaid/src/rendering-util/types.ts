@@ -125,6 +125,7 @@ export interface Edge {
   pattern?: string;
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
+  isUserDefinedId?: boolean;
 }
 
 export interface RectOptions {
