@@ -933,24 +933,25 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     description: The object containing configurations specific for architecture diagrams
     type: object
     unevaluatedProperties: false
-    required:
-      - useMaxWidth
-      - padding
-      - iconSize
-      - fontSize
     properties:
       padding:
         type: number
-        default: 40
       icons:
         type: array
-        default: []
+        items:
+          type: object
+          required:
+            - name
+            - url
+          properties:
+            name:
+              type: string
+            url:
+              type: string
       iconSize:
         type: number
-        default: 80
       fontSize:
         type: number
-        default: 16
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config

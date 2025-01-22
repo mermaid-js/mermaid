@@ -1,7 +1,7 @@
-import type { DiagramDB } from '../../diagram-api/types.js';
-import type { ArchitectureDiagramConfig } from '../../config.type.js';
-import type { D3Element } from '../../types.js';
 import type cytoscape from 'cytoscape';
+import type { ArchitectureDiagramConfig } from '../../config.type.js';
+import type { DiagramDB } from '../../diagram-api/types.js';
+import type { D3Element } from '../../types.js';
 
 /*=======================================*\
 |       Architecture Diagram Types        |

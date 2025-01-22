@@ -7,12 +7,12 @@ import {
   curveBumpX,
   curveBumpY,
   curveBundle,
+  curveCardinal,
   curveCardinalClosed,
   curveCardinalOpen,
-  curveCardinal,
+  curveCatmullRom,
   curveCatmullRomClosed,
   curveCatmullRomOpen,
-  curveCatmullRom,
   curveLinear,
   curveLinearClosed,
   curveMonotoneX,
@@ -23,16 +23,16 @@ import {
   curveStepBefore,
   select,
 } from 'd3';
-import common from './diagrams/common/common.js';
-import { sanitizeDirective } from './utils/sanitizeDirective.js';
-import { log } from './logger.js';
-import { detectType } from './diagram-api/detectType.js';
-import assignWithDepth from './assignWithDepth.js';
-import type { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
+import assignWithDepth from './assignWithDepth.js';
+import type { MermaidConfig } from './config.type.js';
+import { detectType } from './diagram-api/detectType.js';
 import { directiveRegex } from './diagram-api/regexes.js';
+import common from './diagrams/common/common.js';
+import { log } from './logger.js';
 import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
+import { sanitizeDirective } from './utils/sanitizeDirective.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 

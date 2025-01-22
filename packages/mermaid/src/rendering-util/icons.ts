@@ -44,7 +44,6 @@ export const registerIconPacks = (iconLoaders: IconLoader[]) => {
     } else if ('url' in iconLoader) {
       loaderStore.set(iconLoader.name, () => fetch(iconLoader.url).then((res) => res.json()));
     } else {
-      log.error('Invalid icon loader:', iconLoader);
       throw new Error('Invalid icon loader. Must have either "icons" or "loader" property.');
     }
   }
