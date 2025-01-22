@@ -249,21 +249,21 @@ export const positionEdgeLabel = (edge, paths) => {
         path
       );
 
-      let minimizationX = pos.x;
-      let minimizationY = pos.y;
-      for (const path_ of paths) {
-        let posOther = utils.calcLabelPosition(path_);
-        if (posOther.x == pos.x) {
-          if (minimizationX > posOther.x) {
-            minimizationY = posOther.y;
-          }
-        } else if (posOther.y == pos.y && minimizationY > posOther.y) {
-          minimizationX = posOther.x;
-        }
-      }
+      // let minimizationX = pos.x;
+      // let minimizationY = pos.y;
+      // for (const path_ of paths) {
+      //   let posOther = utils.calcLabelPosition(path_);
+      //   if (posOther.x == pos.x) {
+      //     if (minimizationX > posOther.x) {
+      //       minimizationY = posOther.y;
+      //     }
+      //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+      //     minimizationX = posOther.x;
+      //   }
+      // }
 
-      x = minimizationX;
-      y = minimizationY;
+      x = pos.x;
+      y = pos.y;
     }
     el.attr('transform', `translate(${x}, ${y})`);
   }
