@@ -836,7 +836,7 @@ graph TD;A--x|text including URL space|B;`)
     });
 
     it('should not modify db when rendering different diagrams', async () => {
-      const classDiagram1 = await mermaidAPI.getDiagramFromText(
+      const stateDiagram1 = await mermaidAPI.getDiagramFromText(
         `stateDiagram
             direction LR
             [*] --> Still
@@ -846,7 +846,7 @@ graph TD;A--x|text including URL space|B;`)
             Moving --> Crash
             Crash --> [*]`
       );
-      const classDiagram2 = await mermaidAPI.getDiagramFromText(
+      const stateDiagram2 = await mermaidAPI.getDiagramFromText(
         `stateDiagram
           direction TB
           [*] --> Still
@@ -856,10 +856,10 @@ graph TD;A--x|text including URL space|B;`)
           Moving --> Crash
           Crash --> [*]`
       );
-      expect(classDiagram1.db).not.toBe(classDiagram2.db);
-      assert(classDiagram1.db instanceof StateDB);
-      assert(classDiagram2.db instanceof StateDB);
-      expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
+      expect(stateDiagram1.db).not.toBe(stateDiagram2.db);
+      assert(stateDiagram1.db instanceof StateDB);
+      assert(stateDiagram2.db instanceof StateDB);
+      expect(stateDiagram1.db.getDirection()).not.toEqual(stateDiagram2.db.getDirection());
     });
   });
 

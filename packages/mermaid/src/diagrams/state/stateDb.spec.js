@@ -81,7 +81,7 @@ describe('state db class', () => {
   beforeEach(() => {
     stateDb = new StateDB();
   });
-  // This is to ensure that functions used in flow JISON are exposed as function from FlowDb
+  // This is to ensure that functions used in state JISON are exposed as function from StateDb
   it('should have functions used in flow JISON as own property', () => {
     const functionsUsedInParser = [
       'setRootDoc',

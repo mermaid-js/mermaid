@@ -25,48 +25,39 @@ import {
   STMT_STYLEDEF,
 } from './stateCommon.js';
 
-export class StateDB {
-  /**
-   * @private
-   * @type {string}
-   */
-  #START_NODE = '[*]';
-  /**
-   * @private
-   * @type {string}
-   */
-  #START_TYPE = 'start';
-  /**
-   * @private
-   * @type {string}
-   */
-  #END_NODE = this.#START_NODE;
-  /**
-   * @private
-   * @type {string}
-   */
-  #END_TYPE = 'end';
-  /**
-   * @private
-   * @type {string}
-   */
-  #COLOR_KEYWORD = 'color';
-  /**
-   * @private
-   * @type {string}
-   */
-  #FILL_KEYWORD = 'fill';
-  /**
-   * @private
-   * @type {string}
-   */
-  #BG_FILL = 'bgFill';
-  /**
-   * @private
-   * @type {string}
-   */
-  #STYLECLASS_SEP = ',';
+const START_NODE = '[*]';
+const START_TYPE = 'start';
+const END_NODE = START_NODE;
+const END_TYPE = 'end';
 
+const COLOR_KEYWORD = 'color';
+const FILL_KEYWORD = 'fill';
+const BG_FILL = 'bgFill';
+const STYLECLASS_SEP = ',';
+
+/**
+ * Returns a new list of classes.
+ * In the future, this can be replaced with a class common to all diagrams.
+ * ClassDef information = { id: id, styles: [], textStyles: [] }
+ *
+ * @returns {Map<string, any>}
+ */
+function newClassesList() {
+  return new Map();
+}
+
+const newDoc = () => {
+  return {
+    /** @type {{ id1: string, id2: string, relationTitle: string }[]} */
+    relations: [],
+    states: new Map(),
+    documents: {},
+  };
+};
+
+const clone = (o) => JSON.parse(JSON.stringify(o));
+
+export class StateDB {
   constructor() {
     this.clear();
 
@@ -78,111 +69,71 @@ export class StateDB {
   }
 
   /**
-   * Returns a new list of classes.
-   * In the future, this can be replaced with a class common to all diagrams.
-   * ClassDef information = { id: id, styles: [], textStyles: [] }
-   *
-   * @returns {Map<string, any>}
    * @private
+   * @type {Array}
    */
-  #newClassesList() {
-    return new Map();
-  }
-
+  nodes = [];
   /**
    * @private
    * @type {Array}
    */
-  #nodes = [];
-  /**
-   * @private
-   * @type {Array}
-   */
-  #edges = [];
+  edges = [];
 
   /**
    * @private
    * @type {string}
    */
-  #direction = DEFAULT_DIAGRAM_DIRECTION;
+  direction = DEFAULT_DIAGRAM_DIRECTION;
   /**
    * @private
    * @type {Array}
    */
-  #rootDoc = [];
+  rootDoc = [];
   /**
    * @private
    * @type {Map<string, any>}
    */
-  #classes = this.#newClassesList(); // style classes defined by a classDef
-
-  // --------------------------------------
-
-  /**
-   * @private
-   * @returns {Object}
-   */
-  #newDoc() {
-    return {
-      /** @type {{ id1: string, id2: string, relationTitle: string }[]} */
-      relations: [],
-      states: new Map(),
-      documents: {},
-    };
-  }
+  classes = newClassesList(); // style classes defined by a classDef
 
   /**
    * @private
    * @type {Object}
    */
-  #documents = {
-    root: this.#newDoc(),
+  documents = {
+    root: newDoc(),
   };
 
   /**
    * @private
    * @type {Object}
    */
-  #currentDocument = this.#documents.root;
+  currentDocument = this.documents.root;
   /**
    * @private
    * @type {number}
    */
-  #startEndCount = 0;
+  startEndCount = 0;
   /**
    * @private
    * @type {number}
    */
-  #dividerCnt = 0;
+  dividerCnt = 0;
 
-  lineType = {
-    LINE: 0,
-    DOTTED_LINE: 1,
-  };
-
-  relationType = {
+  static relationType = {
     AGGREGATION: 0,
     EXTENSION: 1,
     COMPOSITION: 2,
     DEPENDENCY: 3,
   };
 
-  /**
-   * @private
-   * @param {Object} o
-   */
-  #clone(o) {
-    return JSON.parse(JSON.stringify(o));
-  }
-
   setRootDoc(o) {
     log.info('Setting root doc', o);
     // rootDoc = { id: 'root', doc: o };
-    this.#rootDoc = o;
+    this.rootDoc = o;
   }
 
   getRootDoc() {
-    return this.#rootDoc;
+    return this.rootDoc;
   }
 
   /**
@@ -191,10 +142,10 @@ export class StateDB {
    * @param {Object} node
    * @param {boolean} first
    */
-  #docTranslator(parent, node, first) {
+  docTranslator(parent, node, first) {
     if (node.stmt === STMT_RELATION) {
-      this.#docTranslator(parent, node.state1, true);
-      this.#docTranslator(parent, node.state2, false);
+      this.docTranslator(parent, node.state1, true);
+      this.docTranslator(parent, node.state2, false);
     } else {
       if (node.stmt === STMT_STATE) {
         if (node.id === '[*]') {
@@ -213,8 +164,8 @@ export class StateDB {
         let i;
         for (i = 0; i < node.doc.length; i++) {
           if (node.doc[i].type === DIVIDER_TYPE) {
-            const newNode = this.#clone(node.doc[i]);
-            newNode.doc = this.#clone(currentDoc);
+            const newNode = clone(node.doc[i]);
+            newNode.doc = clone(currentDoc);
             doc.push(newNode);
             currentDoc = [];
           } else {
@@ -228,19 +179,19 @@ export class StateDB {
             stmt: STMT_STATE,
             id: generateId(),
             type: 'divider',
-            doc: this.#clone(currentDoc),
+            doc: clone(currentDoc),
           };
-          doc.push(this.#clone(newNode));
+          doc.push(clone(newNode));
           node.doc = doc;
         }
 
-        node.doc.forEach((docNode) => this.#docTranslator(node, docNode, true));
+        node.doc.forEach((docNode) => this.docTranslator(node, docNode, true));
       }
     }
   }
   getRootDocV2() {
-    this.#docTranslator({ id: 'root' }, { id: 'root', doc: this.#rootDoc }, true);
-    return { id: 'root', doc: this.#rootDoc };
+    this.docTranslator({ id: 'root' }, { id: 'root', doc: this.rootDoc }, true);
+    return { id: 'root', doc: this.rootDoc };
     // Here
   }
 
@@ -323,13 +274,13 @@ export class StateDB {
       undefined,
       this.getRootDocV2(),
       diagramStates,
-      this.#nodes,
-      this.#edges,
+      this.nodes,
+      this.edges,
       true,
       look,
-      this.#classes
+      this.classes
     );
-    this.#nodes.forEach((node) => {
+    this.nodes.forEach((node) => {
       if (Array.isArray(node.label)) {
         // add the rest as description
         node.description = node.label.slice(1);
@@ -370,9 +321,9 @@ export class StateDB {
   ) {
     const trimmedId = id?.trim();
     // add the state if needed
-    if (!this.#currentDocument.states.has(trimmedId)) {
+    if (!this.currentDocument.states.has(trimmedId)) {
       log.info('Adding state ', trimmedId, descr);
-      this.#currentDocument.states.set(trimmedId, {
+      this.currentDocument.states.set(trimmedId, {
         id: trimmedId,
         descriptions: [],
         type,
@@ -383,11 +334,11 @@ export class StateDB {
         textStyles: [],
       });
     } else {
-      if (!this.#currentDocument.states.get(trimmedId).doc) {
-        this.#currentDocument.states.get(trimmedId).doc = doc;
+      if (!this.currentDocument.states.get(trimmedId).doc) {
+        this.currentDocument.states.get(trimmedId).doc = doc;
       }
-      if (!this.#currentDocument.states.get(trimmedId).type) {
-        this.#currentDocument.states.get(trimmedId).type = type;
+      if (!this.currentDocument.states.get(trimmedId).type) {
+        this.currentDocument.states.get(trimmedId).type = type;
       }
     }
 
@@ -403,7 +354,7 @@ export class StateDB {
     }
 
     if (note) {
-      const doc2 = this.#currentDocument.states.get(trimmedId);
+      const doc2 = this.currentDocument.states.get(trimmedId);
       doc2.note = note;
       doc2.note.text = common.sanitizeText(doc2.note.text, getConfig());
     }
@@ -428,32 +379,32 @@ export class StateDB {
   }
 
   clear(saveCommon) {
-    this.#nodes = [];
-    this.#edges = [];
-    this.#documents = {
-      root: this.#newDoc(),
+    this.nodes = [];
+    this.edges = [];
+    this.documents = {
+      root: newDoc(),
     };
-    this.#currentDocument = this.#documents.root;
+    this.currentDocument = this.documents.root;
 
     // number of start and end nodes; used to construct ids
-    this.#startEndCount = 0;
-    this.classes = this.#newClassesList();
+    this.startEndCount = 0;
+    this.classes = newClassesList();
     if (!saveCommon) {
       commonClear();
     }
   }
 
   getState(id) {
-    return this.#currentDocument.states.get(id);
+    return this.currentDocument.states.get(id);
   }
   getStates() {
-    return this.#currentDocument.states;
+    return this.currentDocument.states;
   }
   logDocuments() {
-    log.info('Documents = ', this.#documents);
+    log.info('Documents = ', this.documents);
   }
   getRelations() {
-    return this.#currentDocument.relations;
+    return this.currentDocument.relations;
   }
 
   /**
@@ -465,11 +416,11 @@ export class StateDB {
    * @returns {string} - the id (original or constructed)
    * @private
    */
-  #startIdIfNeeded(id = '') {
+  startIdIfNeeded(id = '') {
     let fixedId = id;
-    if (id === this.#START_NODE) {
-      this.#startEndCount++;
-      fixedId = `${this.#START_TYPE}${this.#startEndCount}`;
+    if (id === START_NODE) {
+      this.startEndCount++;
+      fixedId = `${START_TYPE}${this.startEndCount}`;
     }
     return fixedId;
   }
@@ -483,8 +434,8 @@ export class StateDB {
    * @returns {string} - the type that should be used
    * @private
    */
-  #startTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
-    return id === this.#START_NODE ? this.#START_TYPE : type;
+  startTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
+    return id === START_NODE ? START_TYPE : type;
   }
 
   /**
@@ -496,11 +447,11 @@ export class StateDB {
    * @returns {string} - the id (original or constructed)
    * @private
    */
-  #endIdIfNeeded(id = '') {
+  endIdIfNeeded(id = '') {
     let fixedId = id;
-    if (id === this.#END_NODE) {
-      this.#startEndCount++;
-      fixedId = `${this.#END_TYPE}${this.#startEndCount}`;
+    if (id === END_NODE) {
+      this.startEndCount++;
+      fixedId = `${END_TYPE}${this.startEndCount}`;
     }
     return fixedId;
   }
@@ -514,8 +465,8 @@ export class StateDB {
    * @returns {string} - the type that should be used
    * @private
    */
-  #endTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
-    return id === this.#END_NODE ? this.#END_TYPE : type;
+  endTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
+    return id === END_NODE ? END_TYPE : type;
   }
 
   /**
@@ -525,10 +476,10 @@ export class StateDB {
    * @param relationTitle
    */
   addRelationObjs(item1, item2, relationTitle) {
-    let id1 = this.#startIdIfNeeded(item1.id.trim());
-    let type1 = this.#startTypeIfNeeded(item1.id.trim(), item1.type);
-    let id2 = this.#startIdIfNeeded(item2.id.trim());
-    let type2 = this.#startTypeIfNeeded(item2.id.trim(), item2.type);
+    let id1 = this.startIdIfNeeded(item1.id.trim());
+    let type1 = this.startTypeIfNeeded(item1.id.trim(), item1.type);
+    let id2 = this.startIdIfNeeded(item2.id.trim());
+    let type2 = this.startTypeIfNeeded(item2.id.trim(), item2.type);
 
     this.addState(
       id1,
@@ -551,7 +502,7 @@ export class StateDB {
       item2.textStyles
     );
 
-    this.#currentDocument.relations.push({
+    this.currentDocument.relations.push({
       id1,
       id2,
       relationTitle: common.sanitizeText(relationTitle, getConfig()),
@@ -569,14 +520,14 @@ export class StateDB {
     if (typeof item1 === 'object') {
       this.addRelationObjs(item1, item2, title);
     } else {
-      const id1 = this.#startIdIfNeeded(item1.trim());
-      const type1 = this.#startTypeIfNeeded(item1);
-      const id2 = this.#endIdIfNeeded(item2.trim());
-      const type2 = this.#endTypeIfNeeded(item2);
+      const id1 = this.startIdIfNeeded(item1.trim());
+      const type1 = this.startTypeIfNeeded(item1);
+      const id2 = this.endIdIfNeeded(item2.trim());
+      const type2 = this.endTypeIfNeeded(item2);
 
       this.addState(id1, type1);
       this.addState(id2, type2);
-      this.#currentDocument.relations.push({
+      this.currentDocument.relations.push({
         id1,
         id2,
         title: common.sanitizeText(title, getConfig()),
@@ -585,7 +536,7 @@ export class StateDB {
   }
 
   addDescription(id, descr) {
-    const theState = this.#currentDocument.states.get(id);
+    const theState = this.currentDocument.states.get(id);
     const _descr = descr.startsWith(':') ? descr.replace(':', '').trim() : descr;
     theState.descriptions.push(common.sanitizeText(_descr, getConfig()));
   }
@@ -599,8 +550,8 @@ export class StateDB {
   }
 
   getDividerId() {
-    this.#dividerCnt++;
-    return 'divider-id-' + this.#dividerCnt;
+    this.dividerCnt++;
+    return 'divider-id-' + this.dividerCnt;
   }
 
   /**
@@ -612,19 +563,19 @@ export class StateDB {
    */
   addStyleClass(id, styleAttributes = '') {
     // create a new style class object with this id
-    if (!this.#classes.has(id)) {
-      this.#classes.set(id, { id: id, styles: [], textStyles: [] }); // This is a classDef
+    if (!this.classes.has(id)) {
+      this.classes.set(id, { id: id, styles: [], textStyles: [] }); // This is a classDef
     }
-    const foundClass = this.#classes.get(id);
+    const foundClass = this.classes.get(id);
     if (styleAttributes !== undefined && styleAttributes !== null) {
-      styleAttributes.split(this.#STYLECLASS_SEP).forEach((attrib) => {
+      styleAttributes.split(STYLECLASS_SEP).forEach((attrib) => {
         // remove any trailing ;
         const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
 
         // replace some style keywords
-        if (RegExp(this.#COLOR_KEYWORD).exec(attrib)) {
-          const newStyle1 = fixedAttrib.replace(this.#FILL_KEYWORD, this.#BG_FILL);
-          const newStyle2 = newStyle1.replace(this.#COLOR_KEYWORD, this.#FILL_KEYWORD);
+        if (RegExp(COLOR_KEYWORD).exec(attrib)) {
+          const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
+          const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
           foundClass.textStyles.push(newStyle2);
         }
         foundClass.styles.push(fixedAttrib);
@@ -637,7 +588,7 @@ export class StateDB {
    * @returns {{} | any | classes}
    */
   getClasses() {
-    return this.#classes;
+    return this.classes;
   }
 
   /**
@@ -691,10 +642,10 @@ export class StateDB {
   }
 
   getDirection() {
-    return this.#direction;
+    return this.direction;
   }
   setDirection(dir) {
-    this.#direction = dir;
+    this.direction = dir;
   }
 
   trimColon(str) {
@@ -704,8 +655,8 @@ export class StateDB {
   getData() {
     const config = getConfig();
     return {
-      nodes: this.#nodes,
-      edges: this.#edges,
+      nodes: this.nodes,
+      edges: this.edges,
       other: {},
       config,
       direction: getDir(this.getRootDocV2()),
