@@ -70,6 +70,8 @@ export class FlowDB implements DiagramDB {
     this.setClickEvent = this.setClickEvent.bind(this);
     this.setTooltip = this.setTooltip.bind(this);
     this.updateLinkInterpolate = this.updateLinkInterpolate.bind(this);
+    this.setClickFun = this.setClickFun.bind(this);
+    this.bindFunctions = this.bindFunctions.bind(this);
 
     this.lex = {
       firstGraph: this.firstGraph.bind(this),
