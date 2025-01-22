@@ -9,6 +9,7 @@
 %x string
 %x token
 %x unqString
+%x style
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
@@ -72,6 +73,17 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "type"          return 'TYPE';
 "docref"        return 'DOCREF';
 
+"style"                         { this.begin("style"); return 'STYLE'; }
+<style>\w+                          return 'ALPHA';
+<style>":" return 'COLON';
+<style>";" return 'SEMICOLON';
+<style>"," return 'COMMA';
+<style>"%" return 'PERCENT';
+<style>"-" return 'MINUS';
+<style>"#" return 'BRKT';
+<style>" "                             /* skip spaces */
+<style>\n { this.popState(); }
+
 "<-"        return 'END_ARROW_L';
 "->"        {return 'END_ARROW_R';}
 "-"         {return 'LINE';}
@@ -81,6 +93,9 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <string>[^"]*       { return "qString"; }
 
 [\w][^\r\n\{\<\>\-\=]*                { yytext = yytext.trim(); return 'unqString';}
+
+<*>\w+                          return 'ALPHA';
+<*>[0-9]+                       return 'NUM';
 
 /lex
 
@@ -106,7 +121,9 @@ diagram
   | relationshipDef diagram
   | directive diagram
   | direction diagram
-  | NEWLINE diagram;
+  | styleStatement diagram
+  | NEWLINE diagram
+  ;
 
 direction
     : direction_tb
@@ -197,6 +214,22 @@ relationship
       { $$=yy.Relationships.REFINES;}
   | TRACES
       { $$=yy.Relationships.TRACES;};
+
+styleStatement
+  : STYLE ALPHA stylesOpt                              {$$ = $STYLE;yy.setCssStyle($2,$stylesOpt);}
+  ;
+
+stylesOpt
+    : style {$$ = [$style]}
+    | stylesOpt COMMA style {$stylesOpt.push($style);$$ = $stylesOpt;}
+    ;
+
+style
+    : styleComponent
+    | style styleComponent  {$$ = $style + $styleComponent;}
+    ;
+
+styleComponent: ALPHA | NUM | COLON | UNIT | SPACE | BRKT | PCT | MINUS | LABEL | SEMICOLON;
 
 
 requirementName: unqString | qString;

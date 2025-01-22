@@ -66,12 +66,14 @@ const getInitialRequirement = (): Requirement => ({
   verifyMethod: VerifyType.VERIFY_ANALYSIS as VerifyType,
   name: '',
   type: RequirementType.REQUIREMENT as RequirementType,
+  cssStyles: [],
 });
 
 const getInitialElement = (): Element => ({
   name: '',
   type: '',
   docRef: '',
+  cssStyles: [],
 });
 
 // Update initial declarations
@@ -99,6 +101,7 @@ const addRequirement = (name: string, type: RequirementType) => {
       text: latestRequirement.text,
       risk: latestRequirement.risk,
       verifyMethod: latestRequirement.verifyMethod,
+      cssStyles: [],
     });
   }
   resetLatestRequirement();
@@ -138,6 +141,7 @@ const addElement = (name: string) => {
       name,
       type: latestElement.type,
       docRef: latestElement.docRef,
+      cssStyles: [],
     });
     log.info('Added new element: ', name);
   }
@@ -177,6 +181,20 @@ const clear = () => {
   resetLatestElement();
   elements = new Map();
   commonClear();
+};
+
+export const setCssStyle = function (id: string, styles: string[]) {
+  const node = requirements.get(id) ?? elements.get(id);
+  if (!styles || !node) {
+    return;
+  }
+  for (const s of styles) {
+    if (s.includes(',')) {
+      node.cssStyles.push(...s.split(','));
+    } else {
+      node.cssStyles.push(s);
+    }
+  }
 };
 
 const getData = () => {
@@ -251,5 +269,6 @@ export default {
   addRelationship,
   getRelationships,
   clear,
+  setCssStyle,
   getData,
 };

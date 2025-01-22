@@ -1,7 +1,7 @@
 import { updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
-import { userNodeOverrides } from './handDrawnShapeStyles.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import { calculateTextWidth, decodeEntities } from '../../../utils.js';
@@ -14,12 +14,14 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
 ) {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
   const requirementNode = node as unknown as Requirement;
   const elementNode = node as unknown as Element;
   const config = getConfig().requirement;
   const PADDING = 20;
   const GAP = 20;
-  const isRequirementNode = 'id' in node;
+  const isRequirementNode = 'verifyMethod' in node;
 
   // Add outer g element
   const shapeSvg = parent
@@ -29,36 +31,68 @@ export async function requirementBox<T extends SVGGraphicsElement>(
 
   let typeHeight;
   if (isRequirementNode) {
-    typeHeight = await addText(shapeSvg, `&lt;&lt;${requirementNode.type}&gt;&gt;`, 0);
+    typeHeight = await addText(
+      shapeSvg,
+      `&lt;&lt;${requirementNode.type}&gt;&gt;`,
+      0,
+      node.labelStyle
+    );
   } else {
-    typeHeight = await addText(shapeSvg, '&lt;&lt;Element&gt;&gt;', 0);
+    typeHeight = await addText(shapeSvg, '&lt;&lt;Element&gt;&gt;', 0, node.labelStyle);
   }
 
   let accumulativeHeight = typeHeight;
-  const nameHeight = await addText(shapeSvg, requirementNode.name, accumulativeHeight);
+  const nameHeight = await addText(
+    shapeSvg,
+    requirementNode.name,
+    accumulativeHeight,
+    node.labelStyle
+  );
   accumulativeHeight += nameHeight + GAP;
 
   // Requirement
   if (isRequirementNode) {
-    const idHeight = await addText(shapeSvg, `Id: ${requirementNode.id}`, accumulativeHeight);
+    const idHeight = await addText(
+      shapeSvg,
+      `Id: ${requirementNode.id}`,
+      accumulativeHeight,
+      node.labelStyle
+    );
     accumulativeHeight += idHeight;
-    const textHeight = await addText(shapeSvg, `Text: ${requirementNode.text}`, accumulativeHeight);
+    const textHeight = await addText(
+      shapeSvg,
+      `Text: ${requirementNode.text}`,
+      accumulativeHeight,
+      node.labelStyle
+    );
     accumulativeHeight += textHeight;
-    const riskHeight = await addText(shapeSvg, `Risk: ${requirementNode.risk}`, accumulativeHeight);
+    const riskHeight = await addText(
+      shapeSvg,
+      `Risk: ${requirementNode.risk}`,
+      accumulativeHeight,
+      node.labelStyle
+    );
     accumulativeHeight += riskHeight;
-    await addText(shapeSvg, `Verification: ${requirementNode.verifyMethod}`, accumulativeHeight);
+    await addText(
+      shapeSvg,
+      `Verification: ${requirementNode.verifyMethod}`,
+      accumulativeHeight,
+      node.labelStyle
+    );
   } else {
     // Element
     const typeHeight = await addText(
       shapeSvg,
       `Type: ${elementNode.type ? elementNode.type : 'Not specified'}`,
-      accumulativeHeight
+      accumulativeHeight,
+      node.labelStyle
     );
     accumulativeHeight += typeHeight;
     await addText(
       shapeSvg,
       `Doc Ref: ${elementNode.docRef ? elementNode.docRef : 'None'}`,
-      accumulativeHeight
+      accumulativeHeight,
+      node.labelStyle
     );
   }
 
@@ -84,7 +118,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const roughRect = rc.rectangle(x, y, totalWidth, totalHeight, options);
 
   const rect = shapeSvg.insert(() => roughRect, ':first-child');
-  rect.attr('class', 'basic label-container');
+  rect.attr('class', 'basic label-container').attr('style', nodeStyles);
 
   // Re-translate labels now that rect is centered
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -123,7 +157,8 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     y + typeHeight + nameHeight + GAP,
     options
   );
-  shapeSvg.insert(() => roughLine);
+  const dividerLine = shapeSvg.insert(() => roughLine);
+  dividerLine.attr('style', nodeStyles);
 
   updateNodeBounds(node, rect);
 
@@ -138,9 +173,9 @@ async function addText<T extends SVGGraphicsElement>(
   parentGroup: D3Selection<T>,
   inputText: string,
   yOffset: number,
-  styles: string[] = []
+  style = ''
 ) {
-  const textEl = parentGroup.insert('g').attr('class', 'label').attr('style', styles.join('; '));
+  const textEl = parentGroup.insert('g').attr('class', 'label').attr('style', style);
   const config = getConfig();
   const useHtmlLabels = config.htmlLabels ?? true;
 
@@ -151,6 +186,7 @@ async function addText<T extends SVGGraphicsElement>(
       width: calculateTextWidth(inputText, config) + 50, // Add room for error when splitting text into multiple lines
       classes: 'markdown-node-label',
       useHtmlLabels,
+      style,
     },
     config
   );

@@ -17,6 +17,7 @@ export interface Requirement {
   text: string;
   risk: RiskLevel;
   verifyMethod: VerifyType;
+  cssStyles: string[];
 }
 
 export type RelationshipType =
@@ -38,4 +39,5 @@ export interface Element {
   name: string;
   type: string;
   docRef: string;
+  cssStyles: string[];
 }
