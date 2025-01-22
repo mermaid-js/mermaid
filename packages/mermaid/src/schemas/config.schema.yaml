@@ -288,6 +288,8 @@ properties:
     $ref: '#/$defs/C4DiagramConfig'
   sankey:
     $ref: '#/$defs/SankeyDiagramConfig'
+  usecase:
+    $ref: '#/$defs/UsecaseDiagramConfig'
   packet:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
@@ -2150,6 +2152,11 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           The suffix to use for values
         type: string
         default: ''
+
+  UsecaseDiagramConfig:
+    title: Usecase Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    type: object
 
   PacketDiagramConfig:
     title: Packet Diagram Config

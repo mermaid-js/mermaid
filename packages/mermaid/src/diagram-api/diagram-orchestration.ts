@@ -21,6 +21,7 @@ import timeline from '../diagrams/timeline/detector.js';
 import mindmap from '../diagrams/mindmap/detector.js';
 import kanban from '../diagrams/kanban/detector.js';
 import sankey from '../diagrams/sankey/sankeyDetector.js';
+import usecase from '../diagrams/usecase/usecaseDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
@@ -91,6 +92,7 @@ export const addDiagrams = () => {
     journey,
     quadrantChart,
     sankey,
+    usecase,
     packet,
     xychart,
     block,

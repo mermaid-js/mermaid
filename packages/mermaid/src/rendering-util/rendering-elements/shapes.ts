@@ -1,6 +1,7 @@
 import type { Entries } from 'type-fest';
 import type { D3Selection, MaybePromise } from '../../types.js';
 import type { Node, ShapeRenderOptions } from '../types.js';
+import { actor } from './shapes/actor.js';
 import { anchor } from './shapes/anchor.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
 import { card } from './shapes/card.js';
@@ -54,6 +55,7 @@ import { tiltedCylinder } from './shapes/tiltedCylinder.js';
 import { trapezoid } from './shapes/trapezoid.js';
 import { trapezoidalPentagon } from './shapes/trapezoidalPentagon.js';
 import { triangle } from './shapes/triangle.js';
+import { ellipse } from './shapes/ellipse.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
@@ -74,15 +76,23 @@ export interface ShapeDefinition {
   /**
    * Aliases can include descriptive names, other short names, etc.
    */
-  aliases?: string[];
+  readonly aliases?: string[];
   /**
    * These are names used by mermaid before the introduction of new shapes. These will not be in standard formats, and shouldn't be used by the users
    */
-  internalAliases?: string[];
+  readonly internalAliases?: string[];
   handler: ShapeHandler;
 }
 
 export const shapesDefs = [
+  {
+    semanticName: 'Actor',
+    name: 'Actor',
+    shortName: 'actor',
+    description: 'Actor used in Use Cases',
+    handler: actor,
+    aliases: ['stickman'],
+  },
   {
     semanticName: 'Process',
     name: 'Rectangle',
@@ -426,6 +436,14 @@ export const shapesDefs = [
     handler: taggedRect,
   },
   {
+    semanticName: 'Ellipse',
+    name: 'Ellipse',
+    shortName: 'ellipse',
+    description: 'Ellipse',
+    aliases: ['use-case'],
+    handler: ellipse,
+  },
+  {
     semanticName: 'Paper Tape',
     name: 'Flag',
     shortName: 'flag',
@@ -449,7 +467,7 @@ export const shapesDefs = [
     aliases: ['lined-document'],
     handler: linedWaveEdgedRect,
   },
-] as const satisfies ShapeDefinition[];
+] as const;
 
 const generateShapeMap = () => {
   // These are the shapes that didn't have documentation present
@@ -478,13 +496,15 @@ const generateShapeMap = () => {
     classBox,
   } as const;
 
+  const emptyArray = [] as const;
+
   const entries = [
     ...(Object.entries(undocumentedShapes) as Entries<typeof undocumentedShapes>),
     ...shapesDefs.flatMap((shape) => {
       const aliases = [
         shape.shortName,
-        ...('aliases' in shape ? shape.aliases : []),
-        ...('internalAliases' in shape ? shape.internalAliases : []),
+        ...('aliases' in shape ? (shape.aliases ?? emptyArray) : emptyArray),
+        ...('internalAliases' in shape ? (shape.internalAliases ?? emptyArray) : emptyArray),
       ];
       return aliases.map((alias) => [alias, shape.handler] as const);
     }),
