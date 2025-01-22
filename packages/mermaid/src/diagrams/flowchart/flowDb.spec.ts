@@ -65,3 +65,36 @@ describe('flow db addClass', () => {
     expect(classes.get('a')?.styles).toEqual(['stroke-width: 8px']);
   });
 });
+
+describe('flow db getData', () => {
+  beforeEach(() => {
+    flowDb.clear();
+  });
+  it('should end in point for for single directional arrows', () => {
+    flowDb.addLink(['A'], ['B'], { type: 'arrow_point' });
+
+    const { edges } = flowDb.getData();
+
+    expect(edges.length).toBe(1);
+    expect(edges[0].arrowTypeStart).toBe('none');
+    expect(edges[0].arrowTypeEnd).toBe('arrow_point');
+  });
+  it('should start and end in points for multi directional arrows', () => {
+    flowDb.addLink(['A'], ['B'], { type: 'double_arrow_point' });
+
+    const { edges } = flowDb.getData();
+
+    expect(edges.length).toBe(1);
+    expect(edges[0].arrowTypeStart).toBe('arrow_point');
+    expect(edges[0].arrowTypeEnd).toBe('arrow_point');
+  });
+  it('should have no points for open arrows', () => {
+    flowDb.addLink(['A'], ['B'], { type: 'arrow_open' });
+
+    const { edges } = flowDb.getData();
+
+    expect(edges.length).toBe(1);
+    expect(edges[0].arrowTypeStart).toBe('none');
+    expect(edges[0].arrowTypeEnd).toBe('none');
+  });
+});
