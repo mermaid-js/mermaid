@@ -1,7 +1,7 @@
-import { log } from '../logger.js';
 import type { ExtendedIconifyIcon, IconifyIcon, IconifyJSON } from '@iconify/types';
 import type { IconifyIconCustomisations } from '@iconify/utils';
 import { getIconData, iconToHTML, iconToSVG, replaceIDs, stringToIcon } from '@iconify/utils';
+import { log } from '../logger.js';
 
 interface AsyncIconLoader {
   name: string;
@@ -13,7 +13,12 @@ interface SyncIconLoader {
   icons: IconifyJSON;
 }
 
-export type IconLoader = AsyncIconLoader | SyncIconLoader;
+interface UrlIconLoader {
+  name: string;
+  url: string;
+}
+
+export type IconLoader = AsyncIconLoader | SyncIconLoader | UrlIconLoader;
 
 export const unknownIcon: IconifyIcon = {
   body: '<g><rect width="80" height="80" style="fill: #087ebf; stroke-width: 0px;"/><text transform="translate(21.16 64.67)" style="fill: #fff; font-family: ArialMT, Arial; font-size: 67.75px;"><tspan x="0" y="0">?</tspan></text></g>',
@@ -36,6 +41,9 @@ export const registerIconPacks = (iconLoaders: IconLoader[]) => {
       loaderStore.set(iconLoader.name, iconLoader.loader);
     } else if ('icons' in iconLoader) {
       iconsStore.set(iconLoader.name, iconLoader.icons);
+    } else if ('url' in iconLoader) {
+      loaderStore.set(iconLoader.name, () =>
+        fetch(iconLoader.url).then((res) => res.json()))
     } else {
       log.error('Invalid icon loader:', iconLoader);
       throw new Error('Invalid icon loader. Must have either "icons" or "loader" property.');
