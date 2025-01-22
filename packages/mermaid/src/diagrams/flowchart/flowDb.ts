@@ -94,10 +94,10 @@ export const addVertex = function (
   const edge = edges.find((e) => e.id === id);
   if (edge) {
     const edgeDoc = doc as EdgeMetaData;
-    if (edgeDoc?.animate) {
+    if (edgeDoc?.animate !== undefined) {
       edge.animate = edgeDoc.animate;
     }
-    if (edgeDoc?.animation) {
+    if (edgeDoc?.animation !== undefined) {
       edge.animation = edgeDoc.animation;
     }
     return;

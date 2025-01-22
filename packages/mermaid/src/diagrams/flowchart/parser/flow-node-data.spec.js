@@ -378,6 +378,28 @@ describe('when parsing directions', function () {
     expect(data4Layout.edges[5].id).toEqual('L_A1_D1_0');
   });
 
+  it('should handle overriding edge animate again', function () {
+    const res = flow.parser.parse(`flowchart TD
+     A e1@--> B
+     C e2@--> D
+     E e3@--> F
+    e1@{ animate: true }
+    e2@{ animate: false }
+    e3@{ animate: true }
+    e3@{ animate: false }
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(6);
+    expect(data4Layout.edges.length).toBe(3);
+    expect(data4Layout.edges[0].id).toEqual('e1');
+    expect(data4Layout.edges[0].animate).toEqual(true);
+    expect(data4Layout.edges[1].id).toEqual('e2');
+    expect(data4Layout.edges[1].animate).toEqual(false);
+    expect(data4Layout.edges[2].id).toEqual('e3');
+    expect(data4Layout.edges[2].animate).toEqual(false);
+  });
+
   it.skip('should be possible to use @  syntax to add labels with trail spaces', function () {
     const res = flow.parser.parse(
       `flowchart TB
