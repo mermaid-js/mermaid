@@ -94,10 +94,10 @@ export const addVertex = function (
   const edge = edges.find((e) => e.id === id);
   if (edge) {
     const edgeDoc = doc as EdgeMetaData;
-    if (edgeDoc?.animate) {
+    if (edgeDoc?.animate !== undefined) {
       edge.animate = edgeDoc.animate;
     }
-    if (edgeDoc?.animation) {
+    if (edgeDoc?.animation !== undefined) {
       edge.animation = edgeDoc.animation;
     }
     return;
@@ -212,6 +212,7 @@ export const addSingleLink = function (_start: string, _end: string, type: any, 
     text: '',
     labelType: 'text',
     classes: [],
+    isUserDefinedId: false,
   };
   log.info('abc78 Got edge...', edge);
   const linkTextObj = type.text;
@@ -231,8 +232,17 @@ export const addSingleLink = function (_start: string, _end: string, type: any, 
     edge.stroke = type.stroke;
     edge.length = type.length > 10 ? 10 : type.length;
   }
-  if (id) {
+
+  if (id && !edges.some((e) => e.id === id)) {
     edge.id = id;
+    edge.isUserDefinedId = true;
+  } else {
+    const existingLinks = edges.filter((e) => e.start === edge.start && e.end === edge.end);
+    if (existingLinks.length === 0) {
+      edge.id = getEdgeId(edge.start, edge.end, { counter: 0, prefix: 'L' });
+    } else {
+      edge.id = getEdgeId(edge.start, edge.end, { counter: existingLinks.length + 1, prefix: 'L' });
+    }
   }
 
   if (edges.length < (config.maxEdges ?? 500)) {
@@ -267,9 +277,18 @@ export const addLink = function (_start: string[], _end: string[], linkData: unk
 
   log.info('addLink', _start, _end, id);
 
+  // for a group syntax like A e1@--> B & C, only the first edge should have an the userDefined id
+  // the rest of the edges should have auto generated ids
   for (const start of _start) {
     for (const end of _end) {
-      addSingleLink(start, end, linkData, id);
+      //use the id only for last node in _start and and first node in _end
+      const isLastStart = start === _start[_start.length - 1];
+      const isFirstEnd = end === _end[0];
+      if (isLastStart && isFirstEnd) {
+        addSingleLink(start, end, linkData, id);
+      } else {
+        addSingleLink(start, end, linkData, undefined);
+      }
     }
   }
 };
@@ -1045,6 +1064,7 @@ export const getData = () => {
     }
     const edge: Edge = {
       id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
+      isUserDefinedId: rawEdge.isUserDefinedId,
       start: rawEdge.start,
       end: rawEdge.end,
       type: rawEdge.type ?? 'normal',

@@ -251,7 +251,7 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].shape).toEqual('squareRect');
     expect(data4Layout.nodes[0].label).toEqual('This is a<br/>multiline string');
   });
-  it(' should be possible to use } in strings', function () {
+  it('should be possible to use } in strings', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
         label: "This is a string with }"
@@ -264,7 +264,7 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].shape).toEqual('squareRect');
     expect(data4Layout.nodes[0].label).toEqual('This is a string with }');
   });
-  it(' should be possible to use @ in strings', function () {
+  it('should be possible to use @ in strings', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
         label: "This is a string with @"
@@ -277,7 +277,7 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].shape).toEqual('squareRect');
     expect(data4Layout.nodes[0].label).toEqual('This is a string with @');
   });
-  it(' should be possible to use @ in strings', function () {
+  it('should be possible to use @ in strings', function () {
     const res = flow.parser.parse(`flowchart TB
       A@{
         label: "This is a string with}"
@@ -291,7 +291,7 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].label).toEqual('This is a string with}');
   });
 
-  it(' should be possible to use @  syntax to add labels on multi nodes', function () {
+  it('should be possible to use @  syntax to add labels on multi nodes', function () {
     const res = flow.parser.parse(`flowchart TB
        n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"}
       `);
@@ -343,7 +343,64 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[9].label).toEqual('@for@ AS@');
     expect(data4Layout.nodes[10].label).toEqual('@for@ AS@');
   });
-  it.skip(' should be possible to use @  syntax to add labels with trail spaces', function () {
+
+  it('should handle unique edge creation with using @ and &', function () {
+    const res = flow.parser.parse(`flowchart TD
+     A & B e1@--> C & D
+        A1 e2@--> C1 & D1
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(7);
+    expect(data4Layout.edges.length).toBe(6);
+    expect(data4Layout.edges[0].id).toEqual('L_A_C_0');
+    expect(data4Layout.edges[1].id).toEqual('L_A_D_0');
+    expect(data4Layout.edges[2].id).toEqual('e1');
+    expect(data4Layout.edges[3].id).toEqual('L_B_D_0');
+    expect(data4Layout.edges[4].id).toEqual('e2');
+    expect(data4Layout.edges[5].id).toEqual('L_A1_D1_0');
+  });
+
+  it('should handle redefine same edge ids again', function () {
+    const res = flow.parser.parse(`flowchart TD
+     A & B e1@--> C & D
+        A1 e1@--> C1 & D1
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(7);
+    expect(data4Layout.edges.length).toBe(6);
+    expect(data4Layout.edges[0].id).toEqual('L_A_C_0');
+    expect(data4Layout.edges[1].id).toEqual('L_A_D_0');
+    expect(data4Layout.edges[2].id).toEqual('e1');
+    expect(data4Layout.edges[3].id).toEqual('L_B_D_0');
+    expect(data4Layout.edges[4].id).toEqual('L_A1_C1_0');
+    expect(data4Layout.edges[5].id).toEqual('L_A1_D1_0');
+  });
+
+  it('should handle overriding edge animate again', function () {
+    const res = flow.parser.parse(`flowchart TD
+     A e1@--> B
+     C e2@--> D
+     E e3@--> F
+    e1@{ animate: true }
+    e2@{ animate: false }
+    e3@{ animate: true }
+    e3@{ animate: false }
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(6);
+    expect(data4Layout.edges.length).toBe(3);
+    expect(data4Layout.edges[0].id).toEqual('e1');
+    expect(data4Layout.edges[0].animate).toEqual(true);
+    expect(data4Layout.edges[1].id).toEqual('e2');
+    expect(data4Layout.edges[1].animate).toEqual(false);
+    expect(data4Layout.edges[2].id).toEqual('e3');
+    expect(data4Layout.edges[2].animate).toEqual(false);
+  });
+
+  it.skip('should be possible to use @  syntax to add labels with trail spaces', function () {
     const res = flow.parser.parse(
       `flowchart TB
        n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"} `
