@@ -26,7 +26,7 @@ export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   // also check if the width or height is less than minimum default values (50),
   // if so set it to min value
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? 25 : 0;
+  const labelPaddingX = node.look === 'neo' ? 28 : 0;
   const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
   if (node.width || node.height) {
     node.width = Math.max((node?.width ?? 0) - (labelPaddingX ?? 0), 10);

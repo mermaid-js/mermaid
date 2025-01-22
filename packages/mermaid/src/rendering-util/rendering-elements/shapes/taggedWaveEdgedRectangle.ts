@@ -20,7 +20,7 @@ export async function taggedWaveEdgedRectangle<T extends SVGGraphicsElement>(
 
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? 13 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
 
   let adjustFinalHeight = true;
   if (node.width || node.height) {

@@ -30,7 +30,7 @@ export async function inv_trapezoid<T extends SVGGraphicsElement>(
 
   const nodePadding = node.padding ?? 0;
   const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
-  const labelPaddingX = node.look === 'neo' ? 19 : 0;
+  const labelPaddingX = node.look === 'neo' ? 9 : 0;
   if (node.width || node.height) {
     node.width = node?.width ?? 0;
     if (node.width < 10) {

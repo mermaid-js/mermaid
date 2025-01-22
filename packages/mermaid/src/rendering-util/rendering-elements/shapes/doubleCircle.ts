@@ -12,7 +12,7 @@ export async function doublecircle<T extends SVGGraphicsElement>(
   node: Node
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
-  const gap = 5;
+  const gap = 12;
   node.labelStyle = labelStyles;
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account

@@ -19,7 +19,7 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? 21 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 20 : nodePadding;
 
   if (node.width || node.height) {
     node.width = node?.width ?? 0;

@@ -59,7 +59,7 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
 
   const nodePadding = node.padding ?? 0;
   const labelPaddingX = node.look === 'neo' ? 24 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
 
   if (node.width || node.height) {
     const originalWidth = node.width ?? 0;
@@ -130,7 +130,7 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
 
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + (node.padding ?? 0) / 1.5 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + (nodePadding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   node.intersect = function (point) {

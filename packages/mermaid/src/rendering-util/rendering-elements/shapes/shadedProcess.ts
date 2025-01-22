@@ -17,7 +17,7 @@ export async function shadedProcess<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
 
   const paddingX = node.look === 'neo' ? 16 : (node.padding ?? 0);
-  const paddingY = node.look === 'neo' ? 13 : (node.padding ?? 0);
+  const paddingY = node.look === 'neo' ? 12 : (node.padding ?? 0);
 
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account
