@@ -232,17 +232,16 @@ export const addSingleLink = function (_start: string, _end: string, type: any, 
     edge.stroke = type.stroke;
     edge.length = type.length > 10 ? 10 : type.length;
   }
-  if (id) {
+
+  if (id && !edges.some((e) => e.id === id)) {
     edge.id = id;
     edge.isUserDefinedId = true;
   } else {
     const existingLinks = edges.filter((e) => e.start === edge.start && e.end === edge.end);
     if (existingLinks.length === 0) {
       edge.id = getEdgeId(edge.start, edge.end, { counter: 0, prefix: 'L' });
-      //edge.id = `${edge.start}-${edge.end}-${edge.length}`;
     } else {
       edge.id = getEdgeId(edge.start, edge.end, { counter: existingLinks.length + 1, prefix: 'L' });
-      //edge.id = `${edge.start}-${edge.end}-${existingLinks.length + 1}`;
     }
   }
 
@@ -280,11 +279,16 @@ export const addLink = function (_start: string[], _end: string[], linkData: unk
 
   // for a group syntax like A e1@--> B & C, only the first edge should have an the userDefined id
   // the rest of the edges should have auto generated ids
-  let isEdgeConsumed = false;
   for (const start of _start) {
     for (const end of _end) {
-      addSingleLink(start, end, linkData, !isEdgeConsumed ? id : undefined);
-      isEdgeConsumed = true;
+      //use the id only for last node in _start and and first node in _end
+      const isLastStart = start === _start[_start.length - 1];
+      const isFirstEnd = end === _end[0];
+      if (isLastStart && isFirstEnd) {
+        addSingleLink(start, end, linkData, id);
+      } else {
+        addSingleLink(start, end, linkData, undefined);
+      }
     }
   }
 };
