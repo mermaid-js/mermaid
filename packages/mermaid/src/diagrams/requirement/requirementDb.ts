@@ -16,6 +16,7 @@ import type {
   Relation,
   RelationshipType,
   Requirement,
+  RequirementClass,
   RequirementType,
   RiskLevel,
   VerifyType,
@@ -67,6 +68,7 @@ const getInitialRequirement = (): Requirement => ({
   name: '',
   type: RequirementType.REQUIREMENT as RequirementType,
   cssStyles: [],
+  classes: ['default'],
 });
 
 const getInitialElement = (): Element => ({
@@ -74,6 +76,7 @@ const getInitialElement = (): Element => ({
   type: '',
   docRef: '',
   cssStyles: [],
+  classes: ['default'],
 });
 
 // Update initial declarations
@@ -82,6 +85,7 @@ let latestRequirement: Requirement = getInitialRequirement();
 let requirements = new Map<string, Requirement>();
 let latestElement: Element = getInitialElement();
 let elements = new Map<string, Element>();
+let classes = new Map<string, RequirementClass>();
 
 // Add reset functions
 const resetLatestRequirement = () => {
@@ -102,6 +106,7 @@ const addRequirement = (name: string, type: RequirementType) => {
       risk: latestRequirement.risk,
       verifyMethod: latestRequirement.verifyMethod,
       cssStyles: [],
+      classes: ['default'],
     });
   }
   resetLatestRequirement();
@@ -142,6 +147,7 @@ const addElement = (name: string) => {
       type: latestElement.type,
       docRef: latestElement.docRef,
       cssStyles: [],
+      classes: ['default'],
     });
     log.info('Added new element: ', name);
   }
@@ -180,21 +186,74 @@ const clear = () => {
   requirements = new Map();
   resetLatestElement();
   elements = new Map();
+  classes = new Map();
   commonClear();
 };
 
-export const setCssStyle = function (id: string, styles: string[]) {
-  const node = requirements.get(id) ?? elements.get(id);
-  if (!styles || !node) {
-    return;
-  }
-  for (const s of styles) {
-    if (s.includes(',')) {
-      node.cssStyles.push(...s.split(','));
-    } else {
-      node.cssStyles.push(s);
+export const setCssStyle = function (ids: string[], styles: string[]) {
+  for (const id of ids) {
+    const node = requirements.get(id) ?? elements.get(id);
+    if (!styles || !node) {
+      return;
+    }
+    for (const s of styles) {
+      if (s.includes(',')) {
+        node.cssStyles.push(...s.split(','));
+      } else {
+        node.cssStyles.push(s);
+      }
     }
   }
+};
+
+export const setClass = function (ids: string[], classNames: string[]) {
+  for (const id of ids) {
+    const node = requirements.get(id) ?? elements.get(id);
+    if (node) {
+      for (const _class of classNames) {
+        node.classes.push(_class);
+        const styles = classes.get(_class)?.styles;
+        if (styles) {
+          node.cssStyles.push(...styles);
+        }
+      }
+    }
+  }
+};
+
+export const defineClass = function (ids: string[], style: string[]) {
+  for (const id of ids) {
+    let styleClass = classes.get(id);
+    if (styleClass === undefined) {
+      styleClass = { id, styles: [], textStyles: [] };
+      classes.set(id, styleClass);
+    }
+
+    if (style) {
+      style.forEach(function (s) {
+        if (/color/.exec(s)) {
+          const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
+          styleClass.textStyles.push(newStyle);
+        }
+        styleClass.styles.push(s);
+      });
+    }
+
+    requirements.forEach((value) => {
+      if (value.classes.includes(id)) {
+        value.cssStyles.push(...style.flatMap((s) => s.split(',')));
+      }
+    });
+    elements.forEach((value) => {
+      if (value.classes.includes(id)) {
+        value.cssStyles.push(...style.flatMap((s) => s.split(',')));
+      }
+    });
+  }
+};
+
+export const getClasses = () => {
+  return classes;
 };
 
 const getData = () => {
@@ -203,6 +262,8 @@ const getData = () => {
   const edges: Edge[] = [];
   for (const requirement of requirements.values()) {
     const node = requirement as unknown as Node;
+    node.cssStyles = requirement.cssStyles;
+    node.cssClasses = requirement.classes.join(' ');
     node.shape = 'requirementBox';
     node.look = config.look;
     nodes.push(node);
@@ -213,6 +274,8 @@ const getData = () => {
     node.shape = 'requirementBox';
     node.look = config.look;
     node.id = element.name;
+    node.cssStyles = element.cssStyles;
+    node.cssClasses = element.classes.join(' ');
 
     nodes.push(node);
   }
@@ -270,5 +333,8 @@ export default {
   getRelationships,
   clear,
   setCssStyle,
+  setClass,
+  defineClass,
+  getClasses,
   getData,
 };

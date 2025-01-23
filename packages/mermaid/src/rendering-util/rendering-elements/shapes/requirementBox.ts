@@ -1,4 +1,4 @@
-import { updateNodeBounds } from './util.js';
+import { getNodeClasses, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
@@ -22,11 +22,12 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const PADDING = 20;
   const GAP = 20;
   const isRequirementNode = 'verifyMethod' in node;
+  const classes = getNodeClasses(node);
 
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
-    .attr('class', '')
+    .attr('class', classes)
     .attr('id', node.domId ?? node.id);
 
   let typeHeight;

@@ -37,6 +37,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 "{"                         return 'STRUCT_START';
 "}"                         return 'STRUCT_STOP';
+":"{3}                       return 'STYLE_SEPARATOR';
 ":"                         return 'COLONSEP';
 
 "id"                        return 'ID';
@@ -77,12 +78,15 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <style>\w+                          return 'ALPHA';
 <style>":" return 'COLON';
 <style>";" return 'SEMICOLON';
-<style>"," return 'COMMA';
 <style>"%" return 'PERCENT';
 <style>"-" return 'MINUS';
 <style>"#" return 'BRKT';
 <style>" "                             /* skip spaces */
+<style>["] { this.begin("string"); }
 <style>\n { this.popState(); }
+
+"classDef" { this.begin("style"); return 'CLASSDEF'; }
+"class" { this.begin("style"); return 'CLASS'; }
 
 "<-"        return 'END_ARROW_L';
 "->"        {return 'END_ARROW_R';}
@@ -92,10 +96,11 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <string>["]         { this.popState(); }
 <string>[^"]*       { return "qString"; }
 
-[\w][^\r\n\{\<\>\-\=]*                { yytext = yytext.trim(); return 'unqString';}
+[\w][^:,\r\n\{\<\>\-\=]*                { yytext = yytext.trim(); return 'unqString';}
 
 <*>\w+                          return 'ALPHA';
 <*>[0-9]+                       return 'NUM';
+<*>","                             return 'COMMA';
 
 /lex
 
@@ -122,6 +127,8 @@ diagram
   | directive diagram
   | direction diagram
   | styleStatement diagram
+  | classDefStatement diagram
+  | classStatement diagram
   | NEWLINE diagram
   ;
 
@@ -137,8 +144,9 @@ direction
     ;
 
 requirementDef
-  : requirementType requirementName STRUCT_START NEWLINE requirementBody
-    { yy.addRequirement($2, $1) };
+  : requirementType requirementName STRUCT_START NEWLINE requirementBody { yy.addRequirement($2, $1) }
+  | requirementType requirementName STYLE_SEPARATOR idList STRUCT_START NEWLINE requirementBody { yy.addRequirement($2, $1); yy.setClass([$2], $4); }
+  ;
 
 requirementBody
   : ID COLONSEP id NEWLINE requirementBody
@@ -182,8 +190,9 @@ verifyType
     { $$=yy.VerifyType.VERIFY_TEST;};
 
 elementDef
-  : ELEMENT elementName STRUCT_START NEWLINE elementBody
-    { yy.addElement($2) };
+  : ELEMENT elementName STRUCT_START NEWLINE elementBody { yy.addElement($2) }
+  | ELEMENT elementName STYLE_SEPARATOR idList STRUCT_START NEWLINE elementBody { yy.addElement($2); yy.setClass([$2], $4); }
+  ;
 
 elementBody
   : TYPE COLONSEP type NEWLINE elementBody
@@ -215,8 +224,24 @@ relationship
   | TRACES
       { $$=yy.Relationships.TRACES;};
 
+classDefStatement
+  : CLASSDEF idList stylesOpt {$$ = $CLASSDEF;yy.defineClass($idList,$stylesOpt);}
+  ;
+
+classStatement
+    : CLASS idList idList                            {yy.setClass($2, $3);}
+    | id STYLE_SEPARATOR idList {yy.setClass([$1], $3);}
+    ;
+
+idList
+    : ALPHA { $$ = [$ALPHA]; }
+    | idList COMMA ALPHA = { $$ = $idList.concat([$ALPHA]); }
+    | id { $$ = [$id]; }
+    | idList COMMA id = { $$ = $idList.concat([$id]); }
+    ;
+
 styleStatement
-  : STYLE ALPHA stylesOpt                              {$$ = $STYLE;yy.setCssStyle($2,$stylesOpt);}
+  : STYLE idList stylesOpt                              {$$ = $STYLE;yy.setCssStyle($2,$stylesOpt);}
   ;
 
 stylesOpt
