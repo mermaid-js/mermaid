@@ -186,7 +186,9 @@ export const positionEdgeLabel = (edge, paths) => {
         }
       }
       const verticalOffset = edgeLength > 200 ? -140 : 0;
+      // const horizontalOffset = edgeLength > 200 ? -200 : 0;
       y += verticalOffset;
+      // x += horizontalOffset;
     }
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
     log.debug(`Updated label transform for edge ${edge.id}: translate(${x}, ${y})`);
