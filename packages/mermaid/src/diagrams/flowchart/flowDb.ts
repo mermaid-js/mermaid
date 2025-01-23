@@ -1097,6 +1097,7 @@ You have to call mermaid.initialize.`
       if (rawEdge.style) {
         styles.push(...rawEdge.style);
       }
+
       const edge: Edge = {
         id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
         isUserDefinedId: rawEdge.isUserDefinedId,
@@ -1123,6 +1124,8 @@ You have to call mermaid.initialize.`
         style: styles,
         pattern: rawEdge.stroke,
         look: config.look,
+        curve: config.flowchart?.curve,
+        showPoints: config.flowchart?.edgeDebug,
         animate: rawEdge.animate,
         animation: rawEdge.animation,
       };
