@@ -55,28 +55,29 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   if (isRequirementNode) {
     const idHeight = await addText(
       shapeSvg,
-      `Id: ${requirementNode.id}`,
+      `${requirementNode.requirement_id ? `Id: ${requirementNode.requirement_id}` : ''}`,
       accumulativeHeight,
       node.labelStyle
     );
+
     accumulativeHeight += idHeight;
     const textHeight = await addText(
       shapeSvg,
-      `Text: ${requirementNode.text}`,
+      `${requirementNode.text ? `Text: ${requirementNode.text}` : ''}`,
       accumulativeHeight,
       node.labelStyle
     );
     accumulativeHeight += textHeight;
     const riskHeight = await addText(
       shapeSvg,
-      `Risk: ${requirementNode.risk}`,
+      `${requirementNode.risk ? `Risk: ${requirementNode.risk}` : ''}`,
       accumulativeHeight,
       node.labelStyle
     );
     accumulativeHeight += riskHeight;
     await addText(
       shapeSvg,
-      `Verification: ${requirementNode.verifyMethod}`,
+      `${requirementNode.verifyMethod ? `Verification: ${requirementNode.verifyMethod}` : ''}`,
       accumulativeHeight,
       node.labelStyle
     );
@@ -84,14 +85,14 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     // Element
     const typeHeight = await addText(
       shapeSvg,
-      `Type: ${elementNode.type ? elementNode.type : 'Not specified'}`,
+      `${elementNode.type ? `Type: ${elementNode.type}` : ''}`,
       accumulativeHeight,
       node.labelStyle
     );
     accumulativeHeight += typeHeight;
     await addText(
       shapeSvg,
-      `Doc Ref: ${elementNode.docRef ? elementNode.docRef : 'None'}`,
+      `${elementNode.docRef ? `Doc Ref: ${elementNode.docRef}` : ''}`,
       accumulativeHeight,
       node.labelStyle
     );
@@ -176,6 +177,9 @@ async function addText<T extends SVGGraphicsElement>(
   yOffset: number,
   style = ''
 ) {
+  if (inputText === '') {
+    return 0;
+  }
   const textEl = parentGroup.insert('g').attr('class', 'label').attr('style', style);
   const config = getConfig();
   const useHtmlLabels = config.htmlLabels ?? true;

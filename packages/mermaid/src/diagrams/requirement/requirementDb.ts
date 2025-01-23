@@ -61,12 +61,12 @@ const setDirection = (dir: string) => {
 };
 
 const getInitialRequirement = (): Requirement => ({
-  id: '',
+  requirement_id: '',
   text: '',
-  risk: RiskLevel.LOW_RISK as RiskLevel,
-  verifyMethod: VerifyType.VERIFY_ANALYSIS as VerifyType,
+  risk: '' as RiskLevel,
+  verifyMethod: '' as VerifyType,
   name: '',
-  type: RequirementType.REQUIREMENT as RequirementType,
+  type: '' as RequirementType,
   cssStyles: [],
   classes: ['default'],
 });
@@ -101,7 +101,7 @@ const addRequirement = (name: string, type: RequirementType) => {
     requirements.set(name, {
       name,
       type,
-      id: latestRequirement.id,
+      requirement_id: latestRequirement.requirement_id,
       text: latestRequirement.text,
       risk: latestRequirement.risk,
       verifyMethod: latestRequirement.verifyMethod,
@@ -118,7 +118,7 @@ const getRequirements = () => requirements;
 
 const setNewReqId = (id: string) => {
   if (latestRequirement !== undefined) {
-    latestRequirement.id = id;
+    latestRequirement.requirement_id = id;
   }
 };
 
@@ -262,6 +262,7 @@ const getData = () => {
   const edges: Edge[] = [];
   for (const requirement of requirements.values()) {
     const node = requirement as unknown as Node;
+    node.id = requirement.name;
     node.cssStyles = requirement.cssStyles;
     node.cssClasses = requirement.classes.join(' ');
     node.shape = 'requirementBox';
@@ -285,8 +286,8 @@ const getData = () => {
     const isContains = relation.type === Relationships.CONTAINS;
     const edge: Edge = {
       id: `${relation.src}-${relation.dst}-${counter}`,
-      start: requirements.get(relation.src)?.id ?? elements.get(relation.src)?.name,
-      end: requirements.get(relation.dst)?.id ?? elements.get(relation.dst)?.name,
+      start: requirements.get(relation.src)?.name ?? elements.get(relation.src)?.name,
+      end: requirements.get(relation.dst)?.name ?? elements.get(relation.dst)?.name,
       label: `&lt;&lt;${relation.type}&gt;&gt;`,
       classes: 'relationshipLine',
       style: ['fill:none', isContains ? '' : 'stroke-dasharray: 10,7'],
