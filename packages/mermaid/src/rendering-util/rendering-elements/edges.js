@@ -183,6 +183,8 @@ export const positionEdgeLabel = (edge, paths) => {
       if (Diagram['type'] == flowchart) {
         const direction = getDirection().flowchart;
         if (direction == 'TB' || direction == 'BT') {
+          //need to check if direction returns what I hope it does
+          console.log(direction);
         }
       }
       const verticalOffset = edgeLength > 200 ? -140 : 0;
