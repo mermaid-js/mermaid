@@ -62,6 +62,10 @@ export function stateStart<T extends SVGGraphicsElement>(
       .attr('height', node.height ?? 14);
   }
 
+  if (node.width < 25) {
+    circle.attr('style', 'filter:url(#drop-shadow-small)');
+  }
+
   updateNodeBounds(node, circle);
 
   node.intersect = function (point) {
