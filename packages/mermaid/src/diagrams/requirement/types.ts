@@ -13,7 +13,7 @@ export type VerifyType = 'Analysis' | 'Demonstration' | 'Inspection' | 'Test';
 export interface Requirement {
   name: string;
   type: RequirementType;
-  requirement_id: string;
+  requirementId: string;
   text: string;
   risk: RiskLevel;
   verifyMethod: VerifyType;

@@ -55,7 +55,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   if (isRequirementNode) {
     const idHeight = await addText(
       shapeSvg,
-      `${requirementNode.requirement_id ? `Id: ${requirementNode.requirement_id}` : ''}`,
+      `${requirementNode.requirementId ? `Id: ${requirementNode.requirementId}` : ''}`,
       accumulativeHeight,
       node.labelStyle
     );

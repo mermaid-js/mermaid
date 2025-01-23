@@ -61,7 +61,7 @@ const setDirection = (dir: string) => {
 };
 
 const getInitialRequirement = (): Requirement => ({
-  requirement_id: '',
+  requirementId: '',
   text: '',
   risk: '' as RiskLevel,
   verifyMethod: '' as VerifyType,
@@ -101,7 +101,7 @@ const addRequirement = (name: string, type: RequirementType) => {
     requirements.set(name, {
       name,
       type,
-      requirement_id: latestRequirement.requirement_id,
+      requirementId: latestRequirement.requirementId,
       text: latestRequirement.text,
       risk: latestRequirement.risk,
       verifyMethod: latestRequirement.verifyMethod,
@@ -118,7 +118,7 @@ const getRequirements = () => requirements;
 
 const setNewReqId = (id: string) => {
   if (latestRequirement !== undefined) {
-    latestRequirement.requirement_id = id;
+    latestRequirement.requirementId = id;
   }
 };
 
