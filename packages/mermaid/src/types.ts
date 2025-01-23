@@ -16,6 +16,11 @@ export interface NodeMetaData {
   ticket?: string;
 }
 
+export interface EdgeMetaData {
+  animation?: 'fast' | 'slow';
+  animate?: boolean;
+}
+
 export interface Point {
   x: number;
   y: number;

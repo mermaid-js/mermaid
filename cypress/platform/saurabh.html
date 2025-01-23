@@ -62,54 +62,23 @@
 
   <body style="display: flex; gap: 2rem; flex-direction: row">
     <pre id="diagram4" class="mermaid">
-      flowchart TD
-       B2@{ icon: "fa:bell", form: "square", label: "B2 agsyua duadu", pos: "b" }
+      flowchart
+          A --> A
+          subgraph B
+            B1 --> B1
+          end
+          subgraph C
+            subgraph C1
+              C2 --> C2
+              subgraph D
+                D1 --> D1
+              end
+              D --> D
+            end
+            C1 --> C1
+          end
+
     </pre>
-    <pre id="diagram4" class="mermaid">
-      flowchart TD
-        B2@{ icon: "logos:aws", form: "rounded", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }
-  </pre
-    >
-    <pre id="diagram4" class="mermaid">
-      flowchart TD
-        B2@{ icon: "fa:bell", form: "circle", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }
-  </pre
-    >
-    <pre id="diagram4" class="mermaid">
-      flowchart TD
-        B2@{ icon: "fa:bell", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }
-  </pre
-    >
-    <pre id="diagram43" class="mermaid2">
-      flowchart BT
-       A --test2--> B2@{ icon: "fa:bell", form: "square", label: "B2", pos: "t", h: 40, w: 30 }@
-       B2 --test--> C
-       D --> B2 --> E
-  </pre
-    >
-    <pre id="diagram4" class="mermaid2">
-      flowchart BT
-       A --test2--> B2@{ icon: "fa:bell", label: "B2 awiugdawu uydgayuiwd wuydguy", pos: "b", h: 40, w: 30 }@
-       B2 --test--> C
-  </pre
-    >
-    <pre id="diagram43" class="mermaid2">
-      flowchart BT
-       A --test2--> B2@{ icon: "fa:bell", label: "B2 dawuygd ayuwgd uy", pos: "t", h: 40, w: 30 }@
-       B2 --test--> C
-  </pre
-    >
-    <pre id="diagram6" class="mermaid2">
-      flowchart TB
-       A --> B2@{ icon: "fa:bell", form: "circle", label: "test augfuyfavf ydvaubfuac", pos: "t", w: 200, h: 100 }@ --> C
-  </pre
-    >
-    <pre id="diagram6" class="mermaid2">
-      flowchart TB
-       A --> B2@{ icon: "fa:bell", form: "circle", label: "test augfuyfavf ydvaubfuac", pos: "b", w: 200, h: 100 }@ --> C
-       D --> B2 --> E
-  </pre
-    >
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';
@@ -123,9 +92,7 @@
         {
           name: 'fa',
           loader: () =>
-            fetch('https://unpkg.com/@iconify-json/fa6-regular/icons.json').then((res) =>
-              res.json()
-            ),
+            fetch('https://unpkg.com/@iconify-json/fa6-solid/icons.json').then((res) => res.json()),
         },
       ]);
       mermaid.parseError = function (err, hash) {
@@ -137,7 +104,7 @@
       mermaid.initialize({
         // theme: 'base',
         // handdrawnSeed: 12,
-        // look: 'classic',
+        look: 'classic',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // 'elk.nodePlacement.strategy': 'SIMPLE',
         // 'elk.nodePlacement.strategy': 'LAYERED',
@@ -146,16 +113,19 @@
         // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
-        flowchart: { titleTopMargin: 10, htmlLabels: true },
+        flowchart: { titleTopMargin: 10, padding: 0, htmlLabels: true },
         // fontFamily: 'Caveat',
-        fontFamily: 'Kalam',
-        // fontFamily: 'courier',
+        // fontFamily: 'Kalam',
+        fontFamily: 'courier',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
           messageFontFamily: 'courier',
         },
-        fontSize: 12,
+        themeVariables: {
+          fontSize: 50,
+          fontFamily: 'courier',
+        },
         logLevel: 0,
         securityLevel: 'loose',
       });
