@@ -10,6 +10,7 @@ import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 import { isLabelStyle } from './shapes/handDrawnShapeStyles.js';
+import { getDirection } from '../../diagrams/git/gitGraphAst.js';
 
 const edgeLabels = new Map();
 const terminalLabels = new Map();
@@ -178,6 +179,12 @@ export const positionEdgeLabel = (edge, paths) => {
 
       const edgeLength = calculateEdgeLength(path);
       log.debug(`Edge Length for ${edge.id}:`, edgeLength);
+
+      if (Diagram['type'] == flowchart) {
+        const direction = getDirection().flowchart;
+        if (direction == 'TB' || direction == 'BT') {
+        }
+      }
       const verticalOffset = edgeLength > 200 ? -140 : 0;
       y += verticalOffset;
     }
