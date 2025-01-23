@@ -182,11 +182,18 @@ export const positionEdgeLabel = (edge, paths) => {
 
       if (Diagram['type'] == flowchart) {
         const direction = getDirection().flowchart;
+        console.log(direction);
         if (direction == 'TB' || direction == 'BT') {
           //need to check if direction returns what I hope it does
-          console.log(direction);
+        }
+        if (direction == 'LR' || direction == 'RL') {
+          //need to check if direction returns what I hope it does
         }
       }
+
+      //and then change the variable to offSet and put it at the top - around line 183
+      //then in the if statement adds the offSet either to the x or y
+      //i need to check that direction returns what i think though
       const verticalOffset = edgeLength > 200 ? -140 : 0;
       // const horizontalOffset = edgeLength > 200 ? -200 : 0;
       y += verticalOffset;
