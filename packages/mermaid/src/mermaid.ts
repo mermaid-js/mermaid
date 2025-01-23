@@ -461,4 +461,5 @@ export default mermaid;
 export {
   calcIntersections,
   calcNodeIntersections,
+  calcIntersect,
 } from './rendering-util/layout-algorithms/fixed/index.js';
