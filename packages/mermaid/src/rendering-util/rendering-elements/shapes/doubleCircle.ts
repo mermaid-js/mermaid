@@ -70,7 +70,8 @@ export async function doublecircle<T extends SVGGraphicsElement>(
       .attr('style', nodeStyles)
       .attr('r', innerRadius)
       .attr('cx', 0)
-      .attr('cy', 0);
+      .attr('cy', 0)
+      .attr('style', 'filter:url("")');
   }
 
   updateNodeBounds(node, circleGroup);
