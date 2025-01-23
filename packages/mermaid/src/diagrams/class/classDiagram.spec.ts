@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method -- Broken for Vitest mocks, see https://github.com/vitest-dev/eslint-plugin-vitest/pull/286 */
 // @ts-expect-error Jison doesn't export types
 import { parser } from './parser/classDiagram.jison';
 import { ClassDB } from './classDb.js';

@@ -29,6 +29,8 @@ import type { DiagramDB } from '../../diagram-api/types.js';
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 let classCounter = 0;
 
+const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
+
 export class ClassDB implements DiagramDB {
   private relations: ClassRelation[] = [];
   private classes = new Map<string, ClassNode>();
@@ -41,12 +43,8 @@ export class ClassDB implements DiagramDB {
 
   private functions: any[] = [];
 
-  private sanitizeText(txt: string) {
-    return common.sanitizeText(txt, getConfig());
-  }
-
   constructor() {
-    this.functions.push(this.setupToolTips);
+    this.functions.push(this.setupToolTips.bind(this));
     this.clear();
 
     // Needed for JISON since it only supports direct properties
@@ -64,10 +62,6 @@ export class ClassDB implements DiagramDB {
     this.defineClass = this.defineClass.bind(this);
     this.setDirection = this.setDirection.bind(this);
     this.setLink = this.setLink.bind(this);
-    this.setTooltip = this.setTooltip.bind(this);
-    this.setClickEvent = this.setClickEvent.bind(this);
-    this.setCssStyle = this.setCssStyle.bind(this);
-    this.setClickFunc = this.setClickFunc.bind(this);
     this.bindFunctions = this.bindFunctions.bind(this);
     this.clear = this.clear.bind(this);
   }
@@ -79,8 +73,8 @@ export class ClassDB implements DiagramDB {
 
     if (id.indexOf('~') > 0) {
       const split = id.split('~');
-      className = this.sanitizeText(split[0]);
-      genericType = this.sanitizeText(split[1]);
+      className = sanitizeText(split[0]);
+      genericType = sanitizeText(split[1]);
     }
 
     return { className: className, type: genericType };
@@ -89,7 +83,7 @@ export class ClassDB implements DiagramDB {
   public setClassLabel(_id: string, label: string) {
     const id = common.sanitizeText(_id, getConfig());
     if (label) {
-      label = this.sanitizeText(label);
+      label = sanitizeText(label);
     }
 
     const { className } = this.splitClassNameAndType(id);
@@ -161,7 +155,7 @@ export class ClassDB implements DiagramDB {
     this.notes = [];
     this.interfaces = [];
     this.functions = [];
-    this.functions.push(this.setupToolTips);
+    this.functions.push(this.setupToolTips.bind(this));
     this.namespaces = new Map();
     this.namespaceCounter = 0;
     this.direction = 'TB';
@@ -264,9 +258,7 @@ export class ClassDB implements DiagramDB {
 
       if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
         // its an annotation
-        theClass.annotations.push(
-          this.sanitizeText(memberString.substring(2, memberString.length - 2))
-        );
+        theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
       } else if (memberString.indexOf(')') > 0) {
         //its a method
         theClass.methods.push(new ClassMember(memberString, 'method'));
@@ -296,7 +288,7 @@ export class ClassDB implements DiagramDB {
     if (label.startsWith(':')) {
       label = label.substring(1);
     }
-    return this.sanitizeText(label.trim());
+    return sanitizeText(label.trim());
   }
 
   /**
@@ -353,7 +345,7 @@ export class ClassDB implements DiagramDB {
   public setTooltip(ids: string, tooltip?: string) {
     ids.split(',').forEach((id) => {
       if (tooltip !== undefined) {
-        this.classes.get(id)!.tooltip = this.sanitizeText(tooltip);
+        this.classes.get(id)!.tooltip = sanitizeText(tooltip);
       }
     });
   }
@@ -386,7 +378,7 @@ export class ClassDB implements DiagramDB {
         if (config.securityLevel === 'sandbox') {
           theClass.linkTarget = '_top';
         } else if (typeof target === 'string') {
-          theClass.linkTarget = this.sanitizeText(target);
+          theClass.linkTarget = sanitizeText(target);
         } else {
           theClass.linkTarget = '_blank';
         }
@@ -464,12 +456,12 @@ export class ClassDB implements DiagramDB {
     });
   }
 
-  public lineType = {
+  public readonly lineType = {
     LINE: 0,
     DOTTED_LINE: 1,
   };
 
-  public relationType = {
+  public readonly relationType = {
     AGGREGATION: 0,
     EXTENSION: 1,
     COMPOSITION: 2,
@@ -592,7 +584,7 @@ export class ClassDB implements DiagramDB {
    * @param type - The type to look for
    * @returns The arrow marker
    */
-  private readonly getArrowMarker = (type: number) => {
+  private getArrowMarker(type: number) {
     let marker;
     switch (type) {
       case 0:
@@ -614,7 +606,7 @@ export class ClassDB implements DiagramDB {
         marker = 'none';
     }
     return marker;
-  };
+  }
 
   public getData() {
     const nodes: Node[] = [];
