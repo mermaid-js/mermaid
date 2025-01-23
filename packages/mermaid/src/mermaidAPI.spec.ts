@@ -70,6 +70,7 @@ import { Diagram } from './Diagram.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 import { StateDB } from './diagrams/state/stateDb.js';
+import { FlowDB } from './diagrams/flowchart/flowDb.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -859,6 +860,37 @@ graph TD;A--x|text including URL space|B;`)
       assert(stateDiagram1.db instanceof StateDB);
       assert(stateDiagram2.db instanceof StateDB);
       expect(stateDiagram1.db.getDirection()).not.toEqual(stateDiagram2.db.getDirection());
+
+      const flowDiagram1 = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      A -- text --> B -- text2 --> C`
+      );
+      const flowDiagram2 = await mermaidAPI.getDiagramFromText(
+        `flowchart TD
+      A -- text --> B -- text2 --> C`
+      );
+      // Since flowDiagram will return new Db object each time, we can compare the db to be different.
+      expect(flowDiagram1.db).not.toBe(flowDiagram2.db);
+      assert(flowDiagram1.db instanceof FlowDB);
+      assert(flowDiagram2.db instanceof FlowDB);
+      expect(flowDiagram1.db.getDirection()).not.toEqual(flowDiagram2.db.getDirection());
+
+      const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+      const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+      // Since sequenceDiagram will return same Db object each time, we can compare the db to be same.
+      expect(sequenceDiagram1.db).toBe(sequenceDiagram2.db);
     });
   });
 
