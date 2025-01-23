@@ -163,6 +163,38 @@ export const calcIntersections = (startNodeId, endNodeId, startNodeSize, endNode
   return [];
 };
 
+/**
+ * @param {string} nodeId
+ * @param {Pick<Node, 'shape' | 'id' | 'intersect' | 'x' | 'y' | 'width' | 'height'>} node
+ * @param {Point} point
+ * @returns {Promise<Point> | Point}
+ */
+export const calcIntersect = async (nodeId, point) => {
+  let node = nodeDB.get(nodeId);
+
+  if (!node) {
+    // CReate new nodes in order not to require a rendered diagram
+    const fakeParent = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const parent = select(fakeParent);
+    node = Object.assign({}, point);
+    node.shape = 'rect';
+
+    await insertNode(parent, node, 'TB');
+
+    // Insert node will not give any widths as the element is not in the DOM
+    node.width = 50;
+    node.height = 50;
+    node.width = 50;
+    node.height = 50;
+  }
+
+  if (!node) {
+    throw new Error("Start node doesn't exist in the nodeDB");
+  }
+  const intersection = calcIntersectionPoint(node, point);
+  return intersection;
+};
+
 const doRender = async (_elem, data4Layout, siteConfig, positions) => {
   const elem = _elem.insert('g').attr('class', 'root');
   elem.insert('g').attr('class', 'clusters');
