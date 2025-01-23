@@ -64,6 +64,10 @@ export class ClassDB implements DiagramDB {
     this.setLink = this.setLink.bind(this);
     this.bindFunctions = this.bindFunctions.bind(this);
     this.clear = this.clear.bind(this);
+
+    this.setTooltip = this.setTooltip.bind(this);
+    this.setClickEvent = this.setClickEvent.bind(this);
+    this.setCssStyle = this.setCssStyle.bind(this);
   }
 
   private splitClassNameAndType(_id: string) {
