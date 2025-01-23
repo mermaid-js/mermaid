@@ -3,7 +3,11 @@ import { evaluate } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
 import utils from '../../utils.js';
-import { getLineFunctionsWithOffset, markerOffsets } from '../../utils/lineWithOffset.js';
+import {
+  getLineFunctionsWithOffset,
+  markerOffsets,
+  markerOffsets2,
+} from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 import { curveBasis, curveLinear, curveCardinal, line, select } from 'd3';
 import rough from 'roughjs';
@@ -581,7 +585,24 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
           (edge.classes ? ' ' + edge.classes : '') +
           (animationClass ? animationClass : '')
       )
-      .attr('style', stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles);
+
+      .attr(
+        'style',
+        (stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles) +
+          ';' +
+          (edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '')
+      );
+    const len = svgPath.node().getTotalLength();
+    const oValueS = markerOffsets2[edge.arrowTypeStart] || 0;
+    const oValueE = markerOffsets2[edge.arrowTypeEnd] || 0;
+
+    if (edge.look === 'neo') {
+      const dashArray = `0 ${oValueS} ${len - oValueS - oValueE} ${oValueE}`;
+
+      // No offset needed because we already start with a zero-length dash that effectively sets us up for a gap at the start.
+      const mOffset = `stroke-dasharray: ${dashArray}; stroke-dashoffset: 0;`;
+      svgPath.attr('style', mOffset + svgPath.attr('style'));
+    }
   }
 
   // MC Special
@@ -589,6 +610,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   svgPath.attr('data-et', 'edge');
   svgPath.attr('data-id', edge.id);
   svgPath.attr('data-points', pointsStr);
+
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem

@@ -44,7 +44,9 @@ export function forkJoin<T extends SVGGraphicsElement>(
   const roughNode = rc.rectangle(x, y, width, height, options);
 
   const shape = shapeSvg.insert(() => roughNode, ':first-child');
-
+  if (node.look !== 'handDrawn') {
+    shape.attr('class', 'outer-path');
+  }
   if (cssStyles && node.look !== 'handDrawn') {
     shape.selectAll('path').attr('style', cssStyles);
   }

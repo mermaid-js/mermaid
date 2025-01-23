@@ -19,8 +19,8 @@ export async function waveEdgedRectangle<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
 
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
 
   let adjustFinalHeight = true;
   if (node.width || node.height) {
@@ -39,7 +39,7 @@ export async function waveEdgedRectangle<T extends SVGGraphicsElement>(
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0) * 2;
   const h = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0) * 2;
-  const waveAmplitude = h / 8;
+  const waveAmplitude = node.look === 'neo' ? h / 4 : h / 8;
   const finalH = h + (adjustFinalHeight ? waveAmplitude : -waveAmplitude);
   const { cssStyles } = node;
 
@@ -76,7 +76,7 @@ export async function waveEdgedRectangle<T extends SVGGraphicsElement>(
 
   const waveEdgeRect = shapeSvg.insert(() => waveEdgeRectNode, ':first-child');
 
-  waveEdgeRect.attr('class', 'basic label-container');
+  waveEdgeRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     waveEdgeRect.selectAll('path').attr('style', cssStyles);
@@ -89,7 +89,7 @@ export async function waveEdgedRectangle<T extends SVGGraphicsElement>(
   waveEdgeRect.attr('transform', `translate(0,${-waveAmplitude / 2})`);
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - waveAmplitude - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, waveEdgeRect);

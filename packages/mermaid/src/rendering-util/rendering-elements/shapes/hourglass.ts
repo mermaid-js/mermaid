@@ -34,7 +34,7 @@ export async function hourglass<T extends SVGGraphicsElement>(parent: D3Selectio
   const pathData = createPathFromPoints(points);
   const shapeNode = rc.path(pathData, options);
   const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
-  polygon.attr('class', 'basic label-container');
+  polygon.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     polygon.selectChildren('path').attr('style', cssStyles);

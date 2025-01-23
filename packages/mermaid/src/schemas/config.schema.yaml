@@ -69,6 +69,8 @@ properties:
       - neutral
       - neo
       - neo-dark
+      - redux
+      - redux-dark
       - mc
       - 'null' # should this be a `null`-type?
     meta:enum:

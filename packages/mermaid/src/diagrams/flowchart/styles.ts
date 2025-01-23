@@ -16,6 +16,7 @@ export interface FlowChartStyleOptions {
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
+  strokeWidth: string;
 }
 
 const fade = (color: string, opacity: number) => {
@@ -57,17 +58,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .node path {
     fill: ${options.mainBkg};
     stroke: ${options.nodeBorder};
-    stroke-width: 1px;
+    stroke-width: ${options.strokeWidth}px;
   }
   .rough-node .label text , .node .label text, .image-shape .label, .icon-shape .label {
     text-anchor: middle;
   }
-  // .flowchart-label .text-outer-tspan {
-  //   text-anchor: middle;
-  // }
-  // .flowchart-label .text-inner-tspan {
-  //   text-anchor: start;
-  // }
 
   .node .katex path {
     fill: #000;
@@ -95,7 +90,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
 
   .edgePath .path {
     stroke: ${options.lineColor};
-    stroke-width: 2.0px;
+    stroke-width: ${options.strokeWidth}px;
   }
 
   .flowchart-link {
@@ -125,7 +120,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
   .cluster rect {
     fill: ${options.clusterBkg};
     stroke: ${options.clusterBorder};
-    stroke-width: 1px;
+    stroke-width: ${options.strokeWidth}px;
   }
 
   .cluster text {

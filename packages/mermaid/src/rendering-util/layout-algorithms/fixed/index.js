@@ -402,7 +402,13 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
 export const render = async (data4Layout, svg, _internalHelpers, _algorithm, positions) => {
   const element = svg.select('g');
   // Org
-  insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
+  insertMarkers(
+    element,
+    data4Layout.markers,
+    data4Layout.type,
+    data4Layout.diagramId,
+    data4Layout.config
+  );
   clearNodes();
   clearEdges();
   clearClusters();

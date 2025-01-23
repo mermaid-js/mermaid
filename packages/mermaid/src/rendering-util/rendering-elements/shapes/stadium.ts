@@ -56,8 +56,8 @@ export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 3 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 20 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account
   // also check if the width or height is less than minimum default values (50),

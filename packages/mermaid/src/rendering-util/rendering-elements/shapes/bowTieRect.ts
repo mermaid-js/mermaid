@@ -89,8 +89,8 @@ export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selecti
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
 
   const calcTotalHeight = (labelHeight: number) => labelHeight + labelPaddingY * 2;
   const calcEllipseRadius = (totalHeight: number) => {
@@ -145,7 +145,7 @@ export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selecti
   const bowTieRectShapePath = rc.path(bowTieRectPath, options);
   const bowTieRectShape = shapeSvg.insert(() => bowTieRectShapePath, ':first-child');
 
-  bowTieRectShape.attr('class', 'basic label-container');
+  bowTieRectShape.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     bowTieRectShape.selectAll('path').attr('style', cssStyles);

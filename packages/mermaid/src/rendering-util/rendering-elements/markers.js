@@ -2,9 +2,9 @@
 import { log } from '../../logger.js';
 
 // Only add the number of markers that the diagram needs
-const insertMarkers = (elem, markerArray, type, id) => {
+const insertMarkers = (elem, markerArray, type, id, config) => {
   markerArray.forEach((markerName) => {
-    markers[markerName](elem, type, id);
+    markers[markerName](elem, type, id, config);
   });
 };
 
@@ -153,58 +153,58 @@ const lollipop = (elem, type, id) => {
     .attr('cy', 7)
     .attr('r', 6);
 };
-const point = (elem, type, id) => {
+const point = (elem, type, id, options) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-pointEnd')
     .attr('class', 'marker ' + type)
-    .attr('viewBox', '0 0 10 10')
-    .attr('refX', 5)
-    .attr('refY', 5)
+    .attr('viewBox', '0 0 11.5 14')
+    .attr('refX', options?.look === 'neo' ? 11.5 : 7.75) // Adjust to position the arrowhead relative to the line
+    .attr('refY', 7) // Half of 14 for vertical center
     .attr('markerUnits', 'userSpaceOnUse')
-    .attr('markerWidth', 8)
-    .attr('markerHeight', 8)
+    .attr('markerWidth', 10.5)
+    .attr('markerHeight', 14)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+    .attr('d', 'M 0 0 L 11.5 7 L 0 14 z')
     .attr('class', 'arrowMarkerPath')
-    .style('stroke-width', 1)
+    .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-pointStart')
     .attr('class', 'marker ' + type)
-    .attr('viewBox', '0 0 10 10')
-    .attr('refX', 4.5)
-    .attr('refY', 5)
+    .attr('viewBox', '0 0 11.5 14')
+    .attr('refX', options?.look === 'neo' ? 1 : 4)
+    .attr('refY', 7)
     .attr('markerUnits', 'userSpaceOnUse')
-    .attr('markerWidth', 8)
-    .attr('markerHeight', 8)
+    .attr('markerWidth', 11.5)
+    .attr('markerHeight', 14)
     .attr('orient', 'auto')
-    .append('path')
-    .attr('d', 'M 0 5 L 10 10 L 10 0 z')
+    .append('polygon')
+    .attr('points', '0,7 11.5,14 11.5,0')
     .attr('class', 'arrowMarkerPath')
-    .style('stroke-width', 1)
+    .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 };
-const circle = (elem, type, id) => {
+const circle = (elem, type, id, options) => {
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-circleEnd')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', 11)
-    .attr('refY', 5)
+    .attr('refY', 5) // What!!!??
+    .attr('refX', options?.look === 'neo' ? 12.25 : 10.75)
     .attr('markerUnits', 'userSpaceOnUse')
-    .attr('markerWidth', 11)
-    .attr('markerHeight', 11)
+    .attr('markerWidth', 14)
+    .attr('markerHeight', 14)
     .attr('orient', 'auto')
     .append('circle')
     .attr('cx', '5')
     .attr('cy', '5')
     .attr('r', '5')
     .attr('class', 'arrowMarkerPath')
-    .style('stroke-width', 1)
+    .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 
   elem
@@ -212,18 +212,18 @@ const circle = (elem, type, id) => {
     .attr('id', id + '_' + type + '-circleStart')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', -1)
+    .attr('refX', options?.look === 'neo' ? -2 : 0)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
-    .attr('markerWidth', 11)
-    .attr('markerHeight', 11)
+    .attr('markerWidth', 14)
+    .attr('markerHeight', 14)
     .attr('orient', 'auto')
     .append('circle')
     .attr('cx', '5')
     .attr('cy', '5')
     .attr('r', '5')
     .attr('class', 'arrowMarkerPath')
-    .style('stroke-width', 1)
+    .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 };
 const cross = (elem, type, id) => {
@@ -231,36 +231,33 @@ const cross = (elem, type, id) => {
     .append('marker')
     .attr('id', id + '_' + type + '-crossEnd')
     .attr('class', 'marker cross ' + type)
-    .attr('viewBox', '0 0 11 11')
-    .attr('refX', 12)
-    .attr('refY', 5.2)
+    .attr('viewBox', '0 0 15 15')
+    .attr('refX', 17.7)
+    .attr('refY', 7.5)
     .attr('markerUnits', 'userSpaceOnUse')
-    .attr('markerWidth', 11)
-    .attr('markerHeight', 11)
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 12)
     .attr('orient', 'auto')
     .append('path')
-    // .attr('stroke', 'black')
-    .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
+    .attr('d', 'M 1,1 L 14,14 M 1,14 L 14,1')
     .attr('class', 'arrowMarkerPath')
-    .style('stroke-width', 2)
-    .style('stroke-dasharray', '1,0');
+    .style('stroke-width', 2.5);
 
   elem
     .append('marker')
     .attr('id', id + '_' + type + '-crossStart')
     .attr('class', 'marker cross ' + type)
-    .attr('viewBox', '0 0 11 11')
-    .attr('refX', -1)
-    .attr('refY', 5.2)
+    .attr('viewBox', '0 0 15 15')
+    .attr('refX', -3.5)
+    .attr('refY', 7.5)
     .attr('markerUnits', 'userSpaceOnUse')
-    .attr('markerWidth', 11)
-    .attr('markerHeight', 11)
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 12)
     .attr('orient', 'auto')
     .append('path')
-    // .attr('stroke', 'black')
-    .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
+    .attr('d', 'M 1,1 L 14,14 M 1,14 L 14,1')
     .attr('class', 'arrowMarkerPath')
-    .style('stroke-width', 2)
+    .style('stroke-width', 2.5)
     .style('stroke-dasharray', '1,0');
 };
 const barb = (elem, type, id) => {

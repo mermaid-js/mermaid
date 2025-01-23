@@ -16,8 +16,8 @@ export async function shadedProcess<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
 
-  const paddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
-  const paddingY = node.look === 'neo' ? (node.padding ?? 0) * 1 : (node.padding ?? 0);
+  const paddingX = node.look === 'neo' ? 16 : (node.padding ?? 0);
+  const paddingY = node.look === 'neo' ? 12 : (node.padding ?? 0);
 
   // If incoming height & width are present, subtract the padding from them
   // as labelHelper does not take padding into account
@@ -64,7 +64,9 @@ export async function shadedProcess<T extends SVGGraphicsElement>(
 
   const rect = shapeSvg.insert(() => roughNode, ':first-child');
 
-  rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
+  rect
+    .attr('class', 'basic label-container outer-path')
+    .attr('style', handleUndefinedAttr(cssStyles));
 
   if (nodeStyles && node.look !== 'handDrawn') {
     rect.selectAll('path').attr('style', nodeStyles);

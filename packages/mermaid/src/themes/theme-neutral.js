@@ -43,6 +43,7 @@ class Theme {
     this.fontSize = '14px';
     this.THEME_COLOR_LIMIT = 12;
     this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
 

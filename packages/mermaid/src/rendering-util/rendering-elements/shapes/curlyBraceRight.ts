@@ -42,8 +42,8 @@ export async function curlyBraceRight<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const labelPaddingX = node.look === 'neo' ? (node.padding ?? 0) * 2 : (node.padding ?? 0);
-  const labelPaddingY = node.look === 'neo' ? (node.padding ?? 0) * 1 : (node.padding ?? 0);
+  const labelPaddingX = node.look === 'neo' ? 18 : (node.padding ?? 0);
+  const labelPaddingY = node.look === 'neo' ? 12 : (node.padding ?? 0);
 
   if (node.width || node.height) {
     let radius = 5;

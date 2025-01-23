@@ -68,12 +68,20 @@ export function stateEnd<T extends SVGGraphicsElement>(
   const circle = shapeSvg.insert(() => roughNode, ':first-child');
   circle.insert(() => roughInnerNode);
 
+  if (node.look !== 'handDrawn') {
+    circle.attr('class', 'outer-path');
+  }
+
   if (cssStyles) {
     circle.selectAll('path').attr('style', cssStyles);
   }
 
   if (nodeStyles) {
     circle.selectAll('path').attr('style', nodeStyles);
+  }
+
+  if (node.width < 25) {
+    circle.attr('style', 'filter:url(#drop-shadow-small)');
   }
 
   updateNodeBounds(node, circle);

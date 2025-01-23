@@ -18,8 +18,8 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 1.5 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 20 : nodePadding;
 
   if (node.width || node.height) {
     node.width = node?.width ?? 0;
@@ -43,7 +43,7 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
   const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
   const h = (node?.height ? node?.height : bbox.height) + labelPaddingY;
 
-  const waveAmplitude = Math.min(h * 0.2, h / 4);
+  const waveAmplitude = h / 8;
   const finalH = h + waveAmplitude * 2;
   const { cssStyles } = node;
 
@@ -68,7 +68,7 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
 
   const waveRect = shapeSvg.insert(() => waveRectNode, ':first-child');
 
-  waveRect.attr('class', 'basic label-container');
+  waveRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     waveRect.selectAll('path').attr('style', cssStyles);

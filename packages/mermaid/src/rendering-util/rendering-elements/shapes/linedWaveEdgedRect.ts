@@ -18,8 +18,8 @@ export async function linedWaveEdgedRect<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
 
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? nodePadding * 2 : (node.padding ?? 0);
-  const labelPaddingY = node.look === 'neo' ? nodePadding * 2 : (node.padding ?? 0);
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
   if (node.width || node.height) {
     const originalWidth = node.width;
     node.width = ((originalWidth ?? 0) * 10) / 11 - labelPaddingX * 2;
@@ -37,7 +37,7 @@ export async function linedWaveEdgedRect<T extends SVGGraphicsElement>(
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
   const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0) * 2;
   const h = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0) * 2;
-  const waveAmplitude = h / 6;
+  const waveAmplitude = node.look === 'neo' ? h / 4 : h / 8;
   const finalH = h + waveAmplitude;
   const { cssStyles } = node;
 
@@ -75,7 +75,7 @@ export async function linedWaveEdgedRect<T extends SVGGraphicsElement>(
 
   const waveEdgeRect = shapeSvg.insert(() => poly, ':first-child');
 
-  waveEdgeRect.attr('class', 'basic label-container');
+  waveEdgeRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     waveEdgeRect.selectAll('path').attr('style', cssStyles);
@@ -88,7 +88,7 @@ export async function linedWaveEdgedRect<T extends SVGGraphicsElement>(
   waveEdgeRect.attr('transform', `translate(0,${-waveAmplitude / 2})`);
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))},${-(bbox.height / 2) - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))},${-(bbox.height / 2) - waveAmplitude - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, waveEdgeRect);

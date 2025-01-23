@@ -53,7 +53,8 @@ export async function triangle<T extends SVGGraphicsElement>(parent: D3Selection
 
   const polygon = shapeSvg
     .insert(() => roughNode, ':first-child')
-    .attr('transform', `translate(${-h / 2}, ${h / 2})`);
+    .attr('transform', `translate(${-h / 2}, ${h / 2})`)
+    .attr('class', 'outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     polygon.selectChildren('path').attr('style', cssStyles);

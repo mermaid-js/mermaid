@@ -65,7 +65,7 @@ const getStyles = (
   }
 
   & .edge-thickness-normal {
-    stroke-width: 1px;
+    stroke-width: ${options.strokeWidth}px;
   }
   & .edge-thickness-thick {
     stroke-width: 3.5px
@@ -111,8 +111,11 @@ const getStyles = (
   }
 
 
-  [data-look="neo"].node rect,  [data-look="neo"].node polygon , [data-look="neo"].node path {
-    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : 'none'};
+  [data-look="neo"].node path {
+    stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
+  }
+
+  [data-look="neo"].node .outer-path {
     filter: ${options.dropShadow};
   }
 
