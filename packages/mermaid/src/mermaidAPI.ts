@@ -27,7 +27,7 @@ import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 
-const MAX_TEXTLENGTH = 50_000;
+const MAX_TEXTLENGTH = 100_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
 

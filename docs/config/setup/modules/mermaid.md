@@ -91,6 +91,27 @@
 
 ## Functions
 
+### calcIntersect
+
+▸ **calcIntersect**(`nodeId`, `point`): `Point` | `Promise`<`Point`>
+
+#### Parameters
+
+| Name     | Type     |
+| :------- | :------- |
+| `nodeId` | `string` |
+| `point`  | `Point`  |
+
+#### Returns
+
+`Point` | `Promise`<`Point`>
+
+#### Defined in
+
+[packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js:172](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js#L172)
+
+---
+
 ### calcIntersections
 
 ▸ **calcIntersections**(`startNodeId`, `endNodeId`, `startNodeSize`, `endNodeSize`): `IntersectionPoint`\[]
