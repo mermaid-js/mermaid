@@ -9,7 +9,7 @@ import type { D3Selection } from '../../../types.js';
 export function filledCircle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  { config: { themeVariables } }: ShapeRenderOptions
+  { config: { themeVariables, theme } }: ShapeRenderOptions
 ) {
   node.label = '';
 
@@ -61,7 +61,7 @@ export function filledCircle<T extends SVGGraphicsElement>(
     filledCircle.attr('class', 'outer-path');
   }
 
-  if (node.width < 25) {
+  if (node.width < 25 && theme === 'redux' && node.look !== 'handDrawn') {
     filledCircle.attr('style', 'filter:url(#drop-shadow-small)');
   }
 

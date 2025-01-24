@@ -8,7 +8,7 @@ import type { D3Selection } from '../../../types.js';
 export function stateStart<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  { config: { themeVariables } }: ShapeRenderOptions
+  { config: { themeVariables, theme } }: ShapeRenderOptions
 ) {
   const { lineColor } = themeVariables;
 
@@ -62,7 +62,7 @@ export function stateStart<T extends SVGGraphicsElement>(
       .attr('height', node.height ?? 14);
   }
 
-  if (node.width < 25) {
+  if (node.width < 25 && theme === 'redux' && node.look !== 'handDrawn') {
     circle.attr('style', 'filter:url(#drop-shadow-small)');
   }
 
