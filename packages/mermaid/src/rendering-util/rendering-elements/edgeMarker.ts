@@ -15,13 +15,14 @@ export const addEdgeMarkers = (
   edge: Pick<EdgeData, 'arrowTypeStart' | 'arrowTypeEnd'>,
   url: string,
   id: string,
-  diagramType: string
+  diagramType: string,
+  useMargin = false
 ) => {
   if (edge.arrowTypeStart) {
-    addEdgeMarker(svgPath, 'start', edge.arrowTypeStart, url, id, diagramType);
+    addEdgeMarker(svgPath, 'start', edge.arrowTypeStart, url, id, diagramType, useMargin);
   }
   if (edge.arrowTypeEnd) {
-    addEdgeMarker(svgPath, 'end', edge.arrowTypeEnd, url, id, diagramType);
+    addEdgeMarker(svgPath, 'end', edge.arrowTypeEnd, url, id, diagramType, useMargin);
   }
 };
 
@@ -37,15 +38,19 @@ const arrowTypesMap = {
   lollipop: 'lollipop',
 } as const;
 
+const arrowTypesWithMarginSupport = ['cross', 'point', 'circle'];
+
 const addEdgeMarker = (
   svgPath: SVG,
   position: 'start' | 'end',
   arrowType: string,
   url: string,
   id: string,
-  diagramType: string
+  diagramType: string,
+  useMargin = false
 ) => {
   const endMarkerType = arrowTypesMap[arrowType as keyof typeof arrowTypesMap];
+  const marginSupport = arrowTypesWithMarginSupport.includes(endMarkerType);
 
   if (!endMarkerType) {
     log.warn(`Unknown arrow type: ${arrowType}`);
@@ -53,5 +58,9 @@ const addEdgeMarker = (
   }
 
   const suffix = position === 'start' ? 'Start' : 'End';
-  svgPath.attr(`marker-${position}`, `url(${url}#${id}_${diagramType}-${endMarkerType}${suffix})`);
+  const offset = useMargin && marginSupport ? '-margin' : '';
+  svgPath.attr(
+    `marker-${position}`,
+    `url(${url}#${id}_${diagramType}-${endMarkerType}${suffix}${offset})`
+  );
 };

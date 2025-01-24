@@ -544,7 +544,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
-
+  let animatedEdge = false;
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
@@ -592,11 +592,13 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
           ';' +
           (edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '')
       );
+
+    animatedEdge =
+      edge.animate === true || !!edge.animation || stylesFromClasses.includes('animation');
     const len = svgPath.node().getTotalLength();
     const oValueS = markerOffsets2[edge.arrowTypeStart] || 0;
     const oValueE = markerOffsets2[edge.arrowTypeEnd] || 0;
-
-    if (edge.look === 'neo') {
+    if (edge.look === 'neo' && !animatedEdge) {
       const dashArray = `0 ${oValueS} ${len - oValueS - oValueE} ${oValueE}`;
 
       // No offset needed because we already start with a zero-length dash that effectively sets us up for a gap at the start.
@@ -646,7 +648,9 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType);
+  const useMargin = !animatedEdge && edge?.look === 'neo';
+
+  addEdgeMarkers(svgPath, edge, url, id, diagramType, useMargin);
 
   let paths = {};
   if (pointsHasChanged) {

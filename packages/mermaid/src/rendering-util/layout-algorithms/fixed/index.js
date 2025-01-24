@@ -94,10 +94,10 @@ export const calcNodeIntersections = async (targetNodeId, _node1, _node2) => {
   }
 
   // Insert node will not give any widths as the element is not in the DOM
-  node1.width = _node1.width || 50;
-  node1.height = _node1.height || 50;
-  node2.width = _node2.width || 50;
-  node2.height = _node2.height || 50;
+  node1.width = _node1.width ?? 50;
+  node1.height = _node1.height ?? 50;
+  node2.width = _node2.width ?? 50;
+  node2.height = _node2.height ?? 50;
 
   const startIntersection = calcIntersectionPoint(node1, { x: node2.x, y: node2.y });
   const endIntersection = calcIntersectionPoint(node2, { x: node1.x, y: node1.y });
@@ -402,13 +402,7 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
 export const render = async (data4Layout, svg, _internalHelpers, _algorithm, positions) => {
   const element = svg.select('g');
   // Org
-  insertMarkers(
-    element,
-    data4Layout.markers,
-    data4Layout.type,
-    data4Layout.diagramId,
-    data4Layout.config
-  );
+  insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
   clearNodes();
   clearEdges();
   clearClusters();
