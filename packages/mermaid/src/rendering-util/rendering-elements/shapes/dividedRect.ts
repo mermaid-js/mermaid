@@ -75,7 +75,7 @@ export async function dividedRectangle<T extends SVGGraphicsElement>(
   // place the label in the center of the lower half of the divided rectangle
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2}, ${-bbox.height / 2 - rectOffset / 2 + rectOffset})`
+    `translate(${-w / 2 + (paddingX ?? 0) - (bbox.x - (bbox.left ?? 0))}, ${-bbox.height / 2 - rectOffset / 2 + rectOffset})`
   );
 
   updateNodeBounds(node, polygon);
