@@ -1,6 +1,6 @@
 import { line, curveBasis } from 'd3';
 import idCache from './id-cache.js';
-import { StateDB } from './stateDb.js';
+import stateDb from './stateDb.js';
 import utils from '../../utils.js';
 import common from '../common/common.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
@@ -414,13 +414,13 @@ let edgeCount = 0;
 export const drawEdge = function (elem, path, relation) {
   const getRelationType = function (type) {
     switch (type) {
-      case StateDB.relationType.AGGREGATION:
+      case stateDb.relationType.AGGREGATION:
         return 'aggregation';
-      case StateDB.relationType.EXTENSION:
+      case stateDb.relationType.EXTENSION:
         return 'extension';
-      case StateDB.relationType.COMPOSITION:
+      case stateDb.relationType.COMPOSITION:
         return 'composition';
-      case StateDB.relationType.DEPENDENCY:
+      case stateDb.relationType.DEPENDENCY:
         return 'dependency';
     }
   };
@@ -459,7 +459,7 @@ export const drawEdge = function (elem, path, relation) {
 
   svgPath.attr(
     'marker-end',
-    'url(' + url + '#' + getRelationType(StateDB.relationType.DEPENDENCY) + 'End' + ')'
+    'url(' + url + '#' + getRelationType(stateDb.relationType.DEPENDENCY) + 'End' + ')'
   );
 
   if (relation.title !== undefined) {
