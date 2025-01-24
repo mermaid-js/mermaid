@@ -89,6 +89,9 @@ $(bold ./$name cypress open --project .)
 $(bold ./$name cypress run --spec cypress/integration/rendering/)$(underline test.spec.ts)
         Run specific test in cypress
 
+$(bold ./$name pnpm --filter=mermaid types:build-config)
+        Update mermaid config based on config schema
+
 $(bold xhost +local:)
         Allow local connections for x11 server
 

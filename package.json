@@ -132,10 +132,5 @@
   },
   "nyc": {
     "report-dir": "coverage/cypress"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "roughjs": "patches/roughjs.patch"
-    }
   }
 }

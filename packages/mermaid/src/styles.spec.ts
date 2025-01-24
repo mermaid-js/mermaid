@@ -27,6 +27,7 @@ import state from './diagrams/state/styles.js';
 import journey from './diagrams/user-journey/styles.js';
 import timeline from './diagrams/timeline/styles.js';
 import mindmap from './diagrams/mindmap/styles.js';
+import railroad from './diagrams/railroad/railroadStyles.js';
 import packet from './diagrams/packet/styles.js';
 import block from './diagrams/block/styles.js';
 import themes from './themes/index.js';
@@ -98,6 +99,7 @@ describe('styles', () => {
         state,
         block,
         timeline,
+        railroad,
         packet,
       })) {
         test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {

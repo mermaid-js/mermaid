@@ -21,6 +21,8 @@
     </style>
   </head>
   <body>
+    <h1>Mermaid development page</h1>
+    <h2>Static diagram example</h2>
     <pre id="diagram" class="mermaid">
 graph TB
       a --> b
@@ -30,11 +32,13 @@ graph TB
     </pre>
 
     <hr />
+    <h2>Dynamic diagram example</h2>
     Type code to view diagram:
     <div class="container">
       <textarea name="code" id="code" cols="30" rows="10"></textarea>
       <div id="dynamicDiagram"></div>
     </div>
+    <button id="render" type="button">Render</button>
     <pre class="mermaid">info</pre>
 
     <script type="module">
@@ -42,8 +46,12 @@ graph TB
       import layouts from '/mermaid-layout-elk.esm.mjs';
       mermaid.registerLayoutLoaders(layouts);
       async function render(str) {
-        const { svg } = await mermaid.render('dynamic', str);
-        document.getElementById('dynamicDiagram').innerHTML = svg;
+        try {
+          const { svg } = await mermaid.render('dynamic', str);
+          document.getElementById('dynamicDiagram').innerHTML = svg;
+        } catch (error) {
+          console.error(error);
+        }
       }
       const storeKey = window.location.pathname;
       const code = localStorage.getItem(storeKey);
@@ -58,8 +66,14 @@ graph TB
       document.getElementById('code').addEventListener('input', async (e) => {
         const value = e.target.value;
         localStorage.setItem(storeKey, value);
-        await render(value);
+        render(value);
       });
+
+      document.getElementById('render').addEventListener('click', async (e) => {
+        const value = document.getElementById('code').target.value;
+        localStorage.setItem(storeKey, value);
+        await render(value);
+      })
     </script>
 
     <script src="/dev/reload.js"></script>

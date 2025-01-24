@@ -127,7 +127,6 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
   assert.ok(mermaidConfigSchema.$defs);
   const modifiedSchema = {
     ...removeRequired(mermaidConfigSchema),
-
     $defs: Object.fromEntries(
       Object.entries(mermaidConfigSchema.$defs).map(([key, subSchema]) => {
         return [key, removeRequired(replaceAllOfWithExtends(subSchema))];
