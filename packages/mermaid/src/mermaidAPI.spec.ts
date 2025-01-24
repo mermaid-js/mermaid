@@ -69,6 +69,7 @@ import { compile, serialize } from 'stylis';
 import { Diagram } from './Diagram.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { ClassDB } from './diagrams/class/classDb.js';
 import { StateDB } from './diagrams/state/stateDb.js';
 import { FlowDB } from './diagrams/flowchart/flowDb.js';
 
@@ -856,6 +857,7 @@ graph TD;A--x|text including URL space|B;`)
           Moving --> Crash
           Crash --> [*]`
       );
+      // Since stateDiagram will return new Db object each time, we can compare the db to be different.
       expect(stateDiagram1.db).not.toBe(stateDiagram2.db);
       assert(stateDiagram1.db instanceof StateDB);
       assert(stateDiagram2.db instanceof StateDB);
@@ -874,6 +876,46 @@ graph TD;A--x|text including URL space|B;`)
       assert(flowDiagram1.db instanceof FlowDB);
       assert(flowDiagram2.db instanceof FlowDB);
       expect(flowDiagram1.db.getDirection()).not.toEqual(flowDiagram2.db.getDirection());
+
+      const classDiagram1 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction TB
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      const classDiagram2 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction LR
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      // Since classDiagram will return new Db object each time, we can compare the db to be different.
+      expect(classDiagram1.db).not.toBe(classDiagram2.db);
+      assert(classDiagram1.db instanceof ClassDB);
+      assert(classDiagram2.db instanceof ClassDB);
+      expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
 
       const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
         `sequenceDiagram
