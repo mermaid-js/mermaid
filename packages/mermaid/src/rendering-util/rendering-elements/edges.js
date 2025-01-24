@@ -429,6 +429,24 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
 //   return newLineData;
 // };
 
+const generateDashArray = (len, oValueS, oValueE) => {
+  const middleLength = len - oValueS - oValueE;
+  const dashLength = 2; // Length of each dash
+  const gapLength = 2; // Length of each gap
+  const dashGapPairLength = dashLength + gapLength;
+
+  // Calculate number of complete dash-gap pairs that can fit
+  const numberOfPairs = Math.floor(middleLength / dashGapPairLength);
+
+  // Generate the middle pattern array
+  const middlePattern = Array(numberOfPairs).fill(`${dashLength} ${gapLength}`).join(' ');
+
+  // Combine all parts
+  const dashArray = `0 ${oValueS} ${middlePattern} ${oValueE}`;
+
+  return dashArray;
+};
+
 export const insertEdge = function (elem, edge, clusterDb, diagramType, startNode, endNode, id) {
   const { handDrawnSeed } = getConfig();
   let points = edge.points;
@@ -598,8 +616,12 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     const len = svgPath.node().getTotalLength();
     const oValueS = markerOffsets2[edge.arrowTypeStart] || 0;
     const oValueE = markerOffsets2[edge.arrowTypeEnd] || 0;
+
     if (edge.look === 'neo' && !animatedEdge) {
-      const dashArray = `0 ${oValueS} ${len - oValueS - oValueE} ${oValueE}`;
+      const dashArray =
+        edge.pattern === 'dotted'
+          ? generateDashArray(len, oValueS, oValueE)
+          : `0 ${oValueS} ${len - oValueS - oValueE} ${oValueE}`;
 
       // No offset needed because we already start with a zero-length dash that effectively sets us up for a gap at the start.
       const mOffset = `stroke-dasharray: ${dashArray}; stroke-dashoffset: 0;`;
