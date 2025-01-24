@@ -837,32 +837,6 @@ graph TD;A--x|text including URL space|B;`)
     });
 
     it('should not modify db when rendering different diagrams', async () => {
-      const stateDiagram1 = await mermaidAPI.getDiagramFromText(
-        `stateDiagram
-            direction LR
-            [*] --> Still
-            Still --> [*]
-            Still --> Moving
-            Moving --> Still
-            Moving --> Crash
-            Crash --> [*]`
-      );
-      const stateDiagram2 = await mermaidAPI.getDiagramFromText(
-        `stateDiagram
-          direction TB
-          [*] --> Still
-          Still --> [*]
-          Still --> Moving
-          Moving --> Still
-          Moving --> Crash
-          Crash --> [*]`
-      );
-      // Since stateDiagram will return new Db object each time, we can compare the db to be different.
-      expect(stateDiagram1.db).not.toBe(stateDiagram2.db);
-      assert(stateDiagram1.db instanceof StateDB);
-      assert(stateDiagram2.db instanceof StateDB);
-      expect(stateDiagram1.db.getDirection()).not.toEqual(stateDiagram2.db.getDirection());
-
       const flowDiagram1 = await mermaidAPI.getDiagramFromText(
         `flowchart LR
       A -- text --> B -- text2 --> C`

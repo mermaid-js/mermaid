@@ -1,9 +1,8 @@
-import { StateDB } from './stateDb.js';
+import stateDb from './stateDb.js';
 
 describe('State Diagram stateDb', () => {
-  let stateDb;
   beforeEach(() => {
-    stateDb = new StateDB();
+    stateDb.clear();
   });
 
   describe('addStyleClass', () => {
@@ -21,9 +20,8 @@ describe('State Diagram stateDb', () => {
   });
 
   describe('addDescription to a state', () => {
-    let stateDb;
     beforeEach(() => {
-      stateDb = new StateDB();
+      stateDb.clear();
       stateDb.addState('state1');
     });
 
@@ -73,27 +71,5 @@ describe('State Diagram stateDb', () => {
       let states = stateDb.getStates();
       expect(states.get(testStateId).descriptions[0]).toEqual('the description');
     });
-  });
-});
-
-describe('state db class', () => {
-  let stateDb;
-  beforeEach(() => {
-    stateDb = new StateDB();
-  });
-  // This is to ensure that functions used in state JISON are exposed as function from StateDb
-  it('should have functions used in flow JISON as own property', () => {
-    const functionsUsedInParser = [
-      'setRootDoc',
-      'trimColon',
-      'getDividerId',
-      'setAccTitle',
-      'setAccDescription',
-      'setDirection',
-    ];
-
-    for (const fun of functionsUsedInParser) {
-      expect(Object.hasOwn(stateDb, fun)).toBe(true);
-    }
   });
 });

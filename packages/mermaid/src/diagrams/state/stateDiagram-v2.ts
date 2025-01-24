@@ -1,15 +1,13 @@
 import type { DiagramDefinition } from '../../diagram-api/types.js';
 // @ts-ignore: JISON doesn't support types
 import parser from './parser/stateDiagram.jison';
-import { StateDB } from './stateDb.js';
+import db from './stateDb.js';
 import styles from './styles.js';
 import renderer from './stateRenderer-v3-unified.js';
 
 export const diagram: DiagramDefinition = {
   parser,
-  get db() {
-    return new StateDB();
-  },
+  db,
   renderer,
   styles,
   init: (cnf) => {
