@@ -781,13 +781,7 @@ export const render = async (
   const elk = new ELK();
   const element = svg.select('g');
   // Add the arrowheads to the svg
-  insertMarkers(
-    element,
-    data4Layout.markers,
-    data4Layout.type,
-    data4Layout.diagramId,
-    data4Layout.config
-  );
+  insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
 
   // Setup the graph with the layout options and the data for the layout
   let elkGraph: any = {

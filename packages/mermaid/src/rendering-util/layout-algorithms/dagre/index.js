@@ -290,13 +290,7 @@ export const render = async (data4Layout, svg) => {
       return {};
     });
   const element = svg.select('g');
-  insertMarkers(
-    element,
-    data4Layout.markers,
-    data4Layout.type,
-    data4Layout.diagramId,
-    data4Layout.config
-  );
+  insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
   clearNodes();
   clearEdges();
   clearClusters();

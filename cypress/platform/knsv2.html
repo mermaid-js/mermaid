@@ -105,11 +105,11 @@
   </head>
 
   <body>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       flowchart LR
         AB["apa@apa@"] --> B(("`apa@apa`"))
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       flowchart
         D(("for D"))
     </pre>
@@ -119,6 +119,208 @@
         e1@{ animate: true}
     </pre>
     <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: forest
+  look: classic
+---
+      flowchart LR
+        A e1@==> BB
+        e1@{ animate: true}
+    </pre>
+    <hr />
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==> B
+        e1@{ animate: false}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: neo
+  look: handDrawn
+---
+      flowchart LR
+        A e1@==> BB
+        e1@{ animate: false}
+    </pre>
+
+    <!-- Next set of tests -->
+    <hr />
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        slow e2@--> B
+        e2@{ animation: slow}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: forest
+  look: classic
+---
+      flowchart LR
+        A e1@--> BB
+        e1@{ animation: fast}
+    </pre>
+    <hr />
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==> B
+          classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: forest
+  look: classic
+---
+      flowchart LR
+        A e1@==> BB
+          classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+    </pre>
+    <!-- Circle -->
+    <hr />
+
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==o B
+        e1@{ animate: true}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: forest
+  look: classic
+---
+      flowchart LR
+        A e1@==o BB
+        e1@{ animate: true}
+    </pre>
+    <hr />
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==o B
+        e1@{ animate: false}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: neo
+  look: handDrawn
+---
+      flowchart LR
+        A e1@==o BB
+        e1@{ animate: false}
+    </pre>
+
+    <!-- Next set of tests -->
+    <hr />
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        slow e2@--o B
+        e2@{ animation: slow}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: forest
+  look: classic
+---
+      flowchart LR
+        A e1@--o BB
+        e1@{ animation: fast}
+    </pre>
+    <hr />
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==o B
+          classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: forest
+  look: classic
+---
+      flowchart LR
+        A e1@==o BB
+          classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+    </pre>
+    <!-- Cross -->
+    <hr />
+
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==x B
+        e1@{ animate: true}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: forest
+  look: classic
+---
+      flowchart LR
+        A e1@==x BB
+        e1@{ animate: true}
+    </pre>
+    <hr />
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==x B
+        e1@{ animate: false}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: neo
+  look: handDrawn
+---
+      flowchart LR
+        A e1@==x BB
+        e1@{ animate: false}
+    </pre>
+
+    <!-- Next set of tests -->
+    <hr />
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        slow e2@--x B
+        e2@{ animation: slow}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: forest
+  look: classic
+---
+      flowchart LR
+        A e1@--x BB
+        e1@{ animation: fast}
+    </pre>
+    <hr />
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==x B
+          classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: forest
+  look: classic
+---
+      flowchart LR
+        A e1@==x BB
+          classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+    </pre>
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   A e1@--> B
   classDef animate stroke-width:2,stroke-dasharray:10\,8,stroke-dashoffset:-180,animation: edge-animation-frame 6s linear infinite, stroke-linecap: round
