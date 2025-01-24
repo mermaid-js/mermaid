@@ -8,7 +8,7 @@ import type { D3Selection } from '../../../types.js';
 export function stateEnd<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  { config: { themeVariables } }: ShapeRenderOptions
+  { config: { themeVariables, theme } }: ShapeRenderOptions
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -80,7 +80,7 @@ export function stateEnd<T extends SVGGraphicsElement>(
     circle.selectAll('path').attr('style', nodeStyles);
   }
 
-  if (node.width < 25) {
+  if (node.width < 25 && theme === 'redux' && node.look !== 'handDrawn') {
     circle.attr('style', 'filter:url(#drop-shadow-small)');
   }
 
