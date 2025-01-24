@@ -15,6 +15,5 @@ export const diagram: DiagramDefinition = {
       cnf.state = {};
     }
     cnf.state.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-    db.clear();
   },
 };
