@@ -1,4 +1,4 @@
-import flowDb from '../flowDb.js';
+import { FlowDB } from '../flowDb.js';
 import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
 
@@ -8,7 +8,7 @@ setConfig({
 
 describe('[Text] when parsing', () => {
   beforeEach(function () {
-    flow.parser.yy = flowDb;
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
   });
 

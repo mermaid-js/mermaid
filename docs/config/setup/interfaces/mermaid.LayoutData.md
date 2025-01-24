@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/rendering-util/types.ts:147](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L147)
+[packages/mermaid/src/rendering-util/types.ts:148](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L148)
 
 ---
 
@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/rendering-util/types.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L146)
+[packages/mermaid/src/rendering-util/types.ts:147](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L147)
 
 ---
 
@@ -40,4 +40,4 @@
 
 #### Defined in
 
-[packages/mermaid/src/rendering-util/types.ts:145](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L145)
+[packages/mermaid/src/rendering-util/types.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L146)
