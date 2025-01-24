@@ -70,7 +70,6 @@ import { Diagram } from './Diagram.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 import { ClassDB } from './diagrams/class/classDb.js';
-import { StateDB } from './diagrams/state/stateDb.js';
 import { FlowDB } from './diagrams/flowchart/flowDb.js';
 
 /**
