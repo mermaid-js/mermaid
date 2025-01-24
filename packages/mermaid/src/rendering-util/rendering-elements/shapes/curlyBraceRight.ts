@@ -119,12 +119,10 @@ export async function curlyBraceRight<T extends SVGGraphicsElement>(
 
   curlyBraceRightShape.attr('transform', `translate(${-radius}, 0)`);
 
-  label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
-
-  // label.attr(
-  //   'transform',
-  //   `translate(${-w / 2 + labelPaddingX / 2 - (bbox.x - (bbox.left ?? 0))},${-(labelPaddingY / 2) - (bbox.y - (bbox.top ?? 0))})`
-  // );
+  label.attr(
+    'transform',
+    `translate(${-w / 2 + (labelPaddingX ?? 0) - (bbox.x - (bbox.left ?? 0))}, ${-bbox.height / 2})`
+  );
 
   updateNodeBounds(node, curlyBraceRightShape);
 
