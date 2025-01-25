@@ -7,7 +7,7 @@ describe('Graph', () => {
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
       C -->|One| D[Laptop]
-      C -->|Two| E[iPhone]
+      C -->|Two| E[iPad]
       C -->|Three| F[fa:fa-car Car]
       `,
       { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
