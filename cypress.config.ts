@@ -23,7 +23,7 @@ export default eyesPlugin(
         });
         // copy any needed variables from process.env to config.env
         config.env.useAppli = process.env.USE_APPLI ? true : false;
-        config.env.useArgos = !!process.env.CI;
+        config.env.useArgos = !!process.env.CI && !!process.env.ARGOS_TOKEN;
 
         if (config.env.useArgos) {
           registerArgosTask(on, config, {
