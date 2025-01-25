@@ -841,7 +841,7 @@ end
           { flowchart: { titleTopMargin: 0 } }
         );
       });
-      it('Sub graphs and markdown strings', () => {
+      it('Sub graphs', () => {
         imgSnapshotTest(
           `---
 config:
