@@ -36,6 +36,7 @@ env:
     ${{ github.event_name == 'issue_comment' && github.event.action == 'created' && contains(github.event.comment.body, '/visual-test') && github.event.issue.pull_request != null }}
 jobs:
   cache:
+    if: ${{ github.event_name != 'issue_comment' || contains(github.event.comment.body, '/visual-test') }}
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
