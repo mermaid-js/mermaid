@@ -135,6 +135,7 @@ The theming engine will only recognize hex colors and not color names. So, the v
 | background           | #f4f4f4                            | Used to calculate color for items that should either be background colored or contrasting to the background                      |
 | fontFamily           | trebuchet ms, verdana, arial       |                                                                                                                                  |
 | fontSize             | 16px                               | Font size in pixels                                                                                                              |
+| titleColor           | calculated from textColor          | Color to be used for the title text in Journey Diagrams.                                                                         |
 | primaryColor         | #fff4dd                            | Color to be used as background in nodes, other colors will be derived from this                                                  |
 | primaryTextColor     | calculated from darkMode #ddd/#333 | Color to be used as text color in nodes using `primaryColor`                                                                     |
 | secondaryColor       | calculated from primaryColor       |                                                                                                                                  |
