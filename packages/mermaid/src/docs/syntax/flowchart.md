@@ -1330,3 +1330,69 @@ mermaid.flowchartConfig = {
 ```
 
 <!--- cspell:ignore lagom --->
+Below is an example **Mermaid flowchart** that captures some of the key comparisons and findings from the text about **transformers vs. graph neural networks (GNNs/MPNNs)** on graph reasoning tasks. You can copy and paste this snippet into a Mermaid-compatible environment (such as [Mermaid Live Editor](https://mermaid.live/) or a markdown file with Mermaid support) to view or customize the diagram.
+
+```mermaid
+flowchart TD
+
+    %% Specify direction from top to bottom
+    A[Transformers] -->|Learn graph tasks| B{"Graph Reasoning<br> Tasks"}
+    A --> C[Large Data Advantage]
+
+    %% Graph tasks subdivided
+    B --> D[Retrieval <br>(Local) Tasks]
+    B --> E[Parallelizable <br>(Global) Tasks]
+    B --> F[Search <br>(Long-range) Tasks]
+
+    %% Performance summaries
+    D --> D1((Good Performance))
+    E --> E1((Strong Performance))
+    F --> F1((Mixed Results))
+
+    %% Comparisons
+    A -->|Compares to| G{"GNNs /<br> MPNNs"}
+    G --> H[Better Inductive Bias<br>(Local tasks)]
+    G --> I((MPNNs often better<br>with few samples))
+
+    A --> J((Often better on<br>global tasks))
+    J -->|Requires more data| K((Transformers can scale<br>with large training sets))
+    
+    %% Link out from local to global aspects
+    H --> D1
+    J --> E1
+    
+    %% Additional notes
+    subgraph Observations
+        note1(Transformers solve<br> parallelizable tasks <br> in log-depth)
+        note2(GNNs can run <br> local tasks easily)
+    end
+
+    E1 --> note1
+    H --> note2
+```
+
+### Explanation of This Diagram
+
+1. **Transformers** (Node A) are evaluated on **Graph Reasoning Tasks** (Node B).  
+2. **Graph Tasks** are split into three broad categories (Nodes D, E, F), reflecting the text’s discussion:
+   - **Retrieval** (local, e.g., degree checks)  
+   - **Parallelizable** (global, e.g., connectivity)  
+   - **Search** (long-range dependencies, e.g., multi-hop paths)  
+3. **Transformers** compare directly to **GNNs/MPNNs** (Node G). GNNs often show stronger **inductive bias** (Node H) for local or small-sample tasks, whereas Transformers shine on more global tasks if data is abundant (Nodes C, J, K).  
+4. Each of the arrowheads and text elements can be further customized to highlight key numeric results or references to short path, cycle checks, etc.
+
+Feel free to **adapt or expand**:
+- **Subdivide** tasks further if you want to detail specific tasks (e.g., “Cycle Check”, “Connectivity”, “Shortest Path”).
+- **Add shapes** for Large Language Models (LLMs) or more specialized MPNN variants if relevant.
+- **Reorganize** the flow for clarity around your specific emphasis (the tasks, the model capacity, or empirical vs. theoretical findings).
+
+---
+
+#### Tips for Customizing
+
+1. **Labels:** Adjust the text on each arrow (e.g., `|Learn graph tasks|`) to reflect your messaging more precisely.  
+2. **Shapes:** Switch to `circle`, `rect`, or `diamond` if you prefer different node shapes.  
+3. **Layout:** Change `flowchart TD` to `LR` or `BT` to modify direction (left-right, bottom-top).  
+4. **Notes or Subgraphs:** Insert `subgraph` blocks if you have subtopics to group, such as “Empirical Findings” vs. “Theoretical Insights.”
+
+This approach should help visually map out the **relationships**, **comparisons**, and **outcomes** in your text about **transformers**, **GNNs**, and **graph reasoning**.
