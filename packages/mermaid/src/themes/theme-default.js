@@ -178,7 +178,7 @@ class Theme {
     this.clusterBkg = this.secondBkg;
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
-    this.titleColor = this.textColor;
+    this.titleColor = this.titleColor || this.textColor;
     this.edgeLabelBackground = this.labelBackground;
 
     /* Sequence Diagram variables */

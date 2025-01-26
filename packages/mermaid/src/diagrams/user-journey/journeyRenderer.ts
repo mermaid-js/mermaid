@@ -49,6 +49,7 @@ const conf = getConfig().journey;
 const LEFT_MARGIN = conf.leftMargin;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().journey;
+  const titleColor = getConfig().themeVariables.titleColor;
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
@@ -95,7 +96,8 @@ export const draw = function (text, id, version, diagObj) {
       .attr('x', LEFT_MARGIN)
       .attr('font-size', '4ex')
       .attr('font-weight', 'bold')
-      .attr('y', 25);
+      .attr('y', 25)
+      .attr('fill', titleColor);
   }
 
   const height = box.stopy - box.starty + 2 * conf.diagramMarginY;
