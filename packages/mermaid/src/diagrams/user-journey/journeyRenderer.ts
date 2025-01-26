@@ -48,8 +48,6 @@ function drawActorLegend(diagram) {
 const conf = getConfig().journey;
 const LEFT_MARGIN = conf.leftMargin;
 export const draw = function (text, id, version, diagObj) {
-  console.warn('hello again');
-  console.warn(getConfig());
   const conf = getConfig().journey;
   const titleColor = getConfig().themeVariables.titleColor;
   const titleFontSize = getConfig().themeVariables.titleFontSize;
