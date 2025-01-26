@@ -233,6 +233,8 @@ class Theme {
     this.fillType5 = adjust(this.secondaryColor, { h: -64 });
     this.fillType6 = adjust(this.primaryColor, { h: 128 });
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
+    this.titleFontFamily = this.titleFontFamily || '"trebuchet ms", verdana, arial, sans-serif';
+    this.titleFontSize = this.titleFontSize || '16px';
 
     /* pie */
     this.pie1 = this.pie1 || this.primaryColor;

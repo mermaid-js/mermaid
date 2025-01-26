@@ -48,8 +48,12 @@ function drawActorLegend(diagram) {
 const conf = getConfig().journey;
 const LEFT_MARGIN = conf.leftMargin;
 export const draw = function (text, id, version, diagObj) {
+  console.warn('hello again');
+  console.warn(getConfig());
   const conf = getConfig().journey;
   const titleColor = getConfig().themeVariables.titleColor;
+  const titleFontSize = getConfig().themeVariables.titleFontSize;
+  const titleFontFamily = getConfig().themeVariables.titleFontFamily;
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
@@ -94,10 +98,11 @@ export const draw = function (text, id, version, diagObj) {
       .append('text')
       .text(title)
       .attr('x', LEFT_MARGIN)
-      .attr('font-size', '4ex')
+      .attr('font-size', titleFontSize)
       .attr('font-weight', 'bold')
       .attr('y', 25)
-      .attr('fill', titleColor);
+      .attr('fill', titleColor)
+      .attr('font-family', titleFontFamily);
   }
 
   const height = box.stopy - box.starty + 2 * conf.diagramMarginY;
