@@ -14,7 +14,6 @@ const getStyles = (options) =>
   .legend {
     fill: ${options.textColor};
     font-family: ${options.fontFamily};
-    font-size: ${options.textSize};
   }
 
   .label text {
