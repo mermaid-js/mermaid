@@ -1,5 +1,5 @@
 import { setConfig } from '../../../config.js';
-import erDb from '../erDb.js';
+import { ErDb } from '../erDb.js';
 import erDiagram from './erDiagram.jison'; // jison file
 
 setConfig({
@@ -7,6 +7,7 @@ setConfig({
 });
 
 describe('when parsing ER diagram it...', function () {
+  const erDb = new ErDb();
   beforeEach(function () {
     erDiagram.parser.yy = erDb;
     erDiagram.parser.yy.clear();

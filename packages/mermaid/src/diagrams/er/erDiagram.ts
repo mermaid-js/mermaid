@@ -1,12 +1,14 @@
 // @ts-ignore: TODO: Fix ts errors
 import erParser from './parser/erDiagram.jison';
-import erDb from './erDb.js';
+import { ErDB } from './erDb.js';
 import erRenderer from './erRenderer-unified.js';
 import erStyles from './styles.js';
 
 export const diagram = {
   parser: erParser,
-  db: erDb,
+  get db() {
+    return new ErDB();
+  },
   renderer: erRenderer,
   styles: erStyles,
 };
