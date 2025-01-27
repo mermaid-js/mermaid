@@ -17,8 +17,8 @@
       "fileExtensions": [".mmd", ".mermaid"]
     },
     {
-      "id": "treeView",
-      "grammar": "src/language/treeView/treeView.langium",
+      "id": "fileTree",
+      "grammar": "src/language/fileTree/fileTree.langium",
       "fileExtensions": [".mmd", ".mermaid"]
     }
   ],

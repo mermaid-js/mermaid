@@ -448,9 +448,9 @@ You may also use `themeCSS` to override this value.
 
 ---
 
-### treeView
+### fileTree
 
-• `Optional` **treeView**: `TreeViewDiagramConfig`
+• `Optional` **fileTree**: `FileTreeDiagramConfig`
 
 #### Defined in
 

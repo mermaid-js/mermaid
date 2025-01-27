@@ -1,5 +1,5 @@
-import type { TreeViewDiagramConfig } from '../../config.type.js';
-import type { TreeViewDB, Node } from './types.js';
+import type { FileTreeDiagramConfig } from '../../config.type.js';
+import type { FileTreeDB, Node } from './types.js';
 import { getConfig as getCommonConfig } from '../../config.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import {
@@ -14,12 +14,12 @@ import {
 import { cleanAndMerge } from '../../utils.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 
-interface TreeViewState {
+interface FileTreeState {
   cnt: number;
   stack: Node[];
 }
 
-const state = new ImperativeState<TreeViewState>(() => ({
+const state = new ImperativeState<FileTreeState>(() => ({
   cnt: 1,
   stack: [
     {
@@ -42,10 +42,10 @@ const getRoot = () => {
 
 const getCount = () => state.records.cnt;
 
-const defaultConfig: Required<TreeViewDiagramConfig> = DEFAULT_CONFIG.treeView;
+const defaultConfig: Required<FileTreeDiagramConfig> = DEFAULT_CONFIG.fileTree;
 
-const getConfig = (): Required<TreeViewDiagramConfig> => {
-  return cleanAndMerge(defaultConfig, getCommonConfig().treeView);
+const getConfig = (): Required<FileTreeDiagramConfig> => {
+  return cleanAndMerge(defaultConfig, getCommonConfig().fileTree);
 };
 
 const addNode = (level: number, name: string) => {
@@ -62,7 +62,7 @@ const addNode = (level: number, name: string) => {
   state.records.stack.push(node);
 };
 
-const db: TreeViewDB = {
+const db: FileTreeDB = {
   clear,
   addNode,
   getRoot,

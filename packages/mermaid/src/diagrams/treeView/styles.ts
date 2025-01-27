@@ -1,23 +1,23 @@
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 import { cleanAndMerge } from '../../utils.js';
-import type { TreeViewDiagramStyles } from './types.js';
+import type { FileTreeDiagramStyles } from './types.js';
 
-const defaultTreeViewDiagramStyles: Required<TreeViewDiagramStyles> = {
+const defaultFileTreeDiagramStyles: Required<FileTreeDiagramStyles> = {
   fontSize: '16px',
   lineColor: 'black',
 };
 
 const styles: DiagramStylesProvider = ({
-  treeView,
+  fileTree,
 }: {
-  treeView?: TreeViewDiagramStyles;
+  fileTree?: FileTreeDiagramStyles;
 }): string => {
-  const { fontSize, lineColor } = cleanAndMerge(defaultTreeViewDiagramStyles, treeView);
+  const { fontSize, lineColor } = cleanAndMerge(defaultFileTreeDiagramStyles, fileTree);
   return `
-    .treeView-node-label {
+    .fileTree-node-label {
         font-size: ${fontSize};
     }
-    .treeView-node-line {
+    .fileTree-node-line {
         stroke: ${lineColor};
     }
     `;

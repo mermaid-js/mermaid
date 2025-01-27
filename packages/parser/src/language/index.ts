@@ -11,7 +11,7 @@ export {
   isPacketBlock,
   isPie,
   isPieSection,
-  TreeView,
+  FileTree,
   TreeNode,
 } from './generated/ast.js';
 export {
@@ -25,4 +25,4 @@ export * from './common/index.js';
 export * from './info/index.js';
 export * from './packet/index.js';
 export * from './pie/index.js';
-export * from './treeView/index.js';
+export * from './fileTree/index.js';

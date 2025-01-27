@@ -1,7 +1,7 @@
 import { AbstractMermaidTokenBuilder } from '../common/index.js';
 
-export class TreeViewTokenBuilder extends AbstractMermaidTokenBuilder {
+export class FileTreeTokenBuilder extends AbstractMermaidTokenBuilder {
   public constructor() {
-    super(['treeView-beta']);
+    super(['fileTree-beta']);
   }
 }

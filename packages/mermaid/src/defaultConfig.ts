@@ -260,8 +260,8 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
-  treeView: {
-    ...defaultConfigJson.treeView,
+  fileTree: {
+    ...defaultConfigJson.fileTree,
     useWidth: undefined,
   },
 };

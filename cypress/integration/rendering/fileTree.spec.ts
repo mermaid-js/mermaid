@@ -1,16 +1,16 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
-describe('TreeView Diagram', () => {
-  it('should render a simple treeView diagram', () => {
+describe('FileTree Diagram', () => {
+  it('should render a simple fileTree diagram', () => {
     imgSnapshotTest(
-      `treeView-beta
+      `fileTree-beta
             file1.ts`
     );
   });
 
-  it('should render a complex treeView diagram', () => {
+  it('should render a complex fileTree diagram', () => {
     imgSnapshotTest(
-      `treeView-beta
+      `fileTree-beta
             root
                 folder1
                     file1.js
@@ -26,9 +26,9 @@ describe('TreeView Diagram', () => {
     );
   });
 
-  it('should render a complex treeView diagram with multiple roots', () => {
+  it('should render a complex fileTree diagram with multiple roots', () => {
     imgSnapshotTest(
-      `treeView-beta
+      `fileTree-beta
             folder1
                 file1.js
                 file2.ts

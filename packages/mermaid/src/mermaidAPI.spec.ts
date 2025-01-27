@@ -31,7 +31,7 @@ vi.mock('./diagrams/xychart/xychartRenderer.js');
 vi.mock('./diagrams/requirement/requirementRenderer.js');
 vi.mock('./diagrams/sequence/sequenceRenderer.js');
 vi.mock('./diagrams/state/stateRenderer-v2.js');
-vi.mock('./diagrams/treeView/renderer.js');
+vi.mock('./diagrams/fileTree/renderer.js');
 
 // -------------------------------------
 
@@ -734,7 +734,7 @@ describe('mermaidAPI', () => {
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
-      { textDiagramType: 'treeView-beta', expectedType: 'treeView' },
+      { textDiagramType: 'fileTree-beta', expectedType: 'fileTree' },
     ];
 
     describe('accessibility', () => {

@@ -1,4 +1,4 @@
-import type { TreeViewDiagramConfig } from '../../config.type.js';
+import type { FileTreeDiagramConfig } from '../../config.type.js';
 import type { DiagramDBBase } from '../../diagram-api/types.js';
 import type { Selection } from 'd3-selection';
 
@@ -17,13 +17,13 @@ export interface Node {
   children: Node[];
 }
 
-export interface TreeViewDB extends DiagramDBBase<TreeViewDiagramConfig> {
+export interface FileTreeDB extends DiagramDBBase<FileTreeDiagramConfig> {
   addNode: (level: number, name: string) => void;
   getRoot: () => Node;
   getCount: () => number;
 }
 
-export interface TreeViewDiagramStyles {
+export interface FileTreeDiagramStyles {
   fontSize?: string;
   lineColor?: string;
 }

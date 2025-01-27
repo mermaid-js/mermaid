@@ -52,7 +52,7 @@ required:
   - sankey
   - packet
   - block
-  - treeView
+  - fileTree
 properties:
   theme:
     description: |
@@ -238,8 +238,8 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
-  treeView:
-    $ref: '#/$defs/TreeViewDiagramConfig'
+  fileTree:
+    $ref: '#/$defs/FileTreeDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2096,10 +2096,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         default: 8
 
-  TreeViewDiagramConfig:
-    title: TreeView Diagram Config
+  FileTreeDiagramConfig:
+    title: FileTree Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
-    description: The object containing configurations specific for treeView diagrams.
+    description: The object containing configurations specific for fileTree diagrams.
     type: object
     unevaluatedProperties: false
     properties:

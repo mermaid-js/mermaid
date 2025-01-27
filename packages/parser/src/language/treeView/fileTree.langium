@@ -1,8 +1,8 @@
-grammar TreeView
+grammar FileTree
 
-entry TreeView:
+entry FileTree:
     SPACELIST?
-    "treeView-beta"
+    "fileTree-beta"
     TitleAndAccessibilities?
     nodes+=TreeNode*
     SPACELIST?

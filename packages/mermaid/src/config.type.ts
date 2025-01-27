@@ -160,7 +160,7 @@ export interface MermaidConfig {
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
-  treeView?: TreeViewDiagramConfig;
+  fileTree?: FileTreeDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1462,12 +1462,12 @@ export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
 }
 /**
- * The object containing configurations specific for treeView diagrams.
+ * The object containing configurations specific for fileTree diagrams.
  *
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
- * via the `definition` "TreeViewDiagramConfig".
+ * via the `definition` "FileTreeDiagramConfig".
  */
-export interface TreeViewDiagramConfig extends BaseDiagramConfig {
+export interface FileTreeDiagramConfig extends BaseDiagramConfig {
   /**
    * Horizontal distance between rows differing by one level
    */

@@ -13,34 +13,34 @@ import {
 } from 'langium';
 
 import { CommonValueConverter } from '../common/valueConverter.js';
-import { MermaidGeneratedSharedModule, TreeViewGeneratedModule } from '../generated/module.js';
-import { TreeViewTokenBuilder } from './tokenBuilder.js';
+import { MermaidGeneratedSharedModule, FileTreeGeneratedModule } from '../generated/module.js';
+import { FileTreeTokenBuilder } from './tokenBuilder.js';
 
 /**
- * Declaration of `TreeView` services.
+ * Declaration of `FileTree` services.
  */
-interface TreeViewAddedServices {
+interface FileTreeAddedServices {
   parser: {
-    TokenBuilder: TreeViewTokenBuilder;
+    TokenBuilder: FileTreeTokenBuilder;
     ValueConverter: CommonValueConverter;
   };
 }
 
 /**
- * Union of Langium default services and `TreeView` services.
+ * Union of Langium default services and `FileTree` services.
  */
-export type TreeViewServices = LangiumCoreServices & TreeViewAddedServices;
+export type FileTreeServices = LangiumCoreServices & FileTreeAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and
- * contributes the declared `TreeView` services.
+ * contributes the declared `FileTree` services.
  */
-export const TreeViewModule: Module<
-  TreeViewServices,
-  PartialLangiumCoreServices & TreeViewAddedServices
+export const FileTreeModule: Module<
+  FileTreeServices,
+  PartialLangiumCoreServices & FileTreeAddedServices
 > = {
   parser: {
-    TokenBuilder: () => new TreeViewTokenBuilder(),
+    TokenBuilder: () => new FileTreeTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
   },
 };
@@ -59,19 +59,19 @@ export const TreeViewModule: Module<
  * @param context - Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createTreeViewServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
+export function createFileTreeServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
   shared: LangiumSharedCoreServices;
-  TreeView: TreeViewServices;
+  FileTree: FileTreeServices;
 } {
   const shared: LangiumSharedCoreServices = inject(
     createDefaultSharedCoreModule(context),
     MermaidGeneratedSharedModule
   );
-  const TreeView: TreeViewServices = inject(
+  const FileTree: FileTreeServices = inject(
     createDefaultCoreModule({ shared }),
-    TreeViewGeneratedModule,
-    TreeViewModule
+    FileTreeGeneratedModule,
+    FileTreeModule
   );
-  shared.ServiceRegistry.register(TreeView);
-  return { shared, TreeView };
+  shared.ServiceRegistry.register(FileTree);
+  return { shared, FileTree };
 }

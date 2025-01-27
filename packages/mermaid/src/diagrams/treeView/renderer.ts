@@ -1,9 +1,9 @@
 import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import type { D3SVGElement, TreeViewDB } from './types.js';
+import type { D3SVGElement, FileTreeDB } from './types.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { TreeViewDiagramConfig } from '../../config.type.js';
+import type { FileTreeDiagramConfig } from '../../config.type.js';
 import type { Node } from './types.js';
 
 const positionLabel = (
@@ -11,13 +11,13 @@ const positionLabel = (
   y: number,
   node: Node,
   domElem: D3SVGElement<SVGGElement>,
-  config: Required<TreeViewDiagramConfig>
+  config: Required<FileTreeDiagramConfig>
 ) => {
   const label = domElem
     .append('text')
     .text(node.name)
     .attr('dominant-baseline', 'middle')
-    .attr('class', 'treeView-node-label');
+    .attr('class', 'fileTree-node-label');
   const { height: labelHeight, width: labelWidth } = label.node()!.getBBox();
   const height = labelHeight + config.paddingY * 2;
   const width = labelWidth + config.paddingX * 2;
@@ -46,20 +46,20 @@ const positionLine = (
     .attr('x2', x2)
     .attr('y2', y2)
     .attr('stroke-width', lineThickness)
-    .attr('class', 'treeView-node-line');
+    .attr('class', 'fileTree-node-line');
 };
 
 const drawTree = (
   elem: D3SVGElement<SVGGElement>,
   root: Node,
-  config: Required<TreeViewDiagramConfig>
+  config: Required<FileTreeDiagramConfig>
 ) => {
   let totalHeight = 0;
   let totalWidth = 0;
   const drawNode = (
     elem: D3SVGElement<SVGGElement>,
     node: Node,
-    config: Required<TreeViewDiagramConfig>,
+    config: Required<FileTreeDiagramConfig>,
     depth: number
   ) => {
     const indent = depth * (config.rowIndent + config.paddingX);
@@ -102,9 +102,9 @@ const drawTree = (
 };
 
 const draw: DrawDefinition = (text, id, _ver, diagObj) => {
-  log.debug('Rendering treeView diagram\n' + text);
+  log.debug('Rendering fileTree diagram\n' + text);
 
-  const db = diagObj.db as TreeViewDB;
+  const db = diagObj.db as FileTreeDB;
   const root = db.getRoot();
   const config = db.getConfig();
 

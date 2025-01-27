@@ -1,15 +1,15 @@
-# TreeView Diagram (v<MERMAID_RELEASE_VERSION>+)
+# FileTree Diagram (v<MERMAID_RELEASE_VERSION>+)
 
 ## Introduction
 
-A TreeView diagram is used to represent hierarchical data in the form of a directory-like structure.
+A FileTree diagram is used to represent hierarchical data in the form of a directory-like structure.
 
 ## Syntax
 
 The structure of the tree depends only on indentation.
 
 ```
-treeView-beta
+fileTree-beta
     <folder name>
         <file name>
         <folder name>
@@ -20,7 +20,7 @@ treeView-beta
 ## Examples
 
 ```mermaid-example
-treeView-beta
+fileTree-beta
     packages
         mermaid
             src
@@ -30,13 +30,13 @@ treeView-beta
 ```mermaid-example
 ---
 config:
-    treeView:
+    fileTree:
         rowIndent: 5
     themeVariables:
-        treeView:
+        fileTree:
             fontSize: '20px'
 ---
-treeView-beta
+fileTree-beta
     packages
         mermaid
             src
