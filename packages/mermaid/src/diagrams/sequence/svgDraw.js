@@ -348,6 +348,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
       .attr('class', 'actor-line 200')
       .attr('stroke-width', '0.5px')
       .attr('stroke', '#999')
+      .attr('style', actor.style)
       .attr('name', actor.name);
 
     g = boxplusLineGroup.append('g');
@@ -378,6 +379,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   rect.rx = 3;
   rect.ry = 3;
   rect.name = actor.name;
+  rect.attrs = { style: actor.style };
   const rectElem = drawRect(g, rect);
   actor.rectData = rect;
 
