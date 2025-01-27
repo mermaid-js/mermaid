@@ -1,5 +1,5 @@
 import { setConfig } from '../../../config.js';
-import requirementDb from '../requirementDb.js';
+import { RequirementDB } from '../requirementDb.js';
 import reqDiagram from './requirementDiagram.jison';
 
 setConfig({
@@ -7,6 +7,7 @@ setConfig({
 });
 
 describe('when parsing requirement diagram it...', function () {
+  const requirementDb = new RequirementDB();
   beforeEach(function () {
     reqDiagram.parser.yy = requirementDb;
     reqDiagram.parser.yy.clear();
