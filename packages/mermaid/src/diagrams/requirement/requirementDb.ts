@@ -345,5 +345,5 @@ export class RequirementDB implements DiagramDB {
   public getAccDescription = getAccDescription;
   public setDiagramTitle = setDiagramTitle;
   public getDiagramTitle = getDiagramTitle;
-  public getConfig = () => getConfig().class;
+  public getConfig = () => getConfig().requirement;
 }
