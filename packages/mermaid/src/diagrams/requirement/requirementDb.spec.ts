@@ -1,8 +1,9 @@
-import requirementDb from './requirementDb.js';
+import { RequirementDB } from './requirementDb.js';
 import { describe, it, expect } from 'vitest';
-import type { RelationshipType } from './types.js';
+import type { Relation, RelationshipType } from './types.js';
 
 describe('requirementDb', () => {
+  const requirementDb = new RequirementDB();
   beforeEach(() => {
     requirementDb.clear();
   });
@@ -23,7 +24,7 @@ describe('requirementDb', () => {
     requirementDb.addRelationship('contains' as RelationshipType, 'src', 'dst');
     const relationships = requirementDb.getRelationships();
     const relationship = relationships.find(
-      (r) => r.type === 'contains' && r.src === 'src' && r.dst === 'dst'
+      (r: Relation) => r.type === 'contains' && r.src === 'src' && r.dst === 'dst'
     );
     expect(relationship).toBeDefined();
   });
