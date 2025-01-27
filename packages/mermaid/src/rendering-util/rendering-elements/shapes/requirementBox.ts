@@ -19,8 +19,8 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   const requirementNode = node as unknown as Requirement;
   const elementNode = node as unknown as Element;
   const config = getConfig().requirement;
-  const PADDING = 20;
-  const GAP = 20;
+  const padding = 20;
+  const gap = 20;
   const isRequirementNode = 'verifyMethod' in node;
   const classes = getNodeClasses(node);
 
@@ -49,7 +49,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     accumulativeHeight,
     node.labelStyle
   );
-  accumulativeHeight += nameHeight + GAP;
+  accumulativeHeight += nameHeight + gap;
 
   // Requirement
   if (isRequirementNode) {
@@ -99,7 +99,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   }
 
   const totalWidth = Math.max(
-    (shapeSvg.node()?.getBBox().width ?? 200) + PADDING,
+    (shapeSvg.node()?.getBBox().width ?? 200) + padding,
     config?.rect_min_width ?? 200
   );
   const totalHeight = totalWidth;
@@ -141,22 +141,22 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     }
 
     const newTranslateY = translateY - totalHeight / 2;
-    let newTranslateX = x + PADDING / 2;
+    let newTranslateX = x + padding / 2;
 
     // Keep type and name labels centered.
     if (i === 0 || i === 1) {
       newTranslateX = translateX;
     }
     // Set the updated transform attribute
-    text.attr('transform', `translate(${newTranslateX}, ${newTranslateY + PADDING})`);
+    text.attr('transform', `translate(${newTranslateX}, ${newTranslateY + padding})`);
   });
 
   // Insert divider line
   const roughLine = rc.line(
     x,
-    y + typeHeight + nameHeight + GAP,
+    y + typeHeight + nameHeight + gap,
     x + totalWidth,
-    y + typeHeight + nameHeight + GAP,
+    y + typeHeight + nameHeight + gap,
     options
   );
   const dividerLine = shapeSvg.insert(() => roughLine);
