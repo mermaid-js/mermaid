@@ -140,7 +140,7 @@ export const shiftPositionByArchitectureDirectionPair = function (
   const rhs = pair[1] as ArchitectureDirection;
   if (isArchitectureDirectionX(lhs)) {
     if (isArchitectureDirectionY(rhs)) {
-      return [x + (lhs === 'L' ? -1 : 1), y + (rhs === 'T' ? 1 : -1)];
+      return [x + (lhs === 'L' ? -1 : 1), y + (rhs === 'T' ? -1 : 1)];
     } else {
       return [x + (lhs === 'L' ? -1 : 1), y];
     }

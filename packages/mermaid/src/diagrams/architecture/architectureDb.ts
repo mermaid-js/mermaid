@@ -285,10 +285,18 @@ const getDataStructures = () => {
           const [posX, posY] = spatialMap[id];
           Object.entries(adj).forEach(([dir, rhsId]) => {
             if (!visited[rhsId]) {
-              spatialMap[rhsId] = shiftPositionByArchitectureDirectionPair(
+              const shift = shiftPositionByArchitectureDirectionPair(
                 [posX, posY],
                 dir as ArchitectureDirectionPair
               );
+
+              if (spatialMap[rhsId] && spatialMap[rhsId].toString() !== shift.toString()) {
+                throw new Error(
+                  `Edges cannot jump more then 1 grid space. Please see the "Considerations" section of the diagram documentation for details.`
+                );
+              }
+
+              spatialMap[rhsId] = shift;
               queue.push(rhsId);
             }
           });
