@@ -322,15 +322,23 @@ function getRelativeConstraints(
               // For XY, only add a constraint if there is a physical connection between the nodes
             } else if (dir.length === 2 && newId && !visited[newPos] && newAdjList[currId][newId]) {
               queue.push(newPos);
-              // For XY directions, Cytoscape won't accept both top/bottom & left/right. We take dir[0] to ensure they aren't duplicated
-              // @ts-ignore cannot determine if left/right or top/bottom are paired together
-              relativeConstraints.push({
-                [ArchitectureDirectionName[dir[0] as ArchitectureDirection]]: newId,
-                [ArchitectureDirectionName[
-                  getOppositeArchitectureDirection(dir[0] as ArchitectureDirection)
-                ]]: currId,
-                gap: 1.5 * getConfigField('iconSize'),
-              });
+              relativeConstraints.push(
+                // @ts-ignore cannot determine if left/right or top/bottom are paired together
+                {
+                  [ArchitectureDirectionName[dir[0] as ArchitectureDirection]]: newId,
+                  [ArchitectureDirectionName[
+                    getOppositeArchitectureDirection(dir[0] as ArchitectureDirection)
+                  ]]: currId,
+                  gap: 1.5 * getConfigField('iconSize'),
+                },
+                {
+                  [ArchitectureDirectionName[dir[1] as ArchitectureDirection]]: newId,
+                  [ArchitectureDirectionName[
+                    getOppositeArchitectureDirection(dir[1] as ArchitectureDirection)
+                  ]]: currId,
+                  gap: 1.5 * getConfigField('iconSize'),
+                }
+              );
             }
           });
         }
