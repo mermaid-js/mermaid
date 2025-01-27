@@ -3,7 +3,7 @@ import type { DiagramDefinition } from '../../diagram-api/types.js';
 import parser from './parser/requirementDiagram.jison';
 import db from './requirementDb.js';
 import styles from './styles.js';
-import renderer from './requirementRenderer-unified.js';
+import renderer from './requirementRenderer.js';
 
 export const diagram: DiagramDefinition = {
   parser,
