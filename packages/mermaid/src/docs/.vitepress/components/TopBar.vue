@@ -29,7 +29,7 @@ let index = ref(Math.floor(Math.random() * taglines.length));
 onMounted(() => {
   setInterval(() => {
     index.value = (index.value + 1) % taglines.length;
-  }, 40_000);
+  }, 5_000);
 });
 </script>
 
