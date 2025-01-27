@@ -38,7 +38,6 @@ const SRC = {
           // to match the real `package.json` values
           'type-fest': '*',
           '@types/d3': '^7.4.3',
-          '@types/dompurify': '^3.0.5',
           typescript: '*',
         },
       },

@@ -450,22 +450,6 @@ export const shapesDefs = [
     aliases: ['lined-document'],
     handler: linedWaveEdgedRect,
   },
-  {
-    semanticName: 'Entity Relationship Box',
-    name: 'Entity Relationship Box',
-    shortName: 'erBox',
-    description: 'Entity Relationship Box',
-    aliases: ['er-box'],
-    handler: erBox,
-  },
-  {
-    semanticName: 'Class Box',
-    name: 'Class Box',
-    shortName: 'classBox',
-    description: 'Class Box',
-    aliases: ['class-box'],
-    handler: classBox,
-  },
 ] as const satisfies ShapeDefinition[];
 
 const generateShapeMap = () => {
@@ -486,8 +470,16 @@ const generateShapeMap = () => {
     icon,
     iconRounded,
     imageSquare,
-    kanbanItem,
     anchor,
+
+    // Kanban diagram
+    kanbanItem,
+
+    // class diagram
+    classBox,
+    
+    // er diagram
+    erBox,
   } as const;
 
   const entries = [
