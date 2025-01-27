@@ -191,6 +191,141 @@ architecture-beta
     bottom_gateway:T -- B:junctionRight
 ```
 
+## Limitations
+
+Due to underlying limitations in the rendering engine, there are a couple things to keep in mind when designing your Architecture diagrams.
+
+### Grid-based layout
+
+Internally, Architecture diagrams are represented using a grid layout where each slot in the grid is a service. When designing your diagrams, take care to ensure there isn't a jump/empty slot between two services.
+
+For example:
+
+```
+architecture-beta
+    service client[Client]                                 %%[0, 0] <--
+    service api(logos:aws-api-gateway)[Amazon API Gateway] %%[1, 0]
+    service lambda1(logos:aws-lambda)[AWS Lambda]          %%[2, 0]
+
+    service dynamodb(logos:aws-dynamodb)[Amazon DynamoDB]  %%[3,-1]
+
+    service s3(logos:aws-s3)[Amazon S3]                    %%[1,-2] <--
+    service lambda2(logos:aws-lambda)[AWS Lambda]          %%[2,-2]
+
+    client:R -[1]-> L:api
+    api:R -[2]-> L:lambda1
+    lambda1:R -[3]-> T:dynamodb
+
+
+    client:B -[4]-> L:s3                                   %% invalid edge (y difference from 0 to -2 is > 1)
+    s3:R -[5]-> L:lambda2
+    lambda2:R -[6]-> B:dynamodb
+```
+
+Would attempt to render as:
+
+![](./img/Architecture-grid.png)
+
+There are two potential ways to resolve this:
+
+1. **Without junctions**
+
+```mermaid-example
+architecture-beta
+    service client[Client]                                 %%[0, 0]
+    service api(logos:aws-api-gateway)[Amazon API Gateway] %%[1, 0]
+    service lambda1(logos:aws-lambda)[AWS Lambda]          %%[2, 0]
+
+    service dynamodb(logos:aws-dynamodb)[Amazon DynamoDB]  %%[3,-1]
+
+    service s3(logos:aws-s3)[Amazon S3]                    %%[1,-1]
+    service lambda2(logos:aws-lambda)[AWS Lambda]          %%[2,-1]
+
+    client:R -[1]-> L:api
+    api:R -[2]-> L:lambda1
+    lambda1:R -[3]-> T:dynamodb
+
+
+    client:B -[4]-> L:s3
+    s3:R -[5]-> L:lambda2
+    lambda2:R -[6]-> L:dynamodb                            %% Modified
+```
+
+```mermaid
+architecture-beta
+    service client[Client]                                 %%[0, 0]
+    service api(logos:aws-api-gateway)[Amazon API Gateway] %%[1, 0]
+    service lambda1(logos:aws-lambda)[AWS Lambda]          %%[2, 0]
+
+    service dynamodb(logos:aws-dynamodb)[Amazon DynamoDB]  %%[3,-1]
+
+    service s3(logos:aws-s3)[Amazon S3]                    %%[1,-1]
+    service lambda2(logos:aws-lambda)[AWS Lambda]          %%[2,-1]
+
+    client:R -[1]-> L:api
+    api:R -[2]-> L:lambda1
+    lambda1:R -[3]-> T:dynamodb
+
+
+    client:B -[4]-> L:s3
+    s3:R -[5]-> L:lambda2
+    lambda2:R -[6]-> L:dynamodb                            %% Modified
+```
+
+2. **With junctions**
+
+```mermaid-example
+architecture-beta
+    service client[Client]                                   %%[0, 0]
+    junction j1                                              %%[0,-1]
+    junction j2                                              %%[0,-2]
+
+    service api(logos:aws-api-gateway)[Amazon API Gateway]   %%[1, 0]
+    service lambda1(logos:aws-lambda)[AWS Lambda 1]          %%[2, 0]
+
+    service dynamodb(logos:aws-dynamodb)[Amazon DynamoDB]    %%[3,-1]
+
+    service s3(logos:aws-s3)[Amazon S3]                      %%[1,-2]
+    service lambda2(logos:aws-lambda)[AWS Lambda 2]          %%[2,-2]
+
+    client:R -[1]-> L:api
+    api:R -[2]-> L:lambda1
+    lambda1:R -[3]-> T:dynamodb
+
+    client:B -[j1]- T:j1
+    j1:B -[j1 to j2]- T:j2
+    j2:R -[j2]- L:s3
+
+    s3:R -[5]-> L:lambda2
+    lambda2:R -[6]-> B:dynamodb
+```
+
+```mermaid
+architecture-beta
+    service client[Client]                                   %%[0, 0]
+    junction j1                                              %%[0,-1]
+    junction j2                                              %%[0,-2]
+
+    service api(logos:aws-api-gateway)[Amazon API Gateway]   %%[1, 0]
+    service lambda1(logos:aws-lambda)[AWS Lambda 1]          %%[2, 0]
+
+    service dynamodb(logos:aws-dynamodb)[Amazon DynamoDB]    %%[3,-1]
+
+    service s3(logos:aws-s3)[Amazon S3]                      %%[1,-2]
+    service lambda2(logos:aws-lambda)[AWS Lambda 2]          %%[2,-2]
+
+    client:R -[1]-> L:api
+    api:R -[2]-> L:lambda1
+    lambda1:R -[3]-> T:dynamodb
+
+    client:B -[j1]- T:j1
+    j1:B -[j1 to j2]- T:j2
+    j2:R -[j2]- L:s3
+
+    s3:R -[5]-> L:lambda2
+    lambda2:R -[6]-> B:dynamodb
+```
+
 ## Icons
 
 By default, architecture diagram supports the following icons: `cloud`, `database`, `disk`, `internet`, `server`.
