@@ -59,6 +59,13 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       node.width = config.er!.minEntityWidth;
     }
     const shapeSvg = await drawRect(parent, node, options);
+
+    // drawRect doesn't center non-htmlLabels correctly as of now, so translate label
+    if (!evaluate(config.htmlLabels)) {
+      const textElement = shapeSvg.select('text');
+      const bbox = (textElement.node() as SVGTextElement)?.getBBox();
+      textElement.attr('transform', `translate(${-bbox.width / 2}, 0)`);
+    }
     return shapeSvg;
   }
 
