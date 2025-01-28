@@ -62,7 +62,7 @@ export function stateStart<T extends SVGGraphicsElement>(
       .attr('height', node.height ?? 14);
   }
 
-  if (node.width < 25 && theme === 'redux' && node.look !== 'handDrawn') {
+  if (node.width < 25 && theme?.includes('redux') && node.look !== 'handDrawn') {
     circle.attr('style', 'filter:url(#drop-shadow-small)');
   }
 

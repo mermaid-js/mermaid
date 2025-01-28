@@ -61,7 +61,7 @@ export function filledCircle<T extends SVGGraphicsElement>(
     filledCircle.attr('class', 'outer-path');
   }
 
-  if (node.width < 25 && theme === 'redux' && node.look !== 'handDrawn') {
+  if (node.width < 25 && theme?.includes('redux') && node.look !== 'handDrawn') {
     filledCircle.attr('style', 'filter:url(#drop-shadow-small)');
   }
 

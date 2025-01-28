@@ -57,7 +57,8 @@ export const render = async (data4Layout: LayoutData, svg: SVG, positions?: any)
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
 
-  const { useGradient, gradientStart, gradientStop } = data4Layout.config.themeVariables;
+  const { theme, themeVariables } = data4Layout.config;
+  const { useGradient, gradientStart, gradientStop } = themeVariables;
 
   svg
     .append('defs')
@@ -70,7 +71,7 @@ export const render = async (data4Layout: LayoutData, svg: SVG, positions?: any)
     .attr('dy', '4')
     .attr('stdDeviation', 0)
     .attr('flood-opacity', '0.06')
-    .attr('flood-color', '#000000');
+    .attr('flood-color', `${theme === 'redux' ? '#000000' : '#FFFFFF'}`);
 
   svg
     .append('defs')
@@ -83,7 +84,7 @@ export const render = async (data4Layout: LayoutData, svg: SVG, positions?: any)
     .attr('dy', '2')
     .attr('stdDeviation', 0)
     .attr('flood-opacity', '0.06')
-    .attr('flood-color', '#000000');
+    .attr('flood-color', `${theme === 'redux' ? '#000000' : '#FFFFFF'}`);
 
   if (useGradient) {
     const gradient = svg
