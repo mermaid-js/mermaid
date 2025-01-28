@@ -34,7 +34,3 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   setupViewPortForSVG(svg, padding, 'requirementDiagram', conf?.useMaxWidth ?? true);
 };
-
-export default {
-  draw,
-};
