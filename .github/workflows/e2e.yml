@@ -132,7 +132,7 @@ jobs:
           browser: chrome
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
-          record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
           # Only set Argos environment variables if the visual test comment trigger is present
           ARGOS_TOKEN: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.ARGOS_TOKEN || '' }}
