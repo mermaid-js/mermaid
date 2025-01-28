@@ -25,7 +25,9 @@ export default eyesPlugin(
         config.env.useAppli = process.env.USE_APPLI ? true : false;
         // only use Argos on CI in the mermaid-js/mermaid repository
         config.env.useArgos =
-          !!process.env.CI && process.env.GITHUB_REPOSITORY === 'mermaid-js/mermaid';
+          !!process.env.CI &&
+          process.env.GITHUB_REPOSITORY === 'mermaid-js/mermaid' &&
+          !!process.env.ARGOS_TOKEN;
 
         if (config.env.useArgos) {
           registerArgosTask(on, config, {
