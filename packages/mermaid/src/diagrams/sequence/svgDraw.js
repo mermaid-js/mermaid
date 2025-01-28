@@ -548,8 +548,9 @@ export const anchorElement = function (elem) {
  * @param {any} verticalPos - Precise y coordinate of bottom activation box edge.
  * @param {any} conf - Sequence diagram config object.
  * @param {any} actorActivations - Number of activations on the actor.
+ * @param {string} style - CSS style of this actor.
  */
-export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
+export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations, style) {
   const rect = svgDrawCommon.getNoteRect();
   const g = bounds.anchored;
   rect.x = bounds.startx;
@@ -557,6 +558,7 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
   rect.class = 'activation' + (actorActivations % 3); // Will evaluate to 0, 1 or 2
   rect.width = bounds.stopx - bounds.startx;
   rect.height = verticalPos - bounds.starty;
+  rect.attrs = { style };
   drawRect(g, rect);
 };
 

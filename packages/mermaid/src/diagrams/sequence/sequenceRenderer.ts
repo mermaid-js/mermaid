@@ -836,6 +836,7 @@ export const draw = async function (_text: string, id: string, _version: string,
    * @param verticalPos - The vertical position of the message.
    */
   function activeEnd(msg: any, verticalPos: number) {
+    const actor = actors.get(msg.from);
     const activationData = bounds.endActivation(msg);
     if (activationData.starty + 18 > verticalPos) {
       activationData.starty = verticalPos - 6;
@@ -846,7 +847,8 @@ export const draw = async function (_text: string, id: string, _version: string,
       activationData,
       verticalPos,
       conf,
-      actorActivations(msg.from).length
+      actorActivations(msg.from).length,
+      actor.style
     );
 
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);

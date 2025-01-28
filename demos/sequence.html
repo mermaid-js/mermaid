@@ -255,13 +255,14 @@
     <pre class="mermaid">
     sequenceDiagram
       participant Pink Alice
-      participant Blue Bob
-      Pink Alice->>Blue Bob: Hello!
-      Blue Bob->>Pink Alice: Hi Alice, what a nice pink color
-      Pink Alice->>Blue Bob: Thanks Bob, I like your color to!
+      participant Purple Bob
+      Pink Alice->>+Purple Bob: Hello!
+      Purple Bob->>+Pink Alice: Hi Alice, what a nice pink color
+      Pink Alice->>-Purple Bob: Thanks Bob, I like your color to!
+      Purple Bob->>-Pink Alice: Thanks Alice!!!
 
       style Pink Alice: fill:pink, stroke:red
-      style Blue Bob: fill:aqua, stroke:blue
+      style Purple Bob: fill:mediumPurple, stroke:purple
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
