@@ -262,10 +262,10 @@ link_statement
 	;
 
 style_statement
-    : 'style' actor text2                              
-		{
+    : 'style' actor text2
+	{
 		$$ = [$2, {type:'setCssStyle', actor:$2.actor, text:$3}];
-		}
+  }
     ;
 
 properties_statement
