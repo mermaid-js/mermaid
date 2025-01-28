@@ -1,7 +1,7 @@
 // @ts-ignore: TODO: Fix ts errors
 import erParser from './parser/erDiagram.jison';
 import { ErDB } from './erDb.js';
-import erRenderer from './erRenderer-unified.js';
+import * as renderer from './erRenderer-unified.js';
 import erStyles from './styles.js';
 
 export const diagram = {
@@ -9,6 +9,6 @@ export const diagram = {
   get db() {
     return new ErDB();
   },
-  renderer: erRenderer,
+  renderer,
   styles: erStyles,
 };

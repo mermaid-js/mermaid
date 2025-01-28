@@ -64,7 +64,3 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   setupViewPortForSVG(svg, padding, 'erDiagram', conf?.useMaxWidth ?? true);
 };
-
-export default {
-  draw,
-};
