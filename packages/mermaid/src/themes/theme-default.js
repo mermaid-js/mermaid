@@ -29,7 +29,7 @@ class Theme {
     this.mainBkg = '#ECECFF';
     this.secondBkg = '#ffffde';
     this.lineColor = '#333333';
-    this.border1 = '#9370DB';
+    this.border1 = '#B8B8FF';
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     this.border2 = '#aaaa33';
     this.arrowheadColor = '#333333';

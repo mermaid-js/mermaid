@@ -21,7 +21,7 @@ class Theme {
     this.noteTextColor = '#28253D';
 
     this.THEME_COLOR_LIMIT = 12;
-    this.radius = 3;
+    this.radius = 12;
     this.strokeWidth = 2;
 
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
