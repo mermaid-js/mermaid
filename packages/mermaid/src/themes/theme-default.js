@@ -33,7 +33,7 @@ class Theme {
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     this.border2 = '#aaaa33';
     this.arrowheadColor = '#333333';
-    this.fontFamily = 'arial, "trebuchet ms", verdana, sans-serif';
+    this.fontFamily = 'arial, sans-serif';
     this.fontSize = '14px';
     this.labelBackground = 'rgba(232,232,232, 0.8)';
     this.textColor = '#333';

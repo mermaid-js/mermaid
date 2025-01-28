@@ -24,7 +24,7 @@ class Theme {
     this.border1 = '#ccc';
     this.border2 = rgba(255, 255, 255, 0.25);
     this.arrowheadColor = 'calculated';
-    this.fontFamily = 'arial, "trebuchet ms", verdana, sans-serif';
+    this.fontFamily = 'arial, sans-serif';
     this.fontSize = '14px';
     this.labelBackground = '#181818';
     this.textColor = '#ccc';

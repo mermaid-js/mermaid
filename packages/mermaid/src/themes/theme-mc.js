@@ -27,7 +27,7 @@ class Theme {
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     // dark
 
-    this.fontFamily = 'arial, "trebuchet ms", verdana, sans-serif';
+    this.fontFamily = 'arial, sans-serif';
     this.fontSize = '14px';
 
     // Neo-specific
