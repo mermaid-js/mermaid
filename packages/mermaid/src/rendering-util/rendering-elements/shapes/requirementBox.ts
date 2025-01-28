@@ -18,7 +18,6 @@ export async function requirementBox<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
   const requirementNode = node as unknown as Requirement;
   const elementNode = node as unknown as Element;
-  const config = getConfig().requirement;
   const padding = 20;
   const gap = 20;
   const isRequirementNode = 'verifyMethod' in node;
@@ -47,7 +46,7 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     shapeSvg,
     requirementNode.name,
     accumulativeHeight,
-    node.labelStyle
+    node.labelStyle + '; font-weight: bold;'
   );
   accumulativeHeight += nameHeight + gap;
 
@@ -98,11 +97,8 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     );
   }
 
-  const totalWidth = Math.max(
-    (shapeSvg.node()?.getBBox().width ?? 200) + padding,
-    config?.rect_min_width ?? 200
-  );
-  const totalHeight = totalWidth;
+  const totalWidth = (shapeSvg.node()?.getBBox().width ?? 200) + padding;
+  const totalHeight = (shapeSvg.node()?.getBBox().height ?? 200) + padding;
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 
@@ -151,16 +147,18 @@ export async function requirementBox<T extends SVGGraphicsElement>(
     text.attr('transform', `translate(${newTranslateX}, ${newTranslateY + padding})`);
   });
 
-  // Insert divider line
-  const roughLine = rc.line(
-    x,
-    y + typeHeight + nameHeight + gap,
-    x + totalWidth,
-    y + typeHeight + nameHeight + gap,
-    options
-  );
-  const dividerLine = shapeSvg.insert(() => roughLine);
-  dividerLine.attr('style', nodeStyles);
+  // Insert divider line if there is body text
+  if (accumulativeHeight > typeHeight + nameHeight + gap) {
+    const roughLine = rc.line(
+      x,
+      y + typeHeight + nameHeight + gap,
+      x + totalWidth,
+      y + typeHeight + nameHeight + gap,
+      options
+    );
+    const dividerLine = shapeSvg.insert(() => roughLine);
+    dividerLine.attr('style', nodeStyles);
+  }
 
   updateNodeBounds(node, rect);
 
@@ -201,6 +199,9 @@ async function addText<T extends SVGGraphicsElement>(
     const textChild = text.children[0];
     for (const child of textChild.children) {
       child.textContent = child.textContent.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+      if (style) {
+        child.setAttribute('style', style);
+      }
     }
     // Get the bounding box after the text update
     bbox = text.getBBox();
