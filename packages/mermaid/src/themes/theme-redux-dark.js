@@ -23,7 +23,7 @@ class Theme {
     this.secondaryTextColor = invert(this.secondaryColor);
     this.tertiaryTextColor = invert(this.tertiaryColor);
 
-    this.mainBkg = '#2a2020';
+    this.mainBkg = '#111113';
     this.secondBkg = 'calculated';
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
@@ -32,14 +32,14 @@ class Theme {
     this.arrowheadColor = invert(this.background);
     this.fontFamily = '"Recursive Variable", arial, sans-serif';
     this.fontSize = '14px';
-    this.labelBackground = '#181818';
+    this.labelBackground = '#111113';
     this.textColor = '#ccc';
     this.THEME_COLOR_LIMIT = 12;
-    this.radius = 3;
+    this.radius = 12;
     this.strokeWidth = 2;
 
     this.noteBkgColor = '#fff5ad';
-    this.noteTextColor = '#333';
+    this.noteTextColor = '#FFFFFF';
 
     this.THEME_COLOR_LIMIT = 12;
     // dark
@@ -47,13 +47,13 @@ class Theme {
     this.fontSize = '14px';
 
     // Neo-specific
-    // this.nodeBorder = 'none';
-    // this.stateBorder = 'none';
+    this.nodeBorder = '#FFFFFF';
+    this.stateBorder = '#FFFFFF';
 
-    this.useGradient = true;
+    this.useGradient = false;
     this.gradientStart = '#0042eb';
     this.gradientStop = '#eb0042';
-    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,0.2))';
+    this.dropShadow = 'url(#drop-shadow)';
 
     /* Architecture Diagram variables */
     this.archEdgeColor = 'calculated';
@@ -66,7 +66,7 @@ class Theme {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
 
     /* Main */
-    this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#eee' : '#333'); // invert(this.primaryColor);
+    this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#eee' : '#FFFFFF'); // invert(this.primaryColor);
     this.secondaryColor = this.secondaryColor || adjust(this.primaryColor, { h: -120 });
     this.tertiaryColor = this.tertiaryColor || adjust(this.primaryColor, { h: 180, l: 5 });
 
@@ -77,7 +77,7 @@ class Theme {
       this.tertiaryBorderColor || mkBorder(this.tertiaryColor, this.darkMode);
     this.noteBorderColor = this.noteBorderColor || mkBorder(this.noteBkgColor, this.darkMode);
     this.noteBkgColor = this.noteBkgColor || '#fff5ad';
-    this.noteTextColor = this.noteTextColor || '#333';
+    this.noteTextColor = this.noteTextColor || '#FFFFFF';
 
     this.secondaryTextColor = this.secondaryTextColor || invert(this.secondaryColor);
     this.tertiaryTextColor = this.tertiaryTextColor || invert(this.tertiaryColor);
