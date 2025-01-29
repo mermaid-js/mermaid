@@ -7,6 +7,9 @@ on:
       - master
       - release/**
   pull_request:
+  issue_comment:
+    types:
+      - created
   merge_group:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
@@ -28,8 +31,12 @@ env:
       ) || 
       github.event.before
     }}
+  # Check if this is a new comment with '/visual-test'
+  RUN_VISUAL_TEST: >-
+    ${{ github.event_name == 'issue_comment' && github.event.action == 'created' && contains(github.event.comment.body, '/visual-test') && github.event.issue.pull_request != null }}
 jobs:
   cache:
+    if: ${{ github.event_name != 'issue_comment' || contains(github.event.comment.body, '/visual-test') }}
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
@@ -125,18 +132,19 @@ jobs:
           browser: chrome
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
-          record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          VITEST_COVERAGE: true
+          # Only set Argos environment variables if the visual test comment trigger is present
+          ARGOS_TOKEN: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.ARGOS_TOKEN || '' }}
+          ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
+          ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
+          ARGOS_PARALLEL_INDEX: ${{ env.RUN_VISUAL_TEST == 'true' && matrix.containers || 1 }}
           CYPRESS_COMMIT: ${{ github.sha }}
-          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-          ARGOS_PARALLEL: true
-          ARGOS_PARALLEL_TOTAL: ${{ strategy.job-total }}
-          ARGOS_PARALLEL_INDEX: ${{ matrix.containers }}
+          CYPRESS_RECORD_KEY: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY || ''}}
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: 'cypress/timings.json'
+          VITEST_COVERAGE: true
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
