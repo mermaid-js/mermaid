@@ -63,4 +63,41 @@ section Checkout from website
       { journey: { useMaxWidth: false } }
     );
   });
+
+  it('should render a user journey diagram title', () => {
+    renderGraph(
+      `---
+config:
+  theme: "forest"
+  themeVariables:
+    primaryColor: "#00ff00"
+    secondaryColor: "#fff"
+    titleColor: "#2900A5"
+    titleFontFamily: "Times New Roman"
+    titleFontSize: "5rem"
+---
+
+journey
+    title User Journey Example
+    section Onboarding
+        Sign Up: 5: John, Shahir
+        Complete Profile: 4: John
+    section Engagement
+        Browse Features: 3: John
+        Use Core Functionality: 4: John
+    section Retention
+        Revisit Application: 5: John
+        Invite Friends: 3: John
+
+        size: 2rem
+    `
+    );
+
+    cy.get('text').contains('User Journey Example').as('title');
+    cy.get('@title').then(($title) => {
+      expect($title).to.have.attr('fill', '#2900A5');
+      expect($title).to.have.attr('font-family', 'Times New Roman');
+      expect($title).to.have.attr('font-size', '5rem');
+    });
+  });
 });
