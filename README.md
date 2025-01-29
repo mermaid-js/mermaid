@@ -95,6 +95,10 @@ In our release process we rely heavily on visual regression tests using [applito
 
 <!-- </Main description> -->
 
+## Mermaid AI Bot
+
+[Mermaid](https://codeparrot.ai/oracle?owner=mermaid-js&repo=mermaid) Bot will help you understand this repository better. You can ask for code examples, installation guide, debugging help and much more.
+
 ## Examples
 
 **The following are some examples of the diagrams, charts and graphs that can be made using Mermaid. Click here to jump into the [text syntax](https://mermaid.js.org/intro/syntax-reference.html).**
@@ -435,7 +439,7 @@ A quick note from Knut Sveidqvist:
 >
 > _Thank you to [Tyler Long](https://github.com/tylerlong) who has been a collaborator since April 2017._
 >
-> _Thank you to the ever-growing list of [contributors](https://github.com/knsv/mermaid/graphs/contributors) that brought the project this far!_
+> _Thank you to the ever-growing list of [contributors](https://github.com/mermaid-js/mermaid/graphs/contributors) that brought the project this far!_
 
 ---
 
