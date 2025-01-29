@@ -58,7 +58,6 @@ export const insertEdgeLabel = async (elem, edge) => {
   label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
 
   // Make element accessible by id for positioning
-  log.debug('Inserting edge label abc88', edge.id, edge.label, edgeLabels.get(edge.id));
   edgeLabels.set(edge.id, edgeLabel);
 
   // Update the abstract data of the edge with the new information about its width and height
@@ -341,94 +340,6 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
   return points;
 };
 
-// function extractCornerPoints(points) {
-//   const cornerPoints = [];
-//   const cornerPointPositions = [];
-//   for (let i = 1; i < points.length - 1; i++) {
-//     const prev = points[i - 1];
-//     const curr = points[i];
-//     const next = points[i + 1];
-//     if (
-//       prev.x === curr.x &&
-//       curr.y === next.y &&
-//       Math.abs(curr.x - next.x) > 5 &&
-//       Math.abs(curr.y - prev.y) > 5
-//     ) {
-//       cornerPoints.push(curr);
-//       cornerPointPositions.push(i);
-//     } else if (
-//       prev.y === curr.y &&
-//       curr.x === next.x &&
-//       Math.abs(curr.x - prev.x) > 5 &&
-//       Math.abs(curr.y - next.y) > 5
-//     ) {
-//       cornerPoints.push(curr);
-//       cornerPointPositions.push(i);
-//     }
-//   }
-//   return { cornerPoints, cornerPointPositions };
-// }
-
-// const findAdjacentPoint = function (pointA, pointB, distance) {
-//   const xDiff = pointB.x - pointA.x;
-//   const yDiff = pointB.y - pointA.y;
-//   const length = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-//   const ratio = distance / length;
-//   return { x: pointB.x - ratio * xDiff, y: pointB.y - ratio * yDiff };
-// };
-
-// const fixCorners = function (lineData) {
-//   const { cornerPointPositions } = extractCornerPoints(lineData);
-//   const newLineData = [];
-//   const r = 4;
-//   for (let i = 0; i < lineData.length; i++) {
-//     if (cornerPointPositions.includes(i)) {
-//       const prevPoint = lineData[i - 1];
-//       const nextPoint = lineData[i + 1];
-//       const cornerPoint = lineData[i];
-
-//       const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, r);
-//       const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, r);
-
-//       const xDiff = newNextPoint.x - newPrevPoint.x;
-//       const yDiff = newNextPoint.y - newPrevPoint.y;
-//       newLineData.push(newPrevPoint);
-
-//       const a = Math.sqrt(2) * 2;
-//       let newCornerPoint = { x: cornerPoint.x, y: cornerPoint.y };
-//       if (Math.abs(nextPoint.x - prevPoint.x) > 10 && Math.abs(nextPoint.y - prevPoint.y) >= 10) {
-//         log.debug(
-//           'Corner point fixing',
-//           Math.abs(nextPoint.x - prevPoint.x),
-//           Math.abs(nextPoint.y - prevPoint.y)
-//         );
-
-//         if (cornerPoint.x === newPrevPoint.x) {
-//           newCornerPoint = {
-//             x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
-//             y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
-//           };
-//         } else {
-//           newCornerPoint = {
-//             x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
-//             y: yDiff < 0 ? newPrevPoint.y - r + a : newPrevPoint.y + r - a,
-//           };
-//         }
-//       } else {
-//         log.debug(
-//           'Corner point skipping fixing',
-//           Math.abs(nextPoint.x - prevPoint.x),
-//           Math.abs(nextPoint.y - prevPoint.y)
-//         );
-//       }
-//       newLineData.push(newCornerPoint, newNextPoint);
-//     } else {
-//       newLineData.push(lineData[i]);
-//     }
-//   }
-//   return newLineData;
-// };
-
 const generateDashArray = (len, oValueS, oValueE) => {
   const middleLength = len - oValueS - oValueE;
   const dashLength = 2; // Length of each dash
@@ -446,7 +357,6 @@ const generateDashArray = (len, oValueS, oValueE) => {
 
   return dashArray;
 };
-
 export const insertEdge = function (elem, edge, clusterDb, diagramType, startNode, endNode, id) {
   const { handDrawnSeed } = getConfig();
   let points = edge.points;
@@ -495,16 +405,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  // lineData = fixCorners(lineData);
-  let lastPoint = lineData[lineData.length - 1];
-  if (lineData.length > 1) {
-    lastPoint = lineData[lineData.length - 1];
-    const secondLastPoint = lineData[lineData.length - 2];
-    const diffX = (lastPoint.x - secondLastPoint.x) / 2;
-    const diffY = (lastPoint.y - secondLastPoint.y) / 2;
-    const midPoint = { x: secondLastPoint.x + diffX, y: secondLastPoint.y + diffY };
-    lineData.splice(-1, 0, midPoint);
-  }
+  //lineData = fixCorners(lineData);
   let curve = curveBasis;
   curve = curveLinear;
   switch (edge.curve) {
@@ -527,8 +428,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
   const { x, y } = getLineFunctionsWithOffset(edge);
   const lineFunction = line().x(x).y(y).curve(curve);
-  // const pointsStr = btoa(JSON.stringify(lineData));
-  // console.log('Line data', lineData);
+
   let strokeClasses;
   switch (edge.thickness) {
     case 'normal':
