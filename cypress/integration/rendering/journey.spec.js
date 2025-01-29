@@ -64,7 +64,7 @@ section Checkout from website
     );
   });
 
-  it('should render a user journey diagram title', () => {
+  it('should correctly render the user journey diagram title with the specified styling', () => {
     renderGraph(
       `---
 config:
