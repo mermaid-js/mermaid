@@ -36,7 +36,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background: #333; */
+        background: #333;
         font-family: 'Arial';
         /* color: white; */
         /* font-size: 18px !important; */
@@ -105,10 +105,9 @@
   </head>
 
   <body>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       flowchart LR
-        A e1@-.-> B
-        C e2@--> D
+        A e1@-.-> B & C e2@--> D
     </pre>
     <pre id="diagram4" class="mermaid2">
       flowchart LR
@@ -152,12 +151,12 @@ config:
     <pre id="diagram4" class="mermaid2">
 ---
 config:
-  theme: forest
-  look: classic
+  look: neo
+  theme: redux
+  layout: elk
 ---
       flowchart LR
         A e1@--> BB
-        e1@{ animation: fast}
     </pre>
     <hr />
     <pre id="diagram4" class="mermaid2">
@@ -180,12 +179,12 @@ config:
     <!-- Circle -->
     <hr />
 
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       flowchart LR
         A e1@==o B
         e1@{ animate: true}
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   theme: forest
@@ -210,6 +209,93 @@ config:
       flowchart LR
         A e1@==o BB
         e1@{ animate: false}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: redux-dark
+  layout: dagre
+---
+classDiagram
+direction TB
+    class Animal {
+	    +int age
+	    +String gender
+	    +isMammal()
+	    +mate()
+    }
+    class Duck {
+	    +String beakColor
+	    +swim()
+	    +quack()
+    }
+
+    class Zebra {
+	    +bool is_wild
+	    +run()
+    }
+    class UntitledClass {
+    }
+    class Animal_copy_1["Animal"] {
+	    +int age
+	    +String gender
+	    +isMammal()
+	    +mate()
+    }
+
+	note for Animal "This is a sample note"
+
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal <|-- Zebra
+    Animal_copy_1 "*" --|> "1" Animal
+    Animal_copy_1 .. UntitledClass
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  theme: redux-dark
+  layout: dagre
+---
+flowchart LR
+  classDef redNode fill:#D50000,color:#000000;
+  classDef pinkNode fill:#E1BEE7,color:#000000;
+  classDef yellowNode fill:#FFF9C4,color:#000000;
+  classDef blackNode fill:#000000,stroke:#FFD600,stroke-width:4px,stroke-dasharray: 0,color:#FFFFFF;
+  classDef greenNode fill:#00F840,color:#000000;
+  classDef reminderNode stroke:#FFD600,stroke-width:4px,stroke-dasharray: 0,fill:#000000,color:#FFFFFF;
+  classDef blueSubgraph fill:#BBDEFB;
+
+  subgraph subgraph_zv2q8ucnp["Shape descriptions"]
+      customer((Customer)):::redNode
+      Support["Support"]:::pinkNode
+      Technician{{Technician}}:::yellowNode
+      Decision{"Decision"}:::blackNode
+  end
+
+  A((Reported issue)):::redNode --> B["Ticket is created"]
+  B --> C{"Working hours?"}:::blackNode
+  C -- Yes --> E{{"Tickets are sent to day team for response"}}:::yellowNode
+  C -- No --> F["Tickets are sent to on-call staff for response"]:::pinkNode
+  E --> Worked{"Ticket being worked on?"}:::reminderNode
+  F --> Worked
+  Worked -- Yes --> G["Work on the tickets based on priority"]:::pinkNode
+  Worked -- No --> Reminder["Reminder is sent"]
+  Reminder --> Worked
+  G --> H["Team fixes the issue"]:::pinkNode
+  H --> I{"Is the issue resolved?"}:::reminderNode
+  I -- Yes --> Done["Ticket is closed and follow-up email is sent"]:::greenNode
+  I -- No --> H
+
+  class subgraph_zv2q8ucnp blueSubgraph
+
+  linkStyle 2 stroke:#00C853,fill:none
+  linkStyle 3 stroke:#D50000,fill:none
+  linkStyle 6 stroke:#00C853,fill:none
+  linkStyle 7 stroke:#D50000,fill:none
+  linkStyle 11 stroke:#00C853,fill:none
+  linkStyle 12 stroke:#D50000,fill:none
+
     </pre>
 
     <!-- Next set of tests -->
@@ -356,7 +442,7 @@ config:
         alert('It worked');
       }
       await mermaid.initialize({
-        // theme: 'base',
+        theme: 'redux-dark',
         // theme: 'default',
         // theme: 'forest',
         // handDrawnSeed: 12,
@@ -364,7 +450,7 @@ config:
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
         // layout: 'elk',
-        // layout: 'fixed',
+        layout: 'sugiyama',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
 
