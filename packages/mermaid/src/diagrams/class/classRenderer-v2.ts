@@ -219,10 +219,18 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
   const conf = getConfig().flowchart;
   let cnt = 0;
 
+  // A set to keep track of rendered edges to avoid duplicates
+  const renderedEdges = new Set();
+
   relations.forEach(function (edge) {
     cnt++;
+    const isSelfReferencing = edge.id1 === edge.id2; // Check if the edge is self-referencing
+
+    const edgeKey = `${edge.id1}->${edge.id2}`; // Unique key for each edge
+
+    // Edge data setup
     const edgeData: EdgeData = {
-      //Set relationship style and line type
+      // Set relationship style and line type
       classes: 'relation',
       pattern: edge.relation.lineType == 1 ? 'dashed' : 'solid',
       id: getEdgeId(edge.id1, edge.id2, {
@@ -231,18 +239,23 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       }),
       // Set link type for rendering
       arrowhead: edge.type === 'arrow_open' ? 'none' : 'normal',
-      //Set edge extra labels
+      // Set edge extra labels
       startLabelRight: edge.relationTitle1 === 'none' ? '' : edge.relationTitle1,
       endLabelLeft: edge.relationTitle2 === 'none' ? '' : edge.relationTitle2,
-      //Set relation arrow types
+      // Set relation arrow types
       arrowTypeStart: getArrowMarker(edge.relation.type1),
       arrowTypeEnd: getArrowMarker(edge.relation.type2),
       style: 'fill:none',
       labelStyle: '',
-      curve: interpolateToCurve(conf?.curve, curveLinear),
+      curve: isSelfReferencing
+        ? curveLinear // Apply a specific curve for self-referencing relations
+        : interpolateToCurve(conf?.curve, curveLinear),
     };
 
-    log.info(edgeData, edge);
+    // Style adjustments
+    if (!edgeData.style) {
+      edgeData.style = 'stroke: #999; fill: none;';
+    }
 
     if (edge.style !== undefined) {
       const styles = getStylesFromArray(edge.style);
@@ -259,7 +272,7 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
 
-      // TODO V10: Flowchart ? Keeping flowchart for backwards compatibility. Remove in next major release
+      // Handle HTML labels for flowchart compatibility
       if (getConfig().flowchart?.htmlLabels ?? getConfig().htmlLabels) {
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
@@ -274,8 +287,22 @@ export const addRelations = function (relations: ClassRelation[], g: graphlib.Gr
         edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
       }
     }
-    // Add the edge to the graph
-    g.setEdge(edge.id1, edge.id2, edgeData, cnt);
+
+    // Add specific adjustments for self-referencing edges
+    if (isSelfReferencing) {
+      edgeData.points = [
+        { x: 50, y: 100 }, // Starting point
+        { x: 70, y: 70 }, // Control point 1
+        { x: 50, y: 40 }, // Control point 2
+      ];
+      edgeData.arrowheadStyle = 'fill: #555'; // Darker arrow for visibility
+    }
+
+    // Check and render edge if it hasn't already been rendered
+    if (!renderedEdges.has(edgeKey)) {
+      g.setEdge(edge.id1, edge.id2, edgeData, cnt);
+      renderedEdges.add(edgeKey); // Mark this edge as rendered
+    }
   });
 };
 
@@ -386,14 +413,15 @@ export const draw = async function (text: string, id: string, _version: string, 
  * @param type - The type to look for
  * @returns The arrow marker
  */
-function getArrowMarker(type: number) {
+function getArrowMarker(type: number | string) {
   let marker;
   switch (type) {
     case 0:
-      marker = 'aggregation';
+    case 'none': // Ensure "none" is explicitly handled
+      marker = 'none';
       break;
     case 1:
-      marker = 'extension';
+      marker = 'aggregation';
       break;
     case 2:
       marker = 'composition';
@@ -405,7 +433,7 @@ function getArrowMarker(type: number) {
       marker = 'lollipop';
       break;
     default:
-      marker = 'none';
+      marker = 'none'; // Fallback
   }
   return marker;
 }
