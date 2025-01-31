@@ -10,41 +10,30 @@ import { cleanAndMerge, parseFontSize } from '../../utils.js';
 import type { D3Section, PieDB, Sections } from './pieTypes.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
-  // Compute the position of each group on the pie:
   const pieData: D3Section[] = [...sections.entries()]
-    .map((element: [string, number]): D3Section => {
-      return {
-        label: element[0],
-        value: element[1],
-      };
-    })
-    .sort((a: D3Section, b: D3Section): number => {
-      return b.value - a.value;
-    });
+    .map((element: [string, number]): D3Section => ({
+      label: element[0],
+      value: element[1],
+    }))
+    .sort((a: D3Section, b: D3Section): number => b.value - a.value);
   const pie: d3.Pie<unknown, D3Section> = d3pie<D3Section>().value(
     (d3Section: D3Section): number => d3Section.value
   );
   return pie(pieData);
 };
 
-/**
- * Draws a Pie Chart with the data given in text.
- *
- * @param text - pie chart code
- * @param id - diagram id
- * @param _version - MermaidJS version from package.json.
- * @param diagObj - A standard diagram containing the DB and the text and type etc of the diagram.
- */
 export const draw: DrawDefinition = (text, id, _version, diagObj) => {
-  log.debug('rendering pie chart\n' + text);
+  log.debug('Rendering pie chart\n' + text);
   const db = diagObj.db as PieDB;
   const globalConfig: MermaidConfig = getConfig();
   const pieConfig: Required<PieDiagramConfig> = cleanAndMerge(db.getConfig(), globalConfig.pie);
+
   const MARGIN = 40;
   const LEGEND_RECT_SIZE = 18;
   const LEGEND_SPACING = 4;
   const height = 450;
   const pieWidth: number = height;
+
   const svg: SVG = selectSvgElement(id);
   const group: SVGGroup = svg.append('g');
   group.attr('transform', 'translate(' + pieWidth / 2 + ',' + height / 2 + ')');
@@ -55,13 +44,11 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
 
   const textPosition: number = pieConfig.textPosition;
   const radius: number = Math.min(pieWidth, height) / 2 - MARGIN;
-  // Shape helper to build arcs:
+
   const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<d3.PieArcDatum<D3Section>>()
     .innerRadius(0)
     .outerRadius(radius);
-  const labelArcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<
-    d3.PieArcDatum<D3Section>
-  >()
+  const labelArcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<d3.PieArcDatum<D3Section>>()
     .innerRadius(radius * textPosition)
     .outerRadius(radius * textPosition);
 
@@ -89,50 +76,73 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     themeVariables.pie11,
     themeVariables.pie12,
   ];
-  // Set the color scale
+
   const color: d3.ScaleOrdinal<string, 12, never> = scaleOrdinal(myGeneratedColors);
 
-  // Build the pie chart: each part of the pie is a path that we build using the arc function.
   group
     .selectAll('mySlices')
     .data(arcs)
     .enter()
     .append('path')
     .attr('d', arcGenerator)
-    .attr('fill', (datum: d3.PieArcDatum<D3Section>) => {
-      return color(datum.data.label);
-    })
+    .attr('fill', (datum: d3.PieArcDatum<D3Section>) => color(datum.data.label))
     .attr('class', 'pieCircle');
 
   let sum = 0;
   sections.forEach((section) => {
     sum += section;
   });
-  // Now add the percentage.
-  // Use the centroid method to get the best coordinates.
+
   group
     .selectAll('mySlices')
     .data(arcs)
     .enter()
     .append('text')
-    .text((datum: d3.PieArcDatum<D3Section>): string => {
-      return ((datum.data.value / sum) * 100).toFixed(0) + '%';
-    })
-    .attr('transform', (datum: d3.PieArcDatum<D3Section>): string => {
-      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-      return 'translate(' + labelArcGenerator.centroid(datum) + ')';
-    })
+    .text((datum: d3.PieArcDatum<D3Section>): string =>
+      ((datum.data.value / sum) * 100).toFixed(0) + '%'
+    )
+    .attr('transform', (datum: d3.PieArcDatum<D3Section>): string =>
+      'translate(' + labelArcGenerator.centroid(datum) + ')'
+    )
     .style('text-anchor', 'middle')
     .attr('class', 'slice');
 
-  group
+  const titleGroup = group.append('g');
+  const titleText = db.getDiagramTitle();
+
+  // Adjust title font size dynamically
+  let fontSize = 16;
+  let width = 0;
+
+  do {
+    const testText = titleGroup
+      .append('text')
+      .text(titleText)
+      .attr('x', 0)
+      .attr('y', -(height - 50) / 2)
+      .style('font-size', `${fontSize}px`)
+      .attr('class', 'pieTitleText')
+      .style('text-anchor', 'middle');
+
+    width = testText.node()?.getBBox()?.width ?? 0;
+    testText.remove();
+
+    if (width > pieWidth - MARGIN) {
+      fontSize--;
+    } else {
+      break;
+    }
+  } while (fontSize > 8);
+
+  titleGroup
     .append('text')
-    .text(db.getDiagramTitle())
+    .text(titleText)
     .attr('x', 0)
     .attr('y', -(height - 50) / 2)
-    .attr('class', 'pieTitleText');
+    .style('font-size', `${fontSize}px`)
+    .attr('class', 'pieTitleText')
+    .style('text-anchor', 'middle');
 
-  // Add the legends/annotations for each section
   const legend = group
     .selectAll('.legend')
     .data(color.domain())
@@ -161,10 +171,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .attr('y', LEGEND_RECT_SIZE - LEGEND_SPACING)
     .text((datum: d3.PieArcDatum<D3Section>): string => {
       const { label, value } = datum.data;
-      if (db.getShowData()) {
-        return `${label} [${value}]`;
-      }
-      return label;
+      return db.getShowData() ? `${label} [${value}]` : label;
     });
 
   const longestTextWidth = Math.max(
@@ -176,7 +183,6 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
 
   const totalWidth = pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
 
-  // Set viewBox
   svg.attr('viewBox', `0 0 ${totalWidth} ${height}`);
   configureSvgSize(svg, height, totalWidth, pieConfig.useMaxWidth);
 };
