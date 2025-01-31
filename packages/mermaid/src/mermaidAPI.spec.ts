@@ -12,8 +12,12 @@ vi.mock('dagre-d3');
 // mermaidAPI.spec.ts:
 import * as accessibility from './accessibility.js'; // Import it this way so we can use spyOn(accessibility,...)
 vi.mock('./accessibility.js', () => ({
-  setA11yDiagramInfo: vi.fn(),
-  addSVGa11yTitleDescription: vi.fn(),
+  setA11yDiagramInfo: vi.fn(() => {
+    return 'setA11yDiagramInfo called';
+  }),
+  addSVGa11yTitleDescription: vi.fn(() => {
+    return 'addSVGa11yTitleDescription called';
+  }),
 }));
 
 // Mock the renderers specifically so we can test render(). Need to mock draw() for each renderer

@@ -11,10 +11,12 @@ import type { D3Section, PieDB, Sections } from './pieTypes.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
   const pieData: D3Section[] = [...sections.entries()]
-    .map((element: [string, number]): D3Section => ({
-      label: element[0],
-      value: element[1],
-    }))
+    .map(
+      (element: [string, number]): D3Section => ({
+        label: element[0],
+        value: element[1],
+      })
+    )
     .sort((a: D3Section, b: D3Section): number => b.value - a.value);
   const pie: d3.Pie<unknown, D3Section> = d3pie<D3Section>().value(
     (d3Section: D3Section): number => d3Section.value
@@ -48,7 +50,9 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const arcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<d3.PieArcDatum<D3Section>>()
     .innerRadius(0)
     .outerRadius(radius);
-  const labelArcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<d3.PieArcDatum<D3Section>>()
+  const labelArcGenerator: d3.Arc<unknown, d3.PieArcDatum<D3Section>> = arc<
+    d3.PieArcDatum<D3Section>
+  >()
     .innerRadius(radius * textPosition)
     .outerRadius(radius * textPosition);
 
@@ -98,14 +102,17 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .data(arcs)
     .enter()
     .append('text')
-    .text((datum: d3.PieArcDatum<D3Section>): string =>
-      ((datum.data.value / sum) * 100).toFixed(0) + '%'
-    )
-    .attr('transform', (datum: d3.PieArcDatum<D3Section>): string =>
-      'translate(' + labelArcGenerator.centroid(datum) + ')'
-    )
-    .style('text-anchor', 'middle')
-    .attr('class', 'slice');
+    .text((datum: d3.PieArcDatum<D3Section>): string => {
+      // Calculate the percentage and ensure it is returned as a string
+      return `${((datum.data.value / sum) * 100).toFixed(0)}%`;
+    })
+    .attr('transform', (datum: d3.PieArcDatum<D3Section>): string => {
+      // Safely deconstruct coordinates and use template literals for the transform attribute
+      const [x, y] = labelArcGenerator.centroid(datum);
+      return `translate(${x}, ${y})`;
+    })
+    .style('text-anchor', 'middle') // Ensure proper alignment for text
+    .attr('class', 'slice'); // Add a class for styling
 
   const titleGroup = group.append('g');
   const titleText = db.getDiagramTitle();
