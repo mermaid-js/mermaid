@@ -179,7 +179,7 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       prettier:
-        specifier: ^3.3.3
+        specifier: ^3.2.5
         version: 3.4.2
       prettier-plugin-jsdoc:
         specifier: ^1.3.0
