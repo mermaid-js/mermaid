@@ -63,7 +63,7 @@ importers:
         version: 4.2.4
       '@vitest/coverage-v8':
         specifier: ^1.4.0
-        version: 1.6.0(vitest@1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.34.1))
+        version: 1.6.0(vitest@1.6.0)
       '@vitest/spy':
         specifier: ^1.4.0
         version: 1.6.0
@@ -179,7 +179,7 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       prettier:
-        specifier: ^3.2.5
+        specifier: ^3.3.3
         version: 3.3.3
       prettier-plugin-jsdoc:
         specifier: ^1.3.0
@@ -12610,7 +12610,7 @@ snapshots:
       vite: 5.4.8(@types/node@20.16.11)(terser@5.34.1)
       vue: 3.5.11(typescript@5.6.2)
 
-  '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(terser@5.34.1))':
+  '@vitest/coverage-v8@1.6.0(vitest@1.6.0)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -12927,17 +12927,17 @@ snapshots:
       '@webassemblyjs/ast': 1.12.1
       '@xtuc/long': 4.2.2
 
-  '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0))(webpack@5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0))':
+  '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0)(webpack@5.95.0)':
     dependencies:
       webpack: 5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0)
 
-  '@webpack-cli/info@1.5.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0))':
+  '@webpack-cli/info@1.5.0(webpack-cli@4.10.0)':
     dependencies:
       envinfo: 7.14.0
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0)
 
-  '@webpack-cli/serve@1.7.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0))(webpack-dev-server@4.15.2(webpack-cli@4.10.0)(webpack@5.95.0))':
+  '@webpack-cli/serve@1.7.0(webpack-cli@4.10.0)(webpack-dev-server@4.15.2)':
     dependencies:
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0)
     optionalDependencies:
@@ -18949,17 +18949,6 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terser-webpack-plugin@5.3.10(esbuild@0.21.5)(webpack@5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.2
-      terser: 5.34.1
-      webpack: 5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0)
-    optionalDependencies:
-      esbuild: 0.21.5
-
   terser-webpack-plugin@5.3.10(esbuild@0.21.5)(webpack@5.95.0(esbuild@0.21.5)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
@@ -18968,6 +18957,17 @@ snapshots:
       serialize-javascript: 6.0.2
       terser: 5.34.1
       webpack: 5.95.0(esbuild@0.21.5)
+    optionalDependencies:
+      esbuild: 0.21.5
+
+  terser-webpack-plugin@5.3.10(esbuild@0.21.5)(webpack@5.95.0):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 3.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.34.1
+      webpack: 5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0)
     optionalDependencies:
       esbuild: 0.21.5
 
@@ -19732,9 +19732,9 @@ snapshots:
   webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0):
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
-      '@webpack-cli/configtest': 1.2.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0))(webpack@5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0))
-      '@webpack-cli/info': 1.5.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0))
-      '@webpack-cli/serve': 1.7.0(webpack-cli@4.10.0(webpack-dev-server@4.15.2)(webpack@5.95.0))(webpack-dev-server@4.15.2(webpack-cli@4.10.0)(webpack@5.95.0))
+      '@webpack-cli/configtest': 1.2.0(webpack-cli@4.10.0)(webpack@5.95.0)
+      '@webpack-cli/info': 1.5.0(webpack-cli@4.10.0)
+      '@webpack-cli/serve': 1.7.0(webpack-cli@4.10.0)(webpack-dev-server@4.15.2)
       colorette: 2.0.20
       commander: 7.2.0
       cross-spawn: 7.0.3
@@ -19747,7 +19747,7 @@ snapshots:
     optionalDependencies:
       webpack-dev-server: 4.15.2(webpack-cli@4.10.0)(webpack@5.95.0)
 
-  webpack-dev-middleware@5.3.4(webpack@5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0)):
+  webpack-dev-middleware@5.3.4(webpack@5.95.0):
     dependencies:
       colorette: 2.0.20
       memfs: 3.5.3
@@ -19786,7 +19786,7 @@ snapshots:
       serve-index: 1.9.1
       sockjs: 0.3.24
       spdy: 4.0.2
-      webpack-dev-middleware: 5.3.4(webpack@5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0))
+      webpack-dev-middleware: 5.3.4(webpack@5.95.0)
       ws: 8.18.0
     optionalDependencies:
       webpack: 5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0)
@@ -19859,7 +19859,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(esbuild@0.21.5)(webpack@5.95.0(esbuild@0.21.5)(webpack-cli@4.10.0))
+      terser-webpack-plugin: 5.3.10(esbuild@0.21.5)(webpack@5.95.0)
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     optionalDependencies:
