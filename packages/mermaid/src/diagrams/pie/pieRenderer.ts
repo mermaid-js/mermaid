@@ -103,52 +103,39 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .enter()
     .append('text')
     .text((datum: d3.PieArcDatum<D3Section>): string => {
-      // Calculate the percentage and ensure it is returned as a string
       return `${((datum.data.value / sum) * 100).toFixed(0)}%`;
     })
     .attr('transform', (datum: d3.PieArcDatum<D3Section>): string => {
-      // Safely deconstruct coordinates and use template literals for the transform attribute
       const [x, y] = labelArcGenerator.centroid(datum);
       return `translate(${x}, ${y})`;
     })
-    .style('text-anchor', 'middle') // Ensure proper alignment for text
-    .attr('class', 'slice'); // Add a class for styling
+    .style('text-anchor', 'middle')
+    .attr('class', 'slice');
 
   const titleGroup = group.append('g');
   const titleText = db.getDiagramTitle();
 
   // Adjust title font size dynamically
-  let fontSize = 16;
-  let width = 0;
+  let fontSize = 25; // Start with a larger font size
+  const minFontSize = 8; // Set a minimum font size
+  const maxAvailableWidth = pieWidth - MARGIN;
 
-  do {
-    const testText = titleGroup
-      .append('text')
-      .text(titleText)
-      .attr('x', 0)
-      .attr('y', -(height - 50) / 2)
-      .style('font-size', `${fontSize}px`)
-      .attr('class', 'pieTitleText')
-      .style('text-anchor', 'middle');
-
-    width = testText.node()?.getBBox()?.width ?? 0;
-    testText.remove();
-
-    if (width > pieWidth - MARGIN) {
-      fontSize--;
-    } else {
-      break;
-    }
-  } while (fontSize > 8);
-
-  titleGroup
+  const titleElement = titleGroup
     .append('text')
     .text(titleText)
     .attr('x', 0)
     .attr('y', -(height - 50) / 2)
-    .style('font-size', `${fontSize}px`)
     .attr('class', 'pieTitleText')
     .style('text-anchor', 'middle');
+
+  // Reduce font size dynamically until it fits
+  while (
+    titleElement.node()?.getBBox()?.width > maxAvailableWidth &&
+    fontSize > minFontSize
+  ) {
+    fontSize -= 1;
+    titleElement.style('font-size', `${fontSize}px`);
+  }
 
   const legend = group
     .selectAll('.legend')
