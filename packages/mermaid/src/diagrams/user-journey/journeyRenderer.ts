@@ -97,12 +97,12 @@ export const draw = function (text, id, version, diagObj) {
       .attr('font-weight', 'bold')
       .attr('y', 25);
   }
-
+  // **Modified Height Calculation**
   const height = box.stopy - box.starty + 2 * conf.diagramMarginY;
+
+  // **Modified Width Calculation**
   const width = LEFT_MARGIN + box.stopx + 2 * conf.diagramMarginX;
-
-  configureSvgSize(diagram, height, width, conf.useMaxWidth);
-
+  configureSvgSize(diagram, height + 50, width + 50, conf.useMaxWidth);
   // Draw activity line
   diagram
     .append('line')
@@ -115,9 +115,13 @@ export const draw = function (text, id, version, diagObj) {
     .attr('marker-end', 'url(#arrowhead)');
 
   const extraVertForTitle = title ? 70 : 0;
-  diagram.attr('viewBox', `${box.startx} -25 ${width} ${height + extraVertForTitle}`);
+  // **Modified ViewBox Calculation**
+  diagram.attr(
+    'viewBox',
+    `${box.startx} -50 ${width + 50} ${height + extraVertForTitle + conf.diagramMarginY + 100}`
+  );
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
-  diagram.attr('height', height + extraVertForTitle + 25);
+  diagram.attr('height', height + extraVertForTitle + 50); // Adjust height for extra padding
 };
 
 export const bounds = {
@@ -149,6 +153,7 @@ export const bounds = {
   },
   updateBounds: function (startx, starty, stopx, stopy) {
     const conf = getConfig().journey;
+
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _self = this;
     let cnt = 0;
@@ -261,7 +266,8 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
     task.x = i * conf.taskMargin + i * conf.width + LEFT_MARGIN;
     task.y = taskPos;
     task.width = conf.diagramMarginX;
-    task.height = conf.diagramMarginY;
+    const estimatedLines = Math.ceil((task.task.length * 8) / conf.width);
+    task.height = Math.max(conf.diagramMarginY, estimatedLines * 14 + 10);
     task.colour = colour;
     task.fill = fill;
     task.num = num;
@@ -269,7 +275,8 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
 
     // Draw the box with the attached line
     svgDraw.drawTask(diagram, task, conf);
-    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, 300 + 5 * 30); // stopY is the length of the descenders.
+
+    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, task.y + task.height + 10);
   }
 };
 

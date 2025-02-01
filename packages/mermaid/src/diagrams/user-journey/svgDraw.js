@@ -117,7 +117,40 @@ export const drawCircle = function (element, circleData) {
 export const drawText = function (elem, textData) {
   return svgDrawCommon.drawText(elem, textData);
 };
-
+export const drawWrappedText = function (elem, textData) {
+  const words = textData.text.split(' ');
+  let line = '';
+  const lineHeight = 14; // Adjust for spacing
+  let yOffset = 0;
+  words.forEach((word) => {
+    const testLine = line + word + ' ';
+    const testElem = elem
+      .append('text')
+      .attr('x', textData.x)
+      .attr('y', textData.y)
+      .attr('font-size', '12px')
+      .text(testLine);
+    if (testElem.node().getComputedTextLength() > textData.maxWidth) {
+      elem
+        .append('text')
+        .attr('x', textData.x)
+        .attr('y', textData.y + yOffset)
+        .attr('font-size', '12px')
+        .text(line);
+      line = word + ' ';
+      yOffset += lineHeight;
+    } else {
+      line = testLine;
+    }
+    testElem.remove();
+  });
+  elem
+    .append('text')
+    .attr('x', textData.x)
+    .attr('y', textData.y + yOffset)
+    .attr('font-size', '12px')
+    .text(line);
+};
 export const drawLabel = function (elem, txtObject) {
   /**
    * @param {any} x
@@ -223,7 +256,7 @@ export const drawTask = function (elem, task, conf) {
   rect.y = task.y;
   rect.fill = task.fill;
   rect.width = conf.width;
-  rect.height = conf.height;
+  rect.height = task.height;
   rect.class = 'task task-type-' + task.num;
   rect.rx = 3;
   rect.ry = 3;
