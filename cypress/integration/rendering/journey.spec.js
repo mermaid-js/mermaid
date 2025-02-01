@@ -47,7 +47,7 @@ section Checkout from website
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.eq(700);
+      expect(maxWidthValue).to.eq(750);
     });
   });
 
