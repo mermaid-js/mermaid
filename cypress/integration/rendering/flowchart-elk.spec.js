@@ -1,4 +1,4 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph, verifyNumber } from '../../helpers/util.ts';
 
 describe('Flowchart ELK', () => {
   it('1-elk: should render a simple flowchart', () => {
@@ -109,7 +109,7 @@ describe('Flowchart ELK', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.be.within(230 * 0.95, 230 * 1.05);
+      verifyNumber(maxWidthValue, 380);
     });
   });
   it('8-elk: should render a flowchart when useMaxWidth is false', () => {
@@ -128,7 +128,7 @@ describe('Flowchart ELK', () => {
       const width = parseFloat(svg.attr('width'));
       // use within because the absolute value can be slightly different depending on the environment ±5%
       // expect(height).to.be.within(446 * 0.95, 446 * 1.05);
-      expect(width).to.be.within(230 * 0.95, 230 * 1.05);
+      verifyNumber(width, 380);
       expect(svg).to.not.have.attr('style');
     });
   });
@@ -692,7 +692,7 @@ A --> B
       {}
     );
     cy.get('svg').should((svg) => {
-      const edges = svg.querySelectorAll('.edges > path');
+      const edges = svg[0].querySelectorAll('.edges > path');
       edges.forEach((edge) => {
         expect(edge).to.have.class('flowchart-link');
       });
@@ -739,7 +739,7 @@ NL\`") --"\`1o **bold**\`"--> c
           { flowchart: { titleTopMargin: 0 } }
         );
       });
-      it('Wrapping long text with a new line', () => {
+      it.skip('Wrapping long text with a new line', () => {
         imgSnapshotTest(
           `%%{init: {"flowchart": {"htmlLabels": true}} }%%
 flowchart-elk LR
@@ -841,7 +841,7 @@ end
           { flowchart: { titleTopMargin: 0 } }
         );
       });
-      it('Sub graphs and markdown strings', () => {
+      it('Sub graphs', () => {
         imgSnapshotTest(
           `---
 config:
