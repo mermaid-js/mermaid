@@ -1,6 +1,6 @@
+import { setConfig } from '../../../config.js';
 import { StateDB } from '../stateDb.js';
 import stateDiagram from './stateDiagram.jison';
-import { setConfig } from '../../../config.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -18,7 +18,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
     describe('defining (classDef)', () => {
       it('has "classDef" as a keyword, an id, and can set a css style attribute', function () {
         stateDiagram.parser.parse('stateDiagram-v2\n classDef exampleClass background:#bbb;');
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const styleClasses = stateDb.getClasses();
         expect(styleClasses.get('exampleClass').styles.length).toEqual(1);
@@ -29,7 +28,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.parse(
           'stateDiagram-v2\n classDef exampleClass background:#bbb, font-weight:bold, font-style:italic;'
         );
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const styleClasses = stateDb.getClasses();
         expect(styleClasses.get('exampleClass').styles.length).toEqual(3);
@@ -43,7 +41,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.parse(
           'stateDiagram-v2\n classDef exampleStyleClass background:#bbb,border:1.5px solid red;'
         );
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const classes = stateDiagram.parser.yy.getClasses();
         expect(classes.get('exampleStyleClass').styles.length).toBe(2);
@@ -55,7 +52,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.parse(
           'stateDiagram-v2\n classDef exampleStyleClass background:  #bbb,border:1.5px solid red;'
         );
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const classes = stateDiagram.parser.yy.getClasses();
         expect(classes.get('exampleStyleClass').styles.length).toBe(2);
@@ -67,7 +63,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.parse(
           'stateDiagram-v2\n classDef __proto__ background:#bbb,border:1.5px solid red;\n classDef constructor background:#bbb,border:1.5px solid red;'
         );
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
         const classes = stateDiagram.parser.yy.getClasses();
         expect(classes.get('__proto__').styles.length).toBe(2);
         expect(classes.get('constructor').styles.length).toBe(2);
@@ -83,7 +78,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         diagram += 'class a exampleStyleClass';
 
         stateDiagram.parser.parse(diagram);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const classes = stateDb.getClasses();
         expect(classes.get('exampleStyleClass').styles.length).toEqual(2);
@@ -104,7 +98,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         diagram += 'class a_a exampleStyleClass';
 
         stateDiagram.parser.parse(diagram);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const classes = stateDiagram.parser.yy.getClasses();
         expect(classes.get('exampleStyleClass').styles.length).toBe(2);
@@ -124,7 +117,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           diagram += 'a --> b:::exampleStyleClass' + '\n';
 
           stateDiagram.parser.parse(diagram);
-          stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
           const states = stateDiagram.parser.yy.getStates();
           const classes = stateDiagram.parser.yy.getClasses();
@@ -163,7 +155,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           diagram += 'class a,b exampleStyleClass';
 
           stateDiagram.parser.parse(diagram);
-          stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
           let classes = stateDiagram.parser.yy.getClasses();
           let states = stateDiagram.parser.yy.getStates();
 
@@ -182,7 +173,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           diagram += 'class a,b,c, d, e exampleStyleClass';
 
           stateDiagram.parser.parse(diagram);
-          stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
           const classes = stateDiagram.parser.yy.getClasses();
           const states = stateDiagram.parser.yy.getStates();
 
@@ -210,7 +200,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           diagram += '}\n';
 
           stateDiagram.parser.parse(diagram);
-          stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
           const states = stateDiagram.parser.yy.getStates();
 
@@ -226,7 +215,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         stateDiagram.parser.parse(`stateDiagram-v2
         id1
         style id1 background:#bbb`);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
         const data4Layout = stateDiagram.parser.yy.getData();
 
         expect(data4Layout.nodes[0].cssStyles).toEqual(['background:#bbb']);
@@ -236,7 +224,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         id1
         id2
         style id1,id2 background:#bbb`);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
         const data4Layout = stateDiagram.parser.yy.getData();
 
         expect(data4Layout.nodes[0].cssStyles).toEqual(['background:#bbb']);
@@ -249,7 +236,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         id2
         style id1,id2 background:#bbb, font-weight:bold, font-style:italic;`);
 
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
         const data4Layout = stateDiagram.parser.yy.getData();
 
         expect(data4Layout.nodes[0].cssStyles).toEqual([

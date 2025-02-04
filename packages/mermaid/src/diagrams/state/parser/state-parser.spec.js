@@ -20,7 +20,6 @@ describe('state parser can parse...', () => {
         const diagramText = `stateDiagram-v2
         state "Small State 1" as namedState1`;
         stateDiagram.parser.parse(diagramText);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const states = stateDiagram.parser.yy.getStates();
         expect(states.get('namedState1')).not.toBeUndefined();
@@ -33,7 +32,6 @@ describe('state parser can parse...', () => {
         const diagramText = `stateDiagram-v2
         namedState1 : Small State 1`;
         stateDiagram.parser.parse(diagramText);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const states = stateDiagram.parser.yy.getStates();
         expect(states.get('namedState1')).not.toBeUndefined();
@@ -44,7 +42,6 @@ describe('state parser can parse...', () => {
         const diagramText = `stateDiagram-v2
         namedState1:Small State 1`;
         stateDiagram.parser.parse(diagramText);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const states = stateDiagram.parser.yy.getStates();
         expect(states.get('namedState1')).not.toBeUndefined();
@@ -62,7 +59,6 @@ describe('state parser can parse...', () => {
       state assemblies
       `;
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get('assemble')).not.toBeUndefined();
       expect(states.get('assemblies')).not.toBeUndefined();
@@ -73,7 +69,6 @@ describe('state parser can parse...', () => {
       state "as" as as
       `;
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get('as')).not.toBeUndefined();
       expect(states.get('as').descriptions.join(' ')).toEqual('as');
@@ -98,7 +93,6 @@ describe('state parser can parse...', () => {
         namedState2 --> bigState2: should point to \\nbigState2 container`;
 
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get('namedState1')).not.toBeUndefined();
@@ -122,7 +116,6 @@ describe('state parser can parse...', () => {
             inner1 --> inner2
         }`;
       stateDiagram.parser.parse(diagramText);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get('bigState1')).not.toBeUndefined();
@@ -139,7 +132,6 @@ describe('state parser can parse...', () => {
 stateDiagram-v2
 [*] --> ${prop}
 ${prop} --> [*]`);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
       const states = stateDiagram.parser.yy.getStates();
       expect(states.get(prop)).not.toBeUndefined();
     });

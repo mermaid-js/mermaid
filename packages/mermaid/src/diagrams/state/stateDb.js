@@ -204,7 +204,7 @@ export class StateDB {
    * refer to the fork as a whole (document).
    * See the parser grammar:  the definition of a document is a document then a 'line', where a line can be a statement.
    * This will push the statement into the list of statements for the current document.
-   *
+   * @private
    * @param _doc
    */
   extract(_doc) {
