@@ -130,6 +130,7 @@ export class StateDB {
     log.info('Setting root doc', o);
     // rootDoc = { id: 'root', doc: o };
     this.rootDoc = o;
+    this.extract(o);
   }
 
   getRootDoc() {
