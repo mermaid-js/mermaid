@@ -13,10 +13,12 @@ export const setConf = function (cnf) {
 };
 
 const actors = {};
+let maxWidth = 0;
 
 /** @param diagram - The diagram to draw to. */
 function drawActorLegend(diagram) {
   const conf = getConfig().journey;
+  maxWidth = 0;
   // Draw the actors
   let yPos = 60;
   Object.keys(actors).forEach((person) => {
@@ -39,14 +41,19 @@ function drawActorLegend(diagram) {
       text: person,
       textMargin: conf.boxTextMargin | 5,
     };
-    svgDraw.drawText(diagram, labelData);
 
+    const textElement = svgDraw.drawText(diagram, labelData);
+    const bbox = textElement.node().getBBox();
+    const textLength = bbox.width;
+    if (textLength > maxWidth) {
+      maxWidth = textLength;
+    }
     yPos += 20;
   });
 }
 // TODO: Cleanup?
 const conf = getConfig().journey;
-const LEFT_MARGIN = conf.leftMargin;
+let LEFT_MARGIN = 0;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().journey;
 
@@ -84,6 +91,7 @@ export const draw = function (text, id, version, diagObj) {
   });
 
   drawActorLegend(diagram);
+  LEFT_MARGIN = conf.leftMargin + maxWidth - 80;
   bounds.insert(0, 0, LEFT_MARGIN, Object.keys(actors).length * 50);
   drawTasks(diagram, tasks, 0);
 
