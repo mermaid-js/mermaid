@@ -451,37 +451,49 @@ const initGraphics = function (graphics) {
  * @param {string} text The text to be wrapped
  * @param {number} width The max width of the text
  */
+
 function wrap(text, width) {
   text.each(function () {
-    var text = select(this),
-      words = text
-        .text()
-        .split(/(\s+|<br>)/)
-        .reverse(),
-      word,
-      line = [],
-      lineHeight = 1.1, // ems
-      y = text.attr('y'),
-      dy = parseFloat(text.attr('dy')),
-      tspan = text
-        .text(null)
-        .append('tspan')
-        .attr('x', 0)
-        .attr('y', y)
-        .attr('dy', dy + 'em');
-    for (let j = 0; j < words.length; j++) {
-      word = words[words.length - 1 - j];
+    const text = select(this);
+    let words = text
+      .text()
+      .split(/(\s+|<br>)/)
+      .reverse(); // Split text into words and reverse for easier processing
+    let word;
+    let line = [];
+    const lineHeight = 1.1; // Line height in ems
+    const y = text.attr('y');
+    const dy = parseFloat(text.attr('dy')) || 0;
+    let tspan = text
+      .text(null) // Clear existing text
+      .append('tspan')
+      .attr('x', 0)
+      .attr('y', y)
+      .attr('dy', dy + 'em');
+    while (words.length) {
+      word = words.pop();
+      // Sanitize and ensure word is a valid string
+      if (typeof word !== 'string') {
+        word = word !== null && word !== undefined ? String(word) : '';
+      }
+      // Handle long words that exceed the width
+      if (word.length * 8 > width) {
+        const splitWord = word.match(/.{1,10}/g) || []; // Split long words into chunks
+        words.push(...splitWord.reverse()); // Push chunks back into words
+        continue;
+      }
       line.push(word);
       tspan.text(line.join(' ').trim());
       if (tspan.node().getComputedTextLength() > width || word === '<br>') {
-        line.pop();
+        line.pop(); // Remove the last word if it exceeds the width
         tspan.text(line.join(' ').trim());
+        // Reset the line for the next tspan
         if (word === '<br>') {
           line = [''];
         } else {
           line = [word];
         }
-
+        // Create a new tspan for the next line
         tspan = text
           .append('tspan')
           .attr('x', 0)
