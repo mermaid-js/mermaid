@@ -15,14 +15,16 @@ describe('sanitizeDirective - Theme Variable Validation', () => {
   });
 
   it('should allow rgb colors', () => {
-    const input = { themeVariables: { mainBkg: 'rgb(0, 0, 0)', actorBkg: 'rgba(0, 0, 0, 0.5)'  } };
+    const input = { themeVariables: { mainBkg: 'rgb(0, 0, 0)', actorBkg: 'rgba(0, 0, 0, 0.5)' } };
     sanitizeDirective(input);
     expect(input.themeVariables.mainBkg).toBe('rgb(0, 0, 0)');
     expect(input.themeVariables.actorBkg).toBe('rgba(0, 0, 0, 0.5)');
   });
 
   it('should allow hsl colors', () => {
-    const input = { themeVariables: { mainBkg: 'hsl(0, 0%, 0%)',  actorBkg: 'hsla(0, 0%, 0%, 0.5)' } };
+    const input = {
+      themeVariables: { mainBkg: 'hsl(0, 0%, 0%)', actorBkg: 'hsla(0, 0%, 0%, 0.5)' },
+    };
     sanitizeDirective(input);
     expect(input.themeVariables.mainBkg).toBe('hsl(0, 0%, 0%)');
     expect(input.themeVariables.actorBkg).toBe('hsla(0, 0%, 0%, 0.5)');
@@ -47,12 +49,14 @@ describe('sanitizeDirective - Theme Variable Validation', () => {
   });
 
   it('should allow relative color syntax', () => {
-    const input = { themeVariables: { 
+    const input = {
+      themeVariables: {
         mainBkg: 'oklch(from var(--base-color) calc(l * 1.15) c h)',
         actorBkg: 'lch(from var(--base-color) calc(l + 20) c h)',
         actorBorder: 'lch(from var(--base-color) calc(l - 20) c h)',
-        signalColor: 'rgb(from red r g b / alpha)'
-      }};
+        signalColor: 'rgb(from red r g b / alpha)',
+      },
+    };
     sanitizeDirective(input);
     expect(input.themeVariables.mainBkg).toBe('oklch(from var(--base-color) calc(l * 1.15) c h)');
     expect(input.themeVariables.actorBkg).toBe('lch(from var(--base-color) calc(l + 20) c h)');
@@ -71,6 +75,4 @@ describe('sanitizeDirective - Theme Variable Validation', () => {
     sanitizeDirective(input);
     expect(input.themeVariables.mainBkg).toBe('');
   });
-
-
 });
