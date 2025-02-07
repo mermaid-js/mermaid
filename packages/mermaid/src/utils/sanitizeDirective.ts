@@ -54,7 +54,7 @@ export const sanitizeDirective = (args: any): void => {
   if (args.themeVariables) {
     for (const k of Object.keys(args.themeVariables)) {
       const val = args.themeVariables[k];
-      if (val?.match && !val.match(/^[\d \-*+/"#%(),.;A-Za-z]+$/)) {
+      if (val?.match && !val.match(/^[\d "#%()*+,./;A-Za-z\-]+$/)) {
         args.themeVariables[k] = '';
       }
     }
