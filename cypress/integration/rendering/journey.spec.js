@@ -63,4 +63,27 @@ section Checkout from website
       { journey: { useMaxWidth: false } }
     );
   });
+
+  it('should give an alert if the task score is greater than 5', () => {
+    const alertStub = cy.stub();
+    cy.on('window:alert', alertStub);
+    renderGraph(
+      `journey
+        accTitle: simple journey demo
+        accDescr: 2 main sections: work and home, each with just a few tasks
+  
+      section Go to work
+        Make tea: 7: Me
+        Go upstairs: 3: Me
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 2: Me`
+    );
+    cy.wait(500).then(() => {
+      expect(alertStub).to.have.callCount(1);
+      expect(alertStub.getCall(0)).to.have.been.calledWith(
+        "Score must be 1-5. Feel free to adjust, or we'll cap it at 5! 😎."
+      );
+    });
+  });
 });
