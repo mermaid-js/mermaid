@@ -6,6 +6,12 @@
 
 # Blog
 
+## [Mermaid Chart: The Evolution of Mermaid](https://docs.mermaidchart.com/blog/posts/mermaid-chart-the-evolution-of-mermaid)
+
+1/30/2025 • 3 mins
+
+Mermaid revolutionized diagramming with its simple, markdown-style syntax, empowering millions of developers worldwide. Now, Mermaid Chart takes it further with AI-powered visuals, a GUI for seamless editing, real-time collaboration, and advanced design tools. Experience the next generation of diagramming—faster, smarter, and built for modern teams. Try Mermaid Chart today!
+
 ## [GUI for editing Mermaid Class Diagrams](https://docs.mermaidchart.com/blog/posts/gui-for-editing-mermaid-class-diagrams)
 
 1/17/2025 • 5 mins
