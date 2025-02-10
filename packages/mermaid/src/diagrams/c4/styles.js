@@ -36,11 +36,27 @@ const getStyles = (options) =>
   fill: ${options.classText};
 }
 
-.labelBkg {
+.edgeLabel .labelBkg {
   background: ${options.mainBkg};
 }
 .edgeLabel .label span {
   background: ${options.mainBkg};
+}
+
+.cluster rect {
+  fill: ${options.clusterBkg};
+  stroke: ${options.clusterBorder};
+  stroke-width: 1px;
+}
+
+.sprite path, .sprite ellipse, .sprite line, .sprite circle, .sprite text {
+  fill: ${options.classText};
+  stroke: ${options.classText};
+}
+
+.legendBkg {
+  fill: ${options.clusterBkg};
+  stroke: ${options.clusterBorder};
 }
 `;
 
