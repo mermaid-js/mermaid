@@ -33,6 +33,7 @@ const extension = (elem, type, id) => {
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('path')
     .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 };

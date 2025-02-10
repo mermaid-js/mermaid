@@ -275,6 +275,7 @@ export const render = async (
         interpolate: undefined;
         style: undefined;
         labelType: any;
+        labelStyle?: string;
         startLabelRight?: string;
         endLabelLeft?: string;
       }) {
@@ -390,6 +391,13 @@ export const render = async (
 
         edgeData.id = linkId;
         edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
+
+        // Change behavior for C4 diagram
+        if (data4Layout.type === 'c4') {
+          edgeData.style = edge.style;
+          edgeData.labelStyle = edge.labelStyle;
+          edgeData.label = edge.text;
+        }
 
         const labelEl = await insertEdgeLabel(labelsEl, edgeData);
 
