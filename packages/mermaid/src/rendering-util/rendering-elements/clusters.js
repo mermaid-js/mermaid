@@ -23,6 +23,8 @@ const rect = async (parent, node) => {
     .insert('g')
     .attr('class', 'cluster ' + node.cssClasses)
     .attr('id', node.id)
+    .attr('data-id', node.id)
+    .attr('data-et', 'cluster')
     .attr('data-look', node.look);
 
   const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
@@ -171,6 +173,7 @@ const roundedWithTitle = async (parent, node) => {
     .insert('g')
     .attr('class', node.cssClasses)
     .attr('id', node.id)
+    .attr('data-et', 'cluster')
     .attr('data-id', node.id)
     .attr('data-look', node.look);
 
@@ -402,6 +405,9 @@ const divider = (parent, node) => {
     .insert('g')
     .attr('class', node.cssClasses)
     .attr('id', node.id)
+    .attr('data-et', 'node')
+    .attr('data-node', 'true')
+    .attr('data-id', node.id)
     .attr('data-look', node.look);
 
   // add the rect
@@ -434,7 +440,12 @@ const divider = (parent, node) => {
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
   } else {
     rect = outerRectG.insert('rect', ':first-child');
-    const outerRectClass = 'divider';
+    let outerRectClass = 'outer';
+    if (node.look === 'neo') {
+      outerRectClass = 'divider';
+    } else {
+      outerRectClass = 'divider';
+    }
 
     // center the rect around its coordinate
     rect

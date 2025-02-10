@@ -7,7 +7,6 @@ import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/rende
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
-import { getDirection } from './flowDb.js';
 
 export const getClasses = function (
   text: string,
@@ -16,7 +15,13 @@ export const getClasses = function (
   return diagramObj.db.getClasses();
 };
 
-export const draw = async function (text: string, id: string, _version: string, diag: any) {
+export const draw = async function (
+  text: string,
+  id: string,
+  _version: string,
+  diag: any,
+  positions: any
+) {
   log.info('REF0:');
   log.info('Drawing state diagram (v2)', id);
   const { securityLevel, flowchart: conf, layout } = getConfig();
@@ -37,10 +42,11 @@ export const draw = async function (text: string, id: string, _version: string, 
   log.debug('Data: ', data4Layout);
   // Create the root SVG
   const svg = getDiagramElement(id, securityLevel);
-  const direction = getDirection();
+  const direction = diag.db.getDirection();
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
+
   if (data4Layout.layoutAlgorithm === 'dagre' && layout === 'elk') {
     log.warn(
       'flowchart-elk was moved to an external package in Mermaid v11. Please refer [release notes](https://github.com/mermaid-js/mermaid/releases/tag/v11.0.0) for more details. This diagram will be rendered using `dagre` layout as a fallback.'
@@ -53,7 +59,7 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.diagramId = id;
   log.debug('REF1:', data4Layout);
-  await render(data4Layout, svg);
+  await render(data4Layout, svg, positions);
   const padding = data4Layout.config.flowchart?.diagramPadding ?? 8;
   utils.insertTitle(
     svg,

@@ -10,10 +10,28 @@ import type { Bounds, Point } from '../../../types.js';
 export async function trapezoid<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
+  const labelPaddingX = node.look === 'neo' ? 9 : 0;
 
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+  if (node.width || node.height) {
+    node.width = node?.width ?? 0;
+    if (node.width < 10) {
+      node.width = 10;
+    }
+
+    node.height = node?.height ?? 0;
+    if (node.height < 10) {
+      node.height = 10;
+    }
+    const _dx = (3 * node.height) / 6;
+    node.height = node.height - labelPaddingY;
+    node.width = node.width - 2 * _dx;
+  }
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY;
+  const w = node?.width ? node?.width : bbox.width + labelPaddingX * 2;
+
   const points = [
     { x: (-3 * h) / 6, y: 0 },
     { x: w + (3 * h) / 6, y: 0 },

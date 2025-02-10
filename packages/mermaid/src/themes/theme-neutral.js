@@ -39,9 +39,11 @@ class Theme {
     this.critical = '#d42';
     this.done = '#bbb';
     this.arrowheadColor = '#333333';
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    this.fontFamily = 'arial, sans-serif';
+    this.fontSize = '14px';
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
 
@@ -110,6 +112,10 @@ class Theme {
 
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
   }
   updateColors() {
     this.secondBkg = lighten(this.contrast, 55);

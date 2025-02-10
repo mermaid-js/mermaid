@@ -6,16 +6,41 @@ import intersect from '../intersect/index.js';
 import type { D3Selection } from '../../../types.js';
 import type { Bounds, Point } from '../../../types.js';
 
+/// The width/height of the tag in comparison to the height of the node
+const TAG_RATIO = 0.2;
+
 export async function taggedRect<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.height = Math.max((node?.height ?? 0) - labelPaddingY * 2, 10);
+    node.width = Math.max(
+      (node?.width ?? 0) - labelPaddingX * 2 - TAG_RATIO * (node.height + labelPaddingY * 2),
+      10
+    );
+  }
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+
+  const totalHeight = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
+  const tagWidth = TAG_RATIO * totalHeight;
+  const tagHeight = TAG_RATIO * totalHeight;
+  const totalWidth = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2 + tagWidth;
+
+  const w = totalWidth - tagWidth;
+  const h = totalHeight;
   const x = -w / 2;
   const y = -h / 2;
-  const tagWidth = 0.2 * h;
-  const tagHeight = 0.2 * h;
+
   const { cssStyles } = node;
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
@@ -49,7 +74,7 @@ export async function taggedRect<T extends SVGGraphicsElement>(parent: D3Selecti
   const taggedRect = shapeSvg.insert(() => tagNode, ':first-child');
   taggedRect.insert(() => rectNode, ':first-child');
 
-  taggedRect.attr('class', 'basic label-container');
+  taggedRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     taggedRect.selectAll('path').attr('style', cssStyles);

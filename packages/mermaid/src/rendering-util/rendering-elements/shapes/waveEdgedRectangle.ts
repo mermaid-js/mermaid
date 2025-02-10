@@ -18,15 +18,34 @@ export async function waveEdgedRectangle<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+
+  let adjustFinalHeight = true;
+  if (node.width || node.height) {
+    adjustFinalHeight = false;
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    if (node.width < 10) {
+      node.width = 10;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 2;
+    if (node.height < 10) {
+      node.height = 10;
+    }
+  }
+
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
-  const waveAmplitude = h / 8;
-  const finalH = h + waveAmplitude;
+  const w = (node?.width ? node?.width : bbox.width) + (labelPaddingX ?? 0) * 2;
+  const h = (node?.height ? node?.height : bbox.height) + (labelPaddingY ?? 0) * 2;
+  const waveAmplitude = node.look === 'neo' ? h / 4 : h / 8;
+  const finalH = h + (adjustFinalHeight ? waveAmplitude : -waveAmplitude);
   const { cssStyles } = node;
 
   // To maintain minimum width
-  const minWidth = 70;
+  const minWidth = 14;
   const widthDif = minWidth - w;
   const extraW = widthDif > 0 ? widthDif / 2 : 0;
 
@@ -58,7 +77,7 @@ export async function waveEdgedRectangle<T extends SVGGraphicsElement>(
 
   const waveEdgeRect = shapeSvg.insert(() => waveEdgeRectNode, ':first-child');
 
-  waveEdgeRect.attr('class', 'basic label-container');
+  waveEdgeRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     waveEdgeRect.selectAll('path').attr('style', cssStyles);
@@ -71,7 +90,7 @@ export async function waveEdgedRectangle<T extends SVGGraphicsElement>(
   waveEdgeRect.attr('transform', `translate(0,${-waveAmplitude / 2})`);
   label.attr(
     'transform',
-    `translate(${-w / 2 + (node.padding ?? 0) - (bbox.x - (bbox.left ?? 0))},${-h / 2 + (node.padding ?? 0) - waveAmplitude - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - waveAmplitude - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, waveEdgeRect);

@@ -20,10 +20,22 @@ export const createDecisionBoxPathD = (x: number, y: number, size: number): stri
 export async function question<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const padding = (node.padding ?? 0) * 4;
+  if (node.width || node.height) {
+    if ((node.width ?? 10) < 10) {
+      node.width = 10;
+    }
+    node.width = (node?.width ?? 0) - padding;
 
-  const w = bbox.width + node.padding;
-  const h = bbox.height + node.padding;
+    if ((node.height ?? 10) < 10) {
+      node.height = 10;
+    }
+    node.height = (node?.height ?? 0) - padding;
+  }
+
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const w = ((node?.width ? node?.width : bbox.width) + padding) / 2;
+  const h = w;
   const s = w + h;
 
   const points = [

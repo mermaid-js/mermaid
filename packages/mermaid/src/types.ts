@@ -1,3 +1,6 @@
+import type { MermaidConfig } from './config.type.js';
+import type { Diagram } from './Diagram.js';
+
 export interface NodeMetaData {
   shape?: string;
   label?: string;
@@ -12,7 +15,11 @@ export interface NodeMetaData {
   assigned?: string;
   ticket?: string;
 }
-import type { MermaidConfig } from './config.type.js';
+
+export interface EdgeMetaData {
+  animation?: 'fast' | 'slow';
+  animate?: boolean;
+}
 
 export interface Point {
   x: number;
@@ -66,15 +73,23 @@ export interface ParseOptions {
 }
 
 export interface ParseResult {
+  success: boolean;
   /**
-   * The diagram type, e.g. 'flowchart', 'sequence', etc.
+   * The mermaid code after extracting the config.
    */
-  diagramType: string;
+  code: string;
   /**
    * The config passed as YAML frontmatter or directives
    */
   config: MermaidConfig;
+  title?: string;
+  diagram?: Diagram;
+  /**
+   * The error that occurred during parsing, if any.
+   */
+  error?: unknown;
 }
+
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 export type D3Element = any;
 

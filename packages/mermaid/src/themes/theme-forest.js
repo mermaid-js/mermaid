@@ -18,8 +18,8 @@ class Theme {
     this.border1 = '#13540c';
     this.border2 = '#6eaa49';
     this.arrowheadColor = 'green';
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    this.fontFamily = 'arial, sans-serif';
+    this.fontSize = '14px';
 
     this.tertiaryColor = lighten('#cde498', 10);
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
@@ -31,6 +31,8 @@ class Theme {
     this.lineColor = invert(this.background);
     this.textColor = invert(this.background);
     this.THEME_COLOR_LIMIT = 12;
+    this.radius = 5;
+    this.strokeWidth = 1;
 
     /* Flowchart variables */
     this.nodeBkg = 'calculated';
@@ -98,6 +100,11 @@ class Theme {
 
     this.errorBkgColor = '#552222';
     this.errorTextColor = '#552222';
+
+    this.useGradient = true;
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,0.5))';
   }
   updateColors() {
     /* Sequence Diagram variables */

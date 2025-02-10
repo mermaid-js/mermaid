@@ -9,17 +9,19 @@ import type { D3Selection } from '../../../types.js';
 import type { Bounds, Point } from '../../../types.js';
 
 function getPoints(w: number, h: number, padding: number) {
+  const NOTCH_SIZE = 12;
   const left = 0;
   const right = w;
   const top = -h;
   const bottom = 0;
+
   return [
-    { x: left + padding, y: top },
+    { x: left + NOTCH_SIZE, y: top },
     { x: right, y: top },
     { x: right, y: bottom },
     { x: left, y: bottom },
-    { x: left, y: top + padding },
-    { x: left + padding, y: top },
+    { x: left, y: top + NOTCH_SIZE },
+    { x: left + NOTCH_SIZE, y: top },
   ];
 }
 export async function card<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {

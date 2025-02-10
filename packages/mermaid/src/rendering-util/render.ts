@@ -1,7 +1,7 @@
-import type { SVG } from '../diagram-api/types.js';
-import type { InternalHelpers } from '../internals.js';
-import { internalHelpers } from '../internals.js';
+import type { Positions, SVG } from '../diagram-api/types.js';
 import { log } from '../logger.js';
+import { internalHelpers } from '../internals.js';
+import type { InternalHelpers } from '../internals.js';
 import type { LayoutData } from './types.js';
 
 export interface RenderOptions {
@@ -13,7 +13,8 @@ export interface LayoutAlgorithm {
     layoutData: LayoutData,
     svg: SVG,
     helpers: InternalHelpers,
-    options?: RenderOptions
+    options?: RenderOptions,
+    positions?: Positions
   ): Promise<void>;
 }
 
@@ -39,21 +40,83 @@ const registerDefaultLayoutLoaders = () => {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
     },
+    {
+      name: 'fixed',
+      loader: async () => await import('./layout-algorithms/fixed/index.js'),
+    },
   ]);
 };
 
 registerDefaultLayoutLoaders();
 
-export const render = async (data4Layout: LayoutData, svg: SVG) => {
+export const render = async (data4Layout: LayoutData, svg: SVG, positions?: any) => {
   if (!(data4Layout.layoutAlgorithm in layoutAlgorithms)) {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
   }
 
   const layoutDefinition = layoutAlgorithms[data4Layout.layoutAlgorithm];
   const layoutRenderer = await layoutDefinition.loader();
-  return layoutRenderer.render(data4Layout, svg, internalHelpers, {
-    algorithm: layoutDefinition.algorithm,
-  });
+
+  const { theme, themeVariables } = data4Layout.config;
+  const { useGradient, gradientStart, gradientStop } = themeVariables;
+
+  svg
+    .append('defs')
+    .append('filter')
+    .attr('id', 'drop-shadow')
+    .attr('height', '130%')
+    .attr('width', '130%')
+    .append('feDropShadow')
+    .attr('dx', '4')
+    .attr('dy', '4')
+    .attr('stdDeviation', 0)
+    .attr('flood-opacity', '0.06')
+    .attr('flood-color', `${theme === 'redux' ? '#000000' : '#FFFFFF'}`);
+
+  svg
+    .append('defs')
+    .append('filter')
+    .attr('id', 'drop-shadow-small')
+    .attr('height', '150%')
+    .attr('width', '150%')
+    .append('feDropShadow')
+    .attr('dx', '2')
+    .attr('dy', '2')
+    .attr('stdDeviation', 0)
+    .attr('flood-opacity', '0.06')
+    .attr('flood-color', `${theme === 'redux' ? '#000000' : '#FFFFFF'}`);
+
+  if (useGradient) {
+    const gradient = svg
+      .append('linearGradient')
+      .attr('id', svg.attr('id') + '-gradient')
+      .attr('gradientUnits', 'objectBoundingBox') // Changed to objectBoundingBox for relative sizing
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '0%');
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '0%')
+      .attr('stop-color', gradientStart)
+      .attr('stop-opacity', 1);
+
+    gradient
+      .append('svg:stop')
+      .attr('offset', '100%') // Adjusted to 100% to ensure full gradient spread
+      .attr('stop-color', gradientStop)
+      .attr('stop-opacity', 1);
+  }
+  return layoutRenderer.render(
+    data4Layout,
+    svg,
+    internalHelpers,
+    {
+      algorithm: layoutDefinition.algorithm,
+    },
+    positions
+  );
 };
 
 /**

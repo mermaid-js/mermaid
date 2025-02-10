@@ -104,14 +104,21 @@ g.stateGroup line {
 }
 
 .node circle.state-end {
-  fill: ${options.innerEndBackground};
+  fill:  ${options.stateBkg || options.mainBkg};
   stroke: ${options.background};
-  stroke-width: 1.5
+  stroke-width: 1.5;
 }
+
+[data-look="neo"].node circle.state-end {
+  filter: none;
+  stroke:${options.background};
+  fill: ${options.lineColor};
+}
+
 .end-state-inner {
   fill: ${options.compositeBackground || options.background};
-  // stroke: ${options.background};
-  stroke-width: 1.5
+  stroke: ${options.background};
+  stroke-width: 1.5;
 }
 
 .node rect {
@@ -119,6 +126,13 @@ g.stateGroup line {
   stroke: ${options.stateBorder || options.nodeBorder};
   stroke-width: 1px;
 }
+
+.node-rect-neo {
+  fill: ${options.stateBkg || options.mainBkg};
+  stroke: none;
+  stroke-width: 1px;
+}
+
 .node polygon {
   fill: ${options.mainBkg};
   stroke: ${options.stateBorder || options.nodeBorder};;
@@ -136,26 +150,26 @@ g.stateGroup line {
 
 .cluster-label, .nodeLabel {
   color: ${options.stateLabelColor};
-  // line-height: 1;
+  line-height: 1.0;
 }
 
 .statediagram-cluster rect.outer {
-  rx: 5px;
-  ry: 5px;
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
 }
 .statediagram-state .divider {
   stroke: ${options.stateBorder || options.nodeBorder};
 }
 
 .statediagram-state .title-state {
-  rx: 5px;
-  ry: 5px;
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
 }
 .statediagram-cluster.statediagram-cluster .inner {
   fill: ${options.compositeBackground || options.background};
 }
 .statediagram-cluster.statediagram-cluster-alt .inner {
-  fill: ${options.altBackground ? options.altBackground : '#efefef'};
+  fill: ${options.altBackground ? options.altBackground : '#f0f0f0'};
 }
 
 .statediagram-cluster .inner {
@@ -164,9 +178,16 @@ g.stateGroup line {
 }
 
 .statediagram-state rect.basic {
-  rx: 5px;
-  ry: 5px;
+  rx: ${options.radius}px;
+  ry: ${options.radius}px;
 }
+
+
+.state-shadow-neo {
+  filter: ${options.dropShadow};
+}
+
+
 .statediagram-state rect.divider {
   stroke-dasharray: 10,10;
   fill: ${options.altBackground ? options.altBackground : '#efefef'};
@@ -198,6 +219,11 @@ g.stateGroup line {
 .statediagram-note .nodeLabel {
   color: ${options.noteTextColor};
 }
+
+.node.statediagram-note rect {
+  stroke: ${options.noteBorderColor} !important;
+}
+
 .statediagram .edgeLabel {
   color: red; // ${options.noteTextColor};
 }

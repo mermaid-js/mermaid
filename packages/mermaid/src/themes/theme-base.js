@@ -20,11 +20,14 @@ class Theme {
     this.noteTextColor = '#333';
 
     this.THEME_COLOR_LIMIT = 12;
-
+    this.radius = 5;
+    this.strokeWidth = 1;
     // dark
 
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
-    this.fontSize = '16px';
+    this.fontFamily = 'arial, sans-serif';
+    this.fontSize = '14px';
+    this.useGradient = true;
+    this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';
   }
   updateColors() {
     // The || is to make sure that if the variable has been defined by a user override that value is to be used
@@ -343,6 +346,9 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
+
+    this.gradientStart = this.primaryBorderColor;
+    this.gradientStop = this.secondaryBorderColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

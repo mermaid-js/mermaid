@@ -67,7 +67,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/diagram-api/types.ts:130](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L130)
+[packages/mermaid/src/diagram-api/types.ts:157](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L157)
 
 ---
 
@@ -77,7 +77,7 @@
 
 #### Defined in
 
-[packages/mermaid/src/diagram-api/types.ts:132](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L132)
+[packages/mermaid/src/diagram-api/types.ts:159](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L159)
 
 ## Variables
 
@@ -88,3 +88,77 @@
 #### Defined in
 
 [packages/mermaid/src/mermaid.ts:442](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L442)
+
+## Functions
+
+### calcIntersect
+
+▸ **calcIntersect**(`nodeId`, `point`): `Point` | `Promise`<`Point`>
+
+#### Parameters
+
+| Name     | Type     |
+| :------- | :------- |
+| `nodeId` | `string` |
+| `point`  | `Point`  |
+
+#### Returns
+
+`Point` | `Promise`<`Point`>
+
+#### Defined in
+
+[packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js:172](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js#L172)
+
+---
+
+### calcIntersections
+
+▸ **calcIntersections**(`startNodeId`, `endNodeId`, `startNodeSize`, `endNodeSize`): `IntersectionPoint`\[]
+
+#### Parameters
+
+| Name                  | Type                    |
+| :-------------------- | :---------------------- |
+| `startNodeId`         | `string`                |
+| `endNodeId`           | `undefined` \| `string` |
+| `startNodeSize`       | `NodePosition`          |
+| `endNodeSize`         | `Object`                |
+| `endNodeSize.height?` | `number`                |
+| `endNodeSize.width?`  | `number`                |
+| `endNodeSize.x`       | `number`                |
+| `endNodeSize.y`       | `number`                |
+
+#### Returns
+
+`IntersectionPoint`\[]
+
+**`Throws`**
+
+If the start node doesn't exist in the nodeDB (e.g. `render` hasn't been called yet)
+
+#### Defined in
+
+[packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js:115](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js#L115)
+
+---
+
+### calcNodeIntersections
+
+▸ **calcNodeIntersections**(`targetNodeId`, `_node1`, `_node2`): `IntersectionPoint`\[] | `Promise`<`IntersectionPoint`\[]>
+
+#### Parameters
+
+| Name           | Type                                                                                              |
+| :------------- | :------------------------------------------------------------------------------------------------ |
+| `targetNodeId` | `any`                                                                                             |
+| `_node1`       | `Pick`<`Node`, `"width"` \| `"height"` \| `"x"` \| `"y"` \| `"id"` \| `"shape"` \| `"intersect"`> |
+| `_node2`       | `Pick`<`Node`, `"width"` \| `"height"` \| `"x"` \| `"y"` \| `"id"` \| `"shape"` \| `"intersect"`> |
+
+#### Returns
+
+`IntersectionPoint`\[] | `Promise`<`IntersectionPoint`\[]>
+
+#### Defined in
+
+[packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js:78](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/fixed/index.js#L78)

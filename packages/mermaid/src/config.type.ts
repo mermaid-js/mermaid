@@ -61,14 +61,25 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null';
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'mc'
+    | 'null';
   themeVariables?: any;
   themeCSS?: string;
   /**
    * Defines which main look to use for the diagram.
    *
    */
-  look?: 'classic' | 'handDrawn';
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
    *
@@ -261,7 +272,12 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Defines how mermaid renders curves for flowcharts.
    *
    */
-  curve?: 'basis' | 'linear' | 'cardinal';
+  curve?: 'basis' | 'linear' | 'cardinal' | 'rounded';
+  /**
+   * Highlights the points in an edge for debugging.
+   *
+   */
+  edgeDebug?: boolean;
   /**
    * Represents the padding between the labels and the shape
    *
@@ -754,6 +770,11 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
   edgeLengthFactor?: string;
   compositTitleSize?: number;
   radius?: number;
+  /**
+   * Defines how mermaid renders curves for flowcharts.
+   *
+   */
+  curve?: 'basis' | 'linear' | 'cardinal' | 'rounded';
   /**
    * Decides which rendering engine that is to be used for the rendering.
    *

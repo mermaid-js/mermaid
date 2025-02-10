@@ -2,7 +2,7 @@ import rough from 'roughjs';
 import { log } from '../../../logger.js';
 import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
 import type { Bounds, Point } from '../../../types.js';
@@ -10,16 +10,37 @@ import type { Bounds, Point } from '../../../types.js';
 export function filledCircle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  { config: { themeVariables } }: ShapeRenderOptions
+  { config: { themeVariables, theme } }: ShapeRenderOptions
 ) {
-  const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';
-  node.labelStyle = labelStyles;
+
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (10),
+  // if so set it to min value
+  if (node.width || node.height) {
+    if ((node.width ?? 0) < 10) {
+      node.width = 10;
+    }
+
+    if ((node.height ?? 0) < 10) {
+      node.height = 10;
+    }
+  }
+
+  if (!node.width) {
+    node.width = 10;
+  }
+
+  if (!node.height) {
+    node.width = 10;
+  }
+
   const shapeSvg = parent
     .insert('g')
     .attr('class', getNodeClasses(node))
     .attr('id', node.domId ?? node.id);
-  const radius = 7;
+  const radius = (node.width ?? 0) / 2;
   const { cssStyles } = node;
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
@@ -37,12 +58,16 @@ export function filledCircle<T extends SVGGraphicsElement>(
 
   filledCircle.selectAll('path').attr('style', `fill: ${nodeBorder} !important;`);
 
-  if (cssStyles && cssStyles.length > 0 && node.look !== 'handDrawn') {
-    filledCircle.selectAll('path').attr('style', cssStyles);
+  if (node.look !== 'handDrawn') {
+    filledCircle.attr('class', 'outer-path');
   }
 
-  if (nodeStyles && node.look !== 'handDrawn') {
-    filledCircle.selectAll('path').attr('style', nodeStyles);
+  if (node.width < 25 && theme?.includes('redux') && node.look !== 'handDrawn') {
+    filledCircle.attr('style', 'filter:url(#drop-shadow-small)');
+  }
+
+  if (cssStyles && cssStyles.length > 0 && node.look !== 'handDrawn') {
+    filledCircle.selectAll('path').attr('style', cssStyles);
   }
 
   updateNodeBounds(node, filledCircle);

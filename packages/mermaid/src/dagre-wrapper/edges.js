@@ -39,7 +39,7 @@ export const insertEdgeLabel = (elem, edge) => {
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
 
   // Create inner g, label, this will be positioned now for centering the text
-  const label = edgeLabel.insert('g').attr('class', 'label');
+  const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
   label.node().appendChild(labelElement);
 
   // Center the label
@@ -423,6 +423,8 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
+    // MC
+    .attr('data-edge', 'true')
     .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
     .attr('style', edge.style);
 

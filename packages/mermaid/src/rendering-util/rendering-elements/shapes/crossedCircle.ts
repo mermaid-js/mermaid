@@ -1,35 +1,32 @@
 import { log } from '../../../logger.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
 import type { Node } from '../../types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
+import { userNodeOverrides } from './handDrawnShapeStyles.js';
 import type { D3Selection } from '../../../types.js';
 import type { Bounds, Point } from '../../../types.js';
 
 function createLine(r: number) {
-  const xAxis45 = Math.cos(Math.PI / 4); // cosine of 45 degrees
-  const yAxis45 = Math.sin(Math.PI / 4); // sine of 45 degrees
+  const axis45 = Math.SQRT1_2; // cosine of 45 degrees = 1/sqrt(2)
   const lineLength = r * 2;
 
-  const pointQ1 = { x: (lineLength / 2) * xAxis45, y: (lineLength / 2) * yAxis45 }; // Quadrant I
-  const pointQ2 = { x: -(lineLength / 2) * xAxis45, y: (lineLength / 2) * yAxis45 }; // Quadrant II
-  const pointQ3 = { x: -(lineLength / 2) * xAxis45, y: -(lineLength / 2) * yAxis45 }; // Quadrant III
-  const pointQ4 = { x: (lineLength / 2) * xAxis45, y: -(lineLength / 2) * yAxis45 }; // Quadrant IV
+  const pointQ1 = { x: (lineLength / 2) * axis45, y: (lineLength / 2) * axis45 }; // Quadrant I
+  const pointQ2 = { x: -(lineLength / 2) * axis45, y: (lineLength / 2) * axis45 }; // Quadrant II
+  const pointQ3 = { x: -(lineLength / 2) * axis45, y: -(lineLength / 2) * axis45 }; // Quadrant III
+  const pointQ4 = { x: (lineLength / 2) * axis45, y: -(lineLength / 2) * axis45 }; // Quadrant IV
 
   return `M ${pointQ2.x},${pointQ2.y} L ${pointQ4.x},${pointQ4.y}
                    M ${pointQ1.x},${pointQ1.y} L ${pointQ3.x},${pointQ3.y}`;
 }
 
 export function crossedCircle<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
-  const { labelStyles, nodeStyles } = styles2String(node);
-  node.labelStyle = labelStyles;
   node.label = '';
   const shapeSvg = parent
     .insert('g')
     .attr('class', getNodeClasses(node))
     .attr('id', node.domId ?? node.id);
-  const radius = Math.max(30, node?.width ?? 0);
+  const radius = node?.width ? node?.width / 2 : node?.height ? node?.height / 2 : 25;
   const { cssStyles } = node;
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
@@ -45,15 +42,13 @@ export function crossedCircle<T extends SVGGraphicsElement>(parent: D3Selection<
   const linePath = createLine(radius);
   const lineNode = rc.path(linePath, options);
 
-  const crossedCircle = shapeSvg.insert(() => circleNode, ':first-child');
+  const crossedCircle = shapeSvg.insert('g', ':first-child');
+  crossedCircle.insert(() => circleNode);
   crossedCircle.insert(() => lineNode);
+  crossedCircle.attr('class', 'outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     crossedCircle.selectAll('path').attr('style', cssStyles);
-  }
-
-  if (nodeStyles && node.look !== 'handDrawn') {
-    crossedCircle.selectAll('path').attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, crossedCircle);

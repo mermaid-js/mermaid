@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { assert, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -35,7 +35,7 @@ vi.mock('./diagrams/sequence/sequenceRenderer.js');
 
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
-import mermaid from './mermaid.js';
+import mermaid, { type ParseResult } from './mermaid.js';
 import mermaidAPI, {
   appendDivSvgG,
   cleanUpSvgCode,
@@ -69,6 +69,8 @@ import { compile, serialize } from 'stylis';
 import { Diagram } from './Diagram.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { ClassDB } from './diagrams/class/classDb.js';
+import { FlowDB } from './diagrams/flowchart/flowDb.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -444,9 +446,14 @@ describe('mermaidAPI', () => {
         '\ndefault' +
         '\n.classDef1 > * { style1-1 !important; }' +
         '\n.classDef1 span { style1-1 !important; }';
-      expect(getStyles).toHaveBeenCalledWith('flowchart-v2', expectedStyles, {
-        fontFamily: 'serif',
-      });
+      expect(getStyles).toHaveBeenCalledWith(
+        'flowchart-v2',
+        expectedStyles,
+        {
+          fontFamily: 'serif',
+        },
+        'someId'
+      );
     });
 
     it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
@@ -686,86 +693,99 @@ describe('mermaidAPI', () => {
     });
     it('returns false for invalid definition with silent option', async () => {
       await expect(
-        mermaidAPI.parse('this is not a mermaid diagram definition', { suppressErrors: true })
+        mermaidAPI
+          .parse('this is not a mermaid diagram definition', { suppressErrors: true })
+          .then((result) => result.success)
       ).resolves.toBe(false);
     });
     it('resolves for valid definition', async () => {
-      await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
-        .toMatchInlineSnapshot(`
+      await expect(
+        mermaidAPI
+          .parse('graph TD;A--x|text including URL space|B;')
+          .then((p) => ({ config: p.config }))
+      ).resolves.toMatchInlineSnapshot(`
         {
           "config": {},
-          "diagramType": "flowchart-v2",
         }
       `);
     });
     it('returns config when defined in frontmatter', async () => {
       await expect(
-        mermaidAPI.parse(`---
+        mermaidAPI
+          .parse(
+            `---
 config:
   theme: base
   flowchart:
     htmlLabels: true
 ---
-graph TD;A--x|text including URL space|B;`)
+graph TD;A--x|text including URL space|B;`
+          )
+          .then((p) => ({ config: p.config }))
       ).resolves.toMatchInlineSnapshot(`
-  {
-    "config": {
-      "flowchart": {
-        "htmlLabels": true,
-      },
-      "theme": "base",
-    },
-    "diagramType": "flowchart-v2",
-  }
-`);
+            {
+              "config": {
+                "flowchart": {
+                  "htmlLabels": true,
+                },
+                "theme": "base",
+              },
+            }
+          `);
     });
 
     it('returns config when defined in directive', async () => {
       await expect(
-        mermaidAPI.parse(`%%{init: { 'theme': 'base' } }%%
-graph TD;A--x|text including URL space|B;`)
+        mermaidAPI
+          .parse(
+            `%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`
+          )
+          .then((p) => ({ config: p.config }))
       ).resolves.toMatchInlineSnapshot(`
-  {
-    "config": {
-      "theme": "base",
-    },
-    "diagramType": "flowchart-v2",
-  }
-`);
+            {
+              "config": {
+                "theme": "base",
+              },
+            }
+          `);
     });
 
     it('returns merged config when defined in frontmatter and directive', async () => {
       await expect(
-        mermaidAPI.parse(`---
+        mermaidAPI
+          .parse(
+            `---
 config:
   theme: forest
   flowchart:
     htmlLabels: true
 ---
 %%{init: { 'theme': 'base' } }%%
-graph TD;A--x|text including URL space|B;`)
+graph TD;A--x|text including URL space|B;`
+          )
+          .then((p) => ({ config: p.config }))
       ).resolves.toMatchInlineSnapshot(`
-  {
-    "config": {
-      "flowchart": {
-        "htmlLabels": true,
-      },
-      "theme": "base",
-    },
-    "diagramType": "flowchart-v2",
-  }
-`);
+            {
+              "config": {
+                "flowchart": {
+                  "htmlLabels": true,
+                },
+                "theme": "base",
+              },
+            }
+          `);
     });
-
     it('returns true for valid definition with silent option', async () => {
       await expect(
-        mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
+        mermaidAPI
+          .parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
+          .then((p) => ({ config: (p as ParseResult).config }))
       ).resolves.toMatchInlineSnapshot(`
-          {
-            "config": {},
-            "diagramType": "flowchart-v2",
-          }
-        `);
+            {
+              "config": {},
+            }
+          `);
     });
   });
 
@@ -832,5 +852,93 @@ graph TD;A--x|text including URL space|B;`)
       expect(diagram).toBeInstanceOf(Diagram);
       expect(diagram.type).toBe('flowchart-v2');
     });
+
+    it('should not modify db when rendering different diagrams', async () => {
+      const flowDiagram1 = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      A -- text --> B -- text2 --> C`
+      );
+      const flowDiagram2 = await mermaidAPI.getDiagramFromText(
+        `flowchart TD
+      A -- text --> B -- text2 --> C`
+      );
+      // Since flowDiagram will return new Db object each time, we can compare the db to be different.
+      expect(flowDiagram1.db).not.toBe(flowDiagram2.db);
+      assert(flowDiagram1.db instanceof FlowDB);
+      assert(flowDiagram2.db instanceof FlowDB);
+      expect(flowDiagram1.db.getDirection()).not.toEqual(flowDiagram2.db.getDirection());
+
+      const classDiagram1 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction TB
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      const classDiagram2 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction LR
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      // Since classDiagram will return new Db object each time, we can compare the db to be different.
+      expect(classDiagram1.db).not.toBe(classDiagram2.db);
+      assert(classDiagram1.db instanceof ClassDB);
+      assert(classDiagram2.db instanceof ClassDB);
+      expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
+
+      const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+      const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+      // Since sequenceDiagram will return same Db object each time, we can compare the db to be same.
+      expect(sequenceDiagram1.db).toBe(sequenceDiagram2.db);
+    });
+  });
+
+  // Sequence Diagram currently uses a singleton DB, so this test will fail
+  it.fails('should not modify db when rendering different sequence diagrams', async () => {
+    const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
+      `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    Bob-->>John: How about you John?`
+    );
+    const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
+      `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    Bob-->>John: How about you John?`
+    );
+    expect(sequenceDiagram1.db).not.toBe(sequenceDiagram2.db);
   });
 });

@@ -4,6 +4,7 @@ import {
   getNodeClasses,
   createPathFromPoints,
   generateFullSineWavePoints,
+  mergePaths,
 } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
@@ -19,13 +20,38 @@ export async function multiWaveEdgedRectangle<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
-  const waveAmplitude = h / 4;
-  const finalH = h + waveAmplitude;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+  let adjustFinalHeight = true;
+
+  if (node.width || node.height) {
+    adjustFinalHeight = false;
+    node.width = (node?.width ?? 0) - labelPaddingX * 2;
+    if (node.width < 50) {
+      node.width = 50;
+    }
+
+    node.height = (node?.height ?? 0) - labelPaddingY * 3;
+    if (node.height < 50) {
+      node.height = 50;
+    }
+
+    // Adjustments for wave amplitude
+    const waveAmplitude = 30;
+    const waveMultiplier = 0.3319;
+
+    node.height = Math.round(node.height - labelPaddingY - waveAmplitude * waveMultiplier);
+  }
+
+  const w = Math.max(bbox.width, node?.width ?? 0) + labelPaddingX * 2;
+  const h = Math.max(bbox.height, node?.height ?? 0) + labelPaddingY * 3;
+  const waveAmplitude = node.look === 'neo' ? h / 4 : h / 8;
+  const finalH = h + (adjustFinalHeight ? waveAmplitude / 2 : -waveAmplitude / 2);
   const x = -w / 2;
   const y = -finalH / 2;
-  const rectOffset = 5;
+  const rectOffset = 10;
 
   const { cssStyles } = node;
 
@@ -74,14 +100,20 @@ export async function multiWaveEdgedRectangle<T extends SVGGraphicsElement>(
   }
 
   const outerPath = createPathFromPoints(outerPathPoints);
-  const outerNode = rc.path(outerPath, options);
+  let outerNode = rc.path(outerPath, options);
   const innerPath = createPathFromPoints(innerPathPoints);
-  const innerNode = rc.path(innerPath, options);
+  let innerNode = rc.path(innerPath, options);
 
-  const shape = shapeSvg.insert(() => outerNode, ':first-child');
+  if (node.look !== 'handDrawn') {
+    outerNode = mergePaths(outerNode);
+    innerNode = mergePaths(innerNode);
+  }
+
+  const shape = shapeSvg.insert('g', ':first-child');
+  shape.insert(() => outerNode);
   shape.insert(() => innerNode);
 
-  shape.attr('class', 'basic label-container');
+  shape.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     shape.selectAll('path').attr('style', cssStyles);
@@ -95,7 +127,7 @@ export async function multiWaveEdgedRectangle<T extends SVGGraphicsElement>(
 
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - rectOffset - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + rectOffset - waveAmplitude / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - rectOffset - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + rectOffset - waveAmplitude - (bbox.y - (bbox.top ?? 0))})`
   );
 
   updateNodeBounds(node, shape);

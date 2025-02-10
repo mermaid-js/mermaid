@@ -26,29 +26,33 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 20 : nodePadding;
 
-  const minWidth = 100; // Minimum width
-  const minHeight = 50; // Minimum height
+  if (node.width || node.height) {
+    node.width = node?.width ?? 0;
+    if (node.width < 20) {
+      node.width = 20;
+    }
 
-  const baseWidth = Math.max(bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const baseHeight = Math.max(bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+    node.height = node?.height ?? 0;
+    if (node.height < 10) {
+      node.height = 10;
+    }
 
-  const aspectRatio = baseWidth / baseHeight;
-
-  let w = baseWidth;
-  let h = baseHeight;
-
-  if (w > h * aspectRatio) {
-    h = w / aspectRatio;
-  } else {
-    w = h * aspectRatio;
+    // Adjust for wave amplitude
+    const waveAmplitude = Math.min(node.height * 0.2, node.height / 4);
+    node.height = Math.ceil(node.height - labelPaddingY - waveAmplitude * (20 / 9));
+    node.width = node.width - labelPaddingX * 2;
   }
 
-  w = Math.max(w, minWidth);
-  h = Math.max(h, minHeight);
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const waveAmplitude = Math.min(h * 0.2, h / 4);
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY;
+
+  const waveAmplitude = h / 8;
   const finalH = h + waveAmplitude * 2;
   const { cssStyles } = node;
 
@@ -68,7 +72,7 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
 
   const waveRect = shapeSvg.insert(() => waveRectNode, ':first-child');
 
-  waveRect.attr('class', 'basic label-container');
+  waveRect.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     waveRect.selectAll('path').attr('style', cssStyles);
@@ -77,6 +81,9 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
   if (nodeStyles && node.look !== 'handDrawn') {
     waveRect.selectAll('path').attr('style', nodeStyles);
   }
+
+  node.width = w;
+  node.height = finalH;
 
   updateNodeBounds(node, waveRect);
 

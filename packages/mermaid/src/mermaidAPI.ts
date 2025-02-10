@@ -14,7 +14,7 @@ import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
 import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
+import type { DiagramMetadata, DiagramStyleClassDef, Positions } from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
 import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
@@ -27,7 +27,7 @@ import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 
-const MAX_TEXTLENGTH = 50_000;
+const MAX_TEXTLENGTH = 100_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
 
@@ -68,17 +68,23 @@ function processAndSetConfigs(text: string) {
 async function parse(
   text: string,
   parseOptions: ParseOptions & { suppressErrors: true }
-): Promise<ParseResult | false>;
+): Promise<ParseResult & { error?: unknown }>;
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult>;
-async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
+async function parse(
+  text: string,
+  parseOptions?: ParseOptions
+): Promise<ParseResult & { error?: unknown }> {
   addDiagrams();
+  let code = '';
+  let title = undefined;
+  let config: MermaidConfig = {};
   try {
-    const { code, config } = processAndSetConfigs(text);
+    ({ code, config, title } = processAndSetConfigs(text));
     const diagram = await getDiagramFromText(code);
-    return { diagramType: diagram.type, config };
+    return { diagram, code, config, title, success: true };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
-      return false;
+      return { code, config, title, success: false, error };
     }
     throw error;
   }
@@ -164,7 +170,7 @@ export const createUserStyles = (
   svgId: string
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
-  const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
+  const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables, svgId);
 
   // Now turn all of the styles into a (compiled) string that starts with the id
   // use the stylis library to compile the css, turn the results into a valid CSS string (serialize(...., stringify))
@@ -306,7 +312,8 @@ export const removeExistingElements = (
 const render = async function (
   id: string,
   text: string,
-  svgContainingElement?: Element
+  svgContainingElement?: Element,
+  positions?: Positions
 ): Promise<RenderResult> {
   addDiagrams();
 
@@ -422,7 +429,7 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, version, diag);
+    await diag.renderer.draw(text, id, version, diag, positions);
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();
@@ -496,12 +503,12 @@ function initialize(userOptions: MermaidConfig = {}) {
       options.themeVariables
     );
   } else if (options) {
-    options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
+    options.themeVariables = theme.neo.getThemeVariables(options.themeVariables);
   }
 
   const config =
     typeof options === 'object' ? configApi.setSiteConfig(options) : configApi.getSiteConfig();
-
+  // console.log('IPI config', config.themeVariables.useGradient);
   setLogLevel(config.logLevel);
   addDiagrams();
 }

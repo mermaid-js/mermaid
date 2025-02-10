@@ -1,20 +1,18 @@
+import rough from 'roughjs';
 import { log } from '../../../logger.js';
 import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import rough from 'roughjs';
+import { userNodeOverrides } from './handDrawnShapeStyles.js';
 import type { D3Selection } from '../../../types.js';
 import type { Bounds, Point } from '../../../types.js';
 
 export async function hourglass<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
-  const { labelStyles, nodeStyles } = styles2String(node);
   node.label = '';
-  node.labelStyle = labelStyles;
   const { shapeSvg } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = Math.max(30, node?.width ?? 0);
-  const h = Math.max(30, node?.height ?? 0);
+  const w = node?.width ? node?.width : 30;
+  const h = node?.height ? node?.height : 30;
 
   const { cssStyles } = node;
 
@@ -37,14 +35,10 @@ export async function hourglass<T extends SVGGraphicsElement>(parent: D3Selectio
   const pathData = createPathFromPoints(points);
   const shapeNode = rc.path(pathData, options);
   const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
-  polygon.attr('class', 'basic label-container');
+  polygon.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     polygon.selectChildren('path').attr('style', cssStyles);
-  }
-
-  if (nodeStyles && node.look !== 'handDrawn') {
-    polygon.selectChildren('path').attr('style', nodeStyles);
   }
 
   polygon.attr('transform', `translate(${-w / 2}, ${-h / 2})`);

@@ -91,23 +91,16 @@
     <pre id="diagram4" class="mermaid">
 ---
 config:
-  layout: elk
+  look: handdrawn
+
 ---
-swimlane TB
-  %% swimlane 1 - A E
-  %% swimlane 2 - B
-  %% swimlane 3 - C D
-%% lane First
- A
-%% end
- A --> B(I am B, the wide one) --> C
- C --> D & F
+flowchart LR
+    n1["n1"] --- C
+    B("Continue") --> C(("Evaluate"))
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
 
- D --> E
- A --> E
- E --> B
-
-B@{ shape: diam}
     </pre>
     <pre id="diagram4" class="mermaid2">
 ---
@@ -139,6 +132,7 @@ flowchart LR
     <pre id="diagram4" class="mermaid2">
 ---
 config:
+  look: neo
   layout: elk
 ---
 flowchart LR
@@ -453,7 +447,7 @@ kanban
       mermaid.initialize({
         // theme: 'base',
         // theme: 'default',
-        // theme: 'forest',
+        theme: 'forest',
         // handDrawnSeed: 12,
         // look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
@@ -461,7 +455,7 @@ kanban
         // layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
-        flowchart: { titleTopMargin: 10 },
+        flowchart: { titleTopMargin: 10, useMaxWidth: false },
         // fontFamily: 'Caveat',
         // fontFamily: 'Kalam',
         // fontFamily: 'courier',

@@ -56,9 +56,9 @@ export async function icon<T extends SVGGraphicsElement>(
 
   const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
   const outerShape = shapeSvg.insert(() => outerNode);
+  const iconElem = shapeSvg.append('g');
 
   if (node.icon) {
-    const iconElem = shapeSvg.append('g');
     iconElem.html(
       `<g>${await getIconSVG(node.icon, {
         height: iconSize,
@@ -79,7 +79,15 @@ export async function icon<T extends SVGGraphicsElement>(
           : -bbox.height / 2 - labelPadding / 2 - iconHeight / 2 - iconY
       })`
     );
-    iconElem.attr('style', `color: ${stylesMap.get('stroke') ?? nodeBorder};`);
+    iconElem.attr('style', `color : ${stylesMap.get('stroke') ?? nodeBorder};`);
+    iconElem
+      .selectAll<SVGPathElement, unknown>('path')
+      .nodes()
+      .forEach((path) => {
+        if (path.getAttribute('fill') === 'currentColor') {
+          path.setAttribute('class', 'icon');
+        }
+      });
   }
 
   label.attr(
@@ -95,6 +103,14 @@ export async function icon<T extends SVGGraphicsElement>(
       topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2
     })`
   );
+
+  if (stylesMap.get('stroke')) {
+    iconElem.selectAll('path').attr('style', `fill: ${stylesMap.get('stroke')}`);
+  }
+
+  if (stylesMap.get('fill')) {
+    iconShape.selectAll('path').attr('style', `stroke: ${stylesMap.get('fill')}`);
+  }
 
   updateNodeBounds(node, outerShape);
 

@@ -1,0 +1,206 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background: #333; */
+        font-family: 'Arial';
+        /* font-size: 18px !important; */
+      }
+
+      h1 {
+        color: grey;
+      }
+
+      .mermaid2 {
+        display: none;
+      }
+
+      .mermaid svg {
+        /* font-size: 18px !important; */
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
+      }
+
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+
+      /* tspan {
+              font-size: 6px !important;
+            } */
+    </style>
+  </head>
+
+  <body>
+    <pre id="diagram" class="mermaid"></pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize({
+        startOnLoad: false,
+        // look: 'handdrawn',
+        // layout: 'elk',
+        fontFamily: 'Kalam',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        flowchart: {
+          // curve: 'cardinal',
+          // edgeDebug: true,
+        },
+        logLevel: 0,
+      });
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+      let code = `---
+config:
+  state:
+    curve: line
+---
+      stateDiagram
+        S:S
+        T:T
+        U:U
+        state Z {
+          state X {
+            Y:Ypsilon
+          }
+        }
+        A
+
+        S --> T: angrepp
+        T --> U
+        T --> V
+      C
+      D
+      E
+
+              `;
+      code = `
+flowchart TB
+    n3["Untitled Node"] --> n5["Untitled Node"] & n6["Untitled Node"] & n7["Untitled Node"] & n8["Untitled Node"] & n9["Untitled Node"]
+      `;
+
+      let positions = {
+        nodes: {
+          S: { x: 0, y: 0 },
+          T: { x: 100, y: 100, width: 100, height: 100 },
+          U: { x: 250, y: 260 },
+          V: { x: 300, y: 120 },
+          Z: { x: 300, y: 10, width: 160, height: 100 },
+          X: { x: 300, y: 20, width: 80, height: 60 },
+          Y: { x: 300, y: 30, width: 50, height: 20 },
+          A: { x: 300, y: 75, width: 20, height: 20 },
+        },
+        edges: {
+          edge0: {
+            points: [
+              { x: 0, y: 0 },
+              { x: 50, y: 0 },
+              { x: 100, y: 100 },
+            ],
+          },
+          edge1: {
+            // points: [
+            //   { x: 100, y: 100 },
+            //   { x: 200, y: 200 },
+            // ],
+            points: [
+              { x: 100, y: 100 },
+              { x: 150, y: 120 },
+              { x: 190.19453144073486, y: 120 },
+              { x: 190.19453144073486, y: 152.1556251525879 },
+              { x: 250, y: 152.1556251525879 },
+              { x: 250, y: 160 },
+            ],
+          },
+          edge2: {
+            points: [
+              { x: 100, y: 100 },
+              { x: 175, y: 80 },
+              { x: 200, y: 120 },
+              { x: 300, y: 100 },
+            ],
+          },
+        },
+      };
+
+      positions = JSON.parse(
+        '{"nodes":{"n3":{"x":360.885009765625,"y":7.677405834197998,"width":120.59375,"height":45.00000762939453},"n5":{"x":546.1309814453125,"y":190.24496459960938,"width":120.59375,"height":45},"n6":{"x":694.6719360351562,"y":167.00001525878906,"width":120.59375,"height":45},"n7":{"x":72.29684925079346,"y":167.00001525878906,"width":120.59370994567871,"height":45},"n8":{"x":250.27700805664062,"y":183.1090545654297,"width":120.59375,"height":45},"n9":{"x":393.2580871582031,"y":197.45834350585938,"width":120.59375,"height":45}},"edges":{"L_n3_n5_0":{"points":[{"x":383.71510673157036,"y":30.177409648895264},{"x":383.71510673157036,"y":98.96118712425232},{"x":523.300888350029,"y":98.96118712425232},{"x":523.300888350029,"y":167.74496459960938}],"start":"n3","end":"n5"},"L_n3_n6_1":{"points":[{"x":408.02337350122014,"y":30.177409648895264},{"x":408.02337350122014,"y":87.33871245384216},{"x":647.533580291497,"y":87.33871245384216},{"x":647.533580291497,"y":144.50001525878906}],"start":"n3","end":"n6"},"L_n3_n7_2":{"points":[{"x":320.12974762228504,"y":30.177409648895264},{"x":270.12974762228504,"y":87.33871245384216},{"x":113.05210448440184,"y":87.33871245384216},{"x":113.05210448440184,"y":144.50001525878906}],"start":"n3","end":"n7"},"L_n3_n8_3":{"points":[{"x":346.6989693425486,"y":30.177409648895264},{"x":346.6989693425486,"y":95.39323210716248},{"x":264.4630460745863,"y":95.39323210716248},{"x":264.4630460745863,"y":160.6090545654297}],"start":"n3","end":"n8"},"L_n3_n9_4":{"points":[{"x":364.7230894682698,"y":30.177409648895264},{"x":364.7230894682698,"y":102.56787657737732},{"x":389.42000810627434,"y":102.56787657737732},{"x":389.42000810627434,"y":174.95834350585938}],"start":"n3","end":"n9"}}}'
+      );
+
+      // console.log('positions:', positions);
+      const { svg } = await mermaid.render('the-id-of-the-svg', code, undefined, positions);
+      // if (window?.calcIntersections2) {
+      //   const int = await calcIntersections2(
+      //     { id: 'a', shape: 'rect', x: 100, y: 100, width: 100, height: 100 },
+      //     { id: 'a', shape: 'rect', x: 300, y: 100, width: 100, height: 100 }
+      //   );
+      //   console.log('Intersections', int);
+      // } else {
+      //   console.error('calcIntersections not found');
+      // }
+      // console.log(JSON.stringify(positions));
+      const elem = document.querySelector('#diagram');
+      elem.innerHTML = svg;
+    </script>
+  </body>
+</html>

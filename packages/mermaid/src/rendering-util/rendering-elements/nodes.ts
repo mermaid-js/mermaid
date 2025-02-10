@@ -3,6 +3,7 @@ import { shapes } from './shapes.js';
 import type { Node, NonClusterNode, ShapeRenderOptions } from '../types.js';
 import type { SVGGroup } from '../../mermaid.js';
 import type { D3Selection } from '../../types.js';
+import { handleUndefinedAttr } from '../../utils.js';
 import type { graphlib } from 'dagre-d3-es';
 
 type ShapeHandler = (typeof shapes)[keyof typeof shapes];
@@ -50,6 +51,12 @@ export async function insertNode(
     el = await shapeHandler(elem, node, renderOptions);
     newEl = el;
   }
+  // MC Special
+  newEl.attr('data-id', node.id);
+  newEl.attr('data-node', true);
+  newEl.attr('data-et', 'node');
+  newEl.attr('data-look', handleUndefinedAttr(node.look));
+
   if (node.tooltip) {
     el.attr('title', node.tooltip);
   }
@@ -76,7 +83,7 @@ export const positionNode = (node: ReturnType<graphlib.Graph['node']>) => {
     'Transforming node',
     node.diff,
     node,
-    'translate(' + (node.x - node.width / 2 - 5) + ', ' + node.width / 2 + ')'
+    'translate(' + (node.x - +(node.diff || 0) - node.width / 2) + ', ' + node.width / 2 + ')'
   );
   const padding = 8;
   const diff = node.diff || 0;

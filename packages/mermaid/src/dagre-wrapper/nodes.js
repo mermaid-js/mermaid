@@ -1156,6 +1156,10 @@ export const insertNode = async (elem, node, renderOptions) => {
     el.attr('class', 'node default ' + node.class);
   }
 
+  // MC Special
+  newEl.attr('data-node', 'true');
+  newEl.attr('data-id', node.id);
+
   nodeElems[node.id] = newEl;
 
   if (node.haveCallback) {

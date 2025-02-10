@@ -51,14 +51,39 @@ export const createInnerCylinderPathD = (
 ): string => {
   return [`M${x - width / 2},${-height / 2}`, `a${rx},${ry} 0,0,0 ${width},0`].join(' ');
 };
+
+const MIN_HEIGHT = 8;
+const MIN_WIDTH = 8;
 export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 24 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
+
+  if (node.width || node.height) {
+    const originalWidth = node.width ?? 0;
+    node.width = (node.width ?? 0) - labelPaddingY;
+    if (node.width < MIN_WIDTH) {
+      node.width = MIN_WIDTH;
+    }
+
+    const rx = originalWidth / 2;
+    const ry = rx / (2.5 + originalWidth / 50);
+    node.height = (node.height ?? 0) - labelPaddingX - ry * 3;
+
+    if (node.height < MIN_HEIGHT) {
+      node.height = MIN_HEIGHT;
+    }
+  }
+
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(bbox.width + node.padding, node.width ?? 0);
+
+  const w = (node.width ? node.width : bbox.width) + labelPaddingY;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = Math.max(bbox.height + ry + node.padding, node.height ?? 0);
+  const h = (node.height ? node.height : bbox.height) + labelPaddingX + ry;
 
   let cylinder: D3Selection<SVGPathElement> | D3Selection<SVGGElement>;
   const { cssStyles } = node;
@@ -68,10 +93,21 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
     const rc = rough.svg(shapeSvg);
     const outerPathData = createOuterCylinderPathD(0, 0, w, h, rx, ry);
     const innerPathData = createInnerCylinderPathD(0, ry, w, h, rx, ry);
-    const outerNode = rc.path(outerPathData, userNodeOverrides(node, {}));
-    const innerLine = rc.path(innerPathData, userNodeOverrides(node, { fill: 'none' }));
+    const options = userNodeOverrides(node, {});
+    const overrides = {};
+    // node.look === 'neo'
+    //   ? {
+    //       roughness: 0,
+    //       stroke: 'none',
+    //       fillStyle: 'solid',
+    //     }
+    //   : {};
 
-    cylinder = shapeSvg.insert(() => innerLine, ':first-child');
+    const outerNode = rc.path(outerPathData, { ...options, ...overrides });
+    const innerLine = rc.path(innerPathData, { ...options, ...overrides });
+
+    const innerLineEl = shapeSvg.insert(() => innerLine, ':first-child');
+    innerLineEl.attr('class', 'neo-line');
     cylinder = shapeSvg.insert(() => outerNode, ':first-child');
     cylinder.attr('class', 'basic label-container');
     if (cssStyles) {
@@ -82,11 +118,12 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
     cylinder = shapeSvg
       .insert('path', ':first-child')
       .attr('d', pathData)
-      .attr('class', 'basic label-container')
+      .attr('class', 'basic label-container outer-path')
       .attr('style', handleUndefinedAttr(cssStyles))
       .attr('style', nodeStyles);
   }
 
+  // find label and move it down
   cylinder.attr('label-offset-y', ry);
   cylinder.attr('transform', `translate(${-w / 2}, ${-(h / 2 + ry)})`);
 
@@ -94,7 +131,7 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
 
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + (node.padding ?? 0) / 1.5 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + (nodePadding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   node.calcIntersect = function (bounds: Bounds, point: Point) {

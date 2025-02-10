@@ -1,16 +1,16 @@
-import { addDetector } from './detectType.js';
-import { log as _log, setLogLevel as _setLogLevel } from '../logger.js';
 import {
+  defaultConfig as _defaultConfig,
   getConfig as _getConfig,
   setConfig as _setConfig,
-  defaultConfig as _defaultConfig,
   setSiteConfig as _setSiteConfig,
 } from '../config.js';
 import { sanitizeText as _sanitizeText } from '../diagrams/common/common.js';
+import * as _commonDb from '../diagrams/common/commonDb.js';
+import { log as _log, setLogLevel as _setLogLevel } from '../logger.js';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox.js';
 import { addStylesForDiagram } from '../styles.js';
+import { addDetector } from './detectType.js';
 import type { DiagramDefinition, DiagramDetector } from './types.js';
-import * as _commonDb from '../diagrams/common/commonDb.js';
 
 /*
   Packaging and exposing resources for external diagrams so that they can import

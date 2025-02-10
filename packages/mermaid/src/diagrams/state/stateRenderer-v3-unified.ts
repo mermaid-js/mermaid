@@ -40,9 +40,16 @@ export const getClasses = function (
   return diagramObj.db.getClasses();
 };
 
-export const draw = async function (text: string, id: string, _version: string, diag: any) {
-  log.info('REF0:');
+export const draw = async function (
+  text: string,
+  id: string,
+  _version: string,
+  diag: any,
+  positions: any
+) {
+  log.info('REF0:', positions);
   log.info('Drawing state diagram (v2)', id);
+  log.info('Diagram Configuration:', getConfig());
   const { securityLevel, state: conf, layout } = getConfig();
   // Extracting the data from the parsed structure into a more usable form
   // Not related to the refactoring, but this is the first step in the rendering process
@@ -64,10 +71,14 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
-  data4Layout.markers = ['barb'];
+  const config = getConfig();
+  if (config.look === 'neo') {
+    data4Layout.markers = ['barbNeo'];
+  } else {
+    data4Layout.markers = ['barb'];
+  }
   data4Layout.diagramId = id;
-  // console.log('REF1:', data4Layout);
-  await render(data4Layout, svg);
+  await render(data4Layout, svg, positions);
   const padding = 8;
   utils.insertTitle(
     svg,

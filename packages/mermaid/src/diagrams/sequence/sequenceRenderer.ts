@@ -237,7 +237,7 @@ interface NoteModel {
  * @param elem - The diagram to draw to.
  * @param noteModel - Note model options.
  */
-const drawNote = async function (elem: any, noteModel: NoteModel) {
+const drawNote = async function (elem: any, noteModel: NoteModel, id: string) {
   bounds.bumpVerticalPos(conf.boxMargin);
   noteModel.height = conf.boxMargin;
   noteModel.starty = bounds.getVerticalPos();
@@ -248,6 +248,8 @@ const drawNote = async function (elem: any, noteModel: NoteModel) {
   rect.class = 'note';
 
   const g = elem.append('g');
+  g.attr('data-et', 'note');
+  g.attr('data-id', 'i' + id);
   const rectElem = svgDraw.drawRect(g, rect);
   const textObj = svgDrawCommon.getTextObj();
   textObj.x = noteModel.startx;
@@ -446,6 +448,11 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   } else {
     line.attr('class', 'messageLine0');
   }
+
+  line.attr('data-et', 'message');
+  line.attr('data-id', 'i' + msgModel.id);
+  line.attr('data-from', msgModel.from);
+  line.attr('data-to', msgModel.to);
 
   let url = '';
   if (conf.arrowMarkerAbsolute) {
@@ -865,7 +872,7 @@ export const draw = async function (_text: string, id: string, _version: string,
       case diagObj.db.LINETYPE.NOTE:
         bounds.resetVerticalPos();
         noteModel = msg.noteModel;
-        await drawNote(diagram, noteModel);
+        await drawNote(diagram, noteModel, msg.id);
         break;
       case diagObj.db.LINETYPE.ACTIVE_START:
         bounds.newActivation(msg, diagram, actors);
@@ -884,7 +891,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         break;
       case diagObj.db.LINETYPE.LOOP_END:
         loopModel = bounds.endLoop();
-        await svgDraw.drawLoop(diagram, loopModel, 'loop', conf);
+        await svgDraw.drawLoop(diagram, loopModel, 'loop', conf, msg);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
@@ -910,7 +917,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         break;
       case diagObj.db.LINETYPE.OPT_END:
         loopModel = bounds.endLoop();
-        await svgDraw.drawLoop(diagram, loopModel, 'opt', conf);
+        await svgDraw.drawLoop(diagram, loopModel, 'opt', conf, msg);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
@@ -934,7 +941,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         break;
       case diagObj.db.LINETYPE.ALT_END:
         loopModel = bounds.endLoop();
-        await svgDraw.drawLoop(diagram, loopModel, 'alt', conf);
+        await svgDraw.drawLoop(diagram, loopModel, 'alt', conf, msg);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
@@ -960,7 +967,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         break;
       case diagObj.db.LINETYPE.PAR_END:
         loopModel = bounds.endLoop();
-        await svgDraw.drawLoop(diagram, loopModel, 'par', conf);
+        await svgDraw.drawLoop(diagram, loopModel, 'par', conf, msg);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
@@ -993,7 +1000,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         break;
       case diagObj.db.LINETYPE.CRITICAL_END:
         loopModel = bounds.endLoop();
-        await svgDraw.drawLoop(diagram, loopModel, 'critical', conf);
+        await svgDraw.drawLoop(diagram, loopModel, 'critical', conf, msg);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
@@ -1008,7 +1015,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         break;
       case diagObj.db.LINETYPE.BREAK_END:
         loopModel = bounds.endLoop();
-        await svgDraw.drawLoop(diagram, loopModel, 'break', conf);
+        await svgDraw.drawLoop(diagram, loopModel, 'break', conf, msg);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
@@ -1018,6 +1025,9 @@ export const draw = async function (_text: string, id: string, _version: string,
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
           msgModel.sequenceVisible = diagObj.db.showSequenceNumbers();
+          msgModel.id = msg.id;
+          msgModel.from = msg.from;
+          msgModel.to = msg.to;
           const lineStartY = await boundMessage(diagram, msgModel);
           adjustCreatedDestroyedData(
             msg,
@@ -1087,6 +1097,18 @@ export const draw = async function (_text: string, id: string, _version: string,
   const requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys, doc);
 
   const { bounds: box } = bounds.getBounds();
+  if (box.startx === undefined) {
+    box.startx = 0;
+  }
+  if (box.starty === undefined) {
+    box.starty = 0;
+  }
+  if (box.stopx === undefined) {
+    box.stopx = 0;
+  }
+  if (box.stopy === undefined) {
+    box.stopy = 0;
+  }
 
   if (box.startx === undefined) {
     box.startx = 0;

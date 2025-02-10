@@ -15,16 +15,22 @@ export async function drawRect<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  // console.log('IPI labelStyles:', labelStyles);
+  // If incoming height & width are present, subtract the padding from them
+  // as labelHelper does not take padding into account
+  // also check if the width or height is less than minimum default values (50),
+  // if so set it to min value
+  if (node.width || node.height) {
+    node.width = (node?.width ?? 10) - options.labelPaddingX * 2;
+    node.height = (node?.height ?? 10) - options.labelPaddingY * 2;
+  }
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
-  const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
+  const totalWidth = (node?.width ? node?.width : bbox.width) + options.labelPaddingX * 2;
+  const totalHeight = (node?.height ? node?.height : bbox.height) + options.labelPaddingY * 2;
+
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
-
-  // log.info('IPI node = ', node);
-
   let rect;
   let { rx, ry } = node;
   const { cssStyles } = node;
@@ -50,15 +56,19 @@ export async function drawRect<T extends SVGGraphicsElement>(
   } else {
     rect = shapeSvg.insert('rect', ':first-child');
 
+    const rectClass = 'basic label-container';
+
     rect
-      .attr('class', 'basic label-container')
+      .attr('class', rectClass)
       .attr('style', nodeStyles)
       .attr('rx', handleUndefinedAttr(rx))
+      .attr('data-id', node.id)
       .attr('ry', handleUndefinedAttr(ry))
       .attr('x', x)
       .attr('y', y)
       .attr('width', totalWidth)
-      .attr('height', totalHeight);
+      .attr('height', totalHeight)
+      .attr('stroke', 'url(#gradient)');
   }
 
   updateNodeBounds(node, rect);

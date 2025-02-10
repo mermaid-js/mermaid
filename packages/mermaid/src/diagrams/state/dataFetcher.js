@@ -54,16 +54,46 @@ export function stateDomId(itemId = '', counter = 0, type = '', typeSpacer = DOM
   return `${DOMID_STATE}-${itemId}${typeStr}-${counter}`;
 }
 
-const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, look, classes) => {
+const setupDoc = (
+  parentParsedItem,
+  doc,
+  diagramStates,
+  nodes,
+  edges,
+  altFlag,
+  look,
+  classes,
+  config
+) => {
   // graphItemCount = 0;
   log.trace('items', doc);
   doc.forEach((item) => {
     switch (item.stmt) {
       case STMT_STATE:
-        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look, classes);
+        dataFetcher(
+          parentParsedItem,
+          item,
+          diagramStates,
+          nodes,
+          edges,
+          altFlag,
+          look,
+          classes,
+          config
+        );
         break;
       case DEFAULT_STATE_TYPE:
-        dataFetcher(parentParsedItem, item, diagramStates, nodes, edges, altFlag, look, classes);
+        dataFetcher(
+          parentParsedItem,
+          item,
+          diagramStates,
+          nodes,
+          edges,
+          altFlag,
+          look,
+          classes,
+          config
+        );
         break;
       case STMT_RELATION:
         {
@@ -75,7 +105,8 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
             edges,
             altFlag,
             look,
-            classes
+            classes,
+            config
           );
           dataFetcher(
             parentParsedItem,
@@ -85,7 +116,8 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
             edges,
             altFlag,
             look,
-            classes
+            classes,
+            config
           );
           const edgeData = {
             id: 'edge' + graphItemCount,
@@ -102,6 +134,7 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
             thickness: G_EDGE_THICKNESS,
             classes: CSS_EDGE,
             look,
+            curve: config.state?.curve,
           };
           edges.push(edgeData);
           graphItemCount++;
@@ -181,7 +214,8 @@ export const dataFetcher = (
   edges,
   altFlag,
   look,
-  classes
+  classes,
+  config
 ) => {
   const itemId = parsedItem.id;
   const dbState = diagramStates.get(itemId);
@@ -362,6 +396,7 @@ export const dataFetcher = (
         labelType: G_EDGE_LABELTYPE,
         thickness: G_EDGE_THICKNESS,
         look,
+        curve: config.state?.curve,
       });
     } else {
       insertOrUpdateNode(nodes, nodeData, classes);
@@ -369,7 +404,17 @@ export const dataFetcher = (
   }
   if (parsedItem.doc) {
     log.trace('Adding nodes children ');
-    setupDoc(parsedItem, parsedItem.doc, diagramStates, nodes, edges, !altFlag, look, classes);
+    setupDoc(
+      parsedItem,
+      parsedItem.doc,
+      diagramStates,
+      nodes,
+      edges,
+      !altFlag,
+      look,
+      classes,
+      config
+    );
   }
 };
 

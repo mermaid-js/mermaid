@@ -221,7 +221,7 @@ const extract = (_doc) => {
   const config = getConfig();
   const look = config.look;
   resetDataFetching();
-  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look, classes);
+  dataFetcher(undefined, getRootDocV2(), diagramStates, nodes, edges, true, look, classes, config);
   nodes.forEach((node) => {
     if (Array.isArray(node.label)) {
       // add the rest as description

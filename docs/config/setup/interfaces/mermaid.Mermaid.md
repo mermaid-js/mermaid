@@ -122,7 +122,7 @@ This function should be called before the run function.
 
 ### mermaidAPI
 
-• **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.defaultConfig; `getConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`userOptions`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](mermaid.ParseResult.md) | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<[`ParseResult`](mermaid.ParseResult.md)> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.setConfig; `updateSiteConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.updateSiteConfig }>
+• **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.defaultConfig; `getConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getConfig; `getDiagramFromText`: (`text`: `string`, `metadata`: `Pick`<`DiagramMetadata`, `"title"`>) => `Promise`<`Diagram`> ; `getSiteConfig`: () => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`userOptions`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => `void` ; `parse`: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](mermaid.ParseResult.md) & { `error?`: `unknown` }>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<[`ParseResult`](mermaid.ParseResult.md)> ; `render`: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`, `positions?`: `Positions`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)> ; `reset`: () => `void` ; `setConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.setConfig; `updateSiteConfig`: (`conf`: [`MermaidConfig`](mermaid.MermaidConfig.md)) => [`MermaidConfig`](mermaid.MermaidConfig.md) = configApi.updateSiteConfig }>
 
 **`Deprecated`**
 
@@ -136,11 +136,11 @@ Use [parse](mermaid.Mermaid.md#parse) and [render](mermaid.Mermaid.md#render) in
 
 ### parse
 
-• **parse**: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](mermaid.ParseResult.md) | `false`>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<[`ParseResult`](mermaid.ParseResult.md)>
+• **parse**: (`text`: `string`, `parseOptions`: [`ParseOptions`](mermaid.ParseOptions.md) & { `suppressErrors`: `true` }) => `Promise`<[`ParseResult`](mermaid.ParseResult.md) & { `error?`: `unknown` }>(`text`: `string`, `parseOptions?`: [`ParseOptions`](mermaid.ParseOptions.md)) => `Promise`<[`ParseResult`](mermaid.ParseResult.md)>
 
 #### Type declaration
 
-▸ (`text`, `parseOptions`): `Promise`<[`ParseResult`](mermaid.ParseResult.md) | `false`>
+▸ (`text`, `parseOptions`): `Promise`<[`ParseResult`](mermaid.ParseResult.md) & { `error?`: `unknown` }>
 
 Parse the text and validate the syntax.
 
@@ -153,7 +153,7 @@ Parse the text and validate the syntax.
 
 ##### Returns
 
-`Promise`<[`ParseResult`](mermaid.ParseResult.md) | `false`>
+`Promise`<[`ParseResult`](mermaid.ParseResult.md) & { `error?`: `unknown` }>
 
 An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
 
@@ -272,19 +272,20 @@ Used to register external diagram types.
 
 ### render
 
-• **render**: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)>
+• **render**: (`id`: `string`, `text`: `string`, `svgContainingElement?`: `Element`, `positions?`: `Positions`) => `Promise`<[`RenderResult`](mermaid.RenderResult.md)>
 
 #### Type declaration
 
-▸ (`id`, `text`, `svgContainingElement?`): `Promise`<[`RenderResult`](mermaid.RenderResult.md)>
+▸ (`id`, `text`, `svgContainingElement?`, `positions?`): `Promise`<[`RenderResult`](mermaid.RenderResult.md)>
 
 ##### Parameters
 
-| Name                    | Type      |
-| :---------------------- | :-------- |
-| `id`                    | `string`  |
-| `text`                  | `string`  |
-| `svgContainingElement?` | `Element` |
+| Name                    | Type        |
+| :---------------------- | :---------- |
+| `id`                    | `string`    |
+| `text`                  | `string`    |
+| `svgContainingElement?` | `Element`   |
+| `positions?`            | `Positions` |
 
 ##### Returns
 
