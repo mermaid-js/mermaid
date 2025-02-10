@@ -370,8 +370,8 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     }
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
-
-  if (head.intersect && tail.intersect) {
+  console.log('APA13 edge.trim', edge.trim);
+  if (head.intersect && tail.intersect && edge.trim) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     log.debug(
@@ -460,8 +460,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let svgPath;
   let linePath =
     edge.curve === 'rounded'
-      ? // ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
-        generateRoundedPath(lineData, 5)
+      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let animatedEdge = false;

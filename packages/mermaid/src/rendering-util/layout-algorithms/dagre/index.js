@@ -305,6 +305,7 @@ export const render = async (data4Layout, svg) => {
 
   log.debug('Edges:', data4Layout.edges);
   data4Layout.edges.forEach((edge) => {
+    edge.trim = true;
     // Handle self-loops
     if (edge.start === edge.end) {
       const nodeId = edge.start;

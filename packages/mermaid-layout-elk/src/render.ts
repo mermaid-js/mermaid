@@ -883,7 +883,6 @@ export const render = async (
 
   // Iterate through all nodes and add the top level nodes to the graph
   const nodes = data4Layout.nodes;
-  const count = 3;
 
   nodes.forEach((n: { id: string | number }) => {
     const node = nodeDb[n.id];
@@ -920,29 +919,6 @@ export const render = async (
       delete node.width;
       delete node.height;
     }
-    if (node.id === 'A' || node.id === 'E') {
-      node.layoutOptions = {
-        ...node.layoutOptions,
-        'partitioning.partition': 1,
-      };
-      node.x = 0;
-    }
-    if (node.id === 'B') {
-      node.layoutOptions = {
-        ...node.layoutOptions,
-        'partitioning.partition': 2,
-      };
-      node.x = 300;
-    }
-    if (node.id === 'C' || node.id === 'D' || node.id === 'F') {
-      node.layoutOptions = {
-        ...node.layoutOptions,
-        'partitioning.partition': 3,
-      };
-      node.x = 800;
-    }
-    // count = count - 1;
-    // console.log('APA13 node partition node id=', node.id, 'count = ', count);
   });
   elkGraph.edges.forEach((edge: any) => {
     const source = edge.sources[0];
@@ -955,10 +931,7 @@ export const render = async (
       setIncludeChildrenPolicy(target, ancestorId);
     }
   });
-  const copy = JSON.parse(JSON.stringify({ ...elkGraph }));
-  console.log('APA13 layout before', JSON.stringify({ ...elkGraph }));
   const g = await elk.layout(elkGraph);
-  console.log('APA13 layout', JSON.parse(JSON.stringify(g)));
   // debugger;
   await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
   g.edges?.map(
@@ -1045,7 +1018,10 @@ export const render = async (
             startNode.innerHTML
           );
         }
-        if (startNode.calcIntersect) {
+        if (startNode.intersect) {
+          // Remove the first point of the edge points
+          edge.points.shift();
+
           // console.log(
           //   'APA13 calculating start intersection start node',
           //   startNode.id,
@@ -1058,7 +1034,7 @@ export const render = async (
           //   '\nPos',
           //   edge.points[0]
           // );
-          const intersection = startNode.calcIntersect(
+          const intersection2 = startNode.calcIntersect(
             {
               x: startNode.offset.posX + startNode.width / 2,
               y: startNode.offset.posY + startNode.height / 2,
@@ -1067,14 +1043,16 @@ export const render = async (
             },
             edge.points[0]
           );
-          // const intersection = startNode.intersect(edge.points[0]);
+          const intersection = startNode.intersect(edge.points[0]);
 
-          if (distance(intersection, edge.points[0]) > epsilon) {
-            edge.points.unshift(intersection);
+          if (distance(intersection2, edge.points[0]) > epsilon) {
+            edge.points.unshift(intersection2);
           }
         }
-        if (endNode.calcIntersect) {
-          const intersection = endNode.calcIntersect(
+        if (endNode.intersect) {
+          // Remove the last point of the edge points
+          edge.points.pop();
+          const intersection2 = endNode.calcIntersect(
             {
               x: endNode.offset.posX + endNode.width / 2,
               y: endNode.offset.posY + endNode.height / 2,
@@ -1084,7 +1062,7 @@ export const render = async (
             edge.points[edge.points.length - 1]
           );
           console.log('APA13 intersection2', endNode);
-          const intersection2 = endNode.intersect(edge.points[edge.points.length - 1]);
+          const intersection = endNode.intersect(edge.points[edge.points.length - 1]);
           // if (edge.id === 'L_n4_C_10_0') {
           // console.log('APA14 lineData', edge.points, 'intersection:', intersection);
           // console.log(
@@ -1092,16 +1070,14 @@ export const render = async (
           //   distance(intersection, edge.points[edge.points.length - 1])
           // );
           // }
+          console.log('APA13 intersection2.2', intersection, intersection2);
 
-          if (distance(intersection, edge.points[edge.points.length - 1]) > epsilon) {
+          if (distance(intersection2, edge.points[edge.points.length - 1]) > epsilon) {
             // console.log('APA13! distance ok\nintersection:', intersection);
-            edge.points.push(intersection);
+            edge.points.push(intersection2);
             // console.log('APA13! distance ok\npoints:', edge.points);
           }
         }
-        // Add coordinates of the start node and end node to the edge points as insert edge will remove those
-        edge.points.unshift({ x: endNode.x, y: endNode.y });
-        edge.points.push({ x: endNode.x, y: endNode.y });
 
         const paths = insertEdge(
           edgesEl,

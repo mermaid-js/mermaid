@@ -380,18 +380,20 @@ const doRender = async (_elem, data4Layout, siteConfig, positions) => {
         };
       }
     }
-
+    // ###############################################################
+    // Edge trimming - this could affect Collab!!!
+    // ###############################################################
+    // we can remove the edge trimming if we want
+    // if we don't set trim to true this will not happen and we dont need to add the start and end positions
+    // to the edge
+    edge.trim = true;
     edge.points = positions.edges[edge.id].points;
+
     const paths = insertEdge(edgePaths, edge, {}, data4Layout.type, {}, {}, data4Layout.diagramId);
     paths.updatedPath = paths.originalPath;
     positionEdgeLabel(edge, paths);
   }
-  if (window) {
-    // TODO: Remove this now that we can do:
-    // import { calcIntersections, calcNodeIntersections } from '@mermaid-chart/mermaid';
-    window.calcIntersections = calcIntersections;
-    window.calcNodeIntersections = calcNodeIntersections;
-  }
+
   return { elem, diff: 0 };
 };
 /**
