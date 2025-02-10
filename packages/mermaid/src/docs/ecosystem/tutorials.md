@@ -42,15 +42,7 @@ https://codepen.io/Ryuno-Ki/pen/LNxwgR
 
 ## Mermaid in open source docs
 
-[K8s.io Diagram Guide](https://kubernetes.io/docs/contribute/style/diagram-guide/)import base64
-from IPython.display import Image, display
-import matplotlib.pyplot as plt
-
-def mm(graph):
-    graphbytes = graph.encode("utf8")
-    base64_bytes = base64.urlsafe_b64encode(graphbytes)
-    base64_string = base64_bytes.decode("ascii")
-    display(Image(url="https://mermaid.ink/img/" + base64_string))
+[K8s.io Diagram Guide](https://kubernetes.io/docs/contribute/style/diagram-guide/)
 
 [K8s.dev blog: Improve your documentation with Mermaid.js diagrams](https://www.kubernetes.dev/blog/2021/12/01/improve-your-documentation-with-mermaid.js-diagrams/)
 
@@ -76,16 +68,16 @@ def mm(graph):
 
 mm("""
 graph LR;
-    A--> B & C & D;
-    B--> A & E;
-    C--> A & E;
-    D--> A & E;
-    E--> B & C & D;
+    A--> B & C & D
+    B--> A & E
+    C--> A & E
+    D--> A & E
+    E--> B & C & D
 """)
 ```
 
 **Output**
 
-![Example graph of the Python integration](img/python-mermaid-integration-updated.png)
+![Example graph of the Python integration](img/python-mermaid-integration.png)
 
 <!--- cspell:ignore Elle Jaoude Neurodiverse graphbytes --->
