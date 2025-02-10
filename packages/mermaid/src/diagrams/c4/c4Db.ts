@@ -116,8 +116,7 @@ export class C4DB implements DiagramDB {
     tags: object | string,
     link: object | string
   ) {
-    // Don't allow label nulling
-    if (!type || !from || !to || !label) {
+    if (!from || !to) {
       return;
     }
 
@@ -148,8 +147,7 @@ export class C4DB implements DiagramDB {
     tags: object | string,
     link: object | string
   ) {
-    // Don't allow label nulling
-    if (!alias || !label) {
+    if (!alias) {
       return;
     }
 
@@ -158,9 +156,6 @@ export class C4DB implements DiagramDB {
       isBoundary: false,
       alias,
       label,
-      fontColor: '#FFFFFF',
-      bgColor: typeC4Shape.includes('person') ? '#08427B' : '#1168BD',
-      borderColor: typeC4Shape.includes('person') ? '#073B6F' : '#3C7FC0',
       parent: this.currentBoundaryParse,
       wrap: this.autoWrap(),
       cssStyles: [],
@@ -168,15 +163,6 @@ export class C4DB implements DiagramDB {
       link: '',
       shape: 'rect',
     };
-
-    if (typeC4Shape.includes('external')) {
-      personOrSystem.borderColor = '#8A8A8A';
-      if (typeC4Shape.includes('person')) {
-        personOrSystem.bgColor = '#686868';
-      } else {
-        personOrSystem.bgColor = '#999999';
-      }
-    }
 
     this.applyValueToObject(personOrSystem, descr, 'descr');
     this.applyValueToObject(personOrSystem, sprite, 'sprite');
@@ -197,8 +183,7 @@ export class C4DB implements DiagramDB {
     tags: object | string,
     link: object | string
   ) {
-    // Don't allow label nulling
-    if (!alias || !label) {
+    if (!alias) {
       return;
     }
 
@@ -207,9 +192,6 @@ export class C4DB implements DiagramDB {
       isBoundary: false,
       alias,
       label,
-      fontColor: '#FFFFFF',
-      bgColor: !typeC4Shape.includes('external') ? '#438DD5' : '#B3B3B3',
-      borderColor: !typeC4Shape.includes('external') ? '#3C7FC0' : '#A6A6A6',
       parent: this.currentBoundaryParse,
       wrap: this.autoWrap(),
       cssStyles: [],
@@ -237,8 +219,7 @@ export class C4DB implements DiagramDB {
     tags: object | string,
     link: object | string
   ) {
-    // Don't allow label nulling
-    if (!alias || !label) {
+    if (!alias) {
       return;
     }
 
@@ -247,9 +228,6 @@ export class C4DB implements DiagramDB {
       isBoundary: false,
       alias,
       label,
-      fontColor: '#FFFFFF',
-      bgColor: '#85BBF0',
-      borderColor: '#78A8D8',
       parent: this.currentBoundaryParse,
       wrap: this.autoWrap(),
       cssStyles: [],
@@ -274,8 +252,7 @@ export class C4DB implements DiagramDB {
     tags: object | string,
     link: object | string
   ) {
-    // Don't allow label nulling
-    if (!alias || !label) {
+    if (!alias) {
       return;
     }
 
@@ -309,8 +286,7 @@ export class C4DB implements DiagramDB {
     tags: object | string,
     link: object | string
   ) {
-    // Don't allow label nulling
-    if (!alias || !label) {
+    if (!alias) {
       return;
     }
 
@@ -347,8 +323,7 @@ export class C4DB implements DiagramDB {
     tags: object | string,
     link: object | string
   ) {
-    // Don't allow label nulling
-    if (!alias || !label) {
+    if (!alias) {
       return;
     }
 
@@ -634,10 +609,6 @@ export class C4DB implements DiagramDB {
     }
   }
 
-  public getRels() {
-    return this.rels;
-  }
-
   private setWrap(wrapSetting: boolean) {
     this.wrapEnabled = wrapSetting;
   }
@@ -914,6 +885,22 @@ export class C4DB implements DiagramDB {
     });
 
     return { title, items };
+  }
+
+  public getNodes() {
+    return this.c4Nodes;
+  }
+
+  public getRels() {
+    return this.rels;
+  }
+
+  public getElementTags() {
+    return this.elementTags;
+  }
+
+  public getRelTags() {
+    return this.relTags;
   }
 
   public getData() {
