@@ -52,4 +52,21 @@ Person(default, "default", "default")`);
     expect(node.descr).toBe('default');
     expect(node.label).toBe('default');
   });
+
+  it('should parse the direction statement', function () {
+    c4.parser.parse(`C4Context\ndirection RL\n`);
+
+    expect(c4.parser.yy.getDirection()).toBe('RL');
+  });
+
+  it('should parse legend statements', function () {
+    c4.parser.parse(`C4Context\nSHOW_LEGEND()\nUPDATE_LEGEND_TITLE("My Legend Title")\n`);
+
+    expect(c4.parser.yy.getLegendData()).toMatchObject({
+      title: ['My Legend Title'],
+      items: [],
+    });
+
+    expect(c4.parser.yy.shouldShowLegend()).toBe(true);
+  });
 });
