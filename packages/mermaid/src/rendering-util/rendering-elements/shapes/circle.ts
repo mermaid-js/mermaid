@@ -54,6 +54,12 @@ export async function circle<T extends SVGGraphicsElement>(parent: D3Selection<T
     log.info('Circle intersect', node, radius, point);
     return intersect.circle(node, radius, point);
   };
+  node.updateIntersect = function () {
+    node.intersect = function (point) {
+      log.info('Circle intersect', node, radius, point);
+      return intersect.circle(node, radius, point);
+    };
+  };
 
   return shapeSvg;
 }

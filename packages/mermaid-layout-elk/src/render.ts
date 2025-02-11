@@ -68,19 +68,25 @@ export const render = async (
 
     // Add the element to the DOM
     if (!node.isGroup) {
-      const child: NodeWithVertex = {
-        ...node,
-      };
-      graph.children.push(child);
-      nodeDb[node.id] = child;
+      // const child: NodeWithVertex = {
+      //   ...node,
+      // };
+      graph.children.push(node);
+      nodeDb[node.id] = node;
 
       const childNodeEl = await insertNode(nodeEl, node, { config, dir: node.dir });
       const boundingBox = childNodeEl.node()!.getBBox();
-      child.domId = childNodeEl;
-      child.calcIntersect = node.calcIntersect;
-      child.intersect = node.intersect;
-      child.width = boundingBox.width;
-      child.height = boundingBox.height;
+      node.domId = childNodeEl;
+      node.width = boundingBox.width;
+      node.height = boundingBox.height;
+      // child.calcIntersect = node.calcIntersect;
+      // child.intersect = node.intersect;
+      // child.width = boundingBox.width;
+      // child.height = boundingBox.height;
+      // child.updateIntersect = node.updateIntersect;
+      // if (child.updateIntersect) {
+      //   child.updateIntersect();
+      // }
     } else {
       // A subgraph
       const child: NodeWithVertex & { children: NodeWithVertex[] } = {
@@ -820,7 +826,7 @@ export const render = async (
       'spacing.nodeNode': 20,
       'spacing.nodeNodeBetweenLayers': 25,
       'spacing.edgeNode': 20,
-      'spacing.edgeNodeBetweenLayers': 10,
+      'spacing.edgeNodeBetweenLayers': 20,
       'spacing.edgeEdge': 10,
       'spacing.edgeEdgeBetweenLayers': 20,
       'spacing.nodeSelfLoop': 20,
@@ -845,7 +851,7 @@ export const render = async (
       // 'elk.layered.considerModelOrder.strategy': 'PREFER_NODES',
       // 'elk.layered.wrapping.cutting.strategy': 'ARD', // NODES_AND_EDGES
       // 'elk.layered.wrapping.cutting.strategy': 'NODES_AND_EDGES',
-      'elk.alignment': 'BOTTOM',
+      // 'elk.alignment': 'BOTTOM',
       // 'elk.layered.nodePlacement.bk.fixedAlignment': 'RIGHTDOWN',
       // 'elk.edgeRouting': 'UNDEFINED',
       'elk.layered.crossingMinimization.forceNodeModelOrder': false,
@@ -1046,12 +1052,14 @@ export const render = async (
           const intersection = startNode.intersect(edge.points[0]);
 
           if (distance(intersection2, edge.points[0]) > epsilon) {
+            // intersection.x = -startNode.offset.posX + intersection.x + startNode.width / 2;
+            // intersection.y = intersection.y + startNode.height / 2 + 5;
             edge.points.unshift(intersection2);
           }
         }
         if (endNode.intersect) {
           // Remove the last point of the edge points
-          edge.points.pop();
+          // edge.points.pop();
           const intersection2 = endNode.calcIntersect(
             {
               x: endNode.offset.posX + endNode.width / 2,
@@ -1073,9 +1081,27 @@ export const render = async (
           console.log('APA13 intersection2.2', intersection, intersection2);
 
           if (distance(intersection2, edge.points[edge.points.length - 1]) > epsilon) {
-            // console.log('APA13! distance ok\nintersection:', intersection);
+            console.log(
+              'APA13! distance ok\nintersection:',
+              intersection,
+              '\nstartNode:',
+              startNode.id,
+              '\nendNode:',
+              endNode.id,
+              '\n distance',
+              distance(intersection2, edge.points[edge.points.length - 1])
+            );
             edge.points.push(intersection2);
             // console.log('APA13! distance ok\npoints:', edge.points);
+          } else {
+            console.log(
+              'APA13! distance not ok\nintersection:',
+              intersection,
+              '\nstartNode:',
+              startNode.id,
+              '\nendNode:',
+              endNode.id
+            );
           }
         }
 

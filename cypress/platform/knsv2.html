@@ -91,31 +91,29 @@
     <pre id="diagram4" class="mermaid">
 ---
 config:
-  look: neo
+  look: classic
+  theme: forest
+  layout: elk
+---
+flowchart LR
+    A["A"] --> C
+    B("B B B B B") --> C[/"C C C C C"/]
+    C@{ shape: circle }
+    %%C@{ shape: question }
+    %%C@{ shape: stadium }
+    </pre>
+    <pre id="diagram4" class="mermaid">
+---
+config:
+  look: classic
   layout: elk
 ---
 flowchart LR
     n1["n1"] --- C
-    B("Continue") --> C(("Evaluate"))
+    B("Continue") --> C[/"Evaluate"/]
     C -- One --> D["Option 1"]
     C -- Two --> E["Option 2"]
     C -- Three --> F["fa:fa-car Option 3"]
-
-    </pre>
-    <pre id="diagram4" class="mermaid2">
----
-config:
-  layout: elk
----
-flowchart TB
-  %% swimlane 1 - A E
-  %% swimlane 2 - B
-  %% swimlane 3 - C D
-
- A --> E & B
- B --> C
-
-B@{ shape: cyl, label: 'Cylinder'}
     </pre>
     <pre id="diagram4" class="mermaid2">
 ---

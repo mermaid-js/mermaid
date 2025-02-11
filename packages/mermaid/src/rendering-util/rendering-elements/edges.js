@@ -15,6 +15,13 @@ import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 import { isLabelStyle } from './shapes/handDrawnShapeStyles.js';
 
+function distance(p1, p2) {
+  if (!p1 || !p2) {
+    return 0;
+  }
+  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+}
+
 const edgeLabels = new Map();
 const terminalLabels = new Map();
 
@@ -370,7 +377,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     }
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
-  console.log('APA13 edge.trim', edge.trim);
   if (head.intersect && tail.intersect && edge.trim) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
@@ -405,6 +411,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
+  console.log('APA13 lineData ', lineData);
   //lineData = fixCorners(lineData);
   let curve = curveBasis;
   curve = curveLinear;
@@ -460,7 +467,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let svgPath;
   let linePath =
     edge.curve === 'rounded'
-      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 3)
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let animatedEdge = false;
@@ -590,6 +597,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
  * @returns {String} - SVG path data string
  */
 function generateRoundedPath(points, radius) {
+  console.log('APA13 points', points);
   if (points.length < 2) {
     return '';
   }
@@ -597,7 +605,7 @@ function generateRoundedPath(points, radius) {
   let path = '';
   const size = points.length;
   const epsilon = 1e-5;
-
+  const lastPoint = points[size - 1];
   for (let i = 0; i < size; i++) {
     const currPoint = points[i];
     const prevPoint = points[i - 1];
@@ -639,6 +647,10 @@ function generateRoundedPath(points, radius) {
 
       // Skip rounding if the angle is too small or too close to 180 degrees
       if (angle < epsilon || Math.abs(Math.PI - angle) < epsilon) {
+        console.log(
+          'APA13 Skip rounding if the angle is too small',
+          `L${currPoint.x},${currPoint.y}`
+        );
         path += `L${currPoint.x},${currPoint.y}`;
         continue;
       }
@@ -652,11 +664,21 @@ function generateRoundedPath(points, radius) {
       const endX = currPoint.x + nx2 * cutLen;
       const endY = currPoint.y + ny2 * cutLen;
 
-      // Draw the line to the start of the curve
-      path += `L${startX},${startY}`;
+      const d = distance(currPoint, lastPoint);
+      if (d > 3) {
+        // Draw the line to the start of the curve
+        path += `L${startX},${startY}`;
 
-      // Draw the quadratic Bezier curve
-      path += `Q${currPoint.x},${currPoint.y} ${endX},${endY}`;
+        // Draw the quadratic Bezier curve
+        path += `Q${currPoint.x},${currPoint.y} ${endX},${endY}`;
+      } else {
+        // // Draw the line to the start of the curve
+        // path += `L${startX},${startY}`;
+        // path += `Q${currPoint.x},${currPoint.y} ${currPoint.x},${currPoint.y}`;
+        // Draw the line to the start of the curve
+        // path += `L${startX},${startY}`;
+        path += `L${lastPoint.x},${lastPoint.y}`;
+      }
     }
   }
 

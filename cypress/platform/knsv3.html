@@ -1,103 +1,173 @@
-<!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Mindmap Mermaid Quick Test Page</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      div.mermaid {
-        /* font-family: 'trebuchet ms', verdana, arial; */
-        font-family: 'Courier New', Courier, monospace !important;
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background: #333; */
+        font-family: 'Arial';
+        /* color: white; */
+        /* font-size: 18px !important; */
       }
+
+      h1 {
+        color: grey;
+      }
+
+      .mermaid2 {
+        display: none;
+      }
+
+      .mermaid svg {
+        /* font-size: 18px !important; */
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
+        background-size: 20px 20px;
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
+      }
+
+      .malware {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+      pre {
+        width: 100%;
+      }
+      /* tspan {
+              font-size: 6px !important;
+            } */
     </style>
   </head>
 
   <body>
-    <h1>Mindmap diagram demo</h1>
-    <pre class="mermaid">
-        mindmap
-        root
-            child1((Circle))
-                grandchild 1
-                grandchild 2
-            child2(Round rectangle)
-                grandchild 3
-                grandchild 4
-            child3[Square]
-                grandchild 5
-                ::icon(mdi mdi-fire)
-                gc6((grand<br/>child 6))
-                ::icon(mdi mdi-fire)
-                gc7((grand<br/>grand<br/>child 8))
-    </pre>
-
-    <h2>Mindmap with root wrapping text and a shape</h2>
-    <pre class="mermaid">
-        mindmap
-            root[A root with a long text that wraps to keep the node size in check]
-    </pre>
-
+    <div class="flex gap-4">
+      <pre id="diagram4" class="mermaid">
+---
+config:
+  look: classic
+  theme: forest
+  layout: elk
+---
+flowchart LR
+    n1["n1"] --> C
+    n2("n2") --> C
+    C@{ shape: circle }
+    </pre
+      >
+      <pre id="diagram4" class="mermaid">
+---
+config:
+  look: neo
+  theme: redux
+  layout: elk
+---
+flowchart LR
+    n1["n1"] --> C
+    n2("n2") --> C
+    C@{ shape: circle }
+    </pre
+      >
+      <pre id="diagram4" class="mermaid">
+---
+config:
+  look: handDrawn
+  theme: forest
+  layout: elk
+---
+flowchart LR
+    n1["n1"] --> C
+    n2("n2") --> C
+    C@{ shape: circle }
+    </pre
+      >
+    </div>
     <script type="module">
-      // import mermaid from './mermaid.esm.mjs';
-      import mermaid from '../../packages/mermaid/dist/mermaid.esm.mjs';
-      // import mermaidMindmap from './mermaid-mindmap.esm.mjs';
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
 
-      // import mermaidMindmap from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9.3.0/+esm';
-      // await mermaid.registerExternalDiagrams([mermaidMindmap]);
+      const staticBellIconPack = {
+        prefix: 'fa6-regular',
+        icons: {
+          bell: {
+            body: '<path fill="currentColor" d="M224 0c-17.7 0-32 14.3-32 32v19.2C119 66 64 130.6 64 208v25.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416h400c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6c-28.3-35.5-43.8-79.6-43.8-125V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32m0 96c61.9 0 112 50.1 112 112v25.4c0 47.9 13.9 94.6 39.7 134.6H72.3c25.8-40 39.7-86.7 39.7-134.6V208c0-61.9 50.1-112 112-112m64 352H160c0 17 6.7 33.3 18.7 45.3S207 512 224 512s33.3-6.7 45.3-18.7S288 465 288 448"/>',
+            width: 448,
+          },
+        },
+        width: 512,
+        height: 512,
+      };
 
-      const ALLOWED_TAGS = [
-        'a',
-        'b',
-        'blockquote',
-        'br',
-        'dd',
-        'div',
-        'dl',
-        'dt',
-        'em',
-        'foreignObject',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'h7',
-        'h8',
-        'hr',
-        'i',
-        'li',
-        'ul',
-        'ol',
-        'p',
-        'pre',
-        'span',
-        'strike',
-        'strong',
-        'table',
-        'tbody',
-        'td',
-        'tfoot',
-        'th',
-        'thead',
-        'tr',
-      ];
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos@1/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () => staticBellIconPack,
+        },
+      ]);
+      mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
-        // console.error('Mermaid error: ', err);
+        console.error('Mermaid error: ', err);
+      };
+      window.callback = function () {
+        alert('A callback was triggered');
       };
       mermaid.initialize({
-        theme: 'base',
-        startOnLoad: true,
+        flowchart: { titleTopMargin: 10, useMaxWidth: false },
+        fontSize: 12,
         logLevel: 0,
-        flowchart: {
-          useMaxWidth: false,
-          htmlLabels: true,
-        },
-        gantt: {
-          useMaxWidth: false,
-        },
-        useMaxWidth: false,
+        securityLevel: 'loose',
       });
       function callback() {
         alert('It worked');
