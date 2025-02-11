@@ -5,7 +5,21 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
+
+// export const createTrapezoidPathD = (
+//   x: number,
+//   y: number,
+//   width: number,
+//   height: number
+// ): string => {
+//   return [
+//     `M${x - (2 * height) / 6},${y}`,
+//     `L${x + width + (2 * height) / 6},${y}`,
+//     `L${x + width - height / 6},${y - height}`,
+//     `L${x + height / 6},${y - height}`,
+//     'Z',
+//   ].join(' ');
+// };
 
 export async function trapezoid<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -68,12 +82,6 @@ export async function trapezoid<T extends SVGGraphicsElement>(parent: D3Selectio
   node.height = h;
 
   updateNodeBounds(node, polygon);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
-  };
 
   node.intersect = function (point) {
     return intersect.polygon(node, points, point);

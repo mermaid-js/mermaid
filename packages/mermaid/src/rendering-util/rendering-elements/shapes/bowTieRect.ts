@@ -4,7 +4,6 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 function generateArcPoints(
   x1: number,
@@ -73,15 +72,6 @@ function generateArcPoints(
 
   return points;
 }
-function getPoints(w: number, h: number, rx: number, ry: number) {
-  return [
-    { x: w / 2, y: -h / 2 },
-    { x: -w / 2, y: -h / 2 },
-    ...generateArcPoints(-w / 2, -h / 2, -w / 2, h / 2, rx, ry, false),
-    { x: w / 2, y: h / 2 },
-    ...generateArcPoints(w / 2, h / 2, w / 2, -h / 2, rx, ry, true),
-  ];
-}
 
 /**
  * Calculates the sagitta of an arc of an ellipse given its chord and radii.
@@ -135,7 +125,13 @@ export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selecti
   // let shape: d3.Selection<SVGPathElement | SVGGElement, unknown, null, undefined>;
   const { cssStyles } = node;
 
-  const points = getPoints(w, h, rx, ry);
+  const points = [
+    { x: w / 2, y: -h / 2 },
+    { x: -w / 2, y: -h / 2 },
+    ...generateArcPoints(-w / 2, -h / 2, -w / 2, h / 2, rx, ry, false),
+    { x: w / 2, y: h / 2 },
+    ...generateArcPoints(w / 2, h / 2, w / 2, -h / 2, rx, ry, true),
+  ];
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
@@ -163,16 +159,6 @@ export async function bowTieRect<T extends SVGGraphicsElement>(parent: D3Selecti
 
   updateNodeBounds(node, bowTieRectShape);
 
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    const w = bounds.width;
-    const h = bounds.height;
-
-    const ry = h / 2;
-    const rx = ry / (2.5 + h / 50);
-
-    const points = getPoints(w, h, rx, ry);
-    return intersect.polygon(bounds, points, point);
-  };
   node.intersect = function (point) {
     const pos = intersect.polygon(node, points, point);
     return pos;

@@ -6,7 +6,6 @@ import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export async function drawRect<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -72,10 +71,6 @@ export async function drawRect<T extends SVGGraphicsElement>(
   }
 
   updateNodeBounds(node, rect);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    return intersect.rect(bounds, point);
-  };
 
   node.intersect = function (point) {
     return intersect.rect(node, point);

@@ -5,7 +5,6 @@ import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import { userNodeOverrides } from './handDrawnShapeStyles.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 function createLine(r: number) {
   const axis45 = Math.SQRT1_2; // cosine of 45 degrees = 1/sqrt(2)
@@ -52,11 +51,6 @@ export function crossedCircle<T extends SVGGraphicsElement>(parent: D3Selection<
   }
 
   updateNodeBounds(node, crossedCircle);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    const radius = Math.max(30, bounds?.width ?? 0);
-    return intersect.circle(bounds, radius, point);
-  };
 
   node.intersect = function (point) {
     log.info('crossedCircle intersect', node, { radius, point });

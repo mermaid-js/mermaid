@@ -5,7 +5,6 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export const createHexagonPathD = (
   x: number,
@@ -90,12 +89,6 @@ export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<
   node.height = h;
 
   updateNodeBounds(node, polygon);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
-  };
 
   node.intersect = function (point) {
     return intersect.polygon(node, points, point);

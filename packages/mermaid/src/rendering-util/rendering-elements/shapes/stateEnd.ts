@@ -4,7 +4,6 @@ import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export function stateEnd<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -86,12 +85,6 @@ export function stateEnd<T extends SVGGraphicsElement>(
   }
 
   updateNodeBounds(node, circle);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
-  };
 
   node.intersect = function (point) {
     return intersect.circle(node, (node.width ?? 0) / 2, point);

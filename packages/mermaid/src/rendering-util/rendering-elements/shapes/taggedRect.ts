@@ -4,7 +4,6 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 /// The width/height of the tag in comparison to the height of the node
 const TAG_RATIO = 0.2;
@@ -85,12 +84,6 @@ export async function taggedRect<T extends SVGGraphicsElement>(parent: D3Selecti
   }
 
   updateNodeBounds(node, taggedRect);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
-  };
 
   node.intersect = function (point) {
     const pos = intersect.polygon(node, rectPoints, point);

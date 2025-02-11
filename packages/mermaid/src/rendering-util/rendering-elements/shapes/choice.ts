@@ -4,15 +4,7 @@ import rough from 'roughjs';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { createPathFromPoints, getNodeClasses } from './util.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
-function getPoints(s: number) {
-  return [
-    { x: 0, y: s / 2 },
-    { x: s / 2, y: 0 },
-    { x: 0, y: -s / 2 },
-    { x: -s / 2, y: 0 },
-  ];
-}
+
 export function choice<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { nodeStyles } = styles2String(node);
   node.label = '';
@@ -24,7 +16,12 @@ export function choice<T extends SVGGraphicsElement>(parent: D3Selection<T>, nod
 
   const s = Math.max(28, node.width ?? 0);
 
-  const points = getPoints(s);
+  const points = [
+    { x: 0, y: s / 2 },
+    { x: s / 2, y: 0 },
+    { x: 0, y: -s / 2 },
+    { x: -s / 2, y: 0 },
+  ];
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
@@ -49,13 +46,6 @@ export function choice<T extends SVGGraphicsElement>(parent: D3Selection<T>, nod
 
   node.width = 28;
   node.height = 28;
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    const s = Math.max(28, bounds.width ?? 0);
-
-    const points = getPoints(s);
-    return intersect.circle(bounds, points, point);
-  };
 
   node.intersect = function (point) {
     return intersect.polygon(node, points, point);

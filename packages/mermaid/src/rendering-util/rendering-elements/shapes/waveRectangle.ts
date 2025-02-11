@@ -10,16 +10,7 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
-function getPoints(w: number, finalH: number, waveAmplitude: number) {
-  return [
-    { x: -w / 2, y: finalH / 2 },
-    ...generateFullSineWavePoints(-w / 2, finalH / 2, w / 2, finalH / 2, waveAmplitude, 1),
-    { x: w / 2, y: -finalH / 2 },
-    ...generateFullSineWavePoints(w / 2, -finalH / 2, -w / 2, -finalH / 2, waveAmplitude, -1),
-  ];
-}
 export async function waveRectangle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
@@ -65,7 +56,12 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
     options.fillStyle = 'solid';
   }
 
-  const points = getPoints(w, finalH, waveAmplitude);
+  const points = [
+    { x: -w / 2, y: finalH / 2 },
+    ...generateFullSineWavePoints(-w / 2, finalH / 2, w / 2, finalH / 2, waveAmplitude, 1),
+    { x: w / 2, y: -finalH / 2 },
+    ...generateFullSineWavePoints(w / 2, -finalH / 2, -w / 2, -finalH / 2, waveAmplitude, -1),
+  ];
 
   const waveRectPath = createPathFromPoints(points);
   const waveRectNode = rc.path(waveRectPath, options);
@@ -86,18 +82,6 @@ export async function waveRectangle<T extends SVGGraphicsElement>(
   node.height = finalH;
 
   updateNodeBounds(node, waveRect);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    const w = bounds.width;
-    const h = bounds.height;
-
-    const waveAmplitude = Math.min(h * 0.2, h / 4);
-    const finalH = h + waveAmplitude * 2;
-
-    const points = getPoints(w, finalH, waveAmplitude);
-    return intersect.polygon(node, points, point);
-  };
-
   node.intersect = function (point) {
     const pos = intersect.polygon(node, points, point);
     return pos;

@@ -10,16 +10,6 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
-
-const getTrapezoidPoints = (rw: number, tw: number, totalHeight: number, radius: number) => [
-  { x: rw, y: 0 },
-  { x: tw, y: 0 },
-  { x: 0, y: totalHeight / 2 },
-  { x: tw, y: totalHeight },
-  { x: rw, y: totalHeight },
-  ...generateCirclePoints(-rw, -totalHeight / 2, radius, 50, 270, 90),
-];
 
 export async function curvedTrapezoid<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -67,7 +57,14 @@ export async function curvedTrapezoid<T extends SVGGraphicsElement>(
   const rw = totalWidth - radius;
   const tw = totalHeight / 4;
 
-  const points = getTrapezoidPoints(rw, tw, totalHeight, radius);
+  const points = [
+    { x: rw, y: 0 },
+    { x: tw, y: 0 },
+    { x: 0, y: totalHeight / 2 },
+    { x: tw, y: totalHeight },
+    { x: rw, y: totalHeight },
+    ...generateCirclePoints(-rw, -totalHeight / 2, radius, 50, 270, 90),
+  ];
 
   const pathData = createPathFromPoints(points);
   const shapeNode = rc.path(pathData, options);
@@ -86,20 +83,6 @@ export async function curvedTrapezoid<T extends SVGGraphicsElement>(
   polygon.attr('transform', `translate(${-w / 2}, ${-h / 2})`);
 
   updateNodeBounds(node, polygon);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    const w = bounds.width;
-    const h = bounds.height;
-    const radius = h / 2;
-
-    const totalWidth = w,
-      totalHeight = h;
-    const rw = totalWidth - radius;
-    const tw = totalHeight / 4;
-    const points = getTrapezoidPoints(rw, tw, totalHeight, radius);
-
-    return intersect.polygon(bounds, points, point);
-  };
 
   node.intersect = function (point) {
     const pos = intersect.polygon(node, points, point);

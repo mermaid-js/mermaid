@@ -4,16 +4,6 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import intersect from '../intersect/index.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
-
-function getOutPathPoints(x: number, y: number, w: number, h: number, rectOffset: number) {
-  return [
-    { x: x - rectOffset, y: y - rectOffset },
-    { x: x - rectOffset, y: y + h },
-    { x: x + w, y: y + h },
-    { x: x + w, y: y - rectOffset },
-  ];
-}
 
 /// Width of the frame on the top and left of the shape
 const rectOffset = 10;
@@ -49,7 +39,12 @@ export async function windowPane<T extends SVGGraphicsElement>(parent: D3Selecti
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 
-  const outerPathPoints = getOutPathPoints(x, y, w, h, rectOffset);
+  const outerPathPoints = [
+    { x: x - rectOffset, y: y - rectOffset },
+    { x: x - rectOffset, y: y + h },
+    { x: x + w, y: y + h },
+    { x: x + w, y: y - rectOffset },
+  ];
 
   const path = `M${x - rectOffset},${y - rectOffset} L${x + w},${y - rectOffset} L${x + w},${y + h} L${x - rectOffset},${y + h} L${x - rectOffset},${y - rectOffset}
                 M${x - rectOffset},${y} L${x + w},${y} L${x + w},${y + h} L${x - rectOffset},${y + h} L${x - rectOffset},${y}
@@ -81,17 +76,6 @@ export async function windowPane<T extends SVGGraphicsElement>(parent: D3Selecti
   );
 
   updateNodeBounds(node, windowPane);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    const w = bounds.width;
-    const h = bounds.height;
-    const rectOffset = 5;
-    const x = -w / 2;
-    const y = -h / 2;
-
-    const outerPathPoints = getOutPathPoints(x, y, w, h, rectOffset);
-    return intersect.polygon(node, outerPathPoints, point);
-  };
 
   node.intersect = function (point) {
     const pos = intersect.polygon(node, outerPathPoints, point);

@@ -9,7 +9,6 @@ import intersect from '../intersect/index.js';
 import { textHelper } from '../../../diagrams/class/shapeUtil.js';
 import { evaluate } from '../../../diagrams/common/common.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const config = getConfig();
@@ -257,9 +256,6 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   }
 
   updateNodeBounds(node, rect);
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    return intersect.rect(bounds, point);
-  };
   node.intersect = function (point) {
     return intersect.rect(node, point);
   };

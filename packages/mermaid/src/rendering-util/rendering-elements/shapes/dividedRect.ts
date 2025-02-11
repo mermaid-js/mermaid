@@ -4,7 +4,6 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export async function dividedRectangle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -80,10 +79,6 @@ export async function dividedRectangle<T extends SVGGraphicsElement>(
   );
 
   updateNodeBounds(node, polygon);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    return intersect.rect(bounds, point);
-  };
 
   node.intersect = function (point) {
     const pos = intersect.rect(node, point);

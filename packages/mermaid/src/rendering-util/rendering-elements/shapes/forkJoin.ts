@@ -4,7 +4,6 @@ import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export function forkJoin<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -62,10 +61,6 @@ export function forkJoin<T extends SVGGraphicsElement>(
     node.width += padding / 2 || 0;
     node.height += padding / 2 || 0;
   }
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    return intersect.rect(bounds, point);
-  };
-
   node.intersect = function (point) {
     return intersect.rect(node, point);
   };

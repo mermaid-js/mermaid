@@ -5,7 +5,6 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { insertPolygonShape } from './insertPolygonShape.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export async function lean_right<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -71,59 +70,8 @@ export async function lean_right<T extends SVGGraphicsElement>(parent: D3Selecti
 
   updateNodeBounds(node, polygon);
 
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    const w = bounds.width;
-    const h = bounds.height;
-    const dx = h / 2;
-    const z = w - h;
-    // (w = dx+z+dx)
-    const points = [
-      { x: -dx, y: 0 },
-      { x: z, y: 0 },
-      { x: z + dx, y: -h },
-      { x: 0, y: -h },
-    ];
-
-    const res = intersect.polygon(bounds, points, point);
-    // if (node.id === 'C') {
-    //   console.log(
-    //     'APA14!',
-    //     bounds.x,
-    //     bounds.x,
-    //     bounds.width,
-    //     '\nw:',
-    //     w,
-    //     points,
-    //     '\nExternal point: ',
-    //     '(',
-    //     point.x,
-    //     point.y,
-    //     ')\nIntersection:',
-    //     res
-    //   );
-    // }
-    return { x: res.x - 0.5, y: res.y - 0.5 };
-  };
-
-  node.intersect = function (point: Point) {
-    const res = intersect.polygon(node, points, point);
-    // if (node.id === 'C') {
-    //   console.log(
-    //     'APA14!!',
-    //     node.x,
-    //     node.y,
-    //     '\nw:',
-    //     node.width,
-    //     points,
-    //     '\nExternal point: ',
-    //     '(',
-    //     point.x,
-    //     point.y,
-    //     ')\nIntersection:',
-    //     res
-    //   );
-    // }
-    return res;
+  node.intersect = function (point) {
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;

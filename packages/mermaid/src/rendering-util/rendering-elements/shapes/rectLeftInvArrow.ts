@@ -4,7 +4,6 @@ import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export async function rect_left_inv_arrow<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -67,12 +66,6 @@ export async function rect_left_inv_arrow<T extends SVGGraphicsElement>(
     `translate(${bbox.x - bbox.width / 2 + notch / 2}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
   );
   updateNodeBounds(node, polygon);
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
-  };
 
   node.intersect = function (point) {
     return intersect.polygon(node, points, point);

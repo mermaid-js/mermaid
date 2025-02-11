@@ -4,7 +4,6 @@ import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export async function imageSquare<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -117,12 +116,6 @@ export async function imageSquare<T extends SVGGraphicsElement>(
   //   'transform',
   //   `translate(${0},${topLabel ? bbox.height / 2 + labelPadding / 2 : -bbox.height / 2 - labelPadding / 2})`
   // );
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
-  };
 
   node.intersect = function (point) {
     log.info('iconSquare intersect', node, point);

@@ -8,7 +8,6 @@ import { createPathFromPoints } from './util.js';
 import { evaluate } from '../../../diagrams/common/common.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 const MIN_HEIGHT = 10;
 const MIN_WIDTH = 10;
@@ -74,12 +73,6 @@ export async function triangle<T extends SVGGraphicsElement>(parent: D3Selection
     'transform',
     `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${h / 2 - (bbox.height + (node.padding ?? 0) / (useHtmlLabels ? 2 : 1) - (bbox.y - (bbox.top ?? 0)))})`
   );
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const radius = bounds.width / 2;
-    return intersect.circle(bounds, radius, point);
-  };
 
   node.intersect = function (point) {
     log.info('Triangle intersect', node, points, point);

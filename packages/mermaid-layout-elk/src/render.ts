@@ -79,14 +79,6 @@ export const render = async (
       node.domId = childNodeEl;
       node.width = boundingBox.width;
       node.height = boundingBox.height;
-      // child.calcIntersect = node.calcIntersect;
-      // child.intersect = node.intersect;
-      // child.width = boundingBox.width;
-      // child.height = boundingBox.height;
-      // child.updateIntersect = node.updateIntersect;
-      // if (child.updateIntersect) {
-      //   child.updateIntersect();
-      // }
     } else {
       // A subgraph
       const child: NodeWithVertex & { children: NodeWithVertex[] } = {

@@ -5,7 +5,6 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
-import type { Bounds, Point } from '../../../types.js';
 
 export const createCylinderPathD = (
   x: number,
@@ -134,24 +133,22 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
     `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) + (nodePadding ?? 0) / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    const w = bounds.width;
-    const rx = w / 2;
-    const ry = rx / (2.5 + w / 50);
-    const h = bounds.height;
-    const pos = intersect.rect(bounds, point);
-    const x = pos.x - (bounds.x ?? 0);
+  node.intersect = function (point) {
+    const pos = intersect.rect(node, point);
+    const x = pos.x - (node.x ?? 0);
+
     if (
       rx != 0 &&
-      (Math.abs(x) < (w ?? 0) / 2 ||
-        (Math.abs(x) == (w ?? 0) / 2 && Math.abs(pos.y - (bounds.y ?? 0)) > (h ?? 0) / 2 - ry))
+      (Math.abs(x) < (node.width ?? 0) / 2 ||
+        (Math.abs(x) == (node.width ?? 0) / 2 &&
+          Math.abs(pos.y - (node.y ?? 0)) > (node.height ?? 0) / 2 - ry))
     ) {
       let y = ry * ry * (1 - (x * x) / (rx * rx));
       if (y > 0) {
         y = Math.sqrt(y);
       }
       y = ry - y;
-      if (point.y - (bounds.y ?? 0) > 0) {
+      if (point.y - (node.y ?? 0) > 0) {
         y = -y;
       }
 
@@ -159,15 +156,6 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
     }
 
     return pos;
-  };
-
-  node.intersect = function (point: Point) {
-    return this.calcIntersect
-      ? this.calcIntersect(
-          { x: node.x ?? 0, y: node.y ?? 0, width: node.width ?? 0, height: node.height ?? 0 },
-          point
-        )
-      : { x: 0, y: 0 };
   };
 
   return shapeSvg;

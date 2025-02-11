@@ -6,18 +6,9 @@ import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { createPathFromPoints } from './util.js';
 import type { D3Selection } from '../../../types.js';
-import type { Bounds, Point } from '../../../types.js';
 
 const MIN_HEIGHT = 10;
 const MIN_WIDTH = 10;
-function getPoints(tw: number, h: number) {
-  return [
-    { x: 0, y: -h },
-    { x: tw, y: -h },
-    { x: tw / 2, y: 0 },
-  ];
-}
-
 export async function flippedTriangle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
@@ -45,8 +36,12 @@ export async function flippedTriangle<T extends SVGGraphicsElement>(
   const h = node?.height ? node?.height : w + bbox.height;
 
   const tw = h;
-  // const tw = w + bbox.height;
-  const points = getPoints(tw, h);
+
+  const points = [
+    { x: 0, y: -h },
+    { x: tw, y: -h },
+    { x: tw / 2, y: 0 },
+  ];
 
   const { cssStyles } = node;
 
@@ -82,16 +77,6 @@ export async function flippedTriangle<T extends SVGGraphicsElement>(
     'transform',
     `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))}, ${-h / 2 + (labelPaddingY ?? 0) / 2 + (bbox.y - (bbox.top ?? 0))})`
   );
-
-  node.calcIntersect = function (bounds: Bounds, point: Point) {
-    // TODO: Implement intersect for this shape
-    const w = bounds.width;
-    const h = bounds.height;
-
-    const tw = w + bounds.height;
-    const points = getPoints(tw, h);
-    return intersect.polygon(node, points, point);
-  };
 
   node.intersect = function (point) {
     log.info('Triangle intersect', node, points, point);
