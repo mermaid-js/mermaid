@@ -3,7 +3,7 @@
  */
 
 // default diagram direction
-export const DEFAULT_DIAGRAM_DIRECTION = 'LR';
+export const DEFAULT_DIAGRAM_DIRECTION = 'TB';
 
 // default direction for any nested documents (composites)
 export const DEFAULT_NESTED_DOC_DIR = 'TB';
