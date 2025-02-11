@@ -767,6 +767,38 @@ export class C4DB implements DiagramDB {
     return accumulatedTag;
   }
 
+  private getCssStylesForNode(node: C4Node) {
+    const styles: string[] = [];
+
+    if (node.bgColor) {
+      styles.push(`background-color: ${node.bgColor}`);
+    }
+    if (node.fontColor) {
+      styles.push(`color: ${node.fontColor}`);
+    }
+    if (node.borderColor) {
+      styles.push(`border-color: ${node.borderColor}`);
+    }
+    if (node.shadowing) {
+      styles.push(`box-shadow: ${node.shadowing}`);
+    }
+
+    return styles;
+  }
+
+  private getCssStylesForRel(rel: C4Relation): string[] {
+    const styles: string[] = [];
+
+    if (rel.lineColor) {
+      styles.push(`stroke: ${rel.lineColor}`);
+    }
+    if (rel.textColor) {
+      styles.push(`color: ${rel.textColor}`);
+    }
+
+    return styles;
+  }
+
   private getCssStylesFromNodeTags(node: C4Node) {
     const styles = [];
 
@@ -969,7 +1001,11 @@ export class C4DB implements DiagramDB {
         shape: shape,
         rx: tagData?.shape === 'rounded_rect' ? 5 : 0,
         ry: tagData?.shape === 'rounded_rect' ? 5 : 0,
-        cssStyles: [...(this.getCssStylesFromNodeTags(c4Node) ?? []), ...c4Node.cssStyles],
+        cssStyles: [
+          ...(this.getCssStylesFromNodeTags(c4Node) ?? []),
+          ...this.getCssStylesForNode(c4Node),
+          ...c4Node.cssStyles,
+        ],
         cssClasses: c4Node.classes.join(' '),
         look: config.look,
         link: c4Node.link,
@@ -989,7 +1025,6 @@ export class C4DB implements DiagramDB {
         id: `${rel.from}-${rel.to}-${count}`,
         start: rel.from,
         end: rel.to,
-        //label: '<br><br>' + rel.label + (rel.techn ? `\n<em>[${techn}]</em>` : ''),
         label: (sprite ? '<br><br>' : '') + rel.label + (rel.techn ? `\n<em>[${techn}]</em>` : ''),
         labelpos: 'c',
         type: 'normal',
@@ -1004,8 +1039,8 @@ export class C4DB implements DiagramDB {
         ],
         style: [
           'fill: none',
-          `${rel.lineColor ? `stroke: ${rel.lineColor}` : ''}`,
           ...(this.getCssStylesFromRelTags(rel) ?? []),
+          ...(this.getCssStylesForRel(rel) ?? []),
         ],
         classes: 'edge',
         pattern: 'solid',
