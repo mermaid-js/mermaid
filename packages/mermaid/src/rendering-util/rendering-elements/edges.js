@@ -672,11 +672,6 @@ function generateRoundedPath(points, radius) {
         // Draw the quadratic Bezier curve
         path += `Q${currPoint.x},${currPoint.y} ${endX},${endY}`;
       } else {
-        // // Draw the line to the start of the curve
-        // path += `L${startX},${startY}`;
-        // path += `Q${currPoint.x},${currPoint.y} ${currPoint.x},${currPoint.y}`;
-        // Draw the line to the start of the curve
-        // path += `L${startX},${startY}`;
         path += `L${lastPoint.x},${lastPoint.y}`;
       }
     }

@@ -93,14 +93,14 @@
 config:
   look: classic
   theme: forest
-  layout: elk
+  layout: dagre
 ---
 flowchart LR
     A["A"] --> C
     B("B B B B B") --> C[/"C C C C C"/]
     C@{ shape: circle }
     %%C@{ shape: question }
-    %%C@{ shape: stadium }
+    C@{ shape: stadium }
     </pre>
     <pre id="diagram4" class="mermaid">
 ---
@@ -114,6 +114,7 @@ flowchart LR
     C -- One --> D["Option 1"]
     C -- Two --> E["Option 2"]
     C -- Three --> F["fa:fa-car Option 3"]
+    C@{ shape: db }
     </pre>
     <pre id="diagram4" class="mermaid2">
 ---

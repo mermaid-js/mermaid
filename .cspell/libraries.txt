@@ -47,6 +47,7 @@ mdbook
 Mermerd
 mkdocs
 Nextra
+NODECOUNT
 nodenext
 npmjs
 pageview
@@ -58,6 +59,7 @@ presetAttributify
 pyplot
 redmine
 rehype
+RIGHTDOWN
 roughjs
 rscratch
 shiki
@@ -67,6 +69,7 @@ sphinxcontrib
 ssim
 stylis
 Swimm
+topdown
 tsbuildinfo
 tseslint
 Tuleap
