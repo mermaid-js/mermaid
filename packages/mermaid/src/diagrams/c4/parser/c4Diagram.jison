@@ -206,8 +206,9 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 <style>"%" return 'PCT';
 <style>"-" return 'MINUS';
 <style>"#" return 'BRKT';
-<style>" "                             /* skip spaces */
-<style>\n { this.popState(); }
+<style>"." return 'DOT';
+<style>" "+ return 'SPACE';                            /* skip spaces */
+<style>[\t ]*\n[\t \n]* { this.popState(); return 'NEWLINE'; }
 
 [\s]+                                     return 'SPACE';
 [\n\r]+                                   return 'EOL';
@@ -357,16 +358,16 @@ attribute
     ;
 
 classDefStatement
-  : CLASSDEF idList stylesOpt {$$ = $CLASSDEF;yy.defineClass($idList,$stylesOpt);}
+  : CLASSDEF SPACE idList SPACE stylesOpt {$$ = $CLASSDEF;yy.defineClass($idList,$stylesOpt);}
   ;
 
 classStatement
-    : CLASS idList idList                            {yy.setClass($2, $3);}
+    : CLASS SPACE idList SPACE idList                            {yy.setClass($3, $5);}
     | ALPHANUM STYLE_SEPARATOR idList {yy.setClass([$1], $3);}
     ;
 
 styleStatement
-    : STYLE idList stylesOpt                              {$$ = $STYLE;yy.setCssStyle($2,$stylesOpt);}
+    : STYLE SPACE idList SPACE stylesOpt                              {$$ = $STYLE;yy.setCssStyle($3,$stylesOpt);}
     ;
 
 stylesOpt
@@ -379,9 +380,12 @@ style
     | style styleComponent  {$$ = $style + $styleComponent;}
     ;
 
-styleComponent: ALPHANUM | NUM | COLON | UNIT | SPACE | BRKT | PCT | MINUS | LABEL | SEMICOLON;
+styleComponent: ALPHANUM | NUM | COLON | UNIT | SPACE | BRKT | PCT | MINUS | LABEL | SEMICOLON | DOT;
 
 idList
     : ALPHANUM { $$ = [$ALPHANUM]; }
-    | idList COMMA ALPHANUM = { $$ = $idList.concat([$ALPHANUM]); }
+    | idList COMMA ALPHANUM { $$ = $idList.concat([$ALPHANUM]); }
+    | idList SPACE COMMA ALPHANUM { $$ = $idList.concat([$ALPHANUM]); }
+    | idList COMMA SPACE ALPHANUM { $$ = $idList.concat([$ALPHANUM]); }
+    | idLIST SPACE COMMA SPACE ALPHANUM { $$ = $idList.concat([$ALPHANUM]); }
     ;
