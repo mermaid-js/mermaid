@@ -213,15 +213,17 @@ export const drawTask = function (elem, task, conf) {
     .attr('stroke', '#666');
 
   // Check if the score exceeds the max limit and show alert
-  if (task.score > 5) {
-    alert(`Score must be 1-5. Feel free to adjust, or we'll cap it at 5! 😎.`);
+  if (!Number.isInteger(task.score) || task.score > 5 || task.score < 0) {
+    throw new Error('Score must be an integer between 0 and 5');
   }
-  // Calculate the potential cy value and clamp it at 300 if needed
+
+  // Calculate the potential cy value and clamp it between 300 and 450 if needed
   let cyValue = 300 + (5 - task.score) * 30;
+  cyValue = Math.min(Math.max(cyValue, 300), 450);
 
   drawFace(g, {
     cx: center,
-    cy: Math.max(cyValue, 300),
+    cy: cyValue,
     score: task.score,
   });
 
