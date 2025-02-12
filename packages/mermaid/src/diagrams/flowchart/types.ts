@@ -53,6 +53,7 @@ export interface FlowText {
 }
 
 export interface FlowEdge {
+  isUserDefinedId: boolean;
   start: string;
   end: string;
   interpolate?: string;
