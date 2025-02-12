@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
@@ -989,7 +990,6 @@ export class C4DB implements DiagramDB {
             ? 'rect'
             : tagData.shape
           : c4Node.shape;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const label =
         typeof c4Node.label === 'object'
           ? `$${Object.keys(c4Node.label)[0]}=${Object.values(c4Node.label)[0]}`
@@ -1025,7 +1025,6 @@ export class C4DB implements DiagramDB {
       const tagData = this.getTagDataFromRel(rel);
       const techn = tagData?.techn ?? rel.techn;
       const sprite = tagData?.sprite ?? rel.sprite;
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const label =
         typeof rel.label === 'object'
           ? `$${Object.keys(rel.label)[0]}=${Object.values(rel.label)[0]}`
