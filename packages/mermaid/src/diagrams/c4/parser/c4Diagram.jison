@@ -187,7 +187,7 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 <string_kv_value>[^"]+                    { return "STR_VALUE";}
 <string_kv_value>["]                      { this.popState(); this.popState(); }
 
-<attribute>[^,]+                          { return "STR";}
+<attribute>(?:\([^)]*\)|[^,)\r\n])+                            { return "STR";}
 
 '{'                                       { /* this.begin("lbrace"); */ return "LBRACE";}
 '}'                                       { /* this.popState(); */ return "RBRACE";}
