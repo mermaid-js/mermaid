@@ -45,7 +45,63 @@ export class SequenceDB implements DiagramDB {
     lastDestroyed: undefined,
   }));
 
-  public addBox = (data: { text: string; color: string; wrap: boolean }) => {
+  constructor() {
+    // Needed for JISON since it only supports direct properties
+    this.apply = this.apply.bind(this);
+    this.parseBoxData = this.parseBoxData.bind(this);
+    this.parseMessage = this.parseMessage.bind(this);
+    this.setWrap(getConfig().wrap);
+
+    this.clear();
+
+    this.LINETYPE = {
+      SOLID: 0,
+      DOTTED: 1,
+      NOTE: 2,
+      SOLID_CROSS: 3,
+      DOTTED_CROSS: 4,
+      SOLID_OPEN: 5,
+      DOTTED_OPEN: 6,
+      LOOP_START: 10,
+      LOOP_END: 11,
+      ALT_START: 12,
+      ALT_ELSE: 13,
+      ALT_END: 14,
+      OPT_START: 15,
+      OPT_END: 16,
+      ACTIVE_START: 17,
+      ACTIVE_END: 18,
+      PAR_START: 19,
+      PAR_AND: 20,
+      PAR_END: 21,
+      RECT_START: 22,
+      RECT_END: 23,
+      SOLID_POINT: 24,
+      DOTTED_POINT: 25,
+      AUTONUMBER: 26,
+      CRITICAL_START: 27,
+      CRITICAL_OPTION: 28,
+      CRITICAL_END: 29,
+      BREAK_START: 30,
+      BREAK_END: 31,
+      PAR_OVER_START: 32,
+      BIDIRECTIONAL_SOLID: 33,
+      BIDIRECTIONAL_DOTTED: 34,
+    };
+
+    this.ARROWTYPE = {
+      FILLED: 0,
+      OPEN: 1,
+    };
+
+    this.PLACEMENT = {
+      LEFTOF: 0,
+      RIGHTOF: 1,
+      OVER: 2,
+    };
+  }
+
+  public addBox(data: { text: string; color: string; wrap: boolean }) {
     this.state.records.boxes.push({
       name: data.text,
       wrap: data.wrap ?? this.autoWrap(),
@@ -53,14 +109,14 @@ export class SequenceDB implements DiagramDB {
       actorKeys: [],
     });
     this.state.records.currentBox = this.state.records.boxes.slice(-1)[0];
-  };
+  }
 
-  public addActor = (
+  public addActor(
     id: string,
     name: string,
     description: { text: string; wrap?: boolean | null; type: string },
     type: string
-  ) => {
+  ) {
     let assignedBox = this.state.records.currentBox;
     const old = this.state.records.actors.get(id);
     if (old) {
@@ -112,9 +168,9 @@ export class SequenceDB implements DiagramDB {
       this.state.records.currentBox.actorKeys.push(id);
     }
     this.state.records.prevActor = id;
-  };
+  }
 
-  private readonly activationCount = (part: string) => {
+  private activationCount(part: string) {
     let i;
     let count = 0;
     if (!part) {
@@ -135,30 +191,31 @@ export class SequenceDB implements DiagramDB {
       }
     }
     return count;
-  };
+  }
 
-  public addMessage = (
+  public addMessage(
     idFrom: Message['from'],
     idTo: Message['to'],
     message: { text: string; wrap?: boolean },
     answer: Message['answer']
-  ) => {
+  ) {
     this.state.records.messages.push({
+      id: this.state.records.messages.length.toString(),
       from: idFrom,
       to: idTo,
       message: message.text,
       wrap: message.wrap ?? this.autoWrap(),
       answer: answer,
     });
-  };
+  }
 
-  public addSignal = (
+  public addSignal(
     idFrom?: Message['from'],
     idTo?: Message['to'],
     message?: { text: string; wrap: boolean },
     messageType?: number,
     activate = false
-  ) => {
+  ) {
     if (messageType === this.LINETYPE.ACTIVE_END) {
       const cnt = this.activationCount(idFrom ?? '');
       if (cnt < 1) {
@@ -177,6 +234,7 @@ export class SequenceDB implements DiagramDB {
       }
     }
     this.state.records.messages.push({
+      id: this.state.records.messages.length.toString(),
       from: idFrom,
       to: idTo,
       message: message?.text ?? '',
@@ -185,52 +243,54 @@ export class SequenceDB implements DiagramDB {
       activate,
     });
     return true;
-  };
+  }
 
-  public hasAtLeastOneBox = () => {
+  public hasAtLeastOneBox() {
     return this.state.records.boxes.length > 0;
-  };
+  }
 
-  public hasAtLeastOneBoxWithTitle = () => {
+  public hasAtLeastOneBoxWithTitle() {
     return this.state.records.boxes.some((b) => b.name);
-  };
+  }
 
-  public getMessages = () => {
+  public getMessages() {
     return this.state.records.messages;
-  };
+  }
 
-  public getBoxes = () => {
+  public getBoxes() {
     return this.state.records.boxes;
-  };
-  public getActors = () => {
+  }
+  public getActors() {
     return this.state.records.actors;
-  };
-  public getCreatedActors = () => {
+  }
+  public getCreatedActors() {
     return this.state.records.createdActors;
-  };
-  public getDestroyedActors = () => {
+  }
+  public getDestroyedActors() {
     return this.state.records.destroyedActors;
-  };
-  public getActor = (id: string) => {
+  }
+  public getActor(id: string) {
     // TODO: do we ever use this function in a way that it might return undefined?
     return this.state.records.actors.get(id)!;
-  };
-  public getActorKeys = () => {
+  }
+  public getActorKeys() {
     return [...this.state.records.actors.keys()];
-  };
-  public enableSequenceNumbers = () => {
+  }
+  public enableSequenceNumbers() {
     this.state.records.sequenceNumbersEnabled = true;
-  };
-  public disableSequenceNumbers = () => {
+  }
+  public disableSequenceNumbers() {
     this.state.records.sequenceNumbersEnabled = false;
-  };
-  public showSequenceNumbers = () => this.state.records.sequenceNumbersEnabled;
+  }
+  public showSequenceNumbers() {
+    return this.state.records.sequenceNumbersEnabled;
+  }
 
-  public setWrap = (wrapSetting?: boolean) => {
+  public setWrap(wrapSetting?: boolean) {
     this.state.records.wrapEnabled = wrapSetting;
-  };
+  }
 
-  private readonly extractWrap = (text?: string): { cleanedText?: string; wrap?: boolean } => {
+  private extractWrap(text?: string): { cleanedText?: string; wrap?: boolean } {
     if (text === undefined) {
       return {};
     }
@@ -239,23 +299,23 @@ export class SequenceDB implements DiagramDB {
       /^:?wrap:/.exec(text) !== null ? true : /^:?nowrap:/.exec(text) !== null ? false : undefined;
     const cleanedText = (wrap === undefined ? text : text.replace(/^:?(?:no)?wrap:/, '')).trim();
     return { cleanedText, wrap };
-  };
+  }
 
-  public autoWrap = () => {
+  public autoWrap() {
     // if setWrap has been called, use that value, otherwise use the value from the config
     // TODO: refactor, always use the config value let setWrap update the config value
     if (this.state.records.wrapEnabled !== undefined) {
       return this.state.records.wrapEnabled;
     }
     return getConfig().sequence?.wrap ?? false;
-  };
+  }
 
-  public clear = () => {
+  public clear() {
     this.state.reset();
     commonClear();
-  };
+  }
 
-  public parseMessage = (str: string) => {
+  public parseMessage(str: string) {
     const trimmedStr = str.trim();
     const { wrap, cleanedText } = this.extractWrap(trimmedStr);
     const message = {
@@ -264,12 +324,12 @@ export class SequenceDB implements DiagramDB {
     };
     log.debug(`parseMessage: ${JSON.stringify(message)}`);
     return message;
-  };
+  }
 
   // We expect the box statement to be color first then description
   // The color can be rgb,rgba,hsl,hsla, or css code names  #hex codes are not supported for now because of the way the char # is handled
   // We extract first segment as color, the rest of the line is considered as text
-  public parseBoxData = (str: string) => {
+  public parseBoxData(str: string) {
     const match = /^((?:rgba?|hsla?)\s*\(.*\)|\w*)(.*)$/.exec(str);
     let color = match?.[1] ? match[1].trim() : 'transparent';
     let title = match?.[2] ? match[2].trim() : undefined;
@@ -294,59 +354,59 @@ export class SequenceDB implements DiagramDB {
       color,
       wrap,
     };
+  }
+
+  public LINETYPE: {
+    SOLID: 0;
+    DOTTED: 1;
+    NOTE: 2;
+    SOLID_CROSS: 3;
+    DOTTED_CROSS: 4;
+    SOLID_OPEN: 5;
+    DOTTED_OPEN: 6;
+    LOOP_START: 10;
+    LOOP_END: 11;
+    ALT_START: 12;
+    ALT_ELSE: 13;
+    ALT_END: 14;
+    OPT_START: 15;
+    OPT_END: 16;
+    ACTIVE_START: 17;
+    ACTIVE_END: 18;
+    PAR_START: 19;
+    PAR_AND: 20;
+    PAR_END: 21;
+    RECT_START: 22;
+    RECT_END: 23;
+    SOLID_POINT: 24;
+    DOTTED_POINT: 25;
+    AUTONUMBER: 26;
+    CRITICAL_START: 27;
+    CRITICAL_OPTION: 28;
+    CRITICAL_END: 29;
+    BREAK_START: 30;
+    BREAK_END: 31;
+    PAR_OVER_START: 32;
+    BIDIRECTIONAL_SOLID: 33;
+    BIDIRECTIONAL_DOTTED: 34;
   };
 
-  public LINETYPE = {
-    SOLID: 0,
-    DOTTED: 1,
-    NOTE: 2,
-    SOLID_CROSS: 3,
-    DOTTED_CROSS: 4,
-    SOLID_OPEN: 5,
-    DOTTED_OPEN: 6,
-    LOOP_START: 10,
-    LOOP_END: 11,
-    ALT_START: 12,
-    ALT_ELSE: 13,
-    ALT_END: 14,
-    OPT_START: 15,
-    OPT_END: 16,
-    ACTIVE_START: 17,
-    ACTIVE_END: 18,
-    PAR_START: 19,
-    PAR_AND: 20,
-    PAR_END: 21,
-    RECT_START: 22,
-    RECT_END: 23,
-    SOLID_POINT: 24,
-    DOTTED_POINT: 25,
-    AUTONUMBER: 26,
-    CRITICAL_START: 27,
-    CRITICAL_OPTION: 28,
-    CRITICAL_END: 29,
-    BREAK_START: 30,
-    BREAK_END: 31,
-    PAR_OVER_START: 32,
-    BIDIRECTIONAL_SOLID: 33,
-    BIDIRECTIONAL_DOTTED: 34,
+  public ARROWTYPE: {
+    FILLED: 0;
+    OPEN: 1;
   };
 
-  public ARROWTYPE = {
-    FILLED: 0,
-    OPEN: 1,
+  public PLACEMENT: {
+    LEFTOF: 0;
+    RIGHTOF: 1;
+    OVER: 2;
   };
 
-  public PLACEMENT = {
-    LEFTOF: 0,
-    RIGHTOF: 1,
-    OVER: 2,
-  };
-
-  public addNote = (
+  public addNote(
     actor: { actor: string },
     placement: Message['placement'],
     message: { text: string; wrap?: boolean }
-  ) => {
+  ) {
     const note: Note = {
       actor: actor,
       placement: placement,
@@ -359,6 +419,7 @@ export class SequenceDB implements DiagramDB {
     const actors = [].concat(actor, actor);
     this.state.records.notes.push(note);
     this.state.records.messages.push({
+      id: this.state.records.messages.length.toString(),
       from: actors[0],
       to: actors[1],
       message: message.text,
@@ -366,9 +427,9 @@ export class SequenceDB implements DiagramDB {
       type: this.LINETYPE.NOTE,
       placement: placement,
     });
-  };
+  }
 
-  public addLinks = (actorId: string, text: { text: string }) => {
+  public addLinks(actorId: string, text: { text: string }) {
     // find the actor
     const actor = this.getActor(actorId);
     // JSON.parse the text
@@ -382,9 +443,9 @@ export class SequenceDB implements DiagramDB {
     } catch (e) {
       log.error('error while parsing actor link text', e);
     }
-  };
+  }
 
-  public addALink = (actorId: string, text: { text: string }) => {
+  public addALink(actorId: string, text: { text: string }) {
     // find the actor
     const actor = this.getActor(actorId);
     try {
@@ -402,13 +463,9 @@ export class SequenceDB implements DiagramDB {
     } catch (e) {
       log.error('error while parsing actor link text', e);
     }
-  };
+  }
 
-  /**
-   * @param actor - the actor to add the links to
-   * @param links - the links to add to the actor
-   */
-  private readonly insertLinks = (actor: Actor, links: Record<string, string>) => {
+  private insertLinks(actor: Actor, links: Record<string, string>) {
     if (actor.links == null) {
       actor.links = links;
     } else {
@@ -416,9 +473,9 @@ export class SequenceDB implements DiagramDB {
         actor.links[key] = links[key];
       }
     }
-  };
+  }
 
-  public addProperties = (actorId: string, text: { text: string }) => {
+  public addProperties(actorId: string, text: { text: string }) {
     // find the actor
     const actor = this.getActor(actorId);
     // JSON.parse the text
@@ -430,13 +487,9 @@ export class SequenceDB implements DiagramDB {
     } catch (e) {
       log.error('error while parsing actor properties text', e);
     }
-  };
+  }
 
-  /**
-   * @param actor - the actor to add the properties to
-   * @param properties - the properties to add to the actor's properties
-   */
-  private readonly insertProperties = (actor: Actor, properties: Record<string, unknown>) => {
+  private insertProperties(actor: Actor, properties: Record<string, unknown>) {
     if (actor.properties == null) {
       actor.properties = properties;
     } else {
@@ -444,13 +497,13 @@ export class SequenceDB implements DiagramDB {
         actor.properties[key] = properties[key];
       }
     }
-  };
+  }
 
-  private readonly boxEnd = () => {
+  private boxEnd() {
     this.state.records.currentBox = undefined;
-  };
+  }
 
-  public addDetails = (actorId: string, text: { text: string }) => {
+  public addDetails(actorId: string, text: { text: string }) {
     // find the actor
     const actor = this.getActor(actorId);
     const elem = document.getElementById(text.text)!;
@@ -470,18 +523,18 @@ export class SequenceDB implements DiagramDB {
     } catch (e) {
       log.error('error while parsing actor details text', e);
     }
-  };
+  }
 
-  public getActorProperty = (actor: Actor, key: string) => {
+  public getActorProperty(actor: Actor, key: string) {
     if (actor?.properties !== undefined) {
       return actor.properties[key];
     }
 
     return undefined;
-  };
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
-  public apply = (param: any | AddMessageParams | AddMessageParams[]) => {
+  public apply(param: any | AddMessageParams | AddMessageParams[]) {
     if (Array.isArray(param)) {
       param.forEach((item) => {
         this.apply(item);
@@ -490,6 +543,7 @@ export class SequenceDB implements DiagramDB {
       switch (param.type) {
         case 'sequenceIndex':
           this.state.records.messages.push({
+            id: this.state.records.messages.length.toString(),
             from: undefined,
             to: undefined,
             message: {
@@ -628,13 +682,15 @@ export class SequenceDB implements DiagramDB {
           break;
       }
     }
-  };
+  }
 
-  public getAccTitle = getAccTitle;
-  public getDiagramTitle = getDiagramTitle;
-  public setDiagramTitle = setDiagramTitle;
-  public getConfig = () => getConfig().sequence;
   public setAccTitle = setAccTitle;
   public setAccDescription = setAccDescription;
+  public setDiagramTitle = setDiagramTitle;
+  public getAccTitle = getAccTitle;
   public getAccDescription = getAccDescription;
+  public getDiagramTitle = getDiagramTitle;
+  public getConfig() {
+    return getConfig().sequence;
+  }
 }

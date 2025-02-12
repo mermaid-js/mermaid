@@ -3,21 +3,24 @@ import type { DiagramDefinition } from '../../diagram-api/types.js';
 import parser from './parser/sequenceDiagram.jison';
 import { SequenceDB } from './sequenceDb.js';
 import styles from './styles.js';
+import { setConfig } from '../../diagram-api/diagramAPI.js';
 import renderer from './sequenceRenderer.js';
-
-let db: SequenceDB;
+import type { MermaidConfig } from '../../config.type.js';
 
 export const diagram: DiagramDefinition = {
   parser,
   get db() {
-    if (!db) {
-      db = new SequenceDB();
-    }
-    return db;
+    return new SequenceDB();
   },
   renderer,
   styles,
-  init: ({ wrap }) => {
-    db.setWrap(wrap);
+  init: (cnf: MermaidConfig) => {
+    if (!cnf.sequence) {
+      cnf.sequence = {};
+    }
+    if (cnf.wrap) {
+      cnf.sequence.wrap = cnf.wrap;
+      setConfig({ sequence: { wrap: cnf.wrap } });
+    }
   },
 };
