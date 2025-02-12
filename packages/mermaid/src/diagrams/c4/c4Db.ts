@@ -989,13 +989,18 @@ export class C4DB implements DiagramDB {
             ? 'rect'
             : tagData.shape
           : c4Node.shape;
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const label =
+        typeof c4Node.label === 'object'
+          ? `$${Object.keys(c4Node.label)[0]}=${Object.values(c4Node.label)[0]}`
+          : (c4Node.label ?? '');
 
       const node = {
         id: c4Node.alias,
         parentId: c4Node.parent !== 'global' ? c4Node.parent : undefined,
         isGroup: c4Node.isBoundary,
         label: !c4Node.isBoundary
-          ? `<em>«${c4Node.type}»</em>\n${c4Node.sprite ? '<br><br>' : ''}<strong>${c4Node.label}</strong>${techn ? `<br><em>[${techn}]</em>` : ''}${c4Node.descr ? `${c4Node.sprite ? '<br>' : '<br><br>'}${c4Node.descr}` : ''}`
+          ? `<em>«${c4Node.type}»</em>\n${c4Node.sprite ? '<br><br>' : ''}<strong>${label}</strong>${techn ? `<br><em>[${techn}]</em>` : ''}${c4Node.descr ? `${c4Node.sprite ? '<br>' : '<br><br>'}${c4Node.descr}` : ''}`
           : `<strong>${c4Node.label}</strong>\n[${c4Node.type}]`,
         padding: config.c4?.c4ShapePadding ?? 6,
         shape: shape,
@@ -1020,12 +1025,17 @@ export class C4DB implements DiagramDB {
       const tagData = this.getTagDataFromRel(rel);
       const techn = tagData?.techn ?? rel.techn;
       const sprite = tagData?.sprite ?? rel.sprite;
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const label =
+        typeof rel.label === 'object'
+          ? `$${Object.keys(rel.label)[0]}=${Object.values(rel.label)[0]}`
+          : (rel.label ?? '');
 
       const edge: Edge = {
         id: `${rel.from}-${rel.to}-${count}`,
         start: rel.from,
         end: rel.to,
-        label: (sprite ? '<br><br>' : '') + rel.label + (rel.techn ? `\n<em>[${techn}]</em>` : ''),
+        label: (sprite ? '<br><br>' : '') + label + (rel.techn ? `\n<em>[${techn}]</em>` : ''),
         labelpos: 'c',
         type: 'normal',
         thickness: 'normal',
