@@ -83,50 +83,53 @@ section Checkout from website
       { journey: { useMaxWidth: true } }
     );
 
-    let rightEdgeXInitial, leftEdgeXInitial, rightEdgeXFinal, leftEdgeXFinal, initialDifference, finalDifference;
+    let rightEdgeXInitial,
+      leftEdgeXInitial,
+      rightEdgeXFinal,
+      leftEdgeXFinal,
+      initialDifference,
+      finalDifference;
 
-    cy.contains('tspan', 'admin Exjjjnjjjj qwerty') 
-      .invoke('getBBox')
-      .then((bbox) => {
-        rightEdgeXInitial = bbox.x + bbox.width;
-        cy.log(`Right edge x-coordinate: ${rightEdgeXInitial}`);
-      });
+    cy.contains('tspan', 'admin Exjjjnjjjj qwerty').then((textBox) => {
+      const bbox = textBox[0].getBBox();
+      const rightEdge = bbox.x + bbox.width;
+      console.warn(rightEdge);
+    });
 
-    cy.contains('div.label', 'Make preBuilt') 
-      .invoke('getBoundingClientRect')
-      .then((rect) => {
-        leftEdgeXInitial = rect.left;
-        cy.log(`Left edge x-coordinate: ${leftEdgeXInitial}`);
-        initialDifference = leftEdgeXInitial - rightEdgeXInitial;
-        cy.log(`Initial Difference: ${initialDifference}`);
-      });
+    cy.get(':nth-child(14) > switch > foreignobject').then((rect) => {
+      console.warn(rect);
+      //const leftEdgeXInitial = rect.left;
+      // cy.log(`Left edge x-coordinate: ${leftEdgeXInitial}`);
+      // initialDifference = leftEdgeXInitial - rightEdgeXInitial;
+      // cy.log(`Initial Difference: ${initialDifference}`);
+    });
 
     // renderGraph(
     //   `journey
     // title  Web hook life cycle
-    // section Darkoob 
-    //     Make preBuilt:5: Darkoob user 
+    // section Darkoob
+    //     Make preBuilt:5: Darkoob user
     //     register slug : 5: Darkoob userf deliberately increasing the size of this label to check if distance between legend and diagram is  maintained
     //   Map slug to a Prebuilt Job:5: Darkoob user
     // section External Service
     //   set Darkoob slug as hook for an Event : 5 : admin Exjjjnjjjj qwerty
-    //   listen to the events : 5 :  External Service 
-    //   call darkoob endpoint : 5 : External Service 
-    // section Darkoob  
+    //   listen to the events : 5 :  External Service
+    //   call darkoob endpoint : 5 : External Service
+    // section Darkoob
     //     check for inputs : 5 : DarkoobAPI
-    //     run the prebuilt job : 5 : DarkoobAPI  
+    //     run the prebuilt job : 5 : DarkoobAPI
     //   `,
     //     { journey: { useMaxWidth: true } }
     //   );
 
-    // cy.contains('tspan', 'Darkoob userf deliberately increasing the size of this label to check if distance between legend and diagram is  maintained') 
+    // cy.contains('tspan', 'Darkoob userf deliberately increasing the size of this label to check if distance between legend and diagram is  maintained')
     //   .invoke('getBBox')
     //   .then((bbox) => {
     //     rightEdgeXFinal = bbox.x + bbox.width;
     //     cy.log(`Right edge x-coordinate final: ${rightEdgeXFinal}`);
     //   });
 
-    // cy.contains('div.label', 'Make preBuilt') 
+    // cy.contains('div.label', 'Make preBuilt')
     //   .invoke('getBoundingClientRect')
     //   .then((rect) => {
     //     leftEdgeXFinal = rect.left;
@@ -136,9 +139,5 @@ section Checkout from website
     //   });
 
     // expect(initialDifference).toEqual(finalDifference);
-
-
   });
-
-
 });
