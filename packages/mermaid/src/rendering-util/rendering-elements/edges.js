@@ -10,7 +10,6 @@ import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 import { isLabelStyle } from './shapes/handDrawnShapeStyles.js';
-import { getDirection } from '../../diagrams/git/gitGraphAst.js';
 
 const edgeLabels = new Map();
 const terminalLabels = new Map();
@@ -180,24 +179,17 @@ export const positionEdgeLabel = (edge, paths) => {
       const edgeLength = calculateEdgeLength(path);
       log.debug(`Edge Length for ${edge.id}:`, edgeLength);
 
-      if (Diagram['type'] == flowchart) {
-        const direction = getDirection().flowchart;
-        console.log(direction);
-        if (direction == 'TB' || direction == 'BT') {
-          //need to check if direction returns what I hope it does
-        }
-        if (direction == 'LR' || direction == 'RL') {
-          //need to check if direction returns what I hope it does
-        }
-      }
+      const direction = siteConfig.flowchart?.direction ?? 'TD';
 
-      //and then change the variable to offSet and put it at the top - around line 183
-      //then in the if statement adds the offSet either to the x or y
-      //i need to check that direction returns what i think though
-      const verticalOffset = edgeLength > 200 ? -140 : 0;
-      // const horizontalOffset = edgeLength > 200 ? -200 : 0;
-      y += verticalOffset;
-      // x += horizontalOffset;
+      if (direction == 'LR' || direction == 'RL') {
+        // For horizontal diagrams, adjust the x coordinate.
+        const horizontalOffset = edgeLength > 200 ? -200 : 0;
+        x += horizontalOffset;
+      } else {
+        // For vertical diagrams (TD, TB, BT), adjust the y coordinate.
+        const verticalOffset = edgeLength > 200 ? -140 : 0;
+        y += verticalOffset;
+      }
     }
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
     log.debug(`Updated label transform for edge ${edge.id}: translate(${x}, ${y})`);
