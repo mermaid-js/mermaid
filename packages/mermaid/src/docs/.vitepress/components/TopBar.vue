@@ -1,40 +1,136 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { namespace } from '../../../../dist/diagrams/state/stateDb';
 
 interface Taglines {
+  name: string;
+  design: string;
   label: string;
   url: string;
 }
 
-const taglines: Taglines[] = [
+const allTaglines: Taglines[] = [
   {
-    label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard',
+    name: 'A AI Bundle',
+    design: '1',
+    label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Chart',
+    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_A',
   },
   {
-    label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor',
+    name: 'B AI Bundle',
+    design: '2',
+    label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Chart',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_B',
   },
   {
+    name: 'C AI Bundle',
+    design: '1',
+    label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Pro',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_C',
+  },
+  {
+    name: 'D AI Bundle',
+    design: '2',
+    label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Pro',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_D',
+  },
+  {
+    name: 'A Teams',
+    design: '1',
     label: 'Diagram live with teammates in Mermaid Chart',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams',
+    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_A',
   },
   {
-    label: 'Replace ChatGPT Pro, Mermaid.live, and LucidChart with Mermaid Pro',
-    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle',
+    name: 'B Teams',
+    design: '2',
+    label: 'Diagram live with teammates in Mermaid Chart',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_B',
+  },
+  {
+    name: 'C Teams',
+    design: '1',
+    label: 'Diagram live with teammates in Mermaid Pro',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_C',
+  },
+  {
+    name: 'D Teams',
+    design: '2',
+    label: 'Diagram live with teammates in Mermaid Pro',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_D',
+  },
+  {
+    name: 'A Visual Editor',
+    design: '1',
+    label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
+    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_A',
+  },
+  {
+    name: 'B Visual Editor',
+    design: '2',
+    label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_B',
+  },
+  {
+    name: 'C Visual Editor',
+    design: '1',
+    label: 'Use the Visual Editor in Mermaid Pro to design and build diagrams',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_C',
+  },
+  {
+    name: 'D Visual Editor',
+    design: '2',
+    label: 'Use the Visual Editor in Mermaid Pro to design and build diagrams',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_D',
+  },
+  {
+    name: 'A Whiteboard',
+    design: '1',
+    label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
+    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_A',
+  },
+  {
+    name: 'B Whiteboard',
+    design: '2',
+    label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_A',
+  },
+  {
+    name: 'C Whiteboard',
+    design: '1',
+    label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
+    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_B',
+  },
+  {
+    name: 'D Whiteboard',
+    design: '2',
+    label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
+    url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_B',
   },
 ];
+
+// Randomly select group A, B, C, or D
+const groups = ['A', 'B', 'C', 'D'];
+const selectedGroup = groups[Math.floor(Math.random() * groups.length)];
+const taglines = allTaglines.filter((tagline) => tagline.name.startsWith(selectedGroup));
 
 let index = ref(Math.floor(Math.random() * taglines.length));
 onMounted(() => {
   setInterval(() => {
     index.value = (index.value + 1) % taglines.length;
-  }, 5_000);
+  }, 2_000);
+});
+
+const currentDesign = computed(() => {
+  const designMap: { [key: string]: string } = {
+    '1': '#f56565',
+    '2': '#4299e1',
+  };
+  return designMap[taglines[index.value].design];
 });
 </script>
 
 <template>
-  <div class="mb-4 w-full top-bar bg-gradient-to-r from-[#bd34fe] to-[#ff3670] flex p-1">
+  <div :style="{ background: currentDesign }" class="mb-4 w-full top-bar flex p-1">
     <p class="w-full tracking-wide fade-text">
       <transition name="fade" mode="out-in">
         <a
