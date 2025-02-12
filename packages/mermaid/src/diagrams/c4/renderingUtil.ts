@@ -49,7 +49,7 @@ export async function addIcons(svgId: string, data4Layout: LayoutData) {
           }
 
           // Position SVG
-          svg.attr(
+          svgGroup.attr(
             'transform',
             `translate(-${getIconDimensions(iconName).width / 2}, ${labelY + 25})`
           );
@@ -95,7 +95,10 @@ export async function addIcons(svgId: string, data4Layout: LayoutData) {
         );
 
         // Position SVG
-        svg.attr('transform', `translate(${width / 2 - getIconDimensions(iconName).width / 2}, 5)`);
+        svgGroup.attr(
+          'transform',
+          `translate(${width / 2 - getIconDimensions(iconName).width / 2}, 5)`
+        );
       }
     })
   );
@@ -196,7 +199,7 @@ export async function drawLegend(svg: SVG, legend: Legend) {
       );
 
       // Position SVG
-      svg.attr('transform', `translate(4, 4)`);
+      svgGroup.attr('transform', `translate(4, 4)`);
     } else if (legendItem.type === 'node') {
       // Draw empty box for node
       legendItemGroup
@@ -238,7 +241,7 @@ export async function drawLegend(svg: SVG, legend: Legend) {
       'transform',
       `translate(
       ${svgBBox.width - (bbox?.width ?? 0)}, 
-      ${svgBBox.height}
+      ${svgBBox.height + padding}
     )`
     );
   }
