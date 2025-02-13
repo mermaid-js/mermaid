@@ -210,10 +210,9 @@ export interface MermaidConfig {
    */
   suppressErrorRendering?: boolean;
   /**
-   * This option controls the rendering of label text. The default behavior
-   * is to treat all labels as markdown to be rendered. Setting this value to
-   * true means labels will not be rendered as markdown unless they
-   * are enclosed in double-quote-backtick delimiters, e.g. "`_markdown label_`".
+   * Only process markdown for labels enclosed in double-quote-backtick delimiters, e.g. "`_markdown label_`".
+   * This can be useful when upgrading from mermaid 10 to 11, as version 11 started interpreting labels as markdown by default.
+   *
    */
   optInMarkdownLabels?: boolean;
 }
