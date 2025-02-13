@@ -312,6 +312,17 @@ Defined in: [packages/mermaid/src/config.type.ts:195](https://github.com/mermaid
 
 ---
 
+### optInMarkdownLabels?
+
+> `optional` **optInMarkdownLabels**: `boolean`
+
+Defined in: [packages/mermaid/src/config.type.ts:217](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L217)
+
+Only process markdown for labels enclosed in double-quote-backtick delimiters, e.g. "`_markdown label_`".
+This can be useful when upgrading from mermaid 10 to 11, as version 11 started interpreting labels as markdown by default.
+
+---
+
 ### packet?
 
 > `optional` **packet**: `PacketDiagramConfig`
