@@ -64,26 +64,54 @@ section Checkout from website
     );
   });
 
-  it('should give an alert if the task score is greater than 5', () => {
-    const alertStub = cy.stub();
-    cy.on('window:alert', alertStub);
-    renderGraph(
-      `journey
-        accTitle: simple journey demo
-        accDescr: 2 main sections: work and home, each with just a few tasks
-  
-      section Go to work
-        Make tea: 7: Me
-        Go upstairs: 3: Me
-      section Go home
-        Go downstairs: 5: Me
-        Sit down: 2: Me`
-    );
-    cy.wait(500).then(() => {
-      expect(alertStub).to.have.callCount(1);
-      expect(alertStub.getCall(0)).to.have.been.calledWith(
-        "Score must be 1-5. Feel free to adjust, or we'll cap it at 5! 😎."
+  it('should throw an error if the task score is not an integer', () => {
+    expect(() => {
+      renderGraph(
+        `journey
+              accTitle: simple journey demo
+              accDescr: 2 main sections: work and home, each with just a few tasks
+        
+            section Go to work
+              Make tea: Hello: Me
+              Go upstairs: 3: Me
+            section Go home
+              Go downstairs: 5: Me
+              Sit down: 2: Me`
       );
-    });
+    }).to.throw('Score must be an integer between 0 and 5');
+  });
+
+  it('should throw an error if the task score is less than 0', () => {
+    expect(() => {
+      renderGraph(
+        `journey
+              accTitle: simple journey demo
+              accDescr: 2 main sections: work and home, each with just a few tasks
+        
+            section Go to work
+              Make tea: -10: Me
+              Go upstairs: 3: Me
+            section Go home
+              Go downstairs: 5: Me
+              Sit down: 2: Me`
+      );
+    }).to.throw('Score must be an integer between 0 and 5');
+  });
+
+  it('should throw an error if the task score is greater than 5', () => {
+    expect(() => {
+      renderGraph(
+        `journey
+              accTitle: simple journey demo
+              accDescr: 2 main sections: work and home, each with just a few tasks
+        
+            section Go to work
+              Make tea: 23: Me
+              Go upstairs: 3: Me
+            section Go home
+              Go downstairs: 5: Me
+              Sit down: 2: Me`
+      );
+    }).to.throw('Score must be an integer between 0 and 5');
   });
 });

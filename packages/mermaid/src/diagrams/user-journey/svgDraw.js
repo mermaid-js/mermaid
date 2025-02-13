@@ -217,13 +217,9 @@ export const drawTask = function (elem, task, conf) {
     throw new Error('Score must be an integer between 0 and 5');
   }
 
-  // Calculate the potential cy value and clamp it between 300 and 450 if needed
-  let cyValue = 300 + (5 - task.score) * 30;
-  cyValue = Math.min(Math.max(cyValue, 300), 450);
-
   drawFace(g, {
     cx: center,
-    cy: cyValue,
+    cy: 300 + (5 - task.score) * 30,
     score: task.score,
   });
 
