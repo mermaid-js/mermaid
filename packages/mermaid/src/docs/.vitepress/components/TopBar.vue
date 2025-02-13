@@ -108,7 +108,6 @@ const allTaglines: Taglines[] = [
   },
 ];
 
-// Randomly select group A, B, C, or D
 const groups = ['A', 'B', 'C', 'D'];
 const selectedGroup = groups[Math.floor(Math.random() * groups.length)];
 const taglines = allTaglines.filter((tagline) => tagline.name.startsWith(selectedGroup));
@@ -144,7 +143,7 @@ const buttonClass = computed(() => {
           class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
         >
           <span class="font-semibold">{{ taglines[index].label }}</span>
-          <button :class="['rounded-lg p-2 px-4 font-semibold tracking-wide', buttonClass]">
+          <button :class="['rounded-lg p-1.5 px-4 font-semibold tracking-wide', buttonClass]">
             Try now
           </button>
         </a>
