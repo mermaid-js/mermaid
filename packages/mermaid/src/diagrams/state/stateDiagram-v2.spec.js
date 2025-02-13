@@ -6,7 +6,7 @@ describe('state diagram V2, ', function () {
   describe('when parsing an info graph it', function () {
     let stateDb;
     beforeEach(function () {
-      stateDb = new StateDB();
+      stateDb = new StateDB(2);
       parser.yy = stateDb;
       stateDiagram.parser.yy = stateDb;
       stateDiagram.parser.yy.clear();
