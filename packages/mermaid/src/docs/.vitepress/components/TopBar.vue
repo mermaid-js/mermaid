@@ -117,20 +117,24 @@ let index = ref(Math.floor(Math.random() * taglines.length));
 onMounted(() => {
   setInterval(() => {
     index.value = (index.value + 1) % taglines.length;
-  }, 2_000);
+  }, 5_000);
 });
 
 const currentDesign = computed(() => {
   const designMap: { [key: string]: string } = {
-    '1': '#f56565',
-    '2': '#4299e1',
+    '1': 'bg-gradient-to-r from-[#bd34fe] to-[#ff3670] ',
+    '2': 'bg-[#2E2183]',
   };
   return designMap[taglines[index.value].design];
+});
+
+const buttonClass = computed(() => {
+  return taglines[index.value].design === '1' ? 'bg-[#2E2183]' : 'bg-[#E0095F]';
 });
 </script>
 
 <template>
-  <div :style="{ background: currentDesign }" class="mb-4 w-full top-bar flex p-1">
+  <div :class="[currentDesign]" class="mb-4 w-full top-bar flex p-2">
     <p class="w-full tracking-wide fade-text">
       <transition name="fade" mode="out-in">
         <a
@@ -140,7 +144,7 @@ const currentDesign = computed(() => {
           class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
         >
           <span class="font-semibold">{{ taglines[index].label }}</span>
-          <button class="rounded bg-[#111113] p-1 px-2 text-sm font-semibold tracking-wide">
+          <button :class="['rounded-lg p-2 px-4 font-semibold tracking-wide', buttonClass]">
             Try now
           </button>
         </a>
