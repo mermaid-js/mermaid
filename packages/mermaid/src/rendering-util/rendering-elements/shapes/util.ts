@@ -13,7 +13,10 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   _classes?: string
 ) => {
   let cssClasses;
-  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
+  const config = getConfig();
+  const useHtmlLabels = node.useHtmlLabels || evaluate(config?.htmlLabels);
+  const optInMarkdownLabels = evaluate(config?.optInMarkdownLabels);
+
   if (!_classes) {
     cssClasses = 'node default';
   } else {
@@ -42,6 +45,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
 
   const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
     useHtmlLabels,
+    optInMarkdownLabels,
     width: node.width || getConfig().flowchart?.wrappingWidth,
     // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
     cssClasses: 'markdown-node-label',

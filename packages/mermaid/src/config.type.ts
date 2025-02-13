@@ -209,6 +209,13 @@ export interface MermaidConfig {
    *
    */
   suppressErrorRendering?: boolean;
+  /**
+   * This option controls the rendering of label text. The default behavior
+   * is to treat all labels as markdown to be rendered. Setting this value to
+   * true means labels will not be rendered as markdown unless they
+   * are enclosed in double-quote-backtick delimiters, e.g. "`_markdown label_`".
+   */
+  optInMarkdownLabels?: boolean;
 }
 /**
  * The object containing configurations specific for flowcharts
