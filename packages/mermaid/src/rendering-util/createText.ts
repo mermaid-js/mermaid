@@ -200,6 +200,7 @@ export const createText = async (
     isTitle = false,
     classes = '',
     useHtmlLabels = true,
+    optInMarkdownLabels = false,
     isNode = true,
     width = 200,
     addSvgBackground = false,
@@ -215,12 +216,24 @@ export const createText = async (
     useHtmlLabels,
     isNode,
     'addSvgBackground: ',
-    addSvgBackground
+    addSvgBackground,
+    'optInMarkdownLabels: ',
+    optInMarkdownLabels
   );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-
-    const htmlText = markdownToHTML(text, config);
+    let labelMaker = (text, config) => {
+      const match = text.match(/^"`(.*)`"$/);
+      if (match) {
+        return markdownToHTML(match[1], config);
+      } else {
+        return `<span class="${classes}">${text}</span>`;
+      }
+    };
+    if (!optInMarkdownLabels) {
+      labelMaker = markdownToHTML;
+    }
+    const htmlText = labelMaker(text, config);
     const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax

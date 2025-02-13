@@ -311,6 +311,12 @@ properties:
     description: |
       Suppresses inserting 'Syntax error' diagram in the DOM.
       This is useful when you want to control how to handle syntax errors in your application.
+  optInMarkdownLabels:
+    type: boolean
+    default: false
+    description: |
+      Only process markdown for labels enclosed in double-quote-backtick delimiters, e.g. "`_markdown label_`".
+      This can be useful when upgrading from mermaid 10 to 11, as version 11 started interpreting labels as markdown by default.
 
 $defs: # JSON Schema definition (maybe we should move these to a separate file)
   BaseDiagramConfig:
