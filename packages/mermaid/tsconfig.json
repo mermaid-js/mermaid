@@ -12,6 +12,6 @@
     "src/diagrams/git/gitGraphRenderer.js",
     "src/diagrams/class/classRenderer.js",
     "src/diagrams/c4/c4Renderer.js",
-    "src/diagrams/c4/svgDraw.js",
+    "src/diagrams/c4/svgDraw.js"
   ]
 }
