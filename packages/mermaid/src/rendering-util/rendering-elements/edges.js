@@ -51,7 +51,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')'); //HERE
+  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
 
   // Make element accessible by id for positioning
   edgeLabels.set(edge.id, edgeLabel);
@@ -194,136 +194,111 @@ export const positionEdgeLabel = (edge, paths) => {
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
     log.debug(`Updated label transform for edge ${edge.id}: translate(${x}, ${y})`);
 
-    // log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
-    // let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
-    // const siteConfig = getConfig();
-    // const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
-    // if (edge.label) {
-    //   const el = edgeLabels.get(edge.id);
-    //   let x = edge.x;
-    //   let y = edge.y;
+    if (edge.startLabelLeft) {
+      const el = terminalLabels.get(edge.id).startLeft;
+      let x = edge.x;
+      let y = edge.y;
+      if (path) {
+        const pos = utils.calcTerminalLabelPosition(
+          edge.arrowTypeStart ? 10 : 0,
+          'start_left',
+          path
+        );
 
-    //   if (path) {
-    //     const pos = utils.calcLabelPosition(path);
-    //     log.debug(
-    //       'Moving label ' + edge.label + ' from (',
-    //       x,
-    //       ',',
-    //       y,
-    //       ') to (',
-    //       pos.x,
-    //       ',',
-    //       pos.y,
-    //       ') abc88'
-    //     );
-    //     if (paths.updatedPath) {
-    //       x = pos.x;
-    //       y = pos.y;
-    //     }
-    //   }
-    //   el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
-  }
-
-  if (edge.startLabelLeft) {
-    const el = terminalLabels.get(edge.id).startLeft;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
-
-      // let minimizationX = pos.x;
-      // let minimizationY = pos.y;
-      // for (const path_ of paths) {
-      //   let posOther = utils.calcLabelPosition(path_);
-      //   if (posOther.x == pos.x) {
-      //     if (minimizationX > posOther.x) {
-      //       minimizationY = posOther.y;
-      //     }
-      //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
-      //     minimizationX = posOther.x;
-      //   }
-      // }
-      x = pos.x;
-      y = pos.y;
+        // let minimizationX = pos.x;
+        // let minimizationY = pos.y;
+        // for (const path_ of paths) {
+        //   let posOther = utils.calcLabelPosition(path_);
+        //   if (posOther.x == pos.x) {
+        //     if (minimizationX > posOther.x) {
+        //       minimizationY = posOther.y;
+        //     }
+        //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+        //     minimizationX = posOther.x;
+        //   }
+        // }
+        x = pos.x;
+        y = pos.y;
+      }
+      el.attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
-  }
-  if (edge.startLabelRight) {
-    const el = terminalLabels.get(edge.id).startRight;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(
-        edge.arrowTypeStart ? 10 : 0,
-        'start_right',
-        path
-      );
+    if (edge.startLabelRight) {
+      const el = terminalLabels.get(edge.id).startRight;
+      let x = edge.x;
+      let y = edge.y;
+      if (path) {
+        const pos = utils.calcTerminalLabelPosition(
+          edge.arrowTypeStart ? 10 : 0,
+          'start_right',
+          path
+        );
 
-      // let minimizationX = pos.x;
-      // let minimizationY = pos.y;
-      // for (const path_ of paths) {
-      //   let posOther = utils.calcLabelPosition(path_);
-      //   if (posOther.x == pos.x) {
-      //     if (minimizationX > posOther.x) {
-      //       minimizationY = posOther.y;
-      //     }
-      //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
-      //     minimizationX = posOther.x;
-      //   }
-      // }
+        // let minimizationX = pos.x;
+        // let minimizationY = pos.y;
+        // for (const path_ of paths) {
+        //   let posOther = utils.calcLabelPosition(path_);
+        //   if (posOther.x == pos.x) {
+        //     if (minimizationX > posOther.x) {
+        //       minimizationY = posOther.y;
+        //     }
+        //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+        //     minimizationX = posOther.x;
+        //   }
+        // }
 
-      x = pos.x;
-      y = pos.y;
+        x = pos.x;
+        y = pos.y;
+      }
+      el.attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
-  }
-  if (edge.endLabelLeft) {
-    const el = terminalLabels.get(edge.id).endLeft;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
+    if (edge.endLabelLeft) {
+      const el = terminalLabels.get(edge.id).endLeft;
+      let x = edge.x;
+      let y = edge.y;
+      if (path) {
+        const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
 
-      // let minimizationX = pos.x;
-      // let minimizationY = pos.y;
-      // for (const path_ of paths) {
-      //   let posOther = utils.calcLabelPosition(path_);
-      //   if (posOther.x == pos.x) {
-      //     if (minimizationX > posOther.x) {
-      //       minimizationY = posOther.y;
-      //     }
-      //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
-      //     minimizationX = posOther.x;
-      //   }
-      // }
-      x = pos.x;
-      y = pos.y;
+        // let minimizationX = pos.x;
+        // let minimizationY = pos.y;
+        // for (const path_ of paths) {
+        //   let posOther = utils.calcLabelPosition(path_);
+        //   if (posOther.x == pos.x) {
+        //     if (minimizationX > posOther.x) {
+        //       minimizationY = posOther.y;
+        //     }
+        //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+        //     minimizationX = posOther.x;
+        //   }
+        // }
+        x = pos.x;
+        y = pos.y;
+      }
+      el.attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
-  }
-  if (edge.endLabelRight) {
-    const el = terminalLabels.get(edge.id).endRight;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
+    if (edge.endLabelRight) {
+      const el = terminalLabels.get(edge.id).endRight;
+      let x = edge.x;
+      let y = edge.y;
+      if (path) {
+        const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
 
-      // let minimizationX = pos.x;
-      // let minimizationY = pos.y;
-      // for (const path_ of paths) {
-      //   let posOther = utils.calcLabelPosition(path_);
-      //   if (posOther.x == pos.x) {
-      //     if (minimizationX > posOther.x) {
-      //       minimizationY = posOther.y;
-      //     }
-      //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
-      //     minimizationX = posOther.x;
-      //   }
-      // }
-      x = pos.x;
-      y = pos.y;
+        // let minimizationX = pos.x;
+        // let minimizationY = pos.y;
+        // for (const path_ of paths) {
+        //   let posOther = utils.calcLabelPosition(path_);
+        //   if (posOther.x == pos.x) {
+        //     if (minimizationX > posOther.x) {
+        //       minimizationY = posOther.y;
+        //     }
+        //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+        //     minimizationX = posOther.x;
+        //   }
+        // }
+        x = pos.x;
+        y = pos.y;
+      }
+      el.attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
   }
 };
 
