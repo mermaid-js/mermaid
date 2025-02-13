@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { namespace } from '../../../../dist/diagrams/state/stateDb';
 
 interface Taglines {
   label: string;
