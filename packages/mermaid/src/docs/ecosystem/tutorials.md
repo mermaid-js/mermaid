@@ -48,7 +48,7 @@ https://codepen.io/Ryuno-Ki/pen/LNxwgR
 
 ## Jupyter / Python Integration with mermaid-js
 
-Here's an example of Python integration with mermaid-js which uses the mermaid.ink service, that displays the graph in a Jupyter notebook and save it as *.png* image with the stated resolution (in this example, `dpi=1200`).
+Here's an example of Python integration with mermaid-js which uses the mermaid.ink service, that displays the graph in a Jupyter notebook and save it as _.png_ image with the stated resolution (in this example, `dpi=1200`).
 
 ```python
 import base64
@@ -80,4 +80,4 @@ graph LR;
 
 ![Example graph of the Python integration](img/python-mermaid-integration.png)
 
-<!--- cspell:ignore Elle Jaoude Neurodiverse graphbytes --->
+<!--- cspell:ignore Elle Jaoude Neurodiverse graphbytes imshow savefig --->
