@@ -50,9 +50,10 @@ export class SequenceDB implements DiagramDB {
     this.apply = this.apply.bind(this);
     this.parseBoxData = this.parseBoxData.bind(this);
     this.parseMessage = this.parseMessage.bind(this);
-    this.setWrap(getConfig().wrap);
 
     this.clear();
+
+    this.setWrap(getConfig().wrap);
 
     this.LINETYPE = {
       SOLID: 0,
