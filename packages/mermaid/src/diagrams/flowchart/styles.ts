@@ -177,6 +177,11 @@ const getStyles = (options: FlowChartStyleOptions) =>
     }
     text-align: center;
   }
+  .node .svg-inline--fa path {
+    fill: currentColor;
+    stroke: revert;
+    stroke-width: revert;
+  }
 `;
 
 export default getStyles;

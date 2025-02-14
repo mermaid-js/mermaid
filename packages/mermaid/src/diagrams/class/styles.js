@@ -157,6 +157,11 @@ g.classGroup line {
   font-size: 18px;
   fill: ${options.textColor};
 }
+.node .svg-inline--fa path {
+  fill: currentColor;
+  stroke: revert;
+  stroke-width: revert;
+}
 `;
 
 export default getStyles;

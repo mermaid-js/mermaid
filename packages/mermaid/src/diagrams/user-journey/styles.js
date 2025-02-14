@@ -131,6 +131,11 @@ const getStyles = (options) =>
   .actor-5 {
     ${options.actor5 ? `fill: ${options.actor5}` : ''};
   }
+  .node .svg-inline--fa path {
+    fill: currentColor;
+    stroke: revert;
+    stroke-width: revert;
+  }
 `;
 
 export default getStyles;
