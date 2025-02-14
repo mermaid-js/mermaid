@@ -29,6 +29,52 @@ interface SequenceState {
   lastDestroyed?: Actor;
 }
 
+const LINETYPE = {
+  SOLID: 0,
+  DOTTED: 1,
+  NOTE: 2,
+  SOLID_CROSS: 3,
+  DOTTED_CROSS: 4,
+  SOLID_OPEN: 5,
+  DOTTED_OPEN: 6,
+  LOOP_START: 10,
+  LOOP_END: 11,
+  ALT_START: 12,
+  ALT_ELSE: 13,
+  ALT_END: 14,
+  OPT_START: 15,
+  OPT_END: 16,
+  ACTIVE_START: 17,
+  ACTIVE_END: 18,
+  PAR_START: 19,
+  PAR_AND: 20,
+  PAR_END: 21,
+  RECT_START: 22,
+  RECT_END: 23,
+  SOLID_POINT: 24,
+  DOTTED_POINT: 25,
+  AUTONUMBER: 26,
+  CRITICAL_START: 27,
+  CRITICAL_OPTION: 28,
+  CRITICAL_END: 29,
+  BREAK_START: 30,
+  BREAK_END: 31,
+  PAR_OVER_START: 32,
+  BIDIRECTIONAL_SOLID: 33,
+  BIDIRECTIONAL_DOTTED: 34,
+} as const;
+
+const ARROWTYPE = {
+  FILLED: 0,
+  OPEN: 1,
+} as const;
+
+const PLACEMENT = {
+  LEFTOF: 0,
+  RIGHTOF: 1,
+  OVER: 2,
+} as const;
+
 export class SequenceDB implements DiagramDB {
   private readonly state = new ImperativeState<SequenceState>(() => ({
     prevActor: undefined,
@@ -54,52 +100,9 @@ export class SequenceDB implements DiagramDB {
     this.clear();
 
     this.setWrap(getConfig().wrap);
-
-    this.LINETYPE = {
-      SOLID: 0,
-      DOTTED: 1,
-      NOTE: 2,
-      SOLID_CROSS: 3,
-      DOTTED_CROSS: 4,
-      SOLID_OPEN: 5,
-      DOTTED_OPEN: 6,
-      LOOP_START: 10,
-      LOOP_END: 11,
-      ALT_START: 12,
-      ALT_ELSE: 13,
-      ALT_END: 14,
-      OPT_START: 15,
-      OPT_END: 16,
-      ACTIVE_START: 17,
-      ACTIVE_END: 18,
-      PAR_START: 19,
-      PAR_AND: 20,
-      PAR_END: 21,
-      RECT_START: 22,
-      RECT_END: 23,
-      SOLID_POINT: 24,
-      DOTTED_POINT: 25,
-      AUTONUMBER: 26,
-      CRITICAL_START: 27,
-      CRITICAL_OPTION: 28,
-      CRITICAL_END: 29,
-      BREAK_START: 30,
-      BREAK_END: 31,
-      PAR_OVER_START: 32,
-      BIDIRECTIONAL_SOLID: 33,
-      BIDIRECTIONAL_DOTTED: 34,
-    };
-
-    this.ARROWTYPE = {
-      FILLED: 0,
-      OPEN: 1,
-    };
-
-    this.PLACEMENT = {
-      LEFTOF: 0,
-      RIGHTOF: 1,
-      OVER: 2,
-    };
+    this.LINETYPE = LINETYPE;
+    this.ARROWTYPE = ARROWTYPE;
+    this.PLACEMENT = PLACEMENT;
   }
 
   public addBox(data: { text: string; color: string; wrap: boolean }) {
@@ -357,51 +360,9 @@ export class SequenceDB implements DiagramDB {
     };
   }
 
-  public LINETYPE: {
-    SOLID: 0;
-    DOTTED: 1;
-    NOTE: 2;
-    SOLID_CROSS: 3;
-    DOTTED_CROSS: 4;
-    SOLID_OPEN: 5;
-    DOTTED_OPEN: 6;
-    LOOP_START: 10;
-    LOOP_END: 11;
-    ALT_START: 12;
-    ALT_ELSE: 13;
-    ALT_END: 14;
-    OPT_START: 15;
-    OPT_END: 16;
-    ACTIVE_START: 17;
-    ACTIVE_END: 18;
-    PAR_START: 19;
-    PAR_AND: 20;
-    PAR_END: 21;
-    RECT_START: 22;
-    RECT_END: 23;
-    SOLID_POINT: 24;
-    DOTTED_POINT: 25;
-    AUTONUMBER: 26;
-    CRITICAL_START: 27;
-    CRITICAL_OPTION: 28;
-    CRITICAL_END: 29;
-    BREAK_START: 30;
-    BREAK_END: 31;
-    PAR_OVER_START: 32;
-    BIDIRECTIONAL_SOLID: 33;
-    BIDIRECTIONAL_DOTTED: 34;
-  };
-
-  public ARROWTYPE: {
-    FILLED: 0;
-    OPEN: 1;
-  };
-
-  public PLACEMENT: {
-    LEFTOF: 0;
-    RIGHTOF: 1;
-    OVER: 2;
-  };
+  public readonly LINETYPE: typeof LINETYPE;
+  public readonly ARROWTYPE: typeof ARROWTYPE;
+  public readonly PLACEMENT: typeof PLACEMENT;
 
   public addNote(
     actor: { actor: string },
