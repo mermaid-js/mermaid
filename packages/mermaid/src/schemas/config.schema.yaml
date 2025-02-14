@@ -1473,6 +1473,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - bottomMarginAdj
       - useMaxWidth
       - rightAngles
+      - titleColor
+      - titleFontFamily
+      - titleFontSize
     properties:
       diagramMarginX:
         $ref: '#/$defs/C4DiagramConfig/properties/diagramMarginX'
@@ -1573,6 +1576,18 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         items:
           type: string
         default: ['#fff']
+      titleColor: 
+        description: Calculated from textColor
+        type: string
+        default: "#00ff00"
+      titleFontFamily:
+        description: Font family to be used for the title text in Journey Diagrams
+        type: string
+        default: '"Open Sans", sans-serif'
+      titleFontSize: 
+        description: Font size in pixels to be used for the title text in Journey Diagrams
+        type: string
+        default: '32px'
 
   TimelineDiagramConfig:
     # added by https://github.com/mermaid-js/mermaid/commit/0d5246fbc730bf15463d7183fe4400a1e2fc492c

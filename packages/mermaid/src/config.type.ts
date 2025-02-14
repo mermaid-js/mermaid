@@ -604,6 +604,18 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   actorColours?: string[];
   sectionFills?: string[];
   sectionColours?: string[];
+  /**
+   * Calculated from textColor
+   */
+  titleColor?: string;
+  /**
+   * Font family to be used for the title text in Journey Diagrams
+   */
+  titleFontFamily?: string;
+  /**
+   * Font size in pixels to be used for the title text in Journey Diagrams
+   */
+  titleFontSize?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

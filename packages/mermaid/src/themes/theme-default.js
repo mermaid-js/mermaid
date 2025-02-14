@@ -178,7 +178,7 @@ class Theme {
     this.clusterBkg = this.secondBkg;
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
-    this.titleColor = this.titleColor === 'calculated' ? this.textColor : this.titleColor;
+    this.titleColor = this.textColor;
     this.edgeLabelBackground = this.labelBackground;
 
     /* Sequence Diagram variables */
@@ -233,8 +233,6 @@ class Theme {
     this.fillType5 = adjust(this.secondaryColor, { h: -64 });
     this.fillType6 = adjust(this.primaryColor, { h: 128 });
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
-    this.titleFontFamily = this.titleFontFamily || '"trebuchet ms", verdana, arial, sans-serif';
-    this.titleFontSize = this.titleFontSize || '16px';
 
     /* pie */
     this.pie1 = this.pie1 || this.primaryColor;

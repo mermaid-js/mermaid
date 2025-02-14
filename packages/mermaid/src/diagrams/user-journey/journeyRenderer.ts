@@ -48,13 +48,11 @@ function drawActorLegend(diagram) {
 const conf = getConfig().journey;
 const LEFT_MARGIN = conf.leftMargin;
 export const draw = function (text, id, version, diagObj) {
-  const configObject = getConfig();
-  const conf = configObject.journey;
-  const titleColor = configObject.themeVariables.titleColor;
-  const titleFontSize = configObject.themeVariables.titleFontSize;
-  const titleFontFamily = configObject.themeVariables.titleFontFamily;
+  const titleColor = conf.titleColor;
+  const titleFontSize = conf.titleFontSize;
+  const titleFontFamily = conf.titleFontFamily;
 
-  const securityLevel = configObject.securityLevel;
+  const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
