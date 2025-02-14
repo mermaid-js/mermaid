@@ -406,7 +406,7 @@ let getIntersectPoints = function (fromNode, endNode) {
   return { startPoint: startPoint, endPoint: endPoint };
 };
 
-export const drawRels = function (diagram, rels, getC4ShapeObj, diagObj) {
+export const drawRels = function (diagram, id, rels, getC4ShapeObj, diagObj) {
   let i = 0;
   for (let rel of rels) {
     i = i + 1;
@@ -435,7 +435,7 @@ export const drawRels = function (diagram, rels, getC4ShapeObj, diagObj) {
     rel.startPoint = points.startPoint;
     rel.endPoint = points.endPoint;
   }
-  svgDraw.drawRels(diagram, rels, conf);
+  svgDraw.drawRels(diagram, id, rels, conf);
 };
 
 /**
@@ -604,9 +604,9 @@ export const draw = function (_text, id, _version, diagObj) {
   const diagram =
     securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : select(`[id="${id}"]`);
 
-  svgDraw.insertComputerIcon(diagram);
-  svgDraw.insertDatabaseIcon(diagram);
-  svgDraw.insertClockIcon(diagram);
+  svgDraw.insertComputerIcon(diagram, id);
+  svgDraw.insertDatabaseIcon(diagram, id);
+  svgDraw.insertClockIcon(diagram, id);
 
   let screenBounds = new Bounds(diagObj);
 
@@ -630,12 +630,12 @@ export const draw = function (_text, id, _version, diagObj) {
   // }
 
   // The arrow head definition is attached to the svg once
-  svgDraw.insertArrowHead(diagram);
-  svgDraw.insertArrowEnd(diagram);
-  svgDraw.insertArrowCrossHead(diagram);
-  svgDraw.insertArrowFilledHead(diagram);
+  svgDraw.insertArrowHead(diagram, id);
+  svgDraw.insertArrowEnd(diagram, id);
+  svgDraw.insertArrowCrossHead(diagram, id);
+  svgDraw.insertArrowFilledHead(diagram, id);
 
-  drawRels(diagram, diagObj.db.getRels(), diagObj.db.getC4Shape, diagObj);
+  drawRels(diagram, id, diagObj.db.getRels(), diagObj.db.getC4Shape, diagObj);
 
   screenBounds.data.stopx = globalBoundaryMaxX;
   screenBounds.data.stopy = globalBoundaryMaxY;
