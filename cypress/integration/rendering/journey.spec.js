@@ -65,7 +65,7 @@ section Checkout from website
   });
 });
 
-describe('User journey diagra task score behavior validation', () => {
+describe('User journey diagram task score behavior validation', () => {
   it('should throw an error if the task score is non-integer', () => {
     let errorCaught = false;
 
