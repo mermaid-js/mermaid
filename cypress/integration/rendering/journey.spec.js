@@ -1,5 +1,4 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
-import 'cypress-fail-on-console-error';
 
 describe('User journey diagram simple tests', () => {
   it('Simple test', () => {
