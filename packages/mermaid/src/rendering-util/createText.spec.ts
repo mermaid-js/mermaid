@@ -1,12 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { replaceIconSubstring } from './createText.js';
+import { icon } from '@fortawesome/fontawesome-svg-core';
+import { faUser, faArrowRight, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
 
 describe('replaceIconSubstring', () => {
   it('converts FontAwesome icon notations to HTML tags', () => {
     const input = 'This is an icon: fa:fa-user and fab:fa-github';
     const output = replaceIconSubstring(input);
-    const expected =
-      "This is an icon: <i class='fa fa-user'></i> and <i class='fab fa-github'></i>";
+    const expected = `This is an icon: ${icon(faUser).html.join('')} and ${icon(faGithub).html.join('')}`;
     expect(output).toEqual(expected);
   });
 
@@ -19,8 +21,7 @@ describe('replaceIconSubstring', () => {
   it('correctly processes multiple FontAwesome icon notations in one string', () => {
     const input = 'Icons galore: fa:fa-arrow-right, fak:fa-truck, fas:fa-home';
     const output = replaceIconSubstring(input);
-    const expected =
-      "Icons galore: <i class='fa fa-arrow-right'></i>, <i class='fak fa-truck'></i>, <i class='fas fa-home'></i>";
+    const expected = `Icons galore: ${icon(faArrowRight).html.join()}, <i class='fak fa-truck'></i>, ${icon(faHome).html.join()}`;
     expect(output).toEqual(expected);
   });
 
