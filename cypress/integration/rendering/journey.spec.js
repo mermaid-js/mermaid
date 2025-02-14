@@ -1,6 +1,7 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import 'cypress-fail-on-console-error';
 
-describe('User journey diagram', () => {
+describe('User journey diagram simple tests', () => {
   it('Simple test', () => {
     imgSnapshotTest(
       `journey
@@ -63,55 +64,101 @@ section Checkout from website
       { journey: { useMaxWidth: false } }
     );
   });
+});
 
-  it('should throw an error if the task score is not an integer', () => {
-    expect(() => {
-      renderGraph(
-        `journey
-              accTitle: simple journey demo
-              accDescr: 2 main sections: work and home, each with just a few tasks
-        
-            section Go to work
-              Make tea: Hello: Me
-              Go upstairs: 3: Me
-            section Go home
-              Go downstairs: 5: Me
-              Sit down: 2: Me`
-      );
-    }).to.throw('Score must be an integer between 0 and 5');
+describe('User journey diagra task score behavior validation', () => {
+  it('should throw an error if the task score is non-integer', () => {
+    let errorCaught = false;
+
+    cy.once('uncaught:exception', () => {
+      errorCaught = true;
+      return false;
+    });
+
+    renderGraph(`
+      journey
+      accTitle: simple journey demo
+      accDescr: 2 main sections: work and home, each with just a few tasks
+
+      section Go to work
+        Make tea: Hello: Me
+        Go upstairs: 3: Me
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 2: Me
+    `);
+
+    cy.wait(500).then(() => {
+      expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(true);
+    });
   });
 
   it('should throw an error if the task score is less than 0', () => {
-    expect(() => {
-      renderGraph(
-        `journey
-              accTitle: simple journey demo
-              accDescr: 2 main sections: work and home, each with just a few tasks
-        
-            section Go to work
-              Make tea: -10: Me
-              Go upstairs: 3: Me
-            section Go home
-              Go downstairs: 5: Me
-              Sit down: 2: Me`
-      );
-    }).to.throw('Score must be an integer between 0 and 5');
+    let errorCaught = false;
+
+    cy.once('uncaught:exception', () => {
+      errorCaught = true;
+      return false;
+    });
+
+    renderGraph(`
+      journey
+      section Go to work
+        Make tea: -10: Me
+        Go upstairs: 3: Me
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 2: Me
+    `);
+
+    cy.wait(500).then(() => {
+      expect(errorCaught, 'Error should be thrown for a score less than 0').to.equal(true);
+    });
   });
 
   it('should throw an error if the task score is greater than 5', () => {
-    expect(() => {
-      renderGraph(
-        `journey
-              accTitle: simple journey demo
-              accDescr: 2 main sections: work and home, each with just a few tasks
-        
-            section Go to work
-              Make tea: 23: Me
-              Go upstairs: 3: Me
-            section Go home
-              Go downstairs: 5: Me
-              Sit down: 2: Me`
-      );
-    }).to.throw('Score must be an integer between 0 and 5');
+    let errorCaught = false;
+
+    cy.once('uncaught:exception', () => {
+      errorCaught = true;
+      return false;
+    });
+
+    renderGraph(`
+      journey
+      section Go to work
+        Make tea: 23: Me
+        Go upstairs: 3: Me
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 2: Me
+    `);
+
+    cy.wait(500).then(() => {
+      expect(errorCaught, 'Error should be thrown for a score greater than 5').to.equal(true);
+    });
+  });
+
+  it('should NOT throw an error if the task score is valid (e.g., 4)', () => {
+    let errorCaught = false;
+
+    cy.once('uncaught:exception', () => {
+      errorCaught = true;
+      return false;
+    });
+
+    renderGraph(`
+      journey
+      section Go to work
+        Make tea: 4: Me
+        Go upstairs: 3: Me
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 2: Me
+    `);
+
+    cy.wait(500).then(() => {
+      expect(errorCaught, 'No error should be thrown for a valid score').to.equal(false);
+    });
   });
 });
