@@ -13,7 +13,6 @@ import {
 } from '../common/commonDb.js';
 import { dataFetcher, reset as resetDataFetching } from './dataFetcher.js';
 import { getDir } from './stateRenderer-v3-unified.js';
-
 import {
   DEFAULT_DIAGRAM_DIRECTION,
   DEFAULT_STATE_TYPE,
