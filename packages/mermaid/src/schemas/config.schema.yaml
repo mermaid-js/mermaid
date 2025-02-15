@@ -2150,6 +2150,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           The suffix to use for values
         type: string
         default: ''
+      colors:
+        description: |
+          Custom colors for nodes in the sankey diagram. Keys are node IDs and values are color strings.
+        type: object
+        additionalProperties:
+          type: string
+        default: {}
 
   PacketDiagramConfig:
     title: Packet Diagram Config
