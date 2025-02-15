@@ -29,7 +29,7 @@ env:
       github.event.before
     }}
   RUN_VISUAL_TEST: >-
-    ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/') }}
+    ${{ github.repository == 'mermaid-js/mermaid' && (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/')) }}
 jobs:
   cache:
     runs-on: ubuntu-latest

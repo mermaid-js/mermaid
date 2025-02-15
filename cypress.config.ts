@@ -27,7 +27,7 @@ export default eyesPlugin(
 
         if (config.env.useArgos) {
           registerArgosTask(on, config, {
-            token: 'fc3a35cf5200db928d65b2047861582d9444032b',
+            token: 'argos_cde7ec66b3c53730a7bbe4059a517f4a76',
           });
         } else {
           addMatchImageSnapshotPlugin(on, config);
