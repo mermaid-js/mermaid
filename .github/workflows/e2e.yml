@@ -19,3 +19,14 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
+      - name: Check if running on GitHub Actions
+        run: |
+          if [ -z "$CI" ] || [ -z "$GITHUB_RUN_ID" ]; then
+            echo "Not running on GitHub Actions"
+            exit 1
+          fi
+
+          RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}")
+
+          echo "$RESPONSE"
