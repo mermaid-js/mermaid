@@ -48,7 +48,7 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
 
 ## Plans
 
-- **Free** - A free plan that includes five diagrams.
+- **Free** - A free plan that includes three diagrams.
 
 - **Pro** - A paid plan that includes unlimited diagrams, access to the collaboration feature, and more.
 
