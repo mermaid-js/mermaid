@@ -1,11 +1,12 @@
-import { parser } from './parser/stateDiagram.jison';
-import stateDb from './stateDb.js';
-import stateDiagram from './parser/stateDiagram.jison';
+import stateDiagram, { parser } from './parser/stateDiagram.jison';
+import { StateDB } from './stateDb.js';
 
 describe('state diagram V2, ', function () {
   // TODO - these examples should be put into ./parser/stateDiagram.spec.js
   describe('when parsing an info graph it', function () {
+    let stateDb;
     beforeEach(function () {
+      stateDb = new StateDB();
       parser.yy = stateDb;
       stateDiagram.parser.yy = stateDb;
       stateDiagram.parser.yy.clear();
@@ -127,7 +128,6 @@ describe('state diagram V2, ', function () {
         `;
 
         stateDiagram.parser.parse(diagram);
-        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
         const rels = stateDb.getRelations();
         const rel_1_2 = rels.find((rel) => rel.id1 === 'State1' && rel.id2 === 'State2');
@@ -402,7 +402,6 @@ describe('state diagram V2, ', function () {
         `;
 
       stateDiagram.parser.parse(diagram);
-      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
       const states = stateDb.getStates();
       expect(states.get('Active').doc[0].id).toEqual('Idle');
