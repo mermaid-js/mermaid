@@ -29,7 +29,7 @@ env:
       github.event.before
     }}
   RUN_VISUAL_TEST: >-
-    ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/') }}
+    ${{ github.repository == 'mermaid-js/mermaid' && (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/')) }}
 jobs:
   cache:
     runs-on: ubuntu-latest
@@ -129,8 +129,6 @@ jobs:
           # e.g. if this action was run from a fork
           record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
-          # Only set Argos environment variables if the visual test comment trigger is present
-          ARGOS_TOKEN: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.ARGOS_TOKEN || '' }}
           ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
           ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
           ARGOS_PARALLEL_INDEX: ${{ env.RUN_VISUAL_TEST == 'true' && matrix.containers || 1 }}
