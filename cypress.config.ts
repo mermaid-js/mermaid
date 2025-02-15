@@ -5,6 +5,14 @@ import { defineConfig } from 'cypress';
 import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin';
 import cypressSplit from 'cypress-split';
 
+const encodeArgosToken = (options: {
+  owner: string;
+  repository: string;
+  jobId: string;
+  runId: string;
+}) => `tokenless-github-${Buffer.from(JSON.stringify(options), 'utf8').toString('base64')}`;
+// cspell:ignore tokenless
+
 export default eyesPlugin(
   defineConfig({
     projectId: 'n2sma2',
@@ -26,8 +34,22 @@ export default eyesPlugin(
         config.env.useArgos = !!process.env.CI && !!process.env.ARGOS_TOKEN;
 
         if (config.env.useArgos) {
+          if (!process.env.GITHUB_REPOSITORY) {
+            throw new Error('GITHUB_REPOSITORY is not set');
+          }
+          if (!process.env.GITHUB_JOB) {
+            throw new Error('GITHUB_JOB is not set');
+          }
+          if (!process.env.GITHUB_RUN_ID) {
+            throw new Error('GITHUB_RUN_ID is not set');
+          }
           registerArgosTask(on, config, {
-            token: 'argos_cde7ec66b3c53730a7bbe4059a517f4a76',
+            token: encodeArgosToken({
+              owner: process.env.GITHUB_REPOSITORY.split('/')[0],
+              repository: process.env.GITHUB_REPOSITORY.split('/')[1],
+              jobId: process.env.GITHUB_JOB,
+              runId: process.env.GITHUB_RUN_ID,
+            }),
           });
         } else {
           addMatchImageSnapshotPlugin(on, config);
