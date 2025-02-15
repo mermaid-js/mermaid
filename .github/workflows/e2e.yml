@@ -11,9 +11,6 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
-permissions:
-  contents: read
-
 jobs:
   cache:
     runs-on: ubuntu-latest
