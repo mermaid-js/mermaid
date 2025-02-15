@@ -1482,6 +1482,13 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   suffix?: string;
+  /**
+   * Custom colors for nodes in the sankey diagram.
+   * Keys are node IDs and values are color strings.
+   */
+  colors?: {
+    [key: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for packet diagrams.
