@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-`mermaidAPI.getDiagramFromText()` now returns a new different db for each state diagram
+`mermaidAPI.getDiagramFromText()` now returns a new db instance on each call for state diagrams
