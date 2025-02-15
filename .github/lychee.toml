@@ -47,7 +47,10 @@ exclude = [
 "https://(www.)?drupal.org",
 
 # Swimm returns 404, eventhough the link is valid
-"https://docs.swimm.io"
+"https://docs.swimm.io",
+
+# Timeout
+"https://huehive.co"
 ]
 
 # Exclude all private IPs from checking.
