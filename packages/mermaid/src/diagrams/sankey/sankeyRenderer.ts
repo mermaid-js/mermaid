@@ -124,7 +124,9 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       return d.y1 - d.y0;
     })
     .attr('width', (d: any) => d.x1 - d.x0)
-    .attr('fill', (d: any) => {return customColors[d.id] || colorScheme(d.id);});
+    .attr('fill', (d: any) => {
+      return customColors[d.id] || colorScheme(d.id);
+    });
 
   const getText = ({ id, value }: { id: string; value: number }) => {
     if (!showValues) {
