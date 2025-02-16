@@ -1,6 +1,5 @@
 import type { Diagram } from '../../Diagram.js';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
-import { log } from '../../logger.js';
 import {
   select as d3select,
   scaleOrdinal as d3scaleOrdinal,
@@ -125,16 +124,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       return d.y1 - d.y0;
     })
     .attr('width', (d: any) => d.x1 - d.x0)
-    .attr('fill', (d: any) => {
-  log.debug('Node color debug:', {
-    id: d.id,
-    customColor: customColors[d.id],
-    fallbackColor: colorScheme(d.id),
-    allCustomColors: customColors,
-    fullConfig: conf
-  });
-  return customColors[d.id] || colorScheme(d.id);
-});
+    .attr('fill', (d: any) => {return customColors[d.id] || colorScheme(d.id);});
 
   const getText = ({ id, value }: { id: string; value: number }) => {
     if (!showValues) {
