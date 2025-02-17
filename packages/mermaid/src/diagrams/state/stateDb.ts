@@ -202,7 +202,7 @@ export class StateDB {
     DEPENDENCY: 3,
   } as const;
 
-  constructor() {
+  constructor(private version: 1 | 2) {
     this.clear();
 
     // Needed for JISON since it only supports direct properties
@@ -215,7 +215,11 @@ export class StateDB {
   setRootDoc(o: Stmt[]) {
     log.info('Setting root doc', o);
     this.rootDoc = o;
-    this.extract(o);
+    if (this.version === 1) {
+      this.extract(o);
+    } else {
+      this.extract(this.getRootDocV2());
+    }
   }
 
   docTranslator(parent: RootStmt | StateStmt, node: Stmt, first: boolean) {
@@ -267,7 +271,7 @@ export class StateDB {
     node.doc.forEach((docNode) => this.docTranslator(node, docNode, true));
   }
 
-  getRootDocV2() {
+  private getRootDocV2() {
     this.docTranslator(
       { id: 'root', stmt: 'root' },
       { id: 'root', stmt: 'root', doc: this.rootDoc },
