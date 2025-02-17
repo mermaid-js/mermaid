@@ -20,6 +20,7 @@ import {
   STMT_APPLYCLASS,
   STMT_CLASSDEF,
   STMT_RELATION,
+  STMT_ROOT,
   STMT_STATE,
   STMT_STYLEDEF,
 } from './stateCommon.js';
@@ -65,11 +66,15 @@ interface RelationStmt extends BaseStmt {
 export interface StateStmt extends BaseStmt {
   stmt: 'state' | 'default';
   id: string;
-  type: 'default' | 'fork' | 'join' | 'choice' | 'divider';
+  type: 'default' | 'fork' | 'join' | 'choice' | 'divider' | 'start' | 'end';
   description?: string;
+  descriptions?: string[];
   doc?: Stmt[];
   note?: Note;
   start?: boolean;
+  classes?: string[];
+  styles?: string[];
+  textStyles?: string[];
 }
 
 interface StyleStmt extends BaseStmt {
@@ -85,7 +90,7 @@ export interface RootStmt {
 }
 
 interface Note {
-  position: 'left_of' | 'right_of';
+  position?: 'left_of' | 'right_of';
   text: string;
 }
 
@@ -98,17 +103,6 @@ export type Stmt =
   | StyleStmt
   | RootStmt;
 
-export interface State {
-  id: string;
-  descriptions: string[];
-  type: string;
-  doc: Stmt[] | null;
-  note: { position?: string; text: string } | null;
-  classes: string[];
-  styles: string[];
-  textStyles: string[];
-}
-
 interface DiagramEdge {
   id1: string;
   id2: string;
@@ -117,7 +111,7 @@ interface DiagramEdge {
 
 interface Document {
   relations: DiagramEdge[];
-  states: Map<string, State>;
+  states: Map<string, StateStmt>;
   documents: Record<string, Document>;
 }
 
@@ -229,34 +223,35 @@ export class StateDB {
       return;
     }
 
-    if (node.stmt !== STMT_STATE) {
-      return;
+    if (node.stmt === STMT_STATE) {
+      if (node.id === '[*]') {
+        node.id = parent.id + (first ? '_start' : '_end');
+        node.start = first;
+      } else {
+        // This is just a plain state, not a start or end
+        node.id = node.id.trim();
+      }
     }
 
-    if (node.id === '[*]') {
-      node.id = parent.id + (first ? '_start' : '_end');
-      node.start = first;
-    } else {
-      node.id = node.id.trim();
-    }
-
-    if (!node.doc) {
+    if ((node.stmt !== STMT_ROOT && node.stmt !== STMT_STATE) || !node.doc) {
       return;
     }
 
     const doc = [];
+    // Check for concurrency
     let currentDoc = [];
-    for (const docItem of node.doc) {
-      if ('type' in docItem && docItem.type === DIVIDER_TYPE) {
-        const newNode = clone(docItem);
+    for (const stmt of node.doc) {
+      if ((stmt as StateStmt).type === DIVIDER_TYPE) {
+        const newNode = clone(stmt);
         newNode.doc = clone(currentDoc);
         doc.push(newNode);
         currentDoc = [];
       } else {
-        currentDoc.push(docItem);
+        currentDoc.push(stmt);
       }
     }
 
+    // If any divider was encountered
     if (doc.length > 0 && currentDoc.length > 0) {
       const newNode = {
         stmt: STMT_STATE,
@@ -273,11 +268,11 @@ export class StateDB {
 
   private getRootDocV2() {
     this.docTranslator(
-      { id: 'root', stmt: 'root' },
-      { id: 'root', stmt: 'root', doc: this.rootDoc },
+      { id: STMT_ROOT, stmt: STMT_ROOT },
+      { id: STMT_ROOT, stmt: STMT_ROOT, doc: this.rootDoc },
       true
     );
-    return { id: 'root', doc: this.rootDoc };
+    return { id: STMT_ROOT, doc: this.rootDoc };
   }
 
   /**
@@ -290,7 +285,6 @@ export class StateDB {
    * This will push the statement into the list of statements for the current document.
    */
   extract(_statements: Stmt[] | { doc: Stmt[] }) {
-    // console.trace('Statements', _statements);
     this.clear(true);
     const statements = Array.isArray(_statements) ? _statements : _statements.doc;
     statements.forEach((item) => {
@@ -367,18 +361,19 @@ export class StateDB {
    */
   addState(
     id: string,
-    type: string = DEFAULT_STATE_TYPE,
-    doc: Stmt[] | null = null,
-    descr: string | string[] | null = null,
-    note: { position?: string; text: string } | null = null,
-    classes: string | string[] | null = null,
-    styles: string | string[] | null = null,
-    textStyles: string | string[] | null = null
+    type: StateStmt['type'] = DEFAULT_STATE_TYPE,
+    doc: Stmt[] | undefined = undefined,
+    descr: string | string[] | undefined = undefined,
+    note: Note | undefined = undefined,
+    classes: string | string[] | undefined = undefined,
+    styles: string | string[] | undefined = undefined,
+    textStyles: string | string[] | undefined = undefined
   ) {
     const trimmedId = id?.trim();
     if (!this.currentDocument.states.has(trimmedId)) {
       log.info('Adding state ', trimmedId, descr);
       this.currentDocument.states.set(trimmedId, {
+        stmt: STMT_STATE,
         id: trimmedId,
         descriptions: [],
         type,
@@ -490,7 +485,7 @@ export class StateDB {
    * If the id is a start node ( [*] ), then return the start type ('start')
    * else return the given type
    */
-  startTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
+  startTypeIfNeeded(id = '', type: StateStmt['type'] = DEFAULT_STATE_TYPE) {
     return id === START_NODE ? START_TYPE : type;
   }
 
@@ -513,7 +508,7 @@ export class StateDB {
    * else return the given type
    *
    */
-  endTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
+  endTypeIfNeeded(id = '', type: StateStmt['type'] = DEFAULT_STATE_TYPE) {
     return id === END_NODE ? END_TYPE : type;
   }
 
@@ -522,10 +517,26 @@ export class StateDB {
     const type1 = this.startTypeIfNeeded(item1.id.trim(), item1.type);
     const id2 = this.startIdIfNeeded(item2.id.trim());
     const type2 = this.startTypeIfNeeded(item2.id.trim(), item2.type);
-
-    this.addState(id1, type1, item1.doc, item1.description, item1.note);
-    this.addState(id2, type2, item2.doc, item2.description, item2.note);
-
+    this.addState(
+      id1,
+      type1,
+      item1.doc,
+      item1.description,
+      item1.note,
+      item1.classes,
+      item1.styles,
+      item1.textStyles
+    );
+    this.addState(
+      id2,
+      type2,
+      item2.doc,
+      item2.description,
+      item2.note,
+      item2.classes,
+      item2.styles,
+      item2.textStyles
+    );
     this.currentDocument.relations.push({
       id1,
       id2,
@@ -558,12 +569,12 @@ export class StateDB {
   addDescription(id: string, descr: string) {
     const theState = this.currentDocument.states.get(id);
     const _descr = descr.startsWith(':') ? descr.replace(':', '').trim() : descr;
-    theState!.descriptions.push(common.sanitizeText(_descr, getConfig()));
+    theState?.descriptions?.push(common.sanitizeText(_descr, getConfig()));
   }
 
   cleanupLabel(label: string) {
     if (label.startsWith(':')) {
-      return label.substr(2).trim();
+      return label.slice(2).trim();
     } else {
       return label.trim();
     }
@@ -620,7 +631,7 @@ export class StateDB {
         this.addState(trimmedId);
         foundState = this.getState(trimmedId);
       }
-      foundState!.classes.push(cssClassName);
+      foundState?.classes?.push(cssClassName);
     });
   }
 
@@ -637,7 +648,7 @@ export class StateDB {
   setStyle(itemId: string, styleText: string) {
     const item = this.getState(itemId);
     if (item !== undefined) {
-      item.styles.push(styleText);
+      item.styles?.push(styleText);
     }
   }
 
@@ -650,7 +661,7 @@ export class StateDB {
   setTextStyle(itemId: string, cssClassName: string) {
     const item = this.getState(itemId);
     if (item !== undefined) {
-      item.textStyles.push(cssClassName);
+      item.textStyles?.push(cssClassName);
     }
   }
 
@@ -663,7 +674,7 @@ export class StateDB {
   }
 
   trimColon(str: string) {
-    return str.startsWith(':') ? str.substr(1).trim() : str.trim();
+    return str.startsWith(':') ? str.slice(1).trim() : str.trim();
   }
 
   getData() {
