@@ -34,7 +34,7 @@ import {
   STMT_RELATION,
   STMT_STATE,
 } from './stateCommon.js';
-import type { Edge, NodeData, State, StateStmt, Stmt, StyleClass } from './stateDb.js';
+import type { Edge, NodeData, StateStmt, Stmt, StyleClass } from './stateDb.js';
 
 // List of nodes created from the parsed diagram statement items
 const nodeDb = new Map<string, NodeData>();
@@ -59,7 +59,7 @@ export function stateDomId(
 const setupDoc = (
   parentParsedItem: StateStmt | undefined,
   doc: Stmt[],
-  diagramStates: Map<string, State>,
+  diagramStates: Map<string, StateStmt>,
   nodes: NodeData[],
   edges: Edge[],
   altFlag: boolean,
@@ -177,18 +177,18 @@ function insertOrUpdateNode(
  * Else create 1 string from the list of classes found
  *
  */
-function getClassesFromDbInfo(dbInfoItem?: State): string {
+function getClassesFromDbInfo(dbInfoItem?: StateStmt): string {
   return dbInfoItem?.classes?.join(' ') ?? '';
 }
 
-function getStylesFromDbInfo(dbInfoItem?: State): string[] {
+function getStylesFromDbInfo(dbInfoItem?: StateStmt): string[] {
   return dbInfoItem?.styles ?? [];
 }
 
 export const dataFetcher = (
   parent: StateStmt | undefined,
   parsedItem: StateStmt,
-  diagramStates: Map<string, State>,
+  diagramStates: Map<string, StateStmt>,
   nodes: NodeData[],
   edges: Edge[],
   altFlag: boolean,
