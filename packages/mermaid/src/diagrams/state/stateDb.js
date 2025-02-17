@@ -643,10 +643,17 @@ export class StateDB {
   }
 
   getDirection() {
+    const doc = this.rootDoc.find((doc) => doc.stmt === 'dir');
+    this.direction = doc ? doc.value : 'TB';
     return this.direction;
   }
   setDirection(dir) {
-    this.direction = dir;
+    let doc = this.rootDoc.find((doc) => doc.stmt === 'dir');
+    if (doc) {
+      doc.value = dir;
+    } else {
+      this.rootDoc.unshift({ stmt: 'dir', value: dir });
+    }
   }
 
   trimColon(str) {
