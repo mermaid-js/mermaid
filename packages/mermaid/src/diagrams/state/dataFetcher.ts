@@ -355,7 +355,7 @@ export const dataFetcher = (
       let from = itemId;
       let to = noteData.id;
 
-      if (parsedItem.note.position === 'left_of') {
+      if (parsedItem.note.position === 'left of') {
         from = noteData.id;
         to = itemId;
       }

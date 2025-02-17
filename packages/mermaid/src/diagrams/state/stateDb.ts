@@ -90,7 +90,7 @@ export interface RootStmt {
 }
 
 interface Note {
-  position?: 'left_of' | 'right_of';
+  position?: 'left of' | 'right of';
   text: string;
 }
 
