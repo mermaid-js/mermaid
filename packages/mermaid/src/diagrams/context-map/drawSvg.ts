@@ -265,7 +265,7 @@ export class ContextMapLink {
       .attr('fill', 'white')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('display', boxText?.length ?? 0 ? null : 'none');
+      .attr('display', (boxText?.length ?? 0) ? null : 'none');
 
     label
       .append('text')
@@ -285,7 +285,7 @@ export class ContextMapLink {
       .attr('fill', 'white')
       .attr('x', bodyPosition.x)
       .attr('y', bodyPosition.y)
-      .attr('display', bodyText?.length ?? 0 ? null : 'none');
+      .attr('display', (bodyText?.length ?? 0) ? null : 'none');
 
     label
       .append('text')
