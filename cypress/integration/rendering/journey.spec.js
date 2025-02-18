@@ -68,10 +68,7 @@ section Checkout from website
     renderGraph(
       `---
 config:
-  theme: "forest"
-  themeVariables:
-    primaryColor: "#00ff00"
-    secondaryColor: "#fff"
+  journey:
     titleColor: "#2900A5"
     titleFontFamily: "Times New Roman"
     titleFontSize: "5rem"
