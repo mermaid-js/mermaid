@@ -61,6 +61,11 @@ const config: RequiredDeep<MermaidConfig> = {
     tickInterval: undefined,
     useWidth: undefined, // can probably be removed since `configKeys` already includes this
   },
+  contextMap: {
+    ...defaultConfigJson.contextMap,
+    useWidth: undefined,
+    useMaxWidth: false,
+  },
   c4: {
     ...defaultConfigJson.c4,
     useWidth: undefined,

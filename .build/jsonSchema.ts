@@ -20,6 +20,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'requirement',
   'mindmap',
   'kanban',
+  'contextMap',
   'timeline',
   'gitGraph',
   'c4',
