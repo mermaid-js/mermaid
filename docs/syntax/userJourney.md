@@ -39,4 +39,4 @@ the user is trying to complete.
 
 Tasks syntax is `Task name: <score>: <comma separated list of actors>`
 
-**Input Constraint for Task Scores:** The score must be an integer between **0** and **5**.
+**Input Constraint for Task Scores:** The score must be an integer between **0** and **5**!
