@@ -657,13 +657,21 @@ export class StateDB {
     }
   }
 
-  getDirection() {
-    const doc = this.rootDoc.find((doc) => doc.stmt === STMT_DIRECTION);
-    const direction = doc ? doc.value : DEFAULT_DIAGRAM_DIRECTION;
-    return direction;
+  /**
+   * Finds the direction statement in the root document.
+   * @private
+   * @returns {{ value: string } | undefined} - the direction statement if present
+   */
+  getDirectionStatement() {
+    return this.rootDoc.find((doc) => doc.stmt === STMT_DIRECTION);
   }
+
+  getDirection() {
+    return this.getDirectionStatement()?.value ?? DEFAULT_DIAGRAM_DIRECTION;
+  }
+
   setDirection(dir) {
-    const doc = this.rootDoc.find((doc) => doc.stmt === STMT_DIRECTION);
+    const doc = this.getDirectionStatement();
     if (doc) {
       doc.value = dir;
     } else {
