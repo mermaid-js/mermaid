@@ -93,15 +93,14 @@ function addConf(conf, key, value) {
 }
 
 // const parser = sequence.parser;
-let diagram;
 
 describe('more than one sequence diagram', () => {
   it('should not have duplicated messages', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
         sequenceDiagram
         Alice->Bob:Hello Bob, how are you?
         Bob-->Alice: I am good thanks!`);
-    expect(diagram1.db.getMessages()).toMatchInlineSnapshot(`
+    expect(diagram.db.getMessages()).toMatchInlineSnapshot(`
       [
         {
           "activate": false,
@@ -183,6 +182,7 @@ describe('more than one sequence diagram', () => {
 });
 
 describe('when parsing a sequenceDiagram', function () {
+  let diagram;
   beforeEach(async function () {
     diagram = await Diagram.fromText(`
 sequenceDiagram
@@ -190,14 +190,7 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`);
   });
-  it('should handle a sequenceDiagram definition', async function () {
-    const str = `
-sequenceDiagram
-Alice->Bob:Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
-
-    await mermaidAPI.parse(str);
+  it('should handle a sequenceDiagram definition', function () {
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -215,7 +208,6 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    await mermaidAPI.parse(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(false);
   });
@@ -227,27 +219,27 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    const diagram1 = await Diagram.fromText(str);
+    const diagram = await Diagram.fromText(str);
 
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1); // needs to be rendered for the correct value of visibility auto numbers
-    expect(diagram1.db.showSequenceNumbers()).toBe(true);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
+    expect(diagram.db.showSequenceNumbers()).toBe(true);
   });
 
   it('should handle a sequenceDiagram definition with a title:', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 title: Diagram Title
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    expect(diagram1.db.getAccDescription()).toBe('');
-    const messages = diagram1.db.getMessages();
-    const title = diagram1.db.getDiagramTitle();
+    expect(diagram.db.getAccDescription()).toBe('');
+    const messages = diagram.db.getMessages();
+    const title = diagram.db.getDiagramTitle();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
@@ -256,20 +248,20 @@ Bob-->Alice: I am good thanks!`);
   });
 
   it('should handle a sequenceDiagram definition with a title without a :', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 title Diagram Title
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    expect(diagram1.db.getAccDescription()).toBe('');
-    const messages = diagram1.db.getMessages();
-    const title = diagram1.db.getDiagramTitle();
+    expect(diagram.db.getAccDescription()).toBe('');
+    const messages = diagram.db.getMessages();
+    const title = diagram.db.getDiagramTitle();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
@@ -278,7 +270,7 @@ Bob-->Alice: I am good thanks!`);
   });
 
   it('should handle a sequenceDiagram definition with a accessibility title and description (accDescr)', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 title: Diagram Title
 accTitle: This is the title
@@ -286,12 +278,12 @@ accDescr: Accessibility Description
 Alice->Bob:Hello Bob, how are you?
 `);
 
-    expect(diagram1.db.getDiagramTitle()).toBe('Diagram Title');
-    expect(diagram1.db.getAccTitle()).toBe('This is the title');
-    expect(diagram1.db.getAccDescription()).toBe('Accessibility Description');
+    expect(diagram.db.getDiagramTitle()).toBe('Diagram Title');
+    expect(diagram.db.getAccTitle()).toBe('This is the title');
+    expect(diagram.db.getAccDescription()).toBe('Accessibility Description');
   });
   it('should handle a sequenceDiagram definition with a accessibility title and multiline description (accDescr)', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 accTitle: This is the title
 accDescr {
@@ -301,37 +293,37 @@ Description
 Alice->Bob:Hello Bob, how are you?
 `);
 
-    expect(diagram1.db.getAccTitle()).toBe('This is the title');
-    expect(diagram1.db.getAccDescription()).toBe('Accessibility\nDescription');
+    expect(diagram.db.getAccTitle()).toBe('This is the title');
+    expect(diagram.db.getAccDescription()).toBe('Accessibility\nDescription');
   });
 
   it('should space in actor names', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob:Hello Bob, how are - you?
 Bob-->Alice: I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(2);
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
   });
   it('should handle dashes in actor names', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice-in-Wonderland->Bob:Hello Bob, how are - you?
 Bob-->Alice-in-Wonderland:I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice-in-Wonderland').description).toBe('Alice-in-Wonderland');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(2);
     expect(messages[0].from).toBe('Alice-in-Wonderland');
@@ -339,19 +331,19 @@ Bob-->Alice-in-Wonderland:I am good thanks!`);
   });
 
   it('should handle dashes in participant names', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant Alice-in-Wonderland
 participant Bob
 Alice-in-Wonderland->Bob:Hello Bob, how are - you?
 Bob-->Alice-in-Wonderland:I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect([...actors.keys()]).toEqual(['Alice-in-Wonderland', 'Bob']);
     expect(actors.get('Alice-in-Wonderland').description).toBe('Alice-in-Wonderland');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(2);
     expect(messages[0].from).toBe('Alice-in-Wonderland');
@@ -359,26 +351,26 @@ Bob-->Alice-in-Wonderland:I am good thanks!`);
   });
 
   it('should alias participants', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant A as Alice
 participant B as Bob
 A->B:Hello Bob, how are you?
 B-->A: I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
 
     expect([...actors.keys()]).toEqual(['A', 'B']);
     expect(actors.get('A').description).toBe('Alice');
     expect(actors.get('B').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages.length).toBe(2);
     expect(messages[0].from).toBe('A');
     expect(messages[1].from).toBe('B');
   });
   it('should alias a mix of actors and participants apa12', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
   actor Alice as Alice2
   actor Bob
@@ -390,7 +382,7 @@ sequenceDiagram
   John->>Mandy: Hi Mandy
   Mandy ->>Joan: Hi Joan`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect([...actors.keys()]).toEqual(['Alice', 'Bob', 'John', 'Mandy', 'Joan']);
     expect(actors.get('Alice').description).toBe('Alice2');
     expect(actors.get('Alice').type).toBe('actor');
@@ -398,212 +390,212 @@ sequenceDiagram
     expect(actors.get('John').type).toBe('participant');
     expect(actors.get('Joan').type).toBe('participant');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages.length).toBe(5);
     expect(messages[0].from).toBe('Alice');
     expect(messages[4].to).toBe('Joan');
   });
   it('should alias actors apa13', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 actor A as Alice
 actor B as Bob
 A->B:Hello Bob, how are you?
 B-->A: I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect([...actors.keys()]).toEqual(['A', 'B']);
     expect(actors.get('A').description).toBe('Alice');
     expect(actors.get('B').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages.length).toBe(2);
     expect(messages[0].from).toBe('A');
     expect(messages[1].from).toBe('B');
   });
   it('should handle in async messages', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice-xBob:Hello Bob, how are you?`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(1);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.SOLID_CROSS);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.SOLID_CROSS);
   });
   it('should handle in async dotted messages', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice--xBob:Hello Bob, how are you?`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(1);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.DOTTED_CROSS);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED_CROSS);
   });
   it('should handle in sync messages', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice-)Bob:Hello Bob, how are you?`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(1);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.SOLID_POINT);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.SOLID_POINT);
   });
   it('should handle in sync dotted messages', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice--)Bob:Hello Bob, how are you?`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(1);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.DOTTED_POINT);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED_POINT);
   });
   it('should handle in arrow messages', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->>Bob:Hello Bob, how are you?`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(1);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.SOLID);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.SOLID);
   });
   it('should handle in arrow messages', async () => {
-    const diagram1 = await Diagram.fromText(
+    const diagram = await Diagram.fromText(
       'sequenceDiagram\n' + 'Alice-->>Bob:Hello Bob, how are you?'
     );
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(1);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.DOTTED);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
   });
   it('should handle bidirectional arrow messages', async () => {
-    const diagram1 = await Diagram.fromText(
+    const diagram = await Diagram.fromText(
       `
 sequenceDiagram
 Alice<<->>Bob:Hello Bob, how are you?`
     );
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(1);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.BIDIRECTIONAL_SOLID);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.BIDIRECTIONAL_SOLID);
   });
   it('should handle bidirectional dotted arrow messages', async () => {
-    const diagram1 = await Diagram.fromText(
+    const diagram = await Diagram.fromText(
       `
     sequenceDiagram
     Alice<<-->>Bob:Hello Bob, how are you?`
     );
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(1);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.BIDIRECTIONAL_DOTTED);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.BIDIRECTIONAL_DOTTED);
   });
   it('should handle actor activation', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice-->>Bob:Hello Bob, how are you?
 activate Bob
 Bob-->>Alice:Hello Alice, I'm fine and  you?
 deactivate Bob`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(4);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.DOTTED);
-    expect(messages[1].type).toBe(diagram1.db.LINETYPE.ACTIVE_START);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
+    expect(messages[1].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
     expect(messages[1].from).toBe('Bob');
-    expect(messages[2].type).toBe(diagram1.db.LINETYPE.DOTTED);
-    expect(messages[3].type).toBe(diagram1.db.LINETYPE.ACTIVE_END);
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.DOTTED);
+    expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
     expect(messages[3].from).toBe('Bob');
   });
   it('should handle actor one line notation activation', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
     sequenceDiagram
     Alice-->>+Bob:Hello Bob, how are you?
     Bob-->>- Alice:Hello Alice, I'm fine and  you?`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(4);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.DOTTED);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
     expect(messages[0].activate).toBeTruthy();
-    expect(messages[1].type).toBe(diagram1.db.LINETYPE.ACTIVE_START);
+    expect(messages[1].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
     expect(messages[1].from).toBe('Bob');
-    expect(messages[2].type).toBe(diagram1.db.LINETYPE.DOTTED);
-    expect(messages[3].type).toBe(diagram1.db.LINETYPE.ACTIVE_END);
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.DOTTED);
+    expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
     expect(messages[3].from).toBe('Bob');
   });
   it('should handle stacked activations', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
       Alice-->>+Bob:Hello Bob, how are you?
       Bob-->>+Carol:Carol, let me introduce Alice?
       Bob-->>- Alice:Hello Alice, please meet Carol?
       Carol->>- Bob:Oh Bob, I'm so happy to be here!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(8);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.DOTTED);
-    expect(messages[1].type).toBe(diagram1.db.LINETYPE.ACTIVE_START);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
+    expect(messages[1].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
     expect(messages[1].from).toBe('Bob');
-    expect(messages[2].type).toBe(diagram1.db.LINETYPE.DOTTED);
-    expect(messages[3].type).toBe(diagram1.db.LINETYPE.ACTIVE_START);
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.DOTTED);
+    expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_START);
     expect(messages[3].from).toBe('Carol');
-    expect(messages[5].type).toBe(diagram1.db.LINETYPE.ACTIVE_END);
+    expect(messages[5].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
     expect(messages[5].from).toBe('Bob');
-    expect(messages[7].type).toBe(diagram1.db.LINETYPE.ACTIVE_END);
+    expect(messages[7].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
     expect(messages[7].from).toBe('Carol');
   });
   it('should handle fail parsing when activating an inactive participant', async () => {
@@ -633,25 +625,25 @@ deactivate Bob`);
   });
 
   it('should handle comments in a sequenceDiagram', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
       Alice->Bob: Hello Bob, how are you?
       %% Comment
       Note right of Bob: Bob thinks
       Bob-->Alice: I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle new lines in a sequenceDiagram', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
       Alice->Bob: Hello Bob, how are you?
 
@@ -660,32 +652,32 @@ deactivate Bob`);
       Bob-->Alice: I am good thanks!
       `);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle semicolons', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram;Alice->Bob: Hello Bob, how are you?;Note right of Bob: Bob thinks;Bob-->Alice: I am good thanks!;`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle one leading space in lines in a sequenceDiagram', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
  Alice->Bob: Hello Bob, how are you?
 
@@ -693,18 +685,18 @@ sequenceDiagram
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle several leading spaces in lines in a sequenceDiagram', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
    Alice->Bob: Hello Bob, how are you?
 
@@ -712,18 +704,18 @@ sequenceDiagram
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle several leading spaces in lines in a sequenceDiagram', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant Alice
 participant Bob
@@ -736,18 +728,18 @@ Note right of John: Rational thoughts<br/>prevail...
     John->Bob: How about you?
 Bob-->John: Jolly good!`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(8);
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('John');
   });
   it('should handle different line breaks', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant 1 as multiline<br>text
 participant 2 as multiline<br/>text
@@ -763,13 +755,13 @@ note right of 4: multiline<br />text
 note right of 1: multiline<br \t/>text
 `);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('1').description).toBe('multiline<br>text');
     expect(actors.get('2').description).toBe('multiline<br/>text');
     expect(actors.get('3').description).toBe('multiline<br />text');
     expect(actors.get('4').description).toBe('multiline<br \t/>text');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('multiline<br>text');
     expect(messages[1].message).toBe('multiline<br>text');
     expect(messages[2].message).toBe('multiline<br/>text');
@@ -780,7 +772,7 @@ note right of 1: multiline<br \t/>text
     expect(messages[7].message).toBe('multiline<br \t/>text');
   });
   it('should handle notes and messages without wrap specified', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant 1
 participant 2
@@ -796,7 +788,7 @@ note right of 4: multiline<br/>text
 note right of 1:nowrap: multiline<br/>text
 `);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('single-line text');
     expect(messages[1].message).toBe('single-line text');
     expect(messages[2].message).toBe('single-line text');
@@ -817,7 +809,7 @@ note right of 1:nowrap: multiline<br/>text
     expect(messages[7].wrap).toBe(false);
   });
   it('should handle notes and messages with wrap specified', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant 1
 participant 2
@@ -829,7 +821,7 @@ note right of 2:wrap: single-line text
 note right of 3:wrap: multiline<br/>text
 `);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('single-line text');
     expect(messages[1].message).toBe('single-line text');
     expect(messages[2].message).toBe('multiline<br/>text');
@@ -840,7 +832,7 @@ note right of 3:wrap: multiline<br/>text
     expect(messages[3].wrap).toBe(true);
   });
   it('should handle notes and messages with nowrap or line breaks', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant 1
 participant 2
@@ -848,39 +840,39 @@ participant 2
 note right of 2: single-line text
 `);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('single-line text');
     expect(messages[1].message).toBe('single-line text');
     expect(messages[0].wrap).toBe(false);
     expect(messages[1].wrap).toBe(false);
   });
   it('should handle notes over a single actor', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Note over Bob: Bob thinks
 `);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].from).toBe('Bob');
     expect(messages[1].to).toBe('Bob');
   });
   it('should handle notes over multiple actors', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Note over Alice,Bob: confusion
 Note over Bob,Alice: resolution
 `);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].from).toBe('Alice');
     expect(messages[1].to).toBe('Bob');
     expect(messages[2].from).toBe('Bob');
     expect(messages[2].to).toBe('Alice');
   });
   it('should handle loop statements', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 
@@ -891,18 +883,18 @@ loop Multiple happy responses
 Bob-->Alice: I am good thanks!
 end`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(5);
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
   });
   it('should add a rect around sequence', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
         %% Comment
@@ -912,20 +904,20 @@ end`);
         end
     `);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
-    expect(messages[1].type).toEqual(diagram1.db.LINETYPE.RECT_START);
+    const messages = diagram.db.getMessages();
+    expect(messages[1].type).toEqual(diagram.db.LINETYPE.RECT_START);
     expect(messages[1].message).toBe('rgb(200, 255, 200)');
-    expect(messages[2].type).toEqual(diagram1.db.LINETYPE.NOTE);
-    expect(messages[3].type).toEqual(diagram1.db.LINETYPE.DOTTED_OPEN);
-    expect(messages[4].type).toEqual(diagram1.db.LINETYPE.RECT_END);
+    expect(messages[2].type).toEqual(diagram.db.LINETYPE.NOTE);
+    expect(messages[3].type).toEqual(diagram.db.LINETYPE.DOTTED_OPEN);
+    expect(messages[4].type).toEqual(diagram.db.LINETYPE.RECT_END);
   });
 
   it('should allow for nested rects', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
         %% Comment
@@ -937,22 +929,22 @@ end`);
         end
     `);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
-    expect(messages[1].type).toEqual(diagram1.db.LINETYPE.RECT_START);
+    const messages = diagram.db.getMessages();
+    expect(messages[1].type).toEqual(diagram.db.LINETYPE.RECT_START);
     expect(messages[1].message).toBe('rgb(200, 255, 200)');
-    expect(messages[2].type).toEqual(diagram1.db.LINETYPE.RECT_START);
+    expect(messages[2].type).toEqual(diagram.db.LINETYPE.RECT_START);
     expect(messages[2].message).toBe('rgb(0, 0, 0)');
-    expect(messages[3].type).toEqual(diagram1.db.LINETYPE.NOTE);
-    expect(messages[4].type).toEqual(diagram1.db.LINETYPE.RECT_END);
-    expect(messages[5].type).toEqual(diagram1.db.LINETYPE.DOTTED_OPEN);
-    expect(messages[6].type).toEqual(diagram1.db.LINETYPE.RECT_END);
+    expect(messages[3].type).toEqual(diagram.db.LINETYPE.NOTE);
+    expect(messages[4].type).toEqual(diagram.db.LINETYPE.RECT_END);
+    expect(messages[5].type).toEqual(diagram.db.LINETYPE.DOTTED_OPEN);
+    expect(messages[6].type).toEqual(diagram.db.LINETYPE.RECT_END);
   });
   it('should handle opt statements', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 
@@ -963,18 +955,18 @@ opt Perhaps a happy response
 Bob-->Alice: I am good thanks!
 end`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(5);
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
   });
   it('should handle alt statements', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 
@@ -987,19 +979,19 @@ else isSick
 Bob-->Alice: Feel sick...
 end`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
 
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(7);
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
   });
   it('should handle alt statements with multiple elses', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 
@@ -1014,38 +1006,38 @@ else default
 Bob-->Alice: :-)
 end`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages.length).toBe(9);
     expect(messages[1].from).toBe('Bob');
-    expect(messages[2].type).toBe(diagram1.db.LINETYPE.ALT_START);
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.ALT_START);
     expect(messages[3].from).toBe('Bob');
-    expect(messages[4].type).toBe(diagram1.db.LINETYPE.ALT_ELSE);
+    expect(messages[4].type).toBe(diagram.db.LINETYPE.ALT_ELSE);
     expect(messages[5].from).toBe('Bob');
-    expect(messages[6].type).toBe(diagram1.db.LINETYPE.ALT_ELSE);
+    expect(messages[6].type).toBe(diagram.db.LINETYPE.ALT_ELSE);
     expect(messages[7].from).toBe('Bob');
-    expect(messages[8].type).toBe(diagram1.db.LINETYPE.ALT_END);
+    expect(messages[8].type).toBe(diagram.db.LINETYPE.ALT_END);
   });
   it('should handle critical statements without options', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
     critical Establish a connection to the DB
         Service-->DB: connect
     end`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
 
     expect(actors.get('Service').description).toBe('Service');
     expect(actors.get('DB').description).toBe('DB');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(3);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.CRITICAL_START);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.CRITICAL_START);
     expect(messages[1].from).toBe('Service');
-    expect(messages[2].type).toBe(diagram1.db.LINETYPE.CRITICAL_END);
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.CRITICAL_END);
   });
   it('should handle critical statements with options', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
     critical Establish a connection to the DB
         Service-->DB: connect
@@ -1055,24 +1047,24 @@ sequenceDiagram
         Service-->Service: Log different error
     end`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
 
     expect(actors.get('Service').description).toBe('Service');
     expect(actors.get('DB').description).toBe('DB');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(7);
-    expect(messages[0].type).toBe(diagram1.db.LINETYPE.CRITICAL_START);
+    expect(messages[0].type).toBe(diagram.db.LINETYPE.CRITICAL_START);
     expect(messages[1].from).toBe('Service');
-    expect(messages[2].type).toBe(diagram1.db.LINETYPE.CRITICAL_OPTION);
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.CRITICAL_OPTION);
     expect(messages[3].from).toBe('Service');
-    expect(messages[4].type).toBe(diagram1.db.LINETYPE.CRITICAL_OPTION);
+    expect(messages[4].type).toBe(diagram.db.LINETYPE.CRITICAL_OPTION);
     expect(messages[5].from).toBe('Service');
-    expect(messages[6].type).toBe(diagram1.db.LINETYPE.CRITICAL_END);
+    expect(messages[6].type).toBe(diagram.db.LINETYPE.CRITICAL_END);
   });
   it('should handle break statements', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
     Consumer-->API: Book something
     API-->BookingService: Start booking process
@@ -1081,23 +1073,23 @@ sequenceDiagram
     end
     API-->BillingService: Start billing process`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
 
     expect(actors.get('Consumer').description).toBe('Consumer');
     expect(actors.get('API').description).toBe('API');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(6);
     expect(messages[0].from).toBe('Consumer');
     expect(messages[1].from).toBe('API');
-    expect(messages[2].type).toBe(diagram1.db.LINETYPE.BREAK_START);
+    expect(messages[2].type).toBe(diagram.db.LINETYPE.BREAK_START);
     expect(messages[3].from).toBe('API');
-    expect(messages[4].type).toBe(diagram1.db.LINETYPE.BREAK_END);
+    expect(messages[4].type).toBe(diagram.db.LINETYPE.BREAK_END);
     expect(messages[5].from).toBe('API');
   });
   it('should handle par statements a sequenceDiagram', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 par Parallel one
 Alice->>Bob: Hello Bob, how are you?
@@ -1110,12 +1102,12 @@ Alice->>Bob: What do you think about it?
 Bob-->>Alice: It's good!
 end`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
 
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(10);
     expect(messages[0].message).toBe('Parallel one');
@@ -1123,7 +1115,7 @@ end`);
     expect(messages[2].from).toBe('Bob');
   });
   it('it should handle par_over statements', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 par_over Parallel overlap
 Alice ->> Bob: Message
@@ -1131,12 +1123,12 @@ Note left of Alice: Alice note
 Note right of Bob: Bob note
 end`);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
 
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
 
     expect(messages.length).toBe(5);
     expect(messages[0].message).toBe('Parallel overlap');
@@ -1145,44 +1137,44 @@ end`);
     expect(messages[3].from).toBe('Bob');
   });
   it('should handle special characters in signals', async () => {
-    const diagram1 = await Diagram.fromText('sequenceDiagram\n' + 'Alice->Bob: -:<>,;# comment');
+    const diagram = await Diagram.fromText('sequenceDiagram\n' + 'Alice->Bob: -:<>,;# comment');
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('-:<>,');
   });
   it('should handle special characters in notes', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Note right of Bob: -:<>,;# comment`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
   });
   it('should handle special characters in loop', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 loop -:<>,;# comment
 Bob-->Alice: I am good thanks!
 end`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
   });
   it('should handle special characters in opt', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 opt -:<>,;# comment
 Bob-->Alice: I am good thanks!
 end`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
   });
   it('should handle special characters in alt', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 alt -:<>,;# comment
@@ -1191,12 +1183,12 @@ else ,<>:-#; comment
 Bob-->Alice: I am good thanks!
 end`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
     expect(messages[3].message).toBe(',<>:-');
   });
   it('should handle special characters in par', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 par -:<>,;# comment
@@ -1205,36 +1197,36 @@ and ,<>:-#; comment
 Bob-->Alice: I am good thanks!
 end`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
     expect(messages[3].message).toBe(',<>:-');
   });
   it('should handle no-label loop', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 loop
 Bob-->Alice: I am good thanks!
 end`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('');
     expect(messages[2].message).toBe('I am good thanks!');
   });
   it('should handle no-label opt', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 opt # comment
 Bob-->Alice: I am good thanks!
 end`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('');
     expect(messages[2].message).toBe('I am good thanks!');
   });
   it('should handle no-label alt', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 alt;Bob-->Alice: I am good thanks!
@@ -1242,14 +1234,14 @@ else # comment
 Bob-->Alice: I am good thanks!
 end`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('');
     expect(messages[2].message).toBe('I am good thanks!');
     expect(messages[3].message).toBe('');
     expect(messages[4].message).toBe('I am good thanks!');
   });
   it('should handle no-label par', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 par;Bob-->Alice: I am good thanks!
@@ -1257,7 +1249,7 @@ and # comment
 Bob-->Alice: I am good thanks!
 end`);
 
-    const messages = diagram1.db.getMessages();
+    const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('');
     expect(messages[2].message).toBe('I am good thanks!');
     expect(messages[3].message).toBe('');
@@ -1265,7 +1257,7 @@ end`);
   });
 
   it('should handle links', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant a as Alice
 participant b as Bob
@@ -1278,7 +1270,7 @@ link a: Swagger @ https://swagger.contoso.com
 link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 `);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('a').links.Repo).toBe('https://repo.contoso.com/');
     expect(actors.get('b').links.Repo).toBe(undefined);
     expect(actors.get('a').links.Dashboard).toBe('https://dashboard.contoso.com/');
@@ -1292,7 +1284,7 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 
   it('should handle properties EXPERIMENTAL: USE WITH CAUTION', async () => {
     //Be aware that the syntax for "properties" is likely to be changed.
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant a as Alice
 participant b as Bob
@@ -1301,7 +1293,7 @@ properties a: {"class": "internal-service-actor", "icon": "@clock"}
 properties b: {"class": "external-service-actor", "icon": "@computer"}
 `);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect(actors.get('a').properties.class).toBe('internal-service-actor');
     expect(actors.get('b').properties.class).toBe('external-service-actor');
     expect(actors.get('a').properties.icon).toBe('@clock');
@@ -1310,7 +1302,7 @@ properties b: {"class": "external-service-actor", "icon": "@computer"}
   });
 
   it('should handle box', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 box green Group 1
 participant a as Alice
@@ -1325,14 +1317,14 @@ link a: Swagger @ https://swagger.contoso.com
 link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 `);
 
-    const boxes = diagram1.db.getBoxes();
+    const boxes = diagram.db.getBoxes();
     expect(boxes[0].name).toEqual('Group 1');
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
     expect(boxes[0].fill).toEqual('green');
   });
 
   it('should handle box without color', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
   sequenceDiagram
   box Group 1
   participant a as Alice
@@ -1347,14 +1339,14 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   `);
 
-    const boxes = diagram1.db.getBoxes();
+    const boxes = diagram.db.getBoxes();
     expect(boxes[0].name).toEqual('Group 1');
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
     expect(boxes[0].fill).toEqual('transparent');
   });
 
   it('should handle box without description', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
   sequenceDiagram
   box Aqua
   participant a as Alice
@@ -1369,14 +1361,14 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   `);
 
-    const boxes = diagram1.db.getBoxes();
+    const boxes = diagram.db.getBoxes();
     expect(boxes[0].name).toBeFalsy();
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
     expect(boxes[0].fill).toEqual('Aqua');
   });
 
   it('should handle simple actor creation', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
   sequenceDiagram
   participant a as Alice
   a ->>b: Hello Bob?
@@ -1386,8 +1378,8 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   create actor d as Donald
   a ->> d: Hello Donald?
   `);
-    const actors = diagram1.db.getActors();
-    const createdActors = diagram1.db.getCreatedActors();
+    const actors = diagram.db.getActors();
+    const createdActors = diagram.db.getCreatedActors();
     expect(actors.get('c').name).toEqual('c');
     expect(actors.get('c').description).toEqual('c');
     expect(actors.get('c').type).toEqual('participant');
@@ -1398,7 +1390,7 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(createdActors.get('d')).toEqual(3);
   });
   it('should handle simple actor destruction', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
   sequenceDiagram
   participant a as Alice
   a ->>b: Hello Bob?
@@ -1408,7 +1400,7 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   destroy c
   b ->> c: Where are you?
   `);
-    const destroyedActors = diagram1.db.getDestroyedActors();
+    const destroyedActors = diagram.db.getDestroyedActors();
     expect(destroyedActors.get('a')).toEqual(1);
     expect(destroyedActors.get('c')).toEqual(3);
   });
@@ -1447,7 +1439,12 @@ describe('when checking the bounds in a sequenceDiagram', function () {
   });
 
   let conf;
-  beforeEach(function () {
+  let diagram;
+  beforeEach(async function () {
+    diagram = await Diagram.fromText(`
+      sequenceDiagram
+      Alice->Bob:Hello Bob, how are you?
+      Bob-->Alice: I am good thanks!`);
     mermaidAPI.reset();
     diagram.renderer.bounds.init();
     conf = diagram.db.getConfig();
@@ -1576,7 +1573,7 @@ describe('when rendering a sequenceDiagram APA', function () {
     setSiteConfig({ logLevel: 5, sequence: conf });
   });
   let conf;
-  beforeEach(async function () {
+  beforeEach(function () {
     mermaidAPI.reset();
 
     // });
@@ -1595,11 +1592,6 @@ describe('when rendering a sequenceDiagram APA', function () {
       mirrorActors: false,
     };
     setSiteConfig({ logLevel: 5, sequence: conf });
-    diagram = await Diagram.fromText(`
-sequenceDiagram
-Alice->Bob:Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`);
   });
   ['tspan', 'fo', 'old', undefined].forEach(function (textPlacement) {
     it(`
@@ -1608,11 +1600,11 @@ it should handle one actor, when textPlacement is ${textPlacement}`, async () =>
 sequenceDiagram
 participant Alice`;
 
-      const diagram1 = await Diagram.fromText(str);
+      const diagram = await Diagram.fromText(str);
       // diagram.renderer.setConf(mermaidAPI.getConfig().sequence);
-      await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+      await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-      const { bounds } = diagram1.renderer.bounds.getBounds();
+      const { bounds } = diagram.renderer.bounds.getBounds();
       expect(bounds.startx).toBe(0);
       expect(bounds.starty).toBe(0);
       expect(bounds.stopx).toBe(conf.width);
@@ -1620,14 +1612,14 @@ participant Alice`;
     });
   });
   it('should handle same actor with different whitespace properly', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant Alice
 participant Alice
 participant Alice
 `);
 
-    const actors = diagram1.db.getActors();
+    const actors = diagram.db.getActors();
     expect([...actors.keys()]).toEqual(['Alice']);
   });
   it('should handle one actor and a centered note', async () => {
@@ -1636,12 +1628,12 @@ sequenceDiagram
 participant Alice
 Note over Alice: Alice thinks
 `;
-    const diagram1 = await Diagram.fromText(str);
+    const diagram = await Diagram.fromText(str);
 
     expect(mermaidAPI.getConfig().sequence.mirrorActors).toBeFalsy();
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width);
@@ -1654,10 +1646,10 @@ sequenceDiagram
 participant Alice
 Note left of Alice: Alice thinks`;
 
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width);
@@ -1670,10 +1662,10 @@ sequenceDiagram
 participant Alice
 Note right of Alice: Alice thinks`;
 
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width / 2 + conf.actorMargin / 2 + conf.width);
@@ -1685,10 +1677,10 @@ Note right of Alice: Alice thinks`;
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
 
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
@@ -1703,10 +1695,10 @@ participant Bob
 end
 Alice->Bob: Hello Bob, how are you?`;
 
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin + conf.boxTextMargin * 2);
@@ -1718,10 +1710,10 @@ Alice->Bob: Hello Bob, how are you?`;
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
     await mermaidAPI.parse(str);
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     const mermaid = mermaidAPI.getConfig();
     expect(mermaid.logLevel).toBe(0);
     expect(bounds.startx).toBe(0);
@@ -1737,11 +1729,11 @@ sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
 
     await mermaidAPI.parse(str);
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const msgs = diagram1.db.getMessages();
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const msgs = diagram.db.getMessages();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     const mermaid = mermaidAPI.getConfig();
     expect(mermaid.logLevel).toBe(0);
     expect(bounds.startx).toBe(0);
@@ -1757,11 +1749,11 @@ Alice->Bob: Hello Bob, how are you?
 Note over Alice,Bob: Looks
 Note over Bob,Alice: Looks back
 `;
-    const diagram1 = await Diagram.fromText(str);
+    const diagram = await Diagram.fromText(str);
     // mermaidAPI.initialize({logLevel:0})
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
@@ -1773,10 +1765,10 @@ sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Bob->Alice: Fine!`;
 
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
@@ -1789,10 +1781,10 @@ Alice->Bob: Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob->Alice: Fine!`;
 
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
 
@@ -1808,10 +1800,10 @@ Alice->Bob: Hello Bob, how are you?
 Note left of Alice: Bob thinks
 Bob->Alice: Fine!`;
 
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
 
@@ -1825,11 +1817,11 @@ Alice->>Bob:wrap: Hello Bob, how are you? If you are not available right now, I 
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
 
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
-    const msgs = diagram1.db.getMessages();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
+    const msgs = diagram.db.getMessages();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
     expect(msgs[0].wrap).toBe(true);
@@ -1847,11 +1839,11 @@ Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
 
     await mermaidAPI.parse(str);
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
-    const msgs = diagram1.db.getMessages();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
+    const msgs = diagram.db.getMessages();
     const mermaid = mermaidAPI.getConfig();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
@@ -1871,12 +1863,12 @@ Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
 
     await mermaidAPI.parse(str);
-    const diagram1 = await Diagram.fromText(str);
+    const diagram = await Diagram.fromText(str);
 
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
-    const msgs = diagram1.db.getMessages();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
+    const msgs = diagram.db.getMessages();
     const mermaid = mermaidAPI.getConfig();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
@@ -1895,11 +1887,11 @@ Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
     // mermaidAPI.initialize({ logLevel: 0 });
     await mermaidAPI.parse(str);
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
-    const msgs = diagram1.db.getMessages();
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
+    const msgs = diagram.db.getMessages();
     const mermaid = mermaidAPI.getConfig();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
@@ -1920,9 +1912,9 @@ loop Cheers
 Bob->Alice: Fine!
 end`;
 
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
 
@@ -1937,9 +1929,9 @@ end`;
           Bob->Alice: I feel surrounded by darkness
         end
     `;
-    const diagram1 = await Diagram.fromText(str);
-    await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
-    const { bounds, models } = diagram1.renderer.bounds.getBounds();
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+    const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
 
@@ -1971,23 +1963,26 @@ describe('when rendering a sequenceDiagram with actor mirror activated', () => {
   });
 
   let conf;
-  beforeEach(function () {
+  let diagram;
+  beforeEach(async function () {
+    diagram = await Diagram.fromText(`
+      sequenceDiagram
+      Alice->Bob:Hello Bob, how are you?
+      Bob-->Alice: I am good thanks!`);
     mermaidAPI.reset();
     conf = diagram.db.getConfig();
     diagram.renderer.bounds.init();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function (textPlacement) {
     it('should handle one actor, when textPlacement is' + textPlacement, async () => {
-      mermaidAPI.initialize(addConf(conf, 'textPlacement', textPlacement));
-      diagram.renderer.bounds.init();
       const str = `
 sequenceDiagram
 participant Alice`;
-      const diagram1 = await Diagram.fromText(str);
-      diagram1.renderer.bounds.init();
-      await diagram1.renderer.draw(str, 'tst', '1.2.3', diagram1);
+      const diagram = await Diagram.fromText(str);
+      diagram.renderer.bounds.init();
+      await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
-      const { bounds, models } = diagram1.renderer.bounds.getBounds();
+      const { bounds, models } = diagram.renderer.bounds.getBounds();
       expect(bounds.startx).toBe(0);
       expect(bounds.starty).toBe(0);
       expect(bounds.stopx).toBe(conf.width);
