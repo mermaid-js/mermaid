@@ -163,7 +163,13 @@ export const bounds = {
         return activation.actor;
       })
       .lastIndexOf(message.from);
-    return this.activations.splice(lastActorActivationIdx, 1)[0];
+    const activationData = this.activations.splice(lastActorActivationIdx, 1)[0];
+    bounds.models.addMessage({
+      activation: activationData,
+      type: message.type,
+      order: lastActorActivationIdx,
+    });
+    return activationData;
   },
   createLoop: function (title = { message: undefined, wrap: false, width: undefined }, fill) {
     return {
@@ -176,6 +182,7 @@ export const bounds = {
       width: title.width,
       height: 0,
       fill: fill,
+      type: title.type,
     };
   },
   newLoop: function (title = { message: undefined, wrap: false, width: undefined }, fill) {
@@ -1143,6 +1150,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   );
 
   log.debug(`models:`, bounds.models);
+  diagObj.setGraphData(JSON.stringify(bounds.models));
 };
 
 /**
