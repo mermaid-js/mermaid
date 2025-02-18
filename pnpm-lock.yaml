@@ -30,7 +30,7 @@ importers:
         version: 8.14.4(eslint@9.12.0(jiti@1.21.6))
       '@cypress/code-coverage':
         specifier: ^3.12.30
-        version: 3.13.4(@babel/core@7.25.7)(@babel/preset-env@7.26.7(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(cypress@13.15.0)(webpack@5.95.0(esbuild@0.21.5))
+        version: 3.13.4(@babel/core@7.25.7)(@babel/preset-env@7.26.8(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(cypress@13.15.0)(webpack@5.95.0(esbuild@0.21.5))
       '@eslint/js':
         specifier: ^9.4.0
         version: 9.12.0
@@ -217,18 +217,6 @@ importers:
       '@braintree/sanitize-url':
         specifier: ^7.0.1
         version: 7.1.0
-      '@fortawesome/fontawesome-svg-core':
-        specifier: ^6.7.2
-        version: 6.7.2
-      '@fortawesome/free-brands-svg-icons':
-        specifier: ^6.7.2
-        version: 6.7.2
-      '@fortawesome/free-regular-svg-icons':
-        specifier: ^6.7.2
-        version: 6.7.2
-      '@fortawesome/free-solid-svg-icons':
-        specifier: ^6.7.2
-        version: 6.7.2
       '@iconify/utils':
         specifier: ^2.1.32
         version: 2.1.33
@@ -1478,12 +1466,6 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0
 
-  '@babel/preset-env@7.26.7':
-    resolution: {integrity: sha512-Ycg2tnXwixaXOVb29rana8HNPgLVBof8qqtNQ9LE22IoyZboQbGSxI6ZySMdW3K5nAe6gu35IaJefUJflhUFTQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-
   '@babel/preset-env@7.26.8':
     resolution: {integrity: sha512-um7Sy+2THd697S4zJEfv/U5MHGJzkN2xhtsR3T/SWRbVSic62nbISh51VVfU9JiO/L/Z97QczHTaFVkOU8IzNg==}
     engines: {node: '>=6.9.0'}
@@ -2236,26 +2218,6 @@ packages:
 
   '@floating-ui/vue@1.1.5':
     resolution: {integrity: sha512-ynL1p5Z+woPVSwgMGqeDrx6HrJfGIDzFyESFkyqJKilGW1+h/8yVY29Khn0LaU6wHBRwZ13ntG6reiHWK6jyzw==}
-
-  '@fortawesome/fontawesome-common-types@6.7.2':
-    resolution: {integrity: sha512-Zs+YeHUC5fkt7Mg1l6XTniei3k4bwG/yo3iFUtZWd/pMx9g3fdvkSK9E0FOC+++phXOka78uJcYb8JaFkW52Xg==}
-    engines: {node: '>=6'}
-
-  '@fortawesome/fontawesome-svg-core@6.7.2':
-    resolution: {integrity: sha512-yxtOBWDrdi5DD5o1pmVdq3WMCvnobT0LU6R8RyyVXPvFRd2o79/0NCuQoCjNTeZz9EzA9xS3JxNWfv54RIHFEA==}
-    engines: {node: '>=6'}
-
-  '@fortawesome/free-brands-svg-icons@6.7.2':
-    resolution: {integrity: sha512-zu0evbcRTgjKfrr77/2XX+bU+kuGfjm0LbajJHVIgBWNIDzrhpRxiCPNT8DW5AdmSsq7Mcf9D1bH0aSeSUSM+Q==}
-    engines: {node: '>=6'}
-
-  '@fortawesome/free-regular-svg-icons@6.7.2':
-    resolution: {integrity: sha512-7Z/ur0gvCMW8G93dXIQOkQqHo2M5HLhYrRVC0//fakJXxcF1VmMPsxnG6Ee8qEylA8b8Q3peQXWMNZ62lYF28g==}
-    engines: {node: '>=6'}
-
-  '@fortawesome/free-solid-svg-icons@6.7.2':
-    resolution: {integrity: sha512-GsBrnOzU8uj0LECDfD5zomZJIjrPhIlWU82AHwa2s40FKH+kcxQaBvBo3Z4TxyZHIyX8XTDxsyA33/Vx9eFuQA==}
-    engines: {node: '>=6'}
 
   '@hapi/hoek@9.3.0':
     resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
@@ -3929,11 +3891,6 @@ packages:
 
   babel-plugin-polyfill-corejs2@0.4.12:
     resolution: {integrity: sha512-CPWT6BwvhrTO2d8QVorhTCQw9Y43zOu7G9HigcfxvepOU6b8o3tcWad6oVgZIsZCTt42FFv97aA7ZJsbM4+8og==}
-    peerDependencies:
-      '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
-
-  babel-plugin-polyfill-corejs3@0.10.6:
-    resolution: {integrity: sha512-b37+KR2i/khY5sKmWNVQAnitvquQbNdWy6lJdsr0kmquCKEEUgMKK4SboVM3HtfnZilfjr4MMQ7vY58FVWDtIA==}
     peerDependencies:
       '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
 
@@ -11630,7 +11587,7 @@ snapshots:
       '@babel/helper-create-regexp-features-plugin': 7.26.3(@babel/core@7.26.8)
       '@babel/helper-plugin-utils': 7.26.5
 
-  '@babel/preset-env@7.26.7(@babel/core@7.25.7)':
+  '@babel/preset-env@7.26.8(@babel/core@7.25.7)':
     dependencies:
       '@babel/compat-data': 7.26.8
       '@babel/core': 7.25.7
@@ -11698,7 +11655,7 @@ snapshots:
       '@babel/plugin-transform-unicode-sets-regex': 7.25.9(@babel/core@7.25.7)
       '@babel/preset-modules': 0.1.6-no-external-plugins(@babel/core@7.25.7)
       babel-plugin-polyfill-corejs2: 0.4.12(@babel/core@7.25.7)
-      babel-plugin-polyfill-corejs3: 0.10.6(@babel/core@7.25.7)
+      babel-plugin-polyfill-corejs3: 0.11.1(@babel/core@7.25.7)
       babel-plugin-polyfill-regenerator: 0.6.3(@babel/core@7.25.7)
       core-js-compat: 3.40.0
       semver: 6.3.1
@@ -12246,11 +12203,11 @@ snapshots:
 
   '@cspell/url@8.14.4': {}
 
-  '@cypress/code-coverage@3.13.4(@babel/core@7.25.7)(@babel/preset-env@7.26.7(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(cypress@13.15.0)(webpack@5.95.0(esbuild@0.21.5))':
+  '@cypress/code-coverage@3.13.4(@babel/core@7.25.7)(@babel/preset-env@7.26.8(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(cypress@13.15.0)(webpack@5.95.0(esbuild@0.21.5))':
     dependencies:
       '@babel/core': 7.25.7
-      '@babel/preset-env': 7.26.7(@babel/core@7.25.7)
-      '@cypress/webpack-preprocessor': 6.0.2(@babel/core@7.25.7)(@babel/preset-env@7.26.7(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(webpack@5.95.0(esbuild@0.21.5))
+      '@babel/preset-env': 7.26.8(@babel/core@7.25.7)
+      '@cypress/webpack-preprocessor': 6.0.2(@babel/core@7.25.7)(@babel/preset-env@7.26.8(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(webpack@5.95.0(esbuild@0.21.5))
       babel-loader: 9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5))
       chalk: 4.1.2
       cypress: 13.15.0
@@ -12286,10 +12243,10 @@ snapshots:
       tunnel-agent: 0.6.0
       uuid: 8.3.2
 
-  '@cypress/webpack-preprocessor@6.0.2(@babel/core@7.25.7)(@babel/preset-env@7.26.7(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(webpack@5.95.0(esbuild@0.21.5))':
+  '@cypress/webpack-preprocessor@6.0.2(@babel/core@7.25.7)(@babel/preset-env@7.26.8(@babel/core@7.25.7))(babel-loader@9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5)))(webpack@5.95.0(esbuild@0.21.5))':
     dependencies:
       '@babel/core': 7.25.7
-      '@babel/preset-env': 7.26.7(@babel/core@7.25.7)
+      '@babel/preset-env': 7.26.8(@babel/core@7.25.7)
       babel-loader: 9.2.1(@babel/core@7.25.7)(webpack@5.95.0(esbuild@0.21.5))
       bluebird: 3.7.1
       debug: 4.3.7(supports-color@8.1.1)
@@ -12564,24 +12521,6 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
-
-  '@fortawesome/fontawesome-common-types@6.7.2': {}
-
-  '@fortawesome/fontawesome-svg-core@6.7.2':
-    dependencies:
-      '@fortawesome/fontawesome-common-types': 6.7.2
-
-  '@fortawesome/free-brands-svg-icons@6.7.2':
-    dependencies:
-      '@fortawesome/fontawesome-common-types': 6.7.2
-
-  '@fortawesome/free-regular-svg-icons@6.7.2':
-    dependencies:
-      '@fortawesome/fontawesome-common-types': 6.7.2
-
-  '@fortawesome/free-solid-svg-icons@6.7.2':
-    dependencies:
-      '@fortawesome/fontawesome-common-types': 6.7.2
 
   '@hapi/hoek@9.3.0': {}
 
@@ -14619,7 +14558,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-plugin-polyfill-corejs3@0.10.6(@babel/core@7.25.7):
+  babel-plugin-polyfill-corejs3@0.11.1(@babel/core@7.25.7):
     dependencies:
       '@babel/core': 7.25.7
       '@babel/helper-define-polyfill-provider': 0.6.3(@babel/core@7.25.7)
