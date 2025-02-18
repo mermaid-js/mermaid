@@ -35,6 +35,10 @@ const arrowTypesMap = {
   composition: 'composition',
   dependency: 'dependency',
   lollipop: 'lollipop',
+  only_one: 'onlyOne',
+  zero_or_one: 'zeroOrOne',
+  one_or_more: 'oneOrMore',
+  zero_or_more: 'zeroOrMore',
 } as const;
 
 const addEdgeMarker = (
