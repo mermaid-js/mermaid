@@ -1576,15 +1576,15 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         items:
           type: string
         default: ['#fff']
-      titleColor: 
+      titleColor:
         description: Calculated from textColor
         type: string
-        default: "#00ff00"
+        default: '#00ff00'
       titleFontFamily:
         description: Font family to be used for the title text in Journey Diagrams
         type: string
         default: '"Open Sans", sans-serif'
-      titleFontSize: 
+      titleFontSize:
         description: Font size in pixels to be used for the title text in Journey Diagrams
         type: string
         default: '32px'
