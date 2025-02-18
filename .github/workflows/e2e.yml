@@ -28,6 +28,8 @@ env:
       ) || 
       github.event.before
     }}
+  RUN_VISUAL_TEST: >-
+    ${{ github.repository == 'mermaid-js/mermaid' && (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/')) }}
 jobs:
   cache:
     runs-on: ubuntu-latest
@@ -43,9 +45,8 @@ jobs:
           node-version-file: '.node-version'
       - name: Cache snapshots
         id: cache-snapshot
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
         with:
-          save-always: true
           path: ./cypress/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
@@ -94,7 +95,7 @@ jobs:
       # These cached snapshots are downloaded, providing the reference snapshots.
       - name: Cache snapshots
         id: cache-snapshot
-        uses: actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache/restore@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
         with:
           path: ./cypress/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
@@ -125,18 +126,17 @@ jobs:
           browser: chrome
           # Disable recording if we don't have an API key
           # e.g. if this action was run from a fork
-          record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          VITEST_COVERAGE: true
+          ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
+          ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
+          ARGOS_PARALLEL_INDEX: ${{ env.RUN_VISUAL_TEST == 'true' && matrix.containers || 1 }}
           CYPRESS_COMMIT: ${{ github.sha }}
-          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-          ARGOS_PARALLEL: true
-          ARGOS_PARALLEL_TOTAL: ${{ strategy.job-total }}
-          ARGOS_PARALLEL_INDEX: ${{ matrix.containers }}
+          CYPRESS_RECORD_KEY: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY || ''}}
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: 'cypress/timings.json'
+          VITEST_COVERAGE: true
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0

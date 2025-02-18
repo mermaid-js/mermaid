@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { assert, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -69,6 +69,9 @@ import { compile, serialize } from 'stylis';
 import { Diagram } from './Diagram.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { ClassDB } from './diagrams/class/classDb.js';
+import { FlowDB } from './diagrams/flowchart/flowDb.js';
+import { StateDB } from './diagrams/state/stateDb.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -832,5 +835,118 @@ graph TD;A--x|text including URL space|B;`)
       expect(diagram).toBeInstanceOf(Diagram);
       expect(diagram.type).toBe('flowchart-v2');
     });
+
+    it('should not modify db when rendering different diagrams', async () => {
+      const stateDiagram1 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+            direction LR
+            [*] --> Still
+            Still --> [*]
+            Still --> Moving
+            Moving --> Still
+            Moving --> Crash
+            Crash --> [*]`
+      );
+      const stateDiagram2 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+          direction TB
+          [*] --> Still
+          Still --> [*]
+          Still --> Moving
+          Moving --> Still
+          Moving --> Crash
+          Crash --> [*]`
+      );
+      expect(stateDiagram1.db).not.toBe(stateDiagram2.db);
+      assert(stateDiagram1.db instanceof StateDB);
+      assert(stateDiagram2.db instanceof StateDB);
+      expect(stateDiagram1.db.getDirection()).not.toEqual(stateDiagram2.db.getDirection());
+
+      const flowDiagram1 = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      A -- text --> B -- text2 --> C`
+      );
+      const flowDiagram2 = await mermaidAPI.getDiagramFromText(
+        `flowchart TD
+      A -- text --> B -- text2 --> C`
+      );
+      // Since flowDiagram will return new Db object each time, we can compare the db to be different.
+      expect(flowDiagram1.db).not.toBe(flowDiagram2.db);
+      assert(flowDiagram1.db instanceof FlowDB);
+      assert(flowDiagram2.db instanceof FlowDB);
+      expect(flowDiagram1.db.getDirection()).not.toEqual(flowDiagram2.db.getDirection());
+
+      const classDiagram1 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction TB
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      const classDiagram2 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction LR
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      // Since classDiagram will return new Db object each time, we can compare the db to be different.
+      expect(classDiagram1.db).not.toBe(classDiagram2.db);
+      assert(classDiagram1.db instanceof ClassDB);
+      assert(classDiagram2.db instanceof ClassDB);
+      expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
+
+      const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+      const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+      // Since sequenceDiagram will return same Db object each time, we can compare the db to be same.
+      expect(sequenceDiagram1.db).toBe(sequenceDiagram2.db);
+    });
+  });
+
+  // Sequence Diagram currently uses a singleton DB, so this test will fail
+  it.fails('should not modify db when rendering different sequence diagrams', async () => {
+    const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
+      `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    Bob-->>John: How about you John?`
+    );
+    const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
+      `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    Bob-->>John: How about you John?`
+    );
+    expect(sequenceDiagram1.db).not.toBe(sequenceDiagram2.db);
   });
 });
