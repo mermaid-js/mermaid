@@ -20,6 +20,7 @@ import {
   DIVIDER_TYPE,
   STMT_APPLYCLASS,
   STMT_CLASSDEF,
+  STMT_DIRECTION,
   STMT_RELATION,
   STMT_STATE,
   STMT_STYLEDEF,
@@ -79,11 +80,6 @@ export class StateDB {
    */
   edges = [];
 
-  /**
-   * @private
-   * @type {string}
-   */
-  direction = DEFAULT_DIAGRAM_DIRECTION;
   /**
    * @private
    * @type {Array}
@@ -643,16 +639,16 @@ export class StateDB {
   }
 
   getDirection() {
-    const doc = this.rootDoc.find((doc) => doc.stmt === 'dir');
-    this.direction = doc ? doc.value : 'TB';
-    return this.direction;
+    const doc = this.rootDoc.find((doc) => doc.stmt === STMT_DIRECTION);
+    const direction = doc ? doc.value : DEFAULT_DIAGRAM_DIRECTION;
+    return direction;
   }
   setDirection(dir) {
-    let doc = this.rootDoc.find((doc) => doc.stmt === 'dir');
+    const doc = this.rootDoc.find((doc) => doc.stmt === STMT_DIRECTION);
     if (doc) {
       doc.value = dir;
     } else {
-      this.rootDoc.unshift({ stmt: 'dir', value: dir });
+      this.rootDoc.unshift({ stmt: STMT_DIRECTION, value: dir });
     }
   }
 
