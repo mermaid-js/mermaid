@@ -26,11 +26,11 @@ jobs:
         with:
           node-version-file: '.node-version'
       - name: Install dependencies
-        uses: cypress-io/github-action@0da3c06ed8217b912deea9d8ee69630baed1737e # v6.7.6
+        uses: cypress-io/github-action@57b70560982e6a11d23d4b8bec7f8a487cdbb71b # v6.7.8
         with:
           runTests: false
       - name: Cypress run
-        uses: cypress-io/github-action@0da3c06ed8217b912deea9d8ee69630baed1737e # v6.7.6
+        uses: cypress-io/github-action@57b70560982e6a11d23d4b8bec7f8a487cdbb71b # v6.7.8
         id: cypress
         with:
           install: false
