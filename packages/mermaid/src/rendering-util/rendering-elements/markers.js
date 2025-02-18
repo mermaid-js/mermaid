@@ -277,6 +277,43 @@ const barb = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
 };
+const requirement_arrow = (elem, type, id) => {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-requirement_arrowEnd')
+    .attr('refX', 20)
+    .attr('refY', 10)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 20)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr(
+      'd',
+      `M0,0
+      L20,10
+      M20,10
+      L0,20`
+    );
+};
+const requirement_contains = (elem, type, id) => {
+  const containsNode = elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-requirement_containsEnd')
+    .attr('refX', 20)
+    .attr('refY', 10)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 20)
+    .attr('orient', 'auto')
+    .append('g');
+
+  containsNode.append('circle').attr('cx', 10).attr('cy', 10).attr('r', 10).attr('fill', 'none');
+
+  containsNode.append('line').attr('x1', 0).attr('x2', 20).attr('y1', 10).attr('y2', 10);
+
+  containsNode.append('line').attr('y1', 0).attr('y2', 20).attr('x1', 10).attr('x2', 10);
+};
 
 // TODO rename the class diagram markers to something shape descriptive and semantic free
 const markers = {
@@ -289,5 +326,7 @@ const markers = {
   circle,
   cross,
   barb,
+  requirement_arrow,
+  requirement_contains,
 };
 export default insertMarkers;
