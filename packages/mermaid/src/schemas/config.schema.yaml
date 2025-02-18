@@ -1577,7 +1577,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           type: string
         default: ['#fff']
       titleColor:
-        description: Color of the title in Journey Diagrams
+        description: Color of the title text in Journey Diagrams
         type: string
         default: '#00ff00'
       titleFontFamily:
