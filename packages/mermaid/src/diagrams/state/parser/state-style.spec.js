@@ -9,7 +9,7 @@ setConfig({
 describe('ClassDefs and classes when parsing a State diagram', () => {
   let stateDb;
   beforeEach(function () {
-    stateDb = new StateDB();
+    stateDb = new StateDB(2);
     stateDiagram.parser.yy = stateDb;
     stateDiagram.parser.yy.clear();
   });
@@ -135,7 +135,6 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           diagram += '[*]:::exampleStyleClass --> b\n';
 
           stateDiagram.parser.parse(diagram);
-          stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
 
           const states = stateDiagram.parser.yy.getStates();
           const classes = stateDiagram.parser.yy.getClasses();

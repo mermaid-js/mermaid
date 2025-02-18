@@ -59,8 +59,13 @@ const newDoc = () => {
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
 export class StateDB {
-  constructor() {
+  /**
+   * @param {1 | 2} version - v1 renderer or v2 renderer.
+   */
+  constructor(version) {
     this.clear();
+
+    this.version = version;
 
     // Needed for JISON since it only supports direct properties
     this.setRootDoc = this.setRootDoc.bind(this);
@@ -68,6 +73,12 @@ export class StateDB {
     this.setDirection = this.setDirection.bind(this);
     this.trimColon = this.trimColon.bind(this);
   }
+
+  /**
+   * @private
+   * @type {1 | 2}
+   */
+  version;
 
   /**
    * @private
@@ -126,7 +137,11 @@ export class StateDB {
     log.info('Setting root doc', o);
     // rootDoc = { id: 'root', doc: o };
     this.rootDoc = o;
-    this.extract(o);
+    if (this.version === 1) {
+      this.extract(o);
+    } else {
+      this.extract(this.getRootDocV2());
+    }
   }
 
   getRootDoc() {
@@ -186,6 +201,10 @@ export class StateDB {
       }
     }
   }
+
+  /**
+   * @private
+   */
   getRootDocV2() {
     this.docTranslator({ id: 'root' }, { id: 'root', doc: this.rootDoc }, true);
     return { id: 'root', doc: this.rootDoc };
