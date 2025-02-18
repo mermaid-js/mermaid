@@ -20,6 +20,7 @@ import {
   DIVIDER_TYPE,
   STMT_APPLYCLASS,
   STMT_CLASSDEF,
+  STMT_DIRECTION,
   STMT_RELATION,
   STMT_STATE,
   STMT_STYLEDEF,
@@ -90,11 +91,6 @@ export class StateDB {
    */
   edges = [];
 
-  /**
-   * @private
-   * @type {string}
-   */
-  direction = DEFAULT_DIAGRAM_DIRECTION;
   /**
    * @private
    * @type {Array}
@@ -661,11 +657,26 @@ export class StateDB {
     }
   }
 
-  getDirection() {
-    return this.direction;
+  /**
+   * Finds the direction statement in the root document.
+   * @private
+   * @returns {{ value: string } | undefined} - the direction statement if present
+   */
+  getDirectionStatement() {
+    return this.rootDoc.find((doc) => doc.stmt === STMT_DIRECTION);
   }
+
+  getDirection() {
+    return this.getDirectionStatement()?.value ?? DEFAULT_DIAGRAM_DIRECTION;
+  }
+
   setDirection(dir) {
-    this.direction = dir;
+    const doc = this.getDirectionStatement();
+    if (doc) {
+      doc.value = dir;
+    } else {
+      this.rootDoc.unshift({ stmt: STMT_DIRECTION, value: dir });
+    }
   }
 
   trimColon(str) {
