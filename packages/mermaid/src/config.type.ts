@@ -605,7 +605,7 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   sectionFills?: string[];
   sectionColours?: string[];
   /**
-   * Calculated from textColor
+   * Color of the title in Journey Diagrams
    */
   titleColor?: string;
   /**
