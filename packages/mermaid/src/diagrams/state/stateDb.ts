@@ -11,7 +11,7 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import { dataFetcher, reset as resetDataFetching } from './dataFetcher.js';
+import { dataFetcher, reset as resetDataFetcher } from './dataFetcher.js';
 import { getDir } from './stateRenderer-v3-unified.js';
 import {
   DEFAULT_DIAGRAM_DIRECTION,
@@ -26,14 +26,16 @@ import {
 } from './stateCommon.js';
 import type { MermaidConfig } from '../../config.type.js';
 
-const START_NODE = '[*]';
-const START_TYPE = 'start';
-const END_NODE = START_NODE;
-const END_TYPE = 'end';
-const COLOR_KEYWORD = 'color';
-const FILL_KEYWORD = 'fill';
-const BG_FILL = 'bgFill';
-const STYLECLASS_SEP = ',';
+const CONSTANTS = {
+  START_NODE: '[*]',
+  START_TYPE: 'start',
+  END_NODE: '[*]',
+  END_TYPE: 'end',
+  COLOR_KEYWORD: 'color',
+  FILL_KEYWORD: 'fill',
+  BG_FILL: 'bgFill',
+  STYLECLASS_SEP: ',',
+} as const;
 
 interface BaseStmt {
   stmt: 'applyClass' | 'classDef' | 'dir' | 'relation' | 'state' | 'style' | 'root' | 'default';
@@ -159,37 +161,32 @@ export interface Edge {
   classes: string;
   look: MermaidConfig['look'];
 }
+
 /**
  * Returns a new list of classes.
  * In the future, this can be replaced with a class common to all diagrams.
  * ClassDef information = \{ id: id, styles: [], textStyles: [] \}
  */
-function newClassesList(): Map<string, StyleClass> {
-  return new Map<string, StyleClass>();
-}
-
-const newDoc = (): Document => {
-  return {
-    relations: [],
-    states: new Map(),
-    documents: {},
-  };
-};
-
-const clone = (o: unknown) => JSON.parse(JSON.stringify(o));
+const newClassesList = (): Map<string, StyleClass> => new Map();
+const newDoc = (): Document => ({
+  relations: [],
+  states: new Map(),
+  documents: {},
+});
+const clone = <T>(o: T): T => JSON.parse(JSON.stringify(o));
 
 export class StateDB {
   private nodes: NodeData[] = [];
   private edges: Edge[] = [];
-  private direction: string = DEFAULT_DIAGRAM_DIRECTION;
+  private direction = DEFAULT_DIAGRAM_DIRECTION;
   private rootDoc: Stmt[] = [];
-  private classes: Map<string, StyleClass> = newClassesList();
-  private documents: { root: Document } = { root: newDoc() };
-  private currentDocument: Document = this.documents.root;
+  private classes = newClassesList();
+  private documents = { root: newDoc() };
+  private currentDocument = this.documents.root;
   private startEndCount = 0;
   private dividerCnt = 0;
 
-  static relationType = {
+  static readonly relationType = {
     AGGREGATION: 0,
     EXTENSION: 1,
     COMPOSITION: 2,
@@ -198,12 +195,89 @@ export class StateDB {
 
   constructor(private version: 1 | 2) {
     this.clear();
-
-    // Needed for JISON since it only supports direct properties
+    // Bind methods used by JISON
     this.setRootDoc = this.setRootDoc.bind(this);
     this.getDividerId = this.getDividerId.bind(this);
     this.setDirection = this.setDirection.bind(this);
     this.trimColon = this.trimColon.bind(this);
+  }
+
+  /**
+   * Convert all of the statements (stmts) that were parsed into states and relationships.
+   * This is done because a state diagram may have nested sections,
+   * where each section is a 'document' and has its own set of statements.
+   * Ex: the section within a fork has its own statements, and incoming and outgoing statements
+   * refer to the fork as a whole (document).
+   * See the parser grammar:  the definition of a document is a document then a 'line', where a line can be a statement.
+   * This will push the statement into the list of statements for the current document.
+   */
+  extract(statements: Stmt[] | { doc: Stmt[] }) {
+    this.clear(true);
+    for (const item of Array.isArray(statements) ? statements : statements.doc) {
+      switch (item.stmt) {
+        case STMT_STATE:
+          this.addState(item.id.trim(), item.type, item.doc, item.description, item.note);
+          break;
+        case STMT_RELATION:
+          this.addRelation(item.state1, item.state2, item.description);
+          break;
+        case STMT_CLASSDEF:
+          this.addStyleClass(item.id.trim(), item.classes);
+          break;
+        case STMT_STYLEDEF:
+          this.handleStyleDef(item);
+          break;
+        case STMT_APPLYCLASS:
+          this.setCssClass(item.id.trim(), item.styleClass);
+          break;
+      }
+    }
+    const diagramStates = this.getStates();
+    const config = getConfig();
+
+    resetDataFetcher();
+    dataFetcher(
+      undefined,
+      this.getRootDocV2() as StateStmt,
+      diagramStates,
+      this.nodes,
+      this.edges,
+      true,
+      config.look,
+      this.classes
+    );
+
+    // Process node labels
+    for (const node of this.nodes) {
+      if (!Array.isArray(node.label)) {
+        continue;
+      }
+
+      node.description = node.label.slice(1);
+      if (node.isGroup && node.description.length > 0) {
+        throw new Error(
+          `Group nodes can only have label. Remove the additional description for node [${node.id}]`
+        );
+      }
+      node.label = node.label[0];
+    }
+  }
+
+  private handleStyleDef(item: StyleStmt) {
+    const ids = item.id.trim().split(',');
+    const styles = item.styleClass.split(',');
+
+    for (const id of ids) {
+      let state = this.getState(id);
+      if (!state) {
+        const trimmedId = id.trim();
+        this.addState(trimmedId);
+        state = this.getState(trimmedId);
+      }
+      if (state) {
+        state.styles = styles.map((s) => s.replace(/;/g, '')?.trim());
+      }
+    }
   }
 
   setRootDoc(o: Stmt[]) {
@@ -224,7 +298,7 @@ export class StateDB {
     }
 
     if (node.stmt === STMT_STATE) {
-      if (node.id === '[*]') {
+      if (node.id === CONSTANTS.START_NODE) {
         node.id = parent.id + (first ? '_start' : '_end');
         node.start = first;
       } else {
@@ -242,7 +316,7 @@ export class StateDB {
     let currentDoc = [];
     for (const stmt of node.doc) {
       if ((stmt as StateStmt).type === DIVIDER_TYPE) {
-        const newNode = clone(stmt);
+        const newNode = clone(stmt as StateStmt);
         newNode.doc = clone(currentDoc);
         doc.push(newNode);
         currentDoc = [];
@@ -258,7 +332,7 @@ export class StateDB {
         id: generateId(),
         type: 'divider',
         doc: clone(currentDoc),
-      };
+      } satisfies StateStmt;
       doc.push(clone(newNode));
       node.doc = doc;
     }
@@ -273,82 +347,6 @@ export class StateDB {
       true
     );
     return { id: STMT_ROOT, doc: this.rootDoc };
-  }
-
-  /**
-   * Convert all of the statements (stmts) that were parsed into states and relationships.
-   * This is done because a state diagram may have nested sections,
-   * where each section is a 'document' and has its own set of statements.
-   * Ex: the section within a fork has its own statements, and incoming and outgoing statements
-   * refer to the fork as a whole (document).
-   * See the parser grammar:  the definition of a document is a document then a 'line', where a line can be a statement.
-   * This will push the statement into the list of statements for the current document.
-   */
-  extract(_statements: Stmt[] | { doc: Stmt[] }) {
-    this.clear(true);
-    const statements = Array.isArray(_statements) ? _statements : _statements.doc;
-    statements.forEach((item) => {
-      log.warn('Statement', item);
-      switch (item.stmt) {
-        case STMT_STATE:
-          this.addState(item.id.trim(), item.type, item.doc, item.description, item.note);
-          break;
-        case STMT_RELATION:
-          this.addRelation(item.state1, item.state2, item.description);
-          break;
-        case STMT_CLASSDEF:
-          this.addStyleClass(item.id.trim(), item.classes);
-          break;
-        case STMT_STYLEDEF:
-          {
-            const ids = item.id.trim().split(',');
-            const styles = item.styleClass.split(',');
-            ids.forEach((id) => {
-              let foundState = this.getState(id);
-              if (foundState === undefined) {
-                const trimmedId = id.trim();
-                this.addState(trimmedId);
-                foundState = this.getState(trimmedId);
-              }
-              foundState!.styles = styles.map((s) => s.replace(/;/g, '')?.trim());
-            });
-          }
-          break;
-        case STMT_APPLYCLASS:
-          this.setCssClass(item.id.trim(), item.styleClass);
-          break;
-      }
-    });
-
-    const diagramStates = this.getStates();
-    const config = getConfig();
-    const look = config.look;
-
-    resetDataFetching();
-    dataFetcher(
-      undefined,
-      this.getRootDocV2() as StateStmt,
-      diagramStates,
-      this.nodes,
-      this.edges,
-      true,
-      look,
-      this.classes
-    );
-    this.nodes.forEach((node) => {
-      if (Array.isArray(node.label)) {
-        node.description = node.label.slice(1);
-        if (node.isGroup && node.description.length > 0) {
-          throw new Error(
-            'Group nodes can only have label. Remove the additional description for node [' +
-              node.id +
-              ']'
-          );
-        }
-        // add first description as label
-        node.label = node.label[0];
-      }
-    });
   }
 
   /**
@@ -398,13 +396,8 @@ export class StateDB {
 
     if (descr) {
       log.info('Setting state description', trimmedId, descr);
-      if (typeof descr === 'string') {
-        this.addDescription(trimmedId, descr.trim());
-      }
-
-      if (typeof descr === 'object') {
-        descr.forEach((des: string) => this.addDescription(trimmedId, des.trim()));
-      }
+      const descriptions = Array.isArray(descr) ? descr : [descr];
+      descriptions.forEach((des) => this.addDescription(trimmedId, des.trim()));
     }
 
     if (note) {
@@ -418,29 +411,27 @@ export class StateDB {
 
     if (classes) {
       log.info('Setting state classes', trimmedId, classes);
-      const classesList = typeof classes === 'string' ? [classes] : classes;
-      classesList.forEach((cssClass: string) => this.setCssClass(trimmedId, cssClass.trim()));
+      const classesList = Array.isArray(classes) ? classes : [classes];
+      classesList.forEach((cssClass) => this.setCssClass(trimmedId, cssClass.trim()));
     }
 
     if (styles) {
       log.info('Setting state styles', trimmedId, styles);
-      const stylesList = typeof styles === 'string' ? [styles] : styles;
-      stylesList.forEach((style: string) => this.setStyle(trimmedId, style.trim()));
+      const stylesList = Array.isArray(styles) ? styles : [styles];
+      stylesList.forEach((style) => this.setStyle(trimmedId, style.trim()));
     }
 
     if (textStyles) {
       log.info('Setting state styles', trimmedId, styles);
-      const textStylesList = typeof textStyles === 'string' ? [textStyles] : textStyles;
-      textStylesList.forEach((textStyle: string) => this.setTextStyle(trimmedId, textStyle.trim()));
+      const textStylesList = Array.isArray(textStyles) ? textStyles : [textStyles];
+      textStylesList.forEach((textStyle) => this.setTextStyle(trimmedId, textStyle.trim()));
     }
   }
 
   clear(saveCommon?: boolean) {
     this.nodes = [];
     this.edges = [];
-    this.documents = {
-      root: newDoc(),
-    };
+    this.documents = { root: newDoc() };
     this.currentDocument = this.documents.root;
 
     // number of start and end nodes; used to construct ids
@@ -473,12 +464,11 @@ export class StateDB {
    * else return the given id
    */
   startIdIfNeeded(id = '') {
-    let fixedId = id;
-    if (id === START_NODE) {
+    if (id === CONSTANTS.START_NODE) {
       this.startEndCount++;
-      fixedId = `${START_TYPE}${this.startEndCount}`;
+      return `${CONSTANTS.START_TYPE}${this.startEndCount}`;
     }
-    return fixedId;
+    return id;
   }
 
   /**
@@ -486,7 +476,7 @@ export class StateDB {
    * else return the given type
    */
   startTypeIfNeeded(id = '', type: StateStmt['type'] = DEFAULT_STATE_TYPE) {
-    return id === START_NODE ? START_TYPE : type;
+    return id === CONSTANTS.START_NODE ? CONSTANTS.START_TYPE : type;
   }
 
   /**
@@ -495,12 +485,11 @@ export class StateDB {
    * else return the given id
    */
   endIdIfNeeded(id = '') {
-    let fixedId = id;
-    if (id === END_NODE) {
+    if (id === CONSTANTS.END_NODE) {
       this.startEndCount++;
-      fixedId = `${END_TYPE}${this.startEndCount}`;
+      return `${CONSTANTS.END_TYPE}${this.startEndCount}`;
     }
-    return fixedId;
+    return id;
   }
 
   /**
@@ -509,7 +498,7 @@ export class StateDB {
    *
    */
   endTypeIfNeeded(id = '', type: StateStmt['type'] = DEFAULT_STATE_TYPE) {
-    return id === END_NODE ? END_TYPE : type;
+    return id === CONSTANTS.END_NODE ? CONSTANTS.END_TYPE : type;
   }
 
   addRelationObjs(item1: StateStmt, item2: StateStmt, relationTitle = '') {
@@ -573,16 +562,12 @@ export class StateDB {
   }
 
   cleanupLabel(label: string) {
-    if (label.startsWith(':')) {
-      return label.slice(2).trim();
-    } else {
-      return label.trim();
-    }
+    return label.startsWith(':') ? label.slice(2).trim() : label.trim();
   }
 
   getDividerId() {
     this.dividerCnt++;
-    return 'divider-id-' + this.dividerCnt;
+    return `divider-id-${this.dividerCnt}`;
   }
 
   /**
@@ -598,12 +583,12 @@ export class StateDB {
       this.classes.set(id, { id, styles: [], textStyles: [] });
     }
     const foundClass = this.classes.get(id);
-    if (styleAttributes !== undefined && styleAttributes !== null && foundClass) {
-      styleAttributes.split(STYLECLASS_SEP).forEach((attrib: string) => {
+    if (styleAttributes && foundClass) {
+      styleAttributes.split(CONSTANTS.STYLECLASS_SEP).forEach((attrib) => {
         const fixedAttrib = attrib.replace(/([^;]*);/, '$1').trim();
-        if (RegExp(COLOR_KEYWORD).exec(attrib)) {
-          const newStyle1 = fixedAttrib.replace(FILL_KEYWORD, BG_FILL);
-          const newStyle2 = newStyle1.replace(COLOR_KEYWORD, FILL_KEYWORD);
+        if (RegExp(CONSTANTS.COLOR_KEYWORD).exec(attrib)) {
+          const newStyle1 = fixedAttrib.replace(CONSTANTS.FILL_KEYWORD, CONSTANTS.BG_FILL);
+          const newStyle2 = newStyle1.replace(CONSTANTS.COLOR_KEYWORD, CONSTANTS.FILL_KEYWORD);
           foundClass.textStyles.push(newStyle2);
         }
         foundClass.styles.push(fixedAttrib);
@@ -624,9 +609,9 @@ export class StateDB {
    * @param cssClassName - CSS class name
    */
   setCssClass(itemIds: string, cssClassName: string) {
-    itemIds.split(',').forEach((id: string) => {
+    itemIds.split(',').forEach((id) => {
       let foundState = this.getState(id);
-      if (foundState === undefined) {
+      if (!foundState) {
         const trimmedId = id.trim();
         this.addState(trimmedId);
         foundState = this.getState(trimmedId);
@@ -646,10 +631,7 @@ export class StateDB {
    * @param styleText - the text of the attributes for the style
    */
   setStyle(itemId: string, styleText: string) {
-    const item = this.getState(itemId);
-    if (item !== undefined) {
-      item.styles?.push(styleText);
-    }
+    this.getState(itemId)?.styles?.push(styleText);
   }
 
   /**
@@ -659,10 +641,7 @@ export class StateDB {
    * @param cssClassName - CSS class name
    */
   setTextStyle(itemId: string, cssClassName: string) {
-    const item = this.getState(itemId);
-    if (item !== undefined) {
-      item.textStyles?.push(cssClassName);
-    }
+    this.getState(itemId)?.textStyles?.push(cssClassName);
   }
 
   getDirection() {
