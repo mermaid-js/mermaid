@@ -1,4 +1,5 @@
 import stateDiagram, { parser } from './parser/stateDiagram.jison';
+import { DEFAULT_DIAGRAM_DIRECTION } from './stateCommon.js';
 import { StateDB } from './stateDb.js';
 
 describe('state diagram V2, ', function () {
@@ -6,7 +7,7 @@ describe('state diagram V2, ', function () {
   describe('when parsing an info graph it', function () {
     let stateDb;
     beforeEach(function () {
-      stateDb = new StateDB();
+      stateDb = new StateDB(2);
       parser.yy = stateDb;
       stateDiagram.parser.yy = stateDb;
       stateDiagram.parser.yy.clear();
@@ -411,6 +412,35 @@ describe('state diagram V2, ', function () {
       expect(rel_Inactive_Idle.relationTitle).toEqual('ACT');
       const rel_Active_Active = rels.find((rel) => rel.id1 === 'Active' && rel.id2 === 'Active');
       expect(rel_Active_Active.relationTitle).toEqual('LOG');
+    });
+
+    it('should check default diagram direction', () => {
+      const diagram = `
+        stateDiagram
+          [*] --> Still
+          Still --> [*]
+        `;
+
+      parser.parse(diagram);
+
+      // checking default direction if no direction is specified
+      const defaultDir = stateDb.getDirection();
+      expect(defaultDir).toEqual(DEFAULT_DIAGRAM_DIRECTION);
+    });
+
+    it('retrieve the diagram direction correctly', () => {
+      const diagram = `
+        stateDiagram
+          direction LR
+          [*] --> Still
+          Still --> [*]
+        `;
+
+      parser.parse(diagram);
+
+      //retrieve the diagram direction
+      const currentDirection = stateDb.getDirection();
+      expect(currentDirection).toEqual('LR');
     });
   });
 });
