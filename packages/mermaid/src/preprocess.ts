@@ -53,7 +53,29 @@ export function preprocessDiagram(code: string) {
   const cleanedCode = cleanupText(code);
   const frontMatterResult = processFrontmatter(cleanedCode);
   const directiveResult = processDirectives(frontMatterResult.text);
-  const config = cleanAndMerge(frontMatterResult.config, directiveResult.directive);
+  const mergedConfig = cleanAndMerge(frontMatterResult.config, directiveResult.directive);
+
+  const hasArchitecture =
+    frontMatterResult.config.architecture || directiveResult.directive.architecture;
+
+  const icons = [
+    ...(frontMatterResult.config.architecture?.icons ?? []),
+    ...(directiveResult.directive.architecture?.icons ?? []),
+  ];
+
+  const architecture = {
+    ...(frontMatterResult.config.architecture ?? {}),
+    ...(directiveResult.directive.architecture ?? {}),
+    icons,
+  };
+
+  const config = hasArchitecture
+    ? {
+        ...mergedConfig,
+        architecture,
+      }
+    : mergedConfig;
+
   code = cleanupComments(directiveResult.text);
   return {
     code,

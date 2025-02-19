@@ -30,7 +30,6 @@ export const sanitizeDirective = (args: any): void => {
       !configKeys.has(key) ||
       args[key] == null
     ) {
-      log.debug('sanitize deleting key: ', key);
       delete args[key];
       continue;
     }

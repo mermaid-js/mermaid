@@ -1,10 +1,10 @@
 import type { Architecture } from '@mermaid-js/parser';
 import { parse } from '@mermaid-js/parser';
-import { log } from '../../logger.js';
 import type { ParserDefinition } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
-import type { ArchitectureDB } from './architectureTypes.js';
 import { db } from './architectureDb.js';
+import type { ArchitectureDB } from './architectureTypes.js';
 
 const populateDb = (ast: Architecture, db: ArchitectureDB) => {
   populateCommonDb(ast, db);
