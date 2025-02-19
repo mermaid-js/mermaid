@@ -249,6 +249,21 @@
       Alice<<->>Bob: Wow, we said that at the same time!
       Bob<<-->>Alice: Bidirectional Arrows are so cool
     </pre>
+
+    <hr />
+
+    <pre class="mermaid">
+    sequenceDiagram
+      participant Pink Alice
+      participant Purple Bob
+      Pink Alice->>+Purple Bob: Hello!
+      Purple Bob->>+Pink Alice: Hi Alice, what a nice pink color
+      Pink Alice->>-Purple Bob: Thanks Bob, I like your color to!
+      Purple Bob->>-Pink Alice: Thanks Alice!!!
+
+      style Pink Alice: fill:pink, stroke:red
+      style Purple Bob: fill:mediumPurple, stroke:purple
+    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

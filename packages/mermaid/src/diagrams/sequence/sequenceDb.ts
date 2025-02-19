@@ -98,6 +98,7 @@ export const addActor = function (
     actorCnt: null,
     rectData: null,
     type: type ?? 'participant',
+    style: '',
   });
   if (state.records.prevActor) {
     const prevActorInRecords = state.records.actors.get(state.records.prevActor);
@@ -478,6 +479,11 @@ export const getActorProperty = function (actor: Actor, key: string) {
   return undefined;
 };
 
+export const setCssStyle = function (actorId: string, text: { text: string }) {
+  const actor = getActor(actorId);
+  actor.style = text.text.replaceAll(',', ';');
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
 export const apply = function (param: any | AddMessageParams | AddMessageParams[]) {
   if (Array.isArray(param)) {
@@ -624,6 +630,9 @@ export const apply = function (param: any | AddMessageParams | AddMessageParams[
       case 'breakEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
+      case 'setCssStyle':
+        setCssStyle(param.actor, param.text);
+        break;
     }
   }
 };
@@ -665,4 +674,5 @@ export default {
   getAccDescription,
   hasAtLeastOneBox,
   hasAtLeastOneBoxWithTitle,
+  setCssStyle,
 };

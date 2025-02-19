@@ -17,6 +17,7 @@ export interface Actor {
   actorCnt: number | null;
   rectData: unknown;
   type: string;
+  style: string;
 }
 
 export interface Message {

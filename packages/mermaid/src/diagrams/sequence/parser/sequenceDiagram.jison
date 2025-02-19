@@ -57,6 +57,7 @@
 "details"                                                       return 'details';
 "over"                                                          return 'over';
 "note"                                                          return 'note';
+"style"                                                         return 'style';
 "activate"                                                      { this.begin('ID'); return 'activate'; }
 "deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
 "title"\s[^#\n;]+                                               return 'title';
@@ -84,7 +85,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \-\-[x]                                                         return 'DOTTED_CROSS';
 \-[\)]                                                          return 'SOLID_POINT';
 \-\-[\)]                                                        return 'DOTTED_POINT';
-":"(?:(?:no)?wrap:)?[^#\n;]+                                    return 'TXT';
+":"(?:(?:no)?wrap:)?[^\n;]+                                     return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
 <<EOF>>                                                         return 'NEWLINE';
@@ -143,6 +144,7 @@ statement
 	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2.actor};}
 	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2.actor};}
 	| note_statement 'NEWLINE'
+	| style_statement 'NEWLINE'
 	| links_statement 'NEWLINE'
 	| link_statement 'NEWLINE'
 	| properties_statement 'NEWLINE'
@@ -258,6 +260,13 @@ link_statement
 		$$ = [$2, {type:'addALink', actor:$2.actor, text:$3}];
   }
 	;
+
+style_statement
+    : 'style' actor text2
+	{
+		$$ = [$2, {type:'setCssStyle', actor:$2.actor, text:$3}];
+  }
+    ;
 
 properties_statement
 	: 'properties' actor text2
