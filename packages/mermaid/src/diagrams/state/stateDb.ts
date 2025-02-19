@@ -649,7 +649,7 @@ export class StateDB {
    * @returns the direction statement if present
    */
   private getDirectionStatement() {
-    return this.rootDoc.find((doc) => doc.stmt === STMT_DIRECTION);
+    return this.rootDoc.find((doc): doc is DirectionStmt => doc.stmt === STMT_DIRECTION);
   }
 
   getDirection() {
