@@ -117,6 +117,9 @@ export interface Edge {
   // Class Diagram specific properties
   startLabelRight?: string;
   endLabelLeft?: string;
+  // C4 Diagram specific properties
+  link?: string;
+  icon?: string;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;

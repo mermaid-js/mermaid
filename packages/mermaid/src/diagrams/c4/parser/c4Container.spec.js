@@ -1,4 +1,4 @@
-import c4Db from '../c4Db.js';
+import { C4DB } from '../c4Db.js';
 import c4 from './c4Diagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -15,7 +15,7 @@ describe.each([
   ['ContainerQueue_Ext', 'external_container_queue'],
 ])('parsing a C4 %s', function (macroName, elementName) {
   beforeEach(function () {
-    c4.parser.yy = c4Db;
+    c4.parser.yy = new C4DB();
     c4.parser.yy.clear();
   });
 
@@ -26,28 +26,24 @@ ${macroName}(ContainerAA, "Internet Banking Container", "Technology", "Allows cu
 
     const yy = c4.parser.yy;
 
-    const shapes = yy.getC4ShapeArray();
-    expect(shapes.length).toBe(1);
-    const onlyShape = shapes[0];
+    const nodes = yy.getNodes();
+    expect(nodes.size).toBe(1);
+    const node = nodes.get('ContainerAA');
 
-    expect(onlyShape).toEqual({
+    expect(node).toEqual({
       alias: 'ContainerAA',
-      descr: {
-        text: 'Allows customers to view information about their bank accounts, and make payments.',
-      },
-      label: {
-        text: 'Internet Banking Container',
-      },
+      classes: ['default'],
+      cssStyles: [],
+      descr: 'Allows customers to view information about their bank accounts, and make payments.',
+      isBoundary: false,
+      label: 'Internet Banking Container',
       link: undefined,
       sprite: undefined,
       tags: undefined,
-      parentBoundary: 'global',
-      typeC4Shape: {
-        text: elementName,
-      },
-      techn: {
-        text: 'Technology',
-      },
+      parent: 'global',
+      shape: 'rect',
+      techn: 'Technology',
+      type: elementName,
       wrap: false,
     });
   });
@@ -56,7 +52,7 @@ ${macroName}(ContainerAA, "Internet Banking Container", "Technology", "Allows cu
     c4.parser.parse(`C4Context
 ${macroName}(ContainerAA, "Internet Banking Container")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('ContainerAA')).toMatchObject({
       alias: 'ContainerAA',
     });
   });
@@ -65,10 +61,8 @@ ${macroName}(ContainerAA, "Internet Banking Container")`);
     c4.parser.parse(`C4Context
 ${macroName}(ContainerAA, "Internet Banking Container")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      label: {
-        text: 'Internet Banking Container',
-      },
+    expect(c4.parser.yy.getNodes().get('ContainerAA')).toMatchObject({
+      label: 'Internet Banking Container',
     });
   });
 
@@ -76,10 +70,8 @@ ${macroName}(ContainerAA, "Internet Banking Container")`);
     c4.parser.parse(`C4Context
 ${macroName}(ContainerAA, "", "Java")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      techn: {
-        text: 'Java',
-      },
+    expect(c4.parser.yy.getNodes().get('ContainerAA')).toMatchObject({
+      techn: 'Java',
     });
   });
 
@@ -87,10 +79,8 @@ ${macroName}(ContainerAA, "", "Java")`);
     c4.parser.parse(`C4Context
 ${macroName}(ContainerAA, "", "", "Allows customers to view information about their bank accounts, and make payments.")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
-      descr: {
-        text: 'Allows customers to view information about their bank accounts, and make payments.',
-      },
+    expect(c4.parser.yy.getNodes().get('ContainerAA')).toMatchObject({
+      descr: 'Allows customers to view information about their bank accounts, and make payments.',
     });
   });
 
@@ -98,11 +88,9 @@ ${macroName}(ContainerAA, "", "", "Allows customers to view information about th
     c4.parser.parse(`C4Context
 ${macroName}(ContainerAA, $sprite="users")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('ContainerAA')).toMatchObject({
       label: {
-        text: {
-          sprite: 'users',
-        },
+        sprite: 'users',
       },
     });
   });
@@ -111,24 +99,20 @@ ${macroName}(ContainerAA, $sprite="users")`);
     c4.parser.parse(`C4Context
 ${macroName}(ContainerAA, $link="https://github.com/mermaidjs")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('ContainerAA')).toMatchObject({
       label: {
-        text: {
-          link: 'https://github.com/mermaidjs',
-        },
+        link: 'https://github.com/mermaidjs',
       },
     });
   });
 
   it('should parse tags', function () {
     c4.parser.parse(`C4Context
-${macroName}(ContainerAA, $tags="tag1,tag2")`);
+${macroName}(ContainerAA, $tags="tag1+tag2")`);
 
-    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('ContainerAA')).toMatchObject({
       label: {
-        text: {
-          tags: 'tag1,tag2',
-        },
+        tags: 'tag1+tag2',
       },
     });
   });

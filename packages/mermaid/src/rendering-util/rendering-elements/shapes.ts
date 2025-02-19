@@ -59,6 +59,7 @@ import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 import { classBox } from './shapes/classBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
+import { octagon } from './shapes/octagon.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -476,6 +477,9 @@ const generateShapeMap = () => {
 
     // class diagram
     classBox,
+
+    // C4 diagram
+    octagon,
   } as const;
 
   const entries = [

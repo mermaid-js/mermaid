@@ -1,18 +1,25 @@
 // @ts-ignore: JISON doesn't support types
 import parser from './parser/c4Diagram.jison';
-import db from './c4Db.js';
-import renderer from './c4Renderer.js';
+import { C4DB } from './c4Db.js';
+import renderer from './c4Renderer-unified.js';
 import styles from './styles.js';
 import type { MermaidConfig } from '../../config.type.js';
 import type { DiagramDefinition } from '../../diagram-api/types.js';
+import { setConfig } from '../../diagram-api/diagramAPI.js';
 
 export const diagram: DiagramDefinition = {
   parser,
-  db,
+  get db() {
+    return new C4DB();
+  },
   renderer,
   styles,
-  init: ({ c4, wrap }: MermaidConfig) => {
-    renderer.setConf(c4);
-    db.setWrap(wrap);
+  init: (cnf: MermaidConfig) => {
+    if (!cnf.flowchart) {
+      cnf.flowchart = {};
+    }
+    if (cnf.layout) {
+      setConfig({ layout: cnf.layout });
+    }
   },
 };
