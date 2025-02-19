@@ -230,7 +230,7 @@ const ConfigWarning = {
 } as const;
 
 type ConfigWarningStrings = keyof typeof ConfigWarning;
-const issuedWarnings: { [key in ConfigWarningStrings]?: boolean } = {};
+const issuedWarnings: Partial<Record<ConfigWarningStrings, boolean>> = {};
 const issueWarning = (warning: ConfigWarningStrings) => {
   if (issuedWarnings[warning]) {
     return;
