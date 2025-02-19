@@ -63,4 +63,84 @@ section Checkout from website
       { journey: { useMaxWidth: false } }
     );
   });
+
+  it('should maintain sufficient space between legend labels and diagram elements', () => {
+    renderGraph(
+      `journey
+    title  Web hook life cycle
+    section Darkoob 
+        Make preBuilt:5: Darkoob user 
+        register slug : 5: Darkoob userf
+      Map slug to a Prebuilt Job:5: Darkoob user
+    section External Service
+      set Darkoob slug as hook for an Event : 5 : admin Exjjjnjjjj qwerty
+      listen to the events : 5 :  External Service 
+      call darkoob endpoint : 5 : External Service 
+    section Darkoob  
+        check for inputs : 5 : DarkoobAPI
+        run the prebuilt job : 5 : DarkoobAPI 
+    `,
+      { journey: { useMaxWidth: true } }
+    );
+
+    let LabelEndX, diagramStartX;
+
+    // Get right edge of the legend
+    cy.contains('tspan', 'admin Exjjjnjjjj qwerty').then((textBox) => {
+      const bbox = textBox[0].getBBox();
+      LabelEndX = bbox.x + bbox.width;
+    });
+
+    // Get left edge of the diagram
+    cy.contains('foreignobject', 'Make preBuilt').then((rect) => {
+      diagramStartX = parseFloat(rect.attr('x'));
+    });
+
+    // Assert right edge of the diagram is greater than or equal to the right edge of the label
+    cy.then(() => {
+      expect(diagramStartX).to.be.gte(LabelEndX);
+    });
+  });
+
+  it('should maintain sufficient space between legend and diagram when legend labels are longer', () => {
+    cy.then(() => {
+      renderGraph(
+        `journey
+      title  Web hook life cycle
+      section Darkoob
+        Make preBuilt:5: Darkoob user
+        register slug : 5: Darkoob userf deliberately increasing the size of this label to check if distance between legend and diagram is  maintained
+        Map slug to a Prebuilt Job:5: Darkoob user
+      section External Service
+        set Darkoob slug as hook for an Event : 5 : admin Exjjjnjjjj qwerty
+        listen to the events : 5 :  External Service
+        call darkoob endpoint : 5 : External Service
+      section Darkoob
+        check for inputs : 5 : DarkoobAPI
+        run the prebuilt job : 5 : DarkoobAPI
+        `,
+        { journey: { useMaxWidth: true } }
+      );
+    });
+
+    let LabelEndX, diagramStartX;
+
+    // Get right edge of the legend
+    cy.contains('tspan', 'Darkoob userf deliberately increasing the size of this label').then(
+      (textBox) => {
+        const bbox = textBox[0].getBBox();
+        LabelEndX = bbox.x + bbox.width;
+      }
+    );
+
+    // Get left edge of the diagram
+    cy.contains('foreignobject', 'Make preBuilt').then((rect) => {
+      diagramStartX = parseFloat(rect.attr('x'));
+    });
+
+    // Assert right edge of the diagram is greater than or equal to the right edge of the label
+    cy.then(() => {
+      expect(diagramStartX).to.be.gte(LabelEndX);
+    });
+  });
 });
