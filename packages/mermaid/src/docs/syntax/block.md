@@ -390,7 +390,7 @@ block-beta
 
 ### Class Styling
 
-Mermaid enables applying styling to classes, which could make styling easier if you want to apply a certain set of styles to multiple elements, as you could just link those elements to a class. 
+Mermaid enables applying styling to classes, which could make styling easier if you want to apply a certain set of styles to multiple elements, as you could just link those elements to a class.
 
 #### Example - Styling a Single Class
 
