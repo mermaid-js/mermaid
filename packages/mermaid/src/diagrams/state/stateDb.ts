@@ -21,6 +21,7 @@ import {
   STMT_CLASSDEF,
   STMT_RELATION,
   STMT_ROOT,
+  STMT_DIRECTION,
   STMT_STATE,
   STMT_STYLEDEF,
 } from './stateCommon.js';
@@ -178,7 +179,6 @@ const clone = <T>(o: T): T => JSON.parse(JSON.stringify(o));
 export class StateDB {
   private nodes: NodeData[] = [];
   private edges: Edge[] = [];
-  private direction = DEFAULT_DIAGRAM_DIRECTION;
   private rootDoc: Stmt[] = [];
   private classes = newClassesList();
   private documents = { root: newDoc() };
@@ -644,12 +644,25 @@ export class StateDB {
     this.getState(itemId)?.textStyles?.push(cssClassName);
   }
 
-  getDirection() {
-    return this.direction;
+  /**
+   * Finds the direction statement in the root document.
+   * @returns the direction statement if present
+   */
+  private getDirectionStatement() {
+    return this.rootDoc.find((doc) => doc.stmt === STMT_DIRECTION);
   }
 
-  setDirection(dir: string) {
-    this.direction = dir;
+  getDirection() {
+    return this.getDirectionStatement()?.value ?? DEFAULT_DIAGRAM_DIRECTION;
+  }
+
+  setDirection(dir: DirectionStmt['value']) {
+    const doc = this.getDirectionStatement();
+    if (doc) {
+      doc.value = dir;
+    } else {
+      this.rootDoc.unshift({ stmt: STMT_DIRECTION, value: dir });
+    }
   }
 
   trimColon(str: string) {
