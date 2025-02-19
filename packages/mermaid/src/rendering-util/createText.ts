@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
-import { getConfig } from '../diagram-api/diagramAPI.js';
-import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 import type { SVGGroup } from '../diagram-api/types.js';
+import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
+import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
 
@@ -180,14 +181,47 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
 /**
  * Convert fontawesome labels into fontawesome icons by using a regex pattern
  * @param text - The raw string to convert
- * @returns string with fontawesome icons as i tags
+ * @returns string with fontawesome icons as i tags if they are from pro pack and as svg if they are from free pack
  */
-export function replaceIconSubstring(text: string) {
-  // The letters 'bklrs' stand for possible endings of the fontawesome prefix (e.g. 'fab' for brands, 'fak' for fa-kit) // cspell: disable-line
-  return text.replace(
-    /fa[bklrs]?:fa-[\w-]+/g, // cspell: disable-line
-    (s) => `<i class='${s.replace(':', ' ')}'></i>`
-  );
+export async function replaceIconSubstring(text) {
+  const iconRegex = /(fas|fab|far|fa|fal|fak|fad):fa-([a-z-]+)/g;
+  const classNameMap = {
+    fas: 'fa-solid',
+    fab: 'fa-brands',
+    far: 'fa-regular',
+    fa: 'fa',
+    fal: 'fa-light',
+    fad: 'fa-duotone',
+    fak: 'fak',
+  } as const;
+  const matches = [...text.matchAll(iconRegex)];
+  if (matches.length === 0) {
+    return text;
+  }
+
+  let newText = text;
+
+  for (const match of matches) {
+    const [fullMatch, prefix, iconName] = match;
+    const className = classNameMap[prefix];
+    const registeredIconName = `${prefix}:${iconName}`;
+
+    try {
+      const isFreeIcon = await isIconAvailable(registeredIconName);
+      if (!isFreeIcon) {
+        log.warn(`Icon ${registeredIconName} is a pro icon.`);
+        newText = newText.replace(fullMatch, `<i class='${className} fa-${iconName}'></i>`);
+        continue;
+      }
+      const faIcon = await getIconSVG(registeredIconName, undefined, { class: 'label-icon' });
+      if (faIcon) {
+        newText = newText.replace(fullMatch, faIcon);
+      }
+    } catch (error) {
+      log.error(`Error processing ${registeredIconName}:`, error);
+    }
+  }
+  return newText;
 }
 
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to sett classes to'nodeLabel' when isNode=true otherwise 'edgeLabel'
@@ -221,7 +255,7 @@ export const createText = async (
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
     const htmlText = markdownToHTML(text, config);
-    const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
+    const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText));
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
     const inputForKatex = text.replace(/\\\\/g, '\\');

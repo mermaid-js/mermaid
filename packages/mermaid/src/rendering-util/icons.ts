@@ -85,7 +85,8 @@ export const isIconAvailable = async (iconName: string) => {
 
 export const getIconSVG = async (
   iconName: string,
-  customisations?: IconifyIconCustomisations & { fallbackPrefix?: string }
+  customisations?: IconifyIconCustomisations & { fallbackPrefix?: string },
+  extraAttributes?: Record<string, string>
 ) => {
   let iconData: ExtendedIconifyIcon;
   try {
@@ -95,6 +96,9 @@ export const getIconSVG = async (
     iconData = unknownIcon;
   }
   const renderData = iconToSVG(iconData, customisations);
-  const svg = iconToHTML(replaceIDs(renderData.body), renderData.attributes);
+  const svg = iconToHTML(replaceIDs(renderData.body), {
+    ...renderData.attributes,
+    ...extraAttributes,
+  });
   return svg;
 };
