@@ -12,15 +12,15 @@ const allTaglines: { [key: string]: { design: number; taglines: Taglines[] } } =
     taglines: [
       {
         label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Chart',
-        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_A',
+        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=AIbundle_A',
       },
       {
         label: 'Diagram live with teammates in Mermaid Chart',
-        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_A',
+        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=teams_A',
       },
       {
         label: 'Use the Visual Editor in Mermaid Chart to design and build diagrams',
-        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_A',
+        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_A',
       },
       {
         label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
@@ -28,7 +28,7 @@ const allTaglines: { [key: string]: { design: number; taglines: Taglines[] } } =
       },
     ],
   },
-  B: {
+B: {
     design: 2,
     taglines: [
       {
@@ -45,11 +45,11 @@ const allTaglines: { [key: string]: { design: number; taglines: Taglines[] } } =
       },
       {
         label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_A',
+        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_B',
       },
     ],
   },
-  C: {
+C: {
     design: 1,
     taglines: [
       {
@@ -66,11 +66,11 @@ const allTaglines: { [key: string]: { design: number; taglines: Taglines[] } } =
       },
       {
         label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_B',
+        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_A',
       },
     ],
   },
-  D: {
+D: {
     design: 2,
     taglines: [
       {
@@ -87,10 +87,8 @@ const allTaglines: { [key: string]: { design: number; taglines: Taglines[] } } =
       },
       {
         label: 'Explore the Mermaid Whiteboard from the creators of Mermaid',
-        url: 'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_B',
+        url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard_B',
       },
-    ],
-  },
 };
 
 const { design, taglines } =
