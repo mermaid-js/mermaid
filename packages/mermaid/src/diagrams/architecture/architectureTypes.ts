@@ -106,9 +106,7 @@ export const isValidArchitectureDirectionPair = function (
   return x !== 'LL' && x !== 'RR' && x !== 'TT' && x !== 'BB';
 };
 
-export type ArchitectureDirectionPairMap = {
-  [key in ArchitectureDirectionPair]?: string;
-};
+export type ArchitectureDirectionPairMap = Partial<Record<ArchitectureDirectionPair, string>>;
 
 /**
  * Creates a pair of the directions of each side of an edge. This function should be used instead of manually creating it to ensure that the source is always the first character.
