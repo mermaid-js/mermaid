@@ -3,10 +3,13 @@
  */
 
 // default diagram direction
-export const DEFAULT_DIAGRAM_DIRECTION = 'LR';
+export const DEFAULT_DIAGRAM_DIRECTION = 'TB';
 
 // default direction for any nested documents (composites)
 export const DEFAULT_NESTED_DOC_DIR = 'TB';
+
+// parsed statement type for a direction
+export const STMT_DIRECTION = 'dir';
 
 // parsed statement type for a state
 export const STMT_STATE = 'state';
