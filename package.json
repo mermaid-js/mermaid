@@ -137,6 +137,10 @@
   "pnpm": {
     "patchedDependencies": {
       "roughjs": "patches/roughjs.patch"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "cypress",
+      "esbuild"
+    ]
   }
 }
