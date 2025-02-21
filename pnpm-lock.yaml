@@ -381,11 +381,11 @@ importers:
         specifier: ^4.13.1
         version: 4.35.0
       typedoc:
-        specifier: ^0.27.0
+        specifier: ^0.27.7
         version: 0.27.7(typescript@5.7.3)
       typedoc-plugin-markdown:
-        specifier: ^3.17.1
-        version: 3.17.1(typedoc@0.27.7(typescript@5.7.3))
+        specifier: ^4.4.2
+        version: 4.4.2(typedoc@0.27.7(typescript@5.7.3))
       typescript:
         specifier: ~5.7.0
         version: 5.7.3
@@ -6328,11 +6328,6 @@ packages:
   handle-thing@2.0.1:
     resolution: {integrity: sha512-9Qn4yBxelxoh2Ow62nP+Ka/kMnOXRi8BXnRaUwezLNhqelnN49xKz4F/dPP8OYLxLxq6JDtZb2i9XznUQbNPTg==}
 
-  handlebars@4.7.8:
-    resolution: {integrity: sha512-vafaFqs8MZkRrSX7sFVUdo3ap/eNiLnb4IakshzvP56X5Nr1iGKAIqdX6tMlm6HcNRIkr6AxO5jFEoJzzpT8aQ==}
-    engines: {node: '>=0.4.7'}
-    hasBin: true
-
   has-ansi@2.0.0:
     resolution: {integrity: sha512-C8vBJ8DwUCx19vhm7urhTuUsr4/IyP6l4VzNQDv+ryHQObW3TTTp9yB68WpYgRe2bbaGuZ/se74IqFeVnMnLZg==}
     engines: {node: '>=0.10.0'}
@@ -9600,10 +9595,11 @@ packages:
   typedarray-to-buffer@3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
 
-  typedoc-plugin-markdown@3.17.1:
-    resolution: {integrity: sha512-QzdU3fj0Kzw2XSdoL15ExLASt2WPqD7FbLeaqwT70+XjKyTshBnUlQA5nNREO1C2P8Uen0CDjsBLMsCQ+zd0lw==}
+  typedoc-plugin-markdown@4.4.2:
+    resolution: {integrity: sha512-kJVkU2Wd+AXQpyL6DlYXXRrfNrHrEIUgiABWH8Z+2Lz5Sq6an4dQ/hfvP75bbokjNDUskOdFlEEm/0fSVyC7eg==}
+    engines: {node: '>= 18'}
     peerDependencies:
-      typedoc: '>=0.24.0'
+      typedoc: 0.27.x
 
   typedoc@0.27.7:
     resolution: {integrity: sha512-K/JaUPX18+61W3VXek1cWC5gwmuLvYTOXJzBvD9W7jFvbPnefRnCHQCEPw7MSNrP/Hj7JJrhZtDDLKdcYm6ucg==}
@@ -10199,9 +10195,6 @@ packages:
   word-wrap@1.2.5:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
-
-  wordwrap@1.0.0:
-    resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
 
   workbox-background-sync@7.1.0:
     resolution: {integrity: sha512-rMbgrzueVWDFcEq1610YyDW71z0oAXLfdRHRQcKw4SGihkfOK0JUEvqWHFwA6rJ+6TClnMIn7KQI5PNN1XQXwQ==}
@@ -17854,15 +17847,6 @@ snapshots:
 
   handle-thing@2.0.1: {}
 
-  handlebars@4.7.8:
-    dependencies:
-      minimist: 1.2.8
-      neo-async: 2.6.2
-      source-map: 0.6.1
-      wordwrap: 1.0.0
-    optionalDependencies:
-      uglify-js: 3.19.3
-
   has-ansi@2.0.0:
     dependencies:
       ansi-regex: 2.1.1
@@ -21724,9 +21708,8 @@ snapshots:
     dependencies:
       is-typedarray: 1.0.0
 
-  typedoc-plugin-markdown@3.17.1(typedoc@0.27.7(typescript@5.7.3)):
+  typedoc-plugin-markdown@4.4.2(typedoc@0.27.7(typescript@5.7.3)):
     dependencies:
-      handlebars: 4.7.8
       typedoc: 0.27.7(typescript@5.7.3)
 
   typedoc@0.27.7(typescript@5.7.3):
@@ -22513,8 +22496,6 @@ snapshots:
   wildcard@2.0.1: {}
 
   word-wrap@1.2.5: {}
-
-  wordwrap@1.0.0: {}
 
   workbox-background-sync@7.1.0:
     dependencies:
