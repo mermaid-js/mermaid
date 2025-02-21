@@ -103,9 +103,8 @@ section Checkout from website
   });
 
   it('should maintain sufficient space between legend and diagram when legend labels are longer', () => {
-    cy.then(() => {
-      renderGraph(
-        `journey
+    renderGraph(
+      `journey
       title  Web hook life cycle
       section Darkoob
         Make preBuilt:5: Darkoob user
@@ -119,9 +118,8 @@ section Checkout from website
         check for inputs : 5 : DarkoobAPI
         run the prebuilt job : 5 : DarkoobAPI
         `,
-        { journey: { useMaxWidth: true } }
-      );
-    });
+      { journey: { useMaxWidth: true } }
+    );
 
     let LabelEndX, diagramStartX;
 
