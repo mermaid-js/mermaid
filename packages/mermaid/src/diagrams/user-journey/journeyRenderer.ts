@@ -44,7 +44,7 @@ function drawActorLegend(diagram) {
 
     const textElement = svgDraw.drawText(diagram, labelData);
     const textLength = textElement.node().getBBox().width;
-    if (textLength > maxWidth && textLength > conf?.leftMargin) {
+    if (textLength > maxWidth && textLength > conf?.leftMargin - textLength) {
       maxWidth = textLength;
     }
     yPos += 20;
