@@ -93,7 +93,7 @@
     "cypress-image-snapshot": "^4.0.1",
     "cypress-split": "^1.24.0",
     "esbuild": "^0.25.0",
-    "eslint": "^9.4.0",
+    "eslint": "^9.20.1",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-cypress": "^4.0.0",
     "eslint-plugin-html": "^8.1.1",

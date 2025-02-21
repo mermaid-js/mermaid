@@ -102,7 +102,6 @@
     "@types/katex": "^0.16.7",
     "@types/lodash-es": "^4.17.12",
     "@types/micromatch": "^4.0.6",
-    "@types/prettier": "^3.0.0",
     "@types/stylis": "^4.2.5",
     "@types/uuid": "^9.0.8",
     "ajv": "^8.12.0",
