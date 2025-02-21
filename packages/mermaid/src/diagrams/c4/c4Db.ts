@@ -105,7 +105,6 @@ export class C4DB implements DiagramDB {
     }
   }
 
-  //type, from, to, label, ?techn, ?descr, ?sprite, ?tags, $link
   public addRel(
     type: string,
     from: string,
@@ -138,7 +137,6 @@ export class C4DB implements DiagramDB {
     this.rels.push(rel as C4Relation);
   }
 
-  //type, alias, label, ?descr, ?sprite, ?tags, $link
   public addPersonOrSystem(
     typeC4Shape: string,
     alias: string,
@@ -173,7 +171,6 @@ export class C4DB implements DiagramDB {
     this.c4Nodes.set(alias, personOrSystem as C4Node);
   }
 
-  //type, alias, label, ?techn, ?descr ?sprite, ?tags, $link
   public addContainer(
     typeC4Shape: string,
     alias: string,
@@ -209,7 +206,6 @@ export class C4DB implements DiagramDB {
     this.c4Nodes.set(alias, container as C4Node);
   }
 
-  //type, alias, label, ?techn, ?descr ?sprite, ?tags, $link
   public addComponent(
     typeC4Shape: string,
     alias: string,
@@ -245,7 +241,6 @@ export class C4DB implements DiagramDB {
     this.c4Nodes.set(alias, component as C4Node);
   }
 
-  //alias, label, ?type, ?tags, $link
   public addPersonOrSystemBoundary(
     alias: string,
     label: string,
@@ -279,7 +274,6 @@ export class C4DB implements DiagramDB {
     this.boundaryParseStack.push(this.parentBoundaryParse);
   }
 
-  //alias, label, ?type, ?tags, $link
   public addContainerBoundary(
     alias: string,
     label: string,
@@ -313,7 +307,6 @@ export class C4DB implements DiagramDB {
     this.boundaryParseStack.push(this.parentBoundaryParse);
   }
 
-  //alias, label, ?type, ?descr, ?sprite, ?tags, $link
   public addDeploymentNode(
     nodeType: string,
     alias: string,
@@ -360,7 +353,6 @@ export class C4DB implements DiagramDB {
     this.boundaryParseStack.push(this.parentBoundaryParse);
   }
 
-  //elementName, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite
   public updateElStyle(
     typeC4Shape: string,
     elementName: string,
@@ -390,7 +382,6 @@ export class C4DB implements DiagramDB {
     this.applyValueToObject(updatedEl, techn, 'techn');
   }
 
-  //textColor, lineColor, ?offsetX, ?offsetY
   public updateRelStyle(
     typeC4Shape: string,
     from: string,
@@ -539,7 +530,6 @@ export class C4DB implements DiagramDB {
     this.relTags.set(tagStereo, tag);
   }
 
-  //?c4ShapeInRow, ?c4BoundaryInRow
   public updateLayoutConfig(
     typeC4Shape: string,
     c4ShapeInRowParam: object | string,

@@ -6,6 +6,8 @@ const testOptions = [
   { description: 'HD: ', options: { logLevel: 1, look: 'handDrawn' } },
 ];
 
+const directions = ['TB', 'BT', 'LR', 'RL'];
+
 describe('C4 Diagram Unified', () => {
   testOptions.forEach(({ description, options }) => {
     it(`${description}should render a simple C4 diagram`, () => {
@@ -126,132 +128,38 @@ describe('C4 Diagram Unified', () => {
       );
     });
 
-    it(`${description}should render a simple C4 diagram with the direction TB`, () => {
-      imgSnapshotTest(
-        `
-        C4Context
-        accTitle: C4 context demo
-        accDescr: Many large C4 diagrams
-  
-        direction TB
-        title System Context diagram for Internet Banking System
-  
-        Enterprise_Boundary(b0, "BankBoundary0") {
-            Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
-  
-            System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
-  
-            Enterprise_Boundary(b1, "BankBoundary") {
-              System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
+    directions.forEach((direction) => {
+      it(`${description}should render a simple C4 diagram with the direction ${direction}`, () => {
+        imgSnapshotTest(
+          `
+          C4Context
+          accTitle: C4 context demo
+          accDescr: Many large C4 diagrams
+    
+          direction ${direction}
+          title System Context diagram for Internet Banking System
+    
+          Enterprise_Boundary(b0, "BankBoundary0") {
+              Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
+    
+              System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
+    
+              Enterprise_Boundary(b1, "BankBoundary") {
+                System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
+              }
             }
-          }
-  
-        BiRel(customerA, SystemAA, "Uses")
-        Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
-        Rel(SystemC, customerA, "Sends e-mails to")
-  
-        UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
-        UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
-        UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
-          `,
-        options
-      );
-    });
-
-    it(`${description}should render a simple C4 diagram with the direction BT`, () => {
-      imgSnapshotTest(
-        `
-        C4Context
-        accTitle: C4 context demo
-        accDescr: Many large C4 diagrams
-  
-        direction BT
-        title System Context diagram for Internet Banking System
-  
-        Enterprise_Boundary(b0, "BankBoundary0") {
-            Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
-  
-            System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
-  
-            Enterprise_Boundary(b1, "BankBoundary") {
-              System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
-            }
-          }
-  
-        BiRel(customerA, SystemAA, "Uses")
-        Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
-        Rel(SystemC, customerA, "Sends e-mails to")
-  
-        UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
-        UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
-        UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
-          `,
-        options
-      );
-    });
-
-    it(`${description}should render a simple C4 diagram with the direction LR`, () => {
-      imgSnapshotTest(
-        `
-        C4Context
-        accTitle: C4 context demo
-        accDescr: Many large C4 diagrams
-  
-        direction LR
-        title System Context diagram for Internet Banking System
-  
-        Enterprise_Boundary(b0, "BankBoundary0") {
-            Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
-  
-            System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
-  
-            Enterprise_Boundary(b1, "BankBoundary") {
-              System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
-            }
-          }
-  
-        BiRel(customerA, SystemAA, "Uses")
-        Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
-        Rel(SystemC, customerA, "Sends e-mails to")
-  
-        UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
-        UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
-        UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
-          `,
-        options
-      );
-    });
-
-    it(`${description}should render a simple C4 diagram with the direction RL`, () => {
-      imgSnapshotTest(
-        `
-        C4Context
-        accTitle: C4 context demo
-        accDescr: Many large C4 diagrams
-  
-        direction RL
-        title System Context diagram for Internet Banking System
-  
-        Enterprise_Boundary(b0, "BankBoundary0") {
-            Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
-  
-            System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
-  
-            Enterprise_Boundary(b1, "BankBoundary") {
-              System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
-            }
-          }
-  
-        BiRel(customerA, SystemAA, "Uses")
-        Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
-        Rel(SystemC, customerA, "Sends e-mails to")
-  
-        UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
-        UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
-        UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
-          `,
-        options
-      );
+    
+          BiRel(customerA, SystemAA, "Uses")
+          Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
+          Rel(SystemC, customerA, "Sends e-mails to")
+    
+          UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
+          UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
+          UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
+            `,
+          options
+        );
+      });
     });
 
     it(`${description}should render a simple C4 diagram with a legend`, () => {
