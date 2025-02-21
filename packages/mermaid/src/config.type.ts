@@ -209,6 +209,12 @@ export interface MermaidConfig {
    *
    */
   suppressErrorRendering?: boolean;
+  /**
+   * Only process markdown for labels enclosed in double-quote-backtick delimiters, e.g. "`_markdown label_`".
+   * This can be useful when upgrading from mermaid 10 to 11, as version 11 started interpreting labels as markdown by default.
+   *
+   */
+  optInMarkdownLabels?: boolean;
 }
 /**
  * The object containing configurations specific for flowcharts
