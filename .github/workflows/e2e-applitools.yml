@@ -32,13 +32,13 @@ jobs:
         run: |
           echo "::error,title=Not using Applitools::APPLITOOLS_API_KEY is empty, disabling Applitools for this run."
 
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
         # uses version from "packageManager" field in package.json
 
       - name: Setup Node.js
-        uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6 # v4.0.4
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version-file: '.node-version'
 
@@ -54,7 +54,7 @@ jobs:
           APPLITOOLS_SERVER_URL: 'https://eyesapi.applitools.com'
 
       - name: Cypress run
-        uses: cypress-io/github-action@d79d2d530a66e641eb4a5f227e13bc985c60b964 # v4.2.2
+        uses: cypress-io/github-action@18a6541367f4580a515371905f499a27a44e8dbe # v6.7.12
         id: cypress
         with:
           start: pnpm run dev
