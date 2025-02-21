@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-Free fontawesome icons are now embeded as svg inside diagram. Pro icons will still be using <i> tag.
+Registered icons are now embedded as SVGs inside diagram. If an icon is not available in the registered icons it will still use <i> tag
