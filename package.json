@@ -103,7 +103,7 @@
     "eslint-plugin-lodash": "^8.0.0",
     "eslint-plugin-markdown": "^5.0.0",
     "eslint-plugin-no-only-tests": "^3.1.0",
-    "eslint-plugin-tsdoc": "^0.3.0",
+    "eslint-plugin-tsdoc": "^0.4.0",
     "eslint-plugin-unicorn": "^57.0.0",
     "express": "^4.19.1",
     "globals": "^15.4.0",
