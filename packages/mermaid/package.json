@@ -68,10 +68,6 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.0.1",
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-brands-svg-icons": "^6.7.2",
-    "@fortawesome/free-regular-svg-icons": "^6.7.2",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@iconify/utils": "^2.1.32",
     "@mermaid-js/parser": "workspace:^",
     "@types/d3": "^7.4.3",

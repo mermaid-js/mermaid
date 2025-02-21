@@ -1,32 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
-import { getConfig } from '../diagram-api/diagramAPI.js';
-import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
+import { getConfig } from '../diagram-api/diagramAPI.js';
 import type { SVGGroup } from '../diagram-api/types.js';
+import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
+import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
-import { library, icon } from '@fortawesome/fontawesome-svg-core';
-import * as fab from '@fortawesome/free-brands-svg-icons';
-import * as fas from '@fortawesome/free-solid-svg-icons';
-import * as far from '@fortawesome/free-regular-svg-icons';
-
-const iconListFab = Object.keys(fab)
-  .filter((key) => key !== 'fab' && key !== 'prefix')
-  .map((icon) => fab[icon]);
-const iconListFas = Object.keys(fas)
-  .filter((key) => key !== 'fas' && key !== 'prefix')
-  .map((icon) => fas[icon]);
-const iconListFar = Object.keys(far)
-  .filter((key) => key !== 'far' && key !== 'prefix')
-  .map((icon) => far[icon]);
-
-library.add(...iconListFab, ...iconListFas, ...iconListFar);
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {
@@ -196,36 +181,35 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
 /**
  * Convert fontawesome labels into fontawesome icons by using a regex pattern
  * @param text - The raw string to convert
- * @returns string with fontawesome icons as i tags if they are from pro pack and as svg if they are from free pack
+ * @returns string with fontawesome icons as svg if the icon is registered otherwise as i tags
  */
-export function replaceIconSubstring(text) {
-  const iconRegex = /(fas|fab|far|fa|fal|fak|fad):fa-([a-z-]+)/g;
-  const classNameMap = {
-    fas: 'fa-solid',
-    fab: 'fa-brands',
-    far: 'fa-regular',
-    fa: 'fa',
-    fal: 'fa-light',
-    fad: 'fa-duotone',
-    fak: 'fak',
-  } as const;
-  const freeIconPack = ['fas', 'fab', 'far', 'fa'];
+export async function replaceIconSubstring(text: string) {
+  // The letters 'bklrs' stand for possible endings of the fontawesome prefix (e.g. 'fab' for brands, 'fak' for fa-kit) // cspell: disable-line
+  const iconRegex = /(fa[bklrs]?):fa-([\w-]+)/g; // cspell: disable-line
 
-  return text.replace(iconRegex, (match, prefix, iconName) => {
-    const isFreeIcon = freeIconPack.includes(prefix);
-    const className = classNameMap[prefix];
-    if (!isFreeIcon) {
-      log.warn(`Icon ${prefix}:fa-${iconName} is pro icon.`);
-      return `<i class='${className} fa-${iconName}'></i>`;
-    }
-    const faIcon = icon({ prefix: prefix, iconName: iconName });
-    if (!faIcon) {
-      log.warn(`Icon ${prefix}:fa-${iconName} not found.`);
-      return match;
-    }
+  const matches = [...text.matchAll(iconRegex)];
+  if (matches.length === 0) {
+    return text;
+  }
 
-    return faIcon.html.join('');
-  });
+  let newText = text;
+
+  for (const match of matches) {
+    const [fullMatch, prefix, iconName] = match;
+    const registeredIconName = `${prefix}:${iconName}`;
+    try {
+      const isIconAvail = await isIconAvailable(registeredIconName);
+      if (isIconAvail) {
+        const faIcon = await getIconSVG(registeredIconName, undefined, { class: 'label-icon' });
+        newText = newText.replace(fullMatch, faIcon);
+      } else {
+        newText = newText.replace(fullMatch, `<i class='${fullMatch.replace(':', ' ')}'></i>`);
+      }
+    } catch (error) {
+      log.error(`Error processing ${registeredIconName}:`, error);
+    }
+  }
+  return newText;
 }
 
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to sett classes to'nodeLabel' when isNode=true otherwise 'edgeLabel'
@@ -259,7 +243,7 @@ export const createText = async (
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
     const htmlText = markdownToHTML(text, config);
-    const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
+    const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText));
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
     const inputForKatex = text.replace(/\\\\/g, '\\');
