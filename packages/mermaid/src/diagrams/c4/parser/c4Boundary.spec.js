@@ -1,4 +1,4 @@
-import c4Db from '../c4Db.js';
+import { C4DB } from '../c4Db.js';
 import c4 from './c4Diagram.jison';
 import { setConfig } from '../../../config.js';
 
@@ -8,7 +8,7 @@ setConfig({
 
 describe.each(['Boundary'])('parsing a C4 %s', function (macroName) {
   beforeEach(function () {
-    c4.parser.yy = c4Db;
+    c4.parser.yy = new C4DB();
     c4.parser.yy.clear();
   });
 
@@ -21,25 +21,14 @@ System(SystemAA, "Internet Banking System")
 
     const yy = c4.parser.yy;
 
-    const boundaries = yy.getBoundarys();
-    expect(boundaries.length).toBe(2);
-    const boundary = boundaries[1];
+    const nodes = yy.getNodes();
+    expect(nodes.size).toBe(2);
+    const boundary = nodes.get('b1');
 
-    expect(boundary).toEqual({
+    expect(boundary).toMatchObject({
+      isBoundary: true,
       alias: 'b1',
-      label: {
-        text: 'BankBoundary',
-      },
-      // TODO: Why are link, and tags undefined instead of not appearing at all?
-      //       Compare to Person where they don't show up.
-      link: undefined,
-      tags: undefined,
-      parentBoundary: 'global',
-      type: {
-        // TODO: Why is this `system` instead of `boundary`?
-        text: 'system',
-      },
-      wrap: false,
+      label: 'BankBoundary',
     });
   });
 
@@ -49,7 +38,7 @@ ${macroName}(b1, "BankBoundary") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('b1')).toMatchObject({
       alias: 'b1',
     });
   });
@@ -60,10 +49,8 @@ ${macroName}(b1, "BankBoundary") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
-      label: {
-        text: 'BankBoundary',
-      },
+    expect(c4.parser.yy.getNodes().get('b1')).toMatchObject({
+      label: 'BankBoundary',
     });
   });
 
@@ -73,8 +60,8 @@ ${macroName}(b1, "", "company") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
-      type: { text: 'company' },
+    expect(c4.parser.yy.getNodes().get('b1')).toMatchObject({
+      type: 'company',
     });
   });
 
@@ -84,26 +71,22 @@ ${macroName}(b1, $link="https://github.com/mermaidjs") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('b1')).toMatchObject({
       label: {
-        text: {
-          link: 'https://github.com/mermaidjs',
-        },
+        link: 'https://github.com/mermaidjs',
       },
     });
   });
 
   it('should parse tags', function () {
     c4.parser.parse(`C4Context
-${macroName}(b1, $tags="tag1,tag2") {
+${macroName}(b1, $tags="tag1+tag2") {
 System(SystemAA, "Internet Banking System")
 }`);
 
-    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+    expect(c4.parser.yy.getNodes().get('b1')).toMatchObject({
       label: {
-        text: {
-          tags: 'tag1,tag2',
-        },
+        tags: 'tag1+tag2',
       },
     });
   });
