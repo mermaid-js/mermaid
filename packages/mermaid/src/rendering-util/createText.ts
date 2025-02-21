@@ -2,7 +2,7 @@
 // @ts-nocheck TODO: Fix types
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
-import { getConfig } from '../diagram-api/diagramAPI.js';
+import { getConfig, sanitizeText } from '../diagram-api/diagramAPI.js';
 import type { SVGGroup } from '../diagram-api/types.js';
 import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
@@ -192,24 +192,26 @@ export async function replaceIconSubstring(text: string) {
     return text;
   }
 
-  let newText = text;
-
-  for (const match of matches) {
-    const [fullMatch, prefix, iconName] = match;
-    const registeredIconName = `${prefix}:${iconName}`;
-    try {
-      const isIconAvail = await isIconAvailable(registeredIconName);
-      if (isIconAvail) {
-        const faIcon = await getIconSVG(registeredIconName, undefined, { class: 'label-icon' });
-        newText = newText.replace(fullMatch, faIcon);
-      } else {
-        newText = newText.replace(fullMatch, `<i class='${fullMatch.replace(':', ' ')}'></i>`);
+  const replacements = await Promise.all(
+    matches.map(async ([fullMatch, prefix, iconName]) => {
+      const registeredIconName = `${prefix}:${iconName}`;
+      try {
+        const isIconRegistered = await isIconAvailable(registeredIconName);
+        const replacement = isIconRegistered
+          ? await getIconSVG(registeredIconName, undefined, { class: 'label-icon' })
+          : `<i class='${sanitizeText(fullMatch).replace(':', ' ')}'></i>`;
+        return { fullMatch, replacement };
+      } catch (error) {
+        log.error(`Error processing ${registeredIconName}:`, error);
+        return { fullMatch, replacement: fullMatch };
       }
-    } catch (error) {
-      log.error(`Error processing ${registeredIconName}:`, error);
-    }
-  }
-  return newText;
+    })
+  );
+
+  return replacements.reduce(
+    (text, { fullMatch, replacement }) => text.replace(fullMatch, replacement),
+    text
+  );
 }
 
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to sett classes to'nodeLabel' when isNode=true otherwise 'edgeLabel'
