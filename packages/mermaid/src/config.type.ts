@@ -613,7 +613,7 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
    */
   titleFontFamily?: string;
   /**
-   * Font size in pixels to be used for the title text in Journey Diagrams
+   * Font size to be used for the title text in Journey Diagrams
    */
   titleFontSize?: string;
 }

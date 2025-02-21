@@ -1579,15 +1579,15 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       titleColor:
         description: Color of the title text in Journey Diagrams
         type: string
-        default: '#00ff00'
+        default: ''
       titleFontFamily:
         description: Font family to be used for the title text in Journey Diagrams
         type: string
-        default: '"Open Sans", sans-serif'
+        default: '"trebuchet ms", verdana, arial, sans-serif'
       titleFontSize:
-        description: Font size in pixels to be used for the title text in Journey Diagrams
+        description: Font size to be used for the title text in Journey Diagrams
         type: string
-        default: '32px'
+        default: '4ex'
 
   TimelineDiagramConfig:
     # added by https://github.com/mermaid-js/mermaid/commit/0d5246fbc730bf15463d7183fe4400a1e2fc492c
