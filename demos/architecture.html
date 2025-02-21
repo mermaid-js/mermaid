@@ -252,5 +252,24 @@
         },
       ]);
     </script>
+    <hr />
+
+    <h2>Config Loading External Icons Demo</h2>
+    <pre class="mermaid">
+    ---
+    title: Config Loading External Icons Demo
+    config:
+      architecture:
+        fontSize: 32
+        icons:
+          - name: urllogos
+            url: 'https://unpkg.com/@iconify-json/logos/icons.json'
+    ---
+    architecture-beta
+      service s3(urllogos:aws-s3)[Cloud Store]
+      service ec2(urllogos:aws-ec2)[Server]
+      service api(urllogos:aws-api-gateway)[Api Gateway]
+    </pre>
+    <hr />
   </body>
 </html>

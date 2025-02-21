@@ -324,7 +324,6 @@ export const db: ArchitectureDB = {
   getAccTitle,
   setAccDescription,
   getAccDescription,
-
   addService,
   getServices,
   addJunction,

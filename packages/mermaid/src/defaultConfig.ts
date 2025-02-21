@@ -1,7 +1,7 @@
 import type { RequiredDeep } from 'type-fest';
 
-import theme from './themes/index.js';
 import type { MermaidConfig } from './config.type.js';
+import theme from './themes/index.js';
 
 // Uses our custom Vite jsonSchemaPlugin to load only the default values from
 // our JSON Schema
@@ -255,12 +255,23 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  architecture: {
+    padding: 40,
+    fontSize: 16,
+    iconSize: 80,
+    icons: [
+      {
+        name: 'iconify-logos',
+        url: 'https://unpkg.com/@iconify-json/logos/icons.json',
+      },
+    ],
+  },
 };
 
 const keyify = (obj: any, prefix = ''): string[] =>
   Object.keys(obj).reduce((res: string[], el): string[] => {
     if (Array.isArray(obj[el])) {
-      return res;
+      return [...res, prefix + el, ...obj[el].flatMap((it: any) => keyify([it], ''))];
     } else if (typeof obj[el] === 'object' && obj[el] !== null) {
       return [...res, prefix + el, ...keyify(obj[el], '')];
     }

@@ -1,12 +1,14 @@
-import { registerIconPacks } from '../../rendering-util/icons.js';
 import type { Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
 import type { FcoseLayoutOptions } from 'cytoscape-fcose';
 import fcose from 'cytoscape-fcose';
 import { select } from 'd3';
+import { getConfig } from '../../config.js';
+import type { MermaidConfig } from '../../config.type.js';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import type { Diagram } from '../../Diagram.js';
 import { log } from '../../logger.js';
+import { registerIconPacks } from '../../rendering-util/icons.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import { getConfigField } from './architectureDb.js';
@@ -36,12 +38,6 @@ import {
 } from './architectureTypes.js';
 import { drawEdges, drawGroups, drawJunctions, drawServices } from './svgDraw.js';
 
-registerIconPacks([
-  {
-    name: architectureIcons.prefix,
-    icons: architectureIcons,
-  },
-]);
 cytoscape.use(fcose);
 
 function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
@@ -499,7 +495,21 @@ function layoutArchitecture(
   });
 }
 
+const loadIcons = (config: MermaidConfig) => {
+  registerIconPacks([
+    {
+      name: architectureIcons.prefix,
+      icons: architectureIcons,
+    },
+  ]);
+
+  registerIconPacks(config.architecture?.icons ?? []);
+};
+
 export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram) => {
+  const config = getConfig();
+  loadIcons(config);
+
   const db = diagObj.db as ArchitectureDB;
 
   const services = db.getServices();
@@ -528,7 +538,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
   await drawGroups(groupElem, cy);
   positionNodes(db, cy);
 
-  setupGraphViewbox(undefined, svg, getConfigField('padding'), getConfigField('useMaxWidth'));
+  setupGraphViewbox(undefined, svg, config.architecture?.padding, config.architecture?.useMaxWidth);
 };
 
 export const renderer = { draw };

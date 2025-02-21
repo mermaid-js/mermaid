@@ -1012,6 +1012,10 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
  */
 export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+  icons?: {
+    name: string;
+    url: string;
+  }[];
   iconSize?: number;
   fontSize?: number;
 }
