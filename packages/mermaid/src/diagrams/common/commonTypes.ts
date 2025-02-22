@@ -42,6 +42,7 @@ export interface TextObject {
   'text-anchor': string;
   style: string;
   textMargin: number;
+  wrapPadding: number;
   rx: number;
   ry: number;
   tspan: boolean;
