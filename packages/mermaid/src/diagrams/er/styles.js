@@ -33,12 +33,12 @@ const getStyles = (options) =>
     font-size: 18px;
     fill: ${options.textColor};
   }    
-  #MD_PARENT_START {
+  .mermaid-marker-er-MD_PARENT_START {
     fill: #f5f5f5 !important;
     stroke: ${options.lineColor} !important;
     stroke-width: 1;
   }
-  #MD_PARENT_END {
+  .mermaid-marker-er-MD_PARENT_END {
     fill: #f5f5f5 !important;
     stroke: ${options.lineColor} !important;
     stroke-width: 1;

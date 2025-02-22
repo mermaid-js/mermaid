@@ -25,7 +25,7 @@ const getStyles = (options) =>
     stroke: ${options.signalColor};
   }
 
-  #arrowhead path {
+  .mermaid-marker-seq-arrowhead path {
     fill: ${options.signalColor};
     stroke: ${options.signalColor};
   }
@@ -34,11 +34,11 @@ const getStyles = (options) =>
     fill: ${options.sequenceNumberColor};
   }
 
-  #sequencenumber {
+  .mermaid-marker-seq-sequencenumber {
     fill: ${options.signalColor};
   }
 
-  #crosshead path {
+  .mermaid-marker-seq-crosshead path {
     fill: ${options.signalColor};
     stroke: ${options.signalColor};
   }
@@ -71,7 +71,6 @@ const getStyles = (options) =>
   }
 
   .note {
-    //stroke: #decc93;
     stroke: ${options.noteBorderColor};
     fill: ${options.noteBkgColor};
   }

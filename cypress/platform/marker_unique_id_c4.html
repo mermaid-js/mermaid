@@ -1,0 +1,27 @@
+<html>
+  <head></head>
+  <body>
+    <div style="visibility: hidden; height: 0">
+      <pre class="mermaid">
+        C4Context
+        Person(A, "A")
+        System(B, "B")
+        BiRel(A, B, "")
+      </pre>
+    </div>
+    <pre class="mermaid">
+      C4Context
+      Person(A, "A")
+      System(B, "B")
+      BiRel(A, B, "")
+    </pre>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: false, logLevel: 0 });
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>

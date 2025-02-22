@@ -1,0 +1,29 @@
+<html>
+  <head></head>
+  <body>
+    <div style="visibility: hidden; height: 0">
+      <pre class="mermaid">
+        erDiagram
+        START_OO ||--|| END_OO : ONLY_ONE
+        START_ZOO |o--o| END_ZOO : ZERO_OR_ONE
+        START_ZOM }o--o{ END_ZOM : ZERO_OR_MORE
+        START_OOM }|--|{ END_OOM : ONE_OR_MORE
+      </pre>
+    </div>
+    <pre class="mermaid">
+      erDiagram
+      START_OO ||--|| END_OO : ONLY_ONE
+      START_ZOO |o--o| END_ZOO : ZERO_OR_ONE
+      START_ZOM }o--o{ END_ZOM : ZERO_OR_MORE
+      START_OOM }|--|{ END_OOM : ONE_OR_MORE
+    </pre>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: false, logLevel: 0 });
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>

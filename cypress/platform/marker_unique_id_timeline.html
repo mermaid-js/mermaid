@@ -1,0 +1,23 @@
+<html>
+  <head></head>
+  <body>
+    <div style="visibility: hidden; height: 0">
+      <pre class="mermaid">
+        timeline
+        2000 : Event
+      </pre>
+    </div>
+    <pre class="mermaid">
+      timeline
+      2000 : Event
+    </pre>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: false, logLevel: 0 });
+      await mermaid.run();
+      if (window.Cypress) {
+        window.rendered = true;
+      }
+    </script>
+  </body>
+</html>
