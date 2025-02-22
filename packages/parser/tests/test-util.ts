@@ -7,11 +7,14 @@ import type {
   PieServices,
   GitGraph,
   GitGraphServices,
+  Architecture,
+  ArchitectureServices,
 } from '../src/language/index.js';
 import {
   createInfoServices,
   createPieServices,
   createGitGraphServices,
+  createArchitectureServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -51,6 +54,17 @@ export function createPieTestServices() {
   return { services: pieServices, parse };
 }
 export const pieParse = createPieTestServices().parse;
+
+const architectureServices: ArchitectureServices = createArchitectureServices().Architecture;
+const architectureParser: LangiumParser = architectureServices.parser.LangiumParser;
+export function createArchitectureTestServices() {
+  const parse = (input: string) => {
+    return architectureParser.parse<Architecture>(input);
+  };
+
+  return { services: architectureServices, parse };
+}
+export const architectureParse = createArchitectureTestServices().parse;
 
 const gitGraphServices: GitGraphServices = createGitGraphServices().GitGraph;
 const gitGraphParser: LangiumParser = gitGraphServices.parser.LangiumParser;
