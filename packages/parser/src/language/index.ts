@@ -6,6 +6,7 @@ export {
   Pie,
   PieSection,
   Architecture,
+  EventModel,
   GitGraph,
   Branch,
   Commit,
@@ -22,6 +23,10 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  EdgeSet,
+  System,
+  Pattern,
+  Role,
 } from './generated/ast.js';
 
 export {
@@ -31,6 +36,7 @@ export {
   PieGeneratedModule,
   ArchitectureGeneratedModule,
   GitGraphGeneratedModule,
+  EventModelGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -39,3 +45,4 @@ export * from './info/index.js';
 export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './architecture/index.js';
+export * from './eventModel/index.js';
