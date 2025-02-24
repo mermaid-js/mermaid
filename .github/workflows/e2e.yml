@@ -59,7 +59,7 @@ jobs:
 
       - name: Install dependencies
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
-        uses: cypress-io/github-action@57b70560982e6a11d23d4b8bec7f8a487cdbb71b # v6.7.8
+        uses: cypress-io/github-action@18a6541367f4580a515371905f499a27a44e8dbe # v6.7.12
         with:
           # just perform install
           runTests: false
@@ -101,7 +101,7 @@ jobs:
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
       - name: Install dependencies
-        uses: cypress-io/github-action@57b70560982e6a11d23d4b8bec7f8a487cdbb71b # v6.7.8
+        uses: cypress-io/github-action@18a6541367f4580a515371905f499a27a44e8dbe # v6.7.12
         with:
           runTests: false
 
@@ -117,7 +117,7 @@ jobs:
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@57b70560982e6a11d23d4b8bec7f8a487cdbb71b # v6.7.8
+        uses: cypress-io/github-action@18a6541367f4580a515371905f499a27a44e8dbe # v6.7.12
         id: cypress
         with:
           install: false
