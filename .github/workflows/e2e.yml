@@ -7,9 +7,6 @@ on:
       - master
       - release/**
   pull_request:
-  issue_comment:
-    types:
-      - created
   merge_group:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
@@ -31,12 +28,10 @@ env:
       ) || 
       github.event.before
     }}
-  # Check if this is a new comment with '/visual-test'
   RUN_VISUAL_TEST: >-
-    ${{ github.event_name == 'issue_comment' && github.event.action == 'created' && contains(github.event.comment.body, '/visual-test') && github.event.issue.pull_request != null }}
+    ${{ github.repository == 'mermaid-js/mermaid' && (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/')) }}
 jobs:
   cache:
-    if: ${{ github.event_name != 'issue_comment' || contains(github.event.comment.body, '/visual-test') }}
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
@@ -50,9 +45,8 @@ jobs:
           node-version-file: '.node-version'
       - name: Cache snapshots
         id: cache-snapshot
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
         with:
-          save-always: true
           path: ./cypress/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
@@ -65,7 +59,7 @@ jobs:
 
       - name: Install dependencies
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
-        uses: cypress-io/github-action@0da3c06ed8217b912deea9d8ee69630baed1737e # v6.7.6
+        uses: cypress-io/github-action@57b70560982e6a11d23d4b8bec7f8a487cdbb71b # v6.7.8
         with:
           # just perform install
           runTests: false
@@ -101,13 +95,13 @@ jobs:
       # These cached snapshots are downloaded, providing the reference snapshots.
       - name: Cache snapshots
         id: cache-snapshot
-        uses: actions/cache/restore@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache/restore@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
         with:
           path: ./cypress/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
       - name: Install dependencies
-        uses: cypress-io/github-action@0da3c06ed8217b912deea9d8ee69630baed1737e # v6.7.6
+        uses: cypress-io/github-action@57b70560982e6a11d23d4b8bec7f8a487cdbb71b # v6.7.8
         with:
           runTests: false
 
@@ -123,7 +117,7 @@ jobs:
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@0da3c06ed8217b912deea9d8ee69630baed1737e # v6.7.6
+        uses: cypress-io/github-action@57b70560982e6a11d23d4b8bec7f8a487cdbb71b # v6.7.8
         id: cypress
         with:
           install: false
@@ -134,8 +128,6 @@ jobs:
           # e.g. if this action was run from a fork
           record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
         env:
-          # Only set Argos environment variables if the visual test comment trigger is present
-          ARGOS_TOKEN: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.ARGOS_TOKEN || '' }}
           ARGOS_PARALLEL: ${{ env.RUN_VISUAL_TEST == 'true' }}
           ARGOS_PARALLEL_TOTAL: ${{ env.RUN_VISUAL_TEST == 'true' && strategy.job-total || 1 }}
           ARGOS_PARALLEL_INDEX: ${{ env.RUN_VISUAL_TEST == 'true' && matrix.containers || 1 }}
