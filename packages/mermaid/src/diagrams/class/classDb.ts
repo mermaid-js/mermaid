@@ -315,6 +315,7 @@ export class ClassDB implements DiagramDB {
   }
 
   public defineClass(ids: string[], style: string[]) {
+    const styles = style.flatMap((s) => s.split(','));
     for (const id of ids) {
       let styleClass = this.styleClasses.get(id);
       if (styleClass === undefined) {
@@ -322,7 +323,7 @@ export class ClassDB implements DiagramDB {
         this.styleClasses.set(id, styleClass);
       }
 
-      if (style) {
+      if (styles.length > 0) {
         style.forEach((s) => {
           if (/color/.exec(s)) {
             const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
@@ -548,6 +549,10 @@ export class ClassDB implements DiagramDB {
 
   public getNamespaces(): NamespaceMap {
     return this.namespaces;
+  }
+
+  public getClassDefs() {
+    return this.styleClasses;
   }
 
   /**
