@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
-import { getConfig } from '../diagram-api/diagramAPI.js';
-import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
+import { getConfig, sanitizeText } from '../diagram-api/diagramAPI.js';
 import type { SVGGroup } from '../diagram-api/types.js';
+import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
+import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
 
@@ -180,13 +181,36 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
 /**
  * Convert fontawesome labels into fontawesome icons by using a regex pattern
  * @param text - The raw string to convert
- * @returns string with fontawesome icons as i tags
+ * @returns string with fontawesome icons as svg if the icon is registered otherwise as i tags
  */
-export function replaceIconSubstring(text: string) {
+export async function replaceIconSubstring(text: string) {
   // The letters 'bklrs' stand for possible endings of the fontawesome prefix (e.g. 'fab' for brands, 'fak' for fa-kit) // cspell: disable-line
-  return text.replace(
-    /fa[bklrs]?:fa-[\w-]+/g, // cspell: disable-line
-    (s) => `<i class='${s.replace(':', ' ')}'></i>`
+  const iconRegex = /(fa[bklrs]?):fa-([\w-]+)/g; // cspell: disable-line
+
+  const matches = [...text.matchAll(iconRegex)];
+  if (matches.length === 0) {
+    return text;
+  }
+
+  const replacements = await Promise.all(
+    matches.map(async ([fullMatch, prefix, iconName]) => {
+      const registeredIconName = `${prefix}:${iconName}`;
+      try {
+        const isIconRegistered = await isIconAvailable(registeredIconName);
+        const replacement = isIconRegistered
+          ? await getIconSVG(registeredIconName, undefined, { class: 'label-icon' })
+          : `<i class='${sanitizeText(fullMatch).replace(':', ' ')}'></i>`;
+        return { fullMatch, replacement };
+      } catch (error) {
+        log.error(`Error processing ${registeredIconName}:`, error);
+        return { fullMatch, replacement: fullMatch };
+      }
+    })
+  );
+
+  return replacements.reduce(
+    (text, { fullMatch, replacement }) => text.replace(fullMatch, replacement),
+    text
   );
 }
 
@@ -221,7 +245,7 @@ export const createText = async (
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
     const htmlText = markdownToHTML(text, config);
-    const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
+    const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText));
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
     const inputForKatex = text.replace(/\\\\/g, '\\');

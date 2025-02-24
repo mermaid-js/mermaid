@@ -1231,9 +1231,13 @@ If a class is named default it will be assigned to all classes without specific 
 
 ## Basic support for fontawesome
 
-It is possible to add icons from fontawesome.
+It is possible to add icons from fontawesome and registered icon pack.
 
-The icons are accessed via the syntax fa:#icon class name#.
+Mermaid supports icons from registered icon packs. Follow the instructions provided [here](../config/icons.md) to register your icon packs.
+
+The registered icons can be accessed via the syntax #registered icon pack name#:#icon name#.
+
+The fontawesome icons are accessed via the syntax fa:#icon class name#.
 
 ```mermaid-example
 flowchart TD
