@@ -110,28 +110,28 @@ importers:
         specifier: ^10.0.0
         version: 10.0.1(eslint@9.20.1(jiti@2.4.2))
       eslint-plugin-cypress:
-        specifier: ^4.0.0
+        specifier: ^4.1.0
         version: 4.1.0(eslint@9.20.1(jiti@2.4.2))
       eslint-plugin-html:
-        specifier: ^8.1.1
+        specifier: ^8.1.2
         version: 8.1.2
       eslint-plugin-jest:
         specifier: ^28.6.0
         version: 28.8.3(@typescript-eslint/eslint-plugin@8.24.1(@typescript-eslint/parser@8.24.1(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.3))(eslint@9.20.1(jiti@2.4.2))(typescript@5.7.3))(eslint@9.20.1(jiti@2.4.2))(jest@29.7.0(@types/node@22.13.4))(typescript@5.7.3)
       eslint-plugin-jsdoc:
-        specifier: ^50.0.0
+        specifier: ^50.0.1
         version: 50.3.2(eslint@9.20.1(jiti@2.4.2))
       eslint-plugin-json:
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: 4.0.1
       eslint-plugin-lodash:
         specifier: ^8.0.0
         version: 8.0.0(eslint@9.20.1(jiti@2.4.2))
       eslint-plugin-markdown:
-        specifier: ^5.0.0
+        specifier: ^5.1.0
         version: 5.1.0(eslint@9.20.1(jiti@2.4.2))
       eslint-plugin-no-only-tests:
-        specifier: ^3.1.0
+        specifier: ^3.3.0
         version: 3.3.0
       eslint-plugin-tsdoc:
         specifier: ^0.4.0
@@ -21276,7 +21276,7 @@ snapshots:
       vscode-languageserver-textdocument: 1.0.12
       vscode-languageserver-types: 3.17.5
       vscode-nls: 5.2.0
-      vscode-uri: 3.0.8
+      vscode-uri: 3.1.0
 
   vscode-jsonrpc@8.2.0: {}
 
