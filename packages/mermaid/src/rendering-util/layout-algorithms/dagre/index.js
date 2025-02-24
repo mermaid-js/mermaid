@@ -268,7 +268,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   return { elem, diff };
 };
 
-export const render = async (data4Layout, svg) => {
+export const render = async (data4Layout, svg, _svghelpers, _options, setGraphData) => {
   const graph = new graphlib.Graph({
     multigraph: true,
     compound: true,
@@ -374,4 +374,10 @@ export const render = async (data4Layout, svg) => {
     undefined,
     siteConfig
   );
+
+  if (setGraphData) {
+    const jsonData = graphlibJson.write(graph);
+    const graphData = JSON.stringify(jsonData)
+    setGraphData(graphData);
+  }
 };
