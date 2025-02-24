@@ -58,6 +58,7 @@ import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 import { classBox } from './shapes/classBox.js';
+import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
@@ -476,6 +477,9 @@ const generateShapeMap = () => {
 
     // class diagram
     classBox,
+
+    // Requirement diagram
+    requirementBox,
   } as const;
 
   const entries = [
