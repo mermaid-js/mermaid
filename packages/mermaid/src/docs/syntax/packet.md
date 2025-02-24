@@ -17,6 +17,17 @@ start-end: "Block name" %% Multi-bit blocks
 ... More Fields ...
 ```
 
+### Bits Syntax (v<MERMAID_RELEASE_VERSION>+)
+
+Using start and end bit counts can be difficult, especially when modifying a design. For this we add a bit count field, which starts from the end of the previous field automagically. Use `bit` or `bits` interchangeably to set the number of bits, thus:
+
+````md
+packet-beta
+1bit: "Block name" %% Single-bit block
+8bits: "Block name" %% 8-bit block
+9-15: "Manually set start and end, it's fine to mix and match"
+... More Fields ...
+
 ## Examples
 
 ```mermaid-example
@@ -24,8 +35,8 @@ start-end: "Block name" %% Multi-bit blocks
 title: "TCP Packet"
 ---
 packet-beta
-0-15: "Source Port"
-16-31: "Destination Port"
+16bits: "Source Port"
+16bits: "Destination Port"
 32-63: "Sequence Number"
 64-95: "Acknowledgment Number"
 96-99: "Data Offset"
@@ -42,6 +53,7 @@ packet-beta
 160-191: "(Options and Padding)"
 192-255: "Data (variable length)"
 ```
+````
 
 ```mermaid-example
 packet-beta
