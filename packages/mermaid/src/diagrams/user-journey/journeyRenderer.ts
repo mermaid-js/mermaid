@@ -19,11 +19,14 @@ let maxWidth = 0;
 function drawActorLegend(diagram) {
   const conf = getConfig().journey;
   maxWidth = 0;
-  // Draw the actors
   let yPos = 60;
+
+  const getRemInPx = (rem) => {
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  };
+
   Object.keys(actors).forEach((person) => {
     const colour = actors[person].color;
-
     const circleData = {
       cx: 20,
       cy: yPos,
@@ -34,20 +37,56 @@ function drawActorLegend(diagram) {
     };
     svgDraw.drawCircle(diagram, circleData);
 
-    const labelData = {
-      x: 40,
-      y: yPos + 7,
-      fill: '#666',
-      text: person,
-      textMargin: conf.boxTextMargin | 5,
-    };
+    // Create temporary text element to measure width
+    const tempText = diagram.append('text').attr('visibility', 'hidden').text(person);
+    const textWidth = tempText.node().getBBox().width;
+    tempText.remove();
 
-    const textElement = svgDraw.drawText(diagram, labelData);
-    const textLength = textElement.node().getBBox().width;
-    if (textLength > maxWidth && textLength > conf?.leftMargin - textLength) {
-      maxWidth = textLength;
+    const maxLineLength = getRemInPx(15);
+    let lines = [];
+
+    if (textWidth > maxLineLength) {
+      // Break the text into chunks regardless of word boundaries
+      let currentText = '';
+      const measureText = diagram.append('text').attr('visibility', 'hidden');
+
+      for (const element of person) {
+        currentText += element;
+        measureText.text(currentText);
+        const currentWidth = measureText.node().getBBox().width;
+
+        if (currentWidth > maxLineLength && currentText.length > 1) {
+          // Add hyphen only if we're breaking within a word
+          lines.push(currentText.slice(0, -1) + '-');
+          currentText = element;
+        }
+      }
+      if (currentText) {
+        lines.push(currentText);
+      }
+      measureText.remove();
+    } else {
+      lines = [person];
     }
-    yPos += 20;
+
+    // Draw the text lines
+    lines.forEach((line, index) => {
+      const labelData = {
+        x: 40,
+        y: yPos + 7 + index * 20,
+        fill: '#666',
+        text: line,
+        textMargin: conf.boxTextMargin | 5,
+      };
+      const textElement = svgDraw.drawText(diagram, labelData);
+      const lineWidth = textElement.node().getBBox().width;
+
+      if (lineWidth > maxWidth && lineWidth > conf?.leftMargin - lineWidth) {
+        maxWidth = lineWidth;
+      }
+    });
+
+    yPos += Math.max(20, lines.length * 20);
   });
 }
 // TODO: Cleanup?
