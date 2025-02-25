@@ -139,4 +139,39 @@ section Checkout from website
       expect(diagramStartX).to.be.gte(LabelEndX);
     });
   });
+
+  it('should check the width and number of lines of the Darkoob user text element', () => {
+    renderGraph(
+      `journey
+      title  Web hook life cycle
+      section Darkoob
+        Make preBuilt:5: Darkoob user
+        register slug : 5: Darkoob userf deliberately increasing the size of this label to check if distance between legend and diagram is  maintained
+        Map slug to a Prebuilt Job:5: Darkoob user
+      section External Service
+        set Darkoob slug as hook for an Event : 5 : admin Exjjjnjjjj qwerty
+        listen to the events : 5 :  External Service
+        call darkoob endpoint : 5 : External Service
+      section Darkoob
+        check for inputs : 5 : DarkoobAPI
+        run the prebuilt job : 5 : DarkoobAPI
+      `,
+      { journey: { useMaxWidth: true } }
+    );
+
+    cy.contains('tspan', 'Darkoob user').then((textBox) => {
+      const bbox = textBox[0].getBBox();
+      const textWidth = bbox.width;
+
+      expect(textWidth).to.equal(320);
+    });
+
+    cy.contains('tspan', 'Darkoob user')
+      .parent()
+      .then((textElement) => {
+        const numLines = textElement.find('tspan').length;
+
+        expect(numLines).to.equal(3);
+      });
+  });
 });
