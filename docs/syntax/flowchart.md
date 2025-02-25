@@ -1916,13 +1916,9 @@ If a class is named default it will be assigned to all classes without specific 
 
 ## Basic support for fontawesome
 
-It is possible to add icons from fontawesome and registered icon pack.
+It is possible to add icons from fontawesome.
 
-Mermaid supports icons from registered icon packs. Follow the instructions provided [here](../config/icons.md) to register your icon packs.
-
-The registered icons can be accessed via the syntax #registered icon pack name#:#icon name#.
-
-The fontawesome icons are accessed via the syntax fa:#icon class name#.
+The icons are accessed via the syntax fa:#icon class name#.
 
 ```mermaid-example
 flowchart TD
@@ -1939,6 +1935,17 @@ flowchart TD
     B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
+
+There are two ways to display these FontAwesome icons:
+
+### Register FontAwesome icon packs (v11.4.2+)
+
+You can register your own FontAwesome icon pack, to register follow the instructions provided [here](../config/icons.md).
+
+> **Note**
+> Note that it will fall back to FontAwesome CSS if FontAwesome packs are not registered.
+
+### Register FontAwesome CSS
 
 Mermaid supports Font Awesome if the CSS is included on the website.
 Mermaid does not have any restriction on the version of Font Awesome that can be used.

@@ -184,34 +184,25 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
  * @returns string with fontawesome icons as svg if the icon is registered otherwise as i tags
  */
 export async function replaceIconSubstring(text: string) {
-  // The letters 'bklrs' stand for possible endings of the fontawesome prefix (e.g. 'fab' for brands, 'fak' for fa-kit) // cspell: disable-line
-  const iconRegex = /(fa[bklrs]?):fa-([\w-]+)/g; // cspell: disable-line
+  const pendingReplacements: Promise<string>[] = [];
+  // cspell: disable-next-line
+  text.replace(/(fa[bklrs]?):fa-([\w-]+)/g, (fullMatch, prefix, iconName) => {
+    pendingReplacements.push(
+      (async () => {
+        const registeredIconName = `${prefix}:${iconName}`;
+        if (await isIconAvailable(registeredIconName)) {
+          return await getIconSVG(registeredIconName, undefined, { class: 'label-icon' });
+        } else {
+          return `<i class='${sanitizeText(fullMatch).replace(':', ' ')}'></i>`;
+        }
+      })()
+    );
+    return fullMatch;
+  });
 
-  const matches = [...text.matchAll(iconRegex)];
-  if (matches.length === 0) {
-    return text;
-  }
-
-  const replacements = await Promise.all(
-    matches.map(async ([fullMatch, prefix, iconName]) => {
-      const registeredIconName = `${prefix}:${iconName}`;
-      try {
-        const isIconRegistered = await isIconAvailable(registeredIconName);
-        const replacement = isIconRegistered
-          ? await getIconSVG(registeredIconName, undefined, { class: 'label-icon' })
-          : `<i class='${sanitizeText(fullMatch).replace(':', ' ')}'></i>`;
-        return { fullMatch, replacement };
-      } catch (error) {
-        log.error(`Error processing ${registeredIconName}:`, error);
-        return { fullMatch, replacement: fullMatch };
-      }
-    })
-  );
-
-  return replacements.reduce(
-    (text, { fullMatch, replacement }) => text.replace(fullMatch, replacement),
-    text
-  );
+  const replacements = await Promise.all(pendingReplacements);
+  // cspell: disable-next-line
+  return text.replace(/(fa[bklrs]?):fa-([\w-]+)/g, () => replacements.shift() ?? '');
 }
 
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to sett classes to'nodeLabel' when isNode=true otherwise 'edgeLabel'
