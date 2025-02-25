@@ -21,10 +21,6 @@ function drawActorLegend(diagram) {
   maxWidth = 0;
   let yPos = 60;
 
-  const getRemInPx = (rem) => {
-    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-  };
-
   Object.keys(actors).forEach((person) => {
     const colour = actors[person].color;
     const circleData = {
@@ -41,8 +37,8 @@ function drawActorLegend(diagram) {
     const tempText = diagram.append('text').attr('visibility', 'hidden').text(person);
     const textWidth = tempText.node().getBBox().width;
     tempText.remove();
-    let configObject = getConfig().journey;
-    const maxLineLength = getRemInPx(15);
+    const journeyConfigObject = getConfig().journey;
+    const maxLineLength = journeyConfigObject.maxLabelWidth;
     let lines = [];
 
     if (textWidth > maxLineLength) {
