@@ -41,7 +41,7 @@ function drawActorLegend(diagram) {
     const tempText = diagram.append('text').attr('visibility', 'hidden').text(person);
     const textWidth = tempText.node().getBBox().width;
     tempText.remove();
-
+    let configObject = getConfig().journey;
     const maxLineLength = getRemInPx(15);
     let lines = [];
 
