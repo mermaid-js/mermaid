@@ -52,9 +52,18 @@ function drawActorLegend(diagram) {
         const currentWidth = measureText.node().getBBox().width;
 
         if (currentWidth > maxLineLength && currentText.length > 1) {
-          // Add hyphen only if we're breaking within a word
-          lines.push(currentText.slice(0, -1) + '-');
-          currentText = element;
+          let lineToPush = currentText.slice(0, -1);
+
+          // If the line ends with a space, trim it and do not add a hyphen.
+          if (lineToPush.endsWith(' ')) {
+            lineToPush = lineToPush.trimEnd();
+          } else {
+            lineToPush = lineToPush + '-';
+          }
+          lines.push(lineToPush);
+
+          // If the breaking character is a space, start fresh; otherwise, start with the character.
+          currentText = element === ' ' ? '' : element;
         }
       }
       if (currentText) {

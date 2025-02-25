@@ -64,44 +64,6 @@ section Checkout from website
     );
   });
 
-  it('should maintain sufficient space between legend labels and diagram elements', () => {
-    renderGraph(
-      `journey
-    title  Web hook life cycle
-    section Darkoob 
-        Make preBuilt:5: Darkoob user 
-        register slug : 5: Darkoob userf
-      Map slug to a Prebuilt Job:5: Darkoob user
-    section External Service
-      set Darkoob slug as hook for an Event : 5 : admin Exjjjnjjjj qwerty
-      listen to the events : 5 :  External Service 
-      call darkoob endpoint : 5 : External Service 
-    section Darkoob  
-        check for inputs : 5 : DarkoobAPI
-        run the prebuilt job : 5 : DarkoobAPI 
-    `,
-      { journey: { useMaxWidth: true } }
-    );
-
-    let LabelEndX, diagramStartX;
-
-    // Get right edge of the legend
-    cy.contains('tspan', 'admin Exjjjnjjjj qwerty').then((textBox) => {
-      const bbox = textBox[0].getBBox();
-      LabelEndX = bbox.x + bbox.width;
-    });
-
-    // Get left edge of the diagram
-    cy.contains('foreignobject', 'Make preBuilt').then((rect) => {
-      diagramStartX = parseFloat(rect.attr('x'));
-    });
-
-    // Assert right edge of the diagram is greater than or equal to the right edge of the label
-    cy.then(() => {
-      expect(diagramStartX).to.be.gte(LabelEndX);
-    });
-  });
-
   it('should maintain sufficient space between legend and diagram when legend labels are longer', () => {
     renderGraph(
       `journey
@@ -140,38 +102,105 @@ section Checkout from website
     });
   });
 
-  it('should check the width and number of lines of the Darkoob user text element', () => {
+  it('should wrap a single long word with hyphenation', () => {
     renderGraph(
-      `journey
-      title  Web hook life cycle
-      section Darkoob
-        Make preBuilt:5: Darkoob user
-        register slug : 5: Darkoob userf deliberately increasing the size of this label to check if distance between legend and diagram is  maintained
-        Map slug to a Prebuilt Job:5: Darkoob user
-      section External Service
-        set Darkoob slug as hook for an Event : 5 : admin Exjjjnjjjj qwerty
-        listen to the events : 5 :  External Service
-        call darkoob endpoint : 5 : External Service
-      section Darkoob
-        check for inputs : 5 : DarkoobAPI
-        run the prebuilt job : 5 : DarkoobAPI
+      `
+      ---
+      config:
+        journey:
+          maxLabelWidth: 100
+      ---
+      journey
+        title Long Word Test
+        section Test
+          VeryLongWord: 5: Supercalifragilisticexpialidocious
       `,
       { journey: { useMaxWidth: true } }
     );
 
-    cy.contains('tspan', 'Darkoob user').then((textBox) => {
-      const bbox = textBox[0].getBBox();
-      const textWidth = bbox.width;
-
-      expect(textWidth).to.equal(320);
+    // Check that at least one line ends with a hyphen, indicating a mid-word break.
+    cy.get('tspan').then((tspans) => {
+      const hasHyphen = [...tspans].some((t) => t.textContent.trim().endsWith('-'));
+      return expect(hasHyphen).to.be.true;
     });
+  });
 
-    cy.contains('tspan', 'Darkoob user')
-      .parent()
-      .then((textElement) => {
-        const numLines = textElement.find('tspan').length;
+  it('should wrap text on whitespace without adding hyphens', () => {
+    renderGraph(
+      `
+      ---
+      config:
+        journey:
+          maxLabelWidth: 200
+      ---
+      journey
+        title Whitespace Test
+        section Test
+          TextWithSpaces: 5: Gustavo Fring is played by Giancarlo Esposito.
+      `,
+      { journey: { useMaxWidth: true } }
+    );
 
-        expect(numLines).to.equal(3);
+    // Verify that none of the text spans end with a hyphen.
+    cy.get('tspan').each(($el) => {
+      const text = $el.text();
+      expect(text.trim()).not.to.match(/-$/);
+    });
+  });
+
+  it('should wrap long labels into multiple lines, keep them under max width, and maintain margins', () => {
+    renderGraph(
+      `
+      ---
+      config:
+        journey:
+          maxLabelWidth: 320
+      ---
+      journey
+        title User Journey Example
+        section Onboarding
+            Sign Up: 5: Sam Sam Sam Sam Sam Sam Sam Sam Sam Sam Sam Sam ...
+        section Engagement
+            Browse Features: 3
+            Use Core Functionality: 4
+      `,
+      { journey: { useMaxWidth: true } }
+    );
+
+    let diagramStartX;
+
+    // Get the diagram's left edge
+    cy.contains('foreignobject', 'Sign Up')
+      .then(($diagram) => {
+        diagramStartX = parseFloat($diagram.attr('x'));
+      })
+      .then(() => {
+        // Get all legend lines that include "Sam"
+        cy.get('text.legend')
+          .filter((i, el) => el.textContent.includes('Sam'))
+          .then(($lines) => {
+            // Check that there are two lines
+            expect($lines.length).to.be.equal(2);
+
+            // Check that for all but the last line it nearly fills the max width
+            $lines.each((index, el) => {
+              const bbox = el.getBBox();
+              if (index < $lines.length - 1) {
+                expect(bbox.width).to.be.closeTo(320, 5);
+              } else {
+                // Last line may be shorter
+                expect(bbox.width).to.be.lte(320);
+              }
+            });
+
+            // check margin between diagram and legend is maintained
+            const longestBBox = $lines.get(0).getBBox(); // longest Line's bbox
+            if (diagramStartX && longestBBox) {
+              const legendRightEdge = longestBBox.x + longestBBox.width;
+              const margin = diagramStartX - legendRightEdge;
+              expect(margin).to.be.closeTo(100, 2); // expect margin to be around 100
+            }
+          });
       });
   });
 });
