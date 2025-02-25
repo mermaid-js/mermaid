@@ -124,12 +124,10 @@ section Checkout from website
     let LabelEndX, diagramStartX;
 
     // Get right edge of the legend
-    cy.contains('tspan', 'Darkoob userf deliberately increasing the size of this label').then(
-      (textBox) => {
-        const bbox = textBox[0].getBBox();
-        LabelEndX = bbox.x + bbox.width;
-      }
-    );
+    cy.contains('tspan', 'Darkoob userf').then((textBox) => {
+      const bbox = textBox[0].getBBox();
+      LabelEndX = bbox.x + bbox.width;
+    });
 
     // Get left edge of the diagram
     cy.contains('foreignobject', 'Make preBuilt').then((rect) => {
