@@ -204,6 +204,7 @@ export const createText = async (
     isNode = true,
     width = 200,
     addSvgBackground = false,
+    labelType = 'text',
   } = {},
   config?: MermaidConfig
 ) => {
@@ -218,14 +219,15 @@ export const createText = async (
     'addSvgBackground: ',
     addSvgBackground,
     'optInMarkdownLabels: ',
-    optInMarkdownLabels
+    optInMarkdownLabels,
+    'labelType: ',
+    labelType
   );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     let labelMaker = (text, config) => {
-      const match = text.match(/^"`(.*)`"$/);
-      if (match) {
-        return markdownToHTML(match[1], config);
+      if (labelType === 'markdown') {
+        return markdownToHTML(text, config);
       } else {
         return `<span class="${classes}">${text}</span>`;
       }

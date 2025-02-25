@@ -51,6 +51,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     cssClasses: 'markdown-node-label',
     style: node.labelStyle,
     addSvgBackground: !!node.icon || !!node.img,
+    labelType: node.labelType,
   });
   // Get the size of the label
   let bbox = text.getBBox();
