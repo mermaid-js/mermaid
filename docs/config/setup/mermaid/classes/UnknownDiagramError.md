@@ -92,7 +92,7 @@ Defined in: node_modules/.pnpm/typescript\@5.7.3/node_modules/typescript/lib/lib
 
 > `static` `optional` **prepareStackTrace**: (`err`, `stackTraces`) => `any`
 
-Defined in: node_modules/.pnpm/@types+node\@22.13.4/node_modules/@types/node/globals.d.ts:143
+Defined in: node_modules/.pnpm/@types+node\@22.13.5/node_modules/@types/node/globals.d.ts:143
 
 Optional override for formatting stack traces
 
@@ -124,7 +124,7 @@ Optional override for formatting stack traces
 
 > `static` **stackTraceLimit**: `number`
 
-Defined in: node_modules/.pnpm/@types+node\@22.13.4/node_modules/@types/node/globals.d.ts:145
+Defined in: node_modules/.pnpm/@types+node\@22.13.5/node_modules/@types/node/globals.d.ts:145
 
 #### Inherited from
 
@@ -136,7 +136,7 @@ Defined in: node_modules/.pnpm/@types+node\@22.13.4/node_modules/@types/node/glo
 
 > `static` **captureStackTrace**(`targetObject`, `constructorOpt`?): `void`
 
-Defined in: node_modules/.pnpm/@types+node\@22.13.4/node_modules/@types/node/globals.d.ts:136
+Defined in: node_modules/.pnpm/@types+node\@22.13.5/node_modules/@types/node/globals.d.ts:136
 
 Create .stack property on a target object
 
