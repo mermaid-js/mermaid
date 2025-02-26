@@ -398,6 +398,42 @@ const zero_or_more = (elem, type, id) => {
     .attr('orient', 'auto');
   endMarker.append('circle').attr('fill', 'white').attr('cx', 9).attr('cy', 18).attr('r', 6);
   endMarker.append('path').attr('d', 'M21,18 Q39,0 57,18 Q39,36 21,18');
+const requirement_arrow = (elem, type, id) => {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-requirement_arrowEnd')
+    .attr('refX', 20)
+    .attr('refY', 10)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 20)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr(
+      'd',
+      `M0,0
+      L20,10
+      M20,10
+      L0,20`
+    );
+};
+const requirement_contains = (elem, type, id) => {
+  const containsNode = elem
+    .append('defs')
+    .append('marker')
+    .attr('id', id + '_' + type + '-requirement_containsEnd')
+    .attr('refX', 20)
+    .attr('refY', 10)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 20)
+    .attr('orient', 'auto')
+    .append('g');
+
+  containsNode.append('circle').attr('cx', 10).attr('cy', 10).attr('r', 10).attr('fill', 'none');
+
+  containsNode.append('line').attr('x1', 0).attr('x2', 20).attr('y1', 10).attr('y2', 10);
+
+  containsNode.append('line').attr('y1', 0).attr('y2', 20).attr('x1', 10).attr('x2', 10);
 };
 
 // TODO rename the class diagram markers to something shape descriptive and semantic free
@@ -415,5 +451,7 @@ const markers = {
   zero_or_one,
   one_or_more,
   zero_or_more,
+  requirement_arrow,
+  requirement_contains,
 };
 export default insertMarkers;

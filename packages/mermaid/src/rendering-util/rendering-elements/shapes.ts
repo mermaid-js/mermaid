@@ -59,6 +59,7 @@ import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 import { erBox } from './shapes/erBox.js';
 import { classBox } from './shapes/classBox.js';
+import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
@@ -480,6 +481,9 @@ const generateShapeMap = () => {
 
     // er diagram
     erBox,
+    
+    // Requirement diagram
+    requirementBox,
   } as const;
 
   const entries = [
