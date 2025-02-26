@@ -1938,9 +1938,9 @@ flowchart TD
 
 There are two ways to display these FontAwesome icons:
 
-### Register FontAwesome icon packs (v11.4.2+)
+### Register FontAwesome icon packs (v\<MERMAID_RELEASE_VERSION>+)
 
-You can register your own FontAwesome icon pack, to register follow the instructions provided [here](../config/icons.md).
+You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
 
 > **Note**
 > Note that it will fall back to FontAwesome CSS if FontAwesome packs are not registered.
