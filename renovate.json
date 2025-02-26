@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
     ":rebaseStalePrs",
@@ -42,5 +43,6 @@
     }
   ],
   "dependencyDashboard": false,
-  "dependencyDashboardAutoclose": true
+  "dependencyDashboardAutoclose": true,
+  "rangeStrategy": "bump"
 }

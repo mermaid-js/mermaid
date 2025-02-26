@@ -58,6 +58,7 @@ import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
 import { classBox } from './shapes/classBox.js';
+import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
@@ -449,14 +450,6 @@ export const shapesDefs = [
     aliases: ['lined-document'],
     handler: linedWaveEdgedRect,
   },
-  {
-    semanticName: 'Class Box',
-    name: 'Class Box',
-    shortName: 'classBox',
-    description: 'Class Box',
-    aliases: ['class-box'],
-    handler: classBox,
-  },
 ] as const satisfies ShapeDefinition[];
 
 const generateShapeMap = () => {
@@ -477,8 +470,16 @@ const generateShapeMap = () => {
     icon,
     iconRounded,
     imageSquare,
-    kanbanItem,
     anchor,
+
+    // Kanban diagram
+    kanbanItem,
+
+    // class diagram
+    classBox,
+
+    // Requirement diagram
+    requirementBox,
   } as const;
 
   const entries = [

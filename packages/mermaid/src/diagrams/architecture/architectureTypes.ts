@@ -7,6 +7,8 @@ import type cytoscape from 'cytoscape';
 |       Architecture Diagram Types        |
 \*=======================================*/
 
+export type ArchitectureAlignment = 'vertical' | 'horizontal' | 'bend';
+
 export type ArchitectureDirection = 'L' | 'R' | 'T' | 'B';
 export type ArchitectureDirectionX = Extract<ArchitectureDirection, 'L' | 'R'>;
 export type ArchitectureDirectionY = Extract<ArchitectureDirection, 'T' | 'B'>;
@@ -104,9 +106,7 @@ export const isValidArchitectureDirectionPair = function (
   return x !== 'LL' && x !== 'RR' && x !== 'TT' && x !== 'BB';
 };
 
-export type ArchitectureDirectionPairMap = {
-  [key in ArchitectureDirectionPair]?: string;
-};
+export type ArchitectureDirectionPairMap = Partial<Record<ArchitectureDirectionPair, string>>;
 
 /**
  * Creates a pair of the directions of each side of an edge. This function should be used instead of manually creating it to ensure that the source is always the first character.
@@ -168,6 +168,18 @@ export const getArchitectureDirectionXYFactors = function (
   } else {
     return [-1, 1];
   }
+};
+
+export const getArchitectureDirectionAlignment = function (
+  a: ArchitectureDirection,
+  b: ArchitectureDirection
+): ArchitectureAlignment {
+  if (isArchitectureDirectionXY(a, b)) {
+    return 'bend';
+  } else if (isArchitectureDirectionX(a)) {
+    return 'horizontal';
+  }
+  return 'vertical';
 };
 
 export interface ArchitectureStyleOptions {
@@ -249,9 +261,27 @@ export interface ArchitectureDB extends DiagramDB {
 
 export type ArchitectureAdjacencyList = Record<string, ArchitectureDirectionPairMap>;
 export type ArchitectureSpatialMap = Record<string, number[]>;
+
+/**
+ * Maps the direction that groups connect from.
+ *
+ * **Outer key**: ID of group A
+ *
+ * **Inner key**: ID of group B
+ *
+ * **Value**: 'vertical' or 'horizontal'
+ *
+ * Note: tmp[groupA][groupB] == tmp[groupB][groupA]
+ */
+export type ArchitectureGroupAlignments = Record<
+  string,
+  Record<string, Exclude<ArchitectureAlignment, 'bend'>>
+>;
+
 export interface ArchitectureDataStructures {
   adjList: ArchitectureAdjacencyList;
   spatialMaps: ArchitectureSpatialMap[];
+  groupAlignments: ArchitectureGroupAlignments;
 }
 
 export interface ArchitectureState extends Record<string, unknown> {

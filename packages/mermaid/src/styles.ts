@@ -27,7 +27,28 @@ const getStyles = (
     font-size: ${options.fontSize};
     fill: ${options.textColor}
   }
-
+  @keyframes edge-animation-frame {
+    from {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  & .edge-animation-slow {
+    stroke-dasharray: 9,5 !important;
+    stroke-dashoffset: 900;
+    animation: dash 50s linear infinite;
+    stroke-linecap: round;
+  }
+  & .edge-animation-fast {
+    stroke-dasharray: 9,5 !important;
+    stroke-dashoffset: 900;
+    animation: dash 20s linear infinite;
+    stroke-linecap: round;
+  }
   /* Classes common for multiple diagrams */
 
   & .error-icon {
