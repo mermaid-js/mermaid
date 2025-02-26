@@ -324,7 +324,7 @@ export class ClassDB implements DiagramDB {
       }
 
       if (styles.length > 0) {
-        style.forEach((s) => {
+        styles.forEach((s) => {
           if (/color/.exec(s)) {
             const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
             styleClass.textStyles.push(newStyle);
@@ -335,7 +335,7 @@ export class ClassDB implements DiagramDB {
 
       this.classes.forEach((value) => {
         if (value.cssClasses.includes(id)) {
-          value.styles.push(...style.flatMap((s) => s.split(',')));
+          value.styles.push(...styles);
         }
       });
     }

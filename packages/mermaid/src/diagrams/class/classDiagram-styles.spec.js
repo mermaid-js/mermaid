@@ -119,26 +119,33 @@ describe('class diagram, ', function () {
         'class Animal\nclassDef red fill:red,color:white,stroke:red\nclassDef large color:black,font-size:20px,font-weight:bold';
 
       parser.parse(str);
-      const expected = new Map([
-        [
-          'red',
-          {
-            id: 'red',
-            styles: ['fill:red', 'color:white', 'stroke:red'],
-            textStyles: ['color:white'],
-          },
-        ],
-        [
-          'large',
-          {
-            id: 'large',
-            styles: ['color:black', 'font-size:20px', 'font-weight:bold'],
-            textStyles: ['color:black'],
-          },
-        ],
-      ]);
 
-      expect(parser.yy.getClassDefs()).toStrictEqual(expected);
+      expect(parser.yy.getClassDefs()).toMatchInlineSnapshot(`
+        Map {
+          "red" => {
+            "id": "red",
+            "styles": [
+              "fill:red",
+              "color:white",
+              "stroke:red",
+            ],
+            "textStyles": [
+              "color:white",
+            ],
+          },
+          "large" => {
+            "id": "large",
+            "styles": [
+              "color:black",
+              "font-size:20px",
+              "font-weight:bold",
+            ],
+            "textStyles": [
+              "color:black",
+            ],
+          },
+        }
+      `);
     });
   });
 });
