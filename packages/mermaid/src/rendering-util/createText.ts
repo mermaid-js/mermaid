@@ -200,7 +200,6 @@ export const createText = async (
     isTitle = false,
     classes = '',
     useHtmlLabels = true,
-    optInMarkdownLabels = false,
     isNode = true,
     width = 200,
     addSvgBackground = false,
@@ -217,11 +216,7 @@ export const createText = async (
     useHtmlLabels,
     isNode,
     'addSvgBackground: ',
-    addSvgBackground,
-    'optInMarkdownLabels: ',
-    optInMarkdownLabels,
-    'labelType: ',
-    labelType
+    addSvgBackground
   );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
@@ -232,7 +227,7 @@ export const createText = async (
         return `<span class="${classes}">${text}</span>`;
       }
     };
-    if (!optInMarkdownLabels) {
+    if (!config?.optInMarkdownLabels) {
       labelMaker = markdownToHTML;
     }
     const htmlText = labelMaker(text, config);
@@ -251,7 +246,18 @@ export const createText = async (
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
     const sanitizeBR = text.replace(/<br\s*\/?>/g, '<br/>');
-    const structuredText = markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config);
+    const structuredText = (() => {
+      if (!config?.optInMarkdownLabels || labelType === 'markdown') {
+        return markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config);
+      } else {
+        // Not parsing the text as markdown, but still translating to MarkdownWord[][]
+        // for createFormattedText. Simply making every word a normal markdown word.
+        const normalized = text.replace(/<br\/>/g, '\n').replace(/\n{2,}/g, '\n');
+        return normalized
+          .split(/\n/)
+          .map((line) => line.split(/\s+/).map((word) => ({ content: word, type: 'normal' })));
+      }
+    })();
     const svgLabel = createFormattedText(
       width,
       el,
