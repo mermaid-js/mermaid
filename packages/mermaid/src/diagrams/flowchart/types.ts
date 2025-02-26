@@ -53,6 +53,7 @@ export interface FlowText {
 }
 
 export interface FlowEdge {
+  isUserDefinedId: boolean;
   start: string;
   end: string;
   interpolate?: string;
@@ -62,6 +63,10 @@ export interface FlowEdge {
   length?: number;
   text: string;
   labelType: 'text';
+  classes: string[];
+  id?: string;
+  animation?: 'fast' | 'slow';
+  animate?: boolean;
 }
 
 export interface FlowClass {
