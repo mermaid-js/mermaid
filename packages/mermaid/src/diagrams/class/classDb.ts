@@ -520,7 +520,7 @@ export class ClassDB implements DiagramDB {
   public setDirection(dir: string) {
     this.direction = dir;
   }
-  
+
   /**
    * Function called by parser when a namespace definition has been found.
    *
