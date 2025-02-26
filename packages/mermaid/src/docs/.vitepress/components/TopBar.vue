@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { type Ref, ref, onMounted } from 'vue';
 
 interface Taglines {
   label: string;
@@ -93,13 +93,22 @@ const allTaglines: { [key: string]: { design: number; taglines: Taglines[] } } =
   },
 };
 
-const { design, taglines } =
-  Object.values(allTaglines)[Math.floor(Math.random() * Object.values(allTaglines).length)];
+// Initialize with default values
+const design: Ref<number> = ref(1);
+const taglines: Ref<Taglines[]> = ref([]);
+const index: Ref<number> = ref(0);
 
-let index = ref(Math.floor(Math.random() * taglines.length));
 onMounted(() => {
+  // Select a random variant on client side
+  const variant =
+    Object.values(allTaglines)[Math.floor(Math.random() * Object.values(allTaglines).length)];
+  design.value = variant.design;
+  taglines.value = variant.taglines;
+  index.value = Math.floor(Math.random() * taglines.value.length);
+
+  // Set up the interval for cycling through taglines
   setInterval(() => {
-    index.value = (index.value + 1) % taglines.length;
+    index.value = (index.value + 1) % taglines.value.length;
   }, 5_000);
 });
 </script>
@@ -112,6 +121,7 @@ onMounted(() => {
     <p class="w-full tracking-wide fade-text">
       <transition name="fade" mode="out-in">
         <a
+          v-if="taglines.length > 0 && taglines[index]"
           :key="index"
           :href="taglines[index].url"
           target="_blank"
