@@ -199,6 +199,7 @@ export const dataFetcher = (
   const dbState = diagramStates.get(itemId);
   const classStr = getClassesFromDbInfo(dbState);
   const style = getStylesFromDbInfo(dbState);
+  const config = getConfig();
 
   log.info('dataFetcher parsedItem', parsedItem, dbState, style);
 
@@ -219,7 +220,7 @@ export const dataFetcher = (
       nodeDb.set(itemId, {
         id: itemId,
         shape,
-        description: common.sanitizeText(itemId, getConfig()),
+        description: common.sanitizeText(itemId, config),
         cssClasses: `${classStr} ${CSS_DIAGRAM_STATE}`,
         cssStyles: style,
       });
@@ -251,7 +252,7 @@ export const dataFetcher = (
           newNode.description = parsedItem.description;
         }
       }
-      newNode.description = common.sanitizeTextOrArray(newNode.description, getConfig());
+      newNode.description = common.sanitizeTextOrArray(newNode.description, config);
     }
 
     // If there's only 1 description entry, just use a regular state shape
@@ -318,7 +319,7 @@ export const dataFetcher = (
         domId: stateDomId(itemId, graphItemCount, NOTE),
         type: newNode.type,
         isGroup: newNode.type === 'group',
-        padding: getConfig().flowchart!.padding,
+        padding: config.flowchart?.padding,
         look,
         position: parsedItem.note.position,
       };
