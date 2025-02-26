@@ -14,12 +14,32 @@ function markRendered() {
   }
 }
 
+function loadFontAwesomeCSS() {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css';
+
+  document.head.appendChild(link);
+
+  return new Promise((resolve, reject) => {
+    link.onload = resolve;
+    link.onerror = () => reject(new Error('Failed to load FontAwesome'));
+  });
+}
+
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
  * page.
  */
 const contentLoaded = async function () {
+  try {
+    await loadFontAwesomeCSS();
+    await Promise.all(Array.from(document.fonts, (font) => font.load()));
+  } catch (error) {
+    console.error('Error loading fonts', error);
+  }
+
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
