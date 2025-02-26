@@ -118,7 +118,7 @@ onMounted(() => {
     :class="[design === 1 ? 'bg-gradient-to-r from-[#bd34fe] to-[#ff3670] ' : 'bg-[#E0095F]']"
     class="mb-4 w-full top-bar flex p-2"
   >
-    <p class="w-full tracking-wide fade-text">
+    <p class="w-full tracking-wide fade-text text-sm">
       <transition name="fade" mode="out-in">
         <a
           v-if="taglines.length > 0 && taglines[index]"
@@ -128,7 +128,7 @@ onMounted(() => {
           class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
         >
           <span class="font-semibold">{{ taglines[index].label }}</span>
-          <button class="bg-[#1E1A2E] rounded-lg p-1.5 px-4 font-semibold tracking-wide">
+          <button class="bg-[#1E1A2E] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide">
             Try now
           </button>
         </a>
