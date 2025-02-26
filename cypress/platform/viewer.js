@@ -33,12 +33,8 @@ function loadFontAwesomeCSS() {
  * page.
  */
 const contentLoaded = async function () {
-  try {
-    await loadFontAwesomeCSS();
-    await Promise.all(Array.from(document.fonts, (font) => font.load()));
-  } catch (error) {
-    console.error('Error loading fonts', error);
-  }
+  await loadFontAwesomeCSS();
+  await Promise.all(Array.from(document.fonts, (font) => font.load()));
 
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
