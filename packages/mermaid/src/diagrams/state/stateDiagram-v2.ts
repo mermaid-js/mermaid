@@ -8,7 +8,7 @@ import renderer from './stateRenderer-v3-unified.js';
 export const diagram: DiagramDefinition = {
   parser,
   get db() {
-    return new StateDB();
+    return new StateDB(2);
   },
   renderer,
   styles,

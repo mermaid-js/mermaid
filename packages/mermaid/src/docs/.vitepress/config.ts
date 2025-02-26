@@ -1,6 +1,6 @@
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
-import { version } from '../../../package.json';
+import packageJson from '../../../package.json' assert { type: 'json' };
 import MermaidExample from './mermaid-markdown-all.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
@@ -58,7 +58,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
       {
         icon: 'discord',
-        link: 'https://discord.gg/AgrbSrBer3',
+        link: 'https://discord.gg/sKeNQX4Wtj',
       },
       {
         icon: {
@@ -95,7 +95,7 @@ function nav() {
       activeMatch: '/announcements',
     },
     {
-      text: version,
+      text: packageJson.version,
       items: [
         {
           text: 'Changelog',

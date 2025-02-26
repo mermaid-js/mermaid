@@ -48,7 +48,7 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
 
 ## Plans
 
-- **Free** - A free plan that includes five diagrams.
+- **Free** - A free plan that includes three diagrams.
 
 - **Pro** - A paid plan that includes unlimited diagrams, access to the collaboration feature, and more.
 
@@ -56,7 +56,7 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
 
 To learn more, visit our [Pricing](https://mermaidchart.com/pricing) page.
 
-Mermaid Chart is currently offering a 14-day free trial on our Pro and Enterprise tiers. Sign up for a free account at [Mermaid Chart](https://www.mermaidchart.com/app/sign-up).
+Mermaid Chart is currently offering a 7-day free trial on our Pro and Enterprise tiers. Sign up for a free account at [Mermaid Chart](https://www.mermaidchart.com/app/sign-up).
 
 ## Mermaid JS contributions
 

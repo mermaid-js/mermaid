@@ -20,6 +20,7 @@ import {
   DIVIDER_TYPE,
   STMT_APPLYCLASS,
   STMT_CLASSDEF,
+  STMT_DIRECTION,
   STMT_RELATION,
   STMT_STATE,
   STMT_STYLEDEF,
@@ -58,8 +59,13 @@ const newDoc = () => {
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
 export class StateDB {
-  constructor() {
+  /**
+   * @param {1 | 2} version - v1 renderer or v2 renderer.
+   */
+  constructor(version) {
     this.clear();
+
+    this.version = version;
 
     // Needed for JISON since it only supports direct properties
     this.setRootDoc = this.setRootDoc.bind(this);
@@ -67,6 +73,12 @@ export class StateDB {
     this.setDirection = this.setDirection.bind(this);
     this.trimColon = this.trimColon.bind(this);
   }
+
+  /**
+   * @private
+   * @type {1 | 2}
+   */
+  version;
 
   /**
    * @private
@@ -79,11 +91,6 @@ export class StateDB {
    */
   edges = [];
 
-  /**
-   * @private
-   * @type {string}
-   */
-  direction = DEFAULT_DIAGRAM_DIRECTION;
   /**
    * @private
    * @type {Array}
@@ -130,7 +137,11 @@ export class StateDB {
     log.info('Setting root doc', o);
     // rootDoc = { id: 'root', doc: o };
     this.rootDoc = o;
-    this.extract(o);
+    if (this.version === 1) {
+      this.extract(o);
+    } else {
+      this.extract(this.getRootDocV2());
+    }
   }
 
   getRootDoc() {
@@ -190,6 +201,10 @@ export class StateDB {
       }
     }
   }
+
+  /**
+   * @private
+   */
   getRootDocV2() {
     this.docTranslator({ id: 'root' }, { id: 'root', doc: this.rootDoc }, true);
     return { id: 'root', doc: this.rootDoc };
@@ -642,11 +657,26 @@ export class StateDB {
     }
   }
 
-  getDirection() {
-    return this.direction;
+  /**
+   * Finds the direction statement in the root document.
+   * @private
+   * @returns {{ value: string } | undefined} - the direction statement if present
+   */
+  getDirectionStatement() {
+    return this.rootDoc.find((doc) => doc.stmt === STMT_DIRECTION);
   }
+
+  getDirection() {
+    return this.getDirectionStatement()?.value ?? DEFAULT_DIAGRAM_DIRECTION;
+  }
+
   setDirection(dir) {
-    this.direction = dir;
+    const doc = this.getDirectionStatement();
+    if (doc) {
+      doc.value = dir;
+    } else {
+      this.rootDoc.unshift({ stmt: STMT_DIRECTION, value: dir });
+    }
   }
 
   trimColon(str) {
