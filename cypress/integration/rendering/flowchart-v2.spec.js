@@ -1076,4 +1076,41 @@ end
       );
     });
   });
+  describe('New @ sytax for node metadata edge cases', () => {
+    it('should be possible to use @  syntax to add labels on multi nodes', () => {
+      imgSnapshotTest(
+        `flowchart TB
+       n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"}
+        `,
+        {}
+      );
+    });
+    it('should be possible to use @  syntax to add labels with trail spaces and &', () => {
+      imgSnapshotTest(
+        `flowchart TB
+       n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"}   
+        `,
+        {}
+      );
+    });
+    it('should be possible to use @  syntax to add labels with trail spaces', () => {
+      imgSnapshotTest(
+        `flowchart TB
+       n2["label for n2"]
+       n4@{ label: "labe for n4"}
+       n5@{ label: "labe for n5"}  
+        `,
+        {}
+      );
+    });
+    it('should be possible to use @  syntax to add labels with trail spaces and edge/link', () => {
+      imgSnapshotTest(
+        `flowchart TD
+    A["A"] --> B["for B"] &    C@{ label: "for c"} & E@{label : "for E"}  
+    D@{label: "for D"}     
+        `,
+        {}
+      );
+    });
+  });
 });

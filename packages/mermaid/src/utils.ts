@@ -337,6 +337,9 @@ export const calculatePoint = (points: Point[], distanceToTraverse: number): Poi
   for (const point of points) {
     if (prevPoint) {
       const vectorDistance = distance(point, prevPoint);
+      if (vectorDistance === 0) {
+        return prevPoint;
+      }
       if (vectorDistance < remainingDistance) {
         remainingDistance -= vectorDistance;
       } else {
@@ -937,8 +940,12 @@ export const getEdgeId = (
     counter?: number;
     prefix?: string;
     suffix?: string;
-  }
+  },
+  id?: string
 ) => {
+  if (id) {
+    return id;
+  }
   return `${prefix ? `${prefix}_` : ''}${from}_${to}_${counter}${suffix ? `_${suffix}` : ''}`;
 };
 
