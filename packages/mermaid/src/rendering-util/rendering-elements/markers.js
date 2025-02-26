@@ -398,6 +398,8 @@ const zero_or_more = (elem, type, id) => {
     .attr('orient', 'auto');
   endMarker.append('circle').attr('fill', 'white').attr('cx', 9).attr('cy', 18).attr('r', 6);
   endMarker.append('path').attr('d', 'M21,18 Q39,0 57,18 Q39,36 21,18');
+};
+
 const requirement_arrow = (elem, type, id) => {
   elem
     .append('defs')
