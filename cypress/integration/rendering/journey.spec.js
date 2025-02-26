@@ -87,9 +87,11 @@ describe('User journey diagram task score behavior validation', () => {
         Sit down: 2: Me
     `);
 
-    cy.wait(500).then(() => {
-      expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(true);
-    });
+    cy.get('svg')
+      .should('exist')
+      .then(() => {
+        expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(true);
+      });
   });
 
   it('should throw an error if the task score is less than 0', () => {
@@ -110,9 +112,11 @@ describe('User journey diagram task score behavior validation', () => {
         Sit down: 2: Me
     `);
 
-    cy.wait(500).then(() => {
-      expect(errorCaught, 'Error should be thrown for a score less than 0').to.equal(true);
-    });
+    cy.get('svg')
+      .should('exist')
+      .then(() => {
+        expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(true);
+      });
   });
 
   it('should throw an error if the task score is greater than 5', () => {
@@ -133,9 +137,11 @@ describe('User journey diagram task score behavior validation', () => {
         Sit down: 2: Me
     `);
 
-    cy.wait(500).then(() => {
-      expect(errorCaught, 'Error should be thrown for a score greater than 5').to.equal(true);
-    });
+    cy.get('svg')
+      .should('exist')
+      .then(() => {
+        expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(true);
+      });
   });
 
   it('should NOT throw an error if the task score is valid (e.g., 4)', () => {
@@ -156,8 +162,10 @@ describe('User journey diagram task score behavior validation', () => {
         Sit down: 2: Me
     `);
 
-    cy.wait(500).then(() => {
-      expect(errorCaught, 'No error should be thrown for a valid score').to.equal(false);
-    });
+    cy.get('svg')
+      .should('exist')
+      .then(() => {
+        expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(false);
+      });
   });
 });
