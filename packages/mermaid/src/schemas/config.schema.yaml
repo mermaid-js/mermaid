@@ -55,6 +55,7 @@ required:
   - packet
   - block
   - look
+  - eventmodeling
 properties:
   theme:
     description: |
@@ -292,6 +293,8 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  eventmodeling:
+    $ref: '#/$defs/EventModelingDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2199,6 +2202,19 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 8
+
+  EventModelingDiagramConfig:
+    title: Event Modeling Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for Event Modeling diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      rowHeight:
+        description: The height of each row in the packet diagram.
+        type: number
+        minimum: 1
+        default: 32
 
   FontCalculator:
     title: Font Calculator

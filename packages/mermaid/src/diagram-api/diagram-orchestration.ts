@@ -24,6 +24,7 @@ import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
+import eventmodeling from '../diagrams/eventmodeling/detector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 
@@ -94,6 +95,7 @@ export const addDiagrams = () => {
     packet,
     xychart,
     block,
-    architecture
+    architecture,
+    eventmodeling
   );
 };

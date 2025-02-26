@@ -22,6 +22,11 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  EventModeling,
+  Frame,
+  DataType,
+  ModelEntityType,
+  isModelEntityType,
 } from './generated/ast.js';
 
 export {
@@ -31,6 +36,7 @@ export {
   PieGeneratedModule,
   ArchitectureGeneratedModule,
   GitGraphGeneratedModule,
+  EventModelingGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -39,3 +45,4 @@ export * from './info/index.js';
 export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './architecture/index.js';
+export * from './eventmodeling/index.js';

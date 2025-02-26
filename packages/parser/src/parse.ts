@@ -1,8 +1,8 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
-import type { Info, Packet, Pie, Architecture, GitGraph } from './index.js';
+import type { Info, Packet, Pie, Architecture, GitGraph, EventModeling } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph;
+export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | EventModeling;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -31,6 +31,11 @@ const initializers = {
     const parser = createGitGraphServices().GitGraph.parser.LangiumParser;
     parsers.gitGraph = parser;
   },
+  eventmodeling: async () => {
+    const { createEventModelingServices } = await import('./language/eventmodeling/index.js');
+    const parser = createEventModelingServices().EventModeling.parser.LangiumParser;
+    parsers.eventmodeling = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -38,6 +43,7 @@ export async function parse(diagramType: 'packet', text: string): Promise<Packet
 export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
+export async function parse(diagramType: 'eventmodeling', text: string): Promise<EventModeling>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
