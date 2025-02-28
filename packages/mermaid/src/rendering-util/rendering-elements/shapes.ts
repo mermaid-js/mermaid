@@ -481,7 +481,7 @@ const generateShapeMap = () => {
 
     // er diagram
     erBox,
-    
+
     // Requirement diagram
     requirementBox,
   } as const;
