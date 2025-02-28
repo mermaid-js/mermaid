@@ -57,6 +57,7 @@ import { triangle } from './shapes/triangle.js';
 import { waveEdgedRectangle } from './shapes/waveEdgedRectangle.js';
 import { waveRectangle } from './shapes/waveRectangle.js';
 import { windowPane } from './shapes/windowPane.js';
+import { erBox } from './shapes/erBox.js';
 import { classBox } from './shapes/classBox.js';
 import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
@@ -477,6 +478,9 @@ const generateShapeMap = () => {
 
     // class diagram
     classBox,
+
+    // er diagram
+    erBox,
 
     // Requirement diagram
     requirementBox,
