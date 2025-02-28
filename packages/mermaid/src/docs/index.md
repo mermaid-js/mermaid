@@ -15,23 +15,23 @@ hero:
     alt: Mermaid
   actions:
     - theme: brand
-      text: Get Started
-      link: /intro/
+      text: Try Mermaid Editor
+      link: https://www.mermaidchart.com/play
     - theme: alt
-      text: View on GitHub
+      text: Build with Mermaid
       link: https://github.com/mermaid-js/mermaid
+    - theme: alt
+      text: Learn more
+      link: https://mermaid.js.org/intro/
 
 features:
   - title: ➕ Easy to use!
-    details: Easily create and render detailed diagrams and charts with the Mermaid Live Editor.
-    link: https://mermaid.live/
+    details: Easily create diagrams and charts with the Mermaid Editor.
+    link: https://www.mermaidchart.com/play
   - title: 🧩 Integrations available!
     details: Use Mermaid with your favorite applications, check out the integrations list.
     link: ../../ecosystem/integrations-community.md
   - title: 🏆 Award winning!
     details: 2019 JavaScript Open Source Award winner for "The Most Exciting Use of Technology".
     link: https://osawards.com/javascript/2019
-  - title: 🥰 Mermaid + Mermaid Chart
-    details: Mermaid Chart is a major supporter of the Mermaid project.
-    link: https://www.mermaidchart.com/
 ---
