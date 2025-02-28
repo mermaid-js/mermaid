@@ -4,10 +4,10 @@ import "../common/common";
 entry Architecture:
     NEWLINE*
     "architecture-beta"
+    NEWLINE*
     (
-    NEWLINE* TitleAndAccessibilities
-    | NEWLINE* Statement*
-    | NEWLINE*
+    TitleAndAccessibilities
+    | Statement*
     )
 ;
 
@@ -50,6 +50,6 @@ terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';
 terminal ARCH_ID: /[\w]+/;
 terminal ARCH_TEXT_ICON: /\("[^"]+"\)/;
 terminal ARCH_ICON: /\([\w-:]+\)/;
-terminal ARCH_TITLE: /\[[\w ]+\]/;
+terminal ARCH_TITLE: /\[[^[\]]+\]/;
 terminal ARROW_GROUP: /\{group\}/;
 terminal ARROW_INTO: /<|>/;
