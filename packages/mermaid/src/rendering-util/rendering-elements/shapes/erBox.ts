@@ -142,7 +142,6 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       TEXT_PADDING;
     yOffsets.push(yOffset);
   }
-
   yOffsets.pop();
   let totalWidthSections = 4;
 
@@ -227,6 +226,24 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   // Draw shape
   const roughRect = rc.rectangle(x, y, w, h, options);
   const rect = shapeSvg.insert(() => roughRect, ':first-child').attr('style', cssStyles!.join(''));
+
+  const { themeVariables } = getConfig();
+  const { secondaryColor, tertiaryColor, nodeBorder } = themeVariables;
+
+  yOffsets.push(0);
+  // Draw row rects
+  for (const [i, yOffset] of yOffsets.entries()) {
+    const isEven = i % 2 === 0 && yOffset !== 0;
+    const roughRect = rc.rectangle(x, nameBBox.height + y + yOffset, w, nameBBox.height, {
+      ...options,
+      fill: isEven ? tertiaryColor : secondaryColor,
+      stroke: nodeBorder,
+    });
+    shapeSvg
+      .insert(() => roughRect, 'g.label')
+      .attr('style', cssStyles!.join(''))
+      .attr('class', `row-rect-${i % 2 === 0 ? 'even' : 'odd'}`);
+  }
 
   // Draw divider lines
   // Name line

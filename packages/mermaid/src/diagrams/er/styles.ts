@@ -30,7 +30,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
   }
 
   .labelBkg {
-    background-color: ${fade(options.edgeLabelBackground, 0.5)};
+    background-color: ${fade(options.tertiaryColor, 0.5)};
   }
 
   .edgeLabel .label {
