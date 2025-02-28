@@ -350,6 +350,26 @@ Bob-->Alice-in-Wonderland:I am good thanks!`);
     expect(messages[1].from).toBe('Bob');
   });
 
+  it('should handle equals in participant names', async () => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+participant Alice=Wonderland
+participant Bob
+Alice=Wonderland->Bob:Hello Bob, how are - you?
+Bob-->Alice=Wonderland:I am good thanks!`);
+
+    const actors = diagram.db.getActors();
+    expect([...actors.keys()]).toEqual(['Alice=Wonderland', 'Bob']);
+    expect(actors.get('Alice=Wonderland').description).toBe('Alice=Wonderland');
+    expect(actors.get('Bob').description).toBe('Bob');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(2);
+    expect(messages[0].from).toBe('Alice=Wonderland');
+    expect(messages[1].from).toBe('Bob');
+  });
+
   it('should alias participants', async () => {
     const diagram = await Diagram.fromText(`
 sequenceDiagram
