@@ -1,6 +1,7 @@
 // @ts-expect-error Incorrect khroma types
 import { darken, lighten, isDark } from 'khroma';
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
+import { getIconStyles } from '../globalStyles.js';
 
 const genSections: DiagramStylesProvider = (options) => {
   let sections = '';
@@ -105,19 +106,6 @@ const getStyles: DiagramStylesProvider = (options) =>
     dominant-baseline: middle;
     text-align: center;
   }
-  .node label-icon path {
-    fill: currentColor;
-    stroke: revert;
-    stroke-width: revert;
-  }
-  /**
-   *  These are copied from font-awesome.css 
-   */
-  .label-icon {
-    display: inline-block;
-    height: 1em;
-    overflow: visible;
-    vertical-align: -0.125em;
-  }
+    ${getIconStyles()}
 `;
 export default getStyles;

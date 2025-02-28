@@ -1249,6 +1249,8 @@ There are two ways to display these FontAwesome icons:
 
 You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
 
+Supported prefixes: `fa`, `fab`, `fas`, `far`, `fal`, `fad`.
+
 ```note
 Note that it will fall back to FontAwesome CSS if FontAwesome packs are not registered.
 ```

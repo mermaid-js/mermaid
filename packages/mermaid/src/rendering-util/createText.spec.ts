@@ -32,6 +32,11 @@ describe('replaceIconSubstring', () => {
   });
 
   it('correctly process the registered icons', async () => {
+    /**
+     *  CC-BY-4.0
+     *  Copyright (c) Fonticons, Inc. - https://fontawesome.com/license/free
+     *  https://fontawesome.com/icons/bell?f=classic&s=regular
+     */
     const staticBellIconPack = {
       prefix: 'fa',
       icons: {

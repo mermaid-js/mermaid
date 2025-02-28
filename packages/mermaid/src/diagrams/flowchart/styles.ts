@@ -1,5 +1,6 @@
 // import khroma from 'khroma';
 import * as khroma from 'khroma';
+import { getIconStyles } from '../globalStyles.js';
 
 /** Returns the styles given options */
 export interface FlowChartStyleOptions {
@@ -177,20 +178,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     }
     text-align: center;
   }
-  .node .label-icon path {
-    fill: currentColor;
-    stroke: revert;
-    stroke-width: revert;
-    }
-  /**
-   *  These are copied from font-awesome.css 
-   */
-  .label-icon {
-    display: inline-block;
-    height: 1em;
-    overflow: visible;
-    vertical-align: -0.125em;
-  }
+  ${getIconStyles()}
 `;
 
 export default getStyles;

@@ -1,3 +1,5 @@
+import { getIconStyles } from '../globalStyles.js';
+
 const getStyles = (options) =>
   `g.classGroup text {
   fill: ${options.nodeBorder || options.classText};
@@ -157,20 +159,7 @@ g.classGroup line {
   font-size: 18px;
   fill: ${options.textColor};
 }
-.node label-icon path {
-  fill: currentColor;
-  stroke: revert;
-  stroke-width: revert;
-}
-  /**
-   *  These are copied from font-awesome.css 
-   */
-.label-icon {
-  display: inline-block;
-  height: 1em;
-  overflow: visible;
-  vertical-align: -0.125em;
-}
+  ${getIconStyles()}
 `;
 
 export default getStyles;
