@@ -29,7 +29,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "section"\s[^:\n]+    return 'section';
 
 // event starting with "==>" keyword
-":"\s[^:\n]+        return 'event';
+":"\s(?:[^#:\n;]|":"(?!\s))+        return 'event';
 [^#:\n]+               return 'period';
 
 
