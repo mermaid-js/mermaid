@@ -282,6 +282,8 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    *
    */
   wrappingWidth?: number;
+
+  direction?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
