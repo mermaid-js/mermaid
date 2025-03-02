@@ -237,4 +237,32 @@ with a second line`
       }).not.toThrow();
     });
   }
+
+  it(`should parse labels without markdown delimiters as text`, function () {
+    const flowChart = `
+    graph TB
+      a[foo]
+    `;
+    flow.parser.parse(flowChart);
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(vert.get('a').id).toBe('a');
+    expect(vert.get('a').text).toBe('foo');
+    expect(vert.get('a').labelType).toBe('text');
+  });
+
+  it(`should parse markdown labels`, function () {
+    const flowChart = `
+    graph TB
+      a["\`foo\`"]
+    `;
+    flow.parser.parse(flowChart);
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(vert.get('a').id).toBe('a');
+    expect(vert.get('a').text).toBe('foo');
+    expect(vert.get('a').labelType).toBe('markdown');
+  });
 });

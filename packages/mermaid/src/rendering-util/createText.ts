@@ -203,6 +203,7 @@ export const createText = async (
     isNode = true,
     width = 200,
     addSvgBackground = false,
+    labelType = 'text',
   } = {},
   config?: MermaidConfig
 ) => {
@@ -219,8 +220,17 @@ export const createText = async (
   );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-
-    const htmlText = markdownToHTML(text, config);
+    let labelMaker = (text, config) => {
+      if (labelType === 'markdown') {
+        return markdownToHTML(text, config);
+      } else {
+        return `<span class="${classes}">${text}</span>`;
+      }
+    };
+    if (!config?.optInMarkdownLabels) {
+      labelMaker = markdownToHTML;
+    }
+    const htmlText = labelMaker(text, config);
     const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
@@ -236,7 +246,18 @@ export const createText = async (
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
     const sanitizeBR = text.replace(/<br\s*\/?>/g, '<br/>');
-    const structuredText = markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config);
+    const structuredText = (() => {
+      if (!config?.optInMarkdownLabels || labelType === 'markdown') {
+        return markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config);
+      } else {
+        // Not parsing the text as markdown, but still translating to MarkdownWord[][]
+        // for createFormattedText. Simply making every word a normal markdown word.
+        const normalized = text.replace(/<br\/>/g, '\n').replace(/\n{2,}/g, '\n');
+        return normalized
+          .split(/\n/)
+          .map((line) => line.split(/\s+/).map((word) => ({ content: word, type: 'normal' })));
+      }
+    })();
     const svgLabel = createFormattedText(
       width,
       el,

@@ -13,7 +13,9 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   _classes?: string
 ) => {
   let cssClasses;
-  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
+  const config = getConfig();
+  const useHtmlLabels = node.useHtmlLabels || evaluate(config?.htmlLabels);
+
   if (!_classes) {
     cssClasses = 'node default';
   } else {
@@ -40,14 +42,20 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     label = typeof node.label === 'string' ? node.label : node.label[0];
   }
 
-  const text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
-    useHtmlLabels,
-    width: node.width || getConfig().flowchart?.wrappingWidth,
-    // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
-    cssClasses: 'markdown-node-label',
-    style: node.labelStyle,
-    addSvgBackground: !!node.icon || !!node.img,
-  });
+  const text = await createText(
+    labelEl,
+    sanitizeText(decodeEntities(label), getConfig()),
+    {
+      useHtmlLabels,
+      width: node.width || getConfig().flowchart?.wrappingWidth,
+      // @ts-expect-error -- This is currently not used. Should this be `classes` instead?
+      cssClasses: 'markdown-node-label',
+      style: node.labelStyle,
+      addSvgBackground: !!node.icon || !!node.img,
+      labelType: node.labelType,
+    },
+    config
+  );
   // Get the size of the label
   let bbox = text.getBBox();
   const halfPadding = (node?.padding ?? 0) / 2;

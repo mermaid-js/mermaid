@@ -412,4 +412,21 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[1].label).toEqual('labe for n4');
     expect(data4Layout.nodes[2].label).toEqual('labe for n5');
   });
+
+  it(' should include labelType in nodes', function () {
+    const res = flow.parser.parse(`flowchart TB
+      A["\`**foo**\`"] --> B[bar]
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(2);
+
+    expect(data4Layout.nodes[0].shape).toEqual('squareRect');
+    expect(data4Layout.nodes[0].label).toEqual('**foo**');
+    expect(data4Layout.nodes[0].labelType).toEqual('markdown');
+
+    expect(data4Layout.nodes[1].shape).toEqual('squareRect');
+    expect(data4Layout.nodes[1].label).toEqual('bar');
+    expect(data4Layout.nodes[1].labelType).toEqual('text');
+  });
 });
