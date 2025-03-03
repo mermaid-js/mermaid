@@ -42,7 +42,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   }
 
   let text;
-  if (node.labelType !== 'string') {
+  if (node.labelType === 'markdown') {
     text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
       useHtmlLabels,
       width: node.width || getConfig().flowchart?.wrappingWidth,
