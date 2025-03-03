@@ -555,7 +555,7 @@ flowchart TD
     A@{ icon: "fa:user", form: "square", label: "User Icon", pos: "t", h: 60 }
 ```
 
-### Parameters
+#### Parameters
 
 - **icon**: The name of the icon from the registered icon pack.
 - **form**: Specifies the background shape of the icon. If not defined there will be no background to icon. Options include:
@@ -577,7 +577,7 @@ flowchart TD
     A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
 ```
 
-### Parameters
+#### Parameters
 
 - **img**: The URL of the image to be displayed.
 - **label**: The text label associated with the image. This can be any string. If not defined, no label will be displayed.
