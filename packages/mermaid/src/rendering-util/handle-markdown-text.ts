@@ -88,6 +88,8 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return `${node.text}`;
     } else if (node.type === 'escape') {
       return node.text;
+    }  else if (node.type === 'link') {
+      return `<a xlink:href="${node.url}" href="${node.url}" target="__blank">${node.children.map(output).join('')}</a>`;
     }
     return `Unsupported markdown: ${node.type}`;
   }
