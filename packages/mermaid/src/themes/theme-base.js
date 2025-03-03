@@ -343,6 +343,9 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
+
+    /* C4 Diagram Variables */
+    this.c4NodeTextColor = this.c4NodeTextColor || this.primaryTextColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

@@ -344,6 +344,9 @@ class Theme {
       this.attributeBackgroundColorEven || lighten(this.background, 2);
     /* -------------------------------------------------- */
 
+    /* C4 Diagram Variables */
+    this.c4NodeTextColor = this.c4NodeTextColor || this.primaryTextColor;
+
     this.nodeBorder = this.nodeBorder || '#999';
   }
   calculate(overrides) {

@@ -936,6 +936,71 @@ export class C4DB implements DiagramDB {
 
       switch (c4Node.type) {
         case 'person':
+          c4Node.classes.push('person');
+          break;
+        case 'external_person':
+          c4Node.classes.push('person', 'external');
+          break;
+        case 'system':
+          c4Node.classes.push('system');
+          break;
+        case 'external_system':
+          c4Node.classes.push('system', 'external');
+          break;
+        case 'container':
+          c4Node.classes.push('container');
+          break;
+        case 'external_container':
+          c4Node.classes.push('container', 'external');
+          break;
+        case 'component':
+          c4Node.classes.push('component');
+          break;
+        case 'external_component':
+          c4Node.classes.push('component', 'external');
+          break;
+        case 'system_db':
+          c4Node.classes.push('system', 'database');
+          break;
+        case 'external_system_db':
+          c4Node.classes.push('system', 'database', 'external');
+          break;
+        case 'container_db':
+          c4Node.classes.push('container', 'database');
+          break;
+        case 'external_container_db':
+          c4Node.classes.push('container', 'database', 'external');
+          break;
+        case 'component_db':
+          c4Node.classes.push('component', 'database');
+          break;
+        case 'external_component_db':
+          c4Node.classes.push('component', 'database', 'external');
+          break;
+        case 'system_queue':
+          c4Node.classes.push('system', 'queue');
+          break;
+        case 'external_system_queue':
+          c4Node.classes.push('system', 'queue', 'external');
+          break;
+        case 'container_queue':
+          c4Node.classes.push('container', 'queue');
+          break;
+        case 'external_container_queue':
+          c4Node.classes.push('container', 'queue', 'external');
+          break;
+        case 'component_queue':
+          c4Node.classes.push('component', 'queue');
+          break;
+        case 'external_component_queue':
+          c4Node.classes.push('component', 'queue', 'external');
+          break;
+        default:
+          break;
+      }
+
+      switch (c4Node.type) {
+        case 'person':
         case 'external_person':
           if (!c4Node.sprite) {
             c4Node.sprite = 'person';
@@ -984,6 +1049,10 @@ export class C4DB implements DiagramDB {
         typeof c4Node.label === 'object'
           ? `$${Object.keys(c4Node.label)[0]}=${Object.values(c4Node.label)[0]}`
           : (c4Node.label ?? '');
+
+      if (c4Node.isBoundary && this.getC4Type() === 'C4Deployment') {
+        c4Node.classes.push('deployment');
+      }
 
       const node = {
         id: c4Node.alias,

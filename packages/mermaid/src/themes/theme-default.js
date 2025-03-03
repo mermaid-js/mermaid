@@ -109,8 +109,47 @@ class Theme {
     this.todayLineColor = 'red';
 
     /* C4 Context Diagram variables */
-    this.personBorder = this.primaryBorderColor;
-    this.personBkg = this.mainBkg;
+    this.c4NodeTextColor = 'white';
+    this.personBorder = '#073B6F';
+    this.personBkg = '#08427B';
+    this.personExtBorder = '#8A8A8A';
+    this.personExtBkg = '#686868';
+    this.systemBorder = '#3C7FC0';
+    this.systemBkg = '#1168BD';
+    this.systemDbBorder = '#3C7FC0';
+    this.systemDbBkg = '#1168BD';
+    this.systemQueueBorder = '#3C7FC0';
+    this.systemQueueBkg = '#1168BD';
+    this.systemExtBorder = '#8A8A8A';
+    this.systemExtBkg = '#999999';
+    this.systemExtDbBorder = '#8A8A8A';
+    this.systemExtDbBkg = '#999999';
+    this.systemExtQueueBorder = '#8A8A8A';
+    this.systemExtQueueBkg = '#999999';
+    this.containerBorder = '#3C7FC0';
+    this.containerBkg = '#438DD5';
+    this.containerDbBorder = '#3C7FC0';
+    this.containerDbBkg = '#438DD5';
+    this.containerQueueBorder = '#3C7FC0';
+    this.containerQueueBkg = '#438DD5';
+    this.containerExtBorder = '#A6A6A6';
+    this.containerExtBkg = '#B3B3B3';
+    this.containerExtDbBorder = '#A6A6A6';
+    this.containerExtDbBkg = '#B3B3B3';
+    this.containerExtQueueBorder = '#A6A6A6';
+    this.containerExtQueueBkg = '#B3B3B3';
+    this.componentBorder = '#78A8D8';
+    this.componentBkg = '#85BBF0';
+    this.componentDbBorder = '#78A8D8';
+    this.componentDbBkg = '#85BBF0';
+    this.componentQueueBorder = '#78A8D8';
+    this.componentQueueBkg = '#85BBF0';
+    this.componentExtBorder = '#BFBFBF';
+    this.componentExtBkg = '#CCCCCC';
+    this.componentExtDbBorder = '#BFBFBF';
+    this.componentExtDbBkg = '#CCCCCC';
+    this.componentExtQueueBorder = '#BFBFBF';
+    this.componentExtQueueBkg = '#CCCCCC';
 
     /* Architecture Diagram variables */
     this.archEdgeColor = 'calculated';
@@ -371,6 +410,9 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
+
+    /* C4 Diagram Variables */
+    this.c4NodeTextColor = this.c4NodeTextColor || this.primaryTextColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
