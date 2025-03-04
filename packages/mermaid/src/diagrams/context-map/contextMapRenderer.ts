@@ -42,6 +42,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
 
   const width = conf.width!;
   const height = conf.height!;
+
+  log.debug('2@@@@@@@@2@@@@@@@@@\n' + JSON.stringify({ width, height }));
   const fontConfig = conf.font as Font;
   const config = new Configuration(
     height,
@@ -50,7 +52,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     (text) => calculateTextWidth(text!, fontConfig),
     (text) => calculateTextHeight(text!, fontConfig),
     { rx: conf.nodePadding!.horizontal!, ry: conf.nodePadding!.vertical! },
-    { horizontal: conf.nodeMargin!.horizontal!, vertical: conf.nodeMargin!.vertical! }
+    { horizontal: conf.nodeMargin!.horizontal!, vertical: conf.nodeMargin!.vertical! },
+    1
   );
 
   buildGraph(svg, { nodes, links }, config);

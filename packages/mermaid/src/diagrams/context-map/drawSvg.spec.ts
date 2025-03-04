@@ -1,8 +1,10 @@
 import * as d3 from 'd3';
 
-import { Configuration, ContextMap, ContextMapLink, ContextMapNode } from './drawSvg.js';
+import type { Font } from './drawSvg.js';
+import { Configuration, ContextMapLink, ContextMapNode } from './drawSvg.js';
 import { describe, test, expect } from 'vitest';
 import { JSDOM } from 'jsdom';
+import type { Point } from '../../types.js';
 
 describe('graph construction', () => {
   const fakeFont = { fontSize: 0, fontFamily: 'any', fontWeight: 0 };
@@ -23,7 +25,8 @@ describe('graph construction', () => {
       calculateTextWidth,
       (_) => textHeight,
       ellipseSize,
-      { horizontal: 0, vertical: 0 }
+      { horizontal: 0, vertical: 0 },
+      1
     );
 
     const contextMapNode = ContextMapNode.createContextMapNode(node, config);
@@ -66,14 +69,15 @@ describe('graph construction', () => {
       (text?: string): number => 0,
       (_) => 15,
       { rx: 50, ry: 10 },
-      { horizontal: 0, vertical: 0 }
+      { horizontal: 0, vertical: 0 },
+      1
     );
 
     const contextMapNodes = [
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
     ];
 
     const disposedNodes = ContextMapNode.disposeNodesInThePlane(contextMapNodes, {
@@ -94,8 +98,8 @@ describe('graph construction', () => {
 
   test('distribute 2 nodes in the plane', () => {
     const nodes = [
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
     ];
 
     ContextMapNode.disposeNodesInThePlane(nodes, { width: 500, height: 500 });
@@ -106,48 +110,42 @@ describe('graph construction', () => {
 
   test('distribute 4 nodes in the plane', () => {
     const nodes = [
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
     ];
 
     ContextMapNode.disposeNodesInThePlane(nodes, { width: 500, height: 500 });
 
     expect(nodes[0].position).toStrictEqual({ x: -50, y: +10 });
-
     expect(nodes[1].position).toStrictEqual({ x: +50, y: 10 });
-
     expect(nodes[2].position).toStrictEqual({ x: -50, y: -10 });
-
     expect(nodes[3].position).toStrictEqual({ x: +50, y: -10 });
   });
 
   test('distribute 4 nodes in the plane with little width', () => {
     const nodes = [
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
     ];
 
     ContextMapNode.disposeNodesInThePlane(nodes, { width: 120, height: 800 });
 
     expect(nodes[0].position).toStrictEqual({ x: 0, y: 30 });
-
     expect(nodes[1].position).toStrictEqual({ x: 0, y: 10 });
-
     expect(nodes[2].position).toStrictEqual({ x: 0, y: -10 });
-
     expect(nodes[3].position).toStrictEqual({ x: 0, y: -30 });
   });
 
   test('distribute 4 nodes in the plane considering margins', () => {
     const nodes = [
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
+      createTestContextMapNode(100, 20, fakeFont, 'any'),
     ];
 
     ContextMapNode.disposeNodesInThePlane(
@@ -157,11 +155,8 @@ describe('graph construction', () => {
     );
 
     expect(nodes[0].position).toStrictEqual({ x: -60, y: 20 });
-
     expect(nodes[1].position).toStrictEqual({ x: +60, y: 20 });
-
     expect(nodes[2].position).toStrictEqual({ x: -60, y: -20 });
-
     expect(nodes[3].position).toStrictEqual({ x: +60, y: -20 });
   });
 
@@ -173,13 +168,14 @@ describe('graph construction', () => {
       (text?: string): number => text?.length ?? 0,
       (_) => 15,
       { rx: 50, ry: 10 },
-      { horizontal: 0, vertical: 0 }
+      { horizontal: 0, vertical: 0 },
+      1
     );
 
     const nodes = [
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'A', { x: -100, y: 0 }),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'B', { x: 100, y: 0 }),
-      new ContextMapNode(100, 20, 0, 0, fakeFont, 'C', { x: 200, y: 200 }),
+      createTestContextMapNode(100, 20, fakeFont, 'A', { x: -100, y: 0 }),
+      createTestContextMapNode(100, 20, fakeFont, 'B', { x: 100, y: 0 }),
+      createTestContextMapNode(100, 20, fakeFont, 'C', { x: 200, y: 200 }),
     ];
     const links = [
       {
@@ -203,3 +199,23 @@ describe('graph construction', () => {
     expect(contextMapLinks[1].link.target.id).toBe('C');
   });
 });
+
+function createTestContextMapNode(
+  width: number,
+  height: number,
+  font: Font,
+  id: string,
+  textPosition: Point = { x: 0, y: 0 },
+  position: Point = { x: 0, y: 0 }
+) {
+  const fakeEllipseSize = { rx: 0, ry: 0 };
+  return {
+    id,
+    width,
+    height,
+    textPosition: { x: textPosition.x, y: textPosition.y },
+    position: { x: position.x, y: position.y },
+    ellipseSize: fakeEllipseSize,
+    font: font,
+  };
+}

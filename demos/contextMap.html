@@ -40,6 +40,30 @@ ContextMap InsuranceContextMap {
   contains PolicyManagementContext
   contains RiskManagementContext
   contains DebtCollection
+  contains FinanceCollection
+
+  CustomerSelfServiceContext [D,C]<-[U,S] CustomerManagementContext
+  CustomerManagementContext [D,ACL]<-[U,OHS,PL] PrintingContext
+  PrintingContext [U,OHS,PL]->[D,ACL] PolicyManagementContext
+  RiskManagementContext [P]<->[P] PolicyManagementContext
+  PolicyManagementContext [D,CF]<-[U,OHS,PL] CustomerManagementContext
+  PolicyManagementContext [D]<-[U] FinanceCollection
+  DebtCollection [D,ACL]<-[U,OHS,PL] PrintingContext
+  PolicyManagementContext [SK]<->[SK] DebtCollection
+}
+   </pre
+    >
+
+    <pre class="mermaid">
+context-map-beta
+
+ContextMap InsuranceContextMap {
+  contains CustomerManagementContext
+  contains CustomerSelfServiceContext
+  contains PrintingContext
+  contains PolicyManagementContext
+  contains RiskManagementContext
+  contains DebtCollection
 
   CustomerSelfServiceContext [D,C]<-[U,S] CustomerManagementContext
   CustomerManagementContext [D,ACL]<-[U,OHS,PL] PrintingContext
@@ -49,7 +73,7 @@ ContextMap InsuranceContextMap {
   DebtCollection [D,ACL]<-[U,OHS,PL] PrintingContext
   PolicyManagementContext [SK]<->[SK] DebtCollection
 }
-   </pre
+       </pre
     >
 
     <script type="module">

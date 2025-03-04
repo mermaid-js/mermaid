@@ -1,5 +1,13 @@
-import type * as d3 from 'd3';
 import type { Link } from './contextMap.js';
+import type { NewContextMapLink, NewContextMapNode } from './svg.js';
+import {
+  appendContextMapLinkPathToSvg,
+  appendContextMapLinkToSvg,
+  appendContextMapNodeToSvg,
+} from './svg.js';
+import type { SVG } from '../../mermaid.js';
+
+export type D3Svg = SVG;
 
 export function buildGraph(
   svg: D3Svg,
@@ -12,15 +20,20 @@ export function buildGraph(
   // show the center svg.append("circle").attr("x", 0).attr("y", 0).attr("r", 5).attr("fill", "green")
 }
 
-export type D3Svg = d3.Selection<SVGSVGElement, any, any, any>;
 export class ContextMap {
   constructor(private configuration: Configuration) {}
 
   create(svg: D3Svg, links: Link[], nodes: Node[]) {
     const height = this.configuration.height;
     const width = this.configuration.width;
+    const scaling = this.configuration.scaling;
 
-    svg.attr('viewBox', [-width / 2, -height / 2, width, height]);
+    svg.attr('viewBox', [
+      (-width * scaling) / 2,
+      (-height * scaling) / 2,
+      width * scaling,
+      height * scaling,
+    ]);
 
     const contextMapNodes = nodes.map((node) =>
       ContextMapNode.createContextMapNode(node, this.configuration)
@@ -31,15 +44,32 @@ export class ContextMap {
       this.configuration.nodeMargin
     );
 
-    const contextMapLinks = ContextMapLink.createContextMapLinksFromNodes(
-      contextMapNodes,
-      links,
-      this.configuration
-    );
+    const springEmbedder = new SpringEmbedder(this.configuration, {
+      springRigidityConstK: 0.0055,
+      effectOfTimeConstDeltaT: 0.4,
+      forceConstant: 100000,
+      frictionConstant: 0.05,
+      simulationIterations: 1500,
+    });
 
-    contextMapLinks.forEach((contextMapLink) => contextMapLink.appendPathTo(svg));
-    contextMapNodes.forEach((contextMapNode) => contextMapNode.appendTo(svg));
-    contextMapLinks.forEach((contextMapLink) => contextMapLink.appendLabelsTo(svg));
+    springEmbedder.runSimulation(contextMapNodes, links, (links, nodes) => {
+      svg.selectAll('*').remove();
+
+      links.forEach((contextMapLink) => appendContextMapLinkPathToSvg(svg, contextMapLink));
+      nodes.forEach((contextMapNode) => appendContextMapNodeToSvg(svg, contextMapNode));
+      links.forEach((contextMapLink) => appendContextMapLinkToSvg(svg, contextMapLink));
+    });
+
+    // show bounds
+    // svg
+    //   .append('rect')
+    //   .attr('x', (-height / 2) * scaling)
+    //   .attr('y', (-width / 2) * scaling)
+    //   .attr('height', height * scaling)
+    //   .attr('width', width * scaling)
+    //   .attr('stroke-width', 3)
+    //   .attr('fill', 'transparent')
+    //   .attr('stroke', 'black');
   }
 }
 
@@ -52,7 +82,7 @@ export interface Font {
   fontSize: number;
   fontWeight: number;
 }
-interface EllipseSize {
+export interface EllipseSize {
   rx: number;
   ry: number;
 }
@@ -68,7 +98,8 @@ export class Configuration {
     public calculateTextWidth: (text?: string) => number,
     public calculateTextHeight: (text?: string) => number,
     public ellipseSize: EllipseSize,
-    public nodeMargin: NodeMargin
+    public nodeMargin: NodeMargin,
+    public scaling: number
   ) {}
 }
 
@@ -76,7 +107,8 @@ interface Point {
   x: number;
   y: number;
 }
-interface LabelSize {
+
+export interface LabelSize {
   labelCenter: Point;
   labelPosition: Point;
   boxWidth: number;
@@ -87,27 +119,180 @@ interface LabelSize {
   bodyTextPosition: Point;
   font: Font;
 }
-export class ContextMapLink {
-  constructor(
-    public link: Link,
-    private targetLabelSize: LabelSize,
-    private sourceLabelSize: LabelSize,
-    private middleLabelSize: { font: Font },
-    public targetPoint: Point,
-    public sourcePoint: Point
-  ) {}
 
+class SpringEmbedder {
+  constructor(
+    private configuration: Configuration,
+    private algorithmConfigurations: {
+      springRigidityConstK: number;
+      effectOfTimeConstDeltaT: number;
+      forceConstant: number;
+      frictionConstant: number;
+      simulationIterations: number;
+    }
+  ) {}
+  runSimulation(
+    contextMapNodes: NewContextMapNode[],
+    links: Link[],
+    drawFn: (links: NewContextMapLink[], nodes: NewContextMapNode[]) => void
+  ) {
+    let speeds: Record<number, Point> = {};
+    for (let time = 0; time < this.algorithmConfigurations.simulationIterations; time++) {
+      const contextMapLinks = ContextMapLink.createContextMapLinksFromNodes(
+        contextMapNodes,
+        links,
+        this.configuration
+      );
+      const forces = this.computeForces(contextMapNodes, contextMapLinks, speeds);
+      speeds = this.updatePositions(contextMapNodes, forces, speeds);
+    }
+    const contextMapLinks = ContextMapLink.createContextMapLinksFromNodes(
+      contextMapNodes,
+      links,
+      this.configuration
+    );
+    drawFn(contextMapLinks, contextMapNodes);
+  }
+
+  private updatePositions(
+    contextMapNodes: NewContextMapNode[],
+    forces: Record<number, Point>,
+    speeds: Record<number, Point>
+  ) {
+    for (const [i, currentNode] of contextMapNodes.entries()) {
+      let speed = speeds[i] || { x: 0, y: 0 };
+      const deltaV = this.vectorMultiply(
+        forces[i],
+        this.algorithmConfigurations.effectOfTimeConstDeltaT
+      );
+      speed = this.vectorSum(speed, deltaV);
+      const deltaX = this.vectorMultiply(
+        speed,
+        this.algorithmConfigurations.effectOfTimeConstDeltaT
+      );
+      const newPosition = this.vectorSum(currentNode.position, deltaX);
+      if (this.isInsideBounds(newPosition, currentNode)) {
+        currentNode.position = newPosition;
+        speeds[i] = speed;
+      }
+    }
+
+    return speeds;
+  }
+
+  private computeForces(
+    contextMapNodes: NewContextMapNode[],
+    contextMapLinks: NewContextMapLink[],
+    speeds: Record<number, Point>
+  ) {
+    const forces: Record<number, Point> = {};
+    for (let i = 0; i < contextMapNodes.length; i++) {
+      forces[i] = { x: 0, y: 0 };
+      const currentNode = contextMapNodes[i];
+
+      for (const [j, otherNode] of contextMapNodes.entries()) {
+        if (i === j) {
+          continue;
+        }
+
+        const gravityForce = this.calculateGravity(currentNode, otherNode);
+        const springForce = this.calculateSpring(currentNode, otherNode, contextMapLinks);
+        const friction = this.calculateFriction(speeds[i] || { x: 0, y: 0 });
+        forces[i] = this.vectorSum(forces[i], gravityForce, springForce, friction);
+      }
+    }
+    return forces;
+  }
+
+  calculateSpring(
+    currentNode: NewContextMapNode,
+    otherNode: NewContextMapNode,
+    contextMapLinks: NewContextMapLink[]
+  ) {
+    const isLinked = contextMapLinks.some((contextMapLink) => {
+      return (
+        (contextMapLink.link.source.id === currentNode.id &&
+          contextMapLink.link.target.id === otherNode.id) ||
+        (contextMapLink.link.source.id === otherNode.id &&
+          contextMapLink.link.target.id === currentNode.id)
+      );
+    });
+    if (!isLinked) {
+      return { x: 0, y: 0 };
+    }
+    const distance = this.calculateDistanceBetweenNodes(currentNode.position, otherNode.position);
+    const forceVector = this.vectorMultiply(
+      distance,
+      -this.algorithmConfigurations.springRigidityConstK
+    );
+    return forceVector;
+  }
+
+  private isInsideBounds(node: Point, nodeSize: { width: number; height: number }): boolean {
+    const height = this.configuration.height * this.configuration.scaling;
+    const width = this.configuration.width * this.configuration.scaling;
+    const horizontalMargin = this.configuration.nodeMargin.horizontal;
+    const verticalMargin = this.configuration.nodeMargin.vertical;
+
+    const nodeWidth = nodeSize.width;
+    const nodeHeight = nodeSize.height;
+    return (
+      node.x - nodeWidth / 2 > -width / 2 + horizontalMargin &&
+      node.x + nodeWidth / 2 < width / 2 - horizontalMargin &&
+      node.y - nodeHeight / 2 > -height / 2 + verticalMargin &&
+      node.y + nodeHeight / 2 < height / 2 - verticalMargin
+    );
+  }
+
+  private calculateGravity(currentNode: NewContextMapNode, otherNode: NewContextMapNode) {
+    const distance = this.calculateDistanceBetweenNodes(currentNode.position, otherNode.position);
+    const length = this.calculatePointLength(distance);
+    const force = this.algorithmConfigurations.forceConstant / length ** 2;
+    const forceVector = this.vectorMultiply(distance, force / length);
+    return forceVector;
+  }
+
+  private calculateFriction(speed: Point) {
+    return this.vectorMultiply(speed, -this.algorithmConfigurations.frictionConstant);
+  }
+
+  vectorMultiply(v: Point, c: number) {
+    return { x: v.x * c, y: v.y * c };
+  }
+
+  vectorSum(...points: Point[]) {
+    return points.reduce(
+      (acc, v) => {
+        return {
+          x: acc.x + v.x,
+          y: acc.y + v.y,
+        };
+      },
+      { x: 0, y: 0 }
+    );
+  }
+
+  calculatePointLength(point: Point) {
+    return Math.sqrt(point.x ** 2 + point.y ** 2);
+  }
+
+  calculateDistanceBetweenNodes(a: Point, b: Point): Point {
+    return { x: a.x - b.x, y: a.y - b.y };
+  }
+}
+
+export class ContextMapLink {
   static createContextMapLinksFromNodes(
-    nodes: ContextMapNode[],
+    nodes: NewContextMapNode[],
     links: Link[],
     config: Configuration
-  ): ContextMapLink[] {
+  ): NewContextMapLink[] {
     const nodeMap = nodes.reduce((map, node) => {
       map.set(node.id, node);
       return map;
-    }, new Map<string, ContextMapNode>());
+    }, new Map<string, NewContextMapNode>());
 
-    const contextMapLinks: ContextMapLink[] = [];
+    const contextMapLinks: NewContextMapLink[] = [];
     for (const link of links) {
       const sourceNode = nodeMap.get(link.source.id);
       const targetNode = nodeMap.get(link.target.id);
@@ -121,12 +306,15 @@ export class ContextMapLink {
   }
 
   static createContextMapLink(
-    sourceNode: ContextMapNode,
-    targetNode: ContextMapNode,
+    sourceNode: NewContextMapNode,
+    targetNode: NewContextMapNode,
     link: Link,
     config: Configuration
   ) {
-    const sourceLabelIntersection = targetNode.calculateIntersection(sourceNode.position);
+    const sourceLabelIntersection = ContextMapNode.calculateIntersection(
+      targetNode,
+      sourceNode.position
+    );
     const targetLabelSize: LabelSize = ContextMapLink.calculateLabelSize(
       config,
       link.target.boxText,
@@ -134,7 +322,10 @@ export class ContextMapLink {
       sourceLabelIntersection
     );
 
-    const targetLabelIntersection = sourceNode.calculateIntersection(targetNode.position);
+    const targetLabelIntersection = ContextMapNode.calculateIntersection(
+      sourceNode,
+      targetNode.position
+    );
     const sourceLabelSize: LabelSize = ContextMapLink.calculateLabelSize(
       config,
       link.source.boxText,
@@ -142,35 +333,15 @@ export class ContextMapLink {
       targetLabelIntersection
     );
 
-    const contextMapLink = new ContextMapLink(
+    const contextMapLink = {
       link,
       targetLabelSize,
       sourceLabelSize,
-      { font: config.font },
-      targetNode.position,
-      sourceNode.position
-    );
+      middleLabelSize: { font: config.font },
+      targetPoint: targetNode.position,
+      sourcePoint: sourceNode.position,
+    };
     return contextMapLink;
-  }
-
-  appendLabelsTo(svg: D3Svg) {
-    this.appendLabel(
-      svg,
-      this.targetLabelSize,
-      this.link.target.boxText,
-      this.link.target.bodyText
-    );
-    this.appendLabel(
-      svg,
-      this.sourceLabelSize,
-      this.link.source.boxText,
-      this.link.source.bodyText
-    );
-    this.appendMiddleLabel(svg);
-  }
-
-  appendPathTo(svg: D3Svg) {
-    this.appendPath(svg);
   }
 
   private static calculateLabelSize(
@@ -202,124 +373,11 @@ export class ContextMapLink {
     };
     return targetLabelSize;
   }
-
-  private appendPath(svg: D3Svg) {
-    const sourceLabelPos = this.sourceLabelSize.labelCenter;
-    const targetLabelPos = this.targetLabelSize.labelCenter;
-
-    svg
-      .append('path')
-      .attr('stroke', 'black')
-      .attr('stroke-width', 0.5)
-      .attr(
-        'd',
-        `M${sourceLabelPos.x},${sourceLabelPos.y}A0,0 0 0,1 ${targetLabelPos.x},${targetLabelPos.y}`
-      );
-  }
-
-  private appendMiddleLabel(svg: D3Svg) {
-    const calculateMidPoint = ([x1, y1]: [number, number], [x2, y2]: [number, number]) => [
-      (x1 + x2) / 2,
-      (y1 + y2) / 2,
-    ];
-
-    const midPoint = calculateMidPoint(
-      [this.sourcePoint.x, this.sourcePoint.y],
-      [this.targetPoint.x, this.targetPoint.y]
-    );
-
-    const middleLabel = svg.append('g');
-    middleLabel
-      .append('text')
-      .attr('font-size', this.middleLabelSize.font.fontSize)
-      .attr('font-family', this.middleLabelSize.font.fontFamily)
-      .attr('font-weight', this.middleLabelSize.font.fontWeight)
-      .text(this.link.middleText ?? '')
-      .attr('x', midPoint[0])
-      .attr('y', midPoint[1]);
-  }
-
-  private appendLabel(
-    svg: D3Svg,
-    {
-      boxWidth,
-      bodyWidth,
-      boxHeight,
-      font,
-      labelPosition,
-      boxTextPosition,
-      bodyPosition,
-      bodyTextPosition,
-    }: LabelSize,
-    boxText?: string,
-    bodyText?: string
-  ) {
-    const label = svg
-      .append('g')
-      .attr('transform', `translate(${labelPosition.x},${labelPosition.y})`);
-
-    label
-      .append('rect')
-      .attr('height', boxHeight)
-      .attr('width', boxWidth)
-      .attr('fill', 'white')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('display', (boxText?.length ?? 0) ? null : 'none');
-
-    label
-      .append('text')
-      .attr('font-size', font.fontSize)
-      .attr('font-family', font.fontFamily)
-      .attr('font-weight', font.fontWeight)
-      .attr('x', boxTextPosition.x)
-      .attr('y', boxTextPosition.y)
-      .text(boxText ?? '');
-
-    label
-      .append('rect')
-      .attr('width', bodyWidth)
-      .attr('height', boxHeight)
-      .attr('stroke-width', 1)
-      .attr('stroke', 'black')
-      .attr('fill', 'white')
-      .attr('x', bodyPosition.x)
-      .attr('y', bodyPosition.y)
-      .attr('display', (bodyText?.length ?? 0) ? null : 'none');
-
-    label
-      .append('text')
-      .attr('font-size', font.fontSize)
-      .attr('font-family', font.fontFamily)
-      .attr('font-weight', font.fontWeight)
-      .attr('x', bodyTextPosition.x)
-      .attr('y', bodyTextPosition.y)
-      .text(bodyText ?? '');
-  }
 }
 
 export class ContextMapNode {
-  private rx: number;
-  private ry: number;
-  constructor(
-    public width: number,
-    public height: number,
-
-    private textWidth: number,
-    private textHeight: number,
-    private font: Font,
-
-    public id: string,
-
-    public textPosition: Point = { x: 0, y: 0 },
-    public position: Point = { x: 0, y: 0 }
-  ) {
-    this.rx = width / 2;
-    this.ry = height / 2;
-  }
-
   static disposeNodesInThePlane(
-    nodes: ContextMapNode[],
+    nodes: NewContextMapNode[],
     boxSize: { width: number; height: number },
     margin = { horizontal: 0, vertical: 0 }
   ) {
@@ -374,30 +432,35 @@ export class ContextMapNode {
       inCurrentRowWidthStartingPoint += width;
       inCurrentRowUsedWidth += width;
 
-      node.setPosition({ x, y });
+      node.position = { x, y };
     }
 
     return nodes;
   }
 
-  static createContextMapNode(node: Node, configuration: Configuration) {
+  static createContextMapNode(node: Node, configuration: Configuration): NewContextMapNode {
     const textWidth = configuration.calculateTextWidth(node.id);
     const textHeight = configuration.calculateTextHeight(node.id);
     const width = configuration.ellipseSize.rx + textWidth;
     const height = configuration.ellipseSize.ry + textHeight;
     const textX = -(textWidth / 2);
     const textY = textHeight / 4;
-    return new ContextMapNode(width, height, textWidth, textHeight, configuration.font, node.id, {
-      x: textX,
-      y: textY,
-    });
+    const rx = width / 2;
+    const ry = height / 2;
+    return {
+      width,
+      height,
+      font: configuration.font,
+      id: node.id,
+      textPosition: { x: textX, y: textY },
+      position: { x: 0, y: 0 },
+      ellipseSize: { rx, ry },
+    };
   }
 
-  calculateIntersection(
-    { x: x2, y: y2 }: Point,
-    { x: centerX, y: centerY }: Point = { x: this.position.x, y: this.position.y },
-    { rx: a, ry: b }: EllipseSize = { rx: this.rx, ry: this.ry }
-  ) {
+  static calculateIntersection(targetNode: NewContextMapNode, { x: x2, y: y2 }: Point) {
+    const { x: centerX, y: centerY } = targetNode.position;
+    const { rx: a, ry: b } = targetNode.ellipseSize;
     const deltaX = x2 - centerX;
     const deltaY = y2 - centerY;
     const angle = Math.atan((deltaY / deltaX) * (a / b));
@@ -410,32 +473,5 @@ export class ContextMapNode {
       y = centerY - b * Math.sin(angle);
     }
     return { x: x, y: y };
-  }
-
-  setPosition(position: Point) {
-    this.position = position;
-  }
-
-  appendTo(svg: D3Svg) {
-    const node = svg
-      .append('g')
-      .attr('transform', `translate(${this.position.x},${this.position.y})`);
-
-    node
-      .append('ellipse')
-      .attr('stroke', 'black')
-      .attr('stroke-width', 1.5)
-      .attr('rx', this.rx)
-      .attr('ry', this.ry)
-      .attr('fill', 'white');
-
-    node
-      .append('text')
-      .attr('font-size', this.font.fontSize)
-      .attr('font-family', this.font.fontFamily)
-      .attr('font-weight', this.font.fontWeight)
-      .attr('x', this.textPosition.x)
-      .attr('y', this.textPosition.y)
-      .text(this.id);
   }
 }
