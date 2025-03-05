@@ -85,6 +85,17 @@ export class FlowDB implements DiagramDB {
     return common.sanitizeText(txt, this.config);
   }
 
+  private sanitizeNodeLabelType(labelType: string) {
+    switch (labelType) {
+      case 'markdown':
+      case 'string':
+      case 'text':
+        return labelType;
+      default:
+        return 'markdown';
+    }
+  }
+
   /**
    * Function to lookup domId from id in the graph definition.
    *
@@ -205,6 +216,7 @@ export class FlowDB implements DiagramDB {
 
       if (doc?.label) {
         vertex.text = doc?.label;
+        vertex.labelType = this.sanitizeNodeLabelType(doc?.labelType ?? 'markdown');
       }
       if (doc?.icon) {
         vertex.icon = doc?.icon;
@@ -996,6 +1008,7 @@ You have to call mermaid.initialize.`
       const baseNode = {
         id: vertex.id,
         label: vertex.text,
+        labelType: vertex.labelType,
         labelStyle: '',
         parentId,
         padding: config.flowchart?.padding || 8,
@@ -1072,6 +1085,7 @@ You have to call mermaid.initialize.`
         id: subGraph.id,
         label: subGraph.title,
         labelStyle: '',
+        labelType: subGraph.labelType,
         parentId: parentDB.get(subGraph.id),
         padding: 8,
         cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
@@ -1103,6 +1117,7 @@ You have to call mermaid.initialize.`
         end: rawEdge.end,
         type: rawEdge.type ?? 'normal',
         label: rawEdge.text,
+        labelType: rawEdge.labelType,
         labelpos: 'c',
         thickness: rawEdge.stroke,
         minlen: rawEdge.length,
