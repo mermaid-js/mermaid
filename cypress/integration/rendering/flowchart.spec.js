@@ -993,4 +993,29 @@ flowchart TB
       }
     );
   });
+  it('69: should render subgraphs with adhoc list headings', () => {
+    imgSnapshotTest(
+      `
+    graph TB
+      subgraph "1. first"
+        a1-->a2
+      end
+      subgraph 2. second
+        b1-->b2
+      end
+      `,
+      { fontFamily: 'courier' }
+    );
+  });
+  it('70: should render subgraphs with markdown headings', () => {
+    imgSnapshotTest(
+      `
+    graph TB
+      subgraph "\`**strong**\`"
+        a1-->a2
+      end
+      `,
+      { fontFamily: 'courier' }
+    );
+  });
 });

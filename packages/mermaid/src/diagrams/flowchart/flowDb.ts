@@ -1101,6 +1101,7 @@ You have to call mermaid.initialize.`
         id: subGraph.id,
         label: subGraph.title,
         labelStyle: '',
+        labelType: subGraph.labelType,
         parentId: parentDB.get(subGraph.id),
         padding: 8,
         cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
