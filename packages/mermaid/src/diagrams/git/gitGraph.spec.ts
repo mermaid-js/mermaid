@@ -306,6 +306,96 @@ describe('when parsing a gitGraph', function () {
       expect(commits.get(key)?.type).toBe(2);
     });
 
+    it('should handle a gitGraph commit with custom commit color RED only', async () => {
+      const str = `gitGraph:
+        commit color: RED
+        `;
+
+      await parser.parse(str);
+      const commits = db.getCommits();
+      expect(commits.size).toBe(1);
+      expect(db.getCurrentBranch()).toBe('main');
+      expect(db.getDirection()).toBe('LR');
+      expect(db.getBranches().size).toBe(1);
+      const key = commits.keys().next().value;
+      expect(commits.get(key)?.message).toBe('');
+      expect(commits.get(key)?.id).not.toBeNull();
+      expect(commits.get(key)?.tags).toStrictEqual([]);
+      expect(commits.get(key)?.color).toBe(1);
+    });
+
+    it('should handle a gitGraph commit with custom commit color BLUE only', async () => {
+      const str = `gitGraph:
+        commit color: BLUE
+        `;
+
+      await parser.parse(str);
+      const commits = db.getCommits();
+      expect(commits.size).toBe(1);
+      expect(db.getCurrentBranch()).toBe('main');
+      expect(db.getDirection()).toBe('LR');
+      expect(db.getBranches().size).toBe(1);
+      const key = commits.keys().next().value;
+      expect(commits.get(key)?.message).toBe('');
+      expect(commits.get(key)?.id).not.toBeNull();
+      expect(commits.get(key)?.tags).toStrictEqual([]);
+      expect(commits.get(key)?.color).toBe(2);
+    });
+
+    it('should handle a gitGraph commit with custom commit color GREEN only', async () => {
+      const str = `gitGraph:
+        commit color: GREEN
+        `;
+
+      await parser.parse(str);
+      const commits = db.getCommits();
+      expect(commits.size).toBe(1);
+      expect(db.getCurrentBranch()).toBe('main');
+      expect(db.getDirection()).toBe('LR');
+      expect(db.getBranches().size).toBe(1);
+      const key = commits.keys().next().value;
+      expect(commits.get(key)?.message).toBe('');
+      expect(commits.get(key)?.id).not.toBeNull();
+      expect(commits.get(key)?.tags).toStrictEqual([]);
+      expect(commits.get(key)?.color).toBe(3);
+    });
+
+    it('should handle a gitGraph commit with custom commit color BLACK only', async () => {
+      const str = `gitGraph:
+        commit color: BLACK
+        `;
+
+      await parser.parse(str);
+      const commits = db.getCommits();
+      expect(commits.size).toBe(1);
+      expect(db.getCurrentBranch()).toBe('main');
+      expect(db.getDirection()).toBe('LR');
+      expect(db.getBranches().size).toBe(1);
+      const key = commits.keys().next().value;
+      expect(commits.get(key)?.message).toBe('');
+      expect(commits.get(key)?.id).not.toBeNull();
+      expect(commits.get(key)?.tags).toStrictEqual([]);
+      expect(commits.get(key)?.color).toBe(0);
+    });
+
+    it('should handle a gitGraph commit with default commit color BLACK', async () => {
+      const str = `gitGraph:
+        commit
+        `;
+
+      await parser.parse(str);
+      const commits = db.getCommits();
+      expect(commits.size).toBe(1);
+      expect(db.getCurrentBranch()).toBe('main');
+      expect(db.getDirection()).toBe('LR');
+      expect(db.getBranches().size).toBe(1);
+      const key = commits.keys().next().value;
+      expect(commits.get(key)?.message).toBe('');
+      expect(commits.get(key)?.id).not.toBeNull();
+      expect(commits.get(key)?.tags).toStrictEqual([]);
+      expect(commits.get(key)?.color).toBe(0);
+    });
+
     it('should handle a gitGraph commit with custom commit type REVERSE only', async () => {
       const str = `gitGraph:
         commit type: REVERSE
@@ -471,7 +561,7 @@ describe('when parsing a gitGraph', function () {
     it('should handle a gitGraph commit with custom  type,tag, msg, commit id,', async () => {
       const str = `gitGraph:
         commit type:REVERSE tag: "test tag" msg: "test msg" id: "1111"
-    
+
         `;
 
       await parser.parse(str);
@@ -1255,7 +1345,7 @@ describe('when parsing a gitGraph', function () {
     it('should throw error when trying to merge branch which has no commits', async () => {
       const str = `gitGraph
         branch test1
-    
+
         checkout main
         commit
         merge test1
