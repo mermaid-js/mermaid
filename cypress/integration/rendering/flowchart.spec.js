@@ -936,7 +936,7 @@ graph TD
     );
   });
 
-  it('#5824: should be able to string and markdown labels', () => {
+  it('#5824: should be able to use string and markdown labels', () => {
     imgSnapshotTest(
       `
 flowchart TB
@@ -954,6 +954,33 @@ flowchart TB
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
       }
+    );
+  });
+
+  it('#5824: should render subgraphs with adhoc list headings', () => {
+    imgSnapshotTest(
+      `
+    graph TB
+      subgraph "1. first"
+        a1-->a2
+      end
+      subgraph 2. second
+        b1-->b2
+      end
+      `,
+      { fontFamily: 'courier' }
+    );
+  });
+
+  it('#5824: should render subgraphs with markdown headings', () => {
+    imgSnapshotTest(
+      `
+    graph TB
+      subgraph "\`**strong**\`"
+        a1-->a2
+      end
+      `,
+      { fontFamily: 'courier' }
     );
   });
 });
