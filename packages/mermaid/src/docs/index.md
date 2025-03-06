@@ -20,7 +20,7 @@ hero:
       link: https://www.mermaidchart.com/play
     - theme: alt
       text: Get started
-      link: https://github.com/mermaid-js/mermaid
+      link: https://docs.mermaidchart.com/mermaid/intro
 
 features:
   - icon:
