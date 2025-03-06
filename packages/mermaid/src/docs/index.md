@@ -12,9 +12,8 @@ hero:
 
   image:
     light: /Hero.svg
-    alt: Mermaid diagram
     dark: /Hero-Dark.svg
-    altDark: Mermaid diagram
+    alt: Mermaid diagram
   actions:
     - theme: brand
       text: Try editor

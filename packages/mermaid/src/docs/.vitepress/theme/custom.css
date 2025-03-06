@@ -22,15 +22,6 @@
   --vp-c-brand-3: var(--vp-c-pink-3);
 }
 
-:root {
-  --vp-home-hero-name-color: var(--vp-c-brand-1);
-
-  --vp-home-hero-image-background-image: #ff3670;
-  --vp-home-hero-image-filter: blur(72px);
-
-  --vp-home-feature-color: #ff3670;
-}
-
 .vp-doc > div {
   width: 100%;
 }
