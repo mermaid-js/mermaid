@@ -11,27 +11,32 @@ hero:
   tagline: JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
   image:
-    src: /mermaid-logo.svg
-    alt: Mermaid
+    light: /Hero.svg
+    alt: Mermaid diagram
+    dark: /Hero-Dark.svg
+    altDark: Mermaid diagram
   actions:
     - theme: brand
-      text: Try Mermaid Editor
+      text: Try editor
       link: https://www.mermaidchart.com/play
     - theme: alt
-      text: Build with Mermaid
+      text: Get started
       link: https://github.com/mermaid-js/mermaid
-    - theme: alt
-      text: Learn more
-      link: https://mermaid.js.org/intro/
 
 features:
-  - title: ➕ Easy to use!
+  - icon:
+      src: /1-Callout-Easy.svg
+    title: Easy to use
     details: Easily create diagrams and charts with the Mermaid Editor.
     link: https://www.mermaidchart.com/play
-  - title: 🧩 Integrations available!
+  - icon:
+      src: /2-Callout-Integrations.svg
+    title: Integrations available
     details: Use Mermaid with your favorite applications, check out the integrations list.
     link: ../../ecosystem/integrations-community.md
-  - title: 🏆 Award winning!
+  - icon:
+      src: /3-Callout-Awards.svg
+    title: Award winning
     details: 2019 JavaScript Open Source Award winner for "The Most Exciting Use of Technology".
     link: https://osawards.com/javascript/2019
 ---

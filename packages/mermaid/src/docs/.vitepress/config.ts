@@ -104,7 +104,7 @@ function nav() {
       ],
     },
     {
-      text: '💻 Open Editor',
+      text: 'Open Editor',
       link: 'https://mermaid.live',
     },
   ];
