@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Radial Layout Example</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      .mermaid {
+        margin: 30px auto;
+        display: block;
+      }
+      .description {
+        background-color: #f5f5f5;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Mermaid Radial Layout Example</h1>
+
+    <div class="description">
+      <p>
+        This example demonstrates the new radial layout for Mermaid diagrams. The radial layout
+        arranges nodes in concentric circles, which can be useful for displaying hierarchical
+        relationships with a focus on the central node.
+      </p>
+    </div>
+
+    <h2>Simple Radial Flowchart</h2>
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+      A[Root Node] --> B[Layer 1 Node A]
+      A --> C[Layer 1 Node C]
+      A --> D[Layer 1 Node D]
+      B --> AA[Layer 2 Node AA]
+      B --> AB[Layer 2 Node AB]
+      C --> CA[Layer 2 Node CA]
+      C --> CB[Layer 2 Node CB]
+      D --> DA[Layer 2 Node DA]
+      D --> DB[Layer 2 Node DB]
+      AA --> AAA[Layer 3 Node AAA]
+      AA --> AAB[Layer 3 Node AAB]
+      AB --> ABA[Layer 3 Node ABA]
+      AB --> ABB[Layer 3 Node ABB]
+      CA --> CAA[Layer 3 Node CAA]
+      CA --> CAB[Layer 3 Node CAB]
+      CB --> CBA[Layer 3 Node CBA]
+      CB --> CBB[Layer 3 Node CBB]
+    </div>
+
+    <h2>Technology Stack with Radial Layout</h2>
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+      APP[Application] --> FE[Frontend]
+      APP --> BE[Backend]
+      APP --> DB[Database]
+      APP --> INFRA[Infrastructure]
+      FE --> REACT[React]
+      FE --> REDUX[Redux]
+      FE --> WEBPACK[Webpack]
+      BE --> NODE[Node.js]
+      BE --> EXPRESS[Express]
+      BE --> GRAPH[GraphQL]
+      DB --> MONGO[MongoDB]
+      DB --> REDIS[Redis]
+      INFRA --> DOCKER[Docker]
+      INFRA --> K8S[Kubernetes]
+      INFRA --> AWS[AWS]
+    </div>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 1,
+        securityLevel: 'loose',
+        flowchart: {
+          htmlLabels: true,
+        },
+      });
+    </script>
+  </body>
+</html>
