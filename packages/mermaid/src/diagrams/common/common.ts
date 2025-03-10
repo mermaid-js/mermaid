@@ -313,6 +313,10 @@ export const markdownLinkRegex = /\[([^\]]+)]\(([^)]+)\)/;
  */
 export const hasMarkdownLink = (text: string): boolean => markdownLinkRegex.test(text);
 
+export const removeUrlsFromLinks = (text: string): string => {
+  return text.replace(markdownLinkRegex, '$1');
+};
+
 /**
  * Computes the minimum dimensions needed to display a div containing MathML
  *
