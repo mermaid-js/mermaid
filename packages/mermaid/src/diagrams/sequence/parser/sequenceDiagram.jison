@@ -84,7 +84,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \-\-[x]                                                         return 'DOTTED_CROSS';
 \-[\)]                                                          return 'SOLID_POINT';
 \-\-[\)]                                                        return 'DOTTED_POINT';
-":"(?:(?:no)?wrap:)?[^#\n;]+                                    return 'TXT';
+":"(?:(?:no)?wrap:)?[^\n;]+                                     return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
 <<EOF>>                                                         return 'NEWLINE';
