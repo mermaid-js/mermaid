@@ -320,7 +320,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
  */
 const parseDuration = function (str) {
   // cspell:disable-next-line
-  const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
+  const statement = /^([+-]?\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
   if (statement !== null) {
     return [Number.parseFloat(statement[1]), statement[2]];
   }
@@ -330,7 +330,8 @@ const parseDuration = function (str) {
 
 const manageUntilAfter = function (str) {
   // test for until
-  const RePattern = /^(?<type>until|after)\s+(?<ids>[\d\w- ]+)/;
+  const RePattern =
+    /^(?<delay>[+-]?\d+(?:\.\d+)?(?:ms|[Mdhmswy])\s+)?(?<type>until|after)\s+(?<ids>[\d\w- ]+)/;
   const reStatement = RePattern.exec(str);
 
   if (reStatement !== null) {
@@ -351,6 +352,17 @@ const manageUntilAfter = function (str) {
           limitTaskStamp = task.endTime;
         }
       }
+    }
+    if (reStatement.groups.delay) {
+      const [durationValue, durationUnit] = parseDuration(reStatement.groups.delay);
+      let endStamp = dayjs(limitTaskStamp);
+      if (!Number.isNaN(durationValue)) {
+        const newTimeStamp = endStamp.add(durationValue, durationUnit);
+        if (newTimeStamp.isValid()) {
+          endStamp = newTimeStamp;
+        }
+      }
+      limitTaskStamp = endStamp.toDate();
     }
 
     if (limitTask) {

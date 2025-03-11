@@ -62,15 +62,16 @@ describe('when using the ganttDb', function () {
 
   // prettier-ignore
   it.each(convert`
-    testName                                                                             | section     | taskName   | taskData                       | expStartDate            | expEndDate                       | expId      | expTask
-    ${'should handle fixed dates'}                                                       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2013-01-12'} | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}         | ${'id1'}   | ${'test1'}
-    ${'should handle duration (days) instead of fixed date to determine end date'}       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2d'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 3)}          | ${'id1'}   | ${'test1'}
-    ${'should handle duration (hours) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2h'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 2)}       | ${'id1'}   | ${'test1'}
-    ${'should handle duration (minutes) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2m'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 0, 2)}    | ${'id1'}   | ${'test1'}
-    ${'should handle duration (seconds) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2s'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 0, 0, 2)} | ${'id1'}   | ${'test1'}
-    ${'should handle duration (weeks) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2w'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 15)}         | ${'id1'}   | ${'test1'}
-    ${'should handle fixed dates without id'}                                            | ${'testa1'} | ${'test1'} | ${'2013-01-01,2013-01-12'}     | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}         | ${'task1'} | ${'test1'}
-    ${'should handle duration instead of a fixed date to determine end date without id'} | ${'testa1'} | ${'test1'} | ${'2013-01-01,4d'}             | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 5)}          | ${'task1'} | ${'test1'}
+    testName                                                                             | section     | taskName   | taskData                       | expStartDate            | expEndDate                         | expId      | expTask
+    ${'should handle fixed dates'}                                                       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2013-01-12'} | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}           | ${'id1'}   | ${'test1'}
+    ${'should handle duration (days) instead of fixed date to determine end date'}       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2d'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 3)}            | ${'id1'}   | ${'test1'}
+    ${'should handle duration (hours) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2h'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 2)}         | ${'id1'}   | ${'test1'}
+    ${'should handle duration (minutes) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2m'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 0, 2)}      | ${'id1'}   | ${'test1'}
+    ${'should handle duration (seconds) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2s'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 0, 0, 2)}   | ${'id1'}   | ${'test1'}
+    ${'should handle duration (weeks) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2w'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 15)}           | ${'id1'}   | ${'test1'}
+    ${'should handle duration (miliseconds) instead of fixed date to determine end date'}| ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2ms'}        | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 0, 0, 0, 2)}| ${'id1'}   | ${'test1'}
+    ${'should handle fixed dates without id'}                                            | ${'testa1'} | ${'test1'} | ${'2013-01-01,2013-01-12'}     | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}           | ${'task1'} | ${'test1'}
+    ${'should handle duration instead of a fixed date to determine end date without id'} | ${'testa1'} | ${'test1'} | ${'2013-01-01,4d'}             | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 5)}            | ${'task1'} | ${'test1'}
   `)('$testName', ({ section, taskName, taskData, expStartDate, expEndDate, expId, expTask }) => {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection(section);
@@ -84,12 +85,46 @@ describe('when using the ganttDb', function () {
 
   // prettier-ignore
   it.each(convert`
-    section     | taskName1  | taskName2  | taskData1              | taskData2             | expStartDate2                                | expEndDate2              | expId2     | expTask2
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id1,1d'} | ${new Date(2013, 0, 15)}                     | ${undefined}             | ${'id2'}   | ${'test2'}
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id3,1d'} | ${new Date(new Date().setHours(0, 0, 0, 0))} | ${undefined}             | ${'id2'}   | ${'test2'}
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'after id1,1d'}     | ${new Date(2013, 0, 15)}                     | ${undefined}             | ${'task1'} | ${'test2'}
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2013-01-26'}       | ${new Date(2013, 0, 15)}                     | ${new Date(2013, 0, 26)} | ${'task1'} | ${'test2'}
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2d'}               | ${new Date(2013, 0, 15)}                     | ${new Date(2013, 0, 17)} | ${'task1'} | ${'test2'}
+  testName                              | taskName    | taskData                              | expStartDate              | expEndDate                 | expId     | expTask
+  ${'start after, end until'}           | ${'test1'}  | ${'id4,after id1, until id3'}         | ${new Date(2025, 0, 15)}  | ${new Date(2025, 1, 29)}   | ${'id4'}  | ${'test1'}
+  ${'start after, end until several id'}| ${'test1'}  | ${'id4,after id1, until id2 id3'}     | ${new Date(2025, 0, 15)}  | ${new Date(2025, 0, 32)}   | ${'id4'}  | ${'test1'}
+  ${'start until, end after'}           | ${'test1'}  | ${'id4,until id2, after id2'}         | ${new Date(2025, 1, 1)}   | ${new Date(2025, 1, 3)}    | ${'id4'}  | ${'test1'}
+  ${'start after, end until +delay'}    | ${'test1'}  | ${'id4, 1d after id1, +3d until id3'} | ${new Date(2025, 0, 16)}  | ${new Date(2025, 2, 4)}    | ${'id4'}  | ${'test1'}
+  ${'start after, end until -delay'}    | ${'test1'}  | ${'-1d after id1, -3d until id3'}     | ${new Date(2025, 0, 14)}  | ${new Date(2025, 1, 26)}   | ${'task1'}| ${'test1'}
+  `)(
+    '$testName',
+    ({
+      taskName,
+      taskData,
+      expStartDate,
+      expEndDate,
+      expId,
+      expTask,
+    }) => {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addSection('section test');
+      ganttDb.addTask('t1', 'id1,2025-01-01,2w');
+      ganttDb.addTask('t2', 'id2,2025-02-01,2d');
+      ganttDb.addTask('t3', 'milestone,id3,2025-03-01,0d');
+      ganttDb.addTask(taskName, taskData);
+      const tasks = ganttDb.getTasks();
+      expect(tasks[3].startTime).toEqual(expStartDate);
+      expect(tasks[3].endTime).toEqual(expEndDate);
+      expect(tasks[3].id).toEqual(expId);
+      expect(tasks[3].task).toEqual(expTask);
+    }
+  );
+
+  // prettier-ignore
+  it.each(convert`
+  testName                                      | section     | taskName1  | taskName2  | taskData1              | taskData2                | expStartDate2                                | expEndDate2              | expId2     | expTask2
+  ${'should handle after with known id'}        | ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id1,1d'}    | ${new Date(2013, 0, 15)}                     | ${undefined}             | ${'id2'}   | ${'test2'}
+  ${'should handle delay with after'}           | ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,1d after id1,1d'} | ${new Date(2013, 0, 16)}                     | ${undefined}             | ${'id2'}   | ${'test2'}
+  ${'should handle negativedelay with after'}   | ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,-1d after id1,1d'}| ${new Date(2013, 0, 14)}                     | ${undefined}             | ${'id2'}   | ${'test2'}
+  ${'should handle after with unknown id'}      | ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id3,1d'}    | ${new Date(new Date().setHours(0, 0, 0, 0))} | ${undefined}             | ${'id2'}   | ${'test2'}
+  ${'after with known id + its id auto defined'}| ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'after id1,1d'}        | ${new Date(2013, 0, 15)}                     | ${undefined}             | ${'task1'} | ${'test2'}
+  ${'should handle end as a date'}              | ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2013-01-26'}          | ${new Date(2013, 0, 15)}                     | ${new Date(2013, 0, 26)} | ${'task1'} | ${'test2'}
+  ${'should handle end as duration'}            | ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2d'}                  | ${new Date(2013, 0, 15)}                     | ${new Date(2013, 0, 17)} | ${'task1'} | ${'test2'}
   `)(
     '$testName',
     ({
