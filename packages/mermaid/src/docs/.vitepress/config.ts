@@ -105,7 +105,7 @@ function nav() {
     },
     {
       text: '💻 Open Editor',
-      link: 'https://www.mermaidchart.com/play',
+      link: 'https://mermaid.live/',
     },
   ];
 }

@@ -27,7 +27,7 @@ features:
       src: /1-Callout-Easy.svg
     title: Easy to use
     details: Easily create diagrams and charts with the Mermaid Editor.
-    link: https://www.mermaidchart.com/play
+    link: https://mermaid.live/
   - icon:
       src: /2-Callout-Integrations.svg
     title: Integrations available
