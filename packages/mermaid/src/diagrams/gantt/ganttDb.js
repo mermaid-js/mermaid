@@ -266,26 +266,9 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
-  // Test for after
-  const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
-  const afterStatement = afterRePattern.exec(str);
-
-  if (afterStatement !== null) {
-    // check all after ids and take the latest
-    let latestTask = null;
-    for (const id of afterStatement.groups.ids.split(' ')) {
-      let task = findTaskById(id);
-      if (task !== undefined && (!latestTask || task.endTime > latestTask.endTime)) {
-        latestTask = task;
-      }
-    }
-
-    if (latestTask) {
-      return latestTask.endTime;
-    }
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
+  let [isUntilAfter, afterUntilDate] = manageUntilAfter(str);
+  if (isUntilAfter) {
+    return afterUntilDate;
   }
 
   // Check for actual date set
@@ -345,29 +328,47 @@ const parseDuration = function (str) {
   return [NaN, 'ms'];
 };
 
-const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
-  str = str.trim();
-
+const manageUntilAfter = function (str) {
   // test for until
-  const untilRePattern = /^until\s+(?<ids>[\d\w- ]+)/;
-  const untilStatement = untilRePattern.exec(str);
+  const RePattern = /^(?<type>until|after)\s+(?<ids>[\d\w- ]+)/;
+  const reStatement = RePattern.exec(str);
 
-  if (untilStatement !== null) {
-    // check all until ids and take the earliest
-    let earliestTask = null;
-    for (const id of untilStatement.groups.ids.split(' ')) {
+  if (reStatement !== null) {
+    // check all until ids and take the earliest/latest
+    log.debug('manageUntilAfter' + reStatement.groups.type);
+    let limitTask = null;
+    let limitTaskStamp = null;
+    for (const id of reStatement.groups.ids.split(' ')) {
       let task = findTaskById(id);
-      if (task !== undefined && (!earliestTask || task.startTime < earliestTask.startTime)) {
-        earliestTask = task;
+      if (reStatement.groups.type == 'until') {
+        if (task !== undefined && (!limitTask || task.startTime < limitTask.startTime)) {
+          limitTask = task;
+          limitTaskStamp = task.startTime;
+        }
+      } else {
+        if (task !== undefined && (!limitTask || task.endTime > limitTask.endTime)) {
+          limitTask = task;
+          limitTaskStamp = task.endTime;
+        }
       }
     }
 
-    if (earliestTask) {
-      return earliestTask.startTime;
+    if (limitTask) {
+      return [true, limitTaskStamp];
     }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return today;
+    return [true, today];
+  }
+  return [false, undefined];
+};
+
+const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
+  str = str.trim();
+
+  let [isUntilAfter, afterUntilDate] = manageUntilAfter(str);
+  if (isUntilAfter) {
+    return afterUntilDate;
   }
 
   // check for actual date
