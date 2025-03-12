@@ -233,6 +233,10 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   yOffsets.push(0);
   // Draw row rects
   for (const [i, yOffset] of yOffsets.entries()) {
+    if (i === 0 && yOffsets.length > 1) {
+      continue;
+      // Skip first row
+    }
     const isEven = i % 2 === 0 && yOffset !== 0;
     const roughRect = rc.rectangle(x, nameBBox.height + y + yOffset, w, nameBBox.height, {
       ...options,
