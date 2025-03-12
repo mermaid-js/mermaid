@@ -459,13 +459,13 @@ describe('when using the ganttDb', function () {
 
     expect(tasks[0].startTime).toEqual(dayjs('2019-09-30', 'YYYY-MM-DD').toDate());
     expect(tasks[0].endTime).toEqual(dayjs('2019-10-11', 'YYYY-MM-DD').toDate());
-    expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
+    expect(tasks[0].renderEndTime).toEqual(dayjs('2019-10-11', 'YYYY-MM-DD').toDate());
     expect(tasks[0].id).toEqual('id1');
     expect(tasks[0].task).toEqual('test1');
 
     expect(tasks[1].startTime).toEqual(dayjs('2019-10-11', 'YYYY-MM-DD').toDate());
     expect(tasks[1].endTime).toEqual(dayjs('2019-10-31', 'YYYY-MM-DD').toDate());
-    expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
+    expect(tasks[1].renderEndTime).toEqual(dayjs('2019-10-31', 'YYYY-MM-DD').toDate());
     expect(tasks[1].id).toEqual('id2');
     expect(tasks[1].task).toEqual('test2');
   });
