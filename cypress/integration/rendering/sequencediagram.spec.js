@@ -79,6 +79,15 @@ describe('Sequence diagram', () => {
       `
     );
   });
+  it('should render links', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      Alice->John: Look at [MermaidJS](https://mermaid.js.org/)
+      John->>Alice: Thanks for the link
+      `
+    );
+  });
   it('should handle different line breaks', () => {
     imgSnapshotTest(
       `
