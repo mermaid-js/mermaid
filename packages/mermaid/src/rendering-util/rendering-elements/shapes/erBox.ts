@@ -228,7 +228,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   const rect = shapeSvg.insert(() => roughRect, ':first-child').attr('style', cssStyles!.join(''));
 
   const { themeVariables } = getConfig();
-  const { secondaryColor, tertiaryColor, nodeBorder } = themeVariables;
+  const { rowEven, rowOdd, nodeBorder } = themeVariables;
 
   yOffsets.push(0);
   // Draw row rects
@@ -236,7 +236,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     const isEven = i % 2 === 0 && yOffset !== 0;
     const roughRect = rc.rectangle(x, nameBBox.height + y + yOffset, w, nameBBox.height, {
       ...options,
-      fill: isEven ? tertiaryColor : secondaryColor,
+      fill: isEven ? rowEven : rowOdd,
       stroke: nodeBorder,
     });
     shapeSvg

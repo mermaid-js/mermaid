@@ -224,6 +224,7 @@ export class ErDB implements DiagramDB {
           counter: count++,
         }),
         type: 'normal',
+        curve: 'basis',
         start: relationship.entityA,
         end: relationship.entityB,
         label: relationship.roleA,
