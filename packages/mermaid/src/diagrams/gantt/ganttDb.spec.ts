@@ -280,7 +280,7 @@ describe('when using the ganttDb', function () {
 
     expect(tasks[3].startTime).toEqual(dayjs('2019-02-01', 'YYYY-MM-DD').toDate());
     expect(tasks[3].endTime).toEqual(dayjs('2019-02-20', 'YYYY-MM-DD').toDate());
-    expect(tasks[3].renderEndTime).toBeNull(); // Fixed end
+    expect(tasks[3].renderEndTime).toEqual(dayjs('2019-02-20', 'YYYY-MM-DD').toDate());
     expect(tasks[3].id).toEqual('id4');
     expect(tasks[3].task).toEqual('test4');
 
@@ -313,6 +313,7 @@ describe('when using the ganttDb', function () {
 
     expect(tasks[0].startTime).toEqual(dayjs('2024-02-28', 'YYYY-MM-DD').toDate());
     expect(tasks[0].endTime).toEqual(dayjs('2024-03-04', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].renderEndTime).toEqual(dayjs('2024-03-04', 'YYYY-MM-DD').toDate());
     expect(tasks[0].id).toEqual('id1');
     expect(tasks[0].task).toEqual('test1');
   });
@@ -519,7 +520,7 @@ describe('when using the ganttDb', function () {
 
       expect(tasks[1].startTime).toEqual(dayjs('2019-02-01', 'YYYY-MM-DD').toDate());
       expect(tasks[1].endTime).toEqual(dayjs('2019-02-04', 'YYYY-MM-DD').toDate());
-      expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
+      expect(tasks[1].renderEndTime).toEqual(dayjs('2019-02-04', 'YYYY-MM-DD').toDate());
       expect(tasks[1].manualEndTime).toBeTruthy();
       expect(tasks[1].id).toEqual('id2');
       expect(tasks[1].task).toEqual('test2');
@@ -539,5 +540,34 @@ describe('when using the ganttDb', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
     expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
+  });
+
+  it('until should work with excludes', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('2025-04-02 2025-04-03 2025-04-04');
+    ganttDb.addSection('section1');
+    ganttDb.addTask('test1', 'id1, 2025-03-31, 3d');
+    ganttDb.addTask('test2', 'id2, until id1, 3d until id1');
+    ganttDb.addTask('test3', 'id3, until id1, after id1');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(dayjs('2025-03-31', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(dayjs('2025-04-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].renderEndTime).toEqual(dayjs('2025-04-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].id).toEqual('id1');
+    expect(tasks[0].task).toEqual('test1');
+
+    expect(tasks[1].startTime).toEqual(dayjs('2025-03-31', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].endTime).toEqual(dayjs('2025-04-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].renderEndTime).toEqual(dayjs('2025-04-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].id).toEqual('id2');
+    expect(tasks[1].task).toEqual('test2');
+
+    expect(tasks[2].startTime).toEqual(dayjs('2025-03-31', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].endTime).toEqual(dayjs('2025-04-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].renderEndTime).toEqual(dayjs('2025-04-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].id).toEqual('id3');
+    expect(tasks[2].task).toEqual('test3');
   });
 });

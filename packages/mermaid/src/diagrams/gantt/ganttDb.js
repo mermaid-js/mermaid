@@ -232,7 +232,7 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
     excludes,
     includes
   );
-  task.endTime = fixedEndTime.toDate();
+  task.endTime = fixedEndTime;
   task.renderEndTime = renderEndTime;
 };
 
@@ -260,7 +260,7 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
     }
     startTime = startTime.add(1, 'd');
   }
-  return [endTime, renderEndTime];
+  return [endTime.toDate(), renderEndTime];
 };
 
 const getStartDate = function (prevTime, dateFormat, str) {
@@ -339,17 +339,25 @@ const manageUntilAfter = function (str) {
     log.debug('manageUntilAfter' + reStatement.groups.type);
     let limitTask = null;
     let limitTaskStamp = null;
+    let renderLimitTaskStamp = null;
     for (const id of reStatement.groups.ids.split(' ')) {
       let task = findTaskById(id);
       if (reStatement.groups.type == 'until') {
         if (task !== undefined && (!limitTask || task.startTime < limitTask.startTime)) {
           limitTask = task;
           limitTaskStamp = task.startTime;
+          renderLimitTaskStamp = task.startTime;
         }
       } else {
-        if (task !== undefined && (!limitTask || task.endTime > limitTask.endTime)) {
+        if (
+          task !== undefined &&
+          (!limitTask ||
+            task.endTime > limitTask.endTime ||
+            task.renderEndTime > limitTask.renderEndTime)
+        ) {
           limitTask = task;
           limitTaskStamp = task.endTime;
+          renderLimitTaskStamp = task.renderEndTime;
         }
       }
     }
@@ -359,28 +367,33 @@ const manageUntilAfter = function (str) {
       if (!Number.isNaN(durationValue)) {
         const newTimeStamp = endStamp.add(durationValue, durationUnit);
         if (newTimeStamp.isValid()) {
-          endStamp = newTimeStamp;
+          [limitTaskStamp, renderLimitTaskStamp] = fixTaskDates(
+            endStamp,
+            newTimeStamp,
+            dateFormat,
+            excludes,
+            includes
+          );
         }
       }
-      limitTaskStamp = endStamp.toDate();
     }
 
     if (limitTask) {
-      return [true, limitTaskStamp];
+      return [true, limitTaskStamp, renderLimitTaskStamp];
     }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return [true, today];
+    return [true, today, today];
   }
-  return [false, undefined];
+  return [false, undefined, undefined];
 };
 
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
-  let [isUntilAfter, afterUntilDate] = manageUntilAfter(str);
+  let [isUntilAfter, afterUntilDate, renderAfterUntilDate] = manageUntilAfter(str);
   if (isUntilAfter) {
-    return afterUntilDate;
+    return [afterUntilDate, renderAfterUntilDate];
   }
 
   // check for actual date
@@ -389,7 +402,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     if (inclusive) {
       parsedDate = parsedDate.add(1, 'd');
     }
-    return parsedDate.toDate();
+    return [parsedDate.toDate(), parsedDate.toDate()];
   }
 
   let endTime = dayjs(prevTime);
@@ -400,7 +413,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
       endTime = newEndTime;
     }
   }
-  return endTime.toDate();
+  return [endTime.toDate(), endTime.toDate()];
 };
 
 let taskCnt = 0;
@@ -463,8 +476,15 @@ const compileData = function (prevTask, dataStr) {
   }
 
   if (endTimeData) {
-    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
-    task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
+    [task.endTime, task.renderEndTime] = getEndDate(
+      task.startTime,
+      dateFormat,
+      endTimeData,
+      inclusiveEndDates
+    );
+    task.manualEndTime =
+      dayjs(endTimeData, 'YYYY-MM-DD', true).isValid() ||
+      /(until|after)/.exec(endTimeData) !== null;
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
@@ -606,7 +626,7 @@ const compileTasks = function () {
     }
 
     if (rawTasks[pos].startTime) {
-      rawTasks[pos].endTime = getEndDate(
+      [rawTasks[pos].endTime, rawTasks[pos].renderEndTime] = getEndDate(
         rawTasks[pos].startTime,
         dateFormat,
         rawTasks[pos].raw.endTime.data,
@@ -614,11 +634,9 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
+        rawTasks[pos].manualEndTime =
+          dayjs(rawTasks[pos].raw.endTime.data, 'YYYY-MM-DD', true).isValid() ||
+          /(until|after)/.exec(rawTasks[pos].raw.endTime.data) !== null;
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
