@@ -12,7 +12,12 @@ entry Packet:
 ;
 
 PacketBlock:
-  start=INT('-' end=INT)? ':' label=STRING EOL
+  (
+    start=INT('-' (end=INT | bits=INT'bit''s'?))? 
+    | bits=INT'bit''s'?
+  )
+  ':' label=STRING
+  EOL
 ;
 
 terminal INT returns number: /0|[1-9][0-9]*/;
