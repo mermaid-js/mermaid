@@ -5,7 +5,8 @@ import { createText } from '../createText.js';
 import utils from '../../utils.js';
 import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
-import { curveBasis, line, select } from 'd3';
+
+import { curveBasis, curveLinear, curveCardinal, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
@@ -472,8 +473,19 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   lineData = fixCorners(lineData);
   let curve = curveBasis;
-  if (edge.curve) {
-    curve = edge.curve;
+  curve = curveLinear;
+  switch (edge.curve) {
+    case 'linear':
+      curve = curveLinear;
+      break;
+    case 'basis':
+      curve = curveBasis;
+      break;
+    case 'cardinal':
+      curve = curveCardinal;
+      break;
+    default:
+      curve = curveBasis;
   }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
@@ -509,7 +521,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let svgPath;
   let linePath = lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
-  let strokeColor = edgeStyles.find((style) => style.startsWith('stroke:'));
+  let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
 
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);

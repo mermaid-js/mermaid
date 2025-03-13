@@ -91,6 +91,10 @@ class Theme {
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
 
+    /* Entity Relationship variables */
+    this.rowOdd = this.rowOdd || lighten(this.mainBkg, 5) || '#ffffff';
+    this.rowEven = this.rowEven || darken(this.mainBkg, 10);
+
     /* state colors */
     this.labelColor = 'calculated';
 

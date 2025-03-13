@@ -36,6 +36,10 @@ const arrowTypesMap = {
   composition: { type: 'composition', fill: true },
   dependency: { type: 'dependency', fill: true },
   lollipop: { type: 'lollipop', fill: false },
+  only_one: { type: 'onlyOne', fill: false },
+  zero_or_one: { type: 'zeroOrOne', fill: false },
+  one_or_more: { type: 'oneOrMore', fill: false },
+  zero_or_more: { type: 'zeroOrMore', fill: false },
   requirement_arrow: { type: 'requirement_arrow', fill: false },
   requirement_contains: { type: 'requirement_contains', fill: false },
 } as const;
