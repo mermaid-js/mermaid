@@ -95,6 +95,25 @@ After processing the tags, the remaining metadata items are interpreted as follo
 Support for keyword `until` was added in (v10.9.0+). This can be used to define a task which is running until some other specific task or milestone starts.
 ```
 
+::: info
+starting from (v\<MERMAID_RELEASE_VERSION>+) `until` and `after`can be used as `startdate` or/and `enddate`. `until` will relate to the **earliest start** date of
+the provided tasks identifiers and `after` will relate to the **latest end** date of the provided tasks.
+
+Moreover positive and negative delay (as duration) can be added in front of after/until keyword. E.g `1d after task2` or `-3w until task1` or `+1.5d after id1`
+
+```mermaid-example
+gantt
+tickInterval 1day
+ref 1 : 2025-01-01, 2d
+ref 2 : 2025-02-01, 2d
+task1: after task1, until task2
+task2: until task1, after task2
+task3: -1d after task1, +1d until task2
+task4: -1d until task1, +1d after task2
+```
+
+:::
+
 For simplicity, the table does not show the use of multiple tasks listed with the `after` keyword. Here is an example of how to use it and how it's interpreted:
 
 ```mermaid-example
