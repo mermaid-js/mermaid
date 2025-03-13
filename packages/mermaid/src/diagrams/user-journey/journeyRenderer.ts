@@ -13,15 +13,16 @@ export const setConf = function (cnf) {
 };
 
 const actors = {};
+let maxWidth = 0;
 
 /** @param diagram - The diagram to draw to. */
 function drawActorLegend(diagram) {
   const conf = getConfig().journey;
-  // Draw the actors
+  maxWidth = 0;
   let yPos = 60;
+
   Object.keys(actors).forEach((person) => {
     const colour = actors[person].color;
-
     const circleData = {
       cx: 20,
       cy: yPos,
@@ -32,21 +33,70 @@ function drawActorLegend(diagram) {
     };
     svgDraw.drawCircle(diagram, circleData);
 
-    const labelData = {
-      x: 40,
-      y: yPos + 7,
-      fill: '#666',
-      text: person,
-      textMargin: conf.boxTextMargin | 5,
-    };
-    svgDraw.drawText(diagram, labelData);
+    // Create temporary text element to measure width
+    const tempText = diagram.append('text').attr('visibility', 'hidden').text(person);
+    const textWidth = tempText.node().getBBox().width;
+    tempText.remove();
+    const journeyConfigObject = getConfig().journey;
+    const maxLineLength = journeyConfigObject.maxLabelWidth;
+    let lines = [];
 
-    yPos += 20;
+    if (textWidth > maxLineLength) {
+      // Break the text into chunks regardless of word boundaries
+      let currentText = '';
+      const measureText = diagram.append('text').attr('visibility', 'hidden');
+
+      for (const element of person) {
+        currentText += element;
+        measureText.text(currentText);
+        const currentWidth = measureText.node().getBBox().width;
+
+        if (currentWidth > maxLineLength && currentText.length > 1) {
+          let lineToPush = currentText.slice(0, -1);
+
+          // If the line ends with a space, trim it and do not add a hyphen.
+          if (lineToPush.endsWith(' ')) {
+            lineToPush = lineToPush.trimEnd();
+          } else {
+            lineToPush = lineToPush + '-';
+          }
+          lines.push(lineToPush);
+
+          // If the breaking character is a space, start fresh; otherwise, start with the character.
+          currentText = element === ' ' ? '' : element;
+        }
+      }
+      if (currentText) {
+        lines.push(currentText);
+      }
+      measureText.remove();
+    } else {
+      lines = [person];
+    }
+
+    // Draw the text lines
+    lines.forEach((line, index) => {
+      const labelData = {
+        x: 40,
+        y: yPos + 7 + index * 20,
+        fill: '#666',
+        text: line,
+        textMargin: conf.boxTextMargin | 5,
+      };
+      const textElement = svgDraw.drawText(diagram, labelData);
+      const lineWidth = textElement.node().getBBox().width;
+
+      if (lineWidth > maxWidth && lineWidth > conf?.leftMargin - lineWidth) {
+        maxWidth = lineWidth;
+      }
+    });
+
+    yPos += Math.max(20, lines.length * 20);
   });
 }
 // TODO: Cleanup?
 const conf = getConfig().journey;
-const LEFT_MARGIN = conf.leftMargin;
+let leftMargin = 0;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().journey;
 
@@ -84,7 +134,8 @@ export const draw = function (text, id, version, diagObj) {
   });
 
   drawActorLegend(diagram);
-  bounds.insert(0, 0, LEFT_MARGIN, Object.keys(actors).length * 50);
+  leftMargin = conf.leftMargin + maxWidth;
+  bounds.insert(0, 0, leftMargin, Object.keys(actors).length * 50);
   drawTasks(diagram, tasks, 0);
 
   const box = bounds.getBounds();
@@ -92,23 +143,23 @@ export const draw = function (text, id, version, diagObj) {
     diagram
       .append('text')
       .text(title)
-      .attr('x', LEFT_MARGIN)
+      .attr('x', leftMargin)
       .attr('font-size', '4ex')
       .attr('font-weight', 'bold')
       .attr('y', 25);
   }
 
   const height = box.stopy - box.starty + 2 * conf.diagramMarginY;
-  const width = LEFT_MARGIN + box.stopx + 2 * conf.diagramMarginX;
+  const width = leftMargin + box.stopx + 2 * conf.diagramMarginX;
 
   configureSvgSize(diagram, height, width, conf.useMaxWidth);
 
   // Draw activity line
   diagram
     .append('line')
-    .attr('x1', LEFT_MARGIN)
+    .attr('x1', leftMargin)
     .attr('y1', conf.height * 4) // One section head + one task + margins
-    .attr('x2', width - LEFT_MARGIN - 4) // Subtract stroke width so arrow point is retained
+    .attr('x2', width - leftMargin - 4) // Subtract stroke width so arrow point is retained
     .attr('y2', conf.height * 4)
     .attr('stroke-width', 4)
     .attr('stroke', 'black')
@@ -234,7 +285,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
       }
 
       const section = {
-        x: i * conf.taskMargin + i * conf.width + LEFT_MARGIN,
+        x: i * conf.taskMargin + i * conf.width + leftMargin,
         y: 50,
         text: task.section,
         fill,
@@ -258,7 +309,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
     }, {});
 
     // Add some rendering data to the object
-    task.x = i * conf.taskMargin + i * conf.width + LEFT_MARGIN;
+    task.x = i * conf.taskMargin + i * conf.width + leftMargin;
     task.y = taskPos;
     task.width = conf.diagramMarginX;
     task.height = conf.diagramMarginY;
