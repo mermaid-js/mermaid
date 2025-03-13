@@ -18,3 +18,6 @@ contact_links:
   - name: Live Editor - Next
     url: https://next.git.mermaid.live
     about: Try unreleased changes in the next branch.
+  - name: Search Existing Issues
+    url: https://github.com/mermaid-js/mermaid/issues
+    about: Please search through existing issues before creating a new one.
