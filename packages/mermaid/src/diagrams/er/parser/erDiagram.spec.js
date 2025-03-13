@@ -1,5 +1,5 @@
 import { setConfig } from '../../../config.js';
-import erDb from '../erDb.js';
+import { ErDB } from '../erDb.js';
 import erDiagram from './erDiagram.jison'; // jison file
 
 setConfig({
@@ -7,6 +7,7 @@ setConfig({
 });
 
 describe('when parsing ER diagram it...', function () {
+  const erDb = new ErDB();
   beforeEach(function () {
     erDiagram.parser.yy = erDb;
     erDiagram.parser.yy.clear();
@@ -143,32 +144,32 @@ describe('when parsing ER diagram it...', function () {
       expect(entities.get(entity).alias).toBe(alias);
     });
 
-    it('can have an alias even if the relationship is defined before class', function () {
+    it('can have an alias even if the relationship is defined before buzz', function () {
       const firstEntity = 'foo';
       const secondEntity = 'bar';
       const alias = 'batman';
       erDiagram.parser.parse(
-        `erDiagram\n${firstEntity} ||--o| ${secondEntity} : rel\nclass ${firstEntity}["${alias}"]\n`
+        `erDiagram\n${firstEntity} ||--o| ${secondEntity} : rel\nbuzz ${firstEntity}["${alias}"]\n`
       );
       const entities = erDb.getEntities();
       expect(entities.has(firstEntity)).toBe(true);
       expect(entities.has(secondEntity)).toBe(true);
       expect(entities.get(firstEntity).alias).toBe(alias);
-      expect(entities.get(secondEntity).alias).toBeUndefined();
+      expect(entities.get(secondEntity).alias).toBe('');
     });
 
-    it('can have an alias even if the relationship is defined after class', function () {
+    it('can have an alias even if the relationship is defined after buzz', function () {
       const firstEntity = 'foo';
       const secondEntity = 'bar';
       const alias = 'batman';
       erDiagram.parser.parse(
-        `erDiagram\nclass ${firstEntity}["${alias}"]\n${firstEntity} ||--o| ${secondEntity} : rel\n`
+        `erDiagram\nbuzz ${firstEntity}["${alias}"]\n${firstEntity} ||--o| ${secondEntity} : rel\n`
       );
       const entities = erDb.getEntities();
       expect(entities.has(firstEntity)).toBe(true);
       expect(entities.has(secondEntity)).toBe(true);
       expect(entities.get(firstEntity).alias).toBe(alias);
-      expect(entities.get(secondEntity).alias).toBeUndefined();
+      expect(entities.get(secondEntity).alias).toBe('');
     });
 
     it('can start with an underscore', function () {
@@ -193,9 +194,9 @@ describe('when parsing ER diagram it...', function () {
 
       expect(entities.size).toBe(1);
       expect(entities.get(entity).attributes.length).toBe(3);
-      expect(entities.get(entity).attributes[0].attributeName).toBe('myBookTitle');
-      expect(entities.get(entity).attributes[1].attributeName).toBe('MYBOOKSUBTITLE_1');
-      expect(entities.get(entity).attributes[2].attributeName).toBe('author-ref[name](1)');
+      expect(entities.get(entity).attributes[0].name).toBe('myBookTitle');
+      expect(entities.get(entity).attributes[1].name).toBe('MYBOOKSUBTITLE_1');
+      expect(entities.get(entity).attributes[2].name).toBe('author-ref[name](1)');
     });
 
     it('should allow asterisk at the start of attribute name', function () {
@@ -258,7 +259,7 @@ describe('when parsing ER diagram it...', function () {
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
     expect(entities.get(entity).attributes.length).toBe(1);
-    expect(entities.get(entity).attributes[0].attributeComment).toBe('comment');
+    expect(entities.get(entity).attributes[0].comment).toBe('comment');
   });
 
   it('should allow an entity with a single attribute to be defined with a key and a comment', function () {
@@ -297,14 +298,14 @@ describe('when parsing ER diagram it...', function () {
       `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n${attribute4}\n${attribute5}\n}`
     );
     const entities = erDb.getEntities();
-    expect(entities.get(entity).attributes[0].attributeKeyTypeList).toEqual(['PK', 'FK']);
-    expect(entities.get(entity).attributes[0].attributeComment).toBe('comment1');
-    expect(entities.get(entity).attributes[1].attributeKeyTypeList).toEqual(['PK', 'UK', 'FK']);
-    expect(entities.get(entity).attributes[2].attributeKeyTypeList).toEqual(['PK', 'UK']);
-    expect(entities.get(entity).attributes[2].attributeComment).toBe('comment3');
-    expect(entities.get(entity).attributes[3].attributeKeyTypeList).toBeUndefined();
-    expect(entities.get(entity).attributes[4].attributeKeyTypeList).toBeUndefined();
-    expect(entities.get(entity).attributes[4].attributeComment).toBe('comment5');
+    expect(entities.get(entity).attributes[0].keys).toEqual(['PK', 'FK']);
+    expect(entities.get(entity).attributes[0].comment).toBe('comment1');
+    expect(entities.get(entity).attributes[1].keys).toEqual(['PK', 'UK', 'FK']);
+    expect(entities.get(entity).attributes[2].keys).toEqual(['PK', 'UK']);
+    expect(entities.get(entity).attributes[2].comment).toBe('comment3');
+    expect(entities.get(entity).attributes[3].keys).toEqual([]);
+    expect(entities.get(entity).attributes[4].keys).toEqual([]);
+    expect(entities.get(entity).attributes[4].comment).toBe('comment5');
   });
 
   it('should allow an entity with attribute that has a generic type', function () {
@@ -341,8 +342,8 @@ describe('when parsing ER diagram it...', function () {
     const entities = erDb.getEntities();
     expect(entities.size).toBe(1);
     expect(entities.get(entity).attributes.length).toBe(2);
-    expect(entities.get(entity).attributes[0].attributeType).toBe('character(10)');
-    expect(entities.get(entity).attributes[1].attributeType).toBe('varchar(5)');
+    expect(entities.get(entity).attributes[0].type).toBe('character(10)');
+    expect(entities.get(entity).attributes[1].type).toBe('varchar(5)');
   });
 
   it('should allow an entity with multiple attributes to be defined', function () {
@@ -762,6 +763,203 @@ describe('when parsing ER diagram it...', function () {
     expect(() => {
       erDiagram.parser.parse(doc);
     }).toThrowError();
+  });
+
+  it('should be possible to apply a style to an entity', function () {
+    const entityName = 'CUSTOMER';
+    erDiagram.parser.parse(`erDiagram
+        ${entityName}
+        style ${entityName} color:red
+      `);
+
+    expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red']);
+  });
+
+  it('should be possible to apply multiple styles to an entity at the same time', function () {
+    const entityName = 'CUSTOMER';
+    erDiagram.parser.parse(
+      `erDiagram
+        ${entityName}
+        style ${entityName} color:red,stroke:blue,fill:#f9f
+      `
+    );
+
+    expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red', 'stroke:blue', 'fill:#f9f']);
+  });
+
+  it('should be possible to apply multiple separately defined styles', function () {
+    const entityName = 'CUSTOMER';
+    erDiagram.parser.parse(
+      `erDiagram
+        ${entityName}
+        style ${entityName} color:red
+        style ${entityName} fill:#f9f
+      `
+    );
+
+    expect(erDb.getEntity(entityName).cssStyles).toEqual(['color:red', 'fill:#f9f']);
+  });
+
+  it('should be possible to assign a class to an entity', function () {
+    const entityName = 'CUSTOMER';
+    erDiagram.parser.parse(`erDiagram\n${entityName}\nclass ${entityName} myClass`);
+
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+  });
+
+  it('should be possible to assign multiple classes to an entity at the same time', function () {
+    const entityName = 'CUSTOMER';
+    erDiagram.parser.parse(
+      `erDiagram\n${entityName}\nclass ${entityName} firstClass, secondClass, thirdClass`
+    );
+
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default firstClass secondClass thirdClass');
+  });
+
+  it('should be possible to assign multiple separately defined classes to an entity', function () {
+    const entityName = 'CUSTOMER';
+    erDiagram.parser.parse(
+      `erDiagram\n${entityName}\nclass ${entityName} firstClass\nclass ${entityName} secondClass`
+    );
+
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default firstClass secondClass');
+  });
+
+  it('should be possible to configure the default class and have it apply to each entity', function () {
+    const firstEntity = 'ENTITY1';
+    const secondEntity = 'ENTITY2';
+    erDiagram.parser.parse(
+      `erDiagram
+        ${firstEntity}
+        ${secondEntity}
+        classDef default fill:#f9f
+      `
+    );
+
+    const expectedOutput = new Map([
+      [
+        'default',
+        {
+          id: 'default',
+          styles: ['fill:#f9f'],
+          textStyles: [],
+        },
+      ],
+    ]);
+
+    expect(erDb.getEntity(firstEntity).cssClasses).toBe('default');
+    expect(erDb.getEntity(secondEntity).cssClasses).toBe('default');
+    expect(erDb.getClasses()).toEqual(expectedOutput);
+  });
+
+  it('should be possible to define a class with styles', function () {
+    const className = 'myClass';
+    const styles = 'fill:#f9f, stroke: red, color: pink';
+    erDiagram.parser.parse(
+      `erDiagram
+        classDef ${className} ${styles}
+      `
+    );
+
+    const expectedOutput = new Map([
+      [
+        className,
+        {
+          id: className,
+          styles: ['fill:#f9f', 'stroke:red', 'color:pink'],
+          textStyles: ['color:pink'],
+        },
+      ],
+    ]);
+
+    expect(erDb.getClasses()).toEqual(expectedOutput);
+  });
+
+  it('should be possible to define multiple class with styles at the same time', function () {
+    const firstClass = 'firstClass';
+    const secondClass = 'secondClass';
+    const styles = 'fill:#f9f, stroke: red, color: pink';
+    erDiagram.parser.parse(
+      `erDiagram
+        classDef ${firstClass},${secondClass} ${styles}
+       `
+    );
+
+    const expectedOutput = new Map([
+      [
+        firstClass,
+        {
+          id: firstClass,
+          styles: ['fill:#f9f', 'stroke:red', 'color:pink'],
+          textStyles: ['color:pink'],
+        },
+      ],
+      [
+        secondClass,
+        {
+          id: secondClass,
+          styles: ['fill:#f9f', 'stroke:red', 'color:pink'],
+          textStyles: ['color:pink'],
+        },
+      ],
+    ]);
+
+    expect(erDb.getClasses()).toEqual(expectedOutput);
+  });
+
+  it('should be possible to assign a class using the shorthand syntax just by itself', function () {
+    const entityName = 'CUSTOMER';
+    const className = 'myClass';
+    erDiagram.parser.parse(`erDiagram\n${entityName}:::${className}`);
+
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+  });
+
+  it('should be possible to assign a class using the shorthand syntax with empty block', function () {
+    const entityName = 'CUSTOMER';
+    const className = 'myClass';
+    erDiagram.parser.parse(`erDiagram\n${entityName}:::${className} {}`);
+
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+  });
+
+  it('should be possible to assign a class using the shorthand syntax with block of attributes', function () {
+    const entityName = 'CUSTOMER';
+    const className = 'myClass';
+    erDiagram.parser.parse(`erDiagram\n${entityName}:::${className} {\nstring name\n}`);
+
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+  });
+
+  it('should be possible to assign multiple classes using the shorthand syntax', function () {
+    const entityName = 'CUSTOMER';
+    const firstClass = 'firstClass';
+    const secondClass = 'secondClass';
+    erDiagram.parser.parse(`erDiagram\n${entityName}:::${firstClass},${secondClass}`);
+
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default firstClass secondClass');
+  });
+
+  it('should be possible to assign classes using the shorthand syntax after defining an alias', function () {
+    const entityName = 'c';
+    const entityAlias = 'CUSTOMER';
+    const myClass = 'myClass';
+    erDiagram.parser.parse(`erDiagram\n${entityName}[${entityAlias}]:::${myClass}`);
+
+    expect(erDb.getEntity(entityName).alias).toBe(entityAlias);
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+  });
+
+  it('should be possible to assign classes using the shorthand syntax while defining a relationship', function () {
+    const entityName = 'CUSTOMER';
+    const otherEntity = 'PERSON';
+    const myClass = 'myClass';
+    erDiagram.parser.parse(
+      `erDiagram\n${entityName}:::${myClass} ||--o{ ${otherEntity}:::${myClass} : allows`
+    );
+
+    expect(erDb.getEntity(entityName).cssClasses).toBe('default myClass');
+    expect(erDb.getEntity(otherEntity).cssClasses).toBe('default myClass');
   });
 
   describe('relationship labels', function () {
