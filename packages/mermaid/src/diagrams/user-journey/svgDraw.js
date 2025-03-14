@@ -1,10 +1,8 @@
 import { arc as d3arc } from 'd3';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
-
 export const drawRect = function (elem, rectData) {
   return svgDrawCommon.drawRect(elem, rectData);
 };
-
 export const drawFace = function (element, faceData) {
   const radius = 15;
   const circleElement = element
@@ -15,9 +13,7 @@ export const drawFace = function (element, faceData) {
     .attr('r', radius)
     .attr('stroke-width', 2)
     .attr('overflow', 'visible');
-
   const face = element.append('g');
-
   //left eye
   face
     .append('circle')
@@ -27,7 +23,6 @@ export const drawFace = function (element, faceData) {
     .attr('stroke-width', 2)
     .attr('fill', '#666')
     .attr('stroke', '#666');
-
   //right eye
   face
     .append('circle')
@@ -37,7 +32,6 @@ export const drawFace = function (element, faceData) {
     .attr('stroke-width', 2)
     .attr('fill', '#666')
     .attr('stroke', '#666');
-
   /** @param {any} face */
   function smile(face) {
     const arc = d3arc()
@@ -52,7 +46,6 @@ export const drawFace = function (element, faceData) {
       .attr('d', arc)
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
   }
-
   /** @param {any} face */
   function sad(face) {
     const arc = d3arc()
@@ -67,7 +60,6 @@ export const drawFace = function (element, faceData) {
       .attr('d', arc)
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
   }
-
   /** @param {any} face */
   function ambivalent(face) {
     face
@@ -82,7 +74,6 @@ export const drawFace = function (element, faceData) {
       .attr('stroke-width', '1px')
       .attr('stroke', '#666');
   }
-
   if (faceData.score > 3) {
     smile(face);
   } else if (faceData.score < 3) {
@@ -90,10 +81,8 @@ export const drawFace = function (element, faceData) {
   } else {
     ambivalent(face);
   }
-
   return circleElement;
 };
-
 export const drawCircle = function (element, circleData) {
   const circleElement = element.append('circle');
   circleElement.attr('cx', circleData.cx);
@@ -102,22 +91,51 @@ export const drawCircle = function (element, circleData) {
   circleElement.attr('fill', circleData.fill);
   circleElement.attr('stroke', circleData.stroke);
   circleElement.attr('r', circleData.r);
-
   if (circleElement.class !== undefined) {
     circleElement.attr('class', circleElement.class);
   }
-
   if (circleData.title !== undefined) {
     circleElement.append('title').text(circleData.title);
   }
-
   return circleElement;
 };
-
 export const drawText = function (elem, textData) {
   return svgDrawCommon.drawText(elem, textData);
 };
-
+export const drawWrappedText = function (elem, textData) {
+  const words = textData.text.split(' ');
+  let line = '';
+  const lineHeight = 14; // Adjust for spacing
+  let yOffset = 0;
+  words.forEach((word) => {
+    const testLine = line + word + ' ';
+    const testElem = elem
+      .append('text')
+      .attr('x', textData.x)
+      .attr('y', textData.y)
+      .attr('font-size', '12px')
+      .text(testLine);
+    if (testElem.node().getComputedTextLength() > textData.maxWidth) {
+      elem
+        .append('text')
+        .attr('x', textData.x)
+        .attr('y', textData.y + yOffset)
+        .attr('font-size', '12px')
+        .text(line);
+      line = word + ' ';
+      yOffset += lineHeight;
+    } else {
+      line = testLine;
+    }
+    testElem.remove();
+  });
+  elem
+    .append('text')
+    .attr('x', textData.x)
+    .attr('y', textData.y + yOffset)
+    .attr('font-size', '12px')
+    .text(line);
+};
 export const drawLabel = function (elem, txtObject) {
   /**
    * @param {any} x
@@ -152,15 +170,12 @@ export const drawLabel = function (elem, txtObject) {
   const polygon = elem.append('polygon');
   polygon.attr('points', genPoints(txtObject.x, txtObject.y, 50, 20, 7));
   polygon.attr('class', 'labelBox');
-
   txtObject.y = txtObject.y + txtObject.labelMargin;
   txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin;
   drawText(elem, txtObject);
 };
-
 export const drawSection = function (elem, section, conf) {
   const g = elem.append('g');
-
   const rect = svgDrawCommon.getNoteRect();
   rect.x = section.x;
   rect.y = section.y;
@@ -174,7 +189,6 @@ export const drawSection = function (elem, section, conf) {
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);
-
   _drawTextCandidateFunc(conf)(
     section.text,
     g,
@@ -187,7 +201,6 @@ export const drawSection = function (elem, section, conf) {
     section.colour
   );
 };
-
 let taskCount = -1;
 /**
  * Draws an actor in the diagram with the attached line
@@ -211,28 +224,24 @@ export const drawTask = function (elem, task, conf) {
     .attr('stroke-width', '1px')
     .attr('stroke-dasharray', '4 2')
     .attr('stroke', '#666');
-
   drawFace(g, {
     cx: center,
     cy: 300 + (5 - task.score) * 30,
     score: task.score,
   });
-
   const rect = svgDrawCommon.getNoteRect();
   rect.x = task.x;
   rect.y = task.y;
   rect.fill = task.fill;
   rect.width = conf.width;
-  rect.height = conf.height;
+  rect.height = task.height;
   rect.class = 'task task-type-' + task.num;
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);
-
   let xPos = task.x + 14;
   task.people.forEach((person) => {
     const colour = task.actors[person].color;
-
     const circle = {
       cx: xPos,
       cy: task.y,
@@ -242,11 +251,9 @@ export const drawTask = function (elem, task, conf) {
       title: person,
       pos: task.actors[person].position,
     };
-
     drawCircle(g, circle);
     xPos += 10;
   });
-
   _drawTextCandidateFunc(conf)(
     task.task,
     g,
@@ -259,7 +266,6 @@ export const drawTask = function (elem, task, conf) {
     task.colour
   );
 };
-
 /**
  * Draws a background rectangle
  *
@@ -269,7 +275,6 @@ export const drawTask = function (elem, task, conf) {
 export const drawBackgroundRect = function (elem, bounds) {
   svgDrawCommon.drawBackgroundRect(elem, bounds);
 };
-
 const _drawTextCandidateFunc = (function () {
   /**
    * @param {any} content
@@ -291,7 +296,6 @@ const _drawTextCandidateFunc = (function () {
       .text(content);
     _setTextAttrs(text, textAttrs);
   }
-
   /**
    * @param {any} content
    * @param {any} g
@@ -305,7 +309,6 @@ const _drawTextCandidateFunc = (function () {
    */
   function byTspan(content, g, x, y, width, height, textAttrs, conf, colour) {
     const { taskFontSize, taskFontFamily } = conf;
-
     const lines = content.split(/<br\s*\/?>/gi);
     for (let i = 0; i < lines.length; i++) {
       const dy = i * taskFontSize - (taskFontSize * (lines.length - 1)) / 2;
@@ -322,16 +325,13 @@ const _drawTextCandidateFunc = (function () {
         .attr('x', x + width / 2)
         .attr('dy', dy)
         .text(lines[i]);
-
       text
         .attr('y', y + height / 2.0)
         .attr('dominant-baseline', 'central')
         .attr('alignment-baseline', 'central');
-
       _setTextAttrs(text, textAttrs);
     }
   }
-
   /**
    * @param {any} content
    * @param {any} g
@@ -351,13 +351,11 @@ const _drawTextCandidateFunc = (function () {
       .attr('width', width)
       .attr('height', height)
       .attr('position', 'fixed');
-
     const text = f
       .append('xhtml:div')
       .style('display', 'table')
       .style('height', '100%')
       .style('width', '100%');
-
     text
       .append('div')
       .attr('class', 'label')
@@ -365,11 +363,9 @@ const _drawTextCandidateFunc = (function () {
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
       .text(content);
-
     byTspan(content, body, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);
   }
-
   /**
    * @param {any} toText
    * @param {any} fromTextAttrsDict
@@ -382,12 +378,10 @@ const _drawTextCandidateFunc = (function () {
       }
     }
   }
-
   return function (conf) {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
-
 const initGraphics = function (graphics) {
   graphics
     .append('defs')
@@ -401,7 +395,6 @@ const initGraphics = function (graphics) {
     .append('path')
     .attr('d', 'M 0,0 V 4 L6,2 Z'); // this is actual shape for arrowhead
 };
-
 export default {
   drawRect,
   drawCircle,
