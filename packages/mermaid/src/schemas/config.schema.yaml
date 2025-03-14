@@ -49,6 +49,7 @@ required:
   - architecture
   - mindmap
   - kanban
+  - contextMap
   - gitGraph
   - c4
   - sankey
@@ -282,6 +283,8 @@ properties:
     $ref: '#/$defs/MindmapDiagramConfig'
   kanban:
     $ref: '#/$defs/KanbanDiagramConfig'
+  contextMap:
+    $ref: '#/$defs/ContextMapDiagramConfig'
   gitGraph:
     $ref: '#/$defs/GitGraphDiagramConfig'
   c4:
@@ -983,6 +986,69 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       ticketBaseUrl:
         type: string
         default: ''
+
+  ContextMapDiagramConfig:
+    title: Context Map Language Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for context map language diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - height
+      - width
+      - useMaxWidth
+      - nodeMargin
+      - nodePadding
+      - font
+    properties:
+      width:
+        type: number
+        default: 600
+      height:
+        type: number
+        default: 600
+      nodeMargin:
+        title: Context Map Node Margin
+        description: margins of nodes
+        type: object
+        unevaluatedProperties: false
+        properties:
+          horizontal:
+            type: number
+          vertical:
+            type: number
+        default:
+          horizontal: 20
+          vertical: 30
+      nodePadding:
+        title: Context Map Node Padding
+        description: padding of nodes
+        type: object
+        unevaluatedProperties: false
+        properties:
+          horizontal:
+            type: number
+          vertical:
+            type: number
+        default:
+          horizontal: 100
+          vertical: 40
+      font:
+        title: Context Map Font
+        description: Font of all Context Map texts
+        type: object
+        unevaluatedProperties: false
+        properties:
+          fontFamily:
+            type: string
+          fontSize:
+            type: number
+          fontWeight:
+            type: number
+        default:
+          fontFamily: 'Arial'
+          fontSize: 12
+          fontWeight: 400
 
   PieDiagramConfig:
     title: Pie Diagram Config

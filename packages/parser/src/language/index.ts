@@ -22,6 +22,9 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  ContextMap,
+  ContextMapNode,
+  ContextMapLink,
 } from './generated/ast.js';
 
 export {
@@ -31,6 +34,7 @@ export {
   PieGeneratedModule,
   ArchitectureGeneratedModule,
   GitGraphGeneratedModule,
+  ContextMapGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -39,3 +43,4 @@ export * from './info/index.js';
 export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './architecture/index.js';
+export * from './contextMap/index.js';
