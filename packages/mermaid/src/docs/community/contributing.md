@@ -240,6 +240,22 @@ Code is the heart of every software project. We strive to make it better. Who if
 
 The core of Mermaid is located under `packages/mermaid/src`.
 
+### Building Mermaid Locally
+
+**Host**
+
+```bash
+pnpm run build
+```
+
+**Docker**
+
+```bash
+./run build
+```
+
+This will build the Mermaid library and the documentation site.
+
 ### Running Mermaid Locally
 
 **Host**
