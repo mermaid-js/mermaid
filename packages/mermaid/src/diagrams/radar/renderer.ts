@@ -118,7 +118,6 @@ const drawAxes = (
   }
 };
 
-export const renderer: DiagramRenderer = { draw };
 function drawCurves(
   g: SVGGroup,
   axes: RadarAxis[],
@@ -159,12 +158,17 @@ function drawCurves(
   });
 }
 
-function relativeRadius(value: number, minValue: number, maxValue: number, radius: number): number {
+export function relativeRadius(
+  value: number,
+  minValue: number,
+  maxValue: number,
+  radius: number
+): number {
   const clippedValue = Math.min(Math.max(value, minValue), maxValue);
   return (radius * (clippedValue - minValue)) / (maxValue - minValue);
 }
 
-function closedRoundCurve(points: { x: number; y: number }[], tension: number): string {
+export function closedRoundCurve(points: { x: number; y: number }[], tension: number): string {
   // Catmull-Rom spline helper function
   const numPoints = points.length;
   let d = `M${points[0].x},${points[0].y}`;
@@ -224,3 +228,5 @@ function drawLegend(
       .text(curve.label);
   });
 }
+
+export const renderer: DiagramRenderer = { draw };

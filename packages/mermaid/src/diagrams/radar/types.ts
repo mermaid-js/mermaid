@@ -28,16 +28,16 @@ export interface RadarDB extends DiagramDBBase<RadarDiagramConfig> {
 }
 
 export interface RadarStyleOptions {
-  axisColor: string;
-  axisStrokeWidth: number;
-  axisLabelFontSize: number;
-  curveOpacity: number;
-  curveStrokeWidth: number;
-  graticuleColor: string;
-  graticuleOpacity: number;
-  graticuleStrokeWidth: number;
-  legendBoxSize: number;
-  legendFontSize: number;
+  axisColor?: string;
+  axisStrokeWidth?: number;
+  axisLabelFontSize?: number;
+  curveOpacity?: number;
+  curveStrokeWidth?: number;
+  graticuleColor?: string;
+  graticuleOpacity?: number;
+  graticuleStrokeWidth?: number;
+  legendBoxSize?: number;
+  legendFontSize?: number;
 }
 
 export interface RadarData {

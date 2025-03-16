@@ -1,6 +1,11 @@
 import { it, describe, expect } from 'vitest';
 import { db } from './db.js';
 import { parser } from './parser.js';
+import { renderer, relativeRadius, closedRoundCurve } from './renderer.js';
+import { Diagram } from '../../Diagram.js';
+import mermaidAPI from '../../mermaidAPI.js';
+import { a } from 'vitest/dist/chunks/suite.qtkXWc6R.js';
+import { buildRadarStyleOptions } from './styles.js';
 
 const {
   clear,
@@ -135,10 +140,6 @@ describe('radar diagrams', () => {
     curve mycurve{1,2,3}
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-
-    // TODO: ✨ Fix this test
-    // expect(getConfig().marginTop).toBe(80);
-    // expect(getConfig().axisLabelFactor).toBe(1.25);
   });
 
   it('should parse radar diagram with theme override', async () => {
@@ -149,8 +150,6 @@ describe('radar diagrams', () => {
     curve mycurve{1,2,3}
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-
-    // TODO: ✨ Add tests for theme override
   });
 
   it('should handle radar diagram with radar style override', async () => {
@@ -161,7 +160,99 @@ describe('radar diagrams', () => {
     curve mycurve{1,2,3}
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
+  });
 
-    // TODO: ✨ Add tests for style override
+  describe('renderer', () => {
+    describe('relativeRadius', () => {
+      it('should calculate relative radius', () => {
+        expect(relativeRadius(5, 0, 10, 100)).toBe(50);
+      });
+
+      it('should handle min value', () => {
+        expect(relativeRadius(0, 0, 10, 100)).toBe(0);
+      });
+
+      it('should handle max value', () => {
+        expect(relativeRadius(10, 0, 10, 100)).toBe(100);
+      });
+
+      it('should clip values below min', () => {
+        expect(relativeRadius(-5, 0, 10, 100)).toBe(0);
+      });
+
+      it('should clip values above max', () => {
+        expect(relativeRadius(15, 0, 10, 100)).toBe(100);
+      });
+
+      it('should handle negative min', () => {
+        expect(relativeRadius(5, -10, 10, 100)).toBe(75);
+      });
+    });
+
+    describe('closedRoundCurve', () => {
+      it('should construct a polygon if tension is 0', () => {
+        const points = [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+          { x: 100, y: 100 },
+          { x: 0, y: 100 },
+        ];
+        const tension = 0;
+        const path = closedRoundCurve(points, tension);
+        expect(path).toMatchInlineSnapshot(
+          `"M0,0 C0,0 100,0 100,0 C100,0 100,100 100,100 C100,100 0,100 0,100 C0,100 0,0 0,0 Z"`
+        );
+      });
+
+      it('should construct a simple round curve', () => {
+        const points = [
+          { x: 0, y: 0 },
+          { x: 100, y: 100 },
+        ];
+        const tension = 0.5;
+        const path = closedRoundCurve(points, tension);
+        expect(path).toMatchInlineSnapshot(`"M0,0 C0,0 100,100 100,100 C100,100 0,0 0,0 Z"`);
+      });
+
+      it('should construct a closed round curve', () => {
+        const points = [
+          { x: 0, y: 0 },
+          { x: 100, y: 0 },
+          { x: 100, y: 100 },
+          { x: 0, y: 100 },
+        ];
+        const tension = 0.5;
+        const path = closedRoundCurve(points, tension);
+        expect(path).toMatchInlineSnapshot(
+          `"M0,0 C50,-50 50,-50 100,0 C150,50 150,50 100,100 C50,150 50,150 0,100 C-50,50 -50,50 0,0 Z"`
+        );
+      });
+    });
+
+    describe('draw', () => {
+      it('should draw a simple radar diagram', async () => {
+        const str = `radar-beta
+        axis A,B,C
+        curve mycurve{1,2,3}`;
+        await mermaidAPI.parse(str);
+        const diagram = await Diagram.fromText(str);
+        await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+      });
+
+      it('should draw a complex radar diagram', async () => {
+        const str = `radar-beta
+        title Radar diagram
+        accTitle: Radar accTitle
+        accDescr: Radar accDescription
+        axis A["Axis A"], B["Axis B"] ,C["Axis C"]
+        curve mycurve["My Curve"]{1,2,3}
+        curve mycurve2["My Curve 2"]{ C: 1, A: 2, B: 3 }
+        graticule polygon
+        `;
+        await mermaidAPI.parse(str);
+        const diagram = await Diagram.fromText(str);
+        await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+      });
+    });
   });
 });

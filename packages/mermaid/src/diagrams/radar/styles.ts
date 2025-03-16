@@ -30,12 +30,18 @@ const genIndexStyles = (
   return sections;
 };
 
-export const styles: DiagramStylesProvider = ({ radar }: { radar?: RadarStyleOptions } = {}) => {
+export const buildRadarStyleOptions = (radar?: RadarStyleOptions) => {
   const defaultThemeVariables = getThemeVariables();
   const currentConfig = getConfigAPI();
 
   const themeVariables = cleanAndMerge(defaultThemeVariables, currentConfig.themeVariables);
   const radarOptions: RadarStyleOptions = cleanAndMerge(themeVariables.radar, radar);
+
+  return { themeVariables, radarOptions };
+};
+
+export const styles: DiagramStylesProvider = ({ radar }: { radar?: RadarStyleOptions } = {}) => {
+  const { themeVariables, radarOptions } = buildRadarStyleOptions(radar);
   return `
 	.radarTitle {
 		font-size: ${themeVariables.fontSize};
