@@ -2264,7 +2264,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 1
         default: 0.17
-      
+
   FontCalculator:
     title: Font Calculator
     description: |
