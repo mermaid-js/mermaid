@@ -39,7 +39,7 @@ export const styles: DiagramStylesProvider = ({ radar }: { radar?: RadarStyleOpt
   return `
 	.radarTitle {
 		font-size: ${themeVariables.fontSize};
-		text-color: ${themeVariables.titleColor};
+		color: ${themeVariables.titleColor};
 		dominant-baseline: hanging;
 		text-anchor: middle;
 	}
