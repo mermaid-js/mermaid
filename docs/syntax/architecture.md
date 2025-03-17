@@ -191,6 +191,64 @@ architecture-beta
     bottom_gateway:T -- B:junctionRight
 ```
 
+## Limitations
+
+Due to underlying limitations in the rendering engine, there are a couple things to keep in mind when designing your Architecture diagrams.
+
+### One edge per side
+
+Only one edge may come out of each side of a node. If multiple edges are needed, junctions should be used.
+
+**Invalid** (error logged to console):
+
+```mermaid-example
+architecture-beta
+    service nodeA(internet)[Node A]
+    service nodeB1(internet)[Node B1]
+    service nodeB2(middleware)[Node B2]
+
+    nodeA:R --> L:nodeB1
+    nodeA:R --> L:nodeB2
+```
+
+```mermaid
+architecture-beta
+    service nodeA(internet)[Node A]
+    service nodeB1(internet)[Node B1]
+    service nodeB2(middleware)[Node B2]
+
+    nodeA:R --> L:nodeB1
+    nodeA:R --> L:nodeB2
+```
+
+**Valid**:
+
+```mermaid-example
+architecture-beta
+    service nodeA(internet)[Node A]
+    service nodeB1(server)[Node B1]
+    service nodeB2(server)[Node B2]
+
+    junction aToB
+
+    nodeA:R --> L:aToB
+    aToB:T --> B:nodeB1
+    aToB:B --> T:nodeB2
+```
+
+```mermaid
+architecture-beta
+    service nodeA(internet)[Node A]
+    service nodeB1(server)[Node B1]
+    service nodeB2(server)[Node B2]
+
+    junction aToB
+
+    nodeA:R --> L:aToB
+    aToB:T --> B:nodeB1
+    aToB:B --> T:nodeB2
+```
+
 ## Icons
 
 By default, architecture diagram supports the following icons: `cloud`, `database`, `disk`, `internet`, `server`.
