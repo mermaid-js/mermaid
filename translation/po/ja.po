@@ -1,0 +1,890 @@
+# Mermaid Japanese translation
+# Copyright (C) 2024 gemmaro
+# This file is distributed under the same license as Mermaid.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Mermaid\n"
+"POT-Creation-Date: 2024-11-28 20:42+0900\n"
+"PO-Revision-Date: 2024-11-28 20:40+0900\n"
+"Last-Translator: gemmaro\n"
+"Language-Team: none\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. type: Plain text
+#: README.md:13
+#, no-wrap
+msgid ""
+"<p align=\"center\">\n"
+"<img src=\"https://raw.githubusercontent.com/mermaid-js/mermaid/develop/docs/public/favicon.svg\" height=\"150\">\n"
+"</p>\n"
+"<h1 align=\"center\">\n"
+"Mermaid\n"
+"</h1>\n"
+"<p align=\"center\">\n"
+"Generate diagrams from markdown-like text.\n"
+"<p>\n"
+"<p align=\"center\">\n"
+"  <a href=\"https://www.npmjs.com/package/mermaid\"><img src=\"https://img.shields.io/npm/v/mermaid?color=ff3670&label=\"></a>\n"
+"<p>\n"
+msgstr ""
+"<p align=\"center\">\n"
+"<img src=\"https://raw.githubusercontent.com/mermaid-js/mermaid/develop/docs/public/favicon.svg\" height=\"150\">\n"
+"</p>\n"
+"<h1 align=\"center\">\n"
+"Mermaid\n"
+"</h1>\n"
+"<p align=\"center\">\n"
+"マークダウンみたいなテキストから図を生成しよう。\n"
+"<p>\n"
+"<p align=\"center\">\n"
+"  <a href=\"https://www.npmjs.com/package/mermaid\"><img src=\"https://img.shields.io/npm/v/mermaid?color=ff3670&label=\"></a>\n"
+"<p>\n"
+
+#. type: Plain text
+#: README.md:27
+#, no-wrap
+msgid ""
+"<p align=\"center\">\n"
+"<a href=\"https://mermaid.live/\"><b>Live Editor!</b></a>\n"
+"</p>\n"
+"<p align=\"center\">\n"
+" <a href=\"https://mermaid.js.org\">📖 Documentation</a> | <a href=\"https://mermaid.js.org/intro/\">🚀 Getting Started</a> | <a href=\"https://www.jsdelivr.com/package/npm/mermaid\">🌐 CDN</a> | <a href=\"https://discord.gg/AgrbSrBer3\" title=\"Discord invite\">🙌 Join Us</a>\n"
+"</p>\n"
+"<p align=\"center\">\n"
+"<a href=\"./README.zh-CN.md\">简体中文</a>\n"
+"<a href=\"./README.ja.md\">日本語</a>\n"
+"</p>\n"
+"<p align=\"center\">\n"
+"Try Live Editor previews of future releases: <a href=\"https://develop.git.mermaid.live/\" title=\"Try the mermaid version from the develop branch.\">Develop</a> | <a href=\"https://next.git.mermaid.live/\" title=\"Try the mermaid version from the next branch.\">Next</a>\n"
+"</p>\n"
+msgstr ""
+"<p align=\"center\">\n"
+"<a href=\"https://mermaid.live/\"><b>ライブエディタ！</b></a>\n"
+"</p>\n"
+"<p align=\"center\">\n"
+" <a href=\"https://mermaid.js.org\">📖 ドキュメント</a> | <a href=\"https://mermaid.js.org/intro/\">🚀 はじめよう</a> | <a href=\"https://www.jsdelivr.com/package/npm/mermaid\">🌐 CDN</a> | <a href=\"https://discord.gg/AgrbSrBer3\" title=\"Discordへの招待\">🙌 参加しよう</a>\n"
+"</p>\n"
+"<p align=\"center\">\n"
+"<a href=\"./README.md\">English</a>\n"
+"<a href=\"./README.zh-CN.md\">简体中文</a>\n"
+"</p>\n"
+"<p align=\"center\">\n"
+"ライブエディタで将来のリリースのプレビューを試そう：<a href=\"https://develop.git.mermaid.live/\" title=\"developブランチのバージョンのmermaidを試します。\">Develop</a> | <a href=\"https://next.git.mermaid.live/\" title=\"nextブランチのバージョンのmermaidを試します。\">Next</a>\n"
+"</p>\n"
+
+#. type: Plain text
+#: README.md:30
+#, no-wrap
+msgid ""
+"<br>\n"
+"<br>\n"
+msgstr ""
+"<br>\n"
+"<br>\n"
+
+#. type: Plain text
+#: README.md:41
+msgid ""
+"[![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/"
+"mermaid)  [![Build CI Status](https://github.com/mermaid-js/mermaid/actions/"
+"workflows/build.yml/badge.svg)](https://github.com/mermaid-js/mermaid/"
+"actions/workflows/build.yml)  [![npm minified gzipped bundle size](https://"
+"img.shields.io/bundlephobia/minzip/mermaid)](https://bundlephobia.com/"
+"package/mermaid)  [![Coverage Status](https://codecov.io/github/mermaid-js/"
+"mermaid/branch/develop/graph/badge.svg)](https://app.codecov.io/github/"
+"mermaid-js/mermaid/tree/develop)  [![CDN Status](https://img.shields.io/"
+"jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)  [!"
+"[NPM Downloads](https://img.shields.io/npm/dm/mermaid)](https://www.npmjs."
+"com/package/mermaid)  [![Join our Discord!](https://img.shields.io/static/v1?"
+"message=join%20chat&color=9cf&logo=discord&label=discord)](https://discord."
+"gg/AgrbSrBer3)  [![Twitter Follow](https://img.shields.io/badge/Social-"
+"mermaidjs__-blue?style=social&logo=X)](https://twitter.com/mermaidjs_)  [!"
+"[Covered by Argos Visual Testing](https://argos-ci.com/badge.svg)](https://"
+"argos-ci.com?utm_source=mermaid&utm_campaign=oss)  [![OpenSSF Scorecard]"
+"(https://api.securityscorecards.dev/projects/github.com/mermaid-js/mermaid/"
+"badge)](https://securityscorecards.dev/viewer/?uri=github.com/mermaid-js/"
+"mermaid)"
+msgstr ""
+"[![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/"
+"mermaid)  [![ビルドCIの状態](https://github.com/mermaid-js/mermaid/actions/"
+"workflows/build.yml/badge.svg)](https://github.com/mermaid-js/mermaid/"
+"actions/workflows/build.yml)  [![npmの最小化されgzip化されたバンドルの容量]"
+"(https://img.shields.io/bundlephobia/minzip/mermaid)](https://bundlephobia."
+"com/package/mermaid)  [![カバレッジ状態](https://codecov.io/github/mermaid-"
+"js/mermaid/branch/develop/graph/badge.svg)](https://app.codecov.io/github/"
+"mermaid-js/mermaid/tree/develop)  [![CDNの状態](https://img.shields.io/"
+"jsdelivr/npm/hm/mermaid)](https://www.jsdelivr.com/package/npm/mermaid)  [!"
+"[NPMのダウンロード数](https://img.shields.io/npm/dm/mermaid)](https://www."
+"npmjs.com/package/mermaid)  [![Discordに参加しよう！](https://img.shields.io/"
+"static/v1?message=join%20chat&color=9cf&logo=discord&label=discord)](https://"
+"discord.gg/AgrbSrBer3)  [![Twitterをフォローしよう](https://img.shields.io/"
+"badge/Social-mermaidjs__-blue?style=social&logo=X)](https://twitter.com/"
+"mermaidjs_)  [![Argos Visual Testingでカバレッジを取っています](https://"
+"argos-ci.com/badge.svg)](https://argos-ci.com?"
+"utm_source=mermaid&utm_campaign=oss)  [![OpenSSF Scorecard](https://api."
+"securityscorecards.dev/projects/github.com/mermaid-js/mermaid/badge)]"
+"(https://securityscorecards.dev/viewer/?uri=github.com/mermaid-js/mermaid)"
+
+#. type: Plain text
+#: README.md:43
+#, no-wrap
+msgid "<img src=\"./img/header.png\" alt=\"\" />\n"
+msgstr "<img src=\"./img/header.png\" alt=\"\" />\n"
+
+#. type: Plain text
+#: README.md:45
+msgid ""
+":trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)]"
+"(https://osawards.com/javascript/2019) in the category \"The most exciting "
+"use of technology\"!!!**"
+msgstr ""
+":trophy: **[JS Open Source Awards (2019)](https://osawards.com/"
+"javascript/2019)  の「最もエキサイティングな技術の使い方」部門に、Mermaidがノ"
+"ミネートされ、受賞しました！！！**"
+
+#. type: Plain text
+#: README.md:47
+#, no-wrap
+msgid "**Thanks to all involved, people committing pull requests, people answering questions! 🙏**\n"
+msgstr "**これまで携わっていただいた方々、プルリクエストをお寄せいただいた方々、質問に答えていただいた方々に感謝します! 🙏**\n"
+
+#. type: Plain text
+#: README.md:49
+#, no-wrap
+msgid "<a href=\"https://mermaid.js.org/landing/\"><img src=\"https://github.com/mermaid-js/mermaid/blob/master/docs/intro/img/book-banner-post-release.jpg\" alt=\"Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!\"></a>\n"
+msgstr "<a href=\"https://mermaid.js.org/landing/\"><img src=\"https://github.com/mermaid-js/mermaid/blob/master/docs/intro/img/book-banner-post-release.jpg\" alt=\"Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!\"></a>\n"
+
+#. type: Title ##
+#: README.md:50
+#, no-wrap
+msgid "Table of content"
+msgstr "目次"
+
+#. type: Plain text
+#: README.md:54
+#, no-wrap
+msgid ""
+"<details>\n"
+"<summary>Expand contents</summary>\n"
+msgstr ""
+"<details>\n"
+"<summary>目次を開く</summary>\n"
+
+#. type: Bullet: '- '
+#: README.md:63
+msgid "[About](#about)"
+msgstr "[Mermaidとは](#Mermaidとは)"
+
+#. type: Bullet: '- '
+#: README.md:63
+msgid "[Examples](#examples)"
+msgstr "[例](#例)"
+
+#. type: Bullet: '- '
+#: README.md:63
+msgid "[Release](#release)"
+msgstr "[リリース](#リリース)"
+
+#. type: Bullet: '- '
+#: README.md:63
+msgid "[Related projects](#related-projects)"
+msgstr "[関連するプロジェクト](#関連するプロジェクト)"
+
+#. type: Bullet: '- '
+#: README.md:63
+msgid "[Contributors](#contributors---)"
+msgstr "[貢献者](#貢献者)"
+
+#. type: Bullet: '- '
+#: README.md:63
+msgid "[Security and safe diagrams](#security-and-safe-diagrams)"
+msgstr "[セキュリティと安全な図](#セキュリティと安全な図)"
+
+#. type: Bullet: '- '
+#: README.md:63
+msgid "[Reporting vulnerabilities](#reporting-vulnerabilities)"
+msgstr "[脆弱性の報告](#脆弱性の報告)"
+
+#. type: Bullet: '- '
+#: README.md:63
+msgid "[Appreciation](#appreciation)"
+msgstr "[謝辞](#謝辞)"
+
+#. type: Plain text
+#: README.md:65
+#, no-wrap
+msgid "</details>\n"
+msgstr "</details>\n"
+
+#. type: Title ##
+#: README.md:66
+#, no-wrap
+msgid "About"
+msgstr "Mermaidとは"
+
+#. type: Plain text
+#: README.md:69
+#, no-wrap
+msgid "<!-- <Main description>   -->\n"
+msgstr "<!-- <説明本文>   -->\n"
+
+#. type: Plain text
+#: README.md:71
+msgid ""
+"Mermaid is a JavaScript-based diagramming and charting tool that uses "
+"Markdown-inspired text definitions and a renderer to create and modify "
+"complex diagrams. The main purpose of Mermaid is to help documentation catch "
+"up with development."
+msgstr ""
+"Mermaidは、JavaScriptベースの、図やチャートを作るツールです。 Markdownに着想"
+"を得たテキストの定義とレンダラーを使っており、複雑な図表を作ったり変更したり"
+"できます。 Mermaidの主な目的は、ドキュメントを開発に追従させる作業を補助する"
+"ことです。"
+
+#. type: Plain text
+#: README.md:73
+#, no-wrap
+msgid "> Doc-Rot is a Catch-22 that Mermaid helps to solve.\n"
+msgstr "> Doc-Rot is a Catch-22 that Mermaid helps to solve.\n"
+
+#. type: Plain text
+#: README.md:78
+#, no-wrap
+msgid ""
+"Diagramming and documentation costs precious developer time and gets outdated quickly.\n"
+"But not having diagrams or docs ruins productivity and hurts organizational learning.<br/>\n"
+"Mermaid addresses this problem by enabling users to create easily modifiable diagrams. It can also be made part of production scripts (and other pieces of code).<br/>\n"
+"<br/>\n"
+msgstr ""
+"図とドキュメントは、開発者の貴重な時間において負担となっており、すぐに陳腐化します。\n"
+"しかし図やドキュメントがないと、生産性が零落し、組織での習得が損なわれます。<br/>\n"
+"Mermaidでは、ユーザーが簡単に変更できる図を作れるようにして、この問題に対処します。\n"
+"製品のスクリプトの一部（や他のコードの一部）にすることもできます。<br/>\n"
+"<br/>\n"
+
+#. type: Plain text
+#: README.md:82
+#, no-wrap
+msgid ""
+"Mermaid allows even non-programmers to easily create detailed diagrams through the [Mermaid Live Editor](https://mermaid.live/).<br/>\n"
+"For video tutorials, visit our [Tutorials](https://mermaid.js.org/ecosystem/tutorials.html) page.\n"
+"Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](https://mermaid.js.org/ecosystem/integrations-community.html).\n"
+msgstr ""
+"Mermaidには、プログラマでない方でも簡単に詳細な図を作れるよう、[Mermaidライブエディタ](https://mermaid.live/)があります。<br/>\n"
+"映像でのチュートリアルとしては、こちらの[チュートリアル](https://github.com/mermaid-js/mermaid/blob/develop/docs/config/Tutorials.md)をご覧ください。<br/>\n"
+"お気に入りのアプリケーションと組み合わせてMermaidを使いたいときは、[Mermaidの統合と使い方](https://mermaid.js.org/ecosystem/integrations-community.html)をご確認ください。\n"
+
+#. type: Plain text
+#: README.md:84
+msgid ""
+"You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-"
+"include-diagrams-markdown-files-mermaid/) as well many of your other "
+"favorite applications—check out the list of [Integrations and Usages of "
+"Mermaid](https://mermaid.js.org/ecosystem/integrations-community.html)."
+msgstr ""
+"またMermaidは、[GitHub](https://github.blog/2022-02-14-include-diagrams-"
+"markdown-files-mermaid/)や、その他多くのお好みのアプリケーションでも使えま"
+"す。 [Mermaidの統合と使い方](https://mermaid.js.org/ecosystem/integrations-"
+"community.html)の一覧をご確認ください。"
+
+#. type: Plain text
+#: README.md:86
+msgid ""
+"For a more detailed introduction to Mermaid and some of its more basic uses, "
+"look to the [Beginner's Guide](https://mermaid.js.org/intro/getting-started."
+"html), [Usage](https://mermaid.js.org/config/usage.html) and [Tutorials]"
+"(https://mermaid.js.org/ecosystem/tutorials.html)."
+msgstr ""
+"より詳しいMermaidの導入やより基本的な用途については、[初心者の手引き]"
+"(https://mermaid.js.org/intro/getting-started.html)と[使い方](https://"
+"https://mermaid.js.org/config/usage.html)と[チュートリアル](https://mermaid."
+"js.org/ecosystem/tutorials.html)をご覧ください。"
+
+#. type: Plain text
+#: README.md:88
+msgid ""
+"Our PR Visual Regression Testing is powered by [Argos](https://argos-ci.com/?"
+"utm_source=mermaid&utm_campaign=oss) with their generous Open Source plan. "
+"It makes the process of reviewing PRs with visual changes a breeze."
+msgstr ""
+"プルリクエストの視覚的なリグレッションテストは、[Argos](https://argos-ci."
+"com/?utm_source=mermaid&utm_campaign=oss)のオープンソースプランの寛大な支援を"
+"受けています。 これにより、プルリクエストをレビューする過程で視覚的な変化が一"
+"目で分かるようになっています。"
+
+#. type: Plain text
+#: README.md:90
+msgid ""
+"[![Covered by Argos Visual Testing](https://argos-ci.com/badge-large.svg)]"
+"(https://argos-ci.com?utm_source=mermaid&utm_campaign=oss)"
+msgstr ""
+"[![Argos Visual Testingでカバレッジを取っています](https://argos-ci.com/"
+"badge-large.svg)](https://argos-ci.com?utm_source=mermaid&utm_campaign=oss)"
+
+#. type: Plain text
+#: README.md:92
+msgid ""
+"In our release process we rely heavily on visual regression tests using "
+"[applitools](https://applitools.com/). Applitools is a great service which "
+"has been easy to use and integrate with our tests."
+msgstr ""
+"リリース工程では、[applitools](https://applitools.com/)を使った視覚的なリグ"
+"レッションテストを大変頼りにしています。 applitoolsは素晴らしいサービスであ"
+"り、Mermaidのテストで使いやすく統合しやすいものでした。"
+
+#. type: Plain text
+#: README.md:96
+#, no-wrap
+msgid ""
+"<a href=\"https://applitools.com/\">\n"
+"<svg width=\"170\" height=\"32\" viewBox=\"0 0 170 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><mask id=\"a\" maskUnits=\"userSpaceOnUse\" x=\"27\" y=\"0\" width=\"143\" height=\"32\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.732.227h141.391v31.19H27.733V.227z\" fill=\"#fff\"></path></mask><g mask=\"url(#a)\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M153.851 22.562l1.971-3.298c1.291 1.219 3.837 2.402 5.988 2.402 1.971 0 2.903-.753 2.903-1.829 0-2.832-10.253-.502-10.253-7.313 0-2.904 2.51-5.45 7.099-5.45 2.904 0 5.234 1.004 6.955 2.367l-1.829 3.226c-1.039-1.075-3.011-2.008-5.126-2.008-1.65 0-2.725.717-2.725 1.685 0 2.546 10.289.395 10.289 7.386 0 3.19-2.724 5.52-7.528 5.52-3.012 0-5.916-1.003-7.744-2.688zm-5.7 2.259h4.553V.908h-4.553v23.913zm-6.273-8.676c0-2.689-1.578-5.02-4.446-5.02-2.832 0-4.409 2.331-4.409 5.02 0 2.724 1.577 5.055 4.409 5.055 2.868 0 4.446-2.33 4.446-5.055zm-13.588 0c0-4.912 3.442-9.07 9.142-9.07 5.736 0 9.178 4.158 9.178 9.07 0 4.911-3.442 9.106-9.178 9.106-5.7 0-9.142-4.195-9.142-9.106zm-5.628 0c0-2.689-1.577-5.02-4.445-5.02-2.832 0-4.41 2.331-4.41 5.02 0 2.724 1.578 5.055 4.41 5.055 2.868 0 4.445-2.33 4.445-5.055zm-13.587 0c0-4.912 3.441-9.07 9.142-9.07 5.736 0 9.178 4.158 9.178 9.07 0 4.911-3.442 9.106-9.178 9.106-5.701 0-9.142-4.195-9.142-9.106zm-8.425 4.338v-8.999h-2.868v-3.98h2.868V2.773h4.553v4.733h3.514v3.979h-3.514v7.78c0 1.111.574 1.936 1.578 1.936.681 0 1.326-.251 1.577-.538l.968 3.478c-.681.609-1.9 1.11-3.8 1.11-3.191 0-4.876-1.648-4.876-4.767zm-8.962 4.338h4.553V7.505h-4.553V24.82zm-.43-21.905a2.685 2.685 0 012.688-2.69c1.506 0 2.725 1.184 2.725 2.69a2.724 2.724 0 01-2.725 2.724c-1.47 0-2.688-1.219-2.688-2.724zM84.482 24.82h4.553V.908h-4.553v23.913zm-6.165-8.676c0-2.976-1.793-5.02-4.41-5.02-1.47 0-3.119.825-3.908 1.973v6.094c.753 1.111 2.438 2.008 3.908 2.008 2.617 0 4.41-2.044 4.41-5.055zm-8.318 6.453v8.82h-4.553V7.504H70v2.187c1.327-1.685 3.227-2.618 5.342-2.618 4.446 0 7.672 3.299 7.672 9.07 0 5.773-3.226 9.107-7.672 9.107-2.043 0-3.907-.86-5.342-2.653zm-10.718-6.453c0-2.976-1.793-5.02-4.41-5.02-1.47 0-3.119.825-3.908 1.973v6.094c.753 1.111 2.438 2.008 3.908 2.008 2.617 0 4.41-2.044 4.41-5.055zm-8.318 6.453v8.82H46.41V7.504h4.553v2.187c1.327-1.685 3.227-2.618 5.342-2.618 4.446 0 7.672 3.299 7.672 9.07 0 5.773-3.226 9.107-7.672 9.107-2.043 0-3.908-.86-5.342-2.653zm-11.758-1.936V18.51c-.753-1.004-2.187-1.542-3.657-1.542-1.793 0-3.263.968-3.263 2.617 0 1.65 1.47 2.582 3.263 2.582 1.47 0 2.904-.502 3.657-1.506zm0 4.159v-1.829c-1.183 1.434-3.227 2.259-5.485 2.259-2.761 0-5.988-1.864-5.988-5.736 0-4.087 3.227-5.593 5.988-5.593 2.33 0 4.337.753 5.485 2.115V13.85c0-1.756-1.506-2.904-3.8-2.904-1.829 0-3.55.717-4.984 2.044L28.63 9.8c2.115-1.901 4.84-2.726 7.564-2.726 3.98 0 7.6 1.578 7.6 6.561v11.186h-4.588z\" fill=\"#00A298\"></path></g><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M14.934 16.177c0 1.287-.136 2.541-.391 3.752-1.666-1.039-3.87-2.288-6.777-3.752 2.907-1.465 5.11-2.714 6.777-3.753.255 1.211.39 2.466.39 3.753m4.6-7.666V4.486a78.064 78.064 0 01-4.336 3.567c-1.551-2.367-3.533-4.038-6.14-5.207C11.1 4.658 12.504 6.7 13.564 9.262 5.35 15.155 0 16.177 0 16.177s5.35 1.021 13.564 6.915c-1.06 2.563-2.463 4.603-4.507 6.415 2.607-1.169 4.589-2.84 6.14-5.207a77.978 77.978 0 014.336 3.568v-4.025s-.492-.82-2.846-2.492c.6-1.611.93-3.354.93-5.174a14.8 14.8 0 00-.93-5.174c2.354-1.673 2.846-2.492 2.846-2.492\" fill=\"#00A298\"></path></svg>\n"
+"</a>\n"
+msgstr ""
+"<a href=\"https://applitools.com/\"> <svg width=\"170\" height=\"32\" viewBox=\"0 0 170 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><mask id=\"a\" maskUnits=\"userSpaceOnUse\" x=\"27\" y=\"0\" width=\"143\" height=\"32\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.732.227h141.391v31.19H27.733V.227z\" fill=\"#fff\"></path></mask><g mask=\"url(#a)\"><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M153.851 22.562l1.971-3.298c1.291 1.219 3.837 2.402 5.988 2.402 1.971 0 2.903-.753 2.903-1.829 0-2.832-10.253-.502-10.253-7.313 0-2.904 2.51-5.45 7.099-5.45 2.904 0 5.234 1.004 6.955 2.367l-1.829 3.226c-1.039-1.075-3.011-2.008-5.126-2.008-1.65 0-2.725.717-2.725 1.685 0 2.546 10.289.395 10.289 7.386 0 3.19-2.724 5.52-7.528 5.52-3.012 0-5.916-1.003-7.744-2.688zm-5.7 2.259h4.553V.908h-4.553v23.913zm-6.273-8.676c0-2.689-1.578-5.02-4.446-5.02-2.832 0-4.409 2.331-4.409 5.02 0 2.724 1.577 5.055 4.409 5.055 2.868 0 4.446-2.33 4.446-5.055zm-13.588 0c0-4.912 3.442-9.07 9.142-9.07 5.736 0 9.178 4.158 9.178 9.07 0 4.911-3.442 9.106-9.178 9.106-5.7 0-9.142-4.195-9.142-9.106zm-5.628 0c0-2.689-1.577-5.02-4.445-5.02-2.832 0-4.41 2.331-4.41 5.02 0 2.724 1.578 5.055 4.41 5.055 2.868 0 4.445-2.33 4.445-5.055zm-13.587 0c0-4.912 3.441-9.07 9.142-9.07 5.736 0 9.178 4.158 9.178 9.07 0 4.911-3.442 9.106-9.178 9.106-5.701 0-9.142-4.195-9.142-9.106zm-8.425 4.338v-8.999h-2.868v-3.98h2.868V2.773h4.553v4.733h3.514v3.979h-3.514v7.78c0 1.111.574 1.936 1.578 1.936.681 0 1.326-.251 1.577-.538l.968 3.478c-.681.609-1.9 1.11-3.8 1.11-3.191 0-4.876-1.648-4.876-4.767zm-8.962 4.338h4.553V7.505h-4.553V24.82zm-.43-21.905a2.685 2.685 0 012.688-2.69c1.506 0 2.725 1.184 2.725 2.69a2.724 2.724 0 01-2.725 2.724c-1.47 0-2.688-1.219-2.688-2.724zM84.482 24.82h4.553V.908h-4.553v23.913zm-6.165-8.676c0-2.976-1.793-5.02-4.41-5.02-1.47 0-3.119.825-3.908 1.973v6.094c.753 1.111 2.438 2.008 3.908 2.008 2.617 0 4.41-2.044 4.41-5.055zm-8.318 6.453v8.82h-4.553V7.504H70v2.187c1.327-1.685 3.227-2.618 5.342-2.618 4.446 0 7.672 3.299 7.672 9.07 0 5.773-3.226 9.107-7.672 9.107-2.043 0-3.907-.86-5.342-2.653zm-10.718-6.453c0-2.976-1.793-5.02-4.41-5.02-1.47 0-3.119.825-3.908 1.973v6.094c.753 1.111 2.438 2.008 3.908 2.008 2.617 0 4.41-2.044 4.41-5.055zm-8.318 6.453v8.82H46.41V7.504h4.553v2.187c1.327-1.685 3.227-2.618 5.342-2.618 4.446 0 7.672 3.299 7.672 9.07 0 5.773-3.226 9.107-7.672 9.107-2.043 0-3.908-.86-5.342-2.653zm-11.758-1.936V18.51c-.753-1.004-2.187-1.542-3.657-1.542-1.793 0-3.263.968-3.263 2.617 0 1.65 1.47 2.582 3.263 2.582 1.47 0 2.904-.502 3.657-1.506zm0 4.159v-1.829c-1.183 1.434-3.227 2.259-5.485 2.259-2.761 0-5.988-1.864-5.988-5.736 0-4.087 3.227-5.593 5.988-5.593 2.33 0 4.337.753 5.485 2.115V13.85c0-1.756-1.506-2.904-3.8-2.904-1.829 0-3.55.717-4.984 2.044L28.63 9.8c2.115-1.901 4.84-2.726 7.564-2.726 3.98 0 7.6 1.578 7.6 6.561v11.186h-4.588z\" fill=\"#00A298\"></path></g><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M14.934 16.177c0 1.287-.136 2.541-.391 3.752-1.666-1.039-3.87-2.288-6.777-3.752 2.907-1.465 5.11-2.714 6.777-3.753.255 1.211.39 2.466.39 3.753m4.6-7.666V4.486a78.064 78.064 0 01-4.336 3.567c-1.551-2.367-3.533-4.038-6.14-5.207C11.1 4.658 12.504 6.7 13.564 9.262 5.35 15.155 0 16.177 0 16.177s5.35 1.021 13.564 6.915c-1.06 2.563-2.463 4.603-4.507 6.415 2.607-1.169 4.589-2.84 6.14-5.207a77.978 77.978 0 014.336 3.568v-4.025s-.492-.82-2.846-2.492c.6-1.611.93-3.354.93-5.174a14.8 14.8 0 00-.93-5.174c2.354-1.673 2.846-2.492 2.846-2.492\" fill=\"#00A298\"></path></svg>\n"
+"</a>\n"
+
+#. type: Plain text
+#: README.md:98
+#, no-wrap
+msgid "<!-- </Main description> -->\n"
+msgstr "<!-- </説明本文> -->\n"
+
+#. type: Title ##
+#: README.md:99
+#, no-wrap
+msgid "Examples"
+msgstr "例"
+
+#. type: Plain text
+#: README.md:102
+#, no-wrap
+msgid "**The following are some examples of the diagrams, charts and graphs that can be made using Mermaid. Click here to jump into the [text syntax](https://mermaid.js.org/intro/syntax-reference.html).**\n"
+msgstr "**以降では、Mermaidを使って作れる図、チャート、グラフの例があります。[テキスト構文](https://mermaid.js.org/intro/syntax-reference.html)をクリックしてご確認ください。**\n"
+
+#. type: Plain text
+#: README.md:104
+#, no-wrap
+msgid "<!-- <Flowchart> -->\n"
+msgstr "<!-- <フローチャート> -->\n"
+
+#. type: Title ###
+#: README.md:105
+#, no-wrap
+msgid "Flowchart [<a href=\"https://mermaid.js.org/syntax/flowchart.html\">docs</a> - <a href=\"https://mermaid.live/edit#pako:eNpNkMtqwzAQRX9FzKqFJK7t1km8KDQP6KJQSLOLvZhIY1tgS0GWmgbb_165IaFaiXvOFTPqgGtBkEJR6zOv0Fj2scsU8-ft8I5G5Gw6fe339GN7tnrYaafE45WvRsLW3Ya4bKVWwzVe_xU-FfVsc9hR62rLwvw_2591z7Y3FuUwgYZMg1L4ObrRzMBW1FAGqb8KKtCLGWRq8Ko7CbS0FdJqA2mBdUsTQGf110VxSK1xdJM2EkuDzd2qNQrypQ7s5TQuXcrW-ie5VoUsx9yZ2seVtac2DYIRz0ppK3eccd0ErRTjD1XfyyRIomSBUUzJPMaXOBb8GC4XRfQcFmL-FEYIwzD8AggvcHE\">live editor</a>]"
+msgstr "フローチャート [<a href=\"https://mermaid.js.org/syntax/flowchart.html\">ドキュメント</a> - <a href=\"https://mermaid.live/edit#pako:eNpNkMtqwzAQRX9FzKqFJK7t1km8KDQP6KJQSLOLvZhIY1tgS0GWmgbb_165IaFaiXvOFTPqgGtBkEJR6zOv0Fj2scsU8-ft8I5G5Gw6fe339GN7tnrYaafE45WvRsLW3Ya4bKVWwzVe_xU-FfVsc9hR62rLwvw_2591z7Y3FuUwgYZMg1L4ObrRzMBW1FAGqb8KKtCLGWRq8Ko7CbS0FdJqA2mBdUsTQGf110VxSK1xdJM2EkuDzd2qNQrypQ7s5TQuXcrW-ie5VoUsx9yZ2seVtac2DYIRz0ppK3eccd0ErRTjD1XfyyRIomSBUUzJPMaXOBb8GC4XRfQcFmL-FEYIwzD8AggvcHE\">ライブエディタ</a>]"
+
+#. type: Fenced code block (mermaid)
+#: README.md:107 README.md:116
+#, no-wrap
+msgid ""
+"flowchart LR\n"
+"\n"
+"A[Hard] -->|Text| B(Round)\n"
+"B --> C{Decision}\n"
+"C -->|One| D[Result 1]\n"
+"C -->|Two| E[Result 2]\n"
+msgstr ""
+"flowchart LR\n"
+"\n"
+"A[Hard] -->|Text| B(Round)\n"
+"B --> C{Decision}\n"
+"C -->|One| D[Result 1]\n"
+"C -->|Two| E[Result 2]\n"
+
+#. type: Title ###
+#: README.md:125
+#, no-wrap
+msgid "Sequence diagram [<a href=\"https://mermaid.js.org/syntax/sequenceDiagram.html\">docs</a> - <a href=\"https://mermaid.live/edit#pako:eNo9kMluwjAQhl_F-AykQMuSA1WrbuLQQ3v1ZbAnsVXHkzrjVhHi3etQwKfRv4w-z0FqMihL2eF3wqDxyUEdoVHhwTuNk-12RzaU4g29JzHMY2HpV0BE0VO6V8ETtdkGz1Zb1F8qiPyG5LX84mrLAmpwoWNh-5a0pWCiAxUwGBXeiVHEU4oq8V_6AHYUwAu2lLLTjVQ4bc1rT2yleI0IfJG320faZ9ABbk-Jz3hZnFxBduR9L2oiM5Jj2WBswJn8-cMArSRbbFDJMo8GK0ielVThmKOpNcD4bBxTlGUFvsOxhMT02QctS44JL6HzAS-iJzCYOwfJfTscunYd542aQuXqQU_RZ9kyt11ZFIM9rR3btJ9qaorOGQuR7c9mWSznyzXMF7hcLeBusTB6P9usq_ntrDKrm9kc5PF4_AMJE56Z\">live editor</a>]"
+msgstr "シーケンス図 [<a href=\"https://mermaid.js.org/syntax/sequenceDiagram.html\">ドキュメント</a> - <a href=\"https://mermaid.live/edit#pako:eNo9kMluwjAQhl_F-AykQMuSA1WrbuLQQ3v1ZbAnsVXHkzrjVhHi3etQwKfRv4w-z0FqMihL2eF3wqDxyUEdoVHhwTuNk-12RzaU4g29JzHMY2HpV0BE0VO6V8ETtdkGz1Zb1F8qiPyG5LX84mrLAmpwoWNh-5a0pWCiAxUwGBXeiVHEU4oq8V_6AHYUwAu2lLLTjVQ4bc1rT2yleI0IfJG320faZ9ABbk-Jz3hZnFxBduR9L2oiM5Jj2WBswJn8-cMArSRbbFDJMo8GK0ielVThmKOpNcD4bBxTlGUFvsOxhMT02QctS44JL6HzAS-iJzCYOwfJfTscunYd542aQuXqQU_RZ9kyt11ZFIM9rR3btJ9qaorOGQuR7c9mWSznyzXMF7hcLeBusTB6P9usq_ntrDKrm9kc5PF4_AMJE56Z\">ライブエディタ</a>]"
+
+#. type: Fenced code block (mermaid)
+#: README.md:127 README.md:139
+#, no-wrap
+msgid ""
+"sequenceDiagram\n"
+"Alice->>John: Hello John, how are you?\n"
+"loop HealthCheck\n"
+"    John->>John: Fight against hypochondria\n"
+"end\n"
+"Note right of John: Rational thoughts!\n"
+"John-->>Alice: Great!\n"
+"John->>Bob: How about you?\n"
+"Bob-->>John: Jolly good!\n"
+msgstr ""
+"sequenceDiagram\n"
+"Alice->>John: Hello John, how are you?\n"
+"loop HealthCheck\n"
+"    John->>John: Fight against hypochondria\n"
+"end\n"
+"Note right of John: Rational thoughts!\n"
+"John-->>Alice: Great!\n"
+"John->>Bob: How about you?\n"
+"Bob-->>John: Jolly good!\n"
+
+#. type: Title ###
+#: README.md:151
+#, no-wrap
+msgid "Gantt chart [<a href=\"https://mermaid.js.org/syntax/gantt.html\">docs</a> - <a href=\"https://mermaid.live/edit#pako:eNp90cGOgyAQBuBXIZxtFbG29bbZ3fsmvXKZylhJEAyOTZrGd1_sto3xsHMBhu-HBO689hp5xS_giJQbsCbjHTv9jcp9-q63SKhZpb3DhMXSOIiE5ZkoNpnYZGXynh6U-4jBK7JnVfBYJo9QvgjtEya1cj8QwFq0TMz4lZqxTBg0hOF5m1jifI2Lf7Bc490CyxUu1rhc4GLGPOEdhg6Mjq92V44xxanFDhWv4lRjA6MlxZWbIh17DYTf2pAPvGrADphwGMmfbq7mFYURX-jLwCVA91bWg8YYunO69Y8vMgPFI2vvGnOZ-2Owsd0S9UOVpvP29mKoHc_b2nfpYHQLgdrrsUzLvDxALrHcS9hJqeuzOB6avBCN3mciBz5N0y_wxZ0J\">live editor</a>]"
+msgstr "ガントチャート [<a href=\"https://mermaid.js.org/syntax/gantt.html\">ドキュメント</a> - <a href=\"https://mermaid.live/edit#pako:eNp90cGOgyAQBuBXIZxtFbG29bbZ3fsmvXKZylhJEAyOTZrGd1_sto3xsHMBhu-HBO689hp5xS_giJQbsCbjHTv9jcp9-q63SKhZpb3DhMXSOIiE5ZkoNpnYZGXynh6U-4jBK7JnVfBYJo9QvgjtEya1cj8QwFq0TMz4lZqxTBg0hOF5m1jifI2Lf7Bc490CyxUu1rhc4GLGPOEdhg6Mjq92V44xxanFDhWv4lRjA6MlxZWbIh17DYTf2pAPvGrADphwGMmfbq7mFYURX-jLwCVA91bWg8YYunO69Y8vMgPFI2vvGnOZ-2Owsd0S9UOVpvP29mKoHc_b2nfpYHQLgdrrsUzLvDxALrHcS9hJqeuzOB6avBCN3mciBz5N0y_wxZ0J\">ライブエディタ</a>]"
+
+#. type: Fenced code block (mermaid)
+#: README.md:153 README.md:164
+#, no-wrap
+msgid ""
+"gantt\n"
+"    section Section\n"
+"    Completed :done,    des1, 2014-01-06,2014-01-08\n"
+"    Active        :active,  des2, 2014-01-07, 3d\n"
+"    Parallel 1   :         des3, after des1, 1d\n"
+"    Parallel 2   :         des4, after des1, 1d\n"
+"    Parallel 3   :         des5, after des3, 1d\n"
+"    Parallel 4   :         des6, after des4, 1d\n"
+msgstr ""
+"gantt\n"
+"    section Section\n"
+"    Completed :done,    des1, 2014-01-06,2014-01-08\n"
+"    Active        :active,  des2, 2014-01-07, 3d\n"
+"    Parallel 1   :         des3, after des1, 1d\n"
+"    Parallel 2   :         des4, after des1, 1d\n"
+"    Parallel 3   :         des5, after des3, 1d\n"
+"    Parallel 4   :         des6, after des4, 1d\n"
+
+#. type: Title ###
+#: README.md:175
+#, no-wrap
+msgid "Class diagram [<a href=\"https://mermaid.js.org/syntax/classDiagram.html\">docs</a> - <a href=\"https://mermaid.live/edit#pako:eNpdkTFPwzAQhf-K5QlQ2zQJJG1UBaGWDYmBgYEwXO1LYuTEwXYqlZL_jt02asXm--690zvfgTLFkWaUSTBmI6DS0BTt2lfzkKx-p1PytEO9f1FtdaQkI2ulZNGuVqK1qEtgmOfk7BitSzKdOhg59XuNGgk0RDxed-_IOr6uf8cZ6UhTZ8bvHqS5ub1mr9svZPbjk6DEBlu7AQuXyBkx4gcvDk9cUMJq0XT_YaW0kNK5j-ufAoRzcihaQvLcoN4Jv50vvVxw_xrnD3RCG9QNCO4-8OgpqK1dpoJm7smxhF7agp6kfcfB4jMXVmmalW4tnFDorXrbt4xmVvc4is53GKFUwNF5DtTuO3-sShjrJjLVlqLyvNfS4drazmRB4NuzSti6386YagIjeA3a1rtlEiRRsoAoxiSN4SGOOduGy0UZ3YclT-dhBHQYhj8dc6_I\">live editor</a>]"
+msgstr "クラス図 [<a href=\"https://mermaid.js.org/syntax/classDiagram.html\">ドキュメント</a> - <a href=\"https://mermaid.live/edit#pako:eNpdkTFPwzAQhf-K5QlQ2zQJJG1UBaGWDYmBgYEwXO1LYuTEwXYqlZL_jt02asXm--690zvfgTLFkWaUSTBmI6DS0BTt2lfzkKx-p1PytEO9f1FtdaQkI2ulZNGuVqK1qEtgmOfk7BitSzKdOhg59XuNGgk0RDxed-_IOr6uf8cZ6UhTZ8bvHqS5ub1mr9svZPbjk6DEBlu7AQuXyBkx4gcvDk9cUMJq0XT_YaW0kNK5j-ufAoRzcihaQvLcoN4Jv50vvVxw_xrnD3RCG9QNCO4-8OgpqK1dpoJm7smxhF7agp6kfcfB4jMXVmmalW4tnFDorXrbt4xmVvc4is53GKFUwNF5DtTuO3-sShjrJjLVlqLyvNfS4drazmRB4NuzSti6386YagIjeA3a1rtlEiRRsoAoxiSN4SGOOduGy0UZ3YclT-dhBHQYhj8dc6_I\">ライブエディタ</a>]"
+
+#. type: Fenced code block (mermaid)
+#: README.md:177 README.md:197
+#, no-wrap
+msgid ""
+"classDiagram\n"
+"Class01 <|-- AveryLongClass : Cool\n"
+"<<Interface>> Class01\n"
+"Class09 --> C2 : Where am I?\n"
+"Class09 --* C3\n"
+"Class09 --|> Class07\n"
+"Class07 : equals()\n"
+"Class07 : Object[] elementData\n"
+"Class01 : size()\n"
+"Class01 : int chimp\n"
+"Class01 : int gorilla\n"
+"class Class10 {\n"
+"  <<service>>\n"
+"  int id\n"
+"  size()\n"
+"}\n"
+"\n"
+msgstr ""
+"classDiagram\n"
+"Class01 <|-- AveryLongClass : Cool\n"
+"<<Interface>> Class01\n"
+"Class09 --> C2 : Where am I?\n"
+"Class09 --* C3\n"
+"Class09 --|> Class07\n"
+"Class07 : equals()\n"
+"Class07 : Object[] elementData\n"
+"Class01 : size()\n"
+"Class01 : int chimp\n"
+"Class01 : int gorilla\n"
+"class Class10 {\n"
+"  <<service>>\n"
+"  int id\n"
+"  size()\n"
+"}\n"
+"\n"
+
+#. type: Title ###
+#: README.md:217
+#, no-wrap
+msgid "State diagram [<a href=\"https://mermaid.js.org/syntax/stateDiagram.html\">docs</a> - <a href=\"https://mermaid.live/edit#pako:eNpdkEFvgzAMhf8K8nEqpYSNthx22Xbcqcexg0sCiZQQlDhIFeK_L8A6TfXp6fOz9ewJGssFVOAJSbwr7ByadGR1n8T6evpO0vQ1uZDSekOrXGFsPqJPO6q-2-imH8f_0TeHXm50lfelsAMjnEHFY6xpMdRAUhhRQxUlFy0GTTXU_RytYeAx-AdXZB1ULWovdoCB7OXWN1CRC-Ju-r3uz6UtchGHJqDbsPygU57iysb2reoWHpyOWBINvsqypb3vFMlw3TfWZF5xiY7keC6zkpUnZIUojwW-FAVvrvn51LLnvOXHQ84Q5nn-AVtLcwk\">live editor</a>]"
+msgstr "状態図 [<a href=\"https://mermaid.js.org/syntax/stateDiagram.html\">ドキュメント</a> - <a href=\"https://mermaid.live/edit#pako:eNpdkEFvgzAMhf8K8nEqpYSNthx22Xbcqcexg0sCiZQQlDhIFeK_L8A6TfXp6fOz9ewJGssFVOAJSbwr7ByadGR1n8T6evpO0vQ1uZDSekOrXGFsPqJPO6q-2-imH8f_0TeHXm50lfelsAMjnEHFY6xpMdRAUhhRQxUlFy0GTTXU_RytYeAx-AdXZB1ULWovdoCB7OXWN1CRC-Ju-r3uz6UtchGHJqDbsPygU57iysb2reoWHpyOWBINvsqypb3vFMlw3TfWZF5xiY7keC6zkpUnZIUojwW-FAVvrvn51LLnvOXHQ84Q5nn-AVtLcwk\">ライブエディタ</a>]"
+
+#. type: Fenced code block (mermaid)
+#: README.md:219 README.md:229
+#, no-wrap
+msgid ""
+"stateDiagram-v2\n"
+"[*] --> Still\n"
+"Still --> [*]\n"
+"Still --> Moving\n"
+"Moving --> Still\n"
+"Moving --> Crash\n"
+"Crash --> [*]\n"
+msgstr ""
+"stateDiagram-v2\n"
+"[*] --> Still\n"
+"Still --> [*]\n"
+"Still --> Moving\n"
+"Moving --> Still\n"
+"Moving --> Crash\n"
+"Crash --> [*]\n"
+
+#. type: Title ###
+#: README.md:239
+#, no-wrap
+msgid "Pie chart [<a href=\"https://mermaid.js.org/syntax/pie.html\">docs</a> - <a href=\"https://mermaid.live/edit#pako:eNo9jsFugzAMhl8F-VzBgEEh13Uv0F1zcYkTIpEEBadShXj3BU3dzf_n77e8wxQUgYDVkvQSbsFsEgpRtEN_5i_kvzx05XiC-xvUHVzAUXRoVe7v0heFBJ7JkQSRR0Ua08ISpD-ymlaFTN_KcoggNC4bXQATh5-Xn0BwTPSWbhZNRPdvLQEV5dIO_FrPZ43dOJ-cgtfWnDzFJeOZed1EVZ3r0lie06Ocgqs2q2aMPD_HvuqbfsCmpf7aYte2anrU46Cbz1qr60fdIBzH8QvW9lkl\">live editor</a>]"
+msgstr "円グラフ [<a href=\"https://mermaid.js.org/syntax/pie.html\">ドキュメント</a> - <a href=\"https://mermaid.live/edit#pako:eNo9jsFugzAMhl8F-VzBgEEh13Uv0F1zcYkTIpEEBadShXj3BU3dzf_n77e8wxQUgYDVkvQSbsFsEgpRtEN_5i_kvzx05XiC-xvUHVzAUXRoVe7v0heFBJ7JkQSRR0Ua08ISpD-ymlaFTN_KcoggNC4bXQATh5-Xn0BwTPSWbhZNRPdvLQEV5dIO_FrPZ43dOJ-cgtfWnDzFJeOZed1EVZ3r0lie06Ocgqs2q2aMPD_HvuqbfsCmpf7aYte2anrU46Cbz1qr60fdIBzH8QvW9lkl\">ライブエディタ</a>]"
+
+#. type: Fenced code block (mermaid)
+#: README.md:241 README.md:248
+#, no-wrap
+msgid ""
+"pie\n"
+"\"Dogs\" : 386\n"
+"\"Cats\" : 85.9\n"
+"\"Rats\" : 15\n"
+msgstr ""
+"pie\n"
+"\"Dogs\" : 386\n"
+"\"Cats\" : 85.9\n"
+"\"Rats\" : 15\n"
+
+#. type: Title ###
+#: README.md:255
+#, no-wrap
+msgid "Git graph [experimental - <a href=\"https://mermaid.live/edit#pako:eNqNkMFugzAMhl8F-VyVAR1tOW_aA-zKxSSGRCMJCk6lCvHuNZPKZdM0n-zf3_8r8QIqaIIGMqnB8kfEybQ--y4VnLP8-9RF9Mpkmm40hmlnDKmvkPiH_kfS7nFo_VN0FAf6XwocQGgxa_nGsm1bYEOOWmik1dRjGrmF1q-Cpkkj07u2HCI0PY4zHQATh8-7V9BwTPSE3iwOEd1OjQE1iWkBvk_bzQY7s0Sq4Hs7bHqKo8iGeZqbPN_WR7mpSd1RHpvPVhuMbG7XOq_L-oJlRfW5wteq0qorrpe-PBW9Pr8UJcK6rg-BLYPQ\">live editor</a>]"
+msgstr "Gitのグラフ [実験的な機能 - <a href=\"https://mermaid.live/edit#pako:eNqNkMFugzAMhl8F-VyVAR1tOW_aA-zKxSSGRCMJCk6lCvHuNZPKZdM0n-zf3_8r8QIqaIIGMqnB8kfEybQ--y4VnLP8-9RF9Mpkmm40hmlnDKmvkPiH_kfS7nFo_VN0FAf6XwocQGgxa_nGsm1bYEOOWmik1dRjGrmF1q-Cpkkj07u2HCI0PY4zHQATh8-7V9BwTPSE3iwOEd1OjQE1iWkBvk_bzQY7s0Sq4Hs7bHqKo8iGeZqbPN_WR7mpSd1RHpvPVhuMbG7XOq_L-oJlRfW5wteq0qorrpe-PBW9Pr8UJcK6rg-BLYPQ\">ライブエディタ</a>]"
+
+#. type: Title ###
+#: README.md:257
+#, no-wrap
+msgid "Bar chart (using gantt chart) [<a href=\"https://mermaid.js.org/syntax/gantt.html\">docs</a> - <a href=\"https://mermaid.live/edit#pako:eNptkU1vhCAQhv8KIenNugiI4rkf6bmXpvEyFVxJFDYyNt1u9r8X63Z7WQ9m5pknLzieaBeMpQ3dg0dsPUkPOhwteXZIXmJcbCT3xMAxkuh8Z8kIEclyMIB209fqKcwTICFvG4IvFy_oLrZ-g9F26ILfQgvNFN94VaRXQ1iWqpumZBcu1J8p1E1TXDx59eQNr5LyEqjJn6hv5QnGNlxevZJmdLLpy5xJSzut45biYCfb0iaVxvawjNjS1p-TCguG16PvaIPzYjO67e3BwX6GiTY9jPFKH43DMF_hGMDY1J4oHg-_f8hFTJFd8L3br3yZx4QHxENsdrt1nO8dDstH3oVpF50ZYMbhU6ud4qoGLqyqBJRCmO6j0HXPZdGbihUc6Pmc0QP49xD-b5X69ZQv2gjO81IwzWqhC1lKrjJ6pA3nVS7SMiVjrKirWlYp5fs3osgrWeo00lorLWvOzz8JVbXm\">live editor</a>]"
+msgstr "棒グラフ（ガントチャートを使用） [<a href=\"https://mermaid.js.org/syntax/gantt.html\">ドキュメント</a> - <a href=\"https://mermaid.live/edit#pako:eNptkU1vhCAQhv8KIenNugiI4rkf6bmXpvEyFVxJFDYyNt1u9r8X63Z7WQ9m5pknLzieaBeMpQ3dg0dsPUkPOhwteXZIXmJcbCT3xMAxkuh8Z8kIEclyMIB209fqKcwTICFvG4IvFy_oLrZ-g9F26ILfQgvNFN94VaRXQ1iWqpumZBcu1J8p1E1TXDx59eQNr5LyEqjJn6hv5QnGNlxevZJmdLLpy5xJSzut45biYCfb0iaVxvawjNjS1p-TCguG16PvaIPzYjO67e3BwX6GiTY9jPFKH43DMF_hGMDY1J4oHg-_f8hFTJFd8L3br3yZx4QHxENsdrt1nO8dDstH3oVpF50ZYMbhU6ud4qoGLqyqBJRCmO6j0HXPZdGbihUc6Pmc0QP49xD-b5X69ZQv2gjO81IwzWqhC1lKrjJ6pA3nVS7SMiVjrKirWlYp5fs3osgrWeo00lorLWvOzz8JVbXm\">ライブエディタ</a>]"
+
+#. type: Fenced code block (mermaid)
+#: README.md:259 README.md:277
+#, no-wrap
+msgid ""
+"gantt\n"
+"    title Git Issues - days since last update\n"
+"    dateFormat  X\n"
+"    axisFormat %s\n"
+"\n"
+"    section Issue19062\n"
+"    71   : 0, 71\n"
+"    section Issue19401\n"
+"    36   : 0, 36\n"
+"    section Issue193\n"
+"    34   : 0, 34\n"
+"    section Issue7441\n"
+"    9    : 0, 9\n"
+"    section Issue1300\n"
+"    5    : 0, 5\n"
+msgstr ""
+"gantt\n"
+"    title Git Issues - days since last update\n"
+"    dateFormat  X\n"
+"    axisFormat %s\n"
+"\n"
+"    section Issue19062\n"
+"    71   : 0, 71\n"
+"    section Issue19401\n"
+"    36   : 0, 36\n"
+"    section Issue193\n"
+"    34   : 0, 34\n"
+"    section Issue7441\n"
+"    9    : 0, 9\n"
+"    section Issue1300\n"
+"    5    : 0, 5\n"
+
+#. type: Title ###
+#: README.md:295
+#, no-wrap
+msgid "User Journey diagram [<a href=\"https://mermaid.js.org/syntax/userJourney.html\">docs</a> - <a href=\"https://mermaid.live/edit#pako:eNplkMFuwjAQRH9l5TMiTVIC-FqqnjhxzWWJN4khsSN7XRSh_HsdKBVt97R6Mzsj-yoqq0hIAXCywRkaSwNxWHNHsB_hYt1ZmwYUfiueKtbWwIcFtjf5zgH2eCZgQgkrCXt64GgMg2fUzkvIn5Xd_V5COtMFvCH_62ht_5yk7MU8sn61HDTfxD8VYiF6cj1qFd94nWkpuKWYKWRcFdUYOi5FaaZoDYNCpnel2Toha-w8LQQGtofRVEKyC_Qw7TQ2DvsfV2dRUTy6Ch6H-UMb7TlGVtbUupl5cF3ELfPgZZLM8rLR3IbjsrJ94rVq0XH7uS2SIis2mOVUrHNc5bmqjul2U2evaa3WL2mGYpqmL2BGiho\">live editor</a>]"
+msgstr "カスタマージャーニーマップ [<a href=\"https://mermaid.js.org/syntax/userJourney.html\">ドキュメント</a> - <a href=\"https://mermaid.live/edit#pako:eNplkMFuwjAQRH9l5TMiTVIC-FqqnjhxzWWJN4khsSN7XRSh_HsdKBVt97R6Mzsj-yoqq0hIAXCywRkaSwNxWHNHsB_hYt1ZmwYUfiueKtbWwIcFtjf5zgH2eCZgQgkrCXt64GgMg2fUzkvIn5Xd_V5COtMFvCH_62ht_5yk7MU8sn61HDTfxD8VYiF6cj1qFd94nWkpuKWYKWRcFdUYOi5FaaZoDYNCpnel2Toha-w8LQQGtofRVEKyC_Qw7TQ2DvsfV2dRUTy6Ch6H-UMb7TlGVtbUupl5cF3ELfPgZZLM8rLR3IbjsrJ94rVq0XH7uS2SIis2mOVUrHNc5bmqjul2U2evaa3WL2mGYpqmL2BGiho\">ライブエディタ</a>]"
+
+#. type: Fenced code block (mermaid)
+#: README.md:297 README.md:309
+#, no-wrap
+msgid ""
+"  journey\n"
+"    title My working day\n"
+"    section Go to work\n"
+"      Make tea: 5: Me\n"
+"      Go upstairs: 3: Me\n"
+"      Do work: 1: Me, Cat\n"
+"    section Go home\n"
+"      Go downstairs: 5: Me\n"
+"      Sit down: 3: Me\n"
+msgstr ""
+"  journey\n"
+"    title My working day\n"
+"    section Go to work\n"
+"      Make tea: 5: Me\n"
+"      Go upstairs: 3: Me\n"
+"      Do work: 1: Me, Cat\n"
+"    section Go home\n"
+"      Go downstairs: 5: Me\n"
+"      Sit down: 3: Me\n"
+
+#. type: Title ###
+#: README.md:321
+#, no-wrap
+msgid "C4 diagram [<a href=\"https://mermaid.js.org/syntax/c4.html\">docs</a>]"
+msgstr "C4モデル [<a href=\"https://mermaid.js.org/syntax/c4.html\">ドキュメント</a>]"
+
+#. type: Fenced code block (mermaid)
+#: README.md:323 README.md:358
+#, no-wrap
+msgid ""
+"C4Context\n"
+"title System Context diagram for Internet Banking System\n"
+"\n"
+"Person(customerA, \"Banking Customer A\", \"A customer of the bank, with personal bank accounts.\")\n"
+"Person(customerB, \"Banking Customer B\")\n"
+"Person_Ext(customerC, \"Banking Customer C\")\n"
+"System(SystemAA, \"Internet Banking System\", \"Allows customers to view information about their bank accounts, and make payments.\")\n"
+"\n"
+"Person(customerD, \"Banking Customer D\", \"A customer of the bank, <br/> with personal bank accounts.\")\n"
+"\n"
+"Enterprise_Boundary(b1, \"BankBoundary\") {\n"
+"\n"
+"  SystemDb_Ext(SystemE, \"Mainframe Banking System\", \"Stores all of the core banking information about customers, accounts, transactions, etc.\")\n"
+"\n"
+"  System_Boundary(b2, \"BankBoundary2\") {\n"
+"    System(SystemA, \"Banking System A\")\n"
+"    System(SystemB, \"Banking System B\", \"A system of the bank, with personal bank accounts.\")\n"
+"  }\n"
+"\n"
+"  System_Ext(SystemC, \"E-mail system\", \"The internal Microsoft Exchange e-mail system.\")\n"
+"  SystemDb(SystemD, \"Banking System D Database\", \"A system of the bank, with personal bank accounts.\")\n"
+"\n"
+"  Boundary(b3, \"BankBoundary3\", \"boundary\") {\n"
+"    SystemQueue(SystemF, \"Banking System F Queue\", \"A system of the bank, with personal bank accounts.\")\n"
+"    SystemQueue_Ext(SystemG, \"Banking System G Queue\", \"A system of the bank, with personal bank accounts.\")\n"
+"  }\n"
+"}\n"
+"\n"
+"BiRel(customerA, SystemAA, \"Uses\")\n"
+"BiRel(SystemAA, SystemE, \"Uses\")\n"
+"Rel(SystemAA, SystemC, \"Sends e-mails\", \"SMTP\")\n"
+"Rel(SystemC, customerA, \"Sends e-mails to\")\n"
+msgstr ""
+"C4Context\n"
+"title System Context diagram for Internet Banking System\n"
+"\n"
+"Person(customerA, \"Banking Customer A\", \"A customer of the bank, with personal bank accounts.\")\n"
+"Person(customerB, \"Banking Customer B\")\n"
+"Person_Ext(customerC, \"Banking Customer C\")\n"
+"System(SystemAA, \"Internet Banking System\", \"Allows customers to view information about their bank accounts, and make payments.\")\n"
+"\n"
+"Person(customerD, \"Banking Customer D\", \"A customer of the bank, <br/> with personal bank accounts.\")\n"
+"\n"
+"Enterprise_Boundary(b1, \"BankBoundary\") {\n"
+"\n"
+"  SystemDb_Ext(SystemE, \"Mainframe Banking System\", \"Stores all of the core banking information about customers, accounts, transactions, etc.\")\n"
+"\n"
+"  System_Boundary(b2, \"BankBoundary2\") {\n"
+"    System(SystemA, \"Banking System A\")\n"
+"    System(SystemB, \"Banking System B\", \"A system of the bank, with personal bank accounts.\")\n"
+"  }\n"
+"\n"
+"  System_Ext(SystemC, \"E-mail system\", \"The internal Microsoft Exchange e-mail system.\")\n"
+"  SystemDb(SystemD, \"Banking System D Database\", \"A system of the bank, with personal bank accounts.\")\n"
+"\n"
+"  Boundary(b3, \"BankBoundary3\", \"boundary\") {\n"
+"    SystemQueue(SystemF, \"Banking System F Queue\", \"A system of the bank, with personal bank accounts.\")\n"
+"    SystemQueue_Ext(SystemG, \"Banking System G Queue\", \"A system of the bank, with personal bank accounts.\")\n"
+"  }\n"
+"}\n"
+"\n"
+"BiRel(customerA, SystemAA, \"Uses\")\n"
+"BiRel(SystemAA, SystemE, \"Uses\")\n"
+"Rel(SystemAA, SystemC, \"Sends e-mails\", \"SMTP\")\n"
+"Rel(SystemC, customerA, \"Sends e-mails to\")\n"
+
+#. type: Title ##
+#: README.md:393
+#, no-wrap
+msgid "Release"
+msgstr "リリース"
+
+#. type: Plain text
+#: README.md:396
+msgid "For those who have the permission to do so:"
+msgstr "以下はパーミッションのある方向けです。"
+
+#. type: Plain text
+#: README.md:398
+msgid "Update version number in `package.json`."
+msgstr "`package.json`のバージョン番号を更新します。"
+
+#. type: Fenced code block (sh)
+#: README.md:399
+#, no-wrap
+msgid "npm publish\n"
+msgstr "npm publish\n"
+
+#. type: Plain text
+#: README.md:404
+msgid ""
+"The above command generates files into the `dist` folder and publishes them "
+"to <https://www.npmjs.com>."
+msgstr ""
+"上記のコマンドにより、`dist`フォルダにファイルを生成し、<https://www.npmjs."
+"com>へ公開します。"
+
+#. type: Title ##
+#: README.md:405
+#, no-wrap
+msgid "Related projects"
+msgstr "関連するプロジェクト"
+
+#. type: Bullet: '- '
+#: README.md:410
+msgid "[Command Line Interface](https://github.com/mermaid-js/mermaid-cli)"
+msgstr ""
+"[コマンドラインインターフェース](https://github.com/mermaid-js/mermaid-cli)"
+
+#. type: Bullet: '- '
+#: README.md:410
+msgid "[Live Editor](https://github.com/mermaid-js/mermaid-live-editor)"
+msgstr "[ライブエディタ](https://github.com/mermaid-js/mermaid-live-editor)"
+
+#. type: Bullet: '- '
+#: README.md:410
+msgid "[HTTP Server](https://github.com/TomWright/mermaid-server)"
+msgstr "[HTTPサーバー](https://github.com/TomWright/mermaid-server)"
+
+#. type: Title ##
+#: README.md:411
+#, no-wrap
+msgid "Contributors [![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)"
+msgstr "貢献者 [![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22) [![貢献者数](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![コミット数](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)"
+
+#. type: Plain text
+#: README.md:414
+msgid ""
+"Mermaid is a growing community and is always accepting new contributors. "
+"There's a lot of different ways to help out and we're always looking for "
+"extra hands! Look at [this issue](https://github.com/mermaid-js/mermaid/"
+"issues/866) if you want to know where to start helping out."
+msgstr ""
+"Mermaidには成長中のコミュニティがあり、いつでも新しいコントリビュータを受け入"
+"れています。 多種多様な方法で手助けしていただけますし、いつも猫の手も借りたい"
+"ほどです！ どこから手伝えばよいか知りたい方は、[こちらのイシュー](https://"
+"github.com/mermaid-js/mermaid/issues/866)をご覧ください。"
+
+#. type: Plain text
+#: README.md:416
+msgid ""
+"Detailed information about how to contribute can be found in the "
+"[contribution guide](https://mermaid.js.org/community/contributing.html)"
+msgstr ""
+"貢献方法についての詳しい情報は、[貢献の手引き](https://mermaid.js.org/"
+"community/contributing.html)にあります。"
+
+#. type: Title ##
+#: README.md:417
+#, no-wrap
+msgid "Security and safe diagrams"
+msgstr "セキュリティと安全な図"
+
+#. type: Plain text
+#: README.md:420
+msgid ""
+"For public sites, it can be precarious to retrieve text from users on the "
+"internet, storing that content for presentation in a browser at a later "
+"stage. The reason is that the user content can contain embedded malicious "
+"scripts that will run when the data is presented. For Mermaid this is a "
+"risk, specially as mermaid diagrams contain many characters that are used in "
+"html which makes the standard sanitation unusable as it also breaks the "
+"diagrams. We still make an effort to sanitize the incoming code and keep "
+"refining the process but it is hard to guarantee that there are no loop "
+"holes."
+msgstr ""
+"公開されているサイトについて、インターネット上のユーザーからテキストを受け取"
+"り、内容を保管して後の段階でブラウザで表示することは危険な場合があります。 そ"
+"の理由として、ユーザーの内容には悪意のあるスクリプトが埋め込まれていることが"
+"あり、データが表示されたときに実行される可能性があるからです。 Mermaidについ"
+"てもこの危険性があり、特にmermaidの図には、htmlで使われている文字が多く含まれ"
+"るからです。 これらの文字があることで標準的なサニタイズが使えないのですが、そ"
+"れはサニタイズにより図も壊れてしまうからです。 それでも入力のコードをサニタイ"
+"ズし、プロセスを改善し続けるよう努めてはいますが、全く抜け穴がないと保証する"
+"ことは困難です。"
+
+#. type: Plain text
+#: README.md:422
+msgid ""
+"As an extra level of security for sites with external users we are happy to "
+"introduce a new security level in which the diagram is rendered in a "
+"sandboxed iframe preventing javascript in the code from being executed. This "
+"is a great step forward for better security."
+msgstr ""
+"外部のユーザーが使うサイト向けに、追加のセキュリティ水準の朗報があります。 こ"
+"の新しく導入されたセキュリティ水準では、図はサンドボックスのiframeにレンダリ"
+"ングされ、コード中のjavascriptが実行されることを防ぎます。 より良いセキュリ"
+"ティに向けた、大きな一歩です。"
+
+#. type: Plain text
+#: README.md:424
+msgid ""
+"_Unfortunately you can not have a cake and eat it at the same time which in "
+"this case means that some of the interactive functionality gets blocked "
+"along with the possible malicious code._"
+msgstr ""
+"_残念ながら、二兎追う者は一兎も得ずと言うように、この場合は幾つかのインタラク"
+"ティブな機能が、悪意のある可能性のあるコード諸共、ブロックされてしまいます。_"
+
+#. type: Title ##
+#: README.md:425
+#, no-wrap
+msgid "Reporting vulnerabilities"
+msgstr "脆弱性の報告"
+
+#. type: Plain text
+#: README.md:428
+msgid ""
+"To report a vulnerability, please e-mail <security@mermaid.live> with a "
+"description of the issue, the steps you took to create the issue, affected "
+"versions, and if known, mitigations for the issue."
+msgstr ""
+"脆弱性の報告は、問題の説明、問題を発生させる工程、影響するバージョンを添えたE"
+"メールを<security@mermaid.live>へお寄せください。 もしわかるようでしたら、問"
+"題の緩和策もいただけますと幸いです。"
+
+#. type: Title ##
+#: README.md:429
+#, no-wrap
+msgid "Appreciation"
+msgstr "謝辞"
+
+#. type: Plain text
+#: README.md:432
+msgid "A quick note from Knut Sveidqvist:"
+msgstr "Knut Sveidqvistからひとこと。"
+
+#. type: Plain text
+#: README.md:440
+#, no-wrap
+msgid ""
+"> _Many thanks to the [d3](https://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!_\n"
+">\n"
+"> _Thanks also to the [js-sequence-diagram](https://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams. Thanks to Jessica Peter for inspiration and starting point for gantt rendering._\n"
+">\n"
+"> _Thank you to [Tyler Long](https://github.com/tylerlong) who has been a collaborator since April 2017._\n"
+">\n"
+"> _Thank you to the ever-growing list of [contributors](https://github.com/knsv/mermaid/graphs/contributors) that brought the project this far!_\n"
+msgstr ""
+"> _グラフィカルなレイアウトと描画のライブラリを提供してくれた[d3](https://d3js.org/)プロジェクトと[dagre-d3](https://github.com/cpettitt/dagre-d3)プロジェクトに感謝します。_\n"
+">\n"
+"> _シーケンス図の文法を使える機能を提供してくれた[js-sequence-diagram](https://bramp.github.io/js-sequence-diagrams)にも感謝します。\n"
+"> ガントチャートのレンダリングの着想と開始地点を教えていただいたJessica Peterにも感謝します。_\n"
+">\n"
+"> _2017年4月からコラボレーターになっていただいている[Tyler Long](https://github.com/tylerlong)に感謝します。_\n"
+">\n"
+"> _プロジェクトがここまでこれたのは、益々多くの方々に[貢献](https://github.com/knsv/mermaid/graphs/contributors)していただいたおかげです。\n"
+"> 貢献者の方々に感謝します。_\n"
+
+#. type: Plain text
+#: README.md:443
+msgid "_Mermaid was created by Knut Sveidqvist for easier documentation._"
+msgstr ""
+"_Mermaidは、ドキュメントをより簡単に書けるように、Knut Sveidqvistが作りまし"
+"た。_"
