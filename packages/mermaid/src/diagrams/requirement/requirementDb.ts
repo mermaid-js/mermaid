@@ -328,7 +328,7 @@ export class RequirementDB implements DiagramDB {
         thickness: 'normal',
         type: 'normal',
         pattern: isContains ? 'normal' : 'dashed',
-        arrowTypeStart: isContains ? 'requirement_contains' : 'requirement_arrow',
+        arrowhead: isContains ? 'requirement_contains' : 'requirement_arrow',
         look: config.look,
       };
 
