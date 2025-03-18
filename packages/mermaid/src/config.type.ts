@@ -799,6 +799,8 @@ export interface ErDiagramConfig extends BaseDiagramConfig {
    *
    */
   entityPadding?: number;
+  nodeSpacing?: number;
+  rankSpacing?: number;
   /**
    * Stroke color of box edges and lines.
    */
