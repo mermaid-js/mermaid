@@ -80,7 +80,7 @@ function drawActorLegend(diagram) {
         y: yPos + 7 + index * 20,
         fill: '#666',
         text: line,
-        textMargin: conf.boxTextMargin || 5,
+        textMargin: conf.boxTextMargin ?? 5,
       };
       svgDraw.drawText(diagram, labelData);
     });
