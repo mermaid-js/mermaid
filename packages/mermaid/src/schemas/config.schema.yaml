@@ -1497,8 +1497,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Maximum width of actor labels
         type: integer
         default: 360
-        minimum: 240
-        maximum: 480
       width:
         description: Width of actor boxes
         type: integer
