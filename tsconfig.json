@@ -11,7 +11,7 @@
     // "disableReferencedProjectLoad": true,             /* Reduce the number of projects loaded automatically by TypeScript. */
 
     /* Language and Environment */
-    "target": "ES6" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "target": "ES2018" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "lib": [
       "DOM",
       "ES2022"
@@ -103,5 +103,5 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "exclude": ["node_modules", "dist", "coverage"]
+  "exclude": ["**/node_modules/*", "**/dist/*", ".git", "coverage"]
 }
