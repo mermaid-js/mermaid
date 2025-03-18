@@ -16,7 +16,7 @@ hero:
     alt: Mermaid diagram
   actions:
     - theme: brand
-      text: Try editor
+      text: Try Playground
       link: https://www.mermaidchart.com/play
     - theme: alt
       text: Get started
