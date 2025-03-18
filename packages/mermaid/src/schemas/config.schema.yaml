@@ -1300,6 +1300,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: integer
         default: 15
         minimum: 0
+      nodeSpacing:
+        type: integer
+        default: 140
+        minimum: 0
+      rankSpacing:
+        type: integer
+        default: 80
+        minimum: 0
       stroke:
         description: Stroke color of box edges and lines.
         type: string
