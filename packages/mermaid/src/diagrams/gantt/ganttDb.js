@@ -33,7 +33,7 @@ let sections = [];
 let tasks = [];
 let currentSection = '';
 let displayMode = '';
-const tags = ['active', 'done', 'crit', 'milestone'];
+const tags = ['active', 'done', 'crit', 'milestone', 'vert'];
 let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
@@ -538,6 +538,7 @@ export const addTask = function (descr, data) {
   rawTask.done = taskInfo.done;
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
+  rawTask.vert = taskInfo.vert;
   rawTask.order = lastOrder;
 
   lastOrder++;
@@ -570,6 +571,7 @@ export const addTaskOrg = function (descr, data) {
   newTask.done = taskInfo.done;
   newTask.crit = taskInfo.crit;
   newTask.milestone = taskInfo.milestone;
+  newTask.vert = taskInfo.vert;
   lastTask = newTask;
   tasks.push(newTask);
 };
