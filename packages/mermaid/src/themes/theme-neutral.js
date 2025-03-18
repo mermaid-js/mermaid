@@ -105,6 +105,10 @@ class Theme {
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
 
+    /* ER diagram */
+    this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
+    this.rowEven = this.rowEven || '#f4f4f4';
+
     /* state colors */
     this.labelColor = 'black';
 

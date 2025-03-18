@@ -110,6 +110,16 @@ class Theme {
     this.personBorder = this.personBorder || this.primaryBorderColor;
     this.personBkg = this.personBkg || this.mainBkg;
 
+    /* ER diagram */
+
+    if (this.darkMode) {
+      this.rowOdd = this.rowOdd || darken(this.mainBkg, 5) || '#ffffff';
+      this.rowEven = this.rowEven || darken(this.mainBkg, 10);
+    } else {
+      this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
+      this.rowEven = this.rowEven || lighten(this.mainBkg, 5);
+    }
+
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
