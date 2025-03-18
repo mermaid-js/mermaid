@@ -263,5 +263,4 @@ Communication tools and platforms
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
 
-
 <!--- cspell:ignore Blazorade HueHive --->
