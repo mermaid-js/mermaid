@@ -18,7 +18,7 @@ let maxWidth = 0;
 /** @param diagram - The diagram to draw to. */
 function drawActorLegend(diagram) {
   const conf = getConfig().journey;
-  maxWidth = 0;
+  maxWidth = conf.maxLabelWidth; // Ensures we don't exceed this width
   let yPos = 60;
 
   Object.keys(actors).forEach((person) => {
@@ -33,67 +33,62 @@ function drawActorLegend(diagram) {
     };
     svgDraw.drawCircle(diagram, circleData);
 
-    // Create temporary text element to measure width
-    const tempText = diagram.append('text').attr('visibility', 'hidden').text(person);
-    const textWidth = tempText.node().getBBox().width;
-    tempText.remove();
-    const journeyConfigObject = getConfig().journey;
-    const maxLineLength = journeyConfigObject.maxLabelWidth;
-    let lines = [];
+    const words = person.split(' '); // Split text into words
+    const lines = [];
+    let currentLine = '';
 
-    if (textWidth > maxLineLength) {
-      // Break the text into chunks regardless of word boundaries
-      let currentText = '';
-      const measureText = diagram.append('text').attr('visibility', 'hidden');
+    const measureText = diagram.append('text').attr('visibility', 'hidden');
 
-      for (const element of person) {
-        currentText += element;
-        measureText.text(currentText);
-        const currentWidth = measureText.node().getBBox().width;
+    words.forEach((word, _index) => {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      measureText.text(testLine);
+      const textWidth = measureText.node().getBBox().width;
 
-        if (currentWidth > maxLineLength && currentText.length > 1) {
-          let lineToPush = currentText.slice(0, -1);
-
-          // If the line ends with a space, trim it and do not add a hyphen.
-          if (lineToPush.endsWith(' ')) {
-            lineToPush = lineToPush.trimEnd();
-          } else {
-            lineToPush = lineToPush + '-';
-          }
-          lines.push(lineToPush);
-
-          // If the breaking character is a space, start fresh; otherwise, start with the character.
-          currentText = element === ' ' ? '' : element;
+      if (textWidth > maxWidth) {
+        if (currentLine) {
+          lines.push(currentLine); // Push previous line before adding a new word
         }
-      }
-      if (currentText) {
-        lines.push(currentText);
-      }
-      measureText.remove();
-    } else {
-      lines = [person];
-    }
+        currentLine = word;
 
-    // Draw the text lines
+        // If a single word is too long, break it
+        if (measureText.node().getBBox().width > maxWidth) {
+          let brokenWord = '';
+          for (const char of word) {
+            brokenWord += char;
+            measureText.text(brokenWord + '-');
+            if (measureText.node().getBBox().width > maxWidth) {
+              lines.push(brokenWord.slice(0, -1) + '-'); // Break word with a hyphen
+              brokenWord = char;
+            }
+          }
+          currentLine = brokenWord;
+        }
+      } else {
+        currentLine = testLine;
+      }
+    });
+
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+    measureText.remove();
+
+    // Draw the text lines within the fixed width
     lines.forEach((line, index) => {
       const labelData = {
         x: 40,
         y: yPos + 7 + index * 20,
         fill: '#666',
         text: line,
-        textMargin: conf.boxTextMargin | 5,
+        textMargin: conf.boxTextMargin || 5,
       };
-      const textElement = svgDraw.drawText(diagram, labelData);
-      const lineWidth = textElement.node().getBBox().width;
-
-      if (lineWidth > maxWidth && lineWidth > conf?.leftMargin - lineWidth) {
-        maxWidth = lineWidth;
-      }
+      svgDraw.drawText(diagram, labelData);
     });
 
     yPos += Math.max(20, lines.length * 20);
   });
 }
+
 // TODO: Cleanup?
 const conf = getConfig().journey;
 let leftMargin = 0;
