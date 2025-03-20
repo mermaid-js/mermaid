@@ -56,7 +56,7 @@ Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to
 
 Where:
 
-- `first-entity` is the name of an entity. Names must begin with an alphabetic character or an underscore (from v10.5.0+), and may also contain digits and hyphens.
+- `first-entity` is the name of an entity. Names support any unicode characters and can include spaces if surrounded by double quotes (e.g. "name with space").
 - `relationship` describes the way that both entities inter-relate. See below.
 - `second-entity` is the name of the other entity.
 - `relationship-label` describes the relationship from the perspective of the first entity.
@@ -70,6 +70,24 @@ For example:
 This statement can be read as _a property contains one or more rooms, and a room is part of one and only one property_. You can see that the label here is from the first entity's perspective: a property contains a room, but a room does not contain a property. When considered from the perspective of the second entity, the equivalent label is usually very easy to infer. (Some ER diagrams label relationships from both perspectives, but this is not supported here, and is usually superfluous).
 
 Only the `first-entity` part of a statement is mandatory. This makes it possible to show an entity with no relationships, which can be useful during iterative construction of diagrams. If any other parts of a statement are specified, then all parts are mandatory.
+
+#### Unicode text
+
+Entity names, relationships, and attributes all support unicode text.
+
+```mermaid-example
+erDiagram
+    "This ❤ Unicode"
+```
+
+#### Markdown formatting
+
+Markdown formatting and text is also supported.
+
+```mermaid-example
+erDiagram
+    "This **is** _Markdown_"
+```
 
 ### Relationship Syntax
 
@@ -109,6 +127,11 @@ Cardinality is a property that describes how many elements of another entity can
 
 Relationships may be classified as either _identifying_ or _non-identifying_ and these are rendered with either solid or dashed lines respectively. This is relevant when one of the entities in question can not have independent existence without the other. For example a firm that insures people to drive cars might need to store data on `NAMED-DRIVER`s. In modelling this we might start out by observing that a `CAR` can be driven by many `PERSON` instances, and a `PERSON` can drive many `CAR`s - both entities can exist without the other, so this is a non-identifying relationship that we might specify in Mermaid as: `PERSON }|..|{ CAR : "driver"`. Note the two dots in the middle of the relationship that will result in a dashed line being drawn between the two entities. But when this many-to-many relationship is resolved into two one-to-many relationships, we observe that a `NAMED-DRIVER` cannot exist without both a `PERSON` and a `CAR` - the relationships become identifying and would be specified using hyphens, which translate to a solid line:
 
+| Value |     Alias for     |
+| :---: | :---------------: |
+|  --   |   _identifying_   |
+|  ..   | _non-identifying_ |
+
 **Aliases**
 
 |     Value     |     Alias for     |
@@ -116,10 +139,16 @@ Relationships may be classified as either _identifying_ or _non-identifying_ and
 |      to       |   _identifying_   |
 | optionally to | _non-identifying_ |
 
-```mermaid
+```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
-    PERSON ||--o{ NAMED-DRIVER : is
+    PERSON }o..o{ NAMED-DRIVER : is
+```
+
+```mermaid-example
+erDiagram
+    CAR 1 to zero or more NAMED-DRIVER : allows
+    PERSON many(0) optionally to 0+ NAMED-DRIVER : is
 ```
 
 ### Attributes
@@ -144,9 +173,9 @@ erDiagram
 
 The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
-### Entity Name Aliases (v10.5.0+)
+### Entity Name Aliases
 
-An alias can be added to an entity using square brackets. If provided, the alias will be showed in the diagram instead of the entity name.
+An alias can be added to an entity using square brackets. If provided, the alias will be showed in the diagram instead of the entity name. Alias names follow all of the same rules as entity names.
 
 ```mermaid-example
 erDiagram
@@ -162,7 +191,7 @@ erDiagram
 
 #### Attribute Keys and Comments
 
-Attributes may also have a `key` or comment defined. Keys can be `PK`, `FK` or `UK`, for Primary Key, Foreign Key or Unique Key. To specify multiple key constraints on a single attribute, separate them with a comma (e.g., `PK, FK`). A `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
+Attributes may also have a `key` or comment defined. Keys can be `PK`, `FK` or `UK`, for Primary Key, Foreign Key or Unique Key (markdown formatting and unicode is not supported for keys). To specify multiple key constraints on a single attribute, separate them with a comma (e.g., `PK, FK`). A `comment` is defined by double quotes at the end of an attribute. Comments themselves cannot have double-quote characters in them.
 
 ```mermaid-example
 erDiagram
@@ -188,35 +217,211 @@ erDiagram
     MANUFACTURER only one to zero or more CAR : makes
 ```
 
-### Other Things
+### Direction
 
-- If you want the relationship label to be more than one word, you must use double quotes around the phrase
-- If you don't want a label at all on a relationship, you must use an empty double-quoted string
-- (v11.1.0+) If you want a multi-line label on a relationship, use `<br />` between the two lines (`"first line<br />second line"`)
+The direction statement declares the direction of the diagram.
 
-## Styling
+This declares that the diagram is oriented from top to bottom (`TB`). This can be reversed to be oriented from bottom to top (`BT`).
 
-### Config options
+```mermaid-example
+erDiagram
+    direction TB
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER ||--|{ LINE-ITEM : contains
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    LINE-ITEM {
+        string productCode
+        int quantity
+        float pricePerUnit
+    }
+```
 
-For simple color customization:
+This declares that the diagram is oriented from left to right (`LR`). This can be reversed to be oriented from right to left (`RL`).
 
-| Name     | Used as                                                              |
-| :------- | :------------------------------------------------------------------- |
-| `fill`   | Background color of an entity or attribute                           |
-| `stroke` | Border color of an entity or attribute, line color of a relationship |
+```mermaid-example
+erDiagram
+    direction LR
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER ||--|{ LINE-ITEM : contains
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    LINE-ITEM {
+        string productCode
+        int quantity
+        float pricePerUnit
+    }
+```
 
-### Classes used
+Possible diagram orientations are:
 
-The following CSS class selectors are available for richer styling:
+- TB - Top to bottom
+- BT - Bottom to top
+- RL - Right to left
+- LR - Left to right
 
-| Selector                   | Description                                           |
-| :------------------------- | :---------------------------------------------------- |
-| `.er.attributeBoxEven`     | The box containing attributes on even-numbered rows   |
-| `.er.attributeBoxOdd`      | The box containing attributes on odd-numbered rows    |
-| `.er.entityBox`            | The box representing an entity                        |
-| `.er.entityLabel`          | The label for an entity                               |
-| `.er.relationshipLabel`    | The label for a relationship                          |
-| `.er.relationshipLabelBox` | The box surrounding a relationship label              |
-| `.er.relationshipLine`     | The line representing a relationship between entities |
+### Styling a node
+
+It is possible to apply specific styles such as a thicker border or a different background color to a node.
+
+```mermaid-example
+erDiagram
+    id1||--||id2 : label
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
+
+It is also possible to attach styles to a list of nodes in one statement:
+
+```
+    style nodeId1,nodeId2 styleList
+```
+
+#### Classes
+
+More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
+should have a different look.
+
+A class definition looks like the example below:
+
+```
+    classDef className fill:#f9f,stroke:#333,stroke-width:4px
+```
+
+It is also possible to define multiple classes in one statement:
+
+```
+    classDef firstClassName,secondClassName font-size:12pt
+```
+
+Attachment of a class to a node is done as per below:
+
+```
+    class nodeId1 className
+```
+
+It is also possible to attach a class to a list of nodes in one statement:
+
+```
+    class nodeId1,nodeId2 className
+```
+
+Multiple classes can be attached at the same time as well:
+
+```
+    class nodeId1,nodeId2 className1,className2
+```
+
+A shorter form of adding a class is to attach the classname to the node using the `:::`operator as per below:
+
+```mermaid-example
+erDiagram
+    direction TB
+    CAR:::someclass {
+        string registrationNumber
+        string make
+        string model
+    }
+    PERSON:::someclass {
+        string firstName
+        string lastName
+        int age
+    }
+    HOUSE:::someclass
+
+    classDef someclass fill:#f96
+```
+
+This form can be used when declaring relationships between entities:
+
+```mermaid-example
+erDiagram
+    CAR {
+        string registrationNumber
+        string make
+        string model
+    }
+    PERSON {
+        string firstName
+        string lastName
+        int age
+    }
+    PERSON:::foo ||--|| CAR : owns
+    PERSON o{--|| HOUSE:::bar : has
+
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef foobar stroke:#00f
+```
+
+Similar to the class statement, the shorthand syntax can also apply multiple classes at once:
+
+```
+    nodeId:::className1,className2
+```
+
+### Default class
+
+If a class is named default it will be assigned to all classes without specific class definitions.
+
+```
+    classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+> **Note:** Custom styles from style or other class statements take priority and will overwrite the default styles. (e.g. The `default` class gives nodes a background color of pink but the `blue` class will give that node a background color of blue if applied.)
+
+```mermaid-example
+erDiagram
+    CAR {
+        string registrationNumber
+        string make
+        string model
+    }
+    PERSON {
+        string firstName
+        string lastName
+        int age
+    }
+    PERSON:::foo ||--|| CAR : owns
+    PERSON o{--|| HOUSE:::bar : has
+
+    classDef default fill:#f9f,stroke-width:4px
+    classDef foo stroke:#f00
+    classDef bar stroke:#0f0
+    classDef foobar stroke:#00f
+```
+
+## Configuration
+
+### Renderer
+
+The layout of the diagram is done with the renderer. The default renderer is dagre.
+
+You can opt to use an alternate renderer named elk by editing the configuration. The elk renderer is better for larger and/or more complex diagrams.
+
+```
+---
+    config:
+        layout: elk
+---
+```
+
+```note
+Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+```
 
 <!--- cspell:locale en,en-gb --->
