@@ -1,5 +1,49 @@
 # mermaid
 
+## 11.5.0
+
+### Minor Changes
+
+- [#6187](https://github.com/mermaid-js/mermaid/pull/6187) [`7809b5a`](https://github.com/mermaid-js/mermaid/commit/7809b5a93fae127f45727071f5ff14325222c518) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - Flowchart new syntax for node metadata bugs
+
+  - Incorrect label mapping for nodes when using `&`
+  - Syntax error when `}` with trailing spaces before new line
+
+- [#6136](https://github.com/mermaid-js/mermaid/pull/6136) [`ec0d9c3`](https://github.com/mermaid-js/mermaid/commit/ec0d9c389aa6018043187654044c1e0b5aa4f600) Thanks [@knsv](https://github.com/knsv)! - Adding support for animation of flowchart edges
+
+- [#6373](https://github.com/mermaid-js/mermaid/pull/6373) [`05bdf0e`](https://github.com/mermaid-js/mermaid/commit/05bdf0e20e2629fe77513218fbd4e28e65f75882) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - Upgrade Requirement and ER diagram to use the common renderer flow
+
+  - Added support for directions
+  - Added support for hand drawn look
+
+- [#6371](https://github.com/mermaid-js/mermaid/pull/6371) [`4d25cab`](https://github.com/mermaid-js/mermaid/commit/4d25caba8e65df078966a283e7e0ae1200bef595) Thanks [@knsv](https://github.com/knsv)! - The arrowhead color should match the color of the edge. Creates a unique clone of the arrow marker with the appropriate color.
+
+### Patch Changes
+
+- [#6064](https://github.com/mermaid-js/mermaid/pull/6064) [`2a91849`](https://github.com/mermaid-js/mermaid/commit/2a91849a38641e97ed6b20cb60aa4506d1b63177) Thanks [@NicolasNewman](https://github.com/NicolasNewman)! - fix: architecture diagrams no longer grow to extreme heights due to conflicting alignments
+
+- [#6198](https://github.com/mermaid-js/mermaid/pull/6198) [`963efa6`](https://github.com/mermaid-js/mermaid/commit/963efa64c794466dcd0f06bad6de6ba554d05a54) Thanks [@ferozmht](https://github.com/ferozmht)! - Fixes for consistent edge id creation & handling edge cases for animate edge feature
+
+- [#6196](https://github.com/mermaid-js/mermaid/pull/6196) [`127bac1`](https://github.com/mermaid-js/mermaid/commit/127bac1147034d8a8588cc8f7870abe92ebc945e) Thanks [@knsv](https://github.com/knsv)! - Fix for issue #6195 - allowing @ signs inside node labels
+
+- [#6212](https://github.com/mermaid-js/mermaid/pull/6212) [`90bbf90`](https://github.com/mermaid-js/mermaid/commit/90bbf90a83bf5da53fc8030cf1370bc8238fa4aa) Thanks [@saurabhg772244](https://github.com/saurabhg772244)! - fix: `mermaidAPI.getDiagramFromText()` now returns a new different db for each class diagram
+
+- [#6218](https://github.com/mermaid-js/mermaid/pull/6218) [`232e60c`](https://github.com/mermaid-js/mermaid/commit/232e60c8cbaea804e6d98aa90f90d1ce76730e17) Thanks [@saurabhg772244](https://github.com/saurabhg772244)! - fix: revert state db to resolve getData returning empty nodes and edges
+
+- [#6250](https://github.com/mermaid-js/mermaid/pull/6250) [`9cad3c7`](https://github.com/mermaid-js/mermaid/commit/9cad3c7aea3bbbc61495b23225ccff76d312783f) Thanks [@saurabhg772244](https://github.com/saurabhg772244)! - `mermaidAPI.getDiagramFromText()` now returns a new db instance on each call for state diagrams
+
+- [#6293](https://github.com/mermaid-js/mermaid/pull/6293) [`cfd84e5`](https://github.com/mermaid-js/mermaid/commit/cfd84e54d502f4d36a35b50478121558cfbef2c4) Thanks [@saurabhg772244](https://github.com/saurabhg772244)! - Added versioning to StateDB and updated tests and diagrams to use it.
+
+- [#6161](https://github.com/mermaid-js/mermaid/pull/6161) [`6cc31b7`](https://github.com/mermaid-js/mermaid/commit/6cc31b74530baa6d0f527346ab1395b0896bb3c2) Thanks [@saurabhg772244](https://github.com/saurabhg772244)! - fix: `mermaidAPI.getDiagramFromText()` now returns a new different db for each flowchart
+
+- [#6272](https://github.com/mermaid-js/mermaid/pull/6272) [`ffa7804`](https://github.com/mermaid-js/mermaid/commit/ffa7804af0701b3d044d6794e36bd9132d6c7e8d) Thanks [@saurabhg772244](https://github.com/saurabhg772244)! - fix: `mermaidAPI.getDiagramFromText()` now returns a new different db for each sequence diagram. Added unique IDs for messages.
+
+- [#6205](https://github.com/mermaid-js/mermaid/pull/6205) [`32a68d4`](https://github.com/mermaid-js/mermaid/commit/32a68d489ed83a5b79f516d6b2fb3a7505c5eb24) Thanks [@saurabhg772244](https://github.com/saurabhg772244)! - fix: Gantt, Sankey and User Journey diagram are now able to pick font-family from mermaid config.
+
+- [#6295](https://github.com/mermaid-js/mermaid/pull/6295) [`da6361f`](https://github.com/mermaid-js/mermaid/commit/da6361f6527918b4b6a9c07cc9558cf2e2c709d2) Thanks [@omkarht](https://github.com/omkarht)! - fix: `getDirection` and `setDirection` in `stateDb` refactored to return and set actual direction
+
+- [#6185](https://github.com/mermaid-js/mermaid/pull/6185) [`3e32332`](https://github.com/mermaid-js/mermaid/commit/3e32332814c659e7ed1bb73d4a26ed4e61b77d59) Thanks [@saurabhg772244](https://github.com/saurabhg772244)! - `mermaidAPI.getDiagramFromText()` now returns a new different db for each state diagram
+
 ## 11.4.1
 
 ### Patch Changes
