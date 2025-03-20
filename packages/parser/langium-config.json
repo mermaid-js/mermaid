@@ -2,6 +2,11 @@
   "projectName": "Mermaid",
   "languages": [
     {
+      "id": "eventModel",
+      "grammar": "src/language/eventModel/eventModel.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
       "id": "info",
       "grammar": "src/language/info/info.langium",
       "fileExtensions": [".mmd", ".mermaid"]
