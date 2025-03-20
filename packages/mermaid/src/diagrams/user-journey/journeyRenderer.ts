@@ -22,10 +22,6 @@ function drawActorLegend(diagram) {
   maxWidth = 0;
   let yPos = 60;
 
-  if (isNaN(maxLabelWidth)) {
-    throw new Error('maxLabelWidth must be a number');
-  }
-
   Object.keys(actors).forEach((person) => {
     const colour = actors[person].color;
     const circleData = {
