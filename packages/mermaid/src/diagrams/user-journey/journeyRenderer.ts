@@ -18,7 +18,8 @@ let maxWidth = 0;
 /** @param diagram - The diagram to draw to. */
 function drawActorLegend(diagram) {
   const conf = getConfig().journey;
-  maxWidth = conf.maxLabelWidth; // Ensures we don't exceed this width
+  const maxLabelWidth = conf.maxLabelWidth;
+  maxWidth = 0;
   let yPos = 60;
 
   Object.keys(actors).forEach((person) => {
@@ -33,47 +34,63 @@ function drawActorLegend(diagram) {
     };
     svgDraw.drawCircle(diagram, circleData);
 
-    const words = person.split(' '); // Split text into words
-    const lines = [];
-    let currentLine = '';
-
-    const measureText = diagram.append('text').attr('visibility', 'hidden');
-
-    words.forEach((word, _index) => {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      measureText.text(testLine);
-      const textWidth = measureText.node().getBBox().width;
-
-      if (textWidth > maxWidth) {
-        if (currentLine) {
-          lines.push(currentLine); // Push previous line before adding a new word
-        }
-        currentLine = word;
-
-        // If a single word is too long, break it
-        if (measureText.node().getBBox().width > maxWidth) {
-          let brokenWord = '';
-          for (const char of word) {
-            brokenWord += char;
-            measureText.text(brokenWord + '-');
-            if (measureText.node().getBBox().width > maxWidth) {
-              lines.push(brokenWord.slice(0, -1) + '-'); // Break word with a hyphen
-              brokenWord = char;
-            }
-          }
-          currentLine = brokenWord;
-        }
-      } else {
-        currentLine = testLine;
-      }
-    });
-
-    if (currentLine) {
-      lines.push(currentLine);
-    }
+    // First, measure the full text width without wrapping.
+    let measureText = diagram.append('text').attr('visibility', 'hidden').text(person);
+    const fullTextWidth = measureText.node().getBBox().width;
     measureText.remove();
 
-    // Draw the text lines within the fixed width
+    let lines = [];
+
+    // If the text is naturally within the max width, use it as a single line.
+    if (fullTextWidth <= maxLabelWidth) {
+      lines = [person];
+    } else {
+      // Otherwise, wrap the text using the knuth-plass algorithm.
+      const words = person.split(' '); // Split the text into words.
+      let currentLine = '';
+      measureText = diagram.append('text').attr('visibility', 'hidden');
+
+      words.forEach((word) => {
+        // check the width of the line with the new word.
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        measureText.text(testLine);
+        const textWidth = measureText.node().getBBox().width;
+
+        if (textWidth > maxLabelWidth) {
+          // If adding the new word exceeds max width, push the current line.
+          if (currentLine) {
+            lines.push(currentLine);
+          }
+          currentLine = word; // Start a new line with the current word.
+
+          // If the word itself is too long, break it with a hyphen.
+          measureText.text(word);
+          if (measureText.node().getBBox().width > maxLabelWidth) {
+            let brokenWord = '';
+            for (const char of word) {
+              brokenWord += char;
+              measureText.text(brokenWord + '-');
+              if (measureText.node().getBBox().width > maxLabelWidth) {
+                // Push the broken part with a hyphen.
+                lines.push(brokenWord.slice(0, -1) + '-');
+                brokenWord = char;
+              }
+            }
+            currentLine = brokenWord;
+          }
+        } else {
+          // If the line with the new word fits, add the new word to the current line.
+          currentLine = testLine;
+        }
+      });
+
+      // Push the last line.
+      if (currentLine) {
+        lines.push(currentLine);
+      }
+      measureText.remove(); // Remove the text element used for measuring.
+    }
+
     lines.forEach((line, index) => {
       const labelData = {
         x: 40,
@@ -82,7 +99,16 @@ function drawActorLegend(diagram) {
         text: line,
         textMargin: conf.boxTextMargin ?? 5,
       };
-      svgDraw.drawText(diagram, labelData);
+
+      // Draw the text and measure the width.
+      const textElement = svgDraw.drawText(diagram, labelData);
+      const lineWidth = textElement.node().getBBox().width;
+
+      // Use conf.leftMargin as the initial spacing baseline,
+      // but expand maxWidth if the line is wider.
+      if (lineWidth > maxWidth && lineWidth > conf.leftMargin - lineWidth) {
+        maxWidth = lineWidth;
+      }
     });
 
     yPos += Math.max(20, lines.length * 20);

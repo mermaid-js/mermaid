@@ -136,7 +136,7 @@ section Checkout from website
       journey
         title Whitespace Test
         section Test
-          TextWithSpaces: 5: Gustavo Fring is played by Giancarlo Esposito.
+          TextWithSpaces: 5: Gustavo Fring is played by Giancarlo Esposito and is a character in Breaking Bad.
       `,
       { journey: { useMaxWidth: true } }
     );
@@ -159,7 +159,9 @@ section Checkout from website
       journey
         title User Journey Example
         section Onboarding
-            Sign Up: 5: Sam Sam Sam Sam Sam Sam Sam Sam Sam Sam Sam Sam ...
+            Sign Up: 5: This is a long label that will be split into multiple lines to test the wrapping functionality
+            Browse Features: 3: This is another long label that will be split into multiple lines to test the wrapping functionality
+            Use Core Functionality: 4: This is yet another long label that will be split into multiple lines to test the wrapping functionality
         section Engagement
             Browse Features: 3
             Use Core Functionality: 4
@@ -177,10 +179,10 @@ section Checkout from website
       .then(() => {
         // Get all legend lines that include "Sam"
         cy.get('text.legend')
-          .filter((i, el) => el.textContent.includes('Sam'))
+          .filter((i, el) => el.textContent.includes('long'))
           .then(($lines) => {
             // Check that there are two lines
-            expect($lines.length).to.be.equal(2);
+            expect($lines.length).to.be.equal(9);
 
             // Check that for all but the last line it nearly fills the max width
             $lines.each((index, el) => {
