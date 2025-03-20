@@ -173,6 +173,10 @@ class Theme {
     this.archEdgeColor = this.lineColor;
     this.archEdgeArrowColor = this.lineColor;
 
+    /* ER diagram */
+    this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
+    this.rowEven = this.rowEven || lighten(this.mainBkg, 20);
+
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;

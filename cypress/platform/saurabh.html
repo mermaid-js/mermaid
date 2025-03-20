@@ -4,7 +4,7 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/font-awesome.min.css"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
@@ -62,56 +62,23 @@
 
   <body style="display: flex; gap: 2rem; flex-direction: row">
     <pre id="diagram4" class="mermaid">
-      flowchart LR
-      A@{ icon: "fa:window-minimize", form: circle }
-      E@{ icon: "fa:window-minimize", form: circle }
-      B@{ icon: "fa:bell", form: circle }
-      B2@{ icon: "fa:bell", form: circle }
-      C@{ icon: "fa:address-book",  form: square  }
-      D@{ icon: "fa:star-half",  form: square  }
-      A --> E
-      B --> B2
-
+      flowchart
+          A --> A
+          subgraph B
+            B1 --> B1
+          end
+          subgraph C
+            subgraph C1
+              C2 --> C2
+              subgraph D
+                D1 --> D1
+              end
+              D --> D
+            end
+            C1 --> C1
+          end
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
-      flowchart TB
-       A --test2--> B2@{ icon: "fa:bell", form: "rounded", label: "B2 aiduaid uyawduad uaduabd uyduadb", pos: "b" }
-       B2 --test--> C
-       D --> B2 --> E
-       style B2 fill:#f9f,stroke:#333,stroke-width:4px
-  </pre
-    >
-    <pre id="diagram43" class="mermaid2">
-      flowchart BT
-       A --test2--> B2@{ icon: "fa:bell", form: "square", label: "B2", pos: "t", h: 40, w: 30 }
-       B2 --test--> C
-       D --> B2 --> E
-  </pre
-    >
-    <pre id="diagram4" class="mermaid2">
-      flowchart BT
-       A --test2--> B2@{ icon: "fa:bell", label: "B2 awiugdawu uydgayuiwd wuydguy", pos: "b", h: 40, w: 30 }
-       B2 --test--> C
-  </pre
-    >
-    <pre id="diagram43" class="mermaid2">
-      flowchart BT
-       A --test2--> B2@{ icon: "fa:bell", label: "B2 dawuygd ayuwgd uy", pos: "t", h: 40, w: 30 }
-       B2 --test--> C
-  </pre
-    >
-    <pre id="diagram6" class="mermaid2">
-      flowchart TB
-       A --> B2@{ icon: "fa:bell", form: "circle", label: "test augfuyfavf ydvaubfuac", pos: "t", w: 200, h: 100 } --> C
-  </pre
-    >
-    <pre id="diagram6" class="mermaid2">
-      flowchart TB
-       A --> B2@{ icon: "fa:bell", form: "circle", label: "test augfuyfavf ydvaubfuac", pos: "b", w: 200, h: 100 } --> C
-       D --> B2 --> E
-  </pre
-    >
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';

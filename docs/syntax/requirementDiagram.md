@@ -84,6 +84,37 @@ element user_defined_name {
 }
 ```
 
+### Markdown Formatting
+
+In places where user defined text is possible (like names, requirement text, element docref, etc.), you can:
+
+- Surround the text in quotes: `"example text"`
+- Use markdown formatting inside quotes: `"**bold text** and *italics*"`
+
+Example:
+
+```mermaid-example
+requirementDiagram
+
+requirement "__test_req__" {
+    id: 1
+    text: "*italicized text* **bold text**"
+    risk: high
+    verifymethod: test
+}
+```
+
+```mermaid
+requirementDiagram
+
+requirement "__test_req__" {
+    id: 1
+    text: "*italicized text* **bold text**"
+    risk: high
+    verifymethod: test
+}
+```
+
 ### Relationship
 
 Relationships are comprised of a source node, destination node, and relationship type.
@@ -248,6 +279,217 @@ This example uses all features of the diagram.
     test_req5 - refines -> test_req6
     test_entity3 - verifies -> test_req5
     test_req <- copies - test_entity2
+```
+
+## Direction
+
+The diagram can be rendered in different directions using the `direction` statement. Valid values are:
+
+- `TB` - Top to Bottom (default)
+- `BT` - Bottom to Top
+- `LR` - Left to Right
+- `RL` - Right to Left
+
+Example:
+
+```mermaid-example
+requirementDiagram
+
+direction LR
+
+requirement test_req {
+    id: 1
+    text: the test text.
+    risk: high
+    verifymethod: test
+}
+
+element test_entity {
+    type: simulation
+}
+
+test_entity - satisfies -> test_req
+```
+
+```mermaid
+requirementDiagram
+
+direction LR
+
+requirement test_req {
+    id: 1
+    text: the test text.
+    risk: high
+    verifymethod: test
+}
+
+element test_entity {
+    type: simulation
+}
+
+test_entity - satisfies -> test_req
+```
+
+## Styling
+
+Requirements and elements can be styled using direct styling or classes. As a rule of thumb, when applying styles or classes, it accepts a list of requirement or element names and a list of class names allowing multiple assignments at a time (The only exception is the shorthand syntax `:::` which can assign multiple classes but only to one requirement or element at a time).
+
+### Direct Styling
+
+Use the `style` keyword to apply CSS styles directly:
+
+```mermaid-example
+requirementDiagram
+
+requirement test_req {
+    id: 1
+    text: styling example
+    risk: low
+    verifymethod: test
+}
+
+element test_entity {
+    type: simulation
+}
+
+style test_req fill:#ffa,stroke:#000, color: green
+style test_entity fill:#f9f,stroke:#333, color: blue
+```
+
+```mermaid
+requirementDiagram
+
+requirement test_req {
+    id: 1
+    text: styling example
+    risk: low
+    verifymethod: test
+}
+
+element test_entity {
+    type: simulation
+}
+
+style test_req fill:#ffa,stroke:#000, color: green
+style test_entity fill:#f9f,stroke:#333, color: blue
+```
+
+### Class Definitions
+
+Define reusable styles using `classDef`:
+
+```mermaid-example
+requirementDiagram
+
+requirement test_req {
+    id: 1
+    text: "class styling example"
+    risk: low
+    verifymethod: test
+}
+
+element test_entity {
+    type: simulation
+}
+
+classDef important fill:#f96,stroke:#333,stroke-width:4px
+classDef test fill:#ffa,stroke:#000
+```
+
+```mermaid
+requirementDiagram
+
+requirement test_req {
+    id: 1
+    text: "class styling example"
+    risk: low
+    verifymethod: test
+}
+
+element test_entity {
+    type: simulation
+}
+
+classDef important fill:#f96,stroke:#333,stroke-width:4px
+classDef test fill:#ffa,stroke:#000
+```
+
+### Default class
+
+If a class is named default it will be applied to all nodes. Specific styles and classes should be defined afterwards to override the applied default styling.
+
+```
+classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+### Applying Classes
+
+Classes can be applied in two ways:
+
+1. Using the `class` keyword:
+
+```
+class test_req,test_entity important
+```
+
+2. Using the shorthand syntax with `:::` either during the definition or afterwards:
+
+```
+requirement test_req:::important {
+    id: 1
+    text: class styling example
+    risk: low
+    verifymethod: test
+}
+```
+
+```
+element test_elem {
+}
+
+test_elem:::myClass
+```
+
+### Combined Example
+
+```mermaid-example
+requirementDiagram
+
+requirement test_req:::important {
+    id: 1
+    text: "class styling example"
+    risk: low
+    verifymethod: test
+}
+
+element test_entity {
+    type: simulation
+}
+
+classDef important font-weight:bold
+
+class test_entity important
+style test_entity fill:#f9f,stroke:#333
+```
+
+```mermaid
+requirementDiagram
+
+requirement test_req:::important {
+    id: 1
+    text: "class styling example"
+    risk: low
+    verifymethod: test
+}
+
+element test_entity {
+    type: simulation
+}
+
+classDef important font-weight:bold
+
+class test_entity important
+style test_entity fill:#f9f,stroke:#333
 ```
 
 <!--- cspell:ignore reqs --->

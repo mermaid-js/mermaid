@@ -37,14 +37,14 @@
     ]
   },
   "dependencies": {
-    "@braintree/sanitize-url": "^7.0.0",
+    "@braintree/sanitize-url": "^7.0.4",
     "d3": "^7.9.0",
     "khroma": "^2.1.0"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
+    "concurrently": "^9.1.2",
     "mermaid": "workspace:*",
-    "rimraf": "^5.0.5"
+    "rimraf": "^6.0.1"
   },
   "files": [
     "dist"

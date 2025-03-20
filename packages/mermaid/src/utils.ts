@@ -337,6 +337,9 @@ export const calculatePoint = (points: Point[], distanceToTraverse: number): Poi
   for (const point of points) {
     if (prevPoint) {
       const vectorDistance = distance(point, prevPoint);
+      if (vectorDistance === 0) {
+        return prevPoint;
+      }
       if (vectorDistance < remainingDistance) {
         remainingDistance -= vectorDistance;
       } else {

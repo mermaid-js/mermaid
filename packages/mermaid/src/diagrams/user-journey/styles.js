@@ -13,6 +13,7 @@ const getStyles = (options) =>
 
   .legend {
     fill: ${options.textColor};
+    font-family: ${options.fontFamily};
   }
 
   .label text {

@@ -5,7 +5,8 @@ import { createText } from '../createText.js';
 import utils from '../../utils.js';
 import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
-import { curveBasis, line, select } from 'd3';
+
+import { curveBasis, curveLinear, curveCardinal, line, select } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
@@ -472,8 +473,19 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   lineData = fixCorners(lineData);
   let curve = curveBasis;
-  if (edge.curve) {
-    curve = edge.curve;
+  curve = curveLinear;
+  switch (edge.curve) {
+    case 'linear':
+      curve = curveLinear;
+      break;
+    case 'basis':
+      curve = curveBasis;
+      break;
+    case 'cardinal':
+      curve = curveCardinal;
+      break;
+    default:
+      curve = curveBasis;
   }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
@@ -509,6 +521,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let svgPath;
   let linePath = lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
+  let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
 
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
@@ -539,18 +552,18 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     if (edge.animation) {
       animationClass = ' edge-animation-' + edge.animation;
     }
+
+    const pathStyle = stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles;
     svgPath = elem
       .append('path')
       .attr('d', linePath)
       .attr('id', edge.id)
       .attr(
         'class',
-        ' ' +
-          strokeClasses +
-          (edge.classes ? ' ' + edge.classes : '') +
-          (animationClass ? animationClass : '')
+        ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '') + (animationClass ?? '')
       )
-      .attr('style', stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles);
+      .attr('style', pathStyle);
+    strokeColor = pathStyle.match(/stroke:([^;]+)/)?.[1];
   }
 
   // DEBUG code, DO NOT REMOVE
@@ -587,7 +600,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType);
+  addEdgeMarkers(svgPath, edge, url, id, diagramType, strokeColor);
 
   let paths = {};
   if (pointsHasChanged) {

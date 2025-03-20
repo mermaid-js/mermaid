@@ -119,6 +119,10 @@ class Theme {
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
 
+    /* Entity Relationship variables */
+    this.rowOdd = 'calculated';
+    this.rowEven = 'calculated';
+
     /* state colors */
     this.labelColor = 'black';
     this.errorBkgColor = '#552222';
@@ -205,6 +209,9 @@ class Theme {
     this.archEdgeColor = this.lineColor;
     this.archEdgeArrowColor = this.lineColor;
 
+    /* Entity Relationship variables */
+    this.rowOdd = this.rowOdd || lighten(this.primaryColor, 75) || '#ffffff';
+    this.rowEven = this.rowEven || lighten(this.primaryColor, 1);
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
@@ -373,6 +380,13 @@ class Theme {
     /* -------------------------------------------------- */
   }
   calculate(overrides) {
+    // for all keys in this object, if it is 'calculated' then set it to undefined
+    Object.keys(this).forEach((k) => {
+      if (this[k] === 'calculated') {
+        this[k] = undefined;
+      }
+    });
+
     if (typeof overrides !== 'object') {
       // Calculate colors form base colors
       this.updateColors();

@@ -132,3 +132,10 @@ export const verifyScreenshot = (name: string): void => {
     cy.matchImageSnapshot(name);
   }
 };
+
+export const verifyNumber = (value: number, expected: number, deltaPercent = 10): void => {
+  expect(value).to.be.within(
+    expected * (1 - deltaPercent / 100),
+    expected * (1 + deltaPercent / 100)
+  );
+};

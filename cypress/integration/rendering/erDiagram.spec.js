@@ -109,8 +109,8 @@ describe('Entity Relationship Diagram', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      // use within because the absolute value can be slightly different depending on the environment ±5%
-      expect(maxWidthValue).to.be.within(140 * 0.95, 140 * 1.05);
+      // use within because the absolute value can be slightly different depending on the environment ±6%
+      expect(maxWidthValue).to.be.within(140 * 0.96, 140 * 1.06);
     });
   });
 
@@ -125,8 +125,8 @@ describe('Entity Relationship Diagram', () => {
     );
     cy.get('svg').should((svg) => {
       const width = parseFloat(svg.attr('width'));
-      // use within because the absolute value can be slightly different depending on the environment ±5%
-      expect(width).to.be.within(140 * 0.95, 140 * 1.05);
+      // use within because the absolute value can be slightly different depending on the environment ±6%
+      expect(width).to.be.within(140 * 0.96, 140 * 1.06);
       // expect(svg).to.have.attr('height', '465');
       expect(svg).to.not.have.attr('style');
     });

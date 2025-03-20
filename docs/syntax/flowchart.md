@@ -1792,8 +1792,7 @@ graph LR
 ```
 
 For a full list of available curves, including an explanation of custom curves, refer to
-the [Shapes](https://github.com/d3/d3-shape/blob/main/README.md#curves) documentation in the
-[d3-shape](https://github.com/d3/d3-shape/) project.
+the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
 
 ### Styling a node
 

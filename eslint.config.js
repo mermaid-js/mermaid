@@ -137,7 +137,6 @@ export default tseslint.config(
       'unicorn/no-instanceof-array': 'error',
       'unicorn/no-typeof-undefined': 'error',
       'unicorn/no-unnecessary-await': 'error',
-      'unicorn/no-unsafe-regex': 'warn',
       'unicorn/no-useless-promise-resolve-reject': 'error',
       'unicorn/prefer-array-find': 'error',
       'unicorn/prefer-array-flat-map': 'error',

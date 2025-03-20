@@ -9,7 +9,7 @@ const parserFnConstructor = (str: string) => {
   };
 };
 
-const mockDB: Record<string, Mock<any, any>> = {
+const mockDB: Record<string, Mock<any>> = {
   setOrientation: vi.fn(),
   setDiagramTitle: vi.fn(),
   setXAxisTitle: vi.fn(),

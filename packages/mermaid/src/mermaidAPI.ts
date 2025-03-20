@@ -8,7 +8,7 @@ import { compile, serialize, stringify } from 'stylis';
 // @ts-ignore: TODO Fix ts errors
 import DOMPurify from 'dompurify';
 import isEmpty from 'lodash-es/isEmpty.js';
-import { version } from '../package.json';
+import packageJson from '../package.json' assert { type: 'json' };
 import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
 import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
@@ -422,12 +422,12 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, version, diag);
+    await diag.renderer.draw(text, id, packageJson.version, diag);
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();
     } else {
-      errorRenderer.draw(text, id, version);
+      errorRenderer.draw(text, id, packageJson.version);
     }
     throw e;
   }
