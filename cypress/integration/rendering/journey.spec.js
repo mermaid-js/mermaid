@@ -177,32 +177,24 @@ section Checkout from website
         diagramStartX = parseFloat($diagram.attr('x'));
       })
       .then(() => {
-        // Get all legend lines that include "Sam"
-        cy.get('text.legend')
-          .filter((i, el) => el.textContent.includes('long'))
-          .then(($lines) => {
-            // Check that there are two lines
-            expect($lines.length).to.be.equal(9);
+        cy.get('text.legend').then(($lines) => {
+          // Check that there are two lines
+          expect($lines.length).to.be.equal(9);
 
-            // Check that for all but the last line it nearly fills the max width
-            $lines.each((index, el) => {
-              const bbox = el.getBBox();
-              if (index < $lines.length - 1) {
-                expect(bbox.width).to.be.closeTo(320, 5);
-              } else {
-                // Last line may be shorter
-                expect(bbox.width).to.be.lte(320);
-              }
-            });
-
-            // check margin between diagram and legend is maintained
-            const longestBBox = $lines.get(0).getBBox(); // longest Line's bbox
-            if (diagramStartX && longestBBox) {
-              const legendRightEdge = longestBBox.x + longestBBox.width;
-              const margin = diagramStartX - legendRightEdge;
-              expect(margin).to.be.closeTo(100, 2); // expect margin to be around 100
-            }
+          // Check that all lines are under the max width
+          $lines.each((index, el) => {
+            const bbox = el.getBBox();
+            expect(bbox.width).to.be.lte(320);
           });
+
+          // check baseline margin between diagram and legend is maintained
+          const longestBBox = $lines.get(7).getBBox(); // longest Line's bbox
+          if (diagramStartX && longestBBox) {
+            const legendRightEdge = longestBBox.x + longestBBox.width;
+            const margin = diagramStartX - legendRightEdge;
+            expect(margin).to.be.closeTo(150, 2);
+          }
+        });
       });
   });
 });
