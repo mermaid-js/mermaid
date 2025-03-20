@@ -169,7 +169,7 @@ section Checkout from website
       { journey: { useMaxWidth: true } }
     );
 
-    let diagramStartX;
+    let diagramStartX, maxLineWidth;
 
     // Get the diagram's left edge
     cy.contains('foreignobject', 'Sign Up')
@@ -178,22 +178,17 @@ section Checkout from website
       })
       .then(() => {
         cy.get('text.legend').then(($lines) => {
-          // Check that there are two lines
+          // Check that there are multiple lines
           expect($lines.length).to.be.equal(9);
 
           // Check that all lines are under the max width
           $lines.each((index, el) => {
             const bbox = el.getBBox();
             expect(bbox.width).to.be.lte(320);
+            maxLineWidth = Math.max(maxLineWidth || 0, bbox.width);
           });
 
-          // check baseline margin between diagram and legend is maintained
-          const longestBBox = $lines.get(7).getBBox(); // longest Line's bbox
-          if (diagramStartX && longestBBox) {
-            const legendRightEdge = longestBBox.x + longestBBox.width;
-            const margin = diagramStartX - legendRightEdge;
-            expect(margin).to.be.closeTo(150, 2);
-          }
+          expect(diagramStartX - 150).to.be.closeTo(maxLineWidth, 2);
         });
       });
   });

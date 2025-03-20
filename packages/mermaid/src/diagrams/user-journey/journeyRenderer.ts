@@ -36,7 +36,7 @@ function drawActorLegend(diagram) {
 
     // First, measure the full text width without wrapping.
     let measureText = diagram.append('text').attr('visibility', 'hidden').text(person);
-    const fullTextWidth = measureText.node().getBBox().width;
+    const fullTextWidth = measureText.node().getBoundingClientRect().width;
     measureText.remove();
 
     let lines = [];
@@ -54,7 +54,7 @@ function drawActorLegend(diagram) {
         // check the width of the line with the new word.
         const testLine = currentLine ? `${currentLine} ${word}` : word;
         measureText.text(testLine);
-        const textWidth = measureText.node().getBBox().width;
+        const textWidth = measureText.node().getBoundingClientRect().width;
 
         if (textWidth > maxLabelWidth) {
           // If adding the new word exceeds max width, push the current line.
@@ -65,12 +65,12 @@ function drawActorLegend(diagram) {
 
           // If the word itself is too long, break it with a hyphen.
           measureText.text(word);
-          if (measureText.node().getBBox().width > maxLabelWidth) {
+          if (measureText.node().getBoundingClientRect().width > maxLabelWidth) {
             let brokenWord = '';
             for (const char of word) {
               brokenWord += char;
               measureText.text(brokenWord + '-');
-              if (measureText.node().getBBox().width > maxLabelWidth) {
+              if (measureText.node().getBoundingClientRect().width > maxLabelWidth) {
                 // Push the broken part with a hyphen.
                 lines.push(brokenWord.slice(0, -1) + '-');
                 brokenWord = char;
@@ -102,7 +102,7 @@ function drawActorLegend(diagram) {
 
       // Draw the text and measure the width.
       const textElement = svgDraw.drawText(diagram, labelData);
-      const lineWidth = textElement.node().getBBox().width;
+      const lineWidth = textElement.node().getBoundingClientRect().width;
 
       // Use conf.leftMargin as the initial spacing baseline,
       // but expand maxWidth if the line is wider.
