@@ -64,6 +64,35 @@ section Checkout from website
     );
   });
 
+  it('should initialize with a left margin of 150px for user journeys', () => {
+    renderGraph(
+      `
+      ---
+      config:
+        journey:
+          maxLabelWidth: 320
+      ---
+      journey
+        title User Journey Example
+        section Onboarding
+            Sign Up: 5:
+            Browse Features: 3:
+            Use Core Functionality: 4:
+        section Engagement
+            Browse Features: 3
+            Use Core Functionality: 4
+      `,
+      { journey: { useMaxWidth: true } }
+    );
+
+    let diagramStartX;
+
+    cy.contains('foreignobject', 'Sign Up').then(($diagram) => {
+      diagramStartX = parseFloat($diagram.attr('x'));
+      expect(diagramStartX).to.be.closeTo(150, 2);
+    });
+  });
+
   it('should maintain sufficient space between legend and diagram when legend labels are longer', () => {
     renderGraph(
       `journey
@@ -118,7 +147,7 @@ section Checkout from website
       { journey: { useMaxWidth: true } }
     );
 
-    // Check that at least one line ends with a hyphen, indicating a mid-word break.
+    // Verify that the line ends with a hyphen, indicating proper hyphenation for words exceeding maxLabelWidth.
     cy.get('tspan').then((tspans) => {
       const hasHyphen = [...tspans].some((t) => t.textContent.trim().endsWith('-'));
       return expect(hasHyphen).to.be.true;
@@ -171,7 +200,7 @@ section Checkout from website
 
     let diagramStartX, maxLineWidth;
 
-    // Get the diagram's left edge
+    // Get the diagram's left edge x-coordinate
     cy.contains('foreignobject', 'Sign Up')
       .then(($diagram) => {
         diagramStartX = parseFloat($diagram.attr('x'));
@@ -181,14 +210,17 @@ section Checkout from website
           // Check that there are multiple lines
           expect($lines.length).to.be.equal(9);
 
-          // Check that all lines are under the max width
+          // Check that all lines are under the maxLabelWidth
           $lines.each((index, el) => {
             const bbox = el.getBBox();
             expect(bbox.width).to.be.lte(320);
             maxLineWidth = Math.max(maxLineWidth || 0, bbox.width);
           });
 
-          expect(diagramStartX - 150).to.be.closeTo(maxLineWidth, 2);
+          /** The expected margin between the diagram and the legend is 150px, as defined by
+           *  conf.leftMargin in user-journey-config.js
+           */
+          expect(diagramStartX - maxLineWidth).to.be.closeTo(150, 2);
         });
       });
   });
