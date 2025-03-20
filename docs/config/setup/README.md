@@ -4,14 +4,12 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/config/setup/README.md](../../../packages/mermaid/src/docs/config/setup/README.md).
 
-**mermaid**
-
----
-
 # mermaid
 
-## Modules
+## Table of contents
 
-- [config](config/README.md)
-- [defaultConfig](defaultConfig/README.md)
-- [mermaid](mermaid/README.md)
+### Modules
+
+- [config](modules/config.md)
+- [defaultConfig](modules/defaultConfig.md)
+- [mermaid](modules/mermaid.md)
