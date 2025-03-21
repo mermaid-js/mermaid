@@ -1,4 +1,26 @@
 # Gitgraph Diagrams
+graph TD
+    A[Capable Sales and Marketing Manager] --> B{Strategic Thinking};
+    A --> C{Strong Leadership};
+    A --> D{Market Analysis Skills};
+    A --> E{Excellent Communication};
+    A --> F{Sales Expertise};
+    A --> G{Marketing Proficiency};
+    A --> H{Data-Driven Decision Making};
+    A --> I{Adaptability};
+    A --> J{Customer-Centric Approach};
+    A --> K{Budget Management};
+
+    B --> L[Develops effective marketing campaigns and sales strategies];
+    C --> M[Manages and motivates sales and marketing teams];
+    D --> N[Understands market trends, customer behavior, and competition];
+    E --> O[Negotiates, persuades, and builds relationships];
+    F --> P[Implements sales techniques to drive conversions];
+    G --> Q[Leverages digital and traditional marketing channels];
+    H --> R[Uses analytics and KPIs to measure success];
+    I --> S[Adjusts strategies to changing market conditions];
+    J --> T[Focuses on understanding and fulfilling customer needs];
+    K --> U[Allocates resources effectively to maximize ROI];
 
 > A Git Graph is a pictorial representation of git commits and git actions(commands) on various branches.
 
