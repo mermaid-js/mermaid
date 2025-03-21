@@ -284,6 +284,14 @@ export const draw = function (text, id, version, diagObj) {
             0.5 * theBarHeight
           );
         }
+        if (d.vert) {
+          return (
+            timeScale(d.startTime) +
+            theSidePad +
+            0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) -
+            0.5 * theBarHeight
+          );
+        }
         return timeScale(d.startTime) + theSidePad;
       })
       .attr('y', function (d, i) {
@@ -293,6 +301,9 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('width', function (d) {
         if (d.milestone) {
+          return theBarHeight;
+        }
+        if (d.vert) {
           return theBarHeight;
         }
         return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
@@ -354,6 +365,9 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           taskClass = ' milestone ' + taskClass;
         }
+        if (d.vert) {
+          taskClass = ' vert ' + taskClass;
+        }
 
         taskClass += secNum;
 
@@ -381,6 +395,13 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           endX = startX + theBarHeight;
         }
+
+        if (d.vert) {
+          startX += 0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) - 0.5 * theBarHeight;
+        }
+        if (d.vert) {
+          endX = startX + theBarHeight;
+        }
         const textWidth = this.getBBox().width;
 
         // Check id text width > width of rectangle
@@ -404,6 +425,9 @@ export const draw = function (text, id, version, diagObj) {
         const startX = timeScale(d.startTime);
         let endX = timeScale(d.endTime);
         if (d.milestone) {
+          endX = startX + theBarHeight;
+        }
+        if (d.vert) {
           endX = startX + theBarHeight;
         }
         const textWidth = this.getBBox().width;
@@ -443,6 +467,10 @@ export const draw = function (text, id, version, diagObj) {
 
         if (d.milestone) {
           taskType += ' milestoneText';
+        }
+
+        if (d.vert) {
+          taskType += ' vertText';
         }
 
         // Check id text width > width of rectangle
