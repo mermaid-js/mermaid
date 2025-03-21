@@ -23,11 +23,17 @@ export const sanitizeDirective = (args: any): void => {
   // Sanitize each key if an object
   for (const key of Object.keys(args)) {
     log.debug('Checking key', key);
+    // Skip configKeys check for Sankey colors object and its contents
+    if (key === 'colors' && args.colors && typeof args.colors === 'object') {
+      log.debug('Preserving Sankey colors object and its contents');
+      continue;
+    }
+
     if (
       key.startsWith('__') ||
       key.includes('proto') ||
       key.includes('constr') ||
-      !configKeys.has(key) ||
+      (!configKeys.has(key) && key !== 'colors') ||
       args[key] == null
     ) {
       log.debug('sanitize deleting key: ', key);
