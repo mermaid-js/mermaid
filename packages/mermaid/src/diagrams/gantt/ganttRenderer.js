@@ -297,6 +297,9 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
+        if (d.vert) {
+          return 0;
+        }
         return i * theGap + theTopPad;
       })
       .attr('width', function (d) {
@@ -304,11 +307,17 @@ export const draw = function (text, id, version, diagObj) {
           return theBarHeight;
         }
         if (d.vert) {
-          return theBarHeight;
+          return 0.005 * theBarHeight;
         }
         return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
       })
-      .attr('height', theBarHeight)
+      // .attr('height', theBarHeight)
+      .attr('height', function (d) {
+        if (d.vert) {
+          return 1000.5 * theBarHeight;
+        }
+        return theBarHeight;
+      })
       .attr('transform-origin', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
