@@ -40,3 +40,20 @@ body:
     attributes:
       label: Screenshots
       description: If applicable, add screenshots to show possible examples of how the theme may look like.
+  - type: textarea
+    attributes:
+      label: Use Cases
+      description: If applicable, give some use cases for where this theme would be useful.
+      placeholder: The theme could be used for ...
+  - type: textarea
+    attributes:
+      label: Additional Information
+      description: Provide any additional information that may help us understand the theme proposal.
+      placeholder: Any other relevant information...
+  - type: checkboxes
+    attributes:
+      label: Confirmation
+      description: Please confirm the following before submitting your issue.
+      options:
+        - label: I have searched for existing issues
+          required: true

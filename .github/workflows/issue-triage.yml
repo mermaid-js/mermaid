@@ -18,3 +18,23 @@ jobs:
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           add-labels: 'Status: Triage'
+      - name: Check for duplicate issues
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'Status: Triage'
+            });
+            const duplicate = issues.find(issue => issue.title === context.payload.issue.title);
+            if (duplicate) {
+              await github.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                labels: ['duplicate']
+              });
+            }
