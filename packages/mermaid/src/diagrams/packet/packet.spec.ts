@@ -30,6 +30,7 @@ describe('packet diagrams', () => {
       [
         [
           {
+            "bits": 11,
             "end": 10,
             "label": "test",
             "start": 0,
@@ -49,14 +50,68 @@ describe('packet diagrams', () => {
       [
         [
           {
+            "bits": 11,
             "end": 10,
             "label": "test",
             "start": 0,
           },
           {
+            "bits": 1,
             "end": 11,
             "label": "single",
             "start": 11,
+          },
+        ],
+      ]
+    `);
+  });
+
+  it('should handle bit counts', async () => {
+    const str = `packet-beta
+    8bits: "byte"
+    16bits: "word"
+    `;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    expect(getPacket()).toMatchInlineSnapshot(`
+      [
+        [
+          {
+            "bits": 8,
+            "end": 7,
+            "label": "byte",
+            "start": 0,
+          },
+          {
+            "bits": 16,
+            "end": 23,
+            "label": "word",
+            "start": 8,
+          },
+        ],
+      ]
+    `);
+  });
+
+  it('should handle bit counts with bit or bits', async () => {
+    const str = `packet-beta
+    8bit: "byte"
+    16bits: "word"
+    `;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    expect(getPacket()).toMatchInlineSnapshot(`
+      [
+        [
+          {
+            "bits": 8,
+            "end": 7,
+            "label": "byte",
+            "start": 0,
+          },
+          {
+            "bits": 16,
+            "end": 23,
+            "label": "word",
+            "start": 8,
           },
         ],
       ]
@@ -73,11 +128,13 @@ describe('packet diagrams', () => {
       [
         [
           {
+            "bits": 11,
             "end": 10,
             "label": "test",
             "start": 0,
           },
           {
+            "bits": 20,
             "end": 31,
             "label": "multiple",
             "start": 11,
@@ -85,6 +142,7 @@ describe('packet diagrams', () => {
         ],
         [
           {
+            "bits": 31,
             "end": 63,
             "label": "multiple",
             "start": 32,
@@ -92,6 +150,7 @@ describe('packet diagrams', () => {
         ],
         [
           {
+            "bits": 26,
             "end": 90,
             "label": "multiple",
             "start": 64,
@@ -111,11 +170,13 @@ describe('packet diagrams', () => {
       [
         [
           {
+            "bits": 17,
             "end": 16,
             "label": "test",
             "start": 0,
           },
           {
+            "bits": 14,
             "end": 31,
             "label": "multiple",
             "start": 17,
@@ -123,6 +184,7 @@ describe('packet diagrams', () => {
         ],
         [
           {
+            "bits": 31,
             "end": 63,
             "label": "multiple",
             "start": 32,
@@ -142,6 +204,16 @@ describe('packet diagrams', () => {
     );
   });
 
+  it('should throw error if numbers are not continuous with bit counts', async () => {
+    const str = `packet-beta
+    16bits: "test"
+    18-20: "error"
+    `;
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 18 - 20 is not contiguous. It should start from 16.]`
+    );
+  });
+
   it('should throw error if numbers are not continuous for single packets', async () => {
     const str = `packet-beta
     0-16: "test"
@@ -149,6 +221,16 @@ describe('packet diagrams', () => {
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: Packet block 18 - 18 is not contiguous. It should start from 17.]`
+    );
+  });
+
+  it('should throw error if numbers are not continuous for single packets with bit counts', async () => {
+    const str = `packet-beta
+    16 bits: "test"
+    18: "error"
+    `;
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 18 - 18 is not contiguous. It should start from 16.]`
     );
   });
 
@@ -170,6 +252,15 @@ describe('packet diagrams', () => {
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: Packet block 25 - 20 is invalid. End must be greater than start.]`
+    );
+  });
+
+  it('should throw error if bit count is 0', async () => {
+    const str = `packet-beta
+    0bits: "test"
+    `;
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 0 is invalid. Cannot have a zero bit field.]`
     );
   });
 });
