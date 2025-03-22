@@ -70,8 +70,8 @@ export const draw = function (text: string, id: string, version: string, diagObj
   let sectionBeginY = 0;
   let masterX = 50 + LEFT_MARGIN;
   //sectionBeginX = masterX;
-  let masterY = 50;
-  sectionBeginY = 50;
+  let masterY = 80;
+  sectionBeginY = 80;
   //draw sections
   let sectionNumber = 0;
   let hasSections = true;
@@ -199,14 +199,19 @@ export const draw = function (text: string, id: string, version: string, diagObj
   log.debug('bounds', box);
 
   if (title) {
-    svg
+    const titleWrapper = svg.append('g').attr('class', 'titleWrapper');
+    const titleText = titleWrapper
       .append('text')
-      .text(title)
-      .attr('x', box.width / 2 - LEFT_MARGIN)
-      .attr('font-size', '4ex')
-      .attr('font-weight', 'bold')
-      .attr('y', 20);
+      .attr('x', box.width / 2)
+      .attr('y', 20)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '20px')
+      .attr('font-weight', 'bold');
+
+    // Use the new wrapText util from svgDraw
+    svgDraw.wrapText(titleText, title, box.width * 0.8, 22);
   }
+
   //5. Draw the diagram
   depthY = hasSections ? maxSectionHeight + maxTaskHeight + 150 : maxTaskHeight + 100;
 
