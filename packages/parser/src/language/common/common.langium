@@ -1,7 +1,7 @@
 // Base terminals and fragments for common language constructs
 // Terminal Precedence: Lazy to Greedy
 // When imported, the terminals are considered after the terminals in the importing grammar
-// Note: Hence, to add a terminal greedier than the common terminals, import the common grammar first
+// Note: Hence, to add a terminal greedier than the common terminals, import it separately after the common import
 
 fragment EOL returns string:
   NEWLINE+ | EOF
