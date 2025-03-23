@@ -45,6 +45,107 @@ import type {
 } from '@mermaid-js/parser';
 // import { isModelEntityType } from '@mermaid-js/parser';
 
+/**
+ * so far no magic, just fixed dimensions. We improve later
+ */
+function calculateFixedDimension(): Dimension {
+  return {
+    width: 150,
+    height: 80,
+  };
+}
+
+export interface Dimension {
+  width: number;
+  height: number;
+}
+
+export interface Coordinate {
+  x: number;
+  y: number;
+}
+
+export type Color = string;
+
+export interface Box {
+  r: number;
+  x: number;
+  y: number;
+  dimension: Dimension;
+  leftSibling: boolean;
+  swimlane: number;
+  color: string;
+  text: string;
+  frame: Frame;
+  /** Line index */
+  index: number;
+}
+
+export interface Swimlane {
+  index: number;
+  r: number;
+  y: number;
+}
+
+export interface Relation {
+  color: string;
+  source: Coordinate;
+  target: Coordinate;
+  sourceBox: Box;
+  targetBox: Box;
+}
+
+export interface Context {
+  boxes: Box[];
+  swimlanes: Record<string, Swimlane>;
+  relations: Relation[];
+  previousFrame?: Frame;
+  previousSwimlaneNumber?: number;
+}
+
+export const PositionFrameKind = 'position frame';
+export interface PositionFrame {
+  $kind: string;
+  index: number;
+  frame: Frame;
+}
+
+export const FramePositionedKind = 'frame positioned';
+export interface FramePositioned {
+  $kind: string;
+  index: number;
+  frame: Frame;
+  color: string;
+  swimlane: number;
+  dimension: Dimension;
+}
+
+export const PositionRelationKind = 'position relation';
+export interface PositionRelation {
+  $kind: string;
+  index: number;
+  frame: Frame;
+  sourceFrame?: Frame;
+}
+
+export const RelationPositionedKind = 'relation positioned';
+export interface RelationPositioned {
+  $kind: string;
+  index: number;
+  frame: Frame;
+  sourceBox: Box;
+  targetBox: Box;
+}
+
+export type Command = PositionFrame | PositionRelation;
+export type Event = FramePositioned | RelationPositioned;
+
+export type DecideFn = (state: Context, command: Command) => Event[];
+export type EvolveFn = (state: Context, event: Event) => Context;
+
+export type Deciders = Record<string, DecideFn>;
+export type Evolvers = Record<string, EvolveFn>;
+
 export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   clear();
 
@@ -66,7 +167,13 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   const SWIMLANE_DISTANCE = 150;
 
-  type Color = string;
+  const initial: Context = {
+    boxes: [],
+    swimlanes: {},
+    relations: [],
+  };
+
+  let state = initial;
 
   function calculateSwimlanePosition(frame: Frame) {
     switch (frame.modelEntityType) {
@@ -98,69 +205,6 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
         return 'red';
     }
   }
-
-  interface Dimension {
-    width: number;
-    height: number;
-  }
-  /**
-   * so far no magic, just fixed dimensions. We improve later
-   */
-  function calculateFixedDimension(): Dimension {
-    return {
-      width: 150,
-      height: 80,
-    };
-  }
-
-  interface Box {
-    r: number;
-    x: number;
-    y: number;
-    dimension: Dimension;
-    leftSibling: boolean;
-    swimlane: number;
-    color: string;
-    text: string;
-  }
-
-  interface Swimlane {
-    index: number;
-    r: number;
-    y: number;
-  }
-
-  interface Context {
-    boxes: Box[];
-    swimlanes: Record<string, Swimlane>;
-    previousFrame?: Frame;
-    previousSwimlaneNumber?: number;
-  }
-  const initial: Context = {
-    boxes: [],
-    swimlanes: {},
-  };
-
-  let state = initial;
-
-  const PositionFrameKind = 'position frame';
-  interface PositionFrame {
-    $kind: string;
-    index: number;
-    frame: Frame;
-  }
-
-  const FramePositionedKind = 'frame positioned';
-  interface FramePositioned {
-    $kind: string;
-    index: number;
-    frame: Frame;
-    color: string;
-    swimlane: number;
-    dimension: Dimension;
-  }
-  type Command = PositionFrame;
-  type Event = FramePositioned;
 
   function decidePositionFrame(state: Context, command: PositionFrame): Event[] {
     const color = calculateEntityColor(command.frame);
@@ -234,33 +278,123 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       swimlane: event.swimlane,
       color: event.color,
       text: event.frame.entityIdentifier,
+      frame: event.frame,
+      index: event.index,
     };
 
     swimlane.r = x + event.dimension.width;
 
     const newState = {
+      ...state,
       boxes: [...state.boxes, box],
       swimlanes: {
         ...state.swimlanes,
         [`${swimlane.index}`]: swimlane,
       },
       previousSwimlaneNumber: event.swimlane,
+      previousFrame: event.frame,
     };
     return newState;
   }
 
-  type DecideFn = (state: Context, command: Command) => Event[];
-  type EvolveFn = (state: Context, event: Event) => Context;
+  function isFirstFrame(index: number, frame: Frame): boolean {
+    if (index === 0 && frame.sourceFrame === undefined) {
+      return true;
+    }
+    return false;
+  }
 
-  type Deciders = Record<string, DecideFn>;
-  type Evolvers = Record<string, EvolveFn>;
+  function hasSourceFrame(frame: Frame): boolean {
+    return frame.sourceFrame !== undefined && frame.sourceFrame !== null;
+  }
+
+  function findBoxByFrame(boxes: Box[], frame: Frame | undefined): Box | undefined {
+    if (frame === undefined || frame === null) {
+      return undefined;
+    }
+    return boxes.find((box) => box.frame.name === frame.name);
+  }
+
+  function findBoxByLineIndex(
+    boxes: Box[],
+    targetSwimlane: number,
+    lineIndex: number
+  ): Box | undefined {
+    if (lineIndex < 0) {
+      return undefined;
+    }
+
+    // boxes.find((box) => box.index === lineIndex);
+    for (let i = lineIndex; i >= 0; i--) {
+      const box = boxes[i];
+      if (box.swimlane !== targetSwimlane) {
+        return box;
+      }
+    }
+    return undefined;
+  }
+
+  function decidePositionRelation(state: Context, command: PositionRelation): Event[] {
+    if (isFirstFrame(command.index, command.frame)) {
+      return [];
+    }
+
+    const targetBox = findBoxByFrame(state.boxes, command.frame);
+
+    if (targetBox === undefined) {
+      throw new Error(`Target box not found for frame ${command.frame.name}`);
+    }
+
+    let sourceBox;
+    if (command.sourceFrame) {
+      sourceBox = findBoxByFrame(state.boxes, command.sourceFrame);
+    } else {
+      sourceBox = findBoxByLineIndex(state.boxes, targetBox.swimlane, command.index - 1);
+    }
+
+    if (sourceBox === undefined) {
+      throw new Error(`Source box not found for frame ${command.frame.name}`);
+    }
+    const event: RelationPositioned = {
+      $kind: RelationPositionedKind,
+      frame: command.frame,
+      index: command.index,
+      sourceBox,
+      targetBox,
+    };
+    return [event];
+  }
+
+  function evolveRelationPositioned(state: Context, event: RelationPositioned): Context {
+    const relation: Relation = {
+      color: '#000',
+      source: {
+        x: event.sourceBox.x,
+        y: event.sourceBox.y,
+      },
+      target: {
+        x: event.targetBox.x,
+        y: event.targetBox.y,
+      },
+      sourceBox: event.sourceBox,
+      targetBox: event.targetBox,
+    };
+
+    const newState = {
+      ...state,
+      relations: [...state.relations, relation],
+    };
+    return newState;
+  }
 
   const deciders: Deciders = {
     [PositionFrameKind]: decidePositionFrame,
+    [PositionRelationKind]: decidePositionRelation,
   };
 
   const evolvers: Evolvers = {
     [FramePositionedKind]: evolveFramePositioned,
+    [RelationPositionedKind]: evolveRelationPositioned,
   };
 
   function decide(state: Context, command: Command): Event[] {
@@ -286,14 +420,32 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     return newState;
   }
 
+  function dispatch(state: Context, command: Command): Context {
+    const events = decide(state, command);
+    const newState = evolve(state, events);
+    return newState;
+  }
+
   ast.frames.forEach((frame: Frame, index: number) => {
-    const events = decide(state, {
+    state = dispatch(state, {
       $kind: PositionFrameKind,
       index,
       frame,
     });
 
-    state = evolve(state, events);
+    let sourceFrame = undefined;
+    if (hasSourceFrame(frame)) {
+      sourceFrame = ast.frames.find(
+        (currentFrame) => currentFrame.name === frame.sourceFrame?.$refText
+      );
+    }
+
+    state = dispatch(state, {
+      $kind: PositionRelationKind,
+      index,
+      frame,
+      sourceFrame,
+    });
   });
 
   function renderD3Box(box: Box) {
@@ -314,31 +466,52 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       .text(box.text);
   }
 
-  state.boxes.forEach(renderD3Box);
+  function dirUpwards(sourceY: number, targetY: number): boolean {
+    return sourceY > targetY;
+  }
 
-  // let pos = 0;
-  //
-  // branches.forEach((branch, index) => {
-  //   const labelElement = drawText(branch.name);
-  //   const g = diagram.append('g');
-  //   const branchLabel = g.insert('g').attr('class', 'branchLabel');
-  //   const label = branchLabel.insert('g').attr('class', 'label branch-label');
-  //   label.node()?.appendChild(labelElement);
-  //   const bbox = labelElement.getBBox();
-  //
-  //   pos = setBranchPosition(branch.name, pos, index, bbox, rotateCommitLabel);
-  //   label.remove();
-  //   branchLabel.remove();
-  //   g.remove();
-  // });
-  //
-  // drawCommits(diagram, allCommitsDict, false);
-  // if (DEFAULT_GITGRAPH_CONFIG.showBranches) {
-  //   drawBranches(diagram, branches);
-  // }
-  // drawArrows(diagram, allCommitsDict);
-  // drawCommits(diagram, allCommitsDict, true);
-  //
+  function renderD3Relation(relation: Relation) {
+    const upwards = dirUpwards(relation.sourceBox.y, relation.targetBox.y);
+
+    const sourceX = relation.sourceBox.x + (relation.sourceBox.dimension.width * 2) / 3;
+    const targetX = relation.targetBox.x + relation.targetBox.dimension.width / 3;
+
+    let sourceY;
+    let targetY;
+
+    // console.debug(`rendering relation up=${upwards} for `, { sourceBox: relation.sourceBox, targetBox: relation.targetBox});
+    if (upwards) {
+      sourceY = relation.sourceBox.y;
+      targetY = relation.targetBox.y + relation.targetBox.dimension.height;
+    } else {
+      sourceY = relation.sourceBox.y + relation.sourceBox.dimension.height;
+      targetY = relation.targetBox.y;
+    }
+
+    diagram
+      .append('path')
+      .attr('fill', 'none')
+      .attr('stroke', relation.color)
+      .attr('stroke-width', '1')
+      .attr('marker-end', 'url(#arrowhead)')
+      .attr('d', `M${sourceX} ${sourceY} L${targetX} ${targetY}`);
+  }
+
+  state.boxes.forEach(renderD3Box);
+  state.relations.forEach(renderD3Relation);
+
+  const marker = diagram
+    .append('defs')
+    .append('marker')
+    .attr('id', 'arrowhead')
+    .attr('markerWidth', '10')
+    .attr('markerHeight', '7')
+    .attr('refX', '10')
+    .attr('refY', '3.5')
+    .attr('orient', 'auto');
+
+  marker.append('polygon').attr('points', '0 0, 10 3.5, 0 7').attr('fill', '#000');
+
   // utils.insertTitle(
   //   diagram,
   //   'gitTitleText',
