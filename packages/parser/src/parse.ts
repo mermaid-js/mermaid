@@ -1,8 +1,8 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
-import type { Info, Packet, Pie, Architecture, GitGraph, EventModeling } from './index.js';
+import type { Info, Packet, Pie, Architecture, GitGraph, EventModeling, Radar } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | EventModeling;
+export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | EventModeling | Radar;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -36,6 +36,11 @@ const initializers = {
     const parser = createEventModelingServices().EventModeling.parser.LangiumParser;
     parsers.eventmodeling = parser;
   },
+  radar: async () => {
+    const { createRadarServices } = await import('./language/radar/index.js');
+    const parser = createRadarServices().Radar.parser.LangiumParser;
+    parsers.radar = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -44,6 +49,7 @@ export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'eventmodeling', text: string): Promise<EventModeling>;
+export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

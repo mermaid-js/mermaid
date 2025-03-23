@@ -7,6 +7,7 @@ export {
   PieSection,
   Architecture,
   GitGraph,
+  Radar,
   Branch,
   Commit,
   Merge,
@@ -37,6 +38,7 @@ export {
   ArchitectureGeneratedModule,
   GitGraphGeneratedModule,
   EventModelingGeneratedModule,
+  RadarGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -46,3 +48,4 @@ export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './architecture/index.js';
 export * from './eventmodeling/index.js';
+export * from './radar/index.js';

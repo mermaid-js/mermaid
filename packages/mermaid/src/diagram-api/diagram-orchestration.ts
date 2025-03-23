@@ -22,6 +22,7 @@ import mindmap from '../diagrams/mindmap/detector.js';
 import kanban from '../diagrams/kanban/detector.js';
 import sankey from '../diagrams/sankey/sankeyDetector.js';
 import { packet } from '../diagrams/packet/detector.js';
+import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
 import eventmodeling from '../diagrams/eventmodeling/detector.js';
@@ -96,6 +97,7 @@ export const addDiagrams = () => {
     xychart,
     block,
     architecture,
-    eventmodeling
+    eventmodeling,
+    radar
   );
 };

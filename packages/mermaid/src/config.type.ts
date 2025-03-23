@@ -200,6 +200,7 @@ export interface MermaidConfig {
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
   eventmodeling?: EventModelingDiagramConfig;
+  radar?: RadarDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1538,6 +1539,50 @@ export interface EventModelingDiagramConfig extends BaseDiagramConfig {
    * The height of each row in the packet diagram.
    */
   rowHeight?: number;
+}
+/**
+ * The object containing configurations specific for radar diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RadarDiagramConfig".
+ */
+export interface RadarDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The size of the radar diagram.
+   */
+  width?: number;
+  /**
+   * The size of the radar diagram.
+   */
+  height?: number;
+  /**
+   * The margin from the top of the radar diagram.
+   */
+  marginTop?: number;
+  /**
+   * The margin from the right of the radar diagram.
+   */
+  marginRight?: number;
+  /**
+   * The margin from the bottom of the radar diagram.
+   */
+  marginBottom?: number;
+  /**
+   * The margin from the left of the radar diagram.
+   */
+  marginLeft?: number;
+  /**
+   * The scale factor of the axis.
+   */
+  axisScaleFactor?: number;
+  /**
+   * The scale factor of the axis label.
+   */
+  axisLabelFactor?: number;
+  /**
+   * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
+   */
+  curveTension?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
