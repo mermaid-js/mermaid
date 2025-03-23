@@ -1,14 +1,15 @@
 grammar Architecture
 import "../common/common";
+import "arch";
 
 entry Architecture:
     NEWLINE*
     "architecture-beta"
     (
-    NEWLINE* TitleAndAccessibilities
-    | NEWLINE* Statement*
-    | NEWLINE*
-    )
+        NEWLINE
+        | TitleAndAccessibilities
+        | Statement
+    )*
 ;
 
 fragment Statement:
@@ -31,25 +32,21 @@ fragment Arrow:
 ;
 
 Group:
-    'group' id=ARCH_ID icon=ARCH_ICON? title=ARCH_TITLE? ('in' in=ARCH_ID)? EOL
+    'group' id=ID icon=ARCH_ICON? title=ARCH_TITLE? ('in' in=ID)? EOL
 ;
 
 Service:
-    'service' id=ARCH_ID (iconText=ARCH_TEXT_ICON | icon=ARCH_ICON)? title=ARCH_TITLE? ('in' in=ARCH_ID)? EOL
+    'service' id=ID (iconText=STRING | icon=ARCH_ICON)? title=ARCH_TITLE? ('in' in=ID)? EOL
 ;
 
 Junction:
-    'junction' id=ARCH_ID ('in' in=ARCH_ID)? EOL
+    'junction' id=ID ('in' in=ID)? EOL
 ;
 
 Edge:
-    lhsId=ARCH_ID lhsGroup?=ARROW_GROUP? Arrow rhsId=ARCH_ID rhsGroup?=ARROW_GROUP? EOL
+    lhsId=ID lhsGroup?=ARROW_GROUP? Arrow rhsId=ID rhsGroup?=ARROW_GROUP? EOL
 ;
 
 terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';
-terminal ARCH_ID: /[\w]+/;
-terminal ARCH_TEXT_ICON: /\("[^"]+"\)/;
-terminal ARCH_ICON: /\([\w-:]+\)/;
-terminal ARCH_TITLE: /\[[\w ]+\]/;
 terminal ARROW_GROUP: /\{group\}/;
 terminal ARROW_INTO: /<|>/;
