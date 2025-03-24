@@ -44,6 +44,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Deepdwn](https://billiam.itch.io/deepdwn) ✅
 - [Doctave](https://www.doctave.com/) ✅
   - [Mermaid in Markdown code blocks](https://docs.doctave.com/components/mermaid) ✅
+- [Forgejo](https://forgejo.org/) ✅
 - [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
@@ -69,6 +70,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Notion](https://notion.so) ✅
 - [Observable](https://observablehq.com/@observablehq/mermaid) ✅
 - [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) ✅
+- [Outline](https://docs.getoutline.com/s/guide/doc/diagrams-KQiKoT4wzK) ✅
 - [Redmine](https://redmine.org)
   - [Mermaid Macro](https://www.redmine.org/plugins/redmine_mermaid_macro)
   - [Markdown for mermaid plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
@@ -99,8 +101,7 @@ Blogging frameworks and platforms
 - [Nextra](https://nextra.site/)
   - [Mermaid](https://nextra.site/docs/guide/mermaid)
 - [WordPress](https://wordpress.org)
-  - [WordPress Markdown Editor](https://wordpress.org/plugins/wp-githuber-md)
-  - [WP-ReliableMD](https://wordpress.org/plugins/wp-reliablemd/)
+  - [MerPRess](https://wordpress.org/plugins/merpress/)
 
 ### CMS/ECM
 

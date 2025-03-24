@@ -1,0 +1,337 @@
+<html>
+  <body>
+    <h1 class="header">Nodes</h1>
+    <div class="node-showcase">
+      <div class="test">
+        <h2>Basic ErNode</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: false
+              look: handDrawn
+              theme: forest
+          ---
+          erDiagram
+            _**hiØ**_[*test*] {
+              *__List~List~int~~sdfds__* __driversLicense__ PK "***The l😀icense #***"
+              *string(99)~T~~~~~~* firstName "Only 99 <br>characters are a<br>llowed dsfsdfsdfsdfs"
+              ~str ing~ lastName
+              string phone UK
+              int age
+            }
+            style PERSON color:red, stroke:blue,fill:#f9f
+            classDef test,test2 stroke:red
+            class PERSON test,test2
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic ErNode</h2>
+        <pre class="mermaid">
+          erDiagram
+            CAR {
+                string registrationNumber
+                string make
+                string model
+            }
+            PERSON {
+                string firstName
+                string lastName
+                int age
+            }
+
+            CAR:::someclass
+            PERSON:::anotherclass,someclass
+        
+            classDef someclass fill:#f96
+            classDef anotherclass color:blue
+        </pre>
+      </div>
+    </div>
+    <h1 class="header">Diagram Testing</h1>
+    <div class="diagram-showcase">
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: false
+              layout: elk
+              look: handDrawn
+              theme: forest
+          ---
+          erDiagram
+            "hi" }o..o{ ORDER : places
+            style hi fill:lightblue
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: false
+              look: handDrawn
+              layout: elk
+          ---
+          erDiagram
+            CAR ||--|{ NAMED-DRIVER : allows
+            PERSON ||..o{ NAMED-DRIVER : is
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              htmlLabels: true
+              look: handDrawn
+              theme: forest
+          ---
+          erDiagram
+            CAR ||--o{ NAMED-DRIVER : allows
+            CAR {
+                test test PK "comment"
+                string make
+                string model
+                string[] parts
+            }
+            PERSON ||--o{ NAMED-DRIVER : is
+            PERSON ||--o{ CAR : is
+            PERSON {
+                string driversLicense PK "The license #"
+                string(99) firstName "Only 99 characters are allowed"
+                string lastName
+                string phone UK
+                int age
+            }
+            NAMED-DRIVER {
+                string carRegistrationNumber PK, FK
+                string driverLicence PK, FK
+            }
+            MANUFACTURER only one to zero or more CAR : makes      
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            title: simple ER diagram
+            config:
+              theme: forest
+          ---
+          erDiagram
+          direction TB
+          p[Pers😀on] {
+              string firstName
+              string lastName
+          }
+          a["Customer Account"] {
+              string email
+          }
+          p ||--o| a : has
+           
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+          ---
+            config:
+              layout: elk
+          ---
+          erDiagram
+          CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+          CUSTOMER ||--o{ ORDER : places
+          CUSTOMER ||--o{ INVOICE : "liable for"
+          DELIVERY-ADDRESS ||--o{ ORDER : receives
+          INVOICE ||--|{ ORDER : covers
+          ORDER ||--|{ ORDER-ITEM : includes
+          PRODUCT-CATEGORY ||--|{ PRODUCT : contains
+          PRODUCT ||--o{ ORDER-ITEM : "ordered in"
+        </pre>
+      </div>
+      <div class="test">
+        <h2>Basic Relationship</h2>
+        <pre class="mermaid">
+---
+  config:
+    layout: elk
+---
+          erDiagram
+          rental{
+                  ~timestamp with time zone~ rental_date "NN"
+                  ~integer~ inventory_id "NN"
+                  ~integer~ customer_id "NN"
+                  ~timestamp with time zone~ return_date
+                  ~integer~ staff_id "NN"
+                  ~integer~ rental_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          film_actor{
+                  ~integer~ actor_id "NN"
+                  ~integer~ film_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          film{
+                  ~text~ title "NN"
+                  ~text~ description
+                  ~public.year~ release_year
+                  ~integer~ language_id "NN"
+                  ~integer~ original_language_id
+                  ~smallint~ length
+                  ~text[]~ special_features
+                  ~tsvector~ fulltext "NN"
+                  ~integer~ film_id "NN"
+                  ~smallint~ rental_duration "NN"
+                  ~numeric(4,2)~ rental_rate "NN"
+                  ~numeric(5,2)~ replacement_cost "NN"
+                  ~public.mpaa_rating~ rating
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          customer{
+                  ~integer~ store_id "NN"
+                  ~text~ first_name "NN"
+                  ~text~ last_name "NN"
+                  ~text~ email
+                  ~integer~ address_id "NN"
+                  ~integer~ active
+                  ~integer~ customer_id "NN"
+                  ~boolean~ activebool "NN"
+                  ~date~ create_date "NN"
+                  ~timestamp with time zone~ last_update
+  }
+          film_category{
+                  ~integer~ film_id "NN"
+                  ~integer~ category_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          actor{
+                  ~text~ first_name "NN"
+                  ~text~ last_name "NN"
+                  ~integer~ actor_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          store{
+                  ~integer~ manager_staff_id "NN"
+                  ~integer~ address_id "NN"
+                  ~integer~ store_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          city{
+                  ~text~ city "NN"
+                  ~integer~ country_id "NN"
+                  ~integer~ city_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          language{
+                  ~character(20)~ name "NN"
+                  ~integer~ language_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          payment{
+                  ~integer~ customer_id "NN"
+                  ~integer~ staff_id "NN"
+                  ~integer~ rental_id "NN"
+                  ~numeric(5,2)~ amount "NN"
+                  ~timestamp with time zone~ payment_date "NN"
+                  ~integer~ payment_id "NN"
+  }
+          category{
+                  ~text~ name "NN"
+                  ~integer~ category_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          inventory{
+                  ~integer~ film_id "NN"
+                  ~integer~ store_id "NN"
+                  ~integer~ inventory_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          address{
+                  ~text~ address "NN"
+                  ~text~ address2
+                  ~text~ district "NN"
+                  ~integer~ city_id "NN"
+                  ~text~ postal_code
+                  ~text~ phone "NN"
+                  ~integer~ address_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          staff{
+                  ~text~ first_name "NN"
+                  ~text~ last_name "NN"
+                  ~integer~ address_id "NN"
+                  ~text~ email
+                  ~integer~ store_id "NN"
+                  ~text~ username "NN"
+                  ~text~ password
+                  ~bytea~ picture
+                  ~integer~ staff_id "NN"
+                  ~boolean~ active "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+          country{
+                  ~text~ country "NN"
+                  ~integer~ country_id "NN"
+                  ~timestamp with time zone~ last_update "NN"
+  }
+  film_actor }|..|| film : film_actor_film_id_fkey
+  film_actor }|..|| actor : film_actor_actor_id_fkey
+  address }|..|| city : address_city_id_fkey
+  city }|..|| country : city_country_id_fkey
+  customer }|..|| store : customer_store_id_fkey
+  customer }|..|| address : customer_address_id_fkey
+  film }|..|| language : film_original_language_id_fkey
+  film }|..|| language : film_language_id_fkey
+  film_category }|..|| film : film_category_film_id_fkey
+  film_category }|..|| category : film_category_category_id_fkey
+  inventory }|..|| store : inventory_store_id_fkey
+        </pre>
+      </div>
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize();
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+  <style>
+    .header {
+      text-decoration: underline;
+      text-align: center;
+    }
+    .node-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .test {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .test > h2 {
+      margin: 0;
+      text-align: center;
+    }
+    .test > p {
+      margin-top: -6px;
+      color: gray;
+    }
+
+    .diagram-showcase {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+  </style>
+</html>
