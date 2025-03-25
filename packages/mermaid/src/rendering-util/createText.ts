@@ -169,10 +169,10 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
       .attr('class', 'text-inner-tspan')
       .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
     if (index === 0) {
-      innerTspan.text(word.content);
+      innerTspan.text(decodeEntities(word.content));
     } else {
       // TODO: check what joiner to use.
-      innerTspan.text(' ' + word.content);
+      innerTspan.text(' ' + decodeEntities(word.content));
     }
   });
 }
