@@ -1,4 +1,4 @@
-# Radar Diagram (v<MERMAID_RELEASE_VERSION>+)
+# Radar Diagram (v11.6.0+)
 
 ## Introduction
 

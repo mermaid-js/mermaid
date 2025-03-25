@@ -423,19 +423,19 @@ const requirement_contains = (elem, type, id) => {
   const containsNode = elem
     .append('defs')
     .append('marker')
-    .attr('id', id + '_' + type + '-requirement_containsEnd')
-    .attr('refX', 20)
+    .attr('id', id + '_' + type + '-requirement_containsStart')
+    .attr('refX', 0)
     .attr('refY', 10)
     .attr('markerWidth', 20)
     .attr('markerHeight', 20)
     .attr('orient', 'auto')
     .append('g');
 
-  containsNode.append('circle').attr('cx', 10).attr('cy', 10).attr('r', 10).attr('fill', 'none');
+  containsNode.append('circle').attr('cx', 10).attr('cy', 10).attr('r', 9).attr('fill', 'none');
 
-  containsNode.append('line').attr('x1', 0).attr('x2', 20).attr('y1', 10).attr('y2', 10);
+  containsNode.append('line').attr('x1', 1).attr('x2', 19).attr('y1', 10).attr('y2', 10);
 
-  containsNode.append('line').attr('y1', 0).attr('y2', 20).attr('x1', 10).attr('x2', 10);
+  containsNode.append('line').attr('y1', 1).attr('y2', 19).attr('x1', 10).attr('x2', 10);
 };
 
 // TODO rename the class diagram markers to something shape descriptive and semantic free
