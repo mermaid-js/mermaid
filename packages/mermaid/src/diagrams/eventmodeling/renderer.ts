@@ -233,7 +233,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     lastBox: Box | undefined,
     event: FramePositioned
   ): number {
-    // console.debug(`calculateX`, { previousSwimlane,swimlane:event.swimlane,r: swimlane.r,lbr:lastBox?.r});
+    // log.debug(`calculateX`, { previousSwimlane,swimlane:event.swimlane,r: swimlane.r,lbr:lastBox?.r});
     if (previousSwimlane === undefined) {
       return 0;
     }
@@ -404,7 +404,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     }
 
     const events = fn(state, command);
-    // console.debug(`decided events`, events);
+    log.debug(`decided events`, events);
     return events;
   }
 
@@ -416,7 +416,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       }
       return fn(previousState, event);
     }, state);
-    // console.debug(`evolve events`, { state,newState,events});
+    log.debug(`evolve events`, { state, newState, events });
     return newState;
   }
 
@@ -456,8 +456,8 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       .attr('y', box.y)
       .attr('width', box.dimension.width)
       .attr('height', box.dimension.height)
-      .attr('fill', box.color)
-      .attr('stroke', '#000');
+      .attr('fill', box.color);
+    // .attr('stroke', '#000');
 
     g.append('text')
       .attr('font-weight', 'bold')
@@ -479,7 +479,10 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     let sourceY;
     let targetY;
 
-    // console.debug(`rendering relation up=${upwards} for `, { sourceBox: relation.sourceBox, targetBox: relation.targetBox});
+    log.debug(`rendering relation up=${upwards} for `, {
+      sourceBox: relation.sourceBox,
+      targetBox: relation.targetBox,
+    });
     if (upwards) {
       sourceY = relation.sourceBox.y;
       targetY = relation.targetBox.y + relation.targetBox.dimension.height;
