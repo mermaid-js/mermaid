@@ -262,7 +262,19 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Defines how mermaid renders curves for flowcharts.
    *
    */
-  curve?: 'basis' | 'linear' | 'cardinal';
+  curve?:
+    | 'basis'
+    | 'bumpX'
+    | 'bumpY'
+    | 'cardinal'
+    | 'catmullRom'
+    | 'linear'
+    | 'monotoneX'
+    | 'monotoneY'
+    | 'natural'
+    | 'step'
+    | 'stepAfter'
+    | 'stepBefore';
   /**
    * Represents the padding between the labels and the shape
    *
