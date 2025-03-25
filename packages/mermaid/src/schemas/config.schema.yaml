@@ -2069,7 +2069,21 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Defines how mermaid renders curves for flowcharts.
         type: string
-        enum: ['basis', 'linear', 'cardinal']
+        enum:
+          [
+            'basis',
+            'bumpX',
+            'bumpY',
+            'cardinal',
+            'catmullRom',
+            'linear',
+            'monotoneX',
+            'monotoneY',
+            'natural',
+            'step',
+            'stepAfter',
+            'stepBefore',
+          ]
         default: 'basis'
       padding:
         description: |

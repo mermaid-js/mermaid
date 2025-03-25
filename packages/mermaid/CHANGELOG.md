@@ -1,5 +1,24 @@
 # mermaid
 
+## 11.6.0
+
+### Minor Changes
+
+- [#6408](https://github.com/mermaid-js/mermaid/pull/6408) [`ad65313`](https://github.com/mermaid-js/mermaid/commit/ad653138e16765d095613a6e5de86dc5e52ac8f0) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: restore curve type configuration functionality for flowcharts. This fixes the issue where curve type settings were not being applied when configured through any of the following methods:
+
+  - Config
+  - Init directive (%%{ init: { 'flowchart': { 'curve': '...' } } }%%)
+  - LinkStyle command (linkStyle default interpolate ...)
+
+- [#6381](https://github.com/mermaid-js/mermaid/pull/6381) [`95d73bc`](https://github.com/mermaid-js/mermaid/commit/95d73bc3f064dbf261a06483f94a7ef4d0bb52eb) Thanks [@thomascizeron](https://github.com/thomascizeron)! - Add Radar Chart
+
+### Patch Changes
+
+- [#2](https://github.com/calvinvette/mermaid/pull/2) [`16d9b63`](https://github.com/mermaid-js/mermaid/commit/16d9b6345749ab5f24d5b8433efc3635d4913863) Thanks [@calvinvette](https://github.com/calvinvette)! - - [#6388](https://github.com/mermaid-js/mermaid/pull/6386)
+  Thanks [@bollwyvl](https://github.com/bollwyvl) - Fix requirement diagram containment arrow
+- Updated dependencies [[`95d73bc`](https://github.com/mermaid-js/mermaid/commit/95d73bc3f064dbf261a06483f94a7ef4d0bb52eb)]:
+  - @mermaid-js/parser@0.4.0
+
 ## 11.5.0
 
 ### Minor Changes

@@ -252,6 +252,7 @@ export class FlowDB implements DiagramDB {
       labelType: 'text',
       classes: [],
       isUserDefinedId: false,
+      interpolate: this.edges.defaultInterpolate,
     };
     log.info('abc78 Got edge...', edge);
     const linkTextObj = type.text;
@@ -1124,6 +1125,7 @@ You have to call mermaid.initialize.`
         look: config.look,
         animate: rawEdge.animate,
         animation: rawEdge.animation,
+        curve: rawEdge.interpolate || this.edges.defaultInterpolate || config.flowchart?.curve,
       };
 
       edges.push(edge);
