@@ -8,55 +8,55 @@ interface Common {
 
 entry EventModeling:
     'eventmodeling'
-    (accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE | modelEntities+=ModelEntity | frames+=Frame | dataEntities+=DataEntity | noteEntities+=NoteEntity | gwtEntities+=Gwt)*;
+    (accDescr=EM_ACC_DESCR | accTitle=EM_ACC_TITLE | title=EM_TITLE | modelEntities+=EmModelEntity | frames+=EmFrame | dataEntities+=EmDataEntity | noteEntities+=EmNoteEntity | gwtEntities+=EmGwt)*;
 
 
-ModelEntityType returns string:
+EmModelEntityType returns string:
     'rmo' | 'scn' | 'cmd' | 'evt' | 'job';
 
-DataType returns string:
+EmDataType returns string:
     'json' | 'jsobj' | 'figma' | 'salt' | 'uri' | 'md' | 'html' | 'text';
 
-fragment DataInline: ('`' dataType=DataType '`')? dataInlineValue=DATA_INLINE;
+fragment EmDataInline: ('`' dataType=EmDataType '`')? dataInlineValue=EM_DATA_INLINE;
 
-fragment DataBlock: ('`' dataType=DataType '`')? dataBlockValue=DATA_BLOCK;
+fragment EmDataBlock: ('`' dataType=EmDataType '`')? dataBlockValue=EM_DATA_BLOCK;
 
-Frame:
-    'tf' name=FI modelEntityType=ModelEntityType entityIdentifier=EID ('>t' sourceFrame=[Frame:FI])? ('[[' dataReference=[DataEntity:EID] ']]')? DataInline?;
+EmFrame:
+    'tf' name=EM_FI modelEntityType=EmModelEntityType entityIdentifier=EM_EID ('>tf' sourceFrame=[EmFrame:EM_FI])? ('[[' dataReference=[EmDataEntity:EM_EID] ']]')? EmDataInline?;
 
-ModelEntity:
-    'entity' name=EID;
+EmModelEntity:
+    'entity' name=EM_EID;
 
-DataEntity:
-    'data' name=EID DataBlock;
+EmDataEntity:
+    'data' name=EM_EID EmDataBlock;
 
-NoteEntity:
-    'note' sourceFrame=[Frame:FI] DataBlock;
+EmNoteEntity:
+    'note' sourceFrame=[EmFrame:EM_FI] EmDataBlock;
 
-Gwt:
-    'gwt' sourceFrame=[Frame:FI] 'given' givenStatements+=GwtStatement+ ('when' whenStatements+=GwtStatement+)? 'then' thenStatements+=GwtStatement+;
+EmGwt:
+    'gwt' sourceFrame=[EmFrame:EM_FI] 'given' givenStatements+=EmGwtStatement+ ('when' whenStatements+=EmGwtStatement+)? 'then' thenStatements+=EmGwtStatement+;
 
-GwtStatement:
-    ModelEntityType entityIdentifier=[ModelEntity:EID];
+EmGwtStatement:
+    EmModelEntityType entityIdentifier=[EmModelEntity:EM_EID];
 
-EID returns string: ID;
-FI returns string: FID;
+EM_EID returns string: EM_ID;
+EM_FI returns string: EM_FID;
 
-terminal ID: /[_a-zA-Z][\w_]*/;
-terminal FID: /\d{1,3}/;
+terminal EM_ID: /[_a-zA-Z][\w_]*/;
+terminal EM_FID: /\d{1,3}/;
 
-terminal DATA_INLINE: /\{(.*)\}|"(.*)"|'(.*)'/;
-terminal DATA_BLOCK: /\{[\t ]*\r?\n(?:[\S\s]*?\r?\n)?\}(?:\r?\n|(?!\S))/;
+terminal EM_DATA_INLINE: /\{(.*)\}|"(.*)"|'(.*)'/;
+terminal EM_DATA_BLOCK: /\{[\t ]*\r?\n(?:[\S\s]*?\r?\n)?\}(?:\r?\n|(?!\S))/;
 
-terminal ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
-terminal ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
-terminal TITLE: /[\t ]*title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*|)/;
+terminal EM_ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
+terminal EM_ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
+terminal EM_TITLE: /[\t ]*title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*|)/;
 
-hidden terminal WS: /\s+/;
-hidden terminal YAML: /---[\t ]*\r?\n(?:[\S\s]*?\r?\n)?---(?:\r?\n|(?!\S))/;
-hidden terminal DIRECTIVE: /[\t ]*%%{[\S\s]*?}%%(?:\r?\n|(?!\S))/;
-hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
+hidden terminal EM_WS: /\s+/;
+hidden terminal EM_YAML: /---[\t ]*\r?\n(?:[\S\s]*?\r?\n)?---(?:\r?\n|(?!\S))/;
+hidden terminal EM_DIRECTIVE: /[\t ]*%%{[\S\s]*?}%%(?:\r?\n|(?!\S))/;
+hidden terminal EM_SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
 
-hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
-hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+hidden terminal EM_ML_COMMENT: /\/\*[\s\S]*?\*\//;
+hidden terminal EM_SL_COMMENT: /\/\/[^\n\r]*/;
 

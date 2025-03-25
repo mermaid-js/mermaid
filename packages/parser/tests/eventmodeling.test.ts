@@ -5,11 +5,11 @@ describe('Parse Event Model', () => {
   it('should parse complex model', () => {
     const result = parse(`eventmodeling
 tf 01 cmd UpdateCartCommand
-tf 02 evt CartUpdatedEvent >t 01 \`jsobj\`{ a: b }
-tf 03 rmo CartItemsReadModel >t 02 [[CartItemsReadModel03]]
-tf 04 evt ProductDescriptionUpdatedEvent >t 01 \`jsobj\`{ a: { c: d } }
-tf 05 evt ProductTitleUpdatedEvent >t 01 { "a": { "c": true } }
-tf 06 evt ProductCountIncrementedEvent >t 01 \`json\`" { "a": { "c": true } } "
+tf 02 evt CartUpdatedEvent >tf 01 \`jsobj\`{ a: b }
+tf 03 rmo CartItemsReadModel >tf 02 [[CartItemsReadModel03]]
+tf 04 evt ProductDescriptionUpdatedEvent >tf 01 \`jsobj\`{ a: { c: d } }
+tf 05 evt ProductTitleUpdatedEvent >tf 01 { "a": { "c": true } }
+tf 06 evt ProductCountIncrementedEvent >tf 01 \`json\`" { "a": { "c": true } } "
 
 data CartItemsReadModel03 {
   { a: b }

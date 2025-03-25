@@ -24,10 +24,10 @@ export {
   isCommit,
   isMerge,
   EventModeling,
-  Frame,
-  DataType,
-  ModelEntityType,
-  isModelEntityType,
+  EmFrame,
+  EmDataType,
+  EmModelEntityType,
+  isEmModelEntityType,
 } from './generated/ast.js';
 
 export {

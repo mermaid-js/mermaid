@@ -39,7 +39,7 @@ const clear = () => {
 };
 
 import type {
-  Frame,
+  EmFrame,
   // DataType,
   // ModelEntityType
 } from '@mermaid-js/parser';
@@ -76,7 +76,7 @@ export interface Box {
   swimlane: number;
   color: string;
   text: string;
-  frame: Frame;
+  frame: EmFrame;
   /** Line index */
   index: number;
 }
@@ -99,46 +99,48 @@ export interface Context {
   boxes: Box[];
   swimlanes: Record<string, Swimlane>;
   relations: Relation[];
-  previousFrame?: Frame;
+  previousFrame?: EmFrame;
   previousSwimlaneNumber?: number;
 }
 
 export const PositionFrameKind = 'position frame';
-export interface PositionFrame {
-  $kind: string;
+export type PositionFrame = {
   index: number;
-  frame: Frame;
-}
+  frame: EmFrame;
+} & CommandBase;
 
 export const FramePositionedKind = 'frame positioned';
-export interface FramePositioned {
-  $kind: string;
+export type FramePositioned = {
   index: number;
-  frame: Frame;
+  frame: EmFrame;
   color: string;
   swimlane: number;
   dimension: Dimension;
-}
+} & EventBase;
 
 export const PositionRelationKind = 'position relation';
-export interface PositionRelation {
-  $kind: string;
+export type PositionRelation = {
   index: number;
-  frame: Frame;
-  sourceFrame?: Frame;
-}
+  frame: EmFrame;
+  sourceFrame?: EmFrame;
+} & CommandBase;
 
 export const RelationPositionedKind = 'relation positioned';
-export interface RelationPositioned {
-  $kind: string;
+export type RelationPositioned = {
   index: number;
-  frame: Frame;
+  frame: EmFrame;
   sourceBox: Box;
   targetBox: Box;
-}
+} & EventBase;
 
 export type Command = PositionFrame | PositionRelation;
 export type Event = FramePositioned | RelationPositioned;
+export interface CommandBase {
+  $kind: string;
+}
+export interface EventBase {
+  $kind: string;
+}
 
 export type DecideFn = (state: Context, command: Command) => Event[];
 export type EvolveFn = (state: Context, event: Event) => Context;
@@ -175,7 +177,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   let state = initial;
 
-  function calculateSwimlanePosition(frame: Frame) {
+  function calculateSwimlanePosition(frame: EmFrame) {
     switch (frame.modelEntityType) {
       case 'scn':
       case 'job':
@@ -189,7 +191,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     }
   }
 
-  function calculateEntityColor(frame: Frame): Color {
+  function calculateEntityColor(frame: EmFrame): Color {
     switch (frame.modelEntityType) {
       case 'scn':
         return '#adacae';
@@ -206,7 +208,9 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     }
   }
 
-  function decidePositionFrame(state: Context, command: PositionFrame): Event[] {
+  function decidePositionFrame(state: Context, _command: Command): Event[] {
+    const command = _command as PositionFrame;
+
     const color = calculateEntityColor(command.frame);
     const swimlane = calculateSwimlanePosition(command.frame);
     const dimension = calculateFixedDimension();
@@ -248,7 +252,9 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     return lastBox.r - BOX_OVERLAP + BOX_PADDING;
   }
 
-  function evolveFramePositioned(state: Context, event: FramePositioned): Context {
+  function evolveFramePositioned(state: Context, _event: Event): Context {
+    const event: FramePositioned = _event as FramePositioned;
+
     // const { frame } = event;
     let swimlane: Swimlane;
     if (state.swimlanes.hasOwnProperty(event.swimlane)) {
@@ -297,18 +303,18 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     return newState;
   }
 
-  function isFirstFrame(index: number, frame: Frame): boolean {
+  function isFirstFrame(index: number, frame: EmFrame): boolean {
     if (index === 0 && frame.sourceFrame === undefined) {
       return true;
     }
     return false;
   }
 
-  function hasSourceFrame(frame: Frame): boolean {
+  function hasSourceFrame(frame: EmFrame): boolean {
     return frame.sourceFrame !== undefined && frame.sourceFrame !== null;
   }
 
-  function findBoxByFrame(boxes: Box[], frame: Frame | undefined): Box | undefined {
+  function findBoxByFrame(boxes: Box[], frame: EmFrame | undefined): Box | undefined {
     if (frame === undefined || frame === null) {
       return undefined;
     }
@@ -334,7 +340,9 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     return undefined;
   }
 
-  function decidePositionRelation(state: Context, command: PositionRelation): Event[] {
+  function decidePositionRelation(state: Context, _command: Command): Event[] {
+    const command = _command as PositionRelation;
+
     if (isFirstFrame(command.index, command.frame)) {
       return [];
     }
@@ -365,7 +373,9 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     return [event];
   }
 
-  function evolveRelationPositioned(state: Context, event: RelationPositioned): Context {
+  function evolveRelationPositioned(state: Context, _event: Event): Context {
+    const event = _event as RelationPositioned;
+
     const relation: Relation = {
       color: '#000',
       source: {
@@ -426,7 +436,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     return newState;
   }
 
-  ast.frames.forEach((frame: Frame, index: number) => {
+  ast.frames.forEach((frame: EmFrame, index: number) => {
     state = dispatch(state, {
       $kind: PositionFrameKind,
       index,
@@ -436,7 +446,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     let sourceFrame = undefined;
     if (hasSourceFrame(frame)) {
       sourceFrame = ast.frames.find(
-        (currentFrame) => currentFrame.name === frame.sourceFrame?.$refText
+        (currentFrame: EmFrame) => currentFrame.name === frame.sourceFrame?.$refText
       );
     }
 
