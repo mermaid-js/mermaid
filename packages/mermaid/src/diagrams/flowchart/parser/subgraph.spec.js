@@ -322,7 +322,7 @@ describe('when parsing subgraphs', function () {
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
 
-    expect(subgraph.dir).toBe('TB');
+    expect(subgraph.dir).toBe('TD');
     expect(subgraph.nodes).toContain('A1');
     expect(subgraph.nodes).toContain('A2');
   });
