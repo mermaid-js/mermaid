@@ -1,5 +1,11 @@
 # @mermaid-js/parser
 
+## 0.4.0
+
+### Minor Changes
+
+- [#6381](https://github.com/mermaid-js/mermaid/pull/6381) [`95d73bc`](https://github.com/mermaid-js/mermaid/commit/95d73bc3f064dbf261a06483f94a7ef4d0bb52eb) Thanks [@thomascizeron](https://github.com/thomascizeron)! - Add Radar Chart
+
 ## 0.3.0
 
 ### Minor Changes

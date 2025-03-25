@@ -1,8 +1,8 @@
 import eyesPlugin from '@applitools/eyes-cypress';
 import { registerArgosTask } from '@argos-ci/cypress/task';
-import coverage from '@cypress/code-coverage/task';
+import coverage from '@cypress/code-coverage/task.js';
 import { defineConfig } from 'cypress';
-import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin';
+import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin.js';
 import cypressSplit from 'cypress-split';
 
 export default eyesPlugin(
