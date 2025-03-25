@@ -1,6 +1,7 @@
 // @ts-expect-error Incorrect khroma types
 import { darken, lighten, isDark } from 'khroma';
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
+import { getIconStyles } from '../globalStyles.js';
 
 const genSections: DiagramStylesProvider = (options) => {
   let sections = '';
@@ -105,5 +106,6 @@ const getStyles: DiagramStylesProvider = (options) =>
     dominant-baseline: middle;
     text-align: center;
   }
+    ${getIconStyles()}
 `;
 export default getStyles;
