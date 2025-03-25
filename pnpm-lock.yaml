@@ -107,8 +107,8 @@ importers:
         specifier: ^9.20.1
         version: 9.20.1(jiti@2.4.2)
       eslint-config-prettier:
-        specifier: ^10.0.0
-        version: 10.0.1(eslint@9.20.1(jiti@2.4.2))
+        specifier: ^10.0.3
+        version: 10.1.1(eslint@9.20.1(jiti@2.4.2))
       eslint-plugin-cypress:
         specifier: ^4.1.0
         version: 4.1.0(eslint@9.20.1(jiti@2.4.2))
@@ -5400,8 +5400,8 @@ packages:
     engines: {node: '>=6.0'}
     hasBin: true
 
-  eslint-config-prettier@10.0.1:
-    resolution: {integrity: sha512-lZBts941cyJyeaooiKxAtzoPHTN+GbQTJFAIdQbRhA4/8whaAraEh47Whw/ZFfrjNSnlAxqfm9i0XVAEkULjCw==}
+  eslint-config-prettier@10.1.1:
+    resolution: {integrity: sha512-4EQQr6wXwS+ZJSzaR5ZCrYgLxqvUjdXctaEtBqHcbkW944B1NQyO4qpdHQbXBONfwxXdkAY81HH4+LUfrg+zPw==}
     hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
@@ -15677,7 +15677,7 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-config-prettier@10.0.1(eslint@9.20.1(jiti@2.4.2)):
+  eslint-config-prettier@10.1.1(eslint@9.20.1(jiti@2.4.2)):
     dependencies:
       eslint: 9.20.1(jiti@2.4.2)
 
@@ -20365,35 +20365,6 @@ snapshots:
       - postcss
       - supports-color
       - vue
-
-  unocss@0.59.4(postcss@8.4.41)(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.33.0)):
-    dependencies:
-      '@unocss/astro': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.33.0))
-      '@unocss/cli': 0.59.4(rollup@4.21.1)
-      '@unocss/core': 0.59.4
-      '@unocss/extractor-arbitrary-variants': 0.59.4
-      '@unocss/postcss': 0.59.4(postcss@8.4.41)
-      '@unocss/preset-attributify': 0.59.4
-      '@unocss/preset-icons': 0.59.4
-      '@unocss/preset-mini': 0.59.4
-      '@unocss/preset-tagify': 0.59.4
-      '@unocss/preset-typography': 0.59.4
-      '@unocss/preset-uno': 0.59.4
-      '@unocss/preset-web-fonts': 0.59.4
-      '@unocss/preset-wind': 0.59.4
-      '@unocss/reset': 0.59.4
-      '@unocss/transformer-attributify-jsx': 0.59.4
-      '@unocss/transformer-attributify-jsx-babel': 0.59.4
-      '@unocss/transformer-compile-class': 0.59.4
-      '@unocss/transformer-directives': 0.59.4
-      '@unocss/transformer-variant-group': 0.59.4
-      '@unocss/vite': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.33.0))
-    optionalDependencies:
-      vite: 5.4.2(@types/node@22.5.1)(terser@5.33.0)
-    transitivePeerDependencies:
-      - postcss
-      - rollup
-      - supports-color
 
   unpipe@1.0.0: {}
 
