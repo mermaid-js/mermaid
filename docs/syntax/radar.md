@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/radar.md](../../packages/mermaid/src/docs/syntax/radar.md).
 
-# Radar Diagram (v\<MERMAID_RELEASE_VERSION>+)
+# Radar Diagram (v11.6.0+)
 
 ## Introduction
 
