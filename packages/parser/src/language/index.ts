@@ -12,7 +12,6 @@ export {
   Commit,
   Merge,
   Statement,
-  isCommon,
   isInfo,
   isPacket,
   isPacketBlock,

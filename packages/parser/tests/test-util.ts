@@ -1,6 +1,8 @@
 import type { LangiumParser, ParseResult } from 'langium';
 import { expect, vi } from 'vitest';
 import type {
+  Architecture,
+  ArchitectureServices,
   Info,
   InfoServices,
   Pie,
@@ -13,6 +15,7 @@ import type {
   GitGraphServices,
 } from '../src/language/index.js';
 import {
+  createArchitectureServices,
   createInfoServices,
   createPieServices,
   createRadarServices,
@@ -46,6 +49,17 @@ export function createInfoTestServices() {
   return { services: infoServices, parse };
 }
 export const infoParse = createInfoTestServices().parse;
+
+const architectureServices: ArchitectureServices = createArchitectureServices().Architecture;
+const architectureParser: LangiumParser = architectureServices.parser.LangiumParser;
+export function createArchitectureTestServices() {
+  const parse = (input: string) => {
+    return architectureParser.parse<Architecture>(input);
+  };
+
+  return { services: architectureServices, parse };
+}
+export const architectureParse = createArchitectureTestServices().parse;
 
 const pieServices: PieServices = createPieServices().Pie;
 const pieParser: LangiumParser = pieServices.parser.LangiumParser;

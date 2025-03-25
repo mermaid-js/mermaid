@@ -31,6 +31,7 @@ vi.mock('./diagrams/xychart/xychartRenderer.js');
 vi.mock('./diagrams/requirement/requirementRenderer.js');
 vi.mock('./diagrams/sequence/sequenceRenderer.js');
 vi.mock('./diagrams/radar/renderer.js');
+vi.mock('./diagrams/architecture/architectureRenderer.js');
 
 // -------------------------------------
 
@@ -799,6 +800,7 @@ graph TD;A--x|text including URL space|B;`)
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
       { textDiagramType: 'radar-beta', expectedType: 'radar' },
+      { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
     ];
 
     describe('accessibility', () => {
