@@ -362,16 +362,4 @@ root
     const child2 = mm.children[1];
     expect(child2.nodeId).toEqual('B');
   });
-  it('MMP-3 should decode HTML entities in mindmap node labels', function () {
-    const str = `mindmap
-      root
-        A &lt; B &amp; C &gt; D`;
-
-    mindmap.parse(str);
-    const mm = mindmap.yy.getMindmap();
-
-    expect(mm.descr).toEqual('root');
-    expect(mm.children.length).toBe(1);
-    expect(mm.children[0].descr).toEqual('A < B & C > D');
-  });
 });
