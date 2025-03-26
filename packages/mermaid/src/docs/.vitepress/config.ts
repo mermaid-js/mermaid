@@ -104,8 +104,8 @@ function nav() {
       ],
     },
     {
-      text: '💻 Live Editor',
-      link: 'https://mermaid.live',
+      text: '💻 Open Editor',
+      link: 'https://mermaid.live/',
     },
   ];
 }
