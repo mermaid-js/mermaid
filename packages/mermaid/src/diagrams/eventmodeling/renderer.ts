@@ -5,45 +5,17 @@ import { log } from '../../logger.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 // import type d3 from 'd3';
 import type { EventModelingDB } from './types.js';
-// import { commitType } from './types.js';
-
-interface BranchPosition {
-  pos: number;
-  index: number;
-}
-
-interface CommitPosition {
-  x: number;
-  y: number;
-}
-
-// interface CommitPositionOffset extends CommitPosition {
-//   posWithOffset: number;
-// }
 
 const DEFAULT_CONFIG = getConfig();
 const DEFAULT_GITGRAPH_CONFIG = DEFAULT_CONFIG?.gitGraph;
 
-const branchPos = new Map<string, BranchPosition>();
-const commitPos = new Map<string, CommitPosition>();
-
-const allCommitsDict = new Map();
-
 const clear = () => {
-  branchPos.clear();
-  commitPos.clear();
-  allCommitsDict.clear();
   // maxPos = 0;
   // lanes = [];
   // dir = 'LR';
 };
 
-import type {
-  EmFrame,
-  // DataType,
-  // ModelEntityType
-} from '@mermaid-js/parser';
-// import { isModelEntityType } from '@mermaid-js/parser';
+import type { EmFrame } from '@mermaid-js/parser';
 
 /**
  * so far no magic, just fixed dimensions. We improve later
