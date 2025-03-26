@@ -30,11 +30,17 @@ const rect = async (parent, node) => {
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
-  const text = await createText(labelEl, node.label, {
-    style: node.labelStyle,
-    useHtmlLabels,
-    isNode: true,
-  });
+  let text;
+  if (node.labelType === 'markdown') {
+    text = await createText(labelEl, node.label, {
+      style: node.labelStyle,
+      useHtmlLabels,
+      isNode: true,
+    });
+  } else {
+    const labelElement = await createLabel(node.label, node.labelStyle, false, true);
+    text = labelEl.node()?.appendChild(labelElement);
+  }
 
   // Get the size of the label
   let bbox = text.getBBox();
