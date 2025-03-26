@@ -54,12 +54,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   log.debug('REF1:', data4Layout);
   await render(data4Layout, svg);
   const padding = data4Layout.config.flowchart?.diagramPadding ?? 8;
-  utils.insertTitle(
-    svg,
-    'flowchartTitleText',
-    conf?.titleTopMargin || 0,
-    diag.db.getDiagramTitle()
-  );
+  utils.insertTitle(svg, 'flowchartTitleText', conf?.titleTopMargin || diag.db.getDiagramTitle());
   setupViewPortForSVG(svg, padding, 'flowchart', conf?.useMaxWidth || false);
 
   // If node has a link, wrap it in an anchor SVG object.
