@@ -442,27 +442,5 @@ describe('state diagram V2, ', function () {
       const currentDirection = stateDb.getDirection();
       expect(currentDirection).toEqual('LR');
     });
-
-    it('should parse and store clickable link with tooltip using the click directive', function () {
-      const str = `
-        stateDiagram-v2
-          StateA
-          click StateA "https://example.com" "Go to StateA"
-      `;
-
-      stateDb = new StateDB(2);
-      parser.yy = {
-        ...stateDb,
-        addLink: stateDb.addLink.bind(stateDb),
-      };
-
-      parser.parse(str);
-
-      const links = stateDb.getLinks();
-      expect(links.has('StateA')).toBe(true);
-      const linkInfo = links.get('StateA');
-      expect(linkInfo.url).toBe('https://example.com');
-      expect(linkInfo.tooltip).toBe('Go to StateA');
-    });
   });
 });

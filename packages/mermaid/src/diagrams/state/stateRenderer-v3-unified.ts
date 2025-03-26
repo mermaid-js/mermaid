@@ -73,12 +73,13 @@ export const draw = async function (text: string, id: string, _version: string, 
     const links: Map<string, { url: string; tooltip: string }> =
       typeof diag.db.getLinks === 'function' ? diag.db.getLinks() : new Map();
 
-    links.forEach((linkInfo, key: string | { id: string }) => {
-      const stateId =
-        typeof key === 'string' ? key : typeof key?.id === 'string' ? key.id : String(key);
+    type StateKey = string | { id: string };
 
-      if (!stateId || typeof stateId !== 'string') {
-        log.warn('⚠️ Invalid stateId:', key);
+    links.forEach((linkInfo, key: StateKey) => {
+      const stateId = typeof key === 'string' ? key : typeof key?.id === 'string' ? key.id : '';
+
+      if (!stateId) {
+        log.warn('⚠️ Invalid or missing stateId from key:', JSON.stringify(key));
         return;
       }
 
