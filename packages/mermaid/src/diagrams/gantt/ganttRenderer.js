@@ -284,14 +284,14 @@ export const draw = function (text, id, version, diagObj) {
             0.5 * theBarHeight
           );
         }
-        if (d.vert) {
-          return (
-            timeScale(d.startTime) +
-            theSidePad +
-            0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) -
-            0.5 * theBarHeight
-          );
-        }
+        // if (d.vert) {
+        //   return (
+        //     timeScale(d.startTime) +
+        //     theSidePad +
+        //     0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) -
+        //     0.5 * theBarHeight
+        //   );
+        // }
         return timeScale(d.startTime) + theSidePad;
       })
       .attr('y', function (d, i) {
@@ -405,12 +405,6 @@ export const draw = function (text, id, version, diagObj) {
           endX = startX + theBarHeight;
         }
 
-        if (d.vert) {
-          startX += 0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) - 0.5 * theBarHeight;
-        }
-        if (d.vert) {
-          endX = startX + theBarHeight;
-        }
         const textWidth = this.getBBox().width;
 
         // Check id text width > width of rectangle
@@ -427,6 +421,9 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
+        if (d.vert) {
+          return conf.barHeight * 8 + (conf.fontSize / 2 - 2) + theTopPad;
+        }
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
       })
       .attr('text-height', theBarHeight)
