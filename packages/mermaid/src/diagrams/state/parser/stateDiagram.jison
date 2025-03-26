@@ -46,6 +46,10 @@
 
 %%
 
+"click"                     return 'CLICK';
+"href"                      return 'HREF';
+\"[^"]*\"                   return 'STRING';   // or use /"[^"]*"/ if preferred
+
 "default"             return 'DEFAULT';
 
 .*direction\s+TB[^\n]*                                      return 'direction_tb';
@@ -246,8 +250,26 @@ statement
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
-    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    ;
-
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    
+    | CLICK idStatement STRING STRING NL
+    {
+        $$ = {
+            stmt: "click",
+            id: $2,
+            url: $3,
+            tooltip: $4
+        };
+    }
+    | CLICK idStatement HREF STRING NL
+    {
+        $$ = {
+            stmt: "click",
+            id: $2,
+            url: $4,
+            tooltip: ""
+        };
+    }
+    ;
 
 classDefStatement
     : classDef CLASSDEF_ID CLASSDEF_STYLEOPTS {
