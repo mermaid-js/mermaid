@@ -17,8 +17,8 @@ importers:
         specifier: ^3.44.9
         version: 3.50.2(encoding@0.1.13)(typescript@5.7.3)
       '@argos-ci/cypress':
-        specifier: ^3.2.0
-        version: 3.2.0(cypress@14.0.3)
+        specifier: ^4.0.1
+        version: 4.0.1(cypress@14.0.3)
       '@changesets/changelog-github':
         specifier: ^0.5.1
         version: 0.5.1(encoding@0.1.13)
@@ -394,10 +394,10 @@ importers:
         version: 5.0.0
       vitepress:
         specifier: ^1.0.2
-        version: 1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.7.9)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3)
+        version: 1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.8.4)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3)
       vitepress-plugin-search:
         specifier: 1.0.4-alpha.22
-        version: 1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.7.9)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3))(vue@3.5.13(typescript@5.7.3))
+        version: 1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.8.4)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3))(vue@3.5.13(typescript@5.7.3))
 
   packages/mermaid-example-diagram:
     dependencies:
@@ -453,8 +453,8 @@ importers:
         specifier: ^7.4.47
         version: 7.4.47
       '@vueuse/core':
-        specifier: ^12.7.0
-        version: 12.7.0(typescript@5.7.3)
+        specifier: ^13.0.0
+        version: 13.0.0(vue@3.5.13(typescript@5.7.3))
       font-awesome:
         specifier: ^4.7.0
         version: 4.7.0
@@ -503,7 +503,7 @@ importers:
         version: 0.21.1(vite@6.1.1(@types/node@22.13.5)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))(workbox-build@7.1.1(@types/babel__core@7.20.5))(workbox-window@7.3.0)
       vitepress:
         specifier: 1.6.3
-        version: 1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.7.9)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3)
+        version: 1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.8.4)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3)
       workbox-window:
         specifier: ^7.3.0
         version: 7.3.0
@@ -768,26 +768,26 @@ packages:
     resolution: {integrity: sha512-4YQc/FGYmA4Jx8vRNRI6YOE8oa7tOWhCik3b1OV3RQ6OkAY5EpVRF8ruiFpX+9BIjZ2V5AdVpsJacYOIiCHNMg==}
     engines: {node: '>=12.13.0'}
 
-  '@argos-ci/api-client@0.8.0':
-    resolution: {integrity: sha512-UHa1vAf8gwHVpkqM/RaSryrFe1juqWH6dHpPeMtT4e/ZMB9hNYwYFinaGq/KRWe88JEi2WeAu776YdoeUSZQkQ==}
+  '@argos-ci/api-client@0.8.1':
+    resolution: {integrity: sha512-3IHv7ANSPNO6OwWgwULlHbP9/tFV9kQDu6+nL9jysfPkGj0GgtrOsyBb+iU931c7wSMo1OD+XNujCnRzDD968w==}
     engines: {node: '>=18.0.0'}
 
-  '@argos-ci/browser@3.0.1':
-    resolution: {integrity: sha512-dqRXWCllulbKlqzwNE2bjbCtNqxVnUUrYpI1iIJQCMvyStmPdGHOYD7BoQQQ2uNPT2pCHeDyysrxc5T3mDyScg==}
+  '@argos-ci/browser@4.0.1':
+    resolution: {integrity: sha512-U29sIpK8B3bWAWsGnrTCi5DkGyHCyl6prSsihAzautPz0wm6IiRouo+PJTcdp7C1bPh3hrTzOyE6IsiP3tESnw==}
     engines: {node: '>=18.0.0'}
 
-  '@argos-ci/core@3.1.0':
-    resolution: {integrity: sha512-bo/pNKk6P0pz4NRdymgU1letwQrRbMPTeFyMsUEW8fhKNdesSFnFIWZBFGsGkkh05uw75PBjl2ZN4PvQ2TxSog==}
+  '@argos-ci/core@3.1.1':
+    resolution: {integrity: sha512-7iE3o1XGxlfHC5AF05pzT0OxuO387sryrZt3gKGj/e+6R20DXz7J49yI8++nQ2cuT+wLhcJp8+X0ox+SGMYHmw==}
     engines: {node: '>=18.0.0'}
 
-  '@argos-ci/cypress@3.2.0':
-    resolution: {integrity: sha512-eBmBiNk3Pxsy9huttYuH5JyZdFooARz12Zxgv6pAnaPLeIG1Rw+E8LwPa71TabNx9b0BjMCzP7L/n/rVd6xbIQ==}
+  '@argos-ci/cypress@4.0.1':
+    resolution: {integrity: sha512-zMW1U90OwEu6TLS5h5FRuTkYUO74e3e/xmsvpWmV9tmoOy86wRpxP1qxS1dQ9Xf5rcwjSiPPkEFHC/FweUIzvw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       cypress: ^12.0.0 || ^13.0.0 || ^14.0.0
 
-  '@argos-ci/util@2.3.0':
-    resolution: {integrity: sha512-tkxnCpaj7yN9nCFzo9MX0FJ5YjUepEOGYfdvF8COQqp+EdY1qubOPpc4Z0l1B60BlC8YtjQv/oRxHSh1XzxWFg==}
+  '@argos-ci/util@2.3.1':
+    resolution: {integrity: sha512-kE61HU2480fbAnimmA4x9HK45ZJvkoqLdW5GxT5uvwhkclQykVd2S6WfGFUr3JokTXfZ5LZEEfoWgtGA316KSQ==}
     engines: {node: '>=18.0.0'}
 
   '@asamuzakjp/css-color@2.8.3':
@@ -3351,6 +3351,9 @@ packages:
   '@types/web-bluetooth@0.0.20':
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
 
+  '@types/web-bluetooth@0.0.21':
+    resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
+
   '@types/ws@8.5.12':
     resolution: {integrity: sha512-3tPRkv1EtkDpzlgyKyI8pGsGZAGPEaXeu0DOj5DI25Ja91bdAYddYHbADRYVrZMRbfW+1l5YwXVDKohDJNQxkQ==}
 
@@ -3651,6 +3654,11 @@ packages:
   '@vueuse/core@12.7.0':
     resolution: {integrity: sha512-jtK5B7YjZXmkGNHjviyGO4s3ZtEhbzSgrbX+s5o+Lr8i2nYqNyHuPVOeTdM1/hZ5Tkxg/KktAuAVDDiHMraMVA==}
 
+  '@vueuse/core@13.0.0':
+    resolution: {integrity: sha512-rkgb4a8/0b234lMGCT29WkCjPfsX0oxrIRR7FDndRoW3FsaC9NBzefXg/9TLhAgwM11f49XnutshM4LzJBrQ5g==}
+    peerDependencies:
+      vue: ^3.5.0
+
   '@vueuse/integrations@12.7.0':
     resolution: {integrity: sha512-IEq7K4bCl7mn3uKJaWtNXnd1CAPaHLUMuyj5K1/k/pVcItt0VONZW8xiGxdIovJcQjkzOHjImhX5t6gija+0/g==}
     peerDependencies:
@@ -3695,8 +3703,16 @@ packages:
   '@vueuse/metadata@12.7.0':
     resolution: {integrity: sha512-4VvTH9mrjXqFN5LYa5YfqHVRI6j7R00Vy4995Rw7PQxyCL3z0Lli86iN4UemWqixxEvYfRjG+hF9wL8oLOn+3g==}
 
+  '@vueuse/metadata@13.0.0':
+    resolution: {integrity: sha512-TRNksqmvtvqsuHf7bbgH9OSXEV2b6+M3BSN4LR5oxWKykOFT9gV78+C2/0++Pq9KCp9KQ1OQDPvGlWNQpOb2Mw==}
+
   '@vueuse/shared@12.7.0':
     resolution: {integrity: sha512-coLlUw2HHKsm7rPN6WqHJQr18WymN4wkA/3ThFaJ4v4gWGWAQQGK+MJxLuJTBs4mojQiazlVWAKNJNpUWGRkNw==}
+
+  '@vueuse/shared@13.0.0':
+    resolution: {integrity: sha512-9MiHhAPw+sqCF/RLo8V6HsjRqEdNEWVpDLm2WBRW2G/kSQjb8X901sozXpSCaeLG0f7TEfMrT4XNaA5m1ez7Dg==}
+    peerDependencies:
+      vue: ^3.5.0
 
   '@wdio/config@7.31.1':
     resolution: {integrity: sha512-WAfswbCatwiaDVqy6kfF/5T8/WS/US/SRhBGUFrfBuGMIe+RRoHgy7jURFWSvUIE7CNHj8yvs46fLUcxhXjzcQ==}
@@ -4077,6 +4093,9 @@ packages:
 
   axios@1.7.9:
     resolution: {integrity: sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==}
+
+  axios@1.8.4:
+    resolution: {integrity: sha512-eBSYY4Y68NNlHbHBMdeDmKNtDgXWhQsJcGqzO3iLUM0GraQFSS9cVgPX5I9b3lbdFKyYoAEGAZF1DwhTaljNAw==}
 
   babel-jest@29.7.0:
     resolution: {integrity: sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg==}
@@ -7644,8 +7663,8 @@ packages:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
 
-  openapi-fetch@0.13.4:
-    resolution: {integrity: sha512-JHX7UYjLEiHuQGCPxa3CCCIqe/nc4bTIF9c4UYVC8BegAbWoS3g4gJxKX5XcG7UtYQs2060kY6DH64KkvNZahg==}
+  openapi-fetch@0.13.5:
+    resolution: {integrity: sha512-AQK8T9GSKFREFlN1DBXTYsLjs7YV2tZcJ7zUWxbjMoQmj8dDSFRrzhLCbHPZWA1TMV3vACqfCxLEZcwf2wxV6Q==}
 
   openapi-typescript-helpers@0.0.15:
     resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
@@ -10358,20 +10377,20 @@ snapshots:
 
   '@applitools/utils@1.7.7': {}
 
-  '@argos-ci/api-client@0.8.0':
+  '@argos-ci/api-client@0.8.1':
     dependencies:
       debug: 4.4.0(supports-color@8.1.1)
-      openapi-fetch: 0.13.4
+      openapi-fetch: 0.13.5
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/browser@3.0.1': {}
+  '@argos-ci/browser@4.0.1': {}
 
-  '@argos-ci/core@3.1.0':
+  '@argos-ci/core@3.1.1':
     dependencies:
-      '@argos-ci/api-client': 0.8.0
-      '@argos-ci/util': 2.3.0
-      axios: 1.7.9(debug@4.4.0)
+      '@argos-ci/api-client': 0.8.1
+      '@argos-ci/util': 2.3.1
+      axios: 1.8.4(debug@4.4.0)
       convict: 6.2.4
       debug: 4.4.0(supports-color@8.1.1)
       fast-glob: 3.3.3
@@ -10380,17 +10399,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/cypress@3.2.0(cypress@14.0.3)':
+  '@argos-ci/cypress@4.0.1(cypress@14.0.3)':
     dependencies:
-      '@argos-ci/browser': 3.0.1
-      '@argos-ci/core': 3.1.0
-      '@argos-ci/util': 2.3.0
+      '@argos-ci/browser': 4.0.1
+      '@argos-ci/core': 3.1.1
+      '@argos-ci/util': 2.3.1
       cypress: 14.0.3
       cypress-wait-until: 3.0.2
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/util@2.3.0': {}
+  '@argos-ci/util@2.3.1': {}
 
   '@asamuzakjp/css-color@2.8.3':
     dependencies:
@@ -13141,6 +13160,8 @@ snapshots:
 
   '@types/web-bluetooth@0.0.20': {}
 
+  '@types/web-bluetooth@0.0.21': {}
+
   '@types/ws@8.5.12':
     dependencies:
       '@types/node': 22.13.5
@@ -13617,24 +13638,37 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@vueuse/integrations@12.7.0(axios@1.7.9)(focus-trap@7.6.4)(typescript@5.7.3)':
+  '@vueuse/core@13.0.0(vue@3.5.13(typescript@5.7.3))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.21
+      '@vueuse/metadata': 13.0.0
+      '@vueuse/shared': 13.0.0(vue@3.5.13(typescript@5.7.3))
+      vue: 3.5.13(typescript@5.7.3)
+
+  '@vueuse/integrations@12.7.0(axios@1.8.4)(focus-trap@7.6.4)(typescript@5.7.3)':
     dependencies:
       '@vueuse/core': 12.7.0(typescript@5.7.3)
       '@vueuse/shared': 12.7.0(typescript@5.7.3)
       vue: 3.5.13(typescript@5.7.3)
     optionalDependencies:
-      axios: 1.7.9(debug@4.4.0)
+      axios: 1.8.4(debug@4.4.0)
       focus-trap: 7.6.4
     transitivePeerDependencies:
       - typescript
 
   '@vueuse/metadata@12.7.0': {}
 
+  '@vueuse/metadata@13.0.0': {}
+
   '@vueuse/shared@12.7.0(typescript@5.7.3)':
     dependencies:
       vue: 3.5.13(typescript@5.7.3)
     transitivePeerDependencies:
       - typescript
+
+  '@vueuse/shared@13.0.0(vue@3.5.13(typescript@5.7.3))':
+    dependencies:
+      vue: 3.5.13(typescript@5.7.3)
 
   '@wdio/config@7.31.1(typescript@5.7.3)':
     dependencies:
@@ -14039,6 +14073,14 @@ snapshots:
   aws4@1.13.2: {}
 
   axios@1.7.9(debug@4.4.0):
+    dependencies:
+      follow-redirects: 1.15.9(debug@4.4.0)
+      form-data: 4.0.2
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
+  axios@1.8.4(debug@4.4.0):
     dependencies:
       follow-redirects: 1.15.9(debug@4.4.0)
       form-data: 4.0.2
@@ -18515,7 +18557,7 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  openapi-fetch@0.13.4:
+  openapi-fetch@0.13.5:
     dependencies:
       openapi-typescript-helpers: 0.0.15
 
@@ -20366,35 +20408,6 @@ snapshots:
       - supports-color
       - vue
 
-  unocss@0.59.4(postcss@8.4.41)(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.33.0)):
-    dependencies:
-      '@unocss/astro': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.33.0))
-      '@unocss/cli': 0.59.4(rollup@4.21.1)
-      '@unocss/core': 0.59.4
-      '@unocss/extractor-arbitrary-variants': 0.59.4
-      '@unocss/postcss': 0.59.4(postcss@8.4.41)
-      '@unocss/preset-attributify': 0.59.4
-      '@unocss/preset-icons': 0.59.4
-      '@unocss/preset-mini': 0.59.4
-      '@unocss/preset-tagify': 0.59.4
-      '@unocss/preset-typography': 0.59.4
-      '@unocss/preset-uno': 0.59.4
-      '@unocss/preset-web-fonts': 0.59.4
-      '@unocss/preset-wind': 0.59.4
-      '@unocss/reset': 0.59.4
-      '@unocss/transformer-attributify-jsx': 0.59.4
-      '@unocss/transformer-attributify-jsx-babel': 0.59.4
-      '@unocss/transformer-compile-class': 0.59.4
-      '@unocss/transformer-directives': 0.59.4
-      '@unocss/transformer-variant-group': 0.59.4
-      '@unocss/vite': 0.59.4(rollup@4.21.1)(vite@5.4.2(@types/node@22.5.1)(terser@5.33.0))
-    optionalDependencies:
-      vite: 5.4.2(@types/node@22.5.1)(terser@5.33.0)
-    transitivePeerDependencies:
-      - postcss
-      - rollup
-      - supports-color
-
   unpipe@1.0.0: {}
 
   unplugin-utils@0.2.4:
@@ -20549,17 +20562,17 @@ snapshots:
       tsx: 4.19.3
       yaml: 2.7.0
 
-  vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.7.9)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3))(vue@3.5.13(typescript@5.7.3)):
+  vitepress-plugin-search@1.0.4-alpha.22(flexsearch@0.7.43)(vitepress@1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.8.4)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3))(vue@3.5.13(typescript@5.7.3)):
     dependencies:
       '@types/flexsearch': 0.7.6
       '@types/markdown-it': 12.2.3
       flexsearch: 0.7.43
       glob-to-regexp: 0.4.1
       markdown-it: 13.0.2
-      vitepress: 1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.7.9)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3)
+      vitepress: 1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.8.4)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3)
       vue: 3.5.13(typescript@5.7.3)
 
-  vitepress@1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.7.9)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3):
+  vitepress@1.6.3(@algolia/client-search@5.20.3)(@types/node@22.13.5)(axios@1.8.4)(postcss@8.5.3)(search-insights@2.17.2)(terser@5.39.0)(typescript@5.7.3):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.20.3)(search-insights@2.17.2)
@@ -20572,7 +20585,7 @@ snapshots:
       '@vue/devtools-api': 7.7.2
       '@vue/shared': 3.5.13
       '@vueuse/core': 12.7.0(typescript@5.7.3)
-      '@vueuse/integrations': 12.7.0(axios@1.7.9)(focus-trap@7.6.4)(typescript@5.7.3)
+      '@vueuse/integrations': 12.7.0(axios@1.8.4)(focus-trap@7.6.4)(typescript@5.7.3)
       focus-trap: 7.6.4
       mark.js: 8.11.1
       minisearch: 7.1.2
