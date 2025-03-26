@@ -79,7 +79,7 @@ export const draw = async function (text: string, id: string, _version: string, 
       const stateId = typeof key === 'string' ? key : typeof key?.id === 'string' ? key.id : '';
 
       if (!stateId) {
-        log.warn('⚠️ Invalid stateId from key:', JSON.stringify(key));
+        log.warn('⚠️ Invalid or missing stateId from key:', JSON.stringify(key));
         return;
       }
 
