@@ -65,6 +65,8 @@ export class StateDB {
   constructor(version) {
     this.clear();
 
+    this.links = new Map();
+
     this.version = version;
 
     // Needed for JISON since it only supports direct properties
@@ -125,6 +127,11 @@ export class StateDB {
    * @type {number}
    */
   dividerCnt = 0;
+  /**
+   * @private
+   * @type {Map<string, { url: string, tooltip: string }>}
+   */
+  links = new Map();
 
   static relationType = {
     AGGREGATION: 0,
@@ -278,6 +285,9 @@ export class StateDB {
         case STMT_APPLYCLASS:
           this.setCssClass(item.id.trim(), item.styleClass);
           break;
+        case 'click':
+          this.addLink(item.id, item.url, item.tooltip);
+          break;
       }
     });
 
@@ -406,6 +416,7 @@ export class StateDB {
     this.startEndCount = 0;
     this.classes = newClassesList();
     if (!saveCommon) {
+      this.links = new Map();
       commonClear();
     }
   }
@@ -568,6 +579,25 @@ export class StateDB {
   getDividerId() {
     this.dividerCnt++;
     return 'divider-id-' + this.dividerCnt;
+  }
+
+  /**
+   * Adds a clickable link to a state.
+   * @param {string} stateId
+   * @param {string} url
+   * @param {string} tooltip
+   */
+  addLink(stateId, url, tooltip = '') {
+    this.links.set(stateId, { url, tooltip });
+    log.warn('Adding link', stateId, url, tooltip);
+  }
+
+  /**
+   * Get all registered links.
+   * @returns {Map<string, { url: string, tooltip: string }>}
+   */
+  getLinks() {
+    return this.links;
   }
 
   /**
