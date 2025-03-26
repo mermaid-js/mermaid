@@ -450,6 +450,12 @@ describe('state diagram V2, ', function () {
           click StateA "https://example.com" "Go to StateA"
       `;
 
+      stateDb = new StateDB(2);
+      parser.yy = {
+        ...stateDb,
+        addLink: stateDb.addLink.bind(stateDb),
+      };
+
       parser.parse(str);
 
       const links = stateDb.getLinks();

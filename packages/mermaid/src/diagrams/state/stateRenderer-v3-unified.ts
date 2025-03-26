@@ -70,9 +70,10 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   // Inject clickable links after nodes are rendered
   try {
-    const links = typeof diag.db.getLinks === 'function' ? diag.db.getLinks() : new Map();
+    const links: Map<string, { url: string; tooltip: string }> =
+      typeof diag.db.getLinks === 'function' ? diag.db.getLinks() : new Map();
 
-    links.forEach((linkInfo, key) => {
+    links.forEach((linkInfo, key: string | { id: string }) => {
       const stateId =
         typeof key === 'string' ? key : typeof key?.id === 'string' ? key.id : String(key);
 
@@ -84,7 +85,7 @@ export const draw = async function (text: string, id: string, _version: string, 
       const allNodes = svg.node()?.querySelectorAll('g');
       let matchedElem: SVGGElement | undefined;
 
-      allNodes?.forEach((g) => {
+      allNodes?.forEach((g: SVGGElement) => {
         const text = g.textContent?.trim();
         if (text === stateId) {
           matchedElem = g;
