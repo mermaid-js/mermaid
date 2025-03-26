@@ -67,6 +67,11 @@ export interface Coordinate {
 
 export type Color = string;
 
+export interface VisualProps {
+  fill: Color;
+  stroke: Color;
+}
+
 export interface Box {
   r: number;
   x: number;
@@ -74,7 +79,7 @@ export interface Box {
   dimension: Dimension;
   leftSibling: boolean;
   swimlane: number;
-  color: string;
+  visual: VisualProps;
   text: string;
   frame: EmFrame;
   /** Line index */
@@ -88,7 +93,7 @@ export interface Swimlane {
 }
 
 export interface Relation {
-  color: string;
+  visual: VisualProps;
   source: Coordinate;
   target: Coordinate;
   sourceBox: Box;
@@ -113,7 +118,7 @@ export const FramePositionedKind = 'frame positioned';
 export type FramePositioned = {
   index: number;
   frame: EmFrame;
-  color: string;
+  visual: VisualProps;
   swimlane: number;
   dimension: Dimension;
 } & EventBase;
@@ -191,27 +196,45 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     }
   }
 
-  function calculateEntityColor(frame: EmFrame): Color {
+  function calculateEntityVisualProps(frame: EmFrame): VisualProps {
     switch (frame.modelEntityType) {
       case 'scn':
-        return '#adacae';
+        return {
+          fill: 'white',
+          stroke: '#dbdada',
+        };
       case 'job':
-        return '#ab71f4';
+        return {
+          fill: '#edb3f6',
+          stroke: '#b88cbf',
+        };
       case 'rmo':
-        return '#d9f79e';
+        return {
+          fill: '#cee741',
+          stroke: '#a3b732',
+        };
       case 'cmd':
-        return '#a7ccf5';
+        return {
+          fill: '#83c6fb',
+          stroke: '#679ac3',
+        };
       case 'evt':
-        return '#f79948';
+        return {
+          fill: '#fac710',
+          stroke: '#c19a0f',
+        };
       default:
-        return 'red';
+        return {
+          fill: 'red',
+          stroke: 'black',
+        };
     }
   }
 
   function decidePositionFrame(state: Context, _command: Command): Event[] {
     const command = _command as PositionFrame;
 
-    const color = calculateEntityColor(command.frame);
+    const visual = calculateEntityVisualProps(command.frame);
     const swimlane = calculateSwimlanePosition(command.frame);
     const dimension = calculateFixedDimension();
 
@@ -219,7 +242,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       $kind: FramePositionedKind,
       frame: command.frame,
       index: command.index,
-      color,
+      visual: visual,
       swimlane,
       dimension,
     };
@@ -282,7 +305,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       dimension: event.dimension,
       leftSibling: false,
       swimlane: event.swimlane,
-      color: event.color,
+      visual: event.visual,
       text: event.frame.entityIdentifier,
       frame: event.frame,
       index: event.index,
@@ -377,7 +400,10 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     const event = _event as RelationPositioned;
 
     const relation: Relation = {
-      color: '#000',
+      visual: {
+        fill: 'none',
+        stroke: '#000',
+      },
       source: {
         x: event.sourceBox.x,
         y: event.sourceBox.y,
@@ -464,9 +490,11 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     g.append('rect')
       .attr('x', box.x)
       .attr('y', box.y)
+      .attr('rx', '3')
       .attr('width', box.dimension.width)
       .attr('height', box.dimension.height)
-      .attr('fill', box.color);
+      .attr('stroke', box.visual.stroke)
+      .attr('fill', box.visual.fill);
     // .attr('stroke', '#000');
 
     g.append('text')
@@ -503,8 +531,8 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
     diagram
       .append('path')
-      .attr('fill', 'none')
-      .attr('stroke', relation.color)
+      .attr('fill', relation.visual.fill)
+      .attr('stroke', relation.visual.stroke)
       .attr('stroke-width', '1')
       .attr('marker-end', 'url(#arrowhead)')
       .attr('d', `M${sourceX} ${sourceY} L${targetX} ${targetY}`);
