@@ -24,6 +24,7 @@ export {
   isCommit,
   isMerge,
   EventModeling,
+  EmDataEntity,
   EmFrame,
   EmDataType,
   EmModelEntityType,
