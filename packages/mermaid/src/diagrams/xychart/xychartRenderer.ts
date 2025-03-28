@@ -91,18 +91,52 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
         if (chartConfig.showDataLabel) {
           if (chartConfig.chartOrientation === 'horizontal') {
+            // Append a temporary group to measure the widths of the texts
+            const tempGroup = svg.append('g').attr('class', 'temp-label-group');
+            // Append texts temporarily to measure their widths
+            const tempTexts = tempGroup
+              .selectAll('text')
+              .data(labelData)
+              .enter()
+              .append('text')
+              .attr('font-size', (data, i) => shape.data[i].height * 0.7)
+              .text((d) => d);
+            // Measure widths and determine the font size & actual widths
+            const measured = tempTexts.nodes().map((node, i) => {
+              const bbox = node.getBBox();
+              return {
+                width: bbox.width,
+                height: bbox.height,
+                fontSize: shape.data[i].height * 0.7,
+              };
+            });
+            const uniformFontSize = Math.floor(Math.min(...measured.map((m) => m.fontSize)));
+            const longestTextWidth = Math.max(...measured.map((m) => m.width));
+            // Clean up temp texts
+            tempGroup.remove();
+
             shapeGroup
               .selectAll('text')
               .data(shape.data)
               .enter()
               .append('text')
-              .attr('x', (data) => data.x + data.width - 50)
+              .attr('x', (data) => data.x + data.width - longestTextWidth - 5)
               .attr('y', (data) => data.y + data.height / 2 + 1)
               .attr('text-anchor', 'start')
               .attr('dominant-baseline', 'middle')
               .attr('fill', 'black')
+              .attr('font-size', `${uniformFontSize}px`)
               .text((data, index) => labelData[index]);
           } else {
+            // Compute candidate font sizes for each bar using width only.
+            const candidateFontSizes = shape.data.map((data, index) => {
+              const label = labelData[index].toString();
+              return data.width / (label.length * 0.6);
+            });
+
+            // Use the smallest font size for uniformity.
+            const uniformFontSize = Math.floor(Math.min(...candidateFontSizes));
+
             shapeGroup
               .selectAll('text')
               .data(shape.data)
@@ -112,6 +146,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
               .attr('y', (data) => data.y + 25)
               .attr('text-anchor', 'middle')
               .attr('fill', 'black')
+              .attr('font-size', `${uniformFontSize}px`)
               .text((data, index) => labelData[index]);
           }
         }
