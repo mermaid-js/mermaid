@@ -284,6 +284,14 @@ export const draw = function (text, id, version, diagObj) {
             0.5 * theBarHeight
           );
         }
+        if (d.special) {
+          return (
+            timeScale(d.startTime) +
+            theSidePad +
+            0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) -
+            0.5 * theBarHeight
+          );
+        }
         return timeScale(d.startTime) + theSidePad;
       })
       .attr('y', function (d, i) {
@@ -293,6 +301,9 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('width', function (d) {
         if (d.milestone) {
+          return theBarHeight;
+        }
+        if (d.special) {
           return theBarHeight;
         }
         return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
@@ -355,6 +366,10 @@ export const draw = function (text, id, version, diagObj) {
           taskClass = ' milestone ' + taskClass;
         }
 
+        if (d.special) {
+          taskClass = ' special ' + taskClass;
+        }
+
         taskClass += secNum;
 
         taskClass += ' ' + classStr;
@@ -381,6 +396,12 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           endX = startX + theBarHeight;
         }
+        if (d.special) {
+          startX += 0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) - 0.5 * theBarHeight;
+        }
+        if (d.special) {
+          endX = startX + theBarHeight;
+        }
         const textWidth = this.getBBox().width;
 
         // Check id text width > width of rectangle
@@ -404,6 +425,9 @@ export const draw = function (text, id, version, diagObj) {
         const startX = timeScale(d.startTime);
         let endX = timeScale(d.endTime);
         if (d.milestone) {
+          endX = startX + theBarHeight;
+        }
+        if (d.special) {
           endX = startX + theBarHeight;
         }
         const textWidth = this.getBBox().width;
@@ -443,6 +467,9 @@ export const draw = function (text, id, version, diagObj) {
 
         if (d.milestone) {
           taskType += ' milestoneText';
+        }
+        if (d.special) {
+          taskType += ' specialText';
         }
 
         // Check id text width > width of rectangle
@@ -769,6 +796,25 @@ export const draw = function (text, id, version, diagObj) {
     if (todayMarker !== '') {
       todayLine.attr('style', todayMarker.replace(/,/g, ';'));
     }
+  }
+
+  /**
+   * @param theSidePad
+   * @param theTopPad
+   * @param w
+   * @param h
+   */
+  function _drawDate(theSidePad, theTopPad, w, h) {
+    const todayG = svg.append('g').attr('class', 'today');
+    const today = new Date();
+    const todayLine = todayG.append('line');
+
+    todayLine
+      .attr('x1', timeScale(today) + theSidePad)
+      .attr('x2', timeScale(today) + theSidePad)
+      .attr('y1', conf.titleTopMargin)
+      .attr('y2', h - conf.titleTopMargin)
+      .attr('class', 'today');
   }
 
   /**

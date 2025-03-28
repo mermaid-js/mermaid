@@ -237,6 +237,19 @@ const getStyles = (options) =>
     fill: ${options.taskTextDarkColor} !important;
   }
 
+  .special {
+      transform: none;
+      border-radius: 0;
+      width: 3px;
+      height: 100%;
+      fill: red;
+  }
+
+  .specialText {
+      font-weight: bold;
+      fill: red;
+  }
+
   .activeCritText0,
   .activeCritText1,
   .activeCritText2,
