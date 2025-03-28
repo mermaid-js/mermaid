@@ -230,6 +230,20 @@ class Theme {
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
 
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
+    };
+
     /* architecture */
     this.archEdgeColor = this.archEdgeColor || '#777';
     this.archEdgeArrowColor = this.archEdgeArrowColor || '#777';
