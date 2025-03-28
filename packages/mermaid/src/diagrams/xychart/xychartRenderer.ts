@@ -89,7 +89,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('stroke', (data) => data.strokeFill)
           .attr('stroke-width', (data) => data.strokeWidth);
 
-        if (chartConfig.showLabelData) {
+        if (chartConfig.showDataLabel) {
           shapeGroup
             .selectAll('text')
             .data(shape.data)
