@@ -14,6 +14,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const db = diagObj.db as typeof XYChartDB;
   const themeConfig = db.getChartThemeConfig();
   const chartConfig = db.getChartConfig();
+  const labelData = db.getXYChartData().plots[0].data.map((data) => data[1]);
   function getDominantBaseLine(horizontalPos: TextVerticalPos) {
     return horizontalPos === 'top' ? 'text-before-edge' : 'middle';
   }
@@ -87,6 +88,19 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('fill', (data) => data.fill)
           .attr('stroke', (data) => data.strokeFill)
           .attr('stroke-width', (data) => data.strokeWidth);
+
+        if (chartConfig.showLabelData) {
+          shapeGroup
+            .selectAll('text')
+            .data(shape.data)
+            .enter()
+            .append('text')
+            .attr('x', (data) => data.x + data.width / 2) // Center text horizontally
+            .attr('y', (data) => data.y + 25) // Position text 5 pixels above the rect
+            .attr('text-anchor', 'middle')
+            .attr('fill', 'black')
+            .text((data, index) => labelData[index]);
+        }
         break;
       case 'text':
         shapeGroup
