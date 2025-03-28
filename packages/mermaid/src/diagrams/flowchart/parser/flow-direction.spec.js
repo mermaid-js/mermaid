@@ -26,7 +26,7 @@ describe('when parsing directions', function () {
     expect(subgraph.nodes[0]).toBe('b');
     expect(subgraph.nodes[1]).toBe('a');
     expect(subgraph.id).toBe('A');
-    expect(subgraph.dir).toBe(undefined);
+    expect(subgraph.dir).toBe('TB');
   });
   it('should handle a subgraph with a direction', function () {
     const res = flow.parser.parse(`flowchart TB
