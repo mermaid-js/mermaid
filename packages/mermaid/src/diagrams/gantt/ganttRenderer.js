@@ -234,7 +234,7 @@ export const draw = function (text, id, version, diagObj) {
     // Get unique task orders. Required to draw the background rects when display mode is compact.
     const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
     const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
-
+    const numOccurrences = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
@@ -243,6 +243,8 @@ export const draw = function (text, id, version, diagObj) {
       .enter()
       .append('rect')
       .attr('x', 0)
+      .data(numOccurrences)
+      .enter()
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
@@ -420,10 +422,16 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
-        i = d.order;
         if (d.vert) {
-          return conf.barHeight * 8 + (conf.fontSize / 2 - 2) + theTopPad;
+          // console.log(d);
+          // console.log(numOccurrences);
+          // console.log((numOccurrences.at(0)).at(1));
+          return (
+            conf.barHeight * numOccurrences.at(0).at(1) * 1.3 + (conf.fontSize / 2 - 2) + theTopPad
+          );
+          // return conf.gridLineStartPadding;
         }
+        i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
       })
       .attr('text-height', theBarHeight)
