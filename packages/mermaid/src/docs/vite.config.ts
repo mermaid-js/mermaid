@@ -3,6 +3,7 @@ import type { PluginOption, Plugin } from 'vite';
 import path from 'path';
 // @ts-expect-error This package has an incorrect export map.
 import { SearchPlugin } from 'vitepress-plugin-search';
+import llmstxt from 'vitepress-plugin-llms';
 import fs from 'fs';
 import Components from 'unplugin-vue-components/vite';
 import Unocss from 'unocss/vite';
@@ -19,6 +20,13 @@ export default defineConfig({
     exclude: ['vitepress'],
   },
   plugins: [
+    llmstxt({
+      ignoreFiles: [
+        "landing/*",
+        "news/*",
+        "index.md",
+      ],
+    }) as Plugin,
     // @ts-ignore This package has an incorrect exports.
     Components({
       include: [/\.vue/, /\.md/],
