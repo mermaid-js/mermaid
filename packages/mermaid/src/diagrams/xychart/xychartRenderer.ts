@@ -90,16 +90,30 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('stroke-width', (data) => data.strokeWidth);
 
         if (chartConfig.showDataLabel) {
-          shapeGroup
-            .selectAll('text')
-            .data(shape.data)
-            .enter()
-            .append('text')
-            .attr('x', (data) => data.x + data.width / 2) // Center text horizontally
-            .attr('y', (data) => data.y + 25) // Position text 5 pixels above the rect
-            .attr('text-anchor', 'middle')
-            .attr('fill', 'black')
-            .text((data, index) => labelData[index]);
+          if (chartConfig.chartOrientation === 'horizontal') {
+            shapeGroup
+              .selectAll('text')
+              .data(shape.data)
+              .enter()
+              .append('text')
+              .attr('x', (data) => data.x + data.width - 50)
+              .attr('y', (data) => data.y + data.height / 2 + 1)
+              .attr('text-anchor', 'start')
+              .attr('dominant-baseline', 'middle')
+              .attr('fill', 'black')
+              .text((data, index) => labelData[index]);
+          } else {
+            shapeGroup
+              .selectAll('text')
+              .data(shape.data)
+              .enter()
+              .append('text')
+              .attr('x', (data) => data.x + data.width / 2)
+              .attr('y', (data) => data.y + 25)
+              .attr('text-anchor', 'middle')
+              .attr('fill', 'black')
+              .text((data, index) => labelData[index]);
+          }
         }
         break;
       case 'text':

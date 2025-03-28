@@ -179,6 +179,7 @@ describe('XY Chart', () => {
             axisLineWidth: 5
           chartOrientation: horizontal
           plotReservedSpacePercent: 60
+          showDataLabel: true
       ---
       xychart-beta
         title "Sales Revenue"
@@ -314,5 +315,114 @@ describe('XY Chart', () => {
       {}
     );
     cy.get('svg');
+  });
+  it('should render bar labels by default', () => {
+    imgSnapshotTest(
+      `
+      xychart-beta
+        title "Default Label Chart"
+        x-axis Categories [A, B, C]
+        y-axis "Values" 0 --> 100
+        bar [10, 50, 90]
+      `,
+      {}
+    );
+  });
+
+  it('should not render bar labels when showLabelData is false', () => {
+    imgSnapshotTest(
+      `
+      ---
+      config:
+        xyChart:
+          showLabelData: false
+      ---
+      xychart-beta
+        title "No Label Chart"
+        x-axis Categories [A, B, C]
+        y-axis "Values" 0 --> 100
+        bar [10, 50, 90]
+      `,
+      {}
+    );
+  });
+
+  it('should render horizontal bar chart with labels', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+    xychart-beta
+      title "Sales Revenue"
+      x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+      y-axis "Revenue (in $)" 4000 --> 11000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    `,
+      {}
+    );
+  });
+
+  it('should render horizontal bar chart without labels', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: false
+        chartOrientation: horizontal
+    ---
+    xychart-beta
+      title "Sales Revenue"
+      x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+      y-axis "Revenue (in $)" 4000 --> 11000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    `,
+      {}
+    );
+  });
+
+  it('should render multiple bar plots with labels correctly', () => {
+    // In this test, we create two bar plots. The default config should render labels for each.
+    imgSnapshotTest(
+      `
+      xychart-beta
+        title "Multiple Bar Plots"
+        x-axis Categories [A, B, C]
+        y-axis "Values" 0 --> 100
+        bar [10, 50, 90]
+        bar [20, 60, 80]
+      `,
+      {}
+    );
+  });
+
+  it('should render a single bar with label', () => {
+    imgSnapshotTest(
+      `
+      xychart-beta
+        title "Single Bar Chart"
+        x-axis Categories [A]
+        y-axis "Value" 0 --> 100
+        bar [75]
+      `,
+      {}
+    );
+  });
+
+  it('should render negative and decimal values with correct labels', () => {
+    imgSnapshotTest(
+      `
+      xychart-beta
+        title "Decimal and Negative Values"
+        x-axis Categories [A, B, C]
+        y-axis -10 --> 10
+        bar [ -2.5, 0.75, 5.1 ]
+      `,
+      {}
+    );
   });
 });
