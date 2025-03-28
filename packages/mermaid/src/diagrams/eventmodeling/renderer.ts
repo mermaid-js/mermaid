@@ -7,6 +7,7 @@ import type { DrawDefinition } from '../../diagram-api/types.js';
 // import type d3 from 'd3';
 
 import type { EmFrame, EmDataEntity } from '@mermaid-js/parser';
+import { isEmResetFrame } from '@mermaid-js/parser';
 
 import type {
   EventModelingDB,
@@ -59,6 +60,9 @@ const diagramProps = {
   boxTextFontWeight: 'bold',
   boxTextPadding: 10,
   swimlaneTextFontWeight: 'bold',
+  labelUiAutomation: 'UI/Automation',
+  labelCommandReadModel: 'Command/Read Model',
+  labelEvents: 'Events',
 };
 
 const initial: Context = {
@@ -71,14 +75,14 @@ const initial: Context = {
 function calculateSwimlaneProps(frame: EmFrame): SwimlaneProps {
   switch (frame.modelEntityType) {
     case 'scn':
-    case 'job':
-      return { index: 0, label: 'UI/Automation' };
+    case 'pcr':
+      return { index: 0, label: diagramProps.labelUiAutomation };
     case 'rmo':
     case 'cmd':
-      return { index: 1, label: 'Command/Read Model' };
+      return { index: 1, label: diagramProps.labelCommandReadModel };
     case 'evt':
     default:
-      return { index: 2, label: 'Events' };
+      return { index: 2, label: diagramProps.labelEvents };
   }
 }
 
@@ -89,7 +93,7 @@ function calculateEntityVisualProps(frame: EmFrame): VisualProps {
         fill: 'white',
         stroke: '#dbdada',
       };
-    case 'job':
+    case 'pcr':
       return {
         fill: '#edb3f6',
         stroke: '#b88cbf',
@@ -252,14 +256,16 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
 }
 
 function isFirstFrame(index: number, frame: EmFrame): boolean {
-  if (index === 0 && frame.sourceFrame === undefined) {
+  if (index === 0 && frame.sourceFrames.length === 0) {
     return true;
   }
   return false;
 }
 
 function hasSourceFrame(frame: EmFrame): boolean {
-  return frame.sourceFrame !== undefined && frame.sourceFrame !== null;
+  return (
+    frame.sourceFrames !== undefined && frame.sourceFrames !== null && frame.sourceFrames.length > 0
+  );
 }
 
 function findBoxByFrame(boxes: Box[], frame: EmFrame | undefined): Box | undefined {
@@ -291,7 +297,7 @@ function findBoxByLineIndex(
 function decidePositionRelation(state: Context, _command: Command): Event[] {
   const command = _command as PositionRelation;
 
-  if (isFirstFrame(command.index, command.frame)) {
+  if (isEmResetFrame(command.frame) || isFirstFrame(command.index, command.frame)) {
     return [];
   }
 
@@ -559,19 +565,29 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       textProps,
     });
 
-    let sourceFrame = undefined;
+    let sourceFrames = undefined;
     if (hasSourceFrame(frame)) {
-      sourceFrame = ast.frames.find(
-        (currentFrame: EmFrame) => currentFrame.name === frame.sourceFrame?.$refText
-      );
-    }
+      log.debug(`source frame`, frame.sourceFrames);
+      sourceFrames = ast.frames.filter((currentFrame: EmFrame) => {
+        //@ts-ignore: sf is Reference<EmFrame> but Reference is present in 'langium' package not available in `mermaid` package directly. We might want to re-export it from `parser`.
+        return frame.sourceFrames.some((sf) => sf.$refText === currentFrame.name);
+      });
 
-    state = dispatch(state, {
-      $kind: PositionRelationKind,
-      index,
-      frame,
-      sourceFrame,
-    });
+      sourceFrames.forEach((sourceFrame: EmFrame) => {
+        state = dispatch(state, {
+          $kind: PositionRelationKind,
+          index,
+          frame,
+          sourceFrame,
+        });
+      });
+    } else {
+      state = dispatch(state, {
+        $kind: PositionRelationKind,
+        index,
+        frame,
+      });
+    }
   });
 
   Object.values(state.swimlanes)

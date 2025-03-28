@@ -29,6 +29,7 @@ export {
   EmDataType,
   EmModelEntityType,
   isEmModelEntityType,
+  isEmResetFrame,
 } from './generated/ast.js';
 
 export {

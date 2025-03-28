@@ -5,11 +5,11 @@ describe('Parse Event Model', () => {
   it('should parse complex model', () => {
     const result = parse(`eventmodeling
 tf 01 cmd UpdateCartCommand
-tf 02 evt CartUpdatedEvent >tf 01 \`jsobj\`{ a: b }
-tf 03 rmo CartItemsReadModel >tf 02 [[CartItemsReadModel03]]
-tf 04 evt ProductDescriptionUpdatedEvent >tf 01 \`jsobj\`{ a: { c: d } }
-tf 05 evt ProductTitleUpdatedEvent >tf 01 { "a": { "c": true } }
-tf 06 evt ProductCountIncrementedEvent >tf 01 \`json\`" { "a": { "c": true } } "
+tf 02 evt CartUpdatedEvent >f 01 \`jsobj\`{ a: b }
+tf 03 rmo CartItemsReadModel >f 02 [[CartItemsReadModel03]]
+tf 04 evt ProductDescriptionUpdatedEvent >f 01 \`jsobj\`{ a: { c: d } }
+tf 05 evt ProductTitleUpdatedEvent >f 01 { "a": { "c": true } }
+tf 06 evt ProductCountIncrementedEvent >f 01 \`json\`" { "a": { "c": true } } "
 
 data CartItemsReadModel03 {
   { a: b }
@@ -80,5 +80,72 @@ tf 01 evt Start
     expect(frame.name).toBe('01');
     expect(frame.modelEntityType).toBe('evt');
     expect(frame.entityIdentifier).toBe('Start');
+  });
+
+  it('should parse qualified names in model', () => {
+    const result = parse(`eventmodeling
+
+tf 02 scn Screen
+tf 01 evt Product.PriceChanged
+tf 03 evt Cart.ItemAdded
+
+  `);
+    // console.error('Eventmodeling', result.value);
+    assert(
+      result.lexerErrors.length === 0,
+      `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+    );
+    expect(result.value.frames.length).toBe(3);
+    const frame = result.value.frames[1];
+    expect(frame.name).toBe('01');
+    expect(frame.modelEntityType).toBe('evt');
+    expect(frame.entityIdentifier).toBe('Product.PriceChanged');
+  });
+
+  it('should parse both types of frames in model', () => {
+    const result = parse(`eventmodeling
+
+tf 02 scn Screen
+rf 01 evt Product.PriceChanged
+tf 03 evt Cart.ItemAdded
+
+  `);
+    // console.error('Eventmodeling', result.value);
+    assert(
+      result.lexerErrors.length === 0,
+      `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+    );
+    expect(result.value.frames.length).toBe(3);
+    const frame = result.value.frames[1];
+    // console.error('Eventmodeling', frame);
+    expect(frame.$type).toBe('EmResetFrame');
+    expect(frame.name).toBe('01');
+    expect(frame.modelEntityType).toBe('evt');
+    expect(frame.entityIdentifier).toBe('Product.PriceChanged');
+  });
+
+  it('should parse multiple source frames model', () => {
+    const result = parse(`eventmodeling
+tf 01 evt Start
+tf 02 evt End
+rf 03 rmo ReadModel01 >f 01 >f 02 { a: true }
+rf 04 rmo ReadModel02 >f 01 >f 02
+  `);
+    // console.error('Eventmodeling', result.value);
+    assert(
+      result.lexerErrors.length === 0,
+      `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+    );
+    expect(result.value.frames.length).toBe(4);
+    let frame = result.value.frames[2];
+    // console.error('Eventmodeling', frame);
+    expect(frame.name).toBe('03');
+    expect(frame.modelEntityType).toBe('rmo');
+    expect(frame.sourceFrames.length).toBe(2);
+
+    frame = result.value.frames[3];
+    expect(frame.name).toBe('04');
+    expect(frame.modelEntityType).toBe('rmo');
+    expect(frame.sourceFrames.length).toBe(2);
   });
 });

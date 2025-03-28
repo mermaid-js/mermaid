@@ -12,7 +12,7 @@ entry EventModeling:
 
 
 EmModelEntityType returns string:
-    'rmo' | 'scn' | 'cmd' | 'evt' | 'job';
+    'rmo' | 'scn' | 'cmd' | 'evt' | 'pcr';
 
 EmDataType returns string:
     'json' | 'jsobj' | 'figma' | 'salt' | 'uri' | 'md' | 'html' | 'text';
@@ -21,11 +21,20 @@ fragment EmDataInline: ('`' dataType=EmDataType '`')? dataInlineValue=EM_DATA_IN
 
 fragment EmDataBlock: ('`' dataType=EmDataType '`')? dataBlockValue=EM_DATA_BLOCK;
 
-EmFrame:
-    'tf' name=EM_FI modelEntityType=EmModelEntityType entityIdentifier=EM_EID ('>tf' sourceFrame=[EmFrame:EM_FI])? ('[[' dataReference=[EmDataEntity:EM_EID] ']]')? EmDataInline?;
+QualifiedName returns string:
+    EM_EID ('.' EM_EID)*;
+
+EmTimeFrame:
+    'tf' name=EM_FI modelEntityType=EmModelEntityType entityIdentifier=QualifiedName ('>f' sourceFrames+=[EmFrame:EM_FI])* ('[[' dataReference=[EmDataEntity:EM_EID] ']]')? EmDataInline?;
+
+EmResetFrame:
+      'rf' name=EM_FI modelEntityType=EmModelEntityType entityIdentifier=QualifiedName ('>f' sourceFrames+=[EmFrame:EM_FI])* ('[[' dataReference=[EmDataEntity:EM_EID] ']]')? EmDataInline?;
+
+
+EmFrame: EmTimeFrame | EmResetFrame;
 
 EmModelEntity:
-    'entity' name=EM_EID;
+    'entity' name=QualifiedName;
 
 EmDataEntity:
     'data' name=EM_EID EmDataBlock;
