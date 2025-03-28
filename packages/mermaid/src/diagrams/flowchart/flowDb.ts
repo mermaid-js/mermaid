@@ -686,7 +686,8 @@ You have to call mermaid.initialize.`
       nodes: nodeList,
       title: title.trim(),
       classes: [],
-      dir,
+      dir: dir ?? this.getDirection(),
+
       labelType: _title.type,
     };
 
