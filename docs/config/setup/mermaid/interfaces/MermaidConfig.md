@@ -105,7 +105,7 @@ You can set this attribute to base the seed on a static string.
 
 > `optional` **dompurifyConfig**: `Config`
 
-Defined in: [packages/mermaid/src/config.type.ts:202](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L202)
+Defined in: [packages/mermaid/src/config.type.ts:203](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L203)
 
 ---
 
@@ -167,7 +167,7 @@ See <https://developer.mozilla.org/en-US/docs/Web/CSS/font-family>
 
 > `optional` **fontSize**: `number`
 
-Defined in: [packages/mermaid/src/config.type.ts:204](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L204)
+Defined in: [packages/mermaid/src/config.type.ts:205](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L205)
 
 ---
 
@@ -280,7 +280,7 @@ Defines which main look to use for the diagram.
 
 > `optional` **markdownAutoWrap**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:205](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L205)
+Defined in: [packages/mermaid/src/config.type.ts:206](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L206)
 
 ---
 
@@ -333,6 +333,14 @@ Defined in: [packages/mermaid/src/config.type.ts:190](https://github.com/mermaid
 > `optional` **quadrantChart**: `QuadrantChartConfig`
 
 Defined in: [packages/mermaid/src/config.type.ts:191](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L191)
+
+---
+
+### radar?
+
+> `optional` **radar**: `RadarDiagramConfig`
+
+Defined in: [packages/mermaid/src/config.type.ts:202](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L202)
 
 ---
 
@@ -404,7 +412,7 @@ Defined in: [packages/mermaid/src/config.type.ts:188](https://github.com/mermaid
 
 > `optional` **suppressErrorRendering**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:211](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L211)
+Defined in: [packages/mermaid/src/config.type.ts:212](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L212)
 
 Suppresses inserting 'Syntax error' diagram in the DOM.
 This is useful when you want to control how to handle syntax errors in your application.
@@ -450,7 +458,7 @@ Defined in: [packages/mermaid/src/config.type.ts:186](https://github.com/mermaid
 
 > `optional` **wrap**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:203](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L203)
+Defined in: [packages/mermaid/src/config.type.ts:204](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L204)
 
 ---
 

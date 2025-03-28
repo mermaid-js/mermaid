@@ -55,6 +55,7 @@ required:
   - packet
   - block
   - look
+  - radar
 properties:
   theme:
     description: |
@@ -292,6 +293,8 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  radar:
+    $ref: '#/$defs/RadarDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2078,7 +2081,21 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Defines how mermaid renders curves for flowcharts.
         type: string
-        enum: ['basis', 'linear', 'cardinal']
+        enum:
+          [
+            'basis',
+            'bumpX',
+            'bumpY',
+            'cardinal',
+            'catmullRom',
+            'linear',
+            'monotoneX',
+            'monotoneY',
+            'natural',
+            'step',
+            'stepAfter',
+            'stepBefore',
+          ]
         default: 'basis'
       padding:
         description: |
@@ -2222,6 +2239,60 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 8
+
+  RadarDiagramConfig:
+    title: Radar Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for radar diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: The size of the radar diagram.
+        type: number
+        minimum: 1
+        default: 600
+      height:
+        description: The size of the radar diagram.
+        type: number
+        minimum: 1
+        default: 600
+      marginTop:
+        description: The margin from the top of the radar diagram.
+        type: number
+        minimum: 0
+        default: 50
+      marginRight:
+        description: The margin from the right of the radar diagram.
+        type: number
+        minimum: 0
+        default: 50
+      marginBottom:
+        description: The margin from the bottom of the radar diagram.
+        type: number
+        minimum: 0
+        default: 50
+      marginLeft:
+        description: The margin from the left of the radar diagram.
+        type: number
+        minimum: 0
+        default: 50
+      axisScaleFactor:
+        description: The scale factor of the axis.
+        type: number
+        minimum: 0
+        default: 1
+      axisLabelFactor:
+        description: The scale factor of the axis label.
+        type: number
+        minimum: 0
+        default: 1.05
+      curveTension:
+        description: The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
+        type: number
+        minimum: 0
+        maximum: 1
+        default: 0.17
 
   FontCalculator:
     title: Font Calculator
