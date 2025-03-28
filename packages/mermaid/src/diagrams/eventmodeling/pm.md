@@ -2,8 +2,6 @@
 
 ## in progress
 
-- [x] dynamic swimlane position and size
-
 ## todo
 
 - [ ] write basic docs
@@ -18,9 +16,11 @@
 - [ ] move decide/evolve to `db.ts`?
 - [ ] support slice identification in the language?
 - [ ] identify slice type (state view, state change, translation, automation)?
+- [ ] either remove Box.y or calculate it properly and use it in rendering time instead of relying on Swimlane.y calculation
 
 ## done
 
+- [x] dynamic swimlane position and size
 - [x] multiple source frames rendering
 - [x] flexible box rendering
 - [x] nice colours

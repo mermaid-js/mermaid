@@ -41,10 +41,11 @@ export interface TextProps {
 export interface Box {
   r: number;
   x: number;
+  /** This has no meaning for the time being. It is calculated from Swimlane.y ATM. */
   y: number;
   dimension: Dimension;
   leftSibling: boolean;
-  swimlane: number;
+  swimlane: Swimlane;
   visual: VisualProps;
   text: string;
   frame: EmFrame;

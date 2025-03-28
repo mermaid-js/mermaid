@@ -45,7 +45,7 @@ const clear = () => {
 };
 
 const diagramProps = {
-  swimlaneMinHeight: 150,
+  swimlaneMinHeight: 60,
   swimlanePadding: 30,
   swimlaneGap: 30,
   boxPadding: 10,
@@ -198,9 +198,6 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
       ? state.swimlanes[state.previousSwimlaneNumber]
       : undefined;
 
-  const aboveSwimlane =
-    event.swimlaneIndex - 1 >= 0 ? state.swimlanes[event.swimlaneIndex - 1] : undefined;
-
   const dimension = {
     width:
       Math.max(
@@ -221,10 +218,22 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
   const maxR = calculateMaxRight(Object.values(state.swimlanes), r);
 
   swimlane.r = x + dimension.width;
-  if (aboveSwimlane) {
-    swimlane.height =
-      Math.max(diagramProps.swimlaneMinHeight, dimension.height) + 2 * diagramProps.swimlanePadding;
-    swimlane.y = aboveSwimlane.y + aboveSwimlane.height + diagramProps.swimlaneGap;
+  swimlane.height =
+    Math.max(diagramProps.swimlaneMinHeight, dimension.height) + 2 * diagramProps.swimlanePadding;
+
+  /** the following swimlane.y recalculation is suboptimal. Additionally
+   * the value of Box.y is not taken into account in rendering time.
+   * This is fine for the time being, but maybe needs improvement later on.
+   */
+  const swimlanes = sortedSwimlanesArray(state.swimlanes);
+  if (swimlanes.length > 0) {
+    swimlanes[0].y = 0;
+  }
+  for (let i = 1; i < swimlanes.length; i++) {
+    const sw = swimlanes[i];
+    const prevSw = swimlanes[i - 1];
+
+    sw.y = prevSw.y + prevSw.height + diagramProps.swimlaneGap;
   }
 
   const box: Box = {
@@ -234,7 +243,7 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
     r,
     dimension,
     leftSibling: false,
-    swimlane: event.swimlaneIndex,
+    swimlane: swimlane,
     visual: event.visual,
     text: event.textProps.content,
     frame: event.frame,
@@ -287,7 +296,7 @@ function findBoxByLineIndex(
   // boxes.find((box) => box.index === lineIndex);
   for (let i = lineIndex; i >= 0; i--) {
     const box = boxes[i];
-    if (box.swimlane !== targetSwimlane) {
+    if (box.swimlane.index !== targetSwimlane) {
       return box;
     }
   }
@@ -311,7 +320,7 @@ function decidePositionRelation(state: Context, _command: Command): Event[] {
   if (command.sourceFrame) {
     sourceBox = findBoxByFrame(state.boxes, command.sourceFrame);
   } else {
-    sourceBox = findBoxByLineIndex(state.boxes, targetBox.swimlane, command.index - 1);
+    sourceBox = findBoxByLineIndex(state.boxes, targetBox.swimlane.index, command.index - 1);
   }
 
   if (sourceBox === undefined) {
@@ -399,11 +408,13 @@ function dirUpwards(sourceY: number, targetY: number): boolean {
 
 function renderD3Box(diagram: Selection<BaseType, unknown, HTMLElement, any>) {
   return (box: Box) => {
+    const y = box.swimlane.y + diagramProps.swimlanePadding;
+
     const g = diagram.append('g');
 
     g.append('rect')
       .attr('x', box.x)
-      .attr('y', box.y)
+      .attr('y', y)
       .attr('rx', '3')
       .attr('width', box.dimension.width)
       .attr('height', box.dimension.height)
@@ -420,7 +431,7 @@ function renderD3Box(diagram: Selection<BaseType, unknown, HTMLElement, any>) {
     const f = g
       .append('foreignObject')
       .attr('x', box.x + diagramProps.boxPadding)
-      .attr('y', box.y + 10)
+      .attr('y', y + 10)
       .attr('width', box.dimension.width - 2 * diagramProps.boxPadding)
       .attr('height', box.dimension.height - 2 * diagramProps.boxPadding);
 
@@ -441,7 +452,10 @@ function renderD3Box(diagram: Selection<BaseType, unknown, HTMLElement, any>) {
 
 function renderD3Relation(diagram: Selection<BaseType, unknown, HTMLElement, any>) {
   return (relation: Relation) => {
-    const upwards = dirUpwards(relation.sourceBox.y, relation.targetBox.y);
+    const sourceBoxY = relation.sourceBox.swimlane.y + diagramProps.swimlanePadding;
+    const targetBoxY = relation.targetBox.swimlane.y + diagramProps.swimlanePadding;
+
+    const upwards = dirUpwards(sourceBoxY, targetBoxY);
 
     const sourceX = relation.sourceBox.x + (relation.sourceBox.dimension.width * 2) / 3;
     const targetX = relation.targetBox.x + relation.targetBox.dimension.width / 3;
@@ -454,11 +468,11 @@ function renderD3Relation(diagram: Selection<BaseType, unknown, HTMLElement, any
       targetBox: relation.targetBox,
     });
     if (upwards) {
-      sourceY = relation.sourceBox.y;
-      targetY = relation.targetBox.y + relation.targetBox.dimension.height;
+      sourceY = sourceBoxY;
+      targetY = targetBoxY + relation.targetBox.dimension.height;
     } else {
-      sourceY = relation.sourceBox.y + relation.sourceBox.dimension.height;
-      targetY = relation.targetBox.y;
+      sourceY = sourceBoxY + relation.sourceBox.dimension.height;
+      targetY = targetBoxY;
     }
 
     diagram
@@ -534,6 +548,10 @@ function calculateTextProps(frame: EmFrame, dataEntities: EmDataEntity[]): TextP
   return props;
 }
 
+function sortedSwimlanesArray(swimlanes: Record<string, Swimlane>): Swimlane[] {
+  return Object.values(swimlanes).sort((a, b) => a.index - b.index);
+}
+
 export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   clear();
 
@@ -590,9 +608,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     }
   });
 
-  Object.values(state.swimlanes)
-    .sort((a, b) => a.index - b.index)
-    .forEach(renderD3Swimlane(diagram, state.maxR));
+  sortedSwimlanesArray(state.swimlanes).forEach(renderD3Swimlane(diagram, state.maxR));
   state.boxes.forEach(renderD3Box(diagram));
   state.relations.forEach(renderD3Relation(diagram));
 
