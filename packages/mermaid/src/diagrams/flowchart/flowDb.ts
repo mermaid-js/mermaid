@@ -311,16 +311,20 @@ You have to call mermaid.initialize.`
 
   public addLink(_start: string[], _end: string[], linkData: unknown) {
     const id = this.isLinkData(linkData) ? linkData.id.replace('@', '') : undefined;
-  
+
     log.info('addLink', _start, _end, id);
-  
+
     // ✅ Detect reverse direction from linkData
-    const isReverse = typeof linkData === 'object' && linkData !== null && 'reverse' in linkData && (linkData as any).reverse === true;
-  
+    const isReverse =
+      typeof linkData === 'object' &&
+      linkData !== null &&
+      'reverse' in linkData &&
+      (linkData as any).reverse === true;
+
     // ✅ Flip start/end nodes if reverse arrow is used
     const actualStartList = isReverse ? _end : _start;
     const actualEndList = isReverse ? _start : _end;
-  
+
     // for a group syntax like A e1@--> B & C, only the first edge should have a userDefined id
     for (const start of actualStartList) {
       for (const end of actualEndList) {
@@ -334,7 +338,6 @@ You have to call mermaid.initialize.`
       }
     }
   }
-  
 
   /**
    * Updates a link's line interpolation algorithm
@@ -1103,7 +1106,6 @@ You have to call mermaid.initialize.`
         styles.push(...rawEdge.style);
       }
 
-      
       const edge: Edge = {
         id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
         isUserDefinedId: rawEdge.isUserDefinedId,
