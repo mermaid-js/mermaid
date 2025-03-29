@@ -9,13 +9,17 @@
         flex-direction: row;
       }
 
+      .code-container {
+        position: fixed;
+      }
+
       #code {
         max-width: 30vw;
         width: 30vw;
       }
 
       #dynamicDiagram {
-        padding-left: 2em;
+        padding-left: 580px;
         flex: 1;
       }
     </style>
@@ -36,7 +40,9 @@ data Udalost02 `jsobj`{ a: 20 }
     <hr />
     Type code to view diagram:
     <div class="container">
-      <textarea name="code" id="code" cols="30" rows="10"></textarea>
+      <div class="code-container">
+        <textarea name="code" id="code" cols="30" rows="10"></textarea>
+      </div>
       <div id="dynamicDiagram"></div>
     </div>
     <pre class="mermaid">info</pre>

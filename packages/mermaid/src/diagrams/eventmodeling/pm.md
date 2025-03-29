@@ -5,10 +5,10 @@
 ## todo
 
 - [ ] write basic docs
-- [ ] coverage tests
 - [ ] render GWTs
 - [ ] render Notes
 - [ ] render diagram title and common attributes
+- [ ] pass diagram props through diagram configuration
 - [ ] output Draw.io SVG+XML
 - [ ] output Martin's Miro JSON (in SVG?)
 - [ ] render nicer relations
@@ -19,6 +19,7 @@
 
 ## done
 
+- [x] coverage tests
 - [x] render swimlanes for namespaced entities
 - [x] dynamic swimlane position and size
 - [x] multiple source frames rendering

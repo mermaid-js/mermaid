@@ -7,8 +7,34 @@ export interface EventModelingDB extends DiagramDBBase<EventModelingDiagramConfi
   setOptions: (rawOptString: string) => void;
   getOptions: () => any;
 
-  getAst: () => EventModeling | undefined;
   setAst: (ast: EventModeling) => void;
+
+  getDiagramProps: () => DiagramProps;
+  getState: () => Context;
+}
+
+export interface DiagramProps {
+  swimlaneMinHeight: number;
+  swimlanePadding: number;
+  swimlaneGap: number;
+  boxPadding: number;
+  boxOverlap: number;
+  boxDefaultY: number;
+  boxMinWidth: number;
+  boxMaxWidth: number;
+  boxMinHeight: number;
+  boxMaxHeight: number;
+  contentStartX: number;
+  textMaxWidth: number;
+  boxTextFontWeight: string;
+  boxTextPadding: number;
+  swimlaneTextFontWeight: string;
+  labelUiAutomation: string;
+  labelUiAutomationPrefix: string;
+  labelCommandReadModel: string;
+  labelCommandReadModelPrefix: string;
+  labelEvents: string;
+  labelEventsPrefix: string;
 }
 
 /**
@@ -80,6 +106,7 @@ export interface Context {
   previousFrame?: EmFrame;
   previousSwimlaneNumber?: number;
   maxR: number;
+  sortedSwimlanesArray: Swimlane[];
 }
 
 /**
