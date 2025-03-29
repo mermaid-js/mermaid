@@ -98,3 +98,31 @@ describe('flow db class', () => {
     }
   });
 });
+
+describe('flow db getData', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+  });
+
+  it('should use defaultInterpolate for edges without specific interpolate', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['A'], ['B'], {});
+    flowDb.updateLinkInterpolate(['default'], 'stepBefore');
+
+    const { edges } = flowDb.getData();
+    expect(edges[0].curve).toBe('stepBefore');
+  });
+
+  it('should prioritize edge-specific interpolate over defaultInterpolate', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['A'], ['B'], {});
+    flowDb.updateLinkInterpolate(['default'], 'stepBefore');
+    flowDb.updateLinkInterpolate([0], 'basis');
+
+    const { edges } = flowDb.getData();
+    expect(edges[0].curve).toBe('basis');
+  });
+});

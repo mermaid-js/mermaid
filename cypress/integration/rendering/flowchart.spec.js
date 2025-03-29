@@ -895,7 +895,7 @@ graph TD
     imgSnapshotTest(
       `
       graph TD
-        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff 
+        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff
         hello --> default
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
@@ -910,6 +910,23 @@ graph TD
       hello --> default
 
       style default stroke:#000,stroke-width:4px
+    `,
+      {
+        flowchart: { htmlLabels: true },
+        securityLevel: 'loose',
+      }
+    );
+  });
+  it('#6369: edge color should affect arrow head', () => {
+    imgSnapshotTest(
+      `
+    flowchart LR
+        A --> B
+        A --> C
+        C --> D
+
+        linkStyle 0 stroke:#D50000
+        linkStyle 2 stroke:#D50000
     `,
       {
         flowchart: { htmlLabels: true },
