@@ -202,6 +202,9 @@ that id.
 "*"                   return 'MULT';
 "#"                   return 'BRKT';
 "&"                   return 'AMP';
+
+"<--"                     return 'REVERSE_LINK';
+
 ([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+  {
     return 'NODE_STRING';
 }
@@ -292,6 +295,7 @@ that id.
 /* operator associations and precedence */
 
 %left '^'
+%token REVERSE_LINK
 
 %start start
 
@@ -477,7 +481,9 @@ link: linkStatement arrowText
         {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText};}
     | LINK_ID START_LINK edgeText LINK
         {var inf = yy.destructLink($LINK, $START_LINK); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$edgeText, "id": $LINK_ID};}
-    ;
+    | REVERSE_LINK
+    { $$ = { type: 'arrow', stroke: 'normal', length: 'normal', reverse: true }; }
+  ;
 
 edgeText: edgeTextToken
     {$$={text:$edgeTextToken, type:'text'};}

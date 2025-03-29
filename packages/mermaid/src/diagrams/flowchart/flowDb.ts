@@ -315,13 +315,22 @@ You have to call mermaid.initialize.`
 
     log.info('addLink', _start, _end, id);
 
-    // for a group syntax like A e1@--> B & C, only the first edge should have an the userDefined id
-    // the rest of the edges should have auto generated ids
-    for (const start of _start) {
-      for (const end of _end) {
-        //use the id only for last node in _start and and first node in _end
-        const isLastStart = start === _start[_start.length - 1];
-        const isFirstEnd = end === _end[0];
+    // ✅ Detect reverse direction from linkData
+    const isReverse =
+      typeof linkData === 'object' &&
+      linkData !== null &&
+      'reverse' in linkData &&
+      (linkData as any).reverse === true;
+
+    // ✅ Flip start/end nodes if reverse arrow is used
+    const actualStartList = isReverse ? _end : _start;
+    const actualEndList = isReverse ? _start : _end;
+
+    // for a group syntax like A e1@--> B & C, only the first edge should have a userDefined id
+    for (const start of actualStartList) {
+      for (const end of actualEndList) {
+        const isLastStart = start === actualStartList[actualStartList.length - 1];
+        const isFirstEnd = end === actualEndList[0];
         if (isLastStart && isFirstEnd) {
           this.addSingleLink(start, end, linkData, id);
         } else {
@@ -1097,6 +1106,7 @@ You have to call mermaid.initialize.`
       if (rawEdge.style) {
         styles.push(...rawEdge.style);
       }
+
       const edge: Edge = {
         id: getEdgeId(rawEdge.start, rawEdge.end, { counter: index, prefix: 'L' }, rawEdge.id),
         isUserDefinedId: rawEdge.isUserDefinedId,
