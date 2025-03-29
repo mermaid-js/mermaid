@@ -6,7 +6,6 @@
 
 - [ ] write basic docs
 - [ ] coverage tests
-- [ ] render swimlanes for namespaced entities
 - [ ] render GWTs
 - [ ] render Notes
 - [ ] render diagram title and common attributes
@@ -20,6 +19,7 @@
 
 ## done
 
+- [x] render swimlanes for namespaced entities
 - [x] dynamic swimlane position and size
 - [x] multiple source frames rendering
 - [x] flexible box rendering

@@ -56,6 +56,7 @@ export interface Box {
 export interface SwimlaneProps {
   index: number;
   label: string;
+  namespace?: string;
 }
 
 export type Swimlane = {
@@ -97,8 +98,6 @@ export type FramePositioned = {
   index: number;
   frame: EmFrame;
   visual: VisualProps;
-  swimlaneIndex: number;
-  swimlaneLabel: string;
   dimension: Dimension;
   textProps: TextProps;
 } & EventBase;

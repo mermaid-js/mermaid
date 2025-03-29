@@ -46,8 +46,8 @@ const clear = () => {
 
 const diagramProps = {
   swimlaneMinHeight: 60,
-  swimlanePadding: 30,
-  swimlaneGap: 30,
+  swimlanePadding: 15,
+  swimlaneGap: 10,
   boxPadding: 10,
   boxOverlap: 90,
   boxDefaultY: 0,
@@ -61,8 +61,11 @@ const diagramProps = {
   boxTextPadding: 10,
   swimlaneTextFontWeight: 'bold',
   labelUiAutomation: 'UI/Automation',
+  labelUiAutomationPrefix: 'UI/A: ',
   labelCommandReadModel: 'Command/Read Model',
+  labelCommandReadModelPrefix: 'C/RM: ',
   labelEvents: 'Events',
+  labelEventsPrefix: 'Stream: ',
 };
 
 const initial: Context = {
@@ -72,17 +75,100 @@ const initial: Context = {
   maxR: 0,
 };
 
-function calculateSwimlaneProps(frame: EmFrame): SwimlaneProps {
+function extractNamespace(entityIdentifier: string): string | undefined {
+  const spl = entityIdentifier.split('.');
+  if (spl.length === 2) {
+    return spl[0];
+  }
+  return undefined;
+}
+
+function extractName(entityIdentifier: string): string | undefined {
+  const spl = entityIdentifier.split('.');
+  if (spl.length === 2) {
+    return spl[1];
+  }
+  return entityIdentifier;
+}
+
+function findSwimlaneByNamespace(
+  swimlanes: Record<string, Swimlane>,
+  namespace: string | undefined
+): Swimlane | undefined {
+  if (!namespace || namespace.length === 0) {
+    return undefined;
+  }
+  return Object.values(swimlanes).find((swimlane) => swimlane.namespace === namespace);
+}
+
+function findNextAvailableIndex(
+  swimlanes: Record<string, Swimlane>,
+  boundaryMin: number,
+  boundaryMax: number
+): number {
+  return (
+    Math.max(
+      boundaryMin,
+      ...Object.keys(swimlanes)
+        .filter((key) => {
+          const index = Number.parseInt(key);
+          return index > boundaryMin && index < boundaryMax;
+        })
+        .map((key) => Number.parseInt(key))
+    ) + 1
+  );
+}
+
+function calculateSwimlaneProps(
+  frame: EmFrame,
+  swimlanes: Record<string, Swimlane>
+): SwimlaneProps {
+  const namespace = extractNamespace(frame.entityIdentifier);
+  const sw = findSwimlaneByNamespace(swimlanes, namespace);
+
   switch (frame.modelEntityType) {
     case 'scn':
     case 'pcr':
+      if (sw) {
+        return {
+          index: sw.index,
+          label: sw.namespace || diagramProps.labelUiAutomation,
+        };
+      } else if (namespace) {
+        return {
+          index: findNextAvailableIndex(swimlanes, 0, 100),
+          label: diagramProps.labelUiAutomationPrefix + namespace,
+        };
+      }
       return { index: 0, label: diagramProps.labelUiAutomation };
     case 'rmo':
     case 'cmd':
-      return { index: 1, label: diagramProps.labelCommandReadModel };
+      if (sw) {
+        return {
+          index: sw.index,
+          label: sw.namespace || diagramProps.labelCommandReadModel,
+        };
+      } else if (namespace) {
+        return {
+          index: findNextAvailableIndex(swimlanes, 100, 200),
+          label: diagramProps.labelCommandReadModelPrefix + namespace,
+        };
+      }
+      return { index: 100, label: diagramProps.labelCommandReadModel };
     case 'evt':
     default:
-      return { index: 2, label: diagramProps.labelEvents };
+      if (sw) {
+        return {
+          index: sw.index,
+          label: sw.namespace || diagramProps.labelEvents,
+        };
+      } else if (namespace) {
+        return {
+          index: findNextAvailableIndex(swimlanes, 200, 300),
+          label: diagramProps.labelEventsPrefix + namespace,
+        };
+      }
+      return { index: 200, label: diagramProps.labelEvents };
   }
 }
 
@@ -125,7 +211,6 @@ function decidePositionFrame(state: Context, _command: Command): Event[] {
   const command = _command as PositionFrame;
 
   const visual = calculateEntityVisualProps(command.frame);
-  const swimlaneProps = calculateSwimlaneProps(command.frame);
   const dimension = {
     width: command.textProps.width + 2 * diagramProps.boxTextPadding,
     height: command.textProps.height + 2 * diagramProps.boxTextPadding,
@@ -136,8 +221,6 @@ function decidePositionFrame(state: Context, _command: Command): Event[] {
     frame: command.frame,
     index: command.index,
     visual: visual,
-    swimlaneIndex: swimlaneProps.index,
-    swimlaneLabel: swimlaneProps.label,
     dimension,
     textProps: command.textProps,
   };
@@ -147,14 +230,13 @@ function decidePositionFrame(state: Context, _command: Command): Event[] {
 function calculateX(
   swimlane: Partial<Swimlane>,
   previousSwimlane: Swimlane | undefined,
-  lastBox: Box | undefined,
-  event: FramePositioned
+  lastBox: Box | undefined
 ): number {
   // log.debug(`calculateX`, { previousSwimlane,swimlane:event.swimlane,r: swimlane.r,lbr:lastBox?.r});
   if (previousSwimlane === undefined) {
     return diagramProps.contentStartX;
   }
-  if (previousSwimlane.index === event.swimlaneIndex && swimlane.r) {
+  if (previousSwimlane.index === swimlane.index && swimlane.r) {
     return swimlane.r + diagramProps.boxPadding;
   }
 
@@ -173,16 +255,18 @@ function calculateMaxRight(swimlanes: Swimlane[], swimlaneR: number): number {
 function evolveFramePositioned(state: Context, _event: Event): Context {
   const event: FramePositioned = _event as FramePositioned;
 
+  const swimlaneProps = calculateSwimlaneProps(event.frame, state.swimlanes);
+
   // const { frame } = event;
   let swimlane: Swimlane;
-  if (state.swimlanes.hasOwnProperty(event.swimlaneIndex)) {
-    swimlane = state.swimlanes[event.swimlaneIndex];
+  if (state.swimlanes.hasOwnProperty(swimlaneProps.index)) {
+    swimlane = state.swimlanes[swimlaneProps.index];
   } else {
     swimlane = {
-      index: event.swimlaneIndex,
-      label: event.swimlaneLabel,
+      index: swimlaneProps.index,
+      label: swimlaneProps.label,
       r: 0,
-      y: event.swimlaneIndex * diagramProps.swimlaneMinHeight + diagramProps.swimlaneGap,
+      y: swimlaneProps.index * diagramProps.swimlaneMinHeight + diagramProps.swimlaneGap,
       height: diagramProps.swimlaneMinHeight,
     };
   }
@@ -213,7 +297,7 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
       2 * diagramProps.boxPadding,
   };
 
-  const x = calculateX(swimlane, previousSwimlane, lastBox, event);
+  const x = calculateX(swimlane, previousSwimlane, lastBox);
   const r = x + dimension.width + diagramProps.boxPadding;
   const maxR = calculateMaxRight(Object.values(state.swimlanes), r);
 
@@ -257,7 +341,7 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
       ...state.swimlanes,
       [`${swimlane.index}`]: swimlane,
     },
-    previousSwimlaneNumber: event.swimlaneIndex,
+    previousSwimlaneNumber: swimlaneProps.index,
     previousFrame: event.frame,
     maxR,
   };
@@ -508,7 +592,8 @@ function renderD3Swimlane(diagram: Selection<BaseType, unknown, HTMLElement, any
 }
 
 function calculateTextProps(frame: EmFrame, dataEntities: EmDataEntity[]): TextProps {
-  let content = `<b>${frame.entityIdentifier}</b>`;
+  const name = extractName(frame.entityIdentifier);
+  let content = `<b>${name}</b>`;
   if (frame.dataInlineValue) {
     content += `<br/>${frame.dataInlineValue}`;
   }
