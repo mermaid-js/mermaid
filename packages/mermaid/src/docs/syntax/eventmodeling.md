@@ -48,7 +48,6 @@ eventmodeling
 tf 01 scn CartScreen
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
-
 ```
 
 Each Time Frame is referenced by a **unique number**. Depending on the complexity of the diagram it should be enough to have just two digit number or more. The Time Frame contains also an **Entity Identifier**, e.g. in case of `01` Time Frame it is `CartScreen`.
@@ -59,7 +58,6 @@ It is possible to provide data examples for individual Time Frames. An Inline Da
 
 ```mermaid-example
 eventmodeling
-
 
 tf 01 scn CartScreen
 tf 02 cmd AddItem { description: string }
@@ -72,7 +70,6 @@ If you need to provide more complex data description, you can define the **Data 
 
 ```mermaid-example
 eventmodeling
-
 
 tf 01 scn CartScreen
 tf 02 cmd AddItem [[AddItem02]]
@@ -100,7 +97,6 @@ By default the diagram builds the relations based on the inference. But modeling
 ```mermaid-example
 eventmodeling
 
-
 tf 01 scn CartScreen
 tf 02 cmd AddItem
 tf 03 evt ItemAdded
@@ -118,7 +114,6 @@ There are situations where you need to specify multiple relations for an entity.
 ```mermaid-example
 eventmodeling
 
-
 rf 02 evt CartCreated
 rf 03 evt ItemAdded
 rf 04 evt ItemRemoved
@@ -132,7 +127,6 @@ tf 01 rmo CartScreen >f 02 >f 03 >f 04 >f 05
 
 ```mermaid-example
 eventmodeling
-
 
 tf 01 scn CartScreen
 tf 02 cmd AddItem
@@ -197,7 +191,6 @@ Inventory.InventoryChanged
 **Namespace** is the first part before the `.` of the Entity Identifier. Each combination of the Namespace and Entity type forms new Swimlane. The order how they are specified in the text definition specifies the order of the Swimlanes in the diagram.
 
 ```mermaid-example
-
 eventmodeling
 
 rf 01 evt Inventory.InventoryChanged
