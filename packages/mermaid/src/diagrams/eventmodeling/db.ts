@@ -463,21 +463,6 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
   swimlane.height =
     Math.max(diagramProps.swimlaneMinHeight, dimension.height) + 2 * diagramProps.swimlanePadding;
 
-  /** the following swimlane.y recalculation is suboptimal. Additionally
-   * the value of Box.y is not taken into account in rendering time.
-   * This is fine for the time being, but maybe needs improvement later on.
-   */
-  const swimlanes = sortedSwimlanesArray(state.swimlanes);
-  if (swimlanes.length > 0) {
-    swimlanes[0].y = 0;
-  }
-  for (let i = 1; i < swimlanes.length; i++) {
-    const sw = swimlanes[i];
-    const prevSw = swimlanes[i - 1];
-
-    sw.y = prevSw.y + prevSw.height + diagramProps.swimlaneGap;
-  }
-
   const box: Box = {
     x,
     y: diagramProps.swimlanePadding + swimlane.y,
@@ -503,6 +488,22 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
     previousFrame: event.frame,
     maxR,
   };
+
+  /** the following swimlane.y recalculation is suboptimal. Additionally
+   * the value of Box.y is not taken into account in rendering time.
+   * This is fine for the time being, but maybe needs improvement later on.
+   */
+  const swimlanes = sortedSwimlanesArray(newState.swimlanes);
+  if (swimlanes.length > 0) {
+    swimlanes[0].y = 0;
+  }
+  for (let i = 1; i < swimlanes.length; i++) {
+    const sw = swimlanes[i];
+    const prevSw = swimlanes[i - 1];
+
+    sw.y = prevSw.y + prevSw.height + diagramProps.swimlaneGap;
+  }
+
   return newState;
 }
 
