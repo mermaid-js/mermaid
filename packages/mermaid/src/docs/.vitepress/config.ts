@@ -160,6 +160,7 @@ function sidebarSyntax() {
         { text: 'Kanban 🔥', link: '/syntax/kanban' },
         { text: 'Architecture 🔥', link: '/syntax/architecture' },
         { text: 'Radar 🔥', link: '/syntax/radar' },
+        { text: 'Event Modeling 🔥', link: '/syntax/eventmodeling' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

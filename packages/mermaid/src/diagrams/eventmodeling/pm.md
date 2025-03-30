@@ -4,7 +4,6 @@
 
 ## todo
 
-- [ ] write basic docs
 - [ ] render GWTs
 - [ ] render Notes
 - [ ] render diagram title and common attributes
@@ -19,6 +18,7 @@
 
 ## done
 
+- [x] write basic docs
 - [x] coverage tests
 - [x] render swimlanes for namespaced entities
 - [x] dynamic swimlane position and size
