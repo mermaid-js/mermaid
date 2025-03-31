@@ -33,6 +33,7 @@ import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
 import { directiveRegex } from './diagram-api/regexes.js';
 import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
+import { drawText } from './diagrams/common/svgDrawCommon.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -820,17 +821,18 @@ export const insertTitle = (
   if (!title) {
     return;
   }
+
   const bounds = parent.node()?.getBBox();
-  if (!bounds) {
-    return;
-  }
-  parent
-    .append('text')
-    .text(title)
-    .attr('text-anchor', 'middle')
-    .attr('x', bounds.x + bounds.width / 2)
-    .attr('y', -titleTopMargin)
-    .attr('class', cssClass);
+  const centerX = bounds ? bounds.x + bounds.width / 2 : 100;
+
+  drawText(parent, {
+    text: title,
+    x: centerX,
+    y: -titleTopMargin,
+    class: cssClass,
+    anchor: 'middle',
+    textMargin: 0,
+  });
 };
 
 /**
