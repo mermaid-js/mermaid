@@ -48,7 +48,12 @@ export const labelHelper = async (parent, node, _classes, isNode) => {
     );
   } else {
     text = textNode.appendChild(
-      createLabel(sanitizeText(decodeEntities(labelText), config), node.labelStyle, false, isNode)
+      await createLabel(
+        sanitizeText(decodeEntities(labelText), config),
+        node.labelStyle,
+        false,
+        isNode
+      )
     );
   }
   // Get the size of the label

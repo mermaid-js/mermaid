@@ -1,4 +1,5 @@
 import * as khroma from 'khroma';
+import { getIconStyles } from '../globalStyles.js';
 
 /** Returns the styles given options */
 export interface BlockChartStyleOptions {
@@ -142,6 +143,7 @@ const getStyles = (options: BlockChartStyleOptions) =>
     font-size: 18px;
     fill: ${options.textColor};
   }
+  ${getIconStyles()}
 `;
 
 export default getStyles;
