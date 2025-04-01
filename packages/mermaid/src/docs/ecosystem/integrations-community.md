@@ -109,6 +109,8 @@ Content Management Systems/Enterprise Content Management
 - [Grav CMS](https://getgrav.org/)
   - [Mermaid Diagrams Plugin](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
   - [GitLab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
+- [Tiki](https://tiki.org)
+  - [Tracker Entity Relationship Diagram](https://doc.tiki.org/Tracker-Entity-Relationship-Diagram)
 - [VitePress](https://vitepress.vuejs.org/)
   - [Plugin for Mermaid.js](https://emersonbottero.github.io/vitepress-plugin-mermaid/)
 - [VuePress](https://vuepress.vuejs.org/)
