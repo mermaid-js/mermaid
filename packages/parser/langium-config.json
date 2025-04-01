@@ -27,6 +27,11 @@
       "fileExtensions": [".mmd", ".mermaid"]
     },
     {
+      "id": "eventmodeling",
+      "grammar": "src/language/eventmodeling/event-modeling.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
       "id": "radar",
       "grammar": "src/language/radar/radar.langium",
       "fileExtensions": [".mmd", ".mermaid"]
