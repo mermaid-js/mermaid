@@ -1,6 +1,6 @@
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getConfig as commonGetConfig } from '../../config.js';
 import type { D3Element } from '../../types.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 import {
@@ -33,6 +33,7 @@ import {
   isArchitectureService,
   shiftPositionByArchitectureDirectionPair,
 } from './architectureTypes.js';
+import { cleanAndMerge } from '../../utils.js';
 
 const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
   DEFAULT_CONFIG.architecture;
@@ -316,6 +317,14 @@ const setElementForId = (id: string, element: D3Element) => {
 };
 const getElementById = (id: string) => state.records.elements[id];
 
+const getConfig = (): Required<ArchitectureDiagramConfig> => {
+  const config = cleanAndMerge({
+    ...DEFAULT_ARCHITECTURE_CONFIG,
+    ...commonGetConfig().architecture,
+  });
+  return config;
+};
+
 export const db: ArchitectureDB = {
   clear,
   setDiagramTitle,
@@ -324,6 +333,7 @@ export const db: ArchitectureDB = {
   getAccTitle,
   setAccDescription,
   getAccDescription,
+  getConfig,
 
   addService,
   getServices,
@@ -348,9 +358,5 @@ export const db: ArchitectureDB = {
 export function getConfigField<T extends keyof ArchitectureDiagramConfig>(
   field: T
 ): Required<ArchitectureDiagramConfig>[T] {
-  const arch = getConfig().architecture;
-  if (arch?.[field]) {
-    return arch[field] as Required<ArchitectureDiagramConfig>[T];
-  }
-  return DEFAULT_ARCHITECTURE_CONFIG[field];
+  return getConfig()[field];
 }
