@@ -1,4 +1,10 @@
-import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
+import common, {
+  calculateMathMLDimensions,
+  hasKatex,
+  renderKatex,
+  hasMarkdownLink,
+  markdownLinkRegex,
+} from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
@@ -127,6 +133,67 @@ export const drawKatex = async function (elem, textData, msgModel = null) {
   return [textElem];
 };
 
+export const drawLink = function (elem, label, url) {
+  const sanitizedUrl = sanitizeUrl(url);
+  elem
+    .append('a')
+    .attr('href', sanitizedUrl)
+    .attr('xlink:href', sanitizedUrl)
+    .attr('target', '_blank')
+    .attr('xlink:show', 'new')
+    .attr('rel', 'noopener noreferrer')
+    .append('tspan')
+    .attr('class', 'link')
+    .text(label);
+};
+
+export const drawMarkdownLinkText = function (elem, text) {
+  // Split text into segments - links and text between links
+  const segments = [];
+  let remainingText = text;
+  let match;
+
+  // Markdown link regex: [text](url)
+  const linkRegex = markdownLinkRegex;
+
+  while ((match = remainingText.match(linkRegex))) {
+    // Push text before link if exists
+    if (match.index > 0) {
+      segments.push({
+        type: 'text',
+        content: remainingText.substring(0, match.index),
+      });
+    }
+
+    // Push link
+    segments.push({
+      type: 'link',
+      text: match[1],
+      url: match[2],
+    });
+
+    // Update remaining text
+    remainingText = remainingText.substring(match.index + match[0].length);
+  }
+
+  // Push remaining text if any
+  if (remainingText) {
+    segments.push({
+      type: 'text',
+      content: remainingText,
+    });
+  }
+
+  // Append all segments
+  segments.forEach((segment) => {
+    if (segment.type === 'link') {
+      drawLink(elem, segment.text, segment.url);
+    } else {
+      elem.append('tspan').text(segment.content);
+    }
+  });
+};
+
 export const drawText = function (elem, textData) {
   let prevTextHeight = 0;
   let textHeight = 0;
@@ -234,13 +301,19 @@ export const drawText = function (elem, textData) {
     }
 
     const text = line || ZERO_WIDTH_SPACE;
+    let textSpan;
     if (textData.tspan) {
-      const span = textElem.append('tspan');
-      span.attr('x', textData.x);
+      textSpan = textElem.append('tspan');
+      textSpan.attr('x', textData.x);
       if (textData.fill !== undefined) {
-        span.attr('fill', textData.fill);
+        textSpan.attr('fill', textData.fill);
       }
-      span.text(text);
+    } else {
+      textSpan = textElem;
+    }
+
+    if (hasMarkdownLink(text)) {
+      drawMarkdownLinkText(textSpan, text);
     } else {
       textElem.text(text);
     }
