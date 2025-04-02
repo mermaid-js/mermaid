@@ -24,7 +24,7 @@ interface NodeData {
  * @param data - LayoutData containing nodes and edges
  * @returns A d3.hierarchy object
  */
-const createHierarchy = (data: LayoutData) => {
+export const createHierarchy = (data: LayoutData) => {
   log.info('Creating hierarchy from data', {
     nodeCount: data.nodes.length,
     edgeCount: data.edges.length,
