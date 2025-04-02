@@ -25,8 +25,10 @@ const taglines: Taglines[] = [
   },
 ];
 
-let index = ref(Math.floor(Math.random() * taglines.length));
+const index: Ref<number> = ref(0);
+
 onMounted(() => {
+  index.value = Math.floor(Math.random() * taglines.length);
   setInterval(() => {
     index.value = (index.value + 1) % taglines.length;
   }, 5_000);
