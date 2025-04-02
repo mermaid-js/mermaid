@@ -50,6 +50,17 @@ export async function insertNode(
     el = await shapeHandler(elem, node, renderOptions);
     newEl = el;
   }
+
+  // ✅ Minimal fix for long-label overflow
+  const label = el.select('.label text') || el.select('text');
+  const labelNode = label.node();
+  if (labelNode && labelNode instanceof SVGGraphicsElement) {
+    const bbox = labelNode.getBBox();
+    const padding = 20;
+    node.width = bbox.width + padding;
+    node.height = bbox.height + padding;
+  }
+
   if (node.tooltip) {
     el.attr('title', node.tooltip);
   }
