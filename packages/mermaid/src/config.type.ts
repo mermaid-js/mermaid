@@ -560,6 +560,10 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
    */
   leftMargin?: number;
   /**
+   * Maximum width of actor labels
+   */
+  maxLabelWidth?: number;
+  /**
    * Width of actor boxes
    */
   width?: number;
