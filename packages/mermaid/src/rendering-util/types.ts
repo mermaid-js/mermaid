@@ -128,6 +128,7 @@ export interface Edge {
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
   isUserDefinedId?: boolean;
+  points?: { x: number; y: number }[];
 }
 
 export interface RectOptions {
