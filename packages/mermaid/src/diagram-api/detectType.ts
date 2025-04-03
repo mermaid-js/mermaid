@@ -1,15 +1,10 @@
 import type { MermaidConfig } from '../config.type.js';
-import { log } from '../logger.js';
-import type {
-  DetectorRecord,
-  DiagramDetector,
-  DiagramLoader,
-  ExternalDiagramDefinition,
-} from './types.js';
-import { anyCommentRegex, directiveRegex, frontMatterRegex } from './regexes.js';
 import { UnknownDiagramError } from '../errors.js';
+import { log } from '../logger.js';
+import { anyCommentRegex, directiveRegex, frontMatterRegex } from './regexes.js';
+import type { DetectorRecord, ExternalDiagramDefinition } from './types.js';
 
-export const detectors: Record<string, DetectorRecord> = {};
+export const diagramDefinitions: Record<string, Omit<DetectorRecord, 'id'>> = {};
 
 /**
  * Detects the type of the graph text.
@@ -38,7 +33,7 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
     .replace(frontMatterRegex, '')
     .replace(directiveRegex, '')
     .replace(anyCommentRegex, '\n');
-  for (const [key, { detector }] of Object.entries(detectors)) {
+  for (const [key, { detector }] of Object.entries(diagramDefinitions)) {
     const diagram = detector(text, config);
     if (diagram) {
       return key;
@@ -64,19 +59,19 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
  * @param diagrams - Diagrams to lazy load, and their detectors, in order of importance.
  */
 export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinition[]) => {
-  for (const { id, detector, loader } of diagrams) {
-    addDetector(id, detector, loader);
+  for (const definition of diagrams) {
+    addDiagramDefinition(definition);
   }
 };
 
-export const addDetector = (key: string, detector: DiagramDetector, loader?: DiagramLoader) => {
-  if (detectors[key]) {
-    log.warn(`Detector with key ${key} already exists. Overwriting.`);
+export const addDiagramDefinition = ({ id, ...definition }: DetectorRecord) => {
+  if (diagramDefinitions[id]) {
+    log.warn(`Detector with key ${id} already exists. Overwriting.`);
   }
-  detectors[key] = { detector, loader };
-  log.debug(`Detector with key ${key} added${loader ? ' with loader' : ''}`);
+  diagramDefinitions[id] = definition;
+  log.debug(`Detector with key ${id} added${definition.loader ? ' with loader' : ''}`);
 };
 
 export const getDiagramLoader = (key: string) => {
-  return detectors[key].loader;
+  return diagramDefinitions[key].loader;
 };

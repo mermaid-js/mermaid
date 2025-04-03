@@ -1,4 +1,4 @@
-import { addDetector } from './detectType.js';
+import { addDiagramDefinition } from './detectType.js';
 import { log as _log, setLogLevel as _setLogLevel } from '../logger.js';
 import {
   getConfig as _getConfig,
@@ -51,7 +51,7 @@ export const registerDiagram = (
   }
   diagrams[id] = diagram;
   if (detector) {
-    addDetector(id, detector);
+    addDiagramDefinition({ id, detector });
   }
   addStylesForDiagram(id, diagram.styles);
 

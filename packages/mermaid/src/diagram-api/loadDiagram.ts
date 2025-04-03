@@ -1,26 +1,27 @@
 import { log } from '../logger.js';
-import { detectors } from './detectType.js';
+import { diagramDefinitions } from './detectType.js';
 import { getDiagram, registerDiagram } from './diagramAPI.js';
 
 export const loadRegisteredDiagrams = async () => {
   log.debug(`Loading registered diagrams`);
   // Load all lazy loaded diagrams in parallel
   const results = await Promise.allSettled(
-    Object.entries(detectors).map(async ([key, { detector, loader }]) => {
-      if (loader) {
+    Object.entries(diagramDefinitions).map(async ([key, { detector, loader }]) => {
+      if (!loader) {
+        return;
+      }
+      try {
+        getDiagram(key);
+      } catch {
         try {
-          getDiagram(key);
-        } catch {
-          try {
-            // Register diagram if it is not already registered
-            const { diagram, id } = await loader();
-            registerDiagram(id, diagram, detector);
-          } catch (err) {
-            // Remove failed diagram from detectors
-            log.error(`Failed to load external diagram with key ${key}. Removing from detectors.`);
-            delete detectors[key];
-            throw err;
-          }
+          // Register diagram if it is not already registered
+          const { diagram, id } = await loader();
+          registerDiagram(id, diagram, detector);
+        } catch (err) {
+          // Remove failed diagram from detectors
+          log.error(`Failed to load external diagram with key ${key}. Removing from detectors.`);
+          delete diagramDefinitions[key];
+          throw err;
         }
       }
     })

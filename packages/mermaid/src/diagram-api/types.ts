@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type * as d3 from 'd3';
-import type { SetRequired } from 'type-fest';
+import type { SetOptional, SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
 
@@ -91,17 +91,20 @@ export interface DiagramDefinition {
   ) => void;
 }
 
-export interface DetectorRecord {
-  detector: DiagramDetector;
-  loader?: DiagramLoader;
-}
-
 export interface ExternalDiagramDefinition {
   id: string;
+  /**
+   * Title, description, and examples for the diagram are optional only for backwards compatibility.
+   * It is strongly recommended to provide these values for all new diagrams.
+   */
+  title?: string;
+  description?: string;
+  examples?: { code: string; title?: string; isDefault?: boolean }[];
   detector: DiagramDetector;
   loader: DiagramLoader;
 }
 
+export type DetectorRecord = SetOptional<ExternalDiagramDefinition, 'loader'>;
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
 
