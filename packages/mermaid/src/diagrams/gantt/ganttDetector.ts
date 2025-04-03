@@ -23,6 +23,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize project schedules and timelines',
   examples: [
     {
+      isDefault: true,
       code: `gantt
     title A Gantt Diagram
     dateFormat  YYYY-MM-DD

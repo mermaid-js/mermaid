@@ -35,6 +35,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize flowcharts and directed graphs',
   examples: [
     {
+      isDefault: true,
       code: `flowchart TD
     A[Christmas] -->|Get money| B(Go shopping)
     B --> C{Let me think}

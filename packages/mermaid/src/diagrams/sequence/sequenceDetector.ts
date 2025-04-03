@@ -23,6 +23,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize interactions between objects over time',
   examples: [
     {
+      isDefault: true,
       code: `sequenceDiagram
     Alice->>+John: Hello John, how are you?
     Alice->>+John: John, can you hear me?

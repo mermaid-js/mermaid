@@ -19,6 +19,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize flow quantities between different stages or processes',
   examples: [
     {
+      isDefault: true,
       code: `---
 config:
   sankey:

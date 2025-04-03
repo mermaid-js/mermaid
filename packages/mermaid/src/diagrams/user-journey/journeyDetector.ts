@@ -23,6 +23,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize user interactions and experiences with a system',
   examples: [
     {
+      isDefault: true,
       code: `journey
     title My working day
     section Go to work

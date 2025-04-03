@@ -23,6 +23,7 @@ export const pie: ExternalDiagramDefinition = {
   description: 'Visualize data as proportional segments of a circle',
   examples: [
     {
+      isDefault: true,
       code: `pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85

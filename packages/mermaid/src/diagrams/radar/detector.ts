@@ -23,6 +23,7 @@ export const radar: ExternalDiagramDefinition = {
   description: 'Visualize data in a radial format',
   examples: [
     {
+      isDefault: true,
       code: `---
 title: "Grades"
 ---

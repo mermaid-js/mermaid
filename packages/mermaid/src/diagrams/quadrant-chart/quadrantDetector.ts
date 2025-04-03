@@ -23,6 +23,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize items in a 2x2 matrix based on two variables',
   examples: [
     {
+      isDefault: true,
       code: `quadrantChart
     title Reach and engagement of campaigns
     x-axis Low Reach --> High Reach

@@ -24,6 +24,7 @@ const plugin: ExternalDiagramDefinition = {
     'Visualize software architecture using the C4 model (Context, Container, Component, Code)',
   examples: [
     {
+      isDefault: true,
       code: `C4Context
     title System Context diagram for Internet Banking System
     Enterprise_Boundary(b0, "BankBoundary0") {

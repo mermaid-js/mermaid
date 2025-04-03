@@ -22,6 +22,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize work items in a Kanban board',
   examples: [
     {
+      isDefault: true,
       code: `---
 config:
   kanban:

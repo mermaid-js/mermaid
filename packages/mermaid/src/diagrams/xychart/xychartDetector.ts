@@ -23,6 +23,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Create scatter plots and line charts with customizable axes',
   examples: [
     {
+      isDefault: true,
       code: `xychart-beta
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]

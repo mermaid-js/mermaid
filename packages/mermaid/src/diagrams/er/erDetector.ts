@@ -23,6 +23,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize database schemas and relationships between entities',
   examples: [
     {
+      isDefault: true,
       code: `erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ ORDER_ITEM : contains

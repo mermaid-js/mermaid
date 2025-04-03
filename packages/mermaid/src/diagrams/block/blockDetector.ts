@@ -19,6 +19,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Create block-based visualizations with beta styling',
   examples: [
     {
+      isDefault: true,
       code: `block-beta
 columns 1
   db(("DB"))

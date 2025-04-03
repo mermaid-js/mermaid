@@ -68,6 +68,14 @@ export const addDiagramDefinition = ({ id, ...definition }: DetectorRecord) => {
   if (diagramDefinitions[id]) {
     log.warn(`Detector with key ${id} already exists. Overwriting.`);
   }
+  if (
+    definition.examples &&
+    definition.examples.filter(({ isDefault }) => isDefault).length !== 1
+  ) {
+    throw new Error(
+      `Diagram with key ${id} must have exactly one default example. Set isDefault to true for one example.`
+    );
+  }
   diagramDefinitions[id] = definition;
   log.debug(`Detector with key ${id} added${definition.loader ? ' with loader' : ''}`);
 };

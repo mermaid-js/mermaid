@@ -28,6 +28,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize class structures and relationships in object-oriented programming',
   examples: [
     {
+      isDefault: true,
       code: `classDiagram
     Animal <|-- Duck
     Animal <|-- Fish

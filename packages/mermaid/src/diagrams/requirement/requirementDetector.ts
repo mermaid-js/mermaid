@@ -23,6 +23,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize system requirements and their relationships',
   examples: [
     {
+      isDefault: true,
       code: `requirementDiagram
 
     requirement test_req {

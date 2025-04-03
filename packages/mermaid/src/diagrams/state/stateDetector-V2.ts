@@ -29,6 +29,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize state transitions and behaviors of a system',
   examples: [
     {
+      isDefault: true,
       code: `stateDiagram-v2
     [*] --> Still
     Still --> [*]

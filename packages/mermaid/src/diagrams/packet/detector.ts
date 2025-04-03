@@ -23,6 +23,7 @@ export const packet: ExternalDiagramDefinition = {
   description: 'Visualize packet data and network traffic',
   examples: [
     {
+      isDefault: true,
       code: `---
 title: "TCP Packet"
 ---

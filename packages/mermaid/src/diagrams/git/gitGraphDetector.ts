@@ -20,6 +20,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize Git repository history and branch relationships',
   examples: [
     {
+      isDefault: true,
       code: `gitGraph
     commit
     branch develop

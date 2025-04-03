@@ -22,6 +22,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize ideas and concepts in a tree-like structure',
   examples: [
     {
+      isDefault: true,
       code: `mindmap
   root((mindmap))
     Origins

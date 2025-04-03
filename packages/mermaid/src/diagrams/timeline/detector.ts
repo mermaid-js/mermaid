@@ -23,6 +23,7 @@ const plugin: ExternalDiagramDefinition = {
   description: 'Visualize events and milestones in chronological order',
   examples: [
     {
+      isDefault: true,
       code: `timeline
     title History of Social Media Platform
     2002 : LinkedIn

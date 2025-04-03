@@ -23,6 +23,7 @@ const architecture: ExternalDiagramDefinition = {
   description: 'Visualize system architecture and components',
   examples: [
     {
+      isDefault: true,
       code: `architecture-beta
     group api(cloud)[API]
 
