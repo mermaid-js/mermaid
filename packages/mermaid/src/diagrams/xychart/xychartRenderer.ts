@@ -50,6 +50,16 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
   const groups: Record<string, any> = {};
 
+  interface BarItem {
+    data: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+    label: string;
+  }
+
   function getGroup(gList: string[]) {
     let elem = group;
     let prefix = '';
@@ -121,33 +131,70 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
               .enter()
               .append('text')
               .attr('x', (data) => data.x + data.width - longestTextWidth - 5)
-              .attr('y', (data) => data.y + data.height / 2 + 1)
+              .attr('y', (data) => data.y + data.height / 2 + 0.2 * data.height)
               .attr('text-anchor', 'start')
               .attr('dominant-baseline', 'middle')
               .attr('fill', 'black')
               .attr('font-size', `${uniformFontSize}px`)
               .text((data, index) => labelData[index]);
           } else {
-            // Compute candidate font sizes for each bar using width only.
-            const candidateFontSizes = shape.data.map((data, index) => {
-              const label = labelData[index].toString();
-              return data.width / (label.length * 0.6);
+            const yOffset = 10;
+
+            // filter out bars that have zero width or height.
+            const validItems = shape.data
+              .map((d, i) => ({ data: d, label: labelData[i].toString() }))
+              .filter((item) => item.data.width > 0 && item.data.height > 0);
+
+            // Helper function that checks if the text with a given fontSize fits within the bar boundaries.
+            function fitsInBar(item: BarItem, fontSize: number, yOffset: number): boolean {
+              const { data, label } = item;
+              const charWidthFactor = 0.7;
+              const textWidth = fontSize * label.length * charWidthFactor;
+
+              // Compute horizontal boundaries using the center.
+              const centerX = data.x + data.width / 2;
+              const leftEdge = centerX - textWidth / 2;
+              const rightEdge = centerX + textWidth / 2;
+
+              // Check that text doesn't overflow horizontally.
+              const horizontalFits = leftEdge >= data.x && rightEdge <= data.x + data.width;
+
+              // For vertical placement, we use 'dominant-baseline: hanging' so that y marks the top of the text.
+              // Thus, the bottom edge is y + yOffset + fontSize.
+              const verticalFits = data.y + yOffset + fontSize <= data.y + data.height;
+
+              return horizontalFits && verticalFits;
+            }
+
+            // For each valid item, start with a candidate font size based on the width,
+            // then reduce it until the text fits within both the horizontal and vertical boundaries.
+            const candidateFontSizes = validItems.map((item) => {
+              const { data, label } = item;
+              let fontSize = data.width / (label.length * 0.7);
+
+              // Decrease the font size until the text fits or fontSize reaches 0.
+              while (!fitsInBar(item, fontSize, yOffset) && fontSize > 0) {
+                fontSize -= 1;
+              }
+              return fontSize;
             });
 
-            // Use the smallest font size for uniformity.
+            // Choose the smallest candidate across all valid bars for uniformity.
             const uniformFontSize = Math.floor(Math.min(...candidateFontSizes));
 
+            // Render text only for valid items.
             shapeGroup
               .selectAll('text')
-              .data(shape.data)
+              .data(validItems)
               .enter()
               .append('text')
-              .attr('x', (data) => data.x + data.width / 2)
-              .attr('y', (data) => data.y + 25)
+              .attr('x', (item) => item.data.x + item.data.width / 2)
+              .attr('y', (item) => item.data.y + yOffset)
               .attr('text-anchor', 'middle')
+              .attr('dominant-baseline', 'hanging')
               .attr('fill', 'black')
               .attr('font-size', `${uniformFontSize}px`)
-              .text((data, index) => labelData[index]);
+              .text((item) => item.label);
           }
         }
         break;
