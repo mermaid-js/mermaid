@@ -101,42 +101,50 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
         if (chartConfig.showDataLabel) {
           if (chartConfig.chartOrientation === 'horizontal') {
-            // Append a temporary group to measure the widths of the texts
-            const tempGroup = svg.append('g').attr('class', 'temp-label-group');
-            // Append texts temporarily to measure their widths
-            const tempTexts = tempGroup
-              .selectAll('text')
-              .data(labelData)
-              .enter()
-              .append('text')
-              .attr('font-size', (data, i) => shape.data[i].height * 0.7)
-              .text((d) => d);
-            // Measure widths and determine the font size & actual widths
-            const measured = tempTexts.nodes().map((node, i) => {
-              const bbox = node.getBBox();
-              return {
-                width: bbox.width,
-                height: bbox.height,
-                fontSize: shape.data[i].height * 0.7,
-              };
+            // Factor to approximate each character's width.
+            const charWidthFactor = 0.7;
+
+            // Filter out bars that have zero width or height.
+            const validItems = shape.data
+              .map((d, i) => ({ data: d, label: labelData[i].toString() }))
+              .filter((item) => item.data.width > 0 && item.data.height > 0);
+
+            // Helper function to check if the text fits horizontally with a 10px right margin.
+            function fitsHorizontally(item: BarItem, fontSize: number): boolean {
+              const { data, label } = item;
+              // Approximate the text width.
+              const textWidth: number = fontSize * label.length * charWidthFactor;
+              // The available width is the bar's width minus a 10px right margin.
+              return textWidth <= data.width - 10;
+            }
+
+            // For each valid bar, start with an initial candidate font size (70% of the bar's height),
+            // then reduce it until the text fits horizontally.
+            const candidateFontSizes = validItems.map((item) => {
+              const { data } = item;
+              let fontSize = data.height * 0.7;
+              // Decrease fontSize until the text fits horizontally.
+              while (!fitsHorizontally(item, fontSize) && fontSize > 0) {
+                fontSize -= 1;
+              }
+              return fontSize;
             });
-            const uniformFontSize = Math.floor(Math.min(...measured.map((m) => m.fontSize)));
-            const longestTextWidth = Math.max(...measured.map((m) => m.width));
-            // Clean up temp texts
-            tempGroup.remove();
+
+            // Choose the smallest candidate font size across all valid bars for uniformity.
+            const uniformFontSize = Math.floor(Math.min(...candidateFontSizes));
 
             shapeGroup
               .selectAll('text')
-              .data(shape.data)
+              .data(validItems)
               .enter()
               .append('text')
-              .attr('x', (data) => data.x + data.width - longestTextWidth - 5)
-              .attr('y', (data) => data.y + data.height / 2 + 0.2 * data.height)
-              .attr('text-anchor', 'start')
+              .attr('x', (item) => item.data.x + item.data.width - 10)
+              .attr('y', (item) => item.data.y + item.data.height / 2)
+              .attr('text-anchor', 'end')
               .attr('dominant-baseline', 'middle')
               .attr('fill', 'black')
               .attr('font-size', `${uniformFontSize}px`)
-              .text((data, index) => labelData[index]);
+              .text((item) => item.label);
           } else {
             const yOffset = 10;
 
