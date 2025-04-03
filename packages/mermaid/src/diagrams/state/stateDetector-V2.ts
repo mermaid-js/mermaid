@@ -25,6 +25,20 @@ const plugin: ExternalDiagramDefinition = {
   id,
   detector,
   loader,
+  title: 'State Diagram',
+  description: 'Visualize state transitions and behaviors of a system',
+  examples: [
+    {
+      code: `stateDiagram-v2
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]`,
+      title: 'Basic State',
+    },
+  ],
 };
 
 export default plugin;

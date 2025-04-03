@@ -31,6 +31,19 @@ const plugin: ExternalDiagramDefinition = {
   id,
   detector,
   loader,
+  title: 'Flowchart',
+  description: 'Visualize flowcharts and directed graphs',
+  examples: [
+    {
+      code: `flowchart TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]`,
+      title: 'Basic Flowchart',
+    },
+  ],
 };
 
 export default plugin;

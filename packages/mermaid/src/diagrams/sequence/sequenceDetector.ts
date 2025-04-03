@@ -19,6 +19,18 @@ const plugin: ExternalDiagramDefinition = {
   id,
   detector,
   loader,
+  title: 'Sequence Diagram',
+  description: 'Visualize interactions between objects over time',
+  examples: [
+    {
+      code: `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`,
+      title: 'Basic Sequence',
+    },
+  ],
 };
 
 export default plugin;
