@@ -1,5 +1,4 @@
 import { line, curveBasis } from 'd3';
-import idCache from './id-cache.js';
 import { StateDB } from './stateDb.js';
 import utils from '../../utils.js';
 import common from '../common/common.js';
@@ -405,8 +404,6 @@ export const drawState = function (elem, stateDef) {
   stateInfo.width = stateBox.width + 2 * getConfig().state.padding;
   stateInfo.height = stateBox.height + 2 * getConfig().state.padding;
 
-  idCache.set(id, stateInfo);
-  // stateCnt++;
   return stateInfo;
 };
 
