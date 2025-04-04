@@ -406,6 +406,9 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           endX = startX + theBarHeight;
         }
+        if (d.vert) {
+          return startX + theSidePad + (endX - startX) / 2 - this.getBBox().width / 2;
+        }
 
         const textWidth = this.getBBox().width;
 
@@ -423,9 +426,7 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         if (d.vert) {
-          return (
-            conf.barHeight * numOccurrences.at(0).at(1) * 1.3 + (conf.fontSize / 2 - 2) + theTopPad
-          );
+          return conf.gridLineStartPadding + taskArray.length * (conf.barHeight + conf.barGap) + 50;
         }
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
