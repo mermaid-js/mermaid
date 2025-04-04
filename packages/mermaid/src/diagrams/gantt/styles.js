@@ -238,11 +238,8 @@ const getStyles = (options) =>
   }
 
   .special {
-      transform: none;
-      border-radius: 0;
-      width: 3px;
+      width: 1px;
       height: 100%;
-      fill: red;
   }
 
   .specialText {

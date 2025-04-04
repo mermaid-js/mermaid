@@ -234,6 +234,7 @@ export const draw = function (text, id, version, diagObj) {
     // Get unique task orders. Required to draw the background rects when display mode is compact.
     const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
     const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
+    const numOccurrences = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
 
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
@@ -259,7 +260,8 @@ export const draw = function (text, id, version, diagObj) {
           }
         }
         return 'section section0';
-      });
+      })
+      .data(numOccurrences);
 
     // Draw the rects representing the tasks
     const rectangles = svg.append('g').selectAll('rect').data(theArray).enter();
@@ -284,19 +286,22 @@ export const draw = function (text, id, version, diagObj) {
             0.5 * theBarHeight
           );
         }
-        if (d.special) {
-          return (
-            timeScale(d.startTime) +
-            theSidePad +
-            0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) -
-            0.5 * theBarHeight
-          );
-        }
+        // if (d.special) {
+        //   return (
+        //     timeScale(d.startTime) +
+        //     theSidePad +
+        //     0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) -
+        //     0.5 * theBarHeight
+        //   );
+        // }
         return timeScale(d.startTime) + theSidePad;
       })
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
+        if (d.special) {
+          return 0;
+        }
         return i * theGap + theTopPad;
       })
       .attr('width', function (d) {
@@ -304,7 +309,7 @@ export const draw = function (text, id, version, diagObj) {
           return theBarHeight;
         }
         if (d.special) {
-          return theBarHeight;
+          return 0.005 * theBarHeight;
         }
         return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
       })
@@ -393,13 +398,10 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           startX += 0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) - 0.5 * theBarHeight;
         }
+        if (d.special) {
+          return startX + theSidePad - 5;
+        }
         if (d.milestone) {
-          endX = startX + theBarHeight;
-        }
-        if (d.special) {
-          startX += 0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) - 0.5 * theBarHeight;
-        }
-        if (d.special) {
           endX = startX + theBarHeight;
         }
         const textWidth = this.getBBox().width;
@@ -417,6 +419,15 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
+        if (d.special) {
+          // console.log(d);
+          // console.log(numOccurrences);
+          // console.log((numOccurrences.at(0)).at(1));
+          return (
+            conf.barHeight * numOccurrences.at(0).at(1) * 1.8 + (conf.fontSize / 2 - 2) + theTopPad
+          );
+          // return conf.gridLineStartPadding;
+        }
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
       })
@@ -425,9 +436,6 @@ export const draw = function (text, id, version, diagObj) {
         const startX = timeScale(d.startTime);
         let endX = timeScale(d.endTime);
         if (d.milestone) {
-          endX = startX + theBarHeight;
-        }
-        if (d.special) {
           endX = startX + theBarHeight;
         }
         const textWidth = this.getBBox().width;
