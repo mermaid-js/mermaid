@@ -243,8 +243,6 @@ export const draw = function (text, id, version, diagObj) {
       .enter()
       .append('rect')
       .attr('x', 0)
-      .data(numOccurrences)
-      .enter()
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
@@ -261,7 +259,9 @@ export const draw = function (text, id, version, diagObj) {
           }
         }
         return 'section section0';
-      });
+      })
+      .data(numOccurrences)
+      .enter();
 
     // Draw the rects representing the tasks
     const rectangles = svg.append('g').selectAll('rect').data(theArray).enter();
