@@ -1229,13 +1229,13 @@ In the initial version, two animation speeds are supported: `fast` and `slow`. S
 
 ```mermaid-example
 flowchart LR
-  A e1@–> B
+  A e1@–-> B
   e1@{ animation: fast }
 ```
 
 ```mermaid
 flowchart LR
-  A e1@–> B
+  A e1@–-> B
   e1@{ animation: fast }
 ```
 
@@ -1247,14 +1247,14 @@ You can also animate edges by assigning a class to them and then defining animat
 
 ```mermaid-example
 flowchart LR
-  A e1@–> B
+  A e1@–-> B
   classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
   class e1 animate
 ```
 
 ```mermaid
 flowchart LR
-  A e1@–> B
+  A e1@–-> B
   classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
   class e1 animate
 ```
