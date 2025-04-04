@@ -548,6 +548,247 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render when there is a date-only dateRange with both start and end dates', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT with date-only startDate and endDate dateRange
+        dateFormat  YYYY-MM-DD
+        dateRange   2022-01-01,2022-03-31
+        axisFormat  %m-%d
+        tickInterval 1week
+        section DB Clean
+        Clean: 2022-01-01, 2d
+        Clean: 2022-01-05, 3d
+        Clean: 2022-01-30, 6d
+        Clean: 2022-02-02, 3d
+        Clean: 2022-02-15, 6d
+        Clean: 2022-03-10, 1d
+        Clean: 2022-03-29, 1d
+        section Sessions
+        A: 2022-01-01, 3d
+        B: 2022-01-07, 4d
+        C: 2022-01-31, 5d
+        D: 2022-02-03, 6d
+        E: 2022-02-22, 1d
+        F: 2022-02-25, 2d
+        G: 2022-03-01, 12d
+        H: 2022-03-19, 8d
+        I: 2022-03-23, 7d
+    `,
+      {}
+    );
+  });
+
+  it('should render when there is a date-only dateRange with a startDate only', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT with date-only startDate dateRange
+        dateFormat  YYYY-MM-DD
+        dateRange   2022-01-01
+        axisFormat  %m-%d
+        tickInterval 1week
+        section DB Clean
+        Clean: 2022-01-01, 2d
+        Clean: 2022-01-05, 3d
+        Clean: 2022-01-30, 6d
+        Clean: 2022-02-02, 3d
+        Clean: 2022-02-15, 6d
+        Clean: 2022-03-10, 1d
+        Clean: 2022-03-29, 1d
+        section Sessions
+        A: 2022-01-01, 3d
+        B: 2022-01-07, 4d
+        C: 2022-01-31, 5d
+        D: 2022-02-03, 6d
+        E: 2022-02-22, 1d
+        F: 2022-02-25, 2d
+        G: 2022-03-01, 12d
+        H: 2022-03-19, 8d
+        I: 2022-03-23, 7d
+    `,
+      {}
+    );
+  });
+
+  it('should render when there is a date-only dateRange with an endDate only', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT with date-only endDate dateRange
+        dateFormat  YYYY-MM-DD
+        dateRange   ,2022-03-31
+        axisFormat  %m-%d
+        tickInterval 1week
+        section DB Clean
+        Clean: 2022-01-01, 2d
+        Clean: 2022-01-05, 3d
+        Clean: 2022-01-30, 6d
+        Clean: 2022-02-02, 3d
+        Clean: 2022-02-15, 6d
+        Clean: 2022-03-10, 1d
+        Clean: 2022-03-29, 1d
+        section Sessions
+        A: 2022-01-01, 3d
+        B: 2022-01-07, 4d
+        C: 2022-01-31, 5d
+        D: 2022-02-03, 6d
+        E: 2022-02-22, 1d
+        F: 2022-02-25, 2d
+        G: 2022-03-01, 12d
+        H: 2022-03-19, 8d
+        I: 2022-03-23, 7d
+    `,
+      {}
+    );
+  });
+
+  it('should render when there is a date-only dateRange with startDate and endDate, with tasks before and after the dateRange', () => {
+    imgSnapshotTest(
+      `gantt
+        title Gantt diagram with date-only date range and tasks before and after the date range
+        dateFormat  YYYY-MM-DD
+        dateRange   2022-01-01,2022-03-31
+        axisFormat  %m-%d
+        tickInterval 1week
+        section Section
+        A task before     : 2021-12-01, 20d
+        A task starting before and completing within: 2021-12-25, 10d 
+        A task within     : 2022-01-15, 40d
+        A task starting within and ending after: 2022-03-25, 10d
+        A task after      : 2022-04-01, 20d
+        section Another
+        A task before     : 2021-11-01, 40d
+        A task within     : 2022-02-15, 30d
+        A task after      : 2023-04-01, 20d
+      `,
+      {}
+    );
+  });
+
+  it('should render when there is a time-only dateRange with both start and end dates', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT with time-only startDate and endDate dateRange
+        dateFormat  HH:mm:ss
+        dateRange   12:30:00,13:30:00
+        axisFormat  %Hh%M
+        section DB Clean
+        Clean: 12:30:00, 12m
+        Clean: 13:00:00, 8m
+        Clean: 13:20:00, 9m
+        section Sessions
+        B: 12:30:00, 12m
+        C: 13:05:00, 12m
+        D: 13:06:00, 33m
+        E: 13:15:00, 55m
+        F: 13:20:00, 10m
+    `,
+      {}
+    );
+  });
+
+  it('should render when there is a time-only dateRange with a startDate only', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT with time-Only startDate dateRange
+        dateFormat  HH:mm:ss
+        dateRange   12:30:00
+        axisFormat  %Hh%M
+        section DB Clean
+        Clean: 12:30:00, 12m
+        Clean: 13:00:00, 8m
+        Clean: 13:30:00, 9m
+        Clean: 14:00:00, 13m
+        Clean: 14:30:00, 10m
+        Clean: 15:00:00, 11m
+        section Sessions
+        A: 12:30:00, 12m
+        B: 13:05:00, 12m
+        C: 13:06:00, 33m
+        D: 13:15:00, 55m
+        E: 13:20:00, 12m
+        F: 13:32:00, 18m
+        G: 13:50:00, 20m
+        H: 14:10:00, 10m
+    `,
+      {}
+    );
+  });
+
+  it('should render when there is a time-only dateRange with an endDate only', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title GANTT with time-Only endDate dateRange
+        dateFormat  HH:mm:ss
+        dateRange   ,13:30:00
+        axisFormat  %Hh%M
+        section DB Clean
+        Clean: 12:00:00, 10m
+        Clean: 12:30:00, 12m
+        Clean: 13:00:00, 8m
+        section Sessions
+        A: 12:00:00, 63m
+        B: 12:30:00, 12m
+        C: 13:05:00, 12m
+        D: 13:06:00, 33m
+        E: 13:15:00, 55m
+        F: 13:20:00, 10m
+    `,
+      {}
+    );
+  });
+
+  it('should render when there is a time-only dateRange with startDate and endDate, with tasks before and after the dateRange', () => {
+    imgSnapshotTest(
+      `gantt
+        title Gantt diagram with time-only date range and tasks before and after the date range
+        dateFormat  HH:mm:ss
+        dateRange   12:00:00, 18:00:00
+        axisFormat  %Hh%M
+        tickInterval 1week
+        section Section
+        A task before     : 11:30:00, 25m
+        A task starting before and completing within: 11:00:00, 2h 
+        A task within     : 12:05:00, 60m
+        A task starting within and ending after: 17:30:00, 75m
+        A task after      : 18:30:00, 30m
+        section Another
+        A task before     : 10:00:00, 119m
+        A task within     : 12:00:00, 6h
+        A task after      : 20:00:00, 4h
+      `,
+      {}
+    );
+  });
+
+  it('should render when there is a date and time dateRange, with both start and end dates, and tasks before and after the dateRange', () => {
+    imgSnapshotTest(
+      `gantt
+        title Gantt diagram with time-only date range and tasks before and after the date range
+        dateFormat  DD-MM-YYYY HH:mm:ss
+        dateRange   01-01-2021 12:00:00, 08-01-2021 18:00:00
+        axisFormat  %m-%d
+        tickInterval 1week
+        section Section
+        A task before     : 01-01-2021 11:30:00, 25m
+        A task starting before and completing within: 01-01-2021 10:00:00, 2d
+        A task within     : 02-01-2021 12:05:00, 4d
+        A task starting within and ending after: 05-01-2021 12:30:00, 4d
+        A task after      : 08-01-2021 18:30:00, 30m
+        section Another
+        A task before     : 31-12-2020 10:00:00, 1d
+        A task within     : 01-01-2021 12:00:00, 7d
+        A task after      : 15-01-2021 12:00:00, 1d
+      `,
+      {}
+    );
+  });
+
   // TODO: fix it
   //
   // This test is skipped deliberately
