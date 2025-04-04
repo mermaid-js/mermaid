@@ -316,7 +316,11 @@ export const draw = function (text, id, version, diagObj) {
       // .attr('height', theBarHeight)
       .attr('height', function (d) {
         if (d.vert) {
-          return 1000.5 * theBarHeight;
+          return (
+            conf.gridLineStartPadding +
+            taskArray.length * (conf.barHeight + conf.barGap) +
+            conf.barHeight * 2
+          );
         }
         return theBarHeight;
       })
@@ -426,7 +430,7 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         if (d.vert) {
-          return conf.gridLineStartPadding + taskArray.length * (conf.barHeight + conf.barGap) + 50;
+          return conf.gridLineStartPadding + taskArray.length * (conf.barHeight + conf.barGap) + 60;
         }
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
