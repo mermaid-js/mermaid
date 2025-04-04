@@ -423,13 +423,9 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         if (d.vert) {
-          // console.log(d);
-          // console.log(numOccurrences);
-          // console.log((numOccurrences.at(0)).at(1));
           return (
             conf.barHeight * numOccurrences.at(0).at(1) * 1.3 + (conf.fontSize / 2 - 2) + theTopPad
           );
-          // return conf.gridLineStartPadding;
         }
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
