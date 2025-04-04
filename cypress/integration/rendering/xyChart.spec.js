@@ -316,9 +316,15 @@ describe('XY Chart', () => {
     );
     cy.get('svg');
   });
-  it('should render bar labels by default', () => {
+  it('should render bar labels when showDataLabel is set to true', () => {
     imgSnapshotTest(
       `
+      ---
+      config:
+        themeVariables:
+          xyChart:
+            showDataLabel: true
+      ---
       xychart-beta
         title "Default Label Chart"
         x-axis Categories [A, B, C]
@@ -329,14 +335,9 @@ describe('XY Chart', () => {
     );
   });
 
-  it('should not render bar labels when showLabelData is false', () => {
+  it('should not render bar labels by default', () => {
     imgSnapshotTest(
       `
-      ---
-      config:
-        xyChart:
-          showLabelData: false
-      ---
       xychart-beta
         title "No Label Chart"
         x-axis Categories [A, B, C]
@@ -372,7 +373,6 @@ describe('XY Chart', () => {
     ---
     config:
       xyChart:
-        showDataLabel: false
         chartOrientation: horizontal
     ---
     xychart-beta
