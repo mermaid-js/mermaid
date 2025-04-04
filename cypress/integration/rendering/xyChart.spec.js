@@ -389,6 +389,11 @@ describe('XY Chart', () => {
     // In this test, we create two bar plots. The default config should render labels for each.
     imgSnapshotTest(
       `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
       xychart-beta
         title "Multiple Bar Plots"
         x-axis Categories [A, B, C]
@@ -403,6 +408,11 @@ describe('XY Chart', () => {
   it('should render a single bar with label', () => {
     imgSnapshotTest(
       `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
       xychart-beta
         title "Single Bar Chart"
         x-axis Categories [A]
@@ -416,6 +426,11 @@ describe('XY Chart', () => {
   it('should render negative and decimal values with correct labels', () => {
     imgSnapshotTest(
       `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
       xychart-beta
         title "Decimal and Negative Values"
         x-axis Categories [A, B, C]
