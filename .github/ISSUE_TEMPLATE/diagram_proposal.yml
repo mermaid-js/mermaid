@@ -58,3 +58,10 @@ body:
       options:
         - I will try and implement it myself.
         - This is a proposal which I'd love to see built into mermaid by the wonderful community.
+  - type: checkboxes
+    attributes:
+      label: Confirmation
+      description: Please confirm the following before submitting your issue.
+      options:
+        - label: I have searched for existing issues
+          required: true
