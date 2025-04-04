@@ -21,11 +21,7 @@ export default defineConfig({
   },
   plugins: [
     llmstxt({
-      ignoreFiles: [
-        "landing/*",
-        "news/*",
-        "index.md",
-      ],
+      ignoreFiles: ['landing/*', 'news/*', 'index.md'],
     }) as Plugin,
     // @ts-ignore This package has an incorrect exports.
     Components({
