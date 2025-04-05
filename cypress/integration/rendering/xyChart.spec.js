@@ -440,4 +440,62 @@ describe('XY Chart', () => {
       {}
     );
   });
+
+  it('should render data labels within the bar in the horizontal xy-chart', () => {
+    imgSnapshotTest(
+      `
+      ---
+      config:
+        xyChart:
+          showDataLabel: true
+          chartOrientation: horizontal
+      ---
+      xychart-beta
+              title "Sales Revenue"
+              x-axis Months [jan,b,c]
+              y-axis "Revenue (in $)" 4000 --> 12000
+              bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000, 3000, 2000, 500, 2000, 3000,11000 ,5000,6000]
+      `,
+      {}
+    );
+
+    let textProps, barProps;
+
+    cy.get('text')
+      .contains('5000')
+      .then(($el) => {
+        const bbox = $el[0].getBBox();
+        textProps = {
+          x: bbox.x,
+          y: bbox.y,
+          width: bbox.width,
+          height: bbox.height,
+        };
+        console.log('textProps', textProps);
+      });
+
+    cy.get('g.bar-plot-0')
+      .find('rect')
+      .first()
+      .then((rect) => {
+        barProps = {
+          x: parseFloat(rect.attr('x')),
+          y: parseFloat(rect.attr('y')),
+          width: parseFloat(rect.attr('width')),
+          height: parseFloat(rect.attr('height')),
+        };
+        console.log('barProps', barProps);
+      })
+      .then(() => {
+        // Ensure that both textProps and barProps are defined before the assertion
+        expect(textProps.x).to.be.greaterThan(barProps.x);
+        expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+        expect(textProps.y).to.be.greaterThan(barProps.y);
+        expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+        expect(textProps.y + textProps.height / 2).to.be.closeTo(
+          barProps.y + barProps.height / 2,
+          1
+        );
+      });
+  });
 });
