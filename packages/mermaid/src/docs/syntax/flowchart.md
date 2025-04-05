@@ -721,7 +721,7 @@ To give an edge an ID, prepend the edge syntax with the ID followed by an `@` ch
 
 ```mermaid
 flowchart LR
-  A e1@–-> B
+  A e1@--> B
 ```
 
 In this example, `e1` is the ID of the edge connecting `A` to `B`. You can then use this ID in later definitions or style statements, just like with nodes.
@@ -746,7 +746,7 @@ In the initial version, two animation speeds are supported: `fast` and `slow`. S
 
 ```mermaid
 flowchart LR
-  A e1@–-> B
+  A e1@--> B
   e1@{ animation: fast }
 ```
 
@@ -758,7 +758,7 @@ You can also animate edges by assigning a class to them and then defining animat
 
 ```mermaid
 flowchart LR
-  A e1@–-> B
+  A e1@--> B
   classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
   class e1 animate
 ```
