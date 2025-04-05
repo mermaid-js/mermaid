@@ -4,9 +4,16 @@
   "description": "Mermaid examples package",
   "author": "Sidharth Vinod",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "module": "./dist/mermaid-examples.core.mjs",
+  "types": "./dist/mermaid.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/mermaid-examples.core.mjs",
+      "default": "./dist/mermaid-examples.core.mjs"
+    },
+    "./*": "./*"
+  },
   "files": [
     "dist"
   ],
