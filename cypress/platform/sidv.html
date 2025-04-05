@@ -40,6 +40,7 @@ graph TB
       const el = document.getElementById('d2');
       const { svg } = await mermaid.render('d22', value);
       console.log(svg);
+      console.log(mermaid.getDiagramData());
       el.innerHTML = svg;
       // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
       // mermaid.test1('second_fast', 200).then((r) => console.info(r));
