@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { Diagram } from './Diagram.js';
-import { addDiagramDefinition } from './diagram-api/detectType.js';
+import { addDetector } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import type { DiagramLoader } from './diagram-api/types.js';
 
@@ -41,11 +41,11 @@ describe('diagram detection', () => {
   });
 
   test('should detect external diagrams', async () => {
-    addDiagramDefinition({
-      id: 'loki',
-      detector: (str) => str.startsWith('loki'),
-      loader: () => Promise.resolve(getDummyDiagram('loki')),
-    });
+    addDetector(
+      'loki',
+      (str) => str.startsWith('loki'),
+      () => Promise.resolve(getDummyDiagram('loki'))
+    );
     const diagram = await Diagram.fromText('loki TD; A-->B');
     expect(diagram).toBeInstanceOf(Diagram);
     expect(diagram.type).toBe('loki');
@@ -53,11 +53,11 @@ describe('diagram detection', () => {
 
   test('should allow external diagrams to override internal ones with same ID', async () => {
     const title = 'overridden';
-    addDiagramDefinition({
-      id: 'flowchart-elk',
-      detector: (str) => str.startsWith('flowchart-elk'),
-      loader: () => Promise.resolve(getDummyDiagram('flowchart-elk', title)),
-    });
+    addDetector(
+      'flowchart-elk',
+      (str) => str.startsWith('flowchart-elk'),
+      () => Promise.resolve(getDummyDiagram('flowchart-elk', title))
+    );
     const diagram = await Diagram.fromText('flowchart-elk TD; A-->B');
     expect(diagram).toBeInstanceOf(Diagram);
     expect(diagram.db.getDiagramTitle?.()).toBe(title);

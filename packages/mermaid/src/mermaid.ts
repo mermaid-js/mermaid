@@ -5,11 +5,7 @@
 import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
-import {
-  detectType,
-  diagramDefinitions,
-  registerLazyLoadedDiagrams,
-} from './diagram-api/detectType.js';
+import { detectType, detectors, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
 import type { ExternalDiagramDefinition, SVG, SVGGroup } from './diagram-api/types.js';
@@ -419,15 +415,9 @@ const render: typeof mermaidAPI.render = (id, text, container) => {
   });
 };
 
-const getDiagramData = (): Pick<
-  ExternalDiagramDefinition,
-  'id' | 'title' | 'description' | 'examples'
->[] => {
-  return Object.entries(diagramDefinitions).map(([id, { title, description, examples }]) => ({
+const getDiagramData = (): Pick<ExternalDiagramDefinition, 'id'>[] => {
+  return Object.keys(detectors).map((id) => ({
     id,
-    title,
-    description,
-    examples,
   }));
 };
 

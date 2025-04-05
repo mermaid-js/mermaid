@@ -93,18 +93,11 @@ export interface DiagramDefinition {
 
 export interface ExternalDiagramDefinition {
   id: string;
-  /**
-   * Title, description, and examples for the diagram are optional only for backwards compatibility.
-   * It is strongly recommended to provide these values for all new diagrams.
-   */
-  title?: string;
-  description?: string;
-  examples?: { code: string; title?: string; isDefault?: boolean }[];
   detector: DiagramDetector;
   loader: DiagramLoader;
 }
 
-export type DetectorRecord = SetOptional<ExternalDiagramDefinition, 'loader'>;
+export type DetectorRecord = SetOptional<Omit<ExternalDiagramDefinition, 'id'>, 'loader'>;
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
 

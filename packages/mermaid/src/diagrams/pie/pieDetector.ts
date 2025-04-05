@@ -19,16 +19,4 @@ export const pie: ExternalDiagramDefinition = {
   id,
   detector,
   loader,
-  title: 'Pie Chart',
-  description: 'Visualize data as proportional segments of a circle',
-  examples: [
-    {
-      isDefault: true,
-      code: `pie title Pets adopted by volunteers
-    "Dogs" : 386
-    "Cats" : 85
-    "Rats" : 15`,
-      title: 'Basic Pie Chart',
-    },
-  ],
 };

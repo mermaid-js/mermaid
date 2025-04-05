@@ -33,4 +33,9 @@ export const packageOptions = {
     packageName: 'mermaid-layout-elk',
     file: 'layouts.ts',
   },
+  'mermaid-examples': {
+    name: 'mermaid-examples',
+    packageName: 'examples',
+    file: 'index.ts',
+  },
 } as const satisfies Record<string, PackageOptions>;

@@ -1,0 +1,20 @@
+{
+  "name": "@mermaid-js/examples",
+  "version": "0.0.1",
+  "description": "Mermaid examples package",
+  "author": "Sidharth Vinod",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mermaid": "workspace:*"
+  }
+}

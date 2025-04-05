@@ -19,21 +19,6 @@ const plugin: ExternalDiagramDefinition = {
   id,
   detector,
   loader,
-  title: 'Timeline Diagram',
-  description: 'Visualize events and milestones in chronological order',
-  examples: [
-    {
-      isDefault: true,
-      code: `timeline
-    title History of Social Media Platform
-    2002 : LinkedIn
-    2004 : Facebook
-         : Google
-    2005 : YouTube
-    2006 : Twitter`,
-      title: 'Project Timeline',
-    },
-  ],
 };
 
 export default plugin;
