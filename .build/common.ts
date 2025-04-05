@@ -33,7 +33,7 @@ export const packageOptions = {
     packageName: 'mermaid-layout-elk',
     file: 'layouts.ts',
   },
-  'mermaid-examples': {
+  examples: {
     name: 'mermaid-examples',
     packageName: 'examples',
     file: 'index.ts',
