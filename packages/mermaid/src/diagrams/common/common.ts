@@ -2,7 +2,7 @@ import DOMPurify from 'dompurify';
 import type { MermaidConfig } from '../../config.type.js';
 
 // Remove and ignore br:s
-export const lineBreakRegex = /<br\s*\/?>/gi;
+export const lineBreakRegex = /<br\s*\/?>|\n/gi;
 
 /**
  * Gets the rows of lines in a string

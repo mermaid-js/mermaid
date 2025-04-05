@@ -65,8 +65,6 @@ export const drawBackgroundRect = (element: SVG | SVGGroup, bounds: Bound): void
 };
 
 export const drawText = (element: SVG | SVGGroup, textData: TextData): D3TextElement => {
-  const nText: string = textData.text.replace(lineBreakRegex, ' ');
-
   const textElem: D3TextElement = element.append('text');
   textElem.attr('x', textData.x);
   textElem.attr('y', textData.y);
@@ -77,9 +75,15 @@ export const drawText = (element: SVG | SVGGroup, textData: TextData): D3TextEle
     textElem.attr('class', textData.class);
   }
 
-  const tspan: D3TSpanElement = textElem.append('tspan');
-  tspan.attr('x', textData.x + textData.textMargin * 2);
-  tspan.text(nText);
+  const normalizedText = textData.text.replace(/\\n/g, '\n');
+  const lines = normalizedText.split(lineBreakRegex);
+
+  lines.forEach((line, i) => {
+    const tspan: D3TSpanElement = textElem.append('tspan');
+    tspan.attr('x', textData.x + textData.textMargin * 2);
+    tspan.attr('dy', i === 0 ? '0' : '1.2em');
+    tspan.text(line);
+  });
 
   return textElem;
 };
