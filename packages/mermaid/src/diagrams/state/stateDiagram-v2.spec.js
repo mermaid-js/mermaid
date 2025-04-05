@@ -456,7 +456,8 @@ describe('state diagram V2, ', function () {
         addLink: stateDb.addLink.bind(stateDb),
       };
 
-      parser.parse(diagram);
+      const doc = parser.parse(diagram);
+      stateDb.extract(doc);
 
       const links = stateDb.getLinks();
 
