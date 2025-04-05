@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
-    "@vueuse/core": "^12.7.0",
+    "@vueuse/core": "^12.8.2",
     "font-awesome": "^4.7.0",
     "jiti": "^2.4.2",
     "mermaid": "workspace:^",
