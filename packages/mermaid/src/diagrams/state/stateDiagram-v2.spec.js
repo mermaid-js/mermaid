@@ -451,11 +451,6 @@ describe('state diagram V2, ', function () {
 
       stateDb.clear();
 
-      parser.yy = {
-        ...stateDb,
-        addLink: stateDb.addLink.bind(stateDb),
-      };
-
       const doc = parser.parse(diagram);
       stateDb.extract(doc);
 
