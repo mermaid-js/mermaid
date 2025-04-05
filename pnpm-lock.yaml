@@ -215,6 +215,12 @@ importers:
         specifier: ^3.0.6
         version: 3.0.6(@types/debug@4.1.12)(@types/node@22.13.5)(@vitest/ui@3.0.6)(jiti@2.4.2)(jsdom@26.0.0)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
 
+  packages/examples:
+    devDependencies:
+      mermaid:
+        specifier: workspace:*
+        version: link:../mermaid
+
   packages/mermaid:
     dependencies:
       '@braintree/sanitize-url':
@@ -420,12 +426,6 @@ importers:
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
-
-  packages/mermaid-examples:
-    devDependencies:
-      mermaid:
-        specifier: workspace:*
-        version: link:../mermaid
 
   packages/mermaid-layout-elk:
     dependencies:
