@@ -1,16 +1,34 @@
 # Blog
 
-## [Mermaid 11.4 is out: New Features and Kanban Diagramming](https://www.mermaidchart.com/blog/posts/mermaid-11-4-is-out-new-features-and-kanban-diagramming)
+## [GUI for editing Mermaid Class Diagrams](https://docs.mermaidchart.com/blog/posts/gui-for-editing-mermaid-class-diagrams)
 
-Mermaid 11.4 brings enhanced functionality with the introduction of Kanban diagrams, allowing users to create visual workflows with status columns and task details.
+1/17/2025 • 5 mins
+
+Discover how the latest update to the Mermaid Visual Editor transforms class diagramming. With new intuitive tools for creating and editing diagrams, dynamic relationship management, and customizable layouts, this feature-packed enhancement streamlines your diagramming experience like never before.
+
+## [7 ER Diagram Examples For Database Modeling from Mermaid AI](https://docs.mermaidchart.com/blog/posts/7-er-diagram-examples-for-database-modeling-from-mermaid-ai)
+
+1/16/2025 • 6 mins
+
+Entity relationship (ER) diagrams are a cornerstone of database design, providing a blueprint for modeling your database and enabling clear communication across functions in your organization. As data volumes continue to soar and as AI models demand clean, well-organized data, ER diagrams have become more vital than ever. You can now quickly build ER diagrams with Mermaid Chart, Mermaid AI to Kickstart and fine tune your diagrams . From e-commerce payment flows to social media interactions and healthcare systems, ER diagrams are powering modern, data-driven environments.
+
+## [Mermaid Whiteboard: Visual Collaboration Made Universal](https://docs.mermaidchart.com/blog/posts/mermaid-whiteboard-visual-collaboration-made-universal)
+
+12/6/2024 • 2 mins
+
+The Mermaid Whiteboard combines Mermaid syntax with a drag-and-drop interface, making it easier for teams to create, edit, and refine diagrams together. Whether you prefer working with code, visuals, Mermaid AI or all three, this tool adapts to your needs while keeping everything tied to Mermaid’s syntax. Key Features 1. Dual-Mode Editing Switch seamlessly between […]
+
+## [Mermaid 11.4 is out: New Features and Kanban Diagramming](https://www.mermaidchart.com/blog/posts/mermaid-11-4-is-out-new-features-and-kanban-diagramming)
 
 October 31, 2024 · 2 mins
 
+Mermaid 11.4 brings enhanced functionality with the introduction of Kanban diagrams, allowing users to create visual workflows with status columns and task details.
+
 ## [How To Build an ER Diagram with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-build-an-er-diagram-with-mermaid-chart)
 
-An entity relationship (ER) diagram acts like a blueprint for your database. This makes ER diagrams effective tools for anyone dealing with complex databases, data modeling, and AI model training.
-
 October 24, 2024 · 4 mins
+
+An entity relationship (ER) diagram acts like a blueprint for your database. This makes ER diagrams effective tools for anyone dealing with complex databases, data modeling, and AI model training.
 
 ## [Expanding the Horizons of Mermaid Flowcharts: Introducing 30 New Shapes!](https://www.mermaidchart.com/blog/posts/new-mermaid-flowchart-shapes/)
 

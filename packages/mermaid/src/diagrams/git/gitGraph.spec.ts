@@ -84,7 +84,7 @@ describe('when parsing a gitGraph', function () {
       const commits = db.getCommits();
 
       expect(commits.size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('a commit');
       expect(db.getCurrentBranch()).toBe('main');
     });
@@ -246,7 +246,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -263,7 +263,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -281,7 +281,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual(['test']);
@@ -299,7 +299,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -317,7 +317,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -335,7 +335,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -353,7 +353,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test commit');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -371,7 +371,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test commit');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -389,7 +389,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -407,7 +407,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -425,7 +425,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -443,7 +443,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -461,7 +461,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test msg');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -480,7 +480,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test msg');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -498,7 +498,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test msg');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -516,7 +516,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test msg');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
