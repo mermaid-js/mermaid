@@ -400,4 +400,26 @@ describe('state diagram, ', function () {
       parser.parse(str);
     });
   });
+  describe('click directive', function () {
+    let stateDb;
+    beforeEach(function () {
+      stateDb = new StateDB(1);
+      parser.yy = stateDb;
+    });
+
+    it('should handle click directive and store links in stateDb', function () {
+      const str = `stateDiagram
+        state S1
+        click S1 "https://example.com" "Go to Example"
+      `;
+
+      parser.parse(str);
+
+      const links = stateDb.getLinks();
+      expect(links.has('S1')).toBe(true);
+      const link = links.get('S1');
+      expect(link.url).toBe('https://example.com');
+      expect(link.tooltip).toBe('Go to Example');
+    });
+  });
 });
