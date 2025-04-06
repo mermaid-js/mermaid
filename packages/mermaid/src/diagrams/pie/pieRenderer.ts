@@ -103,9 +103,11 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .enter()
     .append('text')
     .text((datum: d3.PieArcDatum<D3Section>): string => {
+      // Calculate the percentage and ensure it is returned as a string
       return `${((datum.data.value / sum) * 100).toFixed(0)}%`;
     })
     .attr('transform', (datum: d3.PieArcDatum<D3Section>): string => {
+      // Safely deconstruct coordinates and use template literals for the transform attribute
       const [x, y] = labelArcGenerator.centroid(datum);
       return `translate(${x}, ${y})`;
     })
