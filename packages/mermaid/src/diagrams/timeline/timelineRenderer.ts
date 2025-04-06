@@ -205,7 +205,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
       .attr('y', 10) // Adjust vertical position as needed
       .attr('width', box.width - 2 * LEFT_MARGIN) // Width of the foreignObject
       .attr('height', 100); // Set a reasonable height for wrapping
-  
+
     // Append a div inside the foreignObject for proper HTML rendering
     foreignObject
       .append('xhtml:div') // Use xhtml namespace for HTML elements inside SVG
@@ -216,7 +216,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
       .style('text-align', 'center') // Center-align the text
       .text(title); // Set the title text
   }
-  
+
   //5. Draw the diagram
   depthY = hasSections ? maxSectionHeight + maxTaskHeight + 150 : maxTaskHeight + 100;
 
