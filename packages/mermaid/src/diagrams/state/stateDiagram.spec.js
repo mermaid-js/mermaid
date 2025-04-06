@@ -409,7 +409,7 @@ describe('state diagram, ', function () {
 
     it('should handle click directive and store links in stateDb', function () {
       const str = `stateDiagram
-        state S1
+        [*] --> S1
         click S1 "https://example.com" "Go to Example"
       `;
 
