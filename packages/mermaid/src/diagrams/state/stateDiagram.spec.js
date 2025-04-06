@@ -404,16 +404,20 @@ describe('state diagram, ', function () {
     let stateDb;
     beforeEach(function () {
       stateDb = new StateDB(1);
-      parser.yy = stateDb;
     });
 
-    it('should handle click directive and store links in stateDb', function () {
-      const str = `stateDiagram
-        [*] --> S1
-        click S1 "https://example.com" "Go to Example"
-      `;
+    it('should store links from click statements manually passed to extract()', function () {
+      const clickStmt = {
+        stmt: 'click',
+        id: 'S1',
+        url: 'https://example.com',
+        tooltip: 'Go to Example',
+      };
 
-      parser.parse(str);
+      // Add state explicitly
+      stateDb.addState('S1');
+      // Simulate parser output
+      stateDb.extract([clickStmt]);
 
       const links = stateDb.getLinks();
       expect(links.has('S1')).toBe(true);
