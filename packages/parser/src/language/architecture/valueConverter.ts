@@ -13,7 +13,18 @@ export class ArchitectureValueConverter extends AbstractMermaidValueConverter {
     } else if (rule.name === 'ARCH_TEXT_ICON') {
       return input.replace(/["()]/g, '');
     } else if (rule.name === 'ARCH_TITLE') {
-      return input.replace(/[[\]]/g, '').trim();
+      if (input.startsWith('["`') && input.endsWith('`"]')) {
+        // markdown
+        return input.substring(3, input.length - 3).trim();
+      } else if (input.startsWith('["')) {
+        // unicode or markdown
+        return input
+          .substring(2, input.length - 2)
+          .replace(/\\"/g, '"')
+          .trim();
+      }
+      // simple
+      return input.substring(1, input.length - 1).trim();
     }
     return undefined;
   }

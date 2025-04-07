@@ -21,6 +21,11 @@
       service ec2(logos:aws-ec2)[Server]
       service api(logos:aws-api-gateway)[Api Gateway]
       service fa(fa:image)[Font Awesome Icon]
+
+      api:L -- R:ec2
+      api:B -- T:s3
+      fa:L -- R:s3
+      fa:T -- B:ec2
     </pre>
 
     <script type="module">
