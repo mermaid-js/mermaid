@@ -1,0 +1,13 @@
+graph TD
+    A[Planeación e Identificación de Necesidades] -->|Art. 26 LAASSP| B[Estudio de Mercado]
+    B -->|5-10 días hábiles| C[Requisición y Suficiencia Presupuestal]
+    C -->|Art. 42 LAASSP<br>3-5 días| D[Elaboración del Anexo Técnico]
+    D -->|7-15 días| E{Modalidad}
+    E -->|Nacional| F[Publicación de Convocatoria<br>Art. 41-43 LAASSP<br>15-20 días]
+    E -->|Internacional| G[Publicación Global + Traducción<br>Art. 41-43 LAASSP<br>30-40 días]
+    F --> H[Recepción/Apertura de Propuestas]
+    G --> H
+    H --> I[Evaluación Técnica-Económica<br>Art. 45 LAASSP<br>10-20 días]
+    I --> J{Resultado}
+    J -->|Aceptada| K[Adjudicación y Contrato<br>Art. 49 LAASSP<br>Nac: 5-10 días / Int: 15 días]
+    J -->|Rechazada| L[Reinicio Parcial del Proceso]
