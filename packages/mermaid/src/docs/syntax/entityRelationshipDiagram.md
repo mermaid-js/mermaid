@@ -407,23 +407,22 @@ erDiagram
 
 ## Configuration
 
-### Renderer
+### Layout
 
 The layout of the diagram is handled by [`render()`](../config/setup/mermaid/interfaces/Mermaid.md#render). The default layout is dagre.
 
-For larger or more-complex diagrams, you can alternatively apply the ELK (Eclipse Layout Kernel) layout using your YAML frontmatter's `config`. For more information, see [Customizing ELK Layout](../intro/syntax-reference.md).
+For larger or more-complex diagrams, you can alternatively apply the ELK (Eclipse Layout Kernel) layout using your YAML frontmatter's `config`. For more information, see [Customizing ELK Layout](../intro/syntax-reference.md#customizing-elk-layout).
 
-```
+```yaml
 ---
 config:
-    layout: elk
+  layout: elk
 ---
 ```
 
 Your Mermaid code should be similar to the following:
 
-``````mermaid-example
-```mermaid
+```mermaid-example
 ---
 title: Order example
 config:
@@ -434,7 +433,6 @@ erDiagram
     ORDER ||--|{ LINE-ITEM : contains
     CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
 ```
-``````
 
 ```note
 Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
