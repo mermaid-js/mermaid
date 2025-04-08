@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-Fix incorrect `style="undefined;"` output in some Mermaid diagrams
+fix: Remove incorrect `style="undefined;"` attributes in some Mermaid diagrams
