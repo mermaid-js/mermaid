@@ -802,7 +802,7 @@ Beginner's tip—a full example using interactive links in an HTML page:
       +run()
       }
 
-      callback Duck callback "Tooltip"
+      callback Duck "callback" "Tooltip"
       link Zebra "https://www.github.com" "This is a link"
   </pre>
 
