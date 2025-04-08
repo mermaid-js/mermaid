@@ -11,6 +11,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   timings:
@@ -44,15 +45,13 @@ jobs:
           SPLIT: 1
           SPLIT_INDEX: 0
           SPLIT_FILE: 'cypress/timings.json'
-      - name: Commit changes
-        uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9.1.4
+      - name: Commit and create pull request
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e
         with:
-          add: 'cypress/timings.json'
-          author_name: 'github-actions[bot]'
-          author_email: '41898282+github-actions[bot]@users.noreply.github.com'
-          message: 'chore: update E2E timings'
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          branch: release-promotion
+          add-paths: |
+            cypress/timings.json
+          commit-message: 'chore: update E2E timings'
+          branch: update-timings
           title: Update E2E Timings
+          delete-branch: true
+          sign-commits: true
