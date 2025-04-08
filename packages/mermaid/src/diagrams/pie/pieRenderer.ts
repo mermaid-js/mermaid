@@ -132,8 +132,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
 
   // Reduce font size dynamically until it fits
   while (
-    (titleElement.node() as SVGGraphicsElement)?.getBBox()?.width
- > maxAvailableWidth &&
+    (titleElement.node() as SVGGraphicsElement)?.getBBox()?.width > maxAvailableWidth &&
     fontSize > minFontSize
   ) {
     fontSize -= 1;
