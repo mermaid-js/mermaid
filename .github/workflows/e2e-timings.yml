@@ -51,8 +51,9 @@ jobs:
           author_name: 'github-actions[bot]'
           author_email: '41898282+github-actions[bot]@users.noreply.github.com'
           message: 'chore: update E2E timings'
+          new_branch: update-timings
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: release-promotion
+          branch: update-timings
           title: Update E2E Timings
