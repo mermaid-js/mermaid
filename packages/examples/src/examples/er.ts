@@ -7,6 +7,7 @@ export default {
   examples: [
     {
       title: 'Basic ER Schema',
+      isDefault: true,
       code: `erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ ORDER_ITEM : contains
@@ -30,7 +31,6 @@ export default {
         int quantity
         float price
     }`,
-      isDefault: true,
     },
   ],
 } satisfies DiagramMetadata;

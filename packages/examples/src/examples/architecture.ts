@@ -7,6 +7,7 @@ export default {
   examples: [
     {
       title: 'Basic System Architecture',
+      isDefault: true,
       code: `architecture-beta
     group api(cloud)[API]
 
@@ -18,7 +19,6 @@ export default {
     db:L -- R:server
     disk1:T -- B:server
     disk2:T -- B:db`,
-      isDefault: true,
     },
   ],
 } satisfies DiagramMetadata;

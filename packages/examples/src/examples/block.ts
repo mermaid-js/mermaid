@@ -7,6 +7,7 @@ export default {
   examples: [
     {
       title: 'Basic Block Layout',
+      isDefault: true,
       code: `block-beta
 columns 1
   db(("DB"))
@@ -21,7 +22,6 @@ columns 1
   ID --> D
   C --> D
   style B fill:#969,stroke:#333,stroke-width:4px`,
-      isDefault: true,
     },
   ],
 } satisfies DiagramMetadata;

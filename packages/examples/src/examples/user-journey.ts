@@ -7,6 +7,7 @@ export default {
   examples: [
     {
       title: 'My Working Day',
+      isDefault: true,
       code: `journey
     title My working day
     section Go to work
@@ -16,7 +17,6 @@ export default {
     section Go home
       Go downstairs: 5: Me
       Sit down: 5: Me`,
-      isDefault: true,
     },
   ],
 } satisfies DiagramMetadata;

@@ -6,6 +6,7 @@ export default {
   description: 'Visualize items in a 2x2 matrix based on two variables',
   examples: [
     {
+      title: 'Product Positioning',
       isDefault: true,
       code: `quadrantChart
     title Reach and engagement of campaigns
@@ -21,7 +22,6 @@ export default {
     Campaign D: [0.78, 0.34]
     Campaign E: [0.40, 0.34]
     Campaign F: [0.35, 0.78]`,
-      title: 'Product Positioning',
     },
   ],
 } satisfies DiagramMetadata;

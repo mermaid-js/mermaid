@@ -6,6 +6,7 @@ export default {
   description: 'Visualize class structures and relationships in object-oriented programming',
   examples: [
     {
+      title: 'Basic Class Inheritance',
       isDefault: true,
       code: `classDiagram
     Animal <|-- Duck
@@ -28,7 +29,6 @@ export default {
       +bool is_wild
       +run()
     }`,
-      title: 'Basic Class Inheritance',
     },
   ],
 } satisfies DiagramMetadata;

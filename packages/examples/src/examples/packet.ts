@@ -7,6 +7,7 @@ export default {
   examples: [
     {
       title: 'TCP Packet',
+      isDefault: true,
       code: `---
 title: "TCP Packet"
 ---
@@ -28,7 +29,6 @@ packet-beta
 144-159: "Urgent Pointer"
 160-191: "(Options and Padding)"
 192-255: "Data (variable length)"`,
-      isDefault: true,
     },
   ],
 } satisfies DiagramMetadata;

@@ -7,6 +7,7 @@ export default {
   examples: [
     {
       title: 'Basic Git Flow',
+      isDefault: true,
       code: `gitGraph
     commit
     branch develop
@@ -22,7 +23,6 @@ export default {
     commit
     checkout main
     merge feature`,
-      isDefault: true,
     },
   ],
 } satisfies DiagramMetadata;

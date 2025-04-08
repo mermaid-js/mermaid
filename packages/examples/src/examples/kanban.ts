@@ -6,8 +6,8 @@ export default {
   description: 'Visualize work items in a Kanban board',
   examples: [
     {
-      isDefault: true,
       title: 'Kanban Diagram',
+      isDefault: true,
       code: `---
 config:
   kanban:

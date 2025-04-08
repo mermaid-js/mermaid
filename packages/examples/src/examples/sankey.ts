@@ -7,6 +7,7 @@ export default {
   examples: [
     {
       title: 'Energy Flow',
+      isDefault: true,
       code: `---
 config:
   sankey:
@@ -82,7 +83,6 @@ Tidal,Electricity grid,9.452
 UK land based bioenergy,Bio-conversion,182.01
 Wave,Electricity grid,19.013
 Wind,Electricity grid,289.366`,
-      isDefault: true,
     },
   ],
 } satisfies DiagramMetadata;

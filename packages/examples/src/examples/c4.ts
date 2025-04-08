@@ -7,6 +7,7 @@ export default {
     'Visualize software architecture using the C4 model (Context, Container, Component, Code)',
   examples: [
     {
+      title: 'Internet Banking System Context',
       isDefault: true,
       code: `C4Context
     title System Context diagram for Internet Banking System
@@ -41,7 +42,6 @@ export default {
     BiRel(SystemAA, SystemE, "Uses")
     Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
     Rel(SystemC, customerA, "Sends e-mails to")`,
-      title: 'Internet Banking System Context',
     },
   ],
 } satisfies DiagramMetadata;

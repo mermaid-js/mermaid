@@ -6,6 +6,7 @@ export default {
   description: 'Visualize project schedules and timelines',
   examples: [
     {
+      title: 'Basic Project Timeline',
       isDefault: true,
       code: `gantt
     title A Gantt Diagram
@@ -16,7 +17,6 @@ export default {
     section Another
     Task in sec      :2014-01-12  , 12d
     another task      : 24d`,
-      title: 'Basic Project Timeline',
     },
   ],
 } satisfies DiagramMetadata;

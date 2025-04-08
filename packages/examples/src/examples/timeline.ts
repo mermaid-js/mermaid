@@ -6,6 +6,7 @@ export default {
   description: 'Visualize events and milestones in chronological order',
   examples: [
     {
+      title: 'Project Timeline',
       isDefault: true,
       code: `timeline
     title History of Social Media Platform
@@ -14,7 +15,6 @@ export default {
          : Google
     2005 : YouTube
     2006 : Twitter`,
-      title: 'Project Timeline',
     },
   ],
 } satisfies DiagramMetadata;

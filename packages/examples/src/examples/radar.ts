@@ -7,6 +7,7 @@ export default {
   examples: [
     {
       title: 'Student Grades',
+      isDefault: true,
       code: `---
 title: "Grades"
 ---
@@ -19,7 +20,6 @@ radar-beta
   max 100
   min 0
 `,
-      isDefault: true,
     },
   ],
 } satisfies DiagramMetadata;

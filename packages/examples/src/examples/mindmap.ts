@@ -7,6 +7,7 @@ export default {
   examples: [
     {
       title: 'Basic Mindmap',
+      isDefault: true,
       code: `mindmap
   root((mindmap))
     Origins
@@ -24,7 +25,6 @@ export default {
     Tools
       Pen and paper
       Mermaid`,
-      isDefault: true,
     },
   ],
 } satisfies DiagramMetadata;
