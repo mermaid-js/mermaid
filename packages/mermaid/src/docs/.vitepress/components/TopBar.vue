@@ -115,7 +115,7 @@ onMounted(() => {
 
 <template>
   <div
-    :class="[design === 1 ? 'bg-gradient-to-r from-[#bd34fe] to-[#ff3670] ' : 'bg-[#E0095F]']"
+    :class="[design === 1 ? 'bg-gradient-to-r from-[#bd34fe] to-[#ff3670]' : 'bg-[#E0095F]']"
     class="mb-4 w-full top-bar flex p-2"
   >
     <p class="w-full tracking-wide fade-text text-sm">
