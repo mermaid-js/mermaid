@@ -17,8 +17,8 @@ export async function drawRect<T extends SVGGraphicsElement>(
   // console.log('IPI labelStyles:', labelStyles);
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
-  const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
+  const totalWidth = node.width || bbox.width + options.labelPaddingX * 2;
+  const totalHeight = node.height || bbox.height + options.labelPaddingY * 2;
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 
