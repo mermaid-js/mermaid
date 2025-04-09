@@ -1,5 +1,22 @@
+/**
+ * Compares new E2E test timings with previous timings and determines whether to keep the new timings.
+ *
+ * The script will:
+ * 1. Read old timings from git HEAD
+ * 2. Read new timings from the current file
+ * 3. Compare the timings and specs
+ * 4. Keep new timings if:
+ *    - Specs were added/removed
+ *    - Any timing changed by 20% or more
+ * 5. Revert to old timings if:
+ *    - No significant timing changes
+ *
+ * This helps prevent unnecessary timing updates when test performance hasn't changed significantly.
+ */
+
 import fs from 'node:fs';
 import path from 'node:path';
+import { execSync } from 'node:child_process';
 
 interface Timing {
   spec: string;
@@ -10,37 +27,45 @@ interface TimingsFile {
   durations: Timing[];
 }
 
-const TIMINGS_PATH = path.join(process.cwd(), 'cypress', 'timings.json');
-const TIMINGS_OLD_PATH = path.join(process.cwd(), 'cypress', 'timings-old.json');
+interface CleanupOptions {
+  keepNew: boolean;
+  reason: string;
+}
+
+const TIMINGS_FILE = 'cypress/timings.json';
+const TIMINGS_PATH = path.join(process.cwd(), TIMINGS_FILE);
 
 function log(message: string): void {
   // eslint-disable-next-line no-console
   console.log(message);
 }
 
-function readTimings(filePath: string): TimingsFile {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+function readOldTimings(): TimingsFile {
+  try {
+    const oldContent = execSync(`git show HEAD:${TIMINGS_FILE}`, { encoding: 'utf8' });
+    return JSON.parse(oldContent);
+  } catch {
+    log('Error getting old timings, using empty file');
+    return { durations: [] };
+  }
 }
 
-interface CleanupOptions {
-  keepNew: boolean;
-  reason: string;
+function readNewTimings(): TimingsFile {
+  return JSON.parse(fs.readFileSync(TIMINGS_PATH, 'utf8'));
 }
 
 function cleanupFiles({ keepNew, reason }: CleanupOptions): void {
   if (keepNew) {
     log(`Keeping new timings: ${reason}`);
-    fs.unlinkSync(TIMINGS_OLD_PATH);
   } else {
     log(`Reverting to old timings: ${reason}`);
-    fs.unlinkSync(TIMINGS_PATH);
-    fs.renameSync(TIMINGS_OLD_PATH, TIMINGS_PATH);
+    execSync(`git checkout HEAD -- ${TIMINGS_FILE}`);
   }
 }
 
 function compareTimings(): void {
-  const oldTimings = readTimings(TIMINGS_OLD_PATH);
-  const newTimings = readTimings(TIMINGS_PATH);
+  const oldTimings = readOldTimings();
+  const newTimings = readNewTimings();
 
   const oldSpecs = new Set(oldTimings.durations.map((d) => d.spec));
   const newSpecs = new Set(newTimings.durations.map((d) => d.spec));
