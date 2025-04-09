@@ -231,10 +231,11 @@ export const draw = function (text, id, version, diagObj) {
    * @param w
    */
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
+    // Sort theArray so that tasks with `vert` come last
+    theArray.sort((a, b) => (a.vert === b.vert ? 0 : a.vert ? 1 : -1));
     // Get unique task orders. Required to draw the background rects when display mode is compact.
     const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
     const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
-    const numOccurrences = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
@@ -260,7 +261,6 @@ export const draw = function (text, id, version, diagObj) {
         }
         return 'section section0';
       })
-      .data(numOccurrences)
       .enter();
 
     // Draw the rects representing the tasks
@@ -429,9 +429,10 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           endX = startX + theBarHeight;
         }
-        if (d.vert) {
-          endX = startX + theBarHeight;
-        }
+        // if (d.vert) {
+        //   return startX + theSidePad + (endX - startX) / 2 - this.getBBox().width / 2;
+        // }
+
         const textWidth = this.getBBox().width;
 
         let classStr = '';

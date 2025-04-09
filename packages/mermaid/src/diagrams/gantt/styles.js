@@ -242,8 +242,8 @@ const getStyles = (options) =>
   }
 
   .vertText {
-    font-size: 15px;
     fill: navy;
+    font-size: 15px;
   }
 
   .activeCritText0,
