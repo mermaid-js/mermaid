@@ -91,20 +91,22 @@ function compareTimings(): void {
     if (!oldTiming) {
       throw new Error(`Could not find old timing for spec: ${newTiming.spec}`);
     }
-    const change = Math.abs(newTiming.duration - oldTiming.duration) / oldTiming.duration;
-    return { spec: newTiming.spec, change };
+    const change = Math.abs(newTiming.duration - oldTiming.duration);
+    const changePercent = change / oldTiming.duration;
+    return { spec: newTiming.spec, change, changePercent };
   });
 
-  const significantChanges = timingChanges.filter((t) => t.change >= 0.2);
+  // Filter changes that's more than 5 seconds and 20% different
+  const significantChanges = timingChanges.filter((t) => t.change > 5000 && t.changePercent >= 0.2);
 
   if (significantChanges.length === 0) {
-    log('No significant timing changes detected (threshold: 20%)');
+    log('No significant timing changes detected (threshold: 5s and 20%)');
     return cleanupFiles({ keepNew: false, reason: 'No significant timing changes' });
   }
 
   log('Significant timing changes:');
   significantChanges.forEach((t) => {
-    log(`${t.spec}: ${(t.change * 100).toFixed(1)}%`);
+    log(`${t.spec}: ${t.change.toFixed(1)}ms (${(t.changePercent * 100).toFixed(1)}%)`);
   });
 
   cleanupFiles({ keepNew: true, reason: 'Significant timing changes detected' });
