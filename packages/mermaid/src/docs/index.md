@@ -20,13 +20,13 @@ hero:
       link: https://www.mermaidchart.com/play
     - theme: alt
       text: Get started
-      link: https://docs.mermaidchart.com/mermaid/intro
+      link: /intro
 
 features:
   - icon:
       src: /1-Callout-Easy.svg
     title: Easy to use
-    details: Easily create diagrams and charts with the Mermaid Editor.
+    details: Easily create diagrams and charts with the Mermaid Live Editor.
     link: https://mermaid.live/
   - icon:
       src: /2-Callout-Integrations.svg
