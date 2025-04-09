@@ -286,21 +286,13 @@ export const draw = function (text, id, version, diagObj) {
             0.5 * theBarHeight
           );
         }
-        // if (d.vert) {
-        //   return (
-        //     timeScale(d.startTime) +
-        //     theSidePad +
-        //     0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) -
-        //     0.5 * theBarHeight
-        //   );
-        // }
         return timeScale(d.startTime) + theSidePad;
       })
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
         if (d.vert) {
-          return 0;
+          return conf.gridLineStartPadding;
         }
         return i * theGap + theTopPad;
       })
@@ -309,18 +301,13 @@ export const draw = function (text, id, version, diagObj) {
           return theBarHeight;
         }
         if (d.vert) {
-          return 0.005 * theBarHeight;
+          return 0.08 * theBarHeight;
         }
         return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
       })
-      // .attr('height', theBarHeight)
       .attr('height', function (d) {
         if (d.vert) {
-          return (
-            conf.gridLineStartPadding +
-            taskArray.length * (conf.barHeight + conf.barGap) +
-            conf.barHeight * 2
-          );
+          return taskArray.length * (conf.barHeight + conf.barGap) + conf.barHeight * 2;
         }
         return theBarHeight;
       })
@@ -406,9 +393,6 @@ export const draw = function (text, id, version, diagObj) {
         let endX = timeScale(d.renderEndTime || d.endTime);
         if (d.milestone) {
           startX += 0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) - 0.5 * theBarHeight;
-        }
-        if (d.special) {
-          return startX + theSidePad - 5;
         }
         if (d.milestone) {
           endX = startX + theBarHeight;
