@@ -38,6 +38,7 @@ export default defineConfig({
     ],
   ],
   themeConfig: {
+    logo: '/favicon.svg',
     nav: nav(),
     editLink: {
       pattern: ({ filePath, frontmatter }) => {
