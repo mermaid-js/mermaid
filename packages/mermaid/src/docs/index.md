@@ -22,7 +22,7 @@ hero:
       rel: external
     - theme: alt
       text: Get started
-      link: /intro
+      link: /intro/
 
 features:
   - icon:
