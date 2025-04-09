@@ -226,12 +226,6 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Defines a top/bottom margin for subgraph titles
    *
    */
-  /**
-   * If true, subgraphs without explicit direction will inherit the global graph direction (e.g., LR, TB, RL, BT).
-   * Defaults to `false` to preserve legacy layout behavior.
-   */
-  inheritDir?: boolean;
-
   subGraphTitleMargin?: {
     top?: number;
     bottom?: number;
@@ -301,12 +295,17 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    *
    */
   wrappingWidth?: number;
+  /**
+   * If true, subgraphs without explicit direction will inherit the global graph direction
+   * (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
+   *
+   */
+  inheritDir?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
  * via the `definition` "BaseDiagramConfig".
  */
-
 export interface BaseDiagramConfig {
   useWidth?: number;
   /**
