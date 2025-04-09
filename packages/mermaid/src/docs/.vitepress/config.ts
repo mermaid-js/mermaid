@@ -38,6 +38,7 @@ export default defineConfig({
     ],
   ],
   themeConfig: {
+    logo: '/favicon.svg',
     nav: nav(),
     editLink: {
       pattern: ({ filePath, frontmatter }) => {
@@ -104,8 +105,10 @@ function nav() {
       ],
     },
     {
-      text: '💻 Live Editor',
-      link: 'https://mermaid.live',
+      text: '💻 Open Editor',
+      link: 'https://mermaid.live/edit',
+      target: '_blank',
+      rel: 'external',
     },
   ];
 }
