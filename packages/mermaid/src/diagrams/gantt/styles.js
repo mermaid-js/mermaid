@@ -237,14 +237,8 @@ const getStyles = (options) =>
     fill: ${options.taskTextDarkColor} !important;
   }
 
-  .special {
-      width: 1px;
-      height: 100%;
-  }
-
-  .specialText {
-      font-weight: bold;
-      fill: red;
+  .vertText {
+    font-size: 15px;
   }
 
   .activeCritText0,

@@ -235,7 +235,6 @@ export const draw = function (text, id, version, diagObj) {
     const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
     const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
     const numOccurrences = Object.keys(categoryHeights).map((d) => [d, categoryHeights[d]]);
-
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
@@ -261,7 +260,8 @@ export const draw = function (text, id, version, diagObj) {
         }
         return 'section section0';
       })
-      .data(numOccurrences);
+      .data(numOccurrences)
+      .enter();
 
     // Draw the rects representing the tasks
     const rectangles = svg.append('g').selectAll('rect').data(theArray).enter();
@@ -286,7 +286,7 @@ export const draw = function (text, id, version, diagObj) {
             0.5 * theBarHeight
           );
         }
-        // if (d.special) {
+        // if (d.vert) {
         //   return (
         //     timeScale(d.startTime) +
         //     theSidePad +
@@ -299,7 +299,7 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
-        if (d.special) {
+        if (d.vert) {
           return 0;
         }
         return i * theGap + theTopPad;
@@ -308,12 +308,22 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           return theBarHeight;
         }
-        if (d.special) {
+        if (d.vert) {
           return 0.005 * theBarHeight;
         }
         return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
       })
-      .attr('height', theBarHeight)
+      // .attr('height', theBarHeight)
+      .attr('height', function (d) {
+        if (d.vert) {
+          return (
+            conf.gridLineStartPadding +
+            taskArray.length * (conf.barHeight + conf.barGap) +
+            conf.barHeight * 2
+          );
+        }
+        return theBarHeight;
+      })
       .attr('transform-origin', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
@@ -370,9 +380,8 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           taskClass = ' milestone ' + taskClass;
         }
-
-        if (d.special) {
-          taskClass = ' special ' + taskClass;
+        if (d.vert) {
+          taskClass = ' vert ' + taskClass;
         }
 
         taskClass += secNum;
@@ -404,6 +413,10 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           endX = startX + theBarHeight;
         }
+        if (d.vert) {
+          return startX + theSidePad + (endX - startX) / 2 - this.getBBox().width / 2;
+        }
+
         const textWidth = this.getBBox().width;
 
         // Check id text width > width of rectangle
@@ -419,14 +432,8 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
-        if (d.special) {
-          // console.log(d);
-          // console.log(numOccurrences);
-          // console.log((numOccurrences.at(0)).at(1));
-          return (
-            conf.barHeight * numOccurrences.at(0).at(1) * 1.8 + (conf.fontSize / 2 - 2) + theTopPad
-          );
-          // return conf.gridLineStartPadding;
+        if (d.vert) {
+          return conf.gridLineStartPadding + taskArray.length * (conf.barHeight + conf.barGap) + 60;
         }
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
@@ -436,6 +443,9 @@ export const draw = function (text, id, version, diagObj) {
         const startX = timeScale(d.startTime);
         let endX = timeScale(d.endTime);
         if (d.milestone) {
+          endX = startX + theBarHeight;
+        }
+        if (d.vert) {
           endX = startX + theBarHeight;
         }
         const textWidth = this.getBBox().width;
@@ -476,8 +486,9 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           taskType += ' milestoneText';
         }
-        if (d.special) {
-          taskType += ' specialText';
+
+        if (d.vert) {
+          taskType += ' vertText';
         }
 
         // Check id text width > width of rectangle
