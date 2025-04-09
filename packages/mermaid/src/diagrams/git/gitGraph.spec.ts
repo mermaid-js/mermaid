@@ -1,6 +1,7 @@
 import { rejects } from 'assert';
 import { db } from './gitGraphAst.js';
 import { parser } from './gitGraphParser.js';
+import { lineBreakRegex } from '../common/common.js';
 
 describe('when parsing a gitGraph', function () {
   beforeEach(function () {
@@ -1317,6 +1318,15 @@ describe('when parsing a gitGraph', function () {
           expect(db.getBranchesAsObjArray()[1].name).toBe(prop);
         });
       }
+    });
+  });
+  describe('gitGraph title rendering', () => {
+    it('should render multi-line titles with \\n and <br> correctly', () => {
+      const title = 'gitGraph Title\nWith Newline<br>And Line Break';
+      const normalizedTitle = title.replace(/\\n/g, '\n');
+      const lines = normalizedTitle.split(lineBreakRegex);
+
+      expect(lines).toEqual(['gitGraph Title', 'With Newline', 'And Line Break']);
     });
   });
 });

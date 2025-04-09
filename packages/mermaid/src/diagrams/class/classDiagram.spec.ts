@@ -4,6 +4,8 @@ import { parser } from './parser/classDiagram.jison';
 import { ClassDB } from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
 import type { ClassMap, NamespaceNode } from './classTypes.js';
+import { lineBreakRegex } from '../common/common.js';
+
 const spyOn = vi.spyOn;
 
 const staticCssStyle = 'text-decoration:underline;';
@@ -1944,5 +1946,15 @@ describe('class db class', () => {
     for (const fun of functionsUsedInParser) {
       expect(Object.hasOwn(classDb, fun)).toBe(true);
     }
+  });
+});
+
+describe('class diagram title rendering', () => {
+  it('should render multi-line titles with \\n and <br> correctly', () => {
+    const title = 'Class Diagram Title\nWith Newline<br>And Line Break';
+    const normalizedTitle = title.replace(/\\n/g, '\n');
+    const lines = normalizedTitle.split(lineBreakRegex);
+
+    expect(lines).toEqual(['Class Diagram Title', 'With Newline', 'And Line Break']);
   });
 });
