@@ -4,14 +4,14 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/font-awesome.min.css"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
       rel="stylesheet"
     />
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
       rel="stylesheet"
     />
     <link
@@ -78,35 +78,78 @@
         font-family: monospace;
         font-size: 72px;
       }
+
       pre {
         width: 100%;
       }
+
       /* tspan {
               font-size: 6px !important;
             } */
+      /* .flowchart-link {
+        stroke-dasharray: 4, 4 !important;
+        animation: flow 1s linear infinite;
+        animation: dashdraw 4.93282s linear infinite;
+        stroke-width: 2px !important;
+      } */
+
+      @keyframes dashdraw {
+        from {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /*stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation:    4.932820s linear infinite;*/
+      /* stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation: dashdraw 4.932820s linear infinite;*/
     </style>
   </head>
 
   <body>
     <pre id="diagram4" class="mermaid">
----
-config:
-  layout: elk
----
       flowchart LR
-      subgraph S2
-      subgraph s1["APA"]
-      D{"Use the editor"}
-      end
-
-
-      D -- Mermaid js --> I{"fa:fa-code Text"}
-            D --> I
-            D --> I
-
-      end
+        AB["apa@apa@"] --> B(("`apa@apa`"))
     </pre>
     <pre id="diagram4" class="mermaid">
+      flowchart
+        D(("for D"))
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==> B
+        e1@{ animate: true}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-width:2,stroke-dasharray:10\,8,stroke-dashoffset:-180,animation: edge-animation-frame 6s linear infinite, stroke-linecap: round
+  class e1 animate
+    </pre>
+    <h2>infinite</h2>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+    </pre>
+    <h2>Mermaid - edge-animation-slow</h2>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  A e1@--> B
+e1@{ animation: fast}
+    </pre>
+    <h2>Mermaid - edge-animation-fast</h2>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-dasharray: 1000,stroke-dashoffset: 1000,animation: dash 10s linear;
+  class e1 edge-animation-fast
+    </pre>
+
+    <pre id="diagram4" class="mermaid2">
+
+info    </pre
+    >
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -131,7 +174,7 @@ config:
       end
       end
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -144,7 +187,7 @@ config:
       D-->I
       D-->I
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -183,7 +226,7 @@ flowchart LR
     n8@{ shape: rect}
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -199,7 +242,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -208,7 +251,7 @@ flowchart LR
     A{A} --> B & C
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -220,7 +263,7 @@ flowchart LR
     end
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -391,7 +434,10 @@ kanban
       window.callback = function () {
         alert('A callback was triggered');
       };
-      mermaid.initialize({
+      function callback() {
+        alert('It worked');
+      }
+      await mermaid.initialize({
         // theme: 'base',
         // theme: 'default',
         // theme: 'forest',
@@ -403,9 +449,11 @@ kanban
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
+
         // fontFamily: 'Caveat',
         // fontFamily: 'Kalam',
         // fontFamily: 'courier',
+        fontFamily: 'arial',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
@@ -417,10 +465,9 @@ kanban
         fontSize: 12,
         logLevel: 0,
         securityLevel: 'loose',
+        callback,
       });
-      function callback() {
-        alert('It worked');
-      }
+
       mermaid.parseError = function (err, hash) {
         console.error('In parse error:');
         console.error(err);

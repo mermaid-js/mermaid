@@ -1183,6 +1183,91 @@ flowchart TB
     B --> D
 ```
 
+### Attaching an ID to Edges
+
+Mermaid now supports assigning IDs to edges, similar to how IDs and metadata can be attached to nodes. This feature lays the groundwork for more advanced styling, classes, and animation capabilities on edges.
+
+**Syntax:**
+
+To give an edge an ID, prepend the edge syntax with the ID followed by an `@` character. For example:
+
+```mermaid-example
+flowchart LR
+  A e1@–> B
+```
+
+```mermaid
+flowchart LR
+  A e1@–> B
+```
+
+In this example, `e1` is the ID of the edge connecting `A` to `B`. You can then use this ID in later definitions or style statements, just like with nodes.
+
+### Turning an Animation On
+
+Once you have assigned an ID to an edge, you can turn on animations for that edge by defining the edge’s properties:
+
+```mermaid-example
+flowchart LR
+  A e1@==> B
+  e1@{ animate: true }
+```
+
+```mermaid
+flowchart LR
+  A e1@==> B
+  e1@{ animate: true }
+```
+
+This tells Mermaid that the edge `e1` should be animated.
+
+### Selecting Type of Animation
+
+In the initial version, two animation speeds are supported: `fast` and `slow`. Selecting a specific animation type is a shorthand for enabling animation and setting the animation speed in one go.
+
+**Examples:**
+
+```mermaid-example
+flowchart LR
+  A e1@–> B
+  e1@{ animation: fast }
+```
+
+```mermaid
+flowchart LR
+  A e1@–> B
+  e1@{ animation: fast }
+```
+
+This is equivalent to `{ animate: true, animation: fast }`.
+
+### Using classDef Statements for Animations
+
+You can also animate edges by assigning a class to them and then defining animation properties in a `classDef` statement. For example:
+
+```mermaid-example
+flowchart LR
+  A e1@–> B
+  classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+```
+
+```mermaid
+flowchart LR
+  A e1@–> B
+  classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+```
+
+In this snippet:
+
+- `e1@-->` creates an edge with ID `e1`.
+- `classDef animate` defines a class named `animate` with styling and animation properties.
+- `class e1 animate` applies the `animate` class to the edge `e1`.
+
+**Note on Escaping Commas:**
+When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid’s style definitions.
+
 ## New arrow types
 
 There are new types of arrows supported:
@@ -1707,8 +1792,7 @@ graph LR
 ```
 
 For a full list of available curves, including an explanation of custom curves, refer to
-the [Shapes](https://github.com/d3/d3-shape/blob/main/README.md#curves) documentation in the
-[d3-shape](https://github.com/d3/d3-shape/) project.
+the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
 
 ### Styling a node
 
