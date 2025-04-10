@@ -5,7 +5,7 @@
 import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
-import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
+import { detectType, detectors, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { loadRegisteredDiagrams } from './diagram-api/loadDiagram.js';
 import type { ExternalDiagramDefinition, SVG, SVGGroup } from './diagram-api/types.js';
@@ -415,6 +415,12 @@ const render: typeof mermaidAPI.render = (id, text, container) => {
   });
 };
 
+const getDiagramData = (): Pick<ExternalDiagramDefinition, 'id'>[] => {
+  return Object.keys(detectors).map((id) => ({
+    id,
+  }));
+};
+
 export interface Mermaid {
   startOnLoad: boolean;
   parseError?: ParseErrorFunction;
@@ -437,6 +443,7 @@ export interface Mermaid {
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
   registerIconPacks: typeof registerIconPacks;
+  getDiagramData: typeof getDiagramData;
 }
 
 const mermaid: Mermaid = {
@@ -454,6 +461,7 @@ const mermaid: Mermaid = {
   setParseErrorHandler,
   detectType,
   registerIconPacks,
+  getDiagramData,
 };
 
 export default mermaid;
