@@ -393,12 +393,11 @@ export const draw = function (text, id, version, diagObj) {
         let endX = timeScale(d.renderEndTime || d.endTime);
         if (d.milestone) {
           startX += 0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) - 0.5 * theBarHeight;
-        }
-        if (d.milestone) {
           endX = startX + theBarHeight;
         }
+
         if (d.vert) {
-          return startX + theSidePad + (endX - startX) / 2 - this.getBBox().width / 2;
+          return timeScale(d.startTime) + theSidePad;
         }
 
         const textWidth = this.getBBox().width;
@@ -429,9 +428,6 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           endX = startX + theBarHeight;
         }
-        // if (d.vert) {
-        //   return startX + theSidePad + (endX - startX) / 2 - this.getBBox().width / 2;
-        // }
 
         const textWidth = this.getBBox().width;
 
