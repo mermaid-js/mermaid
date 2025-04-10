@@ -49,7 +49,13 @@ Option:
         | name='max' value=NUMBER
         | name='min' value=NUMBER
         | name='graticule' value=GRATICULE
+        | name='showTickLabels' value=BOOLEAN
+        | name='tickLabels' value=TickLabels
     )
 ;   
 
 terminal GRATICULE returns string: 'circle' | 'polygon';
+
+TickLabels:
+    '{' NEWLINE* labels+=STRING (',' NEWLINE* labels+=STRING)* NEWLINE* '}'
+;

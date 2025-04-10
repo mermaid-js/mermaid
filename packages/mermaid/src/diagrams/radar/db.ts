@@ -17,7 +17,14 @@ import type {
   Option,
   Entry,
 } from '../../../../parser/dist/src/language/generated/ast.js';
-import type { RadarAxis, RadarCurve, RadarOptions, RadarDB, RadarData } from './types.js';
+import type {
+  RadarAxis,
+  RadarCurve,
+  RadarOptions,
+  RadarDB,
+  RadarData,
+  TickLabels,
+} from './types.js';
 
 const defaultOptions: RadarOptions = {
   showLegend: true,
@@ -25,6 +32,8 @@ const defaultOptions: RadarOptions = {
   max: null,
   min: 0,
   graticule: 'circle',
+  showTickLabels: false,
+  tickLabels: { labels: [] },
 };
 
 const defaultRadarData: RadarData = {
@@ -102,6 +111,8 @@ const setOptions = (options: Option[]) => {
     max: (optionMap.max?.value as number) ?? defaultOptions.max,
     min: (optionMap.min?.value as number) ?? defaultOptions.min,
     graticule: (optionMap.graticule?.value as 'circle' | 'polygon') ?? defaultOptions.graticule,
+    showTickLabels: (optionMap.showTickLabels?.value as boolean) ?? defaultOptions.showTickLabels,
+    tickLabels: (optionMap.tickLabels?.value as TickLabels) ?? defaultOptions.tickLabels,
   };
 };
 

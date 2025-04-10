@@ -2,7 +2,7 @@ import type { Diagram } from '../../Diagram.js';
 import type { RadarDiagramConfig } from '../../config.type.js';
 import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import type { RadarDB, RadarAxis, RadarCurve } from './types.js';
+import type { RadarDB, RadarAxis, RadarCurve, TickLabels } from './types.js';
 
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const db = diagram.db as RadarDB;
@@ -25,7 +25,15 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const radius = Math.min(config.width, config.height) / 2;
 
   // 🕸️ Draw graticule
-  drawGraticule(g, axes, radius, options.ticks, options.graticule);
+  drawGraticule(
+    g,
+    axes,
+    radius,
+    options.ticks,
+    options.graticule,
+    options.showTickLabels,
+    options.tickLabels
+  );
 
   // 🪓 Draw the axes
   drawAxes(g, axes, radius, config);
@@ -67,8 +75,46 @@ const drawGraticule = (
   axes: RadarAxis[],
   radius: number,
   ticks: number,
-  graticule: string
+  graticule: string,
+  showTickLabels: boolean,
+  tickLabels: TickLabels
 ) => {
+  if (showTickLabels) {
+    // eslint-disable-next-line
+    console.log(tickLabels);
+    for (let i = 0; i < ticks; i++) {
+      const {
+        labels: { [i]: label },
+      } = tickLabels;
+      const angle = 0;
+      const offset = -i * 20;
+
+      // g.append('line')
+      //   .attr('x1', 0)
+      //   .attr('y1', 0)
+      //   .attr('x2', radius * config.axisScaleFactor * Math.cos(angle))
+      //   .attr('y2', radius * config.axisScaleFactor * Math.sin(angle))
+      //   .attr('class', 'radarAxisLegendLine');
+      // eslint-disable-next-line
+      console.log(radius, i, Math.cos(angle));
+      g.append('text')
+        .text(label)
+        .attr('x', 0)
+        .attr('y', offset)
+        .attr('class', 'radarAxisLegendLabel');
+
+      // if (graticule === 'circle') {
+      //   continue;
+      // } else if (graticule === 'polygon') {
+      //   // const label = tickLabels.labels[i]
+      //   // I am sure that this brings me to hell ...
+      //   const { labels: { [i]: label }} = tickLabels;
+      //   // eslint-disable-next-line
+      //   console.log(label);
+      // }
+    }
+  }
+
   if (graticule === 'circle') {
     // Draw a circle for each tick
     for (let i = 0; i < ticks; i++) {

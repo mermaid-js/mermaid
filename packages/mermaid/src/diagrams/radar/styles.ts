@@ -42,6 +42,7 @@ export const buildRadarStyleOptions = (radar?: RadarStyleOptions) => {
 
 export const styles: DiagramStylesProvider = ({ radar }: { radar?: RadarStyleOptions } = {}) => {
   const { themeVariables, radarOptions } = buildRadarStyleOptions(radar);
+  // TODO: fix
   return `
 	.radarTitle {
 		font-size: ${themeVariables.fontSize};
@@ -69,6 +70,16 @@ export const styles: DiagramStylesProvider = ({ radar }: { radar?: RadarStyleOpt
 		text-anchor: start;
 		font-size: ${radarOptions.legendFontSize}px;
 		dominant-baseline: hanging;
+	}
+  .radarAxisLegendLine {
+		stroke: #ff00ff;
+		stroke-width: 1;
+	}
+  .radarAxisLegendLabel {
+		dominant-baseline: middle;
+		text-anchor: middle;
+		font-size: ${radarOptions.axisLabelFontSize}px;
+		color: #ff00ff;
 	}
 	${genIndexStyles(themeVariables, radarOptions)}
 	`;
