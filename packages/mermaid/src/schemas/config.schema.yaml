@@ -2105,6 +2105,13 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         default: 200
 
+      inheritDir:
+        type: boolean
+        default: false
+        description: |
+          If true, subgraphs without explicit direction will inherit the global graph direction
+          (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
+
   SankeyLinkColor:
     description: |
       Picks the color of the sankey diagram links, using the colors of the source and/or target of the links.
