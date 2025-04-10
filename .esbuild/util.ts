@@ -29,6 +29,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     minify: true,
     keepNames: true,
     platform: 'browser',
+    target: 'es2015',
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
