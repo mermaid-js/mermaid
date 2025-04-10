@@ -41,6 +41,7 @@ jsonschema
 katex
 khroma
 langium
+llmstxt
 mathml
 matplotlib
 mdbook
