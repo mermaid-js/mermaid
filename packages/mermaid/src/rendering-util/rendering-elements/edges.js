@@ -562,7 +562,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
   let svgPath;
   let linePath = lineFunction(lineData);
-  const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
+  const edgeStyles = Array.isArray(edge.style) ? edge.style : edge.style ? [edge.style] : [];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
 
   if (edge.look === 'handDrawn') {

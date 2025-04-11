@@ -58,6 +58,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     format,
     minify,
     options: { name, file, packageName },
+    globalName = 'mermaid',
   } = options;
   const external: string[] = ['require', 'fs', 'path'];
   const outFileName = getFileName(name, options);
@@ -68,6 +69,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     },
     metafile,
     minify,
+    globalName,
     logLevel: 'info',
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
     define: {
@@ -89,11 +91,12 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   if (format === 'iife') {
     output.format = 'iife';
     output.splitting = false;
-    output.globalName = '__esbuild_esm_mermaid';
+    const originalGlobalName = output.globalName ?? 'mermaid';
+    output.globalName = `__esbuild_esm_mermaid_nm[${JSON.stringify(originalGlobalName)}]`;
     // Workaround for removing the .default access in esbuild IIFE.
     // https://github.com/mermaid-js/mermaid/pull/4109#discussion_r1292317396
     output.footer = {
-      js: 'globalThis.mermaid = globalThis.__esbuild_esm_mermaid.default;',
+      js: `globalThis[${JSON.stringify(originalGlobalName)}] = globalThis.${output.globalName}.default;`,
     };
     output.outExtension = { '.js': '.js' };
   } else {
