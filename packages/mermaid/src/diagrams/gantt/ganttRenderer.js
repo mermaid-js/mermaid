@@ -429,9 +429,6 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           endX = startX + theBarHeight;
         }
-        // if (d.vert) {
-        //   return startX + theSidePad + (endX - startX) / 2 - this.getBBox().width / 2;
-        // }
 
         const textWidth = this.getBBox().width;
 
