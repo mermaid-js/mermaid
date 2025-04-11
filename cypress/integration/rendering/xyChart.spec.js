@@ -551,4 +551,226 @@ describe('XY Chart', () => {
       });
     });
   });
+
+  it('should render data labels within each bar in the horizontal xy-chart with multiple bars of different sizes', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+    xychart-beta
+      title "Sales Revenue"
+      x-axis Months [jan,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s]
+      y-axis "Revenue (in $)" 4000 --> 12000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000, 8000, 10000, 5000, 7600, 4999,11000 ,5000,6000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+            expect(textProps.y + textProps.height / 2).to.be.closeTo(
+              barProps.y + barProps.height / 2,
+              1
+            );
+          });
+      });
+    });
+  });
+
+  it('should render data labels within each bar in the vertical xy-chart', () => {
+    imgSnapshotTest(
+      `
+      ---
+      config:
+        xyChart:
+          showDataLabel: true
+      ---
+      xychart-beta
+        title "Sales Revenue"
+        x-axis Months [jan,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s]
+        y-axis "Revenue (in $)" 4000 --> 12000
+        bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000, 8000, 10000, 5000, 7600, 4999,11000 ,5000,6000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            // Check horizontal alignment (within tolerance)
+            expect(textProps.x + textProps.width / 2).to.be.closeTo(
+              barProps.x + barProps.width / 2,
+              1
+            );
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+          });
+      });
+    });
+  });
+
+  it('should render data labels correctly for a bar in the horizontal xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+    xychart-beta
+            title "Sales Revenue"
+            x-axis Months [jan]
+            y-axis "Revenue (in $)" 3000 --> 12000
+            bar [4000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+            expect(textProps.y + textProps.height / 2).to.be.closeTo(
+              barProps.y + barProps.height / 2,
+              1
+            );
+          });
+      });
+    });
+  });
+
+  it('should render data labels correctly for a bar in the vertical xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
+    xychart-beta
+            title "Sales Revenue"
+            x-axis Months [jan]
+            y-axis "Revenue (in $)" 3000 --> 12000
+            bar [4000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            // Check horizontal alignment (within tolerance)
+            expect(textProps.x + textProps.width / 2).to.be.closeTo(
+              barProps.x + barProps.width / 2,
+              1
+            );
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+          });
+      });
+    });
+  });
 });
