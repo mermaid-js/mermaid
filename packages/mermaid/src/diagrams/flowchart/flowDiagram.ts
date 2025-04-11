@@ -23,5 +23,28 @@ export const diagram = {
     }
     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
     setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
+
+    if (cnf.flowchart.direction) {
+      setConfig({ flowchart: { direction: cnf.flowchart.direction } });
+    }
   },
 };
+
+// export const diagram = {
+//   parser: flowParser,
+//   get db() {
+//     return new FlowDB();
+//   },
+//   renderer,
+//   styles: flowStyles,
+//   init: (cnf: MermaidConfig) => {
+//     if (!cnf.flowchart) {
+//       cnf.flowchart = {};
+//     }
+//     if (cnf.layout) {
+//       setConfig({ layout: cnf.layout });
+//     }
+//     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+//     setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
+//   },
+// };
