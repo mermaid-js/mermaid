@@ -158,9 +158,14 @@ export const calculateEdgeLength = (path) => {
   }
   return length;
 };
+import { FlowDB } from '../../diagrams/flowchart/flowDb.ts';
 
 export const positionEdgeLabel = (edge, paths) => {
   log.debug('Adjusting label position for edge', edge.id);
+
+  const diagramType = getConfig().diagramType || 'flowchart';
+  const flowDb = new FlowDB();
+  const direction = diagramType === 'flowchart' ? flowDb.getDirection() : 'TD';
 
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
@@ -179,16 +184,14 @@ export const positionEdgeLabel = (edge, paths) => {
       const edgeLength = calculateEdgeLength(path);
       log.debug(`Edge Length for ${edge.id}:`, edgeLength);
 
-      const direction = siteConfig.flowchart?.direction ?? 'TD';
-
-      if (direction == 'LR' || direction == 'RL') {
-        // For horizontal diagrams, adjust the x coordinate.
-        const horizontalOffset = edgeLength > 200 ? -200 : 0;
-        x += horizontalOffset;
-      } else {
-        // For vertical diagrams (TD, TB, BT), adjust the y coordinate.
-        const verticalOffset = edgeLength > 200 ? -140 : 0;
-        y += verticalOffset;
+      if (diagramType === 'flowchart') {
+        if (direction === 'LR' || direction === 'RL') {
+          const horizontalOffset = edgeLength > 200 ? -200 : -50;
+          x += horizontalOffset;
+        } else {
+          const verticalOffset = edgeLength > 200 ? -140 : -50;
+          y += verticalOffset;
+        }
       }
     }
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
