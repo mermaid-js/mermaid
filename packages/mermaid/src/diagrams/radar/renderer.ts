@@ -31,8 +31,8 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     radius,
     options.ticks,
     options.graticule,
-    options.showTickLabels,
-    options.tickLabels
+    options.tickLabels,
+    options.tickLabelsAxis
   );
 
   // 🪓 Draw the axes
@@ -70,51 +70,73 @@ const drawFrame = (svg: SVG, config: Required<RadarDiagramConfig>): SVGGroup => 
   return svg.append('g').attr('transform', `translate(${center.x}, ${center.y})`);
 };
 
+const _getAngleOffset = (angle: number) => {
+  // Convert angle to degrees for easier comparison
+  const degrees = angle * (180 / Math.PI);
+
+  // Define angle ranges with ±22.5° tolerance (45° / 2)
+  if (degrees >= -112.5 && degrees < -67.5) {
+    // Around 12 o'clock (-90°)
+    return { x: 10, y: 0 };
+  } else if (degrees >= -67.5 && degrees < -22.5) {
+    // Around 2 o'clock (-45°)
+    return { x: 7.5, y: 7.5 };
+  } else if (degrees >= -22.5 && degrees < 22.5) {
+    // Around 3 o'clock (0°)
+    return { x: 0, y: 7.5 };
+  } else if (degrees >= 22.5 && degrees < 67.5) {
+    // Around 4 o'clock (45°)
+    return { x: 10, y: -5 };
+  } else if (degrees >= 67.5 && degrees < 112.5) {
+    // Around 6 o'clock (90°)
+    return { x: -10, y: 0 };
+  } else if (degrees >= 112.5 && degrees < 157.5) {
+    // Around 7 o'clock (135°)
+    return { x: -7.5, y: -7.5 };
+  } else if (degrees >= 157.5 && degrees < 202.5) {
+    // Around 9 o'clock (180°)
+    return { x: 0, y: -7.5 };
+  } else if (degrees >= 202.5 && degrees < 247.5) {
+    // Around 10 o'clock (225°)
+    return { x: -7.5, y: 7.5 };
+  }
+
+  // Default offset if no range matches
+  return { x: 0, y: 0 };
+};
+
+const _drawTickLabel = (
+  g: SVGGroup,
+  tickLabels: TickLabels,
+  angle: number,
+  i: number,
+  x: number,
+  y: number
+) => {
+  const {
+    labels: { [i]: label },
+  } = tickLabels;
+
+  const angleLabelOffsets = _getAngleOffset(angle);
+  const xWithOffset = x + angleLabelOffsets.x;
+  const yWithOffset = y + angleLabelOffsets.y;
+
+  g.append('text')
+    .text(label)
+    .attr('x', xWithOffset)
+    .attr('y', yWithOffset)
+    .attr('class', 'radarAxisLegendLabel');
+};
+
 const drawGraticule = (
   g: SVGGroup,
   axes: RadarAxis[],
   radius: number,
   ticks: number,
   graticule: string,
-  showTickLabels: boolean,
-  tickLabels: TickLabels
+  tickLabels: TickLabels,
+  tickLabelsAxis: number | null
 ) => {
-  if (showTickLabels) {
-    // eslint-disable-next-line
-    console.log(tickLabels);
-    for (let i = 0; i < ticks; i++) {
-      const {
-        labels: { [i]: label },
-      } = tickLabels;
-      const angle = 0;
-      const offset = -i * 20;
-
-      // g.append('line')
-      //   .attr('x1', 0)
-      //   .attr('y1', 0)
-      //   .attr('x2', radius * config.axisScaleFactor * Math.cos(angle))
-      //   .attr('y2', radius * config.axisScaleFactor * Math.sin(angle))
-      //   .attr('class', 'radarAxisLegendLine');
-      // eslint-disable-next-line
-      console.log(radius, i, Math.cos(angle));
-      g.append('text')
-        .text(label)
-        .attr('x', 0)
-        .attr('y', offset)
-        .attr('class', 'radarAxisLegendLabel');
-
-      // if (graticule === 'circle') {
-      //   continue;
-      // } else if (graticule === 'polygon') {
-      //   // const label = tickLabels.labels[i]
-      //   // I am sure that this brings me to hell ...
-      //   const { labels: { [i]: label }} = tickLabels;
-      //   // eslint-disable-next-line
-      //   console.log(label);
-      // }
-    }
-  }
-
   if (graticule === 'circle') {
     // Draw a circle for each tick
     for (let i = 0; i < ticks; i++) {
@@ -131,6 +153,15 @@ const drawGraticule = (
           const angle = (2 * j * Math.PI) / numAxes - Math.PI / 2;
           const x = r * Math.cos(angle);
           const y = r * Math.sin(angle);
+
+          if (tickLabels.labels.length > 0) {
+            if (tickLabelsAxis === null) {
+              _drawTickLabel(g, tickLabels, angle, i, x, y);
+            } else if (j === tickLabelsAxis - 1) {
+              _drawTickLabel(g, tickLabels, angle, i, x, y);
+            }
+          }
+
           return `${x},${y}`;
         })
         .join(' ');

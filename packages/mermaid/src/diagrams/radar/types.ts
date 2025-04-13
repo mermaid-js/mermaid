@@ -20,8 +20,8 @@ export interface RadarOptions {
   max: number | null;
   min: number;
   graticule: 'circle' | 'polygon';
-  showTickLabels: boolean;
   tickLabels: TickLabels;
+  tickLabelsAxis: number | null;
 }
 export interface RadarDB extends DiagramDBBase<RadarDiagramConfig> {
   getAxes: () => RadarAxis[];

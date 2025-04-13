@@ -49,8 +49,8 @@ Option:
         | name='max' value=NUMBER
         | name='min' value=NUMBER
         | name='graticule' value=GRATICULE
-        | name='showTickLabels' value=BOOLEAN
         | name='tickLabels' value=TickLabels
+        | name='tickLabelsAxis' value=NUMBER
     )
 ;   
 

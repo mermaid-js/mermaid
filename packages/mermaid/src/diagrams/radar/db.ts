@@ -32,8 +32,8 @@ const defaultOptions: RadarOptions = {
   max: null,
   min: 0,
   graticule: 'circle',
-  showTickLabels: false,
   tickLabels: { labels: [] },
+  tickLabelsAxis: null,
 };
 
 const defaultRadarData: RadarData = {
@@ -111,8 +111,9 @@ const setOptions = (options: Option[]) => {
     max: (optionMap.max?.value as number) ?? defaultOptions.max,
     min: (optionMap.min?.value as number) ?? defaultOptions.min,
     graticule: (optionMap.graticule?.value as 'circle' | 'polygon') ?? defaultOptions.graticule,
-    showTickLabels: (optionMap.showTickLabels?.value as boolean) ?? defaultOptions.showTickLabels,
     tickLabels: (optionMap.tickLabels?.value as TickLabels) ?? defaultOptions.tickLabels,
+    tickLabelsAxis:
+      (optionMap.tickLabelsAxis?.value as number | null) ?? defaultOptions.tickLabelsAxis,
   };
 };
 
