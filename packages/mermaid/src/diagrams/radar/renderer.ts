@@ -25,18 +25,13 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const radius = Math.min(config.width, config.height) / 2;
 
   // 🕸️ Draw graticule
-  drawGraticule(
-    g,
-    axes,
-    radius,
-    options.ticks,
-    options.graticule,
-    options.tickLabels,
-    options.tickLabelsAxis
-  );
+  drawGraticule(g, axes, radius, options.ticks, options.graticule);
 
   // 🪓 Draw the axes
   drawAxes(g, axes, radius, config);
+
+  // 📏 Draw the tick labels
+  drawTickLabels(g, axes, radius, options.ticks, options.tickLabels, options.tickLabelsAxis);
 
   // 📊 Draw the curves
   drawCurves(g, axes, curves, minValue, maxValue, options.graticule, config);
@@ -105,37 +100,12 @@ const _getAngleOffset = (angle: number) => {
   return { x: 0, y: 0 };
 };
 
-const _drawTickLabel = (
-  g: SVGGroup,
-  tickLabels: TickLabels,
-  angle: number,
-  i: number,
-  x: number,
-  y: number
-) => {
-  const {
-    labels: { [i]: label },
-  } = tickLabels;
-
-  const angleLabelOffsets = _getAngleOffset(angle);
-  const xWithOffset = x + angleLabelOffsets.x;
-  const yWithOffset = y + angleLabelOffsets.y;
-
-  g.append('text')
-    .text(label)
-    .attr('x', xWithOffset)
-    .attr('y', yWithOffset)
-    .attr('class', 'radarAxisLegendLabel');
-};
-
 const drawGraticule = (
   g: SVGGroup,
   axes: RadarAxis[],
   radius: number,
   ticks: number,
-  graticule: string,
-  tickLabels: TickLabels,
-  tickLabelsAxis: number | null
+  graticule: string
 ) => {
   if (graticule === 'circle') {
     // Draw a circle for each tick
@@ -153,15 +123,6 @@ const drawGraticule = (
           const angle = (2 * j * Math.PI) / numAxes - Math.PI / 2;
           const x = r * Math.cos(angle);
           const y = r * Math.sin(angle);
-
-          if (tickLabels.labels.length > 0) {
-            if (tickLabelsAxis === null) {
-              _drawTickLabel(g, tickLabels, angle, i, x, y);
-            } else if (j === tickLabelsAxis - 1) {
-              _drawTickLabel(g, tickLabels, angle, i, x, y);
-            }
-          }
-
           return `${x},${y}`;
         })
         .join(' ');
@@ -194,6 +155,39 @@ const drawAxes = (
       .attr('class', 'radarAxisLabel');
   }
 };
+
+function drawTickLabels(
+  g: SVGGroup,
+  axes: RadarAxis[],
+  radius: number,
+  ticks: number,
+  tickLabels: TickLabels,
+  tickLabelsAxis: number | null
+) {
+  const numAxes = axes.length;
+  for (let tickIdx = 0; tickIdx < ticks; tickIdx++) {
+    const r = (radius * (tickIdx + 1)) / ticks;
+    const {
+      labels: { [tickIdx]: label },
+    } = tickLabels;
+
+    axes.forEach((_, axisIdx) => {
+      const angle = (2 * axisIdx * Math.PI) / numAxes - Math.PI / 2;
+      const angleLabelOffsets = _getAngleOffset(angle);
+      const xWithOffset = r * Math.cos(angle) + angleLabelOffsets.x;
+      const yWithOffset = r * Math.sin(angle) + angleLabelOffsets.y;
+
+      const drawForAxis = tickLabelsAxis === null || axisIdx === tickLabelsAxis - 1;
+      if (drawForAxis) {
+        g.append('text')
+          .text(label)
+          .attr('x', xWithOffset)
+          .attr('y', yWithOffset)
+          .attr('class', 'radarAxisLegendLabel');
+      }
+    });
+  }
+}
 
 function drawCurves(
   g: SVGGroup,

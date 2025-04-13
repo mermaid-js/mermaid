@@ -78,7 +78,7 @@ export const styles: DiagramStylesProvider = ({ radar }: { radar?: RadarStyleOpt
   .radarAxisLegendLabel {
 		dominant-baseline: middle;
 		text-anchor: middle;
-		font-size: ${(radarOptions.axisLabelFontSize ?? 12) * 1.5}px;
+		font-size: ${radarOptions.axisLabelFontSize}px;
 		color: #ff00ff;
 	}
 	${genIndexStyles(themeVariables, radarOptions)}
