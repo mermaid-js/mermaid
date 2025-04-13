@@ -111,7 +111,14 @@ const setOptions = (options: Option[]) => {
     max: (optionMap.max?.value as number) ?? defaultOptions.max,
     min: (optionMap.min?.value as number) ?? defaultOptions.min,
     graticule: (optionMap.graticule?.value as 'circle' | 'polygon') ?? defaultOptions.graticule,
-    tickLabels: (optionMap.tickLabels?.value as TickLabels) ?? defaultOptions.tickLabels,
+    // this is due to that otherwise $container gets set here via the Options type and
+    //  creates a circular structure which breaks tests
+    tickLabels: {
+      labels: [
+        ...((optionMap.tickLabels?.value as TickLabels)?.labels ??
+          defaultOptions.tickLabels.labels),
+      ],
+    },
     tickLabelsAxis:
       (optionMap.tickLabelsAxis?.value as number | null) ?? defaultOptions.tickLabelsAxis,
   };
