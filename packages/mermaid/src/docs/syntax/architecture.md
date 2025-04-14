@@ -6,12 +6,12 @@
 
 ```mermaid-example
 architecture-beta
-    group api(cloud)[API]
+    group api('cloud')['API']
 
-    service db(database)[Database] in api
-    service disk1(disk)[Storage] in api
-    service disk2(disk)[Storage] in api
-    service server(server)[Server] in api
+    service db('database')['Database'] in api
+    service disk1('disk')['Storage'] in api
+    service disk2('disk')['Storage'] in api
+    service server('server')['Server'] in api
 
     db:L -- R:server
     disk1:T -- B:server
@@ -31,13 +31,13 @@ To begin an architecture diagram, use the keyword `architecture-beta`, followed 
 The syntax for declaring a group is:
 
 ```
-group {group id}({icon name})[{title}] (in {parent id})?
+group {group id}('{icon name}')['{label}'] (in {parent id})?
 ```
 
 Put together:
 
 ```
-group public_api(cloud)[Public API]
+group public_api('cloud')['Public API']
 ```
 
 creates a group identified as `public_api`, uses the icon `cloud`, and has the label `Public API`.
@@ -45,7 +45,7 @@ creates a group identified as `public_api`, uses the icon `cloud`, and has the l
 Additionally, groups can be placed within a group using the optional `in` keyword
 
 ```
-group private_api(cloud)[Private API] in public_api
+group private_api('cloud')['Private API'] in public_api
 ```
 
 ### Services
@@ -53,13 +53,13 @@ group private_api(cloud)[Private API] in public_api
 The syntax for declaring a service is:
 
 ```
-service {service id}({icon name})[{title}] (in {parent id})?
+service {service id}('{icon name}')['{label}'] (in {parent id})?
 ```
 
 Put together:
 
 ```
-service database1(database)[My Database]
+service database1('database')['My Database']
 ```
 
 creates the service identified as `database1`, using the icon `database`, with the label `My Database`.
@@ -67,7 +67,7 @@ creates the service identified as `database1`, using the icon `database`, with t
 If the service belongs to a group, it can be placed inside it through the optional `in` keyword
 
 ```
-service database1(database)[My Database] in private_api
+service database1('database')['My Database'] in private_api
 ```
 
 ### Edges
@@ -75,7 +75,7 @@ service database1(database)[My Database] in private_api
 The syntax for declaring an edge is:
 
 ```
-{serviceId}{{group}}?:{T|B|L|R} {<}?--{>}? {T|B|L|R}:{serviceId}{{group}}?
+{serviceId}{{group}}? :? {T|B|L|R} {<}?--{>}? {T|B|L|R} :? {serviceId}{{group}}?
 ```
 
 #### Edge Direction
@@ -96,6 +96,12 @@ db:T -- L:server
 
 creates a 90 degree edge between the services `db` and `server`, with the edge coming out of the top of `db` and the left of `server`.
 
+```
+db R -- L server
+```
+
+the colons are optional, so the above example is equivalent to the previous one.
+
 #### Arrows
 
 Arrows can be added to each side of an edge by adding `<` before the direction on the left, and/or `>` after the direction on the right.
@@ -115,8 +121,8 @@ To have an edge go from a group to another group or service within another group
 For example:
 
 ```
-service server[Server] in groupOne
-service subnet[Subnet] in groupTwo
+service server['Server'] in groupOne
+service subnet['Subnet'] in groupTwo
 
 server{group}:B --> T:subnet{group}
 ```
@@ -137,11 +143,11 @@ junction {junction id} (in {parent id})?
 
 ```mermaid-example
 architecture-beta
-    service left_disk(disk)[Disk]
-    service top_disk(disk)[Disk]
-    service bottom_disk(disk)[Disk]
-    service top_gateway(internet)[Gateway]
-    service bottom_gateway(internet)[Gateway]
+    service left_disk('disk')['Disk']
+    service top_disk('disk')['Disk']
+    service bottom_disk('disk')['Disk']
+    service top_gateway('internet')['Gateway']
+    service bottom_gateway('internet')['Gateway']
     junction junctionCenter
     junction junctionRight
 
@@ -162,12 +168,12 @@ After the icons are installed, they can be used in the architecture diagram by u
 
 ```mermaid-example
 architecture-beta
-    group api(logos:aws-lambda)[API]
+    group api('logos:aws-lambda')['API']
 
-    service db(logos:aws-aurora)[Database] in api
-    service disk1(logos:aws-glacier)[Storage] in api
-    service disk2(logos:aws-s3)[Storage] in api
-    service server(logos:aws-ec2)[Server] in api
+    service db('logos:aws-aurora')['Database'] in api
+    service disk1('logos:aws-glacier')['Storage'] in api
+    service disk2('logos:aws-s3')['Storage'] in api
+    service server('logos:aws-ec2')['Server'] in api
 
     db:L -- R:server
     disk1:T -- B:server
