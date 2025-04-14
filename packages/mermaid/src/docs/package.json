@@ -36,6 +36,7 @@
     "vite": "^6.1.1",
     "vite-plugin-pwa": "^0.21.1",
     "vitepress": "1.6.3",
+    "vitepress-plugin-llms": "^0.0.16",
     "workbox-window": "^7.3.0"
   }
 }
