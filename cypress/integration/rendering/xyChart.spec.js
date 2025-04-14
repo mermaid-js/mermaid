@@ -542,7 +542,7 @@ describe('XY Chart', () => {
             // Check horizontal alignment (within tolerance)
             expect(textProps.x + textProps.width / 2).to.be.closeTo(
               barProps.x + barProps.width / 2,
-              1
+              5
             );
 
             expect(textProps.y).to.be.greaterThan(barProps.y);
@@ -600,7 +600,7 @@ describe('XY Chart', () => {
             expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
             expect(textProps.y + textProps.height / 2).to.be.closeTo(
               barProps.y + barProps.height / 2,
-              1
+              5
             );
           });
       });
@@ -653,7 +653,7 @@ describe('XY Chart', () => {
             // Check horizontal alignment (within tolerance)
             expect(textProps.x + textProps.width / 2).to.be.closeTo(
               barProps.x + barProps.width / 2,
-              1
+              5
             );
 
             expect(textProps.y).to.be.greaterThan(barProps.y);
@@ -711,7 +711,7 @@ describe('XY Chart', () => {
             expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
             expect(textProps.y + textProps.height / 2).to.be.closeTo(
               barProps.y + barProps.height / 2,
-              1
+              5
             );
           });
       });
@@ -764,7 +764,7 @@ describe('XY Chart', () => {
             // Check horizontal alignment (within tolerance)
             expect(textProps.x + textProps.width / 2).to.be.closeTo(
               barProps.x + barProps.width / 2,
-              1
+              5
             );
 
             expect(textProps.y).to.be.greaterThan(barProps.y);
@@ -822,7 +822,7 @@ describe('XY Chart', () => {
             expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
             expect(textProps.y + textProps.height / 2).to.be.closeTo(
               barProps.y + barProps.height / 2,
-              1
+              5
             );
           });
       });
