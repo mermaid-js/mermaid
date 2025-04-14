@@ -115,7 +115,7 @@ describe('radar', () => {
     });
 
     it.each([
-      `axis my-axis["My Axis Label"]
+      `axis my-axis['My Axis Label']
       axis my-axis2["My Second Axis Label"]`,
       `axis my-axis ["My Axis Label"], my-axis2\t["My Second Axis Label"]`,
     ])('should handle axis labels', (context: string) => {
@@ -129,6 +129,22 @@ describe('radar', () => {
       expect(axes[0].label).toBe('My Axis Label');
       expect(axes[1].name).toBe('my-axis2');
       expect(axes[1].label).toBe('My Second Axis Label');
+    });
+
+    it('should handle axis labels with Markdown', () => {
+      const result = parse(`radar-beta
+        axis my-axis['\`My Axis Label\`']
+        axis my-axis2["\`My Second Axis Label\`"]
+      `);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Radar);
+
+      const { axes } = result.value;
+      expect(axes).toHaveLength(2);
+      expect(axes[0].name).toBe('my-axis');
+      expect(axes[0].label).toBe('`My Axis Label`');
+      expect(axes[1].name).toBe('my-axis2');
+      expect(axes[1].label).toBe('`My Second Axis Label`');
     });
 
     it('should not allow empty axis names', () => {
