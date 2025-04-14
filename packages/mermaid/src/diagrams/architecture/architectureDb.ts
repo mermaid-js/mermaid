@@ -62,7 +62,7 @@ export class ArchitectureDB implements DiagramDB {
     id,
     icon,
     in: parent,
-    title,
+    label,
     iconText,
   }: Omit<ArchitectureService, 'edges'>): void {
     if (this.registeredIds[id] !== undefined) {
@@ -91,7 +91,7 @@ export class ArchitectureDB implements DiagramDB {
       type: 'service',
       icon,
       iconText,
-      title,
+      label,
       edges: [],
       in: parent,
     };
@@ -124,7 +124,7 @@ export class ArchitectureDB implements DiagramDB {
     return this.nodes[id] ?? null;
   }
 
-  public addGroup({ id, icon, in: parent, title }: ArchitectureGroup): void {
+  public addGroup({ id, icon, in: parent, label }: ArchitectureGroup): void {
     if (this.registeredIds?.[id] !== undefined) {
       throw new Error(
         `The group id [${id}] is already in use by another ${this.registeredIds[id]}`
@@ -149,7 +149,7 @@ export class ArchitectureDB implements DiagramDB {
     this.groups[id] = {
       id,
       icon,
-      title,
+      label,
       in: parent,
     };
   }
@@ -165,7 +165,7 @@ export class ArchitectureDB implements DiagramDB {
     rhsInto,
     lhsGroup,
     rhsGroup,
-    title,
+    label,
   }: ArchitectureEdge): void {
     if (!isArchitectureDirection(lhsDir)) {
       throw new Error(
@@ -211,7 +211,7 @@ export class ArchitectureDB implements DiagramDB {
       rhsDir,
       rhsInto,
       rhsGroup,
-      title,
+      label,
     };
 
     this.edges.push(edge);

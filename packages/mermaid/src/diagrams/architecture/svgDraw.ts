@@ -281,11 +281,11 @@ export const drawServices = async function (
     const serviceElem = elem.append('g');
     const iconSize = db.getConfigField('iconSize');
 
-    if (service.title) {
+    if (service.label) {
       const textElem = serviceElem.append('g');
       await createText(
         textElem,
-        service.title,
+        service.label,
         {
           useHtmlLabels: false,
           width: iconSize * 1.5,
