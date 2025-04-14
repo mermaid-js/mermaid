@@ -1,7 +1,7 @@
 import { it, describe, expect } from 'vitest';
 import { db } from './db.js';
 import { parser } from './parser.js';
-import { relativeRadius, closedRoundCurve } from './renderer.js';
+import { relativeRadius, closedRoundCurve, _getAngleOffset } from './renderer.js';
 import { Diagram } from '../../Diagram.js';
 import mermaidAPI from '../../mermaidAPI.js';
 
@@ -273,6 +273,53 @@ describe('radar diagrams', () => {
         await mermaidAPI.parse(str);
         const diagram = await Diagram.fromText(str);
         await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+      });
+    });
+
+    describe('_getAngleOffset', () => {
+      it('should handle angles around -90°', () => {
+        const angle = -Math.PI / 2; // -90 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 10, y: 0 });
+      });
+
+      it('should handle angles around -45°', () => {
+        const angle = -Math.PI / 4; // -45 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 7.5, y: 7.5 });
+      });
+
+      it('should handle angles around 0°', () => {
+        const angle = 0; // 0 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 0, y: 7.5 });
+      });
+
+      it('should handle angles around 45°', () => {
+        const angle = Math.PI / 4; // 45 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 10, y: -5 });
+      });
+
+      it('should handle angles around 90°', () => {
+        const angle = Math.PI / 2; // 90 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: -10, y: 0 });
+      });
+
+      it('should handle angles around 135°', () => {
+        const angle = (3 * Math.PI) / 4; // 135 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: -7.5, y: -7.5 });
+      });
+
+      it('should handle angles around 180°', () => {
+        const angle = Math.PI; // 180 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 0, y: -7.5 });
+      });
+
+      it('should handle angles around 225°', () => {
+        const angle = (5 * Math.PI) / 4; // 225 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: -7.5, y: 7.5 });
+      });
+
+      it('should handle default case for angles outside defined ranges', () => {
+        const angle = -3 * Math.PI; // -540 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 0, y: 0 });
       });
     });
   });

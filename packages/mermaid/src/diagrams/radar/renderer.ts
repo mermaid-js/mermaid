@@ -65,7 +65,7 @@ const drawFrame = (svg: SVG, config: Required<RadarDiagramConfig>): SVGGroup => 
   return svg.append('g').attr('transform', `translate(${center.x}, ${center.y})`);
 };
 
-const _getAngleOffset = (angle: number) => {
+export function _getAngleOffset(angle: number) {
   // Convert angle to degrees for easier comparison
   const degrees = angle * (180 / Math.PI);
 
@@ -98,7 +98,7 @@ const _getAngleOffset = (angle: number) => {
 
   // Default offset if no range matches
   return { x: 0, y: 0 };
-};
+}
 
 const drawGraticule = (
   g: SVGGroup,
