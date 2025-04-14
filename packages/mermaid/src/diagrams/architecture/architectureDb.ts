@@ -57,7 +57,7 @@ const addService = function ({
   id,
   icon,
   in: parent,
-  title,
+  label,
   iconText,
 }: Omit<ArchitectureService, 'edges'>) {
   if (state.records.registeredIds[id] !== undefined) {
@@ -86,7 +86,7 @@ const addService = function ({
     type: 'service',
     icon,
     iconText,
-    title,
+    label,
     edges: [],
     in: parent,
   };
@@ -113,7 +113,7 @@ const getNodes = (): ArchitectureNode[] => Object.values(state.records.nodes);
 
 const getNode = (id: string): ArchitectureNode | null => state.records.nodes[id];
 
-const addGroup = function ({ id, icon, in: parent, title }: ArchitectureGroup) {
+const addGroup = function ({ id, icon, in: parent, label }: ArchitectureGroup) {
   if (state.records.registeredIds[id] !== undefined) {
     throw new Error(
       `The group id [${id}] is already in use by another ${state.records.registeredIds[id]}`
@@ -138,7 +138,7 @@ const addGroup = function ({ id, icon, in: parent, title }: ArchitectureGroup) {
   state.records.groups[id] = {
     id,
     icon,
-    title,
+    label,
     in: parent,
   };
 };
@@ -155,7 +155,7 @@ const addEdge = function ({
   rhsInto,
   lhsGroup,
   rhsGroup,
-  title,
+  label,
 }: ArchitectureEdge<string>) {
   if (!isArchitectureDirection(lhsDir)) {
     throw new Error(
@@ -201,7 +201,7 @@ const addEdge = function ({
     rhsDir,
     rhsInto,
     rhsGroup,
-    title,
+    label,
   };
 
   state.records.edges.push(edge);
