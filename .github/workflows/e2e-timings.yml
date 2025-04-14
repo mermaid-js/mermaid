@@ -51,7 +51,7 @@ jobs:
         run: pnpm tsx scripts/compare-timings.ts
 
       - name: Commit and create pull request
-        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e
+        uses: peter-evans/create-pull-request@a7b20e1da215b3ef3ccddb48ff65120256ed6226
         with:
           add-paths: |
             cypress/timings.json
