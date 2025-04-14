@@ -196,7 +196,7 @@ export interface ArchitectureService {
   edges: ArchitectureEdge[];
   icon?: string;
   iconText?: string;
-  title?: string;
+  label?: string;
   in?: string;
   width?: number;
   height?: number;
@@ -226,7 +226,7 @@ export const isArchitectureJunction = function (x: ArchitectureNode): x is Archi
 export interface ArchitectureGroup {
   id: string;
   icon?: string;
-  title?: string;
+  label?: string;
   in?: string;
 }
 
@@ -239,7 +239,7 @@ export interface ArchitectureEdge<DT = ArchitectureDirection> {
   rhsDir: DT;
   rhsInto?: boolean;
   rhsGroup?: boolean;
-  title?: string;
+  label?: string;
 }
 
 export interface ArchitectureDB extends DiagramDBBase<ArchitectureDiagramConfig> {
