@@ -183,7 +183,7 @@ function drawTickLabels(
           .text(label)
           .attr('x', xWithOffset)
           .attr('y', yWithOffset)
-          .attr('class', 'radarAxisLegendLabel');
+          .attr('class', 'radarAxisTickLabel');
       }
     });
   }
