@@ -14,7 +14,7 @@ import {
 
 import { MermaidGeneratedSharedModule, ArchitectureGeneratedModule } from '../generated/module.js';
 import { ArchitectureTokenBuilder } from './tokenBuilder.js';
-import { ArchitectureValueConverter } from './valueConverter.js';
+import { CommonValueConverter } from '../common/valueConverter.js';
 
 /**
  * Declaration of `Architecture` services.
@@ -22,7 +22,7 @@ import { ArchitectureValueConverter } from './valueConverter.js';
 interface ArchitectureAddedServices {
   parser: {
     TokenBuilder: ArchitectureTokenBuilder;
-    ValueConverter: ArchitectureValueConverter;
+    ValueConverter: CommonValueConverter;
   };
 }
 
@@ -41,7 +41,7 @@ export const ArchitectureModule: Module<
 > = {
   parser: {
     TokenBuilder: () => new ArchitectureTokenBuilder(),
-    ValueConverter: () => new ArchitectureValueConverter(),
+    ValueConverter: () => new CommonValueConverter(),
   },
 };
 
