@@ -952,6 +952,10 @@ export interface XYChartConfig extends BaseDiagramConfig {
    */
   titlePadding?: number;
   /**
+   * Should show the value corresponding to the bar within the bar
+   */
+  showDataLabel?: boolean;
+  /**
    * Should show the chart title
    */
   showTitle?: boolean;
