@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { Architecture } from '../src/language/index.js';
 import { expectNoErrorsOrAlternatives, architectureParse as parse } from './test-util.js';
 
@@ -33,7 +32,7 @@ describe('architecture', () => {
       expect(result.value.$type).toBe(Architecture);
 
       const { title } = result.value;
-      expect(title).toBe('sample title');
+      expect(title).toEqual(['sample title']);
     });
 
     it.each([
@@ -48,7 +47,7 @@ describe('architecture', () => {
       expect(result.value.$type).toBe(Architecture);
 
       const { title } = result.value;
-      expect(title).toBe('sample title');
+      expect(title).toEqual(['sample title']);
     });
 
     it('should handle regular architecture + title + accTitle + accDescr', () => {
@@ -62,9 +61,9 @@ describe('architecture', () => {
       expect(result.value.$type).toBe(Architecture);
 
       const { title, accTitle, accDescr } = result.value;
-      expect(title).toBe('sample title');
-      expect(accTitle).toBe('sample accTitle');
-      expect(accDescr).toBe('sample accDescr');
+      expect(title).toEqual(['sample title']);
+      expect(accTitle).toEqual(['sample accTitle']);
+      expect(accDescr).toEqual(['sample accDescr']);
     });
 
     it('should handle regular architecture + title + accTitle + multi-line accDescr', () => {
@@ -80,9 +79,9 @@ describe('architecture', () => {
       expect(result.value.$type).toBe(Architecture);
 
       const { title, accTitle, accDescr } = result.value;
-      expect(title).toBe('sample title');
-      expect(accTitle).toBe('sample accTitle');
-      expect(accDescr).toBe('sample accDescr');
+      expect(title).toEqual(['sample title']);
+      expect(accTitle).toEqual(['sample accTitle']);
+      expect(accDescr).toEqual(['sample accDescr']);
     });
   });
 });

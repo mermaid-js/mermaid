@@ -35,7 +35,7 @@ describe('radar', () => {
       expect(result.value.$type).toBe(Radar);
 
       const { title } = result.value;
-      expect(title).toBe('My Title');
+      expect(title).toEqual(['My Title']);
     });
 
     it.each([
@@ -47,7 +47,7 @@ describe('radar', () => {
       expect(result.value.$type).toBe(Radar);
 
       const { accDescr } = result.value;
-      expect(accDescr).toBe('My Accessible Description');
+      expect(accDescr).toEqual(['My Accessible Description']);
     });
 
     it.each([
@@ -59,7 +59,7 @@ describe('radar', () => {
       expect(result.value.$type).toBe(Radar);
 
       const { accTitle } = result.value;
-      expect(accTitle).toBe('My Accessible Title');
+      expect(accTitle).toEqual(['My Accessible Title']);
     });
 
     it.each([
@@ -75,9 +75,9 @@ describe('radar', () => {
       expect(result.value.$type).toBe(Radar);
 
       const { title, accDescr, accTitle } = result.value;
-      expect(title).toBe('My Title');
-      expect(accDescr).toBe('My Accessible Description');
-      expect(accTitle).toBe('My Accessible Title');
+      expect(title).toEqual(['My Title']);
+      expect(accDescr).toEqual(['My Accessible Description']);
+      expect(accTitle).toEqual(['My Accessible Title']);
     });
   });
 
