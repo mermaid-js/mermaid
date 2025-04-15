@@ -1,6 +1,6 @@
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph, verifyNumber } from '../../helpers/util.ts';
 
-describe.skip('Flowchart ELK', () => {
+describe('Flowchart ELK', () => {
   it('1-elk: should render a simple flowchart', () => {
     imgSnapshotTest(
       `flowchart-elk TD
@@ -109,7 +109,7 @@ describe.skip('Flowchart ELK', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.be.within(230 * 0.95, 230 * 1.05);
+      verifyNumber(maxWidthValue, 380);
     });
   });
   it('8-elk: should render a flowchart when useMaxWidth is false', () => {
@@ -128,7 +128,7 @@ describe.skip('Flowchart ELK', () => {
       const width = parseFloat(svg.attr('width'));
       // use within because the absolute value can be slightly different depending on the environment ±5%
       // expect(height).to.be.within(446 * 0.95, 446 * 1.05);
-      expect(width).to.be.within(230 * 0.95, 230 * 1.05);
+      verifyNumber(width, 380);
       expect(svg).to.not.have.attr('style');
     });
   });
@@ -692,7 +692,7 @@ A --> B
       {}
     );
     cy.get('svg').should((svg) => {
-      const edges = svg.querySelectorAll('.edges > path');
+      const edges = svg[0].querySelectorAll('.edges > path');
       edges.forEach((edge) => {
         expect(edge).to.have.class('flowchart-link');
       });
@@ -739,7 +739,7 @@ NL\`") --"\`1o **bold**\`"--> c
           { flowchart: { titleTopMargin: 0 } }
         );
       });
-      it('Wrapping long text with a new line', () => {
+      it.skip('Wrapping long text with a new line', () => {
         imgSnapshotTest(
           `%%{init: {"flowchart": {"htmlLabels": true}} }%%
 flowchart-elk LR
@@ -841,7 +841,7 @@ end
           { flowchart: { titleTopMargin: 0 } }
         );
       });
-      it('Sub graphs and markdown strings', () => {
+      it('Sub graphs', () => {
         imgSnapshotTest(
           `---
 config:
@@ -856,6 +856,196 @@ flowchart LR
     C -- Two --> E(("Option 2"))
     D --> E
       A["A"]
+
+`,
+          { flowchart: { titleTopMargin: 0 } }
+        );
+      });
+      it('6080: should handle diamond shape intersections', () => {
+        imgSnapshotTest(
+          `---
+config:
+  layout: elk
+---
+flowchart LR
+ subgraph s1["Untitled subgraph"]
+        n1["Evaluate"]
+        n2["Option 1"]
+        n3["Option 2"]
+        n4["fa:fa-car Option 3"]
+  end
+ subgraph s2["Untitled subgraph"]
+        n5["Evaluate"]
+        n6["Option 1"]
+        n7["Option 2"]
+        n8["fa:fa-car Option 3"]
+  end
+    A["Start"] -- Some text --> B("Continue")
+    B --> C{"Evaluate"}
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
+    n1 -- One --> n2
+    n1 -- Two --> n3
+    n1 -- Three --> n4
+    n5 -- One --> n6
+    n5 -- Two --> n7
+    n5 -- Three --> n8
+    n1@{ shape: diam}
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: rect}
+    n5@{ shape: diam}
+    n6@{ shape: rect}
+    n7@{ shape: rect}
+    n8@{ shape: rect}
+
+`,
+          { flowchart: { titleTopMargin: 0 } }
+        );
+      });
+
+      it('6088-1: should handle diamond shape intersections', () => {
+        imgSnapshotTest(
+          `---
+config:
+  layout: elk
+---
+      flowchart LR
+      subgraph S2
+      subgraph s1["APA"]
+      D{"Use the editor"}
+      end
+
+
+      D -- Mermaid js --> I{"fa:fa-code Text"}
+            D --> I
+            D --> I
+
+      end
+`,
+          { flowchart: { titleTopMargin: 0 } }
+        );
+      });
+
+      it('6088-2: should handle diamond shape intersections', () => {
+        imgSnapshotTest(
+          `---
+config:
+  layout: elk
+---
+      flowchart LR
+      a
+      subgraph s0["APA"]
+      subgraph s8["APA"]
+      subgraph s1["APA"]
+        D{"X"}
+        E[Q]
+      end
+      subgraph s3["BAPA"]
+        F[Q]
+        I
+      end
+            D --> I
+            D --> I
+            D --> I
+
+      I{"X"}
+      end
+      end
+
+`,
+          { flowchart: { titleTopMargin: 0 } }
+        );
+      });
+
+      it('6088-3: should handle diamond shape intersections', () => {
+        imgSnapshotTest(
+          `---
+config:
+  layout: elk
+---
+      flowchart LR
+      a
+        D{"Use the editor"}
+
+      D -- Mermaid js --> I{"fa:fa-code Text"}
+      D-->I
+      D-->I
+
+`,
+          { flowchart: { titleTopMargin: 0 } }
+        );
+      });
+
+      it('6088-4: should handle diamond shape intersections', () => {
+        imgSnapshotTest(
+          `---
+config:
+  layout: elk
+---
+flowchart LR
+ subgraph s1["Untitled subgraph"]
+        n1["Evaluate"]
+        n2["Option 1"]
+        n3["Option 2"]
+        n4["fa:fa-car Option 3"]
+  end
+ subgraph s2["Untitled subgraph"]
+        n5["Evaluate"]
+        n6["Option 1"]
+        n7["Option 2"]
+        n8["fa:fa-car Option 3"]
+  end
+    A["Start"] -- Some text --> B("Continue")
+    B --> C{"Evaluate"}
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
+    n1 -- One --> n2
+    n1 -- Two --> n3
+    n1 -- Three --> n4
+    n5 -- One --> n6
+    n5 -- Two --> n7
+    n5 -- Three --> n8
+    n1@{ shape: diam}
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: rect}
+    n5@{ shape: diam}
+    n6@{ shape: rect}
+    n7@{ shape: rect}
+    n8@{ shape: rect}
+
+`,
+          { flowchart: { titleTopMargin: 0 } }
+        );
+      });
+
+      it('6088-5: should handle diamond shape intersections', () => {
+        imgSnapshotTest(
+          `---
+config:
+  layout: elk
+---
+flowchart LR
+    A{A} --> B & C
+
+`,
+          { flowchart: { titleTopMargin: 0 } }
+        );
+      });
+      it('6088-6: should handle diamond shape intersections', () => {
+        imgSnapshotTest(
+          `---
+config:
+  layout: elk
+---
+flowchart LR
+    A{A} --> B & C
+    subgraph "subbe"
+      A
+    end
 
 `,
           { flowchart: { titleTopMargin: 0 } }

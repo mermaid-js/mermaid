@@ -4,10 +4,14 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/font-awesome.min.css"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
       rel="stylesheet"
     />
     <link
@@ -34,6 +38,7 @@
         /* background: rgb(221, 208, 208); */
         /* background: #333; */
         font-family: 'Arial';
+        /* color: white; */
         /* font-size: 18px !important; */
       }
 
@@ -73,363 +78,355 @@
         font-family: monospace;
         font-size: 72px;
       }
+
       pre {
         width: 100%;
       }
+
       /* tspan {
               font-size: 6px !important;
             } */
+      /* .flowchart-link {
+        stroke-dasharray: 4, 4 !important;
+        animation: flow 1s linear infinite;
+        animation: dashdraw 4.93282s linear infinite;
+        stroke-width: 2px !important;
+      } */
+
+      @keyframes dashdraw {
+        from {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /*stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation:    4.932820s linear infinite;*/
+      /* stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation: dashdraw 4.932820s linear infinite;*/
     </style>
   </head>
 
   <body>
-    <div class="flex">
-      <pre id="diagram" class="mermaid2">
----
-  title: hello2
-  config:
-    look: handDrawn
-    layout: elk
-    elk:
-        <!-- nodePlacementStrategy: INTERACTIVE -->
-        <!-- mergeEdges: true -->
----
-stateDiagram-v2
-    direction LR
-    accTitle: An idealized Open Source supply-chain graph
-
-    %%
-    state "🟦 Importer" as author_importer
-    state "🟥 Supplier, Owner" as author_owner
-    state "🟨🟥 Maintainer, Author\n🟨 Custodian" as author
-    state "🟩 Distributor" as repository_distributor
-    state "🟦 Importer" as language_importer
-    state "🟦🟨 Packager" as language_packager
-    state "🟦🟨 OSS Steward" as language_steward
-    state "🟨 Curator" as language_curator
-    state "🟩 Distributor" as language_distributor
-    state "🟦 Contributor" as contributor
-    state "🟦 Importer" as package_importer
-    state "🟨 Patcher" as package_patcher
-    state "🟨🟦 Builder\n🟨🟦 Packager\n🟨🟦 Containerizer" as package_packager
-    state "🟨 Curator" as package_curator
-    state "🟩 Distributor" as package_distributor
-    state "🟦 Importer" as integrator_importer
-    state "🟥 Supplier, Manufacturer, Owner" as integrator_owner
-    state "🟦🟨🟥 Integrator, Developer" as integrator_developer
-    state "🟩🟨 SBOM Redactor\n🟩 Publisher" as integrator_publisher
-    state "🟦🟨 Builder" as integrator_builder
-    state "🟨 Deployer" as deployer
-    state "🟦 Vuln. Checker" as integrator_checker
-    state "🟩🟨 SBOM Redactor" as redactor
-    state "🟦 Consumer\n🟦  User" as consumer
-    state "🟦 Auditor" as auditor_internal
-    state "🟦 Auditor" as auditor_external
-
-    %%
-    classDef createsSBOM stroke:red,stroke-width:3px;
-    classDef updatesSBOM stroke:yellow,stroke-width:3px;
-    classDef assemblesSBOM stroke:yellow,stroke-width:3px;
-    classDef distributesSBOM stroke:green,stroke-width:3px;
-    classDef verifiesSBOM stroke:#07f,stroke-width:3px;
-
-    %%
-    class author_importer verifiesSBOM
-    class author_owner createsSBOM
-    class manufacturer_owner createsSBOM
-    class author assemblesSBOM
-    class package_importer verifiesSBOM
-    class package_patcher updatesSBOM
-    class package_packager assemblesSBOM
-    class package_curator distributesSBOM
-    class package_distributor distributesSBOM
-    class language_importer verifiesSBOM
-    class language_packager assemblesSBOM
-    class language_steward updatesSBOM
-    class language_curator distributesSBOM
-    class language_distributor distributesSBOM
-    class repository_distributor distributesSBOM
-    class integrator_importer verifiesSBOM
-    class integrator_owner createsSBOM
-    class integrator_developer assemblesSBOM
-    class integrator_publisher distributesSBOM
-    class integrator_builder assemblesSBOM
-    class integrator_checker verifiesSBOM
-    class deployer assemblesSBOM
-    class redactor distributesSBOM
-    class auditor_internal verifiesSBOM
-    class auditor_external verifiesSBOM
-
-    state "Maintainer Environment" as environment_maintainer {
-        [*] --> author_importer
-        [*] --> author
-        author_importer --> author
-        author_owner --> author
-        author       --> language_packager
-    }
-
-    [*] --> environment_maintainer
-
-    state "Language Ecosystem" as ecosystem_lang {
-        [*] --> language_importer
-        [*] --> language_steward
-        [*] --> language_curator
-        [*] --> language_distributor
-        language_importer --> language_distributor
-        language_importer --> language_curator
-        language_steward --> language_curator
-        language_curator --> language_distributor
-    }
-
-    language_packager --> ecosystem_lang
-    ecosystem_lang    --> ecosystem_lang
-
-    state "Public Collaboration Ecosystem" as ecosystem_repo {
-        [*] --> repository_distributor
-    }
-
-    author         --> ecosystem_repo
-    ecosystem_repo --> author
-
-    repository_distributor --> contributor
-    contributor            --> repository_distributor
-
-    state "Package Ecosystem" as ecosystem_package {
-        [*] --> package_importer
-        [*] --> package_packager
-        [*] --> package_patcher
-        package_importer --> package_patcher
-        package_importer --> package_packager
-        package_patcher  --> package_packager
-        package_packager --> package_curator
-        package_packager --> package_distributor
-        package_curator  --> package_distributor
-    }
-
-    repository_distributor --> ecosystem_package
-    language_distributor   --> ecosystem_package
-    ecosystem_package      --> ecosystem_package
-
-    state "Integrator Environment" as environment_integrator {
-        [*] --> integrator_developer
-        [*] --> integrator_importer
-        integrator_importer  --> integrator_developer
-        integrator_owner     --> integrator_developer
-        integrator_builder   --> integrator_publisher
-        integrator_developer --> integrator_checker
-        integrator_checker   --> integrator_developer
-        auditor_internal     --> integrator_developer
-        integrator_developer --> integrator_builder
-        integrator_developer --> auditor_internal
-    }
-
-    repository_distributor --> environment_integrator
-    language_distributor   --> environment_integrator
-    package_distributor    --> environment_integrator
-
-    state "Production Environment" as environment_prod {
-        [*] --> deployer
-        deployer --> redactor
-    }
-
-    integrator_publisher --> [*]
-    integrator_developer --> environment_prod
-    integrator_builder   --> environment_prod
-    integrator_publisher --> environment_prod
-
-    deployer --> auditor_external
-    deployer --> consumer
-    redactor --> consumer
-
-
-
-</pre>
-
-      <pre id="diagram" class="mermaid2">
----
-config:
-  look: neo
----
-flowchart RL
-    subgraph "   "
-        A5@{ shape: manual-file, label: "a label"}
-        B5@{ shape: manual-input, label: "a label" }
-        C5@{ shape: mul-doc, label: "a label" }
-        D5@{ shape: mul-proc, label: "a label" }
-        E5@{ shape: paper-tape, label: "a label" }
-        B3@{ shape: das, label: "a label" }
-        C3@{ shape: disk, label: "a label" }
-        D4@{ shape: lin-doc, label: "a label" }
-        E4@{ shape: loop-limit, label: "a label" }
-    end
-    subgraph "   "
-        B6@{ shape: summary, label: "a label" }
-        C6@{ shape: tag-we-rect, label: "a label" }
-        D6@{ shape: tag-rect, label: "a label" }
-        A2@{ shape: fork}
-        B2@{ shape: hourglass }
-        C2@{ shape: comment, label: "I am a comment" }
-        D2@{ shape: bolt }
-        D3@{ shape: disp, label: "a label" }
-        C4@{ shape: junction, label: "a label" }
-        A4@{ shape: extract, label: "a label"}
-        B52[a fr]@{ shape: fr }
-    end
-    subgraph " "
-        A1@{ shape: text, label: This is a textblock}
-        B1@{ shape: card, label: "a label" }
-        C1@{ shape: lined-proc, label: "a label" }
-        D1@{ shape: start, label: "a label" }
-        E1@{ shape: stop, label: "a label" }
-        E2@{ shape: doc, label: "a label" }
-        A6@{ shape: stored-data, label: "a label"}
-        A3@{ shape: delay, label: "a label" }
-        E3@{ shape: div-proc, label: "a label" }
-        B4[a label]@{ shape: win-pane }
-    end
-      </pre>
-      <pre id="diagram" class="mermaid2">
----
-  title: hello2
-  config:
-    look: handDrawn
-    elk:
-      <!-- nodePlacementStrategy: SIMPLE -->
----
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-flowchart TD
-
-    A([Start]) -->|go to booking page| B("select
-    ISBS booking no")
-    A --> QQ{cancel booking}
-    A --> RR{no show}
-    A --> SS{change booking}
-    B -->C(wmpay_request_payment.request_type= 'partial',
- wmpay_request_payment.status= 'paid',
- pos_booking.booking_status= ‘partial’ and 'full_deposit')
- style C text-align:left
-    C -->D{manage booking}
-
-    D -->|cancel|E[ระบบแสดงช่องให้กรอกเหตุผล]
-    E -->F{กดปุ่ม 'cancel' หรือไม่}
-    F -->|Yes|G[ระบบบันทึกค่าใหม่
-    และไม่สามารถแก้ไขข้อมูลได้]
-    F -->|No|H[กดปุ่ม 'close']
-    H -->|ระบบไม่เปลี่ยนแปลงข้อมูล|Z
-    G -->|ระบบส่งข้อมูล|I[(POS_database)]
-    I -->|pos_booking.booking_status='cancel'|Z([End])
-
-
-    D -->|no show|J[ระบบแสดงช่องให้กรอกเหตุผล]
-    J -->K{กดปุ่ม 'noshow' หรือไม่}
-    K -->|Yes|L[ระบบสร้างใบเสร็จอัตโนมัติ
-    Product_id: 439,
-    ItemName: no show]
-     style L text-align:left
-
-     K -->|No|O[กดปุ่ม 'close']
-     O -->|ระบบไม่เปลี่ยนแปลงข้อมูล|Z
-    L -->M[ระบบบันทึกค่าใหม่]
-    M -->|ระบบส่งข้อมูล|N[(POS_database)]
-    N -->|pos_booking.booking_status=‘noshow’|Z
-
-
-
-</pre>
-      <pre id="diagram" class="mermaid2">
----
-  title: hello2
-  config:
-    look: handDrawn
-    layout: dagre
-    elk:
-        nodePlacementStrategy: BRANDES_KOEPF
----
-flowchart
-  A --> A
-  subgraph A
-    B --> B
-    subgraph B
-      C
-    end
-  end
-
-
-</pre
-      >
-      <pre id="diagram" class="mermaid2">
----
-config:
-  look: handdrawn
-  flowchart:
-    htmlLabels: true
----
-flowchart
-      A[I am a long text, where do I go??? handdrawn - true]
-</pre
-      >
-    </div>
-    <div class="flex">
-      <pre id="diagram" class="mermaid2">
----
-config:
-  flowchart:
-    htmlLabels: false
----
-flowchart
-      A[I am a long text, where do I go??? classic - false]
-</pre
-      >
-      <pre id="diagram" class="mermaid2">
----
-config:
-  flowchart:
-    htmlLabels: true
----
-flowchart
-      A[I am a long text, where do I go??? classic - true]
-</pre
-      >
-    </div>
-    <pre id="diagram2" class="mermaid2">
-flowchart LR
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-
-
-    </pre>
-
-    <pre id="diagram3" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
       flowchart LR
-    A:::foo & B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    classDef ash color:red
-    class C ash
-    style C stroke:#00f, fill:black
-
+        AB["apa@apa@"] --> B(("`apa@apa`"))
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      flowchart
+        D(("for D"))
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      flowchart LR
+        A e1@==> B
+        e1@{ animate: true}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-width:2,stroke-dasharray:10\,8,stroke-dashoffset:-180,animation: edge-animation-frame 6s linear infinite, stroke-linecap: round
+  class e1 animate
+    </pre>
+    <h2>infinite</h2>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+    </pre>
+    <h2>Mermaid - edge-animation-slow</h2>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  A e1@--> B
+e1@{ animation: fast}
+    </pre>
+    <h2>Mermaid - edge-animation-fast</h2>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-dasharray: 1000,stroke-dashoffset: 1000,animation: dash 10s linear;
+  class e1 edge-animation-fast
     </pre>
 
     <pre id="diagram4" class="mermaid2">
-      stateDiagram
-    A:::foo
-    B:::bar --> C:::foobar
-    classDef foo stroke:#f00
-    classDef bar stroke:#0f0
-    style C stroke:#00f, fill:black, color:white
+
+info    </pre
+    >
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+      flowchart LR
+      a
+      subgraph s0["APA"]
+      subgraph s8["APA"]
+      subgraph s1["APA"]
+        D{"X"}
+        E[Q]
+      end
+      subgraph s3["BAPA"]
+        F[Q]
+        I
+      end
+            D --> I
+            D --> I
+            D --> I
+
+      I{"X"}
+      end
+      end
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+      flowchart LR
+      a
+        D{"Use the editor"}
+
+      D -- Mermaid js --> I{"fa:fa-code Text"}
+      D-->I
+      D-->I
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+ subgraph s1["Untitled subgraph"]
+        n1["Evaluate"]
+        n2["Option 1"]
+        n3["Option 2"]
+        n4["fa:fa-car Option 3"]
+  end
+ subgraph s2["Untitled subgraph"]
+        n5["Evaluate"]
+        n6["Option 1"]
+        n7["Option 2"]
+        n8["fa:fa-car Option 3"]
+  end
+    A["Start"] -- Some text --> B("Continue")
+    B --> C{"Evaluate"}
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
+    n1 -- One --> n2
+    n1 -- Two --> n3
+    n1 -- Three --> n4
+    n5 -- One --> n6
+    n5 -- Two --> n7
+    n5 -- Three --> n8
+    n1@{ shape: diam}
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: rect}
+    n5@{ shape: diam}
+    n6@{ shape: rect}
+    n7@{ shape: rect}
+    n8@{ shape: rect}
 
     </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+ subgraph s1["Untitled subgraph"]
+        n1["Evaluate"]
+        n2["Option 1"]
+  end
+    n1 -- One --> n2
 
-    <pre id="diagram4" class="mermaid">
-flowchart TB
-  A@{
-    label: "aksljhf kasjdh"
-  }
+
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    A{A} --> B & C
+</pre
+    >
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    A{A} --> B & C
+    subgraph "subbe"
+      A
+    end
+</pre
+    >
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: rect}
+    A["Start"] -- Some text --> B("Continue")
+    B --> C{"Evaluate"}
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
+    %% C@{ shape: hexagon}
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  kanban:
+    ticketBaseUrl: 'https://github.com/your-repo/issues/#TICKET#'
+---
+kanban
+  Backlog
+    task1[📝 Define project requirements]@{ ticket: a101 }
+  To Do
+    task2[🔍 Research technologies]@{ ticket: a102 }
+  Review
+    task4[🔍 Code review for login feature]@{ ticket: a104 }
+  Done
+    task5[✅ Deploy initial version]@{ ticket: a105 }
+  In Progress
+    task3[💻 Develop login feature]@{ ticket: 103 }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Default] --> A@{ icon: 'fa:bell', form: 'rounded' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Style] --> A@{ icon: 'fa:bell', form: 'rounded' }
+style A fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Class] --> A@{ icon: 'fa:bell', form: 'rounded' }
+A:::AClass
+classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  nA[Class] --> A@{ icon: 'logos:aws', form: 'rounded' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Default] --> A@{ icon: 'fa:bell', form: 'square' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Style] --> A@{ icon: 'fa:bell', form: 'square' }
+style A fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Class] --> A@{ icon: 'fa:bell', form: 'square' }
+A:::AClass
+classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  nA[Class] --> A@{ icon: 'logos:aws', form: 'square' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Default] --> A@{ icon: 'fa:bell', form: 'circle' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Style] --> A@{ icon: 'fa:bell', form: 'circle' }
+style A fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Class] --> A@{ icon: 'fa:bell', form: 'circle' }
+A:::AClass
+classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  nA[Class] --> A@{ icon: 'logos:aws', form: 'circle' }
+  A:::AClass
+  classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  nA[Style] --> A@{ icon: 'logos:aws', form: 'circle' }
+  style A fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+kanban
+  id2[In progress]
+    docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  kanban:
+    ticketBaseUrl: 'https://mermaidchart.atlassian.net/browse/#TICKET#'
+    # sectionWidth: 300
+---
+kanban
+  Todo
+    [Create Documentation]
+    docs[Create Blog about the new diagram]
+  id7[In progress]
+    id6[Create renderer so that it works in all cases. We also add som extra text here for testing purposes. And some more just for the extra flare.]
+  id9[Ready for deploy]
+    id8[Design grammar]@{ assigned: 'knsv' }
+  id10[Ready for test]
+    id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }
+    id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
+  id11[Done]
+    id5[define getData]
+    id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}
+    id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }
+
+  id12[Can't reproduce]
+    id3[Weird flickering in Firefox]
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       import layouts from './mermaid-layout-elk.esm.mjs';
+
+      const staticBellIconPack = {
+        prefix: 'fa6-regular',
+        icons: {
+          bell: {
+            body: '<path fill="currentColor" d="M224 0c-17.7 0-32 14.3-32 32v19.2C119 66 64 130.6 64 208v25.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416h400c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6c-28.3-35.5-43.8-79.6-43.8-125V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32m0 96c61.9 0 112 50.1 112 112v25.4c0 47.9 13.9 94.6 39.7 134.6H72.3c25.8-40 39.7-86.7 39.7-134.6V208c0-61.9 50.1-112 112-112m64 352H160c0 17 6.7 33.3 18.7 45.3S207 512 224 512s33.3-6.7 45.3-18.7S288 465 288 448"/>',
+            width: 448,
+          },
+        },
+        width: 512,
+        height: 512,
+      };
+
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos@1/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () => staticBellIconPack,
+        },
+      ]);
       mermaid.registerLayoutLoaders(layouts);
       mermaid.parseError = function (err, hash) {
         console.error('Mermaid error: ', err);
@@ -437,8 +434,13 @@ flowchart TB
       window.callback = function () {
         alert('A callback was triggered');
       };
-      mermaid.initialize({
+      function callback() {
+        alert('It worked');
+      }
+      await mermaid.initialize({
         // theme: 'base',
+        // theme: 'default',
+        // theme: 'forest',
         // handDrawnSeed: 12,
         // look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
@@ -447,21 +449,25 @@ flowchart TB
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
+
         // fontFamily: 'Caveat',
         // fontFamily: 'Kalam',
         // fontFamily: 'courier',
+        fontFamily: 'arial',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
           messageFontFamily: 'courier',
         },
+        kanban: {
+          htmlLabels: false,
+        },
         fontSize: 12,
-        logLevel: 3,
+        logLevel: 0,
         securityLevel: 'loose',
+        callback,
       });
-      function callback() {
-        alert('It worked');
-      }
+
       mermaid.parseError = function (err, hash) {
         console.error('In parse error:');
         console.error(err);

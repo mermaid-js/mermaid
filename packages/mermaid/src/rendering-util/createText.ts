@@ -204,7 +204,7 @@ export const createText = async (
     width = 200,
     addSvgBackground = false,
   } = {},
-  config: MermaidConfig
+  config?: MermaidConfig
 ) => {
   log.debug(
     'XYZ createText',

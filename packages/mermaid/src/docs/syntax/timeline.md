@@ -12,7 +12,7 @@ timeline
     2002 : LinkedIn
     2004 : Facebook
          : Google
-    2005 : Youtube
+    2005 : YouTube
     2006 : Twitter
 ```
 
@@ -51,7 +51,7 @@ timeline
     title History of Social Media Platform
     2002 : LinkedIn
     2004 : Facebook : Google
-    2005 : Youtube
+    2005 : YouTube
     2006 : Twitter
 ```
 
@@ -134,7 +134,7 @@ However, if there is no section defined, then we have two possibilities:
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
 
 ```
@@ -165,7 +165,7 @@ let us look at same example, where we have disabled the multiColor option.
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
 
 ```
@@ -193,7 +193,7 @@ Now let's override the default values for the `cScale0` to `cScale2` variables:
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -226,7 +226,7 @@ Let's put them to use, and see how our sample diagram looks in different themes:
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -241,7 +241,7 @@ Let's put them to use, and see how our sample diagram looks in different themes:
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -256,7 +256,7 @@ Let's put them to use, and see how our sample diagram looks in different themes:
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -271,7 +271,7 @@ Let's put them to use, and see how our sample diagram looks in different themes:
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram
@@ -286,7 +286,7 @@ Let's put them to use, and see how our sample diagram looks in different themes:
         title History of Social Media Platform
           2002 : LinkedIn
           2004 : Facebook : Google
-          2005 : Youtube
+          2005 : YouTube
           2006 : Twitter
           2007 : Tumblr
           2008 : Instagram

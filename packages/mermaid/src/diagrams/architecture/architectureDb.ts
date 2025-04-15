@@ -1,6 +1,6 @@
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { getConfig as commonGetConfig } from '../../config.js';
 import type { D3Element } from '../../types.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
 import {
@@ -13,6 +13,7 @@ import {
   setDiagramTitle,
 } from '../common/commonDb.js';
 import type {
+  ArchitectureAlignment,
   ArchitectureDB,
   ArchitectureDirectionPair,
   ArchitectureDirectionPairMap,
@@ -25,12 +26,14 @@ import type {
   ArchitectureState,
 } from './architectureTypes.js';
 import {
+  getArchitectureDirectionAlignment,
   getArchitectureDirectionPair,
   isArchitectureDirection,
   isArchitectureJunction,
   isArchitectureService,
   shiftPositionByArchitectureDirectionPair,
 } from './architectureTypes.js';
+import { cleanAndMerge } from '../../utils.js';
 
 const DEFAULT_ARCHITECTURE_CONFIG: Required<ArchitectureDiagramConfig> =
   DEFAULT_CONFIG.architecture;
@@ -211,12 +214,18 @@ const addEdge = function ({
 const getEdges = (): ArchitectureEdge[] => state.records.edges;
 
 /**
- * Returns the current diagram's adjacency list & spatial map.
+ * Returns the current diagram's adjacency list, spatial map, & group alignments.
  * If they have not been created, run the algorithms to generate them.
  * @returns
  */
 const getDataStructures = () => {
   if (state.records.dataStructures === undefined) {
+    // Tracks how groups are aligned with one another. Generated while creating the adj list
+    const groupAlignments: Record<
+      string,
+      Record<string, Exclude<ArchitectureAlignment, 'bend'>>
+    > = {};
+
     // Create an adjacency list of the diagram to perform BFS on
     // Outer reduce applied on all services
     // Inner reduce applied on the edges for a service
@@ -224,6 +233,19 @@ const getDataStructures = () => {
       Record<string, ArchitectureDirectionPairMap>
     >((prevOuter, [id, service]) => {
       prevOuter[id] = service.edges.reduce<ArchitectureDirectionPairMap>((prevInner, edge) => {
+        // track the direction groups connect to one another
+        const lhsGroupId = getNode(edge.lhsId)?.in;
+        const rhsGroupId = getNode(edge.rhsId)?.in;
+        if (lhsGroupId && rhsGroupId && lhsGroupId !== rhsGroupId) {
+          const alignment = getArchitectureDirectionAlignment(edge.lhsDir, edge.rhsDir);
+          if (alignment !== 'bend') {
+            groupAlignments[lhsGroupId] ??= {};
+            groupAlignments[lhsGroupId][rhsGroupId] = alignment;
+            groupAlignments[rhsGroupId] ??= {};
+            groupAlignments[rhsGroupId][lhsGroupId] = alignment;
+          }
+        }
+
         if (edge.lhsId === id) {
           // source is LHS
           const pair = getArchitectureDirectionPair(edge.lhsDir, edge.rhsDir);
@@ -245,6 +267,7 @@ const getDataStructures = () => {
     // Configuration for the initial pass of BFS
     const firstId = Object.keys(adjList)[0];
     const visited = { [firstId]: 1 };
+    // If a key is present in this object, it has not been visited
     const notVisited = Object.keys(adjList).reduce(
       (prev, id) => (id === firstId ? prev : { ...prev, [id]: 1 }),
       {} as Record<string, number>
@@ -283,6 +306,7 @@ const getDataStructures = () => {
     state.records.dataStructures = {
       adjList,
       spatialMaps,
+      groupAlignments,
     };
   }
   return state.records.dataStructures;
@@ -293,6 +317,14 @@ const setElementForId = (id: string, element: D3Element) => {
 };
 const getElementById = (id: string) => state.records.elements[id];
 
+const getConfig = (): Required<ArchitectureDiagramConfig> => {
+  const config = cleanAndMerge({
+    ...DEFAULT_ARCHITECTURE_CONFIG,
+    ...commonGetConfig().architecture,
+  });
+  return config;
+};
+
 export const db: ArchitectureDB = {
   clear,
   setDiagramTitle,
@@ -301,6 +333,7 @@ export const db: ArchitectureDB = {
   getAccTitle,
   setAccDescription,
   getAccDescription,
+  getConfig,
 
   addService,
   getServices,
@@ -325,9 +358,5 @@ export const db: ArchitectureDB = {
 export function getConfigField<T extends keyof ArchitectureDiagramConfig>(
   field: T
 ): Required<ArchitectureDiagramConfig>[T] {
-  const arch = getConfig().architecture;
-  if (arch?.[field]) {
-    return arch[field] as Required<ArchitectureDiagramConfig>[T];
-  }
-  return DEFAULT_ARCHITECTURE_CONFIG[field];
+  return getConfig()[field];
 }

@@ -19,6 +19,25 @@ describe.skip('architecture diagram', () => {
             `
     );
   });
+  it('should render a simple architecture diagram with titleAndAccessabilities', () => {
+    imgSnapshotTest(
+      `architecture-beta
+          title Simple Architecture Diagram
+          accTitle: Accessibility Title
+          accDescr: Accessibility Description
+          group api(cloud)[API]
+
+          service db(database)[Database] in api
+          service disk1(disk)[Storage] in api
+          service disk2(disk)[Storage] in api
+          service server(server)[Server] in api
+
+          db:L -- R:server
+          disk1:T -- B:server
+          disk2:T -- B:db
+      `
+    );
+  });
   it('should render an architecture diagram with groups within groups', () => {
     imgSnapshotTest(
       `architecture-beta
@@ -169,6 +188,58 @@ describe.skip('architecture diagram', () => {
         
                 juncC{group} R--L) juncR{group}
             `
+    );
+  });
+
+  it('should render an architecture diagram with a reasonable height', () => {
+    imgSnapshotTest(
+      `architecture-beta
+              group federated(cloud)[Federated Environment]
+                  service server1(server)[System] in federated
+                  service edge(server)[Edge Device] in federated
+                  server1:R -- L:edge
+
+              group on_prem(cloud)[Hub]
+                  service firewall(server)[Firewall Device] in on_prem
+                  service server(server)[Server] in on_prem
+                  firewall:R -- L:server
+
+                  service db1(database)[db1] in on_prem
+                  service db2(database)[db2] in on_prem
+                  service db3(database)[db3] in on_prem
+                  service db4(database)[db4] in on_prem
+                  service db5(database)[db5] in on_prem
+                  service db6(database)[db6] in on_prem
+
+                  junction mid in on_prem
+                  server:B -- T:mid
+
+                  junction 1Leftofmid in on_prem
+                  1Leftofmid:R -- L:mid
+                  1Leftofmid:B -- T:db1
+
+                  junction 2Leftofmid in on_prem
+                  2Leftofmid:R -- L:1Leftofmid
+                  2Leftofmid:B -- T:db2
+
+                  junction 3Leftofmid in on_prem
+                  3Leftofmid:R -- L:2Leftofmid
+                  3Leftofmid:B -- T:db3
+
+                  junction 1RightOfMid in on_prem
+                  mid:R -- L:1RightOfMid
+                  1RightOfMid:B -- T:db4
+                  
+                  junction 2RightOfMid in on_prem
+                  1RightOfMid:R -- L:2RightOfMid
+                  2RightOfMid:B -- T:db5        
+                  
+                  junction 3RightOfMid in on_prem
+                  2RightOfMid:R -- L:3RightOfMid
+                  3RightOfMid:B -- T:db6         
+
+                  edge:R -- L:firewall
+      `
     );
   });
 });
