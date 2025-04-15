@@ -6,6 +6,12 @@
 
 # Gitgraph Diagrams
 
+<script setup>
+import IconsNote from './icons-note.md' 
+</script>
+
+<IconsNote />
+
 > A Git Graph is a pictorial representation of git commits and git actions(commands) on various branches.
 
 These kind of diagram are particularly helpful to developers and devops teams to share their Git branching strategies. For example, it makes it easier to visualize how git flow works.
