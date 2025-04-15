@@ -10,7 +10,7 @@ This diagram type is particularly useful for developers, network engineers, educ
 
 ## Syntax
 
-```md
+```
 packet-beta
 start: "Block name" %% Single-bit block
 start-end: "Block name" %% Multi-bit blocks
@@ -21,7 +21,7 @@ start-end: "Block name" %% Multi-bit blocks
 
 Using start and end bit counts can be difficult, especially when modifying a design. For this we add a bit count field, which starts from the end of the previous field automagically. Use `+<count>` to set the number of bits, thus:
 
-```md
+```
 packet-beta
 +1: "Block name" %% Single-bit block
 +8: "Block name" %% 8-bit block
