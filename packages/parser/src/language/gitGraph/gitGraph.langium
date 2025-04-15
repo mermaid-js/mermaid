@@ -1,39 +1,15 @@
 grammar GitGraph
-
-interface Common {
-  accDescr?: string;
-  accTitle?: string;
-  title?: string;
-}
-
-fragment TitleAndAccessibilities:
-  ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE) EOL)+
-;
-
-fragment EOL returns string:
-  NEWLINE+ | EOF
-;
-
-terminal NEWLINE: /\r?\n/;
-terminal ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
-terminal ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
-terminal TITLE: /[\t ]*title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*|)/;
-
-hidden terminal WHITESPACE: /[\t ]+/;
-hidden terminal YAML: /---[\t ]*\r?\n(?:[\S\s]*?\r?\n)?---(?:\r?\n|(?!\S))/;
-hidden terminal DIRECTIVE: /[\t ]*%%{[\S\s]*?}%%(?:\r?\n|(?!\S))/;
-hidden terminal SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
+import "../common/common";
+import "reference";
 
 entry GitGraph:
   NEWLINE*
   ('gitGraph' | 'gitGraph' ':' | 'gitGraph:' | ('gitGraph' Direction ':'))
-  NEWLINE*
   (
-    NEWLINE*
-    (TitleAndAccessibilities |
-    statements+=Statement |
-     NEWLINE)*
-  )
+    NEWLINE
+    | TitleAndAccessibilities
+    | statements+=Statement
+  )*
 ;
 
 Statement
@@ -56,12 +32,12 @@ Commit:
         |'type:' type=('NORMAL' | 'REVERSE' | 'HIGHLIGHT')
     )* EOL;
 Branch:
-    'branch' name=(ID|STRING)
+    'branch' name=(REFERENCE|STRING)
     ('order:' order=INT)?
     EOL;
 
 Merge:
-    'merge' branch=(ID|STRING)
+    'merge' branch=(REFERENCE|STRING)
     (
         'id:' id=STRING
         |'tag:' tags+=STRING
@@ -69,7 +45,7 @@ Merge:
     )* EOL;
 
 Checkout:
-    ('checkout'|'switch') branch=(ID|STRING) EOL;
+    ('checkout'|'switch') branch=(REFERENCE|STRING) EOL;
 
 CherryPicking:
     'cherry-pick' 
@@ -78,10 +54,3 @@ CherryPicking:
         |'tag:' tags+=STRING
         |'parent:' parent=STRING
     )* EOL;
-
-
-
-terminal INT returns number: /[0-9]+(?=\s)/;
-terminal ID returns string: /\w([-\./\w]*[-\w])?/;
-terminal STRING: /"[^"]*"|'[^']*'/;
-

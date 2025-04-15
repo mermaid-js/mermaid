@@ -40,6 +40,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [Mermaid Charts & Diagrams for Jira](https://marketplace.atlassian.com/apps/1224537/)
   - [Mermaid for Jira Cloud - Draw UML diagrams easily](https://marketplace.atlassian.com/apps/1223053/mermaid-for-jira-cloud-draw-uml-diagrams-easily?hosting=cloud&tab=overview)
   - [CloudScript.io Mermaid Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
+  - [Mermaid plus for Confluence](https://marketplace.atlassian.com/apps/1236814/mermaid-plus-for-confluence?hosting=cloud&tab=overview)
 - [Azure Devops](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
 - [Deepdwn](https://billiam.itch.io/deepdwn) ✅
 - [Doctave](https://www.doctave.com/) ✅
@@ -267,7 +268,5 @@ Communication tools and platforms
   - [reveal.js-mermaid-plugin](https://github.com/ludwick/reveal.js-mermaid-plugin)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
-- [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
-- [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
 
 <!--- cspell:ignore Blazorade HueHive --->

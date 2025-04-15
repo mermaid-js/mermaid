@@ -255,8 +255,12 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  radar: {
+    ...defaultConfigJson.radar,
+  },
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const keyify = (obj: any, prefix = ''): string[] =>
   Object.keys(obj).reduce((res: string[], el): string[] => {
     if (Array.isArray(obj[el])) {

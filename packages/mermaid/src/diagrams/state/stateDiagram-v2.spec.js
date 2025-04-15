@@ -5,6 +5,7 @@ import { StateDB } from './stateDb.js';
 describe('state diagram V2, ', function () {
   // TODO - these examples should be put into ./parser/stateDiagram.spec.js
   describe('when parsing an info graph it', function () {
+    /** @type {StateDB} */
     let stateDb;
     beforeEach(function () {
       stateDb = new StateDB(2);
@@ -347,6 +348,20 @@ describe('state diagram V2, ', function () {
       `;
 
       parser.parse(str);
+      expect(stateDb.getState('Active').note).toMatchInlineSnapshot(`
+        {
+          "position": "left of",
+          "text": "this is a short<br>note",
+        }
+      `);
+      expect(stateDb.getState('Inactive').note).toMatchInlineSnapshot(`
+        {
+          "position": "right of",
+          "text": "A note can also
+              be defined on
+              several lines",
+        }
+      `);
     });
     it('should handle multiline notes with different line breaks', function () {
       const str = `stateDiagram-v2
@@ -357,6 +372,12 @@ describe('state diagram V2, ', function () {
       `;
 
       parser.parse(str);
+      expect(stateDb.getStates().get('State1').note).toMatchInlineSnapshot(`
+        {
+          "position": "right of",
+          "text": "Line1<br>Line2<br>Line3<br>Line4<br>Line5",
+        }
+      `);
     });
     it('should handle floating notes', function () {
       const str = `stateDiagram-v2
@@ -367,15 +388,14 @@ describe('state diagram V2, ', function () {
       parser.parse(str);
     });
     it('should handle floating notes', function () {
-      const str = `stateDiagram-v2\n
+      const str = `stateDiagram-v2
       state foo
       note "This is a floating note" as N1
       `;
-
       parser.parse(str);
     });
     it('should handle notes for composite (nested) states', function () {
-      const str = `stateDiagram-v2\n
+      const str = `stateDiagram-v2
       [*] --> NotShooting
 
       state "Not Shooting State" as NotShooting {
@@ -390,6 +410,12 @@ describe('state diagram V2, ', function () {
       `;
 
       parser.parse(str);
+      expect(stateDb.getState('NotShooting').note).toMatchInlineSnapshot(`
+        {
+          "position": "right of",
+          "text": "This is a note on a composite state",
+        }
+      `);
     });
 
     it('A composite state should be able to link to itself', () => {

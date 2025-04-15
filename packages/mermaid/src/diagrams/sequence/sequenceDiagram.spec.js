@@ -1679,7 +1679,6 @@ Alice->Bob: Hello Bob, how are you?`;
 
     const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
-
     const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
