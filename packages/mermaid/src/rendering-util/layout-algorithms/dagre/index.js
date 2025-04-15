@@ -346,6 +346,7 @@ export const render = async (data4Layout, svg) => {
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
       edge1.id = nodeId + '-cyclic-special-1';
+      edgeMid.arrowTypeStart = 'none';
       edgeMid.arrowTypeEnd = 'none';
       edgeMid.id = nodeId + '-cyclic-special-mid';
       edge2.label = '';
@@ -354,6 +355,7 @@ export const render = async (data4Layout, svg) => {
         edge2.toCluster = nodeId;
       }
       edge2.id = nodeId + '-cyclic-special-2';
+      edge2.arrowTypeStart = 'none';
       graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
       graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyc<lic-special-2');

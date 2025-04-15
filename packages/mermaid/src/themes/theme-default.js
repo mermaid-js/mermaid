@@ -119,6 +119,10 @@ class Theme {
     this.archGroupBorderColor = this.primaryBorderColor;
     this.archGroupBorderWidth = '2px';
 
+    /* Entity Relationship variables */
+    this.rowOdd = 'calculated';
+    this.rowEven = 'calculated';
+
     /* state colors */
     this.labelColor = 'black';
     this.errorBkgColor = '#552222';
@@ -205,6 +209,9 @@ class Theme {
     this.archEdgeColor = this.lineColor;
     this.archEdgeArrowColor = this.lineColor;
 
+    /* Entity Relationship variables */
+    this.rowOdd = this.rowOdd || lighten(this.primaryColor, 75) || '#ffffff';
+    this.rowEven = this.rowEven || lighten(this.primaryColor, 1);
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
@@ -283,6 +290,20 @@ class Theme {
     this.quadrantExternalBorderStrokeFill =
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
+
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
+    };
 
     /* xychart */
     this.xyChart = {
@@ -373,6 +394,13 @@ class Theme {
     /* -------------------------------------------------- */
   }
   calculate(overrides) {
+    // for all keys in this object, if it is 'calculated' then set it to undefined
+    Object.keys(this).forEach((k) => {
+      if (this[k] === 'calculated') {
+        this[k] = undefined;
+      }
+    });
+
     if (typeof overrides !== 'object') {
       // Calculate colors form base colors
       this.updateColors();
