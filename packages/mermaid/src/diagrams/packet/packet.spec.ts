@@ -68,8 +68,8 @@ describe('packet diagrams', () => {
 
   it('should handle bit counts', async () => {
     const str = `packet-beta
-    8bits: "byte"
-    16bits: "word"
+    +8: "byte"
+    +16: "word"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
     expect(getPacket()).toMatchInlineSnapshot(`
@@ -94,8 +94,8 @@ describe('packet diagrams', () => {
 
   it('should handle bit counts with bit or bits', async () => {
     const str = `packet-beta
-    8bit: "byte"
-    16bits: "word"
+    +8: "byte"
+    +16: "word"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
     expect(getPacket()).toMatchInlineSnapshot(`
@@ -206,7 +206,7 @@ describe('packet diagrams', () => {
 
   it('should throw error if numbers are not continuous with bit counts', async () => {
     const str = `packet-beta
-    16bits: "test"
+    +16: "test"
     18-20: "error"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -226,7 +226,7 @@ describe('packet diagrams', () => {
 
   it('should throw error if numbers are not continuous for single packets with bit counts', async () => {
     const str = `packet-beta
-    16 bits: "test"
+    +16: "test"
     18: "error"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -257,7 +257,7 @@ describe('packet diagrams', () => {
 
   it('should throw error if bit count is 0', async () => {
     const str = `packet-beta
-    0bits: "test"
+    +0: "test"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: Packet block 0 is invalid. Cannot have a zero bit field.]`

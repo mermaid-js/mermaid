@@ -19,9 +19,7 @@ const populate = (ast: Packet) => {
     if (start !== undefined && end !== undefined && end < start) {
       throw new Error(`Packet block ${start} - ${end} is invalid. End must be greater than start.`);
     }
-    if (start == undefined) {
-      start = lastBit + 1;
-    }
+    start ??= lastBit + 1;
     if (start !== lastBit + 1) {
       throw new Error(
         `Packet block ${start} - ${end ?? start} is not contiguous. It should start from ${
@@ -32,12 +30,8 @@ const populate = (ast: Packet) => {
     if (bits === 0) {
       throw new Error(`Packet block ${start} is invalid. Cannot have a zero bit field.`);
     }
-    if (end == undefined) {
-      end = start + (bits ?? 1) - 1;
-    }
-    if (bits == undefined) {
-      bits = end - start + 1;
-    }
+    end ??= start + (bits ?? 1) - 1;
+    bits ??= end - start + 1;
     lastBit = end;
     log.debug(`Packet block ${start} - ${lastBit} with label ${label}`);
 
