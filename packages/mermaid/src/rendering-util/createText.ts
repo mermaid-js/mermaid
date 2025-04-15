@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
+import { getConfig } from '../diagram-api/diagramAPI.js';
+import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
+import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
-import type { Group } from '../diagram-api/types.js';
+import type { SVGGroup } from '../diagram-api/types.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
@@ -15,11 +18,18 @@ function applyStyle(dom, styleFn) {
   }
 }
 
-function addHtmlSpan(element, node, width, classes, addBackground = false) {
+async function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const fo = element.append('foreignObject');
-  const div = fo.append('xhtml:div');
+  // This is not the final width but used in order to make sure the foreign
+  // object in firefox gets a width at all. The final width is fetched from the div
+  fo.attr('width', `${10 * width}px`);
+  fo.attr('height', `${10 * width}px`);
 
-  const label = node.label;
+  const div = fo.append('xhtml:div');
+  let label = node.label;
+  if (node.label && hasKatex(node.label)) {
+    label = await renderKatex(node.label.replace(common.lineBreakRegex, '\n'), getConfig());
+  }
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   const span = div.append('span');
   span.html(label);
@@ -29,7 +39,9 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
   applyStyle(div, node.labelStyle);
   div.style('display', 'table-cell');
   div.style('white-space', 'nowrap');
+  div.style('line-height', '1.5');
   div.style('max-width', width + 'px');
+  div.style('text-align', 'center');
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
   if (addBackground) {
     div.attr('class', 'labelBkg');
@@ -43,8 +55,8 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
     bbox = div.node().getBoundingClientRect();
   }
 
-  fo.style('width', bbox.width);
-  fo.style('height', bbox.height);
+  // fo.style('width', bbox.width);
+  // fo.style('height', bbox.height);
 
   return fo.node();
 }
@@ -76,7 +88,7 @@ function computeWidthOfText(parentNode: any, lineHeight: number, line: MarkdownL
 }
 
 export function computeDimensionOfText(
-  parentNode: Group,
+  parentNode: SVGGroup,
   lineHeight: number,
   text: string
 ): DOMRect | undefined {
@@ -107,7 +119,7 @@ function createFormattedText(
 ) {
   const lineHeight = 1.1;
   const labelGroup = g.append('g');
-  const bkg = labelGroup.insert('rect').attr('class', 'background');
+  const bkg = labelGroup.insert('rect').attr('class', 'background').attr('style', 'stroke: none');
   const textElement = labelGroup.append('text').attr('y', '-10.1');
   let lineIndex = 0;
   for (const line of structuredText) {
@@ -129,8 +141,8 @@ function createFormattedText(
     const bbox = textElement.node().getBBox();
     const padding = 2;
     bkg
-      .attr('x', -padding)
-      .attr('y', -padding)
+      .attr('x', bbox.x - padding)
+      .attr('y', bbox.y - padding)
       .attr('width', bbox.width + 2 * padding)
       .attr('height', bbox.height + 2 * padding);
 
@@ -180,7 +192,7 @@ export function replaceIconSubstring(text: string) {
 
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to sett classes to'nodeLabel' when isNode=true otherwise 'edgeLabel'
 // When not using htmlLabels => to set classes to 'title-row' when isTitle=true otherwise 'title-row'
-export const createText = (
+export const createText = async (
   el,
   text = '',
   {
@@ -192,24 +204,79 @@ export const createText = (
     width = 200,
     addSvgBackground = false,
   } = {},
-  config: MermaidConfig
+  config?: MermaidConfig
 ) => {
-  log.info('createText', text, style, isTitle, classes, useHtmlLabels, isNode, addSvgBackground);
+  log.debug(
+    'XYZ createText',
+    text,
+    style,
+    isTitle,
+    classes,
+    useHtmlLabels,
+    isNode,
+    'addSvgBackground: ',
+    addSvgBackground
+  );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
     const htmlText = markdownToHTML(text, config);
     const decodedReplacedText = replaceIconSubstring(decodeEntities(htmlText));
+
+    //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
+    const inputForKatex = text.replace(/\\\\/g, '\\');
+
     const node = {
       isNode,
-      label: decodedReplacedText,
+      label: hasKatex(text) ? inputForKatex : decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
-    const vertexNode = addHtmlSpan(el, node, width, classes, addSvgBackground);
+    const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground);
     return vertexNode;
   } else {
-    const structuredText = markdownToLines(text, config);
-    const svgLabel = createFormattedText(width, el, structuredText, addSvgBackground);
+    //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
+    const sanitizeBR = text.replace(/<br\s*\/?>/g, '<br/>');
+    const structuredText = markdownToLines(sanitizeBR.replace('<br>', '<br/>'), config);
+    const svgLabel = createFormattedText(
+      width,
+      el,
+      structuredText,
+      text ? addSvgBackground : false
+    );
+    if (isNode) {
+      if (/stroke:/.exec(style)) {
+        style = style.replace('stroke:', 'lineColor:');
+      }
+
+      const nodeLabelTextStyle = style
+        .replace(/stroke:[^;]+;?/g, '')
+        .replace(/stroke-width:[^;]+;?/g, '')
+        .replace(/fill:[^;]+;?/g, '')
+        .replace(/color:/g, 'fill:');
+      select(svgLabel).attr('style', nodeLabelTextStyle);
+      // svgLabel.setAttribute('style', style);
+    } else {
+      //On style, assume `stroke`, `stroke-width` are used for edge path, so remove them
+      // remove `fill`
+      //  use  `background` as `fill` for label rect,
+
+      const edgeLabelRectStyle = style
+        .replace(/stroke:[^;]+;?/g, '')
+        .replace(/stroke-width:[^;]+;?/g, '')
+        .replace(/fill:[^;]+;?/g, '')
+        .replace(/background:/g, 'fill:');
+      select(svgLabel)
+        .select('rect')
+        .attr('style', edgeLabelRectStyle.replace(/background:/g, 'fill:'));
+
+      // for text, update fill color with `color`
+      const edgeLabelTextStyle = style
+        .replace(/stroke:[^;]+;?/g, '')
+        .replace(/stroke-width:[^;]+;?/g, '')
+        .replace(/fill:[^;]+;?/g, '')
+        .replace(/color:/g, 'fill:');
+      select(svgLabel).select('text').attr('style', edgeLabelTextStyle);
+    }
     return svgLabel;
   }
 };

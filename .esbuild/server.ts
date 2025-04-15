@@ -9,13 +9,18 @@ import { generateLangium } from '../.build/generateLangium.js';
 import { defaultOptions, getBuildConfig } from './util.js';
 
 const configs = Object.values(packageOptions).map(({ packageName }) =>
-  getBuildConfig({ ...defaultOptions, minify: false, core: false, entryName: packageName })
+  getBuildConfig({
+    ...defaultOptions,
+    minify: false,
+    core: false,
+    options: packageOptions[packageName],
+  })
 );
 const mermaidIIFEConfig = getBuildConfig({
   ...defaultOptions,
   minify: false,
   core: false,
-  entryName: 'mermaid',
+  options: packageOptions.mermaid,
   format: 'iife',
 });
 configs.push(mermaidIIFEConfig);

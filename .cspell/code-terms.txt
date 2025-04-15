@@ -26,8 +26,10 @@ concat
 controlx
 controly
 CSSCLASS
+curv
 CYLINDEREND
 CYLINDERSTART
+DAGA
 datakey
 DEND
 descr
@@ -54,6 +56,7 @@ GENERICTYPE
 getBoundarys
 grammr
 graphtype
+halign
 iife
 interp
 introdcued
@@ -65,6 +68,7 @@ Kaufmann
 keyify
 LABELPOS
 LABELTYPE
+layoutstop
 lcov
 LEFTOF
 Lexa
@@ -90,6 +94,7 @@ reqs
 rewritelinks
 rgba
 RIGHTOF
+roughjs
 sankey
 sequencenumber
 shrc
@@ -109,6 +114,7 @@ strikethrough
 stringifying
 struct
 STYLECLASS
+STYLEDEF
 STYLEOPTS
 subcomponent
 subcomponents
@@ -117,6 +123,8 @@ SUBROUTINEEND
 SUBROUTINESTART
 Subschemas
 substr
+SVGG
+SVGSVG
 TAGEND
 TAGSTART
 techn
@@ -133,6 +141,7 @@ tsdoc
 typeof
 typestr
 unshift
+urlsafe
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH

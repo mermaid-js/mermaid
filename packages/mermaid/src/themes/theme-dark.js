@@ -6,7 +6,6 @@ class Theme {
     this.background = '#333';
     this.primaryColor = '#1f2020';
     this.secondaryColor = lighten(this.primaryColor, 16);
-
     this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
     this.primaryBorderColor = invert(this.background);
     this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
@@ -22,7 +21,7 @@ class Theme {
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
     this.lineColor = 'calculated';
-    this.border1 = '#81B1DB';
+    this.border1 = '#ccc';
     this.border2 = rgba(255, 255, 255, 0.25);
     this.arrowheadColor = 'calculated';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
@@ -85,6 +84,17 @@ class Theme {
     this.personBorder = this.primaryBorderColor;
     this.personBkg = this.mainBkg;
 
+    /* Architecture Diagram variables */
+    this.archEdgeColor = 'calculated';
+    this.archEdgeArrowColor = 'calculated';
+    this.archEdgeWidth = '3';
+    this.archGroupBorderColor = this.primaryBorderColor;
+    this.archGroupBorderWidth = '2px';
+
+    /* Entity Relationship variables */
+    this.rowOdd = this.rowOdd || lighten(this.mainBkg, 5) || '#ffffff';
+    this.rowEven = this.rowEven || darken(this.mainBkg, 10);
+
     /* state colors */
     this.labelColor = 'calculated';
 
@@ -132,6 +142,10 @@ class Theme {
     this.gridColor = this.mainContrastColor;
     this.doneTaskBkgColor = this.mainContrastColor;
     this.taskTextDarkColor = this.darkTextColor;
+
+    /* Architecture Diagram variables */
+    this.archEdgeColor = this.lineColor;
+    this.archEdgeArrowColor = this.lineColor;
 
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
@@ -277,6 +291,20 @@ class Theme {
       blockFillColor: this.background,
     };
 
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
+    };
+
     /* class */
     this.classText = this.primaryTextColor;
 
@@ -333,6 +361,8 @@ class Theme {
     this.attributeBackgroundColorEven =
       this.attributeBackgroundColorEven || lighten(this.background, 2);
     /* -------------------------------------------------- */
+
+    this.nodeBorder = this.nodeBorder || '#999';
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

@@ -1,0 +1,10 @@
+diff --git a/bin/rough.d.ts b/bin/rough.d.ts
+index 810db1fb34496a5b9f7c0734a7ad8be8605f5534..3624d5b6288a3d2b7d397dfcfffce60558f18cf9 100644
+--- a/bin/rough.d.ts
++++ b/bin/rough.d.ts
+@@ -8,4 +8,4 @@ declare const _default: {
+     generator(config?: Config): RoughGenerator;
+     newSeed(): number;
+ };
+-export default _default;
++export = _default;

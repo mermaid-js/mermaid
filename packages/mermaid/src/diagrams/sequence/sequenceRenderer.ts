@@ -1088,6 +1088,19 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   const { bounds: box } = bounds.getBounds();
 
+  if (box.startx === undefined) {
+    box.startx = 0;
+  }
+  if (box.starty === undefined) {
+    box.starty = 0;
+  }
+  if (box.stopx === undefined) {
+    box.stopx = 0;
+  }
+  if (box.stopy === undefined) {
+    box.stopy = 0;
+  }
+
   // Make sure the height of the diagram supports long menus.
   let boxHeight = box.stopy - box.starty;
   if (boxHeight < requiredBoxSize.maxHeight) {
@@ -1525,7 +1538,6 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
   let current, noteModel, msgModel;
 
   for (const msg of messages) {
-    msg.id = utils.random({ length: 10 });
     switch (msg.type) {
       case diagObj.db.LINETYPE.LOOP_START:
       case diagObj.db.LINETYPE.ALT_START:

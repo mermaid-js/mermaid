@@ -24,11 +24,14 @@ Doctave
 DokuWiki
 dompurify
 elkjs
+fcose
 fontawesome
+Forgejo
 Foswiki
 Gitea
 graphlib
 Grav
+icones
 iconify
 Inkdrop
 jiti
@@ -55,8 +58,10 @@ presetAttributify
 pyplot
 redmine
 rehype
+roughjs
 rscratch
 shiki
+Slidev
 sparkline
 sphinxcontrib
 ssim

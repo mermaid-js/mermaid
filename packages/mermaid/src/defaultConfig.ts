@@ -20,6 +20,11 @@ const config: RequiredDeep<MermaidConfig> = {
   // Set, even though they're `undefined` so that `configKeys` finds these keys
   // TODO: Should we replace these with `null` so that they can go in the JSON Schema?
   deterministicIDSeed: undefined,
+  elk: {
+    // mergeEdges is needed here to be considered
+    mergeEdges: false,
+    nodePlacementStrategy: 'BRANDES_KOEPF',
+  },
   themeCSS: undefined,
 
   // add non-JSON default config values
@@ -47,6 +52,9 @@ const config: RequiredDeep<MermaidConfig> = {
         fontWeight: this.actorFontWeight,
       };
     },
+  },
+  class: {
+    hideEmptyMembersBox: false,
   },
   gantt: {
     ...defaultConfigJson.gantt,
@@ -244,24 +252,15 @@ const config: RequiredDeep<MermaidConfig> = {
     ...defaultConfigJson.requirement,
     useWidth: undefined,
   },
-  gitGraph: {
-    ...defaultConfigJson.gitGraph,
-    // TODO: This is a temporary override for `gitGraph`, since every other
-    //       diagram does have `useMaxWidth`, but instead sets it to `true`.
-    //       Should we set this to `true` instead?
-    useMaxWidth: false,
-  },
-  sankey: {
-    ...defaultConfigJson.sankey,
-    // this is false, unlike every other diagram (other than gitGraph)
-    // TODO: can we make this default to `true` instead?
-    useMaxWidth: false,
-  },
   packet: {
     ...defaultConfigJson.packet,
   },
+  radar: {
+    ...defaultConfigJson.radar,
+  },
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const keyify = (obj: any, prefix = ''): string[] =>
   Object.keys(obj).reduce((res: string[], el): string[] => {
     if (Array.isArray(obj[el])) {

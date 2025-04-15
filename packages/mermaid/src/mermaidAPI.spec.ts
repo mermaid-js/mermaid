@@ -1,4 +1,4 @@
-import { vi, it, expect, describe, beforeEach } from 'vitest';
+import { assert, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // -------------------------------------
 //  Mocks and mocking
@@ -30,7 +30,8 @@ vi.mock('./diagrams/packet/renderer.js');
 vi.mock('./diagrams/xychart/xychartRenderer.js');
 vi.mock('./diagrams/requirement/requirementRenderer.js');
 vi.mock('./diagrams/sequence/sequenceRenderer.js');
-vi.mock('./diagrams/state/stateRenderer-v2.js');
+vi.mock('./diagrams/radar/renderer.js');
+vi.mock('./diagrams/architecture/architectureRenderer.js');
 
 // -------------------------------------
 
@@ -67,9 +68,13 @@ vi.mock('stylis', () => {
 });
 
 import { compile, serialize } from 'stylis';
-import { decodeEntities, encodeEntities } from './utils.js';
 import { Diagram } from './Diagram.js';
+import { ClassDB } from './diagrams/class/classDb.js';
+import { FlowDB } from './diagrams/flowchart/flowDb.js';
+import { SequenceDB } from './diagrams/sequence/sequenceDb.js';
+import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { StateDB } from './diagrams/state/stateDb.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -694,18 +699,79 @@ describe('mermaidAPI', () => {
       await expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).resolves
         .toMatchInlineSnapshot(`
         {
+          "config": {},
           "diagramType": "flowchart-v2",
         }
       `);
     });
+    it('returns config when defined in frontmatter', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  theme: base
+  flowchart:
+    htmlLabels: true
+---
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "flowchart": {
+        "htmlLabels": true,
+      },
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
+    it('returns config when defined in directive', async () => {
+      await expect(
+        mermaidAPI.parse(`%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
+    it('returns merged config when defined in frontmatter and directive', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  theme: forest
+  flowchart:
+    htmlLabels: true
+---
+%%{init: { 'theme': 'base' } }%%
+graph TD;A--x|text including URL space|B;`)
+      ).resolves.toMatchInlineSnapshot(`
+  {
+    "config": {
+      "flowchart": {
+        "htmlLabels": true,
+      },
+      "theme": "base",
+    },
+    "diagramType": "flowchart-v2",
+  }
+`);
+    });
+
     it('returns true for valid definition with silent option', async () => {
       await expect(
         mermaidAPI.parse('graph TD;A--x|text including URL space|B;', { suppressErrors: true })
       ).resolves.toMatchInlineSnapshot(`
-        {
-          "diagramType": "flowchart-v2",
-        }
-      `);
+          {
+            "config": {},
+            "diagramType": "flowchart-v2",
+          }
+        `);
     });
   });
 
@@ -719,7 +785,7 @@ describe('mermaidAPI', () => {
     // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different than was is put in the diagram text (ex: in -v2 diagrams)
     const diagramTypesAndExpectations = [
       { textDiagramType: 'C4Context', expectedType: 'c4' },
-      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
+      { textDiagramType: 'classDiagram', expectedType: 'class' },
       { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
       { textDiagramType: 'erDiagram', expectedType: 'er' },
       { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
@@ -733,6 +799,8 @@ describe('mermaidAPI', () => {
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
+      { textDiagramType: 'radar-beta', expectedType: 'radar' },
+      { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
     ];
 
     describe('accessibility', () => {
@@ -771,6 +839,109 @@ describe('mermaidAPI', () => {
       );
       expect(diagram).toBeInstanceOf(Diagram);
       expect(diagram.type).toBe('flowchart-v2');
+    });
+
+    it('should not modify db when rendering different diagrams', async () => {
+      const stateDiagram1 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+            direction LR
+            [*] --> Still
+            Still --> [*]
+            Still --> Moving
+            Moving --> Still
+            Moving --> Crash
+            Crash --> [*]`
+      );
+      const stateDiagram2 = await mermaidAPI.getDiagramFromText(
+        `stateDiagram
+          direction TB
+          [*] --> Still
+          Still --> [*]
+          Still --> Moving
+          Moving --> Still
+          Moving --> Crash
+          Crash --> [*]`
+      );
+      expect(stateDiagram1.db).not.toBe(stateDiagram2.db);
+      assert(stateDiagram1.db instanceof StateDB);
+      assert(stateDiagram2.db instanceof StateDB);
+      expect(stateDiagram1.db.getDirection()).not.toEqual(stateDiagram2.db.getDirection());
+
+      const flowDiagram1 = await mermaidAPI.getDiagramFromText(
+        `flowchart LR
+      A -- text --> B -- text2 --> C`
+      );
+      const flowDiagram2 = await mermaidAPI.getDiagramFromText(
+        `flowchart TD
+      A -- text --> B -- text2 --> C`
+      );
+      // Since flowDiagram will return new Db object each time, we can compare the db to be different.
+      expect(flowDiagram1.db).not.toBe(flowDiagram2.db);
+      assert(flowDiagram1.db instanceof FlowDB);
+      assert(flowDiagram2.db instanceof FlowDB);
+      expect(flowDiagram1.db.getDirection()).not.toEqual(flowDiagram2.db.getDirection());
+
+      const classDiagram1 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction TB
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      const classDiagram2 = await mermaidAPI.getDiagramFromText(
+        `classDiagram
+            direction LR
+            class Student {
+              -idCard : IdCard
+            }
+            class IdCard{
+              -id : int
+              -name : string
+            }
+            class Bike{
+              -id : int
+              -name : string
+            }
+            Student "1" --o "1" IdCard : carries
+            Student "1" --o "1" Bike : rides`
+      );
+      // Since classDiagram will return new Db object each time, we can compare the db to be different.
+      expect(classDiagram1.db).not.toBe(classDiagram2.db);
+      assert(classDiagram1.db instanceof ClassDB);
+      assert(classDiagram2.db instanceof ClassDB);
+      expect(classDiagram1.db.getDirection()).not.toEqual(classDiagram2.db.getDirection());
+
+      const sequenceDiagram1 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+      const sequenceDiagram2 = await mermaidAPI.getDiagramFromText(
+        `sequenceDiagram
+        actor A1
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!`
+      );
+
+      // Since sequenceDiagram will return new Db object each time, we can compare the db to be different.
+      expect(sequenceDiagram1.db).not.toBe(sequenceDiagram2.db);
+      assert(sequenceDiagram1.db instanceof SequenceDB);
+      assert(sequenceDiagram2.db instanceof SequenceDB);
+      expect(sequenceDiagram1.db.getActors()).not.toEqual(sequenceDiagram2.db.getActors());
     });
   });
 });

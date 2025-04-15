@@ -3,20 +3,20 @@ import { fileURLToPath } from 'url';
 import type { BuildOptions } from 'esbuild';
 import { readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
-import { packageOptions } from '../.build/common.js';
+import type { PackageOptions } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-export interface MermaidBuildOptions {
+export interface MermaidBuildOptions extends BuildOptions {
   minify: boolean;
   core: boolean;
   metafile: boolean;
   format: 'esm' | 'iife';
-  entryName: keyof typeof packageOptions;
+  options: PackageOptions;
 }
 
-export const defaultOptions: Omit<MermaidBuildOptions, 'entryName'> = {
+export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> = {
   minify: false,
   metafile: false,
   core: false,
@@ -52,9 +52,15 @@ const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOpt
 };
 
 export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
-  const { core, entryName, metafile, format, minify } = options;
+  const {
+    core,
+    metafile,
+    format,
+    minify,
+    options: { name, file, packageName },
+    globalName = 'mermaid',
+  } = options;
   const external: string[] = ['require', 'fs', 'path'];
-  const { name, file, packageName } = packageOptions[entryName];
   const outFileName = getFileName(name, options);
   const output: BuildOptions = buildOptions({
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
@@ -63,6 +69,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     },
     metafile,
     minify,
+    globalName,
     logLevel: 'info',
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
     define: {
@@ -84,11 +91,12 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   if (format === 'iife') {
     output.format = 'iife';
     output.splitting = false;
-    output.globalName = '__esbuild_esm_mermaid';
+    const originalGlobalName = output.globalName ?? 'mermaid';
+    output.globalName = `__esbuild_esm_mermaid_nm[${JSON.stringify(originalGlobalName)}]`;
     // Workaround for removing the .default access in esbuild IIFE.
     // https://github.com/mermaid-js/mermaid/pull/4109#discussion_r1292317396
     output.footer = {
-      js: 'globalThis.mermaid = globalThis.__esbuild_esm_mermaid.default;',
+      js: `globalThis[${JSON.stringify(originalGlobalName)}] = globalThis.${output.globalName}.default;`,
     };
     output.outExtension = { '.js': '.js' };
   } else {

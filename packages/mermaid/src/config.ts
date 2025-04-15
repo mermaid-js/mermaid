@@ -190,7 +190,10 @@ export const addDirective = (directive: MermaidConfig) => {
 
   // If the directive has a fontFamily, but no themeVariables, add the fontFamily to the themeVariables
   if (directive.fontFamily && !directive.themeVariables?.fontFamily) {
-    directive.themeVariables = { fontFamily: directive.fontFamily };
+    directive.themeVariables = {
+      ...directive.themeVariables,
+      fontFamily: directive.fontFamily,
+    };
   }
 
   directives.push(directive);
@@ -227,7 +230,7 @@ const ConfigWarning = {
 } as const;
 
 type ConfigWarningStrings = keyof typeof ConfigWarning;
-const issuedWarnings: { [key in ConfigWarningStrings]?: boolean } = {};
+const issuedWarnings: Partial<Record<ConfigWarningStrings, boolean>> = {};
 const issueWarning = (warning: ConfigWarningStrings) => {
   if (issuedWarnings[warning]) {
     return;

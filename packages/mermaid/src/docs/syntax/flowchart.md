@@ -194,6 +194,404 @@ flowchart TD
     id1(((This is the text in the circle)))
 ```
 
+## Expanded Node Shapes in Mermaid Flowcharts (v11.3.0+)
+
+Mermaid introduces 30 new shapes to enhance the flexibility and precision of flowchart creation. These new shapes provide more options to represent processes, decisions, events, data storage visually, and other elements within your flowcharts, improving clarity and semantic meaning.
+
+New Syntax for Shape Definition
+
+Mermaid now supports a general syntax for defining shape types to accommodate the growing number of shapes. This syntax allows you to assign specific shapes to nodes using a clear and flexible format:
+
+```
+A@{ shape: rect }
+```
+
+This syntax creates a node A as a rectangle. It renders in the same way as `A["A"]`, or `A`.
+
+### Complete List of New Shapes
+
+Below is a comprehensive list of the newly introduced shapes and their corresponding semantic meanings, short names, and aliases:
+
+<!--@include: virtual:shapesTable -->
+
+### Example Flowchart with New Shapes
+
+Here’s an example flowchart that utilizes some of the newly introduced shapes:
+
+```mermaid-example
+flowchart RL
+    A@{ shape: manual-file, label: "File Handling"}
+    B@{ shape: manual-input, label: "User Input"}
+    C@{ shape: docs, label: "Multiple Documents"}
+    D@{ shape: procs, label: "Process Automation"}
+    E@{ shape: paper-tape, label: "Paper Records"}
+```
+
+### Process
+
+```mermaid-example
+flowchart TD
+    A@{ shape: rect, label: "This is a process" }
+```
+
+### Event
+
+```mermaid-example
+flowchart TD
+    A@{ shape: rounded, label: "This is an event" }
+```
+
+### Terminal Point (Stadium)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: stadium, label: "Terminal point" }
+```
+
+### Subprocess
+
+```mermaid-example
+flowchart TD
+    A@{ shape: subproc, label: "This is a subprocess" }
+```
+
+### Database (Cylinder)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: cyl, label: "Database" }
+```
+
+### Start (Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: circle, label: "Start" }
+```
+
+### Odd
+
+```mermaid-example
+flowchart TD
+    A@{ shape: odd, label: "Odd shape" }
+```
+
+### Decision (Diamond)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: diamond, label: "Decision" }
+```
+
+### Prepare Conditional (Hexagon)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: hex, label: "Prepare conditional" }
+```
+
+### Data Input/Output (Lean Right)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lean-r, label: "Input/Output" }
+```
+
+### Data Input/Output (Lean Left)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lean-l, label: "Output/Input" }
+```
+
+### Priority Action (Trapezoid Base Bottom)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: trap-b, label: "Priority action" }
+```
+
+### Manual Operation (Trapezoid Base Top)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: trap-t, label: "Manual operation" }
+```
+
+### Stop (Double Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: dbl-circ, label: "Stop" }
+```
+
+### Text Block
+
+```mermaid-example
+flowchart TD
+    A@{ shape: text, label: "This is a text block" }
+```
+
+### Card (Notched Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: notch-rect, label: "Card" }
+```
+
+### Lined/Shaded Process
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lin-rect, label: "Lined process" }
+```
+
+### Start (Small Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: sm-circ, label: "Small start" }
+```
+
+### Stop (Framed Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: framed-circle, label: "Stop" }
+```
+
+### Fork/Join (Long Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: fork, label: "Fork or Join" }
+```
+
+### Collate (Hourglass)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: hourglass, label: "Collate" }
+```
+
+### Comment (Curly Brace)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: comment, label: "Comment" }
+```
+
+### Comment Right (Curly Brace Right)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: brace-r, label: "Comment" }
+```
+
+### Comment with braces on both sides
+
+```mermaid-example
+flowchart TD
+    A@{ shape: braces, label: "Comment" }
+```
+
+### Com Link (Lightning Bolt)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: bolt, label: "Communication link" }
+```
+
+### Document
+
+```mermaid-example
+flowchart TD
+    A@{ shape: doc, label: "Document" }
+```
+
+### Delay (Half-Rounded Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: delay, label: "Delay" }
+```
+
+### Direct Access Storage (Horizontal Cylinder)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: das, label: "Direct access storage" }
+```
+
+### Disk Storage (Lined Cylinder)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lin-cyl, label: "Disk storage" }
+```
+
+### Display (Curved Trapezoid)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: curv-trap, label: "Display" }
+```
+
+### Divided Process (Divided Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: div-rect, label: "Divided process" }
+```
+
+### Extract (Small Triangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: tri, label: "Extract" }
+```
+
+### Internal Storage (Window Pane)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: win-pane, label: "Internal storage" }
+```
+
+### Junction (Filled Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: f-circ, label: "Junction" }
+```
+
+### Lined Document
+
+```mermaid-example
+flowchart TD
+    A@{ shape: lin-doc, label: "Lined document" }
+```
+
+### Loop Limit (Notched Pentagon)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: notch-pent, label: "Loop limit" }
+```
+
+### Manual File (Flipped Triangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: flip-tri, label: "Manual file" }
+```
+
+### Manual Input (Sloped Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: sl-rect, label: "Manual input" }
+```
+
+### Multi-Document (Stacked Document)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: docs, label: "Multiple documents" }
+```
+
+### Multi-Process (Stacked Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: processes, label: "Multiple processes" }
+```
+
+### Paper Tape (Flag)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: flag, label: "Paper tape" }
+```
+
+### Stored Data (Bow Tie Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: bow-rect, label: "Stored data" }
+```
+
+### Summary (Crossed Circle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: cross-circ, label: "Summary" }
+```
+
+### Tagged Document
+
+```mermaid-example
+flowchart TD
+    A@{ shape: tag-doc, label: "Tagged document" }
+```
+
+### Tagged Process (Tagged Rectangle)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: tag-rect, label: "Tagged process" }
+```
+
+## Special shapes in Mermaid Flowcharts (v11.3.0+)
+
+Mermaid also introduces 2 special shapes to enhance your flowcharts: **icon** and **image**. These shapes allow you to include icons and images directly within your flowcharts, providing more visual context and clarity.
+
+### Icon Shape
+
+You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions provided [here](../config/icons.md). The syntax for defining an icon shape is as follows:
+
+```mermaid-example
+flowchart TD
+    A@{ icon: "fa:user", form: "square", label: "User Icon", pos: "t", h: 60 }
+```
+
+### Parameters
+
+- **icon**: The name of the icon from the registered icon pack.
+- **form**: Specifies the background shape of the icon. If not defined there will be no background to icon. Options include:
+  - `square`
+  - `circle`
+  - `rounded`
+- **label**: The text label associated with the icon. This can be any string. If not defined, no label will be displayed.
+- **pos**: The position of the label. If not defined label will default to bottom of icon. Possible values are:
+  - `t`
+  - `b`
+- **h**: The height of the icon. If not defined this will default to 48 which is minimum.
+
+### Image Shape
+
+You can use the `image` shape to include an image in your flowchart. The syntax for defining an image shape is as follows:
+
+```mermaid-example
+flowchart TD
+    A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
+```
+
+### Parameters
+
+- **img**: The URL of the image to be displayed.
+- **label**: The text label associated with the image. This can be any string. If not defined, no label will be displayed.
+- **pos**: The position of the label. If not defined, the label will default to the bottom of the image. Possible values are:
+  - `t`
+  - `b`
+- **w**: The width of the image. If not defined, this will default to the natural width of the image.
+- **h**: The height of the image. If not defined, this will default to the natural height of the image.
+- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the height (`h`) accordingly to the width (`w`). If not defined, this will default to `off` Possible values are:
+  - `on`
+  - `off`
+
+These new shapes provide additional flexibility and visual appeal to your flowcharts, making them more informative and engaging.
+
 ## Links between nodes
 
 Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.
@@ -312,6 +710,67 @@ flowchart TB
     B --> C
     B --> D
 ```
+
+### Attaching an ID to Edges
+
+Mermaid now supports assigning IDs to edges, similar to how IDs and metadata can be attached to nodes. This feature lays the groundwork for more advanced styling, classes, and animation capabilities on edges.
+
+**Syntax:**
+
+To give an edge an ID, prepend the edge syntax with the ID followed by an `@` character. For example:
+
+```mermaid
+flowchart LR
+  A e1@--> B
+```
+
+In this example, `e1` is the ID of the edge connecting `A` to `B`. You can then use this ID in later definitions or style statements, just like with nodes.
+
+### Turning an Animation On
+
+Once you have assigned an ID to an edge, you can turn on animations for that edge by defining the edge’s properties:
+
+```mermaid
+flowchart LR
+  A e1@==> B
+  e1@{ animate: true }
+```
+
+This tells Mermaid that the edge `e1` should be animated.
+
+### Selecting Type of Animation
+
+In the initial version, two animation speeds are supported: `fast` and `slow`. Selecting a specific animation type is a shorthand for enabling animation and setting the animation speed in one go.
+
+**Examples:**
+
+```mermaid
+flowchart LR
+  A e1@--> B
+  e1@{ animation: fast }
+```
+
+This is equivalent to `{ animate: true, animation: fast }`.
+
+### Using classDef Statements for Animations
+
+You can also animate edges by assigning a class to them and then defining animation properties in a `classDef` statement. For example:
+
+```mermaid
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+```
+
+In this snippet:
+
+- `e1@-->` creates an edge with ID `e1`.
+- `classDef animate` defines a class named `animate` with styling and animation properties.
+- `class e1 animate` applies the `animate` class to the edge `e1`.
+
+**Note on Escaping Commas:**
+When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid’s style definitions.
 
 ## New arrow types
 
@@ -676,8 +1135,7 @@ graph LR
 ```
 
 For a full list of available curves, including an explanation of custom curves, refer to
-the [Shapes](https://github.com/d3/d3-shape/blob/main/README.md#curves) documentation in the
-[d3-shape](https://github.com/d3/d3-shape/) project.
+the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
 
 ### Styling a node
 
