@@ -29,6 +29,7 @@ import timeline from './diagrams/timeline/styles.js';
 import mindmap from './diagrams/mindmap/styles.js';
 import packet from './diagrams/packet/styles.js';
 import block from './diagrams/block/styles.js';
+import radar from './diagrams/radar/styles.js';
 import themes from './themes/index.js';
 
 function checkValidStylisCSSStyleSheet(stylisString: string) {
@@ -99,6 +100,7 @@ describe('styles', () => {
         block,
         timeline,
         packet,
+        radar,
       })) {
         test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {
           const { default: getStyles, addStylesForDiagram } = await import('./styles.js');
