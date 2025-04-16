@@ -10,7 +10,7 @@
 
 # Interface: LayoutData
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:145](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L145)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:150](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L150)
 
 ## Indexable
 
@@ -22,7 +22,7 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:145](https://github.co
 
 > **config**: [`MermaidConfig`](MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:148](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L148)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:153](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L153)
 
 ---
 
@@ -30,7 +30,7 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:148](https://github.co
 
 > **edges**: `Edge`\[]
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:147](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L147)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:152](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L152)
 
 ---
 
@@ -38,4 +38,4 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:147](https://github.co
 
 > **nodes**: `Node`\[]
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L146)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:151](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L151)
