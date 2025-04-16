@@ -1,4 +1,4 @@
-import { imgSnapshotTest, urlSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../helpers/util.ts';
 
 describe('architecture diagram', () => {
   it('should render a simple architecture diagram with groups', () => {
@@ -314,12 +314,5 @@ describe('architecture diagram', () => {
                   edge:R -- L:firewall
       `
     );
-  });
-});
-
-// Skipped as the layout is not deterministic, and causes issues in E2E tests.
-describe.skip('architecture - external', () => {
-  it('should allow adding external icons', () => {
-    urlSnapshotTest('http://localhost:9000/architecture-external.html');
   });
 });
