@@ -166,7 +166,99 @@ describe('architecture diagrams', () => {
       expectEdge(edges[2], 'disk2', false, 'db', false, 'T', false, undefined, 'B', false);
       expectEdge(edges[3], 'server', false, 'gateway', false, 'T', false, undefined, 'B', false);
     });
-    it('should render a simple architecture diagram with titleAndAccessabilities', async () => {
+
+    it('should render an architecture diagram with markdown labels', async () => {
+      const str = `architecture-beta
+                group api('cloud')['\`**API**\`']
+
+                service db('database')[\`_Database_\`] in api
+                service disk1('disk')["\`_Storage_\`"] in api
+                service disk2('disk')["\`_Storage_\`"] in api
+                service server('server')["\`_Server_\`"] in api
+                service gateway('internet')["\`_Gateway_\`"] 
+
+                db L - ["\`**Bold Label**\`"] - R server
+                disk1 T - ["\`**Bold Label**\`"] - B server
+                disk2 T - ["\`_Italic Label_\`"] - B db
+                server T - ["\`_Italic Label_\`"] - B gateway
+
+                group a('cloud')['a.b-t']
+                group b('cloud')['\`user:password@some_domain.com\`']
+                group c('cloud')["\`The **cat** in the hat\`"]
+                group d('cloud')["\`The *bat*
+                in the chat\`"]
+                group e('cloud')['Начало']
+                group f('cloud')['➙ коммунизм 🚩']
+                service right_disk('disk')["❤ Disk"]
+                group g('cloud')['\\"Начало\\"']
+        `;
+      await expect(parser.parse(str)).resolves.not.toThrow();
+      const services = getServices();
+      const groups = getGroups();
+      const edges = getEdges();
+      expect(services.length).toBe(6);
+      expect(groups.length).toBe(8);
+      expect(edges.length).toBe(4);
+      expectGroup(groups[0], 'api', 'cloud', '`**API**`', undefined);
+      expectGroup(groups[1], 'a', 'cloud', 'a.b-t', undefined);
+      expectGroup(groups[2], 'b', 'cloud', '`user:password@some_domain.com`', undefined);
+      expectGroup(groups[3], 'c', 'cloud', '`The **cat** in the hat`', undefined);
+      expectGroup(
+        groups[4],
+        'd',
+        'cloud',
+        `\`The *bat*
+                in the chat\``,
+        undefined
+      );
+      expectGroup(groups[5], 'e', 'cloud', 'Начало', undefined);
+      expectGroup(groups[6], 'f', 'cloud', '➙ коммунизм 🚩', undefined);
+      expectGroup(groups[7], 'g', 'cloud', '"Начало"', undefined);
+      expectService(services[0], 'db', 'database', undefined, '`_Database_`', 'api');
+      expectService(services[1], 'disk1', 'disk', undefined, '`_Storage_`', 'api');
+      expectService(services[2], 'disk2', 'disk', undefined, '`_Storage_`', 'api');
+      expectService(services[3], 'server', 'server', undefined, '`_Server_`', 'api');
+      expectService(services[4], 'gateway', 'internet', undefined, '`_Gateway_`', undefined);
+      expectService(services[5], 'right_disk', 'disk', undefined, '❤ Disk', undefined);
+      expectEdge(
+        edges[0],
+        'db',
+        false,
+        'server',
+        false,
+        'L',
+        false,
+        '`**Bold Label**`',
+        'R',
+        false
+      );
+      expectEdge(
+        edges[1],
+        'disk1',
+        false,
+        'server',
+        false,
+        'T',
+        false,
+        '`**Bold Label**`',
+        'B',
+        false
+      );
+      expectEdge(edges[2], 'disk2', false, 'db', false, 'T', false, '`_Italic Label_`', 'B', false);
+      expectEdge(
+        edges[3],
+        'server',
+        false,
+        'gateway',
+        false,
+        'T',
+        false,
+        '`_Italic Label_`',
+        'B',
+        false
+      );
+    });
+    it('should render a simple architecture diagram with titleAndAccessibilities', async () => {
       const str = `architecture-beta
           title Simple Architecture Diagram
           accTitle: Accessibility Title
