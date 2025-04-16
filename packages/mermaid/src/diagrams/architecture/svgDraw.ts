@@ -1,7 +1,7 @@
 import { getIconSVG } from '../../rendering-util/icons.js';
 import type cytoscape from 'cytoscape';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { createText } from '../../rendering-util/createText.js';
+import { createNonFormattedText, createText } from '../../rendering-util/createText.js';
 import type { D3Element } from '../../types.js';
 import { db, getConfigField } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
@@ -134,16 +134,20 @@ export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core)
           }
 
           const textElem = g.append('g');
-          await createText(
-            textElem,
-            label,
-            {
-              useHtmlLabels: false,
-              width,
-              classes: 'architecture-service-label',
-            },
-            getConfig()
-          );
+          if (label.startsWith('`')) {
+            await createText(
+              textElem,
+              label.slice(1, -1),
+              {
+                useHtmlLabels: false,
+                width,
+                classes: 'architecture-service-label',
+              },
+              getConfig()
+            );
+          } else {
+            createNonFormattedText(width, textElem, label);
+          }
 
           textElem
             .attr('dy', '1em')
@@ -229,16 +233,20 @@ export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Cor
         }
         if (data.label) {
           const textElem = groupLabelContainer.append('g');
-          await createText(
-            textElem,
-            data.label,
-            {
-              useHtmlLabels: false,
-              width: w,
-              classes: 'architecture-service-label',
-            },
-            getConfig()
-          );
+          if (data.label.startsWith('`')) {
+            await createText(
+              textElem,
+              data.label.slice(1, -1),
+              {
+                useHtmlLabels: false,
+                width: w,
+                classes: 'architecture-service-label',
+              },
+              getConfig()
+            );
+          } else {
+            createNonFormattedText(w, textElem, data.label);
+          }
           textElem
             .attr('dy', '1em')
             .attr('alignment-baseline', 'middle')
@@ -270,16 +278,20 @@ export const drawServices = async function (
 
     if (service.label) {
       const textElem = serviceElem.append('g');
-      await createText(
-        textElem,
-        service.label,
-        {
-          useHtmlLabels: false,
-          width: iconSize * 1.5,
-          classes: 'architecture-service-label',
-        },
-        getConfig()
-      );
+      if (service.label.startsWith('`')) {
+        await createText(
+          textElem,
+          service.label.slice(1, -1),
+          {
+            useHtmlLabels: false,
+            width: iconSize * 1.5,
+            classes: 'architecture-service-label',
+          },
+          getConfig()
+        );
+      } else {
+        createNonFormattedText(iconSize * 1.5, textElem, service.label);
+      }
 
       textElem
         .attr('dy', '1em')
@@ -332,7 +344,6 @@ export const drawServices = async function (
           `M0 ${iconSize} v${-iconSize} q0,-5 5,-5 h${iconSize} q5,0 5,5 v${iconSize} H0 Z`
         );
     }
-
     serviceElem.attr('class', 'architecture-service');
 
     const { width, height } = serviceElem._groups[0][0].getBBox();
