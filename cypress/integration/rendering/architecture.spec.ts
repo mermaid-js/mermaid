@@ -19,6 +19,79 @@ describe('architecture diagram', () => {
             `
     );
   });
+  it('should render an architecture diagram with markdown labels', () => {
+    imgSnapshotTest(
+      `architecture-beta
+          group api('cloud')['\`**API**\`']
+
+          service db('database')[\`_Database_\`] in api
+          service disk1('disk')[\`_Storage_\`] in api
+          service disk2('disk')[\`_Storage_\`] in api
+          service server('server')[\`_Server_\`] in api
+          service gateway('internet')[\`_Gateway_\`] 
+
+          db L - ["\`**Bold Label**\`"] - R server
+          disk1 T - ["\`**Bold Label**\`"] - B server
+          disk2 T - ["\`_Italic Label_\`"] - B db
+          server T - ["\`_Italic Label_\`"] - B gateway
+      `
+    );
+  });
+
+  it('should render an architecture diagram with non-markdown labels as text', () => {
+    imgSnapshotTest(
+      `architecture-beta
+          group api('cloud')['**API**']
+          service db('database')['_Database_'] in api
+          service disk1('disk')['_Storage_'] in api
+          service disk2('disk')['_Storage_'] in api
+          service server('server')['_Server_'] in api
+          service gateway('internet')['_Gateway_']
+          db L - ["**Bold Label**"] - R server
+          disk1 T - ["**Bold Label**"] - B server
+          disk2 T - ["_Italic Label_"] - B db
+          server T - ["_Italic Label_"] - B gateway
+      `
+    );
+  });
+
+  it('should render special characters in a label', () => {
+    imgSnapshotTest(
+      `architecture-beta
+          group a('cloud')['a.b-t']
+          group b('cloud')['\`user:password@some_domain.com\`']
+      `
+    );
+  });
+
+  it('should render markdown in a label', () => {
+    imgSnapshotTest(
+      `architecture-beta
+          group a('cloud')["\`The **cat** in the hat\`"]
+          group b('cloud')["\`The *bat*
+          in the chat\`"]
+      `
+    );
+  });
+
+  it('should render unicode in a label', () => {
+    imgSnapshotTest(
+      `architecture-beta
+          group a('cloud')['Начало']
+          group b('cloud')['➙ коммунизм 🚩']
+          service right_disk('disk')["❤ Disk"]
+      `
+    );
+  });
+
+  it('should render escaped "', () => {
+    imgSnapshotTest(
+      `architecture-beta
+          group a('cloud')['\\"Начало\\"']
+      `
+    );
+  });
+
   it('should render a simple architecture diagram with titleAndAccessibilities', () => {
     imgSnapshotTest(
       `architecture-beta
