@@ -34,7 +34,7 @@ The syntax for declaring a group is:
 group {group id}('{icon name}')['{label}'] (in {parent id})?
 ```
 
-Put together:
+For instance:
 
 ```
 group public_api('cloud')['Public API']
@@ -48,6 +48,18 @@ Additionally, groups can be placed within a group using the optional `in` keywor
 group private_api('cloud')['Private API'] in public_api
 ```
 
+Icons, labels, and parent groups are optional. Markdown labels are supported between backticks.
+Hence, all of the following are valid:
+
+```
+architecture-beta
+    group public_api('cloud')[`**Public** API`]
+    group private_api('cloud')
+    group application
+    group microservices in application
+    group api('cloud')['API'] in public_api
+```
+
 ### Services
 
 The syntax for declaring a service is:
@@ -56,7 +68,7 @@ The syntax for declaring a service is:
 service {service id}('{icon name}')['{label}'] (in {parent id})?
 ```
 
-Put together:
+For instance:
 
 ```
 service database1('database')['My Database']
@@ -70,17 +82,57 @@ If the service belongs to a group, it can be placed inside it through the option
 service database1('database')['My Database'] in private_api
 ```
 
+Icons, labels, and parent groups are optional. Markdown labels are supported between backticks.
+
+Hence, all of the following are valid:
+
+```
+architecture-beta
+    group public_api
+    group private_api
+    group application
+
+    service db('database')[`_Database_`] in public_api
+    service disk1['Storage'] in application
+    service disk2('disk') in application
+    service server
+```
+
 ### Edges
 
 The syntax for declaring an edge is:
 
 ```
-{serviceId}{{group}}? :? {T|B|L|R} {<}?--{>}? {T|B|L|R} :? {serviceId}{{group}}?
+{serviceId}{{group}}? :? {T|B|L|R} {<}?-{['Label']}?-{>}? {T|B|L|R} :? {serviceId}{{group}}?
+```
+
+For instance:
+
+```
+db{group} L - ['Connection'] -> R:server
+```
+
+creates an edge between the group of `db` and service `server`, with a directional arrow going from `db` to `server`, and a label `Connection` on the edge.
+
+The edge can be labeled by adding a label in square brackets `[]` after the `-` and before the `>`.
+
+The colon (`:`), the group modifier (`{group}`), the arrow (`<` or `>`), and the label (`[]`) are all optional.
+Hence, the following are all valid:
+
+```
+architecture-beta
+    service db('database')['My Database']
+    service server('server')['My Server']
+
+    db T -- B server
+    db:T -- B:server
+    db L <- ['Connection'] -> R server
+    db{group} L <- [`**Bold Label**`] -> R:server
 ```
 
 #### Edge Direction
 
-The side of the service the edge comes out of is specified by adding a colon (`:`) to the side of the service connecting to the arrow and adding `L|R|T|B`
+The side of the service the edge comes out of is specified by adding `L|R|T|B`
 
 For example:
 
@@ -133,7 +185,7 @@ It's important to note that `groupId`s cannot be used for specifying edges and t
 
 ### Junctions
 
-Junctions are a special type of node which acts as a potential 4-way split between edges.
+Junctions are a special type of node which acts as a potential 4-way split between edges. It can be basically used as an invisible node to connect edges together in a more complex way.
 
 The syntax for declaring a junction is:
 
