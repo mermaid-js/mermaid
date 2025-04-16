@@ -238,13 +238,13 @@ const getStyles = (options) =>
   }
 
   .vert {
-    stroke: navy;
+    stroke: maroon;
   }
 
   .vertText {
     font-size: 15px;
     text-anchor: middle;
-    fill: navy;
+    fill: maroon;
   }
 
   .activeCritText0,
