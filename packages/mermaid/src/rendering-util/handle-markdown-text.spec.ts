@@ -228,6 +228,19 @@ test('markdownToLines - No auto wrapping', () => {
   `);
 });
 
+test('markdownToLines - email address', () => {
+  expect(markdownToLines(`henri@test.fr`)).toMatchInlineSnapshot(`
+    [
+      [
+        {
+          "content": "henri@test.fr",
+          "type": "normal",
+        },
+      ],
+    ]
+  `);
+});
+
 test('markdownToHTML - Basic test', () => {
   const input = `This is regular text
 Here is a new line
@@ -306,4 +319,8 @@ test('markdownToHTML - auto wrapping', () => {
       { markdownAutoWrap: true }
     )
   ).toMatchInlineSnapshot('"<p>Hello, how do<br/>you do?</p>"');
+});
+
+test('markdownToHTML - email address', () => {
+  expect(markdownToHTML(`henri@test.fr`)).toMatchInlineSnapshot('"<p>henri@test.fr</p>"');
 });
