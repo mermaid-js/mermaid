@@ -107,17 +107,18 @@ xychart-beta
 
 ## Chart Configurations
 
-| Parameter                | Description                                    | Default value |
-| ------------------------ | ---------------------------------------------- | :-----------: |
-| width                    | Width of the chart                             |      700      |
-| height                   | Height of the chart                            |      500      |
-| titlePadding             | Top and Bottom padding of the title            |      10       |
-| titleFontSize            | Title font size                                |      20       |
-| showTitle                | Title to be shown or not                       |     true      |
-| xAxis                    | xAxis configuration                            |  AxisConfig   |
-| yAxis                    | yAxis configuration                            |  AxisConfig   |
-| chartOrientation         | 'vertical' or 'horizontal'                     |  'vertical'   |
-| plotReservedSpacePercent | Minimum space plots will take inside the chart |      50       |
+| Parameter                | Description                                                   | Default value |
+| ------------------------ | ------------------------------------------------------------- | :-----------: |
+| width                    | Width of the chart                                            |      700      |
+| height                   | Height of the chart                                           |      500      |
+| titlePadding             | Top and Bottom padding of the title                           |      10       |
+| titleFontSize            | Title font size                                               |      20       |
+| showTitle                | Title to be shown or not                                      |     true      |
+| xAxis                    | xAxis configuration                                           |  AxisConfig   |
+| yAxis                    | yAxis configuration                                           |  AxisConfig   |
+| chartOrientation         | 'vertical' or 'horizontal'                                    |  'vertical'   |
+| plotReservedSpacePercent | Minimum space plots will take inside the chart                |      50       |
+| showDataLabel            | Should show the value corresponding to the bar within the bar |     false     |
 
 ### AxisConfig
 
@@ -163,6 +164,7 @@ config:
     xyChart:
         width: 900
         height: 600
+        showDataLabel: true
     themeVariables:
         xyChart:
             titleColor: "#ff0000"
@@ -181,6 +183,7 @@ config:
     xyChart:
         width: 900
         height: 600
+        showDataLabel: true
     themeVariables:
         xyChart:
             titleColor: "#ff0000"

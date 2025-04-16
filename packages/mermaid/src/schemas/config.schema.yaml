@@ -1228,6 +1228,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         default: 10
         minimum: 0
+      showDataLabel:
+        description: Should show the value corresponding to the bar within the bar
+        type: boolean
+        default: false
       showTitle:
         description: Should show the chart title
         type: boolean
@@ -1484,6 +1488,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - bottomMarginAdj
       - useMaxWidth
       - rightAngles
+      - titleColor
+      - titleFontFamily
+      - titleFontSize
     properties:
       diagramMarginX:
         $ref: '#/$defs/C4DiagramConfig/properties/diagramMarginX'
@@ -1496,6 +1503,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: integer
         default: 150
         minimum: 0
+      maxLabelWidth:
+        description: Maximum width of actor labels
+        type: integer
+        default: 360
       width:
         description: Width of actor boxes
         type: integer
@@ -1584,6 +1595,18 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         items:
           type: string
         default: ['#fff']
+      titleColor:
+        description: Color of the title text in Journey Diagrams
+        type: string
+        default: ''
+      titleFontFamily:
+        description: Font family to be used for the title text in Journey Diagrams
+        type: string
+        default: '"trebuchet ms", verdana, arial, sans-serif'
+      titleFontSize:
+        description: Font size to be used for the title text in Journey Diagrams
+        type: string
+        default: '4ex'
 
   TimelineDiagramConfig:
     # added by https://github.com/mermaid-js/mermaid/commit/0d5246fbc730bf15463d7183fe4400a1e2fc492c
