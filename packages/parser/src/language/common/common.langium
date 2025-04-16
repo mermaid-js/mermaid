@@ -27,7 +27,8 @@ terminal NUMBER returns number: FLOAT | INT;
 
 terminal MARKDOWN_STRING returns string:
   /"`([^`\\]|\\.)*`"/ |
-  /'`([^`\\]|\\.)*`'/
+  /'`([^`\\]|\\.)*`'/ |
+  /`([^`\\]|\\.)*`/
 ;
 terminal LITERAL_STRING returns string:
   /"([^"\\]|\\.)*"/ |
