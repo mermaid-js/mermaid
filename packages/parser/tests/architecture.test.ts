@@ -17,6 +17,11 @@ describe('architecture', () => {
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(Architecture);
     });
+
+    it('should not allow architecture-beta & group in same line', () => {
+      const result = parse(`architecture-beta group api(cloud)[API]`);
+      expect(result.parserErrors.length).toBeGreaterThan(0);
+    });
   });
 
   describe('should handle TitleAndAccessibilities', () => {
@@ -101,6 +106,88 @@ describe('architecture', () => {
       expect(groups[0].label).toBeUndefined();
     });
 
+    it('should handle special characters in a label', () => {
+      const context = `architecture-beta
+       group api('cloud')["a.b-t"]`;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const { groups } = result.value;
+      expect(groups).toHaveLength(1);
+      expect(groups[0].id).toBe('api');
+      expect(groups[0].icon).toBe('cloud');
+      expect(groups[0].label).toBe('a.b-t');
+      expect(groups[0].in).toBeUndefined();
+    });
+
+    it('should handle special characters like email in a label', () => {
+      const context = `architecture-beta
+          group api('cloud')["user:password@some_domain.com"]`;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+      const { groups } = result.value;
+      expect(groups).toHaveLength(1);
+      expect(groups[0].id).toBe('api');
+      expect(groups[0].icon).toBe('cloud');
+      expect(groups[0].label).toBe('user:password@some_domain.com');
+      expect(groups[0].in).toBeUndefined();
+    });
+
+    it.each([
+      'group api("cloud")[`The **cat** in the _hat_`]',
+      'group api("cloud")["`The **cat** in the _hat_`"]',
+      'group api("cloud")[\'`The **cat** in the _hat_`\']',
+    ])('should handle markdown in a label', (context: string) => {
+      const str = `architecture-beta
+        ${context}`;
+      const result = parse(str);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+      const { groups } = result.value;
+      expect(groups).toHaveLength(1);
+      expect(groups[0].id).toBe('api');
+      expect(groups[0].icon).toBe('cloud');
+      expect(groups[0].label).toBe('`The **cat** in the _hat_`');
+      expect(groups[0].in).toBeUndefined();
+    });
+    it('should handle markdown in a label', () => {
+      const context = `architecture-beta
+       group api('cloud')["\`The *bat*
+        in the chat\`"]
+      `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const { groups } = result.value;
+      expect(groups).toHaveLength(1);
+      expect(groups[0].id).toBe('api');
+      expect(groups[0].icon).toBe('cloud');
+      expect(groups[0].label).toBe(`\`The *bat*
+        in the chat\``);
+      expect(groups[0].in).toBeUndefined();
+    });
+
+    it('should handle unicode', () => {
+      const result = parse(`architecture-beta
+      group api('cloud')["Начало"]`);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const { groups } = result.value;
+      expect(groups[0].label).toBe('Начало');
+    });
+
+    it('should handle escaping "', () => {
+      const result = parse('architecture-beta\ngroup api("cloud")["\\"Начало\\""]');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+
+      const { groups } = result.value;
+      expect(groups[0].label).toBe('"Начало"');
+    });
     it('should handle a group with icon', () => {
       const context = `architecture-beta
                 group api('cloud')
@@ -498,6 +585,25 @@ describe('architecture', () => {
       expect(result.value.$type).toBe(Architecture);
     });
 
+    it('should handle an architecture diagram with markdown labels', () => {
+      const context = `architecture-beta
+                group api('cloud')['\`**API**\`']
+
+                service db('database')[\`_Database_\`] in api
+                service disk1('disk')[\`_Storage_\`] in api
+                service disk2('disk')[\`_Storage_\`] in api
+                service server('server')[\`_Server_\`] in api
+                service gateway('internet')[\`_Gateway_\`] 
+
+                db L - ["\`**Bold Label**\`"] - R server
+                disk1 T - ["\`**Bold Label**\`"] - B server
+                disk2 T - ["\`_Italic Label_\`"] - B db
+                server T - ["\`_Italic Label_\`"] - B gateway
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.$type).toBe(Architecture);
+    });
     it('should handle a complex architecture diagram', () => {
       const context = `architecture-beta
       group federated('cloud')['Federated Environment']
