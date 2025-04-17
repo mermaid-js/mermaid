@@ -30,6 +30,7 @@ jobs:
         uses: cypress-io/github-action@18a6541367f4580a515371905f499a27a44e8dbe # v6.7.12
         with:
           runTests: false
+
       - name: Cypress run
         uses: cypress-io/github-action@18a6541367f4580a515371905f499a27a44e8dbe # v6.7.12
         id: cypress
@@ -45,13 +46,25 @@ jobs:
           SPLIT: 1
           SPLIT_INDEX: 0
           SPLIT_FILE: 'cypress/timings.json'
+
+      - name: Compare timings
+        id: compare
+        run: |
+          OUTPUT=$(pnpm tsx scripts/compare-timings.ts)
+          echo "$OUTPUT" >> $GITHUB_STEP_SUMMARY
+
+          echo "output<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Commit and create pull request
-        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e
+        uses: peter-evans/create-pull-request@a7b20e1da215b3ef3ccddb48ff65120256ed6226
         with:
           add-paths: |
             cypress/timings.json
           commit-message: 'chore: update E2E timings'
           branch: update-timings
           title: Update E2E Timings
+          body: ${{ steps.compare.outputs.output }}
           delete-branch: true
           sign-commits: true

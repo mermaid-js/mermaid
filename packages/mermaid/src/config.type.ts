@@ -560,6 +560,10 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
    */
   leftMargin?: number;
   /**
+   * Maximum width of actor labels
+   */
+  maxLabelWidth?: number;
+  /**
    * Width of actor boxes
    */
   width?: number;
@@ -617,6 +621,18 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   actorColours?: string[];
   sectionFills?: string[];
   sectionColours?: string[];
+  /**
+   * Color of the title text in Journey Diagrams
+   */
+  titleColor?: string;
+  /**
+   * Font family to be used for the title text in Journey Diagrams
+   */
+  titleFontFamily?: string;
+  /**
+   * Font size to be used for the title text in Journey Diagrams
+   */
+  titleFontSize?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -935,6 +951,10 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Top and bottom space from the chart title
    */
   titlePadding?: number;
+  /**
+   * Should show the value corresponding to the bar within the bar
+   */
+  showDataLabel?: boolean;
   /**
    * Should show the chart title
    */

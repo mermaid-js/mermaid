@@ -500,6 +500,8 @@ function layoutArchitecture(
 }
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram) => {
+  // TODO: Add title support for architecture diagrams
+
   const db = diagObj.db as ArchitectureDB;
 
   const services = db.getServices();
