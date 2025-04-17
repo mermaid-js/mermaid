@@ -293,14 +293,14 @@ describe('when parsing directions', function () {
 
   it('should be possible to use @  syntax to add labels on multi nodes', function () {
     const res = flow.parser.parse(`flowchart TB
-       n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"}
+       n2["label for n2"] &   n4@{ label: "label for n4"}   & n5@{ label: "label for n5"}
       `);
 
     const data4Layout = flow.parser.yy.getData();
     expect(data4Layout.nodes.length).toBe(3);
     expect(data4Layout.nodes[0].label).toEqual('label for n2');
-    expect(data4Layout.nodes[1].label).toEqual('labe for n4');
-    expect(data4Layout.nodes[2].label).toEqual('labe for n5');
+    expect(data4Layout.nodes[1].label).toEqual('label for n4');
+    expect(data4Layout.nodes[2].label).toEqual('label for n5');
   });
 
   it('should be possible to use @  syntax to add labels on multi nodes with edge/link', function () {
@@ -403,13 +403,13 @@ describe('when parsing directions', function () {
   it.skip('should be possible to use @  syntax to add labels with trail spaces', function () {
     const res = flow.parser.parse(
       `flowchart TB
-       n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"} `
+       n2["label for n2"] &   n4@{ label: "label for n4"}   & n5@{ label: "label for n5"} `
     );
 
     const data4Layout = flow.parser.yy.getData();
     expect(data4Layout.nodes.length).toBe(3);
     expect(data4Layout.nodes[0].label).toEqual('label for n2');
-    expect(data4Layout.nodes[1].label).toEqual('labe for n4');
-    expect(data4Layout.nodes[2].label).toEqual('labe for n5');
+    expect(data4Layout.nodes[1].label).toEqual('label for n4');
+    expect(data4Layout.nodes[2].label).toEqual('label for n5');
   });
 });

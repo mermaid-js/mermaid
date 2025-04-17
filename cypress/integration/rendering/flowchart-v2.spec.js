@@ -1080,7 +1080,7 @@ end
     it('should be possible to use @  syntax to add labels on multi nodes', () => {
       imgSnapshotTest(
         `flowchart TB
-       n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"}
+       n2["label for n2"] &   n4@{ label: "label for n4"}   & n5@{ label: "label for n5"}
         `,
         {}
       );
@@ -1088,7 +1088,7 @@ end
     it('should be possible to use @  syntax to add labels with trail spaces and &', () => {
       imgSnapshotTest(
         `flowchart TB
-       n2["label for n2"] &   n4@{ label: "labe for n4"}   & n5@{ label: "labe for n5"}   
+       n2["label for n2"] &   n4@{ label: "label for n4"}   & n5@{ label: "label for n5"}   
         `,
         {}
       );
@@ -1097,8 +1097,8 @@ end
       imgSnapshotTest(
         `flowchart TB
        n2["label for n2"]
-       n4@{ label: "labe for n4"}
-       n5@{ label: "labe for n5"}  
+       n4@{ label: "label for n4"}
+       n5@{ label: "label for n5"}  
         `,
         {}
       );
