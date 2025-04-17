@@ -248,7 +248,7 @@ classE o-- classF : aggregation
 
 Relations can logically represent an N:M association:
 
-```mermaid
+```mermaid-example
 classDiagram
     Animal <|--|> Zebra
 ```
