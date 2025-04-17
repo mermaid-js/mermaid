@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/gitgraph.md](../../packages/mermaid/src/docs/syntax/gitgraph.md).
 
-# Gitgraph Diagrams
+# GitGraph Diagrams
 
 > A Git Graph is a pictorial representation of git commits and git actions(commands) on various branches.
 
@@ -413,7 +413,7 @@ Let see an example:
         commit id:"C"
 ```
 
-## Gitgraph specific configuration options
+## GitGraph specific configuration options
 
 In Mermaid, you have the option to configure the gitgraph diagram. You can configure the following options:
 
