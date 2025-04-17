@@ -598,4 +598,90 @@ gantt
     5    : 0, 5
 ```
 
+### Timeline (with comments, CSS, config in frontmatter, directives)
+
+```mermaid-example
+---
+    # triple line MUST be first to start frontmatter. Then, any consistent indent
+    # yaml style comment
+    displayMode: compact
+    config:
+#        theme: forest
+#        themeCSS: " #item36 { fill: CadetBlue } "
+        gantt:
+            useWidth: 400
+
+---
+%%{
+    init: {
+        'Comment': 'Not official, but common JSON style comment',
+        'Comment': 'Depreciated 2023 for frontmatter, easier to format, overrides frontmatter',
+        'themeCSS': ' #item36 { fill: CadetBlue }    rect[id^=workaround] { height: calc(100% - 50px) ; transform: translate(9px, 25px); y: 0; width: 1.5px; stroke: none; fill: red; } text[id^=workaround] { fill: red; y: 100%; font-size: 15px;}',
+        'gantt':{
+            'usedWidth': 400, 'rightPadding': 0
+        }
+    }
+}%%
+gantt
+    title Sampler
+    dateFormat YYYY
+    axisFormat %y
+    %% comment - this next line doesn't recognise year
+    tickInterval 4year
+
+
+    section Issue19062
+    71   :            item71, 1900, 1930
+    section Issue19401
+    36   :            item36, 1913, 1935 %% themeCSS targets #item36 as id directly
+    section Issue1300
+    94   :            item94, 1910, 1915
+    5    :            item5,  1920, 1925
+    0    : milestone, item0,  1918, 1s
+    9    : vert,              1906, 1s %% not yet official
+    64   : workaround,        1923, 1s %% custom CSS object in themeCSS https://github.com/mermaid-js/mermaid/issues/3250
+```
+
+```mermaid
+---
+    # triple line MUST be first to start frontmatter. Then, any consistent indent
+    # yaml style comment
+    displayMode: compact
+    config:
+#        theme: forest
+#        themeCSS: " #item36 { fill: CadetBlue } "
+        gantt:
+            useWidth: 400
+
+---
+%%{
+    init: {
+        'Comment': 'Not official, but common JSON style comment',
+        'Comment': 'Depreciated 2023 for frontmatter, easier to format, overrides frontmatter',
+        'themeCSS': ' #item36 { fill: CadetBlue }    rect[id^=workaround] { height: calc(100% - 50px) ; transform: translate(9px, 25px); y: 0; width: 1.5px; stroke: none; fill: red; } text[id^=workaround] { fill: red; y: 100%; font-size: 15px;}',
+        'gantt':{
+            'usedWidth': 400, 'rightPadding': 0
+        }
+    }
+}%%
+gantt
+    title Sampler
+    dateFormat YYYY
+    axisFormat %y
+    %% comment - this next line doesn't recognise year
+    tickInterval 4year
+
+
+    section Issue19062
+    71   :            item71, 1900, 1930
+    section Issue19401
+    36   :            item36, 1913, 1935 %% themeCSS targets #item36 as id directly
+    section Issue1300
+    94   :            item94, 1910, 1915
+    5    :            item5,  1920, 1925
+    0    : milestone, item0,  1918, 1s
+    9    : vert,              1906, 1s %% not yet official
+    64   : workaround,        1923, 1s %% custom CSS object in themeCSS https://github.com/mermaid-js/mermaid/issues/3250
+```
+
 <!--- cspell:ignore isadded --->
