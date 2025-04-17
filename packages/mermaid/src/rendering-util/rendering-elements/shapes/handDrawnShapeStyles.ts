@@ -16,7 +16,7 @@ export const solidStateFill = (color: string) => {
 };
 
 export const compileStyles = (node: Node) => {
-  // node.cssCompiledStyles is an array of strings in the form of 'key: value' where jey is the css property and value is the value
+  // node.cssCompiledStyles is an array of strings in the form of 'key: value' where key is the css property and value is the value
   // the array is the styles of node node from the classes it is using
   // node.cssStyles is an array of styles directly set on the node
   // concat the arrays and remove duplicates such that the values from node.cssStyles are used if there are duplicates
