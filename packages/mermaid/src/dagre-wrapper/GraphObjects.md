@@ -22,7 +22,7 @@ flowchart
   C1 --> C2
 ```
 
-The new nodes C1 and C2 are a special type of nodes, clusterNodes. ClusterNodes have have the nodes in the cluster including the cluster attached in a graph object.
+The new nodes C1 and C2 are a special type of nodes, clusterNodes. ClusterNodes have the nodes in the cluster including the cluster attached in a graph object.
 
 When rendering this diagram it is being rendered recursively. The diagram is rendered by the dagre-mermaid:render function which in turn will be used to render the node C1 and the node C2. The result of those renderings will be inserted as nodes in the "root" diagram. With this recursive approach it would be possible to have different layout direction for each cluster.
 
