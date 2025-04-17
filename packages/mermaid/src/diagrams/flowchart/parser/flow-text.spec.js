@@ -596,7 +596,7 @@ describe('[Text] when parsing', () => {
     expect(() => flow.parser.parse(str)).toThrowError("got 'STR'");
   });
 
-  it('should throw error for nested quoatation marks', function () {
+  it('should throw error for nested quotation marks', function () {
     const str = 'graph TD; A["This is a "()" in text"];';
 
     expect(() => flow.parser.parse(str)).toThrowError("Expecting 'SQE'");
