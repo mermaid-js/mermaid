@@ -501,10 +501,10 @@ If you want to propose changes to how the documentation is _organized_, such as 
 
 ### Build Docs
 
-The content of `/docs` folder is built with Github Actions.
+The content of `/docs` folder is built with GitHub Actions.
 
 ```warning
-So as to allow automatic compilation of documentation pages you have to enable Github Actions on your fork first
+So as to allow automatic compilation of documentation pages you have to enable GitHub Actions on your fork first
 ```
 
 ## Submit your pull request
