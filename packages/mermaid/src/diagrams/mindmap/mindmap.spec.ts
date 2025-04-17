@@ -10,7 +10,7 @@ describe('when parsing a mindmap ', function () {
     mindmap.yy.clear();
     setLogLevel('trace');
   });
-  describe('hiearchy', function () {
+  describe('hierarchy', function () {
     it('MMP-1 should handle a simple root definition abc122', function () {
       const str = `mindmap
     root`;

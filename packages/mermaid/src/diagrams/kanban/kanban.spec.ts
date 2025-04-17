@@ -11,7 +11,7 @@ describe('when parsing a kanban ', function () {
     kanban.yy.clear();
     setLogLevel('trace');
   });
-  describe('hiearchy', function () {
+  describe('hierarchy', function () {
     it('KNBN-1 should handle a simple root definition abc122', function () {
       const str = `kanban
     root`;
