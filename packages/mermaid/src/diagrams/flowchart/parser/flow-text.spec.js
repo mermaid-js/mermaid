@@ -429,7 +429,7 @@ describe('[Text] when parsing', () => {
 
       expect(vert.get('C').text).toBe('Начало');
     });
-    it('should handle backslask', function () {
+    it('should handle backslash', function () {
       const res = flow.parser.parse('graph TD;A-->C(c:\\windows);');
 
       const vert = flow.parser.yy.getVertices();
