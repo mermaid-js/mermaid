@@ -671,7 +671,7 @@ describe('Gantt diagram', () => {
       title Gantt Digram
       dateFormat  YYYY-MM-DD
       section Section
-      ;A task with a semiclon           :a1, 2014-01-01, 30d
+      ;A task with a semicolon           :a1, 2014-01-01, 30d
       Another task     :after a1  , 20d
       section Another
       Task in sec      :2014-01-12  , 12d
