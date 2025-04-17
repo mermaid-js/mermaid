@@ -11,8 +11,7 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/mermaid-examples.core.mjs",
       "default": "./dist/mermaid-examples.core.mjs"
-    },
-    "./*": "./*"
+    }
   },
   "files": [
     "dist"
