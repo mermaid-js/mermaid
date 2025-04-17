@@ -133,7 +133,7 @@ Themes for xychart resides inside xychart attribute so to set the variables use 
 config:
   themeVariables:
     xyChart:
-      titleColor: "#ff0000"
+      titleColor: '#ff0000'
 ---
 ```
 
