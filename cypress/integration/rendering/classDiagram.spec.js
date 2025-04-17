@@ -429,7 +429,7 @@ describe('Class diagram', () => {
     classDiagram
       class \`This\nTitle\nHas\nMany\nNewlines\` {
         +String Also
-        -Stirng Many
+        -String Many
         #int Members
         +And()
         -Many()
@@ -443,7 +443,7 @@ describe('Class diagram', () => {
     classDiagram
       class \`This\nTitle\nHas\nMany\nNewlines\` {
         +String Also
-        -Stirng Many
+        -String Many
         #int Members
         +And()
         -Many()
@@ -459,7 +459,7 @@ describe('Class diagram', () => {
       namespace testingNamespace {
       class \`This\nTitle\nHas\nMany\nNewlines\` {
         +String Also
-        -Stirng Many
+        -String Many
         #int Members
         +And()
         -Many()
