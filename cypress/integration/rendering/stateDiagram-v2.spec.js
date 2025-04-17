@@ -552,7 +552,7 @@ style AState fill:#636,border:1px solid red,color:white;
         { logLevel: 0, fontFamily: 'courier' }
       );
     });
-    it(' should let styles take preceedence over classes', () => {
+    it(' should let styles take precedence over classes', () => {
       imgSnapshotTest(
         `
 stateDiagram-v2
