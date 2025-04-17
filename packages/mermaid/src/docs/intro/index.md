@@ -44,7 +44,7 @@ For a more detailed introduction to Mermaid and some of its more basic uses, loo
 
 🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/contributing.md) | 🔌 [Plug-Ins](../ecosystem/integrations-community.md)
 
-> 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/mermaid-js/mermaid/issues/866).
+> 🖖 Keep a steady pulse: [mermaid needs more Collaborators](https://github.com/mermaid-js/mermaid/issues/866).
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!!**
 
