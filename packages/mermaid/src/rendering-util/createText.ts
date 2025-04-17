@@ -190,7 +190,7 @@ export function replaceIconSubstring(text: string) {
   );
 }
 
-// Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to set classes to'nodeLabel' when isNode=true otherwise 'edgeLabel'
+// Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to set classes to 'nodeLabel' when isNode=true otherwise 'edgeLabel'
 // When not using htmlLabels => to set classes to 'title-row' when isTitle=true otherwise 'title-row'
 export const createText = async (
   el,
