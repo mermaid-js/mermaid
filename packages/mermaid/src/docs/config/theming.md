@@ -41,12 +41,6 @@ Example of `init` directive setting the `theme` to `forest`:
     a --> b
 ```
 
-```mermaid
-%%{init: {'theme':'forest'}}%%
-  graph TD
-    a --> b
-```
-
 > **Reminder**: the only theme that can be customized is the `base` theme. The following section covers how to use `themeVariables` for customizations.
 
 ## Customizing Themes with `themeVariables`
@@ -62,36 +56,6 @@ You will need to use the [base](#available-themes) theme as it is the only modif
 Example of modifying `themeVariables` using the `init` directive:
 
 ```mermaid-example
-%%{
-  init: {
-    'theme': 'base',
-    'themeVariables': {
-      'primaryColor': '#BB2528',
-      'primaryTextColor': '#fff',
-      'primaryBorderColor': '#7C0000',
-      'lineColor': '#F8B229',
-      'secondaryColor': '#006100',
-      'tertiaryColor': '#fff'
-    }
-  }
-}%%
-        graph TD
-          A[Christmas] -->|Get money| B(Go shopping)
-          B --> C{Let me think}
-          B --> G[/Another/]
-          C ==>|One| D[Laptop]
-          C -->|Two| E[iPhone]
-          C -->|Three| F[fa:fa-car Car]
-          subgraph section
-            C
-            D
-            E
-            F
-            G
-          end
-```
-
-```mermaid
 %%{
   init: {
     'theme': 'base',

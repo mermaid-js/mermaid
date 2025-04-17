@@ -1,11 +1,9 @@
 import { it, describe, expect } from 'vitest';
 import { db } from './db.js';
 import { parser } from './parser.js';
-import { renderer, relativeRadius, closedRoundCurve } from './renderer.js';
+import { relativeRadius, closedRoundCurve } from './renderer.js';
 import { Diagram } from '../../Diagram.js';
 import mermaidAPI from '../../mermaidAPI.js';
-import { a } from 'vitest/dist/chunks/suite.qtkXWc6R.js';
-import { buildRadarStyleOptions } from './styles.js';
 
 const {
   clear,
