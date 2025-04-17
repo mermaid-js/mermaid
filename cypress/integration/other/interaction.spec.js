@@ -146,7 +146,7 @@ describe('Interaction', () => {
     });
   });
 
-  describe('Interaction - security level other, missspelling', () => {
+  describe('Interaction - security level other, misspelling', () => {
     beforeEach(() => {
       cy.visit('http://localhost:9000/click_security_other.html');
     });
