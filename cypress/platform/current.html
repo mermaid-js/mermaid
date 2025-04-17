@@ -61,9 +61,9 @@
       #quot;elit#quot;."}}
     </div>
     <div class="mermaid2" style="width: 50%; height: 50%">
-      flowchart TB internet nat routeur lb1 lb2 compute1 compute2 subgraph project routeur nat
-      subgraph subnet1 compute1 lb1 end subgraph subnet2 compute2 lb2 end end internet --> routeur
-      routeur --> subnet1 & subnet2 subnet1 & subnet2 --> nat --> internet
+      flowchart TB internet nat router lb1 lb2 compute1 compute2 subgraph project router nat
+      subgraph subnet1 compute1 lb1 end subgraph subnet2 compute2 lb2 end end internet --> router
+      router --> subnet1 & subnet2 subnet1 & subnet2 --> nat --> internet
     </div>
     <div class="mermaid2" style="width: 50%; height: 50%">
       flowchart TD subgraph one[One] subgraph sub_one[Sub One] _sub_one end end subgraph two[Two]
