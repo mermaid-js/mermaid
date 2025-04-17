@@ -319,7 +319,7 @@ You have to call mermaid.initialize.`
     // the rest of the edges should have auto generated ids
     for (const start of _start) {
       for (const end of _end) {
-        //use the id only for last node in _start and and first node in _end
+        //use the id only for last node in _start and first node in _end
         const isLastStart = start === _start[_start.length - 1];
         const isFirstEnd = end === _end[0];
         if (isLastStart && isFirstEnd) {

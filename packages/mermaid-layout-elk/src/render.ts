@@ -713,7 +713,7 @@ export const render = async (
       // check if point is inside the boundary rect
       if (!outsideNode(bounds, point) && !isInside) {
         // First point inside the rect found
-        // Calc the intersection coord between the point anf the last point outside the rect
+        // Calc the intersection coord between the point and the last point outside the rect
         let inter;
 
         if (isDiamond) {
