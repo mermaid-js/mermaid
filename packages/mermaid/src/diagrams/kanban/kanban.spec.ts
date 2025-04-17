@@ -56,7 +56,7 @@ describe('when parsing a kanban ', function () {
       expect(sections[0].label).toEqual('root');
     });
 
-    it('KNBN-4 should not dsitinguis between deeper hierachial levels in thr kanban definition', function () {
+    it('KNBN-4 should not distinguish between deeper hierachial levels in thr kanban definition', function () {
       const str = `kanban
     root
       child1
