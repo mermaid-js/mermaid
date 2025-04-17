@@ -138,8 +138,8 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
-    State1: This a a single line description
-    State2: This a a multi line description
+    State1: This a single line description
+    State2: This a multi line description
     State2: here comes the multi part
     [*] --> State1
     State1 --> State2

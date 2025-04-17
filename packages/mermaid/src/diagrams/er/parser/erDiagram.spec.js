@@ -969,13 +969,13 @@ describe('when parsing ER diagram it...', function () {
       expect(rels[0].roleA).toBe('');
     });
 
-    it('should allow an non-empty quoted label', function () {
+    it('should allow a non-empty quoted label', function () {
       erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : "places"');
       const rels = erDb.getRelationships();
       expect(rels[0].roleA).toBe('places');
     });
 
-    it('should allow an non-empty unquoted label', function () {
+    it('should allow a non-empty unquoted label', function () {
       erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : places');
       const rels = erDb.getRelationships();
       expect(rels[0].roleA).toBe('places');

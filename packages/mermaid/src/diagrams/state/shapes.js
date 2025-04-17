@@ -136,7 +136,7 @@ export const drawDescrState = (g, stateDef) => {
 
 /** Adds the creates a box around the existing content and adds a panel for the id on top of the content. */
 /**
- * Function that creates an title row and a frame around a substate for a composite state diagram.
+ * Function that creates a title row and a frame around a substate for a composite state diagram.
  * The function returns a new d3 svg object with updated width and height properties;
  *
  * @param {any} g The d3 svg object for the substate to framed

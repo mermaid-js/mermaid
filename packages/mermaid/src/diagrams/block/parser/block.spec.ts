@@ -3,7 +3,7 @@ import block from './block.jison';
 import db from '../blockDB.js';
 
 describe('Block diagram', function () {
-  describe('when parsing an block diagram graph it should handle > ', function () {
+  describe('when parsing a block diagram graph it should handle > ', function () {
     beforeEach(function () {
       block.parser.yy = db;
       block.parser.yy.clear();
