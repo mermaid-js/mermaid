@@ -106,7 +106,7 @@ Required edgeData for proper rendering:
 
 | property   | description                                                          |
 | ---------- | -------------------------------------------------------------------- |
-| id         | Id of the edge                                                       |
+| id         | ID of the edge                                                       |
 | arrowHead  | overlap between arrowHead and arrowType?                             |
 | arrowType  | overlap between arrowHead and arrowType?                             |
 | style      |                                                                      |

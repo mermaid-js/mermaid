@@ -143,7 +143,7 @@ export const render = async (
             height: node.height,
           };
           if (node.isGroup) {
-            log.debug('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
+            log.debug('id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
             const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
             // TODO use faster way of cloning
             const clusterNode = JSON.parse(JSON.stringify(node));
@@ -152,10 +152,10 @@ export const render = async (
             clusterNode.width = Math.max(clusterNode.width, node.labelData.width);
             await insertCluster(subgraphEl, clusterNode);
 
-            log.debug('Id (UIO)= ', node.id, node.width, node.shape, node.labels);
+            log.debug('id (UIO)= ', node.id, node.width, node.shape, node.labels);
           } else {
             log.info(
-              'Id NODE = ',
+              'id NODE = ',
               node.id,
               node.x,
               node.y,
