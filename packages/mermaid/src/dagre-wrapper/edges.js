@@ -279,7 +279,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
 
     return res;
   } else {
-    // Intersection onn sides of rect
+    // Intersection on sides of rect
     if (insidePoint.x < outsidePoint.x) {
       r = outsidePoint.x - w - x;
     } else {
