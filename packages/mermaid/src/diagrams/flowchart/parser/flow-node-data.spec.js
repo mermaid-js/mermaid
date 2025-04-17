@@ -124,7 +124,7 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].label).toEqual('D');
   });
 
-  it('should be forgiving with many spaces before teh end', function () {
+  it('should be forgiving with many spaces before the end', function () {
     const res = flow.parser.parse(`flowchart TB
       D@{ shape: rounded         }`);
 
