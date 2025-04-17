@@ -1076,7 +1076,7 @@ end
       );
     });
   });
-  describe('New @ sytax for node metadata edge cases', () => {
+  describe('New @ syntax for node metadata edge cases', () => {
     it('should be possible to use @  syntax to add labels on multi nodes', () => {
       imgSnapshotTest(
         `flowchart TB
