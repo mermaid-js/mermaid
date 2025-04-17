@@ -53,7 +53,7 @@ Of these two approaches the top one renders better and is used when possible. Wh
 
 # Graph objects and their properties
 
-Explains the representation of various objects used to render the flow charts and what the properties mean. This ofc from the perspective of the dagre-wrapper.
+Explains the representation of various objects used to render the flow charts and what the properties mean. This is from the perspective of the dagre-wrapper.
 
 ## node
 
