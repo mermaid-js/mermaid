@@ -402,7 +402,7 @@ stateDiagram-v2
       `
 stateDiagram-v2
     MyState
-    note left of MyState : I am a leftie
+    note left of MyState : I am a lefty
     note right of MyState : I am a rightie
     `,
       {
