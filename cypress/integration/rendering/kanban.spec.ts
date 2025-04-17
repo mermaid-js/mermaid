@@ -62,7 +62,7 @@ describe('Kanban diagram', () => {
       {}
     );
   });
-  it('6: should handle assigments', () => {
+  it('6: should handle assignments', () => {
     imgSnapshotTest(
       `kanban
   id1[Todo]
