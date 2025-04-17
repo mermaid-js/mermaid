@@ -573,7 +573,7 @@ describe('Gantt diagram', () => {
       `
     );
   });
-  it('should render a gantt diagram exculding friday and saturday', () => {
+  it('should render a gantt diagram excluding friday and saturday', () => {
     imgSnapshotTest(
       `gantt
       title A Gantt Diagram
@@ -584,7 +584,7 @@ describe('Gantt diagram', () => {
       A task :a1, 2024-02-28, 10d`
     );
   });
-  it('should render a gantt diagram exculding saturday and sunday', () => {
+  it('should render a gantt diagram excluding saturday and sunday', () => {
     imgSnapshotTest(
       `gantt
       title A Gantt Diagram
