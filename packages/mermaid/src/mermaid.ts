@@ -415,7 +415,12 @@ const render: typeof mermaidAPI.render = (id, text, container) => {
   });
 };
 
-const getDiagramData = (): Pick<ExternalDiagramDefinition, 'id'>[] => {
+/**
+ * Gets the metadata for all registered diagrams.
+ * Currently only the id is returned.
+ * @returns An array of objects with the id of the diagram.
+ */
+const getRegisteredDiagramsMetadata = (): Pick<ExternalDiagramDefinition, 'id'>[] => {
   return Object.keys(detectors).map((id) => ({
     id,
   }));
@@ -443,7 +448,7 @@ export interface Mermaid {
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
   registerIconPacks: typeof registerIconPacks;
-  getDiagramData: typeof getDiagramData;
+  getRegisteredDiagramsMetadata: typeof getRegisteredDiagramsMetadata;
 }
 
 const mermaid: Mermaid = {
@@ -461,7 +466,7 @@ const mermaid: Mermaid = {
   setParseErrorHandler,
   detectType,
   registerIconPacks,
-  getDiagramData,
+  getRegisteredDiagramsMetadata,
 };
 
 export default mermaid;
