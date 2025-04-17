@@ -256,7 +256,7 @@ mermaid.run({
 - Problem showing graph with php on localhost [\#502](https://github.com/knsv/mermaid/issues/502)
 - logLevel's option doesnt work at 7.0.0 [\#501](https://github.com/knsv/mermaid/issues/501)
 - How do I get the log for a render or parse attempt? [\#500](https://github.com/knsv/mermaid/issues/500)
-- Mermaid neutral style style to built in latest release [\#499](https://github.com/knsv/mermaid/issues/499)
+- Mermaid neutral style to built in latest release [\#499](https://github.com/knsv/mermaid/issues/499)
 - Any plans for adding a typescript definition file? [\#495](https://github.com/knsv/mermaid/issues/495)
 - Gantt diagrams too narrow [\#493](https://github.com/knsv/mermaid/issues/493)
 - Flowchart edge labels placement [\#490](https://github.com/knsv/mermaid/issues/490)
