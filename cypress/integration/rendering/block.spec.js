@@ -236,7 +236,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL17: width alignment - blocks shold be equal in width', () => {
+  it('BL17: width alignment - blocks should be equal in width', () => {
     imgSnapshotTest(
       `block-beta
     A("This is the text")
