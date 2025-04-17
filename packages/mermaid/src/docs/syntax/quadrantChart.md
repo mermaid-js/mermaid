@@ -127,7 +127,14 @@ Points are used to plot a circle inside the quadrantChart. The syntax is `<text>
 ## Example on config and theme
 
 ```mermaid-example
-%%{init: {"quadrantChart": {"chartWidth": 400, "chartHeight": 400}, "themeVariables": {"quadrant1TextFill": "#ff0000"} }}%%
+---
+config:
+  quadrantChart:
+    chartWidth: 400
+    chartHeight: 400
+  themeVariables:
+    quadrant1TextFill: "ff0000"
+---
 quadrantChart
   x-axis Urgent --> Not Urgent
   y-axis Not Important --> "Important ❤"
