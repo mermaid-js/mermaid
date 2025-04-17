@@ -20,7 +20,7 @@ describe('Interaction', () => {
     });
 
     it('Graph: should handle a click on a node with a bound url', () => {
-      // When there is a URL, cy.contains selects the a tag instead of the span. The .node is a child of a, so we have to use find instead of parent.
+      // When there is a URL, `cy.contains()` selects the `a` tag instead of the `span` tag. The .node is a child of `a`, so we have to use `find()` instead of `parent`.
       cy.contains('URLTest1').find('.node').click();
       cy.location().should(({ href }) => {
         expect(href).to.eq('http://localhost:9000/empty.html');
