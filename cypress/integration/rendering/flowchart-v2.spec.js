@@ -433,7 +433,7 @@ flowchart TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('63: title on subgraphs should be themable', () => {
+  it('63: title on subgraphs should be themeable', () => {
     imgSnapshotTest(
       `
       %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
