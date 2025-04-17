@@ -20,7 +20,9 @@ describe('examples', () => {
       'flowchart',
       'state',
     ];
-    const diagrams = mermaid.getDiagramData().filter((d) => !skippedDiagrams.includes(d.id));
+    const diagrams = mermaid
+      .getRegisteredDiagramsMetadata()
+      .filter((d) => !skippedDiagrams.includes(d.id));
     expect(diagrams.length).toBeGreaterThan(0);
     for (const diagram of diagrams) {
       const data = diagramData.find((d) => d.id === diagram.id)!;
