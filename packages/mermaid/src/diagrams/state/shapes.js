@@ -37,7 +37,7 @@ export const drawDivider = (g) =>
     .attr('y2', 0);
 
 /**
- * Draws a an end state as a black circle
+ * Draws an end state as a black circle
  *
  * @param {any} g
  * @param {any} stateDef
