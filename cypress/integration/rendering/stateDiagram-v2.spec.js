@@ -565,7 +565,7 @@ style AState fill:#636,border:1px solid red,color:white;
         { logLevel: 0, fontFamily: 'courier' }
       );
     });
-    it(' should allow styles to take effect in stubgraphs', () => {
+    it(' should allow styles to take effect in subgraphs', () => {
       imgSnapshotTest(
         `
   stateDiagram
