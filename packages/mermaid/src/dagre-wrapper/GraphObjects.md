@@ -32,7 +32,7 @@ When rendering this diagram it is being rendered recursively. The diagram is ren
 
 _Data for a clusterNode_
 
-When a cluster has edges to or from some of its nodes leading outside the cluster the approach of recursive rendering can not be used as the layout of the graph needs to take responsibility for nodes outside of the cluster.
+When a cluster has edges to or from some of its nodes leading outside the cluster the approach of recursive rendering cannot be used as the layout of the graph needs to take responsibility for nodes outside of the cluster.
 
 ```mermaid
 flowchart

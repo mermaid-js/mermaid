@@ -40,7 +40,7 @@ describe('when parsing ER diagram it...', function () {
       allowed.forEach((allowedChar) => {
         const singleOccurrence = `Blo${allowedChar}rf`;
         const repeatedOccurrence = `Blo${allowedChar}${allowedChar}rf`;
-        const cannontStartWith = `${allowedChar}Blorf`;
+        const cannotStartWith = `${allowedChar}Blorf`;
         const endsWith = `Blorf${allowedChar}`;
 
         it(`${singleOccurrence} fails if not surrounded by quotes`, function () {
@@ -73,7 +73,7 @@ describe('when parsing ER diagram it...', function () {
           expect(entities.has(name)).toBe(true);
         });
 
-        it(`"${cannontStartWith}" cannot start with the character`, function () {
+        it(`"${cannotStartWith}" cannot start with the character`, function () {
           const name = repeatedOccurrence;
           expect(() => {
             erDiagram.parser.parse(`erDiagram\n "${name}"\n`);
