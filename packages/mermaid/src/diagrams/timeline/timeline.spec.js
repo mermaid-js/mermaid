@@ -30,7 +30,7 @@ describe('when parsing a timeline ', function () {
       });
     });
 
-    it('should handle a two section and two coressponding tasks', function () {
+    it('should handle a two section and two corresponding tasks', function () {
       let str = `timeline
     section abc-123
     task1
