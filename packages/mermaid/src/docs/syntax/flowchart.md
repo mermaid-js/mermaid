@@ -548,7 +548,7 @@ Mermaid also introduces 2 special shapes to enhance your flowcharts: **icon** an
 
 ### Icon Shape
 
-You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions provided [here](../config/icons.md). The syntax for defining an icon shape is as follows:
+You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions to [add custom icons](../config/icons.md). The syntax for defining an icon shape is as follows:
 
 ```mermaid-example
 flowchart TD
