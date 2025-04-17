@@ -197,7 +197,7 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].shape).toEqual('squareRect');
     expect(data4Layout.nodes[0].label).toEqual('This is }');
   });
-  it('should error on non-existent shape', function () {
+  it('should error on nonexistent shape', function () {
     expect(() => {
       flow.parser.parse(`flowchart TB
       A@{ shape: this-shape-does-not-exist }
