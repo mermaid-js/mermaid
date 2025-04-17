@@ -114,7 +114,7 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
    * This is because the `MermaidConfig` type is used as an input, and everything is optional,
    * since all the required values have default values.s
    *
-   * In the future, we should make make the input to Mermaid `Partial<MermaidConfig>`.
+   * In the future, we should make the input to Mermaid `Partial<MermaidConfig>`.
    *
    * @todo TODO: Remove this function when Mermaid releases a new breaking change.
    * @param schema - The input schema.
