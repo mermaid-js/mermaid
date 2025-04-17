@@ -117,7 +117,7 @@ describe('Gantt diagram', () => {
       {}
     );
   });
-  it('should FAIL redering a gantt chart for issue #1060 with invalid date', () => {
+  it('should FAIL rendering a gantt chart for issue #1060 with invalid date', () => {
     imgSnapshotTest(
       `
       gantt
