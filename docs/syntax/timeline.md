@@ -308,7 +308,7 @@ See how the colors are changed to the values specified in the theme variables.
 
 ## Themes
 
-Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](../config/theming.md).
+Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about [theming your diagram](../config/theming.md).
 
 The following are the different pre-defined theme options:
 
