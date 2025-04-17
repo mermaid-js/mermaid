@@ -83,7 +83,7 @@ Mermaid offers a variety of styles or “looks” for your diagrams, allowing yo
 
 You can select a look by adding the look parameter in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid
+```mermaid-example
 ---
 config:
   look: handDrawn
@@ -108,7 +108,7 @@ In addition to customizing the look of your diagrams, Mermaid Chart now allows y
 
 You can specify the layout algorithm directly in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: elk
