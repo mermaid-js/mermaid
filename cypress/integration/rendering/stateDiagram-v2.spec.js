@@ -345,7 +345,7 @@ stateDiagram
       }
     );
   });
-  it('v2 width of compond state should grow with title if title is wider', () => {
+  it('v2 width of compound state should grow with title if title is wider', () => {
     imgSnapshotTest(
       `
 stateDiagram-v2
