@@ -699,7 +699,7 @@ A --> B
       { flowchart: { titleTopMargin: 10 } }
     );
   });
-  it('3192: It should be possieble to render flowcharts with invisible edges', () => {
+  it('3192: It should be possible to render flowcharts with invisible edges', () => {
     imgSnapshotTest(
       `---
 title: Simple flowchart with invisible edges
