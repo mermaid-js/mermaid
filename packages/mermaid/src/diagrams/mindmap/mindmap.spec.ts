@@ -19,7 +19,7 @@ describe('when parsing a mindmap ', function () {
       // console.log('Time for checks', mindmap.yy.getMindmap().descr);
       expect(mindmap.yy.getMindmap().descr).toEqual('root');
     });
-    it('MMP-2 should handle a hierachial mindmap definition', function () {
+    it('MMP-2 should handle a hierarchical mindmap definition', function () {
       const str = `mindmap
     root
       child1
@@ -43,7 +43,7 @@ describe('when parsing a mindmap ', function () {
       expect(mindmap.yy.getMindmap().descr).toEqual('root');
     });
 
-    it('MMP-4 should handle a deeper hierachial mindmap definition', function () {
+    it('MMP-4 should handle a deeper hierarchical mindmap definition', function () {
       const str = `mindmap
     root
       child1
