@@ -30,8 +30,8 @@ import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
 // SSIM actually does not catch minute changes in the image, so it is not as accurate as pixelmatch.
 // addMatchImageSnapshotCommand({
 //   comparisonMethod: 'ssim',
-//   failureThreshould: 0.01,
-//   failureThreshouldType: 'percent',
+//   failureThreshold: 0.01,
+//   failureThresholdType: 'percent',
 //   customDiffConfig: {
 //     ssim: 'fast',
 //   },

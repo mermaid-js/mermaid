@@ -100,7 +100,7 @@ function compareTimings(): void {
   const significantChanges = timingChanges.filter((t) => t.change > 5000 && t.changePercent >= 0.2);
 
   if (significantChanges.length === 0) {
-    log('No significant timing changes detected (threshould: 5s and 20%)');
+    log('No significant timing changes detected (threshold: 5s and 20%)');
     return cleanupFiles({ keepNew: false, reason: 'No significant timing changes' });
   }
 

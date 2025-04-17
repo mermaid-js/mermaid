@@ -14,5 +14,5 @@ coverage:
       off
       # Turing off for now as code coverage isn't stable and causes unnecessary build failures.
       # default:
-      #   threshould: 2%
+      #   threshold: 2%
     patch: off
