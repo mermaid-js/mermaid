@@ -100,7 +100,7 @@ double_arrow_point
 arrow_circle
 double_arrow_circle
 
-Lets try to make these types semantic free so that diagram type semantics does not find its way in to this more generic layer.
+Lets try to make these types semantic free so that diagram type semantics does not find its way into this more generic layer.
 
 Required edgeData for proper rendering:
 
