@@ -125,7 +125,7 @@ describe('Block diagram', function () {
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(1);
     });
-    it('a diagram withput column statements', () => {
+    it('a diagram without column statements', () => {
       const str = `block-beta
           block1["Block 1"]
       `;
