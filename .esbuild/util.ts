@@ -36,7 +36,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
-    // sourcemap: 'linked',
+    sourcemap: 'external',
     ...override,
   };
 };
