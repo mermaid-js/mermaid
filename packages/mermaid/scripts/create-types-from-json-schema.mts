@@ -85,7 +85,7 @@ function validateSchema(jsonSchema: unknown): asserts jsonSchema is JSONSchemaTy
  *
  * @param mermaidConfigSchema - The input JSON Schema.
  */
-async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
+async function generateTypeScript(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
   /**
    * Replace all usages of `allOf` with `extends`.
    *
@@ -108,13 +108,13 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
   }
 
   /**
-   * For backwards compatibility with older Mermaid Typescript defs,
+   * For backwards compatibility with older Mermaid TypeScript defs,
    * we need to make all value optional instead of required.
    *
    * This is because the `MermaidConfig` type is used as an input, and everything is optional,
    * since all the required values have default values.s
    *
-   * In the future, we should make make the input to Mermaid `Partial<MermaidConfig>`.
+   * In the future, we should make the input to Mermaid `Partial<MermaidConfig>`.
    *
    * @todo TODO: Remove this function when Mermaid releases a new breaking change.
    * @param schema - The input schema.
@@ -197,7 +197,7 @@ async function main() {
   validateSchema(configJsonSchema);
 
   // Generate types from JSON Schema
-  await generateTypescript(configJsonSchema);
+  await generateTypeScript(configJsonSchema);
 }
 
 main().catch((error) => {

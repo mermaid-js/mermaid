@@ -64,7 +64,11 @@ flowchart LR
 Use double quotes and backticks "\` text \`" to enclose the markdown text.
 
 ```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
     newLines["`Line1
@@ -548,7 +552,7 @@ Mermaid also introduces 2 special shapes to enhance your flowcharts: **icon** an
 
 ### Icon Shape
 
-You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions provided [here](../config/icons.md). The syntax for defining an icon shape is as follows:
+You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions to [add custom icons](../config/icons.md). The syntax for defining an icon shape is as follows:
 
 ```mermaid-example
 flowchart TD
@@ -976,7 +980,10 @@ flowchart LR
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
 
 ```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
 subgraph "One"
   a("`The **cat**
@@ -1309,7 +1316,9 @@ The _elk_ renderer is an experimental feature.
 You can change the renderer to elk by adding this directive:
 
 ```
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+config:
+  flowchart:
+    defaultRenderer: "elk"
 ```
 
 ```note

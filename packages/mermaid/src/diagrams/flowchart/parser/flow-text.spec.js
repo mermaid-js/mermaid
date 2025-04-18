@@ -429,7 +429,7 @@ describe('[Text] when parsing', () => {
 
       expect(vert.get('C').text).toBe('Начало');
     });
-    it('should handle backslask', function () {
+    it('should handle backslash', function () {
       const res = flow.parser.parse('graph TD;A-->C(c:\\windows);');
 
       const vert = flow.parser.yy.getVertices();
@@ -596,7 +596,7 @@ describe('[Text] when parsing', () => {
     expect(() => flow.parser.parse(str)).toThrowError("got 'STR'");
   });
 
-  it('should throw error for nested quoatation marks', function () {
+  it('should throw error for nested quotation marks', function () {
     const str = 'graph TD; A["This is a "()" in text"];';
 
     expect(() => flow.parser.parse(str)).toThrowError("Expecting 'SQE'");

@@ -7,7 +7,7 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 ## Introduction to Block Diagrams
 
-```mermaid
+```mermaid-example
 block-beta
 columns 1
   db(("DB"))
@@ -458,7 +458,7 @@ block-beta
 ```
 
 **Correction**:
-Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection. Also remember that one of the fundaments for block diagram is to give the author full control of where the boxes are positioned so in the example you need to add a space between the boxes:
+Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection. Also remember that one of the fundamentals for block diagram is to give the author full control of where the boxes are positioned so in the example you need to add a space between the boxes:
 
 ```mermaid-example
 block-beta

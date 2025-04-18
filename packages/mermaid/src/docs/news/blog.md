@@ -10,7 +10,7 @@ Discover how the latest update to the Mermaid Visual Editor transforms class dia
 
 1/16/2025 • 6 mins
 
-Entity relationship (ER) diagrams are a cornerstone of database design, providing a blueprint for modeling your database and enabling clear communication across functions in your organization. As data volumes continue to soar and as AI models demand clean, well-organized data, ER diagrams have become more vital than ever. You can now quickly build ER diagrams with Mermaid Chart, Mermaid AI to Kickstart and fine tune your diagrams . From e-commerce payment flows to social media interactions and healthcare systems, ER diagrams are powering modern, data-driven environments.
+Entity relationship (ER) diagrams are a cornerstone of database design, providing a blueprint for modeling your database and enabling clear communication across functions in your organization. As data volumes continue to soar and as AI models demand clean, well-organized data, ER diagrams have become more vital than ever. You can now quickly build ER diagrams with Mermaid Chart, Mermaid AI to kick-start and fine tune your diagrams . From e-commerce payment flows to social media interactions and healthcare systems, ER diagrams are powering modern, data-driven environments.
 
 ## [Mermaid Whiteboard: Visual Collaboration Made Universal](https://docs.mermaidchart.com/blog/posts/mermaid-whiteboard-visual-collaboration-made-universal)
 
