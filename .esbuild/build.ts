@@ -38,6 +38,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
         minify: true,
         includeLargeFeatures: false,
         metafile: shouldVisualize,
+        sourcemap: false,
       }
     );
   }

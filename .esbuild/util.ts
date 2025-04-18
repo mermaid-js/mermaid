@@ -62,22 +62,21 @@ const getFileName = (
 export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   const {
     core,
-    metafile,
     format,
-    minify,
     options: { name, file, packageName },
     globalName = 'mermaid',
     includeLargeFeatures,
+    ...rest
   } = options;
+
   const external: string[] = ['require', 'fs', 'path'];
   const outFileName = getFileName(name, options);
   const output: BuildOptions = buildOptions({
+    ...rest,
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
     entryPoints: {
       [outFileName]: `src/${file}`,
     },
-    metafile,
-    minify,
     globalName,
     logLevel: 'info',
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
