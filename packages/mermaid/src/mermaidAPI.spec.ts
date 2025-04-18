@@ -610,7 +610,7 @@ describe('mermaidAPI', () => {
 
       let error: any = { message: '' };
       try {
-        // @ts-ignore This is a read-only property. Typescript will not allow assignment, but regular javascript might.
+        // @ts-ignore This is a read-only property. TypeScript will not allow assignment, but regular javascript might.
         mermaidAPI.defaultConfig = config;
       } catch (e) {
         error = e;

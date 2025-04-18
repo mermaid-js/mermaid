@@ -9,7 +9,7 @@ describe('diagram-orchestration', () => {
     expect(detectType('graph TD; A-->B')).toBe('flowchart');
   });
 
-  describe('proper diagram types should be detetced', () => {
+  describe('proper diagram types should be detected', () => {
     beforeAll(() => {
       addDiagrams();
     });

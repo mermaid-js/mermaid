@@ -51,7 +51,7 @@ export class MockedD3 {
   });
 
   // NOTE: The d3 implementation allows for a selector ('beforeSelector' arg below).
-  //   With this mocked implementation, we assume it will always refer to an node id
+  //   With this mocked implementation, we assume it will always refer to a node id
   //   and will always be of the form "#[id of the node to insert before]".
   //   To keep this simple, any leading '#' is removed and the resulting string is the node id searched.
   insert = (type: string, beforeSelector?: string, id = this.id + '-inserted'): MockedD3 => {

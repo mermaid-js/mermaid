@@ -526,7 +526,7 @@ click taskId href URL
 - taskId is the id of the task
 - callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified.
 
-Beginner's tip—a full example using interactive links in an html context:
+Beginner's tip—a full example using interactive links in an HTML context:
 
 ```html
 <body>

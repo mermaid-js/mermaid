@@ -2119,7 +2119,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Width of nodes where text is wrapped.
 
-          When using markdown strings the text ius wrapped automatically, this
+          When using markdown strings the text is wrapped automatically, this
           value sets the max width of a text before it continues on a new line.
         type: number
         default: 200

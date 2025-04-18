@@ -222,7 +222,7 @@ export const merge = (mergeDB: MergeDB): void => {
     const error: any = new Error(
       'Incorrect usage of "merge". Commit with id:' +
         customId +
-        ' already exists, use different custom Id'
+        ' already exists, use different custom id'
     );
     error.hash = {
       text: `merge ${otherBranch} ${customId} ${overrideType} ${customTags?.join(' ')}`,
