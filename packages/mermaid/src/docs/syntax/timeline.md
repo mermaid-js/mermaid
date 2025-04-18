@@ -160,7 +160,13 @@ mermaid.initialize({
 let us look at same example, where we have disabled the multiColor option.
 
 ```mermaid-example
-   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}}%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+  timeline:
+    disableMulticolor: true
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -184,11 +190,17 @@ Example:
 Now let's override the default values for the `cScale0` to `cScale2` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'cScale0': '#ff0000', 'cScaleLabel0': '#ffffff',
-              'cScale1': '#00ff00',
-              'cScale2': '#0000ff', 'cScaleLabel2': '#ffffff'
-       } } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    cScale0: '#ff0000'
+    cScaleLabel0: '#ffffff'
+    cScale1: '#00ff00'
+    cScale2: '#0000ff'
+    cScaleLabel2: '#ffffff'
+---
        timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -221,7 +233,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Base Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -236,7 +252,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Forest Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'forest'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -251,7 +271,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Dark Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'dark'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -266,7 +290,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Default Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -281,7 +309,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Neutral Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'neutral'
+---
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
