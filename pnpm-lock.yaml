@@ -518,6 +518,8 @@ importers:
         specifier: ^11.0.3
         version: 11.0.3
 
+  packages/tiny: {}
+
   tests/webpack:
     dependencies:
       '@mermaid-js/mermaid-example-diagram':

@@ -14,6 +14,7 @@ export interface MermaidBuildOptions extends BuildOptions {
   metafile: boolean;
   format: 'esm' | 'iife';
   options: PackageOptions;
+  includeLargeFeatures: boolean;
 }
 
 export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> = {
@@ -21,6 +22,7 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
   metafile: false,
   core: false,
   format: 'esm',
+  includeLargeFeatures: true,
 } as const;
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
@@ -39,11 +41,17 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
   };
 };
 
-const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOptions) => {
+const getFileName = (
+  fileName: string,
+  { core, format, minify, includeLargeFeatures }: MermaidBuildOptions
+) => {
   if (core) {
     fileName += '.core';
   } else if (format === 'esm') {
     fileName += '.esm';
+  }
+  if (!includeLargeFeatures) {
+    fileName += '.tiny';
   }
   if (minify) {
     fileName += '.min';
@@ -54,25 +62,27 @@ const getFileName = (fileName: string, { core, format, minify }: MermaidBuildOpt
 export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   const {
     core,
-    metafile,
     format,
-    minify,
     options: { name, file, packageName },
     globalName = 'mermaid',
+    includeLargeFeatures,
+    ...rest
   } = options;
+
   const external: string[] = ['require', 'fs', 'path'];
   const outFileName = getFileName(name, options);
   const output: BuildOptions = buildOptions({
+    ...rest,
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
     entryPoints: {
       [outFileName]: `src/${file}`,
     },
-    metafile,
-    minify,
     globalName,
     logLevel: 'info',
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
     define: {
+      // This needs to be stringified for esbuild
+      includeLargeFeatures: `${includeLargeFeatures}`,
       'import.meta.vitest': 'undefined',
     },
   });

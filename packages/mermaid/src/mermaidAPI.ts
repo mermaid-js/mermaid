@@ -5,7 +5,6 @@
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
-// @ts-ignore: TODO Fix ts errors
 import DOMPurify from 'dompurify';
 import isEmpty from 'lodash-es/isEmpty.js';
 import packageJson from '../package.json' assert { type: 'json' };
