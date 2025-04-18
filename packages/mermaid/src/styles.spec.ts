@@ -29,9 +29,10 @@ import timeline from './diagrams/timeline/styles.js';
 import mindmap from './diagrams/mindmap/styles.js';
 import packet from './diagrams/packet/styles.js';
 import block from './diagrams/block/styles.js';
+import radar from './diagrams/radar/styles.js';
 import themes from './themes/index.js';
 
-async function checkValidStylisCSSStyleSheet(stylisString: string) {
+function checkValidStylisCSSStyleSheet(stylisString: string) {
   const cssString = serialize(compile(`#my-svg-id{${stylisString}}`), stringify);
   const errors = validate(cssString, 'this-file-was-created-by-tests.css') as Error[];
 
@@ -51,6 +52,7 @@ async function checkValidStylisCSSStyleSheet(stylisString: string) {
 
   if (unexpectedErrors.length > 0) {
     throw new Error(
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       `The given CSS string was invalid: ${errors}.\n\n` +
         'Copy the below CSS into https://jigsaw.w3.org/css-validator/validator to help debug where the invalid CSS is:\n\n' +
         `Original CSS value was ${cssString}`
@@ -75,7 +77,7 @@ describe('styles', () => {
 
       const styles = getStyles(diagramType, '', getConfig().themeVariables);
 
-      await checkValidStylisCSSStyleSheet(styles);
+      checkValidStylisCSSStyleSheet(styles);
     });
 
     /**
@@ -98,6 +100,7 @@ describe('styles', () => {
         block,
         timeline,
         packet,
+        radar,
       })) {
         test(`should return a valid style for diagram ${diagramId} and theme ${themeId}`, async () => {
           const { default: getStyles, addStylesForDiagram } = await import('./styles.js');
@@ -110,7 +113,7 @@ describe('styles', () => {
             themes[themeId].getThemeVariables()
           );
 
-          await checkValidStylisCSSStyleSheet(styles);
+          checkValidStylisCSSStyleSheet(styles);
         });
       }
     }

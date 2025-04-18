@@ -1,5 +1,101 @@
 # Blog
 
+## [GUI for editing Mermaid Class Diagrams](https://docs.mermaidchart.com/blog/posts/gui-for-editing-mermaid-class-diagrams)
+
+1/17/2025 • 5 mins
+
+Discover how the latest update to the Mermaid Visual Editor transforms class diagramming. With new intuitive tools for creating and editing diagrams, dynamic relationship management, and customizable layouts, this feature-packed enhancement streamlines your diagramming experience like never before.
+
+## [7 ER Diagram Examples For Database Modeling from Mermaid AI](https://docs.mermaidchart.com/blog/posts/7-er-diagram-examples-for-database-modeling-from-mermaid-ai)
+
+1/16/2025 • 6 mins
+
+Entity relationship (ER) diagrams are a cornerstone of database design, providing a blueprint for modeling your database and enabling clear communication across functions in your organization. As data volumes continue to soar and as AI models demand clean, well-organized data, ER diagrams have become more vital than ever. You can now quickly build ER diagrams with Mermaid Chart, Mermaid AI to kick-start and fine tune your diagrams . From e-commerce payment flows to social media interactions and healthcare systems, ER diagrams are powering modern, data-driven environments.
+
+## [Mermaid Whiteboard: Visual Collaboration Made Universal](https://docs.mermaidchart.com/blog/posts/mermaid-whiteboard-visual-collaboration-made-universal)
+
+12/6/2024 • 2 mins
+
+The Mermaid Whiteboard combines Mermaid syntax with a drag-and-drop interface, making it easier for teams to create, edit, and refine diagrams together. Whether you prefer working with code, visuals, Mermaid AI or all three, this tool adapts to your needs while keeping everything tied to Mermaid’s syntax. Key Features 1. Dual-Mode Editing Switch seamlessly between […]
+
+## [Mermaid 11.4 is out: New Features and Kanban Diagramming](https://www.mermaidchart.com/blog/posts/mermaid-11-4-is-out-new-features-and-kanban-diagramming)
+
+October 31, 2024 · 2 mins
+
+Mermaid 11.4 brings enhanced functionality with the introduction of Kanban diagrams, allowing users to create visual workflows with status columns and task details.
+
+## [How To Build an ER Diagram with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-build-an-er-diagram-with-mermaid-chart)
+
+October 24, 2024 · 4 mins
+
+An entity relationship (ER) diagram acts like a blueprint for your database. This makes ER diagrams effective tools for anyone dealing with complex databases, data modeling, and AI model training.
+
+## [Expanding the Horizons of Mermaid Flowcharts: Introducing 30 New Shapes!](https://www.mermaidchart.com/blog/posts/new-mermaid-flowchart-shapes/)
+
+24 September 2024 · 5 mins
+
+Discover 30 new shapes in Mermaid flowcharts, offering enhanced clarity, customization, and versatility for more dynamic and expressive visualizations.
+
+## [Introducing Architecture Diagrams in Mermaid](https://www.mermaidchart.com/blog/posts/mermaid-supports-architecture-diagrams/)
+
+2 September 2024 · 2 mins
+
+Discover the fresh new and unique Neo and Hand-Drawn looks for Mermaid Diagrams, while still offering the classic look you love.
+
+## [Mermaid v11 is out!](https://www.mermaidchart.com/blog/posts/mermaid-v11/)
+
+23 August 2024 · 2 mins
+
+Mermaid v11 introduces advanced layout options, new diagram types, and enhanced customization features, thanks to the incredible contributions from our community.
+
+## [Mermaid Innovation - Introducing New Looks for Mermaid Diagrams](https://www.mermaidchart.com/blog/posts/mermaid-innovation-introducing-new-looks-for-mermaid-diagrams/)
+
+6 August 2024 ·3 mins
+
+Discover the fresh new and unique Neo and Hand-Drawn looks for Mermaid Diagrams, while still offering the classic look you love.
+
+## [The Mermaid Chart Plugin for Jira: A How-To User Guide](https://www.mermaidchart.com/blog/posts/the-mermaid-chart-plugin-for-jira-a-how-to-user-guide/)
+
+31 July 2024 · 5 mins
+
+The Mermaid Chart plugin for Jira has arrived!
+
+## [Mermaid AI Is Here to Change the Game For Diagram Creation](https://www.mermaidchart.com/blog/posts/mermaid-ai-is-here-to-change-the-game-for-diagram-creation/)
+
+22 July 2024 · 5 mins
+
+The Mermaid AI chat interface
+
+## [How to Make a Sequence Diagram with Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-make-a-sequence-diagram-in-mermaid-chart-step-by-step-guide/)
+
+8 July 2024 · 6 mins
+
+Sequence diagrams are important for communicating complex systems in a clear and concise manner.
+
+## [How to Use the New “Comments” Feature in Mermaid Chart](https://www.mermaidchart.com/blog/posts/how-to-use-the-new-comments-feature-in-mermaid-chart/)
+
+2 July 2024 · 3 mins
+
+How to Use the New Comments Feature in Mermaid Chart
+
+## [How to Use the official Mermaid Chart for Confluence app](https://www.mermaidchart.com/blog/posts/how-to-use-the-official-mermaid-chart-for-confluence-app/)
+
+21 May 2024 · 4 mins
+
+It doesn’t matter if you’re a data enthusiast, software engineer, or visual storyteller; our Confluence app can allow you to embed Mermaid Chart diagrams — and dynamically edit them — within your Confluence pages.
+
+## [How to Choose the Right Documentation Software](https://www.mermaidchart.com/blog/posts/how-to-choose-the-right-documentation-software/)
+
+7 May 2024 · 5 mins
+
+How to Choose the Right Documentation Software. Reliable and efficient documentation software is crucial in the fast-paced world of software development.
+
+## [AI in software diagramming: What trends will define the future?](https://www.mermaidchart.com/blog/posts/ai-in-software-diagramming/)
+
+24 April 2024 · 5 mins
+
+Artificial intelligence (AI) tools are changing the way developers work.
+
 ## [Mermaid Chart Unveils Visual Editor for Sequence Diagrams](https://www.mermaidchart.com/blog/posts/mermaid-chart-unveils-visual-editor-for-sequence-diagrams/)
 
 8 April 2024 · 5 mins

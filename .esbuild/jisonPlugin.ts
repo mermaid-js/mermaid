@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { transformJison } from '../.build/jisonTransformer.js';
-import { Plugin } from 'esbuild';
+import type { Plugin } from 'esbuild';
 
 export const jisonPlugin: Plugin = {
   name: 'jison',

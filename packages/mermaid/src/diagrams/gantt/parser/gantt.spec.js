@@ -1,7 +1,6 @@
 import { parser } from './gantt.jison';
 import ganttDb from '../ganttDb.js';
-import { convert } from '../../../tests/util.js';
-import { vi } from 'vitest';
+import { vi, it } from 'vitest';
 const spyOn = vi.spyOn;
 const parserFnConstructor = (str) => {
   return () => {
@@ -150,14 +149,14 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[3].id).toEqual('d');
     expect(tasks[3].task).toEqual('task D');
   });
-  it.each(convert`
+  it.each`
     tags                     | milestone | done     | crit     | active
     ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
     ${'done'}                | ${false}  | ${true}  | ${false} | ${false}
     ${'crit'}                | ${false}  | ${false} | ${true}  | ${false}
     ${'active'}              | ${false}  | ${false} | ${false} | ${true}
     ${'crit,milestone,done'} | ${true}   | ${true}  | ${true}  | ${false}
-  `)('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
+  `('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
     const str =
       'gantt\n' +
       'dateFormat YYYY-MM-DD\n' +
@@ -256,4 +255,15 @@ row2`;
       expect(ganttDb.getWeekday()).toBe(day);
     }
   );
+
+  it.each(['__proto__', 'constructor'])('should allow for a link to %s id', (prop) => {
+    expect(() =>
+      parser.parse(`gantt
+    dateFormat YYYY-MM-DD
+    section Section
+    A task :${prop}, 2024-10-01, 3d
+    click ${prop} href "https://mermaid.js.org/"
+    `)
+    ).not.toThrow();
+  });
 });

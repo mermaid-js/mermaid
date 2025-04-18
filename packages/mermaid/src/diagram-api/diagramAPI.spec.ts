@@ -29,7 +29,7 @@ describe('DiagramAPI', () => {
       `[UnknownDiagramError: No diagram type detected matching given configuration for text: loki diagram]`
     );
     const detector: DiagramDetector = (str: string) => {
-      return str.match('loki') !== null;
+      return /loki/.exec(str) !== null;
     };
     registerDiagram(
       'loki',

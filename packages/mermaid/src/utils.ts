@@ -1,5 +1,5 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import type { CurveFactory } from 'd3';
+import type { BaseType, CurveFactory } from 'd3';
 import {
   curveBasis,
   curveBasisClosed,
@@ -32,8 +32,7 @@ import type { MermaidConfig } from './config.type.js';
 import memoize from 'lodash-es/memoize.js';
 import merge from 'lodash-es/merge.js';
 import { directiveRegex } from './diagram-api/regexes.js';
-import type { D3Element } from './mermaidAPI.js';
-import type { Point, TextDimensionConfig, TextDimensions } from './types.js';
+import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
 
 export const ZERO_WIDTH_SPACE = '\u200b';
 
@@ -178,11 +177,7 @@ export const detectDirective = function (
       if (match.index === directiveRegex.lastIndex) {
         directiveRegex.lastIndex++;
       }
-      if (
-        (match && !type) ||
-        (type && match[1] && match[1].match(type)) ||
-        (type && match[2] && match[2].match(type))
-      ) {
+      if ((match && !type) || (type && match[1]?.match(type)) || (type && match[2]?.match(type))) {
         const type = match[1] ? match[1] : match[2];
         const args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
         result.push({ type, args });
@@ -342,6 +337,9 @@ export const calculatePoint = (points: Point[], distanceToTraverse: number): Poi
   for (const point of points) {
     if (prevPoint) {
       const vectorDistance = distance(point, prevPoint);
+      if (vectorDistance === 0) {
+        return prevPoint;
+      }
       if (vectorDistance < remainingDistance) {
         remainingDistance -= vectorDistance;
       } else {
@@ -572,7 +570,7 @@ export const wrapLabel: (label: string, maxWidth: number, config: WrapLabelConfi
       if (common.lineBreakRegex.test(label)) {
         return label;
       }
-      const words = label.split(' ');
+      const words = label.split(' ').filter(Boolean);
       const completedLines: string[] = [];
       let nextLine = '';
       words.forEach((word, index) => {
@@ -647,7 +645,7 @@ const breakString: (
  * This calculates the text's height, taking into account the wrap breaks and both the statically
  * configured height, width, and the length of the text (in pixels).
  *
- * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
+ * If the wrapped text has greater height, we extend the height, so it's value won't overflow.
  *
  * @param text - The text to measure
  * @param config - The config for fontSize, fontFamily, and fontWeight all impacting the
@@ -778,7 +776,7 @@ export const entityDecode = function (html: string): string {
   // Escape HTML before decoding for HTML Entities
   html = escape(html).replace(/%26/g, '&').replace(/%23/g, '#').replace(/%3B/g, ';');
   decoder.innerHTML = html;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
   return unescape(decoder.textContent!);
 };
 
@@ -829,6 +827,7 @@ export const insertTitle = (
   parent
     .append('text')
     .text(title)
+    .attr('text-anchor', 'middle')
     .attr('x', bounds.x + bounds.width / 2)
     .attr('y', -titleTopMargin)
     .attr('class', cssClass);
@@ -929,3 +928,35 @@ export const decodeEntities = function (text: string): string {
 export const isString = (value: unknown): value is string => {
   return typeof value === 'string';
 };
+
+export const getEdgeId = (
+  from: string,
+  to: string,
+  {
+    counter = 0,
+    prefix,
+    suffix,
+  }: {
+    counter?: number;
+    prefix?: string;
+    suffix?: string;
+  },
+  id?: string
+) => {
+  if (id) {
+    return id;
+  }
+  return `${prefix ? `${prefix}_` : ''}${from}_${to}_${counter}${suffix ? `_${suffix}` : ''}`;
+};
+
+/**
+ * D3's `selection.attr` method doesn't officially support `undefined`.
+ *
+ * However, it seems if you do pass `undefined`, it seems to be treated as `null`
+ * (e.g. it removes the attribute).
+ */
+export function handleUndefinedAttr(
+  attrValue: Parameters<d3.Selection<BaseType, unknown, HTMLElement, any>['attr']>[1] | undefined
+) {
+  return attrValue ?? null;
+}

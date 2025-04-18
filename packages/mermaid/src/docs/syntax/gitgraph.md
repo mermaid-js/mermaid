@@ -1,4 +1,4 @@
-# Gitgraph Diagrams
+# GitGraph Diagrams
 
 > A Git Graph is a pictorial representation of git commits and git actions(commands) on various branches.
 
@@ -271,7 +271,7 @@ Let see an example:
         commit id:"C"
 ```
 
-## Gitgraph specific configuration options
+## GitGraph specific configuration options
 
 In Mermaid, you have the option to configure the gitgraph diagram. You can configure the following options:
 
@@ -290,7 +290,13 @@ Sometimes you may want to hide the branch names and lines from the diagram. You 
 Usage example:
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': false}} }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+  gitGraph:
+    showBranches: false
+---
       gitGraph
         commit
         branch hotfix
@@ -346,7 +352,13 @@ You can change the layout of the commit labels by using the `rotateCommitLabel` 
 Usage example: Rotated commit labels
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'rotateCommitLabel': true}} }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+  gitGraph:
+    rotateCommitLabel: true
+---
 gitGraph
   commit id: "feat(api): ..."
   commit id: "a"
@@ -367,7 +379,13 @@ gitGraph
 Usage example: Horizontal commit labels
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'rotateCommitLabel': false}} }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+  gitGraph:
+    rotateCommitLabel: false
+---
 gitGraph
   commit id: "feat(api): ..."
   commit id: "a"
@@ -392,7 +410,14 @@ Sometimes you may want to hide the commit labels from the diagram. You can do th
 Usage example:
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': false,'showCommitLabel': false}} }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+  gitGraph:
+    showBranches: false
+    showCommitLabel: false
+---
       gitGraph
         commit
         branch hotfix
@@ -444,7 +469,15 @@ Sometimes you may want to customize the name of the main/default branch. You can
 Usage example:
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true,'mainBranchName': 'MetroLine1'}} }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+    mainBranchName: 'MetroLine1'
+---
       gitGraph
         commit id:"NewYork"
         commit id:"Dallas"
@@ -486,7 +519,14 @@ To fully control the order of all the branches, you must define `order` for all 
 Usage example:
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true}} }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+---
       gitGraph
       commit
       branch test1 order: 3
@@ -500,7 +540,15 @@ Look at the diagram, all the branches are following the order defined.
 Usage example:
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true,'mainBranchOrder': 2}} }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+    mainBranchOrder: 2
+---
       gitGraph
       commit
       branch test1 order: 3
@@ -571,7 +619,7 @@ Usage example:
        commit
 ```
 
-### Bottom to Top (`BT:`) (v<MERMAID_RELEASE_VERSION>+)
+### Bottom to Top (`BT:`) (v11.0.0+)
 
 In `BT` (**Bottom-to-Top**) orientation, the commits run from bottom to top of the graph and branches are arranged side-by-side.
 
@@ -636,7 +684,7 @@ gitGraph:
 
 ## Themes
 
-Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](../config/theming.md).
+Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about [theming your diagram](../config/theming.md).
 
 The following are the different pre-defined theme options:
 
@@ -652,7 +700,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Base Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'base' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'base'
+---
       gitGraph
         commit
         branch hotfix
@@ -700,7 +752,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Forest Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'forest'
+---
       gitGraph
         commit
         branch hotfix
@@ -748,7 +804,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Default Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+---
       gitGraph
         commit type:HIGHLIGHT
         branch hotfix
@@ -796,7 +856,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Dark Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'dark'
+---
       gitGraph
         commit
         branch hotfix
@@ -844,7 +908,11 @@ Let's put them to use, and see how our sample diagram looks in different themes:
 ### Neutral Theme
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'neutral'
+---
       gitGraph
         commit
         branch hotfix
@@ -898,7 +966,11 @@ For understanding let us take a sample diagram with theme `default`, the default
 See how the default theme is used to set the colors for the branches:
 
 ```mermaid-example
-%%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+---
        gitGraph
        commit
        branch develop
@@ -929,16 +1001,20 @@ Example:
 Now let's override the default values for the `git0` to `git3` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'git0': '#ff0000',
-              'git1': '#00ff00',
-              'git2': '#0000ff',
-              'git3': '#ff00ff',
-              'git4': '#00ffff',
-              'git5': '#ffff00',
-              'git6': '#ff00ff',
-              'git7': '#00ffff'
-       } } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+      'git0': '#ff0000'
+      'git1': '#00ff00'
+      'git2': '#0000ff'
+      'git3': '#ff00ff'
+      'git4': '#00ffff'
+      'git5': '#ffff00'
+      'git6': '#ff00ff'
+      'git7': '#00ffff'
+---
        gitGraph
        commit
        branch develop
@@ -965,18 +1041,22 @@ Lets see how the default theme is used to set the colors for the branch labels:
 Now let's override the default values for the `gitBranchLabel0` to `gitBranchLabel2` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-        'gitBranchLabel0': '#ffffff',
-        'gitBranchLabel1': '#ffffff',
-        'gitBranchLabel2': '#ffffff',
-        'gitBranchLabel3': '#ffffff',
-        'gitBranchLabel4': '#ffffff',
-        'gitBranchLabel5': '#ffffff',
-        'gitBranchLabel6': '#ffffff',
-        'gitBranchLabel7': '#ffffff',
-        'gitBranchLabel8': '#ffffff',
-        'gitBranchLabel9': '#ffffff'
-  } } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    'gitBranchLabel0': '#ffffff'
+    'gitBranchLabel1': '#ffffff'
+    'gitBranchLabel2': '#ffffff'
+    'gitBranchLabel3': '#ffffff'
+    'gitBranchLabel4': '#ffffff'
+    'gitBranchLabel5': '#ffffff'
+    'gitBranchLabel6': '#ffffff'
+    'gitBranchLabel7': '#ffffff'
+    'gitBranchLabel8': '#ffffff'
+    'gitBranchLabel9': '#ffffff'
+---
   gitGraph
     checkout main
     branch branch1
@@ -1002,10 +1082,14 @@ Example:
 Now let's override the default values for the `commitLabelColor` to `commitLabelBackground` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'commitLabelColor': '#ff0000',
-              'commitLabelBackground': '#00ff00'
-       } } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    commitLabelColor: '#ff0000'
+    commitLabelBackground: '#00ff00'
+---
        gitGraph
        commit
        branch develop
@@ -1031,11 +1115,15 @@ Example:
 Now let's override the default values for the `commitLabelFontSize` variable:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'commitLabelColor': '#ff0000',
-              'commitLabelBackground': '#00ff00',
-              'commitLabelFontSize': '16px'
-       } } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    commitLabelColor: '#ff0000'
+    commitLabelBackground: '#00ff00'
+    commitLabelFontSize: '16px'
+---
        gitGraph
        commit
        branch develop
@@ -1061,11 +1149,15 @@ Example:
 Now let's override the default values for the `tagLabelFontSize` variable:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'commitLabelColor': '#ff0000',
-              'commitLabelBackground': '#00ff00',
-              'tagLabelFontSize': '16px'
-       } } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    commitLabelColor: '#ff0000'
+    commitLabelBackground: '#00ff00'
+    tagLabelFontSize: '16px'
+---
        gitGraph
        commit
        branch develop
@@ -1090,11 +1182,15 @@ Example:
 Now let's override the default values for the `tagLabelColor`, `tagLabelBackground` and to `tagLabelBorder` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'tagLabelColor': '#ff0000',
-              'tagLabelBackground': '#00ff00',
-              'tagLabelBorder': '#0000ff'
-       } } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    tagLabelColor: '#ff0000'
+    tagLabelBackground: '#00ff00'
+    tagLabelBorder: '#0000ff'
+---
        gitGraph
        commit
        branch develop
@@ -1121,9 +1217,13 @@ Example:
 Now let's override the default values for the `git0` to `git3` variables:
 
 ```mermaid-example
-    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'gitInv0': '#ff0000'
-       } } }%%
+---
+config:
+  logLevel: 'debug'
+  theme: 'default'
+  themeVariables:
+    'gitInv0': '#ff0000'
+---
        gitGraph
        commit
        branch develop

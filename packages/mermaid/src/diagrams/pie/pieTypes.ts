@@ -34,7 +34,7 @@ export interface PieStyleOptions {
   pieOpacity: string;
 }
 
-export type Sections = Record<string, number>;
+export type Sections = Map<string, number>;
 
 export interface D3Section {
   label: string;

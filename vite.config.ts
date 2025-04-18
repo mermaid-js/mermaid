@@ -10,7 +10,6 @@ export default defineConfig({
   plugins: [
     jison(),
     jsonSchemaPlugin(), // handles .schema.yaml JSON Schema files
-    // @ts-expect-error According to the type definitions, rollup plugins are incompatible with vite
     typescript({ compilerOptions: { declaration: false } }),
   ],
   test: {
@@ -25,6 +24,7 @@ export default defineConfig({
       exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
     },
     includeSource: ['packages/*/src/**/*.{js,ts}'],
+    clearMocks: true,
   },
   build: {
     /** If you set esmExternals to true, this plugins assumes that

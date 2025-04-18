@@ -1,5 +1,5 @@
-import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import { FlowDB } from '../flowDb.js';
+import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -8,23 +8,23 @@ setConfig({
 
 describe('parsing a flow chart with markdown strings', function () {
   beforeEach(function () {
-    flow.parser.yy = flowDb;
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
   });
 
-  it('mardown formatting in nodes and labels', function () {
+  it('markdown formatting in nodes and labels', function () {
     const res = flow.parser.parse(`flowchart
 A["\`The cat in **the** hat\`"]-- "\`The *bat* in the chat\`" -->B["The dog in the hog"] -- "The rat in the mat" -->C;`);
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(vert['A'].id).toBe('A');
-    expect(vert['A'].text).toBe('The cat in **the** hat');
-    expect(vert['A'].labelType).toBe('markdown');
-    expect(vert['B'].id).toBe('B');
-    expect(vert['B'].text).toBe('The dog in the hog');
-    expect(vert['B'].labelType).toBe('string');
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('A').text).toBe('The cat in **the** hat');
+    expect(vert.get('A').labelType).toBe('markdown');
+    expect(vert.get('B').id).toBe('B');
+    expect(vert.get('B').text).toBe('The dog in the hog');
+    expect(vert.get('B').labelType).toBe('string');
     expect(edges.length).toBe(2);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
@@ -37,7 +37,7 @@ A["\`The cat in **the** hat\`"]-- "\`The *bat* in the chat\`" -->B["The dog in t
     expect(edges[1].text).toBe('The rat in the mat');
     expect(edges[1].labelType).toBe('string');
   });
-  it('mardown formatting in subgraphs', function () {
+  it('markdown formatting in subgraphs', function () {
     const res = flow.parser.parse(`flowchart LR
 subgraph "One"
   a("\`The **cat**

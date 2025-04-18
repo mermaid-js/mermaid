@@ -41,7 +41,18 @@ exclude = [
 "https://bundlephobia.com",
 
 # Chrome webstore migration issue. Temporary
-"https://chromewebstore.google.com"
+"https://chromewebstore.google.com",
+
+# Drupal 403
+"https://(www.)?drupal.org",
+
+# Swimm returns 404, even though the link is valid
+"https://docs.swimm.io",
+
+# Timeout
+"https://huehive.co",
+"https://foswiki.org",
+"https://www.gnu.org",
 ]
 
 # Exclude all private IPs from checking.

@@ -1,7 +1,7 @@
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 describe('C4 diagram', () => {
-  it('should render a simple C4Context diagram', () => {
+  it('C4.1 should render a simple C4Context diagram', () => {
     imgSnapshotTest(
       `
       C4Context
@@ -30,9 +30,8 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
-  it('should render a simple C4Container diagram', () => {
+  it('C4.2 should render a simple C4Container diagram', () => {
     imgSnapshotTest(
       `
       C4Container
@@ -50,9 +49,8 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
-  it('should render a simple C4Component diagram', () => {
+  it('C4.3 should render a simple C4Component diagram', () => {
     imgSnapshotTest(
       `
       C4Component
@@ -69,9 +67,8 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
-  it('should render a simple C4Dynamic diagram', () => {
+  it('C4.4 should render a simple C4Dynamic diagram', () => {
     imgSnapshotTest(
       `
       C4Dynamic
@@ -93,9 +90,8 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
-  it('should render a simple C4Deployment diagram', () => {
+  it('C4.5 should render a simple C4Deployment diagram', () => {
     imgSnapshotTest(
       `
       C4Deployment
@@ -117,6 +113,5 @@ describe('C4 diagram', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
 });

@@ -20,6 +20,10 @@ const getStyles = (options) =>
 .label text {
   fill: ${options.classText};
 }
+
+.labelBkg {
+  background: ${options.mainBkg};
+}
 .edgeLabel .label span {
   background: ${options.mainBkg};
 }

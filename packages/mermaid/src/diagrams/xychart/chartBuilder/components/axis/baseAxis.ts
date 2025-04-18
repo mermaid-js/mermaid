@@ -58,7 +58,7 @@ export abstract class BaseAxis implements Axis {
 
   abstract recalculateScale(): void;
 
-  abstract getTickValues(): Array<string | number>;
+  abstract getTickValues(): (string | number)[];
 
   getTickDistance(): number {
     const range = this.getRange();

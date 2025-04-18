@@ -351,7 +351,7 @@ export const extractor = (graph, depth) => {
     return;
   }
   // For clusters without incoming and/or outgoing edges, create a new cluster-node
-  // containing the nodes and edges in the custer in a new graph
+  // containing the nodes and edges in the cluster in a new graph
   // for (let i = 0;)
   let nodes = graph.nodes();
   let hasChildren = false;
@@ -399,7 +399,7 @@ export const extractor = (graph, depth) => {
 
       const graphSettings = graph.graph();
       let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
-      if (clusterDb[node] && clusterDb[node].clusterData && clusterDb[node].clusterData.dir) {
+      if (clusterDb[node]?.clusterData?.dir) {
         dir = clusterDb[node].clusterData.dir;
         log.warn('Fixing dir', clusterDb[node].clusterData.dir, dir);
       }

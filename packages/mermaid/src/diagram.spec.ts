@@ -30,12 +30,12 @@ const getDummyDiagram = (id: string, title?: string): Awaited<ReturnType<Diagram
 
 describe('diagram detection', () => {
   test('should detect inbuilt diagrams', async () => {
-    const graph = (await Diagram.fromText('graph TD; A-->B')) as Diagram;
+    const graph = await Diagram.fromText('graph TD; A-->B');
     expect(graph).toBeInstanceOf(Diagram);
     expect(graph.type).toBe('flowchart-v2');
-    const sequence = (await Diagram.fromText(
+    const sequence = await Diagram.fromText(
       'sequenceDiagram; Alice->>+John: Hello John, how are you?'
-    )) as Diagram;
+    );
     expect(sequence).toBeInstanceOf(Diagram);
     expect(sequence.type).toBe('sequence');
   });
@@ -85,7 +85,7 @@ describe('diagram detection', () => {
     );
   });
 
-  test('should consider entity codes when present in diagram defination', async () => {
+  test('should consider entity codes when present in diagram definition', async () => {
     const diagram = await Diagram.fromText(`sequenceDiagram
     A->>B: I #9829; you!
     B->>A: I #9829; you #infin; times more!`);

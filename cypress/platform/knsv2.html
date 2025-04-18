@@ -4,44 +4,65 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/font-awesome.min.css"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
       rel="stylesheet"
     />
     <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        background: #333;
+        /* background: #333; */
         font-family: 'Arial';
+        /* color: white; */
         /* font-size: 18px !important; */
       }
+
       h1 {
         color: grey;
       }
-      .mermaid {
-        border: 1px solid #ddd;
-        margin: 10px;
-      }
+
       .mermaid2 {
         display: none;
       }
+
       .mermaid svg {
         /* font-size: 18px !important; */
-        /* background-color: #efefef; */
-        background-color: #333;
-        background-image: radial-gradient(#333 51%, transparent 91%),
-          radial-gradient(#333 51%, transparent 91%);
+
+        /* background-color: #efefef;
+        background-image: radial-gradient(#fff 51%, transparent 91%),
+          radial-gradient(#fff 51%, transparent 91%);
         background-size: 20px 20px;
-        background-position: 0 0, 10px 10px;
-        background-repeat: repeat;
-        border: 2px solid rgb(131, 142, 205);
+        background-position:
+          0 0,
+          10px 10px;
+        background-repeat: repeat; */
       }
+
       .malware {
         position: fixed;
         bottom: 0;
@@ -57,558 +78,400 @@
         font-family: monospace;
         font-size: 72px;
       }
+
+      pre {
+        width: 100%;
+      }
+
       /* tspan {
-        font-size: 6px !important;
+              font-size: 6px !important;
+            } */
+      /* .flowchart-link {
+        stroke-dasharray: 4, 4 !important;
+        animation: flow 1s linear infinite;
+        animation: dashdraw 4.93282s linear infinite;
+        stroke-width: 2px !important;
       } */
+
+      @keyframes dashdraw {
+        from {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /*stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation:    4.932820s linear infinite;*/
+      /* stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation: dashdraw 4.932820s linear infinite;*/
     </style>
   </head>
+
   <body>
-    <pre id="diagram" class="mermaid">
-      block-beta
-  blockArrowId<["Label"]>(right)
-  blockArrowId2<["Label"]>(left)
-  blockArrowId3<["Label"]>(up)
-  blockArrowId4<["Label"]>(down)
-  blockArrowId5<["Label"]>(x)
-  blockArrowId6<["Label"]>(y)
-  blockArrowId6<["Label"]>(x, down)
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  block:e:4
-    columns 2
-      f
-      g
-  end
-
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  block:e:4
-    columns 2
-      f
-      g
-      h
-  end
-
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  columns 4
-  a b c d
-  block:e:4
-    columns 2
-      f
-      g
-      h
-  end
-  i:4
-
-    </pre>
-    <pre id="diagram" class="mermaid2">
-flowchart LR
-  X-- "y" -->z
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-columns 5
-   A space B
-   A --x B
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-columns 3
-  a["A wide one"] b:2 c:2 d
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  block:e
-      f
-  end
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  columns 3
-  a:3
-  block:e:3
-      f
-  end
-  g
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  columns 3
-  a:3
-  block:e:3
-      f
-      g
-  end
-  h
-  i
-  j
-
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-columns 3
-  a b:2
-  block:e:3
-      f
-  end
-  g h i
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-columns 3
-  a b c
-  e:3
-  f g h
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-columns 1
-  db(("DB"))
-  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
-  block:ID
-    A
-    B["A wide one in the middle"]
-    C
-  end
-  space
-  D
-  ID --> D
-  C --> D
-  style B fill:#f9F,stroke:#333,stroke-width:4px
-    </pre>
-    <pre id="diagram" class="mermaid">
-block-beta
-  columns 5
-  A1:3
-  A2:1
-  A3
-  B1 B2 B3:3
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-  block
-    D
-    E
-  end
-  db("This is the text in the box")
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-
-      block
-        D
-      end
-      A["A: I am a wide one"]
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    A["square"]
-    B("rounded")
-    C(("circle"))
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    A>"rect_left_inv_arrow"]
-    B{"diamond"}
-    C{{"hexagon"}}
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    A(["stadium"])
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    %% A[["subroutine"]]
-    %% B[("cylinder")]
-    C>"surprise"]
-    </pre>
-    <pre id="diagram" class="mermaid2">
-block-beta
-    A[/"lean right"/]
-    B[\"lean left"\]
-    C[/"trapezoid"\]
-    D[\"trapezoid"/]
-    </pre>
-
-    <pre id="diagram" class="mermaid2">
-flowchart
-      B
-      style B fill:#f9F,stroke:#333,stroke-width:4px
-    </pre>
-
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
       flowchart LR
-      a1 -- apa --> b1
+        AB["apa@apa@"] --> B(("`apa@apa`"))
     </pre>
-
-    <pre id="diagram" class="mermaid2">
-flowchart RL
-  subgraph "`one`"
-    id
-  end
+    <pre id="diagram4" class="mermaid">
+      flowchart
+        D(("for D"))
     </pre>
-    <pre id="diagram" class="mermaid2">
-flowchart RL
-    subgraph "`one`"
-      a1 -- l1 --> a2
-      a1 -- l2 --> a2
-    end
-    </pre>
-    <pre id="diagram" class="mermaid2">
-flowchart
-id["`A root with a long text that wraps to keep the node size in check. A root with a long text that wraps to keep the node size in check`"]</pre
-    >
-    <pre id="diagram" class="mermaid2">
-flowchart LR
-    A[A text that needs to be wrapped wraps to another line]
-    B[A text that needs to be<br/>wrapped wraps to another line]
-    C["`A text that needs to be wrapped to another line`"]</pre>
-    <pre id="diagram" class="mermaid2">
-flowchart LR
-    C["`A text
-        that needs
-        to be wrapped
-        in another
-        way`"]
-  </pre
-    >
-    <pre id="diagram" class="mermaid2">
-      classDiagram-v2
-        note "I love this diagram!\nDo you love it?"
-    </pre>
-    <pre id="diagram" class="mermaid2">
-    stateDiagram-v2
-    State1: The state with a note with minus - and plus + in it
-    note left of State1
-      Important information! You can write
-      notes with . and  in them.
-    end note    </pre
-    >
-    <pre id="diagram" class="mermaid2">
-mindmap
-root
-  Child3(A node with an icon and with a long text that wraps to keep the node size in check)
-</pre
-    >
-    <pre id="diagram" class="mermaid2">
-      %%{init: {"theme": "forest"} }%%
-mindmap
-    id1[**Start2**<br/>end]
-      id2[**Start2**<br />end]
-      %% Another comment
-      id3[**Start2**<br>end] %% Comment
-      id4[**Start2**<br >end<br    >the very end]
-    </pre>
-    <pre id="diagram" class="mermaid2">
-mindmap
-    id1["`**Start2**
-    second line 😎 with long text that is wrapping to the next line`"]
-      id2["`Child **with bold** text`"]
-      id3["`Children of which some
-      is using *italic type of* text`"]
-      id4[Child]
-      id5["`Child
-      Row
-      and another
-      `"]
-    </pre>
-    <pre id="diagram" class="mermaid2">
-mindmap
-    id1("`**Root**`"]
-      id2["`A formatted text... with **bold** and *italics*`"]
-      id3[Regular labels works as usual]
-      id4["`Emojis and unicode works too: 🤓
-      शान्तिः سلام  和平 `"]
-
-    </pre>
-    <pre id="diagram" class="mermaid2">
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
-flowchart TB
-  %% I could not figure out how to use double quotes in labels in Mermaid
-  subgraph ibm[IBM Espresso CPU]
-    core0[IBM PowerPC Broadway Core 0]
-    core1[IBM PowerPC Broadway Core 1]
-    core2[IBM PowerPC Broadway Core 2]
-
-    rom[16 KB ROM]
-
-    core0 --- core2
-
-    rom --> core2
-  end
-
-  subgraph amd["`**AMD** Latte GPU`"]
-    mem[Memory & I/O Bridge]
-    dram[DRAM Controller]
-    edram[32 MB EDRAM MEM1]
-    rom[512 B SEEPROM]
-
-    sata[SATA IF]
-    exi[EXI]
-
-    subgraph gx[GX]
-      sram[3 MB 1T-SRAM]
-    end
-
-    radeon[AMD Radeon R7xx GX2]
-
-    mem --- gx
-    mem --- radeon
-
-    rom --- mem
-
-    mem --- sata
-    mem --- exi
-
-    dram --- sata
-    dram --- exi
-  end
-
-  ddr3[2 GB DDR3 RAM MEM2]
-
-  mem --- ddr3
-  dram --- ddr3
-  edram --- ddr3
-
-  core1 --- mem
-
-  exi --- rtc
-  rtc{{rtc}}
-</pre
-    >
-    <pre id="diagram" class="mermaid2">
-%%{init: {"flowchart": {"defaultRenderer": "elk", "htmlLabels": false}} }%%
-flowchart TB
-  %% I could not figure out how to use double quotes in labels in Mermaid
-  subgraph ibm[IBM Espresso CPU]
-    core0[IBM PowerPC Broadway Core 0]
-    core1[IBM PowerPC Broadway Core 1]
-    core2[IBM PowerPC Broadway Core 2]
-
-    rom[16 KB ROM]
-
-    core0 --- core2
-
-    rom --> core2
-  end
-
-  subgraph amd["`**AMD** Latte GPU`"]
-    mem[Memory & I/O Bridge]
-    dram[DRAM Controller]
-    edram[32 MB EDRAM MEM1]
-    rom[512 B SEEPROM]
-
-    sata[SATA IF]
-    exi[EXI]
-
-    subgraph gx[GX]
-      sram[3 MB 1T-SRAM]
-    end
-
-    radeon[AMD Radeon R7xx GX2]
-
-    mem --- gx
-    mem --- radeon
-
-    rom --- mem
-
-    mem --- sata
-    mem --- exi
-
-    dram --- sata
-    dram --- exi
-  end
-
-  ddr3[2 GB DDR3 RAM MEM2]
-
-  mem --- ddr3
-  dram --- ddr3
-  edram --- ddr3
-
-  core1 --- mem
-
-  exi --- rtc
-  rtc{{rtc}}
-</pre
-    >
-
-    <br />
-    <pre id="diagram" class="mermaid2">
-flowchart TB
-  %% I could not figure out how to use double quotes in labels in Mermaid
-  subgraph ibm[IBM Espresso CPU]
-    core0[IBM PowerPC Broadway Core 0]
-    core1[IBM PowerPC Broadway Core 1]
-    core2[IBM PowerPC Broadway Core 2]
-
-    rom[16 KB ROM]
-
-    core0 --- core2
-
-    rom --> core2
-  end
-
-  subgraph amd[AMD Latte GPU]
-    mem[Memory & I/O Bridge]
-    dram[DRAM Controller]
-    edram[32 MB EDRAM MEM1]
-    rom[512 B SEEPROM]
-
-    sata[SATA IF]
-    exi[EXI]
-
-    subgraph gx[GX]
-      sram[3 MB 1T-SRAM]
-    end
-
-    radeon[AMD Radeon R7xx GX2]
-
-    mem --- gx
-    mem --- radeon
-
-    rom --- mem
-
-    mem --- sata
-    mem --- exi
-
-    dram --- sata
-    dram --- exi
-  end
-
-  ddr3[2 GB DDR3 RAM MEM2]
-
-  mem --- ddr3
-  dram --- ddr3
-  edram --- ddr3
-
-  core1 --- mem
-
-  exi --- rtc
-  rtc{{rtc}}
-</pre
-    >
-    <br />
-    &nbsp;
-    <pre id="diagram" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
       flowchart LR
-  B1 --be be--x B2
-  B1 --bo bo--o B3
-  subgraph Ugge
-      B2
-      B3
-      subgraph inner
-          B4
-          B5
-      end
-      subgraph inner2
-        subgraph deeper
-          C4
-          C5
-        end
-        C6
-      end
-
-      B4 --> C4
-
-      B3 -- X --> B4
-      B2 --> inner
-
-      C4 --> C5
-  end
-
-  subgraph outer
-      B6
-  end
-  B6 --> B5
-  </pre
-    >
-    <pre id="diagram" class="mermaid2">
-sequenceDiagram
-    Customer->>+Stripe: Makes a payment request
-    Stripe->>+Bank: Forwards the payment request to the bank
-    Bank->>+Customer: Asks for authorization
-    Customer->>+Bank: Provides authorization
-    Bank->>+Stripe: Sends a response with payment details
-    Stripe->>+Merchant: Sends a notification of payment receipt
-    Merchant->>+Stripe: Confirms the payment
-    Stripe->>+Customer: Sends a confirmation of payment
-    Customer->>+Merchant: Receives goods or services
-        </pre
-    >
-    <pre id="diagram" class="mermaid2">
-mindmap
-  root((mindmap))
-    Origins
-      Long history
-      ::icon(fa fa-book)
-      Popularisation
-        British popular psychology author Tony Buzan
-    Research
-      On effectiveness<br/>and features
-      On Automatic creation
-        Uses
-            Creative techniques
-            Strategic planning
-            Argument mapping
-    Tools
-      Pen and paper
-      Mermaid
+        A e1@==> B
+        e1@{ animate: true}
     </pre>
-    <br />
-    <pre id="diagram" class="mermaid2">
-  example-diagram
+    <pre id="diagram4" class="mermaid">
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-width:2,stroke-dasharray:10\,8,stroke-dashoffset:-180,animation: edge-animation-frame 6s linear infinite, stroke-linecap: round
+  class e1 animate
+    </pre>
+    <h2>infinite</h2>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
+  class e1 animate
+    </pre>
+    <h2>Mermaid - edge-animation-slow</h2>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  A e1@--> B
+e1@{ animation: fast}
+    </pre>
+    <h2>Mermaid - edge-animation-fast</h2>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  A e1@--> B
+  classDef animate stroke-dasharray: 1000,stroke-dashoffset: 1000,animation: dash 10s linear;
+  class e1 edge-animation-fast
     </pre>
 
-    <!-- <div id="cy"></div> -->
-    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
-    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
-    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
-    <!-- <script src="./mermaid.js"></script> -->
+    <pre id="diagram4" class="mermaid2">
 
+info    </pre
+    >
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+      flowchart LR
+      a
+      subgraph s0["APA"]
+      subgraph s8["APA"]
+      subgraph s1["APA"]
+        D{"X"}
+        E[Q]
+      end
+      subgraph s3["BAPA"]
+        F[Q]
+        I
+      end
+            D --> I
+            D --> I
+            D --> I
+
+      I{"X"}
+      end
+      end
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+      flowchart LR
+      a
+        D{"Use the editor"}
+
+      D -- Mermaid js --> I{"fa:fa-code Text"}
+      D-->I
+      D-->I
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+ subgraph s1["Untitled subgraph"]
+        n1["Evaluate"]
+        n2["Option 1"]
+        n3["Option 2"]
+        n4["fa:fa-car Option 3"]
+  end
+ subgraph s2["Untitled subgraph"]
+        n5["Evaluate"]
+        n6["Option 1"]
+        n7["Option 2"]
+        n8["fa:fa-car Option 3"]
+  end
+    A["Start"] -- Some text --> B("Continue")
+    B --> C{"Evaluate"}
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
+    n1 -- One --> n2
+    n1 -- Two --> n3
+    n1 -- Three --> n4
+    n5 -- One --> n6
+    n5 -- Two --> n7
+    n5 -- Three --> n8
+    n1@{ shape: diam}
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: rect}
+    n5@{ shape: diam}
+    n6@{ shape: rect}
+    n7@{ shape: rect}
+    n8@{ shape: rect}
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+ subgraph s1["Untitled subgraph"]
+        n1["Evaluate"]
+        n2["Option 1"]
+  end
+    n1 -- One --> n2
+
+
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    A{A} --> B & C
+</pre
+    >
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    A{A} --> B & C
+    subgraph "subbe"
+      A
+    end
+</pre
+    >
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+---
+flowchart LR
+    n2@{ shape: rect}
+    n3@{ shape: rect}
+    n4@{ shape: rect}
+    A["Start"] -- Some text --> B("Continue")
+    B --> C{"Evaluate"}
+    C -- One --> D["Option 1"]
+    C -- Two --> E["Option 2"]
+    C -- Three --> F["fa:fa-car Option 3"]
+    %% C@{ shape: hexagon}
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  kanban:
+    ticketBaseUrl: 'https://github.com/your-repo/issues/#TICKET#'
+---
+kanban
+  Backlog
+    task1[📝 Define project requirements]@{ ticket: a101 }
+  To Do
+    task2[🔍 Research technologies]@{ ticket: a102 }
+  Review
+    task4[🔍 Code review for login feature]@{ ticket: a104 }
+  Done
+    task5[✅ Deploy initial version]@{ ticket: a105 }
+  In Progress
+    task3[💻 Develop login feature]@{ ticket: 103 }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Default] --> A@{ icon: 'fa:bell', form: 'rounded' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Style] --> A@{ icon: 'fa:bell', form: 'rounded' }
+style A fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Class] --> A@{ icon: 'fa:bell', form: 'rounded' }
+A:::AClass
+classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  nA[Class] --> A@{ icon: 'logos:aws', form: 'rounded' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Default] --> A@{ icon: 'fa:bell', form: 'square' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Style] --> A@{ icon: 'fa:bell', form: 'square' }
+style A fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Class] --> A@{ icon: 'fa:bell', form: 'square' }
+A:::AClass
+classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  nA[Class] --> A@{ icon: 'logos:aws', form: 'square' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Default] --> A@{ icon: 'fa:bell', form: 'circle' }
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Style] --> A@{ icon: 'fa:bell', form: 'circle' }
+style A fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+nA[Class] --> A@{ icon: 'fa:bell', form: 'circle' }
+A:::AClass
+classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  nA[Class] --> A@{ icon: 'logos:aws', form: 'circle' }
+  A:::AClass
+  classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+flowchart LR
+  nA[Style] --> A@{ icon: 'logos:aws', form: 'circle' }
+  style A fill:#f9f,stroke:#333,stroke-width:4px
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+kanban
+  id2[In progress]
+    docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  kanban:
+    ticketBaseUrl: 'https://mermaidchart.atlassian.net/browse/#TICKET#'
+    # sectionWidth: 300
+---
+kanban
+  Todo
+    [Create Documentation]
+    docs[Create Blog about the new diagram]
+  id7[In progress]
+    id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]
+  id9[Ready for deploy]
+    id8[Design grammar]@{ assigned: 'knsv' }
+  id10[Ready for test]
+    id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }
+    id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
+  id11[Done]
+    id5[define getData]
+    id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}
+    id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }
+
+  id12[Can't reproduce]
+    id3[Weird flickering in Firefox]
+    </pre>
     <script type="module">
-      // import mindmap from '../../packages/mermaid-mindmap/src/detector';
-      // import example from '../../packages/mermaid-example-diagram/src/mermaid-example-diagram.core.mjs';
       import mermaid from './mermaid.esm.mjs';
-      // await mermaid.registerExternalDiagrams([example]);
-      mermaid.parseError = function (err, hash) {
-        // console.error('Mermaid error: ', err);
+      import layouts from './mermaid-layout-elk.esm.mjs';
+
+      const staticBellIconPack = {
+        prefix: 'fa6-regular',
+        icons: {
+          bell: {
+            body: '<path fill="currentColor" d="M224 0c-17.7 0-32 14.3-32 32v19.2C119 66 64 130.6 64 208v25.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416h400c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6c-28.3-35.5-43.8-79.6-43.8-125V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32m0 96c61.9 0 112 50.1 112 112v25.4c0 47.9 13.9 94.6 39.7 134.6H72.3c25.8-40 39.7-86.7 39.7-134.6V208c0-61.9 50.1-112 112-112m64 352H160c0 17 6.7 33.3 18.7 45.3S207 512 224 512s33.3-6.7 45.3-18.7S288 465 288 448"/>',
+            width: 448,
+          },
+        },
+        width: 512,
+        height: 512,
       };
-      // mermaid.initialize({
-      //   // theme: 'forest',
-      //   startOnLoad: true,
-      //   logLevel: 0,
-      //   flowchart: {
-      //     // defaultRenderer: 'elk',
-      //     useMaxWidth: false,
-      //     // htmlLabels: false,
-      //     htmlLabels: true,
-      //   },
-      //   // htmlLabels: false,
-      //   gantt: {
-      //     useMaxWidth: false,
-      //   },
-      //   useMaxWidth: false,
-      // });
-      mermaid.initialize({
-        theme: 'dark',
-        startOnLoad: true,
-        logLevel: 0,
-      });
+
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos@1/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () => staticBellIconPack,
+        },
+      ]);
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
       function callback() {
         alert('It worked');
       }
+      await mermaid.initialize({
+        // theme: 'base',
+        // theme: 'default',
+        // theme: 'forest',
+        // handDrawnSeed: 12,
+        // look: 'handDrawn',
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        // layout: 'dagre',
+        // layout: 'elk',
+        // layout: 'fixed',
+        // htmlLabels: false,
+        flowchart: { titleTopMargin: 10 },
+
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        // fontFamily: 'courier',
+        fontFamily: 'arial',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        kanban: {
+          htmlLabels: false,
+        },
+        fontSize: 12,
+        logLevel: 0,
+        securityLevel: 'loose',
+        callback,
+      });
+
       mermaid.parseError = function (err, hash) {
         console.error('In parse error:');
         console.error(err);
       };
-      // mermaid.test1('first_slow', 1200).then((r) => console.info(r));
-      // mermaid.test1('second_fast', 200).then((r) => console.info(r));
-      // mermaid.test1('third_fast', 200).then((r) => console.info(r));
-      // mermaid.test1('forth_slow', 1200).then((r) => console.info(r));
     </script>
   </body>
 </html>

@@ -10,17 +10,15 @@
 
 /* eslint-disable no-console */
 
-import { readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import _Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
+import { JSON_SCHEMA, load } from 'js-yaml';
+import { compile, type JSONSchema } from 'json-schema-to-typescript';
 import assert from 'node:assert';
 import { execFile } from 'node:child_process';
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { promisify } from 'node:util';
-
-import { load, JSON_SCHEMA } from 'js-yaml';
-import { compile, type JSONSchema } from 'json-schema-to-typescript';
 import prettier from 'prettier';
-
-import _Ajv2019, { type JSONSchemaType } from 'ajv/dist/2019.js';
 
 // Workaround for wrong AJV types, see
 // https://github.com/ajv-validator/ajv/issues/2132#issuecomment-1290409907
@@ -33,28 +31,6 @@ import type { MermaidConfig } from '../src/config.type.js';
 const verifyOnly = process.argv.includes('--verify');
 /** If `true`, automatically `git add` any changes (i.e. during `pnpm run pre-commit`)*/
 const git = process.argv.includes('--git');
-
-/**
- * All of the keys in the mermaid config that have a mermaid diagram config.
- */
-const MERMAID_CONFIG_DIAGRAM_KEYS = [
-  'flowchart',
-  'sequence',
-  'gantt',
-  'journey',
-  'class',
-  'state',
-  'er',
-  'pie',
-  'quadrantChart',
-  'xyChart',
-  'requirement',
-  'mindmap',
-  'timeline',
-  'gitGraph',
-  'c4',
-  'sankey',
-];
 
 /**
  * Loads the MermaidConfig JSON schema YAML file.
@@ -109,7 +85,7 @@ function validateSchema(jsonSchema: unknown): asserts jsonSchema is JSONSchemaTy
  *
  * @param mermaidConfigSchema - The input JSON Schema.
  */
-async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
+async function generateTypeScript(mermaidConfigSchema: JSONSchemaType<MermaidConfig>) {
   /**
    * Replace all usages of `allOf` with `extends`.
    *
@@ -121,7 +97,7 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
    * @returns The schema with `allOf` replaced with `extends`.
    */
   function replaceAllOfWithExtends(schema: JSONSchemaType<Record<string, any>>) {
-    if (schema['allOf']) {
+    if (schema.allOf) {
       const { allOf, ...schemaWithoutAllOf } = schema;
       return {
         ...schemaWithoutAllOf,
@@ -132,13 +108,13 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
   }
 
   /**
-   * For backwards compatibility with older Mermaid Typescript defs,
+   * For backwards compatibility with older Mermaid TypeScript defs,
    * we need to make all value optional instead of required.
    *
    * This is because the `MermaidConfig` type is used as an input, and everything is optional,
    * since all the required values have default values.s
    *
-   * In the future, we should make make the input to Mermaid `Partial<MermaidConfig>`.
+   * In the future, we should make the input to Mermaid `Partial<MermaidConfig>`.
    *
    * @todo TODO: Remove this function when Mermaid releases a new breaking change.
    * @param schema - The input schema.
@@ -148,53 +124,9 @@ async function generateTypescript(mermaidConfigSchema: JSONSchemaType<MermaidCon
     return { ...schema, required: [] };
   }
 
-  /**
-   * This is a temporary hack to control the order the types are generated in.
-   *
-   * By default, json-schema-to-typescript outputs the $defs in the order they
-   * are used, then any unused schemas at the end.
-   *
-   * **The only purpose of this function is to make the `git diff` simpler**
-   * **We should remove this later to simplify the code**
-   *
-   * @todo TODO: Remove this function in a future PR.
-   * @param schema - The input schema.
-   * @returns The schema with all `$ref`s removed.
-   */
-  function unrefSubschemas(schema: JSONSchemaType<Record<string, any>>) {
-    return {
-      ...schema,
-      properties: Object.fromEntries(
-        Object.entries(schema.properties).map(([key, propertySchema]) => {
-          if (MERMAID_CONFIG_DIAGRAM_KEYS.includes(key)) {
-            const { $ref, ...propertySchemaWithoutRef } = propertySchema as JSONSchemaType<unknown>;
-            if ($ref === undefined) {
-              throw Error(
-                `subSchema ${key} is in MERMAID_CONFIG_DIAGRAM_KEYS but does not have a $ref field`
-              );
-            }
-            const [
-              _root, // eslint-disable-line @typescript-eslint/no-unused-vars
-              _defs, // eslint-disable-line @typescript-eslint/no-unused-vars
-              defName,
-            ] = $ref.split('/');
-            return [
-              key,
-              {
-                ...propertySchemaWithoutRef,
-                tsType: defName,
-              },
-            ];
-          }
-          return [key, propertySchema];
-        })
-      ),
-    };
-  }
-
   assert.ok(mermaidConfigSchema.$defs);
   const modifiedSchema = {
-    ...unrefSubschemas(removeRequired(mermaidConfigSchema)),
+    ...removeRequired(mermaidConfigSchema),
 
     $defs: Object.fromEntries(
       Object.entries(mermaidConfigSchema.$defs).map(([key, subSchema]) => {
@@ -265,7 +197,7 @@ async function main() {
   validateSchema(configJsonSchema);
 
   // Generate types from JSON Schema
-  await generateTypescript(configJsonSchema);
+  await generateTypeScript(configJsonSchema);
 }
 
 main().catch((error) => {

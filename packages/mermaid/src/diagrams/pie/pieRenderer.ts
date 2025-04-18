@@ -1,17 +1,17 @@
 import type d3 from 'd3';
-import { scaleOrdinal, pie as d3pie, arc } from 'd3';
-import { log } from '../../logger.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { cleanAndMerge, parseFontSize } from '../../utils.js';
-import type { DrawDefinition, Group, SVG } from '../../diagram-api/types.js';
-import type { D3Section, PieDB, Sections } from './pieTypes.js';
+import { arc, pie as d3pie, scaleOrdinal } from 'd3';
 import type { MermaidConfig, PieDiagramConfig } from '../../config.type.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+import type { DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
+import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
+import { cleanAndMerge, parseFontSize } from '../../utils.js';
+import type { D3Section, PieDB, Sections } from './pieTypes.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
   // Compute the position of each group on the pie:
-  const pieData: D3Section[] = Object.entries(sections)
+  const pieData: D3Section[] = [...sections.entries()]
     .map((element: [string, number]): D3Section => {
       return {
         label: element[0],
@@ -46,7 +46,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const height = 450;
   const pieWidth: number = height;
   const svg: SVG = selectSvgElement(id);
-  const group: Group = svg.append('g');
+  const group: SVGGroup = svg.append('g');
   group.attr('transform', 'translate(' + pieWidth / 2 + ',' + height / 2 + ')');
 
   const { themeVariables } = globalConfig;
@@ -105,8 +105,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .attr('class', 'pieCircle');
 
   let sum = 0;
-  Object.keys(sections).forEach((key: string): void => {
-    sum += sections[key];
+  sections.forEach((section) => {
+    sum += section;
   });
   // Now add the percentage.
   // Use the centroid method to get the best coordinates.
@@ -119,6 +119,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
       return ((datum.data.value / sum) * 100).toFixed(0) + '%';
     })
     .attr('transform', (datum: d3.PieArcDatum<D3Section>): string => {
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       return 'translate(' + labelArcGenerator.centroid(datum) + ')';
     })
     .style('text-anchor', 'middle')

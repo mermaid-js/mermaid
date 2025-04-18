@@ -11,7 +11,7 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-  it('2: should render a simple gitgraph with commit on main branch with Id', () => {
+  it('2: should render a simple gitgraph with commit on main branch with id', () => {
     imgSnapshotTest(
       `gitGraph
        commit id: "One"
@@ -253,7 +253,7 @@ describe('Git Graph diagram', () => {
       `
       gitGraph
       checkout main
-      %% Make sure to manually set the ID of all commits, for consistent visual tests
+      %% Make sure to manually set the id of all commits, for consistent visual tests
       commit id: "1-abcdefg"
       checkout main
       branch branch1
@@ -343,7 +343,7 @@ gitGraph
       {}
     );
   });
-  it('16: should render a simple gitgraph with commit on main branch with Id | Vertical Branch', () => {
+  it('16: should render a simple gitgraph with commit on main branch with id | Vertical Branch', () => {
     imgSnapshotTest(
       `gitGraph TB:
        commit id: "One"
@@ -585,7 +585,7 @@ gitGraph
       `
       gitGraph TB:
       checkout main
-      %% Make sure to manually set the ID of all commits, for consistent visual tests
+      %% Make sure to manually set the id of all commits, for consistent visual tests
       commit id: "1-abcdefg"
       checkout main
       branch branch1
@@ -1024,7 +1024,7 @@ gitGraph TB:
         {}
       );
     });
-    it('51: should render a simple gitgraph with commit on main branch with Id | Vertical Branch - Bottom-to-top', () => {
+    it('51: should render a simple gitgraph with commit on main branch with id | Vertical Branch - Bottom-to-top', () => {
       imgSnapshotTest(
         `gitGraph BT:
          commit id: "One"
@@ -1266,7 +1266,7 @@ gitGraph TB:
         `
         gitGraph BT:
         checkout main
-        %% Make sure to manually set the ID of all commits, for consistent visual tests
+        %% Make sure to manually set the id of all commits, for consistent visual tests
         commit id: "1-abcdefg"
         checkout main
         branch branch1
@@ -1491,7 +1491,7 @@ gitGraph TB:
         `
         gitGraph
         switch main
-        %% Make sure to manually set the ID of all commits, for consistent visual tests
+        %% Make sure to manually set the id of all commits, for consistent visual tests
         commit id: "1-abcdefg"
         switch main
         branch branch1
@@ -1532,5 +1532,41 @@ gitGraph TB:
         {}
       );
     });
+    it('75: should render a gitGraph with multiple tags on a merge commit on bottom-to-top orientation', () => {
+      imgSnapshotTest(
+        `gitGraph BT:
+        commit id: "ZERO"
+        branch develop
+        commit id:"A"
+        checkout main
+        commit id:"ONE"
+        checkout develop
+        commit id:"B"
+        checkout main
+        merge develop id:"Release 1.0" type:HIGHLIGHT tag: "SAML v2.0" tag: "OpenID v1.1"
+        commit id:"TWO"
+        checkout develop
+        commit id:"C"`,
+        {}
+      );
+    });
+  });
+  it('76: should render a gitGraph with multiple tags on a merge commit on left-to-right orientation', () => {
+    imgSnapshotTest(
+      `gitGraph
+    commit id: "ZERO"
+    branch develop
+    commit id:"A"
+    checkout main
+    commit id:"ONE"
+    checkout develop
+    commit id:"B"
+    checkout main
+    merge develop id:"Release 1.0" type:HIGHLIGHT tag: "SAML v2.0" tag: "OpenID v1.1"
+    commit id:"TWO"
+    checkout develop
+    commit id:"C"`,
+      {}
+    );
   });
 });

@@ -20,8 +20,9 @@ export interface Actor {
 }
 
 export interface Message {
-  from?: { actor: string };
-  to?: { actor: string };
+  id: string;
+  from?: string;
+  to?: string;
   message:
     | string
     | {
@@ -78,8 +79,7 @@ export interface AddMessageParams {
     | 'breakEnd'
     | 'parOverStart'
     | 'parOverEnd'
-    | 'parOverAnd'
-    | 'parOverEnd';
+    | 'parOverAnd';
 
   activate: boolean;
 }

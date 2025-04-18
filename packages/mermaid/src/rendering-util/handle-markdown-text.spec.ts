@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import { markdownToLines, markdownToHTML } from './handle-markdown-text.js';
 import { test, expect } from 'vitest';
 
@@ -37,9 +36,9 @@ Here is a line *with an italic* section`;
       { content: 'is', type: 'normal' },
       { content: 'a', type: 'normal' },
       { content: 'line', type: 'normal' },
-      { content: 'with', type: 'emphasis' },
-      { content: 'an', type: 'emphasis' },
-      { content: 'italic', type: 'emphasis' },
+      { content: 'with', type: 'em' },
+      { content: 'an', type: 'em' },
+      { content: 'italic', type: 'em' },
       { content: 'section', type: 'normal' },
     ],
   ];
@@ -143,7 +142,7 @@ test('markdownToLines - Only italic formatting', () => {
       { content: 'This', type: 'normal' },
       { content: 'is', type: 'normal' },
       { content: 'an', type: 'normal' },
-      { content: 'italic', type: 'emphasis' },
+      { content: 'italic', type: 'em' },
       { content: 'test', type: 'normal' },
     ],
   ];
@@ -156,7 +155,7 @@ it('markdownToLines - Mixed formatting', () => {
   let input = `*Italic* and **bold** formatting`;
   let expected = [
     [
-      { content: 'Italic', type: 'emphasis' },
+      { content: 'Italic', type: 'em' },
       { content: 'and', type: 'normal' },
       { content: 'bold', type: 'strong' },
       { content: 'formatting', type: 'normal' },
@@ -167,9 +166,9 @@ it('markdownToLines - Mixed formatting', () => {
   input = `*Italic with space* and **bold ws** formatting`;
   expected = [
     [
-      { content: 'Italic', type: 'emphasis' },
-      { content: 'with', type: 'emphasis' },
-      { content: 'space', type: 'emphasis' },
+      { content: 'Italic', type: 'em' },
+      { content: 'with', type: 'em' },
+      { content: 'space', type: 'em' },
       { content: 'and', type: 'normal' },
       { content: 'bold', type: 'strong' },
       { content: 'ws', type: 'strong' },
@@ -191,9 +190,9 @@ Word!`;
       { content: 'the', type: 'strong' },
       { content: 'hog...', type: 'normal' },
       { content: 'a', type: 'normal' },
-      { content: 'very', type: 'emphasis' },
-      { content: 'long', type: 'emphasis' },
-      { content: 'text', type: 'emphasis' },
+      { content: 'very', type: 'em' },
+      { content: 'long', type: 'em' },
+      { content: 'text', type: 'em' },
       { content: 'about', type: 'normal' },
       { content: 'it', type: 'normal' },
     ],
@@ -215,13 +214,13 @@ test('markdownToLines - No auto wrapping', () => {
     [
       [
         {
-          "content": "Hello, how do",
+          "content": "Hello,&nbsp;how&nbsp;do",
           "type": "normal",
         },
       ],
       [
         {
-          "content": "you do?",
+          "content": "you&nbsp;do?",
           "type": "normal",
         },
       ],
@@ -297,4 +296,14 @@ test('markdownToHTML - no auto wrapping', () => {
       { markdownAutoWrap: false }
     )
   ).toMatchInlineSnapshot('"<p>Hello,&nbsp;how&nbsp;do<br/>you&nbsp;do?</p>"');
+});
+
+test('markdownToHTML - auto wrapping', () => {
+  expect(
+    markdownToHTML(
+      `Hello, how do
+  you do?`,
+      { markdownAutoWrap: true }
+    )
+  ).toMatchInlineSnapshot('"<p>Hello, how do<br/>you do?</p>"');
 });

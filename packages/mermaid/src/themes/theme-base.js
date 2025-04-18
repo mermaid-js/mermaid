@@ -1,9 +1,9 @@
-import { darken, lighten, adjust, invert, isDark, toRgba } from 'khroma';
-import { mkBorder } from './theme-helpers.js';
+import { adjust, darken, invert, isDark, lighten } from 'khroma';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
+import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -109,6 +109,16 @@ class Theme {
 
     this.personBorder = this.personBorder || this.primaryBorderColor;
     this.personBkg = this.personBkg || this.mainBkg;
+
+    /* ER diagram */
+
+    if (this.darkMode) {
+      this.rowOdd = this.rowOdd || darken(this.mainBkg, 5) || '#ffffff';
+      this.rowEven = this.rowEven || darken(this.mainBkg, 10);
+    } else {
+      this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
+      this.rowEven = this.rowEven || lighten(this.mainBkg, 5);
+    }
 
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
@@ -219,6 +229,27 @@ class Theme {
     this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
+
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
+    };
+
+    /* architecture */
+    this.archEdgeColor = this.archEdgeColor || '#777';
+    this.archEdgeArrowColor = this.archEdgeArrowColor || '#777';
+    this.archEdgeWidth = this.archEdgeWidth || '3';
+    this.archGroupBorderColor = this.archGroupBorderColor || '#000';
+    this.archGroupBorderWidth = this.archGroupBorderWidth || '2px';
 
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || this.primaryColor;

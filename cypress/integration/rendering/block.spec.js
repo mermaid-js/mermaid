@@ -14,7 +14,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL2: should handle colums statement in sub-blocks', () => {
+  it('BL2: should handle columns statement in sub-blocks', () => {
     imgSnapshotTest(
       `block-beta
   id1["Hello"]
@@ -30,7 +30,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL3: should align block widths and handle colums statement in sub-blocks', () => {
+  it('BL3: should align block widths and handle columns statement in sub-blocks', () => {
     imgSnapshotTest(
       `block-beta
   block
@@ -46,7 +46,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL4: should align block widths and handle colums statements in deeper sub-blocks then 1 level', () => {
+  it('BL4: should align block widths and handle columns statements in deeper sub-blocks then 1 level', () => {
     imgSnapshotTest(
       `block-beta
   columns 1
@@ -66,7 +66,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL5: should align block widths and handle colums statements in deeper sub-blocks then 1 level (alt)', () => {
+  it('BL5: should align block widths and handle columns statements in deeper sub-blocks then 1 level (alt)', () => {
     imgSnapshotTest(
       `block-beta
   columns 1
@@ -236,7 +236,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL16: width alignment - blocks shold be equal in width', () => {
+  it('BL17: width alignment - blocks should be equal in width', () => {
     imgSnapshotTest(
       `block-beta
     A("This is the text")
@@ -247,7 +247,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL17: block types 1 - square, rounded and circle', () => {
+  it('BL18: block types 1 - square, rounded and circle', () => {
     imgSnapshotTest(
       `block-beta
     A["square"]
@@ -258,7 +258,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL18: block types 2 - odd, diamond and hexagon', () => {
+  it('BL19: block types 2 - odd, diamond and hexagon', () => {
     imgSnapshotTest(
       `block-beta
     A>"rect_left_inv_arrow"]
@@ -269,7 +269,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL19: block types 3 - stadium', () => {
+  it('BL20: block types 3 - stadium', () => {
     imgSnapshotTest(
       `block-beta
     A(["stadium"])
@@ -278,7 +278,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL20: block types 4 - lean right, lean left, trapezoid and inv trapezoid', () => {
+  it('BL21: block types 4 - lean right, lean left, trapezoid and inv trapezoid', () => {
     imgSnapshotTest(
       `block-beta
     A[/"lean right"/]
@@ -290,7 +290,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL21: block types 1 - square, rounded and circle', () => {
+  it('BL22: block types 1 - square, rounded and circle', () => {
     imgSnapshotTest(
       `block-beta
     A["square"]
@@ -301,7 +301,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL22: sizing - it should be possible to make a block wider', () => {
+  it('BL23: sizing - it should be possible to make a block wider', () => {
     imgSnapshotTest(
       `block-beta
       A("rounded"):2
@@ -312,7 +312,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL23: sizing - it should be possible to make a composite block wider', () => {
+  it('BL24: sizing - it should be possible to make a composite block wider', () => {
     imgSnapshotTest(
       `block-beta
       block:2
@@ -324,7 +324,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL24: block in the middle with space on each side', () => {
+  it('BL25: block in the middle with space on each side', () => {
     imgSnapshotTest(
       `block-beta
         columns 3
@@ -335,7 +335,7 @@ describe('Block diagram', () => {
       {}
     );
   });
-  it('BL25: space and an edge', () => {
+  it('BL26: space and an edge', () => {
     imgSnapshotTest(
       `block-beta
   columns 5
@@ -345,7 +345,7 @@ describe('Block diagram', () => {
       {}
     );
   });
-  it('BL26: block sizes for regular blocks', () => {
+  it('BL27: block sizes for regular blocks', () => {
     imgSnapshotTest(
       `block-beta
   columns 3
@@ -354,7 +354,7 @@ describe('Block diagram', () => {
       {}
     );
   });
-  it('BL27: composite block with a set width - f should use the available space', () => {
+  it('BL28: composite block with a set width - f should use the available space', () => {
     imgSnapshotTest(
       `block-beta
   columns 3
@@ -363,11 +363,12 @@ describe('Block diagram', () => {
       f
   end
   g
-      `,
+  `,
       {}
     );
   });
-  it('BL23: composite block with a set width - f and g should split the available space', () => {
+
+  it('BL29: composite block with a set width - f and g should split the available space', () => {
     imgSnapshotTest(
       `block-beta
   columns 3
@@ -379,7 +380,7 @@ describe('Block diagram', () => {
   h
   i
   j
-      `,
+  `,
       {}
     );
   });

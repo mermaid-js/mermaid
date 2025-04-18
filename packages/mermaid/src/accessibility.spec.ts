@@ -1,6 +1,6 @@
 import { MockedD3 } from './tests/MockedD3.js';
 import { setA11yDiagramInfo, addSVGa11yTitleDescription } from './accessibility.js';
-import type { D3Element } from './mermaidAPI.js';
+import type { D3Element } from './types.js';
 
 describe('accessibility', () => {
   const fauxSvgNode: MockedD3 = new MockedD3();
@@ -109,7 +109,7 @@ describe('accessibility', () => {
         describe('with a11y description', () => {
           const a11yDesc = 'a11y description';
 
-          it('shold set aria-labelledby to the title id inserted as a child', () => {
+          it('should set aria-labelledby to the title id inserted as a child', () => {
             expectAriaLabelledByItTitleId(fauxSvgNode, a11yTitle, a11yDesc, givenId);
           });
 

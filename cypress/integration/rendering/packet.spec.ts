@@ -10,6 +10,15 @@ describe('packet structure', () => {
     );
   });
 
+  it('should render a simple packet diagram without ranges', () => {
+    imgSnapshotTest(
+      `packet-beta
+  0: "h"
+  1: "i"
+`
+    );
+  });
+
   it('should render a complex packet diagram', () => {
     imgSnapshotTest(
       `packet-beta

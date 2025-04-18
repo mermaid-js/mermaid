@@ -56,7 +56,7 @@ The following commands must be sufficient enough to start with:
 
 ```bash
 curl -fsSL https://get.pnpm.io/install.sh | sh -
-pnpm env use --global 18
+pnpm env use --global 20
 ```
 
 You may also need to reload `.shrc` or `.bashrc` afterwards.
@@ -239,6 +239,22 @@ Code is the heart of every software project. We strive to make it better. Who if
 
 The core of Mermaid is located under `packages/mermaid/src`.
 
+### Building Mermaid Locally
+
+**Host**
+
+```bash
+pnpm run build
+```
+
+**Docker**
+
+```bash
+./run build
+```
+
+This will build the Mermaid library and the documentation site.
+
 ### Running Mermaid Locally
 
 **Host**
@@ -370,9 +386,9 @@ If the users have no way to know that things have changed, then you haven't real
 Likewise, if users don't know that there is a new feature that you've implemented, it will forever remain unknown and unused.
 
 The documentation has to be updated for users to know that things have been changed and added!
-If you are adding a new feature, add `(v10.8.0+)` in the title or description. It will be replaced automatically with the current version number when the release happens.
+If you are adding a new feature, add `(v<MERMAID_RELEASE_VERSION>+)` in the title or description. It will be replaced automatically with the current version number when the release happens.
 
-eg: `# Feature Name (v10.8.0+)`
+eg: `# Feature Name (v<MERMAID_RELEASE_VERSION>+)`
 
 We know it can sometimes be hard to code _and_ write user documentation.
 
@@ -481,14 +497,14 @@ This is a danger alert
 
 ### Navigation
 
-If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](../.vitepress/config.ts). The same goes to **topbar**.
+If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](../.vitepress/config.ts). The same goes for **topbar**.
 
 ### Build Docs
 
-The content of `/docs` folder is built with Github Actions.
+The content of `/docs` folder is built with GitHub Actions.
 
 > **Warning**
-> So as to allow automatic compilation of documentation pages you have to enable Github Actions on your fork first
+> So as to allow automatic compilation of documentation pages you have to enable GitHub Actions on your fork first
 
 ## Submit your pull request
 

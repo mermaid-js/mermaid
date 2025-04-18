@@ -427,6 +427,51 @@ And `Link` can be one of:
 | --   | Solid       |
 | ..   | Dashed      |
 
+### Lollipop Interfaces
+
+Classes can also be given a special relation type that defines a lollipop interface on the class. A lollipop interface is defined using the following syntax:
+
+- `bar ()-- foo`
+- `foo --() bar`
+
+The interface (bar) with the lollipop connects to the class (foo).
+
+Note: Each interface that is defined is unique and is meant to not be shared between classes / have multiple edges connecting to it.
+
+```mermaid-example
+classDiagram
+  bar ()-- foo
+```
+
+```mermaid
+classDiagram
+  bar ()-- foo
+```
+
+```mermaid-example
+classDiagram
+  class Class01 {
+    int amount
+    draw()
+  }
+  Class01 --() bar
+  Class02 --() bar
+
+  foo ()-- Class01
+```
+
+```mermaid
+classDiagram
+  class Class01 {
+    int amount
+    draw()
+  }
+  Class01 --() bar
+  Class02 --() bar
+
+  foo ()-- Class01
+```
+
 ## Define Namespace
 
 A namespace groups classes.
@@ -776,9 +821,11 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
 ## Styling
 
-### Styling a node (v10.7.0+)
+### Styling a node
 
 It is possible to apply specific styles such as a thicker border or a different background color to an individual node using the `style` keyword.
+
+Note that notes and namespaces cannot be styled individually but do support themes.
 
 ```mermaid-example
 classDiagram
@@ -799,11 +846,102 @@ classDiagram
 #### Classes
 
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
-should have a different look. This is done by predefining classes in css styles that can be applied from the graph definition using the `cssClass` statement or the `:::` short hand.
+should have a different look.
+
+A class definition looks like the example below:
+
+```
+classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+Also, it is possible to define style to multiple classes in one statement:
+
+```
+classDef firstClassName,secondClassName font-size:12pt;
+```
+
+Attachment of a class to a node is done as per below:
+
+```
+cssClass "nodeId1" className;
+```
+
+It is also possible to attach a class to a list of nodes in one statement:
+
+```
+cssClass "nodeId1,nodeId2" className;
+```
+
+A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
+
+```mermaid-example
+classDiagram
+    class Animal:::someclass
+    classDef someclass fill:#f96
+```
+
+```mermaid
+classDiagram
+    class Animal:::someclass
+    classDef someclass fill:#f96
+```
+
+Or:
+
+```mermaid-example
+classDiagram
+    class Animal:::someclass {
+        -int sizeInFeet
+        -canEat()
+    }
+    classDef someclass fill:#f96
+```
+
+```mermaid
+classDiagram
+    class Animal:::someclass {
+        -int sizeInFeet
+        -canEat()
+    }
+    classDef someclass fill:#f96
+```
+
+### Default class
+
+If a class is named default it will be applied to all nodes. Specific styles and classes should be defined afterwards to override the applied default styling.
+
+```
+classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+```mermaid-example
+classDiagram
+  class Animal:::pink
+  class Mineral
+
+  classDef default fill:#f96,color:red
+  classDef pink color:#f9f
+```
+
+```mermaid
+classDiagram
+  class Animal:::pink
+  class Mineral
+
+  classDef default fill:#f96,color:red
+  classDef pink color:#f9f
+```
+
+### CSS Classes
+
+It is also possible to predefine classes in CSS styles that can be applied from the graph definition as in the example
+below:
+
+**Example style**
 
 ```html
 <style>
-  .styleClass > rect {
+  .styleClass > * > g {
     fill: #ff0000;
     stroke: #ffff00;
     stroke-width: 4px;
@@ -811,19 +949,7 @@ should have a different look. This is done by predefining classes in css styles 
 </style>
 ```
 
-Then attaching that class to a specific node:
-
-```
-    cssClass "nodeId1" styleClass;
-```
-
-It is also possible to attach a class to a list of nodes in one statement:
-
-```
-    cssClass "nodeId1,nodeId2" styleClass;
-```
-
-A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
+**Example definition**
 
 ```mermaid-example
 classDiagram
@@ -835,136 +961,32 @@ classDiagram
     class Animal:::styleClass
 ```
 
-Or:
-
-```mermaid-example
-classDiagram
-    class Animal:::styleClass {
-        -int sizeInFeet
-        -canEat()
-    }
-```
-
-```mermaid
-classDiagram
-    class Animal:::styleClass {
-        -int sizeInFeet
-        -canEat()
-    }
-```
-
-?> cssClasses cannot be added using this shorthand method at the same time as a relation statement.
-
-?> Due to limitations with existing markup for class diagrams, it is not currently possible to define css classes within the diagram itself. **_Coming soon!_**
-
-### Default Styles
-
-The main styling of the class diagram is done with a preset number of css classes. During rendering these classes are extracted from the file located at src/themes/class.scss. The classes used here are described below:
-
-| Class              | Description                                                       |
-| ------------------ | ----------------------------------------------------------------- |
-| g.classGroup text  | Styles for general class text                                     |
-| classGroup .title  | Styles for general class title                                    |
-| g.classGroup rect  | Styles for class diagram rectangle                                |
-| g.classGroup line  | Styles for class diagram line                                     |
-| .classLabel .box   | Styles for class label box                                        |
-| .classLabel .label | Styles for class label text                                       |
-| composition        | Styles for composition arrow head and arrow line                  |
-| aggregation        | Styles for aggregation arrow head and arrow line(dashed or solid) |
-| dependency         | Styles for dependency arrow head and arrow line                   |
-
-#### Sample stylesheet
-
-```scss
-body {
-  background: white;
-}
-
-g.classGroup text {
-  fill: $nodeBorder;
-  stroke: none;
-  font-family: 'trebuchet ms', verdana, arial;
-  font-family: var(--mermaid-font-family);
-  font-size: 10px;
-
-  .title {
-    font-weight: bolder;
-  }
-}
-
-g.classGroup rect {
-  fill: $nodeBkg;
-  stroke: $nodeBorder;
-}
-
-g.classGroup line {
-  stroke: $nodeBorder;
-  stroke-width: 1;
-}
-
-.classLabel .box {
-  stroke: none;
-  stroke-width: 0;
-  fill: $nodeBkg;
-  opacity: 0.5;
-}
-
-.classLabel .label {
-  fill: $nodeBorder;
-  font-size: 10px;
-}
-
-.relation {
-  stroke: $nodeBorder;
-  stroke-width: 1;
-  fill: none;
-}
-
-@mixin composition {
-  fill: $nodeBorder;
-  stroke: $nodeBorder;
-  stroke-width: 1;
-}
-
-#compositionStart {
-  @include composition;
-}
-
-#compositionEnd {
-  @include composition;
-}
-
-@mixin aggregation {
-  fill: $nodeBkg;
-  stroke: $nodeBorder;
-  stroke-width: 1;
-}
-
-#aggregationStart {
-  @include aggregation;
-}
-
-#aggregationEnd {
-  @include aggregation;
-}
-
-#dependencyStart {
-  @include composition;
-}
-
-#dependencyEnd {
-  @include composition;
-}
-
-#extensionStart {
-  @include composition;
-}
-
-#extensionEnd {
-  @include composition;
-}
-```
+> cssClasses cannot be added using this shorthand method at the same time as a relation statement.
 
 ## Configuration
 
-`Coming soon!`
+### Members Box
+
+It is possible to hide the empty members box of a class node.
+
+This is done by changing the **hideEmptyMembersBox** value of the class diagram configuration. For more information on how to edit the Mermaid configuration see the [configuration page.](https://mermaid.js.org/config/configuration.html)
+
+```mermaid-example
+---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+  class Duck
+```
+
+```mermaid
+---
+  config:
+    class:
+      hideEmptyMembersBox: true
+---
+classDiagram
+  class Duck
+```

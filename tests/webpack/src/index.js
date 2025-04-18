@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const mermaid = require('mermaid');
 import mindmap from '@mermaid-js/mermaid-mindmap';
 

@@ -279,7 +279,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
 
     return res;
   } else {
-    // Intersection onn sides of rect
+    // Intersection on sides of rect
     if (insidePoint.x < outsidePoint.x) {
       r = outsidePoint.x - w - x;
     } else {
@@ -324,7 +324,7 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
     // check if point is inside the boundary rect
     if (!outsideNode(boundaryNode, point) && !isInside) {
       // First point inside the rect found
-      // Calc the intersection coord between the point anf the last point outside the rect
+      // Calc the intersection coord between the point and the last point outside the rect
       const inter = intersection(boundaryNode, lastPointOutside, point);
 
       // // Check case where the intersection is the same as the last point

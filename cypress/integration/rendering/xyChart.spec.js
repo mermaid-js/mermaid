@@ -9,7 +9,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Should render a complete chart', () => {
     imgSnapshotTest(
@@ -35,7 +34,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('y-axis title not required', () => {
     imgSnapshotTest(
@@ -48,7 +46,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Should render a chart without y-axis with different range', () => {
     imgSnapshotTest(
@@ -60,7 +57,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('x axis title not required', () => {
     imgSnapshotTest(
@@ -72,7 +68,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Multiple plots can be rendered', () => {
     imgSnapshotTest(
@@ -87,7 +82,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Decimals and negative numbers are supported', () => {
     imgSnapshotTest(
@@ -98,7 +92,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render spark line with "plotReservedSpacePercent"', () => {
     imgSnapshotTest(
@@ -116,7 +109,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render spark bar without displaying other property', () => {
     imgSnapshotTest(
@@ -143,7 +135,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Should use all the config from directive', () => {
     imgSnapshotTest(
@@ -158,7 +149,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Should use all the config from yaml', () => {
     imgSnapshotTest(
@@ -189,6 +179,7 @@ describe('XY Chart', () => {
             axisLineWidth: 5
           chartOrientation: horizontal
           plotReservedSpacePercent: 60
+          showDataLabel: true
       ---
       xychart-beta
         title "Sales Revenue"
@@ -199,7 +190,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render with show axis title false', () => {
     imgSnapshotTest(
@@ -221,7 +211,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render with show axis label false', () => {
     imgSnapshotTest(
@@ -243,7 +232,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render with show axis tick false', () => {
     imgSnapshotTest(
@@ -265,7 +253,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render with show axis line false', () => {
     imgSnapshotTest(
@@ -287,7 +274,6 @@ describe('XY Chart', () => {
       `,
       {}
     );
-    cy.get('svg');
   });
   it('Render all the theme color', () => {
     imgSnapshotTest(
@@ -317,6 +303,529 @@ describe('XY Chart', () => {
       `,
       {}
     );
+  });
+  it('should use the correct distances between data points', () => {
+    imgSnapshotTest(
+      `
+      xychart-beta
+        x-axis 0 --> 2
+        line [0, 1, 0, 1]
+        bar [1, 0, 1, 0]
+      `,
+      {}
+    );
     cy.get('svg');
+  });
+
+  it('should render vertical bar chart with labels', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
+    xychart-beta
+      title "Sales Revenue"
+      x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+      y-axis "Revenue (in $)" 4000 --> 11000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    `,
+      {}
+    );
+  });
+
+  it('should render horizontal bar chart with labels', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+    xychart-beta
+      title "Sales Revenue"
+      x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+      y-axis "Revenue (in $)" 4000 --> 11000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    `,
+      {}
+    );
+  });
+
+  it('should render vertical bar chart without labels by default', () => {
+    imgSnapshotTest(
+      `
+    xychart-beta
+      title "Sales Revenue"
+      x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+      y-axis "Revenue (in $)" 4000 --> 11000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    `,
+      {}
+    );
+  });
+
+  it('should render horizontal bar chart without labels by default', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        chartOrientation: horizontal
+    ---
+    xychart-beta
+      title "Sales Revenue"
+      x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+      y-axis "Revenue (in $)" 4000 --> 11000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+    `,
+      {}
+    );
+  });
+
+  it('should render multiple bar plots vertically with labels correctly', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
+      xychart-beta
+        title "Multiple Bar Plots"
+        x-axis Categories [A, B, C]
+        y-axis "Values" 0 --> 100
+        bar [10, 50, 90]
+      `,
+      {}
+    );
+  });
+
+  it('should render multiple bar plots horizontally with labels correctly', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+      xychart-beta
+        title "Multiple Bar Plots"
+        x-axis Categories [A, B, C]
+        y-axis "Values" 0 --> 100
+        bar [10, 50, 90]
+      `,
+      {}
+    );
+  });
+
+  it('should render a single bar with label for a vertical xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
+      xychart-beta
+        title "Single Bar Chart"
+        x-axis Categories [A]
+        y-axis "Value" 0 --> 100
+        bar [75]
+      `,
+      {}
+    );
+  });
+
+  it('should render a single bar with label for a horizontal xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+      xychart-beta
+        title "Single Bar Chart"
+        x-axis Categories [A]
+        y-axis "Value" 0 --> 100
+        bar [75]
+      `,
+      {}
+    );
+  });
+
+  it('should render negative and decimal values with correct labels for vertical xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
+      xychart-beta
+        title "Decimal and Negative Values"
+        x-axis Categories [A, B, C]
+        y-axis -10 --> 10
+        bar [ -2.5, 0.75, 5.1 ]
+      `,
+      {}
+    );
+  });
+
+  it('should render negative and decimal values with correct labels for horizontal xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+      xychart-beta
+        title "Decimal and Negative Values"
+        x-axis Categories [A, B, C]
+        y-axis -10 --> 10
+        bar [ -2.5, 0.75, 5.1 ]
+      `,
+      {}
+    );
+  });
+
+  it('should render data labels within each bar in the vertical xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
+    xychart-beta
+            title "Sales Revenue"
+            x-axis Months [jan,b,c]
+            y-axis "Revenue (in $)" 4000 --> 12000
+            bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000, 3000, 2000, 500, 2000, 3000, 11000, 5000, 6000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            // Check horizontal alignment (within tolerance)
+            expect(textProps.x + textProps.width / 2).to.be.closeTo(
+              barProps.x + barProps.width / 2,
+              5
+            );
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+          });
+      });
+    });
+  });
+
+  it('should render data labels within each bar in the horizontal xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+    xychart-beta
+            title "Sales Revenue"
+            x-axis Months [jan,b,c]
+            y-axis "Revenue (in $)" 4000 --> 12000
+            bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000, 3000, 2000, 500, 2000, 3000, 11000, 5000, 6000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+            expect(textProps.y + textProps.height / 2).to.be.closeTo(
+              barProps.y + barProps.height / 2,
+              5
+            );
+          });
+      });
+    });
+  });
+
+  it('should render data labels within each bar in the vertical xy-chart with a lot of bars of different sizes', () => {
+    imgSnapshotTest(
+      `
+      ---
+      config:
+        xyChart:
+          showDataLabel: true
+      ---
+      xychart-beta
+        title "Sales Revenue"
+        x-axis Months [jan,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s]
+        y-axis "Revenue (in $)" 4000 --> 12000
+        bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000, 8000, 10000, 5000, 7600, 4999,11000 ,5000,6000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            // Check horizontal alignment (within tolerance)
+            expect(textProps.x + textProps.width / 2).to.be.closeTo(
+              barProps.x + barProps.width / 2,
+              5
+            );
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+          });
+      });
+    });
+  });
+
+  it('should render data labels within each bar in the horizontal xy-chart with a lot of bars of different sizes', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+    xychart-beta
+      title "Sales Revenue"
+      x-axis Months [jan,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s]
+      y-axis "Revenue (in $)" 4000 --> 12000
+      bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000, 8000, 10000, 5000, 7600, 4999,11000 ,5000,6000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+            expect(textProps.y + textProps.height / 2).to.be.closeTo(
+              barProps.y + barProps.height / 2,
+              5
+            );
+          });
+      });
+    });
+  });
+
+  it('should render data labels correctly for a bar in the vertical xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+    ---
+    xychart-beta
+            title "Sales Revenue"
+            x-axis Months [jan]
+            y-axis "Revenue (in $)" 3000 --> 12000
+            bar [4000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            // Check horizontal alignment (within tolerance)
+            expect(textProps.x + textProps.width / 2).to.be.closeTo(
+              barProps.x + barProps.width / 2,
+              5
+            );
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+          });
+      });
+    });
+  });
+
+  it('should render data labels correctly for a bar in the horizontal xy-chart', () => {
+    imgSnapshotTest(
+      `
+    ---
+    config:
+      xyChart:
+        showDataLabel: true
+        chartOrientation: horizontal
+    ---
+    xychart-beta
+            title "Sales Revenue"
+            x-axis Months [jan]
+            y-axis "Revenue (in $)" 3000 --> 12000
+            bar [4000]
+    `,
+      {}
+    );
+
+    cy.get('g.bar-plot-0').within(() => {
+      cy.get('rect').each(($rect, index) => {
+        // Extract bar properties
+        const barProps = {
+          x: parseFloat($rect.attr('x')),
+          y: parseFloat($rect.attr('y')),
+          width: parseFloat($rect.attr('width')),
+          height: parseFloat($rect.attr('height')),
+        };
+
+        // Get the text element corresponding to this bar by index.
+        cy.get('text')
+          .eq(index)
+          .then(($text) => {
+            const bbox = $text[0].getBBox();
+            const textProps = {
+              x: bbox.x,
+              y: bbox.y,
+              width: bbox.width,
+              height: bbox.height,
+            };
+
+            // Verify that the text label is positioned within the boundaries of the bar.
+            expect(textProps.x).to.be.greaterThan(barProps.x);
+            expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
+
+            expect(textProps.y).to.be.greaterThan(barProps.y);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+            expect(textProps.y + textProps.height / 2).to.be.closeTo(
+              barProps.y + barProps.height / 2,
+              5
+            );
+          });
+      });
+    });
   });
 });

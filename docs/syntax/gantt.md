@@ -172,7 +172,7 @@ The `title` is an _optional_ string to be displayed at the top of the Gantt char
 The `excludes` is an _optional_ attribute that accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".
 These date will be marked on the graph, and be excluded from the duration calculation of tasks. Meaning that if there are excluded dates during a task interval, the number of 'skipped' days will be added to the end of the task to ensure the duration is as specified in the code.
 
-#### Weekend (v\<MERMAID_RELEASE_VERSION>+)
+#### Weekend (v\11.0.0+)
 
 When excluding weekends, it is possible to configure the weekends to be either Friday and Saturday or Saturday and Sunday. By default weekends are Saturday and Sunday.
 To define the weekend start day, there is an _optional_ attribute `weekend` that can be added in a new line followed by either `friday` or `saturday`.
@@ -500,7 +500,7 @@ mermaid.ganttConfig = {
   sectionFontSize: 24, // Font size for sections
   numberSectionStyles: 1, // The number of alternating section styles
   axisFormat: '%d/%m', // Date/time format of the axis
-  tickInterval: '1 week', // Axis ticks
+  tickInterval: '1week', // Axis ticks
   topAxis: true, // When this flag is set, date labels will be added to the top of the chart
   displayMode: 'compact', // Turns compact mode on
   weekday: 'sunday', // On which day a week-based interval should start
@@ -526,7 +526,7 @@ click taskId href URL
 - taskId is the id of the task
 - callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified.
 
-Beginner's tip—a full example using interactive links in an html context:
+Beginner's tip—a full example using interactive links in an HTML context:
 
 ```html
 <body>

@@ -109,7 +109,7 @@ describe('when using the ganttDb', function () {
       ganttDb.addTask(taskName2, taskData2);
       const tasks = ganttDb.getTasks();
       expect(tasks[1].startTime).toEqual(expStartDate2);
-      if (!expEndDate2 === undefined) {
+      if (expEndDate2) {
         expect(tasks[1].endTime).toEqual(expEndDate2);
       }
       expect(tasks[1].id).toEqual(expId2);
@@ -219,7 +219,7 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('test3', 'id3,after id2,7d');
     ganttDb.addTask('test4', 'id4,2019-02-01,2019-02-20'); // Fixed endTime
     ganttDb.addTask('test5', 'id5,after id4,1d');
-    ganttDb.addSection('full ending taks on last day');
+    ganttDb.addSection('full ending task on last day');
     ganttDb.addTask('test6', 'id6,2019-02-13,2d');
     ganttDb.addTask('test7', 'id7,after id6,1d');
 

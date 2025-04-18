@@ -26,7 +26,7 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
   fatal: warning,
 };
 
-export let setLogLevel: (level: keyof typeof LEVELS | number | string) => void;
+export let setLogLevel: (level: keyof typeof LEVELS | number) => void;
 export let getConfig: () => MermaidConfig;
 export let sanitizeText: (str: string) => string;
 // eslint-disable @typescript-eslint/no-explicit-any

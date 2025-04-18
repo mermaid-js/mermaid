@@ -117,7 +117,7 @@ describe('Gantt diagram', () => {
       {}
     );
   });
-  it('should FAIL redering a gantt chart for issue #1060 with invalid date', () => {
+  it('should FAIL rendering a gantt chart for issue #1060 with invalid date', () => {
     imgSnapshotTest(
       `
       gantt
@@ -573,7 +573,7 @@ describe('Gantt diagram', () => {
       `
     );
   });
-  it('should render a gantt diagram exculding friday and saturday', () => {
+  it('should render a gantt diagram excluding friday and saturday', () => {
     imgSnapshotTest(
       `gantt
       title A Gantt Diagram
@@ -584,7 +584,7 @@ describe('Gantt diagram', () => {
       A task :a1, 2024-02-28, 10d`
     );
   });
-  it('should render a gantt diagram exculding saturday and sunday', () => {
+  it('should render a gantt diagram excluding saturday and sunday', () => {
     imgSnapshotTest(
       `gantt
       title A Gantt Diagram
@@ -671,7 +671,7 @@ describe('Gantt diagram', () => {
       title Gantt Digram
       dateFormat  YYYY-MM-DD
       section Section
-      ;A task with a semiclon           :a1, 2014-01-01, 30d
+      ;A task with a semicolon           :a1, 2014-01-01, 30d
       Another task     :after a1  , 20d
       section Another
       Task in sec      :2014-01-12  , 12d

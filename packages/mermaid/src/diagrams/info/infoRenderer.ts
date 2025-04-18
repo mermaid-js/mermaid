@@ -1,10 +1,10 @@
+import type { DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { configureSvgSize } from '../../setupGraphViewbox.js';
 
 /**
- * Draws a an info picture in the tag with id: id based on the graph definition in text.
+ * Draws an info picture in the tag with id: id based on the graph definition in text.
  *
  * @param text - The text of the diagram.
  * @param id - The id of the diagram which will be used as a DOM element id.
@@ -15,7 +15,9 @@ const draw: DrawDefinition = (text, id, version) => {
 
   const svg: SVG = selectSvgElement(id);
   configureSvgSize(svg, 100, 400, true);
-  svg
+
+  const group: SVGGroup = svg.append('g');
+  group
     .append('text')
     .attr('x', '50%')
     .attr('y', '50%')
