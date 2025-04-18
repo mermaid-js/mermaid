@@ -471,48 +471,57 @@ gantt
     5    : 0, 5
 ```
 
-### Timeline (with comments, CSS, config in frontmatter, directives)
+### Timeline (with comments, CSS, config in frontmatter)
 
 ```mermaid-example
 ---
-    # triple line MUST be first to start frontmatter. Then, any consistent indent
-    # yaml style comment
-    displayMode: compact
+    # 'Triple dash' MUST be first to start mermaid frontmatter. 
+    # YAML requires consistent indenting
+    # Settings are caseSensitive, silently ignore mispellings; incorrect parameters will break diagram, and inconsistantly require strings to be quoted
+    # Reminder to test diagrams online: https://mermaid.live
+    # 'init' and chart 'config' settings belong here.
+    title: Ignored if specified in chart
+    displayMode: compact     #gantt specific setting but works at this level too
     config:
+        # yaml style comment
 #        theme: forest
 #        themeCSS: " #item36 { fill: CadetBlue } "
+        themeCSS: " // YAML supports multiline strings using a newline markers: \n
+            // Comment in CSS using slashes   \n
+            #item36 { fill: CadetBlue }       \n
+            
+            // Custom marker workaround CSS from forum (below)    \n
+            rect[id^=workaround] { height: calc(100% - 50px) ; transform: translate(9px, 25px); y: 0; width: 1.5px; stroke: none; fill: red; }   \n
+            text[id^=workaround] { fill: red; y: 100%; font-size: 15px;} 
+        "
         gantt:
             useWidth: 400
-
+            rightPadding: 0
+            topAxis: true  #false
+            numberSectionStyles: 2 
 ---
-%%{
-    init: {
-        'Comment': 'Not official, but common JSON style comment',
-        'Comment': 'Depreciated 2023 for frontmatter, easier to format, overrides frontmatter',
-        'themeCSS': ' #item36 { fill: CadetBlue }    rect[id^=workaround] { height: calc(100% - 50px) ; transform: translate(9px, 25px); y: 0; width: 1.5px; stroke: none; fill: red; } text[id^=workaround] { fill: red; y: 100%; font-size: 15px;}',
-        'gantt':{
-            'usedWidth': 400, 'rightPadding': 0
-        }
-    }
-}%%
+%% nb: As of 2025, using directives "%%{" here for 'init' not longer supported - use frontmatter (triple-dash) instead.
+
+%% Comment for Mermaid (double percent + at least a space)
+%% Script is case insensitive. Indents are completely ignored.
+%% Mispelling or unknown words will break diagrams, while parameters silently fail. Strings shouldn't be quoted and will auto-detect based on expected parameters
 gantt
-    title Sampler
-    dateFormat YYYY
+    title Timeline - Gantt Sampler 
+    dateFormat YYYY 
     axisFormat %y
-    %% comment - this next line doesn't recognise year
-    tickInterval 4year
-
-
+    %% this next line doesn't recognise 'decade' or 'year', but will silently ignore
+    tickInterval 1decade
+    
     section Issue19062
     71   :            item71, 1900, 1930
     section Issue19401
-    36   :            item36, 1913, 1935 %% themeCSS targets #item36 as id directly
+    36   :            item36, 1913, 1935
     section Issue1300
     94   :            item94, 1910, 1915
     5    :            item5,  1920, 1925
     0    : milestone, item0,  1918, 1s
-    9    : vert,              1906, 1s %% not yet official
-    64   : workaround,        1923, 1s %% custom CSS object in themeCSS https://github.com/mermaid-js/mermaid/issues/3250
+    9    : vert,              1906, 1s   %% not yet official
+    64   : workaround,        1923, 1s   %% custom CSS object https://github.com/mermaid-js/mermaid/issues/3250
 ```
 
 <!--- cspell:ignore isadded --->
