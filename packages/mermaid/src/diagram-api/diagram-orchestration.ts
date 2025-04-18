@@ -72,7 +72,7 @@ export const addDiagrams = () => {
   );
 
   if (includeLargeFeatures) {
-    registerLazyLoadedDiagrams(flowchartElk, mindmap);
+    registerLazyLoadedDiagrams(flowchartElk, mindmap, architecture);
   }
 
   // Ordering of detectors is important. The first one to return true will be used.
@@ -99,7 +99,6 @@ export const addDiagrams = () => {
     packet,
     xychart,
     block,
-    architecture,
     radar
   );
 };
