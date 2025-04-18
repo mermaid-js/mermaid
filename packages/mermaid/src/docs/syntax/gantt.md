@@ -477,7 +477,7 @@ gantt
 ---
     # 'Triple dash' MUST be first to start mermaid frontmatter. 
     # YAML requires consistent indenting
-    # Settings are caseSensitive, silently ignore mispellings; incorrect parameters will break diagram, and inconsistantly require strings to be quoted
+    # Settings are caseSensitive, silently ignore misspellings; incorrect parameters will break diagram, and inconsistently require strings to be quoted
     # Reminder to test diagrams online: https://mermaid.live
     # 'init' and chart 'config' settings belong here.
     title: Ignored if specified in chart
@@ -504,7 +504,7 @@ gantt
 
 %% Comment for Mermaid (double percent + at least a space)
 %% Script is case insensitive. Indents are completely ignored.
-%% Mispelling or unknown words will break diagrams, while parameters silently fail. Strings shouldn't be quoted and will auto-detect based on expected parameters
+%% misspelling or unknown words will break diagrams, while parameters silently fail. Strings shouldn't be quoted and will auto-detect based on expected parameters
 gantt
     title Timeline - Gantt Sampler 
     dateFormat YYYY 
