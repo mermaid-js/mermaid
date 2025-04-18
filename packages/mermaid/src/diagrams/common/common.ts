@@ -369,7 +369,7 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
 
   return text.replace(
     katexRegex,
-    'Katex is unsupported in mermaid.tiny.js. Please use mermaid.js or mermaid.min.js.'
+    'Katex is not supported in @mermaid-js/tiny. Please use the full mermaid library.'
   );
 };
 
