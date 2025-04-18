@@ -475,7 +475,7 @@ gantt
 
 ```mermaid-example
 ---
-    # 'Triple dash' MUST be first to start mermaid frontmatter. 
+    # 'Triple dash' MUST be first to start mermaid frontmatter.
     # YAML requires consistent indenting
     # Settings are caseSensitive, silently ignore misspellings; incorrect parameters will break diagram, and inconsistently require strings to be quoted
     # Reminder to test diagrams online: https://mermaid.live
@@ -489,16 +489,16 @@ gantt
         themeCSS: " // YAML supports multiline strings using a newline markers: \n
             // Comment in CSS using slashes   \n
             #item36 { fill: CadetBlue }       \n
-            
+
             // Custom marker workaround CSS from forum (below)    \n
             rect[id^=workaround] { height: calc(100% - 50px) ; transform: translate(9px, 25px); y: 0; width: 1.5px; stroke: none; fill: red; }   \n
-            text[id^=workaround] { fill: red; y: 100%; font-size: 15px;} 
+            text[id^=workaround] { fill: red; y: 100%; font-size: 15px;}
         "
         gantt:
             useWidth: 400
             rightPadding: 0
             topAxis: true  #false
-            numberSectionStyles: 2 
+            numberSectionStyles: 2
 ---
 %% nb: As of 2025, using directives "%%{" here for 'init' not longer supported - use frontmatter (triple-dash) instead.
 
@@ -506,12 +506,12 @@ gantt
 %% Script is case insensitive. Indents are completely ignored.
 %% misspelling or unknown words will break diagrams, while parameters silently fail. Strings shouldn't be quoted and will auto-detect based on expected parameters
 gantt
-    title Timeline - Gantt Sampler 
-    dateFormat YYYY 
+    title Timeline - Gantt Sampler
+    dateFormat YYYY
     axisFormat %y
     %% this next line doesn't recognise 'decade' or 'year', but will silently ignore
     tickInterval 1decade
-    
+
     section Issue19062
     71   :            item71, 1900, 1930
     section Issue19401
