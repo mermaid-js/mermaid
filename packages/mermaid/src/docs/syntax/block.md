@@ -7,7 +7,7 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 ## Introduction to Block Diagrams
 
-```mermaid
+```mermaid-example
 block-beta
 columns 1
   db(("DB"))

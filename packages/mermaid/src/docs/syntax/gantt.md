@@ -259,7 +259,7 @@ gantt
 
 The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceding YAML settings.
 
-```mermaid
+```mermaid-example
 ---
 displayMode: compact
 ---
