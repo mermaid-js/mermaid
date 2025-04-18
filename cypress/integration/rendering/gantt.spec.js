@@ -358,6 +358,23 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render a gantt diagram with a vert tag', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   ss
+        axisFormat   %Ss
+
+        section Section
+        A task           : a1, 00, 6s
+        Milestone     : vert, 01,
+        section Another
+        Task in sec      : 06, 3s
+        another task     : 3s
+      `
+    );
+  });
   it('should render a gantt diagram with tick is 2 milliseconds', () => {
     imgSnapshotTest(
       `

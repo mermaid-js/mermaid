@@ -79,6 +79,7 @@ class Theme {
     this.critBkgColor = '#E83737';
     this.taskTextDarkColor = 'calculated';
     this.todayLineColor = '#DB5757';
+    this.vertLineColor = '#00BFFF';
 
     /* C4 Context Diagram variables */
     this.personBorder = this.primaryBorderColor;

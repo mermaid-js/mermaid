@@ -237,6 +237,18 @@ const getStyles = (options) =>
     fill: ${options.taskTextDarkColor} !important;
   }
 
+  .vert {
+    // stroke: #00FFFF;
+    stroke: ${options.vertLineColor};
+  }
+
+  .vertText {
+    font-size: 15px;
+    text-anchor: middle;
+    // fill: #00FFFF;
+    fill: ${options.vertLineColor} !important;
+  }
+
   .activeCritText0,
   .activeCritText1,
   .activeCritText2,
