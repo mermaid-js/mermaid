@@ -2,7 +2,7 @@
 
 Dynamic and integrated theme configuration was introduced in Mermaid version 8.7.0.
 
-Themes can now be customized at the site-wide level, or on individual Mermaid diagrams. For site-wide theme customization, the `initialize` call is used. For diagram specific customization, Frontmatter config is used.
+Themes can now be customized at the site-wide level, or on individual Mermaid diagrams. For site-wide theme customization, the `initialize` call is used. For diagram specific customization, frontmatter config is used.
 
 ## Available Themes
 
@@ -31,9 +31,9 @@ mermaid.initialize({
 
 ## Diagram-specific Themes
 
-To customize the theme of an individual diagram, use Frontmatter config.
+To customize the theme of an individual diagram, use frontmatter config.
 
-Example of Frontmatter config setting the `theme` to `forest`:
+Example of frontmatter config setting the `theme` to `forest`:
 
 ```mermaid-example
 ---
@@ -48,15 +48,15 @@ config:
 
 ## Customizing Themes with `themeVariables`
 
-To make a custom theme, modify `themeVariables` via Frontmatter config.
+To make a custom theme, modify `themeVariables` via frontmatter config.
 
 You will need to use the [base](#available-themes) theme as it is the only modifiable theme.
 
 | Parameter      | Description                        | Type   | Properties                                                                          |
 | -------------- | ---------------------------------- | ------ | ----------------------------------------------------------------------------------- |
-| themeVariables | Modifiable with Frontmatter config | Object | `primaryColor`, `primaryTextColor`, `lineColor` ([see full list](#theme-variables)) |
+| themeVariables | Modifiable with frontmatter config | Object | `primaryColor`, `primaryTextColor`, `lineColor` ([see full list](#theme-variables)) |
 
-Example of modifying `themeVariables` using Frontmatter config:
+Example of modifying `themeVariables` using frontmatter config:
 
 ```mermaid-example
 ---
