@@ -23,7 +23,7 @@ import {
   curveStepBefore,
   select,
 } from 'd3';
-import common from './diagrams/common/common.js';
+import common, { removeUrlsFromLinks } from './diagrams/common/common.js';
 import { sanitizeDirective } from './utils/sanitizeDirective.js';
 import { log } from './logger.js';
 import { detectType } from './diagram-api/detectType.js';
@@ -716,7 +716,7 @@ export const calculateTextDimensions: (
       const dim = { width: 0, height: 0, lineHeight: 0 };
       for (const line of lines) {
         const textObj = getTextObj();
-        textObj.text = line || ZERO_WIDTH_SPACE;
+        textObj.text = removeUrlsFromLinks(line) || ZERO_WIDTH_SPACE;
         // @ts-ignore TODO: Fix D3 types
         const textElem = drawSimpleText(g, textObj)
           // @ts-ignore TODO: Fix D3 types
