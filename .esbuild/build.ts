@@ -81,7 +81,7 @@ const buildTinyMermaid = async () => {
   await mkdir('./packages/tiny/dist', { recursive: true });
   await rename(
     './packages/mermaid/dist/mermaid.tiny.min.js',
-    './packages/tiny/dist/mermaid.tiny.min.js'
+    './packages/tiny/dist/mermaid.tiny.js'
   );
   // Copy version from mermaid's package.json to tiny's package.json
   const mermaidPkg = JSON.parse(await readFile('./packages/mermaid/package.json', 'utf8'));
