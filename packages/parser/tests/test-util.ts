@@ -13,6 +13,8 @@ import type {
   PacketServices,
   GitGraph,
   GitGraphServices,
+  MindMap,
+  MindMapServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -21,6 +23,7 @@ import {
   createRadarServices,
   createPacketServices,
   createGitGraphServices,
+  createMindMapServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -104,3 +107,14 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const mindMapServices: MindMapServices = createMindMapServices().MindMap;
+const mindMapParser: LangiumParser = mindMapServices.parser.LangiumParser;
+export function createMindMapTestServices() {
+  const parse = (input: string) => {
+    return mindMapParser.parse<MindMap>(input);
+  };
+
+  return { services: mindMapServices, parse };
+}
+export const mindMapParse = createMindMapTestServices().parse;

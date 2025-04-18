@@ -41,3 +41,4 @@ export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './architecture/index.js';
 export * from './radar/index.js';
+export * from './mindmap/index.js';

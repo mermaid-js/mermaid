@@ -1,0 +1,22 @@
+org
+  CEO[CEO]
+    CFO[CFO]
+      Finance1[Finance 1]
+      Finance2[Finance 2]
+    CTO[CTO]
+      Dev1[Developer 1]
+      Dev2[Developer 2]
+
+----
+org
+    CEO[CEO]
+        connector
+            CTO[CTO]
+        CFO[CFO]
+            Finance1[Finance 1]
+            Finance2[Finance 2]
+    CTO[CTO]
+---
+org
+   President --> VP1[VP Sales] & VP2[VP Production] & VP3[VP Marketing]
+
