@@ -1,6 +1,5 @@
 import type { GrammarAST, Stream, TokenBuilderOptions } from 'langium';
 import type { TokenType } from 'chevrotain';
-
 import { DefaultTokenBuilder } from 'langium';
 
 export abstract class AbstractMermaidTokenBuilder extends DefaultTokenBuilder {
