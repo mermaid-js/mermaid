@@ -2,10 +2,10 @@
 
 This is a tiny version of mermaid that is optimized for the web. It is a subset of the mermaid library and is designed to be used in the browser via CDN.
 
-## Usage via NPM
+## Lazy loading
 
-This package is not meant to be installed directly from npm. It is designed to be used via CDN.
-If you need to use mermaid in your project, please install the full [`mermaid` package](https://www.npmjs.com/package/mermaid) instead.
+The original mermaid library supports lazy loading, so it will be faster on the initial load, and only load the required diagrams.
+This is not supported in the tiny mermaid library. So it's always recommended to use the full mermaid library unless you have a very specific reason to reduce the bundle size.
 
 ## Removals from mermaid
 
@@ -14,6 +14,12 @@ This does not support
 - Mindmap Diagram
 - Architecture Diagram
 - Katex rendering
+- Lazy loading
+
+## Usage via NPM
+
+This package is not meant to be installed directly from npm. It is designed to be used via CDN.
+If you need to use mermaid in your project, please install the full [`mermaid` package](https://www.npmjs.com/package/mermaid) instead.
 
 ## Usage via CDN
 
