@@ -19,12 +19,11 @@ const draw: DrawDefinition = (text, id, version) => {
   const group: SVGGroup = svg.append('g');
   group
     .append('text')
-    .attr('x', '50%')
-    .attr('y', '50%')
+    .attr('x', 100)
+    .attr('y', 40)
     .attr('class', 'version')
     .attr('font-size', 32)
-    .attr('dominant-baseline', 'middle')
-    .attr('text-anchor', 'middle')
+    .style('text-anchor', 'middle')
     .text(`v${version}`);
 };
 
