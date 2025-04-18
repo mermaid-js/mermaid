@@ -94,7 +94,7 @@
     "cypress-split": "^1.24.14",
     "esbuild": "^0.25.0",
     "eslint": "^9.24.0",
-    "eslint-config-prettier": "^10.1.1",
+    "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-cypress": "^4.2.1",
     "eslint-plugin-html": "^8.1.2",
     "eslint-plugin-jest": "^28.11.0",
