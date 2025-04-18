@@ -19,7 +19,7 @@ describe.skip('architecture diagram', () => {
             `
     );
   });
-  it('should render a simple architecture diagram with titleAndAccessabilities', () => {
+  it('should render a simple architecture diagram with titleAndAccessibilities', () => {
     imgSnapshotTest(
       `architecture-beta
           title Simple Architecture Diagram

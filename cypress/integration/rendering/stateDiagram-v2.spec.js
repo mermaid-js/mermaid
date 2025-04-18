@@ -138,8 +138,8 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
-    State1: This a a single line description
-    State2: This a a multi line description
+    State1: This a single line description
+    State2: This a multi line description
     State2: here comes the multi part
     [*] --> State1
     State1 --> State2
@@ -345,7 +345,7 @@ stateDiagram
       }
     );
   });
-  it('v2 width of compond state should grow with title if title is wider', () => {
+  it('v2 width of compound state should grow with title if title is wider', () => {
     imgSnapshotTest(
       `
 stateDiagram-v2
@@ -402,8 +402,8 @@ stateDiagram-v2
       `
 stateDiagram-v2
     MyState
-    note left of MyState : I am a leftie
-    note right of MyState : I am a rightie
+    note left of MyState : I am a lefty
+    note right of MyState : I am a righty
     `,
       {
         logLevel: 0,
@@ -552,7 +552,7 @@ style AState fill:#636,border:1px solid red,color:white;
         { logLevel: 0, fontFamily: 'courier' }
       );
     });
-    it(' should let styles take preceedence over classes', () => {
+    it(' should let styles take precedence over classes', () => {
       imgSnapshotTest(
         `
 stateDiagram-v2
@@ -565,7 +565,7 @@ style AState fill:#636,border:1px solid red,color:white;
         { logLevel: 0, fontFamily: 'courier' }
       );
     });
-    it(' should allow styles to take effect in stubgraphs', () => {
+    it(' should allow styles to take effect in subgraphs', () => {
       imgSnapshotTest(
         `
   stateDiagram

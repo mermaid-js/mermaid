@@ -290,7 +290,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   /**
    * Width of nodes where text is wrapped.
    *
-   * When using markdown strings the text ius wrapped automatically, this
+   * When using markdown strings the text is wrapped automatically, this
    * value sets the max width of a text before it continues on a new line.
    *
    */
@@ -621,6 +621,18 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   actorColours?: string[];
   sectionFills?: string[];
   sectionColours?: string[];
+  /**
+   * Color of the title text in Journey Diagrams
+   */
+  titleColor?: string;
+  /**
+   * Font family to be used for the title text in Journey Diagrams
+   */
+  titleFontFamily?: string;
+  /**
+   * Font size to be used for the title text in Journey Diagrams
+   */
+  titleFontSize?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -939,6 +951,10 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Top and bottom space from the chart title
    */
   titlePadding?: number;
+  /**
+   * Should show the value corresponding to the bar within the bar
+   */
+  showDataLabel?: boolean;
   /**
    * Should show the chart title
    */

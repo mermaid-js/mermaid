@@ -3,7 +3,7 @@
  *  (c) 2014-2021 Knut Sveidqvist
  *  MIT license.
  *
- *  Based on js sequence diagrams jison grammr
+ *  Based on js sequence diagrams jison grammar
  *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.

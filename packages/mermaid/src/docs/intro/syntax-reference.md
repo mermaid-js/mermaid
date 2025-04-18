@@ -83,7 +83,7 @@ Mermaid offers a variety of styles or “looks” for your diagrams, allowing yo
 
 You can select a look by adding the look parameter in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid
+```mermaid-example
 ---
 config:
   look: handDrawn
@@ -108,7 +108,7 @@ In addition to customizing the look of your diagrams, Mermaid Chart now allows y
 
 You can specify the layout algorithm directly in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: elk
@@ -149,8 +149,9 @@ flowchart LR
   B -->|Option 1| C[Path 1]
   B -->|Option 2| D[Path 2]
 
-#### Using Dagre Layout with Classic Look:
 ```
+
+#### Using Dagre Layout with Classic Look:
 
 Another example:
 

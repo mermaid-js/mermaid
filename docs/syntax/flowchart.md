@@ -83,7 +83,11 @@ flowchart LR
 Use double quotes and backticks "\` text \`" to enclose the markdown text.
 
 ```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
     newLines["`Line1
@@ -93,7 +97,11 @@ flowchart LR
 ```
 
 ```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
     newLines["`Line1
@@ -932,7 +940,7 @@ Mermaid also introduces 2 special shapes to enhance your flowcharts: **icon** an
 
 ### Icon Shape
 
-You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions provided [here](../config/icons.md). The syntax for defining an icon shape is as follows:
+You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions to [add custom icons](../config/icons.md). The syntax for defining an icon shape is as follows:
 
 ```mermaid-example
 flowchart TD
@@ -944,7 +952,7 @@ flowchart TD
     A@{ icon: "fa:user", form: "square", label: "User Icon", pos: "t", h: 60 }
 ```
 
-### Parameters
+#### Parameters
 
 - **icon**: The name of the icon from the registered icon pack.
 - **form**: Specifies the background shape of the icon. If not defined there will be no background to icon. Options include:
@@ -971,7 +979,7 @@ flowchart TD
     A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
 ```
 
-### Parameters
+#### Parameters
 
 - **img**: The URL of the image to be displayed.
 - **label**: The text label associated with the image. This can be any string. If not defined, no label will be displayed.
@@ -1592,7 +1600,10 @@ flowchart LR
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
 
 ```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
 subgraph "One"
   a("`The **cat**
@@ -1605,7 +1616,10 @@ end
 ```
 
 ```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
 subgraph "One"
   a("`The **cat**
@@ -2029,7 +2043,9 @@ The _elk_ renderer is an experimental feature.
 You can change the renderer to elk by adding this directive:
 
 ```
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+config:
+  flowchart:
+    defaultRenderer: "elk"
 ```
 
 > **Note**

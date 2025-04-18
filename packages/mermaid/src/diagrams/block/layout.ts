@@ -77,7 +77,7 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
     block?.size?.x,
     'block width =',
     block?.size,
-    'sieblingWidth',
+    'siblingWidth',
     siblingWidth
   );
   if (!block?.size?.width) {
@@ -141,7 +141,7 @@ function setBlockSizes(block: Block, db: BlockDB, siblingWidth = 0, siblingHeigh
     // If maxWidth
     if (width < siblingWidth) {
       log.debug(
-        `Detected to small siebling: abc95 ${block.id} sieblingWidth ${siblingWidth} sieblingHeight ${siblingHeight} width ${width}`
+        `Detected to small sibling: abc95 ${block.id} siblingWidth ${siblingWidth} siblingHeight ${siblingHeight} width ${width}`
       );
       width = siblingWidth;
       height = siblingHeight;
