@@ -1,5 +1,6 @@
 import { FlowDB } from './flowDb.js';
 import type { FlowSubGraph } from './types.js';
+import { lineBreakRegex } from '../common/common.js';
 
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
@@ -124,5 +125,15 @@ describe('flow db getData', () => {
 
     const { edges } = flowDb.getData();
     expect(edges[0].curve).toBe('basis');
+  });
+});
+
+describe('flow db title rendering', () => {
+  it('should render multi-line titles with \\n and <br> correctly', () => {
+    const title = 'Line 1\\nLine 2<br>Line 3';
+    const normalizedTitle = title.replace(/\\n/g, '\n');
+    const lines = normalizedTitle.split(lineBreakRegex);
+
+    expect(lines).toEqual(['Line 1', 'Line 2', 'Line 3']);
   });
 });

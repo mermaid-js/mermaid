@@ -468,5 +468,19 @@ describe('state diagram V2, ', function () {
       const currentDirection = stateDb.getDirection();
       expect(currentDirection).toEqual('LR');
     });
+
+    it('should render multi-line titles with \\n and <br> correctly', function () {
+      const diagram = `
+        stateDiagram-v2
+        title: Line 1\nLine 2<br>Line 3
+        [*] --> State1
+        State1 --> [*]
+      `;
+
+      parser.parse(diagram);
+
+      const title = stateDb.getAccTitle();
+      expect(title).toBe('Line 1\nLine 2\nLine 3');
+    });
   });
 });

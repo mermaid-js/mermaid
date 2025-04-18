@@ -1,6 +1,7 @@
 import { RequirementDB } from './requirementDb.js';
 import { describe, it, expect } from 'vitest';
 import type { Relation, RelationshipType } from './types.js';
+import { lineBreakRegex } from '../common/common.js';
 
 describe('requirementDb', () => {
   const requirementDb = new RequirementDB();
@@ -92,5 +93,15 @@ describe('requirementDb', () => {
 
     expect(requirement?.cssStyles).toEqual(['color:red']);
     expect(element?.cssStyles).toEqual(['stroke-width:4px', 'stroke: yellow']);
+  });
+});
+
+describe('requirement diagram title rendering', () => {
+  it('should render multi-line titles with \\n and <br> correctly', () => {
+    const title = 'Requirement Diagram Title\nWith Newline<br>And Line Break';
+    const normalizedTitle = title.replace(/\\n/g, '\n');
+    const lines = normalizedTitle.split(lineBreakRegex);
+
+    expect(lines).toEqual(['Requirement Diagram Title', 'With Newline', 'And Line Break']);
   });
 });

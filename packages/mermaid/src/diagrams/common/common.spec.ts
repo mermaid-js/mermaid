@@ -1,4 +1,5 @@
 import { sanitizeText, removeScript, parseGenericTypes, countOccurrence } from './common.js';
+import { lineBreakRegex } from './common.js';
 
 describe('when securityLevel is antiscript, all script must be removed', () => {
   /**
@@ -99,3 +100,13 @@ it.each([
     expect(countOccurrence(str, substring)).toEqual(count);
   }
 );
+
+describe('lineBreakRegex and line splitting', () => {
+  it('should split text by <br> and \\n properly', () => {
+    const rawTitle = 'Line 1\\nLine 2<br>Line 3';
+    const normalized = rawTitle.replace(/\\n/g, '\n');
+    const lines = normalized.split(lineBreakRegex);
+
+    expect(lines).toEqual(['Line 1', 'Line 2', 'Line 3']);
+  });
+});
