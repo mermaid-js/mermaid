@@ -14,7 +14,7 @@ import {
 
 import { MermaidGeneratedSharedModule, MindmapGeneratedModule } from '../generated/module.js';
 import { MindmapTokenBuilder } from './tokenBuilder.js';
-import { CommonValueConverter } from '../common/valueConverter.js';
+import { MindmapValueConverter } from './valueConverter.js';
 
 /**
  * Declaration of `Mindmap` services.
@@ -22,7 +22,7 @@ import { CommonValueConverter } from '../common/valueConverter.js';
 interface MindmapAddedServices {
   parser: {
     TokenBuilder: MindmapTokenBuilder;
-    ValueConverter: CommonValueConverter;
+    ValueConverter: MindmapValueConverter;
   };
 }
 
@@ -41,7 +41,7 @@ export const MindmapModule: Module<
 > = {
   parser: {
     TokenBuilder: () => new MindmapTokenBuilder(),
-    ValueConverter: () => new CommonValueConverter(),
+    ValueConverter: () => new MindmapValueConverter(),
   },
 };
 

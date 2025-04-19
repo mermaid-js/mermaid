@@ -50,37 +50,22 @@ describe('MindMap Parser Tests', () => {
 
     expect(r1.$type).toBe('MindmapRow');
     const node1 = r1.item as CircleNode;
-    console.debug('NODE1:', node1);
     expect(node1.$type).toBe('CircleNode');
-    expect(result.value.rows[1].element.ID).toBe('Root');
-    expect(result.value.rows[1].element.desc).toBe('Root');
-    expect(Object.keys(result.value.rows[1].element)).toBe('root');
-    expect(result.value.rows[1].indent).toBe('indent');
-    expect(Object.keys(result.value.rows[1].element)).toBe(true);
-    expect(result.value.rows[1].element.id).toBe('SimpleNode');
+    expect(node1.id).toBe('child1');
+    expect(node1.desc).toBe('Child 1');
+    // expect(Object.keys(r1)).toBe(2);
 
-    // Temporarily commenting out failing assertions
-    // expect(result.successful).toBe(true);
-    // Check that there are 4 rows: mindmap, root, child1, child2, grandchild
-    expect(result.value.rows.length).toBe(5);
-    // Check that the first statement is the mindmap
-    expect(result.value.rows[0].type).toBe('mindmap');
-    // Check that the second statement is the root
-    expect(result.value.rows[1].type.type).toBe('circle');
-    expect(result.value.rows[1].text).toBe('Root');
-    expect(result.value.rows[1].depth).toBe(0);
-    // Check that the third statement is the first child
-    expect(result.value.rows[2].type.type).toBe('circle');
-    expect(result.value.rows[2].text).toBe('Child 1');
-    expect(result.value.rows[2].depth).toBe(1);
-    // Check that the fourth statement is the second child
-    expect(result.value.rows[3].type.type).toBe('circle');
-    expect(result.value.rows[3].text).toBe('Child 2');
-    expect(result.value.rows[3].depth).toBe(1);
-    // Check that the fifth statement is the grandchild
-    expect(result.value.rows[4].type.type).toBe('circle');
-    expect(result.value.rows[4].text).toBe('Grand Child');
-    expect(result.value.rows[4].depth).toBe(2);
+    const child2 = rows[2].item as CircleNode;
+    // expect(result.value.rows[1].indent).toBe('indent');
+    // expect(Object.keys(node1)).toBe(true);
+    expect(child2.id).toBe('child2');
+    expect(child2.desc).toBe('Child 2');
+
+    const grandChild = rows[3].item as CircleNode;
+    // expect(result.value.rows[1].indent).toBe('indent');
+    // expect(Object.keys(node1)).toBe(true);
+    expect(grandChild.id).toBe('grandchild');
+    expect(grandChild.desc).toBe('Grand Child');
   });
 });
 

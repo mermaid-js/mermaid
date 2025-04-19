@@ -9,7 +9,9 @@ entry MindmapDoc:
     (MindmapRows+=MindmapRow)*;
 
 MindmapRow:
-    (indent=INDENTATION)? item=Item (terminator=NL)?;
+    // indent=(INDENTATION | '0') item=Item (terminator=NL)?;
+        (indent=INDENTATION)? item=Item (terminator=NL)?;
+
 
 Item:
     Node | IconDecoration | ClassDecoration;
@@ -20,7 +22,9 @@ Node:
 
 // Specifically handle double parentheses case - highest priority
 CircleNode:
-    id=ID '((' desc=(ID | STRING) '))';
+    id=ID desc=(CIRCLE_STR);
+    // id=ID '((' desc=(CIRCLE_STR) '))';
+    // id=ID '((' desc=(ID|STRING) '))';
 
 // Handle other complex node variants
 OtherComplex:
@@ -49,6 +53,9 @@ terminal CLASS_KEYWORD: ':::';
 
 // Basic token types
 terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
+// terminal CIRCLE_STR: /[\s\S]*?\)\)/;
+terminal CIRCLE_STR:  /\(\(([\s\S]*?)\)\)/;
+// terminal CIRCLE_STR:  /(?!\(\()[\s\S]+?(?!\(\()/;
 terminal STRING: /"[^"]*"|'[^']*'/;
 terminal INDENTATION: /[ \t]{2,}/;  // Two or more spaces/tabs for indentation
 terminal NL: /\r?\n/;
