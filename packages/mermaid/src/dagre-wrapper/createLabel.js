@@ -45,7 +45,7 @@ function addHtmlLabel(node) {
  * @deprecated svg-util/createText instead
  */
 const createLabel = (_vertexText, style, isTitle, isNode) => {
-  let vertexText = _vertexText || '';
+  let vertexText = _vertexText ?? '';
   if (typeof vertexText === 'object') {
     vertexText = vertexText[0];
   }
