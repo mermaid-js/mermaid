@@ -17,7 +17,14 @@ import type {
   Option,
   Entry,
 } from '../../../../parser/dist/src/language/generated/ast.js';
-import type { RadarAxis, RadarCurve, RadarOptions, RadarDB, RadarData } from './types.js';
+import type {
+  RadarAxis,
+  RadarCurve,
+  RadarOptions,
+  RadarDB,
+  RadarData,
+  TickLabels,
+} from './types.js';
 
 const defaultOptions: RadarOptions = {
   showLegend: true,
@@ -25,6 +32,8 @@ const defaultOptions: RadarOptions = {
   max: null,
   min: 0,
   graticule: 'circle',
+  tickLabels: { labels: [] },
+  tickLabelsAxis: null,
 };
 
 const defaultRadarData: RadarData = {
@@ -102,6 +111,16 @@ const setOptions = (options: Option[]) => {
     max: (optionMap.max?.value as number) ?? defaultOptions.max,
     min: (optionMap.min?.value as number) ?? defaultOptions.min,
     graticule: (optionMap.graticule?.value as 'circle' | 'polygon') ?? defaultOptions.graticule,
+    // this is due to that otherwise $container gets set here via the Options type and
+    //  creates a circular structure which breaks tests
+    tickLabels: {
+      labels: [
+        ...((optionMap.tickLabels?.value as TickLabels)?.labels ??
+          defaultOptions.tickLabels.labels),
+      ],
+    },
+    tickLabelsAxis:
+      (optionMap.tickLabelsAxis?.value as number | null) ?? defaultOptions.tickLabelsAxis,
   };
 };
 

@@ -70,6 +70,12 @@ export const styles: DiagramStylesProvider = ({ radar }: { radar?: RadarStyleOpt
 		font-size: ${radarOptions.legendFontSize}px;
 		dominant-baseline: hanging;
 	}
+  .radarAxisTickLabel {
+		dominant-baseline: middle;
+		text-anchor: middle;
+		font-size: ${radarOptions.axisLabelFontSize}px;
+		color: ${radarOptions.axisColor};
+	}
 	${genIndexStyles(themeVariables, radarOptions)}
 	`;
 };

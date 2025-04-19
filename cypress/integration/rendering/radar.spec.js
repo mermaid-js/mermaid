@@ -42,6 +42,9 @@ describe('radar structure', () => {
                 max 8
                 min 0
                 graticule polygon
+
+                tickLabels{'-1','0','1'}
+                tickLabelsAxis 2
             `
     );
     cy.get('svg').should((svg) => {

@@ -1,7 +1,7 @@
 import { it, describe, expect } from 'vitest';
 import { db } from './db.js';
 import { parser } from './parser.js';
-import { relativeRadius, closedRoundCurve } from './renderer.js';
+import { relativeRadius, closedRoundCurve, _getAngleOffset } from './renderer.js';
 import { Diagram } from '../../Diagram.js';
 import mermaidAPI from '../../mermaidAPI.js';
 
@@ -75,6 +75,10 @@ describe('radar diagrams', () => {
         "max": null,
         "min": 0,
         "showLegend": true,
+        "tickLabels": {
+          "labels": [],
+        },
+        "tickLabelsAxis": null,
         "ticks": 5,
       }
     `);
@@ -87,6 +91,8 @@ describe('radar diagrams', () => {
     graticule polygon
     min 1
     max 10
+    tickLabels {'-4','-3','-2','-1','0','1','2','3','4','5'}
+    tickLabelsAxis 2
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
     expect(getOptions()).toMatchInlineSnapshot(`
@@ -95,6 +101,21 @@ describe('radar diagrams', () => {
         "max": 10,
         "min": 1,
         "showLegend": false,
+        "tickLabels": {
+          "labels": [
+            "-4",
+            "-3",
+            "-2",
+            "-1",
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+          ],
+        },
+        "tickLabelsAxis": 2,
         "ticks": 10,
       }
     `);
@@ -246,10 +267,59 @@ describe('radar diagrams', () => {
         curve mycurve["My Curve"]{1,2,3}
         curve mycurve2["My Curve 2"]{ C: 1, A: 2, B: 3 }
         graticule polygon
+        tickLabels {'-2','-1','0','1','2'}
+        tickLabelsAxis 2
         `;
         await mermaidAPI.parse(str);
         const diagram = await Diagram.fromText(str);
         await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+      });
+    });
+
+    describe('_getAngleOffset', () => {
+      it('should handle angles around -90°', () => {
+        const angle = -Math.PI / 2; // -90 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 10, y: 0 });
+      });
+
+      it('should handle angles around -45°', () => {
+        const angle = -Math.PI / 4; // -45 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 7.5, y: 7.5 });
+      });
+
+      it('should handle angles around 0°', () => {
+        const angle = 0; // 0 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 0, y: 7.5 });
+      });
+
+      it('should handle angles around 45°', () => {
+        const angle = Math.PI / 4; // 45 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 10, y: -5 });
+      });
+
+      it('should handle angles around 90°', () => {
+        const angle = Math.PI / 2; // 90 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: -10, y: 0 });
+      });
+
+      it('should handle angles around 135°', () => {
+        const angle = (3 * Math.PI) / 4; // 135 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: -7.5, y: -7.5 });
+      });
+
+      it('should handle angles around 180°', () => {
+        const angle = Math.PI; // 180 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 0, y: -7.5 });
+      });
+
+      it('should handle angles around 225°', () => {
+        const angle = (5 * Math.PI) / 4; // 225 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: -7.5, y: 7.5 });
+      });
+
+      it('should handle default case for angles outside defined ranges', () => {
+        const angle = -3 * Math.PI; // -540 degrees
+        expect(_getAngleOffset(angle)).toEqual({ x: 0, y: 0 });
       });
     });
   });
