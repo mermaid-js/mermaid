@@ -6,30 +6,38 @@ grammar Mindmap
 
 entry MindmapDoc:
     MINDMAP_KEYWORD (newline=NL)?
-    (statements+=Statement)*;
+    (MindmapRows+=MindmapRow)*;
 
-Statement:
-    (indent=INDENTATION)? element=Element (terminator=NL)?;
+MindmapRow:
+    (indent=INDENTATION)? item=Item (terminator=NL)?;
 
-Element:
+Item:
     Node | IconDecoration | ClassDecoration;
 
+// Use a special rule order to handle the parsing precedence
 Node:
-    ComplexNode | SimpleNode;
+    CircleNode | OtherComplex | SimpleNode;
 
-SimpleNode:
+// Specifically handle double parentheses case - highest priority
+CircleNode:
+    id=ID '((' desc=(ID | STRING) '))';
+
+// Handle other complex node variants
+OtherComplex:
     id=ID
-    // Ensure it does not match the structure of a ComplexNode
-    (NL | INDENTATION)?;
+    (
+        ('[' '[' desc=(ID | STRING) ']' ']') |
+        ('{' '{' desc=(ID | STRING) '}' '}') |
+        ('(-' desc=(ID | STRING) '-)') |
+        ('(' desc=(ID | STRING) ')')
+    );
 
-ComplexNode:
-    (id=ID)?
-    start=(LPAREN|LBRACKET|LCURLY|START_CLOUD|DOUBLE_PAREN)
-    desc=(ID|STRING)
-    end=(RPAREN|RBRACKET|RCURLY|END_CLOUD|DOUBLE_PAREN);
+// Simple node as fallback
+SimpleNode:
+    id=ID;
 
 IconDecoration:
-    ICON_KEYWORD content=(ID|STRING) RPAREN;
+    ICON_KEYWORD content=(ID|STRING) ')';
 
 ClassDecoration:
     CLASS_KEYWORD content=(ID|STRING);
@@ -38,17 +46,6 @@ ClassDecoration:
 terminal MINDMAP_KEYWORD: 'mindmap';
 terminal ICON_KEYWORD: '::icon(';
 terminal CLASS_KEYWORD: ':::';
-
-// Delimiters - using unique string literals
-terminal LPAREN: '(';
-terminal RPAREN: ')';
-terminal DOUBLE_PAREN: '((' | '))';  // Combined to avoid regex conflicts
-terminal LBRACKET: '[';
-terminal RBRACKET: ']';
-terminal LCURLY: '{{';
-terminal RCURLY: '}}';
-terminal START_CLOUD: '(-';
-terminal END_CLOUD: '-)';
 
 // Basic token types
 terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
