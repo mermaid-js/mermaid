@@ -10,7 +10,7 @@ Diagram Examples can be found in the [Mermaid Live Editor](https://mermaid.live)
 
 One would notice that all **Diagrams definitions begin** with a declaration of the **diagram type**, followed by the definitions of the diagram and its contents. This declaration notifies the parser which kind of diagram the code is supposed to generate. The only exception to this a [Frontmatter](#frontmatter-for-diagram-code) configuration.
 
-Code is case insensitive. Indents are completely ignored but recommended for structure and readability. 
+Code is case insensitive. Indents are completely ignored but recommended for structure and readability.
 
 Line comments can ignore anything on the line after '%% '.
 
@@ -60,7 +60,7 @@ The following are the most commonly used methods, and they are all tied to Merma
 
 Here you can edit certain values to change the behavior and appearance of the diagram.
 
-Each of these techniques are functionally equivalent, but better for different deployments.  
+Each of these techniques are functionally equivalent, but better for different deployments.
 
 ### [The initialize() call](./getting-started.md#_3-calling-the-javascript-api)
 
