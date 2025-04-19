@@ -88,7 +88,7 @@ function positionNodes(db: ArchitectureDB, cy: cytoscape.Core) {
     data.y = node.position().y;
 
     const nodeElem = db.getElementById(data.id);
-    nodeElem.attr('transform', 'translate(' + (data.x || 0) + ',' + (data.y || 0) + ')');
+    nodeElem.attr('transform', 'translate(' + (data.x ?? 0) + ',' + (data.y ?? 0) + ')');
   });
 }
 
