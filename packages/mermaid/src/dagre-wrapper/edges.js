@@ -69,9 +69,7 @@ export const insertEdgeLabel = (elem, edge) => {
     fo = inner.node().appendChild(startLabelElement);
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
-    if (!terminalLabels[edge.id]) {
-      terminalLabels[edge.id] = {};
-    }
+    terminalLabels[edge.id] ??= {};
     terminalLabels[edge.id].startLeft = startEdgeLabelLeft;
     setTerminalWidth(fo, edge.startLabelLeft);
   }
@@ -85,9 +83,7 @@ export const insertEdgeLabel = (elem, edge) => {
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
-    if (!terminalLabels[edge.id]) {
-      terminalLabels[edge.id] = {};
-    }
+    terminalLabels[edge.id] ??= {};
     terminalLabels[edge.id].startRight = startEdgeLabelRight;
     setTerminalWidth(fo, edge.startLabelRight);
   }
@@ -102,9 +98,7 @@ export const insertEdgeLabel = (elem, edge) => {
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
 
-    if (!terminalLabels[edge.id]) {
-      terminalLabels[edge.id] = {};
-    }
+    terminalLabels[edge.id] ??= {};
     terminalLabels[edge.id].endLeft = endEdgeLabelLeft;
     setTerminalWidth(fo, edge.endLabelLeft);
   }
@@ -119,9 +113,7 @@ export const insertEdgeLabel = (elem, edge) => {
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelRight.node().appendChild(endLabelElement);
-    if (!terminalLabels[edge.id]) {
-      terminalLabels[edge.id] = {};
-    }
+    terminalLabels[edge.id] ??= {};
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight);
   }
@@ -141,7 +133,7 @@ function setTerminalWidth(fo, value) {
 
 export const positionEdgeLabel = (edge, paths) => {
   log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels[edge.id], paths);
-  let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
+  let path = paths.updatedPath ?? paths.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   if (edge.label) {
