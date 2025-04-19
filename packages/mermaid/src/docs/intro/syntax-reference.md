@@ -60,7 +60,7 @@ The following are the most commonly used methods, and they are all tied to Merma
 
 Here you can edit certain values to change the behavior and appearance of the diagram.
 
-Each of these techniques are functionally equivilent, but better for different deployments.  
+Each of these techniques are functionally equivalent, but better for different deployments.  
 
 ### [The initialize() call](./getting-started.md#_3-calling-the-javascript-api)
 
@@ -70,7 +70,7 @@ Used when Mermaid is called via an API, or through a `<script>` tag.
 
 Frontmatter is the term for adding YAML metadata at the start of code. This allows for reconfiguration of a diagram before it is rendered. You can pass metadata Frontmatter with your definition by adding `---` to the lines before and after the definition. This 'triple dash' MUST be the only character on the first line.
 
-Frontmatter uses YAML coding syntax. It requires any indenting to be consistent, settings are case sensitive. Mermaid will silently ignore misspelling, but badly formed parameters will break the diagram. Strings will inconsistantly require quotation marks.
+Frontmatter uses YAML coding syntax. It requires any indenting to be consistent, settings are case sensitive. Mermaid will silently ignore misspelling, but badly formed parameters will break the diagram. Strings will inconsistently require quotation marks.
 
 ```mermaid-example
 ---
