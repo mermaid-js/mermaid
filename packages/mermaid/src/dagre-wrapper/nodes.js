@@ -15,9 +15,7 @@ const formatClass = (str) => {
   return '';
 };
 const getClassesFromNode = (node, otherClasses) => {
-  return `${otherClasses ? otherClasses : 'node default'}${formatClass(node.classes)} ${formatClass(
-    node.class
-  )}`;
+  return `${otherClasses ?? 'node default'}${formatClass(node.classes)} ${formatClass(node.class)}`;
 };
 
 const question = async (parent, node) => {
@@ -57,7 +55,7 @@ const choice = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
-    .attr('id', node.domId || node.id);
+    .attr('id', node.domId ?? node.id);
 
   const s = 28;
   const points = [
@@ -566,7 +564,7 @@ const rectWithTitle = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', classes)
-    .attr('id', node.domId || node.id);
+    .attr('id', node.domId ?? node.id);
 
   // Create the title label and insert it after the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -808,7 +806,7 @@ const start = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
-    .attr('id', node.domId || node.id);
+    .attr('id', node.domId ?? node.id);
   const circle = shapeSvg.insert('circle', ':first-child');
 
   // center the circle around its coordinate
@@ -827,7 +825,7 @@ const forkJoin = (parent, node, dir) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
-    .attr('id', node.domId || node.id);
+    .attr('id', node.domId ?? node.id);
 
   let width = 70;
   let height = 10;
@@ -859,7 +857,7 @@ const end = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
-    .attr('id', node.domId || node.id);
+    .attr('id', node.domId ?? node.id);
   const innerCircle = shapeSvg.insert('circle', ':first-child');
   const circle = shapeSvg.insert('circle', ':first-child');
 
@@ -891,7 +889,7 @@ const class_box = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', classes)
-    .attr('id', node.domId || node.id);
+    .attr('id', node.domId ?? node.id);
 
   // Create the title label and insert it after the rect
   const rect = shapeSvg.insert('rect', ':first-child');
