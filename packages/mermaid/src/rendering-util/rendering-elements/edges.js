@@ -161,83 +161,163 @@ function setTerminalWidth(fo, value) {
   }
 }
 
+export const calculateEdgeLength = (path) => {
+  if (!path || path.length < 2) {
+    return 0;
+  }
+
+  let length = 0;
+  for (let i = 0; i < path.length - 1; i++) {
+    const dx = path[i + 1].x - path[i].x;
+    const dy = path[i + 1].y - path[i].y;
+    length += Math.sqrt(dx * dx + dy * dy);
+  }
+  return length;
+};
+import { FlowDB } from '../../diagrams/flowchart/flowDb.ts';
+
 export const positionEdgeLabel = (edge, paths) => {
-  log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
+  log.debug('Adjusting label position for edge', edge.id);
+
+  const diagramType = getConfig().diagramType || 'flowchart';
+  const flowDb = new FlowDB();
+  const direction = diagramType === 'flowchart' ? flowDb.getDirection() : 'TD';
+
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+
   if (edge.label) {
     const el = edgeLabels.get(edge.id);
     let x = edge.x;
     let y = edge.y;
+
     if (path) {
       const pos = utils.calcLabelPosition(path);
-      log.debug(
-        'Moving label ' + edge.label + ' from (',
-        x,
-        ',',
-        y,
-        ') to (',
-        pos.x,
-        ',',
-        pos.y,
-        ') abc88'
-      );
-      if (paths.updatedPath) {
-        x = pos.x;
-        y = pos.y;
+      x = pos.x;
+      y = pos.y;
+
+      const edgeLength = calculateEdgeLength(path);
+      log.debug(`Edge Length for ${edge.id}:`, edgeLength);
+
+      if (diagramType === 'flowchart') {
+        if (direction === 'LR' || direction === 'RL') {
+          const horizontalOffset = edgeLength > 200 ? -200 : -50;
+          x += horizontalOffset;
+        } else {
+          const verticalOffset = edgeLength > 200 ? -140 : -50;
+          y += verticalOffset;
+        }
       }
     }
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
-  }
+    log.debug(`Updated label transform for edge ${edge.id}: translate(${x}, ${y})`);
 
-  if (edge.startLabelLeft) {
-    const el = terminalLabels.get(edge.id).startLeft;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
-      x = pos.x;
-      y = pos.y;
+    if (edge.startLabelLeft) {
+      const el = terminalLabels.get(edge.id).startLeft;
+      let x = edge.x;
+      let y = edge.y;
+      if (path) {
+        const pos = utils.calcTerminalLabelPosition(
+          edge.arrowTypeStart ? 10 : 0,
+          'start_left',
+          path
+        );
+
+        // let minimizationX = pos.x;
+        // let minimizationY = pos.y;
+        // for (const path_ of paths) {
+        //   let posOther = utils.calcLabelPosition(path_);
+        //   if (posOther.x == pos.x) {
+        //     if (minimizationX > posOther.x) {
+        //       minimizationY = posOther.y;
+        //     }
+        //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+        //     minimizationX = posOther.x;
+        //   }
+        // }
+        x = pos.x;
+        y = pos.y;
+      }
+      el.attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
-  }
-  if (edge.startLabelRight) {
-    const el = terminalLabels.get(edge.id).startRight;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(
-        edge.arrowTypeStart ? 10 : 0,
-        'start_right',
-        path
-      );
-      x = pos.x;
-      y = pos.y;
+    if (edge.startLabelRight) {
+      const el = terminalLabels.get(edge.id).startRight;
+      let x = edge.x;
+      let y = edge.y;
+      if (path) {
+        const pos = utils.calcTerminalLabelPosition(
+          edge.arrowTypeStart ? 10 : 0,
+          'start_right',
+          path
+        );
+
+        // let minimizationX = pos.x;
+        // let minimizationY = pos.y;
+        // for (const path_ of paths) {
+        //   let posOther = utils.calcLabelPosition(path_);
+        //   if (posOther.x == pos.x) {
+        //     if (minimizationX > posOther.x) {
+        //       minimizationY = posOther.y;
+        //     }
+        //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+        //     minimizationX = posOther.x;
+        //   }
+        // }
+
+        x = pos.x;
+        y = pos.y;
+      }
+      el.attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
-  }
-  if (edge.endLabelLeft) {
-    const el = terminalLabels.get(edge.id).endLeft;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
-      x = pos.x;
-      y = pos.y;
+    if (edge.endLabelLeft) {
+      const el = terminalLabels.get(edge.id).endLeft;
+      let x = edge.x;
+      let y = edge.y;
+      if (path) {
+        const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
+
+        // let minimizationX = pos.x;
+        // let minimizationY = pos.y;
+        // for (const path_ of paths) {
+        //   let posOther = utils.calcLabelPosition(path_);
+        //   if (posOther.x == pos.x) {
+        //     if (minimizationX > posOther.x) {
+        //       minimizationY = posOther.y;
+        //     }
+        //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+        //     minimizationX = posOther.x;
+        //   }
+        // }
+        x = pos.x;
+        y = pos.y;
+      }
+      el.attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
-  }
-  if (edge.endLabelRight) {
-    const el = terminalLabels.get(edge.id).endRight;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
-      x = pos.x;
-      y = pos.y;
+    if (edge.endLabelRight) {
+      const el = terminalLabels.get(edge.id).endRight;
+      let x = edge.x;
+      let y = edge.y;
+      if (path) {
+        const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
+
+        // let minimizationX = pos.x;
+        // let minimizationY = pos.y;
+        // for (const path_ of paths) {
+        //   let posOther = utils.calcLabelPosition(path_);
+        //   if (posOther.x == pos.x) {
+        //     if (minimizationX > posOther.x) {
+        //       minimizationY = posOther.y;
+        //     }
+        //   } else if (posOther.y == pos.y && minimizationY > posOther.y) {
+        //     minimizationX = posOther.x;
+        //   }
+        // }
+        x = pos.x;
+        y = pos.y;
+      }
+      el.attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
   }
 };
 
@@ -412,7 +492,7 @@ const fixCorners = function (lineData) {
           Math.abs(nextPoint.x - prevPoint.x),
           Math.abs(nextPoint.y - prevPoint.y)
         );
-        const r = 5;
+        const r = 50000;
         if (cornerPoint.x === newPrevPoint.x) {
           newCornerPoint = {
             x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,

@@ -22,8 +22,8 @@ async function addHtmlSpan(element, node, width, classes, addBackground = false)
   const fo = element.append('foreignObject');
   // This is not the final width but used in order to make sure the foreign
   // object in firefox gets a width at all. The final width is fetched from the div
-  fo.attr('width', `${10 * width}px`);
-  fo.attr('height', `${10 * width}px`);
+  fo.attr('width', `${1000 * width}px`);
+  fo.attr('height', `${1000 * width}px`);
 
   const div = fo.append('xhtml:div');
   let label = node.label;
@@ -143,8 +143,8 @@ function createFormattedText(
     bkg
       .attr('x', bbox.x - padding)
       .attr('y', bbox.y - padding)
-      .attr('width', bbox.width + 2 * padding)
-      .attr('height', bbox.height + 2 * padding);
+      .attr('width', bbox.width + 500 * padding)
+      .attr('height', bbox.height + 500 * padding);
 
     return labelGroup.node();
   } else {
