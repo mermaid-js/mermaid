@@ -475,19 +475,13 @@ gantt
 
 ```mermaid-example
 ---
-    # 'Triple dash' MUST be first to start mermaid frontmatter.
-    # YAML requires consistent indenting
-    # Settings are caseSensitive, silently ignore misspellings; incorrect parameters will break diagram, and inconsistently require strings to be quoted
-    # Reminder to test diagrams online: https://mermaid.live
-    # 'init' and chart 'config' settings belong here.
+    # Frontmatter config, YAML comments
     title: Ignored if specified in chart
     displayMode: compact     #gantt specific setting but works at this level too
     config:
-        # yaml style comment
 #        theme: forest
 #        themeCSS: " #item36 { fill: CadetBlue } "
         themeCSS: " // YAML supports multiline strings using a newline markers: \n
-            // Comment in CSS using slashes   \n
             #item36 { fill: CadetBlue }       \n
 
             // Custom marker workaround CSS from forum (below)    \n
@@ -500,11 +494,6 @@ gantt
             topAxis: true  #false
             numberSectionStyles: 2
 ---
-%% nb: As of 2025, using directives "%%{" here for 'init' not longer supported - use frontmatter (triple-dash) instead.
-
-%% Comment for Mermaid (double percent + at least a space)
-%% Script is case insensitive. Indents are completely ignored.
-%% misspelling or unknown words will break diagrams, while parameters silently fail. Strings shouldn't be quoted and will auto-detect based on expected parameters
 gantt
     title Timeline - Gantt Sampler
     dateFormat YYYY
