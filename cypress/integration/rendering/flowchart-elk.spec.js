@@ -208,13 +208,13 @@ describe('Flowchart ELK', () => {
       `flowchart-elk TB
   internet
   nat
-  routeur
+  router
   lb1
   lb2
   compute1
   compute2
   subgraph project
-  routeur
+  router
   nat
     subgraph subnet1
       compute1
@@ -225,8 +225,8 @@ describe('Flowchart ELK', () => {
       lb2
     end
   end
-  internet --> routeur
-  routeur --> subnet1 & subnet2
+  internet --> router
+  router --> subnet1 & subnet2
   subnet1 & subnet2 --> nat --> internet
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
@@ -443,7 +443,7 @@ flowchart-elk TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('63-elk: title on subgraphs should be themable', () => {
+  it('63-elk: title on subgraphs should be themeable', () => {
     imgSnapshotTest(
       `
       %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%

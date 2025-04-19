@@ -192,8 +192,9 @@ flowchart LR
   B -->|Option 1| C[Path 1]
   B -->|Option 2| D[Path 2]
 
-#### Using Dagre Layout with Classic Look:
 ```
+
+#### Using Dagre Layout with Classic Look:
 
 Another example:
 
