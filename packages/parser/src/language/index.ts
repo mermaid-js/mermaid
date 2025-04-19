@@ -11,6 +11,7 @@ export {
   Branch,
   Commit,
   Merge,
+  MindmapDoc as Mindmap,
   Statement,
   isInfo,
   isPacket,
@@ -32,6 +33,7 @@ export {
   ArchitectureGeneratedModule,
   GitGraphGeneratedModule,
   RadarGeneratedModule,
+  MindmapGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';

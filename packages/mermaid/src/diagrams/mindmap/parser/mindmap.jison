@@ -1,127 +1,94 @@
-/** mermaid
- *  https://knsv.github.io/mermaid
- *  (c) 2015 Knut Sveidqvist
- *  MIT license.
+/**
+ * Mindmap grammar for Langium
+ * Converted from mermaid's jison grammar
  */
-%lex
+grammar Mindmap
 
-%options case-insensitive
+// Entry rule - equivalent to the 'start' rule in jison
+entry MindmapDocument:
+    // The document starts with the 'mindmap' keyword
+    (spaceLines+=SPACELINE)*
+    'mindmap' (NL)?
+    (documentContent=DocumentContent)?;
 
-%{
-	// Pre-lexer code can go here
-%}
-%x NODE
-%x NSTR
-%x NSTR2
-%x ICON
-%x CLASS
+// Document contains multiple statements separated by newlines
+DocumentContent:
+    statements+=Statement (stop+=Stop statements+=Statement)* (stop+=Stop)?;
 
-%%
+// A stop is a newline, EOF, or a spaceline - used to separate statements
+Stop:
+    NL | EOF | SPACELINE;
 
-\s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
-// \%\%[^\n]*\n                             /* skip comments */
-"mindmap"		       return 'MINDMAP';
-":::"              { this.begin('CLASS'); }
-<CLASS>.+			     { this.popState();return 'CLASS'; }
-<CLASS>\n				   { this.popState();}
-// [\s]*"::icon("   { this.begin('ICON'); }
-"::icon("   { yy.getLogger().trace('Begin icon');this.begin('ICON'); }
-[\s]+[\n]     {yy.getLogger().trace('SPACELINE');return 'SPACELINE'                 /* skip all whitespace */    ;}
-[\n]+               return 'NL';
-<ICON>[^\)]+			 { return 'ICON'; }
-<ICON>\)				   {yy.getLogger().trace('end icon');this.popState();}
-"-)"               { yy.getLogger().trace('Exploding node'); this.begin('NODE');return 'NODE_DSTART'; }
-"(-"               { yy.getLogger().trace('Cloud'); this.begin('NODE');return 'NODE_DSTART'; }
-"))"               { yy.getLogger().trace('Explosion Bang'); this.begin('NODE');return 'NODE_DSTART'; }
-")"               { yy.getLogger().trace('Cloud Bang'); this.begin('NODE');return 'NODE_DSTART'; }
-"(("               { this.begin('NODE');return 'NODE_DSTART'; }
-"{{"               { this.begin('NODE');return 'NODE_DSTART'; }
-"("                { this.begin('NODE');return 'NODE_DSTART'; }
-"["                { this.begin('NODE');return 'NODE_DSTART'; }
-[\s]+              return 'SPACELIST'                 /* skip all whitespace */    ;
-// !(-\()            return 'NODE_ID';
-[^\(\[\n\)\{\}]+         return 'NODE_ID';
-<<EOF>>            return 'EOF';
-<NODE>["][`]          { this.begin("NSTR2");}
-<NSTR2>[^`"]+        { return "NODE_DESCR";}
-<NSTR2>[`]["]          { this.popState();}
-<NODE>["]          { yy.getLogger().trace('Starting NSTR');this.begin("NSTR");}
-<NSTR>[^"]+        { yy.getLogger().trace('description:', yytext); return "NODE_DESCR";}
-<NSTR>["]          {this.popState();}
-<NODE>[\)]\)         {this.popState();yy.getLogger().trace('node end ))');return "NODE_DEND";}
-<NODE>[\)]         {this.popState();yy.getLogger().trace('node end )');return "NODE_DEND";}
-<NODE>[\]]         {this.popState();yy.getLogger().trace('node end ...',yytext);return "NODE_DEND";}
-<NODE>"}}"         {this.popState();yy.getLogger().trace('node end ((');return "NODE_DEND";}
-<NODE>"(-"         {this.popState();yy.getLogger().trace('node end (-');return "NODE_DEND";}
-<NODE>"-)"         {this.popState();yy.getLogger().trace('node end (-');return "NODE_DEND";}
-<NODE>"(("         {this.popState();yy.getLogger().trace('node end ((');return "NODE_DEND";}
-<NODE>"("          {this.popState();yy.getLogger().trace('node end ((');return "NODE_DEND";}
-<NODE>[^\)\]\(\}]+     { yy.getLogger().trace('Long description:', yytext);   return 'NODE_DESCR';}
-<NODE>.+(?!\(\()     { yy.getLogger().trace('Long description:', yytext);   return 'NODE_DESCR';}
-// [\[]               return 'NODE_START';
-// .+                 return 'TXT' ;
+// Statements can be nodes, icons, classes, or empty lines
+Statement:
+    // The whitespace prefix determines nesting level in the mindmap
+    (indent=INDENT)? (
+        node=Node |         // A node in the mindmap
+        icon=IconDecoration | // Icon decoration for a node
+        cssClass=ClassDecoration // CSS class for a node
+    ) |
+    SPACELINE; // Empty or comment lines
 
-/lex
+// A node can be either simple (just ID) or complex (with description)
+Node:
+    SimpleNode | ComplexNode;
 
-%start start
+// Simple node is just an identifier
+SimpleNode:
+    id=NODE_ID;
 
-%% /* language grammar */
+// Complex node has a description enclosed in brackets, parentheses, etc.
+ComplexNode:
+    // Optional ID followed by a description with delimiters
+    (id=NODE_ID)? start=NODE_DSTART description=NODE_DESCR end=NODE_DEND;
 
-start
-// %{	: info document 'EOF' { return yy; } }
-	: mindMap
-  |	spaceLines mindMap
-  ;
+// Icon decoration for nodes
+IconDecoration:
+    '::icon(' name=ICON ')';
 
-spaceLines
-  : SPACELINE
-  | spaceLines SPACELINE
-  | spaceLines NL
-  ;
+// CSS class decoration for nodes
+ClassDecoration:
+    ':::' name=CLASS;
 
-mindMap
-  : MINDMAP document  { return yy; }
-  | MINDMAP NL document  { return yy; }
-  ;
+// Hidden terminal rules (comments, whitespace that should be ignored during parsing)
+hidden terminal WS: /[ \t]+/;
 
-stop
-  : NL {yy.getLogger().trace('Stop NL ');}
-  | EOF {yy.getLogger().trace('Stop EOF ');}
-  | SPACELINE
-  | stop NL {yy.getLogger().trace('Stop NL2 ');}
-  | stop EOF {yy.getLogger().trace('Stop EOF2 ');}
-  ;
-document
-	: document statement stop
-	| statement stop
-	;
+// Terminal rules (lexer rules)
+terminal INDENT: /[ \t]+/;
+terminal SPACELINE: /\s*\%\%.*|[ \t]+\n/;
+terminal NL: /\n+/;
+terminal EOF: /$/;
 
-statement
-	: SPACELIST node       { yy.getLogger().info('Node: ',$2.id);yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
-	| SPACELIST ICON       { yy.getLogger().trace('Icon: ',$2);yy.decorateNode({icon: $2}); }
-	| SPACELIST CLASS      { yy.decorateNode({class: $2}); }
-  | SPACELINE { yy.getLogger().trace('SPACELIST');}
-	| node					       { yy.getLogger().trace('Node: ',$1.id);yy.addNode(0, $1.id, $1.descr, $1.type);  }
-	| ICON                 { yy.decorateNode({icon: $1}); }
-	| CLASS                { yy.decorateNode({class: $1}); }
-  | SPACELIST
-	;
+// Node related terminals with refined regex patterns to match the jison lexer
+terminal NODE_ID: /[^\(\[\n\)\{\}]+/;
+terminal NODE_DSTART: /\(\(|\{\{|\(|\[|\-\)|\(\-|\)\)|\)/;
+terminal NODE_DEND: /\)\)|\}\}|\)|\]|\(\-|\-\)|\(\(/;
+terminal NODE_DESCR: /[^"\)`\]]+/;
+terminal ICON: /[^\)]+/;
+terminal CLASS: /[^\n]+/;
 
+// We also need to implement these semantic actions from the jison grammar:
+// - addNode(level, id, description, type)
+// - decorateNode({icon: iconName})
+// - decorateNode({class: className})
+// - getType(startDelimiter, endDelimiter)
 
+/**
+ * Interface for a MindmapNode.
+ * This represents the AST node for a mindmap node.
+ */
+interface MindmapNode {
+    id: string;
+    description?: string;
+    type: NodeType;
+    level: number;  // Indentation level (derived from the INDENT token)
+    icon?: string;
+    cssClass?: string;
+    children?: MindmapNode[];
+}
 
-node
-  :nodeWithId
-  |nodeWithoutId
-  ;
-
-nodeWithoutId
-  :   NODE_DSTART NODE_DESCR NODE_DEND
-	      { yy.getLogger().trace("node found ..", $1); $$ = { id: $2, descr: $2, type: yy.getType($1, $3) }; }
-  ;
-
-nodeWithId
-	:  NODE_ID             { $$ = { id: $1, descr: $1, type: yy.nodeType.DEFAULT }; }
-	|  NODE_ID NODE_DSTART NODE_DESCR NODE_DEND
-	                       { yy.getLogger().trace("node found ..", $1); $$ = { id: $1, descr: $3, type: yy.getType($2, $4) }; }
-	;
-%%
+/**
+ * The different node types in mindmap based on delimiters.
+ * This corresponds to the yy.getType() function in the jison grammar.
+ */
+type NodeType = 'DEFAULT' | 'CIRCLE' | 'CLOUD' | 'BANG' | 'HEXAGON' | 'ROUND';

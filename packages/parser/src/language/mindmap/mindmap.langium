@@ -1,49 +1,64 @@
-grammar MindMap
+/**
+ * Mindmap grammar for Langium
+ * Converted from mermaid's jison grammar
+ */
+grammar Mindmap
 
-import 'Terminals'
-
-entry Diagram:
-    keyword='mindmap'
-    statements+=Statement*;
+entry MindmapDoc:
+    MINDMAP_KEYWORD (newline=NL)?
+    (statements+=Statement)*;
 
 Statement:
-    RootNode | Node;
+    (indent=INDENTATION)? element=Element (terminator=NL)?;
 
-RootNode:
-    root=Text (child=Node)?;
+Element:
+    Node | IconDecoration | ClassDecoration;
 
 Node:
-    depth=DEPTH text=Text (child=Node)?;
+    ComplexNode | SimpleNode;
 
-terminal DEPTH:
-    /\t+/ | / {2,}/;
+SimpleNode:
+    id=ID
+    // Ensure it does not match the structure of a ComplexNode
+    (NL | INDENTATION)?;
 
-Text:
-    content=TEXT_CONTENT shorthand=SHORTHAND?;
+ComplexNode:
+    (id=ID)?
+    start=(LPAREN|LBRACKET|LCURLY|START_CLOUD|DOUBLE_PAREN)
+    desc=(ID|STRING)
+    end=(RPAREN|RBRACKET|RCURLY|END_CLOUD|DOUBLE_PAREN);
 
-terminal TEXT_CONTENT:
-    /[^\n\r\[\]]+/;
+IconDecoration:
+    ICON_KEYWORD content=(ID|STRING) RPAREN;
 
-terminal SHORTHAND:
-    /\[[^\]]*\]/;
+ClassDecoration:
+    CLASS_KEYWORD content=(ID|STRING);
 
-terminal ICON:
-    /::icon\([^\)]+\)/;
+// Keywords with fixed text patterns
+terminal MINDMAP_KEYWORD: 'mindmap';
+terminal ICON_KEYWORD: '::icon(';
+terminal CLASS_KEYWORD: ':::';
 
-terminal CLASSNAME:
-    /:::[^\n]*/;
+// Delimiters - using unique string literals
+terminal LPAREN: '(';
+terminal RPAREN: ')';
+terminal DOUBLE_PAREN: '((' | '))';  // Combined to avoid regex conflicts
+terminal LBRACKET: '[';
+terminal RBRACKET: ']';
+terminal LCURLY: '{{';
+terminal RCURLY: '}}';
+terminal START_CLOUD: '(-';
+terminal END_CLOUD: '-)';
 
-hidden terminal WS:
-    /\s+/;
+// Basic token types
+terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
+terminal STRING: /"[^"]*"|'[^']*'/;
+terminal INDENTATION: /[ \t]{2,}/;  // Two or more spaces/tabs for indentation
+terminal NL: /\r?\n/;
 
-hidden terminal NEWLINE:
-    /\r?\n/;
+// Hidden tokens
+hidden terminal WS: /[ \t]/;  // Single space or tab for hidden whitespace
+hidden terminal ML_COMMENT: /\%\%[^\n]*/;
 
-hidden terminal ML_COMMENT:
-    /\/\*[\s\S]*?\*\//;
-
-hidden terminal SL_COMMENT:
-    /\/\/[^\n\r]*/;
-
-hidden terminal DIRECTIVE:
-    /%%[^\n\r]*/;
+// Type definition for node types
+type NodeType = 'DEFAULT' | 'CIRCLE' | 'CLOUD' | 'BANG' | 'HEXAGON' | 'ROUND';

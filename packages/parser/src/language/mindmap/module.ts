@@ -4,242 +4,74 @@ import type {
   LangiumSharedCoreServices,
   Module,
   PartialLangiumCoreServices,
-  LanguageMetaData,
-  Grammar,
 } from 'langium';
 import {
-  inject,
+  EmptyFileSystem,
   createDefaultCoreModule,
   createDefaultSharedCoreModule,
-  EmptyFileSystem,
-  loadGrammarFromJson,
+  inject,
 } from 'langium';
+
+import { MermaidGeneratedSharedModule, MindmapGeneratedModule } from '../generated/module.js';
+import { MindmapTokenBuilder } from './tokenBuilder.js';
 import { CommonValueConverter } from '../common/valueConverter.js';
-import { MermaidGeneratedSharedModule } from '../generated/module.js';
-import { MindMapTokenBuilder } from './tokenBuilder.js';
 
-export const MindMapLanguageMetaData: LanguageMetaData = {
-  languageId: 'mindmap',
-  fileExtensions: ['.mmd', '.mermaid'],
-  caseInsensitive: false,
-  mode: 'production',
-};
-
-// Define a minimal grammar directly in JSON format
-let loadedMindMapGrammar: Grammar | undefined;
-export const MindMapGrammar = (): Grammar =>
-  loadedMindMapGrammar ??
-  (loadedMindMapGrammar = loadGrammarFromJson(`{
-    "$type": "Grammar",
-    "isDeclared": true,
-    "name": "MindMap",
-    "imports": [],
-    "rules": [
-      {
-        "$type": "ParserRule",
-        "entry": true,
-        "name": "Diagram",
-        "definition": {
-          "$type": "Group",
-          "elements": [
-            {
-              "$type": "Assignment",
-              "feature": "keyword",
-              "operator": "=",
-              "terminal": {
-                "$type": "Keyword",
-                "value": "mindmap"
-              }
-            },
-            {
-              "$type": "Assignment",
-              "feature": "statements",
-              "operator": "+=",
-              "terminal": {
-                "$type": "Alternatives",
-                "elements": [
-                  {
-                    "$type": "RuleCall",
-                    "rule": {"$ref": "#/rules@1"},
-                    "arguments": []
-                  },
-                  {
-                    "$type": "RuleCall",
-                    "rule": {"$ref": "#/rules@2"},
-                    "arguments": []
-                  }
-                ]
-              },
-              "cardinality": "*"
-            }
-          ]
-        },
-        "definesHiddenTokens": false,
-        "fragment": false,
-        "hiddenTokens": [],
-        "parameters": [],
-        "wildcard": false
-      },
-      {
-        "$type": "ParserRule",
-        "name": "RootNode",
-        "definition": {
-          "$type": "Group",
-          "elements": [
-            {
-              "$type": "Assignment",
-              "feature": "content",
-              "operator": "=",
-              "terminal": {
-                "$type": "RuleCall",
-                "rule": {"$ref": "#/rules@3"},
-                "arguments": []
-              }
-            }
-          ]
-        },
-        "definesHiddenTokens": false,
-        "entry": false,
-        "fragment": false,
-        "hiddenTokens": [],
-        "parameters": [],
-        "wildcard": false
-      },
-      {
-        "$type": "ParserRule",
-        "name": "ChildNode",
-        "definition": {
-          "$type": "Group",
-          "elements": [
-            {
-              "$type": "Assignment",
-              "feature": "depth",
-              "operator": "=",
-              "terminal": {
-                "$type": "RuleCall",
-                "rule": {"$ref": "#/rules@4"},
-                "arguments": []
-              }
-            },
-            {
-              "$type": "Assignment",
-              "feature": "content",
-              "operator": "=",
-              "terminal": {
-                "$type": "RuleCall",
-                "rule": {"$ref": "#/rules@3"},
-                "arguments": []
-              }
-            }
-          ]
-        },
-        "definesHiddenTokens": false,
-        "entry": false,
-        "fragment": false,
-        "hiddenTokens": [],
-        "parameters": [],
-        "wildcard": false
-      },
-      {
-        "$type": "TerminalRule",
-        "name": "WORD",
-        "type": {"$type": "ReturnType", "name": "string"},
-        "definition": {
-          "$type": "RegexToken",
-          "regex": "/[a-zA-Z0-9_-]+/"
-        },
-        "fragment": false,
-        "hidden": false
-      },
-      {
-        "$type": "TerminalRule",
-        "name": "INDENT",
-        "type": {"$type": "ReturnType", "name": "string"},
-        "definition": {
-          "$type": "RegexToken",
-          "regex": "/(?:\\\\t+| {2,})/"
-        },
-        "fragment": false,
-        "hidden": false
-      },
-      {
-        "$type": "TerminalRule",
-        "name": "WS",
-        "definition": {
-          "$type": "RegexToken",
-          "regex": "/\\\\s+/"
-        },
-        "fragment": false,
-        "hidden": true
-      },
-      {
-        "$type": "TerminalRule",
-        "name": "NL",
-        "definition": {
-          "$type": "RegexToken",
-          "regex": "/\\\\r?\\\\n/"
-        },
-        "fragment": false,
-        "hidden": false
-      },
-      {
-        "$type": "TerminalRule",
-        "name": "ML_COMMENT",
-        "definition": {
-          "$type": "RegexToken",
-          "regex": "/\\\\/\\\\*[\\\\s\\\\S]*?\\\\*\\\\//"
-        },
-        "fragment": false,
-        "hidden": true
-      },
-      {
-        "$type": "TerminalRule",
-        "name": "SL_COMMENT",
-        "definition": {
-          "$type": "RegexToken",
-          "regex": "/(?:%+|\\\\/{2,})[^\\\\n\\\\r]*/"
-        },
-        "fragment": false,
-        "hidden": true
-      }
-    ],
-    "definesHiddenTokens": false,
-    "hiddenTokens": [],
-    "interfaces": [],
-    "types": [],
-    "usedGrammars": []
-  }`));
-
-interface MindMapAddedServices {
+/**
+ * Declaration of `Mindmap` services.
+ */
+interface MindmapAddedServices {
   parser: {
-    TokenBuilder: MindMapTokenBuilder;
+    TokenBuilder: MindmapTokenBuilder;
     ValueConverter: CommonValueConverter;
   };
 }
 
-export type MindMapServices = LangiumCoreServices & MindMapAddedServices;
+/**
+ * Union of Langium default services and `Mindmap` services.
+ */
+export type MindmapServices = LangiumCoreServices & MindmapAddedServices;
 
-export const MindMapModule: Module<
-  MindMapServices,
-  PartialLangiumCoreServices & MindMapAddedServices
+/**
+ * Dependency injection module that overrides Langium default services and
+ * contributes the declared `Mindmap` services.
+ */
+export const MindmapModule: Module<
+  MindmapServices,
+  PartialLangiumCoreServices & MindmapAddedServices
 > = {
   parser: {
-    TokenBuilder: () => new MindMapTokenBuilder(),
+    TokenBuilder: () => new MindmapTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
   },
-  Grammar: MindMapGrammar,
-  LanguageMetaData: () => MindMapLanguageMetaData,
 };
 
-export function createMindMapServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
+/**
+ * Create the full set of services required by Langium.
+ *
+ * First inject the shared services by merging two modules:
+ *  - Langium default shared services
+ *  - Services generated by langium-cli
+ *
+ * Then inject the language-specific services by merging three modules:
+ *  - Langium default language-specific services
+ *  - Services generated by langium-cli
+ *  - Services specified in this file
+ * @param context - Optional module context with the LSP connection
+ * @returns An object wrapping the shared services and the language-specific services
+ */
+export function createMindmapServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
   shared: LangiumSharedCoreServices;
-  MindMap: MindMapServices;
+  Mindmap: MindmapServices;
 } {
   const shared: LangiumSharedCoreServices = inject(
     createDefaultSharedCoreModule(context),
     MermaidGeneratedSharedModule
   );
-  const MindMap: MindMapServices = inject(createDefaultCoreModule({ shared }), MindMapModule);
-  shared.ServiceRegistry.register(MindMap);
-  return { shared, MindMap };
+  const Mindmap: MindmapServices = inject(
+    createDefaultCoreModule({ shared }),
+    MindmapGeneratedModule,
+    MindmapModule
+  );
+  shared.ServiceRegistry.register(Mindmap);
+  return { shared, Mindmap };
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { mindMapParse as parse } from './test-util.js';
+import { mindmapParse as parse } from './test-util.js';
+import { keys } from '../../mermaid-flowchart-elk/dist/packages/mermaid/src/diagrams/state/id-cache';
 
 // Tests for mindmap parser with simple root and child nodes
 describe('MindMap Parser Tests', () => {
@@ -30,8 +31,9 @@ describe('MindMap Parser Tests', () => {
     expect(rootNode.content).toBe('root');
   });
 
-  it('should parse a mindmap with child nodes', () => {
-    const _result = parse(
+  it.only('should parse a mindmap with child nodes', () => {
+    console.log('BEFORE RESULT:');
+    const result = parse(
       'mindmap\nroot((Root))\n  child1((Child 1))\n  child2((Child 2))\n    grandchild((Grand Child))'
     );
 
@@ -40,28 +42,49 @@ describe('MindMap Parser Tests', () => {
     // Statements length: result.value?.statements?.length
     // If statements exist, they would have properties like id, type, text, depth
 
+    const statements = result.value.statements;
+    const s0 = statements[0];
+    const s1 = statements[1];
+
+    console.debug('Statements:', s0);
+
+    expect(result.value.statements[0].$type).toBe('Statement');
+    // expect(result.value.statements[0].element.$type).toBe('ComplexNode');
+    expect(s0.element.$type).toBe('ComplexNode');
+    expect(Object.keys(s0)).toBe('Root');
+    expect(s0.element.ID).toBe('Root');
+
+    expect(result.value.statements[1].$type).toBe('Statement');
+    expect(result.value.statements[1].element.$type).toBe('ComplexNode');
+    expect(result.value.statements[1].element.ID).toBe('Root');
+    expect(result.value.statements[1].element.desc).toBe('Root');
+    expect(Object.keys(result.value.statements[1].element)).toBe('root');
+    expect(result.value.statements[1].indent).toBe('indent');
+    expect(Object.keys(result.value.statements[1].element)).toBe(true);
+    expect(result.value.statements[1].element.id).toBe('SimpleNode');
+
     // Temporarily commenting out failing assertions
     // expect(result.successful).toBe(true);
-    // // Check that there are 4 statements: mindmap, root, child1, child2, grandchild
-    // expect(result.value.statements.length).toBe(5);
-    // // Check that the first statement is the mindmap
-    // expect(result.value.statements[0].type).toBe('mindmap');
-    // // Check that the second statement is the root
-    // expect(result.value.statements[1].type.type).toBe('circle');
-    // expect(result.value.statements[1].text).toBe('Root');
-    // expect(result.value.statements[1].depth).toBe(0);
-    // // Check that the third statement is the first child
-    // expect(result.value.statements[2].type.type).toBe('circle');
-    // expect(result.value.statements[2].text).toBe('Child 1');
-    // expect(result.value.statements[2].depth).toBe(1);
-    // // Check that the fourth statement is the second child
-    // expect(result.value.statements[3].type.type).toBe('circle');
-    // expect(result.value.statements[3].text).toBe('Child 2');
-    // expect(result.value.statements[3].depth).toBe(1);
-    // // Check that the fifth statement is the grandchild
-    // expect(result.value.statements[4].type.type).toBe('circle');
-    // expect(result.value.statements[4].text).toBe('Grand Child');
-    // expect(result.value.statements[4].depth).toBe(2);
+    // Check that there are 4 statements: mindmap, root, child1, child2, grandchild
+    expect(result.value.statements.length).toBe(5);
+    // Check that the first statement is the mindmap
+    expect(result.value.statements[0].type).toBe('mindmap');
+    // Check that the second statement is the root
+    expect(result.value.statements[1].type.type).toBe('circle');
+    expect(result.value.statements[1].text).toBe('Root');
+    expect(result.value.statements[1].depth).toBe(0);
+    // Check that the third statement is the first child
+    expect(result.value.statements[2].type.type).toBe('circle');
+    expect(result.value.statements[2].text).toBe('Child 1');
+    expect(result.value.statements[2].depth).toBe(1);
+    // Check that the fourth statement is the second child
+    expect(result.value.statements[3].type.type).toBe('circle');
+    expect(result.value.statements[3].text).toBe('Child 2');
+    expect(result.value.statements[3].depth).toBe(1);
+    // Check that the fifth statement is the grandchild
+    expect(result.value.statements[4].type.type).toBe('circle');
+    expect(result.value.statements[4].text).toBe('Grand Child');
+    expect(result.value.statements[4].depth).toBe(2);
   });
 });
 
