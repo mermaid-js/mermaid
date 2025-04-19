@@ -8,7 +8,13 @@ Diagram Examples can be found in the [Mermaid Live Editor](https://mermaid.live)
 
 ## Syntax Structure
 
-One would notice that all **Diagrams definitions begin** with a declaration of the **diagram type**, followed by the definitions of the diagram and its contents. This declaration notifies the parser which kind of diagram the code is supposed to generate.
+One would notice that all **Diagrams definitions begin** with a declaration of the **diagram type**, followed by the definitions of the diagram and its contents. This declaration notifies the parser which kind of diagram the code is supposed to generate. The only exception to this a [Frontmatter](#frontmatter-for-diagram-code) configuration.
+
+Code is case insensitive. Indents are completely ignored but recommended for structure and readability. 
+
+Line comments can ignore anything on the line after '%% '.
+
+Unknown words and misspellings will break a diagram, while parameters silently fail. Strings shouldn't be quoted and will parse based on expected parameters.
 
 **Example** : The code below is for an Entity Relationship Diagram, specified by the `erDiagram` declaration. What follows is the definition of the different `Entities` represented in it.
 
