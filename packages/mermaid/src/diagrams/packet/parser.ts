@@ -50,9 +50,7 @@ const getNextFittingBlock = (
   row: number,
   bitsPerRow: number
 ): [Required<PacketBlock>, PacketBlock | undefined] => {
-  if (block.end === undefined) {
-    block.end = block.start;
-  }
+  block.end ??= block.start;
 
   if (block.start > block.end) {
     throw new Error(`Block start ${block.start} is greater than block end ${block.end}.`);
