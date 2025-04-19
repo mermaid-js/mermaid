@@ -190,9 +190,7 @@ export const render = async (
       const children = nodeArr.filter((node: { parentId: any }) => node.parentId === subgraph.id);
       children.forEach((node: any) => {
         parentLookupDb.parentById[node.id] = subgraph.id;
-        if (parentLookupDb.childrenById[subgraph.id] === undefined) {
-          parentLookupDb.childrenById[subgraph.id] = [];
-        }
+        parentLookupDb.childrenById[subgraph.id] ??= [];
         parentLookupDb.childrenById[subgraph.id].push(node);
       });
     });
@@ -381,10 +379,10 @@ export const render = async (
         }
 
         edgeData.labelType = edge.labelType;
-        edgeData.label = (edge?.text || '').replace(common.lineBreakRegex, '\n');
+        edgeData.label = (edge?.text ?? '').replace(common.lineBreakRegex, '\n');
 
         if (edge.style === undefined) {
-          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
+          edgeData.style = edgeData.style ?? 'stroke: #333; stroke-width: 1.5px;fill:none;';
         }
 
         edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
@@ -725,9 +723,7 @@ export const render = async (
             inter = inter2;
           }
         }
-        if (!inter) {
-          inter = intersection(bounds, lastPointOutside, point);
-        }
+        inter ??= intersection(bounds, lastPointOutside, point);
 
         // Check case where the intersection is the same as the last point
         let pointPresent = false;
@@ -840,8 +836,8 @@ export const render = async (
       node.labels = [
         {
           text: node.label,
-          width: node?.labelData?.width || 50,
-          height: node?.labelData?.height || 50,
+          width: node?.labelData?.width ?? 50,
+          height: node?.labelData?.height ?? 50,
         },
         (node.width = node.width + 2 * node.padding),
         log.debug('UIO node label', node?.labelData?.width, node.padding),
@@ -917,7 +913,7 @@ export const render = async (
       if (edge.sections) {
         const src = edge.sections[0].startPoint;
         const dest = edge.sections[0].endPoint;
-        const segments = edge.sections[0].bendPoints ? edge.sections[0].bendPoints : [];
+        const segments = edge.sections[0].bendPoints ?? [];
 
         const segPoints = segments.map((segment: { x: any; y: any }) => {
           return { x: segment.x + offset.x, y: segment.y + offset.y };
