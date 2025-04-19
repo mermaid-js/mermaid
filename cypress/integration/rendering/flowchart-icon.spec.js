@@ -2,9 +2,9 @@ import { imgSnapshotTest } from '../../helpers/util.ts';
 
 const themes = ['default', 'forest', 'dark', 'base', 'neutral'];
 
-themes.forEach((theme, index) => {
-  describe('Flowchart Icon', () => {
-    it(`${index + 1}-icon: verify if icons are working from fontawesome library ${theme} theme`, () => {
+describe('when rendering flowchart with icons', () => {
+  for (const theme of themes) {
+    it(`should render icons from fontawesome library on theme ${theme}`, () => {
       imgSnapshotTest(
         `flowchart TD
             A("fab:fa-twitter Twitter") --> B("fab:fa-facebook Facebook")
@@ -15,12 +15,8 @@ themes.forEach((theme, index) => {
         { theme }
       );
     });
-  });
-});
 
-themes.forEach((theme, index) => {
-  describe('Flowchart Icon', () => {
-    it(`${index + 1}-icon: verify if registered icons are working on ${theme} theme`, () => {
+    it(`should render registered icons on theme ${theme}`, () => {
       imgSnapshotTest(
         `flowchart TD
             A("fa:fa-bell Bell") 
@@ -28,5 +24,5 @@ themes.forEach((theme, index) => {
         { theme }
       );
     });
-  });
+  }
 });
