@@ -10,7 +10,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
   const vertex = block;
 
   let classStr = 'default';
-  if ((vertex?.classes?.length || 0) > 0) {
+  if ((vertex?.classes?.length ?? 0) > 0) {
     classStr = (vertex?.classes ?? []).join(' ');
   }
   classStr = classStr + ' flowchart-label';
