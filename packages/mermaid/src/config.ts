@@ -30,7 +30,7 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: Mermaid
   if (sumOfDirectives.theme && sumOfDirectives.theme in theme) {
     const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
-      tmpConfigFromInitialize.themeVariables || {},
+      tmpConfigFromInitialize.themeVariables ?? {},
       sumOfDirectives.themeVariables
     );
     if (cfg.theme && cfg.theme in theme) {
