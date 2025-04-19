@@ -125,12 +125,30 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .style('text-anchor', 'middle')
     .attr('class', 'slice');
 
-  group
+  const titleGroup = group.append('g');
+  const titleText = db.getDiagramTitle();
+
+  // Adjust title font size dynamically
+  let fontSize = 25; // Start with a larger font size
+  const minFontSize = 8; // Set a minimum font size
+  const maxAvailableWidth = pieWidth - MARGIN;
+
+  const titleElement = titleGroup
     .append('text')
-    .text(db.getDiagramTitle())
+    .text(titleText)
     .attr('x', 0)
     .attr('y', -(height - 50) / 2)
-    .attr('class', 'pieTitleText');
+    .attr('class', 'pieTitleText')
+    .style('text-anchor', 'middle');
+
+  // Reduce font size dynamically until it fits
+  while (
+    (titleElement.node() as SVGGraphicsElement)?.getBBox()?.width > maxAvailableWidth &&
+    fontSize > minFontSize
+  ) {
+    fontSize -= 1;
+    titleElement.style('font-size', `${fontSize}px`);
+  }
 
   // Add the legends/annotations for each section
   const legend = group
