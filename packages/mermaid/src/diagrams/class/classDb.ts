@@ -41,7 +41,7 @@ export class ClassDB implements DiagramDB {
   private namespaces = new Map<string, NamespaceNode>();
   private namespaceCounter = 0;
 
-  private functions: any[] = [];
+  private functions: ((element: Element) => void)[] = [];
 
   constructor() {
     this.functions.push(this.setupToolTips.bind(this));
@@ -477,7 +477,7 @@ export class ClassDB implements DiagramDB {
     let tooltipElem: Selection<HTMLDivElement, unknown, HTMLElement, unknown> =
       select('.mermaidTooltip');
     // @ts-expect-error - Incorrect types
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
+    if ((tooltipElem._groups ?? tooltipElem)[0][0] === null) {
       tooltipElem = select('body')
         .append('div')
         .attr('class', 'mermaidTooltip')
