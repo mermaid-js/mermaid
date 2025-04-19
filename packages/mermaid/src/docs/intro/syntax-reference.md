@@ -54,11 +54,37 @@ The following are the most commonly used methods, and they are all tied to Merma
 
 Here you can edit certain values to change the behavior and appearance of the diagram.
 
+Each of these techniques are functionally equivilent, but better for different deployments.  
+
 ### [The initialize() call](./getting-started.md#_3-calling-the-javascript-api)
 
 Used when Mermaid is called via an API, or through a `<script>` tag.
 
+### Frontmatter for diagram code
+
+Frontmatter is the term for adding YAML metadata at the start of code. This allows for reconfiguration of a diagram before it is rendered. You can pass metadata Frontmatter with your definition by adding `---` to the lines before and after the definition. This 'triple dash' MUST be the only character on the first line.
+
+Frontmatter uses YAML coding syntax. It requires any indenting to be consistent, settings are case sensitive. Mermaid will silently ignore misspelling, but badly formed parameters will break the diagram. Strings will inconsistantly require quotation marks.
+
+```mermaid-example
+---
+title: Frontmatter Example
+displayMode: compact
+config:
+  theme: forest
+gantt:
+    useWidth: 400
+    compact: true
+---
+gantt
+    section Waffle
+        Iron  : 1982, 3y
+        House : 1986, 3y
+```
+
 ### [Directives](../config/directives.md)
+
+Note: After 2025, directives will stop working. See [pull request #4691](https://github.com/mermaid-js/mermaid/pull/6491)
 
 Allows for the limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram. You can pass a directive alongside your definition inside `%%{ }%%`. It can be done either above or below your diagram definition.
 
