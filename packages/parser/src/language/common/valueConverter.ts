@@ -47,6 +47,15 @@ export abstract class AbstractMermaidValueConverter extends DefaultValueConverte
     _cstNode: CstNode
   ): ValueType | undefined {
     const regex: RegExp | undefined = rulesRegexes[rule.name];
+    // Markdown string
+    if (
+      rule.name === 'STRING' &&
+      (input.startsWith('"`') || input.startsWith("'`") || input.startsWith('`'))
+    ) {
+      // A Markdown string keeps its backticks
+      // Remove quotes (`result`, '`result`' or "`result`" gives `result`)
+      return input.replace(/(^["']|["']$)/g, '');
+    }
     if (regex === undefined) {
       return undefined;
     }
