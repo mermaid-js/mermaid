@@ -238,7 +238,7 @@ let clusterElems = {};
 
 export const insertCluster = (elem, node) => {
   log.trace('Inserting cluster');
-  const shape = node.shape || 'rect';
+  const shape = node.shape ?? 'rect';
   clusterElems[node.id] = shapes[shape](elem, node);
 };
 export const getClusterTitleWidth = (elem, node) => {

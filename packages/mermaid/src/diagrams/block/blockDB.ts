@@ -82,9 +82,7 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
       foundBlock = { id: trimmedId, type: 'na', children: [] } as Block;
       blockDatabase.set(trimmedId, foundBlock);
     }
-    if (!foundBlock.classes) {
-      foundBlock.classes = [];
-    }
+    foundBlock.classes ??= [];
     foundBlock.classes.push(cssClassName);
   });
 };

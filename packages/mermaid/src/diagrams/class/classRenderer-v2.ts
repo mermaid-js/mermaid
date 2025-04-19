@@ -117,7 +117,7 @@ export const addClasses = function (
         style: styles.style,
         id: vertex.id,
         domId: vertex.domId,
-        tooltip: diagObj.db.getTooltip(vertex.id, parent) || '',
+        tooltip: diagObj.db.getTooltip(vertex.id, parent) ?? '',
         haveCallback: vertex.haveCallback,
         link: vertex.link,
         width: vertex.type === 'group' ? 500 : undefined,

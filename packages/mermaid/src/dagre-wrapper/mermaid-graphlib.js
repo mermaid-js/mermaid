@@ -4,7 +4,9 @@ import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 
 export let clusterDb = {};
+/** @type {Record<string, string[]>} */
 let descendants = {};
+/** @type {Record<string, string>} */
 let parents = {};
 
 export const clear = () => {
