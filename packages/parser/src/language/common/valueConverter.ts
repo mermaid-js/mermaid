@@ -31,9 +31,8 @@ export abstract class AbstractMermaidValueConverter extends DefaultValueConverte
   ): ValueType {
     let value: ValueType | undefined = this.runCommonConverter(rule, input, cstNode);
 
-    if (value === undefined) {
-      value = this.runCustomConverter(rule, input, cstNode);
-    }
+    value ??= this.runCustomConverter(rule, input, cstNode);
+
     if (value === undefined) {
       return super.runConverter(rule, input, cstNode);
     }
