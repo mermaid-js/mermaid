@@ -90,8 +90,6 @@ gantt
 
 ### [Directives](../config/directives.md)
 
-Note: After 2025, directives will stop working. See [pull request #4691](https://github.com/mermaid-js/mermaid/pull/6491)
-
 Allows for the limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram. You can pass a directive alongside your definition inside `%%{ }%%`. It can be done either above or below your diagram definition.
 
 ### [Theme Manipulation](../config/theming.md)
