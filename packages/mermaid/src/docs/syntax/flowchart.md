@@ -1250,6 +1250,20 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
+There are two ways to display these FontAwesome icons:
+
+### Register FontAwesome icon packs (v<MERMAID_RELEASE_VERSION>+)
+
+You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
+
+Supported prefixes: `fa`, `fab`, `fas`, `far`, `fal`, `fad`.
+
+```note
+Note that it will fall back to FontAwesome CSS if FontAwesome packs are not registered.
+```
+
+### Register FontAwesome CSS
+
 Mermaid supports Font Awesome if the CSS is included on the website.
 Mermaid does not have any restriction on the version of Font Awesome that can be used.
 
