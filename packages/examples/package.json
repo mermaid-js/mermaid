@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/examples",
-  "version": "0.0.1",
+  "version": "0.0.1-beta.1",
   "description": "Mermaid examples package",
   "author": "Sidharth Vinod",
   "type": "module",
@@ -22,5 +22,8 @@
   "dependencies": {},
   "devDependencies": {
     "mermaid": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
