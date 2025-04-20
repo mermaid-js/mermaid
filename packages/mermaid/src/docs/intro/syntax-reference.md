@@ -10,11 +10,10 @@ Diagram Examples can be found in the [Mermaid Live Editor](https://mermaid.live)
 
 One would notice that all **Diagrams definitions begin** with a declaration of the **diagram type**, followed by the definitions of the diagram and its contents. This declaration notifies the parser which kind of diagram the code is supposed to generate. The only exception to this a [Frontmatter](#frontmatter-for-diagram-code) configuration.
 
-Code is case insensitive. Indents are completely ignored but recommended for structure and readability.
 
 Line comments can ignore anything on the line after '%% '.
 
-Unknown words and misspellings will break a diagram, while parameters silently fail. Strings shouldn't be quoted and will parse based on expected parameters.
+Unknown words and misspellings will break a diagram, while parameters silently fail.
 
 **Example** : The code below is for an Entity Relationship Diagram, specified by the `erDiagram` declaration. What follows is the definition of the different `Entities` represented in it.
 
@@ -70,7 +69,7 @@ Used when Mermaid is called via an API, or through a `<script>` tag.
 
 Frontmatter is the term for adding YAML metadata at the start of code. This allows for reconfiguration of a diagram before it is rendered. You can pass metadata Frontmatter with your definition by adding `---` to the lines before and after the definition. This 'triple dash' MUST be the only character on the first line.
 
-Frontmatter uses YAML coding syntax. It requires any indenting to be consistent, settings are case sensitive. Mermaid will silently ignore misspelling, but badly formed parameters will break the diagram. Strings will inconsistently require quotation marks.
+Frontmatter uses YAML syntax. It requires any indentation to be consistent and settings are case sensitive. Mermaid will silently ignore misspelling, but badly formed parameters will break the diagram. 
 
 ```mermaid-example
 ---
