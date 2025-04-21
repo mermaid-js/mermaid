@@ -77,8 +77,8 @@ describe('architecture diagram', () => {
   it('should render unicode in a label', () => {
     imgSnapshotTest(
       `architecture-beta
-          group a('cloud')['Начало']
-          group b('cloud')['➙ коммунизм 🚩']
+          group a('cloud')['сервер']
+          group b('cloud')['➙ девори девор 🔥']
           service right_disk('disk')["❤ Disk"]
       `
     );
@@ -87,7 +87,7 @@ describe('architecture diagram', () => {
   it('should render escaped "', () => {
     imgSnapshotTest(
       `architecture-beta
-          group a('cloud')['\\"Начало\\"']
+          group a('cloud')['\\"сервер\\"']
       `
     );
   });
