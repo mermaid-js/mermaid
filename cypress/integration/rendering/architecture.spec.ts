@@ -12,10 +12,10 @@ describe('architecture diagram', () => {
                 service server('server')['Server'] in api
                 service gateway('internet')['Gateway'] 
 
-                db L--R server
-                disk1 T--B server
-                disk2 T--B db
-                server T--B gateway
+                db:L--R:server
+                disk1:T--B:server
+                disk2:T--B:db
+                server:T--B:gateway
             `
     );
   });
@@ -30,10 +30,10 @@ describe('architecture diagram', () => {
           service server('server')[\`_Server_\`] in api
           service gateway('internet')[\`_Gateway_\`] 
 
-          db L - ["\`**Bold Label**\`"] - R server
-          disk1 T - ["\`**Bold Label**\`"] - B server
-          disk2 T - ["\`_Italic Label_\`"] - B db
-          server T - ["\`_Italic Label_\`"] - B gateway
+          db:L - ["\`**Bold Label**\`"] - R:server
+          disk1:T - ["\`**Bold Label**\`"] - B:server
+          disk2:T - ["\`_Italic Label_\`"] - B:db
+          server:T - ["\`_Italic Label_\`"] - B:gateway
       `
     );
   });
@@ -47,10 +47,10 @@ describe('architecture diagram', () => {
           service disk2('disk')['_Storage_'] in api
           service server('server')['_Server_'] in api
           service gateway('internet')['_Gateway_']
-          db L - ["**Bold Label**"] - R server
-          disk1 T - ["**Bold Label**"] - B server
-          disk2 T - ["_Italic Label_"] - B db
-          server T - ["_Italic Label_"] - B gateway
+          db:L - ["**Bold Label**"] - R:server
+          disk1:T - ["**Bold Label**"] - B:server
+          disk2:T - ["_Italic Label_"] - B:db
+          server:T - ["_Italic Label_"] - B:gateway
       `
     );
   });
@@ -163,15 +163,15 @@ describe('architecture diagram', () => {
                 service servT('server')['Server 4']
                 service servB('server')['Server 5']
         
-                servC L <--> R servL
-                servC R <--> L servR
-                servC T <--> B servT
-                servC B <--> T servB
+                servC:L <--> R:servL
+                servC:R <--> L:servR
+                servC:T <--> B:servT
+                servC:B <--> T:servB
         
-                servL T <--> L servT
-                servL B <--> L servB
-                servR T <--> R servT
-                servR B <--> R servB
+                servL:T <--> L:servT
+                servL:B <--> L:servB
+                servR:T <--> R:servT
+                servR:B <--> R:servB
             `
     );
   });
@@ -190,10 +190,10 @@ describe('architecture diagram', () => {
                 service bottom_disk('disk')['Disk'] in bottom_group
                 service center_disk('disk')['Disk'] in center_group
         
-                left_disk{group} R <--> L center_disk{group}
-                right_disk{group} L <--> R center_disk{group}
-                top_disk{group} B <--> T center_disk{group}
-                bottom_disk{group} T <-->B center_disk{group}
+                left_disk{group}:R <--> L:center_disk{group}
+                right_disk{group}:L <--> R:center_disk{group}
+                top_disk{group}:B <--> T:center_disk{group}
+                bottom_disk{group}:T <-->B:center_disk{group}
             `
     );
   });
@@ -206,15 +206,15 @@ describe('architecture diagram', () => {
                 service servT('server')['Server 4']
                 service servB('server')['Server 5']
         
-                servC L-['Label']-R servL
-                servC R-['Label']-L servR
-                servC T-['Label']-B servT
-                servC B-['Label']-T servB
+                servC:L-['Label']-R:servL
+                servC:R-['Label']-L:servR
+                servC:T-['Label']-B:servT
+                servC:B-['Label']-T:servB
         
-                servL T-['Label']-L servT
-                servL B-['Label']-L servB
-                servR T-['Label']-R servT
-                servR B-['Label']-R servB
+                servL:T-['Label']-L:servT
+                servL:B-['Label']-L:servB
+                servR:T-['Label']-R:servT
+                servR:B-['Label']-R:servB
             `
     );
   });
@@ -229,12 +229,12 @@ describe('architecture diagram', () => {
                 junction juncC
                 junction juncR
         
-                left_disk R--L juncC
-                top_disk B--T juncC
-                bottom_disk T--B juncC
-                juncC R--L juncR
-                top_gateway B--T juncR
-                bottom_gateway T--B juncR
+                left_disk:R--L:juncC
+                top_disk:B--T:juncC
+                bottom_disk:T--B:juncC
+                juncC:R--L:juncR
+                top_gateway:B--T:juncR
+                bottom_gateway:T--B:juncR
             `
     );
   });
@@ -251,15 +251,15 @@ describe('architecture diagram', () => {
                 junction juncC in left
                 junction juncR in right
         
-                left_disk R--L juncC
-                top_disk B--T juncC
-                bottom_disk T--B juncC
+                left_disk:R--L:juncC
+                top_disk:B--T:juncC
+                bottom_disk:T--B:juncC
         
         
-                top_gateway B <--T juncR
-                bottom_gateway T <--B juncR
+                top_gateway:B <--T:juncR
+                bottom_gateway:T <--B:juncR
         
-                juncC{group} R-->L juncR{group}
+                juncC{group}:R-->L:juncR{group}
             `
     );
   });
