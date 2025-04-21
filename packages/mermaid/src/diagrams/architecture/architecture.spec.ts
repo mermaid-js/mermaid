@@ -19,62 +19,6 @@ const {
   getJunctions,
 } = db;
 
-function expectGroup(
-  group: ArchitectureGroup,
-  id: string,
-  icon: string | undefined,
-  label: string | undefined,
-  inGroup: string | undefined
-) {
-  expect(group.id).toBe(id);
-  expect(group.icon).toBe(icon);
-  expect(group.label).toBe(label);
-  expect(group.in).toBe(inGroup);
-}
-
-function expectService(
-  service: ArchitectureService,
-  id: string,
-  icon: string | undefined,
-  iconText: string | undefined,
-  label: string,
-  inGroup: string | undefined
-) {
-  expect(service.id).toBe(id);
-  expect(service.icon).toBe(icon);
-  expect(service.iconText).toBe(iconText);
-  expect(service.label).toBe(label);
-  expect(service.in).toBe(inGroup);
-}
-
-function expectJunction(junction: ArchitectureJunction, id: string, inGroup: string | undefined) {
-  expect(junction.id).toBe(id);
-  expect(junction.in).toBe(inGroup);
-}
-
-function expectEdge(
-  edge: ArchitectureEdge,
-  lhsId: string,
-  lhsGroup: boolean,
-  rhsId: string,
-  rhsGroup: boolean,
-  lhsDir: string,
-  lhsInto: boolean,
-  label: string | undefined,
-  rhsDir: string,
-  rhsInto: boolean
-) {
-  expect(edge.lhsId).toBe(lhsId);
-  expect(edge.lhsGroup).toBe(lhsGroup);
-  expect(edge.rhsId).toBe(rhsId);
-  expect(edge.rhsGroup).toBe(rhsGroup);
-  expect(edge.lhsDir).toBe(lhsDir);
-  expect(edge.lhsInto).toBe(lhsInto);
-  expect(edge.label).toBe(label);
-  expect(edge.rhsDir).toBe(rhsDir);
-  expect(edge.rhsInto).toBe(rhsInto);
-}
-
 describe('architecture diagrams', () => {
   let db: ArchitectureDB;
   beforeEach(() => {
@@ -158,16 +102,214 @@ describe('architecture diagrams', () => {
       expect(groups.length).toBe(1);
       expect(edges.length).toBe(4);
 
-      expectGroup(groups[0], 'api', 'cloud', 'API', undefined);
-      expectService(services[0], 'db', 'database', undefined, 'Database', 'api');
-      expectService(services[1], 'disk1', 'disk', undefined, 'Storage', 'api');
-      expectService(services[2], 'disk2', 'disk', undefined, 'Storage', 'api');
-      expectService(services[3], 'server', 'server', undefined, 'Server', 'api');
-      expectService(services[4], 'gateway', 'internet', undefined, 'Gateway', undefined);
-      expectEdge(edges[0], 'db', false, 'server', false, 'L', false, undefined, 'R', false);
-      expectEdge(edges[1], 'disk1', false, 'server', false, 'T', false, undefined, 'B', false);
-      expectEdge(edges[2], 'disk2', false, 'db', false, 'T', false, undefined, 'B', false);
-      expectEdge(edges[3], 'server', false, 'gateway', false, 'T', false, undefined, 'B', false);
+      expect(groups[0]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "api",
+          "in": undefined,
+          "label": "API",
+        }
+      `);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "db",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk2",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "db",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db",
+          "in": "api",
+          "label": "Database",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk1",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "disk1",
+          "in": "api",
+          "label": "Storage",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk2",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "db",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "disk2",
+          "in": "api",
+          "label": "Storage",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "db",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk1",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "server",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "gateway",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "server",
+          "in": "api",
+          "label": "Server",
+          "type": "service",
+        }
+      `);
+      expect(services[4]).toMatchInlineSnapshot(`
+        {
+        "edges": [
+          {
+            "label": undefined,
+            "lhsDir": "T",
+            "lhsGroup": false,
+            "lhsId": "server",
+            "lhsInto": false,
+            "rhsDir": "B",
+            "rhsGroup": false,
+            "rhsId": "gateway",
+            "rhsInto": false,
+          },
+        ],
+        "icon": "internet",
+        "iconText": undefined,
+        "id": "gateway",
+        "in": undefined,
+        "label": "Gateway",
+        "type": "service",
+      }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "db",
+          "lhsInto": false,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "server",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "disk1",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "server",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "disk2",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "db",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[3]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "server",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "gateway",
+          "rhsInto": false,
+        }
+      `);
     });
 
     it('should render an architecture diagram with markdown labels', async () => {
@@ -193,7 +335,7 @@ describe('architecture diagrams', () => {
                 group e('cloud')['диск']
                 group f('cloud')['➙ сервер ❤️‍🔥']
                 service right_disk('disk')["❤ Disk"]
-                group g('cloud')['\\"диск\\"']
+                group g('cloud')['"\`диск\`"']
         `;
       await expect(parser.parse(str)).resolves.not.toThrow();
       const services = getServices();
@@ -202,64 +344,282 @@ describe('architecture diagrams', () => {
       expect(services.length).toBe(6);
       expect(groups.length).toBe(8);
       expect(edges.length).toBe(4);
-      expectGroup(groups[0], 'api', 'cloud', '`**API**`', undefined);
-      expectGroup(groups[1], 'a', 'cloud', 'a.b-t', undefined);
-      expectGroup(groups[2], 'b', 'cloud', '`user:password@some_domain.com`', undefined);
-      expectGroup(groups[3], 'c', 'cloud', '`The **cat** in the hat`', undefined);
-      expectGroup(
-        groups[4],
-        'd',
-        'cloud',
-        `\`The *bat*
-                in the chat\``,
-        undefined
-      );
-      expectGroup(groups[5], 'e', 'cloud', 'диск', undefined);
-      expectGroup(groups[6], 'f', 'cloud', '➙ сервер ❤️‍🔥', undefined);
-      expectGroup(groups[7], 'g', 'cloud', '"диск"', undefined);
-      expectService(services[0], 'db', 'database', undefined, '`_Database_`', 'api');
-      expectService(services[1], 'disk1', 'disk', undefined, '`_Storage_`', 'api');
-      expectService(services[2], 'disk2', 'disk', undefined, '`_Storage_`', 'api');
-      expectService(services[3], 'server', 'server', undefined, '`_Server_`', 'api');
-      expectService(services[4], 'gateway', 'internet', undefined, '`_Gateway_`', undefined);
-      expectService(services[5], 'right_disk', 'disk', undefined, '❤ Disk', undefined);
-      expectEdge(
-        edges[0],
-        'db',
-        false,
-        'server',
-        false,
-        'L',
-        false,
-        '`**Bold Label**`',
-        'R',
-        false
-      );
-      expectEdge(
-        edges[1],
-        'disk1',
-        false,
-        'server',
-        false,
-        'T',
-        false,
-        '`**Bold Label**`',
-        'B',
-        false
-      );
-      expectEdge(edges[2], 'disk2', false, 'db', false, 'T', false, '`_Italic Label_`', 'B', false);
-      expectEdge(
-        edges[3],
-        'server',
-        false,
-        'gateway',
-        false,
-        'T',
-        false,
-        '`_Italic Label_`',
-        'B',
-        false
-      );
+      expect(groups[0]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "api",
+          "in": undefined,
+          "label": "\`**API**\`",
+        }
+      `);
+      expect(groups[1]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "a",
+          "in": undefined,
+          "label": "a.b-t",
+        }
+      `);
+      expect(groups[2]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "b",
+          "in": undefined,
+          "label": "\`user:password@some_domain.com\`",
+        }
+      `);
+      expect(groups[3]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "c",
+          "in": undefined,
+          "label": "\`The **cat** in the hat\`",
+        }
+      `);
+      expect(groups[4]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "d",
+          "in": undefined,
+          "label": "\`The *bat*
+                        in the chat\`",
+        }
+      `);
+      expect(groups[5]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "e",
+          "in": undefined,
+          "label": "диск",
+        }
+      `);
+      expect(groups[6]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "f",
+          "in": undefined,
+          "label": "➙ сервер ❤️‍🔥",
+        }
+      `);
+      expect(groups[7]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "g",
+          "in": undefined,
+          "label": ""\`диск\`"",
+        }
+      `);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "\`**Bold Label**\`",
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "db",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": "\`_Italic Label_\`",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk2",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "db",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db",
+          "in": "api",
+          "label": "\`_Database_\`",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "\`**Bold Label**\`",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk1",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "disk1",
+          "in": "api",
+          "label": "\`_Storage_\`",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "\`_Italic Label_\`",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk2",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "db",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "disk2",
+          "in": "api",
+          "label": "\`_Storage_\`",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "\`**Bold Label**\`",
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "db",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": "\`**Bold Label**\`",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk1",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": "\`_Italic Label_\`",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "server",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "gateway",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "server",
+          "in": "api",
+          "label": "\`_Server_\`",
+          "type": "service",
+        }
+      `);
+      expect(services[4]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "\`_Italic Label_\`",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "server",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "gateway",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "internet",
+          "iconText": undefined,
+          "id": "gateway",
+          "in": undefined,
+          "label": "\`_Gateway_\`",
+          "type": "service",
+        }
+      `);
+      expect(services[5]).toMatchInlineSnapshot(`
+        {
+          "edges": [],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "right_disk",
+          "in": undefined,
+          "label": "❤ Disk",
+          "type": "service",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": "\`**Bold Label**\`",
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "db",
+          "lhsInto": false,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "server",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": "\`**Bold Label**\`",
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "disk1",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "server",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": "\`_Italic Label_\`",
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "disk2",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "db",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[3]).toMatchInlineSnapshot(`
+        {
+          "label": "\`_Italic Label_\`",
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "server",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "gateway",
+          "rhsInto": false,
+        }
+      `);
     });
     it('should render a simple architecture diagram with titleAndAccessibilities', async () => {
       const str = `architecture-beta
@@ -289,14 +649,167 @@ describe('architecture diagrams', () => {
       expect(getDiagramTitle()).toBe('Simple Architecture Diagram');
       expect(getAccTitle()).toBe('Accessibility Title');
       expect(getAccDescription()).toBe('Accessibility Description');
-      expectGroup(groups[0], 'api', 'cloud', 'API', undefined);
-      expectService(services[0], 'db', 'database', undefined, 'Database', 'api');
-      expectService(services[1], 'disk1', 'disk', undefined, 'Storage', 'api');
-      expectService(services[2], 'disk2', 'disk', undefined, 'Storage', 'api');
-      expectService(services[3], 'server', 'server', undefined, 'Server', 'api');
-      expectEdge(edges[0], 'db', false, 'server', false, 'L', false, undefined, 'R', false);
-      expectEdge(edges[1], 'disk1', false, 'server', false, 'T', false, undefined, 'B', false);
-      expectEdge(edges[2], 'disk2', false, 'db', false, 'T', false, undefined, 'B', false);
+      expect(groups[0]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "api",
+          "in": undefined,
+          "label": "API",
+        }
+      `);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "db",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk2",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "db",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db",
+          "in": "api",
+          "label": "Database",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk1",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "disk1",
+          "in": "api",
+          "label": "Storage",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk2",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "db",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "disk2",
+          "in": "api",
+          "label": "Storage",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "db",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "disk1",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "server",
+          "in": "api",
+          "label": "Server",
+          "type": "service",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "db",
+          "lhsInto": false,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "server",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "disk1",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "server",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "disk2",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "db",
+          "rhsInto": false,
+        }
+      `);
     });
     it('should render an architecture diagram with groups within groups', async () => {
       const str = `architecture-beta
@@ -323,16 +836,183 @@ describe('architecture diagrams', () => {
       expect(services.length).toBe(4);
       expect(groups.length).toBe(3);
       expect(edges.length).toBe(3);
-      expectGroup(groups[0], 'api', undefined, 'API', undefined);
-      expectGroup(groups[1], 'public', undefined, 'Public API', 'api');
-      expectGroup(groups[2], 'private', undefined, 'Private API', 'api');
-      expectService(services[0], 'serv1', 'server', undefined, 'Server', 'public');
-      expectService(services[1], 'serv2', 'server', undefined, 'Server', 'private');
-      expectService(services[2], 'db', 'database', undefined, 'Database', 'private');
-      expectService(services[3], 'gateway', 'internet', undefined, 'Gateway', 'api');
-      expectEdge(edges[0], 'serv1', false, 'serv2', false, 'B', false, undefined, 'T', false);
-      expectEdge(edges[1], 'serv2', false, 'db', false, 'L', false, undefined, 'R', false);
-      expectEdge(edges[2], 'serv1', false, 'gateway', false, 'L', false, undefined, 'R', false);
+      expect(groups[0]).toMatchInlineSnapshot(`
+        {
+          "icon": undefined,
+          "id": "api",
+          "in": undefined,
+          "label": "API",
+        }
+      `);
+      expect(groups[1]).toMatchInlineSnapshot(`
+        {
+          "icon": undefined,
+          "id": "public",
+          "in": "api",
+          "label": "Public API",
+        }
+      `);
+      expect(groups[2]).toMatchInlineSnapshot(`
+        {
+          "icon": undefined,
+          "id": "private",
+          "in": "api",
+          "label": "Private API",
+        }
+      `);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "serv1",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "serv2",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "serv1",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "gateway",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "serv1",
+          "in": "public",
+          "label": "Server",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "serv1",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "serv2",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "serv2",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "db",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "serv2",
+          "in": "private",
+          "label": "Server",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "serv2",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "db",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db",
+          "in": "private",
+          "label": "Database",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "serv1",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "gateway",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "internet",
+          "iconText": undefined,
+          "id": "gateway",
+          "in": "api",
+          "label": "Gateway",
+          "type": "service",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "serv1",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "serv2",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "serv2",
+          "lhsInto": false,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "db",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "serv1",
+          "lhsInto": false,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "gateway",
+          "rhsInto": false,
+        }
+      `);
     });
     it('should render an architecture diagram with the fallback icon', async () => {
       const str = `architecture-beta
@@ -346,14 +1026,17 @@ describe('architecture diagrams', () => {
       expect(services.length).toBe(1);
       expect(groups.length).toBe(0);
       expect(edges.length).toBe(0);
-      expectService(
-        services[0],
-        'unknown',
-        'iconnamedoesntexist',
-        undefined,
-        'Unknown Icon',
-        undefined
-      );
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [],
+          "icon": "iconnamedoesntexist",
+          "iconText": undefined,
+          "id": "unknown",
+          "in": undefined,
+          "label": "Unknown Icon",
+          "type": "service",
+        }
+      `);
     });
 
     it('should render an architecture diagram with split directioning', async () => {
@@ -377,15 +1060,206 @@ describe('architecture diagrams', () => {
       expect(services.length).toBe(5);
       expect(groups.length).toBe(0);
       expect(edges.length).toBe(4);
-      expectService(services[0], 'db', 'database', undefined, 'Database', undefined);
-      expectService(services[1], 's3', 'disk', undefined, 'Storage', undefined);
-      expectService(services[2], 'serv1', 'server', undefined, 'Server 1', undefined);
-      expectService(services[3], 'serv2', 'server', undefined, 'Server 2', undefined);
-      expectService(services[4], 'disk', 'disk', undefined, 'Disk', undefined);
-      expectEdge(edges[0], 'db', false, 's3', false, 'L', false, undefined, 'R', false);
-      expectEdge(edges[1], 'serv1', false, 's3', false, 'L', false, undefined, 'T', false);
-      expectEdge(edges[2], 'serv2', false, 's3', false, 'L', false, undefined, 'B', false);
-      expectEdge(edges[3], 'serv1', false, 'disk', false, 'T', false, undefined, 'B', false);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "db",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "s3",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db",
+          "in": undefined,
+          "label": "Database",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "db",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "s3",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "serv1",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "s3",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "serv2",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "s3",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "s3",
+          "in": undefined,
+          "label": "Storage",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "serv1",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "s3",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "serv1",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "disk",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "serv1",
+          "in": undefined,
+          "label": "Server 1",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "serv2",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "s3",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "serv2",
+          "in": undefined,
+          "label": "Server 2",
+          "type": "service",
+        }
+      `);
+      expect(services[4]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "serv1",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "disk",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "disk",
+          "in": undefined,
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "db",
+          "lhsInto": false,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "s3",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "serv1",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "s3",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "serv2",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "s3",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[3]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "serv1",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "disk",
+          "rhsInto": false,
+        }
+      `);
     });
     it('should render an architecture diagram with directional arrows', async () => {
       const str = `architecture-beta
@@ -413,19 +1287,346 @@ describe('architecture diagrams', () => {
       expect(services.length).toBe(5);
       expect(groups.length).toBe(0);
       expect(edges.length).toBe(8);
-      expectService(services[0], 'servC', 'server', undefined, 'Server 1', undefined);
-      expectService(services[1], 'servL', 'server', undefined, 'Server 2', undefined);
-      expectService(services[2], 'servR', 'server', undefined, 'Server 3', undefined);
-      expectService(services[3], 'servT', 'server', undefined, 'Server 4', undefined);
-      expectService(services[4], 'servB', 'server', undefined, 'Server 5', undefined);
-      expectEdge(edges[0], 'servC', false, 'servL', false, 'L', true, undefined, 'R', true);
-      expectEdge(edges[1], 'servC', false, 'servR', false, 'R', true, undefined, 'L', true);
-      expectEdge(edges[2], 'servC', false, 'servT', false, 'T', true, undefined, 'B', true);
-      expectEdge(edges[3], 'servC', false, 'servB', false, 'B', true, undefined, 'T', true);
-      expectEdge(edges[4], 'servL', false, 'servT', false, 'T', true, undefined, 'L', true);
-      expectEdge(edges[5], 'servL', false, 'servB', false, 'B', true, undefined, 'L', true);
-      expectEdge(edges[6], 'servR', false, 'servT', false, 'T', true, undefined, 'R', true);
-      expectEdge(edges[7], 'servR', false, 'servB', false, 'B', true, undefined, 'R', true);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": true,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servL",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": true,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servR",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": true,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": true,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servC",
+          "in": undefined,
+          "label": "Server 1",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": true,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servL",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servL",
+              "lhsInto": true,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servL",
+              "lhsInto": true,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servL",
+          "in": undefined,
+          "label": "Server 2",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": true,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servR",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servR",
+              "lhsInto": true,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servR",
+              "lhsInto": true,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servR",
+          "in": undefined,
+          "label": "Server 3",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": true,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servL",
+              "lhsInto": true,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servR",
+              "lhsInto": true,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servT",
+          "in": undefined,
+          "label": "Server 4",
+          "type": "service",
+        }
+      `);
+      expect(services[4]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": true,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servL",
+              "lhsInto": true,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servR",
+              "lhsInto": true,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servB",
+          "in": undefined,
+          "label": "Server 5",
+          "type": "service",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "servC",
+          "lhsInto": true,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "servL",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "servC",
+          "lhsInto": true,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "servR",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "servC",
+          "lhsInto": true,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "servT",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[3]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "servC",
+          "lhsInto": true,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "servB",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[4]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "servL",
+          "lhsInto": true,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "servT",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[5]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "servL",
+          "lhsInto": true,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "servB",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[6]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "servR",
+          "lhsInto": true,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "servT",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[7]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "servR",
+          "lhsInto": true,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "servB",
+          "rhsInto": true,
+        }
+      `);
     });
     it('should render an architecture diagram with group edges', async () => {
       const str = `architecture-beta
@@ -454,42 +1655,246 @@ describe('architecture diagrams', () => {
       expect(services.length).toBe(5);
       expect(groups.length).toBe(5);
       expect(edges.length).toBe(4);
-      expectGroup(groups[0], 'left_group', 'cloud', 'Left', undefined);
-      expectGroup(groups[1], 'right_group', 'cloud', 'Right', undefined);
-      expectGroup(groups[2], 'top_group', 'cloud', 'Top', undefined);
-      expectGroup(groups[3], 'bottom_group', 'cloud', 'Bottom', undefined);
-      expectGroup(groups[4], 'center_group', 'cloud', 'Center', undefined);
-      expectService(services[0], 'left_disk', 'disk', undefined, 'Disk', 'left_group');
-      expectService(services[1], 'right_disk', 'disk', undefined, 'Disk', 'right_group');
-      expectService(services[2], 'top_disk', 'disk', undefined, 'Disk', 'top_group');
-      expectService(services[3], 'bottom_disk', 'disk', undefined, 'Disk', 'bottom_group');
-      expectService(services[4], 'center_disk', 'disk', undefined, 'Disk', 'center_group');
-      expectEdge(edges[0], 'left_disk', true, 'center_disk', true, 'R', true, undefined, 'L', true);
-      expectEdge(
-        edges[1],
-        'right_disk',
-        true,
-        'center_disk',
-        true,
-        'L',
-        true,
-        undefined,
-        'R',
-        true
-      );
-      expectEdge(edges[2], 'top_disk', true, 'center_disk', true, 'B', true, undefined, 'T', true);
-      expectEdge(
-        edges[3],
-        'bottom_disk',
-        true,
-        'center_disk',
-        true,
-        'T',
-        true,
-        undefined,
-        'B',
-        true
-      );
+      expect(groups[0]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "left_group",
+          "in": undefined,
+          "label": "Left",
+        }
+      `);
+      expect(groups[1]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "right_group",
+          "in": undefined,
+          "label": "Right",
+        }
+      `);
+      expect(groups[2]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "top_group",
+          "in": undefined,
+          "label": "Top",
+        }
+      `);
+      expect(groups[3]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "bottom_group",
+          "in": undefined,
+          "label": "Bottom",
+        }
+      `);
+      expect(groups[4]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "center_group",
+          "in": undefined,
+          "label": "Center",
+        }
+      `);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": true,
+              "lhsId": "left_disk",
+              "lhsInto": true,
+              "rhsDir": "L",
+              "rhsGroup": true,
+              "rhsId": "center_disk",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "left_disk",
+          "in": "left_group",
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": true,
+              "lhsId": "right_disk",
+              "lhsInto": true,
+              "rhsDir": "R",
+              "rhsGroup": true,
+              "rhsId": "center_disk",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "right_disk",
+          "in": "right_group",
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": true,
+              "lhsId": "top_disk",
+              "lhsInto": true,
+              "rhsDir": "T",
+              "rhsGroup": true,
+              "rhsId": "center_disk",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "top_disk",
+          "in": "top_group",
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": true,
+              "lhsId": "bottom_disk",
+              "lhsInto": true,
+              "rhsDir": "B",
+              "rhsGroup": true,
+              "rhsId": "center_disk",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "bottom_disk",
+          "in": "bottom_group",
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[4]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": true,
+              "lhsId": "left_disk",
+              "lhsInto": true,
+              "rhsDir": "L",
+              "rhsGroup": true,
+              "rhsId": "center_disk",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "L",
+              "lhsGroup": true,
+              "lhsId": "right_disk",
+              "lhsInto": true,
+              "rhsDir": "R",
+              "rhsGroup": true,
+              "rhsId": "center_disk",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": true,
+              "lhsId": "top_disk",
+              "lhsInto": true,
+              "rhsDir": "T",
+              "rhsGroup": true,
+              "rhsId": "center_disk",
+              "rhsInto": true,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": true,
+              "lhsId": "bottom_disk",
+              "lhsInto": true,
+              "rhsDir": "B",
+              "rhsGroup": true,
+              "rhsId": "center_disk",
+              "rhsInto": true,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "center_disk",
+          "in": "center_group",
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": true,
+          "lhsId": "left_disk",
+          "lhsInto": true,
+          "rhsDir": "L",
+          "rhsGroup": true,
+          "rhsId": "center_disk",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "L",
+          "lhsGroup": true,
+          "lhsId": "right_disk",
+          "lhsInto": true,
+          "rhsDir": "R",
+          "rhsGroup": true,
+          "rhsId": "center_disk",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": true,
+          "lhsId": "top_disk",
+          "lhsInto": true,
+          "rhsDir": "T",
+          "rhsGroup": true,
+          "rhsId": "center_disk",
+          "rhsInto": true,
+        }
+      `);
+      expect(edges[3]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": true,
+          "lhsId": "bottom_disk",
+          "lhsInto": true,
+          "rhsDir": "B",
+          "rhsGroup": true,
+          "rhsId": "center_disk",
+          "rhsInto": true,
+        }
+      `);
     });
     it('should render an architecture diagram with edge labels', async () => {
       const str = `architecture-beta
@@ -517,19 +1922,346 @@ describe('architecture diagrams', () => {
       expect(services.length).toBe(5);
       expect(groups.length).toBe(0);
       expect(edges.length).toBe(8);
-      expectService(services[0], 'servC', 'server', undefined, 'Server 1', undefined);
-      expectService(services[1], 'servL', 'server', undefined, 'Server 2', undefined);
-      expectService(services[2], 'servR', 'server', undefined, 'Server 3', undefined);
-      expectService(services[3], 'servT', 'server', undefined, 'Server 4', undefined);
-      expectService(services[4], 'servB', 'server', undefined, 'Server 5', undefined);
-      expectEdge(edges[0], 'servC', false, 'servL', false, 'L', false, 'Label', 'R', false);
-      expectEdge(edges[1], 'servC', false, 'servR', false, 'R', false, 'Label', 'L', false);
-      expectEdge(edges[2], 'servC', false, 'servT', false, 'T', false, 'Label', 'B', false);
-      expectEdge(edges[3], 'servC', false, 'servB', false, 'B', false, 'Label', 'T', false);
-      expectEdge(edges[4], 'servL', false, 'servT', false, 'T', false, 'Label', 'L', false);
-      expectEdge(edges[5], 'servL', false, 'servB', false, 'B', false, 'Label', 'L', false);
-      expectEdge(edges[6], 'servR', false, 'servT', false, 'T', false, 'Label', 'R', false);
-      expectEdge(edges[7], 'servR', false, 'servB', false, 'B', false, 'Label', 'R', false);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "Label",
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servL",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servR",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servC",
+          "in": undefined,
+          "label": "Server 1",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "Label",
+              "lhsDir": "L",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servL",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servL",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servL",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servL",
+          "in": undefined,
+          "label": "Server 2",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "Label",
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servR",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servR",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servR",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servR",
+          "in": undefined,
+          "label": "Server 3",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "Label",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servL",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "servR",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servT",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servT",
+          "in": undefined,
+          "label": "Server 4",
+          "type": "service",
+        }
+      `);
+      expect(services[4]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": "Label",
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servC",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servL",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": false,
+            },
+            {
+              "label": "Label",
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "servR",
+              "lhsInto": false,
+              "rhsDir": "R",
+              "rhsGroup": false,
+              "rhsId": "servB",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "servB",
+          "in": undefined,
+          "label": "Server 5",
+          "type": "service",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": "Label",
+          "lhsDir": "L",
+          "lhsGroup": false,
+          "lhsId": "servC",
+          "lhsInto": false,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "servL",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": "Label",
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "servC",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "servR",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": "Label",
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "servC",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "servT",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[3]).toMatchInlineSnapshot(`
+        {
+          "label": "Label",
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "servC",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "servB",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[4]).toMatchInlineSnapshot(`
+        {
+          "label": "Label",
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "servL",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "servT",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[5]).toMatchInlineSnapshot(`
+        {
+          "label": "Label",
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "servL",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "servB",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[6]).toMatchInlineSnapshot(`
+        {
+          "label": "Label",
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "servR",
+          "lhsInto": false,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "servT",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[7]).toMatchInlineSnapshot(`
+        {
+          "label": "Label",
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "servR",
+          "lhsInto": false,
+          "rhsDir": "R",
+          "rhsGroup": false,
+          "rhsId": "servB",
+          "rhsInto": false,
+        }
+      `);
     });
     it('should render an architecture diagram with simple junction edges', async () => {
       const str = `architecture-beta
@@ -558,30 +2290,294 @@ describe('architecture diagrams', () => {
       expect(groups.length).toBe(0);
       expect(edges.length).toBe(6);
       expect(junctions.length).toBe(2);
-      expectService(services[0], 'left_disk', 'disk', undefined, 'Disk', undefined);
-      expectService(services[1], 'top_disk', 'disk', undefined, 'Disk', undefined);
-      expectService(services[2], 'bottom_disk', 'disk', undefined, 'Disk', undefined);
-      expectService(services[3], 'top_gateway', 'internet', undefined, 'Gateway', undefined);
-      expectService(services[4], 'bottom_gateway', 'internet', undefined, 'Gateway', undefined);
-      expectJunction(junctions[0], 'juncC', undefined);
-      expectJunction(junctions[1], 'juncR', undefined);
-      expectEdge(edges[0], 'left_disk', false, 'juncC', false, 'R', false, undefined, 'L', false);
-      expectEdge(edges[1], 'top_disk', false, 'juncC', false, 'B', false, undefined, 'T', false);
-      expectEdge(edges[2], 'bottom_disk', false, 'juncC', false, 'T', false, undefined, 'B', false);
-      expectEdge(edges[3], 'juncC', false, 'juncR', false, 'R', false, undefined, 'L', false);
-      expectEdge(edges[4], 'top_gateway', false, 'juncR', false, 'B', false, undefined, 'T', false);
-      expectEdge(
-        edges[5],
-        'bottom_gateway',
-        false,
-        'juncR',
-        false,
-        'T',
-        false,
-        undefined,
-        'B',
-        false
-      );
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "left_disk",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "left_disk",
+          "in": undefined,
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "top_disk",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "top_disk",
+          "in": undefined,
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "bottom_disk",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "bottom_disk",
+          "in": undefined,
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "top_gateway",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "internet",
+          "iconText": undefined,
+          "id": "top_gateway",
+          "in": undefined,
+          "label": "Gateway",
+          "type": "service",
+        }
+      `);
+      expect(services[4]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "bottom_gateway",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "internet",
+          "iconText": undefined,
+          "id": "bottom_gateway",
+          "in": undefined,
+          "label": "Gateway",
+          "type": "service",
+        }
+      `);
+      expect(junctions[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "left_disk",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "top_disk",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "bottom_disk",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "juncC",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+          ],
+          "id": "juncC",
+          "in": undefined,
+          "type": "junction",
+        }
+      `);
+      expect(junctions[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "juncC",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "top_gateway",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "bottom_gateway",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+          ],
+          "id": "juncR",
+          "in": undefined,
+          "type": "junction",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "left_disk",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "juncC",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "top_disk",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "juncC",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "bottom_disk",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "juncC",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[3]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "juncC",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "juncR",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[4]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "top_gateway",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "juncR",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[5]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "bottom_gateway",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "juncR",
+          "rhsInto": false,
+        }
+      `);
     });
     it('should render an architecture diagram with complex junction edges', async () => {
       const str = `architecture-beta
@@ -615,32 +2611,310 @@ describe('architecture diagrams', () => {
       expect(groups.length).toBe(2);
       expect(junctions.length).toBe(2);
       expect(edges.length).toBe(6);
-      expectGroup(groups[0], 'left', undefined, undefined, undefined);
-      expectGroup(groups[1], 'right', undefined, undefined, undefined);
-      expectService(services[0], 'left_disk', 'disk', undefined, 'Disk', 'left');
-      expectService(services[1], 'top_disk', 'disk', undefined, 'Disk', 'left');
-      expectService(services[2], 'bottom_disk', 'disk', undefined, 'Disk', 'left');
-      expectService(services[3], 'top_gateway', 'internet', undefined, 'Gateway', 'right');
-      expectService(services[4], 'bottom_gateway', 'internet', undefined, 'Gateway', 'right');
-      expectJunction(junctions[0], 'juncC', 'left');
-      expectJunction(junctions[1], 'juncR', 'right');
-      expectEdge(edges[0], 'left_disk', false, 'juncC', false, 'R', false, undefined, 'L', false);
-      expectEdge(edges[1], 'top_disk', false, 'juncC', false, 'B', false, undefined, 'T', false);
-      expectEdge(edges[2], 'bottom_disk', false, 'juncC', false, 'T', false, undefined, 'B', false);
-      expectEdge(edges[3], 'top_gateway', false, 'juncR', false, 'B', true, undefined, 'T', false);
-      expectEdge(
-        edges[4],
-        'bottom_gateway',
-        false,
-        'juncR',
-        false,
-        'T',
-        true,
-        undefined,
-        'B',
-        false
-      );
-      expectEdge(edges[5], 'juncC', true, 'juncR', true, 'R', false, undefined, 'L', true);
+      expect(groups[0]).toMatchInlineSnapshot(`
+        {
+          "icon": undefined,
+          "id": "left",
+          "in": undefined,
+          "label": undefined,
+        }
+      `);
+      expect(groups[1]).toMatchInlineSnapshot(`
+        {
+          "icon": undefined,
+          "id": "right",
+          "in": undefined,
+          "label": undefined,
+        }
+      `);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "left_disk",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "left_disk",
+          "in": "left",
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "top_disk",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "top_disk",
+          "in": "left",
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "bottom_disk",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "disk",
+          "iconText": undefined,
+          "id": "bottom_disk",
+          "in": "left",
+          "label": "Disk",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "top_gateway",
+              "lhsInto": true,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "internet",
+          "iconText": undefined,
+          "id": "top_gateway",
+          "in": "right",
+          "label": "Gateway",
+          "type": "service",
+        }
+      `);
+      expect(services[4]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "bottom_gateway",
+              "lhsInto": true,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "internet",
+          "iconText": undefined,
+          "id": "bottom_gateway",
+          "in": "right",
+          "label": "Gateway",
+          "type": "service",
+        }
+      `);
+      expect(junctions[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "left_disk",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "top_disk",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "bottom_disk",
+              "lhsInto": false,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "juncC",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": true,
+              "lhsId": "juncC",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": true,
+              "rhsId": "juncR",
+              "rhsInto": true,
+            },
+          ],
+          "id": "juncC",
+          "in": "left",
+          "type": "junction",
+        }
+      `);
+      expect(junctions[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "top_gateway",
+              "lhsInto": true,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "T",
+              "lhsGroup": false,
+              "lhsId": "bottom_gateway",
+              "lhsInto": true,
+              "rhsDir": "B",
+              "rhsGroup": false,
+              "rhsId": "juncR",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": true,
+              "lhsId": "juncC",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": true,
+              "rhsId": "juncR",
+              "rhsInto": true,
+            },
+          ],
+          "id": "juncR",
+          "in": "right",
+          "type": "junction",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "left_disk",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "juncC",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "top_disk",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "juncC",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "bottom_disk",
+          "lhsInto": false,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "juncC",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[3]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "top_gateway",
+          "lhsInto": true,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "juncR",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[4]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "T",
+          "lhsGroup": false,
+          "lhsId": "bottom_gateway",
+          "lhsInto": true,
+          "rhsDir": "B",
+          "rhsGroup": false,
+          "rhsId": "juncR",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[5]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": true,
+          "lhsId": "juncC",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": true,
+          "rhsId": "juncR",
+          "rhsInto": true,
+        }
+      `);
     });
 
     it('should render an architecture diagram with a reasonable height', async () => {
@@ -701,85 +2975,765 @@ describe('architecture diagrams', () => {
       expect(groups.length).toBe(2);
       expect(edges.length).toBe(16);
       expect(junctions.length).toBe(7);
-      expectGroup(groups[0], 'federated', 'cloud', 'Federated Environment', undefined);
-      expectGroup(groups[1], 'on_prem', 'cloud', 'Hub', undefined);
-      expectService(services[0], 'server1', 'server', undefined, 'System', 'federated');
-      expectService(services[1], 'edge', 'server', undefined, 'Edge Device', 'federated');
-      expectService(services[2], 'firewall', 'server', undefined, 'Firewall Device', 'on_prem');
-      expectService(services[3], 'server', 'server', undefined, 'Server', 'on_prem');
-      expectService(services[4], 'db1', 'database', undefined, 'db1', 'on_prem');
-      expectService(services[5], 'db2', 'database', undefined, 'db2', 'on_prem');
-      expectService(services[6], 'db3', 'database', undefined, 'db3', 'on_prem');
-      expectService(services[7], 'db4', 'database', undefined, 'db4', 'on_prem');
-      expectService(services[8], 'db5', 'database', undefined, 'db5', 'on_prem');
-      expectService(services[9], 'db6', 'database', undefined, 'db6', 'on_prem');
-      expectJunction(junctions[0], 'mid', 'on_prem');
-      expectJunction(junctions[1], '1Leftofmid', 'on_prem');
-      expectJunction(junctions[2], '2Leftofmid', 'on_prem');
-      expectJunction(junctions[3], '3Leftofmid', 'on_prem');
-      expectJunction(junctions[4], '1RightOfMid', 'on_prem');
-      expectJunction(junctions[5], '2RightOfMid', 'on_prem');
-      expectJunction(junctions[6], '3RightOfMid', 'on_prem');
-      expectEdge(edges[0], 'server1', false, 'edge', false, 'R', false, undefined, 'L', false);
-      expectEdge(edges[1], 'firewall', false, 'server', false, 'R', false, undefined, 'L', false);
-      expectEdge(edges[2], 'server', false, 'mid', false, 'B', false, undefined, 'T', false);
-      expectEdge(edges[3], '1Leftofmid', false, 'mid', false, 'R', false, undefined, 'L', false);
-      expectEdge(edges[4], '1Leftofmid', false, 'db1', false, 'B', false, undefined, 'T', false);
-      expectEdge(
-        edges[5],
-        '2Leftofmid',
-        false,
-        '1Leftofmid',
-        false,
-        'R',
-        false,
-        undefined,
-        'L',
-        false
-      );
-      expectEdge(edges[6], '2Leftofmid', false, 'db2', false, 'B', false, undefined, 'T', false);
-      expectEdge(
-        edges[7],
-        '3Leftofmid',
-        false,
-        '2Leftofmid',
-        false,
-        'R',
-        false,
-        undefined,
-        'L',
-        false
-      );
-      expectEdge(edges[8], '3Leftofmid', false, 'db3', false, 'B', false, undefined, 'T', false);
-      expectEdge(edges[9], 'mid', false, '1RightOfMid', false, 'R', false, undefined, 'L', false);
-      expectEdge(edges[10], '1RightOfMid', false, 'db4', false, 'B', false, undefined, 'T', false);
-      expectEdge(
-        edges[11],
-        '1RightOfMid',
-        false,
-        '2RightOfMid',
-        false,
-        'R',
-        false,
-        undefined,
-        'L',
-        false
-      );
-      expectEdge(edges[12], '2RightOfMid', false, 'db5', false, 'B', false, undefined, 'T', false);
-      expectEdge(
-        edges[13],
-        '2RightOfMid',
-        false,
-        '3RightOfMid',
-        false,
-        'R',
-        false,
-        undefined,
-        'L',
-        false
-      );
-      expectEdge(edges[14], '3RightOfMid', false, 'db6', false, 'B', false, undefined, 'T', false);
-      expectEdge(edges[15], 'edge', false, 'firewall', false, 'R', false, undefined, 'L', false);
+      expect(groups[0]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "federated",
+          "in": undefined,
+          "label": "Federated Environment",
+        }
+      `);
+      expect(groups[1]).toMatchInlineSnapshot(`
+        {
+          "icon": "cloud",
+          "id": "on_prem",
+          "in": undefined,
+          "label": "Hub",
+        }
+      `);
+      expect(services[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "server1",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "edge",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "server1",
+          "in": "federated",
+          "label": "System",
+          "type": "service",
+        }
+      `);
+      expect(services[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "server1",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "edge",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "edge",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "firewall",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "edge",
+          "in": "federated",
+          "label": "Edge Device",
+          "type": "service",
+        }
+      `);
+      expect(services[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "firewall",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "edge",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "firewall",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "firewall",
+          "in": "on_prem",
+          "label": "Firewall Device",
+          "type": "service",
+        }
+      `);
+      expect(services[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "firewall",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "server",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "server",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "mid",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "server",
+          "iconText": undefined,
+          "id": "server",
+          "in": "on_prem",
+          "label": "Server",
+          "type": "service",
+        }
+      `);
+      expect(services[4]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "1Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db1",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db1",
+          "in": "on_prem",
+          "label": "db1",
+          "type": "service",
+        }
+      `);
+      expect(services[5]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "2Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db2",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db2",
+          "in": "on_prem",
+          "label": "db2",
+          "type": "service",
+        }
+      `);
+      expect(services[6]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "3Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db3",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db3",
+          "in": "on_prem",
+          "label": "db3",
+          "type": "service",
+        }
+      `);
+      expect(services[7]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "1RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db4",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db4",
+          "in": "on_prem",
+          "label": "db4",
+          "type": "service",
+        }
+      `);
+      expect(services[8]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "2RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db5",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db5",
+          "in": "on_prem",
+          "label": "db5",
+          "type": "service",
+        }
+      `);
+      expect(services[9]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "3RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db6",
+              "rhsInto": false,
+            },
+          ],
+          "icon": "database",
+          "iconText": undefined,
+          "id": "db6",
+          "in": "on_prem",
+          "label": "db6",
+          "type": "service",
+        }
+      `);
+      expect(junctions[0]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "server",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "mid",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "1Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "mid",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "mid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "1RightOfMid",
+              "rhsInto": false,
+            },
+          ],
+          "id": "mid",
+          "in": "on_prem",
+          "type": "junction",
+        }
+      `);
+      expect(junctions[1]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "1Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "mid",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "1Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db1",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "2Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "1Leftofmid",
+              "rhsInto": false,
+            },
+          ],
+          "id": "1Leftofmid",
+          "in": "on_prem",
+          "type": "junction",
+        }
+      `);
+      expect(junctions[2]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "2Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "1Leftofmid",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "2Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db2",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "3Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "2Leftofmid",
+              "rhsInto": false,
+            },
+          ],
+          "id": "2Leftofmid",
+          "in": "on_prem",
+          "type": "junction",
+        }
+      `);
+      expect(junctions[3]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "3Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "2Leftofmid",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "3Leftofmid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db3",
+              "rhsInto": false,
+            },
+          ],
+          "id": "3Leftofmid",
+          "in": "on_prem",
+          "type": "junction",
+        }
+      `);
+      expect(junctions[4]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "mid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "1RightOfMid",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "1RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db4",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "1RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "2RightOfMid",
+              "rhsInto": false,
+            },
+          ],
+          "id": "1RightOfMid",
+          "in": "on_prem",
+          "type": "junction",
+        }
+      `);
+      expect(junctions[5]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "1RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "2RightOfMid",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "2RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db5",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "2RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "3RightOfMid",
+              "rhsInto": false,
+            },
+          ],
+          "id": "2RightOfMid",
+          "in": "on_prem",
+          "type": "junction",
+        }
+      `);
+      expect(junctions[6]).toMatchInlineSnapshot(`
+        {
+          "edges": [
+            {
+              "label": undefined,
+              "lhsDir": "R",
+              "lhsGroup": false,
+              "lhsId": "2RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "L",
+              "rhsGroup": false,
+              "rhsId": "3RightOfMid",
+              "rhsInto": false,
+            },
+            {
+              "label": undefined,
+              "lhsDir": "B",
+              "lhsGroup": false,
+              "lhsId": "3RightOfMid",
+              "lhsInto": false,
+              "rhsDir": "T",
+              "rhsGroup": false,
+              "rhsId": "db6",
+              "rhsInto": false,
+            },
+          ],
+          "id": "3RightOfMid",
+          "in": "on_prem",
+          "type": "junction",
+        }
+      `);
+      expect(edges[0]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "server1",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "edge",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[1]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "firewall",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "server",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[2]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "server",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "mid",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[3]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "1Leftofmid",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "mid",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[4]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "1Leftofmid",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "db1",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[5]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "2Leftofmid",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "1Leftofmid",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[6]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "2Leftofmid",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "db2",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[7]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "3Leftofmid",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "2Leftofmid",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[8]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "3Leftofmid",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "db3",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[9]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "mid",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "1RightOfMid",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[10]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "1RightOfMid",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "db4",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[11]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "1RightOfMid",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "2RightOfMid",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[12]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "2RightOfMid",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "db5",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[13]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "2RightOfMid",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "3RightOfMid",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[14]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "B",
+          "lhsGroup": false,
+          "lhsId": "3RightOfMid",
+          "lhsInto": false,
+          "rhsDir": "T",
+          "rhsGroup": false,
+          "rhsId": "db6",
+          "rhsInto": false,
+        }
+      `);
+      expect(edges[15]).toMatchInlineSnapshot(`
+        {
+          "label": undefined,
+          "lhsDir": "R",
+          "lhsGroup": false,
+          "lhsId": "edge",
+          "lhsInto": false,
+          "rhsDir": "L",
+          "rhsGroup": false,
+          "rhsId": "firewall",
+          "rhsInto": false,
+        }
+      `);
     });
   });
 });
