@@ -19,11 +19,11 @@ fragment Statement:
 ;
 
 fragment LeftPort:
-    ':'? lhsDir=ARROW_DIRECTION
+    ':' lhsDir=ARROW_DIRECTION
 ;
 
 fragment RightPort:
-    rhsDir=ARROW_DIRECTION ':'?
+    rhsDir=ARROW_DIRECTION ':'
 ;
 
 fragment Arrow:
