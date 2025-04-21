@@ -443,10 +443,8 @@ describe('architecture', () => {
     it.each([
       'left: L--R :right',
       'left: L -- R :right',
-      'left L -- R :right',
-      'left L--R right',
-      'left L -- R right',
       'left:L--R:right',
+      'left : L -- R : right',
     ])('should handle a diagram with edges %s', (context: string) => {
       const result = parse(`architecture-beta
                 ${context}
@@ -468,7 +466,7 @@ describe('architecture', () => {
 
     it('should handle an edge with bidirectional arrows', () => {
       const context = `architecture-beta
-                top T <--> B bottom
+                top : T <--> B : bottom
                 `;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
@@ -488,7 +486,7 @@ describe('architecture', () => {
 
     it('should handle an edge with unidirectional arrows', () => {
       const context = `architecture-beta
-                top T --> B bottom
+                top : T --> B : bottom
                 `;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
@@ -508,7 +506,7 @@ describe('architecture', () => {
 
     it('should handle an edge with bidirectional group edges', () => {
       const context = `architecture-beta
-                left{group} L--R right{group}
+                left{group} : L--R : right{group}
                 `;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
@@ -528,7 +526,7 @@ describe('architecture', () => {
 
     it('should handle an edge with unidirectional group edges', () => {
       const context = `architecture-beta
-                left{group} L-->R right
+                left{group} : L-->R : right
                 `;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
@@ -548,7 +546,7 @@ describe('architecture', () => {
 
     it('should handle an edge with label', () => {
       const context = `architecture-beta
-                left L-['My Edge Label']-R right
+                left : L-['My Edge Label']-R : right
                 `;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
@@ -595,10 +593,10 @@ describe('architecture', () => {
                 service server('server')[\`_Server_\`] in api
                 service gateway('internet')[\`_Gateway_\`] 
 
-                db L - ["\`**Bold Label**\`"] - R server
-                disk1 T - ["\`**Bold Label**\`"] - B server
-                disk2 T - ["\`_Italic Label_\`"] - B db
-                server T - ["\`_Italic Label_\`"] - B gateway
+                db:L - ["\`**Bold Label**\`"] - R:server
+                disk1:T - ["\`**Bold Label**\`"] - B:server
+                disk2:T - ["\`_Italic Label_\`"] - B: db
+                server:T - ["\`_Italic Label_\`"] - B: gateway
             `;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);

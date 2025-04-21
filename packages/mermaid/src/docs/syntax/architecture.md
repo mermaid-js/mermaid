@@ -103,20 +103,22 @@ architecture-beta
 The syntax for declaring an edge is:
 
 ```
-{serviceId}{{group}}? :? {T|B|L|R} {<}?-{['Label']}?-{>}? {T|B|L|R} :? {serviceId}{{group}}?
+{serviceId}{{group}}? : {T|B|L|R} {<}?-{['Label']}?-{>}? {T|B|L|R} : {serviceId}{{group}}?
 ```
 
 For instance:
 
 ```
-db{group} L - ['Connection'] -> R:server
+db{group}:L - ['Connection'] -> R:server
 ```
 
 creates an edge between the group of `db` and service `server`, with a directional arrow going from `db` to `server`, and a label `Connection` on the edge.
 
+The colons (`:`) are used to specify the side of the service the edge comes out of. The side of the service the edge comes out of is specified by adding `L|R|T|B` after the colon. `L` for left, `R` for right, `T` for top, and `B` for bottom.
+
 The edge can be labeled by adding a label in square brackets `[]` after the `-` and before the `>`.
 
-The colon (`:`), the group modifier (`{group}`), the arrow (`<` or `>`), and the label (`[]`) are all optional.
+The group modifier (`{group}`), the arrow (`<` or `>`), and the label (`[]`) are all optional.
 Hence, the following are all valid:
 
 ```
@@ -132,7 +134,7 @@ architecture-beta
 
 #### Edge Direction
 
-The side of the service the edge comes out of is specified by adding `L|R|T|B`
+The side of the service the edge comes out of is specified by adding a colon (`:`) to the side of the service connecting to the arrow and adding `L|R|T|B`
 
 For example:
 
@@ -147,12 +149,6 @@ db:T -- L:server
 ```
 
 creates a 90 degree edge between the services `db` and `server`, with the edge coming out of the top of `db` and the left of `server`.
-
-```
-db R -- L server
-```
-
-the colons are optional, so the above example is equivalent to the previous one.
 
 #### Arrows
 
