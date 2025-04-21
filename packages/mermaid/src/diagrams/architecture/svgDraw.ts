@@ -146,7 +146,11 @@ export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core)
               getConfig()
             );
           } else {
-            createNonFormattedText(width, textElem, label);
+            createNonFormattedText(
+              width,
+              textElem.attr('class', 'architecture-service-label'),
+              label
+            );
           }
 
           textElem
@@ -245,7 +249,11 @@ export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Cor
               getConfig()
             );
           } else {
-            createNonFormattedText(w, textElem, data.label);
+            createNonFormattedText(
+              w,
+              textElem.attr('class', 'architecture-service-label'),
+              data.label
+            );
           }
           textElem
             .attr('dy', '1em')
@@ -290,7 +298,11 @@ export const drawServices = async function (
           getConfig()
         );
       } else {
-        createNonFormattedText(iconSize * 1.5, textElem, service.label);
+        createNonFormattedText(
+          iconSize * 1.5,
+          textElem.attr('class', 'architecture-service-label'),
+          service.label
+        );
       }
 
       textElem
