@@ -65,9 +65,15 @@ export const addTask = function (descr, taskData) {
   let peeps = [];
   if (pieces.length === 1) {
     score = Number(pieces[0]);
+    if (!Number.isInteger(score) || score > 5 || score < 0) {
+      throw new Error('Score must be an integer between 0 and 5');
+    }
     peeps = [];
   } else {
     score = Number(pieces[0]);
+    if (!Number.isInteger(score) || score > 5 || score < 0) {
+      throw new Error('Score must be an integer between 0 and 5');
+    }
     peeps = pieces[1].split(',');
   }
   const peopleList = peeps.map((s) => s.trim());
