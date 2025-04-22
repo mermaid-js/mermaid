@@ -67,6 +67,7 @@ export const registerLazyLoadedDiagrams = (...diagrams: ExternalDiagramDefinitio
   for (const { id, detector, loader } of diagrams) {
     addDetector(id, detector, loader);
   }
+  console.log("Diagram in use: ", diagrams)
 };
 
 export const addDetector = (key: string, detector: DiagramDetector, loader?: DiagramLoader) => {

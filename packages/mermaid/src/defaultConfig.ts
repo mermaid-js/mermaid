@@ -53,6 +53,28 @@ const config: RequiredDeep<MermaidConfig> = {
       };
     },
   },
+  
+  // eslint-disable-next-line @cspell/spellchecker
+  usecase: {
+    ...defaultConfigJson.usecase,
+    actorFont: function (this: MermaidConfig) {
+      return {
+        fontFamily: this.fontFamily,
+        // eslint-disable-next-line @cspell/spellchecker
+        fontSize: this.usecase?.fontSize,
+        fontWeight: 400,
+      };
+    },
+    useCaseFont: function (this: MermaidConfig) {
+      return {
+        fontFamily: this.fontFamily,
+        // eslint-disable-next-line @cspell/spellchecker
+        fontSize: this.usecase?.fontSize,
+        fontWeight: 400,
+      };
+    },
+  },
+  
   class: {
     hideEmptyMembersBox: false,
   },

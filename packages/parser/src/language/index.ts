@@ -11,6 +11,8 @@ export {
   Commit,
   Merge,
   Statement,
+  UseCase,
+  UseCaseDiagram,
   isCommon,
   isInfo,
   isPacket,
@@ -22,6 +24,8 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  isUseCase,
+  isUseCaseDiagram,
 } from './generated/ast.js';
 
 export {
@@ -31,6 +35,7 @@ export {
   PieGeneratedModule,
   ArchitectureGeneratedModule,
   GitGraphGeneratedModule,
+  UseCaseGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -39,3 +44,4 @@ export * from './info/index.js';
 export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './architecture/index.js';
+export * from './use-case/index.js';

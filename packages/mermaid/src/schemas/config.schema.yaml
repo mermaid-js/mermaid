@@ -292,6 +292,8 @@ properties:
     $ref: '#/$defs/PacketDiagramConfig'
   block:
     $ref: '#/$defs/BlockDiagramConfig'
+  usecase:
+    $ref: '#/$defs/UseCaseDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -948,6 +950,42 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       fontSize:
         type: number
         default: 16
+
+  UseCaseDiagramConfig:
+    title: Use Case Diagram Config
+    allOf:
+      - $ref: '#/$defs/BaseDiagramConfig'
+    type: object
+    unevaluatedProperties: false
+    description: The object containing configurations specific for use-case diagrams
+    required:
+      - fontSize
+    properties:
+      fontSize:
+        type: number
+        default: 16
+      actorSpacing:
+        type: number
+        default: 40
+      useCaseSpacing:
+        type: number
+        default: 40
+      systemPadding:
+        type: number
+        default: 16
+      labelPadding:
+        type: number
+        default: 4
+      actorIconSize:
+        type: number
+        default: 32
+      padding:
+        type: number
+        default: 20
+      htmlLabels:
+        type: boolean
+        default: true
+
 
   MindmapDiagramConfig:
     title: Mindmap Diagram Config

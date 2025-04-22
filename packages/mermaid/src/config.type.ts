@@ -199,6 +199,7 @@ export interface MermaidConfig {
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
+  usecase?: UseCaseDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1525,6 +1526,22 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+}
+/**
+ * The object containing configurations specific for use-case diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "UseCaseDiagramConfig".
+ */
+export interface UseCaseDiagramConfig extends BaseDiagramConfig {
+  fontSize?: number;
+  actorSpacing?: number;
+  useCaseSpacing?: number;
+  systemPadding?: number;
+  labelPadding?: number;
+  actorIconSize?: number;
+  padding?: number;
+  htmlLabels?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

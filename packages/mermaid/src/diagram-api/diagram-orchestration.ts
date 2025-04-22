@@ -1,3 +1,4 @@
+/* eslint-disable @cspell/spellchecker */
 import c4 from '../diagrams/c4/c4Detector.js';
 import flowchart from '../diagrams/flowchart/flowDetector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
@@ -26,10 +27,12 @@ import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
+import usecase from '../diagrams/use-case/useCaseDetector.js';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
   if (hasLoadedDiagrams) {
+    console.log("Diagram is loaded.");
     return;
   }
   // This is added here to avoid race-conditions.
@@ -94,6 +97,7 @@ export const addDiagrams = () => {
     packet,
     xychart,
     block,
-    architecture
+    architecture, 
+    usecase
   );
 };

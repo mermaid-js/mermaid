@@ -141,6 +141,10 @@
     "onlyBuiltDependencies": [
       "cypress",
       "esbuild"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp",
+      "vue-demi"
     ]
   }
 }

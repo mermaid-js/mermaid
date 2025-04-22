@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <title>Mermaid development page</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: row;
+      }
+
+      #code {
+        max-width: 30vw;
+        width: 30vw;
+      }
+
+      #dynamicDiagram {
+        padding-left: 2em;
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <pre id="diagram" class="mermaid">
+      use-case-beta
+      actor User
+      User --> "Log in"
+      User --> "Place orders"      
+      User --> "Track Orders"
+    </pre>
+
+    <hr />
+    Type code to view diagram:
+    <div class="container">
+      <textarea name="code" id="code" cols="30" rows="10"></textarea>
+      <!-- drawing box -->
+      <div id="dynamicDiagram"></div> 
+    </div>
+    <pre class="mermaid">info</pre>
+
+    <script type="module">
+      import mermaid from '/mermaid.esm.mjs';
+      import layouts from '/mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      async function render(str) {
+        const { svg } = await mermaid.render('dynamic', str);
+        // draw to drawing box
+        document.getElementById('dynamicDiagram').innerHTML = svg; 
+      }
+      const storeKey = window.location.pathname;
+      const code = localStorage.getItem(storeKey);
+      if (code) {
+        document.getElementById('code').value = code;
+        await render(code);
+      }
+      mermaid.initialize({
+        startOnLoad: true,
+        logLevel: 0,
+      });
+      document.getElementById('code').addEventListener('input', async (e) => {
+        const value = e.target.value;
+        localStorage.setItem(storeKey, value);
+        await render(value);
+      });
+    </script>
+
+    <script src="/dev/reload.js"></script>
+  </body>
+</html>
