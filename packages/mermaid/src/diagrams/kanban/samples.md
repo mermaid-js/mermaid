@@ -54,14 +54,12 @@ kanban
     id8: Design grammar
 
   id2@{
-    assigned: knsv
     icon: heart
     priority: high
     descr: "Handles JISON parsing logic and structure."
   }
 
   id8@{
-    assigned: knsv
     priority: medium
     descr: "Design grammar rules for parsing input efficiently."
   }
