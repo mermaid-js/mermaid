@@ -290,7 +290,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   /**
    * Width of nodes where text is wrapped.
    *
-   * When using markdown strings the text ius wrapped automatically, this
+   * When using markdown strings the text is wrapped automatically, this
    * value sets the max width of a text before it continues on a new line.
    *
    */

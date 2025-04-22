@@ -45,13 +45,15 @@ jobs:
       - if: ${{ env.USE_APPLI }}
         name: Notify applitools of new batch
         # Copied from docs https://applitools.com/docs/topics/integrations/github-integration-ci-setup.html
-        run: curl -L -d '' -X POST "$APPLITOOLS_SERVER_URL/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$GITHUB_SHA&BranchName=${APPLITOOLS_BRANCH}$&ParentBranchName=$APPLITOOLS_PARENT_BRANCH"
         env:
           # e.g. mermaid-js/mermaid/my-branch
           APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
           APPLITOOLS_PARENT_BRANCH: ${{ github.event.inputs.parent_branch }}
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
           APPLITOOLS_SERVER_URL: 'https://eyesapi.applitools.com'
+        uses: wei/curl@61d92b5169ea0425820dd13cf6fbad66b483e9f1
+        with:
+          args: -X POST "$APPLITOOLS_SERVER_URL/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$GITHUB_SHA&BranchName=${APPLITOOLS_BRANCH}$&ParentBranchName=$APPLITOOLS_PARENT_BRANCH"
 
       - name: Cypress run
         uses: cypress-io/github-action@18a6541367f4580a515371905f499a27a44e8dbe # v6.7.12

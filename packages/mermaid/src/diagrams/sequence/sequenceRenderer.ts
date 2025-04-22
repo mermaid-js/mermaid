@@ -232,7 +232,7 @@ interface NoteModel {
 }
 
 /**
- * Draws an note in the diagram with the attached line
+ * Draws a note in the diagram with the attached line
  *
  * @param elem - The diagram to draw to.
  * @param noteModel - Note model options.

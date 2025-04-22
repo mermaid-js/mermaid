@@ -17,7 +17,7 @@ export const clear = () => {
   terminalLabels = {};
 };
 
-export const insertEdgeLabel = (elem, edge) => {
+export const insertEdgeLabel = async (elem, edge) => {
   const config = getConfig();
   const useHtmlLabels = evaluate(config.flowchart.htmlLabels);
   // Create the actual text element
@@ -33,7 +33,7 @@ export const insertEdgeLabel = (elem, edge) => {
           },
           config
         )
-      : createLabel(edge.label, edge.labelStyle);
+      : await createLabel(edge.label, edge.labelStyle);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
@@ -63,7 +63,7 @@ export const insertEdgeLabel = (elem, edge) => {
   let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
-    const startLabelElement = createLabel(edge.startLabelLeft, edge.labelStyle);
+    const startLabelElement = await createLabel(edge.startLabelLeft, edge.labelStyle);
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
     fo = inner.node().appendChild(startLabelElement);
@@ -77,7 +77,7 @@ export const insertEdgeLabel = (elem, edge) => {
   }
   if (edge.startLabelRight) {
     // Create the actual text element
-    const startLabelElement = createLabel(edge.startLabelRight, edge.labelStyle);
+    const startLabelElement = await createLabel(edge.startLabelRight, edge.labelStyle);
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
     fo = startEdgeLabelRight.node().appendChild(startLabelElement);
@@ -93,7 +93,7 @@ export const insertEdgeLabel = (elem, edge) => {
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
-    const endLabelElement = createLabel(edge.endLabelLeft, edge.labelStyle);
+    const endLabelElement = await createLabel(edge.endLabelLeft, edge.labelStyle);
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     fo = inner.node().appendChild(endLabelElement);
@@ -110,7 +110,7 @@ export const insertEdgeLabel = (elem, edge) => {
   }
   if (edge.endLabelRight) {
     // Create the actual text element
-    const endLabelElement = createLabel(edge.endLabelRight, edge.labelStyle);
+    const endLabelElement = await createLabel(edge.endLabelRight, edge.labelStyle);
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
@@ -279,7 +279,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
 
     return res;
   } else {
-    // Intersection onn sides of rect
+    // Intersection on sides of rect
     if (insidePoint.x < outsidePoint.x) {
       r = outsidePoint.x - w - x;
     } else {
@@ -324,7 +324,7 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
     // check if point is inside the boundary rect
     if (!outsideNode(boundaryNode, point) && !isInside) {
       // First point inside the rect found
-      // Calc the intersection coord between the point anf the last point outside the rect
+      // Calc the intersection coord between the point and the last point outside the rect
       const inter = intersection(boundaryNode, lastPointOutside, point);
 
       // // Check case where the intersection is the same as the last point

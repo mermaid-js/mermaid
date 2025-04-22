@@ -526,7 +526,7 @@ click taskId href URL
 - taskId is the id of the task
 - callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified.
 
-Beginner's tip—a full example using interactive links in an html context:
+Beginner's tip—a full example using interactive links in an HTML context:
 
 ```html
 <body>
@@ -596,6 +596,88 @@ gantt
     9    : 0, 9
     section Issue1300
     5    : 0, 5
+```
+
+### Timeline (with comments, CSS, config in frontmatter)
+
+```mermaid-example
+---
+    # Frontmatter config, YAML comments
+    title: Ignored if specified in chart
+    displayMode: compact     #gantt specific setting but works at this level too
+    config:
+#        theme: forest
+#        themeCSS: " #item36 { fill: CadetBlue } "
+        themeCSS: " // YAML supports multiline strings using a newline markers: \n
+            #item36 { fill: CadetBlue }       \n
+
+            // Custom marker workaround CSS from forum (below)    \n
+            rect[id^=workaround] { height: calc(100% - 50px) ; transform: translate(9px, 25px); y: 0; width: 1.5px; stroke: none; fill: red; }   \n
+            text[id^=workaround] { fill: red; y: 100%; font-size: 15px;}
+        "
+        gantt:
+            useWidth: 400
+            rightPadding: 0
+            topAxis: true  #false
+            numberSectionStyles: 2
+---
+gantt
+    title Timeline - Gantt Sampler
+    dateFormat YYYY
+    axisFormat %y
+    %% this next line doesn't recognise 'decade' or 'year', but will silently ignore
+    tickInterval 1decade
+
+    section Issue19062
+    71   :            item71, 1900, 1930
+    section Issue19401
+    36   :            item36, 1913, 1935
+    section Issue1300
+    94   :            item94, 1910, 1915
+    5    :            item5,  1920, 1925
+    0    : milestone, item0,  1918, 1s
+    9    : vert,              1906, 1s   %% not yet official
+    64   : workaround,        1923, 1s   %% custom CSS object https://github.com/mermaid-js/mermaid/issues/3250
+```
+
+```mermaid
+---
+    # Frontmatter config, YAML comments
+    title: Ignored if specified in chart
+    displayMode: compact     #gantt specific setting but works at this level too
+    config:
+#        theme: forest
+#        themeCSS: " #item36 { fill: CadetBlue } "
+        themeCSS: " // YAML supports multiline strings using a newline markers: \n
+            #item36 { fill: CadetBlue }       \n
+
+            // Custom marker workaround CSS from forum (below)    \n
+            rect[id^=workaround] { height: calc(100% - 50px) ; transform: translate(9px, 25px); y: 0; width: 1.5px; stroke: none; fill: red; }   \n
+            text[id^=workaround] { fill: red; y: 100%; font-size: 15px;}
+        "
+        gantt:
+            useWidth: 400
+            rightPadding: 0
+            topAxis: true  #false
+            numberSectionStyles: 2
+---
+gantt
+    title Timeline - Gantt Sampler
+    dateFormat YYYY
+    axisFormat %y
+    %% this next line doesn't recognise 'decade' or 'year', but will silently ignore
+    tickInterval 1decade
+
+    section Issue19062
+    71   :            item71, 1900, 1930
+    section Issue19401
+    36   :            item36, 1913, 1935
+    section Issue1300
+    94   :            item94, 1910, 1915
+    5    :            item5,  1920, 1925
+    0    : milestone, item0,  1918, 1s
+    9    : vert,              1906, 1s   %% not yet official
+    64   : workaround,        1923, 1s   %% custom CSS object https://github.com/mermaid-js/mermaid/issues/3250
 ```
 
 <!--- cspell:ignore isadded --->

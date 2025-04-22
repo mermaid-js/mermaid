@@ -138,9 +138,16 @@ xychart-beta
 
 ## Chart Theme Variables
 
-> **Note**
-> Themes for xychart resides inside xychart attribute so to set the variables use this syntax
-> %%{init: { "themeVariables": {"xyChart": {"titleColor": "#ff0000"} } }}%%
+Themes for xychart resides inside xychart attribute so to set the variables use this syntax:
+
+```yaml
+---
+config:
+  themeVariables:
+    xyChart:
+      titleColor: '#ff0000'
+---
+```
 
 | Parameter        | Description                                               |
 | ---------------- | --------------------------------------------------------- |

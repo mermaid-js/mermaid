@@ -24,7 +24,7 @@ describe('architecture diagrams', () => {
       await expect(parser.parse(str)).resolves.not.toThrow();
     });
 
-    it('should handle an simple radar definition', async () => {
+    it('should handle a simple radar definition', async () => {
       const str = `architecture-beta
             service db
             `;

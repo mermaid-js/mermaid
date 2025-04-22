@@ -41,7 +41,7 @@
 
             CAR:::someclass
             PERSON:::anotherclass,someclass
-        
+
             classDef someclass fill:#f96
             classDef anotherclass color:blue
         </pre>
@@ -90,7 +90,7 @@
           erDiagram
             CAR ||--o{ NAMED-DRIVER : allows
             CAR {
-                test test PK "comment"
+                text text PK "comment"
                 string make
                 string model
                 string[] parts
@@ -108,7 +108,7 @@
                 string carRegistrationNumber PK, FK
                 string driverLicence PK, FK
             }
-            MANUFACTURER only one to zero or more CAR : makes      
+            MANUFACTURER only one to zero or more CAR : makes
         </pre>
       </div>
       <div class="test">
@@ -129,7 +129,7 @@
               string email
           }
           p ||--o| a : has
-           
+
         </pre>
       </div>
       <div class="test">
