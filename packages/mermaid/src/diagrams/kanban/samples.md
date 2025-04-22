@@ -40,7 +40,7 @@ config:
   theme: default
   kanban:
     showId: true
-    fields: [title, priority, assigned, descr]
+    fields: [title, priority, assigned, descr,]
 ---
 
 kanban
