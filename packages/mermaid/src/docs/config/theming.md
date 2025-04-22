@@ -2,7 +2,7 @@
 
 Dynamic and integrated theme configuration was introduced in Mermaid version 8.7.0.
 
-Themes can now be customized at the site-wide level, or on individual Mermaid diagrams. For site-wide theme customization, the `initialize` call is used. For diagram specific customization, the `init` directive is used.
+Themes can now be customized at the site-wide level, or on individual Mermaid diagrams. For site-wide theme customization, the `initialize` call is used. For diagram specific customization, frontmatter config is used.
 
 ## Available Themes
 
@@ -31,12 +31,15 @@ mermaid.initialize({
 
 ## Diagram-specific Themes
 
-To customize the theme of an individual diagram, use the `init` directive.
+To customize the theme of an individual diagram, use frontmatter config.
 
-Example of `init` directive setting the `theme` to `forest`:
+Example of frontmatter config setting the `theme` to `forest`:
 
 ```mermaid-example
-%%{init: {'theme':'forest'}}%%
+---
+config:
+  theme: 'forest'
+---
   graph TD
     a --> b
 ```
@@ -45,30 +48,28 @@ Example of `init` directive setting the `theme` to `forest`:
 
 ## Customizing Themes with `themeVariables`
 
-To make a custom theme, modify `themeVariables` via `init`.
+To make a custom theme, modify `themeVariables` via frontmatter config.
 
 You will need to use the [base](#available-themes) theme as it is the only modifiable theme.
 
-| Parameter      | Description                          | Type   | Properties                                                                          |
-| -------------- | ------------------------------------ | ------ | ----------------------------------------------------------------------------------- |
-| themeVariables | Modifiable with the `init` directive | Object | `primaryColor`, `primaryTextColor`, `lineColor` ([see full list](#theme-variables)) |
+| Parameter      | Description                        | Type   | Properties                                                                          |
+| -------------- | ---------------------------------- | ------ | ----------------------------------------------------------------------------------- |
+| themeVariables | Modifiable with frontmatter config | Object | `primaryColor`, `primaryTextColor`, `lineColor` ([see full list](#theme-variables)) |
 
-Example of modifying `themeVariables` using the `init` directive:
+Example of modifying `themeVariables` using frontmatter config:
 
 ```mermaid-example
-%%{
-  init: {
-    'theme': 'base',
-    'themeVariables': {
-      'primaryColor': '#BB2528',
-      'primaryTextColor': '#fff',
-      'primaryBorderColor': '#7C0000',
-      'lineColor': '#F8B229',
-      'secondaryColor': '#006100',
-      'tertiaryColor': '#fff'
-    }
-  }
-}%%
+---
+config:
+  theme: 'base'
+  themeVariables:
+    primaryColor: '#BB2528'
+    primaryTextColor: '#fff'
+    primaryBorderColor: '#7C0000'
+    lineColor: '#F8B229'
+    secondaryColor: '#006100'
+    tertiaryColor: '#fff'
+---
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
