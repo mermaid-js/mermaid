@@ -67,12 +67,12 @@ kanban
   }
 
   %% Set background color for entire sections (approximation by coloring all cards in the section)
-  style id2 fill:#E1BEE7,stroke:#AA00FF
+  style id2 fill:#E1BEE7
   style id3 fill:#E1BEE7
   style id4 fill:#E1BEE7
   style id5 fill:#E1BEE7
   style id6 fill:#E1BEE7
 
-  style id8 fill:#FFF59D,stroke:#FBC02D
+  style id8 fill:#FFF59D
 
 
