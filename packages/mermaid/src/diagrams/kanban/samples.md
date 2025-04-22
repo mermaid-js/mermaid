@@ -74,3 +74,12 @@ kanban
   style id6 fill:#E1BEE7
 
   style id8 fill:#FFF59D,stroke:#FBC02D
+
+
+
+
+  config:
+  theme: default
+  kanban:
+    showIds: true
+    fields: [[title], [description], [id, assigned]]
