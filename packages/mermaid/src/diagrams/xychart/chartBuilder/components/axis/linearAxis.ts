@@ -33,6 +33,6 @@ export class LinearAxis extends BaseAxis {
   }
 
   getScaleValue(value: number): number {
-    return this.scale(value);
+    return Math.floor(this.scale(value)); // or Math.round
   }
 }
