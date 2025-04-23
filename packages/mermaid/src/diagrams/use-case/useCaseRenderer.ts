@@ -1,142 +1,180 @@
 /* eslint-disable @cspell/spellchecker */
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
+import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
 import { getConfigField } from './useCaseDb.js';
 import type { UseCaseDB } from './useCaseTypes.js';
 
-export const draw: DrawDefinition = (text, id, _version, diagObj: Diagram) => {
+// user‑icon path
+const PERSON_ICON =
+  'M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2' +
+  'c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z';
+
+export const draw: DrawDefinition = (text, id, _v, diagObj: Diagram) => {
   const db = diagObj.db as UseCaseDB;
 
-  // Select or create SVG container
-  const svg: SVG = selectSvgElement(id);
+  // SVG boilerplate
+  const svg: SVG = selectSvgElement(id)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .style('display', 'block')
+    .style('margin', '0 auto');
+
   const g = svg.append('g');
 
-  // Robust numeric parsing with defaults
-  const rawUseCaseSpacing = Number(getConfigField('useCaseSpacing'));
-  const useCaseSpacing = isNaN(rawUseCaseSpacing) ? 20 : rawUseCaseSpacing;
-  const rawFontSize = Number(getConfigField('fontSize'));
-  const fontSize = isNaN(rawFontSize) ? 16 : rawFontSize;
-  const rawPadding = Number(getConfigField('padding'));
-  const padding = isNaN(rawPadding) ? 20 : rawPadding;
+  // Config & fallbacks
+  const useCaseSpacing = Number(getConfigField('useCaseSpacing')) || 40;
+  const fontSize       = Number(getConfigField('fontSize'))       || 16;
+  const padding        = Number(getConfigField('padding'))        || 8;
+  const systemPad      = 20; //margin around rectangle
 
-  // Fetch data
   const actors   = db.getActors();
   const useCases = db.getUseCases();
   const edges    = db.getEdges();
 
-  // Draw left actor (default first if no position)
-  const leftActor = actors.find((a) => a.position === 'left') ?? actors[0];
+  // Draw use cases & track bounds
+  const useCaseGroup = g.append('g').attr('class', 'usecase-nodes');
+  const useCaseX     = 150;
+  let   useCaseY     = 0;
+
+  // bounds init
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+  useCases.forEach((uc) => {
+    const ucGroup = useCaseGroup.append('g').attr('class', 'usecase-node');
+
+    const text = ucGroup.append('text')
+      .text(uc.label)
+      .attr('font-size', fontSize);
+
+    const bb   = (text.node() as SVGGraphicsElement).getBBox();
+    const pad  = 10;
+    const w    = bb.width  + 2 * pad;
+    const h    = bb.height + 2 * pad;
+
+    const cx = useCaseX + w / 2;
+    const cy = useCaseY + h / 2;
+
+    ucGroup.insert('ellipse', 'text')
+      .attr('cx', cx).attr('cy', cy)
+      .attr('rx', w/2).attr('ry', h/2)
+      .attr('fill', '#fff').attr('stroke', '#333');
+
+    text.attr('x', cx).attr('y', cy + bb.height/4)
+        .attr('text-anchor', 'middle');
+
+    db.setElementForId(uc.id, { x: cx, y: cy, rx: w/2, ry: h/2, type: 'usecase' });
+
+    // update bounds
+    minX = Math.min(minX, cx - w/2);
+    maxX = Math.max(maxX, cx + w/2);
+    minY = Math.min(minY, cy - h/2);
+    maxY = Math.max(maxY, cy + h/2);
+
+    useCaseY += h + useCaseSpacing;
+  });
+
+  
+
+  // System rectangle
+  const rectX = minX - systemPad;
+  const rectY = minY - systemPad;
+  const rectW = maxX - minX + 2*systemPad;
+  const rectH = maxY - minY + 2*systemPad;
+
+  g.insert('rect', '.usecase-nodes') // place behind ellipses
+    .attr('x', rectX).attr('y', rectY)
+    .attr('width',  rectW).attr('height', rectH)
+    .attr('rx', 4).attr('ry', 4)
+    .attr('fill', 'none')
+    .attr('stroke', '#666')
+    .attr('stroke-dasharray', '6 4');
+
+  //optional label “System” above rectangle
+  g.append('text')
+    .text('System') //modify lable if necessary
+    .attr('x', rectX + rectW / 2)
+    .attr('y', rectY - 8)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', fontSize)
+    .attr('font-style', 'italic');
+
+  // Compute mid‑height for actors
+  const diagramHeight = maxY - minY;
+  const midY          = rectY + diagramHeight / 2;
+
+  // Resolve overlapping of system and users
+  const gap = 40;
+  const actorRad = 20; 
+
+  // LEFT actor 
+  const leftActor = actors.find(a => a.position === 'left' || !a.position);
+  const leftX = rectX - gap - actorRad;
   if (leftActor) {
-    const actorGroup = g.append('g').attr('class', 'usecase-actor');
-    actorGroup.append('circle').attr('cx', 0).attr('cy', 0).attr('r', 20).attr('fill', '#ccc');
-    actorGroup.append('text')
+    const scale = 1.7;
+    g.append('g').attr('class', 'usecase-actor')
+      .append('path')
+      .attr('d', PERSON_ICON)
+      .attr('fill', '#ccc')
+      .attr('transform', `translate(${leftX - 12*scale}, ${midY - 12*scale}) scale(${scale})`);
+
+    g.append('text')
       .text(leftActor.label)
-      .attr('x', 0)
-      .attr('y', 40)
+      .attr('x', leftX)
+      .attr('y', midY + 40)
       .attr('text-anchor', 'middle')
       .attr('font-size', fontSize);
 
-    db.setElementForId(leftActor.id, actorGroup);
-    const actorEl = db.getElementById(leftActor.id)!;
-    actorEl.x = 0;
-    actorEl.y = 0;
-    actorEl.r = 20;
+    db.setElementForId(leftActor.id, { x: leftX, y: midY, r: actorRad, type: 'actor', position: 'left' });
   }
 
-  // Draw standalone use cases
-  const useCaseX = 150;
-  let currentY = 0;
-  useCases.forEach((uc) => {
-    const container = uc.in
-      ? ((db.getElementById(uc.in) as any) || g)
-      : g;
-    const ucGroup = container.append('g').attr('class', 'usecase-node');
-
-    const textEl = ucGroup.append('text').text(uc.label).attr('font-size', fontSize);
-    const bbox = (textEl.node() as SVGGraphicsElement).getBBox();
-    const w = bbox.width + padding;
-    const h = bbox.height + padding;
-    const cx = useCaseX + w / 2;
-    const cy = currentY + h / 2;
-
-    ucGroup.insert('ellipse', 'text')
-      .attr('cx', cx)
-      .attr('cy', cy)
-      .attr('rx', w / 2)
-      .attr('ry', h / 2)
-      .attr('fill', '#fff')
-      .attr('stroke', '#333');
-
-    textEl.attr('x', cx).attr('y', cy + bbox.height / 4).attr('text-anchor', 'middle');
-
-    db.setElementForId(uc.id, ucGroup);
-    const ucEl = db.getElementById(uc.id)!;
-    ucEl.x = cx;
-    ucEl.y = cy;
-    ucEl.rx = w / 2;
-    ucEl.ry = h / 2;
-
-    currentY += h + useCaseSpacing;
-  });
-
-  // Draw right actor
-  const rightActor = actors.find((a) => a.position === 'right');
+  // RIGHT actor (if any)
+  const rightActor = actors.find(a => a.position === 'right');
+  const rightX = rectX + rectW + gap + actorRad;
   if (rightActor) {
     const x = useCaseX + 200;
-    const y = currentY - useCaseSpacing / 2;
-    const actorGroup = g.append('g').attr('class', 'usecase-actor');
-    actorGroup.append('circle').attr('cx', x).attr('cy', y).attr('r', 20).attr('fill', '#ccc');
-    actorGroup.append('text')
+    const y = midY;
+    const scale = 1.7;
+
+    g.append('g').attr('class', 'usecase-actor')
+      .append('path')
+      .attr('d', PERSON_ICON)
+      .attr('fill', '#ccc')
+      .attr('transform', `translate(${rightX - 12*scale}, ${y - 12*scale}) scale(${scale})`);
+
+    g.append('text')
       .text(rightActor.label)
-      .attr('x', x)
+      .attr('x', rightX)
       .attr('y', y + 40)
       .attr('text-anchor', 'middle')
       .attr('font-size', fontSize);
 
-    db.setElementForId(rightActor.id, actorGroup);
-    const actorEl = db.getElementById(rightActor.id)!;
-    actorEl.x = x;
-    actorEl.y = y;
-    actorEl.r = 20;
+    db.setElementForId(rightActor.id, { x: rightX, y, r: actorRad, type: 'actor', position: 'right' });
   }
 
-  // Draw edges
+  // Edges
   const edgeGroup = g.append('g').attr('class', 'usecase-edges');
-  edges.forEach((edge) => {
-    const fromEl = db.getElementById(edge.from);
-    const toEl   = db.getElementById(edge.to);
-    if (!fromEl || !toEl) return;
-    const dx = toEl.x - fromEl.x;
-    const dy = toEl.y - fromEl.y;
-    const dist = Math.hypot(dx, dy) || 1;
-    const fromR = fromEl.r ?? (fromEl.rx ?? 0);
-    const toR   = toEl.r   ?? (toEl.rx ?? 0);
-    const startX = fromEl.x + (dx / dist) * fromR;
-    const startY = fromEl.y + (dy / dist) * fromR;
-    const endX   = toEl.x   - (dx / dist) * toR;
-    const endY   = toEl.y   - (dy / dist) * toR;
+
+  edges.forEach(edge => {
+    const from = db.getElementById(edge.from);
+    const to   = db.getElementById(edge.to);
+    if (!from || !to) {
+      return;
+    } 
+    const right = from.x < to.x;
+    const x1 = right ? from.x + (from.r ?? 0) : from.x - (from.r ?? 0);
+    const y1 = from.y;
+    const x2 = right ? to.x - (to.rx ?? 0)   : to.x + (to.rx ?? 0);
+    const y2 = to.y;
 
     edgeGroup.append('line')
-      .attr('x1', startX).attr('y1', startY)
-      .attr('x2', endX).attr('y2', endY)
+      .attr('x1', x1).attr('y1', y1)
+      .attr('x2', x2).attr('y2', y2)
       .attr('stroke', '#000');
   });
 
-  // Compute bounds and set viewBox + inline size
-  const bounds = (g.node() as SVGGElement).getBBox();
-  const vbX = bounds.x - padding;
-  const vbY = bounds.y - padding;
-  const vbW = bounds.width + 2 * padding;
-  const vbH = bounds.height + 2 * padding;
-
-  svg
-    .attr('viewBox', `${vbX} ${vbY} ${vbW} ${vbH}`)
-    .attr('preserveAspectRatio', 'xMidYMid meet')
-    .style('display', 'block')
-    .style('margin', '0 auto')
-    .style('width', `${vbW}px`)
-    .style('height', `${vbH}px`);
+  // Fit viewBox
+  setupGraphViewbox(undefined, svg, padding, getConfigField('useMaxWidth'));
 };
 
 export const renderer = { draw };

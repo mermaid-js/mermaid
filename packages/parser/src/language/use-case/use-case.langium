@@ -33,7 +33,7 @@ fragment Arrow:
 
 
 Actor:
-    'actor' id=UC_ID ('position' position=('left' | 'right'))? EOL
+    'actor' id=UC_ID ('position'? position=('left' | 'right'))? EOL
 ;
 
 UseCase:
