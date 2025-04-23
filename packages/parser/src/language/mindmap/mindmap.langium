@@ -46,6 +46,9 @@ IconDecoration:
 ClassDecoration:
     CLASS_KEYWORD content=(ID|STRING);
 
+// This should be processed before whitespace is ignored
+terminal INDENTATION: /[ \t]{2,}/;  // Two or more spaces/tabs for indentation
+
 // Keywords with fixed text patterns
 terminal MINDMAP_KEYWORD: 'mindmap';
 terminal ICON_KEYWORD: '::icon(';
@@ -57,11 +60,13 @@ terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
 terminal CIRCLE_STR:  /\(\(([\s\S]*?)\)\)/;
 // terminal CIRCLE_STR:  /(?!\(\()[\s\S]+?(?!\(\()/;
 terminal STRING: /"[^"]*"|'[^']*'/;
-terminal INDENTATION: /[ \t]{2,}/;  // Two or more spaces/tabs for indentation
+
+// Modified indentation rule to have higher priority than WS
+
 terminal NL: /\r?\n/;
 
 // Hidden tokens
-hidden terminal WS: /[ \t]/;  // Single space or tab for hidden whitespace
+terminal WS: /[ \t]/;  // Single space or tab for hidden whitespace
 hidden terminal ML_COMMENT: /\%\%[^\n]*/;
 
 // Type definition for node types

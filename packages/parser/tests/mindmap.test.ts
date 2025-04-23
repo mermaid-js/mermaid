@@ -40,7 +40,13 @@ describe('MindMap Parser Tests', () => {
 
     const rows = result.value.MindmapRows;
     const r0 = rows[0];
+    expect(r0.indent).toBe(undefined);
     const r1 = rows[1];
+    expect(r1.indent).toBe(2);
+    const r2 = rows[2];
+    expect(r2.indent).toBe(2);
+    const r3 = rows[3];
+    expect(r3.indent).toBe(4);
 
     expect(r0.$type).toBe('MindmapRow');
     const node0 = r0.item as CircleNode;
@@ -49,6 +55,7 @@ describe('MindMap Parser Tests', () => {
     expect(node0.id).toBe('root');
 
     expect(r1.$type).toBe('MindmapRow');
+    // console.debug('R1:', r1);
     const node1 = r1.item as CircleNode;
     expect(node1.$type).toBe('CircleNode');
     expect(node1.id).toBe('child1');

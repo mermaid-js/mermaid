@@ -8,13 +8,15 @@ export class MindmapValueConverter extends AbstractMermaidValueConverter {
     input: string,
     _cstNode: CstNode
   ): ValueType | undefined {
-    console.debug('MermaidValueConverter', rule.name, input);
+    console.debug('MermaidValueConverter', rule.name);
     if (rule.name === 'CIRCLE_STR') {
       return input.replace('((', '').replace('))', '').trim();
     } else if (rule.name === 'ARCH_TEXT_ICON') {
       return input.replace(/["()]/g, '');
     } else if (rule.name === 'ARCH_TITLE') {
       return input.replace(/[[\]]/g, '').trim();
+    } else if (rule.name === 'INDENTATION') {
+      return input.length;
     }
     return undefined;
   }
