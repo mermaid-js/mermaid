@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { mindmapParse as parse } from './test-util.js';
-import type { CircleNode } from '../src/language/generated/ast';
-import { MindmapRow, Item } from '../src/language/generated/ast';
+import type { CircleNode, SimpleNode, OtherComplex } from '../src/language/generated/ast.js';
+// import { MindmapRow, Item } from '../src/language/generated/ast';
 
 // Tests for mindmap parser with simple root and child nodes
 describe('MindMap Parser Tests', () => {
@@ -21,19 +21,18 @@ describe('MindMap Parser Tests', () => {
     expect(result).toBeDefined();
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-
+    const rows = result.value.MindmapRows;
     // Check if we have a statement
-    expect(result.value.rows).toBeDefined();
-    expect(result.value.rows.length).toBeGreaterThan(0);
+    expect(rows).toBeDefined();
+    expect(rows.length).toBe(1);
 
     // Check the content of the root node
-    const rootNode = result.value.rows[0];
+    const rootNode = rows[0].item as SimpleNode;
     expect(rootNode).toBeDefined();
-    expect(rootNode.content).toBe('root');
+    expect(rootNode?.id).toBe('root');
   });
 
-  it.only('should parse a mindmap with child nodes', () => {
-    console.log('BEFORE RESULT:');
+  it('should parse a mindmap with child nodes', () => {
     const result = parse(
       'mindmap\nroot((Root))\n  child1((Child 1))\n  child2((Child 2))\n    grandchild((Grand Child))'
     );
@@ -81,7 +80,8 @@ describe('Hierarchy (ported from mindmap.spec.ts)', () => {
     const result = parse('mindmap\nroot');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('root');
+    const rootNode = result.value.MindmapRows[0].item as SimpleNode;
+    expect(rootNode.id).toBe('root');
   });
 
   it('MMP-2 should handle a hierarchical mindmap definition', () => {
@@ -89,27 +89,48 @@ describe('Hierarchy (ported from mindmap.spec.ts)', () => {
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
     // Langium AST may not have children as nested objects, so just check rows
-    expect(result.value.rows[0].content).toBe('root');
-    expect(result.value.rows[1].content).toBe('child1');
-    expect(result.value.rows[2].content).toBe('child2');
+    const rootNode = result.value.MindmapRows[0].item as SimpleNode;
+    const child1Node = result.value.MindmapRows[1].item as SimpleNode;
+    const child2Node = result.value.MindmapRows[2].item as SimpleNode;
+    expect(rootNode.id).toBe('root');
+    expect(child1Node.id).toBe('child1');
+    expect(child2Node.id).toBe('child2');
   });
 
-  it('MMP-3 should handle a simple root definition with a shape and without an id', () => {
-    const result = parse('mindmap\n(root)');
+  it.only('MMP-3 should handle a simple root definition with a shape and without an id', () => {
+    const result = parse('mindmap\n(root)\n');
     expect(result.lexerErrors).toHaveLength(0);
+    console.debug('RESULT:', result.parserErrors);
     expect(result.parserErrors).toHaveLength(0);
     // The content should be 'root', shape info may not be present in AST
-    expect(result.value.rows[0].content).toBe('root');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.id).toBe(undefined);
+    expect(rootNode.desc).toBe('root');
+  });
+
+  it('MMP-3.5 should handle a simple root definition with a shape and without an id', () => {
+    const result = parse('mindmap\n("r(oo)t")\n');
+    expect(result.lexerErrors).toHaveLength(0);
+    console.debug('RESULT:', result.parserErrors);
+    expect(result.parserErrors).toHaveLength(0);
+    // The content should be 'root', shape info may not be present in AST
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.id).toBe(undefined);
+    expect(rootNode.desc).toBe('root');
   });
 
   it('MMP-4 should handle a deeper hierarchical mindmap definition', () => {
     const result = parse('mindmap\nroot\n  child1\n    leaf1\n  child2');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('root');
-    expect(result.value.rows[1].content).toBe('child1');
-    expect(result.value.rows[2].content).toBe('leaf1');
-    expect(result.value.rows[3].content).toBe('child2');
+    const rootNode = result.value.MindmapRows[0].item as SimpleNode;
+    const child1Node = result.value.MindmapRows[1].item as SimpleNode;
+    const leaf1Node = result.value.MindmapRows[2].item as SimpleNode;
+    const child2Node = result.value.MindmapRows[3].item as SimpleNode;
+    expect(rootNode.id).toBe('root');
+    expect(child1Node.id).toBe('child1');
+    expect(leaf1Node.id).toBe('leaf1');
+    expect(child2Node.id).toBe('child2');
   });
 
   it('MMP-5 Multiple roots are illegal', () => {
@@ -132,58 +153,67 @@ describe('Nodes (ported from mindmap.spec.ts)', () => {
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
     // Langium AST: check content, id, and maybe type if available
-    expect(result.value.rows[0].content).toBe('The root');
-    // TODO: check id and type if present in AST
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.desc).toBe('The root');
+    expect(rootNode.id).toBe('root');
   });
 
   it('MMP-8 should handle an id and type for a node definition', () => {
     const result = parse('mindmap\nroot\n  theId(child1)');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('root');
-    expect(result.value.rows[1].content).toBe('child1');
-    // TODO: check id and type if present in AST
+    const rootNode = result.value.MindmapRows[0].item as SimpleNode;
+    const childNode = result.value.MindmapRows[1].item as OtherComplex;
+    expect(rootNode.id).toBe('root');
+    expect(childNode.id).toBe('theId');
+    expect(childNode.desc).toBe('child1');
   });
 
   it('MMP-9 should handle an id and type for a node definition', () => {
     const result = parse('mindmap\nroot\n  theId(child1)');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('root');
-    expect(result.value.rows[1].content).toBe('child1');
-    // TODO: check id and type if present in AST
+    const rootNode = result.value.MindmapRows[0].item as SimpleNode;
+    const childNode = result.value.MindmapRows[1].item as OtherComplex;
+    expect(rootNode.id).toBe('root');
+    expect(childNode.id).toBe('theId');
+    expect(childNode.desc).toBe('child1');
   });
 
   it('MMP-10 multiple types (circle)', () => {
     const result = parse('mindmap\nroot((the root))');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('the root');
-    // TODO: check type if present in AST
+    const rootNode = result.value.MindmapRows[0].item as CircleNode;
+    expect(rootNode.desc).toBe('the root');
+    expect(rootNode.id).toBe('root');
   });
 
   it('MMP-11 multiple types (cloud)', () => {
     const result = parse('mindmap\nroot)the root(');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('the root');
-    // TODO: check type if present in AST
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.desc).toBe('the root');
+    expect(rootNode.id).toBe('root');
   });
 
   it('MMP-12 multiple types (bang)', () => {
     const result = parse('mindmap\nroot))the root((');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('the root');
-    // TODO: check type if present in AST
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.desc).toBe('the root');
+    expect(rootNode.id).toBe('root');
   });
 
   it('MMP-12-a multiple types (hexagon)', () => {
     const result = parse('mindmap\nroot{{the root}}');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('the root');
-    // TODO: check type if present in AST
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.desc).toBe('the root');
+    expect(rootNode.id).toBe('root');
   });
 });
 
@@ -193,28 +223,32 @@ describe('Decorations (ported from mindmap.spec.ts)', () => {
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
     // TODO: check icon if present in AST
-    expect(result.value.rows[0].content).toBe('The root');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.desc).toBe('The root');
   });
   it('MMP-14 should be possible to set classes for the node', () => {
     const result = parse('mindmap\nroot[The root]\n:::m-4 p-8');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
     // TODO: check class if present in AST
-    expect(result.value.rows[0].content).toBe('The root');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.desc).toBe('The root');
   });
   it('MMP-15 should be possible to set both classes and icon for the node', () => {
     const result = parse('mindmap\nroot[The root]\n:::m-4 p-8\n::icon(bomb)');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
     // TODO: check class and icon if present in AST
-    expect(result.value.rows[0].content).toBe('The root');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.desc).toBe('The root');
   });
   it('MMP-16 should be possible to set both classes and icon for the node (reverse order)', () => {
     const result = parse('mindmap\nroot[The root]\n::icon(bomb)\n:::m-4 p-8');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
     // TODO: check class and icon if present in AST
-    expect(result.value.rows[0].content).toBe('The root');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.desc).toBe('The root');
   });
 });
 
@@ -223,14 +257,17 @@ describe('Descriptions (ported from mindmap.spec.ts)', () => {
     const result = parse('mindmap\nroot["String containing []"]');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('String containing []');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    expect(rootNode.desc).toBe('String containing []');
   });
   it('MMP-18 should be possible to use node syntax in the descriptions in children', () => {
     const result = parse('mindmap\nroot["String containing []"]\n  child1["String containing ()"]');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('String containing []');
-    expect(result.value.rows[1].content).toBe('String containing ()');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    const childNode = result.value.MindmapRows[1].item as OtherComplex;
+    expect(rootNode.desc).toBe('String containing []');
+    expect(childNode.desc).toBe('String containing ()');
   });
   it('MMP-19 should be possible to have a child after a class assignment', () => {
     const result = parse(
@@ -238,10 +275,14 @@ describe('Descriptions (ported from mindmap.spec.ts)', () => {
     );
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('Root');
-    expect(result.value.rows[1].content).toBe('Child');
-    expect(result.value.rows[2].content).toBe('a');
-    expect(result.value.rows[3].content).toBe('b');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    const childNode = result.value.MindmapRows[1].item as OtherComplex;
+    const aNode = result.value.MindmapRows[3].item as OtherComplex;
+    const bNode = result.value.MindmapRows[4].item as OtherComplex;
+    expect(rootNode.desc).toBe('Root');
+    expect(childNode.desc).toBe('Child');
+    expect(aNode.desc).toBe('a');
+    expect(bNode.desc).toBe('New Stuff');
   });
 });
 
@@ -250,10 +291,14 @@ describe('Miscellaneous (ported from mindmap.spec.ts)', () => {
     const result = parse('mindmap\nroot(Root)\n  Child(Child)\n    a(a)\n\n    b[New Stuff]');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('Root');
-    expect(result.value.rows[1].content).toBe('Child');
-    expect(result.value.rows[2].content).toBe('a');
-    expect(result.value.rows[3].content).toBe('b');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    const childNode = result.value.MindmapRows[1].item as OtherComplex;
+    const aNode = result.value.MindmapRows[2].item as OtherComplex;
+    const bNode = result.value.MindmapRows[3].item as OtherComplex;
+    expect(rootNode.desc).toBe('Root');
+    expect(childNode.desc).toBe('Child');
+    expect(aNode.desc).toBe('a');
+    expect(bNode.desc).toBe('New Stuff');
   });
   it('MMP-21 should be possible to have comments in a mindmap', () => {
     const result = parse(
@@ -261,10 +306,14 @@ describe('Miscellaneous (ported from mindmap.spec.ts)', () => {
     );
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('Root');
-    expect(result.value.rows[1].content).toBe('Child');
-    expect(result.value.rows[2].content).toBe('a');
-    expect(result.value.rows[3].content).toBe('b');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    const childNode = result.value.MindmapRows[1].item as OtherComplex;
+    const aNode = result.value.MindmapRows[2].item as OtherComplex;
+    const bNode = result.value.MindmapRows[3].item as OtherComplex;
+    expect(rootNode.desc).toBe('Root');
+    expect(childNode.desc).toBe('Child');
+    expect(aNode.desc).toBe('a');
+    expect(bNode.desc).toBe('New Stuff');
   });
   it('MMP-22 should be possible to have comments at the end of a line', () => {
     const result = parse(
@@ -272,33 +321,46 @@ describe('Miscellaneous (ported from mindmap.spec.ts)', () => {
     );
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('Root');
-    expect(result.value.rows[1].content).toBe('Child');
-    expect(result.value.rows[2].content).toBe('a');
-    expect(result.value.rows[3].content).toBe('b');
+    const rootNode = result.value.MindmapRows[0].item as OtherComplex;
+    const childNode = result.value.MindmapRows[1].item as OtherComplex;
+    const aNode = result.value.MindmapRows[2].item as OtherComplex;
+    const bNode = result.value.MindmapRows[3].item as OtherComplex;
+    expect(rootNode.desc).toBe('Root');
+    expect(childNode.desc).toBe('Child');
+    expect(aNode.desc).toBe('a');
+    expect(bNode.desc).toBe('New Stuff');
   });
   it('MMP-23 Rows with only spaces should not interfere', () => {
     const result = parse('mindmap\nroot\n A\n \n\n B');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('root');
-    expect(result.value.rows[1].content).toBe('A');
-    expect(result.value.rows[2].content).toBe('B');
+    const rootNode = result.value.MindmapRows[0].item as SimpleNode;
+    const aNode = result.value.MindmapRows[1].item as SimpleNode;
+    const bNode = result.value.MindmapRows[2].item as SimpleNode;
+    expect(rootNode.id).toBe('root');
+    expect(aNode.id).toBe('A');
+    expect(bNode.id).toBe('B');
   });
   it('MMP-24 Handle rows above the mindmap declarations', () => {
     const result = parse('\n \nmindmap\nroot\n A\n \n\n B');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('root');
-    expect(result.value.rows[1].content).toBe('A');
-    expect(result.value.rows[2].content).toBe('B');
+    const rootNode = result.value.MindmapRows[0].item as SimpleNode;
+    const aNode = result.value.MindmapRows[1].item as SimpleNode;
+    const bNode = result.value.MindmapRows[2].item as SimpleNode;
+    expect(rootNode.id).toBe('root');
+    expect(aNode.id).toBe('A');
+    expect(bNode.id).toBe('B');
   });
   it('MMP-25 Handle rows above the mindmap declarations, no space', () => {
     const result = parse('\n\n\nmindmap\nroot\n A\n \n\n B');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
-    expect(result.value.rows[0].content).toBe('root');
-    expect(result.value.rows[1].content).toBe('A');
-    expect(result.value.rows[2].content).toBe('B');
+    const rootNode = result.value.MindmapRows[0].item as SimpleNode;
+    const aNode = result.value.MindmapRows[1].item as SimpleNode;
+    const bNode = result.value.MindmapRows[2].item as SimpleNode;
+    expect(rootNode.id).toBe('root');
+    expect(aNode.id).toBe('A');
+    expect(bNode.id).toBe('B');
   });
 });

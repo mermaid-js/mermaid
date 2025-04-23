@@ -18,13 +18,16 @@ Item:
 
 // Use a special rule order to handle the parsing precedence
 Node:
-    CircleNode | OtherComplex | SimpleNode;
+    CircleNode | OtherComplex | SimpleNode | RoundedNode;
 
 // Specifically handle double parentheses case - highest priority
 CircleNode:
-    id=ID desc=(CIRCLE_STR);
+    (id=ID)? desc=(CIRCLE_STR);
     // id=ID '((' desc=(CIRCLE_STR) '))';
     // id=ID '((' desc=(ID|STRING) '))';
+
+RoundedNode:
+    (id=ID)? desc=(ROUNDED_STR);
 
 // Handle other complex node variants
 OtherComplex:
@@ -50,7 +53,7 @@ ClassDecoration:
 terminal INDENTATION: /[ \t]{2,}/;  // Two or more spaces/tabs for indentation
 
 // Keywords with fixed text patterns
-terminal MINDMAP_KEYWORD: 'mindmap';
+terminal MINDMAP_KEYWORD: 'mindmap\n';
 terminal ICON_KEYWORD: '::icon(';
 terminal CLASS_KEYWORD: ':::';
 
@@ -58,6 +61,7 @@ terminal CLASS_KEYWORD: ':::';
 terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
 // terminal CIRCLE_STR: /[\s\S]*?\)\)/;
 terminal CIRCLE_STR:  /\(\(([\s\S]*?)\)\)/;
+terminal ROUNDED_STR:  /\(([\s\S]*?)\)/;
 // terminal CIRCLE_STR:  /(?!\(\()[\s\S]+?(?!\(\()/;
 terminal STRING: /"[^"]*"|'[^']*'/;
 
