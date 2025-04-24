@@ -15,6 +15,7 @@ import {
 import { MermaidGeneratedSharedModule, MindmapGeneratedModule } from '../generated/module.js';
 import { MindmapTokenBuilder } from './tokenBuilder.js';
 import { MindmapValueConverter } from './valueConverter.js';
+import { MindmapValidator, registerValidationChecks } from './mindmap-validator.js';
 
 /**
  * Declaration of `Mindmap` services.
@@ -23,6 +24,9 @@ interface MindmapAddedServices {
   parser: {
     TokenBuilder: MindmapTokenBuilder;
     ValueConverter: MindmapValueConverter;
+  };
+  validation: {
+    MindmapValidator: MindmapValidator;
   };
 }
 
@@ -42,6 +46,9 @@ export const MindmapModule: Module<
   parser: {
     TokenBuilder: () => new MindmapTokenBuilder(),
     ValueConverter: () => new MindmapValueConverter(),
+  },
+  validation: {
+    MindmapValidator: () => new MindmapValidator(),
   },
 };
 
@@ -73,5 +80,9 @@ export function createMindmapServices(context: DefaultSharedCoreModuleContext = 
     MindmapModule
   );
   shared.ServiceRegistry.register(Mindmap);
+
+  // Register validation checks
+  registerValidationChecks(Mindmap);
+
   return { shared, Mindmap };
 }

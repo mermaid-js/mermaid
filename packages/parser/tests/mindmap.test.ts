@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mindmapParse as parse } from './test-util.js';
+import { validatedMindmapParse as validatedParse, mindmapParse as parse } from './test-util.js';
 import type { CircleNode, SimpleNode, OtherComplex } from '../src/language/generated/ast.js';
 // import { MindmapRow, Item } from '../src/language/generated/ast';
 
@@ -97,7 +97,7 @@ describe('Hierarchy (ported from mindmap.spec.ts)', () => {
     expect(child2Node.id).toBe('child2');
   });
 
-  it.only('MMP-3 should handle a simple root definition with a shape and without an id', () => {
+  it('MMP-3 should handle a simple root definition with a shape and without an id', () => {
     const result = parse('mindmap\n(root)\n');
     expect(result.lexerErrors).toHaveLength(0);
     console.debug('RESULT:', result.parserErrors);
@@ -111,12 +111,12 @@ describe('Hierarchy (ported from mindmap.spec.ts)', () => {
   it('MMP-3.5 should handle a simple root definition with a shape and without an id', () => {
     const result = parse('mindmap\n("r(oo)t")\n');
     expect(result.lexerErrors).toHaveLength(0);
-    console.debug('RESULT:', result.parserErrors);
+    console.debug('RESULT-', result.parserErrors);
     expect(result.parserErrors).toHaveLength(0);
     // The content should be 'root', shape info may not be present in AST
     const rootNode = result.value.MindmapRows[0].item as OtherComplex;
     expect(rootNode.id).toBe(undefined);
-    expect(rootNode.desc).toBe('root');
+    expect(rootNode.desc).toBe('r(oo)t');
   });
 
   it('MMP-4 should handle a deeper hierarchical mindmap definition', () => {
@@ -133,11 +133,16 @@ describe('Hierarchy (ported from mindmap.spec.ts)', () => {
     expect(child2Node.id).toBe('child2');
   });
 
-  it('MMP-5 Multiple roots are illegal', () => {
+  it.only('MMP-5 Multiple roots are illegal', async () => {
     const str = 'mindmap\nroot\nfakeRoot';
-    const result = parse(str);
+    const result = await validatedParse(str, { validation: true });
     // Langium parser may not throw, but should have parserErrors
-    expect(result.parserErrors.length).toBeGreaterThan(0);
+    expect(result.diagnostics![0].message).toBe(
+      'Multiple root nodes are not allowed in a mindmap.'
+    );
+    const str2 = 'mindmap\nroot\n  notAFakeRoot';
+    const result2 = await validatedParse(str2, { validation: true });
+    expect(result2.diagnostics?.length).toBe(0);
   });
 
   it('MMP-6 real root in wrong place', () => {

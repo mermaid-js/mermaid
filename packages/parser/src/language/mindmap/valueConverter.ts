@@ -13,6 +13,8 @@ export class MindmapValueConverter extends AbstractMermaidValueConverter {
       return input.replace('((', '').replace('))', '').trim();
     } else if (rule.name === 'ROUNDED_STR') {
       return input.replace('(', '').replace(')', '').trim();
+    } else if (rule.name === 'ROUNDED_STR_QUOTES') {
+      return input.replace('("', '').replace('")', '').trim();
     } else if (rule.name === 'ARCH_TEXT_ICON') {
       return input.replace(/["()]/g, '');
     } else if (rule.name === 'ARCH_TITLE') {

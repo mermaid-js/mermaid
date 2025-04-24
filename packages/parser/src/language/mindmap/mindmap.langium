@@ -27,7 +27,7 @@ CircleNode:
     // id=ID '((' desc=(ID|STRING) '))';
 
 RoundedNode:
-    (id=ID)? desc=(ROUNDED_STR);
+    (id=ID)? desc=(ROUNDED_STR_QUOTES|ROUNDED_STR);
 
 // Handle other complex node variants
 OtherComplex:
@@ -58,11 +58,12 @@ terminal ICON_KEYWORD: '::icon(';
 terminal CLASS_KEYWORD: ':::';
 
 // Basic token types
-terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
 // terminal CIRCLE_STR: /[\s\S]*?\)\)/;
 terminal CIRCLE_STR:  /\(\(([\s\S]*?)\)\)/;
+terminal ROUNDED_STR_QUOTES:  /\(\"([\s\S]*?)\"\)/;
 terminal ROUNDED_STR:  /\(([\s\S]*?)\)/;
 // terminal CIRCLE_STR:  /(?!\(\()[\s\S]+?(?!\(\()/;
+terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
 terminal STRING: /"[^"]*"|'[^']*'/;
 
 // Modified indentation rule to have higher priority than WS

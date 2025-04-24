@@ -1,4 +1,4 @@
-import type { LangiumParser, ParseResult } from 'langium';
+import type { LangiumParser, ParseResult, ParserOptions } from 'langium';
 import { expect, vi } from 'vitest';
 import type {
   Architecture,
@@ -25,6 +25,7 @@ import {
   createGitGraphServices,
   createMindmapServices,
 } from '../src/language/index.js';
+import { parseHelper } from 'langium/test';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
@@ -111,10 +112,12 @@ export const gitGraphParse = createGitGraphTestServices().parse;
 const mindmapServices: MindmapServices = createMindmapServices().Mindmap;
 const mindmapParser: LangiumParser = mindmapServices.parser.LangiumParser;
 export function createMindmapTestServices() {
-  const parse = (input: string) => {
-    return mindmapParser.parse<Mindmap>(input);
+  const parse = (input: string, options?: ParserOptions) => {
+    return mindmapParser.parse<MindmapDoc>(input, options);
   };
+  const validatedParse = parseHelper<Mindmap>(mindmapServices);
 
-  return { services: mindmapServices, parse };
+  return { services: mindmapServices, parse, validatedParse };
 }
 export const mindmapParse = createMindmapTestServices().parse;
+export const validatedMindmapParse = createMindmapTestServices().validatedParse;
