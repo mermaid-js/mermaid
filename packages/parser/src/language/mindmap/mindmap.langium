@@ -18,7 +18,7 @@ Item:
 
 // Use a special rule order to handle the parsing precedence
 Node:
-    CircleNode | OtherComplex | SimpleNode | RoundedNode;
+    CircleNode | OtherComplex | SimpleNode | RoundedNode | SquareNode;
 
 // Specifically handle double parentheses case - highest priority
 CircleNode:
@@ -28,6 +28,9 @@ CircleNode:
 
 RoundedNode:
     (id=ID)? desc=(ROUNDED_STR_QUOTES|ROUNDED_STR);
+
+SquareNode:
+    (id=ID)? desc=(SQUARE_STR_QUOTES|SQUARE_STR);
 
 // Handle other complex node variants
 OtherComplex:
@@ -62,6 +65,8 @@ terminal CLASS_KEYWORD: ':::';
 terminal CIRCLE_STR:  /\(\(([\s\S]*?)\)\)/;
 terminal ROUNDED_STR_QUOTES:  /\(\"([\s\S]*?)\"\)/;
 terminal ROUNDED_STR:  /\(([\s\S]*?)\)/;
+terminal SQUARE_STR_QUOTES:  /\[\"([\s\S]*?)\"\]/;
+terminal SQUARE_STR:  /\[([\s\S]*?)\]/;
 // terminal CIRCLE_STR:  /(?!\(\()[\s\S]+?(?!\(\()/;
 terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
 terminal STRING: /"[^"]*"|'[^']*'/;

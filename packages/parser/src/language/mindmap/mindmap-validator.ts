@@ -41,9 +41,10 @@ export class MindmapValidator {
   checkSingleRoot(doc: MindmapDoc, accept: ValidationAcceptor): void {
     // eslint-disable-next-line no-console
     console.debug('CHECKING SINGLE ROOT');
-    let rootNodeFound = false;
+    let rootNodeIndentation;
 
     for (const row of doc.MindmapRows) {
+      console.debug('ROW BY ROW', row.indent);
       // Skip non-node items (e.g., class decorations, icon decorations)
       if (
         !row.item ||
@@ -52,18 +53,24 @@ export class MindmapValidator {
       ) {
         continue;
       }
-
-      // Check if this is a root node (no indentation)
-      if (row.indent === undefined) {
-        if (rootNodeFound) {
-          // If we've already found a root node, report an error
-          accept('error', 'Multiple root nodes are not allowed in a mindmap.', {
-            node: row,
-            property: 'item',
-          });
-        } else {
-          rootNodeFound = true;
-        }
+      if (
+        rootNodeIndentation === undefined && // Check if this is a root node (no indentation)
+        row.indent === undefined
+      ) {
+        rootNodeIndentation = 0;
+      } else if (row.indent === undefined) {
+        console.debug('FAIL 1', rootNodeIndentation, row.indent);
+        // If we've already found a root node, report an error
+        accept('error', 'Multiple root nodes are not allowed in a mindmap.', {
+          node: row,
+          property: 'item',
+        });
+      } else if (rootNodeIndentation >= row.indent) {
+        console.debug('FAIL 2', rootNodeIndentation, row.indent, row.item);
+        accept('error', 'Multiple root nodes are not allowed in a mindmap.', {
+          node: row,
+          property: 'item',
+        });
       }
     }
   }

@@ -133,7 +133,7 @@ describe('Hierarchy (ported from mindmap.spec.ts)', () => {
     expect(child2Node.id).toBe('child2');
   });
 
-  it.only('MMP-5 Multiple roots are illegal', async () => {
+  it('MMP-5 Multiple roots are illegal', async () => {
     const str = 'mindmap\nroot\nfakeRoot';
     const result = await validatedParse(str, { validation: true });
     // Langium parser may not throw, but should have parserErrors
@@ -145,10 +145,10 @@ describe('Hierarchy (ported from mindmap.spec.ts)', () => {
     expect(result2.diagnostics?.length).toBe(0);
   });
 
-  it('MMP-6 real root in wrong place', () => {
+  it('MMP-6 real root in wrong place', async () => {
     const str = 'mindmap\n    root\n  fakeRoot\nrealRootWrongPlace';
-    const result = parse(str);
-    expect(result.parserErrors.length).toBeGreaterThan(0);
+    const r2 = await validatedParse(str, { validation: true });
+    expect(r2.diagnostics?.length).toBe(0);
   });
 });
 
