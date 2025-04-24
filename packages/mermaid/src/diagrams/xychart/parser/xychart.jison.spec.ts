@@ -409,6 +409,7 @@ describe('Testing xychart jison file', () => {
       [45, 99, 12]
     );
   });
+
   it('parse multiple bar and line variant 2', () => {
     const str = `
     xychart-beta horizontal
