@@ -100,8 +100,9 @@ Mermaid can load multiple diagrams, in the same page.
 
 ## Tiny Mermaid
 
-We have a smaller version of mermaid that is almost half the size of the full library.
-If you need a leaner version without some additional features, you can use the [Mermaid Tiny](https://github.com/mermaid-js/mermaid/tree/develop/packages/tiny) library.
+We offer a smaller version of Mermaid that's approximately half the size of the full library. This tiny version doesn't support Mindmap Diagrams, Architecture Diagrams, KaTeX rendering, or lazy loading.
+
+If you need a more lightweight version without these features, you can use [Mermaid Tiny](https://github.com/mermaid-js/mermaid/tree/develop/packages/tiny).
 
 ## Enabling Click Event and Tags in Nodes
 
