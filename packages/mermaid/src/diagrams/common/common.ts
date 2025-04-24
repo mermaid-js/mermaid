@@ -303,6 +303,20 @@ export const katexRegex = /\$\$(.*)\$\$/g;
  */
 export const hasKatex = (text: string): boolean => (text.match(katexRegex)?.length ?? 0) > 0;
 
+export const markdownLinkRegex = /\[([^\]]+)]\(([^)]+)\)/;
+
+/**
+ * Detect markdown links
+ *
+ * @param text - The text to test
+ * @returns Whether or not the text has markdown links
+ */
+export const hasMarkdownLink = (text: string): boolean => markdownLinkRegex.test(text);
+
+export const removeUrlsFromLinks = (text: string): string => {
+  return text.replace(markdownLinkRegex, '$1');
+};
+
 /**
  * Computes the minimum dimensions needed to display a div containing MathML
  *

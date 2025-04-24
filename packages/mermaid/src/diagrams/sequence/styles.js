@@ -48,6 +48,10 @@ const getStyles = (options) =>
     stroke: none;
   }
 
+  .link {
+    fill: #0000EE;
+  }
+
   .labelBox {
     stroke: ${options.labelBoxBorderColor};
     fill: ${options.labelBoxBkgColor};
