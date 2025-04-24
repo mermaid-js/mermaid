@@ -30,6 +30,11 @@
       "id": "radar",
       "grammar": "src/language/radar/radar.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "xy",
+      "grammar": "src/language/xy/xy.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",
