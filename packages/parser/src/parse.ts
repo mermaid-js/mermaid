@@ -1,6 +1,10 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
+<<<<<<< HEAD
 import type { Info, Packet, Pie, Architecture, GitGraph, Radar, Treemap } from './index.js';
+=======
+import type { Info, Packet, Pie, Architecture, GitGraph, Radar, XY } from './index.js';
+>>>>>>> 74d659049 (🖋️ Add XY langium grammar)
 
 export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar;
 
@@ -41,6 +45,11 @@ const initializers = {
     const parser = createTreemapServices().Treemap.parser.LangiumParser;
     parsers.treemap = parser;
   },
+  xy: async () => {
+    const { createXYServices } = await import('./language/xy/index.js');
+    const parser = createXYServices().XY.parser.LangiumParser;
+    parsers.xy = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -49,7 +58,11 @@ export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
+<<<<<<< HEAD
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
+=======
+export async function parse(diagramType: 'xy', text: string): Promise<XY>;
+>>>>>>> 74d659049 (🖋️ Add XY langium grammar)
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
