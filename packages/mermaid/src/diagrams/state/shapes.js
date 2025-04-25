@@ -1,5 +1,4 @@
 import { line, curveBasis } from 'd3';
-import idCache from './id-cache.js';
 import { StateDB } from './stateDb.js';
 import utils from '../../utils.js';
 import common from '../common/common.js';
@@ -38,7 +37,7 @@ export const drawDivider = (g) =>
     .attr('y2', 0);
 
 /**
- * Draws a an end state as a black circle
+ * Draws an end state as a black circle
  *
  * @param {any} g
  * @param {any} stateDef
@@ -137,7 +136,7 @@ export const drawDescrState = (g, stateDef) => {
 
 /** Adds the creates a box around the existing content and adds a panel for the id on top of the content. */
 /**
- * Function that creates an title row and a frame around a substate for a composite state diagram.
+ * Function that creates a title row and a frame around a substate for a composite state diagram.
  * The function returns a new d3 svg object with updated width and height properties;
  *
  * @param {any} g The d3 svg object for the substate to framed
@@ -405,8 +404,6 @@ export const drawState = function (elem, stateDef) {
   stateInfo.width = stateBox.width + 2 * getConfig().state.padding;
   stateInfo.height = stateBox.height + 2 * getConfig().state.padding;
 
-  idCache.set(id, stateInfo);
-  // stateCnt++;
   return stateInfo;
 };
 
