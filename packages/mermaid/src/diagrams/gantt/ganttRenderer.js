@@ -799,25 +799,6 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * @param theSidePad
-   * @param theTopPad
-   * @param w
-   * @param h
-   */
-  function _drawDate(theSidePad, theTopPad, w, h) {
-    const todayG = svg.append('g').attr('class', 'today');
-    const today = new Date();
-    const todayLine = todayG.append('line');
-
-    todayLine
-      .attr('x1', timeScale(today) + theSidePad)
-      .attr('x2', timeScale(today) + theSidePad)
-      .attr('y1', conf.titleTopMargin)
-      .attr('y2', h - conf.titleTopMargin)
-      .attr('class', 'today');
-  }
-
-  /**
    * From this stack exchange question:
    * http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
    *
