@@ -247,7 +247,6 @@ journey
         Revisit Application: 5: John
         Invite Friends: 3: John
 
-        size: 2rem
     `
     );
 
