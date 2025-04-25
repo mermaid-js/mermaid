@@ -643,7 +643,7 @@ const compileTasks = function () {
 
     if (state.records.rawTasks[pos].startTime) {
       state.records.rawTasks[pos].endTime = getEndDate(
-        state.records.rawTasks[pos].startTime!,
+        state.records.rawTasks[pos].startTime,
         state.records.dateFormat,
         state.records.rawTasks[pos].raw.endTime.data,
         state.records.inclusiveEndDates

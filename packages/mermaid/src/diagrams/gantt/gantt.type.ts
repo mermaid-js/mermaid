@@ -37,9 +37,7 @@ export type Weekday =
   | 'saturday';
 export type Weekend = 'saturday' | 'friday';
 
-export type WeekendStartMap = {
-  [key in Weekend]: number;
-};
+export type WeekendStartMap = Record<Weekend, number>;
 
 interface BaseTask {
   id: string;
