@@ -99,7 +99,7 @@ describe('Flowchart v2', () => {
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-      expect(maxWidthValue).to.be.within(417 * 0.95, 417 * 1.05);
+      expect(maxWidthValue).to.be.within(440 * 0.95, 440 * 1.05);
     });
   });
   it('8: should render a flowchart when useMaxWidth is false', () => {
@@ -118,7 +118,7 @@ describe('Flowchart v2', () => {
       const width = parseFloat(svg.attr('width'));
       // use within because the absolute value can be slightly different depending on the environment ±5%
       // expect(height).to.be.within(446 * 0.95, 446 * 1.05);
-      expect(width).to.be.within(417 * 0.95, 417 * 1.05);
+      expect(width).to.be.within(440 * 0.95, 440 * 1.05);
       expect(svg).to.not.have.attr('style');
     });
   });
@@ -198,13 +198,13 @@ describe('Flowchart v2', () => {
       `flowchart TB
   internet
   nat
-  routeur
+  router
   lb1
   lb2
   compute1
   compute2
   subgraph project
-  routeur
+  router
   nat
     subgraph subnet1
       compute1
@@ -215,8 +215,8 @@ describe('Flowchart v2', () => {
       lb2
     end
   end
-  internet --> routeur
-  routeur --> subnet1 & subnet2
+  internet --> router
+  router --> subnet1 & subnet2
   subnet1 & subnet2 --> nat --> internet
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
@@ -433,7 +433,7 @@ flowchart TD
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-  it('63: title on subgraphs should be themable', () => {
+  it('63: title on subgraphs should be themeable', () => {
     imgSnapshotTest(
       `
       %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
@@ -699,7 +699,7 @@ A --> B
       { flowchart: { titleTopMargin: 10 } }
     );
   });
-  it('3192: It should be possieble to render flowcharts with invisible edges', () => {
+  it('3192: It should be possible to render flowcharts with invisible edges', () => {
     imgSnapshotTest(
       `---
 title: Simple flowchart with invisible edges
@@ -786,7 +786,7 @@ A ~~~ B
       `---
       title: Subgraph nodeSpacing and rankSpacing example
       config:
-        flowchart: 
+        flowchart:
           nodeSpacing: 250
           rankSpacing: 250
       ---
@@ -1050,6 +1050,66 @@ end
         {
           flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } },
         }
+      );
+    });
+    it('Should render self-loops', () => {
+      imgSnapshotTest(
+        `flowchart
+          A --> A
+          subgraph B
+            B1 --> B1
+          end
+          subgraph C
+            subgraph C1
+              C2 --> C2
+              subgraph D
+                D1 --> D1
+              end
+              D --> D
+            end
+            C1 --> C1
+          end
+        `,
+        {
+          flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } },
+        }
+      );
+    });
+  });
+  describe('New @ syntax for node metadata edge cases', () => {
+    it('should be possible to use @  syntax to add labels on multi nodes', () => {
+      imgSnapshotTest(
+        `flowchart TB
+       n2["label for n2"] &   n4@{ label: "label for n4"}   & n5@{ label: "label for n5"}
+        `,
+        {}
+      );
+    });
+    it('should be possible to use @  syntax to add labels with trail spaces and &', () => {
+      imgSnapshotTest(
+        `flowchart TB
+       n2["label for n2"] &   n4@{ label: "label for n4"}   & n5@{ label: "label for n5"}   
+        `,
+        {}
+      );
+    });
+    it('should be possible to use @  syntax to add labels with trail spaces', () => {
+      imgSnapshotTest(
+        `flowchart TB
+       n2["label for n2"]
+       n4@{ label: "label for n4"}
+       n5@{ label: "label for n5"}  
+        `,
+        {}
+      );
+    });
+    it('should be possible to use @  syntax to add labels with trail spaces and edge/link', () => {
+      imgSnapshotTest(
+        `flowchart TD
+    A["A"] --> B["for B"] &    C@{ label: "for c"} & E@{label : "for E"}  
+    D@{label: "for D"}     
+        `,
+        {}
       );
     });
   });

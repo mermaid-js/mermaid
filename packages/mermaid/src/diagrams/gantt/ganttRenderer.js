@@ -470,7 +470,7 @@ export const draw = function (text, id, version, diagObj) {
 
     const securityLevel = getConfig().securityLevel;
 
-    // Wrap the tasks in an a tag for working links without javascript
+    // Wrap the tasks in a tag for working links without javascript
     if (securityLevel === 'sandbox') {
       let sandboxElement;
       sandboxElement = select('#i' + id);

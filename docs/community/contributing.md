@@ -239,6 +239,22 @@ Code is the heart of every software project. We strive to make it better. Who if
 
 The core of Mermaid is located under `packages/mermaid/src`.
 
+### Building Mermaid Locally
+
+**Host**
+
+```bash
+pnpm run build
+```
+
+**Docker**
+
+```bash
+./run build
+```
+
+This will build the Mermaid library and the documentation site.
+
 ### Running Mermaid Locally
 
 **Host**
@@ -481,14 +497,14 @@ This is a danger alert
 
 ### Navigation
 
-If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](../.vitepress/config.ts). The same goes to **topbar**.
+If you want to propose changes to how the documentation is _organized_, such as adding a new section or re-arranging or renaming a section, you must update the **sidebar navigation**, which is defined in [the vitepress config](../.vitepress/config.ts). The same goes for **topbar**.
 
 ### Build Docs
 
-The content of `/docs` folder is built with Github Actions.
+The content of `/docs` folder is built with GitHub Actions.
 
 > **Warning**
-> So as to allow automatic compilation of documentation pages you have to enable Github Actions on your fork first
+> So as to allow automatic compilation of documentation pages you have to enable GitHub Actions on your fork first
 
 ## Submit your pull request
 

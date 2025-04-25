@@ -1,3 +1,5 @@
+import { getIconStyles } from '../globalStyles.js';
+
 const getStyles = (options) =>
   `g.classGroup text {
   fill: ${options.nodeBorder || options.classText};
@@ -19,6 +21,10 @@ const getStyles = (options) =>
 }
 .label text {
   fill: ${options.classText};
+}
+
+.labelBkg {
+  background: ${options.mainBkg};
 }
 .edgeLabel .label span {
   background: ${options.mainBkg};
@@ -153,6 +159,7 @@ g.classGroup line {
   font-size: 18px;
   fill: ${options.textColor};
 }
+  ${getIconStyles()}
 `;
 
 export default getStyles;

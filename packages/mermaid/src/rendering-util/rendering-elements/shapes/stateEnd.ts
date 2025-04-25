@@ -1,35 +1,55 @@
-import { updateNodeBounds } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node } from '$root/rendering-util/types.d.ts';
-import type { SVG } from '$root/diagram-api/types.js';
 import rough from 'roughjs';
-import { solidStateFill } from './handDrawnShapeStyles.js';
-import { getConfig } from '$root/diagram-api/diagramAPI.js';
+import type { Node, ShapeRenderOptions } from '../../types.js';
+import intersect from '../intersect/index.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { updateNodeBounds } from './util.js';
+import type { D3Selection } from '../../../types.js';
 
-export const stateEnd = (parent: SVG, node: Node) => {
-  const { themeVariables } = getConfig();
-  const { lineColor } = themeVariables;
+export function stateEnd<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node,
+  { config: { themeVariables } }: ShapeRenderOptions
+) {
+  const { labelStyles, nodeStyles } = styles2String(node);
+  node.labelStyle = labelStyles;
+  const { cssStyles } = node;
+  const { lineColor, stateBorder, nodeBorder } = themeVariables;
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
     .attr('id', node.domId || node.id);
 
-  let circle;
-  let innerCircle;
-  if (node.look === 'handDrawn') {
-    // @ts-ignore TODO: Fix rough typings
-    const rc = rough.svg(shapeSvg);
-    const roughNode = rc.circle(0, 0, 14, { ...solidStateFill(lineColor), roughness: 0.5 });
-    const roughInnerNode = rc.circle(0, 0, 5, { ...solidStateFill(lineColor), fillStyle: 'solid' });
-    circle = shapeSvg.insert(() => roughNode);
-    innerCircle = shapeSvg.insert(() => roughInnerNode);
-  } else {
-    innerCircle = shapeSvg.insert('circle', ':first-child');
-    circle = shapeSvg.insert('circle', ':first-child');
+  // @ts-ignore TODO: Fix rough typings
+  const rc = rough.svg(shapeSvg);
+  const options = userNodeOverrides(node, {});
 
-    circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
+  if (node.look !== 'handDrawn') {
+    options.roughness = 0;
+    options.fillStyle = 'solid';
+  }
 
-    innerCircle.attr('class', 'state-end').attr('r', 5).attr('width', 10).attr('height', 10);
+  const roughNode = rc.circle(0, 0, 14, {
+    ...options,
+    stroke: lineColor,
+    strokeWidth: 2,
+  });
+  const innerFill = stateBorder ?? nodeBorder;
+  const roughInnerNode = rc.circle(0, 0, 5, {
+    ...options,
+    fill: innerFill,
+    stroke: innerFill,
+    strokeWidth: 2,
+    fillStyle: 'solid',
+  });
+  const circle = shapeSvg.insert(() => roughNode, ':first-child');
+  circle.insert(() => roughInnerNode);
+
+  if (cssStyles) {
+    circle.selectAll('path').attr('style', cssStyles);
+  }
+
+  if (nodeStyles) {
+    circle.selectAll('path').attr('style', nodeStyles);
   }
 
   updateNodeBounds(node, circle);
@@ -39,4 +59,4 @@ export const stateEnd = (parent: SVG, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

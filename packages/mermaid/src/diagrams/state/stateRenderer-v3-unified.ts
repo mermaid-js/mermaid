@@ -36,7 +36,6 @@ export const getClasses = function (
   text: string,
   diagramObj: any
 ): Map<string, DiagramStyleClassDef> {
-  diagramObj.db.extract(diagramObj.db.getRootDocV2());
   return diagramObj.db.getClasses();
 };
 

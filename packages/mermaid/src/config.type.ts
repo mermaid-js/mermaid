@@ -191,12 +191,15 @@ export interface MermaidConfig {
   quadrantChart?: QuadrantChartConfig;
   xyChart?: XYChartConfig;
   requirement?: RequirementDiagramConfig;
+  architecture?: ArchitectureDiagramConfig;
   mindmap?: MindmapDiagramConfig;
+  kanban?: KanbanDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
+  radar?: RadarDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -259,7 +262,19 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Defines how mermaid renders curves for flowcharts.
    *
    */
-  curve?: 'basis' | 'linear' | 'cardinal';
+  curve?:
+    | 'basis'
+    | 'bumpX'
+    | 'bumpY'
+    | 'cardinal'
+    | 'catmullRom'
+    | 'linear'
+    | 'monotoneX'
+    | 'monotoneY'
+    | 'natural'
+    | 'step'
+    | 'stepAfter'
+    | 'stepBefore';
   /**
    * Represents the padding between the labels and the shape
    *
@@ -275,7 +290,7 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   /**
    * Width of nodes where text is wrapped.
    *
-   * When using markdown strings the text ius wrapped automatically, this
+   * When using markdown strings the text is wrapped automatically, this
    * value sets the max width of a text before it continues on a new line.
    *
    */
@@ -545,6 +560,10 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
    */
   leftMargin?: number;
   /**
+   * Maximum width of actor labels
+   */
+  maxLabelWidth?: number;
+  /**
    * Width of actor boxes
    */
   width?: number;
@@ -602,6 +621,18 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   actorColours?: string[];
   sectionFills?: string[];
   sectionColours?: string[];
+  /**
+   * Color of the title text in Journey Diagrams
+   */
+  titleColor?: string;
+  /**
+   * Font family to be used for the title text in Journey Diagrams
+   */
+  titleFontFamily?: string;
+  /**
+   * Font size to be used for the title text in Journey Diagrams
+   */
+  titleFontSize?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -715,6 +746,7 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
    */
   diagramPadding?: number;
   htmlLabels?: boolean;
+  hideEmptyMembersBox?: boolean;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -792,6 +824,8 @@ export interface ErDiagramConfig extends BaseDiagramConfig {
    *
    */
   entityPadding?: number;
+  nodeSpacing?: number;
+  rankSpacing?: number;
   /**
    * Stroke color of box edges and lines.
    */
@@ -918,6 +952,10 @@ export interface XYChartConfig extends BaseDiagramConfig {
    */
   titlePadding?: number;
   /**
+   * Should show the value corresponding to the bar within the bar
+   */
+  showDataLabel?: boolean;
+  /**
    * Should show the chart title
    */
   showTitle?: boolean;
@@ -1002,6 +1040,17 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
   line_height?: number;
 }
 /**
+ * The object containing configurations specific for architecture diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "ArchitectureDiagramConfig".
+ */
+export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  iconSize?: number;
+  fontSize?: number;
+}
+/**
  * The object containing configurations specific for mindmap diagrams
  *
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -1010,6 +1059,17 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
 export interface MindmapDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   maxNodeWidth?: number;
+}
+/**
+ * The object containing configurations specific for kanban diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "KanbanDiagramConfig".
+ */
+export interface KanbanDiagramConfig extends BaseDiagramConfig {
+  padding?: number;
+  sectionWidth?: number;
+  ticketBaseUrl?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -1498,6 +1558,50 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+}
+/**
+ * The object containing configurations specific for radar diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RadarDiagramConfig".
+ */
+export interface RadarDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The size of the radar diagram.
+   */
+  width?: number;
+  /**
+   * The size of the radar diagram.
+   */
+  height?: number;
+  /**
+   * The margin from the top of the radar diagram.
+   */
+  marginTop?: number;
+  /**
+   * The margin from the right of the radar diagram.
+   */
+  marginRight?: number;
+  /**
+   * The margin from the bottom of the radar diagram.
+   */
+  marginBottom?: number;
+  /**
+   * The margin from the left of the radar diagram.
+   */
+  marginLeft?: number;
+  /**
+   * The scale factor of the axis.
+   */
+  axisScaleFactor?: number;
+  /**
+   * The scale factor of the axis label.
+   */
+  axisLabelFactor?: number;
+  /**
+   * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
+   */
+  curveTension?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

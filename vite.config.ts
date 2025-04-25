@@ -2,15 +2,10 @@ import jison from './.vite/jisonPlugin.js';
 import jsonSchemaPlugin from './.vite/jsonSchemaPlugin.js';
 import typescript from '@rollup/plugin-typescript';
 import { defaultExclude, defineConfig } from 'vitest/config';
-import path from 'path';
 
 export default defineConfig({
   resolve: {
     extensions: ['.js'],
-    alias: {
-      // Define your alias here
-      $root: path.resolve(__dirname, 'packages/mermaid/src'),
-    },
   },
   plugins: [
     jison(),
@@ -29,6 +24,7 @@ export default defineConfig({
       exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
     },
     includeSource: ['packages/*/src/**/*.{js,ts}'],
+    clearMocks: true,
   },
   build: {
     /** If you set esmExternals to true, this plugins assumes that

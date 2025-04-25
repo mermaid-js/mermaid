@@ -553,7 +553,7 @@ function applyNodePropertyBorders(rect, borders, totalWidth, totalHeight) {
   rect.attr('stroke-dasharray', strokeDashArray.join(' '));
 }
 
-const rectWithTitle = (parent, node) => {
+const rectWithTitle = async (parent, node) => {
   // const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
 
   let classes;
@@ -586,7 +586,7 @@ const rectWithTitle = (parent, node) => {
   }
   log.info('Label text abc79', title, text2, typeof text2 === 'object');
 
-  const text = label.node().appendChild(createLabel(title, node.labelStyle, true, true));
+  const text = label.node().appendChild(await createLabel(title, node.labelStyle, true, true));
   let bbox = { width: 0, height: 0 };
   if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
@@ -601,7 +601,12 @@ const rectWithTitle = (parent, node) => {
   const descr = label
     .node()
     .appendChild(
-      createLabel(textRows.join ? textRows.join('<br/>') : textRows, node.labelStyle, true, true)
+      await createLabel(
+        textRows.join ? textRows.join('<br/>') : textRows,
+        node.labelStyle,
+        true,
+        true
+      )
     );
 
   if (evaluate(getConfig().flowchart.htmlLabels)) {
@@ -876,7 +881,7 @@ const end = (parent, node) => {
   return shapeSvg;
 };
 
-const class_box = (parent, node) => {
+const class_box = async (parent, node) => {
   const halfPadding = node.padding / 2;
   const rowPadding = 4;
   const lineHeight = 8;
@@ -910,7 +915,7 @@ const class_box = (parent, node) => {
     : '';
   const interfaceLabel = labelContainer
     .node()
-    .appendChild(createLabel(interfaceLabelText, node.labelStyle, true, true));
+    .appendChild(await createLabel(interfaceLabelText, node.labelStyle, true, true));
   let interfaceBBox = interfaceLabel.getBBox();
   if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = interfaceLabel.children[0];
@@ -935,7 +940,7 @@ const class_box = (parent, node) => {
   }
   const classTitleLabel = labelContainer
     .node()
-    .appendChild(createLabel(classTitleString, node.labelStyle, true, true));
+    .appendChild(await createLabel(classTitleString, node.labelStyle, true, true));
   select(classTitleLabel).attr('class', 'classTitle');
   let classTitleBBox = classTitleLabel.getBBox();
   if (evaluate(getConfig().flowchart.htmlLabels)) {
@@ -950,7 +955,7 @@ const class_box = (parent, node) => {
     maxWidth = classTitleBBox.width;
   }
   const classAttributes = [];
-  node.classData.members.forEach((member) => {
+  node.classData.members.forEach(async (member) => {
     const parsedInfo = member.getDisplayDetails();
     let parsedText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
@@ -959,7 +964,7 @@ const class_box = (parent, node) => {
     const lbl = labelContainer
       .node()
       .appendChild(
-        createLabel(
+        await createLabel(
           parsedText,
           parsedInfo.cssStyle ? parsedInfo.cssStyle : node.labelStyle,
           true,
@@ -984,7 +989,7 @@ const class_box = (parent, node) => {
   maxHeight += lineHeight;
 
   const classMethods = [];
-  node.classData.methods.forEach((member) => {
+  node.classData.methods.forEach(async (member) => {
     const parsedInfo = member.getDisplayDetails();
     let displayText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
@@ -993,7 +998,7 @@ const class_box = (parent, node) => {
     const lbl = labelContainer
       .node()
       .appendChild(
-        createLabel(
+        await createLabel(
           displayText,
           parsedInfo.cssStyle ? parsedInfo.cssStyle : node.labelStyle,
           true,
@@ -1131,7 +1136,7 @@ const shapes = {
 
 let nodeElems = {};
 
-export const insertNode = async (elem, node, dir) => {
+export const insertNode = async (elem, node, renderOptions) => {
   let newEl;
   let el;
 
@@ -1144,9 +1149,9 @@ export const insertNode = async (elem, node, dir) => {
       target = node.linkTarget || '_blank';
     }
     newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
-    el = await shapes[node.shape](newEl, node, dir);
+    el = await shapes[node.shape](newEl, node, renderOptions);
   } else {
-    el = await shapes[node.shape](elem, node, dir);
+    el = await shapes[node.shape](elem, node, renderOptions);
     newEl = el;
   }
   if (node.tooltip) {

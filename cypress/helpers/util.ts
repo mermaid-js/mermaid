@@ -29,6 +29,7 @@ export const mermaidUrl = (
   options: CypressMermaidConfig,
   api: boolean
 ): string => {
+  options.handDrawnSeed = 1;
   const codeObject: CodeObject = {
     code: graphStr,
     mermaid: options,
@@ -73,7 +74,7 @@ export const imgSnapshotTest = (
 
 export const urlSnapshotTest = (
   url: string,
-  options: CypressMermaidConfig,
+  options: CypressMermaidConfig = {},
   _api = false,
   validation?: any
 ): void => {
@@ -130,4 +131,11 @@ export const verifyScreenshot = (name: string): void => {
   } else {
     cy.matchImageSnapshot(name);
   }
+};
+
+export const verifyNumber = (value: number, expected: number, deltaPercent = 10): void => {
+  expect(value).to.be.within(
+    expected * (1 - deltaPercent / 100),
+    expected * (1 + deltaPercent / 100)
+  );
 };

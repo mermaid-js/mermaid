@@ -23,7 +23,7 @@ import {
   insertEdge,
   clear as clearEdges,
 } from '../../rendering-elements/edges.js';
-import { log } from '$root/logger.js';
+import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
@@ -111,7 +111,7 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
         if (graph.children(v).length > 0) {
           // This is a cluster but not to be rendered recursively
           // Render as before
-          log.info(
+          log.trace(
             'Cluster - the non recursive path XBX',
             v,
             node.id,
@@ -120,12 +120,12 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
             'Graph:',
             graph
           );
-          log.info(findNonClusterChild(node.id, graph));
+          log.trace(findNonClusterChild(node.id, graph));
           clusterDb.set(node.id, { id: findNonClusterChild(node.id, graph), node });
           // insertCluster(clusters, graph.node(v));
         } else {
-          log.warn('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
-          await insertNode(nodes, graph.node(v), dir);
+          log.trace('Node - the non recursive path XAX', v, nodes, graph.node(v), dir);
+          await insertNode(nodes, graph.node(v), { config: siteConfig, dir });
         }
       }
     })
@@ -346,12 +346,16 @@ export const render = async (data4Layout, svg) => {
       edge1.label = '';
       edge1.arrowTypeEnd = 'none';
       edge1.id = nodeId + '-cyclic-special-1';
+      edgeMid.arrowTypeStart = 'none';
       edgeMid.arrowTypeEnd = 'none';
       edgeMid.id = nodeId + '-cyclic-special-mid';
       edge2.label = '';
-      edge1.fromCluster = nodeId;
-      edge2.toCluster = nodeId;
+      if (node.isGroup) {
+        edge1.fromCluster = nodeId;
+        edge2.toCluster = nodeId;
+      }
       edge2.id = nodeId + '-cyclic-special-2';
+      edge2.arrowTypeStart = 'none';
       graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
       graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyc<lic-special-2');

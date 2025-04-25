@@ -12,7 +12,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -30,7 +29,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: true },
         fontFamily: 'courier',
       }
@@ -47,7 +45,7 @@ describe('Flowchart HandDrawn', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[Car]
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -62,7 +60,7 @@ describe('Flowchart HandDrawn', () => {
       C -->|Two| E[\\iPhone\\]
       C -->|Three| F[Car]
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -78,7 +76,7 @@ describe('Flowchart HandDrawn', () => {
       classDef processHead fill:#888888,color:white,font-weight:bold,stroke-width:3px,stroke:#001f3f
       class 1A,1B,D,E processHead
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -107,7 +105,7 @@ describe('Flowchart HandDrawn', () => {
       35(SAM.CommonFA.PopulationFME)-->39(SAM.CommonFA.ChargeDetails)
       36(SAM.CommonFA.PremetricCost)-->39(SAM.CommonFA.ChargeDetails)
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -178,7 +176,7 @@ describe('Flowchart HandDrawn', () => {
       9a072290_1ec3_e711_8c5a_005056ad0002-->d6072290_1ec3_e711_8c5a_005056ad0002
       9a072290_1ec3_e711_8c5a_005056ad0002-->71082290_1ec3_e711_8c5a_005056ad0002
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -187,7 +185,7 @@ describe('Flowchart HandDrawn', () => {
       `
     graph TB;subgraph "number as labels";1;end;
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -199,7 +197,7 @@ describe('Flowchart HandDrawn', () => {
         a1-->a2
       end
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -211,7 +209,7 @@ describe('Flowchart HandDrawn', () => {
         a1-->a2
       end
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -246,7 +244,7 @@ describe('Flowchart HandDrawn', () => {
       style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
       style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -348,7 +346,7 @@ describe('Flowchart HandDrawn', () => {
       sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4DA958A0-26D9-4D47-93A7-70F39FD7D51A;
       sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4FC27B48-A6F9-460A-A675-021F5854FE22;
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, fontFamily: 'courier' }
+      { look: 'handDrawn', fontFamily: 'courier' }
     );
   });
 
@@ -364,7 +362,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         listUrl: false,
         listId: 'color styling',
         fontFamily: 'courier',
@@ -390,7 +387,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         listUrl: false,
         listId: 'color styling',
         fontFamily: 'courier',
@@ -411,7 +407,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -435,7 +430,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -457,7 +451,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -471,7 +464,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -485,7 +477,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -500,7 +491,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -527,7 +517,6 @@ describe('Flowchart HandDrawn', () => {
       class A someclass;`,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -544,7 +533,7 @@ describe('Flowchart HandDrawn', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, flowchart: { nodeSpacing: 50 }, fontFamily: 'courier' }
+      { look: 'handDrawn', flowchart: { nodeSpacing: 50 }, fontFamily: 'courier' }
     );
   });
 
@@ -560,7 +549,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { rankSpacing: '100' },
         fontFamily: 'courier',
       }
@@ -578,7 +566,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -603,7 +590,7 @@ describe('Flowchart HandDrawn', () => {
       click E "notes://do-your-thing/id" "other protocol test"
       click F "javascript:alert('test')" "script test"
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, securityLevel: 'loose', fontFamily: 'courier' }
+      { look: 'handDrawn', securityLevel: 'loose', fontFamily: 'courier' }
     );
   });
 
@@ -623,7 +610,7 @@ describe('Flowchart HandDrawn', () => {
       click B "index.html#link-clicked" "link test"
       click D testClick "click test"
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, flowchart: { htmlLabels: true } }
+      { look: 'handDrawn', flowchart: { htmlLabels: true } }
     );
   });
 
@@ -645,7 +632,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -664,7 +650,7 @@ describe('Flowchart HandDrawn', () => {
       class A myClass1
       class D myClass2
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, flowchart: { htmlLabels: true } }
+      { look: 'handDrawn', flowchart: { htmlLabels: true } }
     );
   });
 
@@ -682,7 +668,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -711,7 +696,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -728,7 +712,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -752,7 +735,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: false },
         fontFamily: 'courier',
       }
@@ -769,7 +751,7 @@ describe('Flowchart HandDrawn', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, flowchart: { diagramPadding: 0 } }
+      { look: 'handDrawn', flowchart: { diagramPadding: 0 } }
     );
   });
 
@@ -804,7 +786,7 @@ describe('Flowchart HandDrawn', () => {
       `graph TD
         a["<strong>Haiya</strong>"]-->b
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, htmlLabels: false, flowchart: { htmlLabels: false } }
+      { look: 'handDrawn', htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
   it('FDH37: should render non-escaped with html labels', () => {
@@ -814,7 +796,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         htmlLabels: true,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
@@ -830,7 +811,7 @@ describe('Flowchart HandDrawn', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, flowchart: { useMaxWidth: true } }
+      { look: 'handDrawn', flowchart: { useMaxWidth: true } }
     );
     cy.get('svg').should((svg) => {
       expect(svg).to.have.attr('width', '100%');
@@ -853,7 +834,7 @@ describe('Flowchart HandDrawn', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { look: 'handDrawn', handDrawnSeed: 1, flowchart: { useMaxWidth: false } }
+      { look: 'handDrawn', flowchart: { useMaxWidth: false } }
     );
     cy.get('svg').should((svg) => {
       // const height = parseFloat(svg.attr('height'));
@@ -874,7 +855,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         htmlLabels: true,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
@@ -904,7 +884,6 @@ describe('Flowchart HandDrawn', () => {
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         htmlLabels: true,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
@@ -919,7 +898,6 @@ graph TD
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         htmlLabels: true,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
@@ -937,7 +915,6 @@ graph TD
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         htmlLabels: true,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
@@ -977,7 +954,6 @@ graph TD
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         htmlLabels: true,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
@@ -999,7 +975,6 @@ graph TD
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         htmlLabels: true,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
@@ -1016,7 +991,6 @@ graph TD
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         htmlLabels: true,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
@@ -1032,7 +1006,6 @@ graph TD
       `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         htmlLabels: true,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
@@ -1051,7 +1024,6 @@ graph TD
     `,
       {
         look: 'handDrawn',
-        handDrawnSeed: 1,
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
       }

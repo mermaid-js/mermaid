@@ -7,7 +7,7 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 ## Introduction to Block Diagrams
 
-```mermaid
+```mermaid-example
 block-beta
 columns 1
   db(("DB"))
@@ -106,7 +106,7 @@ block-beta
   a["A label"] b:2 c:2 d
 ```
 
-In this example, the block labeled "A wide one" spans two columns, while blocks 'b', 'c', and 'd' are allocated their own columns. This flexibility in block sizing is crucial for accurately representing systems with components of varying significance or size.
+In this example, the block labeled "A labels" spans one column, while blocks 'b', 'c' span 2 columns, and 'd' is again allocated its own column. This flexibility in block sizing is crucial for accurately representing systems with components of varying significance or size.
 
 ### Creating Composite Blocks
 
@@ -152,6 +152,19 @@ block-beta
 ```
 
 This example demonstrates how Mermaid dynamically adjusts the width of the columns to accommodate the widest block, in this case, 'a' and the composite block 'e'. This dynamic adjustment is essential for creating visually balanced and easy-to-understand diagrams.
+
+**Merging Blocks Horizontally:**
+In scenarios where you need to stack blocks horizontally, you can use column width to accomplish the task. Blocks can be arranged vertically by putting them in a single column. Here is how you can create a block diagram in which 4 blocks are stacked on top of each other:
+
+```mermaid-example
+block-beta
+  block
+    columns 1
+    a["A label"] b c d
+  end
+```
+
+In this example, the width of the merged block dynamically adjusts to the width of the largest child block.
 
 With these advanced configuration options, Mermaid's block diagrams can be tailored to represent a wide array of complex systems and structures. The flexibility offered by these features enables users to create diagrams that are both informative and visually appealing. In the following sections, we will explore further capabilities, including different block shapes and linking options.
 
@@ -375,6 +388,21 @@ block-beta
   style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
+### Class Styling
+
+Mermaid enables applying styling to classes, which could make styling easier if you want to apply a certain set of styles to multiple elements, as you could just link those elements to a class.
+
+#### Example - Styling a Single Class
+
+```mermaid-example
+block-beta
+  A space B
+  A-->B
+  classDef blue fill:#6e6ce6,stroke:#333,stroke-width:4px;
+  class A blue
+  style B fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+```
+
 In this example, a class named 'blue' is defined and applied to block 'A', while block 'B' receives individual styling. This demonstrates the flexibility of Mermaid in applying both shared and unique styles within the same diagram.
 
 The ability to style blocks individually or through classes provides a powerful tool for enhancing the visual impact and clarity of block diagrams. Whether emphasizing certain elements or maintaining a cohesive design across the diagram, these styling capabilities are central to effective diagramming. The next sections will present practical examples and use cases, followed by tips for troubleshooting common issues.
@@ -445,7 +473,7 @@ block-beta
 ```
 
 **Correction**:
-Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection. Also remember that one of the fundaments for block diagram is to give the author full control of where the boxes are positioned so in the example you need to add a space between the boxes:
+Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection. Also remember that one of the fundamentals for block diagram is to give the author full control of where the boxes are positioned so in the example you need to add a space between the boxes:
 
 ```mermaid-example
 block-beta

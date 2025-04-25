@@ -8,7 +8,11 @@ Diagram Examples can be found in the [Mermaid Live Editor](https://mermaid.live)
 
 ## Syntax Structure
 
-One would notice that all **Diagrams definitions begin** with a declaration of the **diagram type**, followed by the definitions of the diagram and its contents. This declaration notifies the parser which kind of diagram the code is supposed to generate.
+One would notice that all **Diagrams definitions begin** with a declaration of the **diagram type**, followed by the definitions of the diagram and its contents. This declaration notifies the parser which kind of diagram the code is supposed to generate. The only exception to this a [Frontmatter](#frontmatter-for-diagram-code) configuration.
+
+Line comments can ignore anything on the line after '%% '.
+
+Unknown words and misspellings will break a diagram, while parameters silently fail.
 
 **Example** : The code below is for an Entity Relationship Diagram, specified by the `erDiagram` declaration. What follows is the definition of the different `Entities` represented in it.
 
@@ -54,9 +58,33 @@ The following are the most commonly used methods, and they are all tied to Merma
 
 Here you can edit certain values to change the behavior and appearance of the diagram.
 
+Each of these techniques are functionally equivalent, but better for different deployments.
+
 ### [The initialize() call](./getting-started.md#_3-calling-the-javascript-api)
 
 Used when Mermaid is called via an API, or through a `<script>` tag.
+
+### Frontmatter for diagram code
+
+Frontmatter is the term for adding YAML metadata at the start of code. This allows for reconfiguration of a diagram before it is rendered. You can pass metadata Frontmatter with your definition by adding `---` to the lines before and after the definition. This 'triple dash' MUST be the only character on the first line.
+
+Frontmatter uses YAML syntax. It requires any indentation to be consistent and settings are case sensitive. Mermaid will silently ignore misspelling, but badly formed parameters will break the diagram.
+
+```mermaid-example
+---
+title: Frontmatter Example
+displayMode: compact
+config:
+  theme: forest
+gantt:
+    useWidth: 400
+    compact: true
+---
+gantt
+    section Waffle
+        Iron  : 1982, 3y
+        House : 1986, 3y
+```
 
 ### [Directives](../config/directives.md)
 
@@ -76,14 +104,14 @@ Mermaid offers a variety of styles or “looks” for your diagrams, allowing yo
 
 **Available Looks:**
 
-    •	Hand-Drawn Look: For a more personal, creative touch, the hand-drawn look brings a sketch-like quality to your diagrams. This style is perfect for informal settings or when you want to add a bit of personality to your diagrams.
-    •	Classic Look: If you prefer the traditional Mermaid style, the classic look maintains the original appearance that many users are familiar with. It’s great for consistency across projects or when you want to keep the familiar aesthetic.
+- Hand-Drawn Look: For a more personal, creative touch, the hand-drawn look brings a sketch-like quality to your diagrams. This style is perfect for informal settings or when you want to add a bit of personality to your diagrams.
+- Classic Look: If you prefer the traditional Mermaid style, the classic look maintains the original appearance that many users are familiar with. It’s great for consistency across projects or when you want to keep the familiar aesthetic.
 
 **How to Select a Look:**
 
 You can select a look by adding the look parameter in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid
+```mermaid-example
 ---
 config:
   look: handDrawn
@@ -101,14 +129,14 @@ In addition to customizing the look of your diagrams, Mermaid Chart now allows y
 
 #### Supported Layout Algorithms:
 
-    •	Dagre (default): This is the classic layout algorithm that has been used in Mermaid for a long time. It provides a good balance of simplicity and visual clarity, making it ideal for most diagrams.
-    •	ELK: For those who need more sophisticated layout capabilities, especially when working with large or intricate diagrams, the ELK (Eclipse Layout Kernel) layout offers advanced options. It provides a more optimized arrangement, potentially reducing overlapping and improving readability. This is not included out the box but needs to be added when integrating mermaid for sites/applications that want to have elk support.
+- Dagre (default): This is the classic layout algorithm that has been used in Mermaid for a long time. It provides a good balance of simplicity and visual clarity, making it ideal for most diagrams.
+- ELK: For those who need more sophisticated layout capabilities, especially when working with large or intricate diagrams, the ELK (Eclipse Layout Kernel) layout offers advanced options. It provides a more optimized arrangement, potentially reducing overlapping and improving readability. This is not included out the box but needs to be added when integrating mermaid for sites/applications that want to have elk support.
 
 #### How to Select a Layout Algorithm:
 
 You can specify the layout algorithm directly in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: elk
@@ -149,8 +177,9 @@ flowchart LR
   B -->|Option 1| C[Path 1]
   B -->|Option 2| D[Path 2]
 
-#### Using Dagre Layout with Classic Look:
 ```
+
+#### Using Dagre Layout with Classic Look:
 
 Another example:
 

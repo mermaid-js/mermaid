@@ -232,7 +232,7 @@ interface NoteModel {
 }
 
 /**
- * Draws an note in the diagram with the attached line
+ * Draws a note in the diagram with the attached line
  *
  * @param elem - The diagram to draw to.
  * @param noteModel - Note model options.
@@ -1538,7 +1538,6 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
   let current, noteModel, msgModel;
 
   for (const msg of messages) {
-    msg.id = utils.random({ length: 10 });
     switch (msg.type) {
       case diagObj.db.LINETYPE.LOOP_START:
       case diagObj.db.LINETYPE.ALT_START:

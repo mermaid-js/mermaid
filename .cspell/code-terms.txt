@@ -26,6 +26,7 @@ concat
 controlx
 controly
 CSSCLASS
+curv
 CYLINDEREND
 CYLINDERSTART
 DAGA
@@ -52,9 +53,9 @@ frontmatter
 funs
 gantt
 GENERICTYPE
-getBoundarys
 grammr
 graphtype
+halign
 iife
 interp
 introdcued
@@ -66,6 +67,7 @@ Kaufmann
 keyify
 LABELPOS
 LABELTYPE
+layoutstop
 lcov
 LEFTOF
 Lexa

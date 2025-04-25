@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
     ":rebaseStalePrs",
@@ -35,8 +36,13 @@
     {
       "groupName": "eslint",
       "matchPackagePatterns": ["eslint"]
+    },
+    {
+      "groupName": "dompurify",
+      "matchPackagePatterns": ["dompurify"]
     }
   ],
   "dependencyDashboard": false,
-  "dependencyDashboardAutoclose": true
+  "dependencyDashboardAutoclose": true,
+  "rangeStrategy": "bump"
 }

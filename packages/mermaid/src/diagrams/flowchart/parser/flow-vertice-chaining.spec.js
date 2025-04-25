@@ -1,5 +1,5 @@
-import flowDb from '../flowDb.js';
-import flow from './flow.jison';
+import { FlowDB } from '../flowDb.js';
+import flow from './flowParser.ts';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -8,7 +8,7 @@ setConfig({
 
 describe('when parsing flowcharts', function () {
   beforeEach(function () {
-    flow.parser.yy = flowDb;
+    flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
@@ -57,7 +57,7 @@ describe('when parsing flowcharts', function () {
     expect(edges[1].type).toBe('arrow_point');
     expect(edges[1].text).toBe('');
   });
-  it('should multiple vertices in link statement in the begining', function () {
+  it('should multiple vertices in link statement in the beginning', function () {
     const res = flow.parser.parse(`
     graph TD
       A-->B & C;

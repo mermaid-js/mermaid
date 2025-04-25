@@ -1,9 +1,13 @@
-import type { Node, RectOptions } from '$root/rendering-util/types.d.ts';
+import type { Node, RectOptions } from '../../types.js';
 import { drawRect } from './drawRect.js';
 import { labelHelper, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
+import type { D3Selection } from '../../../types.js';
 
-export const roundedRect = async (parent: SVGAElement, node: Node) => {
+export async function roundedRect<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node
+) {
   const options = {
     rx: 5,
     ry: 5,
@@ -13,10 +17,10 @@ export const roundedRect = async (parent: SVGAElement, node: Node) => {
   } as RectOptions;
 
   return drawRect(parent, node, options);
-};
+}
 
-export const labelRect = async (parent: SVGElement, node: Node) => {
-  const { shapeSvg } = await labelHelper(parent, node, 'label');
+export async function labelRect<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'label');
 
   // log.trace('Classes = ', node.class);
   // add the rect
@@ -27,6 +31,10 @@ export const labelRect = async (parent: SVGElement, node: Node) => {
   const totalHeight = 0.1;
   rect.attr('width', totalWidth).attr('height', totalHeight);
   shapeSvg.attr('class', 'label edgeLabel');
+  label.attr(
+    'transform',
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${-(bbox.height / 2) - (bbox.y - (bbox.top ?? 0))})`
+  );
 
   // if (node.props) {
   //   const propKeys = new Set(Object.keys(node.props));
@@ -48,4 +56,4 @@ export const labelRect = async (parent: SVGElement, node: Node) => {
   };
 
   return shapeSvg;
-};
+}

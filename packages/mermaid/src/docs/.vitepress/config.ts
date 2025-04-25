@@ -1,6 +1,6 @@
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
-import { version } from '../../../package.json';
+import packageJson from '../../../package.json' assert { type: 'json' };
 import MermaidExample from './mermaid-markdown-all.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
@@ -58,7 +58,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
       {
         icon: 'discord',
-        link: 'https://discord.gg/AgrbSrBer3',
+        link: 'https://discord.gg/sKeNQX4Wtj',
       },
       {
         icon: {
@@ -95,7 +95,7 @@ function nav() {
       activeMatch: '/announcements',
     },
     {
-      text: version,
+      text: packageJson.version,
       items: [
         {
           text: 'Changelog',
@@ -148,7 +148,7 @@ function sidebarSyntax() {
         { text: 'Pie Chart', link: '/syntax/pie' },
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
-        { text: 'Gitgraph (Git) Diagram', link: '/syntax/gitgraph' },
+        { text: 'GitGraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps', link: '/syntax/mindmap' },
         { text: 'Timeline', link: '/syntax/timeline' },
@@ -157,6 +157,9 @@ function sidebarSyntax() {
         { text: 'XY Chart 🔥', link: '/syntax/xyChart' },
         { text: 'Block Diagram 🔥', link: '/syntax/block' },
         { text: 'Packet 🔥', link: '/syntax/packet' },
+        { text: 'Kanban 🔥', link: '/syntax/kanban' },
+        { text: 'Architecture 🔥', link: '/syntax/architecture' },
+        { text: 'Radar 🔥', link: '/syntax/radar' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -173,6 +176,7 @@ function sidebarConfig() {
         { text: 'API-Usage', link: '/config/usage' },
         { text: 'Mermaid API Configuration', link: '/config/setup/README' },
         { text: 'Mermaid Configuration Options', link: '/config/schema-docs/config' },
+        { text: 'Registering icons', link: '/config/icons' },
         { text: 'Directives', link: '/config/directives' },
         { text: 'Theming', link: '/config/theming' },
         { text: 'Math', link: '/config/math' },

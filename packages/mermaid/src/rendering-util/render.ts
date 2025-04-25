@@ -1,7 +1,7 @@
-import type { SVG } from '$root/diagram-api/types.js';
-import type { InternalHelpers } from '$root/internals.js';
-import { internalHelpers } from '$root/internals.js';
-import { log } from '$root/logger.js';
+import type { SVG } from '../diagram-api/types.js';
+import type { InternalHelpers } from '../internals.js';
+import { internalHelpers } from '../internals.js';
+import { log } from '../logger.js';
 import type { LayoutData } from './types.js';
 
 export interface RenderOptions {

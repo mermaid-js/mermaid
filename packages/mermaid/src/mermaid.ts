@@ -2,6 +2,7 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
+import { registerIconPacks } from './rendering-util/icons.js';
 import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
@@ -366,7 +367,7 @@ const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
 };
 
 /**
- * Function that renders an svg with a graph from a chart definition. Usage example below.
+ * Function that renders an SVG with a graph from a chart definition. Usage example below.
  *
  * ```javascript
  *  element = document.querySelector('#graphDiv');
@@ -435,6 +436,7 @@ export interface Mermaid {
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
   detectType: typeof detectType;
+  registerIconPacks: typeof registerIconPacks;
 }
 
 const mermaid: Mermaid = {
@@ -451,6 +453,7 @@ const mermaid: Mermaid = {
   contentLoaded,
   setParseErrorHandler,
   detectType,
+  registerIconPacks,
 };
 
 export default mermaid;

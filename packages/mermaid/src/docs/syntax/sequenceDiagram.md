@@ -105,6 +105,9 @@ end
 box rgb(33,66,99)
 ... actors ...
 end
+box rgba(33,66,99,0.5)
+... actors ...
+end
 ```
 
 ```note
@@ -152,7 +155,7 @@ There are ten types of arrows currently supported:
 | `<<->>`  | Solid line with bidirectional arrowheads (v11.0.0+)  |
 | `<<-->>` | Dotted line with bidirectional arrowheads (v11.0.0+) |
 | `-x`     | Solid line with a cross at the end                   |
-| `--x`    | Dotted line with a cross at the end.                 |
+| `--x`    | Dotted line with a cross at the end                  |
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
 
@@ -394,6 +397,12 @@ sequenceDiagram
 
 It is possible to highlight flows by providing colored background rects. This is done by the notation
 
+```
+rect COLOR
+... content ...
+end
+```
+
 The colors are defined using rgb and rgba syntax.
 
 ```
@@ -433,7 +442,7 @@ sequenceDiagram
 
 Comments can be entered within a sequence diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     %% this is a comment

@@ -8,7 +8,10 @@ import { defaultOptions, getBuildConfig } from './util.js';
 const shouldVisualize = process.argv.includes('--visualize');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
-  const commonOptions: MermaidBuildOptions = { ...defaultOptions, entryName } as const;
+  const commonOptions: MermaidBuildOptions = {
+    ...defaultOptions,
+    options: packageOptions[entryName],
+  } as const;
   const buildConfigs: MermaidBuildOptions[] = [
     // package.mjs
     { ...commonOptions },
@@ -31,6 +34,19 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
       { ...iifeOptions, minify: true, metafile: shouldVisualize }
     );
   }
+  if (entryName === 'mermaid-zenuml') {
+    const iifeOptions: MermaidBuildOptions = {
+      ...commonOptions,
+      format: 'iife',
+      globalName: 'mermaid-zenuml',
+    };
+    buildConfigs.push(
+      // mermaid-zenuml.js
+      { ...iifeOptions },
+      // mermaid-zenuml.min.js
+      { ...iifeOptions, minify: true, metafile: shouldVisualize }
+    );
+  }
 
   const results = await Promise.all(buildConfigs.map((option) => build(getBuildConfig(option))));
 
@@ -40,7 +56,7 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
         continue;
       }
       const fileName = Object.keys(metafile.outputs)
-        .find((file) => !file.includes('chunks') && file.endsWith('js'))
+        .find((file) => !file.includes('chunks') && file.endsWith('js'))!
         .replace('dist/', '');
       // Upload metafile into https://esbuild.github.io/analyze/
       await writeFile(`stats/${fileName}.meta.json`, JSON.stringify(metafile));
