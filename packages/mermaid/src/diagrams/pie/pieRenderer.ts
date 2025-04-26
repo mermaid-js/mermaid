@@ -35,6 +35,8 @@ const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
  * @param _version - MermaidJS version from package.json.
  * @param diagObj - A standard diagram containing the DB and the text and type etc of the diagram.
  */
+
+
 export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   log.debug('rendering pie chart\n' + text);
   const db = diagObj.db as PieDB;
@@ -46,6 +48,37 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const height = 450;
   const pieWidth: number = height;
   const svg: SVG = selectSvgElement(id);
+  function splitTitleIntoLines(title: string, maxLineWidth: number): string[] {
+    const words = title.split(' ');
+    const lines: string[] = [];
+    let currentLine = '';
+
+    const tempText = svg.append('text')
+      .attr('class', 'temp-title-text')
+      .style('font-size', '8px')
+      .style('visibility', 'hidden')
+      .style('position', 'absolute');
+
+    for (const word of words) {
+      const testLine = currentLine.length ? currentLine + ' ' + word : word;
+      tempText.text(testLine);
+      const width = (tempText.node() as SVGGraphicsElement)?.getBBox().width ?? 0;
+      if (width > maxLineWidth && currentLine !== '') {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    tempText.remove();
+    return lines;
+  }
+
   const group: SVGGroup = svg.append('g');
   group.attr('transform', 'translate(' + pieWidth / 2 + ',' + height / 2 + ')');
 
@@ -137,18 +170,44 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .append('text')
     .text(titleText)
     .attr('x', 0)
-    .attr('y', -(height - 50) / 2)
+    .attr('y', -(height - 100) / 2)
     .attr('class', 'pieTitleText')
     .style('text-anchor', 'middle');
 
-  // Reduce font size dynamically until it fits
-  while (
-    (titleElement.node() as SVGGraphicsElement)?.getBBox()?.width > maxAvailableWidth &&
-    fontSize > minFontSize
-  ) {
-    fontSize -= 1;
-    titleElement.style('font-size', `${fontSize}px`);
-  }
+    let titleFits = false;
+
+    while (!titleFits && fontSize > minFontSize) {
+      titleElement.style('font-size', `${fontSize}px`);
+      titleFits = (titleElement.node() as SVGGraphicsElement)?.getBBox()?.width <= maxAvailableWidth;
+      if (!titleFits) {
+        fontSize -= 1;
+      }
+    }
+    
+    if (!titleFits) {
+      // Title still too long even after shrinking: split into multiple lines
+      titleElement.remove(); // Remove the single-line title
+    
+      const lines = splitTitleIntoLines(titleText, maxAvailableWidth);
+    
+      const titleGroup = svg.append('g');
+      const TITLE_START_Y = 10;
+      const LINE_SPACING = 10;
+      
+      lines.forEach((line, i) => {
+        titleGroup
+          .append('text')
+          .text(line)
+          .attr('x', pieWidth / 2) // center horizontally!
+          .attr('y', TITLE_START_Y + i * LINE_SPACING)
+          .attr('class', 'pieTitleText')
+          .style('text-anchor', 'middle')
+          .style('font-size', `${minFontSize}px`);
+      });
+      
+      
+    }
+    
 
   // Add the legends/annotations for each section
   const legend = group
