@@ -167,12 +167,12 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const maxAvailableWidth = pieWidth - MARGIN;
 
   const titleElement = svg
-  .append('text')
-  .text(titleText)
-  .attr('x', pieWidth / 2)
-  .attr('y', 30) // <-- fixed: always near top
-  .attr('class', 'pieTitleText')
-  .style('text-anchor', 'middle');
+    .append('text')
+    .text(titleText)
+    .attr('x', pieWidth / 2)
+    .attr('y', 30) // <-- fixed: always near top
+    .attr('class', 'pieTitleText')
+    .style('text-anchor', 'middle');
 
   let titleFits = false;
 
@@ -190,7 +190,6 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
 
     const lines = splitTitleIntoLines(titleText, maxAvailableWidth);
 
-    const titleGroup = svg.append('g');
     const TITLE_START_Y = 10;
     const LINE_SPACING = 10;
 
