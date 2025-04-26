@@ -34,6 +34,7 @@ const defaultOptions: RadarOptions = {
   graticule: 'circle',
   tickLabels: { labels: [] },
   tickLabelsAxis: null,
+  tickLabelsOffset: 10,
 };
 
 const defaultRadarData: RadarData = {
@@ -121,6 +122,8 @@ const setOptions = (options: Option[]) => {
     },
     tickLabelsAxis:
       (optionMap.tickLabelsAxis?.value as number | null) ?? defaultOptions.tickLabelsAxis,
+    tickLabelsOffset:
+      (optionMap.tickLabelsOffset?.value as number) ?? defaultOptions.tickLabelsOffset,
   };
 };
 

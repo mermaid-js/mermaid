@@ -74,6 +74,7 @@ radar-beta
 
   tickLabels{'-2','-1','0','1','2'}
   tickLabelsAxis 2
+  tickLabelsOffset 10
 
 ```
 
@@ -93,6 +94,7 @@ radar-beta
 
   tickLabels{'-2','-1','0','1','2'}
   tickLabelsAxis 2
+  tickLabelsOffset 10
 
 ```
 
@@ -151,6 +153,7 @@ radar-beta
 - `ticks`: The ticks keyword is used to define the number of ticks on the graticule. It is the number of concentric circles or polygons drawn to indicate the scale of the radar diagram. If not provided, the default number of ticks is `5`.
 - `tickLabels`: The tickLabels keyword can be used to define labels for each tick. If not provided, no tick labels are rendered.
 - `tickLabelsAxis`: The tickLabelsAxis can be used in conjunction with tickLabels to define where the tick labels should be rendered. The tickLabelsAxis can be any number <= number of axis. If not provided, the default is `null` which render the labels on all axis.
+- `tickLabelsOffset`: The perpendicular offset between the tick label and the axis. If not provided, the default offset is `10` (px).
 
 ```
 radar-beta

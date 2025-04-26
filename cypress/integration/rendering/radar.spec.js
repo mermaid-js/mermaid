@@ -45,6 +45,7 @@ describe('radar structure', () => {
 
                 tickLabels{'-1','0','1'}
                 tickLabelsAxis 2
+                tickLabelsOffset 10
             `
     );
     cy.get('svg').should((svg) => {

@@ -31,7 +31,15 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   drawAxes(g, axes, radius, config);
 
   // 📏 Draw the tick labels
-  drawTickLabels(g, axes, radius, options.ticks, options.tickLabels, options.tickLabelsAxis);
+  drawTickLabels(
+    g,
+    axes,
+    radius,
+    options.ticks,
+    options.tickLabels,
+    options.tickLabelsAxis,
+    options.tickLabelsOffset
+  );
 
   // 📊 Draw the curves
   drawCurves(g, axes, curves, minValue, maxValue, options.graticule, config);
@@ -64,41 +72,6 @@ const drawFrame = (svg: SVG, config: Required<RadarDiagramConfig>): SVGGroup => 
   // g element to center the radar chart
   return svg.append('g').attr('transform', `translate(${center.x}, ${center.y})`);
 };
-
-export function _getAngleOffset(angle: number) {
-  // Convert angle to degrees for easier comparison
-  const degrees = angle * (180 / Math.PI);
-
-  // Define angle ranges with ±22.5° tolerance (45° / 2)
-  if (degrees >= -112.5 && degrees < -67.5) {
-    // Around 12 o'clock (-90°)
-    return { x: 10, y: 0 };
-  } else if (degrees >= -67.5 && degrees < -22.5) {
-    // Around 2 o'clock (-45°)
-    return { x: 7.5, y: 7.5 };
-  } else if (degrees >= -22.5 && degrees < 22.5) {
-    // Around 3 o'clock (0°)
-    return { x: 0, y: 7.5 };
-  } else if (degrees >= 22.5 && degrees < 67.5) {
-    // Around 4 o'clock (45°)
-    return { x: 10, y: -5 };
-  } else if (degrees >= 67.5 && degrees < 112.5) {
-    // Around 6 o'clock (90°)
-    return { x: -10, y: 0 };
-  } else if (degrees >= 112.5 && degrees < 157.5) {
-    // Around 7 o'clock (135°)
-    return { x: -7.5, y: -7.5 };
-  } else if (degrees >= 157.5 && degrees < 202.5) {
-    // Around 9 o'clock (180°)
-    return { x: 0, y: -7.5 };
-  } else if (degrees >= 202.5 && degrees < 247.5) {
-    // Around 10 o'clock (225°)
-    return { x: -7.5, y: 7.5 };
-  }
-
-  // Default offset if no range matches
-  return { x: 0, y: 0 };
-}
 
 const drawGraticule = (
   g: SVGGroup,
@@ -162,7 +135,8 @@ function drawTickLabels(
   radius: number,
   ticks: number,
   tickLabels: TickLabels,
-  tickLabelsAxis: number | null
+  tickLabelsAxis: number | null,
+  tickLabelsOffset: number
 ) {
   const numAxes = axes.length;
   for (let tickIdx = 0; tickIdx < ticks; tickIdx++) {
@@ -173,9 +147,10 @@ function drawTickLabels(
 
     axes.forEach((_, axisIdx) => {
       const angle = (2 * axisIdx * Math.PI) / numAxes - Math.PI / 2;
-      const angleLabelOffsets = _getAngleOffset(angle);
-      const xWithOffset = r * Math.cos(angle) + angleLabelOffsets.x;
-      const yWithOffset = r * Math.sin(angle) + angleLabelOffsets.y;
+
+      const adjustedAngle = r - tickLabelsOffset;
+      const xWithOffset = adjustedAngle * Math.cos(angle) + tickLabelsOffset * Math.sin(angle);
+      const yWithOffset = adjustedAngle * Math.sin(angle) - tickLabelsOffset * Math.cos(angle);
 
       const drawForAxis = tickLabelsAxis === null || axisIdx === tickLabelsAxis - 1;
       if (drawForAxis) {

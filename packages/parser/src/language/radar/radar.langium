@@ -51,6 +51,7 @@ Option:
         | name='graticule' value=GRATICULE
         | name='tickLabels' value=TickLabels
         | name='tickLabelsAxis' value=NUMBER
+        | name='tickLabelsOffset' value=NUMBER
     )
 ;   
 

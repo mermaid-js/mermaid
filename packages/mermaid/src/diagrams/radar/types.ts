@@ -22,6 +22,7 @@ export interface RadarOptions {
   graticule: 'circle' | 'polygon';
   tickLabels: TickLabels;
   tickLabelsAxis: number | null;
+  tickLabelsOffset: number;
 }
 export interface RadarDB extends DiagramDBBase<RadarDiagramConfig> {
   getAxes: () => RadarAxis[];
