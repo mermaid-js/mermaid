@@ -7,7 +7,7 @@ import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import utils from '../../utils.js';
-
+import { transformRawToTask } from './gantt.transform.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -160,9 +160,7 @@ export const getTasks = function () {
     iterationCount++;
   }
 
-  // @ts-ignore TODO: Fix type
-  state.records.tasks = state.records.rawTasks;
-  log.info('Tasks:', state.records.tasks);
+  state.records.tasks = state.records.rawTasks.map(transformRawToTask);
   return state.records.tasks;
 };
 
@@ -403,6 +401,8 @@ const compileData = function (prevTask: Task, dataStr: string) {
     active: false,
     done: false,
     crit: false,
+    order: 0,
+    prevTaskId: null,
     milestone: false,
     links: [],
   };
@@ -602,6 +602,8 @@ export const addTaskOrg = function (descr: string, data: string) {
     milestone: false,
     startTime: null,
     endTime: null,
+    order: 0,
+    prevTaskId: null,
     links: [],
   };
   const taskInfo = compileData(state.records.lastTask!, data);

@@ -55,6 +55,8 @@ interface BaseTask {
 }
 
 export interface Task extends BaseTask {
+  order: number;
+  prevTaskId: string | null;
   startTime: Date | Dayjs | null;
   endTime: Date | Dayjs | null;
   links: string[];
