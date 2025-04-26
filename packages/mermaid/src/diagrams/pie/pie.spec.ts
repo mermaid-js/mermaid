@@ -138,6 +138,14 @@ describe('pie', () => {
         `);
       }).rejects.toThrowError();
     });
+    it('should reject pie sections with negative integers', async () => {
+      await expect(async () => {
+        await parser.parse(`pie
+        "ash" : -40
+        "bat" : 60
+        `);
+      }).rejects.toThrowError();
+    });
 
     it('should handle unsafe properties', async () => {
       await expect(
