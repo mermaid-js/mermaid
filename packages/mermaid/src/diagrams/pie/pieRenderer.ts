@@ -36,7 +36,6 @@ const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
  * @param diagObj - A standard diagram containing the DB and the text and type etc of the diagram.
  */
 
-
 export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   log.debug('rendering pie chart\n' + text);
   const db = diagObj.db as PieDB;
@@ -53,7 +52,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     const lines: string[] = [];
     let currentLine = '';
 
-    const tempText = svg.append('text')
+    const tempText = svg
+      .append('text')
       .attr('class', 'temp-title-text')
       .style('font-size', '8px')
       .style('visibility', 'hidden')
@@ -166,48 +166,45 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const minFontSize = 8; // Set a minimum font size
   const maxAvailableWidth = pieWidth - MARGIN;
 
-  const titleElement = titleGroup
-    .append('text')
-    .text(titleText)
-    .attr('x', 0)
-    .attr('y', -(height - 100) / 2)
-    .attr('class', 'pieTitleText')
-    .style('text-anchor', 'middle');
+  const titleElement = svg
+  .append('text')
+  .text(titleText)
+  .attr('x', pieWidth / 2)
+  .attr('y', 30) // <-- fixed: always near top
+  .attr('class', 'pieTitleText')
+  .style('text-anchor', 'middle');
 
-    let titleFits = false;
+  let titleFits = false;
 
-    while (!titleFits && fontSize > minFontSize) {
-      titleElement.style('font-size', `${fontSize}px`);
-      titleFits = (titleElement.node() as SVGGraphicsElement)?.getBBox()?.width <= maxAvailableWidth;
-      if (!titleFits) {
-        fontSize -= 1;
-      }
-    }
-    
+  while (!titleFits && fontSize > minFontSize) {
+    titleElement.style('font-size', `${fontSize}px`);
+    titleFits = (titleElement.node() as SVGGraphicsElement)?.getBBox()?.width <= maxAvailableWidth;
     if (!titleFits) {
-      // Title still too long even after shrinking: split into multiple lines
-      titleElement.remove(); // Remove the single-line title
-    
-      const lines = splitTitleIntoLines(titleText, maxAvailableWidth);
-    
-      const titleGroup = svg.append('g');
-      const TITLE_START_Y = 10;
-      const LINE_SPACING = 10;
-      
-      lines.forEach((line, i) => {
-        titleGroup
-          .append('text')
-          .text(line)
-          .attr('x', pieWidth / 2) // center horizontally!
-          .attr('y', TITLE_START_Y + i * LINE_SPACING)
-          .attr('class', 'pieTitleText')
-          .style('text-anchor', 'middle')
-          .style('font-size', `${minFontSize}px`);
-      });
-      
-      
+      fontSize -= 1;
     }
-    
+  }
+
+  if (!titleFits) {
+    // Title still too long even after shrinking: split into multiple lines
+    titleElement.remove(); // Remove the single-line title
+
+    const lines = splitTitleIntoLines(titleText, maxAvailableWidth);
+
+    const titleGroup = svg.append('g');
+    const TITLE_START_Y = 10;
+    const LINE_SPACING = 10;
+
+    lines.forEach((line, i) => {
+      titleGroup
+        .append('text')
+        .text(line)
+        .attr('x', pieWidth / 2) // center horizontally!
+        .attr('y', TITLE_START_Y + i * LINE_SPACING)
+        .attr('class', 'pieTitleText')
+        .style('text-anchor', 'middle')
+        .style('font-size', `${minFontSize}px`);
+    });
+  }
 
   // Add the legends/annotations for each section
   const legend = group
