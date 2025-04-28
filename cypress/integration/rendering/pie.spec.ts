@@ -82,4 +82,30 @@ describe('pie chart', () => {
       `
     );
   });
+  it('renders short title without shrink or wrap', () => {
+    imgSnapshotTest(`
+      pie
+        title Short
+        "A" : 60
+        "B" : 40
+    `);
+  });
+
+  it('shrinks font size for medium long title', () => {
+    imgSnapshotTest(`
+      pie
+        title Short
+        "A" : 60
+        "B" : 40
+    `);
+  });
+
+  it('wraps very long title into multiple lines', () => {
+    imgSnapshotTest(`
+      pie
+        title Short
+        "A" : 60
+        "B" : 40
+    `);
+  });
 });
