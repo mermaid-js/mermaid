@@ -174,7 +174,7 @@ describe('Nodes (ported from mindmap.spec.ts)', () => {
     expect(childNode.desc).toBe('child1');
   });
 
-  it.only('MMP-9 should handle an id and type for a node definition', () => {
+  it('MMP-9 should handle an id and type for a node definition', () => {
     const result = parse('mindmap\nroot\n  theId(child1)');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
@@ -255,6 +255,51 @@ describe('Decorations (ported from mindmap.spec.ts)', () => {
     // TODO: check class and icon if present in AST
     const rootNode = result.value.MindmapRows[0].item as OtherComplex;
     expect(rootNode.desc).toBe('The root');
+  });
+  it('MMP-16.2 should handle an id and type for a node definition', () => {
+    const result = parse(`mindmap
+id1[SquareNode I am]
+  id2["SquareNode I am"]
+  id3("RoundedNode I am")
+  id4(RoundedNode I am)
+  id5(("CircleNode I am"))
+  id6((CircleNode I am))
+  id7))BangNode I am((
+  id8))"BangNode I am"((
+  id9)"CloudNode I am"(
+  id10)CloudNode I am(
+  id11{{"HexagonNode I am"}}
+  id12{{HexagonNode I am}}
+  id13
+`);
+
+    expect(result.lexerErrors).toHaveLength(0);
+    expect(result.parserErrors).toHaveLength(0);
+    expect(result.value.MindmapRows).toHaveLength(13);
+    expect(result.value.MindmapRows[0].item.$type).toBe('SquareNode');
+    expect(result.value.MindmapRows[1].item.$type).toBe('SquareNode');
+    expect(result.value.MindmapRows[2].item.$type).toBe('RoundedNode');
+    expect(result.value.MindmapRows[3].item.$type).toBe('RoundedNode');
+    expect(result.value.MindmapRows[4].item.$type).toBe('CircleNode');
+    expect(result.value.MindmapRows[5].item.$type).toBe('CircleNode');
+    expect(result.value.MindmapRows[6].item.$type).toBe('BangNode');
+    expect(result.value.MindmapRows[7].item.$type).toBe('BangNode');
+    expect(result.value.MindmapRows[8].item.$type).toBe('CloudNode');
+    expect(result.value.MindmapRows[9].item.$type).toBe('CloudNode');
+    expect(result.value.MindmapRows[10].item.$type).toBe('HexagonNode');
+    expect(result.value.MindmapRows[11].item.$type).toBe('HexagonNode');
+    expect(result.value.MindmapRows[12].item.$type).toBe('SimpleNode');
+
+    let id = 1;
+    for (const row of result.value.MindmapRows as MindmapRow[]) {
+      const item = row.item as Node;
+      expect(item.id).toBeDefined();
+      expect(item?.id).toBe('id' + id);
+      if (item.id !== 'id13') {
+        expect(item.desc).toBe(item.$type + ' I am');
+      }
+      id++;
+    }
   });
 });
 

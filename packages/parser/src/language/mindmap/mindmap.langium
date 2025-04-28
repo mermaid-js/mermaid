@@ -18,19 +18,25 @@ Item:
 
 // Use a special rule order to handle the parsing precedence
 Node:
-    CircleNode | OtherComplex | SimpleNode | RoundedNode | SquareNode;
+    SquareNode | RoundedNode | CircleNode | BangNode | CloudNode | HexagonNode | SimpleNode;
 
 // Specifically handle double parentheses case - highest priority
 CircleNode:
-    (id=ID)? desc=(CIRCLE_STR);
-    // id=ID '((' desc=(CIRCLE_STR) '))';
-    // id=ID '((' desc=(ID|STRING) '))';
+    (id=ID)? desc=(CIRCLE_STR|CIRCLE_QSTR);
+BangNode:
+    (id=ID)? desc=(BANG_STR|BANG_QSTR);
 
 RoundedNode:
-    (id=ID)? desc=(ROUNDED_STR_QUOTES|ROUNDED_STR);
+    (id=ID)? desc=(ROUNDED_STR|ROUNDED_QSTR);
 
 SquareNode:
-    (id=ID)? desc=(SQUARE_STR_QUOTES|SQUARE_STR);
+    (id=ID)? desc=(SQUARE_STR|SQUARE_QSTR);
+
+CloudNode:
+    (id=ID)? desc=(CLOUD_STR|CLOUD_QSTR);
+
+HexagonNode:
+    (id=ID)? desc=(HEXAGON_STR|HEXAGON_QSTR);
 
 // Handle other complex node variants
 OtherComplex:
@@ -47,33 +53,37 @@ SimpleNode:
     id=ID;
 
 IconDecoration:
-    ICON_KEYWORD content=(ID|STRING) ')';
+    content=(ICON);
 
 ClassDecoration:
-    CLASS_KEYWORD content=(ID|STRING);
+    content=(CLASS);
 
 // This should be processed before whitespace is ignored
 terminal INDENTATION: /[ \t]{2,}/;  // Two or more spaces/tabs for indentation
 
 // Keywords with fixed text patterns
 terminal MINDMAP_KEYWORD: 'mindmap\n';
-terminal ICON_KEYWORD: '::icon(';
-terminal CLASS_KEYWORD: ':::';
+// terminal ICON_KEYWORD: '::icon(';
+// terminal CLASS_KEYWORD: ':::';
 
 // Basic token types
-// terminal CIRCLE_STR: /[\s\S]*?\)\)/;
-terminal CIRCLE_STR:  /\(\(([\s\S]*?)\)\)/;
-terminal ROUNDED_STR_QUOTES:  /\(\"([\s\S]*?)\"\)/;
-terminal ROUNDED_STR:  /\(([\s\S]*?)\)/;
-terminal SQUARE_STR_QUOTES:  /\[\"([\s\S]*?)\"\]/;
+terminal CIRCLE_QSTR:  "((\"" -> "\"))";
+terminal CIRCLE_STR:  "((" -> "))";
+terminal BANG_QSTR:  "))\"" -> "\"((";
+terminal BANG_STR:  "))" -> "((";
+terminal CLOUD_QSTR:  ")\"" -> "\"(";
+terminal CLOUD_STR:  ")" -> "(";
+terminal HEXAGON_QSTR:  "{{\"" -> "\"}}";
+terminal HEXAGON_STR:  "{{" -> "}}";
+terminal ROUNDED_QSTR:  "(\"" -> "\")";
+terminal ROUNDED_STR:   "(" -> ")";
+terminal SQUARE_QSTR:  /\[\"([\s\S]*?)\"\]/;
 terminal SQUARE_STR:  /\[([\s\S]*?)\]/;
-terminal BANG_STR_QUOTES:  /\[\"([\s\S]*?)\"\]/;
-terminal BANG_STR:  /\[([\s\S]*?)\]/;
-terminal CLOUD_STR_QUOTES:  /\)\"([\s\S]*?)\"\(/;
-terminal CLOUD_STR:  /\)([\s\S]*?)\(/;
-// terminal CIRCLE_STR:  /(?!\(\()[\s\S]+?(?!\(\()/;
+
+terminal ICON: "::icon(" -> ")";
+terminal CLASS: /:::([^\n:])*/;
+
 terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
-terminal STRING: /"[^"]*"|'[^']*'/;
 
 // Modified indentation rule to have higher priority than WS
 

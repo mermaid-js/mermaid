@@ -59,14 +59,14 @@ export class MindmapValidator {
       ) {
         rootNodeIndentation = 0;
       } else if (row.indent === undefined) {
-        console.debug('FAIL 1', rootNodeIndentation, row.indent);
+        // console.debug('FAIL 1', rootNodeIndentation, row.indent);
         // If we've already found a root node, report an error
         accept('error', 'Multiple root nodes are not allowed in a mindmap.', {
           node: row,
           property: 'item',
         });
       } else if (rootNodeIndentation >= row.indent) {
-        console.debug('FAIL 2', rootNodeIndentation, row.indent, row.item);
+        // console.debug('FAIL 2', rootNodeIndentation, row.indent, row.item);
         accept('error', 'Multiple root nodes are not allowed in a mindmap.', {
           node: row,
           property: 'item',
