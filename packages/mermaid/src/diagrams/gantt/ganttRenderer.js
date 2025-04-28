@@ -253,8 +253,11 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('height', theGap)
       .attr('class', function (d) {
+        log.info('just categories', categories);
         for (const [i, category] of categories.entries()) {
+          log.info('category', category, i);
           if (d.type === category) {
+            log.info('section section' + (i % conf.numberSectionStyles));
             return 'section section' + (i % conf.numberSectionStyles);
           }
         }
