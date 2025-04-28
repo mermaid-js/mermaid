@@ -174,7 +174,7 @@ describe('Nodes (ported from mindmap.spec.ts)', () => {
     expect(childNode.desc).toBe('child1');
   });
 
-  it('MMP-9 should handle an id and type for a node definition', () => {
+  it.only('MMP-9 should handle an id and type for a node definition', () => {
     const result = parse('mindmap\nroot\n  theId(child1)');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
@@ -196,6 +196,7 @@ describe('Nodes (ported from mindmap.spec.ts)', () => {
 
   it('MMP-11 multiple types (cloud)', () => {
     const result = parse('mindmap\nroot)the root(');
+    console.debug('RESULT:', result.parserErrors);
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
     const rootNode = result.value.MindmapRows[0].item as OtherComplex;
