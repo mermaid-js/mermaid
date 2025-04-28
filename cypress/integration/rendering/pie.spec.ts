@@ -82,4 +82,40 @@ describe('pie chart', () => {
       `
     );
   });
+  describe('title wrapping', () => {
+    it('should render a pie chart with a short title', () => {
+      cy.renderGraph(`
+        pie title Short Title
+        "A" : 60
+        "B" : 40
+      `);
+    });
+  
+    it('should render a pie chart with a medium-length title that wraps into two lines', () => {
+      cy.renderGraph(`
+        pie title This is a medium title that should wrap nicely
+        "A" : 50
+        "B" : 30
+        "C" : 20
+      `);
+    });
+  
+    it('should render a pie chart with a very long title that wraps into multiple lines without overlapping the pie', () => {
+      cy.renderGraph(`
+        pie title This is a very long pie chart title that should properly wrap into multiple lines and not overlap with the pie chart even if it is extremely verbose
+        "A" : 45
+        "B" : 35
+        "C" : 20
+      `);
+    });
+  
+    it('should render a small pie chart with a long title', () => {
+      cy.renderGraph(`
+        %%{ init: { "themeVariables": { "pieOuterStrokeWidth": "1px" }, "pie": { "textPosition": 0.5 } } }%%
+        pie title Small Pie with Long Title that should wrap
+        "A" : 100
+      `);
+    });
+  });
+  
 });
