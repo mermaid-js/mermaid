@@ -2022,4 +2022,20 @@ describe('sequence db class', () => {
       expect(Object.hasOwn(sequenceDb, fun)).toBe(true);
     }
   });
+  // This test verifies that messages with a colon but no content (e.g., "Alice->>Bob:")
+  // are correctly parsed as valid messages with an empty string as the message content.
+
+  it('should parse a message with a trailing colon but no content', async () => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+Alice->>Bob:
+Bob->>Alice:Got it!
+`);
+
+    const messages = diagram.db.getMessages();
+    expect(messages.length).toBe(2);
+    expect(messages[0].message).toBe('');
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[0].to).toBe('Bob');
+  });
 });
