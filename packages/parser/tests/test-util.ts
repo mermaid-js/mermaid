@@ -113,7 +113,7 @@ const mindmapServices: MindmapServices = createMindmapServices().Mindmap;
 const mindmapParser: LangiumParser = mindmapServices.parser.LangiumParser;
 export function createMindmapTestServices() {
   const parse = (input: string, options?: ParserOptions) => {
-    return mindmapParser.parse<MindmapDoc>(input, options);
+    return mindmapParser.parse<Mindmap>(input, options);
   };
   const validatedParse = parseHelper<Mindmap>(mindmapServices);
 
