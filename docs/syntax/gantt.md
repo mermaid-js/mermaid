@@ -229,6 +229,30 @@ gantt
     Final milestone : milestone, m2, 18:08, 4m
 ```
 
+### Vertical Markers
+
+The `vert` keyword lets you add vertical lines to your Gantt chart, making it easy to highlight important dates like deadlines, events, or checkpoints. These markers extend across the entire chart and are positioned based on the date you provide. Unlike milestones, vertical markers don’t take up a row. They’re purely visual reference points that help break up the timeline and make important moments easier to spot.
+
+```mermaid-example
+gantt
+    dateFormat HH:mm
+    axisFormat %H:%M
+    Initial vert : vert, v1, 17:30, 2m
+    Task A : 3m
+    Task B : 8m
+    Final vert : vert, v2, 17:58, 4m
+```
+
+```mermaid
+gantt
+    dateFormat HH:mm
+    axisFormat %H:%M
+    Initial vert : vert, v1, 17:30, 2m
+    Task A : 3m
+    Task B : 8m
+    Final vert : vert, v2, 17:58, 4m
+```
+
 ## Setting dates
 
 `dateFormat` defines the format of the date **input** of your gantt elements. How these dates are represented in the rendered chart **output** are defined by `axisFormat`.

@@ -81,6 +81,7 @@ class Theme {
     this.critBorderColor = '#ff8888';
     this.critBkgColor = 'red';
     this.todayLineColor = 'red';
+    this.vertLineColor = '#00BFFF';
 
     /* C4 Context Diagram variables */
     this.personBorder = this.primaryBorderColor;
