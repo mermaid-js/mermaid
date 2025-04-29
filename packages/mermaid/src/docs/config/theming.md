@@ -129,30 +129,29 @@ The theming engine will only recognize hex colors and not color names. So, the v
 
 ## Theme Variables
 
-| Variable   | Default value                | Description                                                                                                 |
-| ---------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| darkMode   | false                        | Affects how derived colors are calculated. Set value to `true` for dark mode.                               |
-| background | #f4f4f4                      | Used to calculate color for items that should either be background colored or contrasting to the background |
-| fontFamily | trebuchet ms, verdana, arial | Font family for diagram text; can be customized via `themeVariables`.                                       |
-
-| fontSize | 16px | Font size in pixels |
-| primaryColor | #fff4dd | Color to be used as background in nodes, other colors will be derived from this |
-| primaryTextColor | calculated from darkMode #ddd/#333 | Color to be used as text color in nodes using `primaryColor` |
-| secondaryColor | calculated from primaryColor | |
-| primaryBorderColor | calculated from primaryColor | Color to be used as border in nodes using `primaryColor` |
-| secondaryBorderColor | calculated from secondaryColor | Color to be used as border in nodes using `secondaryColor` |
-| secondaryTextColor | calculated from secondaryColor | Color to be used as text color in nodes using `secondaryColor` |
-| tertiaryColor | calculated from primaryColor | |
-| tertiaryBorderColor | calculated from tertiaryColor | Color to be used as border in nodes using `tertiaryColor` |
-| tertiaryTextColor | calculated from tertiaryColor | Color to be used as text color in nodes using `tertiaryColor` |
-| noteBkgColor | #fff5ad | Color used as background in notes |
-| noteTextColor | #333 | Text color in note rectangles |
-| noteBorderColor | calculated from noteBkgColor | Border color in note rectangles |
-| lineColor | calculated from background | |
-| textColor | calculated from primaryTextColor | Text in diagram over the background for instance text on labels and on signals in sequence diagram or the title in Gantt diagram |
-| mainBkg | calculated from primaryColor | Background in flowchart objects like rects/circles, class diagram classes, sequence diagram etc |
-| errorBkgColor | tertiaryColor | Color for syntax error message |
-| errorTextColor | tertiaryTextColor | Color for syntax error message |
+| Variable             | Default value                      | Description                                                                                                                      |
+| -------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| darkMode             | false                              | Affects how derived colors are calculated. Set value to `true` for dark mode.                                                    |
+| background           | #f4f4f4                            | Used to calculate color for items that should either be background colored or contrasting to the background                      |
+| fontFamily           | trebuchet ms, verdana, arial       | Font family for diagram text; can be customized via `themeVariables`                                                             |
+| fontSize             | 16px                               | Font size in pixels                                                                                                              |
+| primaryColor         | #fff4dd                            | Color to be used as background in nodes, other colors will be derived from this                                                  |
+| primaryTextColor     | calculated from darkMode #ddd/#333 | Color to be used as text color in nodes using `primaryColor`                                                                     |
+| secondaryColor       | calculated from primaryColor       |                                                                                                                                  |
+| primaryBorderColor   | calculated from primaryColor       | Color to be used as border in nodes using `primaryColor`                                                                         |
+| secondaryBorderColor | calculated from secondaryColor     | Color to be used as border in nodes using `secondaryColor`                                                                       |
+| secondaryTextColor   | calculated from secondaryColor     | Color to be used as text color in nodes using `secondaryColor`                                                                   |
+| tertiaryColor        | calculated from primaryColor       |                                                                                                                                  |
+| tertiaryBorderColor  | calculated from tertiaryColor      | Color to be used as border in nodes using `tertiaryColor`                                                                        |
+| tertiaryTextColor    | calculated from tertiaryColor      | Color to be used as text color in nodes using `tertiaryColor`                                                                    |
+| noteBkgColor         | #fff5ad                            | Color used as background in notes                                                                                                |
+| noteTextColor        | #333                               | Text color in note rectangles                                                                                                    |
+| noteBorderColor      | calculated from noteBkgColor       | Border color in note rectangles                                                                                                  |
+| lineColor            | calculated from background         |                                                                                                                                  |
+| textColor            | calculated from primaryTextColor   | Text in diagram over the background for instance text on labels and on signals in sequence diagram or the title in Gantt diagram |
+| mainBkg              | calculated from primaryColor       | Background in flowchart objects like rects/circles, class diagram classes, sequence diagram etc                                  |
+| errorBkgColor        | tertiaryColor                      | Color for syntax error message                                                                                                   |
+| errorTextColor       | tertiaryTextColor                  | Color for syntax error message                                                                                                   |
 
 ## Flowchart Variables
 
