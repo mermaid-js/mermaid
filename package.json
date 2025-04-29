@@ -104,7 +104,7 @@
     "eslint-plugin-markdown": "^5.1.0",
     "eslint-plugin-no-only-tests": "^3.3.0",
     "eslint-plugin-tsdoc": "^0.4.0",
-    "eslint-plugin-unicorn": "^58.0.0",
+    "eslint-plugin-unicorn": "^59.0.0",
     "express": "^5.1.0",
     "globals": "^16.0.0",
     "globby": "^14.0.2",
