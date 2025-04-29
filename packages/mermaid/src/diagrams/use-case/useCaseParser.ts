@@ -1,13 +1,15 @@
+/* eslint-disable unicorn/better-regex */
+/* eslint-disable @cspell/spellchecker */
 import type { UseCaseDiagram } from '@mermaid-js/parser';
 import { parse } from '@mermaid-js/parser';
-import { log } from '../../logger.js';
+// import { log } from '../../logger.js';
 import type { ParserDefinition } from '../../diagram-api/types.js';
-import { populateCommonDb } from '../common/populateCommonDb.js';
+// import { populateCommonDb } from '../common/populateCommonDb.js';
 import type { UseCaseDB } from './useCaseTypes.js';
 import { db } from './useCaseDb.js';
 
 const populateDb = (ast: UseCaseDiagram, db: UseCaseDB) => {
-  populateCommonDb(ast, db);
+  // populateCommonDb(ast, db);
   const containerId = ast.system?.id ?? ''; // empty string = root
   // Add actors
   ast.actors?.forEach((actor) =>
@@ -15,7 +17,7 @@ const populateDb = (ast: UseCaseDiagram, db: UseCaseDB) => {
       id: actor.id,
       type: 'actor',
       position: actor.position ?? 'left',
-      label: actor.name ?? actor.id,
+      label: actor.id,
     })
   );
 
@@ -35,70 +37,80 @@ const populateDb = (ast: UseCaseDiagram, db: UseCaseDB) => {
         id: uc.name.replace(/"/g, ''),
         type: 'usecase',
         label: uc.name.replace(/"/g, ''),
-        in: ast.system.id,
+        in: ast.system?.id,
       })
     );
   }
 
-  function ensureUseCase(rawId: string) {
-    const cleanId = rawId.replace(/['"]+/g, '').trim();
-    if (!existingUCs.has(cleanId)) {
-      db.addUseCase({
-        id: cleanId,
-        type: 'usecase',
-        label: cleanId,
-        in: containerId,      // ← assign the container here
-      });
-      existingUCs.add(cleanId);
-    }
-  }
-  // Prepare a set of existing use case IDs
-  const existingUCs = new Set(db.getUseCases().map((node) => node.id));
+  // // Prepare a set of existing use case IDs
+  // const existingUCs = new Set(db.getUseCases().map((node) => node.id));
 
-  // Helper: if an ID isn't in existingUCs, add it now
-  function ensureUseCase(rawId: string) {
-    const cleanId = rawId.replace(/['"]+/g, '');
-    if (!existingUCs.has(cleanId)) {
-      db.addUseCase({
-        id: cleanId,
-        type: 'usecase',
-        label: cleanId,
-      });
-      existingUCs.add(cleanId);
-    }
-  }
+  // function ensureUseCase(rawId: string) {
+  //   // eslint-disable-next-line unicorn/better-regex
+  //   const cleanId = rawId.replace(/['"]+/g, '').trim();
+  //   if (!existingUCs.has(cleanId)) {
+  //     db.addUseCase({
+  //       id: cleanId,
+  //       type: 'usecase',
+  //       label: cleanId,
+  //       in: containerId, // assign the container here
+  //     });
+  //     existingUCs.add(cleanId);
+  //   }
+  // }
 
-  // Add edges (Actor → UseCase), creating missing use cases on the fly
-  ast.edges?.forEach((edge) => {
-    ensureUseCase(edge.rhsId);
-    db.addEdge({
-      from: edge.lhsId,
-      to: edge.rhsId.replace(/['"]+/g, ''),
-      title: edge.title?.replace(/[\[\]]/g, ''),
+  // // Add edges (Actor → UseCase & UseCase → UseCase)
+  // ast.edges?.forEach((edge) => {
+  //   // ensureUseCase(edge.lhsId);
+  //   ensureUseCase(edge.rhsId);
+  //   db.addEdge({
+  //     from: edge.lhsId.replace(/["']+/g, ''),
+  //     to:   edge.rhsId.replace(/["']+/g, ''),
+  //     dashed: !!edge.dashed,
+  //     title: edge.title?.replace(/[[\]]/g, ''),
+  //   });
+  // });
+  /* ─── Helper to auto-create missing UCs ──────────────────── */
+  const actorIds = new Set(ast.actors?.map((a) => a.id) ?? []);
+  const existingUCs = new Set(db.getUseCases().map((n) => n.id));
+
+  function ensureUseCase(rawId: string) {
+    const clean = rawId.replace(/["']+/g, '').trim();
+    if (actorIds.has(clean) || existingUCs.has(clean)) {
+      return;
+    }
+    db.addUseCase({
+      id: clean,
+      type: 'usecase',
+      label: clean,
+      in: containerId,
     });
-  });
+    existingUCs.add(clean);
+  }
 
-  // Add arrows (UseCase → UseCase), likewise
-  ast.arrows?.forEach((arrow) => {
-    ensureUseCase(arrow.lhsId);
-    ensureUseCase(arrow.rhsId);
+  // Edges (Actor→UseCase & UseCase→UseCase)
+  ast.edges?.forEach((edge) => {
+    ensureUseCase(edge.lhsId);
+    ensureUseCase(edge.rhsId);
+
     db.addEdge({
-      from: arrow.lhsId.replace(/['"]+/g, ''),
-      to: arrow.rhsId.replace(/['"]+/g, ''),
-      title: arrow.title?.replace(/[\[\]]/g, ''),
+      from: edge.lhsId.replace(/["']+/g, ''),
+      to: edge.rhsId.replace(/["']+/g, ''),
+      // dashed: !!edge.dashed,
+      title: edge.title?.replace(/[[\]]/g, ''),
     });
   });
 };
-
 
 export const parser: ParserDefinition = {
   parse: async (input: string): Promise<void> => {
     try {
       const ast: UseCaseDiagram = await parse('use_case', input);
-      console.log('[useCaseParser] AST:', ast);
-      console.log('[useCaseParser] Populating DB...');
+      // console.log('[useCaseParser] AST:', ast);
+      // console.log('[useCaseParser] Populating DB...');
       populateDb(ast, db);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log('[useCaseParser] Parse error:', err);
       throw err;
     }

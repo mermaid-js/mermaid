@@ -27,7 +27,7 @@
       User --> "Place orders"      
       User --> "Track Orders"
       Admin --> "Log in"
-      Admin --> "Add items"
+      Admin --> "Manage users"
     </pre>
 
     <hr />
@@ -35,54 +35,19 @@
     <div class="container">
       <textarea name="code" id="code" cols="30" rows="10"></textarea>
       <!-- drawing box -->
-      <div id="dynamicDiagram"></div> 
+      <div id="dynamicDiagram"></div>
     </div>
     <pre class="mermaid">info</pre>
 
-    <!-- <script type="module">
+    <script type="module">
       import mermaid from '/mermaid.esm.mjs';
       import layouts from '/mermaid-layout-elk.esm.mjs';
       mermaid.registerLayoutLoaders(layouts);
-    
-      //Init first
-      mermaid.initialize({
-        startOnLoad: true,
-        logLevel: 0,
-      });
-    
-      //Render helper (trim)
-      async function render(str) {
-        const clean = str.trimStart(); //Remove spaces or newlines
-        if (!clean) return;
-        const { svg } = await mermaid.render('dynamic', clean);
-        document.getElementById('dynamicDiagram').innerHTML = svg;
-      }
-    
-      //Restore saved code
-      const storeKey = window.location.pathname;
-      const saved    = localStorage.getItem(storeKey);
-      if (saved) {
-        document.getElementById('code').value = saved;
-        await render(saved); // now safe: mermaid already init’d
-      }
-    
-      //live‑update on input
-      document.getElementById('code').addEventListener('input', async (e) => {
-        const value = e.target.value;
-        localStorage.setItem(storeKey, value);
-        await render(value);
-      });
-    </script> -->
 
-    <script type="module">
-      import mermaid from '/mermaid.esm.mjs';
-      import layouts  from '/mermaid-layout-elk.esm.mjs';
-      mermaid.registerLayoutLoaders(layouts);
-    
-      /* 1 –- Mermaid setup */
+      //Mermaid setup
       mermaid.initialize({ startOnLoad: true, logLevel: 0 });
-    
-      /* 2 –- Render helper */
+
+      //Render helper
       async function render(str) {
         const clean = str.trimStart();
         if (!clean) {
@@ -92,30 +57,27 @@
         const { svg } = await mermaid.render('dynamic', clean);
         document.getElementById('dynamicDiagram').innerHTML = svg;
       }
-    
-      /* 3 –- Always start blank each visit */
+
+      //Always start blank each visit
       const storeKey = window.location.pathname;
-      localStorage.removeItem(storeKey);                 // wipe old stash
-      const textarea = document.getElementById('code');  // shortcut
-      textarea.value = '';                               // blank editor
-    
-      /* 4 –- Autosave on every keystroke (no redraw yet) */
+      localStorage.removeItem(storeKey); // wipe old stash
+      const textarea = document.getElementById('code'); // shortcut
+      textarea.value = ''; // blank editor
+
+      //Autosave on every keystroke (no redraw yet)
       textarea.addEventListener('input', () => {
         localStorage.setItem(storeKey, textarea.value);
       });
-    
-      /* 5 –- Re-render only after Enter is released  */
+
+      //Re-render only after Enter is released
       textarea.addEventListener('keyup', async (e) => {
         const plainEnter = e.key === 'Enter' && !e.ctrlKey && !e.shiftKey;
-        const ctrlEnter  = e.key === 'Enter' &&  e.ctrlKey;
+        const ctrlEnter = e.key === 'Enter' && e.ctrlKey;
         if (plainEnter || ctrlEnter) {
-          await render(textarea.value);   // newline is already in the value
+          await render(textarea.value); // newline is already in the value
         }
       });
     </script>
-    
-    
-    
 
     <script src="/dev/reload.js"></script>
   </body>

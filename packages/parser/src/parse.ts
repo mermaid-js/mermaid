@@ -35,7 +35,7 @@ const initializers = {
     const { createUseCaseServices } = await import('./language/use-case/index.js');
     const parser = createUseCaseServices().UseCase.parser.LangiumParser;
     parsers.use_case = parser;
-  }
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -43,8 +43,7 @@ export async function parse(diagramType: 'packet', text: string): Promise<Packet
 export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
-export async function parse(diagramType: 'use-case', text: string): Promise<UseCase>;
-
+export async function parse(diagramType: 'use_case', text: string): Promise<UseCase>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

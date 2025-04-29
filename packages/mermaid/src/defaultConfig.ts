@@ -53,7 +53,7 @@ const config: RequiredDeep<MermaidConfig> = {
       };
     },
   },
-  
+
   // eslint-disable-next-line @cspell/spellchecker
   usecase: {
     ...defaultConfigJson.usecase,
@@ -74,7 +74,7 @@ const config: RequiredDeep<MermaidConfig> = {
       };
     },
   },
-  
+
   class: {
     hideEmptyMembersBox: false,
   },

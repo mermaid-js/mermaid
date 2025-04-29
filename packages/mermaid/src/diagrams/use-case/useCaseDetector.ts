@@ -5,7 +5,7 @@ import type {
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
 
-const id = 'use-case';
+const id = 'use_case';
 
 // tell Mermaid to use Use Case Diagram plugin
 const detector: DiagramDetector = (txt) => {
@@ -14,9 +14,9 @@ const detector: DiagramDetector = (txt) => {
   return /^\s*use-case/.test(txt);
 };
 
-// lazy loader 
+// lazy loader
 const loader: DiagramLoader = async () => {
-  console.log('[useCaseDetector] loader triggered');
+  // console.log('[useCaseDetector] loader triggered');
   const { diagram } = await import('./useCaseDiagram.js');
   return { id, diagram };
 };

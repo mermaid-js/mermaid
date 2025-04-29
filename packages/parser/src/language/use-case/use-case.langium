@@ -28,9 +28,11 @@ fragment RightPort:
 
 fragment Arrow:
     LeftPort? lhsInto?=ARROW_INTO?
-    ('--' | '-' title=UC_TITLE '-') 
+    (
+        dashed?=DASHED_ARROW                // use the terminal we defined
+      | ('--' | '-' title=UC_TITLE '-')      // solid variants
+    )
     rhsInto?=ARROW_INTO? RightPort?;
-
 
 Actor:
     'actor' id=UC_ID ('position'? position=('left' | 'right'))? EOL
@@ -56,5 +58,6 @@ terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';
 terminal ARROW_INTO: /<|>/;
 terminal UC_TITLE: /\[[\w \-]+\]/;
 terminal UC_LABEL: /"[^"]+"/;
-terminal UC_ID: /[\w]+/;
+terminal DASHED_ARROW : /-\.\->/;   
+terminal UC_ID: /[\w]+/; 
 terminal ARROW_GROUP: /\{group\}/;

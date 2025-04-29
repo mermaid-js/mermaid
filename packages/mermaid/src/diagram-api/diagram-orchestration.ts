@@ -32,7 +32,6 @@ import usecase from '../diagrams/use-case/useCaseDetector.js';
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
   if (hasLoadedDiagrams) {
-    console.log("Diagram is loaded.");
     return;
   }
   // This is added here to avoid race-conditions.
@@ -97,7 +96,7 @@ export const addDiagrams = () => {
     packet,
     xychart,
     block,
-    architecture, 
+    architecture,
     usecase
   );
 };

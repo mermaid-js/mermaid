@@ -4,7 +4,7 @@ import { db } from './useCaseDb.js';
 import styles from './useCaseStyles.js';
 import { renderer } from './useCaseRenderer.js';
 
-console.log('[useCaseDiagram] loaded');
+// console.log('[useCaseDiagram] loaded');
 
 export const diagram: DiagramDefinition = {
   parser,

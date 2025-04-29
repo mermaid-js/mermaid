@@ -27,6 +27,7 @@ export interface UseCaseEdge {
   from: string;
   to: string;
   title?: string;
+  dashed?: boolean;
 }
 
 export interface UseCaseState extends Record<string, unknown> {
