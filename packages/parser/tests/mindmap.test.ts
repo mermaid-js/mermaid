@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { validatedMindmapParse as validatedParse, mindmapParse as parse } from './test-util.js';
-import type { CircleNode, SimpleNode, OtherComplex } from '../src/language/generated/ast.js';
+import type { CircleNode, SimpleNode } from '../src/language/generated/ast.js';
 // import { MindmapRow, Item } from '../src/language/generated/ast';
 
 // Tests for mindmap parser with simple root and child nodes
