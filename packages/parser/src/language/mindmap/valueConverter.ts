@@ -8,7 +8,6 @@ export class MindmapValueConverter extends AbstractMermaidValueConverter {
     input: string,
     _cstNode: CstNode
   ): ValueType | undefined {
-    console.debug('MermaidValueConverter', rule.name, input);
     if (rule.name === 'CIRCLE_STR') {
       return input.replace('((', '').replace('))', '').trim();
     } else if (rule.name === 'CIRCLE_QSTR') {
@@ -42,7 +41,6 @@ export class MindmapValueConverter extends AbstractMermaidValueConverter {
     } else if (rule.name === 'ICON') {
       return input.replace('::icon(', '').replace(')', '').trim();
     } else if (rule.name === 'INDENTATION') {
-      console.debug('INDENTATION', input.length);
       return input.length;
     }
     return undefined;

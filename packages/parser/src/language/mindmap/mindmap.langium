@@ -1,16 +1,20 @@
 /**
  * Mindmap grammar for Langium
  * Converted from mermaid's jison grammar
+ *
+ * The ML_COMMENT and NL hidden terminals handle whitespace, comments, and newlines
+ * before the mindmap keyword, allowing for empty lines and comments before the
+ * mindmap declaration.
  */
 grammar Mindmap
 
 entry MindmapDoc:
-    (PREDOC)? MINDMAP_KEYWORD
+    MINDMAP_KEYWORD
     (MindmapRows+=MindmapRow)*;
 
-
-PREDOC:
-    pre=(ML_COMMENT | WS)+;
+hidden terminal WS: /[ \t]/;  // Single space or tab for hidden whitespace
+hidden terminal ML_COMMENT: /\%\%[^\n]*/;
+hidden terminal NL: /\r?\n/;
 
 MindmapRow:
     (indent=INDENTATION)|(indent=INDENTATION)? (item=Item);
@@ -76,12 +80,6 @@ terminal CLASS: /:::([^\n:])*/;
 terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
 terminal STRING: /"[^"]*"|'[^']*'/;
 // Modified indentation rule to have higher priority than WS
-
-hidden terminal ML_COMMENT: /\s*\%\%[^\n]*/;
-hidden terminal NL: /\r?\n/;
-
-// Hidden tokens
-terminal WS: /[ \t]/;  // Single space or tab for hidden whitespace
 
 // Type definition for node types
 type NodeType = 'DEFAULT' | 'CIRCLE' | 'CLOUD' | 'BANG' | 'HEXAGON' | 'ROUND';
