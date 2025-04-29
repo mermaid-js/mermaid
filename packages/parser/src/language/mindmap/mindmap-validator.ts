@@ -1,21 +1,21 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { MermaidAstType, MindmapDoc } from '../generated/ast.js';
+import type { MermaidAstType, MindmapDoc, MindmapRow } from '../generated/ast.js';
 import type { MindmapServices } from './module.js';
 
 /**
  * Register custom validation checks.
  */
 export function registerValidationChecks(services: MindmapServices) {
-  console.debug('MindmapValidator registerValidationChecks');
   const validator = services.validation.MindmapValidator;
   const registry = services.validation.ValidationRegistry;
   if (registry) {
-    console.debug('MindmapValidator registerValidationChecks registry');
     // Use any to bypass type checking since we know MindmapDoc is part of the AST
     // but the type system is having trouble with it
     const checks: ValidationChecks<MermaidAstType> = {
-      MindmapDoc: validator.checkSingleRoot,
-      MindmapRow: validator.checkSingleRootRow,
+      MindmapDoc: validator.checkSingleRoot.bind(validator),
+      MindmapRow: (node: MindmapRow, accept: ValidationAcceptor) => {
+        validator.checkSingleRootRow(node, accept);
+      },
     };
     registry.register(checks, validator);
   }
@@ -29,7 +29,7 @@ export class MindmapValidator {
     // eslint-disable-next-line no-console
     console.debug('MindmapValidator constructor');
   }
-  checkSingleRootRow(_doc: MindmapDoc, _accept: ValidationAcceptor): void {
+  checkSingleRootRow(_node: MindmapRow, _accept: ValidationAcceptor): void {
     // eslint-disable-next-line no-console
     console.debug('CHECKING SINGLE ROOT Row');
   }
@@ -44,7 +44,6 @@ export class MindmapValidator {
     let rootNodeIndentation;
 
     for (const row of doc.MindmapRows) {
-      console.debug('ROW BY ROW', row.indent);
       // Skip non-node items (e.g., class decorations, icon decorations)
       if (
         !row.item ||
@@ -59,14 +58,15 @@ export class MindmapValidator {
       ) {
         rootNodeIndentation = 0;
       } else if (row.indent === undefined) {
-        // console.debug('FAIL 1', rootNodeIndentation, row.indent);
         // If we've already found a root node, report an error
         accept('error', 'Multiple root nodes are not allowed in a mindmap.', {
           node: row,
           property: 'item',
         });
-      } else if (rootNodeIndentation >= row.indent) {
-        // console.debug('FAIL 2', rootNodeIndentation, row.indent, row.item);
+      } else if (
+        rootNodeIndentation !== undefined &&
+        rootNodeIndentation >= parseInt(row.indent, 10)
+      ) {
         accept('error', 'Multiple root nodes are not allowed in a mindmap.', {
           node: row,
           property: 'item',
