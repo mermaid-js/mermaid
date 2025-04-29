@@ -42,6 +42,7 @@ export class MindmapValueConverter extends AbstractMermaidValueConverter {
     } else if (rule.name === 'ICON') {
       return input.replace('::icon(', '').replace(')', '').trim();
     } else if (rule.name === 'INDENTATION') {
+      console.debug('INDENTATION', input.length);
       return input.length;
     }
     return undefined;

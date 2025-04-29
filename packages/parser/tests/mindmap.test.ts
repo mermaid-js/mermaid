@@ -142,6 +142,7 @@ describe('Hierarchy (ported from mindmap.spec.ts)', () => {
     );
     const str2 = 'mindmap\nroot\n  notAFakeRoot';
     const result2 = await validatedParse(str2, { validation: true });
+    // console.debug('RESULT2:', result2.diagnostics);
     expect(result2.diagnostics?.length).toBe(0);
   });
 
@@ -353,17 +354,25 @@ describe('Miscellaneous (ported from mindmap.spec.ts)', () => {
   });
   it('MMP-21 should be possible to have comments in a mindmap', () => {
     const result = parse(
+      // 'mindmap\nroot(Root)\n  Child(Child)\n    a(a)\n %% This is a comment\n    b[New Stuff]'
       'mindmap\nroot(Root)\n  Child(Child)\n    a(a)\n\n    %% This is a comment\n    b[New Stuff]'
     );
+    if (result.lexerErrors.length > 0) {
+      console.debug('lexerErrors', result.lexerErrors);
+    }
     expect(result.lexerErrors).toHaveLength(0);
+    if (result.parserErrors.length > 0) {
+      console.debug('Error', result.parserErrors);
+    }
+
     expect(result.parserErrors).toHaveLength(0);
     const rootNode = result.value.MindmapRows[0].item as OtherComplex;
     const childNode = result.value.MindmapRows[1].item as OtherComplex;
     const aNode = result.value.MindmapRows[2].item as OtherComplex;
-    const bNode = result.value.MindmapRows[3].item as OtherComplex;
     expect(rootNode.desc).toBe('Root');
     expect(childNode.desc).toBe('Child');
     expect(aNode.desc).toBe('a');
+    const bNode = result.value.MindmapRows[4].item as OtherComplex;
     expect(bNode.desc).toBe('New Stuff');
   });
   it('MMP-22 should be possible to have comments at the end of a line', () => {
@@ -375,19 +384,19 @@ describe('Miscellaneous (ported from mindmap.spec.ts)', () => {
     const rootNode = result.value.MindmapRows[0].item as OtherComplex;
     const childNode = result.value.MindmapRows[1].item as OtherComplex;
     const aNode = result.value.MindmapRows[2].item as OtherComplex;
-    const bNode = result.value.MindmapRows[3].item as OtherComplex;
+    const bNode = result.value.MindmapRows[4].item as OtherComplex;
     expect(rootNode.desc).toBe('Root');
     expect(childNode.desc).toBe('Child');
     expect(aNode.desc).toBe('a');
     expect(bNode.desc).toBe('New Stuff');
   });
   it('MMP-23 Rows with only spaces should not interfere', () => {
-    const result = parse('mindmap\nroot\n A\n \n\n B');
+    const result = parse('mindmap\nroot\n  A\n \n\n B');
     expect(result.lexerErrors).toHaveLength(0);
     expect(result.parserErrors).toHaveLength(0);
     const rootNode = result.value.MindmapRows[0].item as SimpleNode;
     const aNode = result.value.MindmapRows[1].item as SimpleNode;
-    const bNode = result.value.MindmapRows[2].item as SimpleNode;
+    const bNode = result.value.MindmapRows[3].item as SimpleNode;
     expect(rootNode.id).toBe('root');
     expect(aNode.id).toBe('A');
     expect(bNode.id).toBe('B');
@@ -398,7 +407,7 @@ describe('Miscellaneous (ported from mindmap.spec.ts)', () => {
     expect(result.parserErrors).toHaveLength(0);
     const rootNode = result.value.MindmapRows[0].item as SimpleNode;
     const aNode = result.value.MindmapRows[1].item as SimpleNode;
-    const bNode = result.value.MindmapRows[2].item as SimpleNode;
+    const bNode = result.value.MindmapRows[3].item as SimpleNode;
     expect(rootNode.id).toBe('root');
     expect(aNode.id).toBe('A');
     expect(bNode.id).toBe('B');
@@ -409,7 +418,7 @@ describe('Miscellaneous (ported from mindmap.spec.ts)', () => {
     expect(result.parserErrors).toHaveLength(0);
     const rootNode = result.value.MindmapRows[0].item as SimpleNode;
     const aNode = result.value.MindmapRows[1].item as SimpleNode;
-    const bNode = result.value.MindmapRows[2].item as SimpleNode;
+    const bNode = result.value.MindmapRows[3].item as SimpleNode;
     expect(rootNode.id).toBe('root');
     expect(aNode.id).toBe('A');
     expect(bNode.id).toBe('B');

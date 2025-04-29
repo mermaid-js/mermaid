@@ -5,13 +5,15 @@
 grammar Mindmap
 
 entry MindmapDoc:
-    MINDMAP_KEYWORD (newline=NL)?
+    (PREDOC)? MINDMAP_KEYWORD
     (MindmapRows+=MindmapRow)*;
 
-MindmapRow:
-    // indent=(INDENTATION | '0') item=Item (terminator=NL)?;
-        (indent=INDENTATION)? item=Item (terminator=NL)?;
 
+PREDOC:
+    pre=(ML_COMMENT | WS)+;
+
+MindmapRow:
+    (indent=INDENTATION)|(indent=INDENTATION)? (item=Item);
 
 Item:
     Node | IconDecoration | ClassDecoration;
@@ -38,16 +40,6 @@ CloudNode:
 HexagonNode:
     (id=ID)? desc=(HEXAGON_STR|HEXAGON_QSTR);
 
-// Handle other complex node variants
-OtherComplex:
-    id=ID
-    (
-        ('[' '[' desc=(ID | STRING) ']' ']') |
-        ('{' '{' desc=(ID | STRING) '}' '}') |
-        ('(-' desc=(ID | STRING) '-)') |
-        ('(' desc=(ID | STRING) ')')
-    );
-
 // Simple node as fallback
 SimpleNode:
     id=ID;
@@ -59,12 +51,10 @@ ClassDecoration:
     content=(CLASS);
 
 // This should be processed before whitespace is ignored
-terminal INDENTATION: /[ \t]{2,}/;  // Two or more spaces/tabs for indentation
+terminal INDENTATION: /[ \t]{1,}/;  // Two or more spaces/tabs for indentation
 
 // Keywords with fixed text patterns
-terminal MINDMAP_KEYWORD: 'mindmap\n';
-// terminal ICON_KEYWORD: '::icon(';
-// terminal CLASS_KEYWORD: ':::';
+terminal MINDMAP_KEYWORD:  'mindmap';
 
 // Basic token types
 terminal CIRCLE_QSTR:  "((\"" -> "\"))";
@@ -84,14 +74,14 @@ terminal ICON: "::icon(" -> ")";
 terminal CLASS: /:::([^\n:])*/;
 
 terminal ID: /[a-zA-Z0-9_\-\.\/]+/;
-
+terminal STRING: /"[^"]*"|'[^']*'/;
 // Modified indentation rule to have higher priority than WS
 
-terminal NL: /\r?\n/;
+hidden terminal ML_COMMENT: /\s*\%\%[^\n]*/;
+hidden terminal NL: /\r?\n/;
 
 // Hidden tokens
 terminal WS: /[ \t]/;  // Single space or tab for hidden whitespace
-hidden terminal ML_COMMENT: /\%\%[^\n]*/;
 
 // Type definition for node types
 type NodeType = 'DEFAULT' | 'CIRCLE' | 'CLOUD' | 'BANG' | 'HEXAGON' | 'ROUND';
