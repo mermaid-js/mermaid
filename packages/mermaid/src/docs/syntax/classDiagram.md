@@ -559,6 +559,7 @@ classDiagram
   style Animal fill:#f9f,stroke:#333,stroke-width:4px
   style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
+
 ### Font Customization with `fontFamily`
 
 Mermaid allows you to customize the font used in your class diagrams using the `fontFamily` property under `themeVariables`. This applies the specified font across the entire diagram, affecting node labels and annotations.
@@ -599,26 +600,34 @@ should have a different look.
 A class definition looks like the example below:
 
 ```
+
 classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+
 ```
 
 Also, it is possible to define style to multiple classes in one statement:
 
 ```
+
 classDef firstClassName,secondClassName font-size:12pt;
+
 ```
 
 Attachment of a class to a node is done as per below:
 
 ```
+
 cssClass "nodeId1" className;
+
 ```
 
 It is also possible to attach a class to a list of nodes in one statement:
 
 ```
+
 cssClass "nodeId1,nodeId2" className;
-```
+
+````
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 
@@ -626,7 +635,7 @@ A shorter form of adding a class is to attach the classname to the node using th
 classDiagram
     class Animal:::someclass
     classDef someclass fill:#f96
-```
+````
 
 Or:
 
