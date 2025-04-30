@@ -559,6 +559,37 @@ classDiagram
   style Animal fill:#f9f,stroke:#333,stroke-width:4px
   style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
+### Font Customization with `fontFamily`
+
+Mermaid allows you to customize the font used in your class diagrams using the `fontFamily` property under `themeVariables`. This applies the specified font across the entire diagram, affecting node labels and annotations.
+
+You can use any valid CSS `font-family` string. Be sure the font is available in the viewer’s environment (e.g., a standard web-safe font or one loaded via a stylesheet).
+
+#### Example
+
+```mermaid
+%%{ init: { "theme": "default", "themeVariables": { "fontFamily": "Comic Sans MS" } } }%%
+classDiagram
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal <|-- Zebra
+    Animal : +int age
+    Animal : +String gender
+    Animal: +isMammal()
+    Animal: +mate()
+    class Duck {
+        +String beakColor
+        +swim()
+        +quack()
+    }
+    class Fish {
+        -int sizeInFeet
+        -canEat()
+    }
+    class Zebra {
+        +bool is_wild
+        +run()
+    }
 
 #### Classes
 
