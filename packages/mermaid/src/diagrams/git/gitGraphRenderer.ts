@@ -911,17 +911,31 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   let pos = 0;
 
   branches.forEach((branch, index) => {
-    const labelElement = drawText(branch.name);
-    const g = diagram.append('g');
-    const branchLabel = g.insert('g').attr('class', 'branchLabel');
-    const label = branchLabel.insert('g').attr('class', 'label branch-label');
-    label.node()?.appendChild(labelElement);
-    const bbox = labelElement.getBBox();
+    let bbox: DOMRect = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      toJSON: () => '',
+    };
+
+    if (DEFAULT_GITGRAPH_CONFIG.showBranches !== false) {
+      const labelElement = drawText(branch.name);
+      const g = diagram.append('g');
+      const branchLabel = g.insert('g').attr('class', 'branchLabel');
+      const label = branchLabel.insert('g').attr('class', 'label branch-label');
+      label.node()?.appendChild(labelElement);
+      bbox = labelElement.getBBox();
+      label.remove();
+      branchLabel.remove();
+      g.remove();
+    }
 
     pos = setBranchPosition(branch.name, pos, index, bbox, rotateCommitLabel);
-    label.remove();
-    branchLabel.remove();
-    g.remove();
   });
 
   drawCommits(diagram, allCommitsDict, false);
