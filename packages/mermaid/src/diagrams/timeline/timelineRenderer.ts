@@ -71,8 +71,8 @@ export const draw = function (text: string, id: string, version: string, diagObj
   let sectionBeginY = 0;
   let masterX = 50 + LEFT_MARGIN;
   //sectionBeginX = masterX;
-  let masterY = 50;
-  sectionBeginY = 50;
+  let masterY = 80;
+  sectionBeginY = 80;
   //draw sections
   let sectionNumber = 0;
   let hasSections = true;
@@ -221,7 +221,6 @@ export const draw = function (text: string, id: string, version: string, diagObj
         .text(line);
     });
   }
-
   //5. Draw the diagram
   depthY = hasSections ? maxSectionHeight + maxTaskHeight + 150 : maxTaskHeight + 100;
 
