@@ -201,7 +201,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
 
   if (title) {
     const maxAvailableWidth = svg.node().getBBox().width - LEFT_MARGIN; // Available width for the title
-    const fontSize = 25; // Initial font size
+
     const wrappedTitle = wrapLabel(title, maxAvailableWidth, { fontSize });
 
     const tempTitle = svg
