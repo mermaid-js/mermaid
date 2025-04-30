@@ -7,6 +7,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
 import type { MermaidConfig } from '../../config.type.js';
+import { wrapLabel } from '../../utils.js';
 
 interface Block<TDesc, TSection> {
   number: number;
@@ -70,8 +71,8 @@ export const draw = function (text: string, id: string, version: string, diagObj
   let sectionBeginY = 0;
   let masterX = 50 + LEFT_MARGIN;
   //sectionBeginX = masterX;
-  let masterY = 80;
-  sectionBeginY = 80;
+  let masterY = 50;
+  sectionBeginY = 50;
   //draw sections
   let sectionNumber = 0;
   let hasSections = true;
@@ -199,17 +200,26 @@ export const draw = function (text: string, id: string, version: string, diagObj
   log.debug('bounds', box);
 
   if (title) {
-    const titleWrapper = svg.append('g').attr('class', 'titleWrapper');
-    const titleText = titleWrapper
-      .append('text')
-      .attr('x', box.width / 2)
-      .attr('y', 20)
-      .attr('text-anchor', 'middle')
-      .attr('font-size', '20px')
-      .attr('font-weight', 'bold');
+    const maxAvailableWidth = svg.node().getBBox().width - LEFT_MARGIN; // Available width for the title
+    const fontSize = 25; // Initial font size
+    const wrappedTitle = wrapLabel(title, maxAvailableWidth, { fontSize });
 
-    // Use the new wrapText util from svgDraw
-    svgDraw.wrapText(titleText, title, box.width * 0.8, 22);
+    const tempTitle = svg
+      .append('text')
+      .attr('x', box.width / 2 - LEFT_MARGIN)
+      .attr('y', 20)
+      .attr('class', 'timelineTitleText')
+      .style('text-anchor', 'middle')
+      .style('white-space', 'pre-line')
+      .style('font-size', fontSize + 'px');
+
+    wrappedTitle.split('<br/>').forEach((line, idx) => {
+      tempTitle
+        .append('tspan')
+        .attr('x', box.width / 2 - LEFT_MARGIN)
+        .attr('dy', idx === 0 ? 0 : '1.2em')
+        .text(line);
+    });
   }
 
   //5. Draw the diagram
