@@ -138,7 +138,7 @@ describe('given a basic class diagram, ', function () {
       expect(relations[0].title).toBe('manages');
     });
 
-    it('should handle backquoted class names', function () {
+    it('should handle backticked class names', function () {
       const str = 'classDiagram\n' + 'class `Car`';
 
       parser.parse(str);
@@ -1207,7 +1207,7 @@ describe('given a class diagram with relationships, ', function () {
       parser.parse(str);
     });
 
-    it('should handle backquoted class name', function () {
+    it('should handle backticked class name', function () {
       const str =
         'classDiagram\n' +
         '`Class1` <|-- Class02\n' +

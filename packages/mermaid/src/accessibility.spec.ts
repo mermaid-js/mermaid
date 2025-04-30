@@ -109,7 +109,7 @@ describe('accessibility', () => {
         describe('with a11y description', () => {
           const a11yDesc = 'a11y description';
 
-          it('shold set aria-labelledby to the title id inserted as a child', () => {
+          it('should set aria-labelledby to the title id inserted as a child', () => {
             expectAriaLabelledByItTitleId(fauxSvgNode, a11yTitle, a11yDesc, givenId);
           });
 

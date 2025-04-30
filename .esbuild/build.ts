@@ -34,6 +34,19 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
       { ...iifeOptions, minify: true, metafile: shouldVisualize }
     );
   }
+  if (entryName === 'mermaid-zenuml') {
+    const iifeOptions: MermaidBuildOptions = {
+      ...commonOptions,
+      format: 'iife',
+      globalName: 'mermaid-zenuml',
+    };
+    buildConfigs.push(
+      // mermaid-zenuml.js
+      { ...iifeOptions },
+      // mermaid-zenuml.min.js
+      { ...iifeOptions, minify: true, metafile: shouldVisualize }
+    );
+  }
 
   const results = await Promise.all(buildConfigs.map((option) => build(getBuildConfig(option))));
 

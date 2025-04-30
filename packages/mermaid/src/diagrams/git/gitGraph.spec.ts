@@ -471,7 +471,7 @@ describe('when parsing a gitGraph', function () {
     it('should handle a gitGraph commit with custom  type,tag, msg, commit id,', async () => {
       const str = `gitGraph:
         commit type:REVERSE tag: "test tag" msg: "test msg" id: "1111"
-    
+
         `;
 
       await parser.parse(str);
@@ -1232,7 +1232,7 @@ describe('when parsing a gitGraph', function () {
         expect(true).toBe(false);
       } catch (e: any) {
         expect(e.message).toBe(
-          'Incorrect usage of "merge". Commit with id:1-111 already exists, use different custom Id'
+          'Incorrect usage of "merge". Commit with id:1-111 already exists, use different custom id'
         );
       }
     });
@@ -1255,7 +1255,7 @@ describe('when parsing a gitGraph', function () {
     it('should throw error when trying to merge branch which has no commits', async () => {
       const str = `gitGraph
         branch test1
-    
+
         checkout main
         commit
         merge test1

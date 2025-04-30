@@ -98,6 +98,7 @@ class Theme {
     this.critBorderColor = this.critBorderColor || '#ff8888';
     this.critBkgColor = this.critBkgColor || 'red';
     this.todayLineColor = this.todayLineColor || 'red';
+    this.vertLineColor = this.vertLineColor || 'navy';
     this.taskTextColor = this.taskTextColor || this.textColor;
     this.taskTextOutsideColor = this.taskTextOutsideColor || this.textColor;
     this.taskTextLightColor = this.taskTextLightColor || this.textColor;

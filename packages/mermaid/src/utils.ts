@@ -645,7 +645,7 @@ const breakString: (
  * This calculates the text's height, taking into account the wrap breaks and both the statically
  * configured height, width, and the length of the text (in pixels).
  *
- * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
+ * If the wrapped text has greater height, we extend the height, so it's value won't overflow.
  *
  * @param text - The text to measure
  * @param config - The config for fontSize, fontFamily, and fontWeight all impacting the
