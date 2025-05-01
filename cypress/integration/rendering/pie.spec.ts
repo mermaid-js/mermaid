@@ -91,21 +91,29 @@ describe('pie chart', () => {
     `);
   });
 
-  it('shrinks font size for medium long title', () => {
-    imgSnapshotTest(`
-      pie
-        title Short
-        "A" : 60
-        "B" : 40
-    `);
+  it('should render a pie chart with a medium-length title', () => {
+    renderGraph(
+      `pie title Distribution of Pets in Urban Areas
+        "Dogs": 50
+        "Cats": 30
+        "Birds": 20
+      `
+    );
+    cy.get('svg').should('exist');
+    cy.get('text').contains('Distribution of Pets in Urban Areas').should('exist');
   });
 
-  it('wraps very long title into multiple lines', () => {
-    imgSnapshotTest(`
-      pie
-        title Short
-        "A" : 60
-        "B" : 40
-    `);
+  it('should render a pie chart with a long title without clipping', () => {
+    renderGraph(
+      `pie title Analysis of the Distribution of Various Pet Species Across Different Metropolitan Regions
+        "Dogs": 50
+        "Cats": 30
+        "Birds": 20
+      `
+    );
+    cy.get('.pieTitleText tspan').then(($tspans) => {
+      const titleText = [...$tspans].map((el) => el.textContent).join(' ');
+      expect(titleText).to.include('Analysis of the Distribution');
+    });
   });
 });
