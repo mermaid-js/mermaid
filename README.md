@@ -44,7 +44,7 @@ Try Live Editor previews of future releases: <a href="https://develop.git.mermai
 
 **Thanks to all involved, people committing pull requests, people answering questions! 🙏**
 
-<a href="https://mermaid.js.org/landing/"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/intro/img/book-banner-post-release.jpg" alt="Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!"></a>
+<a href="https://mermaid.js.org/landing/"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/intro/img/book-banner-post-release.jpg" alt='Banner for "The Official Guide to Mermaid.js" book'></a>
 
 ## Table of content
 
@@ -451,7 +451,7 @@ For public sites, it can be precarious to retrieve text from users on the intern
 
 As an extra level of security for sites with external users we are happy to introduce a new security level in which the diagram is rendered in a sandboxed iframe preventing javascript in the code from being executed. This is a great step forward for better security.
 
-_Unfortunately you can not have a cake and eat it at the same time which in this case means that some of the interactive functionality gets blocked along with the possible malicious code._
+_Unfortunately you cannot have a cake and eat it at the same time which in this case means that some of the interactive functionality gets blocked along with the possible malicious code._
 
 ## Reporting vulnerabilities
 

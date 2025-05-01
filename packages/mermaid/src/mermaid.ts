@@ -367,7 +367,7 @@ const parse: typeof mermaidAPI.parse = async (text, parseOptions) => {
 };
 
 /**
- * Function that renders an svg with a graph from a chart definition. Usage example below.
+ * Function that renders an SVG with a graph from a chart definition. Usage example below.
  *
  * ```javascript
  *  element = document.querySelector('#graphDiv');
