@@ -79,9 +79,22 @@ describe('pie chart', () => {
       `pie showData
         "Dogs": 50
         "Cats": 25
-      `
+      `,
+      {
+        pie: {
+          useMaxWidth: true,
+        },
+        themeVariables: {
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '16px',
+          pieOuterStrokeWidth: '1px',
+          legendTextColor: '#000',
+          pieStrokeColor: '#000',
+        },
+      }
     );
   });
+
   it('renders short title without shrink or wrap', () => {
     imgSnapshotTest(`
       pie
