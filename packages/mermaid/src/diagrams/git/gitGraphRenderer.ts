@@ -812,9 +812,11 @@ const drawArrows = (
 
 const drawBranches = (
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
-  branches: { name: string }[]
+  branches: { name: string }[],
+  DEFAULT_GITGRAPH_CONFIG: any
 ) => {
   const g = svg.append('g');
+
   branches.forEach((branch, index) => {
     const adjustIndexForTheme = index % THEME_COLOR_LIMIT;
 
@@ -899,9 +901,12 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   clear();
 
   log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
+  const DEFAULT_CONFIG = getConfig();
+  const DEFAULT_GITGRAPH_CONFIG = DEFAULT_CONFIG?.gitGraph;
   if (!DEFAULT_GITGRAPH_CONFIG) {
     throw new Error('GitGraph config not found');
   }
+
   const rotateCommitLabel = DEFAULT_GITGRAPH_CONFIG.rotateCommitLabel ?? false;
   const db = diagObj.db as GitGraphDBRenderProvider;
   allCommitsDict = db.getCommits();
@@ -940,7 +945,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   drawCommits(diagram, allCommitsDict, false);
   if (DEFAULT_GITGRAPH_CONFIG.showBranches) {
-    drawBranches(diagram, branches);
+    drawBranches(diagram, branches, DEFAULT_GITGRAPH_CONFIG);
   }
   drawArrows(diagram, allCommitsDict);
   drawCommits(diagram, allCommitsDict, true);
