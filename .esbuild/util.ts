@@ -32,6 +32,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
+    supported: { 'class-static-blocks': false },
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
     sourcemap: 'external',
