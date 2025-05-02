@@ -152,55 +152,46 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .style('text-anchor', 'middle')
     .attr('class', 'slice');
 
-  const titleText = db.getDiagramTitle();
-  const maxAvailableWidth = pieWidth - MARGIN;
-  let fontSize = 25;
-  const minFontSize = 10;
-  const titleWrapConfig = {
-    fontFamily: 'Arial',
-    fontWeight: 400,
-    joinWith: '<br/>'
-  };
-  
-
-  // Start wrapping immediately
-  let wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
-    ...titleWrapConfig,
-    fontSize
-  });
-  
-
-  let lines = wrappedTitle.split('<br/>');
-
-  // Create temporary text to measure
-  let tempTitle = createTitle(svg, lines, fontSize, pieWidth);
-
-
-
-  let bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
-
-  // Shrink if even the wrapped version is too wide
-  while (bbox && bbox.width > maxAvailableWidth && fontSize > minFontSize) {
-    fontSize -= 1;
-    tempTitle.remove();
-
-    // Re-wrap at smaller font size
-    wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
-  ...titleWrapConfig,
-  fontSize
-});
-
-    lines = wrappedTitle.split('<br/>');
-
-    // Redraw
-    tempTitle = createTitle(svg, lines, fontSize, pieWidth);
-
-
-    bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
-  }
-  const titleHeight = bbox?.height || 0;
-  const TITLE_MARGIN = 10; // add extra margin between title and pie
-  const extraMargin = lines.length * 3; 
+    const titleText = db.getDiagramTitle();
+    let titleHeight = 0;
+    const TITLE_MARGIN = 10;
+    let extraMargin = 0;
+    
+    if (titleText) {
+      const maxAvailableWidth = pieWidth - MARGIN;
+      let fontSize = 25;
+      const minFontSize = 10;
+      const titleWrapConfig = {
+        fontFamily: 'Arial',
+        fontWeight: 400,
+        joinWith: '<br/>'
+      };
+    
+      let wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
+        ...titleWrapConfig,
+        fontSize
+      });
+    
+      let lines = wrappedTitle.split('<br/>');
+      let tempTitle = createTitle(svg, lines, fontSize, pieWidth);
+      let bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
+    
+      while (bbox && bbox.width > maxAvailableWidth && fontSize > minFontSize) {
+        fontSize -= 1;
+        tempTitle.remove();
+        wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
+          ...titleWrapConfig,
+          fontSize
+        });
+        lines = wrappedTitle.split('<br/>');
+        tempTitle = createTitle(svg, lines, fontSize, pieWidth);
+        bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
+      }
+    
+      titleHeight = bbox?.height || 0;
+      extraMargin = lines.length * 3;
+    }
+    
 group.attr(
   'transform',
   `translate(${pieWidth / 2}, ${height / 2 + titleHeight + TITLE_MARGIN + extraMargin})`
