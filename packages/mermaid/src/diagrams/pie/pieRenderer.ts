@@ -32,8 +32,8 @@ const createTitle = (
   fontSize: number,
   pieWidth: number
 ): d3.Selection<SVGTextElement, unknown, Element | null, unknown> => {
-
-  const tempTitle = svg.append<SVGTextElement>('text')
+  const tempTitle = svg
+    .append<SVGTextElement>('text')
     .attr('x', pieWidth / 2)
     .attr('y', 30)
     .attr('class', 'pieTitleText')
@@ -42,7 +42,8 @@ const createTitle = (
     .style('font-size', fontSize + 'px');
 
   lines.forEach((line, idx) => {
-    tempTitle.append('tspan')
+    tempTitle
+      .append('tspan')
       .attr('x', pieWidth / 2)
       .attr('dy', idx === 0 ? 0 : '1.2em')
       .text(line);
@@ -50,8 +51,6 @@ const createTitle = (
 
   return tempTitle;
 };
-
-
 
 /**
  * Draws a Pie Chart with the data given in text.
@@ -152,53 +151,50 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .style('text-anchor', 'middle')
     .attr('class', 'slice');
 
-    const titleText = db.getDiagramTitle();
-    let titleHeight = 0;
-    const TITLE_MARGIN = 10;
-    let extraMargin = 0;
-    
-    if (titleText) {
-      const maxAvailableWidth = pieWidth - MARGIN;
-      let fontSize = 25;
-      const minFontSize = 10;
-      const titleWrapConfig = {
-        fontFamily: 'Arial',
-        fontWeight: 400,
-        joinWith: '<br/>'
-      };
-    
-      let wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
-        ...titleWrapConfig,
-        fontSize
-      });
-    
-      let lines = wrappedTitle.split('<br/>');
-      let tempTitle = createTitle(svg, lines, fontSize, pieWidth);
-      let bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
-    
-      while (bbox && bbox.width > maxAvailableWidth && fontSize > minFontSize) {
-        fontSize -= 1;
-        tempTitle.remove();
-        wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
-          ...titleWrapConfig,
-          fontSize
-        });
-        lines = wrappedTitle.split('<br/>');
-        tempTitle = createTitle(svg, lines, fontSize, pieWidth);
-        bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
-      }
-    
-      titleHeight = bbox?.height || 0;
-      extraMargin = lines.length * 3;
-    }
-    
-group.attr(
-  'transform',
-  `translate(${pieWidth / 2}, ${height / 2 + titleHeight + TITLE_MARGIN + extraMargin})`
-);
+  const titleText = db.getDiagramTitle();
+  let titleHeight = 0;
+  const TITLE_MARGIN = 10;
+  let extraMargin = 0;
 
-  
-  
+  if (titleText) {
+    const maxAvailableWidth = pieWidth - MARGIN;
+    let fontSize = 25;
+    const minFontSize = 10;
+    const titleWrapConfig = {
+      fontFamily: 'Arial',
+      fontWeight: 400,
+      joinWith: '<br/>',
+    };
+
+    let wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
+      ...titleWrapConfig,
+      fontSize,
+    });
+
+    let lines = wrappedTitle.split('<br/>');
+    let tempTitle = createTitle(svg, lines, fontSize, pieWidth);
+    let bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
+
+    while (bbox && bbox.width > maxAvailableWidth && fontSize > minFontSize) {
+      fontSize -= 1;
+      tempTitle.remove();
+      wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
+        ...titleWrapConfig,
+        fontSize,
+      });
+      lines = wrappedTitle.split('<br/>');
+      tempTitle = createTitle(svg, lines, fontSize, pieWidth);
+      bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
+    }
+
+    titleHeight = bbox?.height || 0;
+    extraMargin = lines.length * 3;
+  }
+
+  group.attr(
+    'transform',
+    `translate(${pieWidth / 2}, ${height / 2 + titleHeight + TITLE_MARGIN + extraMargin})`
+  );
 
   // Add the legends/annotations for each section
   const legend = group
