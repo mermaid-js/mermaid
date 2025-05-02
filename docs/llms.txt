@@ -1,0 +1,62 @@
+# Mermaid Documentation
+
+## 📔 Introduction
+- [About Mermaid](https://mermaid.js.org/intro/n00b-overview.html) - An introduction to Mermaid, a JavaScript-based diagramming and charting tool.
+- [Getting Started](https://mermaid.js.org/intro/getting-started.html) - Learn how to create your first Mermaid diagram with simple syntax.
+- [Syntax and Configuration](https://mermaid.js.org/intro/syntax-reference.html) - Overview of Mermaid's basic syntax rules and configuration options.
+
+## 📊 Diagram Syntax
+- [Flowchart](https://mermaid.js.org/syntax/flowchart.html) - Create diagrams that represent workflows or processes with connected nodes.
+- [Sequence Diagram](https://mermaid.js.org/syntax/sequenceDiagram.html) - Visualize the sequence of messages and interactions between different participants.
+- [Class Diagram](https://mermaid.js.org/syntax/classDiagram.html) - Display class structures and relationships for object-oriented programming.
+- [State Diagram](https://mermaid.js.org/syntax/stateDiagram.html) - Illustrate the different states and transitions of a system or entity.
+- [Entity Relationship Diagram](https://mermaid.js.org/syntax/entityRelationshipDiagram.html) - Visualize entities and their relationships in database design.
+- [User Journey](https://mermaid.js.org/syntax/userJourney.html) - Map the journey a user takes through a product or service.
+- [Gantt](https://mermaid.js.org/syntax/gantt.html) - Create Gantt charts for project scheduling and timeline visualization.
+- [Pie Chart](https://mermaid.js.org/syntax/pie.html) - Display data as slices of a circular pie chart.
+- [Quadrant Chart](https://mermaid.js.org/syntax/quadrantChart.html) - Organize data into four quadrants for strategic planning and analysis.
+- [Requirement Diagram](https://mermaid.js.org/syntax/requirementDiagram.html) - Document system requirements and their relationships.
+- [Gitgraph (Git) Diagram](https://mermaid.js.org/syntax/gitgraph.html) - Display Git branching and merging history visually.
+- [C4 Diagram 🦺⚠️](https://mermaid.js.org/syntax/c4.html) - Create software architecture diagrams at different levels of detail using the C4 model.
+- [Mindmaps](https://mermaid.js.org/syntax/mindmap.html) - Generate hierarchical diagrams for organizing ideas and concepts.
+- [Timeline](https://mermaid.js.org/syntax/timeline.html) - Display events in chronological order on a linear timeline.
+- [ZenUML](https://mermaid.js.org/syntax/zenuml.html) - Create sequence diagrams with an intuitive, code-like syntax.
+- [Sankey 🔥](https://mermaid.js.org/syntax/sankey.html) - Visualize flow quantities where arrow width is proportional to flow quantity.
+- [XY Chart 🔥](https://mermaid.js.org/syntax/xyChart.html) - Create various types of plots with X and Y axes like line and scatter plots.
+- [Block Diagram 🔥](https://mermaid.js.org/syntax/block.html) - Create diagrams that represent systems with interconnected blocks.
+- [Packet 🔥](https://mermaid.js.org/syntax/packet.html) - Visualize network packet structures and data formats.
+- [Kanban 🔥](https://mermaid.js.org/syntax/kanban.html) - Display work items in columns to visualize workflow and progress.
+- [Architecture 🔥](https://mermaid.js.org/syntax/architecture.html) - Create system architecture diagrams with various components.
+- [Radar 🔥](https://mermaid.js.org/syntax/radar.html) - Display multivariate data on a radar/spider chart.
+- [Other Examples](https://mermaid.js.org/syntax/examples.html) - Additional examples showcasing Mermaid's capabilities in various scenarios.
+
+## 📚 Ecosystem
+- [Mermaid Chart](https://mermaid.js.org/ecosystem/mermaid-chart.html) - A collaborative platform for creating, editing and sharing Mermaid diagrams.
+- [Tutorials](https://mermaid.js.org/ecosystem/tutorials.html) - Step-by-step guides to help you learn how to use Mermaid effectively.
+- [Integrations - Community](https://mermaid.js.org/ecosystem/integrations-community.html) - List of third-party tools and platforms that have integrated Mermaid.
+- [Integrations - Create](https://mermaid.js.org/ecosystem/integrations-create.html) - Guidelines for developers looking to integrate Mermaid into their own applications.
+
+## ⚙️ Deployment and Configuration
+- [Configuration](https://mermaid.js.org/config/configuration.html) - Learn how to configure Mermaid for your specific needs.
+- [API-Usage](https://mermaid.js.org/config/usage.html) - Documentation on how to use the Mermaid JavaScript API in your applications.
+- [Mermaid API Configuration](https://mermaid.js.org/config/mermaidAPI.html) - Detailed information about the Mermaid API configuration options.
+- [Mermaid Configuration Options](https://mermaid.js.org/config/setup/README.html) - Reference guide for setting up and configuring Mermaid.
+- [Mermaid Configuration Options](https://mermaid.js.org/config/schema-docs/config.html) - Comprehensive schema documentation for all Mermaid configuration options.
+- [Registering icons](https://mermaid.js.org/config/icons.html) - Documentation on how to register and use custom icons in your diagrams.
+- [Directives](https://mermaid.js.org/config/directives.html) - Special commands that modify the behavior of Mermaid diagrams.
+- [Theming](https://mermaid.js.org/config/theming.html) - Customize the appearance of your diagrams with themes and styles.
+- [Math](https://mermaid.js.org/config/math.html) - Support for mathematical notation and formulas within your diagrams.
+- [Accessibility](https://mermaid.js.org/config/accessibility.html) - Making your Mermaid diagrams accessible to all users.
+- [Mermaid CLI](https://mermaid.js.org/config/mermaidCLI.html) - Command-line interface for generating Mermaid diagrams without a browser.
+- [FAQ](https://mermaid.js.org/config/faq.html) - Answers to frequently asked questions about Mermaid.
+
+## 🙌 Contributing
+- [Getting Started](https://mermaid.js.org/community/intro.html) - Introduction to contributing to the Mermaid open-source project.
+- [Contributing to Mermaid](https://mermaid.js.org/community/contributing.html) - Guidelines and best practices for contributing to Mermaid.
+- [Adding Diagrams](https://mermaid.js.org/community/new-diagram.html) - Instructions for adding new diagram types to the Mermaid codebase.
+- [Questions and Suggestions](https://mermaid.js.org/community/questions-and-suggestions.html) - How to get help and provide feedback to the Mermaid community.
+- [Security](https://mermaid.js.org/community/security.html) - Information about security policies and how to report vulnerabilities.
+
+## 📰 Latest News
+- [Announcements](https://mermaid.js.org/news/announcements.html) - Official announcements about Mermaid updates and releases.
+- [Blog](https://mermaid.js.org/news/blog.html) - Articles about Mermaid features, use cases, and community stories.
