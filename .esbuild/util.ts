@@ -23,6 +23,11 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
   format: 'esm',
 } as const;
 
+function parse(prefix: string) {
+  const arg = process.argv.find((a) => a.startsWith(prefix + '='));
+  return arg?.replace(prefix + '=', '');
+}
+
 const buildOptions = (override: BuildOptions): BuildOptions => {
   return {
     bundle: true,
@@ -33,6 +38,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
     supported: { 'class-static-blocks': false },
+    target: parse('--target') ?? 'ES2020',
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
     sourcemap: 'external',
