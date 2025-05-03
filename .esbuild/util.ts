@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
+import { parseOption } from '../.build/util.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -23,11 +24,6 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
   format: 'esm',
 } as const;
 
-function parse(prefix: string) {
-  const arg = process.argv.find((a) => a.startsWith(prefix + '='));
-  return arg?.replace(prefix + '=', '');
-}
-
 const buildOptions = (override: BuildOptions): BuildOptions => {
   return {
     bundle: true,
@@ -38,7 +34,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
     supported: { 'class-static-blocks': false },
-    target: parse('--target') ?? 'ES2020',
+    target: parseOption('--target') ?? 'ES2020',
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
     sourcemap: 'external',
