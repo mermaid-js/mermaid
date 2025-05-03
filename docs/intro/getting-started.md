@@ -297,6 +297,14 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
 </html>
 ```
 
+In this example, `mermaid.js` is built from source with `--target` to tackle compatibility issues:
+
+`mermaid.js` is located under `packages/mermaid/dist`.
+
+```bash
+pnpm run build:esbuild --mermaid --target=ES2018
+```
+
 ## 5. Adding Mermaid as a dependency
 
 Below are the steps for adding Mermaid as a dependency:
