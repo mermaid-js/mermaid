@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
+import { parseOption } from '../.build/util.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
