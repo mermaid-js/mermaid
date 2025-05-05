@@ -130,7 +130,7 @@ describe('pie', () => {
       expect(sections.get('bat')).toBe(40);
     });
 
-    it('should handle simple pie with negative decimal', async () => {
+    it('should not handle simple pie with negative decimal', async () => {
       await expect(async () => {
         await parser.parse(`pie
         "ash" : -60.67
