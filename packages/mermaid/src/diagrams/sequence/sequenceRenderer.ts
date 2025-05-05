@@ -455,7 +455,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       window.location.host +
       window.location.pathname +
       window.location.search;
-      url = url.replace(/\\/g, '\\\\');
+    url = url.replace(/\\/g, '\\\\');
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }
