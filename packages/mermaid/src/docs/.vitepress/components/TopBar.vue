@@ -37,13 +37,10 @@ const randomTagLines: Taglines[] = [
 ];
 
 const index: Ref<number> = ref(0);
-const currentBannerSet = ref<Taglines[]>(taglines);
-
-console.log('currentBannerSet:', currentBannerSet.value);
+const currentBannerSet: Ref<Taglines[]> = ref(taglines);
 
 onMounted(() => {
   const newIndex = Math.floor(Math.random() * randomTagLines.length);
-  console.log('newIndex:', newIndex);
   currentBannerSet.value = [...taglines, randomTagLines[newIndex]];
   index.value = Math.floor(Math.random() * currentBannerSet.value.length);
   setInterval(() => {
@@ -58,11 +55,11 @@ onMounted(() => {
       <transition name="fade" mode="out-in">
         <a
           :key="index"
-          :href="currentBannerSet?.[index]?.url"
+          :href="currentBannerSet[index].url"
           target="_blank"
           class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
         >
-          <span class="font-semibold">{{ currentBannerSet?.[index]?.label }}</span>
+          <span class="font-semibold">{{ currentBannerSet[index].label }}</span>
           <button class="bg-[#1E1A2E] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide">
             Try now
           </button>
