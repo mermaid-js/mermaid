@@ -450,6 +450,7 @@ export const drawEdge = function (elem, path, relation) {
       window.location.host +
       window.location.pathname +
       window.location.search;
+    url = url.replace(/\\/g, '\\\\');
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }

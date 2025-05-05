@@ -446,6 +446,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
       window.location.host +
       window.location.pathname +
       window.location.search;
+    url = url.replace(/\\/g, '\\\\');
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }

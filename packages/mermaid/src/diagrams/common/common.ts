@@ -158,6 +158,7 @@ const getUrl = (useAbsolute: boolean): string => {
       window.location.host +
       window.location.pathname +
       window.location.search;
+    url = url.replace(/\\/g, '\\\\');
     url = url.replaceAll(/\(/g, '\\(');
     url = url.replaceAll(/\)/g, '\\)');
   }

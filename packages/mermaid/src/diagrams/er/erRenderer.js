@@ -457,6 +457,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
       window.location.host +
       window.location.pathname +
       window.location.search;
+    url = url.replace(/\\/g, '\\\\'); // Escape backslashes
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }

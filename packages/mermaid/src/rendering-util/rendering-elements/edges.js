@@ -637,7 +637,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       window.location.host +
       window.location.pathname +
       window.location.search;
-    url = url.replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+    url = url.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
   }
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
