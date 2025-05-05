@@ -28,7 +28,7 @@ const randomTagLines: Taglines[] = [
   },
   {
     label: 'Customize your layout and design with Mermaid Chart’s GUI!',
-    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=GUI',
+    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=gui',
   },
   {
     label: 'Customize your layout and design in Mermaid Chart!',
