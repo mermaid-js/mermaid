@@ -8,11 +8,11 @@ interface Taglines {
 
 const taglines: Taglines[] = [
   {
-    label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Pro',
+    label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Chart',
     url: 'https://www.mermaidchart.com/mermaid-ai?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=aibundle',
   },
   {
-    label: 'Diagram live with teammates in Mermaid Pro',
+    label: 'Diagram live with teammates in Mermaid Chart',
     url: 'https://www.mermaidchart.com/landing?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=team_collaboration',
   },
 ];
