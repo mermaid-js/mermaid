@@ -43,16 +43,16 @@ const populate = (ast: XY) => {
       db.setYAxisRangeData(data.start, data.end);
     }
   }
-  if (line) {
-    for (const lineData of line) {
-      const { data, title } = lineData;
-      db.setLineData({ text: title ?? '', type: 'text' }, data.values);
-    }
-  }
   if (bar) {
     for (const barData of bar) {
       const { data, title } = barData;
       db.setBarData({ text: title ?? '', type: 'text' }, data.values);
+    }
+  }
+  if (line) {
+    for (const lineData of line) {
+      const { data, title } = lineData;
+      db.setLineData({ text: title ?? '', type: 'text' }, data.values);
     }
   }
 };
