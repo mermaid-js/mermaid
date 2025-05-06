@@ -34,7 +34,7 @@ let plotColorPalette = xyChartThemeConfig.plotColorPalette.split(',').map((color
 let hasSetXAxis = false;
 let hasSetYAxis = false;
 
-interface NormalTextType {
+export interface NormalTextType {
   type: 'text';
   text: string;
 }
