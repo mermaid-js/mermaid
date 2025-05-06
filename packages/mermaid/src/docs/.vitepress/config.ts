@@ -27,6 +27,17 @@ export default defineConfig({
   ],
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    ['meta', { property: 'og:title', content: 'Mermaid' }],
+    [
+      'meta',
+      {
+        property: 'og:description',
+        content: 'Create diagrams and visualizations using text and code.',
+      },
+    ],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:url', content: 'https://mermaid.js.org' }],
+    ['meta', { property: 'og:image', content: 'https://mermaid.js.org/favicon.svg' }],
     [
       'script',
       {
