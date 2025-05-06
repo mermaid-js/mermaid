@@ -6,7 +6,7 @@ import type { Info, Packet, Pie, Architecture, GitGraph, Radar, Treemap } from '
 import type { Info, Packet, Pie, Architecture, GitGraph, Radar, XY } from './index.js';
 >>>>>>> 74d659049 (🖋️ Add XY langium grammar)
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar;
+export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | XY;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
