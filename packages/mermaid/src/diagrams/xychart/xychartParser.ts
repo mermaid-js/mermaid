@@ -16,6 +16,7 @@ const populate = (ast: XY) => {
   if (title) {
     db.setDiagramTitle(title);
   }
+  // Note: xAxis and yAxis must be populated before the data
   if (xAxis) {
     const { title, data } = xAxis;
     if (title) {
