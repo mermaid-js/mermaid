@@ -257,7 +257,7 @@ describe('xy', () => {
       const result = parse(`
                 xy-beta
                 x-axis xAxisName [ "cat1  with space", cat2asdf, cat3]
-            `); // TODO: 💥 Breaking changes: we don't support category with spaces without strings
+            `);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(XY);
       const { xAxis } = result.value;
@@ -536,7 +536,7 @@ describe('xy', () => {
               line lineTitle [11, 45.5, 67, 23]
               bar barTitle2 [13, 42, 56.89]
               line lineTitle2 [45, 99, 12]
-          `); // TODO: 💥 Breaking changes: leading zeros are not supported
+          `);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(XY);
 
