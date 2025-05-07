@@ -106,19 +106,30 @@
 
   <body>
     <pre id="diagram4" class="mermaid">
+treemap
+    "Root"
+        "Branch 1"
+            "Leaf 1.1": 10
+            "Leaf 1.2": 15
+        "Branch 2"
+            "Leaf 2.1": 20
+            "Leaf 2.2": 25
+            "Leaf 2.3": 30
+    </pre>
+    <pre id="diagram4" class="mermaid2">
       flowchart LR
         AB["apa@apa@"] --> B(("`apa@apa`"))
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       flowchart
         D(("for D"))
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       flowchart LR
         A e1@==> B
         e1@{ animate: true}
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   A e1@--> B
   classDef animate stroke-width:2,stroke-dasharray:10\,8,stroke-dashoffset:-180,animation: edge-animation-frame 6s linear infinite, stroke-linecap: round

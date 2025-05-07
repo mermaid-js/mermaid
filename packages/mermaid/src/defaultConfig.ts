@@ -258,6 +258,16 @@ const config: RequiredDeep<MermaidConfig> = {
   radar: {
     ...defaultConfigJson.radar,
   },
+  treemap: {
+    useMaxWidth: true,
+    padding: 10,
+    showValues: true,
+    nodeWidth: 100,
+    nodeHeight: 40,
+    borderWidth: 1,
+    valueFontSize: 12,
+    labelFontSize: 14,
+  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

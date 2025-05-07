@@ -27,6 +27,7 @@ import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
+import { treemap } from '../diagrams/treemap/detector.js';
 
 let hasLoadedDiagrams = false;
 export const addDiagrams = () => {
@@ -96,6 +97,7 @@ export const addDiagrams = () => {
     xychart,
     block,
     architecture,
-    radar
+    radar,
+    treemap
   );
 };
