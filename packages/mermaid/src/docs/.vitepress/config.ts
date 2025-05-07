@@ -37,7 +37,10 @@ export default defineConfig({
     ],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:url', content: 'https://mermaid.js.org' }],
-    ['meta', { property: 'og:image', content: 'https://mermaid.js.org/favicon.svg' }],
+    [
+      'meta',
+      { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
+    ],
     [
       'script',
       {

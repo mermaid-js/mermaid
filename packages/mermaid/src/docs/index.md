@@ -11,8 +11,8 @@ hero:
   tagline: JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
   image:
-    light: /Hero.svg
-    dark: /Hero-Dark.svg
+    light: /hero-chart.svg
+    dark: /hero-chart-dark.svg
     alt: Mermaid diagram
   actions:
     - theme: brand
