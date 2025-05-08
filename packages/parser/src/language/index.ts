@@ -8,6 +8,7 @@ export {
   Architecture,
   GitGraph,
   Radar,
+  XY,
   Branch,
   Commit,
   Merge,
@@ -32,6 +33,7 @@ export {
   ArchitectureGeneratedModule,
   GitGraphGeneratedModule,
   RadarGeneratedModule,
+  XYGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -41,3 +43,4 @@ export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './architecture/index.js';
 export * from './radar/index.js';
+export * from './xy/index.js';
