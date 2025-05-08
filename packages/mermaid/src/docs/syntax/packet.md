@@ -11,7 +11,7 @@ This diagram type is particularly useful for developers, network engineers, educ
 ## Syntax
 
 ```md
-packet-beta
+packet
 start: "Block name" %% Single-bit block
 start-end: "Block name" %% Multi-bit blocks
 ... More Fields ...
@@ -23,7 +23,7 @@ start-end: "Block name" %% Multi-bit blocks
 ---
 title: "TCP Packet"
 ---
-packet-beta
+packet
 0-15: "Source Port"
 16-31: "Destination Port"
 32-63: "Sequence Number"
@@ -44,7 +44,7 @@ packet-beta
 ```
 
 ```mermaid-example
-packet-beta
+packet
 title UDP Packet
 0-15: "Source Port"
 16-31: "Destination Port"
@@ -92,7 +92,7 @@ config:
     packet:
       startByteColor: red
 ---
-packet-beta
+packet
 0-15: "Source Port"
 16-31: "Destination Port"
 32-63: "Sequence Number"

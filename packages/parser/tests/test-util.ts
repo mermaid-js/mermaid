@@ -32,9 +32,10 @@ const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined)
  * @param result - the result `parse` function.
  */
 export function expectNoErrorsOrAlternatives(result: ParseResult) {
-  expect(result.lexerErrors).toHaveLength(0);
-  expect(result.parserErrors).toHaveLength(0);
-
+  expect.soft(result.lexerErrors).toHaveLength(0);
+  expect.soft(result.parserErrors).toHaveLength(0);
+  // To see what the error is, in the logs.
+  expect(result.lexerErrors[0]).toBeUndefined();
   expect(consoleMock).not.toHaveBeenCalled();
   consoleMock.mockReset();
 }
