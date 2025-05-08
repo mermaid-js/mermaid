@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/radar.md](../../packages/mermaid/src/docs/syntax/radar.md).
 
-# Radar Diagram (v\<MERMAID_RELEASE_VERSION>+)
+# Radar Diagram (v11.6.0+)
 
 ## Introduction
 
@@ -177,7 +177,15 @@ Please refer to the [configuration](/config/schema-docs/config-defs-radar-diagra
 
 > **Note**
 > The default values for these variables depend on the theme used. To override the default values, set the desired values in the themeVariables section of the configuration:
-> %%{init: {"themeVariables": {"cScale0": "#FF0000", "cScale1": "#00FF00"}} }%%
+>
+> ---
+>
+> config:
+> themeVariables:
+> cScale0: "#FF0000"
+> cScale1: "#00FF00"
+>
+> ---
 
 Radar charts support the color scales `cScale${i}` where `i` is a number from `0` to the theme's maximum number of colors in its color scale. Usually, the maximum number of colors is `12`.
 
@@ -191,7 +199,15 @@ Radar charts support the color scales `cScale${i}` where `i` is a number from `0
 
 > **Note**
 > Specific variables for radar resides inside the `radar` key. To set the radar style options, use this syntax.
-> %%{init: {"themeVariables": {"radar": {"axisColor": "#FF0000"}} } }%%
+>
+> ---
+>
+> config:
+> themeVariables:
+> radar:
+> axisColor: "#FF0000"
+>
+> ---
 
 | Property             | Description                  | Default Value |
 | -------------------- | ---------------------------- | ------------- |

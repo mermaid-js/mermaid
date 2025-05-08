@@ -44,7 +44,7 @@ function addHtmlLabel(node) {
  * @param isNode
  * @deprecated svg-util/createText instead
  */
-const createLabel = (_vertexText, style, isTitle, isNode) => {
+const createLabel = async (_vertexText, style, isTitle, isNode) => {
   let vertexText = _vertexText || '';
   if (typeof vertexText === 'object') {
     vertexText = vertexText[0];
@@ -53,9 +53,10 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');
     log.debug('vertexText' + vertexText);
+    const label = await replaceIconSubstring(decodeEntities(vertexText));
     const node = {
       isNode,
-      label: replaceIconSubstring(decodeEntities(vertexText)),
+      label,
       labelStyle: style.replace('fill:', 'color:'),
     };
     let vertexNode = addHtmlLabel(node);
