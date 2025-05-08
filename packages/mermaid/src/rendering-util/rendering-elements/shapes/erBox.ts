@@ -89,6 +89,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   nameBBox.height += TEXT_PADDING;
   let yOffset = 0;
   const yOffsets = [];
+  const rows = [];
   let maxTypeWidth = 0;
   let maxNameWidth = 0;
   let maxKeysWidth = 0;
@@ -137,12 +138,12 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     );
     maxCommentWidth = Math.max(maxCommentWidth, commentBBox.width + PADDING);
 
-    yOffset +=
+    const rowHeight =
       Math.max(typeBBox.height, nameBBox.height, keysBBox.height, commentBBox.height) +
       TEXT_PADDING;
-    yOffsets.push(yOffset);
+    rows.push({ yOffset, rowHeight });
+    yOffset += rowHeight;
   }
-  yOffsets.pop();
   let totalWidthSections = 4;
 
   if (maxKeysWidth <= PADDING) {
@@ -185,8 +186,12 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     options.fillStyle = 'solid';
   }
 
+  let totalShapeBBoxHeight = 0;
+  if (rows.length > 0) {
+    totalShapeBBoxHeight = rows.reduce((sum, row) => sum + (row?.rowHeight ?? 0), 0);
+  }
   const w = Math.max(shapeBBox.width + PADDING * 2, node?.width || 0, maxWidth);
-  const h = Math.max(shapeBBox.height + (yOffsets[0] || yOffset) + TEXT_PADDING, node?.height || 0);
+  const h = Math.max((totalShapeBBoxHeight ?? 0) + nameBBox.height, node?.height || 0);
   const x = -w / 2;
   const y = -h / 2;
 
@@ -232,13 +237,10 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
   yOffsets.push(0);
   // Draw row rects
-  for (const [i, yOffset] of yOffsets.entries()) {
-    if (i === 0 && yOffsets.length > 1) {
-      continue;
-      // Skip first row
-    }
-    const isEven = i % 2 === 0 && yOffset !== 0;
-    const roughRect = rc.rectangle(x, nameBBox.height + y + yOffset, w, nameBBox.height, {
+  for (const [i, row] of rows.entries()) {
+    const contentRowIndex = i + 1; // Adjusted index to skip the header (name) row
+    const isEven = contentRowIndex % 2 === 0 && row.yOffset !== 0;
+    const roughRect = rc.rectangle(x, nameBBox.height + y + row?.yOffset, w, row?.rowHeight, {
       ...options,
       fill: isEven ? rowEven : rowOdd,
       stroke: nodeBorder,
@@ -246,7 +248,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
     shapeSvg
       .insert(() => roughRect, 'g.label')
       .attr('style', cssStyles!.join(''))
-      .attr('class', `row-rect-${i % 2 === 0 ? 'even' : 'odd'}`);
+      .attr('class', `row-rect-${isEven ? 'even' : 'odd'}`);
   }
 
   // Draw divider lines
