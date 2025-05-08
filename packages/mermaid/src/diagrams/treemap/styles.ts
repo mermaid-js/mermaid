@@ -22,9 +22,8 @@ export const getStyles: DiagramStylesProvider = ({
 
   return `
   .treemapNode {
-    fill: pink;
-    stroke: black;
-    stroke-width: 1;
+    // stroke: black;
+    // stroke-width: 1;
   }
 	.packetByte {
 		font-size: ${options.byteFontSize};

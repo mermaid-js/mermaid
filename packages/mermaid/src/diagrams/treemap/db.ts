@@ -16,7 +16,7 @@ const defaultTreemapData: TreemapData = {
   nodes: [],
   levels: new Map(),
 };
-
+let outerNodes: TreemapNode[] = [];
 let data: TreemapData = structuredClone(defaultTreemapData);
 
 const getConfig = () => {
@@ -32,17 +32,22 @@ const addNode = (node: TreemapNode, level: number) => {
   data.nodes.push(node);
   data.levels.set(node, level);
 
+  if (level === 0) {
+    outerNodes.push(node);
+  }
+
   // Set the root node if this is a level 0 node and we don't have a root yet
   if (level === 0 && !data.root) {
     data.root = node;
   }
 };
 
-const getRoot = (): TreemapNode | undefined => data.root;
+const getRoot = (): TreemapNode | undefined => ({ name: '', children: outerNodes });
 
 const clear = () => {
   commonClear();
   data = structuredClone(defaultTreemapData);
+  outerNodes = [];
 };
 
 export const db: TreemapDB = {
