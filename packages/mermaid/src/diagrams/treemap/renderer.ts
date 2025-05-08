@@ -3,10 +3,9 @@ import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { TreemapDB, TreemapNode } from './types.js';
+import { scaleOrdinal, treemap, hierarchy, format } from 'd3';
 
-const DEFAULT_PADDING = 10;
-const DEFAULT_NODE_WIDTH = 100;
-const DEFAULT_NODE_HEIGHT = 40;
+const DEFAULT_PADDING = 1;
 
 /**
  * Draws the treemap diagram
@@ -23,136 +22,144 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   }
 
   const svg = selectSvgElement(id);
-
-  // Calculate the size of the treemap
-  const { width, height } = calculateTreemapSize(root, config);
+  // Use config dimensions or defaults
+  const width = config.nodeWidth ? config.nodeWidth * 10 : 960;
+  const height = config.nodeHeight ? config.nodeHeight * 10 : 500;
   const titleHeight = title ? 30 : 0;
-  const svgWidth = width + padding * 2;
-  const svgHeight = height + padding * 2 + titleHeight;
+  const svgWidth = width;
+  const svgHeight = height + titleHeight;
 
   // Set the SVG size
   svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
   configureSvgSize(svg, svgHeight, svgWidth, config.useMaxWidth);
 
+  // Format for displaying values
+  const valueFormat = format(',d');
+
+  // Create color scale
+  const colorScale = scaleOrdinal<string>().range([
+    '#8dd3c7',
+    '#ffffb3',
+    '#bebada',
+    '#fb8072',
+    '#80b1d3',
+    '#fdb462',
+    '#b3de69',
+    '#fccde5',
+    '#d9d9d9',
+    '#bc80bd',
+  ]);
+
   // Create a container group to hold all elements
-  const g = svg.append('g').attr('transform', `translate(${padding}, ${padding + titleHeight})`);
+  const g = svg.append('g').attr('transform', `translate(0, ${titleHeight})`);
 
   // Draw the title if it exists
   if (title) {
     svg
       .append('text')
       .attr('x', svgWidth / 2)
-      .attr('y', padding + titleHeight / 2)
+      .attr('y', titleHeight / 2)
       .attr('class', 'treemapTitle')
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
       .text(title);
   }
 
-  // Draw the treemap recursively
-  drawNode(g, root, 0, 0, width, height, config);
-};
+  // Convert data to hierarchical structure
+  const hierarchyRoot = hierarchy<TreemapNode>(root)
+    .sum((d) => d.value || 0)
+    .sort((a, b) => (b.value || 0) - (a.value || 0));
 
-/**
- * Calculates the size of the treemap
- */
-const calculateTreemapSize = (
-  root: TreemapNode,
-  config: any
-): { width: number; height: number } => {
-  // If we have a value, use it as the size
-  if (root.value) {
-    return {
-      width: config.nodeWidth || DEFAULT_NODE_WIDTH,
-      height: config.nodeHeight || DEFAULT_NODE_HEIGHT,
-    };
-  }
+  // Create treemap layout
+  const treemapLayout = treemap<TreemapNode>().size([width, height]).padding(padding).round(true);
 
-  // Otherwise, layout the children
-  if (!root.children || root.children.length === 0) {
-    return {
-      width: config.nodeWidth || DEFAULT_NODE_WIDTH,
-      height: config.nodeHeight || DEFAULT_NODE_HEIGHT,
-    };
-  }
+  // Apply the treemap layout to the hierarchy
+  const treemapData = treemapLayout(hierarchyRoot);
 
-  // Calculate based on children
-  let totalWidth = 0;
-  let maxHeight = 0;
+  // Draw ALL nodes, not just leaves
+  const allNodes = treemapData.descendants();
 
-  // Arrange in a simple tiled layout
-  for (const child of root.children) {
-    const { width, height } = calculateTreemapSize(child, config);
-    totalWidth += width + (config.padding || DEFAULT_PADDING);
-    maxHeight = Math.max(maxHeight, height);
-  }
+  // Draw section nodes (non-leaf nodes)
+  const sections = g
+    .selectAll('.treemapSection')
+    .data(allNodes.filter((d) => d.children && d.children.length > 0))
+    .enter()
+    .append('g')
+    .attr('class', 'treemapSection')
+    .attr('transform', (d) => `translate(${d.x0},${d.y0})`);
 
-  // Remove the last padding
-  totalWidth -= config.padding || DEFAULT_PADDING;
-
-  return {
-    width: Math.max(totalWidth, config.nodeWidth || DEFAULT_NODE_WIDTH),
-    height: Math.max(
-      maxHeight + (config.padding || DEFAULT_PADDING) * 2,
-      config.nodeHeight || DEFAULT_NODE_HEIGHT
-    ),
-  };
-};
-
-/**
- * Recursively draws a node and its children in the treemap
- */
-const drawNode = (
-  parent: any,
-  node: TreemapNode,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  config: any
-) => {
-  // Add rectangle
-  parent
+  // Add rectangles for the sections
+  sections
     .append('rect')
-    .attr('x', x)
-    .attr('y', y)
-    .attr('width', width)
-    .attr('height', height)
-    .attr('class', `treemapNode ${node.value ? 'treemapLeaf' : 'treemapSection'}`);
+    .attr('width', (d) => d.x1 - d.x0)
+    .attr('height', (d) => d.y1 - d.y0)
+    .attr('class', 'treemapSectionRect')
+    .attr('fill', (d) => colorScale(d.data.name))
+    .attr('fill-opacity', 0.2)
+    .attr('stroke', (d) => colorScale(d.data.name))
+    .attr('stroke-width', 1);
 
-  // Add the label
-  parent
+  // Add section labels
+  sections
     .append('text')
-    .attr('x', x + width / 2)
-    .attr('y', y + 20) // Position the label at the top
-    .attr('class', 'treemapLabel')
-    .attr('text-anchor', 'middle')
-    .text(node.name);
+    .attr('class', 'treemapSectionLabel')
+    .attr('x', 4)
+    .attr('y', 14)
+    .text((d) => d.data.name)
+    .attr('font-weight', 'bold');
 
-  // Add the value if it exists and should be shown
-  if (node.value !== undefined && config.showValues !== false) {
-    parent
+  // Add section values if enabled
+  if (config.showValues !== false) {
+    sections
       .append('text')
-      .attr('x', x + width / 2)
-      .attr('y', y + height - 10) // Position the value at the bottom
-      .attr('class', 'treemapValue')
-      .attr('text-anchor', 'middle')
-      .text(node.value);
+      .attr('class', 'treemapSectionValue')
+      .attr('x', 4)
+      .attr('y', 28)
+      .text((d) => (d.value ? valueFormat(d.value) : ''))
+      .attr('font-style', 'italic');
   }
 
-  // If this is a section with children, layout and draw the children
-  if (!node.value && node.children && node.children.length > 0) {
-    // Simple tiled layout for children
-    const padding = config.padding || DEFAULT_PADDING;
-    let currentX = x + padding;
-    const innerY = y + 30; // Allow space for the label
-    const innerHeight = height - 40; // Allow space for label
+  // Draw the leaf nodes (nodes with no children)
+  const cell = g
+    .selectAll('.treemapLeaf')
+    .data(treemapData.leaves())
+    .enter()
+    .append('g')
+    .attr('class', 'treemapNode')
+    .attr('transform', (d) => `translate(${d.x0},${d.y0})`);
 
-    for (const child of node.children) {
-      const childWidth = width / node.children.length - padding;
-      drawNode(parent, child, currentX, innerY, childWidth, innerHeight, config);
-      currentX += childWidth + padding;
-    }
+  // Add rectangle for each leaf node
+  cell
+    .append('rect')
+    .attr('width', (d) => d.x1 - d.x0)
+    .attr('height', (d) => d.y1 - d.y0)
+    .attr('class', 'treemapLeaf')
+    .attr('fill', (d) => {
+      // Go up to parent for color
+      let current = d;
+      while (current.depth > 1 && current.parent) {
+        current = current.parent;
+      }
+      return colorScale(current.data.name);
+    })
+    .attr('fill-opacity', 0.8);
+
+  // Add node labels
+  cell
+    .append('text')
+    .attr('class', 'treemapLabel')
+    .attr('x', 4)
+    .attr('y', 14)
+    .text((d) => d.data.name);
+
+  // Add node values if enabled
+  if (config.showValues !== false) {
+    cell
+      .append('text')
+      .attr('class', 'treemapValue')
+      .attr('x', 4)
+      .attr('y', 26)
+      .text((d) => (d.value ? valueFormat(d.value) : ''));
   }
 };
 

@@ -4,6 +4,7 @@ import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { db } from './db.js';
 import type { TreemapNode } from './types.js';
+import { buildHierarchy } from './utils.js';
 
 /**
  * Populates the database with data from the Treemap AST
@@ -12,11 +13,8 @@ import type { TreemapNode } from './types.js';
 const populate = (ast: any) => {
   populateCommonDb(ast, db);
 
-  // Process rows
-  let lastLevel = 0;
-  let lastNode: TreemapNode | undefined;
-
-  // Process each row in the treemap, building the node hierarchy
+  const items = [];
+  // Extract data from each row in the treemap
   for (const row of ast.TreemapRows || []) {
     const item = row.item;
     if (!item) {
@@ -25,57 +23,26 @@ const populate = (ast: any) => {
 
     const level = row.indent ? parseInt(row.indent) : 0;
     const name = getItemName(item);
-
-    // Create the node
-    const node: TreemapNode = {
-      name,
-      children: [],
-    };
-
-    // If it's a leaf node, add the value
-    if (item.$type === 'Leaf') {
-      node.value = item.value;
-    }
-
-    // Add to the right place in hierarchy
-    if (level === 0) {
-      // Root node
-      db.addNode(node, level);
-    } else if (level > lastLevel) {
-      // Child of the last node
-      if (lastNode) {
-        lastNode.children = lastNode.children || [];
-        lastNode.children.push(node);
-        node.parent = lastNode;
-      }
-      db.addNode(node, level);
-    } else if (level === lastLevel) {
-      // Sibling of the last node
-      if (lastNode?.parent) {
-        lastNode.parent.children = lastNode.parent.children || [];
-        lastNode.parent.children.push(node);
-        node.parent = lastNode.parent;
-      }
-      db.addNode(node, level);
-    } else if (level < lastLevel) {
-      // Go up in the hierarchy
-      let parent = lastNode ? lastNode.parent : undefined;
-      for (let i = lastLevel; i > level; i--) {
-        if (parent) {
-          parent = parent.parent;
-        }
-      }
-      if (parent) {
-        parent.children = parent.children || [];
-        parent.children.push(node);
-        node.parent = parent;
-      }
-      db.addNode(node, level);
-    }
-
-    lastLevel = level;
-    lastNode = node;
+    const itemData = { level, name, type: item.$type, value: item.value };
+    items.push(itemData);
   }
+
+  // Convert flat structure to hierarchical
+  const hierarchyNodes = buildHierarchy(items);
+
+  // Add all nodes to the database
+  const addNodesRecursively = (nodes: TreemapNode[], level: number) => {
+    for (const node of nodes) {
+      db.addNode(node, level);
+      if (node.children && node.children.length > 0) {
+        addNodesRecursively(node.children, level + 1);
+      }
+    }
+  };
+
+  addNodesRecursively(hierarchyNodes, 0);
+
+  log.debug('Processed items:', items);
 };
 
 /**

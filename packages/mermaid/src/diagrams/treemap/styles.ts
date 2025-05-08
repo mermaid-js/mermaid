@@ -21,6 +21,11 @@ export const getStyles: DiagramStylesProvider = ({
   const options = cleanAndMerge(defaultPacketStyleOptions, packet);
 
   return `
+  .treemapNode {
+    fill: pink;
+    stroke: black;
+    stroke-width: 1;
+  }
 	.packetByte {
 		font-size: ${options.byteFontSize};
 	}
