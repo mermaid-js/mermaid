@@ -15,7 +15,7 @@
     "git graph"
   ],
   "scripts": {
-    "clean": "pnpm run -r clean ",
+    "clean": "pnpm run -r clean",
     "build": "pnpm build:esbuild && pnpm build:types",
     "build:esbuild": "pnpm clean && tsx .esbuild/build.ts",
     "build:vite": "pnpm clean && tsx .vite/build.ts",
