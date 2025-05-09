@@ -38,7 +38,6 @@ test('default', () => {
 
 function buildConfig(supported: Record<string, boolean>, target: string | undefined) {
   return {
-    bundle: true,
     ...(Object.keys(supported).length === 0 ? {} : { supported }),
     ...(target === undefined ? {} : { target }),
   };
@@ -48,7 +47,7 @@ test('spread with no options', () => {
   const supported = {};
   const target = parseOption('--target', ['cmd']);
   const config = buildConfig(supported, target);
-  expect(config).toStrictEqual({ bundle: true });
+  expect(config).toStrictEqual({});
 });
 
 test('spread', () => {
@@ -57,7 +56,6 @@ test('spread', () => {
   const target = parseOption('--target', argv);
   const config = buildConfig(supported, target);
   expect(config).toStrictEqual({
-    bundle: true,
     supported: { 'class-static-blocks': false },
     target: 'ES2018',
   });
