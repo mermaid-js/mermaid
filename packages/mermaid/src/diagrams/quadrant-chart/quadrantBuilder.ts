@@ -1,4 +1,4 @@
-import * as d3Scale from 'd3-scale';
+import { scaleLinear } from 'd3-scale';
 import type { BaseDiagramConfig, QuadrantChartConfig } from '../../config.type.js';
 import defaultConfig from '../../defaultConfig.js';
 import { log } from '../../logger.js';
@@ -477,13 +477,11 @@ export class QuadrantBuilder {
 
     const { quadrantHeight, quadrantLeft, quadrantTop, quadrantWidth } = quadrantSpace;
 
-    const xAxis = d3Scale
-      .scaleLinear()
+    const xAxis = scaleLinear()
       .domain([0, 1])
       .range([quadrantLeft, quadrantWidth + quadrantLeft]);
 
-    const yAxis = d3Scale
-      .scaleLinear()
+    const yAxis = scaleLinear()
       .domain([0, 1])
       .range([quadrantHeight + quadrantTop, quadrantTop]);
 
