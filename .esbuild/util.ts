@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
+import { parseOption } from '../.build/util.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -34,6 +35,8 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
+    supported: { 'class-static-blocks': false },
+    target: parseOption('--target') ?? 'ES2020',
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
     sourcemap: 'external',

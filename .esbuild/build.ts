@@ -99,6 +99,9 @@ const main = async () => {
   // it should build `parser` before `mermaid` because it's a dependency
   for (const pkg of packageNames) {
     await buildPackage(pkg).catch(handler);
+    if (process.argv.includes('--' + pkg)) {
+      break;
+    }
   }
   await buildTinyMermaid();
 };

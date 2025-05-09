@@ -80,7 +80,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
       'import.meta.vitest': 'undefined',
     },
     resolve: {
-      extensions: [],
+      extensions: ['.js'],
     },
     plugins: [
       jisonPlugin(),

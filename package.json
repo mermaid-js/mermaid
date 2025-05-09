@@ -15,8 +15,10 @@
     "git graph"
   ],
   "scripts": {
+    "clean": "pnpm run -r clean",
     "build": "pnpm build:esbuild && pnpm build:types",
-    "build:esbuild": "pnpm run -r clean && tsx .esbuild/build.ts",
+    "build:esbuild": "pnpm clean && tsx .esbuild/build.ts",
+    "build:vite": "pnpm clean && tsx .vite/build.ts",
     "build:mermaid": "pnpm build:esbuild --mermaid",
     "build:viz": "pnpm build:esbuild --visualize",
     "build:types": "pnpm --filter mermaid types:build-config && tsx .build/types.ts",
@@ -127,7 +129,7 @@
     "tsx": "^4.7.3",
     "typescript": "~5.7.3",
     "typescript-eslint": "^8.32.0",
-    "vite": "^6.1.1",
+    "vite": "^6.3.4",
     "vite-plugin-istanbul": "^7.0.0",
     "vitest": "^3.0.6"
   },
