@@ -27,6 +27,10 @@ test(
   }
 );
 
+test('illegal supported option', () => {
+  expect(parseOptions('--supported', ['cmd', '--supported=true'])).toStrictEqual({});
+});
+
 test('default', () => {
   expect(parseOption('--target', ['cmd'])).toBe(undefined);
   expect(parseOptions('--supported', ['cmd'])).toStrictEqual({});
