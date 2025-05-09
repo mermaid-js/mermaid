@@ -9,19 +9,25 @@
 grammar Treemap
 
 // Interface declarations for data types
-interface Item {}
-interface Section extends Item {
+interface Item {
     name: string
+    classSelector?: string // For ::: class
+}
+interface Section extends Item {
 }
 interface Leaf extends Item {
-    name: string
     value: number
 }
-
+interface ClassDefStatement {
+    className: string
+    styleText: string // Optional style text
+}
 entry TreemapDoc:
     TREEMAP_KEYWORD
     (TreemapRows+=TreemapRow)*;
 
+terminal CLASS_DEF: /classDef\s+([a-zA-Z_][a-zA-Z0-9_]+)(?:\s+([^;\r\n]*))?(?:;)?/;
+terminal STYLE_SEPARATOR: ':::';
 terminal SEPARATOR: ':';
 terminal COMMA: ',';
 
@@ -30,24 +36,28 @@ hidden terminal ML_COMMENT: /\%\%[^\n]*/;
 hidden terminal NL: /\r?\n/;
 
 TreemapRow:
-    indent=INDENTATION? item=Item;
+    indent=INDENTATION? (item=Item | ClassDef);
+
+// Class definition statement handled by the value converter
+ClassDef returns string:
+    CLASS_DEF;
 
 Item returns Item:
     Leaf | Section;
 
 // Use a special rule order to handle the parsing precedence
 Section returns Section:
-    name=STRING;
+    name=STRING (STYLE_SEPARATOR classSelector=ID)?;
 
 Leaf returns Leaf:
-    name=STRING INDENTATION? (SEPARATOR | COMMA) INDENTATION? value=MyNumber;
+    name=STRING INDENTATION? (SEPARATOR | COMMA) INDENTATION? value=MyNumber (STYLE_SEPARATOR classSelector=ID)?;
 
 // This should be processed before whitespace is ignored
 terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
 // Keywords with fixed text patterns
 terminal TREEMAP_KEYWORD:  'treemap';
-
+terminal ID: /[a-zA-Z_][a-zA-Z0-9_]*/;
 // Define as a terminal rule
 terminal NUMBER: /[0-9_\.\,]+/;
 

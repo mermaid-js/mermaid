@@ -20,9 +20,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const treemapInnerPadding = config.padding !== undefined ? config.padding : DEFAULT_INNER_PADDING;
   const title = treemapDb.getDiagramTitle();
   const root = treemapDb.getRoot();
-  // const theme = config.getThemeVariables();
   const { themeVariables } = getConfig();
-  console.log('root', root);
   if (!root) {
     return;
   }
@@ -272,19 +270,87 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const leafLabels = cell
     .append('text')
     .attr('class', 'treemapLabel')
-    .attr('x', 4)
-    .attr('y', 14)
-    .style('font-size', '34px')
+    .attr('x', (d) => (d.x1 - d.x0) / 2)
+    .attr('y', (d) => (d.y1 - d.y0) / 2)
+    .style('text-anchor', 'middle')
+    .style('dominant-baseline', 'middle')
+    .style('font-size', '38px')
     .style('fill', (d) => colorScaleLabel(d.data.name))
     // .style('stroke', (d) => colorScaleLabel(d.data.name))
     .attr('clip-path', (d, i) => `url(#clip-${id}-${i})`)
     .text((d) => d.data.name);
 
   leafLabels.each(function (d) {
+    const self = select(this);
     const nodeWidth = d.x1 - d.x0;
     const nodeHeight = d.y1 - d.y0;
-    if (nodeWidth < 30 || nodeHeight < 20) {
-      select(this).style('display', 'none');
+    const textNode = self.node()!;
+
+    const padding = 4;
+    const availableWidth = nodeWidth - 2 * padding;
+    const availableHeight = nodeHeight - 2 * padding;
+
+    if (availableWidth < 10 || availableHeight < 10) {
+      self.style('display', 'none');
+      return;
+    }
+
+    let currentLabelFontSize = parseInt(self.style('font-size'), 10);
+    const minLabelFontSize = 8;
+    const originalValueRelFontSize = 28; // Original font size of value, for max cap
+    const valueScaleFactor = 0.6; // Value font size as a factor of label font size
+    const minValueFontSize = 6;
+    const spacingBetweenLabelAndValue = 2;
+
+    // 1. Adjust label font size to fit width
+    while (
+      textNode.getComputedTextLength() > availableWidth &&
+      currentLabelFontSize > minLabelFontSize
+    ) {
+      currentLabelFontSize--;
+      self.style('font-size', `${currentLabelFontSize}px`);
+    }
+
+    // 2. Adjust both label and prospective value font size to fit combined height
+    let prospectiveValueFontSize = Math.max(
+      minValueFontSize,
+      Math.min(originalValueRelFontSize, Math.round(currentLabelFontSize * valueScaleFactor))
+    );
+    let combinedHeight =
+      currentLabelFontSize + spacingBetweenLabelAndValue + prospectiveValueFontSize;
+
+    while (combinedHeight > availableHeight && currentLabelFontSize > minLabelFontSize) {
+      currentLabelFontSize--;
+      prospectiveValueFontSize = Math.max(
+        minValueFontSize,
+        Math.min(originalValueRelFontSize, Math.round(currentLabelFontSize * valueScaleFactor))
+      );
+      if (
+        prospectiveValueFontSize < minValueFontSize &&
+        currentLabelFontSize === minLabelFontSize
+      ) {
+        break;
+      } // Avoid shrinking label if value is already at min
+      self.style('font-size', `${currentLabelFontSize}px`);
+      combinedHeight =
+        currentLabelFontSize + spacingBetweenLabelAndValue + prospectiveValueFontSize;
+      if (prospectiveValueFontSize <= minValueFontSize && combinedHeight > availableHeight) {
+        // If value is at min and still doesn't fit, label might need to shrink more alone
+        // This might lead to label being too small for its own text, checked next
+      }
+    }
+
+    // Update label font size based on height adjustment
+    self.style('font-size', `${currentLabelFontSize}px`);
+
+    // 3. Final visibility check for the label
+    if (
+      textNode.getComputedTextLength() > availableWidth ||
+      currentLabelFontSize < minLabelFontSize ||
+      availableHeight < currentLabelFontSize
+    ) {
+      self.style('display', 'none');
+      // If label is hidden, value will be hidden by its own .each() loop
     }
   });
 
@@ -293,17 +359,64 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     const leafValues = cell
       .append('text')
       .attr('class', 'treemapValue')
-      .attr('x', 4)
-      .attr('y', 26)
-      .style('font-size', '10px')
+      .attr('x', (d) => (d.x1 - d.x0) / 2)
+      .attr('y', function (d) {
+        // Y position calculated dynamically in leafValues.each based on final label metrics
+        return (d.y1 - d.y0) / 2; // Placeholder, will be overwritten
+      })
+      .style('text-anchor', 'middle')
+      .style('dominant-baseline', 'hanging')
+      // Initial font size, will be scaled in .each()
+      .style('font-size', '28px')
       .attr('clip-path', (d, i) => `url(#clip-${id}-${i})`)
       .text((d) => (d.value ? valueFormat(d.value) : ''));
 
     leafValues.each(function (d) {
+      const valueTextElement = select(this);
+      const parentCellNode = this.parentNode as SVGGElement | null;
+
+      if (!parentCellNode) {
+        valueTextElement.style('display', 'none');
+        return;
+      }
+
+      const labelElement = select(parentCellNode).select<SVGTextElement>('.treemapLabel');
+
+      if (labelElement.empty() || labelElement.style('display') === 'none') {
+        valueTextElement.style('display', 'none');
+        return;
+      }
+
+      const finalLabelFontSize = parseFloat(labelElement.style('font-size'));
+      const originalValueFontSize = 28; // From initial style setting
+      const valueScaleFactor = 0.6;
+      const minValueFontSize = 6;
+      const spacingBetweenLabelAndValue = 2;
+
+      const actualValueFontSize = Math.max(
+        minValueFontSize,
+        Math.min(originalValueFontSize, Math.round(finalLabelFontSize * valueScaleFactor))
+      );
+      valueTextElement.style('font-size', `${actualValueFontSize}px`);
+
+      const labelCenterY = (d.y1 - d.y0) / 2;
+      const valueTopActualY = labelCenterY + finalLabelFontSize / 2 + spacingBetweenLabelAndValue;
+      valueTextElement.attr('y', valueTopActualY);
+
       const nodeWidth = d.x1 - d.x0;
-      const nodeHeight = d.y1 - d.y0;
-      if (nodeWidth < 30 || nodeHeight < 30) {
-        select(this).style('display', 'none');
+      const nodeTotalHeight = d.y1 - d.y0;
+      const cellBottomPadding = 4;
+      const maxValueBottomY = nodeTotalHeight - cellBottomPadding;
+      const availableWidthForValue = nodeWidth - 2 * 4; // padding for value text
+
+      if (
+        valueTextElement.node()!.getComputedTextLength() > availableWidthForValue ||
+        valueTopActualY + actualValueFontSize > maxValueBottomY ||
+        actualValueFontSize < minValueFontSize
+      ) {
+        valueTextElement.style('display', 'none');
+      } else {
+        valueTextElement.style('display', null);
       }
     });
   }
