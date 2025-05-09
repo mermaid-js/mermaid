@@ -297,18 +297,18 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
 </html>
 ```
 
-In this example, `mermaid.js` is built from source with [`--supported`](https://esbuild.github.io/api/#supported) and  [`--target`](https://esbuild.github.io/api/#target) to tackle compatibility issues:
+In this example, `mermaid.js` is built from source with `--target` to tackle compatibility issues:
 
 `mermaid.js` is located under `packages/mermaid/dist`.
 
 ```bash
-pnpm run build:esbuild --mermaid --supported:class-static-blocks=false --target=ES2018
+pnpm run build:esbuild --mermaid --target=ES2018
 ```
 
-To disable source-map, use `--source-map=false`:
+To disable [`source-map`](https://esbuild.github.io/api/#sourcemap), use `--source-map=false`:
 
 ```bash
-pnpm run build:mermaid --source-map=false
+pnpm run build:esbuild --mermaid --source-map=false
 ```
 
 ## 5. Adding Mermaid as a dependency
