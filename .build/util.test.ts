@@ -1,5 +1,4 @@
 import { expect, test } from 'vitest';
-
 import { parseOption } from './util.js';
 
 test('--target=ES2018 parsed to ES2018', () => {
