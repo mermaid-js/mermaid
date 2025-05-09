@@ -305,6 +305,12 @@ In this example, `mermaid.js` is built from source with [`--supported`](https://
 pnpm run build:esbuild --mermaid --supported:class-static-blocks=false --target=ES2018
 ```
 
+To disable source-map, use `--source-map=false`:
+
+```bash
+pnpm run build:mermaid --source-map=false
+```
+
 ## 5. Adding Mermaid as a dependency
 
 Below are the steps for adding Mermaid as a dependency:

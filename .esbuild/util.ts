@@ -27,6 +27,7 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
 const buildOptions = (override: BuildOptions): BuildOptions => {
   const supported = parseOptions('--supported');
   const target = parseOption('--target');
+  const sourceMap = parseOption('--source-map');
   return {
     bundle: true,
     minify: true,
@@ -39,7 +40,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     ...(target === undefined ? {} : { target }),
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
-    sourcemap: 'external',
+    sourcemap: sourceMap === 'false' ? false : 'external',
     ...override,
   };
 };
