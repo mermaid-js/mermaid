@@ -39,7 +39,16 @@ const CONSTANTS = {
 } as const;
 
 interface BaseStmt {
-  stmt: 'applyClass' | 'classDef' | 'dir' | 'relation' | 'state' | 'style' | 'root' | 'default';
+  stmt:
+    | 'applyClass'
+    | 'classDef'
+    | 'dir'
+    | 'relation'
+    | 'state'
+    | 'style'
+    | 'root'
+    | 'default'
+    | 'click';
 }
 
 interface ApplyClassStmt extends BaseStmt {
@@ -92,6 +101,13 @@ export interface RootStmt {
   doc?: Stmt[];
 }
 
+export interface ClickStmt extends BaseStmt {
+  stmt: 'click';
+  id: string;
+  url: string;
+  tooltip: string;
+}
+
 interface Note {
   position?: 'left of' | 'right of';
   text: string;
@@ -104,7 +120,8 @@ export type Stmt =
   | RelationStmt
   | StateStmt
   | StyleStmt
-  | RootStmt;
+  | RootStmt
+  | ClickStmt;
 
 interface DiagramEdge {
   id1: string;
@@ -185,6 +202,7 @@ export class StateDB {
   private currentDocument = this.documents.root;
   private startEndCount = 0;
   private dividerCnt = 0;
+  private links = new Map<string, { url: string; tooltip: string }>();
 
   static readonly relationType = {
     AGGREGATION: 0,
@@ -229,6 +247,9 @@ export class StateDB {
           break;
         case STMT_APPLYCLASS:
           this.setCssClass(item.id.trim(), item.styleClass);
+          break;
+        case 'click':
+          this.addLink(item.id, item.url, item.tooltip);
           break;
       }
     }
@@ -438,6 +459,7 @@ export class StateDB {
     this.startEndCount = 0;
     this.classes = newClassesList();
     if (!saveCommon) {
+      this.links = new Map(); // <-- add here
       commonClear();
     }
   }
@@ -456,6 +478,21 @@ export class StateDB {
 
   getRelations() {
     return this.currentDocument.relations;
+  }
+
+  /**
+   * Adds a clickable link to a state.
+   */
+  addLink(stateId: string, url: string, tooltip: string): void {
+    this.links.set(stateId, { url, tooltip });
+    log.warn('Adding link', stateId, url, tooltip);
+  }
+
+  /**
+   * Get all registered links.
+   */
+  getLinks(): Map<string, { url: string; tooltip: string }> {
+    return this.links;
   }
 
   /**
