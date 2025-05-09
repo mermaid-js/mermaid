@@ -161,4 +161,42 @@ describe('Timeline diagram', () => {
       {}
     );
   });
+
+  it('11: should render a simple timeline with a custom width of 300', () => {
+    imgSnapshotTest(
+      `%%{init: { 'logLevel': 'debug', 'timeline': { 'width': 300 } } }%%
+    timeline
+        title History of Social Media Platform
+          2002 : LinkedIn
+          2004 : Facebook : Google
+          2005 : Youtube
+          2006 : Twitter
+          2007 : Tumblr
+          2008 : Instagram
+          2010 : Pinterest
+      `,
+      {
+        timeline: {
+          width: 300,
+        },
+      }
+    );
+  });
+
+  it('12: should render a simple timeline with default width of 150', () => {
+    imgSnapshotTest(
+      `%%{init: { 'logLevel': 'debug', 'timeline': { 'width': 150 } } }%%
+    timeline
+        title History of Social Media Platform
+          2002 : LinkedIn
+          2004 : Facebook : Google
+          2005 : Youtube
+          2006 : Twitter
+          2007 : Tumblr
+          2008 : Instagram
+          2010 : Pinterest
+      `,
+      {}
+    );
+  });
 });
