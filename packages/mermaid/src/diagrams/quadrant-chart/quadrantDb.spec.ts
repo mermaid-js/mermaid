@@ -60,7 +60,7 @@ describe('quadrant unit tests', () => {
 
     quadrantDb.clear();
     parser.yy = quadrantDb;
-    parser.quadrantDb(input);
+    parser.parse(input);
 
     expect(quadrantDb.getQuadrantData().quadrants[0].text.text).toBe(
       '🔥 This is a very long quadrant title that should wrap properly inside the box'
