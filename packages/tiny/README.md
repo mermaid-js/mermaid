@@ -23,14 +23,6 @@ If you need to use mermaid in your project, please install the full [`mermaid` p
 
 ## Usage via CDN
 
-### Latest version
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/@mermaid-js/tiny/dist/mermaid.tiny.js"></script>
-```
-
-### Specific version
-
 ```html
 <!-- Format -->
 <script src="https://cdn.jsdelivr.net/npm/@mermaid-js/tiny@<MERMAID_MAJOR_VERSION>/dist/mermaid.tiny.js"></script>
