@@ -15,8 +15,9 @@
     "git graph"
   ],
   "scripts": {
+    "clean": "pnpm run -r clean",
     "build": "pnpm build:esbuild && pnpm build:types",
-    "build:esbuild": "pnpm run -r clean && tsx .esbuild/build.ts",
+    "build:esbuild": "pnpm clean && tsx .esbuild/build.ts",
     "build:mermaid": "pnpm build:esbuild --mermaid",
     "build:viz": "pnpm build:esbuild --visualize",
     "build:types": "pnpm --filter mermaid types:build-config && tsx .build/types.ts",
