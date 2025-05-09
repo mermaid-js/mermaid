@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   roughjs:
-    hash: vxb6t6fqvzyhwhtjiliqr25jyq
+    hash: 3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64
     path: patches/roughjs.patch
 
 importers:
@@ -267,7 +267,7 @@ importers:
         version: 15.0.7
       roughjs:
         specifier: ^4.6.6
-        version: 4.6.6(patch_hash=vxb6t6fqvzyhwhtjiliqr25jyq)
+        version: 4.6.6(patch_hash=3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64)
       stylis:
         specifier: ^4.3.6
         version: 4.3.6
@@ -20340,7 +20340,7 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.40.2
       fsevents: 2.3.3
 
-  roughjs@4.6.6(patch_hash=vxb6t6fqvzyhwhtjiliqr25jyq):
+  roughjs@4.6.6(patch_hash=3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64):
     dependencies:
       hachure-fill: 0.5.2
       path-data-parser: 0.1.0
