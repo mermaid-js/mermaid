@@ -290,11 +290,17 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   /**
    * Width of nodes where text is wrapped.
    *
-   * When using markdown strings the text ius wrapped automatically, this
+   * When using markdown strings the text is wrapped automatically, this
    * value sets the max width of a text before it continues on a new line.
    *
    */
   wrappingWidth?: number;
+  /**
+   * If true, subgraphs without explicit direction will inherit the global graph direction
+   * (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
+   *
+   */
+  inheritDir?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
