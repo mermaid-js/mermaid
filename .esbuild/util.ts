@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
-import { parseOption } from '../.build/util.js';
+import { parseOption, parseOptions } from '../.build/util.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -25,6 +25,8 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
 } as const;
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
+  const supported = parseOptions('--supported');
+  const target = parseOption('--target');
   return {
     bundle: true,
     minify: true,
@@ -33,6 +35,8 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
+    ...(Object.keys(supported).length === 0 ? {} : { supported }),
+    ...(target === undefined ? {} : { target }),
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
     sourcemap: 'external',
