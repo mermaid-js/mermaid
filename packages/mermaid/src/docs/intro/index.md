@@ -109,6 +109,7 @@ To Deploy Mermaid:
 
 - [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
 - [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
+- [Mermaid Tiny](https://github.com/mermaid-js/mermaid/tree/develop/packages/tiny)
 - [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
 - [Mermaid Parcel Demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 
