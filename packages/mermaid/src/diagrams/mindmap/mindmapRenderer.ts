@@ -149,7 +149,7 @@ function positionNodes(db: MindmapDB, cy: cytoscape.Core) {
     data.y = node.position().y;
     positionNode(db, data);
     const el = db.getElementById(data.nodeId);
-    log.info('Id:', id, 'Position: (', node.position().x, ', ', node.position().y, ')', data);
+    log.info('id:', id, 'Position: (', node.position().x, ', ', node.position().y, ')', data);
     el.attr(
       'transform',
       `translate(${node.position().x - data.width / 2}, ${node.position().y - data.height / 2})`

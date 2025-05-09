@@ -29,7 +29,7 @@ body:
       label: Colors
       description: |-
         A detailed list of the different colour values to use.
-        A list of currently used variable names can be found [here](https://mermaid-js.github.io/mermaid/#/theming?id=theme-variables-reference-table)
+        See the [list of currently used variable names](https://mermaid-js.github.io/mermaid/#/theming?id=theme-variables-reference-table)
       placeholder: |-
         - background: #f4f4f4
         - primaryColor: #fff4dd

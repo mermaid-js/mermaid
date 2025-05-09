@@ -14,7 +14,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL2: should handle colums statement in sub-blocks', () => {
+  it('BL2: should handle columns statement in sub-blocks', () => {
     imgSnapshotTest(
       `block-beta
   id1["Hello"]
@@ -30,7 +30,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL3: should align block widths and handle colums statement in sub-blocks', () => {
+  it('BL3: should align block widths and handle columns statement in sub-blocks', () => {
     imgSnapshotTest(
       `block-beta
   block
@@ -46,7 +46,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL4: should align block widths and handle colums statements in deeper sub-blocks then 1 level', () => {
+  it('BL4: should align block widths and handle columns statements in deeper sub-blocks then 1 level', () => {
     imgSnapshotTest(
       `block-beta
   columns 1
@@ -66,7 +66,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL5: should align block widths and handle colums statements in deeper sub-blocks then 1 level (alt)', () => {
+  it('BL5: should align block widths and handle columns statements in deeper sub-blocks then 1 level (alt)', () => {
     imgSnapshotTest(
       `block-beta
   columns 1
@@ -236,7 +236,7 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL17: width alignment - blocks shold be equal in width', () => {
+  it('BL17: width alignment - blocks should be equal in width', () => {
     imgSnapshotTest(
       `block-beta
     A("This is the text")

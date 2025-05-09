@@ -146,7 +146,7 @@ root
       shouldHaveRoot
     );
   });
-  it('text shouhld wrap with icon', () => {
+  it('text should wrap with icon', () => {
     imgSnapshotTest(
       `mindmap
 root
