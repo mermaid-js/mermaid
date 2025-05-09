@@ -1,7 +1,11 @@
 import * as d3 from 'd3';
 import { log } from '../../../logger.js';
 import { insertNode, positionNode, clear as clearNodes } from '../../rendering-elements/nodes.js';
-import { insertCluster, clear as clearClusters } from '../../rendering-elements/clusters.js';
+import {
+  insertCluster,
+  clear as clearClusters,
+  positionCluster,
+} from '../../rendering-elements/clusters.js';
 import {
   insertEdgeLabel,
   positionEdgeLabel,
@@ -9,7 +13,7 @@ import {
   clear as clearEdges,
 } from '../../rendering-elements/edges.js';
 import insertMarkers from '../../rendering-elements/markers.js';
-import type { LayoutData, Node, Edge } from '../../types.js';
+import type { LayoutData, Node, ClusterNode } from '../../types.js';
 import type { SVG } from '../../../diagram-api/types.js';
 
 // Define interfaces for the hierarchy data
@@ -25,12 +29,11 @@ interface NodeData {
  * @returns A d3.hierarchy object
  */
 export const createHierarchy = (data: LayoutData) => {
-  log.info('Creating hierarchy from data', {
+  log.info('Creating hierarchy from data (v2: parentId + edges)', {
     nodeCount: data.nodes.length,
     edgeCount: data.edges.length,
   });
 
-  // Build a map of parent-child relationships from edges
   const nodeMap = new Map<string, NodeData>();
   data.nodes.forEach((node) => {
     nodeMap.set(node.id, {
@@ -38,71 +41,119 @@ export const createHierarchy = (data: LayoutData) => {
       node,
       children: [],
     });
-    log.trace(`Added node to map: ${node.id}`);
+    log.trace(`Initialized node in map: ${node.id}`);
   });
 
-  let root: NodeData | undefined;
-  // Find the root node (node without parents or with isGroup=true)
-  const rootNodes = data.nodes.filter(
-    (node) => !node.parentId || (node.isGroup && node.id.includes('root'))
-  );
-  log.info('Potential root nodes', rootNodes);
+  const hasExplicitParentInHierarchy = new Set<string>();
 
-  if (rootNodes.length > 0) {
-    root = nodeMap.get(rootNodes[0].id);
-    log.info('Selected root node', root);
-  } else if (data.nodes.length > 0) {
-    // If no clear root, use first node
-    root = nodeMap.get(data.nodes[0].id);
-    log.info('Using first node as root', root);
-  }
+  // Phase 1: Populate children based on parentId (for subgraphs)
+  log.trace('Hierarchy Phase 1: Processing parentId relationships');
+  data.nodes.forEach((node) => {
+    if (node.parentId && nodeMap.has(node.parentId)) {
+      const parentNodeData = nodeMap.get(node.parentId);
+      const childNodeData = nodeMap.get(node.id);
 
-  // Make sure we have a root
-  if (!root && data.nodes.length > 0) {
-    root = {
-      id: 'default-root',
-      node: data.nodes[0],
-      children: [],
-    };
-    log.info('Created default root', root);
-  }
-
-  if (!data.nodes.some((node) => !node.parentId)) {
-    // What should we do here, if there is no explicit root?
-    // What if there is more than one?
-  }
-
-  // Populate children arrays based on edges
-  data.edges.forEach((edge) => {
-    const source = nodeMap.get(edge.start ?? '');
-    const target = nodeMap.get(edge.end ?? '');
-
-    if (source && target) {
-      if (!source.children.some((child) => child.id === target.id)) {
-        source.children.push(target);
-        log.trace(`Added edge relationship: ${source.id} -> ${target.id}`);
+      if (
+        parentNodeData &&
+        childNodeData &&
+        !parentNodeData.children.some((c) => c.id === childNodeData.id)
+      ) {
+        parentNodeData.children.push(childNodeData);
+        hasExplicitParentInHierarchy.add(childNodeData.id);
+        log.trace(`Added parent-child (parentId): ${parentNodeData.id} -> ${childNodeData.id}`);
       }
-    } else {
-      log.warn(`Could not find nodes for edge: ${edge.start} -> ${edge.end}`);
     }
   });
 
-  // Alternatively, use parentId for hierarchy when available
-  // data.nodes.forEach((node) => {
-  //   if (node.parentId && nodeMap.has(node.parentId)) {
-  //     const parent = nodeMap.get(node.parentId);
-  //     const child = nodeMap.get(node.id);
+  // Phase 2: Populate children based on edges for nodes not yet parented by parentId
+  log.trace('Hierarchy Phase 2: Processing edge relationships for remaining nodes');
+  data.edges.forEach((edge) => {
+    if (!edge.start || !edge.end) {
+      log.warn('Skipping edge with no start/end for hierarchy building', edge);
+      return;
+    }
+    const sourceNodeData = nodeMap.get(edge.start);
+    const targetNodeData = nodeMap.get(edge.end);
 
-  //     if (parent && child && !parent.children.some((c) => c.id === child.id)) {
-  //       parent.children.push(child);
-  //       log.trace(`Added parent-child relationship: ${parent.id} -> ${child.id}`);
-  //     }
-  //   }
-  // });
+    if (sourceNodeData && targetNodeData) {
+      if (hasExplicitParentInHierarchy.has(targetNodeData.id)) {
+        // Target already has a parent from parentId (subgraph structure),
+        // so this edge doesn't define its primary D3 hierarchy parent.
+        log.trace(
+          `Target ${targetNodeData.id} already parented by parentId. Edge ${edge.start}->${edge.end} not used for D3 hierarchy parent.`
+        );
+      } else if (!sourceNodeData.children.some((c) => c.id === targetNodeData.id)) {
+        // If target is not yet parented by parentId, and not already a child of source from another edge.
+        sourceNodeData.children.push(targetNodeData);
+        hasExplicitParentInHierarchy.add(targetNodeData.id);
+        log.trace(`Added parent-child (edge): ${sourceNodeData.id} -> ${targetNodeData.id}`);
+      }
+    }
+  });
 
-  // Build the d3 hierarchy
+  // Phase 3: Root determination
+  log.trace('Hierarchy Phase 3: Determining root node(s)');
+  const rootCandidates: NodeData[] = [];
+  data.nodes.forEach((node) => {
+    if (!hasExplicitParentInHierarchy.has(node.id)) {
+      const nodeData = nodeMap.get(node.id);
+      if (nodeData) {
+        rootCandidates.push(nodeData);
+        log.trace(`Node ${node.id} is a root candidate.`);
+      }
+    }
+  });
+
+  let root: NodeData | undefined;
+  if (rootCandidates.length === 1) {
+    root = rootCandidates[0];
+    log.info('Selected single root candidate:', root.id);
+  } else if (rootCandidates.length > 1) {
+    const syntheticRootNode: Node = { id: '%%SYNTHETIC_RADIAL_ROOT%%', isGroup: true };
+    root = {
+      id: syntheticRootNode.id,
+      node: syntheticRootNode,
+      children: rootCandidates, // Directly assign candidates as children
+    };
+    log.info(
+      `Created synthetic root for ${rootCandidates.length} candidates. Children:`,
+      root.children.map((c) => c.id)
+    );
+  } else if (data.nodes.length > 0 && rootCandidates.length === 0) {
+    log.warn(
+      'No root candidates found (all nodes have an explicit parent in hierarchy). This might be a cycle or fully contained graph. Falling back to first node without a parser-defined parentId, or just the first node.'
+    );
+    const firstNodeWithoutParentId = data.nodes.find((n) => !n.parentId);
+    if (firstNodeWithoutParentId) {
+      root = nodeMap.get(firstNodeWithoutParentId.id);
+      log.info('Fallback root: first node without parser-defined parentId:', root?.id);
+    } else {
+      root = nodeMap.get(data.nodes[0].id);
+      log.info('Fallback root: first node in data:', root?.id);
+    }
+  } else if (data.nodes.length === 0) {
+    log.info('No nodes in data, creating an empty root.');
+    root = { id: 'empty-root', node: { id: 'empty-root', isGroup: false }, children: [] };
+  }
+
+  // Ensure root is defined if nodes exist, otherwise d3.hierarchy will fail
+  if (!root && data.nodes.length > 0) {
+    log.error(
+      'CRITICAL: Root still not determined despite nodes present. Defaulting to first node to prevent crash.'
+    );
+    root = nodeMap.get(data.nodes[0].id) ?? {
+      id: 'critical-fallback',
+      node: { id: 'critical-fallback', isGroup: false },
+      children: [],
+    };
+  }
+
   const hierarchy = d3.hierarchy(
-    root ?? { id: 'empty', node: { id: 'empty', isGroup: false }, children: [] }
+    root ?? {
+      id: 'final-fallback-empty',
+      node: { id: 'final-fallback-empty', isGroup: false },
+      children: [],
+    }
   );
   log.info('Created D3 hierarchy', {
     depth: hierarchy.height,
@@ -134,11 +185,11 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
   clearClusters();
   log.trace('Cleared previous rendering elements');
 
-  // Create container elements
-  const nodes = element.insert('g').attr('class', 'nodes');
-  const edgePaths = element.insert('g').attr('class', 'edgePaths');
-  const edgeLabels = element.insert('g').attr('class', 'edgeLabels');
+  // Create container elements in the desired rendering order (back to front)
   const clusters = element.insert('g').attr('class', 'clusters');
+  const edgePaths = element.insert('g').attr('class', 'edgePaths');
+  const nodes = element.insert('g').attr('class', 'nodes');
+  const edgeLabels = element.insert('g').attr('class', 'edgeLabels');
 
   // Create D3 hierarchy from our data
   const hierarchyData = createHierarchy(data4Layout);
@@ -147,12 +198,18 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
   // Create a map to store node elements for quick lookup
   const nodeMap = new Map<string, Node>();
 
-  // Insert nodes first (without positioning) to calculate dimensions
-  log.info('First pass: inserting nodes to calculate dimensions');
+  // Insert nodes first (without positioning) to calculate dimensions and collecting cluster definitions
+  log.info(
+    'First pass: inserting nodes to calculate dimensions and collecting cluster definitions'
+  );
+  const clusterNodeDefinitions: Node[] = []; // Store cluster node definitions
   for (const node of data4Layout.nodes) {
     // Handle clusters/groups separately
     if (node.isGroup) {
-      await insertCluster(clusters, node);
+      // Don't call insertCluster yet. Store for processing after layout and extent calculation.
+      clusterNodeDefinitions.push(node);
+      // We still need to put it in the nodeMap if other nodes reference it as a parent via ID for extents
+      // or if it needs its own dimensions calculated (though for groups, this is from children)
     } else {
       await insertNode(nodes, node, {
         config: data4Layout.config,
@@ -213,101 +270,147 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
   const treeData = treeLayout(hierarchyData);
   log.trace('Applied tree layout');
 
+  // Initialize clusterExtents
+  const clusterExtents = new Map<
+    string,
+    { minX: number; minY: number; maxX: number; maxY: number }
+  >();
+
   // Position nodes based on the calculated layout
   treeData.each((d) => {
     if (d.data?.node) {
       const node = d.data.node;
-      // Convert from polar to Cartesian coordinates
+
+      // Calculate layout coordinates for all nodes in the tree (including synthetic)
+      // as children's positions depend on parent's layout coordinates.
       node.x = d.y * Math.cos(d.x - Math.PI / 2) + centerX;
       node.y = d.y * Math.sin(d.x - Math.PI / 2) + centerY;
 
-      // Position the node
-      positionNode(node);
-      log.trace(`Positioned node ${d.data.id} at (${node.x}, ${node.y})`);
+      // Skip actual DOM positioning for the synthetic root node as it has no element
+      if (node.id === '%%SYNTHETIC_RADIAL_ROOT%%') {
+        log.trace(
+          `Calculated layout coords for synthetic root ${node.id} at (${node.x}, ${node.y}) - skipping DOM positioning.`
+        );
+        return; // Important: return here to not call positionNode for synthetic root
+      }
+
+      // If it's a group/cluster node, its DOM positioning is handled by positionCluster later.
+      // We only need its D3-calculated x/y.
+      if (node.isGroup) {
+        log.trace(
+          `Group node ${node.id} layout coords: (${node.x}, ${node.y}) - DOM positioning will be handled by positionCluster.`
+        );
+        // Note: We don't return here. Cluster extent updates for its children (if any) might still proceed below,
+        // and the node itself (if it's a child of another cluster) needs to update parent extents.
+      } else {
+        // It's a regular node, position its DOM elements.
+        positionNode(node);
+        log.trace(`Positioned node ${node.id} at (${node.x}, ${node.y})`);
+      }
+
+      // Update cluster extents if node is part of a cluster
+      if (node.parentId && !node.isGroup) {
+        // only for child nodes, not the group itself
+        const extents = clusterExtents.get(node.parentId) ?? {
+          minX: Infinity,
+          minY: Infinity,
+          maxX: -Infinity,
+          maxY: -Infinity,
+        };
+        extents.minX = Math.min(extents.minX, (node.x ?? 0) - (node.width ?? 0) / 2);
+        extents.minY = Math.min(extents.minY, (node.y ?? 0) - (node.height ?? 0) / 2);
+        extents.maxX = Math.max(extents.maxX, (node.x ?? 0) + (node.width ?? 0) / 2);
+        extents.maxY = Math.max(extents.maxY, (node.y ?? 0) + (node.height ?? 0) / 2);
+        clusterExtents.set(node.parentId, extents);
+        log.trace(`Updated extents for cluster ${node.parentId}`, extents);
+      }
     }
   });
 
-  // Create edges from the layout
-  const edges = treeData
-    .links()
-    .map((link) => {
-      if (!link.source.data || !link.target.data) {
-        log.warn('Link missing source or target data');
-        return null;
-      }
+  // Position clusters based on the extents of their children
+  log.info('Positioning clusters');
+  for (const clusterNode of clusterNodeDefinitions) {
+    const extents = clusterExtents.get(clusterNode.id);
+    if (extents) {
+      const padding = clusterNode.padding ?? 15; // Default padding if not specified
+      clusterNode.x = (extents.minX + extents.maxX) / 2;
+      clusterNode.y = (extents.minY + extents.maxY) / 2;
+      clusterNode.width = extents.maxX - extents.minX + padding * 2;
+      clusterNode.height = extents.maxY - extents.minY + padding * 2;
 
-      // Find the original edge or create a new one
-      const sourceId = link.source.data.id;
-      const targetId = link.target.data.id;
-      const edgeId = `${sourceId}-${targetId}`;
+      // Now that width/height/x/y are known, insert the cluster element
+      // Pass x:0, y:0 to insertCluster so it draws locally centered.
+      const nodeForInsert = { ...clusterNode, x: 0, y: 0 };
+      await insertCluster(clusters, nodeForInsert as ClusterNode);
+      // Then position (translate) it using the original clusterNode with correct x,y center.
+      positionCluster(clusterNode as ClusterNode);
+      log.trace(
+        `Inserted and Positioned cluster ${clusterNode.id} at (${clusterNode.x}, ${clusterNode.y}) with size (${clusterNode.width}x${clusterNode.height})`
+      );
+    } else {
+      // Handle empty clusters or clusters with no positioned children
+      log.warn(
+        `No extents found for cluster ${clusterNode.id}, it might be empty. Drawing at default/parsed position and size.`
+      );
+      // If a cluster is empty, its x,y,width,height might be from parsing or default to 0.
+      // We still need to insert and position it.
+      const emptyNodeForInsert = { ...clusterNode, x: 0, y: 0 };
+      await insertCluster(clusters, emptyNodeForInsert as ClusterNode); // Will use parsed/default width/height
+      positionCluster(clusterNode as ClusterNode); // Will use parsed/default x,y for positioning
+    }
+  }
 
-      let edge = data4Layout.edges.find((e) => e.start === sourceId && e.end === targetId);
+  // Render edges based on data4Layout.edges (original diagram edges)
+  log.info(`Rendering ${data4Layout.edges.length} original diagram edges`);
+  // The nodeMap here should be the one populated in the render function,
+  // which holds nodes after their dimensions are calculated and before layout applied.
+  // The x,y coordinates are applied directly to data4Layout.nodes by treeData.each().
 
-      if (!edge) {
-        // Create a new edge from the layout
-        edge = {
-          id: edgeId,
-          start: sourceId,
-          end: targetId,
-          type: 'curved',
-        } as Edge;
-        log.info(`Created new edge: ${edgeId}`);
-      }
-
-      // Get actual node positions from the layout
-      const sourceNode = nodeMap.get(sourceId);
-      const targetNode = nodeMap.get(targetId);
-
-      if (!sourceNode || !targetNode) {
-        log.warn(`Cannot find nodes for edge ${edgeId}`);
-        return null;
-      }
-
-      // Create curved path using the node positions
-      const startX = sourceNode.x ?? 0;
-      const startY = sourceNode.y ?? 0;
-      const endX = targetNode.x ?? 0;
-      const endY = targetNode.y ?? 0;
-
-      // Store path points for rendering - add intermediate points for curved path
-      const midX = (startX + endX) / 2;
-      const midY = (startY + endY) / 2;
-
-      // Add curvature based on distance and node position in the tree
-      // Edges between levels should curve more than edges within a level
-      const curveFactor = 0.2;
-      const curveX = midX + curveFactor * (endY - startY);
-      const curveY = midY - curveFactor * (endX - startX);
-
-      if (edge) {
-        edge.points = [
-          { x: startX, y: startY },
-          { x: curveX, y: curveY },
-          { x: endX, y: endY },
-        ];
-        log.trace(`Edge points for ${edgeId}`, edge.points);
-      }
-
-      return edge;
-    })
-    .filter((edge): edge is Edge => edge !== null);
-
-  log.info(`Created ${edges.length} edges`);
-
-  // Render edges
-  log.info(`Rendering ${edges.length} edges`);
-  for (const edge of edges) {
-    if (!edge) {
+  for (const edge of data4Layout.edges) {
+    if (!edge?.start || !edge.end) {
+      log.warn('Skipping invalid edge from data4Layout.edges', edge);
       continue;
     }
 
-    // Get start and end nodes
     const startNode = data4Layout.nodes.find((n) => n.id === edge.start);
     const endNode = data4Layout.nodes.find((n) => n.id === edge.end);
 
     log.trace(`Processing edge ${edge.id || ''} from ${edge.start} to ${edge.end}`);
 
     if (startNode && endNode) {
+      // Ensure nodes have positions
+      if (
+        startNode.x === undefined ||
+        startNode.y === undefined ||
+        endNode.x === undefined ||
+        endNode.y === undefined
+      ) {
+        log.warn(`Nodes for edge ${edge.id} lack x/y coordinates. Skipping edge.`, {
+          startNode,
+          endNode,
+        });
+        continue;
+      }
+
+      // Create curved path using the node positions
+      const startX = startNode.x ?? 0;
+      const startY = startNode.y ?? 0;
+      const endX = endNode.x ?? 0;
+      const endY = endNode.y ?? 0;
+
+      const midX = (startX + endX) / 2;
+      const midY = (startY + endY) / 2;
+      const curveFactor = 0.2; // Keep existing curve logic for now
+      const curveX = midX + curveFactor * (endY - startY);
+      const curveY = midY - curveFactor * (endX - startX);
+
+      edge.points = [
+        { x: startX, y: startY },
+        { x: curveX, y: curveY },
+        { x: endX, y: endY },
+      ];
+      log.trace(`Edge points for ${edge.id || '(no id)'}`, edge.points);
+
       await insertEdgeLabel(edgeLabels, edge);
       const paths = insertEdge(
         edgePaths,
