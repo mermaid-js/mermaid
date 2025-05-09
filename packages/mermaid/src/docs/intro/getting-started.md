@@ -292,6 +292,8 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
 
 In this example, `mermaid.js` is built from source with [`--supported`](https://esbuild.github.io/api/#supported) and [`--target`](https://esbuild.github.io/api/#target) to tackle compatibility issues:
 
+`mermaid.esm.mjs` is located under `packages/mermaid/dist`.
+
 ```bash
 pnpm run build:esbuild --mermaid --supported:class-static-blocks=false --target=ES2018
 ```
