@@ -98,7 +98,7 @@ The theming engine will only recognize hex colors and not color names. So, the v
 | -------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | darkMode             | false                              | Affects how derived colors are calculated. Set value to `true` for dark mode.                                                    |
 | background           | #f4f4f4                            | Used to calculate color for items that should either be background colored or contrasting to the background                      |
-| fontFamily           | trebuchet ms, verdana, arial       |                                                                                                                                  |
+| fontFamily           | trebuchet ms, verdana, arial       | Font family for diagram text                                                                                                     |
 | fontSize             | 16px                               | Font size in pixels                                                                                                              |
 | primaryColor         | #fff4dd                            | Color to be used as background in nodes, other colors will be derived from this                                                  |
 | primaryTextColor     | calculated from darkMode #ddd/#333 | Color to be used as text color in nodes using `primaryColor`                                                                     |

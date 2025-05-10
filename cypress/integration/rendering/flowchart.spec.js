@@ -934,4 +934,43 @@ graph TD
       }
     );
   });
+  it('68: should honor subgraph direction when inheritDir is false', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {"flowchart": { "inheritDir": false }}}%%
+      flowchart TB
+        direction LR
+        subgraph A
+          direction TB
+          a --> b
+        end
+        subgraph B
+          c --> d
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
+
+  it('69: should inherit global direction when inheritDir is true', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {"flowchart": { "inheritDir": true }}}%%
+      flowchart TB
+        direction LR
+        subgraph A
+          direction TB
+          a --> b
+        end
+        subgraph B
+          c --> d
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
 });
