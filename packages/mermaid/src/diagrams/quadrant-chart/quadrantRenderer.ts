@@ -119,50 +119,42 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
     .attr('dominant-baseline', 'hanging') // align to top
     .each(function (data) {
       const textElem = select(this);
-      const fontSize = parseFloat(data.text.fontSize || '12');
+      const fontSize = parseFloat(data.text.fontSize ?? '12');
       const lineHeight = fontSize * 1.2;
-      const maxWidth = data.width - 10; // 5px padding on both sides
-      const maxHeight = data.height - 10;
+      const maxWidth = data.width - 10;
       const words = data.text.text.split(/\s+/);
 
+      const lines: string[] = [];
       let line = '';
-      let yOffset = 0;
 
       for (const word of words) {
         const testLine = line + word + ' ';
-        const tspan = textElem
-          .append('tspan')
-          .attr('x', data.x + 5)
-          .attr('y', data.y + 5 + yOffset)
-          .text(testLine.trim());
-
+        const tspan = textElem.append('tspan').text(testLine.trim());
         if (tspan.node().getComputedTextLength() > maxWidth) {
           tspan.remove();
-          if (yOffset + lineHeight >= maxHeight) {
-            break;
-          }
-
-          textElem
-            .append('tspan')
-            .attr('x', data.x + 5)
-            .attr('y', data.y + 5 + yOffset)
-            .text(line.trim());
-
+          lines.push(line.trim());
           line = word + ' ';
-          yOffset += lineHeight;
         } else {
-          line = testLine;
           tspan.remove();
+          line = testLine;
         }
       }
 
-      if (line.trim() && yOffset + lineHeight < maxHeight) {
+      if (line.trim()) {
+        lines.push(line.trim());
+      }
+
+      const totalHeight = lines.length * lineHeight;
+      const startY = data.y + (data.height - totalHeight) / 2 + lineHeight * 0.8; // center vertically
+
+      lines.forEach((l, i) => {
         textElem
           .append('tspan')
-          .attr('x', data.x + 5)
-          .attr('y', data.y + 5 + yOffset)
-          .text(line.trim());
-      }
+          .attr('x', data.x + data.width / 2) // center X
+          .attr('y', startY + i * lineHeight)
+          .attr('text-anchor', 'middle')
+          .text(l);
+      });
     });
 
   const labels = labelGroup
