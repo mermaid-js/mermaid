@@ -149,7 +149,7 @@ const breakToPlaceholder = (s: string): string => {
  * @param useAbsolute - Whether to return the absolute URL or not
  * @returns The current URL
  */
-const getUrl = (useAbsolute: boolean): string => {
+export const getUrl = (useAbsolute: boolean): string => {
   let url = '';
   if (useAbsolute) {
     url =
