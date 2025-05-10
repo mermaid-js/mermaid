@@ -545,6 +545,38 @@ It is possible to annotate classes with markers to provide additional metadata a
 
 Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class, and either way the output will be same:
 
+> **Tip:**\
+> In Mermaid class diagrams, annotations like `<<interface>>` can be attached in two ways:
+>
+> - **Inline with the class definition** (Recommended for consistency):
+>
+>   ```mermaid-example
+>   classDiagram
+>     class Shape <<interface>>
+>   ```
+>
+>   ```mermaid
+>   classDiagram
+>     class Shape <<interface>>
+>   ```
+>
+> - **Separate line after the class definition**:
+>
+>   ```mermaid-example
+>   classDiagram
+>     class Shape
+>     <<interface>> Shape
+>   ```
+>
+>   ```mermaid
+>   classDiagram
+>     class Shape
+>     <<interface>> Shape
+>   ```
+>
+> Both methods are fully supported and produce identical diagrams.\
+> However, it is recommended to use the **inline style** for better readability and consistent formatting across diagrams.
+
 - In a **_separate line_** after a class is defined:
 
 ```mermaid-example
