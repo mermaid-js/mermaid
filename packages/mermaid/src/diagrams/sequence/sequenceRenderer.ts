@@ -3,6 +3,7 @@ import { select } from 'd3';
 import svgDraw, { drawKatex, ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDraw.js';
 import { log } from '../../logger.js';
 import common, { calculateMathMLDimensions, hasKatex } from '../common/common.js';
+import { getUrl } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import assignWithDepth from '../../assignWithDepth.js';
@@ -449,15 +450,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
 
   let url = '';
   if (conf.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\\/g, '\\\\');
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    url = getUrl(true);
   }
 
   line.attr('stroke-width', 2);

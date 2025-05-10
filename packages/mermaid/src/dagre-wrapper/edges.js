@@ -4,7 +4,7 @@ import { createText } from '../rendering-util/createText.js';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import utils from '../utils.js';
-import { evaluate } from '../diagrams/common/common.js';
+import { evaluate, getUrl } from '../diagrams/common/common.js';
 import { getLineFunctionsWithOffset } from '../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../utils/subGraphTitleMargins.js';
 import { addEdgeMarkers } from './edgeMarker.js';
@@ -440,15 +440,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   let url = '';
   // // TODO: Can we load this config only from the rendered graph type?
   if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\\/g, '\\\\');
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    url = getUrl(true);
   }
 
   addEdgeMarkers(svgPath, edge, url, id, diagramType);
