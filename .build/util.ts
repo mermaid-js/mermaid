@@ -11,11 +11,11 @@ export function parseOptions(
     .filter((a) => a.startsWith(prefix + ':'))
     .reduce(
       (obj, arg) => {
-        const pairs = arg.split(/[:=]/);
-        if (pairs.length < 3) {
+        const arr = arg.split(/[:=]/);
+        if (arr.length < 3) {
           return obj;
         }
-        obj[pairs[1]] = 'true' === pairs[2];
+        obj[arr[1]] = 'true' === arr[2];
         return obj;
       },
       {} as Record<string, boolean>
