@@ -16,6 +16,7 @@ This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
 Treemap diagrams are an effective way to visualize hierarchical data and show proportions between categories and subcategories. The size of each rectangle is proportional to the value it represents, making it easy to compare different parts of a hierarchy.
 
 Treemap diagrams are particularly useful for:
+
 - Visualizing hierarchical data structures
 - Comparing proportions between categories
 - Displaying large amounts of hierarchical data in a limited space
@@ -144,6 +145,7 @@ treemap
 Values in treemap diagrams can be formatted to display in different ways using the `valueFormat` configuration option. This option primarily uses [D3's format specifiers](https://github.com/d3/d3-format#locale_format) to control how numbers are displayed, with some additional special cases for common formats.
 
 Some common format patterns:
+
 - `,` - Thousands separator (default)
 - `$` - Add dollar sign
 - `.1f` - Show one decimal place
@@ -201,6 +203,7 @@ Treemap diagrams are commonly used for:
 ## Related Diagrams
 
 If treemap diagrams don't suit your needs, consider these alternatives:
+
 - **Pie Charts**: For simple proportion comparisons without hierarchy
 - **Sunburst Diagrams**: For hierarchical data with a radial layout (yet to be released in Mermaid).
 - **Sankey Diagrams**: For flow-based hierarchical data
