@@ -3,27 +3,34 @@ import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
 import { db } from './db.js';
-import type { TreemapNode } from './types.js';
+import type { TreemapNode, TreemapAst } from './types.js';
 import { buildHierarchy } from './utils.js';
 
 /**
  * Populates the database with data from the Treemap AST
  * @param ast - The Treemap AST
  */
-const populate = (ast: any) => {
+const populate = (ast: TreemapAst) => {
   populateCommonDb(ast, db);
 
-  const items = [];
+  const items: {
+    level: number;
+    name: string;
+    type: string;
+    value?: number;
+    classSelector?: string;
+    cssCompiledStyles?: string;
+  }[] = [];
 
   // Extract classes and styles from the treemap
-  for (const row of ast.TreemapRows || []) {
+  for (const row of ast.TreemapRows ?? []) {
     if (row.$type === 'ClassDefStatement') {
-      db.addClass(row.className, row.styleText);
+      db.addClass(row.className ?? '', row.styleText ?? '');
     }
   }
 
   // Extract data from each row in the treemap
-  for (const row of ast.TreemapRows || []) {
+  for (const row of ast.TreemapRows ?? []) {
     const item = row.item;
 
     if (!item) {
@@ -33,13 +40,17 @@ const populate = (ast: any) => {
     const level = row.indent ? parseInt(row.indent) : 0;
     const name = getItemName(item);
 
+    // Get styles as a string if they exist
+    const styles = item.classSelector ? db.getStylesForClass(item.classSelector) : [];
+    const cssCompiledStyles = styles.length > 0 ? styles.join(';') : undefined;
+
     const itemData = {
       level,
       name,
       type: item.$type,
       value: item.value,
       classSelector: item.classSelector,
-      cssCompiledStyles: item.classSelector ? db.getStylesForClass(item.classSelector) : undefined,
+      cssCompiledStyles,
     };
 
     items.push(itemData);

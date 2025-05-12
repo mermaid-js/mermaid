@@ -40,6 +40,30 @@ export interface TreemapData {
   root?: TreemapNode;
 }
 
+export interface TreemapItem {
+  $type: string;
+  name: string;
+  value?: number;
+  classSelector?: string;
+}
+
+export interface TreemapRow {
+  $type: string;
+  indent?: string;
+  item?: TreemapItem;
+  className?: string;
+  styleText?: string;
+}
+
+export interface TreemapAst {
+  TreemapRows?: TreemapRow[];
+  title?: string;
+  description?: string;
+  accDescription?: string;
+  accTitle?: string;
+  diagramTitle?: string;
+}
+
 // Define the TreemapDiagramConfig interface
 export interface TreemapDiagramConfig extends BaseDiagramConfig {
   padding?: number;

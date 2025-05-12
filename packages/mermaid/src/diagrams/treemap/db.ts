@@ -78,8 +78,8 @@ const getClasses = (): Map<string, DiagramStyleClassDef> => {
   return classes;
 };
 
-const getStylesForClass = (classSelector: string) => {
-  return classes.get(classSelector)?.styles;
+const getStylesForClass = (classSelector: string): string[] => {
+  return classes.get(classSelector)?.styles ?? [];
 };
 
 const clear = () => {
