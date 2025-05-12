@@ -114,7 +114,7 @@ describe('Configuration', () => {
           .first()
           .should('have.attr', 'marker-end')
           .should('exist')
-          .and('include', 'url(http://localhost');
+          .and('include', 'url(http\\:\\/\\/localhost');
       });
     });
     it('should not taint the initial configuration when using multiple directives', () => {
