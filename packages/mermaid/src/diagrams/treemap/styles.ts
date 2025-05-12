@@ -1,53 +1,51 @@
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
 import { cleanAndMerge } from '../../utils.js';
-import type { PacketStyleOptions } from './types.js';
+import type { TreemapStyleOptions } from './types.js';
 
-const defaultPacketStyleOptions: PacketStyleOptions = {
-  byteFontSize: '10px',
-  startByteColor: 'black',
-  endByteColor: 'black',
+const defaultTreemapStyleOptions: TreemapStyleOptions = {
+  sectionStrokeColor: 'black',
+  sectionStrokeWidth: '1',
+  sectionFillColor: '#efefef',
+  leafStrokeColor: 'black',
+  leafStrokeWidth: '1',
+  leafFillColor: '#efefef',
   labelColor: 'black',
   labelFontSize: '12px',
+  valueFontSize: '10px',
+  valueColor: 'black',
   titleColor: 'black',
   titleFontSize: '14px',
-  blockStrokeColor: 'black',
-  blockStrokeWidth: '1',
-  blockFillColor: '#efefef',
 };
 
 export const getStyles: DiagramStylesProvider = ({
-  packet,
-}: { packet?: PacketStyleOptions } = {}) => {
-  const options = cleanAndMerge(defaultPacketStyleOptions, packet);
+  treemap,
+}: { treemap?: TreemapStyleOptions } = {}) => {
+  const options = cleanAndMerge(defaultTreemapStyleOptions, treemap);
 
   return `
-  .treemapNode {
-    // stroke: black;
-    // stroke-width: 1;
+  .treemapNode.section {
+    stroke: ${options.sectionStrokeColor};
+    stroke-width: ${options.sectionStrokeWidth};
+    fill: ${options.sectionFillColor};
   }
-	.packetByte {
-		font-size: ${options.byteFontSize};
-	}
-	.packetByte.start {
-		fill: ${options.startByteColor};
-	}
-	.packetByte.end {
-		fill: ${options.endByteColor};
-	}
-	.packetLabel {
-		fill: ${options.labelColor};
-		font-size: ${options.labelFontSize};
-	}
-	.packetTitle {
-		fill: ${options.titleColor};
-		font-size: ${options.titleFontSize};
-	}
-	.packetBlock {
-		stroke: ${options.blockStrokeColor};
-		stroke-width: ${options.blockStrokeWidth};
-		fill: ${options.blockFillColor};
-	}
-	`;
+  .treemapNode.leaf {
+    stroke: ${options.leafStrokeColor};
+    stroke-width: ${options.leafStrokeWidth};
+    fill: ${options.leafFillColor};
+  }
+  .treemapLabel {
+    fill: ${options.labelColor};
+    font-size: ${options.labelFontSize};
+  }
+  .treemapValue {
+    fill: ${options.valueColor};
+    font-size: ${options.valueFontSize};
+  }
+  .treemapTitle {
+    fill: ${options.titleColor};
+    font-size: ${options.titleFontSize};
+  }
+  `;
 };
 
 export default getStyles;

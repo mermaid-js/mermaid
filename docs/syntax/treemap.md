@@ -91,7 +91,8 @@ mermaid.initialize({
     nodeHeight: 40,
     borderWidth: 1,
     valueFontSize: 12,
-    labelFontSize: 14
+    labelFontSize: 14,
+    valueFormat: ','
   }
 });
 ```
@@ -108,6 +109,48 @@ Key configuration options:
 | borderWidth  | Width of node borders                      | 1       |
 | valueFontSize| Font size for values                       | 12      |
 | labelFontSize| Font size for node labels                  | 14      |
+| valueFormat  | Format string for values (D3 format)       | ','     |
+
+## Value Formatting
+
+You can customize how values are displayed in the treemap using the `valueFormat` configuration option. This option primarily uses [D3's format specifiers](https://github.com/d3/d3-format#locale_format) to control how numbers are displayed, with some additional special cases for common formats.
+
+Common format patterns:
+- `,` - Thousands separator (default)
+- `$` - Add dollar sign
+- `.1f` - Show one decimal place
+- `.1%` - Show as percentage with one decimal place
+- `$0,0` - Dollar sign with thousands separator
+- `$.2f` - Dollar sign with 2 decimal places
+- `$,.2f` - Dollar sign with thousands separator and 2 decimal places
+
+The treemap diagram supports both standard D3 format specifiers and some common currency formats that combine the dollar sign with other formatting options.
+
+Example with currency formatting:
+
+```mermaid
+%%{init: {'treemap': {'valueFormat': '$0,0'}}}%%
+treemap
+    Budget
+        Development
+            Frontend: 250000
+            Backend: 350000
+        Marketing
+            Digital: 150000
+            Print: 50000
+```
+
+Example with percentage formatting:
+
+```mermaid
+%%{init: {'treemap': {'valueFormat': '.1%'}}}%%
+treemap
+    Market Share
+        Company A: 0.35
+        Company B: 0.25
+        Company C: 0.15
+        Others: 0.25
+```
 
 ## Notes and Limitations
 

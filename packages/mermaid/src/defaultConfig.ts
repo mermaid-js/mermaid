@@ -267,6 +267,7 @@ const config: RequiredDeep<MermaidConfig> = {
     borderWidth: 1,
     valueFontSize: 12,
     labelFontSize: 14,
+    valueFormat: ',',
   },
 };
 

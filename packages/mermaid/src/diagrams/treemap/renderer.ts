@@ -47,7 +47,33 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   configureSvgSize(svg, svgHeight, svgWidth, config.useMaxWidth);
 
   // Format for displaying values
-  const valueFormat = format(',');
+  let valueFormat;
+  try {
+    // Handle special format patterns
+    const formatStr = config.valueFormat || ',';
+
+    // Handle special cases that aren't directly supported by D3 format
+    if (formatStr === '$0,0') {
+      // Currency with thousands separator
+      valueFormat = (value: number) => '$' + format(',')(value);
+    } else if (formatStr.startsWith('$') && formatStr.includes(',')) {
+      // Other dollar formats with commas
+      const precision = formatStr.match(/\.\d+/);
+      const precisionStr = precision ? precision[0] : '';
+      valueFormat = (value: number) => '$' + format(',' + precisionStr)(value);
+    } else if (formatStr.startsWith('$')) {
+      // Simple dollar sign prefix
+      const restOfFormat = formatStr.substring(1);
+      valueFormat = (value: number) => '$' + format(restOfFormat || '')(value);
+    } else {
+      // Standard D3 format
+      valueFormat = format(formatStr);
+    }
+  } catch (error) {
+    console.error('Error creating format function:', error);
+    // Fallback to default format
+    valueFormat = format(',');
+  }
 
   // Create color scale
   const colorScale = scaleOrdinal<string>().range([

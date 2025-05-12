@@ -49,4 +49,5 @@ export interface TreemapDiagramConfig extends BaseDiagramConfig {
   borderWidth?: number;
   valueFontSize?: number;
   labelFontSize?: number;
+  valueFormat?: string;
 }

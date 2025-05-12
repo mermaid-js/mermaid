@@ -113,7 +113,7 @@ classDef secondary fill:#6cf,stroke:#333,stroke-dasharray:5 5;
     );
   });
 
-  it('8: should handle value formatting', () => {
+  it('8: should handle dollar value formatting with thousands separator', () => {
     imgSnapshotTest(
       `%%{init: {'treemap': {'valueFormat': '$0,0'}}}%%
 treemap
@@ -125,6 +125,103 @@ treemap
     "Marketing"
         "Advertising": 400000
         "Events": 100000
+      `,
+      {}
+    );
+  });
+
+  it('8a: should handle percentage formatting', () => {
+    imgSnapshotTest(
+      `%%{init: {'treemap': {'valueFormat': '.1%'}}}%%
+treemap
+"Market Share"
+    "Company A": 0.35
+    "Company B": 0.25
+    "Company C": 0.15
+    "Others": 0.25
+      `,
+      {}
+    );
+  });
+
+  it('8b: should handle decimal formatting', () => {
+    imgSnapshotTest(
+      `%%{init: {'treemap': {'valueFormat': '.2f'}}}%%
+treemap
+"Metrics"
+    "Conversion Rate": 0.0567
+    "Bounce Rate": 0.6723
+    "Click-through Rate": 0.1289
+    "Engagement": 0.4521
+      `,
+      {}
+    );
+  });
+
+  it('8c: should handle dollar sign with decimal places', () => {
+    imgSnapshotTest(
+      `%%{init: {'treemap': {'valueFormat': '$.2f'}}}%%
+treemap
+"Product Prices"
+    "Basic": 19.99
+    "Standard": 49.99
+    "Premium": 99.99
+    "Enterprise": 199.99
+      `,
+      {}
+    );
+  });
+
+  it('8d: should handle dollar sign with thousands separator and decimal places', () => {
+    imgSnapshotTest(
+      `%%{init: {'treemap': {'valueFormat': '$,.2f'}}}%%
+treemap
+"Revenue"
+    "Q1": 1250345.75
+    "Q2": 1645789.25
+    "Q3": 1845123.50
+    "Q4": 2145678.75
+      `,
+      {}
+    );
+  });
+
+  it('8e: should handle simple thousands separator', () => {
+    imgSnapshotTest(
+      `%%{init: {'treemap': {'valueFormat': ','}}}%%
+treemap
+"User Counts"
+    "Active Users": 1250345
+    "New Signups": 45789
+    "Churned": 12350
+    "Converted": 78975
+      `,
+      {}
+    );
+  });
+
+  it('8f: should handle valueFormat set via directive with dollar and thousands separator', () => {
+    imgSnapshotTest(
+      `%%{init: {'treemap': {'valueFormat': '$,.0f'}}}%%
+treemap
+"Sales by Region"
+    "North": 1234567
+    "South": 7654321
+    "East": 4567890
+    "West": 9876543
+      `,
+      {}
+    );
+  });
+
+  it('8g: should handle scientific notation format', () => {
+    imgSnapshotTest(
+      `%%{init: {'treemap': {'valueFormat': '.2e'}}}%%
+treemap
+"Scientific Values"
+    "Value 1": 1234567
+    "Value 2": 0.0000123
+    "Value 3": 1000000000
       `,
       {}
     );

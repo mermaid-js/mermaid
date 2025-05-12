@@ -141,7 +141,20 @@ treemap
 
 ### Value Formatting
 
-Values in treemap diagrams can be formatted to display in different ways:
+Values in treemap diagrams can be formatted to display in different ways using the `valueFormat` configuration option. This option primarily uses [D3's format specifiers](https://github.com/d3/d3-format#locale_format) to control how numbers are displayed, with some additional special cases for common formats.
+
+Some common format patterns:
+- `,` - Thousands separator (default)
+- `$` - Add dollar sign
+- `.1f` - Show one decimal place
+- `.1%` - Show as percentage with one decimal place
+- `$0,0` - Dollar sign with thousands separator
+- `$.2f` - Dollar sign with 2 decimal places
+- `$,.2f` - Dollar sign with thousands separator and 2 decimal places
+
+The treemap diagram supports both standard D3 format specifiers and some common currency formats that combine the dollar sign with other formatting options.
+
+Example with currency formatting:
 
 ```mermaid-example
 %%{init: {'treemap': {'valueFormat': '$0,0'}}}%%
@@ -154,6 +167,18 @@ treemap
     "Marketing"
         "Advertising": 400000
         "Events": 100000
+```
+
+Example with percentage formatting:
+
+```mermaid-example
+%%{init: {'treemap': {'valueFormat': '.1%'}}}%%
+treemap
+"Market Share"
+    "Company A": 0.35
+    "Company B": 0.25
+    "Company C": 0.15
+    "Others": 0.25
 ```
 
 ## Common Use Cases
