@@ -11,7 +11,9 @@ import { buildHierarchy } from './utils.js';
  * @param ast - The Treemap AST
  */
 const populate = (ast: TreemapAst) => {
-  populateCommonDb(ast, db);
+  // We need to bypass the type checking for populateCommonDb
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  populateCommonDb(ast as any, db);
 
   const items: {
     level: number;
@@ -77,7 +79,7 @@ const populate = (ast: TreemapAst) => {
  * @param item - The treemap item
  * @returns The name of the item
  */
-const getItemName = (item: any): string => {
+const getItemName = (item: { name?: string | number }): string => {
   return item.name ? String(item.name) : '';
 };
 
@@ -85,7 +87,8 @@ export const parser: ParserDefinition = {
   parse: async (text: string): Promise<void> => {
     try {
       // Use a generic parse that accepts any diagram type
-      const parseFunc = parse as (diagramType: string, text: string) => Promise<any>;
+
+      const parseFunc = parse as (diagramType: string, text: string) => Promise<TreemapAst>;
       const ast = await parseFunc('treemap', text);
       log.debug('Treemap AST:', ast);
       populate(ast);

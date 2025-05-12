@@ -13,7 +13,7 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import type { TreemapDB, TreemapData, TreemapNode } from './types.js';
+import type { TreemapDB, TreemapData, TreemapDiagramConfig, TreemapNode } from './types.js';
 
 const defaultTreemapData: TreemapData = {
   nodes: [],
@@ -22,11 +22,15 @@ const defaultTreemapData: TreemapData = {
 let outerNodes: TreemapNode[] = [];
 let data: TreemapData = structuredClone(defaultTreemapData);
 
-const getConfig = () => {
+const getConfig = (): Required<TreemapDiagramConfig> => {
+  // Use type assertion with unknown as intermediate step
+  const defaultConfig = DEFAULT_CONFIG as unknown as { treemap: Required<TreemapDiagramConfig> };
+  const userConfig = commonGetConfig() as unknown as { treemap?: Partial<TreemapDiagramConfig> };
+
   return cleanAndMerge({
-    ...DEFAULT_CONFIG.treemap,
-    ...commonGetConfig().treemap,
-  });
+    ...defaultConfig.treemap,
+    ...(userConfig.treemap ?? {}),
+  }) as Required<TreemapDiagramConfig>;
 };
 
 const getNodes = (): TreemapNode[] => data.nodes;
