@@ -146,20 +146,17 @@ classDef class1   fill:red,color:blue,stroke:#FFD600;
 
 </pre
     >
-    <pre id="diagram4" class="mermaid2">
-stateDiagram
-  direction TB
-  classDef apa   classDef apa fill:red, color: blue;
-
-  [*] --> Still
-  Still --> [*]
-  Still --> Moving
-  Moving --> Still
-  Moving --> Crash
-  Crash --> [*]
-  Still --> s1
-  class Still apa
-
+    <pre id="diagram4" class="mermaid">
+%%{init: {'treemap': {'valueFormat': '$0,0'}}}%%
+treemap
+"Budget"
+    "Operations"
+        "Salaries": 700000
+        "Equipment": 200000
+        "Supplies": 100000
+    "Marketing"
+        "Advertising": 400000
+        "Events": 100000
 
 </pre
     >
