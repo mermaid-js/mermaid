@@ -58,8 +58,6 @@ const addClass = (id: string, _style: string) => {
   if (style) {
     style.forEach((s) => {
       if (isLabelStyle(s)) {
-        console.debug('isLabelStyle', s);
-        // const newStyle = s.replace('fill', 'bgFill'); // .replace('color', 'fill');
         if (styleClass?.textStyles) {
           styleClass.textStyles.push(s);
         } else {
@@ -73,12 +71,6 @@ const addClass = (id: string, _style: string) => {
       }
     });
   }
-
-  // classes.forEach((value) => {
-  //   if (value.cssClasses.includes(id)) {
-  //     value.styles.push(...style.flatMap((s) => s.split(',')));
-  //   }
-  // });
 
   classes.set(id, styleClass);
 };

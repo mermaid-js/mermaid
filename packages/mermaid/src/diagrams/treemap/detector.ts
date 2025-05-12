@@ -7,7 +7,6 @@ import type {
 const id = 'treemap';
 
 const detector: DiagramDetector = (txt) => {
-  console.log('treemap detector', txt);
   return /^\s*treemap/.test(txt);
 };
 

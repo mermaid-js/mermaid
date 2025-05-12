@@ -104,8 +104,6 @@ describe('Treemap Parser', () => {
     it('should parse a classDef statement', () => {
       const result = parse('treemap\nclassDef myClass fill:red;');
 
-      console.debug(result.value);
-
       // We know there are parser errors with styleText as the Langium grammar can't handle it perfectly
       // Check that we at least got the right type and className
       expect(result.value.TreemapRows).toHaveLength(1);

@@ -17,8 +17,6 @@ const populate = (ast: any) => {
 
   // Extract classes and styles from the treemap
   for (const row of ast.TreemapRows || []) {
-    const item = row.item;
-
     if (row.$type === 'ClassDefStatement') {
       db.addClass(row.className, row.styleText);
     }
@@ -43,7 +41,7 @@ const populate = (ast: any) => {
       classSelector: item.classSelector,
       cssCompiledStyles: item.classSelector ? db.getStylesForClass(item.classSelector) : undefined,
     };
-    console.debug('itemData', item.$type);
+
     items.push(itemData);
   }
 
@@ -61,11 +59,6 @@ const populate = (ast: any) => {
   };
 
   addNodesRecursively(hierarchyNodes, 0);
-
-  console.debug('ast.ClassDefStatement', ast);
-  // Extract data from each classdefintion in the treemap
-
-  log.debug('Processed items:', items);
 };
 
 /**
