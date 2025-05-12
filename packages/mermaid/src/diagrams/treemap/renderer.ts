@@ -11,6 +11,7 @@ import type { TreemapDB, TreemapNode } from './types.js';
 import { scaleOrdinal, treemap, hierarchy, format, select } from 'd3';
 import { styles2String } from '../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import { getConfig } from '../../config.js';
+import { log } from '../../logger.js';
 import type { Node } from '../../rendering-util/types.js';
 
 const DEFAULT_INNER_PADDING = 10; // Default for inner padding between cells/sections
@@ -23,7 +24,7 @@ const SECTION_HEADER_HEIGHT = 25;
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const treemapDb = diagram.db as TreemapDB;
   const config = treemapDb.getConfig();
-  const treemapInnerPadding = config.padding !== undefined ? config.padding : DEFAULT_INNER_PADDING;
+  const treemapInnerPadding = config.padding ?? DEFAULT_INNER_PADDING;
   const title = treemapDb.getDiagramTitle();
   const root = treemapDb.getRoot();
   const { themeVariables } = getConfig();
@@ -58,7 +59,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       valueFormat = (value: number) => '$' + format(',')(value);
     } else if (formatStr.startsWith('$') && formatStr.includes(',')) {
       // Other dollar formats with commas
-      const precision = formatStr.match(/\.\d+/);
+      const precision = /\.\d+/.exec(formatStr);
       const precisionStr = precision ? precision[0] : '';
       valueFormat = (value: number) => '$' + format(',' + precisionStr)(value);
     } else if (formatStr.startsWith('$')) {
@@ -70,7 +71,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       valueFormat = format(formatStr);
     }
   } catch (error) {
-    console.error('Error creating format function:', error);
+    log.error('Error creating format function:', error);
     // Fallback to default format
     valueFormat = format(',');
   }
@@ -142,8 +143,8 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
 
   // Create the hierarchical structure
   const hierarchyRoot = hierarchy<TreemapNode>(root)
-    .sum((d) => d.value || 0)
-    .sort((a, b) => (b.value || 0) - (a.value || 0));
+    .sum((d) => d.value ?? 0)
+    .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
 
   // Create treemap layout
   const treemapLayout = treemap<TreemapNode>()
@@ -180,11 +181,19 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('fill-opacity', 0.6)
     .attr('stroke-width', 0.6);
 
+  // Add clip paths for section headers to prevent text overflow
+  sections
+    .append('clipPath')
+    .attr('id', (_d, i) => `clip-section-${id}-${i}`)
+    .append('rect')
+    .attr('width', (d) => Math.max(0, d.x1 - d.x0 - 12)) // 6px padding on each side
+    .attr('height', SECTION_HEADER_HEIGHT);
+
   sections
     .append('rect')
     .attr('width', (d) => d.x1 - d.x0)
     .attr('height', (d) => d.y1 - d.y0)
-    .attr('class', (d, i) => {
+    .attr('class', (_d, i) => {
       return `treemapSection section${i}`;
     })
     .attr('fill', (d) => colorScale(d.data.name))
@@ -200,14 +209,16 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   sections
     .append('text')
     .attr('class', 'treemapSectionLabel')
-    .attr('x', 6)
+    .attr('x', 6) // Keep original left padding
     .attr('y', SECTION_HEADER_HEIGHT / 2)
     .attr('dominant-baseline', 'middle')
     .text((d) => d.data.name)
     .attr('font-weight', 'bold')
     .attr('style', (d) => {
       const labelStyles =
-        'dominant-baseline: middle; font-size: 12px;fill:' + colorScaleLabel(d.data.name) + ';';
+        'dominant-baseline: middle; font-size: 12px; fill:' +
+        colorScaleLabel(d.data.name) +
+        '; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
       const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
       return labelStyles + styles.labelStyles.replace('color:', 'fill:');
     })
@@ -266,9 +277,9 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       .attr('font-style', 'italic')
       .attr('style', (d) => {
         const labelStyles =
-          'text-anchor: middle; dominant-baseline: middle; font-size: 10px;fill:' +
+          'text-anchor: end; dominant-baseline: middle; font-size: 10px; fill:' +
           colorScaleLabel(d.data.name) +
-          ';';
+          '; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;';
         const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
         return labelStyles + styles.labelStyles.replace('color:', 'fill:');
       });
@@ -313,7 +324,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   // Add clip paths to prevent text from extending outside nodes
   cell
     .append('clipPath')
-    .attr('id', (d, i) => `clip-${id}-${i}`)
+    .attr('id', (_d, i) => `clip-${id}-${i}`)
     .append('rect')
     .attr('width', (d) => Math.max(0, d.x1 - d.x0 - 4))
     .attr('height', (d) => Math.max(0, d.y1 - d.y0 - 4));
@@ -333,7 +344,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
       return labelStyles + styles.labelStyles.replace('color:', 'fill:');
     })
-    .attr('clip-path', (d, i) => `url(#clip-${id}-${i})`)
+    .attr('clip-path', (_d, i) => `url(#clip-${id}-${i})`)
     .text((d) => d.data.name);
 
   leafLabels.each(function (d) {
@@ -429,7 +440,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
         return labelStyles + styles.labelStyles.replace('color:', 'fill:');
       })
 
-      .attr('clip-path', (d, i) => `url(#clip-${id}-${i})`)
+      .attr('clip-path', (_d, i) => `url(#clip-${id}-${i})`)
       .text((d) => (d.value ? valueFormat(d.value) : ''));
 
     leafValues.each(function (d) {
@@ -502,7 +513,10 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   );
 };
 
-const getClasses = function (text: string, diagramObj: any): Map<string, DiagramStyleClassDef> {
-  return diagramObj.db.getClasses();
+const getClasses = function (
+  _text: string,
+  diagramObj: Pick<Diagram, 'db'>
+): Map<string, DiagramStyleClassDef> {
+  return (diagramObj.db as TreemapDB).getClasses();
 };
 export const renderer: DiagramRenderer = { draw, getClasses };
