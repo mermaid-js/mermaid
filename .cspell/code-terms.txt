@@ -87,6 +87,7 @@ NODIR
 NSTR
 outdir
 Qcontrolx
+QSTR
 reinit
 rels
 reqs

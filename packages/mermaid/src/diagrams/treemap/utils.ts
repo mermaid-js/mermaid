@@ -6,7 +6,7 @@ import type { TreemapNode } from './types.js';
  * @returns A hierarchical tree structure
  */
 export function buildHierarchy(
-  items: { level: number; name: string; type: string; value?: number }[]
+  items: { level: number; name: string; type: string; value?: number; classSelector?: string }[]
 ): TreemapNode[] {
   if (!items.length) {
     return [];
@@ -20,6 +20,8 @@ export function buildHierarchy(
       name: item.name,
       children: item.type === 'Leaf' ? undefined : [],
     };
+    node.classSelector = item?.classSelector;
+    node.cssCompiledStyles = item?.cssCompiledStyles;
 
     if (item.type === 'Leaf' && item.value !== undefined) {
       node.value = item.value;

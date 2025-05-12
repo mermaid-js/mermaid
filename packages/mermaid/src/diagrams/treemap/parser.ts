@@ -14,16 +14,36 @@ const populate = (ast: any) => {
   populateCommonDb(ast, db);
 
   const items = [];
+
+  // Extract classes and styles from the treemap
+  for (const row of ast.TreemapRows || []) {
+    const item = row.item;
+
+    if (row.$type === 'ClassDefStatement') {
+      db.addClass(row.className, row.styleText);
+    }
+  }
+
   // Extract data from each row in the treemap
   for (const row of ast.TreemapRows || []) {
     const item = row.item;
+
     if (!item) {
       continue;
     }
 
     const level = row.indent ? parseInt(row.indent) : 0;
     const name = getItemName(item);
-    const itemData = { level, name, type: item.$type, value: item.value };
+
+    const itemData = {
+      level,
+      name,
+      type: item.$type,
+      value: item.value,
+      classSelector: item.classSelector,
+      cssCompiledStyles: item.classSelector ? db.getStylesForClass(item.classSelector) : undefined,
+    };
+    console.debug('itemData', item.$type);
     items.push(itemData);
   }
 
@@ -41,6 +61,9 @@ const populate = (ast: any) => {
   };
 
   addNodesRecursively(hierarchyNodes, 0);
+
+  console.debug('ast.ClassDefStatement', ast);
+  // Extract data from each classdefintion in the treemap
 
   log.debug('Processed items:', items);
 };

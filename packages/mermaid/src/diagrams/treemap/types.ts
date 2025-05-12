@@ -1,4 +1,4 @@
-import type { DiagramDBBase } from '../../diagram-api/types.js';
+import type { DiagramDBBase, DiagramStyleClassDef } from '../../diagram-api/types.js';
 import type { BaseDiagramConfig } from '../../config.type.js';
 
 export interface TreemapNode {
@@ -6,12 +6,17 @@ export interface TreemapNode {
   children?: TreemapNode[];
   value?: number;
   parent?: TreemapNode;
+  classSelector?: string;
+  cssCompiledStyles?: string[];
 }
 
 export interface TreemapDB extends DiagramDBBase<TreemapDiagramConfig> {
   getNodes: () => TreemapNode[];
   addNode: (node: TreemapNode, level: number) => void;
   getRoot: () => TreemapNode | undefined;
+  getClasses: () => Map<string, DiagramStyleClassDef>;
+  addClass: (className: string, style: string) => void;
+  getStylesForClass: (classSelector: string) => string[];
 }
 
 export interface TreemapStyleOptions {

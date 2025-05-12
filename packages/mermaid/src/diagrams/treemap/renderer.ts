@@ -1,11 +1,17 @@
 import type { Diagram } from '../../Diagram.js';
-import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
+import type {
+  DiagramRenderer,
+  DiagramStyleClassDef,
+  DrawDefinition,
+} from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { TreemapDB, TreemapNode } from './types.js';
 import { scaleOrdinal, treemap, hierarchy, format, select } from 'd3';
+import { styles2String } from '../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 import { getConfig } from '../../config.js';
+import type { Node } from '../../rendering-util/types.js';
 
 const DEFAULT_INNER_PADDING = 10; // Default for inner padding between cells/sections
 const SECTION_INNER_PADDING = 10; // Default for inner padding between cells/sections
@@ -144,22 +150,26 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('width', (d) => d.x1 - d.x0)
     .attr('height', SECTION_HEADER_HEIGHT)
     .attr('class', 'treemapSectionHeader')
-    // .attr('fill', (d) => colorScale(d.data.name))
     .attr('fill', 'none')
     .attr('fill-opacity', 0.6)
-    // .attr('stroke', (d) => colorScale(d.data.name))
     .attr('stroke-width', 0.6);
 
   sections
     .append('rect')
     .attr('width', (d) => d.x1 - d.x0)
     .attr('height', (d) => d.y1 - d.y0)
-    .attr('class', 'treemapSection')
+    .attr('class', (d, i) => {
+      return `treemapSection section${i}`;
+    })
     .attr('fill', (d) => colorScale(d.data.name))
     .attr('fill-opacity', 0.6)
     .attr('stroke', (d) => colorScalePeer(d.data.name))
     .attr('stroke-width', 2.0)
-    .attr('stroke-opacity', 0.4);
+    .attr('stroke-opacity', 0.4)
+    .attr('style', (d) => {
+      const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
+      return styles.nodeStyles + ';' + styles.borderStyles.join(';');
+    });
   // Add section labels
   sections
     .append('text')
@@ -169,8 +179,12 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('dominant-baseline', 'middle')
     .text((d) => d.data.name)
     .attr('font-weight', 'bold')
-    .style('font-size', '12px')
-    .style('fill', (d) => colorScaleLabel(d.data.name))
+    .attr('style', (d) => {
+      const labelStyles =
+        'dominant-baseline: middle; font-size: 12px;fill:' + colorScaleLabel(d.data.name) + ';';
+      const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
+      return labelStyles + styles.labelStyles.replace('color:', 'fill:');
+    })
     .each(function (d) {
       const self = select(this);
       const originalText = d.data.name;
@@ -224,8 +238,14 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       .attr('dominant-baseline', 'middle')
       .text((d) => (d.value ? valueFormat(d.value) : ''))
       .attr('font-style', 'italic')
-      .style('font-size', '10px')
-      .style('fill', (d) => colorScaleLabel(d.data.name));
+      .attr('style', (d) => {
+        const labelStyles =
+          'text-anchor: middle; dominant-baseline: middle; font-size: 10px;fill:' +
+          colorScaleLabel(d.data.name) +
+          ';';
+        const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
+        return labelStyles + styles.labelStyles.replace('color:', 'fill:');
+      });
   }
 
   // Draw the leaf nodes
@@ -235,7 +255,9 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .data(leafNodes)
     .enter()
     .append('g')
-    .attr('class', 'treemapNode treemapLeafGroup')
+    .attr('class', (d, i) => {
+      return `treemapNode treemapLeafGroup leaf${i}${d.data.classSelector ? ` ${d.data.classSelector}` : ''}x`;
+    })
     .attr('transform', (d) => `translate(${d.x0},${d.y0})`);
 
   // Add rectangle for each leaf node
@@ -248,6 +270,10 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       // Leaves inherit color from their immediate parent section's name.
       // If a leaf is the root itself (no parent), it uses its own name.
       return d.parent ? colorScale(d.parent.data.name) : colorScale(d.data.name);
+    })
+    .attr('style', (d) => {
+      const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
+      return styles.nodeStyles;
     })
     .attr('fill-opacity', 0.2)
     .attr('stroke', (d) => {
@@ -272,11 +298,15 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('class', 'treemapLabel')
     .attr('x', (d) => (d.x1 - d.x0) / 2)
     .attr('y', (d) => (d.y1 - d.y0) / 2)
-    .style('text-anchor', 'middle')
-    .style('dominant-baseline', 'middle')
-    .style('font-size', '38px')
-    .style('fill', (d) => colorScaleLabel(d.data.name))
-    // .style('stroke', (d) => colorScaleLabel(d.data.name))
+    // .style('fill', (d) => colorScaleLabel(d.data.name))
+    .attr('style', (d) => {
+      const labelStyles =
+        'text-anchor: middle; dominant-baseline: middle; font-size: 38px;fill:' +
+        colorScaleLabel(d.data.name) +
+        ';';
+      const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
+      return labelStyles + styles.labelStyles.replace('color:', 'fill:');
+    })
     .attr('clip-path', (d, i) => `url(#clip-${id}-${i})`)
     .text((d) => d.data.name);
 
@@ -364,10 +394,15 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
         // Y position calculated dynamically in leafValues.each based on final label metrics
         return (d.y1 - d.y0) / 2; // Placeholder, will be overwritten
       })
-      .style('text-anchor', 'middle')
-      .style('dominant-baseline', 'hanging')
-      // Initial font size, will be scaled in .each()
-      .style('font-size', '28px')
+      .attr('style', (d) => {
+        const labelStyles =
+          'text-anchor: middle; dominant-baseline: hanging; font-size: 28px;fill:' +
+          colorScaleLabel(d.data.name) +
+          ';';
+        const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
+        return labelStyles + styles.labelStyles.replace('color:', 'fill:');
+      })
+
       .attr('clip-path', (d, i) => `url(#clip-${id}-${i})`)
       .text((d) => (d.value ? valueFormat(d.value) : ''));
 
@@ -441,4 +476,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   );
 };
 
-export const renderer: DiagramRenderer = { draw };
+const getClasses = function (text: string, diagramObj: any): Map<string, DiagramStyleClassDef> {
+  return diagramObj.db.getClasses();
+};
+export const renderer: DiagramRenderer = { draw, getClasses };

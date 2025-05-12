@@ -32,8 +32,26 @@
       href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Recursive:wght@300..1000&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
+      .recursive-mermaid {
+        font-family: 'Recursive', sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        font-variation-settings:
+          'slnt' 0,
+          'CASL' 0,
+          'CRSV' 0.5,
+          'MONO' 0;
+      }
+
       body {
         /* background: rgb(221, 208, 208); */
         /* background: #333; */
@@ -45,7 +63,9 @@
       h1 {
         color: grey;
       }
-
+      .mermaid {
+        border: 0px solid red;
+      }
       .mermaid2 {
         display: none;
       }
@@ -83,6 +103,11 @@
         width: 100%;
       }
 
+      .class2 {
+        fill: red;
+        fill-opacity: 1;
+      }
+
       /* tspan {
               font-size: 6px !important;
             } */
@@ -107,14 +132,50 @@
   <body>
     <pre id="diagram4" class="mermaid">
 treemap
+"Section 1"
+    "Leaf 1.1": 12
+    "Section 1.2":::class1
+      "Leaf 1.2.1": 12
+"Section 2"
+    "Leaf 2.1": 20:::class1
+    "Leaf 2.2": 25
+    "Leaf 2.3": 12
+
+classDef class1   fill:red,color:blue,stroke:#FFD600;
+
+
+</pre
+    >
+    <pre id="diagram4" class="mermaid2">
+stateDiagram
+  direction TB
+  classDef apa   classDef apa fill:red, color: blue;
+
+  [*] --> Still
+  Still --> [*]
+  Still --> Moving
+  Moving --> Still
+  Moving --> Crash
+  Crash --> [*]
+  Still --> s1
+  class Still apa
+
+
+</pre
+    >
+    <pre id="diagram4" class="mermaid2">
+treemap
     "Root"
         "Branch 1"
-            "Leaf 1.1": 10
-            "Leaf 1.2": 15
+            "Leaf 1.1": 12
+            "Branch 1.2"
+                "Leaf 1.2.1": 110
+                "Leaf 1.2.2": 12
+                "Leaf 1.2.3": 13
         "Branch 2"
             "Leaf 2.1": 20
             "Leaf 2.2": 25
-            "Leaf 2.3": 30
+            "Leaf 2.3": 12
     </pre>
     <pre id="diagram4" class="mermaid2">
       flowchart LR
@@ -449,7 +510,7 @@ kanban
         alert('It worked');
       }
       await mermaid.initialize({
-        // theme: 'base',
+        theme: 'base',
         // theme: 'default',
         // theme: 'forest',
         // handDrawnSeed: 12,
@@ -460,11 +521,7 @@ kanban
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
-
-        // fontFamily: 'Caveat',
-        // fontFamily: 'Kalam',
-        // fontFamily: 'courier',
-        fontFamily: 'arial',
+        fontFamily: "'Recursive', sans-serif",
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
