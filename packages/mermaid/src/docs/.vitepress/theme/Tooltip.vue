@@ -11,32 +11,48 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const isVisible = ref(false);
 const currentTarget = ref<HTMLElement | null>(null);
 const tooltipStyle = ref({});
+let showTimer: ReturnType<typeof setTimeout> | null = null;
+let hideTimer: ReturnType<typeof setTimeout> | null = null;
 
 const showTooltip = (target: HTMLElement) => {
-  currentTarget.value = target;
-  const rect = target.getBoundingClientRect();
-  tooltipStyle.value = {
-    left: `${rect.left + rect.width / 2}px`,
-    top: `${rect.top}px`,
-  };
-  isVisible.value = true;
+  if (hideTimer) {
+    clearTimeout(hideTimer);
+    hideTimer = null;
+  }
+
+  showTimer = setTimeout(() => {
+    currentTarget.value = target;
+    const rect = target.getBoundingClientRect();
+    tooltipStyle.value = {
+      left: `${rect.left + rect.width / 2}px`,
+      top: `${rect.bottom}px`,
+    };
+    isVisible.value = true;
+  }, 400);
 };
 
 const hideTooltip = () => {
-  currentTarget.value = null;
-  isVisible.value = false;
+  if (showTimer) {
+    clearTimeout(showTimer);
+    showTimer = null;
+  }
+
+  hideTimer = setTimeout(() => {
+    currentTarget.value = null;
+    isVisible.value = false;
+  }, 100);
 };
 
 const handleMouseOver = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
   if (
-    target.matches('a[href*="mermaidchart.com"]') ||
-    target.matches('button[onclick*="mermaidchart.com"]')
+    target.matches('a[href*="try_playground"]') ||
+    target.matches('button[onclick*="try_playground"]')
   ) {
     showTooltip(target);
   }
@@ -64,9 +80,10 @@ onUnmounted(() => {
   position: fixed;
   background: black;
   color: white;
-  padding: 0.3rem 0.6rem;
+  padding: 0.25rem 0.5rem;
   border-radius: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.65rem;
+  font-weight: 400;
   pointer-events: none;
   z-index: 1000;
   text-align: center;
@@ -74,7 +91,7 @@ onUnmounted(() => {
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;
-  transform: translate(-50%, -90%);
+  transform: translate(-50%, 0);
   margin-top: -0.5rem;
   display: flex;
   align-items: center;
@@ -83,6 +100,6 @@ onUnmounted(() => {
 
 .mermaid-chart-tooltip.visible {
   opacity: 1;
-  transform: translate(-50%, -100%);
+  transform: translate(-50%, 30%);
 }
 </style>
