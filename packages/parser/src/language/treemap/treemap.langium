@@ -7,6 +7,7 @@
  * treemap declaration.
  */
 grammar Treemap
+import "../common/common";
 
 // Interface declarations for data types
 interface Item {
@@ -22,9 +23,21 @@ interface ClassDefStatement {
     className: string
     styleText: string // Optional style text
 }
-entry TreemapDoc:
+interface TreemapDoc {
+    TreemapRows: TreemapRow[]
+    title?: string
+    accTitle?: string
+    accDescr?: string
+}
+
+entry TreemapDoc returns TreemapDoc:
+    NEWLINE*
     TREEMAP_KEYWORD
-    (TreemapRows+=TreemapRow)*;
+    (
+        TitleAndAccessibilities
+        | TreemapRows+=TreemapRow
+        | NEWLINE
+    )*;
 
 terminal CLASS_DEF: /classDef\s+([a-zA-Z_][a-zA-Z0-9_]+)(?:\s+([^;\r\n]*))?(?:;)?/;
 terminal STYLE_SEPARATOR: ':::';
@@ -33,7 +46,6 @@ terminal COMMA: ',';
 
 hidden terminal WS: /[ \t]+/;  // One or more spaces or tabs for hidden whitespace
 hidden terminal ML_COMMENT: /\%\%[^\n]*/;
-hidden terminal NL: /\r?\n/;
 
 TreemapRow:
     indent=INDENTATION? (item=Item | ClassDef);
@@ -57,12 +69,7 @@ terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
 // Keywords with fixed text patterns
 terminal TREEMAP_KEYWORD:  'treemap';
-terminal ID: /[a-zA-Z_][a-zA-Z0-9_]*/;
-// Define as a terminal rule
-terminal NUMBER: /[0-9_\.\,]+/;
 
 // Then create a data type rule that uses it
 MyNumber returns number: NUMBER;
-
-terminal STRING: /"[^"]*"|'[^']*'/;
 // Modified indentation rule to have higher priority than WS

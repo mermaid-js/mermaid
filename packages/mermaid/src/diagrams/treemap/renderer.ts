@@ -78,7 +78,6 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
 
   // Create color scale
   const colorScale = scaleOrdinal<string>().range([
-    'transparent',
     themeVariables.cScale0,
     themeVariables.cScale1,
     themeVariables.cScale2,
@@ -93,7 +92,6 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     themeVariables.cScale11,
   ]);
   const colorScalePeer = scaleOrdinal<string>().range([
-    'transparent',
     themeVariables.cScalePeer0,
     themeVariables.cScalePeer1,
     themeVariables.cScalePeer2,
@@ -108,7 +106,6 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     themeVariables.cScalePeer11,
   ]);
   const colorScaleLabel = scaleOrdinal<string>().range([
-    'transparent',
     themeVariables.cScaleLabel0,
     themeVariables.cScaleLabel1,
     themeVariables.cScaleLabel2,
@@ -161,8 +158,10 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   // Apply the treemap layout to the hierarchy
   const treemapData = treemapLayout(hierarchyRoot);
 
-  // Draw section nodes (branches - nodes with children)
-  const branchNodes = treemapData.descendants().filter((d) => d.children && d.children.length > 0);
+  // Draw section nodes (branches - nodes with children), excluding the root node
+  const branchNodes = treemapData
+    .descendants()
+    .filter((d) => d.children && d.children.length > 0 && d.depth > 0);
   const sections = g
     .selectAll('.treemapSection')
     .data(branchNodes)
@@ -178,8 +177,9 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('height', SECTION_HEADER_HEIGHT)
     .attr('class', 'treemapSectionHeader')
     .attr('fill', 'none')
-    .attr('fill-opacity', 0.6)
-    .attr('stroke-width', 0.6);
+    .attr('fill-opacity', (d) => (d.depth === 0 ? 0 : 0.6))
+    .attr('stroke-width', (d) => (d.depth === 0 ? 0 : 0.6))
+    .attr('style', (d) => (d.depth === 0 ? 'display: none;' : ''));
 
   // Add clip paths for section headers to prevent text overflow
   sections
@@ -196,11 +196,11 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('class', (_d, i) => {
       return `treemapSection section${i}`;
     })
-    .attr('fill', (d) => colorScale(d.data.name))
-    .attr('fill-opacity', 0.6)
-    .attr('stroke', (d) => colorScalePeer(d.data.name))
+
+    .attr('fill-opacity', (d) => (d.depth === 0 ? 0 : 0.6))
+    .attr('stroke', (d) => (d.depth === 0 ? 'transparent' : colorScalePeer(d.data.name)))
     .attr('stroke-width', 2.0)
-    .attr('stroke-opacity', 0.4)
+    .attr('stroke-opacity', (d) => (d.depth === 0 ? 0 : 0.4))
     .attr('style', (d) => {
       const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
       return styles.nodeStyles + ';' + styles.borderStyles.join(';');
@@ -212,9 +212,13 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('x', 6) // Keep original left padding
     .attr('y', SECTION_HEADER_HEIGHT / 2)
     .attr('dominant-baseline', 'middle')
-    .text((d) => d.data.name)
+    .text((d) => (d.depth === 0 ? '' : d.data.name)) // Skip label for root section
     .attr('font-weight', 'bold')
     .attr('style', (d) => {
+      // Hide the label for the root section
+      if (d.depth === 0) {
+        return 'display: none;';
+      }
       const labelStyles =
         'dominant-baseline: middle; font-size: 12px; fill:' +
         colorScaleLabel(d.data.name) +
@@ -223,6 +227,10 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       return labelStyles + styles.labelStyles.replace('color:', 'fill:');
     })
     .each(function (d) {
+      // Skip processing for root section
+      if (d.depth === 0) {
+        return;
+      }
       const self = select(this);
       const originalText = d.data.name;
       self.text(originalText);
@@ -273,9 +281,13 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       .attr('y', SECTION_HEADER_HEIGHT / 2)
       .attr('text-anchor', 'end')
       .attr('dominant-baseline', 'middle')
-      .text((d) => (d.value ? valueFormat(d.value) : ''))
+      .text((d) => (d.depth === 0 ? '' : d.value ? valueFormat(d.value) : '')) // Skip value for root section
       .attr('font-style', 'italic')
       .attr('style', (d) => {
+        // Hide the value for the root section
+        if (d.depth === 0) {
+          return 'display: none;';
+        }
         const labelStyles =
           'text-anchor: end; dominant-baseline: middle; font-size: 10px; fill:' +
           colorScaleLabel(d.data.name) +
@@ -285,8 +297,8 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       });
   }
 
-  // Draw the leaf nodes
-  const leafNodes = treemapData.leaves();
+  // Draw the leaf nodes, excluding the root node
+  const leafNodes = treemapData.leaves().filter((d) => d.depth > 0);
   const cell = g
     .selectAll('.treemapLeafGroup')
     .data(leafNodes)
@@ -304,6 +316,10 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
     .attr('height', (d) => d.y1 - d.y0)
     .attr('class', 'treemapLeaf')
     .attr('fill', (d) => {
+      // Make the root rectangle transparent
+      if (d.depth === 0) {
+        return 'transparent';
+      }
       // Leaves inherit color from their immediate parent section's name.
       // If a leaf is the root itself (no parent), it uses its own name.
       return d.parent ? colorScale(d.parent.data.name) : colorScale(d.data.name);
@@ -312,14 +328,18 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       const styles = styles2String({ cssCompiledStyles: d.data.cssCompiledStyles } as Node);
       return styles.nodeStyles;
     })
-    .attr('fill-opacity', 0.2)
+    .attr('fill-opacity', (d) => (d.depth === 0 ? 0 : 0.2))
     .attr('stroke', (d) => {
+      // Make the root rectangle transparent
+      if (d.depth === 0) {
+        return 'transparent';
+      }
       // Leaves inherit color from their immediate parent section's name.
       // If a leaf is the root itself (no parent), it uses its own name.
       return d.parent ? colorScale(d.parent.data.name) : colorScale(d.data.name);
     })
     .attr('stroke-width', 2.0)
-    .attr('stroke-opacity', 0.3);
+    .attr('stroke-opacity', (d) => (d.depth === 0 ? 0 : 0.3));
 
   // Add clip paths to prevent text from extending outside nodes
   cell
@@ -492,25 +512,9 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       }
     });
   }
-
-  setupViewPortForSVG(svg, 0, 'flowchart', config?.useMaxWidth || false);
-  const viewBox = svg.attr('viewBox');
-  const viewBoxParts = viewBox.split(' ');
-  const viewBoxWidth = viewBoxParts[2];
-  const viewBoxHeight = viewBoxParts[3];
-  const viewBoxX = viewBoxParts[0];
-  const viewBoxY = viewBoxParts[1];
-
-  const viewBoxWidthNumber = Number(viewBoxWidth);
-  const viewBoxHeightNumber = Number(viewBoxHeight);
-  const viewBoxXNumber = Number(viewBoxX);
-  const viewBoxYNumber = Number(viewBoxY);
-
-  // Adjust the viewBox to account for the title height
-  svg.attr(
-    'viewBox',
-    `${viewBoxXNumber} ${viewBoxYNumber + SECTION_HEADER_HEIGHT} ${viewBoxWidthNumber} ${viewBoxHeightNumber - SECTION_HEADER_HEIGHT}`
-  );
+  const padding = 8;
+  // const padding = config.treemap.diagramPadding ?? 8;
+  setupViewPortForSVG(svg, padding, 'flowchart', config?.useMaxWidth || false);
 };
 
 const getClasses = function (

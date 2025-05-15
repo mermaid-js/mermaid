@@ -287,4 +287,55 @@ classDef sales fill:#c3a66b,stroke:#333;
       {}
     );
   });
+
+  it('12: should render a treemap with title', () => {
+    imgSnapshotTest(
+      `
+    treemap
+      title Treemap with Title
+      "Category A"
+          "Item A1": 10
+          "Item A2": 20
+      "Category B"
+          "Item B1": 15
+          "Item B2": 25
+      `,
+      {}
+    );
+  });
+
+  it('13: should render a treemap with accessibility attributes', () => {
+    imgSnapshotTest(
+      `
+    treemap
+      accTitle: Accessible Treemap Title
+      accDescr: This is a description of the treemap for accessibility purposes
+      "Category A"
+          "Item A1": 10
+          "Item A2": 20
+      "Category B"
+          "Item B1": 15
+          "Item B2": 25
+      `,
+      {}
+    );
+  });
+
+  it('14: should render a treemap with title and accessibility attributes', () => {
+    imgSnapshotTest(
+      `
+    treemap
+      title Treemap with Title and Accessibility
+      accTitle: Accessible Treemap Title
+      accDescr: This is a description of the treemap for accessibility purposes
+      "Category A"
+          "Item A1": 10
+          "Item A2": 20
+      "Category B"
+          "Item B1": 15
+          "Item B2": 25
+      `,
+      {}
+    );
+  });
 });
