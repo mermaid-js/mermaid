@@ -265,6 +265,7 @@ const config: RequiredDeep<MermaidConfig> = {
   treemap: {
     useMaxWidth: true,
     padding: 10,
+    diagramPadding: 8,
     showValues: true,
     nodeWidth: 100,
     nodeHeight: 40,

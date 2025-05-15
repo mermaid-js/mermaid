@@ -512,9 +512,8 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       }
     });
   }
-  const padding = 8;
-  // const padding = config.treemap.diagramPadding ?? 8;
-  setupViewPortForSVG(svg, padding, 'flowchart', config?.useMaxWidth || false);
+  const diagramPadding = config.diagramPadding ?? 8;
+  setupViewPortForSVG(svg, diagramPadding, 'flowchart', config?.useMaxWidth || false);
 };
 
 const getClasses = function (

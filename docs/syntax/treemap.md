@@ -208,6 +208,49 @@ treemap
     "Item B2": 25
 ```
 
+### Diagram Padding
+
+You can adjust the padding around the treemap diagram using the `diagramPadding` configuration option:
+
+```mermaid-example
+%%{init: {'treemap': {'diagramPadding': 20}}}%%
+treemap
+"Category A"
+    "Item A1": 10
+    "Item A2": 20
+"Category B"
+    "Item B1": 15
+    "Item B2": 25
+```
+
+```mermaid
+%%{init: {'treemap': {'diagramPadding': 20}}}%%
+treemap
+"Category A"
+    "Item A1": 10
+    "Item A2": 20
+"Category B"
+    "Item B1": 15
+    "Item B2": 25
+```
+
+## Configuration Options
+
+The treemap diagram supports the following configuration options:
+
+| Option         | Description                                                                 | Default |
+| -------------- | --------------------------------------------------------------------------- | ------- |
+| useMaxWidth    | When true, the diagram width is set to 100% and scales with available space | true    |
+| padding        | Internal padding between nodes                                              | 10      |
+| diagramPadding | Padding around the entire diagram                                           | 8       |
+| showValues     | Whether to show values in the treemap                                       | true    |
+| nodeWidth      | Width of nodes                                                              | 100     |
+| nodeHeight     | Height of nodes                                                             | 40      |
+| borderWidth    | Width of borders                                                            | 1       |
+| valueFontSize  | Font size for values                                                        | 12      |
+| labelFontSize  | Font size for labels                                                        | 14      |
+| valueFormat    | Format for values (see Value Formatting section)                            | ','     |
+
 ## Advanced Features
 
 ### Value Formatting

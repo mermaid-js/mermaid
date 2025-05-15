@@ -67,6 +67,7 @@ export interface TreemapAst {
 // Define the TreemapDiagramConfig interface
 export interface TreemapDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+  diagramPadding?: number;
   showValues?: boolean;
   nodeWidth?: number;
   nodeHeight?: number;
