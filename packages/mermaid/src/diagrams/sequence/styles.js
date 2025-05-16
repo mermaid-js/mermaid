@@ -1,5 +1,9 @@
 const getStyles = (options) =>
-  `.actor {
+  `.box {
+    stroke: ${options.boxBorder};
+  }
+
+  .actor {
     stroke: ${options.actorBorder};
     fill: ${options.actorBkg};
   }
