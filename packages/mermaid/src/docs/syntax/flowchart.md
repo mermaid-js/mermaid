@@ -576,7 +576,7 @@ flowchart TD
 
 You can use the `image` shape to include an image in your flowchart. The syntax for defining an image shape is as follows:
 
-```mermaid-example
+```
 flowchart TD
     A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
 ```
