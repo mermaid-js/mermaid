@@ -980,6 +980,7 @@ flowchart LR
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
 
 ```mermaid-example
+---
 config:
   flowchart:
     htmlLabels: false
