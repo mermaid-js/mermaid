@@ -172,7 +172,7 @@ describe('xy', () => {
     });
 
     it('should parse x-axis range data with only decimal part', () => {
-      const result = parse(`xy-beta\nx-axis -.45 --> +.34`);
+      const result = parse(`xy-beta\nx-axis -.45 --> .34`);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(XY);
       const { xAxis } = result.value;
@@ -362,13 +362,13 @@ describe('xy', () => {
     });
 
     it.each(XY_KEYWORDS)(
-      '%s keyword with line data with spaces and +,- symbols',
+      '%s keyword with line data with spaces and - symbols',
       (keyword: string) => {
         const result = parse(`
             ${keyword}
             x-axis xAxisName
             y-axis yAxisName
-            line "lineTitle with space" [  +23 , -45  , 56.6 ]
+            line "lineTitle with space" [  23 , -45  , 56.6 ]
         `);
         expectNoErrorsOrAlternatives(result);
         expect(result.value.$type).toBe(XY);
@@ -390,7 +390,7 @@ describe('xy', () => {
             ${keyword}
             x-axis xAxisName
             y-axis yAxisName
-            line [  +23 , -45  , .33]
+            line [  23 , -45  , .33]
         `);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(XY);
@@ -407,12 +407,12 @@ describe('xy', () => {
     });
 
     it.each([
-      'line "lineTitle with space" [  +23 [ -45  , 56.6 ]',
-      'line "lineTitle with space" [  +23 , -45  ] 56.6 ]',
+      'line "lineTitle with space" [  23 [ -45  , 56.6 ]',
+      'line "lineTitle with space" [  23 , -45  ] 56.6 ]',
       'line "lineTitle with space"',
-      'line "lineTitle with space" [  +23 , , -45  , 56.6 ]',
-      'line "lineTitle with space" [  +23 , -4aa5  , 56.6 ]',
-      'line lineTitle with space [  +23 , -45  , 56.6 ]',
+      'line "lineTitle with space" [  23 , , -45  , 56.6 ]',
+      'line "lineTitle with space" [  23 , -4aa5  , 56.6 ]',
+      'line lineTitle with space [  23 , -45  , 56.6 ]',
     ])('should throw error for common errors in %s', (errorInLine: string) => {
       const result = parse(`
                 xy-beta
@@ -447,13 +447,13 @@ describe('xy', () => {
     });
 
     it.each(XY_KEYWORDS)(
-      '%s keyword with bar data with spaces and +,- symbols',
+      '%s keyword with bar data with spaces and - symbols',
       (keyword: string) => {
         const result = parse(`
               ${keyword}
               x-axis xAxisName
               y-axis yAxisName
-              bar "barTitle with space" [  +23 , -45  , 56.6 ]
+              bar "barTitle with space" [  23 , -45  , 56.6 ]
           `);
         expectNoErrorsOrAlternatives(result);
         expect(result.value.$type).toBe(XY);
@@ -475,7 +475,7 @@ describe('xy', () => {
               ${keyword}
               x-axis xAxisName
               y-axis yAxisName
-              bar [  +23 , -45  , .33]
+              bar [  23 , -45  , .33]
           `);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(XY);
@@ -492,12 +492,12 @@ describe('xy', () => {
     });
 
     it.each([
-      'bar "barTitle with space" [  +23 [ -45  , 56.6 ]',
-      'bar "barTitle with space" [  +23 , -45  ] 56.6 ]',
+      'bar "barTitle with space" [  23 [ -45  , 56.6 ]',
+      'bar "barTitle with space" [  23 , -45  ] 56.6 ]',
       'bar "barTitle with space"',
-      'bar "barTitle with space" [  +23 , , -45  , 56.6 ]',
-      'bar "barTitle with space" [  +23 , -4aa5  , 56.6 ]',
-      'bar barTitle with space [  +23 , -45  , 56.6 ]',
+      'bar "barTitle with space" [  23 , , -45  , 56.6 ]',
+      'bar "barTitle with space" [  23 , -4aa5  , 56.6 ]',
+      'bar barTitle with space [  23 , -45  , 56.6 ]',
     ])('should throw error for common errors in %s', (errorInBar: string) => {
       const result = parse(`
                   xy-beta
