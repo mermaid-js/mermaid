@@ -102,7 +102,7 @@ The only two things required are the chart name (`xychart-beta`) and one data se
 
 ```
 xychart-beta
-    line [+1.3, .6, 2.4, -.34]
+    line [1.3, .6, 2.4, -.34]
 ```
 
 ## Chart Configurations
