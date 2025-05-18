@@ -21,12 +21,12 @@ terminal ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}
 terminal ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
 terminal TITLE: /[\t ]*title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*|)/;
 
-terminal POSITIVE_INT returns number: /[+]?0|[1-9][0-9]*(?!\.)/;
-terminal NEGATIVE_INT returns number: /[-]?0|[1-9][0-9]*(?!\.)/;
+terminal POSITIVE_INT returns number: /0|[1-9][0-9]*(?!\.)/;
+terminal NEGATIVE_INT returns number: /[-]0|[1-9][0-9]*(?!\.)/;
 terminal INT returns number: POSITIVE_INT | NEGATIVE_INT;
 
-terminal POSITIVE_NUMBER returns number: /[+]?(?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?/;
-terminal NEGATIVE_NUMBER returns number: /[-]?(?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?/;
+terminal POSITIVE_NUMBER returns number: /(?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?/;
+terminal NEGATIVE_NUMBER returns number: /[-](?=\.\d|\d)(?:0|[1-9]\d*)?(?:\.\d*)?/;
 terminal NUMBER returns number: POSITIVE_NUMBER | NEGATIVE_NUMBER;
 
 terminal MARKDOWN_STRING returns string:
