@@ -34,8 +34,10 @@ const hideTooltip = () => {
 const handleMouseOver = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
   if (
-    target.matches('a[href*="try_playground"]') ||
-    target.matches('button[onclick*="try_playground"]')
+    (target.matches('a[href*="mermaidchart.com"]') ||
+      target.matches('button[onclick*="mermaidchart.com"]')) &&
+    !target.matches('.no-tooltip') &&
+    !target.matches('.VPSocialLink')
   ) {
     showTooltip(target);
   }

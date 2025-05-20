@@ -57,7 +57,7 @@ onMounted(() => {
           :key="index"
           :href="currentBannerSet[index].url"
           target="_blank"
-          class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
+          class="unstyled flex justify-center items-center gap-4 text-white no-tooltip tracking-wide plausible-event-name=bannerClick"
         >
           <span class="font-semibold">{{ currentBannerSet[index].label }}</span>
           <button class="bg-[#1E1A2E] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide">
