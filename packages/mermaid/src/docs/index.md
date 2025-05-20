@@ -17,9 +17,6 @@ hero:
   actions:
     - theme: brand
       text: Try Playground
-      link: https://www.mermaidchart.com/play
-      target: _blank
-      rel: external
     - theme: alt
       text: Get started
       link: /intro/
