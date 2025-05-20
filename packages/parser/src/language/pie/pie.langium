@@ -12,5 +12,5 @@ entry Pie:
 ;
 
 PieSection:
-  label=STRING ":" value=NUMBER EOL
+  label=STRING ":" value=POSITIVE_NUMBER EOL
 ;

@@ -1,14 +1,6 @@
 import type { CstNode, GrammarAST, ValueType } from 'langium';
 import { DefaultValueConverter } from 'langium';
 
-import { accessibilityDescrRegex, accessibilityTitleRegex, titleRegex } from './matcher.js';
-
-const rulesRegexes: Record<string, RegExp> = {
-  ACC_DESCR: accessibilityDescrRegex,
-  ACC_TITLE: accessibilityTitleRegex,
-  TITLE: titleRegex,
-};
-
 export abstract class AbstractMermaidValueConverter extends DefaultValueConverter {
   /**
    * A method contains convert logic to be used by class.
@@ -31,9 +23,7 @@ export abstract class AbstractMermaidValueConverter extends DefaultValueConverte
   ): ValueType {
     let value: ValueType | undefined = this.runCommonConverter(rule, input, cstNode);
 
-    if (value === undefined) {
-      value = this.runCustomConverter(rule, input, cstNode);
-    }
+    value ??= this.runCustomConverter(rule, input, cstNode);
     if (value === undefined) {
       return super.runConverter(rule, input, cstNode);
     }
@@ -46,27 +36,38 @@ export abstract class AbstractMermaidValueConverter extends DefaultValueConverte
     input: string,
     _cstNode: CstNode
   ): ValueType | undefined {
-    const regex: RegExp | undefined = rulesRegexes[rule.name];
-    if (regex === undefined) {
-      return undefined;
+    // Title and accessibilities
+    if (rule.name === 'TITLE') {
+      return this.processTitleAndAccessibilities(input, 'title');
+    } else if (rule.name === 'ACC_DESCR') {
+      return this.processTitleAndAccessibilities(input, 'accDescr');
+    } else if (rule.name === 'ACC_TITLE') {
+      return this.processTitleAndAccessibilities(input, 'accTitle');
     }
-    const match = regex.exec(input);
-    if (match === null) {
-      return undefined;
-    }
-    // single line title, accTitle, accDescr
-    if (match[1] !== undefined) {
-      return match[1].trim().replace(/[\t ]{2,}/gm, ' ');
-    }
-    // multi line accDescr
-    if (match[2] !== undefined) {
-      return match[2]
-        .replace(/^\s*/gm, '')
-        .replace(/\s+$/gm, '')
-        .replace(/[\t ]{2,}/gm, ' ')
-        .replace(/[\n\r]{2,}/gm, '\n');
+    // Markdown string
+    if (
+      rule.name === 'STRING' &&
+      (input.startsWith('"`') || input.startsWith("'`") || input.startsWith('`'))
+    ) {
+      // A Markdown string keeps its backticks
+      // Remove quotes (`result`, '`result`' or "`result`" gives `result`)
+      return input.replace(/(^["']|["']$)/g, '');
     }
     return undefined;
+  }
+
+  private processTitleAndAccessibilities(input: string, keyword: string) {
+    // Remove the keyword at the beginning of the string (it can be followed by a colon)
+    // If we're left with enclosing braces, remove them
+    // Remove enclosing quotes if they exist
+    // Trim each line (separated by newlines)
+    // Replace multiple spaces or tabs with a single space
+    return input
+      .replace(new RegExp(`^\\s*${keyword}\\s*:?\\s*`), '')
+      .replace(/^[\s{}]+|[\s{}]+$/g, '')
+      .replace(/(^["']|["']$)/g, '')
+      .replace(/[\t ]{2,}/gm, ' ')
+      .replace(/[\n\r]+[\t ]+/gm, '\n');
   }
 }
 

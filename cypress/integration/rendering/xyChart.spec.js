@@ -88,7 +88,7 @@ describe('XY Chart', () => {
       `
       xychart-beta
         y-axis -2.4 --> 3.5
-        line [+1.3, .6, 2.4, -.34]
+        line [1.3, .6, 2.4, -.34]
       `,
       {}
     );
