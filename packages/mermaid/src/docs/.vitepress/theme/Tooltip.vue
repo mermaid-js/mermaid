@@ -1,8 +1,7 @@
 <template>
   <div
-    v-if="isVisible"
     class="mermaid-chart-tooltip"
-    :class="{ visible: isVisible }"
+    :class="{ showing: isVisible, hiding: !isVisible }"
     :style="tooltipStyle"
   >
     <span class="mdi mdi-open-in-new"></span>
@@ -16,36 +15,20 @@ import { onMounted, onUnmounted, ref } from 'vue';
 const isVisible = ref(false);
 const currentTarget = ref<HTMLElement | null>(null);
 const tooltipStyle = ref({});
-let showTimer: ReturnType<typeof setTimeout> | null = null;
-let hideTimer: ReturnType<typeof setTimeout> | null = null;
 
 const showTooltip = (target: HTMLElement) => {
-  if (hideTimer) {
-    clearTimeout(hideTimer);
-    hideTimer = null;
-  }
-
-  showTimer = setTimeout(() => {
-    currentTarget.value = target;
-    const rect = target.getBoundingClientRect();
-    tooltipStyle.value = {
-      left: `${rect.left + rect.width / 2}px`,
-      top: `${rect.bottom}px`,
-    };
-    isVisible.value = true;
-  }, 400);
+  currentTarget.value = target;
+  const rect = target.getBoundingClientRect();
+  tooltipStyle.value = {
+    left: `${rect.left + rect.width / 2}px`,
+    top: `${rect.bottom}px`,
+  };
+  isVisible.value = true;
 };
 
 const hideTooltip = () => {
-  if (showTimer) {
-    clearTimeout(showTimer);
-    showTimer = null;
-  }
-
-  hideTimer = setTimeout(() => {
-    currentTarget.value = null;
-    isVisible.value = false;
-  }, 100);
+  currentTarget.value = null;
+  isVisible.value = false;
 };
 
 const handleMouseOver = (e: MouseEvent) => {
@@ -82,24 +65,47 @@ onUnmounted(() => {
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 0.5rem;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 400;
   pointer-events: none;
   z-index: 1000;
   text-align: center;
   opacity: 0;
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
-  transform: translate(-50%, 0);
+  pointer-events: none;
+  transform: translateX(-50%);
   margin-top: -0.5rem;
   display: flex;
   align-items: center;
   gap: 0.375rem;
 }
 
-.mermaid-chart-tooltip.visible {
-  opacity: 1;
-  transform: translate(-50%, 30%);
+.mermaid-chart-tooltip.showing {
+  animation: tooltipFadeIn 0.3s ease 0.4s forwards;
+}
+
+.mermaid-chart-tooltip.hiding {
+  animation: tooltipFadeOut 0.3s ease forwards;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 5px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 10px);
+  }
+}
+
+@keyframes tooltipFadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, 5px);
+  }
 }
 </style>
