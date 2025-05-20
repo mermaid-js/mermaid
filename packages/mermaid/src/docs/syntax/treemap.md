@@ -113,22 +113,10 @@ classDef important fill:#f96,stroke:#333,stroke-width:2px;
 You can customize the colors of your treemap using the theme configuration:
 
 ```mermaid-example
-%%{init: {'theme': 'forest'}}%%
-treemap
-"Category A"
-    "Item A1": 10
-    "Item A2": 20
-"Category B"
-    "Item B1": 15
-    "Item B2": 25
-```
-
-### Directives
-
-You can use directives to customize the appearance of your treemap:
-
-```mermaid-example
-%%{init: {'treemap': {'useWidth': true, 'useHeight': true}}}%%
+---
+config:
+    theme: 'forest'
+---
 treemap
 "Category A"
     "Item A1": 10
@@ -143,7 +131,11 @@ treemap
 You can adjust the padding around the treemap diagram using the `diagramPadding` configuration option:
 
 ```mermaid-example
-%%{init: {'treemap': {'diagramPadding': 20}}}%%
+---
+config:
+  treemap:
+    diagramPadding: 200
+---
 treemap
 "Category A"
     "Item A1": 10
@@ -191,7 +183,11 @@ The treemap diagram supports both standard D3 format specifiers and some common 
 Example with currency formatting:
 
 ```mermaid-example
-%%{init: {'treemap': {'valueFormat': '$0,0'}}}%%
+---
+config:
+  treemap:
+    valueFormat: '$0,0'
+---
 treemap
 "Budget"
     "Operations"
@@ -206,7 +202,11 @@ treemap
 Example with percentage formatting:
 
 ```mermaid-example
-%%{init: {'treemap': {'valueFormat': '.1%'}}}%%
+---
+config:
+  treemap:
+    valueFormat: '$.1%'
+---
 treemap
 "Market Share"
     "Company A": 0.35

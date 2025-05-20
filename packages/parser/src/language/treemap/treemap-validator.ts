@@ -1,5 +1,5 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { MermaidAstType, TreemapDoc, TreemapRow } from '../generated/ast.js';
+import type { MermaidAstType, TreemapDoc } from '../generated/ast.js';
 import type { TreemapServices } from './module.js';
 
 /**
@@ -13,9 +13,7 @@ export function registerValidationChecks(services: TreemapServices) {
     // but the type system is having trouble with it
     const checks: ValidationChecks<MermaidAstType> = {
       TreemapDoc: validator.checkSingleRoot.bind(validator),
-      TreemapRow: (node: TreemapRow, accept: ValidationAcceptor) => {
-        validator.checkSingleRootRow(node, accept);
-      },
+      // Remove unused validation for TreemapRow
     };
     registry.register(checks, validator);
   }
@@ -25,33 +23,19 @@ export function registerValidationChecks(services: TreemapServices) {
  * Implementation of custom validations.
  */
 export class TreemapValidator {
-  constructor() {
-    // eslint-disable-next-line no-console
-    console.debug('TreemapValidator constructor');
-  }
-  checkSingleRootRow(_node: TreemapRow, _accept: ValidationAcceptor): void {
-    // eslint-disable-next-line no-console
-    console.debug('CHECKING SINGLE ROOT Row');
-  }
-
   /**
    * Validates that a treemap has only one root node.
    * A root node is defined as a node that has no indentation.
    */
   checkSingleRoot(doc: TreemapDoc, accept: ValidationAcceptor): void {
-    // eslint-disable-next-line no-console
-    console.debug('CHECKING SINGLE ROOT');
     let rootNodeIndentation;
 
     for (const row of doc.TreemapRows) {
-      // Skip non-node items (e.g., class decorations, icon decorations)
-      if (
-        !row.item ||
-        row.item.$type === 'ClassDecoration' ||
-        row.item.$type === 'IconDecoration'
-      ) {
+      // Skip non-node items or items without a type
+      if (!row.item) {
         continue;
       }
+
       if (
         rootNodeIndentation === undefined && // Check if this is a root node (no indentation)
         row.indent === undefined

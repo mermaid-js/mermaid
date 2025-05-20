@@ -31,55 +31,44 @@
     <p>This is a demo of the new treemap diagram type in Mermaid.</p>
 
     <h2>Basic Treemap Example</h2>
-    <pre><code>
+    <pre class="mermaid">
 treemap
     "Root"
         "Branch 1"
             "Leaf 1.1": 10
             "Leaf 1.2": 15
         "Branch 2"
-            "Leaf 2.1": 20
+            "Branch 2.1"
+                "Leaf 2.1.1": 20
+                "Leaf 2.1.2": 25
             "Leaf 2.2": 25
             "Leaf 2.3": 30
-    </code></pre>
-    <div class="mermaid">
-      treemap Root Branch 1 Leaf 1.1: 10 Leaf 1.2: 15 Branch 2 Leaf 2.1: 20 Leaf 2.2: 25 Leaf 2.3:
-      30
-    </div>
+    </pre>
 
     <h2>Technology Stack Treemap Example</h2>
-    <pre><code>
+    <pre class="mermaid">
 treemap
-    Technology Stack
-        Frontend
-            React: 35
-            CSS: 15
-            HTML: 10
-        Backend
-            Node.js: 25
-            Express: 10
-            MongoDB: 15
-        DevOps
-            Docker: 10
-            Kubernetes: 15
-            CI/CD: 5
-    </code></pre>
-    <div class="mermaid">
-      treemap Technology Stack Frontend React: 35 CSS: 15 HTML: 10 Backend Node.js: 25 Express: 10
-      MongoDB: 15 DevOps Docker: 10 Kubernetes: 15 CI/CD: 5
-    </div>
+    "Technology Stack"
+        "Frontend"
+            "React": 35
+            "CSS": 15
+            "HTML": 10
+        "Backend"
+            "Node.js": 25
+            "Express": 10
+            "MongoDB": 15
+        "DevOps"
+            "Docker": 10
+            "Kubernetes": 15
+            "CI/CD": 5
+    </pre>
 
     <script type="module">
-      import mermaid from '../dist/mermaid.esm.min.mjs';
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
-        startOnLoad: true,
-        theme: 'default',
+        theme: 'forest',
+        logLevel: 1,
         securityLevel: 'loose',
-        treemap: {
-          useMaxWidth: true,
-          padding: 15,
-          showValues: true,
-        },
       });
     </script>
   </body>
