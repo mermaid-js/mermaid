@@ -50,7 +50,8 @@ exclude = [
 "https://docs.swimm.io",
 
 # Timeout
-"https://huehive.co"
+"https://huehive.co",
+"https://foswiki.org"
 ]
 
 # Exclude all private IPs from checking.
