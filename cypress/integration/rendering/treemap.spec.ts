@@ -287,7 +287,7 @@ classDef sales fill:#c3a66b,stroke:#333;
       {}
     );
   });
-
+  /*
   it.skip('12: should render a treemap with title', () => {
     imgSnapshotTest(
       `
@@ -338,4 +338,5 @@ classDef sales fill:#c3a66b,stroke:#333;
       {}
     );
   });
+  */
 });
