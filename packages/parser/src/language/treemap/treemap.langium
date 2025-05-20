@@ -7,7 +7,18 @@
  * treemap declaration.
  */
 grammar Treemap
-import "../common/common";
+
+
+
+fragment TitleAndAccessibilities:
+  ((accDescr=ACC_DESCR | accTitle=ACC_TITLE | title=TITLE))+
+;
+
+terminal BOOLEAN returns boolean: 'true' | 'false';
+
+terminal ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
+terminal ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
+terminal TITLE: /[\t ]*title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*|)/;
 
 // Interface declarations for data types
 interface Item {
@@ -31,13 +42,12 @@ interface TreemapDoc {
 }
 
 entry TreemapDoc returns TreemapDoc:
-    NEWLINE*
     TREEMAP_KEYWORD
     (
         TitleAndAccessibilities
         | TreemapRows+=TreemapRow
-        | NEWLINE
     )*;
+terminal TREEMAP_KEYWORD:  'treemap-beta' | 'treemap';
 
 terminal CLASS_DEF: /classDef\s+([a-zA-Z_][a-zA-Z0-9_]+)(?:\s+([^;\r\n]*))?(?:;)?/;
 terminal STYLE_SEPARATOR: ':::';
@@ -46,6 +56,7 @@ terminal COMMA: ',';
 
 hidden terminal WS: /[ \t]+/;  // One or more spaces or tabs for hidden whitespace
 hidden terminal ML_COMMENT: /\%\%[^\n]*/;
+hidden terminal NL: /\r?\n/;
 
 TreemapRow:
     indent=INDENTATION? (item=Item | ClassDef);
@@ -59,17 +70,21 @@ Item returns Item:
 
 // Use a special rule order to handle the parsing precedence
 Section returns Section:
-    name=STRING (STYLE_SEPARATOR classSelector=ID)?;
+    name=STRING2 (STYLE_SEPARATOR classSelector=ID2)?;
 
 Leaf returns Leaf:
-    name=STRING INDENTATION? (SEPARATOR | COMMA) INDENTATION? value=MyNumber (STYLE_SEPARATOR classSelector=ID)?;
+    name=STRING2 INDENTATION? (SEPARATOR | COMMA) INDENTATION? value=MyNumber (STYLE_SEPARATOR classSelector=ID2)?;
 
 // This should be processed before whitespace is ignored
 terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
 // Keywords with fixed text patterns
-terminal TREEMAP_KEYWORD:  'treemap';
+terminal ID2: /[a-zA-Z_][a-zA-Z0-9_]*/;
+// Define as a terminal rule
+terminal NUMBER2: /[0-9_\.\,]+/;
 
 // Then create a data type rule that uses it
-MyNumber returns number: NUMBER;
+MyNumber returns number: NUMBER2;
+
+terminal STRING2: /"[^"]*"|'[^']*'/;
 // Modified indentation rule to have higher priority than WS

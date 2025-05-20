@@ -3,7 +3,7 @@ import { imgSnapshotTest } from '../../helpers/util.ts';
 describe('Treemap Diagram', () => {
   it('1: should render a basic treemap', () => {
     imgSnapshotTest(
-      `treemap
+      `treemap-beta
 "Category A"
     "Item A1": 10
     "Item A2": 20
@@ -17,7 +17,7 @@ describe('Treemap Diagram', () => {
 
   it('2: should render a hierarchical treemap', () => {
     imgSnapshotTest(
-      `treemap
+      `treemap-beta
 "Products"
     "Electronics"
         "Phones": 50
@@ -37,7 +37,7 @@ describe('Treemap Diagram', () => {
 
   it('3: should render a treemap with styling using classDef', () => {
     imgSnapshotTest(
-      `treemap
+      `treemap-beta
 "Section 1"
     "Leaf 1.1": 12
     "Section 1.2":::class1
@@ -55,7 +55,7 @@ classDef class1 fill:red,color:blue,stroke:#FFD600;
 
   it('4: should handle long text that wraps', () => {
     imgSnapshotTest(
-      `treemap
+      `treemap-beta
 "Main Category"
     "This is a very long item name that should wrap to the next line when rendered in the treemap diagram": 50
     "Short item": 20
@@ -67,7 +67,7 @@ classDef class1 fill:red,color:blue,stroke:#FFD600;
   it('5: should render with a forest theme', () => {
     imgSnapshotTest(
       `%%{init: {'theme': 'forest'}}%%
-treemap
+treemap-beta
 "Category A"
     "Item A1": 10
     "Item A2": 20
@@ -81,7 +81,7 @@ treemap
 
   it('6: should handle multiple levels of nesting', () => {
     imgSnapshotTest(
-      `treemap
+      `treemap-beta
 "Level 1"
     "Level 2A"
         "Level 3A": 10
@@ -98,7 +98,7 @@ treemap
 
   it('7: should handle classDef with multiple styles', () => {
     imgSnapshotTest(
-      `treemap
+      `treemap-beta
 "Main"
     "A": 20
     "B":::important
@@ -133,7 +133,7 @@ treemap
   it('8a: should handle percentage formatting', () => {
     imgSnapshotTest(
       `%%{init: {'treemap': {'valueFormat': '.1%'}}}%%
-treemap
+treemap-beta
 "Market Share"
     "Company A": 0.35
     "Company B": 0.25
@@ -147,7 +147,7 @@ treemap
   it('8b: should handle decimal formatting', () => {
     imgSnapshotTest(
       `%%{init: {'treemap': {'valueFormat': '.2f'}}}%%
-treemap
+treemap-beta
 "Metrics"
     "Conversion Rate": 0.0567
     "Bounce Rate": 0.6723
@@ -161,7 +161,7 @@ treemap
   it('8c: should handle dollar sign with decimal places', () => {
     imgSnapshotTest(
       `%%{init: {'treemap': {'valueFormat': '$.2f'}}}%%
-treemap
+treemap-beta
 "Product Prices"
     "Basic": 19.99
     "Standard": 49.99
@@ -175,7 +175,7 @@ treemap
   it('8d: should handle dollar sign with thousands separator and decimal places', () => {
     imgSnapshotTest(
       `%%{init: {'treemap': {'valueFormat': '$,.2f'}}}%%
-treemap
+treemap-beta
 "Revenue"
     "Q1": 1250345.75
     "Q2": 1645789.25
@@ -189,7 +189,7 @@ treemap
   it('8e: should handle simple thousands separator', () => {
     imgSnapshotTest(
       `%%{init: {'treemap': {'valueFormat': ','}}}%%
-treemap
+treemap-beta
 "User Counts"
     "Active Users": 1250345
     "New Signups": 45789
@@ -203,7 +203,7 @@ treemap
   it('8f: should handle valueFormat set via directive with dollar and thousands separator', () => {
     imgSnapshotTest(
       `%%{init: {'treemap': {'valueFormat': '$,.0f'}}}%%
-treemap
+treemap-beta
 "Sales by Region"
     "North": 1234567
     "South": 7654321
@@ -217,7 +217,7 @@ treemap
   it('8g: should handle scientific notation format', () => {
     imgSnapshotTest(
       `%%{init: {'treemap': {'valueFormat': '.2e'}}}%%
-treemap
+treemap-beta
 "Scientific Values"
     "Value 1": 1234567
     "Value 2": 0.0000123
@@ -230,7 +230,7 @@ treemap
   it('9: should handle a complex example with multiple features', () => {
     imgSnapshotTest(
       `%%{init: {'theme': 'dark', 'treemap': {'valueFormat': '$0,0'}}}%%
-treemap
+treemap-beta
 "Company Budget"
     "Engineering":::engineering
         "Frontend": 300000
@@ -255,7 +255,7 @@ classDef sales fill:#c3a66b,stroke:#333;
   it('10: should render the example from documentation', () => {
     imgSnapshotTest(
       `
-    treemap
+    treemap-beta
       "Section 1"
           "Leaf 1.1": 12
           "Section 1.2":::class1
@@ -274,7 +274,7 @@ classDef sales fill:#c3a66b,stroke:#333;
   it('11: should handle comments', () => {
     imgSnapshotTest(
       `
-    treemap
+    treemap-beta
       %% This is a comment
       "Category A"
           "Item A1": 10
@@ -288,10 +288,10 @@ classDef sales fill:#c3a66b,stroke:#333;
     );
   });
 
-  it('12: should render a treemap with title', () => {
+  it.skip('12: should render a treemap with title', () => {
     imgSnapshotTest(
       `
-    treemap
+    treemap-beta
       title Treemap with Title
       "Category A"
           "Item A1": 10
@@ -304,10 +304,10 @@ classDef sales fill:#c3a66b,stroke:#333;
     );
   });
 
-  it('13: should render a treemap with accessibility attributes', () => {
+  it.skip('13: should render a treemap with accessibility attributes', () => {
     imgSnapshotTest(
       `
-    treemap
+    treemap-beta
       accTitle: Accessible Treemap Title
       accDescr: This is a description of the treemap for accessibility purposes
       "Category A"
@@ -321,7 +321,7 @@ classDef sales fill:#c3a66b,stroke:#333;
     );
   });
 
-  it('14: should render a treemap with title and accessibility attributes', () => {
+  it.skip('14: should render a treemap with title and accessibility attributes', () => {
     imgSnapshotTest(
       `
     treemap

@@ -10,13 +10,13 @@ export class TreemapValueConverter extends AbstractMermaidValueConverter {
     input: string,
     _cstNode: CstNode
   ): ValueType | undefined {
-    if (rule.name === 'NUMBER') {
+    if (rule.name === 'NUMBER2') {
       // Convert to a number by removing any commas and converting to float
       return parseFloat(input.replace(/,/g, ''));
     } else if (rule.name === 'SEPARATOR') {
       // Remove quotes
       return input.substring(1, input.length - 1);
-    } else if (rule.name === 'STRING') {
+    } else if (rule.name === 'STRING2') {
       // Remove quotes
       return input.substring(1, input.length - 1);
     } else if (rule.name === 'INDENTATION') {

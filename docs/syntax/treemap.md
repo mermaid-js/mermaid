@@ -25,7 +25,7 @@ Treemap diagrams are particularly useful for:
 ## Syntax
 
 ```
-treemap
+treemap-beta
 "Section 1"
     "Leaf 1.1": 12
     "Section 1.2"
@@ -49,7 +49,7 @@ Nodes in a treemap are defined using the following syntax:
 ### Basic Treemap
 
 ```mermaid-example
-treemap
+treemap-beta
 "Category A"
     "Item A1": 10
     "Item A2": 20
@@ -59,7 +59,7 @@ treemap
 ```
 
 ```mermaid
-treemap
+treemap-beta
 "Category A"
     "Item A1": 10
     "Item A2": 20
@@ -71,7 +71,7 @@ treemap
 ### Hierarchical Treemap
 
 ```mermaid-example
-treemap
+treemap-beta
 "Products"
     "Electronics"
         "Phones": 50
@@ -83,7 +83,7 @@ treemap
 ```
 
 ```mermaid
-treemap
+treemap-beta
 "Products"
     "Electronics"
         "Phones": 50
@@ -97,7 +97,7 @@ treemap
 ### Treemap with Styling
 
 ```mermaid-example
-treemap
+treemap-beta
 "Section 1"
     "Leaf 1.1": 12
     "Section 1.2":::class1
@@ -111,7 +111,7 @@ classDef class1 fill:red,color:blue,stroke:#FFD600;
 ```
 
 ```mermaid
-treemap
+treemap-beta
 "Section 1"
     "Leaf 1.1": 12
     "Section 1.2":::class1
@@ -133,7 +133,7 @@ Treemap diagrams can be customized using Mermaid's styling and configuration opt
 You can define custom styles for nodes using the `classDef` syntax, which is a standard feature across many Mermaid diagram types:
 
 ```mermaid-example
-treemap
+treemap-beta
 "Main"
     "A": 20
     "B":::important
@@ -145,7 +145,7 @@ classDef important fill:#f96,stroke:#333,stroke-width:2px;
 ```
 
 ```mermaid
-treemap
+treemap-beta
 "Main"
     "A": 20
     "B":::important
@@ -165,7 +165,7 @@ You can customize the colors of your treemap using the theme configuration:
 config:
     theme: 'forest'
 ---
-treemap
+treemap-beta
 "Category A"
     "Item A1": 10
     "Item A2": 20
@@ -179,7 +179,7 @@ treemap
 config:
     theme: 'forest'
 ---
-treemap
+treemap-beta
 "Category A"
     "Item A1": 10
     "Item A2": 20
@@ -198,7 +198,7 @@ config:
   treemap:
     diagramPadding: 200
 ---
-treemap
+treemap-beta
 "Category A"
     "Item A1": 10
     "Item A2": 20
@@ -213,7 +213,7 @@ config:
   treemap:
     diagramPadding: 200
 ---
-treemap
+treemap-beta
 "Category A"
     "Item A1": 10
     "Item A2": 20
@@ -265,7 +265,7 @@ config:
   treemap:
     valueFormat: '$0,0'
 ---
-treemap
+treemap-beta
 "Budget"
     "Operations"
         "Salaries": 700000
@@ -282,7 +282,7 @@ config:
   treemap:
     valueFormat: '$0,0'
 ---
-treemap
+treemap-beta
 "Budget"
     "Operations"
         "Salaries": 700000
@@ -301,7 +301,7 @@ config:
   treemap:
     valueFormat: '$.1%'
 ---
-treemap
+treemap-beta
 "Market Share"
     "Company A": 0.35
     "Company B": 0.25
@@ -315,7 +315,7 @@ config:
   treemap:
     valueFormat: '$.1%'
 ---
-treemap
+treemap-beta
 "Market Share"
     "Company A": 0.35
     "Company B": 0.25
