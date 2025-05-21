@@ -205,7 +205,8 @@ export abstract class BaseAxis implements Axis {
             (this.showLabel ? this.axisConfig.labelPadding : 0) -
             (this.showTick ? this.axisConfig.tickLength : 0) -
             (this.showAxisLine ? this.axisConfig.axisLineWidth : 0),
-          y: this.getScaleValue(tick),
+          y: tick === 0 ? this.getScaleValue(0) : this.getScaleValue(tick),
+
           fill: this.axisThemeConfig.labelColor,
           fontSize: this.axisConfig.labelFontSize,
           rotation: 0,
@@ -290,19 +291,23 @@ export abstract class BaseAxis implements Axis {
       });
     }
     if (this.showTick) {
-      const y = this.boundingRect.y + (this.showAxisLine ? this.axisConfig.axisLineWidth : 0);
+      const yBase = this.boundingRect.y + (this.showAxisLine ? this.axisConfig.axisLineWidth : 0);
       drawableElement.push({
         type: 'path',
         groupTexts: ['bottom-axis', 'ticks'],
-        data: this.getTickValues().map((tick) => ({
-          path: `M ${this.getScaleValue(tick)},${y} L ${this.getScaleValue(tick)},${
-            y + this.axisConfig.tickLength
-          }`,
-          strokeFill: this.axisThemeConfig.tickColor,
-          strokeWidth: this.axisConfig.tickWidth,
-        })),
+        data: this.getTickValues().map((tick) => {
+          const y = tick === 0 ? this.getScaleValue(0) : yBase; // ✅ Align tick 0 to real baseline
+          return {
+            path: `M ${this.getScaleValue(tick)},${y} L ${this.getScaleValue(tick)},${
+              y + this.axisConfig.tickLength
+            }`,
+            strokeFill: this.axisThemeConfig.tickColor,
+            strokeWidth: this.axisConfig.tickWidth,
+          };
+        }),
       });
     }
+
     if (this.showTitle) {
       drawableElement.push({
         type: 'text',
