@@ -83,21 +83,24 @@ const featureColumns = ref<Feature[][]>([
   ],
 ]);
 
-const isVisible = ref(true);
+const isVisible = ref(false);
 
 const handleMouseDown = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
-  if (target.matches('a[class*="editorModal"]') || target.matches('button[class*="editorModal"]')) {
+  if (
+    (target.tagName === 'A' && target.textContent?.trim() === 'Try Playground') ||
+    (target.tagName === 'SPAN' && target.textContent?.trim() === '💻 Open Editor')
+  ) {
     isVisible.value = !isVisible.value;
   }
 };
 
 onMounted(() => {
-  document.addEventListener('mousedown', handleMouseDown);
+  document.addEventListener('click', handleMouseDown);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('mousedown', handleMouseDown);
+  document.removeEventListener('click', handleMouseDown);
 });
 </script>
 

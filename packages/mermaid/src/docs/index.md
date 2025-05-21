@@ -17,6 +17,7 @@ hero:
   actions:
     - theme: brand
       text: Try Playground
+      link: /
     - theme: alt
       text: Get started
       link: /intro/
