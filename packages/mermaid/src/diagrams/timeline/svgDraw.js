@@ -492,6 +492,27 @@ function wrap(text, width) {
     }
   });
 }
+function wrapText(textElem, textContent, maxWidth, lineHeight) {
+  const words = textContent.split(/\s+/); // Split text into words
+  let line = '';
+  let tspan = textElem.append('tspan').attr('x', '0').attr('dy', '0'); // Create first tspan
+
+  words.forEach((word) => {
+    const testLine = line + word + ' ';
+    tspan.text(testLine); // Temporarily set text to test its width
+
+    if (tspan.node().getComputedTextLength() > maxWidth && line !== '') {
+      // If line exceeds maxWidth, finalize current tspan and start a new one
+      tspan.text(line.trim());
+      line = word + ' ';
+      tspan = textElem.append('tspan').attr('x', '0').attr('dy', `${lineHeight}px`);
+    } else {
+      line = testLine; // Keep adding words to current line
+    }
+  });
+
+  tspan.text(line.trim()); // Finalize last tspan
+}
 
 export const drawNode = function (elem, node, fullSection, conf) {
   const section = (fullSection % MAX_SECTIONS) - 1;
@@ -503,24 +524,35 @@ export const drawNode = function (elem, node, fullSection, conf) {
   );
   const bkgElem = nodeElem.append('g');
 
-  // Create the wrapped text element
+  // Create the text group
   const textElem = nodeElem.append('g');
 
-  const txt = textElem
-    .append('text')
-    .text(node.descr)
-    .attr('dy', '1em')
-    .attr('alignment-baseline', 'middle')
-    .attr('dominant-baseline', 'middle')
-    .attr('text-anchor', 'middle')
-    .call(wrap, node.width);
-  const bbox = txt.node().getBBox();
-  const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
-  node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
-  node.height = Math.max(node.height, node.maxHeight);
-  node.width = node.width + 2 * node.padding;
+  // Replace <text> with <foreignObject> for wrapping
+  const foreignObject = textElem
+    .append('foreignObject')
+    .attr('x', node.padding) // Add padding to position text inside the box
+    .attr('y', node.padding / 2)
+    .attr('width', node.width - node.padding * 2) // Width of the foreignObject
+    .attr('height', node.height) // Set a reasonable height for now
+    .style('overflow', 'visible'); // Ensure content isn't clipped
 
-  textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
+  // Append a div inside the foreignObject for proper HTML rendering
+  foreignObject
+    .append('xhtml:div') // Use xhtml namespace for HTML elements inside SVG
+    .attr('xmlns', 'http://www.w3.org/1999/xhtml') // Explicitly set XHTML namespace
+    .style('font-size', `${conf.fontSize || '16px'}`)
+    .style('word-wrap', 'break-word') // Ensure long words break properly
+    .style('white-space', 'normal') // Allow normal wrapping behavior
+    .style('text-align', 'center') // Center-align the text if needed
+    .text(node.descr); // Set the title or description text
+
+  // Calculate dimensions dynamically based on content
+  const bbox = foreignObject.node().getBBox();
+  node.height = Math.max(bbox.height + node.padding, node.maxHeight);
+  node.width = Math.max(bbox.width + node.padding * 2, node.width);
+
+  // Position the group within the node
+  textElem.attr('transform', `translate(${node.width / 2 - bbox.width / 2}, ${node.padding / 2})`);
 
   // Create the background element
   defaultBkg(bkgElem, node, section, conf);
@@ -567,6 +599,7 @@ const defaultBkg = function (elem, node, section) {
 };
 
 export default {
+  wrapText,
   drawRect,
   drawCircle,
   drawSection,
