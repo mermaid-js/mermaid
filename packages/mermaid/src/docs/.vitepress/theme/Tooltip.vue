@@ -1,8 +1,7 @@
 <template>
   <div
-    v-if="isVisible"
     class="mermaid-chart-tooltip"
-    :class="{ visible: isVisible }"
+    :class="{ showing: isVisible, hiding: !isVisible }"
     :style="tooltipStyle"
   >
     <span class="mdi mdi-open-in-new"></span>
@@ -11,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const isVisible = ref(false);
 const currentTarget = ref<HTMLElement | null>(null);
@@ -22,7 +21,7 @@ const showTooltip = (target: HTMLElement) => {
   const rect = target.getBoundingClientRect();
   tooltipStyle.value = {
     left: `${rect.left + rect.width / 2}px`,
-    top: `${rect.top}px`,
+    top: `${rect.bottom}px`,
   };
   isVisible.value = true;
 };
@@ -35,8 +34,10 @@ const hideTooltip = () => {
 const handleMouseOver = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
   if (
-    target.matches('a[href*="mermaidchart.com"]') ||
-    target.matches('button[onclick*="mermaidchart.com"]')
+    (target.matches('a[href*="mermaidchart.com"]') ||
+      target.matches('button[onclick*="mermaidchart.com"]')) &&
+    !target.matches('.no-tooltip') &&
+    !target.matches('.VPSocialLink')
   ) {
     showTooltip(target);
   }
@@ -64,25 +65,49 @@ onUnmounted(() => {
   position: fixed;
   background: black;
   color: white;
-  padding: 0.3rem 0.6rem;
+  padding: 0.25rem 0.5rem;
   border-radius: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.75rem;
+  font-weight: 400;
   pointer-events: none;
   z-index: 1000;
   text-align: center;
   opacity: 0;
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
-  transform: translate(-50%, -90%);
+  pointer-events: none;
+  transform: translateX(-50%);
   margin-top: -0.5rem;
   display: flex;
   align-items: center;
   gap: 0.375rem;
 }
 
-.mermaid-chart-tooltip.visible {
-  opacity: 1;
-  transform: translate(-50%, -100%);
+.mermaid-chart-tooltip.showing {
+  animation: tooltipFadeIn 0.3s ease 0.4s forwards;
+}
+
+.mermaid-chart-tooltip.hiding {
+  animation: tooltipFadeOut 0.3s ease forwards;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 5px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 10px);
+  }
+}
+
+@keyframes tooltipFadeOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, 5px);
+  }
 }
 </style>
