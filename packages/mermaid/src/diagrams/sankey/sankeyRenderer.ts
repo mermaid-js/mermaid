@@ -103,6 +103,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
 
   // Get color scheme for the graph
   const colorScheme = d3scaleOrdinal(d3schemeTableau10);
+  const customColors = conf?.colors ?? {};
 
   // Create rectangles for nodes
   svg
@@ -123,7 +124,9 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       return d.y1 - d.y0;
     })
     .attr('width', (d: any) => d.x1 - d.x0)
-    .attr('fill', (d: any) => colorScheme(d.id));
+    .attr('fill', (d: any) => {
+      return customColors[d.id] || colorScheme(d.id);
+    });
 
   const getText = ({ id, value }: { id: string; value: number }) => {
     if (!showValues) {
@@ -171,12 +174,12 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     gradient
       .append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', (d: any) => colorScheme(d.source.id));
+      .attr('stop-color', (d: any) => customColors[d.source.id] || colorScheme(d.source.id));
 
     gradient
       .append('stop')
       .attr('offset', '100%')
-      .attr('stop-color', (d: any) => colorScheme(d.target.id));
+      .attr('stop-color', (d: any) => customColors[d.target.id] || colorScheme(d.target.id));
   }
 
   let coloring: any;
@@ -185,10 +188,10 @@ export const draw = function (text: string, id: string, _version: string, diagOb
       coloring = (d: any) => d.uid;
       break;
     case 'source':
-      coloring = (d: any) => colorScheme(d.source.id);
+      coloring = (d: any) => customColors[d.source.id] || colorScheme(d.source.id);
       break;
     case 'target':
-      coloring = (d: any) => colorScheme(d.target.id);
+      coloring = (d: any) => customColors[d.target.id] || colorScheme(d.target.id);
       break;
     default:
       coloring = linkColor;
