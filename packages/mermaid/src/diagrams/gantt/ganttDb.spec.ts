@@ -1,18 +1,14 @@
 // @ts-nocheck TODO: Fix TS
 import dayjs from 'dayjs';
-import ganttDb from './ganttDb.js';
+import GanttDb from './ganttDb.js';
 import { convert } from '../../tests/util.js';
 
 describe('when using the ganttDb', function () {
-  beforeEach(function () {
-    ganttDb.clear();
-  });
-
   describe('when using duration', function () {
     it.each([{ str: '1d', expected: [1, 'd'] }])(
       'should %s resulting in $o duration',
       ({ str, expected }) => {
-        expect(ganttDb.parseDuration(str)).toEqual(expected);
+        expect(new GanttDb().parseDuration(str)).toEqual(expected);
       }
     );
 
@@ -26,12 +22,14 @@ describe('when using the ganttDb', function () {
       ${'1f'}   | ${[NaN, 'ms']}
     `
     )('should $str resulting in $expected duration', ({ str, expected }) => {
-      expect(ganttDb.parseDuration(str)).toEqual(expected);
+      expect(new GanttDb().parseDuration(str)).toEqual(expected);
     });
   });
 
   describe('when calling the clear function', function () {
+    let ganttDb;
     beforeEach(function () {
+      ganttDb = new GanttDb();
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.enableInclusiveEndDates();
       ganttDb.setDisplayMode('compact');
@@ -72,6 +70,7 @@ describe('when using the ganttDb', function () {
     ${'should handle fixed dates without id'}                                            | ${'testa1'} | ${'test1'} | ${'2013-01-01,2013-01-12'}     | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}         | ${'task1'} | ${'test1'}
     ${'should handle duration instead of a fixed date to determine end date without id'} | ${'testa1'} | ${'test1'} | ${'2013-01-01,4d'}             | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 5)}          | ${'task1'} | ${'test1'}
   `)('$testName', ({ section, taskName, taskData, expStartDate, expEndDate, expId, expTask }) => {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection(section);
     ganttDb.addTask(taskName, taskData);
@@ -103,6 +102,7 @@ describe('when using the ganttDb', function () {
       expId2,
       expTask2,
     }) => {
+      const ganttDb = new GanttDb();
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.addSection(section);
       ganttDb.addTask(taskName1, taskData1);
@@ -118,6 +118,7 @@ describe('when using the ganttDb', function () {
   );
 
   it('should handle milliseconds', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('x');
     ganttDb.addSection('testa1');
     ganttDb.addTask('test1', 'id1,0,20ms');
@@ -139,6 +140,7 @@ describe('when using the ganttDb', function () {
   });
 
   it('should handle relative start date based on id regardless of sections', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('sec1');
     ganttDb.addTask('test1', 'id1,2013-01-01,2w');
@@ -160,6 +162,7 @@ describe('when using the ganttDb', function () {
   });
 
   it('should handle relative end date based on id regardless of sections', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('sec1');
     ganttDb.addTask('task1', 'id1,2013-01-01,until id3');
@@ -181,6 +184,7 @@ describe('when using the ganttDb', function () {
   });
 
   it('should handle relative start date based on multiple id', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('sec1');
     ganttDb.addTask('task1', 'id1,after id2 id3 id4,1d');
@@ -196,6 +200,7 @@ describe('when using the ganttDb', function () {
   });
 
   it('should handle relative end date based on multiple id', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('sec1');
     ganttDb.addTask('task1', 'id1,2013-01-01,until id2 id3 id4');
@@ -211,6 +216,7 @@ describe('when using the ganttDb', function () {
   });
 
   it('should ignore weekends', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.setExcludes('weekends 2019-02-06,friday');
     ganttDb.addSection('weekends skip test');
@@ -268,6 +274,7 @@ describe('when using the ganttDb', function () {
   });
 
   it('should ignore weekends starting on friday', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.setExcludes('weekends');
     ganttDb.setWeekend('friday');
@@ -283,6 +290,7 @@ describe('when using the ganttDb', function () {
   });
 
   it('should maintain the order in which tasks are created', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setAccTitle('Project Execution');
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('section A section');
@@ -415,6 +423,7 @@ describe('when using the ganttDb', function () {
   });
 
   it('should work when end date is the 31st', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('Task endTime is on the 31st day of the month');
     ganttDb.addTask('test1', 'id1,2019-09-30,11d');
@@ -453,6 +462,7 @@ describe('when using the ganttDb', function () {
         const endTime = new Date(2020, 10, 2);
         expect(endTime.toISOString()).toBe('2020-11-02T08:00:00.000Z');
 
+        const ganttDb = new GanttDb();
         ganttDb.setDateFormat('YYYY-MM-DD');
         ganttDb.addSection('Task handles 25 hour day');
         ganttDb.addTask('daylight savings day', 'id1,2020-11-01,1d');
@@ -469,7 +479,9 @@ describe('when using the ganttDb', function () {
   /* c8 ignore stop */
 
   describe('when setting inclusive end dates', function () {
+    let ganttDb;
     beforeEach(function () {
+      ganttDb = new GanttDb();
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.enableInclusiveEndDates();
       ganttDb.addTask('test1', 'id1,2019-02-01,1d');
@@ -496,11 +508,13 @@ describe('when using the ganttDb', function () {
     ${'hide'}  | ${'off'}
     ${'style'} | ${'stoke:stroke-width:5px,stroke:#00f,opacity:0.5'}
   `)('should ${type} today marker', ({ expected }) => {
+    const ganttDb = new GanttDb();
     ganttDb.setTodayMarker(expected);
     expect(ganttDb.getTodayMarker()).toEqual(expected);
   });
 
   it('should reject dates with ridiculous years', function () {
+    const ganttDb = new GanttDb();
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
     expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
