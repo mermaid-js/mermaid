@@ -10,6 +10,7 @@ interface EditorColumn {
   title: string;
   description: string;
   redirectUrl: string;
+  highlighted?: boolean;
   features: Feature[];
 }
 
@@ -30,6 +31,7 @@ const editorColumns: EditorColumn[] = [
     description: 'Advanced features, free account',
     redirectUrl:
       'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart',
+    highlighted: true,
     features: [
       { iconUrl: '/icons/icon-folder.svg', featureName: 'Storage' },
       { iconUrl: '/icons/icon-terminal.svg', featureName: 'Code editor' },
@@ -87,13 +89,12 @@ onUnmounted(() => {
   >
     <div class="flex flex-row relative top-[8%] gap-4 p-4">
       <div
-        v-for="(column, index) in editorColumns"
-        :key="index"
+        v-for="column in editorColumns"
         class="w-80 flex relative flex-col items-center justify-start bg-[#dceef1] p-6 m-6 text-gray-800 shadow-sm"
-        :class="index === 1 ? 'bg-white rounded-b-lg' : 'bg-[#DCEEF1] rounded-lg'"
+        :class="column.highlighted ? 'bg-white rounded-b-lg' : 'bg-[#DCEEF1] rounded-lg'"
       >
         <div
-          v-if="index === 1"
+          v-if="column.highlighted"
           class="absolute -top-8 w-full rounded-t-3xl bg-[#E0095F] py-2 flex items-center justify-center shadow-md"
         >
           <p class="text-sm font-semibold text-white">Best for collaboration</p>
@@ -110,7 +111,9 @@ onUnmounted(() => {
           :href="column.redirectUrl"
           target="_blank"
           class="mb-4 flex h-10 w-full items-center justify-center rounded-xl hover:bg-[#272040] hover:text-white"
-          :class="index === 1 ? 'bg-[#1e1a2e] text-[#BEDDE3]' : 'bg-[#BEDDE3] text-[#1E1A2E]'"
+          :class="
+            column.highlighted ? 'bg-[#1e1a2e] text-[#BEDDE3]' : 'bg-[#BEDDE3] text-[#1E1A2E]'
+          "
         >
           Start free
         </a>
