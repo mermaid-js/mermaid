@@ -120,9 +120,7 @@ function nav() {
     },
     {
       text: '💻 Open Editor',
-      link: 'https://mermaid.live/edit',
-      target: '_blank',
-      rel: 'external',
+      link: '/',
     },
   ];
 }
