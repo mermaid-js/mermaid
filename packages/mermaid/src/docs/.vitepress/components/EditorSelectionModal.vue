@@ -87,19 +87,19 @@ onUnmounted(() => {
     class="fixed top-0 left-0 z-20 flex h-screen w-screen backdrop-blur-sm items-center justify-center"
     @click.self="isVisible = false"
   >
-    <div class="flex flex-row relative top-[8%] gap-4 p-4">
+    <div class="flex flex-row rounded-xl relative top-[8%] gap-5 p-6 bg-[#F1F8FA]">
       <div
         v-for="column in editorColumns"
-        class="w-80 flex relative flex-col items-center justify-start bg-[#dceef1] p-6 m-6 text-gray-800 shadow-sm"
-        :class="column.highlighted ? 'bg-white rounded-b-lg' : 'bg-[#DCEEF1] rounded-lg'"
+        class="w-80 flex relative flex-col justify-start items-center bg-[#dceef1] p-8 mb-6 mt-16 text-gray-800 shadow-sm"
+        :class="column.highlighted ? 'bg-white rounded-b-3xl' : 'bg-[#DCEEF1] rounded-3xl'"
       >
         <div
           v-if="column.highlighted"
-          class="absolute -top-8 w-full rounded-t-3xl bg-[#E0095F] py-2 flex items-center justify-center shadow-md"
+          class="absolute -top-10 w-full rounded-t-3xl bg-[#E0095F] py-2 flex justify-center shadow-md"
         >
-          <p class="text-sm font-semibold text-white">Best for collaboration</p>
+          <p class="text-lg font-semibold text-white">Best for collaboration</p>
         </div>
-        <header class="mb-6 text-center space-y-1">
+        <header class="mb-6 w-full text-start space-y-1">
           <p class="text-2xl font-medium capitalize text-[#1E1A2E]">
             {{ column.title }}
           </p>
@@ -110,14 +110,16 @@ onUnmounted(() => {
         <a
           :href="column.redirectUrl"
           target="_blank"
-          class="mb-4 flex h-10 w-full items-center justify-center rounded-xl hover:bg-[#272040] hover:text-white"
+          class="mb-6 flex h-10 w-full items-center justify-center rounded-xl hover:bg-[#272040] hover:text-white"
           :class="
-            column.highlighted ? 'bg-[#1e1a2e] text-[#BEDDE3]' : 'bg-[#BEDDE3] text-[#1E1A2E]'
+            column.highlighted
+              ? 'bg-[#1e1a2e] text-[#BEDDE3] hover:text-[#5CA3B4]'
+              : 'bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E]'
           "
         >
           Start free
         </a>
-        <div class="h-px w-full bg-[#bedde3] mb-4"></div>
+        <div class="h-px w-full bg-[#bedde3] mb-6"></div>
         <ul class="w-full space-y-2">
           <li
             v-for="{ iconUrl, featureName } in column.features"
