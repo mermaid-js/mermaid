@@ -6,91 +6,108 @@ interface Feature {
   featureName: string;
 }
 
-const featureColumns = ref<Feature[][]>([
+const featureColumns: Feature[][] = [
   [
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-public.svg',
+      iconUrl: '/icons/icon-public.svg',
       featureName: 'Diagram stored in URL',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-terminal.svg',
+      iconUrl: '/icons/icon-terminal.svg',
       featureName: 'Code editor',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-whiteboard.svg',
+      iconUrl: '/icons/icon-whiteboard.svg',
       featureName: 'Whiteboard',
     },
   ],
   [
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-folder.svg',
+      iconUrl: '/icons/icon-folder.svg',
       featureName: 'Storage',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-terminal.svg',
+      iconUrl: '/icons/icon-terminal.svg',
       featureName: 'Code editor',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-ai-diagrams.svg',
+      iconUrl: '/icons/icon-ai-diagram.svg',
       featureName: 'AI diagram generator',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-whiteboard.svg',
+      iconUrl: '/icons/icon-whiteboard.svg',
       featureName: 'Whiteboard',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-group.svg',
+      iconUrl: '/icons/icon-group.svg',
       featureName: 'Teams',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-multi-user-editing.svg',
+      iconUrl: '/icons/icon-groups.svg',
       featureName: 'Multi-user editing',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-ai-repair.svg',
+      iconUrl: '/icons/icon-ai-repair.svg',
       featureName: 'AI diagram repair',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-version-history.svg',
+      iconUrl: '/icons/icon-version-history.svg',
       featureName: 'Version history',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-comments.svg',
+      iconUrl: '/icons/icon-comment.svg',
       featureName: 'Comments',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-presentations.svg',
+      iconUrl: '/icons/icon-presentation.svg',
       featureName: 'Presentations',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-plugins.svg',
+      iconUrl: '/icons/icon-plugins.svg',
       featureName: 'Advanced Plugins',
     },
   ],
   [
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-public.svg',
+      iconUrl: '/icons/icon-public.svg',
       featureName: 'Diagram stored in URL',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-terminal.svg',
+      iconUrl: '/icons/icon-terminal.svg',
       featureName: 'Code editor',
     },
     {
-      iconUrl: 'https://static.mermaidchart.dev/assets/icon-how-to-reg.svg',
+      iconUrl: '/icons/icon-open-source.svg',
       featureName: 'Open source',
     },
+    {
+      iconUrl: '/icons/icon-version-history.svg',
+      featureName: 'Version history',
+    },
   ],
-]);
+];
+
+const columnTitles = ['Playground', 'Free', 'Open Source'];
+const columnDescriptions = [
+  'Basic features, no login',
+  'Advanced features, free account',
+  'Code only, no login',
+];
+const redirectUrl = [
+  'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=playground',
+  'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart',
+  'https://mermaid.live/edit',
+];
 
 const isVisible = ref(false);
 
 const handleMouseDown = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
   if (
-    (target.tagName === 'A' && target.textContent?.trim() === 'Try Playground') ||
+    (target.tagName === 'A' && target.textContent?.trim() === 'Try Editor') ||
     (target.tagName === 'SPAN' && target.textContent?.trim() === '💻 Open Editor')
   ) {
+    e.preventDefault();
     isVisible.value = !isVisible.value;
   }
 };
@@ -110,12 +127,12 @@ onUnmounted(() => {
     class="fixed top-0 left-0 z-20 flex h-screen w-screen backdrop-blur-sm items-center justify-center"
     @click.self="isVisible = false"
   >
-    <div v-if="isVisible" class="flex flex-row relative top-[8%] gap-4 p-4">
+    <div class="flex flex-row relative top-[8%] gap-4 p-4">
       <div
         v-for="(column, index) in featureColumns"
         :key="index"
-        class="w-80 flex relative flex-col items-center justify-start rounded-lg bg-[#dceef1] p-6 m-6 text-gray-800 shadow-sm"
-        :class="index === 1 ? 'bg-white' : 'bg-[#DCEEF1]'"
+        class="w-80 flex relative flex-col items-center justify-start bg-[#dceef1] p-6 m-6 text-gray-800 shadow-sm"
+        :class="index === 1 ? 'bg-white rounded-b-lg' : 'bg-[#DCEEF1] rounded-lg'"
       >
         <div
           v-if="index === 1"
@@ -125,26 +142,14 @@ onUnmounted(() => {
         </div>
         <header class="mb-6 text-center space-y-1">
           <p class="text-2xl font-medium capitalize text-[#1E1A2E]">
-            {{ ['Playground', 'Free', 'Open Source'][index] }}
+            {{ columnTitles[index] }}
           </p>
           <p class="text-sm text-gray-600">
-            {{
-              [
-                'Basic features, no login',
-                'Advanced features, free account',
-                'Code only, no login',
-              ][index]
-            }}
+            {{ columnDescriptions[index] }}
           </p>
         </header>
         <a
-          :href="
-            [
-              'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=playground',
-              'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart',
-              'https://mermaid.live/edit?utm_source=mermaid_live_editor&utm_medium=editor_selection&utm_campaign=open_source',
-            ][index]
-          "
+          :href="redirectUrl[index]"
           target="_blank"
           class="mb-4 flex h-10 w-full items-center justify-center rounded-xl hover:bg-[#272040] hover:text-white"
           :class="index === 1 ? 'bg-[#1e1a2e] text-[#BEDDE3]' : 'bg-[#BEDDE3] text-[#1E1A2E]'"
@@ -156,9 +161,9 @@ onUnmounted(() => {
           <li
             v-for="{ iconUrl, featureName } in column"
             :key="featureName"
-            class="flex items-center"
+            class="flex items-center gap-2"
           >
-            <img :src="iconUrl" :alt="featureName" class="mr-2 inline-block h-5 w-5" />
+            <img :src="iconUrl" :alt="featureName" class="inline-block size-5" />
             <span>{{ featureName }}</span>
           </li>
         </ul>
