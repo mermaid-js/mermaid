@@ -6,97 +6,55 @@ interface Feature {
   featureName: string;
 }
 
-const featureColumns: Feature[][] = [
-  [
-    {
-      iconUrl: '/icons/icon-public.svg',
-      featureName: 'Diagram stored in URL',
-    },
-    {
-      iconUrl: '/icons/icon-terminal.svg',
-      featureName: 'Code editor',
-    },
-    {
-      iconUrl: '/icons/icon-whiteboard.svg',
-      featureName: 'Whiteboard',
-    },
-  ],
-  [
-    {
-      iconUrl: '/icons/icon-folder.svg',
-      featureName: 'Storage',
-    },
-    {
-      iconUrl: '/icons/icon-terminal.svg',
-      featureName: 'Code editor',
-    },
-    {
-      iconUrl: '/icons/icon-ai-diagram.svg',
-      featureName: 'AI diagram generator',
-    },
-    {
-      iconUrl: '/icons/icon-whiteboard.svg',
-      featureName: 'Whiteboard',
-    },
-    {
-      iconUrl: '/icons/icon-group.svg',
-      featureName: 'Teams',
-    },
-    {
-      iconUrl: '/icons/icon-groups.svg',
-      featureName: 'Multi-user editing',
-    },
-    {
-      iconUrl: '/icons/icon-ai-repair.svg',
-      featureName: 'AI diagram repair',
-    },
-    {
-      iconUrl: '/icons/icon-version-history.svg',
-      featureName: 'Version history',
-    },
-    {
-      iconUrl: '/icons/icon-comment.svg',
-      featureName: 'Comments',
-    },
-    {
-      iconUrl: '/icons/icon-presentation.svg',
-      featureName: 'Presentations',
-    },
-    {
-      iconUrl: '/icons/icon-plugins.svg',
-      featureName: 'Advanced Plugins',
-    },
-  ],
-  [
-    {
-      iconUrl: '/icons/icon-public.svg',
-      featureName: 'Diagram stored in URL',
-    },
-    {
-      iconUrl: '/icons/icon-terminal.svg',
-      featureName: 'Code editor',
-    },
-    {
-      iconUrl: '/icons/icon-open-source.svg',
-      featureName: 'Open source',
-    },
-    {
-      iconUrl: '/icons/icon-version-history.svg',
-      featureName: 'Version history',
-    },
-  ],
-];
+interface EditorColumn {
+  title: string;
+  description: string;
+  redirectUrl: string;
+  features: Feature[];
+}
 
-const columnTitles = ['Playground', 'Free', 'Open Source'];
-const columnDescriptions = [
-  'Basic features, no login',
-  'Advanced features, free account',
-  'Code only, no login',
-];
-const redirectUrl = [
-  'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=playground',
-  'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart',
-  'https://mermaid.live/edit',
+const editorColumns: EditorColumn[] = [
+  {
+    title: 'Playground',
+    description: 'Basic features, no login',
+    redirectUrl:
+      'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=playground',
+    features: [
+      { iconUrl: '/icons/icon-public.svg', featureName: 'Diagram stored in URL' },
+      { iconUrl: '/icons/icon-terminal.svg', featureName: 'Code editor' },
+      { iconUrl: '/icons/icon-whiteboard.svg', featureName: 'Whiteboard' },
+    ],
+  },
+  {
+    title: 'Free',
+    description: 'Advanced features, free account',
+    redirectUrl:
+      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart',
+    features: [
+      { iconUrl: '/icons/icon-folder.svg', featureName: 'Storage' },
+      { iconUrl: '/icons/icon-terminal.svg', featureName: 'Code editor' },
+      { iconUrl: '/icons/icon-ai-diagram.svg', featureName: 'AI diagram generator' },
+      { iconUrl: '/icons/icon-whiteboard.svg', featureName: 'Whiteboard' },
+      { iconUrl: '/icons/icon-group.svg', featureName: 'Teams' },
+      { iconUrl: '/icons/icon-groups.svg', featureName: 'Multi-user editing' },
+      { iconUrl: '/icons/icon-ai-repair.svg', featureName: 'AI diagram repair' },
+      { iconUrl: '/icons/icon-version-history.svg', featureName: 'Version history' },
+      { iconUrl: '/icons/icon-comment.svg', featureName: 'Comments' },
+      { iconUrl: '/icons/icon-presentation.svg', featureName: 'Presentations' },
+      { iconUrl: '/icons/icon-plugins.svg', featureName: 'Advanced Plugins' },
+    ],
+  },
+  {
+    title: 'Open Source',
+    description: 'Code only, no login',
+    redirectUrl: 'https://mermaid.live/edit',
+    features: [
+      { iconUrl: '/icons/icon-public.svg', featureName: 'Diagram stored in URL' },
+      { iconUrl: '/icons/icon-terminal.svg', featureName: 'Code editor' },
+      { iconUrl: '/icons/icon-open-source.svg', featureName: 'Open source' },
+      { iconUrl: '/icons/icon-version-history.svg', featureName: 'Version history' },
+    ],
+  },
 ];
 
 const isVisible = ref(false);
@@ -129,7 +87,7 @@ onUnmounted(() => {
   >
     <div class="flex flex-row relative top-[8%] gap-4 p-4">
       <div
-        v-for="(column, index) in featureColumns"
+        v-for="(column, index) in editorColumns"
         :key="index"
         class="w-80 flex relative flex-col items-center justify-start bg-[#dceef1] p-6 m-6 text-gray-800 shadow-sm"
         :class="index === 1 ? 'bg-white rounded-b-lg' : 'bg-[#DCEEF1] rounded-lg'"
@@ -142,24 +100,24 @@ onUnmounted(() => {
         </div>
         <header class="mb-6 text-center space-y-1">
           <p class="text-2xl font-medium capitalize text-[#1E1A2E]">
-            {{ columnTitles[index] }}
+            {{ column.title }}
           </p>
           <p class="text-sm text-gray-600">
-            {{ columnDescriptions[index] }}
+            {{ column.description }}
           </p>
         </header>
         <a
-          :href="redirectUrl[index]"
+          :href="column.redirectUrl"
           target="_blank"
           class="mb-4 flex h-10 w-full items-center justify-center rounded-xl hover:bg-[#272040] hover:text-white"
           :class="index === 1 ? 'bg-[#1e1a2e] text-[#BEDDE3]' : 'bg-[#BEDDE3] text-[#1E1A2E]'"
         >
           Start free
         </a>
-        <div id="border-1"></div>
+        <div class="h-px w-full bg-[#bedde3] mb-4"></div>
         <ul class="w-full space-y-2">
           <li
-            v-for="{ iconUrl, featureName } in column"
+            v-for="{ iconUrl, featureName } in column.features"
             :key="featureName"
             class="flex items-center gap-2"
           >
@@ -171,11 +129,3 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
-
-<style>
-#border-1 {
-  border-bottom: 1px solid #bedde3;
-  width: 100%;
-  margin-bottom: 16px;
-}
-</style>
