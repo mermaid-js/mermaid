@@ -30,7 +30,7 @@ const editorColumns: EditorColumn[] = [
     title: 'Free',
     description: 'Advanced features, free account',
     redirectUrl:
-      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart',
+      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart&redirect=%2Fapp%2Fdiagrams%2Fnew',
     highlighted: true,
     features: [
       { iconUrl: '/icons/folder.svg', featureName: 'Storage' },
@@ -87,7 +87,9 @@ onUnmounted(() => {
     class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center"
     @click.self="isVisible = false"
   >
-    <div class="flex flex-row rounded-xl relative gap-5 pt-20 pb-10 px-10 bg-[#F1F8FA]">
+    <div
+      class="flex flex-row rounded-xl relative gap-5 pt-20 pb-10 px-10 @dark:bg-red:50 bg-[#F1F8FA]"
+    >
       <div
         v-for="column in editorColumns"
         class="w-80 flex relative flex-col justify-start items-center bg-[#dceef1] p-8 text-gray-800 shadow-sm"
