@@ -21,9 +21,9 @@ const editorColumns: EditorColumn[] = [
     redirectUrl:
       'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=playground',
     features: [
-      { iconUrl: '/icons/icon-public.svg', featureName: 'Diagram stored in URL' },
-      { iconUrl: '/icons/icon-terminal.svg', featureName: 'Code editor' },
-      { iconUrl: '/icons/icon-whiteboard.svg', featureName: 'Whiteboard' },
+      { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
+      { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
+      { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
     ],
   },
   {
@@ -33,17 +33,17 @@ const editorColumns: EditorColumn[] = [
       'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart',
     highlighted: true,
     features: [
-      { iconUrl: '/icons/icon-folder.svg', featureName: 'Storage' },
-      { iconUrl: '/icons/icon-terminal.svg', featureName: 'Code editor' },
-      { iconUrl: '/icons/icon-ai-diagram.svg', featureName: 'AI diagram generator' },
-      { iconUrl: '/icons/icon-whiteboard.svg', featureName: 'Whiteboard' },
-      { iconUrl: '/icons/icon-group.svg', featureName: 'Teams' },
-      { iconUrl: '/icons/icon-groups.svg', featureName: 'Multi-user editing' },
-      { iconUrl: '/icons/icon-ai-repair.svg', featureName: 'AI diagram repair' },
-      { iconUrl: '/icons/icon-version-history.svg', featureName: 'Version history' },
-      { iconUrl: '/icons/icon-comment.svg', featureName: 'Comments' },
-      { iconUrl: '/icons/icon-presentation.svg', featureName: 'Presentations' },
-      { iconUrl: '/icons/icon-plugins.svg', featureName: 'Advanced Plugins' },
+      { iconUrl: '/icons/folder.svg', featureName: 'Storage' },
+      { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
+      { iconUrl: '/icons/ai-diagram.svg', featureName: 'AI diagram generator' },
+      { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
+      { iconUrl: '/icons/group.svg', featureName: 'Teams' },
+      { iconUrl: '/icons/groups.svg', featureName: 'Multi-user editing' },
+      { iconUrl: '/icons/ai-repair.svg', featureName: 'AI diagram repair' },
+      { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
+      { iconUrl: '/icons/comment.svg', featureName: 'Comments' },
+      { iconUrl: '/icons/presentation.svg', featureName: 'Presentations' },
+      { iconUrl: '/icons/plugins.svg', featureName: 'Advanced Plugins' },
     ],
   },
   {
@@ -51,10 +51,10 @@ const editorColumns: EditorColumn[] = [
     description: 'Code only, no login',
     redirectUrl: 'https://mermaid.live/edit',
     features: [
-      { iconUrl: '/icons/icon-public.svg', featureName: 'Diagram stored in URL' },
-      { iconUrl: '/icons/icon-terminal.svg', featureName: 'Code editor' },
-      { iconUrl: '/icons/icon-open-source.svg', featureName: 'Open source' },
-      { iconUrl: '/icons/icon-version-history.svg', featureName: 'Version history' },
+      { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
+      { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
+      { iconUrl: '/icons/open-source.svg', featureName: 'Open source' },
+      { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
     ],
   },
 ];
@@ -84,13 +84,13 @@ onUnmounted(() => {
 <template>
   <div
     v-if="isVisible"
-    class="fixed top-0 left-0 z-20 flex h-screen w-screen backdrop-blur-sm items-center justify-center"
+    class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center"
     @click.self="isVisible = false"
   >
-    <div class="flex flex-row rounded-xl relative top-[8%] gap-5 p-6 bg-[#F1F8FA]">
+    <div class="flex flex-row rounded-xl relative gap-5 pt-20 pb-10 px-10 bg-[#F1F8FA]">
       <div
         v-for="column in editorColumns"
-        class="w-80 flex relative flex-col justify-start items-center bg-[#dceef1] p-8 mb-6 mt-16 text-gray-800 shadow-sm"
+        class="w-80 flex relative flex-col justify-start items-center bg-[#dceef1] p-8 text-gray-800 shadow-sm"
         :class="column.highlighted ? 'bg-white rounded-b-3xl' : 'bg-[#DCEEF1] rounded-3xl'"
       >
         <div
