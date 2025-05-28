@@ -87,15 +87,17 @@ onUnmounted(() => {
     class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center"
     @click.self="isVisible = false"
   >
-    <div class="flex flex-row rounded-xl relative gap-5 pt-20 pb-10 px-10 bg-[#F1F8FA]">
+    <div class="flex flex-row rounded-3xl shadow relative gap-5 pt-20 pb-10 px-10 bg-[#F1F8FA]">
       <div
         v-for="column in editorColumns"
-        class="w-80 flex relative flex-col justify-start items-center bg-[#dceef1] p-8 text-gray-800 shadow-sm"
-        :class="column.highlighted ? 'bg-white rounded-b-3xl' : 'bg-[#DCEEF1] rounded-3xl'"
+        class="w-80 flex relative flex-col justify-start items-center bg-[#dceef1] p-8 text-gray-800 shadow"
+        :class="
+          column.highlighted ? 'bg-white rounded-b-3xl shadow-xl' : 'bg-[#DCEEF1] rounded-3xl'
+        "
       >
         <div
           v-if="column.highlighted"
-          class="absolute -top-10 w-full rounded-t-3xl bg-[#E0095F] py-2 flex justify-center shadow-md"
+          class="absolute -top-10 w-full rounded-t-3xl bg-[#E0095F] py-2 flex justify-center"
         >
           <p class="text-lg font-semibold text-white">Best for collaboration</p>
         </div>
@@ -110,7 +112,7 @@ onUnmounted(() => {
         <a
           :href="column.redirectUrl"
           target="_blank"
-          class="mb-6 flex h-10 w-full items-center justify-center rounded-xl hover:bg-[#272040] hover:text-white"
+          class="mb-6 flex h-10 w-full items-center justify-center rounded-xl hover:bg-[#272040] hover:text-white hover:shadow-md"
           :class="
             column.highlighted
               ? 'bg-[#1e1a2e] text-[#BEDDE3] hover:text-[#5CA3B4]'
