@@ -68,41 +68,45 @@ const TimeProvider = {
   _initialized: false,
   _incrementStep: 1,
 
-  _initialize: function() {
-      if (this._initialized) {
-          return;
-      }
+  _initialize: function () {
+    if (this._initialized) {
+      return;
+    }
 
-      if (window.performance && typeof window.performance.now === 'function' &&
-          window.performance.timing && typeof window.performance.timing.navigationStart === 'number') {
-          this._canUsePerformanceNow = true;
-          this._lastTimestamp = window.performance.timeOrigin * 1e3;
-      } else {
-          this._canUsePerformanceNow = false;
-          this._lastTimestamp = Date.now()  * 1e3;
-      }
-      this._initialized = true;
+    if (
+      window.performance &&
+      typeof window.performance.now === 'function' &&
+      window.performance.timing &&
+      typeof window.performance.timing.navigationStart === 'number'
+    ) {
+      this._canUsePerformanceNow = true;
+      this._lastTimestamp = window.performance.timeOrigin * 1e3;
+    } else {
+      this._canUsePerformanceNow = false;
+      this._lastTimestamp = Date.now() * 1e3;
+    }
+    this._initialized = true;
   },
 
-  _getRawTimestamp: function() {
-      if (this._canUsePerformanceNow) {
-        return Math.floor((window.performance.timeOrigin + window.performance.now()) * 1e3);
-      } else {
-        return Date.now() * 1e3;
-      }
+  _getRawTimestamp: function () {
+    if (this._canUsePerformanceNow) {
+      return Math.floor((window.performance.timeOrigin + window.performance.now()) * 1e3);
+    } else {
+      return Date.now() * 1e3;
+    }
   },
 
-  getTimestamp: function() {
-      this._initialize();
-      const rawTimestamp = this._getRawTimestamp();
+  getTimestamp: function () {
+    this._initialize();
+    const rawTimestamp = this._getRawTimestamp();
 
-      if (rawTimestamp <= this._lastTimestamp) {
-          this._lastTimestamp += this._incrementStep;
-      } else {
-          this._lastTimestamp = rawTimestamp;
-      }
-      return this._lastTimestamp;
-  }
+    if (rawTimestamp <= this._lastTimestamp) {
+      this._lastTimestamp += this._incrementStep;
+    } else {
+      this._lastTimestamp = rawTimestamp;
+    }
+    return this._lastTimestamp;
+  },
 };
 /**
  * Detects the init config object from the text
