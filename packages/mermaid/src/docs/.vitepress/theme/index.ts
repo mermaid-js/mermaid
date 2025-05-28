@@ -1,12 +1,13 @@
 /* eslint-disable no-console */
 import DefaultTheme from 'vitepress/theme';
-import './custom.css';
-import Mermaid from './Mermaid.vue';
-import Tooltip from './Tooltip.vue';
 import Contributors from '../components/Contributors.vue';
+import EditorSelectionModal from '../components/EditorSelectionModal.vue';
 import HomePage from '../components/HomePage.vue';
 import TopBar from '../components/TopBar.vue';
+import './custom.css';
+import Mermaid from './Mermaid.vue';
 import { getRedirect } from './redirect.js';
+import Tooltip from './Tooltip.vue';
 // @ts-ignore Type not available
 import 'uno.css';
 import type { EnhanceAppContext } from 'vitepress';
@@ -22,6 +23,7 @@ export default {
       'home-hero-before': () => h(TopBar),
       'doc-before': () => h(TopBar),
       'layout-bottom': () => h(Tooltip),
+      'home-hero-after': () => h(EditorSelectionModal),
     });
   },
   enhanceApp({ app, router }: EnhanceAppContext) {

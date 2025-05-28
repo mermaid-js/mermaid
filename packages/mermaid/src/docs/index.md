@@ -16,8 +16,8 @@ hero:
     alt: Mermaid diagram
   actions:
     - theme: brand
-      text: Try Playground
-      link: https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=button&utm_campaign=try_playground
+      text: Try Editor
+      link: https://mermaid.live/edit
       target: _blank
       rel: external
     - theme: alt
