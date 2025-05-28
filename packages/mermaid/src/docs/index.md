@@ -17,7 +17,9 @@ hero:
   actions:
     - theme: brand
       text: Try Editor
-      link: /
+      link: https://mermaid.live/edit
+      target: _blank
+      rel: external
     - theme: alt
       text: Get started
       link: /intro/
