@@ -139,8 +139,13 @@
       "roughjs": "patches/roughjs.patch"
     },
     "onlyBuiltDependencies": [
+      "canvas",
       "cypress",
       "esbuild"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp",
+      "vue-demi"
     ]
   }
 }
