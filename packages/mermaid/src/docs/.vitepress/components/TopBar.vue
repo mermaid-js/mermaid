@@ -47,7 +47,7 @@ onMounted(() => {
           :key="index"
           :href="taglines[index].url"
           target="_blank"
-          class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
+          class="unstyled flex justify-center items-center gap-4 no-tooltip text-white tracking-wide plausible-event-name=bannerClick"
         >
           <span class="font-semibold">{{ taglines[index].label }}</span>
           <button
