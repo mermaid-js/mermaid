@@ -22,17 +22,25 @@ const taglines: Taglines[] = [
 ];
 
 const index: Ref<number> = ref(0);
+const isPaused: Ref<boolean> = ref(false);
 
 onMounted(() => {
   index.value = Math.floor(Math.random() * taglines.length);
   setInterval(() => {
+    if (isPaused.value) {
+      return;
+    }
     index.value = (index.value + 1) % taglines.length;
   }, 5_000);
 });
 </script>
 
 <template>
-  <div class="mb-4 w-full top-bar flex p-2 bg-[#E0095F]">
+  <div
+    class="mb-4 w-full top-bar flex p-2 bg-[#E0095F]"
+    @mouseenter="isPaused = true"
+    @mouseleave="isPaused = false"
+  >
     <p class="w-full tracking-wide fade-text text-xl">
       <transition name="fade" mode="out-in">
         <a
