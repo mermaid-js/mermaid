@@ -41,7 +41,7 @@ onMounted(() => {
     @mouseenter="isPaused = true"
     @mouseleave="isPaused = false"
   >
-    <p class="w-full tracking-wide fade-text text-xl">
+    <p class="w-full tracking-wide fade-text text-lg">
       <transition name="fade" mode="out-in">
         <a
           :key="index"
@@ -51,7 +51,7 @@ onMounted(() => {
         >
           <span class="font-semibold">{{ taglines[index].label }}</span>
           <button
-            class="bg-[#1E1A2E] shrink-0 text-xl rounded-lg p-1.5 px-4 font-semibold tracking-wide"
+            class="bg-[#1E1A2E] shrink-0 text-lg rounded-lg p-1.5 px-4 font-semibold tracking-wide"
           >
             Try now
           </button>
