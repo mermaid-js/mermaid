@@ -8,6 +8,10 @@ interface Taglines {
 
 const taglines: Taglines[] = [
   {
+    label: 'Customize your layout and design in Mermaid Chart’s visual editor!',
+    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor',
+  },
+  {
     label: 'Replace ChatGPT Pro, Mermaid.live, and Lucid Chart with Mermaid Chart',
     url: 'https://www.mermaidchart.com/mermaid-ai?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=aibundle',
   },
@@ -17,58 +21,30 @@ const taglines: Taglines[] = [
   },
 ];
 
-const randomTagLines: Taglines[] = [
-  {
-    label: "Customize your layout and design in Mermaid Chart's whiteboard!",
-    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=whiteboard',
-  },
-  {
-    label: "Customize your layout and design in Mermaid Chart's visual editor!",
-    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor',
-  },
-  {
-    label: "Customize your layout and design with Mermaid Chart's GUI!",
-    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=gui',
-  },
-  {
-    label: 'Customize your layout and design in Mermaid Chart!',
-    url: 'https://www.mermaidchart.com/whiteboard?utm_source=mermaid_js&utm_medium=banner_ad&utm_campaign=visual_editor_whiteboard_gui',
-  },
-];
-
 const index: Ref<number> = ref(0);
-const currentBannerSet: Ref<Taglines[]> = ref(taglines);
-const isPaused: Ref<boolean> = ref(false);
 
 onMounted(() => {
-  const newIndex = Math.floor(Math.random() * randomTagLines.length);
-  currentBannerSet.value = [...taglines, randomTagLines[newIndex]];
-  index.value = Math.floor(Math.random() * currentBannerSet.value.length);
+  index.value = Math.floor(Math.random() * taglines.length);
   setInterval(() => {
-    if (isPaused.value) {
-      return;
-    }
-    index.value = (index.value + 1) % currentBannerSet.value.length;
+    index.value = (index.value + 1) % taglines.length;
   }, 5_000);
 });
 </script>
 
 <template>
-  <div
-    class="mb-4 w-full top-bar flex p-2 bg-[#E0095F]"
-    @mouseenter="isPaused = true"
-    @mouseleave="isPaused = false"
-  >
-    <p class="w-full tracking-wide fade-text text-sm">
+  <div class="mb-4 w-full top-bar flex p-2 bg-[#E0095F]">
+    <p class="w-full tracking-wide fade-text text-xl">
       <transition name="fade" mode="out-in">
         <a
           :key="index"
-          :href="currentBannerSet[index].url"
+          :href="taglines[index].url"
           target="_blank"
-          class="unstyled flex justify-center items-center gap-4 text-white no-tooltip tracking-wide plausible-event-name=bannerClick"
+          class="unstyled flex justify-center items-center gap-4 text-white tracking-wide plausible-event-name=bannerClick"
         >
-          <span class="font-semibold">{{ currentBannerSet[index].label }}</span>
-          <button class="bg-[#1E1A2E] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide">
+          <span class="font-semibold">{{ taglines[index].label }}</span>
+          <button
+            class="bg-[#1E1A2E] shrink-0 text-xl rounded-lg p-1.5 px-4 font-semibold tracking-wide"
+          >
             Try now
           </button>
         </a>
