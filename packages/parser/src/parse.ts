@@ -1,8 +1,8 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
-import type { Info, Packet, Pie, Architecture, GitGraph, Radar } from './index.js';
+import type { Info, Packet, Pie, Architecture, GitGraph, Radar, XY } from './index.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar;
+export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | XY;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -36,6 +36,11 @@ const initializers = {
     const parser = createRadarServices().Radar.parser.LangiumParser;
     parsers.radar = parser;
   },
+  xy: async () => {
+    const { createXYServices } = await import('./language/xy/index.js');
+    const parser = createXYServices().XY.parser.LangiumParser;
+    parsers.xy = parser;
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -44,6 +49,7 @@ export async function parse(diagramType: 'pie', text: string): Promise<Pie>;
 export async function parse(diagramType: 'architecture', text: string): Promise<Architecture>;
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
+export async function parse(diagramType: 'xy', text: string): Promise<XY>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

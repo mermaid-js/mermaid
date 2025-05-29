@@ -13,6 +13,8 @@ import type {
   PacketServices,
   GitGraph,
   GitGraphServices,
+  XY,
+  XYServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -21,6 +23,7 @@ import {
   createRadarServices,
   createPacketServices,
   createGitGraphServices,
+  createXYServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -36,6 +39,18 @@ export function expectNoErrorsOrAlternatives(result: ParseResult) {
   expect(result.parserErrors).toHaveLength(0);
 
   expect(consoleMock).not.toHaveBeenCalled();
+  consoleMock.mockReset();
+}
+
+/**
+ * A helper test function that validate that the result has errors
+ * or any ambiguous alternatives from chevrotain.
+ *
+ * @param result - the result `parse` function.
+ */
+export function expectErrorsOrAlternatives(result: ParseResult) {
+  expect(result.lexerErrors.length > 0 || result.parserErrors.length > 0).toBe(true);
+
   consoleMock.mockReset();
 }
 
@@ -104,3 +119,14 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const xyServices: XYServices = createXYServices().XY;
+const xyParser: LangiumParser = xyServices.parser.LangiumParser;
+export function createXYTestServices() {
+  const parse = (input: string) => {
+    return xyParser.parse<XY>(input);
+  };
+
+  return { services: xyServices, parse };
+}
+export const xyParse = createXYTestServices().parse;
