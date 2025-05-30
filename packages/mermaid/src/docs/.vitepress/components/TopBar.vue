@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, type Ref, ref } from 'vue';
+import { useRoute } from 'vitepress';
+import { computed, onMounted, type Ref, ref } from 'vue';
 
 interface Taglines {
   label: string;
@@ -23,6 +24,11 @@ const taglines: Taglines[] = [
 
 const index: Ref<number> = ref(0);
 const isPaused: Ref<boolean> = ref(false);
+const route = useRoute();
+
+const isHomePage = computed(() => {
+  return route.path === '/';
+});
 
 onMounted(() => {
   index.value = Math.floor(Math.random() * taglines.length);
@@ -41,7 +47,7 @@ onMounted(() => {
     @mouseenter="isPaused = true"
     @mouseleave="isPaused = false"
   >
-    <p class="w-full tracking-wide fade-text text-lg">
+    <p class="w-full tracking-wide fade-text text-lg" :class="isHomePage ? 'text-lg' : 'text-sm'">
       <transition name="fade" mode="out-in">
         <a
           :key="index"
@@ -51,7 +57,8 @@ onMounted(() => {
         >
           <span class="font-semibold">{{ taglines[index].label }}</span>
           <button
-            class="bg-[#1E1A2E] shrink-0 text-lg rounded-lg p-1.5 px-4 font-semibold tracking-wide"
+            class="bg-[#1E1A2E] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide"
+            :class="isHomePage ? 'text-lg' : 'text-sm'"
           >
             Try now
           </button>
