@@ -805,7 +805,9 @@ export class InitIDGenerator {
     // TODO: Seed is only used for length?
     // v11: Use the actual value of seed string to generate an initial value for count.
     this.count = seed ? seed.length : 0;
-    this.next = deterministic ? () => this.count++ : () => TimeProvider.getTimestamp();
+    this.next = deterministic
+      ? () => this.count++
+      : () => Number.parseInt(`${Date.now()}${this.count++}`);
   }
 }
 
