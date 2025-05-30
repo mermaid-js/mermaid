@@ -161,4 +161,68 @@ describe('Timeline diagram', () => {
       {}
     );
   });
+
+  it('11: should render timeline with many stacked events and proper timeline line length', () => {
+    imgSnapshotTest(
+      `timeline
+        title Medical Device Lifecycle
+        section Pre-Development
+          Quality Management System : Regulatory Compliance : Risk Management
+        section Development
+          Management Responsibility : Planning Activities : Human Resources
+          Resource Management : Management Reviews : Infrastructure
+        section Post-Development
+          Product Realization Activities : Planning Activities : Customer-related Processes
+          Post-Production Activities : Feedback : Complaints : Adverse Events
+                                    : Research and Development : Purchasing Activities
+                                    : Production Activities : Installation Activities
+                                    : Servicing Activities : Post-Market Surveillance
+      `,
+      {}
+    );
+  });
+
+  it('12: should render timeline with proper vertical line lengths for all columns', () => {
+    imgSnapshotTest(
+      `---
+config:
+    theme: base
+    themeVariables:
+        fontFamily: Fira Sans
+        fontSize: 17px
+        cScale0: '#b3cde0'
+        cScale1: '#f49090'
+        cScale2: '#85d5b8'
+---
+
+timeline
+    title Medical Device Lifecycle
+    section Planning
+        Quality Management System (4): Regulatory Compliance (4.1.1)
+            : Risk Management (4.1.2)
+        Management Resposibility (5): Planning Activities (5.4)
+            : Management Reviews (5.6)
+         Resource Management (6): Human Resources (6.2)
+            : Infrastructure (6.3)
+    section Realization
+        Research and Development (7.3): RnD Planning (7.3.2)
+            : Inputs (7.3.3)
+            : Outputs (7.3.4)
+            : Review (7.3.5)
+            : Verification (7.3.6)
+            : Validation (7.3.7)
+        Purchasing (7.4): Purchasing Process (7.4.1)
+            : Purchasing Information (7.4.2)
+        Production (7.5): Production Activities (7.5.1)
+            : Production Feedback (8.2.1)
+        Installation (7.5.3): Installation Activities (7.5.3)
+        Servicing (7.5.4): Servicing Activities (7.5.4)
+    section Post-Production
+        Post-Market Activities (8): Feedback (8.2.1)
+            : Complaints (8.2.2)
+            : Adverse Events (8.2.3)
+      `,
+      {}
+    );
+  });
 });
