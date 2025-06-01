@@ -309,4 +309,21 @@ describe('when parsing subgraphs', function () {
     expect(subgraphA.nodes).toContain('a');
     expect(subgraphA.nodes).not.toContain('c');
   });
+  it('should correctly parse direction TD inside a subgraph', function () {
+    const res = flow.parser.parse(`
+      graph LR
+        subgraph WithTD
+          direction TD
+          A1 --> A2
+        end
+    `);
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    const subgraph = subgraphs[0];
+
+    expect(subgraph.dir).toBe('TD');
+    expect(subgraph.nodes).toContain('A1');
+    expect(subgraph.nodes).toContain('A2');
+  });
 });
