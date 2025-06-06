@@ -133,7 +133,7 @@
     <pre id="diagram4" class="mermaid">
       ---
       config:
-        layout: dagre
+        layout: cose-bilkent
       ---
       mindmap
       root((mindmap))
@@ -154,13 +154,13 @@
     <pre id="diagram4" class="mermaid">
       ---
       config:
-        layout: elk
+        layout: cose-bilkent
       ---
       flowchart LR
       root{mindmap} --- Origins --- Europe
-      root --- Origins --- Asia
+      Origins --> Asia
       root --- Background --- Rich
-      root --- Background --- Poor
+      Background --- Poor
 
 
 

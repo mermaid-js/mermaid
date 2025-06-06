@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test Unified Rendering - Mindmap with Different Layout Algorithms</title>
+    <script src="http://localhost:9000/mermaid.js"></script>
+  </head>
+  <body>
+    <h1>Test Unified Rendering System</h1>
+
+    <h2>Mindmap with Cose-Bilkent (Default)</h2>
+    <div class="mermaid">
+      mindmap root((mindmap)) Origins Long history ::icon(fa fa-book) Popularisation British popular
+      psychology author Tony Buzan Research On effectiveness<br />and features On Automatic creation
+      Uses Creative techniques Strategic planning Argument mapping Tools Pen and paper Mermaid
+    </div>
+
+    <h2>Mindmap with Dagre Layout</h2>
+    <div class="mermaid">
+      --- config: layout: dagre --- mindmap root((mindmap)) Origins Long history Popularisation
+      British popular psychology author Tony Buzan Research On effectiveness<br />and features On
+      Automatic creation Uses Creative techniques Strategic planning Tools Pen and paper Mermaid
+    </div>
+
+    <h2>ER Diagram with Cose-Bilkent Layout</h2>
+    <div class="mermaid">
+      --- config: layout: cose-bilkent --- erDiagram CUSTOMER ||--o{ ORDER : places ORDER ||--|{
+      LINE-ITEM : contains CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
+    </div>
+
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        logLevel: 'debug',
+        mindmap: {
+          layoutAlgorithm: 'cose-bilkent',
+        },
+      });
+    </script>
+  </body>
+</html>

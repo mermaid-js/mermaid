@@ -196,12 +196,34 @@ const flattenNodes = (node: MindmapNode, processedNodes: MindmapLayoutNode[]): v
     cssClasses += ` ${node.class}`;
   }
 
+  // Map mindmap node type to valid shape name
+  const getShapeFromType = (type: number) => {
+    switch (type) {
+      case nodeType.CIRCLE:
+        return 'circle';
+      case nodeType.RECT:
+        return 'rect';
+      case nodeType.ROUNDED_RECT:
+        return 'rounded';
+      case nodeType.CLOUD:
+        return 'rounded'; // Map cloud to rounded for now
+      case nodeType.BANG:
+        return 'circle'; // Map bang to circle for now
+      case nodeType.HEXAGON:
+        return 'hexagon';
+      case nodeType.DEFAULT:
+      case nodeType.NO_BORDER:
+      default:
+        return 'rect';
+    }
+  };
+
   const processedNode: MindmapLayoutNode = {
     id: 'node_' + node.id.toString(),
     domId: 'node_' + node.id.toString(),
     label: node.descr,
     isGroup: false,
-    shape: 'rect', // Default shape, can be customized based on node.type
+    shape: getShapeFromType(node.type),
     width: node.width,
     height: node.height ?? 0,
     padding: node.padding,
@@ -298,6 +320,17 @@ const getData = (): LayoutData => {
 
   log.debug(`getData: processed ${processedNodes.length} nodes and ${processedEdges.length} edges`);
 
+  // Create shapes map for ELK compatibility
+  const shapes = new Map<string, any>();
+  processedNodes.forEach((node) => {
+    shapes.set(node.id, {
+      shape: node.shape,
+      width: node.width,
+      height: node.height,
+      padding: node.padding,
+    });
+  });
+
   return {
     nodes: processedNodes,
     edges: processedEdges,
@@ -309,6 +342,11 @@ const getData = (): LayoutData => {
     direction: 'TB', // Top-to-bottom direction for mindmaps
     nodeSpacing: 50, // Default spacing between nodes
     rankSpacing: 50, // Default spacing between ranks
+    // Add shapes for ELK compatibility
+    shapes: Object.fromEntries(shapes),
+    // Additional properties that layout algorithms might expect
+    type: 'mindmap',
+    diagramId: 'mindmap-' + Date.now(),
   };
 };
 
