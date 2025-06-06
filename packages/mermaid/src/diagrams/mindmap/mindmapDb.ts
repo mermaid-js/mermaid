@@ -4,6 +4,21 @@ import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import type { MindmapNode } from './mindmapTypes.js';
 import defaultConfig from '../../defaultConfig.js';
+import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
+
+// Extend Node type for mindmap-specific properties
+export type MindmapLayoutNode = Node & {
+  level: number;
+  nodeId: string;
+  type: number;
+  section?: number;
+};
+
+// Extend Edge type for mindmap-specific properties
+export type MindmapLayoutEdge = Edge & {
+  depth: number;
+  section?: number;
+};
 
 let nodes: MindmapNode[] = [];
 let cnt = 0;
@@ -139,6 +154,164 @@ const type2Str = (type: number) => {
   }
 };
 
+/**
+ * Assign section numbers to nodes based on their position relative to root
+ * @param node - The mindmap node to process
+ * @param sectionNumber - The section number to assign (undefined for root)
+ */
+const assignSections = (node: MindmapNode, sectionNumber?: number): void => {
+  // Assign section number to the current node
+  node.section = sectionNumber;
+
+  // For root node's children, assign section numbers based on their index
+  // For other nodes, inherit parent's section number
+  if (node.children) {
+    node.children.forEach((child, index) => {
+      const childSectionNumber = node.level === 0 ? index : sectionNumber;
+      assignSections(child, childSectionNumber);
+    });
+  }
+};
+
+/**
+ * Convert mindmap tree structure to flat array of nodes
+ * @param node - The mindmap node to process
+ * @param processedNodes - Array to collect processed nodes
+ */
+const flattenNodes = (node: MindmapNode, processedNodes: MindmapLayoutNode[]): void => {
+  // Build CSS classes for the node
+  let cssClasses = 'mindmap-node';
+
+  // Add section-specific classes
+  if (node.level === 0) {
+    // Root node gets special classes
+    cssClasses += ' section-root section--1';
+  } else if (node.section !== undefined) {
+    // Child nodes get section class based on their section number
+    cssClasses += ` section-${node.section}`;
+  }
+
+  // Add any custom classes from the node
+  if (node.class) {
+    cssClasses += ` ${node.class}`;
+  }
+
+  const processedNode: MindmapLayoutNode = {
+    id: 'node_' + node.id.toString(),
+    domId: 'node_' + node.id.toString(),
+    label: node.descr,
+    isGroup: false,
+    shape: 'rect', // Default shape, can be customized based on node.type
+    width: node.width,
+    height: node.height ?? 0,
+    padding: node.padding,
+    cssClasses: cssClasses,
+    cssStyles: [],
+    look: 'default',
+    icon: node.icon,
+    x: node.x,
+    y: node.y,
+    // Mindmap-specific properties
+    level: node.level,
+    nodeId: node.nodeId,
+    type: node.type,
+    section: node.section,
+  };
+
+  processedNodes.push(processedNode);
+
+  // Recursively process children
+  if (node.children) {
+    node.children.forEach((child) => flattenNodes(child, processedNodes));
+  }
+};
+
+/**
+ * Generate edges from parent-child relationships in mindmap tree
+ * @param node - The mindmap node to process
+ * @param edges - Array to collect edges
+ */
+const generateEdges = (node: MindmapNode, edges: MindmapLayoutEdge[]): void => {
+  if (node.children) {
+    node.children.forEach((child) => {
+      // Build CSS classes for the edge
+      let edgeClasses = 'edge';
+
+      // Add section-specific classes based on the child's section
+      if (child.section !== undefined) {
+        edgeClasses += ` section-edge-${child.section}`;
+      }
+
+      // Add depth class based on the parent's level + 1 (depth of the edge)
+      const edgeDepth = node.level + 1;
+      edgeClasses += ` edge-depth-${edgeDepth}`;
+
+      const edge: MindmapLayoutEdge = {
+        id: `edge_${node.id}_${child.id}`,
+        start: 'node_' + node.id.toString(),
+        end: 'node_' + child.id.toString(),
+        type: 'normal',
+        curve: 'basis',
+        thickness: 'normal',
+        look: 'default',
+        classes: edgeClasses,
+        // Store mindmap-specific data
+        depth: node.level,
+        section: child.section,
+      };
+
+      edges.push(edge);
+
+      // Recursively process child edges
+      generateEdges(child, edges);
+    });
+  }
+};
+
+/**
+ * Get structured data for layout algorithms
+ * Following the pattern established by ER diagrams
+ * @returns Structured data containing nodes, edges, and config
+ */
+const getData = (): LayoutData => {
+  const mindmapRoot = getMindmap();
+  const config = getConfig();
+
+  if (!mindmapRoot) {
+    return {
+      nodes: [],
+      edges: [],
+      config,
+    };
+  }
+  log.debug('getData: mindmapRoot', mindmapRoot, config);
+
+  // Assign section numbers to all nodes based on their position relative to root
+  assignSections(mindmapRoot);
+
+  // Convert tree structure to flat arrays
+  const processedNodes: MindmapLayoutNode[] = [];
+  const processedEdges: MindmapLayoutEdge[] = [];
+
+  flattenNodes(mindmapRoot, processedNodes);
+  generateEdges(mindmapRoot, processedEdges);
+
+  log.debug(`getData: processed ${processedNodes.length} nodes and ${processedEdges.length} edges`);
+
+  return {
+    nodes: processedNodes,
+    edges: processedEdges,
+    config,
+    // Store the root node for mindmap-specific layout algorithms
+    rootNode: mindmapRoot,
+    // Properties required by dagre layout algorithm
+    markers: [], // Mindmaps don't use markers
+    direction: 'TB', // Top-to-bottom direction for mindmaps
+    nodeSpacing: 50, // Default spacing between nodes
+    rankSpacing: 50, // Default spacing between ranks
+  };
+};
+
 // Expose logger to grammar
 const getLogger = () => log;
 const getElementById = (id: number) => elements[id];
@@ -154,6 +327,7 @@ const db = {
   type2Str,
   getLogger,
   getElementById,
+  getData,
 } as const;
 
 export default db;

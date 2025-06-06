@@ -962,6 +962,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - useMaxWidth
       - padding
       - maxNodeWidth
+      - layoutAlgorithm
     properties:
       padding:
         type: number
@@ -969,6 +970,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       maxNodeWidth:
         type: number
         default: 200
+      layoutAlgorithm:
+        description: Layout algorithm to use for positioning mindmap nodes
+        type: string
+        default: 'cose-bilkent'
 
   KanbanDiagramConfig:
     title: Kanban Diagram Config

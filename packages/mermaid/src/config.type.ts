@@ -1065,6 +1065,10 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
 export interface MindmapDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   maxNodeWidth?: number;
+  /**
+   * Layout algorithm to use for positioning mindmap nodes
+   */
+  layoutAlgorithm?: string;
 }
 /**
  * The object containing configurations specific for kanban diagrams

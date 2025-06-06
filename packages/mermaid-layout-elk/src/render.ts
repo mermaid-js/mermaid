@@ -51,14 +51,28 @@ export const render = async (
 
     // Add the element to the DOM
     if (!node.isGroup) {
+      // Create a clean node object for ELK with only the properties it expects
       const child: NodeWithVertex = {
-        ...node,
+        id: node.id,
+        width: node.width,
+        height: node.height,
+        // Store the original node data for later use
+        label: node.label,
+        isGroup: node.isGroup,
+        shape: node.shape,
+        padding: node.padding,
+        cssClasses: node.cssClasses,
+        cssStyles: node.cssStyles,
+        look: node.look,
+        // Include parentId for subgraph processing
+        parentId: node.parentId,
       };
       graph.children.push(child);
       nodeDb[node.id] = child;
 
       const childNodeEl = await insertNode(nodeEl, node, { config, dir: node.dir });
       const boundingBox = childNodeEl.node()!.getBBox();
+      // Store the domId separately for rendering, not in the ELK graph
       child.domId = childNodeEl;
       child.width = boundingBox.width;
       child.height = boundingBox.height;
@@ -866,11 +880,16 @@ export const render = async (
       delete node.height;
     }
   });
-  elkGraph.edges.forEach((edge: any) => {
+  log.debug('APA01 processing edges, count:', elkGraph.edges.length);
+  elkGraph.edges.forEach((edge: any, index: number) => {
+    log.debug('APA01 processing edge', index, ':', edge);
     const source = edge.sources[0];
     const target = edge.targets[0];
+    log.debug('APA01 source:', source, 'target:', target);
+    log.debug('APA01 nodeDb[source]:', nodeDb[source]);
+    log.debug('APA01 nodeDb[target]:', nodeDb[target]);
 
-    if (nodeDb[source].parentId !== nodeDb[target].parentId) {
+    if (nodeDb[source] && nodeDb[target] && nodeDb[source].parentId !== nodeDb[target].parentId) {
       const ancestorId = findCommonAncestor(source, target, parentLookupDb);
       // an edge that breaks a subgraph has been identified, set configuration accordingly
       setIncludeChildrenPolicy(source, ancestorId);
@@ -878,7 +897,37 @@ export const render = async (
     }
   });
 
-  const g = await elk.layout(elkGraph);
+  log.debug('APA01 before');
+  log.debug('APA01 elkGraph structure:', JSON.stringify(elkGraph, null, 2));
+  log.debug('APA01 elkGraph.children length:', elkGraph.children?.length);
+  log.debug('APA01 elkGraph.edges length:', elkGraph.edges?.length);
+
+  // Validate that all edge references exist as nodes
+  elkGraph.edges?.forEach((edge: any, index: number) => {
+    log.debug(`APA01 validating edge ${index}:`, edge);
+    if (edge.sources) {
+      edge.sources.forEach((sourceId: any) => {
+        const sourceExists = elkGraph.children?.some((child: any) => child.id === sourceId);
+        log.debug(`APA01 source ${sourceId} exists:`, sourceExists);
+      });
+    }
+    if (edge.targets) {
+      edge.targets.forEach((targetId: any) => {
+        const targetExists = elkGraph.children?.some((child: any) => child.id === targetId);
+        log.debug(`APA01 target ${targetId} exists:`, targetExists);
+      });
+    }
+  });
+
+  let g;
+  try {
+    g = await elk.layout(elkGraph);
+    log.debug('APA01 after - success');
+    log.debug('APA01 layout result:', JSON.stringify(g, null, 2));
+  } catch (error) {
+    log.error('APA01 ELK layout error:', error);
+    throw error;
+  }
 
   // debugger;
   await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);

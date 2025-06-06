@@ -39,6 +39,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
     },
+    {
+      name: 'cose-bilkent',
+      loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
+    },
   ]);
 };
 

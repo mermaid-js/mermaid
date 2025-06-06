@@ -105,20 +105,77 @@
   </head>
 
   <body>
-    <pre id="diagram4" class="mermaid">
-      flowchart LR
-        AB["apa@apa@"] --> B(("`apa@apa`"))
+    <pre id="diagram4" class="mermaid2">
+      ---
+      config:
+        layout: dagre
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+          Long history
+          ::icon(fa fa-book)
+          Popularisation
+            British popular psychology author Tony Buzan
+        Research
+          On effectiveness&lt;br/>and features
+          On Automatic creation
+            Uses
+                Creative techniques
+                Strategic planning
+                Argument mapping
+        Tools
+          Pen and paper
+          Mermaid
+
+
     </pre>
     <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: dagre
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+          Europe
+          Asia
+            East
+            West
+        Background
+          Rich
+          Poor
+
+
+
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart LR
+      root{mindmap} --- Origins --- Europe
+      root --- Origins --- Asia
+      root --- Background --- Rich
+      root --- Background --- Poor
+
+
+
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
       flowchart
         D(("for D"))
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       flowchart LR
         A e1@==> B
         e1@{ animate: true}
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   A e1@--> B
   classDef animate stroke-width:2,stroke-dasharray:10\,8,stroke-dashoffset:-180,animation: edge-animation-frame 6s linear infinite, stroke-linecap: round
