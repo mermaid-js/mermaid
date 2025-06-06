@@ -4,7 +4,8 @@ import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from '
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
 type Node = LayoutData['nodes'][number];
-
+// Used to calculate distances in order to avoid floating number rounding issues when comparing floating numbers
+const epsilon = 0.0001;
 interface LabelData {
   width: number;
   height: number;
@@ -17,7 +18,16 @@ interface NodeWithVertex extends Omit<Node, 'domId'> {
   labelData?: LabelData;
   domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
 }
-
+interface Point {
+  x: number;
+  y: number;
+}
+function distance(p1?: Point, p2?: Point): number {
+  if (!p1 || !p2) {
+    return 0;
+  }
+  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+}
 export const render = async (
   data4Layout: LayoutData,
   svg: SVG,
@@ -74,6 +84,7 @@ export const render = async (
       const boundingBox = childNodeEl.node()!.getBBox();
       // Store the domId separately for rendering, not in the ELK graph
       child.domId = childNodeEl;
+      child.calcIntersect = node.calcIntersect;
       child.width = boundingBox.width;
       child.height = boundingBox.height;
     } else {
@@ -473,302 +484,6 @@ export const render = async (
     }
   }
 
-  function intersectLine(
-    p1: { y: number; x: number },
-    p2: { y: number; x: number },
-    q1: { x: any; y: any },
-    q2: { x: any; y: any }
-  ) {
-    log.debug('UIO intersectLine', p1, p2, q1, q2);
-    // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
-    // p7 and p473.
-
-    // let a1, a2, b1, b2, c1, c2;
-    // let r1, r2, r3, r4;
-    // let denom, offset, num;
-    // let x, y;
-
-    // Compute a1, b1, c1, where line joining points 1 and 2 is F(x,y) = a1 x +
-    // b1 y + c1 = 0.
-    const a1 = p2.y - p1.y;
-    const b1 = p1.x - p2.x;
-    const c1 = p2.x * p1.y - p1.x * p2.y;
-
-    // Compute r3 and r4.
-    const r3 = a1 * q1.x + b1 * q1.y + c1;
-    const r4 = a1 * q2.x + b1 * q2.y + c1;
-
-    const epsilon = 1e-6;
-
-    // Check signs of r3 and r4. If both point 3 and point 4 lie on
-    // same side of line 1, the line segments do not intersect.
-    if (r3 !== 0 && r4 !== 0 && sameSign(r3, r4)) {
-      return /*DON'T_INTERSECT*/;
-    }
-
-    // Compute a2, b2, c2 where line joining points 3 and 4 is G(x,y) = a2 x + b2 y + c2 = 0
-    const a2 = q2.y - q1.y;
-    const b2 = q1.x - q2.x;
-    const c2 = q2.x * q1.y - q1.x * q2.y;
-
-    // Compute r1 and r2
-    const r1 = a2 * p1.x + b2 * p1.y + c2;
-    const r2 = a2 * p2.x + b2 * p2.y + c2;
-
-    // Check signs of r1 and r2. If both point 1 and point 2 lie
-    // on same side of second line segment, the line segments do
-    // not intersect.
-    if (Math.abs(r1) < epsilon && Math.abs(r2) < epsilon && sameSign(r1, r2)) {
-      return /*DON'T_INTERSECT*/;
-    }
-
-    // Line segments intersect: compute intersection point.
-    const denom = a1 * b2 - a2 * b1;
-    if (denom === 0) {
-      return /*COLLINEAR*/;
-    }
-
-    const offset = Math.abs(denom / 2);
-
-    // The denom/2 is to get rounding instead of truncating. It
-    // is added or subtracted to the numerator, depending upon the
-    // sign of the numerator.
-    let num = b1 * c2 - b2 * c1;
-    const x = num < 0 ? (num - offset) / denom : (num + offset) / denom;
-
-    num = a2 * c1 - a1 * c2;
-    const y = num < 0 ? (num - offset) / denom : (num + offset) / denom;
-
-    return { x: x, y: y };
-  }
-
-  function sameSign(r1: number, r2: number) {
-    return r1 * r2 > 0;
-  }
-  const diamondIntersection = (
-    bounds: { x: any; y: any; width: any; height: any },
-    outsidePoint: { x: number; y: number },
-    insidePoint: any
-  ) => {
-    const x1 = bounds.x;
-    const y1 = bounds.y;
-
-    const w = bounds.width; //+ bounds.padding;
-    const h = bounds.height; // + bounds.padding;
-
-    const polyPoints = [
-      { x: x1, y: y1 - h / 2 },
-      { x: x1 + w / 2, y: y1 },
-      { x: x1, y: y1 + h / 2 },
-      { x: x1 - w / 2, y: y1 },
-    ];
-    log.debug(
-      `APA16 diamondIntersection calc abc89:
-  outsidePoint: ${JSON.stringify(outsidePoint)}
-  insidePoint : ${JSON.stringify(insidePoint)}
-  node-bounds       : x:${bounds.x} y:${bounds.y} w:${bounds.width} h:${bounds.height}`,
-      JSON.stringify(polyPoints)
-    );
-
-    const intersections = [];
-
-    let minX = Number.POSITIVE_INFINITY;
-    let minY = Number.POSITIVE_INFINITY;
-
-    polyPoints.forEach(function (entry) {
-      minX = Math.min(minX, entry.x);
-      minY = Math.min(minY, entry.y);
-    });
-
-    const left = x1 - w / 2 - minX;
-    const top = y1 - h / 2 - minY;
-
-    for (let i = 0; i < polyPoints.length; i++) {
-      const p1 = polyPoints[i];
-      const p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
-      const intersect = intersectLine(
-        bounds,
-        outsidePoint,
-        { x: left + p1.x, y: top + p1.y },
-        { x: left + p2.x, y: top + p2.y }
-      );
-
-      if (intersect) {
-        intersections.push(intersect);
-      }
-    }
-
-    if (!intersections.length) {
-      return bounds;
-    }
-
-    log.debug('UIO intersections', intersections);
-
-    if (intersections.length > 1) {
-      // More intersections, find the one nearest to edge end point
-      intersections.sort(function (p, q) {
-        const pdx = p.x - outsidePoint.x;
-        const pdy = p.y - outsidePoint.y;
-        const distp = Math.sqrt(pdx * pdx + pdy * pdy);
-
-        const qdx = q.x - outsidePoint.x;
-        const qdy = q.y - outsidePoint.y;
-        const distq = Math.sqrt(qdx * qdx + qdy * qdy);
-
-        return distp < distq ? -1 : distp === distq ? 0 : 1;
-      });
-    }
-
-    return intersections[0];
-  };
-
-  const intersection = (
-    node: { x: any; y: any; width: number; height: number },
-    outsidePoint: { x: number; y: number },
-    insidePoint: { x: number; y: number }
-  ) => {
-    log.debug(`intersection calc abc89:
-  outsidePoint: ${JSON.stringify(outsidePoint)}
-  insidePoint : ${JSON.stringify(insidePoint)}
-  node        : x:${node.x} y:${node.y} w:${node.width} h:${node.height}`);
-    const x = node.x;
-    const y = node.y;
-
-    const dx = Math.abs(x - insidePoint.x);
-    // const dy = Math.abs(y - insidePoint.y);
-    const w = node.width / 2;
-    let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-    const h = node.height / 2;
-
-    const Q = Math.abs(outsidePoint.y - insidePoint.y);
-    const R = Math.abs(outsidePoint.x - insidePoint.x);
-
-    if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
-      // Intersection is top or bottom of rect.
-      const q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
-      r = (R * q) / Q;
-      const res = {
-        x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
-        y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q,
-      };
-
-      if (r === 0) {
-        res.x = outsidePoint.x;
-        res.y = outsidePoint.y;
-      }
-      if (R === 0) {
-        res.x = outsidePoint.x;
-      }
-      if (Q === 0) {
-        res.y = outsidePoint.y;
-      }
-
-      log.debug(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res); // cspell: disable-line
-
-      return res;
-    } else {
-      // Intersection on sides of rect
-      if (insidePoint.x < outsidePoint.x) {
-        r = outsidePoint.x - w - x;
-      } else {
-        // r = outsidePoint.x - w - x;
-        r = x - w - outsidePoint.x;
-      }
-      const q = (Q * r) / R;
-      //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
-      // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
-      let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
-      // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
-      let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
-      log.debug(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
-      if (r === 0) {
-        _x = outsidePoint.x;
-        _y = outsidePoint.y;
-      }
-      if (R === 0) {
-        _x = outsidePoint.x;
-      }
-      if (Q === 0) {
-        _y = outsidePoint.y;
-      }
-
-      return { x: _x, y: _y };
-    }
-  };
-  const outsideNode = (
-    node: { x: any; y: any; width: number; height: number },
-    point: { x: number; y: number }
-  ) => {
-    const x = node.x;
-    const y = node.y;
-    const dx = Math.abs(point.x - x);
-    const dy = Math.abs(point.y - y);
-    const w = node.width / 2;
-    const h = node.height / 2;
-    if (dx >= w || dy >= h) {
-      return true;
-    }
-    return false;
-  };
-  /**
-   * This function will page a path and node where the last point(s) in the path is inside the node
-   * and return an update path ending by the border of the node.
-   */
-  const cutPathAtIntersect = (
-    _points: any[],
-    bounds: { x: any; y: any; width: any; height: any; padding: any },
-    isDiamond: boolean
-  ) => {
-    log.debug('APA18 cutPathAtIntersect Points:', _points, 'node:', bounds, 'isDiamond', isDiamond);
-    const points: any[] = [];
-    let lastPointOutside = _points[0];
-    let isInside = false;
-    _points.forEach((point: any) => {
-      // check if point is inside the boundary rect
-      if (!outsideNode(bounds, point) && !isInside) {
-        // First point inside the rect found
-        // Calc the intersection coord between the point and the last point outside the rect
-        let inter;
-
-        if (isDiamond) {
-          const inter2 = diamondIntersection(bounds, lastPointOutside, point);
-          const distance = Math.sqrt(
-            (lastPointOutside.x - inter2.x) ** 2 + (lastPointOutside.y - inter2.y) ** 2
-          );
-          if (distance > 1) {
-            inter = inter2;
-          }
-        }
-        if (!inter) {
-          inter = intersection(bounds, lastPointOutside, point);
-        }
-
-        // Check case where the intersection is the same as the last point
-        let pointPresent = false;
-        points.forEach((p) => {
-          pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
-        });
-        // if (!pointPresent) {
-        if (!points.some((e) => e.x === inter.x && e.y === inter.y)) {
-          points.push(inter);
-        } else {
-          log.debug('abc88 no intersect', inter, points);
-        }
-        // points.push(inter);
-        isInside = true;
-      } else {
-        // Outside
-        log.debug('abc88 outside', point, lastPointOutside, points);
-        lastPointOutside = point;
-        // points.push(point);
-        if (!isInside) {
-          points.push(point);
-        }
-      }
-    });
-    return points;
-  };
-
   // @ts-ignore - ELK is not typed
   const elk = new ELK();
   const element = svg.select('g');
@@ -1015,42 +730,37 @@ export const render = async (
             startNode.innerHTML
           );
         }
-        if (startNode.shape === 'diamond' || startNode.shape === 'diam') {
-          edge.points.unshift({
-            x: startNode.offset.posX + startNode.width / 2,
-            y: startNode.offset.posY + startNode.height / 2,
-          });
-        }
-        if (endNode.shape === 'diamond' || endNode.shape === 'diam') {
-          edge.points.push({
-            x: endNode.offset.posX + endNode.width / 2,
-            y: endNode.offset.posY + endNode.height / 2,
-          });
-        }
 
-        edge.points = cutPathAtIntersect(
-          edge.points.reverse(),
-          {
-            x: startNode.offset.posX + startNode.width / 2,
-            y: startNode.offset.posY + startNode.height / 2,
-            width: sw,
-            height: startNode.height,
-            padding: startNode.padding,
-          },
-          startNode.shape === 'diamond' || startNode.shape === 'diam'
-        ).reverse();
+        if (startNode.calcIntersect) {
+          const intersection = startNode.calcIntersect(
+            {
+              x: startNode.offset.posX + startNode.width / 2,
+              y: startNode.offset.posY + startNode.height / 2,
+              width: startNode.width,
+              height: startNode.height,
+            },
+            edge.points[0]
+          );
 
-        edge.points = cutPathAtIntersect(
-          edge.points,
-          {
-            x: endNode.offset.posX + endNode.width / 2,
-            y: endNode.offset.posY + endNode.height / 2,
-            width: ew,
-            height: endNode.height,
-            padding: endNode.padding,
-          },
-          endNode.shape === 'diamond' || endNode.shape === 'diam'
-        );
+          if (distance(intersection, edge.points[0]) > epsilon) {
+            edge.points.unshift(intersection);
+          }
+        }
+        if (endNode.calcIntersect) {
+          const intersection = endNode.calcIntersect(
+            {
+              x: endNode.offset.posX + endNode.width / 2,
+              y: endNode.offset.posY + endNode.height / 2,
+              width: endNode.width,
+              height: endNode.height,
+            },
+            edge.points[edge.points.length - 1]
+          );
+
+          if (distance(intersection, edge.points[edge.points.length - 1]) > epsilon) {
+            edge.points.push(intersection);
+          }
+        }
 
         const paths = insertEdge(
           edgesEl,
@@ -1061,7 +771,6 @@ export const render = async (
           endNode,
           data4Layout.diagramId
         );
-        log.info('APA12 edge points after insert', JSON.stringify(edge.points));
 
         edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
         edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;

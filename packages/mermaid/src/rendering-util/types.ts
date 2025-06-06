@@ -2,6 +2,7 @@ export type MarkdownWordType = 'normal' | 'strong' | 'em';
 import type { MermaidConfig } from '../config.type.js';
 import type { ClusterShapeID } from './rendering-elements/clusters.js';
 import type { ShapeID } from './rendering-elements/shapes.js';
+import type { Bounds, Point } from '../types.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
@@ -43,6 +44,7 @@ interface BaseNode {
   height?: number;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
+  calcIntersect?: (bounds: Bounds, point: Point) => any;
 
   // Non-generic properties
   rx?: number; // Used for rounded corners in Rect, Ellipse, etc.Maybe it to specialized RectNode, EllipseNode, etc.
