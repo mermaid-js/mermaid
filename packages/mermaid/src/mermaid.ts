@@ -3,7 +3,6 @@
  * functionality and to render the diagrams to svg code!
  */
 import { registerIconPacks } from './rendering-util/icons.js';
-import { dedent } from 'ts-dedent';
 import type { MermaidConfig } from './config.type.js';
 import { detectType, registerLazyLoadedDiagrams } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
@@ -166,12 +165,7 @@ const runThrowsErrors = async function (
     const id = `mermaid-${idGenerator.next()}`;
 
     // Fetch the graph definition including tags
-    txt = element.innerHTML;
-
-    // transforms the html to pure text
-    txt = dedent(utils.entityDecode(txt)) // removes indentation, required for YAML parsing
-      .trim()
-      .replace(/<br\s*\/?>/gi, '<br/>');
+    txt = element.textContent ?? '';
 
     const init = utils.detectInit(txt);
     if (init) {
