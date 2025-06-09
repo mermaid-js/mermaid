@@ -247,7 +247,6 @@ journey
         Revisit Application: 5: John
         Invite Friends: 3: John
 
-        size: 2rem
     `
     );
 
@@ -257,5 +256,110 @@ journey
       expect($title).to.have.attr('font-family', 'Times New Roman');
       expect($title).to.have.attr('font-size', '5rem');
     });
+  });
+});
+
+describe('User journey diagram task score behavior validation', () => {
+  it('should throw an error if the task score is non-integer', () => {
+    let errorCaught = false;
+
+    cy.once('uncaught:exception', () => {
+      errorCaught = true;
+      return false;
+    });
+
+    renderGraph(`
+      journey
+      accTitle: simple journey demo
+      accDescr: 2 main sections: work and home, each with just a few tasks
+
+      section Go to work
+        Make tea: Hello: Me
+        Go upstairs: 3: Me
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 2: Me
+    `);
+
+    cy.get('svg')
+      .should('exist')
+      .then(() => {
+        expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(true);
+      });
+  });
+
+  it('should throw an error if the task score is less than 0', () => {
+    let errorCaught = false;
+
+    cy.once('uncaught:exception', () => {
+      errorCaught = true;
+      return false;
+    });
+
+    renderGraph(`
+      journey
+      section Go to work
+        Make tea: -10: Me
+        Go upstairs: 3: Me
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 2: Me
+    `);
+
+    cy.get('svg')
+      .should('exist')
+      .then(() => {
+        expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(true);
+      });
+  });
+
+  it('should throw an error if the task score is greater than 5', () => {
+    let errorCaught = false;
+
+    cy.once('uncaught:exception', () => {
+      errorCaught = true;
+      return false;
+    });
+
+    renderGraph(`
+      journey
+      section Go to work
+        Make tea: 23: Me
+        Go upstairs: 3: Me
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 2: Me
+    `);
+
+    cy.get('svg')
+      .should('exist')
+      .then(() => {
+        expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(true);
+      });
+  });
+
+  it('should NOT throw an error if the task score is valid (e.g., 4)', () => {
+    let errorCaught = false;
+
+    cy.once('uncaught:exception', () => {
+      errorCaught = true;
+      return false;
+    });
+
+    renderGraph(`
+      journey
+      section Go to work
+        Make tea: 4: Me
+        Go upstairs: 3: Me
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 2: Me
+    `);
+
+    cy.get('svg')
+      .should('exist')
+      .then(() => {
+        expect(errorCaught, 'Error should be thrown for a non-integer score').to.equal(false);
+      });
   });
 });
