@@ -3,7 +3,9 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "types": ["vitest/importMeta", "vitest/globals"]
+    "types": ["vitest/importMeta", "vitest/globals"],
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": [
     "./src/**/*.ts",

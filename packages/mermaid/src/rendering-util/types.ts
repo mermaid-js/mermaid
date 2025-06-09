@@ -80,11 +80,23 @@ interface BaseNode {
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
+  isEdgeLabel?: boolean;
+  edgeStart?: string;
+  edgeEnd?: string;
+  layer?: number;
+  order?: number;
+  isDummy?: boolean;
 }
 
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
   isGroup: false;
+  isEdgeLabel?: boolean;
+  edgeStart?: string;
+  edgeEnd?: string;
+  layer?: number;
+  order?: number;
+  isDummy?: boolean;
 }
 
 // Common properties for any node in the system
@@ -126,6 +138,8 @@ export interface Edge {
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
   isUserDefinedId?: boolean;
+  isLabelEdge?: boolean;
+  points?: { x: number; y: number }[];
 }
 
 export interface RectOptions {
