@@ -166,14 +166,14 @@ describe('Parsing CherryPicking Statements', () => {
   describe('Parsing with Accessibility Titles and Descriptions', () => {
     it('should parse accessibility titles', () => {
       const result = parse(`gitGraph\n  accTitle: Accessible Graph\n  commit\n`);
-      expect(result.value.accTitle).toBe('Accessible Graph');
+      expect(result.value.accTitle).toEqual(['Accessible Graph']);
     });
 
     it('should parse multiline accessibility descriptions', () => {
       const result = parse(
         `gitGraph\n  accDescr {\n    Detailed description\n    across multiple lines\n  }\n  commit\n`
       );
-      expect(result.value.accDescr).toBe('Detailed description\nacross multiple lines');
+      expect(result.value.accDescr).toEqual(['Detailed description\nacross multiple lines']);
     });
   });
 
@@ -189,7 +189,7 @@ describe('Parsing CherryPicking Statements', () => {
         merge feature tag:"v1.0"
         cherry-pick id:"feat1" tag:"critical fix"
       `);
-      expect(result.value.accTitle).toBe('Complex Example');
+      expect(result.value.accTitle).toEqual(['Complex Example']);
       expect(result.value.statements[0].$type).toBe('Commit');
       expect(result.value.statements[1].$type).toBe('Branch');
       expect(result.value.statements[2].$type).toBe('Commit');
