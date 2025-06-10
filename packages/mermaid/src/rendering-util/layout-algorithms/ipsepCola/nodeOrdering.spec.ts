@@ -51,14 +51,11 @@ describe('nodeOrdering', () => {
     layerAssignment(layoutData);
 
     // Call Node order Assignment for the graph
-    assignNodeOrder(50, layoutData);
+    assignNodeOrder(1, layoutData);
     expect(layoutData.nodes.find((node: Node) => node.id === 'two').order).toEqual(0);
     expect(layoutData.nodes.find((node: Node) => node.id === 'b1').order).toEqual(0);
     expect(layoutData.nodes.find((node: Node) => node.id === 'three').order).toEqual(0);
     expect(layoutData.nodes.find((node: Node) => node.id === 'c2').order).toEqual(0);
-
-    // expect(graph.getNodeAttributes('B').layer).toEqual(2);
-    // expect(graph.getNodeAttributes('C').layer).toEqual(3);
   });
 
   it('should correctly assign the orders to node', async () => {
@@ -80,7 +77,7 @@ describe('nodeOrdering', () => {
     layerAssignment(layoutData);
 
     // Call Node order Assignment for the graph
-    assignNodeOrder(50, layoutData);
+    assignNodeOrder(1, layoutData);
     expect(layoutData.nodes.find((node: Node) => node.id === 'one').order).toEqual(0.75);
     expect(layoutData.nodes.find((node: Node) => node.id === 'a1').order).toEqual(0);
     expect(layoutData.nodes.find((node: Node) => node.id === 'a2').order).toEqual(1);
@@ -110,7 +107,7 @@ describe('nodeOrdering', () => {
     layerAssignment(layoutData);
 
     // Call Node order Assignment for the graph
-    assignNodeOrder(50, layoutData);
+    assignNodeOrder(1, layoutData);
     expect(layoutData.nodes.find((node: Node) => node.id === 'P1').order).toEqual(0);
     expect(layoutData.nodes.find((node: Node) => node.id === 'P1.5').order).toEqual(1);
     expect(layoutData.nodes.find((node: Node) => node.id === 'P2').order).toEqual(0);
@@ -145,7 +142,7 @@ describe('nodeOrdering', () => {
     layerAssignment(layoutData);
 
     // Call Node order Assignment for the graph
-    assignNodeOrder(50, layoutData);
+    assignNodeOrder(1, layoutData);
     expect(layoutData.nodes.find((node: Node) => node.id === 'Z').order).toEqual(8);
     expect(layoutData.nodes.find((node: Node) => node.id === 'Y').order).toEqual(0.5);
     expect(layoutData.nodes.find((node: Node) => node.id === 'X').order).toEqual(0);
