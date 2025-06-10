@@ -1,10 +1,10 @@
 import * as d3 from 'd3';
-import { FlowDB } from '../../../diagrams/flowchart/flowDb.ts';
-import flow from '../../../diagrams/flowchart/parser/flowParser.ts';
-import { createGraphWithElements } from '../../createGraph.ts';
-import { layerAssignment } from './layerAssignment.ts';
+import { FlowDB } from '../../../diagrams/flowchart/flowDb.js';
+import flow from '../../../diagrams/flowchart/parser/flowParser.js';
 import type { D3Selection } from '../../../types.ts';
 import type { Node } from '../../types.ts';
+import { createGraphWithElements } from '../../createGraph.js';
+import { layerAssignment } from './layerAssignment.js';
 
 describe('layerAssignment', () => {
   beforeEach(function () {

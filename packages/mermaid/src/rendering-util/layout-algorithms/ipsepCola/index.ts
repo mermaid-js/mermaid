@@ -1,17 +1,17 @@
 import insertMarkers from '../../rendering-elements/markers.js';
 import { clear as clearGraphlib } from '../dagre/mermaid-graphlib.js';
-import { clear as clearNodes } from '../../rendering-elements/nodes.ts';
+import { clear as clearNodes } from '../../rendering-elements/nodes.js';
 import { clear as clearClusters } from '../../rendering-elements/clusters.js';
 import { clear as clearEdges } from '../../rendering-elements/edges.js';
 import type { LayoutData, Node } from '../../types.ts';
-import { adjustLayout } from './adjustLayout.ts';
-import { layerAssignment } from './layerAssignment.ts';
-import { assignNodeOrder } from './nodeOrdering.ts';
-import { assignInitialPositions } from './assignInitialPositions.ts';
-import { applyCola } from './applyCola.ts';
-import { createGraphWithElements } from '../../createGraph.ts';
 import type { D3Selection } from '../../../types.ts';
 import type { SVG } from '../../../mermaid.ts';
+import { adjustLayout } from './adjustLayout.js';
+import { createGraphWithElements } from '../../createGraph.js';
+import { layerAssignment } from './layerAssignment.js';
+import { assignNodeOrder } from './nodeOrdering.js';
+import { assignInitialPositions } from './assignInitialPositions.js';
+import { applyCola } from './applyCola.js';
 
 export async function render(data4Layout: LayoutData, svg: SVG): Promise<void> {
   const element = svg.select('g') as unknown as D3Selection<SVGElement>;
