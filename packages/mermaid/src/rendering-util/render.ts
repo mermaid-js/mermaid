@@ -41,7 +41,7 @@ const registerDefaultLayoutLoaders = () => {
     },
     {
       name: 'ipsepCola',
-      loader: async () => await import('./layout-algorithms/ipsepCola/index.ts'),
+      loader: async () => await import('./layout-algorithms/ipsepCola/index.js'),
     },
   ]);
 };
