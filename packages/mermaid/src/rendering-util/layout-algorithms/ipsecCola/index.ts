@@ -33,19 +33,7 @@ export async function render(data4Layout: LayoutData, svg: SVG): Promise<void> {
   // assign initial coordinates
   assignInitialPositions(100, 130, data4Layout);
 
-  const nodesCount = data4Layout.nodes.length;
-  const edgesCount = data4Layout.edges.length;
-
-  const groupNodes = data4Layout.nodes.filter((node) => {
-    if (node.isGroup) {
-      return node;
-    }
-  });
-
-  let iteration = nodesCount + edgesCount;
-  if (groupNodes.length > 0) {
-    iteration = iteration * 5;
-  }
+  const iteration = calculateIterations(data4Layout);
 
   applyCola(
     {
@@ -80,4 +68,22 @@ function sortGroupNodesToEnd(nodes: Node[]): Node[] {
     });
 
   return [...nonGroupNodes, ...groupNodes];
+}
+
+function calculateIterations(data4Layout: LayoutData) {
+  const nodesCount = data4Layout.nodes.length;
+  const edgesCount = data4Layout.edges.length;
+
+  const groupNodes = data4Layout.nodes.filter((node) => {
+    if (node.isGroup) {
+      return node;
+    }
+  });
+
+  let iteration = nodesCount + edgesCount;
+  if (groupNodes.length > 0) {
+    iteration = iteration * 5;
+  }
+
+  return iteration;
 }
