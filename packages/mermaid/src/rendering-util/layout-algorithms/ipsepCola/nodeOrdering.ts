@@ -1,4 +1,4 @@
-import type { Edge, LayoutData, Node } from '../../types.js';
+import type { Edge, LayoutData, Node } from '../../types.ts';
 
 type LayerMap = Record<number, Node[]>;
 

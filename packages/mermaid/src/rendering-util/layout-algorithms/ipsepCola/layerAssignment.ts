@@ -1,4 +1,4 @@
-import type { Edge, LayoutData } from '../../types.js';
+import type { Edge, LayoutData } from '../../types.ts';
 
 export function layerAssignment(data4Layout: LayoutData): void {
   const removedEdges: Edge[] = [];

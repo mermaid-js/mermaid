@@ -1,8 +1,8 @@
-import type { LayoutData } from '../../types.js';
-import type { D3Selection } from '../../../types.js';
+import type { LayoutData } from '../../types.ts';
+import type { D3Selection } from '../../../types.ts';
 import { insertCluster } from '../../rendering-elements/clusters.js';
 import { insertEdge } from '../../rendering-elements/edges.js';
-import { positionNode } from '../../rendering-elements/nodes.js';
+import { positionNode } from '../../rendering-elements/nodes.ts';
 
 export async function adjustLayout(
   data4Layout: LayoutData,

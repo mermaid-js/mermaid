@@ -1,4 +1,4 @@
-import type { LayoutData, Node } from '../../types.js';
+import type { LayoutData, Node } from '../../types.ts';
 
 /**
  * Assigns initial x and y positions to each node

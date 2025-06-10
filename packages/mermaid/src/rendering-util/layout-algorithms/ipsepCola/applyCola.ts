@@ -1,5 +1,5 @@
-import type { Point } from '../../../types.js';
-import type { Edge, LayoutData, Node } from '../../types.js';
+import type { Point } from '../../../types.ts';
+import type { Edge, LayoutData, Node } from '../../types.ts';
 
 interface ColaOptions {
   iterations?: number;
