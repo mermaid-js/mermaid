@@ -1,9 +1,6 @@
-import * as d3 from 'd3';
 import { FlowDB } from '../../../diagrams/flowchart/flowDb.js';
 import flow from '../../../diagrams/flowchart/parser/flowParser.js';
-import type { D3Selection } from '../../../types.ts';
 import type { Node } from '../../types.ts';
-import { createGraphWithElements } from '../../createGraph.js';
 import { layerAssignment } from './layerAssignment.js';
 
 describe('layerAssignment', () => {
@@ -21,9 +18,6 @@ describe('layerAssignment', () => {
     // Get layout data from flowDb
     await flow.parse(flowchart);
     const layoutData = flow.parser.yy.getData();
-    const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3.select('svg');
-    const element = svg.select('g') as unknown as D3Selection<SVGElement>;
-    const graph = createGraphWithElements(element, layoutData);
 
     // Call Layer Assignment for the graph
     layerAssignment(layoutData);
@@ -48,10 +42,6 @@ describe('layerAssignment', () => {
     // Get layout data from flowDb
     await flow.parse(flowchart);
     const layoutData = flow.parser.yy.getData();
-
-    const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3.select('svg');
-    const element = svg.select('g') as unknown as D3Selection<SVGElement>;
-    const graph = createGraphWithElements(element, layoutData);
 
     // Call Layer Assignment for the graph
     layerAssignment(layoutData);
@@ -78,10 +68,6 @@ describe('layerAssignment', () => {
     // Get layout data from flowDb
     await flow.parse(flowchart);
     const layoutData = flow.parser.yy.getData();
-
-    const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3.select('svg');
-    const element = svg.select('g') as unknown as D3Selection<SVGElement>;
-    const graph = createGraphWithElements(element, layoutData);
 
     // Call Layer Assignment for the graph
     layerAssignment(layoutData);
@@ -110,10 +96,6 @@ describe('layerAssignment', () => {
     // Get layout data from flowDb
     await flow.parse(flowchart);
     const layoutData = flow.parser.yy.getData();
-
-    const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3.select('svg');
-    const element = svg.select('g') as unknown as D3Selection<SVGElement>;
-    const graph = createGraphWithElements(element, layoutData);
 
     // Call Layer Assignment for the graph
     layerAssignment(layoutData);
@@ -147,10 +129,6 @@ describe('layerAssignment', () => {
     await flow.parse(flowchart);
     const layoutData = flow.parser.yy.getData();
 
-    const svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any> = d3.select('svg');
-    const element = svg.select('g') as unknown as D3Selection<SVGElement>;
-    const graph = createGraphWithElements(element, layoutData);
-
     // Call Layer Assignment for the graph
     layerAssignment(layoutData);
 
@@ -162,5 +140,22 @@ describe('layerAssignment', () => {
     expect(layoutData.nodes.find((node: Node) => node.id === 'c').layer).toEqual(1);
     expect(layoutData.nodes.find((node: Node) => node.id === 'd').layer).toEqual(2);
     expect(layoutData.nodes.find((node: Node) => node.id === 'P').layer).toEqual(3);
+  });
+  it('should correctly assign the layers to node', async () => {
+    const flowchart = `
+          flowchart LR
+            A --|Test Label|--> B --> C
+        `;
+
+    // Get layout data from flowDb
+    await flow.parse(flowchart);
+    const layoutData = flow.parser.yy.getData();
+
+    // Call Layer Assignment for the graph
+    layerAssignment(layoutData);
+
+    expect(layoutData.nodes.find((node: Node) => node.id === 'A').layer).toEqual(1);
+    expect(layoutData.nodes.find((node: Node) => node.id === 'B').layer).toEqual(2);
+    expect(layoutData.nodes.find((node: Node) => node.id === 'C').layer).toEqual(3);
   });
 });
