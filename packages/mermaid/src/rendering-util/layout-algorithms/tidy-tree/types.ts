@@ -1,3 +1,5 @@
+import type { Node } from '../../types.js';
+
 /**
  * Positioned node after layout calculation
  */
@@ -33,11 +35,22 @@ export interface LayoutResult {
 }
 
 /**
- * Cytoscape layout configuration
+ * Tidy-tree node structure compatible with non-layered-tidy-tree-layout
  */
-export interface CytoscapeLayoutConfig {
-  name: 'cose-bilkent';
-  quality: 'proof';
-  styleEnabled: boolean;
-  animate: boolean;
+export interface TidyTreeNode {
+  id: string | number;
+  width: number;
+  height: number;
+  x?: number;
+  y?: number;
+  children?: TidyTreeNode[];
+  _originalNode?: Node; // Store reference to original node data
+}
+
+/**
+ * Tidy-tree layout configuration
+ */
+export interface TidyTreeLayoutConfig {
+  gap: number; // Horizontal gap between nodes
+  bottomPadding: number; // Vertical gap between levels
 }

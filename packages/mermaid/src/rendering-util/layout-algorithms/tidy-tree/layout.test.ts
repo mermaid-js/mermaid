@@ -1,160 +1,190 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-// Mock cytoscape and cytoscape-cose-bilkent before importing the modules
-vi.mock('cytoscape', () => {
-  const mockCy = {
-    add: vi.fn(),
-    nodes: vi.fn(() => ({
-      forEach: vi.fn(),
-      map: vi.fn((fn) => [
-        fn({
-          data: () => ({
-            id: '1',
-            nodeId: '1',
-            labelText: 'Root',
-            level: 0,
-            type: 0,
-            width: 100,
-            height: 50,
-            padding: 10,
-          }),
-          position: () => ({ x: 100, y: 100 }),
-        }),
-      ]),
-    })),
-    edges: vi.fn(() => ({
-      map: vi.fn((fn) => [
-        fn({
-          data: () => ({
-            id: '1_2',
-            source: '1',
-            target: '2',
-            depth: 0,
-          }),
-          _private: {
-            rscratch: {
-              startX: 100,
-              startY: 100,
-              midX: 150,
-              midY: 150,
-              endX: 200,
-              endY: 200,
-            },
-          },
-        }),
-      ]),
-    })),
-    layout: vi.fn(() => ({
-      run: vi.fn(),
-    })),
-    ready: vi.fn((callback) => callback({})),
-  };
+// Mock non-layered-tidy-tree-layout
+vi.mock('non-layered-tidy-tree-layout', () => ({
+  BoundingBox: vi.fn().mockImplementation(() => ({})),
+  Layout: vi.fn().mockImplementation(() => ({
+    layout: vi.fn().mockImplementation((treeData) => {
+      // Return a result based on the input tree structure
+      const result = { ...treeData };
 
-  const mockCytoscape = vi.fn(() => mockCy);
-  mockCytoscape.use = vi.fn();
+      // Set positions for the virtual root (if it exists)
+      if (result.id && result.id.toString().startsWith('virtual-root')) {
+        result.x = 0;
+        result.y = 0;
+      } else {
+        result.x = 100;
+        result.y = 50;
+      }
 
-  return {
-    default: mockCytoscape,
-  };
-});
+      // Set positions for children if they exist
+      if (result.children) {
+        result.children.forEach((child, index) => {
+          child.x = 50 + index * 100;
+          child.y = 100;
 
-vi.mock('cytoscape-cose-bilkent', () => ({
-  default: vi.fn(),
-}));
+          // Recursively position grandchildren
+          if (child.children) {
+            child.children.forEach((grandchild, gIndex) => {
+              grandchild.x = 25 + gIndex * 50;
+              grandchild.y = 200;
+            });
+          }
+        });
+      }
 
-vi.mock('d3', () => ({
-  select: vi.fn(() => ({
-    append: vi.fn(() => ({
-      attr: vi.fn(() => ({
-        attr: vi.fn(() => ({
-          remove: vi.fn(),
-        })),
-      })),
-    })),
+      return {
+        result,
+        boundingBox: {
+          left: 0,
+          right: 200,
+          top: 0,
+          bottom: 250,
+        },
+      };
+    }),
   })),
 }));
 
 // Import modules after mocks
-import { layout, validateLayoutData } from './index.js';
-import type { MindmapLayoutData, LayoutResult } from './types.js';
-import type { MindmapNode } from '../../../diagrams/mindmap/mindmapTypes.js';
+import { executeTidyTreeLayout, validateLayoutData } from './layout.js';
+import type { LayoutResult } from './types.js';
+import type { LayoutData } from '../../types.js';
 import type { MermaidConfig } from '../../../config.type.js';
 
-describe('Cose-Bilkent Layout Algorithm', () => {
+describe('Tidy-Tree Layout Algorithm', () => {
   let mockConfig: MermaidConfig;
-  let mockRootNode: MindmapNode;
-  let mockLayoutData: MindmapLayoutData;
+  let mockLayoutData: LayoutData;
 
   beforeEach(() => {
     mockConfig = {
-      mindmap: {
-        layoutAlgorithm: 'cose-bilkent',
-        padding: 10,
-        maxNodeWidth: 200,
-        useMaxWidth: true,
-      },
+      theme: 'default',
     } as MermaidConfig;
 
-    mockRootNode = {
-      id: 1,
-      nodeId: '1',
-      level: 0,
-      descr: 'Root',
-      type: 0,
-      width: 100,
-      height: 50,
-      padding: 10,
-      x: 0,
-      y: 0,
-      children: [
+    mockLayoutData = {
+      nodes: [
         {
-          id: 2,
-          nodeId: '2',
-          level: 1,
-          descr: 'Child 1',
-          type: 0,
+          id: 'root',
+          label: 'Root',
+          isGroup: false,
+          shape: 'rect',
+          width: 100,
+          height: 50,
+          padding: 10,
+          x: 0,
+          y: 0,
+          cssClasses: '',
+          cssStyles: [],
+          look: 'default',
+        },
+        {
+          id: 'child1',
+          label: 'Child 1',
+          isGroup: false,
+          shape: 'rect',
           width: 80,
           height: 40,
           padding: 10,
           x: 0,
           y: 0,
-        },
-      ],
-    } as MindmapNode;
-
-    mockLayoutData = {
-      nodes: [
-        {
-          id: '1',
-          nodeId: '1',
-          level: 0,
-          descr: 'Root',
-          type: 0,
-          width: 100,
-          height: 50,
-          padding: 10,
+          cssClasses: '',
+          cssStyles: [],
+          look: 'default',
         },
         {
-          id: '2',
-          nodeId: '2',
-          level: 1,
-          descr: 'Child 1',
-          type: 0,
+          id: 'child2',
+          label: 'Child 2',
+          isGroup: false,
+          shape: 'rect',
           width: 80,
           height: 40,
           padding: 10,
+          x: 0,
+          y: 0,
+          cssClasses: '',
+          cssStyles: [],
+          look: 'default',
+        },
+        {
+          id: 'child3',
+          label: 'Child 3',
+          isGroup: false,
+          shape: 'rect',
+          width: 80,
+          height: 40,
+          padding: 10,
+          x: 0,
+          y: 0,
+          cssClasses: '',
+          cssStyles: [],
+          look: 'default',
+        },
+        {
+          id: 'child4',
+          label: 'Child 4',
+          isGroup: false,
+          shape: 'rect',
+          width: 80,
+          height: 40,
+          padding: 10,
+          x: 0,
+          y: 0,
+          cssClasses: '',
+          cssStyles: [],
+          look: 'default',
         },
       ],
       edges: [
         {
-          id: '1_2',
-          source: '1',
-          target: '2',
-          depth: 0,
+          id: 'root_child1',
+          start: 'root',
+          end: 'child1',
+          type: 'edge',
+          classes: '',
+          style: [],
+          animate: false,
+          arrowTypeEnd: 'arrow_point',
+          arrowTypeStart: 'none',
+        },
+        {
+          id: 'root_child2',
+          start: 'root',
+          end: 'child2',
+          type: 'edge',
+          classes: '',
+          style: [],
+          animate: false,
+          arrowTypeEnd: 'arrow_point',
+          arrowTypeStart: 'none',
+        },
+        {
+          id: 'root_child3',
+          start: 'root',
+          end: 'child3',
+          type: 'edge',
+          classes: '',
+          style: [],
+          animate: false,
+          arrowTypeEnd: 'arrow_point',
+          arrowTypeStart: 'none',
+        },
+        {
+          id: 'root_child4',
+          start: 'root',
+          end: 'child4',
+          type: 'edge',
+          classes: '',
+          style: [],
+          animate: false,
+          arrowTypeEnd: 'arrow_point',
+          arrowTypeStart: 'none',
         },
       ],
       config: mockConfig,
-      rootNode: mockRootNode,
+      direction: 'TB',
+      type: 'test',
+      diagramId: 'test-diagram',
+      markers: [],
     };
   });
 
@@ -165,11 +195,6 @@ describe('Cose-Bilkent Layout Algorithm', () => {
 
     it('should throw error for missing data', () => {
       expect(() => validateLayoutData(null as any)).toThrow('Layout data is required');
-    });
-
-    it('should throw error for missing root node', () => {
-      const invalidData = { ...mockLayoutData, rootNode: null as any };
-      expect(() => validateLayoutData(invalidData)).toThrow('Root node is required');
     });
 
     it('should throw error for missing config', () => {
@@ -188,9 +213,9 @@ describe('Cose-Bilkent Layout Algorithm', () => {
     });
   });
 
-  describe('layout function', () => {
+  describe('executeTidyTreeLayout function', () => {
     it('should execute layout algorithm successfully', async () => {
-      const result: LayoutResult = await layout(mockLayoutData, mockConfig);
+      const result: LayoutResult = await executeTidyTreeLayout(mockLayoutData, mockConfig);
 
       expect(result).toBeDefined();
       expect(result.nodes).toBeDefined();
@@ -200,7 +225,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
     });
 
     it('should return positioned nodes with coordinates', async () => {
-      const result: LayoutResult = await layout(mockLayoutData, mockConfig);
+      const result: LayoutResult = await executeTidyTreeLayout(mockLayoutData, mockConfig);
 
       expect(result.nodes.length).toBeGreaterThan(0);
       result.nodes.forEach((node) => {
@@ -212,7 +237,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
     });
 
     it('should return positioned edges with coordinates', async () => {
-      const result: LayoutResult = await layout(mockLayoutData, mockConfig);
+      const result: LayoutResult = await executeTidyTreeLayout(mockLayoutData, mockConfig);
 
       expect(result.edges.length).toBeGreaterThan(0);
       result.edges.forEach((edge) => {
@@ -225,26 +250,77 @@ describe('Cose-Bilkent Layout Algorithm', () => {
       });
     });
 
-    it('should handle empty mindmap data gracefully', async () => {
-      const emptyData: MindmapLayoutData = {
+    it('should handle empty layout data gracefully', async () => {
+      const emptyData: LayoutData = {
+        ...mockLayoutData,
         nodes: [],
         edges: [],
-        config: mockConfig,
-        rootNode: mockRootNode,
       };
 
-      const result: LayoutResult = await layout(emptyData, mockConfig);
-      expect(result).toBeDefined();
-      expect(result.nodes).toBeDefined();
-      expect(result.edges).toBeDefined();
-      expect(Array.isArray(result.nodes)).toBe(true);
-      expect(Array.isArray(result.edges)).toBe(true);
+      await expect(executeTidyTreeLayout(emptyData, mockConfig)).rejects.toThrow(
+        'No nodes found in layout data'
+      );
     });
 
-    it('should throw error for invalid data', async () => {
-      const invalidData = { ...mockLayoutData, rootNode: null as any };
+    it('should throw error for missing nodes', async () => {
+      const invalidData = { ...mockLayoutData, nodes: [] };
 
-      await expect(layout(invalidData, mockConfig)).rejects.toThrow();
+      await expect(executeTidyTreeLayout(invalidData, mockConfig)).rejects.toThrow(
+        'No nodes found in layout data'
+      );
+    });
+
+    it('should handle empty edges (single node tree)', async () => {
+      const singleNodeData = {
+        ...mockLayoutData,
+        edges: [],
+        nodes: [mockLayoutData.nodes[0]], // Only root node
+      };
+
+      const result = await executeTidyTreeLayout(singleNodeData, mockConfig);
+      expect(result).toBeDefined();
+      expect(result.nodes).toHaveLength(1);
+      expect(result.edges).toHaveLength(0);
+    });
+
+    it('should create bidirectional dual-tree layout with alternating left/right children', async () => {
+      const result = await executeTidyTreeLayout(mockLayoutData, mockConfig);
+
+      expect(result).toBeDefined();
+      expect(result.nodes).toHaveLength(5); // root + 4 children
+
+      // Find the root node (should be at center)
+      const rootNode = result.nodes.find((node) => node.id === 'root');
+      expect(rootNode).toBeDefined();
+      expect(rootNode!.x).toBe(0); // Root should be at center
+      expect(rootNode!.y).toBe(0); // Root should be at center
+
+      // Check that children are positioned on left and right sides
+      const child1 = result.nodes.find((node) => node.id === 'child1');
+      const child2 = result.nodes.find((node) => node.id === 'child2');
+      const child3 = result.nodes.find((node) => node.id === 'child3');
+      const child4 = result.nodes.find((node) => node.id === 'child4');
+
+      expect(child1).toBeDefined();
+      expect(child2).toBeDefined();
+      expect(child3).toBeDefined();
+      expect(child4).toBeDefined();
+
+      // Child1 and Child3 should be on the left (negative x), Child2 and Child4 on the right (positive x)
+      // In bidirectional layout, trees grow horizontally from the root
+      expect(child1!.x).toBeLessThan(rootNode!.x); // Left side (grows left)
+      expect(child2!.x).toBeGreaterThan(rootNode!.x); // Right side (grows right)
+      expect(child3!.x).toBeLessThan(rootNode!.x); // Left side (grows left)
+      expect(child4!.x).toBeGreaterThan(rootNode!.x); // Right side (grows right)
+
+      // Verify that the layout is truly bidirectional (horizontal growth)
+      // Left tree children should be positioned to the left of root
+      expect(child1!.x).toBeLessThan(-100); // Should be significantly left of center
+      expect(child3!.x).toBeLessThan(-100); // Should be significantly left of center
+
+      // Right tree children should be positioned to the right of root
+      expect(child2!.x).toBeGreaterThan(100); // Should be significantly right of center
+      expect(child4!.x).toBeGreaterThan(100); // Should be significantly right of center
     });
   });
 });

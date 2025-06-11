@@ -1,21 +1,28 @@
-import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
-import { executeCoseBilkentLayout } from './layout.js';
+import type { InternalHelpers, LayoutData, RenderOptions, SVG } from 'mermaid';
+import { executeTidyTreeLayout } from './layout.js';
 
-type Node = LayoutData['nodes'][number];
-
-interface NodeWithPosition extends Node {
+interface NodeWithPosition {
+  id: string;
   x?: number;
   y?: number;
-  domId?: SVGGroup;
+  width?: number;
+  height?: number;
+  domId?: any; // SVG element reference
+  [key: string]: any; // Allow additional properties from original node
 }
 
 /**
- * Render function for cose-bilkent layout algorithm
+ * Render function for bidirectional tidy-tree layout algorithm
  *
  * This follows the same pattern as ELK and dagre renderers:
  * 1. Insert nodes into DOM to get their actual dimensions
- * 2. Run the layout algorithm to calculate positions
+ * 2. Run the bidirectional tidy-tree layout algorithm to calculate positions
  * 3. Position the nodes and edges based on layout results
+ *
+ * The bidirectional layout creates two trees that grow horizontally in opposite
+ * directions from a central root node:
+ * - Left tree: grows horizontally to the left (children: 1st, 3rd, 5th...)
+ * - Right tree: grows horizontally to the right (children: 2nd, 4th, 6th...)
  */
 export const render = async (
   data4Layout: LayoutData,
@@ -29,7 +36,7 @@ export const render = async (
     log,
     positionEdgeLabel,
   }: InternalHelpers,
-  { algorithm }: RenderOptions
+  { algorithm: _algorithm }: RenderOptions
 ) => {
   const nodeDb: Record<string, NodeWithPosition> = {};
   const clusterDb: Record<string, any> = {};
@@ -51,7 +58,12 @@ export const render = async (
     data4Layout.nodes.map(async (node) => {
       if (node.isGroup) {
         // Handle subgraphs/clusters
-        const clusterNode: NodeWithPosition = { ...node };
+        const clusterNode: NodeWithPosition = {
+          ...node,
+          id: node.id,
+          width: node.width,
+          height: node.height,
+        };
         clusterDb[node.id] = clusterNode;
         nodeDb[node.id] = clusterNode;
 
@@ -59,7 +71,12 @@ export const render = async (
         await insertCluster(subGraphsEl, node);
       } else {
         // Handle regular nodes
-        const nodeWithPosition: NodeWithPosition = { ...node };
+        const nodeWithPosition: NodeWithPosition = {
+          ...node,
+          id: node.id,
+          width: node.width,
+          height: node.height,
+        };
         nodeDb[node.id] = nodeWithPosition;
 
         // Insert node to get actual dimensions
@@ -79,8 +96,8 @@ export const render = async (
     })
   );
 
-  // Step 2: Run the cose-bilkent layout algorithm
-  log.debug('Running cose-bilkent layout algorithm');
+  // Step 2: Run the bidirectional tidy-tree layout algorithm
+  log.debug('Running bidirectional tidy-tree layout algorithm');
 
   // Update the layout data with actual dimensions
   const updatedLayoutData = {
@@ -89,29 +106,32 @@ export const render = async (
       const nodeWithDimensions = nodeDb[node.id];
       return {
         ...node,
-        width: nodeWithDimensions.width,
-        height: nodeWithDimensions.height,
+        width: nodeWithDimensions.width || node.width || 100,
+        height: nodeWithDimensions.height || node.height || 50,
       };
     }),
   };
 
-  const layoutResult = await executeCoseBilkentLayout(updatedLayoutData, data4Layout.config);
+  const layoutResult = await executeTidyTreeLayout(updatedLayoutData, data4Layout.config);
 
-  // Step 3: Position the nodes based on layout results
-  log.debug('Positioning nodes based on layout results');
+  // Step 3: Position the nodes based on bidirectional layout results
+  log.debug('Positioning nodes based on bidirectional layout results');
 
   layoutResult.nodes.forEach((positionedNode) => {
     const node = nodeDb[positionedNode.id];
-    if (node && node.domId) {
-      // Position the node at the calculated coordinates
-      // The positionedNode.x/y represents the center of the node, so use directly
+    if (node?.domId) {
+      // Position the node at the calculated coordinates from bidirectional layout
+      // The layout algorithm has already calculated positions for:
+      // - Root node at center (0, 0)
+      // - Left tree nodes with negative x coordinates (growing left)
+      // - Right tree nodes with positive x coordinates (growing right)
       node.domId.attr('transform', `translate(${positionedNode.x}, ${positionedNode.y})`);
 
       // Store the final position
       node.x = positionedNode.x;
       node.y = positionedNode.y;
 
-      log.debug(`Positioned node ${node.id} at center (${positionedNode.x}, ${positionedNode.y})`);
+      log.debug(`Positioned node ${node.id} at (${positionedNode.x}, ${positionedNode.y})`);
     }
   });
 
@@ -121,11 +141,11 @@ export const render = async (
   await Promise.all(
     data4Layout.edges.map(async (edge) => {
       // Insert edge label first
-      const edgeLabel = await insertEdgeLabel(edgeLabels, edge);
+      await insertEdgeLabel(edgeLabels, edge);
 
       // Get start and end nodes
-      const startNode = nodeDb[edge.start];
-      const endNode = nodeDb[edge.end];
+      const startNode = nodeDb[edge.start || ''];
+      const endNode = nodeDb[edge.end || ''];
 
       if (startNode && endNode) {
         // Find the positioned edge data
@@ -179,5 +199,5 @@ export const render = async (
     })
   );
 
-  log.debug('Cose-bilkent rendering completed');
+  log.debug('Bidirectional tidy-tree rendering completed');
 };
