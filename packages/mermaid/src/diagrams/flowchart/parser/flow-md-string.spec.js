@@ -1,5 +1,5 @@
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import flow from './flowParserAdapter.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -8,16 +8,16 @@ setConfig({
 
 describe('parsing a flow chart with markdown strings', function () {
   beforeEach(function () {
-    flow.parser.yy = new FlowDB();
-    flow.parser.yy.clear();
+    flow.yy = new FlowDB();
+    flow.yy.clear();
   });
 
   it('markdown formatting in nodes and labels', function () {
-    const res = flow.parser.parse(`flowchart
+    const res = flow.parse(`flowchart
 A["\`The cat in **the** hat\`"]-- "\`The *bat* in the chat\`" -->B["The dog in the hog"] -- "The rat in the mat" -->C;`);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
 
     expect(vert.get('A').id).toBe('A');
     expect(vert.get('A').text).toBe('The cat in **the** hat');
@@ -38,7 +38,7 @@ A["\`The cat in **the** hat\`"]-- "\`The *bat* in the chat\`" -->B["The dog in t
     expect(edges[1].labelType).toBe('string');
   });
   it('markdown formatting in subgraphs', function () {
-    const res = flow.parser.parse(`flowchart LR
+    const res = flow.parse(`flowchart LR
 subgraph "One"
   a("\`The **cat**
   in the hat\`") -- "1o" --> b{{"\`The **dog** in the hog\`"}}
@@ -48,7 +48,7 @@ subgraph "\`**Two**\`"
   in the hat\`") -- "\`1o **ipa**\`" --> d("The dog in the hog")
 end`);
 
-    const subgraphs = flow.parser.yy.getSubGraphs();
+    const subgraphs = flow.yy.getSubGraphs();
     expect(subgraphs.length).toBe(2);
     const subgraph = subgraphs[0];
 

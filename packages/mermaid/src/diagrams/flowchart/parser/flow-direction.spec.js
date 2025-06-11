@@ -1,5 +1,5 @@
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import flow from './flowParserAdapter.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -8,18 +8,18 @@ setConfig({
 
 describe('when parsing directions', function () {
   beforeEach(function () {
-    flow.parser.yy = new FlowDB();
-    flow.parser.yy.clear();
-    flow.parser.yy.setGen('gen-2');
+    flow.yy = new FlowDB();
+    flow.yy.clear();
+    flow.yy.setGen('gen-2');
   });
 
   it('should use default direction from top level', function () {
-    const res = flow.parser.parse(`flowchart TB
+    const res = flow.parse(`flowchart TB
     subgraph A
       a --> b
     end`);
 
-    const subgraphs = flow.parser.yy.getSubGraphs();
+    const subgraphs = flow.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
@@ -29,13 +29,13 @@ describe('when parsing directions', function () {
     expect(subgraph.dir).toBe(undefined);
   });
   it('should handle a subgraph with a direction', function () {
-    const res = flow.parser.parse(`flowchart TB
+    const res = flow.parse(`flowchart TB
     subgraph A
       direction BT
       a --> b
     end`);
 
-    const subgraphs = flow.parser.yy.getSubGraphs();
+    const subgraphs = flow.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
@@ -45,14 +45,14 @@ describe('when parsing directions', function () {
     expect(subgraph.dir).toBe('BT');
   });
   it('should use the last defined direction', function () {
-    const res = flow.parser.parse(`flowchart TB
+    const res = flow.parse(`flowchart TB
     subgraph A
       direction BT
       a --> b
       direction RL
     end`);
 
-    const subgraphs = flow.parser.yy.getSubGraphs();
+    const subgraphs = flow.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
@@ -63,7 +63,7 @@ describe('when parsing directions', function () {
   });
 
   it('should handle nested subgraphs 1', function () {
-    const res = flow.parser.parse(`flowchart TB
+    const res = flow.parse(`flowchart TB
     subgraph A
       direction RL
       b-->B
@@ -75,7 +75,7 @@ describe('when parsing directions', function () {
       c
     end`);
 
-    const subgraphs = flow.parser.yy.getSubGraphs();
+    const subgraphs = flow.yy.getSubGraphs();
     expect(subgraphs.length).toBe(2);
 
     const subgraphA = subgraphs.find((o) => o.id === 'A');

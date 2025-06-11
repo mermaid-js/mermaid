@@ -1,5 +1,5 @@
 import { FlowDB } from '../flowDb.js';
-import flow from './flowParser.ts';
+import flow from './flowParserAdapter.js';
 import { setConfig } from '../../../config.js';
 
 setConfig({
@@ -8,19 +8,19 @@ setConfig({
 
 describe('when parsing flowcharts', function () {
   beforeEach(function () {
-    flow.parser.yy = new FlowDB();
-    flow.parser.yy.clear();
-    flow.parser.yy.setGen('gen-2');
+    flow.yy = new FlowDB();
+    flow.yy.clear();
+    flow.yy.setGen('gen-2');
   });
 
   it('should handle chaining of vertices', function () {
-    const res = flow.parser.parse(`
+    const res = flow.parse(`
     graph TD
       A-->B-->C;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
 
     expect(vert.get('A').id).toBe('A');
     expect(vert.get('B').id).toBe('B');
@@ -36,13 +36,13 @@ describe('when parsing flowcharts', function () {
     expect(edges[1].text).toBe('');
   });
   it('should handle chaining of vertices', function () {
-    const res = flow.parser.parse(`
+    const res = flow.parse(`
     graph TD
       A & B --> C;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
 
     expect(vert.get('A').id).toBe('A');
     expect(vert.get('B').id).toBe('B');
@@ -58,13 +58,13 @@ describe('when parsing flowcharts', function () {
     expect(edges[1].text).toBe('');
   });
   it('should multiple vertices in link statement in the beginning', function () {
-    const res = flow.parser.parse(`
+    const res = flow.parse(`
     graph TD
       A-->B & C;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
 
     expect(vert.get('A').id).toBe('A');
     expect(vert.get('B').id).toBe('B');
@@ -80,13 +80,13 @@ describe('when parsing flowcharts', function () {
     expect(edges[1].text).toBe('');
   });
   it('should multiple vertices in link statement at the end', function () {
-    const res = flow.parser.parse(`
+    const res = flow.parse(`
     graph TD
       A & B--> C & D;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
 
     expect(vert.get('A').id).toBe('A');
     expect(vert.get('B').id).toBe('B');
@@ -111,13 +111,13 @@ describe('when parsing flowcharts', function () {
     expect(edges[3].text).toBe('');
   });
   it('should handle chaining of vertices at both ends at once', function () {
-    const res = flow.parser.parse(`
+    const res = flow.parse(`
     graph TD
       A & B--> C & D;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
 
     expect(vert.get('A').id).toBe('A');
     expect(vert.get('B').id).toBe('B');
@@ -142,13 +142,13 @@ describe('when parsing flowcharts', function () {
     expect(edges[3].text).toBe('');
   });
   it('should handle chaining and multiple nodes in link statement FVC ', function () {
-    const res = flow.parser.parse(`
+    const res = flow.parse(`
     graph TD
       A --> B & B2 & C --> D2;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
 
     expect(vert.get('A').id).toBe('A');
     expect(vert.get('B').id).toBe('B');
@@ -182,16 +182,16 @@ describe('when parsing flowcharts', function () {
     expect(edges[5].text).toBe('');
   });
   it('should handle chaining and multiple nodes in link statement with extra info in statements', function () {
-    const res = flow.parser.parse(`
+    const res = flow.parse(`
     graph TD
       A[ h ] -- hello --> B[" test "]:::exClass & C --> D;
       classDef exClass background:#bbb,border:1px solid red;
     `);
 
-    const vert = flow.parser.yy.getVertices();
-    const edges = flow.parser.yy.getEdges();
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
 
-    const classes = flow.parser.yy.getClasses();
+    const classes = flow.yy.getClasses();
 
     expect(classes.get('exClass').styles.length).toBe(2);
     expect(classes.get('exClass').styles[0]).toBe('background:#bbb');

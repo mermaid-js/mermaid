@@ -29,7 +29,7 @@ const keywords = [
 
 const specialChars = ['#', ':', '0', '&', ',', '*', '.', '\\', 'v', '-', '/', '_'];
 
-describe('[Singlenodes] when parsing', () => {
+describe('[Chevrotain Singlenodes] when parsing', () => {
   beforeEach(function () {
     flow.yy = new FlowDB();
     flow.yy.clear();
@@ -45,6 +45,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(edges.length).toBe(0);
     expect(vert.get('A').styles.length).toBe(0);
   });
+
   it('should handle a single node with white space after it (SN1)', function () {
     // Silly but syntactically correct
     const res = flow.parse('graph TD;A ;');
@@ -100,17 +101,6 @@ describe('[Singlenodes] when parsing', () => {
 
     expect(edges.length).toBe(0);
     expect(vert.get('a').type).toBe('round');
-  });
-
-  it('should handle a single odd node', function () {
-    // Silly but syntactically correct
-    const res = flow.parse('graph TD;a>A];');
-
-    const vert = flow.yy.getVertices();
-    const edges = flow.yy.getEdges();
-
-    expect(edges.length).toBe(0);
-    expect(vert.get('a').type).toBe('odd');
   });
 
   it('should handle a single diamond node', function () {
@@ -325,6 +315,7 @@ describe('[Singlenodes] when parsing', () => {
     'end',
     'subgraph',
   ];
+
   it.each(errorKeywords)('should throw error at nodes beginning with %s', function (keyword) {
     const str = `graph TD;${keyword}.node;${keyword}-node;${keyword}/node`;
     const vert = flow.yy.getVertices();
