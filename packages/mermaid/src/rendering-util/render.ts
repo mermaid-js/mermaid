@@ -43,6 +43,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'cose-bilkent',
       loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
     },
+    {
+      name: 'tidy-tree',
+      loader: async () => await import('./layout-algorithms/tidy-tree/index.js'),
+    },
   ]);
 };
 

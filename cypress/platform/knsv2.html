@@ -105,6 +105,29 @@
   </head>
 
   <body>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: tidy-tree
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+        Tools
+          Pen and paper
+          Mermaid
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart TB
+          A --> n0["1"]
+          A --> n1["2"]
+          A --> n2["3"]
+          A --> n3["4"]
+    </pre>
     <pre id="diagram4" class="mermaid2">
       ---
       config:
@@ -127,10 +150,8 @@
         Tools
           Pen and paper
           Mermaid
-
-
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: cose-bilkent
@@ -138,23 +159,67 @@
       mindmap
       root((mindmap))
         Origins
-          Europe
-          Asia
-            East
-            West
+          Long history
+          ::icon(fa fa-book)
+          Popularisation
+            British popular psychology author Tony Buzan
+        Research
+          On effectiveness&lt;br/>and features
+          On Automatic creation
+            Uses
+                Creative techniques
+                Strategic planning
+                Argument mapping
+        Tools
+          Pen and paper
+          Mermaid
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+      ---
+      config:
+        layout: elk
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+          Long history
+          ::icon(fa fa-book)
+          Popularisation
+            British popular psychology author Tony Buzan
+        Research
+          On effectiveness&lt;br/>and features
+          On Automatic creation
+            Uses
+                Creative techniques
+                Strategic planning
+                Argument mapping
+        Tools
+          Pen and paper
+          Mermaid
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+      ---
+      config:
+        layout: cose-bilkent
+      ---
+      flowchart LR
+      root{mindmap} --- Origins --- Europe
+      Origins --> Asia
+      root --- Background --- Rich
+      Background --- Poor
+      subgraph apa
         Background
-          Rich
-          Poor
-
+        Poor
+      end
 
 
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
-        layout: cose-bilkent
+        layout: elk
       ---
       flowchart LR
       root{mindmap} --- Origins --- Europe
@@ -269,7 +334,7 @@ config:
       end
       end
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -282,7 +347,7 @@ config:
       D-->I
       D-->I
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -321,7 +386,7 @@ flowchart LR
     n8@{ shape: rect}
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -337,7 +402,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -346,7 +411,7 @@ flowchart LR
     A{A} --> B & C
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -376,7 +441,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   kanban:
@@ -395,81 +460,81 @@ kanban
     task3[💻 Develop login feature]@{ ticket: 103 }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'rounded' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'rounded' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'rounded' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'rounded' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'square' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'square' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'square' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'square' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'circle' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'circle' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'circle' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'circle' }
   A:::AClass
   classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Style] --> A@{ icon: 'logos:aws', form: 'circle' }
   style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 kanban
   id2[In progress]
     docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   kanban:
