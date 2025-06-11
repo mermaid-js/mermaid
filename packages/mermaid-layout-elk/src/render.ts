@@ -793,7 +793,7 @@ export const render = async (
       // 'elk.layered.crossingMinimization.semiInteractive': true,
       // 'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
       // 'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
-      'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
+      // 'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
       // 'elk.insideSelfLoops.activate': true,
       // 'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
       // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES', // NODES_AND_EDGES
