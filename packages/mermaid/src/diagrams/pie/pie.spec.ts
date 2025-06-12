@@ -139,6 +139,24 @@ describe('pie', () => {
       }).rejects.toThrowError();
     });
 
+    it('should handle simple pie with zero slice value', async () => {
+      await expect(async () => {
+        await parser.parse(`pie
+        "ash" : 0
+        "bat" : 40.12
+        `);
+      }).rejects.toThrowError();
+    });
+
+    it('should handle simple pie with negative slice value', async () => {
+      await expect(async () => {
+        await parser.parse(`pie
+        "ash" : -60
+        "bat" : 40.12
+        `);
+      }).rejects.toThrowError();
+    });
+
     it('should handle unsafe properties', async () => {
       await expect(
         parser.parse(`pie title Unsafe props test
