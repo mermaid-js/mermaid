@@ -34,6 +34,17 @@ const clear = (): void => {
 };
 
 const addSection = ({ label, value }: D3Section): void => {
+  if (value <= 0) {
+    const error: any = new Error(
+      `Section "${label}" has invalid value: ${value}. Zero and negative values are not allowed in pie charts. All slice values must be > 0`
+    );
+    error.hash = {
+      text: `pie "${label}": ${value}`,
+      token: `${value}`,
+      expected: ['a positive number (> 0)'],
+    };
+    throw error;
+  }
   if (!sections.has(label)) {
     sections.set(label, value);
     log.debug(`added new section: ${label}, with value: ${value}`);
