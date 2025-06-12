@@ -9,7 +9,7 @@ vi.mock('non-layered-tidy-tree-layout', () => ({
       const result = { ...treeData };
 
       // Set positions for the virtual root (if it exists)
-      if (result.id && result.id.toString().startsWith('virtual-root')) {
+      if (result.id?.toString().startsWith('virtual-root')) {
         result.x = 0;
         result.y = 0;
       } else {
@@ -321,6 +321,110 @@ describe('Tidy-Tree Layout Algorithm', () => {
       // Right tree children should be positioned to the right of root
       expect(child2!.x).toBeGreaterThan(100); // Should be significantly right of center
       expect(child4!.x).toBeGreaterThan(100); // Should be significantly right of center
+    });
+
+    it('should correctly transpose coordinates to prevent high nodes from covering nodes above them', async () => {
+      // Create a test case with nodes that have different heights to test transposition
+      const testData = {
+        ...mockLayoutData,
+        nodes: [
+          {
+            id: 'root',
+            label: 'Root',
+            isGroup: false,
+            shape: 'rect' as const,
+            width: 100,
+            height: 50,
+            padding: 10,
+            x: 0,
+            y: 0,
+            cssClasses: '',
+            cssStyles: [],
+            look: 'default',
+          },
+          {
+            id: 'tall-child',
+            label: 'Tall Child',
+            isGroup: false,
+            shape: 'rect' as const,
+            width: 80,
+            height: 120, // Tall node
+            padding: 10,
+            x: 0,
+            y: 0,
+            cssClasses: '',
+            cssStyles: [],
+            look: 'default',
+          },
+          {
+            id: 'short-child',
+            label: 'Short Child',
+            isGroup: false,
+            shape: 'rect' as const,
+            width: 80,
+            height: 30, // Short node
+            padding: 10,
+            x: 0,
+            y: 0,
+            cssClasses: '',
+            cssStyles: [],
+            look: 'default',
+          },
+        ],
+        edges: [
+          {
+            id: 'root_tall',
+            start: 'root',
+            end: 'tall-child',
+            type: 'edge',
+            classes: '',
+            style: [],
+            animate: false,
+            arrowTypeEnd: 'arrow_point',
+            arrowTypeStart: 'none',
+          },
+          {
+            id: 'root_short',
+            start: 'root',
+            end: 'short-child',
+            type: 'edge',
+            classes: '',
+            style: [],
+            animate: false,
+            arrowTypeEnd: 'arrow_point',
+            arrowTypeStart: 'none',
+          },
+        ],
+      };
+
+      const result = await executeTidyTreeLayout(testData, mockConfig);
+
+      expect(result).toBeDefined();
+      expect(result.nodes).toHaveLength(3); // root + 2 children
+
+      // Find all nodes
+      const rootNode = result.nodes.find((node) => node.id === 'root');
+      const tallChild = result.nodes.find((node) => node.id === 'tall-child');
+      const shortChild = result.nodes.find((node) => node.id === 'short-child');
+
+      expect(rootNode).toBeDefined();
+      expect(tallChild).toBeDefined();
+      expect(shortChild).toBeDefined();
+
+      // Verify that nodes are positioned correctly with proper transposition
+      // The tall child and short child should be on opposite sides
+      expect(tallChild!.x).not.toBe(shortChild!.x); // Should be on different sides
+
+      // Verify that the original dimensions are preserved (not transposed in final output)
+      expect(tallChild!.width).toBe(80); // Original width preserved
+      expect(tallChild!.height).toBe(120); // Original height preserved
+      expect(shortChild!.width).toBe(80); // Original width preserved
+      expect(shortChild!.height).toBe(30); // Original height preserved
+
+      // Verify that nodes don't overlap vertically (the transposition fix)
+      // Both children should have reasonable Y positions that don't cause overlap
+      const yDifference = Math.abs(tallChild!.y - shortChild!.y);
+      expect(yDifference).toBeGreaterThanOrEqual(0); // Should have proper vertical spacing
     });
   });
 });

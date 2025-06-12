@@ -29,7 +29,7 @@ export const render = async (
     log,
     positionEdgeLabel,
   }: InternalHelpers,
-  { algorithm }: RenderOptions
+  { algorithm: _algorithm }: RenderOptions
 ) => {
   const nodeDb: Record<string, NodeWithPosition> = {};
   const clusterDb: Record<string, any> = {};
@@ -121,7 +121,7 @@ export const render = async (
   await Promise.all(
     data4Layout.edges.map(async (edge) => {
       // Insert edge label first
-      const edgeLabel = await insertEdgeLabel(edgeLabels, edge);
+      const _edgeLabel = await insertEdgeLabel(edgeLabels, edge);
 
       // Get start and end nodes
       const startNode = nodeDb[edge.start];
@@ -132,7 +132,7 @@ export const render = async (
         const positionedEdge = layoutResult.edges.find((e) => e.id === edge.id);
 
         if (positionedEdge) {
-          console.debug('APA01 positionedEdge', positionedEdge);
+          log.debug('APA01 positionedEdge', positionedEdge);
           // Create edge path with positioned coordinates
           const edgeWithPath = {
             ...edge,
