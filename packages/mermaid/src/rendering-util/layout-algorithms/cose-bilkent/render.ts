@@ -102,7 +102,7 @@ export const render = async (
 
   layoutResult.nodes.forEach((positionedNode) => {
     const node = nodeDb[positionedNode.id];
-    if (node && node.domId) {
+    if (node?.domId) {
       // Position the node at the calculated coordinates
       // The positionedNode.x/y represents the center of the node, so use directly
       node.domId.attr('transform', `translate(${positionedNode.x}, ${positionedNode.y})`);
@@ -132,13 +132,11 @@ export const render = async (
         const positionedEdge = layoutResult.edges.find((e) => e.id === edge.id);
 
         if (positionedEdge) {
+          console.debug('APA01 positionedEdge', positionedEdge);
           // Create edge path with positioned coordinates
           const edgeWithPath = {
             ...edge,
-            points: [
-              { x: positionedEdge.startX, y: positionedEdge.startY },
-              { x: positionedEdge.endX, y: positionedEdge.endY },
-            ],
+            points: positionedEdge.points,
           };
 
           // Insert the edge path

@@ -7,6 +7,13 @@ export interface PositionedNode {
   id: string;
   x: number;
   y: number;
+  // Tree membership information for edge calculations
+  section?: 'root' | 'left' | 'right';
+  // Original node dimensions for edge point calculations
+  width?: number;
+  height?: number;
+  // Reference to original node for additional data
+  originalNode?: Node;
   [key: string]: unknown; // Allow additional properties
 }
 
@@ -23,6 +30,14 @@ export interface PositionedEdge {
   midY: number;
   endX: number;
   endY: number;
+  // Tree membership information for edge styling/routing
+  sourceSection?: 'root' | 'left' | 'right';
+  targetSection?: 'root' | 'left' | 'right';
+  // Node dimensions for precise edge point calculations
+  sourceWidth?: number;
+  sourceHeight?: number;
+  targetWidth?: number;
+  targetHeight?: number;
   [key: string]: unknown; // Allow additional properties
 }
 

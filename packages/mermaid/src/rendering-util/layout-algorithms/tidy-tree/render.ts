@@ -152,15 +152,17 @@ export const render = async (
         const positionedEdge = layoutResult.edges.find((e) => e.id === edge.id);
 
         if (positionedEdge) {
+          console.debug('APA01 positionedEdge', positionedEdge);
           // Create edge path with positioned coordinates
           const edgeWithPath = {
             ...edge,
-            points: [
-              { x: positionedEdge.startX, y: positionedEdge.startY },
-              { x: positionedEdge.endX, y: positionedEdge.endY },
-            ],
+            points: positionedEdge.points,
+            // points: [
+            //   { x: positionedEdge.startX, y: positionedEdge.startY },
+            //   { x: positionedEdge.endX, y: positionedEdge.endY },
+            // ],
           };
-
+          // debugger;
           // Insert the edge path
           const paths = insertEdge(
             edgePaths,
