@@ -59,8 +59,7 @@ const EOF = createToken({
 // Complex pattern to handle all edge cases including punctuation at start/end
 const NODE_STRING = createToken({
   name: 'NODE_STRING',
-  pattern:
-    /\\\w+|\w+\\|&[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|-[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|[<>^v][\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|:[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|,[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|[\w!"#$%&'*+,./:?\\`](?:[\w!"#$%&'*+,./:?\\`]|-(?![.=-])|\.(?!-))*[\w!"#$%&'*+,./:?\\`-]|[\w!"#$%&'*+,./:?\\`]|&|-|\\|\//,
+  pattern: /[A-Za-z0-9_]+/,
 });
 
 // ============================================================================
@@ -207,42 +206,36 @@ const ShapeDataStart = createToken({
 const LINK = createToken({
   name: 'LINK',
   pattern: /[<ox]?--+[>ox-]/,
-  longer_alt: NODE_STRING,
 });
 
 const START_LINK = createToken({
   name: 'START_LINK',
   pattern: /[<ox]?--/,
   push_mode: 'edgeText_mode',
-  longer_alt: NODE_STRING,
 });
 
 // Regular thick links without text
 const THICK_LINK = createToken({
   name: 'THICK_LINK',
   pattern: /[<ox]?==+[=>ox-]?/,
-  longer_alt: NODE_STRING,
 });
 
 const START_THICK_LINK = createToken({
   name: 'START_THICK_LINK',
   pattern: /[<ox]?==/,
   push_mode: 'thickEdgeText_mode',
-  longer_alt: NODE_STRING,
 });
 
 // Regular dotted links without text
 const DOTTED_LINK = createToken({
   name: 'DOTTED_LINK',
   pattern: /[<ox]?-?\.+-[>ox-]?/,
-  longer_alt: NODE_STRING,
 });
 
 const START_DOTTED_LINK = createToken({
   name: 'START_DOTTED_LINK',
   pattern: /[<ox]?-\./,
   push_mode: 'dottedEdgeText_mode',
-  longer_alt: NODE_STRING,
 });
 
 // ============================================================================
@@ -295,13 +288,11 @@ const DiamondStart = createToken({
 const Colon = createToken({
   name: 'Colon',
   pattern: /:/,
-  longer_alt: NODE_STRING,
 });
 
 const Comma = createToken({
   name: 'Comma',
   pattern: /,/,
-  longer_alt: NODE_STRING,
 });
 
 const Pipe = createToken({
@@ -319,7 +310,6 @@ const Ampersand = createToken({
 const Minus = createToken({
   name: 'Minus',
   pattern: /-/,
-  longer_alt: NODE_STRING,
 });
 
 // Additional special character tokens for node IDs - currently unused but kept for future reference
@@ -578,6 +568,9 @@ const multiModeLexerDefinition = {
       // Basic punctuation (must come before NODE_STRING for proper tokenization)
       Pipe,
       Ampersand,
+      Minus,
+      Colon,
+      Comma,
 
       // Node strings and numbers (must come after punctuation)
       NODE_STRING,
