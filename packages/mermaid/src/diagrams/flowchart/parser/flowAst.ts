@@ -553,6 +553,20 @@ export class FlowchartAstVisitor extends BaseVisitor {
       } else {
         linkData = { type: 'arrow_point', text: '' };
 
+        // Determine arrow type based on START_LINK pattern
+        // Check for open arrows (ending with '-' and no arrowhead)
+        if (startToken.endsWith('-') && !startToken.includes('.') && !startToken.includes('=')) {
+          linkData.type = 'arrow_open';
+        }
+        // Check for dotted arrows
+        else if (startToken.includes('.')) {
+          linkData.type = 'arrow_dotted';
+        }
+        // Check for thick arrows
+        else if (startToken.includes('=')) {
+          linkData.type = 'arrow_thick';
+        }
+
         // Check for arrow length in START_LINK token
         const dashCount = (startToken.match(/-/g) || []).length;
         if (dashCount >= 6) {
@@ -605,6 +619,12 @@ export class FlowchartAstVisitor extends BaseVisitor {
     if (ctx.NODE_STRING) {
       ctx.NODE_STRING.forEach((token: IToken) => {
         text += token.image;
+      });
+    }
+    if (ctx.QuotedString) {
+      ctx.QuotedString.forEach((token: IToken) => {
+        // Remove quotes from quoted string
+        text += token.image.slice(1, -1);
       });
     }
     if (ctx.EDGE_TEXT) {
