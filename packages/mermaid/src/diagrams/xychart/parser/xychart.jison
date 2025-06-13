@@ -29,6 +29,7 @@
 <acc_descr_multiline>"{"                 { this.popState(); }
 <acc_descr_multiline>[^\}]*               { return "acc_descr_multiline_value"; }
 
+"xychart"                                 {return 'XYCHART';}
 "xychart-beta"                            {return 'XYCHART';}
 (?:"vertical"|"horizontal")               {return 'CHART_ORIENTATION'}
 

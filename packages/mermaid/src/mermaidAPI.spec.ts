@@ -796,6 +796,7 @@ graph TD;A--x|text including URL space|B;`)
       { textDiagramType: 'pie', expectedType: 'pie' },
       { textDiagramType: 'packet-beta', expectedType: 'packet' },
       { textDiagramType: 'xychart-beta', expectedType: 'xychart' },
+      { textDiagramType: 'xychart', expectedType: 'xychart' },
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
