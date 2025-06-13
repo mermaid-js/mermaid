@@ -47,7 +47,7 @@ onMounted(() => {
     @mouseenter="isPaused = true"
     @mouseleave="isPaused = false"
   >
-    <p class="w-full tracking-wide fade-text text-lg" :class="isHomePage ? 'text-lg' : 'text-sm'">
+    <p class="w-full tracking-wide fade-text" :class="isHomePage ? 'text-lg' : 'text-sm'">
       <transition name="fade" mode="out-in">
         <a
           :key="index"
