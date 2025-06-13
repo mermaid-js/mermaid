@@ -55,6 +55,34 @@ export class FlowchartParser extends CstParser {
   private statement = this.RULE('statement', () => {
     this.OR([
       { ALT: () => this.SUBRULE(this.vertexStatement) },
+      // Standalone link statement only when pattern is exactly nodeId link nodeId (no continuation)
+      {
+        ALT: () => this.SUBRULE(this.standaloneLinkStatement),
+        GATE: () => {
+          // Look ahead to see if this is a simple nodeId link nodeId pattern
+          // without any continuation (like more links or ampersands)
+          const la1 = this.LA(1); // First token (should be nodeId)
+          const la2 = this.LA(2); // Second token (should be link)
+          const la3 = this.LA(3); // Third token (should be nodeId)
+          const la4 = this.LA(4); // Fourth token (should be separator or EOF)
+
+          // Check if we have the exact pattern: nodeId link nodeId separator/EOF
+          return (
+            (la1.tokenType === tokens.NODE_STRING || la1.tokenType === tokens.NumberToken) &&
+            (la2.tokenType === tokens.LINK ||
+              la2.tokenType === tokens.THICK_LINK ||
+              la2.tokenType === tokens.DOTTED_LINK ||
+              la2.tokenType === tokens.START_LINK ||
+              la2.tokenType === tokens.START_THICK_LINK ||
+              la2.tokenType === tokens.START_DOTTED_LINK) &&
+            (la3.tokenType === tokens.NODE_STRING || la3.tokenType === tokens.NumberToken) &&
+            (la4 === undefined ||
+              la4.tokenType === tokens.Semicolon ||
+              la4.tokenType === tokens.Newline ||
+              la4.tokenType === tokens.WhiteSpace)
+          );
+        },
+      },
       { ALT: () => this.SUBRULE(this.styleStatement) },
       { ALT: () => this.SUBRULE(this.linkStyleStatement) },
       { ALT: () => this.SUBRULE(this.classDefStatement) },
@@ -170,7 +198,7 @@ export class FlowchartParser extends CstParser {
     // TODO: Add style separator support when implementing styling
   });
 
-  // Node ID - handles both simple and compound node IDs
+  // Node ID - handles both simple and special character node IDs
   private nodeId = this.RULE('nodeId', () => {
     this.OR([
       { ALT: () => this.CONSUME(tokens.NODE_STRING) },
@@ -287,11 +315,11 @@ export class FlowchartParser extends CstParser {
     });
   });
 
-  // Arrow text - PIPE text PIPE
+  // Arrow text - PIPE text PipeEnd
   private arrowText = this.RULE('arrowText', () => {
     this.CONSUME(tokens.Pipe);
     this.SUBRULE(this.text);
-    this.CONSUME2(tokens.Pipe);
+    this.CONSUME(tokens.PipeEnd);
   });
 
   // Text rule - following JISON pattern

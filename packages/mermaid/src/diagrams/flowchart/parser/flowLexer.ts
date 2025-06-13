@@ -55,12 +55,12 @@ const EOF = createToken({
 // Modified to include special characters and handle minus character edge cases
 // Allows - in node IDs including standalone -, -at-start, and -at-end patterns
 // Avoids conflicts with link tokens by using negative lookahead for link patterns
-// Handles compound cases like &node, -node, vnode where special chars are followed by word chars
-// Only matches compound patterns (special char + word chars), not standalone special chars
+// Handles compound cases like &node, -node, vnode where special chars are followed by word chars // cspell:disable-line
+// Complex pattern to handle all edge cases including punctuation at start/end
 const NODE_STRING = createToken({
   name: 'NODE_STRING',
   pattern:
-    /\\\w+|\w+\\|&[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|-[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|[<>^v][\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|[\w!"#$%&'*+,./:?\\`](?:[\w!"#$%&'*+,./:?\\`]|-(?![.=-])|\.(?!-))*[\w!"#$%&'*+,./:?\\`]|[\w!"#$%&'*+,./:?\\`]|&|-|\\|\//,
+    /\\\w+|\w+\\|&[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|-[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|[<>^v][\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|:[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|,[\w!"#$%&'*+,./:?\\`]+[\w!"#$%&'*+,./:?\\`-]*|[\w!"#$%&'*+,./:?\\`](?:[\w!"#$%&'*+,./:?\\`]|-(?![.=-])|\.(?!-))*[\w!"#$%&'*+,./:?\\`-]|[\w!"#$%&'*+,./:?\\`]|&|-|\\|\//,
 });
 
 // ============================================================================
@@ -146,6 +146,7 @@ const Default = createToken({
 const DirectionValue = createToken({
   name: 'DirectionValue',
   pattern: /LR|RL|TB|BT|TD|BR|<|>|\^|v/,
+  longer_alt: NODE_STRING,
 });
 
 // ============================================================================
@@ -202,37 +203,46 @@ const ShapeDataStart = createToken({
 // LINK TOKENS (JISON lines 154-164)
 // ============================================================================
 
+// Regular links without text
 const LINK = createToken({
   name: 'LINK',
-  pattern: /\s*[<ox]?--+[>ox-]\s*/,
+  pattern: /[<ox]?--+[>ox-]/,
+  longer_alt: NODE_STRING,
 });
 
 const START_LINK = createToken({
   name: 'START_LINK',
-  pattern: /\s*[<ox]?--\s*/,
+  pattern: /[<ox]?--/,
   push_mode: 'edgeText_mode',
+  longer_alt: NODE_STRING,
 });
 
+// Regular thick links without text
 const THICK_LINK = createToken({
   name: 'THICK_LINK',
-  pattern: /\s*[<ox]?==+[=>ox-]?\s*/,
+  pattern: /[<ox]?==+[=>ox-]?/,
+  longer_alt: NODE_STRING,
 });
 
 const START_THICK_LINK = createToken({
   name: 'START_THICK_LINK',
-  pattern: /\s*[<ox]?==(?=\s*\|)\s*/,
+  pattern: /[<ox]?==/,
   push_mode: 'thickEdgeText_mode',
+  longer_alt: NODE_STRING,
 });
 
+// Regular dotted links without text
 const DOTTED_LINK = createToken({
   name: 'DOTTED_LINK',
-  pattern: /\s*[<ox]?-?\.+-[>ox-]?\s*/,
+  pattern: /[<ox]?-?\.+-[>ox-]?/,
+  longer_alt: NODE_STRING,
 });
 
 const START_DOTTED_LINK = createToken({
   name: 'START_DOTTED_LINK',
-  pattern: /\s*[<ox]?-\.(?!-)\s*/,
+  pattern: /[<ox]?-\./,
   push_mode: 'dottedEdgeText_mode',
+  longer_alt: NODE_STRING,
 });
 
 // ============================================================================
@@ -297,6 +307,7 @@ const Comma = createToken({
 const Pipe = createToken({
   name: 'Pipe',
   pattern: /\|/,
+  push_mode: 'text_mode',
 });
 
 const Ampersand = createToken({
@@ -311,38 +322,38 @@ const Minus = createToken({
   longer_alt: NODE_STRING,
 });
 
-// Additional special character tokens for node IDs
-const Hash = createToken({
-  name: 'Hash',
-  pattern: /#/,
-  longer_alt: NODE_STRING,
-});
+// Additional special character tokens for node IDs - currently unused but kept for future reference
+// const Hash = createToken({
+//   name: 'Hash',
+//   pattern: /#/,
+//   longer_alt: NODE_STRING,
+// });
 
-const Asterisk = createToken({
-  name: 'Asterisk',
-  pattern: /\*/,
-  longer_alt: NODE_STRING,
-});
+// const Asterisk = createToken({
+//   name: 'Asterisk',
+//   pattern: /\*/,
+//   longer_alt: NODE_STRING,
+// });
 
-const Dot = createToken({
-  name: 'Dot',
-  pattern: /\./,
-  longer_alt: NODE_STRING,
-});
+// const Dot = createToken({
+//   name: 'Dot',
+//   pattern: /\./,
+//   longer_alt: NODE_STRING,
+// });
 
 // Backslash token removed - handled entirely by NODE_STRING
 
-const Slash = createToken({
-  name: 'Slash',
-  pattern: /\//,
-  longer_alt: NODE_STRING,
-});
+// const Slash = createToken({
+//   name: 'Slash',
+//   pattern: /\//,
+//   longer_alt: NODE_STRING,
+// });
 
-const Underscore = createToken({
-  name: 'Underscore',
-  pattern: /_/,
-  longer_alt: NODE_STRING,
-});
+// const Underscore = createToken({
+//   name: 'Underscore',
+//   pattern: /_/,
+//   longer_alt: NODE_STRING,
+// });
 
 const NumberToken = createToken({
   name: 'NumberToken',
@@ -452,6 +463,13 @@ const DiamondEnd = createToken({
   pop_mode: true,
 });
 
+// Pipe token for text mode that pops back to initial mode
+const PipeEnd = createToken({
+  name: 'PipeEnd',
+  pattern: /\|/,
+  pop_mode: true,
+});
+
 // Tokens for edge text modes (JISON lines 156, 160, 164)
 const EdgeTextContent = createToken({
   name: 'EdgeTextContent',
@@ -557,12 +575,9 @@ const multiModeLexerDefinition = {
       HexagonStart,
       DiamondStart,
 
-      // Basic punctuation (must come before NODE_STRING)
+      // Basic punctuation (must come before NODE_STRING for proper tokenization)
       Pipe,
-      Colon,
-      Comma,
       Ampersand,
-      Minus,
 
       // Node strings and numbers (must come after punctuation)
       NODE_STRING,
@@ -601,7 +616,7 @@ const multiModeLexerDefinition = {
       HexagonEnd,
       DiamondEnd,
       QuotedString,
-      Pipe, // Special handling for pipe in text mode
+      PipeEnd, // Pipe that pops back to initial mode
       TextContent,
     ],
 
@@ -753,6 +768,7 @@ export const allTokens = [
   Colon,
   Comma,
   Pipe,
+  PipeEnd,
   Ampersand,
   Minus,
 ];
@@ -850,6 +866,7 @@ export {
   Colon,
   Comma,
   Pipe,
+  PipeEnd,
   Ampersand,
   Minus,
 };

@@ -106,7 +106,7 @@
     "@types/stylis": "^4.2.7",
     "@types/uuid": "^10.0.0",
     "ajv": "^8.17.1",
-    "chokidar": "^4.0.3",
+    "chokidar": "3.6.0",
     "concurrently": "^9.1.2",
     "csstree-validator": "^4.0.1",
     "globby": "^14.0.2",

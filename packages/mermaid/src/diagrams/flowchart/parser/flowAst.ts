@@ -375,7 +375,7 @@ export class FlowchartAstVisitor extends BaseVisitor {
       if (nodeId.startsWith(keyword)) {
         // Allow if the keyword is not followed by a delimiter (e.g., "endpoint" is OK, "end.node" is not)
         const afterKeyword = nodeId.substring(keyword.length);
-        if (afterKeyword.length === 0 || /^[./\-]/.test(afterKeyword)) {
+        if (afterKeyword.length === 0 || /^[./-]/.test(afterKeyword)) {
           throw new Error(`Node ID cannot start with reserved keyword: ${keyword}`);
         }
       }
@@ -835,6 +835,10 @@ export class FlowchartAstVisitor extends BaseVisitor {
     const endNodeId = this.visit(ctx.nodeId[1]);
     const linkData = this.visit(ctx.link);
 
+    // Ensure both start and end nodes exist as vertices
+    this.ensureVertex(startNodeId);
+    this.ensureVertex(endNodeId);
+
     const edge: any = {
       start: startNodeId,
       end: endNodeId,
@@ -848,6 +852,17 @@ export class FlowchartAstVisitor extends BaseVisitor {
     }
 
     this.edges.push(edge);
+  }
+
+  // Helper method to ensure a vertex exists
+  private ensureVertex(nodeId: string): void {
+    if (!this.vertices[nodeId]) {
+      this.vertices[nodeId] = {
+        id: nodeId,
+        text: nodeId,
+        type: 'default',
+      };
+    }
   }
 
   // Missing visitor methods
