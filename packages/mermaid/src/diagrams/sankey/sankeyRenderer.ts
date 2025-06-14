@@ -89,7 +89,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   const sankey = d3Sankey()
     .nodeId((d: any) => d.id) // we use 'id' property to identify node
     .nodeWidth(nodeWidth)
-    .nodePadding(10 + (showValues ? 15 : 0))
+    .nodePadding(10)
     .nodeAlign(nodeAlign)
     .extent([
       [0, 0],
