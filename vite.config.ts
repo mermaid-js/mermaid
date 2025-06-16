@@ -23,7 +23,7 @@ export default defineConfig({
       reportsDirectory: './coverage/vitest',
       exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
     },
-    includeSource: ['packages/*/src/**/*.{js,ts}'],
+    includeSource: ['packages/*/src/**/*.{js,ts}', 'packages/*/src/**/**.{js,ts}'],
     clearMocks: true,
   },
   build: {
