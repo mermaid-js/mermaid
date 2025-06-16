@@ -17,8 +17,8 @@ terminal ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}
 terminal ACC_TITLE: /[\t ]*accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
 terminal TITLE: /[\t ]*title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*|)/;
 
-terminal FLOAT returns number: /-?[0-9]+\.[0-9]+(?!\.)/;
-terminal INT returns number: /-?(0|[1-9][0-9]*)(?!\.)/;
+terminal FLOAT returns number: /[0-9]+\.[0-9]+(?!\.)/;
+terminal INT returns number: /0|[1-9][0-9]*(?!\.)/;
 terminal NUMBER returns number: FLOAT | INT;
 
 terminal STRING returns string: /"([^"\\]|\\.)*"|'([^'\\]|\\.)*'/;
