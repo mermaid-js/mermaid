@@ -55,7 +55,7 @@ describe('svgDraw', function () {
       expect(rect.attr).toHaveBeenCalledWith('ry', '10');
       expect(rect.attr).toHaveBeenCalledWith('class', 'unitTestRectangleClass');
     });
-    it('should not add the class attribute if a class isn`t provided', () => {
+    it('should not add the class attribute if a class is not provided', () => {
       const svg = MockD3('svg');
       svgDraw.drawRect(svg, {
         x: 10,

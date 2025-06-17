@@ -54,7 +54,6 @@ frontmatter
 funs
 gantt
 GENERICTYPE
-getBoundarys
 grammr
 graphtype
 halign

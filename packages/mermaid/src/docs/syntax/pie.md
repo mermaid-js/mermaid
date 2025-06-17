@@ -35,7 +35,13 @@ Drawing a pie chart is really simple in mermaid.
 ## Example
 
 ```mermaid-example
-%%{init: {"pie": {"textPosition": 0.5}, "themeVariables": {"pieOuterStrokeWidth": "5px"}} }%%
+---
+config:
+  pie:
+    textPosition: 0.5
+  themeVariables:
+    pieOuterStrokeWidth: "5px"
+---
 pie showData
     title Key elements in Product X
     "Calcium" : 42.96

@@ -143,7 +143,7 @@ export const render = async (
             height: node.height,
           };
           if (node.isGroup) {
-            log.debug('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
+            log.debug('id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
             const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
             // TODO use faster way of cloning
             const clusterNode = JSON.parse(JSON.stringify(node));
@@ -152,10 +152,10 @@ export const render = async (
             clusterNode.width = Math.max(clusterNode.width, node.labelData.width);
             await insertCluster(subgraphEl, clusterNode);
 
-            log.debug('Id (UIO)= ', node.id, node.width, node.shape, node.labels);
+            log.debug('id (UIO)= ', node.id, node.width, node.shape, node.labels);
           } else {
             log.info(
-              'Id NODE = ',
+              'id NODE = ',
               node.id,
               node.x,
               node.y,
@@ -653,7 +653,7 @@ export const render = async (
 
       return res;
     } else {
-      // Intersection onn sides of rect
+      // Intersection on sides of rect
       if (insidePoint.x < outsidePoint.x) {
         r = outsidePoint.x - w - x;
       } else {
@@ -713,7 +713,7 @@ export const render = async (
       // check if point is inside the boundary rect
       if (!outsideNode(bounds, point) && !isInside) {
         // First point inside the rect found
-        // Calc the intersection coord between the point anf the last point outside the rect
+        // Calc the intersection coord between the point and the last point outside the rect
         let inter;
 
         if (isDiamond) {
@@ -766,6 +766,7 @@ export const render = async (
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      'elk.layered.crossingMinimization.forceNodeModelOrder': true,
       'elk.algorithm': algorithm,
       'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
@@ -780,7 +781,6 @@ export const render = async (
       // 'spacing.edgeEdge': 10,
       // 'spacing.edgeEdgeBetweenLayers': 20,
       // 'spacing.nodeSelfLoop': 20,
-
       // Tweaking options
       // 'elk.layered.nodePlacement.favorStraightEdges': true,
       // 'nodePlacement.feedbackEdges': true,
