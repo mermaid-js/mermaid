@@ -141,20 +141,28 @@ describe('pie', () => {
 
     it('should handle simple pie with zero slice value', async () => {
       await expect(async () => {
-        await parser.parse(`pie
-        "ash" : 0
-        "bat" : 40.12
-        `);
-      }).rejects.toThrowError();
+        await parser.parse(`pie title Default text position: Animal adoption
+        accTitle: simple pie char demo
+        accDescr: pie chart with 3 sections: dogs, cats, rats. Most are dogs.
+         "dogs" : 0
+        "rats" : 40.12
+    `);
+      }).rejects.toThrowError(
+        '"dogs" has invalid value: 0. Zero and negative values are not allowed in pie charts. All slice values must be > 0'
+      );
     });
 
     it('should handle simple pie with negative slice value', async () => {
       await expect(async () => {
-        await parser.parse(`pie
-        "ash" : -60
-        "bat" : 40.12
-        `);
-      }).rejects.toThrowError();
+        await parser.parse(`pie title Default text position: Animal adoption
+        accTitle: simple pie char demo
+        accDescr: pie chart with 3 sections: dogs, cats, rats. Most are dogs.
+         "dogs" : -60.67
+        "rats" : 40.12
+    `);
+      }).rejects.toThrowError(
+        '"dogs" has invalid value: -60.67. Zero and negative values are not allowed in pie charts. All slice values must be > 0'
+      );
     });
 
     it('should handle unsafe properties', async () => {
