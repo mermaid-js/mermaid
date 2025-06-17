@@ -407,7 +407,7 @@ describe('Testing xychart jison file', () => {
   it('parse multiple bar and line variant 2', () => {
     const str = `
     xychart horizontal
-    title Basic xychart
+    title "Basic xychart"
     x-axis "this is x axis" [category1, "category 2", category3]
     y-axis yaxisText 10 --> 150
  bar barTitle1 [23, 45, 56.6]
