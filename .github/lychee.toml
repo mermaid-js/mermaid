@@ -52,7 +52,7 @@ exclude = [
 # Timeout
 "https://huehive.co",
 "https://foswiki.org",
-"https://www.gnu.org",
+"https://www.gnu.org"
 ]
 
 # Exclude all private IPs from checking.
