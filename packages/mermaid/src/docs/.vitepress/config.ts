@@ -2,6 +2,7 @@ import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' assert { type: 'json' };
 import MermaidExample from './mermaid-markdown-all.js';
+import { addCanonicalUrls } from './canonical-urls.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -25,6 +26,7 @@ export default defineConfig({
     // ignore all localhost links
     /^https?:\/\/localhost/,
   ],
+  transformPageData: addCanonicalUrls,
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     ['meta', { property: 'og:title', content: 'Mermaid' }],
