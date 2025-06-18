@@ -29,8 +29,8 @@ import { log } from './logger.js';
 import { detectType } from './diagram-api/detectType.js';
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
-import memoize from 'lodash-es/memoize.js';
-import merge from 'lodash-es/merge.js';
+import { memoize } from 'es-toolkit/compat';
+import { merge } from 'es-toolkit/compat';
 import { directiveRegex } from './diagram-api/regexes.js';
 import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
 

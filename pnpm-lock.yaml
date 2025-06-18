@@ -253,6 +253,9 @@ importers:
       dompurify:
         specifier: ^3.2.5
         version: 3.2.5
+      es-toolkit:
+        specifier: ^1.39.3
+        version: 1.39.3
       katex:
         specifier: ^0.16.9
         version: 0.16.11
@@ -5476,6 +5479,9 @@ packages:
   es-to-primitive@1.3.0:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
+
+  es-toolkit@1.39.3:
+    resolution: {integrity: sha512-Qb/TCFCldgOy8lZ5uC7nLGdqJwSabkQiYQShmw4jyiPk1pZzaYWTwaYKYP7EgLccWYgZocMrtItrwh683voaww==}
 
   es2015-i18n-tag@1.6.1:
     resolution: {integrity: sha512-MYoh9p+JTkgnzBh0MEBON6xUyzdmwT6wzsmmFJvZujGSXiI2kM+3XvFl6+AcIO2eeL6VWgtX9szSiDTMwDxyYA==}
@@ -16527,6 +16533,8 @@ snapshots:
       is-callable: 1.2.7
       is-date-object: 1.1.0
       is-symbol: 1.1.1
+
+  es-toolkit@1.39.3: {}
 
   es2015-i18n-tag@1.6.1: {}
 
