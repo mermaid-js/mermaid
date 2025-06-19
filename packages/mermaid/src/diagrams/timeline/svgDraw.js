@@ -1,5 +1,89 @@
 import { arc as d3arc, select } from 'd3';
+import { createText } from '../../rendering-util/createText.js';
+
 const MAX_SECTIONS = 12;
+
+/**
+ * Process HTML content in node descriptions
+ * @param {object} textElem - The SVG element to append text to
+ * @param {object} node - The node object containing description and dimensions
+ * @param {object} conf - Configuration object
+ * @param {boolean} isVirtual - Whether this is for virtual height calculation
+ */
+const processHtmlContent = async function (textElem, node, conf, isVirtual = false) {
+  // Create temporary text to get initial dimensions
+  const tempText = textElem
+    .append('text')
+    .text(node.descr.replace(/<[^>]*>/g, ''))
+    .attr('dy', '1em')
+    .attr('alignment-baseline', 'middle')
+    .attr('dominant-baseline', 'middle')
+    .attr('text-anchor', 'middle')
+    .call(wrap, node.width);
+
+  if (!isVirtual) {
+    tempText.attr('visibility', 'hidden');
+  }
+
+  const bbox = tempText.node().getBBox();
+  tempText.remove();
+
+  // Create the actual HTML content
+  const textObj = await createText(
+    textElem,
+    node.descr,
+    {
+      useHtmlLabels: true,
+      width: node.width,
+      classes: 'timeline-node-label',
+      isNode: true,
+    },
+    conf
+  );
+
+  if (!isVirtual) {
+    select(textObj).attr('transform', 'translate(0, 0)');
+  }
+
+  // Process the foreign object
+  const foreignObject = textElem.select('foreignObject');
+  if (foreignObject.node()) {
+    foreignObject.attr('width', `${10 * node.width}px`).attr('height', `${10 * node.width}px`);
+
+    const div = foreignObject.select('div');
+    if (div.node()) {
+      div
+        .style('display', 'table-cell')
+        .style('white-space', 'nowrap')
+        .style('line-height', '1.5')
+        .style('max-width', node.width + 'px')
+        .style('text-align', 'center');
+
+      let divBBox = div.node().getBoundingClientRect();
+
+      if (divBBox.width === node.width) {
+        div
+          .style('display', 'table')
+          .style('white-space', 'break-spaces')
+          .style('width', node.width + 'px');
+
+        divBBox = div.node().getBoundingClientRect();
+      }
+
+      foreignObject.attr('width', node.width).attr('height', divBBox.height);
+
+      if (!isVirtual) {
+        foreignObject.attr('x', -node.width / 2).attr('y', 3);
+
+        div.style('width', node.width + 'px');
+      } else {
+        bbox.height = divBBox.height;
+      }
+    }
+  }
+
+  return bbox;
+};
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -409,6 +493,9 @@ const _drawTextCandidateFunc = (function () {
       .style('display', 'table-cell')
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
+      .style('word-wrap', 'break-word')
+      .style('overflow-wrap', 'break-word')
+      .style('white-space', 'normal')
       .text(content);
 
     byTspan(content, body, x, y, width, height, textAttrs, conf);
@@ -493,7 +580,7 @@ function wrap(text, width) {
   });
 }
 
-export const drawNode = function (elem, node, fullSection, conf) {
+export const drawNode = async function (elem, node, fullSection, conf) {
   const section = (fullSection % MAX_SECTIONS) - 1;
   const nodeElem = elem.append('g');
   node.section = section;
@@ -506,19 +593,30 @@ export const drawNode = function (elem, node, fullSection, conf) {
   // Create the wrapped text element
   const textElem = nodeElem.append('g');
 
-  const txt = textElem
-    .append('text')
-    .text(node.descr)
-    .attr('dy', '1em')
-    .attr('alignment-baseline', 'middle')
-    .attr('dominant-baseline', 'middle')
-    .attr('text-anchor', 'middle')
-    .call(wrap, node.width);
-  const bbox = txt.node().getBBox();
-  const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
-  node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
-  node.height = Math.max(node.height, node.maxHeight);
-  node.width = node.width + 2 * node.padding;
+  const hasHtml = /<[a-z][\S\s]*>/i.test(node.descr);
+
+  if (hasHtml) {
+    const bbox = await processHtmlContent(textElem, node, conf, false);
+
+    const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
+    node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
+    node.height = Math.max(node.height, node.maxHeight);
+    node.width = node.width + 2 * node.padding;
+  } else {
+    const txt = textElem
+      .append('text')
+      .text(node.descr)
+      .attr('dy', '1em')
+      .attr('alignment-baseline', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('text-anchor', 'middle')
+      .call(wrap, node.width);
+    const bbox = txt.node().getBBox();
+    const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
+    node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
+    node.height = Math.max(node.height, node.maxHeight);
+    node.width = node.width + 2 * node.padding;
+  }
 
   textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
 
@@ -528,17 +626,25 @@ export const drawNode = function (elem, node, fullSection, conf) {
   return node;
 };
 
-export const getVirtualNodeHeight = function (elem, node, conf) {
+export const getVirtualNodeHeight = async function (elem, node, conf) {
   const textElem = elem.append('g');
-  const txt = textElem
-    .append('text')
-    .text(node.descr)
-    .attr('dy', '1em')
-    .attr('alignment-baseline', 'middle')
-    .attr('dominant-baseline', 'middle')
-    .attr('text-anchor', 'middle')
-    .call(wrap, node.width);
-  const bbox = txt.node().getBBox();
+
+  const hasHtml = /<[a-z][\S\s]*>/i.test(node.descr);
+
+  let bbox;
+  if (hasHtml) {
+    bbox = await processHtmlContent(textElem, node, conf, true);
+  } else {
+    const txt = textElem
+      .append('text')
+      .text(node.descr)
+      .attr('dy', '1em')
+      .attr('alignment-baseline', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('text-anchor', 'middle')
+      .call(wrap, node.width);
+    bbox = txt.node().getBBox();
+  }
   const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
   textElem.remove();
   return bbox.height + fontSize * 1.1 * 0.5 + node.padding;
