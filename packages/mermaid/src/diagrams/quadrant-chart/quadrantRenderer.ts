@@ -111,16 +111,51 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
   quadrants
     .append('text')
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('fill', (data: QuadrantQuadrantsType) => data.text.fill)
-    .attr('font-size', (data: QuadrantQuadrantsType) => data.text.fontSize)
-    .attr('dominant-baseline', (data: QuadrantQuadrantsType) =>
-      getDominantBaseLine(data.text.horizontalPos)
-    )
-    .attr('text-anchor', (data: QuadrantQuadrantsType) => getTextAnchor(data.text.verticalPos))
-    .attr('transform', (data: QuadrantQuadrantsType) => getTransformation(data.text))
-    .text((data: QuadrantQuadrantsType) => data.text.text);
+    .attr('x', (data) => data.x + 5) // 5px padding from left inside quadrant
+    .attr('y', (data) => data.y + 5) // 5px padding from top inside quadrant
+    .attr('fill', (data) => data.text.fill)
+    .attr('font-size', (data) => data.text.fontSize)
+    .attr('text-anchor', 'start') // force left-alignment
+    .attr('dominant-baseline', 'hanging') // align to top
+    .each(function (data) {
+      const textElem = select(this);
+      const fontSize = parseFloat(data.text.fontSize ?? '12');
+      const lineHeight = fontSize * 1.2;
+      const maxWidth = data.width - 10;
+      const words = data.text.text.split(/\s+/);
+
+      const lines: string[] = [];
+      let line = '';
+
+      for (const word of words) {
+        const testLine = line + word + ' ';
+        const tspan = textElem.append('tspan').text(testLine.trim());
+        if (tspan.node().getComputedTextLength() > maxWidth) {
+          tspan.remove();
+          lines.push(line.trim());
+          line = word + ' ';
+        } else {
+          tspan.remove();
+          line = testLine;
+        }
+      }
+
+      if (line.trim()) {
+        lines.push(line.trim());
+      }
+
+      const totalHeight = lines.length * lineHeight;
+      const startY = data.y + (data.height - totalHeight) / 2 + lineHeight * 0.8; // center vertically
+
+      lines.forEach((l, i) => {
+        textElem
+          .append('tspan')
+          .attr('x', data.x + data.width / 2) // center X
+          .attr('y', startY + i * lineHeight)
+          .attr('text-anchor', 'middle')
+          .text(l);
+      });
+    });
 
   const labels = labelGroup
     .selectAll('g.label')
