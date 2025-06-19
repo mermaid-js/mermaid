@@ -1,5 +1,6 @@
 import { arc as d3arc, select } from 'd3';
 import { createText } from '../../rendering-util/createText.js';
+import DOMPurify from 'dompurify';
 
 const MAX_SECTIONS = 12;
 
@@ -12,9 +13,10 @@ const MAX_SECTIONS = 12;
  */
 const processHtmlContent = async function (textElem, node, conf, isVirtual = false) {
   // Create temporary text to get initial dimensions
+  const sanitizedHtml = DOMPurify.sanitize(node.descr, { ALLOWED_TAGS: [] });
   const tempText = textElem
     .append('text')
-    .text(node.descr.replace(/<[^>]*>/g, ''))
+    .text(sanitizedHtml)
     .attr('dy', '1em')
     .attr('alignment-baseline', 'middle')
     .attr('dominant-baseline', 'middle')
