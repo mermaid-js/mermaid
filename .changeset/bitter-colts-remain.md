@@ -1,5 +1,5 @@
 ---
-'@mermaid-js/mermaid-zenuml': minor
+'@mermaid-js/mermaid-zenuml': patch
 ---
 
 Upgraded the dependency @zenuml/core
