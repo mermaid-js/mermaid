@@ -399,6 +399,7 @@ function tryTokenizeKeywords(input: string, position: number): TokenResult {
       { pattern: /^href\b/, type: 'Href' },
       { pattern: /^call\b/, type: 'Call' },
       { pattern: /^default\b/, type: 'Default' },
+      { pattern: /^interpolate\b/, type: 'Interpolate' },
       { pattern: /^accTitle\s*:/, type: 'AccTitle' },
       { pattern: /^accDescr\s*:/, type: 'AccDescr' },
       { pattern: /^accDescr\s*{/, type: 'AccDescrMultiline' },
@@ -994,25 +995,26 @@ function initializeTokenTypeMap() {
     // Basic tokens
     ['NODE_STRING', NODE_STRING],
     ['NumberToken', NumberToken],
-    ['DirectionValue', DirectionValue],
-    ['Semicolon', Semicolon],
+    ['DIR', DirectionValue],
+    ['SEMI', Semicolon],
     ['Newline', Newline],
     ['Space', Space],
     ['EOF', EOF],
 
     // Keywords
-    ['Graph', Graph],
-    ['Subgraph', Subgraph],
-    ['End', End],
-    ['Style', Style],
-    ['LinkStyle', LinkStyle],
-    ['ClassDef', ClassDef],
-    ['Class', Class],
-    ['Click', Click],
-    ['Href', Href],
-    ['Callback', Callback],
-    ['Call', Call],
-    ['Default', Default],
+    ['GRAPH', Graph],
+    ['subgraph', Subgraph],
+    ['end', End],
+    ['STYLE', Style],
+    ['LINKSTYLE', LinkStyle],
+    ['CLASSDEF', ClassDef],
+    ['CLASS', Class],
+    ['CLICK', Click],
+    ['HREF', Href],
+    ['CALLBACKNAME', Callback],
+    ['CALLBACKNAME', Call],
+    ['DEFAULT', Default],
+    ['INTERPOLATE', Interpolate],
 
     // Links
     ['LINK', LINK],
@@ -1028,18 +1030,18 @@ function initializeTokenTypeMap() {
     ['EdgeTextEnd', EdgeTextEnd],
 
     // Shape tokens
-    ['SquareStart', SquareStart],
-    ['SquareEnd', SquareEnd],
-    ['CircleStart', CircleStart],
-    ['CircleEnd', CircleEnd],
-    ['DoubleCircleStart', DoubleCircleStart],
-    ['DoubleCircleEnd', DoubleCircleEnd],
+    ['SQS', SquareStart],
+    ['SQE', SquareEnd],
+    ['CIRCLESTART', CircleStart],
+    ['CIRCLEEND', CircleEnd],
+    ['DOUBLECIRCLESTART', DoubleCircleStart],
+    ['DOUBLECIRCLEEND', DoubleCircleEnd],
     ['PS', PS],
     ['PE', PE],
-    ['HexagonStart', HexagonStart],
-    ['HexagonEnd', HexagonEnd],
-    ['DiamondStart', DiamondStart],
-    ['DiamondEnd', DiamondEnd],
+    ['HEXSTART', HexagonStart],
+    ['HEXEND', HexagonEnd],
+    ['DIAMOND_START', DiamondStart],
+    ['DIAMOND_STOP', DiamondEnd],
 
     // String tokens
     ['StringStart', StringStart],
@@ -1051,12 +1053,12 @@ function initializeTokenTypeMap() {
     ['QuotedString', QuotedString],
 
     // Text tokens
-    ['TextContent', TextContent],
-    ['Pipe', Pipe],
+    ['textToken', TextContent],
+    ['PIPE', Pipe],
     ['PipeEnd', PipeEnd],
 
     // Punctuation
-    ['Ampersand', Ampersand],
+    ['AMP', Ampersand],
     ['Minus', Minus],
     ['Colon', Colon],
     ['Comma', Comma],
@@ -1125,12 +1127,12 @@ const Newline = createToken({
 });
 
 const Semicolon = createToken({
-  name: 'Semicolon',
+  name: 'SEMI',
   pattern: /;/,
 });
 
 const Space = createToken({
-  name: 'Space',
+  name: 'SPACE',
   pattern: /\s/,
 });
 
@@ -1149,10 +1151,10 @@ const EOF = createToken({
 // Avoids conflicts with link tokens by using negative lookahead for link patterns
 // Handles compound cases like &node, -node, vnode where special chars are followed by word chars // cspell:disable-line
 // Complex pattern to handle all edge cases including punctuation at start/end
-// Includes : and , characters to match JISON behavior
+// Includes : and , characters to match JISON behavior, but excludes ::: to avoid conflicts with StyleSeparator
 const NODE_STRING = createToken({
   name: 'NODE_STRING',
-  pattern: /([A-Za-z0-9!"#$%&'*+.`?\\_/:,]|-(?=[^>.-])|=(?!=))+/,
+  pattern: /([A-Za-z0-9!"#$%&'*+.`?\\_/,]|:(?!::)|-(?=[^>.-])|=(?!=))+/,
 });
 
 // ============================================================================
@@ -1160,74 +1162,80 @@ const NODE_STRING = createToken({
 // ============================================================================
 
 const Graph = createToken({
-  name: 'Graph',
+  name: 'GRAPH',
   pattern: /graph|flowchart|flowchart-elk/i,
   longer_alt: NODE_STRING,
 });
 
 const Subgraph = createToken({
-  name: 'Subgraph',
+  name: 'subgraph',
   pattern: /subgraph/i,
   longer_alt: NODE_STRING,
 });
 
 const End = createToken({
-  name: 'End',
+  name: 'end',
   pattern: /end/i,
   longer_alt: NODE_STRING,
 });
 
 const Style = createToken({
-  name: 'Style',
+  name: 'STYLE',
   pattern: /style/i,
   longer_alt: NODE_STRING,
 });
 
 const LinkStyle = createToken({
-  name: 'LinkStyle',
+  name: 'LINKSTYLE',
   pattern: /linkstyle/i,
   longer_alt: NODE_STRING,
 });
 
 const ClassDef = createToken({
-  name: 'ClassDef',
+  name: 'CLASSDEF',
   pattern: /classdef/i,
   longer_alt: NODE_STRING,
 });
 
 const Class = createToken({
-  name: 'Class',
+  name: 'CLASS',
   pattern: /class/i,
   longer_alt: NODE_STRING,
 });
 
 const Click = createToken({
-  name: 'Click',
+  name: 'CLICK',
   pattern: /click/i,
   longer_alt: NODE_STRING,
 });
 
 const Href = createToken({
-  name: 'Href',
+  name: 'HREF',
   pattern: /href/i,
   longer_alt: NODE_STRING,
 });
 
 const Callback = createToken({
-  name: 'Callback',
+  name: 'CALLBACKNAME',
   pattern: /callback/i,
   longer_alt: NODE_STRING,
 });
 
 const Call = createToken({
-  name: 'Call',
+  name: 'CALLBACKNAME',
   pattern: /call/i,
   longer_alt: NODE_STRING,
 });
 
 const Default = createToken({
-  name: 'Default',
+  name: 'DEFAULT',
   pattern: /default/i,
+  longer_alt: NODE_STRING,
+});
+
+const Interpolate = createToken({
+  name: 'INTERPOLATE',
+  pattern: /interpolate/i,
   longer_alt: NODE_STRING,
 });
 
@@ -1235,8 +1243,14 @@ const Default = createToken({
 // DIRECTION TOKENS (JISON lines 127-137)
 // ============================================================================
 
+const Direction = createToken({
+  name: 'Direction',
+  pattern: /direction/,
+  longer_alt: NODE_STRING,
+});
+
 const DirectionValue = createToken({
-  name: 'DirectionValue',
+  name: 'DIR',
   pattern: /LR|RL|TB|BT|TD|BR|<|>|\^|v/,
   longer_alt: NODE_STRING,
 });
@@ -1337,7 +1351,7 @@ const START_DOTTED_LINK = createToken({
 
 // Mode-switching tokens for shapes
 const SquareStart = createToken({
-  name: 'SquareStart',
+  name: 'SQS',
   pattern: /\[/,
   push_mode: 'text_mode',
 });
@@ -1350,27 +1364,93 @@ const PS = createToken({
 
 // Circle and double circle tokens (must come before PS)
 const DoubleCircleStart = createToken({
-  name: 'DoubleCircleStart',
+  name: 'DOUBLECIRCLESTART',
   pattern: /\({3}/,
   push_mode: 'text_mode',
 });
 
 const CircleStart = createToken({
-  name: 'CircleStart',
+  name: 'CIRCLESTART',
   pattern: /\(\(/,
   push_mode: 'text_mode',
 });
 
 // Hexagon tokens
 const HexagonStart = createToken({
-  name: 'HexagonStart',
+  name: 'HEXSTART',
   pattern: /{{/,
   push_mode: 'text_mode',
 });
 
 const DiamondStart = createToken({
-  name: 'DiamondStart',
+  name: 'DIAMOND_START',
   pattern: /{/,
+  push_mode: 'text_mode',
+});
+
+// Subroutine tokens
+const SubroutineStart = createToken({
+  name: 'SUBROUTINESTART',
+  pattern: /\[\[/,
+  push_mode: 'text_mode',
+});
+
+// Trapezoid tokens
+const TrapezoidStart = createToken({
+  name: 'TRAPSTART',
+  pattern: /\[\//,
+  push_mode: 'text_mode',
+});
+
+// Inverted trapezoid tokens
+const InvTrapezoidStart = createToken({
+  name: 'INVTRAPSTART',
+  pattern: /\[\\/,
+  push_mode: 'text_mode',
+});
+
+// Lean right tokens
+const LeanRightStart = createToken({
+  name: 'LeanRightStart',
+  pattern: /\[\/\//,
+  push_mode: 'text_mode',
+});
+
+// Note: Lean left uses InvTrapezoidStart ([\) and TrapezoidEnd (\]) tokens
+// The distinction between lean_left and inv_trapezoid is made in the parser
+
+// Odd vertex tokens
+const OddStart = createToken({
+  name: 'OddStart',
+  pattern: />/,
+  push_mode: 'text_mode',
+});
+
+// Rect tokens
+const RectStart = createToken({
+  name: 'RectStart',
+  pattern: /\[\|/,
+  push_mode: 'rectText_mode',
+});
+
+// Stadium tokens
+const StadiumStart = createToken({
+  name: 'StadiumStart',
+  pattern: /\(\[/,
+  push_mode: 'text_mode',
+});
+
+// Ellipse tokens
+const EllipseStart = createToken({
+  name: 'EllipseStart',
+  pattern: /\(-/,
+  push_mode: 'text_mode',
+});
+
+// Cylinder tokens
+const CylinderStart = createToken({
+  name: 'CylinderStart',
+  pattern: /\[\(/,
   push_mode: 'text_mode',
 });
 
@@ -1390,14 +1470,20 @@ const Comma = createToken({
   longer_alt: NODE_STRING,
 });
 
+// Style separator for direct class application (:::)
+const StyleSeparator = createToken({
+  name: 'StyleSeparator',
+  pattern: /:::/,
+});
+
 const Pipe = createToken({
-  name: 'Pipe',
+  name: 'PIPE',
   pattern: /\|/,
   push_mode: 'text_mode',
 });
 
 const Ampersand = createToken({
-  name: 'Ampersand',
+  name: 'AMP',
   pattern: /&/,
   longer_alt: NODE_STRING,
 });
@@ -1502,8 +1588,19 @@ const MarkdownStringEnd = createToken({
 
 // Tokens for text mode (JISON lines 272-283)
 const TextContent = createToken({
-  name: 'TextContent',
-  pattern: /[^"()[\]{|}]+/,
+  name: 'textToken',
+  pattern: /(?:[^"()[\]{|}\\/-]|-(?!\))|\/(?!\])|\\(?!\]))+/,
+});
+
+// Rect text content - allows | characters in text
+const RectTextContent = createToken({
+  name: 'RectTextContent',
+  pattern: /(?:[^"()[\]{}\\/-]|-(?!\))|\/(?!\])|\\(?!\])|\|(?!\]))+/,
+});
+
+const BackslashInText = createToken({
+  name: 'BackslashInText',
+  pattern: /\\/,
 });
 
 const QuotedString = createToken({
@@ -1512,7 +1609,7 @@ const QuotedString = createToken({
 });
 
 const SquareEnd = createToken({
-  name: 'SquareEnd',
+  name: 'SQE',
   pattern: /]/,
   pop_mode: true,
 });
@@ -1525,27 +1622,85 @@ const PE = createToken({
 
 // Circle and double circle end tokens (must come before PE)
 const DoubleCircleEnd = createToken({
-  name: 'DoubleCircleEnd',
+  name: 'DOUBLECIRCLEEND',
   pattern: /\){3}/,
   pop_mode: true,
 });
 
 const CircleEnd = createToken({
-  name: 'CircleEnd',
+  name: 'CIRCLEEND',
   pattern: /\)\)/,
   pop_mode: true,
 });
 
 // Hexagon end token
 const HexagonEnd = createToken({
-  name: 'HexagonEnd',
+  name: 'HEXEND',
   pattern: /}}/,
   pop_mode: true,
 });
 
 const DiamondEnd = createToken({
-  name: 'DiamondEnd',
+  name: 'DIAMOND_STOP',
   pattern: /}/,
+  pop_mode: true,
+});
+
+// Subroutine end token
+const SubroutineEnd = createToken({
+  name: 'SubroutineEnd',
+  pattern: /\]\]/,
+  pop_mode: true,
+});
+
+// Trapezoid end token
+const TrapezoidEnd = createToken({
+  name: 'TrapezoidEnd',
+  pattern: /\\\]/,
+  pop_mode: true,
+});
+
+// Inverted trapezoid end token
+const InvTrapezoidEnd = createToken({
+  name: 'InvTrapezoidEnd',
+  pattern: /\/\]/,
+  pop_mode: true,
+});
+
+// Lean right end token
+const LeanRightEnd = createToken({
+  name: 'LeanRightEnd',
+  pattern: /\\\\\]/,
+  pop_mode: true,
+});
+
+// Note: Lean left end uses TrapezoidEnd (\]) token
+// The distinction between lean_left and trapezoid is made in the parser
+
+// Note: Rect shapes use SquareEnd (]) token
+// The distinction between square and rect is made in the parser based on start token
+
+// Note: Odd shapes use SquareEnd (]) token
+// The distinction between square, rect, and odd is made in the parser based on start token
+
+// Stadium end token
+const StadiumEnd = createToken({
+  name: 'StadiumEnd',
+  pattern: /\]\)/,
+  pop_mode: true,
+});
+
+// Ellipse end token
+const EllipseEnd = createToken({
+  name: 'EllipseEnd',
+  pattern: /-\)/,
+  pop_mode: true,
+});
+
+// Cylinder end token
+const CylinderEnd = createToken({
+  name: 'CylinderEnd',
+  pattern: /\)\]/,
   pop_mode: true,
 });
 
@@ -1633,6 +1788,8 @@ const multiModeLexerDefinition = {
       Callback,
       Call,
       Default,
+      Interpolate,
+      Direction,
 
       // Links (order matters for precedence - must come before DirectionValue)
       // Full patterns must come before partial patterns to avoid conflicts
@@ -1643,7 +1800,10 @@ const multiModeLexerDefinition = {
       START_DOTTED_LINK,
       START_LINK,
 
-      // Direction values (must come after LINK tokens)
+      // Odd shape start (must come before DirectionValue to avoid conflicts)
+      OddStart,
+
+      // Direction values (must come after LINK tokens and OddStart)
       DirectionValue,
 
       // String starts (QuotedString must come before StringStart to avoid conflicts)
@@ -1655,6 +1815,14 @@ const multiModeLexerDefinition = {
       ShapeDataStart,
 
       // Shape starts (order matters - longer patterns first)
+      LeanRightStart,
+      SubroutineStart,
+      TrapezoidStart,
+      InvTrapezoidStart,
+      StadiumStart,
+      EllipseStart,
+      CylinderStart,
+      RectStart,
       SquareStart,
       DoubleCircleStart,
       CircleStart,
@@ -1666,12 +1834,15 @@ const multiModeLexerDefinition = {
       Pipe,
       Ampersand,
       Minus,
+      StyleSeparator, // Must come before Colon to avoid conflicts (:::)
       Colon,
       Comma,
 
-      // Node strings and numbers (must come after punctuation)
-      NODE_STRING,
+      // Numbers must come before NODE_STRING to avoid being captured by it
       NumberToken,
+
+      // Node strings (must come after punctuation and numbers)
+      NODE_STRING,
 
       // Structural tokens
       Newline,
@@ -1699,6 +1870,14 @@ const multiModeLexerDefinition = {
     text_mode: [
       WhiteSpace,
       Comment,
+      // Shape end tokens must come first to have priority
+      EllipseEnd, // -) pattern must come before TextContent
+      LeanRightEnd,
+      SubroutineEnd,
+      TrapezoidEnd,
+      InvTrapezoidEnd,
+      StadiumEnd,
+      CylinderEnd,
       SquareEnd,
       DoubleCircleEnd,
       CircleEnd,
@@ -1707,6 +1886,7 @@ const multiModeLexerDefinition = {
       DiamondEnd,
       QuotedString,
       PipeEnd, // Pipe that pops back to initial mode
+      BackslashInText,
       TextContent,
     ],
 
@@ -1731,6 +1911,16 @@ const multiModeLexerDefinition = {
       EdgeTextPipe,
       QuotedString,
       EdgeTextContent,
+    ],
+
+    // rectText mode - for rect shapes that allow | in text
+    rectText_mode: [
+      WhiteSpace,
+      Comment,
+      // Shape end tokens must come first to have priority
+      SquareEnd, // ] pattern for rect shapes
+      BackslashInText,
+      RectTextContent,
     ],
 
     // shapeData mode (JISON lines 57-64)
@@ -1787,6 +1977,21 @@ export const allTokens = [
   START_DOTTED_LINK,
 
   // Shapes (must come before NODE_STRING to avoid conflicts)
+  LeanRightStart,
+  LeanRightEnd,
+  SubroutineStart,
+  SubroutineEnd,
+  TrapezoidStart,
+  TrapezoidEnd,
+  InvTrapezoidStart,
+  InvTrapezoidEnd,
+  StadiumStart,
+  StadiumEnd,
+  EllipseStart,
+  EllipseEnd,
+  CylinderStart,
+  CylinderEnd,
+  RectStart,
   SquareStart,
   SquareEnd,
   DoubleCircleStart,
@@ -1799,10 +2004,13 @@ export const allTokens = [
   HexagonEnd,
   DiamondStart,
   DiamondEnd,
+  OddStart,
+
+  // Numbers must come before NODE_STRING to avoid being captured by it
+  NumberToken,
 
   // Node strings and identifiers
   NODE_STRING,
-  NumberToken,
 
   // Keywords
   Graph,
@@ -1816,8 +2024,10 @@ export const allTokens = [
   Href,
   Call,
   Default,
+  Interpolate,
 
   // Direction
+  Direction,
   DirectionValue,
 
   // Accessibility
@@ -1852,9 +2062,12 @@ export const allTokens = [
 
   // Text content
   TextContent,
+  RectTextContent,
+  BackslashInText,
   QuotedString,
 
   // Basic punctuation
+  StyleSeparator, // Must come before Colon to avoid conflicts (:::)
   Colon,
   Comma,
   Pipe,
@@ -1881,9 +2094,11 @@ export {
   Space,
   EOF,
 
+  // Numbers must come before NODE_STRING to avoid being captured by it
+  NumberToken,
+
   // Node strings and identifiers
   NODE_STRING,
-  NumberToken,
 
   // Keywords
   Graph,
@@ -1898,8 +2113,10 @@ export {
   Callback,
   Call,
   Default,
+  Interpolate,
 
   // Direction
+  Direction,
   DirectionValue,
 
   // Accessibility
@@ -1941,6 +2158,21 @@ export {
   EdgeTextEnd,
 
   // Shapes
+  LeanRightStart,
+  LeanRightEnd,
+  SubroutineStart,
+  SubroutineEnd,
+  TrapezoidStart,
+  TrapezoidEnd,
+  InvTrapezoidStart,
+  InvTrapezoidEnd,
+  StadiumStart,
+  StadiumEnd,
+  EllipseStart,
+  EllipseEnd,
+  CylinderStart,
+  CylinderEnd,
+  RectStart,
   SquareStart,
   SquareEnd,
   DoubleCircleStart,
@@ -1953,12 +2185,16 @@ export {
   HexagonEnd,
   DiamondStart,
   DiamondEnd,
+  OddStart,
 
   // Text content
   TextContent,
+  RectTextContent,
+  BackslashInText,
   QuotedString,
 
   // Basic punctuation
+  StyleSeparator, // Must come before Colon to avoid conflicts (:::)
   Colon,
   Comma,
   Pipe,

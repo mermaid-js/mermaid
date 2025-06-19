@@ -23,14 +23,17 @@ export interface FlowDb {
     props?: any
   ) => void;
   addLink: (start: string | string[], end: string | string[], linkData: any) => void;
+  updateLink: (positions: ('default' | number)[], style: string[]) => void;
+  updateLinkInterpolate: (positions: ('default' | number)[], interpolate: string) => void;
   addClass: (id: string, style: string) => void;
   setClass: (ids: string | string[], className: string) => void;
   setClickEvent: (id: string, functionName: string, functionArgs?: string) => void;
   setLink: (id: string, link: string, target?: string) => void;
-  addSubGraph: (id: string, list: any[], title: string) => string;
+  addSubGraph: (id: any, list: any[], title: any) => string;
   getVertices: () => Record<string, any>;
   getEdges: () => any[];
   getClasses: () => Record<string, string>;
+  getSubGraphs: () => any[];
   clear: () => void;
   setAccTitle: (title: string) => void;
   setAccDescription: (description: string) => void;
@@ -113,6 +116,40 @@ class FlowchartParserAdapter {
         });
       },
 
+      updateLink: (positions: ('default' | number)[], style: string[]) => {
+        positions.forEach((pos) => {
+          if (typeof pos === 'number' && pos >= state.edges.length) {
+            throw new Error(
+              `The index ${pos} for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and ${
+                state.edges.length - 1
+              }. (Help: Ensure that the index is within the range of existing edges.)`
+            );
+          }
+          if (pos === 'default') {
+            (state.edges as any).defaultStyle = style;
+          } else {
+            state.edges[pos].style = style;
+            // if edges[pos].style does have fill not set, set it to none
+            if (
+              (state.edges[pos]?.style?.length ?? 0) > 0 &&
+              !state.edges[pos]?.style?.some((s: string) => s?.startsWith('fill'))
+            ) {
+              state.edges[pos]?.style?.push('fill:none');
+            }
+          }
+        });
+      },
+
+      updateLinkInterpolate: (positions: ('default' | number)[], interpolate: string) => {
+        positions.forEach((pos) => {
+          if (pos === 'default') {
+            (state.edges as any).defaultInterpolate = interpolate;
+          } else {
+            state.edges[pos].interpolate = interpolate;
+          }
+        });
+      },
+
       addClass: (id: string, style: string) => {
         state.classes[id] = style;
       },
@@ -143,19 +180,25 @@ class FlowchartParserAdapter {
         });
       },
 
-      addSubGraph: (id: string, list: any[], title: string) => {
-        const sgId = id || `subGraph${state.subCount++}`;
-        state.subGraphs.push({
+      addSubGraph: (id: any, list: any[], title: any) => {
+        // Handle both string and object formats for compatibility
+        const idStr = typeof id === 'string' ? id : id?.text || '';
+        const titleStr = typeof title === 'string' ? title : title?.text || '';
+
+        const sgId = idStr || `subGraph${state.subCount++}`;
+        const subgraph = {
           id: sgId,
           nodes: list,
-          title: title || sgId,
-        });
+          title: titleStr || sgId,
+        };
+        state.subGraphs.push(subgraph);
         return sgId;
       },
 
       getVertices: () => state.vertices,
       getEdges: () => state.edges,
       getClasses: () => state.classes,
+      getSubGraphs: () => state.subGraphs,
 
       clear: () => {
         state.vertices.clear();
@@ -196,6 +239,8 @@ class FlowchartParserAdapter {
 
     // Parse
     this.parser.input = lexResult.tokens;
+    // Clear any previous parser errors
+    this.parser.errors = [];
     const cst = this.parser.flowchart();
 
     if (this.parser.errors.length > 0) {
@@ -216,7 +261,7 @@ class FlowchartParserAdapter {
     this.yy.subGraphs.push(...ast.subGraphs);
     this.yy.direction = ast.direction;
     Object.assign(this.yy.tooltips, ast.tooltips);
-    this.yy.clickEvents.push(...ast.clickEvents);
+    // Click events are handled separately in the main parse method
 
     return ast;
   }
@@ -242,6 +287,9 @@ const flow = {
     targetYY.clear();
     parserInstance.visitor.clear();
 
+    // Set FlowDB instance in visitor for direct integration
+    parserInstance.visitor.setFlowDb(targetYY);
+
     // Tokenize
     const lexResult = parserInstance.lexer.tokenize(text);
 
@@ -254,6 +302,8 @@ const flow = {
 
     // Parse
     parserInstance.parser.input = lexResult.tokens;
+    // Clear any previous parser errors
+    parserInstance.parser.errors = [];
     const cst = parserInstance.parser.flowchart();
 
     if (parserInstance.parser.errors.length > 0) {
@@ -265,26 +315,30 @@ const flow = {
     const ast = parserInstance.visitor.visit(cst);
 
     // Update yy state with parsed data
-    // Convert plain object vertices to Map
-    Object.entries(ast.vertices).forEach(([id, vertex]) => {
-      // Use addVertex method if available, otherwise set directly
-      if (typeof targetYY.addVertex === 'function') {
-        // Create textObj structure expected by FlowDB
-        const textObj = vertex.text ? { text: vertex.text, type: 'text' } : undefined;
-        targetYY.addVertex(
-          id,
-          textObj,
-          vertex.type,
-          vertex.style || [],
-          vertex.classes || [],
-          vertex.dir,
-          vertex.props || {},
-          undefined // metadata
-        );
-      } else {
-        targetYY.vertices.set(id, vertex);
-      }
-    });
+    // Only process vertices if visitor didn't have FlowDB instance
+    // (if visitor had FlowDB, vertices were added directly during parsing)
+    if (!parserInstance.visitor.flowDb) {
+      // Convert plain object vertices to Map
+      Object.entries(ast.vertices).forEach(([id, vertex]) => {
+        // Use addVertex method if available, otherwise set directly
+        if (typeof targetYY.addVertex === 'function') {
+          // Create textObj structure expected by FlowDB
+          const textObj = vertex.text ? { text: vertex.text, type: 'text' } : undefined;
+          targetYY.addVertex(
+            id,
+            textObj,
+            vertex.type,
+            vertex.style || [],
+            vertex.classes || [],
+            vertex.dir,
+            vertex.props || {},
+            undefined // metadata
+          );
+        } else {
+          targetYY.vertices.set(id, vertex);
+        }
+      });
+    }
 
     // Add edges
     ast.edges.forEach((edge) => {
@@ -301,6 +355,18 @@ const flow = {
         targetYY.edges.push(edge);
       }
     });
+
+    // Apply linkStyles after edges have been added
+    if (ast.linkStyles) {
+      ast.linkStyles.forEach((linkStyle) => {
+        if (linkStyle.interpolate && typeof targetYY.updateLinkInterpolate === 'function') {
+          targetYY.updateLinkInterpolate(linkStyle.positions, linkStyle.interpolate);
+        }
+        if (linkStyle.styles && typeof targetYY.updateLink === 'function') {
+          targetYY.updateLink(linkStyle.positions, linkStyle.styles);
+        }
+      });
+    }
 
     // Add classes
     Object.entries(ast.classes).forEach(([id, className]) => {
@@ -346,8 +412,6 @@ const flow = {
     ast.clickEvents.forEach((clickEvent) => {
       if (typeof targetYY.setClickEvent === 'function') {
         targetYY.setClickEvent(clickEvent.id, clickEvent.functionName, clickEvent.functionArgs);
-      } else if (targetYY.clickEvents) {
-        targetYY.clickEvents.push(clickEvent);
       }
     });
 
@@ -358,6 +422,9 @@ const flow = {
 // Mermaid expects these exports
 export const parser = parserInstance;
 export const yy = parserInstance.yy;
+
+// Add backward compatibility for JISON parser interface
+flow.parser = parserInstance;
 
 // Default export for modern imports
 export default flow;

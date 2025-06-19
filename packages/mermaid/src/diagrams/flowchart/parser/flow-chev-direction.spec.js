@@ -6,7 +6,7 @@ setConfig({
   securityLevel: 'strict',
 });
 
-describe('when parsing directions', function () {
+describe('when parsing directions with Chevrotain', function () {
   beforeEach(function () {
     flow.yy = new FlowDB();
     flow.yy.clear();

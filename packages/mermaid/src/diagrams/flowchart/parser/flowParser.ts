@@ -13,9 +13,16 @@ export class FlowchartParser extends CstParser {
 
   // Root rule
   public flowchart = this.RULE('flowchart', () => {
+    // Handle optional leading whitespace/newlines
+    this.MANY(() => {
+      this.OR([
+        { ALT: () => this.CONSUME(tokens.Newline) },
+        { ALT: () => this.CONSUME(tokens.WhiteSpace) },
+      ]);
+    });
     this.SUBRULE(this.graphDeclaration);
     // Handle statements and separators more flexibly
-    this.MANY(() => {
+    this.MANY2(() => {
       this.SUBRULE(this.statement);
       // Optional separator after statement
       this.OPTION(() => {
@@ -89,15 +96,12 @@ export class FlowchartParser extends CstParser {
       { ALT: () => this.SUBRULE(this.classStatement) },
       { ALT: () => this.SUBRULE(this.clickStatement) },
       { ALT: () => this.SUBRULE(this.subgraphStatement) },
-      // Direction statement only when DirectionValue is followed by separator
+      // Direction statement when Direction keyword is followed by DirectionValue
       {
         ALT: () => this.SUBRULE(this.directionStatement),
         GATE: () =>
-          this.LA(1).tokenType === tokens.DirectionValue &&
-          (this.LA(2).tokenType === tokens.Semicolon ||
-            this.LA(2).tokenType === tokens.Newline ||
-            this.LA(2).tokenType === tokens.WhiteSpace ||
-            this.LA(2) === undefined), // EOF
+          this.LA(1).tokenType === tokens.Direction &&
+          this.LA(2).tokenType === tokens.DirectionValue,
       },
       { ALT: () => this.SUBRULE(this.accStatement) }, // Re-enabled
     ]);
@@ -124,69 +128,175 @@ export class FlowchartParser extends CstParser {
   // Styled vertex
   private styledVertex = this.RULE('styledVertex', () => {
     this.SUBRULE(this.vertex);
-    // TODO: Add style separator support when implementing styling
+    // Support direct class application with ::: syntax
+    this.OPTION(() => {
+      this.CONSUME(tokens.StyleSeparator);
+      this.SUBRULE(this.className);
+    });
   });
 
   // Vertex - following JISON pattern
   private vertex = this.RULE('vertex', () => {
     this.OR([
-      // idString SQS text SQE
-      {
-        ALT: () => {
-          this.SUBRULE(this.nodeId);
-          this.CONSUME(tokens.SquareStart);
-          this.SUBRULE(this.nodeText);
-          this.CONSUME(tokens.SquareEnd);
-        },
-      },
-      // idString DoubleCircleStart text DoubleCircleEnd
-      {
-        ALT: () => {
-          this.SUBRULE2(this.nodeId);
-          this.CONSUME(tokens.DoubleCircleStart);
-          this.SUBRULE2(this.nodeText);
-          this.CONSUME(tokens.DoubleCircleEnd);
-        },
-      },
-      // idString CircleStart text CircleEnd
-      {
-        ALT: () => {
-          this.SUBRULE3(this.nodeId);
-          this.CONSUME(tokens.CircleStart);
-          this.SUBRULE3(this.nodeText);
-          this.CONSUME(tokens.CircleEnd);
-        },
-      },
-      // idString PS text PE
-      {
-        ALT: () => {
-          this.SUBRULE4(this.nodeId);
-          this.CONSUME(tokens.PS);
-          this.SUBRULE4(this.nodeText);
-          this.CONSUME(tokens.PE);
-        },
-      },
-      // idString HexagonStart text HexagonEnd
-      {
-        ALT: () => {
-          this.SUBRULE5(this.nodeId);
-          this.CONSUME(tokens.HexagonStart);
-          this.SUBRULE5(this.nodeText);
-          this.CONSUME(tokens.HexagonEnd);
-        },
-      },
-      // idString DIAMOND_START text DIAMOND_STOP
-      {
-        ALT: () => {
-          this.SUBRULE6(this.nodeId);
-          this.CONSUME(tokens.DiamondStart);
-          this.SUBRULE6(this.nodeText);
-          this.CONSUME(tokens.DiamondEnd);
-        },
-      },
-      // idString (plain node)
-      { ALT: () => this.SUBRULE7(this.nodeId) },
+      // Basic shapes (first 6)
+      { ALT: () => this.SUBRULE(this.vertexWithSquare) },
+      { ALT: () => this.SUBRULE(this.vertexWithDoubleCircle) },
+      { ALT: () => this.SUBRULE(this.vertexWithCircle) },
+      { ALT: () => this.SUBRULE(this.vertexWithRound) },
+      { ALT: () => this.SUBRULE(this.vertexWithHexagon) },
+      { ALT: () => this.SUBRULE(this.vertexWithDiamond) },
+      // Extended shapes (next 6)
+      { ALT: () => this.SUBRULE(this.vertexWithSubroutine) },
+      { ALT: () => this.SUBRULE(this.vertexWithTrapezoidVariant) },
+      { ALT: () => this.SUBRULE2(this.vertexWithStadium) },
+      { ALT: () => this.SUBRULE2(this.vertexWithEllipse) },
+      { ALT: () => this.SUBRULE2(this.vertexWithCylinder) },
+      // Node with data syntax
+      { ALT: () => this.SUBRULE(this.vertexWithNodeData) },
+      // Plain node
+      { ALT: () => this.SUBRULE(this.nodeId) },
     ]);
+  });
+
+  // Individual vertex shape rules
+  private vertexWithSquare = this.RULE('vertexWithSquare', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.SquareStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SquareEnd);
+  });
+
+  private vertexWithDoubleCircle = this.RULE('vertexWithDoubleCircle', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.DoubleCircleStart);
+    this.OPTION(() => {
+      this.SUBRULE(this.nodeText);
+    });
+    this.CONSUME(tokens.DoubleCircleEnd);
+  });
+
+  private vertexWithCircle = this.RULE('vertexWithCircle', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.CircleStart);
+    this.OPTION(() => {
+      this.SUBRULE(this.nodeText);
+    });
+    this.CONSUME(tokens.CircleEnd);
+  });
+
+  private vertexWithRound = this.RULE('vertexWithRound', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.PS);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.PE);
+  });
+
+  private vertexWithHexagon = this.RULE('vertexWithHexagon', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.HexagonStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.HexagonEnd);
+  });
+
+  private vertexWithDiamond = this.RULE('vertexWithDiamond', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.DiamondStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.DiamondEnd);
+  });
+
+  private vertexWithSubroutine = this.RULE('vertexWithSubroutine', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.SubroutineStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SubroutineEnd);
+  });
+
+  private vertexWithTrapezoidVariant = this.RULE('vertexWithTrapezoidVariant', () => {
+    this.SUBRULE(this.nodeId);
+    this.OR([
+      {
+        ALT: () => {
+          this.CONSUME(tokens.TrapezoidStart);
+          this.SUBRULE(this.nodeText);
+          this.CONSUME(tokens.TrapezoidEnd);
+        },
+      },
+      {
+        ALT: () => {
+          this.CONSUME(tokens.InvTrapezoidStart);
+          this.SUBRULE2(this.nodeText);
+          this.CONSUME(tokens.InvTrapezoidEnd);
+        },
+      },
+      {
+        ALT: () => {
+          this.CONSUME2(tokens.TrapezoidStart);
+          this.SUBRULE3(this.nodeText);
+          this.CONSUME2(tokens.InvTrapezoidEnd);
+        },
+      },
+      {
+        ALT: () => {
+          this.CONSUME2(tokens.InvTrapezoidStart);
+          this.SUBRULE4(this.nodeText);
+          this.CONSUME2(tokens.TrapezoidEnd);
+        },
+      },
+    ]);
+  });
+
+  private vertexWithStadium = this.RULE('vertexWithStadium', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.StadiumStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.StadiumEnd);
+  });
+
+  private vertexWithEllipse = this.RULE('vertexWithEllipse', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.EllipseStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.EllipseEnd);
+  });
+
+  private vertexWithCylinder = this.RULE('vertexWithCylinder', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.CylinderStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.CylinderEnd);
+  });
+
+  // Vertex with node data syntax (e.g., D@{ shape: rounded })
+  private vertexWithNodeData = this.RULE('vertexWithNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.SUBRULE(this.nodeData);
+  });
+
+  // Node data rule (handles @{ ... } syntax)
+  private nodeData = this.RULE('nodeData', () => {
+    this.CONSUME(tokens.ShapeDataStart);
+    this.SUBRULE(this.nodeDataContent);
+    this.CONSUME(tokens.ShapeDataEnd);
+  });
+
+  // Node data content (handles the content inside @{ ... })
+  private nodeDataContent = this.RULE('nodeDataContent', () => {
+    this.MANY(() => {
+      this.OR([
+        { ALT: () => this.CONSUME(tokens.ShapeDataContent) },
+        { ALT: () => this.SUBRULE(this.nodeDataString) },
+      ]);
+    });
+  });
+
+  // Node data string (handles quoted strings inside node data)
+  private nodeDataString = this.RULE('nodeDataString', () => {
+    this.CONSUME(tokens.ShapeDataStringStart);
+    this.MANY(() => {
+      this.CONSUME(tokens.ShapeDataStringContent);
+    });
+    this.CONSUME(tokens.ShapeDataStringEnd);
   });
 
   // Node definition (legacy)
@@ -221,9 +331,15 @@ export class FlowchartParser extends CstParser {
   // Node shape
   private nodeShape = this.RULE('nodeShape', () => {
     this.OR([
+      { ALT: () => this.SUBRULE(this.leanRightShape) },
+      { ALT: () => this.SUBRULE(this.subroutineShape) },
+      { ALT: () => this.SUBRULE(this.trapezoidShape) },
+      { ALT: () => this.SUBRULE(this.invTrapezoidShape) },
+      { ALT: () => this.SUBRULE(this.rectShape) },
       { ALT: () => this.SUBRULE(this.squareShape) },
       { ALT: () => this.SUBRULE(this.circleShape) },
       { ALT: () => this.SUBRULE(this.diamondShape) },
+      { ALT: () => this.SUBRULE(this.oddShape) },
     ]);
   });
 
@@ -246,10 +362,50 @@ export class FlowchartParser extends CstParser {
     this.CONSUME(tokens.DiamondEnd);
   });
 
+  private subroutineShape = this.RULE('subroutineShape', () => {
+    this.CONSUME(tokens.SubroutineStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SubroutineEnd);
+  });
+
+  private trapezoidShape = this.RULE('trapezoidShape', () => {
+    this.CONSUME(tokens.TrapezoidStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.TrapezoidEnd);
+  });
+
+  private invTrapezoidShape = this.RULE('invTrapezoidShape', () => {
+    this.CONSUME(tokens.InvTrapezoidStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.InvTrapezoidEnd);
+  });
+
+  private leanRightShape = this.RULE('leanRightShape', () => {
+    this.CONSUME(tokens.LeanRightStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.LeanRightEnd);
+  });
+
+  // Note: leanLeftShape is now handled by vertexWithTrapezoidVariant
+  // (InvTrapezoidStart + nodeText + TrapezoidEnd)
+
+  private rectShape = this.RULE('rectShape', () => {
+    this.CONSUME(tokens.RectStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SquareEnd);
+  });
+
+  private oddShape = this.RULE('oddShape', () => {
+    this.CONSUME(tokens.OddStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SquareEnd);
+  });
+
   // Node text
   private nodeText = this.RULE('nodeText', () => {
     this.OR([
       { ALT: () => this.CONSUME(tokens.TextContent) },
+      { ALT: () => this.CONSUME(tokens.RectTextContent) },
       { ALT: () => this.CONSUME(tokens.NODE_STRING) },
       { ALT: () => this.CONSUME(tokens.QuotedString) },
       { ALT: () => this.CONSUME(tokens.NumberToken) },
@@ -356,11 +512,31 @@ export class FlowchartParser extends CstParser {
     this.SUBRULE(this.statementSeparator);
   });
 
-  // Link style statement
+  // Link style statement - unambiguous structure
   private linkStyleStatement = this.RULE('linkStyleStatement', () => {
     this.CONSUME(tokens.LinkStyle);
-    this.SUBRULE(this.linkIndexList);
-    this.SUBRULE(this.styleList);
+
+    // First, determine positions (DEFAULT or numberList)
+    this.OR([
+      {
+        ALT: () => {
+          this.CONSUME(tokens.Default);
+        },
+      },
+      { ALT: () => this.SUBRULE(this.numberList) },
+    ]);
+
+    // Then handle optional INTERPOLATE + alphaNum
+    this.OPTION(() => {
+      this.CONSUME(tokens.Interpolate);
+      this.SUBRULE(this.alphaNum);
+    });
+
+    // Then handle optional styleList
+    this.OPTION2(() => {
+      this.SUBRULE2(this.styleList);
+    });
+
     this.SUBRULE(this.statementSeparator);
   });
 
@@ -483,9 +659,11 @@ export class FlowchartParser extends CstParser {
 
   // Direction statement
   private directionStatement = this.RULE('directionStatement', () => {
-    // TODO: Add direction keyword token
+    this.CONSUME(tokens.Direction);
     this.CONSUME(tokens.DirectionValue);
-    this.SUBRULE(this.statementSeparator);
+    this.OPTION(() => {
+      this.SUBRULE(this.statementSeparator);
+    });
   });
 
   // Helper rules
@@ -495,13 +673,26 @@ export class FlowchartParser extends CstParser {
 
   private subgraphId = this.RULE('subgraphId', () => {
     this.OR([
-      { ALT: () => this.CONSUME(tokens.NODE_STRING) },
       { ALT: () => this.CONSUME(tokens.QuotedString) },
       {
         ALT: () => {
           this.CONSUME(tokens.StringStart);
           this.CONSUME(tokens.StringContent);
           this.CONSUME(tokens.StringEnd);
+        },
+      },
+      // Handle single or multi-word subgraph titles (including keywords)
+      {
+        ALT: () => {
+          this.AT_LEAST_ONE(() => {
+            this.OR2([
+              { ALT: () => this.CONSUME(tokens.NODE_STRING) },
+              { ALT: () => this.CONSUME(tokens.NumberToken) },
+              { ALT: () => this.CONSUME(tokens.Style) }, // Allow 'style' keyword in titles
+              { ALT: () => this.CONSUME(tokens.Class) }, // Allow 'class' keyword in titles
+              { ALT: () => this.CONSUME(tokens.Click) }, // Allow 'click' keyword in titles
+            ]);
+          });
         },
       },
     ]);
@@ -517,17 +708,37 @@ export class FlowchartParser extends CstParser {
 
   private linkIndexList = this.RULE('linkIndexList', () => {
     this.OR([
-      { ALT: () => this.CONSUME(tokens.NODE_STRING) }, // "default"
+      { ALT: () => this.CONSUME(tokens.Default) },
       { ALT: () => this.SUBRULE(this.numberList) },
     ]);
   });
 
   private numberList = this.RULE('numberList', () => {
-    this.CONSUME(tokens.NumberToken);
-    this.MANY(() => {
-      this.CONSUME(tokens.Comma);
-      this.CONSUME2(tokens.NumberToken);
-    });
+    this.OR([
+      // Handle properly tokenized numbers: NumberToken, Comma, NumberToken, ...
+      {
+        ALT: () => {
+          this.CONSUME(tokens.NumberToken);
+          this.MANY(() => {
+            this.CONSUME(tokens.Comma);
+            this.CONSUME2(tokens.NumberToken);
+          });
+        },
+      },
+      // Handle comma-separated numbers that got tokenized as NODE_STRING (e.g., "0,1")
+      {
+        ALT: () => {
+          this.CONSUME(tokens.NODE_STRING);
+        },
+      },
+    ]);
+  });
+
+  private alphaNum = this.RULE('alphaNum', () => {
+    this.OR([
+      { ALT: () => this.CONSUME(tokens.NODE_STRING) },
+      { ALT: () => this.CONSUME(tokens.NumberToken) },
+    ]);
   });
 
   private styleList = this.RULE('styleList', () => {
@@ -539,13 +750,18 @@ export class FlowchartParser extends CstParser {
   });
 
   private style = this.RULE('style', () => {
-    this.AT_LEAST_ONE(() => {
+    // Collect all tokens that can be part of a CSS style value
+    // This handles cases like "border:1px solid red" which gets tokenized as separate tokens
+    // Use MANY instead of AT_LEAST_ONE to allow single token styles
+    this.CONSUME(tokens.NODE_STRING); // First token is required (usually the main style like "stroke-width:1px")
+    this.MANY(() => {
       this.OR([
-        { ALT: () => this.CONSUME(tokens.NODE_STRING) },
+        { ALT: () => this.CONSUME2(tokens.NODE_STRING) },
         { ALT: () => this.CONSUME(tokens.NumberToken) },
         { ALT: () => this.CONSUME(tokens.Colon) },
-        { ALT: () => this.CONSUME(tokens.Semicolon) },
         { ALT: () => this.CONSUME(tokens.Minus) },
+        { ALT: () => this.CONSUME(tokens.DirectionValue) }, // For values like 'solid'
+        // Don't consume Semicolon as it's a statement separator
       ]);
     });
   });
@@ -582,3 +798,6 @@ export class FlowchartParser extends CstParser {
     ]);
   });
 }
+
+// Export the adapter for backward compatibility
+export { default as default } from './flowParserAdapter.js';

@@ -1,0 +1,119 @@
+import { FlowDB } from '../flowDb.js';
+import flow from './flowParserAdapter.js';
+import { setConfig } from '../../../config.js';
+
+setConfig({
+  securityLevel: 'strict',
+});
+
+describe('[Chevrotain Lines] when parsing', () => {
+  beforeEach(function () {
+    flow.yy = new FlowDB();
+    flow.yy.clear();
+  });
+
+  it('should handle line interpolation default definitions', function () {
+    const res = flow.parse('graph TD\n' + 'A-->B\n' + 'linkStyle default interpolate basis');
+
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
+
+    expect(edges.defaultInterpolate).toBe('basis');
+  });
+
+  it('should handle line interpolation numbered definitions', function () {
+    const res = flow.parse(
+      'graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0 interpolate basis\n' +
+        'linkStyle 1 interpolate cardinal'
+    );
+
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
+
+    expect(edges[0].interpolate).toBe('basis');
+    expect(edges[1].interpolate).toBe('cardinal');
+  });
+
+  it('should handle line interpolation multi-numbered definitions', function () {
+    const res = flow.parse(
+      'graph TD\n' + 'A-->B\n' + 'A-->C\n' + 'linkStyle 0,1 interpolate basis'
+    );
+
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
+
+    expect(edges[0].interpolate).toBe('basis');
+    expect(edges[1].interpolate).toBe('basis');
+  });
+
+  it('should handle line interpolation default with style', function () {
+    const res = flow.parse(
+      'graph TD\n' + 'A-->B\n' + 'linkStyle default interpolate basis stroke-width:1px;'
+    );
+
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
+
+    expect(edges.defaultInterpolate).toBe('basis');
+  });
+
+  it('should handle line interpolation numbered with style', function () {
+    const res = flow.parse(
+      'graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0 interpolate basis stroke-width:1px;\n' +
+        'linkStyle 1 interpolate cardinal stroke-width:1px;'
+    );
+
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
+
+    expect(edges[0].interpolate).toBe('basis');
+    expect(edges[1].interpolate).toBe('cardinal');
+  });
+
+  it('should handle line interpolation multi-numbered with style', function () {
+    const res = flow.parse(
+      'graph TD\n' + 'A-->B\n' + 'A-->C\n' + 'linkStyle 0,1 interpolate basis stroke-width:1px;'
+    );
+
+    const vert = flow.yy.getVertices();
+    const edges = flow.yy.getEdges();
+
+    expect(edges[0].interpolate).toBe('basis');
+    expect(edges[1].interpolate).toBe('basis');
+  });
+
+  describe('it should handle new line type notation', function () {
+    it('should handle regular lines', function () {
+      const res = flow.parse('graph TD;A-->B;');
+
+      const vert = flow.yy.getVertices();
+      const edges = flow.yy.getEdges();
+
+      expect(edges[0].stroke).toBe('normal');
+    });
+
+    it('should handle dotted lines', function () {
+      const res = flow.parse('graph TD;A-.->B;');
+
+      const vert = flow.yy.getVertices();
+      const edges = flow.yy.getEdges();
+
+      expect(edges[0].stroke).toBe('dotted');
+    });
+
+    it('should handle dotted lines', function () {
+      const res = flow.parse('graph TD;A==>B;');
+
+      const vert = flow.yy.getVertices();
+      const edges = flow.yy.getEdges();
+
+      expect(edges[0].stroke).toBe('thick');
+    });
+  });
+});

@@ -66,6 +66,7 @@ export class FlowDB implements DiagramDB {
     this.updateLink = this.updateLink.bind(this);
     this.addClass = this.addClass.bind(this);
     this.setClass = this.setClass.bind(this);
+    this.setStyle = this.setStyle.bind(this);
     this.destructLink = this.destructLink.bind(this);
     this.setClickEvent = this.setClickEvent.bind(this);
     this.setTooltip = this.setTooltip.bind(this);
@@ -444,6 +445,35 @@ You have to call mermaid.initialize.`
     }
   }
 
+  /**
+   * Called by parser when a style statement is found. Adds styles to a vertex.
+   *
+   * @param id - Vertex id
+   * @param styles - Array of style strings
+   */
+  public setStyle(id: string, styles: string[]) {
+    let vertex = this.vertices.get(id);
+    if (!vertex) {
+      // Create vertex if it doesn't exist
+      vertex = {
+        id,
+        domId: this.version === 'gen-1' ? 'flowchart-' + id + '-' + this.vertexCounter : id,
+        styles: [],
+        classes: [],
+        text: id,
+        labelType: 'text',
+        props: {},
+        parentId: undefined,
+      };
+      this.vertices.set(id, vertex);
+      this.vertexCounter++;
+    }
+
+    // Add styles to the vertex
+    const styleArray = Array.isArray(styles) ? styles : [styles];
+    vertex.styles.push(...styleArray);
+  }
+
   public setTooltip(ids: string, tooltip: string) {
     if (tooltip === undefined) {
       return;
@@ -687,7 +717,7 @@ You have to call mermaid.initialize.`
       }
     }
 
-    id = id ?? 'subGraph' + this.subCount;
+    id = id || 'subGraph' + this.subCount;
     title = title || '';
     title = this.sanitizeText(title);
     this.subCount = this.subCount + 1;
