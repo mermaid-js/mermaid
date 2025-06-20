@@ -138,14 +138,14 @@ jobs:
           SPLIT_FILE: 'cypress/timings.json'
           VITEST_COVERAGE: true
 
-      - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
-        # Run step only pushes to develop and pull_requests
-        if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')}}
-        with:
-          files: coverage/cypress/lcov.info
-          flags: e2e
-          name: mermaid-codecov
-          fail_ci_if_error: false
-          verbose: true
-          token: 6845cc80-77ee-4e17-85a1-026cd95e0766
+      # - name: Upload Coverage to Codecov
+      #   uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
+      #   # Run step only pushes to develop and pull_requests
+      #   if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')}}
+      #   with:
+      #     files: coverage/cypress/lcov.info
+      #     flags: e2e
+      #     name: mermaid-codecov
+      #     fail_ci_if_error: false
+      #     verbose: true
+      #     token: 6845cc80-77ee-4e17-85a1-026cd95e0766
