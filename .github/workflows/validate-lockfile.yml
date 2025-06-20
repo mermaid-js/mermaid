@@ -33,8 +33,8 @@ jobs:
 
       - name: Ensure pnpm-lock.yaml changes only with package.json
         run: |
-          git fetch origin ${{ github.base_ref }}
-          git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD > changed_files.txt
           if grep -q '^pnpm-lock.yaml$' changed_files.txt && ! grep -q 'package.json' changed_files.txt; then
             echo "❌ pnpm-lock.yaml was changed without any package.json"
             exit 1
