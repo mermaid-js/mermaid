@@ -219,3 +219,38 @@ To run a specific test in a test file:
 
 Example:
 `vitest packages/mermaid/src/diagrams/flowchart/parser/flow-chev-singlenode.spec.js -t "diamond node with html in it (SN3)" --run`
+
+# Current Status of Chevrotain Parser Migration
+
+## ✅ COMPLETED TASKS:
+- **Interaction parsing**: Successfully fixed callback functions with multiple comma-separated arguments
+- **Tooltip handling**: Fixed tooltip support for both href and callback syntax patterns
+- **Test coverage**: All 13 interaction tests passing, 24 style tests passing, 2 node data tests passing
+
+## ❌ CRITICAL ISSUES REMAINING:
+- **Edge creation completely broken**: Most tests show `edges.length` is 0 when should be non-zero
+- **Core parsing regression**: Changes to `clickStatement` parser rule affected broader parsing functionality
+- **Vertex chaining broken**: All vertex chaining tests failing due to missing edges
+- **Overall test status**: 126 failed | 524 passed | 3 skipped (653 total tests)
+
+## 🎯 IMMEDIATE NEXT TASKS:
+1. **URGENT**: Fix edge creation regression - core parsing functionality is broken
+2. Investigate why changes to interaction parsing affected edge parsing
+3. Restore edge parsing without breaking interaction functionality
+4. Run full test suite to ensure no other regressions
+
+## 📝 KEY FILES MODIFIED:
+- `packages/mermaid/src/diagrams/flowchart/parser/flowParser.ts` - Parser grammar rules
+- `packages/mermaid/src/diagrams/flowchart/parser/flowAst.ts` - AST visitor implementation
+
+## 🔧 RECENT CHANGES MADE:
+1. **Parser**: Modified `clickCall` rule to accept multiple tokens for complex arguments using `MANY()`
+2. **AST Visitor**: Updated `clickCall` method to correctly extract function names and combine argument tokens
+3. **Interaction Handling**: Fixed tooltip handling for both href and callback syntax patterns
+
+## ⚠️ REGRESSION ANALYSIS:
+The interaction parsing fix introduced a critical regression where edge creation is completely broken. This suggests that modifications to the `clickStatement` parser rule had unintended side effects on the core parsing functionality. The parser can still tokenize correctly (as evidenced by passing style tests) but fails to create edges from link statements.
+
+## 🧪 TEST COMMAND:
+Use this command to run all Chevrotain tests:
+`pnpm vitest packages/mermaid/src/diagrams/flowchart/parser/flow*chev*.spec.js --run`

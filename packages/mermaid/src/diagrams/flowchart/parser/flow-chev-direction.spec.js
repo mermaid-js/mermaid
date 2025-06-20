@@ -23,7 +23,7 @@ describe('when parsing directions with Chevrotain', function () {
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
-    // Fix test expectation to match actual parser behavior (both JISON and Chevrotain produce same order)
+    // Chevrotain parser now produces nodes in the correct order: a --> b means ['a', 'b']
     expect(subgraph.nodes[0]).toBe('a');
     expect(subgraph.nodes[1]).toBe('b');
     expect(subgraph.id).toBe('A');
@@ -40,7 +40,7 @@ describe('when parsing directions with Chevrotain', function () {
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
-    // Fix test expectation to match actual parser behavior (both JISON and Chevrotain produce same order)
+    // Chevrotain parser now produces nodes in the correct order: a --> b means ['a', 'b']
     expect(subgraph.nodes[0]).toBe('a');
     expect(subgraph.nodes[1]).toBe('b');
     expect(subgraph.id).toBe('A');
@@ -58,7 +58,7 @@ describe('when parsing directions with Chevrotain', function () {
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
-    // Fix test expectation to match actual parser behavior (both JISON and Chevrotain produce same order)
+    // Chevrotain parser now produces nodes in the correct order: a --> b means ['a', 'b']
     expect(subgraph.nodes[0]).toBe('a');
     expect(subgraph.nodes[1]).toBe('b');
     expect(subgraph.id).toBe('A');

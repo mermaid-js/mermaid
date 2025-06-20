@@ -36,6 +36,7 @@ interface ParseResult {
     styles?: string[];
     interpolate?: string;
   }>;
+  edgeMetadata: Record<string, any>; // Store edge metadata to apply after edges are created
 }
 
 const BaseVisitor = new FlowchartParser().getBaseCstVisitorConstructor();
@@ -59,6 +60,7 @@ export class FlowchartAstVisitor extends BaseVisitor {
     styles?: string[];
     interpolate?: string;
   }> = [];
+  private edgeMetadata: Record<string, any> = {}; // Store edge metadata to apply later
 
   constructor() {
     super();
@@ -86,6 +88,7 @@ export class FlowchartAstVisitor extends BaseVisitor {
     this.currentSubgraph = null;
     this.currentSubgraphNodes = null;
     this.linkStyles = [];
+    this.edgeMetadata = {};
   }
 
   flowchart(ctx: any): ParseResult {
@@ -106,6 +109,7 @@ export class FlowchartAstVisitor extends BaseVisitor {
       accTitle: this.accTitle,
       accDescription: this.accDescription,
       linkStyles: this.linkStyles,
+      edgeMetadata: this.edgeMetadata,
     };
   }
 
@@ -162,27 +166,49 @@ export class FlowchartAstVisitor extends BaseVisitor {
         // Collect target node IDs (for ampersand syntax)
         const endNodeIds = this.visit(nextNode);
 
-        // Create edges from each start node to each end node
-        for (const startNodeId of startNodeIds) {
-          for (const endNodeId of endNodeIds) {
-            const edge: any = {
-              start: startNodeId,
-              end: endNodeId,
-              type: linkData.type,
-              text: linkData.text || '',
-            };
+        // Add edges to FlowDB if available, otherwise add to internal edges
+        if (this.flowDb && typeof this.flowDb.addLink === 'function') {
+          // Create the linkData structure expected by FlowDB
+          const linkDataForFlowDb = {
+            id: linkData.id, // Include edge ID for user-defined edge IDs
+            type: linkData.type,
+            stroke: linkData.stroke,
+            length: linkData.length,
+            text: linkData.text
+              ? { text: linkData.text, type: linkData.labelType || 'text' }
+              : undefined,
+          };
+          // Call addLink with arrays of all start and end nodes to properly handle edge ID assignment
+          this.flowDb.addLink(startNodeIds, endNodeIds, linkDataForFlowDb);
+        } else {
+          // Fallback: Create individual edges for internal tracking
+          for (const startNodeId of startNodeIds) {
+            for (const endNodeId of endNodeIds) {
+              const edge: any = {
+                start: startNodeId,
+                end: endNodeId,
+                type: linkData.type,
+                text: linkData.text || '',
+                labelType: linkData.labelType || 'text',
+              };
 
-            // Include stroke property if present
-            if (linkData.stroke) {
-              edge.stroke = linkData.stroke;
+              // Include edge ID if present
+              if (linkData.id) {
+                edge.id = linkData.id;
+              }
+
+              // Include stroke property if present
+              if (linkData.stroke) {
+                edge.stroke = linkData.stroke;
+              }
+
+              // Include length property if present
+              if (linkData.length) {
+                edge.length = linkData.length;
+              }
+
+              this.edges.push(edge);
             }
-
-            // Include length property if present
-            if (linkData.length) {
-              edge.length = linkData.length;
-            }
-
-            this.edges.push(edge);
           }
         }
 
@@ -233,8 +259,32 @@ export class FlowchartAstVisitor extends BaseVisitor {
 
   // Vertex - handles different node shapes
   vertex(ctx: any): void {
-    // Handle the new structure with separate vertex rules
-    if (ctx.vertexWithSquare) {
+    // Handle vertices with both labels and node data first (higher priority)
+    if (ctx.vertexWithSquareAndNodeData) {
+      this.visit(ctx.vertexWithSquareAndNodeData);
+    } else if (ctx.vertexWithDoubleCircleAndNodeData) {
+      this.visit(ctx.vertexWithDoubleCircleAndNodeData);
+    } else if (ctx.vertexWithCircleAndNodeData) {
+      this.visit(ctx.vertexWithCircleAndNodeData);
+    } else if (ctx.vertexWithRoundAndNodeData) {
+      this.visit(ctx.vertexWithRoundAndNodeData);
+    } else if (ctx.vertexWithHexagonAndNodeData) {
+      this.visit(ctx.vertexWithHexagonAndNodeData);
+    } else if (ctx.vertexWithDiamondAndNodeData) {
+      this.visit(ctx.vertexWithDiamondAndNodeData);
+    } else if (ctx.vertexWithSubroutineAndNodeData) {
+      this.visit(ctx.vertexWithSubroutineAndNodeData);
+    } else if (ctx.vertexWithStadiumAndNodeData) {
+      this.visit(ctx.vertexWithStadiumAndNodeData);
+    } else if (ctx.vertexWithEllipseAndNodeData) {
+      this.visit(ctx.vertexWithEllipseAndNodeData);
+    } else if (ctx.vertexWithCylinderAndNodeData) {
+      this.visit(ctx.vertexWithCylinderAndNodeData);
+    } else if (ctx.vertexWithOddAndNodeData) {
+      this.visit(ctx.vertexWithOddAndNodeData);
+    } else if (ctx.vertexWithRectAndNodeData) {
+      this.visit(ctx.vertexWithRectAndNodeData);
+    } else if (ctx.vertexWithSquare) {
       this.visit(ctx.vertexWithSquare);
     } else if (ctx.vertexWithDoubleCircle) {
       this.visit(ctx.vertexWithDoubleCircle);
@@ -256,20 +306,32 @@ export class FlowchartAstVisitor extends BaseVisitor {
       this.visit(ctx.vertexWithEllipse);
     } else if (ctx.vertexWithCylinder) {
       this.visit(ctx.vertexWithCylinder);
+    } else if (ctx.vertexWithOdd) {
+      this.visit(ctx.vertexWithOdd);
+    } else if (ctx.vertexWithRect) {
+      this.visit(ctx.vertexWithRect);
+    } else if (ctx.vertexWithNodeData) {
+      // Node with data syntax
+      this.visit(ctx.vertexWithNodeData);
     } else if (ctx.nodeId) {
       // Plain node
       const nodeId = this.visit(ctx.nodeId);
-      this.addVertex(nodeId, nodeId, 'default');
+      this.addVertex(nodeId, nodeId, 'squareRect');
     }
   }
 
   // Helper method to add vertex
-  private addVertex(nodeId: string, nodeText: string, nodeType: string): void {
+  private addVertex(
+    nodeId: string,
+    nodeText: string,
+    nodeType: string,
+    labelType: string = 'text'
+  ): void {
     // Add vertex to FlowDB if available, otherwise add to internal vertices
     if (this.flowDb && typeof this.flowDb.addVertex === 'function') {
       // Create textObj structure expected by FlowDB
       // Always create textObj, even for empty text, to prevent FlowDB from using nodeId as text
-      const textObj = { text: nodeText, type: 'text' };
+      const textObj = { text: nodeText, type: labelType };
       this.flowDb.addVertex(
         nodeId,
         textObj,
@@ -300,110 +362,310 @@ export class FlowchartAstVisitor extends BaseVisitor {
   // Individual vertex shape visitors
   vertexWithSquare(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = this.visit(ctx.nodeText);
-    this.addVertex(nodeId, nodeText, 'square');
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'square', nodeTextData.labelType);
   }
 
   vertexWithDoubleCircle(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = ctx.nodeText ? this.visit(ctx.nodeText) : '';
-    this.addVertex(nodeId, nodeText, 'doublecircle');
+    const nodeTextData = ctx.nodeText ? this.visit(ctx.nodeText) : { text: '', labelType: 'text' };
+    this.addVertex(nodeId, nodeTextData.text, 'doublecircle', nodeTextData.labelType);
   }
 
   vertexWithCircle(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = ctx.nodeText ? this.visit(ctx.nodeText) : '';
-    this.addVertex(nodeId, nodeText, 'circle');
+    const nodeTextData = ctx.nodeText ? this.visit(ctx.nodeText) : { text: '', labelType: 'text' };
+    this.addVertex(nodeId, nodeTextData.text, 'circle', nodeTextData.labelType);
   }
 
   vertexWithRound(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = this.visit(ctx.nodeText);
-    this.addVertex(nodeId, nodeText, 'round');
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'round', nodeTextData.labelType);
   }
 
   vertexWithHexagon(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = this.visit(ctx.nodeText);
-    this.addVertex(nodeId, nodeText, 'hexagon');
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'hexagon', nodeTextData.labelType);
   }
 
   vertexWithDiamond(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = this.visit(ctx.nodeText);
-    this.addVertex(nodeId, nodeText, 'diamond');
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'diamond', nodeTextData.labelType);
   }
 
   vertexWithSubroutine(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = this.visit(ctx.nodeText);
-    this.addVertex(nodeId, nodeText, 'subroutine');
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'subroutine', nodeTextData.labelType);
   }
 
   vertexWithTrapezoidVariant(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = this.visit(ctx.nodeText);
+    const nodeTextData = this.visit(ctx.nodeText);
 
     // Determine trapezoid type based on start/end token combination
     let shapeType = 'trapezoid';
 
-    if (ctx.TrapezoidStart && ctx.TrapezoidEnd) {
+    // Check for actual token names from the lexer
+    if (ctx.TRAPSTART && ctx.TrapezoidEnd) {
       shapeType = 'trapezoid';
-    } else if (ctx.InvTrapezoidStart && ctx.InvTrapezoidEnd) {
+    } else if (ctx.INVTRAPSTART && ctx.InvTrapezoidEnd) {
       shapeType = 'inv_trapezoid';
-    } else if (ctx.TrapezoidStart && ctx.InvTrapezoidEnd) {
+    } else if (ctx.TRAPSTART && ctx.InvTrapezoidEnd) {
       shapeType = 'lean_right';
-    } else if (ctx.InvTrapezoidStart && ctx.TrapezoidEnd) {
+    } else if (ctx.INVTRAPSTART && ctx.TrapezoidEnd) {
       shapeType = 'lean_left';
     }
 
-    this.addVertex(nodeId, nodeText, shapeType);
+    this.addVertex(nodeId, nodeTextData.text, shapeType, nodeTextData.labelType);
   }
 
   vertexWithStadium(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = this.visit(ctx.nodeText);
-    this.addVertex(nodeId, nodeText, 'stadium');
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'stadium', nodeTextData.labelType);
   }
 
   vertexWithEllipse(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = this.visit(ctx.nodeText);
-    this.addVertex(nodeId, nodeText, 'ellipse');
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'ellipse', nodeTextData.labelType);
   }
 
   vertexWithCylinder(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
-    const nodeText = this.visit(ctx.nodeText);
-    this.addVertex(nodeId, nodeText, 'cylinder');
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'cylinder', nodeTextData.labelType);
+  }
+
+  vertexWithOdd(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'odd', nodeTextData.labelType);
+  }
+
+  vertexWithRect(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'rect', nodeTextData.labelType);
+  }
+
+  // Vertices with both labels and node data
+  vertexWithSquareAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    // Combine label from square brackets with node data properties
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'squareRect';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithDoubleCircleAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = ctx.nodeText ? this.visit(ctx.nodeText) : { text: '', labelType: 'text' };
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'doublecircle';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithCircleAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = ctx.nodeText ? this.visit(ctx.nodeText) : { text: '', labelType: 'text' };
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'circle';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithRoundAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'round';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithHexagonAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'hexagon';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithDiamondAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'diamond';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithSubroutineAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'subroutine';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithStadiumAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'stadium';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithEllipseAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'ellipse';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithCylinderAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'cylinder';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithOddAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'odd';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
+  }
+
+  vertexWithRectAndNodeData(ctx: any): void {
+    const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    const nodeDataProps = this.visit(ctx.nodeData);
+
+    const finalLabel = nodeDataProps.label || nodeTextData.text;
+    const shape = nodeDataProps.shape || 'rect';
+    const mappedShape = this.mapShapeNameToType(shape);
+
+    this.addVertexWithData(nodeId, finalLabel, mappedShape, nodeDataProps);
   }
 
   // Vertex with node data syntax
   vertexWithNodeData(ctx: any): void {
-    console.debug('🔥 vertexWithNodeData called with ctx:', ctx);
     const nodeId = this.visit(ctx.nodeId);
     const nodeDataProps = this.visit(ctx.nodeData);
 
-    console.debug('🔥 nodeId:', nodeId, 'nodeDataProps:', nodeDataProps);
+    // Check if this looks like edge metadata (has ONLY animation properties and no node properties)
+    const hasAnimationProps =
+      nodeDataProps.animate !== undefined || nodeDataProps.animation !== undefined;
+    const hasNodeProps =
+      nodeDataProps.shape !== undefined ||
+      nodeDataProps.label !== undefined ||
+      nodeDataProps.icon !== undefined ||
+      nodeDataProps.form !== undefined ||
+      nodeDataProps.pos !== undefined ||
+      nodeDataProps.img !== undefined ||
+      nodeDataProps.constraint !== undefined ||
+      nodeDataProps.w !== undefined ||
+      nodeDataProps.h !== undefined;
 
-    // Extract shape and label from node data
-    const shape = nodeDataProps.shape || 'squareRect'; // Default shape
-    const label = nodeDataProps.label || nodeId; // Use nodeId as default label
+    const isEdgeMetadata = hasAnimationProps && !hasNodeProps;
 
-    // Map shape name to the correct type for FlowDB
-    const mappedShape = this.mapShapeNameToType(shape);
+    if (isEdgeMetadata) {
+      // Store edge metadata to apply later after edges are created
+      this.edgeMetadata[nodeId] = nodeDataProps;
+    } else {
+      // This is regular node data, process as vertex
+      if (this.flowDb && typeof this.flowDb.addVertex === 'function') {
+        // Extract label and shape from node data
+        const label = nodeDataProps.label || nodeId;
+        const shape = nodeDataProps.shape || 'squareRect';
 
-    console.debug('🔥 Adding vertex with shape:', mappedShape, 'label:', label);
+        // Validate shape if provided in nodeData
+        if (nodeDataProps.shape && !this.isValidShape(nodeDataProps.shape)) {
+          throw new Error(`No such shape: ${nodeDataProps.shape}.`);
+        }
 
-    // Add vertex with node data properties
-    this.addVertexWithData(nodeId, label, mappedShape, nodeDataProps);
+        const mappedShape = this.mapShapeNameToType(shape);
+
+        // Create textObj structure expected by FlowDB using the label
+        const textObj = { text: label, type: 'text' };
+
+        // Add as regular vertex
+        this.flowDb.addVertex(
+          nodeId,
+          textObj,
+          mappedShape,
+          [], // style
+          [], // classes
+          undefined, // dir
+          nodeDataProps, // props
+          undefined // metadata
+        );
+      } else {
+        // Fallback: treat as regular vertex
+        const shape = nodeDataProps.shape || 'squareRect';
+        const label = nodeDataProps.label || nodeId;
+        const mappedShape = this.mapShapeNameToType(shape);
+        this.addVertexWithData(nodeId, label, mappedShape, nodeDataProps);
+      }
+    }
+
+    this.lastNodeId = nodeId;
   }
 
   // Node data visitor
   nodeData(ctx: any): any {
-    console.debug('🔥 nodeData called with ctx:', ctx);
     const result = this.visit(ctx.nodeDataContent);
-    console.debug('🔥 nodeData result:', result);
     return result;
   }
 
@@ -411,19 +673,42 @@ export class FlowchartAstVisitor extends BaseVisitor {
   nodeDataContent(ctx: any): any {
     const props: any = {};
 
-    if (ctx.ShapeDataContent) {
-      // Parse the shape data content
-      const content = ctx.ShapeDataContent.map((token: any) => token.image).join('');
-      this.parseNodeDataContent(content, props);
+    // Reconstruct the content by processing all tokens and subrules in the correct order
+    let fullContent = '';
+
+    // Get content tokens
+    const contentTokens = ctx.ShapeDataContent || [];
+
+    // Get nodeDataString subrule contexts
+    const nodeDataStringContexts = ctx.nodeDataString || [];
+
+    // Process content tokens and string contexts in order
+    // Since the parser processes them in sequence, we need to reconstruct the original order
+    let stringIndex = 0;
+
+    for (const contentToken of contentTokens) {
+      fullContent += contentToken.image;
+
+      // Check if this content token suggests a string should follow
+      // Look for patterns like 'key: ' (ends with colon and space/whitespace)
+      if (contentToken.image.trim().endsWith(':') && stringIndex < nodeDataStringContexts.length) {
+        // Visit the nodeDataString context to get the actual string value
+        const stringValue = this.visit(nodeDataStringContexts[stringIndex]);
+        fullContent += `"${stringValue}"`;
+        stringIndex++;
+      }
     }
 
-    if (ctx.nodeDataString) {
-      // Handle quoted strings in node data
-      ctx.nodeDataString.forEach((stringCtx: any) => {
-        const stringValue = this.visit(stringCtx);
-        // This would need more sophisticated parsing to handle key-value pairs with quoted strings
-        // For now, we'll handle this in parseNodeDataContent
-      });
+    // If we still have unprocessed strings, add them
+    while (stringIndex < nodeDataStringContexts.length) {
+      const stringValue = this.visit(nodeDataStringContexts[stringIndex]);
+      fullContent += `"${stringValue}"`;
+      stringIndex++;
+    }
+
+    // Parse the reconstructed content
+    if (fullContent.trim()) {
+      this.parseNodeDataContent(fullContent, props);
     }
 
     return props;
@@ -439,17 +724,103 @@ export class FlowchartAstVisitor extends BaseVisitor {
 
   // Helper method to parse node data content
   private parseNodeDataContent(content: string, props: any): void {
-    // Parse YAML-like content: "shape: rounded, label: 'Hello'"
-    // Split by commas and parse key-value pairs
-    const pairs = content.split(',').map((pair) => pair.trim());
+    // Parse YAML-like content: "shape: rounded\nlabel: 'Hello'" or "shape: rounded, label: 'Hello'"
+    // Handle both single-line and multi-line formats
+    const lines = content.split('\n'); // Don't trim yet - we need to preserve indentation for YAML-style parsing
 
-    for (const pair of pairs) {
-      const colonIndex = pair.indexOf(':');
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      const trimmedLine = line.trim();
+
+      // Skip empty lines
+      if (!trimmedLine) {
+        i++;
+        continue;
+      }
+
+      const colonIndex = trimmedLine.indexOf(':');
       if (colonIndex > 0) {
-        const key = pair.substring(0, colonIndex).trim();
-        let value = pair.substring(colonIndex + 1).trim();
+        const key = trimmedLine.substring(0, colonIndex).trim();
+        let value = trimmedLine.substring(colonIndex + 1).trim();
 
-        // Remove quotes if present
+        // Skip empty values
+        if (!value) {
+          i++;
+          continue;
+        }
+
+        // Handle YAML-style multiline string syntax (|)
+        if (value === '|') {
+          // Collect subsequent indented lines as multiline content
+          const multilineContent: string[] = [];
+          i++; // Move to next line
+
+          // Determine the base indentation level from the first content line
+          let baseIndent = -1;
+
+          while (i < lines.length) {
+            const nextLine = lines[i];
+            const nextTrimmed = nextLine.trim();
+
+            // If line is empty, include it but don't use it to determine indentation
+            if (!nextTrimmed) {
+              i++;
+              continue;
+            }
+
+            // Calculate indentation level
+            const indent = nextLine.length - nextLine.trimStart().length;
+
+            // If this is the first content line, set base indentation
+            if (baseIndent === -1) {
+              baseIndent = indent;
+            }
+
+            // If line has same or greater indentation than base, it's part of multiline content
+            if (indent >= baseIndent) {
+              multilineContent.push(nextTrimmed);
+              i++;
+            } else {
+              // Next property found (less indented), break out of multiline collection
+              break;
+            }
+          }
+
+          // Join multiline content with newlines and add final newline
+          props[key] = multilineContent.join('\n') + '\n';
+          continue; // Don't increment i again since we already did it in the loop
+        }
+
+        // Handle quoted multi-line strings (strings that span multiple lines within quotes)
+        if (
+          (value.startsWith('"') && !value.endsWith('"')) ||
+          (value.startsWith("'") && !value.endsWith("'"))
+        ) {
+          // This is a multi-line quoted string, collect until closing quote
+          const quote = value[0];
+          let multilineValue = value.substring(1); // Remove opening quote
+          i++; // Move to next line
+
+          while (i < lines.length) {
+            const nextLine = lines[i].trim();
+            if (nextLine.endsWith(quote)) {
+              // Found closing quote
+              multilineValue += '<br/>' + nextLine.substring(0, nextLine.length - 1);
+              break;
+            } else {
+              // Continue collecting lines
+              multilineValue += '<br/>' + nextLine;
+            }
+            i++;
+          }
+
+          props[key] = multilineValue;
+          i++;
+          continue;
+        }
+
+        // Remove quotes if present (for single-line quoted strings)
         if (
           (value.startsWith('"') && value.endsWith('"')) ||
           (value.startsWith("'") && value.endsWith("'"))
@@ -457,8 +828,20 @@ export class FlowchartAstVisitor extends BaseVisitor {
           value = value.slice(1, -1);
         }
 
-        props[key] = value;
+        // Convert boolean and numeric values
+        let parsedValue: any = value;
+        if (value === 'true') {
+          parsedValue = true;
+        } else if (value === 'false') {
+          parsedValue = false;
+        } else if (!isNaN(Number(value)) && value !== '') {
+          parsedValue = Number(value);
+        }
+
+        props[key] = parsedValue;
       }
+
+      i++;
     }
   }
 
@@ -613,6 +996,11 @@ export class FlowchartAstVisitor extends BaseVisitor {
             text: linkData.linkText,
           };
 
+          // Include labelType if present
+          if (linkData.linkLabelType) {
+            edge.labelType = linkData.linkLabelType;
+          }
+
           // Include stroke property if present
           if (linkData.linkStroke) {
             edge.stroke = linkData.linkStroke;
@@ -623,7 +1011,28 @@ export class FlowchartAstVisitor extends BaseVisitor {
             edge.length = linkData.linkLength;
           }
 
-          this.edges.push(edge);
+          // Add to FlowDB if available
+          if (this.flowDb && typeof this.flowDb.addSingleLink === 'function') {
+            // Create linkTextObj structure expected by FlowDB
+            const linkTextObj = linkData.linkText
+              ? {
+                  text: linkData.linkText,
+                  type: linkData.linkLabelType || 'text',
+                }
+              : undefined;
+
+            const linkTypeObj = {
+              type: linkData.linkType,
+              stroke: linkData.linkStroke,
+              length: linkData.linkLength,
+              text: linkTextObj,
+            };
+
+            this.flowDb.addSingleLink(startNode, linkData.node, linkTypeObj, linkData.id);
+          } else {
+            // Fallback to internal tracking
+            this.edges.push(edge);
+          }
         });
       });
     }
@@ -632,7 +1041,7 @@ export class FlowchartAstVisitor extends BaseVisitor {
   nodeDefinition(ctx: any): any {
     const nodeId = this.visit(ctx.nodeId);
     let text = nodeId;
-    let type = 'default';
+    let type = 'squareRect';
 
     if (ctx.nodeShape) {
       const shapeData = this.visit(ctx.nodeShape);
@@ -688,23 +1097,44 @@ export class FlowchartAstVisitor extends BaseVisitor {
       nodeId = ctx.NODE_STRING[0].image;
     } else if (ctx.NumberToken) {
       nodeId = ctx.NumberToken[0].image;
-    } else if (ctx.Default) {
-      nodeId = ctx.Default[0].image;
+    } else if (ctx.DEFAULT) {
+      nodeId = ctx.DEFAULT[0].image;
     } else if (ctx.Ampersand) {
       // Standalone & (uses CONSUME2)
       nodeId = ctx.Ampersand[0].image;
     } else if (ctx.Minus) {
       // Standalone - (uses CONSUME2)
       nodeId = ctx.Minus[0].image;
-    } else if (ctx.DirectionValue) {
-      // Standalone direction value (uses CONSUME2)
-      nodeId = ctx.DirectionValue[0].image;
+    } else if (ctx.DIR) {
+      // Standalone direction value (fixed to use DIR instead of DirectionValue)
+      nodeId = ctx.DIR[0].image;
     } else if (ctx.Colon) {
       // Standalone : character
       nodeId = ctx.Colon[0].image;
     } else if (ctx.Comma) {
       // Standalone , character
       nodeId = ctx.Comma[0].image;
+    } else if (ctx.Hash) {
+      // Standalone # character
+      nodeId = ctx.Hash[0].image;
+    } else if (ctx.Dot) {
+      // Standalone . character
+      nodeId = ctx.Dot[0].image;
+    } else if (ctx.Slash) {
+      // Standalone / character
+      nodeId = ctx.Slash[0].image;
+    } else if (ctx.Underscore) {
+      // Standalone _ character
+      nodeId = ctx.Underscore[0].image;
+    } else if (ctx.Plus) {
+      // Standalone + character
+      nodeId = ctx.Plus[0].image;
+    } else if (ctx.Equals) {
+      // Standalone = character
+      nodeId = ctx.Equals[0].image;
+    } else if (ctx.AMP) {
+      // Standalone & character
+      nodeId = ctx.AMP[0].image;
     }
 
     // If no nodeId was found, it might be an empty context
@@ -729,12 +1159,12 @@ export class FlowchartAstVisitor extends BaseVisitor {
       'interpolate',
       'classDef',
       'class',
+      'end',
+      'subgraph',
       '_self',
       '_blank',
       '_parent',
       '_top',
-      'end',
-      'subgraph',
     ];
 
     // Check if node ID starts with any error keyword followed by a delimiter
@@ -777,72 +1207,95 @@ export class FlowchartAstVisitor extends BaseVisitor {
   }
 
   squareShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'square', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'square', text: nodeTextData.text };
   }
 
   circleShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'doublecircle', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'doublecircle', text: nodeTextData.text };
   }
 
   diamondShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'diamond', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'diamond', text: nodeTextData.text };
   }
 
   subroutineShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'subroutine', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'subroutine', text: nodeTextData.text };
   }
 
   trapezoidShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'trapezoid', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'trapezoid', text: nodeTextData.text };
   }
 
   invTrapezoidShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'inv_trapezoid', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'inv_trapezoid', text: nodeTextData.text };
   }
 
   leanRightShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'lean_right', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'lean_right', text: nodeTextData.text };
   }
 
   leanLeftShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'lean_left', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'lean_left', text: nodeTextData.text };
   }
 
   rectShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'rect', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'rect', text: nodeTextData.text };
   }
 
   oddShape(ctx: any): any {
-    const text = this.visit(ctx.nodeText);
-    return { type: 'odd', text };
+    const nodeTextData = this.visit(ctx.nodeText);
+    return { type: 'odd', text: nodeTextData.text };
   }
 
-  nodeText(ctx: any): string {
+  nodeText(ctx: any): { text: string; labelType: string } {
+    let text = '';
+    let labelType = 'text';
+
     if (ctx.TextContent) {
-      return ctx.TextContent[0].image;
+      text = ctx.TextContent[0].image;
     } else if (ctx.RectTextContent) {
-      return ctx.RectTextContent[0].image;
+      // RectTextContent format: "borders:lt|actual text" - extract text after last |
+      const rectContent = ctx.RectTextContent[0].image;
+      const lastPipeIndex = rectContent.lastIndexOf('|');
+      text = lastPipeIndex !== -1 ? rectContent.substring(lastPipeIndex + 1) : rectContent;
+    } else if (ctx.textToken) {
+      text = ctx.textToken[0].image;
     } else if (ctx.NODE_STRING) {
-      return ctx.NODE_STRING[0].image;
+      text = ctx.NODE_STRING[0].image;
     } else if (ctx.StringContent) {
-      return ctx.StringContent[0].image;
+      text = ctx.StringContent[0].image;
     } else if (ctx.QuotedString) {
       // Remove quotes from quoted string
       const quoted = ctx.QuotedString[0].image;
-      return quoted.slice(1, -1);
+      text = quoted.slice(1, -1);
+
+      // Check if this is a markdown string (starts and ends with backticks)
+      if (text.startsWith('`') && text.endsWith('`')) {
+        // Remove the backticks for markdown strings
+        text = text.slice(1, -1);
+        labelType = 'markdown';
+      } else {
+        labelType = 'string';
+      }
     } else if (ctx.NumberToken) {
-      return ctx.NumberToken[0].image;
+      text = ctx.NumberToken[0].image;
     }
-    return '';
+
+    // Apply HTML escaping for special characters (matching JISON parser behavior)
+    if (text === '<') {
+      text = '&lt;';
+    }
+
+    return { text, labelType };
   }
 
   linkChain(ctx: any): any[] {
@@ -857,6 +1310,11 @@ export class FlowchartAstVisitor extends BaseVisitor {
         linkText: linkData.text,
         node: nodeData.id,
       };
+
+      // Include labelType if present
+      if (linkData.labelType) {
+        linkInfo.linkLabelType = linkData.labelType;
+      }
 
       // Include length property if present
       if (linkData.length) {
@@ -884,14 +1342,32 @@ export class FlowchartAstVisitor extends BaseVisitor {
   }
 
   linkStatement(ctx: any): any {
-    if (ctx.LINK) {
-      return this.parseLinkToken(ctx.LINK[0]);
-    } else if (ctx.THICK_LINK) {
-      return this.parseLinkToken(ctx.THICK_LINK[0]);
-    } else if (ctx.DOTTED_LINK) {
-      return this.parseLinkToken(ctx.DOTTED_LINK[0]);
+    let linkData = { type: 'arrow', text: '' };
+    let edgeId: string | undefined = undefined;
+
+    // Check for LINK_ID token first
+    if (ctx.LINK_ID) {
+      const linkIdToken = ctx.LINK_ID[0];
+      const linkIdImage = linkIdToken.image.trim();
+      // Extract edge ID by removing the trailing '@'
+      edgeId = linkIdImage.replace(/@$/, '');
     }
-    return { type: 'arrow', text: '' };
+
+    // Parse the actual link token
+    if (ctx.LINK) {
+      linkData = this.parseLinkToken(ctx.LINK[0]);
+    } else if (ctx.THICK_LINK) {
+      linkData = this.parseLinkToken(ctx.THICK_LINK[0]);
+    } else if (ctx.DOTTED_LINK) {
+      linkData = this.parseLinkToken(ctx.DOTTED_LINK[0]);
+    }
+
+    // Add edge ID if present
+    if (edgeId) {
+      linkData.id = edgeId;
+    }
+
+    return linkData;
   }
 
   parseLinkToken(token: IToken): any {
@@ -968,21 +1444,70 @@ export class FlowchartAstVisitor extends BaseVisitor {
       length = line.length - 1;
     }
 
-    const result: any = { type, stroke, text: '' };
+    // Combine stroke and type to create the final edge type (like JISON parser)
+    let finalType = type;
+    if (stroke === 'dotted') {
+      // For dotted arrows, replace the base type with dotted version
+      if (type === 'arrow_point') {
+        finalType = 'arrow_dotted';
+      } else if (type === 'arrow_open') {
+        finalType = 'arrow_dotted';
+      } else if (type === 'arrow_cross') {
+        finalType = 'arrow_dotted';
+      } else if (type === 'arrow_circle') {
+        finalType = 'arrow_dotted';
+      } else if (type === 'double_arrow_point') {
+        finalType = 'double_arrow_dotted';
+      }
+    } else if (stroke === 'thick') {
+      // For thick arrows, replace the base type with thick version
+      if (type === 'arrow_point') {
+        finalType = 'arrow_thick';
+      } else if (type === 'arrow_open') {
+        finalType = 'arrow_thick';
+      } else if (type === 'arrow_cross') {
+        finalType = 'arrow_thick';
+      } else if (type === 'arrow_circle') {
+        finalType = 'arrow_thick';
+      } else if (type === 'double_arrow_point') {
+        finalType = 'double_arrow_thick';
+      }
+    }
+
+    const result: any = { type: finalType, stroke, text: '' };
     if (length !== undefined) {
-      result.length = length;
+      // Map numeric length to string representation (like JISON parser)
+      if (length === 3) {
+        result.length = 'long';
+      } else if (length === 5) {
+        result.length = 'extralong';
+      } else {
+        result.length = length; // Keep numeric for other values
+      }
     }
     return result;
   }
 
   linkWithEdgeText(ctx: any): any {
     let text = '';
+    let labelType = 'text';
     if (ctx.edgeText) {
-      text = this.visit(ctx.edgeText);
+      const edgeTextData = this.visit(ctx.edgeText);
+      text = edgeTextData.text;
+      labelType = edgeTextData.labelType;
     }
 
     // Get the link type from the EdgeTextEnd token and combine with start token info
     let linkData: any = { type: 'arrow_point', stroke: 'normal', text: '' };
+    let edgeId: string | undefined = undefined;
+
+    // Check for LINK_ID token first
+    if (ctx.LINK_ID) {
+      const linkIdToken = ctx.LINK_ID[0];
+      const linkIdImage = linkIdToken.image.trim();
+      // Extract edge ID by removing the trailing '@'
+      edgeId = linkIdImage.replace(/@$/, '');
+    }
 
     // First, determine the stroke type from the start token
     let stroke = 'normal';
@@ -997,12 +1522,43 @@ export class FlowchartAstVisitor extends BaseVisitor {
       linkData = this.parseLinkToken(ctx.EdgeTextEnd[0]);
       // Override the stroke with the start token information
       linkData.stroke = stroke;
+
+      // Check if this is a bidirectional arrow by examining the start token
+      // Only convert to bidirectional if the start token actually contains '<' (indicating a left arrow)
+      let isBidirectional = false;
+      if (ctx.START_LINK && ctx.START_LINK[0].image.includes('<')) {
+        isBidirectional = true;
+      } else if (ctx.START_DOTTED_LINK && ctx.START_DOTTED_LINK[0].image.includes('<')) {
+        isBidirectional = true;
+      } else if (ctx.START_THICK_LINK && ctx.START_THICK_LINK[0].image.includes('<')) {
+        isBidirectional = true;
+      }
+
+      if (isBidirectional) {
+        // This is a bidirectional arrow - convert to double_arrow type
+        if (linkData.type === 'arrow_point') {
+          linkData.type = 'double_arrow_point';
+        } else if (linkData.type === 'arrow_open') {
+          linkData.type = 'double_arrow_open';
+        } else if (linkData.type === 'arrow_cross') {
+          linkData.type = 'double_arrow_cross';
+        } else if (linkData.type === 'arrow_circle') {
+          linkData.type = 'double_arrow_circle';
+        }
+      }
     } else {
       // Fallback if no EdgeTextEnd token
       linkData = { type: 'arrow_point', stroke: stroke, text: '' };
     }
 
     linkData.text = text;
+    linkData.labelType = labelType;
+
+    // Add edge ID if present
+    if (edgeId) {
+      linkData.id = edgeId;
+    }
+
     return linkData;
   }
 
@@ -1025,8 +1581,10 @@ export class FlowchartAstVisitor extends BaseVisitor {
     return linkData;
   }
 
-  edgeText(ctx: any): string {
+  edgeText(ctx: any): { text: string; labelType: string } {
     let text = '';
+    let labelType = 'text';
+
     if (ctx.EdgeTextContent) {
       ctx.EdgeTextContent.forEach((token: IToken) => {
         text += token.image;
@@ -1041,17 +1599,33 @@ export class FlowchartAstVisitor extends BaseVisitor {
     if (ctx.QuotedString) {
       ctx.QuotedString.forEach((token: IToken) => {
         // Remove quotes from quoted string
-        text += token.image.slice(1, -1);
+        let quotedText = token.image.slice(1, -1);
+
+        // Check if this is a markdown string (starts and ends with backticks)
+        if (quotedText.startsWith('`') && quotedText.endsWith('`')) {
+          // Remove the backticks for markdown strings
+          quotedText = quotedText.slice(1, -1);
+          labelType = 'markdown';
+        } else {
+          labelType = 'string';
+        }
+
+        text += quotedText;
       });
     }
     if (ctx.EDGE_TEXT) {
-      return ctx.EDGE_TEXT[0].image;
+      text = ctx.EDGE_TEXT[0].image;
+      return { text, labelType };
     } else if (ctx.String) {
-      return ctx.String[0].image.slice(1, -1); // Remove quotes
+      text = ctx.String[0].image.slice(1, -1); // Remove quotes
+      labelType = 'string';
+      return { text, labelType };
     } else if (ctx.MarkdownString) {
-      return ctx.MarkdownString[0].image.slice(2, -2); // Remove markdown quotes
+      text = ctx.MarkdownString[0].image.slice(2, -2); // Remove markdown quotes
+      labelType = 'markdown';
+      return { text, labelType };
     }
-    return text;
+    return { text, labelType };
   }
 
   linkText(ctx: any): string {
@@ -1085,6 +1659,11 @@ export class FlowchartAstVisitor extends BaseVisitor {
     let text = '';
     if (ctx.TextContent) {
       ctx.TextContent.forEach((token: IToken) => {
+        text += token.image;
+      });
+    }
+    if (ctx.textToken) {
+      ctx.textToken.forEach((token: IToken) => {
         text += token.image;
       });
     }
@@ -1190,6 +1769,25 @@ export class FlowchartAstVisitor extends BaseVisitor {
 
     if (ctx.clickHref) {
       const hrefData = this.visit(ctx.clickHref);
+      // Call FlowDB setLink method directly (like JISON parser does)
+      if (this.flowDb && typeof this.flowDb.setLink === 'function') {
+        if (hrefData.target !== undefined) {
+          this.flowDb.setLink(nodeId, hrefData.href, hrefData.target);
+        } else {
+          this.flowDb.setLink(nodeId, hrefData.href);
+        }
+      }
+
+      // Call FlowDB setTooltip method directly if tooltip exists (like JISON parser does)
+      if (hrefData.tooltip !== undefined) {
+        if (this.flowDb && typeof this.flowDb.setTooltip === 'function') {
+          this.flowDb.setTooltip(nodeId, hrefData.tooltip);
+        }
+        // Also store in tooltips for compatibility
+        this.tooltips[nodeId] = hrefData.tooltip;
+      }
+
+      // Also store in clickEvents for compatibility
       this.clickEvents.push({
         id: nodeId,
         type: 'href',
@@ -1198,24 +1796,87 @@ export class FlowchartAstVisitor extends BaseVisitor {
       });
     } else if (ctx.clickCall) {
       const callData = this.visit(ctx.clickCall);
+      // Call FlowDB setClickEvent method directly (like JISON parser does)
+      if (this.flowDb && typeof this.flowDb.setClickEvent === 'function') {
+        if (callData.args !== undefined) {
+          this.flowDb.setClickEvent(nodeId, callData.functionName, callData.args);
+        } else {
+          this.flowDb.setClickEvent(nodeId, callData.functionName);
+        }
+      }
+
+      // Handle tooltip for clickCall (callback) syntax
+      let tooltip = undefined;
+      if (ctx.QuotedString && ctx.QuotedString.length > 0) {
+        // For clickCall, any QuotedString in clickStatement context is a tooltip
+        tooltip = ctx.QuotedString[0].image.slice(1, -1); // Remove quotes
+      }
+
+      // Call FlowDB setTooltip method directly if tooltip exists (like JISON parser does)
+      if (tooltip !== undefined) {
+        if (this.flowDb && typeof this.flowDb.setTooltip === 'function') {
+          this.flowDb.setTooltip(nodeId, tooltip);
+        }
+        // Also store in tooltips for compatibility
+        this.tooltips[nodeId] = tooltip;
+      }
+
+      // Also store in clickEvents for compatibility
       this.clickEvents.push({
         id: nodeId,
         type: 'call',
         functionName: callData.functionName,
-        args: callData.args,
+        functionArgs: callData.args, // Use functionArgs to match adapter expectations
       });
-    }
+    } else if (ctx.QuotedString && ctx.QuotedString.length > 0) {
+      // Handle direct link syntax: click A "url" ["tooltip"] [target]
+      const href = ctx.QuotedString[0].image.slice(1, -1); // Remove quotes
 
-    // Handle tooltip
-    if (ctx.String) {
-      const tooltip = ctx.String[0].image.slice(1, -1);
-      this.tooltips[nodeId] = tooltip;
+      // Extract tooltip if present (second QuotedString)
+      let tooltip = undefined;
+      if (ctx.QuotedString.length > 1) {
+        tooltip = ctx.QuotedString[1].image.slice(1, -1); // Remove quotes
+      }
+
+      // Check for target parameter (NODE_STRING)
+      // Note: nodeId was already consumed by the nodeId rule, so ctx.NODE_STRING[0] is the target
+      let target = undefined;
+      if (ctx.NODE_STRING && ctx.NODE_STRING.length > 0) {
+        target = ctx.NODE_STRING[0].image;
+      }
+
+      // Call FlowDB setLink method directly (like JISON parser does)
+      if (this.flowDb && typeof this.flowDb.setLink === 'function') {
+        if (target !== undefined) {
+          this.flowDb.setLink(nodeId, href, target);
+        } else {
+          this.flowDb.setLink(nodeId, href);
+        }
+      }
+
+      // Call FlowDB setTooltip method directly if tooltip exists (like JISON parser does)
+      if (tooltip !== undefined) {
+        if (this.flowDb && typeof this.flowDb.setTooltip === 'function') {
+          this.flowDb.setTooltip(nodeId, tooltip);
+        }
+        // Also store in tooltips for compatibility
+        this.tooltips[nodeId] = tooltip;
+      }
+
+      // Also store in clickEvents for compatibility
+      this.clickEvents.push({
+        id: nodeId,
+        type: 'href',
+        href: href,
+        target: target,
+      });
     }
   }
 
   subgraphStatement(ctx: any): void {
     let subgraphId: string | undefined = undefined;
     let title: string | undefined = undefined;
+    let titleLabelType: string = 'text';
 
     // Extract subgraph ID and title
     if (ctx.subgraphId) {
@@ -1226,6 +1887,13 @@ export class FlowchartAstVisitor extends BaseVisitor {
         const quotedString = subgraphIdNode.children.QuotedString[0].image;
         title = quotedString.slice(1, -1); // Remove quotes
         subgraphId = undefined; // Will be auto-generated
+        titleLabelType = 'text';
+      } else if (subgraphIdNode.children && subgraphIdNode.children.MarkdownStringStart) {
+        // This is a markdown title - use it as title and auto-generate ID
+        const markdownContent = subgraphIdNode.children.MarkdownStringContent[0].image;
+        title = markdownContent; // Already without backticks and quotes
+        subgraphId = undefined; // Will be auto-generated
+        titleLabelType = 'markdown';
       } else {
         // Get the parsed subgraph ID/title
         const parsedValue = this.visit(ctx.subgraphId);
@@ -1244,7 +1912,8 @@ export class FlowchartAstVisitor extends BaseVisitor {
 
     // Extract title from brackets or additional quoted string
     if (ctx.nodeText) {
-      title = this.visit(ctx.nodeText);
+      const nodeTextData = this.visit(ctx.nodeText);
+      title = nodeTextData.text;
     } else if (ctx.QuotedString) {
       title = ctx.QuotedString[0].image.slice(1, -1); // Remove quotes
     }
@@ -1274,11 +1943,10 @@ export class FlowchartAstVisitor extends BaseVisitor {
     if (this.flowDb && typeof this.flowDb.addSubGraph === 'function') {
       // Format parameters as expected by FlowDB
       const idObj = subgraphId ? { text: subgraphId } : { text: '' };
-      const titleObj = { text: title || subgraphId || '', type: 'text' };
+      const titleObj = { text: title || subgraphId || '', type: titleLabelType };
 
-      // Reverse the node order to match JISON parser behavior
-      const reversedNodes = [...subgraphNodes].reverse();
-      const sgId = this.flowDb.addSubGraph(idObj, reversedNodes, titleObj);
+      // Use the natural node order (same as JISON parser behavior)
+      const sgId = this.flowDb.addSubGraph(idObj, subgraphNodes, titleObj);
 
       // Set direction if it was specified within the subgraph
       if (currentSubgraph.dir) {
@@ -1294,13 +1962,13 @@ export class FlowchartAstVisitor extends BaseVisitor {
       }
     } else {
       // Fallback to internal tracking
-      // Reverse the node order to match JISON parser behavior
-      const reversedNodes = [...subgraphNodes].reverse();
+      // Use the natural node order (same as JISON parser behavior)
       this.subGraphs.push({
         id: subgraphId || `subGraph${this.subCount++}`,
         title: title || subgraphId || '',
-        nodes: reversedNodes,
+        nodes: subgraphNodes,
         dir: currentSubgraph.dir,
+        labelType: titleLabelType,
       });
     }
 
@@ -1310,7 +1978,8 @@ export class FlowchartAstVisitor extends BaseVisitor {
   }
 
   directionStatement(ctx: any): void {
-    const direction = ctx.DirectionValue[0].image;
+    // The DirectionValue token has name 'DIR' in the lexer
+    const direction = ctx.DIR[0].image;
     this.direction = direction;
 
     // If we're currently processing a subgraph, set its direction
@@ -1412,7 +2081,13 @@ export class FlowchartAstVisitor extends BaseVisitor {
       end: endNodeId,
       type: linkData.type,
       text: linkData.text,
+      labelType: linkData.labelType || 'text',
     };
+
+    // Include edge ID if present
+    if (linkData.id) {
+      edge.id = linkData.id;
+    }
 
     // Include stroke property if present
     if (linkData.stroke) {
@@ -1424,7 +2099,20 @@ export class FlowchartAstVisitor extends BaseVisitor {
       edge.length = linkData.length;
     }
 
-    this.edges.push(edge);
+    // Add edge to FlowDB if available, otherwise add to internal edges
+    if (this.flowDb && typeof this.flowDb.addLink === 'function') {
+      // Create the linkData structure expected by FlowDB
+      const linkDataForFlowDb = {
+        id: edge.id, // Include edge ID for user-defined edge IDs
+        type: edge.type,
+        stroke: edge.stroke,
+        length: edge.length,
+        text: edge.text ? { text: edge.text, type: edge.labelType || 'text' } : undefined,
+      };
+      this.flowDb.addLink([edge.start], [edge.end], linkDataForFlowDb);
+    } else {
+      this.edges.push(edge);
+    }
   }
 
   // Helper method to ensure a vertex exists
@@ -1466,28 +2154,38 @@ export class FlowchartAstVisitor extends BaseVisitor {
     let styles: string[] = [];
 
     // Determine which pattern we're dealing with
-    if (ctx.Default) {
+    if (ctx.DEFAULT) {
       positions = ['default'];
     } else if (ctx.numberList) {
       positions = this.visit(ctx.numberList);
     }
 
-    // Check for interpolate
-    if (ctx.Interpolate && ctx.alphaNum) {
-      interpolate = this.visit(ctx.alphaNum);
-    }
-
-    // Check for styles
+    // Check for styles (now at the top level)
     if (ctx.styleList) {
       styles = this.visit(ctx.styleList);
     }
 
-    // Store the linkStyle operation for later application
-    this.linkStyles.push({
-      positions,
-      styles: styles.length > 0 ? styles : undefined,
-      interpolate,
-    });
+    // Check for interpolate
+    if (ctx.INTERPOLATE && ctx.alphaNum) {
+      interpolate = this.visit(ctx.alphaNum);
+    }
+
+    // Apply link styles immediately if using FlowDB
+    if (this.flowDb) {
+      if (interpolate && typeof this.flowDb.updateLinkInterpolate === 'function') {
+        this.flowDb.updateLinkInterpolate(positions, interpolate);
+      }
+      if (styles.length > 0 && typeof this.flowDb.updateLink === 'function') {
+        this.flowDb.updateLink(positions, styles);
+      }
+    } else {
+      // Store the linkStyle operation for later application (fallback)
+      this.linkStyles.push({
+        positions,
+        styles: styles.length > 0 ? styles : undefined,
+        interpolate,
+      });
+    }
   }
 
   linkIndexList(_ctx: any): number[] {
@@ -1562,52 +2260,131 @@ export class FlowchartAstVisitor extends BaseVisitor {
 
   clickHref(ctx: any): any {
     let href = '';
-    if (ctx.NODE_STRING) {
-      href = ctx.NODE_STRING[0].image;
-    } else if (ctx.QuotedString) {
+    let tooltip = undefined;
+    let target = undefined;
+
+    // Parse href (first parameter) - prioritize QuotedString over NODE_STRING
+    if (ctx.QuotedString) {
       href = ctx.QuotedString[0].image.slice(1, -1); // Remove quotes
+
+      // Check for tooltip parameter (second QuotedString)
+      if (ctx.QuotedString.length > 1) {
+        tooltip = ctx.QuotedString[1].image.slice(1, -1); // Remove quotes
+      }
+
+      // Check for target parameter (NODE_STRING)
+      if (ctx.NODE_STRING && ctx.NODE_STRING.length > 0) {
+        target = ctx.NODE_STRING[0].image;
+      }
+    } else if (ctx.NODE_STRING) {
+      href = ctx.NODE_STRING[0].image;
+      // Check for target parameter (second NODE_STRING)
+      if (ctx.NODE_STRING.length > 1) {
+        target = ctx.NODE_STRING[1].image;
+      }
     }
+
     return {
       href: href,
-      target: undefined,
+      tooltip: tooltip,
+      target: target,
     };
   }
 
   clickCall(ctx: any): any {
     let functionName = '';
+    let args = '';
 
     if (ctx.Call) {
-      if (ctx.NODE_STRING) {
+      // Handle "call functionName" or "call functionName(args)" syntax
+      if (ctx.Callback) {
+        // Handle "call callback" syntax where callback is tokenized as Callback token
+        functionName = ctx.Callback[0].image;
+      } else if (ctx.NODE_STRING) {
         functionName = ctx.NODE_STRING[0].image;
       } else if (ctx.QuotedString) {
         functionName = ctx.QuotedString[0].image.slice(1, -1); // Remove quotes
       }
+
+      // Parse function arguments if present
+      if (ctx.PS && ctx.PE) {
+        // Function has parentheses, check for arguments
+        // Handle complex arguments like "test0", test1, test2
+        const argParts: string[] = [];
+
+        // Collect all argument tokens in order
+        const allTokens: any[] = [];
+
+        // Determine if we need to skip the first token based on how function name was extracted
+        let skipFirstQuotedString = false;
+        let skipFirstNodeString = false;
+
+        if (ctx.Callback) {
+          // Function name came from Callback token, so all QuotedString and NODE_STRING tokens are arguments
+          skipFirstQuotedString = false;
+          skipFirstNodeString = false;
+        } else if (ctx.QuotedString && ctx.QuotedString.length > 0) {
+          // Function name came from first QuotedString, skip it
+          skipFirstQuotedString = true;
+        } else if (ctx.NODE_STRING && ctx.NODE_STRING.length > 0) {
+          // Function name came from first NODE_STRING, skip it
+          skipFirstNodeString = true;
+        }
+
+        if (ctx.QuotedString) {
+          const startIndex = skipFirstQuotedString ? 1 : 0;
+          for (let i = startIndex; i < ctx.QuotedString.length; i++) {
+            allTokens.push({ token: ctx.QuotedString[i], type: 'QuotedString' });
+          }
+        }
+        if (ctx.NODE_STRING) {
+          const startIndex = skipFirstNodeString ? 1 : 0;
+          for (let i = startIndex; i < ctx.NODE_STRING.length; i++) {
+            allTokens.push({ token: ctx.NODE_STRING[i], type: 'NODE_STRING' });
+          }
+        }
+        if (ctx.textToken) {
+          allTokens.push(...ctx.textToken.map((token: any) => ({ token, type: 'textToken' })));
+        }
+
+        // Sort tokens by their position in the input
+        allTokens.sort((a, b) => a.token.startOffset - b.token.startOffset);
+
+        // Build the argument string
+        allTokens.forEach(({ token, type }) => {
+          if (type === 'QuotedString') {
+            argParts.push(token.image); // Keep quotes for function arguments
+          } else {
+            argParts.push(token.image);
+          }
+        });
+
+        args = argParts.join('');
+      }
+
       return {
         functionName: functionName,
-        args: [], // TODO: Parse arguments if present
+        args: args || undefined, // Only include args if they exist
       };
     } else if (ctx.Callback) {
-      if (ctx.NODE_STRING) {
-        functionName = ctx.NODE_STRING[0].image;
-      } else if (ctx.QuotedString) {
-        functionName = ctx.QuotedString[0].image.slice(1, -1); // Remove quotes
-      } else if (ctx.StringStart && ctx.StringContent && ctx.StringEnd) {
-        functionName = ctx.StringContent[0].image; // String content without quotes
-      }
+      // For simple callback syntax like "click A callback", use the Callback token value as function name
+      functionName = ctx.Callback[0].image; // Use the Callback token itself as the function name
       return {
         functionName: functionName,
-        args: [],
+        args: undefined, // Simple callback has no args
       };
     }
     return {
       functionName: '',
-      args: [],
+      args: undefined,
     };
   }
 
   subgraphId(ctx: any): string {
     if (ctx.QuotedString) {
       return ctx.QuotedString[0].image.slice(1, -1); // Remove quotes
+    } else if (ctx.MarkdownStringStart && ctx.MarkdownStringContent && ctx.MarkdownStringEnd) {
+      return ctx.MarkdownStringContent[0].image; // Markdown content without backticks and quotes
     } else if (ctx.StringStart && ctx.StringContent && ctx.StringEnd) {
       return ctx.StringContent[0].image; // String content without quotes
     } else {
@@ -1616,7 +2393,7 @@ export class FlowchartAstVisitor extends BaseVisitor {
       const allTokens: any[] = [];
 
       // Collect all token types that can appear in subgraph titles
-      const tokenTypes = ['NODE_STRING', 'NumberToken', 'Style', 'Class', 'Click'];
+      const tokenTypes = ['NODE_STRING', 'NumberToken', 'STYLE', 'CLASS', 'CLICK'];
       tokenTypes.forEach((tokenType) => {
         if (ctx[tokenType] && Array.isArray(ctx[tokenType])) {
           ctx[tokenType].forEach((token: any) => {

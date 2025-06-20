@@ -1,7 +1,7 @@
 import { createToken, Lexer, TokenType, IToken, ILexingResult, ILexingError } from 'chevrotain';
 
-// Debug flag for lexer logging
-const DEBUG_LEXER = true; // Set to true to enable debug logging
+// Debug flag for lexer logging - disabled in production for performance
+const DEBUG_LEXER = false; // Set to true to enable debug logging
 
 // Context-aware lexer state
 interface LexerContext {
@@ -274,8 +274,9 @@ function updateContext(context: LexerContext, token: IToken): void {
     case 'NODE_STRING':
     case 'NumberToken':
     case 'Ampersand':
+    case 'AtSymbol':
     case 'Minus':
-    case 'DirectionValue':
+    case 'DIR':
     case 'Colon':
     case 'Comma':
     case 'Default':
@@ -388,23 +389,23 @@ function tryTokenizeKeywords(input: string, position: number): TokenResult {
 
     // If it's a pure keyword at word boundary, check if it should be a keyword
     const keywordPatterns = [
-      { pattern: /^graph\b/, type: 'Graph' },
-      { pattern: /^subgraph\b/, type: 'Subgraph' },
-      { pattern: /^end\b/, type: 'End' },
-      { pattern: /^style\b/, type: 'Style' },
-      { pattern: /^linkStyle\b/, type: 'LinkStyle' },
-      { pattern: /^classDef\b/, type: 'ClassDef' },
-      { pattern: /^class\b/, type: 'Class' },
-      { pattern: /^click\b/, type: 'Click' },
-      { pattern: /^href\b/, type: 'Href' },
+      { pattern: /^graph\b/, type: 'GRAPH' },
+      { pattern: /^subgraph\b/, type: 'subgraph' },
+      { pattern: /^end\b/, type: 'end' },
+      { pattern: /^style\b/, type: 'STYLE' },
+      { pattern: /^linkStyle\b/, type: 'LINKSTYLE' },
+      { pattern: /^classDef\b/, type: 'CLASSDEF' },
+      { pattern: /^class\b/, type: 'CLASS' },
+      { pattern: /^click\b/, type: 'CLICK' },
+      { pattern: /^href\b/, type: 'HREF' },
       { pattern: /^call\b/, type: 'Call' },
-      { pattern: /^default\b/, type: 'Default' },
-      { pattern: /^interpolate\b/, type: 'Interpolate' },
+      { pattern: /^default\b/, type: 'DEFAULT' },
+      { pattern: /^interpolate\b/, type: 'INTERPOLATE' },
       { pattern: /^accTitle\s*:/, type: 'AccTitle' },
       { pattern: /^accDescr\s*:/, type: 'AccDescr' },
       { pattern: /^accDescr\s*{/, type: 'AccDescrMultiline' },
       // Direction values
-      { pattern: /^(TB|TD|BT|RL|LR)\b/, type: 'DirectionValue' },
+      { pattern: /^(TB|TD|BT|RL|LR)\b/, type: 'DIR' },
     ];
 
     for (const { pattern, type } of keywordPatterns) {
@@ -1011,12 +1012,13 @@ function initializeTokenTypeMap() {
     ['CLASS', Class],
     ['CLICK', Click],
     ['HREF', Href],
-    ['CALLBACKNAME', Callback],
-    ['CALLBACKNAME', Call],
+    ['Callback', Callback],
+    ['Call', Call],
     ['DEFAULT', Default],
     ['INTERPOLATE', Interpolate],
 
     // Links
+    ['LINK_ID', LINK_ID],
     ['LINK', LINK],
     ['START_LINK', START_LINK],
     ['THICK_LINK', THICK_LINK],
@@ -1059,6 +1061,7 @@ function initializeTokenTypeMap() {
 
     // Punctuation
     ['AMP', Ampersand],
+    ['AtSymbol', AtSymbol],
     ['Minus', Minus],
     ['Colon', Colon],
     ['Comma', Comma],
@@ -1216,13 +1219,13 @@ const Href = createToken({
 });
 
 const Callback = createToken({
-  name: 'CALLBACKNAME',
+  name: 'Callback',
   pattern: /callback/i,
   longer_alt: NODE_STRING,
 });
 
 const Call = createToken({
-  name: 'CALLBACKNAME',
+  name: 'Call',
   pattern: /call/i,
   longer_alt: NODE_STRING,
 });
@@ -1308,6 +1311,13 @@ const ShapeDataStart = createToken({
 // ============================================================================
 // LINK TOKENS (JISON lines 154-164)
 // ============================================================================
+
+// Link ID token (must come before NODE_STRING to avoid conflicts)
+const LINK_ID = createToken({
+  name: 'LINK_ID',
+  pattern: /[^\s"]+@(?=[^{"])/,
+  longer_alt: NODE_STRING,
+});
 
 // Regular links without text
 const LINK = createToken({
@@ -1488,6 +1498,12 @@ const Ampersand = createToken({
   longer_alt: NODE_STRING,
 });
 
+const AtSymbol = createToken({
+  name: 'AtSymbol',
+  pattern: /@/,
+  longer_alt: NODE_STRING,
+});
+
 const Minus = createToken({
   name: 'Minus',
   pattern: /-/,
@@ -1529,7 +1545,7 @@ const Minus = createToken({
 
 const NumberToken = createToken({
   name: 'NumberToken',
-  pattern: /\d+/,
+  pattern: /\d+(?![A-Za-z])/,
 });
 
 // ============================================================================
@@ -1800,6 +1816,9 @@ const multiModeLexerDefinition = {
       START_DOTTED_LINK,
       START_LINK,
 
+      // Link ID (must come before NODE_STRING to avoid conflicts)
+      LINK_ID,
+
       // Odd shape start (must come before DirectionValue to avoid conflicts)
       OddStart,
 
@@ -1833,6 +1852,7 @@ const multiModeLexerDefinition = {
       // Basic punctuation (must come before NODE_STRING for proper tokenization)
       Pipe,
       Ampersand,
+      AtSymbol,
       Minus,
       StyleSeparator, // Must come before Colon to avoid conflicts (:::)
       Colon,
@@ -1969,6 +1989,7 @@ export const allTokens = [
   EOF,
 
   // Links (must come before NODE_STRING to avoid conflicts)
+  LINK_ID,
   LINK,
   START_LINK,
   THICK_LINK,
@@ -2073,6 +2094,7 @@ export const allTokens = [
   Pipe,
   PipeEnd,
   Ampersand,
+  AtSymbol,
   Minus,
 ];
 
@@ -2145,6 +2167,7 @@ export {
   ShapeDataEnd,
 
   // Links
+  LINK_ID,
   LINK,
   START_LINK,
   THICK_LINK,
@@ -2200,5 +2223,6 @@ export {
   Pipe,
   PipeEnd,
   Ampersand,
+  AtSymbol,
   Minus,
 };

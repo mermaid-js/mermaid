@@ -138,20 +138,71 @@ export class FlowchartParser extends CstParser {
   // Vertex - following JISON pattern
   private vertex = this.RULE('vertex', () => {
     this.OR([
-      // Basic shapes (first 6)
+      // Vertices with both labels and node data (use lookahead to resolve ambiguity)
+      {
+        ALT: () => this.SUBRULE(this.vertexWithSquareAndNodeData),
+        GATE: () => this.hasShapeDataAfterSquare(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithDoubleCircleAndNodeData),
+        GATE: () => this.hasShapeDataAfterDoubleCircle(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithCircleAndNodeData),
+        GATE: () => this.hasShapeDataAfterCircle(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithRoundAndNodeData),
+        GATE: () => this.hasShapeDataAfterRound(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithHexagonAndNodeData),
+        GATE: () => this.hasShapeDataAfterHexagon(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithDiamondAndNodeData),
+        GATE: () => this.hasShapeDataAfterDiamond(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithSubroutineAndNodeData),
+        GATE: () => this.hasShapeDataAfterSubroutine(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithStadiumAndNodeData),
+        GATE: () => this.hasShapeDataAfterStadium(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithEllipseAndNodeData),
+        GATE: () => this.hasShapeDataAfterEllipse(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithCylinderAndNodeData),
+        GATE: () => this.hasShapeDataAfterCylinder(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithOddAndNodeData),
+        GATE: () => this.hasShapeDataAfterOdd(),
+      },
+      {
+        ALT: () => this.SUBRULE(this.vertexWithRectAndNodeData),
+        GATE: () => this.hasShapeDataAfterRect(),
+      },
+      // Basic shapes (without node data)
       { ALT: () => this.SUBRULE(this.vertexWithSquare) },
       { ALT: () => this.SUBRULE(this.vertexWithDoubleCircle) },
       { ALT: () => this.SUBRULE(this.vertexWithCircle) },
       { ALT: () => this.SUBRULE(this.vertexWithRound) },
       { ALT: () => this.SUBRULE(this.vertexWithHexagon) },
       { ALT: () => this.SUBRULE(this.vertexWithDiamond) },
-      // Extended shapes (next 6)
+      // Extended shapes (without node data)
       { ALT: () => this.SUBRULE(this.vertexWithSubroutine) },
       { ALT: () => this.SUBRULE(this.vertexWithTrapezoidVariant) },
       { ALT: () => this.SUBRULE2(this.vertexWithStadium) },
       { ALT: () => this.SUBRULE2(this.vertexWithEllipse) },
       { ALT: () => this.SUBRULE2(this.vertexWithCylinder) },
-      // Node with data syntax
+      { ALT: () => this.SUBRULE(this.vertexWithOdd) },
+      { ALT: () => this.SUBRULE(this.vertexWithRect) },
+      // Node with data syntax only
       { ALT: () => this.SUBRULE(this.vertexWithNodeData) },
       // Plain node
       { ALT: () => this.SUBRULE(this.nodeId) },
@@ -267,11 +318,273 @@ export class FlowchartParser extends CstParser {
     this.CONSUME(tokens.CylinderEnd);
   });
 
+  private vertexWithOdd = this.RULE('vertexWithOdd', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.OddStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SquareEnd);
+  });
+
+  private vertexWithRect = this.RULE('vertexWithRect', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.RectStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SquareEnd);
+  });
+
   // Vertex with node data syntax (e.g., D@{ shape: rounded })
   private vertexWithNodeData = this.RULE('vertexWithNodeData', () => {
     this.SUBRULE(this.nodeId);
     this.SUBRULE(this.nodeData);
   });
+
+  // Vertices with both labels and node data
+  private vertexWithSquareAndNodeData = this.RULE('vertexWithSquareAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.SquareStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SquareEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithDoubleCircleAndNodeData = this.RULE('vertexWithDoubleCircleAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.DoubleCircleStart);
+    this.OPTION(() => {
+      this.SUBRULE(this.nodeText);
+    });
+    this.CONSUME(tokens.DoubleCircleEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithCircleAndNodeData = this.RULE('vertexWithCircleAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.CircleStart);
+    this.OPTION(() => {
+      this.SUBRULE(this.nodeText);
+    });
+    this.CONSUME(tokens.CircleEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithRoundAndNodeData = this.RULE('vertexWithRoundAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.PS);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.PE);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithHexagonAndNodeData = this.RULE('vertexWithHexagonAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.HexagonStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.HexagonEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithDiamondAndNodeData = this.RULE('vertexWithDiamondAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.DiamondStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.DiamondEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithSubroutineAndNodeData = this.RULE('vertexWithSubroutineAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.SubroutineStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SubroutineEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithStadiumAndNodeData = this.RULE('vertexWithStadiumAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.StadiumStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.StadiumEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithEllipseAndNodeData = this.RULE('vertexWithEllipseAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.EllipseStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.EllipseEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithCylinderAndNodeData = this.RULE('vertexWithCylinderAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.CylinderStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.CylinderEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithOddAndNodeData = this.RULE('vertexWithOddAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.OddStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SquareEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  private vertexWithRectAndNodeData = this.RULE('vertexWithRectAndNodeData', () => {
+    this.SUBRULE(this.nodeId);
+    this.CONSUME(tokens.RectStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SquareEnd);
+    this.SUBRULE(this.nodeData);
+  });
+
+  // Lookahead methods to resolve ambiguity between shapes with and without node data
+  private hasShapeDataAfterSquare(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.SquareStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterDoubleCircle(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.DoubleCircleStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterCircle(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.CircleStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterRound(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.PS &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterHexagon(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.HexagonStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterDiamond(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.DiamondStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterSubroutine(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.SubroutineStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterStadium(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.StadiumStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterEllipse(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.EllipseStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterCylinder(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.CylinderStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterOdd(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.OddStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  private hasShapeDataAfterRect(): boolean {
+    return (
+      this.LA(1).tokenType === tokens.NODE_STRING &&
+      this.LA(2).tokenType === tokens.RectStart &&
+      this.hasShapeDataAfterPosition(3)
+    );
+  }
+
+  // Helper method to check for @{ after a shape's closing token
+  private hasShapeDataAfterPosition(startPos: number): boolean {
+    let pos = startPos;
+    // Skip through the shape content and find the closing token
+    let depth = 1;
+    while (depth > 0 && pos <= 10) {
+      // Limit lookahead to prevent infinite loops
+      const token = this.LA(pos);
+      if (!token) return false;
+
+      // Check for opening tokens that increase depth
+      if (
+        token.tokenType === tokens.SquareStart ||
+        token.tokenType === tokens.DoubleCircleStart ||
+        token.tokenType === tokens.CircleStart ||
+        token.tokenType === tokens.PS ||
+        token.tokenType === tokens.HexagonStart ||
+        token.tokenType === tokens.DiamondStart ||
+        token.tokenType === tokens.SubroutineStart ||
+        token.tokenType === tokens.StadiumStart ||
+        token.tokenType === tokens.EllipseStart ||
+        token.tokenType === tokens.CylinderStart ||
+        token.tokenType === tokens.OddStart ||
+        token.tokenType === tokens.RectStart
+      ) {
+        depth++;
+      }
+      // Check for closing tokens that decrease depth
+      else if (
+        token.tokenType === tokens.SquareEnd ||
+        token.tokenType === tokens.DoubleCircleEnd ||
+        token.tokenType === tokens.CircleEnd ||
+        token.tokenType === tokens.PE ||
+        token.tokenType === tokens.HexagonEnd ||
+        token.tokenType === tokens.DiamondEnd ||
+        token.tokenType === tokens.SubroutineEnd ||
+        token.tokenType === tokens.StadiumEnd ||
+        token.tokenType === tokens.EllipseEnd ||
+        token.tokenType === tokens.CylinderEnd
+      ) {
+        depth--;
+      }
+
+      pos++;
+    }
+
+    // Check if the next token after the shape is @{
+    return this.LA(pos)?.tokenType === tokens.ShapeDataStart;
+  }
 
   // Node data rule (handles @{ ... } syntax)
   private nodeData = this.RULE('nodeData', () => {
@@ -442,18 +755,42 @@ export class FlowchartParser extends CstParser {
   // Link statement
   private linkStatement = this.RULE('linkStatement', () => {
     this.OR([
-      { ALT: () => this.CONSUME(tokens.LINK) },
-      { ALT: () => this.CONSUME(tokens.THICK_LINK) },
-      { ALT: () => this.CONSUME(tokens.DOTTED_LINK) },
+      // LINK_ID followed by link token (e.g., "e1@-->")
+      {
+        ALT: () => {
+          this.CONSUME(tokens.LINK_ID);
+          this.OR2([
+            { ALT: () => this.CONSUME(tokens.LINK) },
+            { ALT: () => this.CONSUME(tokens.THICK_LINK) },
+            { ALT: () => this.CONSUME(tokens.DOTTED_LINK) },
+          ]);
+        },
+      },
+      // Regular link tokens without ID
+      { ALT: () => this.CONSUME2(tokens.LINK) },
+      { ALT: () => this.CONSUME2(tokens.THICK_LINK) },
+      { ALT: () => this.CONSUME2(tokens.DOTTED_LINK) },
     ]);
   });
 
   // Link with edge text - START_LINK/START_DOTTED_LINK/START_THICK_LINK edgeText EdgeTextEnd
   private linkWithEdgeText = this.RULE('linkWithEdgeText', () => {
     this.OR([
-      { ALT: () => this.CONSUME(tokens.START_LINK) },
-      { ALT: () => this.CONSUME(tokens.START_DOTTED_LINK) },
-      { ALT: () => this.CONSUME(tokens.START_THICK_LINK) },
+      // LINK_ID followed by START_LINK pattern (e.g., "e1@-- text -->")
+      {
+        ALT: () => {
+          this.CONSUME(tokens.LINK_ID);
+          this.OR2([
+            { ALT: () => this.CONSUME(tokens.START_LINK) },
+            { ALT: () => this.CONSUME(tokens.START_DOTTED_LINK) },
+            { ALT: () => this.CONSUME(tokens.START_THICK_LINK) },
+          ]);
+        },
+      },
+      // Regular START_LINK patterns without ID
+      { ALT: () => this.CONSUME2(tokens.START_LINK) },
+      { ALT: () => this.CONSUME2(tokens.START_DOTTED_LINK) },
+      { ALT: () => this.CONSUME2(tokens.START_THICK_LINK) },
     ]);
     this.SUBRULE(this.edgeText);
     this.CONSUME(tokens.EdgeTextEnd);
@@ -523,21 +860,27 @@ export class FlowchartParser extends CstParser {
           this.CONSUME(tokens.Default);
         },
       },
-      { ALT: () => this.SUBRULE(this.numberList) },
+      {
+        ALT: () => {
+          this.SUBRULE(this.numberList);
+        },
+      },
     ]);
 
-    // Then handle optional INTERPOLATE + alphaNum
+    // Then handle optional INTERPOLATE + alphaNum (must come before styleList)
     this.OPTION(() => {
       this.CONSUME(tokens.Interpolate);
       this.SUBRULE(this.alphaNum);
     });
 
-    // Then handle optional styleList
+    // Then handle optional styleList (after interpolate)
     this.OPTION2(() => {
-      this.SUBRULE2(this.styleList);
+      this.SUBRULE(this.styleList);
     });
 
-    this.SUBRULE(this.statementSeparator);
+    this.OPTION3(() => {
+      this.SUBRULE(this.statementSeparator);
+    });
   });
 
   // Class definition statement
@@ -563,12 +906,24 @@ export class FlowchartParser extends CstParser {
     this.OR([
       { ALT: () => this.SUBRULE(this.clickHref) },
       { ALT: () => this.SUBRULE(this.clickCall) },
+      // Handle direct link syntax: click A "url" ["tooltip"] [target]
+      {
+        ALT: () => {
+          this.CONSUME(tokens.QuotedString); // URL
+          // Optional tooltip (second QuotedString)
+          this.OPTION3(() => {
+            this.CONSUME2(tokens.QuotedString); // Tooltip
+          });
+          // Optional target parameter (NODE_STRING)
+          this.OPTION4(() => {
+            this.CONSUME2(tokens.NODE_STRING); // Target parameter like "_blank"
+          });
+        },
+      },
     ]);
+    // Optional tooltip for clickCall (callback) syntax
     this.OPTION(() => {
-      this.OR2([
-        { ALT: () => this.CONSUME(tokens.NODE_STRING) },
-        { ALT: () => this.CONSUME(tokens.QuotedString) },
-      ]);
+      this.CONSUME3(tokens.QuotedString); // Tooltip for callback syntax
     });
     this.OPTION2(() => {
       this.SUBRULE(this.statementSeparator);
@@ -582,6 +937,14 @@ export class FlowchartParser extends CstParser {
       { ALT: () => this.CONSUME(tokens.NODE_STRING) },
       { ALT: () => this.CONSUME(tokens.QuotedString) },
     ]);
+    // Optional tooltip parameter (second QuotedString)
+    this.OPTION(() => {
+      this.CONSUME2(tokens.QuotedString); // Tooltip parameter
+    });
+    // Optional target parameter
+    this.OPTION2(() => {
+      this.CONSUME2(tokens.NODE_STRING); // Target parameter like "_blank"
+    });
   });
 
   // Click call
@@ -593,28 +956,29 @@ export class FlowchartParser extends CstParser {
           this.OR2([
             { ALT: () => this.CONSUME(tokens.NODE_STRING) },
             { ALT: () => this.CONSUME(tokens.QuotedString) },
+            { ALT: () => this.CONSUME(tokens.Callback) }, // Handle "call callback" syntax
           ]);
           this.OPTION(() => {
-            this.CONSUME(tokens.Pipe);
-            // Parse arguments
-            this.CONSUME2(tokens.Pipe);
+            this.CONSUME(tokens.PS); // Opening parenthesis
+            this.OPTION2(() => {
+              // Parse function arguments - handle multiple tokens for complex arguments
+              this.MANY(() => {
+                this.OR3([
+                  { ALT: () => this.CONSUME(tokens.TextContent) }, // Arguments as text token
+                  { ALT: () => this.CONSUME2(tokens.QuotedString) },
+                  { ALT: () => this.CONSUME2(tokens.NODE_STRING) },
+                ]);
+              });
+            });
+            this.CONSUME(tokens.PE); // Closing parenthesis
           });
         },
       },
       {
         ALT: () => {
-          this.CONSUME(tokens.Callback);
-          this.OR3([
-            { ALT: () => this.CONSUME2(tokens.NODE_STRING) },
-            { ALT: () => this.CONSUME2(tokens.QuotedString) },
-            {
-              ALT: () => {
-                this.CONSUME(tokens.StringStart);
-                this.CONSUME(tokens.StringContent);
-                this.CONSUME(tokens.StringEnd);
-              },
-            },
-          ]);
+          this.CONSUME2(tokens.Callback);
+          // For simple callback syntax like "click A callback", the Callback token itself is the function name
+          // Don't consume additional strings here - let clickStatement handle tooltips
         },
       },
     ]);
@@ -676,6 +1040,13 @@ export class FlowchartParser extends CstParser {
       { ALT: () => this.CONSUME(tokens.QuotedString) },
       {
         ALT: () => {
+          this.CONSUME(tokens.MarkdownStringStart);
+          this.CONSUME(tokens.MarkdownStringContent);
+          this.CONSUME(tokens.MarkdownStringEnd);
+        },
+      },
+      {
+        ALT: () => {
           this.CONSUME(tokens.StringStart);
           this.CONSUME(tokens.StringContent);
           this.CONSUME(tokens.StringEnd);
@@ -723,12 +1094,16 @@ export class FlowchartParser extends CstParser {
             this.CONSUME(tokens.Comma);
             this.CONSUME2(tokens.NumberToken);
           });
+          // Optionally handle mixed case: NumberToken followed by NODE_STRING
+          this.OPTION(() => {
+            this.CONSUME(tokens.NODE_STRING);
+          });
         },
       },
       // Handle comma-separated numbers that got tokenized as NODE_STRING (e.g., "0,1")
       {
         ALT: () => {
-          this.CONSUME(tokens.NODE_STRING);
+          this.CONSUME2(tokens.NODE_STRING);
         },
       },
     ]);

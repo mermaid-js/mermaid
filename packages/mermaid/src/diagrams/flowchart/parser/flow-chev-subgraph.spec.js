@@ -19,8 +19,8 @@ describe('when parsing subgraphs with Chevrotain', function () {
     const subgraph = subgraphs[0];
 
     expect(subgraph.nodes.length).toBe(2);
-    expect(subgraph.nodes[0]).toBe('a2');
-    expect(subgraph.nodes[1]).toBe('a1');
+    expect(subgraph.nodes[0]).toBe('a1');
+    expect(subgraph.nodes[1]).toBe('a2');
     expect(subgraph.title).toBe('One');
     expect(subgraph.id).toBe('One');
   });
@@ -30,9 +30,9 @@ describe('when parsing subgraphs with Chevrotain', function () {
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(3);
-    expect(subgraph.nodes[0]).toBe('a3');
+    expect(subgraph.nodes[0]).toBe('a1');
     expect(subgraph.nodes[1]).toBe('a2');
-    expect(subgraph.nodes[2]).toBe('a1');
+    expect(subgraph.nodes[2]).toBe('a3');
     expect(subgraph.title).toBe('One');
     expect(subgraph.id).toBe('One');
   });
@@ -43,8 +43,8 @@ describe('when parsing subgraphs with Chevrotain', function () {
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
-    expect(subgraph.nodes[0]).toBe('a2');
-    expect(subgraph.nodes[1]).toBe('a1');
+    expect(subgraph.nodes[0]).toBe('a1');
+    expect(subgraph.nodes[1]).toBe('a2');
     expect(subgraph.title).toBe('Some Title');
     expect(subgraph.id).toBe('subGraph0');
   });
@@ -55,8 +55,8 @@ describe('when parsing subgraphs with Chevrotain', function () {
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(2);
-    expect(subgraph.nodes[0]).toBe('a2');
-    expect(subgraph.nodes[1]).toBe('a1');
+    expect(subgraph.nodes[0]).toBe('a1');
+    expect(subgraph.nodes[1]).toBe('a2');
     expect(subgraph.title).toBe('Some Title');
     expect(subgraph.id).toBe('some-id');
   });

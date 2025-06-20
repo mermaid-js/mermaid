@@ -323,7 +323,9 @@ const flow = {
         // Use addVertex method if available, otherwise set directly
         if (typeof targetYY.addVertex === 'function') {
           // Create textObj structure expected by FlowDB
-          const textObj = vertex.text ? { text: vertex.text, type: 'text' } : undefined;
+          const textObj = vertex.text
+            ? { text: vertex.text, type: vertex.labelType || 'text' }
+            : undefined;
           targetYY.addVertex(
             id,
             textObj,
@@ -341,20 +343,48 @@ const flow = {
     }
 
     // Add edges
-    ast.edges.forEach((edge) => {
-      if (typeof targetYY.addLink === 'function') {
-        // Create the linkData structure expected by FlowDB
-        const linkData = {
-          type: edge.type,
-          stroke: edge.stroke,
-          length: edge.length,
-          text: edge.text ? { text: edge.text, type: 'text' } : undefined,
-        };
-        targetYY.addLink([edge.start], [edge.end], linkData);
-      } else {
-        targetYY.edges.push(edge);
-      }
-    });
+    // Only process edges if visitor didn't have FlowDB instance
+    // (if visitor had FlowDB, edges were added directly during parsing)
+    if (!parserInstance.visitor.flowDb) {
+      ast.edges.forEach((edge) => {
+        if (typeof targetYY.addLink === 'function') {
+          // Create the linkData structure expected by FlowDB
+          const linkData = {
+            id: edge.id, // Include edge ID for user-defined edge IDs
+            type: edge.type,
+            stroke: edge.stroke,
+            length: edge.length,
+            text: edge.text ? { text: edge.text, type: edge.labelType || 'text' } : undefined,
+          };
+          targetYY.addLink([edge.start], [edge.end], linkData);
+        } else {
+          targetYY.edges.push(edge);
+        }
+      });
+    }
+
+    // Apply edge metadata after edges have been created
+    if (ast.edgeMetadata && typeof targetYY.addVertex === 'function') {
+      Object.entries(ast.edgeMetadata).forEach(([edgeId, metadata]) => {
+        // Convert metadata object to YAML string format expected by FlowDB
+        const yamlMetadata = Object.entries(metadata)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(', ');
+
+        // Use FlowDB's addVertex method which can detect edges and apply metadata
+        const textObj = { text: edgeId, type: 'text' };
+        targetYY.addVertex(
+          edgeId,
+          textObj,
+          'squareRect', // shape (not used for edges)
+          [], // style
+          [], // classes
+          undefined, // dir
+          {}, // props (empty for edges)
+          yamlMetadata // metadata - this will be processed as YAML and applied to the edge
+        );
+      });
+    }
 
     // Apply linkStyles after edges have been added
     if (ast.linkStyles) {
@@ -408,12 +438,30 @@ const flow = {
       targetYY.setAccDescription(ast.accDescription);
     }
 
-    // Add click events
-    ast.clickEvents.forEach((clickEvent) => {
-      if (typeof targetYY.setClickEvent === 'function') {
-        targetYY.setClickEvent(clickEvent.id, clickEvent.functionName, clickEvent.functionArgs);
-      }
-    });
+    // Click events are now handled directly by the AST visitor during parsing
+    // to match JISON parser behavior and avoid duplicate calls
+    // ast.clickEvents.forEach((clickEvent) => {
+    //   if (clickEvent.type === 'href') {
+    //     // Handle href/link events
+    //     if (typeof targetYY.setLink === 'function') {
+    //       if (clickEvent.target !== undefined) {
+    //         targetYY.setLink(clickEvent.id, clickEvent.href, clickEvent.target);
+    //       } else {
+    //         targetYY.setLink(clickEvent.id, clickEvent.href);
+    //       }
+    //     }
+    //   } else if (clickEvent.type === 'call') {
+    //     // Handle callback/function call events
+    //     if (typeof targetYY.setClickEvent === 'function') {
+    //       // Only pass functionArgs if it's defined (for compatibility with JISON parser)
+    //       if (clickEvent.functionArgs !== undefined) {
+    //         targetYY.setClickEvent(clickEvent.id, clickEvent.functionName, clickEvent.functionArgs);
+    //       } else {
+    //         targetYY.setClickEvent(clickEvent.id, clickEvent.functionName);
+    //       }
+    //     }
+    //   }
+    // });
 
     return ast;
   },
