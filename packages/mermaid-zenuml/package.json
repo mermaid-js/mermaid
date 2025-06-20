@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/mermaid-zenuml",
-  "version": "0.3.0",
+  "version": "0.2.1",
   "description": "MermaidJS plugin for ZenUML integration",
   "module": "dist/mermaid-zenuml.core.mjs",
   "types": "dist/detector.d.ts",
