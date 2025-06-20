@@ -14,6 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # so we have both base and head SHAs to diff
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
