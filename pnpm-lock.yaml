@@ -262,9 +262,6 @@ importers:
       khroma:
         specifier: ^2.1.0
         version: 2.1.0
-      lodash-es:
-        specifier: ^4.17.21
-        version: 4.17.21
       marked:
         specifier: ^15.0.7
         version: 15.0.7
@@ -314,9 +311,6 @@ importers:
       '@types/katex':
         specifier: ^0.16.7
         version: 0.16.7
-      '@types/lodash-es':
-        specifier: ^4.17.12
-        version: 4.17.12
       '@types/micromatch':
         specifier: ^4.0.9
         version: 4.0.9
@@ -3324,9 +3318,6 @@ packages:
 
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
-
-  '@types/lodash-es@4.17.12':
-    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
 
   '@types/lodash@4.17.10':
     resolution: {integrity: sha512-YpS0zzoduEhuOWjAotS6A5AVCva7X4lVlYLF0FYHAY9sdraBfnatttHItlWeZdGhuEkf+OzMNg2ZYAx8t+52uQ==}
@@ -13913,10 +13904,6 @@ snapshots:
       '@types/node': 22.13.5
 
   '@types/linkify-it@5.0.0': {}
-
-  '@types/lodash-es@4.17.12':
-    dependencies:
-      '@types/lodash': 4.17.10
 
   '@types/lodash@4.17.10': {}
 
