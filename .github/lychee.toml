@@ -53,6 +53,7 @@ exclude = [
 "https://huehive.co",
 "https://foswiki.org",
 "https://www.gnu.org",
+"https://mermaid-preview.com"
 ]
 
 # Exclude all private IPs from checking.

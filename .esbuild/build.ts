@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import type { MermaidBuildOptions } from './util.js';
@@ -90,6 +90,7 @@ const buildTinyMermaid = async () => {
   tinyPkg.version = mermaidPkg.version;
 
   await writeFile('./packages/tiny/package.json', JSON.stringify(tinyPkg, null, 2) + '\n');
+  await cp('./packages/mermaid/CHANGELOG.md', './packages/tiny/CHANGELOG.md');
 };
 
 const main = async () => {
