@@ -44,3 +44,21 @@ jobs:
             echo "❌ pnpm-lock.yaml was changed without any package.json"
             exit 1
           fi
+
+      - name: Comment on PR if validation failed
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## 🔍 Lockfile Validation Failed
+
+            One or more issues were found in `pnpm-lock.yaml`:
+            - Tarball references are not allowed.
+            - `packages/mermaid/src/vitepress` path must not appear in the lockfile.
+            - `pnpm-lock.yaml` should only change when `package.json` changes.
+
+            Please fix these issues and push an update.
+
+            _Posted automatically by GitHub Actions_
