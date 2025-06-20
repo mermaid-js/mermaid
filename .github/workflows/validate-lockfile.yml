@@ -15,7 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # so we have both base and head SHAs to diff
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -23,18 +22,21 @@ jobs:
         with:
           node-version: 20
 
-      - name: Check pnpm-lock.yaml for tarball fields and unexpected paths
+      - name: Validate pnpm-lock.yaml entries
         run: |
-          if grep -q 'tarball:' pnpm-lock.yaml; then
-            echo "❌ tarball field found in pnpm-lock.yaml"
-            exit 1
-          fi
-          if grep -q 'packages/mermaid/src/vitepress' pnpm-lock.yaml; then
-            echo "❌ Unexpected path found in pnpm-lock.yaml"
-            exit 1
-          fi
+          forbidden=(
+            'tarball:'                                  # no tarball fields
+            'packages/mermaid/src/vitepress'            # no vitepress paths
+          )
 
-      - name: Ensure pnpm-lock.yaml changes only when package.json changes
+          for pat in "${forbidden[@]}"; do
+            if grep -qF "$pat" pnpm-lock.yaml; then
+              echo "❌ Forbidden pattern \"$pat\" found in pnpm-lock.yaml"
+              exit 1
+            fi
+          done
+
+      - name: Ensure pnpm-lock.yaml only when package.json changes
         run: |
           git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} > changed_files.txt
           if grep -q '^pnpm-lock.yaml$' changed_files.txt && \
