@@ -61,9 +61,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            ## 🔍 Lockfile Validation Failed
-
-            The following issue(s) were detected in `pnpm-lock.yaml`:
+            The following issue(s) were detected:
             ${{ steps.validate.outputs.errors }}
 
             Please address these and push an update.
