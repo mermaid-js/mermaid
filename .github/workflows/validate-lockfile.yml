@@ -1,0 +1,41 @@
+name: Validate pnpm-lock.yaml
+
+on:
+  pull_request:
+    paths:
+      - 'pnpm-lock.yaml'
+      - '**/package.json'
+      - '**/*.js'
+      - '.github/workflows/validate-lockfile.yml'
+
+jobs:
+  validate-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check pnpm-lock.yaml for tarball fields and unexpected paths
+        run: |
+          if grep -q 'tarball:' pnpm-lock.yaml; then
+            echo "❌ tarball field found in pnpm-lock.yaml"
+            exit 1
+          fi
+          if grep -q 'packages/mermaid/src/vitepress' pnpm-lock.yaml; then
+            echo "❌ Unexpected path found in pnpm-lock.yaml"
+            exit 1
+          fi
+
+      - name: Ensure pnpm-lock.yaml changes only with package.json
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          if grep -q '^pnpm-lock.yaml$' changed_files.txt && ! grep -q 'package.json' changed_files.txt; then
+            echo "❌ pnpm-lock.yaml was changed without any package.json"
+            exit 1
+          fi
