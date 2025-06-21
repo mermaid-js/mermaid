@@ -12,6 +12,7 @@ gantt
 gitgraph
 gzipped
 handDrawn
+ipsepcola
 kanban
 marginx
 marginy
