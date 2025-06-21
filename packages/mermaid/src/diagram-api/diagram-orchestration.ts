@@ -25,6 +25,7 @@ import { packet } from '../diagrams/packet/detector.js';
 import { radar } from '../diagrams/radar/detector.js';
 import block from '../diagrams/block/blockDetector.js';
 import architecture from '../diagrams/architecture/architectureDetector.js';
+import ishikawa from '../diagrams/ishikawa/detector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import '../type.d.ts';
@@ -99,6 +100,7 @@ export const addDiagrams = () => {
     packet,
     xychart,
     block,
-    radar
+    radar,
+    ishikawa
   );
 };
