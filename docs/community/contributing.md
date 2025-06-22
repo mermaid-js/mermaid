@@ -301,7 +301,7 @@ If you are adding a feature, you will definitely need to add tests. Depending on
 
 Unit tests are tests that test a single function or module. They are the easiest to write and the fastest to run.
 
-Unit tests are mandatory for all code except the renderers. (The renderers are tested with integration tests.)
+Unit tests are mandatory for all code except the layout tests. (The layouts are tested with integration tests.)
 
 We use [Vitest](https://vitest.dev) to run unit tests.
 
@@ -326,6 +326,30 @@ When using Docker prepend your command with `./run`:
 ```sh
 ./run pnpm test
 ```
+
+##### Testing the DOM
+
+One can use `jsdomIt` to test any part of Mermaid that interacts with the DOM, as long as it is not related to the layout.
+
+The function `jsdomIt` ([developed in utils.ts](../../tests/util.ts)) overrides `it` from `vitest`, and creates a pseudo-browser environment that works almost like the real deal for the duration of the test. It uses JSDOM to create a DOM, and adds objects `window` and `document` to `global` to mock the browser environment.
+
+> \[!NOTE]
+> The layout cannot work in `jsdomIt` tests because JSDOM has no rendering engine, hence the pseudo-browser environment.
+
+Example :
+
+```typescript
+import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
+
+jsdomIt('should add element "thing" in the SVG', ({ svg }) => {
+  // Code in this block runs in a pseudo-browser environment
+  addThing(svg); // The svg item is the D3 selection of the SVG node
+  const svgNode = ensureNodeFromSelector('svg'); // Retrieve the DOM node using the DOM API
+  expect(svgNode.querySelector('thing')).not.toBeNull(); // Test the structure of the SVG
+});
+```
+
+They can be used to test any method that interacts with the DOM, including for testing renderers. For renderers, additional integration testing is necessary to test the layout though.
 
 #### Integration / End-to-End (E2E) Tests
 
