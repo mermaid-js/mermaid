@@ -599,7 +599,7 @@ You have to call mermaid.initialize.`
           .text(el.attr('title'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
           .style('top', window.scrollY + rect.bottom + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
+        tooltipElem.html(tooltipElem.html().replace(/&lt;br\s*\/?&gt;/gi, '<br/>'));
         el.classed('hover', true);
       })
       .on('mouseout', (e: MouseEvent) => {
