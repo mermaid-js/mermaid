@@ -28,6 +28,7 @@ ${'2w'}   | ${dayjs.duration(2, 'w')}
 
 import { JSDOM } from 'jsdom';
 import { expect, it } from 'vitest';
+import { select, type Selection } from 'd3';
 
 export const convert = (template: TemplateStringsArray, ...params: unknown[]) => {
   const header = template[0]
@@ -61,6 +62,11 @@ export const MOCKED_BBOX = {
   height: 666,
 };
 
+interface JsdomItInput {
+  // eslint-disable-next-line
+  svg: Selection<SVGSVGElement, never, HTMLElement, any>; // The `any` here comes from D3'as API.
+}
+
 /**
  * Test method borrowed from d3 : https://github.com/d3/d3-selection/blob/v3.0.0/test/jsdom.js
  *
@@ -74,7 +80,7 @@ export const MOCKED_BBOX = {
  *
  * This makes it possible to make structural tests instead of mocking everything.
  */
-export function jsdomIt(message: string, run: () => void | Promise<void>) {
+export function jsdomIt(message: string, run: (input: JsdomItInput) => void | Promise<void>) {
   return it(message, async (): Promise<void> => {
     const oldWindow = global.window;
     const oldDocument = global.document;
@@ -99,7 +105,8 @@ export function jsdomIt(message: string, run: () => void | Promise<void>) {
       setOnProtectedConstant(global, 'document', dom.window.document); // Fool D3 into thinking it's in a browser
       setOnProtectedConstant(global, 'MutationObserver', undefined); // JSDOM doesn't like cytoscape elements
 
-      await run();
+      const svgSelection = select<SVGSVGElement, never>('svg');
+      await run({ svg: svgSelection });
     } finally {
       setOnProtectedConstant(global, 'window', oldWindow);
       setOnProtectedConstant(global, 'document', oldDocument);
