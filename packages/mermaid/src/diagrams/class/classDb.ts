@@ -476,8 +476,7 @@ export class ClassDB implements DiagramDB {
   private readonly setupToolTips = (element: Element) => {
     let tooltipElem: Selection<HTMLDivElement, unknown, HTMLElement, unknown> =
       select('.mermaidTooltip');
-    // @ts-expect-error - Incorrect types
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
+    if (tooltipElem.empty()) {
       tooltipElem = select('body')
         .append('div')
         .attr('class', 'mermaidTooltip')

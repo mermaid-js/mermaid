@@ -571,9 +571,7 @@ You have to call mermaid.initialize.`
 
   private setupToolTips(element: Element) {
     let tooltipElem = select('.mermaidTooltip');
-    // @ts-ignore TODO: fix this
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-      // @ts-ignore TODO: fix this
+    if (tooltipElem.empty()) {
       tooltipElem = select('body')
         .append('div')
         .attr('class', 'mermaidTooltip')
