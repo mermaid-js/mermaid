@@ -113,11 +113,14 @@ function layoutFishbone(
       // Calculate position along the diagonal category branch
       // Distribute causes evenly along 60% of the branch (from 20% to 80%)
       const branchProgress = 0.2 + (causeIndex * 0.6) / Math.max(causes.length - 1, 1);
-      const causeX = spineX + requiredDistance * branchProgress * Math.cos(categoryAngle);
-      const causeY = spineY + requiredDistance * branchProgress * Math.sin(categoryAngle);
 
-      // Calculate individual distance for this cause based on its sub-causes
-      const causeDistance = calculateCauseDistance(cause);
+      // Calculate max sub-cause distance for all causes in this category
+      const maxSubCauses = Math.max(...causes.map((c) => (c.children ? c.children.length : 0)));
+      const causeDistance = Math.max(300, 400 + maxSubCauses * 50);
+
+      // Use causeDistance for the position of the cause node (not requiredDistance)
+      const causeX = spineX + causeDistance * branchProgress * Math.cos(categoryAngle);
+      const causeY = spineY + causeDistance * branchProgress * Math.sin(categoryAngle);
 
       // Position sub-causes in pairs, with first pair to the left of category point
       const subCauses = cause.children || [];

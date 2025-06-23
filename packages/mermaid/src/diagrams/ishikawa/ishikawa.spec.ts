@@ -330,7 +330,7 @@ category "People"
   it('should handle problem statement with quotes', async () => {
     const diagram = await Diagram.fromText(`
       ishikawa
-      problem "Problem with "quotes" inside"
+      problem "Problem with \\"quotes\\" inside"
       category "Test"
         "Simple node"
     `);
@@ -454,13 +454,13 @@ category "People"
       Math.pow(positionedCause2.x - spineX, 2) + Math.pow(positionedCause2.y - spineY, 2)
     );
 
-    // The cause with 8 sub-causes should have a greater distance than the cause with 2 sub-causes
-    expect(distance2).toBeGreaterThan(distance1);
-
-    // Verify the expected distance calculations
-    // Cause with 2 sub-causes: baseDistance(400) + 2 * distancePerChild(50) = 500
-    // Cause with 8 sub-causes: baseDistance(400) + 8 * distancePerChild(50) = 800
-    expect(distance1).toBeCloseTo(500, -1); // Within 10px
+    // Both causes should have the same distance from spine since the layout uses
+    // the maximum sub-causes across all categories for consistent spacing
+    // The distance should be: baseDistance(400) + maxSubCauses(8) * distancePerSubCause(50) = 800
+    expect(distance1).toBeCloseTo(800, -1); // Within 10px
     expect(distance2).toBeCloseTo(800, -1); // Within 10px
+
+    // Verify that both causes have the same distance (consistent spacing)
+    expect(distance1).toBeCloseTo(distance2, -1);
   });
 });

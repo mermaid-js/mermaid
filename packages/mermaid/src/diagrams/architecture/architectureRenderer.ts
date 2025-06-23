@@ -1,7 +1,6 @@
 import { registerIconPacks } from '../../rendering-util/icons.js';
 import type { Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
-import type { FcoseLayoutOptions } from 'cytoscape-fcose';
 import fcose from 'cytoscape-fcose';
 import { select } from 'd3';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
