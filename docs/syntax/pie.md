@@ -40,7 +40,7 @@ Drawing a pie chart is really simple in mermaid.
 **Note:**
 
 > Pie chart values must be **positive numbers greater than zero**.\
-> **Zero and negative values are not allowed** and will result in an error.
+> **Negative values are not allowed** and will result in an error.
 
 \[pie] \[showData] (OPTIONAL)
 \[title] \[titlevalue] (OPTIONAL)
