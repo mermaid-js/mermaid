@@ -123,7 +123,7 @@ export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core)
               : 'Y'
             : 'XY';
 
-          let width = 0;
+          let width;
           if (axis === 'X') {
             width = Math.abs(startX - endX);
           } else if (axis === 'Y') {
@@ -198,8 +198,9 @@ export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Cor
       if (data.type === 'group') {
         const { h, w, x1, y1 } = node.boundingBox();
 
-        groupsEl
-          .append('rect')
+        const groupNode = groupsEl.append('rect');
+        groupNode
+          .attr('id', `group-${data.id}`)
           .attr('x', x1 + halfIconSize)
           .attr('y', y1 + halfIconSize)
           .attr('width', w)
@@ -254,6 +255,8 @@ export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Cor
               ')'
           );
         }
+
+        db.setElementForId(data.id, groupNode);
       }
     })
   );
@@ -333,9 +336,9 @@ export const drawServices = async function (
         );
     }
 
-    serviceElem.attr('class', 'architecture-service');
+    serviceElem.attr('class', 'architecture-service').attr('id', `service-${service.id}`);
 
-    const { width, height } = serviceElem._groups[0][0].getBBox();
+    const { width, height } = serviceElem.node().getBBox();
     service.width = width;
     service.height = height;
     db.setElementForId(service.id, serviceElem);
