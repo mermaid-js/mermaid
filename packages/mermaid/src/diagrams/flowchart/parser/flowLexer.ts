@@ -1159,9 +1159,10 @@ const EOF = createToken({
 // Complex pattern to handle all edge cases including punctuation at start/end
 // Includes : and , characters to match JISON behavior, but excludes ::: to avoid conflicts with StyleSeparator
 // Excludes , when followed by digits to allow proper comma-separated number parsing
+// CRITICAL: Excludes \ when followed by , to allow EscapedComma token to match
 const NODE_STRING = createToken({
   name: 'NODE_STRING',
-  pattern: /([\w!"#$%&'*+./?\\`]|:(?!::)|-(?=[^.>-])|=(?!=)|,(?!\d))+/,
+  pattern: /([\w!"#$%&'*+./?`]|\\(?!,)|:(?!::)|-(?=[^.>-])|=(?!=)|,(?!\d))+/,
 });
 
 // ============================================================================
@@ -1482,6 +1483,14 @@ const CylinderStart = createToken({
 const Colon = createToken({
   name: 'Colon',
   pattern: /:/,
+  longer_alt: NODE_STRING,
+});
+
+// Escaped comma token (must come before regular Comma for precedence)
+// CRITICAL FIX: Handle escaped commas (\,) in CSS values like stroke-dasharray:10\,8
+const EscapedComma = createToken({
+  name: 'EscapedComma',
+  pattern: /\\,/,
   longer_alt: NODE_STRING,
 });
 
@@ -1868,6 +1877,7 @@ const multiModeLexerDefinition = {
       Minus,
       StyleSeparator, // Must come before Colon to avoid conflicts (:::)
       Colon,
+      EscapedComma, // CRITICAL: Must come before Comma for precedence
       Comma,
 
       // Numbers must come before NODE_STRING to avoid being captured by it
@@ -2060,6 +2070,7 @@ export const allTokens = [
   // Basic punctuation (must come before NODE_STRING to avoid being captured by it)
   StyleSeparator, // Must come before Colon to avoid conflicts (:::)
   Colon,
+  EscapedComma, // CRITICAL: Must come before Comma for precedence
   Comma,
   Pipe,
   PipeEnd,
@@ -2233,6 +2244,7 @@ export {
   // Basic punctuation
   StyleSeparator, // Must come before Colon to avoid conflicts (:::)
   Colon,
+  EscapedComma, // CRITICAL: Must come before Comma for precedence
   Comma,
   Pipe,
   PipeEnd,

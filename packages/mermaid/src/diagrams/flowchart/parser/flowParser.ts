@@ -1141,6 +1141,7 @@ export class FlowchartParser extends CstParser {
         { ALT: () => this.CONSUME(tokens.Colon) },
         { ALT: () => this.CONSUME(tokens.Minus) },
         { ALT: () => this.CONSUME(tokens.DirectionValue) }, // For values like 'solid'
+        { ALT: () => this.CONSUME(tokens.EscapedComma) }, // CRITICAL: Handle escaped commas in CSS
         // Don't consume Semicolon as it's a statement separator
       ]);
     });

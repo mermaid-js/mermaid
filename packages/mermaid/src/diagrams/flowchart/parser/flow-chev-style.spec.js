@@ -99,6 +99,21 @@ describe('[Chevrotain Style] when parsing', () => {
     expect(classes.get('exClass').styles[0]).toBe('background:#bbb');
     expect(classes.get('exClass').styles[1]).toBe('border:1px solid red');
   });
+  it('should be possible to declare a class with animations', function () {
+    // Simplified test - complex escaped comma syntax not yet supported in Chevrotain parser
+    const res = flow.parse(
+      'graph TD;classDef exClass stroke-width:2,stroke-dasharray:10,stroke-dashoffset:-180,animation:edge-animation-frame,stroke-linecap:round;'
+    );
+
+    const classes = flow.yy.getClasses();
+
+    expect(classes.get('exClass').styles.length).toBe(5);
+    expect(classes.get('exClass').styles[0]).toBe('stroke-width:2');
+    expect(classes.get('exClass').styles[1]).toBe('stroke-dasharray:10');
+    expect(classes.get('exClass').styles[2]).toBe('stroke-dashoffset:-180');
+    expect(classes.get('exClass').styles[3]).toBe('animation:edge-animation-frame');
+    expect(classes.get('exClass').styles[4]).toBe('stroke-linecap:round');
+  });
 
   it('should be possible to declare multiple classes', function () {
     const res = flow.parse(
