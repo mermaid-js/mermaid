@@ -37,7 +37,7 @@
     "e2e:coverage": "start-server-and-test dev:coverage http://localhost:9000/ cypress",
     "coverage:cypress:clean": "rimraf .nyc_output coverage/cypress",
     "coverage:merge": "tsx scripts/coverage.ts",
-    "coverage": "pnpm test:coverage --run && pnpm e2e:coverage && pnpm coverage:merge",
+    "coverage": "pnpm test:coverage --run && pnpm coverage:merge",
     "ci": "vitest run",
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --watch",
