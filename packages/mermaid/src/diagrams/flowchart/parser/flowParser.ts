@@ -201,6 +201,7 @@ export class FlowchartParser extends CstParser {
       { ALT: () => this.SUBRULE2(this.vertexWithEllipse) },
       { ALT: () => this.SUBRULE2(this.vertexWithCylinder) },
       { ALT: () => this.SUBRULE(this.vertexWithOdd) },
+      { ALT: () => this.SUBRULE(this.vertexWithNodeIdOdd) },
       { ALT: () => this.SUBRULE(this.vertexWithRect) },
       // Node with data syntax only
       { ALT: () => this.SUBRULE(this.vertexWithNodeData) },
@@ -321,6 +322,13 @@ export class FlowchartParser extends CstParser {
   private vertexWithOdd = this.RULE('vertexWithOdd', () => {
     this.SUBRULE(this.nodeId);
     this.CONSUME(tokens.OddStart);
+    this.SUBRULE(this.nodeText);
+    this.CONSUME(tokens.SquareEnd);
+  });
+
+  // Special rule for node IDs ending with minus followed by odd start (e.g., "odd->text]")
+  private vertexWithNodeIdOdd = this.RULE('vertexWithNodeIdOdd', () => {
+    this.CONSUME(tokens.NodeIdWithOddStart);
     this.SUBRULE(this.nodeText);
     this.CONSUME(tokens.SquareEnd);
   });
@@ -1094,16 +1102,13 @@ export class FlowchartParser extends CstParser {
             this.CONSUME(tokens.Comma);
             this.CONSUME2(tokens.NumberToken);
           });
-          // Optionally handle mixed case: NumberToken followed by NODE_STRING
-          this.OPTION(() => {
-            this.CONSUME(tokens.NODE_STRING);
-          });
         },
       },
       // Handle comma-separated numbers that got tokenized as NODE_STRING (e.g., "0,1")
+      // Only consume NODE_STRING if it looks like a number list (contains only digits and commas)
       {
         ALT: () => {
-          this.CONSUME2(tokens.NODE_STRING);
+          this.CONSUME(tokens.NODE_STRING);
         },
       },
     ]);

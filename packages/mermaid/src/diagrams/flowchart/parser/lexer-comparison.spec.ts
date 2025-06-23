@@ -19,7 +19,7 @@ describe('Lexer Comparison Tests', () => {
     const input = 'graph TD';
     const expected: ExpectedToken[] = [
       { type: 'GRAPH', value: 'graph' },
-      { type: 'DIR', value: 'TD' },
+      { type: 'DirectionValue', value: 'TD' },
     ];
 
     expect(() => runTest('GRA001', input, expected)).not.toThrow();

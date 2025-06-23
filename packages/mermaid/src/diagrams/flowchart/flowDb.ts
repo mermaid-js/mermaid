@@ -160,7 +160,9 @@ export class FlowDB implements DiagramDB {
 
     if (textObj !== undefined) {
       this.config = getConfig();
-      txt = this.sanitizeText(textObj.text.trim());
+      // Don't trim text that contains newlines to preserve YAML multi-line formatting
+      const shouldTrim = !textObj.text.includes('\n');
+      txt = this.sanitizeText(shouldTrim ? textObj.text.trim() : textObj.text);
       vertex.labelType = textObj.type;
       // strip quotes if string starts and ends with a quote
       if (txt.startsWith('"') && txt.endsWith('"')) {
@@ -1037,7 +1039,7 @@ You have to call mermaid.initialize.`
     } else {
       const baseNode = {
         id: vertex.id,
-        label: vertex.text,
+        label: vertex.text?.replace(/<br>/g, '<br/>'),
         labelStyle: '',
         parentId,
         padding: config.flowchart?.padding || 8,

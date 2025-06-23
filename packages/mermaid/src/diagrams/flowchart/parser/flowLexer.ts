@@ -1430,6 +1430,13 @@ const LeanRightStart = createToken({
 // The distinction between lean_left and inv_trapezoid is made in the parser
 
 // Odd vertex tokens
+// Special token for node IDs ending with minus followed by odd start (e.g., "odd->")
+const NodeIdWithOddStart = createToken({
+  name: 'NodeIdWithOddStart',
+  pattern: /([A-Za-z0-9!"#$%&'*+.`?\\_/,]|:(?!::)|-(?=[^>.-])|=(?!=))*->/,
+  push_mode: 'text_mode',
+});
+
 const OddStart = createToken({
   name: 'OddStart',
   pattern: />/,
@@ -1820,6 +1827,7 @@ const multiModeLexerDefinition = {
       LINK_ID,
 
       // Odd shape start (must come before DirectionValue to avoid conflicts)
+      NodeIdWithOddStart, // Must come before OddStart to handle "nodeId->" pattern
       OddStart,
 
       // Direction values (must come after LINK tokens and OddStart)
@@ -2025,6 +2033,7 @@ export const allTokens = [
   HexagonEnd,
   DiamondStart,
   DiamondEnd,
+  NodeIdWithOddStart,
   OddStart,
 
   // Numbers must come before NODE_STRING to avoid being captured by it
@@ -2208,6 +2217,7 @@ export {
   HexagonEnd,
   DiamondStart,
   DiamondEnd,
+  NodeIdWithOddStart,
   OddStart,
 
   // Text content

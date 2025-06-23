@@ -361,7 +361,7 @@ describe('[Text] when parsing with Chevrotain', () => {
     });
 
     it('should handle edge case for odd vertex with node id ending with minus', function () {
-      const res = flow.parse('graph TD;A_node-->odd->Vertex Text];');
+      flow.parse('graph TD;A_node-->odd->Vertex Text];');
       const vert = flow.yy.getVertices();
 
       expect(vert.get('odd-').type).toBe('odd');

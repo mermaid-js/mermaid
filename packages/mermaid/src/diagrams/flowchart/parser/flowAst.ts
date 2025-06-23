@@ -308,6 +308,8 @@ export class FlowchartAstVisitor extends BaseVisitor {
       this.visit(ctx.vertexWithCylinder);
     } else if (ctx.vertexWithOdd) {
       this.visit(ctx.vertexWithOdd);
+    } else if (ctx.vertexWithNodeIdOdd) {
+      this.visit(ctx.vertexWithNodeIdOdd);
     } else if (ctx.vertexWithRect) {
       this.visit(ctx.vertexWithRect);
     } else if (ctx.vertexWithNodeData) {
@@ -443,6 +445,15 @@ export class FlowchartAstVisitor extends BaseVisitor {
 
   vertexWithOdd(ctx: any): void {
     const nodeId = this.visit(ctx.nodeId);
+    const nodeTextData = this.visit(ctx.nodeText);
+    this.addVertex(nodeId, nodeTextData.text, 'odd', nodeTextData.labelType);
+  }
+
+  // Special visitor for node IDs ending with minus followed by odd start (e.g., "odd->text]")
+  vertexWithNodeIdOdd(ctx: any): void {
+    // Extract node ID from NodeIdWithOddStart token (remove the trailing ">")
+    const nodeIdWithOddStart = ctx.NodeIdWithOddStart[0].image;
+    const nodeId = nodeIdWithOddStart.slice(0, -1); // Remove the ">" suffix, keep the "-"
     const nodeTextData = this.visit(ctx.nodeText);
     this.addVertex(nodeId, nodeTextData.text, 'odd', nodeTextData.labelType);
   }
@@ -726,19 +737,31 @@ export class FlowchartAstVisitor extends BaseVisitor {
   private parseNodeDataContent(content: string, props: any): void {
     // Parse YAML-like content: "shape: rounded\nlabel: 'Hello'" or "shape: rounded, label: 'Hello'"
     // Handle both single-line and multi-line formats
-    const lines = content.split('\n'); // Don't trim yet - we need to preserve indentation for YAML-style parsing
 
-    let i = 0;
-    while (i < lines.length) {
+    // First, split by lines to handle multi-line YAML format
+    const lines = content.split('\n');
+
+    // Process each line
+    for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       const trimmedLine = line.trim();
 
       // Skip empty lines
       if (!trimmedLine) {
-        i++;
         continue;
       }
 
+      // Check if this line contains comma-separated properties (single-line format)
+      if (trimmedLine.includes(',') && trimmedLine.includes(':')) {
+        // Split by comma and process each property
+        const properties = this.splitPropertiesByComma(trimmedLine);
+        for (const property of properties) {
+          this.parseProperty(property.trim(), props, lines, i);
+        }
+        continue;
+      }
+
+      // Handle single property per line (multi-line YAML format)
       const colonIndex = trimmedLine.indexOf(':');
       if (colonIndex > 0) {
         const key = trimmedLine.substring(0, colonIndex).trim();
@@ -746,7 +769,6 @@ export class FlowchartAstVisitor extends BaseVisitor {
 
         // Skip empty values
         if (!value) {
-          i++;
           continue;
         }
 
@@ -788,7 +810,8 @@ export class FlowchartAstVisitor extends BaseVisitor {
           }
 
           // Join multiline content with newlines and add final newline
-          props[key] = multilineContent.join('\n') + '\n';
+          const result = multilineContent.join('\n') + '\n';
+          props[key] = result;
           continue; // Don't increment i again since we already did it in the loop
         }
 
@@ -806,11 +829,11 @@ export class FlowchartAstVisitor extends BaseVisitor {
             const nextLine = lines[i].trim();
             if (nextLine.endsWith(quote)) {
               // Found closing quote
-              multilineValue += '<br/>' + nextLine.substring(0, nextLine.length - 1);
+              multilineValue += '<br>' + nextLine.substring(0, nextLine.length - 1);
               break;
             } else {
               // Continue collecting lines
-              multilineValue += '<br/>' + nextLine;
+              multilineValue += '<br>' + nextLine;
             }
             i++;
           }
@@ -820,29 +843,78 @@ export class FlowchartAstVisitor extends BaseVisitor {
           continue;
         }
 
-        // Remove quotes if present (for single-line quoted strings)
-        if (
-          (value.startsWith('"') && value.endsWith('"')) ||
-          (value.startsWith("'") && value.endsWith("'"))
-        ) {
-          value = value.slice(1, -1);
-        }
-
-        // Convert boolean and numeric values
-        let parsedValue: any = value;
-        if (value === 'true') {
-          parsedValue = true;
-        } else if (value === 'false') {
-          parsedValue = false;
-        } else if (!isNaN(Number(value)) && value !== '') {
-          parsedValue = Number(value);
-        }
-
-        props[key] = parsedValue;
+        // Process single property
+        this.parseProperty(trimmedLine, props, lines, i);
       }
-
-      i++;
     }
+  }
+
+  // Helper method to split properties by comma while respecting quoted strings
+  private splitPropertiesByComma(line: string): string[] {
+    const properties: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    let quoteChar = '';
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+
+      if ((char === '"' || char === "'") && !inQuotes) {
+        inQuotes = true;
+        quoteChar = char;
+        current += char;
+      } else if (char === quoteChar && inQuotes) {
+        inQuotes = false;
+        quoteChar = '';
+        current += char;
+      } else if (char === ',' && !inQuotes) {
+        if (current.trim()) {
+          properties.push(current.trim());
+        }
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+
+    // Add the last property
+    if (current.trim()) {
+      properties.push(current.trim());
+    }
+
+    return properties;
+  }
+
+  // Helper method to parse a single property
+  private parseProperty(property: string, props: any, lines: string[], lineIndex: number): void {
+    const colonIndex = property.indexOf(':');
+    if (colonIndex <= 0) return;
+
+    const key = property.substring(0, colonIndex).trim();
+    let value = property.substring(colonIndex + 1).trim();
+
+    // Skip empty values
+    if (!value) return;
+
+    // Remove quotes if present (for single-line quoted strings)
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    // Convert boolean and numeric values
+    let parsedValue: any = value;
+    if (value === 'true') {
+      parsedValue = true;
+    } else if (value === 'false') {
+      parsedValue = false;
+    } else if (!isNaN(Number(value)) && value !== '') {
+      parsedValue = Number(value);
+    }
+
+    props[key] = parsedValue;
   }
 
   // Map shape names from node data to FlowDB types
@@ -2198,17 +2270,15 @@ export class FlowchartAstVisitor extends BaseVisitor {
     const numbers: number[] = [];
 
     // Handle properly tokenized numbers (NumberToken, Comma, NumberToken, ...)
-    if (ctx.NumberToken && !ctx.NODE_STRING) {
+    if (ctx.NumberToken) {
       ctx.NumberToken.forEach((token: any) => {
         numbers.push(parseInt(token.image, 10));
       });
     }
 
-    // Handle mixed case: NumberToken followed by NODE_STRING (e.g., "0" + ",1")
-    if (ctx.NumberToken && ctx.NODE_STRING) {
-      // Add the first number
-      numbers.push(parseInt(ctx.NumberToken[0].image, 10));
-
+    // Handle comma-separated numbers that got tokenized as NODE_STRING (e.g., "0,1")
+    // Only if there are no NumberToken (to avoid conflicts with styles)
+    if (ctx.NODE_STRING && !ctx.NumberToken) {
       // Parse the comma-separated part
       const nodeString = ctx.NODE_STRING[0].image;
       if (nodeString.startsWith(',')) {
