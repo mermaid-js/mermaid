@@ -14,6 +14,9 @@ export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: 
  * @privateRemarks This is exported as part of the public mermaidAPI.
  */
 export class Diagram {
+
+  graphData: string | null = null;
+
   public static async fromText(text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) {
     const config = configApi.getConfig();
     const type = detectType(text, config);
@@ -63,5 +66,13 @@ export class Diagram {
 
   getType() {
     return this.type;
+  }
+
+  setGraphData(graphString: string) {
+    this.graphData = graphString;
+  }
+
+  getGraphData(): string | null {
+    return this.graphData;
   }
 }
