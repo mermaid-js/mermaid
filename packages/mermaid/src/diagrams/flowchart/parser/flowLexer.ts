@@ -1,4 +1,5 @@
-import { createToken, Lexer, TokenType, IToken, ILexingResult, ILexingError } from 'chevrotain';
+import type { TokenType, IToken, ILexingResult, ILexingError } from 'chevrotain';
+import { createToken, Lexer } from 'chevrotain';
 
 // Debug flag for lexer logging - disabled in production for performance
 const DEBUG_LEXER = false; // Set to true to enable debug logging
@@ -186,7 +187,7 @@ function contextAwareTokenizeWithBacktracking(input: string, context: LexerConte
     const remainingInput = input.substring(position);
 
     // Skip whitespace
-    const whitespaceMatch = remainingInput.match(/^\s+/);
+    const whitespaceMatch = /^\s+/.exec(remainingInput);
     if (whitespaceMatch) {
       position += whitespaceMatch[0].length;
       continue;
@@ -376,8 +377,8 @@ function tryTokenizeKeywords(input: string, position: number): TokenResult {
   // Check if this looks like a node name with special characters
   // Node names can contain keywords but should not be tokenized as keywords
   // if they have special characters like dots, dashes, underscores
-  const nodeNamePattern = /^[a-zA-Z0-9._-]+/;
-  const nodeNameMatch = input.match(nodeNamePattern);
+  const nodeNamePattern = /^[\w.-]+/;
+  const nodeNameMatch = nodeNamePattern.exec(input);
 
   if (nodeNameMatch && nodeNameMatch[0].length > 0) {
     const fullMatch = nodeNameMatch[0];
@@ -463,11 +464,11 @@ function tryEdgeTextTokenization(
   // Edge text patterns - order matters!
   const patterns = [
     // Complete arrow endings (must come first to properly close edge text mode)
-    { pattern: /^-{1,}[xo>]/, type: 'EdgeTextEnd', mode: LexerMode.INITIAL },
+    { pattern: /^-+[>ox]/, type: 'EdgeTextEnd', mode: LexerMode.INITIAL },
     // Pipe tokens for text boundaries
     { pattern: /^\|/, type: 'EdgeTextPipe' },
     // Arrow ending characters that should be skipped (consume but don't emit token)
-    { pattern: /^[>xo-]/, type: 'SKIP' },
+    { pattern: /^[>ox-]/, type: 'SKIP' },
     // Quoted strings
     { pattern: /^"([^"\\]|\\.)*"/, type: 'QuotedString' },
     // Text content (simple pattern - just consume non-pipe characters)
@@ -519,10 +520,10 @@ function tryThickEdgeTextTokenization(
 ): TokenResult {
   // Thick edge text patterns
   const patterns = [
-    { pattern: /^[xo<]?={2,}[=xo>]/, type: 'EdgeTextEnd', mode: LexerMode.INITIAL },
+    { pattern: /^[<ox]?={2,}[=>ox]/, type: 'EdgeTextEnd', mode: LexerMode.INITIAL },
     { pattern: /^\|/, type: 'EdgeTextPipe' },
     { pattern: /^"([^"\\]|\\.)*"/, type: 'QuotedString' },
-    { pattern: /^[^|"]+/, type: 'EdgeTextContent' },
+    { pattern: /^[^"|]+/, type: 'EdgeTextContent' },
   ];
 
   return tryPatternMatch(patterns, input, position, context);
@@ -567,12 +568,12 @@ function tryDottedEdgeTextTokenization(
 
   // Dotted edge text patterns
   const patterns = [
-    { pattern: /^[xo<]?\.{2,}[.-xo>]/, type: 'EdgeTextEnd', mode: LexerMode.INITIAL },
+    { pattern: /^[<ox]?\.{2,}[.-x]/, type: 'EdgeTextEnd', mode: LexerMode.INITIAL },
     { pattern: /^\|/, type: 'EdgeTextPipe' },
     // Skip dotted arrow characters that should not be part of text content
-    { pattern: /^[>xo.-]/, type: 'SKIP' },
+    { pattern: /^[.>ox-]/, type: 'SKIP' },
     { pattern: /^"([^"\\]|\\.)*"/, type: 'QuotedString' },
-    { pattern: /^[^|"]+/, type: 'EdgeTextContent' },
+    { pattern: /^[^"|]+/, type: 'EdgeTextContent' },
   ];
 
   const result = tryPatternMatch(patterns, input, position, context);
@@ -619,7 +620,7 @@ function tryTextModeTokenization(
   position: number
 ): TokenResult {
   const patterns = [
-    { pattern: /^\]/, type: 'SquareEnd', mode: LexerMode.INITIAL },
+    { pattern: /^]/, type: 'SquareEnd', mode: LexerMode.INITIAL },
     { pattern: /^\)\)/, type: 'DoubleCircleEnd', mode: LexerMode.INITIAL },
     { pattern: /^\)/, type: 'CircleEnd', mode: LexerMode.INITIAL },
     { pattern: /^>/, type: 'PE', mode: LexerMode.INITIAL },
@@ -627,7 +628,7 @@ function tryTextModeTokenization(
     { pattern: /^}/, type: 'DiamondEnd', mode: LexerMode.INITIAL },
     { pattern: /^\|/, type: 'PipeEnd', mode: LexerMode.INITIAL },
     { pattern: /^"([^"\\]|\\.)*"/, type: 'QuotedString' },
-    { pattern: /^[^\])}|>]+/, type: 'TextContent' },
+    { pattern: /^[^)>\]|}]+/, type: 'TextContent' },
   ];
 
   return tryPatternMatch(patterns, input, position, context);
@@ -649,7 +650,7 @@ function tryStringModeTokenization(
 
 // Helper function to try pattern matching with mode switching
 function tryPatternMatch(
-  patterns: Array<{ pattern: RegExp; type: string; mode?: LexerMode }>,
+  patterns: { pattern: RegExp; type: string; mode?: LexerMode }[],
   input: string,
   position: number,
   context: LexerContext
@@ -716,13 +717,13 @@ function tryTokenizeAsNode(input: string, position: number): TokenResult {
     // Quoted strings
     /^"([^"\\]|\\.)*"/,
     // Alphanumeric with special chars, but stopping at token boundaries, shape delimiters, and pipes
-    /^(?!-{2,}[>.-]|={2,}[>=]|\.{2,}[>.-])[a-zA-Z0-9_\-+*&:.#$%^!@\\\/~`'"?<>=]+?(?=[;,\s\[\](){}|]|$)/,
+    /^(?!-{2,}[.>-]|={2,}[=>]|\.{2,}[.>-])[\w!"#$%&'*+./:<=>?@\\^`~\-]+?(?=[\s(),;[\]{|}]|$)/,
     // Simple alphanumeric (most common case)
-    /^[a-zA-Z0-9_]+/,
+    /^\w+/,
     // Numbers
     /^\d+/,
     // Single safe special characters (excluding token boundaries, shape delimiters, and pipes)
-    /^[&:.#$%^!@\\\/~`'"?<>=]/,
+    /^[!"#$%&'./:<=>?@\\^`~]/,
   ];
 
   for (const pattern of nodePatterns) {
@@ -731,7 +732,9 @@ function tryTokenizeAsNode(input: string, position: number): TokenResult {
       const matchedText = match[0];
 
       // Skip empty matches
-      if (matchedText.length === 0) continue;
+      if (matchedText.length === 0) {
+        continue;
+      }
 
       // Additional validation: ensure this doesn't conflict with arrows
       if (!isArrowPattern(matchedText) && !isArrowStart(input, matchedText.length)) {
@@ -770,8 +773,8 @@ function analyzeLinkPattern(input: string): {
   // Strategy: Check for text patterns first, then decide how to tokenize the arrow
 
   // Thick link patterns (==, ===, etc.)
-  const thickFullMatch = input.match(/^([xo<]?={2,}[=xo>])/);
-  const thickStartMatch = input.match(/^([xo<]?={2,})/);
+  const thickFullMatch = /^([<ox]?={2,}[=>ox])/.exec(input);
+  const thickStartMatch = /^([<ox]?={2,})/.exec(input);
 
   if (thickStartMatch) {
     const linkStart = thickStartMatch[1];
@@ -797,8 +800,8 @@ function analyzeLinkPattern(input: string): {
 
   // Dotted link patterns (-.-, -..-, etc.)
   // Handle both single dot (-.-) and multiple dots (-..-, -...-, etc.)
-  const dottedFullMatch = input.match(/^([xo<]?-\.+[.-xo>])/);
-  const dottedStartMatch = input.match(/^([xo<]?-\.+)/);
+  const dottedFullMatch = /^([<ox]?-\.+[.-x])/.exec(input);
+  const dottedStartMatch = /^([<ox]?-\.+)/.exec(input);
 
   if (dottedStartMatch) {
     const linkStart = dottedStartMatch[1];
@@ -821,8 +824,8 @@ function analyzeLinkPattern(input: string): {
 
   // Regular link patterns (--, ---, -->, etc.)
   // This is the key fix: we need to handle cases like --> when followed by text
-  const regularFullMatch = input.match(/^([xo<]?-{2,}[-xo>])/);
-  const regularStartMatch = input.match(/^([xo<]?-{2,})/);
+  const regularFullMatch = /^([<ox]?-{2,}[>ox-])/.exec(input);
+  const regularStartMatch = /^([<ox]?-{2,})/.exec(input);
 
   if (regularStartMatch) {
     const linkStart = regularStartMatch[1];
@@ -849,7 +852,7 @@ function analyzeLinkPattern(input: string): {
   }
 
   // Single dash patterns (for open arrows like A-|text|->B)
-  const singleDashMatch = input.match(/^([xo<]?-)/);
+  const singleDashMatch = /^([<ox]?-)/.exec(input);
   if (singleDashMatch) {
     const linkStart = singleDashMatch[1];
     const remaining = input.substring(linkStart.length);
@@ -887,8 +890,8 @@ function tryStandardTokenization(input: string, position: number): TokenResult {
 function tryFallbackTokenization(input: string, position: number): TokenResult {
   // Try to match single characters or small patterns
   const fallbackPatterns = [
-    { pattern: /^[a-zA-Z0-9_]/, type: 'NODE_STRING' },
-    { pattern: /^[&:,+*#$%^!@()[\]{}|\\\/~`';?<>=.-]/, type: 'NODE_STRING' },
+    { pattern: /^\w/, type: 'NODE_STRING' },
+    { pattern: /^[!#$%&'()*+,./:;<=>?@[\\\]^`{|}~-]/, type: 'NODE_STRING' },
   ];
 
   for (const { pattern, type } of fallbackPatterns) {
@@ -915,7 +918,7 @@ function tryFallbackTokenization(input: string, position: number): TokenResult {
 
 // Helper functions for pattern detection
 function isArrowPattern(text: string): boolean {
-  const arrowPatterns = [/^-{2,}[>.-]/, /^={2,}[>=]/, /^\.{2,}[>.-]/];
+  const arrowPatterns = [/^-{2,}[.>-]/, /^={2,}[=>]/, /^\.{2,}[.>-]/];
   return arrowPatterns.some((pattern) => pattern.test(text));
 }
 
@@ -928,7 +931,7 @@ function isArrowStart(input: string, offset: number): boolean {
 function hasTextPattern(input: string): boolean {
   // Check if input starts with text patterns like |text| or "text"
   // Also handle cases where arrow endings (>, -, .) come before the text pattern
-  return /^\s*[|"]/.test(input) || /^[>.-]+\s*[|"]/.test(input);
+  return /^\s*["|]/.test(input) || /^[.>-]+\s*["|]/.test(input);
 }
 
 // Single character tokenization for precise token boundaries
@@ -936,7 +939,7 @@ function tokenizeSingleCharacter(input: string, position: number): TokenResult {
   const char = input[0];
 
   // Map single characters to their token types
-  const singleCharTokens: { [key: string]: string } = {
+  const singleCharTokens: Record<string, string> = {
     ';': 'Semicolon',
     ':': 'Colon',
     ',': 'Comma',
@@ -957,7 +960,7 @@ function tokenizeSingleCharacter(input: string, position: number): TokenResult {
   }
 
   // If it's alphanumeric, treat as NODE_STRING
-  if (/[a-zA-Z0-9_]/.test(char)) {
+  if (/\w/.test(char)) {
     return {
       token: createTokenInstance('NODE_STRING', char, position),
       consumed: 1,
@@ -992,7 +995,7 @@ const tokenTypeMap = new Map<string, TokenType>();
 
 function initializeTokenTypeMap() {
   // Initialize the token type map with all our defined tokens
-  const tokenMappings: Array<[string, TokenType]> = [
+  const tokenMappings: [string, TokenType][] = [
     // Basic tokens
     ['NODE_STRING', NODE_STRING],
     ['NumberToken', NumberToken],
@@ -1155,9 +1158,10 @@ const EOF = createToken({
 // Handles compound cases like &node, -node, vnode where special chars are followed by word chars // cspell:disable-line
 // Complex pattern to handle all edge cases including punctuation at start/end
 // Includes : and , characters to match JISON behavior, but excludes ::: to avoid conflicts with StyleSeparator
+// Excludes , when followed by digits to allow proper comma-separated number parsing
 const NODE_STRING = createToken({
   name: 'NODE_STRING',
-  pattern: /([A-Za-z0-9!"#$%&'*+.`?\\_/,]|:(?!::)|-(?=[^>.-])|=(?!=))+/,
+  pattern: /([\w!"#$%&'*+./?\\`]|:(?!::)|-(?=[^.>-])|=(?!=)|,(?!\d))+/,
 });
 
 // ============================================================================
@@ -1315,7 +1319,7 @@ const ShapeDataStart = createToken({
 // Link ID token (must come before NODE_STRING to avoid conflicts)
 const LINK_ID = createToken({
   name: 'LINK_ID',
-  pattern: /[^\s"]+@(?=[^{"])/,
+  pattern: /[^\s"]+@(?=[^"{])/,
   longer_alt: NODE_STRING,
 });
 
@@ -1433,7 +1437,7 @@ const LeanRightStart = createToken({
 // Special token for node IDs ending with minus followed by odd start (e.g., "odd->")
 const NodeIdWithOddStart = createToken({
   name: 'NodeIdWithOddStart',
-  pattern: /([A-Za-z0-9!"#$%&'*+.`?\\_/,]|:(?!::)|-(?=[^>.-])|=(?!=))*->/,
+  pattern: /([\w!"#$%&'*+,./?\\`]|:(?!::)|-(?=[^.>-])|=(?!=))*->/,
   push_mode: 'text_mode',
 });
 
@@ -1612,13 +1616,13 @@ const MarkdownStringEnd = createToken({
 // Tokens for text mode (JISON lines 272-283)
 const TextContent = createToken({
   name: 'textToken',
-  pattern: /(?:[^"()[\]{|}\\/-]|-(?!\))|\/(?!\])|\\(?!\]))+/,
+  pattern: /(?:[^"()/[\\\]{|}-]|-(?!\))|\/(?!])|\\(?!]))+/,
 });
 
 // Rect text content - allows | characters in text
 const RectTextContent = createToken({
   name: 'RectTextContent',
-  pattern: /(?:[^"()[\]{}\\/-]|-(?!\))|\/(?!\])|\\(?!\])|\|(?!\]))+/,
+  pattern: /(?:[^"()/[\\\]{}-]|-(?!\))|\/(?!])|\\(?!])|\|(?!]))+/,
 });
 
 const BackslashInText = createToken({
@@ -1672,28 +1676,28 @@ const DiamondEnd = createToken({
 // Subroutine end token
 const SubroutineEnd = createToken({
   name: 'SubroutineEnd',
-  pattern: /\]\]/,
+  pattern: /]]/,
   pop_mode: true,
 });
 
 // Trapezoid end token
 const TrapezoidEnd = createToken({
   name: 'TrapezoidEnd',
-  pattern: /\\\]/,
+  pattern: /\\]/,
   pop_mode: true,
 });
 
 // Inverted trapezoid end token
 const InvTrapezoidEnd = createToken({
   name: 'InvTrapezoidEnd',
-  pattern: /\/\]/,
+  pattern: /\/]/,
   pop_mode: true,
 });
 
 // Lean right end token
 const LeanRightEnd = createToken({
   name: 'LeanRightEnd',
-  pattern: /\\\\\]/,
+  pattern: /\\\\]/,
   pop_mode: true,
 });
 
@@ -1709,7 +1713,7 @@ const LeanRightEnd = createToken({
 // Stadium end token
 const StadiumEnd = createToken({
   name: 'StadiumEnd',
-  pattern: /\]\)/,
+  pattern: /]\)/,
   pop_mode: true,
 });
 
@@ -1723,7 +1727,7 @@ const EllipseEnd = createToken({
 // Cylinder end token
 const CylinderEnd = createToken({
   name: 'CylinderEnd',
-  pattern: /\)\]/,
+  pattern: /\)]/,
   pop_mode: true,
 });
 
@@ -2039,10 +2043,7 @@ export const allTokens = [
   // Numbers must come before NODE_STRING to avoid being captured by it
   NumberToken,
 
-  // Node strings and identifiers
-  NODE_STRING,
-
-  // Keywords
+  // Keywords (must come before NODE_STRING to avoid being captured by it)
   Graph,
   Subgraph,
   End,
@@ -2055,6 +2056,19 @@ export const allTokens = [
   Call,
   Default,
   Interpolate,
+
+  // Basic punctuation (must come before NODE_STRING to avoid being captured by it)
+  StyleSeparator, // Must come before Colon to avoid conflicts (:::)
+  Colon,
+  Comma,
+  Pipe,
+  PipeEnd,
+  Ampersand,
+  AtSymbol,
+  Minus,
+
+  // Node strings and identifiers
+  NODE_STRING,
 
   // Direction
   Direction,
@@ -2095,16 +2109,6 @@ export const allTokens = [
   RectTextContent,
   BackslashInText,
   QuotedString,
-
-  // Basic punctuation
-  StyleSeparator, // Must come before Colon to avoid conflicts (:::)
-  Colon,
-  Comma,
-  Pipe,
-  PipeEnd,
-  Ampersand,
-  AtSymbol,
-  Minus,
 ];
 
 // Context-aware lexer that provides full compatibility
