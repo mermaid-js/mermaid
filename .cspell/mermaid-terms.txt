@@ -14,11 +14,10 @@ gzipped
 handDrawn
 ipsepcola
 kanban
-knsv
-Knut
 marginx
 marginy
 Markdownish
+mermaidchart
 mermaidjs
 mindmap
 mindmaps
@@ -36,7 +35,6 @@ sandboxed
 siebling
 statediagram
 substate
-Sveidqvist
 unfixable
 Viewbox
 viewports

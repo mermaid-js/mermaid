@@ -766,6 +766,7 @@ export const render = async (
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      'elk.layered.crossingMinimization.forceNodeModelOrder': true,
       'elk.algorithm': algorithm,
       'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
@@ -780,7 +781,6 @@ export const render = async (
       // 'spacing.edgeEdge': 10,
       // 'spacing.edgeEdgeBetweenLayers': 20,
       // 'spacing.nodeSelfLoop': 20,
-
       // Tweaking options
       // 'elk.layered.nodePlacement.favorStraightEdges': true,
       // 'nodePlacement.feedbackEdges': true,

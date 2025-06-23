@@ -17,7 +17,7 @@ start-end: "Block name" %% Multi-bit blocks
 ... More Fields ...
 ```
 
-### Bits Syntax (v<MERMAID_RELEASE_VERSION>+)
+### Bits Syntax (v11.7.0+)
 
 Using start and end bit counts can be difficult, especially when modifying a design. For this we add a bit count field, which starts from the end of the previous field automagically. Use `+<count>` to set the number of bits, thus:
 
