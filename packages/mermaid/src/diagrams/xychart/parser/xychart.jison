@@ -30,6 +30,7 @@
 <acc_descr_multiline>[^\}]*               { return "acc_descr_multiline_value"; }
 
 "xychart-beta"                            {return 'XYCHART';}
+"xychart"                                 {return 'XYCHART';}
 (?:"vertical"|"horizontal")               {return 'CHART_ORIENTATION'}
 
 "x-axis"                                  { this.pushState("axis_data"); return "X_AXIS"; }
