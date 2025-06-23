@@ -39,6 +39,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
     },
+    {
+      name: 'radial',
+      loader: async () => await import('./layout-algorithms/radial/index.js'),
+    },
   ]);
 };
 
