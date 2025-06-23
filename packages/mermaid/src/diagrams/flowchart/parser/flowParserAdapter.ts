@@ -414,10 +414,10 @@ const flow = {
       targetYY.subGraphs.push(...ast.subGraphs);
     }
 
-    // Set direction
-    if (typeof targetYY.setDirection === 'function') {
+    // Set direction (only if not already set during parsing)
+    if (ast.direction && typeof targetYY.setDirection === 'function') {
       targetYY.setDirection(ast.direction);
-    } else {
+    } else if (ast.direction) {
       targetYY.direction = ast.direction;
     }
 
@@ -472,7 +472,30 @@ export const parser = parserInstance;
 export const yy = parserInstance.yy;
 
 // Add backward compatibility for JISON parser interface
+// The Diagram.fromText method expects parser.parser.yy to exist for JISON parsers
 flow.parser = parserInstance;
 
-// Default export for modern imports
-export default flow;
+// CRITICAL FIX: Create a parser object with the expected JISON structure
+// This allows the main diagram rendering system to set the yy object correctly
+const jisonCompatibleParser = {
+  ...flow,
+  // Override the yy property to ensure it's properly linked
+  get yy() {
+    return flow.yy;
+  },
+  set yy(value) {
+    flow.yy = value;
+  },
+  parser: {
+    ...parserInstance,
+    get yy() {
+      return flow.yy;
+    },
+    set yy(value) {
+      flow.yy = value;
+    },
+  },
+};
+
+// Default export for modern imports - use the JISON-compatible version
+export default jisonCompatibleParser;

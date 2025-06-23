@@ -114,8 +114,16 @@ export class FlowchartAstVisitor extends BaseVisitor {
   }
 
   graphDeclaration(ctx: any): void {
-    if (ctx.DirectionValue) {
-      this.direction = ctx.DirectionValue[0].image;
+    // CRITICAL FIX: Access direction token as ctx.DIR (not ctx.DirectionValue)
+    // The token is defined with name 'DIR' in the lexer
+    if (ctx.DIR && ctx.DIR.length > 0) {
+      this.direction = ctx.DIR[0].image;
+
+      // CRITICAL FIX: Call setDirection on FlowDB immediately if available
+      // This ensures direction is set during parsing, matching JISON behavior
+      if (this.flowDb && typeof this.flowDb.setDirection === 'function') {
+        this.flowDb.setDirection(this.direction);
+      }
     }
   }
 
