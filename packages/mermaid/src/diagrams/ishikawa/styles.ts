@@ -1,4 +1,4 @@
-const getStyles = (options) => `
+const getStyles = (options: any) => `
   /* Main container */
   .ishikawa-container {
     fill: none;

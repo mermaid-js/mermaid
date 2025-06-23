@@ -403,57 +403,60 @@ category "People"
 
     const db = diagram.db as any;
     const root = db.getIshikawa();
-    
+
     // Get the category and its causes
     const category = root.children[0];
     expect(category.descr).toBe('Testing');
     expect(category.children).toHaveLength(2);
-    
+
     const cause1 = category.children[0];
     const cause2 = category.children[1];
-    
+
     // Verify sub-cause counts
     expect(cause1.children).toHaveLength(2); // 2 sub-causes
     expect(cause2.children).toHaveLength(8); // 8 sub-causes
-    
+
     // Test the layout function to get positioned nodes
     const { nodes } = layoutFishbone(root, {});
-    
+
     // Find the positioned cause nodes
-    const positionedCause1 = nodes.find(node => node.id === cause1.id);
-    const positionedCause2 = nodes.find(node => node.id === cause2.id);
-    
+    const positionedCause1 = nodes.find((node: any) => node.id === cause1.id);
+    const positionedCause2 = nodes.find((node: any) => node.id === cause2.id);
+
     expect(positionedCause1).toBeDefined();
     expect(positionedCause2).toBeDefined();
     expect(positionedCause1?.x).toBeDefined();
     expect(positionedCause1?.y).toBeDefined();
     expect(positionedCause2?.x).toBeDefined();
     expect(positionedCause2?.y).toBeDefined();
-    
+
     // Calculate distances from spine (spine is at x=100, y=400)
     const spineX = 100;
     const spineY = 400;
-    
+
     // Type guard to ensure nodes are defined
-    if (!positionedCause1 || !positionedCause2 || 
-        positionedCause1.x === undefined || positionedCause1.y === undefined ||
-        positionedCause2.x === undefined || positionedCause2.y === undefined) {
+    if (
+      !positionedCause1 ||
+      !positionedCause2 ||
+      positionedCause1.x === undefined ||
+      positionedCause1.y === undefined ||
+      positionedCause2.x === undefined ||
+      positionedCause2.y === undefined
+    ) {
       throw new Error('Positioned nodes not found or missing coordinates');
     }
-    
+
     const distance1 = Math.sqrt(
-      Math.pow((positionedCause1.x - spineX), 2) + 
-      Math.pow((positionedCause1.y - spineY), 2)
+      Math.pow(positionedCause1.x - spineX, 2) + Math.pow(positionedCause1.y - spineY, 2)
     );
-    
+
     const distance2 = Math.sqrt(
-      Math.pow((positionedCause2.x - spineX), 2) + 
-      Math.pow((positionedCause2.y - spineY), 2)
+      Math.pow(positionedCause2.x - spineX, 2) + Math.pow(positionedCause2.y - spineY, 2)
     );
-    
+
     // The cause with 8 sub-causes should have a greater distance than the cause with 2 sub-causes
     expect(distance2).toBeGreaterThan(distance1);
-    
+
     // Verify the expected distance calculations
     // Cause with 2 sub-causes: baseDistance(400) + 2 * distancePerChild(50) = 500
     // Cause with 8 sub-causes: baseDistance(400) + 8 * distancePerChild(50) = 800

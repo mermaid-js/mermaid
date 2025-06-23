@@ -14,7 +14,7 @@ function calculateSpineLength(categories: IshikawaNode[]): number {
   const minSpineLength = 800; // Minimum spine length for visual appeal
   const baseSpineLength = 1200; // Base length for reference
   const lengthPerCategory = 200; // Additional length per category
-  
+
   return Math.max(minSpineLength, baseSpineLength + (categories.length - 3) * lengthPerCategory);
 }
 
@@ -23,15 +23,15 @@ function calculateCauseDistance(category: IshikawaNode, allCategories?: Ishikawa
   const minDistance = 300; // Minimum distance from spine to category
   const baseDistance = 400; // Base distance for reference
   const distancePerSubCause = 50; // Additional distance per sub-cause
-  
+
   const totalSubCauses = countSubCauses(category);
-  
+
   // If we have all categories, use the maximum sub-causes for consistent spacing
   if (allCategories) {
-    const maxSubCauses = Math.max(...allCategories.map(cat => countSubCauses(cat)));
+    const maxSubCauses = Math.max(...allCategories.map((cat) => countSubCauses(cat)));
     return Math.max(minDistance, baseDistance + maxSubCauses * distancePerSubCause);
   }
-  
+
   // Otherwise, use the current category's sub-causes
   return Math.max(minDistance, baseDistance + totalSubCauses * distancePerSubCause);
 }
@@ -77,7 +77,7 @@ function layoutFishbone(
 
     // Alternate between top and bottom
     const isTop = categoryIndex % 2 === 0;
-    
+
     // Calculate category angle: top categories go up/left, bottom categories go down/left
     const categoryAngle = isTop
       ? -Math.PI + Math.PI / 4 // Top: up and left (-135°)
@@ -121,26 +121,32 @@ function layoutFishbone(
 
       // Position sub-causes in pairs, with first pair to the left of category point
       const subCauses = cause.children || [];
-      
+
       subCauses.forEach((subCause, subCauseIndex) => {
         // Calculate sub-cause position in pairs
         // Use the same angle as the category (cause inherits category angle)
         const causeAngle = categoryAngle; // Sub-causes follow cause angle (which is category angle)
-        
+
         // Arrange sub-causes in pairs, starting to the left of the category point
         const pairIndex = Math.floor(subCauseIndex / 2); // Which pair this sub-cause belongs to
         const isFirstInPair = subCauseIndex % 2 === 0; // Is this the first sub-cause in the pair?
-        
+
         // Calculate distance from cause point (negative = left, positive = right)
         const distanceFromCause = (pairIndex + 1) * (causeDistance * 0.3); // Use cause distance for spacing
-        const pairOffset = isFirstInPair ? 40 :-40; // 40px offset to make ribs opposite to each other
-        
+        const pairOffset = isFirstInPair ? 40 : -40; // 40px offset to make ribs opposite to each other
+
         // Calculate perpendicular angle for pair offset
         const perpendicularAngle = causeAngle + Math.PI / 2;
-        
+
         // Calculate sub-cause position
-        const subCauseX = causeX + distanceFromCause * Math.cos(causeAngle) + pairOffset * Math.cos(perpendicularAngle);
-        const subCauseY = causeY + distanceFromCause * Math.sin(causeAngle) + pairOffset * Math.sin(perpendicularAngle);
+        const subCauseX =
+          causeX +
+          distanceFromCause * Math.cos(causeAngle) +
+          pairOffset * Math.cos(perpendicularAngle);
+        const subCauseY =
+          causeY +
+          distanceFromCause * Math.sin(causeAngle) +
+          pairOffset * Math.sin(perpendicularAngle);
 
         // Position sub-cause node
         subCause.x = subCauseX;
@@ -166,16 +172,19 @@ function layoutFishbone(
   return { nodes, edges };
 }
 
+// Export for testing
+export { layoutFishbone };
+
 // Helper function to count total sub-causes for a category
 function countSubCauses(category: IshikawaNode): number {
   let count = 0;
   const causes = category.children || [];
-  
-  causes.forEach(cause => {
+
+  causes.forEach((cause) => {
     const subCauses = cause.children || [];
     count += subCauses.length;
   });
-  
+
   return count;
 }
 
@@ -232,10 +241,10 @@ function drawEdges(edgesEl: D3Element, edges: { from: number; to: number }[], db
             // Calculate spine connection point with dynamic spine length
             const categoryIndex = Math.abs(edge.from) - 1;
             const categories = toData.children || [];
-            
+
             // Calculate dynamic spine length (same logic as layoutFishbone)
             const spineLength = calculateSpineLength(categories);
-            
+
             const categorySpacing = spineLength / (categories.length + 1);
             const spineX = 100 + (categoryIndex + 1) * categorySpacing;
             const spineY = root?.y ?? 400;
@@ -266,12 +275,16 @@ function drawEdges(edgesEl: D3Element, edges: { from: number; to: number }[], db
 
       if (ishikawaData) {
         // Find the actual nodes with improved error handling
-        const findNode = (id: number, node: IshikawaNode, visited = new Set<number>()): IshikawaNode | null => {
+        const findNode = (
+          id: number,
+          node: IshikawaNode,
+          visited = new Set<number>()
+        ): IshikawaNode | null => {
           if (visited.has(node.id)) {
             return null; // Prevent circular references
           }
           visited.add(node.id);
-          
+
           if (node.id === id) {
             return node;
           }
