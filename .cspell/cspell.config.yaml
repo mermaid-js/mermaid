@@ -48,6 +48,7 @@ dictionaries:
   - mermaid-terms
   - suggestions
   - contributors
+  - misc-terms
 
 ignorePaths:
   - '*.txt' # do not spell check local dictionaries

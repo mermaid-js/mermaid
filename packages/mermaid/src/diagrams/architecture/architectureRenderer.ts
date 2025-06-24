@@ -1,7 +1,6 @@
 import { registerIconPacks } from '../../rendering-util/icons.js';
 import type { Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
-import type { FcoseLayoutOptions } from 'cytoscape-fcose';
 import fcose from 'cytoscape-fcose';
 import { select } from 'd3';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
@@ -42,6 +41,7 @@ registerIconPacks([
     icons: architectureIcons,
   },
 ]);
+// @ts-ignore - Type conflicts between different cytoscape type versions
 cytoscape.use(fcose);
 
 function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
@@ -418,7 +418,7 @@ function layoutArchitecture(
       },
       alignmentConstraint,
       relativePlacementConstraint,
-    } as FcoseLayoutOptions);
+    } as any); // Type assertion to bypass cytoscape type conflicts
 
     // Once the diagram has been generated and the service's position cords are set, adjust the XY edges to have a 90deg bend
     layout.one('layoutstop', () => {

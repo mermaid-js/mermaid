@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Ishikawa Diagram Mermaid Demo</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .demo-section {
+        margin-bottom: 40px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .demo-section h2 {
+        color: #555;
+        margin-bottom: 15px;
+      }
+      .mermaid {
+        text-align: center;
+        margin: 20px 0;
+      }
+      .description {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .description h3 {
+        margin-top: 0;
+        color: #495057;
+      }
+      .description p {
+        margin-bottom: 10px;
+        line-height: 1.6;
+      }
+      .description ul {
+        margin-bottom: 0;
+      }
+      .description li {
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Ishikawa Diagram (Fishbone Diagram) Demo</h1>
+
+      <div class="description">
+        <h3>What is an Ishikawa Diagram?</h3>
+        <p>
+          An Ishikawa diagram (also known as a fishbone diagram or cause-and-effect diagram) is a
+          tool for identifying the root causes of a problem. It helps teams systematically analyze
+          complex issues by organizing potential causes into categories.
+        </p>
+
+        <h3>Common Categories (The 8 Ps):</h3>
+        <ul>
+          <li><strong>Product/Service:</strong> Issues related to the product or service itself</li>
+          <li><strong>Price:</strong> Cost-related problems</li>
+          <li><strong>Place:</strong> Location or distribution issues</li>
+          <li><strong>Promotion:</strong> Marketing and communication problems</li>
+          <li><strong>People:</strong> Human resource and training issues</li>
+          <li><strong>Process:</strong> Workflow and procedure problems</li>
+          <li><strong>Physical Evidence:</strong> Tangible aspects of the service</li>
+          <li><strong>Performance:</strong> Quality and efficiency issues</li>
+        </ul>
+      </div>
+
+      <div class="demo-section">
+        <h2>Basic Ishikawa Diagram</h2>
+        <p>This example shows a simple fishbone diagram for analyzing customer complaints:</p>
+        <pre class="mermaid">
+ishikawa
+problem "Customer complaints increasing"
+category "People"
+  "Lack of training"
+  "Poor communication"
+  "Inadequate supervision"
+category "Process"
+  "Inefficient workflow"
+  "Missing procedures"
+  "Poor documentation"
+category "Equipment"
+  "Outdated tools"
+  "Maintenance issues"
+  "Software problems"
+        </pre>
+      </div>
+
+      <div class="demo-section">
+        <h2>Product Quality Issues Analysis</h2>
+        <p>This example demonstrates the classic 6M categories for manufacturing:</p>
+        <pre class="mermaid">
+ishikawa
+problem "Product quality issues"
+category "Materials"
+  "Poor quality raw materials"
+  "Inconsistent suppliers"
+  "Storage problems"
+category "Methods"
+  "Outdated procedures"
+  "Lack of standardization"
+  "Poor work instructions"
+category "Machines"
+  "Equipment breakdowns"
+  "Inadequate maintenance"
+  "Calibration issues"
+category "Environment"
+  "Temperature fluctuations"
+  "Humidity issues"
+  "Poor lighting"
+category "Measurement"
+  "Inaccurate gauges"
+  "Poor measurement techniques"
+  "Calibration problems"
+category "Manpower"
+  "Lack of training"
+  "Fatigue"
+  "Poor motivation"
+        </pre>
+      </div>
+
+      <div class="demo-section">
+        <h2>Service Delivery Problems</h2>
+        <p>This example uses the 8 Ps framework for service industries:</p>
+        <pre class="mermaid">
+ishikawa
+problem "Service delivery delays"
+category "People"
+  [Staff shortages]
+  (Poor training)
+  ((High turnover))
+category "Process"
+  [Complex procedures]
+  (Inefficient workflow)
+  ((Lack of automation))
+category "Physical Evidence"
+  [Poor facilities]
+  (Outdated equipment)
+  ((Inadequate signage))
+category "Performance"
+  [Slow response times]
+  (Quality issues)
+  ((Customer dissatisfaction))
+        </pre>
+      </div>
+
+      <div class="demo-section">
+        <h2>Software Development Issues</h2>
+        <p>This example shows how to analyze software development problems:</p>
+        <pre class="mermaid">
+ishikawa
+problem "Software bugs in production"
+category "People"
+  "Lack of testing experience"
+  "Poor code reviews"
+  "Insufficient training"
+category "Process"
+  "Inadequate testing procedures"
+  "Missing deployment checks"
+  "Poor change management"
+category "Technology"
+  "Outdated frameworks"
+  "Integration issues"
+  "Performance bottlenecks"
+category "Environment"
+  "Different dev/prod environments"
+  "Configuration drift"
+  "Resource constraints"
+        </pre>
+      </div>
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+
+      mermaid.initialize({
+        theme: 'base',
+        startOnLoad: true,
+        logLevel: 1,
+        ishikawa: {
+          padding: 20,
+          maxNodeWidth: 200,
+          useMaxWidth: true,
+        },
+      });
+    </script>
+  </body>
+</html>
