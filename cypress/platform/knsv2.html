@@ -105,10 +105,39 @@
   </head>
 
   <body>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
       ---
       config:
         layout: elk
+        flowchart:
+          curve: linear
+      ---
+      flowchart LR
+          A[A] -- Mermaid js --> B[B]
+          A[A] -- Mermaid js --- B[B]
+          A@{ shape: diamond}
+          B@{ shape: diamond}
+
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: linear
+      ---
+      flowchart LR
+          D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+          I --> D & D
+          D@{ shape: question}
+          I@{ shape: question}
+    </pre>
+    <pre id="diagram4" class="mermaid2">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: linear
       ---
       flowchart LR
           D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
@@ -121,24 +150,27 @@
 ---
 config:
   layout: elk
+
 ---
 flowchart LR
  %% subgraph s1["Untitled subgraph"]
-        C{"Evaluate"}
+        C["Evaluate"]
  %% end
 
     B --> C
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
+  flowchart:
+    curve: linear
 ---
 flowchart LR
 %% A ==> B
 %% A2 --> B2
-      D --> I((I the Circle))
-            D --> I
+A{A} --> B((Bo boo)) & B & B & B
+
     </pre>
     <pre id="diagram4" class="mermaid2">
       ---
@@ -456,7 +488,7 @@ kanban
         // look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
-        // layout: 'elk',
+        layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },

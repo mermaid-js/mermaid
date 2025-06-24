@@ -1,11 +1,18 @@
+import type {
+  InternalHelpers,
+  LayoutData,
+  RenderOptions,
+  SVG,
+  SVGGroup,
+} from '@mermaid-chart/mermaid';
+// @ts-ignore TODO: Investigate D3 issue
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
-import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
+import { bounds } from '../../mermaid/src/diagrams/user-journey/journeyRenderer';
 
 type Node = LayoutData['nodes'][number];
-// Used to calculate distances in order to avoid floating number rounding issues when comparing floating numbers
-const epsilon = 0.0001;
+
 interface LabelData {
   width: number;
   height: number;
@@ -18,16 +25,7 @@ interface NodeWithVertex extends Omit<Node, 'domId'> {
   labelData?: LabelData;
   domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
 }
-interface Point {
-  x: number;
-  y: number;
-}
-function distance(p1?: Point, p2?: Point): number {
-  if (!p1 || !p2) {
-    return 0;
-  }
-  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-}
+
 export const render = async (
   data4Layout: LayoutData,
   svg: SVG,
@@ -61,17 +59,13 @@ export const render = async (
 
     // Add the element to the DOM
     if (!node.isGroup) {
-      const child: NodeWithVertex = {
-        ...node,
-      };
+      const child = node as NodeWithVertex;
       graph.children.push(child);
-      nodeDb[node.id] = child;
+      nodeDb[node.id] = node;
 
       const childNodeEl = await insertNode(nodeEl, node, { config, dir: node.dir });
       const boundingBox = childNodeEl.node()!.getBBox();
       child.domId = childNodeEl;
-      child.calcIntersect = node.calcIntersect;
-      child.intersect = node.intersect;
       child.width = boundingBox.width;
       child.height = boundingBox.height;
     } else {
@@ -80,7 +74,9 @@ export const render = async (
         ...node,
         children: [],
       };
+      // Let lke render with the copy
       graph.children.push(child);
+      // Save the original contining the intersection function
       nodeDb[node.id] = child;
       await addVertices(nodeEl, nodeArr, child, node.id);
 
@@ -155,7 +151,7 @@ export const render = async (
             height: node.height,
           };
           if (node.isGroup) {
-            log.debug('id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
+            log.debug('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
             const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
             // TODO use faster way of cloning
             const clusterNode = JSON.parse(JSON.stringify(node));
@@ -164,10 +160,10 @@ export const render = async (
             clusterNode.width = Math.max(clusterNode.width, node.labelData.width);
             await insertCluster(subgraphEl, clusterNode);
 
-            log.debug('id (UIO)= ', node.id, node.width, node.shape, node.labels);
+            log.debug('Id (UIO)= ', node.id, node.width, node.shape, node.labels);
           } else {
             log.info(
-              'id NODE = ',
+              'Id NODE = ',
               node.id,
               node.x,
               node.y,
@@ -301,7 +297,7 @@ export const render = async (
           linkIdCnt[linkIdBase]++;
           log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
         }
-        const linkId = linkIdBase + '_' + linkIdCnt[linkIdBase];
+        const linkId = linkIdBase; // + '_' + linkIdCnt[linkIdBase];
         edge.id = linkId;
         log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
         const linkNameStart = 'LS_' + edge.start;
@@ -471,6 +467,372 @@ export const render = async (
     }
   }
 
+  const intersection = (
+    node: { x: any; y: any; width: number; height: number },
+    outsidePoint: { x: number; y: number },
+    insidePoint: { x: number; y: number }
+  ) => {
+    log.debug(`intersection calc abc89:
+  outsidePoint: ${JSON.stringify(outsidePoint)}
+  insidePoint : ${JSON.stringify(insidePoint)}
+  node        : x:${node.x} y:${node.y} w:${node.width} h:${node.height}`);
+    const x = node.x;
+    const y = node.y;
+
+    const dx = Math.abs(x - insidePoint.x);
+    // const dy = Math.abs(y - insidePoint.y);
+    const w = node.width / 2;
+    let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
+    const h = node.height / 2;
+
+    const Q = Math.abs(outsidePoint.y - insidePoint.y);
+    const R = Math.abs(outsidePoint.x - insidePoint.x);
+
+    if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
+      // Intersection is top or bottom of rect.
+      const q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+      r = (R * q) / Q;
+      const res = {
+        x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
+        y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q,
+      };
+
+      if (r === 0) {
+        res.x = outsidePoint.x;
+        res.y = outsidePoint.y;
+      }
+      if (R === 0) {
+        res.x = outsidePoint.x;
+      }
+      if (Q === 0) {
+        res.y = outsidePoint.y;
+      }
+
+      log.debug(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res); // cspell: disable-line
+
+      return res;
+    } else {
+      // Intersection onn sides of rect
+      if (insidePoint.x < outsidePoint.x) {
+        r = outsidePoint.x - w - x;
+      } else {
+        // r = outsidePoint.x - w - x;
+        r = x - w - outsidePoint.x;
+      }
+      const q = (Q * r) / R;
+      //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
+      // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
+      let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
+      // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
+      let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
+      log.debug(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
+      if (r === 0) {
+        _x = outsidePoint.x;
+        _y = outsidePoint.y;
+      }
+      if (R === 0) {
+        _x = outsidePoint.x;
+      }
+      if (Q === 0) {
+        _y = outsidePoint.y;
+      }
+
+      return { x: _x, y: _y };
+    }
+  };
+  const outsideNode = (
+    node: { x: any; y: any; width: number; height: number },
+    point: { x: number; y: number }
+  ) => {
+    const x = node.x;
+    const y = node.y;
+    const dx = Math.abs(point.x - x);
+    const dy = Math.abs(point.y - y);
+    const w = node.width / 2;
+    const h = node.height / 2;
+    if (dx >= w || dy >= h) {
+      return true;
+    }
+    return false;
+  };
+
+  const cutter2 = (startNode: any, endNode: any, _points: any[]) => {
+    const startBounds = {
+      x: startNode.offset.posX + startNode.width / 2,
+      y: startNode.offset.posY + startNode.height / 2,
+      width: startNode.width,
+      height: startNode.height,
+      padding: startNode.padding,
+    };
+    const endBounds = {
+      x: endNode.offset.posX + endNode.width / 2,
+      y: endNode.offset.posY + endNode.height / 2,
+      width: endNode.width,
+      height: endNode.height,
+      padding: endNode.padding,
+    };
+
+    if (_points.length === 0) {
+      return [];
+    }
+
+    // Copy the original points array
+    const points = [..._points];
+
+    // The first point is the center of sNode, the last point is the center of eNode
+    const startCenter = points[0];
+    const endCenter = points[points.length - 1];
+
+    log.debug('UIO cutter2: startCenter:', startCenter);
+    log.debug('UIO cutter2: endCenter:', endCenter);
+
+    let firstOutsideStartIndex = -1;
+    let lastOutsideEndIndex = -1;
+
+    // Single iteration through the array
+    for (let i = 0; i < points.length; i++) {
+      const point = points[i];
+
+      // Check if this is the first point outside the start node
+      if (firstOutsideStartIndex === -1 && outsideNode(startBounds, point)) {
+        firstOutsideStartIndex = i;
+        log.debug('UIO cutter2: First point outside start node at index', i, point);
+      }
+
+      // Check if this point is outside the end node (keep updating to find the last one)
+      if (outsideNode(endBounds, point)) {
+        lastOutsideEndIndex = i;
+        log.debug('UIO cutter2: Point outside end node at index', i, point);
+      }
+    }
+
+    log.debug(
+      'UIO cutter2: firstOutsideStartIndex:',
+      firstOutsideStartIndex,
+      'lastOutsideEndIndex:',
+      lastOutsideEndIndex
+    );
+    log.debug('UIO cutter2: startBounds:', startBounds);
+    log.debug('UIO cutter2: endBounds:', endBounds);
+    log.debug('UIO cutter2: original points:', _points);
+
+    // Calculate intersection with start node if we found a point outside it
+    if (firstOutsideStartIndex !== -1) {
+      const outsidePoint = points[firstOutsideStartIndex];
+      let startIntersection;
+
+      // Try using the node's intersect method first
+      if (startNode.intersect) {
+        startIntersection = startNode.intersect(outsidePoint);
+
+        // Check if the intersection is valid (distance > 1)
+        const distance = Math.sqrt(
+          (startCenter.x - startIntersection.x) ** 2 + (startCenter.y - startIntersection.y) ** 2
+        );
+        if (distance <= 1) {
+          startIntersection = null;
+        }
+      }
+
+      // Fallback to intersection function
+      if (!startIntersection) {
+        startIntersection = intersection(startBounds, startCenter, outsidePoint);
+      }
+
+      // Replace the first point with the intersection
+      if (startIntersection) {
+        // Check if the intersection is the same as any existing point
+        const isDuplicate = points.some(
+          (p, index) =>
+            index > 0 &&
+            Math.abs(p.x - startIntersection.x) < 0.1 &&
+            Math.abs(p.y - startIntersection.y) < 0.1
+        );
+
+        if (isDuplicate) {
+          log.debug(
+            'UIO cutter2: Start intersection is duplicate of existing point, removing first point instead'
+          );
+          points.shift(); // Remove the first point instead of replacing it
+        } else {
+          log.debug(
+            'UIO cutter2: Replacing first point',
+            points[0],
+            'with intersection',
+            startIntersection
+          );
+          points[0] = startIntersection;
+        }
+      }
+    }
+
+    // Calculate intersection with end node
+    // Need to recalculate indices since we may have removed the first point
+    let outsidePointForEnd = null;
+    let outsideIndexForEnd = -1;
+
+    // Find the last point that's outside the end node in the current points array
+    for (let i = points.length - 1; i >= 0; i--) {
+      if (outsideNode(endBounds, points[i])) {
+        outsidePointForEnd = points[i];
+        outsideIndexForEnd = i;
+        log.debug('UIO cutter2: Found point outside end node at current index:', i, points[i]);
+        break;
+      }
+    }
+
+    if (!outsidePointForEnd && points.length > 1) {
+      // No points outside end node, try using the second-to-last point
+      log.debug('UIO cutter2: No points outside end node, trying second-to-last point');
+      outsidePointForEnd = points[points.length - 2];
+      outsideIndexForEnd = points.length - 2;
+    }
+
+    if (outsidePointForEnd) {
+      // Check if the outside point is actually on the boundary (distance = 0 from intersection)
+      // If so, we need to create a truly outside point
+      let actualOutsidePoint = outsidePointForEnd;
+
+      // Quick check: if the point is very close to the node boundary, move it further out
+      const dx = Math.abs(outsidePointForEnd.x - endBounds.x);
+      const dy = Math.abs(outsidePointForEnd.y - endBounds.y);
+      const w = endBounds.width / 2;
+      const h = endBounds.height / 2;
+
+      log.debug('UIO cutter2: Checking if outside point is truly outside:', {
+        outsidePoint: outsidePointForEnd,
+        dx,
+        dy,
+        w,
+        h,
+        isOnBoundary: Math.abs(dx - w) < 1 || Math.abs(dy - h) < 1,
+      });
+
+      // If the point is on or very close to the boundary, move it further out
+      if (Math.abs(dx - w) < 1 || Math.abs(dy - h) < 1) {
+        log.debug('UIO cutter2: Outside point is on boundary, creating truly outside point');
+        // Move the point further away from the node center
+        const directionX = outsidePointForEnd.x - endBounds.x;
+        const directionY = outsidePointForEnd.y - endBounds.y;
+        const length = Math.sqrt(directionX * directionX + directionY * directionY);
+
+        if (length > 0) {
+          // Move the point 10 pixels further out in the same direction
+          actualOutsidePoint = {
+            x: endBounds.x + (directionX / length) * (length + 10),
+            y: endBounds.y + (directionY / length) * (length + 10),
+          };
+          log.debug('UIO cutter2: Created truly outside point:', actualOutsidePoint);
+        }
+      }
+
+      let endIntersection;
+
+      // Try using the node's intersect method first
+      if (endNode.intersect) {
+        endIntersection = endNode.intersect(actualOutsidePoint);
+        log.debug('UIO cutter2: endNode.intersect result:', endIntersection);
+
+        // Check if the intersection is on the wrong side of the node
+        const isWrongSide =
+          (actualOutsidePoint.x < endBounds.x && endIntersection.x > endBounds.x) ||
+          (actualOutsidePoint.x > endBounds.x && endIntersection.x < endBounds.x);
+
+        if (isWrongSide) {
+          log.debug('UIO cutter2: endNode.intersect returned wrong side, setting to null');
+          endIntersection = null;
+        } else {
+          // Check if the intersection is valid (distance > 1)
+          const distance = Math.sqrt(
+            (actualOutsidePoint.x - endIntersection.x) ** 2 +
+              (actualOutsidePoint.y - endIntersection.y) ** 2
+          );
+          log.debug('UIO cutter2: Distance from outside point to intersection:', distance);
+          if (distance <= 1) {
+            log.debug('UIO cutter2: endNode.intersect distance too small, setting to null');
+            endIntersection = null;
+          }
+        }
+      } else {
+        log.debug('UIO cutter2: endNode.intersect method not available');
+      }
+
+      // Fallback to intersection function
+      if (!endIntersection) {
+        // Create a proper inside point that's on the correct side of the node
+        // The inside point should be between the outside point and the far edge
+        const insidePoint = {
+          x:
+            actualOutsidePoint.x < endBounds.x
+              ? endBounds.x - endBounds.width / 4
+              : endBounds.x + endBounds.width / 4,
+          y: endCenter.y,
+        };
+
+        log.debug('UIO cutter2: Using fallback intersection function with:', {
+          endBounds,
+          actualOutsidePoint,
+          insidePoint,
+          endCenter,
+        });
+        endIntersection = intersection(endBounds, actualOutsidePoint, insidePoint);
+        log.debug('UIO cutter2: Fallback intersection result:', endIntersection);
+      }
+
+      // Replace the last point with the intersection
+      if (endIntersection) {
+        // Check if the intersection is the same as any existing point
+        const isDuplicate = points.some(
+          (p, index) =>
+            index < points.length - 1 &&
+            Math.abs(p.x - endIntersection.x) < 0.1 &&
+            Math.abs(p.y - endIntersection.y) < 0.1
+        );
+
+        if (isDuplicate) {
+          log.debug(
+            'UIO cutter2: End intersection is duplicate of existing point, removing last point instead'
+          );
+          points.pop(); // Remove the last point instead of replacing it
+        } else {
+          log.debug(
+            'UIO cutter2: Replacing last point',
+            points[points.length - 1],
+            'with intersection',
+            endIntersection,
+            'using outside point at index',
+            outsideIndexForEnd
+          );
+          points[points.length - 1] = endIntersection;
+        }
+      }
+    } else {
+      log.debug('UIO cutter2: No suitable outside point found for end node intersection');
+    }
+
+    log.debug('UIO cutter2: Final points:', points);
+
+    // Debug: Check which side of the end node we're ending at
+    if (points.length > 0) {
+      const finalPoint = points[points.length - 1];
+      const endNodeCenter = endBounds.x;
+      const endNodeLeftEdge = endNodeCenter - endBounds.width / 2;
+      const endNodeRightEdge = endNodeCenter + endBounds.width / 2;
+
+      log.debug('UIO cutter2: End node analysis:', {
+        finalPoint,
+        endNodeCenter,
+        endNodeLeftEdge,
+        endNodeRightEdge,
+        endingSide: finalPoint.x < endNodeCenter ? 'LEFT' : 'RIGHT',
+        distanceFromLeftEdge: Math.abs(finalPoint.x - endNodeLeftEdge),
+        distanceFromRightEdge: Math.abs(finalPoint.x - endNodeRightEdge),
+      });
+    }
+
+    return points;
+  };
+
   // @ts-ignore - ELK is not typed
   const elk = new ELK();
   const element = svg.select('g');
@@ -482,7 +844,6 @@ export const render = async (
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'elk.layered.crossingMinimization.forceNodeModelOrder': true,
       'elk.algorithm': algorithm,
       'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
@@ -497,6 +858,7 @@ export const render = async (
       // 'spacing.edgeEdge': 10,
       // 'spacing.edgeEdgeBetweenLayers': 20,
       // 'spacing.nodeSelfLoop': 20,
+
       // Tweaking options
       // 'elk.layered.nodePlacement.favorStraightEdges': true,
       // 'nodePlacement.feedbackEdges': true,
@@ -682,46 +1044,69 @@ export const render = async (
             startNode.innerHTML
           );
         }
-
-        if (startNode.calcIntersect) {
-          const intersection = startNode.calcIntersect(
-            {
-              x: startNode.offset.posX + startNode.width / 2,
-              y: startNode.offset.posY + startNode.height / 2,
-              width: startNode.width,
-              height: startNode.height,
-            },
-            edge.points[0]
-          );
-
-          if (distance(intersection, edge.points[0]) > epsilon) {
-            edge.points.unshift(intersection);
-          }
-        } else {
-          log.warn('UIO no intersect', startNode.id, startNode);
-          const intersection = startNode.intersect(edge.points);
-
-          if (distance(intersection, edge.points[0]) > epsilon) {
-            edge.points.unshift(intersection);
-          }
+        startNode.x = startNode.offset.posX + startNode.width / 2;
+        startNode.y = startNode.offset.posY + startNode.height / 2;
+        endNode.x = endNode.offset.posX + endNode.width / 2;
+        endNode.y = endNode.offset.posY + endNode.height / 2;
+        if (startNode.shape !== 'rect33') {
+          edge.points.unshift({
+            x: startNode.x,
+            y: startNode.y,
+          });
         }
-        log.warn('UIO here', startNode.id, startNode);
-        if (endNode.calcIntersect) {
-          const intersection = endNode.calcIntersect(
-            {
-              x: endNode.offset.posX + endNode.width / 2,
-              y: endNode.offset.posY + endNode.height / 2,
-              width: endNode.width,
-              height: endNode.height,
-            },
-            edge.points[edge.points.length - 1]
-          );
-
-          if (distance(intersection, edge.points[edge.points.length - 1]) > epsilon) {
-            edge.points.push(intersection);
-          }
+        if (endNode.shape !== 'rect33') {
+          edge.points.push({
+            x: endNode.x,
+            y: endNode.y,
+          });
         }
 
+        // edge.points = cutPathAtIntersect2(startNode, edge.points.reverse(), offset, {
+        //   x: startNode.x + startNode.width / 2 + offset.x,
+        //   y: startNode.y + startNode.height / 2 + offset.y,
+        //   width: sw,
+        //   height: startNode.height,
+        //   padding: startNode.padding,
+        // }).reverse();
+
+        // edge.points = cutPathAtIntersect2(endNode, edge.points, offset, {
+        //   x: endNode.x + ew / 2 + endNode.offset.x,
+        //   y: endNode.y + endNode.height / 2 + endNode.offset.y,
+        //   width: ew,
+        //   height: endNode.height,
+        //   padding: endNode.padding,
+        // });
+
+        // edge.points = cutPathAtIntersect(
+        //   edge.points.reverse(),
+        //   {
+        //     x: startNode.offset.posX + startNode.width / 2,
+        //     y: startNode.offset.posY + startNode.height / 2,
+        //     width: sw,
+        //     height: startNode.height,
+        //     padding: startNode.padding,
+        //   },
+        //   true // startNode.shape === 'diamond' || startNode.shape === 'diam'
+        // ).reverse();
+
+        // console.log('UIO width', sw, startNode.width);
+
+        // edge.points = cutPathAtIntersect(
+        //   edge.points,
+        //   {
+        //     x: endNode.offset.posX + endNode.width / 2,
+        //     y: endNode.offset.posY + endNode.height / 2,
+        //     width: ew,
+        //     height: endNode.height,
+        //     padding: endNode.padding,
+        //   },
+        //   endNode.shape === 'diamond' || endNode.shape === 'diam'
+        // );
+        // startNode.intersect = undefined;
+        // endNode.intersect = undefined;
+        log.debug('UIO cutter2: Points before cutter2:', edge.points);
+        edge.points = cutter2(startNode, endNode, edge.points);
+        log.debug('UIO cutter2: Points after cutter2:', edge.points);
         const paths = insertEdge(
           edgesEl,
           edge,
@@ -729,8 +1114,10 @@ export const render = async (
           data4Layout.type,
           startNode,
           endNode,
-          data4Layout.diagramId
+          data4Layout.diagramId,
+          true
         );
+        log.info('APA12 edge points after insert', JSON.stringify(edge.points));
 
         edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
         edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;
