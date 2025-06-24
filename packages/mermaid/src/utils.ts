@@ -884,7 +884,7 @@ export default {
   runFunc,
   entityDecode,
   insertTitle,
-  isPointInDAttr,
+  isLabelCoordinateInPath,
   parseFontSize,
   InitIDGenerator,
 };
@@ -962,12 +962,16 @@ export function handleUndefinedAttr(
   return attrValue ?? null;
 }
 
-export function isPointInDAttr(points: Point[], dAttr: string) {
-  if (!points || points.length < 2 || !dAttr) {
-    return false;
-  }
-
-  const point = points[1];
+/**
+ * Checks if the  x or y coordinate of the edge label
+ * appears in the given SVG path data string.
+ *
+ * @param point  - The Point object with x and y properties to check.
+ * @param dAttr  - SVG path data string (the 'd' attribute of an SVG path element).
+ * @returns      - True if the rounded x or y coordinate of the edge label is found
+ *                 in the sanitized path data string; otherwise, false.
+ */
+export function isLabelCoordinateInPath(point: Point, dAttr: string) {
   const roundedX = Math.round(point.x);
   const roundedY = Math.round(point.y);
 
