@@ -1,7 +1,8 @@
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
-import { version } from '../../../package.json';
+import packageJson from '../../../package.json' assert { type: 'json' };
 import MermaidExample from './mermaid-markdown-all.js';
+import { addCanonicalUrls } from './canonical-urls.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -25,8 +26,23 @@ export default defineConfig({
     // ignore all localhost links
     /^https?:\/\/localhost/,
   ],
+  transformPageData: addCanonicalUrls,
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    ['meta', { property: 'og:title', content: 'Mermaid' }],
+    [
+      'meta',
+      {
+        property: 'og:description',
+        content: 'Create diagrams and visualizations using text and code.',
+      },
+    ],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:url', content: 'https://mermaid.js.org' }],
+    [
+      'meta',
+      { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
+    ],
     [
       'script',
       {
@@ -38,6 +54,7 @@ export default defineConfig({
     ],
   ],
   themeConfig: {
+    logo: '/favicon.svg',
     nav: nav(),
     editLink: {
       pattern: ({ filePath, frontmatter }) => {
@@ -58,7 +75,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/mermaid-js/mermaid' },
       {
         icon: 'discord',
-        link: 'https://discord.gg/AgrbSrBer3',
+        link: 'https://discord.gg/sKeNQX4Wtj',
       },
       {
         icon: {
@@ -95,7 +112,7 @@ function nav() {
       activeMatch: '/announcements',
     },
     {
-      text: version,
+      text: packageJson.version,
       items: [
         {
           text: 'Changelog',
@@ -104,8 +121,10 @@ function nav() {
       ],
     },
     {
-      text: '💻 Live Editor',
-      link: 'https://mermaid.live',
+      text: '💻 Open Editor',
+      link: 'https://mermaid.live/edit',
+      target: '_blank',
+      rel: 'external',
     },
   ];
 }
@@ -148,7 +167,7 @@ function sidebarSyntax() {
         { text: 'Pie Chart', link: '/syntax/pie' },
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
-        { text: 'Gitgraph (Git) Diagram', link: '/syntax/gitgraph' },
+        { text: 'GitGraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps', link: '/syntax/mindmap' },
         { text: 'Timeline', link: '/syntax/timeline' },
@@ -159,6 +178,7 @@ function sidebarSyntax() {
         { text: 'Packet 🔥', link: '/syntax/packet' },
         { text: 'Kanban 🔥', link: '/syntax/kanban' },
         { text: 'Architecture 🔥', link: '/syntax/architecture' },
+        { text: 'Radar 🔥', link: '/syntax/radar' },
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },

@@ -24,6 +24,7 @@ export default defineConfig({
       exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
     },
     includeSource: ['packages/*/src/**/*.{js,ts}'],
+    clearMocks: true,
   },
   build: {
     /** If you set esmExternals to true, this plugins assumes that
@@ -34,6 +35,8 @@ export default defineConfig({
     },
   },
   define: {
+    // Needs to be string
+    includeLargeFeatures: 'true',
     'import.meta.vitest': 'undefined',
   },
 });

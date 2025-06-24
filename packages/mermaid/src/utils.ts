@@ -337,6 +337,9 @@ export const calculatePoint = (points: Point[], distanceToTraverse: number): Poi
   for (const point of points) {
     if (prevPoint) {
       const vectorDistance = distance(point, prevPoint);
+      if (vectorDistance === 0) {
+        return prevPoint;
+      }
       if (vectorDistance < remainingDistance) {
         remainingDistance -= vectorDistance;
       } else {
@@ -642,7 +645,7 @@ const breakString: (
  * This calculates the text's height, taking into account the wrap breaks and both the statically
  * configured height, width, and the length of the text (in pixels).
  *
- * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
+ * If the wrapped text has greater height, we extend the height, so it's value won't overflow.
  *
  * @param text - The text to measure
  * @param config - The config for fontSize, fontFamily, and fontWeight all impacting the
@@ -937,8 +940,12 @@ export const getEdgeId = (
     counter?: number;
     prefix?: string;
     suffix?: string;
-  }
+  },
+  id?: string
 ) => {
+  if (id) {
+    return id;
+  }
   return `${prefix ? `${prefix}_` : ''}${from}_${to}_${counter}${suffix ? `_${suffix}` : ''}`;
 };
 

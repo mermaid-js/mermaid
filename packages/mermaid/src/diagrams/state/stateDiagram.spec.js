@@ -1,9 +1,11 @@
 import { parser } from './parser/stateDiagram.jison';
-import stateDb from './stateDb.js';
+import { StateDB } from './stateDb.js';
 
 describe('state diagram, ', function () {
   describe('when parsing an info graph it', function () {
+    let stateDb;
     beforeEach(function () {
+      stateDb = new StateDB(1);
       parser.yy = stateDb;
     });
 
@@ -396,6 +398,32 @@ describe('state diagram, ', function () {
       `;
 
       parser.parse(str);
+    });
+  });
+  describe('click directive', function () {
+    let stateDb;
+    beforeEach(function () {
+      stateDb = new StateDB(1);
+    });
+
+    it('should store links from click statements manually passed to extract()', function () {
+      const clickStmt = {
+        stmt: 'click',
+        id: 'S1',
+        url: 'https://example.com',
+        tooltip: 'Go to Example',
+      };
+
+      // Add state explicitly
+      stateDb.addState('S1');
+      // Simulate parser output
+      stateDb.extract([clickStmt]);
+
+      const links = stateDb.getLinks();
+      expect(links.has('S1')).toBe(true);
+      const link = links.get('S1');
+      expect(link.url).toBe('https://example.com');
+      expect(link.tooltip).toBe('Go to Example');
     });
   });
 });

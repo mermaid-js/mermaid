@@ -4,14 +4,14 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/font-awesome.min.css"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
       rel="stylesheet"
     />
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
       rel="stylesheet"
     />
     <link
@@ -78,17 +78,46 @@
         font-family: monospace;
         font-size: 72px;
       }
+
       pre {
         width: 100%;
       }
+
       /* tspan {
               font-size: 6px !important;
             } */
+      /* .flowchart-link {
+        stroke-dasharray: 4, 4 !important;
+        animation: flow 1s linear infinite;
+        animation: dashdraw 4.93282s linear infinite;
+        stroke-width: 2px !important;
+      } */
+
+      @keyframes dashdraw {
+        from {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /*stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation:    4.932820s linear infinite;*/
+      /* stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation: dashdraw 4.932820s linear infinite;*/
     </style>
   </head>
 
   <body>
     <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart LR
+          D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+          D --> I & I
+          a["a"]
+          D@{ shape: trap-b}
+          I@{ shape: lean-l}
+    </pre>
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -100,7 +129,7 @@ flowchart LR
 
     B --> C
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -111,25 +140,27 @@ flowchart LR
       D --> I((I the Circle))
             D --> I
     </pre>
-    <pre id="diagram4" class="mermaid">
----
-config:
-  layout: elk
----
+    <pre id="diagram4" class="mermaid2">
+      ---
+      config:
+        layout: elk
+        theme: default
+        look: classic
+      ---
       flowchart LR
-      subgraph S2
-      subgraph s1["APA"]
-      D{"Use the editor"}
-      end
-
-
-      D -- Mermaid js --> I(("fa:fa-code Text"))
-            D --> I
-           D --> E --> I
-
-      end
+       subgraph s1["APA"]
+              D{"Use the editor"}
+        end
+       subgraph S2["S2"]
+              s1
+              I>"fa:fa-code Text"]
+              E["E"]
+        end
+          D -- Mermaid js --> I
+          D --> I & E
+          E --> I
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -154,7 +185,7 @@ config:
       end
       end
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -167,7 +198,7 @@ config:
       D-->I
       D-->I
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -206,7 +237,7 @@ flowchart LR
     n8@{ shape: rect}
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -222,7 +253,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -231,7 +262,7 @@ flowchart LR
     A{A} --> B & C
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -243,7 +274,7 @@ flowchart LR
     end
 </pre
     >
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   layout: elk
@@ -261,7 +292,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   kanban:
@@ -280,81 +311,81 @@ kanban
     task3[💻 Develop login feature]@{ ticket: 103 }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'rounded' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'rounded' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'rounded' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'rounded' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'square' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'square' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'square' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'square' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'circle' }
 
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'circle' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'circle' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'circle' }
   A:::AClass
   classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 flowchart LR
   nA[Style] --> A@{ icon: 'logos:aws', form: 'circle' }
   style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 kanban
   id2[In progress]
     docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
     </pre>
-    <pre id="diagram4" class="mermaid">
+    <pre id="diagram4" class="mermaid2">
 ---
 config:
   kanban:
@@ -366,7 +397,7 @@ kanban
     [Create Documentation]
     docs[Create Blog about the new diagram]
   id7[In progress]
-    id6[Create renderer so that it works in all cases. We also add som extra text here for testing purposes. And some more just for the extra flare.]
+    id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]
   id9[Ready for deploy]
     id8[Design grammar]@{ assigned: 'knsv' }
   id10[Ready for test]
@@ -414,7 +445,10 @@ kanban
       window.callback = function () {
         alert('A callback was triggered');
       };
-      mermaid.initialize({
+      function callback() {
+        alert('It worked');
+      }
+      await mermaid.initialize({
         // theme: 'base',
         // theme: 'default',
         // theme: 'forest',
@@ -426,9 +460,11 @@ kanban
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
+
         // fontFamily: 'Caveat',
         // fontFamily: 'Kalam',
         // fontFamily: 'courier',
+        fontFamily: 'arial',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
@@ -440,10 +476,9 @@ kanban
         fontSize: 12,
         logLevel: 0,
         securityLevel: 'loose',
+        callback,
       });
-      function callback() {
-        alert('It worked');
-      }
+
       mermaid.parseError = function (err, hash) {
         console.error('In parse error:');
         console.error(err);

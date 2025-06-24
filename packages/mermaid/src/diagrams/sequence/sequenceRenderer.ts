@@ -3,6 +3,7 @@ import { select } from 'd3';
 import svgDraw, { drawKatex, ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDraw.js';
 import { log } from '../../logger.js';
 import common, { calculateMathMLDimensions, hasKatex } from '../common/common.js';
+import { getUrl } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import assignWithDepth from '../../assignWithDepth.js';
@@ -232,7 +233,7 @@ interface NoteModel {
 }
 
 /**
- * Draws an note in the diagram with the attached line
+ * Draws a note in the diagram with the attached line
  *
  * @param elem - The diagram to draw to.
  * @param noteModel - Note model options.
@@ -449,14 +450,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
 
   let url = '';
   if (conf.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    url = getUrl(true);
   }
 
   line.attr('stroke-width', 2);
@@ -1538,7 +1532,6 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
   let current, noteModel, msgModel;
 
   for (const msg of messages) {
-    msg.id = utils.random({ length: 10 });
     switch (msg.type) {
       case diagObj.db.LINETYPE.LOOP_START:
       case diagObj.db.LINETYPE.ALT_START:

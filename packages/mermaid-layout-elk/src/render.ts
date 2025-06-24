@@ -71,6 +71,7 @@ export const render = async (
       const boundingBox = childNodeEl.node()!.getBBox();
       child.domId = childNodeEl;
       child.calcIntersect = node.calcIntersect;
+      child.intersect = node.intersect;
       child.width = boundingBox.width;
       child.height = boundingBox.height;
     } else {
@@ -154,7 +155,7 @@ export const render = async (
             height: node.height,
           };
           if (node.isGroup) {
-            log.debug('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
+            log.debug('id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
             const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
             // TODO use faster way of cloning
             const clusterNode = JSON.parse(JSON.stringify(node));
@@ -163,10 +164,10 @@ export const render = async (
             clusterNode.width = Math.max(clusterNode.width, node.labelData.width);
             await insertCluster(subgraphEl, clusterNode);
 
-            log.debug('Id (UIO)= ', node.id, node.width, node.shape, node.labels);
+            log.debug('id (UIO)= ', node.id, node.width, node.shape, node.labels);
           } else {
             log.info(
-              'Id NODE = ',
+              'id NODE = ',
               node.id,
               node.x,
               node.y,
@@ -481,6 +482,7 @@ export const render = async (
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      'elk.layered.crossingMinimization.forceNodeModelOrder': true,
       'elk.algorithm': algorithm,
       'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
@@ -495,7 +497,6 @@ export const render = async (
       // 'spacing.edgeEdge': 10,
       // 'spacing.edgeEdgeBetweenLayers': 20,
       // 'spacing.nodeSelfLoop': 20,
-
       // Tweaking options
       // 'elk.layered.nodePlacement.favorStraightEdges': true,
       // 'nodePlacement.feedbackEdges': true,
@@ -696,7 +697,15 @@ export const render = async (
           if (distance(intersection, edge.points[0]) > epsilon) {
             edge.points.unshift(intersection);
           }
+        } else {
+          log.warn('UIO no intersect', startNode.id, startNode);
+          const intersection = startNode.intersect(edge.points);
+
+          if (distance(intersection, edge.points[0]) > epsilon) {
+            edge.points.unshift(intersection);
+          }
         }
+        log.warn('UIO here', startNode.id, startNode);
         if (endNode.calcIntersect) {
           const intersection = endNode.calcIntersect(
             {

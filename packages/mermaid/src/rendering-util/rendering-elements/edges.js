@@ -1,14 +1,31 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate } from '../../diagrams/common/common.js';
+import { evaluate, getUrl } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
 import utils from '../../utils.js';
 import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
-import { curveBasis, line, select } from 'd3';
+
+import {
+  curveBasis,
+  curveLinear,
+  curveCardinal,
+  curveBumpX,
+  curveBumpY,
+  curveCatmullRom,
+  curveMonotoneX,
+  curveMonotoneY,
+  curveNatural,
+  curveStep,
+  curveStepAfter,
+  curveStepBefore,
+  line,
+  select,
+} from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
+import { isLabelStyle } from './shapes/handDrawnShapeStyles.js';
 
 const edgeLabels = new Map();
 const terminalLabels = new Map();
@@ -373,6 +390,13 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   let pointsHasChanged = false;
   const tail = startNode;
   var head = endNode;
+  const edgeClassStyles = [];
+  for (const key in edge.cssCompiledStyles) {
+    if (isLabelStyle(key)) {
+      continue;
+    }
+    edgeClassStyles.push(edge.cssCompiledStyles[key]);
+  }
 
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
@@ -410,9 +434,46 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   lineData = adjustForArrowHeads(lineData);
   // lineData = fixCorners(lineData);
   let curve = curveBasis;
-  // let curve = curveLinear;
-  if (edge.curve) {
-    curve = edge.curve;
+  curve = curveLinear;
+  switch (edge.curve) {
+    case 'linear':
+      curve = curveLinear;
+      break;
+    case 'basis':
+      curve = curveBasis;
+      break;
+    case 'cardinal':
+      curve = curveCardinal;
+      break;
+    case 'bumpX':
+      curve = curveBumpX;
+      break;
+    case 'bumpY':
+      curve = curveBumpY;
+      break;
+    case 'catmullRom':
+      curve = curveCatmullRom;
+      break;
+    case 'monotoneX':
+      curve = curveMonotoneX;
+      break;
+    case 'monotoneY':
+      curve = curveMonotoneY;
+      break;
+    case 'natural':
+      curve = curveNatural;
+      break;
+    case 'step':
+      curve = curveStep;
+      break;
+    case 'stepAfter':
+      curve = curveStepAfter;
+      break;
+    case 'stepBefore':
+      curve = curveStepBefore;
+      break;
+    default:
+      curve = curveBasis;
   }
 
   const { x, y } = getLineFunctionsWithOffset(edge);
@@ -447,7 +508,9 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
   let svgPath;
   let linePath = lineFunction(lineData);
-  const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
+  const edgeStyles = Array.isArray(edge.style) ? edge.style : edge.style ? [edge.style] : [];
+  let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
+
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
@@ -468,12 +531,27 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     svgPath.attr('d', d);
     elem.node().appendChild(svgPath.node());
   } else {
+    const stylesFromClasses = edgeClassStyles.join(';');
+    const styles = edgeStyles ? edgeStyles.reduce((acc, style) => acc + style + ';', '') : '';
+    let animationClass = '';
+    if (edge.animate) {
+      animationClass = ' edge-animation-fast';
+    }
+    if (edge.animation) {
+      animationClass = ' edge-animation-' + edge.animation;
+    }
+
+    const pathStyle = stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles;
     svgPath = elem
       .append('path')
       .attr('d', linePath)
       .attr('id', edge.id)
-      .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-      .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
+      .attr(
+        'class',
+        ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '') + (animationClass ?? '')
+      )
+      .attr('style', pathStyle);
+    strokeColor = pathStyle.match(/stroke:([^;]+)/)?.[1];
   }
 
   // DEBUG code, DO NOT REMOVE
@@ -499,18 +577,12 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
   let url = '';
   if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+    url = getUrl(true);
   }
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType);
+  addEdgeMarkers(svgPath, edge, url, id, diagramType, strokeColor);
 
   let paths = {};
   if (pointsHasChanged) {
