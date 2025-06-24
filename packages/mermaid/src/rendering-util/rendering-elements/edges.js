@@ -638,6 +638,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
   addEdgeMarkers(svgPath, edge, url, id, diagramType, strokeColor);
 
+  if (!utils.isPointInDAttr(points, svgPath.attr('d'))) {
+    pointsHasChanged = true;
+  }
+
   let paths = {};
   if (pointsHasChanged) {
     paths.updatedPath = points;

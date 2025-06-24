@@ -884,6 +884,7 @@ export default {
   runFunc,
   entityDecode,
   insertTitle,
+  isPointInDAttr,
   parseFontSize,
   InitIDGenerator,
 };
@@ -959,4 +960,20 @@ export function handleUndefinedAttr(
   attrValue: Parameters<d3.Selection<BaseType, unknown, HTMLElement, any>['attr']>[1] | undefined
 ) {
   return attrValue ?? null;
+}
+
+export function isPointInDAttr(points: Point[], dAttr: string) {
+  if (!points || points.length < 2 || !dAttr) {
+    return false;
+  }
+
+  const point = points[1];
+  const roundedX = Math.round(point.x);
+  const roundedY = Math.round(point.y);
+
+  const sanitizedD = dAttr.replace(/(\d+\.\d+)/g, (match) =>
+    Math.round(parseFloat(match)).toString()
+  );
+
+  return sanitizedD.includes(roundedX.toString()) || sanitizedD.includes(roundedY.toString());
 }
