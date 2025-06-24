@@ -63,7 +63,9 @@ export const MOCKED_BBOX = {
 };
 
 interface JsdomItInput {
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  body: Selection<HTMLBodyElement, never, HTMLElement, any>; // The `any` here comes from D3'as API.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   svg: Selection<SVGSVGElement, never, HTMLElement, any>; // The `any` here comes from D3'as API.
 }
 
@@ -105,8 +107,9 @@ export function jsdomIt(message: string, run: (input: JsdomItInput) => void | Pr
       setOnProtectedConstant(global, 'document', dom.window.document); // Fool D3 into thinking it's in a browser
       setOnProtectedConstant(global, 'MutationObserver', undefined); // JSDOM doesn't like cytoscape elements
 
-      const svgSelection = select<SVGSVGElement, never>('svg');
-      await run({ svg: svgSelection });
+      const body = select<HTMLBodyElement, never>('body');
+      const svg = select<SVGSVGElement, never>('svg');
+      await run({ body, svg });
     } finally {
       setOnProtectedConstant(global, 'window', oldWindow);
       setOnProtectedConstant(global, 'document', oldDocument);

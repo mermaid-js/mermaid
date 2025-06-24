@@ -196,53 +196,45 @@ describe('mermaidAPI', () => {
   describe('appendDivSvgG', () => {
     // cspell:ignore dthe
 
-    jsdomIt('appends a div node', () => {
-      const body = select<HTMLBodyElement, never>('body');
+    jsdomIt('appends a div node', ({ body }) => {
       appendDivSvgG(body, 'theId', 'dtheId');
       const divNode = ensureNodeFromSelector('div');
       const svgNode = ensureNodeFromSelector('svg', divNode);
       ensureNodeFromSelector('g', svgNode);
     });
-    jsdomIt('the id for the div is "d" with the id appended', () => {
-      const body = select<HTMLBodyElement, never>('body');
+    jsdomIt('the id for the div is "d" with the id appended', ({ body }) => {
       appendDivSvgG(body, 'theId', 'dtheId');
       const divNode = ensureNodeFromSelector('div');
       expect(divNode?.getAttribute('id')).toBe('dtheId');
     });
 
-    jsdomIt('sets the style for the div if one is given', () => {
-      const body = select<HTMLBodyElement, never>('body');
+    jsdomIt('sets the style for the div if one is given', ({ body }) => {
       appendDivSvgG(body, 'theId', 'dtheId', 'given div style', 'given x link');
       const divNode = ensureNodeFromSelector('div');
       expect(divNode?.getAttribute('style')).toBe('given div style');
     });
 
-    jsdomIt('sets the svg width to 100%', () => {
-      const body = select<HTMLBodyElement, never>('body');
+    jsdomIt('sets the svg width to 100%', ({ body }) => {
       appendDivSvgG(body, 'theId', 'dtheId');
       const svgNode = ensureNodeFromSelector('div > svg');
       expect(svgNode.getAttribute('width')).toBe('100%');
     });
-    jsdomIt('the svg id is the id', () => {
-      const body = select<HTMLBodyElement, never>('body');
+    jsdomIt('the svg id is the id', ({ body }) => {
       appendDivSvgG(body, 'theId', 'dtheId');
       const svgNode = ensureNodeFromSelector('div > svg');
       expect(svgNode.getAttribute('id')).toBe('theId');
     });
-    jsdomIt('the svg xml namespace is the 2000 standard', () => {
-      const body = select<HTMLBodyElement, never>('body');
+    jsdomIt('the svg xml namespace is the 2000 standard', ({ body }) => {
       appendDivSvgG(body, 'theId', 'dtheId');
       const svgNode = ensureNodeFromSelector('div > svg');
       expect(svgNode.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
     });
-    jsdomIt('sets the  svg xlink if one is given', () => {
-      const body = select<HTMLBodyElement, never>('body');
+    jsdomIt('sets the  svg xlink if one is given', ({ body }) => {
       appendDivSvgG(body, 'theId', 'dtheId', 'div style', 'given x link');
       const svgNode = ensureNodeFromSelector('div > svg');
       expect(svgNode.getAttribute('xmlns:xlink')).toBe('given x link');
     });
-    jsdomIt('returns the given parentRoot d3 nodes', () => {
-      const body = select<HTMLBodyElement, never>('body');
+    jsdomIt('returns the given parentRoot d3 nodes', ({ body }) => {
       expect(appendDivSvgG(body, 'theId', 'dtheId')).toEqual(body);
     });
   });
