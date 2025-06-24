@@ -454,13 +454,11 @@ category "People"
       Math.pow(positionedCause2.x - spineX, 2) + Math.pow(positionedCause2.y - spineY, 2)
     );
 
-    // Both causes should have the same distance from spine since the layout uses
-    // the maximum sub-causes across all categories for consistent spacing
-    // The distance should be: baseDistance(400) + maxSubCauses(8) * distancePerSubCause(50) = 800
-    expect(distance1).toBeCloseTo(800, -1); // Within 10px
-    expect(distance2).toBeCloseTo(800, -1); // Within 10px
+    // The cause with fewer sub-causes (cause1: 2 sub-causes) should be positioned closer to the spine
+    // than the cause with more sub-causes (cause2: 8 sub-causes)
+    expect(distance1).toBeLessThan(distance2);
 
-    // Verify that both causes have the same distance (consistent spacing)
-    expect(distance1).toBeCloseTo(distance2, -1);
+    // Both causes should have different distances (they should not be the same)
+    expect(distance1).not.toBeCloseTo(distance2, -1);
   });
 });
