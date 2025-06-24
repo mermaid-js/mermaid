@@ -3,9 +3,7 @@ import { cp } from 'fs/promises';
 
 const main = async () => {
   const coverageDir = 'coverage';
-  const coverageFiles = ['vitest', 'cypress'].map(
-    (dir) => `${coverageDir}/${dir}/coverage-final.json`
-  );
+  const coverageFiles = ['vitest'].map((dir) => `${coverageDir}/${dir}/coverage-final.json`);
 
   //copy coverage files from vitest and cypress to coverage folder
   await Promise.all(
