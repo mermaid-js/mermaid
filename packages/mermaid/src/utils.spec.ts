@@ -6,7 +6,6 @@ import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import memoize from 'lodash-es/memoize.js';
 import { preprocessDiagram } from './preprocess.js';
 import { MOCKED_BBOX, ensureNodeFromSelector, jsdomIt } from './tests/util.js';
-import { select } from 'd3';
 
 addDiagrams();
 
@@ -370,36 +369,31 @@ describe('when initializing the id generator', function () {
 });
 
 describe('when inserting titles', function () {
-  jsdomIt('does nothing if the title is empty', function () {
-    const svg = select<SVGSVGElement, never>('svg');
+  jsdomIt('does nothing if the title is empty', function ({ svg }) {
     utils.insertTitle(svg, 'testClass', 0, '');
     const titleNode = document.querySelector('svg > text');
     expect(titleNode).toBeNull();
   });
 
-  jsdomIt('appends the title as a text item with the given title text', function () {
-    const svg = select<SVGSVGElement, never>('svg');
+  jsdomIt('appends the title as a text item with the given title text', function ({ svg }) {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
     const titleNode = ensureNodeFromSelector('svg > text');
     expect(titleNode.innerHTML).toBe('test title');
   });
 
-  jsdomIt('x value is the bounds x position + half of the bounds width', () => {
-    const svg = select<SVGSVGElement, never>('svg');
+  jsdomIt('x value is the bounds x position + half of the bounds width', ({ svg }) => {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
     const titleNode = ensureNodeFromSelector('svg > text');
     expect(titleNode.getAttribute('x')).toBe(`${MOCKED_BBOX.x + MOCKED_BBOX.width / 2}`);
   });
 
-  jsdomIt('y value is the negative of given title top margin', () => {
-    const svg = select<SVGSVGElement, never>('svg');
+  jsdomIt('y value is the negative of given title top margin', ({ svg }) => {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
     const titleNode = ensureNodeFromSelector('svg > text');
     expect(titleNode.getAttribute('y')).toBe(`${MOCKED_BBOX.y - 5}`);
   });
 
-  jsdomIt('class is the given css class', () => {
-    const svg = select<SVGSVGElement, never>('svg');
+  jsdomIt('class is the given css class', ({ svg }) => {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
     const titleNode = ensureNodeFromSelector('svg > text');
     expect(titleNode.getAttribute('class')).toBe('testClass');
