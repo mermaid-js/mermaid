@@ -16,8 +16,8 @@ export const solidStateFill = (color: string) => {
 };
 
 export const compileStyles = (node: Node) => {
-  // node.cssCompiledStyles is an array of strings in the form of 'key: value' where jey is the css property and value is the value
-  // the array is the styles of node node from the classes it is using
+  // node.cssCompiledStyles is an array of strings in the form of 'key: value' where key is the css property and value is the value
+  // the array is the styles of node from the classes it is using
   // node.cssStyles is an array of styles directly set on the node
   // concat the arrays and remove duplicates such that the values from node.cssStyles are used if there are duplicates
   const stylesMap = styles2Map([...(node.cssCompiledStyles || []), ...(node.cssStyles || [])]);
@@ -32,7 +32,28 @@ export const styles2Map = (styles: string[]) => {
   });
   return styleMap;
 };
-
+export const isLabelStyle = (key: string) => {
+  return (
+    key === 'color' ||
+    key === 'font-size' ||
+    key === 'font-family' ||
+    key === 'font-weight' ||
+    key === 'font-style' ||
+    key === 'text-decoration' ||
+    key === 'text-align' ||
+    key === 'text-transform' ||
+    key === 'line-height' ||
+    key === 'letter-spacing' ||
+    key === 'word-spacing' ||
+    key === 'text-shadow' ||
+    key === 'text-overflow' ||
+    key === 'white-space' ||
+    key === 'word-wrap' ||
+    key === 'word-break' ||
+    key === 'overflow-wrap' ||
+    key === 'hyphens'
+  );
+};
 export const styles2String = (node: Node) => {
   const { stylesArray } = compileStyles(node);
   const labelStyles: string[] = [];
@@ -42,26 +63,7 @@ export const styles2String = (node: Node) => {
 
   stylesArray.forEach((style) => {
     const key = style[0];
-    if (
-      key === 'color' ||
-      key === 'font-size' ||
-      key === 'font-family' ||
-      key === 'font-weight' ||
-      key === 'font-style' ||
-      key === 'text-decoration' ||
-      key === 'text-align' ||
-      key === 'text-transform' ||
-      key === 'line-height' ||
-      key === 'letter-spacing' ||
-      key === 'word-spacing' ||
-      key === 'text-shadow' ||
-      key === 'text-overflow' ||
-      key === 'white-space' ||
-      key === 'word-wrap' ||
-      key === 'word-break' ||
-      key === 'overflow-wrap' ||
-      key === 'hyphens'
-    ) {
+    if (isLabelStyle(key)) {
       labelStyles.push(style.join(':') + ' !important');
     } else {
       nodeStyles.push(style.join(':') + ' !important');

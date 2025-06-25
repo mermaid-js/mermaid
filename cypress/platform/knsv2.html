@@ -4,14 +4,14 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/font-awesome.min.css"
     />
     <link
       href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
       rel="stylesheet"
     />
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
       rel="stylesheet"
     />
     <link
@@ -78,24 +78,85 @@
         font-family: monospace;
         font-size: 72px;
       }
+
       pre {
         width: 100%;
       }
+
       /* tspan {
               font-size: 6px !important;
             } */
+      /* .flowchart-link {
+        stroke-dasharray: 4, 4 !important;
+        animation: flow 1s linear infinite;
+        animation: dashdraw 4.93282s linear infinite;
+        stroke-width: 2px !important;
+      } */
+
+      @keyframes dashdraw {
+        from {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /*stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation:    4.932820s linear infinite;*/
+      /* stroke-width:2;stroke-dasharray:10.000000,9.865639;stroke-dashoffset:-198.656393;animation: dashdraw 4.932820s linear infinite;*/
     </style>
   </head>
 
   <body>
     <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: linear
+      ---
+      flowchart LR
+          A[A] -- Mermaid js --> B[B]
+          A[A] -- Mermaid js --- B[B]
+          A@{ shape: diamond}
+          B@{ shape: diamond}
+
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: rounded
+      ---
+      flowchart LR
+          D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+          I --> D & D
+          D@{ shape: question}
+          I@{ shape: question}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: rounded
+        elk:
+          nodePlacementStrategy: NETWORK_SIMPLEX
+      ---
+      flowchart LR
+          D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+          D --> I & I
+          a["a"]
+          D@{ shape: trap-b}
+          I@{ shape: lean-l}
+    </pre>
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
+
 ---
 flowchart LR
  %% subgraph s1["Untitled subgraph"]
-        C{"Evaluate"}
+        C["Evaluate"]
  %% end
 
     B --> C
@@ -104,30 +165,34 @@ flowchart LR
 ---
 config:
   layout: elk
+  flowchart:
+    //curve: linear
 ---
 flowchart LR
 %% A ==> B
 %% A2 --> B2
-      D --> I((I the Circle))
-            D --> I
+A{A} --> B((Bo boo)) & B & B & B
+
     </pre>
     <pre id="diagram4" class="mermaid">
----
-config:
-  layout: elk
----
+      ---
+      config:
+        layout: elk
+        theme: default
+        look: classic
+      ---
       flowchart LR
-      subgraph S2
-      subgraph s1["APA"]
-      D{"Use the editor"}
-      end
-
-
-      D -- Mermaid js --> I(("fa:fa-code Text"))
-            D --> I
-           D --> E --> I
-
-      end
+       subgraph s1["APA"]
+              D{"Use the editor"}
+        end
+       subgraph S2["S2"]
+              s1
+              I>"fa:fa-code Text"]
+              E["E"]
+        end
+          D -- Mermaid js --> I
+          D --> I & E
+          E --> I
     </pre>
     <pre id="diagram4" class="mermaid">
 ---
@@ -366,7 +431,7 @@ kanban
     [Create Documentation]
     docs[Create Blog about the new diagram]
   id7[In progress]
-    id6[Create renderer so that it works in all cases. We also add som extra text here for testing purposes. And some more just for the extra flare.]
+    id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]
   id9[Ready for deploy]
     id8[Design grammar]@{ assigned: 'knsv' }
   id10[Ready for test]
@@ -414,7 +479,10 @@ kanban
       window.callback = function () {
         alert('A callback was triggered');
       };
-      mermaid.initialize({
+      function callback() {
+        alert('It worked');
+      }
+      await mermaid.initialize({
         // theme: 'base',
         // theme: 'default',
         // theme: 'forest',
@@ -422,13 +490,15 @@ kanban
         // look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
-        // layout: 'elk',
+        layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
+
         // fontFamily: 'Caveat',
         // fontFamily: 'Kalam',
         // fontFamily: 'courier',
+        fontFamily: 'arial',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
@@ -440,10 +510,9 @@ kanban
         fontSize: 12,
         logLevel: 0,
         securityLevel: 'loose',
+        callback,
       });
-      function callback() {
-        alert('It worked');
-      }
+
       mermaid.parseError = function (err, hash) {
         console.error('In parse error:');
         console.error(err);

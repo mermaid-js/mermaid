@@ -28,7 +28,7 @@ describe('when securityLevel is antiscript, all script must be removed', () => {
   it('should remove all javascript urls', () => {
     compareRemoveScript(
       `This is a <a href="javascript:runHijackingScript();">clean link</a> + <a href="javascript:runHijackingScript();">clean link</a>
-  and <a href="javascript&colon;bipassedMining();">me too</a>`,
+  and <a href="javascript&colon;bypassedMining();">me too</a>`,
       `This is a <a>clean link</a> + <a>clean link</a>
   and <a>me too</a>`
     );

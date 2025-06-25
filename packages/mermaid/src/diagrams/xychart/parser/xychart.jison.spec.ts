@@ -9,7 +9,7 @@ const parserFnConstructor = (str: string) => {
   };
 };
 
-const mockDB: Record<string, Mock<any, any>> = {
+const mockDB: Record<string, Mock<any>> = {
   setOrientation: vi.fn(),
   setDiagramTitle: vi.fn(),
   setXAxisTitle: vi.fn(),
@@ -128,7 +128,7 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setXAxisRangeData).toHaveBeenCalledWith(45.5, 0.34);
   });
 
-  it('parse x-axis without axisname and range data', () => {
+  it('parse x-axis without axis name and range data', () => {
     const str = 'xychart-beta \nx-axis   45.5   -->   1.34   \n';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({
@@ -154,7 +154,7 @@ describe('Testing xychart jison file', () => {
     ]);
   });
 
-  it('parse x-axis without axisname and category data', () => {
+  it('parse x-axis without axis name and category data', () => {
     const str = 'xychart-beta \nx-axis    [  "cat1"  ,   cat2a  ]   \n   ';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({
@@ -244,7 +244,7 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'yAxisName', type: 'text' });
     expect(mockDB.setYAxisRangeData).toHaveBeenCalledWith(45.5, 33);
   });
-  it('parse y-axis without axisname with range data', () => {
+  it('parse y-axis without axis name with range data', () => {
     const str = 'xychart-beta \ny-axis    45.5   -->   33   \n';
     expect(parserFnConstructor(str)).not.toThrow();
     expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: '', type: 'text' });

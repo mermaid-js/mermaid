@@ -39,7 +39,7 @@ Where to start:
 - You could work on a new feature! [These](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Development%22+label%3A%22Type%3A+Enhancement%22+label%3A%22Status%3A+Approved%22+) are some ideas!
 - You could confirm the bugs in [these issues](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Status%3A+Triage%22++label%3A%22Type%3A+Bug+%2F+Error%22).
 
-[You can join our Discord server if you want closer contact!](https://discord.gg/AgrbSrBer3)
+[You can join our Discord server if you want closer contact!](https://discord.gg/sKeNQX4Wtj)
 
 ## A Question Or a Suggestion?
 
@@ -53,6 +53,6 @@ If you have faced a vulnerability [report it to us](./security.md).
 
 Don't get daunted if it is hard in the beginning. We have a great community with only encouraging words. So, if you get stuck, ask for help and hints in the Slack forum. If you want to show off something good, show it off there.
 
-[You can join our Discord server if you want closer contact!](https://discord.gg/AgrbSrBer3)
+[You can join our Discord server if you want closer contact!](https://discord.gg/sKeNQX4Wtj)
 
 ![Image of superhero wishing you good luck](https://media.giphy.com/media/l49JHz7kJvl6MCj3G/giphy.gif)

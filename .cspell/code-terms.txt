@@ -47,13 +47,13 @@ edgesep
 EMPTYSTR
 enddate
 ERDIAGRAM
+eslint
 flatmap
 forwardable
 frontmatter
 funs
 gantt
 GENERICTYPE
-getBoundarys
 grammr
 graphtype
 halign

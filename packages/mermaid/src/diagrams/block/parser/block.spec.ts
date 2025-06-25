@@ -3,7 +3,7 @@ import block from './block.jison';
 import db from '../blockDB.js';
 
 describe('Block diagram', function () {
-  describe('when parsing an block diagram graph it should handle > ', function () {
+  describe('when parsing a block diagram graph it should handle > ', function () {
     beforeEach(function () {
       block.parser.yy = db;
       block.parser.yy.clear();
@@ -125,7 +125,7 @@ describe('Block diagram', function () {
       const blocks = db.getBlocks();
       expect(blocks.length).toBe(1);
     });
-    it('a diagram withput column statements', () => {
+    it('a diagram without column statements', () => {
       const str = `block-beta
           block1["Block 1"]
       `;

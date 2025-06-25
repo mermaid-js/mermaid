@@ -14,6 +14,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const db = diagObj.db as typeof XYChartDB;
   const themeConfig = db.getChartThemeConfig();
   const chartConfig = db.getChartConfig();
+  const labelData = db.getXYChartData().plots[0].data.map((data) => data[1]);
   function getDominantBaseLine(horizontalPos: TextVerticalPos) {
     return horizontalPos === 'top' ? 'text-before-edge' : 'middle';
   }
@@ -48,6 +49,16 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const shapes: DrawableElem[] = db.getDrawableElem();
 
   const groups: Record<string, any> = {};
+
+  interface BarItem {
+    data: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+    label: string;
+  }
 
   function getGroup(gList: string[]) {
     let elem = group;
@@ -87,6 +98,113 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('fill', (data) => data.fill)
           .attr('stroke', (data) => data.strokeFill)
           .attr('stroke-width', (data) => data.strokeWidth);
+
+        if (chartConfig.showDataLabel) {
+          if (chartConfig.chartOrientation === 'horizontal') {
+            // Factor to approximate each character's width.
+            const charWidthFactor = 0.7;
+
+            // Filter out bars that have zero width or height.
+            const validItems = shape.data
+              .map((d, i) => ({ data: d, label: labelData[i].toString() }))
+              .filter((item) => item.data.width > 0 && item.data.height > 0);
+
+            // Helper function to check if the text fits horizontally with a 10px right margin.
+            function fitsHorizontally(item: BarItem, fontSize: number): boolean {
+              const { data, label } = item;
+              // Approximate the text width.
+              const textWidth: number = fontSize * label.length * charWidthFactor;
+              // The available width is the bar's width minus a 10px right margin.
+              return textWidth <= data.width - 10;
+            }
+
+            // For each valid bar, start with an initial candidate font size (70% of the bar's height),
+            // then reduce it until the text fits horizontally.
+            const candidateFontSizes = validItems.map((item) => {
+              const { data } = item;
+              let fontSize = data.height * 0.7;
+              // Decrease fontSize until the text fits horizontally.
+              while (!fitsHorizontally(item, fontSize) && fontSize > 0) {
+                fontSize -= 1;
+              }
+              return fontSize;
+            });
+
+            // Choose the smallest candidate font size across all valid bars for uniformity.
+            const uniformFontSize = Math.floor(Math.min(...candidateFontSizes));
+
+            shapeGroup
+              .selectAll('text')
+              .data(validItems)
+              .enter()
+              .append('text')
+              .attr('x', (item) => item.data.x + item.data.width - 10)
+              .attr('y', (item) => item.data.y + item.data.height / 2)
+              .attr('text-anchor', 'end')
+              .attr('dominant-baseline', 'middle')
+              .attr('fill', 'black')
+              .attr('font-size', `${uniformFontSize}px`)
+              .text((item) => item.label);
+          } else {
+            const yOffset = 10;
+
+            // filter out bars that have zero width or height.
+            const validItems = shape.data
+              .map((d, i) => ({ data: d, label: labelData[i].toString() }))
+              .filter((item) => item.data.width > 0 && item.data.height > 0);
+
+            // Helper function that checks if the text with a given fontSize fits within the bar boundaries.
+            function fitsInBar(item: BarItem, fontSize: number, yOffset: number): boolean {
+              const { data, label } = item;
+              const charWidthFactor = 0.7;
+              const textWidth = fontSize * label.length * charWidthFactor;
+
+              // Compute horizontal boundaries using the center.
+              const centerX = data.x + data.width / 2;
+              const leftEdge = centerX - textWidth / 2;
+              const rightEdge = centerX + textWidth / 2;
+
+              // Check that text doesn't overflow horizontally.
+              const horizontalFits = leftEdge >= data.x && rightEdge <= data.x + data.width;
+
+              // For vertical placement, we use 'dominant-baseline: hanging' so that y marks the top of the text.
+              // Thus, the bottom edge is y + yOffset + fontSize.
+              const verticalFits = data.y + yOffset + fontSize <= data.y + data.height;
+
+              return horizontalFits && verticalFits;
+            }
+
+            // For each valid item, start with a candidate font size based on the width,
+            // then reduce it until the text fits within both the horizontal and vertical boundaries.
+            const candidateFontSizes = validItems.map((item) => {
+              const { data, label } = item;
+              let fontSize = data.width / (label.length * 0.7);
+
+              // Decrease the font size until the text fits or fontSize reaches 0.
+              while (!fitsInBar(item, fontSize, yOffset) && fontSize > 0) {
+                fontSize -= 1;
+              }
+              return fontSize;
+            });
+
+            // Choose the smallest candidate across all valid bars for uniformity.
+            const uniformFontSize = Math.floor(Math.min(...candidateFontSizes));
+
+            // Render text only for valid items.
+            shapeGroup
+              .selectAll('text')
+              .data(validItems)
+              .enter()
+              .append('text')
+              .attr('x', (item) => item.data.x + item.data.width / 2)
+              .attr('y', (item) => item.data.y + yOffset)
+              .attr('text-anchor', 'middle')
+              .attr('dominant-baseline', 'hanging')
+              .attr('fill', 'black')
+              .attr('font-size', `${uniformFontSize}px`)
+              .text((item) => item.label);
+          }
+        }
         break;
       case 'text':
         shapeGroup
