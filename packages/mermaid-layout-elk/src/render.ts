@@ -9,7 +9,6 @@ import type {
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
-import { bounds } from '../../mermaid/src/diagrams/user-journey/journeyRenderer';
 
 type Node = LayoutData['nodes'][number];
 
@@ -74,9 +73,9 @@ export const render = async (
         ...node,
         children: [],
       };
-      // Let lke render with the copy
+      // Let elk render with the copy
       graph.children.push(child);
-      // Save the original contining the intersection function
+      // Save the original containing the intersection function
       nodeDb[node.id] = child;
       await addVertices(nodeEl, nodeArr, child, node.id);
 
@@ -267,7 +266,6 @@ export const render = async (
     const edges = dataForLayout.edges;
     const labelsEl = svg.insert('g').attr('class', 'edgeLabels');
     const linkIdCnt: any = {};
-    const dir = dataForLayout.direction || 'DOWN';
     let defaultStyle: string | undefined;
     let defaultLabelStyle: string | undefined;
 
@@ -404,13 +402,11 @@ export const render = async (
 
         // calculate start and end points of the edge, note that the source and target
         // can be modified for shapes that have ports
-        // @ts-ignore TODO: fix this
-        const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge, dir);
+
+        const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge);
         log.debug('abc78 source and target', source, target);
         // Add the edge to the graph
         graph.edges.push({
-          // @ts-ignore TODO: fix this
-          id: 'e' + edge.start + edge.end,
           ...edge,
           sources: [source],
           targets: [target],
@@ -810,6 +806,25 @@ export const render = async (
       log.debug('UIO cutter2: No suitable outside point found for end node intersection');
     }
 
+    // Final cleanup: Check if the last point is too close to the previous point
+    if (points.length > 1) {
+      const lastPoint = points[points.length - 1];
+      const secondLastPoint = points[points.length - 2];
+      const distance = Math.sqrt(
+        (lastPoint.x - secondLastPoint.x) ** 2 + (lastPoint.y - secondLastPoint.y) ** 2
+      );
+
+      // If the distance is very small (less than 2 pixels), remove the last point
+      if (distance < 2) {
+        log.debug(
+          'UIO cutter2: Last point too close to previous point, removing it. Distance:',
+          distance
+        );
+        log.debug('UIO cutter2: Removing last point:', lastPoint, 'keeping:', secondLastPoint);
+        points.pop();
+      }
+    }
+
     log.debug('UIO cutter2: Final points:', points);
 
     // Debug: Check which side of the end node we're ending at
@@ -1061,49 +1076,6 @@ export const render = async (
           });
         }
 
-        // edge.points = cutPathAtIntersect2(startNode, edge.points.reverse(), offset, {
-        //   x: startNode.x + startNode.width / 2 + offset.x,
-        //   y: startNode.y + startNode.height / 2 + offset.y,
-        //   width: sw,
-        //   height: startNode.height,
-        //   padding: startNode.padding,
-        // }).reverse();
-
-        // edge.points = cutPathAtIntersect2(endNode, edge.points, offset, {
-        //   x: endNode.x + ew / 2 + endNode.offset.x,
-        //   y: endNode.y + endNode.height / 2 + endNode.offset.y,
-        //   width: ew,
-        //   height: endNode.height,
-        //   padding: endNode.padding,
-        // });
-
-        // edge.points = cutPathAtIntersect(
-        //   edge.points.reverse(),
-        //   {
-        //     x: startNode.offset.posX + startNode.width / 2,
-        //     y: startNode.offset.posY + startNode.height / 2,
-        //     width: sw,
-        //     height: startNode.height,
-        //     padding: startNode.padding,
-        //   },
-        //   true // startNode.shape === 'diamond' || startNode.shape === 'diam'
-        // ).reverse();
-
-        // console.log('UIO width', sw, startNode.width);
-
-        // edge.points = cutPathAtIntersect(
-        //   edge.points,
-        //   {
-        //     x: endNode.offset.posX + endNode.width / 2,
-        //     y: endNode.offset.posY + endNode.height / 2,
-        //     width: ew,
-        //     height: endNode.height,
-        //     padding: endNode.padding,
-        //   },
-        //   endNode.shape === 'diamond' || endNode.shape === 'diam'
-        // );
-        // startNode.intersect = undefined;
-        // endNode.intersect = undefined;
         log.debug('UIO cutter2: Points before cutter2:', edge.points);
         edge.points = cutter2(startNode, endNode, edge.points);
         log.debug('UIO cutter2: Points after cutter2:', edge.points);

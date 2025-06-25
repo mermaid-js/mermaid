@@ -602,7 +602,7 @@ export const insertEdge = function (
   //     .attr('cx', point.x)
   //     .attr('cy', point.y);
   // });
-  if (edge.showPoints || true) {
+  if (edge.showPoints) {
     lineData.forEach((point) => {
       elem
         .append('circle')
