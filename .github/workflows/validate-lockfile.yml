@@ -21,10 +21,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
 
       - name: Validate pnpm-lock.yaml entries
         id: validate # give this step an ID so we can reference its outputs
@@ -33,20 +30,17 @@ jobs:
 
           # 1) No tarball references
           if grep -qF 'tarball:' pnpm-lock.yaml; then
-            echo "• Tarball references found"
             issues+=("• Tarball references found (forbidden)")
           fi
 
           # 2) No unwanted vitepress paths
           if grep -qF 'packages/mermaid/src/vitepress' pnpm-lock.yaml; then
-            echo "• Disallowed path 'packages/mermaid/src/vitepress'"
             issues+=("• Disallowed path 'packages/mermaid/src/vitepress' present. Run `rm -rf packages/mermaid/src/vitepress && pnpm install` to regenerate.")
           fi
 
           # 3) Lockfile only changes when package.json changes
           git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} > changed.txt
           if grep -q '^pnpm-lock.yaml$' changed.txt && ! grep -q 'package.json' changed.txt; then
-            echo "• pnpm-lock.yaml changed without any package.json modification"
             issues+=("• pnpm-lock.yaml changed without any package.json modification")
           fi
 
