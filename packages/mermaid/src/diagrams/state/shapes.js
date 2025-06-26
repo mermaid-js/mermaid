@@ -1,7 +1,7 @@
 import { line, curveBasis } from 'd3';
 import { StateDB } from './stateDb.js';
 import utils from '../../utils.js';
-import common from '../common/common.js';
+import common, { getUrl } from '../common/common.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 
@@ -444,14 +444,7 @@ export const drawEdge = function (elem, path, relation) {
     .attr('class', 'transition');
   let url = '';
   if (getConfig().state.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    url = getUrl(true);
   }
 
   svgPath.attr(
