@@ -75,6 +75,17 @@ const PLACEMENT = {
   OVER: 2,
 } as const;
 
+export const PARTICIPANT_TYPE = {
+  ACTOR: 'actor',
+  BOUNDARY: 'boundary',
+  COLLECTIONS: 'collections',
+  CONTROL: 'control',
+  DATABASE: 'database',
+  ENTITY: 'entity',
+  PARTICIPANT: 'participant',
+  QUEUE: 'queue',
+} as const;
+
 export class SequenceDB implements DiagramDB {
   private readonly state = new ImperativeState<SequenceState>(() => ({
     prevActor: undefined,

@@ -10,6 +10,7 @@ import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
+import { PARTICIPANT_TYPE } from './sequenceDb.js';
 
 let conf = {};
 
@@ -724,11 +725,14 @@ function adjustCreatedDestroyedData(
       msgModel.startx = msgModel.startx - adjustment;
     }
   }
+  const actorArray = [PARTICIPANT_TYPE.ACTOR, PARTICIPANT_TYPE.CONTROL, PARTICIPANT_TYPE.ENTITY];
 
   // if it is a create message
   if (createdActors.get(msg.to) == index) {
     const actor = actors.get(msg.to);
-    const adjustment = actor.type == 'actor' ? ACTOR_TYPE_WIDTH / 2 + 3 : actor.width / 2 + 3;
+    const adjustment = actorArray.includes(actor.type)
+      ? ACTOR_TYPE_WIDTH / 2 + 3
+      : actor.width / 2 + 3;
     receiverAdjustment(actor, adjustment);
     actor.starty = lineStartY - actor.height / 2;
     bounds.bumpVerticalPos(actor.height / 2);
@@ -737,7 +741,7 @@ function adjustCreatedDestroyedData(
   else if (destroyedActors.get(msg.from) == index) {
     const actor = actors.get(msg.from);
     if (conf.mirrorActors) {
-      const adjustment = actor.type == 'actor' ? ACTOR_TYPE_WIDTH / 2 : actor.width / 2;
+      const adjustment = actorArray.includes(actor.type) ? ACTOR_TYPE_WIDTH / 2 : actor.width / 2;
       senderAdjustment(actor, adjustment);
     }
     actor.stopy = lineStartY - actor.height / 2;
@@ -747,7 +751,9 @@ function adjustCreatedDestroyedData(
   else if (destroyedActors.get(msg.to) == index) {
     const actor = actors.get(msg.to);
     if (conf.mirrorActors) {
-      const adjustment = actor.type == 'actor' ? ACTOR_TYPE_WIDTH / 2 + 3 : actor.width / 2 + 3;
+      const adjustment = actorArray.includes(actor.type)
+        ? ACTOR_TYPE_WIDTH / 2 + 3
+        : actor.width / 2 + 3;
       receiverAdjustment(actor, adjustment);
     }
     actor.stopy = lineStartY - actor.height / 2;

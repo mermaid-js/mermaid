@@ -3,6 +3,8 @@ import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
+import { createInnerCylinderPathD } from '../../rendering-util/rendering-elements/shapes/tiltedCylinder.js';
+import { createCylinderPathD } from '../../rendering-util/rendering-elements/shapes/cylinder.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -411,6 +413,607 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   return height;
 };
 
+/**
+ * Draws an actor in the diagram with the attached line
+ *
+ * @param {any} elem - The diagram we'll draw to.
+ * @param {any} actor - The actor to draw.
+ * @param {any} conf - DrawText implementation discriminator object
+ * @param {boolean} isFooter - If the actor is the footer one
+ */
+const drawActorTypeCollections = function (elem, actor, conf, isFooter) {
+  const actorY = isFooter ? actor.stopy : actor.starty;
+  const center = actor.x + actor.width / 2;
+  const centerY = actorY + actor.height;
+
+  const boxplusLineGroup = elem.append('g').lower();
+  var g = boxplusLineGroup;
+
+  if (!isFooter) {
+    actorCnt++;
+    if (Object.keys(actor.links || {}).length && !conf.forceMenus) {
+      g.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
+    g.append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', centerY)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line 200')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
+
+    g = boxplusLineGroup.append('g');
+    actor.actorCnt = actorCnt;
+
+    if (actor.links != null) {
+      g.attr('id', 'root-' + actorCnt);
+    }
+  }
+
+  const rect = svgDrawCommon.getNoteRect();
+  var cssclass = 'actor';
+  if (actor.properties?.class) {
+    cssclass = actor.properties.class;
+  } else {
+    rect.fill = '#eaeaea';
+  }
+  if (isFooter) {
+    cssclass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssclass += ` ${TOP_ACTOR_CLASS}`;
+  }
+  rect.x = actor.x;
+  rect.y = actorY;
+  rect.width = actor.width;
+  rect.height = actor.height;
+  rect.class = cssclass;
+  // rect.rx = 3;
+  // rect.ry = 3;
+  rect.name = actor.name;
+
+  // 🔹 DRAW STACKED RECTANGLES
+  const offset = 6;
+  const shadowRect = {
+    ...rect,
+    x: rect.x + offset,
+    y: rect.y + (isFooter ? +offset : -offset),
+    class: 'actor',
+  };
+  drawRect(g, shadowRect);
+  const rectElem = drawRect(g, rect); // draw main rectangle on top
+  actor.rectData = rect;
+
+  if (actor.properties?.icon) {
+    const iconSrc = actor.properties.icon.trim();
+    if (iconSrc.charAt(0) === '@') {
+      svgDrawCommon.drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
+    } else {
+      svgDrawCommon.drawImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc);
+    }
+  }
+
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+    actor.description,
+    g,
+    rect.x,
+    rect.y,
+    rect.width,
+    rect.height,
+    { class: `actor ${ACTOR_BOX_CLASS}` },
+    conf
+  );
+
+  let height = actor.height;
+  if (rectElem.node) {
+    const bounds = rectElem.node().getBBox();
+    actor.height = bounds.height;
+    height = bounds.height;
+  }
+
+  return height;
+};
+
+const drawActorTypeQueue = function (elem, actor, conf, isFooter) {
+  const actorY = isFooter ? actor.stopy : actor.starty;
+  const center = actor.x + actor.width / 2;
+  const centerY = actorY + actor.height;
+
+  const boxplusLineGroup = elem.append('g').lower();
+  let g = boxplusLineGroup;
+
+  if (!isFooter) {
+    actorCnt++;
+    if (Object.keys(actor.links || {}).length && !conf.forceMenus) {
+      g.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
+    g.append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', centerY)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line 200')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
+
+    g = boxplusLineGroup.append('g');
+    actor.actorCnt = actorCnt;
+
+    if (actor.links != null) {
+      g.attr('id', 'root-' + actorCnt);
+    }
+  }
+
+  const rect = svgDrawCommon.getNoteRect();
+  let cssclass = 'actor';
+  if (actor.properties?.class) {
+    cssclass = actor.properties.class;
+  } else {
+    rect.fill = '#eaeaea';
+  }
+
+  if (isFooter) {
+    cssclass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssclass += ` ${TOP_ACTOR_CLASS}`;
+  }
+
+  rect.x = actor.x;
+  rect.y = actorY;
+  rect.width = actor.width;
+  rect.height = actor.height;
+  rect.class = cssclass;
+  rect.name = actor.name;
+
+  // Cylinder dimensions
+  const ry = rect.height / 2;
+  const rx = ry / (2.5 + rect.height / 50);
+
+  // Cylinder base group
+  const cylinderGroup = g.append('g');
+  const cylinderArc = g.append('g');
+
+  // Main cylinder body
+  cylinderGroup
+    .append('path')
+    .attr(
+      'd',
+      `
+    M ${rect.x},${rect.y + ry}
+    a ${rx},${ry} 0 0 0 0,${rect.height}
+    h ${rect.width - 2 * rx}
+    a ${rx},${ry} 0 0 0 0,-${rect.height}
+    Z
+  `
+    )
+    .attr('class', cssclass);
+  cylinderArc
+    .append('path')
+    .attr('d', createInnerCylinderPathD(rect.x - rx, rect.y + ry, rect.width, rect.height, rx, ry))
+    .attr('stroke', '#666')
+    .attr('stroke-width', '1px')
+    .attr('class', cssclass);
+
+  if (!isFooter) {
+    cylinderGroup.attr('transform', `translate(${rx}, ${-(rect.height / 2) - rect.y})`);
+    cylinderArc.attr('transform', `translate(${rect.width / 2}, ${rect.height / 2})`);
+  } else {
+    cylinderGroup.attr('transform', `translate(${rx}, ${-(rect.height / 2)})`);
+    cylinderArc.attr('transform', `translate(${rect.width / 2}, ${actorY + rect.height / 2})`);
+  }
+
+  actor.rectData = rect;
+
+  if (actor.properties?.icon) {
+    const iconSrc = actor.properties.icon.trim();
+    const iconX = rect.x + rect.width - 20;
+    const iconY = rect.y + 10;
+    if (iconSrc.charAt(0) === '@') {
+      svgDrawCommon.drawEmbeddedImage(g, iconX, iconY, iconSrc.substr(1));
+    } else {
+      svgDrawCommon.drawImage(g, iconX, iconY, iconSrc);
+    }
+  }
+
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+    actor.description,
+    g,
+    rect.x,
+    rect.y,
+    rect.width,
+    rect.height,
+    { class: `actor ${ACTOR_BOX_CLASS}` },
+    conf
+  );
+
+  let height = actor.height;
+  const lastPath = cylinderGroup.select('path:last-child');
+  if (lastPath.node()) {
+    const bounds = lastPath.node().getBBox();
+    actor.height = bounds.height;
+    height = bounds.height;
+  }
+
+  return height;
+};
+
+const drawActorTypeControl = function (elem, actor, conf, isFooter) {
+  const actorY = isFooter ? actor.stopy : actor.starty;
+  const center = actor.x + actor.width / 2;
+  const centerY = actorY + 75;
+
+  const line = elem.append('g').lower();
+
+  if (!isFooter) {
+    actorCnt++;
+    line
+      .append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', centerY)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line 200')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
+
+    actor.actorCnt = actorCnt;
+  }
+  const actElem = elem.append('g');
+  let cssClass = ACTOR_MAN_FIGURE_CLASS;
+  if (isFooter) {
+    cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssClass += ` ${TOP_ACTOR_CLASS}`;
+  }
+  actElem.attr('class', cssClass);
+  actElem.attr('name', actor.name);
+
+  const rect = svgDrawCommon.getNoteRect();
+  rect.x = actor.x;
+  rect.y = actorY;
+  rect.fill = '#eaeaea';
+  rect.width = actor.width;
+  rect.height = actor.height;
+  rect.class = 'actor';
+
+  const cx = actor.x + actor.width / 2;
+  const cy = actorY + 30;
+  const r = 18;
+
+  actElem
+    .append('defs')
+    .append('marker')
+    .attr('id', 'filled-head-control')
+    .attr('refX', 15.5)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 28)
+    .attr('orient', '180')
+    .append('path')
+    .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
+
+  // Draw the base circle
+  actElem
+    .append('circle')
+    .attr('cx', cx)
+    .attr('cy', cy)
+    .attr('r', r)
+    .attr('fill', '#eaeaf7')
+    .attr('stroke', '#666')
+    .attr('stroke-width', 1.2);
+
+  // Draw looping arrow as arc path
+  actElem
+    .append('path')
+    .attr('d', `M ${cx},${cy - r}`)
+    .attr('stroke-width', 1.5)
+    .attr('marker-end', 'url(#filled-head-control)');
+
+  const bounds = actElem.node().getBBox();
+  actor.height = bounds.height + conf.boxTextMargin;
+
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+    actor.description,
+    actElem,
+    rect.x,
+    rect.y + (!isFooter ? 30 : 40),
+    rect.width,
+    rect.height,
+    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
+    conf
+  );
+
+  return actor.height;
+};
+
+const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
+  const actorY = isFooter ? actor.stopy : actor.starty;
+  const center = actor.x + actor.width / 2;
+  const centerY = actorY + 75;
+
+  const line = elem.append('g').lower();
+
+  const actElem = elem.append('g');
+  let cssClass = ACTOR_MAN_FIGURE_CLASS;
+  if (isFooter) {
+    cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssClass += ` ${TOP_ACTOR_CLASS}`;
+  }
+  actElem.attr('class', cssClass);
+  actElem.attr('name', actor.name);
+
+  const rect = svgDrawCommon.getNoteRect();
+  rect.x = actor.x;
+  rect.y = actorY;
+  rect.fill = '#eaeaea';
+  rect.width = actor.width;
+  rect.height = actor.height;
+  rect.class = 'actor';
+
+  const cx = actor.x + actor.width / 2;
+  const cy = actorY + 25;
+  const r = 18;
+
+  actElem
+    .append('circle')
+    .attr('cx', cx)
+    .attr('cy', cy)
+    .attr('r', r)
+    .attr('width', actor.width)
+    .attr('height', actor.height);
+
+  actElem
+    .append('line')
+    .attr('x1', cx - r)
+    .attr('x2', cx + r)
+    .attr('y1', cy + r)
+    .attr('y2', cy + r)
+    .attr('stroke', '#333')
+    .attr('stroke-width', 2);
+
+  const boundBox = actElem.node().getBBox();
+  actor.height = boundBox.height + conf.boxTextMargin;
+
+  if (!isFooter) {
+    actorCnt++;
+    line
+      .append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', centerY)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line 200')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
+
+    actor.actorCnt = actorCnt;
+  }
+
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+    actor.description,
+    actElem,
+    rect.x,
+    rect.y + (!isFooter ? (cy + r - actorY) / 2 : (cy - actorY) / 2 + r + 2),
+    rect.width,
+    rect.height,
+    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
+    conf
+  );
+
+  if (!isFooter) {
+    actElem.attr('transform', `translate(${0}, ${r / 2})`);
+  } else {
+    actElem.attr('transform', `translate(${0}, ${r / 2})`);
+  }
+
+  return actor.height;
+};
+
+const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
+  const actorY = isFooter ? actor.stopy : actor.starty;
+  const center = actor.x + actor.width / 2;
+  const centerY = actorY + actor.height;
+
+  const boxplusLineGroup = elem.append('g').lower();
+  let g = boxplusLineGroup;
+
+  if (!isFooter) {
+    actorCnt++;
+    if (Object.keys(actor.links || {}).length && !conf.forceMenus) {
+      g.attr('onclick', popupMenuToggle(`actor${actorCnt}_popup`)).attr('cursor', 'pointer');
+    }
+    g.append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', centerY)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line 200')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
+
+    g = boxplusLineGroup.append('g');
+    actor.actorCnt = actorCnt;
+
+    if (actor.links != null) {
+      g.attr('id', 'root-' + actorCnt);
+    }
+  }
+
+  const rect = svgDrawCommon.getNoteRect();
+
+  let cssclass = 'actor';
+  if (actor.properties?.class) {
+    cssclass = actor.properties.class;
+  } else {
+    rect.fill = '#eaeaea';
+  }
+
+  if (isFooter) {
+    cssclass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssclass += ` ${TOP_ACTOR_CLASS}`;
+  }
+
+  rect.x = actor.x;
+  rect.y = actorY;
+  rect.width = actor.width;
+  rect.height = actor.height;
+  rect.class = cssclass;
+  rect.name = actor.name;
+
+  // Cylinder dimensions
+  rect.x = actor.x;
+  rect.y = actorY;
+  const w = rect.width;
+  const h = rect.height;
+  const rx = w / 2;
+  const ry = rx / (2.5 + w / 50);
+
+  // Cylinder base group
+  const cylinderGroup = g.append('g');
+
+  const pathData = createCylinderPathD(
+    rect.x,
+    rect.y,
+    w / 2,
+    isFooter ? h - ry : h / 2,
+    rx / 4,
+    ry / 4
+  );
+  cylinderGroup.append('path').attr('d', pathData).attr('class', cssclass);
+
+  if (!isFooter) {
+    cylinderGroup.attr('transform', `translate(${w / 4}, ${-centerY / 2 + 2.75 * ry})`);
+  } else {
+    cylinderGroup.attr('transform', `translate(${w / 4}, ${ry / 2})`);
+  }
+
+  actor.rectData = rect;
+
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+    actor.description,
+    g,
+    rect.x,
+    rect.y + (!isFooter ? ry * 1.75 : h / 2 + ry),
+    rect.width,
+    rect.height,
+    { class: `actor ${ACTOR_BOX_CLASS}` },
+    conf
+  );
+
+  let height = actor.height;
+  const lastPath = cylinderGroup.select('path:last-child');
+  if (lastPath.node()) {
+    const bounds = lastPath.node().getBBox();
+    actor.height = bounds.height;
+    height = bounds.height;
+  }
+
+  return height;
+};
+
+const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
+  const actorY = isFooter ? actor.stopy : actor.starty;
+  const center = actor.x + actor.width / 2;
+  const centerY = actorY + 80;
+  const radius = 30;
+  const line = elem.append('g').lower();
+
+  if (!isFooter) {
+    actorCnt++;
+    line
+      .append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', centerY)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line 200')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
+
+    actor.actorCnt = actorCnt;
+  }
+  const actElem = elem.append('g');
+  let cssClass = ACTOR_MAN_FIGURE_CLASS;
+  if (isFooter) {
+    cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssClass += ` ${TOP_ACTOR_CLASS}`;
+  }
+  actElem.attr('class', cssClass);
+  actElem.attr('name', actor.name);
+
+  const rect = svgDrawCommon.getNoteRect();
+  rect.x = actor.x;
+  rect.y = actorY;
+  rect.fill = '#eaeaea';
+  rect.width = actor.width;
+  rect.height = actor.height;
+  rect.class = 'actor';
+  rect.rx = 3;
+  rect.ry = 3;
+
+  actElem
+    .append('line')
+    .attr('id', 'actor-man-torso' + actorCnt)
+    .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
+    .attr('y1', actorY + 10)
+    .attr('x2', actor.x + actor.width / 2 - 15)
+    .attr('y2', actorY + 10);
+
+  actElem
+    .append('line')
+    .attr('id', 'actor-man-arms' + actorCnt)
+    .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
+    .attr('y1', actorY + 0) // starting Y
+    .attr('x2', actor.x + actor.width / 2 - radius * 2.5)
+    .attr('y2', actorY + 20); // ending Y (26px long, adjust as needed)
+
+  actElem
+    .append('circle')
+    .attr('cx', actor.x + actor.width / 2)
+    .attr('cy', actorY + 10)
+    .attr('r', radius)
+    .attr('width', actor.width);
+
+  const bounds = actElem.node().getBBox();
+  actor.height = bounds.height + conf.boxTextMargin;
+
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+    actor.description,
+    actElem,
+    rect.x,
+    rect.y + (!isFooter ? radius / 2 : radius / 2),
+    rect.width,
+    rect.height,
+    { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
+    conf
+  );
+
+  if (!isFooter) {
+    actElem.attr('transform', `translate(0,${radius / 2 + 7})`);
+  } else {
+    actElem.attr('transform', `translate(0,${radius / 2 + 7})`);
+  }
+
+  // actElem.attr('transform', `translate(${rect.width / 2}, ${actorY + rect.height / 2})`);
+
+  return actor.height;
+};
+
 const drawActorTypeActor = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
@@ -512,6 +1115,18 @@ export const drawActor = async function (elem, actor, conf, isFooter) {
       return await drawActorTypeActor(elem, actor, conf, isFooter);
     case 'participant':
       return await drawActorTypeParticipant(elem, actor, conf, isFooter);
+    case 'boundary':
+      return await drawActorTypeBoundary(elem, actor, conf, isFooter);
+    case 'control':
+      return await drawActorTypeControl(elem, actor, conf, isFooter);
+    case 'entity':
+      return await drawActorTypeEntity(elem, actor, conf, isFooter);
+    case 'database':
+      return await drawActorTypeDatabase(elem, actor, conf, isFooter);
+    case 'collections':
+      return await drawActorTypeCollections(elem, actor, conf, isFooter);
+    case 'queue':
+      return await drawActorTypeQueue(elem, actor, conf, isFooter);
   }
 };
 
