@@ -38,6 +38,8 @@ export interface TreemapData {
   nodes: TreemapNode[];
   levels: Map<TreemapNode, number>;
   root?: TreemapNode;
+  outerNodes: TreemapNode[];
+  classes: Map<string, DiagramStyleClassDef>;
 }
 
 export interface TreemapItem {

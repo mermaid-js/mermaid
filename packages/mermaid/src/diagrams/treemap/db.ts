@@ -19,10 +19,11 @@ import type { TreemapDB, TreemapData, TreemapDiagramConfig, TreemapNode } from '
 const defaultTreemapData: TreemapData = {
   nodes: [],
   levels: new Map(),
+  outerNodes: [],
+  classes: new Map(),
 };
 
 const state = new ImperativeState<TreemapData>(() => structuredClone(defaultTreemapData));
-let outerNodes: TreemapNode[] = [];
 
 const getConfig = (): Required<TreemapDiagramConfig> => {
   // Use type assertion with unknown as intermediate step
@@ -43,7 +44,7 @@ const addNode = (node: TreemapNode, level: number) => {
   data.levels.set(node, level);
 
   if (level === 0) {
-    outerNodes.push(node);
+    data.outerNodes.push(node);
   }
 
   // Set the root node if this is a level 0 node and we don't have a root yet
@@ -52,11 +53,10 @@ const addNode = (node: TreemapNode, level: number) => {
   }
 };
 
-const getRoot = (): TreemapNode | undefined => ({ name: '', children: outerNodes });
-
-let classes = new Map<string, DiagramStyleClassDef>();
+const getRoot = (): TreemapNode | undefined => ({ name: '', children: state.records.outerNodes });
 
 const addClass = (id: string, _style: string) => {
+  const classes = state.records.classes;
   const styleClass = classes.get(id) ?? { id, styles: [], textStyles: [] };
   classes.set(id, styleClass);
 
@@ -82,18 +82,16 @@ const addClass = (id: string, _style: string) => {
   classes.set(id, styleClass);
 };
 const getClasses = (): Map<string, DiagramStyleClassDef> => {
-  return classes;
+  return state.records.classes;
 };
 
 const getStylesForClass = (classSelector: string): string[] => {
-  return classes.get(classSelector)?.styles ?? [];
+  return state.records.classes.get(classSelector)?.styles ?? [];
 };
 
 const clear = () => {
   commonClear();
   state.reset();
-  outerNodes = [];
-  classes = new Map();
 };
 
 export const db: TreemapDB = {
