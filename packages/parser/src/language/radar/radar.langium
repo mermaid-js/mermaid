@@ -14,10 +14,6 @@ entry Radar:
     )*
 ;
 
-fragment Label:
-    '[' label=STRING ']'
-;
-
 Axis:
     name=ID (Label)? 
 ;
