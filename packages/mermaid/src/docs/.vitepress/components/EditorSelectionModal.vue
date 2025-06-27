@@ -11,6 +11,7 @@ interface EditorColumn {
   description: string;
   redirectUrl: string;
   highlighted?: boolean;
+  proTrialUrl?: string;
   features: Feature[];
 }
 
@@ -32,6 +33,8 @@ const editorColumns: EditorColumn[] = [
     redirectUrl:
       'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart&redirect=%2Fapp%2Fdiagrams%2Fnew',
     highlighted: true,
+    proTrialUrl:
+      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart_trial&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout',
     features: [
       { iconUrl: '/icons/folder.svg', featureName: 'Storage' },
       { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
@@ -120,6 +123,14 @@ onUnmounted(() => {
           "
         >
           Start free
+        </a>
+        <a
+          v-if="column.proTrialUrl"
+          :href="column.proTrialUrl"
+          target="_blank"
+          class="mb-6 flex h-10 w-full text-white items-center justify-center rounded-xl bg-[#E0095F] hover:shadow-md"
+        >
+          Start Pro trial
         </a>
         <div class="h-px w-full bg-[#bedde3] mb-6"></div>
         <ul class="w-full space-y-2">
