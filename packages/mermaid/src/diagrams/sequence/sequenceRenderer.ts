@@ -725,7 +725,12 @@ function adjustCreatedDestroyedData(
       msgModel.startx = msgModel.startx - adjustment;
     }
   }
-  const actorArray = [PARTICIPANT_TYPE.ACTOR, PARTICIPANT_TYPE.CONTROL, PARTICIPANT_TYPE.ENTITY];
+  const actorArray = [
+    PARTICIPANT_TYPE.ACTOR,
+    PARTICIPANT_TYPE.CONTROL,
+    PARTICIPANT_TYPE.ENTITY,
+    PARTICIPANT_TYPE.DATABASE,
+  ];
 
   // if it is a create message
   if (createdActors.get(msg.to) == index) {

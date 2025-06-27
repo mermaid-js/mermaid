@@ -3,8 +3,6 @@ import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
-import { createInnerCylinderPathD } from '../../rendering-util/rendering-elements/shapes/tiltedCylinder.js';
-import { createCylinderPathD } from '../../rendering-util/rendering-elements/shapes/cylinder.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -582,8 +580,7 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter) {
     .append('path')
     .attr(
       'd',
-      `
-    M ${rect.x},${rect.y + ry}
+      `M ${rect.x},${rect.y + ry}
     a ${rx},${ry} 0 0 0 0,${rect.height}
     h ${rect.width - 2 * rx}
     a ${rx},${ry} 0 0 0 0,-${rect.height}
@@ -593,18 +590,17 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter) {
     .attr('class', cssclass);
   cylinderArc
     .append('path')
-    .attr('d', createInnerCylinderPathD(rect.x - rx, rect.y + ry, rect.width, rect.height, rx, ry))
+    .attr(
+      'd',
+      `M ${rect.x},${rect.y + ry}
+      a ${rx},${ry} 0 0 0 0,${rect.height}`
+    )
     .attr('stroke', '#666')
     .attr('stroke-width', '1px')
     .attr('class', cssclass);
 
-  if (!isFooter) {
-    cylinderGroup.attr('transform', `translate(${rx}, ${-(rect.height / 2) - rect.y})`);
-    cylinderArc.attr('transform', `translate(${rect.width / 2}, ${rect.height / 2})`);
-  } else {
-    cylinderGroup.attr('transform', `translate(${rx}, ${-(rect.height / 2)})`);
-    cylinderArc.attr('transform', `translate(${rect.width / 2}, ${actorY + rect.height / 2})`);
-  }
+  cylinderGroup.attr('transform', `translate(${rx}, ${-(rect.height / 2)})`);
+  cylinderArc.attr('transform', `translate(${rect.width - rx}, ${-rect.height / 2})`);
 
   actor.rectData = rect;
 
@@ -821,7 +817,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
 const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + actor.height;
+  const centerY = actorY + actor.height + 2 * conf.boxTextMargin;
 
   const boxplusLineGroup = elem.append('g').lower();
   let g = boxplusLineGroup;
@@ -875,52 +871,55 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
   // Cylinder dimensions
   rect.x = actor.x;
   rect.y = actorY;
-  const w = rect.width;
-  const h = rect.height;
+  const w = rect.width / 4;
+  const h = rect.height * 0.8;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
 
   // Cylinder base group
   const cylinderGroup = g.append('g');
 
-  const pathData = createCylinderPathD(
-    rect.x,
-    rect.y,
-    w / 2,
-    isFooter ? h - ry : h / 2,
-    rx / 4,
-    ry / 4
-  );
-  cylinderGroup.append('path').attr('d', pathData).attr('class', cssclass);
+  const d = `
+  M ${rect.x},${rect.y + ry}
+  a ${rx},${ry} 0 0 0 ${w},0
+  a ${rx},${ry} 0 0 0 -${w},0
+  l 0,${h - 2 * ry}
+  a ${rx},${ry} 0 0 0 ${w},0
+  l 0,-${h - 2 * ry}
+`;
+  // Draw the main cylinder body
+  cylinderGroup
+    .append('path')
+    .attr('d', d)
+    .attr('fill', '#eaeaea')
+    .attr('stroke', '#000')
+    .attr('stroke-width', 1)
+    .attr('class', cssclass);
 
   if (!isFooter) {
-    cylinderGroup.attr('transform', `translate(${w / 4}, ${-centerY / 2 + 2.75 * ry})`);
+    cylinderGroup.attr('transform', `translate(${w * 1.5}, ${rect.height / 4 - 2 * ry})`);
   } else {
-    cylinderGroup.attr('transform', `translate(${w / 4}, ${ry / 2})`);
+    cylinderGroup.attr('transform', `translate(${w * 1.5}, ${rect.height / 4 - 2 * ry})`);
   }
-
   actor.rectData = rect;
-
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
     rect.x,
-    rect.y + (!isFooter ? ry * 1.75 : h / 2 + ry),
+    rect.y + (!isFooter ? rect.height / 2 : h / 2 + ry),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_BOX_CLASS}` },
     conf
   );
 
-  let height = actor.height;
   const lastPath = cylinderGroup.select('path:last-child');
   if (lastPath.node()) {
     const bounds = lastPath.node().getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
+    actor.height = bounds.height + 2 * conf.boxTextMargin;
   }
 
-  return height;
+  return actor.height;
 };
 
 const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
