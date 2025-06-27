@@ -1,4 +1,3 @@
-
 <div align="right">
   <details>
     <summary >🌐 Language</summary>
