@@ -1,8 +1,8 @@
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' assert { type: 'json' };
-import MermaidExample from './mermaid-markdown-all.js';
 import { addCanonicalUrls } from './canonical-urls.js';
+import MermaidExample from './mermaid-markdown-all.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -122,9 +122,7 @@ function nav() {
     },
     {
       text: '💻 Open Editor',
-      link: 'https://mermaid.live/edit',
-      target: '_blank',
-      rel: 'external',
+      link: '#',
     },
   ];
 }
