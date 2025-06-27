@@ -24,7 +24,7 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
 
   Official Mermaid Chart plugins:
 
-  - [Mermaid Chart GPT](https://chat.openai.com/g/g-1IRFKwq4G-mermaid-chart)
+  - [Mermaid Chart GPT](https://chatgpt.com/g/g-684cc36f30208191b21383b88650a45d-mermaid-chart-diagrams-and-charts)
   - [Confluence](https://marketplace.atlassian.com/apps/1234056/mermaid-chart-for-confluence?hosting=cloud&tab=overview)
   - [Jira](https://marketplace.atlassian.com/apps/1234810/mermaid-chart-for-jira?tab=overview&hosting=cloud)
   - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart)
