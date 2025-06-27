@@ -4,6 +4,7 @@ import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { isLabelStyle } from '../../rendering-util/rendering-elements/shapes/handDrawnShapeStyles.js';
 
 import { cleanAndMerge } from '../../utils.js';
+import { ImperativeState } from '../../utils/imperativeState.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -19,8 +20,9 @@ const defaultTreemapData: TreemapData = {
   nodes: [],
   levels: new Map(),
 };
+
+const state = new ImperativeState<TreemapData>(() => structuredClone(defaultTreemapData));
 let outerNodes: TreemapNode[] = [];
-let data: TreemapData = structuredClone(defaultTreemapData);
 
 const getConfig = (): Required<TreemapDiagramConfig> => {
   // Use type assertion with unknown as intermediate step
@@ -33,9 +35,10 @@ const getConfig = (): Required<TreemapDiagramConfig> => {
   }) as Required<TreemapDiagramConfig>;
 };
 
-const getNodes = (): TreemapNode[] => data.nodes;
+const getNodes = (): TreemapNode[] => state.records.nodes;
 
 const addNode = (node: TreemapNode, level: number) => {
+  const data = state.records;
   data.nodes.push(node);
   data.levels.set(node, level);
 
@@ -57,10 +60,10 @@ const addClass = (id: string, _style: string) => {
   const styleClass = classes.get(id) ?? { id, styles: [], textStyles: [] };
   classes.set(id, styleClass);
 
-  const style = _style.replace(/\\,/g, '§§§').replace(/,/g, ';').replace(/§§§/g, ',').split(';');
+  const styles = _style.replace(/\\,/g, '§§§').replace(/,/g, ';').replace(/§§§/g, ',').split(';');
 
-  if (style) {
-    style.forEach((s) => {
+  if (styles) {
+    styles.forEach((s) => {
       if (isLabelStyle(s)) {
         if (styleClass?.textStyles) {
           styleClass.textStyles.push(s);
@@ -88,7 +91,7 @@ const getStylesForClass = (classSelector: string): string[] => {
 
 const clear = () => {
   commonClear();
-  data = structuredClone(defaultTreemapData);
+  state.reset();
   outerNodes = [];
   classes = new Map();
 };

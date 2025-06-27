@@ -66,7 +66,10 @@ classDef class1 fill:red,color:blue,stroke:#FFD600;
 
   it('5: should render with a forest theme', () => {
     imgSnapshotTest(
-      `%%{init: {'theme': 'forest'}}%%
+      `---
+config:
+  theme: forest
+---
 treemap-beta
 "Category A"
     "Item A1": 10
@@ -115,7 +118,11 @@ classDef secondary fill:#6cf,stroke:#333,stroke-dasharray:5 5;
 
   it('8: should handle dollar value formatting with thousands separator', () => {
     imgSnapshotTest(
-      `%%{init: {'treemap': {'valueFormat': '$0,0'}}}%%
+      `---
+config:
+  treemap:
+    valueFormat: "$0,0"
+---
 treemap
 "Budget"
     "Operations"
@@ -132,7 +139,11 @@ treemap
 
   it('8a: should handle percentage formatting', () => {
     imgSnapshotTest(
-      `%%{init: {'treemap': {'valueFormat': '.1%'}}}%%
+      `---
+config:
+  treemap:
+    valueFormat: ".1%"
+---
 treemap-beta
 "Market Share"
     "Company A": 0.35
@@ -146,7 +157,11 @@ treemap-beta
 
   it('8b: should handle decimal formatting', () => {
     imgSnapshotTest(
-      `%%{init: {'treemap': {'valueFormat': '.2f'}}}%%
+      `---
+config:
+  treemap:
+    valueFormat: ".2f"
+---
 treemap-beta
 "Metrics"
     "Conversion Rate": 0.0567
@@ -160,7 +175,11 @@ treemap-beta
 
   it('8c: should handle dollar sign with decimal places', () => {
     imgSnapshotTest(
-      `%%{init: {'treemap': {'valueFormat': '$.2f'}}}%%
+      `---
+config:
+  treemap:
+    valueFormat: "$.2f"
+---
 treemap-beta
 "Product Prices"
     "Basic": 19.99
@@ -174,7 +193,11 @@ treemap-beta
 
   it('8d: should handle dollar sign with thousands separator and decimal places', () => {
     imgSnapshotTest(
-      `%%{init: {'treemap': {'valueFormat': '$,.2f'}}}%%
+      `---
+config:
+  treemap:
+    valueFormat: "$,.2f"
+---
 treemap-beta
 "Revenue"
     "Q1": 1250345.75
@@ -188,7 +211,11 @@ treemap-beta
 
   it('8e: should handle simple thousands separator', () => {
     imgSnapshotTest(
-      `%%{init: {'treemap': {'valueFormat': ','}}}%%
+      `---
+config:
+  treemap:
+    valueFormat: ","
+---
 treemap-beta
 "User Counts"
     "Active Users": 1250345
@@ -202,7 +229,11 @@ treemap-beta
 
   it('8f: should handle valueFormat set via directive with dollar and thousands separator', () => {
     imgSnapshotTest(
-      `%%{init: {'treemap': {'valueFormat': '$,.0f'}}}%%
+      `---
+config:
+  treemap:
+    valueFormat: "$,.0f"
+---
 treemap-beta
 "Sales by Region"
     "North": 1234567
@@ -216,7 +247,11 @@ treemap-beta
 
   it('8g: should handle scientific notation format', () => {
     imgSnapshotTest(
-      `%%{init: {'treemap': {'valueFormat': '.2e'}}}%%
+      `---
+config:
+  treemap:
+    valueFormat: ".2e"
+---
 treemap-beta
 "Scientific Values"
     "Value 1": 1234567
@@ -229,7 +264,12 @@ treemap-beta
 
   it('9: should handle a complex example with multiple features', () => {
     imgSnapshotTest(
-      `%%{init: {'theme': 'dark', 'treemap': {'valueFormat': '$0,0'}}}%%
+      `---
+config:
+  theme: dark
+  treemap:
+    valueFormat: "$0,0"
+---
 treemap-beta
 "Company Budget"
     "Engineering":::engineering

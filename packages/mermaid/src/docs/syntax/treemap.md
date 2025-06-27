@@ -236,9 +236,9 @@ Treemap diagrams are commonly used for:
 
 If treemap diagrams don't suit your needs, consider these alternatives:
 
-- **Pie Charts**: For simple proportion comparisons without hierarchy
+- [**Pie Charts**](./pie.md): For simple proportion comparisons without hierarchy
 - **Sunburst Diagrams**: For hierarchical data with a radial layout (yet to be released in Mermaid).
-- **Sankey Diagrams**: For flow-based hierarchical data
+- [**Sankey Diagrams**](./sankey.md): For flow-based hierarchical data
 
 ## Notes
 
