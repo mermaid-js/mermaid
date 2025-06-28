@@ -6,6 +6,7 @@ braintree
 catmull
 compositTitleSize
 curv
+deephistory
 doublecircle
 elems
 gantt
