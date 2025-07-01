@@ -712,13 +712,13 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
     .attr('marker-end', 'url(#filled-head-control)');
 
   const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + conf.boxTextMargin;
+  actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
-    rect.y + (!isFooter ? 30 : 40),
+    rect.y + 30,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -774,8 +774,8 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
     .attr('stroke', '#333')
     .attr('stroke-width', 2);
 
-  const boundBox = actElem.node().getBBox();
-  actor.height = boundBox.height + conf.boxTextMargin;
+  const bounds = actElem.node().getBBox();
+  actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
 
   if (!isFooter) {
     actorCnt++;
@@ -916,7 +916,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
   const lastPath = cylinderGroup.select('path:last-child');
   if (lastPath.node()) {
     const bounds = lastPath.node().getBBox();
-    actor.height = bounds.height + 2 * conf.boxTextMargin;
+    actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
   }
 
   return actor.height;
@@ -989,7 +989,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
     .attr('width', actor.width);
 
   const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + conf.boxTextMargin;
+  actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
