@@ -606,4 +606,229 @@ State1 --> [*]
       {}
     );
   });
+  it('should render edge labels correctly', () => {
+    imgSnapshotTest(
+      `---
+title: On The Way To Something Something DarkSide
+config:
+  look: default
+  theme: default
+---
+
+stateDiagram-v2
+
+   state State1_____________
+   {
+      c0
+   }
+
+   state State2_____________
+   {
+      c1
+   }
+
+   state State3_____________
+   {
+      c7
+   }
+
+   state State4_____________
+   {
+      c2
+   }
+
+   state State5_____________
+   {
+      c3
+   }
+
+   state State6_____________
+   {
+      c4
+   }
+
+   state State7_____________
+   {
+      c5
+   }
+
+   state State8_____________
+   {
+      c6
+   }
+
+
+[*] --> State1_____________
+State1_____________ --> State2_____________   : Transition1_____
+State2_____________ --> State4_____________   : Transition2_____
+State2_____________ --> State3_____________   : Transition3_____
+State3_____________ --> State2_____________
+State4_____________ --> State2_____________   : Transition5_____
+State4_____________ --> State5_____________   : Transition6_____
+State5_____________ --> State6_____________   : Transition7_____
+State6_____________ --> State4_____________   : Transition8_____
+State2_____________ --> State7_____________   : Transition4_____
+State4_____________ --> State7_____________   : Transition4_____
+State5_____________ --> State7_____________   : Transition4_____
+State6_____________ --> State7_____________   : Transition4_____
+State7_____________ --> State1_____________   : Transition9_____
+State5_____________ --> State8_____________   : Transition10____
+State8_____________ --> State5_____________   : Transition11____
+`,
+      {}
+    );
+  });
+  it('should render edge labels correctly with multiple transitions', () => {
+    imgSnapshotTest(
+      `---
+title: Multiple Transitions
+config:
+  look: default
+  theme: default
+---
+
+stateDiagram-v2
+
+   state State1_____________
+   {
+      c0
+   }
+
+   state State2_____________
+   {
+      c1
+   }
+
+   state State3_____________
+   {
+      c7
+   }
+
+   state State4_____________
+   {
+      c2
+   }
+
+   state State5_____________
+   {
+      c3
+   }
+
+   state State6_____________
+   {
+      c4
+   }
+
+   state State7_____________
+   {
+      c5
+   }
+
+   state State8_____________
+   {
+      c6
+   }
+
+   state State9_____________
+   {
+      c9
+   }
+
+[*] --> State1_____________
+State1_____________ --> State2_____________   : Transition1_____
+State2_____________ --> State4_____________   : Transition2_____
+State2_____________ --> State3_____________   : Transition3_____
+State3_____________ --> State2_____________
+State4_____________ --> State2_____________   : Transition5_____
+State4_____________ --> State5_____________   : Transition6_____
+State5_____________ --> State6_____________   : Transition7_____
+State6_____________ --> State4_____________   : Transition8_____
+State2_____________ --> State7_____________   : Transition4_____
+State4_____________ --> State7_____________   : Transition4_____
+State5_____________ --> State7_____________   : Transition4_____
+State6_____________ --> State7_____________   : Transition4_____
+State7_____________ --> State1_____________   : Transition9_____
+State5_____________ --> State8_____________   : Transition10____
+State8_____________ --> State5_____________   : Transition11____
+State9_____________ --> State8_____________   : Transition12____
+`,
+      {}
+    );
+  });
+
+  it('should render edge labels correctly with multiple states', () => {
+    imgSnapshotTest(
+      `---
+title: Multiple States
+config:
+  look: default
+  theme: default
+---
+
+stateDiagram-v2
+
+   state State1_____________
+   {
+      c0
+   }
+
+   state State2_____________
+   {
+      c1
+   }
+
+   state State3_____________
+   {
+      c7
+   }
+
+   state State4_____________
+   {
+      c2
+   }
+
+   state State5_____________
+   {
+      c3
+   }
+
+   state State6_____________
+   {
+      c4
+   }
+
+   state State7_____________
+   {
+      c5
+   }
+
+   state State8_____________
+   {
+      c6
+   }
+
+   state State9_____________
+   {
+      c9
+   }
+
+   state State10_____________
+   {
+      c10
+   }
+
+[*] --> State1_____________
+State1_____________ --> State2_____________   : Transition1_____
+State2_____________ --> State3_____________   : Transition2_____
+State3_____________ --> State4_____________   : Transition3_____
+State4_____________ --> State5_____________   : Transition4_____
+State5_____________ --> State6_____________   : Transition5_____
+State6_____________ --> State7_____________   : Transition6_____
+State7_____________ --> State8_____________   : Transition7_____
+State8_____________ --> State9_____________   : Transition8_____
+State9_____________ --> State10_____________   : Transition9_____
+`,
+      {}
+    );
+  });
 });
