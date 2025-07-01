@@ -1949,7 +1949,7 @@ flowchart TD
 
 There are two ways to display these FontAwesome icons:
 
-### Register FontAwesome icon packs (v\<MERMAID_RELEASE_VERSION>+)
+### Register FontAwesome icon packs (v11.7.0+)
 
 You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
 
