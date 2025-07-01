@@ -21,6 +21,8 @@ jobs:
         with:
           node-version: 20
 
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
       - name: Validate pnpm-lock.yaml entries
         id: validate # give this step an ID so we can reference its outputs
         run: |
