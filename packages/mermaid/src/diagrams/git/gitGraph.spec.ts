@@ -1349,12 +1349,12 @@ describe('when parsing a gitGraph', function () {
      commit id:"work on v1.1"
   `;
 
-    const spyOn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    const logWarnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
 
     await parser.parse(str);
 
-    expect(spyOn).toHaveBeenCalledWith('Commit ID working on MDR already exists');
+    expect(logWarnSpy).toHaveBeenCalledWith('Commit ID working on MDR already exists');
 
-    spyOn.mockRestore();
+    logWarnSpy.mockRestore();
   });
 });
