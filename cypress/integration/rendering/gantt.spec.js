@@ -565,6 +565,18 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render only the day when using dateFormat D', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      title Test
+      dateFormat D
+      A :a, 1, 1d
+    `,
+      {}
+    );
+  });
+
   // TODO: fix it
   //
   // This test is skipped deliberately
