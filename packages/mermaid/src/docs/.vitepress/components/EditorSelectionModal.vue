@@ -10,7 +10,9 @@ interface EditorColumn {
   title: string;
   description: string;
   redirectUrl: string;
+  buttonText: string;
   highlighted?: boolean;
+  proTrialUrl?: string;
   features: Feature[];
 }
 
@@ -20,6 +22,7 @@ const editorColumns: EditorColumn[] = [
     description: 'Basic features, no login',
     redirectUrl:
       'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=playground',
+    buttonText: 'Start free',
     features: [
       { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
       { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
@@ -27,11 +30,14 @@ const editorColumns: EditorColumn[] = [
     ],
   },
   {
-    title: 'Free',
-    description: 'Advanced features, free account',
+    title: 'Free or Pro',
+    description: 'Advanced features, Free or Pro account',
     redirectUrl:
       'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart&redirect=%2Fapp%2Fdiagrams%2Fnew',
+    buttonText: 'Start Free',
     highlighted: true,
+    proTrialUrl:
+      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart_trial&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
     features: [
       { iconUrl: '/icons/folder.svg', featureName: 'Storage' },
       { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
@@ -50,6 +56,7 @@ const editorColumns: EditorColumn[] = [
     title: 'Open Source',
     description: 'Code only, no login',
     redirectUrl: 'https://mermaid.live/edit',
+    buttonText: 'Start free',
     features: [
       { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
       { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
@@ -84,15 +91,17 @@ onUnmounted(() => {
 <template>
   <div
     v-if="isVisible"
-    class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center"
+    class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center bg-[#8585A4]/40"
     @click.self="isVisible = false"
   >
-    <div class="flex flex-row rounded-3xl shadow relative gap-5 pt-20 pb-10 px-10 bg-[#F1F8FA]">
+    <div
+      class="flex flex-col sm:flex-row rounded-3xl shadow relative gap-5 pt-10 sm:pt-20 pb-10 px-4 sm:px-10 bg-[#F1F8FA] overflow-y-auto max-h-full"
+    >
       <div
         v-for="column in editorColumns"
-        class="w-80 flex relative flex-col justify-start items-center bg-[#dceef1] p-8 text-gray-800 shadow"
+        class="sm:w-96 flex relative flex-col justify-start items-center p-6 sm:p-8 text-gray-800 shadow w-full"
         :class="
-          column.highlighted ? 'bg-white rounded-b-3xl shadow-xl' : 'bg-[#DCEEF1] rounded-3xl'
+          column.highlighted ? 'bg-white rounded-b-3xl mt-10 sm:mt-0' : 'bg-[#DCEEF1] rounded-3xl'
         "
       >
         <div
@@ -102,7 +111,7 @@ onUnmounted(() => {
           <p class="text-lg font-semibold text-white">Best for collaboration</p>
         </div>
         <header class="mb-6 w-full text-start space-y-1">
-          <p class="text-2xl font-medium capitalize text-[#1E1A2E]">
+          <p class="text-2xl font-medium text-[#1E1A2E]">
             {{ column.title }}
           </p>
           <p class="text-sm text-gray-600">
@@ -112,14 +121,18 @@ onUnmounted(() => {
         <a
           :href="column.redirectUrl"
           target="_blank"
-          class="mb-6 flex h-10 w-full items-center justify-center rounded-xl hover:bg-[#272040] hover:text-white hover:shadow-md"
-          :class="
-            column.highlighted
-              ? 'bg-[#1e1a2e] text-[#BEDDE3] hover:text-[#5CA3B4]'
-              : 'bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E]'
-          "
+          class="flex h-10 w-full bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] items-center justify-center rounded-xl hover:text-white hover:shadow-md"
+          :class="column.highlighted ? 'mb-6' : 'mb-[88px]'"
         >
-          Start free
+          {{ column.buttonText }}
+        </a>
+        <a
+          v-if="column.proTrialUrl"
+          :href="column.proTrialUrl"
+          target="_blank"
+          class="mb-6 flex h-10 w-full text-white items-center justify-center rounded-xl bg-[#E0095F] hover:bg-[#B0134A]"
+        >
+          Start Pro trial
         </a>
         <div class="h-px w-full bg-[#bedde3] mb-6"></div>
         <ul class="w-full space-y-2">
