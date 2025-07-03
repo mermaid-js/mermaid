@@ -31,6 +31,12 @@
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
+"boundary"                                                      { this.begin('ID'); return 'participant_boundary'; }
+"control"                                                       { this.begin('ID'); return 'participant_control'; }
+"entity"                                                        { this.begin('ID'); return 'participant_entity'; }
+"database"                                                      { this.begin('ID'); return 'participant_database'; }
+"collections"                                                   { this.begin('ID'); return 'participant_collections'; }
+"queue"                                                         { this.begin('ID'); return 'participant_queue'; }
 "create"                                                        return 'create';
 "destroy"                                                       { this.begin('ID'); return 'destroy'; }
 <ID>[^\<->\->:\n,;]+?([\-]*[^\<->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
@@ -231,6 +237,25 @@ participant_statement
 	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
 	| 'participant_actor' actor 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $$=$2;}
 	| 'destroy' actor 'NEWLINE' {$2.type='destroyParticipant'; $$=$2;}
+
+	| 'participant_boundary' actor 'AS' restOfLine 'NEWLINE' {$2.draw='boundary'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_boundary' actor 'NEWLINE' {$2.draw='boundary'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_control' actor 'AS' restOfLine 'NEWLINE' {$2.draw='control'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_control' actor 'NEWLINE' {$2.draw='control'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_entity' actor 'AS' restOfLine 'NEWLINE' {$2.draw='entity'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_entity' actor 'NEWLINE' {$2.draw='entity'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_database' actor 'AS' restOfLine 'NEWLINE' {$2.draw='database'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_database' actor 'NEWLINE' {$2.draw='database'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_collections' actor 'AS' restOfLine 'NEWLINE' {$2.draw='collections'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_collections' actor 'NEWLINE' {$2.draw='collections'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_queue' actor 'AS' restOfLine 'NEWLINE' {$2.draw='queue'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_queue' actor 'NEWLINE' {$2.draw='queue'; $2.type='addParticipant'; $$=$2;}
+
 	;
 
 note_statement
