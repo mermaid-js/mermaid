@@ -1,4 +1,4 @@
-import { rejects } from 'assert';
+import { log } from '../../logger.js';
 import { db } from './gitGraphAst.js';
 import { parser } from './gitGraphParser.js';
 
@@ -1318,5 +1318,43 @@ describe('when parsing a gitGraph', function () {
         });
       }
     });
+  });
+  it('should log a warning when two commits have the same ID', async () => {
+    const str = `gitGraph
+     commit id:"initial commit"
+     commit id:"work on first release"
+     commit id:"design freeze from here"
+     branch v1-rc
+     checkout v1-rc
+     commit id:"bugfix 1"
+     commit id:"bigfix 2" tag:"v1.0.1"
+     branch FORK-v1.0-MDR
+     checkout FORK-v1.0-MDR
+     commit id:"working on MDR"
+     checkout v1-rc
+     commit id:"minor design changes for MDR" tag:"v1.0.2"
+     checkout FORK-v1.0-MDR
+     merge v1-rc
+     checkout main
+     commit id:"new feature for v1.1…"
+     checkout FORK-v1.0-MDR
+     commit id:"working on MDR"
+     commit id:"finishing MDR"
+     branch v1.0-MDR
+     checkout v1.0-MDR
+     commit id:"brush up release" tag:"v1.0.2-MDR"
+     checkout v1-rc
+     commit id:"bugfix without MDR"
+     checkout main
+     commit id:"work on v1.1"
+  `;
+
+    const spyOn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+    await parser.parse(str);
+
+    expect(spyOn).toHaveBeenCalledWith('Commit ID working on MDR already exists');
+
+    spyOn.mockRestore();
   });
 });
