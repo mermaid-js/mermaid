@@ -37,7 +37,7 @@ const editorColumns: EditorColumn[] = [
     buttonText: 'Start Free',
     highlighted: true,
     proTrialUrl:
-      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart_trial&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout',
+      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart_trial&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
     features: [
       { iconUrl: '/icons/folder.svg', featureName: 'Storage' },
       { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
@@ -99,7 +99,7 @@ onUnmounted(() => {
     >
       <div
         v-for="column in editorColumns"
-        class="sm:w-80 flex relative flex-col justify-start items-center p-6 sm:p-8 text-gray-800 shadow w-full"
+        class="sm:w-96 flex relative flex-col justify-start items-center p-6 sm:p-8 text-gray-800 shadow w-full"
         :class="
           column.highlighted ? 'bg-white rounded-b-3xl mt-10 sm:mt-0' : 'bg-[#DCEEF1] rounded-3xl'
         "
@@ -111,7 +111,7 @@ onUnmounted(() => {
           <p class="text-lg font-semibold text-white">Best for collaboration</p>
         </div>
         <header class="mb-6 w-full text-start space-y-1">
-          <p class="text-2xl font-medium capitalize text-[#1E1A2E]">
+          <p class="text-2xl font-medium text-[#1E1A2E]">
             {{ column.title }}
           </p>
           <p class="text-sm text-gray-600">
@@ -121,7 +121,8 @@ onUnmounted(() => {
         <a
           :href="column.redirectUrl"
           target="_blank"
-          class="mb-6 flex h-10 w-full bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] items-center justify-center rounded-xl hover:text-white hover:shadow-md"
+          class="flex h-10 w-full bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] items-center justify-center rounded-xl hover:text-white hover:shadow-md"
+          :class="column.highlighted ? 'mb-6' : 'mb-[88px]'"
         >
           {{ column.buttonText }}
         </a>
@@ -129,7 +130,7 @@ onUnmounted(() => {
           v-if="column.proTrialUrl"
           :href="column.proTrialUrl"
           target="_blank"
-          class="mb-6 flex h-10 w-full text-white items-center justify-center rounded-xl bg-[#1e1a2e] text-[#BEDDE3] hover:text-[#5CA3B4] hover:shadow-md"
+          class="mb-6 flex h-10 w-full text-white items-center justify-center rounded-xl bg-[#E0095F] hover:bg-[#B0134A]"
         >
           Start Pro trial
         </a>
