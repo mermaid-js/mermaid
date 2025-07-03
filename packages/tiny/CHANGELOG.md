@@ -1,5 +1,18 @@
 # mermaid
 
+## 11.8.0
+
+### Minor Changes
+
+- [#6590](https://github.com/mermaid-js/mermaid/pull/6590) [`f338802`](https://github.com/mermaid-js/mermaid/commit/f338802642cdecf5b7ed6c19a20cf2a81effbbee) Thanks [@knsv](https://github.com/knsv)! - Adding support for the new diagram type nested treemap
+
+### Patch Changes
+
+- [#6707](https://github.com/mermaid-js/mermaid/pull/6707) [`592c5bb`](https://github.com/mermaid-js/mermaid/commit/592c5bb880c3b942710a2878d386bcb3eb35c137) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Log a warning when duplicate commit IDs are encountered in gitGraph to help identify and debug rendering issues caused by non-unique IDs.
+
+- Updated dependencies [[`f338802`](https://github.com/mermaid-js/mermaid/commit/f338802642cdecf5b7ed6c19a20cf2a81effbbee)]:
+  - @mermaid-js/parser@0.6.0
+
 ## 11.7.0
 
 ### Minor Changes

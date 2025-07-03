@@ -1,5 +1,11 @@
 # @mermaid-js/parser
 
+## 0.6.0
+
+### Minor Changes
+
+- [#6590](https://github.com/mermaid-js/mermaid/pull/6590) [`f338802`](https://github.com/mermaid-js/mermaid/commit/f338802642cdecf5b7ed6c19a20cf2a81effbbee) Thanks [@knsv](https://github.com/knsv)! - Adding support for the new diagram type nested treemap
+
 ## 0.5.0
 
 ### Minor Changes
