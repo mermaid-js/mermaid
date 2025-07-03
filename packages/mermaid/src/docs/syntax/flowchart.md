@@ -952,6 +952,28 @@ flowchart LR
   B1 --> B2
 ```
 
+### `inheritDir` Configuration Option
+
+By default, if a subgraph does **not** specify a `direction`, it falls back to the standard top-down (`TD`) layout.  
+The `inheritDir` option changes this behavior so that subgraphs without an explicit direction inherit the direction of the parent graph instead.
+
+This is useful when you want a consistent direction across the entire diagram.
+
+```mermaid-example
+---
+config:
+  flowchart:
+    inheritDir: true
+---
+
+flowchart LR
+  A --> B
+  subgraph Group
+    B --> C
+  end
+
+```
+
 #### Limitation
 
 If any of a subgraph's nodes are linked to the outside, subgraph direction will be ignored. Instead the subgraph will inherit the direction of the parent graph:
