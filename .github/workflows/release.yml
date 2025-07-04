@@ -8,15 +8,13 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions: # added using https://github.com/step-security/secure-repo
-  contents: read
+  contents: write # to create release (changesets/action)
+  id-token: write # OpenID Connect token needed for provenance
+  pull-requests: write # to create pull request (changesets/action)
 
 jobs:
   release:
     if: github.repository == 'mermaid-js/mermaid'
-    permissions:
-      contents: write # to create release (changesets/action)
-      id-token: write # OpenID Connect token needed for provenance
-      pull-requests: write # to create pull request (changesets/action)
     name: Release
     runs-on: ubuntu-latest
     steps:

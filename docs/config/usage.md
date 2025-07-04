@@ -28,7 +28,7 @@ We have compiled some Video [Tutorials](../ecosystem/tutorials.md) on how to use
 
 Requirements:
 
-- Node >= 16
+- Node.js 16 or higher (LTS versions recommended)
 
 ```bash
 # NPM
