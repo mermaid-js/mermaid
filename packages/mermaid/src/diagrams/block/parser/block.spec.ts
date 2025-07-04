@@ -402,6 +402,21 @@ columns 1
       const B = blocks[0];
       expect(B.styles).toContain('fill:#f9F');
     });
+    it('should throw error when block width exceeds column width', () => {
+      const str = `block-beta
+    columns 1
+    A:1
+    B:2
+    C:3
+    D:4
+    E:3
+    F:2
+    G:1`;
+
+      expect(() => block.parse(str)).toThrowError(
+        'width of block B is greater than the column width'
+      );
+    });
   });
 
   describe('prototype properties', function () {

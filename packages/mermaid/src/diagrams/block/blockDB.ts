@@ -92,7 +92,18 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
 const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
+  const columnSettingBlock = blockList.find((b) => b?.type === 'column-setting');
+  const column = columnSettingBlock?.columns ?? -1;
   for (const block of blockList) {
+    if (
+      typeof column === 'number' &&
+      column > 0 &&
+      block.type !== 'column-setting' &&
+      typeof block.widthInColumns === 'number' &&
+      block.widthInColumns > column
+    ) {
+      throw new Error(`width of block ${block.id} is greater than the column width`);
+    }
     if (block.label) {
       block.label = sanitizeText(block.label);
     }
