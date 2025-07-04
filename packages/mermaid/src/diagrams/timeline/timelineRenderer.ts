@@ -29,7 +29,7 @@ export const draw = function (text: string, id: string, version: string, diagObj
   //1. Fetch the configuration
   const conf = getConfig();
   // @ts-expect-error - wrong config?
-  const LEFT_MARGIN = conf.leftMargin ?? 50;
+  const LEFT_MARGIN = conf.timeline?.leftMargin ?? 50;
 
   log.debug('timeline', diagObj.db);
 
