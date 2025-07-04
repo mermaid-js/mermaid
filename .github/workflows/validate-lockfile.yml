@@ -5,6 +5,10 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'pnpm-lock.yaml'
+      - '**/package.json'
+      - '.github/workflows/validate-lockfile.yml'
 
 permissions:
   contents: read
@@ -14,21 +18,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
-        # uses version from "packageManager" field in package.json
 
       - name: Setup Node.js
-        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.node-version'
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Validate pnpm-lock.yaml entries
+        id: validate
+        run: |
+          issues=()
+
+          if grep -qF 'tarball:' pnpm-lock.yaml; then
+            issues+=("• Tarball references found (forbidden)")
+          fi
+
+          if grep -qF 'packages/mermaid/src/vitepress' pnpm-lock.yaml; then
+            issues+=("• Disallowed path 'packages/mermaid/src/vitepress' present. Run `rm -rf packages/mermaid/src/vitepress && pnpm install` to regenerate.")
+          fi
+
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} > changed.txt
+          if grep -q '^pnpm-lock.yaml$' changed.txt && ! grep -q 'package.json' changed.txt; then
+            issues+=("• pnpm-lock.yaml changed without any package.json modification")
+          fi
+
+          if [ ${#issues[@]} -gt 0 ]; then
+            {
+              echo "errors<<EOF"
+              printf '%s\n' "${issues[@]}"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+            exit 1
+          fi
 
       - name: Validate mermaid-live-editor compatibility
         run: |
@@ -38,23 +70,32 @@ jobs:
           fi
           cd mermaid-live-editor
 
-          # Check package.json engines requirement
           REQUIRED_NODE=$(node -p "require('./package.json').engines?.node || 'not specified'")
           CURRENT_NODE=$(node --version)
 
           echo "Required Node version: $REQUIRED_NODE"
           echo "Current Node version: $CURRENT_NODE"
 
-          # Test yarn install with current Node version
           yarn install
 
       - name: Validate build process
         run: |
           echo "Testing editor.bash script compatibility..."
-          # Set required environment variables
           export COMMIT_REF="${{ github.sha }}"
           export NODE_OPTIONS="--max_old_space_size=4096"
           export COREPACK_ENABLE_STRICT='0'
-
-          # Run the editor script to validate it works with Node 20
           ./scripts/editor.bash
+
+      - name: Comment on PR if validation failed
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            The following issue(s) were detected:
+            ${{ steps.validate.outputs.errors }}
+
+            Please address these and push an update.
+
+            _Posted automatically by GitHub Actions_
