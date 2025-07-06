@@ -500,7 +500,7 @@ export class ClassDB implements DiagramDB {
 
         tooltipElem.transition().duration(200).style('opacity', '.9');
         tooltipElem
-          .html(el.attr('title').replace(/<br>/g, '<br/>'))
+          .html(title.replace(/<br>/g, '<br/>'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
           .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
         el.classed('hover', true);
