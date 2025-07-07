@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { expectNoErrorsOrAlternatives } from './test-util.js';
-import type { TreemapDoc, Section, Leaf, TreemapRow } from '../src/language/generated/ast.js';
+import type { Treemap, Section, Leaf, TreemapRow } from '../src/language/generated/ast.js';
 import type { LangiumParser } from 'langium';
 import { createTreemapServices } from '../src/language/treemap/module.js';
 
@@ -9,21 +9,21 @@ describe('Treemap Parser', () => {
   const parser: LangiumParser = services.parser.LangiumParser;
 
   const parse = (input: string) => {
-    return parser.parse<TreemapDoc>(input);
+    return parser.parse<Treemap>(input);
   };
 
   describe('Basic Parsing', () => {
     it('should parse empty treemap', () => {
       const result = parse('treemap');
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe('TreemapDoc');
+      expect(result.value.$type).toBe('Treemap');
       expect(result.value.TreemapRows).toHaveLength(0);
     });
 
     it('should parse a section node', () => {
       const result = parse('treemap\n"Root"');
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe('TreemapDoc');
+      expect(result.value.$type).toBe('Treemap');
       expect(result.value.TreemapRows).toHaveLength(1);
       if (result.value.TreemapRows[0].item) {
         expect(result.value.TreemapRows[0].item.$type).toBe('Section');
@@ -39,7 +39,7 @@ describe('Treemap Parser', () => {
   "Child2" : 200
 `);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe('TreemapDoc');
+      expect(result.value.$type).toBe('Treemap');
       expect(result.value.TreemapRows).toHaveLength(3);
 
       if (result.value.TreemapRows[0].item) {
@@ -95,7 +95,7 @@ describe('Treemap Parser', () => {
 
       // We're only checking that the multiple root nodes parse successfully
       // The validation errors would be reported by the validator during validation
-      expect(result.value.$type).toBe('TreemapDoc');
+      expect(result.value.$type).toBe('Treemap');
       expect(result.value.TreemapRows).toHaveLength(2);
     });
   });
@@ -104,7 +104,7 @@ describe('Treemap Parser', () => {
     it('should parse a treemap with title', () => {
       const result = parse('treemap\ntitle My Treemap Diagram\n"Root"\n  "Child": 100');
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe('TreemapDoc');
+      expect(result.value.$type).toBe('Treemap');
       // We can't directly test the title property due to how Langium processes TitleAndAccessibilities
       // but we can verify the TreemapRows are parsed correctly
       expect(result.value.TreemapRows).toHaveLength(2);
@@ -113,7 +113,7 @@ describe('Treemap Parser', () => {
     it('should parse a treemap with accTitle', () => {
       const result = parse('treemap\naccTitle: Accessible Title\n"Root"\n  "Child": 100');
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe('TreemapDoc');
+      expect(result.value.$type).toBe('Treemap');
       // We can't directly test the accTitle property due to how Langium processes TitleAndAccessibilities
       expect(result.value.TreemapRows).toHaveLength(2);
     });
@@ -123,7 +123,7 @@ describe('Treemap Parser', () => {
         'treemap\naccDescr: This is an accessible description\n"Root"\n  "Child": 100'
       );
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe('TreemapDoc');
+      expect(result.value.$type).toBe('Treemap');
       // We can't directly test the accDescr property due to how Langium processes TitleAndAccessibilities
       expect(result.value.TreemapRows).toHaveLength(2);
     });
@@ -136,7 +136,7 @@ accDescr: This is an accessible description
 "Root"
   "Child": 100`);
       expectNoErrorsOrAlternatives(result);
-      expect(result.value.$type).toBe('TreemapDoc');
+      expect(result.value.$type).toBe('Treemap');
       // We can't directly test these properties due to how Langium processes TitleAndAccessibilities
       expect(result.value.TreemapRows).toHaveLength(2);
     });

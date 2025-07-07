@@ -34,14 +34,14 @@ interface ClassDefStatement {
     className: string
     styleText: string // Optional style text
 }
-interface TreemapDoc {
+interface Treemap {
     TreemapRows: TreemapRow[]
     title?: string
     accTitle?: string
     accDescr?: string
 }
 
-entry TreemapDoc returns TreemapDoc:
+entry Treemap returns Treemap:
     TREEMAP_KEYWORD
     (
         TitleAndAccessibilities
