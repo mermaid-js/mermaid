@@ -1,5 +1,11 @@
 # @mermaid-js/parser
 
+## 0.6.1
+
+### Patch Changes
+
+- [#6725](https://github.com/mermaid-js/mermaid/pull/6725) [`0da2922`](https://github.com/mermaid-js/mermaid/commit/0da2922ee7f47959e324ec10d3d21ee70594f557) Thanks [@shubham-mermaid](https://github.com/shubham-mermaid)! - chore: use Treemap instead of TreemapDoc in parser.
+
 ## 0.6.0
 
 ### Minor Changes
