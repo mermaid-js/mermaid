@@ -26,7 +26,7 @@ describe('examples', () => {
     expect(diagrams.length).toBeGreaterThan(0);
     for (const diagram of diagrams) {
       const data = diagramData.find((d) => d.id === diagram.id)!;
-      expect(data).toBeDefined();
+      expect(data, `Example for ${diagram.id} is not defined`).toBeDefined();
       expect(data.examples.length).toBeGreaterThan(0);
       expect(data.examples.filter((e) => e.isDefault).length).toBe(1);
     }
