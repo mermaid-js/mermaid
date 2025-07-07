@@ -20,6 +20,7 @@ import timelineDiagram from './examples/timeline.js';
 import quadrantChart from './examples/quadrant-chart.js';
 import packetDiagram from './examples/packet.js';
 import blockDiagram from './examples/block.js';
+import treemapDiagram from './examples/treemap.js';
 
 export const diagramData: DiagramMetadata[] = [
   flowChart,
@@ -43,4 +44,5 @@ export const diagramData: DiagramMetadata[] = [
   quadrantChart,
   packetDiagram,
   blockDiagram,
+  treemapDiagram,
 ];
