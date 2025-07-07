@@ -1,5 +1,11 @@
 # mermaid
 
+## 11.9.0
+
+### Minor Changes
+
+- [#6453](https://github.com/mermaid-js/mermaid/pull/6453) [`5acbd7e`](https://github.com/mermaid-js/mermaid/commit/5acbd7e762469d9d89a9c77faf6617ee13367f3a) Thanks [@sidharthv96](https://github.com/sidharthv96)! - feat: Add `getRegisteredDiagramsMetadata` to `mermaid`, which returns all the registered diagram IDs in mermaid
+
 ## 11.8.1
 
 ### Patch Changes
