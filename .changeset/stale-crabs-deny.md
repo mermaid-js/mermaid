@@ -1,5 +1,5 @@
 ---
-'mermaid': minor
+'mermaid': patch
 ---
 
-chore: use treemap instead of treemapdoc in parser.
+chore: use Treemap instead of TreemapDoc in parser.
