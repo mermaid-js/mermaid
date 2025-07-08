@@ -23,7 +23,7 @@ export default {
       'home-hero-before': () => h(TopBar),
       'doc-before': () => h(TopBar),
       'layout-bottom': () => h(Tooltip),
-      'home-hero-after': () => h(EditorSelectionModal),
+      'layout-top': () => h(EditorSelectionModal),
     });
   },
   enhanceApp({ app, router }: EnhanceAppContext) {
