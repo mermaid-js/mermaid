@@ -12,6 +12,25 @@
 
 %options case-insensitive
 
+%{
+function matchAsActorOrParticipant(tokenName, tokenType) {
+  const ahead = this._input;
+
+  // Detect if an arrow or colon is coming right after the token
+  const arrowLike = /^(?:\s)*(->>|-->>|->|-->|<<->>|<<-->>)/;
+  const colonLike = /^\s*:/;
+
+  // Treat as ACTOR if database appears inline in a message (arrow or colon follows)
+  if (arrowLike.test(ahead) || colonLike.test(ahead)) {
+    yytext = tokenName;
+    return 'ACTOR';
+  }
+  // Otherwise treat as a participant type declaration
+  this.begin('ID');
+  return tokenType;
+}
+%}
+
 // Special states for recognizing aliases
 // A special state for grabbing text up to the first comment/newline
 %x ID ALIAS LINE
@@ -31,12 +50,12 @@
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
-"boundary"                                                      { this.begin('ID'); return 'participant_boundary'; }
-"control"                                                       { this.begin('ID'); return 'participant_control'; }
-"entity"                                                        { this.begin('ID'); return 'participant_entity'; }
-"database"                                                      { this.begin('ID'); return 'participant_database'; }
-"collections"                                                   { this.begin('ID'); return 'participant_collections'; }
-"queue"                                                         { this.begin('ID'); return 'participant_queue'; }
+"boundary"                                                      { return matchAsActorOrParticipant.call(this, 'boundary', 'participant_boundary'); }
+"control"                                                       { return matchAsActorOrParticipant.call(this, 'control', 'participant_control'); }
+"entity"                                                        { return matchAsActorOrParticipant.call(this, 'entity', 'participant_entity'); }
+"database"                                                      { return matchAsActorOrParticipant.call(this, 'database', 'participant_database'); }
+"collections"                                                   { return matchAsActorOrParticipant.call(this, 'collections', 'participant_collections'); }
+"queue"                                                         { return matchAsActorOrParticipant.call(this, 'queue', 'participant_queue'); }
 "create"                                                        return 'create';
 "destroy"                                                       { this.begin('ID'); return 'destroy'; }
 <ID>[^\<->\->:\n,;]+?([\-]*[^\<->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
