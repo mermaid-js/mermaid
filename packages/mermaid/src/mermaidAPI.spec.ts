@@ -794,7 +794,7 @@ graph TD;A--x|text including URL space|B;`)
       { textDiagramType: 'gantt', expectedType: 'gantt' },
       { textDiagramType: 'journey', expectedType: 'journey' },
       { textDiagramType: 'pie', expectedType: 'pie' },
-      { textDiagramType: 'packet-beta', expectedType: 'packet' },
+      { textDiagramType: 'packet', expectedType: 'packet' },
       { textDiagramType: 'packet', expectedType: 'packet' },
       { textDiagramType: 'xychart-beta', expectedType: 'xychart' },
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },

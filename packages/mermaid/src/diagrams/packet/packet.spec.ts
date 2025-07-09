@@ -73,7 +73,7 @@ describe('packet diagrams', () => {
   });
 
   it('should handle bit counts', async () => {
-    const str = `packet-beta
+    const str = `packet
     +8: "byte"
     +16: "word"
     `;
@@ -99,7 +99,7 @@ describe('packet diagrams', () => {
   });
 
   it('should handle bit counts with bit or bits', async () => {
-    const str = `packet-beta
+    const str = `packet
     +8: "byte"
     +16: "word"
     `;
@@ -211,7 +211,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous with bit counts', async () => {
-    const str = `packet-beta
+    const str = `packet
     +16: "test"
     18-20: "error"
     `;
@@ -231,7 +231,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous for single packets with bit counts', async () => {
-    const str = `packet-beta
+    const str = `packet
     +16: "test"
     18: "error"
     `;
@@ -262,7 +262,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if bit count is 0', async () => {
-    const str = `packet-beta
+    const str = `packet
     +0: "test"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
