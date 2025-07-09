@@ -44,7 +44,10 @@ const addNode = (level: number, id: string, descr: string, type: number) => {
     id: cnt++,
     nodeId: sanitizeText(id, conf),
     level,
-    descr: sanitizeText(descr, conf),
+    descr: sanitizeText(descr, conf)
+      .replace(/&gt;/g, '>')
+      .replace(/&lt;/g, '<')
+      .replace(/&amp;/g, '&'),
     type,
     children: [],
     width: conf.mindmap?.maxNodeWidth ?? defaultConfig.mindmap.maxNodeWidth,
