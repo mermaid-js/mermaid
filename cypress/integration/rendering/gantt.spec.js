@@ -647,6 +647,20 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render a gantt diagram excluding a specific date in YYYY-MM-DD HH:mm:ss format', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      dateFormat  YYYY-MM-DD HH:mm:ss
+      excludes    2025-07-07
+      section     Section
+      A task      :a1, 2025-07-04 20:30:30, 2025-07-08 10:30:30
+      Another task:after a1, 20h
+    `,
+      {}
+    );
+  });
+
   it("should render when there's a semicolon in the title", () => {
     imgSnapshotTest(
       `
