@@ -46,6 +46,9 @@ exclude = [
 # Drupal 403
 "https://(www.)?drupal.org",
 
+# Phbpp 403
+"https://(www.)?phpbb.com",
+
 # Swimm returns 404, even though the link is valid
 "https://docs.swimm.io",
 
