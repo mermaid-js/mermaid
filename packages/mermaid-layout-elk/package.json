@@ -30,14 +30,14 @@
   "license": "MIT",
   "dependencies": {
     "d3": "^7.9.0",
-    "elkjs": "^0.9.3"
+    "elkjs": "^0.10.0"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
     "mermaid": "workspace:^"
   },
   "peerDependencies": {
-    "mermaid": "^11.0.2"
+    "mermaid": "^11.8.1"
   },
   "files": [
     "dist"
