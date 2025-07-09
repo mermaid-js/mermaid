@@ -12,5 +12,10 @@ entry Packet:
 ;
 
 PacketBlock:
-  start=INT('-' end=INT)? ':' label=STRING EOL
+  (
+    start=INT('-' end=INT)?
+    | '+' bits=INT
+  )
+  ':' label=STRING
+  EOL
 ;

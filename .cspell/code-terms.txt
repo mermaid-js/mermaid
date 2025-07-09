@@ -47,6 +47,7 @@ edgesep
 EMPTYSTR
 enddate
 ERDIAGRAM
+eslint
 flatmap
 forwardable
 frontmatter
@@ -87,6 +88,7 @@ NODIR
 NSTR
 outdir
 Qcontrolx
+QSTR
 reinit
 rels
 reqs

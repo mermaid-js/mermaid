@@ -576,7 +576,7 @@ flowchart TD
 
 You can use the `image` shape to include an image in your flowchart. The syntax for defining an image shape is as follows:
 
-```mermaid-example
+```
 flowchart TD
     A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
 ```
@@ -980,6 +980,7 @@ flowchart LR
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
 
 ```mermaid-example
+---
 config:
   flowchart:
     htmlLabels: false
@@ -1252,7 +1253,7 @@ flowchart TD
 
 There are two ways to display these FontAwesome icons:
 
-### Register FontAwesome icon packs (v<MERMAID_RELEASE_VERSION>+)
+### Register FontAwesome icon packs (v11.7.0+)
 
 You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
 
