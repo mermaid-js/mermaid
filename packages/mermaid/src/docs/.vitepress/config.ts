@@ -141,6 +141,7 @@ function sidebarAll() {
       ],
     },
     ...sidebarSyntax(),
+    ...sidebarAlgorithms(),
     ...sidebarEcosystem(),
     ...sidebarConfig(),
     ...sidebarCommunity(),
@@ -218,6 +219,27 @@ function sidebarEcosystem() {
         { text: 'Tutorials', link: '/ecosystem/tutorials' },
         { text: 'Integrations - Community', link: '/ecosystem/integrations-community' },
         { text: 'Integrations - Create', link: '/ecosystem/integrations-create' },
+      ],
+    },
+  ];
+}
+
+function sidebarAlgorithms() {
+  return [
+    {
+      text: '🧠 Diagram Algorithms',
+      collapsed: false,
+      items: [
+        { text: 'Introduction', link: '/layouts/introduction' },
+        { text: 'Layout Algorithm Development', link: '/layouts/development' },
+        {
+          text: 'IPSep-Cola',
+          collapsed: false,
+          items: [
+            { text: 'Overview', link: '/layouts/ipsepcola/overview' },
+            { text: 'Implementation', link: '/layouts/ipsepcola/implementation' },
+          ],
+        },
       ],
     },
   ];
