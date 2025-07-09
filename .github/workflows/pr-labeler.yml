@@ -29,3 +29,29 @@ jobs:
           disable-releaser: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add "Sponsored by MermaidChart" label
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const { data: commits } = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            const isSponsored = commits.some(
+              (c) => c.commit.author.email?.endsWith('@mermaidchart.com')
+            );
+
+            if (isSponsored) {
+              console.log('PR is sponsored. Adding label.');
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: ['Sponsored by MermaidChart'],
+              });
+            }
