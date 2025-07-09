@@ -11,7 +11,7 @@ export default {
       code: `---
 title: "TCP Packet"
 ---
-packet-beta
+packet
 0-15: "Source Port"
 16-31: "Destination Port"
 32-63: "Sequence Number"
