@@ -3,7 +3,7 @@ import utils, { calculatePoint, cleanAndMerge, detectDirective } from './utils.j
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import memoize from 'lodash-es/memoize.js';
+import { memoize } from 'es-toolkit/compat';
 import { MockedD3 } from './tests/MockedD3.js';
 import { preprocessDiagram } from './preprocess.js';
 
