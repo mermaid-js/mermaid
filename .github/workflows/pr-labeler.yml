@@ -42,7 +42,7 @@ jobs:
               pull_number: prNumber,
             });
 
-            const isSponsored = commits.some(
+            const isSponsored = commits.every(
               (c) => c.commit.author.email?.endsWith('@mermaidchart.com')
             );
 
