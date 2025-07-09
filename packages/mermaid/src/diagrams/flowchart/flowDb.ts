@@ -139,6 +139,9 @@ export class FlowDB implements DiagramDB {
       if (edgeDoc?.animation !== undefined) {
         edge.animation = edgeDoc.animation;
       }
+      if (edgeDoc?.curve !== undefined) {
+        edge.interpolate = edgeDoc.curve;
+      }
       return;
     }
 
