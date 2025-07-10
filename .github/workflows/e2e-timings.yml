@@ -17,7 +17,7 @@ jobs:
   timings:
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node-20.11.0-chrome-121.0.6167.85-1-ff-120.0-edge-121.0.2277.83-1
+      image: cypress/browsers:latest
       options: --user 1001
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
