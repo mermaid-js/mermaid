@@ -25,6 +25,7 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
   const s = w + h;
+  const adjustment = 0.5;
 
   const points = [
     { x: s / 2, y: 0 },
@@ -45,13 +46,14 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
 
     polygon = shapeSvg
       .insert(() => roughNode, ':first-child')
-      .attr('transform', `translate(${-s / 2}, ${s / 2})`);
+      .attr('transform', `translate(${-s / 2 + adjustment}, ${s / 2})`);
 
     if (cssStyles) {
       polygon.attr('style', cssStyles);
     }
   } else {
     polygon = insertPolygonShape(shapeSvg, s, s, points);
+    polygon.attr('transform', `translate(${-s / 2 + adjustment}, ${s / 2})`);
   }
 
   if (nodeStyles) {
