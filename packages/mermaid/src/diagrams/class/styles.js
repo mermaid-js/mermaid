@@ -148,6 +148,18 @@ g.classGroup line {
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
+  
+  .classTitle.abstract {
+  font-style: italic;
+  font-weight: normal;
+}
+.classTitle.enumeration {
+  text-decoration: underline;
+  font-weight: normal;
+}
+.classTitle.interface {
+  font-weight: bold;
+}
 
 .edgeTerminals {
   font-size: 11px;

@@ -45,6 +45,36 @@ export async function textHelper<T extends SVGGraphicsElement>(
 
   labelGroup = shapeSvg.insert('g').attr('class', 'label-group text');
   await addText(labelGroup, node, 0, ['font-weight: bolder']);
+  // Determine styling based on annotations
+  let labelStyles = ['font-weight: bolder']; // Default bold style
+  let labelClass = 'classTitle';
+
+  if (node.annotations && node.annotations.length > 0) {
+    const annotation = node.annotations[0].toLowerCase();
+    switch (annotation) {
+      case 'abstract':
+        labelClass = 'classTitle abstract';
+        labelStyles = [];
+        break;
+      case 'enumeration':
+        labelClass = 'classTitle enumeration';
+        labelStyles = [];
+        break;
+      case 'interface':
+        labelClass = 'classTitle interface';
+        labelStyles = [];
+        break;
+      default:
+        labelClass = 'classTitle';
+        labelStyles = ['font-weight: bolder'];
+        break;
+    }
+  }
+
+  // Apply the CSS class to the label group
+  labelGroup.attr('class', `label-group text ${labelClass}`);
+
+  await addText(labelGroup, node, 0, labelStyles);
   const labelGroupBBox = labelGroup.node()!.getBBox();
   labelGroupHeight = labelGroupBBox.height;
 
