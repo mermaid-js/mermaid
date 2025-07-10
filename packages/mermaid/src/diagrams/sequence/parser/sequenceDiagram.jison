@@ -12,6 +12,25 @@
 
 %options case-insensitive
 
+%{
+function matchAsActorOrParticipant(tokenName, tokenType) {
+  const ahead = this._input;
+
+  // Detect if an arrow or colon is coming right after the token
+  const arrowLike = /^(?:\s)*(->>|-->>|->|-->|<<->>|<<-->>)/;
+  const colonLike = /^\s*:/;
+
+  // Treat as ACTOR if database appears inline in a message (arrow or colon follows)
+  if (arrowLike.test(ahead) || colonLike.test(ahead)) {
+    yytext = tokenName;
+    return 'ACTOR';
+  }
+  // Otherwise treat as a participant type declaration
+  this.begin('ID');
+  return tokenType;
+}
+%}
+
 // Special states for recognizing aliases
 // A special state for grabbing text up to the first comment/newline
 %x ID ALIAS LINE
@@ -31,6 +50,12 @@
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
+"boundary"                                                      { return matchAsActorOrParticipant.call(this, 'boundary', 'participant_boundary'); }
+"control"                                                       { return matchAsActorOrParticipant.call(this, 'control', 'participant_control'); }
+"entity"                                                        { return matchAsActorOrParticipant.call(this, 'entity', 'participant_entity'); }
+"database"                                                      { return matchAsActorOrParticipant.call(this, 'database', 'participant_database'); }
+"collections"                                                   { return matchAsActorOrParticipant.call(this, 'collections', 'participant_collections'); }
+"queue"                                                         { return matchAsActorOrParticipant.call(this, 'queue', 'participant_queue'); }
 "create"                                                        return 'create';
 "destroy"                                                       { this.begin('ID'); return 'destroy'; }
 <ID>[^\<->\->:\n,;]+?([\-]*[^\<->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
@@ -231,6 +256,25 @@ participant_statement
 	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
 	| 'participant_actor' actor 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $$=$2;}
 	| 'destroy' actor 'NEWLINE' {$2.type='destroyParticipant'; $$=$2;}
+
+	| 'participant_boundary' actor 'AS' restOfLine 'NEWLINE' {$2.draw='boundary'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_boundary' actor 'NEWLINE' {$2.draw='boundary'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_control' actor 'AS' restOfLine 'NEWLINE' {$2.draw='control'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_control' actor 'NEWLINE' {$2.draw='control'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_entity' actor 'AS' restOfLine 'NEWLINE' {$2.draw='entity'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_entity' actor 'NEWLINE' {$2.draw='entity'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_database' actor 'AS' restOfLine 'NEWLINE' {$2.draw='database'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_database' actor 'NEWLINE' {$2.draw='database'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_collections' actor 'AS' restOfLine 'NEWLINE' {$2.draw='collections'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_collections' actor 'NEWLINE' {$2.draw='collections'; $2.type='addParticipant'; $$=$2;}
+
+	| 'participant_queue' actor 'AS' restOfLine 'NEWLINE' {$2.draw='queue'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_queue' actor 'NEWLINE' {$2.draw='queue'; $2.type='addParticipant'; $$=$2;}
+
 	;
 
 note_statement
