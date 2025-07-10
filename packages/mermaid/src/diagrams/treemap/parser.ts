@@ -83,7 +83,7 @@ const getItemName = (item: { name?: string | number }): string => {
 };
 
 export const parser: ParserDefinition = {
-  parser: { yy: undefined },
+  parser: { yy: {} as TreemapDB },
   parse: async (text: string): Promise<void> => {
     try {
       // Use a generic parse that accepts any diagram type
