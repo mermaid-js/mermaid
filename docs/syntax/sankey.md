@@ -23,7 +23,7 @@ config:
   sankey:
     showValues: false
 ---
-sankey-beta
+sankey
 
 Agricultural 'waste',Bio-conversion,124.729
 Bio-conversion,Liquid,0.597
@@ -101,7 +101,7 @@ config:
   sankey:
     showValues: false
 ---
-sankey-beta
+sankey
 
 Agricultural 'waste',Bio-conversion,124.729
 Bio-conversion,Liquid,0.597
@@ -175,7 +175,7 @@ Wind,Electricity grid,289.366
 
 ## Syntax
 
-The idea behind syntax is that a user types `sankey-beta` keyword first, then pastes raw CSV below and get the result.
+The idea behind syntax is that a user types `sankey` keyword first, then pastes raw CSV below and get the result.
 
 It implements CSV standard as [described here](https://www.ietf.org/rfc/rfc4180.txt) with subtle **differences**:
 
@@ -187,7 +187,7 @@ It implements CSV standard as [described here](https://www.ietf.org/rfc/rfc4180.
 It is implied that 3 columns inside CSV should represent `source`, `target` and `value` accordingly:
 
 ```mermaid-example
-sankey-beta
+sankey
 
 %% source,target,value
 Electricity grid,Over generation / exports,104.453
@@ -196,7 +196,7 @@ Electricity grid,H2 conversion,27.14
 ```
 
 ```mermaid
-sankey-beta
+sankey
 
 %% source,target,value
 Electricity grid,Over generation / exports,104.453
@@ -209,7 +209,7 @@ Electricity grid,H2 conversion,27.14
 CSV does not support empty lines without comma delimiters by default. But you can add them if needed:
 
 ```mermaid-example
-sankey-beta
+sankey
 
 Bio-conversion,Losses,26.862
 
@@ -219,7 +219,7 @@ Bio-conversion,Gas,81.144
 ```
 
 ```mermaid
-sankey-beta
+sankey
 
 Bio-conversion,Losses,26.862
 
@@ -233,14 +233,14 @@ Bio-conversion,Gas,81.144
 If you need to have a comma, wrap it in double quotes:
 
 ```mermaid-example
-sankey-beta
+sankey
 
 Pumped heat,"Heating and cooling, homes",193.026
 Pumped heat,"Heating and cooling, commercial",70.672
 ```
 
 ```mermaid
-sankey-beta
+sankey
 
 Pumped heat,"Heating and cooling, homes",193.026
 Pumped heat,"Heating and cooling, commercial",70.672
@@ -251,14 +251,14 @@ Pumped heat,"Heating and cooling, commercial",70.672
 If you need to have double quote, put a pair of them inside quoted string:
 
 ```mermaid-example
-sankey-beta
+sankey
 
 Pumped heat,"Heating and cooling, ""homes""",193.026
 Pumped heat,"Heating and cooling, ""commercial""",70.672
 ```
 
 ```mermaid
-sankey-beta
+sankey
 
 Pumped heat,"Heating and cooling, ""homes""",193.026
 Pumped heat,"Heating and cooling, ""commercial""",70.672
