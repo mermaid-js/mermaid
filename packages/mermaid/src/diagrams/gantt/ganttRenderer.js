@@ -554,14 +554,12 @@ export const draw = function (text, id, version, diagObj) {
       return;
     }
 
-    const normalizedExcludes = excludes.map((d) => dayjs(d).format('YYYY-MM-DD'));
-    const normalizedIncludes = includes.map((d) => dayjs(d).format('YYYY-MM-DD'));
+    const dateFormat = diagObj.db.getDateFormat();
     const excludeRanges = [];
     let range = null;
     let d = dayjs(minTime);
     while (d.valueOf() <= maxTime) {
-      const dStr = d.format('YYYY-MM-DD');
-      if (normalizedExcludes.includes(dStr) && !normalizedIncludes.includes(dStr)) {
+      if (diagObj.db.isInvalidDate(d, dateFormat, excludes, includes)) {
         if (!range) {
           range = {
             start: d,

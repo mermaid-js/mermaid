@@ -661,6 +661,35 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render a gantt diagram excluding saturday and sunday in YYYY-MM-DD HH:mm:ss format', () => {
+    imgSnapshotTest(
+      `
+        gantt
+      dateFormat  YYYY-MM-DD HH:mm:ss
+      excludes    weekends
+       weekend saturday
+      section     Section
+      A task      :a1, 2025-07-04 20:30:30, 2025-07-08 10:30:30
+      Another task:after a1, 20h
+    `,
+      {}
+    );
+  });
+  it('should render a gantt diagram excluding friday and saturday in YYYY-MM-DD HH:mm:ss format', () => {
+    imgSnapshotTest(
+      `
+        gantt
+      dateFormat  YYYY-MM-DD HH:mm:ss
+      excludes    weekends
+       weekend friday
+      section     Section
+      A task      :a1, 2025-07-04 20:30:30, 2025-07-08 10:30:30
+      Another task:after a1, 20h
+    `,
+      {}
+    );
+  });
+
   it("should render when there's a semicolon in the title", () => {
     imgSnapshotTest(
       `
