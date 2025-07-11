@@ -1,5 +1,5 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { MermaidAstType, TreemapDoc } from '../generated/ast.js';
+import type { MermaidAstType, Treemap } from '../generated/ast.js';
 import type { TreemapServices } from './module.js';
 
 /**
@@ -9,10 +9,10 @@ export function registerValidationChecks(services: TreemapServices) {
   const validator = services.validation.TreemapValidator;
   const registry = services.validation.ValidationRegistry;
   if (registry) {
-    // Use any to bypass type checking since we know TreemapDoc is part of the AST
+    // Use any to bypass type checking since we know Treemap is part of the AST
     // but the type system is having trouble with it
     const checks: ValidationChecks<MermaidAstType> = {
-      TreemapDoc: validator.checkSingleRoot.bind(validator),
+      Treemap: validator.checkSingleRoot.bind(validator),
       // Remove unused validation for TreemapRow
     };
     registry.register(checks, validator);
@@ -27,7 +27,7 @@ export class TreemapValidator {
    * Validates that a treemap has only one root node.
    * A root node is defined as a node that has no indentation.
    */
-  checkSingleRoot(doc: TreemapDoc, accept: ValidationAcceptor): void {
+  checkSingleRoot(doc: Treemap, accept: ValidationAcceptor): void {
     let rootNodeIndentation;
 
     for (const row of doc.TreemapRows) {
