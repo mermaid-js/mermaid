@@ -77,14 +77,14 @@ export class TreeMapDB implements DiagramDB {
     return this.classes.get(classSelector)?.styles ?? [];
   }
 
-  public clear = () => {
+  public clear() {
     commonClear();
     this.nodes = [];
     this.levels = new Map();
     this.outerNodes = [];
     this.classes = new Map();
     this.root = undefined;
-  };
+  }
 
   public setAccTitle = setAccTitle;
   public getAccTitle = getAccTitle;
