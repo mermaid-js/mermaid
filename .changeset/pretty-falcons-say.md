@@ -1,5 +1,5 @@
 ---
-'mermaid': chore
+'mermaid': patch
 ---
 
-chore: updated treemapdb to use class based approach
+patch: updated treemapdb to use class based approach

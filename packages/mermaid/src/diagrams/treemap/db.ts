@@ -1,6 +1,6 @@
 import type { DiagramDB } from '../../diagram-api/types.js';
-import { ImperativeState } from '../../utils/imperativeState.js';
-import type { TreemapData, TreemapDiagramConfig, TreemapNode } from './types.js';
+import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
+import type { TreemapDiagramConfig, TreemapNode } from './types.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import { getConfig as commonGetConfig } from '../../config.js';
 import { cleanAndMerge } from '../../utils.js';
@@ -15,29 +15,19 @@ import {
   setDiagramTitle,
 } from '../common/commonDb.js';
 export class TreeMapDB implements DiagramDB {
-  private data: TreemapData;
-  private state: ImperativeState<TreemapData>;
-
-  constructor() {
-    this.data = {
-      nodes: [],
-      levels: new Map(),
-      outerNodes: [],
-      classes: new Map(),
-    };
-
-    this.state = new ImperativeState<TreemapData>(() => structuredClone(this.data));
-  }
+  private nodes: TreemapNode[] = [];
+  private levels: Map<TreemapNode, number> = new Map<TreemapNode, number>();
+  private outerNodes: TreemapNode[] = [];
+  private classes: Map<string, DiagramStyleClassDef> = new Map<string, DiagramStyleClassDef>();
+  private root?: TreemapNode;
 
   public getNodes() {
-    return this.state.records.nodes;
+    return this.nodes;
   }
 
   public getConfig() {
-    // Use type assertion with unknown as intermediate step
     const defaultConfig = DEFAULT_CONFIG as unknown as { treemap: Required<TreemapDiagramConfig> };
     const userConfig = commonGetConfig() as unknown as { treemap?: Partial<TreemapDiagramConfig> };
-
     return cleanAndMerge({
       ...defaultConfig.treemap,
       ...(userConfig.treemap ?? {}),
@@ -45,31 +35,21 @@ export class TreeMapDB implements DiagramDB {
   }
 
   public addNode(node: TreemapNode, level: number) {
-    const data = this.state.records;
-    data.nodes.push(node);
-    data.levels.set(node, level);
-
+    this.nodes.push(node);
+    this.levels.set(node, level);
     if (level === 0) {
-      data.outerNodes.push(node);
-    }
-
-    // Set the root node if this is a level 0 node and we don't have a root yet
-    if (level === 0 && !data.root) {
-      data.root = node;
+      this.outerNodes.push(node);
+      this.root ??= node;
     }
   }
 
   public getRoot() {
-    return { name: '', children: this.state.records.outerNodes };
+    return { name: '', children: this.outerNodes };
   }
 
   public addClass(id: string, _style: string) {
-    // const classes = this.state.records.classes;
-    const styleClass = this.state.records.classes.get(id) ?? { id, styles: [], textStyles: [] };
-    this.state.records.classes.set(id, styleClass);
-
+    const styleClass = this.classes.get(id) ?? { id, styles: [], textStyles: [] };
     const styles = _style.replace(/\\,/g, '§§§').replace(/,/g, ';').replace(/§§§/g, ',').split(';');
-
     if (styles) {
       styles.forEach((s) => {
         if (isLabelStyle(s)) {
@@ -86,27 +66,30 @@ export class TreeMapDB implements DiagramDB {
         }
       });
     }
-
-    this.state.records.classes.set(id, styleClass);
+    this.classes.set(id, styleClass);
   }
 
   public getClasses() {
-    return this.state.records.classes;
+    return this.classes;
   }
 
   public getStylesForClass(classSelector: string): string[] {
-    return this.state.records.classes.get(classSelector)?.styles ?? [];
+    return this.classes.get(classSelector)?.styles ?? [];
   }
 
   public clear = () => {
     commonClear();
-    this.state.reset();
+    this.nodes = [];
+    this.levels = new Map();
+    this.outerNodes = [];
+    this.classes = new Map();
+    this.root = undefined;
   };
 
   public setAccTitle = setAccTitle;
-  public setAccDescription = setAccDescription;
-  public setDiagramTitle = setDiagramTitle;
   public getAccTitle = getAccTitle;
-  public getAccDescription = getAccDescription;
+  public setDiagramTitle = setDiagramTitle;
   public getDiagramTitle = getDiagramTitle;
+  public getAccDescription = getAccDescription;
+  public setAccDescription = setAccDescription;
 }
