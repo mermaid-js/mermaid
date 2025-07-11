@@ -126,3 +126,20 @@ describe('flow db getData', () => {
     expect(edges[0].curve).toBe('basis');
   });
 });
+
+describe('flow db direction', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+  });
+
+  it('should set direction to TB when TD is set', () => {
+    flowDb.setDirection('TD');
+    expect(flowDb.getDirection()).toBe('TB');
+  });
+
+  it('should correctly set direction irrespective of leading spaces', () => {
+    flowDb.setDirection(' TD');
+    expect(flowDb.getDirection()).toBe('TB');
+  });
+});
