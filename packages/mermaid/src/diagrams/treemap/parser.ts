@@ -2,15 +2,15 @@ import { parse } from '@mermaid-js/parser';
 import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
-import { db } from './db.js';
-import type { TreemapNode, TreemapAst } from './types.js';
+import type { TreemapNode, TreemapAst, TreemapDB } from './types.js';
 import { buildHierarchy } from './utils.js';
+import { TreeMapDB } from './db.js';
 
 /**
  * Populates the database with data from the Treemap AST
  * @param ast - The Treemap AST
  */
-const populate = (ast: TreemapAst) => {
+const populate = (ast: TreemapAst, db: TreemapDB) => {
   // We need to bypass the type checking for populateCommonDb
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   populateCommonDb(ast as any, db);
@@ -84,6 +84,8 @@ const getItemName = (item: { name?: string | number }): string => {
 };
 
 export const parser: ParserDefinition = {
+  // @ts-expect-error - TreeMapDB is not assignable to DiagramDB
+  parser: { yy: undefined },
   parse: async (text: string): Promise<void> => {
     try {
       // Use a generic parse that accepts any diagram type
@@ -91,7 +93,13 @@ export const parser: ParserDefinition = {
       const parseFunc = parse as (diagramType: string, text: string) => Promise<TreemapAst>;
       const ast = await parseFunc('treemap', text);
       log.debug('Treemap AST:', ast);
-      populate(ast);
+      const db = parser.parser?.yy;
+      if (!(db instanceof TreeMapDB)) {
+        throw new Error(
+          'parser.parser?.yy was not a TreemapDB. This is due to a bug within Mermaid, please report this issue at https://github.com/mermaid-js/mermaid/issues.'
+        );
+      }
+      populate(ast, db);
     } catch (error) {
       log.error('Error parsing treemap:', error);
       throw error;
