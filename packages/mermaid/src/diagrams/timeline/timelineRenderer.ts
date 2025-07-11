@@ -126,6 +126,9 @@ export const draw = async function (text: string, id: string, version: string, d
       };
       maxEventLineLengthTemp += await svgDraw.getVirtualNodeHeight(svg, eventNode, conf);
     }
+    if (task.events.length > 0) {
+      maxEventLineLengthTemp += (task.events.length - 1) * 10;
+    }
     maxEventLineLength = Math.max(maxEventLineLength, maxEventLineLengthTemp);
   }
 
@@ -285,16 +288,9 @@ export const drawTasks = async function (
       lineWrapper
         .append('line')
         .attr('x1', masterX + 190 / 2)
-        .attr('y1', masterY + maxTaskHeight) // One section head + one task + margins
-        .attr('x2', masterX + 190 / 2) // Subtract stroke width so arrow point is retained
-        .attr(
-          'y2',
-          masterY +
-            maxTaskHeight +
-            (isWithoutSections ? maxTaskHeight : maxSectionHeight) +
-            maxEventLineLength +
-            120
-        )
+        .attr('y1', masterY + maxTaskHeight) // Start from bottom of task box
+        .attr('x2', masterX + 190 / 2) // Same x coordinate for vertical line
+        .attr('y2', masterY + maxTaskHeight + 100 + maxEventLineLength + 100) // End at consistent depth with ample padding for visible dashed lines and arrowheads
         .attr('stroke-width', 2)
         .attr('stroke', 'black')
         .attr('marker-end', 'url(#arrowhead)')

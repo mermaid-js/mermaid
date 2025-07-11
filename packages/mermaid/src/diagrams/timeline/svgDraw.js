@@ -78,9 +78,8 @@ const processHtmlContent = async function (textElem, node, conf, isVirtual = fal
         foreignObject.attr('x', -node.width / 2).attr('y', 3);
 
         div.style('width', node.width + 'px');
-      } else {
-        bbox.height = divBBox.height;
       }
+      bbox.height = divBBox.height;
     }
   }
 
@@ -599,9 +598,7 @@ export const drawNode = async function (elem, node, fullSection, conf) {
 
   if (hasHtml) {
     const bbox = await processHtmlContent(textElem, node, conf, false);
-
-    const fontSize = conf.fontSize?.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
-    node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
+    node.height = bbox.height + node.padding;
     node.height = Math.max(node.height, node.maxHeight);
     node.width = node.width + 2 * node.padding;
   } else {
