@@ -84,7 +84,8 @@ const getItemName = (item: { name?: string | number }): string => {
 };
 
 export const parser: ParserDefinition = {
-  parser: { yy: new TreeMapDB() },
+  // @ts-expect-error - TreeMapDB is not assignable to DiagramDB
+  parser: { yy: undefined },
   parse: async (text: string): Promise<void> => {
     try {
       // Use a generic parse that accepts any diagram type
