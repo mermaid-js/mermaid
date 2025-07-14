@@ -26,7 +26,7 @@ jobs:
       - name: Validate pnpm-lock.yaml entries
         id: validate # give this step an ID so we can reference its outputs
         run: |
-          : > "$GITHUB_OUTPUT" 
+          : > $GITHUB_OUTPUT
           issues=()
 
           # 1) No tarball references
@@ -51,7 +51,7 @@ jobs:
               echo "errors<<EOF"
               printf '%s\n' "${issues[@]}"
               echo "EOF"
-            } >> "$GITHUB_OUTPUT"
+            } >> $GITHUB_OUTPUT
             exit 1
           fi
 
