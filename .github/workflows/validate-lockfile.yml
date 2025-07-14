@@ -46,12 +46,6 @@ jobs:
 
           # If any issues, output them and fail
           if [ ${#issues[@]} -gt 0 ]; then
-            # Use the new GITHUB_OUTPUT approach to set a multiline output
-            {
-              echo "errors<<EOF"
-              printf '%s\n' "${issues[@]}"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
             exit 1
           fi
 
