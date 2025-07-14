@@ -17,8 +17,8 @@ importers:
         specifier: ^3.44.9
         version: 3.50.2(encoding@0.1.13)(typescript@5.7.3)
       '@argos-ci/cypress':
-        specifier: ^5.0.0
-        version: 5.0.0(cypress@14.5.1)
+        specifier: ^5.0.1
+        version: 5.0.1(cypress@14.5.1)
       '@changesets/changelog-github':
         specifier: ^0.5.1
         version: 0.5.1(encoding@0.1.13)
@@ -788,8 +788,8 @@ packages:
     resolution: {integrity: sha512-P+tGofNLAtH0+e87M8sZc+juAtbOcnV6z2nA2MwB2OzUVVXGINJHAF2cK0ZUyXC9d8a7RL0+rQWkP4vXDA/gBw==}
     engines: {node: '>=18.0.0'}
 
-  '@argos-ci/cypress@5.0.0':
-    resolution: {integrity: sha512-EZm7nqKauLlZzumqu4T/vtMoUKdlngkI5FLYATmxZ6E+6s7wjJ5wcWl8Vxm9kl7r3l4cVdY2PM9hqde8D9zmXA==}
+  '@argos-ci/cypress@5.0.1':
+    resolution: {integrity: sha512-Noc46XIoiGmoWYiQOxYIQxbmENBCbbpJdw+AGbdH/R1c107x4ElTRObCiqEsdfV+k72UKge+B0DJgwH7mavDZw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       cypress: ^12.0.0 || ^13.0.0 || ^14.0.0
@@ -10751,7 +10751,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/cypress@5.0.0(cypress@14.5.1)':
+  '@argos-ci/cypress@5.0.1(cypress@14.5.1)':
     dependencies:
       '@argos-ci/browser': 4.1.2
       '@argos-ci/core': 3.2.1
