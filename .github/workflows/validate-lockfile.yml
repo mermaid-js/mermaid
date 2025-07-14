@@ -35,7 +35,7 @@ jobs:
 
           # 2) No unwanted vitepress paths
           if grep -qF 'packages/mermaid/src/vitepress' pnpm-lock.yaml; then
-            issues+=("• Disallowed path 'packages/mermaid/src/vitepress' present. Run `rm -rf packages/mermaid/src/vitepress && pnpm install` to regenerate.")
+            issues+=("• Disallowed path 'packages/mermaid/src/vitepress' present. Run \`rm -rf packages/mermaid/src/vitepress && pnpm install\` to regenerate.")
           fi
 
           # 3) Lockfile only changes when package.json changes
@@ -46,12 +46,11 @@ jobs:
 
           # If any issues, output them and fail
           if [ ${#issues[@]} -gt 0 ]; then
-            # Use the new GITHUB_OUTPUT approach to set a multiline output
             {
               echo "errors<<EOF"
               printf '%s\n' "${issues[@]}"
               echo "EOF"
-            } >> $GITHUB_OUTPUT
+            } >> "$GITHUB_OUTPUT"
             exit 1
           fi
 
@@ -63,6 +62,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             The following issue(s) were detected:
+              
             ${{ steps.validate.outputs.errors }}
 
             Please address these and push an update.
