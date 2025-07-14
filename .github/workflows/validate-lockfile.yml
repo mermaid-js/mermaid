@@ -46,6 +46,7 @@ jobs:
 
           # If any issues, output them and fail
           if [ ${#issues[@]} -gt 0 ]; then
+            printf '%s\n' "${issues[@]}" >> $GITHUB_OUTPUT
             exit 1
           fi
 
