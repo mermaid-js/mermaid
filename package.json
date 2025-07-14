@@ -83,7 +83,7 @@
     "@vitest/spy": "^3.0.6",
     "@vitest/ui": "^3.0.6",
     "ajv": "^8.17.1",
-    "chokidar": "4.0.3",
+    "chokidar": "3.6.0",
     "concurrently": "^9.1.2",
     "cors": "^2.8.5",
     "cpy-cli": "^5.0.0",
