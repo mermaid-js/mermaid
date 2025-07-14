@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.44.9",
-    "@argos-ci/cypress": "^4.0.3",
+    "@argos-ci/cypress": "^5.0.0",
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.27.12",
     "@cspell/eslint-plugin": "^8.19.3",
