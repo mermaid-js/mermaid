@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-patch: Update MindmapDB to use class based approach
+chore: Update MindmapDB to use class based approach
