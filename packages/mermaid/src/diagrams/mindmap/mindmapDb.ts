@@ -18,7 +18,7 @@ const nodeType = {
 
 export class MindmapDB {
   private nodes: MindmapNode[] = [];
-  private cnt = 0;
+  private count = 0;
   private elements: Record<number, D3Element> = {};
   public readonly nodeType: typeof nodeType;
 
@@ -36,7 +36,7 @@ export class MindmapDB {
   }
   public clear() {
     this.nodes = [];
-    this.cnt = 0;
+    this.count = 0;
     this.elements = {};
   }
 
@@ -68,7 +68,7 @@ export class MindmapDB {
     }
 
     const node: MindmapNode = {
-      id: this.cnt++,
+      id: this.count++,
       nodeId: sanitizeText(id, conf),
       level,
       descr: sanitizeText(descr, conf),
