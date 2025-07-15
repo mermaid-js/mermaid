@@ -52,6 +52,9 @@ exclude = [
 # Swimm returns 404, even though the link is valid
 "https://docs.swimm.io",
 
+# Certificate Error
+"https://noteshub.app",
+
 # Timeout
 "https://huehive.co",
 "https://foswiki.org",
