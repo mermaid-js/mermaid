@@ -21,10 +21,6 @@ export class TreeMapDB implements DiagramDB {
   private classes: Map<string, DiagramStyleClassDef> = new Map<string, DiagramStyleClassDef>();
   private root?: TreemapNode;
 
-  constructor() {
-    this.clear();
-  }
-
   public getNodes() {
     return this.nodes;
   }
