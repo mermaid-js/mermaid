@@ -15,8 +15,14 @@ describe('packet diagrams', () => {
     expect(getPacket()).toMatchInlineSnapshot('[]');
   });
 
+  it('should handle a packet definition', async () => {
+    const str = `packet`;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    expect(getPacket()).toMatchInlineSnapshot('[]');
+  });
+
   it('should handle diagram with data and title', async () => {
-    const str = `packet-beta
+    const str = `packet
     title Packet diagram
     accTitle: Packet accTitle
     accDescr: Packet accDescription
@@ -41,7 +47,7 @@ describe('packet diagrams', () => {
   });
 
   it('should handle single bits', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-10: "test"
     11: "single"
     `;
@@ -67,7 +73,7 @@ describe('packet diagrams', () => {
   });
 
   it('should handle bit counts', async () => {
-    const str = `packet-beta
+    const str = `packet
     +8: "byte"
     +16: "word"
     `;
@@ -93,7 +99,7 @@ describe('packet diagrams', () => {
   });
 
   it('should handle bit counts with bit or bits', async () => {
-    const str = `packet-beta
+    const str = `packet
     +8: "byte"
     +16: "word"
     `;
@@ -119,7 +125,7 @@ describe('packet diagrams', () => {
   });
 
   it('should split into multiple rows', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-10: "test"
     11-90: "multiple"
     `;
@@ -161,7 +167,7 @@ describe('packet diagrams', () => {
   });
 
   it('should split into multiple rows when cut at exact length', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     17-63: "multiple"
     `;
@@ -195,7 +201,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     18-20: "error"
     `;
@@ -205,7 +211,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous with bit counts', async () => {
-    const str = `packet-beta
+    const str = `packet
     +16: "test"
     18-20: "error"
     `;
@@ -215,7 +221,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous for single packets', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     18: "error"
     `;
@@ -225,7 +231,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous for single packets with bit counts', async () => {
-    const str = `packet-beta
+    const str = `packet
     +16: "test"
     18: "error"
     `;
@@ -235,7 +241,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous for single packets - 2', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     17: "good"
     19: "error"
@@ -246,7 +252,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if end is less than start', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     25-20: "error"
     `;
@@ -256,7 +262,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if bit count is 0', async () => {
-    const str = `packet-beta
+    const str = `packet
     +0: "test"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(

@@ -1,12 +1,12 @@
 // @ts-expect-error No types available for JISON
 import { parser as mindmap } from './parser/mindmap.jison';
-import mindmapDB from './mindmapDb.js';
+import { MindmapDB } from './mindmapDb.js';
 // Todo fix utils functions for tests
 import { setLogLevel } from '../../diagram-api/diagramAPI.js';
 
 describe('when parsing a mindmap ', function () {
   beforeEach(function () {
-    mindmap.yy = mindmapDB;
+    mindmap.yy = new MindmapDB();
     mindmap.yy.clear();
     setLogLevel('trace');
   });
