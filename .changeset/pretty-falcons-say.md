@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-patch: Updated treemapdb to use class based approach
+patch: Updated TreeMapDB to use class based approach
