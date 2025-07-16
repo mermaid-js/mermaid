@@ -1,11 +1,11 @@
-import { vi } from 'vitest';
+import { expect, vi } from 'vitest';
 import utils, { calculatePoint, cleanAndMerge, detectDirective } from './utils.js';
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import memoize from 'lodash-es/memoize.js';
-import { MockedD3 } from './tests/MockedD3.js';
 import { preprocessDiagram } from './preprocess.js';
+import { MOCKED_BBOX, ensureNodeFromSelector, jsdomIt } from './tests/util.js';
 
 addDiagrams();
 
@@ -369,53 +369,34 @@ describe('when initializing the id generator', function () {
 });
 
 describe('when inserting titles', function () {
-  const svg = new MockedD3('svg');
-  const mockedElement = {
-    getBBox: vi.fn().mockReturnValue({ x: 10, y: 11, width: 100, height: 200 }),
-  };
-  const fauxTitle = new MockedD3('title');
-
-  beforeEach(() => {
-    svg.node = vi.fn().mockReturnValue(mockedElement);
-  });
-
-  it('does nothing if the title is empty', function () {
-    const svgAppendSpy = vi.spyOn(svg, 'append');
+  jsdomIt('does nothing if the title is empty', function ({ svg }) {
     utils.insertTitle(svg, 'testClass', 0, '');
-    expect(svgAppendSpy).not.toHaveBeenCalled();
+    const titleNode = document.querySelector('svg > text');
+    expect(titleNode).toBeNull();
   });
 
-  it('appends the title as a text item with the given title text', function () {
-    const svgAppendSpy = vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const titleTextSpy = vi.spyOn(fauxTitle, 'text');
-
+  jsdomIt('appends the title as a text item with the given title text', function ({ svg }) {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(svgAppendSpy).toHaveBeenCalled();
-    expect(titleTextSpy).toHaveBeenCalledWith('test title');
+    const titleNode = ensureNodeFromSelector('svg > text');
+    expect(titleNode.innerHTML).toBe('test title');
   });
 
-  it('x value is the bounds x position + half of the bounds width', () => {
-    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
-
+  jsdomIt('x value is the bounds x position + half of the bounds width', ({ svg }) => {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(titleAttrSpy).toHaveBeenCalledWith('x', 10 + 100 / 2);
+    const titleNode = ensureNodeFromSelector('svg > text');
+    expect(titleNode.getAttribute('x')).toBe(`${MOCKED_BBOX.x + MOCKED_BBOX.width / 2}`);
   });
 
-  it('y value is the negative of given title top margin', () => {
-    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
-
+  jsdomIt('y value is the negative of given title top margin', ({ svg }) => {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(titleAttrSpy).toHaveBeenCalledWith('y', -5);
+    const titleNode = ensureNodeFromSelector('svg > text');
+    expect(titleNode.getAttribute('y')).toBe(`${MOCKED_BBOX.y - 5}`);
   });
 
-  it('class is the given css class', () => {
-    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
-
+  jsdomIt('class is the given css class', ({ svg }) => {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(titleAttrSpy).toHaveBeenCalledWith('class', 'testClass');
+    const titleNode = ensureNodeFromSelector('svg > text');
+    expect(titleNode.getAttribute('class')).toBe('testClass');
   });
 });
 
