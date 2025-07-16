@@ -414,7 +414,7 @@ columns 1
     G:1`;
 
       expect(() => block.parse(str)).toThrowError(
-        'width of block B is greater than the column width'
+        'Block B width 2 exceeds configured column width 1'
       );
     });
   });
