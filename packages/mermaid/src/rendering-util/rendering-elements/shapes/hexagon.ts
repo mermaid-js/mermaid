@@ -40,7 +40,10 @@ export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<
     options.fillStyle = 'solid';
   }
 
-  const halfWidth = w / 2;
+  let halfWidth = w / 2;
+  const m = halfWidth / 6; // Margin for label
+  halfWidth = halfWidth + m; // Adjusted half width for hexagon
+
   const halfHeight = h / 2;
 
   const fixedLength = halfHeight / 2;
