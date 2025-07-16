@@ -40,6 +40,10 @@
     {
       "groupName": "dompurify",
       "matchPackagePatterns": ["dompurify"]
+    },
+    {
+      "matchPackageNames": ["chokidar"],
+      "enabled": false
     }
   ],
   "dependencyDashboard": false,
