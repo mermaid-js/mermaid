@@ -13,8 +13,8 @@ entry Packet:
 
 PacketBlock:
   (
-    start=INT('-' end=INT)?
-    | '+' bits=INT
+    start=POSITIVE_INT('-' end=POSITIVE_INT)?
+    | '+' bits=POSITIVE_INT
   )
   ':' label=STRING
   EOL

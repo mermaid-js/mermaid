@@ -9,6 +9,7 @@ export {
   GitGraph,
   Radar,
   Treemap,
+  XY,
   Branch,
   Commit,
   Merge,
@@ -35,6 +36,7 @@ export {
   GitGraphGeneratedModule,
   RadarGeneratedModule,
   TreemapGeneratedModule,
+  XYGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -45,3 +47,4 @@ export * from './pie/index.js';
 export * from './architecture/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
+export * from './xy/index.js';
