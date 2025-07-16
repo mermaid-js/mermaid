@@ -84,6 +84,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 LLM integrations to create mermaid diagrams using AI from text descriptions.
 
 - [HueHive - Create mermaid diagrams with text](https://huehive.co/tools/diagrams)
+- [MCP Server Mermaid](https://github.com/hustcc/mcp-mermaid)
 
 ### CRM/ERP
 
