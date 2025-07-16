@@ -149,14 +149,16 @@ g.classGroup line {
   stroke-width: 1;
 }
   
-  .classTitle.abstract {
+.classTitle.abstract {
   font-style: italic;
   font-weight: normal;
 }
+
 .classTitle.enumeration {
   text-decoration: underline;
   font-weight: normal;
 }
+
 .classTitle.interface {
   font-weight: bold;
 }
