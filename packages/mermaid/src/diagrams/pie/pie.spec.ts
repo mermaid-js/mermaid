@@ -161,7 +161,7 @@ describe('pie', () => {
         "rats" : 40.12
     `);
       }).rejects.toThrowError(
-        '"dogs" has invalid value: -60.67.Negative values are not allowed in pie charts. All slice values must be > 0'
+        '"dogs" has invalid value: -60.67. Negative values are not allowed in pie charts. All slice values must be >= 0.'
       );
     });
 
