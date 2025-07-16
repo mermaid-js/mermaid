@@ -300,7 +300,7 @@ const setBlock = (block: Block) => {
   blockDatabase.set(block.id, block);
 };
 
-const getLogger = () => console;
+const getLogger = () => log;
 
 /**
  * Return all of the style classes

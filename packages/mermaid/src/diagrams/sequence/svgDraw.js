@@ -524,7 +524,7 @@ export const drawBox = function (elem, box, conf) {
       box.name,
       g,
       box.x,
-      box.y + (box.textMaxHeight || 0) / 2,
+      box.y + conf.boxTextMargin + (box.textMaxHeight || 0) / 2,
       box.width,
       0,
       { class: 'text' },
