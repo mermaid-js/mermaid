@@ -102,7 +102,9 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       typeof block.widthInColumns === 'number' &&
       block.widthInColumns > column
     ) {
-      throw new Error(`width of block ${block.id} is greater than the column width`);
+      throw new Error(
+        `Block ${block.id} width ${block.widthInColumns} exceeds configured column width ${column}`
+      );
     }
     if (block.label) {
       block.label = sanitizeText(block.label);
