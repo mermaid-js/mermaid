@@ -1,6 +1,7 @@
 // @ts-ignore: jison doesn't export types
 import block from './block.jison';
 import db from '../blockDB.js';
+import { log } from '../../../logger.js';
 
 describe('Block diagram', function () {
   describe('when parsing a block diagram graph it should handle > ', function () {
@@ -402,20 +403,24 @@ columns 1
       const B = blocks[0];
       expect(B.styles).toContain('fill:#f9F');
     });
-    it('should throw error when block width exceeds column width', () => {
+    it('should log a warning when block width exceeds column width', () => {
       const str = `block-beta
-    columns 1
-    A:1
-    B:2
-    C:3
-    D:4
-    E:3
-    F:2
-    G:1`;
+  columns 1
+  A:1
+  B:2
+  C:3
+  D:4
+  E:3
+  F:2
+  G:1`;
 
-      expect(() => block.parse(str)).toThrowError(
-        'Block B width 2 exceeds configured column width 1'
-      );
+      const logWarnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+      block.parse(str);
+
+      expect(logWarnSpy).toHaveBeenCalledWith('Block B width 2 exceeds configured column width 1');
+
+      logWarnSpy.mockRestore();
     });
   });
 

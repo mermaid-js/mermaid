@@ -102,7 +102,7 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       typeof block.widthInColumns === 'number' &&
       block.widthInColumns > column
     ) {
-      throw new Error(
+      log.warn(
         `Block ${block.id} width ${block.widthInColumns} exceeds configured column width ${column}`
       );
     }
