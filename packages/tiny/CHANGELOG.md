@@ -1,5 +1,48 @@
 # mermaid
 
+## 11.9.0
+
+### Minor Changes
+
+- [#6453](https://github.com/mermaid-js/mermaid/pull/6453) [`5acbd7e`](https://github.com/mermaid-js/mermaid/commit/5acbd7e762469d9d89a9c77faf6617ee13367f3a) Thanks [@sidharthv96](https://github.com/sidharthv96)! - feat: Add `getRegisteredDiagramsMetadata` to `mermaid`, which returns all the registered diagram IDs in mermaid
+
+### Patch Changes
+
+- [#6738](https://github.com/mermaid-js/mermaid/pull/6738) [`d90634b`](https://github.com/mermaid-js/mermaid/commit/d90634bf2b09e586b055729e07e9a1a31b21827c) Thanks [@shubham-mermaid](https://github.com/shubham-mermaid)! - chore: Updated TreeMapDB to use class based approach
+
+- [#6510](https://github.com/mermaid-js/mermaid/pull/6510) [`7a38eb7`](https://github.com/mermaid-js/mermaid/commit/7a38eb715d795cd5c66cb59357d64ec197b432e6) Thanks [@sidharthv96](https://github.com/sidharthv96)! - chore: Move packet diagram out of beta
+
+- [#6747](https://github.com/mermaid-js/mermaid/pull/6747) [`3e3ae08`](https://github.com/mermaid-js/mermaid/commit/3e3ae089305e1c7b9948b9e149eba6854fe7f2d6) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: adjust sequence diagram title positioning to prevent overlap with top border in Safari
+
+- [#6751](https://github.com/mermaid-js/mermaid/pull/6751) [`d3e2be3`](https://github.com/mermaid-js/mermaid/commit/d3e2be35be066adeb7fd502b4a24c223c3b53947) Thanks [@darshanr0107](https://github.com/darshanr0107)! - chore: Update MindmapDB to use class based approach
+
+- [#6715](https://github.com/mermaid-js/mermaid/pull/6715) [`637680d`](https://github.com/mermaid-js/mermaid/commit/637680d4d9e39b4f8cb6f05b4cb261e8f5693ac3) Thanks [@Syn3ugar](https://github.com/Syn3ugar)! - fix(timeline): fix loading `leftMargin` from config
+
+  The `timeline.leftMargin` config value should now correctly control the size of the left margin, instead of being ignored.
+
+- Updated dependencies [[`7a38eb7`](https://github.com/mermaid-js/mermaid/commit/7a38eb715d795cd5c66cb59357d64ec197b432e6)]:
+  - @mermaid-js/parser@0.6.2
+
+## 11.8.1
+
+### Patch Changes
+
+- Updated dependencies [[`0da2922`](https://github.com/mermaid-js/mermaid/commit/0da2922ee7f47959e324ec10d3d21ee70594f557)]:
+  - @mermaid-js/parser@0.6.1
+
+## 11.8.0
+
+### Minor Changes
+
+- [#6590](https://github.com/mermaid-js/mermaid/pull/6590) [`f338802`](https://github.com/mermaid-js/mermaid/commit/f338802642cdecf5b7ed6c19a20cf2a81effbbee) Thanks [@knsv](https://github.com/knsv)! - Adding support for the new diagram type nested treemap
+
+### Patch Changes
+
+- [#6707](https://github.com/mermaid-js/mermaid/pull/6707) [`592c5bb`](https://github.com/mermaid-js/mermaid/commit/592c5bb880c3b942710a2878d386bcb3eb35c137) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Log a warning when duplicate commit IDs are encountered in gitGraph to help identify and debug rendering issues caused by non-unique IDs.
+
+- Updated dependencies [[`f338802`](https://github.com/mermaid-js/mermaid/commit/f338802642cdecf5b7ed6c19a20cf2a81effbbee)]:
+  - @mermaid-js/parser@0.6.0
+
 ## 11.7.0
 
 ### Minor Changes
