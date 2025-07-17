@@ -615,9 +615,20 @@ export const draw = function (text, id, version, diagObj) {
    * @param h
    */
   function makeGrid(theSidePad, theTopPad, w, h) {
+    const dateFormat = diagObj.db.getDateFormat();
+    const userAxisFormat = diagObj.db.getAxisFormat();
+    let axisFormat;
+    if (userAxisFormat) {
+      axisFormat = userAxisFormat;
+    } else if (dateFormat === 'D') {
+      axisFormat = '%d';
+    } else {
+      axisFormat = conf.axisFormat ?? '%Y-%m-%d';
+    }
+
     let bottomXAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-      .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+      .tickFormat(timeFormat(axisFormat));
 
     const reTickInterval = /^([1-9]\d*)(millisecond|second|minute|hour|day|week|month)$/;
     const resultTickInterval = reTickInterval.exec(
@@ -669,7 +680,7 @@ export const draw = function (text, id, version, diagObj) {
     if (diagObj.db.topAxisEnabled() || conf.topAxis) {
       let topXAxis = axisTop(timeScale)
         .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-        .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+        .tickFormat(timeFormat(axisFormat));
 
       if (resultTickInterval !== null) {
         const every = resultTickInterval[1];
