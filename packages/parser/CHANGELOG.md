@@ -1,5 +1,11 @@
 # @mermaid-js/parser
 
+## 0.6.2
+
+### Patch Changes
+
+- [#6510](https://github.com/mermaid-js/mermaid/pull/6510) [`7a38eb7`](https://github.com/mermaid-js/mermaid/commit/7a38eb715d795cd5c66cb59357d64ec197b432e6) Thanks [@sidharthv96](https://github.com/sidharthv96)! - chore: Move packet diagram out of beta
+
 ## 0.6.1
 
 ### Patch Changes
