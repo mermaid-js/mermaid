@@ -1798,7 +1798,11 @@ Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRo
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
 ```
-%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+---
+config:
+  flowchart:
+    curve: stepBefore
+---
 graph LR
 ```
 
