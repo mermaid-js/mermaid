@@ -20,14 +20,11 @@ on:
     - cron: '30 8 * * *'
 
 permissions: # added using https://github.com/step-security/secure-repo
-  contents: read
+  contents: read # lychee only uses the GITHUB_TOKEN to avoid rate-limiting
 
 jobs:
   link-checker:
     runs-on: ubuntu-latest
-    permissions:
-      # lychee only uses the GITHUB_TOKEN to avoid rate-limiting
-      contents: read
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 

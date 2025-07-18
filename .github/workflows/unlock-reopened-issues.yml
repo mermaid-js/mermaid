@@ -4,6 +4,9 @@ on:
   issues:
     types: [reopened]
 
+permissions:
+  issues: write
+
 jobs:
   triage:
     runs-on: ubuntu-latest

@@ -6,13 +6,15 @@ on:
       - develop
   schedule:
     - cron: 29 15 * * 0
-permissions: read-all
+permissions:
+  id-token: write
+  security-events: write
+  contents: read
+  actions: read
+
 jobs:
   analysis:
     name: Scorecard analysis
-    permissions:
-      id-token: write
-      security-events: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

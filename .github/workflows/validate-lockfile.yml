@@ -1,52 +1,59 @@
-name: Validate pnpm-lock.yaml
+name: Validate Lockfile and Node Version
 
 on:
+  push:
+    branches: [main, develop]
   pull_request:
+    branches: [main, develop]
     paths:
       - 'pnpm-lock.yaml'
       - '**/package.json'
       - '.github/workflows/validate-lockfile.yml'
 
+permissions:
+  contents: read
+
 jobs:
   validate-lockfile:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up Node.js
+      - name: Setup pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: '.node-version'
+          cache: 'pnpm'
 
-      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Validate pnpm-lock.yaml entries
-        id: validate # give this step an ID so we can reference its outputs
+        id: validate
         run: |
           issues=()
 
-          # 1) No tarball references
           if grep -qF 'tarball:' pnpm-lock.yaml; then
             issues+=("• Tarball references found (forbidden)")
           fi
 
-          # 2) No unwanted vitepress paths
           if grep -qF 'packages/mermaid/src/vitepress' pnpm-lock.yaml; then
             issues+=("• Disallowed path 'packages/mermaid/src/vitepress' present. Run `rm -rf packages/mermaid/src/vitepress && pnpm install` to regenerate.")
           fi
 
-          # 3) Lockfile only changes when package.json changes
           git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} > changed.txt
           if grep -q '^pnpm-lock.yaml$' changed.txt && ! grep -q 'package.json' changed.txt; then
             issues+=("• pnpm-lock.yaml changed without any package.json modification")
           fi
 
-          # If any issues, output them and fail
           if [ ${#issues[@]} -gt 0 ]; then
-            # Use the new GITHUB_OUTPUT approach to set a multiline output
             {
               echo "errors<<EOF"
               printf '%s\n' "${issues[@]}"
@@ -54,6 +61,30 @@ jobs:
             } >> $GITHUB_OUTPUT
             exit 1
           fi
+
+      - name: Validate mermaid-live-editor compatibility
+        run: |
+          echo "Checking Node version compatibility for mermaid-live-editor..."
+          if [ ! -d "mermaid-live-editor" ]; then
+            git clone --single-branch https://github.com/mermaid-js/mermaid-live-editor.git
+          fi
+          cd mermaid-live-editor
+
+          REQUIRED_NODE=$(node -p "require('./package.json').engines?.node || 'not specified'")
+          CURRENT_NODE=$(node --version)
+
+          echo "Required Node version: $REQUIRED_NODE"
+          echo "Current Node version: $CURRENT_NODE"
+
+          yarn install
+
+      - name: Validate build process
+        run: |
+          echo "Testing editor.bash script compatibility..."
+          export COMMIT_REF="${{ github.sha }}"
+          export NODE_OPTIONS="--max_old_space_size=4096"
+          export COREPACK_ENABLE_STRICT='0'
+          ./scripts/editor.bash
 
       - name: Comment on PR if validation failed
         if: failure()

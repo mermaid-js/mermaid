@@ -12,16 +12,14 @@ concurrency:
 permissions:
   contents: read
   actions: write
+  id-token: write
+  issues: write
+  pull-requests: write
 
 jobs:
   preview:
     if: ${{ github.repository_owner == 'mermaid-js' }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-      issues: write
-      pull-requests: write
     name: Publish preview release
     timeout-minutes: 5
     steps:

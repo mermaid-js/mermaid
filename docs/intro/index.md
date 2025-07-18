@@ -329,7 +329,7 @@ Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@11>
 
 To Deploy Mermaid:
 
-1. You will need to install node v16, which would have npm
+1. You will need to install Node.js (version 16 or higher recommended), which includes npm
 2. Install mermaid
    - NPM: `npm i mermaid`
    - Yarn: `yarn add mermaid`
