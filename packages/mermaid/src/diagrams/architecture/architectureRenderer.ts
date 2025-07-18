@@ -52,7 +52,7 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
         type: 'service',
         id: service.id,
         icon: service.icon,
-        label: service.title,
+        label: service.label,
         parent: service.in,
         width: getConfigField('iconSize'),
         height: getConfigField('iconSize'),
@@ -100,7 +100,7 @@ function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
         type: 'group',
         id: group.id,
         icon: group.icon,
-        label: group.title,
+        label: group.label,
         parent: group.in,
       } as NodeSingularData,
       classes: 'node-group',
@@ -110,14 +110,14 @@ function addGroups(groups: ArchitectureGroup[], cy: cytoscape.Core) {
 
 function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
   edges.forEach((parsedEdge) => {
-    const { lhsId, rhsId, lhsInto, lhsGroup, rhsInto, lhsDir, rhsDir, rhsGroup, title } =
+    const { lhsId, rhsId, lhsInto, lhsGroup, rhsInto, lhsDir, rhsDir, rhsGroup, label } =
       parsedEdge;
     const edgeType = isArchitectureDirectionXY(parsedEdge.lhsDir, parsedEdge.rhsDir)
       ? 'segments'
       : 'straight';
     const edge: EdgeSingularData = {
       id: `${lhsId}-${rhsId}`,
-      label: title,
+      label: label,
       source: lhsId,
       sourceDir: lhsDir,
       sourceArrow: lhsInto,
