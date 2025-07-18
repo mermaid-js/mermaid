@@ -125,4 +125,43 @@ describe('flow db getData', () => {
     const { edges } = flowDb.getData();
     expect(edges[0].curve).toBe('basis');
   });
+
+  it('should support modifying interpolate using edge id syntax', () => {
+    flowDb.addVertex('A', { text: 'A', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('B', { text: 'B', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('C', { text: 'C', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addVertex('D', { text: 'D', type: 'text' }, undefined, [], [], '', {}, undefined);
+    flowDb.addLink(['A'], ['B'], {});
+    flowDb.addLink(['A'], ['C'], { id: 'e2' });
+    flowDb.addLink(['B'], ['D'], { id: 'e3' });
+    flowDb.addLink(['C'], ['D'], {});
+    flowDb.updateLinkInterpolate(['default'], 'stepBefore');
+    flowDb.updateLinkInterpolate([0], 'basis');
+    flowDb.addVertex(
+      'e2',
+      { text: 'Shouldnt be used', type: 'text' },
+      undefined,
+      [],
+      [],
+      '',
+      {},
+      ' curve: monotoneX '
+    );
+    flowDb.addVertex(
+      'e3',
+      { text: 'Shouldnt be used', type: 'text' },
+      undefined,
+      [],
+      [],
+      '',
+      {},
+      ' curve: catmullRom '
+    );
+
+    const { edges } = flowDb.getData();
+    expect(edges[0].curve).toBe('basis');
+    expect(edges[1].curve).toBe('monotoneX');
+    expect(edges[2].curve).toBe('catmullRom');
+    expect(edges[3].curve).toBe('stepBefore');
+  });
 });

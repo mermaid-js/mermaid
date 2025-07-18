@@ -1113,4 +1113,24 @@ end
       );
     });
   });
+
+  it('6617: Per Link Curve Styling using edge Ids', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A e1@-->B e5@--> E
+      E e7@--> D
+      B e3@-->D
+      A e2@-->C e4@-->D
+      C e6@--> F
+      F e8@--> D
+      e1@{ curve: natural }
+      e2@{ curve: stepAfter }
+      e3@{ curve: monotoneY }
+      e4@{ curve: bumpY }
+      e5@{ curve: linear }
+      e6@{ curve: catmullRom }
+      e7@{ curve: cardinal }
+      `
+    );
+  });
 });
