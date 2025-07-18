@@ -453,6 +453,10 @@ You have to call mermaid.initialize.`
       return;
     }
     tooltip = this.sanitizeText(tooltip);
+
+    // Backwards compatibility. No need to support variations with spaces in them,
+    // since older versions only supported exactly `<br>` and `<br/>`.
+    tooltip = tooltip.replaceAll('<br>', '\n').replaceAll('<br/>', '\n');
     for (const id of ids.split(',')) {
       this.tooltips.set(this.version === 'gen-1' ? this.lookUpDomId(id) : id, tooltip);
     }
@@ -574,7 +578,7 @@ You have to call mermaid.initialize.`
   }
 
   private setupToolTips(element: Element) {
-    let tooltipElem = select('.mermaidTooltip');
+    let tooltipElem = select<HTMLDivElement, unknown>('.mermaidTooltip');
     // @ts-ignore TODO: fix this
     if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
       // @ts-ignore TODO: fix this
@@ -599,11 +603,11 @@ You have to call mermaid.initialize.`
         const rect = (e.currentTarget as Element)?.getBoundingClientRect();
 
         tooltipElem.transition().duration(200).style('opacity', '.9');
+        // use `.innerText` instead of `.text()` to convert \n to line breaks
+        tooltipElem.node()!.innerText = el.attr('title');
         tooltipElem
-          .text(el.attr('title'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
           .style('top', window.scrollY + rect.bottom + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
         el.classed('hover', true);
       })
       .on('mouseout', (e: MouseEvent) => {
