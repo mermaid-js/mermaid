@@ -36,15 +36,41 @@ export async function textHelper<T extends SVGGraphicsElement>(
 
   annotationGroup = shapeSvg.insert('g').attr('class', 'annotation-group text');
   if (node.annotations.length > 0) {
-    const annotation = node.annotations[0];
-    await addText(annotationGroup, { text: `«${annotation}»` } as unknown as ClassMember, 0);
+    await addText(annotationGroup, { text: `` } as unknown as ClassMember, 0);
 
     const annotationGroupBBox = annotationGroup.node()!.getBBox();
     annotationGroupHeight = annotationGroupBBox.height;
   }
 
   labelGroup = shapeSvg.insert('g').attr('class', 'label-group text');
-  await addText(labelGroup, node, 0, ['font-weight: bolder']);
+
+  // Determine styling based on annotations
+  let labelStyles = ['font-weight: bolder']; // Default bold style
+  let labelClass = '';
+  if (node.annotations && node.annotations.length > 0) {
+    const annotation = node.annotations[0].toLowerCase();
+    switch (annotation) {
+      case 'abstract':
+        labelClass = 'abstract';
+        labelStyles = [];
+        break;
+      case 'enumeration':
+        labelClass = 'enumeration';
+        labelStyles = [];
+        break;
+      case 'interface':
+        labelClass = 'interface';
+        labelStyles = [];
+        break;
+      default:
+        labelStyles = ['font-weight: bolder'];
+        break;
+    }
+  }
+  // Apply the CSS class to the label group
+  labelGroup.attr('class', `label-group text classTitle ${labelClass}`);
+
+  await addText(labelGroup, node, 0, labelStyles);
   const labelGroupBBox = labelGroup.node()!.getBBox();
   labelGroupHeight = labelGroupBBox.height;
 
@@ -71,7 +97,7 @@ export async function textHelper<T extends SVGGraphicsElement>(
   // Center annotation
   if (annotationGroup !== null) {
     const annotationGroupBBox = annotationGroup.node()!.getBBox();
-    annotationGroup.attr('transform', `translate(${-annotationGroupBBox.width / 2})`);
+    annotationGroup.attr('transform', `translate(${-annotationGroupBBox.width / 2}, 0)`);
   }
 
   // Adjust label
