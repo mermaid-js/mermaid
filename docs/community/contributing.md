@@ -29,7 +29,8 @@ In GitHub, you first [**fork a mermaid repository**](https://github.com/mermaid-
 
 Then you **clone** a copy to your local development machine (e.g. where you code) to make a copy with all the files to work with.
 
-> **💡 Tip** > [Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
+> **💡 Tip**
+> [Here is a GitHub document that gives an overview of the process](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
 
 ```bash
 git clone git@github.com/your-fork/mermaid
