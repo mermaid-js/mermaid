@@ -114,7 +114,7 @@ IPSep-CoLa is ideal for:
 
 ## 🔍 Comparison Table
 
-| Feature                   | Dagre       | ELK                 | IPSep-CoLa (Upcoming)          |
+| Feature                   | Dagre       | ELK                 | IPSep-CoLa                     |
 | ------------------------- | ----------- | ------------------- | ------------------------------ |
 | Layout Type               | Layered DAG | Modular (varied)    | Constraint-driven force layout |
 | Edge Labeling             | ⚠️ Basic    | ✅ Yes              | ✅ Smart Placement             |

@@ -20,15 +20,15 @@ export async function adjustLayout(
     }
   }
 
-  data4Layout.edges.forEach((edge) => {
+  for (const edge of data4Layout.edges) {
     insertEdge(
       groups.edgePaths,
-      { ...edge },
+      edge,
       {},
       data4Layout.type,
       edge.start,
       edge.end,
       data4Layout.diagramId
     );
-  });
+  }
 }

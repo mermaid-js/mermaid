@@ -26,34 +26,13 @@ Before starting, ensure the following:
 
 ## 🔄 Step-by-Step Integration
 
-### 1. Clone the Mermaid Repository
-
-```bash
-git clone https://github.com/mermaid-js/mermaid.git
-cd mermaid
-```
-
-### 2. Install Dependencies
-
-Mermaid uses `pnpm` for dependency management:
-
-```bash
-pnpm i
-```
-
-### 3. Start the Development Server
-
-This will spin up a local dev environment with hot reload:
-
-```bash
-pnpm dev
-```
+### Refer [Mermaid Contributing Guide](/packages/mermaid/src/docs/community/contributing.md)
 
 ---
 
 ## 🧠 Implementing Your Custom Layout Algorithm
 
-### 4. Create Your Layout Folder
+### 1. Create Your Layout Folder
 
 Navigate to the relevant source directory and create a folder for your new algorithm:
 
@@ -65,7 +44,7 @@ touch myCustomLayout/index.ts
 
 > 📁 You can organize supporting files, utils, and types inside this folder.
 
-### 5. Register the Layout Algorithm
+### 2. Register the Layout Algorithm
 
 Open the file:
 
@@ -91,7 +70,7 @@ This tells Mermaid how to load your layout dynamically by name (`id`).
 
 ## 🧪 Testing Your Algorithm
 
-### 6. Create a Test File
+### 3. Create a Test File
 
 To visually test your layout implementation, create a test HTML file in:
 
@@ -127,7 +106,7 @@ Inside the file, load your diagram like this:
 </html>
 ```
 
-### 7. Open in Browser
+### 4. Open in Browser
 
 After running `pnpm dev`, open your test in the browser:
 

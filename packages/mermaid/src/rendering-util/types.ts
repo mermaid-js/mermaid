@@ -72,6 +72,12 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  isEdgeLabel?: boolean;
+  edgeStart?: string;
+  edgeEnd?: string;
+  layer?: number;
+  order?: number;
+  isDummy?: boolean;
 }
 
 /**
@@ -80,23 +86,11 @@ interface BaseNode {
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
-  isEdgeLabel?: boolean;
-  edgeStart?: string;
-  edgeEnd?: string;
-  layer?: number;
-  order?: number;
-  isDummy?: boolean;
 }
 
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
   isGroup: false;
-  isEdgeLabel?: boolean;
-  edgeStart?: string;
-  edgeEnd?: string;
-  layer?: number;
-  order?: number;
-  isDummy?: boolean;
 }
 
 // Common properties for any node in the system
