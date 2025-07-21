@@ -456,6 +456,20 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   line.attr('stroke-width', 2);
   line.attr('stroke', 'none'); // handled by theme/css anyway
   line.style('fill', 'none'); // remove any fill colour
+
+  if (type === diagObj.db.LINETYPE.SOLID_TOP) {
+    line.attr('marker-end', 'url(' + url + '#solidTopArrowHead)');
+  }
+  if (type === diagObj.db.LINETYPE.SOLID_BOTTOM) {
+    line.attr('marker-end', 'url(' + url + '#solidBottomArrowHead)');
+  }
+  if (type === diagObj.db.LINETYPE.STICK_TOP) {
+    line.attr('marker-end', 'url(' + url + '#stickTopArrowHead)');
+  }
+  if (type === diagObj.db.LINETYPE.STICK_BOTTOM) {
+    line.attr('marker-end', 'url(' + url + '#stickBottomArrowHead)');
+  }
+
   if (type === diagObj.db.LINETYPE.SOLID || type === diagObj.db.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
   }
@@ -824,6 +838,10 @@ export const draw = async function (_text: string, id: string, _version: string,
   svgDraw.insertArrowCrossHead(diagram);
   svgDraw.insertArrowFilledHead(diagram);
   svgDraw.insertSequenceNumber(diagram);
+  svgDraw.insertSolidTopArrowHead(diagram);
+  svgDraw.insertSolidBottomArrowHead(diagram);
+  svgDraw.insertStickTopArrowHead(diagram);
+  svgDraw.insertStickBottomArrowHead(diagram);
 
   /**
    * @param msg - The message to draw.
@@ -1035,6 +1053,10 @@ export const draw = async function (_text: string, id: string, _version: string,
         diagObj.db.LINETYPE.SOLID_OPEN,
         diagObj.db.LINETYPE.DOTTED_OPEN,
         diagObj.db.LINETYPE.SOLID,
+        diagObj.db.LINETYPE.SOLID_TOP,
+        diagObj.db.LINETYPE.SOLID_BOTTOM,
+        diagObj.db.LINETYPE.STICK_TOP,
+        diagObj.db.LINETYPE.STICK_BOTTOM,
         diagObj.db.LINETYPE.DOTTED,
         diagObj.db.LINETYPE.SOLID_CROSS,
         diagObj.db.LINETYPE.DOTTED_CROSS,
@@ -1430,6 +1452,10 @@ const buildMessageModel = function (msg, actors, diagObj) {
       diagObj.db.LINETYPE.SOLID_OPEN,
       diagObj.db.LINETYPE.DOTTED_OPEN,
       diagObj.db.LINETYPE.SOLID,
+      diagObj.db.LINETYPE.SOLID_TOP,
+      diagObj.db.LINETYPE.SOLID_BOTTOM,
+      diagObj.db.LINETYPE.STICK_TOP,
+      diagObj.db.LINETYPE.STICK_BOTTOM,
       diagObj.db.LINETYPE.DOTTED,
       diagObj.db.LINETYPE.SOLID_CROSS,
       diagObj.db.LINETYPE.DOTTED_CROSS,
@@ -1480,7 +1506,14 @@ const buildMessageModel = function (msg, actors, diagObj) {
      * Shorten the length of arrow at the end and move the marker forward (using refX) to have a clean arrowhead
      * This is not required for open arrows that don't have arrowheads
      */
-    if (![diagObj.db.LINETYPE.SOLID_OPEN, diagObj.db.LINETYPE.DOTTED_OPEN].includes(msg.type)) {
+    if (
+      ![
+        diagObj.db.LINETYPE.SOLID_OPEN,
+        diagObj.db.LINETYPE.DOTTED_OPEN,
+        diagObj.db.LINETYPE.STICK_TOP,
+        diagObj.db.LINETYPE.STICK_BOTTOM,
+      ].includes(msg.type)
+    ) {
       stopx += adjustValue(3);
     }
 

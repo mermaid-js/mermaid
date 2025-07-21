@@ -1099,6 +1099,77 @@ const _drawMenuItemTextCandidateFunc = (function () {
   };
 })();
 
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param elem
+ */
+export const insertSolidTopArrowHead = function (elem) {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', 'solidTopArrowHead')
+    .attr('refX', 7.9)
+    .attr('refY', 5.25)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 12)
+    .attr('orient', 'auto-start-reverse')
+    .append('path')
+    .attr('d', 'M 0 -0.25 L 10 6 L 0 6 z'); // this is actual shape for arrowhead
+};
+
+export const insertSolidBottomArrowHead = function (elem) {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', 'solidBottomArrowHead')
+    .attr('refX', 7.9)
+    .attr('refY', 4.7)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 12)
+    .attr('orient', 'auto-start-reverse')
+    .append('path')
+    .attr('d', 'M 0.1 10 L 10 4 L 0 4 z');
+};
+
+export const insertStickTopArrowHead = function (elem) {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', ' stickTopArrowHead')
+    .attr('refX', 10.5)
+    .attr('refY', 10)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 12)
+    .attr('orient', 'auto-start-reverse')
+    .append('path')
+    .attr('d', 'M 0 0 L 10 10')
+    .attr('stroke', 'black')
+    .attr('stroke-width', 1.5)
+    .attr('fill', 'none');
+};
+
+export const insertStickBottomArrowHead = function (elem) {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', ' stickBottomArrowHead')
+    .attr('refX', 10)
+    .attr('refY', 5.25)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 12)
+    .attr('orient', 'auto-start-reverse')
+    .append('path')
+    .attr('d', 'M 10 5 L 0 10') // Diagonal line down from (10,5) to (0,10)
+    .attr('stroke', 'black')
+    .attr('stroke-width', 1.5)
+    .attr('fill', 'none');
+};
+
 export default {
   drawRect,
   drawText,
@@ -1121,4 +1192,9 @@ export default {
   getNoteRect,
   fixLifeLineHeights,
   sanitizeUrl,
+
+  insertSolidTopArrowHead,
+  insertSolidBottomArrowHead,
+  insertStickTopArrowHead,
+  insertStickBottomArrowHead,
 };

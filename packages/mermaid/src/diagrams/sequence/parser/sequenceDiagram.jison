@@ -88,6 +88,10 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 ":"                             								return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
+"=>"                                                            return 'SOLID_ARROW_TOP';
+"==>"                                                           return 'SOLID_ARROW_BOTTOM';
+"=->"                                                           return 'STICK_ARROW_TOP';
+"==->"                                                          return 'STICK_ARROW_BOTTOM';
 <<EOF>>                                                         return 'NEWLINE';
 .                                                               return 'INVALID';
 
@@ -313,6 +317,10 @@ signaltype
 	: SOLID_OPEN_ARROW  { $$ = yy.LINETYPE.SOLID_OPEN; }
 	| DOTTED_OPEN_ARROW { $$ = yy.LINETYPE.DOTTED_OPEN; }
 	| SOLID_ARROW       { $$ = yy.LINETYPE.SOLID; }
+	| SOLID_ARROW_TOP    { $$ = yy.LINETYPE.SOLID_TOP; }
+	| SOLID_ARROW_BOTTOM { $$ = yy.LINETYPE.SOLID_BOTTOM; }
+	| STICK_ARROW_TOP    { $$ = yy.LINETYPE.STICK_TOP; }
+	| STICK_ARROW_BOTTOM { $$ = yy.LINETYPE.STICK_BOTTOM; }
   | BIDIRECTIONAL_SOLID_ARROW       { $$ = yy.LINETYPE.BIDIRECTIONAL_SOLID; }
 	| DOTTED_ARROW      { $$ = yy.LINETYPE.DOTTED; }
 	| BIDIRECTIONAL_DOTTED_ARROW      { $$ = yy.LINETYPE.BIDIRECTIONAL_DOTTED; }
