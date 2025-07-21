@@ -20,7 +20,7 @@ Before starting, ensure the following:
 
 ## 🔄 Step-by-Step Integration
 
-### Refer [Mermaid Contributing Guide](/packages/mermaid/src/docs/community/contributing.md)
+### Refer [Mermaid Contributing Guide](../community/contributing.md)
 
 ---
 
