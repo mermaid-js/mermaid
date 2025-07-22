@@ -440,7 +440,15 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     type === diagObj.db.LINETYPE.DOTTED_CROSS ||
     type === diagObj.db.LINETYPE.DOTTED_POINT ||
     type === diagObj.db.LINETYPE.DOTTED_OPEN ||
-    type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED
+    type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED ||
+    type === diagObj.db.LINETYPE.SOLID_TOP_DOTTED ||
+    type === diagObj.db.LINETYPE.SOLID_BOTTOM_DOTTED ||
+    type === diagObj.db.LINETYPE.STICK_TOP_DOTTED ||
+    type === diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED ||
+    type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED ||
+    type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED ||
+    type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED ||
+    type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED
   ) {
     line.style('stroke-dasharray', '3, 3');
     line.attr('class', 'messageLine1');
@@ -457,29 +465,47 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
   line.attr('stroke', 'none'); // handled by theme/css anyway
   line.style('fill', 'none'); // remove any fill colour
 
-  if (type === diagObj.db.LINETYPE.SOLID_TOP) {
+  if (type === diagObj.db.LINETYPE.SOLID_TOP || type === diagObj.db.LINETYPE.SOLID_TOP_DOTTED) {
     line.attr('marker-end', 'url(' + url + '#solidTopArrowHead)');
   }
-  if (type === diagObj.db.LINETYPE.SOLID_BOTTOM) {
+  if (
+    type === diagObj.db.LINETYPE.SOLID_BOTTOM ||
+    type === diagObj.db.LINETYPE.SOLID_BOTTOM_DOTTED
+  ) {
     line.attr('marker-end', 'url(' + url + '#solidBottomArrowHead)');
   }
-  if (type === diagObj.db.LINETYPE.STICK_TOP) {
+  if (type === diagObj.db.LINETYPE.STICK_TOP || type === diagObj.db.LINETYPE.STICK_TOP_DOTTED) {
     line.attr('marker-end', 'url(' + url + '#stickTopArrowHead)');
   }
-  if (type === diagObj.db.LINETYPE.STICK_BOTTOM) {
+  if (
+    type === diagObj.db.LINETYPE.STICK_BOTTOM ||
+    type === diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED
+  ) {
     line.attr('marker-end', 'url(' + url + '#stickBottomArrowHead)');
   }
 
-  if (type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE) {
+  if (
+    type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE ||
+    type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED
+  ) {
     line.attr('marker-start', 'url(' + url + '#solidBottomArrowHead)');
   }
-  if (type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE) {
+  if (
+    type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE ||
+    type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED
+  ) {
     line.attr('marker-start', 'url(' + url + '#solidTopArrowHead)');
   }
-  if (type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE) {
+  if (
+    type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE ||
+    type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED
+  ) {
     line.attr('marker-start', 'url(' + url + '#stickBottomArrowHead)');
   }
-  if (type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE) {
+  if (
+    type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE ||
+    type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED
+  ) {
     line.attr('marker-start', 'url(' + url + '#stickTopArrowHead)');
   }
 
@@ -1066,14 +1092,27 @@ export const draw = async function (_text: string, id: string, _version: string,
         diagObj.db.LINETYPE.SOLID_OPEN,
         diagObj.db.LINETYPE.DOTTED_OPEN,
         diagObj.db.LINETYPE.SOLID,
+
         diagObj.db.LINETYPE.SOLID_TOP,
         diagObj.db.LINETYPE.SOLID_BOTTOM,
         diagObj.db.LINETYPE.STICK_TOP,
         diagObj.db.LINETYPE.STICK_BOTTOM,
+
+        diagObj.db.LINETYPE.SOLID_TOP_DOTTED,
+        diagObj.db.LINETYPE.SOLID_BOTTOM_DOTTED,
+        diagObj.db.LINETYPE.STICK_TOP_DOTTED,
+        diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED,
+
         diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
         diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
         diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE,
         diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE,
+
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED,
+
         diagObj.db.LINETYPE.DOTTED,
         diagObj.db.LINETYPE.SOLID_CROSS,
         diagObj.db.LINETYPE.DOTTED_CROSS,
@@ -1469,14 +1508,27 @@ const buildMessageModel = function (msg, actors, diagObj) {
       diagObj.db.LINETYPE.SOLID_OPEN,
       diagObj.db.LINETYPE.DOTTED_OPEN,
       diagObj.db.LINETYPE.SOLID,
+
       diagObj.db.LINETYPE.SOLID_TOP,
       diagObj.db.LINETYPE.SOLID_BOTTOM,
       diagObj.db.LINETYPE.STICK_TOP,
       diagObj.db.LINETYPE.STICK_BOTTOM,
+
+      diagObj.db.LINETYPE.SOLID_TOP_DOTTED,
+      diagObj.db.LINETYPE.SOLID_BOTTOM_DOTTED,
+      diagObj.db.LINETYPE.STICK_TOP_DOTTED,
+      diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED,
+
       diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
       diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
       diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE,
       diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE,
+
+      diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED,
+      diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+      diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED,
+      diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED,
+
       diagObj.db.LINETYPE.DOTTED,
       diagObj.db.LINETYPE.SOLID_CROSS,
       diagObj.db.LINETYPE.DOTTED_CROSS,
@@ -1531,10 +1583,24 @@ const buildMessageModel = function (msg, actors, diagObj) {
       ![
         diagObj.db.LINETYPE.SOLID_OPEN,
         diagObj.db.LINETYPE.DOTTED_OPEN,
+
         diagObj.db.LINETYPE.STICK_TOP,
         diagObj.db.LINETYPE.STICK_BOTTOM,
+
+        diagObj.db.LINETYPE.STICK_TOP_DOTTED,
+        diagObj.db.LINETYPE.STICK_BOTTOM_DOTTED,
+
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+
         diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE,
         diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE,
+
+        diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED,
+
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
       ].includes(msg.type)
     ) {
       stopx += adjustValue(3);
@@ -1544,9 +1610,14 @@ const buildMessageModel = function (msg, actors, diagObj) {
      * Shorten start position of bidirectional arrow to accommodate for second arrowhead
      */
     if (
-      [diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID, diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED].includes(
-        msg.type
-      )
+      [
+        diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID,
+        diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED,
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
+      ].includes(msg.type)
     ) {
       startx -= adjustValue(3);
     }
