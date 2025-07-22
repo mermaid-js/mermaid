@@ -470,6 +470,19 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     line.attr('marker-end', 'url(' + url + '#stickBottomArrowHead)');
   }
 
+  if (type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE) {
+    line.attr('marker-start', 'url(' + url + '#solidBottomArrowHead)');
+  }
+  if (type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE) {
+    line.attr('marker-start', 'url(' + url + '#solidTopArrowHead)');
+  }
+  if (type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE) {
+    line.attr('marker-start', 'url(' + url + '#stickBottomArrowHead)');
+  }
+  if (type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE) {
+    line.attr('marker-start', 'url(' + url + '#stickTopArrowHead)');
+  }
+
   if (type === diagObj.db.LINETYPE.SOLID || type === diagObj.db.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
   }
@@ -1057,6 +1070,10 @@ export const draw = async function (_text: string, id: string, _version: string,
         diagObj.db.LINETYPE.SOLID_BOTTOM,
         diagObj.db.LINETYPE.STICK_TOP,
         diagObj.db.LINETYPE.STICK_BOTTOM,
+        diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
+        diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE,
         diagObj.db.LINETYPE.DOTTED,
         diagObj.db.LINETYPE.SOLID_CROSS,
         diagObj.db.LINETYPE.DOTTED_CROSS,
@@ -1456,6 +1473,10 @@ const buildMessageModel = function (msg, actors, diagObj) {
       diagObj.db.LINETYPE.SOLID_BOTTOM,
       diagObj.db.LINETYPE.STICK_TOP,
       diagObj.db.LINETYPE.STICK_BOTTOM,
+      diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE,
+      diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE,
+      diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE,
+      diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE,
       diagObj.db.LINETYPE.DOTTED,
       diagObj.db.LINETYPE.SOLID_CROSS,
       diagObj.db.LINETYPE.DOTTED_CROSS,
@@ -1512,6 +1533,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
         diagObj.db.LINETYPE.DOTTED_OPEN,
         diagObj.db.LINETYPE.STICK_TOP,
         diagObj.db.LINETYPE.STICK_BOTTOM,
+        diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE,
+        diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE,
       ].includes(msg.type)
     ) {
       stopx += adjustValue(3);
