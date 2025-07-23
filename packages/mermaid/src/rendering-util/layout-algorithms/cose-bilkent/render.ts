@@ -115,6 +115,18 @@ export const render = async (
     }
   });
 
+  layoutResult.edges.forEach((positionedEdge) => {
+    const edge = data4Layout.edges.find((e) => e.id === positionedEdge.id);
+    if (edge) {
+      // Update the edge data with positioned coordinates
+      edge.points = [
+        { x: positionedEdge.startX, y: positionedEdge.startY },
+        { x: positionedEdge.midX, y: positionedEdge.midY },
+        { x: positionedEdge.endX, y: positionedEdge.endY },
+      ];
+    }
+  });
+
   // Step 4: Insert and position edges
   log.debug('Inserting and positioning edges');
 
@@ -134,10 +146,7 @@ export const render = async (
         if (positionedEdge) {
           log.debug('APA01 positionedEdge', positionedEdge);
           // Create edge path with positioned coordinates
-          const edgeWithPath = {
-            ...edge,
-            points: positionedEdge.points,
-          };
+          const edgeWithPath = { ...edge };
 
           // Insert the edge path
           const paths = insertEdge(
