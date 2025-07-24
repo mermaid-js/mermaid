@@ -79,7 +79,54 @@ describe('pie chart', () => {
       `pie showData
         "Dogs": 50
         "Cats": 25
+      `,
+      {
+        pie: {
+          useMaxWidth: true,
+        },
+        themeVariables: {
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '16px',
+          pieOuterStrokeWidth: '1px',
+          legendTextColor: '#000',
+          pieStrokeColor: '#000',
+        },
+      }
+    );
+  });
+
+  it('renders short title without shrink or wrap', () => {
+    imgSnapshotTest(`
+      pie
+        title Short
+        "A" : 60
+        "B" : 40
+    `);
+  });
+
+  it('should render a pie chart with a medium-length title', () => {
+    renderGraph(
+      `pie title Distribution of Pets in Urban Areas
+        "Dogs": 50
+        "Cats": 30
+        "Birds": 20
       `
     );
+    cy.get('svg').should('exist');
+    cy.get('text').contains('Distribution of Pets in Urban Areas').should('exist');
+  });
+
+  it('should render a pie chart with a long title without clipping', () => {
+    renderGraph(
+      `pie title Analysis of the Distribution of Various Pet Species Across Different Metropolitan Regions
+        "Dogs": 50
+        "Cats": 30
+        "Birds": 20
+      `
+    );
+    cy.get('.pieTitleText tspan').then(($tspans) => {
+      const titleText = [...$tspans].map((el) => el.textContent).join(' ');
+      expect(titleText).to.include('Analysis of the Distribution');
+    });
   });
 });

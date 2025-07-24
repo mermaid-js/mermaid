@@ -6,7 +6,7 @@ import type { DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import { cleanAndMerge, parseFontSize } from '../../utils.js';
+import { cleanAndMerge, parseFontSize, wrapLabel } from '../../utils.js';
 import type { D3Section, PieDB, Sections } from './pieTypes.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
@@ -26,6 +26,31 @@ const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
   );
   return pie(pieData);
 };
+const createTitle = (
+  svg: SVG,
+  lines: string[],
+  fontSize: number,
+  pieWidth: number
+): d3.Selection<SVGTextElement, unknown, Element | null, unknown> => {
+  const tempTitle = svg
+    .append<SVGTextElement>('text')
+    .attr('x', pieWidth / 2)
+    .attr('y', 30)
+    .attr('class', 'pieTitleText')
+    .style('text-anchor', 'middle')
+    .style('white-space', 'pre-line')
+    .style('font-size', fontSize + 'px');
+
+  lines.forEach((line, idx) => {
+    tempTitle
+      .append('tspan')
+      .attr('x', pieWidth / 2)
+      .attr('dy', idx === 0 ? 0 : '1.2em')
+      .text(line);
+  });
+
+  return tempTitle;
+};
 
 /**
  * Draws a Pie Chart with the data given in text.
@@ -35,6 +60,7 @@ const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
  * @param _version - MermaidJS version from package.json.
  * @param diagObj - A standard diagram containing the DB and the text and type etc of the diagram.
  */
+
 export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   log.debug('rendering pie chart\n' + text);
   const db = diagObj.db as PieDB;
@@ -46,8 +72,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const height = 450;
   const pieWidth: number = height;
   const svg: SVG = selectSvgElement(id);
+
   const group: SVGGroup = svg.append('g');
-  group.attr('transform', 'translate(' + pieWidth / 2 + ',' + height / 2 + ')');
 
   const { themeVariables } = globalConfig;
   let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
@@ -125,12 +151,50 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .style('text-anchor', 'middle')
     .attr('class', 'slice');
 
-  group
-    .append('text')
-    .text(db.getDiagramTitle())
-    .attr('x', 0)
-    .attr('y', -(height - 50) / 2)
-    .attr('class', 'pieTitleText');
+  const titleText = db.getDiagramTitle();
+  let titleHeight = 0;
+  const TITLE_MARGIN = 10;
+  let extraMargin = 0;
+
+  if (titleText) {
+    const maxAvailableWidth = pieWidth - MARGIN;
+    let fontSize = 25;
+    const minFontSize = 10;
+    const titleWrapConfig = {
+      fontFamily: 'Arial',
+      fontWeight: 400,
+      joinWith: '<br/>',
+    };
+
+    let wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
+      ...titleWrapConfig,
+      fontSize,
+    });
+
+    let lines = wrappedTitle.split('<br/>');
+    let tempTitle = createTitle(svg, lines, fontSize, pieWidth);
+    let bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
+
+    while (bbox && bbox.width > maxAvailableWidth && fontSize > minFontSize) {
+      fontSize -= 1;
+      tempTitle.remove();
+      wrappedTitle = wrapLabel(titleText, maxAvailableWidth, {
+        ...titleWrapConfig,
+        fontSize,
+      });
+      lines = wrappedTitle.split('<br/>');
+      tempTitle = createTitle(svg, lines, fontSize, pieWidth);
+      bbox = (tempTitle.node() as SVGGraphicsElement)?.getBBox();
+    }
+
+    titleHeight = bbox?.height || 0;
+    extraMargin = lines.length * 3;
+  }
+
+  group.attr(
+    'transform',
+    `translate(${pieWidth / 2}, ${height / 2 + titleHeight + TITLE_MARGIN + extraMargin})`
+  );
 
   // Add the legends/annotations for each section
   const legend = group
@@ -177,7 +241,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const totalWidth = pieWidth + MARGIN + LEGEND_RECT_SIZE + LEGEND_SPACING + longestTextWidth;
 
   // Set viewBox
-  svg.attr('viewBox', `0 0 ${totalWidth} ${height}`);
+  svg.attr('viewBox', `0 0 ${totalWidth} ${height + titleHeight + TITLE_MARGIN}`);
+
   configureSvgSize(svg, height, totalWidth, pieConfig.useMaxWidth);
 };
 
