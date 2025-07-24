@@ -206,9 +206,9 @@ const flattenNodes = (node: MindmapNode, processedNodes: MindmapLayoutNode[]): v
       case nodeType.ROUNDED_RECT:
         return 'rounded';
       case nodeType.CLOUD:
-        return 'rounded'; // Map cloud to rounded for now
+        return 'cloud';
       case nodeType.BANG:
-        return 'circle'; // Map bang to circle for now
+        return 'bang';
       case nodeType.HEXAGON:
         return 'hexagon';
       case nodeType.DEFAULT:

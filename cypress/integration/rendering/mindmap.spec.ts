@@ -105,6 +105,126 @@ root))bang((
     );
   });
 
+  it('Bang and cloud shape with dagre layout', () => {
+    imgSnapshotTest(
+      `---
+      config:
+        layout: dagre
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+          Long history
+          ::icon(fa fa-book)
+          Popularisation
+            British popular psychology author Tony Buzan
+        Research
+          On effectiveness<br/>and features
+          On Automatic creation
+            Uses
+                Creative techniques
+                Strategic planning
+                Argument mapping
+        Tools
+          Pen and paper
+          Mermaid
+    `,
+      {},
+      undefined,
+      shouldHaveRoot
+    );
+  });
+
+  it('Bang and cloud shape with elk layout', () => {
+    imgSnapshotTest(
+      `---
+      config:
+        layout: elk
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+          Long history
+          ::icon(fa fa-book)
+          Popularisation
+            British popular psychology author Tony Buzan
+        Research
+          On effectiveness<br/>and features
+          On Automatic creation
+            Uses
+                Creative techniques
+                Strategic planning
+                Argument mapping
+        Tools
+          Pen and paper
+          Mermaid
+    `,
+      {},
+      undefined,
+      shouldHaveRoot
+    );
+  });
+
+  it('Bang and cloud shape with cose-bilkent layout', () => {
+    imgSnapshotTest(
+      `---
+      config:
+        layout: cose-bilkent
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+          Long history
+          ::icon(fa fa-book)
+          Popularisation
+            British popular psychology author Tony Buzan
+        Research
+          On effectiveness<br/>and features
+          On Automatic creation
+            Uses
+                Creative techniques
+                Strategic planning
+                Argument mapping
+        Tools
+          Pen and paper
+          Mermaid
+    `,
+      {},
+      undefined,
+      shouldHaveRoot
+    );
+  });
+
+  it('Bang and cloud shape with tidy-tree layout', () => {
+    imgSnapshotTest(
+      `---
+      config:
+        layout: tidy-tree
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+          Long history
+          ::icon(fa fa-book)
+          Popularisation
+            British popular psychology author Tony Buzan
+        Research
+          On effectiveness<br/>and features
+          On Automatic creation
+            Uses
+                Creative techniques
+                Strategic planning
+                Argument mapping
+        Tools
+          Pen and paper
+          Mermaid
+    `,
+      {},
+      undefined,
+      shouldHaveRoot
+    );
+  });
+
   it('braches', () => {
     imgSnapshotTest(
       `mindmap

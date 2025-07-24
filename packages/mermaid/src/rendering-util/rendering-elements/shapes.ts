@@ -61,6 +61,8 @@ import { erBox } from './shapes/erBox.js';
 import { classBox } from './shapes/classBox.js';
 import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
+import { bang } from './shapes/bang.js';
+import { cloud } from './shapes/cloud.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -134,6 +136,22 @@ export const shapesDefs = [
     description: 'Starting point',
     aliases: ['circ'],
     handler: circle,
+  },
+  {
+    semanticName: 'Bang',
+    name: 'Bang',
+    shortName: 'bang',
+    description: 'Bang',
+    aliases: ['bang'],
+    handler: bang,
+  },
+  {
+    semanticName: 'Cloud',
+    name: 'Cloud',
+    shortName: 'cloud',
+    description: 'cloud',
+    aliases: ['cloud'],
+    handler: cloud,
   },
   {
     semanticName: 'Decision',
