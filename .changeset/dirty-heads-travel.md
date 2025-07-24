@@ -2,4 +2,4 @@
 'mermaid': minor
 ---
 
-chore: mermaid diagrams for flowchart mindmap and mermaidAPI
+chore: Mermaid diagrams for flowchart mindmap and mermaidAPI
