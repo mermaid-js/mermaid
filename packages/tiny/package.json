@@ -1,0 +1,25 @@
+{
+  "name": "@mermaid-js/tiny",
+  "version": "11.9.0",
+  "description": "Tiny version of mermaid",
+  "type": "commonjs",
+  "main": "./dist/mermaid.tiny.js",
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "author": "Sidharth Vinod",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -16,6 +16,19 @@ export interface NodeMetaData {
 export interface EdgeMetaData {
   animation?: 'fast' | 'slow';
   animate?: boolean;
+  curve?:
+    | 'basis'
+    | 'bumpX'
+    | 'bumpY'
+    | 'cardinal'
+    | 'catmullRom'
+    | 'linear'
+    | 'monotoneX'
+    | 'monotoneY'
+    | 'natural'
+    | 'step'
+    | 'stepAfter'
+    | 'stepBefore';
 }
 import type { MermaidConfig } from './config.type.js';
 

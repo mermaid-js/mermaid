@@ -1,8 +1,9 @@
 import { createText } from '../../rendering-util/createText.js';
-import type { FilledMindMapNode, MindmapDB } from './mindmapTypes.js';
+import type { FilledMindMapNode } from './mindmapTypes.js';
 import type { Point, D3Element } from '../../types.js';
 import { parseFontSize } from '../../utils.js';
 import type { MermaidConfig } from '../../config.type.js';
+import type { MindmapDB } from './mindmapDb.js';
 
 const MAX_SECTIONS = 12;
 

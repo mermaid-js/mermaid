@@ -83,7 +83,11 @@ flowchart LR
 Use double quotes and backticks "\` text \`" to enclose the markdown text.
 
 ```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
     newLines["`Line1
@@ -93,7 +97,11 @@ flowchart LR
 ```
 
 ```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
     newLines["`Line1
@@ -932,7 +940,7 @@ Mermaid also introduces 2 special shapes to enhance your flowcharts: **icon** an
 
 ### Icon Shape
 
-You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions provided [here](../config/icons.md). The syntax for defining an icon shape is as follows:
+You can use the `icon` shape to include an icon in your flowchart. To use icons, you need to register the icon pack first. Follow the instructions to [add custom icons](../config/icons.md). The syntax for defining an icon shape is as follows:
 
 ```mermaid-example
 flowchart TD
@@ -944,7 +952,7 @@ flowchart TD
     A@{ icon: "fa:user", form: "square", label: "User Icon", pos: "t", h: 60 }
 ```
 
-### Parameters
+#### Parameters
 
 - **icon**: The name of the icon from the registered icon pack.
 - **form**: Specifies the background shape of the icon. If not defined there will be no background to icon. Options include:
@@ -961,17 +969,12 @@ flowchart TD
 
 You can use the `image` shape to include an image in your flowchart. The syntax for defining an image shape is as follows:
 
-```mermaid-example
+```
 flowchart TD
     A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
 ```
 
-```mermaid
-flowchart TD
-    A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
-```
-
-### Parameters
+#### Parameters
 
 - **img**: The URL of the image to be displayed.
 - **label**: The text label associated with the image. This can be any string. If not defined, no label will be displayed.
@@ -1193,12 +1196,12 @@ To give an edge an ID, prepend the edge syntax with the ID followed by an `@` ch
 
 ```mermaid-example
 flowchart LR
-  A e1@–> B
+  A e1@--> B
 ```
 
 ```mermaid
 flowchart LR
-  A e1@–> B
+  A e1@--> B
 ```
 
 In this example, `e1` is the ID of the edge connecting `A` to `B`. You can then use this ID in later definitions or style statements, just like with nodes.
@@ -1229,13 +1232,13 @@ In the initial version, two animation speeds are supported: `fast` and `slow`. S
 
 ```mermaid-example
 flowchart LR
-  A e1@–> B
+  A e1@--> B
   e1@{ animation: fast }
 ```
 
 ```mermaid
 flowchart LR
-  A e1@–> B
+  A e1@--> B
   e1@{ animation: fast }
 ```
 
@@ -1247,14 +1250,14 @@ You can also animate edges by assigning a class to them and then defining animat
 
 ```mermaid-example
 flowchart LR
-  A e1@–> B
+  A e1@--> B
   classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
   class e1 animate
 ```
 
 ```mermaid
 flowchart LR
-  A e1@–> B
+  A e1@--> B
   classDef animate stroke-dasharray: 9,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
   class e1 animate
 ```
@@ -1592,7 +1595,11 @@ flowchart LR
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
 
 ```mermaid-example
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
 subgraph "One"
   a("`The **cat**
@@ -1605,7 +1612,11 @@ end
 ```
 
 ```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
+---
+config:
+  flowchart:
+    htmlLabels: false
+---
 flowchart LR
 subgraph "One"
   a("`The **cat**
@@ -1784,15 +1795,54 @@ It is possible to style the type of curve used for lines between items, if the d
 Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRom`, `linear`, `monotoneX`, `monotoneY`,
 `natural`, `step`, `stepAfter`, and `stepBefore`.
 
+For a full list of available curves, including an explanation of custom curves, refer to
+the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
+
+Line styling can be achieved in two ways:
+
+1. Change the curve style of all the lines
+2. Change the curve style of a particular line
+
+#### Diagram level curve style
+
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
 ```
-%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+---
+config:
+  flowchart:
+    curve: stepBefore
+---
 graph LR
 ```
 
-For a full list of available curves, including an explanation of custom curves, refer to
-the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
+#### Edge level curve style using Edge IDs (v\<MERMAID_RELEASE_VERSION>+)
+
+You can assign IDs to [edges](#attaching-an-id-to-edges). After assigning an ID you can modify the line style by modifying the edge's `curve` property using the following syntax:
+
+```mermaid-example
+flowchart LR
+    A e1@==> B
+    A e2@--> C
+    e1@{ curve: linear }
+    e2@{ curve: natural }
+```
+
+```mermaid
+flowchart LR
+    A e1@==> B
+    A e2@--> C
+    e1@{ curve: linear }
+    e2@{ curve: natural }
+```
+
+```info
+Any edge curve style modified at the edge level overrides the diagram level style.
+```
+
+```info
+If the same edge is modified multiple times the last modification will be rendered.
+```
 
 ### Styling a node
 
@@ -1936,6 +1986,19 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
+There are two ways to display these FontAwesome icons:
+
+### Register FontAwesome icon packs (v11.7.0+)
+
+You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
+
+Supported prefixes: `fa`, `fab`, `fas`, `far`, `fal`, `fad`.
+
+> **Note**
+> Note that it will fall back to FontAwesome CSS if FontAwesome packs are not registered.
+
+### Register FontAwesome CSS
+
 Mermaid supports Font Awesome if the CSS is included on the website.
 Mermaid does not have any restriction on the version of Font Awesome that can be used.
 
@@ -2016,7 +2079,9 @@ The _elk_ renderer is an experimental feature.
 You can change the renderer to elk by adding this directive:
 
 ```
-%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+config:
+  flowchart:
+    defaultRenderer: "elk"
 ```
 
 > **Note**

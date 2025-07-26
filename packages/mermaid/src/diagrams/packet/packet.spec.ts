@@ -15,8 +15,14 @@ describe('packet diagrams', () => {
     expect(getPacket()).toMatchInlineSnapshot('[]');
   });
 
+  it('should handle a packet definition', async () => {
+    const str = `packet`;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    expect(getPacket()).toMatchInlineSnapshot('[]');
+  });
+
   it('should handle diagram with data and title', async () => {
-    const str = `packet-beta
+    const str = `packet
     title Packet diagram
     accTitle: Packet accTitle
     accDescr: Packet accDescription
@@ -30,6 +36,7 @@ describe('packet diagrams', () => {
       [
         [
           {
+            "bits": 11,
             "end": 10,
             "label": "test",
             "start": 0,
@@ -40,7 +47,7 @@ describe('packet diagrams', () => {
   });
 
   it('should handle single bits', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-10: "test"
     11: "single"
     `;
@@ -49,11 +56,13 @@ describe('packet diagrams', () => {
       [
         [
           {
+            "bits": 11,
             "end": 10,
             "label": "test",
             "start": 0,
           },
           {
+            "bits": 1,
             "end": 11,
             "label": "single",
             "start": 11,
@@ -63,8 +72,60 @@ describe('packet diagrams', () => {
     `);
   });
 
+  it('should handle bit counts', async () => {
+    const str = `packet
+    +8: "byte"
+    +16: "word"
+    `;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    expect(getPacket()).toMatchInlineSnapshot(`
+      [
+        [
+          {
+            "bits": 8,
+            "end": 7,
+            "label": "byte",
+            "start": 0,
+          },
+          {
+            "bits": 16,
+            "end": 23,
+            "label": "word",
+            "start": 8,
+          },
+        ],
+      ]
+    `);
+  });
+
+  it('should handle bit counts with bit or bits', async () => {
+    const str = `packet
+    +8: "byte"
+    +16: "word"
+    `;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    expect(getPacket()).toMatchInlineSnapshot(`
+      [
+        [
+          {
+            "bits": 8,
+            "end": 7,
+            "label": "byte",
+            "start": 0,
+          },
+          {
+            "bits": 16,
+            "end": 23,
+            "label": "word",
+            "start": 8,
+          },
+        ],
+      ]
+    `);
+  });
+
   it('should split into multiple rows', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-10: "test"
     11-90: "multiple"
     `;
@@ -73,11 +134,13 @@ describe('packet diagrams', () => {
       [
         [
           {
+            "bits": 11,
             "end": 10,
             "label": "test",
             "start": 0,
           },
           {
+            "bits": 20,
             "end": 31,
             "label": "multiple",
             "start": 11,
@@ -85,6 +148,7 @@ describe('packet diagrams', () => {
         ],
         [
           {
+            "bits": 31,
             "end": 63,
             "label": "multiple",
             "start": 32,
@@ -92,6 +156,7 @@ describe('packet diagrams', () => {
         ],
         [
           {
+            "bits": 26,
             "end": 90,
             "label": "multiple",
             "start": 64,
@@ -102,7 +167,7 @@ describe('packet diagrams', () => {
   });
 
   it('should split into multiple rows when cut at exact length', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     17-63: "multiple"
     `;
@@ -111,11 +176,13 @@ describe('packet diagrams', () => {
       [
         [
           {
+            "bits": 17,
             "end": 16,
             "label": "test",
             "start": 0,
           },
           {
+            "bits": 14,
             "end": 31,
             "label": "multiple",
             "start": 17,
@@ -123,6 +190,7 @@ describe('packet diagrams', () => {
         ],
         [
           {
+            "bits": 31,
             "end": 63,
             "label": "multiple",
             "start": 32,
@@ -133,7 +201,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     18-20: "error"
     `;
@@ -142,8 +210,18 @@ describe('packet diagrams', () => {
     );
   });
 
+  it('should throw error if numbers are not continuous with bit counts', async () => {
+    const str = `packet
+    +16: "test"
+    18-20: "error"
+    `;
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 18 - 20 is not contiguous. It should start from 16.]`
+    );
+  });
+
   it('should throw error if numbers are not continuous for single packets', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     18: "error"
     `;
@@ -152,8 +230,18 @@ describe('packet diagrams', () => {
     );
   });
 
+  it('should throw error if numbers are not continuous for single packets with bit counts', async () => {
+    const str = `packet
+    +16: "test"
+    18: "error"
+    `;
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 18 - 18 is not contiguous. It should start from 16.]`
+    );
+  });
+
   it('should throw error if numbers are not continuous for single packets - 2', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     17: "good"
     19: "error"
@@ -164,12 +252,21 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if end is less than start', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     25-20: "error"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: Packet block 25 - 20 is invalid. End must be greater than start.]`
+    );
+  });
+
+  it('should throw error if bit count is 0', async () => {
+    const str = `packet
+    +0: "test"
+    `;
+    await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Packet block 0 is invalid. Cannot have a zero bit field.]`
     );
   });
 });

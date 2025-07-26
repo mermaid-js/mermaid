@@ -64,7 +64,7 @@ describe('pie chart', () => {
     });
   });
 
-  it('should render a pie diagram when textPosition is setted', () => {
+  it('should render a pie diagram when textPosition is set', () => {
     imgSnapshotTest(
       `pie
         "Dogs": 50

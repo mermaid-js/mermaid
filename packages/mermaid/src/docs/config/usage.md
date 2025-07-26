@@ -92,6 +92,12 @@ Mermaid can load multiple diagrams, in the same page.
 > Try it out, save this code as HTML and load it using any browser.
 > (Except Internet Explorer, please don't use Internet Explorer.)
 
+## Tiny Mermaid
+
+We offer a smaller version of Mermaid that's approximately half the size of the full library. This tiny version doesn't support Mindmap Diagrams, Architecture Diagrams, KaTeX rendering, or lazy loading.
+
+If you need a more lightweight version without these features, you can use [Mermaid Tiny](https://github.com/mermaid-js/mermaid/tree/develop/packages/tiny).
+
 ## Enabling Click Event and Tags in Nodes
 
 A `securityLevel` configuration has to first be cleared. `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality. This was introduced in version 8.2 as a security improvement, aimed at preventing malicious use.

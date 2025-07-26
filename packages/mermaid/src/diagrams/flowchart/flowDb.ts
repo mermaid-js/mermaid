@@ -139,6 +139,9 @@ export class FlowDB implements DiagramDB {
       if (edgeDoc?.animation !== undefined) {
         edge.animation = edgeDoc.animation;
       }
+      if (edgeDoc?.curve !== undefined) {
+        edge.interpolate = edgeDoc.curve;
+      }
       return;
     }
 
@@ -315,11 +318,11 @@ You have to call mermaid.initialize.`
 
     log.info('addLink', _start, _end, id);
 
-    // for a group syntax like A e1@--> B & C, only the first edge should have an the userDefined id
+    // for a group syntax like A e1@--> B & C, only the first edge should have a userDefined id
     // the rest of the edges should have auto generated ids
     for (const start of _start) {
       for (const end of _end) {
-        //use the id only for last node in _start and and first node in _end
+        //use the id only for last node in _start and first node in _end
         const isLastStart = start === _start[_start.length - 1];
         const isFirstEnd = end === _end[0];
         if (isLastStart && isFirstEnd) {
@@ -651,7 +654,8 @@ You have to call mermaid.initialize.`
       const prims: any = { boolean: {}, number: {}, string: {} };
       const objs: any[] = [];
 
-      let dir; //  = undefined; direction.trim();
+      let dir: string | undefined;
+
       const nodeList = a.filter(function (item) {
         const type = typeof item;
         if (item.stmt && item.stmt === 'dir') {
@@ -670,7 +674,16 @@ You have to call mermaid.initialize.`
       return { nodeList, dir };
     };
 
-    const { nodeList, dir } = uniq(list.flat());
+    const result = uniq(list.flat());
+    const nodeList = result.nodeList;
+    let dir = result.dir;
+    const flowchartConfig = getConfig().flowchart ?? {};
+    dir =
+      dir ??
+      (flowchartConfig.inheritDir
+        ? (this.getDirection() ?? (getConfig() as any).direction ?? undefined)
+        : undefined);
+
     if (this.version === 'gen-1') {
       for (let i = 0; i < nodeList.length; i++) {
         nodeList[i] = this.lookUpDomId(nodeList[i]);
@@ -681,6 +694,7 @@ You have to call mermaid.initialize.`
     title = title || '';
     title = this.sanitizeText(title);
     this.subCount = this.subCount + 1;
+
     const subGraph = {
       id: id,
       nodes: nodeList,

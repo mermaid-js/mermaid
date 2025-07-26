@@ -379,6 +379,15 @@ function layoutArchitecture(
           },
         },
       ],
+      layout: {
+        name: 'grid',
+        boundingBox: {
+          x1: 0,
+          x2: 100,
+          y1: 0,
+          y2: 100,
+        },
+      },
     });
     // Remove element after layout
     renderEl.remove();
@@ -500,6 +509,8 @@ function layoutArchitecture(
 }
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram) => {
+  // TODO: Add title support for architecture diagrams
+
   const db = diagObj.db as ArchitectureDB;
 
   const services = db.getServices();

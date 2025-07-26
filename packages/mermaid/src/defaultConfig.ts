@@ -71,6 +71,10 @@ const config: RequiredDeep<MermaidConfig> = {
         fontWeight: this.personFontWeight,
       };
     },
+    flowchart: {
+      ...defaultConfigJson.flowchart,
+      inheritDir: false, // default to legacy behavior
+    },
 
     external_personFont: function () {
       return {
@@ -260,6 +264,18 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   radar: {
     ...defaultConfigJson.radar,
+  },
+  treemap: {
+    useMaxWidth: true,
+    padding: 10,
+    diagramPadding: 8,
+    showValues: true,
+    nodeWidth: 100,
+    nodeHeight: 40,
+    borderWidth: 1,
+    valueFontSize: 12,
+    labelFontSize: 14,
+    valueFormat: ',',
   },
 };
 
