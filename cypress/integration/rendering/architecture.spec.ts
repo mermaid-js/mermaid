@@ -242,6 +242,23 @@ describe.skip('architecture diagram', () => {
       `
     );
   });
+
+  it('should render an error due to overlapping nodes', () => {
+    // #6120
+    imgSnapshotTest(
+      `architecture-beta
+            group clients(cloud)[Clients]
+            group vercel_cloud(cloud)[Vercel cloud]
+
+            service mobile_app(internet)[Mobile app] in clients
+            service web_app(internet)[Web app] in clients
+            service middleware(middleware)[Middleware] in vercel_cloud
+
+            mobile_app:R -- L:middleware
+            web_app:R -- L:middleware
+      `
+    );
+  });
 });
 
 // Skipped as the layout is not deterministic, and causes issues in E2E tests.
