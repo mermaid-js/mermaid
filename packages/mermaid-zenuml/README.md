@@ -104,6 +104,7 @@ zenuml
 ```
 
 Available annotators include:
+
 - `@Actor` - Human figure
 - `@Database` - Database symbol
 - `@Boundary` - Boundary symbol
@@ -380,4 +381,4 @@ MIT
 
 - [ZenUML Official Website](https://zenuml.com)
 - [Mermaid Documentation](https://mermaid.js.org)
-- [GitHub Repository](https://github.com/mermaid-js/mermaid) 
+- [GitHub Repository](https://github.com/mermaid-js/mermaid)
