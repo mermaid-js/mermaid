@@ -7,10 +7,16 @@ import { setConfig } from '../../diagram-api/diagramAPI.js';
 import renderer from './sequenceRenderer.js';
 import type { MermaidConfig } from '../../config.type.js';
 
+const db = new SequenceDB();
+parser.yy = {
+  parseMessage: db.parseMessage.bind(db),
+  matchAsActorOrParticipant: db.matchAsActorOrParticipant.bind(db),
+};
+
 export const diagram: DiagramDefinition = {
   parser,
   get db() {
-    return new SequenceDB();
+    return db;
   },
   renderer,
   styles,

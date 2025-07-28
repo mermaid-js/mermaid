@@ -107,6 +107,7 @@ export class SequenceDB implements DiagramDB {
     this.apply = this.apply.bind(this);
     this.parseBoxData = this.parseBoxData.bind(this);
     this.parseMessage = this.parseMessage.bind(this);
+    this.matchAsActorOrParticipant = this.matchAsActorOrParticipant.bind(this);
 
     this.clear();
 
@@ -339,6 +340,23 @@ export class SequenceDB implements DiagramDB {
     };
     log.debug(`parseMessage: ${JSON.stringify(message)}`);
     return message;
+  }
+
+  public matchAsActorOrParticipant(
+    tokenName: string,
+    tokenType: string,
+    inputRemainder: string,
+    lexer: any
+  ): string {
+    log.info({ tokenName });
+    const arrowLike = /^\s*(->>|-->>|->|-->|<<->>|<<-->>|-x|--x|-\))/;
+    const colonLike = /^\s*:/;
+
+    if (arrowLike.test(inputRemainder) || colonLike.test(inputRemainder)) {
+      return 'ACTOR';
+    }
+    lexer.begin('ID'); // used  the passed lexer
+    return tokenType;
   }
 
   // We expect the box statement to be color first then description
