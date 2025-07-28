@@ -26,7 +26,10 @@ export default eyesPlugin(
         config.env.useArgos = process.env.RUN_VISUAL_TEST === 'true';
 
         if (config.env.useArgos) {
-          registerArgosTask(on, config);
+          registerArgosTask(on, config, {
+            // Enable upload to Argos only when it runs on CI.
+            uploadToArgos: !!process.env.CI,
+          });
         } else {
           addMatchImageSnapshotPlugin(on, config);
         }
