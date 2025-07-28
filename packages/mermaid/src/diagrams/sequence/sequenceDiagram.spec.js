@@ -104,6 +104,7 @@ describe('more than one sequence diagram', () => {
       [
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Alice",
           "id": "0",
           "message": "Hello Bob, how are you?",
@@ -113,6 +114,7 @@ describe('more than one sequence diagram', () => {
         },
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Bob",
           "id": "1",
           "message": "I am good thanks!",
@@ -131,6 +133,7 @@ describe('more than one sequence diagram', () => {
       [
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Alice",
           "id": "0",
           "message": "Hello Bob, how are you?",
@@ -140,6 +143,7 @@ describe('more than one sequence diagram', () => {
         },
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Bob",
           "id": "1",
           "message": "I am good thanks!",
@@ -160,6 +164,7 @@ describe('more than one sequence diagram', () => {
       [
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Alice",
           "id": "0",
           "message": "Hello John, how are you?",
@@ -169,6 +174,7 @@ describe('more than one sequence diagram', () => {
         },
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "John",
           "id": "1",
           "message": "I am good thanks!",
@@ -2037,5 +2043,35 @@ Bob->>Alice:Got it!
     expect(messages[0].message).toBe('');
     expect(messages[0].from).toBe('Alice');
     expect(messages[0].to).toBe('Bob');
+  });
+
+  it('1 should parse ', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    actor Bob
+    actor Alice
+        Bob -|\\ Alice: Hello Alice, how are you?
+        Bob -|/ Alice: Hello Alice, how are you?
+        Bob -// Alice: Hello Alice, how are you?
+        Bob -\\\\ Alice: Hello Alice, how are you?
+        
+        Bob \\|- Alice: Hello Alice, how are you?
+        Bob /|- Alice: Hello Alice, how are you?
+        Bob //- Alice: Hello Alice, how are you?
+        Bob \\\\- Alice: Hello Alice, how are you?        
+    `);
+
+    const messages = diagram.db.getMessages();
+  });
+
+  it('2 should parse ', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    actor Bob
+    actor Alice
+      Alice ()<<->>() Bob: hey?
+    `);
+
+    const messages = diagram.db.getMessages();
   });
 });
