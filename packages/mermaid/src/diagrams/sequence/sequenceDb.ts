@@ -270,7 +270,7 @@ export class SequenceDB implements DiagramDB {
       wrap: message?.wrap ?? this.autoWrap(),
       type: messageType,
       activate,
-      centralConnection,
+      centralConnection: centralConnection ?? 0,
     });
     return true;
   }
