@@ -82,6 +82,10 @@ const LINETYPE = {
   SOLID_ARROW_BOTTOM_REVERSE_DOTTED: 56,
   STICK_ARROW_TOP_REVERSE_DOTTED: 57,
   STICK_ARROW_BOTTOM_REVERSE_DOTTED: 58,
+
+  CENTRAL_CONNECTION: 59,
+  CENTRAL_CONNECTION_REVERSE: 60,
+  CENTRAL_CONNECTION_DUAL: 61,
 } as const;
 
 const ARROWTYPE = {
@@ -238,7 +242,8 @@ export class SequenceDB implements DiagramDB {
     idTo?: Message['to'],
     message?: { text: string; wrap: boolean },
     messageType?: number,
-    activate = false
+    activate = false,
+    centralConnection?: number
   ) {
     if (messageType === this.LINETYPE.ACTIVE_END) {
       const cnt = this.activationCount(idFrom ?? '');
@@ -265,6 +270,7 @@ export class SequenceDB implements DiagramDB {
       wrap: message?.wrap ?? this.autoWrap(),
       type: messageType,
       activate,
+      centralConnection,
     });
     return true;
   }
@@ -557,6 +563,12 @@ export class SequenceDB implements DiagramDB {
         case 'activeStart':
           this.addSignal(param.actor, undefined, undefined, param.signalType);
           break;
+        case 'centralConnection':
+          this.addSignal(param.actor, undefined, undefined, param.signalType);
+          break;
+        case 'centralConnectionReverse':
+          this.addSignal(param.actor, undefined, undefined, param.signalType);
+          break;
         case 'activeEnd':
           this.addSignal(param.actor, undefined, undefined, param.signalType);
           break;
@@ -600,7 +612,14 @@ export class SequenceDB implements DiagramDB {
               this.state.records.lastDestroyed = undefined;
             }
           }
-          this.addSignal(param.from, param.to, param.msg, param.signalType, param.activate);
+          this.addSignal(
+            param.from,
+            param.to,
+            param.msg,
+            param.signalType,
+            param.activate,
+            param.centralConnection
+          );
           break;
         case 'boxStart':
           this.addBox(param.boxData);

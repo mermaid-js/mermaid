@@ -73,7 +73,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "off"															return 'off';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
-[^\/\\\+\<->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)|\-\|\\|\-\\|\-\/|\-\/\/|\-\|\/|\/\|\-|\\\|\-|\/\/\-|\\\\\-|\/\|\-|\-\-\|\\|\-\-))[\-]*[^\+\<->\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; } //final_4.11
+[^\/\\\+\()\<->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)|\-\|\\|\-\\|\-\/|\-\/\/|\-\|\/|\/\|\-|\\\|\-|\/\/\-|\\\\\-|\/\|\-|\-\-\|\\|\-\-|\(\)))[\-]*[^\+\<->\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; } //final_4.11
 "->>"                                                           return 'SOLID_ARROW';
 "<<->>"                                                           return 'BIDIRECTIONAL_SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
@@ -113,6 +113,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 ":"                             								return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
+"()"                                                            return '()';
 <<EOF>>                                                         return 'NEWLINE';
 .                                                               return 'INVALID';
 
@@ -321,6 +322,20 @@ signal
 	| actor signaltype '-' actor text2
 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $1.actor}
+	             ]}
+    | actor signaltype '()' actor text2
+	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5, activate: true, centralConnection: yy.LINETYPE.CENTRAL_CONNECTION},
+	              {type: 'centralConnection', signalType: yy.LINETYPE.CENTRAL_CONNECTION, actor: $4.actor, }
+	             ]}
+    
+	| actor '()' signaltype actor text2
+	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$3, msg:$5, activate: false, centralConnection: yy.LINETYPE.CENTRAL_CONNECTION_REVERSE},
+	              {type: 'centralConnectionReverse', signalType: yy.LINETYPE.CENTRAL_CONNECTION_REVERSE, actor: $1.actor}
+	             ]}
+	| actor '()' signaltype '()' actor text2
+	{ $$ = [$1,$5,{type: 'addMessage', from:$1.actor, to:$5.actor, signalType:$3, msg:$6, activate: true, centralConnection: yy.LINETYPE.CENTRAL_CONNECTION_DUAL},
+	 			 {type: 'centralConnection', signalType: yy.LINETYPE.CENTRAL_CONNECTION, actor: $5.actor, },
+				 {type: 'centralConnectionReverse', signalType: yy.LINETYPE.CENTRAL_CONNECTION_REVERSE, actor: $1.actor}
 	             ]}
 	| actor signaltype actor text2
 	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}

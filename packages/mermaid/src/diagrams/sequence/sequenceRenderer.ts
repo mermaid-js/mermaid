@@ -281,6 +281,36 @@ const drawNote = async function (elem: any, noteModel: NoteModel) {
   bounds.models.addNote(noteModel);
 };
 
+const drawCentralConnection = function (
+  elem: any,
+  msg: any,
+  msgModel: any,
+  diagObj: Diagram,
+  startx,
+  stopx,
+  lineStartY
+) {
+  const g = elem.append('g');
+  const circle = g.append('circle');
+  circle.attr(
+    'cx',
+    msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION ? stopx + 7.5 : startx - 5
+  );
+  // circle.attr('cx',x);
+  circle.attr('cy', lineStartY);
+  circle.attr('r', 5);
+  circle.attr('width', 10);
+  circle.attr('height', 10);
+  if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL) {
+    const circle = g.append('circle');
+    circle.attr('cx', stopx + 7.5);
+    circle.attr('cy', lineStartY);
+    circle.attr('r', 5);
+    circle.attr('width', 10);
+    circle.attr('height', 10);
+  }
+};
+
 const messageFont = (cnf) => {
   return {
     fontFamily: cnf.messageFontFamily,
@@ -366,7 +396,7 @@ async function boundMessage(_diagram, msgModel): Promise<number> {
  * @param lineStartY - The Y coordinate at which the message line starts
  * @param diagObj - The diagram object.
  */
-const drawMessage = async function (diagram, msgModel, lineStartY: number, diagObj: Diagram) {
+const drawMessage = async function (diagram, msgModel, lineStartY: number, diagObj: Diagram, msg) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDrawCommon.getTextObj();
@@ -432,6 +462,9 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     line.attr('y1', lineStartY);
     line.attr('x2', stopx);
     line.attr('y2', lineStartY);
+    if (msg.centralConnection) {
+      drawCentralConnection(diagram, msg, msgModel, diagObj, startx, stopx, lineStartY);
+    }
   }
   // Make an SVG Container
   // Draw the line
@@ -921,6 +954,12 @@ export const draw = async function (_text: string, id: string, _version: string,
       case diagObj.db.LINETYPE.ACTIVE_START:
         bounds.newActivation(msg, diagram, actors);
         break;
+      case diagObj.db.LINETYPE.CENTRAL_CONNECTION:
+        bounds.newActivation(msg, diagram, actors);
+        break;
+      case diagObj.db.LINETYPE.CENTRAL_CONNECTION_REVERSE:
+        bounds.newActivation(msg, diagram, actors);
+        break;
       case diagObj.db.LINETYPE.ACTIVE_END:
         activeEnd(msg, bounds.getVerticalPos());
         break;
@@ -1079,7 +1118,7 @@ export const draw = async function (_text: string, id: string, _version: string,
             createdActors,
             destroyedActors
           );
-          messagesToDraw.push({ messageModel: msgModel, lineStartY: lineStartY });
+          messagesToDraw.push({ messageModel: msgModel, lineStartY: lineStartY, msg });
           bounds.models.addMessage(msgModel);
         } catch (e) {
           log.error('error while drawing message', e);
@@ -1132,7 +1171,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   await drawActors(diagram, actors, actorKeys, false);
 
   for (const e of messagesToDraw) {
-    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj);
+    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj, e.msg);
   }
   if (conf.mirrorActors) {
     await drawActors(diagram, actors, actorKeys, true);
@@ -1546,6 +1585,12 @@ const buildMessageModel = function (msg, actors, diagObj) {
   let startx = isArrowToRight ? fromRight : fromLeft;
   let stopx = isArrowToRight ? toLeft : toRight;
 
+  if (
+    msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_REVERSE ||
+    msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL
+  ) {
+    startx += 4;
+  }
   // As the line width is considered, the left and right values will be off by 2.
   const isArrowToActivation = Math.abs(toLeft - toRight) > 2;
 
