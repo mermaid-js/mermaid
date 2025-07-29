@@ -384,4 +384,17 @@ describe('Block diagram', () => {
       {}
     );
   });
+
+  it('BL30: block should overflow if too wide for columns', () => {
+    imgSnapshotTest(
+      `block-beta
+  columns 2
+  fit:2
+  overflow:3
+  short:1
+  also_overflow:2
+`,
+      {}
+    );
+  });
 });
