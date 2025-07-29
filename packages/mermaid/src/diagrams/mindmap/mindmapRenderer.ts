@@ -9,10 +9,10 @@ import { log } from '../../logger.js';
 import type { D3Element } from '../../types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import type { FilledMindMapNode, MindmapDB, MindmapNode } from './mindmapTypes.js';
+import type { FilledMindMapNode, MindmapNode } from './mindmapTypes.js';
 import { drawNode, positionNode } from './svgDraw.js';
 import defaultConfig from '../../defaultConfig.js';
-
+import type { MindmapDB } from './mindmapDb.js';
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
 

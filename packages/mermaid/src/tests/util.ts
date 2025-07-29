@@ -26,6 +26,10 @@ ${'2w'}   | ${dayjs.duration(2, 'w')}
 ```
 */
 
+import { JSDOM } from 'jsdom';
+import { expect, it } from 'vitest';
+import { select, type Selection } from 'd3';
+
 export const convert = (template: TemplateStringsArray, ...params: unknown[]) => {
   const header = template[0]
     .trim()
@@ -42,3 +46,83 @@ export const convert = (template: TemplateStringsArray, ...params: unknown[]) =>
   }
   return out;
 };
+
+/**
+ * Getting rid of linter issues to make {@link jsdomIt} work.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function setOnProtectedConstant(object: any, key: string, value: unknown): void {
+  object[key] = value;
+}
+
+export const MOCKED_BBOX = {
+  x: 0,
+  y: 0,
+  width: 666,
+  height: 666,
+};
+
+interface JsdomItInput {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  body: Selection<HTMLBodyElement, never, HTMLElement, any>; // The `any` here comes from D3'as API.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  svg: Selection<SVGSVGElement, never, HTMLElement, any>; // The `any` here comes from D3'as API.
+}
+
+/**
+ * Test method borrowed from d3 : https://github.com/d3/d3-selection/blob/v3.0.0/test/jsdom.js
+ *
+ * Fools d3 into thinking it's working in a browser with a real DOM.
+ *
+ * The DOM is actually an instance of JSDom with monkey-patches for DOM methods that require a
+ * rendering engine.
+ *
+ * The resulting environment is capable of rendering SVGs with the caveat that layouts are
+ * completely screwed.
+ *
+ * This makes it possible to make structural tests instead of mocking everything.
+ */
+export function jsdomIt(message: string, run: (input: JsdomItInput) => void | Promise<void>) {
+  return it(message, async (): Promise<void> => {
+    const oldWindow = global.window;
+    const oldDocument = global.document;
+
+    try {
+      const baseHtml = `
+        <html lang="en">
+          <body id="cy">
+            <svg id="svg"/>
+          </body>
+        </html>
+      `;
+      const dom = new JSDOM(baseHtml, {
+        resources: 'usable',
+        beforeParse(_window) {
+          // Mocks DOM functions that require rendering, JSDOM doesn't
+          setOnProtectedConstant(_window.Element.prototype, 'getBBox', () => MOCKED_BBOX);
+          setOnProtectedConstant(_window.Element.prototype, 'getComputedTextLength', () => 200);
+        },
+      });
+      setOnProtectedConstant(global, 'window', dom.window); // Fool D3 into thinking it's in a browser
+      setOnProtectedConstant(global, 'document', dom.window.document); // Fool D3 into thinking it's in a browser
+      setOnProtectedConstant(global, 'MutationObserver', undefined); // JSDOM doesn't like cytoscape elements
+
+      const body = select<HTMLBodyElement, never>('body');
+      const svg = select<SVGSVGElement, never>('svg');
+      await run({ body, svg });
+    } finally {
+      setOnProtectedConstant(global, 'window', oldWindow);
+      setOnProtectedConstant(global, 'document', oldDocument);
+    }
+  });
+}
+
+/**
+ * Retrieves the node from its parent with ParentNode#querySelector,
+ * then checks that it exists before returning it.
+ */
+export function ensureNodeFromSelector(selector: string, parent: ParentNode = document): Element {
+  const node = parent.querySelector(selector);
+  expect(node).not.toBeNull();
+  return node!;
+}

@@ -111,3 +111,13 @@ const themes = {
 ```
 
 The actual options and values for the colors are defined in **src/theme/theme-\[xyz].js**. If you provide the options your diagram needs in the existing theme files then the theming will work smoothly without hiccups.
+
+## Examples
+
+The `@mermaid-js/examples` package contains a collection of examples that are used by tools like mermaid.live to help users get started with the new diagram.
+
+You can duplicate an existing diagram example file, eg: `packages/examples/src/examples/flowchart.ts`, and modify it with details specific to your diagram.
+
+Then you can import the example in the `packages/examples/src/index.ts` file and add it to the `examples` array.
+
+Each diagram should have at least one example, and that should be marked as default. It is good to add more examples to showcase different features of the diagram.
