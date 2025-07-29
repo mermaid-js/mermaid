@@ -272,6 +272,7 @@ function layoutBlocks(block: Block, db: BlockDB) {
       }
       let columnsFilled = child?.widthInColumns ?? 1;
       if (columns > 0) {
+        // Make sure overflowing lines do not affect later lines
         columnsFilled = Math.min(columnsFilled, columns - (columnPos % columns));
       }
       columnPos += columnsFilled;
