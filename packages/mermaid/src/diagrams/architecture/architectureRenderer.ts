@@ -191,7 +191,7 @@ function getAlignments(
               prev[dir] ??= [];
               prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds]; // add the node ids of both groups to the axis array in prev
             } else if (aGroupId === 'default' || bGroupId === 'default') {
-              // If either of the groups are in the default space (not in a group), use the same behaviour as above
+              // If either of the groups are in the default space (not in a group), use the same behavior as above
               prev[dir] ??= [];
               prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds];
             } else {

@@ -41,7 +41,6 @@ export class ArchitectureDB implements DiagramDB {
   private groups: Record<string, ArchitectureGroup> = {};
   private edges: ArchitectureEdge[] = [];
   private registeredIds: Record<string, 'node' | 'group'> = {};
-  // private config: Required<ArchitectureDiagramConfig> = DEFAULT_ARCHITECTURE_CONFIG;
   private dataStructures?: ArchitectureState['dataStructures'];
   private elements: Record<string, D3Element> = {};
 
@@ -184,7 +183,7 @@ export class ArchitectureDB implements DiagramDB {
         `The left-hand id [${lhsId}] does not yet exist. Please create the service/group before declaring an edge to it.`
       );
     }
-    if (this.nodes[rhsId] === undefined && this.groups[lhsId] === undefined) {
+    if (this.nodes[rhsId] === undefined && this.groups[rhsId] === undefined) {
       throw new Error(
         `The right-hand id [${rhsId}] does not yet exist. Please create the service/group before declaring an edge to it.`
       );
@@ -359,7 +358,7 @@ export class ArchitectureDB implements DiagramDB {
  * @param field - the config field to access
  * @returns
  */
-// export function getConfigField<T extends key of ArchitectureDiagramConfig>(
+// export function getConfigField<T extends keyof ArchitectureDiagramConfig>(
 //   field: T
 // ): Required<ArchitectureDiagramConfig>[T] {
 //   return db.getConfig()[field];

@@ -10,7 +10,7 @@ const populateDb = (ast: Architecture, db: ArchitectureDB) => {
   ast.groups.map((group) => db.addGroup(group));
   ast.services.map((service) => db.addService({ ...service, type: 'service' }));
   ast.junctions.map((service) => db.addJunction({ ...service, type: 'junction' }));
-  // @ts-ignore ToDo our parser guarantees the type is L/R/T/B and not string. How to change to union type?
+  // @ts-ignore TODO our parser guarantees the type is L/R/T/B and not string. How to change to union type?
   ast.edges.map((edge) => db.addEdge(edge));
 };
 
