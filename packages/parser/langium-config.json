@@ -34,6 +34,10 @@
     {
       "id": "treemap",
       "grammar": "src/language/treemap/treemap.langium",
+    },
+    {
+      "id": "xy",
+      "grammar": "src/language/xy/xy.langium",
       "fileExtensions": [".mmd", ".mermaid"]
     }
   ],

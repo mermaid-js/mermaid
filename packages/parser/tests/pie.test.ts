@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { Pie } from '../src/language/index.js';
-import { expectNoErrorsOrAlternatives, pieParse as parse } from './test-util.js';
+import {
+  expectErrorsOrAlternatives,
+  expectNoErrorsOrAlternatives,
+  pieParse as parse,
+} from './test-util.js';
 
 describe('pie', () => {
   describe('should handle pie definition with or without showData', () => {
@@ -141,8 +145,8 @@ describe('pie', () => {
 
     it('should handle sections with showData', () => {
       const context = `pie showData
-        "GitHub": 100
-        "GitLab": 50`;
+      "GitHub": 100
+      "GitLab": 50`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(Pie);
@@ -159,8 +163,8 @@ describe('pie', () => {
 
     it('should handle sections with title', () => {
       const context = `pie title sample wow
-        "GitHub": 100
-        "GitLab": 50`;
+      "GitHub": 100
+      "GitLab": 50`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(Pie);
@@ -177,8 +181,8 @@ describe('pie', () => {
 
     it('should handle value with positive decimal', () => {
       const context = `pie
-        "ash": 60.67
-        "bat": 40`;
+      "ash": 60.67
+      "bat": 40`;
       const result = parse(context);
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe(Pie);
@@ -189,6 +193,15 @@ describe('pie', () => {
 
       expect(sections[1].label).toBe('bat');
       expect(sections[1].value).toBe(40);
+    });
+
+    it('should not handle sections with negative value', () => {
+      const context = `pie
+        "ash" : -60.67
+        "bat" : 40.12
+      `;
+      const result = parse(context);
+      expectErrorsOrAlternatives(result);
     });
 
     it('should handle sections with accTitle', () => {

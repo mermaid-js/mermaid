@@ -33,7 +33,7 @@ Commit:
     )* EOL;
 Branch:
     'branch' name=(REFERENCE|STRING)
-    ('order:' order=INT)?
+    ('order:' order=POSITIVE_INT)?
     EOL;
 
 Merge:

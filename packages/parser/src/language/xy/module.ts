@@ -11,36 +11,32 @@ import {
   createDefaultSharedCoreModule,
   inject,
 } from 'langium';
-
-import { MermaidGeneratedSharedModule, ArchitectureGeneratedModule } from '../generated/module.js';
-import { ArchitectureTokenBuilder } from './tokenBuilder.js';
 import { CommonValueConverter } from '../common/valueConverter.js';
+import { MermaidGeneratedSharedModule, XYGeneratedModule } from '../generated/module.js';
+import { XYTokenBuilder } from './tokenBuilder.js';
 
 /**
- * Declaration of `Architecture` services.
+ * Declaration of `XY` services.
  */
-interface ArchitectureAddedServices {
+interface XYAddedServices {
   parser: {
-    TokenBuilder: ArchitectureTokenBuilder;
+    TokenBuilder: XYTokenBuilder;
     ValueConverter: CommonValueConverter;
   };
 }
 
 /**
- * Union of Langium default services and `Architecture` services.
+ * Union of Langium default services and `XY` services.
  */
-export type ArchitectureServices = LangiumCoreServices & ArchitectureAddedServices;
+export type XYServices = LangiumCoreServices & XYAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and
- * contributes the declared `Architecture` services.
+ * contributes the declared `XY` services.
  */
-export const ArchitectureModule: Module<
-  ArchitectureServices,
-  PartialLangiumCoreServices & ArchitectureAddedServices
-> = {
+export const XYModule: Module<XYServices, PartialLangiumCoreServices & XYAddedServices> = {
   parser: {
-    TokenBuilder: () => new ArchitectureTokenBuilder(),
+    TokenBuilder: () => new XYTokenBuilder(),
     ValueConverter: () => new CommonValueConverter(),
   },
 };
@@ -59,21 +55,15 @@ export const ArchitectureModule: Module<
  * @param context - Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createArchitectureServices(
-  context: DefaultSharedCoreModuleContext = EmptyFileSystem
-): {
+export function createXYServices(context: DefaultSharedCoreModuleContext = EmptyFileSystem): {
   shared: LangiumSharedCoreServices;
-  Architecture: ArchitectureServices;
+  XY: XYServices;
 } {
   const shared: LangiumSharedCoreServices = inject(
     createDefaultSharedCoreModule(context),
     MermaidGeneratedSharedModule
   );
-  const Architecture: ArchitectureServices = inject(
-    createDefaultCoreModule({ shared }),
-    ArchitectureGeneratedModule,
-    ArchitectureModule
-  );
-  shared.ServiceRegistry.register(Architecture);
-  return { shared, Architecture };
+  const XY: XYServices = inject(createDefaultCoreModule({ shared }), XYGeneratedModule, XYModule);
+  shared.ServiceRegistry.register(XY);
+  return { shared, XY };
 }

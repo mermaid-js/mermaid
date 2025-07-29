@@ -1,6 +1,6 @@
 import type { DiagramDefinition } from '../../diagram-api/types.js';
-// @ts-ignore: Jison doesn't support types.
-import parser from './parser/xychart.jison';
+
+import { parser } from './xychartParser.js';
 import db from './xychartDb.js';
 import renderer from './xychartRenderer.js';
 

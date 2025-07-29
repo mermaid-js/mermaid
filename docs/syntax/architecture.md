@@ -12,12 +12,12 @@
 
 ```mermaid-example
 architecture-beta
-    group api(cloud)[API]
+    group api('cloud')['API']
 
-    service db(database)[Database] in api
-    service disk1(disk)[Storage] in api
-    service disk2(disk)[Storage] in api
-    service server(server)[Server] in api
+    service db('database')['Database'] in api
+    service disk1('disk')['Storage'] in api
+    service disk2('disk')['Storage'] in api
+    service server('server')['Server'] in api
 
     db:L -- R:server
     disk1:T -- B:server
@@ -26,12 +26,12 @@ architecture-beta
 
 ```mermaid
 architecture-beta
-    group api(cloud)[API]
+    group api('cloud')['API']
 
-    service db(database)[Database] in api
-    service disk1(disk)[Storage] in api
-    service disk2(disk)[Storage] in api
-    service server(server)[Server] in api
+    service db('database')['Database'] in api
+    service disk1('disk')['Storage'] in api
+    service disk2('disk')['Storage'] in api
+    service server('server')['Server'] in api
 
     db:L -- R:server
     disk1:T -- B:server
@@ -51,13 +51,13 @@ To begin an architecture diagram, use the keyword `architecture-beta`, followed 
 The syntax for declaring a group is:
 
 ```
-group {group id}({icon name})[{title}] (in {parent id})?
+group {group id}('{icon name}')['{label}'] (in {parent id})?
 ```
 
-Put together:
+For instance:
 
 ```
-group public_api(cloud)[Public API]
+group public_api('cloud')['Public API']
 ```
 
 creates a group identified as `public_api`, uses the icon `cloud`, and has the label `Public API`.
@@ -65,7 +65,19 @@ creates a group identified as `public_api`, uses the icon `cloud`, and has the l
 Additionally, groups can be placed within a group using the optional `in` keyword
 
 ```
-group private_api(cloud)[Private API] in public_api
+group private_api('cloud')['Private API'] in public_api
+```
+
+Icons, labels, and parent groups are optional. Markdown labels are supported between backticks.
+Hence, all of the following are valid:
+
+```
+architecture-beta
+    group public_api('cloud')[`**Public** API`]
+    group private_api('cloud')
+    group application
+    group microservices in application
+    group api('cloud')['API'] in public_api
 ```
 
 ### Services
@@ -73,13 +85,13 @@ group private_api(cloud)[Private API] in public_api
 The syntax for declaring a service is:
 
 ```
-service {service id}({icon name})[{title}] (in {parent id})?
+service {service id}('{icon name}')['{label}'] (in {parent id})?
 ```
 
-Put together:
+For instance:
 
 ```
-service database1(database)[My Database]
+service database1('database')['My Database']
 ```
 
 creates the service identified as `database1`, using the icon `database`, with the label `My Database`.
@@ -87,7 +99,23 @@ creates the service identified as `database1`, using the icon `database`, with t
 If the service belongs to a group, it can be placed inside it through the optional `in` keyword
 
 ```
-service database1(database)[My Database] in private_api
+service database1('database')['My Database'] in private_api
+```
+
+Icons, labels, and parent groups are optional. Markdown labels are supported between backticks.
+
+Hence, all of the following are valid:
+
+```
+architecture-beta
+    group public_api
+    group private_api
+    group application
+
+    service db('database')[`_Database_`] in public_api
+    service disk1['Storage'] in application
+    service disk2('disk') in application
+    service server
 ```
 
 ### Edges
@@ -95,7 +123,33 @@ service database1(database)[My Database] in private_api
 The syntax for declaring an edge is:
 
 ```
-{serviceId}{{group}}?:{T|B|L|R} {<}?--{>}? {T|B|L|R}:{serviceId}{{group}}?
+{serviceId}{{group}}? : {T|B|L|R} {<}?-{['Label']}?-{>}? {T|B|L|R} : {serviceId}{{group}}?
+```
+
+For instance:
+
+```
+db{group}:L - ['Connection'] -> R:server
+```
+
+creates an edge between the group of `db` and service `server`, with a directional arrow going from `db` to `server`, and a label `Connection` on the edge.
+
+The colons (`:`) are used to specify the side of the service the edge comes out of. The side of the service the edge comes out of is specified by adding `L|R|T|B` after the colon. `L` for left, `R` for right, `T` for top, and `B` for bottom.
+
+The edge can be labeled by adding a label in square brackets `[]` after the `-` and before the `>`.
+
+The group modifier (`{group}`), the arrow (`<` or `>`), and the label (`[]`) are all optional.
+Hence, the following are all valid:
+
+```
+architecture-beta
+    service db('database')['My Database']
+    service server('server')['My Server']
+
+    db T -- B server
+    db:T -- B:server
+    db L <- ['Connection'] -> R server
+    db{group} L <- [`**Bold Label**`] -> R:server
 ```
 
 #### Edge Direction
@@ -135,8 +189,8 @@ To have an edge go from a group to another group or service within another group
 For example:
 
 ```
-service server[Server] in groupOne
-service subnet[Subnet] in groupTwo
+service server['Server'] in groupOne
+service subnet['Subnet'] in groupTwo
 
 server{group}:B --> T:subnet{group}
 ```
@@ -147,7 +201,7 @@ It's important to note that `groupId`s cannot be used for specifying edges and t
 
 ### Junctions
 
-Junctions are a special type of node which acts as a potential 4-way split between edges.
+Junctions are a special type of node which acts as a potential 4-way split between edges. It can be basically used as an invisible node to connect edges together in a more complex way.
 
 The syntax for declaring a junction is:
 
@@ -157,11 +211,11 @@ junction {junction id} (in {parent id})?
 
 ```mermaid-example
 architecture-beta
-    service left_disk(disk)[Disk]
-    service top_disk(disk)[Disk]
-    service bottom_disk(disk)[Disk]
-    service top_gateway(internet)[Gateway]
-    service bottom_gateway(internet)[Gateway]
+    service left_disk('disk')['Disk']
+    service top_disk('disk')['Disk']
+    service bottom_disk('disk')['Disk']
+    service top_gateway('internet')['Gateway']
+    service bottom_gateway('internet')['Gateway']
     junction junctionCenter
     junction junctionRight
 
@@ -175,11 +229,11 @@ architecture-beta
 
 ```mermaid
 architecture-beta
-    service left_disk(disk)[Disk]
-    service top_disk(disk)[Disk]
-    service bottom_disk(disk)[Disk]
-    service top_gateway(internet)[Gateway]
-    service bottom_gateway(internet)[Gateway]
+    service left_disk('disk')['Disk']
+    service top_disk('disk')['Disk']
+    service bottom_disk('disk')['Disk']
+    service top_gateway('internet')['Gateway']
+    service bottom_gateway('internet')['Gateway']
     junction junctionCenter
     junction junctionRight
 
@@ -200,12 +254,12 @@ After the icons are installed, they can be used in the architecture diagram by u
 
 ```mermaid-example
 architecture-beta
-    group api(logos:aws-lambda)[API]
+    group api('logos:aws-lambda')['API']
 
-    service db(logos:aws-aurora)[Database] in api
-    service disk1(logos:aws-glacier)[Storage] in api
-    service disk2(logos:aws-s3)[Storage] in api
-    service server(logos:aws-ec2)[Server] in api
+    service db('logos:aws-aurora')['Database'] in api
+    service disk1('logos:aws-glacier')['Storage'] in api
+    service disk2('logos:aws-s3')['Storage'] in api
+    service server('logos:aws-ec2')['Server'] in api
 
     db:L -- R:server
     disk1:T -- B:server
@@ -214,12 +268,12 @@ architecture-beta
 
 ```mermaid
 architecture-beta
-    group api(logos:aws-lambda)[API]
+    group api('logos:aws-lambda')['API']
 
-    service db(logos:aws-aurora)[Database] in api
-    service disk1(logos:aws-glacier)[Storage] in api
-    service disk2(logos:aws-s3)[Storage] in api
-    service server(logos:aws-ec2)[Server] in api
+    service db('logos:aws-aurora')['Database'] in api
+    service disk1('logos:aws-glacier')['Storage'] in api
+    service disk2('logos:aws-s3')['Storage'] in api
+    service server('logos:aws-ec2')['Server'] in api
 
     db:L -- R:server
     disk1:T -- B:server
