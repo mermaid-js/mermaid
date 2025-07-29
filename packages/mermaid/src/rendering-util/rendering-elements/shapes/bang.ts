@@ -17,7 +17,7 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     getNodeClasses(node)
   );
 
-  const w = bbox.width + 2 * halfPadding;
+  const w = bbox.width + 8 * halfPadding;
   const h = bbox.height + 2 * halfPadding;
   const r = 0.15 * w;
   const { cssStyles } = node;

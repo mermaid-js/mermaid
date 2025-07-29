@@ -3,6 +3,7 @@ import type { MermaidConfig } from '../../../config.type.js';
 import { log } from '../../../logger.js';
 import type { LayoutData, Node, Edge } from '../../types.js';
 import type { LayoutResult, TidyTreeNode, PositionedNode, PositionedEdge } from './types.js';
+import { intersection } from '../../rendering-elements/edges.js';
 
 let intersectionShift = 50;
 /**
@@ -449,14 +450,47 @@ function positionRightTreeBidirectional(
 }
 
 /**
+ * Calculate the intersection point of a line with a circle
+ * @param circle - Circle coordinates and radius
+ * @param lineStart - Starting point of the line
+ * @param lineEnd - Ending point of the line
+ * @returns The intersection point
+ */
+function computeCircleEdgeIntersection(
+  circle: { x: number; y: number; width: number; height: number },
+  lineStart: { x: number; y: number },
+  lineEnd: { x: number; y: number }
+): { x: number; y: number } {
+  const radius = Math.min(circle.width, circle.height) / 2;
+
+  const dx = lineEnd.x - lineStart.x;
+  const dy = lineEnd.y - lineStart.y;
+  const length = Math.sqrt(dx * dx + dy * dy);
+
+  if (length === 0) {
+    return lineStart;
+  }
+
+  // Normalize the direction vector from Start to End
+  const nx = dx / length;
+  const ny = dy / length;
+
+  // Start at the circle center and go backwards by the radius along the direction vector
+  return {
+    x: circle.x - nx * radius,
+    y: circle.y - ny * radius,
+  };
+}
+
+/**
  * Calculate edge positions based on positioned nodes
  * Now includes tree membership and node dimensions for precise edge calculations
+ * Edges now stop at shape boundaries instead of extending to centers
  */
 function calculateEdgePositions(
   edges: Edge[],
   positionedNodes: PositionedNode[]
 ): PositionedEdge[] {
-  // Create a comprehensive map of node information
   const nodeInfo = new Map<string, PositionedNode>();
   positionedNodes.forEach((node) => {
     nodeInfo.set(node.id, node);
@@ -465,33 +499,10 @@ function calculateEdgePositions(
   return edges.map((edge) => {
     const sourceNode = nodeInfo.get(edge.start ?? '');
     const targetNode = nodeInfo.get(edge.end ?? '');
-    log.debug('APA01 calculateEdgePositions', edge, sourceNode, 'targetNode', targetNode);
 
-    if (!sourceNode) {
-      log.error('APA01 Source node not found for edge', edge);
-      // Return a default edge instead of undefined
-      return {
-        id: edge.id,
-        source: edge.start ?? '',
-        target: edge.end ?? '',
-        startX: 0,
-        startY: 0,
-        midX: 0,
-        midY: 0,
-        endX: 0,
-        endY: 0,
-        points: [{ x: 0, y: 0 }],
-        sourceSection: undefined,
-        targetSection: undefined,
-        sourceWidth: undefined,
-        sourceHeight: undefined,
-        targetWidth: undefined,
-        targetHeight: undefined,
-      };
-    }
-    if (targetNode === undefined) {
-      log.error('APA01 Target node not found for edge', edge);
-      // Return a default edge instead of undefined
+    if (!sourceNode || !targetNode) {
+      const missingNode = !sourceNode ? 'Source' : 'Target';
+      log.error(`APA01 ${missingNode} node not found for edge`, edge);
       return {
         id: edge.id,
         source: edge.start ?? '',
@@ -512,11 +523,43 @@ function calculateEdgePositions(
       };
     }
 
-    // Fallback positions if nodes not found
-    const startPos = sourceNode ? { x: sourceNode.x, y: sourceNode.y } : { x: 0, y: 0 };
-    const endPos = targetNode ? { x: targetNode.x, y: targetNode.y } : { x: 0, y: 0 };
+    const sourceCenter = { x: sourceNode.x, y: sourceNode.y };
+    const targetCenter = { x: targetNode.x, y: targetNode.y };
 
-    // Calculate midpoint for edge
+    const isSourceRound = ['circle', 'cloud', 'bang'].includes(
+      sourceNode.originalNode?.shape ?? ''
+    );
+    const isTargetRound = ['circle', 'cloud', 'bang'].includes(
+      targetNode.originalNode?.shape ?? ''
+    );
+
+    // Initial intersection approximation
+    let startPos = isSourceRound
+      ? computeCircleEdgeIntersection(
+          {
+            x: sourceNode.x,
+            y: sourceNode.y,
+            width: sourceNode.width ?? 100,
+            height: sourceNode.height ?? 100,
+          },
+          targetCenter,
+          sourceCenter
+        )
+      : intersection(sourceNode, sourceCenter, targetCenter);
+
+    let endPos = isTargetRound
+      ? computeCircleEdgeIntersection(
+          {
+            x: targetNode.x,
+            y: targetNode.y,
+            width: targetNode.width ?? 100,
+            height: targetNode.height ?? 100,
+          },
+          sourceCenter,
+          targetCenter
+        )
+      : intersection(targetNode, targetCenter, sourceCenter);
+
     const midX = (startPos.x + endPos.x) / 2;
     const midY = (startPos.y + endPos.y) / 2;
 
@@ -545,6 +588,38 @@ function calculateEdgePositions(
     }
 
     points.push(endPos);
+
+    // Recalculate source intersection
+    const secondPoint = points.length > 1 ? points[1] : targetCenter;
+    startPos = isSourceRound
+      ? computeCircleEdgeIntersection(
+          {
+            x: sourceNode.x,
+            y: sourceNode.y,
+            width: sourceNode.width ?? 100,
+            height: sourceNode.height ?? 100,
+          },
+          secondPoint,
+          sourceCenter
+        )
+      : intersection(sourceNode, secondPoint, sourceCenter);
+    points[0] = startPos;
+
+    // Recalculate target intersection
+    const secondLastPoint = points.length > 1 ? points[points.length - 2] : sourceCenter;
+    endPos = isTargetRound
+      ? computeCircleEdgeIntersection(
+          {
+            x: targetNode.x,
+            y: targetNode.y,
+            width: targetNode.width ?? 100,
+            height: targetNode.height ?? 100,
+          },
+          secondLastPoint,
+          targetCenter
+        )
+      : intersection(targetNode, secondLastPoint, targetCenter);
+    points[points.length - 1] = endPos;
 
     return {
       id: edge.id,
