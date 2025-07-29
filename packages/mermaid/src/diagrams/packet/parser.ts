@@ -3,12 +3,12 @@ import { parse } from '@mermaid-js/parser';
 import type { ParserDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { populateCommonDb } from '../common/populateCommonDb.js';
-import { db } from './db.js';
+import { PacketDB } from './db.js';
 import type { PacketBlock, PacketWord } from './types.js';
 
 const maxPacketSize = 10_000;
 
-const populate = (ast: Packet) => {
+const populate = (ast: Packet, db: PacketDB) => {
   populateCommonDb(ast, db);
   let lastBit = -1;
   let word: PacketWord = [];
@@ -91,9 +91,17 @@ const getNextFittingBlock = (
 };
 
 export const parser: ParserDefinition = {
+  // @ts-expect-error - PacketDB is not assignable to DiagramDB
+  parser: { yy: undefined },
   parse: async (input: string): Promise<void> => {
     const ast: Packet = await parse('packet', input);
+    const db = parser.parser?.yy;
+    if (!(db instanceof PacketDB)) {
+      throw new Error(
+        'parser.parser?.yy was not a PacketDB. This is due to a bug within Mermaid, please report this issue at https://github.com/mermaid-js/mermaid/issues.'
+      );
+    }
     log.debug(ast);
-    populate(ast);
+    populate(ast, db);
   },
 };
