@@ -406,7 +406,8 @@ You have to call mermaid.initialize.`
    *
    */
   public setDirection(dir: string) {
-    this.direction = dir;
+    this.direction = dir.trim();
+
     if (/.*</.exec(this.direction)) {
       this.direction = 'RL';
     }
