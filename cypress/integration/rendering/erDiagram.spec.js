@@ -354,4 +354,19 @@ ORDER ||--|{ LINE-ITEM : contains
       { logLevel: 1 }
     );
   });
+
+  describe('Include char sequence "graph" in text (#6795)', () => {
+    it('has a label with char sequence "graph"', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          p[Photograph] {
+            varchar(12) jobId
+            date dateCreated
+          }
+        `,
+        { flowchart: { defaultRenderer: 'elk' } }
+      );
+    });
+  });
 });
