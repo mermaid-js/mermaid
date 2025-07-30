@@ -366,5 +366,22 @@ Word!\`]
       );
     });
   });
+  describe('Include char sequence "graph" in text (#6795)', () => {
+    it('has a label with char sequence "graph"', () => {
+      imgSnapshotTest(
+        `
+        mindmap
+          root
+            Photograph
+              Waterfall
+              Landscape
+            Geography
+              Mountains
+              Rocks
+        `,
+        { flowchart: { defaultRenderer: 'elk' } }
+      );
+    });
+  });
   /* The end */
 });
