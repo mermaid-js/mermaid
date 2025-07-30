@@ -19,13 +19,13 @@ vi.mock('non-layered-tidy-tree-layout', () => ({
 
       // Set positions for children if they exist
       if (result.children) {
-        result.children.forEach((child, index) => {
+        result.children.forEach((child:Node, index:number) => {
           child.x = 50 + index * 100;
           child.y = 100;
 
           // Recursively position grandchildren
           if (child.children) {
-            child.children.forEach((grandchild, gIndex) => {
+            child.children.forEach((grandchild, gIndex:number) => {
               grandchild.x = 25 + gIndex * 50;
               grandchild.y = 200;
             });
@@ -51,6 +51,7 @@ import { executeTidyTreeLayout, validateLayoutData } from './layout.js';
 import type { LayoutResult } from './types.js';
 import type { LayoutData } from '../../types.js';
 import type { MermaidConfig } from '../../../config.type.js';
+import type { Node } from '../../../../dist/rendering-util/types.js';
 
 describe('Tidy-Tree Layout Algorithm', () => {
   let mockConfig: MermaidConfig;

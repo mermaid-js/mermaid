@@ -1135,15 +1135,46 @@ It is possible to style the type of curve used for lines between items, if the d
 Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRom`, `linear`, `monotoneX`, `monotoneY`,
 `natural`, `step`, `stepAfter`, and `stepBefore`.
 
+For a full list of available curves, including an explanation of custom curves, refer to
+the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
+
+Line styling can be achieved in two ways:
+
+1. Change the curve style of all the lines
+2. Change the curve style of a particular line
+
+#### Diagram level curve style
+
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
 ```
-%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+---
+config:
+  flowchart:
+    curve: stepBefore
+---
 graph LR
 ```
 
-For a full list of available curves, including an explanation of custom curves, refer to
-the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
+#### Edge level curve style using Edge IDs (v<MERMAID_RELEASE_VERSION>+)
+
+You can assign IDs to [edges](#attaching-an-id-to-edges). After assigning an ID you can modify the line style by modifying the edge's `curve` property using the following syntax:
+
+```mermaid
+flowchart LR
+    A e1@==> B
+    A e2@--> C
+    e1@{ curve: linear }
+    e2@{ curve: natural }
+```
+
+```info
+Any edge curve style modified at the edge level overrides the diagram level style.
+```
+
+```info
+If the same edge is modified multiple times the last modification will be rendered.
+```
 
 ### Styling a node
 
@@ -1253,7 +1284,7 @@ flowchart TD
 
 There are two ways to display these FontAwesome icons:
 
-### Register FontAwesome icon packs (v<MERMAID_RELEASE_VERSION>+)
+### Register FontAwesome icon packs (v11.7.0+)
 
 You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
 

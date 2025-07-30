@@ -51,7 +51,7 @@ vi.mock('cytoscape', () => {
   };
 
   const mockCytoscape = vi.fn(() => mockCy);
-  mockCytoscape.use = vi.fn();
+(mockCytoscape as any).use = vi.fn();
 
   return {
     default: mockCytoscape,
@@ -75,15 +75,16 @@ vi.mock('d3', () => ({
 }));
 
 // Import modules after mocks
-import { layout, validateLayoutData } from './index.js';
-import type { MindmapLayoutData, LayoutResult } from './types.js';
+import {validateLayoutData,executeCoseBilkentLayout} from './layout.js';
+import type {  LayoutResult } from './types.js';
 import type { MindmapNode } from '../../../diagrams/mindmap/mindmapTypes.js';
 import type { MermaidConfig } from '../../../config.type.js';
+import type { LayoutData } from '../../types.js';
 
 describe('Cose-Bilkent Layout Algorithm', () => {
   let mockConfig: MermaidConfig;
   let mockRootNode: MindmapNode;
-  let mockLayoutData: MindmapLayoutData;
+  let mockLayoutData: LayoutData;
 
   beforeEach(() => {
     mockConfig = {
@@ -133,6 +134,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
           width: 100,
           height: 50,
           padding: 10,
+          isGroup:false
         },
         {
           id: '2',
@@ -143,6 +145,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
           width: 80,
           height: 40,
           padding: 10,
+          isGroup:false
         },
       ],
       edges: [
@@ -190,7 +193,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
 
   describe('layout function', () => {
     it('should execute layout algorithm successfully', async () => {
-      const result: LayoutResult = await layout(mockLayoutData, mockConfig);
+      const result: LayoutResult = await executeCoseBilkentLayout(mockLayoutData, mockConfig);
 
       expect(result).toBeDefined();
       expect(result.nodes).toBeDefined();
@@ -200,7 +203,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
     });
 
     it('should return positioned nodes with coordinates', async () => {
-      const result: LayoutResult = await layout(mockLayoutData, mockConfig);
+      const result: LayoutResult = await executeCoseBilkentLayout(mockLayoutData, mockConfig);
 
       expect(result.nodes.length).toBeGreaterThan(0);
       result.nodes.forEach((node) => {
@@ -212,7 +215,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
     });
 
     it('should return positioned edges with coordinates', async () => {
-      const result: LayoutResult = await layout(mockLayoutData, mockConfig);
+      const result: LayoutResult = await executeCoseBilkentLayout(mockLayoutData, mockConfig);
 
       expect(result.edges.length).toBeGreaterThan(0);
       result.edges.forEach((edge) => {
@@ -226,14 +229,14 @@ describe('Cose-Bilkent Layout Algorithm', () => {
     });
 
     it('should handle empty mindmap data gracefully', async () => {
-      const emptyData: MindmapLayoutData = {
+      const emptyData: LayoutData = {
         nodes: [],
         edges: [],
         config: mockConfig,
         rootNode: mockRootNode,
       };
 
-      const result: LayoutResult = await layout(emptyData, mockConfig);
+      const result: LayoutResult = await executeCoseBilkentLayout(emptyData, mockConfig);
       expect(result).toBeDefined();
       expect(result.nodes).toBeDefined();
       expect(result.edges).toBeDefined();
@@ -244,7 +247,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
     it('should throw error for invalid data', async () => {
       const invalidData = { ...mockLayoutData, rootNode: null as any };
 
-      await expect(layout(invalidData, mockConfig)).rejects.toThrow();
+      await expect(executeCoseBilkentLayout(invalidData, mockConfig)).rejects.toThrow();
     });
   });
 });

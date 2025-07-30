@@ -5,9 +5,10 @@ import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js
 import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
-import type { FilledMindMapNode, MindmapDB } from './mindmapTypes.js';
+import type { FilledMindMapNode } from './mindmapTypes.js';
 import { drawNode } from './svgDraw.js';
 import defaultConfig from '../../defaultConfig.js';
+import type { MindmapDB } from './mindmapDb.js';
 
 async function _drawNodes(
   db: MindmapDB,

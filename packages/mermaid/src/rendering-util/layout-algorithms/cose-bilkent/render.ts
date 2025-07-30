@@ -1,12 +1,16 @@
 import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 import { executeCoseBilkentLayout } from './layout.js';
+import type { D3Selection } from '../../../types.js';
 
-type Node = LayoutData['nodes'][number];
+type Node = Record<string, unknown>;
 
 interface NodeWithPosition extends Node {
   x?: number;
   y?: number;
-  domId?: SVGGroup;
+  domId?: string |SVGGroup | D3Selection<SVGAElement>;
+  width?: number;
+  height?: number;
+  id?: string;
 }
 
 /**
@@ -105,7 +109,7 @@ export const render = async (
     if (node?.domId) {
       // Position the node at the calculated coordinates
       // The positionedNode.x/y represents the center of the node, so use directly
-      node.domId.attr('transform', `translate(${positionedNode.x}, ${positionedNode.y})`);
+      (node.domId as D3Selection<SVGAElement>).attr('transform', `translate(${positionedNode.x}, ${positionedNode.y})`);
 
       // Store the final position
       node.x = positionedNode.x;
@@ -136,8 +140,8 @@ export const render = async (
       const _edgeLabel = await insertEdgeLabel(edgeLabels, edge);
 
       // Get start and end nodes
-      const startNode = nodeDb[edge.start];
-      const endNode = nodeDb[edge.end];
+      const startNode = nodeDb[edge.start ?? ''];
+      const endNode = nodeDb[edge.end ?? ''];
 
       if (startNode && endNode) {
         // Find the positioned edge data

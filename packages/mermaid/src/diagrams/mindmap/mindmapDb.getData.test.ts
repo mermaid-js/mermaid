@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import db from './mindmapDb.js';
+import { MindmapDB } from './mindmapDb.js';
 import type { MindmapLayoutNode, MindmapLayoutEdge } from './mindmapDb.js';
+import { Edge } from '../../rendering-util/types.js';
 
 // Mock the getConfig function
 vi.mock('../../diagram-api/diagramAPI.js', () => ({
@@ -15,7 +16,10 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
 }));
 
 describe('MindmapDb getData function', () => {
+  let db: MindmapDB;
+
   beforeEach(() => {
+    db = new MindmapDB();
     // Clear the database before each test
     db.clear();
   });
@@ -44,13 +48,13 @@ describe('MindmapDb getData function', () => {
       expect(result.rootNode).toBeDefined();
 
       // Check root node
-      const rootNode = result.nodes.find((n: any) => n.id === '0') as MindmapLayoutNode;
+      const rootNode = (result.nodes as MindmapLayoutNode[]).find((n) => n.id === '0');
       expect(rootNode).toBeDefined();
       expect(rootNode?.label).toBe('Root Node');
       expect(rootNode?.level).toBe(0);
 
       // Check child nodes
-      const child1 = result.nodes.find((n: any) => n.id === '1') as MindmapLayoutNode;
+      const child1 = (result.nodes as MindmapLayoutNode[]).find((n) => n.id === '1');
       expect(child1).toBeDefined();
       expect(child1?.label).toBe('Child 1');
       expect(child1?.level).toBe(1);
@@ -131,7 +135,7 @@ describe('MindmapDb getData function', () => {
 
       const result = db.getData();
 
-      const edgeIds = result.edges.map((e: any) => e.id);
+      const edgeIds = result.edges.map((e: Edge) => e.id);
       const uniqueIds = new Set(edgeIds);
 
       expect(edgeIds).toHaveLength(3);

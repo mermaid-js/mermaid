@@ -3,6 +3,7 @@ import type { LayoutData } from './types.ts';
 import type { Selection } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import type { NonClusterNode } from '../../dist/rendering-util/types.js';
 
 // Update type:
 type D3Selection<T extends SVGElement = SVGElement> = Selection<
@@ -87,9 +88,10 @@ export async function createGraphWithElements(
         height: 0, // Will be updated after insertion
         isEdgeLabel: true,
         isDummy: true,
+        isGroup: false,
         parentId: edge.parentId,
         ...(edge.dir ? { dir: edge.dir } : {}),
-      };
+      } as NonClusterNode;
 
       // Insert the label node into the DOM
       const labelNodeEl = await insertNode(nodesGroup, labelNode, { config, dir: edge.dir });

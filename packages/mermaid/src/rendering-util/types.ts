@@ -39,7 +39,7 @@ interface BaseNode {
   linkTarget?: string;
   tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
-  isGroup: boolean;
+  isGroup?: boolean;
   width?: number;
   height?: number;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
@@ -79,14 +79,31 @@ interface BaseNode {
 /**
  * Group/cluster nodes, e.g. nodes that contain other nodes.
  */
+export type NodeChildren = Node[];
+
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
+  children?: NodeChildren;
+  nodeId?: string; 
+  level?: number; 
+  descr?: string;
+  type?: number; 
+  height?: number; 
+  width?: number; 
+  padding?: number; 
 }
-
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
   isGroup: false;
+  children?: NodeChildren;
+  nodeId?: string;
+  level?: number;
+  descr?: string;
+  type?: number; 
+  height?: number; 
+  width?: number; 
+  padding?: number; 
 }
 
 // Common properties for any node in the system
@@ -115,7 +132,7 @@ export interface Edge {
   start?: string;
   stroke?: string;
   text?: string;
-  type: string;
+  type?: string;
   // Class Diagram specific properties
   startLabelRight?: string;
   endLabelLeft?: string;
@@ -129,6 +146,11 @@ export interface Edge {
   look?: string;
   isUserDefinedId?: boolean;
   points?: Point[];
+  parentId?: string; 
+  dir?: string;
+  source?: string;
+  target?: string;
+  depth?: number; 
 }
 
 export interface RectOptions {

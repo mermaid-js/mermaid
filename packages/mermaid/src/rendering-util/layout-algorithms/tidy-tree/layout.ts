@@ -33,9 +33,6 @@ export function executeTidyTreeLayout(
         data.edges = []; // Allow empty edges for single-node trees
       }
 
-      // Find the maximum number of children any one node have expect for the root node
-      const _maxChildren = Math.max(...data.nodes.map((node) => node.children?.length ?? 0));
-
       // Convert layout data to dual-tree format (left and right trees)
       const { leftTree, rightTree, rootNode } = convertToDualTreeFormat(data);
 
@@ -344,8 +341,8 @@ function combineAndPositionTrees(
   // Add left tree nodes with their specific offset
   const leftTreeNodesWithOffset = leftTreeNodes.map((node) => ({
     id: node.id,
-    x: node.x - node.width / 2,
-    y: node.y + leftTreeOffset + node.height / 2,
+    x: node.x - (node.width ?? 0) / 2,
+    y: node.y + leftTreeOffset + (node.height ?? 0) / 2,
     section: 'left' as const,
     width: node.width,
     height: node.height,
@@ -355,8 +352,8 @@ function combineAndPositionTrees(
   // Add right tree nodes with their specific offset
   const rightTreeNodesWithOffset = rightTreeNodes.map((node) => ({
     id: node.id,
-    x: node.x + node.width / 2,
-    y: node.y + rightTreeOffset + node.height / 2,
+    x: node.x + (node.width ?? 0) / 2,
+    y: node.y + rightTreeOffset + (node.height ?? 0) / 2,
     section: 'right' as const,
     width: node.width,
     height: node.height,

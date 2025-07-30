@@ -162,7 +162,6 @@ export const render = async (
             //   { x: positionedEdge.endX, y: positionedEdge.endY },
             // ],
           };
-          // debugger;
           // Insert the edge path
           const paths = insertEdge(
             edgePaths,

@@ -2,6 +2,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
+import type { NodeChildren } from 'mermaid/dist/rendering-util/types.js';
 
 type Node = LayoutData['nodes'][number];
 // Used to calculate distances in order to avoid floating number rounding issues when comparing floating numbers
@@ -14,7 +15,7 @@ interface LabelData {
 }
 
 interface NodeWithVertex extends Omit<Node, 'domId'> {
-  children?: unknown[];
+  children?: NodeChildren;
   labelData?: LabelData;
   domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
 }
@@ -495,6 +496,7 @@ export const render = async (
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+      'elk.layered.crossingMinimization.forceNodeModelOrder': true,
       'elk.algorithm': algorithm,
       'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
@@ -509,7 +511,6 @@ export const render = async (
       // 'spacing.edgeEdge': 10,
       // 'spacing.edgeEdgeBetweenLayers': 20,
       // 'spacing.nodeSelfLoop': 20,
-
       // Tweaking options
       // 'elk.layered.nodePlacement.favorStraightEdges': true,
       // 'nodePlacement.feedbackEdges': true,

@@ -2,8 +2,10 @@
 Ashish Jain
 cpettitt
 Dong Cai
+knsv
+Knut Sveidqvist
 Nikolay Rozhkov
 Peng Xiao
 Per Brolin
+Sidharth Vinod
 subhash-halder
-Vinod Sidharth
