@@ -62,22 +62,6 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
   node.calcIntersect = function (bounds: Bounds, point: Point) {
     const s = bounds.width;
 
-    // console.log(
-    //   'APA10\nbounds width:',
-    //   bounds.width,
-    //   '\nbounds height:',
-    //   bounds.height,
-    //   'point:',
-    //   point.x,
-    //   point.y,
-    //   '\nw:',
-    //   w,
-    //   '\nh',
-    //   h,
-    //   '\ns',
-    //   s
-    // );
-
     // Define polygon points
     const points = [
       { x: s / 2, y: 0 },

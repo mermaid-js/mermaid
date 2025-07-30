@@ -5,7 +5,6 @@ import type { LayoutData, Node, Edge } from '../../types.js';
 import type { LayoutResult, TidyTreeNode, PositionedNode, PositionedEdge } from './types.js';
 import { intersection } from '../../rendering-elements/edges.js';
 
-let intersectionShift = 50;
 /**
  * Execute the tidy-tree layout algorithm on generic layout data
  *
@@ -20,6 +19,7 @@ export function executeTidyTreeLayout(
   data: LayoutData,
   _config: MermaidConfig
 ): Promise<LayoutResult> {
+  let intersectionShift = 50;
   log.debug('APA01 Starting tidy-tree layout algorithm');
 
   return new Promise((resolve, reject) => {
@@ -80,7 +80,11 @@ export function executeTidyTreeLayout(
         rightBoundingBox,
         data
       );
-      const positionedEdges = calculateEdgePositions(data.edges, positionedNodes);
+      const positionedEdges = calculateEdgePositions(
+        data.edges,
+        positionedNodes,
+        intersectionShift
+      );
 
       log.debug(
         `Tidy-tree layout completed: ${positionedNodes.length} nodes, ${positionedEdges.length} edges`
@@ -486,7 +490,8 @@ function computeCircleEdgeIntersection(
  */
 function calculateEdgePositions(
   edges: Edge[],
-  positionedNodes: PositionedNode[]
+  positionedNodes: PositionedNode[],
+  intersectionShift: number
 ): PositionedEdge[] {
   const nodeInfo = new Map<string, PositionedNode>();
   positionedNodes.forEach((node) => {

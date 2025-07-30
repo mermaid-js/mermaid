@@ -21,7 +21,6 @@ export type MindmapLayoutEdge = Edge & {
   section?: number;
 };
 
-
 const nodeType = {
   DEFAULT: 0,
   NO_BORDER: 0,
@@ -178,19 +177,19 @@ export class MindmapDB {
    * @param node - The mindmap node to process
    * @param sectionNumber - The section number to assign (undefined for root)
    */
-  public assignSections (node: MindmapNode, sectionNumber?: number): void {
+  public assignSections(node: MindmapNode, sectionNumber?: number): void {
     // Assign section number to the current node
     node.section = sectionNumber;
 
     // For root node's children, assign section numbers based on their index
     // For other nodes, inherit parent's section number
     if (node.children) {
-      node.children.forEach((child, index) => {
+      for (const [index, child] of node.children.entries()) {
         const childSectionNumber = node.level === 0 ? index : sectionNumber;
         this.assignSections(child, childSectionNumber);
-      });
+      }
     }
-  };
+  }
 
   /**
    * Convert mindmap tree structure to flat array of nodes
@@ -263,58 +262,61 @@ export class MindmapDB {
 
     // Recursively process children
     if (node.children) {
-      node.children.forEach((child) => this.flattenNodes(child, processedNodes));
+      for (const child of node.children) {
+        this.flattenNodes(child, processedNodes);
+      }
     }
-  };
+  }
 
   /**
    * Generate edges from parent-child relationships in mindmap tree
    * @param node - The mindmap node to process
    * @param edges - Array to collect edges
    */
- public generateEdges(node: MindmapNode, edges: MindmapLayoutEdge[]): void{
-    if (node.children) {
-      node.children.forEach((child) => {
-        // Build CSS classes for the edge
-        let edgeClasses = 'edge';
-
-        // Add section-specific classes based on the child's section
-        if (child.section !== undefined) {
-          edgeClasses += ` section-edge-${child.section}`;
-        }
-
-        // Add depth class based on the parent's level + 1 (depth of the edge)
-        const edgeDepth = node.level + 1;
-        edgeClasses += ` edge-depth-${edgeDepth}`;
-
-        const edge: MindmapLayoutEdge = {
-          id: `edge_${node.id}_${child.id}`,
-          start: 'node_' + node.id.toString(),
-          end: 'node_' + child.id.toString(),
-          type: 'normal',
-          curve: 'basis',
-          thickness: 'normal',
-          look: 'default',
-          classes: edgeClasses,
-          // Store mindmap-specific data
-          depth: node.level,
-          section: child.section,
-        };
-
-        edges.push(edge);
-
-        // Recursively process child edges
-        this.generateEdges(child, edges);
-      });
+  public generateEdges(node: MindmapNode, edges: MindmapLayoutEdge[]): void {
+    if (!node.children) {
+      return;
     }
-  };
+    for (const child of node.children) {
+      // Build CSS classes for the edge
+      let edgeClasses = 'edge';
+
+      // Add section-specific classes based on the child's section
+      if (child.section !== undefined) {
+        edgeClasses += ` section-edge-${child.section}`;
+      }
+
+      // Add depth class based on the parent's level + 1 (depth of the edge)
+      const edgeDepth = node.level + 1;
+      edgeClasses += ` edge-depth-${edgeDepth}`;
+
+      const edge: MindmapLayoutEdge = {
+        id: `edge_${node.id}_${child.id}`,
+        start: 'node_' + node.id.toString(),
+        end: 'node_' + child.id.toString(),
+        type: 'normal',
+        curve: 'basis',
+        thickness: 'normal',
+        look: 'default',
+        classes: edgeClasses,
+        // Store mindmap-specific data
+        depth: node.level,
+        section: child.section,
+      };
+
+      edges.push(edge);
+
+      // Recursively process child edges
+      this.generateEdges(child, edges);
+    }
+  }
 
   /**
    * Get structured data for layout algorithms
    * Following the pattern established by ER diagrams
    * @returns Structured data containing nodes, edges, and config
    */
-public getData (): LayoutData {
+  public getData(): LayoutData {
     const mindmapRoot = this.getMindmap();
     const config = getConfig();
 
@@ -343,14 +345,14 @@ public getData (): LayoutData {
 
     // Create shapes map for ELK compatibility
     const shapes = new Map<string, any>();
-    processedNodes.forEach((node) => {
+    for (const node of processedNodes) {
       shapes.set(node.id, {
         shape: node.shape,
         width: node.width,
         height: node.height,
         padding: node.padding,
       });
-    });
+    }
 
     return {
       nodes: processedNodes,
@@ -369,11 +371,10 @@ public getData (): LayoutData {
       type: 'mindmap',
       diagramId: 'mindmap-' + Date.now(),
     };
-  };
-
-  // Expose logger to grammar
-   public getLogger() {
-    return log;
   }
 
+  // Expose logger to grammar
+  public getLogger() {
+    return log;
+  }
 }

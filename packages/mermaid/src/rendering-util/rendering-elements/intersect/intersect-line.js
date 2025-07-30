@@ -56,31 +56,7 @@ function intersectLine(p1, p2, q1, q2) {
 
     num = a2 * c1 - a1 * c2;
     const y = num < 0 ? (num - offset) / denom : (num + offset) / denom;
-    // console.log(
-    //   'APA30 intersectLine intersection',
-    //   '\np1: (',
-    //   p1.x,
-    //   p1.y,
-    //   ')',
-    //   '\np2: (',
-    //   p2.x,
-    //   p2.y,
-    //   ')',
-    //   '\nq1: (',
-    //   q1.x,
-    //   q1.y,
-    //   ')',
-    //   '\np1: (',
-    //   q2.x,
-    //   q2.y,
-    //   ')',
-    //   'offset:',
-    //   offset,
-    //   '\nintersection: (',
-    //   x,
-    //   y,
-    //   ')'
-    // );
+
     return { x: x, y: y };
   }
 }

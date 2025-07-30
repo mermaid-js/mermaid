@@ -26,18 +26,6 @@ vi.mock('cytoscape-cose-bilkent', () => ({
   default: vi.fn(),
 }));
 
-vi.mock('d3', () => ({
-  select: vi.fn(() => ({
-    append: vi.fn(() => ({
-      attr: vi.fn(() => ({
-        attr: vi.fn(() => ({
-          remove: vi.fn(),
-        })),
-      })),
-    })),
-  })),
-}));
-
 describe('Cytoscape Setup', () => {
   let mockNodes: Node[];
   let mockEdges: Edge[];
