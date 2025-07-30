@@ -242,6 +242,79 @@ describe.skip('architecture diagram', () => {
       `
     );
   });
+
+  it('should render a consistent architecture diagram', () => {
+    // #6024
+    imgSnapshotTest(
+      `architecture-beta
+              group api(cloud)[API]
+
+              service db(database)[Database] in api
+              service disk1(disk)[Storage] in api
+              service disk2(disk)[Storage] in api
+              service server(server)[Server] in api
+
+              db:L <--> R:server
+              disk1:T <--> L:server
+              disk2:T <--> R:db
+      `
+    );
+  });
+
+  it('should render a consistent architecture diagram', () => {
+    // #6166
+    imgSnapshotTest(
+      `architecture-beta
+          service client[Client]
+          junction j1
+          junction j2
+      
+          service api(logos:aws-api-gateway)[Amazon API Gateway]
+          service lambda1(logos:aws-lambda)[AWS Lambda 1]
+      
+          service dynamodb(logos:aws-dynamodb)[Amazon DynamoDB]
+      
+          service s3(logos:aws-s3)[Amazon S3]
+          service lambda2(logos:aws-lambda)[AWS Lambda 2]
+      
+          client:R -[1]-> L:api
+          api:R -[2]-> L:lambda1
+          lambda1:R -[3]-> T:dynamodb
+      
+          client:B -[j1]- T:j1
+          j1:B -[j1 to j2]- T:j2
+          j2:R -[j2]- L:s3
+      
+          s3:R -[5]-> L:lambda2
+          lambda2:R -[6]-> B:dynamodb
+      `
+    );
+  });
+
+  it('should render an error', () => {
+    // #6166
+    imgSnapshotTest(
+      `architecture-beta
+              architecture-beta
+              service client[Client]
+              service api(logos:aws-api-gateway)[Amazon API Gateway]
+              service lambda1(logos:aws-lambda)[AWS Lambda]
+
+              service dynamodb(logos:aws-dynamodb)[Amazon DynamoDB]
+              
+              service s3(logos:aws-s3)[Amazon S3]
+              service lambda2(logos:aws-lambda)[AWS Lambda]
+
+              client:R -[1]-> L:api
+              api:R -[2]-> L:lambda1
+              lambda1:R -[3]-> T:dynamodb
+
+              client:B -[4]-> L:s3
+              s3:R -[5]-> L:lambda2
+              lambda2:R -[6]-> B:dynamodb
+      `
+    );
+  });
 });
 
 // Skipped as the layout is not deterministic, and causes issues in E2E tests.
