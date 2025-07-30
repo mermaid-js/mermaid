@@ -1,17 +1,18 @@
-import { parser } from './gantt.jison';
-import ganttDb from '../ganttDb.js';
+import gantt from './ganttParser.ts';
+import GanttDb from '../ganttDb.js';
 import { vi, it } from 'vitest';
 const spyOn = vi.spyOn;
+
 const parserFnConstructor = (str) => {
   return () => {
-    parser.parse(str);
+    gantt.parser.parse(str);
   };
 };
 
 describe('when parsing a gantt diagram it', function () {
   beforeEach(function () {
-    parser.yy = ganttDb;
-    parser.yy.clear();
+    gantt.parser.yy = new GanttDb();
+    gantt.parser.yy.clear();
   });
 
   it('should handle a dateFormat definition', function () {
@@ -41,12 +42,12 @@ describe('when parsing a gantt diagram it', function () {
     expect(parserFnConstructor(str)).not.toThrow();
   });
   it('should handle a todayMarker definition', function () {
-    spyOn(ganttDb, 'setTodayMarker');
+    spyOn(gantt.parser.yy, 'setTodayMarker');
     const str =
       'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid\nexcludes weekdays 2019-02-01\ntodayMarker off';
 
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(ganttDb.setTodayMarker).toHaveBeenCalledWith('off');
+    expect(gantt.parser.yy.setTodayMarker).toHaveBeenCalledWith('off');
   });
   it('should handle a section definition', function () {
     const str =
@@ -110,7 +111,7 @@ describe('when parsing a gantt diagram it', function () {
     expect(parserFnConstructor(semi)).not.toThrow();
     expect(parserFnConstructor(hash)).not.toThrow();
 
-    const tasks = parser.yy.getTasks();
+    const tasks = gantt.parser.yy.getTasks();
 
     expect(tasks[0].startTime).toEqual(new Date(2014, 0, 1));
     expect(tasks[0].endTime).toEqual(new Date(2014, 0, 4));
@@ -130,7 +131,7 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
 
-    const tasks = parser.yy.getTasks();
+    const tasks = gantt.parser.yy.getTasks();
 
     expect(tasks[0].startTime).toEqual(new Date(2024, 0, 27));
     expect(tasks[0].endTime).toEqual(new Date(2024, 0, 28));
@@ -170,7 +171,7 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
 
-    const tasks = parser.yy.getTasks();
+    const tasks = gantt.parser.yy.getTasks();
 
     allowedTags.forEach(function (t) {
       if (eval(t)) {
@@ -181,7 +182,7 @@ describe('when parsing a gantt diagram it', function () {
     });
   });
   it('should parse callback specifier with no args', function () {
-    spyOn(ganttDb, 'setClickEvent');
+    spyOn(gantt.parser.yy, 'setClickEvent');
     const str =
       'gantt\n' +
       'dateFormat  YYYY-MM-DD\n' +
@@ -190,12 +191,11 @@ describe('when parsing a gantt diagram it', function () {
       'Calling a callback        :cl2, after cl1, 3d\n\n' +
       'click cl1 href "https://mermaidjs.github.io/"\n' +
       'click cl2 call ganttTestClick()\n';
-
     expect(parserFnConstructor(str)).not.toThrow();
-    expect(ganttDb.setClickEvent).toHaveBeenCalledWith('cl2', 'ganttTestClick', null);
+    expect(gantt.parser.yy.setClickEvent).toHaveBeenCalledWith('cl2', 'ganttTestClick', null);
   });
   it('should parse callback specifier with arbitrary number of args', function () {
-    spyOn(ganttDb, 'setClickEvent');
+    spyOn(gantt.parser.yy, 'setClickEvent');
     const str =
       'gantt\n' +
       'dateFormat  YYYY-MM-DD\n' +
@@ -207,7 +207,7 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
     const args = '"test1", "test2", "test3"';
-    expect(ganttDb.setClickEvent).toHaveBeenCalledWith(
+    expect(gantt.parser.yy.setClickEvent).toHaveBeenCalledWith(
       'cl2',
       'ganttTestClick',
       '"test0", test1, test2'
@@ -224,10 +224,9 @@ describe('when parsing a gantt diagram it', function () {
        section Section
        A task :a1, 2014-01-01, 30d\n`;
 
-    parser.parse(ganttString);
-
-    expect(ganttDb.getAccTitle()).toBe(expectedTitle);
-    expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
+    gantt.parser.parse(ganttString);
+    expect(gantt.parser.yy.getAccTitle()).toBe(expectedTitle);
+    expect(gantt.parser.yy.getAccDescription()).toBe(expectedAccDescription);
   });
   it('should allow for a accessibility title and multiline description (accDescr)', function () {
     const expectedTitle = 'Gantt Diagram';
@@ -242,23 +241,22 @@ row2`;
        section Section
        A task :a1, 2014-01-01, 30d\n`;
 
-    parser.parse(ganttString);
-
-    expect(ganttDb.getAccTitle()).toBe(expectedTitle);
-    expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
+    gantt.parser.parse(ganttString);
+    expect(gantt.parser.yy.getAccTitle()).toBe(expectedTitle);
+    expect(gantt.parser.yy.getAccDescription()).toBe(expectedAccDescription);
   });
 
   it.each(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])(
     'should allow for setting the starting weekday to %s for tick interval',
     (day) => {
-      parser.parse(`gantt\nweekday ${day}`);
-      expect(ganttDb.getWeekday()).toBe(day);
+      gantt.parser.parse(`gantt\nweekday ${day}`);
+      expect(gantt.parser.yy.getWeekday()).toBe(day);
     }
   );
 
   it.each(['__proto__', 'constructor'])('should allow for a link to %s id', (prop) => {
     expect(() =>
-      parser.parse(`gantt
+      gantt.parser.parse(`gantt
     dateFormat YYYY-MM-DD
     section Section
     A task :${prop}, 2024-10-01, 3d
