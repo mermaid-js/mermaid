@@ -1,9 +1,9 @@
-import { getIconSVG } from '../../rendering-util/icons.js';
 import type cytoscape from 'cytoscape';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';
+import { getIconSVG } from '../../rendering-util/icons.js';
 import type { D3Element } from '../../types.js';
-import { db, getConfigField } from './architectureDb.js';
+import type { ArchitectureDB } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import {
   ArchitectureDirectionArrow,
@@ -16,14 +16,17 @@ import {
   isArchitectureDirectionY,
   isArchitecturePairXY,
   nodeData,
-  type ArchitectureDB,
   type ArchitectureJunction,
   type ArchitectureService,
 } from './architectureTypes.js';
 
-export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core) {
-  const padding = getConfigField('padding');
-  const iconSize = getConfigField('iconSize');
+export const drawEdges = async function (
+  edgesEl: D3Element,
+  cy: cytoscape.Core,
+  db: ArchitectureDB
+) {
+  const padding = db.getConfigField('padding');
+  const iconSize = db.getConfigField('iconSize');
   const halfIconSize = iconSize / 2;
   const arrowSize = iconSize / 6;
   const halfArrowSize = arrowSize / 2;
@@ -183,13 +186,17 @@ export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core)
   );
 };
 
-export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Core) {
-  const padding = getConfigField('padding');
+export const drawGroups = async function (
+  groupsEl: D3Element,
+  cy: cytoscape.Core,
+  db: ArchitectureDB
+) {
+  const padding = db.getConfigField('padding');
   const groupIconSize = padding * 0.75;
 
-  const fontSize = getConfigField('fontSize');
+  const fontSize = db.getConfigField('fontSize');
 
-  const iconSize = getConfigField('iconSize');
+  const iconSize = db.getConfigField('iconSize');
   const halfIconSize = iconSize / 2;
 
   await Promise.all(
@@ -266,7 +273,7 @@ export const drawServices = async function (
 ): Promise<number> {
   for (const service of services) {
     const serviceElem = elem.append('g');
-    const iconSize = getConfigField('iconSize');
+    const iconSize = db.getConfigField('iconSize');
 
     if (service.title) {
       const textElem = serviceElem.append('g');
@@ -350,7 +357,7 @@ export const drawJunctions = function (
 ) {
   junctions.forEach((junction) => {
     const junctionElem = elem.append('g');
-    const iconSize = getConfigField('iconSize');
+    const iconSize = db.getConfigField('iconSize');
 
     const bkgElem = junctionElem.append('g');
     bkgElem
