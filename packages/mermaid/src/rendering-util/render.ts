@@ -45,7 +45,7 @@ const registerDefaultLayoutLoaders = () => {
     },
     {
       name: 'tidy-tree',
-      loader: async () => await import('./layout-algorithms/tidy-tree/index.js'),
+      loader: async () => await import('../../../mermaid-layout-tidy-tree/src/index.js'),
     },
     {
       name: 'elk',

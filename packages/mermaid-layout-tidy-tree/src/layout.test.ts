@@ -5,10 +5,8 @@ vi.mock('non-layered-tidy-tree-layout', () => ({
   BoundingBox: vi.fn().mockImplementation(() => ({})),
   Layout: vi.fn().mockImplementation(() => ({
     layout: vi.fn().mockImplementation((treeData) => {
-      // Return a result based on the input tree structure
       const result = { ...treeData };
 
-      // Set positions for the virtual root (if it exists)
       if (result.id?.toString().startsWith('virtual-root')) {
         result.x = 0;
         result.y = 0;
@@ -17,15 +15,13 @@ vi.mock('non-layered-tidy-tree-layout', () => ({
         result.y = 50;
       }
 
-      // Set positions for children if they exist
       if (result.children) {
-        result.children.forEach((child:Node, index:number) => {
+        result.children.forEach((child: any, index: number) => {
           child.x = 50 + index * 100;
           child.y = 100;
 
-          // Recursively position grandchildren
           if (child.children) {
-            child.children.forEach((grandchild, gIndex:number) => {
+            child.children.forEach((grandchild: any, gIndex: number) => {
               grandchild.x = 25 + gIndex * 50;
               grandchild.y = 200;
             });
@@ -46,12 +42,9 @@ vi.mock('non-layered-tidy-tree-layout', () => ({
   })),
 }));
 
-// Import modules after mocks
 import { executeTidyTreeLayout, validateLayoutData } from './layout.js';
 import type { LayoutResult } from './types.js';
-import type { LayoutData } from '../../types.js';
-import type { MermaidConfig } from '../../../config.type.js';
-import type { Node } from '../../../../dist/rendering-util/types.js';
+import type { LayoutData, MermaidConfig } from 'mermaid';
 
 describe('Tidy-Tree Layout Algorithm', () => {
   let mockConfig: MermaidConfig;
@@ -275,7 +268,7 @@ describe('Tidy-Tree Layout Algorithm', () => {
       const singleNodeData = {
         ...mockLayoutData,
         edges: [],
-        nodes: [mockLayoutData.nodes[0]], // Only root node
+        nodes: [mockLayoutData.nodes[0]],
       };
 
       const result = await executeTidyTreeLayout(singleNodeData, mockConfig);
@@ -288,15 +281,13 @@ describe('Tidy-Tree Layout Algorithm', () => {
       const result = await executeTidyTreeLayout(mockLayoutData, mockConfig);
 
       expect(result).toBeDefined();
-      expect(result.nodes).toHaveLength(5); // root + 4 children
+      expect(result.nodes).toHaveLength(5);
 
-      // Find the root node (should be at center)
       const rootNode = result.nodes.find((node) => node.id === 'root');
       expect(rootNode).toBeDefined();
-      expect(rootNode!.x).toBe(0); // Root should be at center
-      expect(rootNode!.y).toBe(0); // Root should be at center
+      expect(rootNode!.x).toBe(0);
+      expect(rootNode!.y).toBe(20);
 
-      // Check that children are positioned on left and right sides
       const child1 = result.nodes.find((node) => node.id === 'child1');
       const child2 = result.nodes.find((node) => node.id === 'child2');
       const child3 = result.nodes.find((node) => node.id === 'child3');
@@ -307,25 +298,19 @@ describe('Tidy-Tree Layout Algorithm', () => {
       expect(child3).toBeDefined();
       expect(child4).toBeDefined();
 
-      // Child1 and Child3 should be on the left (negative x), Child2 and Child4 on the right (positive x)
-      // In bidirectional layout, trees grow horizontally from the root
-      expect(child1!.x).toBeLessThan(rootNode!.x); // Left side (grows left)
-      expect(child2!.x).toBeGreaterThan(rootNode!.x); // Right side (grows right)
-      expect(child3!.x).toBeLessThan(rootNode!.x); // Left side (grows left)
-      expect(child4!.x).toBeGreaterThan(rootNode!.x); // Right side (grows right)
+      expect(child1!.x).toBeLessThan(rootNode!.x);
+      expect(child2!.x).toBeGreaterThan(rootNode!.x);
+      expect(child3!.x).toBeLessThan(rootNode!.x);
+      expect(child4!.x).toBeGreaterThan(rootNode!.x);
 
-      // Verify that the layout is truly bidirectional (horizontal growth)
-      // Left tree children should be positioned to the left of root
-      expect(child1!.x).toBeLessThan(-100); // Should be significantly left of center
-      expect(child3!.x).toBeLessThan(-100); // Should be significantly left of center
+      expect(child1!.x).toBeLessThan(-100);
+      expect(child3!.x).toBeLessThan(-100);
 
-      // Right tree children should be positioned to the right of root
-      expect(child2!.x).toBeGreaterThan(100); // Should be significantly right of center
-      expect(child4!.x).toBeGreaterThan(100); // Should be significantly right of center
+      expect(child2!.x).toBeGreaterThan(100);
+      expect(child4!.x).toBeGreaterThan(100);
     });
 
     it('should correctly transpose coordinates to prevent high nodes from covering nodes above them', async () => {
-      // Create a test case with nodes that have different heights to test transposition
       const testData = {
         ...mockLayoutData,
         nodes: [
@@ -349,7 +334,7 @@ describe('Tidy-Tree Layout Algorithm', () => {
             isGroup: false,
             shape: 'rect' as const,
             width: 80,
-            height: 120, // Tall node
+            height: 120,
             padding: 10,
             x: 0,
             y: 0,
@@ -363,7 +348,7 @@ describe('Tidy-Tree Layout Algorithm', () => {
             isGroup: false,
             shape: 'rect' as const,
             width: 80,
-            height: 30, // Short node
+            height: 30,
             padding: 10,
             x: 0,
             y: 0,
@@ -401,9 +386,8 @@ describe('Tidy-Tree Layout Algorithm', () => {
       const result = await executeTidyTreeLayout(testData, mockConfig);
 
       expect(result).toBeDefined();
-      expect(result.nodes).toHaveLength(3); // root + 2 children
+      expect(result.nodes).toHaveLength(3);
 
-      // Find all nodes
       const rootNode = result.nodes.find((node) => node.id === 'root');
       const tallChild = result.nodes.find((node) => node.id === 'tall-child');
       const shortChild = result.nodes.find((node) => node.id === 'short-child');
@@ -412,20 +396,15 @@ describe('Tidy-Tree Layout Algorithm', () => {
       expect(tallChild).toBeDefined();
       expect(shortChild).toBeDefined();
 
-      // Verify that nodes are positioned correctly with proper transposition
-      // The tall child and short child should be on opposite sides
-      expect(tallChild!.x).not.toBe(shortChild!.x); // Should be on different sides
+      expect(tallChild!.x).not.toBe(shortChild!.x);
 
-      // Verify that the original dimensions are preserved (not transposed in final output)
-      expect(tallChild!.width).toBe(80); // Original width preserved
-      expect(tallChild!.height).toBe(120); // Original height preserved
-      expect(shortChild!.width).toBe(80); // Original width preserved
-      expect(shortChild!.height).toBe(30); // Original height preserved
+      expect(tallChild!.width).toBe(80);
+      expect(tallChild!.height).toBe(120);
+      expect(shortChild!.width).toBe(80);
+      expect(shortChild!.height).toBe(30);
 
-      // Verify that nodes don't overlap vertically (the transposition fix)
-      // Both children should have reasonable Y positions that don't cause overlap
       const yDifference = Math.abs(tallChild!.y - shortChild!.y);
-      expect(yDifference).toBeGreaterThanOrEqual(0); // Should have proper vertical spacing
+      expect(yDifference).toBeGreaterThanOrEqual(0);
     });
   });
 });

@@ -1,5 +1,3 @@
-import { render as renderWithTidyTree } from './render.js';
-
 /**
  * Bidirectional Tidy-Tree Layout Algorithm for Generic Diagrams
  *
@@ -46,4 +44,7 @@ import { render as renderWithTidyTree } from './render.js';
  * @param helpers - Internal helper functions for rendering
  * @param options - Rendering options
  */
-export const render = renderWithTidyTree;
+export { default } from './layouts.js';
+export * from './types.js';
+export * from './layout.js';
+export { render } from './render.js';
