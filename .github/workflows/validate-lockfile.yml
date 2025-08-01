@@ -35,7 +35,7 @@ jobs:
 
           # 2) No unwanted vitepress paths
           if grep -qF 'packages/mermaid/src/vitepress' pnpm-lock.yaml; then
-            issues+=("• Disallowed path present.")
+            issues+=("• Disallowed path 'packages/mermaid/src/vitepress' present")
           fi
 
           # 3) Lockfile only changes when package.json changes
