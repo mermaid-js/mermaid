@@ -1,21 +1,12 @@
 import { it, describe, expect } from 'vitest';
-import { db } from './architectureDb.js';
 import { parser } from './architectureParser.js';
-
-const {
-  clear,
-  getDiagramTitle,
-  getAccTitle,
-  getAccDescription,
-  getServices,
-  getGroups,
-  getEdges,
-  getJunctions,
-} = db;
-
+import { ArchitectureDB } from './architectureDb.js';
 describe('architecture diagrams', () => {
+  let db: ArchitectureDB;
   beforeEach(() => {
-    clear();
+    db = new ArchitectureDB();
+    // @ts-expect-error since type is set to undefined we will have error
+    parser.parser?.yy = db;
   });
 
   describe('architecture diagram definitions', () => {
@@ -36,7 +27,7 @@ describe('architecture diagrams', () => {
     it('should handle title on the first line', async () => {
       const str = `architecture-beta title Simple Architecture Diagram`;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      expect(getDiagramTitle()).toBe('Simple Architecture Diagram');
+      expect(db.getDiagramTitle()).toBe('Simple Architecture Diagram');
     });
 
     it('should handle title on another line', async () => {
@@ -44,7 +35,7 @@ describe('architecture diagrams', () => {
             title Simple Architecture Diagram
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      expect(getDiagramTitle()).toBe('Simple Architecture Diagram');
+      expect(db.getDiagramTitle()).toBe('Simple Architecture Diagram');
     });
 
     it('should handle accessibility title and description', async () => {
@@ -53,8 +44,8 @@ describe('architecture diagrams', () => {
             accDescr: Accessibility Description
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      expect(getAccTitle()).toBe('Accessibility Title');
-      expect(getAccDescription()).toBe('Accessibility Description');
+      expect(db.getAccTitle()).toBe('Accessibility Title');
+      expect(db.getAccDescription()).toBe('Accessibility Description');
     });
 
     it('should handle multiline accessibility description', async () => {
@@ -64,7 +55,7 @@ describe('architecture diagrams', () => {
             }
             `;
       await expect(parser.parse(str)).resolves.not.toThrow();
-      expect(getAccDescription()).toBe('Accessibility Description');
+      expect(db.getAccDescription()).toBe('Accessibility Description');
     });
   });
 });
