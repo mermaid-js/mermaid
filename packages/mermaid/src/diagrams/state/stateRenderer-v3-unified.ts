@@ -87,7 +87,6 @@ export const draw = async function (text: string, id: string, _version: string, 
       const allNodes = svg.node()?.querySelectorAll('g.node');
       let matchedElem: SVGGElement | undefined;
 
-      // memo: ここでlabelとnodeどちらもmatchしてしまっていた
       allNodes?.forEach((g: SVGGElement) => {
         const text = g.textContent?.trim();
         if (text === stateId) {
