@@ -1,4 +1,7 @@
-import type { Node } from '../../types.js';
+import type { LayoutData } from 'mermaid';
+
+export type Node = LayoutData['nodes'][number];
+export type Edge = LayoutData['edges'][number];
 
 /**
  * Positioned node after layout calculation
@@ -7,14 +10,11 @@ export interface PositionedNode {
   id: string;
   x: number;
   y: number;
-  // Tree membership information for edge calculations
   section?: 'root' | 'left' | 'right';
-  // Original node dimensions for edge point calculations
   width?: number;
   height?: number;
-  // Reference to original node for additional data
   originalNode?: Node;
-  [key: string]: unknown; // Allow additional properties
+  [key: string]: unknown;
 }
 
 /**
@@ -30,15 +30,13 @@ export interface PositionedEdge {
   midY: number;
   endX: number;
   endY: number;
-  // Tree membership information for edge styling/routing
   sourceSection?: 'root' | 'left' | 'right';
   targetSection?: 'root' | 'left' | 'right';
-  // Node dimensions for precise edge point calculations
   sourceWidth?: number;
   sourceHeight?: number;
   targetWidth?: number;
   targetHeight?: number;
-  [key: string]: unknown; // Allow additional properties
+  [key: string]: unknown;
 }
 
 /**
@@ -59,13 +57,13 @@ export interface TidyTreeNode {
   x?: number;
   y?: number;
   children?: TidyTreeNode[];
-  _originalNode?: Node; // Store reference to original node data
+  _originalNode?: Node;
 }
 
 /**
  * Tidy-tree layout configuration
  */
 export interface TidyTreeLayoutConfig {
-  gap: number; // Horizontal gap between nodes
-  bottomPadding: number; // Vertical gap between levels
+  gap: number;
+  bottomPadding: number;
 }

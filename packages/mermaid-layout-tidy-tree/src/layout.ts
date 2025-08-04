@@ -1,9 +1,13 @@
 import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
-import type { MermaidConfig } from '../../../config.type.js';
-import { log } from '../../../logger.js';
-import type { LayoutData, Node, Edge } from '../../types.js';
-import type { LayoutResult, TidyTreeNode, PositionedNode, PositionedEdge } from './types.js';
-import { intersection } from '../../rendering-elements/edges.js';
+import type { MermaidConfig, LayoutData } from 'mermaid';
+import type {
+  LayoutResult,
+  TidyTreeNode,
+  PositionedNode,
+  PositionedEdge,
+  Node,
+  Edge,
+} from './types.js';
 
 /**
  * Execute the tidy-tree layout algorithm on generic layout data
@@ -20,48 +24,34 @@ export function executeTidyTreeLayout(
   _config: MermaidConfig
 ): Promise<LayoutResult> {
   let intersectionShift = 50;
-  log.debug('APA01 Starting tidy-tree layout algorithm');
 
   return new Promise((resolve, reject) => {
     try {
-      // Validate input data
       if (!data.nodes || !Array.isArray(data.nodes) || data.nodes.length === 0) {
         throw new Error('No nodes found in layout data');
       }
 
       if (!data.edges || !Array.isArray(data.edges)) {
-        data.edges = []; // Allow empty edges for single-node trees
+        data.edges = [];
       }
 
-      // Convert layout data to dual-tree format (left and right trees)
       const { leftTree, rightTree, rootNode } = convertToDualTreeFormat(data);
 
-      // Configure tidy-tree layout with dynamic gap based on node heights
-      // Since we transpose coordinates, the gap becomes horizontal spacing in final layout
-      // We need to ensure enough space for the tallest nodes
-      const gap = 20; // Math.max(20, maxNodeHeight + 20); // Ensure minimum gap plus node height
-      const bottomPadding = 40; // Horizontal gap between levels
+      const gap = 20;
+      const bottomPadding = 40;
       intersectionShift = 30;
-
-      // if (maxChildren > 5) {
-      //   bottomPadding = 50;
-      //   intersectionShift = 50;
-      // }
 
       const bb = new BoundingBox(gap, bottomPadding);
       const layout = new Layout(bb);
 
-      // Execute layout algorithm for both trees
       let leftResult = null;
       let rightResult = null;
       let leftBoundingBox = null;
       let rightBoundingBox = null;
 
       if (leftTree) {
-        // log.debug('APA01 Left tree before layout', leftTree.children[0]?.children[0]);
         const leftLayoutResult = layout.layout(leftTree);
         leftResult = leftLayoutResult.result;
-        log.debug('APA01 Left tree before layout', JSON.stringify(leftResult, null, 2));
         leftBoundingBox = leftLayoutResult.boundingBox;
       }
 
@@ -71,7 +61,6 @@ export function executeTidyTreeLayout(
         rightBoundingBox = rightLayoutResult.boundingBox;
       }
 
-      // Combine and position the trees
       const positionedNodes = combineAndPositionTrees(
         rootNode,
         leftResult,
@@ -86,24 +75,11 @@ export function executeTidyTreeLayout(
         intersectionShift
       );
 
-      log.debug(
-        `Tidy-tree layout completed: ${positionedNodes.length} nodes, ${positionedEdges.length} edges`
-      );
-      if (leftBoundingBox || rightBoundingBox) {
-        log.debug(
-          `Left bounding box: ${leftBoundingBox ? `left=${leftBoundingBox.left}, right=${leftBoundingBox.right}, top=${leftBoundingBox.top}, bottom=${leftBoundingBox.bottom}` : 'none'}`
-        );
-        log.debug(
-          `Right bounding box: ${rightBoundingBox ? `left=${rightBoundingBox.left}, right=${rightBoundingBox.right}, top=${rightBoundingBox.top}, bottom=${rightBoundingBox.bottom}` : 'none'}`
-        );
-      }
-
       resolve({
         nodes: positionedNodes,
         edges: positionedEdges,
       });
     } catch (error) {
-      log.error('Error in tidy-tree layout algorithm:', error);
       reject(error);
     }
   });
@@ -122,11 +98,9 @@ function convertToDualTreeFormat(data: LayoutData): {
 } {
   const { nodes, edges } = data;
 
-  // Create a map of nodes for quick lookup
   const nodeMap = new Map<string, Node>();
   nodes.forEach((node) => nodeMap.set(node.id, node));
 
-  // Build adjacency list to represent parent-child relationships
   const children = new Map<string, string[]>();
   const parents = new Map<string, string>();
 
@@ -143,28 +117,21 @@ function convertToDualTreeFormat(data: LayoutData): {
     }
   });
 
-  // Find root node (node with no parent)
   const rootNodeData = nodes.find((node) => !parents.has(node.id));
-  if (!rootNodeData) {
-    // If no clear root, use the first node
-    if (nodes.length === 0) {
-      throw new Error('No nodes available to create tree');
-    }
-    log.warn('No root node found, using first node as root');
+  if (!rootNodeData && nodes.length === 0) {
+    throw new Error('No nodes available to create tree');
   }
 
-  const actualRoot = rootNodeData || nodes[0];
+  const actualRoot = rootNodeData ?? nodes[0];
 
-  // Create root node
   const rootNode: TidyTreeNode = {
     id: actualRoot.id,
-    width: actualRoot.width || 100,
-    height: actualRoot.height || 50,
+    width: actualRoot.width ?? 100,
+    height: actualRoot.height ?? 50,
     _originalNode: actualRoot,
   };
 
-  // Get root's children and split them alternately
-  const rootChildren = children.get(actualRoot.id) || [];
+  const rootChildren = children.get(actualRoot.id) ?? [];
   const leftChildren: string[] = [];
   const rightChildren: string[] = [];
 
@@ -176,7 +143,6 @@ function convertToDualTreeFormat(data: LayoutData): {
     }
   });
 
-  // Build left and right trees
   const leftTree = leftChildren.length > 0 ? buildSubTree(leftChildren, children, nodeMap) : null;
 
   const rightTree =
@@ -194,10 +160,9 @@ function buildSubTree(
   children: Map<string, string[]>,
   nodeMap: Map<string, Node>
 ): TidyTreeNode {
-  // Create a virtual root for this subtree
   const virtualRoot: TidyTreeNode = {
     id: `virtual-root-${Math.random()}`,
-    width: 1, // Minimal size for virtual root
+    width: 1,
     height: 1,
     children: rootChildren
       .map((childId) => nodeMap.get(childId))
@@ -217,21 +182,17 @@ function convertNodeToTidyTreeTransposed(
   children: Map<string, string[]>,
   nodeMap: Map<string, Node>
 ): TidyTreeNode {
-  const childIds = children.get(node.id) || [];
+  const childIds = children.get(node.id) ?? [];
   const childNodes = childIds
     .map((childId) => nodeMap.get(childId))
     .filter((child): child is Node => child !== undefined)
     .map((child) => convertNodeToTidyTreeTransposed(child, children, nodeMap));
 
-  // Transpose width and height for horizontal layout
-  // When tree grows horizontally, the original width becomes the height in the layout
-  // and the original height becomes the width in the layout
   return {
     id: node.id,
-    width: node.height || 50, // Original height becomes layout width
-    height: node.width || 100, // Original width becomes layout height
+    width: node.height ?? 50,
+    height: node.width ?? 100,
     children: childNodes.length > 0 ? childNodes : undefined,
-    // Store original node data for later use
     _originalNode: node,
   };
 }
@@ -249,28 +210,17 @@ function combineAndPositionTrees(
 ): PositionedNode[] {
   const positionedNodes: PositionedNode[] = [];
 
-  log.debug('combineAndPositionTrees', {
-    leftResult,
-    rightResult,
-  });
-
-  // Calculate root position (center of the layout)
   const rootX = 0;
   const rootY = 0;
 
-  // Calculate spacing between trees
-  const treeSpacing = rootNode.width / 2 + 30; // Horizontal spacing from root to tree
-
-  // First, collect node positions for each tree separately
+  const treeSpacing = rootNode.width / 2 + 30;
   const leftTreeNodes: PositionedNode[] = [];
   const rightTreeNodes: PositionedNode[] = [];
 
-  // Position left tree (grows to the left)
   if (leftResult?.children) {
     positionLeftTreeBidirectional(leftResult.children, leftTreeNodes, rootX - treeSpacing, rootY);
   }
 
-  // Position right tree (grows to the right)
   if (rightResult?.children) {
     positionRightTreeBidirectional(
       rightResult.children,
@@ -280,22 +230,17 @@ function combineAndPositionTrees(
     );
   }
 
-  // Calculate center points for each tree separately
-  // Only use first-level children (direct children of root) for centering
   let leftTreeCenterY = 0;
   let rightTreeCenterY = 0;
 
   if (leftTreeNodes.length > 0) {
-    // Filter to only first-level children (those closest to root on X axis)
-    // Find the X coordinate closest to root for left tree nodes
     const leftTreeXPositions = [...new Set(leftTreeNodes.map((node) => node.x))].sort(
       (a, b) => b - a
-    ); // Sort descending (closest to root first)
-    const firstLevelLeftX = leftTreeXPositions[0]; // X position closest to root
+    );
+    const firstLevelLeftX = leftTreeXPositions[0];
     const firstLevelLeftNodes = leftTreeNodes.filter((node) => node.x === firstLevelLeftX);
 
     if (firstLevelLeftNodes.length > 0) {
-      // Calculate bounding box considering node heights
       const leftMinY = Math.min(
         ...firstLevelLeftNodes.map((node) => node.y - (node.height ?? 50) / 2)
       );
@@ -307,16 +252,13 @@ function combineAndPositionTrees(
   }
 
   if (rightTreeNodes.length > 0) {
-    // Filter to only first-level children (those closest to root on X axis)
-    // Find the X coordinate closest to root for right tree nodes
     const rightTreeXPositions = [...new Set(rightTreeNodes.map((node) => node.x))].sort(
       (a, b) => a - b
-    ); // Sort ascending (closest to root first)
-    const firstLevelRightX = rightTreeXPositions[0]; // X position closest to root
+    );
+    const firstLevelRightX = rightTreeXPositions[0];
     const firstLevelRightNodes = rightTreeNodes.filter((node) => node.x === firstLevelRightX);
 
     if (firstLevelRightNodes.length > 0) {
-      // Calculate bounding box considering node heights
       const rightMinY = Math.min(
         ...firstLevelRightNodes.map((node) => node.y - (node.height ?? 50) / 2)
       );
@@ -327,22 +269,19 @@ function combineAndPositionTrees(
     }
   }
 
-  // Calculate different offsets for each tree to center them around the root
   const leftTreeOffset = -leftTreeCenterY;
   const rightTreeOffset = -rightTreeCenterY;
 
-  // Add the centered root
   positionedNodes.push({
     id: String(rootNode.id),
     x: rootX,
-    y: rootY + 20, // Root stays at center
+    y: rootY + 20,
     section: 'root',
-    width: rootNode._originalNode?.width || rootNode.width,
-    height: rootNode._originalNode?.height || rootNode.height,
+    width: rootNode._originalNode?.width ?? rootNode.width,
+    height: rootNode._originalNode?.height ?? rootNode.height,
     originalNode: rootNode._originalNode,
   });
 
-  // Add left tree nodes with their specific offset
   const leftTreeNodesWithOffset = leftTreeNodes.map((node) => ({
     id: node.id,
     x: node.x - (node.width ?? 0) / 2,
@@ -353,7 +292,6 @@ function combineAndPositionTrees(
     originalNode: node.originalNode,
   }));
 
-  // Add right tree nodes with their specific offset
   const rightTreeNodesWithOffset = rightTreeNodes.map((node) => ({
     id: node.id,
     x: node.x + (node.width ?? 0) / 2,
@@ -364,8 +302,6 @@ function combineAndPositionTrees(
     originalNode: node.originalNode,
   }));
 
-  // Add all nodes to the final result
-  // The tidy-tree algorithm should handle proper spacing, so no additional collision detection needed
   positionedNodes.push(...leftTreeNodesWithOffset);
   positionedNodes.push(...rightTreeNodesWithOffset);
 
@@ -383,23 +319,18 @@ function positionLeftTreeBidirectional(
   offsetY: number
 ): void {
   nodes.forEach((node) => {
-    // For left tree: transpose the tidy-tree coordinates correctly
-    // Tidy-tree X (tree levels going down) becomes our Y position (vertical spacing)
-    // Tidy-tree Y (sibling spacing) becomes our X distance from root (grows left)
-    const distanceFromRoot = node.y ?? 0; // Horizontal distance from root (grows left)
-    const verticalPosition = node.x ?? 0; // Vertical position (tree levels)
+    const distanceFromRoot = node.y ?? 0;
+    const verticalPosition = node.x ?? 0;
 
-    // Get the original node dimensions directly from the stored original node
     const originalWidth = node._originalNode?.width ?? 100;
     const originalHeight = node._originalNode?.height ?? 50;
 
-    // Use the vertical position as calculated by the tidy-tree algorithm
     const adjustedY = offsetY + verticalPosition;
 
     positionedNodes.push({
       id: String(node.id),
-      x: offsetX - distanceFromRoot, // Negative to grow left from root
-      y: adjustedY, // Vertical position based on tree level
+      x: offsetX - distanceFromRoot,
+      y: adjustedY,
       width: originalWidth,
       height: originalHeight,
       originalNode: node._originalNode,
@@ -422,23 +353,18 @@ function positionRightTreeBidirectional(
   offsetY: number
 ): void {
   nodes.forEach((node) => {
-    // For right tree: transpose the tidy-tree coordinates correctly
-    // Tidy-tree X (tree levels going down) becomes our Y position (vertical spacing)
-    // Tidy-tree Y (sibling spacing) becomes our X distance from root (grows right)
-    const distanceFromRoot = node.y ?? 0; // Horizontal distance from root (grows right)
-    const verticalPosition = node.x ?? 0; // Vertical position (tree levels)
+    const distanceFromRoot = node.y ?? 0;
+    const verticalPosition = node.x ?? 0;
 
-    // Get the original node dimensions directly from the stored original node
     const originalWidth = node._originalNode?.width ?? 100;
     const originalHeight = node._originalNode?.height ?? 50;
 
-    // Use the vertical position as calculated by the tidy-tree algorithm
     const adjustedY = offsetY + verticalPosition;
 
     positionedNodes.push({
       id: String(node.id),
-      x: offsetX + distanceFromRoot, // Positive to grow right from root
-      y: adjustedY, // Vertical position based on tree level
+      x: offsetX + distanceFromRoot,
+      y: adjustedY,
       width: originalWidth,
       height: originalHeight,
       originalNode: node._originalNode,
@@ -472,15 +398,62 @@ function computeCircleEdgeIntersection(
     return lineStart;
   }
 
-  // Normalize the direction vector from Start to End
   const nx = dx / length;
   const ny = dy / length;
 
-  // Start at the circle center and go backwards by the radius along the direction vector
   return {
     x: circle.x - nx * radius,
     y: circle.y - ny * radius,
   };
+}
+
+/**
+ * Calculate intersection point of a line with a rectangle
+ * This is a simplified version that we'll use instead of importing from mermaid
+ */
+function intersection(
+  node: { x: number; y: number; width?: number; height?: number },
+  point1: { x: number; y: number },
+  point2: { x: number; y: number }
+): { x: number; y: number } {
+  const nodeWidth = node.width ?? 100;
+  const nodeHeight = node.height ?? 50;
+
+  const centerX = node.x;
+  const centerY = node.y;
+
+  const dx = point2.x - point1.x;
+  const dy = point2.y - point1.y;
+
+  if (dx === 0 && dy === 0) {
+    return { x: centerX, y: centerY };
+  }
+
+  const halfWidth = nodeWidth / 2;
+  const halfHeight = nodeHeight / 2;
+
+  let intersectionX = centerX;
+  let intersectionY = centerY;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 0) {
+      intersectionX = centerX + halfWidth;
+      intersectionY = centerY + (halfWidth * dy) / dx;
+    } else {
+      intersectionX = centerX - halfWidth;
+      intersectionY = centerY - (halfWidth * dy) / dx;
+    }
+  } else {
+    if (dy > 0) {
+      intersectionY = centerY + halfHeight;
+      intersectionX = centerX + (halfHeight * dx) / dy;
+    } else {
+      intersectionY = centerY - halfHeight;
+      intersectionX = centerX - (halfHeight * dx) / dy;
+    }
+  }
+
+  return { x: intersectionX, y: intersectionY };
 }
 
 /**
@@ -503,8 +476,6 @@ function calculateEdgePositions(
     const targetNode = nodeInfo.get(edge.end ?? '');
 
     if (!sourceNode || !targetNode) {
-      const missingNode = !sourceNode ? 'Source' : 'Target';
-      log.error(`APA01 ${missingNode} node not found for edge`, edge);
       return {
         id: edge.id,
         source: edge.start ?? '',
@@ -535,7 +506,6 @@ function calculateEdgePositions(
       targetNode.originalNode?.shape ?? ''
     );
 
-    // Initial intersection approximation
     let startPos = isSourceRound
       ? computeCircleEdgeIntersection(
           {
@@ -591,7 +561,6 @@ function calculateEdgePositions(
 
     points.push(endPos);
 
-    // Recalculate source intersection
     const secondPoint = points.length > 1 ? points[1] : targetCenter;
     startPos = isSourceRound
       ? computeCircleEdgeIntersection(
@@ -607,7 +576,6 @@ function calculateEdgePositions(
       : intersection(sourceNode, secondPoint, sourceCenter);
     points[0] = startPos;
 
-    // Recalculate target intersection
     const secondLastPoint = points.length > 1 ? points[points.length - 2] : sourceCenter;
     endPos = isTargetRound
       ? computeCircleEdgeIntersection(
@@ -634,10 +602,8 @@ function calculateEdgePositions(
       endX: endPos.x,
       endY: endPos.y,
       points,
-      // Include tree membership information
       sourceSection: sourceNode?.section,
       targetSection: targetNode?.section,
-      // Include node dimensions for precise edge point calculations
       sourceWidth: sourceNode?.width,
       sourceHeight: sourceNode?.height,
       targetWidth: targetNode?.width,
