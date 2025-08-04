@@ -2,7 +2,7 @@ import type { LayoutLoaderDefinition } from 'mermaid';
 
 const loader = async () => await import(`./render.js`);
 
-const layouts: LayoutLoaderDefinition[] = [
+const tidyTreeLayout: LayoutLoaderDefinition[] = [
   {
     name: 'tidy-tree',
     loader,
@@ -10,4 +10,4 @@ const layouts: LayoutLoaderDefinition[] = [
   },
 ];
 
-export default layouts;
+export default tidyTreeLayout;

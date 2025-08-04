@@ -43,14 +43,6 @@ const registerDefaultLayoutLoaders = () => {
       name: 'cose-bilkent',
       loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
     },
-    {
-      name: 'tidy-tree',
-      loader: async () => await import('@mermaid-js/layout-tidy-tree/src/render.js'),
-    },
-    {
-      name: 'elk',
-      loader: async () => await import('@mermaid-js/layout-elk/src/render.js'),
-    },
   ]);
 };
 
