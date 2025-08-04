@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/examples",
-  "version": "0.0.1-beta.1",
+  "version": "1.0.0",
   "description": "Mermaid examples package",
   "author": "Sidharth Vinod",
   "type": "module",
@@ -16,6 +16,10 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
   "scripts": {
     "clean": "rimraf dist"
   },
