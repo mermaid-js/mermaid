@@ -45,11 +45,11 @@ const registerDefaultLayoutLoaders = () => {
     },
     {
       name: 'tidy-tree',
-      loader: async () => await import('../../../mermaid-layout-tidy-tree/src/index.js'),
+      loader: async () => await import('@mermaid-js/layout-tidy-tree/src/render.js'),
     },
     {
       name: 'elk',
-      loader: async () => await import('../../../mermaid-layout-elk/src/render.js'),
+      loader: async () => await import('@mermaid-js/layout-elk/src/render.js'),
     },
   ]);
 };

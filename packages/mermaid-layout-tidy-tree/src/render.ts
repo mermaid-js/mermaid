@@ -48,7 +48,7 @@ export const render = async (
   const edgePaths = element.insert('g').attr('class', 'edgePaths');
   const edgeLabels = element.insert('g').attr('class', 'edgeLabels');
   const nodes = element.insert('g').attr('class', 'nodes');
-
+  // Step 1: Insert nodes into DOM to get their actual dimensions
   log.debug('Inserting nodes into DOM for dimension calculation');
 
   await Promise.all(
@@ -87,7 +87,7 @@ export const render = async (
       }
     })
   );
-
+  // Step 2: Run the bidirectional tidy-tree layout algorithm
   log.debug('Running bidirectional tidy-tree layout algorithm');
 
   const updatedLayoutData = {
@@ -103,17 +103,22 @@ export const render = async (
   };
 
   const layoutResult = await executeTidyTreeLayout(updatedLayoutData, data4Layout.config);
-
+  // Step 3: Position the nodes based on bidirectional layout results
   log.debug('Positioning nodes based on bidirectional layout results');
 
   layoutResult.nodes.forEach((positionedNode) => {
     const node = nodeDb[positionedNode.id];
     if (node?.domId) {
+      // Position the node at the calculated coordinates from bidirectional layout
+      // The layout algorithm has already calculated positions for:
+      // - Root node at center (0, 0)
+      // - Left tree nodes with negative x coordinates (growing left)
+      // - Right tree nodes with positive x coordinates (growing right)
       node.domId.attr('transform', `translate(${positionedNode.x}, ${positionedNode.y})`);
-
+      // Store the final position
       node.x = positionedNode.x;
       node.y = positionedNode.y;
-
+      // Step 3: Position the nodes based on bidirectional layout results
       log.debug(`Positioned node ${node.id} at (${positionedNode.x}, ${positionedNode.y})`);
     }
   });

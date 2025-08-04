@@ -229,6 +229,12 @@ importers:
       '@iconify/utils':
         specifier: ^2.1.33
         version: 2.3.0
+      '@mermaid-js/layout-elk':
+        specifier: workspace:^
+        version: link:../mermaid-layout-elk
+      '@mermaid-js/layout-tidy-tree':
+        specifier: workspace:^
+        version: link:../mermaid-layout-tidy-tree
       '@mermaid-js/parser':
         specifier: workspace:^
         version: link:../parser
@@ -448,6 +454,7 @@ importers:
       mermaid:
         specifier: workspace:^
         version: link:../mermaid
+
   packages/mermaid-layout-tidy-tree:
     dependencies:
       d3:

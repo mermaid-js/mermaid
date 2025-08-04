@@ -1,7 +1,7 @@
 import type { LayoutData } from 'mermaid';
 
-type Node = LayoutData['nodes'][number];
-type Edge = LayoutData['edges'][number];
+export type Node = LayoutData['nodes'][number];
+export type Edge = LayoutData['edges'][number];
 
 /**
  * Positioned node after layout calculation
@@ -67,5 +67,3 @@ export interface TidyTreeLayoutConfig {
   gap: number;
   bottomPadding: number;
 }
-
-export type { Node, Edge };
