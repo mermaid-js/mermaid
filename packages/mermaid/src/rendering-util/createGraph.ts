@@ -1,9 +1,8 @@
 import { insertNode } from './rendering-elements/nodes.js';
-import type { LayoutData } from './types.ts';
+import type { LayoutData, NonClusterNode } from './types.ts';
 import type { Selection } from 'd3';
 import { getConfig } from '../diagram-api/diagramAPI.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import type { NonClusterNode } from '../../dist/rendering-util/types.js';
 
 // Update type:
 type D3Selection<T extends SVGElement = SVGElement> = Selection<
