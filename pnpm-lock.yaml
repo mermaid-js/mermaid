@@ -271,9 +271,6 @@ importers:
       marked:
         specifier: ^15.0.7
         version: 15.0.12
-      non-layered-tidy-tree-layout:
-        specifier: ^2.0.2
-        version: 2.0.2
       roughjs:
         specifier: ^4.6.6
         version: 4.6.6(patch_hash=3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64)
