@@ -3,3 +3,5 @@
 ---
 
 fix: sanitize KATEX blocks
+
+Resolves issue reported by @fourcube
