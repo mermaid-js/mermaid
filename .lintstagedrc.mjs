@@ -7,5 +7,6 @@ export default {
     'prettier --write',
   ],
   '.cspell/*.txt': ['tsx scripts/fixCSpell.ts'],
+  '**/*.md': ['pnpm dlx cspell'],
   '**/*.jison': ['pnpm -w run lint:jison'],
 };
