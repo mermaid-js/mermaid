@@ -1,4 +1,4 @@
-import { mermaidUrl } from '../../helpers/util.ts';
+import { imgSnapshotTest, mermaidUrl, utf8ToB64 } from '../../helpers/util.ts';
 describe('XSS', () => {
   it('should handle xss in tags', () => {
     const str =
@@ -138,6 +138,17 @@ describe('XSS', () => {
   });
   it('should sanitize backticks block diagram labels properly', () => {
     cy.visit('http://localhost:9000/xss25.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
+
+  it('should sanitize icon labels in architecture diagrams', () => {
+    const str = JSON.stringify({
+      code: `architecture-beta
+    group api(cloud)[API]
+    service db "<img src=x onerror=\\"xssAttack()\\">" [Database] in api`,
+    });
+    imgSnapshotTest(utf8ToB64(str), {}, true);
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });

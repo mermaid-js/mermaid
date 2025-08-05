@@ -14,7 +14,7 @@ interface CodeObject {
   mermaid: CypressMermaidConfig;
 }
 
-const utf8ToB64 = (str: string): string => {
+export const utf8ToB64 = (str: string): string => {
   return Buffer.from(decodeURIComponent(encodeURIComponent(str))).toString('base64');
 };
 
