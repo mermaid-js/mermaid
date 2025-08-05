@@ -1,0 +1,158 @@
+@top Flowchart { statement* }
+
+statement {
+  GraphKeyword |
+  Subgraph |
+  End |
+  Direction |
+  StyleKeyword |
+  ClickKeyword |
+  LinkStyleKeyword |
+  ClassDefKeyword |
+  ClassKeyword |
+  DefaultKeyword |
+  InterpolateKeyword |
+  HrefKeyword |
+  CallKeyword |
+  LinkTargetKeyword |
+  Identifier |
+  Number |
+  Arrow |
+  Pipe |
+  Semi |
+  Amp |
+  Hyphen |
+  SquareStart | SquareEnd |
+  ParenStart | ParenEnd |
+  DiamondStart | DiamondEnd |
+  DoubleCircleStart | DoubleCircleEnd |
+  TagEnd |
+  SubroutineStart | SubroutineEnd |
+  CylinderStart | CylinderEnd |
+  StadiumStart | StadiumEnd |
+  TrapStart | TrapEnd |
+  InvTrapStart | InvTrapEnd |
+  newline
+}
+
+GraphKeyword { graphKeyword }
+Subgraph { subgraph }
+End { end }
+Direction { direction }
+StyleKeyword { styleKeyword }
+ClickKeyword { clickKeyword }
+LinkStyleKeyword { linkStyleKeyword }
+ClassDefKeyword { classDefKeyword }
+ClassKeyword { classKeyword }
+DefaultKeyword { defaultKeyword }
+InterpolateKeyword { interpolateKeyword }
+HrefKeyword { hrefKeyword }
+CallKeyword { callKeyword }
+LinkTargetKeyword { linkTargetKeyword }
+Identifier { identifier }
+Number { number }
+Arrow { arrow }
+Pipe { pipe }
+Semi { semi }
+Amp { amp }
+Hyphen { hyphen }
+SquareStart { squareStart }
+SquareEnd { squareEnd }
+ParenStart { parenStart }
+ParenEnd { parenEnd }
+DiamondStart { diamondStart }
+DiamondEnd { diamondEnd }
+DoubleCircleStart { doubleCircleStart }
+DoubleCircleEnd { doubleCircleEnd }
+TagEnd { tagEnd }
+SubroutineStart { subroutineStart }
+SubroutineEnd { subroutineEnd }
+CylinderStart { cylinderStart }
+CylinderEnd { cylinderEnd }
+StadiumStart { stadiumStart }
+StadiumEnd { stadiumEnd }
+TrapStart { trapStart }
+TrapEnd { trapEnd }
+InvTrapStart { invTrapStart }
+InvTrapEnd { invTrapEnd }
+
+@tokens {
+  // Whitespace and control
+  space { $[ \t]+ }
+  newline { $[\n\r]+ }
+
+  // Comments (skip these)
+  Comment { "%%" ![\n]* }
+
+  // Keywords (exact matches, highest precedence)
+  @precedence { graphKeyword, subgraph, end, direction, styleKeyword, clickKeyword, linkStyleKeyword, classDefKeyword, classKeyword, defaultKeyword, interpolateKeyword, hrefKeyword, callKeyword, linkTargetKeyword, identifier }
+  graphKeyword { "flowchart-elk" | "flowchart" | "graph" }
+  subgraph { "subgraph" }
+  end { "end" }
+
+  // Direction keywords (include single character directions)
+  direction { "LR" | "RL" | "TB" | "BT" | "TD" | "BR" | "v" | "^" | "<" }
+
+  // Style and interaction keywords
+  styleKeyword { "style" }
+  clickKeyword { "click" }
+  linkStyleKeyword { "linkStyle" }
+  classDefKeyword { "classDef" }
+  classKeyword { "class" }
+  defaultKeyword { "default" }
+  interpolateKeyword { "interpolate" }
+  hrefKeyword { "href" }
+  callKeyword { "call" }
+  linkTargetKeyword { "_self" | "_blank" | "_parent" | "_top" }
+
+  // Arrow patterns - comprehensive support
+  @precedence { arrow, identifier }
+  arrow {
+    // Longer patterns first to avoid conflicts
+    "<--->" | "<-->" | "<-.->" | "<-.>" | "<==>" | "<=>" |
+    "---->" | "-----" | "------>" |
+    "-->" | "---" | "==>" | "===" | "-.->" | "-.-" |
+    "--x" | "--o" | ".->" | "=>" | "<=" |
+    "<--" | "<==" | "<-." | "--"
+  }
+
+  // Punctuation tokens
+  pipe { "|" }
+  semi { ";" }
+  amp { "&" }
+  hyphen { "-" }
+
+  // Shape delimiters - Basic
+  squareStart { "[" }
+  squareEnd { "]" }
+  parenStart { "(" }
+  parenEnd { ")" }
+  diamondStart { "{" }
+  diamondEnd { "}" }
+
+  // Shape delimiters - Complex (higher precedence to match longer patterns first)
+  @precedence { doubleCircleStart, doubleCircleEnd, subroutineStart, subroutineEnd, cylinderStart, cylinderEnd, stadiumStart, stadiumEnd, trapStart, trapEnd, invTrapStart, invTrapEnd, parenStart, squareStart }
+  doubleCircleStart { "(((" }
+  doubleCircleEnd { ")))" }
+  subroutineStart { "[[" }
+  subroutineEnd { "]]" }
+  cylinderStart { "[(" }
+  cylinderEnd { ")]" }
+  stadiumStart { "([" }
+  stadiumEnd { "])" }
+  trapStart { "[/" }
+  trapEnd { "/]" }
+  invTrapStart { "[\\" }
+  invTrapEnd { "\\]" }
+
+  // Other shape tokens
+  tagEnd { ">" }
+
+  // Numbers (for numeric node IDs)
+  number { $[0-9]+ }
+
+  // Node identifiers (lowest precedence, more flexible pattern)
+  identifier { $[a-zA-Z_]$[a-zA-Z0-9_]* }
+}
+
+@skip { space | Comment }
