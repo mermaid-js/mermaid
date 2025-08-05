@@ -23,6 +23,8 @@ CRLF \u000D\u000A
 ESCAPED_QUOTE \u0022
 DQUOTE \u0022
 TEXTDATA [\u0020-\u0021\u0023-\u002B\u002D-\u007E]
+UNICODE_EXCEPT_CONTROL_CODES_COMMA_DQUOTE [\u0020-\u0021\u0023-\u002B\u002D-\u007E\u00A0-\uD7FF\uE000-\uFFFD]
+UNICODE_TEXTDATA {UNICODE_EXCEPT_CONTROL_CODES_COMMA_DQUOTE}
 
 %%
 
@@ -31,9 +33,9 @@ TEXTDATA [\u0020-\u0021\u0023-\u002B\u002D-\u007E]
 <INITIAL,csv>({CRLF}|{LF})                     { return 'NEWLINE' }
 <INITIAL,csv>{COMMA}                           { return 'COMMA' }
 <INITIAL,csv>{DQUOTE}                          { this.pushState('escaped_text'); return 'DQUOTE'; }
-<INITIAL,csv>{TEXTDATA}*                       { return 'NON_ESCAPED_TEXT' }
+<INITIAL,csv>{UNICODE_TEXTDATA}*               { return 'NON_ESCAPED_TEXT' }
 <INITIAL,csv,escaped_text>{DQUOTE}(?!{DQUOTE}) {this.popState('escaped_text'); return 'DQUOTE'; } // unescaped DQUOTE closes string
-<INITIAL,csv,escaped_text>({TEXTDATA}|{COMMA}|{CR}|{LF}|{DQUOTE}{DQUOTE})* { return 'ESCAPED_TEXT'; }
+<INITIAL,csv,escaped_text>({UNICODE_TEXTDATA}|{COMMA}|{CR}|{LF}|{DQUOTE}{DQUOTE})* { return 'ESCAPED_TEXT'; }
 
 /lex
 
