@@ -99,6 +99,7 @@ Blogging frameworks and platforms
   - [Mermaid](https://nextra.site/docs/guide/mermaid)
 - [WordPress](https://wordpress.org)
   - [MerPRess](https://wordpress.org/plugins/merpress/)
+  - [WP Documentation](https://wordpress.org/themes/wp-documentation/)
 
 ### CMS/ECM
 
