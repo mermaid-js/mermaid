@@ -238,13 +238,15 @@ export function edgeTypeStr2Type(typeStr: string): string {
 }
 
 export function edgeStrToEdgeData(typeStr: string): string {
-  switch (typeStr.trim()) {
-    case '--x':
+  switch (typeStr.replace(/^[\s-]+|[\s-]+$/g, '')) {
+    case 'x':
       return 'arrow_cross';
-    case '--o':
+    case 'o':
       return 'arrow_circle';
-    default:
+    case '>':
       return 'arrow_point';
+    default:
+      return '';
   }
 }
 

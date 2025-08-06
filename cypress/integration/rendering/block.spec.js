@@ -397,4 +397,25 @@ describe('Block diagram', () => {
       {}
     );
   });
+
+  it('BL31: edge without arrow syntax should render with no arrowheads', () => {
+    imgSnapshotTest(
+      `block-beta
+  a
+  b
+  a --- b
+`,
+      {}
+    );
+  });
+  it('BL32: edge with arrow syntax should render with arrowheads', () => {
+    imgSnapshotTest(
+      `block-beta
+  a
+  b
+  a --> b
+`,
+      {}
+    );
+  });
 });
