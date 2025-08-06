@@ -1,6 +1,15 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
-import type { Info, Packet, Pie, Architecture, GitGraph, Radar, Treemap } from './index.js';
+import type {
+  Info,
+  Packet,
+  Pie,
+  Architecture,
+  GitGraph,
+  Radar,
+  Treemap,
+  // Usecase,
+} from './index.js';
 
 export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar;
 
@@ -41,6 +50,11 @@ const initializers = {
     const parser = createTreemapServices().Treemap.parser.LangiumParser;
     parsers.treemap = parser;
   },
+  // usecase: async () => {
+  //   const { createUsecaseServices } = await import('./language/usecase/index.js');
+  //   const parser = createUsecaseServices().Usecase.parser.LangiumParser;
+  //   parsers.usecase = parser;
+  // },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -50,6 +64,7 @@ export async function parse(diagramType: 'architecture', text: string): Promise<
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
+// export async function parse(diagramType: 'usecase', text: string): Promise<Usecase>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

@@ -9,6 +9,7 @@ export {
   GitGraph,
   Radar,
   Treemap,
+  Usecase,
   Branch,
   Commit,
   Merge,
@@ -24,6 +25,7 @@ export {
   isBranch,
   isCommit,
   isMerge,
+  isUsecase,
 } from './generated/ast.js';
 
 export {
@@ -35,6 +37,7 @@ export {
   GitGraphGeneratedModule,
   RadarGeneratedModule,
   TreemapGeneratedModule,
+  UsecaseGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -45,3 +48,4 @@ export * from './pie/index.js';
 export * from './architecture/index.js';
 export * from './radar/index.js';
 export * from './treemap/index.js';
+export * from './usecase/index.js';
