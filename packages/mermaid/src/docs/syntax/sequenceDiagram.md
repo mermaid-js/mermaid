@@ -46,6 +46,126 @@ sequenceDiagram
     Bob->>Alice: Hi Alice
 ```
 
+### Boundary
+
+If you want to use the boundary symbol for a participant, use the `boundary` statement as shown below.
+
+```mermaid-example
+sequenceDiagram
+    boundary theBoundary
+    participant Bob
+    theBoundary->>Bob: Request from boundary
+    Bob->>theBoundary: Response to boundary
+```
+
+```mermaid
+sequenceDiagram
+    boundary theBoundary
+    participant Bob
+    theBoundary->>Bob: Request from boundary
+    Bob->>theBoundary: Response to boundary
+```
+
+### Control
+
+If you want to use the control symbol for a participant, use the `control` statement as shown below.
+
+```mermaid-example
+sequenceDiagram
+    control theControl
+    participant Alice
+    theControl->>Alice: Control request
+    Alice->>theControl: Control response
+```
+
+```mermaid
+sequenceDiagram
+    control theControl
+    participant Alice
+    theControl->>Alice: Control request
+    Alice->>theControl: Control response
+```
+
+### Entity
+
+If you want to use the entity symbol for a participant, use the `entity` statement as shown below.
+
+```mermaid-example
+sequenceDiagram
+    entity theEntity
+    participant Bob
+    theEntity->>Bob: Entity request
+    Bob->>theEntity: Entity response
+```
+
+```mermaid
+sequenceDiagram
+    entity theEntity
+    participant Bob
+    theEntity->>Bob: Entity request
+    Bob->>theEntity: Entity response
+```
+
+### Database
+
+If you want to use the database symbol for a participant, use the `database` statement as shown below.
+
+```mermaid-example
+sequenceDiagram
+    database theDb
+    participant Alice
+    theDb->>Alice: DB query
+    Alice->>theDb: DB result
+```
+
+```mermaid
+sequenceDiagram
+    database theDb
+    participant Alice
+    theDb->>Alice: DB query
+    Alice->>theDb: DB result
+```
+
+### Collections
+
+If you want to use the collections symbol for a participant, use the `collections` statement as shown below.
+
+```mermaid-example
+sequenceDiagram
+    collections theCollection
+    participant Bob
+    theCollection->>Bob: Collections request
+    Bob->>theCollection: Collections response
+```
+
+```mermaid
+sequenceDiagram
+    collections theCollection
+    participant Bob
+    theCollection->>Bob: Collections request
+    Bob->>theCollection: Collections response
+```
+
+### Queue
+
+If you want to use the queue symbol for a participant, use the `queue` statement as shown below.
+
+```mermaid-example
+sequenceDiagram
+    queue theQueue
+    participant Alice
+    theQueue->>Alice: Queue message
+    Alice->>theQueue: Queue
+```
+
+```mermaid
+sequenceDiagram
+    queue theQueue
+    participant Alice
+    theQueue->>Alice: Queue message
+    Alice->>theQueue: Queue
+```
+
 ### Aliases
 
 The actor can have a convenient identifier and a descriptive label.
