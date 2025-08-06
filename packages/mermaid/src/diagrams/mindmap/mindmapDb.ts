@@ -178,9 +178,13 @@ export class MindmapDB {
    * @param sectionNumber - The section number to assign (undefined for root)
    */
   public assignSections(node: MindmapNode, sectionNumber?: number): void {
-    // Assign section number to the current node
-    node.section = sectionNumber;
-
+    // For root node, section should be undefined (not -1)
+    if (node.level === 0) {
+      node.section = undefined;
+    } else {
+      // For non-root nodes, assign the section number
+      node.section = sectionNumber;
+    }
     // For root node's children, assign section numbers based on their index
     // For other nodes, inherit parent's section number
     if (node.children) {
@@ -198,21 +202,23 @@ export class MindmapDB {
    */
   public flattenNodes(node: MindmapNode, processedNodes: MindmapLayoutNode[]): void {
     // Build CSS classes for the node
-    let cssClasses = 'mindmap-node';
+    const cssClasses = ['mindmap-node'];
 
     // Add section-specific classes
     if (node.level === 0) {
       // Root node gets special classes
-      cssClasses += ' section-root section--1';
+      cssClasses.push('section-root', 'section--1');
     } else if (node.section !== undefined) {
       // Child nodes get section class based on their section number
-      cssClasses += ` section-${node.section}`;
+      cssClasses.push(`section-${node.section}`);
     }
 
     // Add any custom classes from the node
     if (node.class) {
-      cssClasses += ` ${node.class}`;
+      cssClasses.push(node.class);
     }
+
+    const classes = cssClasses.join(' ');
 
     // Map mindmap node type to valid shape name
     const getShapeFromType = (type: number) => {
@@ -237,7 +243,7 @@ export class MindmapDB {
     };
 
     const processedNode: MindmapLayoutNode = {
-      id: 'node_' + node.id.toString(),
+      id: node.id.toString(),
       domId: 'node_' + node.id.toString(),
       label: node.descr,
       isGroup: false,
@@ -245,7 +251,7 @@ export class MindmapDB {
       width: node.width,
       height: node.height ?? 0,
       padding: node.padding,
-      cssClasses: cssClasses,
+      cssClasses: classes,
       cssStyles: [],
       look: 'default',
       icon: node.icon,
@@ -292,8 +298,8 @@ export class MindmapDB {
 
       const edge: MindmapLayoutEdge = {
         id: `edge_${node.id}_${child.id}`,
-        start: 'node_' + node.id.toString(),
-        end: 'node_' + child.id.toString(),
+        start: node.id.toString(),
+        end: child.id.toString(),
         type: 'normal',
         curve: 'basis',
         thickness: 'normal',

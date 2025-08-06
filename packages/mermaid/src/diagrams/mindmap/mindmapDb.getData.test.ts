@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MindmapDB } from './mindmapDb.js';
 import type { MindmapLayoutNode, MindmapLayoutEdge } from './mindmapDb.js';
-import { Edge } from '../../rendering-util/types.js';
+import type { Edge } from '../../rendering-util/types.js';
 
 // Mock the getConfig function
 vi.mock('../../diagram-api/diagramAPI.js', () => ({

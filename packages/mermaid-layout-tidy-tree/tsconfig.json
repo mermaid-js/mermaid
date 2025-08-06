@@ -5,6 +5,6 @@
     "outDir": "./dist",
     "types": ["vitest/importMeta", "vitest/globals"]
   },
-"include": ["./src/**/.ts", "./src/**/*.d.ts"],
+  "include": ["./src/**/*.ts", "./src/**/*.d.ts"],
   "typeRoots": ["./src/types"]
 }

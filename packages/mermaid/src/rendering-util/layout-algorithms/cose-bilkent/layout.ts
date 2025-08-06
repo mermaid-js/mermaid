@@ -25,14 +25,8 @@ export async function executeCoseBilkentLayout(
   log.debug('Starting cose-bilkent layout algorithm');
 
   try {
-    // Validate input data
-    if (!data.nodes || !Array.isArray(data.nodes)) {
-      throw new Error('No nodes found in layout data');
-    }
-
-    if (!data.edges || !Array.isArray(data.edges)) {
-      throw new Error('No edges found in layout data');
-    }
+    // Validate layout data structure
+    validateLayoutData(data);
 
     // Create and configure cytoscape instance
     const cy = await createCytoscapeInstance(data);
@@ -65,6 +59,10 @@ export function validateLayoutData(data: LayoutData): boolean {
 
   if (!data.config) {
     throw new Error('Configuration is required in layout data');
+  }
+
+  if (!data.rootNode) {
+    throw new Error('Root node is required');
   }
 
   if (!Array.isArray(data.nodes)) {
