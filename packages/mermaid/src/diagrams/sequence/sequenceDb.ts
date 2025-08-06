@@ -348,7 +348,6 @@ export class SequenceDB implements DiagramDB {
     inputRemainder: string,
     lexer: any
   ): string {
-    log.info({ tokenName });
     const arrowLike = /^\s*(->>|-->>|->|-->|<<->>|<<-->>|-x|--x|-\))/;
     const colonLike = /^\s*:/;
 
