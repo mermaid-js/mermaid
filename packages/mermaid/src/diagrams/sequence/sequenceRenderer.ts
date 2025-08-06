@@ -286,28 +286,35 @@ const drawCentralConnection = function (
   msg: any,
   msgModel: any,
   diagObj: Diagram,
-  startx,
-  stopx,
-  lineStartY
+  startx: number,
+  stopx: number,
+  lineStartY: number
 ) {
+  const actors = diagObj.db.getActors();
+  const [fromLeft] = activationBounds(msg.from, actors);
+  const [toLeft] = activationBounds(msg.to, actors);
+  const isArrowToRight = fromLeft <= toLeft;
+
   const g = elem.append('g');
-  const circle = g.append('circle');
-  circle.attr(
-    'cx',
-    msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION ? stopx + 7.5 : startx - 5
-  );
-  // circle.attr('cx',x);
-  circle.attr('cy', lineStartY);
-  circle.attr('r', 5);
-  circle.attr('width', 10);
-  circle.attr('height', 10);
-  if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL) {
-    const circle = g.append('circle');
-    circle.attr('cx', stopx + 7.5);
-    circle.attr('cy', lineStartY);
-    circle.attr('r', 5);
-    circle.attr('width', 10);
-    circle.attr('height', 10);
+
+  const drawCircle = (cx: number) => {
+    g.append('circle')
+      .attr('cx', cx)
+      .attr('cy', lineStartY)
+      .attr('r', 5)
+      .attr('width', 10)
+      .attr('height', 10);
+  };
+
+  if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION) {
+    const cx = isArrowToRight ? stopx + 8 : stopx - 8;
+    drawCircle(cx);
+  } else if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL) {
+    const offset = isArrowToRight ? 8 : -8;
+    drawCircle(stopx + offset);
+    drawCircle(startx - 2.75); // second circle (near start)
+  } else {
+    drawCircle(startx - 2.75);
   }
 };
 
