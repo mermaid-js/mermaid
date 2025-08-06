@@ -512,4 +512,17 @@ describe('Class diagram', () => {
       );
     });
   });
+
+  it('should handle backticks for namespace and class names', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+          namespace \`A::B\` {
+              class \`IPC::Sender\`
+          }
+          RenderProcessHost --|> \`IPC::Sender\`
+      `,
+      {}
+    );
+  });
 });
