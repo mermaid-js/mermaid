@@ -1113,6 +1113,37 @@ end
       );
     });
   });
+  describe('Flowchart Node Shape Rendering', () => {
+    it('should render a stadium-shaped node', () => {
+      imgSnapshotTest(
+        `flowchart TB
+          A(["Start"]) --> n1["Untitled Node"]
+          A --> n2["Untitled Node"]     
+        `,
+        {}
+      );
+    });
+    it('should render a diamond-shaped node using shape config', () => {
+      imgSnapshotTest(
+        `flowchart BT
+          n2["Untitled Node"] --> n1["Diamond"]
+          n1@{ shape: diam}     
+        `,
+        {}
+      );
+    });
+    it('should render a rounded rectangle and a normal rectangle', () => {
+      imgSnapshotTest(
+        `flowchart BT
+        n2["Untitled Node"] --> n1["Rounded Rectangle"]
+        n3["Untitled Node"] --> n1
+        n1@{ shape: rounded}
+        n3@{ shape: rect}  
+    `,
+        {}
+      );
+    });
+  });
 
   it('6617: Per Link Curve Styling using edge Ids', () => {
     imgSnapshotTest(
