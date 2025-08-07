@@ -4,5 +4,4 @@
 
 fix: sanitize icon labels and icon SVGs
 
-Resolves issue reported by @fourcube
-
+Resolves CVE-2025-54880 reported by @fourcube
