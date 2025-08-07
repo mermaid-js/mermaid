@@ -80,6 +80,7 @@ function mapShapeType(shapeType: string | undefined): FlowVertexTypeParam {
 class LezerFlowParser {
   public yy: FlowDB | undefined;
   private lastReferencedNodeId: string | null = null;
+  private pendingChainNodes: string[] = [];
 
   constructor() {
     this.yy = undefined;
@@ -222,6 +223,23 @@ class LezerFlowParser {
           break;
         case 'CLICK':
           i = this.parseClickStatement(tokens, i);
+          break;
+        case 'STYLE':
+          i = this.parseStyleStatement(tokens, i);
+          break;
+        case 'CLASSDEF':
+          i = this.parseClassDefStatement(tokens, i);
+          break;
+        case 'CLASS':
+          i = this.parseClassStatement(tokens, i);
+          break;
+        case 'LINKSTYLE':
+          i = this.parseLinkStyleStatement(tokens, i);
+          break;
+        case 'AMP':
+          // Handle ampersand for vertex chaining
+          console.log(`UIO DEBUG: Processing token ${i}: AMP = "${token.value}"`);
+          i = this.parseVertexChaining(tokens, i);
           break;
         case 'LINK':
         case 'Arrow':
@@ -458,10 +476,34 @@ class LezerFlowParser {
       return this.parseOrphanedShapeStatement(tokens, i);
     }
 
-    // Look for LINK or Arrow token anywhere in the lookahead (not just position 1)
-    const hasEdgeToken = lookahead.some((token) => token.type === 'Arrow' || token.type === 'LINK');
-    if (lookahead.length >= 3 && hasEdgeToken) {
-      console.log(`UIO DEBUG: Taking edge statement path (found edge token in lookahead)`);
+    // Look for LINK or Arrow token in the immediate vicinity (not scanning entire sequence)
+    // Only look at the next few tokens to avoid false positives from distant edges
+    const immediateTokens = lookahead.slice(0, 5); // Only look at next 5 tokens
+    const hasImmediateEdgeToken = immediateTokens.some(
+      (token) => token.type === 'Arrow' || token.type === 'LINK'
+    );
+
+    // Also check for split arrow patterns like "A--" + ">" (which represents "A-->")
+    const hasSplitArrow =
+      lookahead.length >= 2 &&
+      lookahead[0].type === 'NODE_STRING' &&
+      lookahead[0].value.endsWith('--') &&
+      lookahead[1].type === 'TagEnd' &&
+      lookahead[1].value === '>';
+
+    // Check for vertex chaining pattern (NODE_STRING followed by AMP)
+    const hasVertexChaining =
+      lookahead.length >= 2 && lookahead[0].type === 'NODE_STRING' && lookahead[1].type === 'AMP';
+
+    if (hasVertexChaining) {
+      console.log(`UIO DEBUG: Taking node statement path (vertex chaining detected)`);
+      return this.parseNodeStatement(tokens, i);
+    }
+
+    if (lookahead.length >= 3 && (hasImmediateEdgeToken || hasSplitArrow)) {
+      console.log(
+        `UIO DEBUG: Taking edge statement path (found edge token in lookahead or split arrow pattern)`
+      );
       return this.parseEdgeStatement(tokens, i);
     }
 
@@ -625,6 +667,7 @@ class LezerFlowParser {
 
   /**
    * Parse a node statement (single node like "A" or shaped node like "A[Square]")
+   * Also handles inline class syntax (A:::className)
    * @param tokens - Array of tokens
    * @param startIndex - Starting index
    * @returns Next index to process
@@ -638,7 +681,51 @@ class LezerFlowParser {
 
     // Handle both 'Identifier' and 'NODE_STRING' token types
     if (nodeToken.type === 'Identifier' || nodeToken.type === 'NODE_STRING') {
-      const nodeId = nodeToken.value;
+      let nodeId = nodeToken.value;
+      const inlineClasses: string[] = [];
+
+      // Check for inline class syntax (:::className)
+      if (nodeId.includes(':::')) {
+        const parts = nodeId.split(':::');
+        nodeId = parts[0];
+        if (parts[1]) {
+          inlineClasses.push(parts[1]);
+          console.log(
+            `UIO DEBUG: parseNodeStatement: Detected inline class ${parts[1]} for node ${nodeId}`
+          );
+        }
+      }
+
+      // Special case: if this is a standalone :::className token (nodeId is empty)
+      // it means this is a class application to the previously created node
+      if (nodeId === '' && inlineClasses.length > 0) {
+        console.log(
+          `UIO DEBUG: parseNodeStatement: Standalone class application ${inlineClasses[0]} - applying to last created node`
+        );
+
+        // Find the most recently created vertex and apply the class
+        const vertices = this.yy?.getVertices();
+        if (vertices && vertices.size > 0) {
+          // Get the last vertex (most recently added)
+          const vertexEntries = [...vertices.entries()];
+          const lastVertex = vertexEntries[vertexEntries.length - 1];
+          const [lastNodeId, lastVertexData] = lastVertex;
+
+          console.log(
+            `UIO DEBUG: parseNodeStatement: Applying class ${inlineClasses[0]} to node ${lastNodeId}`
+          );
+
+          // Add the class to the existing vertex
+          if (!lastVertexData.classes) {
+            lastVertexData.classes = [];
+          }
+          lastVertexData.classes.push(...inlineClasses);
+        }
+
+        i++;
+        return i;
+      }
+
       log.debug(`UIO Creating node: ${nodeId}`);
 
       // Look ahead to see if this is a shaped node
@@ -647,7 +734,7 @@ class LezerFlowParser {
       // Check for shape patterns: A[text], A(text), A{text}, etc.
       if (lookahead.length >= 3 && this.isShapeStart(lookahead[1].type)) {
         console.log(`UIO DEBUG: Detected shaped node: ${nodeId} with shape ${lookahead[1].type}`);
-        return this.parseShapedNode(tokens, i);
+        return this.parseShapedNode(tokens, i, inlineClasses);
       }
 
       if (this.yy) {
@@ -657,7 +744,7 @@ class LezerFlowParser {
           { text: nodeId, type: 'text' }, // textObj
           undefined, // type
           [], // style
-          [], // classes
+          inlineClasses, // classes - use inline classes from :::className syntax
           '', // dir
           {}, // props
           undefined // metadata
@@ -694,11 +781,13 @@ class LezerFlowParser {
    * Parse a shaped node like A[Square], B(Round), C{Diamond}
    * @param tokens - Array of tokens
    * @param startIndex - Starting index (should be at the node ID)
+   * @param inlineClasses - Optional inline classes to apply to the node
    * @returns Next index to process
    */
   private parseShapedNode(
     tokens: { type: string; value: string; from: number; to: number }[],
-    startIndex: number
+    startIndex: number,
+    inlineClasses: string[] = []
   ): number {
     let i = startIndex;
 
@@ -783,6 +872,15 @@ class LezerFlowParser {
       // For ellipse shapes, stop when we encounter the closing hyphen
       if (actualShapeType === 'EllipseStart' && tokens[i].type === 'Hyphen') {
         break; // This is the closing hyphen, don't include it in the text
+      }
+
+      // Stop collecting tokens if we encounter statement-level keywords
+      // This prevents consuming tokens from subsequent statements
+      if (this.isStatementKeyword(tokens[i].type)) {
+        console.log(
+          `UIO DEBUG: Stopping shape text collection at statement keyword: ${tokens[i].type}:${tokens[i].value}`
+        );
+        break;
       }
 
       // Check for HTML tag pattern: < + tag_name + >
@@ -883,7 +981,8 @@ class LezerFlowParser {
       const nodeType = this.mapShapeToNodeType(actualShapeType, actualEndToken);
 
       // Process the text to handle markdown
-      const processedText = processNodeText(shapeText || nodeId);
+      // Don't fall back to nodeId if shapeText is empty - empty text should remain empty
+      const processedText = processNodeText(shapeText);
 
       // Create the shaped node
       this.yy.addVertex(
@@ -891,7 +990,7 @@ class LezerFlowParser {
         { text: processedText.text, type: processedText.type }, // textObj - processed text with correct type
         mapShapeType(nodeType), // type - the shape type (mapped to valid FlowVertexTypeParam)
         [], // style
-        [], // classes
+        inlineClasses, // classes - use inline classes from :::className syntax
         '', // dir
         {}, // props
         undefined // metadata
@@ -947,7 +1046,444 @@ class LezerFlowParser {
   }
 
   /**
-   * Map Record<string, string>lowDB node type
+   * Check if a token type represents a statement-level keyword
+   * @param tokenType - The token type to check
+   * @returns True if it's a statement-level keyword
+   */
+  private isStatementKeyword(tokenType: string): boolean {
+    const statementKeywords = [
+      'CLICK',
+      'STYLE',
+      'LINKSTYLE',
+      'CLASSDEF',
+      'CLASS',
+      'SUBGRAPH',
+      'GRAPH',
+      'GraphKeyword',
+    ];
+    return statementKeywords.includes(tokenType);
+  }
+
+  /**
+   * Parse vertex chaining with ampersand (&) operator
+   * Handles patterns like: A & B --> C (creates A-->C and B-->C)
+   */
+  private parseVertexChaining(tokens: Token[], startIndex: number): number {
+    console.log(`UIO DEBUG: parseVertexChaining called at index ${startIndex}`);
+
+    // Look back to find the previous node that should be part of the chain
+    const prevNodeIndex = startIndex - 1;
+    if (prevNodeIndex >= 0 && tokens[prevNodeIndex].type === 'NODE_STRING') {
+      const prevNodeId = tokens[prevNodeIndex].value;
+      console.log(`UIO DEBUG: parseVertexChaining: Found previous node ${prevNodeId} for chaining`);
+
+      // Ensure the previous node exists with inline classes applied
+      this.ensureNodeWithInlineClasses(prevNodeId);
+
+      // Look ahead to find the next node after the AMP
+      const nextIndex = startIndex + 1;
+      if (nextIndex < tokens.length && tokens[nextIndex].type === 'NODE_STRING') {
+        const nextNodeId = tokens[nextIndex].value;
+        console.log(`UIO DEBUG: parseVertexChaining: Found next node ${nextNodeId} for chaining`);
+
+        // Ensure the next node exists with inline classes applied
+        this.ensureNodeWithInlineClasses(nextNodeId);
+
+        // Store the chaining relationship for later processing
+        // Use clean node IDs (without inline classes) for the pending chain
+        this.pendingChainNodes = this.pendingChainNodes || [];
+        const { cleanNodeId: cleanPrevNodeId } = this.extractInlineClasses(prevNodeId);
+        this.pendingChainNodes.push(cleanPrevNodeId);
+
+        console.log(
+          `UIO DEBUG: parseVertexChaining: Added ${cleanPrevNodeId} to pending chain nodes`
+        );
+      }
+    }
+
+    // Skip the AMP token and continue
+    return startIndex + 1;
+  }
+
+  /**
+   * Parse a style statement: style nodeId styleProperties
+   * Example: style A background:#fff,border:1px solid red
+   */
+  private parseStyleStatement(tokens: Token[], startIndex: number): number {
+    console.log(`UIO DEBUG: parseStyleStatement called at index ${startIndex}`);
+
+    let i = startIndex + 1; // Skip the STYLE token
+
+    // Get the node ID
+    if (i >= tokens.length || tokens[i].type !== 'NODE_STRING') {
+      console.log(`UIO DEBUG: parseStyleStatement: Expected node ID at index ${i}`);
+      return i;
+    }
+
+    const nodeId = tokens[i].value;
+    console.log(`UIO DEBUG: parseStyleStatement: nodeId=${nodeId}`);
+    i++;
+
+    // Collect style properties until we hit a semicolon or end of tokens
+    // Handle comma-separated styles where each style can contain spaces
+    const styleProperties: string[] = [];
+    let currentStyle = '';
+
+    while (i < tokens.length && tokens[i].type !== 'SEMI') {
+      if (tokens[i].type === 'NODE_STRING') {
+        if (currentStyle) {
+          currentStyle += ' ' + tokens[i].value;
+        } else {
+          currentStyle = tokens[i].value;
+        }
+        console.log(`UIO DEBUG: parseStyleStatement: Building style: "${currentStyle}"`);
+      } else if (
+        tokens[i].type === '⚠' &&
+        tokens[i].value === ',' && // Comma separates styles - save current style and start new one
+        currentStyle
+      ) {
+        styleProperties.push(currentStyle);
+        console.log(`UIO DEBUG: parseStyleStatement: Completed style: "${currentStyle}"`);
+        currentStyle = '';
+      }
+      i++;
+    }
+
+    // Add the last style if there is one
+    if (currentStyle) {
+      styleProperties.push(currentStyle);
+      console.log(`UIO DEBUG: parseStyleStatement: Completed final style: "${currentStyle}"`);
+    }
+
+    // Apply the styles to the node
+    if (styleProperties.length > 0) {
+      console.log(
+        `UIO DEBUG: parseStyleStatement: Applying ${styleProperties.length} styles to node ${nodeId}`
+      );
+
+      // Ensure the node exists
+      const existingVertices = this.yy.getVertices();
+      if (!existingVertices.has(nodeId)) {
+        this.yy.addVertex(
+          nodeId,
+          { text: nodeId, type: 'text' },
+          undefined, // type
+          [], // style
+          [], // classes
+          '', // dir
+          {}, // props
+          undefined // metadata
+        );
+      }
+
+      // Apply styles to the node
+      const vertex = existingVertices.get(nodeId);
+      if (vertex) {
+        // Initialize styles array if it doesn't exist
+        if (!vertex.styles) {
+          vertex.styles = [];
+        }
+
+        // Add all style properties to the vertex
+        for (const styleProperty of styleProperties) {
+          vertex.styles.push(styleProperty);
+          console.log(
+            `UIO DEBUG: parseStyleStatement: Added style "${styleProperty}" to vertex ${nodeId}`
+          );
+        }
+      } else {
+        console.log(
+          `UIO DEBUG: parseStyleStatement: Vertex ${nodeId} not found, cannot apply styles`
+        );
+      }
+    }
+
+    return i;
+  }
+
+  /**
+   * Parse a classDef statement: classDef className[,className2,...] styleProperties
+   * Example: classDef exClass background:#bbb,border:1px solid red
+   * Example: classDef firstClass,secondClass background:#bbb,border:1px solid red
+   */
+  private parseClassDefStatement(tokens: Token[], startIndex: number): number {
+    console.log(`UIO DEBUG: parseClassDefStatement called at index ${startIndex}`);
+
+    let i = startIndex + 1; // Skip the CLASSDEF token
+
+    // Collect class names (comma-separated)
+    const classNames: string[] = [];
+    let collectingClassNames = true;
+
+    while (i < tokens.length && tokens[i].type !== 'SEMI' && collectingClassNames) {
+      if (tokens[i].type === 'NODE_STRING') {
+        // Check if this looks like a style property (contains :)
+        if (tokens[i].value.includes(':')) {
+          // This is a style property, stop collecting class names
+          collectingClassNames = false;
+          break;
+        } else {
+          classNames.push(tokens[i].value);
+          console.log(`UIO DEBUG: parseClassDefStatement: Added class name: ${tokens[i].value}`);
+        }
+      } else if (tokens[i].type === '⚠' && tokens[i].value === ',') {
+        // Skip comma separators between class names
+        console.log(
+          `UIO DEBUG: parseClassDefStatement: Skipping comma separator between class names`
+        );
+      }
+      i++;
+    }
+
+    if (classNames.length === 0) {
+      console.log(`UIO DEBUG: parseClassDefStatement: No class names found`);
+      return i;
+    }
+
+    // Now collect style properties until we hit a semicolon, end of tokens, or another statement
+    // Handle comma-separated styles where each style can contain spaces
+    const styleProperties: string[] = [];
+    let currentStyle = '';
+
+    while (i < tokens.length && this.shouldContinueParsingClassDef(tokens, i)) {
+      if (tokens[i].type === 'NODE_STRING') {
+        if (currentStyle) {
+          // Calculate the actual spacing between tokens to preserve original formatting
+          const prevToken = tokens[i - 1];
+          const currentToken = tokens[i];
+          const gap = currentToken.from - prevToken.to;
+          const spacing = ' '.repeat(Math.max(1, gap)); // At least one space, but preserve original spacing
+          currentStyle += spacing + tokens[i].value;
+        } else {
+          currentStyle = tokens[i].value;
+        }
+        console.log(`UIO DEBUG: parseClassDefStatement: Building style: "${currentStyle}"`);
+      } else if (tokens[i].type === '⚠' && tokens[i].value === ',') {
+        // Comma separates styles - save current style and start new one
+        if (currentStyle) {
+          styleProperties.push(currentStyle);
+          console.log(`UIO DEBUG: parseClassDefStatement: Completed style: "${currentStyle}"`);
+          currentStyle = '';
+        }
+      } else if (tokens[i].type === '⚠' && tokens[i].value.includes('%')) {
+        // Handle special case like "%," for percentage values
+        currentStyle += tokens[i].value.replace(',', '');
+        console.log(`UIO DEBUG: parseClassDefStatement: Added percentage: "${tokens[i].value}"`);
+      }
+      i++;
+    }
+
+    // Add the last style if there is one
+    if (currentStyle) {
+      styleProperties.push(currentStyle);
+      console.log(`UIO DEBUG: parseClassDefStatement: Completed final style: "${currentStyle}"`);
+    }
+
+    // Create the class definitions
+    if (styleProperties.length > 0) {
+      for (const className of classNames) {
+        console.log(
+          `UIO DEBUG: parseClassDefStatement: Creating class ${className} with ${styleProperties.length} styles`
+        );
+
+        // Store the class definition in the FlowDB
+        if (this.yy.addClass) {
+          // FlowDB.addClass expects a string[] array
+          this.yy.addClass(className, styleProperties);
+          console.log(
+            `UIO DEBUG: parseClassDefStatement: Stored class ${className} with styles: [${styleProperties.join(', ')}]`
+          );
+        } else {
+          // Fallback: try to access classes directly
+          const classes = this.yy.getClasses();
+          if (classes) {
+            classes.set(className, { styles: styleProperties });
+            console.log(
+              `UIO DEBUG: parseClassDefStatement: Fallback stored class ${className} with ${styleProperties.length} styles`
+            );
+          }
+        }
+      }
+    }
+
+    return i;
+  }
+
+  /**
+   * Helper method to extract inline classes from a node ID
+   * Handles syntax like "nodeId:::className"
+   * @param nodeId - The node ID that may contain inline classes
+   * @returns Object with cleanNodeId and classes array
+   */
+  private extractInlineClasses(nodeId: string): { cleanNodeId: string; classes: string[] } {
+    const classes: string[] = [];
+    let cleanNodeId = nodeId;
+
+    if (nodeId.includes(':::')) {
+      const parts = nodeId.split(':::');
+      cleanNodeId = parts[0];
+      if (parts[1]) {
+        classes.push(parts[1]);
+        console.log(
+          `UIO DEBUG: extractInlineClasses: Extracted class ${parts[1]} from node ${cleanNodeId}`
+        );
+      }
+    }
+
+    return { cleanNodeId, classes };
+  }
+
+  /**
+   * Helper method to ensure a node exists with proper inline classes applied
+   * @param nodeId - The node ID that may contain inline classes
+   * @param textObj - Optional text object for the node
+   * @param nodeType - Optional node type
+   */
+  private ensureNodeWithInlineClasses(
+    nodeId: string,
+    textObj?: { text: string; type: string },
+    nodeType?: string
+  ): string {
+    const { cleanNodeId, classes } = this.extractInlineClasses(nodeId);
+
+    if (this.yy) {
+      // Check if node already exists
+      const vertices = this.yy.getVertices();
+      if (!vertices.has(cleanNodeId)) {
+        // Create the node
+        this.yy.addVertex(
+          cleanNodeId,
+          textObj || { text: cleanNodeId, type: 'text' },
+          nodeType,
+          [], // style
+          classes, // classes from inline syntax
+          '', // dir
+          {}, // props
+          undefined // metadata
+        );
+        console.log(
+          `UIO DEBUG: ensureNodeWithInlineClasses: Created node ${cleanNodeId} with classes [${classes.join(', ')}]`
+        );
+      } else if (classes.length > 0) {
+        // Node exists, apply classes
+        const vertex = vertices.get(cleanNodeId);
+        if (vertex) {
+          if (!vertex.classes) {
+            vertex.classes = [];
+          }
+          vertex.classes.push(...classes);
+          console.log(
+            `UIO DEBUG: ensureNodeWithInlineClasses: Applied classes [${classes.join(', ')}] to existing node ${cleanNodeId}`
+          );
+        }
+      }
+    }
+
+    return cleanNodeId;
+  }
+
+  /**
+   * Helper method to determine if we should continue parsing a classDef statement
+   * Stops when encountering statement boundaries or other keywords
+   */
+  private shouldContinueParsingClassDef(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    index: number
+  ): boolean {
+    if (index >= tokens.length) {
+      return false;
+    }
+
+    const token = tokens[index];
+
+    // Stop at semicolon (explicit statement terminator)
+    if (token.type === 'SEMI') {
+      return false;
+    }
+
+    // Stop at other statement keywords
+    const statementKeywords = ['CLASSDEF', 'STYLE', 'CLASS', 'LINKSTYLE', 'GRAPH', 'SUBGRAPH'];
+    if (statementKeywords.includes(token.type)) {
+      return false;
+    }
+
+    // Stop at structural tokens that indicate a new statement
+    const structuralTokens = ['AMP', 'LINK', 'Arrow'];
+    if (structuralTokens.includes(token.type)) {
+      return false;
+    }
+
+    // Check for significant gaps in token positions (indicates newlines/statement breaks)
+    if (index > 0) {
+      const prevToken = tokens[index - 1];
+      const gap = token.from - prevToken.to;
+
+      // If there's a significant gap (more than a few characters), it's likely a new statement
+      // This handles cases where there are newlines between statements
+      if (gap > 5) {
+        console.log(
+          `UIO DEBUG: shouldContinueParsingClassDef: Detected significant gap (${gap}) between tokens, stopping classDef parsing`
+        );
+        return false;
+      }
+    }
+
+    // For NODE_STRING tokens, be more permissive to allow multi-word CSS values
+    // Only stop if it's clearly not part of a style (like a node ID or keyword)
+    if (token.type === 'NODE_STRING') {
+      // Allow common CSS value words that don't contain colons
+      const cssValueWords = [
+        'solid',
+        'red',
+        'blue',
+        'green',
+        'black',
+        'white',
+        'bold',
+        'italic',
+        'px',
+        'em',
+        'rem',
+        '%',
+      ];
+      const isLikelyCssValue = cssValueWords.some((word) =>
+        token.value.toLowerCase().includes(word.toLowerCase())
+      );
+
+      // If it contains a colon, it's definitely a style property
+      if (token.value.includes(':')) {
+        return true;
+      }
+
+      // If it's a likely CSS value word, continue parsing
+      if (isLikelyCssValue) {
+        console.log(
+          `UIO DEBUG: shouldContinueParsingClassDef: "${token.value}" looks like a CSS value, continuing`
+        );
+        return true;
+      }
+
+      // If it's a short token that could be a CSS value, continue
+      if (token.value.length <= 6) {
+        console.log(
+          `UIO DEBUG: shouldContinueParsingClassDef: "${token.value}" is short, might be CSS value, continuing`
+        );
+        return true;
+      }
+
+      // Otherwise, it might be a node ID or other non-style token
+      console.log(
+        `UIO DEBUG: shouldContinueParsingClassDef: NODE_STRING "${token.value}" doesn't look like a style property, stopping`
+      );
+      return false;
+    }
+
+    // Continue parsing for style-related tokens
+    return true;
+  }
+
+  /**
+   * Map shape start type to FlowDB node type
    * @param shapeStartType - The shape start token type
    * @returns The corresponding FlowDB node type
    */
@@ -1560,11 +2096,29 @@ class LezerFlowParser {
     if (sourceToken.type !== 'Identifier' && sourceToken.type !== 'NODE_STRING') {
       return i + 1; // Skip if not identifier or node string
     }
-    const sourceId = sourceToken.value;
+
+    // Check for split arrow pattern like "A--" + ">" (which represents "A-->")
+    const hasSplitArrow =
+      i + 1 < tokens.length &&
+      sourceToken.value.endsWith('--') &&
+      tokens[i + 1].type === 'TagEnd' &&
+      tokens[i + 1].value === '>';
+
+    let sourceId: string;
+    if (hasSplitArrow) {
+      // Extract the actual node ID by removing the arrow part
+      sourceId = sourceToken.value.slice(0, -2); // Remove the trailing "--"
+      console.log(
+        `UIO DEBUG: parseEdgeStatement: detected split arrow pattern, sourceId=${sourceId}`
+      );
+    } else {
+      sourceId = sourceToken.value;
+    }
     i++;
 
     // Check if this is a shaped source node (A[text], A(text), etc.)
-    if (i < tokens.length && this.isShapeStart(tokens[i].type)) {
+    // But skip this check if we detected a split arrow pattern
+    if (!hasSplitArrow && i < tokens.length && this.isShapeStart(tokens[i].type)) {
       console.log(`UIO DEBUG: parseEdgeStatement: parsing shaped source node ${sourceId}`);
       // Parse the shaped node, but start from the node ID token
       i = this.parseShapedNode(tokens, startIndex);
@@ -1596,8 +2150,12 @@ class LezerFlowParser {
 
     i = edgeInfo.nextIndex;
 
+    // Extract inline classes from source and target nodes
+    const cleanSourceId = this.ensureNodeWithInlineClasses(sourceId);
+    const cleanTargetId = this.ensureNodeWithInlineClasses(edgeInfo.targetId);
+
     console.log(
-      `UIO DEBUG: Creating edge: ${sourceId} ${edgeInfo.arrow} ${edgeInfo.targetId} (text: "${edgeInfo.text}", type: ${edgeInfo.type}, stroke: ${edgeInfo.stroke})`
+      `UIO DEBUG: Creating edge: ${cleanSourceId} ${edgeInfo.arrow} ${cleanTargetId} (text: "${edgeInfo.text}", type: ${edgeInfo.type}, stroke: ${edgeInfo.stroke})`
     );
 
     if (this.yy) {
@@ -1605,22 +2163,22 @@ class LezerFlowParser {
       // If so, don't create it here - let the main parser handle it as a shaped node
       const isTargetShaped = i < tokens.length && this.isShapeStart(tokens[i].type);
       console.log(
-        `UIO DEBUG: parseEdgeStatement: targetId=${edgeInfo.targetId}, nextToken=${tokens[i]?.type}:${tokens[i]?.value}, isTargetShaped=${isTargetShaped}`
+        `UIO DEBUG: parseEdgeStatement: targetId=${cleanTargetId}, nextToken=${tokens[i]?.type}:${tokens[i]?.value}, isTargetShaped=${isTargetShaped}`
       );
 
       if (!isTargetShaped) {
         // Create target node if it doesn't exist or hasn't been properly configured
         // Check if vertex already exists and has custom text/type (indicating it was parsed as a shaped vertex)
         const existingVertices = this.yy.getVertices();
-        const existingVertex = existingVertices.get(edgeInfo.targetId);
+        const existingVertex = existingVertices.get(cleanTargetId);
         const hasCustomProperties =
           existingVertex &&
           (existingVertex.text !== edgeInfo.targetId || existingVertex.type !== undefined);
 
         if (!hasCustomProperties) {
           this.yy.addVertex(
-            edgeInfo.targetId,
-            { text: edgeInfo.targetId, type: 'text' },
+            cleanTargetId,
+            { text: cleanTargetId, type: 'text' },
             undefined, // type
             [], // style
             [], // classes
@@ -1631,7 +2189,7 @@ class LezerFlowParser {
         }
       } else {
         // Target is shaped - track it for orphaned shape processing
-        this.lastReferencedNodeId = edgeInfo.targetId;
+        this.lastReferencedNodeId = cleanTargetId;
         console.log(
           `UIO DEBUG: Tracking lastReferencedNodeId = ${this.lastReferencedNodeId} for orphaned shape processing`
         );
@@ -1640,13 +2198,53 @@ class LezerFlowParser {
       // Process edge text for markdown
       const processedEdgeText = processNodeText(edgeInfo.text);
 
-      // Create the edge with proper properties using addSingleLink
-      this.yy.addSingleLink(sourceId, edgeInfo.targetId, {
+      // Create the main edge
+      this.yy.addSingleLink(cleanSourceId, cleanTargetId, {
         text: { text: processedEdgeText.text, type: processedEdgeText.type },
         type: edgeInfo.type,
         stroke: edgeInfo.stroke,
         length: edgeInfo.length,
       });
+
+      // Create additional edges for any pending chain nodes
+      if (this.pendingChainNodes.length > 0) {
+        console.log(
+          `UIO DEBUG: Creating ${this.pendingChainNodes.length} additional edges for chained nodes`
+        );
+        for (const chainNodeId of this.pendingChainNodes) {
+          const cleanChainNodeId = this.ensureNodeWithInlineClasses(chainNodeId);
+          console.log(
+            `UIO DEBUG: Creating chained edge: ${cleanChainNodeId} ${edgeInfo.arrow} ${cleanTargetId}`
+          );
+
+          // Ensure the chain node exists as a vertex
+          const existingVertices = this.yy.getVertices();
+          if (!existingVertices.has(cleanChainNodeId)) {
+            this.yy.addVertex(
+              cleanChainNodeId,
+              { text: cleanChainNodeId, type: 'text' },
+              undefined, // type
+              [], // style
+              [], // classes
+              '', // dir
+              {}, // props
+              undefined // metadata
+            );
+          }
+
+          // Create the chained edge
+          this.yy.addSingleLink(cleanChainNodeId, cleanTargetId, {
+            text: { text: processedEdgeText.text, type: processedEdgeText.type },
+            type: edgeInfo.type,
+            stroke: edgeInfo.stroke,
+            length: edgeInfo.length,
+          });
+        }
+
+        // Clear pending chain nodes after processing
+        this.pendingChainNodes = [];
+        console.log(`UIO DEBUG: Cleared pending chain nodes`);
+      }
     }
 
     return i;
@@ -1675,14 +2273,23 @@ class LezerFlowParser {
       `UIO DEBUG: parseEdgePattern called at index ${i}, token: ${tokens[i]?.type}:${tokens[i]?.value}`
     );
 
-    // Look for arrow token (Arrow or LINK)
-    if (i >= tokens.length || (tokens[i].type !== 'Arrow' && tokens[i].type !== 'LINK')) {
+    // Check for split arrow pattern (TagEnd with ">")
+    let firstArrow: string;
+    if (i < tokens.length && tokens[i].type === 'TagEnd' && tokens[i].value === '>') {
+      // This is the ">" part of a split arrow like "A--" + ">"
+      firstArrow = '-->';
+      console.log(
+        `UIO DEBUG: parseEdgePattern: Detected split arrow pattern, treating as "${firstArrow}"`
+      );
+      i++;
+    } else if (i < tokens.length && (tokens[i].type === 'Arrow' || tokens[i].type === 'LINK')) {
+      // Regular arrow token
+      firstArrow = tokens[i].value;
+      i++;
+    } else {
       console.log(`UIO DEBUG: parseEdgePattern: No arrow/link token found at index ${i}`);
       return null;
     }
-
-    const firstArrow = tokens[i].value;
-    i++;
 
     // Check if this is a simple arrow (A --> B) or complex (A<-- text -->B)
     console.log(
@@ -1710,6 +2317,32 @@ class LezerFlowParser {
 
       let targetId = tokens[i].value;
       i++;
+
+      // Check for sequential chaining pattern (e.g., B-- in A-->B-->C)
+      if (targetId.endsWith('--')) {
+        // This is a sequential chain - extract the actual node ID
+        const actualTargetId = targetId.slice(0, -2); // Remove the trailing "--"
+        console.log(
+          `UIO DEBUG: parseEdgePattern: Detected sequential chaining, targetId=${actualTargetId} (was ${targetId})`
+        );
+
+        // Add the actual target to pending chain nodes for the next edge
+        this.pendingChainNodes = this.pendingChainNodes || [];
+        this.pendingChainNodes.push(actualTargetId);
+        console.log(
+          `UIO DEBUG: parseEdgePattern: Added ${actualTargetId} to pending chain nodes for sequential chaining`
+        );
+
+        return {
+          arrow: firstArrow,
+          targetId: actualTargetId,
+          text: '',
+          type: this.getArrowType(firstArrow),
+          stroke: this.getArrowStroke(firstArrow),
+          length: this.getArrowLength(firstArrow),
+          nextIndex: i,
+        };
+      }
 
       // Handle compound node IDs: if current token is DIR and next is NODE_STRING, combine them
       if (tokens[i - 1].type === 'DIR' && i < tokens.length && tokens[i].type === 'NODE_STRING') {
@@ -2635,6 +3268,202 @@ class LezerFlowParser {
       }
       if (tooltip) {
         this.yy.setTooltip(nodeId, tooltip);
+      }
+    }
+
+    return i;
+  }
+
+  /**
+   * Parse a class statement: class nodeId[,nodeId2,...] className
+   * Example: class a,b exClass
+   */
+  private parseClassStatement(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): number {
+    console.log(`UIO DEBUG: parseClassStatement called at index ${startIndex}`);
+
+    let i = startIndex + 1; // Skip the CLASS token
+
+    // Collect all NODE_STRING tokens first, then determine which is the class name
+    const allTokens: string[] = [];
+
+    while (i < tokens.length && tokens[i].type !== 'SEMI') {
+      if (tokens[i].type === 'NODE_STRING') {
+        allTokens.push(tokens[i].value);
+        console.log(`UIO DEBUG: parseClassStatement: Found token: ${tokens[i].value}`);
+      } else if (tokens[i].type === '⚠' && tokens[i].value === ',') {
+        // Skip comma separators
+        console.log(`UIO DEBUG: parseClassStatement: Skipping comma separator`);
+      }
+      i++;
+    }
+
+    if (allTokens.length === 0) {
+      console.log(`UIO DEBUG: parseClassStatement: No tokens found`);
+      return i;
+    }
+
+    // The last token is the class name, all others are node IDs
+    const nodeIds = allTokens.slice(0, -1);
+    const className = allTokens[allTokens.length - 1];
+
+    console.log(
+      `UIO DEBUG: parseClassStatement: nodeIds=[${nodeIds.join(', ')}], className=${className}`
+    );
+
+    if (nodeIds.length === 0) {
+      console.log(`UIO DEBUG: parseClassStatement: No node IDs found`);
+      return i;
+    }
+
+    // Apply the class to all specified nodes
+    const vertices = this.yy?.getVertices();
+    if (vertices) {
+      for (const nodeId of nodeIds) {
+        console.log(
+          `UIO DEBUG: parseClassStatement: Applying class ${className} to node ${nodeId}`
+        );
+
+        // Ensure the node exists
+        if (!vertices.has(nodeId)) {
+          this.yy.addVertex(
+            nodeId,
+            { text: nodeId, type: 'text' },
+            undefined, // type
+            [], // style
+            [], // classes
+            '', // dir
+            {}, // props
+            undefined // metadata
+          );
+        }
+
+        // Apply the class to the node
+        const vertex = vertices.get(nodeId);
+        if (vertex) {
+          if (!vertex.classes) {
+            vertex.classes = [];
+          }
+          vertex.classes.push(className);
+          console.log(
+            `UIO DEBUG: parseClassStatement: Applied class ${className} to vertex ${nodeId}`
+          );
+        }
+      }
+    }
+
+    return i;
+  }
+
+  /**
+   * Parse a linkStyle statement: linkStyle edgeIndex[,edgeIndex2,...] styleProperties
+   * Example: linkStyle 0 stroke-width:1px
+   * Example: linkStyle 10,11 stroke-width:1px
+   */
+  private parseLinkStyleStatement(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): number {
+    console.log(`UIO DEBUG: parseLinkStyleStatement called at index ${startIndex}`);
+
+    let i = startIndex + 1; // Skip the LINKSTYLE token
+
+    // Collect edge indices (comma-separated)
+    const edgeIndices: number[] = [];
+    let collectingIndices = true;
+
+    while (i < tokens.length && tokens[i].type !== 'SEMI' && collectingIndices) {
+      if (tokens[i].type === 'NODE_STRING') {
+        const value = tokens[i].value;
+
+        // Check if this is a number (edge index) or a style property
+        if (/^\d+$/.test(value)) {
+          const edgeIndex = parseInt(value, 10);
+          edgeIndices.push(edgeIndex);
+          console.log(`UIO DEBUG: parseLinkStyleStatement: Added edge index: ${edgeIndex}`);
+        } else {
+          // This is likely a style property, stop collecting indices
+          collectingIndices = false;
+          break;
+        }
+      } else if (tokens[i].type === '⚠' && tokens[i].value === ',') {
+        // Skip comma separators between edge indices
+        console.log(
+          `UIO DEBUG: parseLinkStyleStatement: Skipping comma separator between edge indices`
+        );
+      }
+      i++;
+    }
+
+    if (edgeIndices.length === 0) {
+      console.log(`UIO DEBUG: parseLinkStyleStatement: No edge indices found`);
+      return i;
+    }
+
+    // Collect style properties (similar to parseStyleStatement)
+    const styles: string[] = [];
+    let currentStyle = '';
+
+    while (i < tokens.length && tokens[i].type !== 'SEMI') {
+      if (tokens[i].type === 'NODE_STRING') {
+        if (currentStyle) {
+          currentStyle += ' ' + tokens[i].value;
+          console.log(`UIO DEBUG: parseLinkStyleStatement: Building style: "${currentStyle}"`);
+        } else {
+          currentStyle = tokens[i].value;
+          console.log(`UIO DEBUG: parseLinkStyleStatement: Building style: "${currentStyle}"`);
+        }
+      } else if (
+        tokens[i].type === '⚠' &&
+        tokens[i].value === ',' && // Complete current style and start a new one
+        currentStyle
+      ) {
+        styles.push(currentStyle);
+        console.log(`UIO DEBUG: parseLinkStyleStatement: Completed style: "${currentStyle}"`);
+        currentStyle = '';
+      }
+      i++;
+    }
+
+    // Add the final style
+    if (currentStyle) {
+      styles.push(currentStyle);
+      console.log(`UIO DEBUG: parseLinkStyleStatement: Completed final style: "${currentStyle}"`);
+    }
+
+    if (styles.length === 0) {
+      console.log(`UIO DEBUG: parseLinkStyleStatement: No styles found`);
+      return i;
+    }
+
+    // Apply styles to the specified edges
+    const edges = this.yy?.getEdges();
+    if (edges) {
+      for (const edgeIndex of edgeIndices) {
+        if (edgeIndex >= 0 && edgeIndex < edges.length) {
+          console.log(
+            `UIO DEBUG: parseLinkStyleStatement: Applying ${styles.length} styles to edge ${edgeIndex}`
+          );
+
+          // Initialize style array if it doesn't exist
+          if (!edges[edgeIndex].style) {
+            edges[edgeIndex].style = [];
+          }
+
+          // Add all styles to the edge
+          for (const style of styles) {
+            edges[edgeIndex].style.push(style);
+            console.log(
+              `UIO DEBUG: parseLinkStyleStatement: Added style "${style}" to edge ${edgeIndex}`
+            );
+          }
+        } else {
+          console.log(
+            `UIO DEBUG: parseLinkStyleStatement: Edge index ${edgeIndex} is out of bounds (total edges: ${edges.length})`
+          );
+        }
       }
     }
 

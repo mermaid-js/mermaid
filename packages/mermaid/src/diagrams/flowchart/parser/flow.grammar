@@ -13,14 +13,11 @@ statement {
   DEFAULT |
   INTERPOLATE |
   HREF |
-
   LINK_TARGET |
-  NODE_STRING |
   STR |
   LINK |
   PIPE |
   SEMI |
-  AMP |
   Hyphen |
   At |
   SquareStart | SquareEnd |
@@ -33,7 +30,13 @@ statement {
   StadiumStart | StadiumEnd |
   TrapStart | TrapEnd |
   InvTrapStart | InvTrapEnd |
-  newline
+  newline |
+  // Vertex patterns - more specific to avoid conflicts
+  NODE_STRING AMP NODE_STRING |
+  NODE_STRING AMP NODE_STRING LINK NODE_STRING |
+  NODE_STRING LINK NODE_STRING AMP NODE_STRING |
+  NODE_STRING LINK NODE_STRING LINK NODE_STRING |
+  NODE_STRING
 }
 
 GRAPH { graphKeyword }
