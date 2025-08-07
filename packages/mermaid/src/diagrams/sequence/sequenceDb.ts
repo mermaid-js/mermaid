@@ -1,4 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import * as yaml from 'js-yaml';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
@@ -13,6 +14,7 @@ import {
   setDiagramTitle,
 } from '../common/commonDb.js';
 import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
+import type { ParticipantMetaData } from '../../types.js';
 
 interface SequenceState {
   prevActor?: string;
@@ -107,7 +109,6 @@ export class SequenceDB implements DiagramDB {
     this.apply = this.apply.bind(this);
     this.parseBoxData = this.parseBoxData.bind(this);
     this.parseMessage = this.parseMessage.bind(this);
-    this.matchAsActorOrParticipant = this.matchAsActorOrParticipant.bind(this);
 
     this.clear();
 
@@ -131,9 +132,22 @@ export class SequenceDB implements DiagramDB {
     id: string,
     name: string,
     description: { text: string; wrap?: boolean | null; type: string },
-    type: string
+    type: string,
+    metadata?: any
   ) {
     let assignedBox = this.state.records.currentBox;
+    let doc;
+    if (metadata !== undefined) {
+      let yamlData;
+      // detect if shapeData contains a newline character
+      if (!metadata.includes('\n')) {
+        yamlData = '{\n' + metadata + '\n}';
+      } else {
+        yamlData = metadata + '\n';
+      }
+      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as ParticipantMetaData;
+    }
+    type = doc?.type ?? type;
     const old = this.state.records.actors.get(id);
     if (old) {
       // If already set and trying to set to a new one throw error
@@ -342,22 +356,6 @@ export class SequenceDB implements DiagramDB {
     return message;
   }
 
-  public matchAsActorOrParticipant(
-    tokenName: string,
-    tokenType: string,
-    inputRemainder: string,
-    lexer: any
-  ): string {
-    const arrowLike = /^\s*(->>|-->>|->|-->|<<->>|<<-->>|-x|--x|-\))/;
-    const colonLike = /^\s*:/;
-
-    if (arrowLike.test(inputRemainder) || colonLike.test(inputRemainder)) {
-      return 'ACTOR';
-    }
-    lexer.begin('ID'); // used  the passed lexer
-    return tokenType;
-  }
-
   // We expect the box statement to be color first then description
   // The color can be rgb,rgba,hsl,hsla, or css code names  #hex codes are not supported for now because of the way the char # is handled
   // We extract first segment as color, the rest of the line is considered as text
@@ -546,7 +544,7 @@ export class SequenceDB implements DiagramDB {
           });
           break;
         case 'addParticipant':
-          this.addActor(param.actor, param.actor, param.description, param.draw);
+          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
           break;
         case 'createParticipant':
           if (this.state.records.actors.has(param.actor)) {

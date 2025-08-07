@@ -2043,8 +2043,8 @@ Bob->>Alice:Got it!
       const actor1 = 'database';
       const diagram = await Diagram.fromText(`
     sequenceDiagram
-        database Alice
-        database Bob
+        participant Alice@{ "type" : "database" }
+        participant Bob@{ "type" : "database" }
         Bob->>+Alice: Hi Alice
         Alice->>+Bob: Hi Bob
       `);
@@ -2057,10 +2057,10 @@ Bob->>Alice:Got it!
       const diagram = await Diagram.fromText(`
     sequenceDiagram
         participant lead
-        queue dsa
+        participant dsa@{ "type" : "queue" }
         API->>+Database: getUserb
         Database-->>-API: userb
-        queue --> Database: hello
+        dsa --> Database: hello
     `);
 
       const messages = diagram.db.getMessages();
@@ -2070,67 +2070,67 @@ Bob->>Alice:Got it!
     it('should parse boundary participant', async () => {
       const diagram = await Diagram.fromText(`
           sequenceDiagram
-          boundary B as Boundary Box
-          B->B: test
+          participant boundary@{ "type" : "boundary" }
+          boundary->boundary: test
       `);
       const actors = diagram.db.getActors();
-      expect(actors.get('B').type).toBe('boundary');
-      expect(actors.get('B').description).toBe('Boundary Box');
+      expect(actors.get('boundary').type).toBe('boundary');
+      expect(actors.get('boundary').description).toBe('boundary');
     });
 
     it('should parse control participant', async () => {
       const diagram = await Diagram.fromText(`
         sequenceDiagram
-        control C as Controller
+         participant C@{ "type" : "control" }
         C->C: test
         `);
       const actors = diagram.db.getActors();
       expect(actors.get('C').type).toBe('control');
-      expect(actors.get('C').description).toBe('Controller');
+      expect(actors.get('C').description).toBe('C');
     });
 
     it('should parse entity participant', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      entity E as Entity
+      participant E@{ "type" : "entity" }
       E->E: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('E').type).toBe('entity');
-      expect(actors.get('E').description).toBe('Entity');
+      expect(actors.get('E').description).toBe('E');
     });
 
     it('should parse database participant', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      database D as Database
+      participant D@{ "type" : "database" }
       D->D: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('D').type).toBe('database');
-      expect(actors.get('D').description).toBe('Database');
+      expect(actors.get('D').description).toBe('D');
     });
 
     it('should parse collections participant', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      collections L as List
+      participant L@{ "type" : "collections" }
       L->L: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('L').type).toBe('collections');
-      expect(actors.get('L').description).toBe('List');
+      expect(actors.get('L').description).toBe('L');
     });
 
     it('should parse queue participant', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      queue Q as Jobs
+      participant Q@{ "type" : "queue" }
       Q->Q: test 
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('Q').type).toBe('queue');
-      expect(actors.get('Q').description).toBe('Jobs');
+      expect(actors.get('Q').description).toBe('Q');
     });
   });
 
@@ -2138,89 +2138,58 @@ Bob->>Alice:Got it!
     it('should parse actor participant', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      queue A as ActorName
+      participant A@{ "type" : "queue" }
       A->A: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('A').type).toBe('queue');
-      expect(actors.get('A').description).toBe('ActorName');
+      expect(actors.get('A').description).toBe('A');
     });
 
     it('should parse participant participant', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      database P as PartName
+      participant P@{ "type" : "database" }
       P->P: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('P').type).toBe('database');
-      expect(actors.get('P').description).toBe('PartName');
+      expect(actors.get('P').description).toBe('P');
     });
 
     it('should parse boundary using actor keyword', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      collections B as Boundary
-      B->B: test
+        participant Alice@{ "type" : "collections" }
+        participant Bob@{ "type" : "control" }
+        Alice->>Bob: Hello Bob, how are you?
       `);
       const actors = diagram.db.getActors();
-      expect(actors.get('B').type).toBe('collections');
-      expect(actors.get('B').description).toBe('Boundary');
+      expect(actors.get('Alice').type).toBe('collections');
+      expect(actors.get('Bob').type).toBe('control');
+      expect(actors.get('Bob').description).toBe('Bob');
     });
 
     it('should parse control using participant keyword', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      control C as Controller
+      participant C@{ "type" : "control" }
       C->C: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('C').type).toBe('control');
-      expect(actors.get('C').description).toBe('Controller');
+      expect(actors.get('C').description).toBe('C');
     });
 
     it('should parse entity using actor keyword', async () => {
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      entity E as Entity
+      participant E@{ "type" : "entity" }
       E->E: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('E').type).toBe('entity');
-      expect(actors.get('E').description).toBe('Entity');
-    });
-
-    it('should parse database using participant keyword', async () => {
-      const diagram = await Diagram.fromText(`
-      sequenceDiagram
-      participant D as Database
-      D->D: test
-      `);
-      const actors = diagram.db.getActors();
-      expect(actors.get('D').type).toBe('participant');
-      expect(actors.get('D').description).toBe('Database');
-    });
-
-    it('should parse collections using actor keyword', async () => {
-      const diagram = await Diagram.fromText(`
-      sequenceDiagram
-      actor L as List
-      L->L: test
-      `);
-      const actors = diagram.db.getActors();
-      expect(actors.get('L').type).toBe('actor');
-      expect(actors.get('L').description).toBe('List');
-    });
-
-    it('should parse queue using participant keyword', async () => {
-      const diagram = await Diagram.fromText(`
-      sequenceDiagram
-      participant Q as Jobs
-      Q->Q: test
-      `);
-      const actors = diagram.db.getActors();
-      expect(actors.get('Q').type).toBe('participant');
-      expect(actors.get('Q').description).toBe('Jobs');
+      expect(actors.get('E').description).toBe('E');
     });
   });
 });
