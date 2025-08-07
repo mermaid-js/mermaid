@@ -51,7 +51,7 @@ vi.mock('cytoscape', () => {
   };
 
   const mockCytoscape = vi.fn(() => mockCy);
-(mockCytoscape as any).use = vi.fn();
+  (mockCytoscape as any).use = vi.fn();
 
   return {
     default: mockCytoscape,
@@ -75,8 +75,8 @@ vi.mock('d3', () => ({
 }));
 
 // Import modules after mocks
-import {validateLayoutData,executeCoseBilkentLayout} from './layout.js';
-import type {  LayoutResult } from './types.js';
+import { validateLayoutData, executeCoseBilkentLayout } from './layout.js';
+import type { LayoutResult } from './types.js';
 import type { MindmapNode } from '../../../diagrams/mindmap/mindmapTypes.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { LayoutData } from '../../types.js';
@@ -134,7 +134,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
           width: 100,
           height: 50,
           padding: 10,
-          isGroup:false
+          isGroup: false,
         },
         {
           id: '2',
@@ -145,7 +145,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
           width: 80,
           height: 40,
           padding: 10,
-          isGroup:false
+          isGroup: false,
         },
       ],
       edges: [

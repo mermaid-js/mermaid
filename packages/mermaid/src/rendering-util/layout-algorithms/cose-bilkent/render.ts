@@ -7,7 +7,7 @@ type Node = Record<string, unknown>;
 interface NodeWithPosition extends Node {
   x?: number;
   y?: number;
-  domId?: string |SVGGroup | D3Selection<SVGAElement>;
+  domId?: string | SVGGroup | D3Selection<SVGAElement>;
   width?: number;
   height?: number;
   id?: string;
@@ -109,7 +109,10 @@ export const render = async (
     if (node?.domId) {
       // Position the node at the calculated coordinates
       // The positionedNode.x/y represents the center of the node, so use directly
-      (node.domId as D3Selection<SVGAElement>).attr('transform', `translate(${positionedNode.x}, ${positionedNode.y})`);
+      (node.domId as D3Selection<SVGAElement>).attr(
+        'transform',
+        `translate(${positionedNode.x}, ${positionedNode.y})`
+      );
 
       // Store the final position
       node.x = positionedNode.x;

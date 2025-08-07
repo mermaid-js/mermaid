@@ -1,9 +1,11 @@
 Please help me to implement the tidy-tree algorithm.
-* I have added a placeholder with the correct signature in `packages/mermaid/src/rendering-util/layout-algorithms/tidy-tree/`.
+
+- I have added a placeholder with the correct signature in `packages/mermaid/src/rendering-util/layout-algorithms/tidy-tree/`.
 
 Replace the cytoscape layout with one using tidy-tree.
 
 This is the API for tidy-tree:
+
 ```
 # non-layered-tidy-tree-layout
 
@@ -16,14 +18,18 @@ Draw non-layered tidy trees in linear time.
 ### Installation
 
 ```
+
 npm install non-layered-tidy-tree-layout
+
 ```
 
 Or
 
 ```
+
 yarn add non-layered-tidy-tree-layout
-```
+
+````
 
 There's also a built verison: `dist/non-layered-tidy-tree-layout.js` for use with browser `<script>` tag, or as a Javascript module.
 
@@ -86,7 +92,7 @@ const { result, boundingBox } = layout.layout(treeData)
 //   top: 0,
 //   bottom: 160
 // }
-```
+````
 
 The method `Layout.layout` modifies `treeData` inplace. It returns an object like `{ result: treeData, boundingBox: {left: num, right: num, top: num, bottom: num} }`. `result` is the same object `treeData` with calculated coordinates, `boundingBox` are the coordinates for the whole tree:
 
@@ -104,13 +110,13 @@ The library also provides a class `Tree` and a method `layout`.
  * @param {number} y - veritcal coordinate of bounding box
  * @param {array} children - a list of Tree instances
  */
-new Tree(width, height, y, children)
+new Tree(width, height, y, children);
 
 /**
  * Calculate x, y coordindates and assign them to tree.
  * @param {Object} tree - a Tree object
  */
-layout(tree)
+layout(tree);
 ```
 
 In case your data structure are not the same as provided by the example above, you can refer to `src/helpers.js` to implement a `Layout` class that converts your data to a `Tree`, then call `layout` to calculate the coordinates for drawing.
@@ -122,10 +128,18 @@ In case your data structure are not the same as provided by the example above, y
 ## Changelog
 
 ### [2.0.1]
+
 - Fixed bounding box calculation in `Layout.getSize` and `Layout.assignLayout` and `Layout.layout`
+
 ### [2.0.0]
+
 - Added `Layout.layout`
 - Removed `Layout.layoutTreeData`
+
 ### [1.0.0]
+
 - Added `Layout`, `BoundingBox`, `layout`, `Tree`
+
+```
+
 ```

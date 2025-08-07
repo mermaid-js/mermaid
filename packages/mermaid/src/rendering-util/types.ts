@@ -85,13 +85,13 @@ export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
   children?: NodeChildren;
-  nodeId?: string; 
-  level?: number; 
+  nodeId?: string;
+  level?: number;
   descr?: string;
-  type?: number; 
-  height?: number; 
-  width?: number; 
-  padding?: number; 
+  type?: number;
+  height?: number;
+  width?: number;
+  padding?: number;
 }
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
@@ -100,10 +100,10 @@ export interface NonClusterNode extends BaseNode {
   nodeId?: string;
   level?: number;
   descr?: string;
-  type?: number; 
-  height?: number; 
-  width?: number; 
-  padding?: number; 
+  type?: number;
+  height?: number;
+  width?: number;
+  padding?: number;
 }
 
 // Common properties for any node in the system
@@ -146,11 +146,11 @@ export interface Edge {
   look?: string;
   isUserDefinedId?: boolean;
   points?: Point[];
-  parentId?: string; 
+  parentId?: string;
   dir?: string;
   source?: string;
   target?: string;
-  depth?: number; 
+  depth?: number;
 }
 
 export interface RectOptions {
