@@ -353,6 +353,9 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
 };
 
 const adjustForArrowHeads = function (lineData, size = 5) {
+  if (!Array.isArray(lineData) || lineData.length < 2) {
+    return lineData;
+  }
   const newLineData = [...lineData];
   const lastPoint = lineData[lineData.length - 1];
   const secondLastPoint = lineData[lineData.length - 2];
