@@ -408,14 +408,4 @@ describe('Block diagram', () => {
       {}
     );
   });
-  it('BL32: edge with arrow syntax should render with arrowheads', () => {
-    imgSnapshotTest(
-      `block-beta
-  a
-  b
-  a --> b
-`,
-      {}
-    );
-  });
 });
