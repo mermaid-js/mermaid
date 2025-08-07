@@ -29,11 +29,14 @@
 \%%(?!\{)[^\n]*                                                 { console.log("COMMENT"); /* skip comments */ }
 [^\}]\%\%[^\n]*                                                 { console.log("COMMENT"); /* skip comments */ }
 [0-9]+(?=[ \n]+)                                                { console.log("NUM:", yytext); return 'NUM'; }
-<ID>[^\<->\->:\n,;@]+?([\-]*[^\<->\->:\n,;@]+?)*?(?=\@\{)       { console.log("LEXER:ACTOR_WITH_CONFIG_OBJECT:", yytext); yytext = yytext.trim(); return 'ACTOR_WITH_CONFIG'; }
-// Enhanced config handling rules
+// Enhanced config handling rules - moved before other ID rules for proper precedence
 <ID>\@\{                                                        { console.log("CONFIG_START"); this.begin('CONFIG'); return 'CONFIG_START'; }
 <CONFIG>[^\}]+                                                  { console.log("CONFIG_CONTENT:", yytext); return 'CONFIG_CONTENT'; }
-<CONFIG>\}                                                      { console.log("CONFIG_END"); this.popState(); return 'CONFIG_END'; }
+<CONFIG>\}                                                      { console.log("CONFIG_END"); this.popState(); this.popState(); return 'CONFIG_END'; }
+// ACTOR_WITH_CONFIG rule must come before general ACTOR rule for proper precedence
+<ID>[^\<->\->:\n,;@]+?([\-]*[^\<->\->:\n,;@]+?)*?(?=\@\{)       { console.log("LEXER:ACTOR_WITH_CONFIG_OBJECT:", yytext); yytext = yytext.trim(); return 'ACTOR_WITH_CONFIG'; }
+// General ACTOR rule - now comes after the more specific ACTOR_WITH_CONFIG rule
+<ID>[^\<->\->:\n,;@]+?([\-]*[^\<->\->:\n,;@]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$) { console.log("ACTOR:", yytext); yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 "box"                                                           { console.log("BOX"); this.begin('LINE'); return 'box'; }
 "participant"                                                   { console.log("PARTICIPANT"); this.begin('ID'); return 'participant'; }
 "actor"                                                         { console.log("ACTOR_TYPE_ACTOR"); this.begin('ID'); return 'participant_actor'; }
@@ -45,9 +48,6 @@
 "queue"                                                         { return yy.matchAsActorOrParticipant('queue', 'participant_queue', this._input, this); }
 "create"                                                        { console.log("CREATE"); return 'create'; }
 "destroy"                                                       { console.log("DESTROY"); this.begin('ID'); return 'destroy'; }
-// Updated ID rules to handle @{...} config
-// <ID>[^\<->\->:\n,;@]+?([\-]*[^\<->\->:\n,;@]+?)*?(?=\@\{)       { console.log("LEXER:ACTOR_WITH_CONFIG:", yytext); yytext = yytext.trim(); return 'ACTOR_WITH_CONFIG'; }
-<ID>[^\<->\->:\n,;]+?([\-]*[^\<->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$) { console.log("ACTOR:", yytext); yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { console.log("AS"); this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { console.log("ALIAS_END"); this.popState(); this.popState(); return 'NEWLINE'; }
 // // Enhanced config handling rules
