@@ -4,4 +4,4 @@
 
 fix: sanitize KATEX blocks
 
-Resolves issue reported by @fourcube
+Resolves CVE-2025-54881 reported by @fourcube
