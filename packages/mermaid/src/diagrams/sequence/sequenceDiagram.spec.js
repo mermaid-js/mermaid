@@ -1348,7 +1348,7 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   it('should handle box without description', async () => {
     const diagram = await Diagram.fromText(`
   sequenceDiagram
-  box Aqua
+  box aqua
   participant a as Alice
   participant b as Bob
   end
@@ -1364,7 +1364,7 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     const boxes = diagram.db.getBoxes();
     expect(boxes[0].name).toBeFalsy();
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
-    expect(boxes[0].fill).toEqual('Aqua');
+    expect(boxes[0].fill).toEqual('aqua');
   });
 
   it('should handle simple actor creation', async () => {
