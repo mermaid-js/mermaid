@@ -1,27 +1,28 @@
 @top Flowchart { statement* }
 
 statement {
-  GraphKeyword |
-  Subgraph |
-  End |
-  Direction |
-  StyleKeyword |
-  ClickKeyword |
-  LinkStyleKeyword |
-  ClassDefKeyword |
-  ClassKeyword |
-  DefaultKeyword |
-  InterpolateKeyword |
-  HrefKeyword |
-  CallKeyword |
-  LinkTargetKeyword |
-  Identifier |
-  Number |
-  Arrow |
-  Pipe |
-  Semi |
-  Amp |
+  GRAPH |
+  SUBGRAPH |
+  END |
+  DIR |
+  STYLE |
+  CLICK |
+  LINKSTYLE |
+  CLASSDEF |
+  CLASS |
+  DEFAULT |
+  INTERPOLATE |
+  HREF |
+
+  LINK_TARGET |
+  NODE_STRING |
+  STR |
+  LINK |
+  PIPE |
+  SEMI |
+  AMP |
   Hyphen |
+  At |
   SquareStart | SquareEnd |
   ParenStart | ParenEnd |
   DiamondStart | DiamondEnd |
@@ -35,27 +36,28 @@ statement {
   newline
 }
 
-GraphKeyword { graphKeyword }
-Subgraph { subgraph }
-End { end }
-Direction { direction }
-StyleKeyword { styleKeyword }
-ClickKeyword { clickKeyword }
-LinkStyleKeyword { linkStyleKeyword }
-ClassDefKeyword { classDefKeyword }
-ClassKeyword { classKeyword }
-DefaultKeyword { defaultKeyword }
-InterpolateKeyword { interpolateKeyword }
-HrefKeyword { hrefKeyword }
-CallKeyword { callKeyword }
-LinkTargetKeyword { linkTargetKeyword }
-Identifier { identifier }
-Number { number }
-Arrow { arrow }
-Pipe { pipe }
-Semi { semi }
-Amp { amp }
+GRAPH { graphKeyword }
+SUBGRAPH { subgraph }
+END { end }
+DIR { direction }
+STYLE { styleKeyword }
+CLICK { clickKeyword }
+LINKSTYLE { linkStyleKeyword }
+CLASSDEF { classDefKeyword }
+CLASS { classKeyword }
+DEFAULT { defaultKeyword }
+INTERPOLATE { interpolateKeyword }
+HREF { hrefKeyword }
+
+LINK_TARGET { linkTargetKeyword }
+NODE_STRING { identifier }
+STR { string }
+LINK { arrow }
+PIPE { pipe }
+SEMI { semi }
+AMP { amp }
 Hyphen { hyphen }
+At { at }
 SquareStart { squareStart }
 SquareEnd { squareEnd }
 ParenStart { parenStart }
@@ -85,13 +87,13 @@ InvTrapEnd { invTrapEnd }
   Comment { "%%" ![\n]* }
 
   // Keywords (exact matches, highest precedence)
-  @precedence { graphKeyword, subgraph, end, direction, styleKeyword, clickKeyword, linkStyleKeyword, classDefKeyword, classKeyword, defaultKeyword, interpolateKeyword, hrefKeyword, callKeyword, linkTargetKeyword, identifier }
+  @precedence { string, graphKeyword, subgraph, end, direction, styleKeyword, clickKeyword, linkStyleKeyword, classDefKeyword, classKeyword, defaultKeyword, interpolateKeyword, hrefKeyword, linkTargetKeyword, identifier }
   graphKeyword { "flowchart-elk" | "flowchart" | "graph" }
   subgraph { "subgraph" }
   end { "end" }
 
   // Direction keywords (include single character directions)
-  direction { "LR" | "RL" | "TB" | "BT" | "TD" | "BR" | "v" | "^" | "<" }
+  direction { "LR" | "RL" | "TB" | "BT" | "TD" | "BR" | "v" | "^" }
 
   // Style and interaction keywords
   styleKeyword { "style" }
@@ -102,18 +104,45 @@ InvTrapEnd { invTrapEnd }
   defaultKeyword { "default" }
   interpolateKeyword { "interpolate" }
   hrefKeyword { "href" }
-  callKeyword { "call" }
+
   linkTargetKeyword { "_self" | "_blank" | "_parent" | "_top" }
 
-  // Arrow patterns - comprehensive support
-  @precedence { arrow, identifier }
+  // Arrow patterns - exact match to JISON patterns for 100% compatibility
+  @precedence { arrow, hyphen, identifier }
   arrow {
-    // Longer patterns first to avoid conflicts
-    "<--->" | "<-->" | "<-.->" | "<-.>" | "<==>" | "<=>" |
-    "---->" | "-----" | "------>" |
-    "-->" | "---" | "==>" | "===" | "-.->" | "-.-" |
-    "--x" | "--o" | ".->" | "=>" | "<=" |
-    "<--" | "<==" | "<-." | "--"
+    // Normal arrows - JISON: [xo<]?\-\-+[-xo>]
+    // Optional left head + 2+ dashes + right ending
+    "x--" $[-]* $[-xo>] |     // x + 2+ dashes + ending
+    "o--" $[-]* $[-xo>] |     // o + 2+ dashes + ending
+    "<--" $[-]* $[-xo>] |     // < + 2+ dashes + ending
+    "--" $[-]* $[-xo>] |      // 2+ dashes + ending (includes --> and ---)
+
+    // Edge text start patterns - for patterns like A<-- text -->B
+    // These need to be separate from complete arrows to handle edge text properly
+    "<--" |                   // Left-pointing edge text start (matches START_LINK)
+    "<==" |                   // Left-pointing thick edge text start
+    "<-." |                   // Left-pointing dotted edge text start (matches START_DOTTED_LINK)
+
+    // Thick arrows - JISON: [xo<]?\=\=+[=xo>]
+    // Optional left head + 2+ equals + right ending
+    "x==" $[=]* $[=xo>] |     // x + 2+ equals + ending
+    "o==" $[=]* $[=xo>] |     // o + 2+ equals + ending
+    "<==" $[=]* $[=xo>] |     // < + 2+ equals + ending
+    "==" $[=]* $[=xo>] |      // 2+ equals + ending (includes ==> and ===)
+
+    // Dotted arrows - JISON: [xo<]?\-?\.+\-[xo>]?
+    // Optional left head + optional dash + 1+ dots + dash + optional right head
+    "x-" $[.]+ "-" $[xo>]? |  // x + dash + dots + dash + optional ending
+    "o-" $[.]+ "-" $[xo>]? |  // o + dash + dots + dash + optional ending
+    "<-" $[.]+ "-" $[xo>]? |  // < + dash + dots + dash + optional ending
+    "-" $[.]+ "-" $[xo>]? |   // dash + dots + dash + optional ending
+    $[.]+ "-" $[xo>]? |       // dots + dash + optional ending (for patterns like .-)
+
+    // Invisible links - JISON: \~\~[\~]+
+    "~~" $[~]* |              // 2+ tildes
+
+    // Basic fallback patterns for edge cases
+    "--" | "==" | "-."
   }
 
   // Punctuation tokens
@@ -121,6 +150,7 @@ InvTrapEnd { invTrapEnd }
   semi { ";" }
   amp { "&" }
   hyphen { "-" }
+  at { "@" }
 
   // Shape delimiters - Basic
   squareStart { "[" }
@@ -148,11 +178,15 @@ InvTrapEnd { invTrapEnd }
   // Other shape tokens
   tagEnd { ">" }
 
-  // Numbers (for numeric node IDs)
-  number { $[0-9]+ }
+  // Simple string literals
+  string { '"' (!["\\] | "\\" _)* '"' | "'" (!['\\] | "\\" _)* "'" }
 
-  // Node identifiers (lowest precedence, more flexible pattern)
-  identifier { $[a-zA-Z_]$[a-zA-Z0-9_]* }
+  // Node identifiers - more permissive pattern to match JISON NODE_STRING
+  // Supports: letters, numbers, underscore, and safe special characters
+  // Handles both pure numbers (like "1") and alphanumeric IDs (like "1id")
+  identifier { $[a-zA-Z0-9_!\"#$'*+.`?=:-]+ }
 }
 
 @skip { space | Comment }
+
+
