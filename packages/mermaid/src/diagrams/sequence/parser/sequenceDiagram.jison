@@ -15,88 +15,99 @@
 
 // Special states for recognizing aliases
 // A special state for grabbing text up to the first comment/newline
-%x ID ALIAS LINE
+%x ID ALIAS LINE CONFIG CONFIG_DATA
 
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
 %%
 
-[\n]+                                                           return 'NEWLINE';
-\s+                                                             /* skip all whitespace */
-<ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
-<INITIAL,ID,ALIAS,LINE>\#[^\n]*   															/* skip comments */
-\%%(?!\{)[^\n]*                                                 /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */
-[0-9]+(?=[ \n]+)       											return 'NUM';
-"box"															{ this.begin('LINE'); return 'box'; }
-"participant"                                                   { this.begin('ID'); return 'participant'; }
-"actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
+[\n]+                                                           { console.log("NEWLINE"); return 'NEWLINE'; }
+\s+                                                             { console.log("WHITESPACE"); /* skip whitespace */ }
+<ID,ALIAS,LINE>((?!\n)\s)+                                      { console.log("SAME-LINE-WHITESPACE"); /* skip same-line whitespace */ }
+<INITIAL,ID,ALIAS,LINE>\#[^\n]*                                 { console.log("COMMENT"); /* skip comments */ }
+\%%(?!\{)[^\n]*                                                 { console.log("COMMENT"); /* skip comments */ }
+[^\}]\%\%[^\n]*                                                 { console.log("COMMENT"); /* skip comments */ }
+[0-9]+(?=[ \n]+)                                                { console.log("NUM:", yytext); return 'NUM'; }
+<ID>[^\<->\->:\n,;@]+?([\-]*[^\<->\->:\n,;@]+?)*?(?=\@\{)       { console.log("LEXER:ACTOR_WITH_CONFIG_OBJECT:", yytext); yytext = yytext.trim(); return 'ACTOR_WITH_CONFIG'; }
+// Enhanced config handling rules
+<ID>\@\{                                                        { console.log("CONFIG_START"); this.begin('CONFIG'); return 'CONFIG_START'; }
+<CONFIG>[^\}]+                                                  { console.log("CONFIG_CONTENT:", yytext); return 'CONFIG_CONTENT'; }
+<CONFIG>\}                                                      { console.log("CONFIG_END"); this.popState(); return 'CONFIG_END'; }
+"box"                                                           { console.log("BOX"); this.begin('LINE'); return 'box'; }
+"participant"                                                   { console.log("PARTICIPANT"); this.begin('ID'); return 'participant'; }
+"actor"                                                         { console.log("ACTOR_TYPE_ACTOR"); this.begin('ID'); return 'participant_actor'; }
 "boundary"                                                      { return yy.matchAsActorOrParticipant('boundary', 'participant_boundary', this._input, this); }
 "control"                                                       { return yy.matchAsActorOrParticipant('control', 'participant_control', this._input, this); }
 "entity"                                                        { return yy.matchAsActorOrParticipant('entity', 'participant_entity', this._input, this); }
 "database"                                                      { return yy.matchAsActorOrParticipant('database', 'participant_database', this._input, this); }
 "collections"                                                   { return yy.matchAsActorOrParticipant('collections', 'participant_collections', this._input, this); }
 "queue"                                                         { return yy.matchAsActorOrParticipant('queue', 'participant_queue', this._input, this); }
-"create"                                                        return 'create';
-"destroy"                                                       { this.begin('ID'); return 'destroy'; }
-<ID>[^\<->\->:\n,;]+?([\-]*[^\<->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
-<ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
-<ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
-"loop"                                                          { this.begin('LINE'); return 'loop'; }
-"rect"                                                          { this.begin('LINE'); return 'rect'; }
-"opt"                                                           { this.begin('LINE'); return 'opt'; }
-"alt"                                                           { this.begin('LINE'); return 'alt'; }
-"else"                                                          { this.begin('LINE'); return 'else'; }
-"par"                                                           { this.begin('LINE'); return 'par'; }
-"par_over" 														{ this.begin('LINE'); return 'par_over'; }
-"and"                                                           { this.begin('LINE'); return 'and'; }
-"critical"                                                      { this.begin('LINE'); return 'critical'; }
-"option"                                                        { this.begin('LINE'); return 'option'; }
-"break"                                                         { this.begin('LINE'); return 'break'; }
-<LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLine'; }
-"end"                                                           return 'end';
-"left of"                                                       return 'left_of';
-"right of"                                                      return 'right_of';
-"links"                                                         return 'links';
-"link"                                                          return 'link';
-"properties"                                                    return 'properties';
-"details"                                                       return 'details';
-"over"                                                          return 'over';
-"note"                                                          return 'note';
-"activate"                                                      { this.begin('ID'); return 'activate'; }
-"deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
-"title"\s[^#\n;]+                                               return 'title';
-"title:"\s[^#\n;]+                                              return 'legacy_title';
-accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
-<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
-<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
-accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
-<acc_descr_multiline>[\}]                       { this.popState(); }
-<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
-"sequenceDiagram"                                               return 'SD';
-"autonumber"                                                    return 'autonumber';
-"off"															return 'off';
-","                                                             return ',';
-";"                                                             return 'NEWLINE';
-[^\+\<->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\<->\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
-"->>"                                                           return 'SOLID_ARROW';
-"<<->>"                                                           return 'BIDIRECTIONAL_SOLID_ARROW';
-"-->>"                                                          return 'DOTTED_ARROW';
-"<<-->>"                                                          return 'BIDIRECTIONAL_DOTTED_ARROW';
-"->"                                                            return 'SOLID_OPEN_ARROW';
-"-->"                                                           return 'DOTTED_OPEN_ARROW';
-\-[x]                                                           return 'SOLID_CROSS';
-\-\-[x]                                                         return 'DOTTED_CROSS';
-\-[\)]                                                          return 'SOLID_POINT';
-\-\-[\)]                                                        return 'DOTTED_POINT';
-":"(?:(?:no)?wrap:)?[^#\n;]*                                    return 'TXT';
-":"                             								return 'TXT';
-"+"                                                             return '+';
-"-"                                                             return '-';
-<<EOF>>                                                         return 'NEWLINE';
-.                                                               return 'INVALID';
+"create"                                                        { console.log("CREATE"); return 'create'; }
+"destroy"                                                       { console.log("DESTROY"); this.begin('ID'); return 'destroy'; }
+// Updated ID rules to handle @{...} config
+// <ID>[^\<->\->:\n,;@]+?([\-]*[^\<->\->:\n,;@]+?)*?(?=\@\{)       { console.log("LEXER:ACTOR_WITH_CONFIG:", yytext); yytext = yytext.trim(); return 'ACTOR_WITH_CONFIG'; }
+<ID>[^\<->\->:\n,;]+?([\-]*[^\<->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$) { console.log("ACTOR:", yytext); yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
+<ALIAS>"as"                                                     { console.log("AS"); this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
+<ALIAS>(?:)                                                     { console.log("ALIAS_END"); this.popState(); this.popState(); return 'NEWLINE'; }
+// // Enhanced config handling rules
+// <ID>\@\{                                                        { console.log("CONFIG_START"); this.begin('CONFIG'); return 'CONFIG_START'; }
+// <CONFIG>[^\}]+                                                  { console.log("CONFIG_CONTENT:", yytext); return 'CONFIG_CONTENT'; }
+// <CONFIG>\}                                                      { console.log("CONFIG_END"); this.popState(); return 'CONFIG_END'; }
+"loop"                                                          { console.log("LOOP"); this.begin('LINE'); return 'loop'; }
+"rect"                                                          { console.log("RECT"); this.begin('LINE'); return 'rect'; }
+"opt"                                                           { console.log("OPT"); this.begin('LINE'); return 'opt'; }
+"alt"                                                           { console.log("ALT"); this.begin('LINE'); return 'alt'; }
+"else"                                                          { console.log("ELSE"); this.begin('LINE'); return 'else'; }
+"par"                                                           { console.log("PAR"); this.begin('LINE'); return 'par'; }
+"par_over"                                                      { console.log("PAR_OVER"); this.begin('LINE'); return 'par_over'; }
+"and"                                                           { console.log("AND"); this.begin('LINE'); return 'and'; }
+"critical"                                                      { console.log("CRITICAL"); this.begin('LINE'); return 'critical'; }
+"option"                                                        { console.log("OPTION"); this.begin('LINE'); return 'option'; }
+"break"                                                         { console.log("BREAK"); this.begin('LINE'); return 'break'; }
+<LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { console.log("REST_OF_LINE:", yytext); this.popState(); return 'restOfLine'; }
+"end"                                                           { console.log("END"); return 'end'; }
+"left of"                                                       { console.log("LEFT_OF"); return 'left_of'; }
+"right of"                                                      { console.log("RIGHT_OF"); return 'right_of'; }
+"links"                                                         { console.log("LINKS"); return 'links'; }
+"link"                                                          { console.log("LINK"); return 'link'; }
+"properties"                                                    { console.log("PROPERTIES"); return 'properties'; }
+"details"                                                       { console.log("DETAILS"); return 'details'; }
+"over"                                                          { console.log("OVER"); return 'over'; }
+"note"                                                          { console.log("NOTE"); return 'note'; }
+"activate"                                                      { console.log("ACTIVATE"); this.begin('ID'); return 'activate'; }
+"deactivate"                                                    { console.log("DEACTIVATE"); this.begin('ID'); return 'deactivate'; }
+"title"\s[^#\n;]+                                               { console.log("TITLE"); return 'title'; }
+"title:"\s[^#\n;]+                                              { console.log("LEGACY_TITLE"); return 'legacy_title'; }
+accTitle\s*":"\s*                                               { console.log("ACC_TITLE"); this.begin("acc_title"); return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { console.log("ACC_TITLE_VALUE:", yytext); this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { console.log("ACC_DESCR"); this.begin("acc_descr"); return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { console.log("ACC_DESCR_VALUE:", yytext); this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                               { console.log("ACC_DESCR_MULTILINE_START"); this.begin("acc_descr_multiline"); }
+<acc_descr_multiline>[\}]                                       { console.log("ACC_DESCR_MULTILINE_END"); this.popState(); }
+<acc_descr_multiline>[^\}]*                                     { console.log("ACC_DESCR_MULTILINE_VALUE:", yytext); return "acc_descr_multiline_value"; }
+"sequenceDiagram"                                               { console.log("SEQUENCE_DIAGRAM"); return 'SD'; }
+"autonumber"                                                    { console.log("AUTONUMBER"); return 'autonumber'; }
+"off"                                                           { console.log("OFF"); return 'off'; }
+","                                                             { console.log("COMMA"); return ','; }
+";"                                                             { console.log("SEMICOLON"); return 'NEWLINE'; }
+[^\+\<->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\<->\->:\n,;]+)* { console.log("ACTOR_GENERIC:", yytext); yytext = yytext.trim(); return 'ACTOR'; }
+"->>"                                                           { console.log("SOLID_ARROW"); return 'SOLID_ARROW'; }
+"<<->>"                                                         { console.log("BIDIRECTIONAL_SOLID_ARROW"); return 'BIDIRECTIONAL_SOLID_ARROW'; }
+"-->>"                                                          { console.log("DOTTED_ARROW"); return 'DOTTED_ARROW'; }
+"<<-->>"                                                        { console.log("BIDIRECTIONAL_DOTTED_ARROW"); return 'BIDIRECTIONAL_DOTTED_ARROW'; }
+"->"                                                            { console.log("SOLID_OPEN_ARROW"); return 'SOLID_OPEN_ARROW'; }
+"-->"                                                           { console.log("DOTTED_OPEN_ARROW"); return 'DOTTED_OPEN_ARROW'; }
+\-[x]                                                           { console.log("SOLID_CROSS"); return 'SOLID_CROSS'; }
+\-\-[x]                                                         { console.log("DOTTED_CROSS"); return 'DOTTED_CROSS'; }
+\-[\)]                                                          { console.log("SOLID_POINT"); return 'SOLID_POINT'; }
+\-\-[\)]                                                        { console.log("DOTTED_POINT"); return 'DOTTED_POINT'; }
+":"(?:(?:no)?wrap:)?[^#\n;]*                                    { console.log("TEXT_WITH_WRAP:", yytext); return 'TXT'; }
+":"                                                             { console.log("TEXT"); return 'TXT'; }
+"+"                                                             { console.log("PLUS"); return '+'; }
+"-"                                                             { console.log("MINUS"); return '-'; }
+<<EOF>>                                                         { console.log("EOF"); return 'NEWLINE'; }
+.                                                               { console.log("INVALID:", yytext); return 'INVALID'; }
 
 /lex
 
@@ -233,13 +244,40 @@ else_sections
 	;
 
 participant_statement
-	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
-	| 'participant' actor 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$$=$2;}
-	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
-	| 'participant_actor' actor 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $$=$2;}
-	| 'destroy' actor 'NEWLINE' {$2.type='destroyParticipant'; $$=$2;}
-
-	| 'participant_boundary' actor 'AS' restOfLine 'NEWLINE' {$2.draw='boundary'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+    : 'participant' actor_with_config 'AS' restOfLine 'NEWLINE'
+      {
+        console.log('Participant with config and alias:', $2, $4);
+        $2.draw = 'participant';
+        $2.type = 'addParticipant';
+        $2.description = yy.parseMessage($4);
+        $$ = $2;
+      }
+    | 'participant' actor_with_config 'NEWLINE'
+      {
+        console.log('Participant with config without alias:', $2);
+        $2.draw = 'participant';
+        $2.type = 'addParticipant';
+        $$ = $2;
+      }
+    | 'participant_actor' actor_with_config 'AS' restOfLine 'NEWLINE'
+      {
+        $2.draw = 'actor';
+        $2.type = 'addParticipant';
+        $2.description = yy.parseMessage($4);
+        $$ = $2;
+      }
+    | 'participant_actor' actor_with_config 'NEWLINE'
+      {
+        $2.draw = 'actor';
+        $2.type = 'addParticipant';
+        $$ = $2;
+      }
+    | 'destroy' actor 'NEWLINE'
+      {
+        $2.type = 'destroyParticipant';
+        $$ = $2;
+      }
+  | 'participant_boundary' actor 'AS' restOfLine 'NEWLINE' {$2.draw='boundary'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
 	| 'participant_boundary' actor 'NEWLINE' {$2.draw='boundary'; $2.type='addParticipant'; $$=$2;}
 
 	| 'participant_control' actor 'AS' restOfLine 'NEWLINE' {$2.draw='control'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
@@ -327,13 +365,71 @@ signal
 	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
 	;
 
-// actor
-// 	: actor_participant
-// 	| actor_actor
-// 	;
+actor_with_config
+    : ACTOR_WITH_CONFIG config_object  // Changed from ACTOR
+      {
+        console.log("ACTOR_WITH_CONFIG Actor with config:", $1, $2);
+        $$ = {
+          type: 'addParticipant',
+          actor: $1,
+          config: $2
+        };
+      }
+    | ACTOR config_object
+      {
+        console.log("Actor with config:", $1, $2);
+        $$ = {
+          type: 'addParticipant',
+          actor: $1,
+          config: $2
+        };
+      }
+    | ACTOR
+      {
+        console.log("Actor without config:", $1);
+        $$ = {
+          type: 'addParticipant',
+          actor: $1,
+        };
+      }
+    ;
 
-actor: ACTOR {$$={ type: 'addParticipant', actor:$1}};
-// actor_actor: ACTOR {$$={type: 'addActor', actor:$1}};
+config_object
+    : CONFIG_START CONFIG_CONTENT CONFIG_END
+      {
+        console.log("Parsing config content:", $2);
+        try {
+          // Remove any trailing whitespace/newlines
+          const content = $2.trim();
+          $$ = JSON.parse(content);
+          console.log("Successfully parsed JSON config:", $$);
+        } catch (e) {
+          console.log("JSON parse failed, using raw content");
+          $$ = $2.trim();
+        }
+      }
+    ;
+actor
+  : ACTOR_WITH_CONFIG  // Add this case
+      {
+        console.log("Actor with config flag:", $1);
+        $$ = { type: 'addParticipant', actor: $1 };
+      }
+	| actor config_object
+      {
+        console.log("Actor with config:", $1, $2);
+        $$ = {
+          type: 'addParticipant',
+          actor: $1.actor,
+          config: $2
+        };
+      }
+    | ACTOR
+      {
+        console.log("Basic actor:", $1);
+        $$ = { type: 'addParticipant', actor: $1 };
+      }
+    ;
 
 signaltype
 	: SOLID_OPEN_ARROW  { $$ = yy.LINETYPE.SOLID_OPEN; }
