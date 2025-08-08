@@ -15,7 +15,7 @@ describe('Sankey Diagram', () => {
   describe('when given a linkColor', function () {
     this.beforeAll(() => {
       cy.wrap(
-        `sankey-beta
+        `sankey
       a,b,10
       `
       ).as('graph');
@@ -62,7 +62,7 @@ describe('Sankey Diagram', () => {
     this.beforeAll(() => {
       cy.wrap(
         `
-        sankey-beta
+        sankey
         
         a,b,8
         b,c,8
