@@ -34,9 +34,9 @@ async function addHtmlSpan(
   fo.attr('height', `${10 * width}px`);
 
   const div = fo.append('xhtml:div');
-  const sanitizedLabel = hasKatex(label)
+  const sanitizedLabel = hasKatex(node.label)
     ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
-    : sanitizeText(label, config);
+    : sanitizeText(node.label, config);
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   const span = div.append('span');
   span.html(sanitizedLabel);
