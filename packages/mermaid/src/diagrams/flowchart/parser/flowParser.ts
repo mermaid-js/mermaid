@@ -4,6 +4,14 @@ import type { FlowDB } from '../flowDb.js';
 import type { FlowVertexTypeParam } from '../types.js';
 import { log } from '../../../logger.js';
 
+// Token type definition
+interface Token {
+  type: string;
+  value: string;
+  from: number;
+  to: number;
+}
+
 /**
  * Process text and determine if it's markdown, string, or regular text
  * @param text - The raw text (may contain quotes and backticks)
@@ -81,6 +89,17 @@ class LezerFlowParser {
   public yy: FlowDB | undefined;
   private lastReferencedNodeId: string | null = null;
   private pendingChainNodes: string[] = [];
+  private currentSourceNodes: string[] = []; // For collecting source nodes in vertex chaining
+  private currentTargetNodes: string[] = []; // For collecting target nodes in vertex chaining
+  private lastTargetNodes: string[] = []; // Track target nodes for continuation edges
+  private pendingShapedTargetId: string | null = null; // Track target node that needs shaping
+  private lastEdgeInfo: {
+    sourceNodes: string[];
+    targetNodes: string[];
+    edgeText: string;
+    edgeType: string;
+    edgeStroke: string;
+  } | null = null; // Track last edge for retroactive target chaining
 
   constructor() {
     this.yy = undefined;
@@ -131,8 +150,438 @@ class LezerFlowParser {
     console.log('UIO DEBUG: Collected tokens:', tokens);
     log.debug('UIO Collected tokens:', tokens);
 
+    // Preprocess tokens to merge fragmented edge patterns
+    const processedTokens = this.preprocessTokens(tokens);
+
     // Second pass: parse the token sequence
-    this.parseTokenSequence(tokens);
+    this.parseTokenSequence(processedTokens);
+  }
+
+  /**
+   * Preprocess tokens to merge fragmented edge patterns
+   * @param tokens - The raw tokens from the parser
+   */
+  private preprocessTokens(
+    tokens: { type: string; value: string; from: number; to: number }[]
+  ): { type: string; value: string; from: number; to: number }[] {
+    console.log('UIO DEBUG: Preprocessing tokens to merge fragmented edge patterns...');
+
+    const processedTokens: { type: string; value: string; from: number; to: number }[] = [];
+    let i = 0;
+
+    while (i < tokens.length) {
+      const token = tokens[i];
+
+      // Skip non-statement tokens
+      if (token.type === 'GRAPH' || token.type === 'DIR' || token.type === 'SEMI') {
+        processedTokens.push(token);
+        i++;
+        continue;
+      }
+
+      // Try to detect fragmented edge patterns
+      const mergedPattern = this.tryMergeFragmentedEdgePattern(tokens, i);
+      if (mergedPattern) {
+        console.log(
+          `UIO DEBUG: Merged fragmented edge pattern: ${mergedPattern.mergedTokens.map((t) => t.value).join(' ')}`
+        );
+        processedTokens.push(...mergedPattern.mergedTokens);
+        i = mergedPattern.nextIndex;
+      } else {
+        processedTokens.push(token);
+        i++;
+      }
+    }
+
+    return processedTokens;
+  }
+
+  /**
+   * Try to merge fragmented edge patterns like "A--text including URL space and send-->B"
+   * @param tokens - All tokens
+   * @param startIndex - Starting index to check
+   */
+  private tryMergeFragmentedEdgePattern(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): {
+    mergedTokens: { type: string; value: string; from: number; to: number }[];
+    nextIndex: number;
+  } | null {
+    // Look for patterns like:
+    // 1. A--text including URL space and send-->B
+    // 2. A-- text including URL space and send -->B
+
+    // Find the end of this potential edge pattern
+    let endIndex = startIndex;
+    let foundArrowEnd = false;
+
+    // Look ahead to find arrow end patterns
+    for (let i = startIndex; i < tokens.length && i < startIndex + 20; i++) {
+      const token = tokens[i];
+      if (token.type === 'SEMI') {
+        endIndex = i;
+        break;
+      }
+      if (
+        token.type === 'LINK' ||
+        token.type === 'TagEnd' ||
+        (token.type === 'NODE_STRING' &&
+          (token.value.endsWith('-->') || token.value.endsWith('-->')))
+      ) {
+        foundArrowEnd = true;
+        endIndex = i + 1; // Include the target node
+        if (i + 1 < tokens.length && tokens[i + 1].type === 'NODE_STRING') {
+          endIndex = i + 2; // Include target node
+        }
+        break;
+      }
+    }
+
+    if (!foundArrowEnd || endIndex <= startIndex + 1) {
+      return null; // Not a complex edge pattern
+    }
+
+    // Extract the tokens that form this edge pattern
+    const patternTokens = tokens.slice(startIndex, endIndex);
+    console.log(
+      `UIO DEBUG: Analyzing potential edge pattern: ${patternTokens.map((t) => t.value).join(' ')}`
+    );
+
+    // Try to detect specific patterns
+    const merged = this.detectAndMergeEdgePattern(patternTokens, tokens, startIndex);
+    if (merged) {
+      return {
+        mergedTokens: merged,
+        nextIndex: endIndex,
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * Helper: does a NODE_STRING like "A-.-" followed by TagEnd '>' and a NODE_STRING target
+   * represent a dotted simple edge A-.->B? If so, merge into canonical tokens.
+   */
+  private matchesDottedSimple(tokens: { type: string; value: string }[]): boolean {
+    return (
+      tokens.length >= 3 &&
+      tokens[0].type === 'NODE_STRING' &&
+      tokens[0].value.endsWith('-.-') &&
+      tokens[1].type === 'TagEnd' &&
+      tokens[1].value === '>' &&
+      tokens[2].type === 'NODE_STRING'
+    );
+  }
+  private mergeDottedSimple(tokens: { type: string; value: string; from: number; to: number }[]) {
+    const first = tokens[0];
+    const target = tokens[2];
+    const src = first.value.slice(0, -3); // drop '-.-'
+    return [
+      { type: 'NODE_STRING', value: src, from: first.from, to: first.from + src.length },
+      { type: 'LINK', value: '-.->', from: first.from + src.length, to: target.from },
+      { type: 'NODE_STRING', value: target.value, from: target.from, to: target.to },
+    ];
+  }
+  /**
+   * Helper: does a NODE_STRING like "A==" followed by TagEnd '>' and a NODE_STRING target
+   * represent a thick simple edge A==>B? If so, merge into canonical tokens.
+   */
+  private matchesThickSimple(tokens: { type: string; value: string }[]): boolean {
+    return (
+      tokens.length >= 3 &&
+      tokens[0].type === 'NODE_STRING' &&
+      tokens[0].value.endsWith('==') &&
+      tokens[1].type === 'TagEnd' &&
+      tokens[1].value === '>' &&
+      tokens[2].type === 'NODE_STRING'
+    );
+  }
+  private mergeThickSimple(tokens: { type: string; value: string; from: number; to: number }[]) {
+    const first = tokens[0];
+    const target = tokens[2];
+    const src = first.value.slice(0, -2); // drop '=='
+    return [
+      { type: 'NODE_STRING', value: src, from: first.from, to: first.from + src.length },
+      { type: 'LINK', value: '==>', from: first.from + src.length, to: target.from },
+      { type: 'NODE_STRING', value: target.value, from: target.from, to: target.to },
+    ];
+  }
+
+  /**
+   * Detect and merge specific edge patterns
+   * @param patternTokens - The tokens that form the potential edge pattern
+   * @param allTokens - All tokens (for context)
+   * @param startIndex - Starting index in allTokens
+   */
+  private detectAndMergeEdgePattern(
+    patternTokens: { type: string; value: string; from: number; to: number }[],
+    allTokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): { type: string; value: string; from: number; to: number }[] | null {
+    // Pattern 1: A--text including URL space and send-->B
+    // Tokens: [A--text, including, URL, space, and, send--, >, B]
+    if (this.matchesPattern1(patternTokens)) {
+      return this.mergePattern1(patternTokens);
+    }
+
+    // Pattern 2: A-- text including URL space and send -->B
+    // Tokens: [A--, text, including, URL, space, and, send, -->, B]
+    if (this.matchesPattern2(patternTokens)) {
+      return this.mergePattern2(patternTokens);
+    }
+
+    // New: simple dotted A-.->B collapsed as NODE_STRING + '>' + NODE_STRING
+    if (this.matchesDottedSimple(patternTokens)) {
+      return this.mergeDottedSimple(patternTokens as any);
+    }
+
+    // New: simple thick A==>B collapsed as NODE_STRING + '>' + NODE_STRING
+    if (this.matchesThickSimple(patternTokens)) {
+      return this.mergeThickSimple(patternTokens as any);
+    }
+
+    return null;
+  }
+
+  /**
+   * Check if a token type can be treated as text in edge patterns
+   */
+  private isTextToken(tokenType: string): boolean {
+    return (
+      tokenType === 'NODE_STRING' ||
+      tokenType === 'GRAPH' ||
+      tokenType === 'DIR' ||
+      tokenType === 'STR' ||
+      tokenType === 'Flowchart' ||
+      tokenType === 'SUBGRAPH' ||
+      tokenType === 'END' ||
+      tokenType === 'STYLE' ||
+      tokenType === 'CLASS' ||
+      tokenType === 'CLASSDEF' ||
+      tokenType === 'CLICK' ||
+      tokenType === 'HREF' ||
+      tokenType === 'CALL' ||
+      tokenType === 'LINKSTYLE' ||
+      tokenType === 'INTERPOLATE' ||
+      tokenType === 'DEFAULT'
+    );
+  }
+
+  /**
+   * Check if tokens match Pattern 1: A--text including URL space and send-->B
+   */
+  private matchesPattern1(
+    tokens: { type: string; value: string; from: number; to: number }[]
+  ): boolean {
+    if (tokens.length < 3) {
+      return false;
+    }
+
+    // First token should be NODE_STRING ending with text (like "A--text")
+    const first = tokens[0];
+    if (first.type !== 'NODE_STRING' || !first.value.includes('--')) {
+      return false;
+    }
+
+    // Should have middle tokens that can be treated as text (NODE_STRING or keywords)
+    const hasMiddleTokens = tokens.slice(1, -2).every((t) => this.isTextToken(t.type));
+    if (!hasMiddleTokens) {
+      return false;
+    }
+
+    // Should end with arrow pattern and target
+    const secondLast = tokens[tokens.length - 2];
+    const last = tokens[tokens.length - 1];
+
+    return (
+      (secondLast.type === 'NODE_STRING' &&
+        secondLast.value.endsWith('--') &&
+        last.type === 'TagEnd' &&
+        last.value === '>') ||
+      (secondLast.type === 'TagEnd' && last.type === 'NODE_STRING')
+    );
+  }
+
+  /**
+   * Check if tokens match Pattern 2: A-- text including URL space and send -->B
+   */
+  private matchesPattern2(
+    tokens: { type: string; value: string; from: number; to: number }[]
+  ): boolean {
+    if (tokens.length < 4) {
+      return false;
+    }
+
+    // First token should be NODE_STRING ending with -- (like "A--")
+    const first = tokens[0];
+    if (first.type !== 'NODE_STRING' || !first.value.endsWith('--')) {
+      return false;
+    }
+
+    // Should have middle tokens that can be treated as text (NODE_STRING or keywords)
+    const middleTokens = tokens.slice(1, -2);
+    const hasMiddleTokens = middleTokens.every((t) => this.isTextToken(t.type));
+    if (!hasMiddleTokens) {
+      return false;
+    }
+
+    // Should end with LINK and target
+    const secondLast = tokens[tokens.length - 2];
+    const last = tokens[tokens.length - 1];
+
+    return (
+      secondLast.type === 'LINK' && secondLast.value.startsWith('--') && last.type === 'NODE_STRING'
+    );
+  }
+
+  /**
+   * Merge Pattern 1 tokens into proper edge format
+   */
+  private mergePattern1(
+    tokens: { type: string; value: string; from: number; to: number }[]
+  ): { type: string; value: string; from: number; to: number }[] {
+    // Extract source node ID from first token (e.g., "A--text" -> "A")
+    const firstToken = tokens[0];
+    const sourceMatch = /^(.+?)--/.exec(firstToken.value);
+    const sourceId = sourceMatch ? sourceMatch[1] : firstToken.value;
+
+    // Extract text from all tokens
+    const textParts = [firstToken.value.substring(sourceId.length + 2)]; // Remove "A--" part
+
+    // Process all middle tokens, handling the special case of the last one
+    for (let i = 1; i < tokens.length - 1; i++) {
+      const token = tokens[i];
+      if (this.isTextToken(token.type)) {
+        // Check if this is a token that ends with '--' and should have it removed
+        if (token.value.endsWith('--') && i < tokens.length - 1) {
+          // Check if the next token is TagEnd (>) - this indicates it's the arrow end
+          const nextToken = tokens[i + 1];
+          if (nextToken && nextToken.type === 'TagEnd') {
+            const textPart = token.value.substring(0, token.value.length - 2);
+
+            if (textPart.trim()) {
+              textParts.push(textPart);
+            }
+          } else {
+            // Regular token that happens to end with '--'
+            textParts.push(token.value);
+          }
+        } else {
+          // Regular token
+          textParts.push(token.value);
+        }
+      }
+    }
+
+    const edgeText = textParts.join(' ').trim();
+    const targetToken = tokens[tokens.length - 1];
+
+    console.log(
+      `UIO DEBUG: Pattern 1 merge - source: ${sourceId}, text: "${edgeText}", target: ${targetToken.value}`
+    );
+
+    return [
+      {
+        type: 'NODE_STRING',
+        value: sourceId,
+        from: firstToken.from,
+        to: firstToken.from + sourceId.length,
+      },
+      {
+        type: 'LINK',
+        value: '--',
+        from: firstToken.from + sourceId.length,
+        to: firstToken.from + sourceId.length + 2,
+      },
+      {
+        type: 'PIPE',
+        value: '|',
+        from: firstToken.from + sourceId.length + 2,
+        to: firstToken.from + sourceId.length + 3,
+      },
+      {
+        type: 'NODE_STRING',
+        value: edgeText,
+        from: firstToken.from + sourceId.length + 3,
+        to: firstToken.from + sourceId.length + 3 + edgeText.length,
+      },
+      {
+        type: 'PIPE',
+        value: '|',
+        from: firstToken.from + sourceId.length + 3 + edgeText.length,
+        to: firstToken.from + sourceId.length + 4 + edgeText.length,
+      },
+      {
+        type: 'LINK',
+        value: '-->',
+        from: firstToken.from + sourceId.length + 4 + edgeText.length,
+        to: targetToken.from,
+      },
+      { type: 'NODE_STRING', value: targetToken.value, from: targetToken.from, to: targetToken.to },
+    ];
+  }
+
+  /**
+   * Merge Pattern 2 tokens into proper edge format
+   */
+  private mergePattern2(
+    tokens: { type: string; value: string; from: number; to: number }[]
+  ): { type: string; value: string; from: number; to: number }[] {
+    // Extract source node ID from first token (e.g., "A--" -> "A")
+    const firstToken = tokens[0];
+    const sourceId = firstToken.value.substring(0, firstToken.value.length - 2); // Remove "--"
+
+    // Extract text from middle tokens
+    const middleTokens = tokens.slice(1, -2);
+    const edgeText = middleTokens
+      .map((t) => t.value)
+      .join(' ')
+      .trim();
+
+    const arrowToken = tokens[tokens.length - 2]; // The LINK token (e.g., "--x", "-->", etc.)
+    const targetToken = tokens[tokens.length - 1];
+
+    return [
+      {
+        type: 'NODE_STRING',
+        value: sourceId,
+        from: firstToken.from,
+        to: firstToken.from + sourceId.length,
+      },
+      {
+        type: 'LINK',
+        value: '--',
+        from: firstToken.from + sourceId.length,
+        to: firstToken.from + sourceId.length + 2,
+      },
+      {
+        type: 'PIPE',
+        value: '|',
+        from: firstToken.from + sourceId.length + 2,
+        to: firstToken.from + sourceId.length + 3,
+      },
+      {
+        type: 'NODE_STRING',
+        value: edgeText,
+        from: firstToken.from + sourceId.length + 3,
+        to: firstToken.from + sourceId.length + 3 + edgeText.length,
+      },
+      {
+        type: 'PIPE',
+        value: '|',
+        from: firstToken.from + sourceId.length + 3 + edgeText.length,
+        to: firstToken.from + sourceId.length + 4 + edgeText.length,
+      },
+      {
+        type: 'LINK',
+        value: arrowToken.value,
+        from: firstToken.from + sourceId.length + 4 + edgeText.length,
+        to: targetToken.from,
+      },
+      { type: 'NODE_STRING', value: targetToken.value, from: targetToken.from, to: targetToken.to },
+    ];
   }
 
   /**
@@ -198,7 +647,8 @@ class LezerFlowParser {
       log.debug(`UIO Processing token ${i}: ${token.type} = "${token.value}"`);
 
       switch (token.type) {
-        case 'GraphKeyword':
+        case 'GRAPH':
+        case 'Flowchart':
           i = this.parseGraphStatement(tokens, i);
           break;
         case 'SUBGRAPH':
@@ -210,6 +660,7 @@ class LezerFlowParser {
           break;
         case 'SquareStart':
         case 'RoundStart':
+        case 'ParenStart': // Add ParenStart as an alias for RoundStart
         case 'DiamondStart':
         case 'CircleStart':
         case 'DoubleCircleStart':
@@ -218,8 +669,20 @@ class LezerFlowParser {
         case 'CylinderStart':
         case 'HexagonStart':
         case 'RectStart':
+        case 'TrapStart':
+        case 'InvTrapStart':
+        case 'TagEnd': // Odd shape start ('>text]')
           // Handle orphaned shape tokens (shape tokens without preceding node ID)
-          i = this.parseStatement(tokens, i);
+          // Check if we have a pending shaped target ID from an embedded arrow edge
+          if (this.pendingShapedTargetId) {
+            console.log(
+              `UIO DEBUG: Applying shape to pending target node: ${this.pendingShapedTargetId}`
+            );
+            i = this.parseShapedNodeForTarget(tokens, i, this.pendingShapedTargetId);
+            this.pendingShapedTargetId = null; // Clear the pending target
+          } else {
+            i = this.parseStatement(tokens, i);
+          }
           break;
         case 'CLICK':
           i = this.parseClickStatement(tokens, i);
@@ -253,12 +716,23 @@ class LezerFlowParser {
           break;
         case 'At':
         case 'Hyphen':
-        case 'TagEnd':
           // Skip these tokens when they appear standalone
           i++;
           break;
         default:
-          i++; // Skip unknown tokens
+          // Check if this is an edge property block (edgeId@{...})
+          if (
+            token.type === 'NODE_STRING' &&
+            i + 1 < tokens.length &&
+            tokens[i + 1].type === 'At' &&
+            i + 2 < tokens.length &&
+            tokens[i + 2].type === 'DiamondStart'
+          ) {
+            console.log(`UIO DEBUG: Detected edge property block: ${token.value}@{...}`);
+            i = this.parseEdgePropertyBlock(tokens, i);
+          } else {
+            i++; // Skip unknown tokens
+          }
           break;
       }
     }
@@ -286,7 +760,7 @@ class LezerFlowParser {
       const token = tokens[i];
       let direction = '';
 
-      if (token.type === 'Direction') {
+      if (token.type === 'DIR') {
         direction = token.value;
         i++;
       } else if (token.type === 'TagEnd' && token.value === '>') {
@@ -294,7 +768,7 @@ class LezerFlowParser {
         direction = 'LR';
         i++;
       } else if (token.value === '<' || token.value === '^' || token.value === 'v') {
-        // Handle special direction characters
+        // Handle special direction characters by value regardless of token type
         switch (token.value) {
           case '<':
             direction = 'RL';
@@ -348,7 +822,7 @@ class LezerFlowParser {
     if (
       lookahead.length >= 2 &&
       lookahead[0].value === 'direction' &&
-      lookahead[1].type === 'Direction'
+      lookahead[1].type === 'DIR'
     ) {
       console.log(`UIO DEBUG: Taking direction statement path`);
       return this.parseDirectionStatement(tokens, i);
@@ -369,55 +843,24 @@ class LezerFlowParser {
         .join(', ')}`
     );
     if (
-      extendedLookahead.length >= 4 &&
+      extendedLookahead.length >= 3 &&
       (extendedLookahead[0].type === 'Identifier' || extendedLookahead[0].type === 'NODE_STRING') &&
       (extendedLookahead[1].type === 'Identifier' || extendedLookahead[1].type === 'NODE_STRING') &&
       extendedLookahead[2].type === 'At'
     ) {
-      console.log(`UIO DEBUG: Edge ID detection: matched basic pattern`);
-      log.debug(`UIO Edge ID detection: matched basic pattern`);
-      // Check for simple arrow pattern: A e1@--> B
-      if (extendedLookahead[3].type === 'Arrow') {
-        console.log(`UIO DEBUG: Edge ID detection: matched simple arrow pattern`);
-        log.debug(`UIO Edge ID detection: matched simple arrow pattern`);
-        return this.parseEdgeWithIdStatement(tokens, i);
-      }
-      // Check for double-ended arrow pattern: A e1@x-- text --x B
-      if (
-        extendedLookahead.length >= 8 &&
-        (extendedLookahead[3].type === 'Identifier' ||
-          extendedLookahead[3].type === 'NODE_STRING') &&
-        extendedLookahead[3].value.length === 1 &&
-        ['x', 'o'].includes(extendedLookahead[3].value) &&
-        extendedLookahead[4].type === 'Arrow' &&
-        // Accept any token type for text (Identifier, GraphKeyword, Direction, etc.)
-        extendedLookahead[5].value &&
-        extendedLookahead[5].value.length > 0 &&
-        extendedLookahead[6].type === 'Arrow' &&
-        extendedLookahead[7].type === 'Identifier'
-      ) {
-        return this.parseEdgeWithIdDoubleArrowStatement(tokens, i);
-      }
-      // Check for dotted double-ended arrow pattern: A e1@x-. text .-x B
-      if (
-        extendedLookahead.length >= 10 &&
-        extendedLookahead[3].type === 'Identifier' &&
-        extendedLookahead[3].value.length === 1 &&
-        ['x', 'o'].includes(extendedLookahead[3].value) &&
-        extendedLookahead[4].type === 'Arrow' &&
-        // Accept any token type for text (Identifier, GraphKeyword, Direction, etc.)
-        extendedLookahead[5].value &&
-        extendedLookahead[5].value.length > 0 &&
-        extendedLookahead[6].type === '⚠' &&
-        extendedLookahead[6].value === '.' &&
-        extendedLookahead[7].type === 'Hyphen' &&
-        extendedLookahead[8].type === 'Identifier' &&
-        extendedLookahead[8].value.length === 1 &&
-        ['x', 'o'].includes(extendedLookahead[8].value) &&
-        extendedLookahead[9].type === 'Identifier'
-      ) {
-        return this.parseEdgeWithIdDottedDoubleArrowStatement(tokens, i);
-      }
+      console.log(`UIO DEBUG: Edge ID detection: matched pattern with '@'`);
+      return this.parseEdgeWithIdStatement(tokens, i);
+    }
+
+    // Edge ID continuation without explicit source: e4@-->D (uses last target as source)
+    if (
+      extendedLookahead.length >= 3 &&
+      (extendedLookahead[0].type === 'Identifier' || extendedLookahead[0].type === 'NODE_STRING') &&
+      extendedLookahead[1].type === 'At' &&
+      (extendedLookahead[2].type === 'LINK' || extendedLookahead[2].type === 'Arrow')
+    ) {
+      console.log(`UIO DEBUG: Edge ID continuation detected (no explicit source)`);
+      return this.parseEdgeWithIdContinuation(tokens, i);
     }
 
     // Check for double-ended arrow patterns: A x-- text --x B
@@ -491,6 +934,20 @@ class LezerFlowParser {
       lookahead[1].type === 'TagEnd' &&
       lookahead[1].value === '>';
 
+    // Check for embedded arrow patterns in NODE_STRING like "A--x" followed by PIPE (for A--x|text|B)
+    const hasEmbeddedArrowWithPipe =
+      lookahead.length >= 2 &&
+      lookahead[0].type === 'NODE_STRING' &&
+      /--[ox]$/.test(lookahead[0].value) && // Ends with --x or --o
+      lookahead[1].type === 'PIPE';
+
+    // Check for embedded arrow pattern like "A--xv" where arrow is followed by node ID (for A--xv(text))
+    const hasEmbeddedArrowWithNode =
+      lookahead.length >= 2 &&
+      lookahead[0].type === 'NODE_STRING' &&
+      /--[ox].+/.test(lookahead[0].value) && // Contains --x or --o followed by more characters
+      this.isShapeStart(lookahead[1].type); // Followed by a shape start
+
     // Check for vertex chaining pattern (NODE_STRING followed by AMP)
     const hasVertexChaining =
       lookahead.length >= 2 && lookahead[0].type === 'NODE_STRING' && lookahead[1].type === 'AMP';
@@ -500,7 +957,24 @@ class LezerFlowParser {
       return this.parseNodeStatement(tokens, i);
     }
 
-    if (lookahead.length >= 3 && (hasImmediateEdgeToken || hasSplitArrow)) {
+    // Edge property block: edgeId@{...}
+    if (
+      lookahead.length >= 3 &&
+      (lookahead[0].type === 'Identifier' || lookahead[0].type === 'NODE_STRING') &&
+      lookahead[1].type === 'At' &&
+      lookahead[2].type === 'DiamondStart'
+    ) {
+      console.log(`UIO DEBUG: Taking edge property block path`);
+      return this.parseEdgePropertyBlock(tokens, i);
+    }
+
+    if (
+      lookahead.length >= 2 &&
+      (hasImmediateEdgeToken ||
+        hasSplitArrow ||
+        hasEmbeddedArrowWithPipe ||
+        hasEmbeddedArrowWithNode)
+    ) {
       console.log(
         `UIO DEBUG: Taking edge statement path (found edge token in lookahead or split arrow pattern)`
       );
@@ -544,9 +1018,44 @@ class LezerFlowParser {
   ): number {
     const i = startIndex;
 
+    // Check if we have target nodes from the previous statement for continuation
+    if (this.lastTargetNodes.length > 0) {
+      console.log(
+        `UIO DEBUG: parseContinuationEdgeStatement: Using target nodes from previous statement: [${this.lastTargetNodes.join(', ')}]`
+      );
+      // Use the stored target nodes as sources for continuation
+      const sourceNodes = [...this.lastTargetNodes];
+
+      // Parse the continuation edge using the existing parseEdgePattern logic
+      const edgeInfo = this.parseEdgePattern(tokens, i);
+      if (!edgeInfo) {
+        console.log(`UIO DEBUG: parseContinuationEdgeStatement: No valid edge pattern found`);
+        return i + 1;
+      }
+
+      const cleanTargetId = this.ensureNodeWithInlineClasses(edgeInfo.targetId);
+
+      // Create edges from all previous target nodes to the new target
+      console.log(
+        `UIO DEBUG: Creating continuation edges from [${sourceNodes.join(', ')}] to [${cleanTargetId}]`
+      );
+      this.yy.addLink(sourceNodes, [cleanTargetId], {
+        text: processNodeText(edgeInfo.text),
+        type: edgeInfo.type,
+        stroke: edgeInfo.stroke,
+        length: edgeInfo.length,
+      });
+
+      // Update lastTargetNodes for potential further continuation
+      this.lastTargetNodes = [cleanTargetId];
+
+      return edgeInfo.nextIndex;
+    }
+
+    // Fallback to legacy single node continuation
     if (!this.lastReferencedNodeId) {
       console.log(
-        `UIO DEBUG: parseContinuationEdgeStatement: No lastReferencedNodeId available, skipping`
+        `UIO DEBUG: parseContinuationEdgeStatement: No lastReferencedNodeId or lastTargetNodes available, skipping`
       );
       return i + 1; // Skip the LINK/Arrow token
     }
@@ -778,6 +1287,38 @@ class LezerFlowParser {
   }
 
   /**
+   * Parse a shaped node for a specific target ID (used for embedded arrow patterns)
+   * @param tokens - Array of tokens
+   * @param startIndex - Starting index (should be at the shape start token)
+   * @param targetId - The target node ID to apply the shape to
+   * @returns Next index to process
+   */
+  private parseShapedNodeForTarget(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number,
+    targetId: string
+  ): number {
+    console.log(`UIO DEBUG: parseShapedNodeForTarget: Creating shaped node for target ${targetId}`);
+
+    // Create a virtual token sequence with the target ID followed by the shape tokens
+    const virtualTokens = [
+      {
+        type: 'NODE_STRING',
+        value: targetId,
+        from: tokens[startIndex].from,
+        to: tokens[startIndex].from,
+      },
+      ...tokens.slice(startIndex),
+    ];
+
+    // Parse as a shaped node starting from the virtual node token
+    const nextIndex = this.parseShapedNode(virtualTokens, 0);
+
+    // Adjust the return index to account for the virtual token
+    return startIndex + (nextIndex - 1);
+  }
+
+  /**
    * Parse a shaped node like A[Square], B(Round), C{Diamond}
    * @param tokens - Array of tokens
    * @param startIndex - Starting index (should be at the node ID)
@@ -874,14 +1415,9 @@ class LezerFlowParser {
         break; // This is the closing hyphen, don't include it in the text
       }
 
-      // Stop collecting tokens if we encounter statement-level keywords
-      // This prevents consuming tokens from subsequent statements
-      if (this.isStatementKeyword(tokens[i].type)) {
-        console.log(
-          `UIO DEBUG: Stopping shape text collection at statement keyword: ${tokens[i].type}:${tokens[i].value}`
-        );
-        break;
-      }
+      // Note: We don't stop for statement keywords when inside shape delimiters
+      // Keywords like 'linkStyle', 'classDef', etc. should be treated as regular text
+      // when they appear inside shapes like [linkStyle] or (classDef)
 
       // Check for HTML tag pattern: < + tag_name + >
       if (
@@ -934,7 +1470,23 @@ class LezerFlowParser {
           shapeText += ' ';
         }
       }
-      shapeText += tokens[i].value;
+
+      // Special handling for ellipse shapes: if this is the last token and it ends with '-',
+      // strip the trailing hyphen as it's part of the shape syntax (-text-)
+      let tokenValue = tokens[i].value;
+      if (
+        actualShapeType === 'EllipseStart' &&
+        tokens[i].type === 'NODE_STRING' &&
+        tokenValue.endsWith('-') &&
+        (i + 1 >= tokens.length || possibleEndTokens.includes(tokens[i + 1].type))
+      ) {
+        tokenValue = tokenValue.slice(0, -1); // Remove trailing hyphen
+        console.log(
+          `UIO DEBUG: Stripped trailing hyphen from ellipse text: "${tokens[i].value}" -> "${tokenValue}"`
+        );
+      }
+
+      shapeText += tokenValue;
       i++;
     }
 
@@ -1066,7 +1618,8 @@ class LezerFlowParser {
 
   /**
    * Parse vertex chaining with ampersand (&) operator
-   * Handles patterns like: A & B --> C (creates A-->C and B-->C)
+   * Collects nodes into arrays for proper JISON-compatible addLink calls
+   * Handles patterns like: A & B --> C (source chaining) and A --> B & C (target chaining)
    */
   private parseVertexChaining(tokens: Token[], startIndex: number): number {
     console.log(`UIO DEBUG: parseVertexChaining called at index ${startIndex}`);
@@ -1075,6 +1628,54 @@ class LezerFlowParser {
     const prevNodeIndex = startIndex - 1;
     if (prevNodeIndex >= 0 && tokens[prevNodeIndex].type === 'NODE_STRING') {
       const prevNodeId = tokens[prevNodeIndex].value;
+
+      // Check if this is a class application (starts with :::) - these should not participate in vertex chaining
+      if (prevNodeId.startsWith(':::')) {
+        console.log(
+          `UIO DEBUG: parseVertexChaining: Skipping class application ${prevNodeId} - not a node for chaining`
+        );
+
+        // Check if we should apply retroactive target chaining
+        const nextIndex = startIndex + 1;
+        if (nextIndex < tokens.length && tokens[nextIndex].type === 'NODE_STRING') {
+          const nextNodeId = tokens[nextIndex].value;
+          console.log(
+            `UIO DEBUG: parseVertexChaining: Checking for retroactive target chaining with ${nextNodeId}`
+          );
+
+          if (this.lastEdgeInfo) {
+            console.log(
+              `UIO DEBUG: parseVertexChaining: Applying retroactive target chaining - adding ${nextNodeId} to previous edge`
+            );
+
+            // Ensure the additional target node exists
+            this.ensureNodeWithInlineClasses(nextNodeId);
+            const { cleanNodeId } = this.extractInlineClasses(nextNodeId);
+
+            // Create additional edge from all source nodes to the new target
+            this.yy.addLink(this.lastEdgeInfo.sourceNodes, [cleanNodeId], {
+              text: { text: this.lastEdgeInfo.edgeText, type: 'text' },
+              type: this.lastEdgeInfo.edgeType,
+              stroke: this.lastEdgeInfo.edgeStroke,
+              length: 1,
+            });
+
+            // Update the last edge info to include the new target
+            this.lastEdgeInfo.targetNodes.push(cleanNodeId);
+            this.lastTargetNodes = [...this.lastEdgeInfo.targetNodes];
+
+            console.log(
+              `UIO DEBUG: parseVertexChaining: Created retroactive target chaining edge from [${this.lastEdgeInfo.sourceNodes.join(', ')}] to [${cleanNodeId}]`
+            );
+
+            // Skip both AMP and NODE_STRING tokens
+            return startIndex + 2;
+          }
+        }
+
+        return startIndex + 1; // Skip the AMP token and continue
+      }
+
       console.log(`UIO DEBUG: parseVertexChaining: Found previous node ${prevNodeId} for chaining`);
 
       // Ensure the previous node exists with inline classes applied
@@ -1089,20 +1690,167 @@ class LezerFlowParser {
         // Ensure the next node exists with inline classes applied
         this.ensureNodeWithInlineClasses(nextNodeId);
 
-        // Store the chaining relationship for later processing
-        // Use clean node IDs (without inline classes) for the pending chain
-        this.pendingChainNodes = this.pendingChainNodes || [];
+        // Determine if this is source chaining or target chaining
+        // Look further back to see if there was a recent edge
+        const hasRecentEdge = this.hasRecentEdgeInTokens(tokens, startIndex);
+
         const { cleanNodeId: cleanPrevNodeId } = this.extractInlineClasses(prevNodeId);
-        this.pendingChainNodes.push(cleanPrevNodeId);
+        const { cleanNodeId: cleanNextNodeId } = this.extractInlineClasses(nextNodeId);
 
         console.log(
-          `UIO DEBUG: parseVertexChaining: Added ${cleanPrevNodeId} to pending chain nodes`
+          `UIO DEBUG: parseVertexChaining: cleanPrevNodeId=${cleanPrevNodeId}, cleanNextNodeId=${cleanNextNodeId}`
         );
+
+        if (hasRecentEdge) {
+          // Target chaining: A --> B & C (create A-->B and A-->C)
+          console.log(`UIO DEBUG: parseVertexChaining: Target chaining detected`);
+          // Add both nodes to target nodes collection
+          if (this.currentTargetNodes.length === 0) {
+            this.currentTargetNodes.push(cleanPrevNodeId);
+          }
+          this.currentTargetNodes.push(cleanNextNodeId);
+          console.log(
+            `UIO DEBUG: parseVertexChaining: Added ${cleanPrevNodeId} and ${cleanNextNodeId} to current target nodes: [${this.currentTargetNodes.join(', ')}]`
+          );
+        } else {
+          // Source chaining: A & B --> C (create A-->C and B-->C)
+          console.log(`UIO DEBUG: parseVertexChaining: Source chaining detected`);
+          // Add both nodes to source nodes collection
+          if (this.currentSourceNodes.length === 0) {
+            // First time: add both previous and next nodes
+            this.currentSourceNodes.push(cleanPrevNodeId);
+            this.currentSourceNodes.push(cleanNextNodeId);
+          } else {
+            // Subsequent times: only add the next node (previous is already in the array)
+            this.currentSourceNodes.push(cleanNextNodeId);
+          }
+          console.log(
+            `UIO DEBUG: parseVertexChaining: Added ${cleanPrevNodeId} and ${cleanNextNodeId} to current source nodes: [${this.currentSourceNodes.join(', ')}]`
+          );
+        }
       }
     }
 
     // Skip the AMP token and continue
     return startIndex + 1;
+  }
+
+  /**
+   * Check if there was a recent edge in the token stream (for target chaining detection)
+   */
+  private hasRecentEdgeInTokens(tokens: Token[], currentIndex: number): boolean {
+    // Look back a few tokens to see if there was an edge
+    for (let i = Math.max(0, currentIndex - 5); i < currentIndex; i++) {
+      if (tokens[i].type === 'LINK' || tokens[i].type === 'Arrow' || tokens[i].type === 'TagEnd') {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Collect additional target nodes for target chaining (A --> B & C & D)
+   * @param tokens - Array of tokens
+   * @param startIndex - Starting index (after the first target)
+   * @returns Object with additional target node IDs and number of tokens consumed
+   */
+  private collectAdditionalTargets(
+    tokens: Token[],
+    startIndex: number
+  ): { additionalTargets: string[]; tokensConsumed: number } {
+    const additionalTargets: string[] = [];
+    let i = startIndex;
+    const originalIndex = startIndex;
+
+    // Look for pattern: AMP NODE_STRING (& C)
+    while (
+      i < tokens.length - 1 &&
+      tokens[i].type === 'AMP' &&
+      tokens[i + 1].type === 'NODE_STRING'
+    ) {
+      const targetNodeId = tokens[i + 1].value;
+      const { cleanNodeId } = this.extractInlineClasses(targetNodeId);
+
+      // Ensure the target node exists
+      this.ensureNodeWithInlineClasses(targetNodeId);
+
+      additionalTargets.push(cleanNodeId);
+      console.log(`UIO DEBUG: collectAdditionalTargets: Found additional target ${cleanNodeId}`);
+
+      i += 2; // Skip AMP and NODE_STRING
+    }
+
+    return {
+      additionalTargets,
+      tokensConsumed: i - originalIndex,
+    };
+  }
+
+  /**
+   * Parse sequential chaining patterns (A-->B-->C creates A-->B and B-->C)
+   * @param tokens - Array of tokens
+   * @param startIndex - Starting index (after the first edge)
+   * @param currentTarget - The target of the first edge (becomes source of next edge)
+   * @returns Array of additional edges to create
+   */
+  private parseSequentialChaining(
+    tokens: Token[],
+    startIndex: number,
+    currentTarget: string
+  ): { source: string; target: string }[] {
+    const additionalEdges: { source: string; target: string }[] = [];
+    let i = startIndex;
+    let currentSource = currentTarget;
+
+    // Look for pattern: TagEnd NODE_STRING-- TagEnd NODE_STRING (-->B-->C)
+    while (i < tokens.length - 2) {
+      // Check for TagEnd followed by NODE_STRING with arrow suffix
+      if (
+        tokens[i].type === 'TagEnd' &&
+        tokens[i + 1].type === 'NODE_STRING' &&
+        tokens[i + 1].value.endsWith('--')
+      ) {
+        // Extract the target node ID (remove the -- suffix)
+        const targetNodeId = tokens[i + 1].value.slice(0, -2);
+        const { cleanNodeId } = this.extractInlineClasses(targetNodeId);
+
+        // Ensure the target node exists
+        this.ensureNodeWithInlineClasses(targetNodeId);
+
+        // Create the edge
+        additionalEdges.push({ source: currentSource, target: cleanNodeId });
+        console.log(
+          `UIO DEBUG: parseSequentialChaining: Found sequential edge ${currentSource} --> ${cleanNodeId}`
+        );
+
+        // The target becomes the source for the next edge
+        currentSource = cleanNodeId;
+        i += 2; // Skip TagEnd and NODE_STRING
+      } else if (
+        tokens[i].type === 'TagEnd' &&
+        tokens[i + 1].type === 'NODE_STRING' &&
+        !tokens[i + 1].value.endsWith('--')
+      ) {
+        // Final node in the chain (no arrow suffix)
+        const targetNodeId = tokens[i + 1].value;
+        const { cleanNodeId } = this.extractInlineClasses(targetNodeId);
+
+        // Ensure the target node exists
+        this.ensureNodeWithInlineClasses(targetNodeId);
+
+        // Create the final edge
+        additionalEdges.push({ source: currentSource, target: cleanNodeId });
+        console.log(
+          `UIO DEBUG: parseSequentialChaining: Found final sequential edge ${currentSource} --> ${cleanNodeId}`
+        );
+
+        break; // End of chain
+      } else {
+        break; // No more sequential chaining
+      }
+    }
+
+    return additionalEdges;
   }
 
   /**
@@ -1319,6 +2067,7 @@ class LezerFlowParser {
     const classes: string[] = [];
     let cleanNodeId = nodeId;
 
+    // First, handle inline classes (nodeId:::className)
     if (nodeId.includes(':::')) {
       const parts = nodeId.split(':::');
       cleanNodeId = parts[0];
@@ -1328,6 +2077,14 @@ class LezerFlowParser {
           `UIO DEBUG: extractInlineClasses: Extracted class ${parts[1]} from node ${cleanNodeId}`
         );
       }
+    }
+
+    // Then, clean arrow suffixes (nodeId-- becomes nodeId)
+    if (cleanNodeId.endsWith('--')) {
+      cleanNodeId = cleanNodeId.slice(0, -2);
+      console.log(
+        `UIO DEBUG: extractInlineClasses: Cleaned arrow suffix, nodeId=${cleanNodeId} (was ${nodeId})`
+      );
     }
 
     return { cleanNodeId, classes };
@@ -1553,7 +2310,12 @@ class LezerFlowParser {
         return false;
       }
 
-      // Add space for other ⚠ tokens (like /, \, `, etc.)
+      // Special case for backslash - don't add space if previous character is colon
+      if (nextTokenValue === '\\' && lastChar === ':') {
+        return false;
+      }
+
+      // Add space for other ⚠ tokens (like /, `, etc.)
       return true;
     }
 
@@ -1626,23 +2388,29 @@ class LezerFlowParser {
     i++; // Skip '@'
 
     // Parse the arrow and target - use existing parseComplexArrowPattern
-    console.log(
-      `UIO DEBUG: parseEdgeWithIdStatement: parsing arrow from position ${i}, tokens: ${tokens
-        .slice(i, i + 3)
-        .map((t) => `${t.type}:${t.value}`)
-        .join(', ')}`
-    );
-    const arrowResult = this.parseComplexArrowPattern(tokens, i);
-    console.log(
-      `UIO DEBUG: parseEdgeWithIdStatement: arrowResult = ${arrowResult ? JSON.stringify(arrowResult) : 'null'}`
-    );
-    if (!arrowResult) {
-      console.log(`UIO DEBUG: parseEdgeWithIdStatement: no arrow result, skipping`);
+    // Only allow a simple single-ended arrow here to avoid consuming across lines
+    const arrowToken = tokens[i];
+    const targetToken = tokens[i + 1];
+    if (!arrowToken || !(arrowToken.type === 'LINK' || arrowToken.type === 'Arrow')) {
+      console.log(
+        `UIO DEBUG: parseEdgeWithIdStatement: expected LINK/Arrow but got ${arrowToken?.type}`
+      );
+      return i + 1;
+    }
+    if (!targetToken || targetToken.type !== 'NODE_STRING') {
+      console.log(
+        `UIO DEBUG: parseEdgeWithIdStatement: expected NODE_STRING target but got ${targetToken?.type}`
+      );
       return i + 1;
     }
 
-    const { targetId, text, type, stroke, length, nextIndex } = arrowResult;
-    i = nextIndex;
+    const arrowVal = arrowToken.value;
+    const targetId = targetToken.value;
+    const text = '';
+    const type = this.getArrowType(arrowVal + '>'); // synthesize right head for typing when needed
+    const stroke = this.getArrowStroke(arrowVal + '>');
+    const length = this.getArrowLength(arrowVal + '>');
+    i += 2;
 
     console.log(`UIO DEBUG: Creating edge with ID: ${sourceId} --[${edgeId}]--> ${targetId}`);
     log.debug(`UIO Creating edge with ID: ${sourceId} --[${edgeId}]--> ${targetId}`);
@@ -1707,6 +2475,71 @@ class LezerFlowParser {
    * @param startIndex - Starting index
    * @returns Next index to process
    */
+  private parseEdgeWithIdContinuation(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): number {
+    // Format: e4@-->D or unique@==>E, using lastTargetNodes as sources
+    let i = startIndex;
+    const edgeId = tokens[i].value; // e4
+    i++; // skip id
+    i++; // skip '@'
+    const arrowToken = tokens[i];
+    const targetToken = tokens[i + 1];
+    if (!arrowToken || !(arrowToken.type === 'LINK' || arrowToken.type === 'Arrow')) {
+      return i + 1;
+    }
+    if (!targetToken || targetToken.type !== 'NODE_STRING') {
+      return i + 1;
+    }
+
+    const arrowVal = arrowToken.value;
+    const targetId = targetToken.value;
+    const type = this.getArrowType(arrowVal + '>');
+    const stroke = this.getArrowStroke(arrowVal + '>');
+    const length = this.getArrowLength(arrowVal + '>');
+    i += 2;
+
+    if (this.yy) {
+      const sources =
+        this.lastTargetNodes.length > 0
+          ? [...this.lastTargetNodes]
+          : this.lastReferencedNodeId
+            ? [this.lastReferencedNodeId]
+            : [];
+      if (sources.length > 0) {
+        // Ensure target exists (unless shaped next)
+        const isTargetShaped = i < tokens.length && this.isShapeStart(tokens[i].type);
+        if (!isTargetShaped) {
+          this.yy.addVertex(
+            targetId,
+            { text: targetId, type: 'text' },
+            undefined,
+            [],
+            [],
+            '',
+            {},
+            undefined
+          );
+        }
+
+        // Add links; only the first link uses the provided id
+        this.yy.addLink(sources, [targetId], {
+          text: { text: '', type: 'text' },
+          type,
+          stroke,
+          length,
+          id: edgeId + '@',
+        });
+        // The FlowDB.addLink strips '@' and uses id for the first link only
+      }
+    }
+
+    // Update lastTargetNodes for further continuations
+    this.lastTargetNodes = [targetId];
+    return i;
+  }
+
   private parseEdgeWithIdDoubleArrowStatement(
     tokens: { type: string; value: string; from: number; to: number }[],
     startIndex: number
@@ -2104,6 +2937,18 @@ class LezerFlowParser {
       tokens[i + 1].type === 'TagEnd' &&
       tokens[i + 1].value === '>';
 
+    // Check for embedded arrow pattern like "A--x" followed by PIPE (for A--x|text|B)
+    const hasEmbeddedArrowWithPipe =
+      i + 1 < tokens.length &&
+      /--[ox]$/.test(sourceToken.value) && // Ends with --x or --o
+      tokens[i + 1].type === 'PIPE';
+
+    // Check for embedded arrow pattern like "A--xv" where arrow is followed by node ID (for A--xv(text))
+    const hasEmbeddedArrowWithNode =
+      i + 1 < tokens.length &&
+      /--[ox].+/.test(sourceToken.value) && // Contains --x or --o followed by more characters
+      this.isShapeStart(tokens[i + 1].type); // Followed by a shape start
+
     let sourceId: string;
     if (hasSplitArrow) {
       // Extract the actual node ID by removing the arrow part
@@ -2111,14 +2956,39 @@ class LezerFlowParser {
       console.log(
         `UIO DEBUG: parseEdgeStatement: detected split arrow pattern, sourceId=${sourceId}`
       );
+    } else if (hasEmbeddedArrowWithPipe) {
+      // Extract the actual node ID by removing the arrow part (--x or --o)
+      sourceId = sourceToken.value.slice(0, -3); // Remove the trailing "--x" or "--o"
+      console.log(
+        `UIO DEBUG: parseEdgeStatement: detected embedded arrow with pipe pattern, sourceId=${sourceId}`
+      );
+    } else if (hasEmbeddedArrowWithNode) {
+      // Extract the actual node ID and target node from the combined token (e.g., "A--xv" -> "A" and "v")
+      const match = /^(.+?)--[xo](.+)$/.exec(sourceToken.value);
+      if (match) {
+        sourceId = match[1]; // "A"
+        const targetNodeId = match[2]; // "v"
+        console.log(
+          `UIO DEBUG: parseEdgeStatement: detected embedded arrow with node pattern, sourceId=${sourceId}, targetNodeId=${targetNodeId}`
+        );
+        // We'll handle this special case later in the parsing logic
+      } else {
+        sourceId = sourceToken.value;
+      }
     } else {
       sourceId = sourceToken.value;
     }
     i++;
 
     // Check if this is a shaped source node (A[text], A(text), etc.)
-    // But skip this check if we detected a split arrow pattern
-    if (!hasSplitArrow && i < tokens.length && this.isShapeStart(tokens[i].type)) {
+    // But skip this check if we detected a split arrow or embedded arrow pattern
+    if (
+      !hasSplitArrow &&
+      !hasEmbeddedArrowWithPipe &&
+      !hasEmbeddedArrowWithNode &&
+      i < tokens.length &&
+      this.isShapeStart(tokens[i].type)
+    ) {
       console.log(`UIO DEBUG: parseEdgeStatement: parsing shaped source node ${sourceId}`);
       // Parse the shaped node, but start from the node ID token
       i = this.parseShapedNode(tokens, startIndex);
@@ -2142,7 +3012,52 @@ class LezerFlowParser {
     console.log(
       `UIO DEBUG: parseEdgeStatement calling parseEdgePattern at index ${i}, token: ${tokens[i]?.type}:${tokens[i]?.value}`
     );
-    const edgeInfo = this.parseEdgePattern(tokens, i);
+
+    let edgeInfo;
+    if (hasEmbeddedArrowWithPipe) {
+      // For embedded arrows like "A--x", extract the arrow and handle pipe-delimited text
+      const arrowMatch = /--([xo])$/.exec(sourceToken.value);
+      if (arrowMatch) {
+        const arrowType = arrowMatch[1]; // 'x' or 'o'
+        const arrow = `--${arrowType}`;
+        console.log(`UIO DEBUG: parseEdgeStatement: extracted embedded arrow: ${arrow}`);
+
+        // Handle pipe-delimited text pattern directly
+        if (i < tokens.length && tokens[i].type === 'PIPE') {
+          console.log(
+            `UIO DEBUG: parseEdgeStatement: Found pipe after embedded arrow, parsing pipe-delimited text`
+          );
+          // Create a fake startIndex that points to where the arrow would be
+          // We need to adjust the parsePipeDelimitedText to work with embedded arrows
+          edgeInfo = this.parsePipeDelimitedTextForEmbedded(tokens, i - 1, arrow);
+        }
+      }
+    } else if (hasEmbeddedArrowWithNode) {
+      // For embedded arrows like "A--xv", extract the arrow and target node
+      const match = /^(.+?)--([xo])(.+)$/.exec(sourceToken.value);
+      if (match) {
+        const arrowType = match[2]; // 'x' or 'o'
+        const arrow = `--${arrowType}`;
+        const targetNodeId = match[3]; // 'v'
+        console.log(
+          `UIO DEBUG: parseEdgeStatement: extracted embedded arrow with node: ${arrow}, target: ${targetNodeId}`
+        );
+
+        // Create edge info - let the main parser handle the target node shape
+        edgeInfo = {
+          arrow,
+          targetId: targetNodeId,
+          text: '',
+          type: this.getArrowType(arrow),
+          stroke: this.getArrowStroke(arrow),
+          length: this.getArrowLength(arrow),
+          nextIndex: i, // Point to the shape token so main parser can handle it
+        };
+      }
+    } else {
+      edgeInfo = this.parseEdgePattern(tokens, i);
+    }
+
     if (!edgeInfo) {
       console.log(`UIO DEBUG: parseEdgePattern returned null`);
       return i + 1; // Skip if no valid edge pattern found
@@ -2162,11 +3077,17 @@ class LezerFlowParser {
       // Check if target node is followed by a shape delimiter
       // If so, don't create it here - let the main parser handle it as a shaped node
       const isTargetShaped = i < tokens.length && this.isShapeStart(tokens[i].type);
+
+      // For embedded arrow with node pattern, we need to check if the target should be shaped
+      // by looking at the current token position which should be at the shape start
+      const isEmbeddedTargetShaped =
+        hasEmbeddedArrowWithNode && i < tokens.length && this.isShapeStart(tokens[i].type);
+
       console.log(
-        `UIO DEBUG: parseEdgeStatement: targetId=${cleanTargetId}, nextToken=${tokens[i]?.type}:${tokens[i]?.value}, isTargetShaped=${isTargetShaped}`
+        `UIO DEBUG: parseEdgeStatement: targetId=${cleanTargetId}, nextToken=${tokens[i]?.type}:${tokens[i]?.value}, isTargetShaped=${isTargetShaped}, isEmbeddedTargetShaped=${isEmbeddedTargetShaped}`
       );
 
-      if (!isTargetShaped) {
+      if (!isTargetShaped && !isEmbeddedTargetShaped) {
         // Create target node if it doesn't exist or hasn't been properly configured
         // Check if vertex already exists and has custom text/type (indicating it was parsed as a shaped vertex)
         const existingVertices = this.yy.getVertices();
@@ -2187,6 +3108,12 @@ class LezerFlowParser {
             undefined // metadata
           );
         }
+      } else if (isEmbeddedTargetShaped) {
+        console.log(
+          `UIO DEBUG: parseEdgeStatement: Skipping target node creation for ${cleanTargetId} - will be handled as shaped node`
+        );
+        // Set the pending shaped target ID so the main parser knows to apply the next shape to this target
+        this.pendingShapedTargetId = cleanTargetId;
       } else {
         // Target is shaped - track it for orphaned shape processing
         this.lastReferencedNodeId = cleanTargetId;
@@ -2198,52 +3125,84 @@ class LezerFlowParser {
       // Process edge text for markdown
       const processedEdgeText = processNodeText(edgeInfo.text);
 
-      // Create the main edge
-      this.yy.addSingleLink(cleanSourceId, cleanTargetId, {
+      // Determine source nodes: use collected source nodes if available, otherwise use current source
+      let sourceNodes: string[] = [];
+      if (this.currentSourceNodes.length > 0) {
+        sourceNodes = [...this.currentSourceNodes];
+        console.log(`UIO DEBUG: Using collected source nodes: [${sourceNodes.join(', ')}]`);
+      } else {
+        sourceNodes = [cleanSourceId];
+        console.log(`UIO DEBUG: Using single source node: [${cleanSourceId}]`);
+      }
+
+      // Look ahead to see if there are additional target nodes (target chaining)
+      let targetNodes = [cleanTargetId];
+      const { additionalTargets, tokensConsumed } = this.collectAdditionalTargets(tokens, i);
+      if (additionalTargets.length > 0) {
+        targetNodes = targetNodes.concat(additionalTargets);
+        console.log(`UIO DEBUG: Found additional targets: [${additionalTargets.join(', ')}]`);
+        // Update the index to skip the additional target tokens
+        i += tokensConsumed;
+      }
+
+      console.log(`UIO DEBUG: Final target nodes: [${targetNodes.join(', ')}]`);
+
+      // Create edges using JISON-compatible addLink function
+      console.log(
+        `UIO DEBUG: Creating edges from [${sourceNodes.join(', ')}] to [${targetNodes.join(', ')}]`
+      );
+      this.yy.addLink(sourceNodes, targetNodes, {
         text: { text: processedEdgeText.text, type: processedEdgeText.type },
         type: edgeInfo.type,
         stroke: edgeInfo.stroke,
         length: edgeInfo.length,
       });
 
-      // Create additional edges for any pending chain nodes
-      if (this.pendingChainNodes.length > 0) {
-        console.log(
-          `UIO DEBUG: Creating ${this.pendingChainNodes.length} additional edges for chained nodes`
-        );
-        for (const chainNodeId of this.pendingChainNodes) {
-          const cleanChainNodeId = this.ensureNodeWithInlineClasses(chainNodeId);
+      // Store edge information for potential retroactive target chaining
+      this.lastEdgeInfo = {
+        sourceNodes: [...sourceNodes],
+        targetNodes: [...targetNodes],
+        edgeText: processedEdgeText.text,
+        edgeType: edgeInfo.type,
+        edgeStroke: edgeInfo.stroke,
+      };
+      console.log(
+        `UIO DEBUG: Stored last edge info for retroactive chaining: [${sourceNodes.join(', ')}] to [${targetNodes.join(', ')}]`
+      );
+
+      // Handle sequential chaining: detect and create additional edges
+      if (edgeInfo.isSequentialChaining) {
+        console.log(`UIO DEBUG: Sequential chaining detected, looking for additional edges`);
+        const additionalEdges = this.parseSequentialChaining(tokens, i, cleanTargetId);
+        for (const additionalEdge of additionalEdges) {
           console.log(
-            `UIO DEBUG: Creating chained edge: ${cleanChainNodeId} ${edgeInfo.arrow} ${cleanTargetId}`
+            `UIO DEBUG: Creating sequential edge: ${additionalEdge.source} --> ${additionalEdge.target}`
           );
-
-          // Ensure the chain node exists as a vertex
-          const existingVertices = this.yy.getVertices();
-          if (!existingVertices.has(cleanChainNodeId)) {
-            this.yy.addVertex(
-              cleanChainNodeId,
-              { text: cleanChainNodeId, type: 'text' },
-              undefined, // type
-              [], // style
-              [], // classes
-              '', // dir
-              {}, // props
-              undefined // metadata
-            );
-          }
-
-          // Create the chained edge
-          this.yy.addSingleLink(cleanChainNodeId, cleanTargetId, {
-            text: { text: processedEdgeText.text, type: processedEdgeText.type },
+          this.yy.addLink([additionalEdge.source], [additionalEdge.target], {
+            text: { text: '', type: 'text' },
             type: edgeInfo.type,
             stroke: edgeInfo.stroke,
             length: edgeInfo.length,
           });
         }
+        // Update the index to skip the processed tokens
+        i += additionalEdges.length * 2; // Each additional edge is TagEnd + NODE_STRING
+      }
 
-        // Clear pending chain nodes after processing
+      // Store target nodes for potential continuation edges
+      this.lastTargetNodes = [...targetNodes];
+      console.log(
+        `UIO DEBUG: Stored target nodes for continuation: [${this.lastTargetNodes.join(', ')}]`
+      );
+
+      // Clear source nodes after creating edges
+      this.currentSourceNodes = [];
+      console.log(`UIO DEBUG: Cleared current source nodes`);
+
+      // Clear any remaining pending chain nodes (legacy)
+      if (this.pendingChainNodes.length > 0) {
         this.pendingChainNodes = [];
-        console.log(`UIO DEBUG: Cleared pending chain nodes`);
+        console.log(`UIO DEBUG: Cleared legacy pending chain nodes`);
       }
     }
 
@@ -2267,6 +3226,7 @@ class LezerFlowParser {
     stroke: string;
     length: number;
     nextIndex: number;
+    isSequentialChaining?: boolean;
   } | null {
     let i = startIndex;
     console.log(
@@ -2326,11 +3286,10 @@ class LezerFlowParser {
           `UIO DEBUG: parseEdgePattern: Detected sequential chaining, targetId=${actualTargetId} (was ${targetId})`
         );
 
-        // Add the actual target to pending chain nodes for the next edge
-        this.pendingChainNodes = this.pendingChainNodes || [];
-        this.pendingChainNodes.push(actualTargetId);
+        // For sequential chaining, the target becomes the source for the next edge
+        // We'll handle this in parseEdgeStatement by setting up the next source
         console.log(
-          `UIO DEBUG: parseEdgePattern: Added ${actualTargetId} to pending chain nodes for sequential chaining`
+          `UIO DEBUG: parseEdgePattern: Sequential chaining detected - ${actualTargetId} will be source for next edge`
         );
 
         return {
@@ -2341,6 +3300,7 @@ class LezerFlowParser {
           stroke: this.getArrowStroke(firstArrow),
           length: this.getArrowLength(firstArrow),
           nextIndex: i,
+          isSequentialChaining: true, // Flag to indicate sequential chaining
         };
       }
 
@@ -2506,7 +3466,6 @@ class LezerFlowParser {
       // Check if this is a single-ended or double-ended arrow
       const hasLeftArrow = /^[<ox]/.test(arrow);
       const hasRightArrow = /[>ox]$/.test(arrow);
-      const isDoubleEnded = hasLeftArrow && hasRightArrow;
 
       // Remove arrow heads and count the remaining connector characters
       let connector = arrow;
@@ -2521,18 +3480,10 @@ class LezerFlowParser {
       const matches = connector.match(/[=-]/g);
       const totalConnectors = matches ? matches.length : 0;
 
-      // Determine subtraction based on arrow type:
-      // - Double-ended arrows (e.g., <--->) → subtract 2 (one for each arrow head)
-      // - Single-ended arrows (e.g., --->) → subtract 1 (for the single arrow head)
-      // - Open-ended arrows (e.g., ---) → subtract 2 (base minimum like original JISON)
-      let subtraction: number;
-      if (isDoubleEnded) {
-        subtraction = 2; // Double-ended: both arrow heads
-      } else if (hasLeftArrow || hasRightArrow) {
-        subtraction = 1; // Single-ended: one arrow head
-      } else {
-        subtraction = 2; // Open-ended: use original JISON logic (subtract 2)
-      }
+      // Subtraction rules to align with JISON tests:
+      // - Open-ended (no heads): length = connectors - 2
+      // - Single-ended OR double-ended (has any head): length = connectors - 1
+      const subtraction = hasLeftArrow || hasRightArrow ? 1 : 2;
 
       return Math.max(1, totalConnectors - subtraction);
     }
@@ -2548,6 +3499,77 @@ class LezerFlowParser {
     }
 
     return 1;
+  }
+
+  /**
+   * Parse pipe-delimited text pattern for embedded arrows (A--x|text|B)
+   */
+  private parsePipeDelimitedTextForEmbedded(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number,
+    arrow: string
+  ): {
+    arrow: string;
+    targetId: string;
+    text: string;
+    type: string;
+    stroke: string;
+    length: number;
+    nextIndex: number;
+  } | null {
+    console.log(`UIO DEBUG: parsePipeDelimitedTextForEmbedded called with arrow: ${arrow}`);
+    let i = startIndex + 1; // Skip the source token, start at the first pipe
+
+    // Expect first pipe
+    if (i >= tokens.length || tokens[i].type !== 'PIPE') {
+      console.log(
+        `UIO DEBUG: parsePipeDelimitedTextForEmbedded: Expected first pipe, got ${tokens[i]?.type}`
+      );
+      return null;
+    }
+    i++; // Skip first pipe
+
+    // Collect text tokens until we find the closing pipe using smart spacing
+    let text = '';
+    while (i < tokens.length && tokens[i].type !== 'PIPE') {
+      // Smart space handling: only add space if needed
+      if (text && this.shouldAddSpaceBetweenTokens(text, tokens[i].value, tokens[i].type)) {
+        text += ' ';
+      }
+      text += tokens[i].value;
+      i++;
+    }
+
+    // Expect closing pipe
+    if (i >= tokens.length || tokens[i].type !== 'PIPE') {
+      return null;
+    }
+    i++; // Skip closing pipe
+
+    // Expect target node
+    if (
+      i >= tokens.length ||
+      (tokens[i].type !== 'Identifier' && tokens[i].type !== 'NODE_STRING')
+    ) {
+      return null;
+    }
+
+    const targetId = tokens[i].value;
+    i++;
+
+    console.log(
+      `UIO DEBUG: parsePipeDelimitedTextForEmbedded: Successfully parsed - arrow: ${arrow}, text: "${text}", target: ${targetId}`
+    );
+
+    return {
+      arrow,
+      targetId,
+      text,
+      type: this.getArrowType(arrow),
+      stroke: this.getArrowStroke(arrow),
+      length: this.getArrowLength(arrow),
+      nextIndex: i,
+    };
   }
 
   /**
@@ -2628,12 +3650,16 @@ class LezerFlowParser {
     const arrowContinuationPatterns = [
       /^-+>$/, // -->, --->, etc.
       /^=+>$/, // ==>, ===>, etc.
-      /^-\.+-?$/, // -.--, -.-, etc.
-      /^\.+-?$/, // .-, .--, etc.
+      /^-\.+-?$/, // -.--, -.-, etc. (legacy)
+      /^\.+-?$/, // .-, .--, etc. (legacy)
       /^<-+$/, // <--, <---, etc.
       /^<=+$/, // <==, <===, etc.
       /^[ox]-+$/, // o--, x--, etc.
       /^-+[ox]$/, // --o, --x, etc.
+      /^<-\.$/, // <-.
+      /^\.->$/, // .->
+      /^=+$/, // open thick continuation (==, ===)
+      /^-+$/, // open normal continuation (--, ---)
     ];
 
     return arrowContinuationPatterns.some((pattern) => pattern.test(linkValue));
@@ -2694,15 +3720,13 @@ class LezerFlowParser {
         // Dot that got split off from dotted arrows
         arrowParts.push(token.value);
       } else if (token.type === 'STR') {
-        // Handle quoted strings for edge text
+        // Handle quoted strings for edge text; preserve quotes so processNodeText can derive labelType
         console.log(`UIO DEBUG: parseComplexArrowPattern: found STR token: ${token.value}`);
-        // Remove quotes from the string value
-        const cleanText = token.value.replace(/^"(.*)"$/, '$1');
         if (!foundText) {
           console.log(
-            `UIO DEBUG: parseComplexArrowPattern: setting text = ${cleanText} (from STR)`
+            `UIO DEBUG: parseComplexArrowPattern: setting text = ${token.value} (from STR, preserving quotes)`
           );
-          text = cleanText;
+          text = token.value; // Keep surrounding quotes; downstream will classify as 'string' or 'markdown'
           foundText = true;
         }
       } else if (
@@ -2721,12 +3745,12 @@ class LezerFlowParser {
 
         // Look ahead to see if there's another Arrow token (indicating double-ended arrow)
         let hasSecondArrow = false;
-        for (let j = i + 1; j < tokens.length && j < i + 3; j++) {
-          if (tokens[j].type === 'Arrow') {
+        for (let j = i + 1; j < tokens.length && j < i + 6; j++) {
+          if (tokens[j].type === 'Arrow' || tokens[j].type === 'LINK') {
             hasSecondArrow = true;
             break;
           }
-          if (tokens[j].type === 'Semi') {
+          if (tokens[j].type === 'SEMI') {
             break; // End of statement
           }
         }
@@ -2756,12 +3780,13 @@ class LezerFlowParser {
           );
           text = token.value;
           foundText = true;
-        } else if (foundText && arrowParts.length === 1) {
-          // We already have text and only one arrow part, continue collecting text tokens
+        } else if (foundText && arrowParts.length <= 1) {
+          // Continue collecting multi-word text until the second arrow begins
           console.log(`UIO DEBUG: parseComplexArrowPattern: appending to text: ${token.value}`);
           text += ' ' + token.value;
-        } else if (foundText && arrowParts.length > 1) {
-          // We have text and multiple arrow parts, this should be the target
+        } else if (foundText && arrowParts.length >= 2) {
+          // We have text collected and have encountered the second arrow.
+          // The current token is the identifier immediately after the second arrow.
           console.log(
             `UIO DEBUG: parseComplexArrowPattern: setting targetId = ${token.value} (double-ended arrow with text)`
           );
@@ -2769,6 +3794,7 @@ class LezerFlowParser {
           i++;
           break;
         } else {
+          // NOTE: fixed stray closing brace
           // No arrow parts yet, this might be the start of a pattern
           // But be conservative - don't assume single chars are arrow parts
           console.log(`UIO DEBUG: parseComplexArrowPattern: no arrow parts yet, breaking`);
@@ -3062,7 +4088,7 @@ class LezerFlowParser {
     i++;
 
     // Get direction value
-    if (i >= tokens.length || tokens[i].type !== 'Direction') {
+    if (i >= tokens.length || tokens[i].type !== 'DIR') {
       return i;
     }
 
@@ -3358,6 +4384,79 @@ class LezerFlowParser {
   }
 
   /**
+   * Parse an edge property block: edgeId@{property: value, ...}
+   * Example: e1@{curve: basis}
+   * Example: uniqueName@{curve: cardinal, animate: true}
+   */
+  private parseEdgePropertyBlock(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): number {
+    console.log(`UIO DEBUG: parseEdgePropertyBlock called at index ${startIndex}`);
+
+    let i = startIndex;
+
+    // Get edge ID
+    const edgeId = tokens[i].value;
+    console.log(`UIO DEBUG: parseEdgePropertyBlock: edgeId = ${edgeId}`);
+    i++; // Skip edge ID
+
+    // Skip '@' symbol
+    i++; // Skip '@'
+
+    // Skip '{' symbol
+    i++; // Skip '{'
+
+    // Collect property data until we find the closing '}'
+    let propertyData = '';
+    let braceCount = 1; // We already consumed the opening brace
+
+    while (i < tokens.length && braceCount > 0) {
+      const token = tokens[i];
+
+      if (token.type === 'DiamondStart' && token.value === '{') {
+        braceCount++;
+        propertyData += token.value;
+      } else if (token.type === 'DiamondEnd' && token.value === '}') {
+        braceCount--;
+        if (braceCount > 0) {
+          propertyData += token.value;
+        }
+      } else {
+        // Add spacing between tokens to preserve original formatting
+        if (
+          propertyData &&
+          this.shouldAddSpaceBetweenTokens(propertyData, token.value, token.type)
+        ) {
+          propertyData += ' ';
+        }
+        propertyData += token.value;
+      }
+      i++;
+    }
+
+    console.log(`UIO DEBUG: parseEdgePropertyBlock: propertyData = "${propertyData}"`);
+
+    // Apply the property data to the edge using the existing addVertex method
+    // which handles both nodes and edges based on the ID
+    if (this.yy && propertyData.trim()) {
+      this.yy.addVertex(
+        edgeId,
+        { text: '', type: 'text' },
+        undefined,
+        [],
+        [],
+        '',
+        {},
+        propertyData.trim()
+      );
+      console.log(`UIO DEBUG: parseEdgePropertyBlock: Applied properties to edge ${edgeId}`);
+    }
+
+    return i;
+  }
+
+  /**
    * Parse a linkStyle statement: linkStyle edgeIndex[,edgeIndex2,...] styleProperties
    * Example: linkStyle 0 stroke-width:1px
    * Example: linkStyle 10,11 stroke-width:1px
@@ -3370,101 +4469,79 @@ class LezerFlowParser {
 
     let i = startIndex + 1; // Skip the LINKSTYLE token
 
-    // Collect edge indices (comma-separated)
-    const edgeIndices: number[] = [];
-    let collectingIndices = true;
+    // Handle DEFAULT or explicit indices
+    const positions: ('default' | number)[] = [];
 
-    while (i < tokens.length && tokens[i].type !== 'SEMI' && collectingIndices) {
-      if (tokens[i].type === 'NODE_STRING') {
-        const value = tokens[i].value;
-
-        // Check if this is a number (edge index) or a style property
-        if (/^\d+$/.test(value)) {
-          const edgeIndex = parseInt(value, 10);
-          edgeIndices.push(edgeIndex);
-          console.log(`UIO DEBUG: parseLinkStyleStatement: Added edge index: ${edgeIndex}`);
+    // Expect either DEFAULT or a numList
+    if (i < tokens.length && tokens[i].type === 'DEFAULT') {
+      positions.push('default');
+      i++;
+    } else {
+      // Parse numList: NUM (COMMA NUM)*
+      while (i < tokens.length && tokens[i].type !== 'SEMI') {
+        if (tokens[i].type === 'NODE_STRING' && /^\d+$/.test(tokens[i].value)) {
+          positions.push(parseInt(tokens[i].value, 10));
+        } else if (tokens[i].type === '⚠' && tokens[i].value === ',') {
+          // skip comma
         } else {
-          // This is likely a style property, stop collecting indices
-          collectingIndices = false;
           break;
         }
-      } else if (tokens[i].type === '⚠' && tokens[i].value === ',') {
-        // Skip comma separators between edge indices
-        console.log(
-          `UIO DEBUG: parseLinkStyleStatement: Skipping comma separator between edge indices`
-        );
+        i++;
       }
+    }
+
+    // Optional: SPACE INTERPOLATE SPACE alphaNum
+    let interpolateValue: string | undefined;
+    if (i < tokens.length && tokens[i].type === 'INTERPOLATE') {
+      // consume INTERPOLATE
       i++;
+      // consume the value (as NODE_STRING)
+      if (i < tokens.length && tokens[i].type === 'NODE_STRING') {
+        interpolateValue = tokens[i].value;
+        i++;
+      }
     }
 
-    if (edgeIndices.length === 0) {
-      console.log(`UIO DEBUG: parseLinkStyleStatement: No edge indices found`);
-      return i;
+    // Decide if we should collect styles: only if a ';' appears before the next LINKSTYLE (to avoid swallowing next statement)
+    let shouldCollectStyles = false;
+    for (let j = i; j < tokens.length; j++) {
+      if (tokens[j].type === 'SEMI') {
+        shouldCollectStyles = true;
+        break;
+      }
+      if (tokens[j].type === 'LINKSTYLE') {
+        shouldCollectStyles = false;
+        break;
+      }
     }
 
-    // Collect style properties (similar to parseStyleStatement)
+    // Collect styles until ';' (style tokens are NODE_STRING, plus commas split styles)
     const styles: string[] = [];
-    let currentStyle = '';
-
-    while (i < tokens.length && tokens[i].type !== 'SEMI') {
-      if (tokens[i].type === 'NODE_STRING') {
-        if (currentStyle) {
-          currentStyle += ' ' + tokens[i].value;
-          console.log(`UIO DEBUG: parseLinkStyleStatement: Building style: "${currentStyle}"`);
-        } else {
-          currentStyle = tokens[i].value;
-          console.log(`UIO DEBUG: parseLinkStyleStatement: Building style: "${currentStyle}"`);
+    if (shouldCollectStyles) {
+      let currentStyle = '';
+      while (i < tokens.length && tokens[i].type !== 'SEMI') {
+        const t = tokens[i];
+        if (t.type === 'NODE_STRING') {
+          currentStyle = currentStyle ? currentStyle + ' ' + t.value : t.value;
+        } else if (t.type === '⚠' && t.value === ',' && currentStyle) {
+          styles.push(currentStyle);
+          currentStyle = '';
         }
-      } else if (
-        tokens[i].type === '⚠' &&
-        tokens[i].value === ',' && // Complete current style and start a new one
-        currentStyle
-      ) {
+        i++;
+      }
+      if (currentStyle) {
         styles.push(currentStyle);
-        console.log(`UIO DEBUG: parseLinkStyleStatement: Completed style: "${currentStyle}"`);
-        currentStyle = '';
       }
-      i++;
     }
 
-    // Add the final style
-    if (currentStyle) {
-      styles.push(currentStyle);
-      console.log(`UIO DEBUG: parseLinkStyleStatement: Completed final style: "${currentStyle}"`);
+    // Apply interpolate first (exactly like JISON)
+    if (interpolateValue && positions.length > 0 && this.yy?.updateLinkInterpolate) {
+      this.yy.updateLinkInterpolate(positions, interpolateValue);
     }
 
-    if (styles.length === 0) {
-      console.log(`UIO DEBUG: parseLinkStyleStatement: No styles found`);
-      return i;
-    }
-
-    // Apply styles to the specified edges
-    const edges = this.yy?.getEdges();
-    if (edges) {
-      for (const edgeIndex of edgeIndices) {
-        if (edgeIndex >= 0 && edgeIndex < edges.length) {
-          console.log(
-            `UIO DEBUG: parseLinkStyleStatement: Applying ${styles.length} styles to edge ${edgeIndex}`
-          );
-
-          // Initialize style array if it doesn't exist
-          if (!edges[edgeIndex].style) {
-            edges[edgeIndex].style = [];
-          }
-
-          // Add all styles to the edge
-          for (const style of styles) {
-            edges[edgeIndex].style.push(style);
-            console.log(
-              `UIO DEBUG: parseLinkStyleStatement: Added style "${style}" to edge ${edgeIndex}`
-            );
-          }
-        } else {
-          console.log(
-            `UIO DEBUG: parseLinkStyleStatement: Edge index ${edgeIndex} is out of bounds (total edges: ${edges.length})`
-          );
-        }
-      }
+    // Apply styles (if any)
+    if (styles.length > 0 && positions.length > 0 && this.yy?.updateLink) {
+      this.yy.updateLink(positions, styles);
     }
 
     return i;
