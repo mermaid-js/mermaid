@@ -2,49 +2,50 @@ import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 const looks = ['classic'];
 const participantTypes = [
-  'participant',
-  'actor',
-  'boundary',
-  'control',
-  'entity',
-  'database',
-  'collections',
-  'queue',
+  { type: 'participant', display: 'participant' },
+  { type: 'actor', display: 'actor' },
+  { type: 'boundary', display: 'boundary' },
+  { type: 'control', display: 'control' },
+  { type: 'entity', display: 'entity' },
+  { type: 'database', display: 'database' },
+  { type: 'collections', display: 'collections' },
+  { type: 'queue', display: 'queue' },
 ];
 
-const interactionTypes = [
-  '->>', // Solid arrow with arrowhead
-  '-->>', // Dotted arrow with arrowhead
-  '->', // Solid arrow without arrowhead
-  '-->', // Dotted arrow without arrowhead
-  '-x', // Solid arrow with cross
-  '--x', // Dotted arrow with cross
-  '->>+', // Solid arrow with arrowhead (activate)
-  '-->>+', // Dotted arrow with arrowhead (activate)
-];
+const restrictedTypes = ['boundary', 'control', 'entity', 'database', 'collections', 'queue'];
+
+const interactionTypes = ['->>', '-->>', '->', '-->', '-x', '--x', '->>+', '-->>+'];
 
 const notePositions = ['left of', 'right of', 'over'];
+
+function getParticipantLine(name, type, alias) {
+  if (restrictedTypes.includes(type)) {
+    return `  participant ${name}@{ "type" : "${type}" }\n`;
+  } else if (alias) {
+    return `  participant ${name}@{ "type" : "${type}" } \n`;
+  } else {
+    return `  participant ${name}@{ "type" : "${type}" }\n`;
+  }
+}
 
 looks.forEach((look) => {
   describe(`Sequence Diagram Tests - ${look} look`, () => {
     it('should render all participant types', () => {
       let diagramCode = `sequenceDiagram\n`;
-      participantTypes.forEach((type, index) => {
-        diagramCode += `  ${type} ${type}${index} as ${type} ${index}\n`;
+      participantTypes.forEach((pt, index) => {
+        const name = `${pt.display}${index}`;
+        diagramCode += getParticipantLine(name, pt.type);
       });
-      // Add some basic interactions
       for (let i = 0; i < participantTypes.length - 1; i++) {
-        diagramCode += `  ${participantTypes[i]}${i} ->> ${participantTypes[i + 1]}${i + 1}: Message ${i}\n`;
+        diagramCode += `  ${participantTypes[i].display}${i} ->> ${participantTypes[i + 1].display}${i + 1}: Message ${i}\n`;
       }
       imgSnapshotTest(diagramCode, { look, sequence: { diagramMarginX: 50, diagramMarginY: 10 } });
     });
 
     it('should render all interaction types', () => {
       let diagramCode = `sequenceDiagram\n`;
-      // Create two participants
-      // Add all interaction types
-      diagramCode += `  participant A\n`;
-      diagramCode += `  participant B\n`;
+      diagramCode += getParticipantLine('A', 'actor');
+      diagramCode += getParticipantLine('B', 'boundary');
       interactionTypes.forEach((interaction, index) => {
         diagramCode += `  A ${interaction} B: ${interaction} message ${index}\n`;
       });
@@ -53,13 +54,14 @@ looks.forEach((look) => {
 
     it('should render participant creation and destruction', () => {
       let diagramCode = `sequenceDiagram\n`;
-      participantTypes.forEach((type, index) => {
-        diagramCode += `  ${type} A\n`;
-        diagramCode += `  ${type} B\n`;
-        diagramCode += `  create ${type} ${type}${index}\n`;
-        diagramCode += `  A ->> ${type}${index}: Hello ${type}\n`;
+      participantTypes.forEach((pt, index) => {
+        const name = `${pt.display}${index}`;
+        diagramCode += getParticipantLine('A', pt.type);
+        diagramCode += getParticipantLine('B', pt.type);
+        diagramCode += `  create participant ${name}@{ "type" : "${pt.type}" }\n`;
+        diagramCode += `  A ->> ${name}: Hello ${pt.display}\n`;
         if (index % 2 === 0) {
-          diagramCode += `  destroy ${type}${index}\n`;
+          diagramCode += `  destroy ${name}\n`;
         }
       });
       imgSnapshotTest(diagramCode, { look });
@@ -67,8 +69,8 @@ looks.forEach((look) => {
 
     it('should render notes in all positions', () => {
       let diagramCode = `sequenceDiagram\n`;
-      diagramCode += `  participant A\n`;
-      diagramCode += `  participant B\n`;
+      diagramCode += getParticipantLine('A', 'actor');
+      diagramCode += getParticipantLine('B', 'boundary');
       notePositions.forEach((position, index) => {
         diagramCode += `  Note ${position} A: Note ${position} ${index}\n`;
       });
@@ -78,12 +80,12 @@ looks.forEach((look) => {
 
     it('should render parallel interactions', () => {
       let diagramCode = `sequenceDiagram\n`;
-      participantTypes.slice(0, 4).forEach((type, index) => {
-        diagramCode += `  ${type} ${type}${index}\n`;
+      participantTypes.slice(0, 4).forEach((pt, index) => {
+        diagramCode += getParticipantLine(`${pt.display}${index}`, pt.type);
       });
       diagramCode += `  par Parallel actions\n`;
-      for (let i = 0; i < participantTypes.length - 1; i += 2) {
-        diagramCode += `    ${participantTypes[i]}${i} ->> ${participantTypes[i + 1]}${i + 1}: Message ${i}\n`;
+      for (let i = 0; i < 3; i += 2) {
+        diagramCode += `    ${participantTypes[i].display}${i} ->> ${participantTypes[i + 1].display}${i + 1}: Message ${i}\n`;
         if (i < participantTypes.length - 2) {
           diagramCode += `    and\n`;
         }
@@ -94,8 +96,8 @@ looks.forEach((look) => {
 
     it('should render alternative flows', () => {
       let diagramCode = `sequenceDiagram\n`;
-      diagramCode += `  participant A\n`;
-      diagramCode += `  participant B\n`;
+      diagramCode += getParticipantLine('A', 'actor');
+      diagramCode += getParticipantLine('B', 'boundary');
       diagramCode += `  alt Successful case\n`;
       diagramCode += `    A ->> B: Request\n`;
       diagramCode += `    B -->> A: Success\n`;
@@ -108,12 +110,12 @@ looks.forEach((look) => {
 
     it('should render loops', () => {
       let diagramCode = `sequenceDiagram\n`;
-      participantTypes.slice(0, 3).forEach((type, index) => {
-        diagramCode += `  ${type} ${type}${index}\n`;
+      participantTypes.slice(0, 3).forEach((pt, index) => {
+        diagramCode += getParticipantLine(`${pt.display}${index}`, pt.type);
       });
       diagramCode += `  loop For each participant\n`;
       for (let i = 0; i < 3; i++) {
-        diagramCode += `    ${participantTypes[0]}0 ->> ${participantTypes[1]}1: Message ${i}\n`;
+        diagramCode += `    ${participantTypes[0].display}0 ->> ${participantTypes[1].display}1: Message ${i}\n`;
       }
       diagramCode += `  end\n`;
       imgSnapshotTest(diagramCode, { look });
@@ -122,27 +124,26 @@ looks.forEach((look) => {
     it('should render boxes around groups', () => {
       let diagramCode = `sequenceDiagram\n`;
       diagramCode += `  box Group 1\n`;
-      participantTypes.slice(0, 3).forEach((type, index) => {
-        diagramCode += `    ${type} ${type}${index}\n`;
+      participantTypes.slice(0, 3).forEach((pt, index) => {
+        diagramCode += `    ${getParticipantLine(`${pt.display}${index}`, pt.type)}`;
       });
       diagramCode += `  end\n`;
       diagramCode += `  box rgb(200,220,255) Group 2\n`;
-      participantTypes.slice(3, 6).forEach((type, index) => {
-        diagramCode += `    ${type} ${type}${index}\n`;
+      participantTypes.slice(3, 6).forEach((pt, index) => {
+        diagramCode += `    ${getParticipantLine(`${pt.display}${index}`, pt.type)}`;
       });
       diagramCode += `  end\n`;
-      // Add some interactions
-      diagramCode += `  ${participantTypes[0]}0 ->> ${participantTypes[3]}0: Cross-group message\n`;
+      diagramCode += `  ${participantTypes[0].display}0 ->> ${participantTypes[3].display}0: Cross-group message\n`;
       imgSnapshotTest(diagramCode, { look });
     });
 
     it('should render with different font settings', () => {
       let diagramCode = `sequenceDiagram\n`;
-      participantTypes.slice(0, 3).forEach((type, index) => {
-        diagramCode += `  ${type} ${type}${index}\n`;
+      participantTypes.slice(0, 3).forEach((pt, index) => {
+        diagramCode += getParticipantLine(`${pt.display}${index}`, pt.type);
       });
-      diagramCode += `  ${participantTypes[0]}0 ->> ${participantTypes[1]}1: Regular message\n`;
-      diagramCode += `  Note right of ${participantTypes[1]}1: Regular note\n`;
+      diagramCode += `  ${participantTypes[0].display}0 ->> ${participantTypes[1].display}1: Regular message\n`;
+      diagramCode += `  Note right of ${participantTypes[1].display}1: Regular note\n`;
       imgSnapshotTest(diagramCode, {
         look,
         sequence: {
@@ -166,15 +167,15 @@ describe('Sequence Diagram Special Cases', () => {
       sequenceDiagram
         box rgb(200,220,255) Authentication
           actor User
-          boundary LoginUI
-          control AuthService
-          database UserDB
+          participant LoginUI@{ "type": "boundary" }
+          participant AuthService@{ "type": "control" }
+          participant UserDB@{ "type": "database" }
         end
-        
+
         box rgb(200,255,220) Order Processing
-          entity Order
-          queue OrderQueue
-          collections AuditLogs
+          participant Order@{ "type": "entity" }
+          participant OrderQueue@{ "type": "queue" }
+          participant AuditLogs@{ "type": "collections" }
         end
         
         User ->> LoginUI: Enter credentials
@@ -230,70 +231,87 @@ describe('Sequence Diagram Special Cases', () => {
     it('should render a sequence diagram with various participant types', () => {
       imgSnapshotTest(
         `
-      sequenceDiagram
-        actor User
-        participant AuthService as Authentication Service
-        boundary UI
-        control OrderController
-        entity Product
-        database MongoDB
-        collections Products
-        queue OrderQueue
-        User ->> UI: Login request
-        UI ->> AuthService: Validate credentials
-        AuthService -->> UI: Authentication token
-        UI ->> OrderController: Place order
-        OrderController ->> Product: Check availability
-        Product -->> OrderController: Available
-        OrderController ->> MongoDB: Save order
-        MongoDB -->> OrderController: Order saved
-        OrderController ->> OrderQueue: Process payment
-        OrderQueue -->> User: Order confirmation
+        sequenceDiagram
+          participant User@{ "type": "actor" }
+          participant AuthService@{ "type": "control" }
+          participant UI@{ "type": "boundary" }
+          participant OrderController@{ "type": "control" }
+          participant Product@{ "type": "entity" }
+          participant MongoDB@{ "type": "database" }
+          participant Products@{ "type": "collections" }
+          participant OrderQueue@{ "type": "queue" }
+          User ->> UI: Login request
+          UI ->> AuthService: Validate credentials
+          AuthService -->> UI: Authentication token
+          UI ->> OrderController: Place order
+          OrderController ->> Product: Check availability
+          Product -->> OrderController: Available
+          OrderController ->> MongoDB: Save order
+          MongoDB -->> OrderController: Order saved
+          OrderController ->> OrderQueue: Process payment
+          OrderQueue -->> User: Order confirmation
       `
       );
     });
 
     it('should render participant creation and destruction with different types', () => {
-      imgSnapshotTest(
-        `
-    sequenceDiagram
-      actor Customer
-      participant Frontend
-      boundary PaymentGateway
-      Customer ->> Frontend: Place order
-      Frontend ->> OrderProcessor: Process order
-      create database OrderDB
-      OrderProcessor ->> OrderDB: Save order
-      `
-      );
+      imgSnapshotTest(`
+      sequenceDiagram
+          participant Alice@{ "type" : "boundary" }
+          Alice->>Bob: Hello Bob, how are you ?
+          Bob->>Alice: Fine, thank you. And you?
+          create participant Carl@{ "type" : "control" }
+          Alice->>Carl: Hi Carl!
+          create actor D as Donald
+          Carl->>D: Hi!
+          destroy Carl
+          Alice-xCarl: We are too many
+          destroy Bob
+          Bob->>Alice: I agree
+      `);
     });
 
     it('should handle complex interactions between different participant types', () => {
       imgSnapshotTest(
         `
-      sequenceDiagram
-    box rgba(200,220,255,0.5) System Components
-    actor User
-    boundary WebUI
-    control API
-    entity BusinessLogic
-    database MainDB
-    end
-    box rgba(200,255,220,0.5) External Services
-    queue MessageQueue
-    database AuditLogs
-    end
+     sequenceDiagram
+        box rgb(200,220,255) Authentication
+          participant User@{ "type": "actor" }
+          participant LoginUI@{ "type": "boundary" }
+          participant AuthService@{ "type": "control" }
+          participant UserDB@{ "type": "database" }
+        end
 
-    User ->> WebUI: Submit request
-    WebUI ->> API: Process request
-    API ->> BusinessLogic: Execute business rules
-    BusinessLogic ->> MainDB: Query data
-    MainDB -->> BusinessLogic: Return results
-    BusinessLogic ->> MessageQueue: Publish event
-    MessageQueue -->> AuditLogs: Store audit trail
-    AuditLogs -->> API: Audit complete
-    API -->> WebUI: Return response
-    WebUI -->> User: Show results
+        box rgb(200,255,220) Order Processing
+          participant Order@{ "type": "entity" }
+          participant OrderQueue@{ "type": "queue" }
+          participant AuditLogs@{ "type": "collections" }
+        end
+
+        User ->> LoginUI: Enter credentials
+        LoginUI ->> AuthService: Validate
+        AuthService ->> UserDB: Query user
+        UserDB -->> AuthService: User data
+
+        alt Valid credentials
+          AuthService -->> LoginUI: Success
+          LoginUI -->> User: Welcome
+
+          par Place order
+            User ->> Order: New order
+            Order ->> OrderQueue: Process
+            and
+            Order ->> AuditLogs: Record
+          end
+
+          loop Until confirmed
+            OrderQueue ->> Order: Update status
+            Order -->> User: Notification
+          end
+        else Invalid credentials
+          AuthService --x LoginUI: Failure
+          LoginUI --x User: Retry
+        end
       `,
         { sequence: { useMaxWidth: false } }
       );
@@ -302,15 +320,15 @@ describe('Sequence Diagram Special Cases', () => {
     it('should render parallel processes with different participant types', () => {
       imgSnapshotTest(
         `
-      sequenceDiagram
-        actor Customer
-        participant Frontend
-        boundary PaymentService
-        control InventoryManager
-        entity Order
-        database OrdersDB
-        queue NotificationQueue
-        
+       sequenceDiagram
+        participant Customer@{ "type": "actor" }
+        participant Frontend@{ "type": "participant" }
+        participant PaymentService@{ "type": "boundary" }
+        participant InventoryManager@{ "type": "control" }
+        participant Order@{ "type": "entity" }
+        participant OrdersDB@{ "type": "database" }
+        participant NotificationQueue@{ "type": "queue" }
+
         Customer ->> Frontend: Place order
         Frontend ->> Order: Create order
         par Parallel Processing
@@ -327,18 +345,18 @@ describe('Sequence Diagram Special Cases', () => {
       `
       );
     });
-
-    it('should render different participant types with notes and loops', () => {
-      imgSnapshotTest(
-        `
+  });
+  it('should render different participant types with notes and loops', () => {
+    imgSnapshotTest(
+      `
     sequenceDiagram
     actor Admin
     participant Dashboard
-    boundary AuthService
-    control UserManager
-    entity UserProfile
-    database UserDB
-    database Logs
+    participant AuthService@{ "type" : "boundary" }
+    participant UserManager@{ "type" : "control" }
+    participant UserProfile@{ "type" : "entity" }
+    participant UserDB@{ "type" : "database" }
+    participant Logs@{ "type" : "database" }
     
     Admin ->> Dashboard: Open user management
     loop Authentication check
@@ -354,217 +372,214 @@ describe('Sequence Diagram Special Cases', () => {
     UserManager ->> Dashboard: Display users
     Dashboard ->> Logs: Record access
     Logs ->> Admin: Audit trail
-      `
-      );
-    });
+    `
+    );
+  });
 
-    it('should render different participant types with alternative flows', () => {
-      imgSnapshotTest(
-        `
-      sequenceDiagram
-        actor Client
-        participant MobileApp
-        boundary CloudService
-        control DataProcessor
-        entity Transaction
-        database TransactionsDB
-        queue EventBus
-        
-        Client ->> MobileApp: Initiate transaction
-        MobileApp ->> CloudService: Authenticate
-        alt Authentication successful
-          CloudService -->> MobileApp: Auth token
-          MobileApp ->> DataProcessor: Process data
-          DataProcessor ->> Transaction: Create transaction
-          Transaction ->> TransactionsDB: Save record
-          TransactionsDB -->> Transaction: Confirmation
-          Transaction ->> EventBus: Publish event
-          EventBus -->> Client: Notification
-        else Authentication failed
-          CloudService -->> MobileApp: Error
-          MobileApp -->> Client: Show error
-        end
+  it('should render different participant types with alternative flows', () => {
+    imgSnapshotTest(
       `
-      );
-    });
+    sequenceDiagram
+      actor Client
+      participant MobileApp
+      participant CloudService@{ "type" : "boundary" }
+      participant DataProcessor@{ "type" : "control" }
+      participant Transaction@{ "type" : "entity" }
+      participant TransactionsDB@{ "type" : "database" }
+      participant EventBus@{ "type" : "queue" }
+      
+      Client ->> MobileApp: Initiate transaction
+      MobileApp ->> CloudService: Authenticate
+      alt Authentication successful
+        CloudService -->> MobileApp: Auth token
+        MobileApp ->> DataProcessor: Process data
+        DataProcessor ->> Transaction: Create transaction
+        Transaction ->> TransactionsDB: Save record
+        TransactionsDB -->> Transaction: Confirmation
+        Transaction ->> EventBus: Publish event
+        EventBus -->> Client: Notification
+      else Authentication failed
+        CloudService -->> MobileApp: Error
+        MobileApp -->> Client: Show error
+      end
+    `
+    );
+  });
 
-    it('should render different participant types with wrapping text', () => {
-      imgSnapshotTest(
-        `
-      sequenceDiagram
-        actor LongNameUser as User With A Very<br/>Long Name
-        participant FE as Frontend Service<br/>With Long Name
-        boundary B as Boundary With<br/>Multiline Name
-        control C as Control With<br/>Multiline Name
-        entity E as Entity With<br/>Multiline Name
-        database DB as Database With<br/>Multiline Name
-        collections COL as Collections With<br/>Multiline Name
-        queue Q as Queue With<br/>Multiline Name
-        
-        LongNameUser ->> FE: This is a very long message that should wrap properly in the diagram
-        FE ->> B: Another long message<br/>with explicit<br/>line breaks
-        B -->> FE: Response message that is also quite long and needs to wrap
-        FE ->> C: Process data
-        C ->> E: Validate
-        E -->> C: Validation result
-        C ->> DB: Save
-        DB -->> C: Save result
-        C ->> COL: Log
-        COL -->> Q: Forward
-        Q -->> LongNameUser: Final response with confirmation of all actions taken
-      `,
-        { sequence: { wrap: true } }
-      );
-    });
-    describe('Sequence Diagram - New Participant Types with Long Notes and Messages', () => {
-      it('should render long notes left of boundary', () => {
-        imgSnapshotTest(
-          `
-      sequenceDiagram
-      boundary Alice
-      actor Bob
-      Alice->>Bob: Hola
-      Note left of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
-      Bob->>Alice: I'm short though
+  it('should render different participant types with wrapping text', () => {
+    imgSnapshotTest(
+      `
+  sequenceDiagram
+      participant B@{ "type" : "boundary" }
+      participant C@{ "type" : "control" }
+      participant E@{ "type" : "entity" }
+      participant DB@{ "type" : "database" }
+      participant COL@{ "type" : "collections" }
+      participant Q@{ "type" : "queue" }
+    
+      FE ->> B: Another long message<br/>with explicit<br/>line breaks
+      B -->> FE: Response message that is also quite long and needs to wrap
+      FE ->> C: Process data
+      C ->> E: Validate
+      E -->> C: Validation result
+      C ->> DB: Save
+      DB -->> C: Save result
+      C ->> COL: Log
+      COL -->> Q: Forward
+      Q -->> LongNameUser: Final response with confirmation of all actions taken
     `,
-          {}
-        );
-      });
+      { sequence: { wrap: true } }
+    );
+  });
 
-      it('should render wrapped long notes left of control', () => {
-        imgSnapshotTest(
-          `
+  describe('Sequence Diagram - New Participant Types with Long Notes and Messages', () => {
+    it('should render long notes left of boundary', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
-      control Alice
+        participant Alice@{ "type" : "boundary" }
+        actor Bob
+        Alice->>Bob: Hola
+        Note left of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+    `,
+        {}
+      );
+    });
+
+    it('should render wrapped long notes left of control', () => {
+      imgSnapshotTest(
+        `
+      sequenceDiagram
+      participant Alice@{ "type" : "control" }
       actor Bob
       Alice->>Bob: Hola
       Note left of Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       Bob->>Alice: I'm short though
     `,
-          {}
-        );
-      });
+        {}
+      );
+    });
 
-      it('should render long notes right of entity', () => {
-        imgSnapshotTest(
-          `
+    it('should render long notes right of entity', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
-      entity Alice
+      participant Alice@{ "type" : "entity" }
       actor Bob
       Alice->>Bob: Hola
       Note right of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       Bob->>Alice: I'm short though
     `,
-          {}
-        );
-      });
+        {}
+      );
+    });
 
-      it('should render wrapped long notes right of database', () => {
-        imgSnapshotTest(
-          `
+    it('should render wrapped long notes right of database', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
-      database Alice
+      participant Alice@{ "type" : "database" }
       actor Bob
       Alice->>Bob: Hola
       Note right of Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       Bob->>Alice: I'm short though
     `,
-          {}
-        );
-      });
+        {}
+      );
+    });
 
-      it('should render long notes over collections', () => {
-        imgSnapshotTest(
-          `
+    it('should render long notes over collections', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
-      collections Alice
+      participant Alice@{ "type" : "collections" }
       actor Bob
       Alice->>Bob: Hola
       Note over Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       Bob->>Alice: I'm short though
     `,
-          {}
-        );
-      });
+        {}
+      );
+    });
 
-      it('should render wrapped long notes over queue', () => {
-        imgSnapshotTest(
-          `
+    it('should render wrapped long notes over queue', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
-      queue Alice
+      participant Alice@{ "type" : "queue" }
       actor Bob
       Alice->>Bob: Hola
       Note over Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       Bob->>Alice: I'm short though
     `,
-          {}
-        );
-      });
+        {}
+      );
+    });
 
-      it('should render notes over actor and boundary', () => {
-        imgSnapshotTest(
-          `
+    it('should render notes over actor and boundary', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
       actor Alice
-      boundary Charlie
+      participant Charlie@{ "type" : "boundary" }
       note over Alice: Some note
       note over Charlie: Other note
     `,
-          {}
-        );
-      });
+        {}
+      );
+    });
 
-      it('should render long messages from database to collections', () => {
-        imgSnapshotTest(
-          `
+    it('should render long messages from database to collections', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
-      database Alice
-      collections Bob
+      participant Alice@{ "type" : "database" }
+      participant Bob@{ "type" : "collections" }
       Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       Bob->>Alice: I'm short though
     `,
-          {}
-        );
-      });
+        {}
+      );
+    });
 
-      it('should render wrapped long messages from control to entity', () => {
-        imgSnapshotTest(
-          `
+    it('should render wrapped long messages from control to entity', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
-      control Alice
-      entity Bob
+      participant Alice@{ "type" : "control" }
+      participant Bob@{ "type" : "entity" }
       Alice->>Bob:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       Bob->>Alice: I'm short though
     `,
-          {}
-        );
-      });
+        {}
+      );
+    });
 
-      it('should render long messages from queue to boundary', () => {
-        imgSnapshotTest(
-          `
+    it('should render long messages from queue to boundary', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
-      queue Alice
-      boundary Bob
+      participant Alice@{ "type" : "queue" }
+      participant Bob@{ "type" : "boundary" }
       Alice->>Bob: I'm short
       Bob->>Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
     `,
-          {}
-        );
-      });
+        {}
+      );
+    });
 
-      it('should render wrapped long messages from actor to database', () => {
-        imgSnapshotTest(
-          `
+    it('should render wrapped long messages from actor to database', () => {
+      imgSnapshotTest(
+        `
       sequenceDiagram
       actor Alice
-      database Bob
+      participant Bob@{ "type" : "database" }
       Alice->>Bob: I'm short
       Bob->>Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
     `,
-          {}
-        );
-      });
+        {}
+      );
     });
   });
 
@@ -574,8 +589,8 @@ describe('Sequence Diagram Special Cases', () => {
         `
       sequenceDiagram
         actor Alice
-        boundary Bob
-        control John as John<br/>Second Line
+        participant Bob@{ "type" : "boundary" }
+        participant John@{ "type" : "control" }
         Alice ->> Bob: Hello Bob, how are you?
         Bob-->>John: How about you John?
         Bob--x Alice: I am good thanks!
@@ -584,9 +599,9 @@ describe('Sequence Diagram Special Cases', () => {
         Bob-->Alice: Checking with John...
         alt either this
           Alice->>John: Yes
-          else or this
+        else or this
           Alice->>John: No
-          else or this will happen
+        else or this will happen
           Alice->John: Maybe
         end
         par this happens in parallel
@@ -611,8 +626,8 @@ describe('Sequence Diagram Special Cases', () => {
         `
       sequenceDiagram
         actor Alice
-        boundary Bob
-        control John as John<br/>Second Line
+        participant Bob@{ "type" : "boundary" }
+        participant John@{ "type" : "control" }
         Alice ->> Bob: Hello Bob, how are you?
         Bob-->>John: How about you John?
         Bob--x Alice: I am good thanks!
@@ -621,9 +636,9 @@ describe('Sequence Diagram Special Cases', () => {
         Bob-->Alice: Checking with John...
         alt either this
           Alice->>John: Yes
-          else or this
+        else or this
           Alice->>John: No
-          else or this will happen
+        else or this will happen
           Alice->John: Maybe
         end
         par this happens in parallel

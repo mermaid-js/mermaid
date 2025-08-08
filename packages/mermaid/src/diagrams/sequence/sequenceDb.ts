@@ -553,7 +553,7 @@ export class SequenceDB implements DiagramDB {
             );
           }
           this.state.records.lastCreated = param.actor;
-          this.addActor(param.actor, param.actor, param.description, param.draw);
+          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
           this.state.records.createdActors.set(param.actor, this.state.records.messages.length);
           break;
         case 'destroyParticipant':
