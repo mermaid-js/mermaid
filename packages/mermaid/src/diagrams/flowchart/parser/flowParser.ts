@@ -211,6 +211,46 @@ class LezerFlowParser {
     // Look for patterns like:
     // 1. A--text including URL space and send-->B
     // 2. A-- text including URL space and send -->B
+    // 3. A---|text|B (pipe-delimited)
+
+    // Check for simple edge pattern first (A---B, A--xB, etc.)
+    // But only if it's not part of a pipe-delimited pattern
+    if (
+      this.isSimpleEdgePattern(tokens[startIndex]) &&
+      !this.isPartOfPipeDelimitedPattern(tokens, startIndex)
+    ) {
+      const patternTokens = [tokens[startIndex]];
+      console.log(
+        `UIO DEBUG: Analyzing simple edge pattern: ${patternTokens.map((t) => t.value).join(' ')}`
+      );
+
+      const merged = this.detectAndMergeEdgePattern(patternTokens, tokens, startIndex);
+      if (merged) {
+        return {
+          mergedTokens: merged,
+          nextIndex: startIndex + 1,
+        };
+      }
+    }
+
+    // Check for pipe-delimited pattern (A---|text|B)
+    if (this.isPipeDelimitedEdgePattern(tokens, startIndex)) {
+      const endIndex = this.findPipeDelimitedPatternEnd(tokens, startIndex);
+      if (endIndex > startIndex) {
+        const patternTokens = tokens.slice(startIndex, endIndex);
+        console.log(
+          `UIO DEBUG: Analyzing pipe-delimited edge pattern: ${patternTokens.map((t) => t.value).join(' ')}`
+        );
+
+        const merged = this.detectAndMergeEdgePattern(patternTokens, tokens, startIndex);
+        if (merged) {
+          return {
+            mergedTokens: merged,
+            nextIndex: endIndex,
+          };
+        }
+      }
+    }
 
     // Find the end of this potential edge pattern
     let endIndex = startIndex;
@@ -258,6 +298,97 @@ class LezerFlowParser {
     }
 
     return null;
+  }
+
+  /**
+   * Check if tokens starting at index form a pipe-delimited edge pattern
+   */
+  private isPipeDelimitedEdgePattern(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): boolean {
+    if (startIndex + 3 >= tokens.length) {
+      return false;
+    }
+
+    const first = tokens[startIndex];
+    const second = tokens[startIndex + 1];
+
+    return (
+      first.type === 'NODE_STRING' && this.endsWithArrow(first.value) && second.type === 'PIPE'
+    );
+  }
+
+  /**
+   * Check if a single NODE_STRING token contains a simple edge pattern
+   */
+  private isSimpleEdgePattern(token: { type: string; value: string }): boolean {
+    if (token.type !== 'NODE_STRING') {
+      return false;
+    }
+
+    // Check for patterns like A---B, A--xB, A--oB, A-->B, etc.
+    const simpleEdgePatterns = [
+      /^(.+?)(---?)([ox]?)(.+)$/, // A---B, A--B, A---xB, A--oB
+      /^(.+?)(==+)([ox]?)(.+)$/, // A===B, A==B, A===xB, A==oB
+      /^(.+?)(-\.-?)([ox]?)(.+)$/, // A-.-B, A-.B, A-.-xB, A-.oB
+      /^(.+?)(--+>)(.+)$/, // A-->B, A--->B
+      /^(.+?)(==+>)(.+)$/, // A==>B, A===>B
+      /^(.+?)(-\.->)(.+)$/, // A-.->B
+    ];
+
+    return simpleEdgePatterns.some((pattern) => pattern.test(token.value));
+  }
+
+  /**
+   * Check if a token is part of a pipe-delimited pattern (should not be treated as simple edge)
+   */
+  private isPartOfPipeDelimitedPattern(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): boolean {
+    // Check if the current token could be the start of a pipe-delimited pattern
+    // This includes tokens that end with arrows (A---) or arrow+ending (A--x)
+    if (startIndex + 1 < tokens.length) {
+      const currentToken = tokens[startIndex];
+      const nextToken = tokens[startIndex + 1];
+
+      if (currentToken.type === 'NODE_STRING' && nextToken.type === 'PIPE') {
+        // Check if current token ends with arrow patterns that could be pipe-delimited
+        const arrowPatterns = [
+          /---?[ox]?$/, // ---, --, --x, --o, ---x, ---o
+          /==+[ox]?$/, // ==, ===, ==x, ==o, ===x, ===o
+          /-\.-?[ox]?$/, // -., -.-,  -.x, -.o, -.-x, -.-o
+        ];
+
+        return arrowPatterns.some((pattern) => pattern.test(currentToken.value));
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Find the end index of a pipe-delimited pattern
+   */
+  private findPipeDelimitedPatternEnd(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): number {
+    // Look for the closing pipe and target node
+    for (let i = startIndex + 2; i < tokens.length; i++) {
+      if (
+        tokens[i].type === 'PIPE' &&
+        i + 1 < tokens.length &&
+        tokens[i + 1].type === 'NODE_STRING'
+      ) {
+        return i + 2; // Include the target node
+      }
+      if (tokens[i].type === 'SEMI') {
+        break; // End of statement
+      }
+    }
+    return startIndex;
   }
 
   /**
@@ -310,6 +441,231 @@ class LezerFlowParser {
   }
 
   /**
+   * Check if tokens match pipe-delimited pattern: A---|text|B
+   */
+  private matchesPipeDelimitedPattern(
+    tokens: { type: string; value: string; from: number; to: number }[]
+  ): boolean {
+    if (tokens.length < 4) {
+      return false;
+    }
+
+    // First token should be NODE_STRING ending with arrow (like "A---", "A==>", "A-.-")
+    const first = tokens[0];
+    if (first.type !== 'NODE_STRING' || !this.endsWithArrow(first.value)) {
+      return false;
+    }
+
+    // Second token should be PIPE
+    if (tokens[1].type !== 'PIPE') {
+      return false;
+    }
+
+    // Find the closing pipe and target
+    let closingPipeIndex = -1;
+    for (let i = 2; i < tokens.length; i++) {
+      if (tokens[i].type === 'PIPE') {
+        closingPipeIndex = i;
+        break;
+      }
+    }
+
+    if (closingPipeIndex === -1 || closingPipeIndex >= tokens.length - 1) {
+      return false;
+    }
+
+    // Last token should be NODE_STRING (target)
+    const last = tokens[tokens.length - 1];
+    if (last.type !== 'NODE_STRING') {
+      return false;
+    }
+
+    // All tokens between pipes should be text tokens
+    const textTokens = tokens.slice(2, closingPipeIndex);
+    return textTokens.every((t) => this.isTextToken(t.type));
+  }
+
+  /**
+   * Merge pipe-delimited pattern tokens into proper edge format
+   */
+  private mergePipeDelimitedPattern(
+    tokens: { type: string; value: string; from: number; to: number }[]
+  ): { type: string; value: string; from: number; to: number }[] {
+    const firstToken = tokens[0];
+
+    // Extract source node ID and arrow from first token (e.g., "A---" -> "A" + "---")
+    const { sourceId, arrow } = this.extractSourceAndArrow(firstToken.value);
+
+    // Find the closing pipe
+    let closingPipeIndex = -1;
+    for (let i = 2; i < tokens.length; i++) {
+      if (tokens[i].type === 'PIPE') {
+        closingPipeIndex = i;
+        break;
+      }
+    }
+
+    // Extract text from tokens between pipes
+    const textTokens = tokens.slice(2, closingPipeIndex);
+    const edgeText = textTokens
+      .map((t) => t.value)
+      .join(' ')
+      .trim();
+
+    const targetToken = tokens[tokens.length - 1];
+
+    console.log(
+      `UIO DEBUG: Pipe-delimited merge - source: ${sourceId}, arrow: ${arrow}, text: "${edgeText}", target: ${targetToken.value}`
+    );
+
+    return [
+      {
+        type: 'NODE_STRING',
+        value: sourceId,
+        from: firstToken.from,
+        to: firstToken.from + sourceId.length,
+      },
+      {
+        type: 'LINK',
+        value: arrow,
+        from: firstToken.from + sourceId.length,
+        to: firstToken.from + sourceId.length + arrow.length,
+      },
+      {
+        type: 'PIPE',
+        value: '|',
+        from: firstToken.from + sourceId.length + arrow.length,
+        to: firstToken.from + sourceId.length + arrow.length + 1,
+      },
+      {
+        type: 'NODE_STRING',
+        value: edgeText,
+        from: firstToken.from + sourceId.length + arrow.length + 1,
+        to: firstToken.from + sourceId.length + arrow.length + 1 + edgeText.length,
+      },
+      {
+        type: 'PIPE',
+        value: '|',
+        from: firstToken.from + sourceId.length + arrow.length + 1 + edgeText.length,
+        to: firstToken.from + sourceId.length + arrow.length + 2 + edgeText.length,
+      },
+      {
+        type: 'NODE_STRING',
+        value: targetToken.value,
+        from: targetToken.from,
+        to: targetToken.to,
+      },
+    ];
+  }
+
+  /**
+   * Check if a string ends with an arrow pattern
+   */
+  private endsWithArrow(value: string): boolean {
+    return (
+      value.endsWith('---') ||
+      value.endsWith('-->') ||
+      value.endsWith('==>') ||
+      value.endsWith('===') ||
+      value.endsWith('-.-') ||
+      value.endsWith('-.->') ||
+      value.endsWith('--') ||
+      value.endsWith('==')
+    );
+  }
+
+  /**
+   * Extract source node ID and arrow from a combined string
+   */
+  private extractSourceAndArrow(value: string): { sourceId: string; arrow: string } {
+    // Try different arrow patterns, longest first
+    const patterns = ['--->', '===>', '-.->', '---', '===', '-.-', '-->', '==>', '--', '=='];
+
+    for (const pattern of patterns) {
+      if (value.endsWith(pattern)) {
+        const sourceId = value.substring(0, value.length - pattern.length);
+        return { sourceId, arrow: pattern };
+      }
+    }
+
+    // Fallback - shouldn't happen if endsWithArrow returned true
+    return { sourceId: value, arrow: '' };
+  }
+
+  /**
+   * Merge a simple edge pattern token (A---B) into proper edge format
+   */
+  private mergeSimpleEdgePattern(token: {
+    type: string;
+    value: string;
+    from: number;
+    to: number;
+  }): { type: string; value: string; from: number; to: number }[] {
+    const value = token.value;
+
+    // Try to match different simple edge patterns
+    const patterns = [
+      { regex: /^(.+?)(---?)([ox])(.+)$/, hasEnding: true }, // A---xB, A--oB
+      { regex: /^(.+?)(---?)(.+)$/, hasEnding: false }, // A---B, A--B
+      { regex: /^(.+?)(==+)([ox])(.+)$/, hasEnding: true }, // A===xB, A==oB
+      { regex: /^(.+?)(==+)(.+)$/, hasEnding: false }, // A===B, A==B
+      { regex: /^(.+?)(-\.-?)([ox])(.+)$/, hasEnding: true }, // A-.-xB, A-.oB
+      { regex: /^(.+?)(-\.-?)(.+)$/, hasEnding: false }, // A-.-B, A-.B
+      { regex: /^(.+?)(--+>)(.+)$/, hasEnding: false }, // A-->B, A--->B
+      { regex: /^(.+?)(==+>)(.+)$/, hasEnding: false }, // A==>B, A===>B
+      { regex: /^(.+?)(-\.->)(.+)$/, hasEnding: false }, // A-.->B
+    ];
+
+    for (const pattern of patterns) {
+      const match = value.match(pattern.regex);
+      if (match) {
+        const sourceId = match[1];
+        let arrow: string;
+        let targetId: string;
+
+        if (pattern.hasEnding) {
+          // Pattern with ending: source, arrow, ending, target
+          arrow = match[2] + match[3]; // arrow + ending (x, o)
+          targetId = match[4];
+        } else {
+          // Pattern without ending: source, arrow, target
+          arrow = match[2];
+          targetId = match[3];
+        }
+
+        console.log(
+          `UIO DEBUG: Simple edge merge - source: ${sourceId}, arrow: ${arrow}, target: ${targetId}`
+        );
+
+        return [
+          {
+            type: 'NODE_STRING',
+            value: sourceId,
+            from: token.from,
+            to: token.from + sourceId.length,
+          },
+          {
+            type: 'LINK',
+            value: arrow,
+            from: token.from + sourceId.length,
+            to: token.from + sourceId.length + arrow.length,
+          },
+          {
+            type: 'NODE_STRING',
+            value: targetId,
+            from: token.from + sourceId.length + arrow.length,
+            to: token.to,
+          },
+        ];
+      }
+    }
+
+    // Fallback - return original token if no pattern matches
+    console.log(`UIO DEBUG: No simple edge pattern matched for: ${value}`);
+    return [token];
+  }
+
+  /**
    * Detect and merge specific edge patterns
    * @param patternTokens - The tokens that form the potential edge pattern
    * @param allTokens - All tokens (for context)
@@ -320,6 +676,17 @@ class LezerFlowParser {
     allTokens: { type: string; value: string; from: number; to: number }[],
     startIndex: number
   ): { type: string; value: string; from: number; to: number }[] | null {
+    // Pattern 0: Simple edge pattern A---B, A--xB, A-->B (single token)
+    if (patternTokens.length === 1 && this.isSimpleEdgePattern(patternTokens[0])) {
+      return this.mergeSimpleEdgePattern(patternTokens[0]);
+    }
+
+    // Pattern 3: Pipe-delimited edge text A---|text|B
+    // Tokens: [A---, |, text, tokens..., |, B]
+    if (this.matchesPipeDelimitedPattern(patternTokens)) {
+      return this.mergePipeDelimitedPattern(patternTokens);
+    }
+
     // Pattern 1: A--text including URL space and send-->B
     // Tokens: [A--text, including, URL, space, and, send--, >, B]
     if (this.matchesPattern1(patternTokens)) {
@@ -2964,7 +3331,7 @@ class LezerFlowParser {
       );
     } else if (hasEmbeddedArrowWithNode) {
       // Extract the actual node ID and target node from the combined token (e.g., "A--xv" -> "A" and "v")
-      const match = /^(.+?)--[xo](.+)$/.exec(sourceToken.value);
+      const match = /^(.+?)--[ox](.+)$/.exec(sourceToken.value);
       if (match) {
         sourceId = match[1]; // "A"
         const targetNodeId = match[2]; // "v"
@@ -3016,7 +3383,7 @@ class LezerFlowParser {
     let edgeInfo;
     if (hasEmbeddedArrowWithPipe) {
       // For embedded arrows like "A--x", extract the arrow and handle pipe-delimited text
-      const arrowMatch = /--([xo])$/.exec(sourceToken.value);
+      const arrowMatch = /--([ox])$/.exec(sourceToken.value);
       if (arrowMatch) {
         const arrowType = arrowMatch[1]; // 'x' or 'o'
         const arrow = `--${arrowType}`;
@@ -3034,7 +3401,7 @@ class LezerFlowParser {
       }
     } else if (hasEmbeddedArrowWithNode) {
       // For embedded arrows like "A--xv", extract the arrow and target node
-      const match = /^(.+?)--([xo])(.+)$/.exec(sourceToken.value);
+      const match = /^(.+?)--([ox])(.+)$/.exec(sourceToken.value);
       if (match) {
         const arrowType = match[2]; // 'x' or 'o'
         const arrow = `--${arrowType}`;

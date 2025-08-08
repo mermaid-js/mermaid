@@ -370,3 +370,7 @@ This document contains important guidelines and standards for working on the Mer
 - Documentation for diagram types is located in packages/mermaid/src/docs/
 - Add links to the sidenav when adding new diagram documentation
 - Use classDiagram.spec.js as a reference for writing diagram test files
+
+Run the tests using: `vitest run packages/mermaid/src/diagrams/flowchart/parser/lezer-*.spec.ts`
+
+
