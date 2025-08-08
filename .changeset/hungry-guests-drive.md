@@ -1,5 +1,7 @@
 ---
-'@mermaid-js/layout-elk': patch
+'mermaid': minor
+'@mermaid-js/layout-tidy-tree': minor
+'@mermaid-js/layout-elk': minor
 ---
 
-fix: Updated offset calculations for diamond shape when handling intersections
+feat: Update mindmaps to use new way of rendering
