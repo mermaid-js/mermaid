@@ -76,218 +76,218 @@ sequenceDiagram
 
 ### Boundary
 
-If you want to use the boundary symbol for a participant, use the `boundary` statement as shown below.
+If you want to use the boundary symbol for a participant, use the JSON configuration syntax as shown below.
 
 ```mermaid-example
 sequenceDiagram
-    boundary theBoundary
+    participant Alice@{ "type" : "boundary" }
     participant Bob
-    theBoundary->>Bob: Request from boundary
-    Bob->>theBoundary: Response to boundary
+    Alice->>Bob: Request from boundary
+    Bob->>Alice: Response to boundary
 ```
 
 ```mermaid
 sequenceDiagram
-    boundary theBoundary
+    participant Alice@{ "type" : "boundary" }
     participant Bob
-    theBoundary->>Bob: Request from boundary
-    Bob->>theBoundary: Response to boundary
+    Alice->>Bob: Request from boundary
+    Bob->>Alice: Response to boundary
 ```
 
 ```mermaid-example
 sequenceDiagram
-    boundary theBoundary
+    participant Alice@{ "type" : "boundary" }
     participant Bob
-    theBoundary->>Bob: Request from boundary
-    Bob->>theBoundary: Response to boundary
+    Alice->>Bob: Request from boundary
+    Bob->>Alice: Response to boundary
 ```
 
 ```mermaid
 sequenceDiagram
-    boundary theBoundary
+    participant Alice@{ "type" : "boundary" }
     participant Bob
-    theBoundary->>Bob: Request from boundary
-    Bob->>theBoundary: Response to boundary
+    Alice->>Bob: Request from boundary
+    Bob->>Alice: Response to boundary
 ```
 
 ### Control
 
-If you want to use the control symbol for a participant, use the `control` statement as shown below.
+If you want to use the control symbol for a participant, use the JSON configuration syntax as shown below.
 
 ```mermaid-example
 sequenceDiagram
-    control theControl
-    participant Alice
-    theControl->>Alice: Control request
-    Alice->>theControl: Control response
+    participant Alice@{ "type" : "control" }
+    participant Bob
+    Alice->>Bob: Control request
+    Bob->>Alice: Control response
 ```
 
 ```mermaid
 sequenceDiagram
-    control theControl
-    participant Alice
-    theControl->>Alice: Control request
-    Alice->>theControl: Control response
+    participant Alice@{ "type" : "control" }
+    participant Bob
+    Alice->>Bob: Control request
+    Bob->>Alice: Control response
 ```
 
 ```mermaid-example
 sequenceDiagram
-    control theControl
-    participant Alice
-    theControl->>Alice: Control request
-    Alice->>theControl: Control response
+    participant Alice@{ "type" : "control" }
+    participant Bob
+    Alice->>Bob: Control request
+    Bob->>Alice: Control response
 ```
 
 ```mermaid
 sequenceDiagram
-    control theControl
-    participant Alice
-    theControl->>Alice: Control request
-    Alice->>theControl: Control response
+    participant Alice@{ "type" : "control" }
+    participant Bob
+    Alice->>Bob: Control request
+    Bob->>Alice: Control response
 ```
 
 ### Entity
 
-If you want to use the entity symbol for a participant, use the `entity` statement as shown below.
+If you want to use the entity symbol for a participant, use the JSON configuration syntax as shown below.
 
 ```mermaid-example
 sequenceDiagram
-    entity theEntity
+    participant Alice@{ "type" : "entity" }
     participant Bob
-    theEntity->>Bob: Entity request
-    Bob->>theEntity: Entity response
+    Alice->>Bob: Entity request
+    Bob->>Alice: Entity response
 ```
 
 ```mermaid
 sequenceDiagram
-    entity theEntity
+    participant Alice@{ "type" : "entity" }
     participant Bob
-    theEntity->>Bob: Entity request
-    Bob->>theEntity: Entity response
+    Alice->>Bob: Entity request
+    Bob->>Alice: Entity response
 ```
 
 ```mermaid-example
 sequenceDiagram
-    entity theEntity
+    participant Alice@{ "type" : "entity" }
     participant Bob
-    theEntity->>Bob: Entity request
-    Bob->>theEntity: Entity response
+    Alice->>Bob: Entity request
+    Bob->>Alice: Entity response
 ```
 
 ```mermaid
 sequenceDiagram
-    entity theEntity
+    participant Alice@{ "type" : "entity" }
     participant Bob
-    theEntity->>Bob: Entity request
-    Bob->>theEntity: Entity response
+    Alice->>Bob: Entity request
+    Bob->>Alice: Entity response
 ```
 
 ### Database
 
-If you want to use the database symbol for a participant, use the `database` statement as shown below.
+If you want to use the database symbol for a participant, use the JSON configuration syntax as shown below.
 
 ```mermaid-example
 sequenceDiagram
-    database theDb
-    participant Alice
-    theDb->>Alice: DB query
-    Alice->>theDb: DB result
+    participant Alice@{ "type" : "database" }
+    participant Bob
+    Alice->>Bob: DB query
+    Bob->>Alice: DB result
 ```
 
 ```mermaid
 sequenceDiagram
-    database theDb
-    participant Alice
-    theDb->>Alice: DB query
-    Alice->>theDb: DB result
+    participant Alice@{ "type" : "database" }
+    participant Bob
+    Alice->>Bob: DB query
+    Bob->>Alice: DB result
 ```
 
 ```mermaid-example
 sequenceDiagram
-    database theDb
-    participant Alice
-    theDb->>Alice: DB query
-    Alice->>theDb: DB result
+    participant Alice@{ "type" : "database" }
+    participant Bob
+    Alice->>Bob: DB query
+    Bob->>Alice: DB result
 ```
 
 ```mermaid
 sequenceDiagram
-    database theDb
-    participant Alice
-    theDb->>Alice: DB query
-    Alice->>theDb: DB result
+    participant Alice@{ "type" : "database" }
+    participant Bob
+    Alice->>Bob: DB query
+    Bob->>Alice: DB result
 ```
 
 ### Collections
 
-If you want to use the collections symbol for a participant, use the `collections` statement as shown below.
+If you want to use the collections symbol for a participant, use the JSON configuration syntax as shown below.
 
 ```mermaid-example
 sequenceDiagram
-    collections theCollection
+    participant Alice@{ "type" : "collections" }
     participant Bob
-    theCollection->>Bob: Collections request
-    Bob->>theCollection: Collections response
+    Alice->>Bob: Collections request
+    Bob->>Alice: Collections response
 ```
 
 ```mermaid
 sequenceDiagram
-    collections theCollection
+    participant Alice@{ "type" : "collections" }
     participant Bob
-    theCollection->>Bob: Collections request
-    Bob->>theCollection: Collections response
+    Alice->>Bob: Collections request
+    Bob->>Alice: Collections response
 ```
 
 ```mermaid-example
 sequenceDiagram
-    collections theCollection
+    participant Alice@{ "type" : "collections" }
     participant Bob
-    theCollection->>Bob: Collections request
-    Bob->>theCollection: Collections response
+    Alice->>Bob: Collections request
+    Bob->>Alice: Collections response
 ```
 
 ```mermaid
 sequenceDiagram
-    collections theCollection
+    participant Alice@{ "type" : "collections" }
     participant Bob
-    theCollection->>Bob: Collections request
-    Bob->>theCollection: Collections response
+    Alice->>Bob: Collections request
+    Bob->>Alice: Collections response
 ```
 
 ### Queue
 
-If you want to use the queue symbol for a participant, use the `queue` statement as shown below.
+If you want to use the queue symbol for a participant, use the JSON configuration syntax as shown below.
 
 ```mermaid-example
 sequenceDiagram
-    queue theQueue
-    participant Alice
-    theQueue->>Alice: Queue message
-    Alice->>theQueue: Queue
+    participant Alice@{ "type" : "queue" }
+    participant Bob
+    Alice->>Bob: Queue message
+    Bob->>Alice: Queue response
 ```
 
 ```mermaid
 sequenceDiagram
-    queue theQueue
-    participant Alice
-    theQueue->>Alice: Queue message
-    Alice->>theQueue: Queue
+    participant Alice@{ "type" : "queue" }
+    participant Bob
+    Alice->>Bob: Queue message
+    Bob->>Alice: Queue response
 ```
 
 ```mermaid-example
 sequenceDiagram
-    queue theQueue
-    participant Alice
-    theQueue->>Alice: Queue message
-    Alice->>theQueue: Queue
+    participant Alice@{ "type" : "queue" }
+    participant Bob
+    Alice->>Bob: Queue message
+    Bob->>Alice: Queue response
 ```
 
 ```mermaid
 sequenceDiagram
-    queue theQueue
-    participant Alice
-    theQueue->>Alice: Queue message
-    Alice->>theQueue: Queue
+    participant Alice@{ "type" : "queue" }
+    participant Bob
+    Alice->>Bob: Queue message
+    Bob->>Alice: Queue response
 ```
 
 ### Aliases
