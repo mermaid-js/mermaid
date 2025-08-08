@@ -182,7 +182,7 @@ describe('Cose-Bilkent Layout Algorithm', () => {
 
     it('should throw error for invalid nodes array', () => {
       const invalidData = { ...mockLayoutData, nodes: null as any };
-      expect(() => validateLayoutData(invalidData)).toThrow('Nodes array is required');
+      expect(() => validateLayoutData(invalidData)).toThrow('No nodes found in layout data');
     });
 
     it('should throw error for invalid edges array', () => {
