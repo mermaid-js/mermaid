@@ -4,4 +4,4 @@
 '@mermaid-js/layout-elk': minor
 ---
 
-feat: Update mindmaps to use new way of rendering
+feat: Update mindmap rendering to support multiple layouts, improved edge intersections, and new shapes
