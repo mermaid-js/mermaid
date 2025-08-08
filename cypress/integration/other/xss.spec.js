@@ -152,4 +152,15 @@ describe('XSS', () => {
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
+
+  it('should sanitize labels', () => {
+    const str = JSON.stringify({
+      code: `erDiagram
+    "<img src=x onerror=xssAttack()>" ||--|| ENTITY2 : "<img src=x onerror=xssAttack()>"
+    `,
+    });
+    imgSnapshotTest(utf8ToB64(str), {}, true);
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
 });
