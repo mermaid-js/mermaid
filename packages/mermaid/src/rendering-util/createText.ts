@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck TODO: Fix types
+import { getConfig } from '../config.js';
 import type { Group } from '../diagram-api/types.js';
+import { sanitizeText } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
@@ -21,12 +23,15 @@ function addHtmlSpan(element, node, width, classes, addBackground = false) {
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   div.html(
-    `
+    sanitizeText(
+      `
     <span class="${labelClass} ${classes}" ` +
-      (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
-      '>' +
-      label +
-      '</span>'
+        (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
+        '>' +
+        label +
+        '</span>',
+      getConfig()
+    )
   );
 
   applyStyle(div, node.labelStyle);

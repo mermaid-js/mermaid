@@ -1,13 +1,12 @@
-import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { select, curveLinear, selectAll } from 'd3';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
-import utils from '../../utils.js';
-import { render } from '../../dagre-wrapper/index.js';
+import { curveLinear, select, selectAll } from 'd3';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import { render } from '../../dagre-wrapper/index.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
-import common, { evaluate, renderKatex } from '../common/common.js';
-import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import utils, { getStylesFromArray, interpolateToCurve } from '../../utils.js';
+import common, { evaluate, renderKatexSanitized } from '../common/common.js';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -140,7 +139,7 @@ export const addVertices = async function (vert, g, svgId, root, doc, diagObj) {
       default:
         _shape = 'rect';
     }
-    const labelText = await renderKatex(vertexText, getConfig());
+    const labelText = await renderKatexSanitized(vertexText, getConfig());
 
     // Add the node
     g.setNode(vertex.id, {
@@ -315,7 +314,10 @@ export const addEdges = async function (edges, g, diagObj) {
       edgeData.labelpos = 'c';
     }
     edgeData.labelType = edge.labelType;
-    edgeData.label = await renderKatex(edge.text.replace(common.lineBreakRegex, '\n'), getConfig());
+    edgeData.label = await renderKatexSanitized(
+      edge.text.replace(common.lineBreakRegex, '\n'),
+      getConfig()
+    );
 
     if (edge.style === undefined) {
       edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';

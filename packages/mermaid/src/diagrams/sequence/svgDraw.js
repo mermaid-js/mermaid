@@ -1,9 +1,12 @@
-import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
-import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import { addFunction } from '../../interactionDb.js';
-import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
+import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
+import common, {
+  calculateMathMLDimensions,
+  hasKatex,
+  renderKatexSanitized,
+} from '../common/common.js';
+import * as svgDrawCommon from '../common/svgDrawCommon.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -86,13 +89,13 @@ const popupMenuToggle = function (popId) {
 
 export const drawKatex = async function (elem, textData, msgModel = null) {
   let textElem = elem.append('foreignObject');
-  const lines = await renderKatex(textData.text, configApi.getConfig());
+  const linesSanitized = await renderKatexSanitized(textData.text, configApi.getConfig());
 
   const divElem = textElem
     .append('xhtml:div')
     .attr('style', 'width: fit-content;')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml')
-    .html(lines);
+    .html(linesSanitized);
   const dim = divElem.node().getBoundingClientRect();
 
   textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
@@ -963,7 +966,7 @@ const _drawTextCandidateFunc = (function () {
       .append('div')
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
-      .html(await renderKatex(content, configApi.getConfig()));
+      .html(await renderKatexSanitized(content, configApi.getConfig()));
 
     byTspan(content, s, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);

@@ -1,13 +1,13 @@
-import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { select, curveLinear, selectAll } from 'd3';
-import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { curveLinear, select, selectAll } from 'd3';
 import { render as Render } from 'dagre-d3-es';
-import { applyStyle } from 'dagre-d3-es/src/dagre-js/util.js';
 import { addHtmlLabel } from 'dagre-d3-es/src/dagre-js/label/add-html-label.js';
+import { applyStyle } from 'dagre-d3-es/src/dagre-js/util.js';
+import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
-import common, { evaluate, renderKatex } from '../common/common.js';
-import { interpolateToCurve, getStylesFromArray } from '../../utils.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
+import { getStylesFromArray, interpolateToCurve } from '../../utils.js';
+import common, { evaluate, renderKatexSanitized } from '../common/common.js';
 import flowChartShapes from './flowChartShapes.js';
 
 const conf = {};
@@ -57,7 +57,7 @@ export const addVertices = async function (vert, g, svgId, root, _doc, diagObj) 
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
-        label: await renderKatex(
+        label: await renderKatexSanitized(
           vertexText.replace(
             /fa[blrs]?:fa-[\w-]+/g, // cspell:disable-line
             (s) => `<i class='${s.replace(':', ' ')}'></i>`
@@ -242,7 +242,7 @@ export const addEdges = async function (edges, g, diagObj) {
         edgeData.labelType = 'html';
         edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}" style="${
           edgeData.labelStyle
-        }">${await renderKatex(
+        }">${await renderKatexSanitized(
           edge.text.replace(
             /fa[blrs]?:fa-[\w-]+/g, // cspell:disable-line
             (s) => `<i class='${s.replace(':', ' ')}'></i>`
