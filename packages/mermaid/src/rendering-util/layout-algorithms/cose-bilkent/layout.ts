@@ -65,8 +65,8 @@ export function validateLayoutData(data: LayoutData): boolean {
     throw new Error('Root node is required');
   }
 
-  if (!Array.isArray(data.nodes)) {
-    throw new Error('Nodes array is required in layout data');
+  if (!data.nodes || !Array.isArray(data.nodes) || data.nodes.length === 0) {
+    throw new Error('No nodes found in layout data');
   }
 
   if (!Array.isArray(data.edges)) {

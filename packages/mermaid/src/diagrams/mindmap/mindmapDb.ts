@@ -43,7 +43,6 @@ export class MindmapDB {
     this.nodeType = nodeType;
     this.clear();
     this.getType = this.getType.bind(this);
-    this.getMindmap = this.getMindmap.bind(this);
     this.getElementById = this.getElementById.bind(this);
     this.getParent = this.getParent.bind(this);
     this.getMindmap = this.getMindmap.bind(this);
