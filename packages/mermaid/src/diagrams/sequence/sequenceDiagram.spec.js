@@ -2038,13 +2038,17 @@ Bob->>Alice:Got it!
     expect(messages[0].from).toBe('Alice');
     expect(messages[0].to).toBe('Bob');
   });
-  describe('when newly parsing messages ', () => {
+  describe('when parsing extended participant syntax ', () => {
     it('should parse a message', async () => {
       const actor1 = 'database';
       const diagram = await Diagram.fromText(`
     sequenceDiagram
         participant Alice@{ "type" : "database" }
         participant Bob@{ "type" : "database" }
+        participant Carl@{ type: "database" }
+        participant David@{ "type" : 'database' }
+        participant Eve@{ type: 'database' }
+        participant Favela@{ "type" : "database"    }
         Bob->>+Alice: Hi Alice
         Alice->>+Bob: Hi Bob
       `);

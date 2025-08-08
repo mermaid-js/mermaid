@@ -58,27 +58,11 @@ sequenceDiagram
     Bob->>Alice: Response to boundary
 ```
 
-```mermaid
-sequenceDiagram
-    participant Alice@{ "type" : "boundary" }
-    participant Bob
-    Alice->>Bob: Request from boundary
-    Bob->>Alice: Response to boundary
-```
-
 ### Control
 
 If you want to use the control symbol for a participant, use the JSON configuration syntax as shown below.
 
 ```mermaid-example
-sequenceDiagram
-    participant Alice@{ "type" : "control" }
-    participant Bob
-    Alice->>Bob: Control request
-    Bob->>Alice: Control response
-```
-
-```mermaid
 sequenceDiagram
     participant Alice@{ "type" : "control" }
     participant Bob
@@ -98,27 +82,11 @@ sequenceDiagram
     Bob->>Alice: Entity response
 ```
 
-```mermaid
-sequenceDiagram
-    participant Alice@{ "type" : "entity" }
-    participant Bob
-    Alice->>Bob: Entity request
-    Bob->>Alice: Entity response
-```
-
 ### Database
 
 If you want to use the database symbol for a participant, use the JSON configuration syntax as shown below.
 
 ```mermaid-example
-sequenceDiagram
-    participant Alice@{ "type" : "database" }
-    participant Bob
-    Alice->>Bob: DB query
-    Bob->>Alice: DB result
-```
-
-```mermaid
 sequenceDiagram
     participant Alice@{ "type" : "database" }
     participant Bob
@@ -138,27 +106,11 @@ sequenceDiagram
     Bob->>Alice: Collections response
 ```
 
-```mermaid
-sequenceDiagram
-    participant Alice@{ "type" : "collections" }
-    participant Bob
-    Alice->>Bob: Collections request
-    Bob->>Alice: Collections response
-```
-
 ### Queue
 
 If you want to use the queue symbol for a participant, use the JSON configuration syntax as shown below.
 
 ```mermaid-example
-sequenceDiagram
-    participant Alice@{ "type" : "queue" }
-    participant Bob
-    Alice->>Bob: Queue message
-    Bob->>Alice: Queue response
-```
-
-```mermaid
 sequenceDiagram
     participant Alice@{ "type" : "queue" }
     participant Bob
