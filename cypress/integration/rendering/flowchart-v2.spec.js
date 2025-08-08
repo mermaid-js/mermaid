@@ -1113,4 +1113,55 @@ end
       );
     });
   });
+  describe('Flowchart Node Shape Rendering', () => {
+    it('should render a stadium-shaped node', () => {
+      imgSnapshotTest(
+        `flowchart TB
+          A(["Start"]) --> n1["Untitled Node"]
+          A --> n2["Untitled Node"]     
+        `,
+        {}
+      );
+    });
+    it('should render a diamond-shaped node using shape config', () => {
+      imgSnapshotTest(
+        `flowchart BT
+          n2["Untitled Node"] --> n1["Diamond"]
+          n1@{ shape: diam}     
+        `,
+        {}
+      );
+    });
+    it('should render a rounded rectangle and a normal rectangle', () => {
+      imgSnapshotTest(
+        `flowchart BT
+        n2["Untitled Node"] --> n1["Rounded Rectangle"]
+        n3["Untitled Node"] --> n1
+        n1@{ shape: rounded}
+        n3@{ shape: rect}  
+    `,
+        {}
+      );
+    });
+  });
+
+  it('6617: Per Link Curve Styling using edge Ids', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A e1@-->B e5@--> E
+      E e7@--> D
+      B e3@-->D
+      A e2@-->C e4@-->D
+      C e6@--> F
+      F e8@--> D
+      e1@{ curve: natural }
+      e2@{ curve: stepAfter }
+      e3@{ curve: monotoneY }
+      e4@{ curve: bumpY }
+      e5@{ curve: linear }
+      e6@{ curve: catmullRom }
+      e7@{ curve: cardinal }
+      `
+    );
+  });
 });

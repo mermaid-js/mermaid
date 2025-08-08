@@ -581,17 +581,11 @@ export const draw = function (text, id, version, diagObj) {
 
     rectangles
       .append('rect')
-      .attr('id', function (d) {
-        return 'exclude-' + d.start.format('YYYY-MM-DD');
-      })
-      .attr('x', function (d) {
-        return timeScale(d.start) + theSidePad;
-      })
+      .attr('id', (d) => 'exclude-' + d.start.format('YYYY-MM-DD'))
+      .attr('x', (d) => timeScale(d.start.startOf('day')) + theSidePad)
       .attr('y', conf.gridLineStartPadding)
-      .attr('width', function (d) {
-        const renderEnd = d.end.add(1, 'day');
-        return timeScale(renderEnd) - timeScale(d.start);
-      })
+      .attr('width', (d) => timeScale(d.end.endOf('day')) - timeScale(d.start.startOf('day')))
+
       .attr('height', h - theTopPad - conf.gridLineStartPadding)
       .attr('transform-origin', function (d, i) {
         return (
