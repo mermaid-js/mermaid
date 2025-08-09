@@ -766,6 +766,7 @@ class LezerFlowParser {
       tokenType === 'END' ||
       tokenType === 'STYLE' ||
       tokenType === 'CLASS' ||
+      tokenType === 'LINK_TARGET' ||
       tokenType === 'CLASSDEF' ||
       tokenType === 'CLICK' ||
       tokenType === 'HREF' ||
@@ -3791,6 +3792,38 @@ class LezerFlowParser {
       if (i < tokens.length && tokens[i].type === 'PIPE') {
         console.log(`UIO DEBUG: parseEdgePattern: Found pipe, calling parsePipeDelimitedText`);
         return this.parsePipeDelimitedText(tokens, startIndex, firstArrow);
+      }
+
+      // Special-case: dotted labelled simple edge like: A -. Label .- B (length 1..)
+      // After firstArrow ('-.'), expect: LABEL (NODE_STRING), CLOSING LINK ('.-','..-','...-'), TARGET (Identifier/NODE_STRING/DIR)
+      if (
+        firstArrow === '-.' &&
+        i + 2 < tokens.length &&
+        tokens[i].type === 'NODE_STRING' &&
+        tokens[i + 1].type === 'LINK' &&
+        /^(\.+)-$/.test(tokens[i + 1].value) &&
+        (tokens[i + 2].type === 'Identifier' ||
+          tokens[i + 2].type === 'NODE_STRING' ||
+          tokens[i + 2].type === 'DIR')
+      ) {
+        const labelToken = tokens[i];
+        const closingLink = tokens[i + 1].value; // e.g., '.-', '..-', '...-'
+        const targetToken = tokens[i + 2];
+
+        const dotCount = (closingLink.match(/\./g) || []).length; // 1..N
+        const targetId = targetToken.value;
+        i = i + 3; // consume label, closing link, and target
+
+        const arrowCanonical = `-${'.'.repeat(dotCount)}-`;
+        return {
+          arrow: arrowCanonical,
+          targetId,
+          text: labelToken.value,
+          type: 'arrow_open',
+          stroke: 'dotted',
+          length: dotCount,
+          nextIndex: i,
+        };
       }
 
       // Simple arrow pattern: A --> B (but B might be a shaped vertex like B(text))
