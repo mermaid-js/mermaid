@@ -100,6 +100,7 @@ class LezerFlowParser {
     edgeType: string;
     edgeStroke: string;
   } | null = null; // Track last edge for retroactive target chaining
+  private originalSource = '';
 
   constructor() {
     this.yy = undefined;
@@ -121,6 +122,9 @@ class LezerFlowParser {
       const newSrc = src.replace(/}\s*\n/g, '}\n');
 
       log.debug('UIO Parsing flowchart with Lezer:', newSrc);
+
+      // Keep a copy of the original source for substring extraction
+      this.originalSource = newSrc;
 
       // Parse with Lezer
       const tree = lezerParser.parse(newSrc);
@@ -169,6 +173,15 @@ class LezerFlowParser {
     const processedTokens: { type: string; value: string; from: number; to: number }[] = [];
     let i = 0;
 
+    // Helper: detect head-open tokens like x--, o--, x==, o==, x-., o-.
+    const isHeadOpenToken = (val: string) =>
+      val === 'x--' ||
+      val === 'o--' ||
+      val === 'x==' ||
+      val === 'o==' ||
+      val === 'x-.' ||
+      val === 'o-.';
+
     while (i < tokens.length) {
       const token = tokens[i];
 
@@ -177,6 +190,31 @@ class LezerFlowParser {
         processedTokens.push(token);
         i++;
         continue;
+      }
+
+      // Convert NODE_STRING head-open tokens (x--, o--, x==, o==, x-., o-.) into LINK when used as arrow openers
+      if (token.type === 'NODE_STRING' && isHeadOpenToken(token.value)) {
+        // Require a plausible source node immediately before in the processed stream
+        const prev = processedTokens[processedTokens.length - 1];
+        // Look ahead for a closing LINK that ends with matching head (x/o)
+        const head = token.value[0]; // 'x' or 'o'
+        let hasClosingTail = false;
+        for (let j = i + 1; j < Math.min(tokens.length, i + 6); j++) {
+          const t = tokens[j];
+          if (t.type === 'LINK' && (t.value.endsWith(head) || t.value.endsWith('>'))) {
+            hasClosingTail = true;
+            break;
+          }
+        }
+        if (prev && (prev.type === 'Identifier' || prev.type === 'NODE_STRING') && hasClosingTail) {
+          const converted = { ...token, type: 'LINK' };
+          console.log(
+            `UIO DEBUG: Converted head-open token ${token.value} to LINK for double-ended arrow`
+          );
+          processedTokens.push(converted);
+          i++;
+          continue;
+        }
       }
 
       // Try to detect fragmented edge patterns
@@ -213,25 +251,8 @@ class LezerFlowParser {
     // 2. A-- text including URL space and send -->B
     // 3. A---|text|B (pipe-delimited)
 
-    // Check for simple edge pattern first (A---B, A--xB, etc.)
-    // But only if it's not part of a pipe-delimited pattern
-    if (
-      this.isSimpleEdgePattern(tokens[startIndex]) &&
-      !this.isPartOfPipeDelimitedPattern(tokens, startIndex)
-    ) {
-      const patternTokens = [tokens[startIndex]];
-      console.log(
-        `UIO DEBUG: Analyzing simple edge pattern: ${patternTokens.map((t) => t.value).join(' ')}`
-      );
-
-      const merged = this.detectAndMergeEdgePattern(patternTokens, tokens, startIndex);
-      if (merged) {
-        return {
-          mergedTokens: merged,
-          nextIndex: startIndex + 1,
-        };
-      }
-    }
+    // Defer simple one-token edge merging until after checking for pipe or text-between-arrows
+    // This ensures patterns like A--text ... -->B are handled as text, not as A -- text.
 
     // Check for pipe-delimited pattern (A---|text|B)
     if (this.isPipeDelimitedEdgePattern(tokens, startIndex)) {
@@ -280,6 +301,20 @@ class LezerFlowParser {
 
     if (!foundArrowEnd || endIndex <= startIndex + 1) {
       return null; // Not a complex edge pattern
+    }
+
+    // Special handling: if this looks like A--text ... -->B or A-- text ... -->B,
+    // fall back to Pattern1/Pattern2 detection so we retain the text.
+    // This helps edge text without pipes.
+    {
+      const slice = tokens.slice(startIndex, endIndex);
+      const merged = this.detectAndMergeEdgePattern(slice, tokens, startIndex);
+      if (merged) {
+        return {
+          mergedTokens: merged,
+          nextIndex: endIndex,
+        } as any; // Will be handled by caller above
+      }
     }
 
     // Extract the tokens that form this edge pattern
@@ -1038,18 +1073,34 @@ class LezerFlowParser {
         case 'RectStart':
         case 'TrapStart':
         case 'InvTrapStart':
-        case 'TagEnd': // Odd shape start ('>text]')
-          // Handle orphaned shape tokens (shape tokens without preceding node ID)
-          // Check if we have a pending shaped target ID from an embedded arrow edge
+        case 'TagEnd': // Odd shape start ('>text]') or split-arrow head ('>')
+          // Priority 1: If we have a pending shaped target from an embedded arrow, consume as shaped node now
           if (this.pendingShapedTargetId) {
             console.log(
               `UIO DEBUG: Applying shape to pending target node: ${this.pendingShapedTargetId}`
             );
             i = this.parseShapedNodeForTarget(tokens, i, this.pendingShapedTargetId);
             this.pendingShapedTargetId = null; // Clear the pending target
-          } else {
-            i = this.parseStatement(tokens, i);
+            break;
           }
+
+          // Priority 2: Orphaned shape token for the last referenced node (e.g., A-->B>text])
+          if (this.isShapeStart(token) && this.lastReferencedNodeId) {
+            console.log(
+              `UIO DEBUG: Detected orphaned shape token '${token.type}:${token.value}' for lastReferencedNodeId=${this.lastReferencedNodeId}`
+            );
+            i = this.parseOrphanedShapeStatement(tokens, i);
+            break;
+          }
+
+          // Priority 3: Continuation edge head (e.g., A-->B-->C)
+          if (token.type === 'TagEnd' && token.value === '>' && this.lastTargetNodes.length > 0) {
+            i = this.parseContinuationEdgeStatement(tokens, i);
+            break;
+          }
+
+          // Fallback: Delegate to parseStatement
+          i = this.parseStatement(tokens, i);
           break;
         case 'CLICK':
           i = this.parseClickStatement(tokens, i);
@@ -1185,6 +1236,19 @@ class LezerFlowParser {
       lookahead.map((t) => `${t.type}:${t.value}`)
     );
 
+    // Accessibility statements: accTitle / accDescr
+    if (
+      lookahead.length >= 1 &&
+      lookahead[0].type === 'NODE_STRING' &&
+      (lookahead[0].value === 'accTitle' || lookahead[0].value === 'accDescr')
+    ) {
+      if (lookahead[0].value === 'accTitle') {
+        return this.parseAccTitleStatement(tokens, i);
+      } else {
+        return this.parseAccDescrStatement(tokens, i);
+      }
+    }
+
     // Check if this is a direction statement (direction BT)
     if (
       lookahead.length >= 2 &&
@@ -1281,7 +1345,7 @@ class LezerFlowParser {
     // Check if this is an edge (A --> B pattern or A(text) --> B pattern)
     // Check for orphaned shape tokens (shape tokens without preceding node ID) FIRST
     // This happens when an edge creates a target node but leaves the shape tokens for later processing
-    if (lookahead.length >= 3 && this.isShapeStart(lookahead[0].type)) {
+    if (lookahead.length >= 3 && this.isShapeStart(lookahead[0])) {
       console.log(`UIO DEBUG: Taking orphaned shape statement path (shape without node ID)`);
       return this.parseOrphanedShapeStatement(tokens, i);
     }
@@ -1633,11 +1697,14 @@ class LezerFlowParser {
   }
 
   /**
-   * Check if a token type represents a shape start delimiter
-   * @param tokenType - The token type to check
-   * @returns True if it's a shape start delimiter
+   * Check if a token represents a shape start delimiter
+   * Accepts either a token object or a token type string for backward compatibility
    */
-  private isShapeStart(tokenType: string): boolean {
+  private isShapeStart(tokenOrType: { type: string; value: string } | string): boolean {
+    const type = typeof tokenOrType === 'string' ? tokenOrType : tokenOrType.type;
+    const val = typeof tokenOrType === 'string' ? '' : tokenOrType.value;
+
+    // Base shape starts by token type
     const shapeStarts = [
       'SquareStart', // [
       'ParenStart', // (
@@ -1650,7 +1717,18 @@ class LezerFlowParser {
       'InvTrapStart', // [\
       'TagEnd', // > (for odd shapes)
     ];
-    return shapeStarts.includes(tokenType);
+
+    if (shapeStarts.includes(type)) {
+      return true;
+    }
+
+    // Some punctuation comes through as generic '⚠' tokens in the lexer
+    // Treat '⚠' with value '>' as an odd-shape start
+    if (type === '⚠' && val === '>') {
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -1775,11 +1853,93 @@ class LezerFlowParser {
       }
     }
 
+    // Track string parsing state inside shape text
+    let inString = false;
+    let stringQuote: '"' | "'" | null = null;
+    let seenStr = false; // saw a single quoted string token as entire text
+    const sawEllipseCloseHyphen = false; // for ellipse (-text-)
+
     // Collect all tokens until we find any valid shape end delimiter
     while (i < tokens.length && !possibleEndTokens.includes(tokens[i].type)) {
+      const tk = tokens[i];
+
+      // If we get a complete quoted string token (STR), allow it only if it's the only content
+      if (tk.type === 'STR') {
+        if (shapeText.trim().length > 0 || seenStr) {
+          throw new Error("got 'STR'");
+        }
+        shapeText += tk.value; // keep quotes; processNodeText will strip and classify
+        seenStr = true;
+        i++;
+        continue;
+      }
+
       // For ellipse shapes, stop when we encounter the closing hyphen
-      if (actualShapeType === 'EllipseStart' && tokens[i].type === 'Hyphen') {
+      if (actualShapeType === 'EllipseStart' && tk.type === 'Hyphen') {
         break; // This is the closing hyphen, don't include it in the text
+      }
+
+      // If a full STR was consumed as the only text, parentheses should trigger SQE (legacy)
+      if (
+        seenStr &&
+        (tk.type === 'ParenStart' || tk.type === 'ParenEnd' || tk.value === '(' || tk.value === ')')
+      ) {
+        throw new Error("Expecting 'SQE'");
+      }
+
+      // Quote handling - mirror legacy JISON error behavior
+      const isQuoteToken =
+        tk.type === 'STR' ||
+        tk.type === 'SQS' ||
+        tk.type === 'SQE' ||
+        tk.type === 'DQS' ||
+        tk.type === 'DQE' ||
+        (tk.type === '⚠' && (tk.value === '"' || tk.value === "'"));
+
+      if (isQuoteToken) {
+        const quoteChar: '"' | "'" = tk.value === "'" ? "'" : '"';
+
+        if (!inString) {
+          // If there is already plain text before a quote, error: mixing text and string
+          if (shapeText.trim().length > 0) {
+            throw new Error("got 'STR'");
+          }
+          // Enter string mode; do not include quote char itself in text
+          inString = true;
+          stringQuote = quoteChar;
+          i++;
+          continue;
+        } else {
+          // Already inside a string
+          if (stringQuote === quoteChar) {
+            // Closing the string
+            inString = false;
+            stringQuote = null;
+            i++;
+            continue;
+          } else {
+            // Nested/mismatched quote inside string
+            throw new Error("Expecting 'SQE'");
+          }
+        }
+      }
+
+      // If inside a string, any parentheses should trigger the SQE error (unterminated string expected)
+      if (
+        inString &&
+        (tk.type === 'ParenStart' || tk.type === 'ParenEnd' || tk.value === '(' || tk.value === ')')
+      ) {
+        throw new Error("Expecting 'SQE'");
+      }
+
+      // In square/rect shapes, parentheses are not allowed within text (legacy behavior)
+      if ((actualShapeType === 'SquareStart' || actualShapeType === 'RectStart') && !inString) {
+        if (tk.type === 'ParenStart' || tk.value === '(') {
+          throw new Error("got 'PS'");
+        }
+        if (tk.type === 'ParenEnd' || tk.value === ')') {
+          throw new Error("got 'PE'");
+        }
       }
 
       // Note: We don't stop for statement keywords when inside shape delimiters
@@ -1788,8 +1948,8 @@ class LezerFlowParser {
 
       // Check for HTML tag pattern: < + tag_name + >
       if (
-        tokens[i].type === '⚠' &&
-        tokens[i].value === '<' &&
+        tk.type === '⚠' &&
+        tk.value === '<' &&
         i + 2 < tokens.length &&
         !possibleEndTokens.includes(tokens[i + 1].type)
       ) {
@@ -1803,7 +1963,7 @@ class LezerFlowParser {
           // Preserve original spacing before HTML tag
           if (shapeText && i > startIndex + 1) {
             const prevToken = tokens[i - 1];
-            const currentToken = tokens[i];
+            const currentToken = tk;
             const gap = currentToken.from - prevToken.to;
 
             if (gap > 0) {
@@ -1826,13 +1986,13 @@ class LezerFlowParser {
       // Preserve original spacing by checking token position gaps
       if (shapeText && i > startIndex + 1) {
         const prevToken = tokens[i - 1];
-        const currentToken = tokens[i];
+        const currentToken = tk;
         const gap = currentToken.from - prevToken.to;
 
         if (gap > 0) {
           // Preserve original spacing (gap represents number of spaces)
           shapeText += ' '.repeat(gap);
-        } else if (this.shouldAddSpaceBetweenTokens(shapeText, tokens[i].value, tokens[i].type)) {
+        } else if (this.shouldAddSpaceBetweenTokens(shapeText, tk.value, tk.type)) {
           // Fall back to smart spacing if no gap
           shapeText += ' ';
         }
@@ -1840,21 +2000,26 @@ class LezerFlowParser {
 
       // Special handling for ellipse shapes: if this is the last token and it ends with '-',
       // strip the trailing hyphen as it's part of the shape syntax (-text-)
-      let tokenValue = tokens[i].value;
+      let tokenValue = tk.value;
       if (
         actualShapeType === 'EllipseStart' &&
-        tokens[i].type === 'NODE_STRING' &&
+        tk.type === 'NODE_STRING' &&
         tokenValue.endsWith('-') &&
         (i + 1 >= tokens.length || possibleEndTokens.includes(tokens[i + 1].type))
       ) {
         tokenValue = tokenValue.slice(0, -1); // Remove trailing hyphen
         console.log(
-          `UIO DEBUG: Stripped trailing hyphen from ellipse text: "${tokens[i].value}" -> "${tokenValue}"`
+          `UIO DEBUG: Stripped trailing hyphen from ellipse text: "${tk.value}" -> "${tokenValue}"`
         );
       }
 
       shapeText += tokenValue;
       i++;
+    }
+
+    // If we are still in a string when the shape ends or input ends, error
+    if (inString) {
+      throw new Error("Expecting 'SQE'");
     }
 
     // Special handling for ellipse end: need to skip the final hyphen
@@ -1866,14 +2031,16 @@ class LezerFlowParser {
       i++;
     }
 
-    // Capture the actual end token for shape mapping
-    let actualEndToken = '';
-    if (i < tokens.length) {
-      actualEndToken = tokens[i].type;
+    // If we ran out of tokens before encountering the shape end, throw to avoid hanging
+    if (i >= tokens.length) {
+      throw new Error('Unexpected end of input');
     }
 
+    // Capture the actual end token for shape mapping
+    const actualEndToken = tokens[i].type;
+
     // Skip the shape end delimiter
-    if (i < tokens.length && tokens[i].type === shapeEndType) {
+    if (tokens[i].type === shapeEndType) {
       i++;
     }
 
@@ -4023,6 +4190,8 @@ class LezerFlowParser {
       /^<=+$/, // <==, <===, etc.
       /^[ox]-+$/, // o--, x--, etc.
       /^-+[ox]$/, // --o, --x, etc.
+      /^[ox]=+$/, // o==, x==, etc. (thick open with head)
+      /^=+[ox]$/, // ==o, ==x, etc. (thick close with head)
       /^<-\.$/, // <-.
       /^\.->$/, // .->
       /^=+$/, // open thick continuation (==, ===)
@@ -4909,6 +5078,188 @@ class LezerFlowParser {
     // Apply styles (if any)
     if (styles.length > 0 && positions.length > 0 && this.yy?.updateLink) {
       this.yy.updateLink(positions, styles);
+    }
+
+    return i;
+  }
+
+  /**
+   * Parse accTitle: single-line accessibility title
+   */
+  private parseAccTitleStatement(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): number {
+    let i = startIndex;
+    // Consume 'accTitle'
+    i++;
+    // Optional ':' which may come as a generic token (⚠) with value ':'
+    if (i < tokens.length && tokens[i].value.trim() === ':') {
+      i++;
+    }
+
+    // Collect text until semicolon or statement boundary/newline gap
+    let title = '';
+    while (i < tokens.length) {
+      const t = tokens[i];
+      if (t.type === 'SEMI') {
+        i++;
+        break;
+      }
+      // Stop on obvious statement starters/structural tokens
+      if (
+        ['GRAPH', 'SUBGRAPH', 'STYLE', 'CLASSDEF', 'CLASS', 'LINKSTYLE', 'CLICK'].includes(
+          t.type
+        ) ||
+        t.type === 'AMP' ||
+        t.type === 'LINK' ||
+        t.type === 'Arrow'
+      ) {
+        break;
+      }
+      // Stop if large gap (newline) and we already collected some text
+      if (title.length > 0 && i > startIndex + 1) {
+        const prev = tokens[i - 1];
+        const gap = t.from - prev.to;
+        if (gap > 5) {
+          break;
+        }
+      }
+
+      // Append with spacing rules
+      if (title.length === 0) {
+        title = t.value;
+      } else {
+        if (this.shouldAddSpaceBetweenTokens(title, t.value, t.type)) {
+          title += ' ' + t.value;
+        } else {
+          title += t.value;
+        }
+      }
+      i++;
+    }
+
+    title = title.trim();
+    if (this.yy && typeof (this.yy as any).setAccTitle === 'function') {
+      (this.yy as any).setAccTitle(title);
+    }
+
+    return i;
+  }
+
+  /**
+   * Parse accDescr: single-line or block form with braces
+   */
+  private parseAccDescrStatement(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): number {
+    let i = startIndex;
+    // Consume 'accDescr'
+    i++;
+
+    // Optional ':' which may come as a generic token (⚠) with value ':'
+    if (i < tokens.length && tokens[i].value.trim() === ':') {
+      i++;
+    }
+
+    // Block form if next token is DiamondStart ("{")
+    if (i < tokens.length && tokens[i].type === 'DiamondStart') {
+      const blockStart = tokens[i]; // '{'
+      i++;
+      // Find matching DiamondEnd ("}")
+      let j = i;
+      let blockEndIndex = -1;
+      while (j < tokens.length) {
+        if (tokens[j].type === 'DiamondEnd') {
+          blockEndIndex = j;
+          break;
+        }
+        j++;
+      }
+      if (blockEndIndex === -1) {
+        // No closing brace; fall back to single-line accumulation
+        return this.parseAccDescrSingleLine(tokens, i);
+      }
+
+      // Extract substring from original source preserving newlines, trim indentation and empty lines
+      const startPos = blockStart.to; // position right after '{'
+      const endPos = tokens[blockEndIndex].from; // position right before '}'
+      let raw = '';
+      try {
+        raw = this.originalSource.slice(startPos, endPos);
+      } catch (e) {
+        // Fallback to token concat if something goes wrong
+        return this.parseAccDescrSingleLine(tokens, i);
+      }
+
+      const lines = raw
+        .split(/\r?\n/)
+        .map((ln) => ln.trim())
+        .filter((ln) => ln.length > 0);
+      const descr = lines.join('\n');
+
+      if (this.yy && typeof (this.yy as any).setAccDescription === 'function') {
+        (this.yy as any).setAccDescription(descr);
+      }
+
+      // Move index past the closing brace
+      return blockEndIndex + 1;
+    }
+
+    // Otherwise, treat as single-line form
+    return this.parseAccDescrSingleLine(tokens, i);
+  }
+
+  private parseAccDescrSingleLine(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    startIndex: number
+  ): number {
+    let i = startIndex;
+    let descr = '';
+
+    while (i < tokens.length) {
+      const t = tokens[i];
+      if (t.type === 'SEMI') {
+        i++;
+        break;
+      }
+      // Stop at obvious statement boundaries
+      if (
+        ['GRAPH', 'SUBGRAPH', 'STYLE', 'CLASSDEF', 'CLASS', 'LINKSTYLE', 'CLICK'].includes(
+          t.type
+        ) ||
+        t.type === 'AMP' ||
+        t.type === 'LINK' ||
+        t.type === 'Arrow'
+      ) {
+        break;
+      }
+
+      // Stop if large gap (newline) and we already collected some text
+      if (descr.length > 0) {
+        const prev = tokens[i - 1];
+        const gap = t.from - prev.to;
+        if (gap > 5) {
+          break;
+        }
+      }
+
+      if (descr.length === 0) {
+        descr = t.value;
+      } else {
+        if (this.shouldAddSpaceBetweenTokens(descr, t.value, t.type)) {
+          descr += ' ' + t.value;
+        } else {
+          descr += t.value;
+        }
+      }
+      i++;
+    }
+
+    descr = descr.trim();
+    if (this.yy && typeof (this.yy as any).setAccDescription === 'function') {
+      (this.yy as any).setAccDescription(descr);
     }
 
     return i;

@@ -120,11 +120,17 @@ InvTrapEnd { invTrapEnd }
     "<--" $[-]* $[-xo>] |     // < + 2+ dashes + ending
     "--" $[-]* $[-xo>] |      // 2+ dashes + ending (includes --> and ---)
 
-    // Edge text start patterns - for patterns like A<-- text -->B
+    // Edge text start patterns - for patterns like A<-- text -->B and A x== text ==x B
     // These need to be separate from complete arrows to handle edge text properly
     "<--" |                   // Left-pointing edge text start (matches START_LINK)
     "<==" |                   // Left-pointing thick edge text start
     "<-." |                   // Left-pointing dotted edge text start (matches START_DOTTED_LINK)
+    "x--" |                   // Cross head open normal start (A x-- text --x B)
+    "o--" |                   // Circle head open normal start (A o-- text --o B)
+    "x==" |                   // Cross head open thick start (A x== text ==x B)
+    "o==" |                   // Circle head open thick start (A o== text ==o B)
+    "x-." |                   // Cross head open dotted start (A x-. text .-x B)
+    "o-." |                   // Circle head open dotted start (A o-. text .-o B)
 
     // Thick arrows - JISON: [xo<]?\=\=+[=xo>]
     // Optional left head + 2+ equals + right ending
