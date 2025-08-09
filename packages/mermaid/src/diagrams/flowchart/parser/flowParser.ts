@@ -112,7 +112,7 @@ class LezerFlowParser {
    * @returns Parse result (for compatibility)
    */
   parse(src: string): unknown {
-    console.log('UIO DEBUG: Our custom parser is being called with:', src);
+    log.debug('UIO Our custom parser is being called with:', src);
     if (!this.yy) {
       throw new Error('Parser database (yy) not initialized. Call parser.yy = new FlowDB() first.');
     }
@@ -151,7 +151,7 @@ class LezerFlowParser {
 
     // First pass: collect all tokens in order
     const tokens = this.collectTokens(tree, source);
-    console.log('UIO DEBUG: Collected tokens:', tokens);
+    log.debug('UIO Collected tokens:', tokens);
     log.debug('UIO Collected tokens:', tokens);
 
     // Preprocess tokens to merge fragmented edge patterns
@@ -168,7 +168,7 @@ class LezerFlowParser {
   private preprocessTokens(
     tokens: { type: string; value: string; from: number; to: number }[]
   ): { type: string; value: string; from: number; to: number }[] {
-    console.log('UIO DEBUG: Preprocessing tokens to merge fragmented edge patterns...');
+    log.debug('UIO Preprocessing tokens to merge fragmented edge patterns...');
 
     const processedTokens: { type: string; value: string; from: number; to: number }[] = [];
     let i = 0;
@@ -208,9 +208,7 @@ class LezerFlowParser {
         }
         if (prev && (prev.type === 'Identifier' || prev.type === 'NODE_STRING') && hasClosingTail) {
           const converted = { ...token, type: 'LINK' };
-          console.log(
-            `UIO DEBUG: Converted head-open token ${token.value} to LINK for double-ended arrow`
-          );
+          log.debug(`UIO Converted head-open token ${token.value} to LINK for double-ended arrow`);
           processedTokens.push(converted);
           i++;
           continue;
@@ -220,8 +218,8 @@ class LezerFlowParser {
       // Try to detect fragmented edge patterns
       const mergedPattern = this.tryMergeFragmentedEdgePattern(tokens, i);
       if (mergedPattern) {
-        console.log(
-          `UIO DEBUG: Merged fragmented edge pattern: ${mergedPattern.mergedTokens.map((t) => t.value).join(' ')}`
+        log.debug(
+          `UIO Merged fragmented edge pattern: ${mergedPattern.mergedTokens.map((t) => t.value).join(' ')}`
         );
         processedTokens.push(...mergedPattern.mergedTokens);
         i = mergedPattern.nextIndex;
@@ -251,7 +249,14 @@ class LezerFlowParser {
     // 2. A-- text including URL space and send -->B
     // 3. A---|text|B (pipe-delimited)
 
-    // Defer simple one-token edge merging until after checking for pipe or text-between-arrows
+    // First, handle the simplest case: a single token containing a complete edge like A---B, A-->B, A--xB
+    const single = tokens[startIndex];
+    if (single && this.isSimpleEdgePattern(single)) {
+      const merged = this.mergeSimpleEdgePattern(single as any);
+      return { mergedTokens: merged, nextIndex: startIndex + 1 };
+    }
+
+    // Defer other merging until after checking for pipe or text-between-arrows
     // This ensures patterns like A--text ... -->B are handled as text, not as A -- text.
 
     // Check for pipe-delimited pattern (A---|text|B)
@@ -259,8 +264,8 @@ class LezerFlowParser {
       const endIndex = this.findPipeDelimitedPatternEnd(tokens, startIndex);
       if (endIndex > startIndex) {
         const patternTokens = tokens.slice(startIndex, endIndex);
-        console.log(
-          `UIO DEBUG: Analyzing pipe-delimited edge pattern: ${patternTokens.map((t) => t.value).join(' ')}`
+        log.debug(
+          `UIO Analyzing pipe-delimited edge pattern: ${patternTokens.map((t) => t.value).join(' ')}`
         );
 
         const merged = this.detectAndMergeEdgePattern(patternTokens, tokens, startIndex);
@@ -319,8 +324,8 @@ class LezerFlowParser {
 
     // Extract the tokens that form this edge pattern
     const patternTokens = tokens.slice(startIndex, endIndex);
-    console.log(
-      `UIO DEBUG: Analyzing potential edge pattern: ${patternTokens.map((t) => t.value).join(' ')}`
+    log.debug(
+      `UIO Analyzing potential edge pattern: ${patternTokens.map((t) => t.value).join(' ')}`
     );
 
     // Try to detect specific patterns
@@ -549,8 +554,8 @@ class LezerFlowParser {
 
     const targetToken = tokens[tokens.length - 1];
 
-    console.log(
-      `UIO DEBUG: Pipe-delimited merge - source: ${sourceId}, arrow: ${arrow}, text: "${edgeText}", target: ${targetToken.value}`
+    log.debug(
+      `UIO Pipe-delimited merge - source: ${sourceId}, arrow: ${arrow}, text: "${edgeText}", target: ${targetToken.value}`
     );
 
     return [
@@ -2921,33 +2926,22 @@ class LezerFlowParser {
     console.log(`UIO DEBUG: parseEdgeWithIdStatement: skipping @ symbol`);
     i++; // Skip '@'
 
-    // Parse the arrow and target - use existing parseComplexArrowPattern
-    // Only allow a simple single-ended arrow here to avoid consuming across lines
-    const arrowToken = tokens[i];
-    const targetToken = tokens[i + 1];
-    if (!arrowToken || !(arrowToken.type === 'LINK' || arrowToken.type === 'Arrow')) {
-      console.log(
-        `UIO DEBUG: parseEdgeWithIdStatement: expected LINK/Arrow but got ${arrowToken?.type}`
-      );
-      return i + 1;
-    }
-    if (!targetToken || targetToken.type !== 'NODE_STRING') {
-      console.log(
-        `UIO DEBUG: parseEdgeWithIdStatement: expected NODE_STRING target but got ${targetToken?.type}`
-      );
+    // Parse the arrow/text/target using the same logic as general edges
+    const complex = this.parseComplexArrowPattern(tokens, i);
+    if (!complex) {
+      console.log(`UIO DEBUG: parseEdgeWithIdStatement: no valid arrow pattern after id`);
       return i + 1;
     }
 
-    const arrowVal = arrowToken.value;
-    const targetId = targetToken.value;
-    const text = '';
-    const type = this.getArrowType(arrowVal + '>'); // synthesize right head for typing when needed
-    const stroke = this.getArrowStroke(arrowVal + '>');
-    const length = this.getArrowLength(arrowVal + '>');
-    i += 2;
+    const { arrow: arrowVal, targetId, text, type, stroke, length, nextIndex } = complex;
+    i = nextIndex;
 
-    console.log(`UIO DEBUG: Creating edge with ID: ${sourceId} --[${edgeId}]--> ${targetId}`);
-    log.debug(`UIO Creating edge with ID: ${sourceId} --[${edgeId}]--> ${targetId}`);
+    console.log(
+      `UIO DEBUG: Creating edge with ID: ${sourceId} --[${edgeId}]--> ${targetId} (text: "${text}")`
+    );
+    log.debug(
+      `UIO Creating edge with ID: ${sourceId} --[${edgeId}]--> ${targetId} (text: "${text}")`
+    );
 
     if (this.yy) {
       // Create source vertex
@@ -4186,6 +4180,7 @@ class LezerFlowParser {
       /^=+>$/, // ==>, ===>, etc.
       /^-\.+-?$/, // -.--, -.-, etc. (legacy)
       /^\.+-?$/, // .-, .--, etc. (legacy)
+      /^\.+-[>ox]$/, // .-x, ..-o (closing dotted with head)
       /^<-+$/, // <--, <---, etc.
       /^<=+$/, // <==, <===, etc.
       /^[ox]-+$/, // o--, x--, etc.
@@ -4230,6 +4225,37 @@ class LezerFlowParser {
       console.log(
         `UIO DEBUG: parseComplexArrowPattern: processing token ${i}: ${token.type}:${token.value}`
       );
+
+      // Handle double-ended arrow heads tokenized as identifiers (e.g., 'x' or 'o')
+      if (
+        (token.type === 'Identifier' || token.type === 'NODE_STRING') &&
+        (token.value === 'x' || token.value === 'o') &&
+        arrowParts.length === 0
+      ) {
+        console.log(
+          `UIO DEBUG: parseComplexArrowPattern: treating '${token.value}' as arrow head prefix`
+        );
+        arrowParts.push(token.value);
+        i++;
+        continue;
+      }
+
+      // Handle combined head+open part tokens like 'x--', 'o--', 'x==', 'o==', 'x-.', 'o-.'
+      if (
+        (token.type === 'Identifier' || token.type === 'NODE_STRING') &&
+        arrowParts.length === 0
+      ) {
+        const m = /^(x|o)(--|==|-\.+)$/.exec(token.value);
+        if (m) {
+          console.log(
+            `UIO DEBUG: parseComplexArrowPattern: splitting combined head+open '${token.value}' into '${m[1]}' and '${m[2]}'`
+          );
+          arrowParts.push(m[1]);
+          arrowParts.push(m[2]);
+          i++;
+          continue;
+        }
+      }
 
       if (token.type === 'Arrow' || token.type === 'LINK') {
         console.log(`UIO DEBUG: parseComplexArrowPattern: found Arrow/LINK token: ${token.value}`);
