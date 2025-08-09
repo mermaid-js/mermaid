@@ -4211,7 +4211,7 @@ class LezerFlowParser {
     length: number;
     nextIndex: number;
   } | null {
-    console.log(`UIO DEBUG: parseComplexArrowPattern called at index ${startIndex}`);
+    log.debug(`UIO parseComplexArrowPattern called at index ${startIndex}`);
     let i = startIndex;
 
     // Collect all tokens until we find the target identifier
@@ -4222,8 +4222,8 @@ class LezerFlowParser {
 
     while (i < tokens.length) {
       const token = tokens[i];
-      console.log(
-        `UIO DEBUG: parseComplexArrowPattern: processing token ${i}: ${token.type}:${token.value}`
+      log.debug(
+        `UIO parseComplexArrowPattern: processing token ${i}: ${token.type}:${token.value}`
       );
 
       // Handle double-ended arrow heads tokenized as identifiers (e.g., 'x' or 'o')
@@ -4232,9 +4232,7 @@ class LezerFlowParser {
         (token.value === 'x' || token.value === 'o') &&
         arrowParts.length === 0
       ) {
-        console.log(
-          `UIO DEBUG: parseComplexArrowPattern: treating '${token.value}' as arrow head prefix`
-        );
+        log.debug(`UIO parseComplexArrowPattern: treating '${token.value}' as arrow head prefix`);
         arrowParts.push(token.value);
         i++;
         continue;
@@ -4247,8 +4245,8 @@ class LezerFlowParser {
       ) {
         const m = /^(x|o)(--|==|-\.+)$/.exec(token.value);
         if (m) {
-          console.log(
-            `UIO DEBUG: parseComplexArrowPattern: splitting combined head+open '${token.value}' into '${m[1]}' and '${m[2]}'`
+          log.debug(
+            `UIO parseComplexArrowPattern: splitting combined head+open '${token.value}' into '${m[1]}' and '${m[2]}'`
           );
           arrowParts.push(m[1]);
           arrowParts.push(m[2]);
@@ -4258,12 +4256,12 @@ class LezerFlowParser {
       }
 
       if (token.type === 'Arrow' || token.type === 'LINK') {
-        console.log(`UIO DEBUG: parseComplexArrowPattern: found Arrow/LINK token: ${token.value}`);
+        log.debug(`UIO parseComplexArrowPattern: found Arrow/LINK token: ${token.value}`);
 
         // If we already have text, check if this LINK token should be treated as text or arrow part
         if (foundText && !this.isArrowContinuation(token.value)) {
           // This LINK token is part of the text, not the arrow
-          console.log(`UIO DEBUG: parseComplexArrowPattern: treating LINK as text: ${token.value}`);
+          log.debug(`UIO parseComplexArrowPattern: treating LINK as text: ${token.value}`);
           text += ' ' + token.value;
         } else {
           // This is part of the arrow pattern
@@ -4283,10 +4281,10 @@ class LezerFlowParser {
         arrowParts.push(token.value);
       } else if (token.type === 'STR') {
         // Handle quoted strings for edge text; preserve quotes so processNodeText can derive labelType
-        console.log(`UIO DEBUG: parseComplexArrowPattern: found STR token: ${token.value}`);
+        log.debug(`UIO parseComplexArrowPattern: found STR token: ${token.value}`);
         if (!foundText) {
-          console.log(
-            `UIO DEBUG: parseComplexArrowPattern: setting text = ${token.value} (from STR, preserving quotes)`
+          log.debug(
+            `UIO parseComplexArrowPattern: setting text = ${token.value} (from STR, preserving quotes)`
           );
           text = token.value; // Keep surrounding quotes; downstream will classify as 'string' or 'markdown'
           foundText = true;
@@ -4294,9 +4292,7 @@ class LezerFlowParser {
       } else if (
         token.type === 'Identifier' ||
         token.type === 'NODE_STRING' ||
-        token.type === '⚠' ||
-        token.type === 'DIR' ||
-        token.type === 'GRAPH'
+        this.isTextToken(token.type)
       ) {
         // This could be text or the target node
         // For single-ended arrows like A e1@----x B, B should be the target directly
@@ -4329,28 +4325,28 @@ class LezerFlowParser {
 
         if (isSingleEndedArrow) {
           // For single-ended arrows, this identifier is the target
-          console.log(
-            `UIO DEBUG: parseComplexArrowPattern: setting targetId = ${token.value} (single-ended arrow)`
+          log.debug(
+            `UIO parseComplexArrowPattern: setting targetId = ${token.value} (single-ended arrow)`
           );
           targetId = token.value;
           i++;
           break;
         } else if (arrowParts.length > 0 && !foundText) {
           // This is text in the middle of a double-ended arrow
-          console.log(
-            `UIO DEBUG: parseComplexArrowPattern: setting text = ${token.value} (double-ended arrow)`
+          log.debug(
+            `UIO parseComplexArrowPattern: setting text = ${token.value} (double-ended arrow)`
           );
           text = token.value;
           foundText = true;
         } else if (foundText && arrowParts.length <= 1) {
           // Continue collecting multi-word text until the second arrow begins
-          console.log(`UIO DEBUG: parseComplexArrowPattern: appending to text: ${token.value}`);
+          log.debug(`UIO parseComplexArrowPattern: appending to text: ${token.value}`);
           text += ' ' + token.value;
         } else if (foundText && arrowParts.length >= 2) {
           // We have text collected and have encountered the second arrow.
           // The current token is the identifier immediately after the second arrow.
-          console.log(
-            `UIO DEBUG: parseComplexArrowPattern: setting targetId = ${token.value} (double-ended arrow with text)`
+          log.debug(
+            `UIO parseComplexArrowPattern: setting targetId = ${token.value} (double-ended arrow with text)`
           );
           targetId = token.value;
           i++;
@@ -4359,7 +4355,7 @@ class LezerFlowParser {
           // NOTE: fixed stray closing brace
           // No arrow parts yet, this might be the start of a pattern
           // But be conservative - don't assume single chars are arrow parts
-          console.log(`UIO DEBUG: parseComplexArrowPattern: no arrow parts yet, breaking`);
+          log.debug(`UIO parseComplexArrowPattern: no arrow parts yet, breaking`);
           break;
         }
       } else {
