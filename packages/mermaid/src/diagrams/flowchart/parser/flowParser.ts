@@ -249,17 +249,8 @@ class LezerFlowParser {
     // 2. A-- text including URL space and send -->B
     // 3. A---|text|B (pipe-delimited)
 
-    // First, handle the simplest case: a single token containing a complete edge like A---B, A-->B, A--xB
-    const single = tokens[startIndex];
-    if (single && this.isSimpleEdgePattern(single)) {
-      const merged = this.mergeSimpleEdgePattern(single as any);
-      return { mergedTokens: merged, nextIndex: startIndex + 1 };
-    }
-
-    // Defer other merging until after checking for pipe or text-between-arrows
-    // This ensures patterns like A--text ... -->B are handled as text, not as A -- text.
-
-    // Check for pipe-delimited pattern (A---|text|B)
+    // First, check for pipe-delimited pattern (A---|text|B), including fragmented tails like
+    // [NODE_STRING 'A', LINK '--', NODE_STRING '-', PIPE '|', ..., PIPE '|', NODE_STRING 'B']
     if (this.isPipeDelimitedEdgePattern(tokens, startIndex)) {
       const endIndex = this.findPipeDelimitedPatternEnd(tokens, startIndex);
       if (endIndex > startIndex) {
@@ -276,6 +267,13 @@ class LezerFlowParser {
           };
         }
       }
+    }
+
+    // Handle the simplest case: a single token containing a complete edge like A---B, A-->B, A--xB
+    const single = tokens[startIndex];
+    if (single && this.isSimpleEdgePattern(single)) {
+      const merged = this.mergeSimpleEdgePattern(single as any);
+      return { mergedTokens: merged, nextIndex: startIndex + 1 };
     }
 
     // Find the end of this potential edge pattern
@@ -490,39 +488,65 @@ class LezerFlowParser {
       return false;
     }
 
-    // First token should be NODE_STRING ending with arrow (like "A---", "A==>", "A-.-")
+    // First token normally is NODE_STRING ending with arrow (like "A---", "A==>", "A-.-").
+    // However, some inputs tokenize the tail as LINK + NODE_STRING '-' before the first pipe.
+    // Support both forms.
     const first = tokens[0];
-    if (first.type !== 'NODE_STRING' || !this.endsWithArrow(first.value)) {
-      return false;
-    }
 
-    // Second token should be PIPE
-    if (tokens[1].type !== 'PIPE') {
-      return false;
-    }
-
-    // Find the closing pipe and target
-    let closingPipeIndex = -1;
-    for (let i = 2; i < tokens.length; i++) {
-      if (tokens[i].type === 'PIPE') {
-        closingPipeIndex = i;
-        break;
+    if (first.type === 'NODE_STRING' && this.endsWithArrow(first.value)) {
+      // Case A: Compact form e.g., ["A---", "|", ..., "|", "B"]
+      if (tokens[1].type !== 'PIPE') {
+        return false;
       }
+      // Find the closing pipe and target
+      let closingPipeIndex = -1;
+      for (let i = 2; i < tokens.length; i++) {
+        if (tokens[i].type === 'PIPE') {
+          closingPipeIndex = i;
+          break;
+        }
+      }
+      if (closingPipeIndex === -1 || closingPipeIndex >= tokens.length - 1) {
+        return false;
+      }
+      const last = tokens[tokens.length - 1];
+      if (last.type !== 'NODE_STRING') {
+        return false;
+      }
+      const textTokens = tokens.slice(2, closingPipeIndex);
+      return textTokens.every((t) => this.isTextToken(t.type));
     }
 
-    if (closingPipeIndex === -1 || closingPipeIndex >= tokens.length - 1) {
-      return false;
+    // Case B: Fragmented tail such as ["A", "--", "-", "|", ..., "|", "B"]
+    if (
+      first.type === 'NODE_STRING' &&
+      tokens.length >= 5 &&
+      tokens[1].type === 'LINK' &&
+      (tokens[1].value === '--' || tokens[1].value === '==') &&
+      tokens[2].type === 'NODE_STRING' &&
+      tokens[2].value === '-' &&
+      tokens[3].type === 'PIPE'
+    ) {
+      // Find the closing pipe and ensure a NODE_STRING target exists
+      let closingPipeIndex = -1;
+      for (let i = 4; i < tokens.length; i++) {
+        if (tokens[i].type === 'PIPE') {
+          closingPipeIndex = i;
+          break;
+        }
+      }
+      if (closingPipeIndex === -1 || closingPipeIndex >= tokens.length - 1) {
+        return false;
+      }
+      const last = tokens[tokens.length - 1];
+      if (last.type !== 'NODE_STRING') {
+        return false;
+      }
+      const textTokens = tokens.slice(4, closingPipeIndex);
+      return textTokens.every((t) => this.isTextToken(t.type));
     }
 
-    // Last token should be NODE_STRING (target)
-    const last = tokens[tokens.length - 1];
-    if (last.type !== 'NODE_STRING') {
-      return false;
-    }
-
-    // All tokens between pipes should be text tokens
-    const textTokens = tokens.slice(2, closingPipeIndex);
-    return textTokens.every((t) => this.isTextToken(t.type));
+    return false;
   }
 
   /**
@@ -756,24 +780,28 @@ class LezerFlowParser {
    * Check if a token type can be treated as text in edge patterns
    */
   private isTextToken(tokenType: string): boolean {
+    // Treat a wide set of tokens as allowable middle text between arrows.
+    // This matches JISON behavior where many keywords are allowed in edge labels.
     return (
       tokenType === 'NODE_STRING' ||
-      tokenType === 'GRAPH' ||
-      tokenType === 'DIR' ||
       tokenType === 'STR' ||
       tokenType === 'Flowchart' ||
+      tokenType === 'GRAPH' ||
+      tokenType === 'DIR' ||
       tokenType === 'SUBGRAPH' ||
       tokenType === 'END' ||
       tokenType === 'STYLE' ||
       tokenType === 'CLASS' ||
-      tokenType === 'LINK_TARGET' ||
       tokenType === 'CLASSDEF' ||
+      tokenType === 'LINKSTYLE' ||
+      tokenType === 'INTERPOLATE' ||
+      tokenType === 'DEFAULT' ||
       tokenType === 'CLICK' ||
       tokenType === 'HREF' ||
       tokenType === 'CALL' ||
-      tokenType === 'LINKSTYLE' ||
-      tokenType === 'INTERPOLATE' ||
-      tokenType === 'DEFAULT'
+      tokenType === 'LINK_TARGET' ||
+      tokenType === 'SLASH' || // for '/'
+      tokenType === 'BACKTICK' // for '`'
     );
   }
 
@@ -862,6 +890,15 @@ class LezerFlowParser {
     for (let i = 1; i < tokens.length - 1; i++) {
       const token = tokens[i];
       if (this.isTextToken(token.type)) {
+        // Normalize single-character separator tokens into their literal form for text
+        if (token.type === 'SLASH') {
+          textParts.push('/');
+          continue;
+        }
+        if (token.type === 'BACKTICK') {
+          textParts.push('`');
+          continue;
+        }
         // Check if this is a token that ends with '--' and should have it removed
         if (token.value.endsWith('--') && i < tokens.length - 1) {
           // Check if the next token is TagEnd (>) - this indicates it's the arrow end
@@ -1412,8 +1449,8 @@ class LezerFlowParser {
         hasEmbeddedArrowWithPipe ||
         hasEmbeddedArrowWithNode)
     ) {
-      console.log(
-        `UIO DEBUG: Taking edge statement path (found edge token in lookahead or split arrow pattern)`
+      log.debug(
+        `UIO Taking edge statement path (found edge token in lookahead or split arrow pattern)`
       );
       return this.parseEdgeStatement(tokens, i);
     }
@@ -3810,7 +3847,7 @@ class LezerFlowParser {
         const closingLink = tokens[i + 1].value; // e.g., '.-', '..-', '...-'
         const targetToken = tokens[i + 2];
 
-        const dotCount = (closingLink.match(/\./g) || []).length; // 1..N
+        const dotCount = (closingLink.match(/\./g) ?? []).length; // 1..N
         const targetId = targetToken.value;
         i = i + 3; // consume label, closing link, and target
 
@@ -3820,6 +3857,39 @@ class LezerFlowParser {
           targetId,
           text: labelToken.value,
           type: 'arrow_open',
+          stroke: 'dotted',
+          length: dotCount,
+          nextIndex: i,
+        };
+      }
+
+      // Special-case: dotted labelled with arrow head like: A -. Label .-> B (length 1..)
+      // After firstArrow ('-.'), expect: LABEL (NODE_STRING), CLOSING LINK WITH HEAD ('.->','..->','...->'), TARGET
+      if (
+        firstArrow === '-.' &&
+        i + 2 < tokens.length &&
+        tokens[i].type === 'NODE_STRING' &&
+        tokens[i + 1].type === 'LINK' &&
+        /^(\.+)->$/.test(tokens[i + 1].value) &&
+        (tokens[i + 2].type === 'Identifier' ||
+          tokens[i + 2].type === 'NODE_STRING' ||
+          tokens[i + 2].type === 'DIR')
+      ) {
+        const labelToken = tokens[i];
+        const closingLinkWithHead = tokens[i + 1].value; // '.->', '..->', ...
+        const targetToken = tokens[i + 2];
+
+        const dotCount = (closingLinkWithHead.match(/\./g) ?? []).length; // 1..N
+        const targetId = targetToken.value;
+        i = i + 3; // consume label, closing + head, and target
+
+        // Canonicalize to dotted arrow with point head of matching length
+        const arrowCanonical = `-${'.'.repeat(dotCount)}->`;
+        return {
+          arrow: arrowCanonical,
+          targetId,
+          text: labelToken.value,
+          type: 'arrow_point',
           stroke: 'dotted',
           length: dotCount,
           nextIndex: i,
