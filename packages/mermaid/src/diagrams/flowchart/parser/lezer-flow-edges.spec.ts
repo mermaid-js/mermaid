@@ -136,6 +136,16 @@ describe('[Lezer Edges] when parsing', () => {
           expect(edges[0].stroke).toBe(`${edgeType.stroke}`);
         });
       });
+
+      it('should treat @ inside label as text (double-ended with id)', () => {
+        const result = flowParser.parser.parse(`flowchart TD;\nA e1@x-- foo@bar --x B;`);
+        const edges = flowParser.parser.yy.getEdges();
+        expect(edges.length).toBe(1);
+        expect(edges[0].id).toBe('e1');
+        expect(edges[0].type).toBe('double_arrow_cross');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].text).toBe('foo @ bar');
+      });
     });
   });
 

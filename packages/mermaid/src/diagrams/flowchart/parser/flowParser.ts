@@ -1127,7 +1127,7 @@ class LezerFlowParser {
     while (i < tokens.length) {
       const token = tokens[i];
 
-      console.log(`UIO DEBUG: Processing token ${i}: ${token.type} = "${token.value}"`);
+      log.debug(`UIO Processing token ${i}: ${token.type} = "${token.value}"`);
       log.debug(`UIO Processing token ${i}: ${token.type} = "${token.value}"`);
 
       switch (token.type) {
@@ -1306,12 +1306,12 @@ class LezerFlowParser {
 
     // Look ahead to determine what kind of statement this is
     const lookahead = this.lookAhead(tokens, i, 10);
-    console.log(
-      `UIO DEBUG: parseStatement called at token ${i}: ${tokens[i]?.type}:${tokens[i]?.value}`
-    );
-    console.log(
-      `UIO DEBUG: parseStatement lookahead:`,
-      lookahead.slice(0, 5).map((t) => `${t.type}:${t.value}`)
+    log.debug(`UIO parseStatement called at token ${i}: ${tokens[i]?.type}:${tokens[i]?.value}`);
+    log.debug(
+      `UIO parseStatement lookahead: ${lookahead
+        .slice(0, 5)
+        .map((t) => `${t.type}:${t.value}`)
+        .join(', ')}`
     );
     log.debug(
       `UIO Parsing statement, lookahead:`,
@@ -2490,6 +2490,15 @@ class LezerFlowParser {
       console.log(`UIO DEBUG: collectAdditionalTargets: Found additional target ${cleanNodeId}`);
 
       i += 2; // Skip AMP and NODE_STRING
+
+      // If the next token is a shape-start, stop here and set lastReferencedNodeId to this target
+      if (i < tokens.length && this.isShapeStart(tokens[i].type)) {
+        this.lastReferencedNodeId = cleanNodeId;
+        console.log(
+          `UIO DEBUG: collectAdditionalTargets: Next token is shape-start for ${cleanNodeId}, setting lastReferencedNodeId and stopping collection`
+        );
+        break;
+      }
     }
 
     return {
@@ -3082,34 +3091,33 @@ class LezerFlowParser {
     tokens: { type: string; value: string; from: number; to: number }[],
     startIndex: number
   ): number {
-    console.log(`UIO DEBUG: parseEdgeWithIdStatement called at index ${startIndex}`);
+    log.debug(`UIO parseEdgeWithIdStatement called at index ${startIndex}`);
     let i = startIndex;
 
     // Get source node
     const sourceId = tokens[i].value;
-    console.log(`UIO DEBUG: parseEdgeWithIdStatement: sourceId = ${sourceId}`);
+    log.debug(`UIO parseEdgeWithIdStatement: sourceId = ${sourceId}`);
     i++; // Skip source node
 
     // Get edge ID
     const edgeId = tokens[i].value;
-    console.log(`UIO DEBUG: parseEdgeWithIdStatement: edgeId = ${edgeId}`);
+    log.debug(`UIO parseEdgeWithIdStatement: edgeId = ${edgeId}`);
     i++; // Skip edge ID
 
     // Skip '@' symbol
-    console.log(`UIO DEBUG: parseEdgeWithIdStatement: skipping @ symbol`);
+    log.debug(`UIO parseEdgeWithIdStatement: skipping @ symbol`);
     i++; // Skip '@'
 
-    // First try complex arrow parsing (handles double-ended heads like x-- text --x and dotted x-. text .-x)
-    const complex = this.parseComplexArrowPattern(tokens, i);
-    let parsed = complex;
+    // Prefer simple edge pattern first to avoid cross-line greediness
+    let parsed = this.parseEdgePattern(tokens, i);
 
-    // Fallback to simple edge pattern if complex did not match
+    // Fallback to complex double-ended pattern only if simple did not match
     if (!parsed) {
-      parsed = this.parseEdgePattern(tokens, i);
+      parsed = this.parseComplexArrowPattern(tokens, i);
     }
 
     if (!parsed) {
-      console.log(`UIO DEBUG: parseEdgeWithIdStatement: no valid arrow pattern after id`);
+      log.debug(`UIO parseEdgeWithIdStatement: no valid arrow pattern after id`);
       return i + 1;
     }
 
@@ -3118,9 +3126,6 @@ class LezerFlowParser {
 
     console.log(
       `UIO DEBUG: Creating edge with ID: ${sourceId} --[${edgeId}]--> ${targetId} (text: "${text}")`
-    );
-    log.debug(
-      `UIO Creating edge with ID: ${sourceId} --[${edgeId}]--> ${targetId} (text: "${text}")`
     );
 
     if (this.yy) {
@@ -3139,8 +3144,8 @@ class LezerFlowParser {
       // Check if target node is followed by a shape delimiter
       // If so, don't create it here - let the main parser handle it as a shaped node
       const isTargetShaped = i < tokens.length && this.isShapeStart(tokens[i].type);
-      console.log(
-        `UIO DEBUG: parseEdgeWithIdStatement: targetId=${targetId}, nextToken=${tokens[i]?.type}:${tokens[i]?.value}, isTargetShaped=${isTargetShaped}`
+      log.debug(
+        `UIO parseEdgeWithIdStatement: targetId=${targetId}, nextToken=${tokens[i]?.type}:${tokens[i]?.value}, isTargetShaped=${isTargetShaped}`
       );
 
       if (!isTargetShaped) {
@@ -4532,6 +4537,27 @@ class LezerFlowParser {
     let text = '';
     let targetId = '';
     let foundText = false;
+    let rightArrowStarted = false; // becomes true once we see arrow tokens after label text
+
+    const appendToLabel = (value: string, prevToken?: { from: number; to: number }) => {
+      if (!foundText) {
+        text = value;
+        foundText = true;
+      } else {
+        // Prefer original spacing based on token positions, fall back to smart spacing
+        if (prevToken) {
+          const gap = tokens[i].from - prevToken.to;
+          if (gap > 0) {
+            text += ' '.repeat(gap);
+          } else if (this.shouldAddSpaceBetweenTokens(text, value, tokens[i].type)) {
+            text += ' ';
+          }
+        } else if (this.shouldAddSpaceBetweenTokens(text, value, tokens[i].type)) {
+          text += ' ';
+        }
+        text += value;
+      }
+    };
 
     while (i < tokens.length) {
       const token = tokens[i];
@@ -4573,11 +4599,15 @@ class LezerFlowParser {
 
         // If we already have text, check if this LINK token should be treated as text or arrow part
         if (foundText && !this.isArrowContinuation(token.value)) {
-          // This LINK token is part of the text, not the arrow
+          // Treat LINK as part of text
           log.debug(`UIO parseComplexArrowPattern: treating LINK as text: ${token.value}`);
-          text += ' ' + token.value;
+          const prev = i > 0 ? tokens[i - 1] : undefined;
+          appendToLabel(token.value, prev);
         } else {
           // This is part of the arrow pattern
+          if (foundText) {
+            rightArrowStarted = true;
+          }
           arrowParts.push(token.value);
         }
       } else if (token.type === 'Hyphen') {
@@ -4605,15 +4635,8 @@ class LezerFlowParser {
       } else if (token.type === 'At') {
         // Treat '@' as part of label text, not as an edge-id marker inside complex edge parsing
         log.debug(`UIO parseComplexArrowPattern: treating '@' as text`);
-        if (!foundText) {
-          text = '@';
-          foundText = true;
-        } else if (arrowParts.length <= 1) {
-          text += ' @';
-        } else {
-          // If we've already started the right side arrow, '@' cannot be part of the arrow, so ignore or append conservatively
-          text += ' @';
-        }
+        const prev = i > 0 ? tokens[i - 1] : undefined;
+        appendToLabel('@', prev);
       } else if (
         token.type === 'Identifier' ||
         token.type === 'NODE_STRING' ||
@@ -4663,11 +4686,12 @@ class LezerFlowParser {
           );
           text = token.value;
           foundText = true;
-        } else if (foundText && arrowParts.length <= 1) {
+        } else if (foundText && !rightArrowStarted) {
           // Continue collecting multi-word text until the second arrow begins
           log.debug(`UIO parseComplexArrowPattern: appending to text: ${token.value}`);
-          text += ' ' + token.value;
-        } else if (foundText && arrowParts.length >= 2) {
+          const prev = i > 0 ? tokens[i - 1] : undefined;
+          appendToLabel(token.value, prev);
+        } else if (foundText && rightArrowStarted) {
           // We have text collected and have encountered the second arrow.
           // The current token is the identifier immediately after the second arrow.
           log.debug(
@@ -4677,9 +4701,7 @@ class LezerFlowParser {
           i++;
           break;
         } else {
-          // NOTE: fixed stray closing brace
           // No arrow parts yet, this might be the start of a pattern
-          // But be conservative - don't assume single chars are arrow parts
           log.debug(`UIO parseComplexArrowPattern: no arrow parts yet, breaking`);
           break;
         }
