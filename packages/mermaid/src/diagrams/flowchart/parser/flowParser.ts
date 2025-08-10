@@ -4801,7 +4801,58 @@ class LezerFlowParser {
     let titleText = subgraphId;
     let titleType = subgraphLabelType as 'text' | 'markdown' | 'string';
     // Title-only mode if original token was STR
-    const titleOnly = tokens[i - 1] && tokens[i - 1].type === 'STR';
+    let titleOnly = tokens[i - 1] && tokens[i - 1].type === 'STR';
+
+    // Support unquoted multi-word titles (title-only header): subgraph old style that is broken
+    if (!titleOnly && i < tokens.length && tokens[i].type !== 'SquareStart') {
+      let j = i;
+      const parts: { value: string; from: number; to: number }[] = [
+        { value: idText, from: tokens[i - 1].from, to: tokens[i - 1].to },
+      ];
+      // Consume consecutive title tokens starting at current position
+      while (
+        j < tokens.length &&
+        (tokens[j].type === 'NODE_STRING' || tokens[j].type === 'STYLE')
+      ) {
+        const t = tokens[j];
+        // Stop if the next token is on a new line relative to the last collected segment
+        try {
+          const last = parts[parts.length - 1];
+          const between = this.originalSource.slice(last.to, t.from);
+          if (between.includes('\n')) {
+            break;
+          }
+        } catch {}
+        const tokenText = tokens[j].type === 'STYLE' ? 'style' : t.value;
+        parts.push({ value: tokenText, from: t.from, to: t.to });
+        j++;
+      }
+      if (parts.length > 1) {
+        // Combine with original spacing, stop if a newline is encountered
+        let combined = '';
+        for (let p = 0; p < parts.length; p++) {
+          const seg = parts[p];
+          if (p === 0) {
+            combined += seg.value;
+          } else {
+            const prev = parts[p - 1];
+            try {
+              const between = this.originalSource.slice(prev.to, seg.from);
+              if (between.includes('\n')) {
+                break;
+              }
+            } catch {}
+            const gap = seg.from - prev.to;
+            combined += gap > 0 ? ' '.repeat(gap) + seg.value : ' ' + seg.value;
+          }
+        }
+        combined = combined.replace(/\s+/g, ' ').trim();
+        titleOnly = true;
+        titleText = combined;
+        // Move i to the position after the last title token consumed
+        i = j;
+      }
+    }
 
     // Optional bracketed title: [Some Title] or ["Some Title"]
     if (i < tokens.length && tokens[i].type === 'SquareStart') {
@@ -4830,18 +4881,12 @@ class LezerFlowParser {
       titleType = processedTitle.type;
     }
 
-    console.log(`UIO DEBUG: parseSubgraphStatement: Parsing subgraph: ${subgraphId}`);
-    log.debug(`UIO Parsing subgraph: ${subgraphId}`);
-
     // Collect all nodes and directions mentioned within this subgraph
-    const subgraphDocument: any[] = [];
-    const mentionedNodes = new Set<string>();
+    const subgraphDocument: ({ stmt: 'dir'; value: string } | string)[] = [];
+    const mentionedNodesArr: string[] = [];
 
     while (i < tokens.length && tokens[i].type !== 'END') {
       const token = tokens[i];
-      console.log(
-        `UIO DEBUG: parseSubgraphStatement: Processing token ${i} inside subgraph: ${token.type}:${token.value}`
-      );
 
       switch (token.type) {
         case 'NODE_STRING': {
@@ -4861,6 +4906,10 @@ class LezerFlowParser {
             // Parse statement and collect all nodes mentioned
             // But be careful not to consume tokens beyond the END token
             const nodesBefore = this.yy ? new Set(this.yy.getVertices().keys()) : new Set();
+            const statementStartId = tokens[i].value; // Remember which node was referenced by this statement
+
+            // Capture number of edges before processing this statement
+            const edgesBefore = this.yy ? this.yy.getEdges().length : 0;
 
             // Find the next END token to limit parsing scope
             let endTokenIndex = -1;
@@ -4886,31 +4935,25 @@ class LezerFlowParser {
 
             const nodesAfter = this.yy ? new Set(this.yy.getVertices().keys()) : new Set();
 
-            // Track all nodes that were referenced in this statement
-            for (const node of nodesAfter) {
-              if (!nodesBefore.has(node)) {
-                mentionedNodes.add(String(node));
+            // Prefer edges for ordering when edges were added by this statement
+            const edgesAfter = this.yy ? this.yy.getEdges().length : 0;
+            if (this.yy && edgesAfter > edgesBefore) {
+              const edges = this.yy.getEdges();
+              for (let ei = edgesBefore; ei < edgesAfter; ei++) {
+                const e = edges[ei];
+                // Collect source then target; we'll reverse the whole list at the end (JISON behavior)
+                mentionedNodesArr.push(String(e.start));
+                mentionedNodesArr.push(String(e.end));
               }
-            }
+            } else {
+              // No edges added; this was a standalone node mention or shaped node
+              // Always record the referenced node, even if it existed before
+              mentionedNodesArr.push(String(statementStartId));
 
-            // Also check if this was a standalone node (just an identifier)
-            if (lookahead.length >= 1 && lookahead[0].type === 'NODE_STRING') {
-              // Check if this is not part of an edge (no arrow following)
-              const nextLookahead = this.lookAhead(tokens, i, 1);
-              if (nextLookahead.length === 0 || nextLookahead[0].type !== 'LINK') {
-                mentionedNodes.add(lookahead[0].value);
-                // Ensure the node exists in the graph
-                if (this.yy) {
-                  this.yy.addVertex(
-                    lookahead[0].value,
-                    { text: lookahead[0].value, type: 'text' },
-                    'round',
-                    [],
-                    [],
-                    '',
-                    {},
-                    undefined
-                  );
+              // Also include any new nodes created by this statement
+              for (const node of nodesAfter) {
+                if (!nodesBefore.has(node)) {
+                  mentionedNodesArr.push(String(node));
                 }
               }
             }
@@ -4956,10 +4999,10 @@ class LezerFlowParser {
 
           const nodesAfter = this.yy ? new Set(this.yy.getVertices().keys()) : new Set();
 
-          // Track all nodes that were referenced in this statement
+          // Track all nodes that were referenced in this statement (preserve insertion order)
           for (const node of nodesAfter) {
             if (!nodesBefore.has(node)) {
-              mentionedNodes.add(String(node));
+              mentionedNodesArr.push(String(node));
             }
           }
           break;
@@ -4978,14 +5021,9 @@ class LezerFlowParser {
     // Add all mentioned nodes to the document
 
     // Add mentioned nodes in reverse insertion order to match JISON ordering
-    const nodeArray = [...mentionedNodes];
-    nodeArray.reverse();
-    subgraphDocument.push(...nodeArray);
-
-    console.log(
-      `UIO DEBUG: parseSubgraphStatement: Final document for ${idText}:`,
-      subgraphDocument
-    );
+    // Reverse to match JISON order
+    mentionedNodesArr.reverse();
+    subgraphDocument.push(...mentionedNodesArr);
 
     if (this.yy && subgraphDocument.length > 0) {
       // Title-only case: pass same object for id and title so FlowDB infers generated id
@@ -5000,7 +5038,6 @@ class LezerFlowParser {
       }
     }
 
-    console.log(`UIO DEBUG: parseSubgraphStatement: Returning index ${i}`);
     return i;
   }
 
