@@ -4796,6 +4796,40 @@ class LezerFlowParser {
 
     i++;
 
+    // Prepare id/title handling and optional bracketed title
+    const idText = subgraphId;
+    let titleText = subgraphId;
+    let titleType = subgraphLabelType as 'text' | 'markdown' | 'string';
+    // Title-only mode if original token was STR
+    const titleOnly = tokens[i - 1] && tokens[i - 1].type === 'STR';
+
+    // Optional bracketed title: [Some Title] or ["Some Title"]
+    if (i < tokens.length && tokens[i].type === 'SquareStart') {
+      i++; // skip '['
+      let collected = '';
+      while (i < tokens.length && tokens[i].type !== 'SquareEnd') {
+        const t = tokens[i];
+        // Preserve spacing using token gaps
+        if (collected) {
+          const prev = tokens[i - 1];
+          const gap = t.from - prev.to;
+          if (gap > 0) {
+            collected += ' '.repeat(gap);
+          } else if (this.shouldAddSpaceBetweenTokens(collected, t.value, t.type)) {
+            collected += ' ';
+          }
+        }
+        collected += t.value;
+        i++;
+      }
+      if (i < tokens.length && tokens[i].type === 'SquareEnd') {
+        i++; // consume ']'
+      }
+      const processedTitle = processNodeText(collected);
+      titleText = processedTitle.text;
+      titleType = processedTitle.type;
+    }
+
     console.log(`UIO DEBUG: parseSubgraphStatement: Parsing subgraph: ${subgraphId}`);
     log.debug(`UIO Parsing subgraph: ${subgraphId}`);
 
@@ -4942,35 +4976,28 @@ class LezerFlowParser {
     }
 
     // Add all mentioned nodes to the document
-    subgraphDocument.push(...[...mentionedNodes]);
+
+    // Add mentioned nodes in reverse insertion order to match JISON ordering
+    const nodeArray = [...mentionedNodes];
+    nodeArray.reverse();
+    subgraphDocument.push(...nodeArray);
 
     console.log(
-      `UIO DEBUG: parseSubgraphStatement: Final document for ${subgraphId}:`,
+      `UIO DEBUG: parseSubgraphStatement: Final document for ${idText}:`,
       subgraphDocument
     );
-    console.log(`UIO DEBUG: parseSubgraphStatement: Mentioned nodes:`, [...mentionedNodes]);
 
     if (this.yy && subgraphDocument.length > 0) {
-      console.log(
-        `UIO DEBUG: parseSubgraphStatement: Creating subgraph ${subgraphId} with document:`,
-        subgraphDocument
-      );
-      log.debug(`UIO Creating subgraph ${subgraphId} with document:`, subgraphDocument);
-
-      // Use the preserved label type from earlier processing
-      console.log(
-        `UIO DEBUG: Creating subgraph with title: "${subgraphId}", labelType: "${subgraphLabelType}"`
-      );
-
-      // Call addSubGraph with the complete document (matching JISON approach)
-      this.yy.addSubGraph({ text: subgraphId }, subgraphDocument, {
-        text: subgraphId,
-        type: subgraphLabelType,
-      });
-    } else {
-      console.log(
-        `UIO DEBUG: parseSubgraphStatement: NOT creating subgraph - yy:${!!this.yy}, docLength:${subgraphDocument.length}`
-      );
+      // Title-only case: pass same object for id and title so FlowDB infers generated id
+      if (titleOnly) {
+        const same = { text: titleText, type: titleType } as const;
+        this.yy.addSubGraph(same as any, subgraphDocument, same as any);
+      } else {
+        this.yy.addSubGraph({ text: idText }, subgraphDocument, {
+          text: titleText,
+          type: titleType,
+        });
+      }
     }
 
     console.log(`UIO DEBUG: parseSubgraphStatement: Returning index ${i}`);
