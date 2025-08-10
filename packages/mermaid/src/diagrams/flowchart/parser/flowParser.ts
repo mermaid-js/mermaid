@@ -3099,8 +3099,15 @@ class LezerFlowParser {
     console.log(`UIO DEBUG: parseEdgeWithIdStatement: skipping @ symbol`);
     i++; // Skip '@'
 
-    // Parse the arrow/text/target using the standard edge parser (same as normal edges)
-    const parsed = this.parseEdgePattern(tokens, i);
+    // First try complex arrow parsing (handles double-ended heads like x-- text --x and dotted x-. text .-x)
+    const complex = this.parseComplexArrowPattern(tokens, i);
+    let parsed = complex;
+
+    // Fallback to simple edge pattern if complex did not match
+    if (!parsed) {
+      parsed = this.parseEdgePattern(tokens, i);
+    }
+
     if (!parsed) {
       console.log(`UIO DEBUG: parseEdgeWithIdStatement: no valid arrow pattern after id`);
       return i + 1;
@@ -4594,6 +4601,18 @@ class LezerFlowParser {
           );
           text = token.value; // Keep surrounding quotes; downstream will classify as 'string' or 'markdown'
           foundText = true;
+        }
+      } else if (token.type === 'At') {
+        // Treat '@' as part of label text, not as an edge-id marker inside complex edge parsing
+        log.debug(`UIO parseComplexArrowPattern: treating '@' as text`);
+        if (!foundText) {
+          text = '@';
+          foundText = true;
+        } else if (arrowParts.length <= 1) {
+          text += ' @';
+        } else {
+          // If we've already started the right side arrow, '@' cannot be part of the arrow, so ignore or append conservatively
+          text += ' @';
         }
       } else if (
         token.type === 'Identifier' ||
