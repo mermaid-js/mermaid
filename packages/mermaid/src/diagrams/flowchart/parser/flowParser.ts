@@ -269,34 +269,72 @@ class LezerFlowParser {
       }
     }
 
-    // Handle the simplest case: a single token containing a complete edge like A---B, A-->B, A--xB
-    const single = tokens[startIndex];
-    if (single && this.isSimpleEdgePattern(single)) {
-      const merged = this.mergeSimpleEdgePattern(single as any);
-      return { mergedTokens: merged, nextIndex: startIndex + 1 };
-    }
-
     // Find the end of this potential edge pattern
     let endIndex = startIndex;
     let foundArrowEnd = false;
 
     // Look ahead to find arrow end patterns
-    for (let i = startIndex; i < tokens.length && i < startIndex + 20; i++) {
+    // Start from the token after the opener to avoid treating the opening LINK "--" as the end
+    for (let i = startIndex + 1; i < tokens.length && i < startIndex + 40; i++) {
       const token = tokens[i];
       if (token.type === 'SEMI') {
         endIndex = i;
         break;
       }
+
+      if (token.type === 'LINK') {
+        const v = token.value;
+        const isClosing = v.includes('>') || /[ox]$/.test(v);
+        if (isClosing) {
+          foundArrowEnd = true;
+          endIndex = i + 1; // Include the target node
+          if (
+            i + 1 < tokens.length &&
+            (tokens[i + 1].type === 'NODE_STRING' ||
+              tokens[i + 1].type === 'Identifier' ||
+              tokens[i + 1].type === 'DIR')
+          ) {
+            endIndex = i + 2; // Include target node
+          }
+          break;
+        }
+        continue;
+      }
+
+      if (token.type === 'TagEnd') {
+        const prev = tokens[i - 1];
+        if (
+          prev &&
+          prev.type === 'NODE_STRING' &&
+          (prev.value.endsWith('--') || prev.value.endsWith('=='))
+        ) {
+          foundArrowEnd = true;
+          endIndex = i + 1;
+          if (
+            i + 1 < tokens.length &&
+            (tokens[i + 1].type === 'NODE_STRING' ||
+              tokens[i + 1].type === 'Identifier' ||
+              tokens[i + 1].type === 'DIR')
+          ) {
+            endIndex = i + 2;
+          }
+          break;
+        }
+      }
+
       if (
-        token.type === 'LINK' ||
-        token.type === 'TagEnd' ||
-        (token.type === 'NODE_STRING' &&
-          (token.value.endsWith('-->') || token.value.endsWith('-->')))
+        token.type === 'NODE_STRING' &&
+        (token.value.endsWith('-->') || token.value.endsWith('==>'))
       ) {
         foundArrowEnd = true;
-        endIndex = i + 1; // Include the target node
-        if (i + 1 < tokens.length && tokens[i + 1].type === 'NODE_STRING') {
-          endIndex = i + 2; // Include target node
+        endIndex = i + 1;
+        if (
+          i + 1 < tokens.length &&
+          (tokens[i + 1].type === 'NODE_STRING' ||
+            tokens[i + 1].type === 'Identifier' ||
+            tokens[i + 1].type === 'DIR')
+        ) {
+          endIndex = i + 2;
         }
         break;
       }
@@ -801,7 +839,8 @@ class LezerFlowParser {
       tokenType === 'CALL' ||
       tokenType === 'LINK_TARGET' ||
       tokenType === 'SLASH' || // for '/'
-      tokenType === 'BACKTICK' // for '`'
+      tokenType === 'BACKTICK' || // for '`'
+      tokenType === '⚠' // generic punctuation/token emitted by lexer (e.g., '/')
     );
   }
 
@@ -3795,7 +3834,7 @@ class LezerFlowParser {
     isSequentialChaining?: boolean;
   } | null {
     let i = startIndex;
-    console.log(
+    log.debug(
       `UIO DEBUG: parseEdgePattern called at index ${i}, token: ${tokens[i]?.type}:${tokens[i]?.value}`
     );
 
@@ -3804,7 +3843,7 @@ class LezerFlowParser {
     if (i < tokens.length && tokens[i].type === 'TagEnd' && tokens[i].value === '>') {
       // This is the ">" part of a split arrow like "A--" + ">"
       firstArrow = '-->';
-      console.log(
+      log.debug(
         `UIO DEBUG: parseEdgePattern: Detected split arrow pattern, treating as "${firstArrow}"`
       );
       i++;
@@ -3813,22 +3852,39 @@ class LezerFlowParser {
       firstArrow = tokens[i].value;
       i++;
     } else {
-      console.log(`UIO DEBUG: parseEdgePattern: No arrow/link token found at index ${i}`);
+      log.debug(`UIO DEBUG: parseEdgePattern: No arrow/link token found at index ${i}`);
       return null;
     }
 
+    // Attempt to normalize split arrow-heads like LINK:"--" + NODE_STRING:"x"/"o"
+    let arrowStartIndex = startIndex; // index of the last arrow-related token
+    if (
+      !this.isCompleteArrow(firstArrow) &&
+      i < tokens.length &&
+      tokens[i].type === 'NODE_STRING' &&
+      (tokens[i].value === 'x' || tokens[i].value === 'o')
+    ) {
+      firstArrow = `${firstArrow}${tokens[i].value}`; // e.g., "--" + "x" => "--x"
+      arrowStartIndex = i; // last arrow-related token index
+      i++; // consume head token
+      log.debug(`UIO DEBUG: parseEdgePattern: merged split head, firstArrow="${firstArrow}"`);
+    }
+
     // Check if this is a simple arrow (A --> B) or complex (A<-- text -->B)
-    console.log(
-      `UIO DEBUG: parseEdgePattern: firstArrow="${firstArrow}", isCompleteArrow=${this.isCompleteArrow(firstArrow)}`
+    const isNowComplete = this.isCompleteArrow(firstArrow);
+    log.debug(
+      `UIO DEBUG: parseEdgePattern: firstArrow="${firstArrow}", isCompleteArrow=${isNowComplete}`
     );
-    if (this.isCompleteArrow(firstArrow)) {
+    if (isNowComplete) {
       // Check for pipe-delimited text pattern: A---|text|B
-      console.log(
+      log.debug(
         `UIO DEBUG: parseEdgePattern: Checking for pipe at index ${i}, token: ${tokens[i]?.type}:${tokens[i]?.value}`
       );
       if (i < tokens.length && tokens[i].type === 'PIPE') {
-        console.log(`UIO DEBUG: parseEdgePattern: Found pipe, calling parsePipeDelimitedText`);
-        return this.parsePipeDelimitedText(tokens, startIndex, firstArrow);
+        log.debug(`UIO DEBUG: parseEdgePattern: Found pipe, calling parsePipeDelimitedText`);
+        // Use the index of the last arrow token so parsePipeDelimitedText finds the pipe at +1
+        const pdStart = arrowStartIndex;
+        return this.parsePipeDelimitedText(tokens, pdStart, firstArrow);
       }
 
       // Special-case: dotted labelled simple edge like: A -. Label .- B (length 1..)
@@ -4163,11 +4219,19 @@ class LezerFlowParser {
     // Collect text tokens until we find the closing pipe using smart spacing
     let text = '';
     while (i < tokens.length && tokens[i].type !== 'PIPE') {
+      const t = tokens[i];
       // Smart space handling: only add space if needed
-      if (text && this.shouldAddSpaceBetweenTokens(text, tokens[i].value, tokens[i].type)) {
+      if (text && this.shouldAddSpaceBetweenTokens(text, t.value, t.type)) {
         text += ' ';
       }
-      text += tokens[i].value;
+      // Normalize single-character separator tokens that lexer may emit
+      if (t.type === 'SLASH') {
+        text += '/';
+      } else if (t.type === 'BACKTICK') {
+        text += '`';
+      } else {
+        text += t.value;
+      }
       i++;
     }
 
@@ -4232,11 +4296,19 @@ class LezerFlowParser {
     // Collect text tokens until we find the closing pipe using smart spacing
     let text = '';
     while (i < tokens.length && tokens[i].type !== 'PIPE') {
+      const t = tokens[i];
       // Smart space handling: only add space if needed
-      if (text && this.shouldAddSpaceBetweenTokens(text, tokens[i].value, tokens[i].type)) {
+      if (text && this.shouldAddSpaceBetweenTokens(text, t.value, t.type)) {
         text += ' ';
       }
-      text += tokens[i].value;
+      // Normalize single-character separator tokens that lexer may emit
+      if (t.type === 'SLASH') {
+        text += '/';
+      } else if (t.type === 'BACKTICK') {
+        text += '`';
+      } else {
+        text += t.value;
+      }
       i++;
     }
 
