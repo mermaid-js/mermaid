@@ -65,10 +65,6 @@ export async function createGraphWithElements(
         node.width = boundingBox.width;
         node.height = boundingBox.height;
         graph.setNode(node.id, { ...node });
-        if (node.parentId) {
-          // Optionally store the parent relationship (Graphology doesn't have a native parent-child concept)
-          // e.g., you could update the node attributes or handle it as needed.
-        }
       }
     })
   );

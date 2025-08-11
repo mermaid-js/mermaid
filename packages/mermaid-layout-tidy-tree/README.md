@@ -8,44 +8,42 @@ This package provides a bidirectional tidy tree layout engine for Mermaid based 
 
 ## Usage
 
-flowchart-tidy-tree TD
-A --> B
-A --> C
-
+```
 ---
-
 config:
-layout: tidy-tree
-
+  layout: tidy-tree
 ---
-
-flowchart TD
-A --> B
-A --> C
+mindmap
+root((mindmap))
+  A
+  B
+```
 
 ### With bundlers
 
-sh
+```sh
 npm install @mermaid-js/layout-tidy-tree
+```
 
-ts
+```ts
 import mermaid from 'mermaid';
 import tidyTreeLayouts from '@mermaid-js/layout-tidy-tree';
 
 mermaid.registerLayoutLoaders(tidyTreeLayouts);
+```
 
 ### With CDN
 
-html
-
+```html
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
   import tidyTreeLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-tidy-tree@0/dist/mermaid-layout-tidy-tree.esm.min.mjs';
 
   mermaid.registerLayoutLoaders(tidyTreeLayouts);
 </script>
+```
 
-## Supported layouts
+## Tidy Tree Layout Overview
 
 tidy-tree: The bidirectional tidy tree layout
 
