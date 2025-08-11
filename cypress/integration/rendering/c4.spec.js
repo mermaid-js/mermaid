@@ -114,4 +114,50 @@ describe('C4 diagram', () => {
       {}
     );
   });
+
+  it('C4.6 should render dashed and dotted line styles for relations', () => {
+    imgSnapshotTest(
+      `
+      C4Context
+      title System Context with Different Line Styles
+      
+      Person(user, "User", "A user of the system")
+      System(systemA, "System A", "Main system")
+      System(systemB, "System B", "Secondary system")
+      System_Ext(systemC, "System C", "External system")
+      
+      Rel(user, systemA, "Uses", "HTTPS")
+      Rel(systemA, systemB, "Calls", "REST")
+      Rel(systemA, systemC, "Integrates", "SOAP")
+      
+      UpdateRelStyle(user, systemA, $lineStyle="dashed")
+      UpdateRelStyle(systemA, systemB, $lineStyle="dotted")
+      UpdateRelStyle(systemA, systemC, $lineStyle="solid", $lineColor="red")
+      `,
+      {}
+    );
+  });
+
+  it('C4.7 should render mixed line styles with bidirectional relations', () => {
+    imgSnapshotTest(
+      `
+      C4Container
+      title Container Diagram with Mixed Line Styles
+      
+      Container(web, "Web Application", "React", "Provides user interface")
+      Container(api, "API", "Node.js", "Handles business logic")
+      Container_Ext(db, "Database", "PostgreSQL", "Stores data")
+      Container(cache, "Cache", "Redis", "Caches frequently accessed data")
+      
+      BiRel(web, api, "Communicates with")
+      Rel(api, db, "Reads/Writes")
+      Rel(api, cache, "Caches data")
+      
+      UpdateRelStyle(web, api, $lineStyle="dashed", $lineColor="blue")
+      UpdateRelStyle(api, db, $lineStyle="dotted", $textColor="green")
+      UpdateRelStyle(api, cache, $lineStyle="solid")
+      `,
+      {}
+    );
+  });
 });
