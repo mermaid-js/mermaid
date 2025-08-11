@@ -29,7 +29,8 @@
     "pie diagram",
     "quadrant chart",
     "requirement diagram",
-    "graph"
+    "graph",
+    "eventmodeling diagram"
   ],
   "scripts": {
     "clean": "rimraf dist",

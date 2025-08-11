@@ -13,6 +13,8 @@ import type {
   PacketServices,
   GitGraph,
   GitGraphServices,
+  EventModeling,
+  EventModelingServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -21,6 +23,7 @@ import {
   createRadarServices,
   createPacketServices,
   createGitGraphServices,
+  createEventModelingServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -105,3 +108,15 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const eventModelingServices: EventModelingServices = createEventModelingServices().EventModeling;
+const eventModelingParser: LangiumParser = eventModelingServices.parser.LangiumParser;
+
+export function createEventModelingTestServices() {
+  const parse = (input: string) => {
+    return eventModelingParser.parse<EventModeling>(input);
+  };
+
+  return { services: gitGraphServices, parse };
+}
+export const eventModelingParse = createEventModelingTestServices().parse;
