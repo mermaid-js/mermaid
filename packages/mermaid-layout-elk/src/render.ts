@@ -2,7 +2,6 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
-import type { NodeChildren } from 'mermaid/dist/rendering-util/types.js';
 
 type Node = LayoutData['nodes'][number];
 // Used to calculate distances in order to avoid floating number rounding issues when comparing floating numbers
@@ -15,7 +14,7 @@ interface LabelData {
 }
 
 interface NodeWithVertex extends Omit<Node, 'domId'> {
-  children?: NodeChildren;
+  children?: LayoutData['nodes'];
   labelData?: LabelData;
   domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
 }

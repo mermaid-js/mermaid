@@ -69,13 +69,6 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
     fallback: 'cose-bilkent',
   });
   // For mindmap diagrams, prioritize mindmap-specific layout algorithm configuration
-  const preferredLayout = conf?.layoutAlgorithm ?? layout ?? 'cose-bilkent';
-  log.debug('Mindmap renderer - preferredLayout:', preferredLayout);
-  log.debug('Mindmap renderer - conf?.layoutAlgorithm:', conf?.layoutAlgorithm);
-  log.debug('Mindmap renderer - layout:', layout);
-
-  log.debug('Mindmap renderer - selected layoutAlgorithm:', data4Layout.layoutAlgorithm);
-  log.debug('APA01 Mindmap renderer - data4Layout.rootNode exists:', !!data4Layout.rootNode);
 
   data4Layout.diagramId = id;
 
