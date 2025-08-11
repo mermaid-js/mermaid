@@ -706,10 +706,9 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
 
   // Draw looping arrow as arc path
   actElem
-    .append('path')
-    .attr('d', `M ${cx},${cy - r}`)
-    .attr('stroke-width', 1.5)
-    .attr('marker-end', 'url(#filled-head-control)');
+    .append('line')
+    .attr('marker-end', 'url(#filled-head-control)')
+    .attr('transform', `translate(${cx}, ${cy - r})`);
 
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
@@ -775,7 +774,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
     .attr('stroke-width', 2);
 
   const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+  actor.height = bounds.height + (conf?.sequence?.labelBoxHeight ?? 0);
 
   if (!isFooter) {
     actorCnt++;
