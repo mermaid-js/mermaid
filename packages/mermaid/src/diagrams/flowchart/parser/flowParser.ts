@@ -185,6 +185,67 @@ class LezerFlowParser {
     while (i < tokens.length) {
       const token = tokens[i];
 
+      // Normalize reserved tokens when used as identifiers or inside identifiers
+      if (token.type === 'DEFAULT') {
+        const prev = processedTokens[processedTokens.length - 1];
+        // Keep DEFAULT only when used in linkStyle (immediately after LINKSTYLE)
+        if (!(prev && prev.type === 'LINKSTYLE')) {
+          processedTokens.push({ ...token, type: 'NODE_STRING', value: 'default' });
+          i++;
+          continue;
+        }
+      }
+      if (token.type === 'END') {
+        const prev = processedTokens[processedTokens.length - 1];
+        const next = i + 1 < tokens.length ? tokens[i + 1] : undefined;
+        let merged = false;
+        // Case 1: Merge prev + 'end' when adjacent (no whitespace)
+        if (
+          prev &&
+          (prev.type === 'Identifier' || prev.type === 'NODE_STRING') &&
+          prev.to === token.from
+        ) {
+          let newVal = prev.value + 'end';
+          let newTo = token.to;
+          // Also merge next if adjacent and identifier-like
+          if (
+            next &&
+            (next.type === 'Identifier' || next.type === 'NODE_STRING') &&
+            token.to === next.from
+          ) {
+            newVal += next.value;
+            newTo = next.to;
+            i += 1; // additionally skip next
+          }
+          // Replace prev with merged NODE_STRING
+          processedTokens[processedTokens.length - 1] = {
+            type: 'NODE_STRING',
+            value: newVal,
+            from: prev.from,
+            to: newTo,
+          } as any;
+          i++;
+          merged = true;
+          continue;
+        }
+        // Case 2: Merge 'end' + next when adjacent (start of identifier)
+        if (
+          next &&
+          (next.type === 'Identifier' || next.type === 'NODE_STRING') &&
+          token.to === next.from
+        ) {
+          processedTokens.push({
+            type: 'NODE_STRING',
+            value: 'end' + next.value,
+            from: token.from,
+            to: next.to,
+          } as any);
+          i += 2;
+          continue;
+        }
+        // Otherwise, keep END as a standalone token (e.g., subgraph end)
+      }
+
       // Skip non-statement tokens
       if (token.type === 'GRAPH' || token.type === 'DIR' || token.type === 'SEMI') {
         processedTokens.push(token);
@@ -1130,6 +1191,19 @@ class LezerFlowParser {
       log.debug(`UIO Processing token ${i}: ${token.type} = "${token.value}"`);
       log.debug(`UIO Processing token ${i}: ${token.type} = "${token.value}"`);
 
+      // Handle accessibility statements early to avoid misinterpreting them as nodes
+      if (typeof token.value === 'string') {
+        const v = token.value.trim();
+        if (v.startsWith('accTitle')) {
+          i = this.parseAccTitleStatement(tokens, i);
+          continue;
+        }
+        if (v.startsWith('accDescr')) {
+          i = this.parseAccDescrStatement(tokens, i);
+          continue;
+        }
+      }
+
       switch (token.type) {
         case 'GRAPH':
         case 'Flowchart':
@@ -1166,18 +1240,28 @@ class LezerFlowParser {
             break;
           }
 
-          // Priority 2: Orphaned shape token for the last referenced node (e.g., A-->B>text])
+          // Disambiguate TagEnd usage: odd-shape start vs continuation arrow head
+          if (token.type === 'TagEnd' && token.value === '>') {
+            const oddAhead = this.isOddShapeAhead(tokens, i);
+            if (oddAhead && this.lastReferencedNodeId) {
+              console.log(
+                `UIO DEBUG: TagEnd '>' detected odd-shape ahead; applying orphaned shape to ${this.lastReferencedNodeId}`
+              );
+              i = this.parseOrphanedShapeStatement(tokens, i);
+              break;
+            }
+            if (this.lastTargetNodes.length > 0) {
+              i = this.parseContinuationEdgeStatement(tokens, i);
+              break;
+            }
+          }
+
+          // Orphaned shape token for the last referenced node (e.g., A-->B>text])
           if (this.isShapeStart(token) && this.lastReferencedNodeId) {
             console.log(
               `UIO DEBUG: Detected orphaned shape token '${token.type}:${token.value}' for lastReferencedNodeId=${this.lastReferencedNodeId}`
             );
             i = this.parseOrphanedShapeStatement(tokens, i);
-            break;
-          }
-
-          // Priority 3: Continuation edge head (e.g., A-->B-->C)
-          if (token.type === 'TagEnd' && token.value === '>' && this.lastTargetNodes.length > 0) {
-            i = this.parseContinuationEdgeStatement(tokens, i);
             break;
           }
 
@@ -1265,6 +1349,7 @@ class LezerFlowParser {
         i++;
       } else if (token.type === 'TagEnd' && token.value === '>') {
         // Handle '>' as LR direction
+
         direction = 'LR';
         i++;
       } else if (token.value === '<' || token.value === '^' || token.value === 'v') {
@@ -1467,6 +1552,18 @@ class LezerFlowParser {
 
     if (hasVertexChaining) {
       console.log(`UIO DEBUG: Taking node statement path (vertex chaining detected)`);
+      return this.parseNodeStatement(tokens, i);
+    }
+
+    // Standalone class application before an edge: ':::className' applies to last created node
+    if (
+      lookahead.length >= 1 &&
+      lookahead[0].type === 'NODE_STRING' &&
+      lookahead[0].value.startsWith(':::')
+    ) {
+      console.log(
+        `UIO DEBUG: Taking node statement path (standalone inline class application detected)`
+      );
       return this.parseNodeStatement(tokens, i);
     }
 
@@ -1906,6 +2003,38 @@ class LezerFlowParser {
       return true;
     }
 
+    return false;
+  }
+
+  /**
+   * Heuristic: determine if a TagEnd '>' at index starts an odd-shape (>text])
+   * rather than acting as a split arrow head in chaining (e.g., B-->C --> D).
+   * Looks ahead a short distance: if we see a SquareEnd ']' without encountering
+   * another LINK/Arrow or semicolon, treat it as an odd-shape start.
+   */
+  private isOddShapeAhead(
+    tokens: { type: string; value: string; from: number; to: number }[],
+    index: number
+  ): boolean {
+    // Expect current token to be TagEnd '>'
+    let sawText = false;
+    for (let j = index + 1; j < Math.min(tokens.length, index + 12); j++) {
+      const t = tokens[j];
+      if (t.type === 'SEMI') {
+        return false;
+      } // statement end before shape close
+      if (t.type === 'LINK' || t.type === 'Arrow') {
+        return false;
+      } // likely part of an edge
+      if (t.type === 'SquareEnd') {
+        return sawText;
+      } // found closing ']' after some text
+      if (t.type === 'NODE_STRING' || t.type === 'STR' || t.type === '⚠') {
+        // Consider punctuation/text as content
+        sawText = true;
+        continue;
+      }
+    }
     return false;
   }
 
@@ -5029,9 +5158,9 @@ class LezerFlowParser {
       // Title-only case: pass same object for id and title so FlowDB infers generated id
       if (titleOnly) {
         const same = { text: titleText, type: titleType } as const;
-        this.yy.addSubGraph(same as any, subgraphDocument, same as any);
+        this.yy.addSubGraph(same as any, subgraphDocument as any, same as any);
       } else {
-        this.yy.addSubGraph({ text: idText }, subgraphDocument, {
+        this.yy.addSubGraph({ text: idText }, subgraphDocument as any, {
           text: titleText,
           type: titleType,
         });
