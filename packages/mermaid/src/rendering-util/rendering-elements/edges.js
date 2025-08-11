@@ -567,10 +567,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
 
   let animationClass = '';
   if (edge.animate) {
-    animationClass = ' edge-animation-fast';
+    animationClass = 'edge-animation-fast';
   }
   if (edge.animation) {
-    animationClass = ' edge-animation-' + edge.animation;
+    animationClass = 'edge-animation-' + edge.animation;
   }
 
   if (edge.look === 'handDrawn') {
@@ -589,7 +589,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       .attr('id', edge.id)
       .attr(
         'class',
-        ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '') + (animationClass ?? '')
+        ' ' +
+          strokeClasses +
+          (edge.classes ? ' ' + edge.classes : '') +
+          (animationClass ? ' ' + animationClass : '')
       )
       .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
     let d = svgPath.attr('d');
@@ -606,7 +609,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       .attr('id', edge.id)
       .attr(
         'class',
-        ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '') + (animationClass ?? '')
+        ' ' +
+          strokeClasses +
+          (edge.classes ? ' ' + edge.classes : '') +
+          (animationClass ? ' ' + animationClass : '')
       )
       .attr('style', pathStyle);
     strokeColor = pathStyle.match(/stroke:([^;]+)/)?.[1];
