@@ -9,62 +9,135 @@ interface Feature {
 interface EditorColumn {
   title: string;
   description: string;
-  redirectUrl: string;
-  buttonText: string;
+  redBarText?: string;
+  redirectUrl?: string;
+  buttonText?: string;
   highlighted?: boolean;
   proTrialUrl?: string;
+  proTrialButtonText?: string;
   features: Feature[];
+  isButtonMargined?: boolean;
 }
 
-const editorColumns: EditorColumn[] = [
-  {
-    title: 'Playground',
-    description: 'Basic features, no login',
-    redirectUrl:
-      'https://www.mermaidchart.com/play?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=playground',
-    buttonText: 'Start free',
-    features: [
-      { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
-      { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
-      { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
-    ],
-  },
-  {
-    title: 'Free or Pro',
-    description: 'Advanced features, Free or Pro account',
-    redirectUrl:
-      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart&redirect=%2Fapp%2Fdiagrams%2Fnew',
-    buttonText: 'Start Free',
-    highlighted: true,
-    proTrialUrl:
-      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection&utm_campaign=mermaid_chart_trial&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
-    features: [
-      { iconUrl: '/icons/folder.svg', featureName: 'Storage' },
-      { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
-      { iconUrl: '/icons/ai-diagram.svg', featureName: 'AI diagram generator' },
-      { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
-      { iconUrl: '/icons/group.svg', featureName: 'Teams' },
-      { iconUrl: '/icons/groups.svg', featureName: 'Multi-user editing' },
-      { iconUrl: '/icons/ai-repair.svg', featureName: 'AI diagram repair' },
-      { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
-      { iconUrl: '/icons/comment.svg', featureName: 'Comments' },
-      { iconUrl: '/icons/presentation.svg', featureName: 'Presentations' },
-      { iconUrl: '/icons/plugins.svg', featureName: 'Advanced Plugins' },
-    ],
-  },
-  {
-    title: 'Open Source',
-    description: 'Code only, no login',
-    redirectUrl: 'https://mermaid.live/edit',
-    buttonText: 'Start free',
-    features: [
-      { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
-      { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
-      { iconUrl: '/icons/open-source.svg', featureName: 'Open source' },
-      { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
-    ],
-  },
+const mermaidChartFeatures: Feature[] = [
+  { iconUrl: '/icons/folder.svg', featureName: 'Storage' },
+  { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
+  { iconUrl: '/icons/ai-diagram.svg', featureName: 'AI diagram generator' },
+  { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
+  { iconUrl: '/icons/group.svg', featureName: 'Teams' },
+  { iconUrl: '/icons/groups.svg', featureName: 'Multi-user editing' },
+  { iconUrl: '/icons/ai-repair.svg', featureName: 'AI diagram repair' },
+  { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
+  { iconUrl: '/icons/comment.svg', featureName: 'Comments' },
+  { iconUrl: '/icons/presentation.svg', featureName: 'Presentations' },
+  { iconUrl: '/icons/plugins.svg', featureName: 'Advanced Plugins' },
 ];
+
+const openSourceFeatures: Feature[] = [
+  { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
+  { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
+  { iconUrl: '/icons/open-source.svg', featureName: 'Open source' },
+  { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
+];
+
+const playgroundFeatures: Feature[] = [
+  { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
+  { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
+  { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
+];
+
+const editorColumnVariants: EditorColumn[][] = [
+  [
+    {
+      title: 'Playground',
+      description: 'Basic features, no login',
+      redirectUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=3_editor_selection_A&utm_campaign=start_playground',
+      buttonText: 'Start free',
+      features: playgroundFeatures,
+    },
+    {
+      title: 'Free or Pro',
+      description: 'Advanced features, Free or Pro account',
+      redirectUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=3_editor_selection_A&utm_campaign=start_free',
+      buttonText: 'Start Free',
+      highlighted: true,
+      redBarText: 'Best for collaboration',
+      features: mermaidChartFeatures,
+    },
+    {
+      title: 'Open Source',
+      description: 'Code only, no login',
+      redirectUrl: 'https://mermaid.live/edit',
+      buttonText: 'Start free',
+      features: openSourceFeatures,
+    },
+  ],
+  [
+    {
+      title: 'Mermaid Pro',
+      description: 'Unlock AI and real-time collaboration',
+      redirectUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection_B&utm_campaign=start_free',
+      buttonText: 'Start Free',
+      highlighted: true,
+      redBarText: 'Recommended',
+      proTrialButtonText: 'Start Pro trial',
+      proTrialUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection_B&utm_campaign=start_trial&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
+      features: mermaidChartFeatures,
+    },
+    {
+      title: 'Open Source',
+      description: 'Code only, no login',
+      redirectUrl: 'https://mermaid.live/edit',
+      buttonText: 'Start free',
+      isButtonMargined: true,
+      features: openSourceFeatures,
+    },
+  ],
+  [
+    {
+      title: 'Mermaid Pro',
+      description: 'Unlock AI and real-time collaboration',
+      highlighted: true,
+      redBarText: 'Recommended',
+      proTrialButtonText: 'Start free trial',
+      proTrialUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection_C&utm_campaign=start_trial&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
+      features: mermaidChartFeatures,
+    },
+    {
+      title: 'Open Source',
+      description: 'Code only, no login',
+      redirectUrl: 'https://mermaid.live/edit',
+      buttonText: 'Start free',
+      features: openSourceFeatures,
+    },
+  ],
+  [
+    {
+      title: 'Mermaid Pro',
+      description: 'Unlock AI and real-time collaboration',
+      highlighted: true,
+      redBarText: 'Recommended',
+      redirectUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection_D&utm_campaign=start_free',
+      buttonText: 'Start free',
+      features: mermaidChartFeatures,
+    },
+    {
+      title: 'Open Source',
+      description: 'Code only, no login',
+      redirectUrl: 'https://mermaid.live/edit',
+      buttonText: 'Start free',
+      features: openSourceFeatures,
+    },
+  ],
+];
+
+const editorColumns = editorColumnVariants[Math.floor(Math.random() * editorColumnVariants.length)];
 
 const isVisible = ref(false);
 
@@ -91,7 +164,7 @@ onUnmounted(() => {
 <template>
   <div
     v-if="isVisible"
-    class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center bg-[#8585A4]/40"
+    class="fixed top-0 left-0 z-50 flex h-screen w-screen backdrop-blur-sm items-center justify-center bg-[#8585A4]/40 plausible-event-name=editorSelectionModalOpen"
     @click.self="isVisible = false"
   >
     <div
@@ -99,6 +172,7 @@ onUnmounted(() => {
     >
       <div
         v-for="column in editorColumns"
+        :key="column.title"
         class="sm:w-96 flex relative flex-col justify-start items-center p-6 sm:p-8 text-gray-800 shadow w-full"
         :class="
           column.highlighted ? 'bg-white rounded-b-3xl mt-10 sm:mt-0' : 'bg-[#DCEEF1] rounded-3xl'
@@ -108,33 +182,35 @@ onUnmounted(() => {
           v-if="column.highlighted"
           class="absolute -top-10 w-full rounded-t-3xl bg-[#E0095F] py-2 flex justify-center"
         >
-          <p class="text-lg font-semibold text-white">Best for collaboration</p>
+          <p class="text-lg font-semibold text-white">{{ column.redBarText }}</p>
         </div>
+
         <header class="mb-6 w-full text-start space-y-1">
-          <p class="text-2xl font-medium text-[#1E1A2E]">
-            {{ column.title }}
-          </p>
-          <p class="text-sm text-gray-600">
-            {{ column.description }}
-          </p>
+          <p class="text-2xl font-medium text-[#1E1A2E]">{{ column.title }}</p>
+          <p class="text-sm text-gray-600">{{ column.description }}</p>
         </header>
+
         <a
+          v-if="column.redirectUrl"
           :href="column.redirectUrl"
           target="_blank"
           class="flex h-10 w-full bg-[#BEDDE3] hover:bg-[#5CA3B4] text-[#1E1A2E] items-center justify-center rounded-xl hover:text-white hover:shadow-md"
-          :class="column.highlighted ? 'mb-6' : 'mb-[88px]'"
+          :class="column.isButtonMargined ? 'mb-[88px]' : ' mb-6'"
         >
           {{ column.buttonText }}
         </a>
+
         <a
           v-if="column.proTrialUrl"
           :href="column.proTrialUrl"
           target="_blank"
           class="mb-6 flex h-10 w-full text-white items-center justify-center rounded-xl bg-[#E0095F] hover:bg-[#B0134A]"
         >
-          Start Pro trial
+          {{ column.proTrialButtonText || 'Start Pro trial' }}
         </a>
+
         <div class="h-px w-full bg-[#bedde3] mb-6"></div>
+
         <ul class="w-full space-y-2">
           <li
             v-for="{ iconUrl, featureName } in column.features"
