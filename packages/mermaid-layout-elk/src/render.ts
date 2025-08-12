@@ -766,7 +766,7 @@ export const render = async (
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'elk.layered.crossingMinimization.forceNodeModelOrder': true,
+      'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
       'elk.algorithm': algorithm,
       'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
