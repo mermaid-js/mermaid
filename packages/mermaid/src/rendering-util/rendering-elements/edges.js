@@ -356,32 +356,11 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
   return points;
 };
 
-
 const generateDashArray = (len, oValueS, oValueE) => {
   const middleLength = len - oValueS - oValueE;
   const dashLength = 2; // Length of each dash
   const gapLength = 2; // Length of each gap
   const dashGapPairLength = dashLength + gapLength;
-
-  // Calculate number of complete dash-gap pairs that can fit
-  const numberOfPairs = Math.floor(middleLength / dashGapPairLength);
-
-  // Generate the middle pattern array
-  const middlePattern = Array(numberOfPairs).fill(`${dashLength} ${gapLength}`).join(' ');
-
-  // Combine all parts
-  const dashArray = `0 ${oValueS} ${middlePattern} ${oValueE}`;
-
-  return dashArray;
-};
-
-const adjustForArrowHeads = function (lineData, size = 5) {
-  if (!Array.isArray(lineData) || lineData.length < 2) {
-    return lineData;
-  }
-  const newLineData = [...lineData];
-  const lastPoint = lineData[lineData.length - 1];
-  const secondLastPoint = lineData[lineData.length - 2];
 
   // Calculate number of complete dash-gap pairs that can fit
   const numberOfPairs = Math.floor(middleLength / dashGapPairLength);

@@ -12,6 +12,12 @@ import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
 type Node = LayoutData['nodes'][number];
 
+// Minimal structural type to avoid depending on d3 Selection typings
+interface D3Selection<T extends Element> {
+  node(): T | null;
+  attr(name: string, value: string): D3Selection<T>;
+}
+
 interface LabelData {
   width: number;
   height: number;
@@ -22,7 +28,7 @@ interface LabelData {
 interface NodeWithVertex extends Omit<Node, 'domId'> {
   children?: LayoutData['nodes'];
   labelData?: LabelData;
-  domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
+  domId?: D3Selection<SVGAElement | SVGGElement>;
 }
 
 export const render = async (
@@ -205,25 +211,19 @@ export const render = async (
       });
     });
 
-    subgraphs.forEach(function (subgraph: { id: string | number }) {
-      const data: any = { id: subgraph.id };
-      if (parentLookupDb.parentById[subgraph.id] !== undefined) {
-        data.parent = parentLookupDb.parentById[subgraph.id];
-      }
-    });
     return parentLookupDb;
   };
 
   const getEdgeStartEndPoint = (edge: any) => {
-    const source: any = edge.start;
-    const target: any = edge.end;
+    // edge.start and edge.end are IDs (string/number) in our layout data
+    const sourceId: string | number = edge.start;
+    const targetId: string | number = edge.end;
 
-    // Save the original source and target
-    const sourceId = source;
-    const targetId = target;
+    const source = sourceId;
+    const target = targetId;
 
-    const startNode = nodeDb[edge.start.id];
-    const endNode = nodeDb[edge.end.id];
+    const startNode = nodeDb[sourceId];
+    const endNode = nodeDb[targetId];
 
     if (!startNode || !endNode) {
       return { source, target };
@@ -365,8 +365,8 @@ export const render = async (
             break;
         }
 
-        edgeData.style = edgeData.style += style;
-        edgeData.labelStyle = edgeData.labelStyle += labelStyle;
+        edgeData.style += style;
+        edgeData.labelStyle += labelStyle;
 
         const conf = getConfig();
         if (edge.interpolate !== undefined) {
@@ -441,6 +441,7 @@ export const render = async (
       case 'RL':
         return 'LEFT';
       case 'TB':
+      case 'TD': // TD is an alias for TB in Mermaid
         return 'DOWN';
       case 'BT':
         return 'UP';
@@ -587,9 +588,7 @@ export const render = async (
     let lastOutsideEndIndex = -1;
 
     // Single iteration through the array
-    for (let i = 0; i < points.length; i++) {
-      const point = points[i];
-
+    for (const [i, point] of points.entries()) {
       // Check if this is the first point outside the start node
       if (firstOutsideStartIndex === -1 && outsideNode(startBounds, point)) {
         firstOutsideStartIndex = i;
@@ -864,9 +863,11 @@ export const render = async (
       'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
-      'spacing.baseValue': 35,
-      'elk.layered.unnecessaryBendpoints': true,
-      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
+      'spacing.baseValue': 25,
+      // 'elk.layered.unnecessaryBendpoints': true,
+      // 'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
+      // 'elk.layered.cycleBreaking.strategy': 'GREEDY_MODEL_ORDER',
+      // 'elk.layered.cycleBreaking.strategy': 'MODEL_ORDER',
       // 'spacing.nodeNode': 20,
       // 'spacing.nodeNodeBetweenLayers': 25,
       // 'spacing.edgeNode': 20,
@@ -876,22 +877,27 @@ export const render = async (
       // 'spacing.nodeSelfLoop': 20,
 
       // Tweaking options
-      // 'elk.layered.nodePlacement.favorStraightEdges': true,
-      // 'nodePlacement.feedbackEdges': true,
-      // 'elk.layered.wrapping.multiEdge.improveCuts': true,
-      // 'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
-      // 'elk.layered.wrapping.strategy': 'MULTI_EDGE',
-      // 'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
-      // 'elk.layered.mergeHierarchyEdges': true,
-      // 'elk.layered.feedbackEdges': true,
-      // 'elk.layered.crossingMinimization.semiInteractive': true,
-      // 'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
-      // 'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
-      // 'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
-      // 'elk.insideSelfLoops.activate': true,
-      // 'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
+      'nodePlacement.favorStraightEdges': true,
+      'elk.layered.nodePlacement.favorStraightEdges': true,
+      'nodePlacement.feedbackEdges': true,
+      'elk.layered.wrapping.multiEdge.improveCuts': true,
+      'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
+      'elk.layered.wrapping.strategy': 'MULTI_EDGE',
+      // 'elk.layered.wrapping.strategy': 'SINGLE_EDGE',
+      'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
+      'elk.layered.mergeHierarchyEdges': true,
+
+      'elk.layered.feedbackEdges': true,
+      'elk.layered.crossingMinimization.semiInteractive': true,
+      'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
+      'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
+      'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
+      'elk.insideSelfLoops.activate': true,
+      'elk.separateConnectedComponents': true,
+      'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
       // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES', // NODES_AND_EDGES
-      // 'elk.layered.wrapping.cutting.strategy': 'ARD', // NODES_AND_EDGES
+      'elk.layered.considerModelOrder.strategy': 'EDGES', // NODES_AND_EDGES
+      'elk.layered.wrapping.cutting.strategy': 'ARD', // NODES_AND_EDGES
     },
     children: [],
     edges: [],
@@ -931,15 +937,16 @@ export const render = async (
 
     // Subgraph
     if (parentLookupDb.childrenById[node.id] !== undefined) {
+      // Set label and adjust node width separately (avoid side effects in labels array)
       node.labels = [
         {
           text: node.label,
-          width: node?.labelData?.width || 50,
-          height: node?.labelData?.height || 50,
+          width: node?.labelData?.width ?? 50,
+          height: node?.labelData?.height ?? 50,
         },
-        (node.width = node.width + 2 * node.padding),
-        log.debug('UIO node label', node?.labelData?.width, node.padding),
       ];
+      node.width = node.width + 2 * node.padding;
+      log.debug('UIO node label', node?.labelData?.width, node.padding);
       node.layoutOptions = {
         'spacing.baseValue': 30,
         'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
@@ -1003,7 +1010,7 @@ export const render = async (
   try {
     g = await elk.layout(elkGraph);
     log.debug('APA01 after - success');
-    log.debug('APA01 layout result:', JSON.stringify(g, null, 2));
+    log.info('APA01 layout result:', JSON.stringify(g, null, 2));
   } catch (error) {
     log.error('APA01 ELK layout error:', error);
     throw error;
@@ -1067,7 +1074,7 @@ export const render = async (
           log.debug(
             'UIO width',
             startNode.id,
-            startNode.with,
+            startNode.width,
             'bbox.width=',
             bbox.width,
             'lw=',
@@ -1087,7 +1094,7 @@ export const render = async (
           log.debug(
             'UIO width',
             startNode.id,
-            startNode.with,
+            startNode.width,
             bbox.width,
             'EW = ',
             ew,
