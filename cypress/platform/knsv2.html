@@ -157,275 +157,93 @@
     <pre id="diagram4" class="mermaid">
       ---
       config:
-        layout: tidy-tree
+        layout: elk
+        flowchart:
+          curve: linear
       ---
-      mindmap
-      root((mindmap is a long thing))
-        A
-        B
-        C
-        D
-      </pre
-    >
-    <pre id="diagram4" class="mermaid">
-      ---
-      config:
-        layout: tidy-tree
-      ---
-      mindmap
-      root((mindmap))
-        A
-        B
-      </pre
-    >
-    <pre id="diagram4" class="mermaid">
-      ---
-      config:
-        layout: tidy-tree
-      ---
-      mindmap
-      root((mindmap))
-        A
-          a
-            apa[I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on]
-            apa2[I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on]
-          b
-          c
-          d
-        B
-            apa3[I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on]
-        D
-          apa5[I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on]
-          apa4[I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on]
+      flowchart LR
+          A[A] -- Mermaid js --> B[B]
+          A[A] -- Mermaid js --- B[B]
+          A@{ shape: diamond}
+          B@{ shape: diamond}
 
     </pre>
-
     <pre id="diagram4" class="mermaid">
-treemap
-"Section 1"
-    "Leaf 1.1": 12
-    "Section 1.2":::class1
-      "Leaf 1.2.1": 12
-"Section 2"
-    "Leaf 2.1": 20:::class1
-    "Leaf 2.2": 25
-    "Leaf 2.3": 12
-
-classDef class1   fill:red,color:blue,stroke:#FFD600;
-
-
-</pre
-    >
-    <pre id="diagram4" class="mermaid2">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: rounded
+      ---
+      flowchart LR
+          D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+          I --> D & D
+          D@{ shape: question}
+          I@{ shape: question}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: rounded
+        elk:
+          nodePlacementStrategy: NETWORK_SIMPLEX
+      ---
+      flowchart LR
+          D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+          D --> I & I
+          a["a"]
+          D@{ shape: trap-b}
+          I@{ shape: lean-l}
+    </pre>
+    <pre id="diagram4" class="mermaid">
 ---
 config:
-  treemap:
-    valueFormat: '$0,0'
+  layout: elk
+
 ---
-treemap
-"Budget"
-    "Operations"
-        "Salaries": 7000
-        "Equipment": 2000
-        "Supplies": 1000
-    "Marketing"
-        "Advertising": 4000
-        "Events": 1000
+flowchart LR
+ %% subgraph s1["Untitled subgraph"]
+        C["Evaluate"]
+ %% end
 
-</pre
-    >
+    B --> C
+    </pre>
     <pre id="diagram4" class="mermaid">
-    treemap
-      title Accessible Treemap Title
-      "Category A"
-          "Item A1": 10
-          "Item A2": 20
-      "Category B"
-          "Item B1": 15
-          "Item B2": 25
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      ---
-      config:
-        layout: tidy-tree
-      ---
-      mindmap
-      root((mindmap))
-        a
-          apa[I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on]
-          apa2[I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on]
-        b
-          apa3[I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on]
-          apa4[I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on. I am a long long multline string passing several levels of text. Lorum ipsum and so on]
-
+---
+config:
+  layout: elk
+  flowchart:
+    //curve: linear
+---
+flowchart LR
+%% A ==> B
+%% A2 --> B2
+A{A} --> B((Bo boo)) & B & B & B
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
-      ---
-      config:
-        layout: tidy-tree
-      ---
-      flowchart TB
-          A --> n0["1"]
-          A --> n1["2"]
-          A --> n2["3"]
-          A --> n3["4"] --> Q & R & S & T
-    </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
       ---
       config:
         layout: elk
-      ---
-      flowchart TB
-          A --> n0["1"]
-          A --> n1["2"]
-          A --> n2["3"]
-          A --> n3["4"] --> Q & R & S & T
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      ---
-      config:
-        layout: dagre
-      ---
-      mindmap
-      root((mindmap is a long thing))
-        Origins
-          Long history
-          ::icon(fa fa-book)
-          Popularisation
-            British popular psychology author Tony Buzan
-        Research
-          On effectiveness&lt;br/>and features
-          On Automatic creation
-            Uses
-                Creative techniques
-                Strategic planning
-                Argument mapping
-        Tools
-          Pen and paper
-          Mermaid
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      ---
-      config:
-        layout: cose-bilkent
-      ---
-      mindmap
-      root((mindmap))
-        Origins
-          Long history
-          ::icon(fa fa-book)
-          Popularisation
-            British popular psychology author Tony Buzan
-        Research
-          On effectiveness&lt;br/>and features
-          On Automatic creation
-            Uses
-                Creative techniques
-                Strategic planning
-                Argument mapping
-        Tools
-          Pen and paper
-          Mermaid
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      ---
-      config:
-        layout: elk
-      ---
-      mindmap
-      root((mindmap))
-        Origins
-          Long history
-          ::icon(fa fa-book)
-          Popularisation
-            British popular psychology author Tony Buzan
-        Research
-          On effectiveness&lt;br/>and features
-          On Automatic creation
-            Uses
-                Creative techniques
-                Strategic planning
-                Argument mapping
-        Tools
-          Pen and paper
-          Mermaid
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      ---
-      config:
-        layout: cose-bilkent
+        theme: default
+        look: classic
       ---
       flowchart LR
-      root{mindmap} --- Origins --- Europe
-      Origins --> Asia
-      root --- Background --- Rich
-      Background --- Poor
-      subgraph apa
-        Background
-        Poor
-      end
-
-
-
-
+       subgraph s1["APA"]
+              D{"Use the editor"}
+        end
+       subgraph S2["S2"]
+              s1
+              I>"fa:fa-code Text"]
+              E["E"]
+        end
+          D -- Mermaid js --> I
+          D --> I & E
+          E --> I
     </pre>
-    <pre id="diagram4" class="mermaid2">
-      ---
-      config:
-        layout: elk
-      ---
-      flowchart LR
-      root{mindmap} --- Origins --- Europe
-      Origins --> Asia
-      root --- Background --- Rich
-      Background --- Poor
-
-
-
-
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      flowchart
-        D(("for D"))
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      flowchart LR
-        A e1@==> B
-        e1@{ animate: true}
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-flowchart LR
-  A e1@--> B
-  classDef animate stroke-width:2,stroke-dasharray:10\,8,stroke-dashoffset:-180,animation: edge-animation-frame 6s linear infinite, stroke-linecap: round
-  class e1 animate
-    </pre>
-    <h2>infinite</h2>
-    <pre id="diagram4" class="mermaid2">
-flowchart LR
-  A e1@--> B
-  classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
-  class e1 animate
-    </pre>
-    <h2>Mermaid - edge-animation-slow</h2>
-    <pre id="diagram4" class="mermaid2">
-flowchart LR
-  A e1@--> B
-e1@{ animation: fast}
-    </pre>
-    <h2>Mermaid - edge-animation-fast</h2>
-    <pre id="diagram4" class="mermaid2">
-flowchart LR
-  A e1@--> B
-  classDef animate stroke-dasharray: 1000,stroke-dashoffset: 1000,animation: dash 10s linear;
-  class e1 edge-animation-fast
-    </pre>
-
-    <pre id="diagram4" class="mermaid2">
-
-info    </pre
-    >
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -463,45 +281,7 @@ config:
       D-->I
       D-->I
     </pre>
-    <pre id="diagram4" class="mermaid2">
----
-config:
-  layout: elk
----
-      flowchart LR
-      a
-      subgraph s0["APA"]
-      subgraph s8["APA"]
-      subgraph s1["APA"]
-        D{"X"}
-        E[Q]
-      end
-      subgraph s3["BAPA"]
-        F[Q]
-        I
-      end
-            D --> I
-            D --> I
-            D --> I
-
-      I{"X"}
-      end
-      end
-    </pre>
-    <pre id="diagram4" class="mermaid2">
----
-config:
-  layout: elk
----
-      flowchart LR
-      a
-        D{"Use the editor"}
-
-      D -- Mermaid js --> I{"fa:fa-code Text"}
-      D-->I
-      D-->I
-    </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -577,7 +357,7 @@ flowchart LR
     end
 </pre
     >
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -759,7 +539,7 @@ kanban
         // look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
-        // layout: 'elk',
+        layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
