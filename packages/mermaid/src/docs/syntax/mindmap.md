@@ -209,3 +209,20 @@ You can also refer the [implementation in the live editor](https://github.com/me
 cspell:locale en,en-gb
 cspell:ignore Buzan
 --->
+
+## Layouts
+
+Mermaid also supports a Tidy Tree layout for mindmaps.
+
+```
+---
+config:
+  layout: tidy-tree
+---
+mindmap
+root((mindmap is a long thing))
+  A
+  B
+  C
+  D
+```
