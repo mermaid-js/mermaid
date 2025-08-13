@@ -755,6 +755,11 @@ graph TD;A--x|text including URL space|B;`)
         expectedType: 'xychart',
         content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
       },
+      {
+        textDiagramType: 'xychart',
+        expectedType: 'xychart',
+        content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
+      },
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
