@@ -331,3 +331,5 @@ root((mindmap is a long thing))
   C
   D
 ```
+
+Instructions to add and register tidy-tree layout are present in [Tidy Tree Configuration](/config/tidy-tree)

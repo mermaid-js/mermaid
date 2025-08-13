@@ -203,6 +203,7 @@ function sidebarConfig() {
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },
+        { text: 'Tidy tree layout Instructions', link: '/config/tidy-tree' },
       ],
     },
   ];
