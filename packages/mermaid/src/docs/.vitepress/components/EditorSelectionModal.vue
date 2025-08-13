@@ -30,7 +30,7 @@ const mermaidChartFeatures: Feature[] = [
   { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
   { iconUrl: '/icons/comment.svg', featureName: 'Comments' },
   { iconUrl: '/icons/presentation.svg', featureName: 'Presentations' },
-  { iconUrl: '/icons/plugins.svg', featureName: 'Advanced Plugins' },
+  { iconUrl: '/icons/plugins.svg', featureName: 'Advanced plugins' },
 ];
 
 const openSourceFeatures: Feature[] = [
