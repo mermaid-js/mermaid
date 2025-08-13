@@ -51,17 +51,17 @@ const editorColumnVariants: EditorColumn[][] = [
     {
       title: 'Playground',
       description: 'Basic features, no login',
-      redirectUrl:
+      proTrialUrl:
         'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=3_editor_selection_A&utm_campaign=start_playground',
-      buttonText: 'Start free',
+      proTrialButtonText: 'Start free',
       features: playgroundFeatures,
     },
     {
       title: 'Free or Pro',
       description: 'Advanced features, Free or Pro account',
-      redirectUrl:
+      proTrialUrl:
         'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=3_editor_selection_A&utm_campaign=start_free',
-      buttonText: 'Start Free',
+      proTrialButtonText: 'Start free',
       highlighted: true,
       redBarText: 'Best for collaboration',
       features: mermaidChartFeatures,
@@ -69,8 +69,8 @@ const editorColumnVariants: EditorColumn[][] = [
     {
       title: 'Open Source',
       description: 'Code only, no login',
-      redirectUrl: 'https://mermaid.live/edit',
-      buttonText: 'Start free',
+      proTrialUrl: 'https://mermaid.live/edit',
+      proTrialButtonText: 'Start free',
       features: openSourceFeatures,
     },
   ],
@@ -91,8 +91,8 @@ const editorColumnVariants: EditorColumn[][] = [
     {
       title: 'Open Source',
       description: 'Code only, no login',
-      redirectUrl: 'https://mermaid.live/edit',
       buttonText: 'Start free',
+      redirectUrl: 'https://mermaid.live/edit',
       isButtonMargined: true,
       features: openSourceFeatures,
     },
@@ -111,8 +111,8 @@ const editorColumnVariants: EditorColumn[][] = [
     {
       title: 'Open Source',
       description: 'Code only, no login',
-      redirectUrl: 'https://mermaid.live/edit',
       buttonText: 'Start free',
+      redirectUrl: 'https://mermaid.live/edit',
       features: openSourceFeatures,
     },
   ],
@@ -122,9 +122,9 @@ const editorColumnVariants: EditorColumn[][] = [
       description: 'Unlock AI and real-time collaboration',
       highlighted: true,
       redBarText: 'Recommended',
-      redirectUrl:
+      proTrialButtonText: 'Start free',
+      proTrialUrl:
         'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection_D&utm_campaign=start_free',
-      buttonText: 'Start free',
       features: mermaidChartFeatures,
     },
     {
