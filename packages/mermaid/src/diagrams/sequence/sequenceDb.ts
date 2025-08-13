@@ -13,8 +13,7 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
-import type { ParticipantMetaData } from '../../types.js';
+import type { Actor, AddMessageParams, Box, Message, Note, ParticipantMetaData } from './types.js';
 
 interface SequenceState {
   prevActor?: string;
@@ -186,6 +185,7 @@ export class SequenceDB implements DiagramDB {
       actorCnt: null,
       rectData: null,
       type: type ?? 'participant',
+      doc: doc,
     });
     if (this.state.records.prevActor) {
       const prevActorInRecords = this.state.records.actors.get(this.state.records.prevActor);
