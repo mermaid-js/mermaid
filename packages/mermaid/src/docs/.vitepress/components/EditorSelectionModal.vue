@@ -51,9 +51,9 @@ const editorColumnVariants: EditorColumn[][] = [
     {
       title: 'Playground',
       description: 'Basic features, no login',
-      proTrialUrl:
+      redirectUrl:
         'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=3_editor_selection_A&utm_campaign=start_playground',
-      proTrialButtonText: 'Start free',
+      buttonText: 'Start free',
       features: playgroundFeatures,
     },
     {
@@ -69,8 +69,8 @@ const editorColumnVariants: EditorColumn[][] = [
     {
       title: 'Open Source',
       description: 'Code only, no login',
-      proTrialUrl: 'https://mermaid.live/edit',
-      proTrialButtonText: 'Start free',
+      redirectUrl: 'https://mermaid.live/edit',
+      buttonText: 'Start free',
       features: openSourceFeatures,
     },
   ],
