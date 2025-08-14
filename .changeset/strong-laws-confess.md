@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix: Remove data loss when unsupported markdown is encountered
+fix: fallback to raw text instead of rendering _Unsupported markdown_
