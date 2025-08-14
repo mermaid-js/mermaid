@@ -62,6 +62,8 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
       });
     } else if (treeNode.type === 'html') {
       lines[currentLine].push({ content: treeNode.text, type: 'normal' });
+    } else {
+      lines[currentLine].push({ content: treeNode.raw, type: 'normal' });
     }
   });
 
