@@ -235,6 +235,7 @@ export class MindmapDB {
         case nodeType.HEXAGON:
           return 'hexagon';
         case nodeType.DEFAULT:
+          return 'defaultMindmapNode';
         case nodeType.NO_BORDER:
         default:
           return 'rect';

@@ -63,6 +63,7 @@ import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
 import { bang } from './shapes/bang.js';
 import { cloud } from './shapes/cloud.js';
+import { defaultMindmapNode } from './shapes/defaultMindmapNode.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -144,6 +145,14 @@ export const shapesDefs = [
     description: 'Bang',
     aliases: ['bang'],
     handler: bang,
+  },
+  {
+    semanticName: 'Default Mindmap Node',
+    name: 'defaultMindmapNode',
+    shortName: 'default-mindmap',
+    description: 'defaultMindmapNode',
+    aliases: ['default-mindmap', 'defaultMindmapNode'],
+    handler: defaultMindmapNode,
   },
   {
     semanticName: 'Cloud',
