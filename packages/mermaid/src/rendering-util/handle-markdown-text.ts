@@ -3,6 +3,7 @@ import { marked } from 'marked';
 import { dedent } from 'ts-dedent';
 import type { MarkdownLine, MarkdownWordType } from './types.js';
 import type { MermaidConfig } from '../config.type.js';
+import { log } from '../logger.js';
 
 /**
  * @param markdown - markdown to process
@@ -89,7 +90,8 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
     } else if (node.type === 'escape') {
       return node.text;
     }
-    return `Unsupported markdown: ${node.type}`;
+    log.warn(`Unsupported markdown: ${node.type}`);
+    return node.raw;
   }
 
   return nodes.map(output).join('');
