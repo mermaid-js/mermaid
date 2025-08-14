@@ -1174,8 +1174,8 @@ end
     end
     githost["Github, Gitlab, BitBucket, etc."]
     githost2["\`Github, Gitlab, BitBucket, etc.\`"]
-    a["1."]
-    b["- x"]
+    a["\`1.\`"]
+    b["\`- x\`"]
       `;
 
     it('should render raw strings', () => {
