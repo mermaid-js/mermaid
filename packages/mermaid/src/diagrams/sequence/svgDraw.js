@@ -496,9 +496,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
 };
 const drawActorTypeImage = async function (elem, actor, conf, isFooter) {
   const img = new Image();
-  const sampleImage =
-    'https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjEwMTMtcC0wMDE5ZC0wMS1rc2k4YjVqbi5qcGc.jpg';
-  img.src = sampleImage ?? actor.doc.image ?? '';
+  img.src = actor.doc.image ?? '';
   await img.decode();
 
   const imageNaturalWidth = Number(img.naturalWidth.toString().replace('px', ''));
@@ -561,15 +559,30 @@ const drawActorTypeImage = async function (elem, actor, conf, isFooter) {
   const center = actor.x + actor.width / 2;
   const centerY = actorY + imageHeight;
 
+  // Calculate positioning
+  const squareX = center - imageWidth / 2;
+  let squareY;
+
+  if (isFooter) {
+    squareY = actorY + (imageHeight - imageHeight * 1);
+  } else {
+    squareY = actorY + 5;
+  }
+
+  // Calculate text position based on image position and size
+  const textY = !isFooter ? squareY + imageHeight : actorY + imageHeight; // Place text below image for header
+
   // Draw actor line for non-footer elements
+  const x = center;
+  const y = centerY + (isFooter ? 0 : imageHeight / 2); // Adjust line start based on image height
   const line = elem.append('g').lower();
   if (!isFooter) {
     actorCnt++;
     line
       .append('line')
       .attr('id', 'actor' + actorCnt)
-      .attr('x1', center)
-      .attr('y1', centerY + imageHeight / 2 + 5) // Adjust line start based on image height
+      .attr('x1', x)
+      .attr('y1', y) // Adjust line start based on image height
       .attr('x2', center)
       .attr('y2', 2000)
       .attr('class', 'actor-line')
@@ -589,19 +602,6 @@ const drawActorTypeImage = async function (elem, actor, conf, isFooter) {
 
   actElem.attr('class', cssClass);
   actElem.attr('name', actor.name);
-
-  // Calculate positioning
-  const squareX = center - imageWidth / 2;
-  let squareY;
-
-  if (isFooter) {
-    // For footer actors, position so the image sits above the baseline
-    // Add some padding to ensure proper spacing
-    squareY = actorY + (imageHeight - imageHeight * 1);
-  } else {
-    // For header actors, add consistent top padding
-    squareY = actorY + 5;
-  }
 
   // Draw background rectangle for the actor image
   actElem
@@ -643,9 +643,6 @@ const drawActorTypeImage = async function (elem, actor, conf, isFooter) {
       .attr('href', img.src)
       .attr('preserveAspectRatio', actor.doc.constraint === 'on' ? 'xMidYMid meet' : 'none');
   }
-
-  // Calculate text position based on image position and size
-  const textY = !isFooter ? squareY + imageHeight : actorY + imageHeight; // Place text below image for header
 
   // Add text label
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(

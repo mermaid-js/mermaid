@@ -85,6 +85,8 @@ export const PARTICIPANT_TYPE = {
   ENTITY: 'entity',
   PARTICIPANT: 'participant',
   QUEUE: 'queue',
+  ICON: 'icon',
+  IMAGE: 'image',
 } as const;
 
 export class SequenceDB implements DiagramDB {
