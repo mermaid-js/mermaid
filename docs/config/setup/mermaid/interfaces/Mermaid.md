@@ -32,7 +32,7 @@ page.
 
 ### detectType()
 
-> **detectType**: (`text`, `config?`) => `string`
+> **detectType**: (`text`, `config`?) => `string`
 
 Defined in: [packages/mermaid/src/mermaid.ts:449](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L449)
 
@@ -105,7 +105,7 @@ An array of objects with the id of the diagram.
 
 ### ~~init()~~
 
-> **init**: (`config?`, `nodes?`, `callback?`) => `Promise`<`void`>
+> **init**: (`config`?, `nodes`?, `callback`?) => `Promise`<`void`>
 
 Defined in: [packages/mermaid/src/mermaid.ts:442](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L442)
 
@@ -117,7 +117,7 @@ Defined in: [packages/mermaid/src/mermaid.ts:442](https://github.com/mermaid-js/
 
 [`MermaidConfig`](MermaidConfig.md)
 
-**Deprecated**, please set configuration in [initialize](#initialize).
+**Deprecated**, please set configuration in [initialize](Mermaid.md#initialize).
 
 ##### nodes?
 
@@ -141,13 +141,13 @@ Called once for each rendered diagram's id.
 
 #### Deprecated
 
-Use [initialize](#initialize) and [run](#run) instead.
+Use [initialize](Mermaid.md#initialize) and [run](Mermaid.md#run) instead.
 
 Renders the mermaid diagrams
 
 #### Deprecated
 
-Use [initialize](#initialize) and [run](#run) instead.
+Use [initialize](Mermaid.md#initialize) and [run](Mermaid.md#run) instead.
 
 ---
 
@@ -176,7 +176,7 @@ Configuration object for mermaid.
 
 ### ~~mermaidAPI~~
 
-> **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](MermaidConfig.md); `getConfig`: () => [`MermaidConfig`](MermaidConfig.md); `getDiagramFromText`: (`text`, `metadata`) => `Promise`<`Diagram`>; `getSiteConfig`: () => [`MermaidConfig`](MermaidConfig.md); `globalReset`: () => `void`; `initialize`: (`userOptions`) => `void`; `parse`: {(`text`, `parseOptions`): `Promise`<`false` | [`ParseResult`](ParseResult.md)>; (`text`, `parseOptions?`): `Promise`<[`ParseResult`](ParseResult.md)>; }; `render`: (`id`, `text`, `svgContainingElement?`) => `Promise`<[`RenderResult`](RenderResult.md)>; `reset`: () => `void`; `setConfig`: (`conf`) => [`MermaidConfig`](MermaidConfig.md); `updateSiteConfig`: (`conf`) => [`MermaidConfig`](MermaidConfig.md); }>
+> **mermaidAPI**: `Readonly`<{ `defaultConfig`: [`MermaidConfig`](MermaidConfig.md); `getConfig`: () => [`MermaidConfig`](MermaidConfig.md); `getDiagramFromText`: (`text`, `metadata`) => `Promise`<`Diagram`>; `getSiteConfig`: () => [`MermaidConfig`](MermaidConfig.md); `globalReset`: () => `void`; `initialize`: (`userOptions`) => `void`; `parse`: (`text`, `parseOptions`) => `Promise`<`false` | [`ParseResult`](ParseResult.md)>(`text`, `parseOptions`?) => `Promise`<[`ParseResult`](ParseResult.md)>; `render`: (`id`, `text`, `svgContainingElement`?) => `Promise`<[`RenderResult`](RenderResult.md)>; `reset`: () => `void`; `setConfig`: (`conf`) => [`MermaidConfig`](MermaidConfig.md); `updateSiteConfig`: (`conf`) => [`MermaidConfig`](MermaidConfig.md); }>
 
 Defined in: [packages/mermaid/src/mermaid.ts:436](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L436)
 
@@ -184,81 +184,73 @@ Defined in: [packages/mermaid/src/mermaid.ts:436](https://github.com/mermaid-js/
 
 #### Deprecated
 
-Use [parse](#parse) and [render](#render) instead. Please [open a discussion](https://github.com/mermaid-js/mermaid/discussions) if your use case does not fit the new API.
+Use [parse](Mermaid.md#parse) and [render](Mermaid.md#render) instead. Please [open a discussion](https://github.com/mermaid-js/mermaid/discussions) if your use case does not fit the new API.
 
 ---
 
 ### parse()
 
-> **parse**: {(`text`, `parseOptions`): `Promise`<`false` | [`ParseResult`](ParseResult.md)>; (`text`, `parseOptions?`): `Promise`<[`ParseResult`](ParseResult.md)>; }
+> **parse**: (`text`, `parseOptions`) => `Promise`<`false` | [`ParseResult`](ParseResult.md)>(`text`, `parseOptions`?) => `Promise`<[`ParseResult`](ParseResult.md)>
 
 Defined in: [packages/mermaid/src/mermaid.ts:437](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L437)
 
-#### Call Signature
-
-> (`text`, `parseOptions`): `Promise`<`false` | [`ParseResult`](ParseResult.md)>
-
 Parse the text and validate the syntax.
 
-##### Parameters
+#### Parameters
 
-###### text
+##### text
 
 `string`
 
 The mermaid diagram definition.
 
-###### parseOptions
+##### parseOptions
 
 [`ParseOptions`](ParseOptions.md) & `object`
 
 Options for parsing.
 
-##### Returns
+#### Returns
 
 `Promise`<`false` | [`ParseResult`](ParseResult.md)>
 
 An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
 
-##### See
+#### See
 
 [ParseOptions](ParseOptions.md)
 
-##### Throws
+#### Throws
 
 Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
 
-#### Call Signature
-
-> (`text`, `parseOptions?`): `Promise`<[`ParseResult`](ParseResult.md)>
-
 Parse the text and validate the syntax.
 
-##### Parameters
+#### Parameters
 
-###### text
+##### text
 
 `string`
 
 The mermaid diagram definition.
 
-###### parseOptions?
+##### parseOptions?
 
 [`ParseOptions`](ParseOptions.md)
 
 Options for parsing.
 
-##### Returns
+#### Returns
 
 `Promise`<[`ParseResult`](ParseResult.md)>
 
 An object with the `diagramType` set to type of the diagram if valid. Otherwise `false` if parseOptions.suppressErrors is `true`.
 
-##### See
+#### See
 
 [ParseOptions](ParseOptions.md)
 
-##### Throws
+#### Throws
 
 Error if the diagram is invalid and parseOptions.suppressErrors is false or not set.
 
@@ -340,7 +332,7 @@ Defined in: [packages/mermaid/src/mermaid.ts:444](https://github.com/mermaid-js/
 
 ### render()
 
-> **render**: (`id`, `text`, `svgContainingElement?`) => `Promise`<[`RenderResult`](RenderResult.md)>
+> **render**: (`id`, `text`, `svgContainingElement`?) => `Promise`<[`RenderResult`](RenderResult.md)>
 
 Defined in: [packages/mermaid/src/mermaid.ts:438](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L438)
 

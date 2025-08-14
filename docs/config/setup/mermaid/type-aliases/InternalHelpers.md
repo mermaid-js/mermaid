@@ -10,6 +10,6 @@
 
 # Type Alias: InternalHelpers
 
-> **InternalHelpers** = _typeof_ `internalHelpers`
+> **InternalHelpers**: _typeof_ `internalHelpers`
 
 Defined in: [packages/mermaid/src/internals.ts:33](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/internals.ts#L33)

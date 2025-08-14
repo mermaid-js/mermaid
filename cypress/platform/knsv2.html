@@ -142,6 +142,33 @@
           I --> D & D
           D@{ shape: question}
           I@{ shape: question}
+</pre>
+    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+  elk:
+    mergeEdges: false
+    forceNodeModelOrder: false
+    considerModelOrder: NONE
+
+---
+            flowchart TB
+              a --> a1 & a2 & a3 & a4
+              b --> b1 & b2
+              b2 --> b3
+              b1 --> b4</pre
+    >
+    <pre id="diagram4" class="mermaid">
+treemap
+"Section 1"
+    "Leaf 1.1": 12
+    "Section 1.2":::class1
+      "Leaf 1.2.1": 12
+"Section 2"
+    "Leaf 2.1": 20:::class1
+    "Leaf 2.2": 25
+    "Leaf 2.3": 12
 
     </pre>
     <pre id="diagram5" class="mermaid">
