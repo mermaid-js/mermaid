@@ -1164,4 +1164,26 @@ end
       `
     );
   });
+
+  describe('when rendering unsuported markdown', () => {
+    const graph = `flowchart TB
+    mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"\`<**1**1\`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["\`How to fix **fix**\`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["\`Github, Gitlab, BitBucket, etc.\`"]
+    a["1."]
+    b["- x"]
+      `;
+
+    it('should render raw strings', () => {
+      imgSnapshotTest(graph);
+    });
+
+    it('should render raw strings with htmlLabels: false', () => {
+      imgSnapshotTest(graph, { htmlLabels: false });
+    });
+  });
 });
