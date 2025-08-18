@@ -1,9 +1,9 @@
 import { select } from 'd3';
-import { log } from '../logger.js';
 import { getConfig } from '../diagram-api/diagramAPI.js';
-import { evaluate } from '../diagrams/common/common.js';
-import { decodeEntities } from '../utils.js';
+import { evaluate, sanitizeText } from '../diagrams/common/common.js';
+import { log } from '../logger.js';
 import { replaceIconSubstring } from '../rendering-util/createText.js';
+import { decodeEntities } from '../utils.js';
 
 /**
  * @param dom
@@ -19,14 +19,14 @@ function applyStyle(dom, styleFn) {
  * @param {any} node
  * @returns {SVGForeignObjectElement} Node
  */
-function addHtmlLabel(node) {
+function addHtmlLabel(node, config) {
   const fo = select(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));
   const div = fo.append('xhtml:div');
 
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   const span = div.append('span');
-  span.html(label);
+  span.html(sanitizeText(label, config));
   applyStyle(span, node.labelStyle);
   span.attr('class', labelClass);
 
@@ -49,7 +49,8 @@ const createLabel = async (_vertexText, style, isTitle, isNode) => {
   if (typeof vertexText === 'object') {
     vertexText = vertexText[0];
   }
-  if (evaluate(getConfig().flowchart.htmlLabels)) {
+  const config = getConfig();
+  if (evaluate(config.flowchart.htmlLabels)) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');
     log.debug('vertexText' + vertexText);
@@ -59,7 +60,7 @@ const createLabel = async (_vertexText, style, isTitle, isNode) => {
       label,
       labelStyle: style.replace('fill:', 'color:'),
     };
-    let vertexNode = addHtmlLabel(node);
+    let vertexNode = addHtmlLabel(node, config);
     // vertexNode.parentNode.removeChild(vertexNode);
     return vertexNode;
   } else {

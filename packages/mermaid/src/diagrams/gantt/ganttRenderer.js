@@ -581,17 +581,11 @@ export const draw = function (text, id, version, diagObj) {
 
     rectangles
       .append('rect')
-      .attr('id', function (d) {
-        return 'exclude-' + d.start.format('YYYY-MM-DD');
-      })
-      .attr('x', function (d) {
-        return timeScale(d.start) + theSidePad;
-      })
+      .attr('id', (d) => 'exclude-' + d.start.format('YYYY-MM-DD'))
+      .attr('x', (d) => timeScale(d.start.startOf('day')) + theSidePad)
       .attr('y', conf.gridLineStartPadding)
-      .attr('width', function (d) {
-        const renderEnd = d.end.add(1, 'day');
-        return timeScale(renderEnd) - timeScale(d.start);
-      })
+      .attr('width', (d) => timeScale(d.end.endOf('day')) - timeScale(d.start.startOf('day')))
+
       .attr('height', h - theTopPad - conf.gridLineStartPadding)
       .attr('transform-origin', function (d, i) {
         return (
@@ -615,9 +609,20 @@ export const draw = function (text, id, version, diagObj) {
    * @param h
    */
   function makeGrid(theSidePad, theTopPad, w, h) {
+    const dateFormat = diagObj.db.getDateFormat();
+    const userAxisFormat = diagObj.db.getAxisFormat();
+    let axisFormat;
+    if (userAxisFormat) {
+      axisFormat = userAxisFormat;
+    } else if (dateFormat === 'D') {
+      axisFormat = '%d';
+    } else {
+      axisFormat = conf.axisFormat ?? '%Y-%m-%d';
+    }
+
     let bottomXAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-      .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+      .tickFormat(timeFormat(axisFormat));
 
     const reTickInterval = /^([1-9]\d*)(millisecond|second|minute|hour|day|week|month)$/;
     const resultTickInterval = reTickInterval.exec(
@@ -669,7 +674,7 @@ export const draw = function (text, id, version, diagObj) {
     if (diagObj.db.topAxisEnabled() || conf.topAxis) {
       let topXAxis = axisTop(timeScale)
         .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-        .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+        .tickFormat(timeFormat(axisFormat));
 
       if (resultTickInterval !== null) {
         const every = resultTickInterval[1];
