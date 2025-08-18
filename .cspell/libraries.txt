@@ -24,6 +24,7 @@ Doctave
 DokuWiki
 dompurify
 elkjs
+eslintcache
 fcose
 fontawesome
 Fonticons

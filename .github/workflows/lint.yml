@@ -40,6 +40,14 @@ jobs:
         env:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
 
+      - name: Setup ESLint cache
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: .eslintcache
+          key: ${{ runner.os }}-eslint-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-
+
       - name: Run Linting
         shell: bash
         run: |
