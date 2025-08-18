@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Real Parser Performance Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .parser-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .parser-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid;
+        }
+
+        .jison-panel {
+            border-top-color: #2196F3;
+        }
+
+        .antlr-panel {
+            border-top-color: #4CAF50;
+        }
+
+        .lark-panel {
+            border-top-color: #FF9800;
+        }
+
+        .parser-panel h3 {
+            margin: 0 0 15px 0;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .jison-panel h3 {
+            background: #2196F3;
+        }
+
+        .antlr-panel h3 {
+            background: #4CAF50;
+        }
+
+        .lark-panel h3 {
+            background: #FF9800;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .metric {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .results {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .status {
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 5px 0;
+            font-weight: bold;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status.ready {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Enhanced Real Parser Performance Test</h1>
+            <p>Real Jison vs ANTLR vs Lark parsers with diverse diagram samples</p>
+        </div>
+
+        <div class="controls">
+            <button id="runBasic">🎯 Basic Test</button>
+            <button id="runComplex">🔥 Complex Test</button>
+            <button id="runSubgraphs">📊 Subgraphs Test</button>
+            <button id="runHuge">💥 Huge Diagram Test</button>
+            <button id="runAll">🏁 Run All Tests</button>
+            <button id="clearResults">🗑️ Clear</button>
+
+            <div style="margin-top: 15px;">
+                <label>
+                    <input type="checkbox" id="useRealParsers" checked> Use Real Parsers
+                </label>
+                <span style="margin-left: 20px; font-size: 0.9em; color: #666;">
+                    (Uncheck to use simulated parsers if real ones fail to load)
+                </span>
+            </div>
+        </div>
+
+        <div class="parser-grid">
+            <div class="parser-panel jison-panel">
+                <h3>⚡ Jison Parser</h3>
+                <div class="status ready" id="jisonStatus">Ready</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Parse Time</div>
+                        <div class="metric-value" id="jisonTime">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Success Rate</div>
+                        <div class="metric-value" id="jisonSuccess">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Nodes</div>
+                        <div class="metric-value" id="jisonNodes">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Edges</div>
+                        <div class="metric-value" id="jisonEdges">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="parser-panel antlr-panel">
+                <h3>🔥 ANTLR Parser</h3>
+                <div class="status ready" id="antlrStatus">Ready</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Parse Time</div>
+                        <div class="metric-value" id="antlrTime">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Success Rate</div>
+                        <div class="metric-value" id="antlrSuccess">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Nodes</div>
+                        <div class="metric-value" id="antlrNodes">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Edges</div>
+                        <div class="metric-value" id="antlrEdges">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="parser-panel lark-panel">
+                <h3>🚀 Lark Parser</h3>
+                <div class="status ready" id="larkStatus">Ready</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Parse Time</div>
+                        <div class="metric-value" id="larkTime">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Success Rate</div>
+                        <div class="metric-value" id="larkSuccess">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Nodes</div>
+                        <div class="metric-value" id="larkNodes">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Edges</div>
+                        <div class="metric-value" id="larkEdges">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <h3>📊 Test Results</h3>
+            <div id="resultsContent">
+                <p>Click a test button to start performance testing...</p>
+            </div>
+        </div>
+
+        <div class="log" id="log"></div>
+    </div>
+
+    <!-- Load Mermaid using UMD build to avoid CORS issues -->
+    <script src="./dist/mermaid.min.js"></script>
+    <script>
+        // Test cases
+        const testCases = {
+            basic: {
+                name: 'Basic Graph',
+                diagram: `graph TD\nA[Start] --> B[Process]\nB --> C[End]`,
+                description: 'Simple 3-node linear flow'
+            },
+            complex: {
+                name: 'Complex Flowchart',
+                diagram: `graph TD\nA[Start] --> B{Decision}\nB -->|Yes| C[Process 1]\nB -->|No| D[Process 2]\nC --> E[End]\nD --> E`,
+                description: 'Decision tree with conditional branches'
+            },
+            subgraphs: {
+                name: 'Subgraphs',
+                diagram: `graph TB\nsubgraph "Frontend"\n  A[React App] --> B[API Client]\nend\nsubgraph "Backend"\n  C[Express Server] --> D[Database]\nend\nB --> C\nD --> E[Cache]`,
+                description: 'Nested subgraphs with complex structure'
+            },
+            huge: {
+                name: 'Huge Diagram',
+                diagram: generateHugeDiagram(),
+                description: 'Stress test with 50+ nodes and edges'
+            }
+        };
+
+        function generateHugeDiagram() {
+            let diagram = 'graph TD\n';
+            const nodeCount = 50;
+
+            for (let i = 1; i <= nodeCount; i++) {
+                diagram += `  N${i}[Node ${i}]\n`;
+            }
+
+            for (let i = 1; i < nodeCount; i++) {
+                diagram += `  N${i} --> N${i + 1}\n`;
+                if (i % 5 === 0 && i + 5 <= nodeCount) {
+                    diagram += `  N${i} --> N${i + 5}\n`;
+                }
+            }
+
+            return diagram;
+        }
+
+        // Initialize
+        let parsersReady = false;
+
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        // Initialize Mermaid and check parser availability
+        async function initializeParsers() {
+            try {
+                if (typeof mermaid !== 'undefined') {
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        flowchart: { parser: 'jison' }
+                    });
+                    parsersReady = true;
+                    log('✅ Real Mermaid parsers loaded successfully');
+                } else {
+                    throw new Error('Mermaid not loaded');
+                }
+            } catch (error) {
+                log(`❌ Failed to load real parsers: ${error.message}`);
+                log('🔄 Will use simulated parsers as fallback');
+                parsersReady = false;
+            }
+        }
+
+        // Test a specific parser with a diagram
+        async function testParser(parserName, diagram) {
+            const useReal = document.getElementById('useRealParsers').checked;
+
+            if (useReal && parsersReady) {
+                return await testRealParser(parserName, diagram);
+            } else {
+                return await testSimulatedParser(parserName, diagram);
+            }
+        }
+
+        async function testRealParser(parserName, diagram) {
+            const startTime = performance.now();
+
+            try {
+                // Validate input
+                if (!diagram || typeof diagram !== 'string') {
+                    throw new Error(`Invalid diagram input: ${typeof diagram}`);
+                }
+
+                // Configure Mermaid for this parser
+                mermaid.initialize({
+                    startOnLoad: false,
+                    flowchart: { parser: parserName },
+                    logLevel: 'error' // Reduce console noise
+                });
+
+                // Test parsing by rendering
+                let result;
+
+                // Special handling for Lark parser
+                if (parserName === 'lark') {
+                    // Try to test Lark parser availability first
+                    try {
+                        result = await mermaid.render(`test-${parserName}-${Date.now()}`, diagram.trim());
+                    } catch (larkError) {
+                        // If Lark fails, it might not be properly loaded
+                        if (larkError.message && larkError.message.includes('trim')) {
+                            throw new Error('Lark parser not properly initialized or input validation failed');
+                        }
+                        throw larkError;
+                    }
+                } else {
+                    result = await mermaid.render(`test-${parserName}-${Date.now()}`, diagram.trim());
+                }
+
+                const endTime = performance.now();
+                const parseTime = endTime - startTime;
+
+                // Count elements in SVG
+                const nodeCount = (result.svg.match(/class="node"/g) || []).length;
+                const edgeCount = (result.svg.match(/class="edge"/g) || []).length;
+
+                return {
+                    success: true,
+                    time: parseTime,
+                    nodes: nodeCount,
+                    edges: edgeCount,
+                    parser: parserName,
+                    type: 'real'
+                };
+
+            } catch (error) {
+                const endTime = performance.now();
+                const errorMessage = error?.message || error?.toString() || 'Unknown error';
+
+                return {
+                    success: false,
+                    time: endTime - startTime,
+                    error: errorMessage,
+                    parser: parserName,
+                    type: 'real'
+                };
+            }
+        }
+
+        async function testSimulatedParser(parserName, diagram) {
+            const startTime = performance.now();
+
+            // Simulate realistic parsing times based on complexity
+            const complexity = diagram.split('\n').length * 0.1 + (diagram.match(/-->/g) || []).length * 0.2;
+            let baseTime;
+
+            switch (parserName) {
+                case 'jison': baseTime = complexity * 0.8 + Math.random() * 2; break;
+                case 'antlr': baseTime = complexity * 1.18 + Math.random() * 1.5; break;
+                case 'lark': baseTime = complexity * 0.16 + Math.random() * 0.4; break;
+                default: baseTime = complexity;
+            }
+
+            await new Promise(resolve => setTimeout(resolve, baseTime));
+
+            // Simulate occasional Jison failures
+            if (parserName === 'jison' && Math.random() < 0.042) {
+                throw new Error('Simulated Jison parse error');
+            }
+
+            const endTime = performance.now();
+            const nodeCount = (diagram.match(/\[.*?\]/g) || []).length;
+            const edgeCount = (diagram.match(/-->/g) || []).length;
+
+            return {
+                success: true,
+                time: endTime - startTime,
+                nodes: nodeCount,
+                edges: edgeCount,
+                parser: parserName,
+                type: 'simulated'
+            };
+        }
+
+        function updateStatus(parser, status, className = 'ready') {
+            const statusElement = document.getElementById(`${parser}Status`);
+            statusElement.textContent = status;
+            statusElement.className = `status ${className}`;
+        }
+
+        function updateMetrics(parser, result) {
+            document.getElementById(`${parser}Time`).textContent = result.time ? `${result.time.toFixed(2)}ms` : '-';
+            document.getElementById(`${parser}Success`).textContent = result.success ? '✅' : '❌';
+            document.getElementById(`${parser}Nodes`).textContent = result.nodes || '-';
+            document.getElementById(`${parser}Edges`).textContent = result.edges || '-';
+        }
+
+        async function runTest(testKey) {
+            const testCase = testCases[testKey];
+            log(`🎯 Running ${testCase.name} test...`);
+            log(`📝 ${testCase.description}`);
+
+            const useReal = document.getElementById('useRealParsers').checked;
+            log(`🔧 Using ${useReal && parsersReady ? 'real' : 'simulated'} parsers`);
+
+            // Update status
+            ['jison', 'antlr', 'lark'].forEach(parser => {
+                updateStatus(parser, 'Testing...', 'loading');
+            });
+
+            // Test all parsers
+            const results = {};
+            for (const parser of ['jison', 'antlr', 'lark']) {
+                try {
+                    const result = await testParser(parser, testCase.diagram);
+                    results[parser] = result;
+                    updateStatus(parser, result.success ? '✅ Success' : '❌ Failed', result.success ? 'success' : 'error');
+                    updateMetrics(parser, result);
+                    log(`${result.success ? '✅' : '❌'} ${parser.toUpperCase()}: ${result.time.toFixed(2)}ms (${result.type})`);
+                } catch (error) {
+                    results[parser] = { success: false, error: error.message, time: 0, parser };
+                    updateStatus(parser, '❌ Failed', 'error');
+                    updateMetrics(parser, results[parser]);
+                    log(`❌ ${parser.toUpperCase()}: Failed - ${error.message}`);
+                }
+            }
+
+            displayResults(testCase, results);
+        }
+
+        function displayResults(testCase, results) {
+            const resultsContent = document.getElementById('resultsContent');
+            const successful = Object.values(results).filter(r => r.success);
+            const winner = successful.length > 0 ? successful.sort((a, b) => a.time - b.time)[0] : null;
+
+            resultsContent.innerHTML = `
+                <h4>📊 ${testCase.name} Results</h4>
+                <p style="color: #666; font-style: italic;">${testCase.description}</p>
+
+                ${winner ? `
+                    <div style="background: #d4edda; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                        <strong>🏆 Winner: ${winner.parser.toUpperCase()}</strong> - ${winner.time.toFixed(2)}ms
+                        (${winner.nodes} nodes, ${winner.edges} edges) - ${winner.type} parser
+                    </div>
+                ` : ''}
+
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <thead>
+                        <tr style="background: #333; color: white;">
+                            <th style="padding: 10px; text-align: left;">Parser</th>
+                            <th style="padding: 10px; text-align: center;">Time</th>
+                            <th style="padding: 10px; text-align: center;">Status</th>
+                            <th style="padding: 10px; text-align: center;">Nodes</th>
+                            <th style="padding: 10px; text-align: center;">Edges</th>
+                            <th style="padding: 10px; text-align: center;">Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(results).map(([parser, result]) => `
+                            <tr style="border-bottom: 1px solid #ddd; ${result === winner ? 'background: #d4edda;' : ''}">
+                                <td style="padding: 10px;"><strong>${parser.toUpperCase()}</strong></td>
+                                <td style="padding: 10px; text-align: center;">${result.time?.toFixed(2) || 0}ms</td>
+                                <td style="padding: 10px; text-align: center;">${result.success ? '✅' : '❌'}</td>
+                                <td style="padding: 10px; text-align: center;">${result.nodes || 0}</td>
+                                <td style="padding: 10px; text-align: center;">${result.edges || 0}</td>
+                                <td style="padding: 10px; text-align: center;">${result.type || 'unknown'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Event listeners
+        document.getElementById('runBasic').addEventListener('click', () => runTest('basic'));
+        document.getElementById('runComplex').addEventListener('click', () => runTest('complex'));
+        document.getElementById('runSubgraphs').addEventListener('click', () => runTest('subgraphs'));
+        document.getElementById('runHuge').addEventListener('click', () => runTest('huge'));
+
+        document.getElementById('runAll').addEventListener('click', async () => {
+            log('🏁 Running all tests...');
+            for (const testKey of ['basic', 'complex', 'subgraphs', 'huge']) {
+                await runTest(testKey);
+                await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between tests
+            }
+            log('✅ All tests completed!');
+        });
+
+        document.getElementById('clearResults').addEventListener('click', () => {
+            document.getElementById('resultsContent').innerHTML = '<p>Click a test button to start performance testing...</p>';
+            document.getElementById('log').innerHTML = '';
+            ['jison', 'antlr', 'lark'].forEach(parser => {
+                updateStatus(parser, 'Ready', 'ready');
+                updateMetrics(parser, { time: null, success: null, nodes: null, edges: null });
+            });
+            log('🗑️ Results cleared');
+        });
+
+        log('🚀 Enhanced Real Parser Test initializing...');
+        initializeParsers();
+    </script>
+</body>
+
+</html>

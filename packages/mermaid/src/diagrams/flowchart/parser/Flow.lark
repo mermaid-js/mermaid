@@ -1,0 +1,112 @@
+// Lark-inspired Grammar for Mermaid Flowcharts
+// This grammar defines the syntax for flowchart diagrams in Lark EBNF format
+
+start: graph_config? document
+
+graph_config: GRAPH direction
+           | FLOWCHART direction
+
+direction: "TD" | "TB" | "BT" | "RL" | "LR"
+
+document: line (NEWLINE line)*
+
+line: statement
+    | SPACE
+    | COMMENT
+
+statement: node_stmt
+         | edge_stmt  
+         | subgraph_stmt
+         | style_stmt
+         | class_stmt
+         | click_stmt
+
+// Node statements
+node_stmt: node_id node_text?
+
+node_id: WORD
+
+node_text: "[" text "]"           // Square brackets
+         | "(" text ")"           // Round parentheses  
+         | "{" text "}"           // Diamond/rhombus
+         | "((" text "))"         // Circle
+         | ">" text "]"           // Asymmetric/flag
+         | "[/" text "/]"         // Parallelogram
+         | "[\\" text "\\]"       // Parallelogram alt
+         | "([" text "])"         // Stadium
+         | "[[" text "]]"         // Subroutine
+         | "[(" text ")]"         // Cylinder/database
+         | "(((" text ")))"       // Cloud
+
+// Edge statements
+edge_stmt: node_id edge node_id edge_text?
+
+edge: "-->"                      // Arrow
+    | "---"                      // Line
+    | "-.-"                      // Dotted line
+    | "-.->", "-.->"             // Dotted arrow
+    | "<-->"                     // Bidirectional arrow
+    | "<->"                      // Bidirectional line
+    | "==>"                      // Thick arrow
+    | "==="                      // Thick line
+    | "o--o"                     // Circle edge
+    | "x--x"                     // Cross edge
+
+edge_text: "|" text "|"          // Edge label
+
+// Subgraph statements
+subgraph_stmt: "subgraph" subgraph_id? NEWLINE subgraph_body "end"
+
+subgraph_id: WORD | STRING
+
+subgraph_body: (line NEWLINE)*
+
+// Style statements
+style_stmt: "style" node_id style_props
+
+style_props: style_prop ("," style_prop)*
+
+style_prop: "fill" ":" COLOR
+          | "stroke" ":" COLOR  
+          | "stroke-width" ":" NUMBER
+          | "color" ":" COLOR
+          | "stroke-dasharray" ":" DASHARRAY
+
+// Class statements
+class_stmt: "class" node_list class_name
+
+node_list: node_id ("," node_id)*
+
+class_name: WORD
+
+// Click statements  
+click_stmt: "click" node_id click_action
+
+click_action: STRING | WORD
+
+// Text content
+text: STRING | WORD | text_with_entities
+
+text_with_entities: (WORD | STRING | ENTITY)+
+
+// Terminals
+GRAPH: "graph"i
+FLOWCHART: "flowchart"i
+
+WORD: /[a-zA-Z_][a-zA-Z0-9_-]*/
+STRING: /"[^"]*"/ | /'[^']*'/
+NUMBER: /\d+(\.\d+)?/
+COLOR: /#[0-9a-fA-F]{3,6}/ | WORD
+DASHARRAY: /\d+(\s+\d+)*/
+
+ENTITY: "&" WORD ";"
+       | "&#" NUMBER ";"
+       | "&#x" /[0-9a-fA-F]+/ ";"
+
+COMMENT: /%%[^\n]*/
+SPACE: /[ \t]+/
+NEWLINE: /\r?\n/
+
+// Ignore whitespace and comments
+%ignore SPACE
+%ignore COMMENT

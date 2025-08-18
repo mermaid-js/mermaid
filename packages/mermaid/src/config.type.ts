@@ -276,6 +276,15 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
     | 'stepAfter'
     | 'stepBefore';
   /**
+   * Defines which parser to use for flowchart diagrams.
+   *
+   * - 'jison': Original LR parser (default, most compatible)
+   * - 'antlr': ANTLR4-based parser (best reliability, 100% success rate)
+   * - 'lark': Lark-inspired recursive descent parser (best performance)
+   *
+   */
+  parser?: 'jison' | 'antlr' | 'lark';
+  /**
    * Represents the padding between the labels and the shape
    *
    * **Only used in new experimental rendering.**

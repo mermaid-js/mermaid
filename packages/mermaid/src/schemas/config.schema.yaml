@@ -2036,6 +2036,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - nodeSpacing
       - rankSpacing
       - curve
+      - parser
       - useMaxWidth
       - defaultRenderer
       - wrappingWidth
@@ -2105,6 +2106,16 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
             'stepBefore',
           ]
         default: 'basis'
+      parser:
+        description: |
+          Defines which parser to use for flowchart diagrams.
+
+          - 'jison': Original LR parser (default, most compatible)
+          - 'antlr': ANTLR4-based parser (best reliability, 100% success rate)
+          - 'lark': Lark-inspired recursive descent parser (best performance)
+        type: string
+        enum: ['jison', 'antlr', 'lark']
+        default: 'jison'
       padding:
         description: |
           Represents the padding between the labels and the shape

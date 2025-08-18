@@ -2,22 +2,34 @@ import type { MermaidConfig } from '../../config.type.js';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
 import { FlowDB } from './flowDb.js';
 import renderer from './flowRenderer-v3-unified.js';
-// @ts-ignore: JISON doesn't support types
-//import flowParser from './parser/flow.jison';
-import flowParser from './parser/flowParser.ts';
+import { getFlowchartParser } from './parser/parserFactory.js';
 import flowStyles from './styles.js';
 
+// Create a parser wrapper that handles dynamic parser selection
+const parserWrapper = {
+  async parse(text: string): Promise<void> {
+    const parser = await getFlowchartParser();
+    return parser.parse(text);
+  },
+  get parser() {
+    // This is for compatibility with existing code that expects parser.yy
+    return {
+      yy: new FlowDB(),
+    };
+  },
+};
+
 export const diagram = {
-  parser: flowParser,
+  parser: parserWrapper,
   get db() {
     return new FlowDB();
   },
   renderer,
   styles: flowStyles,
   init: (cnf: MermaidConfig) => {
-    if (!cnf.flowchart) {
-      cnf.flowchart = {};
-    }
+    cnf.flowchart ??= {};
+    // Set default parser if not specified
+    cnf.flowchart.parser ??= 'jison';
     if (cnf.layout) {
       setConfig({ layout: cnf.layout });
     }

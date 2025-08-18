@@ -37,6 +37,17 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
     sourcemap: 'external',
+    // Add Node.js polyfills for ANTLR4TS
+    define: {
+      'process.env.NODE_ENV': '"production"',
+      global: 'globalThis',
+    },
+    inject: [],
+    // Polyfill Node.js modules for browser
+    alias: {
+      assert: 'assert',
+      util: 'util',
+    },
     ...override,
   };
 };

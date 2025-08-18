@@ -651,6 +651,11 @@ You have to call mermaid.initialize.`
       id = undefined;
     }
 
+    // Handle empty string IDs like undefined for auto-generation
+    if (id === '') {
+      id = undefined;
+    }
+
     const uniq = (a: any[]) => {
       const prims: any = { boolean: {}, number: {}, string: {} };
       const objs: any[] = [];

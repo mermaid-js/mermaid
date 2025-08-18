@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration-Based Parser Test: Jison vs ANTLR vs Lark</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .test-input {
+            width: 100%;
+            height: 200px;
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .parser-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .parser-result {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 4px solid;
+        }
+
+        .jison-result { border-top-color: #2196F3; }
+        .antlr-result { border-top-color: #4CAF50; }
+        .lark-result { border-top-color: #FF9800; }
+
+        .parser-result h3 {
+            margin: 0 0 15px 0;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .jison-result h3 { background: #2196F3; }
+        .antlr-result h3 { background: #4CAF50; }
+        .lark-result h3 { background: #FF9800; }
+
+        .result-content {
+            min-height: 200px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .config-example {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.loading { background: #d1ecf1; color: #0c5460; }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .metric {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Configuration-Based Parser Test</h1>
+            <p>Real test of Jison vs ANTLR vs Lark parsers using configuration directives</p>
+        </div>
+
+        <div class="config-example">
+            <strong>Configuration Format:</strong><br>
+            ---<br>
+            config:<br>
+            &nbsp;&nbsp;parser: jison | antlr | lark<br>
+            ---<br>
+            flowchart TD<br>
+            &nbsp;&nbsp;A[Start] --> B[End]
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Test Input</h3>
+            <textarea id="testInput" class="test-input" placeholder="Enter your flowchart with configuration...">---
+config:
+  parser: jison
+---
+flowchart TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Process]
+    B -->|No| D[Skip]
+    C --> E[End]
+    D --> E</textarea>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button id="testAllParsers">🏁 Test All Three Parsers</button>
+                <button id="testSingleParser">🎯 Test Single Parser</button>
+                <button id="clearResults">🗑️ Clear Results</button>
+            </div>
+        </div>
+
+        <div class="parser-grid">
+            <div class="parser-result jison-result">
+                <h3>⚡ Jison Parser</h3>
+                <div class="status" id="jisonStatus">Ready</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Parse Time</div>
+                        <div class="metric-value" id="jisonTime">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Nodes</div>
+                        <div class="metric-value" id="jisonNodes">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Edges</div>
+                        <div class="metric-value" id="jisonEdges">-</div>
+                    </div>
+                </div>
+                <div class="result-content" id="jisonResult">Waiting for test...</div>
+            </div>
+
+            <div class="parser-result antlr-result">
+                <h3>🔥 ANTLR Parser</h3>
+                <div class="status" id="antlrStatus">Ready</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Parse Time</div>
+                        <div class="metric-value" id="antlrTime">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Nodes</div>
+                        <div class="metric-value" id="antlrNodes">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Edges</div>
+                        <div class="metric-value" id="antlrEdges">-</div>
+                    </div>
+                </div>
+                <div class="result-content" id="antlrResult">Waiting for test...</div>
+            </div>
+
+            <div class="parser-result lark-result">
+                <h3>🚀 Lark Parser</h3>
+                <div class="status" id="larkStatus">Ready</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Parse Time</div>
+                        <div class="metric-value" id="larkTime">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Nodes</div>
+                        <div class="metric-value" id="larkNodes">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Edges</div>
+                        <div class="metric-value" id="larkEdges">-</div>
+                    </div>
+                </div>
+                <div class="result-content" id="larkResult">Waiting for test...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import the parser factory and parsers
+        import { getFlowchartParser } from './src/diagrams/flowchart/parser/parserFactory.js';
+        
+        // Test configuration
+        let testResults = {};
+
+        // Utility functions
+        function updateStatus(parser, status, className = '') {
+            const statusElement = document.getElementById(`${parser}Status`);
+            statusElement.textContent = status;
+            statusElement.className = `status ${className}`;
+        }
+
+        function updateMetrics(parser, time, nodes, edges) {
+            document.getElementById(`${parser}Time`).textContent = time ? `${time.toFixed(2)}ms` : '-';
+            document.getElementById(`${parser}Nodes`).textContent = nodes || '-';
+            document.getElementById(`${parser}Edges`).textContent = edges || '-';
+        }
+
+        function updateResult(parser, content) {
+            document.getElementById(`${parser}Result`).textContent = content;
+        }
+
+        function parseConfigAndFlowchart(input) {
+            const lines = input.trim().split('\n');
+            let configSection = false;
+            let config = { parser: 'jison' };
+            let flowchartLines = [];
+            
+            for (const line of lines) {
+                if (line.trim() === '---') {
+                    configSection = !configSection;
+                    continue;
+                }
+                
+                if (configSection) {
+                    if (line.includes('parser:')) {
+                        const match = line.match(/parser:\s*(\w+)/);
+                        if (match) {
+                            config.parser = match[1];
+                        }
+                    }
+                } else {
+                    flowchartLines.push(line);
+                }
+            }
+            
+            return {
+                config,
+                flowchart: flowchartLines.join('\n').trim()
+            };
+        }
+
+        async function testParser(parserType, flowchartInput) {
+            updateStatus(parserType, 'Testing...', 'loading');
+            
+            try {
+                const startTime = performance.now();
+                
+                // Get the parser
+                const parser = await getFlowchartParser(parserType);
+                
+                // Parse the flowchart
+                parser.parse(flowchartInput);
+                
+                const endTime = performance.now();
+                const parseTime = endTime - startTime;
+                
+                // Get results from the database
+                const db = parser.yy || parser.parser?.yy;
+                const vertices = db ? Object.keys(db.getVertices()).length : 0;
+                const edges = db ? db.getEdges().length : 0;
+                
+                // Update UI
+                updateStatus(parserType, '✅ Success', 'success');
+                updateMetrics(parserType, parseTime, vertices, edges);
+                updateResult(parserType, `Parse successful!
+Time: ${parseTime.toFixed(2)}ms
+Vertices: ${vertices}
+Edges: ${edges}
+Parser: ${parserType.toUpperCase()}`);
+                
+                return {
+                    success: true,
+                    time: parseTime,
+                    vertices,
+                    edges,
+                    parser: parserType
+                };
+                
+            } catch (error) {
+                updateStatus(parserType, '❌ Failed', 'error');
+                updateResult(parserType, `Parse failed!
+Error: ${error.message}
+Parser: ${parserType.toUpperCase()}`);
+                
+                return {
+                    success: false,
+                    error: error.message,
+                    parser: parserType
+                };
+            }
+        }
+
+        async function testAllParsers() {
+            const input = document.getElementById('testInput').value;
+            const { config, flowchart } = parseConfigAndFlowchart(input);
+            
+            console.log('Testing all parsers with:', { config, flowchart });
+            
+            // Test all three parsers in parallel
+            const promises = [
+                testParser('jison', flowchart),
+                testParser('antlr', flowchart),
+                testParser('lark', flowchart)
+            ];
+            
+            const results = await Promise.all(promises);
+            testResults = {
+                jison: results[0],
+                antlr: results[1],
+                lark: results[2]
+            };
+            
+            console.log('Test results:', testResults);
+            
+            // Show summary
+            const successCount = results.filter(r => r.success).length;
+            const avgTime = results.filter(r => r.success).reduce((sum, r) => sum + r.time, 0) / successCount;
+            
+            alert(`Test Complete!
+Success: ${successCount}/3 parsers
+Average time: ${avgTime.toFixed(2)}ms
+Fastest: ${results.filter(r => r.success).sort((a, b) => a.time - b.time)[0]?.parser || 'none'}`);
+        }
+
+        async function testSingleParser() {
+            const input = document.getElementById('testInput').value;
+            const { config, flowchart } = parseConfigAndFlowchart(input);
+            
+            console.log('Testing single parser:', config.parser);
+            
+            const result = await testParser(config.parser, flowchart);
+            testResults[config.parser] = result;
+            
+            console.log('Single test result:', result);
+        }
+
+        function clearResults() {
+            ['jison', 'antlr', 'lark'].forEach(parser => {
+                updateStatus(parser, 'Ready', '');
+                updateMetrics(parser, null, null, null);
+                updateResult(parser, 'Waiting for test...');
+            });
+            
+            testResults = {};
+            console.log('Results cleared');
+        }
+
+        // Event listeners
+        document.getElementById('testAllParsers').addEventListener('click', testAllParsers);
+        document.getElementById('testSingleParser').addEventListener('click', testSingleParser);
+        document.getElementById('clearResults').addEventListener('click', clearResults);
+
+        // Initialize
+        console.log('🚀 Configuration-based parser test initialized');
+        console.log('📝 Ready to test Jison vs ANTLR vs Lark parsers');
+        
+        // Test parser factory availability
+        (async () => {
+            try {
+                const jisonParser = await getFlowchartParser('jison');
+                console.log('✅ Jison parser available');
+                
+                const antlrParser = await getFlowchartParser('antlr');
+                console.log('✅ ANTLR parser available (or fallback to Jison)');
+                
+                const larkParser = await getFlowchartParser('lark');
+                console.log('✅ Lark parser available (or fallback to Jison)');
+                
+            } catch (error) {
+                console.error('❌ Parser factory error:', error);
+            }
+        })();
+    </script>
+</body>
+</html>
