@@ -103,13 +103,12 @@ export async function roundedRect<T extends SVGGraphicsElement>(
   const { cssStyles } = node;
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
-  const options = {
-    ...userNodeOverrides(node, {}),
-    stroke: 'none',
-  };
+  const options = userNodeOverrides(node, {});
+
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
+    options.stroke = 'none';
   }
 
   const points = [
