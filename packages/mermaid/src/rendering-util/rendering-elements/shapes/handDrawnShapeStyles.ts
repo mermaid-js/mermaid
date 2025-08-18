@@ -104,8 +104,23 @@ export const userNodeOverrides = (node: Node, options: any) => {
       seed: handDrawnSeed,
       strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1.3,
       fillLineDash: [0, 0],
+      strokeLineDash: getStrokeDashArray(stylesMap.get('stroke-dasharray')),
     },
     options
   );
   return result;
+};
+
+const getStrokeDashArray = (strokeDasharrayStyle?: string) => {
+  if (!strokeDasharrayStyle) {
+    return [0, 0];
+  }
+  const dashArray = strokeDasharrayStyle.trim().split(/\s+/).map(Number);
+  if (dashArray.length === 1) {
+    const val = isNaN(dashArray[0]) ? 0 : dashArray[0];
+    return [val, val];
+  }
+  const first = isNaN(dashArray[0]) ? 0 : dashArray[0];
+  const second = isNaN(dashArray[1]) ? 0 : dashArray[1];
+  return [first, second];
 };
