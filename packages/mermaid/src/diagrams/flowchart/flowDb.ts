@@ -462,6 +462,9 @@ You have to call mermaid.initialize.`
     const domId = this.lookUpDomId(id);
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (getConfig().securityLevel !== 'loose') {
+      log.warn(
+        `Click event callback calls are ignored because securityLevel is not "loose" in Mermaid config`
+      );
       return;
     }
     if (functionName === undefined) {
