@@ -142,6 +142,17 @@ describe('XSS', () => {
     cy.get('#the-malware').should('not.exist');
   });
 
+  it('should sanitize icon labels in architecture diagrams', () => {
+    const str = JSON.stringify({
+      code: `architecture-beta
+    group api(cloud)[API]
+    service db "<img src=x onerror=\\"xssAttack()\\">" [Database] in api`,
+    });
+    imgSnapshotTest(utf8ToB64(str), {}, true);
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
+
   it('should sanitize katex blocks', () => {
     const str = JSON.stringify({
       code: `sequenceDiagram
