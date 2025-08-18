@@ -24,6 +24,8 @@ const config: RequiredDeep<MermaidConfig> = {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
     nodePlacementStrategy: 'BRANDES_KOEPF',
+    forceNodeModelOrder: false,
+    considerModelOrder: 'NODES_AND_EDGES',
   },
   themeCSS: undefined,
 
