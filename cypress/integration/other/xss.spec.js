@@ -1,4 +1,4 @@
-import { mermaidUrl } from '../../helpers/util.ts';
+import { imgSnapshotTest, mermaidUrl, utf8ToB64 } from '../../helpers/util.ts';
 describe('XSS', () => {
   it('should handle xss in tags', () => {
     const str =
@@ -138,6 +138,28 @@ describe('XSS', () => {
   });
   it('should sanitize backticks block diagram labels properly', () => {
     cy.visit('http://localhost:9000/xss25.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
+
+  it('should sanitize katex blocks', () => {
+    const str = JSON.stringify({
+      code: `sequenceDiagram
+    participant A as Alice<img src="x" onerror="xssAttack()">$$\\text{Alice}$$
+    A->>John: Hello John, how are you?`,
+    });
+    imgSnapshotTest(utf8ToB64(str), {}, true);
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
+
+  it('should sanitize labels', () => {
+    const str = JSON.stringify({
+      code: `erDiagram
+    "<img src=x onerror=xssAttack()>" ||--|| ENTITY2 : "<img src=x onerror=xssAttack()>"
+    `,
+    });
+    imgSnapshotTest(utf8ToB64(str), {}, true);
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
