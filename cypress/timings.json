@@ -34,7 +34,7 @@
     },
     {
       "spec": "cypress/integration/rendering/architecture.spec.ts",
-      "duration": 97
+      "duration": 109
     },
     {
       "spec": "cypress/integration/rendering/block.spec.js",
