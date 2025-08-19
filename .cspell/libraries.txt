@@ -29,7 +29,6 @@ fontawesome
 Fonticons
 Forgejo
 Foswiki
-fourcube
 Gitea
 graphlib
 Grav
