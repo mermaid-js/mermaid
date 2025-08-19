@@ -1192,7 +1192,6 @@ export default {
   getNoteRect,
   fixLifeLineHeights,
   sanitizeUrl,
-
   insertSolidTopArrowHead,
   insertSolidBottomArrowHead,
   insertStickTopArrowHead,

@@ -163,22 +163,22 @@ Lines can be solid or dotted, and can end with various types of arrowheads, cros
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
 
-**New Half-Arrows**
+**Half-Arrows**
 
 The following half-arrow types are now supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
 
 ---
 
 | Type    | Description                                          |
-| ------- | ---------------------------------------------------- | ---------------------------------------------- |
+| ------- | ---------------------------------------------------- |
 | `-\|\`  | Solid line with top half arrowhead                   |
 | `--\|\` | Dotted line with top half arrowhead                  |
 | `-\|/`  | Solid line with bottom half arrowhead                |
 | `--\|/` | Dotted line with bottom half arrowhead               |
 | `/\|-`  | Solid line with reverse top half arrowhead           |
 | `/\|--` | Dotted line with reverse top half arrowhead          |
-| `\\     | -`                                                   | Solid line with reverse bottom half arrowhead  |
-| `\\     | --`                                                  | Dotted line with reverse bottom half arrowhead |
+| `\\-`   | Solid line with reverse bottom half arrowhead        |
+| `\\--`  | Dotted line with reverse bottom half arrowhead       |
 | `-\\`   | Solid line with top stick half arrowhead             |
 | `--\\`  | Dotted line with top stick half arrowhead            |
 | `-//`   | Solid line with bottom stick half arrowhead          |
@@ -198,15 +198,6 @@ To indicate a central connection, append `()` to the arrow syntax.
 #### Basic Syntax
 
 ```mermaid-example
-sequenceDiagram
-    participant Alice
-    participant John
-    Alice->>()John: Hello John
-    Alice()->>John: How are you?
-    John()->>()Alice: Great!
-```
-
-```mermaid
 sequenceDiagram
     participant Alice
     participant John
