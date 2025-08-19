@@ -16,6 +16,7 @@ function applyStyle(dom, styleFn) {
 
 /**
  * @param {any} node
+ * @param config
  * @returns {SVGForeignObjectElement} Node
  */
 function addHtmlLabel(node, config) {
@@ -33,8 +34,8 @@ function addHtmlLabel(node, config) {
         '>' +
         label +
         '</span>',
-      config,
-    ),
+      config
+    )
   );
 
   applyStyle(div, node.labelStyle);
@@ -65,7 +66,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
       isNode,
       label: decodeEntities(vertexText).replace(
         /fa[blrs]?:fa-[\w-]+/g, // cspell: disable-line
-        (s) => `<i class='${s.replace(':', ' ')}'></i>`,
+        (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
       labelStyle: style.replace('fill:', 'color:'),
     };
