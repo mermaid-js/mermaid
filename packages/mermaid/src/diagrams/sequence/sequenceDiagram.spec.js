@@ -2058,26 +2058,52 @@ Bob->>Alice:Got it!
     expect(messages[0].from).toBe('Alice');
     expect(messages[0].to).toBe('Bob');
   });
-  describe('when parsing extended participant syntax ', () => {
-    it('should parse a message', async () => {
-      const actor1 = 'database';
+  describe('when parsing extended participant syntax', () => {
+    it('should parse participants with different quote styles and whitespace', async () => {
       const diagram = await Diagram.fromText(`
-    sequenceDiagram
-        participant Alice@{ "type" : "database" }
-        participant Bob@{ "type" : "database" }
-        participant Carl@{ type: "database" }
-        participant David@{ "type" : 'database' }
-        participant Eve@{ type: 'database' }
-        participant Favela@{ "type" : "database"    }
-        Bob->>+Alice: Hi Alice
-        Alice->>+Bob: Hi Bob
-      `);
+  sequenceDiagram
+      participant Alice@{ "type" : "database" }
+      participant Bob@{ "type" : "database" }
+      participant Carl@{ type: "database" }
+      participant David@{ "type" : 'database' }
+      participant Eve@{ type: 'database' }
+      participant Favela@{ "type" : "database"    }
+      Bob->>+Alice: Hi Alice
+      Alice->>+Bob: Hi Bob
+    `);
 
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('Alice').type).toBe('database');
+      expect(actors.get('Alice').description).toBe('Alice');
+
+      expect(actors.get('Bob').type).toBe('database');
+      expect(actors.get('Bob').description).toBe('Bob');
+
+      expect(actors.get('Carl').type).toBe('database');
+      expect(actors.get('Carl').description).toBe('Carl');
+
+      expect(actors.get('David').type).toBe('database');
+      expect(actors.get('David').description).toBe('David');
+
+      expect(actors.get('Eve').type).toBe('database');
+      expect(actors.get('Eve').description).toBe('Eve');
+
+      expect(actors.get('Favela').type).toBe('database');
+      expect(actors.get('Favela').description).toBe('Favela');
+
+      // Verify messages were parsed correctly
       const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(4); // 2 messages + 2 activation messages
+      expect(messages[0].from).toBe('Bob');
+      expect(messages[0].to).toBe('Alice');
+      expect(messages[0].message).toBe('Hi Alice');
+      expect(messages[2].from).toBe('Alice'); // Second message (index 2 due to activation)
+      expect(messages[2].to).toBe('Bob');
+      expect(messages[2].message).toBe('Hi Bob');
     });
 
-    it('should parse a message', async () => {
-      const actor1 = 'database';
+    it('should parse mixed participant types with extended syntax', async () => {
       const diagram = await Diagram.fromText(`
     sequenceDiagram
         participant lead
@@ -2085,9 +2111,93 @@ Bob->>Alice:Got it!
         API->>+Database: getUserb
         Database-->>-API: userb
         dsa --> Database: hello
-    `);
+`);
 
+      // Verify actors were created
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('lead').type).toBe('participant');
+      expect(actors.get('lead').description).toBe('lead');
+
+      // Participant with extended syntax
+      expect(actors.get('dsa').type).toBe('queue');
+      expect(actors.get('dsa').description).toBe('dsa');
+
+      // Implicitly created actors (from messages)
+      expect(actors.get('API').type).toBe('participant');
+      expect(actors.get('API').description).toBe('API');
+
+      expect(actors.get('Database').type).toBe('participant');
+      expect(actors.get('Database').description).toBe('Database');
+
+      // Verify messages were parsed correctly
       const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(5); // 3 messages + 2 activation messages
+
+      // First message with activation
+      expect(messages[0].from).toBe('API');
+      expect(messages[0].to).toBe('Database');
+      expect(messages[0].message).toBe('getUserb');
+      expect(messages[0].activate).toBe(true);
+
+      // Second message with deactivation
+      expect(messages[2].from).toBe('Database');
+      expect(messages[2].to).toBe('API');
+      expect(messages[2].message).toBe('userb');
+
+      // Third message
+      expect(messages[4].from).toBe('dsa');
+      expect(messages[4].to).toBe('Database');
+      expect(messages[4].message).toBe('hello');
+    });
+
+    it('should fail for malformed JSON in participant definition', async () => {
+      const invalidDiagram = `
+    sequenceDiagram
+      participant D@{ "type: "entity" }
+      participant E@{ "type": "dat
+      abase }
+  `;
+
+      let error = false;
+      try {
+        await mermaidAPI.parse(invalidDiagram);
+      } catch (e) {
+        error = true;
+      }
+      expect(error).toBe(true);
+    });
+
+    it('should fail for missing colon separator', async () => {
+      const invalidDiagram = `
+    sequenceDiagram
+      participant C@{ "type" "control" }
+      C ->> C: action
+  `;
+
+      let error = false;
+      try {
+        await mermaidAPI.parse(invalidDiagram);
+      } catch (e) {
+        error = true;
+      }
+      expect(error).toBe(true);
+    });
+
+    it('should fail for missing closing brace', async () => {
+      const invalidDiagram = `
+    sequenceDiagram
+      participant E@{ "type": "entity"
+      E ->> E: process
+  `;
+
+      let error = false;
+      try {
+        await mermaidAPI.parse(invalidDiagram);
+      } catch (e) {
+        error = true;
+      }
+      expect(error).toBe(true);
     });
   });
   describe('participant type parsing', () => {
