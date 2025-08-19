@@ -11,6 +11,7 @@ import { decodeEntities } from '../utils.js';
 import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
+import { getConfig } from '../config.js';
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {
@@ -25,7 +26,7 @@ async function addHtmlSpan(
   classes,
   addBackground = false,
   // TODO: Make config mandatory
-  config: MermaidConfig = {}
+  config: MermaidConfig = getConfig()
 ) {
   const fo = element.append('foreignObject');
   // This is not the final width but used in order to make sure the foreign
