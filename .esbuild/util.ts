@@ -33,7 +33,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     platform: 'browser',
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
-    external: ['require', 'fs', 'path'],
+    external: ['require', 'fs', 'path', 'assert', 'util'],
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
     sourcemap: 'external',
@@ -80,7 +80,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     ...rest
   } = options;
 
-  const external: string[] = ['require', 'fs', 'path'];
+  const external: string[] = ['require', 'fs', 'path', 'assert', 'util'];
   const outFileName = getFileName(name, options);
   const output: BuildOptions = buildOptions({
     ...rest,
