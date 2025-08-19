@@ -27,9 +27,6 @@
   "devDependencies": {
     "mermaid": "workspace:*"
   },
-  "peerDependencies": {
-    "mermaid": "workspace:^"
-  },
   "publishConfig": {
     "access": "public"
   }
