@@ -512,7 +512,7 @@ You have to call mermaid.initialize.`
    * @param linkStr - URL to create a link for
    * @param target - Target attribute for the link
    */
-  public setLink(ids: string, linkStr: string, target: string) {
+  public setLink(ids: string, linkStr: string, target?: string) {
     ids.split(',').forEach((id) => {
       const vertex = this.vertices.get(id);
       if (vertex !== undefined) {
