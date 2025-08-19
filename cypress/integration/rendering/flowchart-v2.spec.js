@@ -1118,7 +1118,7 @@ end
       imgSnapshotTest(
         `flowchart TB
           A(["Start"]) --> n1["Untitled Node"]
-          A --> n2["Untitled Node"]     
+          A --> n2["Untitled Node"]
         `,
         {}
       );
@@ -1127,7 +1127,7 @@ end
       imgSnapshotTest(
         `flowchart BT
           n2["Untitled Node"] --> n1["Diamond"]
-          n1@{ shape: diam}     
+          n1@{ shape: diam}
         `,
         {}
       );
@@ -1138,7 +1138,7 @@ end
         n2["Untitled Node"] --> n1["Rounded Rectangle"]
         n3["Untitled Node"] --> n1
         n1@{ shape: rounded}
-        n3@{ shape: rect}  
+        n3@{ shape: rect}
     `,
         {}
       );

@@ -182,7 +182,7 @@ const contentLoadedApi = async function () {
       for (let i = 0; i < numCodes; i++) {
         const { svg, bindFunctions } = await mermaid.render('newid' + i, graphObj.code[i], divs[i]);
         div.innerHTML = svg;
-        bindFunctions(div);
+        bindFunctions?.(div);
       }
     } else {
       const div = document.createElement('div');
@@ -194,7 +194,7 @@ const contentLoadedApi = async function () {
       const { svg, bindFunctions } = await mermaid.render('newid', graphObj.code, div);
       div.innerHTML = svg;
       console.log(div.innerHTML);
-      bindFunctions(div);
+      bindFunctions?.(div);
     }
   }
 };
