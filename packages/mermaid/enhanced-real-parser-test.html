@@ -69,6 +69,10 @@
             border-top-color: #FF9800;
         }
 
+        .lezer-panel {
+            border-top-color: #9C27B0;
+        }
+
         .parser-panel h3 {
             margin: 0 0 15px 0;
             text-align: center;
@@ -87,6 +91,10 @@
 
         .lark-panel h3 {
             background: #FF9800;
+        }
+
+        .lezer-panel h3 {
+            background: #9C27B0;
         }
 
         .metrics {
@@ -191,7 +199,7 @@
     <div class="container">
         <div class="header">
             <h1>🚀 Enhanced Real Parser Performance Test</h1>
-            <p>Real Jison vs ANTLR vs Lark parsers with diverse diagram samples</p>
+            <p>Real Jison vs ANTLR vs Lark vs Lezer parsers with diverse diagram samples</p>
         </div>
 
         <div class="controls">
@@ -278,6 +286,29 @@
                     <div class="metric">
                         <div class="metric-label">Edges</div>
                         <div class="metric-value" id="larkEdges">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="parser-panel lezer-panel">
+                <h3>⚡ Lezer Parser</h3>
+                <div class="status ready" id="lezerStatus">Ready</div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">Parse Time</div>
+                        <div class="metric-value" id="lezerTime">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Success Rate</div>
+                        <div class="metric-value" id="lezerSuccess">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Nodes</div>
+                        <div class="metric-value" id="lezerNodes">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Edges</div>
+                        <div class="metric-value" id="lezerEdges">-</div>
                     </div>
                 </div>
             </div>
@@ -502,13 +533,13 @@
             log(`🔧 Using ${useReal && parsersReady ? 'real' : 'simulated'} parsers`);
 
             // Update status
-            ['jison', 'antlr', 'lark'].forEach(parser => {
+            ['jison', 'antlr', 'lark', 'lezer'].forEach(parser => {
                 updateStatus(parser, 'Testing...', 'loading');
             });
 
             // Test all parsers
             const results = {};
-            for (const parser of ['jison', 'antlr', 'lark']) {
+            for (const parser of ['jison', 'antlr', 'lark', 'lezer']) {
                 try {
                     const result = await testParser(parser, testCase.diagram);
                     results[parser] = result;
@@ -587,7 +618,7 @@
         document.getElementById('clearResults').addEventListener('click', () => {
             document.getElementById('resultsContent').innerHTML = '<p>Click a test button to start performance testing...</p>';
             document.getElementById('log').innerHTML = '';
-            ['jison', 'antlr', 'lark'].forEach(parser => {
+            ['jison', 'antlr', 'lark', 'lezer'].forEach(parser => {
                 updateStatus(parser, 'Ready', 'ready');
                 updateMetrics(parser, { time: null, success: null, nodes: null, edges: null });
             });

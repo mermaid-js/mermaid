@@ -16,6 +16,7 @@ import flowParserJison from './flow.js';
 // Dynamic imports for optional parsers
 let flowParserANTLR: any = null;
 let flowParserLark: any = null;
+let flowParserLezer: any = null;
 
 /**
  * Parser interface that all parsers must implement
@@ -32,7 +33,7 @@ export interface FlowchartParser {
 /**
  * Parser type enumeration
  */
-export type ParserType = 'jison' | 'antlr' | 'lark';
+export type ParserType = 'jison' | 'antlr' | 'lark' | 'lezer';
 
 /**
  * Parser factory class
@@ -48,6 +49,7 @@ export class FlowchartParserFactory {
     this.parsers.set('jison', flowParserJison);
     this.parsers.set('antlr', null);
     this.parsers.set('lark', null);
+    this.parsers.set('lezer', null);
   }
 
   /**
@@ -123,6 +125,41 @@ export class FlowchartParserFactory {
     })();
 
     this.loadingPromises.set('lark', loadPromise);
+    return loadPromise;
+  }
+
+  /**
+   * Load Lezer parser dynamically
+   */
+  private async loadLezerParser(): Promise<FlowchartParser> {
+    if (this.parsers.get('lezer')) {
+      return this.parsers.get('lezer')!;
+    }
+
+    if (this.loadingPromises.has('lezer')) {
+      return this.loadingPromises.get('lezer')!;
+    }
+
+    const loadPromise = (async () => {
+      try {
+        console.log('🔍 FACTORY: Loading Lezer parser...');
+        log.info('Loading Lezer parser...');
+        const lezerModule = await import('./flowParser.js');
+        console.log('🔍 FACTORY: Lezer module loaded:', lezerModule);
+        flowParserLezer = lezerModule.default;
+        console.log('🔍 FACTORY: Lezer parser instance:', flowParserLezer);
+        this.parsers.set('lezer', flowParserLezer);
+        log.info('Lezer parser loaded successfully');
+        return flowParserLezer;
+      } catch (error) {
+        console.error('🔍 FACTORY: Failed to load Lezer parser:', error);
+        log.error('Failed to load Lezer parser:', error);
+        log.warn('Falling back to Jison parser');
+        return this.parsers.get('jison')!;
+      }
+    })();
+
+    this.loadingPromises.set('lezer', loadPromise);
     return loadPromise;
   }
 
@@ -227,6 +264,10 @@ export class FlowchartParserFactory {
         parser = await this.loadLarkParser();
         break;
 
+      case 'lezer':
+        parser = await this.loadLezerParser();
+        break;
+
       case 'jison':
       default:
         parser = this.parsers.get('jison')!;
@@ -249,6 +290,7 @@ export class FlowchartParserFactory {
         return true; // Always available
       case 'antlr':
       case 'lark':
+      case 'lezer':
         return true; // Can be dynamically loaded
       default:
         return false;
@@ -259,7 +301,7 @@ export class FlowchartParserFactory {
    * Get list of available parsers
    */
   public getAvailableParsers(): ParserType[] {
-    return ['jison', 'antlr', 'lark'];
+    return ['jison', 'antlr', 'lark', 'lezer'];
   }
 
   /**
@@ -268,7 +310,7 @@ export class FlowchartParserFactory {
   public async preloadAllParsers(): Promise<void> {
     log.info('Preloading all flowchart parsers...');
 
-    const loadPromises = [this.loadANTLRParser(), this.loadLarkParser()];
+    const loadPromises = [this.loadANTLRParser(), this.loadLarkParser(), this.loadLezerParser()];
 
     try {
       await Promise.all(loadPromises);
@@ -287,6 +329,7 @@ export class FlowchartParserFactory {
     this.parsers.set('jison', flowParserJison);
     this.parsers.set('antlr', null);
     this.parsers.set('lark', null);
+    this.parsers.set('lezer', null);
   }
 }
 
