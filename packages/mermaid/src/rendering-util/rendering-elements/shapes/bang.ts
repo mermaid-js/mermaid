@@ -20,6 +20,7 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   const w = bbox.width + 10 * halfPadding;
   const h = bbox.height + 8 * halfPadding;
   const r = 0.15 * w;
+  const { cssStyles } = node;
 
   const minWidth = bbox.width + 20;
   const minHeight = bbox.height + 20;
