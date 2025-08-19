@@ -1,11 +1,11 @@
 /**
- * Combined Flow Huge Test - All Three Parsers
+ * Combined Flow Huge Test - All Four Parsers
  *
- * This test compares performance and scalability across JISON, ANTLR, and LARK parsers
+ * This test compares performance and scalability across JISON, ANTLR, LARK, and LEZER parsers
  * when handling very large flowchart diagrams.
  *
  * Original test: flow-huge.spec.js
- * Migration: Tests all three parsers with performance metrics
+ * Migration: Tests all four parsers with performance metrics
  */
 
 import { FlowDB } from '../flowDb.js';
@@ -17,16 +17,17 @@ setConfig({
   maxEdges: 10000, // Increase edge limit for huge diagram testing
 });
 
-console.log('🚀 Starting comprehensive huge diagram test comparison across all parsers');
+console.log('🚀 Starting comprehensive huge diagram test comparison across all four parsers');
 
 // Test configuration
-const PARSERS = ['jison', 'antlr', 'lark'];
+const PARSERS = ['jison', 'antlr', 'lark', 'lezer'];
 
 // Performance tracking
 const performanceResults = {
   jison: { passed: 0, failed: 0, errors: [], avgTime: 0, maxMemory: 0 },
   antlr: { passed: 0, failed: 0, errors: [], avgTime: 0, maxMemory: 0 },
   lark: { passed: 0, failed: 0, errors: [], avgTime: 0, maxMemory: 0 },
+  lezer: { passed: 0, failed: 0, errors: [], avgTime: 0, maxMemory: 0 },
 };
 
 // Helper function to measure memory usage
@@ -77,8 +78,8 @@ function generateHugeDiagram() {
   };
 }
 
-describe('Combined Flow Huge Test - All Three Parsers', () => {
-  console.log('📊 Testing huge diagram parsing with 3 parsers');
+describe('Combined Flow Huge Test - All Four Parsers', () => {
+  console.log('📊 Testing huge diagram parsing with 4 parsers (JISON, ANTLR, LARK, LEZER)');
 
   const diagrams = generateHugeDiagram();
 
@@ -239,6 +240,58 @@ describe('Combined Flow Huge Test - All Three Parsers', () => {
     });
   });
 
+  describe('LEZER Parser Huge Tests', () => {
+    it('should handle small huge diagrams (lezer)', async () => {
+      await runWithParser('lezer', (parser) => {
+        try {
+          const startTime = Date.now();
+          const startMemory = getMemoryUsage();
+
+          const res = parser.parse(diagrams.small);
+          const vert = parser.yy.getVertices();
+          const edges = parser.yy.getEdges();
+
+          const endTime = Date.now();
+          const endMemory = getMemoryUsage();
+
+          expect(edges[0].type).toBe('arrow_point');
+          expect(edges.length).toBe(101);
+          expect(vert.size).toBe(2);
+
+          trackResult('lezer', true, null, endTime - startTime, endMemory - startMemory);
+        } catch (error) {
+          trackResult('lezer', false, error);
+          throw error;
+        }
+      });
+    });
+
+    it('should handle medium huge diagrams (lezer)', async () => {
+      await runWithParser('lezer', (parser) => {
+        try {
+          const startTime = Date.now();
+          const startMemory = getMemoryUsage();
+
+          const res = parser.parse(diagrams.medium);
+          const vert = parser.yy.getVertices();
+          const edges = parser.yy.getEdges();
+
+          const endTime = Date.now();
+          const endMemory = getMemoryUsage();
+
+          expect(edges[0].type).toBe('arrow_point');
+          expect(edges.length).toBeGreaterThan(1000);
+          expect(vert.size).toBe(2);
+
+          trackResult('lezer', true, null, endTime - startTime, endMemory - startMemory);
+        } catch (error) {
+          trackResult('lezer', false, error);
+          throw error;
+        }
+      });
+    });
+  });
+
   // Performance comparison summary
   describe('Parser Performance Comparison Summary', () => {
     it('should provide comprehensive performance comparison results', () => {
@@ -291,7 +344,9 @@ describe('Combined Flow Huge Test - All Three Parsers', () => {
 
       if (overallSuccessRate === '100.0') {
         console.log('\n🎉 SUCCESS: All parsers achieved 100% compatibility!');
-        console.log('🚀 All three parsers (JISON, ANTLR, LARK) handle huge diagrams identically!');
+        console.log(
+          '🚀 All four parsers (JISON, ANTLR, LARK, LEZER) handle huge diagrams identically!'
+        );
       } else {
         console.log(
           '\n⚠️  Some performance or compatibility issues remain - see individual parser results above'
