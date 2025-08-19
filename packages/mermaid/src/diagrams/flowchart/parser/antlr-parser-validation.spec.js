@@ -1,12 +1,12 @@
 /**
  * ANTLR Parser Validation Test Suite
- * 
+ *
  * This comprehensive test suite validates the ANTLR parser against existing
  * flowchart test cases to ensure 100% compatibility with the Jison parser.
  */
 
 import { FlowDB } from '../flowDb.js';
-import flowParserJison from './flowParser.ts';
+import flowParserJison from './flowAntlrParser.js';
 import flowParserANTLR from './flowParserANTLR.ts';
 import { setConfig } from '../../../config.js';
 
@@ -30,101 +30,100 @@ function compareFlowDBs(jisonDB, antlrDB) {
       edges: { jison: 0, antlr: 0, match: true },
       direction: { jison: '', antlr: '', match: true },
       subGraphs: { jison: 0, antlr: 0, match: true },
-      classes: { jison: 0, antlr: 0, match: true }
-    }
+      classes: { jison: 0, antlr: 0, match: true },
+    },
   };
 
   try {
     // Compare vertices
     const jisonVertices = jisonDB.getVertices();
     const antlrVertices = antlrDB.getVertices();
-    
+
     comparison.summary.vertices.jison = jisonVertices.size;
     comparison.summary.vertices.antlr = antlrVertices.size;
     comparison.summary.vertices.match = jisonVertices.size === antlrVertices.size;
-    
+
     if (!comparison.summary.vertices.match) {
       comparison.identical = false;
       comparison.differences.push({
         type: 'VERTEX_COUNT_MISMATCH',
         jison: jisonVertices.size,
-        antlr: antlrVertices.size
+        antlr: antlrVertices.size,
       });
     }
 
     // Compare edges
     const jisonEdges = jisonDB.getEdges();
     const antlrEdges = antlrDB.getEdges();
-    
+
     comparison.summary.edges.jison = jisonEdges.length;
     comparison.summary.edges.antlr = antlrEdges.length;
     comparison.summary.edges.match = jisonEdges.length === antlrEdges.length;
-    
+
     if (!comparison.summary.edges.match) {
       comparison.identical = false;
       comparison.differences.push({
         type: 'EDGE_COUNT_MISMATCH',
         jison: jisonEdges.length,
-        antlr: antlrEdges.length
+        antlr: antlrEdges.length,
       });
     }
 
     // Compare direction
     const jisonDirection = jisonDB.getDirection() || '';
     const antlrDirection = antlrDB.getDirection() || '';
-    
+
     comparison.summary.direction.jison = jisonDirection;
     comparison.summary.direction.antlr = antlrDirection;
     comparison.summary.direction.match = jisonDirection === antlrDirection;
-    
+
     if (!comparison.summary.direction.match) {
       comparison.identical = false;
       comparison.differences.push({
         type: 'DIRECTION_MISMATCH',
         jison: jisonDirection,
-        antlr: antlrDirection
+        antlr: antlrDirection,
       });
     }
 
     // Compare subgraphs
     const jisonSubGraphs = jisonDB.getSubGraphs();
     const antlrSubGraphs = antlrDB.getSubGraphs();
-    
+
     comparison.summary.subGraphs.jison = jisonSubGraphs.length;
     comparison.summary.subGraphs.antlr = antlrSubGraphs.length;
     comparison.summary.subGraphs.match = jisonSubGraphs.length === antlrSubGraphs.length;
-    
+
     if (!comparison.summary.subGraphs.match) {
       comparison.identical = false;
       comparison.differences.push({
         type: 'SUBGRAPH_COUNT_MISMATCH',
         jison: jisonSubGraphs.length,
-        antlr: antlrSubGraphs.length
+        antlr: antlrSubGraphs.length,
       });
     }
 
     // Compare classes
     const jisonClasses = jisonDB.getClasses();
     const antlrClasses = antlrDB.getClasses();
-    
+
     comparison.summary.classes.jison = jisonClasses.size;
     comparison.summary.classes.antlr = antlrClasses.size;
     comparison.summary.classes.match = jisonClasses.size === antlrClasses.size;
-    
+
     if (!comparison.summary.classes.match) {
       comparison.identical = false;
       comparison.differences.push({
         type: 'CLASS_COUNT_MISMATCH',
         jison: jisonClasses.size,
-        antlr: antlrClasses.size
+        antlr: antlrClasses.size,
       });
     }
-
   } catch (error) {
     comparison.identical = false;
     comparison.differences.push({
       type: 'COMPARISON_ERROR',
-      error: error.message
+      error: error.message,
     });
   }
 
@@ -141,7 +140,7 @@ async function testSingleInput(input) {
     input: input,
     jison: { success: false, error: null, db: null },
     antlr: { success: false, error: null, db: null },
-    comparison: null
+    comparison: null,
   };
 
   // Test Jison parser
@@ -150,9 +149,9 @@ async function testSingleInput(input) {
     flowParserJison.parser.yy = jisonDB;
     flowParserJison.parser.yy.clear();
     flowParserJison.parser.yy.setGen('gen-2');
-    
+
     flowParserJison.parse(input);
-    
+
     result.jison.success = true;
     result.jison.db = jisonDB;
   } catch (error) {
@@ -165,9 +164,9 @@ async function testSingleInput(input) {
     flowParserANTLR.parser.yy = antlrDB;
     flowParserANTLR.parser.yy.clear();
     flowParserANTLR.parser.yy.setGen('gen-2');
-    
+
     flowParserANTLR.parse(input);
-    
+
     result.antlr.success = true;
     result.antlr.db = antlrDB;
   } catch (error) {
@@ -183,7 +182,6 @@ async function testSingleInput(input) {
 }
 
 describe('ANTLR Parser Validation Against Jison Parser', () => {
-  
   describe('Basic Functionality Tests', () => {
     const basicTests = [
       'graph TD',
@@ -192,17 +190,17 @@ describe('ANTLR Parser Validation Against Jison Parser', () => {
       'A-->B',
       'A --> B',
       'graph TD\nA-->B',
-      'graph TD\nA-->B\nB-->C'
+      'graph TD\nA-->B\nB-->C',
     ];
 
-    basicTests.forEach(testInput => {
+    basicTests.forEach((testInput) => {
       it(`should parse "${testInput.replace(/\n/g, '\\n')}" identically to Jison`, async () => {
         const result = await testSingleInput(testInput);
-        
+
         console.log(`\n📊 Test: "${testInput.replace(/\n/g, '\\n')}"`);
         console.log(`Jison: ${result.jison.success ? '✅' : '❌'} ${result.jison.error || ''}`);
         console.log(`ANTLR: ${result.antlr.success ? '✅' : '❌'} ${result.antlr.error || ''}`);
-        
+
         if (result.comparison) {
           console.log(`Match: ${result.comparison.identical ? '✅ IDENTICAL' : '❌ DIFFERENT'}`);
           if (!result.comparison.identical) {
@@ -213,7 +211,7 @@ describe('ANTLR Parser Validation Against Jison Parser', () => {
         // Both parsers should succeed
         expect(result.jison.success).toBe(true);
         expect(result.antlr.success).toBe(true);
-        
+
         // Results should be identical
         if (result.comparison) {
           expect(result.comparison.identical).toBe(true);
@@ -234,24 +232,24 @@ describe('ANTLR Parser Validation Against Jison Parser', () => {
       'graph TD\nA([Stadium])',
       'graph TD\nA[[Subroutine]]',
       'graph TD\nA[(Database)]',
-      'graph TD\nA(((Cloud)))'
+      'graph TD\nA(((Cloud)))',
     ];
 
-    shapeTests.forEach(testInput => {
+    shapeTests.forEach((testInput) => {
       it(`should parse node shape "${testInput.split('\\n')[1]}" identically to Jison`, async () => {
         const result = await testSingleInput(testInput);
-        
+
         console.log(`\n📊 Shape Test: "${testInput.replace(/\n/g, '\\n')}"`);
         console.log(`Jison: ${result.jison.success ? '✅' : '❌'} ${result.jison.error || ''}`);
         console.log(`ANTLR: ${result.antlr.success ? '✅' : '❌'} ${result.antlr.error || ''}`);
-        
+
         if (result.comparison) {
           console.log(`Match: ${result.comparison.identical ? '✅ IDENTICAL' : '❌ DIFFERENT'}`);
         }
 
         // ANTLR parser should succeed (Jison may fail on some shapes)
         expect(result.antlr.success).toBe(true);
-        
+
         // If both succeed, they should match
         if (result.jison.success && result.comparison) {
           expect(result.comparison.identical).toBe(true);
@@ -270,24 +268,24 @@ describe('ANTLR Parser Validation Against Jison Parser', () => {
       'graph TD\nA<-->B',
       'graph TD\nA<->B',
       'graph TD\nA===B',
-      'graph TD\nA==>B'
+      'graph TD\nA==>B',
     ];
 
-    edgeTests.forEach(testInput => {
+    edgeTests.forEach((testInput) => {
       it(`should parse edge type "${testInput.split('\\n')[1]}" identically to Jison`, async () => {
         const result = await testSingleInput(testInput);
-        
+
         console.log(`\n📊 Edge Test: "${testInput.replace(/\n/g, '\\n')}"`);
         console.log(`Jison: ${result.jison.success ? '✅' : '❌'} ${result.jison.error || ''}`);
         console.log(`ANTLR: ${result.antlr.success ? '✅' : '❌'} ${result.antlr.error || ''}`);
-        
+
         if (result.comparison) {
           console.log(`Match: ${result.comparison.identical ? '✅ IDENTICAL' : '❌ DIFFERENT'}`);
         }
 
         // ANTLR parser should succeed
         expect(result.antlr.success).toBe(true);
-        
+
         // If both succeed, they should match
         if (result.jison.success && result.comparison) {
           expect(result.comparison.identical).toBe(true);
@@ -304,7 +302,7 @@ describe('ANTLR Parser Validation Against Jison Parser', () => {
         B -->|No| D[Process 2]
         C --> E[End]
         D --> E`,
-      
+
       `flowchart LR
         subgraph "Subgraph 1"
           A --> B
@@ -313,21 +311,21 @@ describe('ANTLR Parser Validation Against Jison Parser', () => {
           C --> D
         end
         B --> C`,
-      
+
       `graph TD
         A --> B
         style A fill:#f9f,stroke:#333,stroke-width:4px
-        style B fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5`
+        style B fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5`,
     ];
 
     complexTests.forEach((testInput, index) => {
       it(`should parse complex flowchart ${index + 1} identically to Jison`, async () => {
         const result = await testSingleInput(testInput);
-        
+
         console.log(`\n📊 Complex Test ${index + 1}:`);
         console.log(`Jison: ${result.jison.success ? '✅' : '❌'} ${result.jison.error || ''}`);
         console.log(`ANTLR: ${result.antlr.success ? '✅' : '❌'} ${result.antlr.error || ''}`);
-        
+
         if (result.comparison) {
           console.log(`Match: ${result.comparison.identical ? '✅ IDENTICAL' : '❌ DIFFERENT'}`);
           if (!result.comparison.identical) {
@@ -337,7 +335,7 @@ describe('ANTLR Parser Validation Against Jison Parser', () => {
 
         // ANTLR parser should succeed
         expect(result.antlr.success).toBe(true);
-        
+
         // If both succeed, they should match
         if (result.jison.success && result.comparison) {
           expect(result.comparison.identical).toBe(true);
@@ -345,5 +343,4 @@ describe('ANTLR Parser Validation Against Jison Parser', () => {
       });
     });
   });
-
 });

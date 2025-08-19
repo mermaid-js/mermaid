@@ -12,7 +12,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { FlowDB } from '../flowDb.js';
-import flowParserJison from './flowParser.ts';
+import flowParserJison from './flowAntlrParser.js';
 import flowParserANTLR from './flowParserANTLR.ts';
 import flowParserLark from './flowParserLark.js';
 import { tokenizeWithANTLR } from './token-stream-comparator.js';

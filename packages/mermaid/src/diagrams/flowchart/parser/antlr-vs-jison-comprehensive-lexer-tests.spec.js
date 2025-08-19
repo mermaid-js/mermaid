@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { FlowDB } from '../flowDb.js';
-import flowParserJison from './flowParser.ts';
+import flowParserJison from './flowAntlrParser.js';
 import { tokenizeWithANTLR } from './token-stream-comparator.js';
 import { setConfig } from '../../../config.js';
 

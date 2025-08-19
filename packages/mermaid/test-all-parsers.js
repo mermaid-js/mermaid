@@ -130,7 +130,7 @@ async function runAllTests() {
 
   // Load Jison parser (always available)
   try {
-    const jisonModule = await import('./src/diagrams/flowchart/parser/flowParser.ts');
+    const jisonModule = await import('./src/diagrams/flowchart/parser/flowAntlrParser.js');
     jisonParser = jisonModule.default;
     console.log('✅ Jison parser loaded');
   } catch (error) {
