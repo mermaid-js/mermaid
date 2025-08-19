@@ -1,5 +1,16 @@
 # @mermaid-js/layout-elk
 
+## 0.1.9
+
+### Patch Changes
+
+- [#6857](https://github.com/mermaid-js/mermaid/pull/6857) [`b9ef683`](https://github.com/mermaid-js/mermaid/commit/b9ef683fb67b8959abc455d6cc5266c37ba435f6) Thanks [@knsv](https://github.com/knsv)! - feat: Exposing elk configuration forceNodeModelOrder and considerModelOrder to the mermaid configuration
+
+- [#6849](https://github.com/mermaid-js/mermaid/pull/6849) [`2260948`](https://github.com/mermaid-js/mermaid/commit/2260948b7bda08f00616c2ce678bed1da69eb96c) Thanks [@anderium](https://github.com/anderium)! - Make elk not force node model order, but strongly consider it instead
+
+- Updated dependencies [[`b9ef683`](https://github.com/mermaid-js/mermaid/commit/b9ef683fb67b8959abc455d6cc5266c37ba435f6), [`2c0931d`](https://github.com/mermaid-js/mermaid/commit/2c0931da46794b49d2523211e25f782900c34e94), [`33e08da`](https://github.com/mermaid-js/mermaid/commit/33e08daf175125295a06b1b80279437004a4e865), [`814b68b`](https://github.com/mermaid-js/mermaid/commit/814b68b4a94813f7c6b3d7fb4559532a7bab2652), [`fce7cab`](https://github.com/mermaid-js/mermaid/commit/fce7cabb71d68a20a66246fe23d066512126a412), [`fc07f0d`](https://github.com/mermaid-js/mermaid/commit/fc07f0d8abca49e4f887d7457b7b94fb07d1e3da), [`12e01bd`](https://github.com/mermaid-js/mermaid/commit/12e01bdb5cacf3569133979a5a4f1d8973e9aec1), [`01aaef3`](https://github.com/mermaid-js/mermaid/commit/01aaef39b4a1ec8bc5a0c6bfa3a20b712d67f4dc), [`daf8d8d`](https://github.com/mermaid-js/mermaid/commit/daf8d8d3befcd600618a629977b76463b38d0ad9), [`c36cd05`](https://github.com/mermaid-js/mermaid/commit/c36cd05c45ac3090181152b4dae41f8d7b569bd6), [`8bb29fc`](https://github.com/mermaid-js/mermaid/commit/8bb29fc879329ad109898e4025b4f4eba2ab0649), [`71b04f9`](https://github.com/mermaid-js/mermaid/commit/71b04f93b07f876df2b30656ef36036c1d0e4e4f), [`c99bce6`](https://github.com/mermaid-js/mermaid/commit/c99bce6bab4c7ce0b81b66d44f44853ce4aeb1c3), [`6cc1926`](https://github.com/mermaid-js/mermaid/commit/6cc192680a2531cab28f87a8061a53b786e010f3), [`9da6fb3`](https://github.com/mermaid-js/mermaid/commit/9da6fb39ae278401771943ac85d6d1b875f78cf1), [`e48b0ba`](https://github.com/mermaid-js/mermaid/commit/e48b0ba61dab7f95aa02da603b5b7d383b894932), [`4d62d59`](https://github.com/mermaid-js/mermaid/commit/4d62d5963238400270e9314c6e4d506f48147074), [`e9ce8cf`](https://github.com/mermaid-js/mermaid/commit/e9ce8cf4da9062d85098042044822100889bb0dd), [`9258b29`](https://github.com/mermaid-js/mermaid/commit/9258b2933bbe1ef41087345ffea3731673671c49), [`da90f67`](https://github.com/mermaid-js/mermaid/commit/da90f6760b6efb0da998bcb63b75eecc29e06c08), [`0133f1c`](https://github.com/mermaid-js/mermaid/commit/0133f1c0c5cff4fc4c8e0b99e9cf0b3d49dcbe71), [`895f9d4`](https://github.com/mermaid-js/mermaid/commit/895f9d43ff98ca05ebfba530789f677f31a011ff)]:
+  - mermaid@11.10.0
+
 ## 0.1.8
 
 ### Patch Changes

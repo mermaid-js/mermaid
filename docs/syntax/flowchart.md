@@ -1816,7 +1816,7 @@ config:
 graph LR
 ```
 
-#### Edge level curve style using Edge IDs (v\<MERMAID_RELEASE_VERSION>+)
+#### Edge level curve style using Edge IDs (v11.10.0+)
 
 You can assign IDs to [edges](#attaching-an-id-to-edges). After assigning an ID you can modify the line style by modifying the edge's `curve` property using the following syntax:
 
