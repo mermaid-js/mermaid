@@ -68,7 +68,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [Obsidian](https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Diagram) ✅
 - [Outline](https://docs.getoutline.com/s/guide/doc/diagrams-KQiKoT4wzK) ✅
 - [Redmine](https://redmine.org)
-  - [Mermaid Macro](https://www.redmine.org/plugins/redmine_mermaid_macro)
+  - [Mermaid Macro](https://redmine.org/plugins/redmine_mermaid_macro)
   - [Markdown for mermaid plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
 - Visual Studio Code [Polyglot Interactive Notebooks](https://github.com/dotnet/interactive#net-interactive)
