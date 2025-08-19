@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lezer Parser Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Lezer Parser Integration Test</h1>
+    <p>Testing if the Lezer parser is properly integrated into the Mermaid build system.</p>
+    
+    <div id="results"></div>
+    
+    <script type="module">
+        const resultsDiv = document.getElementById('results');
+        
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            resultsDiv.appendChild(div);
+        }
+        
+        async function testLezerIntegration() {
+            addResult('🔍 Starting Lezer parser integration test...', 'info');
+            
+            try {
+                // Test 1: Check if we can import the parser factory
+                addResult('📦 Testing parser factory import...', 'info');
+                
+                // Import from the built ESM bundle
+                const mermaidModule = await import('./dist/mermaid.esm.mjs');
+                addResult('✅ Successfully imported Mermaid ESM module', 'success');
+                
+                // Test 2: Check if the parser factory is available
+                if (mermaidModule.getFlowchartParser) {
+                    addResult('✅ getFlowchartParser function is available', 'success');
+                    
+                    // Test 3: Try to get the lezer parser
+                    try {
+                        addResult('🔍 Attempting to load Lezer parser...', 'info');
+                        const parser = await mermaidModule.getFlowchartParser('lezer');
+                        
+                        if (parser) {
+                            addResult('✅ Lezer parser loaded successfully!', 'success');
+                            addResult(`📋 Parser interface: <pre>${JSON.stringify({
+                                hasParser: !!parser.parser,
+                                hasYy: !!parser.yy,
+                                hasParse: !!parser.parse,
+                                hasParserParse: !!parser.parser?.parse
+                            }, null, 2)}</pre>`, 'info');
+                            
+                            // Test 4: Try basic parsing (expect it to fail gracefully)
+                            try {
+                                addResult('🔍 Testing basic parsing functionality...', 'info');
+                                const testDiagram = 'graph TD\\nA --> B';
+                                
+                                // Initialize parser database
+                                const { FlowDB } = await import('./dist/chunks/mermaid.esm/chunk-D5O2T7ZF.mjs');
+                                parser.yy = new FlowDB();
+                                
+                                const result = parser.parse(testDiagram);
+                                addResult('✅ Basic parsing completed (implementation may be incomplete)', 'success');
+                                
+                            } catch (parseError) {
+                                addResult(`⚠️ Parsing failed (expected for incomplete implementation): ${parseError.message}`, 'info');
+                            }
+                            
+                        } else {
+                            addResult('❌ Lezer parser returned null/undefined', 'error');
+                        }
+                        
+                    } catch (lezerError) {
+                        addResult(`❌ Failed to load Lezer parser: ${lezerError.message}`, 'error');
+                        console.error('Lezer parser error:', lezerError);
+                    }
+                    
+                } else {
+                    addResult('❌ getFlowchartParser function not found in module', 'error');
+                    addResult(`Available exports: <pre>${JSON.stringify(Object.keys(mermaidModule), null, 2)}</pre>`, 'info');
+                }
+                
+            } catch (error) {
+                addResult(`❌ Test failed: ${error.message}`, 'error');
+                console.error('Test error:', error);
+            }
+            
+            addResult('🏁 Test completed', 'info');
+        }
+        
+        // Run the test
+        testLezerIntegration().catch(error => {
+            addResult(`❌ Unexpected error: ${error.message}`, 'error');
+            console.error('Unexpected error:', error);
+        });
+    </script>
+</body>
+</html>
