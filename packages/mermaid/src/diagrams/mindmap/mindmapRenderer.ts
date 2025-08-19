@@ -80,6 +80,13 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   if (!mm) {
     return;
   }
+  data4Layout.nodes.forEach((node) => {
+    if (node.shape === 'rounded') {
+      node.radius = 15;
+      node.taper = 15;
+      node.stroke = 'none';
+    }
+  });
 
   // Use the unified rendering system
   await render(data4Layout, svg);

@@ -95,22 +95,21 @@ export async function roundedRect<T extends SVGGraphicsElement>(
 
   const labelPaddingX = node?.padding ?? 0;
   const labelPaddingY = node?.padding ?? 0;
-
   const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
   const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
-  const radius = 15;
-  const taper = 15; // Taper width for the rounded corners
+  const radius = node.radius || 5;
+  const taper = node.taper || 5; // Taper width for the rounded corners
   const { cssStyles } = node;
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
-
+  if (node.stroke) {
+    options.stroke = node.stroke;
+  }
   if (node.look !== 'handDrawn') {
     options.roughness = 0;
     options.fillStyle = 'solid';
-    options.stroke = 'none';
   }
-
   const points = [
     // Top edge (left to right)
     { x: -w / 2 + taper, y: -h / 2 }, // Top-left corner start (1)

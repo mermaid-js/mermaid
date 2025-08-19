@@ -92,6 +92,9 @@ export interface ClusterNode extends BaseNode {
   height?: number;
   width?: number;
   padding?: number;
+  radius?: number;
+  taper?: number;
+  stroke?: string;
 }
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
@@ -104,6 +107,9 @@ export interface NonClusterNode extends BaseNode {
   height?: number;
   width?: number;
   padding?: number;
+  radius?: number;
+  taper?: number;
+  stroke?: string;
 }
 
 // Common properties for any node in the system
