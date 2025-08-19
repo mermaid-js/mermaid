@@ -95,6 +95,7 @@ export interface ClusterNode extends BaseNode {
   radius?: number;
   taper?: number;
   stroke?: string;
+  from?: 'mindmap' | 'flowchart' | 'state' | 'class' | 'sequence' | 'er'; // Indicates the diagram type this node is from
 }
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
@@ -110,6 +111,7 @@ export interface NonClusterNode extends BaseNode {
   radius?: number;
   taper?: number;
   stroke?: string;
+  from?: 'mindmap' | 'flowchart' | 'state' | 'class' | 'sequence' | 'er'; // Indicates the diagram type this node is from
 }
 
 // Common properties for any node in the system

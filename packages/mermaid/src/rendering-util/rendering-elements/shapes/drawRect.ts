@@ -19,7 +19,10 @@ export async function drawRect<T extends SVGGraphicsElement>(
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
-  const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
+  const totalHeight = Math.max(
+    bbox.height + (node.from === 'mindmap' ? options.labelPaddingY : options.labelPaddingY * 2),
+    node?.height || 0
+  );
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 

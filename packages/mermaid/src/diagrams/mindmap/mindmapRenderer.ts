@@ -85,6 +85,11 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
       node.radius = 15;
       node.taper = 15;
       node.stroke = 'none';
+      node.from = 'mindmap';
+    } else if (node.shape === 'rect') {
+      node.height = 46;
+      node.width = 92;
+      node.from = 'mindmap';
     }
   });
 

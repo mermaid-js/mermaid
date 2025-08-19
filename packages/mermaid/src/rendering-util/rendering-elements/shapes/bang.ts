@@ -17,33 +17,36 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     getNodeClasses(node)
   );
 
-  const w = bbox.width + 8 * halfPadding;
-  const h = bbox.height + 2 * halfPadding;
+  const w = bbox.width + 10 * halfPadding;
+  const h = bbox.height + 8 * halfPadding;
   const r = 0.15 * w;
-  const { cssStyles } = node;
 
-  // Label centered around (0,0)
+  const minWidth = bbox.width + 20;
+  const minHeight = bbox.height + 20;
+  const effectiveWidth = Math.max(w, minWidth);
+  const effectiveHeight = Math.max(h, minHeight);
+
   label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
 
   let bangElem;
   const path = `M0 0 
-    a${r},${r} 1 0,0 ${w * 0.25},${-1 * h * 0.1}
-    a${r},${r} 1 0,0 ${w * 0.25},${0}
-    a${r},${r} 1 0,0 ${w * 0.25},${0}
-    a${r},${r} 1 0,0 ${w * 0.25},${h * 0.1}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${-1 * effectiveHeight * 0.1}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${effectiveHeight * 0.1}
 
-    a${r},${r} 1 0,0 ${w * 0.15},${h * 0.33}
-    a${r * 0.8},${r * 0.8} 1 0,0 0,${h * 0.34}
-    a${r},${r} 1 0,0 ${-1 * w * 0.15},${h * 0.33}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.15},${effectiveHeight * 0.33}
+    a${r * 0.8},${r * 0.8} 1 0,0 0,${effectiveHeight * 0.34}
+    a${r},${r} 1 0,0 ${-1 * effectiveWidth * 0.15},${effectiveHeight * 0.33}
 
-    a${r},${r} 1 0,0 ${-1 * w * 0.25},${h * 0.15}
-    a${r},${r} 1 0,0 ${-1 * w * 0.25},0
-    a${r},${r} 1 0,0 ${-1 * w * 0.25},0
-    a${r},${r} 1 0,0 ${-1 * w * 0.25},${-1 * h * 0.15}
+    a${r},${r} 1 0,0 ${-1 * effectiveWidth * 0.25},${effectiveHeight * 0.15}
+    a${r},${r} 1 0,0 ${-1 * effectiveWidth * 0.25},0
+    a${r},${r} 1 0,0 ${-1 * effectiveWidth * 0.25},0
+    a${r},${r} 1 0,0 ${-1 * effectiveWidth * 0.25},${-1 * effectiveHeight * 0.15}
 
-    a${r},${r} 1 0,0 ${-1 * w * 0.1},${-1 * h * 0.33}
-    a${r * 0.8},${r * 0.8} 1 0,0 0,${-1 * h * 0.34}
-    a${r},${r} 1 0,0 ${w * 0.1},${-1 * h * 0.33}
+    a${r},${r} 1 0,0 ${-1 * effectiveWidth * 0.1},${-1 * effectiveHeight * 0.33}
+    a${r * 0.8},${r * 0.8} 1 0,0 0,${-1 * effectiveHeight * 0.34}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.1},${-1 * effectiveHeight * 0.33}
   H0 V0 Z`;
 
   if (node.look === 'handDrawn') {
@@ -62,7 +65,7 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   }
 
   // Translate the path (center the shape)
-  bangElem.attr('transform', `translate(${-w / 2}, ${-h / 2})`);
+  bangElem.attr('transform', `translate(${-effectiveWidth / 2}, ${-effectiveHeight / 2})`);
 
   updateNodeBounds(node, bangElem);
   node.calcIntersect = function (bounds: Bounds, point: Point) {
