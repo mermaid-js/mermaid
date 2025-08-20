@@ -1,0 +1,12 @@
+flowchart TD
+  A(Start) --> B[Khởi tạo: Serial.begin, analogReference(DEFAULT)]
+  B --> C[Đặt tham số: Vref=5.0; RL=1kΩ; CT_ratio=1000; N=2000]
+  C --> D[sum=0; i=0]
+  D --> E{ i < N ? }
+  E -- Có --> F[adcA0=analogRead(A0)\nadcA1=analogRead(A1)\nxn=adcA0-adcA1]
+  F --> G[v=xn*Vref/1024.0\ni2=v/RL\ni1=i2*CT_ratio]
+  G --> H[sum += i1*i1; i++]
+  H --> E
+  E -- Không --> I[Irms = sqrt(sum/N)]
+  I --> J[Serial.print/println; delay(1000)]
+  J --> D
