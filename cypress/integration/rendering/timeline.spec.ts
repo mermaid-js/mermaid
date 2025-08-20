@@ -226,8 +226,13 @@ timeline
     );
   });
   it('13: should render markdown htmlLabels', () => {
-    const timelineCode = `%%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
-    timeline
+    imgSnapshotTest(
+      `---
+config:
+    theme: forest
+---
+
+ timeline
     title Timeline of Industrial Revolution
     section 17th-20th century
         Industry 1.0 : Machinery, Water power, Steam <br>power
@@ -236,7 +241,8 @@ timeline
     section 21st century
         Industry 4.0 : Internet, Robotics, Internet of Things
         Industry 5.0 : Artificial intelligence, Big data, 3D printing
-      `;
-    imgSnapshotTest(timelineCode);
+      `,
+      {}
+    );
   });
 });
