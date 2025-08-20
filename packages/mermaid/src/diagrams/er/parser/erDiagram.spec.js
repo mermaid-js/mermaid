@@ -981,6 +981,12 @@ describe('when parsing ER diagram it...', function () {
       expect(rels[0].roleA).toBe('places');
     });
 
+    it('should allow label as optional', function () {
+      erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER');
+      const rels = erDb.getRelationships();
+      expect(rels[0].roleA).toBe('');
+    });
+
     it('should represent parent-child relationship correctly', function () {
       erDiagram.parser.parse('erDiagram\nPROJECT u--o{ TEAM_MEMBER : "parent"');
       const rels = erDb.getRelationships();
