@@ -406,53 +406,69 @@ function computeCircleEdgeIntersection(
   };
 }
 
-/**
- * Calculate intersection point of a line with a rectangle
- * This is a simplified version that we'll use instead of importing from mermaid
- */
 function intersection(
   node: { x: number; y: number; width?: number; height?: number },
-  point1: { x: number; y: number },
-  point2: { x: number; y: number }
+  outsidePoint: { x: number; y: number },
+  insidePoint: { x: number; y: number }
 ): { x: number; y: number } {
-  const nodeWidth = node.width ?? 100;
-  const nodeHeight = node.height ?? 50;
+  const x = node.x;
+  const y = node.y;
 
-  const centerX = node.x;
-  const centerY = node.y;
-
-  const dx = point2.x - point1.x;
-  const dy = point2.y - point1.y;
-
-  if (dx === 0 && dy === 0) {
-    return { x: centerX, y: centerY };
+  if (!node.width || !node.height) {
+    return { x: outsidePoint.x, y: outsidePoint.y };
   }
+  const dx = Math.abs(x - insidePoint.x);
+  const w = node?.width / 2;
+  let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
+  const h = node.height / 2;
 
-  const halfWidth = nodeWidth / 2;
-  const halfHeight = nodeHeight / 2;
+  const Q = Math.abs(outsidePoint.y - insidePoint.y);
+  const R = Math.abs(outsidePoint.x - insidePoint.x);
 
-  let intersectionX = centerX;
-  let intersectionY = centerY;
+  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
+    // Intersection is top or bottom of rect.
+    const q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    r = (R * q) / Q;
+    const res = {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q,
+    };
 
-  if (Math.abs(dx) > Math.abs(dy)) {
-    if (dx > 0) {
-      intersectionX = centerX + halfWidth;
-      intersectionY = centerY + (halfWidth * dy) / dx;
-    } else {
-      intersectionX = centerX - halfWidth;
-      intersectionY = centerY - (halfWidth * dy) / dx;
+    if (r === 0) {
+      res.x = outsidePoint.x;
+      res.y = outsidePoint.y;
     }
+    if (R === 0) {
+      res.x = outsidePoint.x;
+    }
+    if (Q === 0) {
+      res.y = outsidePoint.y;
+    }
+
+    return res;
   } else {
-    if (dy > 0) {
-      intersectionY = centerY + halfHeight;
-      intersectionX = centerX + (halfHeight * dx) / dy;
+    if (insidePoint.x < outsidePoint.x) {
+      r = outsidePoint.x - w - x;
     } else {
-      intersectionY = centerY - halfHeight;
-      intersectionX = centerX - (halfHeight * dx) / dy;
+      r = x - w - outsidePoint.x;
     }
-  }
+    const q = (Q * r) / R;
+    let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
+    let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
 
-  return { x: intersectionX, y: intersectionY };
+    if (r === 0) {
+      _x = outsidePoint.x;
+      _y = outsidePoint.y;
+    }
+    if (R === 0) {
+      _x = outsidePoint.x;
+    }
+    if (Q === 0) {
+      _y = outsidePoint.y;
+    }
+
+    return { x: _x, y: _y };
+  }
 }
 
 /**
