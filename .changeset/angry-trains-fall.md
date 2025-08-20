@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix: make relationship-label optional in ER diagrams
+fix: Make relationship-label optional in ER diagrams
