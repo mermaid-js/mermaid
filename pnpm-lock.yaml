@@ -533,6 +533,67 @@ importers:
         specifier: ^7.3.0
         version: 7.3.0
 
+  packages/mermaid/src/vitepress:
+    dependencies:
+      '@mdi/font':
+        specifier: ^7.4.47
+        version: 7.4.47
+      '@vueuse/core':
+        specifier: ^13.1.0
+        version: 13.6.0(vue@3.5.18(typescript@5.8.3))
+      font-awesome:
+        specifier: ^4.7.0
+        version: 4.7.0
+      jiti:
+        specifier: ^2.4.2
+        version: 2.5.1
+      mermaid:
+        specifier: workspace:^
+        version: link:../..
+      vue:
+        specifier: ^3.4.38
+        version: 3.5.18(typescript@5.8.3)
+    devDependencies:
+      '@iconify-json/carbon':
+        specifier: ^1.1.37
+        version: 1.2.11
+      '@unocss/reset':
+        specifier: ^66.0.0
+        version: 66.3.3
+      '@vite-pwa/vitepress':
+        specifier: ^1.0.0
+        version: 1.0.0(vite-plugin-pwa@1.0.2(vite@6.3.5(@types/node@22.17.0)(jiti@2.5.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0))
+      '@vitejs/plugin-vue':
+        specifier: ^6.0.0
+        version: 6.0.1(vite@6.3.5(@types/node@22.17.0)(jiti@2.5.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.18(typescript@5.8.3))
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
+      https-localhost:
+        specifier: ^4.7.1
+        version: 4.7.1
+      pathe:
+        specifier: ^2.0.3
+        version: 2.0.3
+      unocss:
+        specifier: ^66.0.0
+        version: 66.3.3(postcss@8.5.6)(vite@6.3.5(@types/node@22.17.0)(jiti@2.5.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.18(typescript@5.8.3))
+      unplugin-vue-components:
+        specifier: ^28.4.0
+        version: 28.8.0(@babel/parser@7.28.0)(vue@3.5.18(typescript@5.8.3))
+      vite:
+        specifier: ^6.1.1
+        version: 6.3.5(@types/node@22.17.0)(jiti@2.5.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+      vite-plugin-pwa:
+        specifier: ^1.0.0
+        version: 1.0.2(vite@6.3.5(@types/node@22.17.0)(jiti@2.5.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0)
+      vitepress:
+        specifier: 1.6.3
+        version: 1.6.3(@algolia/client-search@5.35.0)(@types/node@22.17.0)(axios@1.11.0)(postcss@8.5.6)(search-insights@2.17.3)(terser@5.43.1)(typescript@5.8.3)
+      workbox-window:
+        specifier: ^7.3.0
+        version: 7.3.0
+
   packages/parser:
     dependencies:
       langium:
@@ -11614,7 +11675,7 @@ snapshots:
       '@babel/preset-env': 7.28.0(@babel/core@7.28.0)
       babel-loader: 10.0.0(@babel/core@7.28.0)(webpack@5.101.0(esbuild@0.25.8))
       bluebird: 3.7.1
-      debug: 4.4.0
+      debug: 4.4.1(supports-color@8.1.1)
       lodash: 4.17.21
       semver: 7.7.2
       webpack: 5.101.0(esbuild@0.25.8)

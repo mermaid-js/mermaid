@@ -1,5 +1,6 @@
 import externalExample from './mermaid-example-diagram.esm.mjs';
 import layouts from './mermaid-layout-elk.esm.mjs';
+import tidyTree from './mermaid-layout-tidy-tree.esm.mjs';
 import zenUml from './mermaid-zenuml.esm.mjs';
 import mermaid from './mermaid.esm.mjs';
 
@@ -65,6 +66,7 @@ const contentLoaded = async function () {
     await mermaid.registerExternalDiagrams([externalExample, zenUml]);
 
     mermaid.registerLayoutLoaders(layouts);
+    mermaid.registerLayoutLoaders(tidyTree);
     mermaid.initialize(graphObj.mermaid);
     /**
      *  CC-BY-4.0
