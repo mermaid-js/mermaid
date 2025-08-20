@@ -90,6 +90,8 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
       node.height = 46;
       node.width = 92;
       node.from = 'mindmap';
+    } else if (node.shape === 'circle') {
+      node.from = 'mindmap';
     }
   });
 
