@@ -3,7 +3,10 @@ import { imgSnapshotTest } from '../../helpers/util.ts';
 describe('Mindmap Tidy Tree', () => {
   it('1-tidy-tree: should render a simple mindmap without children', () => {
     imgSnapshotTest(
-      `
+      ` ---
+      config:
+        layout: tidy-tree
+      ---
       mindmap
       root((mindmap))
         A
@@ -13,7 +16,10 @@ describe('Mindmap Tidy Tree', () => {
   });
   it('2-tidy-tree: should render a simple mindmap', () => {
     imgSnapshotTest(
-      `
+      ` ---
+      config:
+        layout: tidy-tree
+      ---
       mindmap
       root((mindmap is a long thing))
         A
@@ -25,7 +31,10 @@ describe('Mindmap Tidy Tree', () => {
   });
   it('3-tidy-tree: should render a  mindmap with different shapes', () => {
     imgSnapshotTest(
-      `
+      ` ---
+      config:
+        layout: tidy-tree
+      ---
       mindmap
       root((mindmap))
         Origins
@@ -49,7 +58,10 @@ describe('Mindmap Tidy Tree', () => {
   });
   it('4-tidy-tree: should render a mindmap with children', () => {
     imgSnapshotTest(
-      `
+      ` ---
+      config:
+        layout: tidy-tree
+      ---
        mindmap
       ((This is a mindmap))
         child1

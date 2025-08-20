@@ -29,7 +29,7 @@ const processFrontmatter = (code: string) => {
     config.gantt.displayMode = displayMode;
   }
   if (diagramType === 'mindmap' && !config.layout) {
-    config.layout = 'tidy-tree';
+    config.layout = 'cose-bilkent'; // Default layout for mindmap
   }
   return { title, config, text };
 };
