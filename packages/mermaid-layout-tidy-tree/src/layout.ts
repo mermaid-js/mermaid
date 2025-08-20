@@ -8,8 +8,6 @@ import type {
   Node,
   Edge,
 } from './types.js';
-import { log } from 'mermaid/src/logger.js';
-import { intersection } from 'mermaid/src/rendering-util/rendering-elements/edges.js';
 
 /**
  * Execute the tidy-tree layout algorithm on generic layout data
@@ -25,6 +23,8 @@ export function executeTidyTreeLayout(
   data: LayoutData,
   _config: MermaidConfig
 ): Promise<LayoutResult> {
+  let intersectionShift = 50;
+
   return new Promise((resolve, reject) => {
     try {
       if (!data.nodes || !Array.isArray(data.nodes) || data.nodes.length === 0) {
@@ -39,7 +39,7 @@ export function executeTidyTreeLayout(
 
       const gap = 20;
       const bottomPadding = 40;
-      const intersectionShift = 30;
+      intersectionShift = 30;
 
       const bb = new BoundingBox(gap, bottomPadding);
       const layout = new Layout(bb);
@@ -117,12 +117,8 @@ function convertToDualTreeFormat(data: LayoutData): {
   });
 
   const rootNodeData = nodes.find((node) => !parents.has(node.id));
-  if (!rootNodeData) {
-    // If no clear root, use the first node
-    if (nodes.length === 0) {
-      throw new Error('No nodes available to create tree');
-    }
-    log.warn('No root node found, using first node as root');
+  if (!rootNodeData && nodes.length === 0) {
+    throw new Error('No nodes available to create tree');
   }
 
   const actualRoot = rootNodeData ?? nodes[0];
@@ -411,7 +407,54 @@ function computeCircleEdgeIntersection(
 }
 
 /**
- 
+ * Calculate intersection point of a line with a rectangle
+ * This is a simplified version that we'll use instead of importing from mermaid
+ */
+function intersection(
+  node: { x: number; y: number; width?: number; height?: number },
+  point1: { x: number; y: number },
+  point2: { x: number; y: number }
+): { x: number; y: number } {
+  const nodeWidth = node.width ?? 100;
+  const nodeHeight = node.height ?? 50;
+
+  const centerX = node.x;
+  const centerY = node.y;
+
+  const dx = point2.x - point1.x;
+  const dy = point2.y - point1.y;
+
+  if (dx === 0 && dy === 0) {
+    return { x: centerX, y: centerY };
+  }
+
+  const halfWidth = nodeWidth / 2;
+  const halfHeight = nodeHeight / 2;
+
+  let intersectionX = centerX;
+  let intersectionY = centerY;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 0) {
+      intersectionX = centerX + halfWidth;
+      intersectionY = centerY + (halfWidth * dy) / dx;
+    } else {
+      intersectionX = centerX - halfWidth;
+      intersectionY = centerY - (halfWidth * dy) / dx;
+    }
+  } else {
+    if (dy > 0) {
+      intersectionY = centerY + halfHeight;
+      intersectionX = centerX + (halfHeight * dx) / dy;
+    } else {
+      intersectionY = centerY - halfHeight;
+      intersectionX = centerX - (halfHeight * dx) / dy;
+    }
+  }
+
+  return { x: intersectionX, y: intersectionY };
+}
+
 /**
  * Calculate edge positions based on positioned nodes
  * Now includes tree membership and node dimensions for precise edge calculations
