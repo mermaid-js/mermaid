@@ -59,6 +59,7 @@ exclude = [
 "https://huehive.co",
 "https://foswiki.org",
 "https://www.gnu.org",
+"https://redmine.org",
 "https://mermaid-preview.com"
 ]
 
