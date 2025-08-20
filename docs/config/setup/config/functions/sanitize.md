@@ -10,7 +10,7 @@
 
 # Function: sanitize()
 
-> **sanitize**(`options`): `void`
+> **sanitize**(`options`, `path`): `void`
 
 Defined in: [packages/mermaid/src/config.ts:146](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L146)
 
@@ -30,6 +30,10 @@ options in-place
 `any`
 
 The potential setConfig parameter
+
+### path
+
+`string`\[] = `[]`
 
 ## Returns
 

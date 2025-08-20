@@ -143,17 +143,29 @@ export const getConfig = (): MermaidConfig => {
  *
  * @param options - The potential setConfig parameter
  */
-export const sanitize = (options: any) => {
+export const sanitize = (options: any, path: string[] = []) => {
   if (!options) {
     return;
   }
+
   // Checking that options are not in the list of excluded options
-  ['secure', ...(siteConfig.secure ?? [])].forEach((key) => {
-    if (Object.hasOwn(options, key)) {
-      // DO NOT attempt to print options[key] within `${}` as a malicious script
-      // can exploit the logger's attempt to stringify the value and execute arbitrary code
-      log.debug(`Denied attempt to modify a secure key ${key}`, options[key]);
-      delete options[key];
+  ['secure', ...(siteConfig.secure ?? [])].forEach((secureKey) => {
+    const securePath = secureKey.split('.');
+
+    // Check if current path matches the secure key path
+    if (path.length >= securePath.length - 1) {
+      const targetKey = securePath[securePath.length - 1];
+      const pathSuffix = path.slice(-(securePath.length - 1));
+      const pathPrefix = securePath.slice(0, -1);
+
+      const isMatch =
+        securePath.length === 1 ? path.length === 0 : pathSuffix.join('.') === pathPrefix.join('.');
+
+      if (isMatch && Object.hasOwn(options, targetKey)) {
+        const fullPath = path.length > 0 ? `${path.join('.')}.${secureKey}` : secureKey;
+        log.debug(`Denied attempt to modify a secure key ${fullPath}`, options[targetKey]);
+        delete options[targetKey];
+      }
     }
   });
 
@@ -163,6 +175,7 @@ export const sanitize = (options: any) => {
       delete options[key];
     }
   });
+
   // Check that there no attempts of xss, there should be no tags at all in the directive
   // blocking data urls as base64 urls can contain svg's with inline script tags
   Object.keys(options).forEach((key) => {
@@ -174,8 +187,9 @@ export const sanitize = (options: any) => {
     ) {
       delete options[key];
     }
-    if (typeof options[key] === 'object') {
-      sanitize(options[key]);
+    if (typeof options[key] === 'object' && options[key] !== null) {
+      // Recursively sanitize nested objects with updated path
+      sanitize(options[key], [...path, key]);
     }
   });
 };

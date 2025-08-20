@@ -34,6 +34,92 @@ describe('when working with site config', () => {
     expect(cfg.fontSize).toBe(config_0.fontSize);
     expect(cfg.securityLevel).toBe(config_0.securityLevel);
   });
+
+  it('should respect nested secure keys when applying directives', () => {
+    const config_0: MermaidConfig = {
+      fontFamily: 'foo-font',
+      themeVariables: {
+        fontSize: 16,
+        fontFamily: 'default-font',
+      },
+      secure: [
+        ...configApi.defaultConfig.secure!,
+        'themeVariables.fontSize',
+        'themeVariables.fontFamily',
+      ],
+    };
+    configApi.setSiteConfig(config_0);
+    const directive: MermaidConfig = {
+      fontFamily: 'baf',
+      themeVariables: {
+        fontSize: 24, // shouldn't be changed
+        fontFamily: 'new-font', // shouldn't be changed
+        primaryColor: '#ff0000', // should be allowed
+      },
+    };
+    const cfg: MermaidConfig = configApi.updateCurrentConfig(config_0, [directive]);
+    expect(cfg.fontFamily).toEqual(directive.fontFamily);
+    expect(cfg.themeVariables!.fontSize).toBe(config_0.themeVariables!.fontSize);
+    expect(cfg.themeVariables!.fontFamily).toBe(config_0.themeVariables!.fontFamily);
+    expect(cfg.themeVariables!.primaryColor).toBe(directive.themeVariables!.primaryColor);
+  });
+
+  it('should handle deeply nested secure keys', () => {
+    const config_0: MermaidConfig = {
+      flowchart: {
+        nodeSpacing: 50,
+        rankSpacing: 50,
+        curve: 'basis',
+        htmlLabels: true,
+        useMaxWidth: true,
+        diagramPadding: 8,
+      },
+      secure: [
+        ...configApi.defaultConfig.secure!,
+        'flowchart.nodeSpacing',
+        'flowchart.rankSpacing',
+      ],
+    };
+    configApi.setSiteConfig(config_0);
+    const directive: MermaidConfig = {
+      flowchart: {
+        nodeSpacing: 100, // shouldn't be changed
+        rankSpacing: 100, // shouldn't be changed
+        curve: 'linear', // should be allowed
+        htmlLabels: false, // should be allowed
+      },
+    };
+    const cfg: MermaidConfig = configApi.updateCurrentConfig(config_0, [directive]);
+    expect(cfg.flowchart!.nodeSpacing).toBe(config_0.flowchart!.nodeSpacing);
+    expect(cfg.flowchart!.rankSpacing).toBe(config_0.flowchart!.rankSpacing);
+    expect(cfg.flowchart!.curve).toBe(directive.flowchart!.curve);
+    expect(cfg.flowchart!.htmlLabels).toBe(directive.flowchart!.htmlLabels);
+    expect(cfg.flowchart!.diagramPadding).toBe(config_0.flowchart!.diagramPadding);
+  });
+
+  it('should handle mixed top-level and nested secure keys', () => {
+    const config_0: MermaidConfig = {
+      fontFamily: 'foo-font',
+      themeVariables: {
+        fontSize: 16,
+        primaryColor: '#000000',
+      },
+      secure: [...configApi.defaultConfig.secure!, 'fontFamily', 'themeVariables.fontSize'],
+    };
+    configApi.setSiteConfig(config_0);
+    const directive: MermaidConfig = {
+      fontFamily: 'new-font', // shouldn't be changed
+      themeVariables: {
+        fontSize: 24, // shouldn't be changed
+        primaryColor: '#ff0000', // should be allowed
+      },
+    };
+    const cfg: MermaidConfig = configApi.updateCurrentConfig(config_0, [directive]);
+    expect(cfg.fontFamily).toBe(config_0.fontFamily);
+    expect(cfg.themeVariables!.fontSize).toBe(config_0.themeVariables!.fontSize);
+    expect(cfg.themeVariables!.primaryColor).toBe(directive.themeVariables!.primaryColor);
+  });
+
   it('should allow setting partial options', () => {
     const defaultConfig = configApi.getConfig();
 
