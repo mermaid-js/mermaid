@@ -58,7 +58,7 @@ jobs:
           timeout_minutes: 1
           max_attempts: 10
           retry_wait_seconds: 10
-          command: curl -f http://localhost:9000 || exit 1
+          command: wget -q --spider http://localhost:9000 || exit 1
 
       - name: Run Cypress with Applitools
         # If you use eyes-cypress runner, switch to `pnpm dlx eyes-cypress run`
