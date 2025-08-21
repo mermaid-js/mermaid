@@ -48,7 +48,7 @@ jobs:
       - name: Run Cypress with Applitools (single spec)
         uses: cypress-io/github-action@v6
         with:
-          command: pnpm cypress
+          command: pnpm dlx @applitools/eyes-cypress run --spec "./cypress/integration/rendering/appli.spec.js"
           start: pnpm dev
           wait-on: http://localhost:9000
           wait-on-timeout: 180
