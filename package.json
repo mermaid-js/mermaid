@@ -31,7 +31,7 @@
     "lint:fix": "eslint --cache --cache-strategy content --fix . && prettier --write . && tsx scripts/fixCSpell.ts",
     "lint:jison": "tsx ./scripts/jison/lint.mts",
     "contributors": "tsx scripts/updateContributors.ts",
-    "cypress": "eyes-cypress run --spec ./cypress/integration/rendering/appli.spec.js",
+    "cypress": "cypress run --spec ./cypress/integration/rendering/appli.spec.js",
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "e2e:coverage": "start-server-and-test dev:coverage http://localhost:9000/ cypress",

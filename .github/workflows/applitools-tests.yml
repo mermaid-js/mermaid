@@ -1,4 +1,4 @@
-name: Applitools E2E (Develop Branch)
+name: Applitools E2E (Develop Branch) - Fixed
 
 on:
   push:
@@ -31,24 +31,36 @@ jobs:
 
     container:
       image: cypress/browsers:node-22.18.0-chrome-139.0.7258.127-1-ff-141.0.3-edge-139.0.3405.86-1
-      options: --user 1001
+      options: --user root
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
-        # uses version from "packageManager" field in package.json
+      - name: Check Applitools API Key
+        run: |
+          if [ -z "${{ secrets.APPLITOOLS_API_KEY }}" ]; then
+            echo "::error::APPLITOOLS_API_KEY secret is not set. Please add it to your repository secrets."
+            exit 1
+          else
+            echo "✅ Applitools API Key is present"
+          fi
 
-      - name: Setup Node.js
-        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
-        with:
-          cache: pnpm
-          node-version-file: '.node-version'
+      - name: Setup Node.js and pnpm
+        run: |
+          # Install pnpm globally
+          npm install -g pnpm@10.4.1
+
+          # Verify installations
+          node --version
+          pnpm --version
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Run Cypress with Applitools (single spec)
         uses: cypress-io/github-action@v6
         with:
-          command: pnpm dlx @applitools/eyes-cypress run --spec "./cypress/integration/rendering/appli.spec.js"
+          command: pnpm cypress
           start: pnpm dev
           wait-on: http://localhost:9000
           wait-on-timeout: 180
