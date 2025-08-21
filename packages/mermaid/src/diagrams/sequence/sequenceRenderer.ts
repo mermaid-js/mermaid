@@ -476,7 +476,29 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
 
   // add node number
   if (sequenceVisible || conf.showSequenceNumbers) {
-    line.attr('marker-start', 'url(' + url + '#sequencenumber)');
+    const isBidirectional =
+      type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID ||
+      type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED;
+
+    if (isBidirectional) {
+      const SEQUENCE_NUMBER_RADIUS = 6;
+
+      if (startx < stopx) {
+        line.attr('x1', startx + 2 * SEQUENCE_NUMBER_RADIUS);
+      } else {
+        line.attr('x1', startx + SEQUENCE_NUMBER_RADIUS);
+      }
+    }
+
+    diagram
+      .append('line')
+      .attr('x1', startx)
+      .attr('y1', lineStartY)
+      .attr('x2', startx)
+      .attr('y2', lineStartY)
+      .attr('stroke-width', 0)
+      .attr('marker-start', 'url(' + url + '#sequencenumber)');
+
     diagram
       .append('text')
       .attr('x', startx)
