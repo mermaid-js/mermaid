@@ -52,12 +52,13 @@ jobs:
       - name: Start server
         run: pnpm dev &
 
-      # Wait until server is ready (replace http://localhost:3000 with your actual URL)
       - name: Wait for server
-        uses: jakejarvis/wait-action@v0.2.0
+        uses: nick-fields/retry@v3
         with:
-          url: 'http://localhost:9000'
-          timeout: 60
+          timeout_minutes: 1
+          max_attempts: 10
+          retry_wait_seconds: 10
+          command: curl -f http://localhost:9000 || exit 1
 
       - name: Run Cypress with Applitools
         # If you use eyes-cypress runner, switch to `pnpm dlx eyes-cypress run`
