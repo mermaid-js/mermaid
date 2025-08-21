@@ -1053,6 +1053,21 @@ flowchart LR
       });
     });
   });
+
+  it('6647-elk: should keep node order when using elk layout unless it would add crossings', () => {
+    imgSnapshotTest(
+      `---
+config:
+  layout: elk
+---
+      flowchart TB
+        a --> a1 & a2 & a3 & a4
+        b --> b1 & b2
+        b2 --> b3
+        b1 --> b4
+      `
+    );
+  });
 });
 
 describe('Title and arrow styling #4813', () => {
