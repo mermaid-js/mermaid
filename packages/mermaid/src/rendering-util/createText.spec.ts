@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { replaceIconSubstring } from './createText.js';
+import { sanitizeText } from '../diagram-api/diagramAPI.js';
 import mermaid from '../mermaid.js';
+import { replaceIconSubstring } from './createText.js';
 
 describe('replaceIconSubstring', () => {
   it('converts FontAwesome icon notations to HTML tags', async () => {
@@ -56,7 +57,7 @@ describe('replaceIconSubstring', () => {
     ]);
     const input = 'Icons galore: fa:fa-bell';
     const output = await replaceIconSubstring(input);
-    const expected = staticBellIconPack.icons.bell.body;
+    const expected = sanitizeText(staticBellIconPack.icons.bell.body);
     expect(output).toContain(expected);
   });
 });

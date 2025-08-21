@@ -3,6 +3,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';
 import { getIconSVG } from '../../rendering-util/icons.js';
 import type { D3Element } from '../../types.js';
+import { sanitizeText } from '../common/common.js';
 import type { ArchitectureDB } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import {
@@ -271,6 +272,7 @@ export const drawServices = async function (
   elem: D3Element,
   services: ArchitectureService[]
 ): Promise<number> {
+  const config = getConfig();
   for (const service of services) {
     const serviceElem = elem.append('g');
     const iconSize = db.getConfigField('iconSize');
@@ -285,7 +287,7 @@ export const drawServices = async function (
           width: iconSize * 1.5,
           classes: 'architecture-service-label',
         },
-        getConfig()
+        config
       );
 
       textElem
@@ -320,7 +322,7 @@ export const drawServices = async function (
         .attr('class', 'node-icon-text')
         .attr('style', `height: ${iconSize}px;`)
         .append('div')
-        .html(service.iconText);
+        .html(sanitizeText(service.iconText, config));
       const fontSize =
         parseInt(
           window
