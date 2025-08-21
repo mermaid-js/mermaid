@@ -45,10 +45,6 @@ jobs:
           cache: pnpm
           node-version-file: '.node-version'
 
-      - name: Install Packages
-        run: |
-          pnpm install --frozen-lockfile
-
       - name: Run Cypress with Applitools (single spec)
         uses: cypress-io/github-action@v6
         with:
