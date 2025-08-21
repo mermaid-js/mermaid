@@ -49,20 +49,9 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
 
-      - name: Start server
-        run: pnpm dev &
-
-      - name: Wait for server
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 1
-          max_attempts: 10
-          retry_wait_seconds: 10
-          command: wget -q --spider http://localhost:9000 || exit 1
-
       - name: Run Cypress with Applitools
         # If you use eyes-cypress runner, switch to `pnpm dlx eyes-cypress run`
-        run: pnpm cypress run --spec "cypress/integration/rendering/appli.spec.js"
+        run: pnpm dev && pnpm cypress run --spec "cypress/integration/rendering/appli.spec.js"
         env:
           # ensure these are visible to Cypress + Applitools
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
