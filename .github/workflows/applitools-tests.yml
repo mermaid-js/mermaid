@@ -49,6 +49,16 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
 
+      - name: Start server
+        run: pnpm dev &
+
+      # Wait until server is ready (replace http://localhost:3000 with your actual URL)
+      - name: Wait for server
+        uses: jakejarvis/wait-action@v0.2.0
+        with:
+          url: 'http://localhost:9000'
+          timeout: 60
+
       - name: Run Cypress with Applitools
         # If you use eyes-cypress runner, switch to `pnpm dlx eyes-cypress run`
         run: pnpm cypress run --spec "cypress/integration/rendering/appli.spec.js"
