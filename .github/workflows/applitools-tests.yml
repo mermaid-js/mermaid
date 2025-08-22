@@ -5,7 +5,8 @@ on:
     branches:
       - develop
       - applitools_workflow
-
+    paths:
+      - '.github/workflows/applitools-tests.yml'
   workflow_dispatch:
     # Manual triggering only - to limit Applitools usage
     inputs:
@@ -53,15 +54,14 @@ jobs:
           node --version
           pnpm --version
 
-      - name: Install dependencies
-        run: pnpm install
-
       - name: Setup Applitools Environment
         run: |
           # Set Applitools environment variables for proper CI integration
           echo "APPLITOOLS_BATCH_ID=${{ github.run_id }}-${{ github.run_attempt }}" >> $GITHUB_ENV
           echo "APPLITOOLS_BATCH_NAME=GitHub Actions - ${{ github.workflow }}" >> $GITHUB_ENV
           echo "APPLITOOLS_SERVER_URL=https://eyes.applitools.com" >> $GITHUB_ENV
+          # Force disable local Eyes server
+          echo "APPLITOOLS_DISABLE_LOCAL_EYES_SERVER=true" >> $GITHUB_ENV
 
       - name: Verify Cypress Installation
         run: |
@@ -83,10 +83,13 @@ jobs:
           APPLITOOLS_BATCH_ID: ${{ env.APPLITOOLS_BATCH_ID }}
           APPLITOOLS_BATCH_NAME: ${{ env.APPLITOOLS_BATCH_NAME }}
           APPLITOOLS_SERVER_URL: ${{ env.APPLITOOLS_SERVER_URL }}
+          APPLITOOLS_DISABLE_LOCAL_EYES_SERVER: ${{ env.APPLITOOLS_DISABLE_LOCAL_EYES_SERVER }}
           USE_APPLI: true
           # Force Applitools to use cloud service instead of local server
           APPLITOOLS_DONT_CLOSE_BATCHES: false
           APPLITOOLS_SAVE_DEBUG_SCREENSHOTS: false
+          # Disable any local server connections
+          APPLITOOLS_PROXY_URL: ''
           # GitHub Actions CI environment
           CI: true
           # Disable Chrome sandbox for container
