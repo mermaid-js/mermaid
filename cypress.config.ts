@@ -1,9 +1,13 @@
+import eyesPlugin from '@applitools/eyes-cypress';
 import { registerArgosTask } from '@argos-ci/cypress/task';
 import coverage from '@cypress/code-coverage/task.js';
 import { defineConfig } from 'cypress';
 import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin.js';
 import cypressSplit from 'cypress-split';
-import eyesPlugin from '@applitools/eyes-cypress';
+
+// Set environment variables to force cloud-only mode
+process.env.APPLITOOLS_SERVER_URL = 'https://eyes.applitools.com';
+process.env.APPLITOOLS_DONT_CLOSE_BATCHES = 'false';
 
 const baseConfig = defineConfig({
   projectId: 'n2sma2',
@@ -50,23 +54,50 @@ const baseConfig = defineConfig({
   pageLoadTimeout: 30000,
 });
 
-// TEMPORARY FIX: Skip Applitools in GitHub Actions to avoid connection issues
-// You can enable this once the connection issue is resolved
-const isGitHubActions = process.env.CI === 'true' && process.env.GITHUB_ACTIONS === 'true';
+// Only apply Applitools if we should use it
+const shouldLoadApplitools = process.env.APPLITOOLS_API_KEY && process.env.USE_APPLI === 'true';
 
-if (process.env.USE_APPLI === 'true' && process.env.APPLITOOLS_API_KEY && !isGitHubActions) {
-  // Load Applitools only in local environment
-  try {
-    module.exports = eyesPlugin(baseConfig);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('Applitools plugin failed to load:', (error as Error).message);
-    module.exports = baseConfig;
-  }
-} else {
-  if (isGitHubActions) {
-    // eslint-disable-next-line no-console
-    console.log('Skipping Applitools in GitHub Actions due to connection issues');
-  }
-  module.exports = baseConfig;
-}
+export default shouldLoadApplitools
+  ? eyesPlugin(baseConfig, {
+      // Force cloud server URL
+      serverUrl: 'https://eyes.applitools.com',
+
+      // Batch configuration
+      batch: {
+        name:
+          process.env.APPLITOOLS_BATCH_NAME ||
+          `GitHub Actions - ${process.env.GITHUB_WORKFLOW || 'Cypress Tests'}`,
+        id:
+          process.env.APPLITOOLS_BATCH_ID ||
+          `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`,
+      },
+
+      // Conservative settings for CI
+      testConcurrency: 1,
+
+      // Browser configuration
+      browser: {
+        width: 1440,
+        height: 1024,
+        name: 'chrome',
+      },
+
+      // Viewport
+      viewportSize: { width: 1440, height: 1024 },
+
+      // Performance settings
+      matchTimeout: 2000,
+      forceFullPageScreenshot: true,
+
+      // Ensure batches close properly
+      // cspell:ignore dont
+      dontCloseBatches: false,
+
+      // Disable debug features that might cause issues
+      saveDebugScreenshots: false,
+      saveDiffs: false,
+
+      // Set explicit concurrency
+      concurrency: 1,
+    })
+  : baseConfig;
