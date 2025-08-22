@@ -14,8 +14,8 @@ importers:
   .:
     devDependencies:
       '@applitools/eyes-cypress':
-        specifier: ^3.44.9
-        version: 3.50.2(encoding@0.1.13)(typescript@5.7.3)
+        specifier: 3.53.2
+        version: 3.53.2(encoding@0.1.13)(typescript@5.7.3)
       '@argos-ci/cypress':
         specifier: ^5.0.2
         version: 5.0.2(cypress@14.5.1)
@@ -663,12 +663,12 @@ packages:
     resolution: {integrity: sha512-OvyhwtYaWSTfo8NfibmFlgl+pIMaBOmN0OwZ3CPaGscEK3B8FCVDuQ7zgxY8seU/1kfSvNWnyB0DtKJyNLxX7g==}
     engines: {node: '>= 16'}
 
-  '@applitools/core-base@1.22.1':
-    resolution: {integrity: sha512-5pHJgSjD6sGpWGrNzQsHasqkO8ROQ65z1F/dE+pITFfanreyoSrr8FLwwjQMiLq/Ggryt69PoAPXd7/N8vf0vg==}
+  '@applitools/core-base@1.26.0':
+    resolution: {integrity: sha512-7cPZTvD2cOsMF2ECEr8wtXFnGz7ihAO50Y6kEr4lyTnsPqzG3RneRF1N0IPC4/Pst0LVnIirarVr0cNnSH2ufw==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/core@4.31.2':
-    resolution: {integrity: sha512-Na/VOO1ab3Ne+BIbX8JQWflFPj5OkhOgTia9xoXq7B4z3BoVY/37eXl3wzbVn0uQJqVuvwhe2MfCwnQ7dI2eaA==}
+  '@applitools/core@4.43.0':
+    resolution: {integrity: sha512-ylYGSJqgw8JDZBIis3yO4/Yf6tz/xQsJzKQFpMsWc2kec6OsqufGSy9tnbKE4NdJ0Z+Q1d+VeivtbYHxwRFgCQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
 
@@ -676,24 +676,24 @@ packages:
     resolution: {integrity: sha512-rH3aq/dkTweEUgS/MKuthD79CZDqpQVJlqmxqVxLZVAzbeFxYdTG/gnfG0zj6YJ025jzcPH2ktdW16Rl3QLutg==}
     engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
 
-  '@applitools/dom-capture@11.5.4':
-    resolution: {integrity: sha512-3n2wLLsXpGGiYrSkHnwgFsTXZntvw5MXtt6n0Kbpyi3mqBgdZ3yPt/9tJ+pQZDX/xe9mNXUVClHXmWmVCrGPCA==}
+  '@applitools/dom-capture@11.5.6':
+    resolution: {integrity: sha512-UBf2PFLk3+tv8GnBNn6bdrp+XDX3Mx3ZckEX8njQiv1l+1WawHoxtr9JxiGk0pNZGcbZ3fv9iZ97wVWhB9wOFw==}
     engines: {node: '>=12.13.0'}
 
   '@applitools/dom-shared@1.0.16':
     resolution: {integrity: sha512-P0JA5mq1f8rIi/xbh2+gCsEvv1CGenf0sGrC2UxXjmaFRpgoVS9BfpNg5aZyFJ9OPoi4qRMi9LCGsFiqZNNcTQ==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/dom-snapshot@4.11.15':
-    resolution: {integrity: sha512-JsJ/2vTOywsxcwUMe9inGkHTBpMrnI09bCB7SJGRlbM4au4JAtMsyF5WnrbvrMlxr/kbe/BsJUDndswlkM9Duw==}
+  '@applitools/dom-snapshot@4.12.1':
+    resolution: {integrity: sha512-5zKM9xQ1v/lmKPAjk4ENT5VCshvFKxziVecS3MGZt1jQUgRlPWQPNxGp7/nKvvWhz9FabVPkmD7zzxl1nIJEzA==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/driver@1.20.4':
-    resolution: {integrity: sha512-Lm1x6Bw66nqu7xtzRQoC3+DQb1PjZiC1DiyXi7L0YzR2c/JhQCyZ1uWWb8NrrLKctwv3SgohXZMaV90TIpAdQw==}
+  '@applitools/driver@1.22.1':
+    resolution: {integrity: sha512-TEq20ZGKCI3Ot5jsJt5Fca1RT0H0hcfFg4f2RxYkm063wUBvawgk08qkGiPZFSCSh0FtakA7J2zThDf72JzYvg==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/ec-client@1.10.4':
-    resolution: {integrity: sha512-2+cs6jHG4HjG3UsswgIQOnjvMg7h/Ms7eerN5vkSXg0UE3/eqWaPz0VBv9+ihOHQOZwJX4BDBR791ZTsMG3XGw==}
+  '@applitools/ec-client@1.11.1':
+    resolution: {integrity: sha512-Lzj02NO4qIMuVWg/oT6ajQIVXrJKGSKjL3V/h/4wSlO+Mj0vOhPL+DepiPz/xIB+dQr0VxdWkQQ/E7zYNmsmIw==}
     engines: {node: '>=12.13.0'}
     hasBin: true
 
@@ -705,18 +705,18 @@ packages:
     resolution: {integrity: sha512-SjjDBFeiKspX3nHKOoSQ+l4JUiJK3xJiWAEaR8b+GuMvnGFLnrvAECHhuXXG00+LwBJM8WKmfxEe17nvZe+nhg==}
     engines: {node: '>=12'}
 
-  '@applitools/execution-grid-tunnel@3.0.8':
-    resolution: {integrity: sha512-4S6NcpxELH4NXketD3g6VUhWDUCuwAm4F1sCZdZLpPWOSMu5QwQDYUoe6/4t5KuktTQ4K7N90NmTzQrxiFtDKA==}
+  '@applitools/execution-grid-tunnel@3.1.0':
+    resolution: {integrity: sha512-xiQK7kWgcdr23Jex70bLy0taQfjFYluiZVC8VaQ5/yYGS9PVEdfqmAsaaEtLa/VZxVnwM5d+bcSRpLVbekCXgw==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
-  '@applitools/eyes-cypress@3.50.2':
-    resolution: {integrity: sha512-K8OIylLfkcNfbkM1VJ+ouudOFtGZaNKVxSVllP7BPKskYPWBjbHE3hSOsmvzYiY6SjdPmbBGLlgO2enrbuC/0w==}
+  '@applitools/eyes-cypress@3.53.2':
+    resolution: {integrity: sha512-huqzn5BcyKbCGv9oWGurWHCupUzlCgiq3pIG9Ce1TCo0OP9iqat95nEBUUTAUT6cIM7Q1ioihDSM0GeLse0+KA==}
     engines: {node: '>=12.13.0'}
     hasBin: true
 
-  '@applitools/eyes@1.32.1':
-    resolution: {integrity: sha512-O6nKRmPTUSgt6yUlbRY8JEJOcq5Ch/yckLipgRRxBbqsL+l9f7JzZ2VCxTuwPkhjQ0tnsitWbz9QeRge5EN6yw==}
+  '@applitools/eyes@1.35.3':
+    resolution: {integrity: sha512-WFtE8asvsYMeYvbEpaWEq2KVjb4AMDK7MK4yuBx7KmmR9bHshums8hc2Wlke17i8tn+S0ibGeK9/XsDzHpPSaQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
 
@@ -724,59 +724,53 @@ packages:
     resolution: {integrity: sha512-fwiF0CbeYHDEOTD/NKaFgaI8LvRcGYG2GaJJiRwcedKko16sQ8F3TK5wXfj2Ytjf+8gjwHwsEEX550z3yvDWxA==}
     engines: {node: '>=8.0.0'}
 
-  '@applitools/image@1.1.16':
-    resolution: {integrity: sha512-vwTDcyzW7OT/PQfVFc1v2aSb48G4I4fzqmRa83wKI3YKt4HzuYYkzFS9OcoN8pSdQ5Kt8+if5gSfSxnYDhtZbw==}
+  '@applitools/image@1.1.21':
+    resolution: {integrity: sha512-BWdSF1bET1ud0dYlvmS5zFRlHPWu5J2uTHsVgrWV3u58Kyqxy755UD4op3+kfDczALylq7wxPOIeK6zQXgiXFg==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/logger@1.1.53':
-    resolution: {integrity: sha512-4mlzYxc0MgM3WIxEwKqIjn9W7G7kMtQc2bFRxozViKOXypTfr72j8iODs88wcetP0GsXtplhZQ5/6aZN5WY9ug==}
+  '@applitools/logger@2.1.5':
+    resolution: {integrity: sha512-HqvQY6QbYzgwwivA8044Yz4ioxlyDCcXd0YXytGNXWn3WAD/VPBju68UTW0W7g3qi2sJmcqxfZIgvOrVtat1YQ==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/logger@2.1.0':
-    resolution: {integrity: sha512-/7wYHRyte8ZoUNGis3lVeEjBdRHda2AcykOr4+3RM2TB8APO4qIPjDSEE5TDramUKzjKC+K4BSUAL39pn8w13w==}
+  '@applitools/nml-client@1.10.0':
+    resolution: {integrity: sha512-PpwJ9/QbBlfVw8mjHu7YjngFD9L+2XL7PHFeQqMRlDFlUBiTUBmGcfm9EEGJpYiFdgo8Uh91gl6I1j1kQiq5nw==}
     engines: {node: '>=12.13.0'}
+    peerDependencies:
+      '@applitools/core-base': 1.26.0
 
-  '@applitools/nml-client@1.8.24':
-    resolution: {integrity: sha512-BV6qONX/2FmFr2j2vRAK3F4irRvVwzYfoklpNataRSSK5ZW6Q+XVSI2uHjD1vVce4Haq7ECeVUkUFMpff1zkjw==}
-    engines: {node: '>=12.13.0'}
-
-  '@applitools/req@1.7.7':
-    resolution: {integrity: sha512-kqEu6TKdPe++53/QDOVWmqYqd2jZ0zoZ/FPPsPKvcHzIY4DFx0W/BhLl0KYXFYWKdE1slnkyyQfCqhKOP0umWw==}
+  '@applitools/req@1.7.15':
+    resolution: {integrity: sha512-P+/xvjPIQ5BUN2DSECZR/4AVZQ+8qIyokzqj4Cd1xwMdEnIWvtRCmIDRusksuSn2fqOnnTuRYab7Rb+pYZx3uw==}
     engines: {node: '>=16.13.0'}
 
-  '@applitools/screenshoter@3.10.5':
-    resolution: {integrity: sha512-eeWae+HSUd/+J8pU0B7QdINR21sF/NHKEXW9duyOHd+GiGNsZxoWJGq1lVXxVx5QKfyrc87Gbbt3b5O+WOyIYg==}
+  '@applitools/screenshoter@3.11.7':
+    resolution: {integrity: sha512-Jkz9I4gLqb9hqn28HpKUhY4FWKmrQD0jlfd0WvkFMtdRJAgRIm1WR3yKYg68pcvP3/S0avhoWCREUSwr7zEm5g==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/snippets@2.6.4':
-    resolution: {integrity: sha512-J9X2uqtt1LQNJsQy9X+1smXKlalKpLJpNRAIvepqGZaVOwG5eKxF7chMZSiztv2jVbZCJj7DRLZdfEueB7xjcA==}
+  '@applitools/snippets@2.6.5':
+    resolution: {integrity: sha512-sfWOKkJ4sBnlTMLKlXy308EnFbetp2Cg0Rlop21VPs+Mi5sPiln+6LX9VvRt+qNd5Q0xTavDXCUYMK2b5k4mOg==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/socket@1.2.1':
-    resolution: {integrity: sha512-OGMVkfOQBrJviVc1K4+kZMExMBTAMA5ZtF7DGrn7pqJQTAVTI7VL9ZXUELwiburMJS6ILNXOcBvi4z9l9adCig==}
+  '@applitools/socket@1.2.6':
+    resolution: {integrity: sha512-HVVlBc7auN89Q1QWFSTIX/b46W+nnbVwBk8ho5tfJRhEFnsASGPReJgLUFfQGJK6AFyMW5i3PVcT/GB+9nmiaA==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/spec-driver-webdriver@1.1.25':
-    resolution: {integrity: sha512-grS0B/ityKqjCac2vJSVpvFnLyyRp5KODXxOQBjmPUGDeOd/aPrw+vdXdbEJOvMZV0oyOMenFLTJ6kT2WxgPMw==}
+  '@applitools/spec-driver-webdriver@1.3.1':
+    resolution: {integrity: sha512-mAovixfnAvgWzCzy4aPoidXYhr7uWbFZ19KFiokCkhi/e9Z0lDBAXphJzR+0XIm2VCJCQpamiXJQgQisemNRZA==}
     engines: {node: '>=12.13.0'}
     peerDependencies:
       webdriver: '>=6.0.0'
 
-  '@applitools/tunnel-client@1.6.2':
-    resolution: {integrity: sha512-TZrb3ctsGnA2Pd4vF2GrOyzJJf5cX16LtJmrgKL+OfdMNJLKTPZ8PrUXElpjUcaYdjdE8bXpF+afmsWfwymqiQ==}
+  '@applitools/tunnel-client@1.9.1':
+    resolution: {integrity: sha512-PXm5kCJp4xVhcRkiP5c0riHCl2KygWgldOMYy3yozcU9uxdDq2L0CociuvNvDSblmvVheFEl8kvqKZw44E6Bng==}
     engines: {node: '>=12.13.0'}
     hasBin: true
 
-  '@applitools/ufg-client@1.16.4':
-    resolution: {integrity: sha512-TTZEH3QW0EoTmgayrF8i+p3BXbqN/yfYDCQOrwwNPlGAvMNbPgfHYhZKiAOi4ecY5MwMLMxkOqTQ0MKS41wN7w==}
+  '@applitools/ufg-client@1.16.14':
+    resolution: {integrity: sha512-ivGGkovgZl0a/XWbdXzSB/diuk2rohxebUmpaknd5tm5Gf4Q0aZywKoemzJCSIqA6UWm+hAtFq/13cYe6R1nNw==}
     engines: {node: '>=12.13.0'}
 
-  '@applitools/utils@1.3.36':
-    resolution: {integrity: sha512-eROEssh7wIW+V87PvLiHI2hUPxqoBxXFMRx3+z5qOZqXUPSR1Uz7EMFwxZcDDR7T6C3O3UDckB2aVB5fJAg5JA==}
-    engines: {node: '>=12.13.0'}
-
-  '@applitools/utils@1.7.7':
-    resolution: {integrity: sha512-4YQc/FGYmA4Jx8vRNRI6YOE8oa7tOWhCik3b1OV3RQ6OkAY5EpVRF8ruiFpX+9BIjZ2V5AdVpsJacYOIiCHNMg==}
+  '@applitools/utils@1.9.0':
+    resolution: {integrity: sha512-DGfeabHlPLFUkuxwdMEobI2FMQjX5OF+wpU6E9wmUB5zPUAdq9LvwGMvDZ1pQU9y87aZUraXp7cTFJTM6I7QUg==}
     engines: {node: '>=12.13.0'}
 
   '@argos-ci/api-client@0.8.1':
@@ -5197,15 +5191,6 @@ packages:
       supports-color:
         optional: true
 
-  debug@4.3.3:
-    resolution: {integrity: sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-
   debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
     engines: {node: '>=6.0'}
@@ -8996,6 +8981,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -10518,38 +10504,39 @@ snapshots:
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.0
 
-  '@applitools/core-base@1.22.1':
+  '@applitools/core-base@1.26.0':
     dependencies:
-      '@applitools/image': 1.1.16
-      '@applitools/logger': 2.1.0
-      '@applitools/req': 1.7.7
-      '@applitools/utils': 1.7.7
+      '@applitools/image': 1.1.21
+      '@applitools/logger': 2.1.5
+      '@applitools/req': 1.7.15
+      '@applitools/utils': 1.9.0
       abort-controller: 3.0.0
       throat: 6.0.2
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/core@4.31.2(encoding@0.1.13)(typescript@5.7.3)':
+  '@applitools/core@4.43.0(encoding@0.1.13)(typescript@5.7.3)':
     dependencies:
-      '@applitools/core-base': 1.22.1
-      '@applitools/dom-capture': 11.5.4
-      '@applitools/dom-snapshot': 4.11.15
-      '@applitools/driver': 1.20.4
-      '@applitools/ec-client': 1.10.4(typescript@5.7.3)
-      '@applitools/logger': 2.1.0
-      '@applitools/nml-client': 1.8.24
-      '@applitools/req': 1.7.7
-      '@applitools/screenshoter': 3.10.5
-      '@applitools/snippets': 2.6.4
-      '@applitools/socket': 1.2.1
-      '@applitools/spec-driver-webdriver': 1.1.25(webdriver@7.31.1(typescript@5.7.3))
-      '@applitools/ufg-client': 1.16.4
-      '@applitools/utils': 1.7.7
+      '@applitools/core-base': 1.26.0
+      '@applitools/dom-capture': 11.5.6
+      '@applitools/dom-snapshot': 4.12.1
+      '@applitools/driver': 1.22.1
+      '@applitools/ec-client': 1.11.1(typescript@5.7.3)
+      '@applitools/logger': 2.1.5
+      '@applitools/nml-client': 1.10.0(@applitools/core-base@1.26.0)
+      '@applitools/req': 1.7.15
+      '@applitools/screenshoter': 3.11.7
+      '@applitools/snippets': 2.6.5
+      '@applitools/socket': 1.2.6
+      '@applitools/spec-driver-webdriver': 1.3.1(webdriver@7.31.1(typescript@5.7.3))
+      '@applitools/ufg-client': 1.16.14
+      '@applitools/utils': 1.9.0
       '@types/ws': 8.5.5
       abort-controller: 3.0.0
       chalk: 4.1.2
       node-fetch: 2.6.7(encoding@0.1.13)
       semver: 7.6.2
+      throat: 6.0.2
       webdriver: 7.31.1(typescript@5.7.3)
       ws: 8.17.1
       yargs: 17.7.2
@@ -10565,39 +10552,39 @@ snapshots:
       mdn-data: 2.1.0
       source-map-js: 1.0.1
 
-  '@applitools/dom-capture@11.5.4':
+  '@applitools/dom-capture@11.5.6':
     dependencies:
       '@applitools/dom-shared': 1.0.16
       '@applitools/functional-commons': 1.6.0
 
   '@applitools/dom-shared@1.0.16': {}
 
-  '@applitools/dom-snapshot@4.11.15':
+  '@applitools/dom-snapshot@4.12.1':
     dependencies:
       '@applitools/css-tree': 1.1.4
       '@applitools/dom-shared': 1.0.16
       '@applitools/functional-commons': 1.6.0
       pako: 1.0.11
 
-  '@applitools/driver@1.20.4':
+  '@applitools/driver@1.22.1':
     dependencies:
-      '@applitools/logger': 2.1.0
-      '@applitools/snippets': 2.6.4
-      '@applitools/utils': 1.7.7
+      '@applitools/logger': 2.1.5
+      '@applitools/snippets': 2.6.5
+      '@applitools/utils': 1.9.0
       semver: 7.6.2
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/ec-client@1.10.4(typescript@5.7.3)':
+  '@applitools/ec-client@1.11.1(typescript@5.7.3)':
     dependencies:
-      '@applitools/core-base': 1.22.1
-      '@applitools/driver': 1.20.4
-      '@applitools/logger': 2.1.0
-      '@applitools/req': 1.7.7
-      '@applitools/socket': 1.2.1
-      '@applitools/spec-driver-webdriver': 1.1.25(webdriver@7.31.1(typescript@5.7.3))
-      '@applitools/tunnel-client': 1.6.2
-      '@applitools/utils': 1.7.7
+      '@applitools/core-base': 1.26.0
+      '@applitools/driver': 1.22.1
+      '@applitools/logger': 2.1.5
+      '@applitools/req': 1.7.15
+      '@applitools/socket': 1.2.6
+      '@applitools/spec-driver-webdriver': 1.3.1(webdriver@7.31.1(typescript@5.7.3))
+      '@applitools/tunnel-client': 1.9.1
+      '@applitools/utils': 1.9.0
       abort-controller: 3.0.0
       webdriver: 7.31.1(typescript@5.7.3)
       yargs: 17.7.2
@@ -10612,11 +10599,11 @@ snapshots:
       binary: 0.3.0
       is-localhost-ip: 2.0.0
 
-  '@applitools/execution-grid-tunnel@3.0.8':
+  '@applitools/execution-grid-tunnel@3.1.0':
     dependencies:
       '@applitools/eg-frpc': 1.0.5
       '@applitools/eg-socks5-proxy-server': 0.5.6
-      '@applitools/logger': 1.1.53
+      '@applitools/logger': 2.1.5
       dotenv: 16.4.7
       encoding: 0.1.13
       fastify: 4.29.0
@@ -10631,13 +10618,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/eyes-cypress@3.50.2(encoding@0.1.13)(typescript@5.7.3)':
+  '@applitools/eyes-cypress@3.53.2(encoding@0.1.13)(typescript@5.7.3)':
     dependencies:
-      '@applitools/core': 4.31.2(encoding@0.1.13)(typescript@5.7.3)
-      '@applitools/eyes': 1.32.1(encoding@0.1.13)(typescript@5.7.3)
+      '@applitools/core': 4.43.0(encoding@0.1.13)(typescript@5.7.3)
+      '@applitools/eyes': 1.35.3(encoding@0.1.13)(typescript@5.7.3)
       '@applitools/functional-commons': 1.6.0
-      '@applitools/logger': 2.1.0
-      '@applitools/utils': 1.7.7
+      '@applitools/logger': 2.1.5
+      '@applitools/utils': 1.9.0
       boxen: 5.1.2
       chalk: 3.0.0
       semver: 7.6.2
@@ -10650,12 +10637,13 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@applitools/eyes@1.32.1(encoding@0.1.13)(typescript@5.7.3)':
+  '@applitools/eyes@1.35.3(encoding@0.1.13)(typescript@5.7.3)':
     dependencies:
-      '@applitools/core': 4.31.2(encoding@0.1.13)(typescript@5.7.3)
-      '@applitools/logger': 2.1.0
-      '@applitools/utils': 1.7.7
+      '@applitools/core': 4.43.0(encoding@0.1.13)(typescript@5.7.3)
+      '@applitools/logger': 2.1.5
+      '@applitools/utils': 1.9.0
       chalk: 4.1.2
+      yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -10665,41 +10653,34 @@ snapshots:
 
   '@applitools/functional-commons@1.6.0': {}
 
-  '@applitools/image@1.1.16':
+  '@applitools/image@1.1.21':
     dependencies:
-      '@applitools/utils': 1.7.7
+      '@applitools/utils': 1.9.0
       bmpimagejs: 1.0.4
       jpeg-js: 0.4.4
       omggif: 1.0.10
       png-async: 0.9.4
 
-  '@applitools/logger@1.1.53':
+  '@applitools/logger@2.1.5':
     dependencies:
-      '@applitools/utils': 1.3.36
-      chalk: 4.1.2
-      debug: 4.3.3
-    transitivePeerDependencies:
-      - supports-color
-
-  '@applitools/logger@2.1.0':
-    dependencies:
-      '@applitools/utils': 1.7.7
+      '@applitools/utils': 1.9.0
       chalk: 4.1.2
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/nml-client@1.8.24':
+  '@applitools/nml-client@1.10.0(@applitools/core-base@1.26.0)':
     dependencies:
-      '@applitools/logger': 2.1.0
-      '@applitools/req': 1.7.7
-      '@applitools/utils': 1.7.7
+      '@applitools/core-base': 1.26.0
+      '@applitools/logger': 2.1.5
+      '@applitools/req': 1.7.15
+      '@applitools/utils': 1.9.0
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/req@1.7.7':
+  '@applitools/req@1.7.15':
     dependencies:
-      '@applitools/utils': 1.7.7
+      '@applitools/utils': 1.9.0
       abort-controller: 3.0.0
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
@@ -10707,62 +10688,60 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/screenshoter@3.10.5':
+  '@applitools/screenshoter@3.11.7':
     dependencies:
-      '@applitools/image': 1.1.16
-      '@applitools/logger': 2.1.0
-      '@applitools/snippets': 2.6.4
-      '@applitools/utils': 1.7.7
+      '@applitools/image': 1.1.21
+      '@applitools/logger': 2.1.5
+      '@applitools/snippets': 2.6.5
+      '@applitools/utils': 1.9.0
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/snippets@2.6.4': {}
+  '@applitools/snippets@2.6.5': {}
 
-  '@applitools/socket@1.2.1':
+  '@applitools/socket@1.2.6':
     dependencies:
-      '@applitools/logger': 2.1.0
-      '@applitools/utils': 1.7.7
+      '@applitools/logger': 2.1.5
+      '@applitools/utils': 1.9.0
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/spec-driver-webdriver@1.1.25(webdriver@7.31.1(typescript@5.7.3))':
+  '@applitools/spec-driver-webdriver@1.3.1(webdriver@7.31.1(typescript@5.7.3))':
     dependencies:
-      '@applitools/driver': 1.20.4
-      '@applitools/utils': 1.7.7
+      '@applitools/driver': 1.22.1
+      '@applitools/utils': 1.9.0
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
       webdriver: 7.31.1(typescript@5.7.3)
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/tunnel-client@1.6.2':
+  '@applitools/tunnel-client@1.9.1':
     dependencies:
-      '@applitools/execution-grid-tunnel': 3.0.8
-      '@applitools/logger': 2.1.0
-      '@applitools/req': 1.7.7
-      '@applitools/socket': 1.2.1
-      '@applitools/utils': 1.7.7
+      '@applitools/execution-grid-tunnel': 3.1.0
+      '@applitools/logger': 2.1.5
+      '@applitools/req': 1.7.15
+      '@applitools/socket': 1.2.6
+      '@applitools/utils': 1.9.0
       abort-controller: 3.0.0
       yargs: 17.7.2
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/ufg-client@1.16.4':
+  '@applitools/ufg-client@1.16.14':
     dependencies:
       '@applitools/css-tree': 1.1.4
-      '@applitools/image': 1.1.16
-      '@applitools/logger': 2.1.0
-      '@applitools/req': 1.7.7
-      '@applitools/utils': 1.7.7
+      '@applitools/image': 1.1.21
+      '@applitools/logger': 2.1.5
+      '@applitools/req': 1.7.15
+      '@applitools/utils': 1.9.0
       '@xmldom/xmldom': 0.8.10
       abort-controller: 3.0.0
       throat: 6.0.2
     transitivePeerDependencies:
       - supports-color
 
-  '@applitools/utils@1.3.36': {}
-
-  '@applitools/utils@1.7.7': {}
+  '@applitools/utils@1.9.0': {}
 
   '@argos-ci/api-client@0.8.1':
     dependencies:
@@ -12142,7 +12121,7 @@ snapshots:
       outdent: 0.5.0
       prettier: 2.8.8
       resolve-from: 5.0.0
-      semver: 7.7.1
+      semver: 7.7.2
 
   '@changesets/assemble-release-plan@6.0.6':
     dependencies:
@@ -12151,7 +12130,7 @@ snapshots:
       '@changesets/should-skip-package': 0.1.2
       '@changesets/types': 6.1.0
       '@manypkg/get-packages': 1.1.3
-      semver: 7.7.1
+      semver: 7.7.2
 
   '@changesets/changelog-git@0.2.1':
     dependencies:
@@ -12215,7 +12194,7 @@ snapshots:
       '@changesets/types': 6.1.0
       '@manypkg/get-packages': 1.1.3
       picocolors: 1.1.1
-      semver: 7.7.1
+      semver: 7.7.2
 
   '@changesets/get-github-info@0.6.0(encoding@0.1.13)':
     dependencies:
@@ -12673,7 +12652,7 @@ snapshots:
       '@babel/preset-env': 7.27.2(@babel/core@7.27.1)
       babel-loader: 9.2.1(@babel/core@7.27.1)(webpack@5.95.0(esbuild@0.25.0))
       bluebird: 3.7.1
-      debug: 4.4.0
+      debug: 4.4.1(supports-color@8.1.1)
       lodash: 4.17.21
       webpack: 5.95.0(esbuild@0.25.0)
     transitivePeerDependencies:
@@ -16353,10 +16332,6 @@ snapshots:
     optionalDependencies:
       supports-color: 8.1.1
 
-  debug@4.3.3:
-    dependencies:
-      ms: 2.1.2
-
   debug@4.3.4:
     dependencies:
       ms: 2.1.2
@@ -17402,7 +17377,7 @@ snapshots:
       '@actions/core': 1.11.1
       arg: 5.0.2
       console.table: 0.10.0
-      debug: 4.4.0
+      debug: 4.4.1(supports-color@8.1.1)
       find-test-names: 1.29.5(@babel/core@7.27.1)
       globby: 11.1.0
       minimatch: 3.1.2
@@ -18303,7 +18278,7 @@ snapshots:
   istanbul-lib-source-maps@5.0.6:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
-      debug: 4.4.0
+      debug: 4.4.1(supports-color@8.1.1)
       istanbul-lib-coverage: 3.2.2
     transitivePeerDependencies:
       - supports-color
@@ -21298,7 +21273,7 @@ snapshots:
 
   teen_process@1.16.0:
     dependencies:
-      '@babel/runtime': 7.26.9
+      '@babel/runtime': 7.27.1
       bluebird: 3.7.2
       lodash: 4.17.21
       shell-quote: 1.8.2
