@@ -1,12 +1,13 @@
+import type { LayoutData, MermaidConfig } from 'mermaid';
+import type { Bounds, Point } from 'mermaid/src/types.js';
 import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
-import type { MermaidConfig, LayoutData } from 'mermaid';
 import type {
-  LayoutResult,
-  TidyTreeNode,
-  PositionedNode,
-  PositionedEdge,
-  Node,
   Edge,
+  LayoutResult,
+  Node,
+  PositionedEdge,
+  PositionedNode,
+  TidyTreeNode,
 } from './types.js';
 
 /**
@@ -46,29 +47,18 @@ export function executeTidyTreeLayout(
 
       let leftResult = null;
       let rightResult = null;
-      let leftBoundingBox = null;
-      let rightBoundingBox = null;
 
       if (leftTree) {
         const leftLayoutResult = layout.layout(leftTree);
         leftResult = leftLayoutResult.result;
-        leftBoundingBox = leftLayoutResult.boundingBox;
       }
 
       if (rightTree) {
         const rightLayoutResult = layout.layout(rightTree);
         rightResult = rightLayoutResult.result;
-        rightBoundingBox = rightLayoutResult.boundingBox;
       }
 
-      const positionedNodes = combineAndPositionTrees(
-        rootNode,
-        leftResult,
-        rightResult,
-        leftBoundingBox,
-        rightBoundingBox,
-        data
-      );
+      const positionedNodes = combineAndPositionTrees(rootNode, leftResult, rightResult);
       const positionedEdges = calculateEdgePositions(
         data.edges,
         positionedNodes,
@@ -202,10 +192,7 @@ function convertNodeToTidyTreeTransposed(
 function combineAndPositionTrees(
   rootNode: TidyTreeNode,
   leftResult: TidyTreeNode | null,
-  rightResult: TidyTreeNode | null,
-  _leftBoundingBox: any,
-  _rightBoundingBox: any,
-  _data: LayoutData
+  rightResult: TidyTreeNode | null
 ): PositionedNode[] {
   const positionedNodes: PositionedNode[] = [];
 
@@ -383,9 +370,9 @@ function positionRightTreeBidirectional(
  * @returns The intersection point
  */
 function computeCircleEdgeIntersection(
-  circle: { x: number; y: number; width: number; height: number },
-  lineStart: { x: number; y: number },
-  lineEnd: { x: number; y: number }
+  circle: Bounds,
+  lineStart: Point,
+  lineEnd: Point
 ): { x: number; y: number } {
   const radius = Math.min(circle.width, circle.height) / 2;
 

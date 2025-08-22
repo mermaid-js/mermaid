@@ -6,26 +6,8 @@ import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/rende
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import type { FilledMindMapNode } from './mindmapTypes.js';
-import { drawNode } from './svgDraw.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { MindmapDB } from './mindmapDb.js';
-
-async function _drawNodes(
-  db: MindmapDB,
-  svg: any,
-  mindmap: FilledMindMapNode,
-  section: number,
-  conf: any
-) {
-  await drawNode(db, svg, mindmap, section, conf);
-  if (mindmap.children) {
-    await Promise.all(
-      mindmap.children.map((child, index) =>
-        _drawNodes(db, svg, child, section < 0 ? index : section, conf)
-      )
-    );
-  }
-}
 
 /**
  * Update the layout data with actual node dimensions after drawing
@@ -42,9 +24,7 @@ function _updateNodeDimensions(data4Layout: LayoutData, mindmapRoot: FilledMindM
     }
 
     // Recursively update children
-    if (node.children) {
-      node.children.forEach(updateNode);
-    }
+    node.children?.forEach(updateNode);
   };
 
   updateNode(mindmapRoot);
@@ -81,20 +61,16 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
     return;
   }
   data4Layout.nodes.forEach((node) => {
+    node.from = 'mindmap';
     if (node.shape === 'rounded') {
       node.radius = 15;
       node.taper = 15;
       node.stroke = 'none';
-      node.from = 'mindmap';
     } else if (node.shape === 'rect') {
       node.height = 46;
       node.width = 92;
-      node.from = 'mindmap';
-    } else if (node.shape === 'circle') {
-      node.from = 'mindmap';
     }
   });
-
   // Use the unified rendering system
   await render(data4Layout, svg);
   // Setup the view box and size of the svg element

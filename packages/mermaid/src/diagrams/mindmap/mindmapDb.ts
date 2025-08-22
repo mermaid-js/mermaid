@@ -4,7 +4,6 @@ import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import type { MindmapNode } from './mindmapTypes.js';
 import defaultConfig from '../../defaultConfig.js';
-
 import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
 
 // Extend Node type for mindmap-specific properties

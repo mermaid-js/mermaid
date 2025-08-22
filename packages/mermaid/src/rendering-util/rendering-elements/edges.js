@@ -485,7 +485,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  //lineData = adjustForArrowHeads(lineData);
   lineData = fixCorners(lineData);
   let curve = curveBasis;
   curve = curveLinear;

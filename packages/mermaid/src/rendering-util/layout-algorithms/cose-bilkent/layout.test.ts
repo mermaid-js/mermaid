@@ -1,4 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { validateLayoutData, executeCoseBilkentLayout } from './layout.js';
+import type { LayoutResult } from './types.js';
+import type { MindmapNode } from '../../../diagrams/mindmap/mindmapTypes.js';
+import type { MermaidConfig } from '../../../config.type.js';
+import type { LayoutData } from '../../types.js';
 
 // Mock cytoscape and cytoscape-cose-bilkent before importing the modules
 vi.mock('cytoscape', () => {
@@ -73,13 +78,6 @@ vi.mock('d3', () => ({
     })),
   })),
 }));
-
-// Import modules after mocks
-import { validateLayoutData, executeCoseBilkentLayout } from './layout.js';
-import type { LayoutResult } from './types.js';
-import type { MindmapNode } from '../../../diagrams/mindmap/mindmapTypes.js';
-import type { MermaidConfig } from '../../../config.type.js';
-import type { LayoutData } from '../../types.js';
 
 describe('Cose-Bilkent Layout Algorithm', () => {
   let mockConfig: MermaidConfig;
