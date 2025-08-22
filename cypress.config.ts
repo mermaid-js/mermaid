@@ -1,14 +1,11 @@
-import eyesPlugin from '@applitools/eyes-cypress';
+// cypress.config.ts
+import { defineConfig } from 'cypress';
 import { registerArgosTask } from '@argos-ci/cypress/task';
 import coverage from '@cypress/code-coverage/task.js';
-import { defineConfig } from 'cypress';
 import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin.js';
 import cypressSplit from 'cypress-split';
 
-// Set environment variables to force cloud-only mode
-process.env.APPLITOOLS_SERVER_URL = 'https://eyes.applitools.com';
-process.env.APPLITOOLS_DONT_CLOSE_BATCHES = 'false';
-
+// --- Base Cypress config (without Applitools) ---
 const baseConfig = defineConfig({
   projectId: 'n2sma2',
   viewportWidth: 1440,
@@ -16,9 +13,13 @@ const baseConfig = defineConfig({
   e2e: {
     specPattern: 'cypress/integration/**/*.{js,ts}',
     setupNodeEvents(on, config) {
+      // Code coverage
       coverage(on, config);
+
+      // Test splitting
       cypressSplit(on, config);
 
+      // Browser launch tweaks for CI
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.name === 'chrome' && browser.isHeadless) {
           launchOptions.args.push(
@@ -33,9 +34,11 @@ const baseConfig = defineConfig({
         return launchOptions;
       });
 
-      config.env.useAppli = process.env.USE_APPLI ? true : false;
+      // Pass flags to Cypress env
+      config.env.useAppli = process.env.USE_APPLI === 'true';
       config.env.useArgos = process.env.RUN_VISUAL_TEST === 'true';
 
+      // Argos or snapshot fallback
       if (config.env.useArgos) {
         registerArgosTask(on, config, {
           uploadToArgos: !!process.env.CI,
@@ -54,15 +57,17 @@ const baseConfig = defineConfig({
   pageLoadTimeout: 30000,
 });
 
-// Only apply Applitools if we should use it
-const shouldLoadApplitools = process.env.APPLITOOLS_API_KEY && process.env.USE_APPLI === 'true';
+// --- Applitools Conditional Setup ---
+async function loadConfig() {
+  const shouldLoadApplitools = !!process.env.APPLITOOLS_API_KEY && process.env.USE_APPLI === 'true';
 
-export default shouldLoadApplitools
-  ? eyesPlugin(baseConfig, {
-      // Force cloud server URL
+  if (shouldLoadApplitools) {
+    // Dynamically import only if needed
+    const { default: eyesPlugin } = await import('@applitools/eyes-cypress');
+
+    return eyesPlugin(baseConfig, {
       serverUrl: 'https://eyes.applitools.com',
 
-      // Batch configuration
       batch: {
         name:
           process.env.APPLITOOLS_BATCH_NAME ||
@@ -72,32 +77,22 @@ export default shouldLoadApplitools
           `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`,
       },
 
-      // Conservative settings for CI
       testConcurrency: 1,
-
-      // Browser configuration
-      browser: {
-        width: 1440,
-        height: 1024,
-        name: 'chrome',
-      },
-
-      // Viewport
+      browser: { name: 'chrome', width: 1440, height: 1024 },
       viewportSize: { width: 1440, height: 1024 },
 
-      // Performance settings
       matchTimeout: 2000,
       forceFullPageScreenshot: true,
-
-      // Ensure batches close properly
       // cspell:ignore dont
       dontCloseBatches: false,
-
-      // Disable debug features that might cause issues
       saveDebugScreenshots: false,
       saveDiffs: false,
-
-      // Set explicit concurrency
       concurrency: 1,
-    })
-  : baseConfig;
+    });
+  }
+
+  return baseConfig;
+}
+
+// Export for Cypress
+export default loadConfig();
