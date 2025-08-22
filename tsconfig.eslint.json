@@ -18,6 +18,7 @@
     "./demos/dev",
     "./vite.config.ts",
     "./vitest.workspace.js",
-    "eslint.config.js"
+    "eslint.config.js",
+    "./appli.config.ts"
   ]
 }
