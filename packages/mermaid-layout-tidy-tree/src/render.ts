@@ -102,7 +102,7 @@ export const render = async (
     }),
   };
 
-  const layoutResult = await executeTidyTreeLayout(updatedLayoutData, data4Layout.config);
+  const layoutResult = await executeTidyTreeLayout(updatedLayoutData);
   // Step 3: Position the nodes based on bidirectional layout results
   log.debug('Positioning nodes based on bidirectional layout results');
 

@@ -1,4 +1,4 @@
-import type { LayoutData, MermaidConfig } from 'mermaid';
+import type { LayoutData } from 'mermaid';
 import type { Bounds, Point } from 'mermaid/src/types.js';
 import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
 import type {
@@ -20,10 +20,7 @@ import type {
  * @param config - Mermaid configuration object
  * @returns Promise resolving to layout result with positioned nodes and edges
  */
-export function executeTidyTreeLayout(
-  data: LayoutData,
-  _config: MermaidConfig
-): Promise<LayoutResult> {
+export function executeTidyTreeLayout(data: LayoutData): Promise<LayoutResult> {
   let intersectionShift = 50;
 
   return new Promise((resolve, reject) => {
@@ -369,11 +366,7 @@ function positionRightTreeBidirectional(
  * @param lineEnd - Ending point of the line
  * @returns The intersection point
  */
-function computeCircleEdgeIntersection(
-  circle: Bounds,
-  lineStart: Point,
-  lineEnd: Point
-): { x: number; y: number } {
+function computeCircleEdgeIntersection(circle: Bounds, lineStart: Point, lineEnd: Point): Point {
   const radius = Math.min(circle.width, circle.height) / 2;
 
   const dx = lineEnd.x - lineStart.x;
@@ -393,11 +386,7 @@ function computeCircleEdgeIntersection(
   };
 }
 
-function intersection(
-  node: { x: number; y: number; width?: number; height?: number },
-  outsidePoint: { x: number; y: number },
-  insidePoint: { x: number; y: number }
-): { x: number; y: number } {
+function intersection(node: PositionedNode, outsidePoint: Point, insidePoint: Point): Point {
   const x = node.x;
   const y = node.y;
 
