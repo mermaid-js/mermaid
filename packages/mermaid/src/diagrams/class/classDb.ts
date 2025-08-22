@@ -627,7 +627,7 @@ export class ClassDB implements DiagramDB {
           padding: config.class!.padding ?? 16,
           // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
           shape: 'rect',
-          cssStyles: ['fill: none', 'stroke: black'],
+          cssStyles: [],
           look: config.look,
         };
         nodes.push(node);
