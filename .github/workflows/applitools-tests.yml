@@ -5,8 +5,7 @@ on:
     branches:
       - develop
       - applitools_workflow
-    paths:
-      - '.github/workflows/applitools-tests.yml'
+
   workflow_dispatch:
     # Manual triggering only - to limit Applitools usage
     inputs:
