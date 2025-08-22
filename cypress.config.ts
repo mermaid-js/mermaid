@@ -3,6 +3,7 @@ import coverage from '@cypress/code-coverage/task.js';
 import { defineConfig } from 'cypress';
 import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin.js';
 import cypressSplit from 'cypress-split';
+import eyesPlugin from '@applitools/eyes-cypress';
 
 const baseConfig = defineConfig({
   projectId: 'n2sma2',
@@ -56,7 +57,6 @@ const isGitHubActions = process.env.CI === 'true' && process.env.GITHUB_ACTIONS 
 if (process.env.USE_APPLI === 'true' && process.env.APPLITOOLS_API_KEY && !isGitHubActions) {
   // Load Applitools only in local environment
   try {
-    const { default: eyesPlugin } = await import('@applitools/eyes-cypress');
     module.exports = eyesPlugin(baseConfig);
   } catch (error) {
     // eslint-disable-next-line no-console
