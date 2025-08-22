@@ -14,7 +14,7 @@ importers:
   .:
     devDependencies:
       '@applitools/eyes-cypress':
-        specifier: 3.53.2
+        specifier: ^3.44.9
         version: 3.53.2(encoding@0.1.13)(typescript@5.7.3)
       '@argos-ci/cypress':
         specifier: ^5.0.2
