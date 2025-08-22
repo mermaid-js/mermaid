@@ -307,14 +307,15 @@ const drawCentralConnection = function (
   };
 
   if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION) {
-    const cx = isArrowToRight ? stopx + 8 : stopx - 8;
+    const cx = isArrowToRight ? stopx + 5 : stopx - 8;
+    drawCircle(cx);
+  } else if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_REVERSE) {
+    const cx = isArrowToRight ? startx - 5 : stopx + 8;
     drawCircle(cx);
   } else if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL) {
-    const offset = isArrowToRight ? 8 : -8;
+    const offset = isArrowToRight ? 5 : -5;
     drawCircle(stopx + offset);
-    drawCircle(startx - 2.75); // second circle (near start)
-  } else {
-    drawCircle(startx - 2.75);
+    drawCircle(startx - offset);
   }
 };
 
@@ -573,7 +574,18 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID ||
       type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED;
 
-    if (isBidirectional) {
+    const isReverseArrowType =
+      type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE ||
+      type === diagObj.db.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED ||
+      type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE ||
+      type === diagObj.db.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED ||
+      type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE ||
+      type === diagObj.db.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED ||
+      type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE ||
+      type === diagObj.db.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED;
+
+    let x = 0;
+    if (isBidirectional || isReverseArrowType) {
       const SEQUENCE_NUMBER_RADIUS = 6;
 
       if (startx < stopx) {
@@ -581,6 +593,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       } else {
         line.attr('x1', startx + SEQUENCE_NUMBER_RADIUS);
       }
+      x = 3.5;
     }
 
     diagram
@@ -590,7 +603,8 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       .attr('x2', startx)
       .attr('y2', lineStartY)
       .attr('stroke-width', 0)
-      .attr('marker-start', 'url(' + url + '#sequencenumber)');
+      .attr('marker-start', 'url(' + url + '#sequencenumber)')
+      .attr('transform', `translate(-${x}, 0)`);
 
     diagram
       .append('text')
@@ -600,7 +614,8 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       .attr('font-size', '12px')
       .attr('text-anchor', 'middle')
       .attr('class', 'sequenceNumber')
-      .text(sequenceIndex);
+      .text(sequenceIndex)
+      .attr('transform', `translate(-${x}, 0)`);
   }
 };
 

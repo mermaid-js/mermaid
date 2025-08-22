@@ -1142,7 +1142,7 @@ export const insertStickTopArrowHead = function (elem) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', ' stickTopArrowHead')
+    .attr('id', 'stickTopArrowHead')
     .attr('refX', 7.5)
     .attr('refY', 7)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -1160,7 +1160,7 @@ export const insertStickBottomArrowHead = function (elem) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', ' stickBottomArrowHead')
+    .attr('id', 'stickBottomArrowHead')
     .attr('refX', 7.5)
     .attr('refY', 0)
     .attr('markerUnits', 'userSpaceOnUse')
