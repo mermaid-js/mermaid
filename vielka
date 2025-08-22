@@ -1,0 +1,50 @@
+flowchart TD
+A[Inicio del Proceso de Compra] --> B[Planificación y Detección de Necesidades]
+B --> C[Elaboración de la Solicitud de Compra]
+C --> D[Estudio de Mercado y Asignación Presupuestaria]
+D --> E{¿Qué tipo de producto?}
+
+E --> F[Productos de Salud<br>Medicamentos, Insumos, Equipos Médicos]
+E --> G[Bienes/Servicios Generales<br>Mobiliario, Mantenimiento, Oficina, etc]
+
+F --> H{Aplica Ley 419 de 2024<br>¿Monto?}
+G --> I{Aplica Ley 22 de 2006<br>¿Monto?}
+
+H -- = B/.50,000 --> J[Compra Menor Ágil]
+H -- B/.50,001-70,000 --> K[Contratación Menor]
+H -- > B/.70,000 --> L[Licitación Pública]
+I -- = B/.50,000 --> M[Contratación Menor]
+I -- > B/.50,000 --> N[Licitación Pública]
+
+J --> O
+K --> O
+L --> O
+M --> O
+N --> O
+
+subgraph O[Procedimiento de Contratación]
+    P [Elaboración del Pliego de Cargos]
+    P --> Q[Publicación en PanamaCompra]
+    Q --> R[Recepción de Ofertas]
+    R --> S[Comisión Evaluadora<br>Analiza ofertas técnicas/económicas]
+    S --> T[Cuadro de Patronato]
+End
+
+T --> U[Junta Directiva del Patronato<br>Aprobación Final]
+U --> V[Asesoría Legal: Emisión de Resolución]
+V --> W[Publicación en PanamaCompra]
+W --> X[Firma de Contrato/Orden de Compra]
+X --> Y[Ejecución: Entrega y Recepción en Almacén]
+Y --> Z[Distribución a Unidades Solicitantes]
+Z --> AA[Control, Fiscalización y Cierre]
+AA --> AB[Fin del Proceso]
+
+style F fill:#c6e0b4
+style G fill:#f8cbad
+style J fill:#e2efda
+style K fill:#e2efda
+style L fill:#e2efda
+style M fill:#fce4d6
+style N fill:#fce4d6
+
+End Sub
