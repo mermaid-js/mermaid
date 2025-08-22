@@ -82,7 +82,7 @@ jobs:
           APPLITOOLS_BATCH_ID: ${{ env.APPLITOOLS_BATCH_ID }}
           APPLITOOLS_BATCH_NAME: ${{ env.APPLITOOLS_BATCH_NAME }}
           APPLITOOLS_SERVER_URL: ${{ env.APPLITOOLS_SERVER_URL }}
-          APPLITOOLS_DISABLE_LOCAL_EYES_SERVER: ${{ env.APPLITOOLS_DISABLE_LOCAL_EYES_SERVER }}
+          APPLITOOLS_DISABLE_LOCAL_EYES_SERVER: true
           USE_APPLI: true
           # Force Applitools to use cloud service instead of local server
           APPLITOOLS_DONT_CLOSE_BATCHES: false
