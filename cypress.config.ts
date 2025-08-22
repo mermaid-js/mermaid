@@ -59,39 +59,33 @@ const baseConfig = defineConfig({
 
 // --- Applitools Conditional Setup ---
 async function loadConfig() {
-  const shouldLoadApplitools = !!process.env.APPLITOOLS_API_KEY && process.env.USE_APPLI === 'true';
+  // Dynamically import only if needed
+  const { default: eyesPlugin } = await import('@applitools/eyes-cypress');
 
-  if (shouldLoadApplitools) {
-    // Dynamically import only if needed
-    const { default: eyesPlugin } = await import('@applitools/eyes-cypress');
+  return eyesPlugin(baseConfig, {
+    serverUrl: 'https://eyes.applitools.com',
 
-    return eyesPlugin(baseConfig, {
-      serverUrl: 'https://eyes.applitools.com',
+    batch: {
+      name:
+        process.env.APPLITOOLS_BATCH_NAME ||
+        `GitHub Actions - ${process.env.GITHUB_WORKFLOW || 'Cypress Tests'}`,
+      id:
+        process.env.APPLITOOLS_BATCH_ID ||
+        `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`,
+    },
 
-      batch: {
-        name:
-          process.env.APPLITOOLS_BATCH_NAME ||
-          `GitHub Actions - ${process.env.GITHUB_WORKFLOW || 'Cypress Tests'}`,
-        id:
-          process.env.APPLITOOLS_BATCH_ID ||
-          `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`,
-      },
+    testConcurrency: 1,
+    browser: { name: 'chrome', width: 1440, height: 1024 },
+    viewportSize: { width: 1440, height: 1024 },
 
-      testConcurrency: 1,
-      browser: { name: 'chrome', width: 1440, height: 1024 },
-      viewportSize: { width: 1440, height: 1024 },
-
-      matchTimeout: 2000,
-      forceFullPageScreenshot: true,
-      // cspell:ignore dont
-      dontCloseBatches: false,
-      saveDebugScreenshots: false,
-      saveDiffs: false,
-      concurrency: 1,
-    });
-  }
-
-  return baseConfig;
+    matchTimeout: 2000,
+    forceFullPageScreenshot: true,
+    // cspell:ignore dont
+    dontCloseBatches: false,
+    saveDebugScreenshots: false,
+    saveDiffs: false,
+    concurrency: 1,
+  });
 }
 
 // Export for Cypress
