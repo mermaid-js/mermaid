@@ -31,7 +31,7 @@ jobs:
 
     container:
       image: cypress/browsers:node-22.18.0-chrome-139.0.7258.127-1-ff-141.0.3-edge-139.0.3405.86-1
-      options: --user root
+      options: --user root --shm-size=2gb
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -57,6 +57,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Setup Applitools Environment
+        run: |
+          # Set Applitools environment variables for proper CI integration
+          echo "APPLITOOLS_BATCH_ID=${{ github.run_id }}-${{ github.run_attempt }}" >> $GITHUB_ENV
+          echo "APPLITOOLS_BATCH_NAME=GitHub Actions - ${{ github.workflow }}" >> $GITHUB_ENV
+          echo "APPLITOOLS_SERVER_URL=https://eyes.applitools.com" >> $GITHUB_ENV
+
+      - name: Verify Cypress Installation
+        run: |
+          npx cypress verify
+          npx cypress info
+
       - name: Run Cypress with Applitools (single spec)
         uses: cypress-io/github-action@v6
         with:
@@ -64,7 +76,19 @@ jobs:
           start: pnpm dev
           wait-on: http://localhost:9000
           wait-on-timeout: 180
+          browser: chrome
+          headless: true
         env:
-          # ensure these are visible to Cypress + Applitools
+          # Ensure these are visible to Cypress + Applitools
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+          APPLITOOLS_BATCH_ID: ${{ env.APPLITOOLS_BATCH_ID }}
+          APPLITOOLS_BATCH_NAME: ${{ env.APPLITOOLS_BATCH_NAME }}
+          APPLITOOLS_SERVER_URL: ${{ env.APPLITOOLS_SERVER_URL }}
           USE_APPLI: true
+          # Force Applitools to use cloud service instead of local server
+          APPLITOOLS_DONT_CLOSE_BATCHES: false
+          APPLITOOLS_SAVE_DEBUG_SCREENSHOTS: false
+          # GitHub Actions CI environment
+          CI: true
+          # Disable Chrome sandbox for container
+          ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-dev-shm-usage'
