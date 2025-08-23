@@ -923,7 +923,13 @@ export const encodeEntities = function (text: string): string {
  * @returns
  */
 export const decodeEntities = function (text: string): string {
-  return text.replace(/ﬂ°°/g, '&#').replace(/ﬂ°/g, '&').replace(/¶ß/g, ';');
+  return text
+    .replace(/ﬂ°°/g, '&#')
+    .replace(/ﬂ°/g, '&')
+    .replace(/¶ß/g, ';')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
 };
 
 export const isString = (value: unknown): value is string => {
