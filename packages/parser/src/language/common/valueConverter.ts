@@ -1,6 +1,5 @@
 import type { CstNode, GrammarAST, ValueType } from 'langium';
 import { DefaultValueConverter } from 'langium';
-
 import { accessibilityDescrRegex, accessibilityTitleRegex, titleRegex } from './matcher.js';
 
 const rulesRegexes: Record<string, RegExp> = {
@@ -31,14 +30,12 @@ export abstract class AbstractMermaidValueConverter extends DefaultValueConverte
   ): ValueType {
     let value: ValueType | undefined = this.runCommonConverter(rule, input, cstNode);
 
-    if (value === undefined) {
-      value = this.runCustomConverter(rule, input, cstNode);
-    }
-    if (value === undefined) {
-      return super.runConverter(rule, input, cstNode);
+    value ??= this.runCustomConverter(rule, input, cstNode);
+    if (value !== undefined) {
+      return value;
     }
 
-    return value;
+    return super.runConverter(rule, input, cstNode);
   }
 
   private runCommonConverter(
