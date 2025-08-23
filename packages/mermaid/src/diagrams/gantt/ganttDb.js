@@ -22,7 +22,7 @@ dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
 
 const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
-let dateFormat = '';
+let dateFormat = 'YYYY-MM-DD';
 let axisFormat = '';
 let tickInterval = undefined;
 let todayMarker = '';
@@ -52,7 +52,7 @@ export const clear = function () {
   lastTask = undefined;
   lastTaskID = undefined;
   rawTasks = [];
-  dateFormat = '';
+  dateFormat = 'YYYY-MM-DD';
   axisFormat = '';
   displayMode = '';
   tickInterval = undefined;
