@@ -250,6 +250,9 @@ importers:
       d3-sankey:
         specifier: ^0.12.3
         version: 0.12.3
+      d3-scale:
+        specifier: ^4.0.2
+        version: 4.0.2
       dagre-d3-es:
         specifier: 7.0.11
         version: 7.0.11
