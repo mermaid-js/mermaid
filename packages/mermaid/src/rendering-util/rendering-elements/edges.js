@@ -1,9 +1,13 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate, getUrl } from '../../diagrams/common/common.js';
+import { evaluate } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
 import utils from '../../utils.js';
-import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
+import {
+  getLineFunctionsWithOffset,
+  markerOffsets,
+  markerOffsets2,
+} from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 
 import {
@@ -27,8 +31,8 @@ import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 import { isLabelStyle } from './shapes/handDrawnShapeStyles.js';
 
-const edgeLabels = new Map();
-const terminalLabels = new Map();
+export const edgeLabels = new Map();
+export const terminalLabels = new Map();
 
 export const clear = () => {
   edgeLabels.clear();
@@ -55,7 +59,7 @@ export const insertEdgeLabel = async (elem, edge) => {
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
 
   // Create inner g, label, this will be positioned now for centering the text
-  const label = edgeLabel.insert('g').attr('class', 'label');
+  const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
   label.node().appendChild(labelElement);
 
   // Center the label
@@ -352,94 +356,33 @@ const cutPathAtIntersect = (_points, boundaryNode) => {
   return points;
 };
 
-function extractCornerPoints(points) {
-  const cornerPoints = [];
-  const cornerPointPositions = [];
-  for (let i = 1; i < points.length - 1; i++) {
-    const prev = points[i - 1];
-    const curr = points[i];
-    const next = points[i + 1];
-    if (
-      prev.x === curr.x &&
-      curr.y === next.y &&
-      Math.abs(curr.x - next.x) > 5 &&
-      Math.abs(curr.y - prev.y) > 5
-    ) {
-      cornerPoints.push(curr);
-      cornerPointPositions.push(i);
-    } else if (
-      prev.y === curr.y &&
-      curr.x === next.x &&
-      Math.abs(curr.x - prev.x) > 5 &&
-      Math.abs(curr.y - next.y) > 5
-    ) {
-      cornerPoints.push(curr);
-      cornerPointPositions.push(i);
-    }
-  }
-  return { cornerPoints, cornerPointPositions };
-}
+const generateDashArray = (len, oValueS, oValueE) => {
+  const middleLength = len - oValueS - oValueE;
+  const dashLength = 2; // Length of each dash
+  const gapLength = 2; // Length of each gap
+  const dashGapPairLength = dashLength + gapLength;
 
-const findAdjacentPoint = function (pointA, pointB, distance) {
-  const xDiff = pointB.x - pointA.x;
-  const yDiff = pointB.y - pointA.y;
-  const length = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-  const ratio = distance / length;
-  return { x: pointB.x - ratio * xDiff, y: pointB.y - ratio * yDiff };
+  // Calculate number of complete dash-gap pairs that can fit
+  const numberOfPairs = Math.floor(middleLength / dashGapPairLength);
+
+  // Generate the middle pattern array
+  const middlePattern = Array(numberOfPairs).fill(`${dashLength} ${gapLength}`).join(' ');
+
+  // Combine all parts
+  const dashArray = `0 ${oValueS} ${middlePattern} ${oValueE}`;
+
+  return dashArray;
 };
-
-const fixCorners = function (lineData) {
-  const { cornerPointPositions } = extractCornerPoints(lineData);
-  const newLineData = [];
-  for (let i = 0; i < lineData.length; i++) {
-    if (cornerPointPositions.includes(i)) {
-      const prevPoint = lineData[i - 1];
-      const nextPoint = lineData[i + 1];
-      const cornerPoint = lineData[i];
-
-      const newPrevPoint = findAdjacentPoint(prevPoint, cornerPoint, 5);
-      const newNextPoint = findAdjacentPoint(nextPoint, cornerPoint, 5);
-
-      const xDiff = newNextPoint.x - newPrevPoint.x;
-      const yDiff = newNextPoint.y - newPrevPoint.y;
-      newLineData.push(newPrevPoint);
-
-      const a = Math.sqrt(2) * 2;
-      let newCornerPoint = { x: cornerPoint.x, y: cornerPoint.y };
-      if (Math.abs(nextPoint.x - prevPoint.x) > 10 && Math.abs(nextPoint.y - prevPoint.y) >= 10) {
-        log.debug(
-          'Corner point fixing',
-          Math.abs(nextPoint.x - prevPoint.x),
-          Math.abs(nextPoint.y - prevPoint.y)
-        );
-        const r = 5;
-        if (cornerPoint.x === newPrevPoint.x) {
-          newCornerPoint = {
-            x: xDiff < 0 ? newPrevPoint.x - r + a : newPrevPoint.x + r - a,
-            y: yDiff < 0 ? newPrevPoint.y - a : newPrevPoint.y + a,
-          };
-        } else {
-          newCornerPoint = {
-            x: xDiff < 0 ? newPrevPoint.x - a : newPrevPoint.x + a,
-            y: yDiff < 0 ? newPrevPoint.y - r + a : newPrevPoint.y + r - a,
-          };
-        }
-      } else {
-        log.debug(
-          'Corner point skipping fixing',
-          Math.abs(nextPoint.x - prevPoint.x),
-          Math.abs(nextPoint.y - prevPoint.y)
-        );
-      }
-      newLineData.push(newCornerPoint, newNextPoint);
-    } else {
-      newLineData.push(lineData[i]);
-    }
-  }
-  return newLineData;
-};
-
-export const insertEdge = function (elem, edge, clusterDb, diagramType, startNode, endNode, id) {
+export const insertEdge = function (
+  elem,
+  edge,
+  clusterDb,
+  diagramType,
+  startNode,
+  endNode,
+  id,
+  skipIntersect = false
+) {
   const { handDrawnSeed } = getConfig();
   let points = edge.points;
   let pointsHasChanged = false;
@@ -453,11 +396,12 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
 
-  if (head.intersect && tail.intersect) {
+  log.debug('UIO intersect check', edge.points, head.x, tail.x);
+  if (head.intersect && tail.intersect && !skipIntersect) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     log.debug(
-      'Last point APA12',
+      'Last point UIO',
       edge.start,
       '-->',
       edge.end,
@@ -467,6 +411,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     );
     points.push(head.intersect(points[points.length - 1]));
   }
+  const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
     points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
@@ -486,7 +431,7 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   }
 
   let lineData = points.filter((p) => !Number.isNaN(p.y));
-  lineData = fixCorners(lineData);
+  //lineData = fixCorners(lineData);
   let curve = curveBasis;
   curve = curveLinear;
   switch (edge.curve) {
@@ -530,6 +475,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       curve = curveBasis;
   }
 
+  // if (edge.curve) {
+  //   curve = edge.curve;
+  // }
+
   const { x, y } = getLineFunctionsWithOffset(edge);
   const lineFunction = line().x(x).y(y).curve(curve);
 
@@ -561,10 +510,14 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       strokeClasses += ' edge-pattern-solid';
   }
   let svgPath;
-  let linePath = lineFunction(lineData);
-  const edgeStyles = Array.isArray(edge.style) ? edge.style : edge.style ? [edge.style] : [];
+  let linePath =
+    edge.curve === 'rounded'
+      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+      : lineFunction(lineData);
+  const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
 
+  let animatedEdge = false;
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
@@ -595,7 +548,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       animationClass = ' edge-animation-' + edge.animation;
     }
 
-    const pathStyle = stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles;
+    const pathStyle =
+      (stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles) +
+      ';' +
+      (edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
     svgPath = elem
       .append('path')
       .attr('d', linePath)
@@ -605,11 +561,38 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
         ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '') + (animationClass ?? '')
       )
       .attr('style', pathStyle);
+
+    //eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
     strokeColor = pathStyle.match(/stroke:([^;]+)/)?.[1];
+
+    // Possible fix to remove eslint-disable-next-line
+    //strokeColor = /stroke:([^;]+)/.exec(pathStyle)?.[1];
+
+    animatedEdge =
+      edge.animate === true || !!edge.animation || stylesFromClasses.includes('animation');
+    const len = svgPath.node().getTotalLength();
+    const oValueS = markerOffsets2[edge.arrowTypeStart] || 0;
+    const oValueE = markerOffsets2[edge.arrowTypeEnd] || 0;
+
+    if (edge.look === 'neo' && !animatedEdge) {
+      const dashArray =
+        edge.pattern === 'dotted' || edge.pattern === 'dashed'
+          ? generateDashArray(len, oValueS, oValueE)
+          : `0 ${oValueS} ${len - oValueS - oValueE} ${oValueE}`;
+
+      // No offset needed because we already start with a zero-length dash that effectively sets us up for a gap at the start.
+      const mOffset = `stroke-dasharray: ${dashArray}; stroke-dashoffset: 0;`;
+      svgPath.attr('style', mOffset + svgPath.attr('style'));
+    }
   }
 
-  // DEBUG code, DO NOT REMOVE
-  // adds a red circle at each edge coordinate
+  // MC Special
+  svgPath.attr('data-edge', true);
+  svgPath.attr('data-et', 'edge');
+  svgPath.attr('data-id', edge.id);
+  svgPath.attr('data-points', pointsStr);
+
+  // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem
   //     .append('circle')
@@ -619,24 +602,33 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   //     .attr('cx', point.x)
   //     .attr('cy', point.y);
   // });
-  // lineData.forEach((point) => {
-  //   elem
-  //     .append('circle')
-  //     .style('stroke', 'blue')
-  //     .style('fill', 'blue')
-  //     .attr('r', 3)
-  //     .attr('cx', point.x)
-  //     .attr('cy', point.y);
-  // });
+  if (edge.showPoints) {
+    lineData.forEach((point) => {
+      elem
+        .append('circle')
+        .style('stroke', 'red')
+        .style('fill', 'red')
+        .attr('r', 1)
+        .attr('cx', point.x)
+        .attr('cy', point.y);
+    });
+  }
 
   let url = '';
   if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
-    url = getUrl(true);
+    url =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search;
+    url = url.replace(/\(/g, '\\(').replace(/\)/g, '\\)');
   }
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  addEdgeMarkers(svgPath, edge, url, id, diagramType, strokeColor);
+  const useMargin = !animatedEdge && edge?.look === 'neo';
+  addEdgeMarkers(svgPath, edge, url, id, diagramType, useMargin, strokeColor);
   const midIndex = Math.floor(points.length / 2);
   const point = points[midIndex];
   if (!utils.isLabelCoordinateInPath(point, svgPath.attr('d'))) {
@@ -650,3 +642,134 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   paths.originalPath = edge.points;
   return paths;
 };
+
+/**
+ * Generates SVG path data with rounded corners from an array of points.
+ * @param {Array} points - Array of points in the format [{x: Number, y: Number}, ...]
+ * @param {Number} radius - The radius of the rounded corners
+ * @returns {String} - SVG path data string
+ */
+function generateRoundedPath(points, radius) {
+  if (points.length < 2) {
+    return '';
+  }
+
+  let path = '';
+  const size = points.length;
+  const epsilon = 1e-5;
+
+  for (let i = 0; i < size; i++) {
+    const currPoint = points[i];
+    const prevPoint = points[i - 1];
+    const nextPoint = points[i + 1];
+
+    if (i === 0) {
+      // Move to the first point
+      path += `M${currPoint.x},${currPoint.y}`;
+    } else if (i === size - 1) {
+      // Last point, draw a straight line to the final point
+      path += `L${currPoint.x},${currPoint.y}`;
+    } else {
+      // Calculate vectors for incoming and outgoing segments
+      const dx1 = currPoint.x - prevPoint.x;
+      const dy1 = currPoint.y - prevPoint.y;
+      const dx2 = nextPoint.x - currPoint.x;
+      const dy2 = nextPoint.y - currPoint.y;
+
+      const len1 = Math.hypot(dx1, dy1);
+      const len2 = Math.hypot(dx2, dy2);
+
+      // Prevent division by zero
+      if (len1 < epsilon || len2 < epsilon) {
+        path += `L${currPoint.x},${currPoint.y}`;
+        continue;
+      }
+
+      // Normalize the vectors
+      const nx1 = dx1 / len1;
+      const ny1 = dy1 / len1;
+      const nx2 = dx2 / len2;
+      const ny2 = dy2 / len2;
+
+      // Calculate the angle between the vectors
+      const dot = nx1 * nx2 + ny1 * ny2;
+      // Clamp the dot product to avoid numerical issues with acos
+      const clampedDot = Math.max(-1, Math.min(1, dot));
+      const angle = Math.acos(clampedDot);
+
+      // Skip rounding if the angle is too small or too close to 180 degrees
+      if (angle < epsilon || Math.abs(Math.PI - angle) < epsilon) {
+        path += `L${currPoint.x},${currPoint.y}`;
+        continue;
+      }
+
+      // Calculate the distance to offset the control point
+      const cutLen = Math.min(radius / Math.sin(angle / 2), len1 / 2, len2 / 2);
+
+      // Calculate the start and end points of the curve
+      const startX = currPoint.x - nx1 * cutLen;
+      const startY = currPoint.y - ny1 * cutLen;
+      const endX = currPoint.x + nx2 * cutLen;
+      const endY = currPoint.y + ny2 * cutLen;
+
+      // Draw the line to the start of the curve
+      path += `L${startX},${startY}`;
+
+      // Draw the quadratic Bezier curve
+      path += `Q${currPoint.x},${currPoint.y} ${endX},${endY}`;
+    }
+  }
+
+  return path;
+}
+// Helper function to calculate delta and angle between two points
+function calculateDeltaAndAngle(point1, point2) {
+  if (!point1 || !point2) {
+    return { angle: 0, deltaX: 0, deltaY: 0 };
+  }
+  const deltaX = point2.x - point1.x;
+  const deltaY = point2.y - point1.y;
+  const angle = Math.atan2(deltaY, deltaX);
+  return { angle, deltaX, deltaY };
+}
+
+// Function to adjust the first and last points of the points array
+function applyMarkerOffsetsToPoints(points, edge) {
+  // Copy the points array to avoid mutating the original data
+  const newPoints = points.map((point) => ({ ...point }));
+
+  // Handle the first point (start of the edge)
+  if (points.length >= 2 && markerOffsets[edge.arrowTypeStart]) {
+    const offsetValue = markerOffsets[edge.arrowTypeStart];
+
+    const point1 = points[0];
+    const point2 = points[1];
+
+    const { angle } = calculateDeltaAndAngle(point1, point2);
+
+    const offsetX = offsetValue * Math.cos(angle);
+    const offsetY = offsetValue * Math.sin(angle);
+
+    newPoints[0].x = point1.x + offsetX;
+    newPoints[0].y = point1.y + offsetY;
+  }
+
+  // Handle the last point (end of the edge)
+  const n = points.length;
+  if (n >= 2 && markerOffsets[edge.arrowTypeEnd]) {
+    const offsetValue = markerOffsets[edge.arrowTypeEnd];
+
+    const point1 = points[n - 1];
+    const point2 = points[n - 2];
+
+    const { angle } = calculateDeltaAndAngle(point2, point1);
+
+    const offsetX = offsetValue * Math.cos(angle);
+    const offsetY = offsetValue * Math.sin(angle);
+
+    newPoints[n - 1].x = point1.x - offsetX;
+    newPoints[n - 1].y = point1.y - offsetY;
+  }
+
+  return newPoints;
+}

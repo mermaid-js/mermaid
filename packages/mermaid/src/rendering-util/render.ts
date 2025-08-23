@@ -4,6 +4,9 @@ import { internalHelpers } from '../internals.js';
 import { log } from '../logger.js';
 import type { LayoutData } from './types.js';
 
+// console.log('MUST be removed, this only for keeping dev server working');
+// import tmp from './layout-algorithms/dagre/index.js';
+
 export interface RenderOptions {
   algorithm?: string;
 }
@@ -38,6 +41,10 @@ const registerDefaultLayoutLoaders = () => {
     {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
+    },
+    {
+      name: 'cose-bilkent',
+      loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
     },
   ]);
 };

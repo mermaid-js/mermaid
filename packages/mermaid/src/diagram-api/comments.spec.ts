@@ -1,5 +1,3 @@
-// tests to check that comments are removed
-
 import { cleanupComments } from './comments.js';
 import { describe, it, expect } from 'vitest';
 
@@ -10,12 +8,12 @@ describe('comments', () => {
 %% This is a comment
 %% This is another comment
 graph TD
-	A-->B
+    A-->B
 %% This is a comment
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
       "graph TD
-      	A-->B
+          A-->B
       "
     `);
   });
@@ -29,9 +27,9 @@ graph TD
 %%{ init: {'theme': 'space before init'}}%%
 %%{init: {'theme': 'space after ending'}}%%
 graph TD
-	A-->B
+    A-->B
 
-	B-->C
+    B-->C
 %% This is a comment
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
@@ -39,9 +37,9 @@ graph TD
       %%{ init: {'theme': 'space before init'}}%%
       %%{init: {'theme': 'space after ending'}}%%
       graph TD
-      	A-->B
+          A-->B
 
-      	B-->C
+          B-->C
       "
     `);
   });
@@ -50,14 +48,14 @@ graph TD
     const text = `
 %% This is a comment
 graph TD
-	A-->B
-	%% This is a comment
-	C-->D
+    A-->B
+    %% This is a comment
+    C-->D
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
       "graph TD
-	A-->B
-	C-->D
+          A-->B
+          C-->D
       "
     `);
   });
@@ -70,11 +68,11 @@ graph TD
 
 %% This is a comment
 graph TD
-	A-->B
+    A-->B
 `;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
       "graph TD
-      	A-->B
+          A-->B
       "
     `);
   });
@@ -82,12 +80,12 @@ graph TD
   it('should remove comments at end of text with no newline', () => {
     const text = `
 graph TD
-	A-->B
+    A-->B
 %% This is a comment`;
 
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
       "graph TD
-	A-->B
+          A-->B
       "
     `);
   });

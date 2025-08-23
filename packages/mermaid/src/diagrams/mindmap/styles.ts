@@ -64,6 +64,9 @@ const getStyles: DiagramStylesProvider = (options) =>
   .section-root text {
     fill: ${options.gitBranchLabel0};
   }
+  .section-root span {
+    color: ${options.gitBranchLabel0};
+  }
   .icon-container {
     height:100%;
     display: flex;

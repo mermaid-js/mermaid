@@ -4,6 +4,7 @@ node_modules/
 coverage/
 .idea/
 .pnpm-store/
+.instructions/
 
 dist
 v8-compile-cache-0

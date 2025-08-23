@@ -326,7 +326,9 @@ Below is a comprehensive list of the newly introduced shapes and their correspon
 
 | **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
 | --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
+| Bang                              | Bang                   | `bang`         | Bang                           | `bang`                                                           |
 | Card                              | Notched Rectangle      | `notch-rect`   | Represents a card              | `card`, `notched-rectangle`                                      |
+| Cloud                             | Cloud                  | `cloud`        | cloud                          | `cloud`                                                          |
 | Collate                           | Hourglass              | `hourglass`    | Represents a collate operation | `collate`, `hourglass`                                           |
 | Com Link                          | Lightning Bolt         | `bolt`         | Communication link             | `com-link`, `lightning-bolt`                                     |
 | Comment                           | Curly Brace            | `brace`        | Adds a comment                 | `brace-l`, `comment`                                             |

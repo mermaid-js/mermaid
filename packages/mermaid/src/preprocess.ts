@@ -1,4 +1,5 @@
 import { cleanupComments } from './diagram-api/comments.js';
+import { detectType } from './diagram-api/detectType.js';
 import { extractFrontMatter } from './diagram-api/frontmatter.js';
 import type { DiagramMetadata } from './diagram-api/types.js';
 import utils, { cleanAndMerge, removeDirectives } from './utils.js';
@@ -18,6 +19,7 @@ const cleanupText = (code: string) => {
 
 const processFrontmatter = (code: string) => {
   const { text, metadata } = extractFrontMatter(code);
+  const diagramType = detectType(text);
   const { displayMode, title, config = {} } = metadata;
   if (displayMode) {
     // Needs to be supported for legacy reasons
@@ -25,6 +27,9 @@ const processFrontmatter = (code: string) => {
       config.gantt = {};
     }
     config.gantt.displayMode = displayMode;
+  }
+  if (diagramType === 'mindmap' && !config.layout) {
+    config.layout = 'tidy-tree';
   }
   return { title, config, text };
 };
