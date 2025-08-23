@@ -170,7 +170,7 @@ describe('svgDraw', function () {
       expect(rect.attr).toHaveBeenCalledWith('width', 100);
       expect(rect.attr).toHaveBeenCalledWith('height', 60);
       expect(rect.attr).toHaveBeenCalledWith('fill', '#ccc');
-      expect(rect.attr).toHaveBeenCalledWith('class', 'rect');
+      expect(rect.attr).toHaveBeenCalledWith('class', 'box');
       expect(rect.lower).toHaveBeenCalled();
     });
   });
