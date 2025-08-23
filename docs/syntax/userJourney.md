@@ -38,3 +38,5 @@ Each user journey is split into sections, these describe the part of the task
 the user is trying to complete.
 
 Tasks syntax is `Task name: <score>: <comma separated list of actors>`
+
+**Input Constraint for Task Score:** The score must be an integer between **0** and **5**.

@@ -212,6 +212,11 @@ export const drawTask = function (elem, task, conf) {
     .attr('stroke-dasharray', '4 2')
     .attr('stroke', '#666');
 
+  // Check if the score exceeds the max limit and show alert
+  if (!Number.isInteger(task.score) || task.score > 5 || task.score < 0) {
+    throw new Error('Score must be an integer between 0 and 5');
+  }
+
   drawFace(g, {
     cx: center,
     cy: 300 + (5 - task.score) * 30,
