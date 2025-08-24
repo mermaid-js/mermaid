@@ -126,7 +126,7 @@ xychart
 
 ## Chart Theme Variables
 
-Themes for xychart resides inside xychart attribute so to set the variables use this syntax:
+Themes for xychart reside inside the `xychart` attribute, allowing customization through the following syntax:
 
 ```yaml
 ---
@@ -149,7 +149,44 @@ config:
 | yAxisTitleColor  | Color of the y-axis title                                 |
 | yAxisTickColor   | Color of the y-axis tick                                  |
 | yAxisLineColor   | Color of the y-axis line                                  |
-| plotColorPalette | String of colors separated by comma e.g. "#f3456, #43445" |
+| plotColorPalette | String of colors separated by commas, e.g., "#f3456, #43445" |
+
+Using the `plotColorPalette`, you can apply a set of colors to the lines and bars in the `xyChart`. The order of colors in the palette corresponds to the order of bars or lines in the chart.
+
+### Example
+
+Here's how you can configure different colors for lines and bars. To add a legend, use corresponding colors in the legend description:
+
+```yaml
+---
+config:
+    themeVariables:
+        xyChart:
+            plotColorPalette: "#000000, #0000FF, #00FF00, #FF0000"
+---
+```
+```
+xychart-beta
+    title "Different Colors in xyChart"
+    x-axis "categoriesX" ["Category 1", "Category 2", "Category 3", "Category 4"]
+    y-axis "valuesY" 0 --> 50
+    %% Black line
+    line [10,20,30,40]
+    %% Blue bar
+    bar [20,30,25,35]
+    %% Green bar
+    bar [15,25,20,30]
+    %% Red line
+    line [5,15,25,35]
+```
+
+With this setup, the chart will use different colors specified in the palette for each line and bar.
+
+**Legend Creation**
+- Use colors from the `plotColorPalette` in the legend.
+- Ensure the description aligns with the order of elements in the chart. 
+
+Thanks to contributors for identifying the need for comprehensive customization examples.
 
 ## Example on config and theme
 
