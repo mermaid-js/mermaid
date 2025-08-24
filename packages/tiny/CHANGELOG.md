@@ -1,5 +1,11 @@
 # mermaid
 
+## 11.10.1
+
+### Patch Changes
+
+- [#6886](https://github.com/mermaid-js/mermaid/pull/6886) [`e0b45c2`](https://github.com/mermaid-js/mermaid/commit/e0b45c2d2b41c2a9038bf87646fa3ccd7560eb20) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Handle arrows correctly when auto number is enabled
+
 ## 11.10.0
 
 ### Minor Changes
