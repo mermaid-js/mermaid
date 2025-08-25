@@ -249,18 +249,16 @@ const checkConfig = (config: MermaidConfig) => {
   }
 };
 
-const isUserDefinedLayout = (): boolean => {
-  if (configFromInitialize?.layout) {
-    return true;
+export const getUserDefinedConfig = (): MermaidConfig => {
+  let userConfig: MermaidConfig = {};
+
+  if (configFromInitialize) {
+    userConfig = assignWithDepth(userConfig, configFromInitialize);
   }
 
-  return directives.some((d) => !!d.layout);
-};
+  for (const d of directives) {
+    userConfig = assignWithDepth(userConfig, d);
+  }
 
-export const getLayoutInfo = () => {
-  const cfg = getConfig();
-  return {
-    layout: cfg.layout ?? 'dagre',
-    isUserDefined: isUserDefinedLayout(),
-  };
+  return userConfig;
 };
