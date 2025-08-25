@@ -5,44 +5,49 @@ const looks = ['classic'] as const;
 looks.forEach((look) => {
   describe(`SequenceDiagram icon participants in ${look} look`, () => {
     it(`single participant with icon`, () => {
-      const diagram = `sequenceDiagram
-participant Bob@{ type: "icon", icon: "fa:bell" }
-Note over Bob: Icon participant`;
+      const diagram = `
+      sequenceDiagram
+        participant Bob@{ type: "icon", icon: "fa:bell" }
+        Note over Bob: Icon participant`;
       imgSnapshotTest(diagram, { look });
     });
 
     it(`two participants, one icon and one normal`, () => {
-      const diagram = `sequenceDiagram
-participant Bob@{ type: "icon", icon: "fa:bell" }
-participant Alice
-Bob->>Alice: Hello`;
+      const diagram = `
+      sequenceDiagram
+        participant Bob@{ type: "icon", icon: "fa:bell" }
+        participant Alice
+        Bob->>Alice: Hello`;
       imgSnapshotTest(diagram, { look });
     });
 
     it(`two icon participants`, () => {
-      const diagram = `sequenceDiagram
-participant Bob@{ type: "icon", icon: "fa:bell" }
-participant Alice@{ type: "icon", icon: "fa:user" }
-Bob->>Alice: Hello
-Alice-->>Bob: Hi`;
+      const diagram = `
+      sequenceDiagram
+        participant Bob@{ type: "icon", icon: "fa:bell" }
+        participant Alice@{ type: "icon", icon: "fa:user" }
+        Bob->>Alice: Hello
+        Alice-->>Bob: Hi`;
       imgSnapshotTest(diagram, { look });
     });
 
     it(`with markdown htmlLabels:true content`, () => {
       // html/markdown in messages/notes (participants themselves don't support label/form/w/h)
-      const diagram = `sequenceDiagram
-participant Bob@{ type: "icon", icon: "fa:bell" }
-participant Alice
-Bob->>Alice: This is **bold** </br>and <strong>strong</strong>
-Note over Bob,Alice: Mixed <em>HTML</em> and **markdown**`;
+      const diagram = `
+      sequenceDiagram
+        participant Bob@{ type: "icon", icon: "fa:bell" }
+        participant Alice
+        Bob->>Alice: This is **bold** </br>and <strong>strong</strong>
+        Note over Bob,Alice: Mixed <em>HTML</em> and **markdown**`;
       imgSnapshotTest(diagram, { look });
     });
 
     it(`with markdown htmlLabels:false content`, () => {
-      const diagram = `sequenceDiagram
-participant Bob@{ type: "icon", icon: "fa:bell" }
-participant Alice
-Bob->>Alice: This is **bold** </br>and <strong>strong</strong>`;
+      const diagram = `
+      sequenceDiagram
+        participant Bob@{ type: "icon", icon: "fa:bell" }
+        participant Alice
+        Bob->>Alice: This is **bold** </br>and <strong>strong</strong>`;
       imgSnapshotTest(diagram, {
         look,
         htmlLabels: false,
@@ -99,14 +104,15 @@ describe('SequenceDiagram colored icon participant', () => {
 describe('SequenceDiagram icon participant with multiple interactions', () => {
   const icon = 'fa:bell-slash';
   it('icon participant interacts with two normal participants', () => {
-    const diagram = `sequenceDiagram
-participant Bob@{ type: "icon", icon: "${icon}" }
-participant Alice
-participant Carol
-Bob->>Alice: Ping
-Alice-->>Bob: Pong
-Bob->>Carol: Notify
-Note right of Bob: Icon side note`;
+    const diagram = `
+    sequenceDiagram
+      participant Bob@{ type: "icon", icon: "${icon}" }
+      participant Alice
+      participant Carol
+      Bob->>Alice: Ping
+      Alice-->>Bob: Pong
+      Bob->>Carol: Notify
+      Note right of Bob: Icon side note`;
     imgSnapshotTest(diagram);
   });
 });
