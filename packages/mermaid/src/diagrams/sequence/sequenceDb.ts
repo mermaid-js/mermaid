@@ -1,4 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import * as yaml from 'js-yaml';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
@@ -13,6 +14,7 @@ import {
   setDiagramTitle,
 } from '../common/commonDb.js';
 import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
+import type { ParticipantMetaData } from '../../types.js';
 
 interface SequenceState {
   prevActor?: string;
@@ -99,6 +101,17 @@ const PLACEMENT = {
   OVER: 2,
 } as const;
 
+export const PARTICIPANT_TYPE = {
+  ACTOR: 'actor',
+  BOUNDARY: 'boundary',
+  COLLECTIONS: 'collections',
+  CONTROL: 'control',
+  DATABASE: 'database',
+  ENTITY: 'entity',
+  PARTICIPANT: 'participant',
+  QUEUE: 'queue',
+} as const;
+
 export class SequenceDB implements DiagramDB {
   private readonly state = new ImperativeState<SequenceState>(() => ({
     prevActor: undefined,
@@ -143,9 +156,22 @@ export class SequenceDB implements DiagramDB {
     id: string,
     name: string,
     description: { text: string; wrap?: boolean | null; type: string },
-    type: string
+    type: string,
+    metadata?: any
   ) {
     let assignedBox = this.state.records.currentBox;
+    let doc;
+    if (metadata !== undefined) {
+      let yamlData;
+      // detect if shapeData contains a newline character
+      if (!metadata.includes('\n')) {
+        yamlData = '{\n' + metadata + '\n}';
+      } else {
+        yamlData = metadata + '\n';
+      }
+      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as ParticipantMetaData;
+    }
+    type = doc?.type ?? type;
     const old = this.state.records.actors.get(id);
     if (old) {
       // If already set and trying to set to a new one throw error
@@ -544,7 +570,7 @@ export class SequenceDB implements DiagramDB {
           });
           break;
         case 'addParticipant':
-          this.addActor(param.actor, param.actor, param.description, param.draw);
+          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
           break;
         case 'createParticipant':
           if (this.state.records.actors.has(param.actor)) {
@@ -553,7 +579,7 @@ export class SequenceDB implements DiagramDB {
             );
           }
           this.state.records.lastCreated = param.actor;
-          this.addActor(param.actor, param.actor, param.description, param.draw);
+          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
           this.state.records.createdActors.set(param.actor, this.state.records.messages.length);
           break;
         case 'destroyParticipant':
