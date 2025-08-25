@@ -78,3 +78,166 @@ describe('when working with site config', () => {
     expect(config_4.altFontFamily).toBeUndefined();
   });
 });
+
+describe('getUserDefinedConfig', () => {
+  beforeEach(() => {
+    configApi.reset();
+  });
+
+  it('should return empty object when no user config is defined', () => {
+    const userConfig = configApi.getUserDefinedConfig();
+    expect(userConfig).toEqual({});
+  });
+
+  it('should return config from initialize only', () => {
+    const initConfig: MermaidConfig = { theme: 'dark', fontFamily: 'Arial' };
+    configApi.saveConfigFromInitialize(initConfig);
+
+    const userConfig = configApi.getUserDefinedConfig();
+    expect(userConfig).toEqual(initConfig);
+  });
+
+  it('should return config from directives only', () => {
+    const directive1: MermaidConfig = { layout: 'elk', fontSize: 14 };
+    const directive2: MermaidConfig = { theme: 'forest' };
+
+    configApi.addDirective(directive1);
+    configApi.addDirective(directive2);
+
+    const userConfig = configApi.getUserDefinedConfig();
+    expect(userConfig.layout).toBe('elk');
+    expect(userConfig.fontSize).toBe(14);
+    expect(userConfig.theme).toBe('forest');
+  });
+
+  it('should combine initialize config and directives', () => {
+    const initConfig: MermaidConfig = { theme: 'dark', fontFamily: 'Arial', layout: 'dagre' };
+    const directive1: MermaidConfig = { layout: 'elk', fontSize: 14 };
+    const directive2: MermaidConfig = { theme: 'forest' };
+
+    configApi.saveConfigFromInitialize(initConfig);
+    configApi.addDirective(directive1);
+    configApi.addDirective(directive2);
+
+    const userConfig = configApi.getUserDefinedConfig();
+    expect(userConfig.theme).toBe('forest');
+    expect(userConfig.fontFamily).toBe('Arial');
+    expect(userConfig.layout).toBe('elk');
+    expect(userConfig.fontSize).toBe(14);
+  });
+
+  it('should handle nested config objects properly', () => {
+    const initConfig: MermaidConfig = {
+      flowchart: { nodeSpacing: 50, rankSpacing: 100 },
+      theme: 'default',
+    };
+    const directive: MermaidConfig = {
+      flowchart: { nodeSpacing: 75, curve: 'basis' },
+      mindmap: { padding: 20 },
+    };
+
+    configApi.saveConfigFromInitialize(initConfig);
+    configApi.addDirective(directive);
+
+    const userConfig = configApi.getUserDefinedConfig();
+    expect(userConfig).toEqual({
+      theme: 'default',
+      flowchart: {
+        nodeSpacing: 75,
+        rankSpacing: 100,
+        curve: 'basis',
+      },
+      mindmap: {
+        padding: 20,
+      },
+    });
+  });
+
+  it('should handle complex nested overrides', () => {
+    const initConfig: MermaidConfig = {
+      flowchart: {
+        nodeSpacing: 50,
+        rankSpacing: 100,
+        curve: 'linear',
+      },
+      theme: 'default',
+    };
+    const directive1: MermaidConfig = {
+      flowchart: {
+        nodeSpacing: 75,
+      },
+      fontSize: 12,
+    };
+    const directive2: MermaidConfig = {
+      flowchart: {
+        curve: 'basis',
+        nodeSpacing: 100,
+      },
+      mindmap: {
+        padding: 15,
+      },
+    };
+
+    configApi.saveConfigFromInitialize(initConfig);
+    configApi.addDirective(directive1);
+    configApi.addDirective(directive2);
+
+    const userConfig = configApi.getUserDefinedConfig();
+    expect(userConfig).toEqual({
+      theme: 'default',
+      fontSize: 12,
+      flowchart: {
+        nodeSpacing: 100,
+        rankSpacing: 100,
+        curve: 'basis',
+      },
+      mindmap: {
+        padding: 15,
+      },
+    });
+  });
+
+  it('should return independent copies (not references)', () => {
+    const initConfig: MermaidConfig = { theme: 'dark', flowchart: { nodeSpacing: 50 } };
+    configApi.saveConfigFromInitialize(initConfig);
+
+    const userConfig1 = configApi.getUserDefinedConfig();
+    const userConfig2 = configApi.getUserDefinedConfig();
+
+    userConfig1.theme = 'neutral';
+    userConfig1.flowchart!.nodeSpacing = 999;
+
+    expect(userConfig2.theme).toBe('dark');
+    expect(userConfig2.flowchart!.nodeSpacing).toBe(50);
+  });
+
+  it('should handle edge cases with undefined values', () => {
+    const initConfig: MermaidConfig = { theme: 'dark', layout: undefined };
+    const directive: MermaidConfig = { fontSize: 14, fontFamily: undefined };
+
+    configApi.saveConfigFromInitialize(initConfig);
+    configApi.addDirective(directive);
+
+    const userConfig = configApi.getUserDefinedConfig();
+    expect(userConfig.theme).toBe('dark');
+    expect(userConfig.layout).toBeUndefined();
+    expect(userConfig.fontFamily).toBeUndefined();
+    expect(userConfig.fontSize).toBe(14);
+  });
+
+  it('should work correctly after reset', () => {
+    const initConfig: MermaidConfig = { theme: 'dark' };
+    const directive: MermaidConfig = { layout: 'elk' };
+
+    configApi.saveConfigFromInitialize(initConfig);
+    configApi.addDirective(directive);
+
+    let userConfig = configApi.getUserDefinedConfig();
+    expect(userConfig).toEqual({ theme: 'dark', layout: 'elk' });
+
+    configApi.reset();
+
+    userConfig = configApi.getUserDefinedConfig();
+    expect(userConfig).toEqual({ theme: 'dark' });
+  });
+});
