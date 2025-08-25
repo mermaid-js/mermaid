@@ -1,9 +1,13 @@
-import common, { calculateMathMLDimensions, hasKatex, renderKatex } from '../common/common.js';
-import * as svgDrawCommon from '../common/svgDrawCommon.js';
-import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
 import { getIconSVG } from '../../rendering-util/icons.js';
+import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
+import common, {
+  calculateMathMLDimensions,
+  hasKatex,
+  renderKatexSanitized,
+} from '../common/common.js';
+import * as svgDrawCommon from '../common/svgDrawCommon.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -88,13 +92,13 @@ const popupMenuToggle = function (popId) {
 
 export const drawKatex = async function (elem, textData, msgModel = null) {
   let textElem = elem.append('foreignObject');
-  const lines = await renderKatex(textData.text, configApi.getConfig());
+  const linesSanitized = await renderKatexSanitized(textData.text, configApi.getConfig());
 
   const divElem = textElem
     .append('xhtml:div')
     .attr('style', 'width: fit-content;')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml')
-    .html(lines);
+    .html(linesSanitized);
   const dim = divElem.node().getBoundingClientRect();
 
   textElem.attr('height', Math.round(dim.height)).attr('width', Math.round(dim.width));
@@ -720,20 +724,18 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter) {
   rect.width = actor.width;
   rect.height = actor.height;
   rect.class = cssclass;
-  // rect.rx = 3;
-  // rect.ry = 3;
   rect.name = actor.name;
 
-  // 🔹 DRAW STACKED RECTANGLES
+  // DRAW STACKED RECTANGLES
   const offset = 6;
   const shadowRect = {
     ...rect,
-    x: rect.x + offset,
-    y: rect.y + (isFooter ? +offset : -offset),
+    x: rect.x + (isFooter ? -offset : -offset),
+    y: rect.y + (isFooter ? +offset : +offset),
     class: 'actor',
   };
-  drawRect(g, shadowRect);
   const rectElem = drawRect(g, rect); // draw main rectangle on top
+  drawRect(g, shadowRect);
   actor.rectData = rect;
 
   if (actor.properties?.icon) {
@@ -748,8 +750,8 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter) {
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     g,
-    rect.x,
-    rect.y,
+    rect.x - offset,
+    rect.y + offset,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_BOX_CLASS}` },
@@ -938,13 +940,13 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
     .append('defs')
     .append('marker')
     .attr('id', 'filled-head-control')
-    .attr('refX', 15.5)
-    .attr('refY', 7)
+    .attr('refX', 11)
+    .attr('refY', 5.8)
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
-    .attr('orient', '180')
+    .attr('orient', '172.5')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
+    .attr('d', 'M 14.4 5.6 L 7.2 10.4 L 8.8 5.6 L 7.2 0.8 Z');
 
   // Draw the base circle
   actElem
@@ -969,7 +971,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter) {
     actor.description,
     actElem,
     rect.x,
-    rect.y + 30,
+    rect.y + r + (isFooter ? 5 : 10),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -1005,7 +1007,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
   rect.class = 'actor';
 
   const cx = actor.x + actor.width / 2;
-  const cy = actorY + 25;
+  const cy = actorY + (!isFooter ? 25 : 10);
   const r = 18;
 
   actElem
@@ -1049,7 +1051,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter) {
     actor.description,
     actElem,
     rect.x,
-    rect.y + (!isFooter ? (cy + r - actorY) / 2 : (cy - actorY) / 2 + r + 2),
+    rect.y + (!isFooter ? (cy + r - actorY) / 2 : (cy - actorY + r - 5) / 2),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -1123,7 +1125,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
   rect.x = actor.x;
   rect.y = actorY;
   const w = rect.width / 4;
-  const h = rect.height * 0.8;
+  const h = rect.width / 4;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
 
@@ -1148,7 +1150,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
     .attr('class', cssclass);
 
   if (!isFooter) {
-    cylinderGroup.attr('transform', `translate(${w * 1.5}, ${rect.height / 4 - 2 * ry})`);
+    cylinderGroup.attr('transform', `translate(${w * 1.5}, ${(rect.height + ry) / 4})`);
   } else {
     cylinderGroup.attr('transform', `translate(${w * 1.5}, ${rect.height / 4 - 2 * ry})`);
   }
@@ -1157,7 +1159,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter) {
     actor.description,
     g,
     rect.x,
-    rect.y + (!isFooter ? rect.height / 2 : h / 2 + ry),
+    rect.y + (!isFooter ? (rect.height + ry) / 2 : (rect.height + h) / 4),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_BOX_CLASS}` },
@@ -1213,8 +1215,6 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
   rect.width = actor.width;
   rect.height = actor.height;
   rect.class = 'actor';
-  rect.rx = 3;
-  rect.ry = 3;
 
   actElem
     .append('line')
@@ -1236,8 +1236,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
     .append('circle')
     .attr('cx', actor.x + actor.width / 2)
     .attr('cy', actorY + 10)
-    .attr('r', radius)
-    .attr('width', actor.width);
+    .attr('r', radius);
 
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
@@ -1246,7 +1245,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
     actor.description,
     actElem,
     rect.x,
-    rect.y + (!isFooter ? radius / 2 : radius / 2),
+    rect.y + (!isFooter ? radius / 2 + 3 : radius / 2 - 4),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -1258,8 +1257,6 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter) {
   } else {
     actElem.attr('transform', `translate(0,${radius / 2 + 7})`);
   }
-
-  // actElem.attr('transform', `translate(${rect.width / 2}, ${actorY + rect.height / 2})`);
 
   return actor.height;
 };
@@ -1834,7 +1831,7 @@ const _drawTextCandidateFunc = (function () {
       .append('div')
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
-      .html(await renderKatex(content, configApi.getConfig()));
+      .html(await renderKatexSanitized(content, configApi.getConfig()));
 
     byTspan(content, s, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);
