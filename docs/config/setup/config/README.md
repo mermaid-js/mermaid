@@ -18,6 +18,7 @@
 
 - [addDirective](functions/addDirective.md)
 - [getConfig](functions/getConfig.md)
+- [getLayoutInfo](functions/getLayoutInfo.md)
 - [getSiteConfig](functions/getSiteConfig.md)
 - [reset](functions/reset.md)
 - [sanitize](functions/sanitize.md)

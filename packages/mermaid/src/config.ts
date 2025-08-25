@@ -248,3 +248,19 @@ const checkConfig = (config: MermaidConfig) => {
     issueWarning('LAZY_LOAD_DEPRECATED');
   }
 };
+
+const isUserDefinedLayout = (): boolean => {
+  if (configFromInitialize?.layout) {
+    return true;
+  }
+
+  return directives.some((d) => !!d.layout);
+};
+
+export const getLayoutInfo = () => {
+  const cfg = getConfig();
+  return {
+    layout: cfg.layout ?? 'dagre',
+    isUserDefined: isUserDefinedLayout(),
+  };
+};
