@@ -10,6 +10,6 @@
 
 # Type Alias: SVGGroup
 
-> **SVGGroup** = `d3.Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>
+> **SVGGroup**: `d3.Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`>
 
 Defined in: [packages/mermaid/src/diagram-api/types.ts:128](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L128)

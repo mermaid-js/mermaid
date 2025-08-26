@@ -1118,7 +1118,7 @@ end
       imgSnapshotTest(
         `flowchart TB
           A(["Start"]) --> n1["Untitled Node"]
-          A --> n2["Untitled Node"]     
+          A --> n2["Untitled Node"]
         `,
         {}
       );
@@ -1127,7 +1127,7 @@ end
       imgSnapshotTest(
         `flowchart BT
           n2["Untitled Node"] --> n1["Diamond"]
-          n1@{ shape: diam}     
+          n1@{ shape: diam}
         `,
         {}
       );
@@ -1138,7 +1138,7 @@ end
         n2["Untitled Node"] --> n1["Rounded Rectangle"]
         n3["Untitled Node"] --> n1
         n1@{ shape: rounded}
-        n3@{ shape: rect}  
+        n3@{ shape: rect}
     `,
         {}
       );
@@ -1163,5 +1163,27 @@ end
       e7@{ curve: cardinal }
       `
     );
+  });
+
+  describe('when rendering unsuported markdown', () => {
+    const graph = `flowchart TB
+    mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"\`<**1**1\`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["\`How to fix **fix**\`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["\`Github, Gitlab, BitBucket, etc.\`"]
+    a["1."]
+    b["- x"]
+      `;
+
+    it('should render raw strings', () => {
+      imgSnapshotTest(graph);
+    });
+
+    it('should render raw strings with htmlLabels: false', () => {
+      imgSnapshotTest(graph, { htmlLabels: false });
+    });
   });
 });
