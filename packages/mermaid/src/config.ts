@@ -252,12 +252,12 @@ const checkConfig = (config: MermaidConfig) => {
 export const getUserDefinedConfig = (): MermaidConfig => {
   let userConfig: MermaidConfig = {};
 
-  for (const d of directives) {
-    userConfig = assignWithDepth(userConfig, d);
-  }
-
   if (configFromInitialize) {
     userConfig = assignWithDepth(userConfig, configFromInitialize);
+  }
+
+  for (const d of directives) {
+    userConfig = assignWithDepth(userConfig, d);
   }
 
   return userConfig;
