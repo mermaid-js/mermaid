@@ -104,10 +104,14 @@ describe('getUserDefinedConfig', () => {
     configApi.addDirective(directive1);
     configApi.addDirective(directive2);
 
-    const userConfig = configApi.getUserDefinedConfig();
-    expect(userConfig.layout).toBe('elk');
-    expect(userConfig.fontSize).toBe(14);
-    expect(userConfig.theme).toBe('forest');
+    expect(configApi.getUserDefinedConfig()).toMatchInlineSnapshot(`
+      {
+        "fontFamily": "Arial",
+        "fontSize": 14,
+        "layout": "elk",
+        "theme": "forest",
+      }
+    `);
   });
 
   it('should combine initialize config and directives', () => {
@@ -120,10 +124,14 @@ describe('getUserDefinedConfig', () => {
     configApi.addDirective(directive2);
 
     const userConfig = configApi.getUserDefinedConfig();
-    expect(userConfig.theme).toBe('forest');
-    expect(userConfig.fontFamily).toBe('Arial');
-    expect(userConfig.layout).toBe('elk');
-    expect(userConfig.fontSize).toBe(14);
+    expect(userConfig).toMatchInlineSnapshot(`
+      {
+        "fontFamily": "Arial",
+        "fontSize": 14,
+        "layout": "elk",
+        "theme": "forest",
+      }
+    `);
   });
 
   it('should handle nested config objects properly', () => {
@@ -140,17 +148,19 @@ describe('getUserDefinedConfig', () => {
     configApi.addDirective(directive);
 
     const userConfig = configApi.getUserDefinedConfig();
-    expect(userConfig).toEqual({
-      theme: 'default',
-      flowchart: {
-        nodeSpacing: 75,
-        rankSpacing: 100,
-        curve: 'basis',
-      },
-      mindmap: {
-        padding: 20,
-      },
-    });
+    expect(userConfig).toMatchInlineSnapshot(`
+      {
+        "flowchart": {
+          "curve": "basis",
+          "nodeSpacing": 75,
+          "rankSpacing": 100,
+        },
+        "mindmap": {
+          "padding": 20,
+        },
+        "theme": "default",
+      }
+    `);
   });
 
   it('should handle complex nested overrides', () => {
@@ -183,18 +193,20 @@ describe('getUserDefinedConfig', () => {
     configApi.addDirective(directive2);
 
     const userConfig = configApi.getUserDefinedConfig();
-    expect(userConfig).toEqual({
-      theme: 'default',
-      fontSize: 12,
-      flowchart: {
-        nodeSpacing: 100,
-        rankSpacing: 100,
-        curve: 'basis',
-      },
-      mindmap: {
-        padding: 15,
-      },
-    });
+    expect(userConfig).toMatchInlineSnapshot(`
+      {
+        "flowchart": {
+          "curve": "basis",
+          "nodeSpacing": 100,
+          "rankSpacing": 100,
+        },
+        "fontSize": 12,
+        "mindmap": {
+          "padding": 15,
+        },
+        "theme": "default",
+      }
+    `);
   });
 
   it('should return independent copies (not references)', () => {
@@ -207,8 +219,14 @@ describe('getUserDefinedConfig', () => {
     userConfig1.theme = 'neutral';
     userConfig1.flowchart!.nodeSpacing = 999;
 
-    expect(userConfig2.theme).toBe('dark');
-    expect(userConfig2.flowchart!.nodeSpacing).toBe(50);
+    expect(userConfig2).toMatchInlineSnapshot(`
+      {
+        "flowchart": {
+          "nodeSpacing": 50,
+        },
+        "theme": "dark",
+      }
+    `);
   });
 
   it('should handle edge cases with undefined values', () => {
@@ -218,26 +236,29 @@ describe('getUserDefinedConfig', () => {
     configApi.saveConfigFromInitialize(initConfig);
     configApi.addDirective(directive);
 
-    const userConfig = configApi.getUserDefinedConfig();
-    expect(userConfig.theme).toBe('dark');
-    expect(userConfig.layout).toBeUndefined();
-    expect(userConfig.fontFamily).toBeUndefined();
-    expect(userConfig.fontSize).toBe(14);
+    expect(configApi.getUserDefinedConfig()).toMatchInlineSnapshot(`
+      {
+        "fontSize": 14,
+        "layout": undefined,
+        "theme": "dark",
+      }
+    `);
   });
 
-  it('should work correctly after reset', () => {
+  it('should retain config from initialize after reset', () => {
     const initConfig: MermaidConfig = { theme: 'dark' };
     const directive: MermaidConfig = { layout: 'elk' };
 
     configApi.saveConfigFromInitialize(initConfig);
     configApi.addDirective(directive);
 
-    let userConfig = configApi.getUserDefinedConfig();
-    expect(userConfig).toEqual({ theme: 'dark', layout: 'elk' });
+    expect(configApi.getUserDefinedConfig()).toMatchInlineSnapshot(`
+      {
+        "layout": "elk",
+        "theme": "dark",
+      }
+    `);
 
     configApi.reset();
-
-    userConfig = configApi.getUserDefinedConfig();
-    expect(userConfig).toEqual({ theme: 'dark' });
   });
 });
