@@ -14,7 +14,7 @@
 
 // Special states for recognizing aliases
 // A special state for grabbing text up to the first comment/newline
-%x ID ALIAS LINE
+%x ID ALIAS LINE CONFIG CONFIG_DATA
 
 %x acc_title
 %x acc_descr
@@ -28,12 +28,17 @@
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
 [0-9]+(?=[ \n]+)       											return 'NUM';
+<ID>\@\{                                                        { this.begin('CONFIG'); return 'CONFIG_START'; }
+<CONFIG>[^\}]+                                                  { return 'CONFIG_CONTENT'; }
+<CONFIG>\}                                                      { this.popState(); this.popState(); return 'CONFIG_END'; }
+<ID>[^\<->\->:\n,;@\s]+(?=\@\{)                                 { yytext = yytext.trim(); return 'ACTOR'; }
+<ID>[^\<->\->:\n,;@]+?([\-]*[^\<->\->:\n,;@]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$) { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
 "create"                                                        return 'create';
 "destroy"                                                       { this.begin('ID'); return 'destroy'; }
-<ID>[^\<->\->:\n,;]+?([\-]*[^\<->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
+<ID>[^<\->\->:\n,;]+?([\-]*[^<\->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
 "loop"                                                          { this.begin('LINE'); return 'loop'; }
@@ -73,7 +78,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "off"															return 'off';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
-[^\+\<->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\<->\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
+[^+<\->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+<\->\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"                                                           return 'SOLID_ARROW';
 "<<->>"                                                           return 'BIDIRECTIONAL_SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
@@ -231,6 +236,8 @@ participant_statement
 	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
 	| 'participant_actor' actor 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $$=$2;}
 	| 'destroy' actor 'NEWLINE' {$2.type='destroyParticipant'; $$=$2;}
+    | 'participant' actor_with_config 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant'; $$=$2;}
+
 	;
 
 note_statement
@@ -301,6 +308,23 @@ signal
 	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
 	;
 
+actor_with_config
+    : ACTOR config_object
+      {
+        $$ = {
+          type: 'addParticipant',
+          actor: $1,
+          config: $2
+        };
+      }
+    ;
+
+config_object
+    : CONFIG_START CONFIG_CONTENT CONFIG_END
+      {
+        $$ = $2.trim();
+      }
+    ;
 // actor
 // 	: actor_participant
 // 	| actor_actor
@@ -313,7 +337,7 @@ signaltype
 	: SOLID_OPEN_ARROW  { $$ = yy.LINETYPE.SOLID_OPEN; }
 	| DOTTED_OPEN_ARROW { $$ = yy.LINETYPE.DOTTED_OPEN; }
 	| SOLID_ARROW       { $$ = yy.LINETYPE.SOLID; }
-  | BIDIRECTIONAL_SOLID_ARROW       { $$ = yy.LINETYPE.BIDIRECTIONAL_SOLID; }
+	| BIDIRECTIONAL_SOLID_ARROW       { $$ = yy.LINETYPE.BIDIRECTIONAL_SOLID; }
 	| DOTTED_ARROW      { $$ = yy.LINETYPE.DOTTED; }
 	| BIDIRECTIONAL_DOTTED_ARROW      { $$ = yy.LINETYPE.BIDIRECTIONAL_DOTTED; }
 	| SOLID_CROSS       { $$ = yy.LINETYPE.SOLID_CROSS; }

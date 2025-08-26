@@ -1,24 +1,26 @@
 import { it, describe, expect } from 'vitest';
-import { db } from './db.js';
+import { PacketDB } from './db.js';
 import { parser } from './parser.js';
 
-const { clear, getPacket, getDiagramTitle, getAccTitle, getAccDescription } = db;
-
 describe('packet diagrams', () => {
+  let db: PacketDB;
   beforeEach(() => {
-    clear();
+    db = new PacketDB();
+    if (parser.parser) {
+      parser.parser.yy = db;
+    }
   });
 
   it('should handle a packet-beta definition', async () => {
     const str = `packet-beta`;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot('[]');
+    expect(db.getPacket()).toMatchInlineSnapshot('[]');
   });
 
   it('should handle a packet definition', async () => {
     const str = `packet`;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot('[]');
+    expect(db.getPacket()).toMatchInlineSnapshot('[]');
   });
 
   it('should handle diagram with data and title', async () => {
@@ -29,10 +31,10 @@ describe('packet diagrams', () => {
     0-10: "test"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getDiagramTitle()).toMatchInlineSnapshot('"Packet diagram"');
-    expect(getAccTitle()).toMatchInlineSnapshot('"Packet accTitle"');
-    expect(getAccDescription()).toMatchInlineSnapshot('"Packet accDescription"');
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getDiagramTitle()).toMatchInlineSnapshot('"Packet diagram"');
+    expect(db.getAccTitle()).toMatchInlineSnapshot('"Packet accTitle"');
+    expect(db.getAccDescription()).toMatchInlineSnapshot('"Packet accDescription"');
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -52,7 +54,7 @@ describe('packet diagrams', () => {
     11: "single"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -78,7 +80,7 @@ describe('packet diagrams', () => {
     +16: "word"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -104,7 +106,7 @@ describe('packet diagrams', () => {
     +16: "word"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -130,7 +132,7 @@ describe('packet diagrams', () => {
     11-90: "multiple"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -172,7 +174,7 @@ describe('packet diagrams', () => {
     17-63: "multiple"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
