@@ -82,6 +82,7 @@ describe('when working with site config', () => {
 describe('getUserDefinedConfig', () => {
   beforeEach(() => {
     configApi.reset();
+    configApi.saveConfigFromInitialize({});
   });
 
   it('should return empty object when no user config is defined', () => {
@@ -106,7 +107,6 @@ describe('getUserDefinedConfig', () => {
 
     expect(configApi.getUserDefinedConfig()).toMatchInlineSnapshot(`
       {
-        "fontFamily": "Arial",
         "fontSize": 14,
         "layout": "elk",
         "theme": "forest",
@@ -128,8 +128,8 @@ describe('getUserDefinedConfig', () => {
       {
         "fontFamily": "Arial",
         "fontSize": 14,
-        "layout": "elk",
-        "theme": "forest",
+        "layout": "dagre",
+        "theme": "dark",
       }
     `);
   });
@@ -152,7 +152,7 @@ describe('getUserDefinedConfig', () => {
       {
         "flowchart": {
           "curve": "basis",
-          "nodeSpacing": 75,
+          "nodeSpacing": 50,
           "rankSpacing": 100,
         },
         "mindmap": {
@@ -196,8 +196,8 @@ describe('getUserDefinedConfig', () => {
     expect(userConfig).toMatchInlineSnapshot(`
       {
         "flowchart": {
-          "curve": "basis",
-          "nodeSpacing": 100,
+          "curve": "linear",
+          "nodeSpacing": 50,
           "rankSpacing": 100,
         },
         "fontSize": 12,
