@@ -1,23 +1,14 @@
-# Tidy-tree Layout Instructions
+# Tidy-tree Layout
 
-Instructions to use the Tidy-tree layout algorithm.
+The **tidy-tree** layout arranges nodes in a hierarchical, tree-like structure. It is especially useful for diagrams where parent-child relationships are important, such as mindmaps.
 
-## Getting Started
+## Features
 
-### Installation
+- Organizes nodes in a tidy, non-overlapping tree
+- Ideal for mindmaps and hierarchical data
+- Automatically adjusts spacing for readability
 
-```bash
-npm install non-layered-tidy-tree-layout
-# or
-yarn add non-layered-tidy-tree-layout
-
-```
-
-There's also a built version: `dist/non-layered-tidy-tree-layout.js` for use with browser `<script>` tag, or as a Javascript module.
-
-## Tidy tree Layouts
-
-Mermaid also supports a Tidy Tree layout for mindmaps.
+## Example Usage
 
 ```
 ---
@@ -32,26 +23,31 @@ root((mindmap is a long thing))
   D
 ```
 
-### With bundlers
-
-```sh
-npm install @mermaid-js/layout-tidy-tree
+```
+ ---
+      config:
+        layout: tidy-tree
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+          Long history
+          ::icon(fa fa-book)
+          Popularisation
+            British popular psychology author Tony Buzan
+        Research
+          On effectiveness&lt;br/>and features
+          On Automatic creation
+            Uses
+                Creative techniques
+                Strategic planning
+                Argument mapping
+        Tools
+              id)I am a cloud(
+                  id))I am a bang((
+                    Tools
 ```
 
-```ts
-import mermaid from 'mermaid';
-import tidyTreeLayouts from '@mermaid-js/layout-tidy-tree';
+## Note
 
-mermaid.registerLayoutLoaders(tidyTreeLayouts);
-```
-
-### With CDN
-
-```html
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  import tidyTreeLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-tidy-tree@0/dist/mermaid-layout-tidy-tree.esm.min.mjs';
-
-  mermaid.registerLayoutLoaders(tidyTreeLayouts);
-</script>
-```
+- Currently, tidy-tree is primarily supported for mindmap diagrams.
