@@ -248,3 +248,17 @@ const checkConfig = (config: MermaidConfig) => {
     issueWarning('LAZY_LOAD_DEPRECATED');
   }
 };
+
+export const getUserDefinedConfig = (): MermaidConfig => {
+  let userConfig: MermaidConfig = {};
+
+  if (configFromInitialize) {
+    userConfig = assignWithDepth(userConfig, configFromInitialize);
+  }
+
+  for (const d of directives) {
+    userConfig = assignWithDepth(userConfig, d);
+  }
+
+  return userConfig;
+};
