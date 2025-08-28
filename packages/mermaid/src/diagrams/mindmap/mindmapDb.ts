@@ -5,6 +5,7 @@ import { log } from '../../logger.js';
 import type { MindmapNode } from './mindmapTypes.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
+import { getUserDefinedConfig } from '../../config.js';
 
 // Extend Node type for mindmap-specific properties
 export type MindmapLayoutNode = Node & {
@@ -325,11 +326,21 @@ export class MindmapDB {
     const mindmapRoot = this.getMindmap();
     const config = getConfig();
 
+    const userDefinedConfig = getUserDefinedConfig();
+    const hasUserDefinedLayout = userDefinedConfig.layout !== undefined;
+
+    const finalConfig = { ...config };
+    if (!hasUserDefinedLayout) {
+      finalConfig.layout = 'cose-bilkent';
+    } else {
+      finalConfig.layout = userDefinedConfig.layout;
+    }
+
     if (!mindmapRoot) {
       return {
         nodes: [],
         edges: [],
-        config,
+        config: finalConfig,
       };
     }
     log.debug('getData: mindmapRoot', mindmapRoot, config);
@@ -362,7 +373,7 @@ export class MindmapDB {
     return {
       nodes: processedNodes,
       edges: processedEdges,
-      config,
+      config: finalConfig,
       // Store the root node for mindmap-specific layout algorithms
       rootNode: mindmapRoot,
       // Properties required by dagre layout algorithm

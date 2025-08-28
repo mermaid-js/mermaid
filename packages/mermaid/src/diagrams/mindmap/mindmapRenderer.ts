@@ -32,7 +32,7 @@ function _updateNodeDimensions(data4Layout: LayoutData, mindmapRoot: FilledMindM
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   log.debug('Rendering mindmap diagram\n' + text);
-  const { securityLevel, mindmap: conf, layout } = getConfig();
+  const { securityLevel, mindmap: conf } = getConfig();
 
   // Draw the nodes first to get their dimensions, then update the layout data
   const db = diagObj.db as MindmapDB;
@@ -45,7 +45,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   const svg = getDiagramElement(id, securityLevel);
 
   data4Layout.type = diagObj.type;
-  data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout, {
+  data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(data4Layout.config.layout, {
     fallback: 'cose-bilkent',
   });
   // For mindmap diagrams, prioritize mindmap-specific layout algorithm configuration
