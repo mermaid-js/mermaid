@@ -11,9 +11,8 @@ export async function circle<T extends SVGGraphicsElement>(parent: D3Selection<T
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
-
-  const radius =
-    node.from === 'mindmap' ? bbox.width / 2 + halfPadding * 2 : bbox.width / 2 + halfPadding;
+  const padding = node.padding ?? halfPadding;
+  const radius = bbox.width / 2 + padding;
   let circleElem;
   const { cssStyles } = node;
 

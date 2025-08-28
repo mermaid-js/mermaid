@@ -95,15 +95,9 @@ export async function roundedRect<T extends SVGGraphicsElement>(
 
   const labelPaddingX = node?.padding ?? 0;
   const labelPaddingY = node?.padding ?? 0;
-  let w;
-  let h;
-  if (node.from === 'mindmap') {
-    w = bbox.width + labelPaddingX * 2;
-    h = bbox.height + labelPaddingY;
-  } else {
-    w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
-    h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
-  }
+
+  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
+  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
   const radius = node.radius || 5;
   const taper = node.taper || 5; // Taper width for the rounded corners
   const { cssStyles } = node;

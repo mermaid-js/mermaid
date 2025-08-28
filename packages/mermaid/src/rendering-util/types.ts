@@ -60,6 +60,8 @@ interface BaseNode {
   borderStyle?: string;
   borderWidth?: number;
   labelTextColor?: string;
+  labelPaddingX?: number;
+  labelPaddingY?: number;
 
   // Flowchart specific properties
   x?: number;

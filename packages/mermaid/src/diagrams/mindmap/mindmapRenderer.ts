@@ -61,14 +61,17 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
     return;
   }
   data4Layout.nodes.forEach((node) => {
-    node.from = 'mindmap';
     if (node.shape === 'rounded') {
       node.radius = 15;
       node.taper = 15;
       node.stroke = 'none';
+      node.width = 0;
+      node.padding = 15;
+    } else if (node.shape === 'circle') {
+      node.padding = 10;
     } else if (node.shape === 'rect') {
-      node.height = 46;
-      node.width = 92;
+      node.width = 0;
+      node.padding = 10;
     }
   });
   // Use the unified rendering system

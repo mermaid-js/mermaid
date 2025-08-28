@@ -7,7 +7,7 @@ export async function squareRect<T extends SVGGraphicsElement>(parent: D3Selecti
     rx: 0,
     ry: 0,
     classes: '',
-    labelPaddingX: node.from === 'mindmap' ? (node?.padding || 0) * 1 : (node?.padding || 0) * 2,
+    labelPaddingX: node.labelPaddingX ?? (node?.padding || 0) * 2,
     labelPaddingY: (node?.padding || 0) * 1,
   } as RectOptions;
   return drawRect(parent, node, options);
