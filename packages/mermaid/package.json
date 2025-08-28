@@ -68,7 +68,7 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.0.4",
-    "@iconify/utils": "3.0.1",
+    "@iconify/utils": "^3.0.1",
     "@mermaid-js/parser": "workspace:^",
     "@types/d3": "^7.4.3",
     "cytoscape": "^3.29.3",

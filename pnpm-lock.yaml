@@ -227,7 +227,7 @@ importers:
         specifier: ^7.0.4
         version: 7.1.0
       '@iconify/utils':
-        specifier: 3.0.1
+        specifier: ^3.0.1
         version: 3.0.1
       '@mermaid-js/parser':
         specifier: workspace:^
@@ -499,7 +499,7 @@ importers:
         specifier: ^2.0.3
         version: 2.0.3
       unocss:
-        specifier: 66.4.2
+        specifier: ^66.4.2
         version: 66.4.2(postcss@8.5.6)(vite@6.1.1(@types/node@22.13.5)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.3)(yaml@2.8.0))
       unplugin-vue-components:
         specifier: ^28.4.0
