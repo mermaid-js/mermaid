@@ -6,12 +6,11 @@ on:
 
 permissions: # added using https://github.com/step-security/secure-repo
   contents: read
+  issues: write # for andymckay/labeler to label issues
+  pull-requests: write # for andymckay/labeler to label PRs
 
 jobs:
   triage:
-    permissions:
-      issues: write # for andymckay/labeler to label issues
-      pull-requests: write # for andymckay/labeler to label PRs
     runs-on: ubuntu-latest
     steps:
       - uses: andymckay/labeler@e6c4322d0397f3240f0e7e30a33b5c5df2d39e90 # 1.0.4
