@@ -81,7 +81,7 @@ describe('Radial Layout', () => {
       );
     });
 
-    xit(`${description}should handle a radial layout with subgraphs`, () => {
+    it(`${description}should handle a radial layout with subgraphs`, () => {
       imgSnapshotTest(
         `
         %%{init: {'theme': 'default', 'layout': 'radial'}}%%
@@ -98,6 +98,68 @@ describe('Radial Layout', () => {
             C --> F[Layer 2 Node F]
             C --> G[Layer 2 Node G]
           end
+        `,
+        options
+      );
+    });
+
+    it(`${description}should handle nested subgraphs in radial layout`, () => {
+      imgSnapshotTest(
+        `
+        %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+        flowchart TD
+          R[Root Outer]
+          subgraph S1[Level 1 Subgraph]
+            S1_N1[L1 Node1]
+            S1_N2[L1 Node2]
+            subgraph S2[Level 2 Subgraph]
+              S2_N1[L2 Node1]
+              S2_N2[L2 Node2]
+              S2_N1 --> S2_N2
+            end
+            S1_N1 --> S2_N1
+            S1_N2 --> S2_N2
+          end
+          R --> S1_N1
+          R --> S1
+        `,
+        options
+      );
+    });
+
+    it(`${description}should handle empty subgraph in radial layout`, () => {
+      imgSnapshotTest(
+        `
+        %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+        flowchart TD
+          subgraph EMPTY_SUB[Empty Subgraph Title]
+          end
+          X[Outside] --> EMPTY_SUB
+        `,
+        options
+      );
+    });
+
+    it(`${description}should handle sibling subgraphs with cross-edges in radial layout`, () => {
+      imgSnapshotTest(
+        `
+        %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+        flowchart TD
+          TOP[Main Top]
+          subgraph SIB_A[Sibling A]
+            A1[Node A1]
+            A2[Node A2]
+            A1 --> A2
+          end
+          subgraph SIB_B[Sibling B]
+            B1[Node B1]
+            B2[Node B2]
+            B1 --> B2
+          end
+          TOP --> A1
+          TOP --> B1
+          A2 --> B1
+          B2 --> A1
         `,
         options
       );

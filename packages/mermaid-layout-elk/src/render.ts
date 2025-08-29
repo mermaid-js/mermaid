@@ -3,7 +3,12 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
-type Node = LayoutData['nodes'][number];
+// Use a more explicit type definition to avoid error type issues
+interface Node {
+  id: string;
+  domId?: string;
+  [key: string]: any;
+}
 
 interface LabelData {
   width: number;
@@ -15,7 +20,10 @@ interface LabelData {
 interface NodeWithVertex extends Omit<Node, 'domId'> {
   children?: unknown[];
   labelData?: LabelData;
-  domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
+  domId?:
+    | Node['domId']
+    | d3.Selection<SVGGElement, unknown, Element | null, unknown>
+    | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
 }
 
 export const render = async (
