@@ -64,6 +64,7 @@ import { kanbanItem } from './shapes/kanbanItem.js';
 import { bang } from './shapes/bang.js';
 import { cloud } from './shapes/cloud.js';
 import { defaultMindmapNode } from './shapes/defaultMindmapNode.js';
+import { mindmapCircle } from './shapes/mindmapCircle.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -153,6 +154,14 @@ export const shapesDefs = [
     description: 'defaultMindmapNode',
     aliases: ['default-mindmap', 'defaultMindmapNode'],
     handler: defaultMindmapNode,
+  },
+  {
+    semanticName: 'Mindmap Circle',
+    name: 'mindmapCircle',
+    shortName: 'mindmap-circle',
+    description: 'mindmapCircle',
+    aliases: ['mindmap-circle'],
+    handler: mindmapCircle,
   },
   {
     semanticName: 'Cloud',

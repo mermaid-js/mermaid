@@ -171,6 +171,10 @@ export interface RectOptions {
   classes: string;
 }
 
+export interface MindmapOptions {
+  padding: number;
+}
+
 // Extending the Node interface for specific types if needed
 export type ClassDiagramNode = Node & {
   memberData: any; // Specific property for class diagram nodes
@@ -206,6 +210,7 @@ export interface ShapeRenderOptions {
   config: MermaidConfig;
   /** Some shapes render differently if a diagram has a direction `LR` */
   dir?: Node['dir'];
+  padding?: number;
 }
 
 export type KanbanNode = Node & {

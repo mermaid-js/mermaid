@@ -2,16 +2,20 @@ import rough from 'roughjs';
 import { log } from '../../../logger.js';
 import type { Bounds, D3Selection, Point } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
-import type { Node } from '../../types.js';
+import type { MindmapOptions, Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
-export async function circle<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
+export async function circle<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node,
+  options?: MindmapOptions | ShapeRenderOptions
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
-  const padding = node.padding ?? halfPadding;
+  const padding = options?.padding ?? halfPadding;
   const radius = bbox.width / 2 + padding;
   let circleElem;
   const { cssStyles } = node;
