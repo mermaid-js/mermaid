@@ -201,6 +201,7 @@ This Markdown should be kept.
         | Manual File                       | Flipped Triangle       | \`flip-tri\`        | Manual file operation          | \`flipped-triangle\`, \`manual-file\`                                |
         | Manual Input                      | Sloped Rectangle       | \`sl-rect\`         | Manual input step              | \`manual-input\`, \`sloped-rectangle\`                               |
         | Manual Operation                  | Trapezoid Base Top     | \`trap-t\`          | Represents a manual task       | \`inv-trapezoid\`, \`manual\`, \`trapezoid-top\`                       |
+        | Mindmap Circle                    | mindmapCircle          | \`mindmap-circle\`  | mindmapCircle                  | \`mindmap-circle\`                                                 |
         | Multi-Document                    | Stacked Document       | \`docs\`            | Multiple documents             | \`documents\`, \`st-doc\`, \`stacked-document\`                        |
         | Multi-Process                     | Stacked Rectangle      | \`st-rect\`         | Multiple processes             | \`processes\`, \`procs\`, \`stacked-rectangle\`                        |
         | Odd                               | Odd                    | \`odd\`             | Odd shape                      |                                                                  |
