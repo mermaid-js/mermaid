@@ -33,8 +33,7 @@ mindmap
 
 ## Join the Development
 
-> **💡 Tip**
-> **Check out our** [**detailed contribution guide**](./contributing.md).
+> **💡 Tip** > **Check out our** [**detailed contribution guide**](./contributing.md).
 
 Where to start:
 
@@ -48,8 +47,7 @@ Where to start:
 
 ## A Question Or a Suggestion?
 
-> **💡 Tip**
-> **Have a look at** [**how to open an issue**](./questions-and-suggestions.md).
+> **💡 Tip** > **Have a look at** [**how to open an issue**](./questions-and-suggestions.md).
 
 If you have faced a vulnerability [report it to us](./security.md).
 
