@@ -52,4 +52,102 @@ Person(default, "default", "default")`);
     expect(onlyShape.descr.text).toBe('default');
     expect(onlyShape.label.text).toBe('default');
   });
+
+  describe('UpdateRelStyle with lineStyle parameter', function () {
+    beforeEach(function () {
+      c4.parser.yy.clear();
+    });
+
+    it('should handle UpdateRelStyle with $lineStyle="dashed"', function () {
+      c4.parser.parse(`C4Context
+        Person(user, "User", "A user")
+        System(system, "System", "A system")
+        Rel(user, system, "Uses")
+        UpdateRelStyle(user, system, $lineStyle="dashed")`);
+
+      const yy = c4.parser.yy;
+      const rels = yy.getRels();
+      expect(rels.length).toBe(1);
+      expect(rels[0].lineStyle).toBe('dashed');
+    });
+
+    it('should handle UpdateRelStyle with $lineStyle="dotted"', function () {
+      c4.parser.parse(`C4Context
+        Person(user, "User", "A user")
+        System(system, "System", "A system")
+        Rel(user, system, "Uses")
+        UpdateRelStyle(user, system, $lineStyle="dotted")`);
+
+      const yy = c4.parser.yy;
+      const rels = yy.getRels();
+      expect(rels.length).toBe(1);
+      expect(rels[0].lineStyle).toBe('dotted');
+    });
+
+    it('should handle UpdateRelStyle with $lineStyle="solid"', function () {
+      c4.parser.parse(`C4Context
+        Person(user, "User", "A user")
+        System(system, "System", "A system")
+        Rel(user, system, "Uses")
+        UpdateRelStyle(user, system, $lineStyle="solid")`);
+
+      const yy = c4.parser.yy;
+      const rels = yy.getRels();
+      expect(rels.length).toBe(1);
+      expect(rels[0].lineStyle).toBe('solid');
+    });
+
+    it('should handle UpdateRelStyle with multiple parameters including lineStyle', function () {
+      c4.parser.parse(`C4Context
+        Person(user, "User", "A user")
+        System(system, "System", "A system")
+        Rel(user, system, "Uses")
+        UpdateRelStyle(user, system, $lineStyle="dashed", $lineColor="red")`);
+
+      const yy = c4.parser.yy;
+      const rels = yy.getRels();
+      expect(rels.length).toBe(1);
+      expect(rels[0].lineStyle).toBe('dashed');
+      expect(rels[0].lineColor).toBe('red');
+    });
+
+    it('should default to solid when lineStyle is not specified', function () {
+      c4.parser.parse(`C4Context
+        Person(user, "User", "A user")
+        System(system, "System", "A system")
+        Rel(user, system, "Uses")`);
+
+      const yy = c4.parser.yy;
+      const rels = yy.getRels();
+      expect(rels.length).toBe(1);
+      expect(rels[0].lineStyle).toBeUndefined(); // Will default to solid in rendering
+    });
+
+    it('should handle invalid lineStyle values gracefully', function () {
+      c4.parser.parse(`C4Context
+        Person(user, "User", "A user")
+        System(system, "System", "A system")
+        Rel(user, system, "Uses")
+        UpdateRelStyle(user, system, $lineStyle="invalid")`);
+
+      const yy = c4.parser.yy;
+      const rels = yy.getRels();
+      expect(rels.length).toBe(1);
+      expect(rels[0].lineStyle).toBe('invalid'); // Will be handled in rendering
+    });
+
+    it('should update lineStyle on bidirectional relations', function () {
+      c4.parser.parse(`C4Context
+        Person(user, "User", "A user")
+        System(system, "System", "A system")
+        BiRel(user, system, "Communicates")
+        UpdateRelStyle(user, system, $lineStyle="dashed")`);
+
+      const yy = c4.parser.yy;
+      const rels = yy.getRels();
+      expect(rels.length).toBe(1);
+      expect(rels[0].lineStyle).toBe('dashed');
+      expect(rels[0].type).toBe('birel');
+    });
+  });
 });
