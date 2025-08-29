@@ -73,8 +73,7 @@ export const render = async (
       await addVertices(nodeEl, nodeArr, child, node.id);
 
       if (node.label) {
-        // @ts-ignore TODO: fix this
-        const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined, true);
+        const { shapeSvg, bbox } = await labelHelper(nodeEl, node, undefined);
         labelData.width = bbox.width;
         labelData.wrappingWidth = config.flowchart!.wrappingWidth;
         // Give some padding for elk
