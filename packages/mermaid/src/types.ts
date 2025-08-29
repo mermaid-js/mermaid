@@ -13,18 +13,6 @@ export interface NodeMetaData {
   ticket?: string;
 }
 
-export interface ParticipantMetaData {
-  type?:
-    | 'actor'
-    | 'participant'
-    | 'boundary'
-    | 'control'
-    | 'entity'
-    | 'database'
-    | 'collections'
-    | 'queue';
-}
-
 export interface EdgeMetaData {
   animation?: 'fast' | 'slow';
   animate?: boolean;
