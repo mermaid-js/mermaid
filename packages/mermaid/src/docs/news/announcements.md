@@ -33,11 +33,13 @@ The Mermaid Chart team is excited to introduce a new Visual Editor for Flowchart
 Learn more:
 
 - Visual Editor For Flowcharts
+
   - [Blog post](https://www.mermaidchart.com/blog/posts/mermaid-chart-releases-new-visual-editor-for-flowcharts)
 
   - [Demo video](https://www.youtube.com/watch?v=5aja0gijoO0)
 
 - Visual Editor For Sequence diagrams
+
   - [Blog post](https://www.mermaidchart.com/blog/posts/mermaid-chart-unveils-visual-editor-for-sequence-diagrams)
 
   - [Demo video](https://youtu.be/imc2u5_N6Dc)
