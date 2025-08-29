@@ -20,6 +20,20 @@ export const draw = async function (text: string, id: string, _version: string, 
   log.info('Drawing state diagram (v2)', id);
   const { securityLevel, flowchart: conf, layout } = getConfig();
 
+  // Warn if flowchart uses `click` syntax but securityLevel is not "loose".
+  // This avoids silent failure when users try to use `click` in strict/sandbox modes.
+  try {
+    if (securityLevel !== 'loose') {
+      const CLICK_SYNTAX_RE = /(^|\r?\n)\s*click\s+[\w.:-]+/i;
+      if (CLICK_SYNTAX_RE.test(text)) {
+        log.warn(
+          'Flowchart node "click" requires securityLevel: "loose". ' +
+            'See https://mermaid.js.org/config/usage.html#enabling-click-event-and-tags-in-nodes'
+        );
+      }
+    }
+  } catch {}
+
   // Handle root and document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
