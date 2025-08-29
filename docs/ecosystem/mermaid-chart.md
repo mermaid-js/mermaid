@@ -29,7 +29,6 @@ Try the Ultimate AI, Mermaid, and Visual Diagramming Suite by creating an accoun
 - **Plugins** - A plugin system for extending the functionality of Mermaid.
 
   Official Mermaid Chart plugins:
-
   - [Mermaid Chart GPT](https://chatgpt.com/g/g-684cc36f30208191b21383b88650a45d-mermaid-chart-diagrams-and-charts)
   - [Confluence](https://marketplace.atlassian.com/apps/1234056/mermaid-chart-for-confluence?hosting=cloud&tab=overview)
   - [Jira](https://marketplace.atlassian.com/apps/1234810/mermaid-chart-for-jira?tab=overview&hosting=cloud)
