@@ -102,13 +102,6 @@
 
     <h2>Simple Test Cases - Radial Layout</h2>
 
-    <h3>Empty Graph</h3>
-    <!-- prettier-ignore -->
-    <div class="mermaid">
-      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
-      flowchart TD
-    </div>
-
     <h3>Single Node Graph</h3>
     <!-- prettier-ignore -->
     <div class="mermaid">
@@ -219,7 +212,6 @@
         OUT_R --> CS1_N1
         OUT_N --> CS2_N2
         CS1_N1 --> OUT_N
-        %% C_S2 --> OUT_R  %% Edge from subgraph to outer node (commented out - not supported)
     </div>
 
     <h3>Multiple Disconnected Components (Forcing Synthetic Root)</h3>
