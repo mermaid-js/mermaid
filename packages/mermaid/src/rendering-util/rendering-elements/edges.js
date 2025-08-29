@@ -565,6 +565,14 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   const edgeStyles = Array.isArray(edge.style) ? edge.style : edge.style ? [edge.style] : [];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
 
+  let animationClass = '';
+  if (edge.animate) {
+    animationClass = 'edge-animation-fast';
+  }
+  if (edge.animation) {
+    animationClass = 'edge-animation-' + edge.animation;
+  }
+
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
     Object.assign([], lineData);
@@ -579,7 +587,13 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     svgPath = select(svgPathNode)
       .select('path')
       .attr('id', edge.id)
-      .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
+      .attr(
+        'class',
+        ' ' +
+          strokeClasses +
+          (edge.classes ? ' ' + edge.classes : '') +
+          (animationClass ? ' ' + animationClass : '')
+      )
       .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
     let d = svgPath.attr('d');
     svgPath.attr('d', d);
@@ -587,13 +601,6 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   } else {
     const stylesFromClasses = edgeClassStyles.join(';');
     const styles = edgeStyles ? edgeStyles.reduce((acc, style) => acc + style + ';', '') : '';
-    let animationClass = '';
-    if (edge.animate) {
-      animationClass = ' edge-animation-fast';
-    }
-    if (edge.animation) {
-      animationClass = ' edge-animation-' + edge.animation;
-    }
 
     const pathStyle = stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles;
     svgPath = elem
@@ -602,7 +609,10 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
       .attr('id', edge.id)
       .attr(
         'class',
-        ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '') + (animationClass ?? '')
+        ' ' +
+          strokeClasses +
+          (edge.classes ? ' ' + edge.classes : '') +
+          (animationClass ? ' ' + animationClass : '')
       )
       .attr('style', pathStyle);
     strokeColor = pathStyle.match(/stroke:([^;]+)/)?.[1];
