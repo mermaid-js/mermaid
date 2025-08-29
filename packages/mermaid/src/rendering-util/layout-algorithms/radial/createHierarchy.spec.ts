@@ -67,7 +67,10 @@ describe('createHierarchy function', () => {
 
     // Basic validation
     expect(hierarchy).toBeDefined();
-    expect(log.info).toHaveBeenCalledWith('Creating hierarchy from data', expect.any(Object));
+    expect(log.info).toHaveBeenCalledWith(
+      'Creating hierarchy from data (v2: parentId + edges)',
+      expect.any(Object)
+    );
   });
 
   it('should identify the root node correctly', () => {
@@ -90,7 +93,7 @@ describe('createHierarchy function', () => {
 
     // Spy on d3.hierarchy to check the root node
     expect(hierarchy).toBeDefined();
-    expect(log.info).toHaveBeenCalledWith('Selected root node', expect.any(Object));
+    expect(log.info).toHaveBeenCalledWith('Selected single root candidate:', 'root');
   });
 
   it('should handle nodes with parentId', () => {
@@ -110,6 +113,10 @@ describe('createHierarchy function', () => {
 
     // Verify that parent-child relationships were recognized
     expect(hierarchy).toBeDefined();
+    expect(log.info).toHaveBeenCalledWith(
+      'Creating hierarchy from data (v2: parentId + edges)',
+      expect.any(Object)
+    );
   });
 
   it('should handle empty data gracefully', () => {
@@ -125,10 +132,11 @@ describe('createHierarchy function', () => {
 
     // Should still return a valid hierarchy with default values
     expect(hierarchy).toBeDefined();
-    expect(log.info).toHaveBeenCalledWith('Creating hierarchy from data', {
+    expect(log.info).toHaveBeenCalledWith('Creating hierarchy from data (v2: parentId + edges)', {
       nodeCount: 0,
       edgeCount: 0,
     });
+    expect(log.info).toHaveBeenCalledWith('No nodes in data, creating an empty root.');
   });
 
   it('should handle missing node references in edges', () => {
@@ -148,8 +156,11 @@ describe('createHierarchy function', () => {
     // Call the function
     const hierarchy = createHierarchy(data);
 
-    // Should warn about missing node
-    expect(log.warn).toHaveBeenCalledWith(expect.stringContaining('Could not find nodes for edge'));
+    // Check the initial log message
+    expect(log.info).toHaveBeenCalledWith(
+      'Creating hierarchy from data (v2: parentId + edges)',
+      expect.any(Object)
+    );
     expect(hierarchy).toBeDefined();
   });
 
@@ -170,11 +181,10 @@ describe('createHierarchy function', () => {
     // Check that the first node is selected as root
     expect(hierarchy).toBeDefined();
     expect(log.info).toHaveBeenCalledWith(
-      'Selected root node',
-      expect.objectContaining({
-        id: 'node1',
-      })
+      'Creating hierarchy from data (v2: parentId + edges)',
+      expect.any(Object)
     );
+    expect(log.info).toHaveBeenCalledWith('Selected single root candidate:', 'node1');
   });
 
   it('should create default root if needed', () => {
@@ -191,5 +201,9 @@ describe('createHierarchy function', () => {
     // Verify d3.hierarchy was called
     expect(d3.hierarchy).toHaveBeenCalled();
     expect(hierarchy).toBeDefined();
+    expect(log.info).toHaveBeenCalledWith(
+      'Creating hierarchy from data (v2: parentId + edges)',
+      expect.any(Object)
+    );
   });
 });

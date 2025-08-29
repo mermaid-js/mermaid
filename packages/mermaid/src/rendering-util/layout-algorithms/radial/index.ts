@@ -333,10 +333,18 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
     const extents = clusterExtents.get(clusterNode.id);
     if (extents) {
       const padding = clusterNode.padding ?? 15; // Default padding if not specified
+      const labelHeight = 40; // Extra space for the subgraph label at the top
+
       clusterNode.x = (extents.minX + extents.maxX) / 2;
+      // Keep the cluster center relative to child nodes, but expand upward for label
       clusterNode.y = (extents.minY + extents.maxY) / 2;
       clusterNode.width = extents.maxX - extents.minX + padding * 2;
-      clusterNode.height = extents.maxY - extents.minY + padding * 2;
+      // Add extra height for the label space
+      clusterNode.height = extents.maxY - extents.minY + padding * 2 + labelHeight;
+
+      // Now adjust the cluster position upward to accommodate the label space
+      // Move the cluster up by half the label height so the expanded area is at the top
+      clusterNode.y = clusterNode.y - labelHeight / 2;
 
       // Now that width/height/x/y are known, insert the cluster element
       // Pass x:0, y:0 to insertCluster so it draws locally centered.
@@ -350,13 +358,23 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
     } else {
       // Handle empty clusters or clusters with no positioned children
       log.warn(
-        `No extents found for cluster ${clusterNode.id}, it might be empty. Drawing at default/parsed position and size.`
+        `No extents found for cluster ${clusterNode.id}, it might be empty. Drawing at default position and size.`
       );
-      // If a cluster is empty, its x,y,width,height might be from parsing or default to 0.
-      // We still need to insert and position it.
+      // Set default values for empty clusters to prevent NaN errors
+      const labelHeight = 40; // Extra space for the subgraph label at the top
+      clusterNode.x = clusterNode.x ?? centerX;
+      clusterNode.y = (clusterNode.y ?? centerY) - labelHeight / 2; // Move up to accommodate label
+      clusterNode.width = clusterNode.width ?? 200; // Default width
+      clusterNode.height = clusterNode.height ?? 100 + labelHeight; // Default height + label space
+
+      // Create the empty cluster with the default values
       const emptyNodeForInsert = { ...clusterNode, x: 0, y: 0 };
-      await insertCluster(clusters, emptyNodeForInsert as ClusterNode); // Will use parsed/default width/height
-      positionCluster(clusterNode as ClusterNode); // Will use parsed/default x,y for positioning
+      await insertCluster(clusters, emptyNodeForInsert as ClusterNode);
+      positionCluster(clusterNode as ClusterNode);
+
+      log.info(
+        `Positioned empty cluster ${clusterNode.id} at (${clusterNode.x}, ${clusterNode.y}) with size (${clusterNode.width}x${clusterNode.height})`
+      );
     }
   }
 
@@ -416,12 +434,14 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
         edgePaths,
         edge,
         {}, // no cluster DB for radial layout
-        data4Layout.type,
+        data4Layout.type || 'flowchart',
         startNode,
         endNode,
-        data4Layout.diagramId
+        data4Layout.diagramId || 'radial'
       );
-      positionEdgeLabel(edge, paths);
+      if (paths) {
+        positionEdgeLabel(edge, paths);
+      }
       log.trace(`Rendered edge from ${edge.start} to ${edge.end}`);
     } else {
       log.warn(`Could not find nodes for edge ${edge.id || ''}`);

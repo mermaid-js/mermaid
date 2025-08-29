@@ -209,7 +209,7 @@
         OUT_N[Outer Node]
         subgraph C_S1[Complex Sub 1]
           CS1_N1[CS1 Node 1]
-          subgraph C_S2[Complex Sub 2 (Nested)]
+          subgraph C_S2[Complex Sub 2 Nested]
             CS2_N1[CS2 Node 1]
             CS2_N2[CS2 Node 2]
             CS2_N1 --> CS2_N2
@@ -219,7 +219,7 @@
         OUT_R --> CS1_N1
         OUT_N --> CS2_N2
         CS1_N1 --> OUT_N
-        C_S2 --> OUT_R  // Edge from subgraph to outer node
+        %% C_S2 --> OUT_R  %% Edge from subgraph to outer node (commented out - not supported)
     </div>
 
     <h3>Multiple Disconnected Components (Forcing Synthetic Root)</h3>
