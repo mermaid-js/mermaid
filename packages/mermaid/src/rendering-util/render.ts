@@ -39,6 +39,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
     },
+    {
+      name: 'ipsepCola',
+      loader: async () => await import('./layout-algorithms/ipsepCola/index.js'),
+    },
   ]);
 };
 

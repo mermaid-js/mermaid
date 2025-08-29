@@ -1,0 +1,601 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        /* background: #333; */
+        font-family: 'Arial';
+      }
+
+      h1 {
+        color: grey;
+      }
+
+      .mermaid2 {
+        display: none;
+      }
+
+      svg {
+        border: 3px solid #300;
+        margin: 10px;
+      }
+
+      pre {
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <pre id="diagram4" class="mermaid">
+      flowchart
+          A --> B
+      subgraph hello
+          C --> D
+        end
+      </pre
+    >
+
+    <pre id="diagram4" class="mermaid">
+      flowchart
+      A --> B
+      A --> B
+      </pre
+    >
+    <pre id="diagram4" class="mermaid">
+        flowchart
+          A[hello] --> A
+        </pre
+    >
+
+    <pre id="diagram4" class="mermaid">
+        flowchart
+          subgraph C
+          c
+        end
+        A --> C
+        </pre
+    >
+    <pre id="diagram4" class="mermaid">
+        flowchart
+          subgraph C
+            c
+          end
+        A --> c
+        </pre
+    >
+
+    <pre id="diagram4" class="mermaid">
+      flowchart TD
+      subgraph D
+        A --> B
+        A --> B
+        B --> A
+        B --> A
+      end
+      </pre
+    >
+    <pre id="diagram4" class="mermaid">
+flowchart
+subgraph B2
+A --> B --> C
+B --> D
+end
+
+B2 --> X
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      stateDiagram-v2
+      [*] --> Still
+      Still --> [*]
+      Still --> Moving
+      Moving --> Still
+      Moving --> Crash
+      Crash --> [*]
+      </pre
+    >
+
+    <pre id="diagram4" class="mermaid">
+classDiagram
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal <|-- Zebra
+    Animal : +int age
+    Animal : +String gender
+    Animal: +isMammal()
+    Animal: +mate()
+    class Duck{
+      +String beakColor
+      +swim()
+      +quack()
+    }
+    class Fish{
+      -int sizeInFeet
+      -canEat()
+    }
+    class Zebra{
+      +bool is_wild
+      +run()
+    }
+      </pre
+    >
+    <pre id="diagram4" class="mermaid">
+flowchart TD
+        P1
+        P1 -->P1.5
+        subgraph P1.5
+          P2
+          P2.5(( A ))
+          P3
+        end
+        P2 --> P4
+        P3 --> P6
+        P1.5 --> P5
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% Length of edges
+flowchart TD
+      L1 --- L2
+      L2 --- C
+      M1 ---> C
+      R1 .-> R2
+      R2 <.-> C
+      C -->|Label 1| E1
+      C <-- Label 2 ---> E2
+      C ----> E3
+      C <-...-> E4
+      C ======> E5
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% Stadium shape
+flowchart TD
+      A([stadium shape test])
+      A -->|Get money| B([Go shopping])
+      B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
+      C -->|One| D([Laptop])
+      C -->|Two| E([iPhone])
+      C -->|Three| F([Car<br/>wroom wroom])
+      click A "index.html#link-clicked" "link test"
+      click B testClick "click test"
+      classDef someclass fill:#f96;
+      class A someclass;
+      class C someclass;
+    </pre>
+
+    <pre id="diagram4" class="mermaid">
+      %% should render escaped without html labels
+flowchart TD
+        a["<strong>Haiya</strong>"]---->b
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs in reverse order
+flowchart LR
+        a -->b
+        subgraph A
+        B
+        end
+        subgraph B
+        b
+        end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs in several levels
+flowchart LR
+    b-->B
+    a-->c
+    subgraph O
+      A
+    end
+    subgraph B
+      c
+    end
+    subgraph A
+        a
+        b
+        B
+    end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs with edges in and out
+flowchart LR
+  internet
+  nat
+  routeur
+  lb1
+  lb2
+  compute1
+  compute2
+  subgraph project
+  routeur
+  nat
+    subgraph subnet1
+      compute1
+      lb1
+    end
+    subgraph subnet2
+      compute2
+      lb2
+    end
+  end
+  internet --> routeur
+  routeur --> subnet1 & subnet2
+  subnet1 & subnet2 --> nat --> internet
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs with outgoing links
+flowchart LR
+  subgraph  main
+    subgraph subcontainer
+      subcontainer-child
+    end
+     subcontainer-child--> subcontainer-sibling
+  end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs with ingoing links
+flowchart LR
+subgraph one[One]
+    subgraph sub_one[Sub One]
+        _sub_one
+    end
+    subgraph sub_two[Sub Two]
+        _sub_two
+    end
+    _one
+end
+
+%% here, either the first or the second one
+sub_one --> sub_two
+_one --> b
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs with outgoing links 3
+flowchart LR
+  subgraph container_Beta
+    process_C-->Process_D
+  end
+  subgraph container_Alpha
+    process_A-->process_B
+    process_A-->|messages|process_C
+    end
+    process_B-->|via_AWSBatch|container_Beta
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs with outgoing links 4
+flowchart LR
+subgraph A
+a -->b
+end
+subgraph B
+b
+end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs with outgoing links 2
+flowchart LR
+    c1-->a2
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+    one --> two
+    three --> two
+    two --> c2
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs with outgoing links 5
+flowchart LR
+  subgraph container_Beta
+    process_C-->Process_D
+  end
+  subgraph container_Alpha
+    process_A-->process_B
+    process_B-->|via_AWSBatch|container_Beta
+    process_A-->|messages|process_C
+  end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% More subgraphs
+      flowchart LR
+    subgraph two
+    b1
+    end
+    subgraph three
+    c2
+    end
+
+    three --> two
+    two --> c2
+    note[There are two links in this diagram]
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% nested subgraphs with outgoing links 5
+flowchart LR
+      A[red text] -->|default style| B(blue text)
+      C([red text]) -->|default style| D[[blue text]]
+      E[(red text)] -->|default style| F((blue text))
+      G>red text] -->|default style| H{blue text}
+      I{{red text}} -->|default style| J[/blue text/]
+      K[\\ red text\\] -->|default style| L[/blue text\\]
+      M[\\ red text/] -->|default style| N[blue text];
+      O(((red text))) -->|default style| P(((blue text)));
+      linkStyle default color:Sienna;
+      style A stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style B stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style C stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style D stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style E stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style F stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style G stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style H stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style I stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style J stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style K stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style L stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style M stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style N stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style O stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style P stroke:#0000ff,fill:#ccccff,color:#0000ff;
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% labels on edges in a cluster
+flowchart RL
+    subgraph one
+      a1 -- I am a long label --> a2
+      a1 -- Another long label --> a2
+    end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% labels on edges in a cluster
+flowchart RL
+    subgraph one
+      a1[Iam a node with a super long label] -- I am a long label --> a2[I am another node with a mega long label]
+      a1 -- Another long label --> a2
+      a3 --> a1 & a2 & a3 & a4
+      a1 --> a4
+    end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% labels on edges in a cluster
+flowchart RL
+    subgraph one
+      a1[Iam a node with a super long label]
+      a2[I am another node with a mega long label]
+      a3[I am a node with a super long label]
+      a4[I am another node with a mega long label]
+      a1 -- Another long label --> a2
+      a3 --> a1 & a2 & a3 & a4
+      a1 --> a4
+    end
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      %% labels on edges in a cluster
+flowchart RL
+      a1[I am a node with a super long label. I am a node with a super long label. I am a node with a super long label. I am a node with a super long label. I am a node with a super long label. ]
+      a2[I am another node with a mega long label]
+      a3[I am a node with a super long label]
+      a4[I am another node with a mega long label]
+      a1 & a2 & a3 & a4 -->  a5 & a6 & a7 & a8 & a9 & a10
+
+    </pre>
+    <pre id="diagram4" class="mermaid">
+         flowchart
+        subgraph Z
+        subgraph X
+        a --> b
+        end
+        subgraph Y
+        c --> d
+        end
+        end
+        Y --> X
+        X --> P
+        P --> Y
+    
+        </pre
+    >
+    <pre id="diagram4" class="mermaid">
+            flowchart
+            
+            a --> b
+            b --> c
+            b --> d
+            c --> a
+            
+                    </pre
+    >
+
+    <pre id="diagram3" class="mermaid">
+flowchart TD
+  Start([Start]) --> Prep[Preparation Step]
+  Prep --> Split{Ready to Process?}
+  Split -->|Yes| T1[Task A]
+  Split -->|Yes| T2[Task B]
+  T1 --> Merge
+  T2 --> Merge
+  Merge((Join Results)) --> Finalize[Finalize Process]
+  Finalize --> End([End])
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+flowchart TD
+  A[Start Build] --> B[Compile Source]
+  B --> C[Test Suite]
+  C --> D{Tests Passed?}
+  D -->|No| E[Notify Developer]
+  E --> A
+  D -->|Yes| F[Build Docker Image]
+
+  subgraph Deploy Pipeline
+    F --> G[Deploy to Staging]
+    G --> H[Run Integration Tests]
+    H --> I{Tests Passed?}
+    I -->|No| J[Rollback & Alert]
+    I -->|Yes| K[Deploy to Production]
+  end
+
+  K --> L([Success])
+</pre
+    >
+
+    <pre class="mermaid">
+classDiagram
+class Controller {
+  +handleRequest(): void
+}
+
+class View {
+  +render(): void
+}
+
+class Model {
+  +getData(): any
+  +setData(data: any): void
+}
+
+Controller --> Model
+Controller --> View
+Model --> View : notifyChange()
+</pre
+    >
+
+    <pre class="mermaid">
+classDiagram
+class AuthService {
+  +login(username: string, password: string): boolean
+  +logout(): void
+  +register(): void
+}
+
+class User {
+  -username: string
+  -password: string
+  -role: Role
+  +changePassword(): void
+}
+
+class Role {
+  -name: string
+  -permissions: string[]
+  +hasPermission(): boolean
+}
+
+AuthService --> User
+User --> Role
+</pre
+    >
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+
+      const staticBellIconPack = {
+        prefix: 'fa6-regular',
+        icons: {
+          bell: {
+            body: '<path fill="currentColor" d="M224 0c-17.7 0-32 14.3-32 32v19.2C119 66 64 130.6 64 208v25.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416h400c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6c-28.3-35.5-43.8-79.6-43.8-125V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32m0 96c61.9 0 112 50.1 112 112v25.4c0 47.9 13.9 94.6 39.7 134.6H72.3c25.8-40 39.7-86.7 39.7-134.6V208c0-61.9 50.1-112 112-112m64 352H160c0 17 6.7 33.3 18.7 45.3S207 512 224 512s33.3-6.7 45.3-18.7S288 465 288 448"/>',
+            width: 448,
+          },
+        },
+        width: 512,
+        height: 512,
+      };
+
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos@1/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () => staticBellIconPack,
+        },
+      ]);
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
+      function callback() {
+        alert('It worked');
+      }
+      await mermaid.initialize({
+        theme: 'redux-dark',
+        // theme: 'default',
+        // theme: 'forest',
+        handDrawnSeed: 12,
+        look: 'classic  ',
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        // layout: 'dagre',
+        layout: 'ipsepCola',
+        // layout: 'elk',
+        // layout: 'sugiyama',
+        // htmlLabels: false,
+        flowchart: { titleTopMargin: 10 },
+
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        // fontFamily: 'courier',
+        fontFamily: 'arial',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        kanban: {
+          htmlLabels: false,
+        },
+        fontSize: 12,
+        logLevel: 0,
+        securityLevel: 'loose',
+        callback,
+      });
+
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+</html>

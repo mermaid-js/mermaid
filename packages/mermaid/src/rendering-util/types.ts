@@ -72,6 +72,12 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  isEdgeLabel?: boolean;
+  edgeStart?: string;
+  edgeEnd?: string;
+  layer?: number;
+  order?: number;
+  isDummy?: boolean;
 }
 
 /**
@@ -126,6 +132,8 @@ export interface Edge {
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
   isUserDefinedId?: boolean;
+  isLabelEdge?: boolean;
+  points?: { x: number; y: number }[];
 }
 
 export interface RectOptions {
