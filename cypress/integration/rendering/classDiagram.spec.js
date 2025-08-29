@@ -524,5 +524,18 @@ describe('Class diagram', () => {
       `,
       {}
     );
+    it('should handle an empty class body with empty braces', () => {
+      imgSnapshotTest(
+        ` classDiagram
+        class FooBase~T~ {}
+    class Bar {
+        +Zip
+        +Zap()
+    }
+    FooBase <|-- Ba
+        `,
+        { flowchart: { defaultRenderer: 'elk' } }
+      );
+    });
   });
 });
