@@ -3,12 +3,14 @@ import { select } from 'd3';
 import svgDraw, { drawKatex, ACTOR_TYPE_WIDTH, drawText, fixLifeLineHeights } from './svgDraw.js';
 import { log } from '../../logger.js';
 import common, { calculateMathMLDimensions, hasKatex } from '../common/common.js';
+import { getUrl } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
+import { PARTICIPANT_TYPE } from './sequenceDb.js';
 
 let conf = {};
 
@@ -232,7 +234,7 @@ interface NoteModel {
 }
 
 /**
- * Draws an note in the diagram with the attached line
+ * Draws a note in the diagram with the attached line
  *
  * @param elem - The diagram to draw to.
  * @param noteModel - Note model options.
@@ -449,14 +451,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
 
   let url = '';
   if (conf.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    url = getUrl(true);
   }
 
   line.attr('stroke-width', 2);
@@ -482,7 +477,29 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
 
   // add node number
   if (sequenceVisible || conf.showSequenceNumbers) {
-    line.attr('marker-start', 'url(' + url + '#sequencenumber)');
+    const isBidirectional =
+      type === diagObj.db.LINETYPE.BIDIRECTIONAL_SOLID ||
+      type === diagObj.db.LINETYPE.BIDIRECTIONAL_DOTTED;
+
+    if (isBidirectional) {
+      const SEQUENCE_NUMBER_RADIUS = 6;
+
+      if (startx < stopx) {
+        line.attr('x1', startx + 2 * SEQUENCE_NUMBER_RADIUS);
+      } else {
+        line.attr('x1', startx + SEQUENCE_NUMBER_RADIUS);
+      }
+    }
+
+    diagram
+      .append('line')
+      .attr('x1', startx)
+      .attr('y1', lineStartY)
+      .attr('x2', startx)
+      .attr('y2', lineStartY)
+      .attr('stroke-width', 0)
+      .attr('marker-start', 'url(' + url + '#sequencenumber)');
+
     diagram
       .append('text')
       .attr('x', startx)
@@ -730,11 +747,19 @@ function adjustCreatedDestroyedData(
       msgModel.startx = msgModel.startx - adjustment;
     }
   }
+  const actorArray = [
+    PARTICIPANT_TYPE.ACTOR,
+    PARTICIPANT_TYPE.CONTROL,
+    PARTICIPANT_TYPE.ENTITY,
+    PARTICIPANT_TYPE.DATABASE,
+  ];
 
   // if it is a create message
   if (createdActors.get(msg.to) == index) {
     const actor = actors.get(msg.to);
-    const adjustment = actor.type == 'actor' ? ACTOR_TYPE_WIDTH / 2 + 3 : actor.width / 2 + 3;
+    const adjustment = actorArray.includes(actor.type)
+      ? ACTOR_TYPE_WIDTH / 2 + 3
+      : actor.width / 2 + 3;
     receiverAdjustment(actor, adjustment);
     actor.starty = lineStartY - actor.height / 2;
     bounds.bumpVerticalPos(actor.height / 2);
@@ -743,7 +768,7 @@ function adjustCreatedDestroyedData(
   else if (destroyedActors.get(msg.from) == index) {
     const actor = actors.get(msg.from);
     if (conf.mirrorActors) {
-      const adjustment = actor.type == 'actor' ? ACTOR_TYPE_WIDTH / 2 : actor.width / 2;
+      const adjustment = actorArray.includes(actor.type) ? ACTOR_TYPE_WIDTH / 2 : actor.width / 2;
       senderAdjustment(actor, adjustment);
     }
     actor.stopy = lineStartY - actor.height / 2;
@@ -753,7 +778,9 @@ function adjustCreatedDestroyedData(
   else if (destroyedActors.get(msg.to) == index) {
     const actor = actors.get(msg.to);
     if (conf.mirrorActors) {
-      const adjustment = actor.type == 'actor' ? ACTOR_TYPE_WIDTH / 2 + 3 : actor.width / 2 + 3;
+      const adjustment = actorArray.includes(actor.type)
+        ? ACTOR_TYPE_WIDTH / 2 + 3
+        : actor.width / 2 + 3;
       receiverAdjustment(actor, adjustment);
     }
     actor.stopy = lineStartY - actor.height / 2;
@@ -1071,10 +1098,11 @@ export const draw = async function (_text: string, id: string, _version: string,
   for (const box of bounds.models.boxes) {
     box.height = bounds.getVerticalPos() - box.y;
     bounds.insert(box.x, box.y, box.x + box.width, box.height);
-    box.startx = box.x;
-    box.starty = box.y;
-    box.stopx = box.startx + box.width;
-    box.stopy = box.starty + box.height;
+    const boxPadding = conf.boxMargin * 2;
+    box.startx = box.x - boxPadding;
+    box.starty = box.y - boxPadding * 0.25;
+    box.stopx = box.startx + box.width + 2 * boxPadding;
+    box.stopy = box.starty + box.height + boxPadding * 0.75;
     box.stroke = 'rgb(0,0,0, 0.5)';
     svgDraw.drawBox(diagram, box, conf);
   }
@@ -1338,6 +1366,9 @@ async function calculateActorMargins(
     let totalWidth = box.actorKeys.reduce((total, aKey) => {
       return (total += actors.get(aKey).width + (actors.get(aKey).margin || 0));
     }, 0);
+
+    const standardBoxPadding = conf.boxMargin * 8;
+    totalWidth += standardBoxPadding;
 
     totalWidth -= 2 * conf.boxTextMargin;
     if (box.wrap) {

@@ -1,6 +1,8 @@
 import type { LangiumParser, ParseResult } from 'langium';
 import { expect, vi } from 'vitest';
 import type {
+  Architecture,
+  ArchitectureServices,
   Info,
   InfoServices,
   Pie,
@@ -13,6 +15,7 @@ import type {
   GitGraphServices,
 } from '../src/language/index.js';
 import {
+  createArchitectureServices,
   createInfoServices,
   createPieServices,
   createRadarServices,
@@ -29,9 +32,10 @@ const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined)
  * @param result - the result `parse` function.
  */
 export function expectNoErrorsOrAlternatives(result: ParseResult) {
-  expect(result.lexerErrors).toHaveLength(0);
-  expect(result.parserErrors).toHaveLength(0);
-
+  expect.soft(result.lexerErrors).toHaveLength(0);
+  expect.soft(result.parserErrors).toHaveLength(0);
+  // To see what the error is, in the logs.
+  expect(result.lexerErrors[0]).toBeUndefined();
   expect(consoleMock).not.toHaveBeenCalled();
   consoleMock.mockReset();
 }
@@ -46,6 +50,17 @@ export function createInfoTestServices() {
   return { services: infoServices, parse };
 }
 export const infoParse = createInfoTestServices().parse;
+
+const architectureServices: ArchitectureServices = createArchitectureServices().Architecture;
+const architectureParser: LangiumParser = architectureServices.parser.LangiumParser;
+export function createArchitectureTestServices() {
+  const parse = (input: string) => {
+    return architectureParser.parse<Architecture>(input);
+  };
+
+  return { services: architectureServices, parse };
+}
+export const architectureParse = createArchitectureTestServices().parse;
 
 const pieServices: PieServices = createPieServices().Pie;
 const pieParser: LangiumParser = pieServices.parser.LangiumParser;

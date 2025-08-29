@@ -1,4 +1,3 @@
-import { registerIconPacks } from '../../rendering-util/icons.js';
 import type { Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
 import type { FcoseLayoutOptions } from 'cytoscape-fcose';
@@ -7,9 +6,10 @@ import { select } from 'd3';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import type { Diagram } from '../../Diagram.js';
 import { log } from '../../logger.js';
+import { registerIconPacks } from '../../rendering-util/icons.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { setupGraphViewbox } from '../../setupGraphViewbox.js';
-import { getConfigField } from './architectureDb.js';
+import type { ArchitectureDB } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import type {
   ArchitectureAlignment,
@@ -22,7 +22,6 @@ import type {
   NodeSingularData,
 } from './architectureTypes.js';
 import {
-  type ArchitectureDB,
   type ArchitectureDirection,
   type ArchitectureEdge,
   type ArchitectureGroup,
@@ -44,7 +43,7 @@ registerIconPacks([
 ]);
 cytoscape.use(fcose);
 
-function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
+function addServices(services: ArchitectureService[], cy: cytoscape.Core, db: ArchitectureDB) {
   services.forEach((service) => {
     cy.add({
       group: 'nodes',
@@ -54,15 +53,15 @@ function addServices(services: ArchitectureService[], cy: cytoscape.Core) {
         icon: service.icon,
         label: service.title,
         parent: service.in,
-        width: getConfigField('iconSize'),
-        height: getConfigField('iconSize'),
+        width: db.getConfigField('iconSize'),
+        height: db.getConfigField('iconSize'),
       } as NodeSingularData,
       classes: 'node-service',
     });
   });
 }
 
-function addJunctions(junctions: ArchitectureJunction[], cy: cytoscape.Core) {
+function addJunctions(junctions: ArchitectureJunction[], cy: cytoscape.Core, db: ArchitectureDB) {
   junctions.forEach((junction) => {
     cy.add({
       group: 'nodes',
@@ -70,8 +69,8 @@ function addJunctions(junctions: ArchitectureJunction[], cy: cytoscape.Core) {
         type: 'junction',
         id: junction.id,
         parent: junction.in,
-        width: getConfigField('iconSize'),
-        height: getConfigField('iconSize'),
+        width: db.getConfigField('iconSize'),
+        height: db.getConfigField('iconSize'),
       } as NodeSingularData,
       classes: 'node-junction',
     });
@@ -257,7 +256,8 @@ function getAlignments(
 }
 
 function getRelativeConstraints(
-  spatialMaps: ArchitectureSpatialMap[]
+  spatialMaps: ArchitectureSpatialMap[],
+  db: ArchitectureDB
 ): fcose.FcoseRelativePlacementConstraint[] {
   const relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = [];
   const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`;
@@ -296,7 +296,7 @@ function getRelativeConstraints(
                 [ArchitectureDirectionName[
                   getOppositeArchitectureDirection(dir as ArchitectureDirection)
                 ]]: currId,
-                gap: 1.5 * getConfigField('iconSize'),
+                gap: 1.5 * db.getConfigField('iconSize'),
               });
             }
           });
@@ -353,7 +353,7 @@ function layoutArchitecture(
           style: {
             'text-valign': 'bottom',
             'text-halign': 'center',
-            'font-size': `${getConfigField('fontSize')}px`,
+            'font-size': `${db.getConfigField('fontSize')}px`,
           },
         },
         {
@@ -375,23 +375,32 @@ function layoutArchitecture(
           selector: '.node-group',
           style: {
             // @ts-ignore Incorrect library types
-            padding: `${getConfigField('padding')}px`,
+            padding: `${db.getConfigField('padding')}px`,
           },
         },
       ],
+      layout: {
+        name: 'grid',
+        boundingBox: {
+          x1: 0,
+          x2: 100,
+          y1: 0,
+          y2: 100,
+        },
+      },
     });
     // Remove element after layout
     renderEl.remove();
 
     addGroups(groups, cy);
-    addServices(services, cy);
-    addJunctions(junctions, cy);
+    addServices(services, cy, db);
+    addJunctions(junctions, cy, db);
     addEdges(edges, cy);
     // Use the spatial map to create alignment arrays for fcose
     const alignmentConstraint = getAlignments(db, spatialMaps, groupAlignments);
 
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
-    const relativePlacementConstraint = getRelativeConstraints(spatialMaps);
+    const relativePlacementConstraint = getRelativeConstraints(spatialMaps, db);
 
     const layout = cy.layout({
       name: 'fcose',
@@ -406,7 +415,9 @@ function layoutArchitecture(
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
         const elasticity =
-          parentA === parentB ? 1.5 * getConfigField('iconSize') : 0.5 * getConfigField('iconSize');
+          parentA === parentB
+            ? 1.5 * db.getConfigField('iconSize')
+            : 0.5 * db.getConfigField('iconSize');
         return elasticity;
       },
       edgeElasticity(edge: EdgeSingular) {
@@ -500,6 +511,8 @@ function layoutArchitecture(
 }
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram) => {
+  // TODO: Add title support for architecture diagrams
+
   const db = diagObj.db as ArchitectureDB;
 
   const services = db.getServices();
@@ -524,11 +537,11 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj: Diagram)
 
   const cy = await layoutArchitecture(services, junctions, groups, edges, db, ds);
 
-  await drawEdges(edgesElem, cy);
-  await drawGroups(groupElem, cy);
+  await drawEdges(edgesElem, cy, db);
+  await drawGroups(groupElem, cy, db);
   positionNodes(db, cy);
 
-  setupGraphViewbox(undefined, svg, getConfigField('padding'), getConfigField('useMaxWidth'));
+  setupGraphViewbox(undefined, svg, db.getConfigField('padding'), db.getConfigField('useMaxWidth'));
 };
 
 export const renderer = { draw };

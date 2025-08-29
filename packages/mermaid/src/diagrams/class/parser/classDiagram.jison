@@ -242,6 +242,7 @@ classLabel
 
 namespaceName
     : alphaNumToken { $$=$1; }
+    | classLiteralName { $$=$1; }
     | alphaNumToken DOT namespaceName { $$=$1+'.'+$3; }
     | alphaNumToken namespaceName { $$=$1+$2; }
     ;

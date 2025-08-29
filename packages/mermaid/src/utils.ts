@@ -645,7 +645,7 @@ const breakString: (
  * This calculates the text's height, taking into account the wrap breaks and both the statically
  * configured height, width, and the length of the text (in pixels).
  *
- * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
+ * If the wrapped text has greater height, we extend the height, so it's value won't overflow.
  *
  * @param text - The text to measure
  * @param config - The config for fontSize, fontFamily, and fontWeight all impacting the
@@ -884,6 +884,7 @@ export default {
   runFunc,
   entityDecode,
   insertTitle,
+  isLabelCoordinateInPath,
   parseFontSize,
   InitIDGenerator,
 };
@@ -959,4 +960,24 @@ export function handleUndefinedAttr(
   attrValue: Parameters<d3.Selection<BaseType, unknown, HTMLElement, any>['attr']>[1] | undefined
 ) {
   return attrValue ?? null;
+}
+
+/**
+ * Checks if the  x or y coordinate of the edge label
+ * appears in the given SVG path data string.
+ *
+ * @param point  - The Point object with x and y properties to check.
+ * @param dAttr  - SVG path data string (the 'd' attribute of an SVG path element).
+ * @returns      - True if the rounded x or y coordinate of the edge label is found
+ *                 in the sanitized path data string; otherwise, false.
+ */
+export function isLabelCoordinateInPath(point: Point, dAttr: string) {
+  const roundedX = Math.round(point.x);
+  const roundedY = Math.round(point.y);
+
+  const sanitizedD = dAttr.replace(/(\d+\.\d+)/g, (match) =>
+    Math.round(parseFloat(match)).toString()
+  );
+
+  return sanitizedD.includes(roundedX.toString()) || sanitizedD.includes(roundedY.toString());
 }

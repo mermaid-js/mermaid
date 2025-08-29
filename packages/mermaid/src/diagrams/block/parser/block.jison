@@ -36,10 +36,10 @@ CRLF \u000D\u000A
 
 %%
 
-"block-beta"                                             { return 'BLOCK_DIAGRAM_KEY'; }
-"block"\s+            { yy.getLogger().debug('Found space-block'); return 'block';}
-"block"\n+            { yy.getLogger().debug('Found nl-block'); return 'block';}
-"block:"            { yy.getLogger().debug('Found space-block'); return 'id-block';}
+"block-beta"              { yy.getLogger().debug('Found block-beta'); return 'BLOCK_DIAGRAM_KEY'; }
+"block:"                  { yy.getLogger().debug('Found id-block'); return 'id-block'; }
+"block"                   { yy.getLogger().debug('Found block'); return 'BLOCK_DIAGRAM_KEY'; }
+
 // \s*\%\%.*                                                       { yy.getLogger().debug('Found comment',yytext); }
 [\s]+                                                           { yy.getLogger().debug('.', yytext); /* skip all whitespace */  }
 [\n]+ {yy.getLogger().debug('_', yytext);                 /* skip all whitespace */   }
@@ -240,7 +240,7 @@ columnsStatement
 
 blockStatement
   : id-block nodeStatement document end { yy.getLogger().debug('Rule: id-block statement : ', $2, $3); const id2 = yy.generateId(); $$ = { ...$2, type:'composite', children: $3 }; }
-  | block document end { yy.getLogger().debug('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:'', children: $2 }; }
+  | BLOCK_DIAGRAM_KEY document end { yy.getLogger().debug('Rule: blockStatement : ', $1, $2, $3); const id = yy.generateId(); $$ = { id, type:'composite', label:'', children: $2 }; }
   ;
 
 node

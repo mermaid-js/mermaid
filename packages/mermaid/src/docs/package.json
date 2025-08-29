@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
-    "@vueuse/core": "^12.7.0",
+    "@vueuse/core": "^13.1.0",
     "font-awesome": "^4.7.0",
     "jiti": "^2.4.2",
     "mermaid": "workspace:^",
@@ -26,15 +26,15 @@
   "devDependencies": {
     "@iconify-json/carbon": "^1.1.37",
     "@unocss/reset": "^66.0.0",
-    "@vite-pwa/vitepress": "^0.5.3",
-    "@vitejs/plugin-vue": "^5.0.5",
+    "@vite-pwa/vitepress": "^1.0.0",
+    "@vitejs/plugin-vue": "^6.0.0",
     "fast-glob": "^3.3.3",
     "https-localhost": "^4.7.1",
     "pathe": "^2.0.3",
-    "unocss": "^66.0.0",
+    "unocss": "^66.4.2",
     "unplugin-vue-components": "^28.4.0",
     "vite": "^6.1.1",
-    "vite-plugin-pwa": "^0.21.1",
+    "vite-plugin-pwa": "^1.0.0",
     "vitepress": "1.6.3",
     "workbox-window": "^7.3.0"
   }

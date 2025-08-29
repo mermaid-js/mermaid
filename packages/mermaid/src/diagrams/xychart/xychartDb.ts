@@ -195,6 +195,10 @@ function getChartConfig() {
   return xyChartConfig;
 }
 
+function getXYChartData() {
+  return xyChartData;
+}
+
 const clear = function () {
   commonClear();
   plotIndex = 0;
@@ -226,4 +230,5 @@ export default {
   setTmpSVGG,
   getChartThemeConfig,
   getChartConfig,
+  getXYChartData,
 };

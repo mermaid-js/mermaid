@@ -33,13 +33,13 @@ function setupDompurifyHooks() {
   const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
 
   DOMPurify.addHook('beforeSanitizeAttributes', (node) => {
-    if (node instanceof Element && node.tagName === 'A' && node.hasAttribute('target')) {
+    if (node.tagName === 'A' && node.hasAttribute('target')) {
       node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') ?? '');
     }
   });
 
   DOMPurify.addHook('afterSanitizeAttributes', (node) => {
-    if (node instanceof Element && node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
+    if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
       node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) ?? '');
       node.removeAttribute(TEMPORARY_ATTRIBUTE);
       if (node.getAttribute('target') === '_blank') {
@@ -149,7 +149,7 @@ const breakToPlaceholder = (s: string): string => {
  * @param useAbsolute - Whether to return the absolute URL or not
  * @returns The current URL
  */
-const getUrl = (useAbsolute: boolean): string => {
+export const getUrl = (useAbsolute: boolean): string => {
   let url = '';
   if (useAbsolute) {
     url =
@@ -158,8 +158,8 @@ const getUrl = (useAbsolute: boolean): string => {
       window.location.host +
       window.location.pathname +
       window.location.search;
-    url = url.replaceAll(/\(/g, '\\(');
-    url = url.replaceAll(/\)/g, '\\)');
+
+    url = CSS.escape(url);
   }
 
   return url;
@@ -311,9 +311,8 @@ export const hasKatex = (text: string): boolean => (text.match(katexRegex)?.leng
  * @returns Object containing \{width, height\}
  */
 export const calculateMathMLDimensions = async (text: string, config: MermaidConfig) => {
-  text = await renderKatex(text, config);
   const divElem = document.createElement('div');
-  divElem.innerHTML = text;
+  divElem.innerHTML = await renderKatexSanitized(text, config);
   divElem.id = 'katex-temp';
   divElem.style.visibility = 'hidden';
   divElem.style.position = 'absolute';
@@ -325,14 +324,7 @@ export const calculateMathMLDimensions = async (text: string, config: MermaidCon
   return dim;
 };
 
-/**
- * Attempts to render and return the KaTeX portion of a string with MathML
- *
- * @param text - The text to test
- * @param config - Configuration for Mermaid
- * @returns String containing MathML if KaTeX is supported, or an error message if it is not and stylesheets aren't present
- */
-export const renderKatex = async (text: string, config: MermaidConfig): Promise<string> => {
+const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Promise<string> => {
   if (!hasKatex(text)) {
     return text;
   }
@@ -341,29 +333,50 @@ export const renderKatex = async (text: string, config: MermaidConfig): Promise<
     return text.replace(katexRegex, 'MathML is unsupported in this environment.');
   }
 
-  const { default: katex } = await import('katex');
-  const outputMode =
-    config.forceLegacyMathML || (!isMathMLSupported() && config.legacyMathML)
-      ? 'htmlAndMathml'
-      : 'mathml';
-  return text
-    .split(lineBreakRegex)
-    .map((line) =>
-      hasKatex(line)
-        ? `<div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">${line}</div>`
-        : `<div>${line}</div>`
-    )
-    .join('')
-    .replace(katexRegex, (_, c) =>
-      katex
-        .renderToString(c, {
-          throwOnError: true,
-          displayMode: true,
-          output: outputMode,
-        })
-        .replace(/\n/g, ' ')
-        .replace(/<annotation.*<\/annotation>/g, '')
-    );
+  if (includeLargeFeatures) {
+    const { default: katex } = await import('katex');
+    const outputMode =
+      config.forceLegacyMathML || (!isMathMLSupported() && config.legacyMathML)
+        ? 'htmlAndMathml'
+        : 'mathml';
+    return text
+      .split(lineBreakRegex)
+      .map((line) =>
+        hasKatex(line)
+          ? `<div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">${line}</div>`
+          : `<div>${line}</div>`
+      )
+      .join('')
+      .replace(katexRegex, (_, c) =>
+        katex
+          .renderToString(c, {
+            throwOnError: true,
+            displayMode: true,
+            output: outputMode,
+          })
+          .replace(/\n/g, ' ')
+          .replace(/<annotation.*<\/annotation>/g, '')
+      );
+  }
+
+  return text.replace(
+    katexRegex,
+    'Katex is not supported in @mermaid-js/tiny. Please use the full mermaid library.'
+  );
+};
+
+/**
+ * Attempts to render and return the KaTeX portion of a string with MathML
+ *
+ * @param text - The text to test
+ * @param config - Configuration for Mermaid
+ * @returns String containing MathML if KaTeX is supported, or an error message if it is not and stylesheets aren't present
+ */
+export const renderKatexSanitized = async (
+  text: string,
+  config: MermaidConfig
+): Promise<string> => {
+  return sanitizeText(await renderKatexUnsanitized(text, config), config);
 };
 
 export default {

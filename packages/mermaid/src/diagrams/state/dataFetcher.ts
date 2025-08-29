@@ -1,3 +1,4 @@
+import type { MermaidConfig } from '../../config.type.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
@@ -33,9 +34,10 @@ import {
   STMT_RELATION,
   STMT_STATE,
 } from './stateCommon.js';
+import type { Edge, NodeData, StateStmt, Stmt, StyleClass } from './stateDb.js';
 
 // List of nodes created from the parsed diagram statement items
-let nodeDb = new Map();
+const nodeDb = new Map<string, NodeData>();
 
 let graphItemCount = 0; // used to construct ids, etc.
 
@@ -43,18 +45,27 @@ let graphItemCount = 0; // used to construct ids, etc.
  * Create a standard string for the dom ID of an item.
  * If a type is given, insert that before the counter, preceded by the type spacer
  *
- * @param itemId
- * @param counter
- * @param {string | null} type
- * @param typeSpacer
- * @returns {string}
  */
-export function stateDomId(itemId = '', counter = 0, type = '', typeSpacer = DOMID_TYPE_SPACER) {
+export function stateDomId(
+  itemId = '',
+  counter = 0,
+  type: string | null = '',
+  typeSpacer = DOMID_TYPE_SPACER
+) {
   const typeStr = type !== null && type.length > 0 ? `${typeSpacer}${type}` : '';
   return `${DOMID_STATE}-${itemId}${typeStr}-${counter}`;
 }
 
-const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, look, classes) => {
+const setupDoc = (
+  parentParsedItem: StateStmt | undefined,
+  doc: Stmt[],
+  diagramStates: Map<string, StateStmt>,
+  nodes: NodeData[],
+  edges: Edge[],
+  altFlag: boolean,
+  look: MermaidConfig['look'],
+  classes: Map<string, StyleClass>
+) => {
   // graphItemCount = 0;
   log.trace('items', doc);
   doc.forEach((item) => {
@@ -95,7 +106,7 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
             arrowTypeEnd: 'arrow_barb',
             style: G_EDGE_STYLE,
             labelStyle: '',
-            label: common.sanitizeText(item.description, getConfig()),
+            label: common.sanitizeText(item.description ?? '', getConfig()),
             arrowheadStyle: G_EDGE_ARROWHEADSTYLE,
             labelpos: G_EDGE_LABELPOS,
             labelType: G_EDGE_LABELTYPE,
@@ -115,11 +126,10 @@ const setupDoc = (parentParsedItem, doc, diagramStates, nodes, edges, altFlag, l
  * Get the direction from the statement items.
  * Look through all of the documents (docs) in the parsedItems
  * Because is a _document_ direction, the default direction is not necessarily the same as the overall default _diagram_ direction.
- * @param {object[]} parsedItem - the parsed statement item to look through
- * @param [defaultDir] - the direction to use if none is found
- * @returns {string}
+ * @param parsedItem - the parsed statement item to look through
+ * @param defaultDir - the direction to use if none is found
  */
-const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
+const getDir = (parsedItem: { doc?: Stmt[] }, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   let dir = defaultDir;
   if (parsedItem.doc) {
     for (const parsedItemDoc of parsedItem.doc) {
@@ -131,7 +141,11 @@ const getDir = (parsedItem, defaultDir = DEFAULT_NESTED_DOC_DIR) => {
   return dir;
 };
 
-function insertOrUpdateNode(nodes, nodeData, classes) {
+function insertOrUpdateNode(
+  nodes: NodeData[],
+  nodeData: NodeData,
+  classes: Map<string, StyleClass>
+) {
   if (!nodeData.id || nodeData.id === '</join></fork>' || nodeData.id === '</choice>') {
     return;
   }
@@ -143,9 +157,9 @@ function insertOrUpdateNode(nodes, nodeData, classes) {
     }
 
     nodeData.cssClasses.split(' ').forEach((cssClass) => {
-      if (classes.get(cssClass)) {
-        const classDef = classes.get(cssClass);
-        nodeData.cssCompiledStyles = [...nodeData.cssCompiledStyles, ...classDef.styles];
+      const classDef = classes.get(cssClass);
+      if (classDef) {
+        nodeData.cssCompiledStyles = [...(nodeData.cssCompiledStyles ?? []), ...classDef.styles];
       }
     });
   }
@@ -162,31 +176,30 @@ function insertOrUpdateNode(nodes, nodeData, classes) {
  * If there aren't any or if dbInfoItem isn't defined, return an empty string.
  * Else create 1 string from the list of classes found
  *
- * @param {undefined | null | object} dbInfoItem
- * @returns {string}
  */
-function getClassesFromDbInfo(dbInfoItem) {
+function getClassesFromDbInfo(dbInfoItem?: StateStmt): string {
   return dbInfoItem?.classes?.join(' ') ?? '';
 }
 
-function getStylesFromDbInfo(dbInfoItem) {
+function getStylesFromDbInfo(dbInfoItem?: StateStmt): string[] {
   return dbInfoItem?.styles ?? [];
 }
 
 export const dataFetcher = (
-  parent,
-  parsedItem,
-  diagramStates,
-  nodes,
-  edges,
-  altFlag,
-  look,
-  classes
+  parent: StateStmt | undefined,
+  parsedItem: StateStmt,
+  diagramStates: Map<string, StateStmt>,
+  nodes: NodeData[],
+  edges: Edge[],
+  altFlag: boolean,
+  look: MermaidConfig['look'],
+  classes: Map<string, StyleClass>
 ) => {
   const itemId = parsedItem.id;
   const dbState = diagramStates.get(itemId);
   const classStr = getClassesFromDbInfo(dbState);
   const style = getStylesFromDbInfo(dbState);
+  const config = getConfig();
 
   log.info('dataFetcher parsedItem', parsedItem, dbState, style);
 
@@ -207,13 +220,13 @@ export const dataFetcher = (
       nodeDb.set(itemId, {
         id: itemId,
         shape,
-        description: common.sanitizeText(itemId, getConfig()),
+        description: common.sanitizeText(itemId, config),
         cssClasses: `${classStr} ${CSS_DIAGRAM_STATE}`,
         cssStyles: style,
       });
     }
 
-    const newNode = nodeDb.get(itemId);
+    const newNode = nodeDb.get(itemId)!;
 
     // Save data for description and group so that for instance a statement without description overwrites
     // one with description  @todo TODO What does this mean? If important, add a test for it
@@ -225,7 +238,7 @@ export const dataFetcher = (
         newNode.shape = SHAPE_STATE_WITH_DESC;
         newNode.description.push(parsedItem.description);
       } else {
-        if (newNode.description?.length > 0) {
+        if (newNode.description?.length && newNode.description.length > 0) {
           // if there is a description already transform it to an array
           newNode.shape = SHAPE_STATE_WITH_DESC;
           if (newNode.description === itemId) {
@@ -239,7 +252,7 @@ export const dataFetcher = (
           newNode.description = parsedItem.description;
         }
       }
-      newNode.description = common.sanitizeTextOrArray(newNode.description, getConfig());
+      newNode.description = common.sanitizeTextOrArray(newNode.description, config);
     }
 
     // If there's only 1 description entry, just use a regular state shape
@@ -262,7 +275,7 @@ export const dataFetcher = (
     }
 
     // This is what will be added to the graph
-    const nodeData = {
+    const nodeData: NodeData = {
       labelStyle: '',
       shape: newNode.shape,
       label: newNode.description,
@@ -294,19 +307,19 @@ export const dataFetcher = (
 
     if (parsedItem.note) {
       // Todo: set random id
-      const noteData = {
+      const noteData: NodeData = {
         labelStyle: '',
         shape: SHAPE_NOTE,
         label: parsedItem.note.text,
         cssClasses: CSS_DIAGRAM_NOTE,
         // useHtmlLabels: false,
         cssStyles: [],
-        cssCompilesStyles: [],
+        cssCompiledStyles: [],
         id: itemId + NOTE_ID + '-' + graphItemCount,
         domId: stateDomId(itemId, graphItemCount, NOTE),
         type: newNode.type,
         isGroup: newNode.type === 'group',
-        padding: getConfig().flowchart.padding,
+        padding: config.flowchart?.padding,
         look,
         position: parsedItem.note.position,
       };

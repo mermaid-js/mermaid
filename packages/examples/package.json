@@ -1,0 +1,33 @@
+{
+  "name": "@mermaid-js/examples",
+  "version": "1.0.0",
+  "description": "Mermaid examples package",
+  "author": "Sidharth Vinod",
+  "type": "module",
+  "module": "./dist/mermaid-examples.core.mjs",
+  "types": "./dist/mermaid.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/mermaid-examples.core.mjs",
+      "default": "./dist/mermaid-examples.core.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "scripts": {
+    "clean": "rimraf dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mermaid": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

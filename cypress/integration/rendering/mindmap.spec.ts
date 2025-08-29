@@ -146,7 +146,7 @@ root
       shouldHaveRoot
     );
   });
-  it('text shouhld wrap with icon', () => {
+  it('text should wrap with icon', () => {
     imgSnapshotTest(
       `mindmap
 root
@@ -243,6 +243,23 @@ mindmap
       id2[\`The dog in **the** hog... a *very long text* about it
 Word!\`]
 `
+      );
+    });
+  });
+  describe('Include char sequence "graph" in text (#6795)', () => {
+    it('has a label with char sequence "graph"', () => {
+      imgSnapshotTest(
+        `
+        mindmap
+          root
+            Photograph
+              Waterfall
+              Landscape
+            Geography
+              Mountains
+              Rocks
+        `,
+        { flowchart: { defaultRenderer: 'elk' } }
       );
     });
   });
