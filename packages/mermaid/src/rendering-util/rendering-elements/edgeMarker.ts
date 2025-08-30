@@ -27,6 +27,7 @@ export const addEdgeMarkers = (
 };
 
 const arrowTypesMap = {
+  none: { type: 'none', fill: false },
   arrow_cross: { type: 'cross', fill: false },
   arrow_point: { type: 'point', fill: true },
   arrow_barb: { type: 'barb', fill: true },
@@ -58,6 +59,11 @@ const addEdgeMarker = (
   if (!arrowTypeInfo) {
     log.warn(`Unknown arrow type: ${arrowType}`);
     return; // unknown arrow type, ignore
+  }
+
+  // Handle "none" arrow type by not adding any marker
+  if (arrowType === 'none') {
+    return; // no marker should be added
   }
 
   const endMarkerType = arrowTypeInfo.type;

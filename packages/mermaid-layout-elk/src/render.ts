@@ -1,9 +1,16 @@
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
+import type { NonClusterNode } from 'mermaid/src/rendering-util/types.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
-type Node = LayoutData['nodes'][number];
+// Use a more explicit type definition to avoid error type issues
+interface Node {
+  id: string;
+  domId?: string;
+  isGroup?: boolean;
+  [key: string]: any;
+}
 
 interface LabelData {
   width: number;
@@ -15,7 +22,10 @@ interface LabelData {
 interface NodeWithVertex extends Omit<Node, 'domId'> {
   children?: unknown[];
   labelData?: LabelData;
-  domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
+  domId?:
+    | Node['domId']
+    | d3.Selection<SVGGElement, unknown, Element | null, unknown>
+    | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
 }
 
 export const render = async (
@@ -57,7 +67,10 @@ export const render = async (
       graph.children.push(child);
       nodeDb[node.id] = child;
 
-      const childNodeEl = await insertNode(nodeEl, node, { config, dir: node.dir });
+      const childNodeEl = await insertNode(nodeEl, node as NonClusterNode, {
+        config,
+        dir: node.dir,
+      });
       const boundingBox = childNodeEl.node()!.getBBox();
       child.domId = childNodeEl;
       child.width = boundingBox.width;
