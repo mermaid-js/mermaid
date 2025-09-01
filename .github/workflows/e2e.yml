@@ -208,26 +208,52 @@ jobs:
           for i in {1..5}; do
             if [ -f "coverage/e2e-shards/coverage-final-$i.json" ]; then
               cp "coverage/e2e-shards/coverage-final-$i.json" "coverage/cypress/coverage-final.json"
+              echo "Copied coverage-final-$i.json to cypress/"
               break
             fi
           done
-          # Create a dummy vitest coverage-final.json if none exists
+          # Create a minimal but valid vitest coverage-final.json
           echo '{"type":"Coverage","version":"1.1","data":{}}' > coverage/vitest/coverage-final.json
           echo "Prepared coverage files:"
           ls -la coverage/vitest/
           ls -la coverage/cypress/
-      - name: Run coverage merge script
+          echo "Checking file contents:"
+          echo "Vitest coverage file:"
+          cat coverage/vitest/coverage-final.json
+          echo "Cypress coverage file:"
+          cat coverage/cypress/coverage-final.json
+          echo "Validating JSON files:"
+          if jq . coverage/vitest/coverage-final.json > /dev/null; then
+            echo "✓ Vitest coverage file is valid JSON"
+          else
+            echo "✗ Vitest coverage file is invalid JSON"
+            exit 1
+          fi
+          if jq . coverage/cypress/coverage-final.json > /dev/null; then
+            echo "✓ Cypress coverage file is valid JSON"
+          else
+            echo "✗ Cypress coverage file is invalid JSON"
+            exit 1
+          fi
+      - name: Generate LCOV from coverage data
         run: |
-          npx tsx scripts/coverage.ts
-          echo "Coverage merge completed. Checking output:"
-          ls -la coverage/combined/ || echo "No combined directory"
-          ls -la coverage/html/ || echo "No html directory"
+          mkdir -p coverage/combined
+          # Convert coverage-final.json to LCOV format using nyc
+          if [ -f coverage/cypress/coverage-final.json ]; then
+            echo "Converting Cypress coverage to LCOV..."
+            npx nyc report --reporter=lcov --report-dir=coverage/combined --cwd=. --temp-dir=coverage/cypress
+            echo "LCOV generation completed"
+            ls -la coverage/combined/
+          else
+            echo "No Cypress coverage file found"
+            exit 1
+          fi
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
         # Run step only pushes to develop and pull_requests
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop'}}
         with:
-          files: coverage/html/lcov.info
+          files: coverage/combined/lcov.info
           flags: e2e
           name: mermaid-codecov
           fail_ci_if_error: false
