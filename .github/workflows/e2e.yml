@@ -172,10 +172,32 @@ jobs:
           pattern: e2e-lcov-*
           path: coverage/e2e-shards
           merge-multiple: true
+      - name: Install dependencies for merging
+        run: pnpm install --frozen-lockfile
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
       - name: Merge LCOV files
         run: |
           mkdir -p coverage/combined
-          npx lcov-result-merger 'coverage/e2e-shards/**/lcov-*.info' > coverage/combined/lcov.info
+          # Check if we have LCOV files to merge
+          if ls coverage/e2e-shards/**/lcov-*.info 1> /dev/null 2>&1; then
+            echo "Found LCOV files to merge:"
+            ls -la coverage/e2e-shards/**/lcov-*.info
+            # Simple concatenation of LCOV files
+            cat coverage/e2e-shards/**/lcov-*.info > coverage/combined/lcov.info
+            echo "Merged LCOV file size:"
+            wc -l coverage/combined/lcov.info
+          else
+            echo "No LCOV files found to merge"
+            exit 1
+          fi
+      - name: Verify merged LCOV file
+        run: |
+          echo "Merged LCOV file contents (first 10 lines):"
+          head -10 coverage/combined/lcov.info
+          echo "File size and line count:"
+          ls -lh coverage/combined/lcov.info
+          wc -l coverage/combined/lcov.info
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
         # Run step only pushes to develop and pull_requests
