@@ -1,10 +1,5 @@
 {
-  "reporter": [
-    "text",
-    "lcov",
-    "json",
-    "html"
-  ],
+  "reporter": ["text", "lcov", "json", "html"],
   "exclude": [
     "node_modules/**/*",
     "cypress/**/*",
@@ -16,4 +11,4 @@
   ],
   "all": true,
   "check-coverage": false
-} 
+}
