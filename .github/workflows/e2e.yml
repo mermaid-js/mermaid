@@ -142,11 +142,26 @@ jobs:
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: 'cypress/timings.json'
           VITEST_COVERAGE: true
+      - name: Debug coverage generation
+        if: ${{ steps.cypress.conclusion == 'success' }}
+        run: |
+          echo "Checking if coverage files were generated:"
+          ls -la coverage/ || echo "No coverage directory"
+          ls -la coverage/cypress/ || echo "No coverage/cypress directory"
+          echo "Looking for any .info files:"
+          find . -name "*.info" -type f | head -10 || echo "No .info files found"
       - name: Prepare unique lcov filename
         if: ${{ steps.cypress.conclusion == 'success' }}
         run: |
           mkdir -p coverage/cypress
-          cp coverage/cypress/lcov.info coverage/cypress/lcov-${{ matrix.containers }}.info
+          if [ -f coverage/cypress/lcov.info ]; then
+            cp coverage/cypress/lcov.info coverage/cypress/lcov-${{ matrix.containers }}.info
+            echo "Created lcov-${{ matrix.containers }}.info"
+            ls -la coverage/cypress/lcov-${{ matrix.containers }}.info
+          else
+            echo "Error: coverage/cypress/lcov.info not found"
+            exit 1
+          fi
       - name: Upload e2e lcov artifact
         if: ${{ steps.cypress.conclusion == 'success' }}
         uses: actions/upload-artifact@v4
@@ -172,6 +187,14 @@ jobs:
           pattern: e2e-lcov-*
           path: coverage/e2e-shards
           merge-multiple: true
+      - name: Debug downloaded artifacts
+        run: |
+          echo "Contents of coverage/e2e-shards:"
+          find coverage/e2e-shards -type f -name "*.info" | head -20
+          echo "All files in coverage/e2e-shards:"
+          ls -la coverage/e2e-shards/
+          echo "Directory structure:"
+          find coverage/e2e-shards -type f | head -20
       - name: Install dependencies for merging
         run: pnpm install --frozen-lockfile
         env:
