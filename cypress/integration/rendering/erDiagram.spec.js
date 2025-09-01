@@ -369,4 +369,94 @@ ORDER ||--|{ LINE-ITEM : contains
       );
     });
   });
+
+  describe('Aggregation Relationships', () => {
+    it('should render basic aggregation relationships', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          DEPARTMENT <> EMPLOYEE : contains
+          PROJECT <>.. TASK : manages
+          TEAM <> MEMBER : consists_of
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with entity attributes', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          DEPARTMENT <> EMPLOYEE : contains
+          DEPARTMENT {
+            int id PK
+            string name
+            string location
+          }
+          EMPLOYEE {
+            int id PK
+            string name
+            int department_id FK
+          }
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with quoted labels', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          UNIVERSITY <> COLLEGE : "has multiple"
+          COLLEGE <> DEPARTMENT : "contains"
+          DEPARTMENT <> FACULTY : "employs"
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render mixed relationship types', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          CUSTOMER ||--o{ ORDER : places
+          ORDER ||--|{ ORDER_ITEM : contains
+          PRODUCT <> ORDER_ITEM : "aggregated in"
+          WAREHOUSE <>.. PRODUCT : "stores"
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with entity aliases', () => {
+      imgSnapshotTest(
+        `
+       erDiagram
+         d[DEPARTMENT]
+         e[EMPLOYEE]
+         p[PROJECT]
+         t[TASK]
+
+         d <> e : contains
+         p <>.. t : manages
+
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render complex aggregation scenarios', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          COMPANY <> DEPARTMENT : owns
+          DEPARTMENT <> EMPLOYEE : contains
+          EMPLOYEE <> PROJECT : works_on
+          PROJECT <> TASK : consists_of
+          TASK <> SUBTASK : includes
+        `,
+        { logLevel: 1 }
+      );
+    });
+  });
 });

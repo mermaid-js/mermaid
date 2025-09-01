@@ -2,6 +2,7 @@ import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EntityNode, Attribute, Relationship, EntityClass, RelSpec } from './erTypes.js';
+import { AggregationType } from './erTypes.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -31,6 +32,11 @@ export class ErDB implements DiagramDB {
   private Identification = {
     NON_IDENTIFYING: 'NON_IDENTIFYING',
     IDENTIFYING: 'IDENTIFYING',
+  };
+
+  private Aggregation = {
+    AGGREGATION: AggregationType.AGGREGATION,
+    AGGREGATION_DASHED: AggregationType.AGGREGATION_DASHED,
   };
 
   constructor() {
@@ -129,6 +135,31 @@ export class ErDB implements DiagramDB {
 
   public getRelationships() {
     return this.relationships;
+  }
+
+  /**
+   * Validate aggregation relationship
+   * @param rSpec - The relationship specification to validate
+   * @returns boolean indicating if the aggregation relationship is valid
+   */
+  public validateAggregationRelationship(rSpec: RelSpec): boolean {
+    const isAggregation =
+      rSpec.relType === this.Aggregation.AGGREGATION ||
+      rSpec.relType === this.Aggregation.AGGREGATION_DASHED;
+
+    if (!isAggregation) {
+      return false;
+    }
+
+    const validCardinalities = [
+      this.Cardinality.ZERO_OR_ONE,
+      this.Cardinality.ZERO_OR_MORE,
+      this.Cardinality.ONE_OR_MORE,
+      this.Cardinality.ONLY_ONE,
+      this.Cardinality.MD_PARENT,
+    ];
+
+    return validCardinalities.includes(rSpec.cardA) && validCardinalities.includes(rSpec.cardB);
   }
 
   public getDirection() {
@@ -248,4 +279,17 @@ export class ErDB implements DiagramDB {
   public setDiagramTitle = setDiagramTitle;
   public getDiagramTitle = getDiagramTitle;
   public getConfig = () => getConfig().er;
+
+  // Getter methods for aggregation constants
+  public get AggregationConstants() {
+    return this.Aggregation;
+  }
+
+  public get CardinalityConstants() {
+    return this.Cardinality;
+  }
+
+  public get IdentificationConstants() {
+    return this.Identification;
+  }
 }
