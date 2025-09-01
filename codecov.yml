@@ -1,0 +1,27 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        target: auto
+        threshold: 1%
+
+comment:
+  layout: 'reach,diff,flags,tree'
+  behavior: default
+  require_changes: false
+
+flags:
+  unit:
+    paths:
+      - packages/
+  e2e:
+    paths:
+      - packages/
+
+# Wait for both unit and e2e coverage uploads before finalizing
+notify:
+  after_n_builds: 2
