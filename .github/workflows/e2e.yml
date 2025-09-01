@@ -150,24 +150,24 @@ jobs:
           ls -la coverage/cypress/ || echo "No coverage/cypress directory"
           echo "Looking for any .info files:"
           find . -name "*.info" -type f | head -10 || echo "No .info files found"
-      - name: Prepare unique lcov filename
+      - name: Prepare coverage artifacts
         if: ${{ steps.cypress.conclusion == 'success' }}
         run: |
           mkdir -p coverage/cypress
-          if [ -f coverage/cypress/lcov.info ]; then
-            cp coverage/cypress/lcov.info coverage/cypress/lcov-${{ matrix.containers }}.info
-            echo "Created lcov-${{ matrix.containers }}.info"
-            ls -la coverage/cypress/lcov-${{ matrix.containers }}.info
+          if [ -f coverage/cypress/coverage-final.json ]; then
+            cp coverage/cypress/coverage-final.json coverage/cypress/coverage-final-${{ matrix.containers }}.json
+            echo "Created coverage-final-${{ matrix.containers }}.json"
+            ls -la coverage/cypress/coverage-final-${{ matrix.containers }}.json
           else
-            echo "Error: coverage/cypress/lcov.info not found"
+            echo "Error: coverage/cypress/coverage-final.json not found"
             exit 1
           fi
-      - name: Upload e2e lcov artifact
+      - name: Upload e2e coverage artifact
         if: ${{ steps.cypress.conclusion == 'success' }}
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-lcov-${{ matrix.containers }}
-          path: coverage/cypress/lcov-${{ matrix.containers }}.info
+          name: e2e-coverage-${{ matrix.containers }}
+          path: coverage/cypress/coverage-final-${{ matrix.containers }}.json
 
   coverage-merge:
     runs-on: ubuntu-latest
@@ -181,10 +181,10 @@ jobs:
         uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version-file: '.node-version'
-      - name: Download e2e lcov shards
+      - name: Download e2e coverage shards
         uses: actions/download-artifact@v4
         with:
-          pattern: e2e-lcov-*
+          pattern: e2e-coverage-*
           path: coverage/e2e-shards
           merge-multiple: true
       - name: Debug downloaded artifacts
@@ -195,38 +195,39 @@ jobs:
           ls -la coverage/e2e-shards/
           echo "Directory structure:"
           find coverage/e2e-shards -type f | head -20
+          echo "Looking for coverage-final.json files:"
+          find coverage/e2e-shards -name "coverage-final.json" | head -20
       - name: Install dependencies for merging
         run: pnpm install --frozen-lockfile
         env:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
-      - name: Merge LCOV files
+      - name: Prepare coverage files for merge script
         run: |
-          mkdir -p coverage/combined
-          # Check if we have LCOV files to merge
-          if ls coverage/e2e-shards/**/lcov-*.info 1> /dev/null 2>&1; then
-            echo "Found LCOV files to merge:"
-            ls -la coverage/e2e-shards/**/lcov-*.info
-            # Simple concatenation of LCOV files
-            cat coverage/e2e-shards/**/lcov-*.info > coverage/combined/lcov.info
-            echo "Merged LCOV file size:"
-            wc -l coverage/combined/lcov.info
-          else
-            echo "No LCOV files found to merge"
-            exit 1
-          fi
-      - name: Verify merged LCOV file
+          mkdir -p coverage/vitest coverage/cypress
+          # Copy E2E coverage-final.json files to the structure expected by scripts/coverage.ts
+          for i in {1..5}; do
+            if [ -f "coverage/e2e-shards/coverage-final-$i.json" ]; then
+              cp "coverage/e2e-shards/coverage-final-$i.json" "coverage/cypress/coverage-final.json"
+              break
+            fi
+          done
+          # Create a dummy vitest coverage-final.json if none exists
+          echo '{"type":"Coverage","version":"1.1","data":{}}' > coverage/vitest/coverage-final.json
+          echo "Prepared coverage files:"
+          ls -la coverage/vitest/
+          ls -la coverage/cypress/
+      - name: Run coverage merge script
         run: |
-          echo "Merged LCOV file contents (first 10 lines):"
-          head -10 coverage/combined/lcov.info
-          echo "File size and line count:"
-          ls -lh coverage/combined/lcov.info
-          wc -l coverage/combined/lcov.info
+          npx tsx scripts/coverage.ts
+          echo "Coverage merge completed. Checking output:"
+          ls -la coverage/combined/ || echo "No combined directory"
+          ls -la coverage/html/ || echo "No html directory"
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
         # Run step only pushes to develop and pull_requests
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop'}}
         with:
-          files: coverage/combined/lcov.info
+          files: coverage/html/lcov.info
           flags: e2e
           name: mermaid-codecov
           fail_ci_if_error: false

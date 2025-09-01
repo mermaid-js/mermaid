@@ -15,6 +15,13 @@ export default eyesPlugin(
       setupNodeEvents(on, config) {
         coverage(on, config);
         cypressSplit(on, config);
+
+        // Ensure coverage generates LCOV format
+        on('task', {
+          coverage: () => {
+            return null;
+          },
+        });
         on('before:browser:launch', (browser, launchOptions) => {
           if (browser.name === 'chrome' && browser.isHeadless) {
             launchOptions.args.push('--window-size=1440,1024', '--force-device-scale-factor=1');

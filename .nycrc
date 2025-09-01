@@ -1,0 +1,19 @@
+{
+  "reporter": [
+    "text",
+    "lcov",
+    "json",
+    "html"
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    "cypress/**/*",
+    "coverage/**/*",
+    "**/*.spec.js",
+    "**/*.spec.ts",
+    "**/*.test.js",
+    "**/*.test.ts"
+  ],
+  "all": true,
+  "check-coverage": false
+} 
