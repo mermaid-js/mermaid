@@ -38,6 +38,8 @@ jobs:
       options: --user 1001
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
       - name: Setup Node.js
         uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
@@ -55,6 +57,7 @@ jobs:
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          fetch-depth: 0
           ref: ${{ env.targetHash }}
 
       - name: Install dependencies
@@ -83,6 +86,8 @@ jobs:
         containers: [1, 2, 3, 4, 5]
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
         # uses version from "packageManager" field in package.json
@@ -137,14 +142,52 @@ jobs:
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: 'cypress/timings.json'
           VITEST_COVERAGE: true
+      - name: Prepare unique lcov filename
+        if: ${{ steps.cypress.conclusion == 'success' }}
+        run: |
+          mkdir -p coverage/cypress
+          cp coverage/cypress/lcov.info coverage/cypress/lcov-${{ matrix.containers }}.info
+      - name: Upload e2e lcov artifact
+        if: ${{ steps.cypress.conclusion == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-lcov-${{ matrix.containers }}
+          path: coverage/cypress/lcov-${{ matrix.containers }}.info
 
+  coverage-merge:
+    runs-on: ubuntu-latest
+    needs: [e2e, unit-test]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version-file: '.node-version'
+      - name: Download e2e lcov shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: e2e-lcov-*
+          path: coverage/e2e-shards
+          merge-multiple: true
+      - name: Download unit lcov
+        uses: actions/download-artifact@v4
+        with:
+          name: unit-lcov
+          path: coverage/vitest
+      - name: Merge LCOV files
+        run: |
+          mkdir -p coverage/combined
+          npx lcov-result-merger 'coverage/vitest/lcov.info' 'coverage/e2e-shards/**/lcov-*.info' > coverage/combined/lcov.info
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
         # Run step only pushes to develop and pull_requests
-        if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')}}
+        if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop'}}
         with:
-          files: coverage/cypress/lcov.info
-          flags: e2e
+          files: coverage/combined/lcov.info
+          flags: combined
           name: mermaid-codecov
           fail_ci_if_error: false
           verbose: true

@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
         # uses version from "packageManager" field in package.json
@@ -41,15 +43,8 @@ jobs:
       - name: Verify out-of-tree build with TypeScript
         run: |
           pnpm test:check:tsc
-
-      - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@13ce06bfc6bbe3ecf90edbbf1bc32fe5978ca1d3 # v5.3.1
-        # Run step only pushes to develop and pull_requests
-        if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
+      - name: Upload unit lcov artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: ./coverage/vitest/lcov.info
-          flags: unit
-          name: mermaid-codecov
-          fail_ci_if_error: false
-          verbose: true
-          token: 6845cc80-77ee-4e17-85a1-026cd95e0766
+          name: unit-lcov
+          path: ./coverage/vitest/lcov.info
