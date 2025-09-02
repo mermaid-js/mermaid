@@ -1070,6 +1070,14 @@ describe('given a class diagram with members and methods ', function () {
 
       parser.parse(str);
     });
+    it('should handle an empty class body with {}', function () {
+      const str = 'classDiagram\nclass EmptyClass {}';
+      parser.parse(str);
+      const actual = parser.yy.getClass('EmptyClass');
+      expect(actual.label).toBe('EmptyClass');
+      expect(actual.members.length).toBe(0);
+      expect(actual.methods.length).toBe(0);
+    });
   });
 });
 
