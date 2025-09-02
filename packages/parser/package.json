@@ -19,7 +19,9 @@
   "scripts": {
     "clean": "rimraf dist src/language/generated",
     "langium:generate": "langium generate",
-    "langium:watch": "langium generate --watch"
+    "langium:watch": "langium generate --watch",
+    "antlr:generate": "antlr4ts -visitor -listener -o src/language/useCase/generated src/language/useCase/Usecase.g4",
+    "generate": "npm run langium:generate && npm run antlr:generate"
   },
   "repository": {
     "type": "git",
@@ -33,6 +35,8 @@
     "ast"
   ],
   "dependencies": {
+    "antlr4ts": "0.5.0-alpha.4",
+    "antlr4ts-cli": "0.5.0-alpha.4",
     "langium": "3.3.1"
   },
   "devDependencies": {

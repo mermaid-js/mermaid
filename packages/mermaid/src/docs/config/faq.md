@@ -1,6 +1,6 @@
 # Frequently Asked Questions
 
-1. [How to add title to flowchart?](https://github.com/mermaid-js/mermaid/issues/1433#issuecomment-1991554712)
+1. [How to add title to flowchart?](https://github.com/mermaid-js/mermaid/issues/556#issuecomment-363182217)
 1. [How to specify custom CSS file?](https://github.com/mermaidjs/mermaid.cli/pull/24#issuecomment-373402785)
 1. [How to fix tooltip misplacement issue?](https://github.com/mermaid-js/mermaid/issues/542#issuecomment-3343564621)
 1. [How to specify gantt diagram xAxis format?](https://github.com/mermaid-js/mermaid/issues/269#issuecomment-373229136)
