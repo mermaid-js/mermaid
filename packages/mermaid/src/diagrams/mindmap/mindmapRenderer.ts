@@ -75,9 +75,9 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   // Setup the view box and size of the svg element using config from data4Layout
   setupViewPortForSVG(
     svg,
-    data4Layout.config.padding ?? defaultConfig.mindmap.padding,
+    data4Layout.config.mindmap?.padding ?? defaultConfig.mindmap.padding,
     'mindmapDiagram',
-    data4Layout.config.useMaxWidth ?? defaultConfig.mindmap.useMaxWidth
+    data4Layout.config.mindmap?.useMaxWidth ?? defaultConfig.mindmap.useMaxWidth
   );
 };
 
