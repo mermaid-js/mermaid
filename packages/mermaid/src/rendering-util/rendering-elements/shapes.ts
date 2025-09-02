@@ -156,14 +156,6 @@ export const shapesDefs = [
     handler: defaultMindmapNode,
   },
   {
-    semanticName: 'Mindmap Circle',
-    name: 'mindmapCircle',
-    shortName: 'mindmap-circle',
-    description: 'mindmapCircle',
-    aliases: ['mindmap-circle'],
-    handler: mindmapCircle,
-  },
-  {
     semanticName: 'Cloud',
     name: 'Cloud',
     shortName: 'cloud',
@@ -511,6 +503,9 @@ const generateShapeMap = () => {
 
     // Kanban diagram
     kanbanItem,
+
+    //Mindmap diagram
+    mindmapCircle,
 
     // class diagram
     classBox,

@@ -224,7 +224,7 @@ export class MindmapDB {
     const getShapeFromType = (type: number) => {
       switch (type) {
         case nodeType.CIRCLE:
-          return 'mindmap-circle';
+          return 'mindmapCircle';
         case nodeType.RECT:
           return 'rect';
         case nodeType.ROUNDED_RECT:
