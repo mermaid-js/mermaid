@@ -183,7 +183,6 @@ This Markdown should be kept.
         | Data Input/Output                 | Lean Left              | \`lean-l\`          | Represents output or input     | \`lean-left\`, \`out-in\`                                            |
         | Database                          | Cylinder               | \`cyl\`             | Database storage               | \`cylinder\`, \`database\`, \`db\`                                     |
         | Decision                          | Diamond                | \`diam\`            | Decision-making step           | \`decision\`, \`diamond\`, \`question\`                                |
-        | Default Mindmap Node              | defaultMindmapNode     | \`default-mindmap\` | defaultMindmapNode             | \`default-mindmap\`, \`defaultMindmapNode\`                          |
         | Delay                             | Half-Rounded Rectangle | \`delay\`           | Represents a delay             | \`half-rounded-rectangle\`                                         |
         | Direct Access Storage             | Horizontal Cylinder    | \`h-cyl\`           | Direct access storage          | \`das\`, \`horizontal-cylinder\`                                     |
         | Disk Storage                      | Lined Cylinder         | \`lin-cyl\`         | Disk storage                   | \`disk\`, \`lined-cylinder\`                                         |

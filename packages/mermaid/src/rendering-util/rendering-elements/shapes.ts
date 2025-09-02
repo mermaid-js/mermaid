@@ -148,14 +148,6 @@ export const shapesDefs = [
     handler: bang,
   },
   {
-    semanticName: 'Default Mindmap Node',
-    name: 'defaultMindmapNode',
-    shortName: 'default-mindmap',
-    description: 'defaultMindmapNode',
-    aliases: ['default-mindmap', 'defaultMindmapNode'],
-    handler: defaultMindmapNode,
-  },
-  {
     semanticName: 'Cloud',
     name: 'Cloud',
     shortName: 'cloud',
@@ -506,7 +498,7 @@ const generateShapeMap = () => {
 
     //Mindmap diagram
     mindmapCircle,
-
+    defaultMindmapNode,
     // class diagram
     classBox,
 

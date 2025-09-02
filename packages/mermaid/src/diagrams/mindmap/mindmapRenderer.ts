@@ -1,4 +1,3 @@
-import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
@@ -32,7 +31,6 @@ function _updateNodeDimensions(data4Layout: LayoutData, mindmapRoot: FilledMindM
 
 export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   log.debug('Rendering mindmap diagram\n' + text);
-  const { securityLevel, mindmap: conf } = getConfig();
 
   // Draw the nodes first to get their dimensions, then update the layout data
   const db = diagObj.db as MindmapDB;
@@ -42,7 +40,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   const data4Layout = db.getData();
 
   // Create the root SVG - the element is the div containing the SVG element
-  const svg = getDiagramElement(id, securityLevel);
+  const svg = getDiagramElement(id, data4Layout.config.securityLevel);
 
   data4Layout.type = diagObj.type;
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(data4Layout.config.layout, {
@@ -55,6 +53,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   if (!mm) {
     return;
   }
+
   data4Layout.nodes.forEach((node) => {
     if (node.shape === 'rounded') {
       node.radius = 15;
@@ -69,14 +68,16 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
       node.padding = 10;
     }
   });
+
   // Use the unified rendering system
   await render(data4Layout, svg);
-  // Setup the view box and size of the svg element
+
+  // Setup the view box and size of the svg element using config from data4Layout
   setupViewPortForSVG(
     svg,
-    conf?.padding ?? defaultConfig.mindmap.padding,
+    data4Layout.config.padding ?? defaultConfig.mindmap.padding,
     'mindmapDiagram',
-    conf?.useMaxWidth ?? defaultConfig.mindmap.useMaxWidth
+    data4Layout.config.useMaxWidth ?? defaultConfig.mindmap.useMaxWidth
   );
 };
 

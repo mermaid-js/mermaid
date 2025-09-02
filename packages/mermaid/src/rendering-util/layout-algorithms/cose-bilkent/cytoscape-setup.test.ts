@@ -22,10 +22,6 @@ vi.mock('cytoscape', () => {
   };
 });
 
-vi.mock('cytoscape-cose-bilkent', () => ({
-  default: vi.fn(),
-}));
-
 describe('Cytoscape Setup', () => {
   let mockNodes: Node[];
   let mockEdges: Edge[];

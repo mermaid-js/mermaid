@@ -6,6 +6,7 @@ import type { MermaidConfig } from '../../../config.type.js';
 import type { LayoutData } from '../../types.js';
 
 // Mock cytoscape and cytoscape-cose-bilkent before importing the modules
+
 vi.mock('cytoscape', () => {
   const mockCy = {
     add: vi.fn(),
@@ -62,22 +63,6 @@ vi.mock('cytoscape', () => {
     default: mockCytoscape,
   };
 });
-
-vi.mock('cytoscape-cose-bilkent', () => ({
-  default: vi.fn(),
-}));
-
-vi.mock('d3', () => ({
-  select: vi.fn(() => ({
-    append: vi.fn(() => ({
-      attr: vi.fn(() => ({
-        attr: vi.fn(() => ({
-          remove: vi.fn(),
-        })),
-      })),
-    })),
-  })),
-}));
 
 describe('Cose-Bilkent Layout Algorithm', () => {
   let mockConfig: MermaidConfig;
