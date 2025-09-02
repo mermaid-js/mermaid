@@ -292,9 +292,10 @@ const drawCentralConnection = function (
   lineStartY: number
 ) {
   const actors = diagObj.db.getActors();
-  const [fromLeft] = activationBounds(msg.from, actors);
-  const [toLeft] = activationBounds(msg.to, actors);
-  const isArrowToRight = fromLeft <= toLeft;
+  const fromActor = actors.get(msg.from);
+  const toActor = actors.get(msg.to);
+  const fromCenter = fromActor.x + fromActor.width / 2;
+  const toCenter = toActor.x + toActor.width / 2;
 
   const g = elem.append('g');
 
@@ -307,16 +308,20 @@ const drawCentralConnection = function (
       .attr('height', 10);
   };
 
-  if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION) {
-    const cx = isArrowToRight ? stopx + 5 : stopx - 8;
-    drawCircle(cx);
-  } else if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_REVERSE) {
-    const cx = isArrowToRight ? startx - 5 : stopx + 8;
-    drawCircle(cx);
-  } else if (msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL) {
-    const offset = isArrowToRight ? 5 : -5;
-    drawCircle(stopx + offset);
-    drawCircle(startx - offset);
+  const { CENTRAL_CONNECTION, CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL } =
+    diagObj.db.LINETYPE;
+
+  switch (msg.centralConnection) {
+    case CENTRAL_CONNECTION:
+      drawCircle(toCenter);
+      break;
+    case CENTRAL_CONNECTION_REVERSE:
+      drawCircle(fromCenter);
+      break;
+    case CENTRAL_CONNECTION_DUAL:
+      drawCircle(fromCenter);
+      drawCircle(toCenter);
+      break;
   }
 };
 
@@ -471,7 +476,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     line.attr('y1', lineStartY);
     line.attr('x2', stopx);
     line.attr('y2', lineStartY);
-    if (msg.centralConnection) {
+    if (hasCentralConnection(msg, diagObj)) {
       drawCentralConnection(diagram, msg, msgModel, diagObj, startx, stopx, lineStartY);
     }
   }
@@ -1600,6 +1605,51 @@ const buildNoteModel = async function (msg, actors, diagObj) {
   return noteModel;
 };
 
+// Central connection positioning constants
+const CENTRAL_CONNECTION_BASE_OFFSET = 4;
+const CENTRAL_CONNECTION_BIDIRECTIONAL_OFFSET = 6;
+
+/**
+ * Check if a message has central connection
+ * @param msg - The message object
+ * @param diagObj - The diagram object containing LINETYPE constants
+ * @returns True if the message has any type of central connection
+ */
+const hasCentralConnection = function (msg, diagObj) {
+  const { CENTRAL_CONNECTION, CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL } =
+    diagObj.db.LINETYPE;
+  return [CENTRAL_CONNECTION, CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL].includes(
+    msg.centralConnection
+  );
+};
+
+/**
+ * Calculate the positioning offset for central connection arrows
+ * @param msg - The message object
+ * @param diagObj - The diagram object containing LINETYPE constants
+ * @param isArrowToRight - Whether the arrow is pointing to the right
+ * @returns The offset to apply to startx position
+ */
+const calculateCentralConnectionOffset = function (msg, diagObj, isArrowToRight) {
+  const { CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL, BIDIRECTIONAL_SOLID } =
+    diagObj.db.LINETYPE;
+
+  let offset = 0;
+
+  if (
+    msg.centralConnection === CENTRAL_CONNECTION_REVERSE ||
+    msg.centralConnection === CENTRAL_CONNECTION_DUAL
+  ) {
+    offset += CENTRAL_CONNECTION_BASE_OFFSET;
+  }
+
+  if (msg.centralConnection === CENTRAL_CONNECTION_DUAL && msg.type === BIDIRECTIONAL_SOLID) {
+    offset += isArrowToRight ? 0 : -CENTRAL_CONNECTION_BIDIRECTIONAL_OFFSET;
+  }
+
+  return offset;
+};
+
 const buildMessageModel = function (msg, actors, diagObj) {
   if (
     ![
@@ -1644,12 +1694,8 @@ const buildMessageModel = function (msg, actors, diagObj) {
   let startx = isArrowToRight ? fromRight : fromLeft;
   let stopx = isArrowToRight ? toLeft : toRight;
 
-  if (
-    msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_REVERSE ||
-    msg.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL
-  ) {
-    startx += 4;
-  }
+  // Apply central connection positioning adjustments
+  startx += calculateCentralConnectionOffset(msg, diagObj, isArrowToRight);
   // As the line width is considered, the left and right values will be off by 2.
   const isArrowToActivation = Math.abs(toLeft - toRight) > 2;
 
