@@ -20,14 +20,20 @@ This page lists the available layout algorithms supported in Mermaid diagrams.
 You can specify the layout in your diagram's YAML config or initialization options. For example:
 
 ```mermaid-example
-%%{init: { 'layout': 'elk' }}%%
+---
+config:
+  layout: elk
+---
 graph TD;
   A-->B;
   B-->C;
 ```
 
 ```mermaid
-%%{init: { 'layout': 'elk' }}%%
+---
+config:
+  layout: elk
+---
 graph TD;
   A-->B;
   B-->C;

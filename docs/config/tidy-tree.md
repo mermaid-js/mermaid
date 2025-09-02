@@ -16,7 +16,7 @@ The **tidy-tree** layout arranges nodes in a hierarchical, tree-like structure. 
 
 ## Example Usage
 
-```
+```mermaid-example
 ---
 config:
   layout: tidy-tree
@@ -29,29 +29,59 @@ root((mindmap is a long thing))
   D
 ```
 
+```mermaid
+---
+config:
+  layout: tidy-tree
+---
+mindmap
+root((mindmap is a long thing))
+  A
+  B
+  C
+  D
 ```
- ---
-      config:
-        layout: tidy-tree
-      ---
-      mindmap
-      root((mindmap))
-        Origins
-          Long history
-          ::icon(fa fa-book)
-          Popularisation
-            British popular psychology author Tony Buzan
-        Research
-          On effectiveness&lt;br/>and features
-          On Automatic creation
-            Uses
-                Creative techniques
-                Strategic planning
-                Argument mapping
-        Tools
-              id)I am a cloud(
-                  id))I am a bang((
-                    Tools
+
+```mermaid-example
+---
+config:
+  layout: tidy-tree
+---
+mindmap
+root((mindmap))
+    Origins
+      Long history
+      ::icon(fa fa-book)
+      Popularisation
+        British popular psychology author Tony Buzan
+    Research
+      On effectiveness<br/>and features
+      On Automatic creation
+        Uses
+            Creative techniques
+            Strategic planning
+            Argument mapping
+```
+
+```mermaid
+---
+config:
+  layout: tidy-tree
+---
+mindmap
+root((mindmap))
+    Origins
+      Long history
+      ::icon(fa fa-book)
+      Popularisation
+        British popular psychology author Tony Buzan
+    Research
+      On effectiveness<br/>and features
+      On Automatic creation
+        Uses
+            Creative techniques
+            Strategic planning
+            Argument mapping
 ```
 
 ## Note
