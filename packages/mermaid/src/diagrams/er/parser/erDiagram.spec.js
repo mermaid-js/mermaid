@@ -995,6 +995,20 @@ describe('when parsing ER diagram it...', function () {
       expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.MD_PARENT);
       expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
     });
+
+    it('should handle whitespace-only relationship labels', function () {
+      erDiagram.parser.parse('erDiagram\nBOOK }|..|{ AUTHOR : "   "');
+      let rels = erDb.getRelationships();
+      expect(rels[rels.length - 1].roleA).toBe('   ');
+
+      erDiagram.parser.parse('erDiagram\nBOOK }|..|{ GENRE : "\t"');
+      rels = erDb.getRelationships();
+      expect(rels[rels.length - 1].roleA).toBe('\t');
+
+      erDiagram.parser.parse('erDiagram\nAUTHOR }|..|{ GENRE : "      "');
+      rels = erDb.getRelationships();
+      expect(rels[rels.length - 1].roleA).toBe('      ');
+    });
   });
 
   describe('prototype properties', function () {
