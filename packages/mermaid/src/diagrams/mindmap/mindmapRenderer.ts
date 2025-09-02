@@ -48,13 +48,8 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(data4Layout.config.layout, {
     fallback: 'cose-bilkent',
   });
-  // For mindmap diagrams, prioritize mindmap-specific layout algorithm configuration
 
   data4Layout.diagramId = id;
-
-  // Ensure required properties are set for compatibility with different layout algorithms
-  data4Layout.markers = ['point'];
-  data4Layout.direction = 'TB';
 
   const mm = db.getMindmap();
   if (!mm) {

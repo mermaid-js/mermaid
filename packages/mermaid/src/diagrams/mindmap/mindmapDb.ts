@@ -1,4 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { v4 } from 'uuid';
 import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
@@ -329,11 +330,9 @@ export class MindmapDB {
     const userDefinedConfig = getUserDefinedConfig();
     const hasUserDefinedLayout = userDefinedConfig.layout !== undefined;
 
-    const finalConfig = { ...config };
+    const finalConfig = config;
     if (!hasUserDefinedLayout) {
       finalConfig.layout = 'cose-bilkent';
-    } else {
-      finalConfig.layout = userDefinedConfig.layout;
     }
 
     if (!mindmapRoot) {
@@ -377,7 +376,7 @@ export class MindmapDB {
       // Store the root node for mindmap-specific layout algorithms
       rootNode: mindmapRoot,
       // Properties required by dagre layout algorithm
-      markers: [], // Mindmaps don't use markers
+      markers: ['point'], // Mindmaps don't use markers
       direction: 'TB', // Top-to-bottom direction for mindmaps
       nodeSpacing: 50, // Default spacing between nodes
       rankSpacing: 50, // Default spacing between ranks
@@ -385,7 +384,7 @@ export class MindmapDB {
       shapes: Object.fromEntries(shapes),
       // Additional properties that layout algorithms might expect
       type: 'mindmap',
-      diagramId: 'mindmap-' + Date.now(),
+      diagramId: 'mindmap-' + v4(),
     };
   }
 
