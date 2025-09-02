@@ -348,9 +348,9 @@ Lines can be solid or dotted, and can end with various types of arrowheads, cros
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
 
-**Half-Arrows**
+**Half-Arrows (v\<MERMAID_RELEASE_VERSION>+)**
 
-The following half-arrow types are now supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
+The following half-arrow types are supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
 
 ---
 
@@ -373,9 +373,9 @@ The following half-arrow types are now supported for more expressive sequence di
 | `\\-`   | Solid line with reverse bottom stick half arrowhead  |
 | `\\--`  | Dotted line with reverse bottom stick half arrowhead |
 
-## Central Connections
+## Central Connections (v\<MERMAID_RELEASE_VERSION>+)
 
-Mermaid sequence diagrams now support **central lifeline connections** using a `()`.\
+Mermaid sequence diagrams support **central lifeline connections** using a `()`.
 This is useful to represent messages or signals that connect to a central point, rather than from one actor directly to another.
 
 To indicate a central connection, append `()` to the arrow syntax.
