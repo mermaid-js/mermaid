@@ -76,6 +76,14 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  children?: NodeChildren;
+  nodeId?: string;
+  level?: number;
+  descr?: string;
+  type?: number;
+  radius?: number;
+  taper?: number;
+  stroke?: string;
 }
 
 /**
@@ -86,34 +94,10 @@ export type NodeChildren = Node[];
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
-  children?: NodeChildren;
-  nodeId?: string;
-  level?: number;
-  descr?: string;
-  type?: number;
-  height?: number;
-  width?: number;
-  padding?: number;
-  radius?: number;
-  taper?: number;
-  stroke?: string;
-  from?: 'mindmap' | 'flowchart' | 'state' | 'class' | 'sequence' | 'er'; // Indicates the diagram type this node is from
 }
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
   isGroup: false;
-  children?: NodeChildren;
-  nodeId?: string;
-  level?: number;
-  descr?: string;
-  type?: number;
-  height?: number;
-  width?: number;
-  padding?: number;
-  radius?: number;
-  taper?: number;
-  stroke?: string;
-  from?: 'mindmap' | 'flowchart' | 'state' | 'class' | 'sequence' | 'er'; // Indicates the diagram type this node is from
 }
 
 // Common properties for any node in the system
