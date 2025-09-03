@@ -36,16 +36,10 @@ export async function textHelper<T extends SVGGraphicsElement>(
 
   annotationGroup = shapeSvg.insert('g').attr('class', 'annotation-group text');
   if (node.annotations.length > 0) {
-    const annotation = node.annotations[0];
-
-    await addText(annotationGroup, { text: `«${annotation}»` } as unknown as ClassMember, 0);
-
-    annotationGroup.style('opacity', '0');
+    await addText(annotationGroup, { text: `` } as unknown as ClassMember, 0);
 
     const annotationGroupBBox = annotationGroup.node()!.getBBox();
     annotationGroupHeight = annotationGroupBBox.height;
-  } else {
-    annotationGroupHeight = 0;
   }
 
   labelGroup = shapeSvg.insert('g').attr('class', 'label-group text');

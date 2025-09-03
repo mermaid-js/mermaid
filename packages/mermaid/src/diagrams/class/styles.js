@@ -53,10 +53,6 @@ g.clickable {
   cursor: pointer;
 }
 
-g.annotation-group[style*="opacity: 0"] { 
- pointer-events: none;
- }
-
 g.classGroup rect {
   fill: ${options.mainBkg};
   stroke: ${options.nodeBorder};
