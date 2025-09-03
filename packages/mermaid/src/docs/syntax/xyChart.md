@@ -155,7 +155,7 @@ config:
 
 To set the color for lines and bars, use the `plotColorPalette` parameter. Colors in the palette will correspond sequentially to the elements in your chart (e.g., first bar/line will use the first color specified in the palette).
 
-```yaml
+```mermaid-example
 ---
 config:
   themeVariables:
