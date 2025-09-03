@@ -2,6 +2,7 @@ export type MarkdownWordType = 'normal' | 'strong' | 'em';
 import type { MermaidConfig } from '../config.type.js';
 import type { ClusterShapeID } from './rendering-elements/clusters.js';
 import type { ShapeID } from './rendering-elements/shapes.js';
+import type { Bounds, Point } from '../types.js';
 export interface MarkdownWord {
   content: string;
   type: MarkdownWordType;
@@ -38,11 +39,12 @@ interface BaseNode {
   linkTarget?: string;
   tooltip?: string;
   padding?: number; //REMOVE?, use from LayoutData.config - Keep, this could be shape specific
-  isGroup: boolean;
+  isGroup?: boolean;
   width?: number;
   height?: number;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
+  calcIntersect?: (bounds: Bounds, point: Point) => any;
 
   // Non-generic properties
   rx?: number; // Used for rounded corners in Rect, Ellipse, etc.Maybe it to specialized RectNode, EllipseNode, etc.
@@ -58,6 +60,8 @@ interface BaseNode {
   borderStyle?: string;
   borderWidth?: number;
   labelTextColor?: string;
+  labelPaddingX?: number;
+  labelPaddingY?: number;
 
   // Flowchart specific properties
   x?: number;
@@ -72,16 +76,25 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  children?: NodeChildren;
+  nodeId?: string;
+  level?: number;
+  descr?: string;
+  type?: number;
+  radius?: number;
+  taper?: number;
+  stroke?: string;
 }
 
 /**
  * Group/cluster nodes, e.g. nodes that contain other nodes.
  */
+export type NodeChildren = Node[];
+
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
 }
-
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
   isGroup: false;
@@ -113,7 +126,7 @@ export interface Edge {
   start?: string;
   stroke?: string;
   text?: string;
-  type: string;
+  type?: string;
   // Class Diagram specific properties
   startLabelRight?: string;
   endLabelLeft?: string;
@@ -126,6 +139,12 @@ export interface Edge {
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
   isUserDefinedId?: boolean;
+  points?: Point[];
+  parentId?: string;
+  dir?: string;
+  source?: string;
+  target?: string;
+  depth?: number;
 }
 
 export interface RectOptions {
@@ -134,6 +153,10 @@ export interface RectOptions {
   labelPaddingX: number;
   labelPaddingY: number;
   classes: string;
+}
+
+export interface MindmapOptions {
+  padding: number;
 }
 
 // Extending the Node interface for specific types if needed
@@ -171,6 +194,7 @@ export interface ShapeRenderOptions {
   config: MermaidConfig;
   /** Some shapes render differently if a diagram has a direction `LR` */
   dir?: Node['dir'];
+  padding?: number;
 }
 
 export type KanbanNode = Node & {
