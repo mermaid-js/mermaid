@@ -53,3 +53,7 @@ vite.config.ts.timestamp-*
 
 # autogenereated by langium-cli
 generated/
+.env
+.mcp.json
+.gitignore
+CLAUDE.MD
