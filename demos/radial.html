@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Radial Layout Example</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      .mermaid {
+        margin: 30px auto;
+        display: block;
+      }
+      .description {
+        background-color: #f5f5f5;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Mermaid Radial Layout Example</h1>
+
+    <div class="description">
+      <p>
+        This example demonstrates the new radial layout for Mermaid diagrams. The radial layout
+        arranges nodes in concentric circles, which can be useful for displaying hierarchical
+        relationships with a focus on the central node.
+      </p>
+    </div>
+
+    <h2>Simple Radial Flowchart</h2>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+      A[Root Node] --> B[Layer 1 Node A]
+      A --> C[Layer 1 Node C]
+      A --> D[Layer 1 Node D]
+      B --> AA[Layer 2 Node AA]
+      B --> AB[Layer 2 Node AB]
+      C --> CA[Layer 2 Node CA]
+      C --> CB[Layer 2 Node CB]
+      D --> DA[Layer 2 Node DA]
+      D --> DB[Layer 2 Node DB]
+      AA --> AAA[Layer 3 Node AAA]
+      AA --> AAB[Layer 3 Node AAB]
+      AB --> ABA[Layer 3 Node ABA]
+      AB --> ABB[Layer 3 Node ABB]
+      CA --> CAA[Layer 3 Node CAA]
+      CA --> CAB[Layer 3 Node CAB]
+      CB --> CBA[Layer 3 Node CBA]
+      CB --> CBB[Layer 3 Node CBB]
+    </div>
+
+    <h2>Technology Stack with Radial Layout</h2>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+      APP[Application] --> FE[Frontend]
+      APP --> BE[Backend]
+      APP --> DB[Database]
+      APP --> INFRA[Infrastructure]
+      FE --> REACT[React]
+      FE --> REDUX[Redux]
+      FE --> WEBPACK[Webpack]
+      BE --> NODE[Node.js]
+      BE --> EXPRESS[Express]
+      BE --> GRAPH[GraphQL]
+      DB --> MONGO[MongoDB]
+      DB --> REDIS[Redis]
+      INFRA --> DOCKER[Docker]
+      INFRA --> K8S[Kubernetes]
+      INFRA --> AWS[AWS]
+    </div>
+
+    <h2>Radial Flowchart with Subgraph</h2>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        A[Root] --> B[Outside Subgraph]
+        subgraph MY_SUBGRAPH[My Subgraph Title]
+            C[Node C in Subgraph]
+            D[Node D in Subgraph]
+            C --> D
+        end
+        A --> C
+        B --> D
+    </div>
+
+    <h2>Simple Test Cases - Radial Layout</h2>
+
+    <h3>Single Node Graph</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        SINGLE[A Single Node]
+    </div>
+
+    <h3>Two Disconnected Nodes</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        DIS_A[Disconnected A]
+        DIS_B[Disconnected B]
+    </div>
+
+    <h3>Two Nodes, One Edge</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        N1[Node 1] --> N2[Node 2]
+    </div>
+
+    <h3>Empty Subgraph</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        subgraph EMPTY_SUB[Empty Subgraph Title]
+        end
+        X[Outside] --> EMPTY_SUB
+    </div>
+
+    <h3>Subgraph with One Node</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        subgraph ONE_NODE_SUB[Subgraph with One Node]
+          SN1[Single Node Inside]
+        end
+        Y[Another Outside] --> SN1
+    </div>
+
+    <h2>Complex Test Cases - Radial Layout</h2>
+
+    <h3>Nested Subgraphs</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        R[Root Outer]
+        subgraph S1[Level 1 Subgraph]
+          S1_N1[L1 Node1]
+          S1_N2[L1 Node2]
+          subgraph S2[Level 2 Subgraph]
+            S2_N1[L2 Node1]
+            S2_N2[L2 Node2]
+            S2_N1 --> S2_N2
+          end
+          S1_N1 --> S2_N1
+          S1_N2 --> S2_N2
+        end
+        R --> S1_N1
+        R --> S1
+    </div>
+
+    <h3>Sibling Subgraphs with Cross-Edges</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        TOP[Main Top]
+        subgraph SIB_A[Sibling A]
+          A1[Node A1]
+          A2[Node A2]
+          A1 --> A2
+        end
+        subgraph SIB_B[Sibling B]
+          B1[Node B1]
+          B2[Node B2]
+          B1 --> B2
+        end
+        TOP --> A1
+        TOP --> B1
+        A2 --> B1
+        B2 --> A1
+    </div>
+
+    <h3>Complex Connectivity with Nested Subgraphs</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        OUT_R[Outer Root]
+        OUT_N[Outer Node]
+        subgraph C_S1[Complex Sub 1]
+          CS1_N1[CS1 Node 1]
+          subgraph C_S2[Complex Sub 2 Nested]
+            CS2_N1[CS2 Node 1]
+            CS2_N2[CS2 Node 2]
+            CS2_N1 --> CS2_N2
+          end
+          CS1_N1 --> CS2_N1
+        end
+        OUT_R --> CS1_N1
+        OUT_N --> CS2_N2
+        CS1_N1 --> OUT_N
+    </div>
+
+    <h3>Multiple Disconnected Components (Forcing Synthetic Root)</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        COMP1_A[Comp1 A] --> COMP1_B[Comp1 B]
+        COMP2_A[Comp2 A] --> COMP2_B[Comp2 B]
+        COMP3_A[Comp3 C]
+    </div>
+
+    <h3>More Complex Non-Subgraph Diagram</h3>
+    <!-- prettier-ignore -->
+    <div class="mermaid">
+      %%{init: {'theme': 'default', 'layout': 'radial'}}%%
+      flowchart TD
+        Z0[Center Point]
+        Z0 --> Z1A[Branch 1A]
+        Z0 --> Z1B[Branch 1B]
+        Z0 --> Z1C[Branch 1C]
+
+        Z1A --> Z2A1[L2 from 1A.1]
+        Z1A --> Z2A2[L2 from 1A.2]
+
+        Z1B --> Z2B1[L2 from 1B.1]
+        Z1B --> Z2B2[L2 from 1B.2]
+        Z1B --> Z2B3[L2 from 1B.3]
+
+        Z1C --> Z2C1[L2 from 1C.1]
+
+        Z2A1 --> Z3A1[L3 from 2A1.1]
+        Z2A2 --> Z3A2[L3 from 2A2.1]
+        Z2B2 --> Z3B1[L3 from 2B2.1]
+        Z3A1 --> Z4A[L4]
+        Z3B1 --> Z4A
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 1,
+        securityLevel: 'loose',
+        flowchart: {
+          htmlLabels: true,
+        },
+      });
+    </script>
+  </body>
+</html>

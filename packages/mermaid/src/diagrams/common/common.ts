@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/triple-slash-reference */
+/// <reference path="../../type.d.ts" />
+/* eslint-enable @typescript-eslint/triple-slash-reference */
 import DOMPurify from 'dompurify';
 import type { MermaidConfig } from '../../config.type.js';
 

@@ -42,7 +42,9 @@ interface BaseNode {
   width?: number;
   height?: number;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   intersect?: (point: any) => any;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // Non-generic properties
   rx?: number; // Used for rounded corners in Rect, Ellipse, etc.Maybe it to specialized RectNode, EllipseNode, etc.
@@ -126,6 +128,7 @@ export interface Edge {
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
   isUserDefinedId?: boolean;
+  points?: { x: number; y: number }[];
 }
 
 export interface RectOptions {
@@ -138,7 +141,9 @@ export interface RectOptions {
 
 // Extending the Node interface for specific types if needed
 export type ClassDiagramNode = Node & {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   memberData: any; // Specific property for class diagram nodes
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 };
 
 // Specific interfaces for layout and render data
@@ -146,12 +151,16 @@ export interface LayoutData {
   nodes: Node[];
   edges: Edge[];
   config: MermaidConfig;
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   [key: string]: any; // Additional properties not yet defined
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
 export interface RenderData {
   items: (Node | Edge)[];
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   [key: string]: any; // Additional properties not yet defined
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
 // This refactored approach ensures that common properties are included in the base `Node` and `Edge` interfaces, with specific types extending these bases with additional properties as needed. This maintains flexibility while ensuring type safety and reducing redundancy.
@@ -160,6 +169,7 @@ export type LayoutMethod =
   | 'dagre'
   | 'dagre-wrapper'
   | 'elk'
+  | 'radial'
   | 'neato'
   | 'dot'
   | 'circo'
