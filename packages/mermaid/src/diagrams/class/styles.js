@@ -31,7 +31,7 @@ const getStyles = (options) =>
 }
 
 .classTitle {
-  font-weight: bolder;
+  font-weight: normal;
 }
 .node rect,
   .node circle,

@@ -36,16 +36,31 @@ export async function textHelper<T extends SVGGraphicsElement>(
 
   annotationGroup = shapeSvg.insert('g').attr('class', 'annotation-group text');
   if (node.annotations.length > 0) {
-    await addText(annotationGroup, { text: `` } as unknown as ClassMember, 0);
-
+    const annotation = node.annotations[0].toLowerCase();
+    let isSupported = false;
+    switch (annotation) {
+      case 'interface':
+      case 'abstract':
+      case 'enumeration':
+        isSupported = true;
+        break;
+    }
+    if (!isSupported) {
+      await addText(
+        annotationGroup,
+        { text: `«${node.annotations[0]}»` } as unknown as ClassMember,
+        0,
+        []
+      );
+      annotationGroup.style('opacity', '1');
+    }
     const annotationGroupBBox = annotationGroup.node()!.getBBox();
     annotationGroupHeight = annotationGroupBBox.height;
   }
-
   labelGroup = shapeSvg.insert('g').attr('class', 'label-group text');
 
   // Determine styling based on annotations
-  let labelStyles = ['font-weight: bolder']; // Default bold style
+  let labelStyles = [''];
   let labelClass = '';
   if (node.annotations && node.annotations.length > 0) {
     const annotation = node.annotations[0].toLowerCase();
@@ -63,7 +78,8 @@ export async function textHelper<T extends SVGGraphicsElement>(
         labelStyles = [];
         break;
       default:
-        labelStyles = ['font-weight: bolder'];
+        labelClass = '';
+        labelStyles = [];
         break;
     }
   }
