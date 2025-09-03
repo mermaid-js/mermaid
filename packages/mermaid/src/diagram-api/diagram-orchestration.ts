@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/triple-slash-reference */
+/// <reference path="../type.d.ts" />
+/* eslint-enable @typescript-eslint/triple-slash-reference */
 import c4 from '../diagrams/c4/c4Detector.js';
 import flowchart from '../diagrams/flowchart/flowDetector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
