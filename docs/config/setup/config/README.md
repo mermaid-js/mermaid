@@ -19,6 +19,7 @@
 - [addDirective](functions/addDirective.md)
 - [getConfig](functions/getConfig.md)
 - [getSiteConfig](functions/getSiteConfig.md)
+- [getUserDefinedConfig](functions/getUserDefinedConfig.md)
 - [reset](functions/reset.md)
 - [sanitize](functions/sanitize.md)
 - [saveConfigFromInitialize](functions/saveConfigFromInitialize.md)

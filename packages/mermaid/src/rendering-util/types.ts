@@ -60,6 +60,8 @@ interface BaseNode {
   borderStyle?: string;
   borderWidth?: number;
   labelTextColor?: string;
+  labelPaddingX?: number;
+  labelPaddingY?: number;
 
   // Flowchart specific properties
   x?: number;
@@ -74,6 +76,14 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  children?: NodeChildren;
+  nodeId?: string;
+  level?: number;
+  descr?: string;
+  type?: number;
+  radius?: number;
+  taper?: number;
+  stroke?: string;
 }
 
 /**
@@ -84,26 +94,10 @@ export type NodeChildren = Node[];
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;
   isGroup: true;
-  children?: NodeChildren;
-  nodeId?: string;
-  level?: number;
-  descr?: string;
-  type?: number;
-  height?: number;
-  width?: number;
-  padding?: number;
 }
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
   isGroup: false;
-  children?: NodeChildren;
-  nodeId?: string;
-  level?: number;
-  descr?: string;
-  type?: number;
-  height?: number;
-  width?: number;
-  padding?: number;
 }
 
 // Common properties for any node in the system
@@ -161,6 +155,10 @@ export interface RectOptions {
   classes: string;
 }
 
+export interface MindmapOptions {
+  padding: number;
+}
+
 // Extending the Node interface for specific types if needed
 export type ClassDiagramNode = Node & {
   memberData: any; // Specific property for class diagram nodes
@@ -196,6 +194,7 @@ export interface ShapeRenderOptions {
   config: MermaidConfig;
   /** Some shapes render differently if a diagram has a direction `LR` */
   dir?: Node['dir'];
+  padding?: number;
 }
 
 export type KanbanNode = Node & {

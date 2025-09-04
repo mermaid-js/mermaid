@@ -101,14 +101,7 @@
         C
         D
     </pre>
-    <pre class="mermaid">
-      mindmap
-      root((mindmap is a long thing))
-        A
-        B
-        C
-        D
-    </pre>
+
     <pre class="mermaid">
     ---
       config:
@@ -369,6 +362,10 @@
     <hr />
     <script type="module">
       import mermaid from '/mermaid.esm.mjs';
+      import tidytree from '/mermaid-layout-tidy-tree.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.registerLayoutLoaders(tidytree);
       mermaid.initialize({
         theme: 'default',
         logLevel: 3,

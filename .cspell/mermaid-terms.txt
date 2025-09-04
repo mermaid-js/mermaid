@@ -5,6 +5,7 @@ bmatrix
 braintree
 catmull
 compositTitleSize
+cose
 curv
 doublecircle
 elem

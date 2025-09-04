@@ -63,6 +63,8 @@ import { requirementBox } from './shapes/requirementBox.js';
 import { kanbanItem } from './shapes/kanbanItem.js';
 import { bang } from './shapes/bang.js';
 import { cloud } from './shapes/cloud.js';
+import { defaultMindmapNode } from './shapes/defaultMindmapNode.js';
+import { mindmapCircle } from './shapes/mindmapCircle.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -494,6 +496,9 @@ const generateShapeMap = () => {
     // Kanban diagram
     kanbanItem,
 
+    //Mindmap diagram
+    mindmapCircle,
+    defaultMindmapNode,
     // class diagram
     classBox,
 

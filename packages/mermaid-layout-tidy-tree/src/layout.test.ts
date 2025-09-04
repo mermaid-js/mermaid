@@ -1,4 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { executeTidyTreeLayout, validateLayoutData } from './layout.js';
+import type { LayoutResult } from './types.js';
+import type { LayoutData, MermaidConfig } from 'mermaid';
 
 // Mock non-layered-tidy-tree-layout
 vi.mock('non-layered-tidy-tree-layout', () => ({
@@ -41,10 +44,6 @@ vi.mock('non-layered-tidy-tree-layout', () => ({
     }),
   })),
 }));
-
-import { executeTidyTreeLayout, validateLayoutData } from './layout.js';
-import type { LayoutResult } from './types.js';
-import type { LayoutData, MermaidConfig } from 'mermaid';
 
 describe('Tidy-Tree Layout Algorithm', () => {
   let mockConfig: MermaidConfig;
@@ -209,7 +208,7 @@ describe('Tidy-Tree Layout Algorithm', () => {
 
   describe('executeTidyTreeLayout function', () => {
     it('should execute layout algorithm successfully', async () => {
-      const result: LayoutResult = await executeTidyTreeLayout(mockLayoutData, mockConfig);
+      const result: LayoutResult = await executeTidyTreeLayout(mockLayoutData);
 
       expect(result).toBeDefined();
       expect(result.nodes).toBeDefined();
@@ -219,7 +218,7 @@ describe('Tidy-Tree Layout Algorithm', () => {
     });
 
     it('should return positioned nodes with coordinates', async () => {
-      const result: LayoutResult = await executeTidyTreeLayout(mockLayoutData, mockConfig);
+      const result: LayoutResult = await executeTidyTreeLayout(mockLayoutData);
 
       expect(result.nodes.length).toBeGreaterThan(0);
       result.nodes.forEach((node) => {
@@ -231,7 +230,7 @@ describe('Tidy-Tree Layout Algorithm', () => {
     });
 
     it('should return positioned edges with coordinates', async () => {
-      const result: LayoutResult = await executeTidyTreeLayout(mockLayoutData, mockConfig);
+      const result: LayoutResult = await executeTidyTreeLayout(mockLayoutData);
 
       expect(result.edges.length).toBeGreaterThan(0);
       result.edges.forEach((edge) => {
@@ -251,7 +250,7 @@ describe('Tidy-Tree Layout Algorithm', () => {
         edges: [],
       };
 
-      await expect(executeTidyTreeLayout(emptyData, mockConfig)).rejects.toThrow(
+      await expect(executeTidyTreeLayout(emptyData)).rejects.toThrow(
         'No nodes found in layout data'
       );
     });
@@ -259,7 +258,7 @@ describe('Tidy-Tree Layout Algorithm', () => {
     it('should throw error for missing nodes', async () => {
       const invalidData = { ...mockLayoutData, nodes: [] };
 
-      await expect(executeTidyTreeLayout(invalidData, mockConfig)).rejects.toThrow(
+      await expect(executeTidyTreeLayout(invalidData)).rejects.toThrow(
         'No nodes found in layout data'
       );
     });
@@ -271,14 +270,14 @@ describe('Tidy-Tree Layout Algorithm', () => {
         nodes: [mockLayoutData.nodes[0]],
       };
 
-      const result = await executeTidyTreeLayout(singleNodeData, mockConfig);
+      const result = await executeTidyTreeLayout(singleNodeData);
       expect(result).toBeDefined();
       expect(result.nodes).toHaveLength(1);
       expect(result.edges).toHaveLength(0);
     });
 
     it('should create bidirectional dual-tree layout with alternating left/right children', async () => {
-      const result = await executeTidyTreeLayout(mockLayoutData, mockConfig);
+      const result = await executeTidyTreeLayout(mockLayoutData);
 
       expect(result).toBeDefined();
       expect(result.nodes).toHaveLength(5);
@@ -383,7 +382,7 @@ describe('Tidy-Tree Layout Algorithm', () => {
         ],
       };
 
-      const result = await executeTidyTreeLayout(testData, mockConfig);
+      const result = await executeTidyTreeLayout(testData);
 
       expect(result).toBeDefined();
       expect(result.nodes).toHaveLength(3);

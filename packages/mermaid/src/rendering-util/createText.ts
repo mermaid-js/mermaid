@@ -2,9 +2,8 @@
 // @ts-nocheck TODO: Fix types
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
-import { getConfig, sanitizeText } from '../diagram-api/diagramAPI.js';
 import type { SVGGroup } from '../diagram-api/types.js';
-import common, { hasKatex, renderKatex } from '../diagrams/common/common.js';
+import common, { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { markdownToHTML, markdownToLines } from '../rendering-util/handle-markdown-text.js';
@@ -12,6 +11,7 @@ import { decodeEntities } from '../utils.js';
 import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
+import { getConfig } from '../config.js';
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {
@@ -19,7 +19,15 @@ function applyStyle(dom, styleFn) {
   }
 }
 
-async function addHtmlSpan(element, node, width, classes, addBackground = false) {
+async function addHtmlSpan(
+  element,
+  node,
+  width,
+  classes,
+  addBackground = false,
+  // TODO: Make config mandatory
+  config: MermaidConfig = getConfig()
+) {
   const fo = element.append('foreignObject');
   // This is not the final width but used in order to make sure the foreign
   // object in firefox gets a width at all. The final width is fetched from the div
@@ -27,13 +35,12 @@ async function addHtmlSpan(element, node, width, classes, addBackground = false)
   fo.attr('height', `${10 * width}px`);
 
   const div = fo.append('xhtml:div');
-  let label = node.label;
-  if (node.label && hasKatex(node.label)) {
-    label = await renderKatex(node.label.replace(common.lineBreakRegex, '\n'), getConfig());
-  }
+  const sanitizedLabel = hasKatex(node.label)
+    ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
+    : sanitizeText(node.label, config);
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   const span = div.append('span');
-  span.html(label);
+  span.html(sanitizedLabel);
   applyStyle(span, node.labelStyle);
   span.attr('class', `${labelClass} ${classes}`);
 
@@ -55,9 +62,6 @@ async function addHtmlSpan(element, node, width, classes, addBackground = false)
     div.style('width', width + 'px');
     bbox = div.node().getBoundingClientRect();
   }
-
-  // fo.style('width', bbox.width);
-  // fo.style('height', bbox.height);
 
   return fo.node();
 }
@@ -181,9 +185,14 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
 /**
  * Convert fontawesome labels into fontawesome icons by using a regex pattern
  * @param text - The raw string to convert
+ * @param config - Mermaid config
  * @returns string with fontawesome icons as svg if the icon is registered otherwise as i tags
  */
-export async function replaceIconSubstring(text: string) {
+export async function replaceIconSubstring(
+  text: string,
+  // TODO: Make config mandatory
+  config: MermaidConfig = {}
+): Promise<string> {
   const pendingReplacements: Promise<string>[] = [];
   // cspell: disable-next-line
   text.replace(/(fa[bklrs]?):fa-([\w-]+)/g, (fullMatch, prefix, iconName) => {
@@ -193,7 +202,7 @@ export async function replaceIconSubstring(text: string) {
         if (await isIconAvailable(registeredIconName)) {
           return await getIconSVG(registeredIconName, undefined, { class: 'label-icon' });
         } else {
-          return `<i class='${sanitizeText(fullMatch).replace(':', ' ')}'></i>`;
+          return `<i class='${sanitizeText(fullMatch, config).replace(':', ' ')}'></i>`;
         }
       })()
     );
@@ -236,7 +245,7 @@ export const createText = async (
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
     const htmlText = markdownToHTML(text, config);
-    const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText));
+    const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
     const inputForKatex = text.replace(/\\\\/g, '\\');
@@ -246,7 +255,7 @@ export const createText = async (
       label: hasKatex(text) ? inputForKatex : decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
-    const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground);
+    const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground, config);
     return vertexNode;
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>

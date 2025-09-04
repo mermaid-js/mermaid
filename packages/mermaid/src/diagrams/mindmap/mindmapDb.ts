@@ -1,11 +1,12 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { v4 } from 'uuid';
 import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import type { MindmapNode } from './mindmapTypes.js';
 import defaultConfig from '../../defaultConfig.js';
-
 import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
+import { getUserDefinedConfig } from '../../config.js';
 
 // Extend Node type for mindmap-specific properties
 export type MindmapLayoutNode = Node & {
@@ -223,7 +224,7 @@ export class MindmapDB {
     const getShapeFromType = (type: number) => {
       switch (type) {
         case nodeType.CIRCLE:
-          return 'circle';
+          return 'mindmapCircle';
         case nodeType.RECT:
           return 'rect';
         case nodeType.ROUNDED_RECT:
@@ -235,6 +236,7 @@ export class MindmapDB {
         case nodeType.HEXAGON:
           return 'hexagon';
         case nodeType.DEFAULT:
+          return 'defaultMindmapNode';
         case nodeType.NO_BORDER:
         default:
           return 'rect';
@@ -325,11 +327,19 @@ export class MindmapDB {
     const mindmapRoot = this.getMindmap();
     const config = getConfig();
 
+    const userDefinedConfig = getUserDefinedConfig();
+    const hasUserDefinedLayout = userDefinedConfig.layout !== undefined;
+
+    const finalConfig = config;
+    if (!hasUserDefinedLayout) {
+      finalConfig.layout = 'cose-bilkent';
+    }
+
     if (!mindmapRoot) {
       return {
         nodes: [],
         edges: [],
-        config,
+        config: finalConfig,
       };
     }
     log.debug('getData: mindmapRoot', mindmapRoot, config);
@@ -362,11 +372,11 @@ export class MindmapDB {
     return {
       nodes: processedNodes,
       edges: processedEdges,
-      config,
+      config: finalConfig,
       // Store the root node for mindmap-specific layout algorithms
       rootNode: mindmapRoot,
       // Properties required by dagre layout algorithm
-      markers: [], // Mindmaps don't use markers
+      markers: ['point'], // Mindmaps don't use markers
       direction: 'TB', // Top-to-bottom direction for mindmaps
       nodeSpacing: 50, // Default spacing between nodes
       rankSpacing: 50, // Default spacing between ranks
@@ -374,7 +384,7 @@ export class MindmapDB {
       shapes: Object.fromEntries(shapes),
       // Additional properties that layout algorithms might expect
       type: 'mindmap',
-      diagramId: 'mindmap-' + Date.now(),
+      diagramId: 'mindmap-' + v4(),
     };
   }
 
