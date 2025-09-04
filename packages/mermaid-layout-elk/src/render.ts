@@ -1,10 +1,4 @@
-import type {
-  InternalHelpers,
-  LayoutData,
-  RenderOptions,
-  SVG,
-  SVGGroup,
-} from '@mermaid-chart/mermaid';
+import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 // @ts-ignore TODO: Investigate D3 issue
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
@@ -78,6 +72,7 @@ export const render = async (
       // A subgraph
       const child: NodeWithVertex & { children: NodeWithVertex[] } = {
         ...node,
+        domId: undefined,
         children: [],
       };
       // Let elk render with the copy
@@ -900,7 +895,7 @@ export const render = async (
       'elk.separateConnectedComponents': true,
       'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
       // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES', // NODES_AND_EDGES
-      'elk.layered.considerModelOrder.strategy': 'EDGES', // NODES_AND_EDGES
+      // 'elk.layered.considerModelOrder.strategy': 'EDGES', // NODES_AND_EDGES
       'elk.layered.wrapping.cutting.strategy': 'ARD', // NODES_AND_EDGES
     },
     children: [],
