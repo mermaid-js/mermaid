@@ -272,6 +272,13 @@ test('markdownToHTML - Only italic formatting', () => {
   expect(output).toEqual(expectedOutput);
 });
 
+test('markdownToHTML - HTML Link', () => {
+  const input = `This is a [link](http://example.com)`;
+  const expectedOutput = `<p>This is a <a xlink:href="http://example.com" href="http://example.com" target="__blank">link</a></p>`;
+  const output = markdownToHTML(input);
+  expect(output).toEqual(expectedOutput);
+});
+
 test('markdownToHTML - Mixed formatting', () => {
   const input = `*Italic* and **bold** formatting`;
   const expectedOutput = `<p><em>Italic</em> and <strong>bold</strong> formatting</p>`;
