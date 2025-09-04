@@ -1,11 +1,5 @@
 # mermaid
 
-## 11.10.1
-
-### Patch Changes
-
-- [#6886](https://github.com/mermaid-js/mermaid/pull/6886) [`e0b45c2`](https://github.com/mermaid-js/mermaid/commit/e0b45c2d2b41c2a9038bf87646fa3ccd7560eb20) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Handle arrows correctly when auto number is enabled
-
 ## 11.10.0
 
 ### Minor Changes
@@ -235,7 +229,6 @@
 - [#5999](https://github.com/mermaid-js/mermaid/pull/5999) [`742ad7c`](https://github.com/mermaid-js/mermaid/commit/742ad7c130964df1fb5544e909d9556081285f68) Thanks [@knsv](https://github.com/knsv)! - Adding Kanban board, a new diagram type
 
 - [#5880](https://github.com/mermaid-js/mermaid/pull/5880) [`bdf145f`](https://github.com/mermaid-js/mermaid/commit/bdf145ffe362462176d9c1e68d5f3ff5c9d962b0) Thanks [@yari-dewalt](https://github.com/yari-dewalt)! - Class diagram changes:
-
   - Updates the class diagram to the new unified way of rendering.
   - Includes a new "classBox" shape to be used in diagrams
   - Other updates such as:
