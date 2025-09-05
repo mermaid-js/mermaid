@@ -981,6 +981,12 @@ describe('when parsing ER diagram it...', function () {
       expect(rels[0].roleA).toBe('places');
     });
 
+    it('should allow label as optional', function () {
+      erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER');
+      const rels = erDb.getRelationships();
+      expect(rels[0].roleA).toBe('');
+    });
+
     it('should represent parent-child relationship correctly', function () {
       erDiagram.parser.parse('erDiagram\nPROJECT u--o{ TEAM_MEMBER : "parent"');
       const rels = erDb.getRelationships();
@@ -988,6 +994,20 @@ describe('when parsing ER diagram it...', function () {
       expect(rels.length).toBe(1);
       expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.MD_PARENT);
       expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
+    });
+
+    it('should handle whitespace-only relationship labels', function () {
+      erDiagram.parser.parse('erDiagram\nBOOK }|..|{ AUTHOR : "   "');
+      let rels = erDb.getRelationships();
+      expect(rels[rels.length - 1].roleA).toBe('   ');
+
+      erDiagram.parser.parse('erDiagram\nBOOK }|..|{ GENRE : "\t"');
+      rels = erDb.getRelationships();
+      expect(rels[rels.length - 1].roleA).toBe('\t');
+
+      erDiagram.parser.parse('erDiagram\nAUTHOR }|..|{ GENRE : "      "');
+      rels = erDb.getRelationships();
+      expect(rels[rels.length - 1].roleA).toBe('      ');
     });
   });
 
