@@ -20,7 +20,11 @@ export const compileStyles = (node: Node) => {
   // the array is the styles of node from the classes it is using
   // node.cssStyles is an array of styles directly set on the node
   // concat the arrays and remove duplicates such that the values from node.cssStyles are used if there are duplicates
-  const stylesMap = styles2Map([...(node.cssCompiledStyles || []), ...(node.cssStyles || [])]);
+  const stylesMap = styles2Map([
+    ...(node.cssCompiledStyles || []),
+    ...(node.cssStyles || []),
+    ...(node.labelStyle || []),
+  ]);
   return { stylesMap, stylesArray: [...stylesMap] };
 };
 
