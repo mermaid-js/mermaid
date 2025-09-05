@@ -656,7 +656,8 @@ export const insertEdge = function (
 
     animatedEdge =
       edge.animate === true || !!edge.animation || stylesFromClasses.includes('animation');
-    const len = svgPath.node().getTotalLength();
+    const pathNode = svgPath.node();
+    const len = typeof pathNode.getTotalLength === 'function' ? pathNode.getTotalLength() : 0;
     const oValueS = markerOffsets2[edge.arrowTypeStart] || 0;
     const oValueE = markerOffsets2[edge.arrowTypeEnd] || 0;
 
