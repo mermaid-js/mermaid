@@ -163,25 +163,32 @@ export const replaceEndpoint = (
   value: P | null | undefined,
   tol = 0.1
 ) => {
-  if (!value) {
+  if (!value || points.length === 0) {
     return;
   }
-  const isDup = points.some((p, i) =>
-    which === 'start'
-      ? i > 0 && Math.abs(p.x - value.x) < tol && Math.abs(p.y - value.y) < tol
-      : i < points.length - 1 && Math.abs(p.x - value.x) < tol && Math.abs(p.y - value.y) < tol
-  );
-  if (isDup) {
-    if (which === 'start') {
+
+  if (which === 'start') {
+    if (
+      points.length > 0 &&
+      Math.abs(points[0].x - value.x) < tol &&
+      Math.abs(points[0].y - value.y) < tol
+    ) {
+      // duplicate start remove it
       points.shift();
     } else {
-      points.pop();
+      points[0] = value;
     }
   } else {
-    if (which === 'start') {
-      points[0] = value;
+    const last = points.length - 1;
+    if (
+      points.length > 0 &&
+      Math.abs(points[last].x - value.x) < tol &&
+      Math.abs(points[last].y - value.y) < tol
+    ) {
+      // duplicate end remove it
+      points.pop();
     } else {
-      points[points.length - 1] = value;
+      points[last] = value;
     }
   }
 };
