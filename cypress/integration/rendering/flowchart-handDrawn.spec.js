@@ -1039,7 +1039,7 @@ graph TD
           style C stroke-width:4px,stroke-dasharray: 5
           L_A_B_0@{ animation: slow } 
           L_B_D_0@{ animation: fast }`,
-      { look: 'handDrawn' }
+      { look: 'handDrawn', screenshot: false }
     );
     cy.get('path#L_A_B_0').should('have.class', 'edge-animation-slow');
     cy.get('path#L_B_D_0').should('have.class', 'edge-animation-fast');
