@@ -4,6 +4,14 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
+import {
+  type P,
+  type RectLike,
+  outsideNode,
+  computeNodeIntersection,
+  replaceEndpoint,
+} from './geometry.js';
+
 type Node = LayoutData['nodes'][number];
 
 // Minimal structural type to avoid depending on d3 Selection typings
@@ -241,6 +249,112 @@ export const render = async (
   /**
    * Add edges to graph based on parsed graph definition
    */
+  // Edge helper maps and utilities (de-duplicated)
+  const ARROW_MAP: Record<string, [string, string]> = {
+    arrow_open: ['arrow_open', 'arrow_open'],
+    arrow_cross: ['arrow_open', 'arrow_cross'],
+    double_arrow_cross: ['arrow_cross', 'arrow_cross'],
+    arrow_point: ['arrow_open', 'arrow_point'],
+    double_arrow_point: ['arrow_point', 'arrow_point'],
+    arrow_circle: ['arrow_open', 'arrow_circle'],
+    double_arrow_circle: ['arrow_circle', 'arrow_circle'],
+  };
+
+  const computeStroke = (
+    stroke: string | undefined,
+    defaultStyle?: string,
+    defaultLabelStyle?: string
+  ) => {
+    // Defaults correspond to 'normal'
+    let thickness = 'normal';
+    let pattern = 'solid';
+    let style = '';
+    let labelStyle = '';
+
+    if (stroke === 'dotted') {
+      pattern = 'dotted';
+      style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
+    } else if (stroke === 'thick') {
+      thickness = 'thick';
+      style = 'stroke-width: 3.5px;fill:none;';
+    } else {
+      // normal
+      style = defaultStyle ?? 'fill:none;';
+      if (defaultLabelStyle !== undefined) {
+        labelStyle = defaultLabelStyle;
+      }
+    }
+    return { thickness, pattern, style, labelStyle };
+  };
+
+  const getCurve = (edgeInterpolate: any, edgesDefaultInterpolate: any, confCurve: any) => {
+    if (edgeInterpolate !== undefined) {
+      return interpolateToCurve(edgeInterpolate, curveLinear);
+    }
+    if (edgesDefaultInterpolate !== undefined) {
+      return interpolateToCurve(edgesDefaultInterpolate, curveLinear);
+    }
+    // @ts-ignore TODO: fix this
+    return interpolateToCurve(confCurve, curveLinear);
+  };
+  const buildEdgeData = (
+    edge: any,
+    defaults: {
+      defaultStyle?: string;
+      defaultLabelStyle?: string;
+      defaultInterpolate?: any;
+      confCurve: any;
+    },
+    common: any
+  ) => {
+    const edgeData: any = { style: '', labelStyle: '' };
+    edgeData.minlen = edge.length || 1;
+    // maintain legacy behavior
+    edge.text = edge.label;
+
+    // Arrowhead fill vs none
+    edgeData.arrowhead = edge.type === 'arrow_open' ? 'none' : 'normal';
+
+    // Arrow types
+    const arrowMap = ARROW_MAP[edge.type] ?? ARROW_MAP.arrow_open;
+    edgeData.arrowTypeStart = arrowMap[0];
+    edgeData.arrowTypeEnd = arrowMap[1];
+
+    // Optional edge label positioning flags
+    edgeData.startLabelRight = edge.startLabelRight;
+    edgeData.endLabelLeft = edge.endLabelLeft;
+
+    // Stroke
+    const strokeRes = computeStroke(edge.stroke, defaults.defaultStyle, defaults.defaultLabelStyle);
+    edgeData.thickness = strokeRes.thickness;
+    edgeData.pattern = strokeRes.pattern;
+    edgeData.style = (edgeData.style || '') + (strokeRes.style || '');
+    edgeData.labelStyle = (edgeData.labelStyle || '') + (strokeRes.labelStyle || '');
+
+    // Curve
+    // @ts-ignore - defaults.confCurve is present at runtime but missing in type
+    edgeData.curve = getCurve(edge.interpolate, defaults.defaultInterpolate, defaults.confCurve);
+
+    // Arrowhead style + labelpos when we have label text
+    const hasText = (edge?.text ?? '') !== '';
+    if (hasText) {
+      edgeData.arrowheadStyle = 'fill: #333';
+      edgeData.labelpos = 'c';
+    } else if (edge.style !== undefined) {
+      edgeData.arrowheadStyle = 'fill: #333';
+    }
+
+    edgeData.labelType = edge.labelType;
+    edgeData.label = (edge?.text ?? '').replace(common.lineBreakRegex, '\n');
+
+    if (edge.style === undefined) {
+      edgeData.style = edgeData.style ?? 'stroke: #333; stroke-width: 1.5px;fill:none;';
+    }
+
+    edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
+    return edgeData;
+  };
+
   const addEdges = async function (
     dataForLayout: { edges: any; direction?: string },
     graph: {
@@ -297,99 +411,18 @@ export const render = async (
         const linkNameStart = 'LS_' + edge.start;
         const linkNameEnd = 'LE_' + edge.end;
 
-        const edgeData: any = { style: '', labelStyle: '' };
-        edgeData.minlen = edge.length || 1;
-        edge.text = edge.label;
-        // Set link type for rendering
-        if (edge.type === 'arrow_open') {
-          edgeData.arrowhead = 'none';
-        } else {
-          edgeData.arrowhead = 'normal';
-        }
-
-        // Check of arrow types, placed here in order not to break old rendering
-        edgeData.arrowTypeStart = 'arrow_open';
-        edgeData.arrowTypeEnd = 'arrow_open';
-
-        /* eslint-disable no-fallthrough */
-        switch (edge.type) {
-          case 'double_arrow_cross':
-            edgeData.arrowTypeStart = 'arrow_cross';
-          case 'arrow_cross':
-            edgeData.arrowTypeEnd = 'arrow_cross';
-            break;
-          case 'double_arrow_point':
-            edgeData.arrowTypeStart = 'arrow_point';
-          case 'arrow_point':
-            edgeData.arrowTypeEnd = 'arrow_point';
-            break;
-          case 'double_arrow_circle':
-            edgeData.arrowTypeStart = 'arrow_circle';
-          case 'arrow_circle':
-            edgeData.arrowTypeEnd = 'arrow_circle';
-            break;
-        }
-
-        let style = '';
-        let labelStyle = '';
-
-        edgeData.startLabelRight = edge.startLabelRight;
-        edgeData.endLabelLeft = edge.endLabelLeft;
-
-        switch (edge.stroke) {
-          case 'normal':
-            style = 'fill:none;';
-            if (defaultStyle !== undefined) {
-              style = defaultStyle;
-            }
-            if (defaultLabelStyle !== undefined) {
-              labelStyle = defaultLabelStyle;
-            }
-            edgeData.thickness = 'normal';
-            edgeData.pattern = 'solid';
-            break;
-          case 'dotted':
-            edgeData.thickness = 'normal';
-            edgeData.pattern = 'dotted';
-            edgeData.style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
-            break;
-          case 'thick':
-            edgeData.thickness = 'thick';
-            edgeData.pattern = 'solid';
-            edgeData.style = 'stroke-width: 3.5px;fill:none;';
-            break;
-        }
-
-        edgeData.style += style;
-        edgeData.labelStyle += labelStyle;
-
         const conf = getConfig();
-        if (edge.interpolate !== undefined) {
-          edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
-        } else if (edges.defaultInterpolate !== undefined) {
-          edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
-        } else {
-          // @ts-ignore TODO: fix this
-          edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
-        }
-
-        if (edge.text === undefined) {
-          if (edge.style !== undefined) {
-            edgeData.arrowheadStyle = 'fill: #333';
-          }
-        } else {
-          edgeData.arrowheadStyle = 'fill: #333';
-          edgeData.labelpos = 'c';
-        }
-
-        edgeData.labelType = edge.labelType;
-        edgeData.label = (edge?.text || '').replace(common.lineBreakRegex, '\n');
-
-        if (edge.style === undefined) {
-          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
-        }
-
-        edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
+        const edgeData = buildEdgeData(
+          edge,
+          {
+            defaultStyle,
+            defaultLabelStyle,
+            defaultInterpolate: edges.defaultInterpolate,
+            // @ts-ignore - conf.curve exists at runtime but is missing from typing
+            confCurve: conf.curve,
+          },
+          common
+        );
 
         edgeData.id = linkId;
         edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
@@ -460,422 +493,94 @@ export const render = async (
     }
   }
 
-  const intersection = (
-    node: { x: any; y: any; width: number; height: number },
-    outsidePoint: { x: number; y: number },
-    insidePoint: { x: number; y: number }
-  ) => {
-    log.debug(`intersection calc abc89:
-  outsidePoint: ${JSON.stringify(outsidePoint)}
-  insidePoint : ${JSON.stringify(insidePoint)}
-  node        : x:${node.x} y:${node.y} w:${node.width} h:${node.height}`);
-    const x = node.x;
-    const y = node.y;
-
-    const dx = Math.abs(x - insidePoint.x);
-    // const dy = Math.abs(y - insidePoint.y);
-    const w = node.width / 2;
-    let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-    const h = node.height / 2;
-
-    const Q = Math.abs(outsidePoint.y - insidePoint.y);
-    const R = Math.abs(outsidePoint.x - insidePoint.x);
-
-    if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
-      // Intersection is top or bottom of rect.
-      const q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
-      r = (R * q) / Q;
-      const res = {
-        x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
-        y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q,
-      };
-
-      // Keep axis-constant special-cases but do not snap to outsidePoint when r===0
-      if (R === 0) {
-        // Vertical approach: x is constant
-        res.x = outsidePoint.x;
-      }
-      if (Q === 0) {
-        // Horizontal approach: y is constant
-        res.y = outsidePoint.y;
-      }
-
-      log.debug(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res); // cspell: disable-line
-
-      return res;
-    } else {
-      // Intersection onn sides of rect
-      if (insidePoint.x < outsidePoint.x) {
-        r = outsidePoint.x - w - x;
-      } else {
-        // r = outsidePoint.x - w - x;
-        r = x - w - outsidePoint.x;
-      }
-      const q = (Q * r) / R;
-      //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
-      // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
-      let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
-      // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
-      let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
-      log.debug(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
-      // Do not snap to outsidePoint when r===0; only handle axis-constant cases
-      if (R === 0) {
-        _x = outsidePoint.x;
-      }
-      if (Q === 0) {
-        _y = outsidePoint.y;
-      }
-
-      return { x: _x, y: _y };
-    }
+  // Node bounds helpers (global)
+  const getEffectiveGroupWidth = (node: any): number => {
+    const labelW = node?.labels?.[0]?.width ?? 0;
+    const padding = node?.padding ?? 0;
+    return Math.max(node.width ?? 0, labelW + padding);
   };
-  const outsideNode = (
-    node: { x: any; y: any; width: number; height: number },
-    point: { x: number; y: number }
-  ) => {
-    const x = node.x;
-    const y = node.y;
-    const dx = Math.abs(point.x - x);
-    const dy = Math.abs(point.y - y);
-    const w = node.width / 2;
-    const h = node.height / 2;
-    if (dx >= w || dy >= h) {
-      return true;
-    }
-    return false;
+
+  const boundsFor = (node: any): RectLike => {
+    const width = node?.isGroup ? getEffectiveGroupWidth(node) : node.width;
+    return {
+      x: node.offset.posX + node.width / 2,
+      y: node.offset.posY + node.height / 2,
+      width,
+      height: node.height,
+      padding: node.padding,
+    };
   };
 
   const cutter2 = (startNode: any, endNode: any, _points: any[]) => {
-    const startBounds = {
-      x: startNode.offset.posX + startNode.width / 2,
-      y: startNode.offset.posY + startNode.height / 2,
-      width: startNode.width,
-      height: startNode.height,
-      padding: startNode.padding,
-    };
-    const endBounds = {
-      x: endNode.offset.posX + endNode.width / 2,
-      y: endNode.offset.posY + endNode.height / 2,
-      width: endNode.width,
-      height: endNode.height,
-      padding: endNode.padding,
-    };
+    const startBounds = boundsFor(startNode);
+    const endBounds = boundsFor(endNode);
 
     if (_points.length === 0) {
       return [];
     }
 
     // Copy the original points array
-    const points = [..._points];
+    const points: P[] = [..._points] as P[];
 
     // The first point is the center of sNode, the last point is the center of eNode
     const startCenter = points[0];
     const endCenter = points[points.length - 1];
 
-    log.debug('UIO cutter2: startCenter:', startCenter);
-    log.debug('UIO cutter2: endCenter:', endCenter);
+    // Minimal, structured logging for diagnostics
+    log.debug('UIO cutter2: bounds', { startBounds, endBounds });
+    log.debug('UIO cutter2: original points', _points);
 
     let firstOutsideStartIndex = -1;
-    let lastOutsideEndIndex = -1;
 
     // Single iteration through the array
     for (const [i, point] of points.entries()) {
-      // Check if this is the first point outside the start node
       if (firstOutsideStartIndex === -1 && outsideNode(startBounds, point)) {
         firstOutsideStartIndex = i;
-        log.debug('UIO cutter2: First point outside start node at index', i, point);
       }
-
-      // Check if this point is outside the end node (keep updating to find the last one)
       if (outsideNode(endBounds, point)) {
-        lastOutsideEndIndex = i;
-        log.debug('UIO cutter2: Point outside end node at index', i, point);
+        // keep scanning; we'll also scan from the end for the last outside point
       }
     }
-
-    log.debug(
-      'UIO cutter2: firstOutsideStartIndex:',
-      firstOutsideStartIndex,
-      'lastOutsideEndIndex:',
-      lastOutsideEndIndex
-    );
-    log.debug('UIO cutter2: startBounds:', startBounds);
-    log.debug('UIO cutter2: endBounds:', endBounds);
-    log.debug('UIO cutter2: original points:', _points);
 
     // Calculate intersection with start node if we found a point outside it
     if (firstOutsideStartIndex !== -1) {
       const outsidePointForStart = points[firstOutsideStartIndex];
-      let actualOutsideStart = outsidePointForStart;
-
-      // Quick check: if the point is very close to the node boundary, move it further out
-      const dxStart = Math.abs(outsidePointForStart.x - startBounds.x);
-      const dyStart = Math.abs(outsidePointForStart.y - startBounds.y);
-      const wStart = startBounds.width / 2;
-      const hStart = startBounds.height / 2;
-
-      log.debug('UIO cutter2: Checking if start outside point is truly outside:', {
-        outsidePoint: outsidePointForStart,
-        dx: dxStart,
-        dy: dyStart,
-        w: wStart,
-        h: hStart,
-        isOnBoundary: Math.abs(dxStart - wStart) < 1 || Math.abs(dyStart - hStart) < 1,
-      });
-
-      // If the point is on or very close to the boundary, move it further out
-      if (Math.abs(dxStart - wStart) < 1 || Math.abs(dyStart - hStart) < 1) {
-        log.debug('UIO cutter2: Start outside point is on boundary, creating truly outside point');
-        const directionX = outsidePointForStart.x - startBounds.x;
-        const directionY = outsidePointForStart.y - startBounds.y;
-        const length = Math.sqrt(directionX * directionX + directionY * directionY);
-
-        if (length > 0) {
-          // Move the point 10 pixels further out in the same direction
-          actualOutsideStart = {
-            x: startBounds.x + (directionX / length) * (length + 10),
-            y: startBounds.y + (directionY / length) * (length + 10),
-          };
-          log.debug('UIO cutter2: Created truly outside start point:', actualOutsideStart);
-        }
-      }
-
-      let startIntersection;
-
-      // Try using the node's intersect method first
-      if (startNode.intersect) {
-        startIntersection = startNode.intersect(actualOutsideStart);
-        log.debug('UIO cutter2: startNode.intersect result:', startIntersection);
-
-        // Check if the intersection is on the wrong side of the node
-        const isWrongSideStart =
-          (actualOutsideStart.x < startBounds.x && startIntersection.x > startBounds.x) ||
-          (actualOutsideStart.x > startBounds.x && startIntersection.x < startBounds.x);
-
-        if (isWrongSideStart) {
-          log.debug('UIO cutter2: startNode.intersect returned wrong side, setting to null');
-          startIntersection = null;
-        } else {
-          // Check if the intersection is valid (distance > 1)
-          const distanceStart = Math.sqrt(
-            (actualOutsideStart.x - startIntersection.x) ** 2 +
-              (actualOutsideStart.y - startIntersection.y) ** 2
-          );
-          log.debug(
-            'UIO cutter2: Distance from start outside point to intersection:',
-            distanceStart
-          );
-          if (distanceStart <= 1) {
-            log.debug('UIO cutter2: startNode.intersect distance too small, setting to null');
-            startIntersection = null;
-          }
-        }
-      } else {
-        log.debug('UIO cutter2: startNode.intersect method not available');
-      }
-
-      // Fallback to intersection function
-      if (!startIntersection) {
-        // Create a proper inside point that's on the correct side of the node
-        // The inside point should be between the outside point and the far edge
-        const isVerticalStart = Math.abs(actualOutsideStart.x - startBounds.x) < 1;
-        const isHorizontalStart = Math.abs(actualOutsideStart.y - startBounds.y) < 1;
-        const insidePointStart = {
-          x: isVerticalStart
-            ? actualOutsideStart.x
-            : actualOutsideStart.x < startBounds.x
-              ? startBounds.x - startBounds.width / 4
-              : startBounds.x + startBounds.width / 4,
-          y: isHorizontalStart ? actualOutsideStart.y : startCenter.y,
-        };
-
-        log.debug('UIO cutter2: Using fallback intersection function for start with:', {
-          startBounds,
-          actualOutsideStart,
-          insidePoint: insidePointStart,
-          startCenter,
-        });
-        startIntersection = intersection(startBounds, actualOutsideStart, insidePointStart);
-        log.debug('UIO cutter2: Fallback start intersection result:', startIntersection);
-      }
-
-      // Replace the first point with the intersection
-      if (startIntersection) {
-        // Check if the intersection is the same as any existing point
-        const isDuplicate = points.some(
-          (p, index) =>
-            index > 0 &&
-            Math.abs(p.x - startIntersection.x) < 0.1 &&
-            Math.abs(p.y - startIntersection.y) < 0.1
-        );
-
-        if (isDuplicate) {
-          log.info(
-            'UIO cutter2: Start intersection is duplicate of existing point, removing first point instead'
-          );
-          points.shift(); // Remove the first point instead of replacing it
-        } else {
-          log.info(
-            'UIO cutter2: Replacing first point',
-            points[0],
-            'with intersection',
-            startIntersection
-          );
-          if (Infinity === startIntersection.x || Infinity === startIntersection.y) {
-            log.info('UIO cutter2: Start intersection out of bounds');
-          } else {
-            log.info('UIO cutter2: Replacing first point with intersection:', startIntersection);
-            points[0] = startIntersection;
-          }
-        }
-      }
+      const startIntersection = computeNodeIntersection(
+        startNode,
+        startBounds,
+        outsidePointForStart,
+        startCenter
+      );
+      log.debug('UIO cutter2: start intersection', startIntersection);
+      replaceEndpoint(points, 'start', startIntersection);
     }
 
     // Calculate intersection with end node
-    // Need to recalculate indices since we may have removed the first point
     let outsidePointForEnd = null;
     let outsideIndexForEnd = -1;
 
-    // Find the last point that's outside the end node in the current points array
     for (let i = points.length - 1; i >= 0; i--) {
       if (outsideNode(endBounds, points[i])) {
         outsidePointForEnd = points[i];
         outsideIndexForEnd = i;
-        log.debug('UIO cutter2: Found point outside end node at current index:', i, points[i]);
         break;
       }
     }
 
     if (!outsidePointForEnd && points.length > 1) {
-      // No points outside end node, try using the second-to-last point
-      log.debug('UIO cutter2: No points outside end node, trying second-to-last point');
       outsidePointForEnd = points[points.length - 2];
       outsideIndexForEnd = points.length - 2;
     }
 
     if (outsidePointForEnd) {
-      // Check if the outside point is actually on the boundary (distance = 0 from intersection)
-      // If so, we need to create a truly outside point
-      let actualOutsidePoint = outsidePointForEnd;
-
-      // Quick check: if the point is very close to the node boundary, move it further out
-      const dx = Math.abs(outsidePointForEnd.x - endBounds.x);
-      const dy = Math.abs(outsidePointForEnd.y - endBounds.y);
-      const w = endBounds.width / 2;
-      const h = endBounds.height / 2;
-
-      log.debug('UIO cutter2: Checking if outside point is truly outside:', {
-        outsidePoint: outsidePointForEnd,
-        dx,
-        dy,
-        w,
-        h,
-        isOnBoundary: Math.abs(dx - w) < 1 || Math.abs(dy - h) < 1,
-      });
-
-      // If the point is on or very close to the boundary, move it further out
-      if (Math.abs(dx - w) < 1 || Math.abs(dy - h) < 1) {
-        log.debug('UIO cutter2: Outside point is on boundary, creating truly outside point');
-        // Move the point further away from the node center
-        const directionX = outsidePointForEnd.x - endBounds.x;
-        const directionY = outsidePointForEnd.y - endBounds.y;
-        const length = Math.sqrt(directionX * directionX + directionY * directionY);
-
-        if (length > 0) {
-          // Move the point 10 pixels further out in the same direction
-          actualOutsidePoint = {
-            x: endBounds.x + (directionX / length) * (length + 10),
-            y: endBounds.y + (directionY / length) * (length + 10),
-          };
-          log.debug('UIO cutter2: Created truly outside point:', actualOutsidePoint);
-        }
-      }
-
-      let endIntersection;
-
-      // Try using the node's intersect method first
-      if (endNode.intersect) {
-        endIntersection = endNode.intersect(actualOutsidePoint);
-        log.debug('UIO cutter2: endNode.intersect result:', endIntersection);
-
-        // Check if the intersection is on the wrong side of the node
-        const isWrongSide =
-          (actualOutsidePoint.x < endBounds.x && endIntersection.x > endBounds.x) ||
-          (actualOutsidePoint.x > endBounds.x && endIntersection.x < endBounds.x);
-
-        if (isWrongSide) {
-          log.debug('UIO cutter2: endNode.intersect returned wrong side, setting to null');
-          endIntersection = null;
-        } else {
-          // Check if the intersection is valid (distance > 1)
-          const distance = Math.sqrt(
-            (actualOutsidePoint.x - endIntersection.x) ** 2 +
-              (actualOutsidePoint.y - endIntersection.y) ** 2
-          );
-          log.debug('UIO cutter2: Distance from outside point to intersection:', distance);
-          if (distance <= 1) {
-            log.debug('UIO cutter2: endNode.intersect distance too small, setting to null');
-            endIntersection = null;
-          }
-        }
-      } else {
-        log.debug('UIO cutter2: endNode.intersect method not available');
-      }
-
-      // Fallback to intersection function
-      if (!endIntersection) {
-        // Create a proper inside point that's on the correct side of the node
-        // The inside point should be between the outside point and the far edge
-        const isVerticalEnd = Math.abs(actualOutsidePoint.x - endBounds.x) < 1;
-        const isHorizontalEnd = Math.abs(actualOutsidePoint.y - endBounds.y) < 1;
-        const insidePoint = {
-          x: isVerticalEnd
-            ? actualOutsidePoint.x
-            : actualOutsidePoint.x < endBounds.x
-              ? endBounds.x - endBounds.width / 4
-              : endBounds.x + endBounds.width / 4,
-          y: isHorizontalEnd ? actualOutsidePoint.y : endCenter.y,
-        };
-
-        log.debug('UIO cutter2: Using fallback intersection function with:', {
-          endBounds,
-          actualOutsidePoint,
-          insidePoint,
-          endCenter,
-        });
-        endIntersection = intersection(endBounds, actualOutsidePoint, insidePoint);
-        log.debug('UIO cutter2: Fallback intersection result:', endIntersection);
-      }
-
-      // Replace the last point with the intersection
-      if (endIntersection) {
-        // Check if the intersection is the same as any existing point
-        const isDuplicate = points.some(
-          (p, index) =>
-            index < points.length - 1 &&
-            Math.abs(p.x - endIntersection.x) < 0.1 &&
-            Math.abs(p.y - endIntersection.y) < 0.1
-        );
-
-        if (isDuplicate) {
-          log.debug(
-            'UIO cutter2: End intersection is duplicate of existing point, removing last point instead'
-          );
-          points.pop(); // Remove the last point instead of replacing it
-        } else {
-          log.debug(
-            'UIO cutter2: Replacing last point',
-            points[points.length - 1],
-            'with intersection',
-            endIntersection,
-            'using outside point at index',
-            outsideIndexForEnd
-          );
-          points[points.length - 1] = endIntersection;
-        }
-      }
-    } else {
-      log.debug('UIO cutter2: No suitable outside point found for end node intersection');
+      const endIntersection = computeNodeIntersection(
+        endNode,
+        endBounds,
+        outsidePointForEnd,
+        endCenter
+      );
+      log.debug('UIO cutter2: end intersection', { endIntersection, outsideIndexForEnd });
+      replaceEndpoint(points, 'end', endIntersection);
     }
 
     // Final cleanup: Check if the last point is too close to the previous point
@@ -885,37 +590,17 @@ export const render = async (
       const distance = Math.sqrt(
         (lastPoint.x - secondLastPoint.x) ** 2 + (lastPoint.y - secondLastPoint.y) ** 2
       );
-
-      // If the distance is very small (less than 2 pixels), remove the last point
       if (distance < 2) {
-        log.debug(
-          'UIO cutter2: Last point too close to previous point, removing it. Distance:',
-          distance
-        );
-        log.debug('UIO cutter2: Removing last point:', lastPoint, 'keeping:', secondLastPoint);
+        log.debug('UIO cutter2: trimming tail point (too close)', {
+          distance,
+          lastPoint,
+          secondLastPoint,
+        });
         points.pop();
       }
     }
 
-    log.debug('UIO cutter2: Final points:', points);
-
-    // Debug: Check which side of the end node we're ending at
-    if (points.length > 0) {
-      const finalPoint = points[points.length - 1];
-      const endNodeCenter = endBounds.x;
-      const endNodeLeftEdge = endNodeCenter - endBounds.width / 2;
-      const endNodeRightEdge = endNodeCenter + endBounds.width / 2;
-
-      log.debug('UIO cutter2: End node analysis:', {
-        finalPoint,
-        endNodeCenter,
-        endNodeLeftEdge,
-        endNodeRightEdge,
-        endingSide: finalPoint.x < endNodeCenter ? 'LEFT' : 'RIGHT',
-        distanceFromLeftEdge: Math.abs(finalPoint.x - endNodeLeftEdge),
-        distanceFromRightEdge: Math.abs(finalPoint.x - endNodeRightEdge),
-      });
-    }
+    log.debug('UIO cutter2: final points', points);
 
     return points;
   };
@@ -982,7 +667,7 @@ export const render = async (
   log.info('Drawing flowchart using v4 renderer', elk);
 
   // Set the direction of the graph based on the parsed information
-  const dir = data4Layout.direction || 'DOWN';
+  const dir = data4Layout.direction ?? 'DOWN';
   elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
 
   // Create the lookup db for the subgraphs and their children to used when creating
