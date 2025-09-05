@@ -490,14 +490,13 @@ export const render = async (
         y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q,
       };
 
-      if (r === 0) {
-        res.x = outsidePoint.x;
-        res.y = outsidePoint.y;
-      }
+      // Keep axis-constant special-cases but do not snap to outsidePoint when r===0
       if (R === 0) {
+        // Vertical approach: x is constant
         res.x = outsidePoint.x;
       }
       if (Q === 0) {
+        // Horizontal approach: y is constant
         res.y = outsidePoint.y;
       }
 
@@ -519,10 +518,7 @@ export const render = async (
       // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
       let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
       log.debug(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
-      if (r === 0) {
-        _x = outsidePoint.x;
-        _y = outsidePoint.y;
-      }
+      // Do not snap to outsidePoint when r===0; only handle axis-constant cases
       if (R === 0) {
         _x = outsidePoint.x;
       }
@@ -609,25 +605,98 @@ export const render = async (
 
     // Calculate intersection with start node if we found a point outside it
     if (firstOutsideStartIndex !== -1) {
-      const outsidePoint = points[firstOutsideStartIndex];
+      const outsidePointForStart = points[firstOutsideStartIndex];
+      let actualOutsideStart = outsidePointForStart;
+
+      // Quick check: if the point is very close to the node boundary, move it further out
+      const dxStart = Math.abs(outsidePointForStart.x - startBounds.x);
+      const dyStart = Math.abs(outsidePointForStart.y - startBounds.y);
+      const wStart = startBounds.width / 2;
+      const hStart = startBounds.height / 2;
+
+      log.debug('UIO cutter2: Checking if start outside point is truly outside:', {
+        outsidePoint: outsidePointForStart,
+        dx: dxStart,
+        dy: dyStart,
+        w: wStart,
+        h: hStart,
+        isOnBoundary: Math.abs(dxStart - wStart) < 1 || Math.abs(dyStart - hStart) < 1,
+      });
+
+      // If the point is on or very close to the boundary, move it further out
+      if (Math.abs(dxStart - wStart) < 1 || Math.abs(dyStart - hStart) < 1) {
+        log.debug('UIO cutter2: Start outside point is on boundary, creating truly outside point');
+        const directionX = outsidePointForStart.x - startBounds.x;
+        const directionY = outsidePointForStart.y - startBounds.y;
+        const length = Math.sqrt(directionX * directionX + directionY * directionY);
+
+        if (length > 0) {
+          // Move the point 10 pixels further out in the same direction
+          actualOutsideStart = {
+            x: startBounds.x + (directionX / length) * (length + 10),
+            y: startBounds.y + (directionY / length) * (length + 10),
+          };
+          log.debug('UIO cutter2: Created truly outside start point:', actualOutsideStart);
+        }
+      }
+
       let startIntersection;
 
       // Try using the node's intersect method first
       if (startNode.intersect) {
-        startIntersection = startNode.intersect(outsidePoint);
+        startIntersection = startNode.intersect(actualOutsideStart);
+        log.debug('UIO cutter2: startNode.intersect result:', startIntersection);
 
-        // Check if the intersection is valid (distance > 1)
-        const distance = Math.sqrt(
-          (startCenter.x - startIntersection.x) ** 2 + (startCenter.y - startIntersection.y) ** 2
-        );
-        if (distance <= 1) {
+        // Check if the intersection is on the wrong side of the node
+        const isWrongSideStart =
+          (actualOutsideStart.x < startBounds.x && startIntersection.x > startBounds.x) ||
+          (actualOutsideStart.x > startBounds.x && startIntersection.x < startBounds.x);
+
+        if (isWrongSideStart) {
+          log.debug('UIO cutter2: startNode.intersect returned wrong side, setting to null');
           startIntersection = null;
+        } else {
+          // Check if the intersection is valid (distance > 1)
+          const distanceStart = Math.sqrt(
+            (actualOutsideStart.x - startIntersection.x) ** 2 +
+              (actualOutsideStart.y - startIntersection.y) ** 2
+          );
+          log.debug(
+            'UIO cutter2: Distance from start outside point to intersection:',
+            distanceStart
+          );
+          if (distanceStart <= 1) {
+            log.debug('UIO cutter2: startNode.intersect distance too small, setting to null');
+            startIntersection = null;
+          }
         }
+      } else {
+        log.debug('UIO cutter2: startNode.intersect method not available');
       }
 
       // Fallback to intersection function
       if (!startIntersection) {
-        startIntersection = intersection(startBounds, startCenter, outsidePoint);
+        // Create a proper inside point that's on the correct side of the node
+        // The inside point should be between the outside point and the far edge
+        const isVerticalStart = Math.abs(actualOutsideStart.x - startBounds.x) < 1;
+        const isHorizontalStart = Math.abs(actualOutsideStart.y - startBounds.y) < 1;
+        const insidePointStart = {
+          x: isVerticalStart
+            ? actualOutsideStart.x
+            : actualOutsideStart.x < startBounds.x
+              ? startBounds.x - startBounds.width / 4
+              : startBounds.x + startBounds.width / 4,
+          y: isHorizontalStart ? actualOutsideStart.y : startCenter.y,
+        };
+
+        log.debug('UIO cutter2: Using fallback intersection function for start with:', {
+          startBounds,
+          actualOutsideStart,
+          insidePoint: insidePointStart,
+          startCenter,
+        });
+        startIntersection = intersection(startBounds, actualOutsideStart, insidePointStart);
+        log.debug('UIO cutter2: Fallback start intersection result:', startIntersection);
       }
 
       // Replace the first point with the intersection
@@ -641,18 +710,23 @@ export const render = async (
         );
 
         if (isDuplicate) {
-          log.debug(
+          log.info(
             'UIO cutter2: Start intersection is duplicate of existing point, removing first point instead'
           );
           points.shift(); // Remove the first point instead of replacing it
         } else {
-          log.debug(
+          log.info(
             'UIO cutter2: Replacing first point',
             points[0],
             'with intersection',
             startIntersection
           );
-          points[0] = startIntersection;
+          if (Infinity === startIntersection.x || Infinity === startIntersection.y) {
+            log.info('UIO cutter2: Start intersection out of bounds');
+          } else {
+            log.info('UIO cutter2: Replacing first point with intersection:', startIntersection);
+            points[0] = startIntersection;
+          }
         }
       }
     }
@@ -752,12 +826,15 @@ export const render = async (
       if (!endIntersection) {
         // Create a proper inside point that's on the correct side of the node
         // The inside point should be between the outside point and the far edge
+        const isVerticalEnd = Math.abs(actualOutsidePoint.x - endBounds.x) < 1;
+        const isHorizontalEnd = Math.abs(actualOutsidePoint.y - endBounds.y) < 1;
         const insidePoint = {
-          x:
-            actualOutsidePoint.x < endBounds.x
+          x: isVerticalEnd
+            ? actualOutsidePoint.x
+            : actualOutsidePoint.x < endBounds.x
               ? endBounds.x - endBounds.width / 4
               : endBounds.x + endBounds.width / 4,
-          y: endCenter.y,
+          y: isHorizontalEnd ? actualOutsidePoint.y : endCenter.y,
         };
 
         log.debug('UIO cutter2: Using fallback intersection function with:', {
@@ -1070,7 +1147,7 @@ export const render = async (
           // sw = Math.max(bbox.width, startNode.width, startNode.labels[0].width);
           sw = Math.max(startNode.width, startNode.labels[0].width + startNode.padding);
           // sw = startNode.width;
-          log.debug(
+          log.info(
             'UIO width',
             startNode.id,
             startNode.width,
