@@ -4,12 +4,22 @@ import type { EdgeData, Point } from '../types.js';
 // under any transparent markers.
 // The offsets are calculated from the markers' dimensions.
 export const markerOffsets = {
-  aggregation: 18,
-  extension: 18,
-  composition: 18,
+  aggregation: 17.25,
+  extension: 17.25,
+  composition: 17.25,
   dependency: 6,
   lollipop: 13.5,
   arrow_point: 4,
+  //arrow_cross: 24,
+} as const;
+
+// We need to draw the lines a bit shorter to avoid drawing
+// under any transparent markers.
+// The offsets are calculated from the markers' dimensions.
+export const markerOffsets2 = {
+  arrow_point: 9,
+  arrow_cross: 12.5,
+  arrow_circle: 12.5,
 } as const;
 
 /**
@@ -104,6 +114,7 @@ export const getLineFunctionsWithOffset = (
         adjustment *= DIRECTION === 'right' ? -1 : 1;
         offset += adjustment;
       }
+
       return pointTransformer(d).x + offset;
     },
     y: function (

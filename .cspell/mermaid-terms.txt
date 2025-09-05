@@ -8,6 +8,7 @@ compositTitleSize
 cose
 curv
 doublecircle
+elem
 elems
 gantt
 gitgraph
