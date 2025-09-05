@@ -64,6 +64,30 @@ const LINETYPE = {
   PAR_OVER_START: 32,
   BIDIRECTIONAL_SOLID: 33,
   BIDIRECTIONAL_DOTTED: 34,
+
+  SOLID_TOP: 41,
+  SOLID_BOTTOM: 42,
+  STICK_TOP: 43,
+  STICK_BOTTOM: 44,
+
+  SOLID_ARROW_TOP_REVERSE: 45,
+  SOLID_ARROW_BOTTOM_REVERSE: 46,
+  STICK_ARROW_TOP_REVERSE: 47,
+  STICK_ARROW_BOTTOM_REVERSE: 48,
+
+  SOLID_TOP_DOTTED: 51,
+  SOLID_BOTTOM_DOTTED: 52,
+  STICK_TOP_DOTTED: 53,
+  STICK_BOTTOM_DOTTED: 54,
+
+  SOLID_ARROW_TOP_REVERSE_DOTTED: 55,
+  SOLID_ARROW_BOTTOM_REVERSE_DOTTED: 56,
+  STICK_ARROW_TOP_REVERSE_DOTTED: 57,
+  STICK_ARROW_BOTTOM_REVERSE_DOTTED: 58,
+
+  CENTRAL_CONNECTION: 59,
+  CENTRAL_CONNECTION_REVERSE: 60,
+  CENTRAL_CONNECTION_DUAL: 61,
 } as const;
 
 const ARROWTYPE = {
@@ -244,7 +268,8 @@ export class SequenceDB implements DiagramDB {
     idTo?: Message['to'],
     message?: { text: string; wrap: boolean },
     messageType?: number,
-    activate = false
+    activate = false,
+    centralConnection?: number
   ) {
     if (messageType === this.LINETYPE.ACTIVE_END) {
       const cnt = this.activationCount(idFrom ?? '');
@@ -271,6 +296,7 @@ export class SequenceDB implements DiagramDB {
       wrap: message?.wrap ?? this.autoWrap(),
       type: messageType,
       activate,
+      centralConnection: centralConnection ?? 0,
     });
     return true;
   }
@@ -563,6 +589,12 @@ export class SequenceDB implements DiagramDB {
         case 'activeStart':
           this.addSignal(param.actor, undefined, undefined, param.signalType);
           break;
+        case 'centralConnection':
+          this.addSignal(param.actor, undefined, undefined, param.signalType);
+          break;
+        case 'centralConnectionReverse':
+          this.addSignal(param.actor, undefined, undefined, param.signalType);
+          break;
         case 'activeEnd':
           this.addSignal(param.actor, undefined, undefined, param.signalType);
           break;
@@ -606,7 +638,14 @@ export class SequenceDB implements DiagramDB {
               this.state.records.lastDestroyed = undefined;
             }
           }
-          this.addSignal(param.from, param.to, param.msg, param.signalType, param.activate);
+          this.addSignal(
+            param.from,
+            param.to,
+            param.msg,
+            param.signalType,
+            param.activate,
+            param.centralConnection
+          );
           break;
         case 'boxStart':
           this.addBox(param.boxData);
