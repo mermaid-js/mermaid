@@ -151,6 +151,35 @@ erDiagram
     PERSON many(0) optionally to 0+ NAMED-DRIVER : is
 ```
 
+### Aggregation
+
+Aggregation represents a "has-a" relationship where the part can exist independently of the whole. This is different from composition, where the part cannot exist without the whole. Aggregation relationships are rendered with hollow diamond markers at the endpoints.
+
+| Value |      Alias for       | Description                    |
+| :---: | :------------------: | ------------------------------ |
+|  <>   |    _aggregation_     | Basic aggregation (solid line) |
+| <>..  | _aggregation-dashed_ | Dashed aggregation line        |
+
+**Examples:**
+
+```mermaid-example
+erDiagram
+    DEPARTMENT <> EMPLOYEE : contains
+    PROJECT <>.. TASK : manages
+    TEAM <> MEMBER : consists_of
+```
+
+In these examples:
+
+- `DEPARTMENT <> EMPLOYEE` shows that a department contains employees (aggregation)
+- `PROJECT <>.. TASK` shows that a project manages tasks (dashed aggregation)
+- `TEAM <> MEMBER` shows that a team consists of members (aggregation)
+
+**Aggregation vs Association**
+
+- **Aggregation** (`<>`): "Has-a" relationship where parts can exist independently
+- **Association** (`||--`, `}o--`): General relationship between entities
+
 ### Attributes
 
 Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`. The attributes are rendered inside the entity boxes. For example:
