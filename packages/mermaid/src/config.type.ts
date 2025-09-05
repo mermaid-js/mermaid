@@ -109,6 +109,16 @@ export interface MermaidConfig {
       | 'INTERACTIVE'
       | 'MODEL_ORDER'
       | 'GREEDY_MODEL_ORDER';
+    /**
+     * The node order given by the model does not change to produce a better layout. E.g. if node A is before node B in the model this is not changed during crossing minimization. This assumes that the node model order is already respected before crossing minimization. This can be achieved by setting considerModelOrder.strategy to NODES_AND_EDGES.
+     *
+     */
+    forceNodeModelOrder?: boolean;
+    /**
+     * Preserves the order of nodes and edges in the model file if this does not lead to additional edge crossings. Depending on the strategy this is not always possible since the node and edge order might be conflicting.
+     *
+     */
+    considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
   };
   darkMode?: boolean;
   htmlLabels?: boolean;
@@ -1065,6 +1075,10 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
 export interface MindmapDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   maxNodeWidth?: number;
+  /**
+   * Layout algorithm to use for positioning mindmap nodes
+   */
+  layoutAlgorithm?: string;
 }
 /**
  * The object containing configurations specific for kanban diagrams

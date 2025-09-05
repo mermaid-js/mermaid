@@ -326,7 +326,9 @@ Below is a comprehensive list of the newly introduced shapes and their correspon
 
 | **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
 | --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
+| Bang                              | Bang                   | `bang`         | Bang                           | `bang`                                                           |
 | Card                              | Notched Rectangle      | `notch-rect`   | Represents a card              | `card`, `notched-rectangle`                                      |
+| Cloud                             | Cloud                  | `cloud`        | cloud                          | `cloud`                                                          |
 | Collate                           | Hourglass              | `hourglass`    | Represents a collate operation | `collate`, `hourglass`                                           |
 | Com Link                          | Lightning Bolt         | `bolt`         | Communication link             | `com-link`, `lightning-bolt`                                     |
 | Comment                           | Curly Brace            | `brace`        | Adds a comment                 | `brace-l`, `comment`                                             |
@@ -983,11 +985,23 @@ flowchart TD
   - `b`
 - **w**: The width of the image. If not defined, this will default to the natural width of the image.
 - **h**: The height of the image. If not defined, this will default to the natural height of the image.
-- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the height (`h`) accordingly to the width (`w`). If not defined, this will default to `off` Possible values are:
+- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the width (`w`) accordingly to the height (`h`). If not defined, this will default to `off` Possible values are:
   - `on`
   - `off`
 
-These new shapes provide additional flexibility and visual appeal to your flowcharts, making them more informative and engaging.
+If you want to resize an image, but keep the same aspect ratio, set `h`, and set `constraint: on` to constrain the aspect ratio. E.g.
+
+```mermaid-example
+flowchart TD
+  %% My image with a constrained aspect ratio
+  A@{ img: "https://mermaid.js.org/favicon.svg", label: "My example image label", pos: "t", h: 60, constraint: "on" }
+```
+
+```mermaid
+flowchart TD
+  %% My image with a constrained aspect ratio
+  A@{ img: "https://mermaid.js.org/favicon.svg", label: "My example image label", pos: "t", h: 60, constraint: "on" }
+```
 
 ## Links between nodes
 
@@ -1816,7 +1830,7 @@ config:
 graph LR
 ```
 
-#### Edge level curve style using Edge IDs (v\<MERMAID_RELEASE_VERSION>+)
+#### Edge level curve style using Edge IDs (v11.10.0+)
 
 You can assign IDs to [edges](#attaching-an-id-to-edges). After assigning an ID you can modify the line style by modifying the edge's `curve` property using the following syntax:
 

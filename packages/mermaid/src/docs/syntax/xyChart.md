@@ -126,7 +126,7 @@ xychart
 
 ## Chart Theme Variables
 
-Themes for xychart resides inside xychart attribute so to set the variables use this syntax:
+Themes for xychart reside inside the `xychart` attribute, allowing customization through the following syntax:
 
 ```yaml
 ---
@@ -150,6 +150,31 @@ config:
 | yAxisTickColor   | Color of the y-axis tick                                  |
 | yAxisLineColor   | Color of the y-axis line                                  |
 | plotColorPalette | String of colors separated by comma e.g. "#f3456, #43445" |
+
+### Setting Colors for Lines and Bars
+
+To set the color for lines and bars, use the `plotColorPalette` parameter. Colors in the palette will correspond sequentially to the elements in your chart (e.g., first bar/line will use the first color specified in the palette).
+
+```mermaid-example
+---
+config:
+  themeVariables:
+    xyChart:
+      plotColorPalette: '#000000, #0000FF, #00FF00, #FF0000'
+---
+xychart
+title "Different Colors in xyChart"
+x-axis "categoriesX" ["Category 1", "Category 2", "Category 3", "Category 4"]
+y-axis "valuesY" 0 --> 50
+%% Black line
+line [10,20,30,40]
+%% Blue bar
+bar [20,30,25,35]
+%% Green bar
+bar [15,25,20,30]
+%% Red line
+line [5,15,25,35]
+```
 
 ## Example on config and theme
 

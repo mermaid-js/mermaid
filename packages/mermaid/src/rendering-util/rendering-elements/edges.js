@@ -438,7 +438,6 @@ const fixCorners = function (lineData) {
   }
   return newLineData;
 };
-
 export const insertEdge = function (elem, edge, clusterDb, diagramType, startNode, endNode, id) {
   const { handDrawnSeed } = getConfig();
   let points = edge.points;
@@ -632,9 +631,9 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
   // lineData.forEach((point) => {
   //   elem
   //     .append('circle')
-  //     .style('stroke', 'blue')
-  //     .style('fill', 'blue')
-  //     .attr('r', 3)
+  //     .style('stroke', 'red')
+  //     .style('fill', 'red')
+  //     .attr('r', 1)
   //     .attr('cx', point.x)
   //     .attr('cy', point.y);
   // });

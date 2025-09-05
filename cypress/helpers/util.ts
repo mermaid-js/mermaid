@@ -15,7 +15,7 @@ interface CodeObject {
   mermaid: CypressMermaidConfig;
 }
 
-const utf8ToB64 = (str: string): string => {
+export const utf8ToB64 = (str: string): string => {
   return Buffer.from(decodeURIComponent(encodeURIComponent(str))).toString('base64');
 };
 
@@ -23,7 +23,7 @@ const batchId: string =
   'mermaid-batch-' +
   (Cypress.env('useAppli')
     ? Date.now().toString()
-    : Cypress.env('CYPRESS_COMMIT') || Date.now().toString());
+    : (Cypress.env('CYPRESS_COMMIT') ?? Date.now().toString()));
 
 export const mermaidUrl = (
   graphStr: string | string[],
@@ -62,9 +62,7 @@ export const imgSnapshotTest = (
     sequence: {
       ...(_options.sequence ?? {}),
       actorFontFamily: 'courier',
-      noteFontFamily: _options.sequence?.noteFontFamily
-        ? _options.sequence.noteFontFamily
-        : 'courier',
+      noteFontFamily: _options.sequence?.noteFontFamily ?? 'courier',
       messageFontFamily: 'courier',
     },
   };

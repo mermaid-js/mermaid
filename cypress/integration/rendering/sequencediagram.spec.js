@@ -893,6 +893,17 @@ describe('Sequence diagram', () => {
         }
       );
     });
+
+    it('should handle bidirectional arrows with autonumber', () => {
+      imgSnapshotTest(`
+       sequenceDiagram
+       autonumber
+       participant A
+       participant B
+       A<<->>B: This is a bidirectional message
+       A->B: This is a normal message`);
+    });
+
     it('should support actor links and properties when not mirrored EXPERIMENTAL: USE WITH CAUTION', () => {
       //Be aware that the syntax for "properties" is likely to be changed.
       imgSnapshotTest(
