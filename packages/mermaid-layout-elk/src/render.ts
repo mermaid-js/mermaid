@@ -880,9 +880,39 @@ export const render = async (
           });
         }
 
-        log.debug('UIO cutter2: Points before cutter2:', edge.points);
-        edge.points = cutter2(startNode, endNode, edge.points);
-        log.debug('UIO cutter2: Points after cutter2:', edge.points);
+        // Debug and sanitize points around cutter2
+        const prevPoints = Array.isArray(edge.points) ? [...edge.points] : [];
+        log.debug('UIO cutter2: Points before cutter2:', prevPoints);
+        edge.points = cutter2(startNode, endNode, prevPoints);
+        const hasNaN = (pts: { x: number; y: number }[]) =>
+          pts?.some((p) => !Number.isFinite(p?.x) || !Number.isFinite(p?.y));
+        if (!Array.isArray(edge.points) || edge.points.length < 2 || hasNaN(edge.points)) {
+          log.warn(
+            'UIO cutter2: Invalid points from cutter2, falling back to prevPoints',
+            edge.points
+          );
+          // Fallback to previous points and strip any invalid ones just in case
+          const cleaned = prevPoints.filter((p) => Number.isFinite(p?.x) && Number.isFinite(p?.y));
+          edge.points = cleaned.length >= 2 ? cleaned : prevPoints;
+        }
+        log.debug('UIO cutter2: Points after cutter2 (sanitized):', edge.points);
+        // Remove consecutive duplicate points to avoid zero-length segments in path builders
+        const deduped = edge.points.filter(
+          (p: { x: number; y: number }, i: number, arr: { x: number; y: number }[]) => {
+            if (i === 0) {
+              return true;
+            }
+            const prev = arr[i - 1];
+            return Math.abs(p.x - prev.x) > 1e-6 || Math.abs(p.y - prev.y) > 1e-6;
+          }
+        );
+        if (deduped.length !== edge.points.length) {
+          log.debug('UIO cutter2: removed consecutive duplicate points', {
+            before: edge.points,
+            after: deduped,
+          });
+        }
+        edge.points = deduped;
         const paths = insertEdge(
           edgesEl,
           edge,
