@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mermaid Functionality Demonstration</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .demo-section {
+        background: white;
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .demo-title {
+        color: #333;
+        border-bottom: 2px solid #007acc;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      .mermaid {
+        text-align: center;
+        margin: 20px 0;
+      }
+      .code-block {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        padding: 15px;
+        font-family: 'Courier New', monospace;
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+      .header {
+        text-align: center;
+        color: #007acc;
+        margin-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🧜‍♀️ Mermaid Functionality Demonstration</h1>
+      <p>A showcase of Mermaid's key diagram types and capabilities</p>
+    </div>
+
+    <div class="demo-section">
+      <h2 class="demo-title">1. Flowchart - Decision Flow</h2>
+      <p><strong>Use case:</strong> Process flows, decision trees, algorithm visualization</p>
+      <div class="code-block">
+        flowchart TD A[Start] --> B{Is it working?} B -->|Yes| C[Great!] B -->|No| D[Debug] D -->
+        E[Fix issues] E --> B C --> F[Deploy]
+      </div>
+      <div class="mermaid">
+        flowchart TD A[Start] --> B{Is it working?} B -->|Yes| C[Great!] B -->|No| D[Debug] D -->
+        E[Fix issues] E --> B C --> F[Deploy]
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2 class="demo-title">2. Sequence Diagram - API Interaction</h2>
+      <p><strong>Use case:</strong> API documentation, system interactions, communication flows</p>
+      <div class="code-block">
+        sequenceDiagram participant C as Client participant S as Server participant DB as Database
+        C->>S: Request user data S->>DB: Query user table DB-->>S: Return user data S-->>C: JSON
+        response Note right of C: Client processes data
+      </div>
+      <div class="mermaid">
+        sequenceDiagram participant C as Client participant S as Server participant DB as Database
+        C->>S: Request user data S->>DB: Query user table DB-->>S: Return user data S-->>C: JSON
+        response Note right of C: Client processes data
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2 class="demo-title">3. Class Diagram - Software Architecture</h2>
+      <p>
+        <strong>Use case:</strong> Object-oriented design, software architecture, database schemas
+      </p>
+      <div class="code-block">
+        classDiagram class User { +String name +String email +login() +logout() } class Order { +int
+        id +Date date +float total +calculate() } class Product { +String name +float price +int
+        stock } User ||--o{ Order : places Order }|--|| Product : contains
+      </div>
+      <div class="mermaid">
+        classDiagram class User { +String name +String email +login() +logout() } class Order { +int
+        id +Date date +float total +calculate() } class Product { +String name +float price +int
+        stock } User ||--o{ Order : places Order }|--|| Product : contains
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2 class="demo-title">4. Git Graph - Development Workflow</h2>
+      <p>
+        <strong>Use case:</strong> Git workflow documentation, branching strategies, release
+        processes
+      </p>
+      <div class="code-block">
+        gitGraph commit id: "Initial" commit id: "Setup" branch feature checkout feature commit id:
+        "Feature A" commit id: "Feature B" checkout main merge feature commit id: "Release v1.0"
+        branch hotfix checkout hotfix commit id: "Fix bug" checkout main merge hotfix commit id:
+        "Release v1.1"
+      </div>
+      <div class="mermaid">
+        gitGraph commit id: "Initial" commit id: "Setup" branch feature checkout feature commit id:
+        "Feature A" commit id: "Feature B" checkout main merge feature commit id: "Release v1.0"
+        branch hotfix checkout hotfix commit id: "Fix bug" checkout main merge hotfix commit id:
+        "Release v1.1"
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2 class="demo-title">5. Gantt Chart - Project Timeline</h2>
+      <p><strong>Use case:</strong> Project management, milestone tracking, resource planning</p>
+      <div class="code-block">
+        gantt title Development Timeline dateFormat YYYY-MM-DD section Planning Requirements :done,
+        req, 2024-01-01, 2024-01-07 Design :done, des, 2024-01-08, 2024-01-14 section Development
+        Backend API :active, api, 2024-01-15, 2024-02-15 Frontend :frontend, after api, 20d Testing
+        :test, after frontend, 10d section Deployment Staging :staging, after test, 3d Production
+        :prod, after staging, 2d
+      </div>
+      <div class="mermaid">
+        gantt title Development Timeline dateFormat YYYY-MM-DD section Planning Requirements :done,
+        req, 2024-01-01, 2024-01-07 Design :done, des, 2024-01-08, 2024-01-14 section Development
+        Backend API :active, api, 2024-01-15, 2024-02-15 Frontend :frontend, after api, 20d Testing
+        :test, after frontend, 10d section Deployment Staging :staging, after test, 3d Production
+        :prod, after staging, 2d
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2 class="demo-title">6. State Diagram - System States</h2>
+      <p><strong>Use case:</strong> State machines, user workflows, system behavior modeling</p>
+      <div class="code-block">
+        stateDiagram-v2 [*] --> Idle Idle --> Loading : start_request Loading --> Success :
+        request_success Loading --> Error : request_failed Success --> Idle : reset Error --> Idle :
+        retry Error --> [*] : give_up
+      </div>
+      <div class="mermaid">
+        stateDiagram-v2 [*] --> Idle Idle --> Loading : start_request Loading --> Success :
+        request_success Loading --> Error : request_failed Success --> Idle : reset Error --> Idle :
+        retry Error --> [*] : give_up
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2 class="demo-title">7. Pie Chart - Data Visualization</h2>
+      <p><strong>Use case:</strong> Data visualization, market share, resource allocation</p>
+      <div class="code-block">
+        pie title Technology Stack Usage "JavaScript" : 35 "TypeScript" : 25 "Python" : 20 "Java" :
+        15 "Other" : 5
+      </div>
+      <div class="mermaid">
+        pie title Technology Stack Usage "JavaScript" : 35 "TypeScript" : 25 "Python" : 20 "Java" :
+        15 "Other" : 5
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2 class="demo-title">8. User Journey - UX Flow</h2>
+      <p>
+        <strong>Use case:</strong> User experience mapping, customer journeys, process optimization
+      </p>
+      <div class="code-block">
+        journey title User Registration Journey section Discovery Visit homepage : 5: User Read
+        about features : 4: User Check pricing : 3: User section Registration Click signup : 3: User
+        Fill form : 2: User Verify email : 1: User, System section Onboarding Complete profile : 4:
+        User Take tutorial : 5: User First task : 5: User
+      </div>
+      <div class="mermaid">
+        journey title User Registration Journey section Discovery Visit homepage : 5: User Read
+        about features : 4: User Check pricing : 3: User section Registration Click signup : 3: User
+        Fill form : 2: User Verify email : 1: User, System section Onboarding Complete profile : 4:
+        User Take tutorial : 5: User First task : 5: User
+      </div>
+    </div>
+
+    <script>
+      // Initialize Mermaid with configuration
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'default',
+        securityLevel: 'loose',
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+        },
+        sequence: {
+          actorMargin: 50,
+          width: 150,
+          height: 65,
+          boxMargin: 10,
+        },
+        gantt: {
+          useMaxWidth: true,
+          leftMargin: 75,
+          gridLineStartPadding: 35,
+        },
+      });
+    </script>
+  </body>
+</html>
