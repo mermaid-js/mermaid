@@ -82,4 +82,13 @@ describe('pie chart', () => {
       `
     );
   });
+  it('should render pie slices only for non-zero values but shows all legends', () => {
+    imgSnapshotTest(
+      `   pie title Pets adopted by volunteers
+    "Dogs" : 386
+    "Cats" : 85
+    "Rats" : 1
+      `
+    );
+  });
 });

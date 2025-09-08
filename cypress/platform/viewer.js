@@ -1,5 +1,6 @@
 import externalExample from './mermaid-example-diagram.esm.mjs';
 import layouts from './mermaid-layout-elk.esm.mjs';
+import tidyTree from './mermaid-layout-tidy-tree.esm.mjs';
 import zenUml from './mermaid-zenuml.esm.mjs';
 import mermaid from './mermaid.esm.mjs';
 
@@ -65,6 +66,7 @@ const contentLoaded = async function () {
     await mermaid.registerExternalDiagrams([externalExample, zenUml]);
 
     mermaid.registerLayoutLoaders(layouts);
+    mermaid.registerLayoutLoaders(tidyTree);
     mermaid.initialize(graphObj.mermaid);
     /**
      *  CC-BY-4.0
@@ -182,7 +184,7 @@ const contentLoadedApi = async function () {
       for (let i = 0; i < numCodes; i++) {
         const { svg, bindFunctions } = await mermaid.render('newid' + i, graphObj.code[i], divs[i]);
         div.innerHTML = svg;
-        bindFunctions(div);
+        bindFunctions?.(div);
       }
     } else {
       const div = document.createElement('div');
@@ -194,7 +196,7 @@ const contentLoadedApi = async function () {
       const { svg, bindFunctions } = await mermaid.render('newid', graphObj.code, div);
       div.innerHTML = svg;
       console.log(div.innerHTML);
-      bindFunctions(div);
+      bindFunctions?.(div);
     }
   }
 };
