@@ -259,15 +259,15 @@ importers:
       dompurify:
         specifier: ^3.2.5
         version: 3.2.5
+      es-toolkit:
+        specifier: ^1.39.6
+        version: 1.39.6
       katex:
         specifier: ^0.16.22
         version: 0.16.22
       khroma:
         specifier: ^2.1.0
         version: 2.1.0
-      lodash-es:
-        specifier: ^4.17.21
-        version: 4.17.21
       marked:
         specifier: ^16.0.0
         version: 16.2.1
@@ -317,9 +317,6 @@ importers:
       '@types/katex':
         specifier: ^0.16.7
         version: 0.16.7
-      '@types/lodash-es':
-        specifier: ^4.17.12
-        version: 4.17.12
       '@types/micromatch':
         specifier: ^4.0.9
         version: 4.0.9
@@ -3357,9 +3354,6 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
-  '@types/lodash-es@4.17.12':
-    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
-
   '@types/lodash@4.17.10':
     resolution: {integrity: sha512-YpS0zzoduEhuOWjAotS6A5AVCva7X4lVlYLF0FYHAY9sdraBfnatttHItlWeZdGhuEkf+OzMNg2ZYAx8t+52uQ==}
 
@@ -5608,6 +5602,9 @@ packages:
   es-to-primitive@1.3.0:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
+
+  es-toolkit@1.39.6:
+    resolution: {integrity: sha512-uiVjnLem6kkfXumlwUEWEKnwUN5QbSEB0DHy2rNJt0nkYcob5K0TXJ7oJRzhAcvx+SRmz4TahKyN5V9cly/IPA==}
 
   es2015-i18n-tag@1.6.1:
     resolution: {integrity: sha512-MYoh9p+JTkgnzBh0MEBON6xUyzdmwT6wzsmmFJvZujGSXiI2kM+3XvFl6+AcIO2eeL6VWgtX9szSiDTMwDxyYA==}
@@ -14174,10 +14171,6 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
-  '@types/lodash-es@4.17.12':
-    dependencies:
-      '@types/lodash': 4.17.10
-
   '@types/lodash@4.17.10': {}
 
   '@types/lodash@4.17.15': {}
@@ -16821,6 +16814,8 @@ snapshots:
       is-callable: 1.2.7
       is-date-object: 1.1.0
       is-symbol: 1.1.1
+
+  es-toolkit@1.39.6: {}
 
   es2015-i18n-tag@1.6.1: {}
 
