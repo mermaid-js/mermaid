@@ -9,6 +9,7 @@ import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
+import { shouldUseHtmlLabels } from '../../utils.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -25,8 +26,7 @@ const rect = async (parent, node) => {
     .attr('id', node.id)
     .attr('data-look', node.look);
 
-  const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
-
+  const useHtmlLabels = shouldUseHtmlLabels();
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 

@@ -1,8 +1,8 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate, getUrl } from '../../diagrams/common/common.js';
+import { getUrl } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
-import utils from '../../utils.js';
+import utils, { shouldUseHtmlLabels } from '../../utils.js';
 import { getLineFunctionsWithOffset } from '../../utils/lineWithOffset.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 
@@ -41,8 +41,7 @@ export const getLabelStyles = (styleArray) => {
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
-  let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
-
+  const useHtmlLabels = shouldUseHtmlLabels();
   const labelElement = await createText(elem, edge.label, {
     style: getLabelStyles(edge.labelStyle),
     useHtmlLabels,
