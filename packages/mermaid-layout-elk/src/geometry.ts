@@ -20,6 +20,21 @@ export interface NodeLike {
 export const EPS = 1;
 export const PUSH_OUT = 10;
 
+export const onBorder = (bounds: RectLike, p: P, tol = 0.5): boolean => {
+  const halfW = bounds.width / 2;
+  const halfH = bounds.height / 2;
+  const left = bounds.x - halfW;
+  const right = bounds.x + halfW;
+  const top = bounds.y - halfH;
+  const bottom = bounds.y + halfH;
+
+  const onLeft = Math.abs(p.x - left) <= tol && p.y >= top - tol && p.y <= bottom + tol;
+  const onRight = Math.abs(p.x - right) <= tol && p.y >= top - tol && p.y <= bottom + tol;
+  const onTop = Math.abs(p.y - top) <= tol && p.x >= left - tol && p.x <= right + tol;
+  const onBottom = Math.abs(p.y - bottom) <= tol && p.x >= left - tol && p.x <= right + tol;
+  return onLeft || onRight || onTop || onBottom;
+};
+
 /**
  * Compute intersection between a rectangle (center x/y, width/height) and the line
  * segment from insidePoint -\> outsidePoint. Returns the point on the rectangle border.

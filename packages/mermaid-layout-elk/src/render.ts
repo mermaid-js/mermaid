@@ -10,6 +10,7 @@ import {
   outsideNode,
   computeNodeIntersection,
   replaceEndpoint,
+  onBorder,
 } from './geometry.js';
 
 type Node = LayoutData['nodes'][number];
@@ -527,8 +528,8 @@ export const render = async (
     const endCenter = points[points.length - 1];
 
     // Minimal, structured logging for diagnostics
-    log.debug('UIO cutter2: bounds', { startBounds, endBounds });
-    log.debug('UIO cutter2: original points', _points);
+    log.debug('PPP cutter2: bounds', { startBounds, endBounds });
+    log.debug('PPP cutter2: original points', _points);
 
     let firstOutsideStartIndex = -1;
 
@@ -867,13 +868,19 @@ export const render = async (
         startNode.y = startNode.offset.posY + startNode.height / 2;
         endNode.x = endNode.offset.posX + endNode.width / 2;
         endNode.y = endNode.offset.posY + endNode.height / 2;
-        if (startNode.shape !== 'rect33') {
+
+        // Only add center points for non-subgraph nodes or when the edge path doesn't already end near the target
+        const shouldAddStartCenter = startNode.shape !== 'rect33';
+        const shouldAddEndCenter = endNode.shape !== 'rect33';
+
+        if (shouldAddStartCenter) {
           edge.points.unshift({
             x: startNode.x,
             y: startNode.y,
           });
         }
-        if (endNode.shape !== 'rect33') {
+
+        if (shouldAddEndCenter) {
           edge.points.push({
             x: endNode.x,
             y: endNode.y,
@@ -882,13 +889,64 @@ export const render = async (
 
         // Debug and sanitize points around cutter2
         const prevPoints = Array.isArray(edge.points) ? [...edge.points] : [];
-        log.debug('UIO cutter2: Points before cutter2:', prevPoints);
-        edge.points = cutter2(startNode, endNode, prevPoints);
+        const endBounds = boundsFor(endNode);
+        log.debug(
+          'PPP cutter2: Points before cutter2:',
+          JSON.stringify(edge.points),
+          'endBounds:',
+          endBounds,
+          onBorder(endBounds, edge.points[edge.points.length - 1])
+        );
+        {
+          const endIsGroup = !!endNode?.isGroup;
+          const lastIdx = prevPoints.length - 1;
+          const lastPt = prevPoints[lastIdx];
+          const endCenterApprox =
+            Math.abs(lastPt.x - endNode.x) < 1e-6 && Math.abs(lastPt.y - endNode.y) < 1e-6;
+          const candidatePt =
+            endCenterApprox && prevPoints.length > 1 ? prevPoints[lastIdx - 1] : lastPt;
+          const lastOnEndBorder = onBorder(endBounds, candidatePt);
+          if (endIsGroup && lastOnEndBorder) {
+            if (endCenterApprox) {
+              // drop the appended end-center so the path truly ends at the border
+              prevPoints.pop();
+            }
+            // still compute start intersection to avoid starting at center
+            const startBounds = boundsFor(startNode);
+            let firstOutsideStartIndex = -1;
+            for (const [i, prevPoint] of prevPoints.entries()) {
+              if (outsideNode(startBounds, prevPoint)) {
+                firstOutsideStartIndex = i;
+                break;
+              }
+            }
+            if (firstOutsideStartIndex !== -1) {
+              const outsidePointForStart = prevPoints[firstOutsideStartIndex];
+              const startCenter = prevPoints[0];
+              const startIntersection = computeNodeIntersection(
+                startNode,
+                startBounds,
+                outsidePointForStart,
+                startCenter
+              );
+              replaceEndpoint(prevPoints, 'start', startIntersection);
+              log.debug('UIO cutter2: start-only intersection applied', { startIntersection });
+            }
+            log.debug(
+              'PPP cutter2: skipping cutter2 because last point on end border and end is group',
+              { endCenterApprox, candidatePt }
+            );
+            edge.points = prevPoints;
+          } else {
+            edge.points = cutter2(startNode, endNode, prevPoints);
+          }
+        }
+        log.debug('PPP cutter2: Points after cutter2:', JSON.stringify(edge.points));
         const hasNaN = (pts: { x: number; y: number }[]) =>
           pts?.some((p) => !Number.isFinite(p?.x) || !Number.isFinite(p?.y));
         if (!Array.isArray(edge.points) || edge.points.length < 2 || hasNaN(edge.points)) {
           log.warn(
-            'UIO cutter2: Invalid points from cutter2, falling back to prevPoints',
+            'POI cutter2: Invalid points from cutter2, falling back to prevPoints',
             edge.points
           );
           // Fallback to previous points and strip any invalid ones just in case
