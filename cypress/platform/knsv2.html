@@ -110,6 +110,49 @@
       config:
         layout: elk
       ---
+      flowchart-elk TB
+      c1-->a2
+      subgraph one
+      a1-->a2
+      end
+      subgraph two
+      b1-->b2
+      end
+      subgraph three
+      c1-->c2
+      end
+      one --> two
+      three --> two
+      two --> c2
+
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart TB
+
+        process_C
+      subgraph container_Alpha
+        subgraph process_B
+          pppB
+        end
+        subgraph process_A
+          pppA
+        end
+        process_B-->|via_AWSBatch|container_Beta
+        process_A-->|messages|container_Beta
+      end
+
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
       flowchart TB
       subgraph container_Beta
         process_C

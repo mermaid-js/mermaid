@@ -511,6 +511,91 @@ export const render = async (
       padding: node.padding,
     };
   };
+  // Helper utilities for endpoint handling around cutter2
+  type Side = 'start' | 'end';
+  const approxEq = (a: number, b: number, eps = 1e-6) => Math.abs(a - b) < eps;
+  const isCenterApprox = (pt: P, node: { x: number; y: number }) =>
+    approxEq(pt.x, node.x) && approxEq(pt.y, node.y);
+
+  const getCandidateBorderPoint = (
+    points: P[],
+    node: any,
+    side: Side
+  ): { candidate: P; centerApprox: boolean } => {
+    if (!points?.length) {
+      return { candidate: { x: node.x, y: node.y } as P, centerApprox: true };
+    }
+    if (side === 'start') {
+      const first = points[0];
+      const centerApprox = isCenterApprox(first, node);
+      const candidate = centerApprox && points.length > 1 ? points[1] : first;
+      return { candidate, centerApprox };
+    } else {
+      const last = points[points.length - 1];
+      const centerApprox = isCenterApprox(last, node);
+      const candidate = centerApprox && points.length > 1 ? points[points.length - 2] : last;
+      return { candidate, centerApprox };
+    }
+  };
+
+  const dropAutoCenterPoint = (points: P[], side: Side, doDrop: boolean) => {
+    if (!doDrop) {
+      return;
+    }
+    if (side === 'start') {
+      if (points.length > 0) {
+        points.shift();
+      }
+    } else {
+      if (points.length > 0) {
+        points.pop();
+      }
+    }
+  };
+
+  const applyStartIntersectionIfNeeded = (points: P[], startNode: any, startBounds: RectLike) => {
+    let firstOutsideStartIndex = -1;
+    for (const [i, p] of points.entries()) {
+      if (outsideNode(startBounds, p)) {
+        firstOutsideStartIndex = i;
+        break;
+      }
+    }
+    if (firstOutsideStartIndex !== -1) {
+      const outsidePointForStart = points[firstOutsideStartIndex];
+      const startCenter = points[0];
+      const startIntersection = computeNodeIntersection(
+        startNode,
+        startBounds,
+        outsidePointForStart,
+        startCenter
+      );
+      replaceEndpoint(points, 'start', startIntersection);
+      log.debug('UIO cutter2: start-only intersection applied', { startIntersection });
+    }
+  };
+
+  const applyEndIntersectionIfNeeded = (points: P[], endNode: any, endBounds: RectLike) => {
+    let outsideIndexForEnd = -1;
+    for (let i = points.length - 1; i >= 0; i--) {
+      if (outsideNode(endBounds, points[i])) {
+        outsideIndexForEnd = i;
+        break;
+      }
+    }
+    if (outsideIndexForEnd !== -1) {
+      const outsidePointForEnd = points[outsideIndexForEnd];
+      const endCenter = points[points.length - 1];
+      const endIntersection = computeNodeIntersection(
+        endNode,
+        endBounds,
+        outsidePointForEnd,
+        endCenter
+      );
+      replaceEndpoint(points, 'end', endIntersection);
+      log.debug('UIO cutter2: end-only intersection applied', { endIntersection });
+    }
+  };
 
   const cutter2 = (startNode: any, endNode: any, _points: any[]) => {
     const startBounds = boundsFor(startNode);
@@ -897,45 +982,41 @@ export const render = async (
           endBounds,
           onBorder(endBounds, edge.points[edge.points.length - 1])
         );
+        // Block for reducing variable scope and guardrails for the cutter function
         {
+          const startBounds = boundsFor(startNode);
+          const endBounds = boundsFor(endNode);
+
+          const startIsGroup = !!startNode?.isGroup;
           const endIsGroup = !!endNode?.isGroup;
-          const lastIdx = prevPoints.length - 1;
-          const lastPt = prevPoints[lastIdx];
-          const endCenterApprox =
-            Math.abs(lastPt.x - endNode.x) < 1e-6 && Math.abs(lastPt.y - endNode.y) < 1e-6;
-          const candidatePt =
-            endCenterApprox && prevPoints.length > 1 ? prevPoints[lastIdx - 1] : lastPt;
-          const lastOnEndBorder = onBorder(endBounds, candidatePt);
-          if (endIsGroup && lastOnEndBorder) {
-            if (endCenterApprox) {
-              // drop the appended end-center so the path truly ends at the border
-              prevPoints.pop();
+
+          const { candidate: startCandidate, centerApprox: startCenterApprox } =
+            getCandidateBorderPoint(prevPoints as P[], startNode, 'start');
+          const { candidate: endCandidate, centerApprox: endCenterApprox } =
+            getCandidateBorderPoint(prevPoints as P[], endNode, 'end');
+
+          const skipStart = startIsGroup && onBorder(startBounds, startCandidate);
+          const skipEnd = endIsGroup && onBorder(endBounds, endCandidate);
+
+          dropAutoCenterPoint(prevPoints as P[], 'start', skipStart && startCenterApprox);
+          dropAutoCenterPoint(prevPoints as P[], 'end', skipEnd && endCenterApprox);
+
+          if (skipStart || skipEnd) {
+            if (!skipStart) {
+              applyStartIntersectionIfNeeded(prevPoints as P[], startNode, startBounds);
             }
-            // still compute start intersection to avoid starting at center
-            const startBounds = boundsFor(startNode);
-            let firstOutsideStartIndex = -1;
-            for (const [i, prevPoint] of prevPoints.entries()) {
-              if (outsideNode(startBounds, prevPoint)) {
-                firstOutsideStartIndex = i;
-                break;
-              }
+            if (!skipEnd) {
+              applyEndIntersectionIfNeeded(prevPoints as P[], endNode, endBounds);
             }
-            if (firstOutsideStartIndex !== -1) {
-              const outsidePointForStart = prevPoints[firstOutsideStartIndex];
-              const startCenter = prevPoints[0];
-              const startIntersection = computeNodeIntersection(
-                startNode,
-                startBounds,
-                outsidePointForStart,
-                startCenter
-              );
-              replaceEndpoint(prevPoints, 'start', startIntersection);
-              log.debug('UIO cutter2: start-only intersection applied', { startIntersection });
-            }
-            log.debug(
-              'PPP cutter2: skipping cutter2 because last point on end border and end is group',
-              { endCenterApprox, candidatePt }
-            );
+
+            log.debug('PPP cutter2: skipping cutter2 due to on-border group endpoint(s)', {
+              skipStart,
+              skipEnd,
+              startCenterApprox,
+              endCenterApprox,
+              startCandidate,
+              endCandidate,
+            });
             edge.points = prevPoints;
           } else {
             edge.points = cutter2(startNode, endNode, prevPoints);
