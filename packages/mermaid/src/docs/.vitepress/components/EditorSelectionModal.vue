@@ -40,7 +40,7 @@ const openSourceFeatures: Feature[] = [
   { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
 ];
 
-const editorColumn: EditorColumn[] = [
+const editorColumns: EditorColumn[] = [
   {
     title: 'Mermaid Pro',
     description: 'Unlock AI and real-time collaboration',
@@ -92,7 +92,7 @@ onUnmounted(() => {
       class="flex flex-col sm:flex-row rounded-3xl shadow relative gap-5 pt-10 sm:pt-20 pb-10 px-4 sm:px-10 bg-[#F1F8FA] overflow-y-auto max-h-full"
     >
       <div
-        v-for="column in editorColumn"
+        v-for="column in editorColumns"
         :key="column.title"
         class="sm:w-96 flex relative flex-col justify-start items-center p-6 sm:p-8 text-gray-800 shadow w-full"
         :class="
