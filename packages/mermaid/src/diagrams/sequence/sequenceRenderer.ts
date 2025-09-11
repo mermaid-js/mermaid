@@ -1631,8 +1631,12 @@ const hasCentralConnection = function (msg, diagObj) {
  * @returns The offset to apply to startx position
  */
 const calculateCentralConnectionOffset = function (msg, diagObj, isArrowToRight) {
-  const { CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL, BIDIRECTIONAL_SOLID } =
-    diagObj.db.LINETYPE;
+  const {
+    CENTRAL_CONNECTION_REVERSE,
+    CENTRAL_CONNECTION_DUAL,
+    BIDIRECTIONAL_SOLID,
+    BIDIRECTIONAL_DOTTED,
+  } = diagObj.db.LINETYPE;
 
   let offset = 0;
 
@@ -1643,7 +1647,10 @@ const calculateCentralConnectionOffset = function (msg, diagObj, isArrowToRight)
     offset += CENTRAL_CONNECTION_BASE_OFFSET;
   }
 
-  if (msg.centralConnection === CENTRAL_CONNECTION_DUAL && msg.type === BIDIRECTIONAL_SOLID) {
+  if (
+    msg.centralConnection === CENTRAL_CONNECTION_DUAL &&
+    (msg.type === BIDIRECTIONAL_SOLID || msg.type === BIDIRECTIONAL_DOTTED)
+  ) {
     offset += isArrowToRight ? 0 : -CENTRAL_CONNECTION_BIDIRECTIONAL_OFFSET;
   }
 
