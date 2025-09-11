@@ -20,6 +20,7 @@ import {
   type ArchitectureJunction,
   type ArchitectureService,
 } from './architectureTypes.js';
+import { getEdgeId } from '../../utils.js';
 
 export const drawEdges = async function (
   edgesEl: D3Element,
@@ -91,7 +92,8 @@ export const drawEdges = async function (
 
         g.insert('path')
           .attr('d', `M ${startX},${startY} L ${midX},${midY} L${endX},${endY} `)
-          .attr('class', 'edge');
+          .attr('class', 'edge')
+          .attr('id', getEdgeId(source, target, { prefix: 'L' }));
 
         if (sourceArrow) {
           const xShift = isArchitectureDirectionX(sourceDir)
@@ -206,8 +208,9 @@ export const drawGroups = async function (
       if (data.type === 'group') {
         const { h, w, x1, y1 } = node.boundingBox();
 
-        groupsEl
-          .append('rect')
+        const groupsNode = groupsEl.append('rect');
+        groupsNode
+          .attr('id', `group-${data.id}`)
           .attr('x', x1 + halfIconSize)
           .attr('y', y1 + halfIconSize)
           .attr('width', w)
@@ -262,6 +265,7 @@ export const drawGroups = async function (
               ')'
           );
         }
+        db.setElementForId(data.id, groupsNode);
       }
     })
   );
@@ -342,9 +346,9 @@ export const drawServices = async function (
         );
     }
 
-    serviceElem.attr('class', 'architecture-service');
+    serviceElem.attr('id', `service-${service.id}`).attr('class', 'architecture-service');
 
-    const { width, height } = serviceElem._groups[0][0].getBBox();
+    const { width, height } = serviceElem.node().getBBox();
     service.width = width;
     service.height = height;
     db.setElementForId(service.id, serviceElem);
