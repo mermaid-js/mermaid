@@ -12,7 +12,7 @@ entry EventModeling:
 
 
 EmModelEntityType returns string:
-    'rmo' | 'scn' | 'cmd' | 'evt' | 'pcr';
+    'rmo' | 'readmodel' | 'scn' | 'screen' | 'cmd' | 'command' | 'evt' | 'event' | 'pcr' | 'processor';
 
 EmDataType returns string:
     'json' | 'jsobj' | 'figma' | 'salt' | 'uri' | 'md' | 'html' | 'text';
@@ -25,10 +25,10 @@ QualifiedName returns string:
     EM_EID ('.' EM_EID)*;
 
 EmTimeFrame:
-    'tf' name=EM_FI modelEntityType=EmModelEntityType entityIdentifier=QualifiedName ('>f' sourceFrames+=[EmFrame:EM_FI])* ('[[' dataReference=[EmDataEntity:EM_EID] ']]')? EmDataInline?;
+    ('tf' | 'timeframe') name=EM_FI modelEntityType=EmModelEntityType entityIdentifier=QualifiedName ('->>' sourceFrames+=[EmFrame:EM_FI])* ('[[' dataReference=[EmDataEntity:EM_EID] ']]')? EmDataInline?;
 
 EmResetFrame:
-      'rf' name=EM_FI modelEntityType=EmModelEntityType entityIdentifier=QualifiedName ('>f' sourceFrames+=[EmFrame:EM_FI])* ('[[' dataReference=[EmDataEntity:EM_EID] ']]')? EmDataInline?;
+    ('rf' | 'resetframe') name=EM_FI modelEntityType=EmModelEntityType entityIdentifier=QualifiedName ('->>' sourceFrames+=[EmFrame:EM_FI])* ('[[' dataReference=[EmDataEntity:EM_EID] ']]')? EmDataInline?;
 
 
 EmFrame: EmTimeFrame | EmResetFrame;
@@ -68,4 +68,3 @@ hidden terminal EM_SINGLE_LINE_COMMENT: /[\t ]*%%[^\n\r]*/;
 
 hidden terminal EM_ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal EM_SL_COMMENT: /\/\/[^\n\r]*/;
-

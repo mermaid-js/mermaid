@@ -5,11 +5,11 @@ describe('Parse Event Model', () => {
   it('should parse complex model', () => {
     const result = parse(`eventmodeling
 tf 01 cmd UpdateCartCommand
-tf 02 evt CartUpdatedEvent >f 01 \`jsobj\`{ a: b }
-tf 03 rmo CartItemsReadModel >f 02 [[CartItemsReadModel03]]
-tf 04 evt ProductDescriptionUpdatedEvent >f 01 \`jsobj\`{ a: { c: d } }
-tf 05 evt ProductTitleUpdatedEvent >f 01 { "a": { "c": true } }
-tf 06 evt ProductCountIncrementedEvent >f 01 \`json\`" { "a": { "c": true } } "
+tf 02 evt CartUpdatedEvent ->> 01 \`jsobj\`{ a: b }
+tf 03 rmo CartItemsReadModel ->> 02 [[CartItemsReadModel03]]
+tf 04 evt ProductDescriptionUpdatedEvent ->> 01 \`jsobj\`{ a: { c: d } }
+tf 05 evt ProductTitleUpdatedEvent ->> 01 { "a": { "c": true } }
+tf 06 evt ProductCountIncrementedEvent ->> 01 \`json\`" { "a": { "c": true } } "
 
 data CartItemsReadModel03 {
   { a: b }
@@ -65,9 +65,9 @@ gwt 03
     expect(result.value.gwtEntities.length).toBe(2);
   });
 
-  it('should parse simple model', () => {
+  it('should parse simple model with full syntax', () => {
     const result = parse(`eventmodeling
-tf 01 evt Start
+timeframe 01 event Start
 
   `);
     // console.error('Eventmodeling', result.value);
@@ -78,14 +78,14 @@ tf 01 evt Start
     expect(result.value.frames.length).toBe(1);
     const frame = result.value.frames[0];
     expect(frame.name).toBe('01');
-    expect(frame.modelEntityType).toBe('evt');
+    expect(frame.modelEntityType).toBe('event');
     expect(frame.entityIdentifier).toBe('Start');
   });
 
   it('should parse qualified names in model', () => {
     const result = parse(`eventmodeling
 
-tf 02 scn Screen
+timeframe 02 screen Screen
 tf 01 evt Product.PriceChanged
 tf 03 evt Cart.ItemAdded
 
@@ -105,8 +105,8 @@ tf 03 evt Cart.ItemAdded
   it('should parse both types of frames in model', () => {
     const result = parse(`eventmodeling
 
-tf 02 scn Screen
-rf 01 evt Product.PriceChanged
+tf 02 screen Screen
+resetframe 01 evt Product.PriceChanged
 tf 03 evt Cart.ItemAdded
 
   `);
@@ -128,8 +128,8 @@ tf 03 evt Cart.ItemAdded
     const result = parse(`eventmodeling
 tf 01 evt Start
 tf 02 evt End
-rf 03 rmo ReadModel01 >f 01 >f 02 { a: true }
-rf 04 rmo ReadModel02 >f 01 >f 02
+rf 03 readmodel ReadModel01 ->> 01 ->> 02 { a: true }
+rf 04 rmo ReadModel02 ->> 01 ->> 02
   `);
     // console.error('Eventmodeling', result.value);
     assert(
@@ -140,7 +140,7 @@ rf 04 rmo ReadModel02 >f 01 >f 02
     let frame = result.value.frames[2];
     // console.error('Eventmodeling', frame);
     expect(frame.name).toBe('03');
-    expect(frame.modelEntityType).toBe('rmo');
+    expect(frame.modelEntityType).toBe('readmodel');
     expect(frame.sourceFrames.length).toBe(2);
 
     frame = result.value.frames[3];
