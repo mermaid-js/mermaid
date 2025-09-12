@@ -89,6 +89,7 @@ export type Swimlane = {
   r: number;
   y: number;
   height: number;
+  maxHeight: number;
 } & SwimlaneProps;
 
 export interface Relation {

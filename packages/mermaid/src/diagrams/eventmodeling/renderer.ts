@@ -51,7 +51,7 @@ function renderD3Box(
     text
       .append('span')
       .style('display', 'table-cell')
-      .style('text-align', 'left')
+      .style('text-align', 'center')
       .style('vertical-align', 'middle')
       .html(box.text);
   };

@@ -149,7 +149,7 @@ data AddItem02 {
   price: 12.5
 }
 
-data ItemAdded03 {
+data ItemAdded {
   description: string
   image: string
   price: number
@@ -177,7 +177,7 @@ data AddItem02 {
   price: 12.5
 }
 
-data ItemAdded03 {
+data ItemAdded {
   description: string
   image: string
   price: number
@@ -207,7 +207,7 @@ data AddItem02 {
   price: 12.5
 }
 
-data ItemAdded03 {
+data ItemAdded {
   description: string
   image: string
   price: number
@@ -235,7 +235,7 @@ data AddItem02 {
   price: 12.5
 }
 
-data ItemAdded03 {
+data ItemAdded {
   description: string
   image: string
   price: number

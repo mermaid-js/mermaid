@@ -148,7 +148,7 @@ function setAst(ast: EventModeling) {
 }
 
 const diagramProps = {
-  swimlaneMinHeight: 60,
+  swimlaneMinHeight: 70,
   swimlanePadding: 15,
   swimlaneGap: 10,
   boxPadding: 10,
@@ -156,8 +156,8 @@ const diagramProps = {
   boxDefaultY: 0,
   boxMinWidth: 80,
   boxMaxWidth: 450,
-  boxMinHeight: 40,
-  boxMaxHeight: 450,
+  boxMinHeight: 80,
+  boxMaxHeight: 750,
   contentStartX: 250,
   textMaxWidth: 450 - 2 * 10,
   boxTextFontWeight: 'bold',
@@ -236,7 +236,9 @@ function calculateSwimlaneProps(
 
   switch (frame.modelEntityType) {
     case 'scn':
+    case 'screen':
     case 'pcr':
+    case 'processor':
       if (sw) {
         return {
           index: sw.index,
@@ -250,7 +252,9 @@ function calculateSwimlaneProps(
       }
       return { index: 0, label: diagramProps.labelUiAutomation };
     case 'rmo':
+    case 'readmodel':
     case 'cmd':
+    case 'command':
       if (sw) {
         return {
           index: sw.index,
@@ -264,6 +268,7 @@ function calculateSwimlaneProps(
       }
       return { index: 100, label: diagramProps.labelCommandReadModel };
     case 'evt':
+    case 'event':
     default:
       if (sw) {
         return {
@@ -283,28 +288,33 @@ function calculateSwimlaneProps(
 function calculateEntityVisualProps(frame: EmFrame): VisualProps {
   switch (frame.modelEntityType) {
     case 'scn':
+    case 'screen':
       return {
         fill: 'white',
         stroke: '#dbdada',
       };
     case 'pcr':
+    case 'processor':
       return {
         fill: '#edb3f6',
         stroke: '#b88cbf',
       };
     case 'rmo':
+    case 'readmodel':
       return {
-        fill: '#cee741',
+        fill: '#d3f1a2',
         stroke: '#a3b732',
       };
     case 'cmd':
+    case 'command':
       return {
-        fill: '#83c6fb',
+        fill: '#bcd6fe',
         stroke: '#679ac3',
       };
     case 'evt':
+    case 'event':
       return {
-        fill: '#fac710',
+        fill: '#ffb778',
         stroke: '#c19a0f',
       };
     default:
@@ -322,19 +332,34 @@ function calculateTextProps(
 ): TextProps {
   const name = extractName(frame.entityIdentifier);
   let content = `<b>${name}</b>`;
+  let dataToBeRendered = false;
+  let toHtml;
+
   if (frame.dataInlineValue) {
-    content += `<br/>${frame.dataInlineValue}`;
+    toHtml = frame.dataInlineValue;
+    toHtml = toHtml.substring(toHtml.indexOf('{') + 1);
+    toHtml = toHtml.substring(0, toHtml.lastIndexOf('}') - 1);
+    dataToBeRendered = true;
   }
+
   if (frame.dataReference) {
     const dataEntity = dataEntities.find(
       (dataEntity) => dataEntity.name === frame.dataReference?.$refText
     );
 
     if (dataEntity) {
-      let toHtml = dataEntity.dataBlockValue.replaceAll('\n', '<br/>');
+      toHtml = dataEntity.dataBlockValue;
+      toHtml = toHtml.substring(toHtml.indexOf('{\n') + 2);
+      toHtml = toHtml.substring(0, toHtml.lastIndexOf('}') - 1);
+      toHtml = toHtml.replaceAll('\n', '<br/>');
       toHtml = toHtml.replaceAll(' ', '&nbsp;');
-      content += `<br/>${toHtml}`;
+      toHtml += `<br/>`;
+      dataToBeRendered = true;
     }
+  }
+
+  if (dataToBeRendered) {
+    content += `<br/><br/><code style="text-align: left; display: block;max-width:${diagramProps.textMaxWidth}px">${toHtml}</code>`;
   }
 
   const wrapLabelConfig = {
@@ -352,9 +377,13 @@ function calculateTextProps(
     fontFamily: wrapLabelConfig.fontFamily,
   };
   const dimensions = calculateTextDimensions(content, textDimensionConfig);
+
+  /** this is a temporal workaround until a more complex dimension calculation is in place */
+  const calculatedWidthFix = dataToBeRendered ? dimensions.width / 3 : dimensions.width;
+
   const props = {
     content,
-    width: dimensions.width,
+    width: calculatedWidthFix,
     height: dimensions.height,
   };
   log.debug(`[${frame.name}] ${frame.entityIdentifier} text`, props);
@@ -426,6 +455,7 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
       r: 0,
       y: swimlaneProps.index * diagramProps.swimlaneMinHeight + diagramProps.swimlaneGap,
       height: diagramProps.swimlaneMinHeight,
+      maxHeight: diagramProps.swimlaneMinHeight,
     };
   }
   // let previousSwimlane: Swimlane;
@@ -460,8 +490,9 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
   const maxR = calculateMaxRight(Object.values(state.swimlanes), r);
 
   swimlane.r = x + dimension.width;
+  swimlane.maxHeight = Math.max(swimlane.maxHeight, dimension.height);
   swimlane.height =
-    Math.max(diagramProps.swimlaneMinHeight, dimension.height) + 2 * diagramProps.swimlanePadding;
+    Math.max(diagramProps.swimlaneMinHeight, swimlane.maxHeight) + 2 * diagramProps.swimlanePadding;
 
   const box: Box = {
     x,
@@ -567,7 +598,8 @@ function decidePositionRelation(state: Context, _command: Command): Event[] {
   }
 
   if (sourceBox === undefined) {
-    throw new Error(`Source box not found for frame ${command.frame.name}`);
+    // Source box not found for frame ${command.frame.name}
+    return [];
   }
   const event: RelationPositioned = {
     $kind: RelationPositionedKind,
