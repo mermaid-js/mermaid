@@ -605,6 +605,14 @@ export const insertEdge = function (
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
 
+  let animationClass = '';
+  if (edge.animate) {
+    animationClass = 'edge-animation-fast';
+  }
+  if (edge.animation) {
+    animationClass = 'edge-animation-' + edge.animation;
+  }
+
   let animatedEdge = false;
   if (edge.look === 'handDrawn') {
     const rc = rough.svg(elem);
@@ -620,7 +628,13 @@ export const insertEdge = function (
     svgPath = select(svgPathNode)
       .select('path')
       .attr('id', edge.id)
-      .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
+      .attr(
+        'class',
+        ' ' +
+          strokeClasses +
+          (edge.classes ? ' ' + edge.classes : '') +
+          (animationClass ? ' ' + animationClass : '')
+      )
       .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
     let d = svgPath.attr('d');
     svgPath.attr('d', d);
@@ -628,13 +642,6 @@ export const insertEdge = function (
   } else {
     const stylesFromClasses = edgeClassStyles.join(';');
     const styles = edgeStyles ? edgeStyles.reduce((acc, style) => acc + style + ';', '') : '';
-    let animationClass = '';
-    if (edge.animate) {
-      animationClass = ' edge-animation-fast';
-    }
-    if (edge.animation) {
-      animationClass = ' edge-animation-' + edge.animation;
-    }
 
     const pathStyle =
       (stylesFromClasses ? stylesFromClasses + ';' + styles + ';' : styles) +
@@ -646,7 +653,10 @@ export const insertEdge = function (
       .attr('id', edge.id)
       .attr(
         'class',
-        ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '') + (animationClass ?? '')
+        ' ' +
+          strokeClasses +
+          (edge.classes ? ' ' + edge.classes : '') +
+          (animationClass ? ' ' + animationClass : '')
       )
       .attr('style', pathStyle);
 
