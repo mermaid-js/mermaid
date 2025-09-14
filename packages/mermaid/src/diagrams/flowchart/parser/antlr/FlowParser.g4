@@ -5,12 +5,11 @@ options {
 }
 
 // Entry point - matches Jison's "start: graphConfig document"
-start: graphConfig document EOF_TOKEN;
+start: graphConfig document;
 
 // Document structure - matches Jison's document rule
-document: 
-    /* empty */ 
-    | document line
+document:
+    line*
     ;
 
 // Line structure - matches Jison's line rule
@@ -19,7 +18,6 @@ line:
     | SEMI
     | NEWLINE
     | WS
-    | EOF_TOKEN
     ;
 
 // Graph configuration - matches Jison's graphConfig rule
@@ -33,6 +31,7 @@ graphConfig:
 // Statement types - matches Jison's statement rule
 statement:
     vertexStatement separator
+    | standaloneVertex separator           // For edge property statements like e1@{curve: basis}
     | styleStatement separator
     | linkStyleStatement separator
     | classDefStatement separator
@@ -45,7 +44,7 @@ statement:
     ;
 
 // Separators
-separator: NEWLINE | SEMI | EOF_TOKEN;
+separator: NEWLINE | SEMI | EOF;
 firstStmtSeparator: SEMI | NEWLINE | spaceList NEWLINE;
 spaceList: WS spaceList | WS;
 
@@ -57,6 +56,12 @@ vertexStatement:
     | node spaceList                        // Single node with space
     | node shapeData                        // Single node with shape data
     | node                                  // Single node
+    ;
+
+// Standalone vertex - for edge property statements like e1@{curve: basis}
+standaloneVertex:
+    NODE_STRING shapeData
+    | LINK_ID shapeData                     // For edge IDs like e1@{curve: basis}
     ;
 
 // Node definition - matches Jison's node rule
@@ -76,7 +81,7 @@ styledVertex:
 vertex:
     idString SQS text SQE                                           // Square: [text]
     | idString DOUBLECIRCLE_START text DOUBLECIRCLEEND             // Double circle: (((text)))
-    | idString PS PS text PE PE                                     // Circle: ((text))
+    | idString CIRCLE_START text CIRCLEEND                         // Circle: ((text))
     | idString ELLIPSE_START text ELLIPSE_END_TOKEN                // Ellipse: (-text-)
     | idString STADIUM_START text STADIUMEND                       // Stadium: ([text])
     | idString SUBROUTINE_START text SUBROUTINEEND                 // Subroutine: [[text]]
@@ -95,7 +100,7 @@ vertex:
 
 // Link definition - matches Jison's link rule
 link:
-    linkStatement arrowText
+    linkStatement arrowText spaceList?
     | linkStatement
     | START_LINK_NORMAL edgeText LINK_NORMAL
     | START_LINK_THICK edgeText LINK_THICK
@@ -111,17 +116,21 @@ linkStatement:
     | LINK_THICK
     | LINK_DOTTED
     | LINK_INVISIBLE
+    | LINK_STATEMENT_NORMAL
+    | LINK_STATEMENT_DOTTED
     | LINK_ID LINK_NORMAL
     | LINK_ID LINK_THICK
     | LINK_ID LINK_DOTTED
     | LINK_ID LINK_INVISIBLE
+    | LINK_ID LINK_STATEMENT_NORMAL
+    | LINK_ID LINK_STATEMENT_THICK
     ;
 
 // Edge text - matches Jison's edgeText rule
 edgeText:
     edgeTextToken
     | edgeText edgeTextToken
-    | STR
+    | stringLiteral
     | MD_STR
     ;
 
@@ -134,14 +143,25 @@ arrowText:
 text:
     textToken
     | text textToken
-    | STR
+    | stringLiteral
     | MD_STR
+    | NODE_STRING
+    | TEXT_CONTENT
+    | ELLIPSE_TEXT
+    | TRAP_TEXT
     ;
 
 // Shape data - matches Jison's shapeData rule
 shapeData:
-    shapeData SHAPE_DATA_CONTENT
+    SHAPE_DATA_START shapeDataContent SHAPE_DATA_END
+    ;
+
+shapeDataContent:
+    shapeDataContent SHAPE_DATA_CONTENT
+    | shapeDataContent SHAPE_DATA_STRING_START SHAPE_DATA_STRING_CONTENT SHAPE_DATA_STRING_END
     | SHAPE_DATA_CONTENT
+    | SHAPE_DATA_STRING_START SHAPE_DATA_STRING_CONTENT SHAPE_DATA_STRING_END
+    |
     ;
 
 // Style statement - matches Jison's styleStatement rule
@@ -169,22 +189,30 @@ classStatement:
     CLASS WS idString WS idString
     ;
 
+// String rule to handle STR patterns
+stringLiteral:
+    STR
+    ;
+
 // Click statement - matches Jison's clickStatement rule
+// CLICK token now contains both 'click' and node ID (like Jison)
 clickStatement:
     CLICK CALLBACKNAME
-    | CLICK CALLBACKNAME WS STR
+    | CLICK CALLBACKNAME stringLiteral
     | CLICK CALLBACKNAME CALLBACKARGS
-    | CLICK CALLBACKNAME CALLBACKARGS WS STR
-    | CLICK HREF STR
-    | CLICK HREF STR WS STR
-    | CLICK HREF STR WS LINK_TARGET
-    | CLICK HREF STR WS STR WS LINK_TARGET
-    | CLICK alphaNum
-    | CLICK alphaNum WS STR
-    | CLICK STR
-    | CLICK STR WS STR
-    | CLICK STR WS LINK_TARGET
-    | CLICK STR WS STR WS LINK_TARGET
+    | CLICK CALLBACKNAME CALLBACKARGS stringLiteral
+    | CLICK CALL CALLBACKNAME
+    | CLICK CALL CALLBACKNAME stringLiteral
+    | CLICK CALL CALLBACKNAME CALLBACKARGS
+    | CLICK CALL CALLBACKNAME CALLBACKARGS stringLiteral
+    | CLICK HREF stringLiteral
+    | CLICK HREF stringLiteral stringLiteral
+    | CLICK HREF stringLiteral LINK_TARGET
+    | CLICK HREF stringLiteral stringLiteral LINK_TARGET
+    | CLICK stringLiteral                                    // CLICK STR - direct click with URL
+    | CLICK stringLiteral stringLiteral                      // CLICK STR STR - click with URL and tooltip
+    | CLICK stringLiteral LINK_TARGET                        // CLICK STR LINK_TARGET - click with URL and target
+    | CLICK stringLiteral stringLiteral LINK_TARGET          // CLICK STR STR LINK_TARGET - click with URL, tooltip, and target
     ;
 
 // Subgraph statement - matches Jison's subgraph rules
@@ -225,7 +253,7 @@ style:
     ;
 
 // Style component - matches Jison's styleComponent rule
-styleComponent: NUM | NODE_STRING | COLON | WS | BRKT | STYLE | MULT;
+styleComponent: NUM | NODE_STRING | COLON | WS | BRKT | STYLE | MULT | MINUS;
 
 // Token definitions - matches Jison's token lists
 idString:
@@ -241,15 +269,15 @@ alphaNum:
 textNoTags:
     textNoTagsToken
     | textNoTags textNoTagsToken
-    | STR
+    | stringLiteral
     | MD_STR
     ;
 
 // Token types - matches Jison's token definitions
 idStringToken: NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COMMA | COLON | AMP | BRKT | MULT | UNICODE_TEXT;
-textToken: TEXT_CONTENT | TAGSTART | TAGEND | UNICODE_TEXT;
+textToken: TEXT_CONTENT | TAGSTART | TAGEND | UNICODE_TEXT | NODE_STRING | WS;
 textNoTagsToken: NUM | NODE_STRING | WS | MINUS | AMP | UNICODE_TEXT | COLON | MULT | BRKT | keywords | START_LINK_NORMAL;
-edgeTextToken: EDGE_TEXT_CONTENT | THICK_EDGE_TEXT_CONTENT | DOTTED_EDGE_TEXT_CONTENT | UNICODE_TEXT;
+edgeTextToken: EDGE_TEXT | THICK_EDGE_TEXT | DOTTED_EDGE_TEXT | UNICODE_TEXT;
 alphaNumToken: NUM | UNICODE_TEXT | NODE_STRING | DIR | DOWN | MINUS | COMMA | COLON | AMP | BRKT | MULT;
 
 // Keywords - matches Jison's keywords rule

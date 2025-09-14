@@ -1,5 +1,11 @@
 lexer grammar FlowLexer;
 
+// Virtual tokens for parser
+tokens {
+    NODIR, DIR, PIPE, PE, SQE, DIAMOND_STOP, STADIUMEND, SUBROUTINEEND, CYLINDEREND, DOUBLECIRCLEEND,
+    ELLIPSE_END_TOKEN, TRAPEND, INVTRAPEND, PS, SQS, TEXT, CIRCLEEND, STR
+}
+
 // Lexer modes to match Jison's state-based lexing
 // Based on Jison: %x string, md_string, acc_title, acc_descr, acc_descr_multiline, dir, vertex, text, etc.
 
@@ -8,13 +14,14 @@ ACC_TITLE: 'accTitle' WS* ':' WS* -> pushMode(ACC_TITLE_MODE);
 ACC_DESCR: 'accDescr' WS* ':' WS* -> pushMode(ACC_DESCR_MODE);
 ACC_DESCR_MULTI: 'accDescr' WS* '{' WS* -> pushMode(ACC_DESCR_MULTILINE_MODE);
 
-// Shape data tokens
-SHAPE_DATA_START: '@{' -> pushMode(SHAPE_DATA_MODE);
+// Shape data tokens - moved after LINK_ID for proper precedence
+// This will be defined later to ensure proper token precedence
 
 // Interactivity tokens
 CALL: 'call' WS+ -> pushMode(CALLBACKNAME_MODE);
 HREF: 'href' WS;
-CLICK: 'click' WS+ -> pushMode(CLICK_MODE);
+// CLICK token - matches 'click' + whitespace + node ID (like Jison)
+CLICK: 'click' WS+ [A-Za-z0-9_]+ -> pushMode(CLICK_MODE);
 
 // Graph declaration tokens - these trigger direction mode
 GRAPH: ('flowchart-elk' | 'graph' | 'flowchart') -> pushMode(DIR_MODE);
@@ -32,18 +39,28 @@ INTERPOLATE: 'interpolate';
 CLASSDEF: 'classDef';
 CLASS: 'class';
 
-// String tokens
-STRING_START: '"' -> pushMode(STRING_MODE);
+// String tokens - must come early to avoid conflicts with QUOTE
 MD_STRING_START: '"`' -> pushMode(MD_STRING_MODE);
 
-// Direction tokens (handled in direction mode)
-DIRECTION_TB: '.*direction' WS+ 'TB' ~[\n]*;
-DIRECTION_BT: '.*direction' WS+ 'BT' ~[\n]*;
-DIRECTION_RL: '.*direction' WS+ 'RL' ~[\n]*;
-DIRECTION_LR: '.*direction' WS+ 'LR' ~[\n]*;
+// Direction tokens - matches Jison's direction_tb, direction_bt, etc.
+// These handle "direction TB", "direction BT", etc. statements within subgraphs
+DIRECTION_TB: 'direction' WS+ 'TB' ~[\n]*;
+DIRECTION_BT: 'direction' WS+ 'BT' ~[\n]*;
+DIRECTION_RL: 'direction' WS+ 'RL' ~[\n]*;
+DIRECTION_LR: 'direction' WS+ 'LR' ~[\n]*;
 
-// Link and edge tokens
-LINK_ID: [^\s"]+? '@' {!(_input.LA(1) == '{' || _input.LA(1) == '"')}?;
+// Shape data tokens - defined BEFORE LINK_ID to handle conflicts
+// The longer match "@{" should take precedence over "@" in LINK_ID
+SHAPE_DATA_START: '@' WS* '{' -> pushMode(SHAPE_DATA_MODE);
+
+// ELLIPSE_START must come very early to avoid conflicts with PAREN_START
+ELLIPSE_START: '(-' -> pushMode(ELLIPSE_TEXT_MODE);
+
+// Link ID token - matches edge IDs like "e1@" but not shape data "@{"
+// Since SHAPE_DATA_START is defined earlier, it will take precedence over LINK_ID for "@{"
+// This allows LINK_ID to match "e1@" without conflict (matches Jison pattern [^\s\"]+\@)
+LINK_ID: ~[ \t\r\n"]+ '@';
+
 NUM: [0-9]+;
 BRKT: '#';
 STYLE_SEPARATOR: ':::';
@@ -54,56 +71,69 @@ COMMA: ',';
 MULT: '*';
 
 // Edge patterns - these are complex in Jison, need careful translation
-// Normal edges: -->
-LINK_NORMAL: WS* [xo<]? '--'+ [-xo>] WS*;
-START_LINK_NORMAL: WS* [xo<]? '--' WS* -> pushMode(EDGE_TEXT_MODE);
+// Normal edges with text: A-- text ---B (matches Jison: <INITIAL>\s*[xo<]?\-\-\s* -> START_LINK)
+START_LINK_NORMAL: WS* [xo<]? '--' WS+ -> pushMode(EDGE_TEXT_MODE);
+// Normal edges without text: A-->B (matches Jison: \s*[xo<]?\-\-+[-xo>]\s*)
+LINK_NORMAL: WS* [xo<]? '--' '-'* [-xo>] WS*;
+// Pipe-delimited edge text: A--x| (linkStatement for arrowText) - matches Jison linkStatement pattern
+LINK_STATEMENT_NORMAL: WS* [xo<]? '--' '-'* [xo<]?;
 
-// Thick edges: ==>
-LINK_THICK: WS* [xo<]? '=='+ [=xo>] WS*;
-START_LINK_THICK: WS* [xo<]? '==' WS* -> pushMode(THICK_EDGE_TEXT_MODE);
+// Thick edges with text: A== text ===B (matches Jison: <INITIAL>\s*[xo<]?\=\=\s* -> START_LINK)
+START_LINK_THICK: WS* [xo<]? '==' WS+ -> pushMode(THICK_EDGE_TEXT_MODE);
+// Thick edges without text: A==>B (matches Jison: \s*[xo<]?\=\=+[=xo>]\s*)
+LINK_THICK: WS* [xo<]? '==' '='* [=xo>] WS*;
+LINK_STATEMENT_THICK: WS* [xo<]? '==' '='* [xo<]?;
 
-// Dotted edges: -.->
-LINK_DOTTED: WS* [xo<]? '-'? '.'+ '-' [xo>]? WS*;
+// Dotted edges with text: A-. text .->B (matches Jison: <INITIAL>\s*[xo<]?\-\.\s* -> START_LINK)
 START_LINK_DOTTED: WS* [xo<]? '-.' WS* -> pushMode(DOTTED_EDGE_TEXT_MODE);
+// Dotted edges without text: A-.->B (matches Jison: \s*[xo<]?\-?\.+\-[xo>]?\s*)
+LINK_DOTTED: WS* [xo<]? '-' '.'+ '-' [xo>]? WS*;
+LINK_STATEMENT_DOTTED: WS* [xo<]? '-' '.'+ [xo<]?;
 
 // Special link
 LINK_INVISIBLE: WS* '~~' '~'+ WS*;
 
-// Vertex shape tokens
-ELLIPSE_START: '(-' -> pushMode(ELLIPSE_TEXT_MODE);
+// PIPE handling: push to TEXT_MODE to handle content between pipes
+// Put this AFTER link patterns to avoid interference with edge parsing
+PIPE: '|' -> pushMode(TEXT_MODE);
+
+// Vertex shape tokens - MUST come first (longer patterns before shorter ones)
+DOUBLECIRCLE_START: '(((' -> pushMode(TEXT_MODE);
+CIRCLE_START: '((' -> pushMode(TEXT_MODE);
+// ELLIPSE_START moved to top of file for precedence
+
+// Basic shape tokens - shorter patterns after longer ones
+SQUARE_START: '[' -> pushMode(TEXT_MODE), type(SQS);
+// PAREN_START must come AFTER ELLIPSE_START to avoid consuming '(' before '(-' can match
+PAREN_START: '(' -> pushMode(TEXT_MODE), type(PS);
+DIAMOND_START: '{' -> pushMode(TEXT_MODE);
+// PIPE_START removed - conflicts with PIPE token. Context-sensitive pipe handling in TEXT_MODE
 STADIUM_START: '([' -> pushMode(TEXT_MODE);
 SUBROUTINE_START: '[[' -> pushMode(TEXT_MODE);
 VERTEX_WITH_PROPS_START: '[|';
 CYLINDER_START: '[(' -> pushMode(TEXT_MODE);
-DOUBLECIRCLE_START: '(((' -> pushMode(TEXT_MODE);
 TRAP_START: '[/' -> pushMode(TRAP_TEXT_MODE);
 INVTRAP_START: '[\\' -> pushMode(TRAP_TEXT_MODE);
 
-// Basic shape tokens
+// Other basic shape tokens
 TAGSTART: '<';
 TAGEND: '>' -> pushMode(TEXT_MODE);
 UP: '^';
-SEP: '|';
 DOWN: 'v';
 MINUS: '-';
 
-// Node string - this is the most important token from Jison
+// Node string - allow dashes with lookahead to prevent conflicts with links (matches Jison pattern)
 // Pattern: ([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+
-NODE_STRING: ([A-Za-z0-9!"#$%&'*+.`?\\/_] | '-' {_input.LA(1) != '>' && _input.LA(1) != '-' && _input.LA(1) != '.'}? | '=' {_input.LA(1) != '='}?)+;
+NODE_STRING: ([A-Za-z0-9!"#$%&'*+.`?\\/_] | '-' ~[>\-.] | '=' ~'=')+;
 
 // Unicode text support (simplified from Jison's extensive Unicode ranges)
 UNICODE_TEXT: [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE]+;
 
-// Basic tokens
-PIPE_START: '|' -> pushMode(TEXT_MODE);
-PAREN_START: '(' -> pushMode(TEXT_MODE);
-SQUARE_START: '[' -> pushMode(TEXT_MODE);
-DIAMOND_START: '{' -> pushMode(TEXT_MODE);
+// String handling - matches Jison's <*>["] behavior (any mode can enter string mode)
+QUOTE: '"' -> pushMode(STRING_MODE), skip;
 
-QUOTE: '"';
 NEWLINE: ('\r'? '\n')+;
 WS: [ \t]+;
-EOF_TOKEN: EOF;
 
 // Lexer modes
 mode ACC_TITLE_MODE;
@@ -126,7 +156,7 @@ SHAPE_DATA_STRING_END: '"' -> popMode;
 SHAPE_DATA_STRING_CONTENT: (~["]+);
 
 mode CALLBACKNAME_MODE;
-CALLBACKNAME_PAREN_EMPTY: '(' WS* ')' -> popMode;
+CALLBACKNAME_PAREN_EMPTY: '(' WS* ')' -> popMode, type(CALLBACKARGS);
 CALLBACKNAME_PAREN_START: '(' -> popMode, pushMode(CALLBACKARGS_MODE);
 CALLBACKNAME: (~[(])*;
 
@@ -135,8 +165,15 @@ CALLBACKARGS_END: ')' -> popMode;
 CALLBACKARGS: (~[)])*;
 
 mode CLICK_MODE;
-CLICK_WS: [ \t\n] -> popMode;
-CLICK_ID: (~[ \t\n])*;
+CLICK_NEWLINE: ('\r'? '\n')+ -> popMode, type(NEWLINE);
+CLICK_WS: WS -> skip;
+CLICK_CALL: 'call' WS+ -> type(CALL), pushMode(CALLBACKNAME_MODE);
+CLICK_HREF: 'href' -> type(HREF);
+CLICK_STR: '"' (~["])* '"' -> type(STR);
+CLICK_LINK_TARGET: ('_self' | '_blank' | '_parent' | '_top') -> type(LINK_TARGET);
+CLICK_CALLBACKNAME: [A-Za-z0-9_]+ -> type(CALLBACKNAME);
+
+
 
 mode DIR_MODE;
 DIR_NEWLINE: ('\r'? '\n')* WS* '\n' -> popMode, type(NODIR);
@@ -151,11 +188,8 @@ DIR_RIGHT: WS* '>' -> popMode, type(DIR);
 DIR_UP: WS* '^' -> popMode, type(DIR);
 DIR_DOWN: WS* 'v' -> popMode, type(DIR);
 
-// Virtual tokens for parser
-tokens { NODIR, DIR }
-
 mode STRING_MODE;
-STRING_END: '"' -> popMode;
+STRING_END: '"' -> popMode, skip;
 STR: (~["]+);
 
 mode MD_STRING_MODE;
@@ -163,7 +197,20 @@ MD_STRING_END: '`"' -> popMode;
 MD_STR: (~[`"])+;
 
 mode TEXT_MODE;
+// Allow nested diamond starts (for hexagon nodes)
+TEXT_DIAMOND_START: '{' -> pushMode(TEXT_MODE), type(DIAMOND_START);
+
+// Handle nested parentheses and brackets like Jison
+TEXT_PAREN_START: '(' -> pushMode(TEXT_MODE), type(PS);
+TEXT_SQUARE_START: '[' -> pushMode(TEXT_MODE), type(SQS);
+
+// Handle quoted strings in text mode - matches Jison's <*>["] behavior
+// Skip the opening quote token, just push to STRING_MODE like Jison does
+TEXT_STRING_START: '"' -> pushMode(STRING_MODE), skip;
+
+// Handle closing pipe in text mode - pop back to default mode
 TEXT_PIPE_END: '|' -> popMode, type(PIPE);
+
 TEXT_PAREN_END: ')' -> popMode, type(PE);
 TEXT_SQUARE_END: ']' -> popMode, type(SQE);
 TEXT_DIAMOND_END: '}' -> popMode, type(DIAMOND_STOP);
@@ -171,31 +218,33 @@ TEXT_STADIUM_END: '])' -> popMode, type(STADIUMEND);
 TEXT_SUBROUTINE_END: ']]' -> popMode, type(SUBROUTINEEND);
 TEXT_CYLINDER_END: ')]' -> popMode, type(CYLINDEREND);
 TEXT_DOUBLECIRCLE_END: ')))' -> popMode, type(DOUBLECIRCLEEND);
-TEXT_CONTENT: (~[\[\](){}|"]+);
+TEXT_CIRCLE_END: '))' -> popMode, type(CIRCLEEND);
+// Now allow all characters except the specific end tokens for this mode
+TEXT_CONTENT: (~[(){}|\]"])+;
 
 mode ELLIPSE_TEXT_MODE;
 ELLIPSE_END: '-)' -> popMode, type(ELLIPSE_END_TOKEN);
-ELLIPSE_TEXT: (~[()])+;
+ELLIPSE_TEXT: (~[-)])+;
 
 mode TRAP_TEXT_MODE;
 TRAP_END_BRACKET: '\\]' -> popMode, type(TRAPEND);
 INVTRAP_END_BRACKET: '/]' -> popMode, type(INVTRAPEND);
-TRAP_TEXT: (~[\\\/\[\](){}]+);
+TRAP_TEXT: (~[\\\\/\]])+;
 
 mode EDGE_TEXT_MODE;
-EDGE_TEXT_LINK_END: '--'+ [-xo>] WS* -> popMode, type(LINK_NORMAL);
-EDGE_TEXT_CONTENT: (~[-])+;
+// Handle space-delimited pattern: A-- text ----B or A-- text -->B (matches Jison: [^-]|\-(?!\-)+)
+// Must handle both cases: extra dashes without arrow (----) and dashes with arrow (-->)
+EDGE_TEXT_LINK_END: WS* '--' '-'* [-xo>]? WS* -> popMode, type(LINK_NORMAL);
+EDGE_TEXT: (~[-] | '-' ~[-])+;
 
 mode THICK_EDGE_TEXT_MODE;
-THICK_EDGE_TEXT_LINK_END: '=='+ [=xo>] WS* -> popMode, type(LINK_THICK);
-THICK_EDGE_TEXT_CONTENT: (~[=])+;
+// Handle thick edge patterns: A== text ====B or A== text ==>B
+THICK_EDGE_TEXT_LINK_END: WS* '==' '='* [=xo>]? WS* -> popMode, type(LINK_THICK);
+THICK_EDGE_TEXT: (~[=] | '=' ~[=])+;
 
 mode DOTTED_EDGE_TEXT_MODE;
-DOTTED_EDGE_TEXT_LINK_END: '.'+ '-' [xo>]? WS* -> popMode, type(LINK_DOTTED);
-DOTTED_EDGE_TEXT_CONTENT: (~[.])+;
+// Handle dotted edge patterns: A-. text ...-B or A-. text .->B
+DOTTED_EDGE_TEXT_LINK_END: WS* '.'+ '-' [xo>]? WS* -> popMode, type(LINK_DOTTED);
+DOTTED_EDGE_TEXT: ~[.]+;
 
-// Virtual tokens for parser
-tokens { 
-    PIPE, PE, SQE, DIAMOND_STOP, STADIUMEND, SUBROUTINEEND, CYLINDEREND, DOUBLECIRCLEEND,
-    ELLIPSE_END_TOKEN, TRAPEND, INVTRAPEND, PS, SQS, TEXT
-}
+

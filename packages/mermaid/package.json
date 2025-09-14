@@ -71,6 +71,8 @@
     "@iconify/utils": "^3.0.1",
     "@mermaid-js/parser": "workspace:^",
     "@types/d3": "^7.4.3",
+    "antlr-ng": "^1.0.10",
+    "antlr4ng": "^3.0.16",
     "cytoscape": "^3.29.3",
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-fcose": "^2.2.0",
