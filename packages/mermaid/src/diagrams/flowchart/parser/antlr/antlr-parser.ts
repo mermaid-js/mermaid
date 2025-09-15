@@ -43,31 +43,27 @@ class FlowchartListener implements ParseTreeListener {
 
   // Handle vertex statements (nodes and edges)
   exitVertexStatement = (ctx: VertexStatementContext) => {
-    try {
-      // Handle the current node
-      const nodeCtx = ctx.node();
-      const shapeDataCtx = ctx.shapeData();
+    // Handle the current node
+    const nodeCtx = ctx.node();
+    const shapeDataCtx = ctx.shapeData();
 
-      if (nodeCtx) {
-        this.processNode(nodeCtx, shapeDataCtx);
+    if (nodeCtx) {
+      this.processNode(nodeCtx, shapeDataCtx);
+    }
+
+    // Handle edges (links) - this is where A-->B gets processed
+    const linkCtx = ctx.link();
+    const prevVertexCtx = ctx.vertexStatement();
+
+    if (linkCtx && prevVertexCtx && nodeCtx) {
+      // We have a link: prevVertex --link--> currentNode
+      // Extract arrays of node IDs to handle ampersand chaining
+      const startNodeIds = this.extractNodeIds(prevVertexCtx);
+      const endNodeIds = this.extractNodeIds(nodeCtx);
+
+      if (startNodeIds.length > 0 && endNodeIds.length > 0) {
+        this.processEdgeArray(startNodeIds, endNodeIds, linkCtx);
       }
-
-      // Handle edges (links) - this is where A-->B gets processed
-      const linkCtx = ctx.link();
-      const prevVertexCtx = ctx.vertexStatement();
-
-      if (linkCtx && prevVertexCtx && nodeCtx) {
-        // We have a link: prevVertex --link--> currentNode
-        // Extract arrays of node IDs to handle ampersand chaining
-        const startNodeIds = this.extractNodeIds(prevVertexCtx);
-        const endNodeIds = this.extractNodeIds(nodeCtx);
-
-        if (startNodeIds.length > 0 && endNodeIds.length > 0) {
-          this.processEdgeArray(startNodeIds, endNodeIds, linkCtx);
-        }
-      }
-    } catch (error) {
-      // Error handling - silently continue for now
     }
   };
 
@@ -280,10 +276,41 @@ class FlowchartListener implements ParseTreeListener {
           yamlContent
         );
       }
-    } catch (error) {
+    } catch (_error) {
       // Error handling - silently continue for now
     }
   };
+
+  // Reserved keywords that cannot be used as node IDs (matches Jison parser)
+  private static readonly RESERVED_KEYWORDS = [
+    'graph',
+    'flowchart',
+    'flowchart-elk',
+    'style',
+    'linkStyle',
+    'interpolate',
+    'classDef',
+    'class',
+    '_self',
+    '_blank',
+    '_parent',
+    '_top',
+    'end',
+    'subgraph',
+  ];
+
+  // Validate that a node ID doesn't start with reserved keywords
+  private validateNodeId(nodeId: string) {
+    for (const keyword of FlowchartListener.RESERVED_KEYWORDS) {
+      if (
+        nodeId.startsWith(keyword + '.') ||
+        nodeId.startsWith(keyword + '-') ||
+        nodeId.startsWith(keyword + '/')
+      ) {
+        throw new Error(`Node ID cannot start with reserved keyword: ${keyword}`);
+      }
+    }
+  }
 
   private processNode(nodeCtx: any, shapeDataCtx?: any) {
     const styledVertexCtx = nodeCtx.styledVertex();
@@ -299,6 +326,9 @@ class FlowchartListener implements ParseTreeListener {
     // Get node ID
     const idCtx = vertexCtx.idString();
     const nodeId = idCtx ? idCtx.getText() : '';
+
+    // Validate node ID against reserved keywords
+    this.validateNodeId(nodeId);
 
     // Check for class application pattern: vertex STYLE_SEPARATOR idString
     const children = styledVertexCtx.children;
@@ -319,10 +349,13 @@ class FlowchartListener implements ParseTreeListener {
 
     // Get node text - if there's explicit text, use it, otherwise use the ID
     const textCtx = vertexCtx.text();
-    const nodeText = textCtx ? textCtx.getText() : nodeId;
-
-    // Create text object
-    const textObj = { text: nodeText, type: 'text' };
+    let textObj;
+    if (textCtx) {
+      const textWithType = this.extractTextWithType(textCtx);
+      textObj = { text: textWithType.text, type: textWithType.type };
+    } else {
+      textObj = { text: nodeId, type: 'text' };
+    }
 
     // Determine node shape based on the vertex structure
     let nodeShape = 'square'; // default
@@ -389,6 +422,7 @@ class FlowchartListener implements ParseTreeListener {
     let shapeDataYaml = '';
     if (shapeDataCtx) {
       const shapeDataText = shapeDataCtx.getText();
+      console.log('Processing shape data:', shapeDataText);
 
       // Extract the content between { and } for YAML parsing
       // e.g., "@{ shape: rounded }" -> "shape: rounded"
@@ -407,111 +441,125 @@ class FlowchartListener implements ParseTreeListener {
         yamlContent = yamlContent.substring(1, yamlContent.length - 1).trim();
       }
 
-      shapeDataYaml = yamlContent;
+      // Normalize YAML indentation to fix inconsistent whitespace
+      const lines = yamlContent.split('\n');
+      const normalizedLines = lines
+        .map((line) => line.trim()) // Remove leading/trailing whitespace
+        .filter((line) => line.length > 0); // Remove empty lines
+
+      shapeDataYaml = normalizedLines.join('\n');
     }
 
     // Add vertex to database
     this.db.addVertex(nodeId, textObj, nodeShape, [], [], '', {}, shapeDataYaml);
 
-    // Note: Subgraph node tracking is handled in processEdge method
-    // to ensure correct order matching Jison parser behavior
+    // Track individual nodes in current subgraph if we're inside one
+    // Use unshift() to match the Jison behavior for node ordering
+    if (this.subgraphStack.length > 0) {
+      const currentSubgraph = this.subgraphStack[this.subgraphStack.length - 1];
+      if (!currentSubgraph.nodes.includes(nodeId)) {
+        currentSubgraph.nodes.unshift(nodeId);
+      }
+    }
   }
 
   private processNodeWithShapeData(styledVertexCtx: any, shapeDataCtx: any) {
-    try {
-      // Extract node ID from styled vertex
-      const nodeId = this.extractNodeId(styledVertexCtx);
-      if (!nodeId) {
-        return;
-      }
-
-      // Extract vertex context to get text and shape
-      const vertexCtx = styledVertexCtx.vertex();
-      if (!vertexCtx) {
-        return;
-      }
-
-      // Get node text - if there's explicit text, use it, otherwise use the ID
-      const textCtx = vertexCtx.text();
-      const nodeText = textCtx ? textCtx.getText() : nodeId;
-
-      // Create text object
-      const textObj = { text: nodeText, type: 'text' };
-
-      // Get node shape from vertex type
-      let nodeShape = 'square'; // default
-
-      // Shape detection logic for trapezoid and other shapes
-
-      if (vertexCtx.SQS()) {
-        nodeShape = 'square';
-      } else if (vertexCtx.CIRCLE_START()) {
-        nodeShape = 'circle';
-      } else if (vertexCtx.PS()) {
-        nodeShape = 'round';
-      } else if (vertexCtx.DOUBLECIRCLE_START()) {
-        nodeShape = 'doublecircle';
-      } else if (vertexCtx.ELLIPSE_START()) {
-        nodeShape = 'ellipse';
-      } else if (vertexCtx.STADIUM_START()) {
-        nodeShape = 'stadium';
-      } else if (vertexCtx.SUBROUTINE_START()) {
-        nodeShape = 'subroutine';
-      } else if (vertexCtx.DIAMOND_START().length === 2) {
-        nodeShape = 'hexagon';
-      } else if (vertexCtx.DIAMOND_START().length === 1) {
-        nodeShape = 'diamond';
-      } else if (vertexCtx.TAGEND()) {
-        nodeShape = 'odd';
-      } else if (
-        vertexCtx.TRAP_START &&
-        vertexCtx.TRAP_START() &&
-        vertexCtx.TRAPEND &&
-        vertexCtx.TRAPEND()
-      ) {
-        nodeShape = 'trapezoid';
-      } else if (
-        vertexCtx.INVTRAP_START &&
-        vertexCtx.INVTRAP_START() &&
-        vertexCtx.INVTRAPEND &&
-        vertexCtx.INVTRAPEND()
-      ) {
-        nodeShape = 'inv_trapezoid';
-      } else if (
-        vertexCtx.TRAP_START &&
-        vertexCtx.TRAP_START() &&
-        vertexCtx.INVTRAPEND &&
-        vertexCtx.INVTRAPEND()
-      ) {
-        nodeShape = 'lean_right';
-      } else if (
-        vertexCtx.INVTRAP_START &&
-        vertexCtx.INVTRAP_START() &&
-        vertexCtx.TRAPEND &&
-        vertexCtx.TRAPEND()
-      ) {
-        nodeShape = 'lean_left';
-      }
-
-      // Shape detection complete
-
-      // Extract shape data content
-      let shapeDataContent = '';
-      if (shapeDataCtx) {
-        const contentCtx = shapeDataCtx.shapeDataContent();
-        if (contentCtx) {
-          shapeDataContent = contentCtx.getText();
-        }
-      }
-
-      // Add vertex to database with shape data
-      this.db.addVertex(nodeId, textObj, nodeShape, [], [], '', {}, shapeDataContent);
-
-      // Note: Subgraph node tracking is handled in edge processing methods
-      // to match Jison parser behavior which collects nodes from statements
-    } catch (_error) {
-      // Error handling for processNodeWithShapeData
+    // Extract node ID from styled vertex
+    const nodeId = this.extractNodeId(styledVertexCtx);
+    if (!nodeId) {
+      return;
     }
+
+    // Validate node ID against reserved keywords
+    this.validateNodeId(nodeId);
+
+    // Extract vertex context to get text and shape
+    const vertexCtx = styledVertexCtx.vertex();
+    if (!vertexCtx) {
+      return;
+    }
+
+    // Get node text - if there's explicit text, use it, otherwise use the ID
+    const textCtx = vertexCtx.text();
+    let textObj;
+    if (textCtx) {
+      const textWithType = this.extractTextWithType(textCtx);
+      textObj = { text: textWithType.text, type: textWithType.type };
+    } else {
+      textObj = { text: nodeId, type: 'text' };
+    }
+
+    // Get node shape from vertex type
+    let nodeShape = 'square'; // default
+
+    // Shape detection logic for trapezoid and other shapes
+
+    if (vertexCtx.SQS()) {
+      nodeShape = 'square';
+    } else if (vertexCtx.CIRCLE_START()) {
+      nodeShape = 'circle';
+    } else if (vertexCtx.PS()) {
+      nodeShape = 'round';
+    } else if (vertexCtx.DOUBLECIRCLE_START()) {
+      nodeShape = 'doublecircle';
+    } else if (vertexCtx.ELLIPSE_START()) {
+      nodeShape = 'ellipse';
+    } else if (vertexCtx.STADIUM_START()) {
+      nodeShape = 'stadium';
+    } else if (vertexCtx.SUBROUTINE_START()) {
+      nodeShape = 'subroutine';
+    } else if (vertexCtx.DIAMOND_START().length === 2) {
+      nodeShape = 'hexagon';
+    } else if (vertexCtx.DIAMOND_START().length === 1) {
+      nodeShape = 'diamond';
+    } else if (vertexCtx.TAGEND()) {
+      nodeShape = 'odd';
+    } else if (
+      vertexCtx.TRAP_START &&
+      vertexCtx.TRAP_START() &&
+      vertexCtx.TRAPEND &&
+      vertexCtx.TRAPEND()
+    ) {
+      nodeShape = 'trapezoid';
+    } else if (
+      vertexCtx.INVTRAP_START &&
+      vertexCtx.INVTRAP_START() &&
+      vertexCtx.INVTRAPEND &&
+      vertexCtx.INVTRAPEND()
+    ) {
+      nodeShape = 'inv_trapezoid';
+    } else if (
+      vertexCtx.TRAP_START &&
+      vertexCtx.TRAP_START() &&
+      vertexCtx.INVTRAPEND &&
+      vertexCtx.INVTRAPEND()
+    ) {
+      nodeShape = 'lean_right';
+    } else if (
+      vertexCtx.INVTRAP_START &&
+      vertexCtx.INVTRAP_START() &&
+      vertexCtx.TRAPEND &&
+      vertexCtx.TRAPEND()
+    ) {
+      nodeShape = 'lean_left';
+    }
+
+    // Shape detection complete
+
+    // Extract shape data content
+    let shapeDataContent = '';
+    if (shapeDataCtx) {
+      const contentCtx = shapeDataCtx.shapeDataContent();
+      if (contentCtx) {
+        shapeDataContent = contentCtx.getText();
+      }
+    }
+
+    // Add vertex to database with shape data - let validation errors bubble up
+    this.db.addVertex(nodeId, textObj, nodeShape, [], [], '', {}, shapeDataContent);
+
+    // Note: Subgraph node tracking is handled in edge processing methods
+    // to match Jison parser behavior which collects nodes from statements
   }
 
   private findStyledVertexInNode(nodeCtx: any): any | null {
@@ -764,15 +812,20 @@ class FlowchartListener implements ParseTreeListener {
     // Track nodes in current subgraph if we're inside one
     if (this.subgraphStack.length > 0) {
       const currentSubgraph = this.subgraphStack[this.subgraphStack.length - 1];
-      // Add all end nodes first, then start nodes (to match Jison behavior)
-      for (const endNodeId of endNodeIds) {
-        if (!currentSubgraph.nodes.includes(endNodeId)) {
-          currentSubgraph.nodes.push(endNodeId);
-        }
-      }
+
+      // To match Jison behavior for chained vertices, we need to add nodes in the order
+      // that matches how Jison processes chains: rightmost nodes first
+      // For a chain a1-->a2-->a3, Jison produces [a3, a2, a1]
+      // The key insight: Jison processes left-to-right but builds the list by prepending
+      // So we add start nodes first (they appear earlier), then end nodes
       for (const startNodeId of startNodeIds) {
         if (!currentSubgraph.nodes.includes(startNodeId)) {
-          currentSubgraph.nodes.push(startNodeId);
+          currentSubgraph.nodes.unshift(startNodeId); // Add to beginning to match Jison order
+        }
+      }
+      for (const endNodeId of endNodeIds) {
+        if (!currentSubgraph.nodes.includes(endNodeId)) {
+          currentSubgraph.nodes.unshift(endNodeId); // Add to beginning to match Jison order
         }
       }
     }
@@ -794,9 +847,11 @@ class FlowchartListener implements ParseTreeListener {
     // Check for arrowText (pipe-delimited text: |text|) at top level
     const arrowTextCtx = linkCtx.arrowText();
     if (arrowTextCtx) {
+      console.log('Processing arrowText context');
       const textContent = arrowTextCtx.text();
       if (textContent) {
-        linkType.text = { text: textContent.getText(), type: 'text' };
+        const textWithType = this.extractTextWithType(textContent);
+        linkType.text = { text: textWithType.text, type: textWithType.type };
       }
     }
 
@@ -872,9 +927,46 @@ class FlowchartListener implements ParseTreeListener {
     // Check for edge text
     const edgeTextCtx = linkCtx.edgeText();
     if (edgeTextCtx) {
-      const textContent = edgeTextCtx.getText();
-      if (textContent) {
-        linkType.text = { text: textContent, type: 'text' };
+      console.log('Processing edgeText context');
+      // edgeText contains a text context, so we need to extract it properly
+      const textCtx = edgeTextCtx.text ? edgeTextCtx.text() : null;
+      if (textCtx) {
+        const textWithType = this.extractTextWithType(textCtx);
+        linkType.text = { text: textWithType.text, type: textWithType.type };
+      } else {
+        // Fallback to direct text extraction with processing
+        const textContent = edgeTextCtx.getText();
+
+        if (textContent) {
+          // Apply the same text processing logic as extractTextWithType
+          // First, trim whitespace to handle ANTLR parser boundary issues
+          const trimmedContent = textContent.trim();
+          let processedText = trimmedContent;
+          let textType = 'text';
+
+          // Detect different text types based on wrapping characters
+          if (
+            trimmedContent.startsWith('"') &&
+            trimmedContent.endsWith('"') &&
+            trimmedContent.length > 4 &&
+            trimmedContent.charAt(1) === '`' &&
+            trimmedContent.charAt(trimmedContent.length - 2) === '`'
+          ) {
+            // Markdown strings: "`text`" (wrapped in quotes)
+            processedText = trimmedContent.slice(2, -2);
+            textType = 'markdown';
+          } else if (
+            trimmedContent.startsWith('"') &&
+            trimmedContent.endsWith('"') &&
+            trimmedContent.length > 2
+          ) {
+            // Quoted strings: "text"
+            processedText = trimmedContent.slice(1, -1);
+            textType = 'string';
+          }
+
+          linkType.text = { text: processedText, type: textType };
+        }
       }
     }
 
@@ -967,6 +1059,7 @@ class FlowchartListener implements ParseTreeListener {
       }
 
       // Push new subgraph context onto stack
+
       this.subgraphStack.push({
         id,
         title,
@@ -1159,17 +1252,135 @@ class FlowchartListener implements ParseTreeListener {
     }
   };
 
-  // Extract text content from a text context
-  private extractTextContent(textCtx: any): string {
-    if (!textCtx || !textCtx.children) return '';
+  // Extract text content from a text context and determine label type
+  private extractTextContent(textCtx: any): { text: string; type: string } {
+    if (!textCtx || !textCtx.children) return { text: '', type: 'text' };
 
     let text = '';
+    let hasMarkdown = false;
+
     for (const child of textCtx.children) {
       if (child.getText) {
-        text += child.getText();
+        const childText = child.getText();
+
+        // Check if this child is an MD_STR token
+        if (child.symbol && child.symbol.type) {
+          // Get the token type name from the lexer
+          const tokenTypeName = this.getTokenTypeName(child.symbol.type);
+          if (tokenTypeName === 'MD_STR') {
+            hasMarkdown = true;
+            text += childText;
+          } else {
+            text += childText;
+          }
+        } else {
+          text += childText;
+        }
       }
     }
-    return text;
+
+    return {
+      text: text,
+      type: hasMarkdown ? 'markdown' : 'text',
+    };
+  }
+
+  // Helper method to get token type name from token type number
+  private getTokenTypeName(tokenType: number): string {
+    // This is a simplified approach - in a full implementation, you'd use the lexer's vocabulary
+    // For now, we'll use a different approach to detect MD_STR tokens
+    return 'UNKNOWN';
+  }
+
+  // Extract text content and detect markdown strings by checking for MD_STR tokens
+  private extractTextWithType(textCtx: any): { text: string; type: string } {
+    if (!textCtx) return { text: '', type: 'text' };
+
+    const fullText = textCtx.getText();
+
+    // Check if the text came from specific context types to determine the label type
+    let detectedType = 'text'; // default
+
+    if (textCtx.children && textCtx.children.length > 0) {
+      const firstChild = textCtx.children[0];
+      const childConstructor = firstChild.constructor.name;
+
+      if (childConstructor === 'StringLiteralContext') {
+        // This came from a quoted string in the grammar
+        detectedType = 'string';
+      }
+    }
+
+    // Detect different text types based on wrapping characters (for cases where quotes are preserved)
+    if (fullText.startsWith('`') && fullText.endsWith('`') && fullText.length > 2) {
+      // Markdown strings: "`text`"
+      const strippedText = fullText.slice(1, -1);
+
+      return {
+        text: strippedText,
+        type: 'markdown',
+      };
+    } else if (fullText.startsWith('"') && fullText.endsWith('"') && fullText.length > 2) {
+      // Quoted strings: "text" (fallback case)
+      const strippedText = fullText.slice(1, -1);
+
+      return {
+        text: strippedText,
+        type: 'string',
+      };
+    }
+
+    // Use the detected type from context analysis
+    return {
+      text: fullText,
+      type: detectedType,
+    };
+  }
+
+  // Check if a text context contains markdown by examining the lexer tokens
+  private checkForMarkdownInContext(textCtx: any): boolean {
+    // Walk through the token stream to find MD_STR tokens
+    if (!textCtx.start || !textCtx.stop) return false;
+
+    const startIndex = textCtx.start.tokenIndex;
+    const stopIndex = textCtx.stop.tokenIndex;
+
+    // Access the token stream from the parser context
+    // This is a more direct approach to check for MD_STR tokens
+    try {
+      const parser = textCtx.parser;
+      if (parser && parser.getTokenStream) {
+        const tokenStream = parser.getTokenStream();
+        for (let i = startIndex; i <= stopIndex; i++) {
+          const token = tokenStream.get(i);
+          if (token && token.type) {
+            // Check if this token type corresponds to MD_STR
+            // MD_STR should be token type that comes after MD_STRING_START
+            const tokenText = token.text;
+            if (tokenText && !tokenText.includes('`') && !tokenText.includes('"')) {
+              // This might be the content of an MD_STR token
+              // Check if there are backticks around this token in the original input
+              const prevToken = i > 0 ? tokenStream.get(i - 1) : null;
+              const nextToken = tokenStream.get(i + 1);
+
+              if (prevToken && nextToken) {
+                const prevText = prevToken.text || '';
+                const nextText = nextToken.text || '';
+
+                // Look for the pattern: "`content`" where content is this token
+                if (prevText.includes('`') || nextText.includes('`')) {
+                  return true;
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      // Fallback - if we can't access the token stream, return false
+    }
+
+    return false;
   }
 
   // Handle arrow text (pipe-delimited edge text)
@@ -1184,12 +1395,13 @@ class FlowchartListener implements ParseTreeListener {
           const child = children[i];
           if (child.constructor.name === 'TextContext') {
             // Store the arrow text for use by the parent link rule
-            this.currentArrowText = this.extractTextContent(child);
+            const textWithType = this.extractTextWithType(child);
+            this.currentArrowText = textWithType.text;
             break;
           }
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Error handling - silently continue for now
     }
   };
@@ -1407,12 +1619,8 @@ class FlowchartListener implements ParseTreeListener {
   };
 
   exitShapeDataContent = (_ctx: any) => {
-    try {
-      // Shape data content is collected and processed when used
-      // The actual processing happens in vertex statement handlers
-    } catch (_error) {
-      // Error handling for shape data content processing
-    }
+    // Shape data content is collected and processed when used
+    // The actual processing happens in vertex statement handlers
   };
 }
 
@@ -1469,7 +1677,20 @@ class ANTLRFlowParser {
 const parser = new ANTLRFlowParser();
 
 // Export in the format expected by the existing code
-export default {
+const exportedParser = {
   parse: (input: string) => parser.parse(input),
   parser: parser,
+  yy: null as any, // This will be set by the test setup
 };
+
+// Make sure the parser uses the external yy when available
+Object.defineProperty(exportedParser, 'yy', {
+  get() {
+    return parser.yy;
+  },
+  set(value) {
+    parser.yy = value;
+  },
+});
+
+export default exportedParser;

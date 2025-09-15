@@ -9,13 +9,14 @@ tokens {
 // Lexer modes to match Jison's state-based lexing
 // Based on Jison: %x string, md_string, acc_title, acc_descr, acc_descr_multiline, dir, vertex, text, etc.
 
+// Shape data tokens - MUST be defined FIRST for absolute precedence over LINK_ID
+// Match exactly "@{" like Jison does (no whitespace allowed between @ and {)
+SHAPE_DATA_START: '@{' -> pushMode(SHAPE_DATA_MODE);
+
 // Accessibility tokens
 ACC_TITLE: 'accTitle' WS* ':' WS* -> pushMode(ACC_TITLE_MODE);
 ACC_DESCR: 'accDescr' WS* ':' WS* -> pushMode(ACC_DESCR_MODE);
 ACC_DESCR_MULTI: 'accDescr' WS* '{' WS* -> pushMode(ACC_DESCR_MULTILINE_MODE);
-
-// Shape data tokens - moved after LINK_ID for proper precedence
-// This will be defined later to ensure proper token precedence
 
 // Interactivity tokens
 CALL: 'call' WS+ -> pushMode(CALLBACKNAME_MODE);
@@ -49,17 +50,14 @@ DIRECTION_BT: 'direction' WS+ 'BT' ~[\n]*;
 DIRECTION_RL: 'direction' WS+ 'RL' ~[\n]*;
 DIRECTION_LR: 'direction' WS+ 'LR' ~[\n]*;
 
-// Shape data tokens - defined BEFORE LINK_ID to handle conflicts
-// The longer match "@{" should take precedence over "@" in LINK_ID
-SHAPE_DATA_START: '@' WS* '{' -> pushMode(SHAPE_DATA_MODE);
-
 // ELLIPSE_START must come very early to avoid conflicts with PAREN_START
 ELLIPSE_START: '(-' -> pushMode(ELLIPSE_TEXT_MODE);
 
-// Link ID token - matches edge IDs like "e1@" but not shape data "@{"
-// Since SHAPE_DATA_START is defined earlier, it will take precedence over LINK_ID for "@{"
-// This allows LINK_ID to match "e1@" without conflict (matches Jison pattern [^\s\"]+\@)
-LINK_ID: ~[ \t\r\n"]+ '@';
+// Link ID token - matches edge IDs like "e1@" when followed by link patterns
+// Uses a negative lookahead pattern to match the Jison lookahead (?=[^\{\"])
+// This prevents LINK_ID from matching "e1@{" and allows SHAPE_DATA_START to match "@{" correctly
+// The pattern matches any non-whitespace followed by @ but only when NOT followed by { or "
+LINK_ID: ~[ \t\r\n"]+ '@' {this.inputStream.LA(1) != '{'.charCodeAt(0) && this.inputStream.LA(1) != '"'.charCodeAt(0)}?;
 
 NUM: [0-9]+;
 BRKT: '#';
@@ -71,10 +69,12 @@ COMMA: ',';
 MULT: '*';
 
 // Edge patterns - these are complex in Jison, need careful translation
+// Normal edges without text: A-->B (matches Jison: \s*[xo<]?\-\-+[-xo>]\s*) - must come first to avoid conflicts
+LINK_NORMAL: WS* [xo<]? '--' '-'* [-xo>] WS*;
 // Normal edges with text: A-- text ---B (matches Jison: <INITIAL>\s*[xo<]?\-\-\s* -> START_LINK)
 START_LINK_NORMAL: WS* [xo<]? '--' WS+ -> pushMode(EDGE_TEXT_MODE);
-// Normal edges without text: A-->B (matches Jison: \s*[xo<]?\-\-+[-xo>]\s*)
-LINK_NORMAL: WS* [xo<]? '--' '-'* [-xo>] WS*;
+// Normal edges with text (no space): A--text---B - match -- followed by any non-dash character
+START_LINK_NORMAL_NOSPACE: WS* [xo<]? '--' -> pushMode(EDGE_TEXT_MODE);
 // Pipe-delimited edge text: A--x| (linkStatement for arrowText) - matches Jison linkStatement pattern
 LINK_STATEMENT_NORMAL: WS* [xo<]? '--' '-'* [xo<]?;
 
@@ -229,12 +229,13 @@ ELLIPSE_TEXT: (~[-)])+;
 mode TRAP_TEXT_MODE;
 TRAP_END_BRACKET: '\\]' -> popMode, type(TRAPEND);
 INVTRAP_END_BRACKET: '/]' -> popMode, type(INVTRAPEND);
-TRAP_TEXT: (~[\\\\/\]])+;
+TRAP_TEXT: (~[\\/\]])+;
 
 mode EDGE_TEXT_MODE;
 // Handle space-delimited pattern: A-- text ----B or A-- text -->B (matches Jison: [^-]|\-(?!\-)+)
 // Must handle both cases: extra dashes without arrow (----) and dashes with arrow (-->)
 EDGE_TEXT_LINK_END: WS* '--' '-'* [-xo>]? WS* -> popMode, type(LINK_NORMAL);
+// Match any character including spaces and single dashes, but not double dashes
 EDGE_TEXT: (~[-] | '-' ~[-])+;
 
 mode THICK_EDGE_TEXT_MODE;

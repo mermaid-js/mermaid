@@ -35,11 +35,14 @@ export class FlowParserVisitor {
     const text = ctx.getText();
     const contextName = ctx.constructor.name;
 
+    console.log('visit called with context:', contextName, 'text:', text);
+
     // Only process specific contexts to avoid duplicates
     if (contextName === 'StartContext') {
+      console.log('Processing StartContext');
       // Parse direction from graph declaration
       // Let FlowDB handle direction symbol mapping just like Jison does
-      const directionPattern = /graph\s+(TD|TB|BT|RL|LR|>|<|\^|v)/i;
+      const directionPattern = /graph\s+(td|tb|bt|rl|lr|>|<|\^|v)/i;
       const dirMatch = text.match(directionPattern);
       if (dirMatch) {
         // Pass the raw direction value to FlowDB - it will handle symbol mapping
@@ -58,7 +61,9 @@ export class FlowParserVisitor {
   }
 
   private visitChildren(ctx: any): void {
-    if (!ctx || !ctx.children) return;
+    if (!ctx?.children) {
+      return;
+    }
 
     for (const child of ctx.children) {
       this.visit(child);
@@ -81,6 +86,7 @@ export class FlowParserVisitor {
     // Parse different types of connections and nodes
     this.parseConnections(text);
     this.parseStandaloneNodes(text);
+    this.parseShapeData(text);
     this.parseClickStatements(text);
     this.parseLinkStyleStatements(text);
     this.parseEdgeCurveProperties(text);
@@ -96,8 +102,10 @@ export class FlowParserVisitor {
     for (const line of lines) {
       const trimmedLine = line.trim();
 
-      // Skip lines that don't contain connections or contain @{curve: ...}
-      if (!trimmedLine || !trimmedLine.includes('-->') || trimmedLine.includes('@{')) {
+      // Skip lines that don't contain connections or contain edge curve properties like @{curve: ...}
+      // But allow node shape data like A@{label: "text"}
+      const isEdgeCurveProperty = trimmedLine.includes('@{') && trimmedLine.includes('curve:');
+      if (!trimmedLine || !trimmedLine.includes('-->') || isEdgeCurveProperty) {
         processedLines.push(line);
         continue;
       }
@@ -154,7 +162,7 @@ export class FlowParserVisitor {
           const connectionPattern =
             /^([A-Za-z0-9_]+(?:\[[^\]]*\]|\([^)]*\)|\{[^}]*\})*)\s*(-+)\s*(.+?)\s*(--?>)\s*([A-Za-z0-9_]+(?:\[[^\]]*\]|\([^)]*\)|\{[^}]*\})*)\s*(.*)$/;
 
-          while (remaining && remaining.includes('-->')) {
+          while (remaining?.includes('-->')) {
             const match = remaining.match(connectionPattern);
             if (match) {
               const [, fromNode, startEdge, edgeText, endEdge, toNode, rest] = match;
@@ -370,7 +378,11 @@ export class FlowParserVisitor {
 
   private parseStandaloneNodes(text: string): void {
     // Parse nodes that might not be in connections (for completeness)
-    // Include markdown string support
+    // Include markdown string support and shape data
+
+    // First, handle shape data nodes separately
+    this.parseShapeDataNodes(text);
+
     const nodePatterns = [
       // IMPORTANT: Specific bracket patterns MUST come before general square bracket pattern
       // Trapezoid nodes: A[/Text\]
@@ -1104,7 +1116,7 @@ export class FlowParserVisitor {
             }
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // Fallback to simple length calculation if destructLink fails
         const dashMatch = edgeType.match(/-+/g);
         const equalsMatch = edgeType.match(/=+/g);
@@ -1220,6 +1232,7 @@ export class FlowParserVisitor {
     // Then process the remaining content (nodes and connections)
     this.parseConnections(text);
     this.parseStandaloneNodes(text);
+    this.parseShapeData(text);
     this.parseClickStatements(text);
     this.parseLinkStyleStatements(text);
     this.parseEdgeCurveProperties(text);
@@ -1712,6 +1725,483 @@ export class FlowParserVisitor {
         break;
       }
     }
+  }
+
+  private parseShapeDataNodes(text: string): void {
+    // Parse standalone nodes with shape data using @{} syntax
+    // Pattern: NodeId@{shape: shapeType, label: "text", other: "value"}
+    // Reference: flow.jison SHAPE_DATA handling
+
+    // Clean the text to remove ANTLR artifacts
+    const cleanText = text.replace(/<EOF>/g, '').trim();
+
+    // Use a more sophisticated approach to find shape data blocks
+    const nodeIdPattern = /([A-Za-z0-9_]+)@\{/g;
+    let match;
+
+    while ((match = nodeIdPattern.exec(cleanText)) !== null) {
+      const nodeId = match[1];
+      const startIndex = match.index + match[0].length;
+
+      // Find the matching closing brace, handling nested braces and quoted strings
+      const shapeDataContent = this.extractShapeDataContent(cleanText, startIndex);
+
+      if (shapeDataContent !== null) {
+        // Parse the shape data content (key: value pairs)
+        const shapeData = this.parseShapeDataContent(shapeDataContent);
+
+        // Apply the shape data to the node
+        this.applyShapeDataToNode(nodeId, shapeData);
+      }
+    }
+  }
+
+  private parseShapeData(text: string): void {
+    // Parse node shape data using @{} syntax
+    // Pattern: NodeId@{shape: shapeType, label: "text", other: "value"}
+    // Reference: flow.jison SHAPE_DATA handling
+
+    // Clean the text to remove ANTLR artifacts
+    const cleanText = text.replace(/<EOF>/g, '').trim();
+
+    // Use a more sophisticated approach to find shape data blocks
+    const nodeIdPattern = /([A-Za-z0-9_]+)@\{/g;
+    let match;
+
+    while ((match = nodeIdPattern.exec(cleanText)) !== null) {
+      const nodeId = match[1];
+      const startIndex = match.index + match[0].length;
+
+      // Find the matching closing brace, handling nested braces and quoted strings
+      const shapeDataContent = this.extractShapeDataContent(cleanText, startIndex);
+
+      if (shapeDataContent !== null) {
+        // Parse the shape data content (key: value pairs)
+        const shapeData = this.parseShapeDataContent(shapeDataContent);
+
+        // Apply the shape data to the node
+        this.applyShapeDataToNode(nodeId, shapeData);
+      }
+    }
+  }
+
+  private extractShapeDataContent(text: string, startIndex: number): string | null {
+    let braceCount = 1;
+    let inQuotes = false;
+    let quoteChar = '';
+    let i = startIndex;
+
+    while (i < text.length && braceCount > 0) {
+      const char = text[i];
+
+      if (!inQuotes && (char === '"' || char === "'")) {
+        inQuotes = true;
+        quoteChar = char;
+      } else if (inQuotes && char === quoteChar) {
+        // Check if it's escaped
+        if (i === 0 || text[i - 1] !== '\\') {
+          inQuotes = false;
+          quoteChar = '';
+        }
+      } else if (!inQuotes) {
+        if (char === '{') {
+          braceCount++;
+        } else if (char === '}') {
+          braceCount--;
+        }
+      }
+
+      i++;
+    }
+
+    if (braceCount === 0) {
+      return text.substring(startIndex, i - 1);
+    }
+
+    return null;
+  }
+
+  private parseShapeDataContent(content: string): Record<string, string> {
+    const data: Record<string, string> = {};
+
+    // Split by commas, but handle quoted strings properly
+    const pairs = this.splitShapeDataPairs(content);
+
+    for (const pair of pairs) {
+      const colonIndex = pair.indexOf(':');
+      if (colonIndex > 0) {
+        const key = pair.substring(0, colonIndex).trim();
+        let value = pair.substring(colonIndex + 1).trim();
+
+        // Remove quotes if present
+        if (
+          (value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))
+        ) {
+          value = value.slice(1, -1);
+        }
+
+        data[key] = value;
+      }
+    }
+
+    return data;
+  }
+
+  private splitShapeDataPairs(content: string): string[] {
+    const pairs: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    let quoteChar = '';
+
+    for (let i = 0; i < content.length; i++) {
+      const char = content[i];
+
+      if (!inQuotes && (char === '"' || char === "'")) {
+        inQuotes = true;
+        quoteChar = char;
+        current += char;
+      } else if (inQuotes && char === quoteChar) {
+        inQuotes = false;
+        quoteChar = '';
+        current += char;
+      } else if (!inQuotes && char === ',') {
+        if (current.trim()) {
+          pairs.push(current.trim());
+        }
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+
+    if (current.trim()) {
+      pairs.push(current.trim());
+    }
+
+    return pairs;
+  }
+
+  private applyShapeDataToNode(nodeId: string, shapeData: Record<string, string>): void {
+    // Ensure the node exists
+    if (!this.db.getVertices().has(nodeId)) {
+      this.db.addVertex(nodeId, nodeId, 'square', [], '', '');
+    }
+
+    // Apply shape if specified
+    if (shapeData.shape) {
+      const vertex = this.db.getVertices().get(nodeId);
+      if (vertex) {
+        vertex.type = this.mapShapeToType(shapeData.shape);
+      }
+    }
+
+    // Apply label if specified
+    if (shapeData.label) {
+      const vertex = this.db.getVertices().get(nodeId);
+      if (vertex) {
+        vertex.text = shapeData.label;
+      }
+    }
+
+    // Apply other properties as needed
+    // This can be extended to handle more shape data properties
+  }
+
+  private mapShapeToType(shape: string): string {
+    // Map shape names to vertex types
+    const shapeMap: Record<string, string> = {
+      squareRect: 'square',
+      rect: 'square',
+      square: 'square',
+      circle: 'circle',
+      ellipse: 'ellipse',
+      diamond: 'diamond',
+      hexagon: 'hexagon',
+      stadium: 'stadium',
+      cylinder: 'cylinder',
+      doublecircle: 'doublecircle',
+      subroutine: 'subroutine',
+      trapezoid: 'trapezoid',
+      inv_trapezoid: 'inv_trapezoid',
+      lean_right: 'lean_right',
+      lean_left: 'lean_left',
+      odd: 'odd',
+    };
+
+    return shapeMap[shape] || 'square';
+  }
+
+  // Vertex statement visitor - handles node definitions with optional shape data
+  visitVertexStatement(ctx: any): any {
+    console.log('visitVertexStatement called with:', ctx.getText());
+
+    // Handle different vertex statement patterns:
+    // - node shapeData
+    // - node spaceList
+    // - node
+    // - vertexStatement link node shapeData
+    // - vertexStatement link node
+
+    if (ctx.node && ctx.shapeData) {
+      console.log('Found node with shape data');
+      // Single node with shape data: node shapeData
+      const nodeCtx = Array.isArray(ctx.node()) ? ctx.node()[ctx.node().length - 1] : ctx.node();
+      const shapeDataCtx = Array.isArray(ctx.shapeData())
+        ? ctx.shapeData()[ctx.shapeData().length - 1]
+        : ctx.shapeData();
+
+      this.visitNode(nodeCtx);
+      this.visitShapeDataForNode(shapeDataCtx, nodeCtx);
+    } else if (ctx.node) {
+      console.log('Found node without shape data');
+      // Single node or chained nodes without shape data
+      const nodes = Array.isArray(ctx.node()) ? ctx.node() : [ctx.node()];
+      for (const nodeCtx of nodes) {
+        this.visitNode(nodeCtx);
+      }
+    }
+
+    // Handle links if present
+    if (ctx.link) {
+      const links = Array.isArray(ctx.link()) ? ctx.link() : [ctx.link()];
+      for (const linkCtx of links) {
+        this.visitLink(linkCtx);
+      }
+    }
+
+    // Continue with default visitor behavior
+    return this.visitChildren(ctx);
+  }
+
+  // Node visitor - handles individual node definitions
+  visitNode(ctx: any): any {
+    if (ctx.styledVertex) {
+      const vertices = Array.isArray(ctx.styledVertex())
+        ? ctx.styledVertex()
+        : [ctx.styledVertex()];
+      for (const vertexCtx of vertices) {
+        this.visitStyledVertex(vertexCtx);
+      }
+    }
+
+    return this.visitChildren(ctx);
+  }
+
+  // Styled vertex visitor - handles vertex with optional style
+  visitStyledVertex(ctx: any): any {
+    if (ctx.vertex) {
+      this.visitVertex(ctx.vertex());
+    }
+
+    // Handle style separator and class assignment
+    if (ctx.STYLE_SEPARATOR && ctx.idString) {
+      const vertexCtx = ctx.vertex();
+      const classId = ctx.idString().getText();
+
+      // Extract node ID from vertex context
+      const nodeId = this.extractNodeIdFromVertexContext(vertexCtx);
+      if (nodeId) {
+        this.db.setClass(nodeId, classId);
+      }
+    }
+
+    return this.visitChildren(ctx);
+  }
+
+  // Vertex visitor - handles basic vertex definitions
+  visitVertex(ctx: any): any {
+    // Extract node information from vertex context
+    let nodeId = '';
+    let nodeText = '';
+    let nodeType = 'square'; // default
+
+    // Handle different vertex types based on the grammar
+    if (ctx.NODE_STRING) {
+      nodeId = ctx.NODE_STRING().getText();
+      nodeText = nodeId; // default text is the ID
+    } else if (ctx.getText) {
+      const fullText = ctx.getText();
+      // Parse vertex text to extract ID and shape information
+      const match = fullText.match(/^([A-Za-z0-9_]+)/);
+      if (match) {
+        nodeId = match[1];
+        nodeText = nodeId;
+      }
+
+      // Determine node type from shape delimiters
+      if (fullText.includes('[') && fullText.includes(']')) {
+        nodeType = 'square';
+        // Extract text between brackets
+        const textMatch = fullText.match(/\[([^\]]*)\]/);
+        if (textMatch) {
+          nodeText = textMatch[1];
+        }
+      } else if (fullText.includes('(') && fullText.includes(')')) {
+        nodeType = 'round';
+        // Extract text between parentheses
+        const textMatch = fullText.match(/\(([^\)]*)\)/);
+        if (textMatch) {
+          nodeText = textMatch[1];
+        }
+      }
+      // Add more shape type detection as needed
+    }
+
+    // Add the vertex to the database if we have a valid node ID
+    if (nodeId) {
+      this.db.addVertex(nodeId, nodeText, nodeType);
+    }
+
+    return this.visitChildren(ctx);
+  }
+
+  // Link visitor - handles edge/connection definitions
+  visitLink(ctx: any): any {
+    // Handle link parsing - this is a placeholder for now
+    // The actual link parsing is complex and handled by the existing regex-based approach
+    return this.visitChildren(ctx);
+  }
+
+  // Shape data visitor methods
+  visitShapeData(ctx: any): string {
+    // Handle shape data parsing through ANTLR visitor pattern
+    const content = this.visitShapeDataContent(ctx.shapeDataContent());
+    return content;
+  }
+
+  visitShapeDataForNode(shapeDataCtx: any, nodeCtx: any): void {
+    console.log('visitShapeDataForNode called');
+    // Handle shape data for a specific node
+    const content = this.visitShapeData(shapeDataCtx);
+    const nodeId = this.extractNodeIdFromVertexContext(nodeCtx);
+
+    console.log('Shape data content:', content);
+    console.log('Node ID:', nodeId);
+
+    if (nodeId && content) {
+      // Parse the shape data content (key: value pairs)
+      const shapeData = this.parseShapeDataContent(content);
+
+      console.log('Parsed shape data:', shapeData);
+
+      // Apply the shape data to the node using FlowDB
+      this.applyShapeDataToNodeViaDB(nodeId, shapeData);
+    }
+  }
+
+  visitShapeDataContent(ctx: any): string {
+    // Collect all shape data content tokens
+    let content = '';
+
+    if (ctx.SHAPE_DATA_CONTENT) {
+      if (Array.isArray(ctx.SHAPE_DATA_CONTENT())) {
+        content += ctx
+          .SHAPE_DATA_CONTENT()
+          .map((token: any) => token.getText())
+          .join('');
+      } else {
+        content += ctx.SHAPE_DATA_CONTENT().getText();
+      }
+    }
+
+    // Handle string content
+    if (ctx.SHAPE_DATA_STRING_START && ctx.SHAPE_DATA_STRING_CONTENT && ctx.SHAPE_DATA_STRING_END) {
+      const stringContents = ctx.SHAPE_DATA_STRING_CONTENT();
+      if (Array.isArray(stringContents)) {
+        content += stringContents.map((token: any) => `"${token.getText()}"`).join('');
+      } else {
+        content += `"${stringContents.getText()}"`;
+      }
+    }
+
+    // Handle nested shape data content
+    if (ctx.shapeDataContent && ctx.shapeDataContent().length > 0) {
+      for (const childCtx of ctx.shapeDataContent()) {
+        content += this.visitShapeDataContent(childCtx);
+      }
+    }
+
+    return content;
+  }
+
+  // Helper method to extract node ID from vertex context
+  extractNodeIdFromVertexContext(vertexCtx: any): string | null {
+    if (!vertexCtx) return null;
+
+    // Try different ways to extract the node ID from vertex context
+    if (vertexCtx.NODE_STRING) {
+      return vertexCtx.NODE_STRING().getText();
+    }
+
+    if (vertexCtx.getText) {
+      const text = vertexCtx.getText();
+      // Extract node ID from vertex text (before any shape delimiters)
+      const match = text.match(/^([A-Za-z0-9_]+)/);
+      return match ? match[1] : null;
+    }
+
+    return null;
+  }
+
+  // Helper method to apply shape data to node via FlowDB (like Jison does)
+  applyShapeDataToNodeViaDB(nodeId: string, shapeData: any): void {
+    // Convert shape data to YAML string format that FlowDB expects
+    let yamlContent = '';
+
+    if (typeof shapeData === 'object' && shapeData !== null) {
+      const pairs: string[] = [];
+      for (const [key, value] of Object.entries(shapeData)) {
+        if (typeof value === 'string') {
+          pairs.push(`${key}: "${value}"`);
+        } else {
+          pairs.push(`${key}: ${value}`);
+        }
+      }
+      yamlContent = pairs.join('\n');
+    } else if (typeof shapeData === 'string') {
+      yamlContent = shapeData;
+    }
+
+    // Call FlowDB addVertex with shape data (8th parameter) like Jison does
+    // addVertex(id, textObj, textType, style, classes, dir, props, shapeData)
+    this.db.addVertex(
+      nodeId,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      yamlContent
+    );
+  }
+
+  private extractNodeIdFromShapeDataContext(ctx: any): string | null {
+    // Walk up the parse tree to find the node ID
+    let parent = ctx.parent;
+
+    while (parent) {
+      // Check if this is a vertexStatement with a node
+      if (parent.node && parent.node().length > 0) {
+        const nodeCtx = parent.node(0);
+        if (nodeCtx.styledVertex && nodeCtx.styledVertex().vertex) {
+          const vertexCtx = nodeCtx.styledVertex().vertex();
+          if (vertexCtx.NODE_STRING) {
+            return vertexCtx.NODE_STRING().getText();
+          }
+        }
+      }
+
+      // Check if this is a standaloneVertex
+      if (parent.NODE_STRING) {
+        return parent.NODE_STRING().getText();
+      }
+
+      parent = parent.parent;
+    }
+
+    return null;
   }
 
   // Text handling methods for markdown support
