@@ -19,6 +19,7 @@ class FlowchartListener implements ParseTreeListener {
   private subgraphStack: {
     id?: string;
     title?: string;
+    titleType?: string;
     nodes: (string | { stmt: string; value: string })[];
   }[] = [];
   private currentArrowText: string = '';
@@ -166,10 +167,15 @@ class FlowchartListener implements ParseTreeListener {
         const textCtx = vertexCtx.text ? vertexCtx.text() : null;
         if (textCtx) {
           console.log('DEBUG: Found TextContext, extracting text from it');
-          const textContent = this.extractStringFromContext(textCtx);
-          console.log('DEBUG: extracted text from TextContext:', textContent);
-          if (textContent) {
-            nodeText = textContent;
+          const textWithType = this.extractTextWithType(textCtx);
+          console.log(
+            'DEBUG: extracted text from TextContext:',
+            textWithType.text,
+            'type:',
+            textWithType.type
+          );
+          if (textWithType.text) {
+            nodeText = textWithType.text;
           }
         } else {
           // No text context, use the node ID as text (will be updated by shape data if present)
@@ -1316,27 +1322,32 @@ class FlowchartListener implements ParseTreeListener {
 
       const textNoTagsCtx = ctx.textNoTags();
       if (textNoTagsCtx) {
-        const idText = this.extractStringFromContext(textNoTagsCtx);
+        const idWithType = this.extractTextWithType(textNoTagsCtx);
+        const idText = idWithType.text;
+        const idType = idWithType.type;
         id = idText;
 
         // Check if there's a title in brackets [title]
         const textCtx = ctx.text();
+        let titleType = idType; // Default to ID type
         if (textCtx) {
-          const titleText = this.extractStringFromContext(textCtx);
-          title = titleText;
+          const titleWithType = this.extractTextWithType(textCtx);
+          title = titleWithType.text;
+          titleType = titleWithType.type;
         } else {
-          // If no separate title, use the ID as title
+          // If no separate title, use the ID as title and its type
           title = idText;
+          titleType = idType;
         }
+
+        // Push new subgraph context onto stack
+        this.subgraphStack.push({
+          id,
+          title,
+          titleType,
+          nodes: [],
+        });
       }
-
-      // Push new subgraph context onto stack
-
-      this.subgraphStack.push({
-        id,
-        title,
-        nodes: [],
-      });
     } catch (_error) {
       // Error handling for subgraph processing
     }
@@ -1359,13 +1370,16 @@ class FlowchartListener implements ParseTreeListener {
       if (currentSubgraph.id && /\s/.test(currentSubgraph.id)) {
         // ID contains spaces - treat as title-only subgraph (auto-generate ID)
         // Pass the same object reference for both id and title to match Jison behavior
-        const titleObj = { text: currentSubgraph.title || '', type: 'text' };
+        const titleObj = {
+          text: currentSubgraph.title || '',
+          type: currentSubgraph.titleType || 'text',
+        };
         id = titleObj;
         title = titleObj;
       } else {
         // Normal ID/title handling
         id = currentSubgraph.id ? { text: currentSubgraph.id } : undefined;
-        title = { text: currentSubgraph.title || '', type: 'text' };
+        title = { text: currentSubgraph.title || '', type: currentSubgraph.titleType || 'text' };
       }
 
       const nodeList = currentSubgraph.nodes;
@@ -1630,9 +1644,18 @@ class FlowchartListener implements ParseTreeListener {
       // Quoted strings: "text" (fallback case)
       const strippedText = fullText.slice(1, -1);
 
+      // Check if the inner content has backticks (nested markdown)
+      if (strippedText.startsWith('`') && strippedText.endsWith('`') && strippedText.length > 2) {
+        const innerStrippedText = strippedText.slice(1, -1);
+        return {
+          text: innerStrippedText,
+          type: 'markdown',
+        };
+      }
+
       return {
         text: strippedText,
-        type: 'string',
+        type: 'text',
       };
     }
 
