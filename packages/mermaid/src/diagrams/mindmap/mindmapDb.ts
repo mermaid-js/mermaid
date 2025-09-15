@@ -37,6 +37,7 @@ export class MindmapDB {
   private nodes: MindmapNode[] = [];
   private count = 0;
   private elements: Record<number, D3Element> = {};
+  private baseLevel?: number;
   public readonly nodeType: typeof nodeType;
 
   constructor() {
@@ -54,6 +55,7 @@ export class MindmapDB {
     this.nodes = [];
     this.count = 0;
     this.elements = {};
+    this.baseLevel = undefined;
   }
 
   public getParent(level: number): MindmapNode | null {
@@ -71,6 +73,17 @@ export class MindmapDB {
 
   public addNode(level: number, id: string, descr: string, type: number): void {
     log.info('addNode', level, id, descr, type);
+
+    let isRoot = false;
+
+    if (this.nodes.length === 0) {
+      this.baseLevel = level;
+      level = 0;
+      isRoot = true;
+    } else if (this.baseLevel !== undefined) {
+      level = level - this.baseLevel;
+      isRoot = false;
+    }
 
     const conf = getConfig();
     let padding = conf.mindmap?.padding ?? defaultConfig.mindmap.padding;
@@ -92,6 +105,7 @@ export class MindmapDB {
       children: [],
       width: conf.mindmap?.maxNodeWidth ?? defaultConfig.mindmap.maxNodeWidth,
       padding,
+      isRoot,
     };
 
     const parent = this.getParent(level);
@@ -99,7 +113,7 @@ export class MindmapDB {
       parent.children.push(node);
       this.nodes.push(node);
     } else {
-      if (this.nodes.length === 0) {
+      if (isRoot) {
         this.nodes.push(node);
       } else {
         throw new Error(
@@ -204,8 +218,7 @@ export class MindmapDB {
     // Build CSS classes for the node
     const cssClasses = ['mindmap-node'];
 
-    // Add section-specific classes
-    if (node.level === 0) {
+    if (node.isRoot === true) {
       // Root node gets special classes
       cssClasses.push('section-root', 'section--1');
     } else if (node.section !== undefined) {
