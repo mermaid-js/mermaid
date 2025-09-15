@@ -42,7 +42,7 @@
     "khroma": "^2.1.0"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2",
+    "concurrently": "^9.2.1",
     "mermaid": "workspace:*",
     "rimraf": "^6.0.1"
   },
