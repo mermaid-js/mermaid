@@ -15,13 +15,15 @@
     "git graph"
   ],
   "scripts": {
-    "build": "pnpm build:esbuild && pnpm build:types",
+    "build": "pnpm antlr:generate && pnpm build:esbuild && pnpm build:types",
     "build:esbuild": "pnpm run -r clean && tsx .esbuild/build.ts",
+    "antlr:generate": "pnpm --filter mermaid antlr:generate",
     "build:mermaid": "pnpm build:esbuild --mermaid",
     "build:viz": "pnpm build:esbuild --visualize",
     "build:types": "pnpm --filter mermaid types:build-config && tsx .build/types.ts",
     "build:types:watch": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly --watch",
     "dev": "tsx .esbuild/server.ts",
+    "dev:antlr": "USE_ANTLR_PARSER=true tsx .esbuild/server-antlr.ts",
     "dev:vite": "tsx .vite/server.ts",
     "dev:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm dev:vite",
     "copy-readme": "cpy './README.*' ./packages/mermaid/ --cwd=.",

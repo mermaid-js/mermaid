@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Mermaid ANTLR Parser Test Page</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  <style>
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .parser-info {
+      background: #e3f2fd;
+      border: 1px solid #2196f3;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .success {
+      background: #e8f5e8;
+      border: 1px solid #4caf50;
+    }
+
+    .error {
+      background: #ffebee;
+      border: 1px solid #f44336;
+    }
+
+    div.mermaid {
+      font-family: 'Courier New', Courier, monospace !important;
+    }
+
+    h1 {
+      color: #1976d2;
+    }
+
+    h2 {
+      color: #424242;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🎯 Mermaid ANTLR Parser Test Page</h1>
+
+  <div class="parser-info">
+    <h3>🔧 Parser Information</h3>
+    <p><strong>Environment Variable:</strong> <code id="env-var">Loading...</code></p>
+    <p><strong>Expected:</strong> <code>USE_ANTLR_PARSER=true</code></p>
+    <p><strong>Status:</strong> <span id="parser-status">Checking...</span></p>
+  </div>
+
+  <div class="test-section">
+    <h2>Test 1: Basic Flowchart</h2>
+    <p>Simple flowchart to test basic ANTLR parser functionality:</p>
+    <pre class="mermaid">
+flowchart TD
+  A[Start] --> B[End]
+    </pre>
+  </div>
+
+
+
+  <div class="test-section">
+    <h2>Test 4: Complex Shapes with Text</h2>
+    <p>Testing various node shapes with complex text content:</p>
+    <pre class="mermaid">
+flowchart LR
+  A(Round Node) --> B{Diamond}
+  B --> C([Stadium])
+  C --> D[[Subroutine]]
+  D --> E[(Database)]
+  E --> F((Circle))
+  F --> G[/Parallelogram/]
+  G --> H[\Trapezoid\]
+  H --> I[Mixed Text with / slash]
+  I --> J[\Mixed Text with \ backslash\]
+    </pre>
+  </div>
+
+  <div class="test-section">
+    <h2>Test 5: Classes and Styles</h2>
+    <p>Testing class and style processing:</p>
+    <pre class="mermaid">
+        flowchart TD
+          A[Node A] --> B[Node B]
+          B --> C[Node C]
+
+          classDef redClass fill:#ff9999,stroke:#333,stroke-width:2px
+          classDef blueClass fill:#9999ff,stroke:#333,stroke-width:2px
+
+          class A redClass
+          class B,C blueClass
+      </pre>
+  </div>
+
+  <div class="test-section">
+    <h2>Test 6: Subgraphs</h2>
+    <p>Testing subgraph processing:</p>
+    <pre class="mermaid">
+        flowchart TD
+          subgraph Main["Main Process"]
+            A[Start] --> B[Process]
+          end
+
+          subgraph Sub["Sub Process"]
+            C[Sub Start] --> D[Sub End]
+          end
+
+          B --> C
+          D --> E[Final End]
+      </pre>
+  </div>
+
+
+  <script type="module">
+    import mermaid from './mermaid.esm.mjs';
+
+    // Override console methods to capture logs
+    const originalLog = console.log;
+    const originalError = console.error;
+
+    console.log = function (...args) {
+      originalLog.apply(console, args);
+      // Display important logs on page
+      if (args[0] && typeof args[0] === 'string' && (
+        args[0].includes('ANTLR Parser:') ||
+        args[0].includes('FlowDB:') ||
+        args[0].includes('FlowchartListener:')
+      )) {
+        const logDiv = document.getElementById('debug-logs') || createLogDiv();
+        logDiv.innerHTML += '<div style="color: blue;">' + args.join(' ') + '</div>';
+      }
+    };
+
+    console.error = function (...args) {
+      originalError.apply(console, args);
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: red;">ERROR: ' + args.join(' ') + '</div>';
+    };
+
+    function createLogDiv() {
+      const logDiv = document.createElement('div');
+      logDiv.id = 'debug-logs';
+      logDiv.style.cssText = 'border: 1px solid #ccc; padding: 10px; margin: 10px 0; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; background: #f9f9f9;';
+      logDiv.innerHTML = '<h3>Debug Logs:</h3>';
+      document.body.appendChild(logDiv);
+      return logDiv;
+    }
+
+    // Initialize mermaid
+    mermaid.initialize({
+      theme: 'default',
+      logLevel: 3,
+      securityLevel: 'loose',
+      flowchart: { curve: 'basis' },
+    });
+
+    // Check environment and parser status
+    const envVar = typeof process !== 'undefined' && process.env ? process.env.USE_ANTLR_PARSER : 'undefined';
+    const envElement = document.getElementById('env-var');
+    const statusElement = document.getElementById('parser-status');
+
+    if (envElement) {
+      envElement.textContent = `USE_ANTLR_PARSER=${envVar || 'undefined'}`;
+    }
+
+    // Check for debug information from parser
+    setTimeout(() => {
+      if (window.MERMAID_PARSER_DEBUG) {
+        console.log('🔍 Found MERMAID_PARSER_DEBUG:', window.MERMAID_PARSER_DEBUG);
+        const debug = window.MERMAID_PARSER_DEBUG;
+
+        if (envElement) {
+          envElement.textContent = `USE_ANTLR_PARSER=${debug.env_value || 'undefined'} (actual: ${debug.USE_ANTLR_PARSER})`;
+        }
+
+        if (statusElement) {
+          if (debug.USE_ANTLR_PARSER) {
+            statusElement.innerHTML = '<span style="color: green;">✅ ANTLR Parser Active</span>';
+            statusElement.parentElement.parentElement.classList.add('success');
+          } else {
+            statusElement.innerHTML = '<span style="color: orange;">⚠️ Jison Parser (Default)</span>';
+          }
+        }
+      } else {
+        console.log('❌ MERMAID_PARSER_DEBUG not found on window');
+      }
+    }, 1000);
+
+    if (statusElement) {
+      if (envVar === 'true') {
+        statusElement.innerHTML = '<span style="color: green;">✅ ANTLR Parser Active</span>';
+        statusElement.parentElement.parentElement.classList.add('success');
+      } else {
+        statusElement.innerHTML = '<span style="color: orange;">⚠️ Jison Parser (Default)</span>';
+      }
+    }
+
+    // Add some debugging
+    console.log('🎯 ANTLR Parser Test Page Loaded');
+    console.log('🔧 Environment:', { USE_ANTLR_PARSER: envVar });
+
+    // Test if we can detect which parser is being used
+    setTimeout(() => {
+      const mermaidElements = document.querySelectorAll('.mermaid');
+      console.log(`📊 Found ${mermaidElements.length} mermaid diagrams`);
+
+      // Check if diagrams rendered successfully
+      const renderedElements = document.querySelectorAll('.mermaid svg');
+      if (renderedElements.length > 0) {
+        console.log('✅ Diagrams rendered successfully!');
+        console.log(`📈 ${renderedElements.length} SVG elements created`);
+
+        // Update status on page
+        const statusElement = document.getElementById('parser-status');
+        if (statusElement && envVar === 'true') {
+          statusElement.innerHTML = '<span style="color: green;">✅ ANTLR Parser Active & Rendering Successfully!</span>';
+        }
+      } else {
+        console.log('❌ No SVG elements found - check for rendering errors');
+        console.log('🔍 Checking for error messages...');
+
+        // Look for error messages in mermaid elements
+        mermaidElements.forEach((element, index) => {
+          console.log(`📋 Diagram ${index + 1} content:`, element.textContent.trim());
+          if (element.innerHTML.includes('error') || element.innerHTML.includes('Error')) {
+            console.log(`❌ Error found in diagram ${index + 1}:`, element.innerHTML);
+          }
+        });
+      }
+    }, 3000);
+  </script>
+</body>
+
+</html>

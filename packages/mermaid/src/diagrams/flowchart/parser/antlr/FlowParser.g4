@@ -82,7 +82,8 @@ vertex:
     idString SQS text SQE                                           // Square: [text]
     | idString DOUBLECIRCLE_START text DOUBLECIRCLEEND             // Double circle: (((text)))
     | idString CIRCLE_START text CIRCLEEND                         // Circle: ((text))
-    | idString ELLIPSE_START text ELLIPSE_END_TOKEN                // Ellipse: (-text-)
+    | idString ELLIPSE_COMPLETE                                    // Ellipse: (-text-) - complete token
+    | idString ELLIPSE_START text ELLIPSE_END_TOKEN                // Ellipse: (-text-) - mode-based
     | idString STADIUM_START text STADIUMEND                       // Stadium: ([text])
     | idString SUBROUTINE_START text SUBROUTINEEND                 // Subroutine: [[text]]
     | idString VERTEX_WITH_PROPS_START NODE_STRING COLON NODE_STRING PIPE text SQE  // Props: [|field:value|text]

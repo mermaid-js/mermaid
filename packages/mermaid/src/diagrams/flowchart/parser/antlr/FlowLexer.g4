@@ -51,6 +51,8 @@ DIRECTION_RL: 'direction' WS+ 'RL' ~[\n]*;
 DIRECTION_LR: 'direction' WS+ 'LR' ~[\n]*;
 
 // ELLIPSE_START must come very early to avoid conflicts with PAREN_START
+// Simplified ellipse pattern - match the entire ellipse in one token
+ELLIPSE_COMPLETE: '(-' (~[)]|')'~[-])* '-)';
 ELLIPSE_START: '(-' -> pushMode(ELLIPSE_TEXT_MODE);
 
 // Link ID token - matches edge IDs like "e1@" when followed by link patterns
@@ -226,8 +228,9 @@ mode ELLIPSE_TEXT_MODE;
 ELLIPSE_END: '-)' -> popMode, type(ELLIPSE_END_TOKEN);
 // Match Jison behavior: allow any char except ()[]{}  OR  - not followed by )
 // Jison pattern: [^\(\)\[\]\{\}]|-\!\)+
+// Fixed: Allow hyphens in the middle of text, but not when they form the end pattern '-)'
 ELLIPSE_TEXT: (
-    ~[()[\]{}-]
+    ~[()[\]{}]
     | '-' {this.inputStream.LA(1) != ')'.charCodeAt(0)}?
 )+;
 

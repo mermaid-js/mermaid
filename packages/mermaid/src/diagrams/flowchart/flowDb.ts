@@ -112,7 +112,9 @@ export class FlowDB implements DiagramDB {
     props = {},
     metadata: any
   ) {
+    console.log('➕ FlowDB: Adding vertex', { id, textObj, type, style, classes, dir });
     if (!id || id.trim().length === 0) {
+      console.log('⚠️ FlowDB: Skipping vertex with empty ID');
       return;
     }
     // Extract the metadata from the shapeData, the syntax for adding metadata for nodes and edges is the same
@@ -326,6 +328,7 @@ You have to call mermaid.initialize.`
   public addLink(_start: string[], _end: string[], linkData: unknown) {
     const id = this.isLinkData(linkData) ? linkData.id.replace('@', '') : undefined;
 
+    console.log('🔗 FlowDB: Adding link', { _start, _end, linkData, id });
     log.info('addLink', _start, _end, id);
 
     // for a group syntax like A e1@--> B & C, only the first edge should have a userDefined id
@@ -564,6 +567,7 @@ You have to call mermaid.initialize.`
    *
    */
   public getVertices() {
+    console.log('📊 FlowDB: Getting vertices, count:', this.vertices.size);
     return this.vertices;
   }
 
@@ -572,6 +576,7 @@ You have to call mermaid.initialize.`
    *
    */
   public getEdges() {
+    console.log('📊 FlowDB: Getting edges, count:', this.edges.length);
     return this.edges;
   }
 
@@ -628,6 +633,7 @@ You have to call mermaid.initialize.`
    *
    */
   public clear(ver = 'gen-2') {
+    console.log('🗑️ FlowDB: Clearing database state');
     this.vertices = new Map();
     this.classes = new Map();
     this.edges = [];
@@ -640,6 +646,7 @@ You have to call mermaid.initialize.`
     this.version = ver;
     this.config = getConfig();
     commonClear();
+    console.log('✅ FlowDB: Database cleared successfully');
   }
 
   public setGen(ver: string) {

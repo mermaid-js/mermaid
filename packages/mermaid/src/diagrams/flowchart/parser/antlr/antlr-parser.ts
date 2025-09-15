@@ -26,6 +26,7 @@ class FlowchartListener implements ParseTreeListener {
   private currentLinkData: any = null;
 
   constructor(db: any) {
+    console.log('👂 FlowchartListener: Constructor called');
     this.db = db;
   }
 
@@ -34,13 +35,15 @@ class FlowchartListener implements ParseTreeListener {
     // Empty implementation
   }
   visitErrorNode() {
-    // Empty implementation
+    console.log('❌ FlowchartListener: Error node encountered');
   }
-  enterEveryRule() {
-    // Empty implementation
+  enterEveryRule(ctx: any) {
+    const ruleName = ctx.constructor.name;
+    console.log('🔍 FlowchartListener: Entering rule:', ruleName);
   }
-  exitEveryRule() {
-    // Empty implementation
+  exitEveryRule(ctx: any) {
+    const ruleName = ctx.constructor.name;
+    console.log('🔍 FlowchartListener: Exiting rule:', ruleName);
   }
 
   // Handle vertex statements (nodes and edges)
@@ -192,6 +195,8 @@ class FlowchartListener implements ParseTreeListener {
           nodeShape = 'round';
         } else if (vertexCtx.DOUBLECIRCLE_START()) {
           nodeShape = 'doublecircle';
+        } else if (vertexCtx.ELLIPSE_COMPLETE()) {
+          nodeShape = 'ellipse';
         } else if (vertexCtx.ELLIPSE_START()) {
           nodeShape = 'ellipse';
         } else if (vertexCtx.STADIUM_START()) {
@@ -393,6 +398,11 @@ class FlowchartListener implements ParseTreeListener {
     if (textCtx) {
       const textWithType = this.extractTextWithType(textCtx);
       textObj = { text: textWithType.text, type: textWithType.type };
+    } else if (vertexCtx.ELLIPSE_COMPLETE()) {
+      // Extract text from ELLIPSE_COMPLETE token: (-text-)
+      const ellipseToken = vertexCtx.ELLIPSE_COMPLETE().getText();
+      const ellipseText = ellipseToken.slice(2, -2); // Remove (- and -)
+      textObj = { text: ellipseText, type: 'text' };
     } else {
       textObj = { text: nodeId, type: 'text' };
     }
@@ -407,6 +417,8 @@ class FlowchartListener implements ParseTreeListener {
       nodeShape = 'round';
     } else if (vertexCtx.DOUBLECIRCLE_START()) {
       nodeShape = 'doublecircle';
+    } else if (vertexCtx.ELLIPSE_COMPLETE()) {
+      nodeShape = 'ellipse';
     } else if (vertexCtx.ELLIPSE_START()) {
       nodeShape = 'ellipse';
     } else if (vertexCtx.STADIUM_START()) {
@@ -602,6 +614,11 @@ class FlowchartListener implements ParseTreeListener {
     if (textCtx) {
       const textWithType = this.extractTextWithType(textCtx);
       textObj = { text: textWithType.text, type: textWithType.type };
+    } else if (vertexCtx.ELLIPSE_COMPLETE()) {
+      // Extract text from ELLIPSE_COMPLETE token: (-text-)
+      const ellipseToken = vertexCtx.ELLIPSE_COMPLETE().getText();
+      const ellipseText = ellipseToken.slice(2, -2); // Remove (- and -)
+      textObj = { text: ellipseText, type: 'text' };
     } else {
       textObj = { text: nodeId, type: 'text' };
     }
@@ -619,6 +636,8 @@ class FlowchartListener implements ParseTreeListener {
       nodeShape = 'round';
     } else if (vertexCtx.DOUBLECIRCLE_START()) {
       nodeShape = 'doublecircle';
+    } else if (vertexCtx.ELLIPSE_COMPLETE()) {
+      nodeShape = 'ellipse';
     } else if (vertexCtx.ELLIPSE_START()) {
       nodeShape = 'ellipse';
     } else if (vertexCtx.STADIUM_START()) {
@@ -1980,33 +1999,53 @@ class ANTLRFlowParser {
    * @returns Parsed result (for compatibility with Jison interface)
    */
   parse(input: string): any {
+    console.log('🎯 ANTLR Parser: Starting parse');
+    console.log('📝 Input:', input);
+
     try {
       // Reset the database state
+      console.log('🔄 ANTLR Parser: Resetting database state');
       this.yy.clear();
 
       // Create ANTLR input stream
+      console.log('📄 ANTLR Parser: Creating input stream');
       const inputStream = CharStream.fromString(input);
 
       // Create lexer
+      console.log('🔤 ANTLR Parser: Creating lexer');
       const lexer = new FlowLexer(inputStream);
 
       // Create token stream
+      console.log('🎫 ANTLR Parser: Creating token stream');
       const tokenStream = new CommonTokenStream(lexer);
 
       // Create parser
+      console.log('⚙️ ANTLR Parser: Creating parser');
       const parser = new FlowParser(tokenStream);
 
       // Parse starting from the root rule
+      console.log('🌳 ANTLR Parser: Starting parse tree generation');
       const tree = parser.start();
+      console.log('✅ ANTLR Parser: Parse tree generated successfully');
 
       // Create and use listener to build the model
+      console.log('👂 ANTLR Parser: Creating listener');
       const listener = new FlowchartListener(this.yy);
+      console.log('🚶 ANTLR Parser: Walking parse tree');
       ParseTreeWalker.DEFAULT.walk(listener, tree);
+      console.log('✅ ANTLR Parser: Parse tree walk completed');
+
+      console.log('📊 ANTLR Parser: Final database state:');
+      console.log('  - Vertices:', this.yy.getVertices());
+      console.log('  - Edges:', this.yy.getEdges());
+      console.log('  - Classes:', this.yy.getClasses());
+      console.log('  - Direction:', this.yy.getDirection());
 
       return tree;
     } catch (error) {
       // Log error for debugging
-      // console.error('ANTLR parsing error:', error);
+      console.error('❌ ANTLR parsing error:', error);
+      console.error('📝 Input that caused error:', input);
       throw error;
     }
   }

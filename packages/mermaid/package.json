@@ -34,6 +34,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "dev": "pnpm -w dev",
+    "antlr:generate": "cd src/diagrams/flowchart/parser/antlr && antlr-ng -Dlanguage=TypeScript -l -v -o generated FlowLexer.g4 FlowParser.g4",
     "docs:code": "typedoc src/defaultConfig.ts src/config.ts src/mermaid.ts && prettier --write ./src/docs/config/setup",
     "docs:build": "rimraf ../../docs && pnpm docs:code && pnpm docs:spellcheck && tsx scripts/docs.cli.mts",
     "docs:verify": "pnpm docs:code && pnpm docs:spellcheck && tsx scripts/docs.cli.mts --verify",

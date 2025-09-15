@@ -84,6 +84,8 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
       // This needs to be stringified for esbuild
       includeLargeFeatures: `${includeLargeFeatures}`,
       'import.meta.vitest': 'undefined',
+      // Replace process.env.USE_ANTLR_PARSER with actual value at build time
+      'process.env.USE_ANTLR_PARSER': `"${process.env.USE_ANTLR_PARSER || 'false'}"`,
     },
   });
 
