@@ -117,22 +117,7 @@ class FlowchartListener implements ParseTreeListener {
         return; // Skip if no valid node ID
       }
 
-      // Check for class application pattern: vertex STYLE_SEPARATOR idString
       const children = ctx.children;
-      if (children && children.length >= 3) {
-        // Look for STYLE_SEPARATOR (:::) pattern
-        for (let i = 0; i < children.length - 1; i++) {
-          if (children[i].getText && children[i].getText() === ':::') {
-            // Found STYLE_SEPARATOR, next should be the class name
-            const className = children[i + 1].getText();
-            if (className) {
-              // Apply class to vertex: setClass(vertex, className)
-              this.db.setClass(nodeId, className);
-              break;
-            }
-          }
-        }
-      }
 
       // Check if this node already exists in the database
       // If it does, it means it was already processed by exitVertexStatement with shape data
@@ -222,6 +207,22 @@ class FlowchartListener implements ParseTreeListener {
 
       // Add vertex to database (no shape data for styled vertex)
       this.db.addVertex(nodeId, textObj, nodeShape, [], [], '', {}, '');
+
+      // AFTER vertex creation, check for class application pattern: vertex STYLE_SEPARATOR idString
+      if (children && children.length >= 3) {
+        // Look for STYLE_SEPARATOR (:::) pattern
+        for (let i = 0; i < children.length - 1; i++) {
+          if (children[i].getText && children[i].getText() === ':::') {
+            // Found STYLE_SEPARATOR, next should be the class name
+            const className = children[i + 1].getText();
+            if (className) {
+              // Apply class to vertex: setClass(vertex, className)
+              this.db.setClass(nodeId, className);
+              break;
+            }
+          }
+        }
+      }
 
       // Note: Subgraph node tracking is handled in edge processing methods
       // to match Jison parser behavior which collects nodes from statements
