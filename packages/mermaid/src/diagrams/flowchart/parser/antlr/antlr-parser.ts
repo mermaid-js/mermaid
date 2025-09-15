@@ -443,13 +443,76 @@ class FlowchartListener implements ParseTreeListener {
         yamlContent = yamlContent.substring(1, yamlContent.length - 1).trim();
       }
 
-      // Normalize YAML indentation to fix inconsistent whitespace
+      // Handle YAML content more carefully to preserve multiline strings
       const lines = yamlContent.split('\n');
-      const normalizedLines = lines
-        .map((line) => line.trim()) // Remove leading/trailing whitespace
-        .filter((line) => line.length > 0); // Remove empty lines
 
-      shapeDataYaml = normalizedLines.join('\n');
+      // Check if this contains YAML pipe syntax (|) which needs special handling
+      const hasPipeSyntax = yamlContent.includes('|');
+
+      // Check if this contains quoted multiline strings that need <br/> conversion
+      const hasQuotedMultiline =
+        yamlContent.includes('"') &&
+        yamlContent.includes('\n') &&
+        /label:\s*"[^"]*\n[^"]*"/.test(yamlContent);
+
+      if (hasQuotedMultiline) {
+        // Handle quoted multiline strings - convert newlines to <br/> before YAML processing
+        let processedYaml = yamlContent;
+
+        // Find quoted multiline strings and replace newlines with <br/>
+        processedYaml = processedYaml.replace(
+          /label:\s*"([^"]*\n[^"]*?)"/g,
+          (_match: string, content: string) => {
+            const convertedContent = content.replace(/\n\s*/g, '<br/>');
+            return `label: "${convertedContent}"`;
+          }
+        );
+
+        // Normalize the processed YAML
+        const processedLines = processedYaml.split('\n');
+        const normalizedLines = processedLines
+          .map((line: string) => line.trim())
+          .filter((line: string) => line.length > 0);
+
+        shapeDataYaml = normalizedLines.join('\n');
+      } else if (hasPipeSyntax) {
+        // For pipe syntax, preserve the structure but fix indentation
+        // The pipe syntax requires proper indentation to work
+        let minIndent = Infinity;
+        const nonEmptyLines = lines.filter((line: string) => line.trim().length > 0);
+
+        // Find minimum indentation (excluding the first line which might be "label: |")
+        for (let i = 1; i < nonEmptyLines.length; i++) {
+          const line = nonEmptyLines[i];
+          const match = line.match(/^(\s*)/);
+          if (match && line.trim().length > 0) {
+            minIndent = Math.min(minIndent, match[1].length);
+          }
+        }
+
+        // Normalize indentation while preserving structure
+        const normalizedLines = lines.map((line: string, index: number) => {
+          if (line.trim().length === 0) return ''; // Keep empty lines
+          if (index === 0 || line.includes(':')) {
+            // First line or lines with colons (property definitions)
+            return line.trim();
+          } else {
+            // Content lines - preserve relative indentation
+            const currentIndent = line.match(/^(\s*)/)?.[1]?.length || 0;
+            const relativeIndent = Math.max(0, currentIndent - minIndent);
+            return '  '.repeat(relativeIndent) + line.trim();
+          }
+        });
+
+        shapeDataYaml = normalizedLines.join('\n');
+      } else {
+        // For regular YAML, normalize as before
+        const normalizedLines = lines
+          .map((line: string) => line.trim()) // Remove leading/trailing whitespace
+          .filter((line: string) => line.length > 0); // Remove empty lines
+
+        shapeDataYaml = normalizedLines.join('\n');
+      }
     }
 
     // Add vertex to database

@@ -207,7 +207,17 @@ export class FlowDB implements DiagramDB {
       }
 
       if (doc?.label) {
-        vertex.text = doc?.label;
+        // Convert newlines to <br/> tags for HTML rendering (except for YAML pipe syntax which preserves \n)
+        let labelText = doc.label;
+        if (
+          typeof labelText === 'string' &&
+          labelText.includes('\n') &&
+          !labelText.endsWith('\n')
+        ) {
+          // This is a quoted multiline string, convert \n to <br/>
+          labelText = labelText.replace(/\n/g, '<br/>');
+        }
+        vertex.text = labelText;
       }
       if (doc?.icon) {
         vertex.icon = doc?.icon;
