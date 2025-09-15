@@ -124,7 +124,8 @@ MINUS: '-';
 
 // Node string - allow dashes with lookahead to prevent conflicts with links (matches Jison pattern)
 // Pattern: ([A-Za-z0-9!"\#$%&'*+\.`?\\_\/]|\-(?=[^\>\-\.])|=(?!=))+
-NODE_STRING: ([A-Za-z0-9!"#$%&'*+.`?\\/_] | '-' ~[>\-.] | '=' ~'=')+;
+// Fixed: Use positive lookahead instead of consuming the following character
+NODE_STRING: ([A-Za-z0-9!"#$%&'*+.`?\\/_] | '-' {this.inputStream.LA(1) != '>'.charCodeAt(0) && this.inputStream.LA(1) != '-'.charCodeAt(0) && this.inputStream.LA(1) != '.'.charCodeAt(0)}? | '=' ~'=')+;
 
 // Unicode text support (simplified from Jison's extensive Unicode ranges)
 UNICODE_TEXT: [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE]+;

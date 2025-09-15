@@ -22,6 +22,7 @@ class FlowchartListener implements ParseTreeListener {
     nodes: (string | { stmt: string; value: string })[];
   }[] = [];
   private currentArrowText: string = '';
+  private currentLinkData: any = null;
 
   constructor(db: any) {
     this.db = db;
@@ -603,7 +604,9 @@ class FlowchartListener implements ParseTreeListener {
           const vertex = styledVertex.vertex();
           if (vertex) {
             const idCtx = vertex.idString();
-            return idCtx ? idCtx.getText() : null;
+            const nodeId = idCtx ? idCtx.getText() : null;
+
+            return nodeId;
           }
         }
       }
@@ -1382,6 +1385,16 @@ class FlowchartListener implements ParseTreeListener {
 
     return false;
   }
+
+  // Handle link processing - this is the critical missing method
+  exitLink = (ctx: any) => {
+    try {
+      // Store link data for use in vertexStatement processing
+      this.currentLinkData = this.extractLinkData(ctx);
+    } catch (_error) {
+      // Error handling for link processing
+    }
+  };
 
   // Handle arrow text (pipe-delimited edge text)
   exitArrowText = (ctx: any) => {
