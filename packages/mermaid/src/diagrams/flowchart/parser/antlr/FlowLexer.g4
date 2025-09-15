@@ -224,7 +224,12 @@ TEXT_CONTENT: (~[(){}|\]"])+;
 
 mode ELLIPSE_TEXT_MODE;
 ELLIPSE_END: '-)' -> popMode, type(ELLIPSE_END_TOKEN);
-ELLIPSE_TEXT: (~[-)])+;
+// Match Jison behavior: allow any char except ()[]{}  OR  - not followed by )
+// Jison pattern: [^\(\)\[\]\{\}]|-\!\)+
+ELLIPSE_TEXT: (
+    ~[()[\]{}-]
+    | '-' {this.inputStream.LA(1) != ')'.charCodeAt(0)}?
+)+;
 
 mode TRAP_TEXT_MODE;
 // End patterns must come first for proper precedence
