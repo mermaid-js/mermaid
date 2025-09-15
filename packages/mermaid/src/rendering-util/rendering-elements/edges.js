@@ -1,8 +1,7 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
-import utils from '../../utils.js';
+import utils, { shouldUseHtmlLabels } from '../../utils.js';
 import {
   getLineFunctionsWithOffset,
   markerOffsets,
@@ -45,16 +44,20 @@ export const getLabelStyles = (styleArray) => {
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
-  let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+  const useHtmlLabels = shouldUseHtmlLabels();
 
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
-  const labelElement = await createText(elem, edge.label, {
-    style: edge.labelStyle,
-    useHtmlLabels,
-    addSvgBackground: true,
-    isNode: false,
-  });
+  const labelElement =
+    edge.labelType === 'markdown' && useHtmlLabels
+      ? await createText(elem, edge.label, {
+          style: edge.labelStyle,
+          useHtmlLabels,
+          addSvgBackground: true,
+          isNode: false,
+        })
+      : await createLabel(edge.label, getLabelStyles(edge.labelStyle), false, false);
+
   log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
