@@ -102,18 +102,20 @@ DOUBLECIRCLE_START: '(((' -> pushMode(TEXT_MODE);
 CIRCLE_START: '((' -> pushMode(TEXT_MODE);
 // ELLIPSE_START moved to top of file for precedence
 
-// Basic shape tokens - shorter patterns after longer ones
-SQUARE_START: '[' -> pushMode(TEXT_MODE), type(SQS);
-// PAREN_START must come AFTER ELLIPSE_START to avoid consuming '(' before '(-' can match
-PAREN_START: '(' -> pushMode(TEXT_MODE), type(PS);
-DIAMOND_START: '{' -> pushMode(TEXT_MODE);
-// PIPE_START removed - conflicts with PIPE token. Context-sensitive pipe handling in TEXT_MODE
+// Basic shape tokens - IMPORTANT: longer patterns MUST come before shorter ones for proper precedence
+// Trapezoid patterns must come before SQUARE_START to avoid '[' matching first
+TRAP_START: '[/' -> pushMode(TRAP_TEXT_MODE);
+INVTRAP_START: '[\\' -> pushMode(TRAP_TEXT_MODE);
+// Other bracket-based patterns
 STADIUM_START: '([' -> pushMode(TEXT_MODE);
 SUBROUTINE_START: '[[' -> pushMode(TEXT_MODE);
 VERTEX_WITH_PROPS_START: '[|';
 CYLINDER_START: '[(' -> pushMode(TEXT_MODE);
-TRAP_START: '[/' -> pushMode(TRAP_TEXT_MODE);
-INVTRAP_START: '[\\' -> pushMode(TRAP_TEXT_MODE);
+// SQUARE_START must come AFTER all other '[' patterns to avoid conflicts
+SQUARE_START: '[' -> pushMode(TEXT_MODE), type(SQS);
+// PAREN_START must come AFTER ELLIPSE_START to avoid consuming '(' before '(-' can match
+PAREN_START: '(' -> pushMode(TEXT_MODE), type(PS);
+DIAMOND_START: '{' -> pushMode(TEXT_MODE);
 
 // Other basic shape tokens
 TAGSTART: '<';
@@ -225,9 +227,17 @@ ELLIPSE_END: '-)' -> popMode, type(ELLIPSE_END_TOKEN);
 ELLIPSE_TEXT: (~[-)])+;
 
 mode TRAP_TEXT_MODE;
+// End patterns must come first for proper precedence
 TRAP_END_BRACKET: '\\]' -> popMode, type(TRAPEND);
 INVTRAP_END_BRACKET: '/]' -> popMode, type(INVTRAPEND);
-TRAP_TEXT: (~[\\/\]])+;
+// Match Jison behavior with a single token that handles all cases
+// Allow sequences of: / not followed by ], \ not followed by ], or other allowed chars
+// This matches the Jison pattern: \/(?!\])|\\(?!\])|[^\\\[\]\(\)\{\}\/]+
+TRAP_TEXT: (
+    '/' {this.inputStream.LA(1) != ']'.charCodeAt(0)}?
+    | '\\' {this.inputStream.LA(1) != ']'.charCodeAt(0)}?
+    | ~[\\/()\]{}]
+)+;
 
 mode EDGE_TEXT_MODE;
 // Handle space-delimited pattern: A-- text ----B or A-- text -->B (matches Jison: [^-]|\-(?!\-)+)
