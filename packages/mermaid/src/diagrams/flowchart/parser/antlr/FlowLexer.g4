@@ -3,7 +3,7 @@ lexer grammar FlowLexer;
 // Virtual tokens for parser
 tokens {
     NODIR, DIR, PIPE, PE, SQE, DIAMOND_STOP, STADIUMEND, SUBROUTINEEND, CYLINDEREND, DOUBLECIRCLEEND,
-    ELLIPSE_END_TOKEN, TRAPEND, INVTRAPEND, PS, SQS, TEXT, CIRCLEEND, STR
+    ELLIPSE_END_TOKEN, TRAPEND, INVTRAPEND, PS, SQS, TEXT, CIRCLEEND, STR, CALLBACKARGS
 }
 
 // Lexer modes to match Jison's state-based lexing
@@ -157,13 +157,10 @@ SHAPE_DATA_STRING_END: '"' -> popMode;
 SHAPE_DATA_STRING_CONTENT: (~["]+);
 
 mode CALLBACKNAME_MODE;
+// Simplified approach: match the entire callback with arguments as one token
+CALLBACKNAME_WITH_ARGS: [A-Za-z0-9_]+ '(' (~[)])* ')' -> popMode, type(CALLBACKARGS);
 CALLBACKNAME_PAREN_EMPTY: '(' WS* ')' -> popMode, type(CALLBACKARGS);
-CALLBACKNAME_PAREN_START: '(' -> popMode, pushMode(CALLBACKARGS_MODE);
-CALLBACKNAME: (~[(])*;
-
-mode CALLBACKARGS_MODE;
-CALLBACKARGS_END: ')' -> popMode;
-CALLBACKARGS: (~[)])*;
+CALLBACKNAME: [A-Za-z0-9_]+;
 
 mode CLICK_MODE;
 CLICK_NEWLINE: ('\r'? '\n')+ -> popMode, type(NEWLINE);

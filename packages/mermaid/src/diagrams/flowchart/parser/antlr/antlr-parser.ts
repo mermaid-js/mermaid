@@ -1143,7 +1143,12 @@ class FlowchartListener implements ParseTreeListener {
             }
           }
 
-          this.db.setLink(nodeId, url, target);
+          // Only pass target parameter if it's defined (matches Jison behavior)
+          if (target !== undefined) {
+            this.db.setLink(nodeId, url, target);
+          } else {
+            this.db.setLink(nodeId, url);
+          }
           if (tooltip) {
             this.db.setTooltip(nodeId, tooltip);
           }
@@ -1151,24 +1156,53 @@ class FlowchartListener implements ParseTreeListener {
       } else if (secondToken && secondToken.trim() === 'call') {
         // CALL patterns: click nodeId call functionName[(args)] [tooltip]
         if (children.length >= 3) {
-          const functionName = children[2].getText();
+          const callbackToken = children[2].getText();
+
+          let functionName = callbackToken;
           let functionArgs = undefined;
           let tooltip = undefined;
 
-          // Check if function has arguments (CALLBACKARGS token)
-          if (children.length >= 4) {
-            const argsToken = children[3].getText();
-            // Only set functionArgs if it's not empty parentheses
-            if (argsToken && argsToken.trim() !== '' && argsToken.trim() !== '()') {
-              functionArgs = argsToken;
+          // Check if the callback token contains arguments: functionName(args)
+          const callbackMatch = /^([A-Za-z0-9_]+)\(([^)]*)\)$/.exec(callbackToken);
+          if (callbackMatch) {
+            functionName = callbackMatch[1];
+            functionArgs = callbackMatch[2];
+            // If arguments are empty, set to undefined to match Jison behavior
+            if (functionArgs.trim() === '') {
+              functionArgs = undefined;
+            }
+          } else {
+            // Check if function has arguments in a separate token (CALLBACKARGS token)
+            if (children.length >= 4) {
+              const argsToken = children[3].getText();
+
+              // Handle different argument formats
+              if (argsToken && argsToken.trim() !== '' && argsToken.trim() !== '()') {
+                // If it's just parentheses with content, extract the content
+                if (argsToken.startsWith('(') && argsToken.endsWith(')')) {
+                  functionArgs = argsToken.slice(1, -1); // Remove outer parentheses
+                } else {
+                  functionArgs = argsToken;
+                }
+              }
             }
           }
 
           // Check for tooltip
-          if (children.length >= 5) {
-            const lastToken = children[children.length - 1].getText();
-            if (lastToken.startsWith('"')) {
-              tooltip = this.extractStringContent(lastToken);
+          // For call patterns, tooltip can be in different positions:
+          // - If callback has args in same token: click A call callback(args) "tooltip" -> tooltip at index 3
+          // - If callback has no args: click A call callback() "tooltip" -> tooltip at index 3
+          // - If callback has separate args token: click A call callback (args) "tooltip" -> tooltip at index 4
+          if (children.length >= 4) {
+            const tooltipToken = children[3].getText();
+            if (tooltipToken && tooltipToken.startsWith('"') && tooltipToken.endsWith('"')) {
+              tooltip = this.extractStringContent(tooltipToken);
+            } else if (children.length >= 5) {
+              // Check index 4 for separate args case
+              const tooltipToken4 = children[4].getText();
+              if (tooltipToken4 && tooltipToken4.startsWith('"') && tooltipToken4.endsWith('"')) {
+                tooltip = this.extractStringContent(tooltipToken4);
+              }
             }
           }
 
