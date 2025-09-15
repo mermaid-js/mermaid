@@ -50,5 +50,8 @@ demos/dev/**
 tsx-0/**
 vite.config.ts.timestamp-*
 
-# autogenereated by langium-cli
+# autogenereated by langium-cli and antlr-cli
 generated/
+
+# autogenereated by antlr-cli
+.antlr/
