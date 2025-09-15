@@ -44,9 +44,23 @@ class FlowchartListener implements ParseTreeListener {
 
   // Handle vertex statements (nodes and edges)
   exitVertexStatement = (ctx: VertexStatementContext) => {
+    console.log('DEBUG: exitVertexStatement called');
     // Handle the current node
     const nodeCtx = ctx.node();
     const shapeDataCtx = ctx.shapeData();
+    console.log(
+      'DEBUG: exitVertexStatement - nodeCtx:',
+      !!nodeCtx,
+      'shapeDataCtx:',
+      !!shapeDataCtx
+    );
+
+    if (nodeCtx) {
+      console.log('DEBUG: exitVertexStatement - nodeCtx text:', nodeCtx.getText());
+    }
+    if (shapeDataCtx) {
+      console.log('DEBUG: exitVertexStatement - shapeDataCtx text:', shapeDataCtx.getText());
+    }
 
     if (nodeCtx) {
       this.processNode(nodeCtx, shapeDataCtx);
@@ -72,38 +86,28 @@ class FlowchartListener implements ParseTreeListener {
   // This matches Jison's node rule behavior
   exitNode = (ctx: any) => {
     try {
+      console.log('DEBUG: exitNode called with context:', ctx.constructor.name);
+
       // Get all children to understand the structure
       const children = ctx.children || [];
+      console.log(
+        'DEBUG: exitNode children:',
+        children.map((c: any) => c.constructor.name)
+      );
 
-      // Check if this is a shape data + ampersand pattern
-      // Pattern: node shapeData spaceList AMP spaceList styledVertex
-      let hasShapeData = false;
-      let shapeDataCtx = null;
-      let nodeCtx = null;
+      // Debug: Print the full text of this node context
+      console.log('DEBUG: exitNode full text:', ctx.getText());
 
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i];
-        if (child.constructor.name === 'ShapeDataContext') {
-          hasShapeData = true;
-          shapeDataCtx = child;
-        } else if (child.constructor.name === 'NodeContext') {
-          nodeCtx = child;
-        }
-      }
+      // Process all styled vertices in the ampersand chain
+      // The ANTLR tree walker might not visit all styled vertices, so we manually process them
+      // But skip nodes that will be processed with shape data to avoid duplicates
+      this.ensureAllStyledVerticesProcessed(ctx);
 
-      // If we have shape data, we need to apply it to the correct node
-      // According to Jison line 419: yy.addVertex($node[$node.length-1], ..., $shapeData)
-      // This means apply shape data to the LAST node before the ampersand
-      if (hasShapeData && shapeDataCtx && nodeCtx) {
-        // The shape data should be applied to the node that comes BEFORE the ampersand
-        // In "D@{ shape: rounded } & E", the shape data applies to D (which is in the NodeContext)
-        // We need to find the styled vertex inside the NodeContext
-        const targetVertexCtx = this.findStyledVertexInNode(nodeCtx);
-        if (targetVertexCtx) {
-          this.processNodeWithShapeData(targetVertexCtx, shapeDataCtx);
-        }
-      }
+      // Process all shape data contexts in the ampersand chain
+      // There can be multiple shape data contexts in a chain like: n4@{...} & n5@{...}
+      this.processAllShapeDataInChain(ctx);
     } catch (_error) {
+      console.log('DEBUG: Error in exitNode:', _error);
       // Error handling for exitNode
     }
   };
@@ -111,9 +115,12 @@ class FlowchartListener implements ParseTreeListener {
   // Handle styled vertex statements (individual nodes)
   exitStyledVertex = (ctx: any) => {
     try {
+      console.log('DEBUG: exitStyledVertex called');
       // Extract node ID using the context object directly
       const nodeId = this.extractNodeId(ctx);
+      console.log('DEBUG: exitStyledVertex nodeId:', nodeId);
       if (!nodeId) {
+        console.log('DEBUG: exitStyledVertex - no nodeId, skipping');
         return; // Skip if no valid node ID
       }
 
@@ -124,8 +131,11 @@ class FlowchartListener implements ParseTreeListener {
       // In that case, we should NOT override it with default shape
       const existingVertex = (this.db as any).vertices?.get(nodeId);
       if (existingVertex) {
+        console.log('DEBUG: exitStyledVertex - node already exists, skipping:', nodeId);
         return;
       }
+
+      console.log('DEBUG: exitStyledVertex - processing new node:', nodeId);
 
       // Get the vertex context to determine shape
       let vertexCtx = null;
@@ -145,10 +155,26 @@ class FlowchartListener implements ParseTreeListener {
       let nodeShape = 'square'; // default
 
       if (vertexCtx) {
+        console.log('DEBUG: vertexCtx.getText():', vertexCtx.getText());
+        console.log(
+          'DEBUG: vertexCtx children:',
+          vertexCtx.children?.map((c: any) => c.constructor.name)
+        );
+
         // Extract text from vertex context
-        const textContent = this.extractStringFromContext(vertexCtx);
-        if (textContent) {
-          nodeText = textContent;
+        // Check if there's a TextContext child (for square bracket text like n2["label"])
+        const textCtx = vertexCtx.text ? vertexCtx.text() : null;
+        if (textCtx) {
+          console.log('DEBUG: Found TextContext, extracting text from it');
+          const textContent = this.extractStringFromContext(textCtx);
+          console.log('DEBUG: extracted text from TextContext:', textContent);
+          if (textContent) {
+            nodeText = textContent;
+          }
+        } else {
+          // No text context, use the node ID as text (will be updated by shape data if present)
+          console.log('DEBUG: No TextContext found, using nodeId as text');
+          nodeText = nodeId;
         }
 
         // Determine shape based on vertex context
@@ -205,8 +231,14 @@ class FlowchartListener implements ParseTreeListener {
 
       const textObj = { text: nodeText, type: 'text' };
 
+      console.log(
+        `DEBUG: exitStyledVertex - about to add vertex ${nodeId} with text: ${nodeText}, shape: ${nodeShape}`
+      );
+
       // Add vertex to database (no shape data for styled vertex)
       this.db.addVertex(nodeId, textObj, nodeShape, [], [], '', {}, '');
+
+      console.log(`DEBUG: exitStyledVertex - successfully added vertex ${nodeId}`);
 
       // AFTER vertex creation, check for class application pattern: vertex STYLE_SEPARATOR idString
       if (children && children.length >= 3) {
@@ -516,7 +548,21 @@ class FlowchartListener implements ParseTreeListener {
     }
 
     // Add vertex to database
+    console.log(
+      `DEBUG: Adding vertex ${nodeId} with label: ${textObj?.text || nodeId}, shapeData: ${shapeDataYaml || 'none'}`
+    );
     this.db.addVertex(nodeId, textObj, nodeShape, [], [], '', {}, shapeDataYaml);
+
+    // Debug: Check what the vertex looks like after adding
+    const verticesAfter = this.db.getVertices();
+    const addedVertex = verticesAfter.get(nodeId);
+    console.log(
+      `DEBUG: Vertex ${nodeId} after adding - text: ${addedVertex?.text}, type: ${addedVertex?.type}`
+    );
+
+    // Debug: Show current node order in database
+    const nodeOrder = Array.from(verticesAfter.keys());
+    console.log(`DEBUG: Current node order in DB: [${nodeOrder.join(', ')}]`);
 
     // Track individual nodes in current subgraph if we're inside one
     // Use unshift() to match the Jison behavior for node ordering
@@ -654,6 +700,44 @@ class FlowchartListener implements ParseTreeListener {
     }
   }
 
+  private findLastStyledVertexInNode(nodeCtx: any): any | null {
+    try {
+      if (!nodeCtx || !nodeCtx.children) {
+        return null;
+      }
+
+      let lastStyledVertex = null;
+
+      // Recursively collect all styled vertices and return the last one
+      const collectStyledVertices = (ctx: any): any[] => {
+        if (!ctx || !ctx.children) {
+          return [];
+        }
+
+        const vertices: any[] = [];
+        for (const child of ctx.children) {
+          if (child.constructor.name === 'StyledVertexContext') {
+            vertices.push(child);
+          } else {
+            // Recursively search in child contexts
+            vertices.push(...collectStyledVertices(child));
+          }
+        }
+        return vertices;
+      };
+
+      const allVertices = collectStyledVertices(nodeCtx);
+      if (allVertices.length > 0) {
+        lastStyledVertex = allVertices[allVertices.length - 1];
+      }
+
+      return lastStyledVertex;
+    } catch (_error) {
+      // Error handling for findLastStyledVertexInNode
+      return null;
+    }
+  }
+
   private extractNodeId(nodeCtx: any): string | null {
     if (!nodeCtx) {
       return null;
@@ -723,6 +807,127 @@ class FlowchartListener implements ParseTreeListener {
     }
 
     return nodeIds;
+  }
+
+  // Ensure all styled vertices in a node chain are processed
+  private ensureAllStyledVerticesProcessed(nodeCtx: any) {
+    if (!nodeCtx) {
+      return;
+    }
+
+    console.log('DEBUG: ensureAllStyledVerticesProcessed called');
+
+    // Find all styled vertices in the chain and process them using existing logic
+    const styledVertices = this.findAllStyledVerticesInChain(nodeCtx);
+    console.log('DEBUG: Found styled vertices:', styledVertices.length);
+
+    for (const styledVertexCtx of styledVertices) {
+      // Use the existing exitStyledVertex logic
+      console.log('DEBUG: Processing styled vertex via exitStyledVertex');
+      this.exitStyledVertex(styledVertexCtx);
+    }
+  }
+
+  // Find all styled vertices in a node chain
+  private findAllStyledVerticesInChain(nodeCtx: any): any[] {
+    const styledVertices: any[] = [];
+    this.collectStyledVerticesRecursively(nodeCtx, styledVertices);
+    return styledVertices;
+  }
+
+  // Recursively collect all styled vertices from a node chain
+  private collectStyledVerticesRecursively(nodeCtx: any, styledVertices: any[]) {
+    if (!nodeCtx) {
+      return;
+    }
+
+    // Get the styled vertex from this level
+    const styledVertex = nodeCtx.styledVertex ? nodeCtx.styledVertex() : null;
+    if (styledVertex) {
+      styledVertices.push(styledVertex);
+    }
+
+    // Recursively process child node contexts
+    const children = nodeCtx.children || [];
+    for (const child of children) {
+      if (child.constructor.name === 'NodeContext') {
+        this.collectStyledVerticesRecursively(child, styledVertices);
+      }
+    }
+  }
+
+  // Process all shape data contexts in a node chain
+  private processAllShapeDataInChain(nodeCtx: any) {
+    if (!nodeCtx) {
+      return;
+    }
+
+    // Find all shape data contexts and their associated styled vertices
+    const shapeDataPairs = this.findAllShapeDataInChain(nodeCtx);
+
+    for (const { styledVertexCtx, shapeDataCtx } of shapeDataPairs) {
+      this.processNodeWithShapeData(styledVertexCtx, shapeDataCtx);
+    }
+  }
+
+  // Find all shape data contexts and their associated styled vertices in a chain
+  private findAllShapeDataInChain(
+    nodeCtx: any
+  ): Array<{ styledVertexCtx: any; shapeDataCtx: any }> {
+    const pairs: Array<{ styledVertexCtx: any; shapeDataCtx: any }> = [];
+    this.collectShapeDataPairsRecursively(nodeCtx, pairs);
+    return pairs;
+  }
+
+  // Recursively collect shape data and styled vertex pairs
+  private collectShapeDataPairsRecursively(
+    nodeCtx: any,
+    pairs: Array<{ styledVertexCtx: any; shapeDataCtx: any }>
+  ) {
+    if (!nodeCtx) {
+      return;
+    }
+
+    const children = nodeCtx.children || [];
+
+    // Look for shape data in this level
+    let shapeDataCtx = null;
+    let childNodeCtx = null;
+    let styledVertexCtx = null;
+
+    for (const child of children) {
+      const childType = child.constructor.name;
+
+      if (childType === 'ShapeDataContext') {
+        shapeDataCtx = child;
+      } else if (childType === 'NodeContext') {
+        childNodeCtx = child;
+      } else if (childType === 'StyledVertexContext') {
+        styledVertexCtx = child;
+      }
+    }
+
+    // If we have shape data, find the target styled vertex
+    if (shapeDataCtx) {
+      let targetStyledVertex = null;
+
+      if (childNodeCtx) {
+        // Shape data applies to the last styled vertex in the child node chain
+        targetStyledVertex = this.findLastStyledVertexInNode(childNodeCtx);
+      } else if (styledVertexCtx) {
+        // Only if there's no child node, shape data applies to the styled vertex at this level
+        targetStyledVertex = styledVertexCtx;
+      }
+
+      if (targetStyledVertex) {
+        pairs.push({ styledVertexCtx: targetStyledVertex, shapeDataCtx });
+      }
+    }
+
+    // Always recursively process child node contexts to find nested shape data
+    if (childNodeCtx) {
+      this.collectShapeDataPairsRecursively(childNodeCtx, pairs);
+    }
   }
 
   // Recursively collect node IDs from a node context (handles ampersand chaining)
