@@ -1,5 +1,11 @@
 # mermaid
 
+## 11.11.1
+
+### Patch Changes
+
+- [#6950](https://github.com/mermaid-js/mermaid/pull/6950) [`a957908`](https://github.com/mermaid-js/mermaid/commit/a9579083bfba367a4f4678547ec37ed7b61b9f5b) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - chore: Fix mindmap rendering in docs and apply tidytree layout
+
 ## 11.11.0
 
 ### Minor Changes
