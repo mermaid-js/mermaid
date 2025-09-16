@@ -48,9 +48,9 @@ export const insertEdgeLabel = async (elem, edge) => {
 
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
-  if (useHtmlLabels === false) {
-    edge.label = edge.label.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
-  }
+  // if (useHtmlLabels === false) {
+  //   edge.label = edge.label.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+  // }
   const labelElement = await createText(elem, edge.label, {
     style: edge.labelStyle,
     useHtmlLabels,

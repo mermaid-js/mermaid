@@ -317,11 +317,17 @@ export class RequirementDB implements DiagramDB {
     for (const relation of this.relations) {
       let counter = 0;
       const isContains = relation.type === this.Relationships.CONTAINS;
+
+      let relationLabel = `&lt;&lt;${relation.type}&gt;&gt;`;
+      if (!config.htmlLabels) {
+        relationLabel = relationLabel.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+      }
+
       const edge: Edge = {
         id: `${relation.src}-${relation.dst}-${counter}`,
         start: this.requirements.get(relation.src)?.name ?? this.elements.get(relation.src)?.name,
         end: this.requirements.get(relation.dst)?.name ?? this.elements.get(relation.dst)?.name,
-        label: `&lt;&lt;${relation.type}&gt;&gt;`,
+        label: relationLabel,
         classes: 'relationshipLine',
         style: ['fill:none', isContains ? '' : 'stroke-dasharray: 10,7'],
         labelpos: 'c',
