@@ -44,10 +44,7 @@ export const draw = async function (text: string, id: string, _version: string, 
   log.info('Drawing state diagram (v2)', id);
   const { securityLevel, state: conf, layout } = getConfig();
   // Extracting the data from the parsed structure into a more usable form
-  // Not related to the refactoring, but this is the first step in the rendering process
   diag.db.extract(diag.db.getRootDocV2());
-
-  //const DIR = getDir(diag.db.getRootDocV2());
 
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
@@ -59,17 +56,14 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = layout;
 
-  // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
-
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
   data4Layout.markers = ['barb'];
   data4Layout.diagramId = id;
-  // console.log('REF1:', data4Layout);
   await render(data4Layout, svg);
   const padding = 8;
 
-  // Inject clickable links after nodes are rendered
+  // inject clickable links after nodes are rendered
   try {
     const links: Map<string, { url: string; tooltip: string }> =
       typeof diag.db.getLinks === 'function' ? diag.db.getLinks() : new Map();
@@ -121,6 +115,18 @@ export const draw = async function (text: string, id: string, _version: string, 
     });
   } catch (err) {
     log.error('❌ Error injecting clickable links:', err);
+  }
+
+  // Apply custom stroke-width to state nodes to smooth out rounded corners
+  const stateNodes = svg.node()?.querySelectorAll('g.state');
+  if (stateNodes) {
+    stateNodes.forEach((node: SVGGElement) => {
+      const rect = node.querySelector('rect'); // Target the rectangle element within the state group
+      if (rect) {
+        rect.setAttribute('stroke-width', '4'); // Increase stroke width to 4px (adjust as needed)
+        rect.setAttribute('stroke', '#333'); // Optional: Set a dark stroke color for contrast
+      }
+    });
   }
 
   utils.insertTitle(
