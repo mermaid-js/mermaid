@@ -225,6 +225,65 @@ Bob-->Alice: I am good thanks!`;
     expect(diagram.db.showSequenceNumbers()).toBe(true);
   });
 
+  it('should support autonumber with start value', async () => {
+    const str = `
+sequenceDiagram
+autonumber 10
+Alice->Bob: Hello
+Bob-->Alice: Hi
+`;
+    const diagram = await Diagram.fromText(str);
+
+    // Verify AUTONUMBER control message
+    const autoMsg = diagram.db.getMessages().find((m) => m.type === diagram.db.LINETYPE.AUTONUMBER);
+    expect(autoMsg).toBeTruthy();
+    expect(autoMsg.message.start).toBe(10);
+    expect(autoMsg.message.step).toBe(1);
+    expect(autoMsg.message.visible).toBe(true);
+
+    // After render, sequence numbers should be enabled
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+    expect(diagram.db.showSequenceNumbers()).toBe(true);
+  });
+
+  it('should support autonumber with start and step values', async () => {
+    const str = `
+sequenceDiagram
+autonumber 5 2
+Alice->Bob: Hello
+Bob-->Alice: Hi
+`;
+    const diagram = await Diagram.fromText(str);
+
+    const autoMsg = diagram.db.getMessages().find((m) => m.type === diagram.db.LINETYPE.AUTONUMBER);
+    expect(autoMsg).toBeTruthy();
+    expect(autoMsg.message.start).toBe(5);
+    expect(autoMsg.message.step).toBe(2);
+    expect(autoMsg.message.visible).toBe(true);
+
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+    expect(diagram.db.showSequenceNumbers()).toBe(true);
+  });
+
+  it('should support turning autonumber off', async () => {
+    const str = `
+sequenceDiagram
+autonumber off
+Alice->Bob: Hello
+Bob-->Alice: Hi
+`;
+    const diagram = await Diagram.fromText(str);
+
+    const autoMsg = diagram.db.getMessages().find((m) => m.type === diagram.db.LINETYPE.AUTONUMBER);
+    expect(autoMsg).toBeTruthy();
+    expect(autoMsg.message.start).toBeUndefined();
+    expect(autoMsg.message.step).toBeUndefined();
+    expect(autoMsg.message.visible).toBe(false);
+
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+    expect(diagram.db.showSequenceNumbers()).toBe(false);
+  });
+
   it('should handle a sequenceDiagram definition with a title:', async () => {
     const diagram = await Diagram.fromText(`
 sequenceDiagram
@@ -2260,7 +2319,7 @@ Bob->>Alice:Got it!
       const diagram = await Diagram.fromText(`
       sequenceDiagram
       participant Q@{ "type" : "queue" }
-      Q->Q: test 
+      Q->Q: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('Q').type).toBe('queue');

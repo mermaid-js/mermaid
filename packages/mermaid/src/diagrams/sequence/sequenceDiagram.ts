@@ -1,6 +1,7 @@
 import type { DiagramDefinition } from '../../diagram-api/types.js';
 // @ts-ignore: JISON doesn't support types
-import parser from './parser/sequenceDiagram.jison';
+// import parser from './parser/sequenceDiagram.jison';
+import parser from './parser/sequenceParser.ts';
 import { SequenceDB } from './sequenceDb.js';
 import styles from './styles.js';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
