@@ -20,7 +20,7 @@
     "clean": "rimraf dist src/language/generated",
     "langium:generate": "langium generate",
     "langium:watch": "langium generate --watch",
-    "antlr:generate": "cd src/language/usecase && npx antlr-ng -Dlanguage=TypeScript --generate-visitor --generate-listener -o generated Usecase.g4"
+    "antlr:generate": "tsx ../../.build/antlr-cli.ts antlr-config.json"
   },
   "repository": {
     "type": "git",
