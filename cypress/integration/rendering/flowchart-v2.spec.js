@@ -1186,4 +1186,17 @@ end
       imgSnapshotTest(graph, { htmlLabels: false });
     });
   });
+
+  it('V2 - 17: should apply class def colour to edge label', () => {
+    imgSnapshotTest(
+      ` graph LR
+    id1(Start) link@-- "Label" -->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+
+class id2 myClass
+classDef myClass fill:#bbf,stroke:#f66,stroke-width:2px,color:white,stroke-dasharray: 5 5
+class link myClass
+`
+    );
+  });
 });

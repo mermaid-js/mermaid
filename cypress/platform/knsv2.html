@@ -32,26 +32,8 @@
       href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Recursive:wght@300..1000&display=swap"
-      rel="stylesheet"
-    />
 
     <style>
-      .recursive-mermaid {
-        font-family: 'Recursive', sans-serif;
-        font-optical-sizing: auto;
-        font-weight: 500;
-        font-style: normal;
-        font-variation-settings:
-          'slnt' 0,
-          'CASL' 0,
-          'CRSV' 0.5,
-          'MONO' 0;
-      }
-
       body {
         /* background: rgb(221, 208, 208); */
         /* background: #333; */
@@ -63,9 +45,7 @@
       h1 {
         color: grey;
       }
-      .mermaid {
-        border: 1px solid red;
-      }
+
       .mermaid2 {
         display: none;
       }
@@ -103,11 +83,6 @@
         width: 100%;
       }
 
-      .class2 {
-        fill: red;
-        fill-opacity: 1;
-      }
-
       /* tspan {
               font-size: 6px !important;
             } */
@@ -130,6 +105,194 @@
   </head>
 
   <body>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart-elk TB
+      c1-->a2
+      subgraph one
+      a1-->a2
+      end
+      subgraph two
+      b1-->b2
+      end
+      subgraph three
+      c1-->c2
+      end
+      one --> two
+      three --> two
+      two --> c2
+
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart TB
+
+        process_C
+      subgraph container_Alpha
+        subgraph process_B
+          pppB
+        end
+        subgraph process_A
+          pppA
+        end
+        process_B-->|via_AWSBatch|container_Beta
+        process_A-->|messages|container_Beta
+      end
+
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart TB
+      subgraph container_Beta
+        process_C
+      end
+      subgraph container_Alpha
+        subgraph process_B
+          pppB
+        end
+        subgraph process_A
+          pppA
+        end
+        process_B-->|via_AWSBatch|container_Beta
+        process_A-->|messages|container_Beta
+      end
+
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart TB
+      subgraph container_Beta
+        process_C
+      end
+
+        process_B-->|via_AWSBatch|container_Beta
+
+
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      classDiagram
+      note "I love this diagram!\nDo you love it?"
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 "1" *-- "*" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 "1" .. "*" Class08
+      Class09 "1" --> "*" C2 : Where am i?
+      Class09 "*" --* "*" C3
+      Class09 "1" --|> "1" Class07
+      Class12 <|.. Class08
+      Class11 ..>Class12
+      Class07 : equals()
+      Class07 : Object[] elementData
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      Class08 <--> C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      note for Class10 "Cool class\nI said it's very cool class!"
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      requirementDiagram
+        requirement test_req {
+        id: 1
+        text: the test text.
+        risk: high
+        verifymethod: test
+        }
+
+        element test_entity {
+        type: simulation
+        }
+
+        test_entity - satisfies -> test_req
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart-elk TB
+      internet
+      nat
+      router
+      compute1
+
+      subgraph project
+      router
+      nat
+        subgraph subnet1
+          compute1
+        end
+      end
+
+      %% router --> subnet1
+      subnet1  --> nat
+      %% nat --> internet
+</pre
+    >
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+      ---
+      flowchart-elk TB
+      internet
+      nat
+      router
+      lb1
+      lb2
+      compute1
+      compute2
+      subgraph project
+      router
+      nat
+        subgraph subnet1
+          compute1
+          lb1
+        end
+        subgraph subnet2
+          compute2
+          lb2
+        end
+      end
+      internet --> router
+      router --> subnet1 & subnet2
+      subnet1 & subnet2 --> nat --> internet
+</pre
+    >
     <pre id="diagram4" class="mermaid">
 ---
 config:
@@ -157,84 +320,149 @@ treemap
     "Leaf 2.2": 25
     "Leaf 2.3": 12
 
-classDef class1   fill:red,color:blue,stroke:#FFD600;
+    </pre>
+    <pre id="diagram5" class="mermaid">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: rounded
+      ---
+      flowchart LR
+          I["fa:fa-code Text"] -- Mermaid js --> D["Use<br/>the<br/>editor!"]
+          I --> D & D
+          D@{ shape: question}
+          I@{ shape: question}
 
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: tidy-tree
+      ---
+      mindmap
+      root((mindmap))
+        Origins
+          Long history
+          ::icon(fa fa-book)
+          Popularisation
+            British popular psychology author Tony Buzan
+        Research
+          On effectiveness<br/>and features
+          On Automatic creation
+            Uses
+                Creative techniques
+                Strategic planning
+                Argument mapping
+        Tools
+          Pen and paper
+          Mermaid
 
-</pre
-    >
-    <pre id="diagram4" class="mermaid2">
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: linear
+      ---
+      flowchart LR
+          A[A] --> B[B]
+          A[A] --- B([C])
+          A@{ shape: diamond}
+          %%B@{ shape: diamond}
+
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: linear
+      ---
+      flowchart LR
+          A[A] -- Mermaid js --> B[B]
+          A[A] -- Mermaid js --- B[B]
+          A@{ shape: diamond}
+          B@{ shape: diamond}
+
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: rounded
+      ---
+      flowchart LR
+          D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+          I --> D & D
+          D@{ shape: question}
+          I@{ shape: question}
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+        flowchart:
+          curve: rounded
+        elk:
+          nodePlacementStrategy: NETWORK_SIMPLEX
+      ---
+      flowchart LR
+          D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+          D --> I & I
+          a["a"]
+          D@{ shape: trap-b}
+          I@{ shape: lean-l}
+    </pre>
+    <pre id="diagram4" class="mermaid">
 ---
 config:
-  treemap:
-    valueFormat: '$0,0'
+  layout: elk
+
 ---
-treemap
-"Budget"
-    "Operations"
-        "Salaries": 7000
-        "Equipment": 2000
-        "Supplies": 1000
-    "Marketing"
-        "Advertising": 4000
-        "Events": 1000
+flowchart LR
+ %% subgraph s1["Untitled subgraph"]
+        C["Evaluate"]
+ %% end
 
-</pre
-    >
+    B --> C
+    </pre>
     <pre id="diagram4" class="mermaid">
-    treemap
-      title Accessible Treemap Title
-      "Category A"
-          "Item A1": 10
-          "Item A2": 20
-      "Category B"
-          "Item B1": 15
-          "Item B2": 25
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      flowchart LR
-        AB["apa@apa@"] --> B(("`apa@apa`"))
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      flowchart
-        D(("for D"))
-    </pre>
-    <pre id="diagram4" class="mermaid2">
-      flowchart LR
-        A e1@==> B
-        e1@{ animate: true}
-    </pre>
-    <pre id="diagram4" class="mermaid2">
+---
+config:
+  layout: elk
+  flowchart:
+    //curve: linear
+---
 flowchart LR
-  A e1@--> B
-  classDef animate stroke-width:2,stroke-dasharray:10\,8,stroke-dashoffset:-180,animation: edge-animation-frame 6s linear infinite, stroke-linecap: round
-  class e1 animate
-    </pre>
-    <h2>infinite</h2>
-    <pre id="diagram4" class="mermaid2">
-flowchart LR
-  A e1@--> B
-  classDef animate stroke-dasharray: 9\,5,stroke-dashoffset: 900,animation: dash 25s linear infinite;
-  class e1 animate
-    </pre>
-    <h2>Mermaid - edge-animation-slow</h2>
-    <pre id="diagram4" class="mermaid2">
-flowchart LR
-  A e1@--> B
-e1@{ animation: fast}
-    </pre>
-    <h2>Mermaid - edge-animation-fast</h2>
-    <pre id="diagram4" class="mermaid2">
-flowchart LR
-  A e1@--> B
-  classDef animate stroke-dasharray: 1000,stroke-dashoffset: 1000,animation: dash 10s linear;
-  class e1 edge-animation-fast
-    </pre>
+%% A ==> B
+%% A2 --> B2
+A{A} --> B((Bo boo)) & B & B & B
 
-    <pre id="diagram4" class="mermaid2">
-
-info    </pre
-    >
-    <pre id="diagram4" class="mermaid2">
+    </pre>
+    <pre id="diagram4" class="mermaid">
+      ---
+      config:
+        layout: elk
+        theme: default
+        look: classic
+      ---
+      flowchart LR
+       subgraph s1["APA"]
+              D{"Use the editor"}
+        end
+       subgraph S2["S2"]
+              s1
+              I>"fa:fa-code Text"]
+              E["E"]
+        end
+          D -- Mermaid js --> I
+          D --> I & E
+          E --> I
+    </pre>
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -259,7 +487,7 @@ config:
       end
       end
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -272,7 +500,7 @@ config:
       D-->I
       D-->I
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -311,7 +539,7 @@ flowchart LR
     n8@{ shape: rect}
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -327,7 +555,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -336,7 +564,7 @@ flowchart LR
     A{A} --> B & C
 </pre
     >
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -348,7 +576,7 @@ flowchart LR
     end
 </pre
     >
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   layout: elk
@@ -366,7 +594,7 @@ flowchart LR
 
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   kanban:
@@ -385,81 +613,81 @@ kanban
     task3[💻 Develop login feature]@{ ticket: 103 }
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'rounded' }
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'rounded' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'rounded' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'rounded' }
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'square' }
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'square' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'square' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'square' }
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
 nA[Default] --> A@{ icon: 'fa:bell', form: 'circle' }
 
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
 nA[Style] --> A@{ icon: 'fa:bell', form: 'circle' }
 style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
 nA[Class] --> A@{ icon: 'fa:bell', form: 'circle' }
 A:::AClass
 classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
   nA[Class] --> A@{ icon: 'logos:aws', form: 'circle' }
   A:::AClass
   classDef AClass fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 flowchart LR
   nA[Style] --> A@{ icon: 'logos:aws', form: 'circle' }
   style A fill:#f9f,stroke:#333,stroke-width:4px
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 kanban
   id2[In progress]
     docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
     </pre>
-    <pre id="diagram4" class="mermaid2">
+    <pre id="diagram4" class="mermaid">
 ---
 config:
   kanban:
@@ -523,18 +751,22 @@ kanban
         alert('It worked');
       }
       await mermaid.initialize({
-        // theme: 'forest',
+        // theme: 'base',
         // theme: 'default',
         // theme: 'forest',
         // handDrawnSeed: 12,
         // look: 'handDrawn',
         // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
         // layout: 'dagre',
-        // layout: 'elk',
+        layout: 'elk',
         // layout: 'fixed',
         // htmlLabels: false,
         flowchart: { titleTopMargin: 10 },
-        fontFamily: "'Recursive', sans-serif",
+
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        // fontFamily: 'courier',
+        fontFamily: 'arial',
         sequence: {
           actorFontFamily: 'courier',
           noteFontFamily: 'courier',
