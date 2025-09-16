@@ -2,6 +2,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
+import { shouldUseHtmlLabels } from '../../utils.js';
 
 import {
   setAccTitle,
@@ -319,7 +320,7 @@ export class RequirementDB implements DiagramDB {
       const isContains = relation.type === this.Relationships.CONTAINS;
 
       let relationLabel = `&lt;&lt;${relation.type}&gt;&gt;`;
-      if (!config.htmlLabels) {
+      if (!shouldUseHtmlLabels()) {
         relationLabel = relationLabel.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
       }
 
