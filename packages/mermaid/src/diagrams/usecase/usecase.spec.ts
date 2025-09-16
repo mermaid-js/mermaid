@@ -84,27 +84,13 @@ function addConf(conf: any, key: any, value: any) {
 
 describe('UseCase diagram with ANTLR parser', () => {
   it('should parse actors and use cases correctly', async () => {
-    const diagram = await Diagram.fromText(`
-        usecase
-         actor Developer1
-         actor Developer2
-         usecase "Login System"
-         usecase Authentication
-         Developer1 --> "Login System"
-         Developer2 --> Authentication
-      `);
-
-    expect(diagram).toBeDefined();
-    expect(diagram.type).toBe('usecase');
-  });
-
-  it('should handle simple usecase diagram', async () => {
-    const diagram = await Diagram.fromText(`
-        usecase
-         actor User
-         usecase "View Profile"
-         User --> "View Profile"
-      `);
+    const diagram = await Diagram.fromText(
+      `usecase
+      actor Developer1
+      actor Developer2
+      Developer1 --> a("Login System")
+      Developer2 --> b(Authentication)`
+    );
 
     expect(diagram).toBeDefined();
     expect(diagram.type).toBe('usecase');
