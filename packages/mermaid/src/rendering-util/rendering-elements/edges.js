@@ -48,16 +48,15 @@ export const insertEdgeLabel = async (elem, edge) => {
 
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
-  const labelElement =
-    edge.labelType === 'markdown' && useHtmlLabels
-      ? await createText(elem, edge.label, {
-          style: edge.labelStyle,
-          useHtmlLabels,
-          addSvgBackground: true,
-          isNode: false,
-        })
-      : await createLabel(edge.label, edge.labelStyle, false, false);
-
+  if (useHtmlLabels === false) {
+    edge.label = edge.label.replaceAll('&gt;', '>').replaceAll('&lt;', '<');
+  }
+  const labelElement = await createText(elem, edge.label, {
+    style: edge.labelStyle,
+    useHtmlLabels,
+    addSvgBackground: true,
+    isNode: false,
+  });
   log.info('abc82', edge, edge.labelType);
 
   // Create outer g, edgeLabel, this will be positioned after graph layout

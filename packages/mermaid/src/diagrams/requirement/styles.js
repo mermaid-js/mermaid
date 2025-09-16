@@ -55,6 +55,11 @@ const getStyles = (options) => `
   .labelBkg {
     background-color: ${options.edgeLabelBackground};
   }
+  .background {
+   fill: ${options.edgeLabelBackground};
+   stroke: none;
+ }
+
 
 `;
 // fill', conf.rect_fill)
