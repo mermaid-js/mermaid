@@ -86,8 +86,7 @@ export class FlowchartParserCore {
 
   // Subgraph processing methods
   protected processSubgraphStatement(id: string, title?: string): void {
-    // Push default title type for new subgraph (will be updated during title processing)
-    this.subgraphTitleTypeStack.push('text');
+    // Stack is already initialized in processSubgraphStatementCore before title extraction
 
     const subgraphData = {
       id: id,
@@ -1254,6 +1253,9 @@ export class FlowchartParserCore {
   protected processSubgraphStatementCore(ctx: any): void {
     console.log('🔍 FlowchartParser: Processing subgraph statement');
 
+    // Initialize the stack BEFORE extracting the title so title processing can update it
+    this.subgraphTitleTypeStack.push('text');
+
     const extractedId = this.extractSubgraphId(ctx);
     const title = this.extractSubgraphLabel(ctx);
 
@@ -1385,7 +1387,7 @@ export class FlowchartParserCore {
           }
           // Check for regular quoted strings: "content"
           else if (text.match(/^"[^"]*"$/)) {
-            type = 'string';
+            type = 'text'; // Regular quoted strings should be 'text', not 'string'
             const match = text.match(/^"([^"]*)"$/);
             if (match) {
               text = match[1];
@@ -1397,8 +1399,10 @@ export class FlowchartParserCore {
             text = text.slice(1, -1); // Remove backticks
           }
 
-          // Store the type information for later use in processSubgraphEnd
-          this.lastSubgraphTitleType = type;
+          // Update the current subgraph's title type in the stack
+          if (this.subgraphTitleTypeStack.length > 0) {
+            this.subgraphTitleTypeStack[this.subgraphTitleTypeStack.length - 1] = type;
+          }
           console.log('🔍 Subgraph title: stored type:', type, 'text:', text);
           return text;
         }
