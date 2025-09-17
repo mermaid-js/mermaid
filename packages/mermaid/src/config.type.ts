@@ -210,6 +210,7 @@ export interface MermaidConfig {
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
   radar?: RadarDiagramConfig;
+  usecase?: UsecaseDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1622,6 +1623,50 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
    * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
    */
   curveTension?: number;
+}
+/**
+ * The object containing configurations specific for usecase diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "UsecaseDiagramConfig".
+ */
+export interface UsecaseDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Font size for actor labels
+   */
+  actorFontSize?: number;
+  /**
+   * Font family for actor labels
+   */
+  actorFontFamily?: string;
+  /**
+   * Font weight for actor labels
+   */
+  actorFontWeight?: string;
+  /**
+   * Font size for usecase labels
+   */
+  usecaseFontSize?: number;
+  /**
+   * Font family for usecase labels
+   */
+  usecaseFontFamily?: string;
+  /**
+   * Font weight for usecase labels
+   */
+  usecaseFontWeight?: string;
+  /**
+   * Margin around actors
+   */
+  actorMargin?: number;
+  /**
+   * Margin around use cases
+   */
+  usecaseMargin?: number;
+  /**
+   * Padding around the entire diagram
+   */
+  diagramPadding?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

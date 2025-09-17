@@ -56,6 +56,7 @@ required:
   - block
   - look
   - radar
+  - usecase
 properties:
   theme:
     description: |
@@ -310,6 +311,8 @@ properties:
     $ref: '#/$defs/BlockDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
+  usecase:
+    $ref: '#/$defs/UsecaseDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration
     description: Configuration options to pass to the `dompurify` library.
@@ -2328,6 +2331,57 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 1
         default: 0.17
+
+  UsecaseDiagramConfig:
+    title: Usecase Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for usecase diagrams.
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+    properties:
+      actorFontSize:
+        description: Font size for actor labels
+        type: number
+        minimum: 1
+        default: 14
+      actorFontFamily:
+        description: Font family for actor labels
+        type: string
+        default: '"Open Sans", sans-serif'
+      actorFontWeight:
+        description: Font weight for actor labels
+        type: string
+        default: 'normal'
+      usecaseFontSize:
+        description: Font size for usecase labels
+        type: number
+        minimum: 1
+        default: 12
+      usecaseFontFamily:
+        description: Font family for usecase labels
+        type: string
+        default: '"Open Sans", sans-serif'
+      usecaseFontWeight:
+        description: Font weight for usecase labels
+        type: string
+        default: 'normal'
+      actorMargin:
+        description: Margin around actors
+        type: number
+        minimum: 0
+        default: 50
+      usecaseMargin:
+        description: Margin around use cases
+        type: number
+        minimum: 0
+        default: 50
+      diagramPadding:
+        description: Padding around the entire diagram
+        type: number
+        minimum: 0
+        default: 20
 
   FontCalculator:
     title: Font Calculator
