@@ -1489,18 +1489,14 @@ describe('Error Handling', () => {
       const emptyInput = '';
 
       expect(() => parseUsecaseWithAntlr(emptyInput)).toThrow(UsecaseParseError);
-      expect(() => parseUsecaseWithAntlr(emptyInput)).toThrow(
-        /mismatched input '<EOF>' expecting {'usecase', NEWLINE}/
-      );
+      expect(() => parseUsecaseWithAntlr(emptyInput)).toThrow(/missing 'usecase'/);
     });
 
     it('should throw UsecaseParseError for only whitespace input', () => {
       const whitespaceInput = '   \n  \t  \n  ';
 
       expect(() => parseUsecaseWithAntlr(whitespaceInput)).toThrow(UsecaseParseError);
-      expect(() => parseUsecaseWithAntlr(whitespaceInput)).toThrow(
-        /extraneous input '<EOF>' expecting {'usecase', NEWLINE}/
-      );
+      expect(() => parseUsecaseWithAntlr(whitespaceInput)).toThrow(/missing 'usecase'/);
     });
 
     it('should throw UsecaseParseError for missing usecase keyword', () => {
@@ -1510,9 +1506,7 @@ describe('Error Handling', () => {
       `;
 
       expect(() => parseUsecaseWithAntlr(missingKeyword)).toThrow(UsecaseParseError);
-      expect(() => parseUsecaseWithAntlr(missingKeyword)).toThrow(
-        /extraneous input 'actor' expecting {'usecase', NEWLINE}/
-      );
+      expect(() => parseUsecaseWithAntlr(missingKeyword)).toThrow(/missing 'usecase'/);
     });
   });
 
