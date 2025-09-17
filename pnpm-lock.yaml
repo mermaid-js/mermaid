@@ -17,7 +17,7 @@ importers:
         specifier: ^3.44.9
         version: 3.55.0(encoding@0.1.13)(typescript@5.7.3)
       '@argos-ci/cypress':
-        specifier: ^5.0.2
+        specifier: ^5.0.7
         version: 5.0.7(cypress@14.5.4)
       '@changesets/changelog-github':
         specifier: ^0.5.1
@@ -16104,7 +16104,7 @@ snapshots:
       proxy-addr: 2.0.7
       rfdc: 1.4.1
       secure-json-parse: 2.7.0
-      semver: 7.7.2
+      semver: 7.6.2
       toad-cache: 3.7.0
 
   fastq@1.19.1:
