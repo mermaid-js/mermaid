@@ -230,19 +230,12 @@ export class FlowchartParserCore {
       const idCtx = vertexCtx ? vertexCtx.idString() : null;
       const nodeId = idCtx ? idCtx.getText() : 'UNKNOWN';
 
-      console.log(
-        `🔍 FlowchartParser: Processing styled vertex '${nodeId}' in current node (rightmost gets shape data)`
-      );
       // The rightmost node is the styledVertex that is directly under the outermost node context
       // In left-recursive grammar, this is the styledVertex at the outermost level
       const isRightmostNode = isOutermostLevel;
       const hasLocalShapeData = styledVertexCtx.shapeData();
       const effectiveShapeDataCtx =
         isRightmostNode && !hasLocalShapeData ? shapeDataCtx : undefined;
-
-      console.log(
-        `🔍 FlowchartParser: Node '${nodeId}' - Is rightmost node: ${isRightmostNode}, has local shape data: ${hasLocalShapeData ? 'YES' : 'NO'}, using vertex statement shape data: ${effectiveShapeDataCtx ? 'YES' : 'NO'}`
-      );
 
       this.processSingleStyledVertex(styledVertexCtx, effectiveShapeDataCtx);
     }
