@@ -120,6 +120,7 @@ export class FlowDB implements DiagramDB {
     // Extract the metadata from the shapeData, the syntax for adding metadata for nodes and edges is the same
     // so at this point we don't know if it's a node or an edge, but we can still extract the metadata
     let doc;
+    let originalYamlData = '';
     if (metadata !== undefined) {
       let yamlData;
       // detect if shapeData contains a newline character
@@ -128,6 +129,7 @@ export class FlowDB implements DiagramDB {
       } else {
         yamlData = metadata + '\n';
       }
+      originalYamlData = yamlData; // Store original for multiline detection
       doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
     }
 
@@ -211,15 +213,35 @@ export class FlowDB implements DiagramDB {
       if (doc?.label) {
         // Convert newlines to <br/> tags for HTML rendering (except for YAML pipe syntax which preserves \n)
         let labelText = doc.label;
-        if (
-          typeof labelText === 'string' &&
-          labelText.includes('\n') &&
-          !labelText.endsWith('\n')
-        ) {
-          // This is a quoted multiline string, convert \n to <br/>
-          labelText = labelText.replace(/\n/g, '<br/>');
+
+        // Check if the original YAML had a quoted multiline string pattern
+        const quotedMultilinePattern = /label:\s*"[^"]*\n[^"]*"/;
+        const isQuotedMultiline = quotedMultilinePattern.test(originalYamlData);
+
+        if (typeof labelText === 'string' && labelText.includes('\n')) {
+          // Check if this is a YAML block scalar (ends with \n) vs quoted multiline string
+          if (labelText.endsWith('\n')) {
+            // YAML block scalar (label: |) - preserve as-is with \n
+            vertex.text = labelText;
+          } else {
+            // Quoted multiline string (label: "text\nmore text") - convert \n to <br/>
+            labelText = labelText.replace(/\n/g, '<br/>');
+            vertex.text = labelText;
+          }
+        } else if (isQuotedMultiline && typeof labelText === 'string') {
+          // YAML parsed away the newlines, but original had quoted multiline - add <br/>
+          // Find where the line break should be by analyzing the original YAML
+          const match = originalYamlData.match(/label:\s*"([^"]*)\n\s*([^"]*)"/);
+          if (match) {
+            const part1 = match[1].trim();
+            const part2 = match[2].trim();
+            vertex.text = `${part1}<br/>${part2}`;
+          } else {
+            vertex.text = labelText;
+          }
+        } else {
+          vertex.text = labelText;
         }
-        vertex.text = labelText;
       }
       if (doc?.icon) {
         vertex.icon = doc?.icon;

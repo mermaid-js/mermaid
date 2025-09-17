@@ -885,16 +885,31 @@ export class FlowchartParserCore {
 
     // Remove the { and } wrapper
     if (yamlContent.startsWith('{') && yamlContent.endsWith('}')) {
-      yamlContent = yamlContent.substring(1, yamlContent.length - 1).trim();
+      yamlContent = yamlContent.substring(1, yamlContent.length - 1);
     }
 
-    // Normalize the YAML content
+    // Normalize YAML indentation while preserving structure
     const lines = yamlContent.split('\n');
-    const normalizedLines = lines
-      .map((line: string) => line.trim())
-      .filter((line: string) => line.length > 0);
 
-    return normalizedLines.join('\n');
+    // Find the minimum indentation (excluding empty lines)
+    let minIndent = Infinity;
+    for (const line of lines) {
+      if (line.trim().length > 0) {
+        const indent = line.length - line.trimStart().length;
+        minIndent = Math.min(minIndent, indent);
+      }
+    }
+
+    // Remove the common indentation from all lines
+    if (minIndent !== Infinity && minIndent > 0) {
+      const normalizedLines = lines.map((line) => {
+        if (line.trim().length === 0) return '';
+        return line.substring(minIndent);
+      });
+      return normalizedLines.join('\n').trim();
+    }
+
+    return yamlContent.trim();
   }
 
   // Style processing methods
