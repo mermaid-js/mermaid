@@ -129,7 +129,9 @@ export class FlowchartParserCore {
     const shapeDataCtx = ctx.shapeData();
 
     if (nodeCtx) {
-      this.processNode(nodeCtx, shapeDataCtx);
+      // The vertexStatement-level shapeData should apply to the rightmost node
+      // in the ampersand chain, but only if that node doesn't have its own shapeData
+      this.processNodeWithVertexStatementShapeData(nodeCtx, shapeDataCtx);
     }
 
     // Handle edges (links) - this is where A-->B gets processed
@@ -154,23 +156,95 @@ export class FlowchartParserCore {
     this.processAllStyledVerticesInNode(nodeCtx, shapeDataCtx);
   }
 
+  // Process a node with vertexStatement-level shape data
+  // The shape data should only apply to the rightmost node if it doesn't have its own
+  protected processNodeWithVertexStatementShapeData(nodeCtx: any, shapeDataCtx?: any): void {
+    if (!nodeCtx) {
+      return;
+    }
+
+    // For ampersand chains, we need to apply the vertexStatement-level shapeData
+    // only to the rightmost node, and only if that node doesn't have its own shapeData
+    this.processAllStyledVerticesInNodeWithRightmostShapeData(nodeCtx, shapeDataCtx);
+  }
+
   // Recursively process all styled vertices in a node context
   protected processAllStyledVerticesInNode(nodeCtx: any, shapeDataCtx?: any): void {
     if (!nodeCtx) {
       return;
     }
 
+    console.log(
+      `🔍 FlowchartParser: Processing node context, has nested node: ${nodeCtx.node() ? 'YES' : 'NO'}, has styled vertex: ${nodeCtx.styledVertex() ? 'YES' : 'NO'}`
+    );
+
     // For left-recursive grammar, process nested node first (left side)
     const nestedNodeCtx = nodeCtx.node();
     if (nestedNodeCtx) {
       // Recursively process the nested node first
-      this.processAllStyledVerticesInNode(nestedNodeCtx, shapeDataCtx);
+      // IMPORTANT: Do NOT pass shapeDataCtx to nested nodes in ampersand chains
+      // Each node should use only its own local shape data
+      console.log(`🔍 FlowchartParser: Processing nested node recursively`);
+      this.processAllStyledVerticesInNode(nestedNodeCtx, undefined);
     }
 
     // Then process the direct styled vertex (right side)
     const styledVertexCtx = nodeCtx.styledVertex();
     if (styledVertexCtx) {
-      this.processSingleStyledVertex(styledVertexCtx, shapeDataCtx);
+      console.log(`🔍 FlowchartParser: Processing styled vertex in current node`);
+      // For ampersand chains, only use the passed shapeDataCtx if this is the first node
+      // Otherwise, each node should use only its own local shape data
+      const effectiveShapeDataCtx = nestedNodeCtx ? undefined : shapeDataCtx;
+      this.processSingleStyledVertex(styledVertexCtx, effectiveShapeDataCtx);
+    }
+  }
+
+  // Process all styled vertices with rightmost shape data application
+  protected processAllStyledVerticesInNodeWithRightmostShapeData(
+    nodeCtx: any,
+    shapeDataCtx?: any,
+    isOutermostLevel: boolean = true
+  ): void {
+    if (!nodeCtx) {
+      return;
+    }
+
+    console.log(
+      `🔍 FlowchartParser: Processing node context with rightmost shape data, has nested node: ${nodeCtx.node() ? 'YES' : 'NO'}, has styled vertex: ${nodeCtx.styledVertex() ? 'YES' : 'NO'}, outermost level: ${isOutermostLevel}`
+    );
+
+    // For left-recursive grammar, process nested node first (left side)
+    const nestedNodeCtx = nodeCtx.node();
+    if (nestedNodeCtx) {
+      // Recursively process the nested node first, but don't pass shape data
+      console.log(`🔍 FlowchartParser: Processing nested node recursively (no shape data)`);
+      this.processAllStyledVerticesInNodeWithRightmostShapeData(nestedNodeCtx, undefined, false);
+    }
+
+    // Then process the direct styled vertex (right side)
+    const styledVertexCtx = nodeCtx.styledVertex();
+
+    if (styledVertexCtx) {
+      // Get node ID for debugging
+      const vertexCtx = styledVertexCtx.vertex();
+      const idCtx = vertexCtx ? vertexCtx.idString() : null;
+      const nodeId = idCtx ? idCtx.getText() : 'UNKNOWN';
+
+      console.log(
+        `🔍 FlowchartParser: Processing styled vertex '${nodeId}' in current node (rightmost gets shape data)`
+      );
+      // The rightmost node is the styledVertex that is directly under the outermost node context
+      // In left-recursive grammar, this is the styledVertex at the outermost level
+      const isRightmostNode = isOutermostLevel;
+      const hasLocalShapeData = styledVertexCtx.shapeData();
+      const effectiveShapeDataCtx =
+        isRightmostNode && !hasLocalShapeData ? shapeDataCtx : undefined;
+
+      console.log(
+        `🔍 FlowchartParser: Node '${nodeId}' - Is rightmost node: ${isRightmostNode}, has local shape data: ${hasLocalShapeData ? 'YES' : 'NO'}, using vertex statement shape data: ${effectiveShapeDataCtx ? 'YES' : 'NO'}`
+      );
+
+      this.processSingleStyledVertex(styledVertexCtx, effectiveShapeDataCtx);
     }
   }
 
@@ -181,13 +255,31 @@ export class FlowchartParserCore {
       return;
     }
 
+    // Get node ID for debugging
+    const idCtx = vertexCtx.idString();
+    const nodeId = idCtx ? idCtx.getText() : '';
+
     // Check if this styled vertex has its own shape data
     const localShapeDataCtx = styledVertexCtx.shapeData();
     const effectiveShapeDataCtx = localShapeDataCtx || shapeDataCtx;
 
-    // Get node ID
-    const idCtx = vertexCtx.idString();
-    const nodeId = idCtx ? idCtx.getText() : '';
+    console.log(`🔍 FlowchartParser: Processing styled vertex '${nodeId}'`);
+    console.log(`🔍 FlowchartParser: Local shape data: ${localShapeDataCtx ? 'YES' : 'NO'}`);
+    if (localShapeDataCtx) {
+      console.log(`🔍 FlowchartParser: Local shape data content: ${localShapeDataCtx.getText()}`);
+    }
+    console.log(`🔍 FlowchartParser: Passed shape data: ${shapeDataCtx ? 'YES' : 'NO'}`);
+    if (shapeDataCtx) {
+      console.log(`🔍 FlowchartParser: Passed shape data content: ${shapeDataCtx.getText()}`);
+    }
+    console.log(
+      `🔍 FlowchartParser: Effective shape data: ${effectiveShapeDataCtx ? 'YES' : 'NO'}`
+    );
+    if (effectiveShapeDataCtx) {
+      console.log(
+        `🔍 FlowchartParser: Effective shape data content: ${effectiveShapeDataCtx.getText()}`
+      );
+    }
 
     // Validate node ID against reserved keywords
     this.validateNodeId(nodeId);
