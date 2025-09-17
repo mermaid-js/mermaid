@@ -1226,10 +1226,28 @@ export class FlowchartParserCore {
     console.log('🔍 FlowchartParser: Processing accDescr statement');
 
     const descText = ctx.getText();
-    const descMatch = descText.match(/accDescr:\s*(.+)/);
-    if (descMatch) {
-      this.processAccDescStatement(descMatch[1].trim());
+
+    // Handle single-line format: accDescr: description
+    const singleLineMatch = descText.match(/accDescr:\s*(.+)/);
+    if (singleLineMatch) {
+      this.processAccDescStatement(singleLineMatch[1].trim());
+      return;
     }
+
+    // Handle multi-line block format: accDescr { description with multiple lines }
+    const blockMatch = descText.match(/accDescr\s*\{\s*([\s\S]*?)\s*\}/);
+    if (blockMatch) {
+      // Clean up the multi-line content: trim whitespace and normalize line breaks
+      const content = blockMatch[1]
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .join('\n');
+      this.processAccDescStatement(content);
+      return;
+    }
+
+    console.log('🔍 FlowchartParser: No accDescr pattern matched for:', descText);
   }
 
   // Subgraph statement processing
