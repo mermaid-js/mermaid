@@ -268,7 +268,9 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
 
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
-
+  if ((dateFormat.trim() === 'x' || dateFormat.trim() === 'X') && /^\d+$/.test(str)) {
+    return new Date(Number(str));
+  }
   // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
   const afterStatement = afterRePattern.exec(str);
