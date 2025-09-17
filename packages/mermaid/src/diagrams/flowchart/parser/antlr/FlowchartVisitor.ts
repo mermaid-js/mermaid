@@ -7,17 +7,85 @@ import { FlowchartParserCore } from './FlowchartParserCore.js';
  * Uses the same core logic as the Listener for 99.1% test compatibility
  */
 export class FlowchartVisitor extends FlowchartParserCore implements FlowParserVisitor<any> {
+  private visitCount = 0;
+  private vertexStatementCount = 0;
+  private edgeCount = 0;
+  private performanceLog: { [key: string]: { count: number; totalTime: number } } = {};
+
   constructor(db: any) {
     super(db);
-    console.log('🎯 FlowchartVisitor: Constructor called');
+    // Only log for debug mode
+    if (process.env.ANTLR_DEBUG === 'true') {
+      console.log('🎯 FlowchartVisitor: Constructor called');
+    }
+  }
+
+  private logPerformance(methodName: string, startTime: number) {
+    // Only track performance in debug mode to reduce overhead
+    if (process.env.ANTLR_DEBUG === 'true') {
+      const duration = performance.now() - startTime;
+      if (!this.performanceLog[methodName]) {
+        this.performanceLog[methodName] = { count: 0, totalTime: 0 };
+      }
+      this.performanceLog[methodName].count++;
+      this.performanceLog[methodName].totalTime += duration;
+    }
+  }
+
+  private printPerformanceReport() {
+    console.log('📊 FlowchartVisitor Performance Report:');
+    console.log(`  Total visits: ${this.visitCount}`);
+    console.log(`  Vertex statements: ${this.vertexStatementCount}`);
+    console.log(`  Edges processed: ${this.edgeCount}`);
+
+    const sortedMethods = Object.entries(this.performanceLog)
+      .sort(([, a], [, b]) => b.totalTime - a.totalTime)
+      .slice(0, 10); // Top 10 slowest methods
+
+    console.log('  Top time-consuming methods:');
+    for (const [method, stats] of sortedMethods) {
+      const avgTime = stats.totalTime / stats.count;
+      console.log(
+        `    ${method}: ${stats.totalTime.toFixed(2)}ms total (${stats.count} calls, ${avgTime.toFixed(2)}ms avg)`
+      );
+    }
   }
 
   // Default visitor methods
   visit(tree: any): any {
-    return tree.accept(this);
+    // Only track performance in debug mode to reduce overhead
+    const shouldTrackPerformance = process.env.ANTLR_DEBUG === 'true';
+    const startTime = shouldTrackPerformance ? performance.now() : 0;
+
+    this.visitCount++;
+    const result = tree.accept(this);
+
+    if (shouldTrackPerformance) {
+      this.logPerformance('visit', startTime);
+    }
+
+    // Print performance report every 20,000 visits for huge diagrams (less frequent)
+    if (this.visitCount % 20000 === 0) {
+      console.log(`🔄 Progress: ${this.visitCount} visits completed`);
+    }
+
+    // Print final performance report after visiting the entire tree (only for root visit)
+    if (
+      shouldTrackPerformance &&
+      this.visitCount > 1000 &&
+      tree.constructor.name === 'StartContext'
+    ) {
+      this.printPerformanceReport();
+    }
+
+    return result;
   }
 
   visitChildren(node: any): any {
+    // Only track performance in debug mode to reduce overhead
+    const shouldTrackPerformance = process.env.ANTLR_DEBUG === 'true';
+    const startTime = shouldTrackPerformance ? performance.now() : 0;
+
     let result = null;
     const n = node.getChildCount();
     for (let i = 0; i < n; i++) {
@@ -25,6 +93,10 @@ export class FlowchartVisitor extends FlowchartParserCore implements FlowParserV
       if (childResult !== null) {
         result = childResult;
       }
+    }
+
+    if (shouldTrackPerformance) {
+      this.logPerformance('visitChildren', startTime);
     }
     return result;
   }
@@ -54,14 +126,26 @@ export class FlowchartVisitor extends FlowchartParserCore implements FlowParserV
 
   // Handle graph config (graph >, flowchart ^, etc.)
   visitGraphConfig(ctx: any): any {
-    console.log('🎯 FlowchartVisitor: Visiting graph config');
+    // Only log for debug mode - this is called frequently
+    if (process.env.ANTLR_DEBUG === 'true') {
+      console.log('🎯 FlowchartVisitor: Visiting graph config');
+    }
     this.processGraphDeclaration(ctx);
     return this.visitChildren(ctx);
   }
 
   // Implement key visitor methods using the same logic as the Listener
   visitVertexStatement(ctx: VertexStatementContext): any {
-    console.log('🎯 FlowchartVisitor: Visiting vertex statement');
+    // Only track performance in debug mode to reduce overhead
+    const shouldTrackPerformance = process.env.ANTLR_DEBUG === 'true';
+    const startTime = shouldTrackPerformance ? performance.now() : 0;
+
+    this.vertexStatementCount++;
+
+    // Log progress for huge diagrams - less frequent logging
+    if (this.vertexStatementCount % 10000 === 0) {
+      console.log(`🔄 Progress: ${this.vertexStatementCount} vertex statements processed`);
+    }
 
     // For left-recursive vertexStatement grammar, we need to visit children first
     // to process the chain in the correct order (A->B->C should process A first)
@@ -71,6 +155,7 @@ export class FlowchartVisitor extends FlowchartParserCore implements FlowParserV
     // This ensures identical behavior and test compatibility with Listener pattern
     this.processVertexStatementCore(ctx);
 
+    this.logPerformance('visitVertexStatement', startTime);
     return result;
   }
 

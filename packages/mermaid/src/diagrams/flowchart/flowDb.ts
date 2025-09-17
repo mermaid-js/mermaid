@@ -112,7 +112,10 @@ export class FlowDB implements DiagramDB {
     props = {},
     metadata: any
   ) {
-    console.log('➕ FlowDB: Adding vertex', { id, textObj, type, style, classes, dir });
+    // Only log for debug mode - this is called very frequently
+    if (process.env.ANTLR_DEBUG === 'true') {
+      console.log('➕ FlowDB: Adding vertex', { id, textObj, type, style, classes, dir });
+    }
     if (!id || id.trim().length === 0) {
       console.log('⚠️ FlowDB: Skipping vertex with empty ID');
       return;
@@ -328,7 +331,10 @@ export class FlowDB implements DiagramDB {
     }
 
     if (this.edges.length < (this.config.maxEdges ?? 500)) {
-      log.info('Pushing edge...');
+      // Reduced logging for performance - only log every 5000th edge for huge diagrams
+      if (this.edges.length % 5000 === 0) {
+        log.info(`Pushing edge ${this.edges.length}...`);
+      }
       this.edges.push(edge);
     } else {
       throw new Error(
@@ -351,10 +357,19 @@ You have to call mermaid.initialize.`
   }
 
   public addLink(_start: string[], _end: string[], linkData: unknown) {
+    const startTime = performance.now();
     const id = this.isLinkData(linkData) ? linkData.id.replace('@', '') : undefined;
 
-    console.log('🔗 FlowDB: Adding link', { _start, _end, linkData, id });
+    // Only log for debug mode or progress tracking for huge diagrams
+    if (process.env.ANTLR_DEBUG === 'true') {
+      console.log('🔗 FlowDB: Adding link', { _start, _end, linkData, id });
+    }
     log.info('addLink', _start, _end, id);
+
+    // Track performance for huge diagrams - less frequent logging
+    if (this.edges.length % 10000 === 0 && this.edges.length > 0) {
+      console.log(`🔄 FlowDB Progress: ${this.edges.length} edges added`);
+    }
 
     // for a group syntax like A e1@--> B & C, only the first edge should have a userDefined id
     // the rest of the edges should have auto generated ids
@@ -369,6 +384,12 @@ You have to call mermaid.initialize.`
           this.addSingleLink(start, end, linkData, undefined);
         }
       }
+    }
+
+    const duration = performance.now() - startTime;
+    if (duration > 1) {
+      // Only log if it takes more than 1ms
+      console.log(`⏱️ FlowDB: addLink took ${duration.toFixed(2)}ms`);
     }
   }
 

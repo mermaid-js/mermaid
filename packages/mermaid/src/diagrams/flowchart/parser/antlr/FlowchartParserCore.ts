@@ -10,6 +10,7 @@ export class FlowchartParserCore {
   protected currentSubgraphNodes: any[][] = []; // Stack of node lists for nested subgraphs
   protected direction: string = 'TB'; // Default direction
   protected subgraphTitleTypeStack: string[] = []; // Stack to track title types for nested subgraphs
+  protected processCount = 0; // Track processing calls for performance logging
 
   // Reserved keywords that cannot be used as node ID prefixes
   private static readonly RESERVED_KEYWORDS = [
@@ -42,7 +43,10 @@ export class FlowchartParserCore {
   // Graph declaration processing (handles "graph >", "flowchart ^", etc.)
   protected processGraphDeclaration(ctx: any): void {
     const graphText = ctx.getText();
-    console.log('🔍 FlowchartParser: Processing graph declaration:', graphText);
+    // Only log for debug mode - this is called frequently
+    if (process.env.ANTLR_DEBUG === 'true') {
+      console.log('🔍 FlowchartParser: Processing graph declaration:', graphText);
+    }
 
     // Extract direction from graph declaration: "graph >", "flowchart ^", etc.
     const directionMatch = graphText.match(
@@ -50,7 +54,9 @@ export class FlowchartParserCore {
     );
     if (directionMatch) {
       const direction = directionMatch[1];
-      console.log('🔍 FlowchartParser: Found direction in graph declaration:', direction);
+      if (process.env.ANTLR_DEBUG === 'true') {
+        console.log('🔍 FlowchartParser: Found direction in graph declaration:', direction);
+      }
       this.processDirectionStatement(direction);
     } else {
       // Set default direction if none specified
@@ -174,9 +180,14 @@ export class FlowchartParserCore {
       return;
     }
 
-    console.log(
-      `🔍 FlowchartParser: Processing node context, has nested node: ${nodeCtx.node() ? 'YES' : 'NO'}, has styled vertex: ${nodeCtx.styledVertex() ? 'YES' : 'NO'}`
-    );
+    // Reduce logging for performance - only log every 5000th call for huge diagrams or debug mode
+    if (
+      process.env.ANTLR_DEBUG === 'true' ||
+      (this.processCount % 5000 === 0 && this.processCount > 0)
+    ) {
+      console.log(`🔍 FlowchartParser: Processing node ${this.processCount}`);
+    }
+    this.processCount++;
 
     // For left-recursive grammar, process nested node first (left side)
     const nestedNodeCtx = nodeCtx.node();
@@ -191,7 +202,7 @@ export class FlowchartParserCore {
     // Then process the direct styled vertex (right side)
     const styledVertexCtx = nodeCtx.styledVertex();
     if (styledVertexCtx) {
-      console.log(`🔍 FlowchartParser: Processing styled vertex in current node`);
+      // Reduced logging for performance
       // For ampersand chains, only use the passed shapeDataCtx if this is the first node
       // Otherwise, each node should use only its own local shape data
       const effectiveShapeDataCtx = nestedNodeCtx ? undefined : shapeDataCtx;
@@ -209,9 +220,13 @@ export class FlowchartParserCore {
       return;
     }
 
-    console.log(
-      `🔍 FlowchartParser: Processing node context with rightmost shape data, has nested node: ${nodeCtx.node() ? 'YES' : 'NO'}, has styled vertex: ${nodeCtx.styledVertex() ? 'YES' : 'NO'}, outermost level: ${isOutermostLevel}`
-    );
+    // Reduce logging for performance - only log every 5000th call for huge diagrams or debug mode
+    if (
+      process.env.ANTLR_DEBUG === 'true' ||
+      (this.processCount % 5000 === 0 && this.processCount > 0)
+    ) {
+      console.log(`🔍 FlowchartParser: Processing node with shape data ${this.processCount}`);
+    }
 
     // For left-recursive grammar, process nested node first (left side)
     const nestedNodeCtx = nodeCtx.node();
@@ -256,21 +271,13 @@ export class FlowchartParserCore {
     const localShapeDataCtx = styledVertexCtx.shapeData();
     const effectiveShapeDataCtx = localShapeDataCtx || shapeDataCtx;
 
-    console.log(`🔍 FlowchartParser: Processing styled vertex '${nodeId}'`);
-    console.log(`🔍 FlowchartParser: Local shape data: ${localShapeDataCtx ? 'YES' : 'NO'}`);
-    if (localShapeDataCtx) {
-      console.log(`🔍 FlowchartParser: Local shape data content: ${localShapeDataCtx.getText()}`);
-    }
-    console.log(`🔍 FlowchartParser: Passed shape data: ${shapeDataCtx ? 'YES' : 'NO'}`);
-    if (shapeDataCtx) {
-      console.log(`🔍 FlowchartParser: Passed shape data content: ${shapeDataCtx.getText()}`);
-    }
-    console.log(
-      `🔍 FlowchartParser: Effective shape data: ${effectiveShapeDataCtx ? 'YES' : 'NO'}`
-    );
-    if (effectiveShapeDataCtx) {
+    // Reduced logging for performance - only log every 5000th vertex for huge diagrams or debug mode
+    if (
+      process.env.ANTLR_DEBUG === 'true' ||
+      (this.processCount % 5000 === 0 && this.processCount > 0)
+    ) {
       console.log(
-        `🔍 FlowchartParser: Effective shape data content: ${effectiveShapeDataCtx.getText()}`
+        `🔍 FlowchartParser: Processing styled vertex '${nodeId}' (${this.processCount})`
       );
     }
 

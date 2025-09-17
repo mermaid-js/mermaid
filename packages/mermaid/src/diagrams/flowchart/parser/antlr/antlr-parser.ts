@@ -24,58 +24,105 @@ export class ANTLRFlowParser {
   }
 
   parse(input: string): any {
-    console.log('🎯 ANTLR Parser: Starting parse');
-    console.log('📝 Input:', input);
+    const startTime = performance.now();
+
+    // Count approximate complexity for performance decisions (optimized regex)
+    const edgeCount = (input.match(/-->/g) ?? []).length;
+    // Use simpler, faster regex for node counting
+    const nodeCount = new Set(input.match(/\w+(?=\s*(?:-->|;|[\[({]))/g) ?? []).size;
+
+    // Only log for complex diagrams or when debugging
+    const isComplexDiagram = edgeCount > 100 || input.length > 1000;
+    const shouldLog = isComplexDiagram || process.env.ANTLR_DEBUG === 'true';
+
+    if (shouldLog) {
+      console.log('🎯 ANTLR Parser: Starting parse');
+      console.log(`📝 Input length: ${input.length} characters`);
+      console.log(`📊 Estimated complexity: ~${edgeCount} edges, ~${nodeCount} nodes`);
+    }
 
     try {
       // Reset database state
-      console.log('🔄 ANTLR Parser: Resetting database state');
+      const resetStart = performance.now();
+      if (shouldLog) console.log('🔄 ANTLR Parser: Resetting database state');
       if (this.yy.clear) {
         this.yy.clear();
       }
+      const resetTime = performance.now() - resetStart;
 
-      // Create input stream
-      console.log('📄 ANTLR Parser: Creating input stream');
+      // Create input stream and lexer (fast operations, minimal logging)
+      const lexerSetupStart = performance.now();
       const inputStream = CharStream.fromString(input);
-
-      // Create lexer
-      console.log('🔤 ANTLR Parser: Creating lexer');
       const lexer = new FlowLexer(inputStream);
-
-      // Create token stream
-      console.log('🎫 ANTLR Parser: Creating token stream');
       const tokenStream = new CommonTokenStream(lexer);
+      const lexerSetupTime = performance.now() - lexerSetupStart;
 
-      // Create parser
-      console.log('⚙️ ANTLR Parser: Creating parser');
+      // Create parser (fast operation)
+      const parserSetupStart = performance.now();
       const parser = new FlowParser(tokenStream);
+      const parserSetupTime = performance.now() - parserSetupStart;
 
-      // Generate parse tree
-      console.log('🌳 ANTLR Parser: Starting parse tree generation');
+      // Generate parse tree (this is the bottleneck)
+      const parseTreeStart = performance.now();
+      if (shouldLog) console.log('🌳 ANTLR Parser: Starting parse tree generation');
       const tree = parser.start();
-      console.log('✅ ANTLR Parser: Parse tree generated successfully');
+      const parseTreeTime = performance.now() - parseTreeStart;
+      if (shouldLog) {
+        console.log(`⏱️ Parse tree generation took: ${parseTreeTime.toFixed(2)}ms`);
+        console.log('✅ ANTLR Parser: Parse tree generated successfully');
+      }
 
       // Check if we should use Visitor or Listener pattern
       // Default to Visitor pattern (true) unless explicitly set to false
       const useVisitorPattern = process.env.USE_ANTLR_VISITOR !== 'false';
 
+      const traversalStart = performance.now();
       if (useVisitorPattern) {
-        console.log('🎯 ANTLR Parser: Creating visitor');
+        if (shouldLog) console.log('🎯 ANTLR Parser: Creating visitor');
         const visitor = new FlowchartVisitor(this.yy);
-        console.log('🚶 ANTLR Parser: Visiting parse tree');
+        if (shouldLog) console.log('🚶 ANTLR Parser: Visiting parse tree');
         visitor.visit(tree);
       } else {
-        console.log('👂 ANTLR Parser: Creating listener');
+        if (shouldLog) console.log('👂 ANTLR Parser: Creating listener');
         const listener = new FlowchartListener(this.yy);
-        console.log('🚶 ANTLR Parser: Walking parse tree');
+        if (shouldLog) console.log('🚶 ANTLR Parser: Walking parse tree');
         ParseTreeWalker.DEFAULT.walk(listener, tree);
       }
+      const traversalTime = performance.now() - traversalStart;
 
-      console.log('✅ ANTLR Parser: Parse completed successfully');
+      const totalTime = performance.now() - startTime;
+
+      // Only show performance breakdown for complex diagrams or debug mode
+      if (shouldLog) {
+        console.log(`⏱️ Tree traversal took: ${traversalTime.toFixed(2)}ms`);
+        console.log(
+          `⏱️ Total parse time: ${totalTime.toFixed(2)}ms (${(totalTime / 1000).toFixed(2)}s)`
+        );
+
+        // Performance breakdown
+        console.log('📊 Performance breakdown:');
+        console.log(
+          `  - Database reset: ${resetTime.toFixed(2)}ms (${((resetTime / totalTime) * 100).toFixed(1)}%)`
+        );
+        console.log(
+          `  - Lexer setup: ${lexerSetupTime.toFixed(2)}ms (${((lexerSetupTime / totalTime) * 100).toFixed(1)}%)`
+        );
+        console.log(
+          `  - Parser setup: ${parserSetupTime.toFixed(2)}ms (${((parserSetupTime / totalTime) * 100).toFixed(1)}%)`
+        );
+        console.log(
+          `  - Parse tree: ${parseTreeTime.toFixed(2)}ms (${((parseTreeTime / totalTime) * 100).toFixed(1)}%)`
+        );
+        console.log(
+          `  - Tree traversal: ${traversalTime.toFixed(2)}ms (${((traversalTime / totalTime) * 100).toFixed(1)}%)`
+        );
+        console.log('✅ ANTLR Parser: Parse completed successfully');
+      }
       return this.yy;
     } catch (error) {
-      console.log('❌ ANTLR parsing error:', error);
-      console.log('📝 Input that caused error:', input);
+      const totalTime = performance.now() - startTime;
+      console.log(`❌ ANTLR parsing error after ${totalTime.toFixed(2)}ms:`, error);
+      console.log('📝 Input that caused error (first 500 chars):', input.substring(0, 500));
       throw error;
     }
   }
