@@ -39,17 +39,43 @@ Open your browser to:
 
 ## 🔧 Environment Configuration
 
-The ANTLR parser is controlled by the `USE_ANTLR_PARSER` environment variable:
+The ANTLR parser system supports dual-pattern architecture with two configuration variables:
+
+### Parser Selection
 
 - `USE_ANTLR_PARSER=true` - Use ANTLR parser
 - `USE_ANTLR_PARSER=false` or unset - Use Jison parser (default)
+
+### Pattern Selection (when ANTLR is enabled)
+
+- `USE_ANTLR_VISITOR=true` - Use Visitor pattern (default) ✨
+- `USE_ANTLR_VISITOR=false` - Use Listener pattern
+
+### Configuration Examples
+
+```bash
+# Use Jison parser (original)
+USE_ANTLR_PARSER=false
+
+# Use ANTLR with Visitor pattern (recommended default)
+USE_ANTLR_PARSER=true USE_ANTLR_VISITOR=true
+
+# Use ANTLR with Listener pattern
+USE_ANTLR_PARSER=true USE_ANTLR_VISITOR=false
+```
 
 ## 📊 Current Status
 
 ### ✅ ANTLR Parser Achievements (99.1% Pass Rate) - PRODUCTION READY!
 
 - **938/947 tests passing** (99.1% compatibility with Jison parser)
-- **Regression Testing Completed** - Full test suite validation ✅
+- **Dual-Pattern Architecture** - Both Listener and Visitor patterns supported ✨
+- **Visitor Pattern Default** - Optimized pull-based parsing with developer control ✅
+- **Listener Pattern Available** - Event-driven push-based parsing option ✅
+- **Shared Core Logic** - Identical behavior across both patterns ✅
+- **Configuration-Based Selection** - Runtime pattern switching via environment variables ✅
+- **Modular Architecture** - Clean separation of concerns with dedicated files ✅
+- **Regression Testing Completed** - Full test suite validation for both patterns ✅
 - **Development Environment Integrated** - Complete workflow setup ✅
 - **Special Character Node ID Handling** - Complex lookahead patterns ✅
 - **Class/Style Processing** - Vertex creation and class assignment ✅
@@ -93,8 +119,17 @@ Only **6 error message format tests** remain - these are cosmetic differences in
 ### Automated Testing
 
 ```bash
-# Run parser tests with ANTLR
-USE_ANTLR_PARSER=true npx vitest run packages/mermaid/src/diagrams/flowchart/parser/
+# Run parser tests with ANTLR Visitor pattern (default)
+USE_ANTLR_PARSER=true USE_ANTLR_VISITOR=true npx vitest run packages/mermaid/src/diagrams/flowchart/parser/
+
+# Run parser tests with ANTLR Listener pattern
+USE_ANTLR_PARSER=true USE_ANTLR_VISITOR=false npx vitest run packages/mermaid/src/diagrams/flowchart/parser/
+
+# Run single test file with Visitor pattern
+USE_ANTLR_PARSER=true USE_ANTLR_VISITOR=true npx vitest run packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js
+
+# Run single test file with Listener pattern
+USE_ANTLR_PARSER=true USE_ANTLR_VISITOR=false npx vitest run packages/mermaid/src/diagrams/flowchart/parser/flow-singlenode.spec.js
 ```
 
 ## 📁 File Structure
@@ -104,11 +139,48 @@ packages/mermaid/src/diagrams/flowchart/parser/
 ├── antlr/
 │   ├── FlowLexer.g4              # ANTLR lexer grammar
 │   ├── FlowParser.g4             # ANTLR parser grammar
-│   ├── antlr-parser.ts           # ANTLR parser implementation
+│   ├── antlr-parser.ts           # Main ANTLR parser with pattern selection
+│   ├── FlowchartParserCore.ts    # Shared core logic (99.1% compatible)
+│   ├── FlowchartListener.ts      # Listener pattern implementation
+│   ├── FlowchartVisitor.ts       # Visitor pattern implementation (default)
 │   └── generated/                # Generated ANTLR files
+│       ├── FlowLexer.ts          # Generated lexer
+│       ├── FlowParser.ts         # Generated parser
+│       ├── FlowParserListener.ts # Generated listener interface
+│       └── FlowParserVisitor.ts  # Generated visitor interface
 ├── flow.jison                    # Original Jison parser
-└── *.spec.js                     # Test files
+├── flowParser.ts                 # Parser interface wrapper
+└── *.spec.js                     # Test files (947 tests total)
 ```
+
+## 🏗️ Dual-Pattern Architecture
+
+The ANTLR parser supports both Listener and Visitor patterns with identical behavior:
+
+### 👂 Listener Pattern
+
+- **Event-driven**: Parser controls traversal via enter/exit methods
+- **Push-based**: Parser pushes events to listener callbacks
+- **Automatic traversal**: Uses `ParseTreeWalker.DEFAULT.walk()`
+- **Best for**: Simple processing, event-driven architectures
+
+### 🚶 Visitor Pattern (Default)
+
+- **Pull-based**: Developer controls traversal and can return values
+- **Manual traversal**: Uses `visitor.visit()` and `visitChildren()`
+- **Return values**: Can return data from visit methods
+- **Best for**: Complex processing, data transformation, AST manipulation
+
+### 🔄 Shared Core Logic
+
+Both patterns extend `FlowchartParserCore` which contains:
+
+- All parsing logic that achieved 99.1% test compatibility
+- Shared helper methods for node processing, style handling, etc.
+- Database interaction methods
+- Error handling and validation
+
+This architecture ensures **identical behavior** regardless of pattern choice.
 
 ## 🔍 Debugging
 
@@ -136,9 +208,12 @@ When everything is working correctly, you should see:
 
 1. ✅ **Server**: "🚀 ANTLR Parser Dev Server listening on http://localhost:9000"
 2. ✅ **Server**: "🎯 Environment: USE_ANTLR_PARSER=true"
-3. ✅ **Browser**: All test diagrams render as SVG elements
-4. ✅ **Console**: "✅ Diagrams rendered successfully!"
-5. ✅ **Test Page**: Green status indicator showing "ANTLR Parser Active & Rendering Successfully!"
+3. ✅ **Server**: "🎯 Environment: USE_ANTLR_VISITOR=true" (or false for Listener)
+4. ✅ **Browser Console**: "🎯 ANTLR Parser: Creating visitor" (or "Creating listener")
+5. ✅ **Browser Console**: "🎯 FlowchartVisitor: Constructor called" (or "FlowchartListener")
+6. ✅ **Browser**: All test diagrams render as SVG elements
+7. ✅ **Console**: "✅ Diagrams rendered successfully!"
+8. ✅ **Test Page**: Green status indicator showing "ANTLR Parser Active & Rendering Successfully!"
 
 ## 🚨 Troubleshooting
 

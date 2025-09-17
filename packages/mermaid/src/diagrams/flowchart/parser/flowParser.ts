@@ -1,6 +1,6 @@
 // @ts-ignore: JISON doesn't support types
 import flowJisonParser from './flow.jison';
-import antlrParser from './antlr/antlr-parser.ts';
+import { ANTLRFlowParser } from './antlr/antlr-parser.ts';
 
 // Configuration flag to switch between parsers
 // Set to true to test ANTLR parser, false to use original Jison parser
@@ -19,17 +19,27 @@ console.log('🔧 FlowParser: USE_ANTLR_PARSER =', USE_ANTLR_PARSER);
 console.log('🔧 FlowParser: process.env.USE_ANTLR_PARSER =', process.env.USE_ANTLR_PARSER);
 console.log('🔧 FlowParser: Selected parser:', USE_ANTLR_PARSER ? 'ANTLR' : 'Jison');
 
-const newParser = Object.assign({}, USE_ANTLR_PARSER ? antlrParser : flowJisonParser);
+// Create the appropriate parser instance
+let parserInstance;
+if (USE_ANTLR_PARSER) {
+  parserInstance = new ANTLRFlowParser();
+} else {
+  parserInstance = flowJisonParser;
+}
 
-newParser.parse = (src: string): unknown => {
-  // remove the trailing whitespace after closing curly braces when ending a line break
-  const newSrc = src.replace(/}\s*\n/g, '}\n');
+// Create a wrapper that provides the expected interface
+const newParser = {
+  parser: parserInstance,
+  parse: (src: string): unknown => {
+    // remove the trailing whitespace after closing curly braces when ending a line break
+    const newSrc = src.replace(/}\s*\n/g, '}\n');
 
-  if (USE_ANTLR_PARSER) {
-    return antlrParser.parse(newSrc);
-  } else {
-    return flowJisonParser.parse(newSrc);
-  }
+    if (USE_ANTLR_PARSER) {
+      return parserInstance.parse(newSrc);
+    } else {
+      return flowJisonParser.parse(newSrc);
+    }
+  },
 };
 
 export default newParser;

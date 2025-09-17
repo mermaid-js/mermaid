@@ -67,13 +67,13 @@ standaloneVertex:
 // Node definition - matches Jison's node rule
 node:
     styledVertex
-    | node shapeData spaceList AMP spaceList styledVertex
     | node spaceList AMP spaceList styledVertex
     ;
 
 // Styled vertex - matches Jison's styledVertex rule
 styledVertex:
-    vertex
+    vertex shapeData
+    | vertex
     | vertex STYLE_SEPARATOR idString
     ;
 
@@ -92,6 +92,7 @@ vertex:
     | idString DIAMOND_START text DIAMOND_STOP                     // Diamond: {text}
     | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP  // Hexagon: {{text}}
     | idString TAGEND text SQE                                     // Odd: >text]
+    | idString                                                     // Simple node ID without shape - default to squareRect
     | idString TRAP_START text TRAPEND                             // Trapezoid: [/text\]
     | idString INVTRAP_START text INVTRAPEND                       // Inv trapezoid: [\text/]
     | idString TRAP_START text INVTRAPEND                          // Lean right: [/text/]
@@ -208,6 +209,8 @@ clickStatement:
     | CLICK CALL CALLBACKNAME stringLiteral
     | CLICK CALL CALLBACKNAME CALLBACKARGS
     | CLICK CALL CALLBACKNAME CALLBACKARGS stringLiteral
+    | CLICK CALL CALLBACKARGS                                // CLICK CALL callback() - call with args only
+    | CLICK CALL CALLBACKARGS stringLiteral                  // CLICK CALL callback() "tooltip" - call with args and tooltip
     | CLICK HREF stringLiteral
     | CLICK HREF stringLiteral stringLiteral
     | CLICK HREF stringLiteral LINK_TARGET

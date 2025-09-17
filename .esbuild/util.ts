@@ -86,6 +86,8 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
       'import.meta.vitest': 'undefined',
       // Replace process.env.USE_ANTLR_PARSER with actual value at build time
       'process.env.USE_ANTLR_PARSER': `"${process.env.USE_ANTLR_PARSER || 'false'}"`,
+      // Replace process.env.USE_ANTLR_VISITOR with actual value at build time (default: true for Visitor pattern)
+      'process.env.USE_ANTLR_VISITOR': `"${process.env.USE_ANTLR_VISITOR || 'true'}"`,
     },
   });
 

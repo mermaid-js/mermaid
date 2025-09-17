@@ -245,6 +245,9 @@ export class FlowDB implements DiagramDB {
       if (doc.w) {
         vertex.assetWidth = Number(doc.w);
       }
+      if (doc.w) {
+        vertex.assetWidth = Number(doc.w);
+      }
       if (doc.h) {
         vertex.assetHeight = Number(doc.h);
       }
@@ -1055,10 +1058,11 @@ You have to call mermaid.initialize.`
           shape: 'rect',
         });
       } else {
+        const shapeFromVertex = this.getTypeFromVertex(vertex);
         nodes.push({
           ...baseNode,
           isGroup: false,
-          shape: this.getTypeFromVertex(vertex),
+          shape: shapeFromVertex,
         });
       }
     }
