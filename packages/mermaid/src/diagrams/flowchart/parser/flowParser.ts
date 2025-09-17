@@ -4,19 +4,40 @@ import { ANTLRFlowParser } from './antlr/antlr-parser.ts';
 
 // Configuration flag to switch between parsers
 // Set to true to test ANTLR parser, false to use original Jison parser
-const USE_ANTLR_PARSER = process.env.USE_ANTLR_PARSER === 'true';
+// Browser-safe environment variable access
+const getEnvVar = (name: string): string | undefined => {
+  try {
+    if (typeof process !== 'undefined' && process.env) {
+      return process.env[name];
+    }
+  } catch (e) {
+    // process is not defined in browser, continue to browser checks
+  }
+
+  // In browser, check for global variables or default values
+  if (typeof window !== 'undefined' && (window as any).MERMAID_CONFIG) {
+    return (window as any).MERMAID_CONFIG[name];
+  }
+  // Default to ANTLR parser in browser if no config is found
+  if (typeof window !== 'undefined' && name === 'USE_ANTLR_PARSER') {
+    return 'true';
+  }
+  return undefined;
+};
+
+const USE_ANTLR_PARSER = getEnvVar('USE_ANTLR_PARSER') === 'true';
 
 // Force logging to window for debugging
 if (typeof window !== 'undefined') {
-  window.MERMAID_PARSER_DEBUG = {
+  (window as any).MERMAID_PARSER_DEBUG = {
     USE_ANTLR_PARSER,
-    env_value: process.env.USE_ANTLR_PARSER,
+    env_value: getEnvVar('USE_ANTLR_PARSER'),
     selected_parser: USE_ANTLR_PARSER ? 'ANTLR' : 'Jison',
   };
 }
 
 console.log('🔧 FlowParser: USE_ANTLR_PARSER =', USE_ANTLR_PARSER);
-console.log('🔧 FlowParser: process.env.USE_ANTLR_PARSER =', process.env.USE_ANTLR_PARSER);
+console.log('🔧 FlowParser: env USE_ANTLR_PARSER =', getEnvVar('USE_ANTLR_PARSER'));
 console.log('🔧 FlowParser: Selected parser:', USE_ANTLR_PARSER ? 'ANTLR' : 'Jison');
 
 // Create the appropriate parser instance

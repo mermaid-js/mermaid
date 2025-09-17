@@ -131,6 +131,16 @@ flowchart LR
   <script type="module">
     import mermaid from './mermaid.esm.mjs';
 
+    // Configure ANTLR parser for browser environment
+    // Since process.env is not available in browser, we set up global config
+    window.MERMAID_CONFIG = {
+      USE_ANTLR_PARSER: 'true',
+      USE_ANTLR_VISITOR: 'true',
+      ANTLR_DEBUG: 'true'
+    };
+
+    console.log('🎯 Browser ANTLR Configuration:', window.MERMAID_CONFIG);
+
     // Override console methods to capture logs
     const originalLog = console.log;
     const originalError = console.error;
@@ -172,7 +182,15 @@ flowchart LR
     });
 
     // Check environment and parser status
-    const envVar = typeof process !== 'undefined' && process.env ? process.env.USE_ANTLR_PARSER : 'undefined';
+    let envVar = 'undefined';
+    try {
+      if (typeof process !== 'undefined' && process.env) {
+        envVar = process.env.USE_ANTLR_PARSER || 'undefined';
+      }
+    } catch (e) {
+      // process is not defined in browser
+      envVar = 'browser-default';
+    }
     const envElement = document.getElementById('env-var');
     const statusElement = document.getElementById('parser-status');
 

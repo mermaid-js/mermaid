@@ -15,7 +15,7 @@ export class FlowchartListener extends FlowchartParserCore implements ParseTreeL
   // Standard ParseTreeListener methods
   enterEveryRule = (ctx: any) => {
     // Optional: Add debug logging for rule entry
-    if (process.env.NODE_ENV === 'development') {
+    if (this.getEnvVar('NODE_ENV') === 'development') {
       const ruleName = ctx.constructor.name;
       console.log('🔍 FlowchartListener: Entering rule:', ruleName);
     }
@@ -23,7 +23,7 @@ export class FlowchartListener extends FlowchartParserCore implements ParseTreeL
 
   exitEveryRule = (ctx: any) => {
     // Optional: Add debug logging for rule exit
-    if (process.env.NODE_ENV === 'development') {
+    if (this.getEnvVar('NODE_ENV') === 'development') {
       const ruleName = ctx.constructor.name;
       console.log('🔍 FlowchartListener: Exiting rule:', ruleName);
     }

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple ANTLR Parser Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .status {
+      background-color: #e8f4fd;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 4px solid #2196F3;
+    }
+    .debug-logs {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #dee2e6;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .mermaid {
+      text-align: center;
+      margin: 20px 0;
+    }
+    h1 { color: #333; }
+    h2 { color: #666; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Simple ANTLR Parser Test</h1>
+    
+    <div class="status">
+      <h3>Parser Status</h3>
+      <p><strong>Environment Variable:</strong> <span id="env-var">Loading...</span></p>
+      <p><strong>Parser Status:</strong> <span id="parser-status">Loading...</span></p>
+      <p><strong>Global Config:</strong> <span id="global-config">Loading...</span></p>
+    </div>
+
+    <div class="debug-logs">
+      <h3>Debug Logs:</h3>
+      <div id="debug-output">Initializing...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 1: Minimal Flowchart</h2>
+      <p>Testing the simplest possible flowchart:</p>
+      <pre class="mermaid">
+        flowchart TD
+          A[Start] --> B[End]
+      </pre>
+    </div>
+  </div>
+
+  <script type="module">
+    import mermaid from './mermaid.esm.mjs';
+
+    // Configure ANTLR parser for browser environment
+    window.MERMAID_CONFIG = {
+      USE_ANTLR_PARSER: 'true',
+      USE_ANTLR_VISITOR: 'true',
+      ANTLR_DEBUG: 'true'
+    };
+
+    // Enhanced debug logging to track down the process.env issue
+    const debugOutput = document.getElementById('debug-output');
+    const originalConsoleLog = console.log;
+    const originalConsoleError = console.error;
+    
+    function addDebugLog(message, type = 'log') {
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+      
+      if (debugOutput) {
+        debugOutput.innerHTML += logEntry + '<br>';
+        debugOutput.scrollTop = debugOutput.scrollHeight;
+      }
+      
+      // Also log to original console
+      if (type === 'error') {
+        originalConsoleError(message);
+      } else {
+        originalConsoleLog(message);
+      }
+    }
+
+    // Override console methods to capture all logs
+    console.log = function(...args) {
+      addDebugLog(args.join(' '), 'log');
+    };
+    
+    console.error = function(...args) {
+      addDebugLog(args.join(' '), 'error');
+    };
+
+    // Add process access detection
+    const originalProcess = window.process;
+    Object.defineProperty(window, 'process', {
+      get: function() {
+        const stack = new Error().stack;
+        addDebugLog(`🚨 PROCESS ACCESS DETECTED! Stack trace: ${stack}`, 'error');
+        return originalProcess;
+      },
+      set: function(value) {
+        addDebugLog(`🚨 PROCESS SET DETECTED! Value: ${value}`, 'error');
+        window._process = value;
+      }
+    });
+
+    addDebugLog('🔧 Starting ANTLR parser test initialization');
+
+    // Check environment and parser status
+    let envVar = 'undefined';
+    try {
+      if (typeof process !== 'undefined' && process.env) {
+        envVar = process.env.USE_ANTLR_PARSER || 'undefined';
+      }
+    } catch (e) {
+      addDebugLog(`🔧 Process check failed (expected in browser): ${e.message}`);
+      envVar = 'browser-default';
+    }
+    
+    const envElement = document.getElementById('env-var');
+    const statusElement = document.getElementById('parser-status');
+    const configElement = document.getElementById('global-config');
+
+    if (envElement) {
+      envElement.textContent = `USE_ANTLR_PARSER=${envVar || 'undefined'}`;
+    }
+
+    if (configElement) {
+      configElement.textContent = JSON.stringify(window.MERMAID_CONFIG);
+    }
+
+    addDebugLog('🔧 Initializing Mermaid with ANTLR parser');
+
+    try {
+      // Initialize mermaid with detailed error handling
+      await mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true
+        },
+        suppressErrors: false, // We want to see all errors
+        logLevel: 'debug'
+      });
+
+      addDebugLog('✅ Mermaid initialized successfully');
+
+      if (statusElement) {
+        statusElement.textContent = '✅ ANTLR Parser Active';
+        statusElement.style.color = 'green';
+      }
+
+      addDebugLog('🎯 Starting diagram rendering');
+
+      // Render diagrams with detailed error tracking
+      const diagrams = document.querySelectorAll('.mermaid');
+      for (let i = 0; i < diagrams.length; i++) {
+        const diagram = diagrams[i];
+        addDebugLog(`🎨 Rendering diagram ${i + 1}/${diagrams.length}`);
+        
+        try {
+          await mermaid.run({
+            nodes: [diagram],
+            suppressErrors: false
+          });
+          addDebugLog(`✅ Diagram ${i + 1} rendered successfully`);
+        } catch (error) {
+          addDebugLog(`❌ Diagram ${i + 1} failed: ${error.message}`, 'error');
+          addDebugLog(`❌ Stack trace: ${error.stack}`, 'error');
+        }
+      }
+
+      addDebugLog('🎉 All diagrams processed');
+
+    } catch (error) {
+      addDebugLog(`❌ Mermaid initialization failed: ${error.message}`, 'error');
+      addDebugLog(`❌ Stack trace: ${error.stack}`, 'error');
+      
+      if (statusElement) {
+        statusElement.textContent = '❌ ANTLR Parser Failed';
+        statusElement.style.color = 'red';
+      }
+    }
+
+    addDebugLog('🔧 Test initialization complete');
+  </script>
+</body>
+</html>

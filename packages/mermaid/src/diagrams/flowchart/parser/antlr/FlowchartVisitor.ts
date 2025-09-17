@@ -15,14 +15,14 @@ export class FlowchartVisitor extends FlowchartParserCore implements FlowParserV
   constructor(db: any) {
     super(db);
     // Only log for debug mode
-    if (process.env.ANTLR_DEBUG === 'true') {
+    if (this.getEnvVar('ANTLR_DEBUG') === 'true') {
       console.log('🎯 FlowchartVisitor: Constructor called');
     }
   }
 
   private logPerformance(methodName: string, startTime: number) {
     // Only track performance in debug mode to reduce overhead
-    if (process.env.ANTLR_DEBUG === 'true') {
+    if (this.getEnvVar('ANTLR_DEBUG') === 'true') {
       const duration = performance.now() - startTime;
       if (!this.performanceLog[methodName]) {
         this.performanceLog[methodName] = { count: 0, totalTime: 0 };
@@ -54,11 +54,25 @@ export class FlowchartVisitor extends FlowchartParserCore implements FlowParserV
   // Default visitor methods
   visit(tree: any): any {
     // Only track performance in debug mode to reduce overhead
-    const shouldTrackPerformance = process.env.ANTLR_DEBUG === 'true';
+    const shouldTrackPerformance = this.getEnvVar('ANTLR_DEBUG') === 'true';
     const startTime = shouldTrackPerformance ? performance.now() : 0;
 
     this.visitCount++;
-    const result = tree.accept(this);
+
+    if (shouldTrackPerformance) {
+      console.log(`🔍 FlowchartVisitor: Visiting node type: ${tree.constructor.name}`);
+    }
+
+    let result;
+    try {
+      result = tree.accept(this);
+      if (shouldTrackPerformance) {
+        console.log(`✅ FlowchartVisitor: Successfully visited ${tree.constructor.name}`);
+      }
+    } catch (error) {
+      console.error(`❌ FlowchartVisitor: Error visiting ${tree.constructor.name}:`, error);
+      throw error;
+    }
 
     if (shouldTrackPerformance) {
       this.logPerformance('visit', startTime);
@@ -83,7 +97,7 @@ export class FlowchartVisitor extends FlowchartParserCore implements FlowParserV
 
   visitChildren(node: any): any {
     // Only track performance in debug mode to reduce overhead
-    const shouldTrackPerformance = process.env.ANTLR_DEBUG === 'true';
+    const shouldTrackPerformance = this.getEnvVar('ANTLR_DEBUG') === 'true';
     const startTime = shouldTrackPerformance ? performance.now() : 0;
 
     let result = null;
@@ -127,7 +141,7 @@ export class FlowchartVisitor extends FlowchartParserCore implements FlowParserV
   // Handle graph config (graph >, flowchart ^, etc.)
   visitGraphConfig(ctx: any): any {
     // Only log for debug mode - this is called frequently
-    if (process.env.ANTLR_DEBUG === 'true') {
+    if (this.getEnvVar('ANTLR_DEBUG') === 'true') {
       console.log('🎯 FlowchartVisitor: Visiting graph config');
     }
     this.processGraphDeclaration(ctx);
@@ -137,7 +151,7 @@ export class FlowchartVisitor extends FlowchartParserCore implements FlowParserV
   // Implement key visitor methods using the same logic as the Listener
   visitVertexStatement(ctx: VertexStatementContext): any {
     // Only track performance in debug mode to reduce overhead
-    const shouldTrackPerformance = process.env.ANTLR_DEBUG === 'true';
+    const shouldTrackPerformance = this.getEnvVar('ANTLR_DEBUG') === 'true';
     const startTime = shouldTrackPerformance ? performance.now() : 0;
 
     this.vertexStatementCount++;

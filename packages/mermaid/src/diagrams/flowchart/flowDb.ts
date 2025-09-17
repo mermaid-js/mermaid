@@ -99,6 +99,23 @@ export class FlowDB implements DiagramDB {
     return id;
   }
 
+  // Browser-safe environment variable access
+  private getEnvVar(name: string): string | undefined {
+    try {
+      if (typeof process !== 'undefined' && process.env) {
+        return process.env[name];
+      }
+    } catch (e) {
+      // process is not defined in browser, continue to browser checks
+    }
+
+    // In browser, check for global variables
+    if (typeof window !== 'undefined' && (window as any).MERMAID_CONFIG) {
+      return (window as any).MERMAID_CONFIG[name];
+    }
+    return undefined;
+  }
+
   /**
    * Function called by parser when a node definition has been found
    */
@@ -113,7 +130,7 @@ export class FlowDB implements DiagramDB {
     metadata: any
   ) {
     // Only log for debug mode - this is called very frequently
-    if (process.env.ANTLR_DEBUG === 'true') {
+    if (this.getEnvVar('ANTLR_DEBUG') === 'true') {
       console.log('➕ FlowDB: Adding vertex', { id, textObj, type, style, classes, dir });
     }
     if (!id || id.trim().length === 0) {
@@ -361,7 +378,7 @@ You have to call mermaid.initialize.`
     const id = this.isLinkData(linkData) ? linkData.id.replace('@', '') : undefined;
 
     // Only log for debug mode or progress tracking for huge diagrams
-    if (process.env.ANTLR_DEBUG === 'true') {
+    if (this.getEnvVar('ANTLR_DEBUG') === 'true') {
       console.log('🔗 FlowDB: Adding link', { _start, _end, linkData, id });
     }
     log.info('addLink', _start, _end, id);

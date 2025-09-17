@@ -33,7 +33,22 @@ export class ANTLRFlowParser {
 
     // Only log for complex diagrams or when debugging
     const isComplexDiagram = edgeCount > 100 || input.length > 1000;
-    const shouldLog = isComplexDiagram || process.env.ANTLR_DEBUG === 'true';
+    const getEnvVar = (name: string): string | undefined => {
+      try {
+        if (typeof process !== 'undefined' && process.env) {
+          return process.env[name];
+        }
+      } catch (e) {
+        // process is not defined in browser, continue to browser checks
+      }
+
+      // In browser, check for global variables
+      if (typeof window !== 'undefined' && (window as any).MERMAID_CONFIG) {
+        return (window as any).MERMAID_CONFIG[name];
+      }
+      return undefined;
+    };
+    const shouldLog = isComplexDiagram || getEnvVar('ANTLR_DEBUG') === 'true';
 
     if (shouldLog) {
       console.log('🎯 ANTLR Parser: Starting parse');
@@ -74,19 +89,33 @@ export class ANTLRFlowParser {
 
       // Check if we should use Visitor or Listener pattern
       // Default to Visitor pattern (true) unless explicitly set to false
-      const useVisitorPattern = process.env.USE_ANTLR_VISITOR !== 'false';
+      const useVisitorPattern = getEnvVar('USE_ANTLR_VISITOR') !== 'false';
 
       const traversalStart = performance.now();
       if (useVisitorPattern) {
         if (shouldLog) console.log('🎯 ANTLR Parser: Creating visitor');
         const visitor = new FlowchartVisitor(this.yy);
         if (shouldLog) console.log('🚶 ANTLR Parser: Visiting parse tree');
-        visitor.visit(tree);
+        try {
+          visitor.visit(tree);
+          if (shouldLog) console.log('✅ ANTLR Parser: Visitor completed successfully');
+        } catch (error) {
+          console.error('❌ ANTLR Parser: Visitor failed:', error.message);
+          console.error('❌ ANTLR Parser: Visitor stack:', error.stack);
+          throw error;
+        }
       } else {
         if (shouldLog) console.log('👂 ANTLR Parser: Creating listener');
         const listener = new FlowchartListener(this.yy);
         if (shouldLog) console.log('🚶 ANTLR Parser: Walking parse tree');
-        ParseTreeWalker.DEFAULT.walk(listener, tree);
+        try {
+          ParseTreeWalker.DEFAULT.walk(listener, tree);
+          if (shouldLog) console.log('✅ ANTLR Parser: Listener completed successfully');
+        } catch (error) {
+          console.error('❌ ANTLR Parser: Listener failed:', error.message);
+          console.error('❌ ANTLR Parser: Listener stack:', error.stack);
+          throw error;
+        }
       }
       const traversalTime = performance.now() - traversalStart;
 

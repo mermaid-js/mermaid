@@ -40,11 +40,28 @@ export class FlowchartParserCore {
     this.db.setDirection(this.direction);
   }
 
+  // Browser-safe environment variable access
+  protected getEnvVar(name: string): string | undefined {
+    try {
+      if (typeof process !== 'undefined' && process.env) {
+        return process.env[name];
+      }
+    } catch (e) {
+      // process is not defined in browser, continue to browser checks
+    }
+
+    // In browser, check for global variables
+    if (typeof window !== 'undefined' && (window as any).MERMAID_CONFIG) {
+      return (window as any).MERMAID_CONFIG[name];
+    }
+    return undefined;
+  }
+
   // Graph declaration processing (handles "graph >", "flowchart ^", etc.)
   protected processGraphDeclaration(ctx: any): void {
     const graphText = ctx.getText();
     // Only log for debug mode - this is called frequently
-    if (process.env.ANTLR_DEBUG === 'true') {
+    if (this.getEnvVar('ANTLR_DEBUG') === 'true') {
       console.log('🔍 FlowchartParser: Processing graph declaration:', graphText);
     }
 
@@ -54,7 +71,7 @@ export class FlowchartParserCore {
     );
     if (directionMatch) {
       const direction = directionMatch[1];
-      if (process.env.ANTLR_DEBUG === 'true') {
+      if (this.getEnvVar('ANTLR_DEBUG') === 'true') {
         console.log('🔍 FlowchartParser: Found direction in graph declaration:', direction);
       }
       this.processDirectionStatement(direction);
@@ -182,7 +199,7 @@ export class FlowchartParserCore {
 
     // Reduce logging for performance - only log every 5000th call for huge diagrams or debug mode
     if (
-      process.env.ANTLR_DEBUG === 'true' ||
+      this.getEnvVar('ANTLR_DEBUG') === 'true' ||
       (this.processCount % 5000 === 0 && this.processCount > 0)
     ) {
       console.log(`🔍 FlowchartParser: Processing node ${this.processCount}`);
@@ -222,7 +239,7 @@ export class FlowchartParserCore {
 
     // Reduce logging for performance - only log every 5000th call for huge diagrams or debug mode
     if (
-      process.env.ANTLR_DEBUG === 'true' ||
+      this.getEnvVar('ANTLR_DEBUG') === 'true' ||
       (this.processCount % 5000 === 0 && this.processCount > 0)
     ) {
       console.log(`🔍 FlowchartParser: Processing node with shape data ${this.processCount}`);
@@ -273,7 +290,7 @@ export class FlowchartParserCore {
 
     // Reduced logging for performance - only log every 5000th vertex for huge diagrams or debug mode
     if (
-      process.env.ANTLR_DEBUG === 'true' ||
+      this.getEnvVar('ANTLR_DEBUG') === 'true' ||
       (this.processCount % 5000 === 0 && this.processCount > 0)
     ) {
       console.log(
