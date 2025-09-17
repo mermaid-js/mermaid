@@ -17,8 +17,8 @@ importers:
         specifier: ^3.44.9
         version: 3.50.2(encoding@0.1.13)(typescript@5.7.3)
       '@argos-ci/cypress':
-        specifier: ^6.1.0
-        version: 6.1.0(cypress@14.5.1)
+        specifier: ^6.1.1
+        version: 6.1.1(cypress@14.5.1)
       '@changesets/changelog-github':
         specifier: ^0.5.1
         version: 0.5.1(encoding@0.1.13)
@@ -803,12 +803,12 @@ packages:
     resolution: {integrity: sha512-SKAD7EXoLX4u50dzTIT/ABnpD284+DnBfoJM0ZrTIav2eiiVJyknNKSznF5w118lYGnYvugTXbKMnukGPzJeOA==}
     engines: {node: '>=20.0.0'}
 
-  '@argos-ci/core@4.1.4':
-    resolution: {integrity: sha512-CNQR+C2okfDfpvi43aWaQCviUmVskUdbs5AIpNM7r74ZxIz/jXHA4yap5d1Dlz24HQ+q/ZhSMXZi6PkZgGImvA==}
+  '@argos-ci/core@4.1.5':
+    resolution: {integrity: sha512-tPsbnSuHEClkdGLUU/qHTNsMe3kAPBvz0DK0nkv6Z18N0imEbzVg+ggmcTmc2x2yEm7i1V456Z2MLhFvTqXnlw==}
     engines: {node: '>=20.0.0'}
 
-  '@argos-ci/cypress@6.1.0':
-    resolution: {integrity: sha512-7pcJxNGJIBi4cpmjvQXPGLs3A1AiS33H8gOgynKkCaIdrCWGEDP3JMXW1sOtTN7G78Qwxq7y0piyZ5ZUpqwPbQ==}
+  '@argos-ci/cypress@6.1.1':
+    resolution: {integrity: sha512-fs6K2o7vEiAjBtQhrB6cp7YG6beYBRI9WyVbAHRVYyhdEic36agAqQ7/q3tx8d+uf7nXjjtZuW7KGUxjBmC9MA==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       cypress: ^12.0.0 || ^13.0.0 || ^14.0.0
@@ -10942,7 +10942,7 @@ snapshots:
 
   '@argos-ci/browser@5.0.0': {}
 
-  '@argos-ci/core@4.1.4':
+  '@argos-ci/core@4.1.5':
     dependencies:
       '@argos-ci/api-client': 0.11.0
       '@argos-ci/util': 3.1.0
@@ -10954,10 +10954,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/cypress@6.1.0(cypress@14.5.1)':
+  '@argos-ci/cypress@6.1.1(cypress@14.5.1)':
     dependencies:
       '@argos-ci/browser': 5.0.0
-      '@argos-ci/core': 4.1.4
+      '@argos-ci/core': 4.1.5
       '@argos-ci/util': 3.1.0
       cypress: 14.5.1
       cypress-wait-until: 3.0.2
