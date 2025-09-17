@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Mermaid examples package",
   "author": "Sidharth Vinod",
+  "license": "MIT",
   "type": "module",
   "module": "./dist/mermaid-examples.core.mjs",
   "types": "./dist/mermaid.d.ts",
