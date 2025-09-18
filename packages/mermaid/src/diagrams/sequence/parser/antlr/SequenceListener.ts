@@ -37,6 +37,8 @@ export class SequenceListener extends SequenceParserCore implements ParseTreeLis
     // Optional: Handle error nodes
     // eslint-disable-next-line no-console
     console.log('❌ SequenceListener: Error node encountered');
+    // Throw error to match Jison parser behavior for syntax errors
+    throw new Error('Syntax error in sequence diagram');
   };
 
   // Loop block handlers

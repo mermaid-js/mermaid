@@ -70,7 +70,8 @@ export class SequenceVisitor extends SequenceParserCore implements SequenceParse
   visitErrorNode(_node: any): any {
     // eslint-disable-next-line no-console
     console.log('❌ SequenceVisitor: Error node encountered');
-    return null;
+    // Throw error to match Jison parser behavior for syntax errors
+    throw new Error('Syntax error in sequence diagram');
   }
 
   // Loop block visitors

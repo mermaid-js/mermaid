@@ -273,14 +273,16 @@ export class SequenceParserCore {
     try {
       const raw = ctx.restOfLine?.()?.getText?.() as string | undefined;
       const line = raw ? (raw.startsWith(':') ? raw.slice(1) : raw).trim() : '';
-      const data = this.db.parseBoxData(line);
-      this.db.addBox(data);
+      // RECT should generate RECT_START signal with parsed message, matching Jison behavior
+      const parsedMessage = this.db.parseMessage(line);
+      this.db.addSignal(undefined, undefined, parsedMessage, this.db.LINETYPE.RECT_START);
     } catch {}
   }
 
   protected processRectBlockExit(): void {
     try {
-      this.db.boxEnd();
+      // RECT should generate RECT_END signal, not box end
+      this.db.addSignal(undefined, undefined, undefined, this.db.LINETYPE.RECT_END);
     } catch {}
   }
 
@@ -341,6 +343,14 @@ export class SequenceParserCore {
     } catch {}
   }
 
+  // Helper method to ensure actor exists (matching Jison behavior)
+  protected ensureActorExists(actorId: string): void {
+    if (!this.db.getActors().has(actorId)) {
+      // Create actor implicitly with default participant type
+      this.db.addActor(actorId, actorId, { text: actorId, type: 'participant' }, 'participant');
+    }
+  }
+
   // Signal statement processing
   protected processSignalStatement(ctx: any): void {
     try {
@@ -355,19 +365,45 @@ export class SequenceParserCore {
         return;
       }
 
+      // Create actors implicitly if they don't exist (matching Jison behavior)
+      this.ensureActorExists(from);
+      this.ensureActorExists(to);
+
       const signalType = ctx.signaltype?.()?.getText?.() as string | undefined;
       if (!signalType) {
         return;
       }
 
-      const msgText = ctx.text2?.()?.getText?.() as string | undefined;
+      const rawText = ctx.text2?.()?.getText?.() as string | undefined;
+      // Strip leading colon from TXT token (TXT includes ':' prefix)
+      const msgText =
+        rawText && rawText.startsWith(':') ? rawText.slice(1).trim() : rawText?.trim();
       const msg = msgText ? this.db.parseMessage(msgText) : undefined;
       const lineType = this.mapSignalType(signalType);
 
+      // Check for activation/deactivation symbols (matching original ANTLR logic)
+      const hasPlus = !!ctx.PLUS?.();
+      const hasMinus = !!ctx.MINUS?.();
+
       if (lineType !== undefined) {
-        this.db.addSignal(from, to, msg, lineType);
+        // Main signal; pass 'activate' flag if there is a plus before the target actor
+        this.db.addSignal(from, to, msg, lineType, hasPlus);
+
+        // One-line activation/deactivation side-effects (matching original ANTLR logic)
+        if (hasPlus && to) {
+          this.db.addSignal(to, undefined, undefined, this.db.LINETYPE.ACTIVE_START);
+        }
+        if (hasMinus && from) {
+          this.db.addSignal(from, undefined, undefined, this.db.LINETYPE.ACTIVE_END);
+        }
       }
-    } catch {}
+    } catch (error) {
+      // Re-throw validation errors (like activation errors) so tests can catch them
+      if (error instanceof Error && error.message.includes('inactivate an inactive participant')) {
+        throw error;
+      }
+      // Silently ignore other parsing errors
+    }
   }
 
   // Note statement processing
@@ -378,13 +414,46 @@ export class SequenceParserCore {
       const actor1 = actors?.[0]?.getText?.() as string | undefined;
       const actor2 = actors?.[1]?.getText?.() as string | undefined;
 
-      const msgText = ctx.text2?.()?.getText?.() as string | undefined;
-      const msg = msgText ? this.db.parseMessage(msgText) : undefined;
+      // Ensure actors exist
+      if (actor1) {
+        this.ensureActorExists(actor1);
+      }
+      if (actor2) {
+        this.ensureActorExists(actor2);
+      }
 
+      const rawText = ctx.text2?.()?.getText?.() as string | undefined;
+      // Strip leading colon from TXT token (TXT includes ':' prefix)
+      const msgText =
+        rawText && rawText.startsWith(':') ? rawText.slice(1).trim() : rawText?.trim();
+      const msg = msgText ? this.db.parseMessage(msgText) : { text: msgText || '' };
+
+      // Use the same pattern as Jison parser: create addNote object and let db.apply() handle it
       if (placement === 'over' && actor2) {
-        this.db.addSignal(actor1, actor2, msg, this.db.LINETYPE.NOTE);
+        // Note over two actors: Alice,Bob (pass array of actor strings)
+        const payload = {
+          type: 'addNote' as const,
+          placement: this.db.PLACEMENT.OVER,
+          actor: [actor1, actor2],
+          text: msg,
+        };
+        this.db.apply(payload);
       } else if (actor1) {
-        this.db.addSignal(actor1, undefined, msg, this.db.LINETYPE.NOTE, placement);
+        // Note over single actor or left/right of actor (pass actor string)
+        const placementValue =
+          placement === 'over'
+            ? this.db.PLACEMENT.OVER
+            : placement === 'leftOf'
+              ? this.db.PLACEMENT.LEFTOF
+              : this.db.PLACEMENT.RIGHTOF;
+
+        const payload = {
+          type: 'addNote' as const,
+          placement: placementValue,
+          actor: actor1,
+          text: msg,
+        };
+        this.db.apply(payload);
       }
     } catch {}
   }
@@ -396,7 +465,10 @@ export class SequenceParserCore {
       if (!actor) {
         return;
       }
-      const msgText = ctx.text2?.()?.getText?.() as string | undefined;
+      const rawText = ctx.text2?.()?.getText?.() as string | undefined;
+      // Strip leading colon from TXT token (TXT includes ':' prefix)
+      const msgText =
+        rawText && rawText.startsWith(':') ? rawText.slice(1).trim() : rawText?.trim();
       const msg = msgText ? this.db.parseMessage(msgText) : undefined;
       this.db.addLinks(actor, msg);
     } catch {}
@@ -409,9 +481,13 @@ export class SequenceParserCore {
       if (!actor) {
         return;
       }
-      const msgText = ctx.text2?.()?.getText?.() as string | undefined;
+      const rawText = ctx.text2?.()?.getText?.() as string | undefined;
+      // Strip leading colon from TXT token (TXT includes ':' prefix)
+      const msgText =
+        rawText && rawText.startsWith(':') ? rawText.slice(1).trim() : rawText?.trim();
       const msg = msgText ? this.db.parseMessage(msgText) : undefined;
-      this.db.addLink(actor, msg);
+      // Use addALink for single link format (not addLink)
+      this.db.addALink(actor, msg);
     } catch {}
   }
 
@@ -422,7 +498,10 @@ export class SequenceParserCore {
       if (!actor) {
         return;
       }
-      const msgText = ctx.text2?.()?.getText?.() as string | undefined;
+      const rawText = ctx.text2?.()?.getText?.() as string | undefined;
+      // Strip leading colon from TXT token (TXT includes ':' prefix)
+      const msgText =
+        rawText && rawText.startsWith(':') ? rawText.slice(1).trim() : rawText?.trim();
       const msg = msgText ? this.db.parseMessage(msgText) : undefined;
       this.db.addProperties(actor, msg);
     } catch {}
@@ -435,7 +514,10 @@ export class SequenceParserCore {
       if (!actor) {
         return;
       }
-      const msgText = ctx.text2?.()?.getText?.() as string | undefined;
+      const rawText = ctx.text2?.()?.getText?.() as string | undefined;
+      // Strip leading colon from TXT token (TXT includes ':' prefix)
+      const msgText =
+        rawText && rawText.startsWith(':') ? rawText.slice(1).trim() : rawText?.trim();
       const msg = msgText ? this.db.parseMessage(msgText) : undefined;
       this.db.addDetails(actor, msg);
     } catch {}
@@ -457,29 +539,36 @@ export class SequenceParserCore {
       } else if (isDeactivate) {
         this.db.addSignal(actor, undefined, undefined, this.db.LINETYPE.ACTIVE_END);
       }
-    } catch {}
+    } catch (error) {
+      // Re-throw validation errors (like activation errors) so tests can catch them
+      if (error instanceof Error && error.message.includes('inactivate an inactive participant')) {
+        throw error;
+      }
+      // Silently ignore other parsing errors
+    }
   }
 
   // Autonumber statement processing
   protected processAutonumberStatement(ctx: any): void {
     try {
       const isOff = !!ctx.OFF?.();
-      const numTok = ctx.NUM?.();
-      const nums = Array.isArray(numTok) ? numTok : numTok ? [numTok] : [];
-      const numTexts = nums.map((n) => n.getText?.() as string).filter(Boolean);
+      // The grammar uses ACTOR tokens for numbers, not NUM tokens
+      const actorTok = ctx.ACTOR?.();
+      const actors = Array.isArray(actorTok) ? actorTok : actorTok ? [actorTok] : [];
+      const actorTexts = actors.map((n) => n.getText?.() as string).filter(Boolean);
 
       let start: number | undefined;
       let step: number | undefined;
 
-      if (numTexts.length >= 1) {
-        const v = Number.parseInt(numTexts[0], 10);
+      if (actorTexts.length >= 1) {
+        const v = Number.parseInt(actorTexts[0], 10);
         if (!Number.isNaN(v)) {
           start = v;
         }
       }
 
-      if (numTexts.length >= 2) {
-        const v = Number.parseInt(numTexts[1], 10);
+      if (actorTexts.length >= 2) {
+        const v = Number.parseInt(actorTexts[1], 10);
         if (!Number.isNaN(v)) {
           step = v;
         }
@@ -499,7 +588,6 @@ export class SequenceParserCore {
         sequenceVisible: visible,
         signalType: this.db.LINETYPE.AUTONUMBER,
       };
-
       this.db.apply(payload);
     } catch {}
   }
