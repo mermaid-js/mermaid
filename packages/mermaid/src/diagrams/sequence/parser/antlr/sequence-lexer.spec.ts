@@ -25,8 +25,8 @@ describe('Sequence ANTLR Lexer', () => {
     const tokens = lex(input);
     const names = tokenNames(tokens);
 
-    // Expect the start: SD NEWLINE TITLE ACTOR ACTOR NEWLINE
-    expect(names.slice(0, 6)).toEqual(['SD', 'NEWLINE', 'TITLE', 'ACTOR', 'ACTOR', 'NEWLINE']);
+    // Expect the start: SD NEWLINE TITLE TXT NEWLINE
+    expect(names.slice(0, 5)).toEqual(['SD', 'NEWLINE', 'TITLE', 'TXT', 'NEWLINE']);
   });
 
   it('lexes activate statement', () => {

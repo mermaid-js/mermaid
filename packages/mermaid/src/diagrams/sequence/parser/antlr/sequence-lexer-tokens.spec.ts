@@ -213,8 +213,8 @@ describe('Sequence ANTLR Lexer - token coverage (expanded for actor/alias)', () 
   it('autonumber with numbers', () => {
     const ns = names(lex('autonumber 12 3'));
     expect(ns[0]).toBe('AUTONUMBER');
-    // Our lexer returns NUM greedily regardless of trailing space/newline context; acceptable for parity tests
-    expect(ns).toContain('NUM');
+    // Current lexer tokenizes numbers using the general identifier rule; accept ACTOR tokens here
+    expect(ns).toEqual(['AUTONUMBER', 'ACTOR', 'ACTOR']);
   });
 
   it('participant alias across lines: A as Alice then B as Bob', () => {

@@ -2,6 +2,7 @@ lexer grammar SequenceLexer;
 tokens { AS }
 
 
+
 // Comments (skip)
 HASH_COMMENT: '#' ~[\r\n]* -> skip;
 PERCENT_COMMENT1: '%%' ~[\r\n]* -> skip;
@@ -18,7 +19,7 @@ PLUS: '+';
 MINUS: '-';
 
 // Core keywords
-SD: 'sequenceDiagram';
+SD: 'sequenceDiagram' -> pushMode(AFTER_SD);
 PARTICIPANT: 'participant' -> pushMode(ID);
 PARTICIPANT_ACTOR: 'actor' -> pushMode(ID);
 CREATE: 'create';
@@ -110,6 +111,16 @@ ACC_DESCR_MULTILINE_VALUE: (~['}'])*;
 mode CONFIG_MODE;
 CONFIG_CONTENT: (~[}])+;
 CONFIG_END: '}' -> popMode;
+
+
+// After the diagram name keyword, consume the rest of header line then pop
+mode AFTER_SD;
+AFTER_SD_WS: [ \t]+ -> skip;
+AFTER_SD_HASH_COMMENT: '#' ~[\r\n]* -> skip;
+AFTER_SD_PERCENT_COMMENT1: '%%' ~[\r\n]* -> skip;
+AFTER_SD_PERCENT_COMMENT2: ~[}] '%%' ~[\r\n]* -> skip;
+AFTER_SD_SEMI: ';' -> popMode, type(NEWLINE);
+AFTER_SD_NEWLINE: ('\r'? '\n')+ -> popMode, type(NEWLINE);
 
 
 // ID mode: after participant/actor, allow same-line WS/comments; pop on newline
