@@ -4,6 +4,7 @@ import cors from 'cors';
 import { context } from 'esbuild';
 import type { Request, Response } from 'express';
 import express from 'express';
+import { execSync } from 'child_process';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import { defaultOptions, getBuildConfig } from './util.js';
@@ -69,6 +70,19 @@ function eventsHandler(request: Request, response: Response) {
 let timeoutID: NodeJS.Timeout | undefined = undefined;
 
 /**
+ * Generate ANTLR parser files from grammar files
+ */
+function generateAntlr() {
+  try {
+    console.log('🎯 ANTLR: Generating parser files...');
+    execSync('tsx scripts/antlr-generate.mts', { stdio: 'inherit' });
+    console.log('✅ ANTLR: Parser files generated successfully');
+  } catch (error) {
+    console.error('❌ ANTLR: Failed to generate parser files:', error);
+  }
+}
+
+/**
  * Debounce file change events to avoid rebuilding multiple times.
  */
 function handleFileChange() {
@@ -83,14 +97,33 @@ function handleFileChange() {
   }, 100);
 }
 
+/**
+ * Handle ANTLR grammar file changes with debouncing
+ */
+function handleAntlrFileChange() {
+  if (timeoutID !== undefined) {
+    clearTimeout(timeoutID);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  timeoutID = setTimeout(async () => {
+    generateAntlr();
+    await rebuildAll();
+    sendEventsToAll();
+    timeoutID = undefined;
+  }, 100);
+}
+
 function sendEventsToAll() {
   clients.forEach(({ response }) => response.write(`data: ${Date.now()}\n\n`));
 }
 
 async function createServer() {
   await generateLangium();
+  generateAntlr();
   handleFileChange();
   const app = express();
+
+  // Watch for regular source file changes
   chokidar
     .watch('**/src/**/*.{js,ts,langium,yaml,json}', {
       ignoreInitial: true,
@@ -109,6 +142,21 @@ async function createServer() {
       handleFileChange();
     });
 
+  // Watch for ANTLR grammar file changes
+  chokidar
+    .watch('**/src/**/parser/antlr/*.g4', {
+      ignoreInitial: true,
+      ignored: [/node_modules/, /dist/, /docs/, /coverage/],
+    })
+    .on('all', (event, path) => {
+      // Ignore other events.
+      if (!['add', 'change'].includes(event)) {
+        return;
+      }
+      console.log(`🎯 ANTLR grammar file ${path} changed. Regenerating parsers...`);
+      handleAntlrFileChange();
+    });
+
   app.use(cors());
   app.get('/events', eventsHandler);
   for (const { packageName } of Object.values(packageOptions)) {
@@ -120,6 +168,8 @@ async function createServer() {
   app.listen(9000, () => {
     console.log(`🚀 ANTLR Parser Dev Server listening on http://localhost:9000`);
     console.log(`🎯 Environment: USE_ANTLR_PARSER=${process.env.USE_ANTLR_PARSER}`);
+    console.log(`🔍 Watching: .g4 grammar files for auto-regeneration`);
+    console.log(`📁 Generated: ANTLR parser files ready`);
   });
 }
 

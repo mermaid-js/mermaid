@@ -1,5 +1,6 @@
 import { build } from 'esbuild';
 import { cp, mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { execSync } from 'child_process';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import type { MermaidBuildOptions } from './util.js';
@@ -93,8 +94,26 @@ const buildTinyMermaid = async () => {
   await cp('./packages/mermaid/CHANGELOG.md', './packages/tiny/CHANGELOG.md');
 };
 
+/**
+ * Generate ANTLR parser files from grammar files
+ */
+const generateAntlr = () => {
+  try {
+    // eslint-disable-next-line no-console
+    console.log('🎯 ANTLR: Generating parser files...');
+    execSync('tsx scripts/antlr-generate.mts', { stdio: 'inherit' });
+    // eslint-disable-next-line no-console
+    console.log('✅ ANTLR: Parser files generated successfully');
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('❌ ANTLR: Failed to generate parser files:', error);
+    throw error;
+  }
+};
+
 const main = async () => {
   await generateLangium();
+  generateAntlr();
   await mkdir('stats', { recursive: true });
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
   // it should build `parser` before `mermaid` because it's a dependency

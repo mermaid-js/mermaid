@@ -10,7 +10,7 @@ const getEnvVar = (name: string): string | undefined => {
     if (typeof process !== 'undefined' && process.env) {
       return process.env[name];
     }
-  } catch (e) {
+  } catch (_e) {
     // process is not defined in browser, continue to browser checks
   }
 
@@ -36,8 +36,11 @@ if (typeof window !== 'undefined') {
   };
 }
 
+// eslint-disable-next-line no-console
 console.log('🔧 FlowParser: USE_ANTLR_PARSER =', USE_ANTLR_PARSER);
+// eslint-disable-next-line no-console
 console.log('🔧 FlowParser: env USE_ANTLR_PARSER =', getEnvVar('USE_ANTLR_PARSER'));
+// eslint-disable-next-line no-console
 console.log('🔧 FlowParser: Selected parser:', USE_ANTLR_PARSER ? 'ANTLR' : 'Jison');
 
 // Create the appropriate parser instance

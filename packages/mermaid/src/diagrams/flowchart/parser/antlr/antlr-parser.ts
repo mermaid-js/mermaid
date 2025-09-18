@@ -38,7 +38,7 @@ export class ANTLRFlowParser {
         if (typeof process !== 'undefined' && process.env) {
           return process.env[name];
         }
-      } catch (e) {
+      } catch (_e) {
         // process is not defined in browser, continue to browser checks
       }
 
