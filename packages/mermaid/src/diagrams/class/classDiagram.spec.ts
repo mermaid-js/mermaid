@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method -- Broken for Vitest mocks, see https://github.com/vitest-dev/eslint-plugin-vitest/pull/286 */
-// @ts-expect-error Jison doesn't export types
-import { parser } from './parser/classDiagram.jison';
+// @ts-expect-error Parser exposes mutable yy property without typings
+import { parser } from './parser/classParser.ts';
 import { ClassDB } from './classDb.js';
 import { vi, describe, it, expect } from 'vitest';
 import type { ClassMap, NamespaceNode } from './classTypes.js';
