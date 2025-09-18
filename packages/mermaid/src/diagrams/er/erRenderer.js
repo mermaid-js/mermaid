@@ -448,6 +448,11 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     svgPath.attr('stroke-dasharray', '8,8');
   }
 
+  // Handle aggregation relationship styling
+  if (rel.relSpec.relType === diagObj.db.Aggregation.AGGREGATION_DASHED) {
+    svgPath.attr('stroke-dasharray', '8,8');
+  }
+
   // TODO: Understand this better
   let url = '';
   if (conf.arrowMarkerAbsolute) {
@@ -501,6 +506,15 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     case diagObj.db.Cardinality.MD_PARENT:
       svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.MD_PARENT_START + ')');
       break;
+  }
+
+  // Handle aggregation markers
+  if (
+    rel.relSpec.relType === diagObj.db.Aggregation.AGGREGATION ||
+    rel.relSpec.relType === diagObj.db.Aggregation.AGGREGATION_DASHED
+  ) {
+    // Add aggregation marker at the start (entity B side)
+    svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.AGGREGATION_START + ')');
   }
 
   // Now label the relationship
