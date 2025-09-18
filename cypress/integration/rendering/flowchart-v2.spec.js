@@ -1199,4 +1199,58 @@ class link myClass
 `
     );
   });
+
+  describe('htmlLabels rendering', () => {
+    it('should not render with htmlLabels when disabled via flowchart config', () => {
+      imgSnapshotTest(
+        `flowchart LR
+          A["HTML label <br> with breaks"] --> B["Another label"]
+          C --> D
+        `,
+        { flowchart: { htmlLabels: false } }
+      );
+    });
+
+    it('should not render with htmlLabels when disabled via global config', () => {
+      imgSnapshotTest(
+        `flowchart LR
+          A["HTML label <br> with breaks"] --> B["Another label"]
+          C --> D
+        `,
+        { htmlLabels: false }
+      );
+    });
+
+    it('should render with htmlLabels when enabled', () => {
+      imgSnapshotTest(
+        `flowchart LR
+          A["HTML label <br> with breaks"] --> B["Another label"]
+          C --> D
+        `,
+        { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+      );
+    });
+
+    it('should not create foreignObject elements when htmlLabels disabled via global config', () => {
+      renderGraph(
+        `flowchart TD
+          A["Node with <br> HTML"] -- "edge <br> label" --> B["Another node"]
+          C --> D
+        `,
+        { htmlLabels: false }
+      );
+      cy.get('svg foreignObject').should('not.exist');
+    });
+
+    it('should create foreignObject elements when htmlLabels enabled', () => {
+      renderGraph(
+        `flowchart TD
+          A["Node with <br> HTML"] -- "edge <br> label" --> B["Another node"]
+          C --> D
+        `,
+        { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+      );
+      cy.get('svg foreignObject').should('exist');
+    });
+  });
 });
