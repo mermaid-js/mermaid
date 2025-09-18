@@ -20,10 +20,19 @@ export const drawRels = (elem, rels, conf) => {
   const relsElem = elem.append('g');
   let i = 0;
   for (let rel of rels) {
-    let textColor = rel.textColor ? rel.textColor : '#444444';
-    let strokeColor = rel.lineColor ? rel.lineColor : '#444444';
+    let textColor = rel.textColor ?? '#444444';
+    let strokeColor = rel.lineColor ?? '#444444';
     let offsetX = rel.offsetX ? parseInt(rel.offsetX) : 0;
     let offsetY = rel.offsetY ? parseInt(rel.offsetY) : 0;
+
+    // Determine stroke-dasharray based on lineStyle
+    let strokeDasharray = '';
+    if (rel.lineStyle === 'dashed') {
+      strokeDasharray = '7,3';
+    } else if (rel.lineStyle === 'dotted') {
+      strokeDasharray = '2,2';
+    }
+    // 'solid' or undefined defaults to no dash array
 
     let url = '';
     if (i === 0) {
@@ -36,6 +45,12 @@ export const drawRels = (elem, rels, conf) => {
       line.attr('stroke-width', '1');
       line.attr('stroke', strokeColor);
       line.style('fill', 'none');
+
+      // Apply stroke-dasharray if specified
+      if (strokeDasharray) {
+        line.attr('stroke-dasharray', strokeDasharray);
+      }
+
       if (rel.type !== 'rel_b') {
         line.attr('marker-end', 'url(' + url + '#arrowhead)');
       }
@@ -64,6 +79,12 @@ export const drawRels = (elem, rels, conf) => {
             .replaceAll('stopx', rel.endPoint.x)
             .replaceAll('stopy', rel.endPoint.y)
         );
+
+      // Apply stroke-dasharray if specified
+      if (strokeDasharray) {
+        line.attr('stroke-dasharray', strokeDasharray);
+      }
+
       if (rel.type !== 'rel_b') {
         line.attr('marker-end', 'url(' + url + '#arrowhead)');
       }
