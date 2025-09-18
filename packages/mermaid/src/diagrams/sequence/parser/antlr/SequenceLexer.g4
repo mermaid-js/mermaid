@@ -1,7 +1,9 @@
 lexer grammar SequenceLexer;
 tokens { AS }
 
-
+@members {
+  private seenSD = false;
+}
 
 // Comments (skip)
 HASH_COMMENT: '#' ~[\r\n]* -> skip;
@@ -9,6 +11,10 @@ PERCENT_COMMENT1: '%%' ~[\r\n]* -> skip;
 PERCENT_COMMENT2: ~[}] '%%' ~[\r\n]* -> skip;
 
 // Whitespace and newline
+
+// YAML front matter (allowed before the diagram header)
+FRONTMATTER_START: { !this.seenSD }? '---' [ \t]* ('\r'? '\n') -> pushMode(FRONTMATTER_MODE), skip;
+
 NEWLINE: ('\r'? '\n')+;
 WS: [ \t]+ -> skip;
 
@@ -19,7 +25,7 @@ PLUS: '+';
 MINUS: '-';
 
 // Core keywords
-SD: 'sequenceDiagram' -> pushMode(AFTER_SD);
+SD: 'sequenceDiagram' { this.seenSD = true; } -> pushMode(AFTER_SD);
 PARTICIPANT: 'participant' -> pushMode(ID);
 PARTICIPANT_ACTOR: 'actor' -> pushMode(ID);
 CREATE: 'create';
@@ -105,12 +111,18 @@ mode ACC_DESCR_MODE;
 ACC_DESCR_VALUE: (~[\r\n;#])* -> popMode;
 
 mode ACC_DESCR_MULTILINE_MODE;
+
 ACC_DESCR_MULTILINE_END: '}' -> popMode;
 ACC_DESCR_MULTILINE_VALUE: (~['}'])*;
 
 mode CONFIG_MODE;
 CONFIG_CONTENT: (~[}])+;
 CONFIG_END: '}' -> popMode;
+
+// YAML front matter mode: consume until closing '---' line, then pop
+mode FRONTMATTER_MODE;
+FM_END: [ \t]* '---' [ \t]* ('\r'? '\n') -> popMode, skip;
+FM_LINE: (~[\r\n])* ('\r'? '\n') -> skip;
 
 
 // After the diagram name keyword, consume the rest of header line then pop

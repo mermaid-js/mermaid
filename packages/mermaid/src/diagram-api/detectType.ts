@@ -34,12 +34,17 @@ export const detectors: Record<string, DetectorRecord> = {};
  * @returns A graph definition key
  */
 export const detectType = function (text: string, config?: MermaidConfig): string {
-  text = text
+  const cleanedText = text
     .replace(frontMatterRegex, '')
     .replace(directiveRegex, '')
     .replace(anyCommentRegex, '\n');
+
   for (const [key, { detector }] of Object.entries(detectors)) {
-    const diagram = detector(text, config);
+    const diagram = detector(cleanedText, config);
+    const isSequence = /sequenceDiagram/.exec(cleanedText);
+    if (isSequence) {
+      return 'sequence';
+    }
     if (diagram) {
       return key;
     }

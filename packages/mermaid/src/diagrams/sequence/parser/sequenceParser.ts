@@ -25,7 +25,7 @@ const getEnvVar = (name: string): string | undefined => {
   return undefined;
 };
 
-const USE_ANTLR_PARSER = getEnvVar('USE_ANTLR_PARSER') === 'true';
+const USE_ANTLR_PARSER = true; //getEnvVar('USE_ANTLR_PARSER') === 'false';
 
 // Force logging to window for debugging
 if (typeof window !== 'undefined') {

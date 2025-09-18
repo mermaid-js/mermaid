@@ -4,7 +4,7 @@ import mermaidAPI from '../../mermaidAPI.js';
 import { Diagram } from '../../Diagram.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 import { SequenceDB } from './sequenceDb.js';
-
+import { preprocessDiagram } from './preprocess.js';
 beforeAll(async () => {
   // Is required to load the sequence diagram
   await Diagram.fromText('sequenceDiagram');
@@ -1820,6 +1820,51 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
     expect(msgs.every((v) => v.wrap)).toBe(true);
   });
+  it('should handle YAML front matter before sequenceDiagram', async () => {
+    const str = `---
+  title: Front matter title
+  config:
+    theme: base
+    themeVariables:
+      primaryColor: "#00ff00"
+  ---
+  sequenceDiagram
+  Alice->Bob: Hello Bob`;
+
+    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+
+    const messages = diagram.db.getMessages();
+    expect(messages.length).toBe(1);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[0].to).toBe('Bob');
+    expect(messages[0].message).toBe('Hello Bob');
+  });
+  it('should handle YAML front matter before sequenceDiagram', async () => {
+    const str = `
+  sequenceDiagram
+  ---
+  title: Front matter title
+  config:
+    theme: base
+    themeVariables:
+      primaryColor: "#00ff00"
+  ---
+  Alice->Bob: Hello Bob`;
+
+    const { code, title } = preprocessDiagram(str);
+    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(code, { title });
+    await diagram.renderer.draw(code, 'tst', '1.2.3', diagram);
+
+    const messages = diagram.db.getMessages();
+    expect(messages.length).toBe(1);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[0].to).toBe('Bob');
+    expect(messages[0].message).toBe('Hello Bob');
+  });
+
   it('should handle two actors and two centered shared notes', async () => {
     const str = `
 sequenceDiagram
