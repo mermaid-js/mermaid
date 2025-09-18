@@ -534,11 +534,19 @@ You have to call mermaid.initialize.`
    * @param functionName - Function to be called on click
    * @param functionArgs - Arguments to be passed to the function
    */
-  public setClickEvent(ids: string, functionName: string, functionArgs: string) {
-    ids.split(',').forEach((id) => {
-      this.setClickFun(id, functionName, functionArgs);
-    });
-    this.setClass(ids, 'clickable');
+  public setClickEvent(ids: string, functionName: string, functionArgs?: string) {
+    if (getConfig().securityLevel !== 'loose') {
+      log.warn(
+        `Click event callback calls are ignored because securityLevel is not "loose" in Mermaid config`,
+        this.config.logLevel,
+        this.config.securityLevel
+      );
+    } else {
+      ids.split(',').forEach((id) => {
+        this.setClickFun(id, functionName, functionArgs ?? '');
+      });
+      this.setClass(ids, 'clickable');
+    }
   }
 
   public bindFunctions(element: Element) {
