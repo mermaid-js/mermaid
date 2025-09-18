@@ -4,7 +4,9 @@ options {
   tokenVocab = SequenceLexer;
 }
 
-start: (NEWLINE)* SD document EOF;
+start: header SD document EOF;
+
+header: (NEWLINE | HEADER_DIRECTIVE | FRONTMATTER)*;
 
 document: (line | loopBlock | rectBlock | boxBlock | optBlock | altBlock | parBlock | parOverBlock | breakBlock | criticalBlock)* statement?;
 

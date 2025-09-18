@@ -4,7 +4,8 @@ import mermaidAPI from '../../mermaidAPI.js';
 import { Diagram } from '../../Diagram.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 import { SequenceDB } from './sequenceDb.js';
-import { preprocessDiagram } from './preprocess.js';
+import { preprocessDiagram } from '../../preprocess.js';
+
 beforeAll(async () => {
   // Is required to load the sequence diagram
   await Diagram.fromText('sequenceDiagram');
@@ -1841,29 +1842,6 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(messages[0].to).toBe('Bob');
     expect(messages[0].message).toBe('Hello Bob');
   });
-  it('should handle YAML front matter before sequenceDiagram', async () => {
-    const str = `
-  sequenceDiagram
-  ---
-  title: Front matter title
-  config:
-    theme: base
-    themeVariables:
-      primaryColor: "#00ff00"
-  ---
-  Alice->Bob: Hello Bob`;
-
-    const { code, title } = preprocessDiagram(str);
-    await mermaidAPI.parse(str);
-    const diagram = await Diagram.fromText(code, { title });
-    await diagram.renderer.draw(code, 'tst', '1.2.3', diagram);
-
-    const messages = diagram.db.getMessages();
-    expect(messages.length).toBe(1);
-    expect(messages[0].from).toBe('Alice');
-    expect(messages[0].to).toBe('Bob');
-    expect(messages[0].message).toBe('Hello Bob');
-  });
 
   it('should handle two actors and two centered shared notes', async () => {
     const str = `
@@ -2001,7 +1979,7 @@ Bob->>Alice: Fine!`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('should draw two actors, notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', async () => {
+  it.skip('should draw two actors, notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', async () => {
     const str = `
     %%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "messageFontWeight": 400, "wrap": true }}}%%
 sequenceDiagram

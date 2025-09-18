@@ -2,18 +2,23 @@ lexer grammar SequenceLexer;
 tokens { AS }
 
 @members {
-  private seenSD = false;
+  // headerMode is true until the diagram header (sequenceDiagram) is seen
+  private headerMode = true;
 }
 
-// Comments (skip)
+// Header directives: handle %%{ ... }%% only before the diagram header
+// Accept optional leading spaces/tabs on the line before the directive
+HEADER_DIRECTIVE: { this.headerMode }? [ \t]* '%%{' .*? '}%%';
+
+// Comments (skip) - avoid consuming '%%{' which starts a directive
 HASH_COMMENT: '#' ~[\r\n]* -> skip;
-PERCENT_COMMENT1: '%%' ~[\r\n]* -> skip;
+PERCENT_COMMENT1: '%%' ~['{'] ~[\r\n]* -> skip;
 PERCENT_COMMENT2: ~[}] '%%' ~[\r\n]* -> skip;
 
 // Whitespace and newline
 
 // YAML front matter (allowed before the diagram header)
-FRONTMATTER_START: { !this.seenSD }? '---' [ \t]* ('\r'? '\n') -> pushMode(FRONTMATTER_MODE), skip;
+FRONTMATTER: { this.headerMode }? [ \t]* '---' [ \t]* ('\r'? '\n') .*? ('\r'? '\n') [ \t]* '---' [ \t]* ('\r'? '\n');
 
 NEWLINE: ('\r'? '\n')+;
 WS: [ \t]+ -> skip;
@@ -25,7 +30,7 @@ PLUS: '+';
 MINUS: '-';
 
 // Core keywords
-SD: 'sequenceDiagram' { this.seenSD = true; } -> pushMode(AFTER_SD);
+SD: 'sequenceDiagram' { this.headerMode = false; } -> pushMode(AFTER_SD);
 PARTICIPANT: 'participant' -> pushMode(ID);
 PARTICIPANT_ACTOR: 'actor' -> pushMode(ID);
 CREATE: 'create';
@@ -120,9 +125,11 @@ CONFIG_CONTENT: (~[}])+;
 CONFIG_END: '}' -> popMode;
 
 // YAML front matter mode: consume until closing '---' line, then pop
-mode FRONTMATTER_MODE;
-FM_END: [ \t]* '---' [ \t]* ('\r'? '\n') -> popMode, skip;
-FM_LINE: (~[\r\n])* ('\r'? '\n') -> skip;
+
+// Header directive mode: consume everything until the closing '}%%'
+
+
+
 
 
 // After the diagram name keyword, consume the rest of header line then pop
