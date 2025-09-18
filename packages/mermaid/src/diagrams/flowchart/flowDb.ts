@@ -537,9 +537,7 @@ You have to call mermaid.initialize.`
   public setClickEvent(ids: string, functionName: string, functionArgs?: string) {
     if (getConfig().securityLevel !== 'loose') {
       log.warn(
-        `Click event callback calls are ignored because securityLevel is not "loose" in Mermaid config`,
-        this.config.logLevel,
-        this.config.securityLevel
+        `Click event callback calls are ignored because securityLevel is not "loose" in Mermaid config`
       );
     } else {
       ids.split(',').forEach((id) => {
