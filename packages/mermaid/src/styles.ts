@@ -4,6 +4,14 @@ import type { DiagramStylesProvider } from './diagram-api/types.js';
 
 const themes: Record<string, DiagramStylesProvider> = {};
 
+const addCssVariables = (options: FlowChartStyleOptions) =>
+  Object.keys(options).forEach((key) => {
+    const k = key as keyof FlowChartStyleOptions;
+    if (typeof options[k] === 'string' && options[k].startsWith('--')) {
+      options[k] = `var(${options[k]})`;
+    }
+  });
+
 const getStyles = (
   type: string,
   userStyles: string,
@@ -18,6 +26,7 @@ const getStyles = (
 ) => {
   let diagramStyles = '';
   if (type in themes && themes[type]) {
+    addCssVariables(options);
     diagramStyles = themes[type](options);
   } else {
     log.warn(`No theme found for ${type}`);
