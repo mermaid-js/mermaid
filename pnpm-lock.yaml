@@ -338,6 +338,9 @@ importers:
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
+      antlr4ng-cli:
+        specifier: ^2.0.0
+        version: 2.0.0
       canvas:
         specifier: ^3.1.0
         version: 3.1.2
@@ -4258,6 +4261,11 @@ packages:
   antlr4@4.11.0:
     resolution: {integrity: sha512-GUGlpE2JUjAN+G8G5vY+nOoeyNhHsXoIJwP1XF1oRw89vifA1K46T6SEkwLwr7drihN7I/lf0DIjKc4OZvBX8w==}
     engines: {node: '>=14'}
+
+  antlr4ng-cli@2.0.0:
+    resolution: {integrity: sha512-oAt5OSSYhRQn1PgahtpAP4Vp3BApCoCqlzX7Q8ZUWWls4hX59ryYuu0t7Hwrnfk796OxP/vgIJaqxdltd/oEvQ==}
+    deprecated: 'This package is deprecated and will no longer be updated. Please use the new antlr-ng package instead: https://github.com/mike-lischke/antlr-ng'
+    hasBin: true
 
   antlr4ng@3.0.15:
     resolution: {integrity: sha512-VELFqTfcpGI2bj6ScMWuxM3FI6HOsojrgmnw3cCbUtsQ1DNOq32wJsjOt7vLvfIniyyuE1DIYegGcuFmn+jgyw==}
@@ -15304,6 +15312,8 @@ snapshots:
       unicode-properties: 1.4.1
 
   antlr4@4.11.0: {}
+
+  antlr4ng-cli@2.0.0: {}
 
   antlr4ng@3.0.15: {}
 

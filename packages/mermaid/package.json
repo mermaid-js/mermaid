@@ -49,6 +49,10 @@
     "types:build-config": "tsx scripts/create-types-from-json-schema.mts",
     "types:verify-config": "tsx scripts/create-types-from-json-schema.mts --verify",
     "checkCircle": "npx madge --circular ./src",
+    "antlr:sequence:clean": "rimraf src/diagrams/sequence/parser/antlr/generated",
+    "antlr:sequence": "pnpm run antlr:sequence:clean && antlr4ng -Dlanguage=TypeScript -Xexact-output-dir -o src/diagrams/sequence/parser/antlr/generated src/diagrams/sequence/parser/antlr/SequenceLexer.g4 src/diagrams/sequence/parser/antlr/SequenceParser.g4",
+    "antlr:class:clean": "rimraf src/diagrams/class/parser/antlr/generated",
+    "antlr:class": "pnpm run antlr:class:clean && antlr4ng -Dlanguage=TypeScript -Xexact-output-dir -o src/diagrams/class/parser/antlr/generated src/diagrams/class/parser/antlr/ClassLexer.g4 src/diagrams/class/parser/antlr/ClassParser.g4",
     "prepublishOnly": "pnpm docs:verify-version"
   },
   "repository": {
@@ -132,7 +136,8 @@
     "unist-util-flatmap": "^1.0.0",
     "unist-util-visit": "^5.0.0",
     "vitepress": "^1.0.2",
-    "vitepress-plugin-search": "1.0.4-alpha.22"
+    "vitepress-plugin-search": "1.0.4-alpha.22",
+    "antlr4ng-cli": "^2.0.0"
   },
   "files": [
     "dist/",
