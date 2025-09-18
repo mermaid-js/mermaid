@@ -4,7 +4,12 @@ import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { select } from 'd3';
 import defaultConfig from '../../../defaultConfig.js';
 import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
-import { decodeEntities, handleUndefinedAttr, parseFontSize } from '../../../utils.js';
+import {
+  decodeEntities,
+  handleUndefinedAttr,
+  parseFontSize,
+  shouldUseHtmlLabels,
+} from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 
 export const labelHelper = async <T extends SVGGraphicsElement>(
@@ -13,7 +18,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   _classes?: string
 ) => {
   let cssClasses;
-  const useHtmlLabels = node.useHtmlLabels || evaluate(getConfig()?.htmlLabels);
+  const useHtmlLabels = shouldUseHtmlLabels();
   if (!_classes) {
     cssClasses = 'node default';
   } else {
