@@ -1231,15 +1231,18 @@ class link myClass
       );
     });
 
-    it('should not create foreignObject elements when htmlLabels disabled via global config', () => {
-      renderGraph(
-        `flowchart TD
-          A["Node with <br> HTML"] -- "edge <br> label" --> B["Another node"]
+    it('should not render with htmlLabels when disabled via flowchart config, even when enabled in global config', () => {
+      imgSnapshotTest(
+        `flowchart LR
+          A["HTML label <br> with breaks"] --> B["Another label"]
           C --> D
         `,
-        { htmlLabels: false }
+        { htmlLabels: true, flowchart: { htmlLabels: false } },
+        undefined,
+        ($svg) => {
+          expect($svg.find('foreignObject').length).to.equal(0);
+        }
       );
-      cy.get('svg foreignObject').should('not.exist');
     });
 
     it('should create foreignObject elements when htmlLabels enabled', () => {

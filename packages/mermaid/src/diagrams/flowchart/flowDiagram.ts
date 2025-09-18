@@ -21,7 +21,7 @@ export const diagram = {
     if (cnf.layout) {
       setConfig({ layout: cnf.layout });
     }
-    cnf.flowchart.htmlLabels = cnf?.htmlLabels ?? cnf.flowchart?.htmlLabels;
+    cnf.flowchart.htmlLabels = cnf.flowchart?.htmlLabels ?? cnf?.htmlLabels;
     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
     setConfig({
       flowchart: {
