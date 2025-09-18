@@ -3,7 +3,8 @@
 // Note that JS doesn't support the "\A" anchor, which means we can't use
 // multiline mode.
 // Relevant YAML spec: https://yaml.org/spec/1.2.2/#914-explicit-documents
-export const frontMatterRegex = /^-{3}\s*[\n\r](.*?)[\n\r]-{3}\s*[\n\r]+/s;
+export const frontMatterRegex =
+  /^\uFEFF?[\t ]*-{3}[\t ]*\r?\n([\S\s]*?)\r?\n[\t ]*-{3}[\t ]*(?:\r?\n|$)/;
 
 export const directiveRegex =
   /%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi;

@@ -28,7 +28,6 @@ import architecture from '../diagrams/architecture/architectureDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
-import { frontMatterRegex } from './regexes.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -69,21 +68,7 @@ export const addDiagrams = () => {
       init: () => null, // no op
     },
     (text) => {
-      const trimmed = text.trimStart();
-      if (!trimmed.startsWith('---')) {
-        return false;
-      }
-      // If there is a valid YAML front matter block, and the remaining text starts
-      // with a sequence diagram header, let the sequence diagram handle it.
-      const m = trimmed.match(frontMatterRegex);
-      if (m) {
-        const rest = trimmed.slice(m[0].length).trimStart();
-        if (/^sequencediagram\b/i.test(rest)) {
-          return false;
-        }
-      }
-      // Otherwise, treat this as an invalid diagram beginning with '---'
-      return true;
+      return text.toLowerCase().trimStart().startsWith('---');
     }
   );
 

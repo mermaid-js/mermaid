@@ -1821,7 +1821,7 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
     expect(msgs.every((v) => v.wrap)).toBe(true);
   });
-  it('should handle YAML front matter before sequenceDiagram', async () => {
+  it('should handle YAML front matter before sequenceDiagram XXX12', async () => {
     const str = `---
   title: Front matter title
   config:

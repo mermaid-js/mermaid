@@ -114,5 +114,21 @@ describe('diagram-orchestration', () => {
         )
       ).toBe('er');
     });
+
+    it('should detect sequence/state even if config strings contain other diagram names', () => {
+      // sequenceDiagram with config string mentioning stateDiagram
+      expect(
+        detectType(
+          `---
+title: Hello Title
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#00ff00"
+---
+sequenceDiagram\nA->B: hi`
+        )
+      ).toBe('sequence');
+    });
   });
 });
