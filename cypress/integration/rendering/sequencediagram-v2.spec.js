@@ -655,5 +655,126 @@ describe('Sequence Diagram Special Cases', () => {
         expect(svg).to.not.have.attr('style');
       });
     });
+
+    describe('Central Connection Rendering Tests', () => {
+      it('should render central connection circles on actor vertical lines', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+        participant Alice
+        participant Bob
+        participant Charlie
+        Alice ()->>() Bob: Central connection
+        Bob ()-->> Charlie: Reverse central connection
+        Charlie ()<<-->>() Alice: Dual central connection`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render central connections with different arrow types', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()->>() Bob: Solid open arrow
+        Alice ()-->>() Bob: Dotted open arrow
+        Alice ()-x() Bob: Solid cross
+        Alice ()--x() Bob: Dotted cross
+        Alice ()->() Bob: Solid arrow`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render central connections with bidirectional arrows', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()<<->>() Bob: Bidirectional solid
+        Alice ()<<-->>() Bob: Bidirectional dotted`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render central connections with activations', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+        participant Alice
+        participant Bob
+        participant Charlie
+        Alice ()->>() Bob: Activate Bob
+        activate Bob
+        Bob ()-->> Charlie: Message to Charlie
+        Bob ()->>() Alice: Response to Alice
+        deactivate Bob`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render central connections mixed with normal messages', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+        participant Alice
+        participant Bob
+        participant Charlie
+        Alice ->> Bob: Normal message
+        Bob ()->>() Charlie: Central connection
+        Charlie -->> Alice: Normal dotted message
+        Alice ()<<-->>() Bob: Dual central connection
+        Bob -x Charlie: Normal cross message`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render central connections with notes', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+        participant Alice
+        participant Bob
+        participant Charlie
+        Alice ()->>() Bob: Central connection
+        Note over Alice,Bob: Central connection note
+        Bob ()-->> Charlie: Reverse central connection
+        Note right of Charlie: Response note
+        Charlie ()<<-->>() Alice: Dual central connection`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render central connections with loops and alternatives', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+        participant Alice
+        participant Bob
+        participant Charlie
+        loop Every minute
+            Alice ()->>() Bob: Central heartbeat
+            Bob ()-->> Charlie: Forward heartbeat
+        end
+        alt Success
+            Charlie ()<<-->>() Alice: Success response
+        else Failure
+            Charlie ()-x() Alice: Failure response
+        end`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render central connections with different participant types', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          participant Alice
+          actor Bob
+          participant Charlie@{"type":"boundary"}
+          participant David@{"type":"control"}
+          participant Eve@{"type":"entity"}
+          Alice ()->>() Bob: To actor
+          Bob ()-->> Charlie: To boundary
+          Charlie ()->>() David: To control
+          David ()<<-->>() Eve: To entity
+          Eve ()-x() Alice: Back to participant`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+    });
   });
 });
