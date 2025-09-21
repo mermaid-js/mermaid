@@ -50,6 +50,31 @@ import { JSDOM } from 'jsdom';
 
 // -------------------------------------------------------------------------------------
 describe('mermaidAPI', () => {
+  beforeEach(() => {
+    (SVGElement.prototype as any).getBBox = () => ({
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 20,
+    });
+  });
+
+  describe('render', () => {
+    it('should preserve multiple spaces inside node labels', async () => {
+      const id = 'spaceTest';
+      const definition = `graph TD\n    A[Let  x  be  a  variable] --> B`;
+
+      const { svg } = await mermaid.render(id, definition);
+
+      const dom = new JSDOM(svg);
+      const textContent = dom.window.document.querySelector('svg')?.textContent;
+      const normalizedText = textContent?.replace(/\s+/g, ' ');
+
+      expect(normalizedText).toContain('Let x be a variable');
+    });
+  });
+});
+describe('mermaidAPI', () => {
   describe('encodeEntities', () => {
     it('removes the ending ; from style [text1]:[optional word]#[text2]; with ', () => {
       const text = 'style this; is ; everything :something#not-nothing; and this too;';
