@@ -86,10 +86,11 @@ export const draw = function (text: string, id: string, _version: string, diagOb
   // That will be a function that calculates nodes and links dimensions
   //
   const nodeWidth = 10;
+  const nodePadding = 10; // Fixed padding that accommodates values
   const sankey = d3Sankey()
     .nodeId((d: any) => d.id) // we use 'id' property to identify node
     .nodeWidth(nodeWidth)
-    .nodePadding(10 + (showValues ? 15 : 0))
+    .nodePadding(nodePadding)
     .nodeAlign(nodeAlign)
     .extent([
       [0, 0],
@@ -198,6 +199,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .append('path')
     .attr('d', d3SankeyLinkHorizontal())
     .attr('stroke', coloring)
+    .attr('vector-effect', 'non-scaling-stroke')
     .attr('stroke-width', (d: any) => Math.max(1, d.width));
 
   setupGraphViewbox(undefined, svg, 0, useMaxWidth);
