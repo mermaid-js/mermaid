@@ -8,6 +8,7 @@ const getStyles = (options) =>
     font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
   }
+  [class*="branch-label"] { font-size: ${options.gitBranchLabelFontSize}; }
   ${[0, 1, 2, 3, 4, 5, 6, 7]
     .map(
       (i) =>

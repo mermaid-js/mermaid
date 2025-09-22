@@ -1,9 +1,9 @@
-import { invert, lighten, rgba, adjust, darken, isDark } from 'khroma';
-import { mkBorder } from './theme-helpers.js';
+import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
+import { mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -385,6 +385,7 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+    this.gitBranchLabelFontSize = this.gitBranchLabelFontSize || this.fontSize;
 
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
