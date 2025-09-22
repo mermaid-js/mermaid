@@ -8,6 +8,10 @@ export interface EntityNode {
   cssClasses?: string;
   cssStyles?: string[];
   cssCompiledStyles?: string[];
+  haveCallback?: boolean;
+  link?: string;
+  linkTarget?: string;
+  tooltip?: string;
 }
 
 export interface Attribute {

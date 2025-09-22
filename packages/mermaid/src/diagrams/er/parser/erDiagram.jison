@@ -50,6 +50,12 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <style>"#"                      return 'BRKT';
 "classDef"                      { this.begin("style"); return 'CLASSDEF'; }
 "class"                         return 'CLASS';
+"click"                         return 'CLICK';
+"href"                          return 'HREF';
+"_self"                         return 'LINK_TARGET';
+"_blank"                        return 'LINK_TARGET';
+"_parent"                       return 'LINK_TARGET';
+"_top"                          return 'LINK_TARGET';
 "one or zero"                   return 'ZERO_OR_ONE';
 "one or more"                   return 'ONE_OR_MORE';
 "one or many"                   return 'ONE_OR_MORE';
@@ -180,6 +186,7 @@ statement
     | classDefStatement
     | classStatement
     | styleStatement
+    | clickStatement
     ;
 
 direction
@@ -210,6 +217,17 @@ classStatement
 
 styleStatement
     : STYLE idList stylesOpt separator                           {;$$ = $STYLE;yy.addCssStyles($2,$stylesOpt);}
+    ;
+
+clickStatement
+    : CLICK entityName ENTITY_NAME LINK_TARGET   { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, ''), $4); }
+    | CLICK entityName WORD LINK_TARGET           { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, ''), $4); }
+    | CLICK entityName HREF ENTITY_NAME LINK_TARGET { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, ''), $5); }
+    | CLICK entityName HREF WORD LINK_TARGET      { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, ''), $5); }
+    | CLICK entityName ENTITY_NAME               { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, '')); }
+    | CLICK entityName WORD                      { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, '')); }
+    | CLICK entityName HREF ENTITY_NAME          { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, '')); }
+    | CLICK entityName HREF WORD                 { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, '')); }
     ;
 
 stylesOpt

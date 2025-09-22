@@ -60,6 +60,45 @@
     </pre>
     <hr />
 
+
+    <h2>Click Test (Issue #2880)</h2>
+    <h3>ER Diagram with Click Events</h3>
+    <pre class="mermaid">
+    erDiagram
+      CUSTOMER {
+        int id PK
+        string name
+        string email
+      }
+      HAT {
+        int id PK
+        string hat_type
+      }
+      BRAINS {
+        int id PK
+        string hat_type
+      }
+      ORDER {
+        int id PK
+        int customer_id FK
+        string status
+      }
+      PAYMENT {
+        int id PK
+      }
+      CUSTOMER ||--o{ ORDER : places
+      CUSTOMER ||--o| HAT : has
+      CUSTOMER ||--o| BRAINS : has
+      ORDER ||--o{ PAYMENT : pays
+      
+      click CUSTOMER "https://mermaid-js.github.io/mermaid/#/"
+      click ORDER href "https://example.com/orders"
+      click PAYMENT href "https://example.com/payments" _blank
+      click HAT "er.html#link-clicked"
+
+    </pre>
+    <hr />
+
     <pre class="mermaid">
     erDiagram
       "HOSPITAL" {
@@ -169,6 +208,8 @@
     </pre>
     <hr />
 
+    <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
@@ -182,6 +223,16 @@
         sequence: { actorMargin: 50 },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
       });
+    </script>
+    <script>
+      function testClick(nodeId) {
+        console.log('clicked', nodeId);
+        let originalBgColor = document.querySelector('body').style.backgroundColor;
+        document.querySelector('body').style.backgroundColor = 'yellow';
+        setTimeout(function () {
+          document.querySelector('body').style.backgroundColor = originalBgColor;
+        }, 100);
+      }
     </script>
   </body>
 </html>

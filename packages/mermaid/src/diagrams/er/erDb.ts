@@ -12,6 +12,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import { getEdgeId } from '../../utils.js';
+import { formatUrl, runFunc } from '../../utils.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 
 export class ErDB implements DiagramDB {
@@ -19,6 +20,8 @@ export class ErDB implements DiagramDB {
   private relationships: Relationship[] = [];
   private classes = new Map<string, EntityClass>();
   private direction = 'TB';
+  private tooltips = new Map<string, string>();
+  private funs: ((element: Element) => void)[] = [];
 
   private Cardinality = {
     ZERO_OR_ONE: 'ZERO_OR_ONE',
@@ -44,6 +47,9 @@ export class ErDB implements DiagramDB {
     this.setClass = this.setClass.bind(this);
     this.setAccTitle = this.setAccTitle.bind(this);
     this.setAccDescription = this.setAccDescription.bind(this);
+    this.setClickEvent = this.setClickEvent.bind(this);
+    this.setLink = this.setLink.bind(this);
+    this.setTooltip = this.setTooltip.bind(this);
   }
 
   /**
@@ -196,10 +202,50 @@ export class ErDB implements DiagramDB {
     }
   }
 
+  public setClickEvent(entityName: string, functionName: string, functionArgs?: string) {
+    const entity = this.entities.get(entityName);
+    if (entity) {
+      entity.haveCallback = true;
+      this.setClass([entityName], ['clickable']);
+      
+      if (getConfig().securityLevel !== 'loose') {
+        return;
+      }
+      
+      this.funs.push((element: Element) => {
+        const elem = element.querySelector(`[id="${entity.id}"]`);
+        if (elem !== null) {
+          elem.addEventListener('click', () => {
+            const argList = functionArgs ? functionArgs.split(',') : [];
+            runFunc(functionName, ...argList);
+          }, false);
+        }
+      });
+    }
+  }
+
+  public setLink(entityName: string, linkStr: string, target?: string) {
+    const entity = this.entities.get(entityName);
+    if (entity) {
+      entity.link = formatUrl(linkStr, getConfig());
+      entity.linkTarget = target;
+      this.setClass([entityName], ['clickable']);
+    }
+  }
+
+  public setTooltip(entityName: string, tooltip: string) {
+    const entity = this.entities.get(entityName);
+    if (entity) {
+      entity.tooltip = tooltip.replace(/"/g, '');
+    }
+  }
+
   public clear() {
     this.entities = new Map();
     this.classes = new Map();
     this.relationships = [];
+    this.tooltips = new Map();
+    this.funs = [];
     commonClear();
   }
 
