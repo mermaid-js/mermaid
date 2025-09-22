@@ -1,4 +1,6 @@
 lexer grammar ClassLexer;
+import HeaderCommon;
+
 
 tokens {
   ACC_TITLE_VALUE,
@@ -28,13 +30,13 @@ fragment NOT_DQUOTE: ~[""];
 
 
 // Comments and whitespace
-COMMENT: '%%' ~[\r\n]* -> skip;
+
 NEWLINE: ('\r'? '\n')+ { this.clearPendingScopes(); };
 WS: [ \t]+ -> skip;
 
 // Diagram title declaration
-CLASS_DIAGRAM_V2: 'classDiagram-v2' -> type(CLASS_DIAGRAM);
-CLASS_DIAGRAM: 'classDiagram';
+CLASS_DIAGRAM_V2: 'classDiagram-v2' { this.headerMode = false; } -> type(CLASS_DIAGRAM);
+CLASS_DIAGRAM: 'classDiagram' { this.headerMode = false; };
 
 // Directions
 DIRECTION_TB: 'direction' WS_INLINE+ 'TB';

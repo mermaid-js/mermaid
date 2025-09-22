@@ -1,4 +1,6 @@
 lexer grammar FlowLexer;
+import HeaderCommon;
+
 
 // Virtual tokens for parser
 tokens {
@@ -25,7 +27,7 @@ HREF: 'href' WS;
 CLICK: 'click' WS+ [A-Za-z0-9_]+ -> pushMode(CLICK_MODE);
 
 // Graph declaration tokens - these trigger direction mode
-GRAPH: ('flowchart-elk' | 'graph' | 'flowchart') -> pushMode(DIR_MODE);
+GRAPH: ('flowchart-elk' | 'graph' | 'flowchart') { this.headerMode = false; } -> pushMode(DIR_MODE);
 SUBGRAPH: 'subgraph';
 END: 'end';
 
