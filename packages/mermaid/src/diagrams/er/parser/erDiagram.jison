@@ -52,6 +52,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "class"                         return 'CLASS';
 "click"                         return 'CLICK';
 "href"                          return 'HREF';
+"call"                          return 'CALL';
 "_self"                         return 'LINK_TARGET';
 "_blank"                        return 'LINK_TARGET';
 "_parent"                       return 'LINK_TARGET';
@@ -220,14 +221,15 @@ styleStatement
     ;
 
 clickStatement
-    : CLICK entityName ENTITY_NAME LINK_TARGET   { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, ''), $4); }
-    | CLICK entityName WORD LINK_TARGET           { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, ''), $4); }
-    | CLICK entityName HREF ENTITY_NAME LINK_TARGET { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, ''), $5); }
-    | CLICK entityName HREF WORD LINK_TARGET      { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, ''), $5); }
-    | CLICK entityName ENTITY_NAME               { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, '')); }
-    | CLICK entityName WORD                      { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, '')); }
-    | CLICK entityName HREF ENTITY_NAME          { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, '')); }
-    | CLICK entityName HREF WORD                 { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, '')); }
+    : CLICK entityName CALL UNICODE_TEXT                     { $$ = $CLICK; yy.setClickEvent($2, $4); }
+    | CLICK entityName ENTITY_NAME LINK_TARGET               { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, ''), $4); }
+    | CLICK entityName WORD LINK_TARGET                      { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, ''), $4); }
+    | CLICK entityName HREF ENTITY_NAME LINK_TARGET          { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, ''), $5); }
+    | CLICK entityName HREF WORD LINK_TARGET                 { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, ''), $5); }
+    | CLICK entityName ENTITY_NAME                           { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, '')); }
+    | CLICK entityName WORD                                  { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, '')); }
+    | CLICK entityName HREF ENTITY_NAME                      { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, '')); }
+    | CLICK entityName HREF WORD                             { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, '')); }
     ;
 
 stylesOpt

@@ -206,23 +206,32 @@ export class ErDB implements DiagramDB {
     const entity = this.entities.get(entityName);
     if (entity) {
       entity.haveCallback = true;
+      entity.functionName = functionName;
+      entity.functionArgs = functionArgs;
       this.setClass([entityName], ['clickable']);
       
       if (getConfig().securityLevel !== 'loose') {
         return;
       }
-      
-      this.funs.push((element: Element) => {
-        const elem = element.querySelector(`[id="${entity.id}"]`);
-        if (elem !== null) {
-          elem.addEventListener('click', () => {
-            const argList = functionArgs ? functionArgs.split(',') : [];
-            runFunc(functionName, ...argList);
-          }, false);
+
+      // Parse arguments like flowchart does
+      let argList: string[] = [];
+      if (typeof functionArgs === 'string') {
+        argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        for (let i = 0; i < argList.length; i++) {
+          let item = argList[i].trim();
+          if (item.startsWith('"') && item.endsWith('"')) {
+            item = item.substr(1, item.length - 2);
+          }
+          argList[i] = item;
         }
-      });
+      }
+
+      // Store parsed arguments for the renderer to use
+      entity.functionArgs = argList.join(',');
     }
   }
+
 
   public setLink(entityName: string, linkStr: string, target?: string) {
     const entity = this.entities.get(entityName);

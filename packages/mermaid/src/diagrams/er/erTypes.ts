@@ -9,6 +9,8 @@ export interface EntityNode {
   cssStyles?: string[];
   cssCompiledStyles?: string[];
   haveCallback?: boolean;
+  functionName?: string;
+  functionArgs?: string;
   link?: string;
   linkTarget?: string;
   tooltip?: string;

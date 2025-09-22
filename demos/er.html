@@ -78,6 +78,10 @@
         int id PK
         string hat_type
       }
+      THOUGHTS {
+        int id PK
+        bool pure
+      }
       ORDER {
         int id PK
         int customer_id FK
@@ -89,13 +93,14 @@
       CUSTOMER ||--o{ ORDER : places
       CUSTOMER ||--o| HAT : has
       CUSTOMER ||--o| BRAINS : has
+      BRAINS ||--o{ THOUGHTS : ponders
       ORDER ||--o{ PAYMENT : pays
       
       click CUSTOMER "https://mermaid-js.github.io/mermaid/#/"
       click ORDER href "https://example.com/orders"
       click PAYMENT href "https://example.com/payments" _blank
       click HAT "er.html#link-clicked"
-
+      click BRAINS call testClick
     </pre>
     <hr />
 
@@ -232,6 +237,9 @@
         setTimeout(function () {
           document.querySelector('body').style.backgroundColor = originalBgColor;
         }, 100);
+      }
+      function testClickWithArgs(arg1, arg2){
+        console.log("testClickWithArgs was clicked with args", arg1, arg2)
       }
     </script>
   </body>
