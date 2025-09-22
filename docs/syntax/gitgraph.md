@@ -2053,29 +2053,6 @@ config:
 
 ```
 
-```mermaid
----
-config:
-  logLevel: 'debug'
-  theme: 'default'
-  themeVariables:
-    gitBranchLabelFontSize: '14px'
----
-       gitGraph
-       commit
-       branch develop
-       commit
-       branch featureA
-       commit
-       checkout develop
-       branch featureB
-       commit
-       checkout main
-       commit
-       merge develop
-
-```
-
 See how the branch label font size changed.
 
 ### Customizing Tag colors
