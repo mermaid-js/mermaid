@@ -1,27 +1,17 @@
 lexer grammar SequenceLexer;
+import HeaderCommon;
 tokens { AS }
 
-@members {
-  // headerMode is true until the diagram header (sequenceDiagram) is seen
-  private headerMode = true;
-}
 
-// Header directives: handle %%{ ... }%% only before the diagram header
-// Accept optional leading spaces/tabs on the line before the directive
-HEADER_DIRECTIVE: { this.headerMode }? [ \t]* '%%{' .*? '}%%';
-
-// Comments (skip) - avoid consuming '%%{' which starts a directive
-HASH_COMMENT: '#' ~[\r\n]* -> skip;
-PERCENT_COMMENT1: '%%' ~['{'] ~[\r\n]* -> skip;
-PERCENT_COMMENT2: ~[}] '%%' ~[\r\n]* -> skip;
 
 // Whitespace and newline
 
-// YAML front matter (allowed before the diagram header)
-FRONTMATTER: { this.headerMode }? [ \t]* '---' [ \t]* ('\r'? '\n') .*? ('\r'? '\n') [ \t]* '---' [ \t]* ('\r'? '\n');
 
 NEWLINE: ('\r'? '\n')+;
 WS: [ \t]+ -> skip;
+// Top-level comments (also defined in HeaderCommon, duplicated here to ensure availability post-header)
+HASH_COMMENT_TOP: '#' ~[\r\n]* -> skip;
+PERCENT_COMMENT_TOP: '%%' ~[\r\n]* -> skip;
 
 // Punctuation and simple symbols
 COMMA: ',';

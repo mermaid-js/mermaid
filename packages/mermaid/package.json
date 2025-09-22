@@ -52,7 +52,7 @@
     "postinstall": "pnpm antlr:generate",
     "checkCircle": "npx madge --circular ./src",
     "antlr:sequence:clean": "rimraf src/diagrams/sequence/parser/antlr/generated",
-    "antlr:sequence": "pnpm run antlr:sequence:clean && antlr4ng -Dlanguage=TypeScript -Xexact-output-dir -o src/diagrams/sequence/parser/antlr/generated src/diagrams/sequence/parser/antlr/SequenceLexer.g4 src/diagrams/sequence/parser/antlr/SequenceParser.g4",
+    "antlr:sequence": "pnpm run antlr:sequence:clean && antlr4ng -Dlanguage=TypeScript -Xexact-output-dir -lib src/diagrams/common/parser/antlr -o src/diagrams/sequence/parser/antlr/generated src/diagrams/sequence/parser/antlr/SequenceLexer.g4 src/diagrams/sequence/parser/antlr/SequenceParser.g4",
     "antlr:class:clean": "rimraf src/diagrams/class/parser/antlr/generated",
     "antlr:class": "pnpm run antlr:class:clean && antlr4ng -Dlanguage=TypeScript -Xexact-output-dir -o src/diagrams/class/parser/antlr/generated src/diagrams/class/parser/antlr/ClassLexer.g4 src/diagrams/class/parser/antlr/ClassParser.g4",
     "antlr:flowchart:clean": "rimraf src/diagrams/flowchart/parser/antlr/generated",

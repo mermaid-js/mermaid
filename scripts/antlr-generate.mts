@@ -141,12 +141,19 @@ function generateAntlrFiles(grammar: GrammarInfo): void {
     cleanGeneratedDir(outputDir);
     ensureGeneratedDir(outputDir);
 
+    // Determine common header lib path for imported grammars
+    const cwd = process.cwd();
+    const commonLibPath = cwd.endsWith('/packages/mermaid')
+      ? 'src/diagrams/common/parser/antlr'
+      : 'packages/mermaid/src/diagrams/common/parser/antlr';
+
     // Generate ANTLR files
     const command = [
       'antlr-ng',
       '-Dlanguage=TypeScript',
       '-l',
       '-v',
+      `--lib "${commonLibPath}"`,
       `-o "${outputDir}"`,
       `"${lexerFile}"`,
       `"${parserFile}"`,
