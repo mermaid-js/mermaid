@@ -90,8 +90,8 @@ u(?=[\.\-\|])                   return 'MD_PARENT';
 \-\.                            return 'NON_IDENTIFYING';
 <style>([^\x00-\x7F]|\w|\-|\*)+ return 'STYLE_TEXT';
 <style>';'                      return 'SEMI';
-([^\x00-\x7F]|\w|\-|\*)+        return 'UNICODE_TEXT';
 ([A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\))  return 'FUNCTION_CALL';
+([^\x00-\x7F]|\w|\-|\*)+        return 'UNICODE_TEXT';
 .                               return yytext[0];
 <<EOF>>                         return 'EOF';
 
