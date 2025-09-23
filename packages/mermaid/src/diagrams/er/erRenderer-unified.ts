@@ -84,16 +84,8 @@ export const draw = async function (text: string, id: string, _version: string, 
         link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
       }
     } else if (vertex.haveCallback) {
-      // Handle callbacks by creating a javascript: href
-      const entity = diag.db.entities.get(vertex.id.replace('entity-', '').replace(/-\d+$/, ''));
-      if (entity && entity.functionName) {
-        if (entity.functionArgs) {
-          link.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `javascript:${entity.functionName}(${entity.functionArgs})`);
-        } else {
-          const entityName = vertex.id.replace('entity-', '').replace(/-\d+$/, '');
-          link.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `javascript:${entity.functionName}('${entityName}')`);
-        }
-      }
+      // Handle callbacks with a void href for visual feedback
+      link.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'javascript:void(0)');
     }
     
     link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.cssClasses || '');

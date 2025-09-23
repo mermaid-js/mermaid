@@ -11,8 +11,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import { getEdgeId } from '../../utils.js';
-import { formatUrl, runFunc } from '../../utils.js';
+import { getEdgeId, formatUrl, runFunc } from '../../utils.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 
 export class ErDB implements DiagramDB {
@@ -20,6 +19,7 @@ export class ErDB implements DiagramDB {
   private relationships: Relationship[] = [];
   private classes = new Map<string, EntityClass>();
   private direction = 'TB';
+  private funs: ((element: Element) => void)[] = [];
 
   private Cardinality = {
     ZERO_OR_ONE: 'ZERO_OR_ONE',
@@ -47,7 +47,7 @@ export class ErDB implements DiagramDB {
     this.setAccDescription = this.setAccDescription.bind(this);
     this.setClickEvent = this.setClickEvent.bind(this);
     this.setLink = this.setLink.bind(this);
-    this.setTooltip = this.setTooltip.bind(this);
+    this.bindFunctions = this.bindFunctions.bind(this);
   }
 
   /**
@@ -204,34 +204,48 @@ export class ErDB implements DiagramDB {
     const entity = this.entities.get(entityName);
     if (entity) {
       entity.haveCallback = true;
-      entity.functionName = functionName;
-      entity.functionArgs = functionArgs;
       this.setClass([entityName], ['clickable']);
       
       if (getConfig().securityLevel !== 'loose') {
         return;
       }
+      
+      if (functionName === undefined) {
+        return;
+      }
 
-      // Parse arguments like flowchart does
       let argList: string[] = [];
       if (typeof functionArgs === 'string') {
+        /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
         argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         for (let i = 0; i < argList.length; i++) {
           let item = argList[i].trim();
-          // Remove outer quotes if present
-          if ((item.startsWith('"') && item.endsWith('"')) || (item.startsWith("'") && item.endsWith("'"))) {
+          /* Removes all double quotes at the start and end of an argument */
+          /* This preserves all starting and ending whitespace inside */
+          if (item.startsWith('"') && item.endsWith('"')) {
             item = item.substr(1, item.length - 2);
-          }
-          // Re-quote as single-quoted string for JavaScript unless it's a number
-          if (!/^\d+(\.\d+)?$/.test(item)) {
-            item = `'${item.replace(/'/g, "\\'")}'`;
           }
           argList[i] = item;
         }
       }
 
-      // Store parsed arguments for the renderer to use
-      entity.functionArgs = argList.join(',');
+      /* if no arguments passed into callback, default to passing in entity name */
+      if (argList.length === 0) {
+        argList.push(entityName);
+      }
+
+      this.funs.push(() => {
+        const elem = document.querySelector(`[id="${entity.id}"]`);
+        if (elem !== null) {
+          elem.addEventListener(
+            'click',
+            () => {
+              runFunc(functionName, ...argList);
+            },
+            false
+          );
+        }
+      });
     }
   }
 
@@ -245,18 +259,17 @@ export class ErDB implements DiagramDB {
     }
   }
 
-  public setTooltip(entityName: string, tooltip: string) {
-    const entity = this.entities.get(entityName);
-    if (entity) {
-      entity.tooltip = tooltip.replace(/"/g, '');
-    }
+  public bindFunctions(element: Element) {
+    this.funs.forEach((fun) => {
+      fun(element);
+    });
   }
 
   public clear() {
     this.entities = new Map();
     this.classes = new Map();
     this.relationships = [];
-    this.tooltips = new Map();
+    this.funs = [];
     commonClear();
   }
 

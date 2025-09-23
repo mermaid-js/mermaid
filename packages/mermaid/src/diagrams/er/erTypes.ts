@@ -13,7 +13,6 @@ export interface EntityNode {
   functionArgs?: string;
   link?: string;
   linkTarget?: string;
-  tooltip?: string;
 }
 
 export interface Attribute {
