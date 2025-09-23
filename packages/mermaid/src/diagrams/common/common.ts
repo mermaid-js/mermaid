@@ -109,7 +109,6 @@ export const sanitizeTextOrArray = (
  * @param text - The text to test
  * @returns Whether or not the text has breaks
  */
-
 export const hasBreaks = (text: string): boolean => {
   return lineBreakRegex.test(text);
 };
