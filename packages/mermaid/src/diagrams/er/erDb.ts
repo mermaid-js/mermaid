@@ -205,11 +205,11 @@ export class ErDB implements DiagramDB {
     if (entity) {
       entity.haveCallback = true;
       this.setClass([entityName], ['clickable']);
-      
+
       if (getConfig().securityLevel !== 'loose') {
         return;
       }
-      
+
       if (functionName === undefined) {
         return;
       }
@@ -248,7 +248,6 @@ export class ErDB implements DiagramDB {
       });
     }
   }
-
 
   public setLink(entityName: string, linkStr: string, target?: string) {
     const entity = this.entities.get(entityName);

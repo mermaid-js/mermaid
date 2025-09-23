@@ -25,7 +25,9 @@ describe('[Interactions] when parsing ER diagram', () => {
 
   it('should be possible to use click to call a callback with arguments', function () {
     spyOn(erDb, 'setClickEvent');
-    erDiagram.parser.parse('erDiagram\nCUSTOMER\nclick CUSTOMER call testCallback(\'arg1\', "arg2")');
+    erDiagram.parser.parse(
+      'erDiagram\nCUSTOMER\nclick CUSTOMER call testCallback(\'arg1\', "arg2")'
+    );
 
     expect(erDb.setClickEvent).toHaveBeenCalledWith('CUSTOMER', 'testCallback', '\'arg1\', "arg2"');
   });
