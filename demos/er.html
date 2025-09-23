@@ -72,14 +72,16 @@
       }
       HAT {
         int id PK
+        int customer_id FK
         string hat_type
       }
       BRAINS {
         int id PK
-        string hat_type
+        int customer_id FK
       }
       THOUGHTS {
         int id PK
+        int brains_id FK
         bool pure
       }
       ORDER {
@@ -89,6 +91,7 @@
       }
       PAYMENT {
         int id PK
+        int order_id FK
       }
       CUSTOMER ||--o{ ORDER : places
       CUSTOMER ||--o| HAT : has
@@ -101,6 +104,7 @@
       click PAYMENT href "https://example.com/payments" _blank
       click HAT "er.html#link-clicked"
       click BRAINS call testClick
+      click THOUGHTS call testClickWithArgs('Gnisis', "rocks")
     </pre>
     <hr />
 

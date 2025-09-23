@@ -20,8 +20,6 @@ export class ErDB implements DiagramDB {
   private relationships: Relationship[] = [];
   private classes = new Map<string, EntityClass>();
   private direction = 'TB';
-  private tooltips = new Map<string, string>();
-  private funs: ((element: Element) => void)[] = [];
 
   private Cardinality = {
     ZERO_OR_ONE: 'ZERO_OR_ONE',
@@ -220,8 +218,13 @@ export class ErDB implements DiagramDB {
         argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         for (let i = 0; i < argList.length; i++) {
           let item = argList[i].trim();
-          if (item.startsWith('"') && item.endsWith('"')) {
+          // Remove outer quotes if present
+          if ((item.startsWith('"') && item.endsWith('"')) || (item.startsWith("'") && item.endsWith("'"))) {
             item = item.substr(1, item.length - 2);
+          }
+          // Re-quote as single-quoted string for JavaScript unless it's a number
+          if (!/^\d+(\.\d+)?$/.test(item)) {
+            item = `'${item.replace(/'/g, "\\'")}'`;
           }
           argList[i] = item;
         }
@@ -254,7 +257,6 @@ export class ErDB implements DiagramDB {
     this.classes = new Map();
     this.relationships = [];
     this.tooltips = new Map();
-    this.funs = [];
     commonClear();
   }
 

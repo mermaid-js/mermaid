@@ -90,7 +90,8 @@ u(?=[\.\-\|])                   return 'MD_PARENT';
 \-\.                            return 'NON_IDENTIFYING';
 <style>([^\x00-\x7F]|\w|\-|\*)+ return 'STYLE_TEXT';
 <style>';'                      return 'SEMI';
-([^\x00-\x7F]|\w|\-|\*|\.)+      return 'UNICODE_TEXT';
+([^\x00-\x7F]|\w|\-|\*)+        return 'UNICODE_TEXT';
+([A-Za-z_][A-Za-z0-9_]*\s*\([^)]*\))  return 'FUNCTION_CALL';
 .                               return yytext[0];
 <<EOF>>                         return 'EOF';
 
@@ -222,6 +223,13 @@ styleStatement
 
 clickStatement
     : CLICK entityName CALL UNICODE_TEXT                     { $$ = $CLICK; yy.setClickEvent($2, $4); }
+    | CLICK entityName CALL FUNCTION_CALL                    { 
+        $$ = $CLICK; 
+        const match = $4.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*\(([^)]*)\)$/);
+        if (match) {
+          yy.setClickEvent($2, match[1], match[2]);
+        }
+      }
     | CLICK entityName ENTITY_NAME LINK_TARGET               { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, ''), $4); }
     | CLICK entityName WORD LINK_TARGET                      { $$ = $CLICK; yy.setLink($2, $3.replace(/"/g, ''), $4); }
     | CLICK entityName HREF ENTITY_NAME LINK_TARGET          { $$ = $CLICK; yy.setLink($2, $4.replace(/"/g, ''), $5); }
