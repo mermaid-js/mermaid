@@ -1434,7 +1434,7 @@ const buildNoteModel = async function (msg, actors, diagObj) {
   } else if (msg.to === msg.from) {
     noteModel.width = shouldWrap
       ? common.getMax(conf.width, fromActor.width)
-      : textDimensions.width + 2 * conf.noteMargin;
+      : common.getMax(fromActor.width, conf.width, textDimensions.width + 2 * conf.noteMargin);
     noteModel.startx = startx + (fromActor.width - noteModel.width) / 2;
   } else {
     noteModel.width =
