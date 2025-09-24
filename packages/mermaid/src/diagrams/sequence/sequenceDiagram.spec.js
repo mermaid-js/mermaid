@@ -891,6 +891,19 @@ Note over Bob,Alice: resolution
     expect(messages[2].from).toBe('Bob');
     expect(messages[2].to).toBe('Alice');
   });
+  it('should handle notes over single actor with KaTeX expressions', async () => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+Alice->Bob: Hello Bob, how are you?
+Note over Bob: $$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$
+`);
+
+    const messages = diagram.db.getMessages();
+    expect(messages[1].from).toBe('Bob');
+    expect(messages[1].to).toBe('Bob');
+    expect(messages[1].message).toBe('$$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$');
+    expect(messages[1].type).toBeDefined();
+  });
   it('should handle loop statements', async () => {
     const diagram = await Diagram.fromText(`
 sequenceDiagram

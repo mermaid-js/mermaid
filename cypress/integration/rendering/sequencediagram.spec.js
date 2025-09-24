@@ -1053,4 +1053,33 @@ describe('Sequence diagram', () => {
       ]);
     });
   });
+
+  describe('Note over with KaTeX expressions', () => {
+    it('should render Note over single actor with KaTeX with proper padding', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        participant A
+        participant B
+        Note over B: $$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$
+        A->>B: Message
+        `,
+        { sequence: { useMaxWidth: false } }
+      );
+    });
+
+    it('should render Note over single actor with KaTeX compared to Note left of', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        participant A
+        participant B
+        Note over B: $$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$
+        Note left of B: $$(sk_B, pk_B)\\leftarrow KeyGen(1^\\lambda)$$
+        A->>B: Message
+        `,
+        { sequence: { useMaxWidth: false } }
+      );
+    });
+  });
 });
