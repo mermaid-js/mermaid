@@ -1054,8 +1054,8 @@ describe('Sequence diagram', () => {
     });
   });
 
-  describe('Note over with KaTeX expressions', () => {
-    it('should render Note over single actor with KaTeX with proper padding', () => {
+  describe('Note over with KaTeX', () => {
+    it('should render KaTeX note over single actor with proper padding', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
@@ -1068,7 +1068,7 @@ describe('Sequence diagram', () => {
       );
     });
 
-    it('should render Note over single actor with KaTeX compared to Note left of', () => {
+    it('should render KaTeX notes consistently across positioning types', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
