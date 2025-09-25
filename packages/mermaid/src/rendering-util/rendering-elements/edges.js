@@ -30,7 +30,6 @@ import rough from 'roughjs';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
 import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
-import { evaluate } from '../../diagrams/common/common.js';
 
 export const edgeLabels = new Map();
 export const terminalLabels = new Map();
@@ -46,7 +45,7 @@ export const getLabelStyles = (styleArray) => {
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
-  let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
+  let useHtmlLabels = getEffectiveHtmlLabels(getConfig());
 
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
