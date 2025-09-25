@@ -2091,7 +2091,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           This property is deprecated.
           Please use the global `htmlLabels` configuration instead.
         type: boolean
-        default: true
         deprecated: true
       nodeSpacing:
         description: |
