@@ -153,6 +153,8 @@ properties:
     default: false
   htmlLabels:
     type: boolean # maybe unused, seems to be copied in each diagram config
+    default: true
+
   fontFamily:
     description: |
       Specifies the font to be used in the rendered diagrams.
@@ -2052,7 +2054,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - titleTopMargin
       - subGraphTitleMargin
       - diagramPadding
-      - htmlLabels
       - nodeSpacing
       - rankSpacing
       - curve
@@ -2084,9 +2085,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default: 8
       htmlLabels:
         description: |
-          Flag for setting whether or not a html tag should be used for rendering labels on the edges.
+          **DEPRECATED: Use global `htmlLabels` instead.**
+
+          Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+          This property is deprecated.
+          Please use the global `htmlLabels` configuration instead.
         type: boolean
         default: true
+        deprecated: true
       nodeSpacing:
         description: |
           Defines the spacing between nodes on the same level
