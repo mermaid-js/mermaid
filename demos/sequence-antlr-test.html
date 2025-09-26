@@ -67,13 +67,17 @@
 </head>
 
 <body>
-  <h1>🎯 Mermaid Sequence ANTLR Parser Test Page</h1>
+  <h1>🚀 Hybrid Sequence Parser Test Page</h1>
+  <p style="text-align: center; color: #666; font-size: 1.1em; margin-bottom: 30px;">
+    Testing the new hybrid AST approach: Order-preserving AST + TokenStreamRewriter for optimal performance
+  </p>
 
   <div class="parser-info">
     <h3>🔧 Parser Information</h3>
     <p><strong>Environment Variable:</strong> <code id="env-var">Loading...</code></p>
     <p><strong>Expected:</strong> <code>USE_ANTLR_PARSER=true</code></p>
     <p><strong>Status:</strong> <span id="parser-status">Checking...</span></p>
+    <p><strong>Hybrid Features:</strong> AST Building, Order Preservation, Smart Regeneration</p>
   </div>
 
   <div class="test-section">
@@ -87,79 +91,102 @@ sequenceDiagram
   </div>
 
   <div class="test-section">
-    <h2>Test 2: Participants and Actors</h2>
-    <p>Testing participant and actor declarations:</p>
-    <pre class="mermaid">
-sequenceDiagram
-  participant A as Alice
-  participant B as Bob
-  actor C as Charlie
-  
-  A->>B: Hello Bob
-  B->>C: Hi Charlie
-  C-->>A: Hello Alice
-    </pre>
+    <h2>🔄 AST-to-Code Regeneration Test</h2>
+    <p>Test the ability to regenerate sequence diagram code from the parsed AST:</p>
+
+    <div style="margin: 10px 0;">
+      <label for="test-select" style="font-weight: bold; margin-right: 10px;">Choose test case:</label>
+      <select id="test-select" style="padding: 5px; margin-right: 10px;">
+        <option value="basic">Basic Messages</option>
+        <option value="participants">With Participants</option>
+        <option value="loops">With Loops</option>
+        <option value="notes">With Notes</option>
+        <option value="custom">Custom Test Case</option>
+      </select>
+    </div>
+
+    <div style="margin: 10px 0;">
+      <button onclick="window.debugMermaidGlobals()"
+        style="background: #ff9800; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-right: 10px;">
+        🔍 Debug Globals
+      </button>
+      <button onclick="window.testASTRegeneration()"
+        style="background: #2196f3; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-right: 10px;">
+        🔄 Test AST Regeneration
+      </button>
+      <button onclick="window.testHybridFeatures()"
+        style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-right: 10px;">
+        🚀 Test Hybrid Features
+      </button>
+      <button onclick="window.renderASTGeneratedDiagram()"
+        style="background: #e91e63; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
+        🎨 Render AST-Generated Diagram
+      </button>
+      <button onclick="window.testASTModification()"
+        style="background: #ff9800; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;">
+        🔧 Test AST Modification
+      </button>
+      <button onclick="window.testAddParticipant()"
+        style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;">
+        ➕ Test Add Participant
+      </button>
+      <button onclick="window.testUpdateParticipantAlias()"
+        style="background: #2196f3; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;">
+        🏷️ Test Update Participant Alias
+      </button>
+    </div>
+
+    <p style="margin-top: 10px; font-size: 14px; color: #666;">
+      First click "Debug Globals" to check if the parser is available, then select a test case and click "Test AST
+      Regeneration". After that, you can test various modifications:
+      <br>• <strong>🔧 Test AST Modification</strong> - Change message text with surgical editing
+      <br>• <strong>➕ Test Add Participant</strong> - Add new participant using HybridSequenceEditor
+      <br>• <strong>🏷️ Test Update Participant Alias</strong> - Add alias to existing participant
+      <br>Check the debug logs below for results.
+    </p>
   </div>
 
   <div class="test-section">
-    <h2>Test 3: Different Arrow Types</h2>
-    <p>Testing various arrow types and message formats:</p>
-    <pre class="mermaid">
-sequenceDiagram
-  Alice->>Bob: Solid arrow
-  Bob-->>Alice: Dotted arrow
-  Alice-xBob: Cross ending
-  Bob--xAlice: Dotted cross
-  Alice-)Bob: Open arrow
-  Bob--)Alice: Dotted open
-    </pre>
+    <h2>🎨 AST-Generated Diagram</h2>
+    <p>This diagram is rendered using code generated from the AST (not the original input):</p>
+    <div id="ast-generated-diagram"
+      style="border: 2px solid #e91e63; padding: 20px; margin: 10px 0; background: #fafafa; min-height: 100px; text-align: center; color: #666;">
+      Click "🎨 Render AST-Generated Diagram" to render a diagram from AST-generated code
+    </div>
   </div>
 
   <div class="test-section">
-    <h2>Test 4: Activation Boxes</h2>
-    <p>Testing activation boxes and lifelines:</p>
-    <pre class="mermaid">
-sequenceDiagram
-  Alice->>+John: Hello John, how are you?
-  Alice->>+John: John, can you hear me?
-  John-->>-Alice: Hi Alice, I can hear you!
-  John-->>-Alice: I feel great!
-    </pre>
+    <h2>🚀 Hybrid AST Features Test</h2>
+    <p>Test the new hybrid AST features: structured AST building, order preservation, and enhanced debugging:</p>
+
+    <div style="margin: 10px 0;">
+      <button onclick="window.showASTStructure()"
+        style="background: #9c27b0; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-right: 10px;">
+        🌳 Show AST Structure
+      </button>
+      <button onclick="window.validateAST()"
+        style="background: #ff5722; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-right: 10px;">
+        ✅ Validate AST
+      </button>
+      <button onclick="window.showASTStatistics()"
+        style="background: #607d8b; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
+        📊 AST Statistics
+      </button>
+    </div>
+
+    <p style="margin-top: 10px; font-size: 14px; color: #666;">
+      These features demonstrate the enhanced AST capabilities: structured data, validation, and comprehensive
+      statistics.
+    </p>
   </div>
 
+  <!-- Debug Logs Section -->
   <div class="test-section">
-    <h2>Test 5: Notes and Comments</h2>
-    <p>Testing notes over participants:</p>
-    <pre class="mermaid">
-sequenceDiagram
-  participant Alice
-  participant Bob
-  
-  Alice->>Bob: Hello Bob
-  Note over Alice,Bob: This is a note over both
-  Note right of Bob: This note is on right of Bob
-  Note left of Alice: This note is on left of Alice
-  Bob-->>Alice: Hi Alice
-    </pre>
-  </div>
-
-  <div class="test-section">
-    <h2>Test 6: Loops and Alt</h2>
-    <p>Testing control flow structures:</p>
-    <pre class="mermaid">
-sequenceDiagram
-  Alice->>Bob: Hello Bob
-  
-  loop Every minute
-    Bob-->>Alice: Great!
-  end
-  
-  alt is sick
-    Bob->>Alice: Not so good :(
-  else is well
-    Bob->>Alice: Feeling fresh like a daisy
-  end
-    </pre>
+    <h2>🔍 Debug Logs</h2>
+    <div id="debug-logs">
+      <h3>🔍 Debug Logs:</h3>
+      <p style="color: #666; font-size: 14px;">Test results and debug information will appear here...</p>
+    </div>
   </div>
 
   <script type="module">
@@ -173,6 +200,28 @@ sequenceDiagram
     };
 
     console.log('🎯 Sequence ANTLR Configuration:', window.MERMAID_CONFIG);
+
+    // Try to make HybridSequenceEditor available globally
+    // Note: In a real implementation, this would be properly imported
+    try {
+      console.log('🔍 Checking for HybridSequenceEditor availability...');
+      // For now, we'll rely on the fallback approach since HybridSequenceEditor
+      // would need to be properly exported and imported in the browser environment
+      window.HybridSequenceEditor = null; // Placeholder - would be the actual class
+    } catch (error) {
+      console.log('⚠️ HybridSequenceEditor not available, will use fallback');
+    }
+
+    // Import the code generator for AST-to-code regeneration
+    let SequenceCodeGenerator;
+    try {
+      const module = await import('./mermaid.esm.mjs');
+      // Try to access the code generator from the mermaid module
+      // This might need adjustment based on how the module is exported
+      console.log('📦 Mermaid module loaded, checking for SequenceCodeGenerator...');
+    } catch (error) {
+      console.error('❌ Failed to import SequenceCodeGenerator:', error);
+    }
 
     // Override console methods to capture logs
     const originalLog = console.log;
@@ -213,7 +262,7 @@ sequenceDiagram
       theme: 'default',
       logLevel: 3,
       securityLevel: 'loose',
-      sequence: { 
+      sequence: {
         diagramMarginX: 50,
         diagramMarginY: 10,
         actorMargin: 50,
@@ -235,7 +284,7 @@ sequenceDiagram
     } catch (e) {
       envVar = 'browser-default';
     }
-    
+
     const envElement = document.getElementById('env-var');
     const statusElement = document.getElementById('parser-status');
 
@@ -273,9 +322,385 @@ sequenceDiagram
       }
     }
 
+    // Store different test cases
+    const TEST_CASES = {
+      basic: `sequenceDiagram
+  Alice->>Bob: Hello Bob, how are you?
+  Bob-->>Alice: Great!`,
+
+      participants: `sequenceDiagram
+  participant A as Alice
+  participant B as Bob
+  A->>B: Hello Bob!
+  B-->>A: Hi Alice!`,
+
+      loops: `sequenceDiagram
+  Alice->>Bob: Hello
+  loop Every minute
+    Bob-->>Alice: Great!
+  end`,
+
+      notes: `sequenceDiagram
+  Alice->>Bob: Hello
+  Note right of Bob: Bob thinks
+  Bob-->>Alice: Hi!`,
+
+      custom: `sequenceDiagram
+
+A->>B: Hello Bob!
+B-->>A: Hi Alice!
+
+participant A as Alice
+participant B as Bob`
+    };
+
+    // Function to test AST-to-code regeneration
+    window.testASTRegeneration = function () {
+      console.log('🔄 Testing AST-to-code regeneration...');
+
+      // Get selected test case
+      const testSelect = document.getElementById('test-select');
+      const selectedTest = testSelect ? testSelect.value : 'basic';
+      const originalCode = TEST_CASES[selectedTest] || TEST_CASES.basic;
+
+      console.log('📝 Selected test case:', selectedTest);
+      console.log('📝 Original code:', originalCode);
+
+      // Try to access the globally exposed parser
+      try {
+        console.log('🌳 Attempting to access global sequence parser...');
+
+        if (window.MERMAID_SEQUENCE_PARSER) {
+          console.log('✅ Found global sequence parser');
+
+          // Display basic info first
+          const logDiv = document.getElementById('debug-logs') || createLogDiv();
+          logDiv.innerHTML += '<div style="color: green; margin: 10px 0; border-top: 1px solid #ccc; padding-top: 10px;"><strong>🔄 AST Regeneration Test (' + selectedTest + '):</strong></div>';
+
+          // Create side-by-side comparison layout
+          logDiv.innerHTML += '<div style="display: flex; gap: 20px; margin: 10px 0;">' +
+            '<div style="flex: 1;">' +
+            '<div style="color: blue; margin: 5px 0; font-weight: bold;">📝 Original Input:</div>' +
+            '<pre style="background: #f0f0f0; padding: 10px; margin: 5px 0; border-left: 3px solid #2196f3; font-size: 12px; overflow-x: auto;">' + originalCode + '</pre>' +
+            '</div>' +
+            '<div id="generated-output-container" style="flex: 1;">' +
+            '<div style="color: green; margin: 5px 0; font-weight: bold;">🔄 Generated Output:</div>' +
+            '<div style="background: #f8f8f8; padding: 10px; margin: 5px 0; border-left: 3px solid #4caf50; color: #666; font-style: italic;">Parsing in progress...</div>' +
+            '</div>' +
+            '</div>';
+
+          try {
+            // First, parse the original code to create the AST
+            console.log('🔄 Parsing original code to create AST...');
+            const parseResult = window.MERMAID_SEQUENCE_PARSER.parse(originalCode);
+            console.log('✅ Parse completed, result:', parseResult);
+            logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ Parsing completed successfully</div>';
+
+            // Get the AST that was built during parsing
+            console.log('🌳 Getting AST from initial parse...');
+            const parsedAST = window.MERMAID_SEQUENCE_PARSER.getAST();
+            const parsedCode = window.MERMAID_SEQUENCE_PARSER.getGeneratedCode();
+            const parsedLines = window.MERMAID_SEQUENCE_PARSER.getGeneratedLines();
+
+            // Try to get formatting-preserved code
+            console.log('🎨 Getting formatting-preserved code...');
+            const formattingPreservedCode = window.MERMAID_SEQUENCE_PARSER.regenerateCodeWithFormatting();
+
+            // Create result object for compatibility
+            const regenerationResult = parsedAST ? {
+              ast: parsedAST,
+              code: formattingPreservedCode || parsedCode, // Use formatting-preserved code if available
+              lines: parsedLines,
+              originalCode: parsedCode, // Keep the AST-generated code for comparison
+              formattingPreservedCode: formattingPreservedCode // Store both versions
+            } : null;
+
+            if (regenerationResult) {
+              console.log('✅ AST available from initial parse!');
+              console.log('📝 Generated code:', regenerationResult.code);
+              console.log('📋 Generated lines:', regenerationResult.lines);
+
+              // Check for AST in the result
+              if (regenerationResult.ast) {
+                console.log('🌳 AST Structure:', regenerationResult.ast);
+              }
+
+              logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ AST built during initial parsing!</div>';
+
+              // Update the generated output container
+              if (regenerationResult.code) {
+                const outputContainer = document.getElementById('generated-output-container');
+                if (outputContainer) {
+                  let outputHtml = '<div style="color: green; margin: 5px 0; font-weight: bold;">🔄 Generated Output:</div>';
+
+                  // Show formatting-preserved code if available
+                  if (regenerationResult.formattingPreservedCode) {
+                    outputHtml += '<div style="color: purple; margin: 5px 0; font-size: 11px;">🎨 Formatting-Preserved (Hybrid Approach):</div>' +
+                      '<pre style="background: #f3e5f5; padding: 10px; margin: 5px 0; border-left: 3px solid #9c27b0; font-size: 12px; overflow-x: auto;">' + regenerationResult.formattingPreservedCode + '</pre>';
+                  }
+
+                  // Show AST-generated code for comparison
+                  if (regenerationResult.originalCode && regenerationResult.originalCode !== regenerationResult.formattingPreservedCode) {
+                    outputHtml += '<div style="color: orange; margin: 5px 0; font-size: 11px;">🌳 AST-Generated (for comparison):</div>' +
+                      '<pre style="background: #fff3e0; padding: 10px; margin: 5px 0; border-left: 3px solid #ff9800; font-size: 12px; overflow-x: auto;">' + regenerationResult.originalCode + '</pre>';
+                  }
+
+                  outputContainer.innerHTML = outputHtml;
+                }
+              }
+
+              // Show AST information if available
+              if (regenerationResult.ast) {
+                logDiv.innerHTML += '<div style="color: purple; margin: 5px 0;"><strong>🌳 AST Information:</strong></div>';
+                logDiv.innerHTML += '<div style="margin: 5px 0; font-family: monospace;">Statements: ' + regenerationResult.ast.statements.length + '</div>';
+
+                // Show statement types
+                const statementTypes = {};
+                regenerationResult.ast.statements.forEach(stmt => {
+                  statementTypes[stmt.type] = (statementTypes[stmt.type] || 0) + 1;
+                });
+
+                Object.keys(statementTypes).forEach(type => {
+                  logDiv.innerHTML += '<div style="margin: 2px 0; font-family: monospace; color: #666;">  ' + type + ': ' + statementTypes[type] + '</div>';
+                });
+
+                // Store AST and generated code globally for further testing
+                window.CURRENT_AST = regenerationResult.ast;
+                window.CURRENT_CODE = regenerationResult.code;
+                window.CURRENT_LINES = regenerationResult.lines;
+              }
+
+              logDiv.innerHTML += '<div style="color: purple; margin: 5px 0;"><strong>📋 Line-by-line breakdown:</strong></div>';
+              regenerationResult.lines.forEach((line, index) => {
+                logDiv.innerHTML += '<div style="color: purple; margin: 2px 0; font-family: monospace;">Line ' + (index + 1) + ': ' + line + '</div>';
+              });
+
+              // Compare original vs generated from AST
+              const originalLines = originalCode.split('\n').map(line => line.trim()).filter(line => line);
+              const generatedLines = regenerationResult.lines ? regenerationResult.lines.map(line => line.trim()).filter(line => line) : [];
+
+              // Add visual comparison section
+              logDiv.innerHTML += '<div style="margin: 20px 0; padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">' +
+                '<div style="color: orange; margin-bottom: 10px; font-weight: bold;">🔍 Input vs Output Comparison:</div>' +
+                '<div style="display: flex; gap: 10px; margin-bottom: 10px;">' +
+                '<div style="background: #e3f2fd; padding: 5px 10px; border-radius: 3px; font-size: 12px;">📏 Original: ' + originalLines.length + ' lines</div>' +
+                '<div style="background: #e8f5e8; padding: 5px 10px; border-radius: 3px; font-size: 12px;">📏 Generated: ' + generatedLines.length + ' lines</div>' +
+                '</div>';
+
+              const isMatch = originalLines.length === generatedLines.length &&
+                originalLines.every((line, index) => line === generatedLines[index]);
+
+              if (isMatch) {
+                logDiv.innerHTML += '<div style="color: green; margin: 10px 0; padding: 10px; background: #e8f5e8; border-radius: 3px;">✅ <strong>Perfect Match!</strong> AST-to-code generation is working correctly.</div>';
+              } else {
+                logDiv.innerHTML += '<div style="color: orange; margin: 10px 0; padding: 10px; background: #fff3e0; border-radius: 3px;">⚠️ <strong>Differences Detected</strong> (may be due to formatting normalization)</div>';
+
+                // Show detailed line-by-line comparison
+                logDiv.innerHTML += '<div style="margin: 10px 0;"><strong>📋 Line-by-Line Analysis:</strong></div>';
+                logDiv.innerHTML += '<div style="font-family: monospace; font-size: 11px; background: white; padding: 10px; border-radius: 3px; max-height: 200px; overflow-y: auto;">';
+
+                const maxLines = Math.max(originalLines.length, generatedLines.length);
+                for (let i = 0; i < Math.min(maxLines, 10); i++) { // Show first 10 lines
+                  const origLine = originalLines[i] || '(missing)';
+                  const genLine = generatedLines[i] || '(missing)';
+                  const match = origLine === genLine;
+                  const lineNum = (i + 1).toString().padStart(2, '0');
+
+                  logDiv.innerHTML += '<div style="margin: 3px 0; padding: 2px 5px; background: ' + (match ? '#e8f5e8' : '#ffebee') + '; border-radius: 2px;">' +
+                    '<span style="color: #666; font-weight: bold;">' + lineNum + ':</span> ' +
+                    '<span style="color: ' + (match ? 'green' : 'red') + ';">' + (match ? '✅' : '❌') + '</span> ' +
+                    '<div style="margin-left: 30px;">' +
+                    '<div style="color: #1976d2;">📥 Input:  "' + origLine + '"</div>' +
+                    '<div style="color: #388e3c;">📤 Output: "' + genLine + '"</div>' +
+                    '</div>' +
+                    '</div>';
+                }
+
+                if (maxLines > 10) {
+                  logDiv.innerHTML += '<div style="color: #666; margin: 5px 0; text-align: center; font-style: italic;">... and ' + (maxLines - 10) + ' more lines</div>';
+                }
+
+                logDiv.innerHTML += '</div>'; // Close monospace container
+              }
+
+              logDiv.innerHTML += '</div>'; // Close comparison section
+
+              // Add transformation summary
+              if (regenerationResult.ast) {
+                const participantCount = regenerationResult.ast.statements.filter(s => s.type === 'participant').length;
+                const messageCount = regenerationResult.ast.statements.filter(s => s.type === 'message').length;
+                const totalStatements = regenerationResult.ast.statements.length;
+
+                logDiv.innerHTML += '<div style="margin: 15px 0; padding: 10px; background: #f3e5f5; border-left: 4px solid #9c27b0; border-radius: 3px;">' +
+                  '<div style="color: #7b1fa2; font-weight: bold; margin-bottom: 8px;">📊 Transformation Summary:</div>' +
+                  '<div style="display: flex; gap: 15px; flex-wrap: wrap;">' +
+                  '<div style="background: white; padding: 5px 10px; border-radius: 3px; font-size: 12px;">🎭 Participants: ' + participantCount + '</div>' +
+                  '<div style="background: white; padding: 5px 10px; border-radius: 3px; font-size: 12px;">💬 Messages: ' + messageCount + '</div>' +
+                  '<div style="background: white; padding: 5px 10px; border-radius: 3px; font-size: 12px;">📝 Total Statements: ' + totalStatements + '</div>' +
+                  '<div style="background: white; padding: 5px 10px; border-radius: 3px; font-size: 12px;">🔄 Process: Input → Parse → AST → Generate → Output</div>' +
+                  '</div>' +
+                  '</div>';
+              }
+
+            } else {
+              console.warn('⚠️ No AST available from initial parse');
+              logDiv.innerHTML += '<div style="color: orange; margin: 10px 0;"><strong>⚠️ AST Not Available:</strong> No AST was built during initial parsing</div>';
+            }
+          } catch (parseError) {
+            console.error('❌ Error during parsing or regeneration:', parseError);
+            logDiv.innerHTML += '<div style="color: red; margin: 10px 0;"><strong>❌ Parse/Regeneration Error:</strong> ' + parseError.message + '</div>';
+          }
+
+        } else {
+          console.warn('⚠️ Global sequence parser not found');
+          const logDiv = document.getElementById('debug-logs') || createLogDiv();
+          logDiv.innerHTML += '<div style="color: orange; margin: 10px 0;"><strong>⚠️ Parser Not Found:</strong> window.MERMAID_SEQUENCE_PARSER is not available</div>';
+        }
+
+      } catch (error) {
+        console.error('❌ Error during AST regeneration test:', error);
+        const logDiv = document.getElementById('debug-logs') || createLogDiv();
+        logDiv.innerHTML += '<div style="color: red; margin: 10px 0;"><strong>❌ AST Regeneration Error:</strong> ' + error.message + '</div>';
+      }
+    };
+
+    // Debug function to check what's available
+    window.debugMermaidGlobals = function () {
+      console.log('🔍 Debugging Mermaid globals...');
+      console.log('window.MERMAID_CONFIG:', window.MERMAID_CONFIG);
+      console.log('window.MERMAID_PARSER_DEBUG:', window.MERMAID_PARSER_DEBUG);
+      console.log('window.MERMAID_SEQUENCE_PARSER:', window.MERMAID_SEQUENCE_PARSER);
+
+      if (window.MERMAID_SEQUENCE_PARSER) {
+        console.log('✅ Sequence parser methods:', Object.keys(window.MERMAID_SEQUENCE_PARSER));
+      }
+    };
+
+    // New hybrid feature test functions
+    window.testHybridFeatures = function () {
+      console.log('🚀 Testing hybrid AST features...');
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: blue; margin: 10px 0; border-top: 1px solid #ccc; padding-top: 10px;"><strong>🚀 Hybrid Features Test:</strong></div>';
+
+      if (window.CURRENT_AST) {
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ AST available from previous test</div>';
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;">🌳 AST Header: ' + window.CURRENT_AST.header + '</div>';
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;">📊 Total Statements: ' + window.CURRENT_AST.statements.length + '</div>';
+
+        // Show detailed statement information
+        window.CURRENT_AST.statements.forEach((stmt, index) => {
+          logDiv.innerHTML += '<div style="margin: 2px 0; font-family: monospace; color: #333;">  [' + stmt.originalIndex + '] ' + stmt.type + ': ' + JSON.stringify(stmt.data).substring(0, 50) + '...</div>';
+        });
+      } else {
+        logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ No AST available - run AST Regeneration test first</div>';
+      }
+    };
+
+    window.showASTStructure = function () {
+      console.log('🌳 Showing AST structure...');
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: purple; margin: 10px 0; border-top: 1px solid #ccc; padding-top: 10px;"><strong>🌳 AST Structure:</strong></div>';
+
+      if (window.CURRENT_AST) {
+        logDiv.innerHTML += '<pre style="background: #f8f8f8; padding: 10px; margin: 5px 0; border-left: 3px solid #9c27b0; font-size: 12px; overflow-x: auto;">' + JSON.stringify(window.CURRENT_AST, null, 2) + '</pre>';
+      } else {
+        logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ No AST available - run AST Regeneration test first</div>';
+      }
+    };
+
+    window.validateAST = function () {
+      console.log('✅ Validating AST...');
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: orange; margin: 10px 0; border-top: 1px solid #ccc; padding-top: 10px;"><strong>✅ AST Validation:</strong></div>';
+
+      if (window.CURRENT_AST) {
+        // Basic validation checks
+        const checks = [];
+
+        // Check header
+        if (window.CURRENT_AST.header === 'sequenceDiagram') {
+          checks.push('✅ Header is valid');
+        } else {
+          checks.push('❌ Invalid header: ' + window.CURRENT_AST.header);
+        }
+
+        // Check statements array
+        if (Array.isArray(window.CURRENT_AST.statements)) {
+          checks.push('✅ Statements is an array');
+        } else {
+          checks.push('❌ Statements is not an array');
+        }
+
+        // Check statement structure
+        let validStatements = 0;
+        window.CURRENT_AST.statements.forEach((stmt, index) => {
+          if (stmt.type && stmt.originalIndex !== undefined && stmt.data) {
+            validStatements++;
+          }
+        });
+
+        checks.push('✅ Valid statements: ' + validStatements + '/' + window.CURRENT_AST.statements.length);
+
+        // Display results
+        checks.forEach(check => {
+          logDiv.innerHTML += '<div style="margin: 2px 0;">' + check + '</div>';
+        });
+      } else {
+        logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ No AST available - run AST Regeneration test first</div>';
+      }
+    };
+
+    window.showASTStatistics = function () {
+      console.log('📊 Showing AST statistics...');
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: teal; margin: 10px 0; border-top: 1px solid #ccc; padding-top: 10px;"><strong>📊 AST Statistics:</strong></div>';
+
+      if (window.CURRENT_AST) {
+        const stats = {
+          totalStatements: window.CURRENT_AST.statements.length,
+          statementTypes: {},
+          participants: new Set(),
+          messages: 0
+        };
+
+        // Analyze statements
+        window.CURRENT_AST.statements.forEach(stmt => {
+          stats.statementTypes[stmt.type] = (stats.statementTypes[stmt.type] || 0) + 1;
+
+          if (stmt.type === 'participant') {
+            stats.participants.add(stmt.data.id);
+          } else if (stmt.type === 'message') {
+            stats.messages++;
+            stats.participants.add(stmt.data.from);
+            stats.participants.add(stmt.data.to);
+          }
+        });
+
+        // Display statistics
+        logDiv.innerHTML += '<div style="margin: 5px 0;">📊 Total Statements: ' + stats.totalStatements + '</div>';
+        logDiv.innerHTML += '<div style="margin: 5px 0;">👥 Unique Participants: ' + stats.participants.size + '</div>';
+        logDiv.innerHTML += '<div style="margin: 5px 0;">💬 Messages: ' + stats.messages + '</div>';
+
+        logDiv.innerHTML += '<div style="margin: 10px 0; font-weight: bold;">Statement Types:</div>';
+        Object.keys(stats.statementTypes).forEach(type => {
+          logDiv.innerHTML += '<div style="margin: 2px 0; font-family: monospace;">  ' + type + ': ' + stats.statementTypes[type] + '</div>';
+        });
+
+        logDiv.innerHTML += '<div style="margin: 10px 0; font-weight: bold;">Participants:</div>';
+        Array.from(stats.participants).forEach(participant => {
+          logDiv.innerHTML += '<div style="margin: 2px 0; font-family: monospace;">  ' + participant + '</div>';
+        });
+      } else {
+        logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ No AST available - run AST Regeneration test first</div>';
+      }
+    };
+
     // Add debugging
-    console.log('🎯 Sequence ANTLR Parser Test Page Loaded');
+    console.log('🚀 Hybrid Sequence Parser Test Page Loaded');
     console.log('🔧 Environment:', { USE_ANTLR_PARSER: envVar });
+    console.log('🔄 AST Regeneration test function available as window.testASTRegeneration()');
+    console.log('🚀 Hybrid features test function available as window.testHybridFeatures()');
+    console.log('🔍 Debug function available as window.debugMermaidGlobals()');
 
     // Test if we can detect which parser is being used
     setTimeout(() => {
@@ -306,6 +731,421 @@ sequenceDiagram
         });
       }
     }, 3000);
+
+    // Test AST modification using HybridSequenceEditor
+    window.testASTModification = function () {
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: orange; margin: 10px 0; border-top: 1px solid #ccc; padding-top: 10px;"><strong>🔧 Hybrid Editor Test:</strong></div>';
+
+      if (!window.CURRENT_CODE) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ No code available. Please run "Test AST Regeneration" first.</div>';
+        return;
+      }
+
+      try {
+        // Create HybridSequenceEditor with current code
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;">🏗️ Creating HybridSequenceEditor...</div>';
+
+        // Import HybridSequenceEditor (assuming it's available globally)
+        if (!window.HybridSequenceEditor) {
+          logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ HybridSequenceEditor not available globally. Using fallback approach.</div>';
+          // Fallback to direct AST manipulation
+          return window.testDirectASTModification();
+        }
+
+        const editor = new window.HybridSequenceEditor(window.CURRENT_CODE);
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ HybridSequenceEditor created successfully</div>';
+
+        // Get original message
+        const ast = editor.getAST();
+        const firstStatement = ast.statements[0];
+        const originalMessage = firstStatement.data ? firstStatement.data.message : firstStatement.message;
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;"><strong>📝 Original Message:</strong> "' + originalMessage + '"</div>';
+
+        // Use the proper API to update message
+        const newMessage = "Hello Bob, how's your day going?";
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;"><strong>🔧 Updating message using updateMessageText()...</strong></div>';
+
+        editor.updateMessageText(0, newMessage);
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;"><strong>✅ Message updated to:</strong> "' + newMessage + '"</div>';
+
+        // Regenerate code using hybrid approach
+        console.log('🔄 Testing hybrid code regeneration...');
+        const regeneratedCode = editor.regenerateCode('auto');
+
+        if (regeneratedCode) {
+          logDiv.innerHTML += '<div style="color: purple; margin: 5px 0;"><strong>🔄 Regenerated Code (Hybrid):</strong></div>';
+          logDiv.innerHTML += '<pre style="background: #f3e5f5; padding: 10px; margin: 5px 0; border-left: 3px solid #9c27b0;">' + regeneratedCode + '</pre>';
+
+          // Check if the change was applied
+          if (regeneratedCode.includes(newMessage)) {
+            logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">🎉 <strong>Perfect!</strong> HybridSequenceEditor successfully applied changes with optimal strategy.</div>';
+          } else {
+            logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ <strong>Partial Success:</strong> Editor working, but change not reflected in output.</div>';
+          }
+        } else {
+          logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Failed to regenerate code using HybridSequenceEditor</div>';
+        }
+
+      } catch (error) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Error during hybrid editor test: ' + error.message + '</div>';
+        console.error('Hybrid editor error:', error);
+      }
+    };
+
+    // Fallback: Direct AST modification (for when HybridSequenceEditor is not available)
+    window.testDirectASTModification = function () {
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">🔄 Using fallback direct AST modification...</div>';
+
+      if (!window.CURRENT_AST) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ No AST available.</div>';
+        return;
+      }
+
+      try {
+        // Get the original message from the correct location
+        const firstStatement = window.CURRENT_AST.statements[0];
+        const originalMessage = firstStatement.data ? firstStatement.data.message : firstStatement.message;
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;"><strong>📝 Original Message:</strong> "' + originalMessage + '"</div>';
+
+        // Modify the AST in the correct location
+        const newMessage = "Hello Bob, how's your day going?";
+        if (firstStatement.data) {
+          firstStatement.data.message = newMessage;
+        } else {
+          firstStatement.message = newMessage;
+        }
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;"><strong>🔧 Modified Message:</strong> "' + newMessage + '"</div>';
+
+        // Test regeneration with formatting preservation
+        const regeneratedCode = window.MERMAID_SEQUENCE_PARSER.regenerateCodeWithFormatting();
+
+        if (regeneratedCode) {
+          logDiv.innerHTML += '<div style="color: purple; margin: 5px 0;"><strong>🔄 Regenerated Code:</strong></div>';
+          logDiv.innerHTML += '<pre style="background: #f3e5f5; padding: 10px; margin: 5px 0; border-left: 3px solid #9c27b0;">' + regeneratedCode + '</pre>';
+
+          if (regeneratedCode.includes(newMessage)) {
+            logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ <strong>Success!</strong> Direct AST modification worked.</div>';
+          } else {
+            logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ <strong>Partial Success:</strong> Change detection working, but using fallback AST regeneration.</div>';
+          }
+        } else {
+          logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Failed to regenerate code</div>';
+        }
+
+      } catch (error) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Error during direct AST modification: ' + error.message + '</div>';
+      }
+    };
+
+    // Test adding a new participant using HybridSequenceEditor
+    window.testAddParticipant = function () {
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: green; margin: 10px 0; border-top: 1px solid #ccc; padding-top: 10px;"><strong>➕ Add Participant Test:</strong></div>';
+
+      if (!window.CURRENT_CODE) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ No code available. Please run "Test AST Regeneration" first.</div>';
+        return;
+      }
+
+      try {
+        // Create HybridSequenceEditor with current code
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;">🏗️ Creating HybridSequenceEditor for participant addition...</div>';
+
+        if (!window.HybridSequenceEditor) {
+          logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ HybridSequenceEditor not available globally. Using fallback approach.</div>';
+          // Fallback: manually add participant to AST
+          return window.testAddParticipantFallback();
+        }
+
+        const editor = new window.HybridSequenceEditor(window.CURRENT_CODE);
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ HybridSequenceEditor created successfully</div>';
+
+        // Add a new participant
+        const newParticipantId = "Charlie";
+        const newParticipantAlias = "Charlie Brown";
+
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;"><strong>➕ Adding participant:</strong> ' + newParticipantId + ' as "' + newParticipantAlias + '"</div>';
+
+        editor.addParticipant(newParticipantId, newParticipantAlias);
+
+        // Regenerate code using hybrid approach
+        console.log('🔄 Testing hybrid code regeneration after adding participant...');
+        const regeneratedCode = editor.regenerateCode('auto');
+
+        if (regeneratedCode) {
+          logDiv.innerHTML += '<div style="color: purple; margin: 5px 0;"><strong>🔄 Regenerated Code (with new participant):</strong></div>';
+          logDiv.innerHTML += '<pre style="background: #e8f5e8; padding: 10px; margin: 5px 0; border-left: 3px solid #4caf50;">' + regeneratedCode + '</pre>';
+
+          // Check if the participant was added
+          if (regeneratedCode.includes('participant ' + newParticipantId)) {
+            logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">🎉 <strong>Perfect!</strong> New participant successfully added with surgical precision.</div>';
+          } else {
+            logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ <strong>Partial Success:</strong> Editor working, but participant not reflected in output.</div>';
+          }
+        } else {
+          logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Failed to regenerate code using HybridSequenceEditor</div>';
+        }
+
+      } catch (error) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Error during add participant test: ' + error.message + '</div>';
+        console.error('Add participant error:', error);
+      }
+    };
+
+    // Fallback: Add participant directly to AST
+    window.testAddParticipantFallback = function () {
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">🔄 Using fallback direct AST participant addition...</div>';
+
+      if (!window.CURRENT_AST) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ No AST available.</div>';
+        return;
+      }
+
+      try {
+        // Add new participant statement to AST
+        const newParticipant = {
+          type: 'participant',
+          originalIndex: window.CURRENT_AST.statements.length,
+          data: {
+            id: 'Charlie',
+            alias: 'Charlie Brown'
+          }
+        };
+
+        // Insert at the beginning (after sequenceDiagram)
+        window.CURRENT_AST.statements.unshift(newParticipant);
+
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;"><strong>➕ Added participant:</strong> Charlie as "Charlie Brown"</div>';
+
+        // Test regeneration
+        const regeneratedCode = window.MERMAID_SEQUENCE_PARSER.regenerateCodeWithFormatting();
+
+        if (regeneratedCode) {
+          logDiv.innerHTML += '<div style="color: purple; margin: 5px 0;"><strong>🔄 Regenerated Code:</strong></div>';
+          logDiv.innerHTML += '<pre style="background: #e8f5e8; padding: 10px; margin: 5px 0; border-left: 3px solid #4caf50;">' + regeneratedCode + '</pre>';
+
+          if (regeneratedCode.includes('participant Charlie')) {
+            logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ <strong>Success!</strong> Direct AST participant addition worked.</div>';
+          } else {
+            logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ <strong>Partial Success:</strong> Participant added to AST but not reflected in regenerated code.</div>';
+          }
+        } else {
+          logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Failed to regenerate code</div>';
+        }
+
+      } catch (error) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Error during direct AST participant addition: ' + error.message + '</div>';
+      }
+    };
+
+    // Test updating participant alias using HybridSequenceEditor
+    window.testUpdateParticipantAlias = function () {
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: blue; margin: 10px 0; border-top: 1px solid #ccc; padding-top: 10px;"><strong>🏷️ Update Participant Alias Test:</strong></div>';
+
+      if (!window.CURRENT_CODE) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ No code available. Please run "Test AST Regeneration" first.</div>';
+        return;
+      }
+
+      try {
+        // Create HybridSequenceEditor with current code
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;">🏗️ Creating HybridSequenceEditor for participant alias update...</div>';
+
+        if (!window.HybridSequenceEditor) {
+          logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ HybridSequenceEditor not available globally. Using fallback approach.</div>';
+          // Fallback: manually update participant in AST
+          return window.testUpdateParticipantAliasFallback();
+        }
+
+        const editor = new window.HybridSequenceEditor(window.CURRENT_CODE);
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ HybridSequenceEditor created successfully</div>';
+
+        // Update participant alias (Alice originally has no alias)
+        const participantId = "Alice";
+        const newAlias = "Alice Wonderland";
+
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;"><strong>🏷️ Updating participant alias:</strong> ' + participantId + ' → "' + newAlias + '"</div>';
+
+        editor.updateParticipantAlias(participantId, newAlias);
+
+        // Regenerate code using hybrid approach
+        console.log('🔄 Testing hybrid code regeneration after updating participant alias...');
+        const regeneratedCode = editor.regenerateCode('auto');
+
+        if (regeneratedCode) {
+          logDiv.innerHTML += '<div style="color: purple; margin: 5px 0;"><strong>🔄 Regenerated Code (with updated alias):</strong></div>';
+          logDiv.innerHTML += '<pre style="background: #e3f2fd; padding: 10px; margin: 5px 0; border-left: 3px solid #2196f3;">' + regeneratedCode + '</pre>';
+
+          // Check if the alias was updated
+          if (regeneratedCode.includes('participant ' + participantId + ' as "' + newAlias + '"')) {
+            logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">🎉 <strong>Perfect!</strong> Participant alias successfully updated with surgical precision.</div>';
+          } else if (regeneratedCode.includes(newAlias)) {
+            logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ <strong>Success!</strong> Participant alias updated (format may vary).</div>';
+          } else {
+            logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ <strong>Partial Success:</strong> Editor working, but alias not reflected in output.</div>';
+          }
+        } else {
+          logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Failed to regenerate code using HybridSequenceEditor</div>';
+        }
+
+      } catch (error) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Error during update participant alias test: ' + error.message + '</div>';
+        console.error('Update participant alias error:', error);
+      }
+    };
+
+    // Fallback: Update participant alias directly in AST
+    window.testUpdateParticipantAliasFallback = function () {
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">🔄 Using fallback direct AST participant alias update...</div>';
+
+      if (!window.CURRENT_AST) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ No AST available.</div>';
+        return;
+      }
+
+      try {
+        // Find Alice participant or create one if it doesn't exist
+        let aliceParticipant = window.CURRENT_AST.statements.find(stmt =>
+          stmt.type === 'participant' && stmt.data && stmt.data.id === 'Alice'
+        );
+
+        if (!aliceParticipant) {
+          // Create participant statement for Alice
+          aliceParticipant = {
+            type: 'participant',
+            originalIndex: 0, // Insert at beginning
+            data: {
+              id: 'Alice',
+              alias: 'Alice Wonderland'
+            }
+          };
+          window.CURRENT_AST.statements.unshift(aliceParticipant);
+          logDiv.innerHTML += '<div style="color: green; margin: 5px 0;"><strong>➕ Created participant:</strong> Alice with alias "Alice Wonderland"</div>';
+        } else {
+          // Update existing participant alias
+          aliceParticipant.data.alias = 'Alice Wonderland';
+          logDiv.innerHTML += '<div style="color: green; margin: 5px 0;"><strong>🏷️ Updated participant alias:</strong> Alice → "Alice Wonderland"</div>';
+        }
+
+        // Test regeneration
+        const regeneratedCode = window.MERMAID_SEQUENCE_PARSER.regenerateCodeWithFormatting();
+
+        if (regeneratedCode) {
+          logDiv.innerHTML += '<div style="color: purple; margin: 5px 0;"><strong>🔄 Regenerated Code:</strong></div>';
+          logDiv.innerHTML += '<pre style="background: #e3f2fd; padding: 10px; margin: 5px 0; border-left: 3px solid #2196f3;">' + regeneratedCode + '</pre>';
+
+          if (regeneratedCode.includes('Alice Wonderland')) {
+            logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ <strong>Success!</strong> Direct AST participant alias update worked.</div>';
+          } else {
+            logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ <strong>Partial Success:</strong> Alias updated in AST but not reflected in regenerated code.</div>';
+          }
+        } else {
+          logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Failed to regenerate code</div>';
+        }
+
+      } catch (error) {
+        logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Error during direct AST participant alias update: ' + error.message + '</div>';
+      }
+    };
+
+    // Function to render diagram using AST-generated code
+    window.renderASTGeneratedDiagram = function () {
+      console.log('🎨 Rendering diagram from AST-generated code...');
+      const logDiv = document.getElementById('debug-logs') || createLogDiv();
+      logDiv.innerHTML += '<div style="color: purple; margin: 10px 0; border-top: 1px solid #ccc; padding-top: 10px;"><strong>🎨 AST-Generated Diagram Rendering:</strong></div>';
+
+      // Check if we have AST-generated code available
+      if (window.CURRENT_CODE) {
+        console.log('✅ Using stored AST-generated code');
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ Using AST-generated code from previous test</div>';
+
+        const astGeneratedCode = window.CURRENT_CODE;
+
+        // Also get the original code for comparison
+        const testSelect = document.getElementById('test-select');
+        const selectedTest = testSelect ? testSelect.value : 'basic';
+        const TEST_CASES = {
+          basic: `sequenceDiagram
+  Alice->>Bob: Hello Bob, how are you?
+  Bob-->>Alice: Great!`,
+          participants: `sequenceDiagram
+  participant A as Alice
+  participant B as Bob
+  A->>B: Hello Bob!
+  B-->>A: Hi Alice!`,
+          loops: `sequenceDiagram
+  Alice->>Bob: Hello
+  loop Every minute
+    Bob-->>Alice: Great!
+  end`,
+          notes: `sequenceDiagram
+  Alice->>Bob: Hello
+  Note right of Bob: Bob thinks
+  Bob-->>Alice: Hi!`,
+          custom: `sequenceDiagram
+
+A->>B: Hello Bob!
+B-->>A: Hi Alice!
+
+participant A as Alice
+participant B as Bob`
+        };
+        const originalCode = TEST_CASES[selectedTest] || TEST_CASES.basic;
+
+        // Log both original and generated code
+        console.log('📝 Original Code:');
+        console.log(originalCode);
+        console.log('🔄 AST-Generated Code:');
+        console.log(astGeneratedCode);
+
+        logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;"><strong>📝 Original Code:</strong></div>';
+        logDiv.innerHTML += '<pre style="background: #f0f0f0; padding: 10px; margin: 5px 0; border-left: 3px solid #2196f3;">' + originalCode + '</pre>';
+        logDiv.innerHTML += '<div style="color: green; margin: 5px 0;"><strong>🔄 AST-Generated Code:</strong></div>';
+        logDiv.innerHTML += '<pre style="background: #f8f8f8; padding: 10px; margin: 5px 0; border-left: 3px solid #e91e63;">' + astGeneratedCode + '</pre>';
+
+        // Create a unique ID for this diagram
+        const diagramId = 'ast-diagram-' + Date.now();
+
+        // Update the diagram container
+        const diagramContainer = document.getElementById('ast-generated-diagram');
+        if (diagramContainer) {
+          diagramContainer.innerHTML = '<div class="mermaid" id="' + diagramId + '">' + astGeneratedCode + '</div>';
+
+          // Re-initialize mermaid for the new diagram
+          try {
+            mermaid.init(undefined, '#' + diagramId);
+            logDiv.innerHTML += '<div style="color: green; margin: 5px 0;">✅ AST-generated diagram rendered successfully!</div>';
+            console.log('✅ AST-generated diagram rendered successfully');
+          } catch (renderError) {
+            console.error('❌ Error rendering AST-generated diagram:', renderError);
+            logDiv.innerHTML += '<div style="color: red; margin: 5px 0;">❌ Error rendering diagram: ' + renderError.message + '</div>';
+            diagramContainer.innerHTML = '<div style="color: red; padding: 20px;">❌ Error rendering diagram: ' + renderError.message + '</div>';
+          }
+        }
+      } else {
+        console.warn('⚠️ No AST-generated code available');
+        logDiv.innerHTML += '<div style="color: orange; margin: 5px 0;">⚠️ No AST-generated code available. Please run "Test AST Regeneration" first.</div>';
+
+        // Try to get code from parser directly
+        if (window.MERMAID_SEQUENCE_PARSER) {
+          const directCode = window.MERMAID_SEQUENCE_PARSER.getGeneratedCode();
+          if (directCode) {
+            logDiv.innerHTML += '<div style="color: blue; margin: 5px 0;">🔄 Found code directly from parser, using that instead</div>';
+            window.CURRENT_CODE = directCode;
+            // Recursively call this function now that we have code
+            window.renderASTGeneratedDiagram();
+            return;
+          }
+        }
+
+        logDiv.innerHTML += '<div style="color: gray; margin: 5px 0;">💡 Tip: Select a test case and click "Test AST Regeneration" first to generate code from AST</div>';
+      }
+    };
   </script>
 </body>
 

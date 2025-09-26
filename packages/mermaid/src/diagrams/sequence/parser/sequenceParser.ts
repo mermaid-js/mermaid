@@ -64,6 +64,50 @@ const newParser = {
       return jisonParser.parse(newSrc);
     }
   },
+  // Expose AST-to-code generation functionality for browser access
+  generateCodeFromAST: () => {
+    if (USE_ANTLR_PARSER && antlrParser.generateCodeFromAST) {
+      return antlrParser.generateCodeFromAST();
+    }
+    console.warn('⚠️ AST-to-code generation only available with ANTLR parser');
+    return null;
+  },
+  // Expose individual AST access methods for browser access
+  getAST: () => {
+    if (USE_ANTLR_PARSER && antlrParser.getAST) {
+      return antlrParser.getAST();
+    }
+    console.warn('⚠️ AST access only available with ANTLR parser');
+    return null;
+  },
+  getGeneratedCode: () => {
+    if (USE_ANTLR_PARSER && antlrParser.getGeneratedCode) {
+      return antlrParser.getGeneratedCode();
+    }
+    console.warn('⚠️ Generated code access only available with ANTLR parser');
+    return null;
+  },
+  getGeneratedLines: () => {
+    if (USE_ANTLR_PARSER && antlrParser.getGeneratedLines) {
+      return antlrParser.getGeneratedLines();
+    }
+    console.warn('⚠️ Generated lines access only available with ANTLR parser');
+    return null;
+  },
+  // Expose formatting-preserving regeneration method
+  regenerateCodeWithFormatting: () => {
+    if (USE_ANTLR_PARSER && antlrParser.regenerateCodeWithFormatting) {
+      return antlrParser.regenerateCodeWithFormatting();
+    }
+    console.warn('⚠️ Formatting-preserving regeneration only available with ANTLR parser');
+    return null;
+  },
 };
+
+// Expose parser globally for browser access (for AST regeneration testing)
+if (typeof window !== 'undefined') {
+  (window as any).MERMAID_SEQUENCE_PARSER = newParser;
+  console.log('🌐 Sequence parser exposed globally as window.MERMAID_SEQUENCE_PARSER');
+}
 
 export default newParser;

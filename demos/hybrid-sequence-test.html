@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Hybrid Sequence Editor Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+        
+        .test-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+        
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+        
+        .result-section {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f0fff4;
+            border-left: 4px solid #48bb78;
+        }
+        
+        .error-section {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #fff5f5;
+            border-left: 4px solid #f56565;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .operations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .operation-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .operation-card h3 {
+            margin-top: 0;
+            color: #4a5568;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .log-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Hybrid Sequence Editor Test</h1>
+        <p style="text-align: center; color: #718096; font-size: 1.1em;">
+            Testing the new hybrid approach: AST-based editing + TokenStreamRewriter for optimal performance
+        </p>
+
+        <!-- Test Section 1: Basic Functionality -->
+        <div class="test-section">
+            <h2>🎯 Basic Hybrid Editor Test</h2>
+            <div class="controls">
+                <button class="btn-primary" onclick="testBasicFunctionality()">Test Basic Functionality</button>
+                <button class="btn-secondary" onclick="clearResults()">Clear Results</button>
+            </div>
+            
+            <div class="code-block" id="originalCode">sequenceDiagram
+  Alice->>Bob: Hello Bob, how are you?
+  Bob-->>Alice: Great!</div>
+            
+            <div id="basicResults"></div>
+        </div>
+
+        <!-- Test Section 2: CRUD Operations -->
+        <div class="test-section">
+            <h2>✏️ CRUD Operations Test</h2>
+            <div class="operations">
+                <div class="operation-card">
+                    <h3>Add Participant</h3>
+                    <input type="text" id="participantId" placeholder="Participant ID (e.g., C)" />
+                    <input type="text" id="participantAlias" placeholder="Alias (e.g., Charlie)" />
+                    <button class="btn-primary" onclick="addParticipant()">Add Participant</button>
+                </div>
+                
+                <div class="operation-card">
+                    <h3>Add Message</h3>
+                    <input type="text" id="messageFrom" placeholder="From (e.g., Alice)" />
+                    <input type="text" id="messageTo" placeholder="To (e.g., Bob)" />
+                    <input type="text" id="messageText" placeholder="Message text" />
+                    <select id="messageArrow">
+                        <option value="->>">->></option>
+                        <option value="-->>">-->></option>
+                        <option value="->">-></option>
+                        <option value="-->">--></option>
+                    </select>
+                    <button class="btn-primary" onclick="addMessage()">Add Message</button>
+                </div>
+                
+                <div class="operation-card">
+                    <h3>Add Note</h3>
+                    <select id="notePosition">
+                        <option value="right">right</option>
+                        <option value="left">left</option>
+                        <option value="over">over</option>
+                    </select>
+                    <input type="text" id="noteParticipant" placeholder="Participant (e.g., Bob)" />
+                    <input type="text" id="noteText" placeholder="Note text" />
+                    <button class="btn-primary" onclick="addNote()">Add Note</button>
+                </div>
+                
+                <div class="operation-card">
+                    <h3>Move Statement</h3>
+                    <input type="number" id="moveFrom" placeholder="From index" />
+                    <input type="number" id="moveTo" placeholder="To index" />
+                    <button class="btn-primary" onclick="moveStatement()">Move Statement</button>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn-primary" onclick="regenerateCode()">Regenerate Code</button>
+                <button class="btn-secondary" onclick="showAST()">Show AST</button>
+                <button class="btn-secondary" onclick="validateAST()">Validate AST</button>
+            </div>
+            
+            <div id="crudResults"></div>
+        </div>
+
+        <!-- Test Section 3: Performance Comparison -->
+        <div class="test-section">
+            <h2>⚡ Performance Test</h2>
+            <div class="controls">
+                <button class="btn-primary" onclick="performanceTest()">Run Performance Test</button>
+                <select id="testSize">
+                    <option value="small">Small (10 statements)</option>
+                    <option value="medium">Medium (50 statements)</option>
+                    <option value="large">Large (200 statements)</option>
+                </select>
+            </div>
+            
+            <div id="performanceResults"></div>
+        </div>
+
+        <!-- Debug Log -->
+        <div class="test-section">
+            <h2>🔍 Debug Log</h2>
+            <div class="controls">
+                <button class="btn-secondary" onclick="clearLog()">Clear Log</button>
+            </div>
+            <div class="log-output" id="debugLog"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // This will be implemented to test the hybrid editor
+        console.log('🚀 Hybrid Sequence Editor Test Page Loaded');
+        
+        // Global variables for testing
+        let hybridEditor = null;
+        let currentAST = null;
+        
+        // Test functions will be implemented here
+        window.testBasicFunctionality = function() {
+            log('🎯 Testing basic hybrid editor functionality...');
+            log('⚠️ Implementation pending - hybrid editor classes need to be imported');
+        };
+        
+        window.addParticipant = function() {
+            const id = document.getElementById('participantId').value;
+            const alias = document.getElementById('participantAlias').value;
+            log(`👤 Adding participant: ${id}${alias ? ` as ${alias}` : ''}`);
+        };
+        
+        window.addMessage = function() {
+            const from = document.getElementById('messageFrom').value;
+            const to = document.getElementById('messageTo').value;
+            const text = document.getElementById('messageText').value;
+            const arrow = document.getElementById('messageArrow').value;
+            log(`💬 Adding message: ${from}${arrow}${to}: ${text}`);
+        };
+        
+        window.addNote = function() {
+            const position = document.getElementById('notePosition').value;
+            const participant = document.getElementById('noteParticipant').value;
+            const text = document.getElementById('noteText').value;
+            log(`📝 Adding note: Note ${position} of ${participant}: ${text}`);
+        };
+        
+        window.moveStatement = function() {
+            const from = document.getElementById('moveFrom').value;
+            const to = document.getElementById('moveTo').value;
+            log(`🔄 Moving statement from ${from} to ${to}`);
+        };
+        
+        window.regenerateCode = function() {
+            log('🔄 Regenerating code from AST...');
+        };
+        
+        window.showAST = function() {
+            log('🌳 Showing current AST structure...');
+        };
+        
+        window.validateAST = function() {
+            log('✅ Validating AST structure...');
+        };
+        
+        window.performanceTest = function() {
+            const size = document.getElementById('testSize').value;
+            log(`⚡ Running performance test with ${size} dataset...`);
+        };
+        
+        window.clearResults = function() {
+            document.getElementById('basicResults').innerHTML = '';
+            document.getElementById('crudResults').innerHTML = '';
+            document.getElementById('performanceResults').innerHTML = '';
+        };
+        
+        window.clearLog = function() {
+            document.getElementById('debugLog').innerHTML = '';
+        };
+        
+        function log(message) {
+            const logElement = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+    </script>
+</body>
+</html>
