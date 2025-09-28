@@ -35,3 +35,15 @@ export interface EntityClass {
   styles: string[];
   textStyles: string[];
 }
+
+// Aggregation relationship types
+export const AggregationType = {
+  AGGREGATION: 'AGGREGATION',
+  AGGREGATION_DASHED: 'AGGREGATION_DASHED',
+} as const;
+
+// Line types for aggregation
+export const AggregationLineType = {
+  SOLID: 'SOLID',
+  DASHED: 'DASHED',
+} as const;

@@ -72,6 +72,8 @@ o\|                             return 'ZERO_OR_ONE';
 o\{                             return 'ZERO_OR_MORE';
 \|\{                            return 'ONE_OR_MORE';
 \s*u                            return 'MD_PARENT';
+"<>.."                          return 'AGGREGATION_DASHED';
+"<>"                            return 'AGGREGATION';
 \.\.                            return 'NON_IDENTIFYING';
 \-\-                            return 'IDENTIFYING';
 "to"                            return 'IDENTIFYING';
@@ -167,6 +169,47 @@ statement
     | entityName SQS entityName SQE STYLE_SEPARATOR idList BLOCK_START BLOCK_STOP { yy.addEntity($1, $3); yy.setClass([$1], $6); }
     | entityName SQS entityName SQE { yy.addEntity($1, $3); }
     | entityName SQS entityName SQE STYLE_SEPARATOR idList { yy.addEntity($1, $3); yy.setClass([$1], $6); }
+    | entityName aggregationRelSpec entityName COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($3);
+          yy.addRelationship($1, $5, $3, $2);
+      }
+    | entityName STYLE_SEPARATOR idList aggregationRelSpec entityName STYLE_SEPARATOR idList COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($5);
+          yy.addRelationship($1, $9, $5, $4);
+          yy.setClass([$1], $3);
+          yy.setClass([$5], $7);
+      }
+    | entityName STYLE_SEPARATOR idList aggregationRelSpec entityName COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($5);
+          yy.addRelationship($1, $7, $5, $4);
+          yy.setClass([$1], $3);
+      }
+    | entityName aggregationRelSpec entityName STYLE_SEPARATOR idList COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($3);
+          yy.addRelationship($1, $7, $3, $2);
+          yy.setClass([$3], $5);
+      }
+    | entityName 'AGGREGATION' entityName COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($3);
+          yy.addRelationship($1, $5, $3, { cardA: 'ZERO_OR_MORE', relType: 'AGGREGATION', cardB: 'ZERO_OR_MORE' });
+      }
+    | entityName 'AGGREGATION_DASHED' entityName COLON role
+      {
+          yy.addEntity($1);
+          yy.addEntity($3);
+          yy.addRelationship($1, $5, $3, { cardA: 'ZERO_OR_MORE', relType: 'AGGREGATION_DASHED', cardB: 'ZERO_OR_MORE' });
+      }
+
     | title title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
@@ -272,6 +315,17 @@ relSpec
       }
     ;
 
+aggregationRelSpec
+    : 'AGGREGATION' cardinality cardinality
+      {
+        $$ = { cardA: $2, relType: $1, cardB: $3 };
+      }
+    | 'AGGREGATION_DASHED' cardinality cardinality
+      {
+        $$ = { cardA: $2, relType: $1, cardB: $3 };
+      }
+    ;
+
 cardinality
     : 'ZERO_OR_ONE'                  { $$ = yy.Cardinality.ZERO_OR_ONE; }
     | 'ZERO_OR_MORE'                 { $$ = yy.Cardinality.ZERO_OR_MORE; }
@@ -283,6 +337,8 @@ cardinality
 relType
     : 'NON_IDENTIFYING'              { $$ = yy.Identification.NON_IDENTIFYING;  }
     | 'IDENTIFYING'                  { $$ = yy.Identification.IDENTIFYING; }
+    | 'AGGREGATION'                  { $$ = yy.Aggregation.AGGREGATION; }
+    | 'AGGREGATION_DASHED'           { $$ = yy.Aggregation.AGGREGATION_DASHED; }
     ;
 
 role

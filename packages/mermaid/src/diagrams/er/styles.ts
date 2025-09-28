@@ -68,6 +68,32 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.lineColor} !important;
     stroke-width: 1;
   }
+
+  .aggregation {
+    stroke: ${options.lineColor};
+    stroke-width: 1;
+    fill: white;
+  }
+
+  .aggregation-dashed {
+    stroke: ${options.lineColor};
+    stroke-width: 1;
+    stroke-dasharray: 8,8;
+    fill: white;
+  }
+
+  .aggregation-marker {
+    fill: white !important;
+    stroke: ${options.lineColor} !important;
+    stroke-width: 1;
+  }
+
+  .aggregation-marker-dashed {
+    fill: white !important;
+    stroke: ${options.lineColor} !important;
+    stroke-width: 1;
+    stroke-dasharray: 3,3;
+  }
 `;
 
 export default getStyles;
