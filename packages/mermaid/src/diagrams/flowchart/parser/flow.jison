@@ -137,6 +137,7 @@ that id.
 <dir>\s*"v"              { this.popState();  return 'DIR'; }
 
 .*direction\s+TB[^\n]*       return 'direction_tb';
+.*direction\s+TD[^\n]*       return 'direction_tb';
 .*direction\s+BT[^\n]*       return 'direction_bt';
 .*direction\s+RL[^\n]*       return 'direction_rl';
 .*direction\s+LR[^\n]*       return 'direction_lr';
