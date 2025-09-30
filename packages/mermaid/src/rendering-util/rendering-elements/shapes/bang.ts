@@ -3,7 +3,6 @@ import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
 import type { Bounds, Point } from '../../../types.js';
@@ -69,11 +68,14 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   H0 V0 Z`;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const roughNode = rc.path(path, options);
     bangElem = shapeSvg.insert(() => roughNode, ':first-child');
-    bangElem.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
+    bangElem
+      .attr('class', 'basic label-container')
+      .attr('style', handleUndefinedAttr(node.cssStyles));
   } else {
     bangElem = shapeSvg
       .insert('path', ':first-child')

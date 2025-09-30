@@ -1,4 +1,3 @@
-import rough from 'roughjs';
 import { log } from '../../../logger.js';
 import type { Bounds, D3Selection, Point } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
@@ -44,15 +43,17 @@ export async function circle<T extends SVGGraphicsElement>(
   label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
 
   let circleElem;
-  const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const roughNode = rc.circle(0, 0, radius * 2, options);
 
     circleElem = shapeSvg.insert(() => roughNode, ':first-child');
-    circleElem.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
+    circleElem
+      .attr('class', 'basic label-container')
+      .attr('style', handleUndefinedAttr(node.cssStyles));
   } else {
     circleElem = shapeSvg
       .insert('circle', ':first-child')

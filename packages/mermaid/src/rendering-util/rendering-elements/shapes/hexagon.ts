@@ -2,7 +2,6 @@ import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } f
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 
 export const createHexagonPathD = (
@@ -51,6 +50,7 @@ export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<
   const labelYOffset = -bbox.height / 2;
   label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
   const { cssStyles } = node;
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
 

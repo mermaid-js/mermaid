@@ -1,4 +1,3 @@
-import rough from 'roughjs';
 import { log } from '../../../logger.js';
 import type { Bounds, D3Selection, Point } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
@@ -48,7 +47,6 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
   const r3 = 0.35 * w;
   const r4 = 0.2 * w;
 
-  const { cssStyles } = node;
   let cloudElem;
 
   // Cloud path
@@ -69,11 +67,14 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
   H0 V0 Z`;
 
   if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const roughNode = rc.path(path, options);
     cloudElem = shapeSvg.insert(() => roughNode, ':first-child');
-    cloudElem.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
+    cloudElem
+      .attr('class', 'basic label-container')
+      .attr('style', handleUndefinedAttr(node.cssStyles));
   } else {
     cloudElem = shapeSvg
       .insert('path', ':first-child')

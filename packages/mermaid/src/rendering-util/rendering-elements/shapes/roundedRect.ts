@@ -2,7 +2,6 @@ import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } f
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 
 /**
@@ -121,6 +120,7 @@ export async function roundedRect<T extends SVGGraphicsElement>(
   const radius = node.radius || 5;
   const taper = node.taper || 5; // Taper width for the rounded corners
   const { cssStyles } = node;
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
   if (node.stroke) {
