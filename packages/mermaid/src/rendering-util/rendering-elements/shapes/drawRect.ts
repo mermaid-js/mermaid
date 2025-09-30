@@ -15,11 +15,33 @@ export async function drawRect<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  // console.log('IPI labelStyles:', labelStyles);
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
-  const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const ICON_SIZE = 30;
+  const ICON_PADDING = 10;
+
+  let totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
+  let totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
+
+  let labelXOffset = -bbox.width / 2;
+  if (node.icon) {
+    const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + options.labelPaddingX * 2;
+    totalWidth = Math.max(totalWidth, minWidthWithIcon);
+    totalHeight = Math.max(totalHeight, ICON_SIZE + options.labelPaddingY * 2);
+
+    node.width = totalWidth;
+    node.height = totalHeight;
+
+    const availableTextSpace = totalWidth - ICON_SIZE - ICON_PADDING * 2;
+    labelXOffset =
+      -totalWidth / 2 + ICON_SIZE + ICON_PADDING + availableTextSpace / 2 - bbox.width / 2;
+  } else {
+    node.width = totalWidth;
+    node.height = totalHeight;
+  }
+  const labelYOffset = -bbox.height / 2;
+  label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;
 

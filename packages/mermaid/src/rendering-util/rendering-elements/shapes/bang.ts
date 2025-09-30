@@ -17,24 +17,42 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     getNodeClasses(node)
   );
 
-  const w = bbox.width + 10 * halfPadding;
-  const h = bbox.height + 8 * halfPadding;
-  const r = 0.15 * w;
-  const { cssStyles } = node;
+  let w = bbox.width + 10 * halfPadding;
+  let h = bbox.height + 8 * halfPadding;
+
+  const ICON_SIZE = 30;
+  const ICON_PADDING = 1;
+
+  if (node.icon) {
+    const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + 10 * halfPadding;
+    w = Math.max(w, minWidthWithIcon);
+    h = Math.max(h, ICON_SIZE + 8 * halfPadding);
+  }
+
+  node.width = w;
+  node.height = h;
 
   const minWidth = bbox.width + 20;
   const minHeight = bbox.height + 20;
   const effectiveWidth = Math.max(w, minWidth);
   const effectiveHeight = Math.max(h, minHeight);
 
-  label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
+  let labelXOffset = -bbox.width / 2;
+  if (node.icon) {
+    const iconSpace = ICON_SIZE + ICON_PADDING;
+    const remainingWidth = effectiveWidth - iconSpace;
+    labelXOffset = -effectiveWidth / 2 + iconSpace + (remainingWidth - bbox.width) / 2;
+  }
 
+  label.attr('transform', `translate(${labelXOffset}, ${-bbox.height / 2})`);
+
+  const r = 0.15 * effectiveWidth;
   let bangElem;
-  const path = `M0 0 
-    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${-1 * effectiveHeight * 0.1}
-    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
-    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
-    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${effectiveHeight * 0.1}
+  const path = `M0 0
+	    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${-1 * effectiveHeight * 0.1}
+	    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
+	    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
+	    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${effectiveHeight * 0.1}
 
     a${r},${r} 1 0,0 ${effectiveWidth * 0.15},${effectiveHeight * 0.33}
     a${r * 0.8},${r * 0.8} 1 0,0 0,${effectiveHeight * 0.34}
@@ -51,7 +69,6 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   H0 V0 Z`;
 
   if (node.look === 'handDrawn') {
-    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const roughNode = rc.path(path, options);

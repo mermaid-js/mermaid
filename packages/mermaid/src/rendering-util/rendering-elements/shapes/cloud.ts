@@ -17,8 +17,30 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
     getNodeClasses(node)
   );
 
-  const w = bbox.width + 2 * halfPadding;
-  const h = bbox.height + 2 * halfPadding;
+  const ICON_SIZE = 30;
+  const ICON_PADDING = 15;
+
+  let w = bbox.width + 2 * halfPadding;
+  let h = bbox.height + 2 * halfPadding;
+
+  let labelXOffset = -bbox.width / 2;
+  if (node.icon) {
+    const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + 2 * halfPadding;
+    w = Math.max(w, minWidthWithIcon);
+    h = Math.max(h, ICON_SIZE + 2 * halfPadding);
+
+    node.width = w;
+    node.height = h;
+
+    const availableTextSpace = w - ICON_SIZE - ICON_PADDING * 2;
+    labelXOffset = -w / 2 + ICON_SIZE + ICON_PADDING + availableTextSpace / 2 - bbox.width / 2;
+  } else {
+    node.width = w;
+    node.height = h;
+  }
+
+  const labelYOffset = -bbox.height / 2;
+  label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
 
   // Cloud radii
   const r1 = 0.15 * w;
@@ -47,7 +69,6 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
   H0 V0 Z`;
 
   if (node.look === 'handDrawn') {
-    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const roughNode = rc.path(path, options);
@@ -60,8 +81,6 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
       .attr('style', nodeStyles)
       .attr('d', path);
   }
-
-  label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
 
   // Center the shape
   cloudElem.attr('transform', `translate(${-w / 2}, ${-h / 2})`);

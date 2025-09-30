@@ -17,22 +17,39 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
     getNodeClasses(node)
   );
 
-  const w = bbox.width + 8 * halfPadding;
-  const h = bbox.height + 2 * halfPadding;
-  const rd = 5;
+  let w = bbox.width + 8 * halfPadding;
+  let h = bbox.height + 2 * halfPadding;
 
-  const rectPath = `
-    M${-w / 2} ${h / 2 - rd}
-    v${-h + 2 * rd}
-    q0,-${rd} ${rd},-${rd}
-    h${w - 2 * rd}
-    q${rd},0 ${rd},${rd}
-    v${h - 2 * rd}
-    q0,${rd} -${rd},${rd}
-    h${-w + 2 * rd}
-    q-${rd},0 -${rd},-${rd}
-    Z
-  `;
+  const ICON_SIZE = 30;
+  const ICON_PADDING = 15;
+
+  if (node.icon) {
+    const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + 8 * halfPadding;
+    w = Math.max(w, minWidthWithIcon);
+    h = Math.max(h, ICON_SIZE + 2 * halfPadding);
+
+    node.width = w;
+    node.height = h;
+
+    const availableTextSpace = w - ICON_SIZE - ICON_PADDING * 2;
+    const labelXOffset =
+      -w / 2 + ICON_SIZE + ICON_PADDING + availableTextSpace / 2 - bbox.width / 2;
+    label.attr('transform', `translate(${labelXOffset}, ${-bbox.height / 2})`);
+  } else {
+    label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
+  }
+
+  const RD = 5;
+  const rectPath = `M${-w / 2} ${h / 2 - RD} 
+    v${-h + 2 * RD} 
+    q0,-${RD} ${RD},-${RD} 
+    h${w - 2 * RD} 
+    q${RD},0 ${RD},${RD} 
+    v${h - 2 * RD} 
+    q0,${RD} -${RD},${RD} 
+    h${-w + 2 * RD} 
+    q-${RD},0 -${RD},-${RD} 
+    Z`;
 
   const bg = shapeSvg
     .append('path')
@@ -49,7 +66,6 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
     .attr('x2', w / 2)
     .attr('y2', h / 2);
 
-  label.attr('transform', `translate(${-bbox.width / 2}, ${-bbox.height / 2})`);
   shapeSvg.append(() => label.node());
 
   updateNodeBounds(node, bg);

@@ -91,17 +91,36 @@ export async function roundedRect<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
   const labelPaddingX = node?.padding ?? 0;
   const labelPaddingY = node?.padding ?? 0;
 
-  const w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
-  const h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
+  let w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
+  let h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
+
+  const ICON_SIZE = 30;
+  const ICON_PADDING = 15;
+
+  let labelXOffset = -bbox.width / 2;
+
+  if (node.icon) {
+    const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + labelPaddingX * 2;
+    w = Math.max(w, minWidthWithIcon);
+    h = Math.max(h, ICON_SIZE + labelPaddingY * 2);
+
+    node.width = w;
+    node.height = h;
+
+    const availableTextSpace = w - ICON_SIZE - ICON_PADDING * 2;
+    labelXOffset = -w / 2 + ICON_SIZE + ICON_PADDING + availableTextSpace / 2 - bbox.width / 2;
+  }
+
+  label.attr('transform', `translate(${labelXOffset}, ${-bbox.height / 2})`);
+
   const radius = node.radius || 5;
   const taper = node.taper || 5; // Taper width for the rounded corners
   const { cssStyles } = node;
-  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
   const rc = rough.svg(shapeSvg);
   const options = userNodeOverrides(node, {});
   if (node.stroke) {

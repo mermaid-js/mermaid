@@ -14,14 +14,39 @@ export async function circle<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
+
+  const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
+    parent,
+    node,
+    getNodeClasses(node)
+  );
+
   const padding = options?.padding ?? halfPadding;
-  const radius = bbox.width / 2 + padding;
+  const ICON_SIZE = 30;
+  const ICON_PADDING = 15;
+
+  let radius = bbox.width / 2 + padding;
+
+  if (node.icon) {
+    const totalWidthNeeded = bbox.width + ICON_SIZE + ICON_PADDING * 2;
+    const minRadiusWithIcon = totalWidthNeeded / 2 + padding;
+    radius = Math.max(radius, minRadiusWithIcon);
+  }
+
+  node.width = radius * 2;
+  node.height = radius * 2;
+
+  let labelXOffset = -bbox.width / 2;
+  if (node.icon) {
+    labelXOffset = -radius + ICON_SIZE + ICON_PADDING;
+  }
+  const labelYOffset = -bbox.height / 2;
+  label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
+
   let circleElem;
   const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
-    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
     const options = userNodeOverrides(node, {});
     const roughNode = rc.circle(0, 0, radius * 2, options);
