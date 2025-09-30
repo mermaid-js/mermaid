@@ -165,6 +165,7 @@ export const render = async (
         domId: { node: () => any; attr: (arg0: string, arg1: string) => void };
       }) {
         if (node) {
+          nodeDb[node.id] ??= {};
           nodeDb[node.id].offset = {
             posX: node.x + relX,
             posY: node.y + relY,
