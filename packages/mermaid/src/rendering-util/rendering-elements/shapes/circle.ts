@@ -6,6 +6,10 @@ import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 import rough from 'roughjs';
+
+const ICON_SIZE = 30;
+const ICON_PADDING = 20;
+
 export async function circle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
@@ -21,27 +25,20 @@ export async function circle<T extends SVGGraphicsElement>(
   );
 
   const padding = options?.padding ?? halfPadding;
-  const ICON_SIZE = 30;
-  const ICON_PADDING = 15;
-
   let radius = bbox.width / 2 + padding;
+  let labelXOffset = -bbox.width / 2;
+  const labelYOffset = -bbox.height / 2;
 
   if (node.icon) {
     const totalWidthNeeded = bbox.width + ICON_SIZE + ICON_PADDING * 2;
     const minRadiusWithIcon = totalWidthNeeded / 2 + padding;
     radius = Math.max(radius, minRadiusWithIcon);
+    labelXOffset = -radius + ICON_SIZE + ICON_PADDING;
+    label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
   }
 
   node.width = radius * 2;
   node.height = radius * 2;
-
-  let labelXOffset = -bbox.width / 2;
-  if (node.icon) {
-    labelXOffset = -radius + ICON_SIZE + ICON_PADDING;
-  }
-  const labelYOffset = -bbox.height / 2;
-  label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
-
   let circleElem;
 
   if (node.look === 'handDrawn') {

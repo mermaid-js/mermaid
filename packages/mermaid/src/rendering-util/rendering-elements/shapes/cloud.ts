@@ -6,6 +6,9 @@ import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 import rough from 'roughjs';
+
+const ICON_SIZE = 30;
+const ICON_PADDING = 15;
 export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -16,13 +19,11 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
     getNodeClasses(node)
   );
 
-  const ICON_SIZE = 30;
-  const ICON_PADDING = 15;
-
   let w = bbox.width + 2 * halfPadding;
   let h = bbox.height + 2 * halfPadding;
 
   let labelXOffset = -bbox.width / 2;
+  const labelYOffset = -bbox.height / 2;
   if (node.icon) {
     const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + 2 * halfPadding;
     w = Math.max(w, minWidthWithIcon);
@@ -33,13 +34,11 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
     const availableTextSpace = w - ICON_SIZE - ICON_PADDING * 2;
     labelXOffset = -w / 2 + ICON_SIZE + ICON_PADDING + availableTextSpace / 2 - bbox.width / 2;
+    label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
   } else {
     node.width = w;
     node.height = h;
   }
-
-  const labelYOffset = -bbox.height / 2;
-  label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
 
   // Cloud radii
   const r1 = 0.15 * w;

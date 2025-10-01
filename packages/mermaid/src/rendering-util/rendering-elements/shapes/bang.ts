@@ -8,6 +8,8 @@ import { handleUndefinedAttr } from '../../../utils.js';
 import type { Bounds, Point } from '../../../types.js';
 import rough from 'roughjs';
 
+const ICON_SIZE = 30;
+const ICON_PADDING = 1;
 export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -19,9 +21,6 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
 
   let w = bbox.width + 10 * halfPadding;
   let h = bbox.height + 8 * halfPadding;
-
-  const ICON_SIZE = 30;
-  const ICON_PADDING = 1;
 
   if (node.icon) {
     const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + 10 * halfPadding;
@@ -42,9 +41,8 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     const iconSpace = ICON_SIZE + ICON_PADDING;
     const remainingWidth = effectiveWidth - iconSpace;
     labelXOffset = -effectiveWidth / 2 + iconSpace + (remainingWidth - bbox.width) / 2;
+    label.attr('transform', `translate(${labelXOffset}, ${-bbox.height / 2})`);
   }
-
-  label.attr('transform', `translate(${labelXOffset}, ${-bbox.height / 2})`);
 
   const r = 0.15 * effectiveWidth;
   let bangElem;

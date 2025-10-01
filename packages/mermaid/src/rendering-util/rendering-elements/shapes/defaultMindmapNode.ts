@@ -4,6 +4,9 @@ import intersect from '../intersect/index.js';
 import { styles2String } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
+const ICON_SIZE = 30;
+const ICON_PADDING = 15;
+
 export async function defaultMindmapNode<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
@@ -19,9 +22,6 @@ export async function defaultMindmapNode<T extends SVGGraphicsElement>(
 
   let w = bbox.width + 8 * halfPadding;
   let h = bbox.height + 2 * halfPadding;
-
-  const ICON_SIZE = 30;
-  const ICON_PADDING = 15;
 
   if (node.icon) {
     const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + 8 * halfPadding;

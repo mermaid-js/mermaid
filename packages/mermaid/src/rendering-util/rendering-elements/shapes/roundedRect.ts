@@ -85,6 +85,9 @@ export function generateArcPoints(
   return points;
 }
 
+const ICON_SIZE = 30;
+const ICON_PADDING = 15;
+
 export async function roundedRect<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
@@ -99,9 +102,6 @@ export async function roundedRect<T extends SVGGraphicsElement>(
   let w = (node?.width ? node?.width : bbox.width) + labelPaddingX * 2;
   let h = (node?.height ? node?.height : bbox.height) + labelPaddingY * 2;
 
-  const ICON_SIZE = 30;
-  const ICON_PADDING = 15;
-
   let labelXOffset = -bbox.width / 2;
 
   if (node.icon) {
@@ -114,9 +114,8 @@ export async function roundedRect<T extends SVGGraphicsElement>(
 
     const availableTextSpace = w - ICON_SIZE - ICON_PADDING * 2;
     labelXOffset = -w / 2 + ICON_SIZE + ICON_PADDING + availableTextSpace / 2 - bbox.width / 2;
+    label.attr('transform', `translate(${labelXOffset}, ${-bbox.height / 2})`);
   }
-
-  label.attr('transform', `translate(${labelXOffset}, ${-bbox.height / 2})`);
 
   const radius = node.radius || 5;
   const taper = node.taper || 5; // Taper width for the rounded corners
