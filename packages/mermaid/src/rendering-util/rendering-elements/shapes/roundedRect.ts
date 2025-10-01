@@ -3,6 +3,7 @@ import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import type { D3Selection } from '../../../types.js';
+import rough from 'roughjs';
 
 /**
  * Generates evenly spaced points along an elliptical arc connecting two points.

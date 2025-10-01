@@ -5,7 +5,7 @@ import type { MindmapOptions, Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
-
+import rough from 'roughjs';
 export async function circle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
