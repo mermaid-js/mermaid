@@ -350,6 +350,30 @@ const parseDuration = function (str) {
   return [NaN, 'ms'];
 };
 
+// Detect whether the end spec is an absolute date (not a duration)
+// Accepts either the configured dateFormat OR plain YYYY-MM-DD.
+// If it's a duration like "5d", this returns false.
+const isAbsoluteEndSpec = function (str, dateFormat) {
+  const [durationValue] = parseDuration(str);
+  if (!Number.isNaN(durationValue)) {
+    // e.g., "5d", "2w" -> duration, not absolute
+    return false;
+  }
+  // Exact match for the configured format
+  if (dayjs(str, dateFormat.trim(), true).isValid()) {
+    return true;
+  }
+  // Back-compat: plain YYYY-MM-DD (the old code only checked this)
+  if (dayjs(str, 'YYYY-MM-DD', true).isValid()) {
+    return true;
+  }
+  // Also support milliseconds/seconds when dateFormat is x/X
+  if ((dateFormat.trim() === 'x' || dateFormat.trim() === 'X') && /^\d+$/.test(str.trim())) {
+    return true;
+  }
+  return false;
+};
+
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
@@ -456,7 +480,7 @@ const compileData = function (prevTask, dataStr) {
 
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
-    task.manualEndTime = dayjs(endTimeData, 'YYYY-MM-DD', true).isValid();
+    task.manualEndTime = isAbsoluteEndSpec(endTimeData, dateFormat);
     checkTaskDates(task, dateFormat, excludes, includes);
   }
 
@@ -608,11 +632,7 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
+        rawTasks[pos].manualEndTime = isAbsoluteEndSpec(rawTasks[pos].raw.endTime.data, dateFormat);
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
