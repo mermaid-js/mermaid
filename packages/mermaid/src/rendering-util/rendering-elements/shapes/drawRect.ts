@@ -8,9 +8,6 @@ import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
 import type { Bounds, Point } from '../../../types.js';
 
-const ICON_SIZE = 30;
-const ICON_PADDING = 10;
-
 export async function drawRect<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
@@ -21,26 +18,17 @@ export async function drawRect<T extends SVGGraphicsElement>(
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  let totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
-  let totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
-  let labelXOffset = -bbox.width / 2;
+  const totalWidth = Math.max(bbox.width + options.labelPaddingX * 2, node?.width || 0);
+  const totalHeight = Math.max(bbox.height + options.labelPaddingY * 2, node?.height || 0);
+
+  node.width = totalWidth;
+  node.height = totalHeight;
+
+  const labelXOffset = -bbox.width / 2;
+
   const labelYOffset = -bbox.height / 2;
-
   if (node.icon) {
-    const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + options.labelPaddingX * 2;
-    totalWidth = Math.max(totalWidth, minWidthWithIcon);
-    totalHeight = Math.max(totalHeight, ICON_SIZE + options.labelPaddingY * 2);
-
-    node.width = totalWidth;
-    node.height = totalHeight;
-
-    const availableTextSpace = totalWidth - ICON_SIZE - ICON_PADDING * 2;
-    labelXOffset =
-      -totalWidth / 2 + ICON_SIZE + ICON_PADDING + availableTextSpace / 2 - bbox.width / 2;
     label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
-  } else {
-    node.width = totalWidth;
-    node.height = totalHeight;
   }
   const x = -totalWidth / 2;
   const y = -totalHeight / 2;

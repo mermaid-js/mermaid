@@ -1,3 +1,4 @@
+import rough from 'roughjs';
 import { log } from '../../../logger.js';
 import type { Bounds, D3Selection, Point } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
@@ -5,10 +6,6 @@ import type { MindmapOptions, Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
-import rough from 'roughjs';
-
-const ICON_SIZE = 30;
-const ICON_PADDING = 20;
 
 export async function circle<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -25,21 +22,19 @@ export async function circle<T extends SVGGraphicsElement>(
   );
 
   const padding = options?.padding ?? halfPadding;
-  let radius = bbox.width / 2 + padding;
-  let labelXOffset = -bbox.width / 2;
-  const labelYOffset = -bbox.height / 2;
 
-  if (node.icon) {
-    const totalWidthNeeded = bbox.width + ICON_SIZE + ICON_PADDING * 2;
-    const minRadiusWithIcon = totalWidthNeeded / 2 + padding;
-    radius = Math.max(radius, minRadiusWithIcon);
-    labelXOffset = -radius + ICON_SIZE + ICON_PADDING;
-    label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
-  }
+  const radius = bbox.width / 2 + padding;
 
   node.width = radius * 2;
   node.height = radius * 2;
+
+  const labelXOffset = -bbox.width / 2;
+  const labelYOffset = -bbox.height / 2;
+  if (node.icon) {
+    label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
+  }
   let circleElem;
+  const { cssStyles } = node;
 
   if (node.look === 'handDrawn') {
     // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
@@ -48,9 +43,7 @@ export async function circle<T extends SVGGraphicsElement>(
     const roughNode = rc.circle(0, 0, radius * 2, options);
 
     circleElem = shapeSvg.insert(() => roughNode, ':first-child');
-    circleElem
-      .attr('class', 'basic label-container')
-      .attr('style', handleUndefinedAttr(node.cssStyles));
+    circleElem.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
   } else {
     circleElem = shapeSvg
       .insert('circle', ':first-child')

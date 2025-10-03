@@ -4,94 +4,11 @@ import type { Node, NonClusterNode, ShapeRenderOptions } from '../types.js';
 import type { SVGGroup } from '../../mermaid.js';
 import type { D3Selection } from '../../types.js';
 import type { graphlib } from 'dagre-d3-es';
-import { getIconSVG, isIconAvailable } from '../icons.js';
 
 type ShapeHandler = (typeof shapes)[keyof typeof shapes];
 type NodeElement = D3Selection<SVGAElement> | Awaited<ReturnType<ShapeHandler>>;
 
 const nodeElems = new Map<string, NodeElement>();
-
-async function renderNodeIcon(
-  parentElement: NodeElement,
-  node: Node,
-  isCircle: boolean,
-  section: number
-) {
-  if (!node.icon) {
-    return;
-  }
-
-  let iconName = node.icon;
-  const isCssFormat = iconName.includes(' ');
-  if (isCssFormat) {
-    iconName = iconName.replace(' ', ':');
-  }
-
-  const iconSize = 30;
-  const nodeWidth = node.width || 100;
-
-  const getTransform = () => {
-    if (isCircle) {
-      const iconPadding = isCssFormat ? 15 : 20; // fallback padding
-      const radius = nodeWidth / 2;
-      return `translate(${-radius + iconSize / 2 + iconPadding}, 0)`;
-    } else {
-      return `translate(${-nodeWidth / 2 + iconSize / 2 + 10}, 0)`;
-    }
-  };
-
-  const createForeignObject = (x: number, y: number) => {
-    const foreignObjectElem = parentElement
-      .append('foreignObject')
-      .attr('width', `${iconSize}px`)
-      .attr('height', `${iconSize}px`)
-      .attr('x', x)
-      .attr('y', y)
-      .attr(
-        'style',
-        'display: flex; align-items: center; justify-content: center; text-align: center;'
-      );
-
-    foreignObjectElem
-      .append('div')
-      .attr('class', 'icon-container')
-      .attr(
-        'style',
-        'width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;'
-      )
-      .append('i')
-      .attr(
-        'class',
-        `node-icon-${section} ${isCssFormat ? (node.icon ?? '') : (node.icon ?? '').replace(':', ' ')}`
-      )
-      .attr('style', `font-size: ${iconSize}px;`);
-
-    return foreignObjectElem;
-  };
-
-  try {
-    if (await isIconAvailable(iconName)) {
-      const iconSvg = await getIconSVG(
-        iconName,
-        { width: iconSize, height: iconSize },
-        { class: 'label-icon' }
-      );
-      const iconElem = parentElement.append('g').html(`<g>${iconSvg}</g>`);
-      iconElem.attr('transform', getTransform());
-      iconElem.attr('style', 'color: currentColor;');
-      return;
-    }
-  } catch (error) {
-    log.debug('SVG icon rendering failed, falling back to CSS:', error);
-  }
-
-  if (isCircle) {
-    const radius = nodeWidth / 2;
-    createForeignObject(-radius + 15, -iconSize / 2);
-  } else {
-    createForeignObject(-nodeWidth / 2 + 30, -iconSize / 2);
-  }
-}
 
 export async function insertNode(
   elem: SVGGroup,
@@ -117,6 +34,7 @@ export async function insertNode(
   }
 
   if (node.link) {
+    // Add link when appropriate
     let target;
     if (renderOptions.config.securityLevel === 'sandbox') {
       target = '_top';
@@ -132,14 +50,6 @@ export async function insertNode(
     el = await shapeHandler(elem, node, renderOptions);
     newEl = el;
   }
-
-  if (node.icon && newEl) {
-    const section = node.section || 0;
-    const isCircle = node.shape === 'circle' || node.shape === 'mindmapCircle';
-
-    await renderNodeIcon(newEl, node, isCircle, section);
-  }
-
   if (node.tooltip) {
     el.attr('title', node.tooltip);
   }

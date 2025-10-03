@@ -2,11 +2,8 @@ import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } f
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import type { D3Selection } from '../../../types.js';
 import rough from 'roughjs';
-
-const ICON_SIZE = 30;
-const ICON_PADDING = 1;
+import type { D3Selection } from '../../../types.js';
 
 export const createHexagonPathD = (
   x: number,
@@ -29,27 +26,21 @@ export const createHexagonPathD = (
 export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  let h = bbox.height + (node.padding ?? 0);
-  let w = bbox.width + (node.padding ?? 0) * 2.5;
+  const h = bbox.height + (node.padding ?? 0);
+  const w = bbox.width + (node.padding ?? 0) * 2.5;
 
-  let labelXOffset = -bbox.width / 2;
+  node.width = w;
+  node.height = h;
+
+  const labelXOffset = -bbox.width / 2;
+
   const labelYOffset = -bbox.height / 2;
+
   if (node.icon) {
-    const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + (node.padding ?? 0) * 2.5;
-    w = Math.max(w, minWidthWithIcon);
-    h = Math.max(h, ICON_SIZE + (node.padding ?? 0));
-
-    node.width = w;
-    node.height = h;
-
-    const availableTextSpace = w - ICON_SIZE - ICON_PADDING * 2;
-    labelXOffset = -w / 2 + ICON_SIZE + ICON_PADDING + availableTextSpace / 2 - bbox.width / 2;
     label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
-  } else {
-    node.width = w;
-    node.height = h;
   }
   const { cssStyles } = node;
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason

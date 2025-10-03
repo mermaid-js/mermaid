@@ -3,13 +3,16 @@ import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
 import type { Bounds, Point } from '../../../types.js';
-import rough from 'roughjs';
+import {
+  calculateMindmapDimensions,
+  getMindmapIconConfig,
+  insertMindmapIcon,
+} from '../../../diagrams/mindmap/mindmapIconHelper.js';
 
-const ICON_SIZE = 30;
-const ICON_PADDING = 1;
 export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -19,14 +22,21 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     getNodeClasses(node)
   );
 
-  let w = bbox.width + 10 * halfPadding;
-  let h = bbox.height + 8 * halfPadding;
+  const baseWidth = bbox.width + 10 * halfPadding;
+  const baseHeight = bbox.height + 8 * halfPadding;
 
-  if (node.icon) {
-    const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + 10 * halfPadding;
-    w = Math.max(w, minWidthWithIcon);
-    h = Math.max(h, ICON_SIZE + 8 * halfPadding);
-  }
+  const iconConfig = getMindmapIconConfig('bang');
+  const dimensions = calculateMindmapDimensions(
+    node,
+    bbox,
+    baseWidth,
+    baseHeight,
+    halfPadding,
+    iconConfig
+  );
+
+  const w = dimensions.width;
+  const h = dimensions.height;
 
   node.width = w;
   node.height = h;
@@ -36,21 +46,14 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
   const effectiveWidth = Math.max(w, minWidth);
   const effectiveHeight = Math.max(h, minHeight);
 
-  let labelXOffset = -bbox.width / 2;
-  if (node.icon) {
-    const iconSpace = ICON_SIZE + ICON_PADDING;
-    const remainingWidth = effectiveWidth - iconSpace;
-    labelXOffset = -effectiveWidth / 2 + iconSpace + (remainingWidth - bbox.width) / 2;
-    label.attr('transform', `translate(${labelXOffset}, ${-bbox.height / 2})`);
-  }
+  label.attr('transform', `translate(${dimensions.labelOffset.x}, ${dimensions.labelOffset.y})`);
 
   const r = 0.15 * effectiveWidth;
-  let bangElem;
   const path = `M0 0
-	    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${-1 * effectiveHeight * 0.1}
-	    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
-	    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
-	    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${effectiveHeight * 0.1}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${-1 * effectiveHeight * 0.1}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${0}
+    a${r},${r} 1 0,0 ${effectiveWidth * 0.25},${effectiveHeight * 0.1}
 
     a${r},${r} 1 0,0 ${effectiveWidth * 0.15},${effectiveHeight * 0.33}
     a${r * 0.8},${r * 0.8} 1 0,0 0,${effectiveHeight * 0.34}
@@ -66,6 +69,7 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
     a${r},${r} 1 0,0 ${effectiveWidth * 0.1},${-1 * effectiveHeight * 0.33}
   H0 V0 Z`;
 
+  let bangElem;
   if (node.look === 'handDrawn') {
     // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
     const rc = rough.svg(shapeSvg);
@@ -85,6 +89,10 @@ export async function bang<T extends SVGGraphicsElement>(parent: D3Selection<T>,
 
   // Translate the path (center the shape)
   bangElem.attr('transform', `translate(${-effectiveWidth / 2}, ${-effectiveHeight / 2})`);
+
+  if (node.icon) {
+    await insertMindmapIcon(shapeSvg, node, iconConfig);
+  }
 
   updateNodeBounds(node, bangElem);
   node.calcIntersect = function (bounds: Bounds, point: Point) {

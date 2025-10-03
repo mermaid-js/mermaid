@@ -1,3 +1,4 @@
+import rough from 'roughjs';
 import { log } from '../../../logger.js';
 import type { Bounds, D3Selection, Point } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
@@ -5,10 +6,12 @@ import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
-import rough from 'roughjs';
+import {
+  getMindmapIconConfig,
+  calculateMindmapDimensions,
+  insertMindmapIcon,
+} from '../../../diagrams/mindmap/mindmapIconHelper.js';
 
-const ICON_SIZE = 30;
-const ICON_PADDING = 15;
 export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
@@ -19,26 +22,26 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
     getNodeClasses(node)
   );
 
-  let w = bbox.width + 2 * halfPadding;
-  let h = bbox.height + 2 * halfPadding;
+  const baseWidth = bbox.width + 2 * halfPadding;
+  const baseHeight = bbox.height + 2 * halfPadding;
 
-  let labelXOffset = -bbox.width / 2;
-  const labelYOffset = -bbox.height / 2;
-  if (node.icon) {
-    const minWidthWithIcon = bbox.width + ICON_SIZE + ICON_PADDING * 2 + 2 * halfPadding;
-    w = Math.max(w, minWidthWithIcon);
-    h = Math.max(h, ICON_SIZE + 2 * halfPadding);
+  const iconConfig = getMindmapIconConfig('cloud');
+  const dimensions = calculateMindmapDimensions(
+    node,
+    bbox,
+    baseWidth,
+    baseHeight,
+    halfPadding,
+    iconConfig
+  );
 
-    node.width = w;
-    node.height = h;
+  const w = dimensions.width;
+  const h = dimensions.height;
 
-    const availableTextSpace = w - ICON_SIZE - ICON_PADDING * 2;
-    labelXOffset = -w / 2 + ICON_SIZE + ICON_PADDING + availableTextSpace / 2 - bbox.width / 2;
-    label.attr('transform', `translate(${labelXOffset}, ${labelYOffset})`);
-  } else {
-    node.width = w;
-    node.height = h;
-  }
+  node.width = w;
+  node.height = h;
+
+  label.attr('transform', `translate(${dimensions.labelOffset.x}, ${dimensions.labelOffset.y})`);
 
   // Cloud radii
   const r1 = 0.15 * w;
@@ -46,6 +49,7 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
   const r3 = 0.35 * w;
   const r4 = 0.2 * w;
 
+  const { cssStyles } = node;
   let cloudElem;
 
   // Cloud path
@@ -71,9 +75,7 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
     const options = userNodeOverrides(node, {});
     const roughNode = rc.path(path, options);
     cloudElem = shapeSvg.insert(() => roughNode, ':first-child');
-    cloudElem
-      .attr('class', 'basic label-container')
-      .attr('style', handleUndefinedAttr(node.cssStyles));
+    cloudElem.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
   } else {
     cloudElem = shapeSvg
       .insert('path', ':first-child')
@@ -84,6 +86,10 @@ export async function cloud<T extends SVGGraphicsElement>(parent: D3Selection<T>
 
   // Center the shape
   cloudElem.attr('transform', `translate(${-w / 2}, ${-h / 2})`);
+
+  if (node.icon) {
+    await insertMindmapIcon(shapeSvg, node, iconConfig);
+  }
 
   updateNodeBounds(node, cloudElem);
 
