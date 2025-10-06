@@ -168,6 +168,7 @@ export class FlowDB implements DiagramDB {
       if (txt.startsWith('"') && txt.endsWith('"')) {
         txt = txt.substring(1, txt.length - 1);
       }
+      txt = txt.replace(/\\\s*\n/g, '\n');
       vertex.text = txt;
     } else {
       if (vertex.text === undefined) {
