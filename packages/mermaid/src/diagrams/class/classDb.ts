@@ -473,6 +473,16 @@ export class ClassDB implements DiagramDB {
     LOLLIPOP: 4,
   };
 
+  // Utility function to escape HTML meta-characters
+  private escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   private readonly setupToolTips = (element: Element) => {
     let tooltipElem = select<HTMLDivElement, unknown>('.mermaidTooltip');
     if (tooltipElem.empty()) {
@@ -509,7 +519,7 @@ export class ClassDB implements DiagramDB {
         const rect = (event.currentTarget as Element).getBoundingClientRect();
         tooltipElem.transition().duration(200).style('opacity', '.9');
         tooltipElem
-          .html(title.replace(/&lt;br\/&gt;/g, '<br/>'))
+          .html(this.escapeHtml(title).replace(/&lt;br\/&gt;/g, '<br/>'))
           .style('left', `${window.scrollX + rect.left + rect.width / 2}px`)
           .style('top', `${window.scrollY + rect.bottom + 4}px`);
 
