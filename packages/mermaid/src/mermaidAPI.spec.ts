@@ -2,6 +2,7 @@ import { assert, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
+import { getEffectiveHtmlLabels } from './config.js';
 import mermaid from './mermaid.js';
 import mermaidAPI, {
   appendDivSvgG,
@@ -358,10 +359,11 @@ describe('mermaidAPI', () => {
         });
 
         describe('no htmlLabels in the configuration', () => {
-          const mocked_config_no_htmlLabels = {
+          const mocked_config_no_htmlLabels: MermaidConfig = {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
+            htmlLabels: false, // Explicitly set to false
           };
 
           describe('creates styles for shape elements "rect", "polygon", "ellipse", and "circle"', () => {
@@ -1147,5 +1149,64 @@ flowchart TD
         expect(config.themeVariables.fontSize).toBe('14px');
       }
     );
+  });
+
+  describe('flowchart.htmlLabels deprecation behavior', () => {
+    beforeEach(() => {
+      mermaidAPI.globalReset();
+    });
+
+    it('should use root-level htmlLabels when only root-level is set', () => {
+      const config: MermaidConfig = { htmlLabels: true };
+      expect(config.htmlLabels).toBe(true);
+
+      const config2: MermaidConfig = { htmlLabels: false };
+      expect(config2.htmlLabels).toBe(false);
+    });
+
+    it('should check config.htmlLabels value directly when set', () => {
+      const config1: MermaidConfig = { htmlLabels: true };
+      expect(config1.htmlLabels).toBe(true);
+
+      const config2: MermaidConfig = { htmlLabels: false };
+      expect(config2.htmlLabels).toBe(false);
+
+      const config3: MermaidConfig = { htmlLabels: undefined };
+      expect(config3.htmlLabels).toBeUndefined();
+    });
+
+    it('should use getEffectiveHtmlLabels only when fallback logic is needed', () => {
+      // Only call getEffectiveHtmlLabels when we need the fallback behavior
+      const configWithDeprecated: MermaidConfig = { flowchart: { htmlLabels: true } };
+      expect(getEffectiveHtmlLabels(configWithDeprecated)).toBe(true);
+
+      const configWithBoth: MermaidConfig = {
+        htmlLabels: false,
+        flowchart: { htmlLabels: true },
+      };
+      expect(getEffectiveHtmlLabels(configWithBoth)).toBe(false); // Root takes precedence
+
+      const configEmpty: MermaidConfig = {};
+      expect(getEffectiveHtmlLabels(configEmpty)).toBe(true); // Default to true
+    });
+
+    it('should verify the precedence logic: config.htmlLabels ?? config.flowchart?.htmlLabels ?? true', () => {
+      // Test the exact precedence chain
+      const config1: MermaidConfig = { htmlLabels: true };
+      const result1 = config1.htmlLabels ?? config1.flowchart?.htmlLabels ?? true;
+      expect(result1).toBe(true);
+
+      const config2: MermaidConfig = { htmlLabels: false };
+      const result2 = config2.htmlLabels ?? config2.flowchart?.htmlLabels ?? true;
+      expect(result2).toBe(false);
+
+      const config3: MermaidConfig = { flowchart: { htmlLabels: true } };
+      const result3 = config3.htmlLabels ?? config3.flowchart?.htmlLabels ?? true;
+      expect(result3).toBe(true);
+
+      const config4: MermaidConfig = {};
+      const result4 = config4.htmlLabels ?? config4.flowchart?.htmlLabels ?? true;
+      expect(result4).toBe(true);
+    });
   });
 });

@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import { getEffectiveHtmlLabels } from '../../config.js';
 import type { MermaidConfig } from '../../config.type.js';
 
 // Remove and ignore br:s
@@ -64,7 +65,7 @@ export const removeScript = (txt: string): string => {
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
-  if (config.flowchart?.htmlLabels !== false) {
+  if (getEffectiveHtmlLabels(config)) {
     const level = config.securityLevel;
     if (level === 'antiscript' || level === 'strict') {
       text = removeScript(text);

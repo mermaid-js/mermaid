@@ -248,7 +248,12 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   diagramPadding?: number;
   /**
-   * Flag for setting whether or not a html tag should be used for rendering labels on the edges.
+   * @deprecated
+   * **DEPRECATED: Use global `htmlLabels` instead.**
+   *
+   * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
+   * This property is deprecated.
+   * Please use the global `htmlLabels` configuration instead.
    *
    */
   htmlLabels?: boolean;

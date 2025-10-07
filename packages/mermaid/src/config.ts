@@ -227,6 +227,8 @@ export const reset = (config = siteConfig): void => {
 const ConfigWarning = {
   LAZY_LOAD_DEPRECATED:
     'The configuration options lazyLoadedDiagrams and loadExternalDiagramsAtStartup are deprecated. Please use registerExternalDiagrams instead.',
+  FLOWCHART_HTML_LABELS_DEPRECATED:
+    'flowchart.htmlLabels is deprecated. Please use global htmlLabels instead.',
 } as const;
 
 type ConfigWarningStrings = keyof typeof ConfigWarning;
@@ -261,4 +263,16 @@ export const getUserDefinedConfig = (): MermaidConfig => {
   }
 
   return userConfig;
+};
+
+/**
+ * Helper function to handle deprecated flowchart.htmlLabels
+ * @param config - The configuration object
+ */
+export const getEffectiveHtmlLabels = (config: MermaidConfig): boolean => {
+  if (config.flowchart?.htmlLabels !== undefined) {
+    issueWarning('FLOWCHART_HTML_LABELS_DEPRECATED');
+  }
+
+  return config.htmlLabels ?? config.flowchart?.htmlLabels ?? true;
 };
