@@ -608,11 +608,9 @@ const compileTasks = function () {
       );
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
-        rawTasks[pos].manualEndTime = dayjs(
-          rawTasks[pos].raw.endTime.data,
-          'YYYY-MM-DD',
-          true
-        ).isValid();
+        const formattedDate = dateFormat?.trim ? dateFormat.trim() : '';
+        rawTasks[pos].manualEndTime =
+          formattedDate && dayjs(rawTasks[pos].raw.endTime.data, formattedDate, true).isValid();
         checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
