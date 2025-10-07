@@ -67,7 +67,22 @@ export const render = async (
 
     // Add the element to the DOM
     if (!node.isGroup) {
-      const child = node as NodeWithVertex;
+      // const child = node as NodeWithVertex;
+      const child: NodeWithVertex = {
+        id: node.id,
+        width: node.width,
+        height: node.height,
+        // Store the original node data for later use
+        label: node.label,
+        isGroup: node.isGroup,
+        shape: node.shape,
+        padding: node.padding,
+        cssClasses: node.cssClasses,
+        cssStyles: node.cssStyles,
+        look: node.look,
+        // Include parentId for subgraph processing
+        parentId: node.parentId,
+      };
       graph.children.push(child);
       nodeDb[node.id] = node;
 
@@ -150,7 +165,7 @@ export const render = async (
         domId: { node: () => any; attr: (arg0: string, arg1: string) => void };
       }) {
         if (node) {
-          nodeDb[node.id] = node;
+          nodeDb[node.id] ??= {};
           nodeDb[node.id].offset = {
             posX: node.x + relX,
             posY: node.y + relY,
@@ -860,11 +875,13 @@ export const render = async (
     log.info('APA01 layout result:', JSON.stringify(g, null, 2));
   } catch (error) {
     log.error('APA01 ELK layout error:', error);
+    log.error('APA01 elkGraph that caused error:', JSON.stringify(elkGraph, null, 2));
     throw error;
   }
 
   // debugger;
   await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
+
   g.edges?.map(
     (edge: {
       sources: (string | number)[];
