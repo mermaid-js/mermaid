@@ -611,6 +611,21 @@ You have to call mermaid.initialize.`
         const el = select(e.currentTarget as Element);
         el.classed('hover', false);
       });
+    // @ts-ignore TODO: fix this
+    tooltipElem = select('body')
+      .append('div')
+      .attr('class', 'mermaidTooltip')
+      .style('opacity', 0)
+      .style('position', 'absolute')
+      .style('text-align', 'center')
+      .style('max-width', '200px')
+      .style('padding', '2px')
+      .style('font-size', '12px')
+      .style('background', '#ffffde')
+      .style('border', '1px solid #333')
+      .style('border-radius', '2px')
+      .style('pointer-events', 'none')
+      .style('z-index', '100');
   }
 
   /**
