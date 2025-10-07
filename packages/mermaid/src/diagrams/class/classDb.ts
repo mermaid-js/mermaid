@@ -1,4 +1,4 @@
-import { select, type Selection } from 'd3';
+import { select } from 'd3';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import common from '../common/common.js';
@@ -474,42 +474,50 @@ export class ClassDB implements DiagramDB {
   };
 
   private readonly setupToolTips = (element: Element) => {
-    let tooltipElem: Selection<HTMLDivElement, unknown, HTMLElement, unknown> =
-      select('.mermaidTooltip');
-    // @ts-expect-error - Incorrect types
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
+    let tooltipElem = select<HTMLDivElement, unknown>('.mermaidTooltip');
+    if (tooltipElem.empty()) {
       tooltipElem = select('body')
         .append('div')
         .attr('class', 'mermaidTooltip')
-        .style('opacity', 0);
+        .style('opacity', 0)
+        .style('position', 'absolute')
+        .style('text-align', 'center')
+        .style('max-width', '200px')
+        .style('padding', '2px')
+        .style('font-size', '12px')
+        .style('background', '#ffffde')
+        .style('border', '1px solid #333')
+        .style('border-radius', '2px')
+        .style('pointer-events', 'none')
+        .style('z-index', '100');
     }
 
     const svg = select(element).select('svg');
 
-    const nodes = svg.selectAll('g.node');
+    const nodes = svg.selectAll('g').filter(function () {
+      return select(this).attr('title') !== null;
+    });
+
     nodes
       .on('mouseover', (event: MouseEvent) => {
         const el = select(event.currentTarget as HTMLElement);
         const title = el.attr('title');
-        // Don't try to draw a tooltip if no data is provided
-        if (title === null) {
+        if (!title) {
           return;
         }
-        // @ts-ignore - getBoundingClientRect is not part of the d3 type definition
-        const rect = this.getBoundingClientRect();
 
+        const rect = (event.currentTarget as Element).getBoundingClientRect();
         tooltipElem.transition().duration(200).style('opacity', '.9');
         tooltipElem
-          .text(el.attr('title'))
-          .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
-          .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
+          .html(title.replace(/&lt;br\/&gt;/g, '<br/>'))
+          .style('left', `${window.scrollX + rect.left + rect.width / 2}px`)
+          .style('top', `${window.scrollY + rect.bottom + 4}px`);
+
         el.classed('hover', true);
       })
       .on('mouseout', (event: MouseEvent) => {
         tooltipElem.transition().duration(500).style('opacity', 0);
-        const el = select(event.currentTarget as HTMLElement);
-        el.classed('hover', false);
+        select(event.currentTarget as HTMLElement).classed('hover', false);
       });
   };
 
