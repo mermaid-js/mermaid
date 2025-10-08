@@ -194,8 +194,16 @@ export async function replaceIconSubstring(
   config: MermaidConfig = {}
 ): Promise<string> {
   const pendingReplacements: Promise<string>[] = [];
-  // cspell: disable-next-line
-  text.replace(/(fa[bklrs]?):fa-([\w-]+)/g, (fullMatch, prefix, iconName) => {
+
+  // Define icon regex patterns
+  const iconPatterns = [
+    // cspell: disable-next-line
+    /(fa[bklrs]?):fa-([\w-]+)/g, // FontAwesome icons
+    /(logos|mdi|symbols):([\w-]+)/g, // Other icon types
+  ];
+
+  // Helper function to process icon replacements
+  const processIconMatch = (fullMatch: string, prefix: string, iconName: string) => {
     pendingReplacements.push(
       (async () => {
         const registeredIconName = `${prefix}:${iconName}`;
@@ -207,11 +215,24 @@ export async function replaceIconSubstring(
       })()
     );
     return fullMatch;
+  };
+
+  // Process each icon pattern
+  iconPatterns.forEach((pattern) => {
+    text.replace(pattern, (fullMatch, prefix, iconName) => {
+      return processIconMatch(fullMatch, prefix, iconName);
+    });
   });
 
   const replacements = await Promise.all(pendingReplacements);
-  // cspell: disable-next-line
-  return text.replace(/(fa[bklrs]?):fa-([\w-]+)/g, () => replacements.shift() ?? '');
+
+  // Apply replacements using the same patterns
+  let result = text;
+  iconPatterns.forEach((pattern) => {
+    result = result.replace(pattern, () => replacements.shift() ?? '');
+  });
+
+  return result;
 }
 
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to set classes to 'nodeLabel' when isNode=true otherwise 'edgeLabel'
