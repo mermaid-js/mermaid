@@ -1,3 +1,4 @@
+import { select } from 'd3';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import { generateId } from '../../utils.js';
@@ -204,6 +205,9 @@ export class StateDB {
   private dividerCnt = 0;
   private links = new Map<string, { url: string; tooltip: string }>();
 
+  // Functions to be run after graph rendering
+  private funs: ((element: Element) => void)[] = []; // cspell:ignore funs
+
   static readonly relationType = {
     AGGREGATION: 0,
     EXTENSION: 1,
@@ -218,6 +222,7 @@ export class StateDB {
     this.getDividerId = this.getDividerId.bind(this);
     this.setDirection = this.setDirection.bind(this);
     this.trimColon = this.trimColon.bind(this);
+    this.bindFunctions = this.bindFunctions.bind(this);
   }
 
   /**
@@ -452,6 +457,7 @@ export class StateDB {
   clear(saveCommon?: boolean) {
     this.nodes = [];
     this.edges = [];
+    this.funs = [this.setupToolTips.bind(this)];
     this.documents = { root: newDoc() };
     this.currentDocument = this.documents.root;
 
@@ -637,6 +643,46 @@ export class StateDB {
     return this.classes;
   }
 
+  private setupToolTips(element: Element) {
+    let tooltipElem = select('.mermaidTooltip');
+    // @ts-ignore TODO: fix this
+    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
+      // @ts-ignore TODO: fix this
+      tooltipElem = select('body')
+        .append('div')
+        .attr('class', 'mermaidTooltip')
+        .style('opacity', 0);
+    }
+
+    const svg = select(element).select('svg');
+
+    const nodes = svg.selectAll('g.node');
+    nodes
+      .on('mouseover', (e: MouseEvent) => {
+        const el = select(e.currentTarget as Element);
+        const title = el.attr('title');
+
+        // Don't try to draw a tooltip if no data is provided
+        if (title === null) {
+          return;
+        }
+        const rect = (e.currentTarget as Element)?.getBoundingClientRect();
+
+        tooltipElem.transition().duration(200).style('opacity', '.9');
+        tooltipElem
+          .text(el.attr('title'))
+          .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
+          .style('top', window.scrollY + rect.bottom + 'px');
+        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
+        el.classed('hover', true);
+      })
+      .on('mouseout', (e: MouseEvent) => {
+        tooltipElem.transition().duration(500).style('opacity', 0);
+        const el = select(e.currentTarget as Element);
+        el.classed('hover', false);
+      });
+  }
+
   /**
    * Add a (style) class or css class to a state with the given id.
    * If the state isn't already in the list of known states, add it.
@@ -679,6 +725,12 @@ export class StateDB {
    */
   setTextStyle(itemId: string, cssClassName: string) {
     this.getState(itemId)?.textStyles?.push(cssClassName);
+  }
+
+  public bindFunctions(element: Element) {
+    this.funs.forEach((fun) => {
+      fun(element);
+    });
   }
 
   /**
