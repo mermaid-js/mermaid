@@ -1,5 +1,6 @@
 import type { DiagramDB } from '../../diagram-api/types.js';
 import type { UsecaseDiagramConfig } from '../../config.type.js';
+import type { LayoutData } from '../../rendering-util/types.js';
 
 export type ActorMetadata = Record<string, string>;
 
@@ -45,11 +46,17 @@ export interface Relationship {
   label?: string;
 }
 
+// Direction types for usecase diagrams
+export type Direction = 'TB' | 'TD' | 'BT' | 'RL' | 'LR';
+
+export const DEFAULT_DIRECTION: Direction = 'TB';
+
 export interface UsecaseFields {
   actors: Map<string, Actor>;
   useCases: Map<string, UseCase>;
   systemBoundaries: Map<string, SystemBoundary>;
   relationships: Relationship[];
+  direction: Direction;
   config: Required<UsecaseDiagramConfig>;
 }
 
@@ -74,6 +81,13 @@ export interface UsecaseDB extends DiagramDB {
   // Relationship management
   addRelationship: (relationship: Relationship) => void;
   getRelationships: () => Relationship[];
+
+  // Direction management
+  setDirection: (direction: Direction) => void;
+  getDirection: () => Direction;
+
+  // Unified rendering support
+  getData: () => LayoutData;
 
   // Utility methods
   clear: () => void;

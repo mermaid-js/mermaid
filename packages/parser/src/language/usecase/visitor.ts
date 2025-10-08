@@ -30,6 +30,8 @@ import type {
   ArrowContext,
   LabeledArrowContext,
   EdgeLabelContext,
+  DirectionStatementContext,
+  DirectionContext,
 } from './generated/UsecaseParser.js';
 import { ARROW_TYPE } from './types.js';
 import type {
@@ -47,6 +49,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
   private systemBoundaries: SystemBoundary[] = [];
   private relationships: Relationship[] = [];
   private relationshipCounter = 0;
+  private direction = 'TB'; // Default direction
 
   constructor() {
     super();
@@ -58,6 +61,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
     this.visitRelationshipStatement = this.visitRelationshipStatementImpl.bind(this);
     this.visitSystemBoundaryStatement = this.visitSystemBoundaryStatementImpl.bind(this);
     this.visitSystemBoundaryTypeStatement = this.visitSystemBoundaryTypeStatementImpl.bind(this);
+    this.visitDirectionStatement = this.visitDirectionStatementImpl.bind(this);
     this.visitActorName = this.visitActorNameImpl.bind(this);
     this.visitArrow = this.visitArrowImpl.bind(this);
   }
@@ -72,6 +76,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
     this.useCases = [];
     this.relationships = [];
     this.relationshipCounter = 0;
+    this.direction = 'TB'; // Reset direction to default
 
     // Visit all statement children
     if (ctx.statement) {
@@ -90,7 +95,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
 
   /**
    * Visit statement rule
-   * Grammar: statement : actorStatement | relationshipStatement | systemBoundaryStatement | systemBoundaryTypeStatement | NEWLINE ;
+   * Grammar: statement : actorStatement | relationshipStatement | systemBoundaryStatement | systemBoundaryTypeStatement | directionStatement | NEWLINE ;
    */
   private visitStatementImpl(ctx: StatementContext): void {
     if (ctx.actorStatement?.()) {
@@ -101,6 +106,8 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
       this.visitSystemBoundaryStatementImpl(ctx.systemBoundaryStatement()!);
     } else if (ctx.systemBoundaryTypeStatement?.()) {
       this.visitSystemBoundaryTypeStatementImpl(ctx.systemBoundaryTypeStatement()!);
+    } else if (ctx.directionStatement?.()) {
+      this.visitDirectionStatementImpl(ctx.directionStatement()!);
     }
     // NEWLINE is ignored
   }
@@ -592,6 +599,30 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
   }
 
   /**
+   * Visit directionStatement rule
+   * Grammar: directionStatement : 'direction' direction NEWLINE* ;
+   */
+  visitDirectionStatementImpl(ctx: DirectionStatementContext): void {
+    const directionCtx = ctx.direction?.();
+    if (directionCtx) {
+      this.direction = this.visitDirectionImpl(directionCtx);
+    }
+  }
+
+  /**
+   * Visit direction rule
+   * Grammar: direction : 'TB' | 'TD' | 'BT' | 'RL' | 'LR' ;
+   */
+  private visitDirectionImpl(ctx: DirectionContext): string {
+    const text = ctx.getText();
+    // Normalize TD to TB (same as flowchart)
+    if (text === 'TD') {
+      return 'TB';
+    }
+    return text;
+  }
+
+  /**
    * Get the parse result after visiting the diagram
    */
   getParseResult(): UsecaseParseResult {
@@ -600,6 +631,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
       useCases: this.useCases,
       systemBoundaries: this.systemBoundaries,
       relationships: this.relationships,
+      direction: this.direction,
     };
   }
 }

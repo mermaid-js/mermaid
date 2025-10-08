@@ -26,6 +26,7 @@ interface UsecaseParseResult {
     arrowType: number;
     label?: string;
   }[];
+  direction?: string;
   accDescr?: string;
   accTitle?: string;
   title?: string;
@@ -94,10 +95,16 @@ const populateDb = (ast: UsecaseParseResult, db: UsecaseDB) => {
     db.addRelationship(relationship);
   });
 
+  // Set direction if provided
+  if (ast.direction) {
+    db.setDirection(ast.direction as any);
+  }
+
   log.debug('Populated usecase database:', {
     actors: ast.actors.length,
     useCases: ast.useCases.length,
     relationships: ast.relationships.length,
+    direction: ast.direction,
   });
 };
 

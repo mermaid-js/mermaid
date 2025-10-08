@@ -14,6 +14,7 @@ import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
 import { cylinder } from './shapes/cylinder.js';
 import { dividedRectangle } from './shapes/dividedRect.js';
 import { doublecircle } from './shapes/doubleCircle.js';
+import { ellipse } from './shapes/ellipse.js';
 import { filledCircle } from './shapes/filledCircle.js';
 import { flippedTriangle } from './shapes/flippedTriangle.js';
 import { forkJoin } from './shapes/forkJoin.js';
@@ -32,6 +33,8 @@ import { lean_right } from './shapes/leanRight.js';
 import { lightningBolt } from './shapes/lightningBolt.js';
 import { linedCylinder } from './shapes/linedCylinder.js';
 import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
+import { usecaseActor } from './shapes/usecaseActor.js';
+import { usecaseSystemBoundary } from './shapes/usecaseSystemBoundary.js';
 import { multiRect } from './shapes/multiRect.js';
 import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { note } from './shapes/note.js';
@@ -114,6 +117,14 @@ export const shapesDefs = [
     description: 'Terminal point',
     aliases: ['terminal', 'pill'],
     handler: stadium,
+  },
+  {
+    semanticName: 'Ellipse',
+    name: 'Ellipse',
+    shortName: 'ellipse',
+    description: 'Ellipse shape',
+    aliases: ['oval'],
+    handler: ellipse,
   },
   {
     semanticName: 'Subprocess',
@@ -507,6 +518,10 @@ const generateShapeMap = () => {
 
     // Requirement diagram
     requirementBox,
+
+    // Usecase diagram
+    usecaseActor,
+    usecaseSystemBoundary,
   } as const;
 
   const entries = [

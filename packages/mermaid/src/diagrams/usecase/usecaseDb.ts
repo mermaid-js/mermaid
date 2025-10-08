@@ -15,10 +15,15 @@ import type {
   UseCase,
   SystemBoundary,
   Relationship,
+  ActorMetadata,
+  Direction,
 } from './usecaseTypes.js';
+import { DEFAULT_DIRECTION } from './usecaseTypes.js';
 import type { RequiredDeep } from 'type-fest';
 import type { UsecaseDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
+import { getConfig as getGlobalConfig } from '../../diagram-api/diagramAPI.js';
+import type { LayoutData, Node, ClusterNode, Edge } from '../../rendering-util/types.js';
 
 export const DEFAULT_USECASE_CONFIG: Required<UsecaseDiagramConfig> = DEFAULT_CONFIG.usecase;
 
@@ -27,6 +32,7 @@ export const DEFAULT_USECASE_DB: RequiredDeep<UsecaseFields> = {
   useCases: new Map(),
   systemBoundaries: new Map(),
   relationships: [],
+  direction: DEFAULT_DIRECTION,
   config: DEFAULT_USECASE_CONFIG,
 } as const;
 
@@ -34,6 +40,7 @@ let actors = new Map<string, Actor>();
 let useCases = new Map<string, UseCase>();
 let systemBoundaries = new Map<string, SystemBoundary>();
 let relationships: Relationship[] = [];
+let direction: Direction = DEFAULT_DIRECTION;
 const config: Required<UsecaseDiagramConfig> = structuredClone(DEFAULT_USECASE_CONFIG);
 
 const getConfig = (): Required<UsecaseDiagramConfig> => structuredClone(config);
@@ -43,6 +50,7 @@ const clear = (): void => {
   useCases = new Map();
   systemBoundaries = new Map();
   relationships = [];
+  direction = DEFAULT_DIRECTION;
   commonClear();
 };
 
@@ -147,6 +155,122 @@ const addRelationship = (relationship: Relationship): void => {
 
 const getRelationships = (): Relationship[] => relationships;
 
+// Direction management
+const setDirection = (dir: Direction): void => {
+  // Normalize TD to TB (same as flowchart)
+  if (dir === 'TD') {
+    direction = 'TB';
+  } else {
+    direction = dir;
+  }
+  log.debug('Direction set to:', direction);
+};
+
+const getDirection = (): Direction => direction;
+
+// Convert usecase diagram data to LayoutData format for unified rendering
+const getData = (): LayoutData => {
+  const globalConfig = getGlobalConfig();
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  // Convert actors to nodes
+  for (const actor of actors.values()) {
+    const node: Node = {
+      id: actor.id,
+      label: actor.name,
+      description: actor.description ? [actor.description] : undefined,
+      shape: 'usecaseActor', // Use custom actor shape
+      isGroup: false,
+      padding: 10,
+      look: globalConfig.look,
+      // Add metadata as data attributes for styling
+      cssClasses: `usecase-actor ${
+        actor.metadata && Object.keys(actor.metadata).length > 0
+          ? Object.entries(actor.metadata)
+              .map(([key, value]) => `actor-${key}-${value}`)
+              .join(' ')
+          : ''
+      }`.trim(),
+      // Pass actor metadata to the shape handler
+      metadata: actor.metadata,
+    } as Node & { metadata?: ActorMetadata };
+    nodes.push(node);
+  }
+
+  // Convert use cases to nodes
+  for (const useCase of useCases.values()) {
+    const node: Node = {
+      id: useCase.id,
+      label: useCase.name,
+      description: useCase.description ? [useCase.description] : undefined,
+      shape: 'ellipse', // Use ellipse shape for use cases
+      isGroup: false,
+      padding: 10,
+      look: globalConfig.look,
+      cssClasses: 'usecase-element',
+      // If use case belongs to a system boundary, set parentId
+      ...(useCase.systemBoundary && { parentId: useCase.systemBoundary }),
+    };
+    nodes.push(node);
+  }
+
+  // Convert system boundaries to group nodes
+  for (const boundary of systemBoundaries.values()) {
+    const node: ClusterNode & { boundaryType?: string } = {
+      id: boundary.id,
+      label: boundary.name,
+      shape: 'usecaseSystemBoundary', // Use custom usecase system boundary cluster shape
+      isGroup: true, // System boundaries are clusters (containers for other nodes)
+      padding: 20,
+      look: globalConfig.look,
+      cssClasses: `system-boundary system-boundary-${boundary.type ?? 'rect'}`,
+      // Pass boundary type to the shape handler
+      boundaryType: boundary.type,
+    };
+    nodes.push(node);
+  }
+
+  // Convert relationships to edges
+  relationships.forEach((relationship, index) => {
+    const edge: Edge = {
+      id: relationship.id || `edge-${index}`,
+      start: relationship.from,
+      end: relationship.to,
+      source: relationship.from,
+      target: relationship.to,
+      label: relationship.label,
+      type: relationship.type,
+      arrowTypeEnd:
+        relationship.arrowType === 0
+          ? 'arrow_point' // Forward arrow (-->)
+          : 'none', // No end arrow for back arrow or line
+      arrowTypeStart:
+        relationship.arrowType === 1
+          ? 'arrow_point' // Back arrow (<--)
+          : 'none', // No start arrow for forward arrow or line
+      classes: `relationship relationship-${relationship.type}`,
+      look: globalConfig.look,
+      thickness: 'normal',
+      pattern: 'solid',
+    };
+    edges.push(edge);
+  });
+
+  return {
+    nodes,
+    edges,
+    config: globalConfig,
+    // Additional properties that layout algorithms might expect
+    type: 'usecase',
+    layoutAlgorithm: 'dagre', // Default layout algorithm
+    direction: getDirection(), // Use the current direction setting
+    nodeSpacing: 50, // Default node spacing
+    rankSpacing: 50, // Default rank spacing
+    markers: ['arrow_point'], // Arrow point markers used in usecase diagrams
+  };
+};
+
 export const db: UsecaseDB = {
   getConfig,
 
@@ -172,4 +296,11 @@ export const db: UsecaseDB = {
 
   addRelationship,
   getRelationships,
+
+  // Direction management
+  setDirection,
+  getDirection,
+
+  // Add getData method for unified rendering
+  getData,
 };

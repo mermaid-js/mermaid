@@ -49,6 +49,7 @@ export interface UsecaseParseResult {
   useCases: UseCase[];
   systemBoundaries: SystemBoundary[];
   relationships: Relationship[];
+  direction?: string;
   accDescr?: string;
   accTitle?: string;
   title?: string;

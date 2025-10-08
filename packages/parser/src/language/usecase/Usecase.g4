@@ -10,6 +10,7 @@ statement
     | relationshipStatement
     | systemBoundaryStatement
     | systemBoundaryTypeStatement
+    | directionStatement
     | NEWLINE
     ;
 
@@ -117,6 +118,18 @@ labeledArrow
 edgeLabel
     : IDENTIFIER
     | STRING
+    ;
+
+directionStatement
+    : 'direction' direction NEWLINE*
+    ;
+
+direction
+    : 'TB'
+    | 'TD'
+    | 'BT'
+    | 'RL'
+    | 'LR'
     ;
 
 // Lexer rules

@@ -1,0 +1,234 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Recursive:wght@300..1000&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .recursive-500 {
+        font-family: 'Recursive', serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        font-variation-settings:
+          'slnt' 0,
+          'CASL' 0,
+          'CRSV' 0.5,
+          'MONO' 0;
+      }
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background: #333; */
+        /* font-family: 'Arial'; */
+        font-family: 'Recursive', serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        font-variation-settings:
+          'slnt' 0,
+          'CASL' 0,
+          'CRSV' 0.5,
+          'MONO' 0;
+        /* color: white; */
+        /* font-size: 18px !important; */
+      }
+      .gridify.tiny {
+        background-image:
+          linear-gradient(transparent 11px, rgba(220, 220, 200, 0.8) 12px, transparent 12px),
+          linear-gradient(90deg, transparent 11px, rgba(220, 220, 200, 0.8) 12px, transparent 12px);
+        background-size:
+          100% 12px,
+          12px 100%;
+      }
+
+      .gridify.dots {
+        background-image: radial-gradient(
+          circle at center,
+          rgba(220, 220, 200, 0.8) 1px,
+          transparent 1px
+        );
+        background-size: 24px 24px;
+      }
+
+      h1 {
+        color: grey;
+      }
+
+      .mermaid2 {
+        display: none;
+      }
+
+      .mermaid svg {
+        font-size: 16px !important;
+        font-family: 'Recursive', serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        font-variation-settings:
+          'slnt' 0,
+          'CASL' 0,
+          'CRSV' 0.5,
+          'MONO' 0;
+      }
+
+      pre {
+        width: 100%;
+        /*box-shadow: 4px 4px 0px 0px #0000000F;*/
+      }
+    </style>
+  </head>
+
+  <body class="gridify dots">
+    <p class="mb-20">Test Diagram</p>
+    <div class="w-full h-64">
+      <pre id="diagram4" class="mermaid">
+usecase
+direction LR
+        actor User1, User2, User3, User4
+        actor Admin1, Admin2
+        actor System1@{ "icon": "bell" }
+        actor System2@{ "icon": "database" }
+
+        systemBoundary "Module A"
+          "Feature A1"
+          "Feature A2"
+          "Admin A1"
+
+        end
+        "Module A"@{ type: package }
+
+        systemBoundary "Module B"
+          "Feature B1"
+          "Feature B2"
+          "Admin B1"
+        end
+
+        User1 --important--> "Feature A1"
+        User2 --> "Feature A2"
+        Admin1 --> "Admin A1"
+        User3 --> "Feature B1"
+        User4 --> "Feature B2"
+        Admin2 --> "Admin B1"
+
+        System1 <-- "Feature A1"
+        System1 <-- "Feature B1"
+        System2 <-- "Admin A1"
+        System2 <-- "Admin B1"
+
+        User1 --"collaborates"--> User2
+        Admin1 --"supervises"--> Admin2
+
+    </pre
+      >
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+
+      const staticBellIconPack = {
+        prefix: 'fa6-regular',
+        icons: {
+          bell: {
+            body: '<path fill="currentColor" d="M224 0c-17.7 0-32 14.3-32 32v19.2C119 66 64 130.6 64 208v25.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416h400c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6c-28.3-35.5-43.8-79.6-43.8-125V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32m0 96c61.9 0 112 50.1 112 112v25.4c0 47.9 13.9 94.6 39.7 134.6H72.3c25.8-40 39.7-86.7 39.7-134.6V208c0-61.9 50.1-112 112-112m64 352H160c0 17 6.7 33.3 18.7 45.3S207 512 224 512s33.3-6.7 45.3-18.7S288 465 288 448"/>',
+            width: 448,
+          },
+        },
+        width: 512,
+        height: 512,
+      };
+
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos@1/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/fa6-solid/icons.json').then((res) => res.json()),
+        },
+      ]);
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
+      function callback() {
+        alert('It worked');
+      }
+      await mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        // theme: 'forest',
+        // handDrawnSeed: 12,
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        layout: 'elk',
+        // layout: 'elk',
+        // layout: 'fixed',
+        // htmlLabels: false,
+        flowchart: { titleTopMargin: 10 },
+
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        // fontFamily: 'courier',
+        fontFamily: 'Recursive',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        kanban: {
+          htmlLabels: false,
+        },
+        fontSize: 16,
+        logLevel: 0,
+        securityLevel: 'loose',
+        callback,
+      });
+      // setTimeout(() => {
+      mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+      // }, 1000);
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+</html>
