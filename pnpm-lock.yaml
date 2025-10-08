@@ -14014,13 +14014,6 @@ snapshots:
 
   ansi-styles@6.2.3: {}
 
-  antlr-ng@1.0.10:
-    dependencies:
-      antlr4ng: 3.0.16
-      commander: 13.1.0
-      stringtemplate4ts: 1.0.9
-      unicode-properties: 1.4.1
-
   antlr4@4.11.0: {}
 
   antlr4ng@3.0.15: {}
@@ -20399,11 +20392,6 @@ snapshots:
   unicode-match-property-value-ecmascript@2.2.1: {}
 
   unicode-property-aliases-ecmascript@2.2.0: {}
-
-  unicode-trie@2.0.0:
-    dependencies:
-      pako: 0.2.9
-      tiny-inflate: 1.0.3
 
   unicorn-magic@0.3.0: {}
 
