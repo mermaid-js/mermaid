@@ -34,7 +34,6 @@ import { lightningBolt } from './shapes/lightningBolt.js';
 import { linedCylinder } from './shapes/linedCylinder.js';
 import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
 import { usecaseActor } from './shapes/usecaseActor.js';
-import { usecaseSystemBoundary } from './shapes/usecaseSystemBoundary.js';
 import { multiRect } from './shapes/multiRect.js';
 import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { note } from './shapes/note.js';
@@ -521,7 +520,6 @@ const generateShapeMap = () => {
 
     // Usecase diagram
     usecaseActor,
-    usecaseSystemBoundary,
   } as const;
 
   const entries = [
