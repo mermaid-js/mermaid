@@ -344,6 +344,7 @@ Below is a comprehensive list of the newly introduced shapes and their correspon
 | Display                           | Curved Trapezoid       | `curv-trap`    | Represents a display           | `curved-trapezoid`, `display`                                    |
 | Divided Process                   | Divided Rectangle      | `div-rect`     | Divided process shape          | `div-proc`, `divided-process`, `divided-rectangle`               |
 | Document                          | Document               | `doc`          | Represents a document          | `doc`, `document`                                                |
+| Ellipse                           | Ellipse                | `ellipse`      | Ellipse shape                  | `oval`                                                           |
 | Event                             | Rounded Rectangle      | `rounded`      | Represents an event            | `event`                                                          |
 | Extract                           | Triangle               | `tri`          | Extraction process             | `extract`, `triangle`                                            |
 | Fork/Join                         | Filled Rectangle       | `fork`         | Fork or join in process flow   | `join`                                                           |
