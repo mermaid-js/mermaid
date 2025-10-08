@@ -973,4 +973,19 @@ graph TD
       }
     );
   });
+
+  it('70: should render a subgraph with direction TD', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+        subgraph A
+          direction TD
+          a --> b
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
 });
