@@ -32,13 +32,14 @@
 <CONFIG>[^\}]+                                                  { return 'CONFIG_CONTENT'; }
 <CONFIG>\}                                                      { this.popState(); this.popState(); return 'CONFIG_END'; }
 <ID>[^\<->\->:\n,;@\s]+(?=\@\{)                                 { yytext = yytext.trim(); return 'ACTOR'; }
-<ID>[^\<->\->:\n,;@]+?([\-]*[^\<->\->:\n,;@]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$) { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
+<ID>[^<>:\n,;@]+(?=\s+as\s) { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
+<ID>[^<>:\n,;@]+(?=\s*[\n;#]|$) { yytext = yytext.trim(); this.popState(); return 'ACTOR'; }
+<ID>[^<>:\n,;@]*\<[^\n]* { this.popState(); return 'INVALID'; }
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
 "create"                                                        return 'create';
 "destroy"                                                       { this.begin('ID'); return 'destroy'; }
-<ID>[^<\->\->:\n,;]+?([\-]*[^<\->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
 "loop"                                                          { this.begin('LINE'); return 'loop'; }
@@ -145,6 +146,7 @@ line
 	: SPACE statement { $$ = $2 }
 	| statement { $$ = $1 }
 	| NEWLINE { $$=[]; }
+	| INVALID { $$=[]; }
 	;
 
 box_section
