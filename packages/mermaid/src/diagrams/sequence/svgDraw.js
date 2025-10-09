@@ -1,5 +1,6 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
+import { getIconSVG } from '../../rendering-util/icons.js';
 import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
 import common, {
   calculateMathMLDimensions,
@@ -322,6 +323,89 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
   });
 };
 
+const drawActorTypeIcon = async function (elem, actor, conf, isFooter) {
+  const actorY = isFooter ? actor.stopy : actor.starty;
+  const center = actor.x + actor.width / 2;
+  const centerY = actorY + actor.height / 2;
+
+  const line = elem.append('g').lower();
+  if (!isFooter) {
+    actorCnt++;
+    line
+      .append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', centerY + 25)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
+    actor.actorCnt = actorCnt;
+  }
+
+  const actElem = elem.append('g');
+  let cssClass = 'actor-icon';
+  if (isFooter) {
+    cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssClass += ` ${TOP_ACTOR_CLASS}`;
+  }
+
+  actElem.attr('class', cssClass);
+  actElem.attr('name', actor.name);
+
+  // Define the size of the square and icon
+  const iconSize = actor.width / 5;
+  const squareX = center - iconSize / 2;
+  const squareY = !isFooter ? actorY + 10 : actorY;
+
+  // Draw a square rectangle for the actor icon background
+
+  actElem
+    .append('rect')
+    .attr('x', squareX)
+    .attr('y', squareY)
+    .attr('width', iconSize)
+    .attr('height', iconSize)
+    .attr('rx', 3) // rounded corners, optional
+    .attr('ry', 3)
+    .attr('fill', 'none'); // light gray background or customize as needed
+
+  // Render icon SVG inside the rectangle
+  const iconGroup = actElem.append('g').attr('transform', `translate(${squareX}, ${squareY})`);
+
+  iconGroup
+    .append('svg')
+    .attr('width', iconSize)
+    .attr('height', iconSize)
+    .html(
+      `<g>${await getIconSVG(actor.doc.icon, {
+        height: iconSize,
+        width: iconSize,
+        fallbackPrefix: '',
+      })}</g>`
+    );
+
+  // Add text label below icon
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+    actor.description,
+    actElem,
+    actor.x,
+    actorY + (!isFooter ? 40 : 30), // positioning below the square icon
+    actor.width,
+    20,
+    { class: 'actor-icon-text' },
+    conf
+  );
+
+  const bounds = actElem.node().getBBox();
+  actor.height = bounds.height + (conf.sequence?.labelBoxHeight ?? 0);
+
+  return actor.height;
+};
+
 /**
  * Draws an actor in the diagram with the attached line
  *
@@ -413,6 +497,174 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter) {
   }
 
   return height;
+};
+const drawActorTypeImage = async function (elem, actor, conf, isFooter) {
+  const img = new Image();
+  img.src = actor.doc.image ?? '';
+  await img.decode();
+
+  const imageNaturalWidth = Number(img.naturalWidth.toString().replace('px', ''));
+  const imageNaturalHeight = Number(img.naturalHeight.toString().replace('px', ''));
+
+  actor.doc.imageAspectRatio = imageNaturalWidth / imageNaturalHeight;
+
+  // Calculate image dimensions with proper sizing logic
+  let imageWidth, imageHeight;
+
+  // Check if custom dimensions are provided and valid
+  const hasValidCustomDimensions =
+    actor.doc.height && actor.doc.height > 10 && actor.doc.width && actor.doc.width > 10;
+
+  if (hasValidCustomDimensions) {
+    if (actor.doc.constraint === 'on') {
+      // Maintain aspect ratio with constraint
+      const customAspectRatio = imageNaturalWidth / imageNaturalHeight;
+
+      if (customAspectRatio > actor.doc.imageAspectRatio) {
+        // Width is the limiting factor
+        imageHeight = actor.doc.height;
+        imageWidth = actor.doc.height * actor.doc.imageAspectRatio;
+      } else {
+        // Height is the limiting factor
+        imageWidth = actor.doc.width;
+        imageHeight = actor.doc.width / actor.doc.imageAspectRatio;
+      }
+    } else {
+      // Use custom dimensions without maintaining aspect ratio
+      imageWidth = actor.doc.width;
+      imageHeight = actor.doc.height;
+    }
+  } else {
+    // Use default sizing based on actor width
+    const defaultImageSize = actor.width / 3.5;
+
+    // Ensure minimum and maximum sizes
+    const minSize = 30;
+    const maxSize = actor.width * 0.8;
+
+    if (actor.doc.imageAspectRatio >= 1) {
+      // Landscape or square image
+      imageWidth = Math.min(Math.max(defaultImageSize, minSize), maxSize);
+      imageHeight = imageWidth / actor.doc.imageAspectRatio;
+    } else {
+      // Portrait image
+      imageHeight = Math.min(Math.max(defaultImageSize, minSize), maxSize);
+      imageWidth = imageHeight * actor.doc.imageAspectRatio;
+    }
+
+    // Ensure the image doesn't exceed actor bounds
+    if (imageWidth > actor.width * 0.9) {
+      imageWidth = actor.width * 0.9;
+      imageHeight = imageWidth / actor.doc.imageAspectRatio;
+    }
+  }
+
+  const actorY = isFooter ? actor.stopy : actor.starty;
+  const center = actor.x + actor.width / 2;
+  const centerY = actorY + imageHeight;
+
+  // Calculate positioning
+  const squareX = center - imageWidth / 2;
+  let squareY;
+
+  if (isFooter) {
+    squareY = actorY + (imageHeight - imageHeight * 1);
+  } else {
+    squareY = actorY + 5;
+  }
+
+  // Calculate text position based on image position and size
+  const textY = !isFooter ? squareY + imageHeight : actorY + imageHeight; // Place text below image for header
+
+  // Draw actor line for non-footer elements
+  const x = center;
+  const y = centerY + (isFooter ? 0 : imageHeight / 2); // Adjust line start based on image height
+  const line = elem.append('g').lower();
+  if (!isFooter) {
+    actorCnt++;
+    line
+      .append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', x)
+      .attr('y1', y) // Adjust line start based on image height
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999')
+      .attr('name', actor.name);
+    actor.actorCnt = actorCnt;
+  }
+
+  const actElem = elem.append('g');
+  let cssClass = 'actor-image';
+  if (isFooter) {
+    cssClass += ` ${BOTTOM_ACTOR_CLASS}`;
+  } else {
+    cssClass += ` ${TOP_ACTOR_CLASS}`;
+  }
+
+  actElem.attr('class', cssClass);
+  actElem.attr('name', actor.name);
+
+  // Draw background rectangle for the actor image
+  actElem
+    .append('rect')
+    .attr('x', squareX)
+    .attr('y', squareY)
+    .attr('width', imageWidth)
+    .attr('height', imageHeight)
+    .attr('rx', 3)
+    .attr('ry', 3)
+    .attr('fill', 'white')
+    .attr('stroke', '#ddd')
+    .attr('stroke-width', '1px');
+
+  // Create clipping path for the image
+  const clipId = `clip-actor-${actorCnt || 'footer'}-${Math.random().toString(36).substr(2, 9)}`;
+  actElem
+    .append('defs')
+    .append('clipPath')
+    .attr('id', clipId)
+    .append('rect')
+    .attr('x', squareX)
+    .attr('y', squareY)
+    .attr('width', imageWidth)
+    .attr('height', imageHeight)
+    .attr('rx', 3)
+    .attr('ry', 3);
+
+  // Render image inside the rectangle
+  const imageGroup = actElem.append('g');
+
+  if (actor.doc.image) {
+    imageGroup
+      .append('image')
+      .attr('x', squareX)
+      .attr('y', squareY)
+      .attr('width', imageWidth)
+      .attr('height', imageHeight)
+      .attr('href', img.src)
+      .attr('preserveAspectRatio', actor.doc.constraint === 'on' ? 'xMidYMid meet' : 'none');
+  }
+
+  // Add text label
+  _drawTextCandidateFunc(conf, hasKatex(actor.description))(
+    actor.description,
+    actElem,
+    actor.x,
+    textY,
+    actor.width,
+    20,
+    { class: 'actor-image-text' },
+    conf
+  );
+
+  // Calculate final bounds and update actor height
+  const bounds = actElem.node().getBBox();
+  actor.height = bounds.height + (conf.sequence?.labelBoxHeight ?? 0);
+
+  return actor.height;
 };
 
 /**
@@ -1122,6 +1374,10 @@ export const drawActor = async function (elem, actor, conf, isFooter) {
       return await drawActorTypeCollections(elem, actor, conf, isFooter);
     case 'queue':
       return await drawActorTypeQueue(elem, actor, conf, isFooter);
+    case 'icon':
+      return await drawActorTypeIcon(elem, actor, conf, isFooter);
+    case 'image':
+      return await drawActorTypeImage(elem, actor, conf, isFooter);
   }
 };
 

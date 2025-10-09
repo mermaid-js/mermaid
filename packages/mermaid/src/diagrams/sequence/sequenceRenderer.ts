@@ -865,6 +865,8 @@ function adjustCreatedDestroyedData(
     PARTICIPANT_TYPE.CONTROL,
     PARTICIPANT_TYPE.ENTITY,
     PARTICIPANT_TYPE.DATABASE,
+    PARTICIPANT_TYPE.ICON,
+    PARTICIPANT_TYPE.IMAGE,
   ];
 
   // if it is a create message
