@@ -1,8 +1,10 @@
 import type { LangiumParser, ParseResult } from 'langium';
 
 import type { Info, Packet, Pie, Architecture, GitGraph, Radar, Treemap } from './index.js';
+import type { UsecaseParseResult } from './language/usecase/types.js';
 
-export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar;
+export type DiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar | UsecaseParseResult;
+export type LangiumDiagramAST = Info | Packet | Pie | Architecture | GitGraph | Radar;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -41,6 +43,9 @@ const initializers = {
     const parser = createTreemapServices().Treemap.parser.LangiumParser;
     parsers.treemap = parser;
   },
+  usecase: () => {
+    // ANTLR-based parser - no Langium parser needed
+  },
 } as const;
 
 export async function parse(diagramType: 'info', text: string): Promise<Info>;
@@ -50,7 +55,12 @@ export async function parse(diagramType: 'architecture', text: string): Promise<
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
+export async function parse(diagramType: 'usecase', text: string): Promise<UsecaseParseResult>;
 
+export async function parse<T extends LangiumDiagramAST>(
+  diagramType: Exclude<keyof typeof initializers, 'usecase'>,
+  text: string
+): Promise<T>;
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,
   text: string
@@ -59,11 +69,19 @@ export async function parse<T extends DiagramAST>(
   if (!initializer) {
     throw new Error(`Unknown diagram type: ${diagramType}`);
   }
+
+  // Handle ANTLR-based parsers separately
+  if (diagramType === 'usecase') {
+    const { parseUsecaseWithAntlr } = await import('./language/usecase/index.js');
+    return parseUsecaseWithAntlr(text) as T;
+  }
+
   if (!parsers[diagramType]) {
     await initializer();
   }
   const parser: LangiumParser = parsers[diagramType];
-  const result: ParseResult<T> = parser.parse<T>(text);
+  const result: ParseResult<T extends LangiumDiagramAST ? T : never> =
+    parser.parse<T extends LangiumDiagramAST ? T : never>(text);
   if (result.lexerErrors.length > 0 || result.parserErrors.length > 0) {
     throw new MermaidParseError(result);
   }
