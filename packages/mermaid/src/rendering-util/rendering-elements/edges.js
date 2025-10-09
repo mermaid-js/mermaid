@@ -44,27 +44,18 @@ export const getLabelStyles = (styleArray) => {
   return styles;
 };
 
-function shouldRenderEdgeLabelAsMarkdown(edge) {
-  const diagramType = edge.diagramType;
-
-  if (diagramType === 'flowchart') {
-    return edge.labelType === 'markdown';
-  }
-
-  return edge.labelType !== 'text' && edge.labelType !== 'string';
-}
-
 export const insertEdgeLabel = async (elem, edge) => {
   let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
 
-  const labelElement = shouldRenderEdgeLabelAsMarkdown(edge)
-    ? await createText(elem, edge.label, {
-        style: getLabelStyles(edge.labelStyle),
-        useHtmlLabels,
-        addSvgBackground: true,
-        isNode: false,
-      })
-    : await createLabel(edge.label, getLabelStyles(edge.labelStyle), undefined, false);
+  const labelElement =
+    edge.labelType === 'markdown'
+      ? await createText(elem, edge.label, {
+          style: getLabelStyles(edge.labelStyle),
+          useHtmlLabels,
+          addSvgBackground: true,
+          isNode: false,
+        })
+      : await createLabel(edge.label, getLabelStyles(edge.labelStyle), undefined, false);
 
   log.info('abc82', edge, edge.labelType);
 

@@ -8,15 +8,6 @@ import { evaluate, sanitizeText } from '../../../diagrams/common/common.js';
 import { decodeEntities, handleUndefinedAttr, parseFontSize } from '../../../utils.js';
 import type { D3Selection, Point } from '../../../types.js';
 
-function shouldRenderAsMarkdown(node: Node): boolean {
-  const diagramType = node.diagramType;
-  if (diagramType === 'flowchart') {
-    return node.labelType === 'markdown';
-  }
-
-  return node.labelType !== 'text' && node.labelType !== 'string';
-}
-
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
@@ -51,7 +42,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   }
 
   let text;
-  if (shouldRenderAsMarkdown(node)) {
+  if (node.labelType === 'markdown') {
     text = await createText(labelEl, sanitizeText(decodeEntities(label), getConfig()), {
       useHtmlLabels,
       width: node.width || getConfig().flowchart?.wrappingWidth,
