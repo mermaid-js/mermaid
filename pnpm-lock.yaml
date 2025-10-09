@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   dagre-d3-es@7.0.11:
-    hash: 86dd75cdc907d2e31dd8935b6b90eb5d86fa1cdb918a417f1adbc052d1e6cebe
+    hash: 9305508c97f786851c4d8a847b5dbb3e46e759f964305997bd486f8745290188
     path: patches/dagre-d3-es@7.0.11.patch
   roughjs:
     hash: 3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64
@@ -255,7 +255,7 @@ importers:
         version: 0.12.3
       dagre-d3-es:
         specifier: 7.0.11
-        version: 7.0.11(patch_hash=86dd75cdc907d2e31dd8935b6b90eb5d86fa1cdb918a417f1adbc052d1e6cebe)
+        version: 7.0.11(patch_hash=9305508c97f786851c4d8a847b5dbb3e46e759f964305997bd486f8745290188)
       dayjs:
         specifier: ^1.11.18
         version: 1.11.18
@@ -15164,7 +15164,7 @@ snapshots:
       d3-transition: 3.0.1(d3-selection@3.0.0)
       d3-zoom: 3.0.0
 
-  dagre-d3-es@7.0.11(patch_hash=86dd75cdc907d2e31dd8935b6b90eb5d86fa1cdb918a417f1adbc052d1e6cebe):
+  dagre-d3-es@7.0.11(patch_hash=9305508c97f786851c4d8a847b5dbb3e46e759f964305997bd486f8745290188):
     dependencies:
       d3: 7.9.0
       lodash-es: 4.17.21

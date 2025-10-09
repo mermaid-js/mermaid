@@ -1,8 +1,8 @@
 diff --git a/src/dagre/position/bk.js b/src/dagre/position/bk.js
-index d4aabdcef2c788873b799489cf27d48aaa0a2ee6..3f4e140dfd9f8f3f365300f04c087bc648868345 100644
+index d4aabdcef2c788873b799489cf27d48aaa0a2ee6..72beff8b3830f1e3241455400f68843888b60a06 100644
 --- a/src/dagre/position/bk.js
 +++ b/src/dagre/position/bk.js
-@@ -129,13 +129,35 @@ function findOtherInnerSegmentNode(g, v) {
+@@ -129,6 +129,16 @@ function findOtherInnerSegmentNode(g, v) {
    }
  }
  
@@ -13,40 +13,21 @@ index d4aabdcef2c788873b799489cf27d48aaa0a2ee6..3f4e140dfd9f8f3f365300f04c087bc6
 + */
 +function isSafeKey(key) {
 +  // Reject prototype pollution vectors
-+  var isSafe = key !== '__proto__' && key !== 'constructor' && key !== 'prototype';
-+  if (!isSafe) {
-+    console.log('[dagre-d3-es SECURITY] Blocked prototype pollution attempt with key:', key);
-+  }
-+  return isSafe;
++  return key !== '__proto__' && key !== 'constructor' && key !== 'prototype';
 +}
 +
  function addConflict(conflicts, v, w) {
-+  console.log('[dagre-d3-es] addConflict called with v:', v, 'w:', w);
-+
    if (v > w) {
      var tmp = v;
-     v = w;
+@@ -136,6 +146,11 @@ function addConflict(conflicts, v, w) {
      w = tmp;
    }
  
 +  // Validate keys to prevent prototype pollution
 +  if (!isSafeKey(v) || !isSafeKey(w)) {
-+    console.log('[dagre-d3-es SECURITY] addConflict blocked for keys v:', v, 'w:', w);
 +    return;
 +  }
 +
    var conflictsV = conflicts[v];
    if (!conflictsV) {
      conflicts[v] = conflictsV = {};
-@@ -149,6 +171,11 @@ function hasConflict(conflicts, v, w) {
-     v = w;
-     w = tmp;
-   }
-+  // Validate keys to prevent prototype pollution
-+  if (!isSafeKey(v) || !isSafeKey(w)) {
-+    console.log('[dagre-d3-es SECURITY] hasConflict blocked for keys v:', v, 'w:', w);
-+    return false;
-+  }
-   return !!conflicts[v] && Object.prototype.hasOwnProperty.call(conflicts[v], w);
- }
- 
