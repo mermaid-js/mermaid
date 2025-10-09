@@ -92,9 +92,7 @@ export class FlowDB implements DiagramDB {
       case 'text':
         return labelType;
       default:
-        // For flowcharts, default to 'text' (v10 behavior: only explicit markdown is rendered)
-        // This is different from v11 where undefined defaulted to 'markdown'
-        return 'text';
+        return 'markdown';
     }
   }
 
