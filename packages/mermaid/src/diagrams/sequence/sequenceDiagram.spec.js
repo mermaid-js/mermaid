@@ -2609,5 +2609,17 @@ Bob->>Alice:Got it!
       expect(actors.get('E').type).toBe('entity');
       expect(actors.get('E').description).toBe('E');
     });
+    it('should handle fail parsing when alias token causes conflicts in participant definition', async () => {
+      let error = false;
+      try {
+        await Diagram.fromText(`
+        sequenceDiagram
+        participant SAS MyServiceWithMoreThan20Chars <br> service decription
+       `);
+      } catch (e) {
+        error = true;
+      }
+      expect(error).toBe(true);
+    });
   });
 });
