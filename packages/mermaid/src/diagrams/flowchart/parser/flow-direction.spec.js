@@ -44,6 +44,25 @@ describe('when parsing directions', function () {
     expect(subgraph.id).toBe('A');
     expect(subgraph.dir).toBe('BT');
   });
+  it('should handle a subgraph with TB direction with TD direction', function () {
+    const res = flow.parser.parse(`flowchart TB
+    subgraph A
+      direction TD
+      direction RL@--> a
+      a --> b["direction LR"]
+    end`);
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    const subgraph = subgraphs[0];
+    expect(subgraph.nodes.length).toBe(3);
+    expect(subgraph.nodes[0]).toBe('a');
+    expect(subgraph.nodes[1]).toBe('direction');
+    expect(subgraph.nodes[2]).toBe('b');
+    expect(flow.parser.yy.getVertices().get('b').text).toBe('direction LR');
+    expect(subgraph.id).toBe('A');
+    expect(subgraph.dir).toBe('TB');
+  });
   it('should use the last defined direction', function () {
     const res = flow.parser.parse(`flowchart TB
     subgraph A

@@ -136,10 +136,11 @@ that id.
 <dir>\s*"^"              { this.popState();  return 'DIR'; }
 <dir>\s*"v"              { this.popState();  return 'DIR'; }
 
-.*direction\s+TB[^\n]*       return 'direction_tb';
-.*direction\s+BT[^\n]*       return 'direction_bt';
-.*direction\s+RL[^\n]*       return 'direction_rl';
-.*direction\s+LR[^\n]*       return 'direction_lr';
+direction\s+TB\s*(?=[\n;]|$)       return 'direction_tb';
+direction\s+TD\s*(?=[\n;]|$)       return 'direction_tb';
+direction\s+BT\s*(?=[\n;]|$)       return 'direction_bt';
+direction\s+RL\s*(?=[\n;]|$)       return 'direction_rl';
+direction\s+LR\s*(?=[\n;]|$)       return 'direction_lr';
 
 [^\s\"]+\@(?=[^\{\"])               { return 'LINK_ID'; }
 [0-9]+                       return 'NUM';
