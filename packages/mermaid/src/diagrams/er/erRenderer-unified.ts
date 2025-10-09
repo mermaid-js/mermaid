@@ -54,7 +54,7 @@ export const draw = async function (text: string, id: string, _version: string, 
     });
   }
 
-  const padding = 8;
+  const padding = conf?.diagramPadding ?? 8;
   utils.insertTitle(
     svg,
     'erDiagramTitleText',
