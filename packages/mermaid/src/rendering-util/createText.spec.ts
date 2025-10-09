@@ -60,4 +60,54 @@ describe('replaceIconSubstring', () => {
     const expected = sanitizeText(staticBellIconPack.icons.bell.body);
     expect(output).toContain(expected);
   });
+
+  describe('logos/mdi/symbols iconsets', () => {
+    it('converts logos icon notations to HTML tags', async () => {
+      const input = 'Check out these logos: logos:react and logos:nodejs';
+      const output = await replaceIconSubstring(input);
+      const expected = `Check out these logos: <i class='logos react'></i> and <i class='logos nodejs'></i>`;
+      expect(output).toEqual(expected);
+    });
+
+    it('converts mdi icon notations to HTML tags', async () => {
+      const input = 'Material design icons: mdi:home and mdi:account-circle';
+      const output = await replaceIconSubstring(input);
+      const expected = `Material design icons: <i class='mdi home'></i> and <i class='mdi account-circle'></i>`;
+      expect(output).toEqual(expected);
+    });
+
+    it('converts symbols icon notations to HTML tags', async () => {
+      const input = 'Symbols: symbols:arrow-upward and symbols:check';
+      const output = await replaceIconSubstring(input);
+      const expected = `Symbols: <i class='symbols arrow-upward'></i> and <i class='symbols check'></i>`;
+      expect(output).toEqual(expected);
+    });
+
+    it('handles mixed icon types in one string', async () => {
+      const input = 'Mixed icons: fa:fa-user, logos:github, mdi:home, symbols:star';
+      const output = await replaceIconSubstring(input);
+      const expected = `Mixed icons: <i class='fa fa-user'></i>, <i class='logos github'></i>, <i class='mdi home'></i>, <i class='symbols star'></i>`;
+      expect(output).toEqual(expected);
+    });
+
+    it('handles multiple logos icons in one string', async () => {
+      const input = 'Logos: logos:react, logos:vue, logos:angular';
+      const output = await replaceIconSubstring(input);
+      const expected = `Logos: <i class='logos react'></i>, <i class='logos vue'></i>, <i class='logos angular'></i>`;
+      expect(output).toEqual(expected);
+    });
+
+    it('handles icons with hyphens and underscores', async () => {
+      const input = 'Complex names: logos:visual-studio-code and mdi:account_circle';
+      const output = await replaceIconSubstring(input);
+      const expected = `Complex names: <i class='logos visual-studio-code'></i> and <i class='mdi account_circle'></i>`;
+      expect(output).toEqual(expected);
+    });
+
+    it('handles strings with no new iconset notations', async () => {
+      const input = 'This string has no new icons';
+      const output = await replaceIconSubstring(input);
+      expect(output).toEqual(input); // No change expected
+    });
+  });
 });
