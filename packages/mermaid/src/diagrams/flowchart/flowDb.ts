@@ -1043,6 +1043,7 @@ You have to call mermaid.initialize.`
         assetWidth: vertex.assetWidth,
         assetHeight: vertex.assetHeight,
         constraint: vertex.constraint,
+        diagramType: 'flowchart', // Add diagram type for rendering decisions
       };
       if (isGroup) {
         nodes.push({
@@ -1110,6 +1111,7 @@ You have to call mermaid.initialize.`
         dir: subGraph.dir,
         isGroup: true,
         look: config.look,
+        diagramType: 'flowchart', // Add diagram type for rendering decisions
       });
     }
 
@@ -1156,6 +1158,7 @@ You have to call mermaid.initialize.`
         animate: rawEdge.animate,
         animation: rawEdge.animation,
         curve: rawEdge.interpolate || this.edges.defaultInterpolate || config.flowchart?.curve,
+        diagramType: 'flowchart', // Add diagram type for rendering decisions
       };
 
       edges.push(edge);

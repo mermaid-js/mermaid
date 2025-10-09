@@ -10,6 +10,16 @@ import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 
+function shouldRenderClusterLabelAsMarkdown(node) {
+  const diagramType = node.diagramType;
+
+  if (diagramType === 'flowchart') {
+    return node.labelType === 'markdown';
+  }
+
+  return node.labelType !== 'text' && node.labelType !== 'string';
+}
+
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
@@ -31,7 +41,7 @@ const rect = async (parent, node) => {
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
   let text;
-  if (node.labelType === 'markdown') {
+  if (shouldRenderClusterLabelAsMarkdown(node)) {
     text = await createText(labelEl, node.label, {
       style: node.labelStyle,
       useHtmlLabels,
