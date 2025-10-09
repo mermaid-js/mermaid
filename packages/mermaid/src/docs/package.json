@@ -17,25 +17,25 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
-    "@vueuse/core": "^13.9.0",
+    "@vueuse/core": "^13.1.0",
     "font-awesome": "^4.7.0",
     "jiti": "^2.4.2",
     "mermaid": "workspace:^",
-    "vue": "^3.5.21"
+    "vue": "^3.4.38"
   },
   "devDependencies": {
-    "@iconify-json/carbon": "^1.2.13",
-    "@unocss/reset": "^66.5.1",
+    "@iconify-json/carbon": "^1.1.37",
+    "@unocss/reset": "^66.0.0",
     "@vite-pwa/vitepress": "^1.0.0",
-    "@vitejs/plugin-vue": "^6.0.1",
+    "@vitejs/plugin-vue": "^6.0.0",
     "fast-glob": "^3.3.3",
     "https-localhost": "^4.7.1",
     "pathe": "^2.0.3",
-    "unocss": "^66.5.1",
-    "unplugin-vue-components": "^28.4.1",
-    "vite": "^7.0.7",
-    "vite-plugin-pwa": "^1.0.3",
-    "vitepress": "1.6.4",
+    "unocss": "^66.4.2",
+    "unplugin-vue-components": "^28.4.0",
+    "vite": "^7.0.0",
+    "vite-plugin-pwa": "^1.0.0",
+    "vitepress": "1.6.3",
     "workbox-window": "^7.3.0"
   }
 }

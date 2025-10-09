@@ -156,7 +156,7 @@ architecture-beta
 ## Icons
 
 By default, architecture diagram supports the following icons: `cloud`, `database`, `disk`, `internet`, `server`.
-Users can use any of the 200,000+ icons available in iconify.design, or add other custom icons, by [registering an icon pack](../config/icons.md).
+Users can use any of the 200,000+ icons available in iconify.design, or [add custom icons](../config/icons.md).
 
 After the icons are installed, they can be used in the architecture diagram by using the format "name:icon-name", where name is the value used when registering the icon pack.
 

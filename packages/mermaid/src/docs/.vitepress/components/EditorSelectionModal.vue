@@ -40,25 +40,104 @@ const openSourceFeatures: Feature[] = [
   { iconUrl: '/icons/version-history.svg', featureName: 'Version history' },
 ];
 
-const editorColumns: EditorColumn[] = [
-  {
-    title: 'Mermaid Pro',
-    description: 'Unlock AI and real-time collaboration',
-    highlighted: true,
-    redBarText: 'Recommended',
-    proTrialButtonText: 'Start free trial',
-    proTrialUrl:
-      'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=2_editor_selection&utm_campaign=start_pro&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
-    features: mermaidChartFeatures,
-  },
-  {
-    title: 'Open Source',
-    description: 'Code only, no login',
-    buttonText: 'Start free',
-    redirectUrl: 'https://mermaid.live/edit',
-    features: openSourceFeatures,
-  },
+const playgroundFeatures: Feature[] = [
+  { iconUrl: '/icons/public.svg', featureName: 'Diagram stored in URL' },
+  { iconUrl: '/icons/terminal.svg', featureName: 'Code editor' },
+  { iconUrl: '/icons/whiteboard.svg', featureName: 'Whiteboard' },
 ];
+
+const editorColumnVariants: EditorColumn[][] = [
+  [
+    {
+      title: 'Playground',
+      description: 'Basic features, no login',
+      redirectUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=3_editor_selection_A&utm_campaign=start_playground',
+      buttonText: 'Start free',
+      features: playgroundFeatures,
+    },
+    {
+      title: 'Free or Pro',
+      description: 'Advanced features, Free or Pro account',
+      proTrialUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=3_editor_selection_A&utm_campaign=start_free',
+      proTrialButtonText: 'Start free',
+      highlighted: true,
+      redBarText: 'Best for collaboration',
+      features: mermaidChartFeatures,
+    },
+    {
+      title: 'Open Source',
+      description: 'Code only, no login',
+      redirectUrl: 'https://mermaid.live/edit',
+      buttonText: 'Start free',
+      features: openSourceFeatures,
+    },
+  ],
+  [
+    {
+      title: 'Mermaid Pro',
+      description: 'Unlock AI and real-time collaboration',
+      redirectUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection_B&utm_campaign=start_free',
+      buttonText: 'Start Free',
+      highlighted: true,
+      redBarText: 'Recommended',
+      proTrialButtonText: 'Start Pro trial',
+      proTrialUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection_B&utm_campaign=start_trial&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
+      features: mermaidChartFeatures,
+    },
+    {
+      title: 'Open Source',
+      description: 'Code only, no login',
+      buttonText: 'Start free',
+      redirectUrl: 'https://mermaid.live/edit',
+      isButtonMargined: true,
+      features: openSourceFeatures,
+    },
+  ],
+  [
+    {
+      title: 'Mermaid Pro',
+      description: 'Unlock AI and real-time collaboration',
+      highlighted: true,
+      redBarText: 'Recommended',
+      proTrialButtonText: 'Start free trial',
+      proTrialUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection_C&utm_campaign=start_trial&redirect=%2Fapp%2Fuser%2Fbilling%2Fcheckout%3FisFromMermaid%3Dtrue',
+      features: mermaidChartFeatures,
+    },
+    {
+      title: 'Open Source',
+      description: 'Code only, no login',
+      buttonText: 'Start free',
+      redirectUrl: 'https://mermaid.live/edit',
+      features: openSourceFeatures,
+    },
+  ],
+  [
+    {
+      title: 'Mermaid Pro',
+      description: 'Unlock AI and real-time collaboration',
+      highlighted: true,
+      redBarText: 'Recommended',
+      proTrialButtonText: 'Start free',
+      proTrialUrl:
+        'https://www.mermaidchart.com/app/sign-up?utm_source=mermaid_js&utm_medium=editor_selection_D&utm_campaign=start_free',
+      features: mermaidChartFeatures,
+    },
+    {
+      title: 'Open Source',
+      description: 'Code only, no login',
+      redirectUrl: 'https://mermaid.live/edit',
+      buttonText: 'Start free',
+      features: openSourceFeatures,
+    },
+  ],
+];
+
+const editorColumns = editorColumnVariants[Math.floor(Math.random() * editorColumnVariants.length)];
 
 const isVisible = ref(false);
 
