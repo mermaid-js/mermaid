@@ -2,6 +2,7 @@ import type { DiagramDBBase } from '../../diagram-api/types.js';
 import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import type { D3Element } from '../../types.js';
 import type cytoscape from 'cytoscape';
+import type { LayoutData } from '../../rendering-util/types.js';
 
 /*=======================================*\
 |       Architecture Diagram Types        |
@@ -256,7 +257,8 @@ export interface ArchitectureDB extends DiagramDBBase<ArchitectureDiagramConfig>
   getEdges: () => ArchitectureEdge[];
   setElementForId: (id: string, element: D3Element) => void;
   getElementById: (id: string) => D3Element;
-  getDataStructures: () => ArchitectureDataStructures;
+  getData: () => LayoutData;
+  getDirection: () => string;
 }
 
 export type ArchitectureAdjacencyList = Record<string, ArchitectureDirectionPairMap>;

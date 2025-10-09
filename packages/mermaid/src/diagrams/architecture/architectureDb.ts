@@ -3,7 +3,9 @@ import type { ArchitectureDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import type { D3Element } from '../../types.js';
-import { cleanAndMerge } from '../../utils.js';
+import { cleanAndMerge, getEdgeId } from '../../utils.js';
+import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
+
 import {
   clear as commonClear,
   getAccDescription,
@@ -351,15 +353,147 @@ export class ArchitectureDB implements DiagramDB {
   public getDiagramTitle = getDiagramTitle;
   public getAccDescription = getAccDescription;
   public setAccDescription = setAccDescription;
-}
 
-/**
- * Typed wrapper for resolving an architecture diagram's config fields. Returns the default value if undefined
- * @param field - the config field to access
- * @returns
- */
-// export function getConfigField<T extends keyof ArchitectureDiagramConfig>(
-//   field: T
-// ): Required<ArchitectureDiagramConfig>[T] {
-//   return db.getConfig()[field];
-// }
+  /**
+   * Converts architecture diagram data to LayoutData format for unified rendering
+   */
+  public getData(): LayoutData {
+    const config = commonGetConfig();
+    const nodes: Node[] = [];
+    const edges: Edge[] = [];
+
+    const groups = this.getGroups();
+    for (const group of groups) {
+      const padding = this.getConfigField('padding');
+      const fontSize = this.getConfigField('fontSize');
+
+      const groupWidth = 200;
+      let groupHeight = 150;
+
+      if (group.title || group.icon) {
+        groupHeight += fontSize + padding;
+      }
+
+      nodes.push({
+        id: group.id,
+        label: group.title,
+        parentId: group.in,
+        isGroup: true,
+        shape: 'rect',
+        icon: group.icon,
+        width: groupWidth,
+        height: groupHeight,
+        padding: padding,
+        cssClasses: 'architecture-group',
+        cssCompiledStyles: [
+          'stroke: #cccccc',
+          'stroke-width: 2px',
+          'stroke-dasharray: 8,8',
+          'fill: transparent',
+        ],
+        labelStyle: '',
+        look: config.look || 'classic',
+        rx: 5,
+        ry: 5,
+      });
+    }
+
+    const services = this.getServices();
+    for (const service of services) {
+      const iconSize = this.getConfigField('iconSize');
+      let nodeWidth = iconSize;
+      let nodeHeight = iconSize;
+
+      if (service.title) {
+        nodeHeight += iconSize * 0.3;
+        nodeWidth = Math.max(nodeWidth, iconSize * 1.5);
+      }
+
+      nodes.push({
+        id: service.id,
+        label: service.title,
+        parentId: service.in,
+        isGroup: false,
+        shape: service.icon || (service as any).iconText ? 'icon' : 'squareRect',
+        icon: service.icon ? `mermaid-architecture:${service.icon}` : 'mermaid-architecture:blank',
+        width: service.width || nodeWidth,
+        height: service.height || nodeHeight,
+        cssClasses: 'architecture-service',
+        look: config.look,
+        padding: this.getConfigField('padding') / 4,
+        description: (service as any).iconText ? [(service as any).iconText] : undefined,
+        assetWidth: iconSize,
+        assetHeight: iconSize,
+      });
+    }
+
+    const junctions = this.getJunctions();
+    for (const junction of junctions) {
+      nodes.push({
+        id: junction.id,
+        parentId: junction.in,
+        isGroup: false,
+        shape: 'squareRect',
+        width: 2,
+        height: 2,
+        cssClasses: 'architecture-junction',
+        look: config.look,
+        type: 'junction' as any,
+        padding: 0,
+      });
+    }
+
+    const architectureEdges = this.getEdges();
+    let edgeCounter = 0;
+    for (const edge of architectureEdges) {
+      const edgeData = {
+        id: getEdgeId(edge.lhsId, edge.rhsId, { counter: edgeCounter, prefix: 'L' }),
+        start: edge.lhsId,
+        end: edge.rhsId,
+        source: edge.lhsId,
+        target: edge.rhsId,
+        label: edge.title || '',
+        labelpos: 'c',
+        type: 'normal',
+        minlen: 2,
+        weight: 1,
+        classes: 'edge-thickness-normal edge-pattern-solid architecture-edge',
+        look: config.look || 'classic',
+        curve: 'linear',
+        arrowTypeStart: edge.lhsInto ? 'point' : 'none',
+        arrowTypeEnd: edge.rhsInto ? 'point' : 'none',
+        arrowheadStyle: 'fill: #333',
+        thickness: 'normal',
+        pattern: 'solid',
+        style: ['stroke: #333333', 'stroke-width: 3px', 'fill: none'],
+        cssCompiledStyles: [],
+        labelStyle: [],
+        lhsDir: edge.lhsDir,
+        rhsDir: edge.rhsDir,
+        lhsInto: edge.lhsInto,
+        rhsInto: edge.rhsInto,
+        lhsGroup: edge.lhsGroup,
+        rhsGroup: edge.rhsGroup,
+      } as Edge & {
+        lhsDir: any;
+        rhsDir: any;
+        lhsInto?: boolean;
+        rhsInto?: boolean;
+        lhsGroup?: boolean;
+        rhsGroup?: boolean;
+      };
+
+      edges.push(edgeData);
+      edgeCounter++;
+    }
+
+    const result = {
+      nodes,
+      edges,
+      config,
+      dataStructures: this.getDataStructures(),
+    };
+
+    return result;
+  }
+}

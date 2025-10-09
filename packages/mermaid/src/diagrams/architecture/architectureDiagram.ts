@@ -2,7 +2,7 @@ import type { DiagramDefinition } from '../../diagram-api/types.js';
 import { parser } from './architectureParser.js';
 import { ArchitectureDB } from './architectureDb.js';
 import styles from './architectureStyles.js';
-import { renderer } from './architectureRenderer.js';
+import { renderer } from './architectureRenderer-unified.js';
 
 export const diagram: DiagramDefinition = {
   parser,
