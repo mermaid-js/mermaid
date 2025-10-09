@@ -176,8 +176,9 @@ function updateTextContentAndStyles(tspan: any, wrappedLine: MarkdownWord[]) {
     if (index === 0) {
       innerTspan.text(word.content);
     } else {
-      // TODO: check what joiner to use.
-      innerTspan.text(' ' + word.content);
+      const prev = wrappedLine[index - 1].content;
+      const insertSpace = !prev.endsWith('<') && !word.content.startsWith('>');
+      innerTspan.text((insertSpace ? ' ' : '') + word.content);
     }
   });
 }
