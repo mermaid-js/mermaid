@@ -52,6 +52,10 @@ radar-beta
   graticule polygon
   max 5
 
+  tickLabels{'-2','-1','0','1','2'}
+  tickLabelsAxis 2
+  tickLabelsOffset 10
+
 ```
 
 ## Details of Syntax
@@ -107,6 +111,9 @@ radar-beta
 - `min`: The minimum value for the radar diagram. This is used to scale the radar diagram. If not provided, the minimum value is `0`.
 - `graticule`: The graticule keyword is used to define the type of graticule to be rendered in the radar diagram. The graticule can be `circle` or `polygon`. If not provided, the default graticule is `circle`.
 - `ticks`: The ticks keyword is used to define the number of ticks on the graticule. It is the number of concentric circles or polygons drawn to indicate the scale of the radar diagram. If not provided, the default number of ticks is `5`.
+- `tickLabels`: The tickLabels keyword can be used to define labels for each tick. If not provided, no tick labels are rendered.
+- `tickLabelsAxis`: The tickLabelsAxis can be used in conjunction with tickLabels to define where the tick labels should be rendered. The tickLabelsAxis can be any number <= number of axis. If not provided, the default is `null` which render the labels on all axis.
+- `tickLabelsOffset`: The perpendicular offset between the tick label and the axis. If not provided, the default offset is `10` (px).
 
 ```
 radar-beta
