@@ -27,6 +27,53 @@ import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 
+/**
+ * Apply absolute note positioning after dagre layout
+ * This fixes the issue where TB and LR directions position notes differently
+ * by making note positioning truly absolute
+ */
+const positionNotes = (graph) => {
+  const noteStatePairs = [];
+
+  graph.nodes().forEach((nodeId) => {
+    const node = graph.node(nodeId);
+    if (node.position && node.shape === 'note') {
+      const edges = graph.nodeEdges(nodeId);
+
+      for (const edge of edges) {
+        const otherNodeId = edge.v === nodeId ? edge.w : edge.v;
+        const otherNode = graph.node(otherNodeId);
+
+        if (otherNode && otherNode.shape !== 'note' && otherNode.shape !== 'noteGroup') {
+          noteStatePairs.push({
+            noteId: nodeId,
+            noteNode: node,
+            stateId: otherNodeId,
+            stateNode: otherNode,
+            position: node.position,
+          });
+        }
+      }
+    }
+  });
+
+  noteStatePairs.forEach(({ noteNode, stateNode, position }) => {
+    const spacing = 60;
+
+    let noteX = noteNode.x;
+    let noteY = stateNode.y;
+
+    if (position === 'right of') {
+      noteX = stateNode.x + stateNode.width / 2 + spacing + noteNode.width / 2;
+    } else if (position === 'left of') {
+      noteX = stateNode.x - stateNode.width / 2 - spacing - noteNode.width / 2;
+    }
+
+    noteNode.x = noteX;
+    noteNode.y = noteY;
+  });
+};
+
 const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, siteConfig) => {
   log.warn('Graph in recursive render:XAX', graphlibJson.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
@@ -163,6 +210,9 @@ const recursiveRender = async (_elem, graph, diagramType, id, parentCluster, sit
   log.info('############################################# XXX');
 
   dagreLayout(graph);
+
+  // Apply absolute note positioning after dagre layout
+  positionNotes(graph);
 
   log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
   // Move the nodes to the correct place
