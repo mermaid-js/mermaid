@@ -16,6 +16,7 @@ export interface MindmapNode {
   x?: number;
   y?: number;
   isRoot?: boolean;
+  labelType?: string;
 }
 
 export type FilledMindMapNode = RequiredDeep<MindmapNode>;
