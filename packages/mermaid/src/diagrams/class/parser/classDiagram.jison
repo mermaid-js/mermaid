@@ -310,7 +310,12 @@ emptyBody
     ;
 
 annotationStatement
-    : ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
+    : annotationList className  { for(const annotation of $1) { yy.addAnnotation($2, annotation); } }
+    ;
+
+annotationList
+    : ANNOTATION_START alphaNumToken ANNOTATION_END { $$ = [$2]; }
+    | annotationList ANNOTATION_START alphaNumToken ANNOTATION_END { $1.push($3); $$ = $1; }
     ;
 
 members

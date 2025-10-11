@@ -922,6 +922,28 @@ foo()
       expect(actual.methods.length).toBe(1);
       expect(actual.annotations[0]).toBe('interface');
     });
+
+    it('should handle multiple consecutive annotations on a single class', function () {
+      const str = 'classDiagram\n' + '<<interface>><<injected>> Class1';
+
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Class1');
+      expect(actual.annotations.length).toBe(2);
+      expect(actual.annotations).toContain('interface');
+      expect(actual.annotations).toContain('injected');
+    });
+
+    it('should handle multiple separate annotations on a single class', function () {
+      const str = 'classDiagram\n' + '<<interface>> Class1\n' + '<<injected>> Class1';
+
+      parser.parse(str);
+
+      const actual = parser.yy.getClass('Class1');
+      expect(actual.annotations.length).toBe(2);
+      expect(actual.annotations).toContain('interface');
+      expect(actual.annotations).toContain('injected');
+    });
   });
 });
 

@@ -237,6 +237,7 @@ export class ClassDB implements DiagramDB {
    * @public
    */
   public addAnnotation(className: string, annotation: string) {
+    this.addClass(className);
     const validatedClassName = this.splitClassNameAndType(className).className;
     this.classes.get(validatedClassName)!.annotations.push(annotation);
   }
