@@ -275,12 +275,23 @@ statement
     ;
 
 namespaceStatement
-    : namespaceIdentifier STRUCT_START classStatements STRUCT_STOP          { yy.addClassesToNamespace($1, $3); }
-    | namespaceIdentifier STRUCT_START NEWLINE classStatements STRUCT_STOP  { yy.addClassesToNamespace($1, $4); }
+    : namespaceIdentifier STRUCT_START namespaceBodyStatements STRUCT_STOP          { yy.addClassesToNamespace($1, $3); }
+    | namespaceIdentifier STRUCT_START NEWLINE namespaceBodyStatements STRUCT_STOP  { yy.addClassesToNamespace($1, $4); }
     ;
 
 namespaceIdentifier
     : NAMESPACE namespaceName { $$=$2; yy.addNamespace($2); }
+    ;
+
+namespaceBodyStatements
+    : namespaceBodyStatement                                        { $$=[$1].filter(s => s !== null); }
+    | namespaceBodyStatement NEWLINE                                { $$=[$1].filter(s => s !== null); }
+    | namespaceBodyStatement NEWLINE namespaceBodyStatements        { var filtered = [$1].filter(s => s !== null); $3.unshift(...filtered); $$=$3; }
+    ;
+
+namespaceBodyStatement
+    : classStatement                { $$=$1; }
+    | clickStatement               { $$=null; /* clickStatements don't return class names, but are processed for side effects */ }
     ;
 
 classStatements

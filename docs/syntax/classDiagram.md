@@ -702,6 +702,7 @@ classDiagram
 It is possible to bind a click event to a node. The click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 You would define these actions on a separate line after all classes have been declared.
+If you have classes defined within a namespace, you can also add interaction definitions within the namespace definition, after the class(es) is defined
 
 ```
 action className "reference" "tooltip"
