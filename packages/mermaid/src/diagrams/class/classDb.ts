@@ -265,6 +265,10 @@ export class ClassDB implements DiagramDB {
         theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
       } else if (memberString.indexOf(')') > 0) {
         //its a method
+        if (memberString.length < 2) {
+          // Too short to be a method, ignore
+          return;
+        }
         theClass.methods.push(new ClassMember(memberString, 'method'));
       } else if (memberString) {
         theClass.members.push(new ClassMember(memberString, 'attribute'));
