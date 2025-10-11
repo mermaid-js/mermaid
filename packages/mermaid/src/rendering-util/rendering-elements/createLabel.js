@@ -1,7 +1,12 @@
 import { select } from 'd3';
-import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import common, { evaluate, renderKatex, hasKatex } from '../../diagrams/common/common.js';
+import common, {
+  evaluate,
+  hasKatex,
+  renderKatexSanitized,
+  sanitizeText,
+} from '../../diagrams/common/common.js';
+import { log } from '../../logger.js';
 import { decodeEntities } from '../../utils.js';
 
 /**
@@ -22,20 +27,21 @@ async function addHtmlLabel(node) {
   const fo = select(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));
   const div = fo.append('xhtml:div');
 
+  const config = getConfig();
   let label = node.label;
   if (node.label && hasKatex(node.label)) {
-    label = await renderKatex(node.label.replace(common.lineBreakRegex, '\n'), getConfig());
+    label = await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config);
   }
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  div.html(
+  const labelSpan =
     '<span class="' +
-      labelClass +
-      '" ' +
-      (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') + // codeql [js/html-constructed-from-input] : false positive
-      '>' +
-      label +
-      '</span>'
-  );
+    labelClass +
+    '" ' +
+    (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') + // codeql [js/html-constructed-from-input] : false positive
+    '>' +
+    label +
+    '</span>';
+  div.html(sanitizeText(labelSpan, config));
 
   applyStyle(div, node.labelStyle);
   div.style('display', 'inline-block');

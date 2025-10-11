@@ -429,7 +429,7 @@ describe('Class diagram', () => {
     classDiagram
       class \`This\nTitle\nHas\nMany\nNewlines\` {
         +String Also
-        -Stirng Many
+        -String Many
         #int Members
         +And()
         -Many()
@@ -443,7 +443,7 @@ describe('Class diagram', () => {
     classDiagram
       class \`This\nTitle\nHas\nMany\nNewlines\` {
         +String Also
-        -Stirng Many
+        -String Many
         #int Members
         +And()
         -Many()
@@ -459,7 +459,7 @@ describe('Class diagram', () => {
       namespace testingNamespace {
       class \`This\nTitle\nHas\nMany\nNewlines\` {
         +String Also
-        -Stirng Many
+        -String Many
         #int Members
         +And()
         -Many()
@@ -493,6 +493,49 @@ describe('Class diagram', () => {
 
     cy.get('svg').then((svg) => {
       cy.get('a').should('have.attr', 'target', '_blank').should('have.attr', 'rel', 'noopener');
+    });
+  });
+
+  describe('Include char sequence "graph" in text (#6795)', () => {
+    it('has a label with char sequence "graph"', () => {
+      imgSnapshotTest(
+        `
+        classDiagram
+          class Person {
+            +String name
+            -Int id
+            #double age
+            +Text demographicProfile
+          }
+        `,
+        { flowchart: { defaultRenderer: 'elk' } }
+      );
+    });
+  });
+
+  it('should handle backticks for namespace and class names', () => {
+    imgSnapshotTest(
+      `
+      classDiagram
+          namespace \`A::B\` {
+              class \`IPC::Sender\`
+          }
+          RenderProcessHost --|> \`IPC::Sender\`
+      `,
+      {}
+    );
+    it('should handle an empty class body with empty braces', () => {
+      imgSnapshotTest(
+        ` classDiagram
+        class FooBase~T~ {}
+    class Bar {
+        +Zip
+        +Zap()
+    }
+    FooBase <|-- Ba
+        `,
+        { flowchart: { defaultRenderer: 'elk' } }
+      );
     });
   });
 });

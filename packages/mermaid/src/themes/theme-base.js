@@ -98,6 +98,7 @@ class Theme {
     this.critBorderColor = this.critBorderColor || '#ff8888';
     this.critBkgColor = this.critBkgColor || 'red';
     this.todayLineColor = this.todayLineColor || 'red';
+    this.vertLineColor = this.vertLineColor || 'navy';
     this.taskTextColor = this.taskTextColor || this.textColor;
     this.taskTextOutsideColor = this.taskTextOutsideColor || this.textColor;
     this.taskTextLightColor = this.taskTextLightColor || this.textColor;
@@ -109,6 +110,16 @@ class Theme {
 
     this.personBorder = this.personBorder || this.primaryBorderColor;
     this.personBkg = this.personBkg || this.mainBkg;
+
+    /* ER diagram */
+
+    if (this.darkMode) {
+      this.rowOdd = this.rowOdd || darken(this.mainBkg, 5) || '#ffffff';
+      this.rowEven = this.rowEven || darken(this.mainBkg, 10);
+    } else {
+      this.rowOdd = this.rowOdd || lighten(this.mainBkg, 75) || '#ffffff';
+      this.rowEven = this.rowEven || lighten(this.mainBkg, 5);
+    }
 
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
@@ -219,6 +230,20 @@ class Theme {
     this.pieOuterStrokeWidth = this.pieOuterStrokeWidth || '2px';
     this.pieOuterStrokeColor = this.pieOuterStrokeColor || 'black';
     this.pieOpacity = this.pieOpacity || '0.7';
+
+    /* radar */
+    this.radar = {
+      axisColor: this.radar?.axisColor || this.lineColor,
+      axisStrokeWidth: this.radar?.axisStrokeWidth || 2,
+      axisLabelFontSize: this.radar?.axisLabelFontSize || 12,
+      curveOpacity: this.radar?.curveOpacity || 0.5,
+      curveStrokeWidth: this.radar?.curveStrokeWidth || 2,
+      graticuleColor: this.radar?.graticuleColor || '#DEDEDE',
+      graticuleStrokeWidth: this.radar?.graticuleStrokeWidth || 1,
+      graticuleOpacity: this.radar?.graticuleOpacity || 0.3,
+      legendBoxSize: this.radar?.legendBoxSize || 12,
+      legendFontSize: this.radar?.legendFontSize || 12,
+    };
 
     /* architecture */
     this.archEdgeColor = this.archEdgeColor || '#777';

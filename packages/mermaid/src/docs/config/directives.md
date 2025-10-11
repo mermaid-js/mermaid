@@ -17,7 +17,6 @@ While directives allow you to change most of the default configuration settings,
 Mermaid basically supports two types of configuration options to be overridden by directives.
 
 1. _General/Top Level configurations_ : These are the configurations that are available and applied to all the diagram. **Some of the most important top-level** configurations are:
-
    - theme
    - fontFamily
    - logLevel
@@ -88,7 +87,7 @@ Here the directive declaration will set the `logLevel` to `debug` and the `theme
 
 Note: You can use 'init' or 'initialize' as both are acceptable as init directives. Also note that `%%init%%` and `%%initialize%%` directives will be grouped together after they are parsed.
 
-```mermaid
+```mermaid-example
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 %%{initialize: { 'logLevel': 'fatal', "theme":'dark', 'startOnLoad': true } }%%
 ...

@@ -1,5 +1,77 @@
 # Blog
 
+## [The Essential Guide to Mermaid Chart Plugin for VS Code [08/2025]](https://docs.mermaidchart.com/blog/posts/the-essential-guide-to-mermaid-chart-plugin-for-vs-code-08-2025)
+
+9/9/2025 • 5 mins
+
+Creating diagrams in VS Code has never been easier—the Mermaid VS Code plugin transforms text-based syntax into clear, professional visuals right inside your editor. With live previews, smart editing, and AI-powered diagram generation, it removes the friction from visualization so you can focus on coding.
+
+## [How to Create Perfect Flowcharts Using AI in 2025 Step-by-Step Guide](https://docs.mermaidchart.com/blog/posts/how-to-create-perfect-flowcharts-using-ai-in-2025-step-by-step-guide)
+
+7/22/2025 • 8 mins
+
+In 2025, AI tools make creating flowcharts faster and easier than ever. With Mermaid’s AI flowchart generator, you can turn plain text into clear, accurate diagrams in seconds. This guide walks through how it works and how to get the most out of it for technical and business workflows alike.
+
+## [Mermaid introduces the Visual Editor for Entity Relationship diagrams](https://docs.mermaidchart.com/blog/posts/mermaid-introduces-the-visual-editor-for-entity-relationship-diagrams)
+
+7/15/2025 • 7 mins
+
+Mermaid just introduced a Visual Editor for Entity Relationship diagrams, letting anyone map database structures through a simple point-and-click interface instead of code. This no-code ER builder now sits alongside Mermaid’s editors for flowcharts, sequence, and class diagrams, enabling teams to craft and share polished data models for apps, AI, and business processes.
+
+## [Mermaid supports Treemap Diagrams now!!!](https://docs.mermaidchart.com/blog/posts/mermaid-have-treemap-diagrams-now)
+
+7/3/2025 • 4 mins
+
+Mermaid has introduced Treemap diagrams, currently in beta, enhancing hierarchical data visualization. Treemap diagrams use nested rectangles to represent data relationships, focusing on size and proportions. They offer various applications, including budget visualization and market analysis. With simple syntax and customization options, users can effectively present complex data hierarchies.
+
+## [AI Diagram Generators and Data Visualization: Best Practices](https://docs.mermaidchart.com/blog/posts/ai-diagram-generators-and-data-visualization-best-practices)
+
+7/2/2025 • 6 mins
+
+AI diagram generators transform complex data into clear, interactive visuals – enabling faster analysis, better decisions, and stronger collaboration across teams. By combining automation with manual refinement, these tools empower anyone to communicate insights effectively, regardless of technical skill level.
+
+## [How to Choose the Best AI Diagram Generator for Your Needs (2025)](https://docs.mermaidchart.com/blog/posts/how-to-choose-the-best-ai-diagram-generator-for-your-needs-2025)
+
+6/26/2025 • 14 mins
+
+AI diagram generators are transforming how developers visualize and communicate complex systems, reducing hours of manual work into minutes. With tools like Mermaid AI, users benefit from both code-based and visual editing, enabling seamless collaboration and precision. Whether you’re diagramming workflows, software architecture, or data relationships, the right AI tool can significantly boost productivity and streamline communication.
+
+## [5 Time-Saving Tips for Using Mermaid’s AI Diagram Generator Effectively](https://docs.mermaidchart.com/blog/posts/5-time-saving-tips-for-using-mermaids-ai-diagram-generator-effectively)
+
+6/11/2025 • 10 mins
+
+See how developers can save time and boost productivity using Mermaid Chart’s AI diagram generator. Learn five practical tips that help turn plain language into powerful, professional diagrams.
+
+## [Enhancing Team Collaboration with AI-Powered Diagrams](https://docs.mermaidchart.com/blog/posts/enhancing-team-collaboration-with-ai-powered-diagrams)
+
+5/27/2025 • 6 mins
+
+Software teams move fast, but old-school diagramming tools can’t keep up. Mermaid Chart replaces static slides and whiteboards with real-time, AI-generated visuals that evolve with your code and ideas. Just describe a process in plain English, and watch it come to life.
+
+## [What is an AI Diagram Generator? Benefits and Use Cases](https://docs.mermaidchart.com/blog/posts/what-is-an-ai-diagram-generator-benefits-and-use-cases)
+
+5/22/2025 • 6 mins
+
+Discover how AI diagram generators like Mermaid Chart transform developer workflows. Instantly turn text into flowcharts, ERDs, and system diagrams, no manual drag-and-drop needed. Learn how it works, key benefits, and real-world use cases.
+
+## [How to Use Mermaid Chart as an AI Diagram Generator for Developers](https://docs.mermaidchart.com/blog/posts/how-to-use-mermaid-chart-as-an-ai-diagram-generator)
+
+5/21/2025 • 9 mins
+
+Would an AI diagram generator make your life easier? We think it would!
+
+## [Mermaid Chart VS Code Plugin: Create and Edit Mermaid.js Diagrams in Visual Studio Code](https://docs.mermaidchart.com/blog/posts/mermaid-chart-vs-code-plugin-create-and-edit-mermaid-js-diagrams-in-visual-studio-code)
+
+3/21/2025 • 5 mins
+
+The Mermaid Chart VS Code Plugin is a powerful developer diagramming tool that brings Mermaid.js diagramming directly into your Visual Studio Code environment. Whether you’re visualizing software architecture, documenting API flows, fixing bad documentation, or managing flowcharts and sequence diagrams, this plugin integrates seamlessly into your workflow. Key Features of the Mermaid Chart VS Code […]
+
+## [Mermaid Chart: The Evolution of Mermaid](https://docs.mermaidchart.com/blog/posts/mermaid-chart-the-evolution-of-mermaid)
+
+1/30/2025 • 3 mins
+
+Mermaid revolutionized diagramming with its simple, markdown-style syntax, empowering millions of developers worldwide. Now, Mermaid Chart takes it further with AI-powered visuals, a GUI for seamless editing, real-time collaboration, and advanced design tools. Experience the next generation of diagramming—faster, smarter, and built for modern teams. Try Mermaid Chart today!
+
 ## [GUI for editing Mermaid Class Diagrams](https://docs.mermaidchart.com/blog/posts/gui-for-editing-mermaid-class-diagrams)
 
 1/17/2025 • 5 mins
@@ -10,7 +82,7 @@ Discover how the latest update to the Mermaid Visual Editor transforms class dia
 
 1/16/2025 • 6 mins
 
-Entity relationship (ER) diagrams are a cornerstone of database design, providing a blueprint for modeling your database and enabling clear communication across functions in your organization. As data volumes continue to soar and as AI models demand clean, well-organized data, ER diagrams have become more vital than ever. You can now quickly build ER diagrams with Mermaid Chart, Mermaid AI to Kickstart and fine tune your diagrams . From e-commerce payment flows to social media interactions and healthcare systems, ER diagrams are powering modern, data-driven environments.
+Entity relationship (ER) diagrams are a cornerstone of database design, providing a blueprint for modeling your database and enabling clear communication across functions in your organization. As data volumes continue to soar and as AI models demand clean, well-organized data, ER diagrams have become more vital than ever. You can now quickly build ER diagrams with Mermaid Chart, Mermaid AI to kick-start and fine tune your diagrams . From e-commerce payment flows to social media interactions and healthcare systems, ER diagrams are powering modern, data-driven environments.
 
 ## [Mermaid Whiteboard: Visual Collaboration Made Universal](https://docs.mermaidchart.com/blog/posts/mermaid-whiteboard-visual-collaboration-made-universal)
 

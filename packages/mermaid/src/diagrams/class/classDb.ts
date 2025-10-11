@@ -99,7 +99,7 @@ export class ClassDB implements DiagramDB {
   /**
    * Function called by parser when a node definition has been found.
    *
-   * @param id - Id of the class to add
+   * @param id - ID of the class to add
    * @public
    */
   public addClass(_id: string) {
@@ -524,7 +524,7 @@ export class ClassDB implements DiagramDB {
   /**
    * Function called by parser when a namespace definition has been found.
    *
-   * @param id - Id of the namespace to add
+   * @param id - ID of the namespace to add
    * @public
    */
   public addNamespace(id: string) {
@@ -553,8 +553,8 @@ export class ClassDB implements DiagramDB {
   /**
    * Function called by parser when a namespace definition has been found.
    *
-   * @param id - Id of the namespace to add
-   * @param classNames - Ids of the class to add
+   * @param id - ID of the namespace to add
+   * @param classNames - IDs of the class to add
    * @public
    */
   public addClassesToNamespace(id: string, classNames: string[]) {

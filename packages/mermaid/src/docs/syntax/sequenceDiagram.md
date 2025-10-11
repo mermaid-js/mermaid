@@ -46,6 +46,78 @@ sequenceDiagram
     Bob->>Alice: Hi Alice
 ```
 
+### Boundary
+
+If you want to use the boundary symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "boundary" }
+    participant Bob
+    Alice->>Bob: Request from boundary
+    Bob->>Alice: Response to boundary
+```
+
+### Control
+
+If you want to use the control symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "control" }
+    participant Bob
+    Alice->>Bob: Control request
+    Bob->>Alice: Control response
+```
+
+### Entity
+
+If you want to use the entity symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "entity" }
+    participant Bob
+    Alice->>Bob: Entity request
+    Bob->>Alice: Entity response
+```
+
+### Database
+
+If you want to use the database symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "database" }
+    participant Bob
+    Alice->>Bob: DB query
+    Bob->>Alice: DB result
+```
+
+### Collections
+
+If you want to use the collections symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "collections" }
+    participant Bob
+    Alice->>Bob: Collections request
+    Bob->>Alice: Collections response
+```
+
+### Queue
+
+If you want to use the queue symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "queue" }
+    participant Bob
+    Alice->>Bob: Queue message
+    Bob->>Alice: Queue response
+```
+
 ### Aliases
 
 The actor can have a convenient identifier and a descriptive label.
@@ -144,7 +216,11 @@ Messages can be of two displayed either solid or with a dotted line.
 [Actor][Arrow][Actor]:Message text
 ```
 
-There are ten types of arrows currently supported:
+Lines can be solid or dotted, and can end with various types of arrowheads, crosses, or open arrows.
+
+#### Supported Arrow Types
+
+**Standard Arrow Types**
 
 | Type     | Description                                          |
 | -------- | ---------------------------------------------------- |
@@ -158,6 +234,49 @@ There are ten types of arrows currently supported:
 | `--x`    | Dotted line with a cross at the end                  |
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
+
+**Half-Arrows (v<MERMAID_RELEASE_VERSION>+)**
+
+The following half-arrow types are supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
+
+---
+
+| Type    | Description                                          |
+| ------- | ---------------------------------------------------- |
+| `-\|\`  | Solid line with top half arrowhead                   |
+| `--\|\` | Dotted line with top half arrowhead                  |
+| `-\|/`  | Solid line with bottom half arrowhead                |
+| `--\|/` | Dotted line with bottom half arrowhead               |
+| `/\|-`  | Solid line with reverse top half arrowhead           |
+| `/\|--` | Dotted line with reverse top half arrowhead          |
+| `\\-`   | Solid line with reverse bottom half arrowhead        |
+| `\\--`  | Dotted line with reverse bottom half arrowhead       |
+| `-\\`   | Solid line with top stick half arrowhead             |
+| `--\\`  | Dotted line with top stick half arrowhead            |
+| `-//`   | Solid line with bottom stick half arrowhead          |
+| `--//`  | Dotted line with bottom stick half arrowhead         |
+| `//-`   | Solid line with reverse top stick half arrowhead     |
+| `//--`  | Dotted line with reverse top stick half arrowhead    |
+| `\\-`   | Solid line with reverse bottom stick half arrowhead  |
+| `\\--`  | Dotted line with reverse bottom stick half arrowhead |
+
+## Central Connections (v<MERMAID_RELEASE_VERSION>+)
+
+Mermaid sequence diagrams support **central lifeline connections** using a `()`.
+This is useful to represent messages or signals that connect to a central point, rather than from one actor directly to another.
+
+To indicate a central connection, append `()` to the arrow syntax.
+
+#### Basic Syntax
+
+```mermaid-example
+sequenceDiagram
+    participant Alice
+    participant John
+    Alice->>()John: Hello John
+    Alice()->>John: How are you?
+    John()->>()Alice: Great!
+```
 
 ## Activations
 
@@ -442,7 +561,7 @@ sequenceDiagram
 
 Comments can be entered within a sequence diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     %% this is a comment

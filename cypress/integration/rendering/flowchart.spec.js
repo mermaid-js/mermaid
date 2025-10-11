@@ -895,7 +895,7 @@ graph TD
     imgSnapshotTest(
       `
       graph TD
-        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff 
+        classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff
         hello --> default
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
@@ -914,6 +914,62 @@ graph TD
       {
         flowchart: { htmlLabels: true },
         securityLevel: 'loose',
+      }
+    );
+  });
+  it('#6369: edge color should affect arrow head', () => {
+    imgSnapshotTest(
+      `
+    flowchart LR
+        A --> B
+        A --> C
+        C --> D
+
+        linkStyle 0 stroke:#D50000
+        linkStyle 2 stroke:#D50000
+    `,
+      {
+        flowchart: { htmlLabels: true },
+        securityLevel: 'loose',
+      }
+    );
+  });
+  it('68: should honor subgraph direction when inheritDir is false', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {"flowchart": { "inheritDir": false }}}%%
+      flowchart TB
+        direction LR
+        subgraph A
+          direction TB
+          a --> b
+        end
+        subgraph B
+          c --> d
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
+
+  it('69: should inherit global direction when inheritDir is true', () => {
+    imgSnapshotTest(
+      `
+      %%{init: {"flowchart": { "inheritDir": true }}}%%
+      flowchart TB
+        direction LR
+        subgraph A
+          direction TB
+          a --> b
+        end
+        subgraph B
+          c --> d
+        end
+      `,
+      {
+        fontFamily: 'courier',
       }
     );
   });
