@@ -88,6 +88,50 @@ describe('given a basic class diagram, ', function () {
       expect(relations[0].title).toBe('generates');
     });
 
+    it('should handle link statements within namespaces', function () {
+      spyOn(classDb, 'setLink');
+      const str = `classDiagram
+        namespace MyNamespace {
+          class UserService {
+            +createUser()
+            +deleteUser()
+          }
+          
+          class PaymentService {
+            +processPayment()
+            +refund()
+          }
+          
+          link UserService "https://example.com/user-service"
+          link PaymentService "https://example.com/payment-service" "Payment Service Documentation"
+        }`;
+
+      parser.parse(str);
+
+      // Verify setLink was called for both classes
+      expect(classDb.setLink).toHaveBeenCalledWith(
+        'UserService',
+        'https://example.com/user-service'
+      );
+      expect(classDb.setLink).toHaveBeenCalledWith(
+        'PaymentService',
+        'https://example.com/payment-service'
+      );
+
+      // Verify the classes have the correct links and are in the namespace
+      const userService = classDb.getClass('UserService');
+      const paymentService = classDb.getClass('PaymentService');
+
+      expect(userService.parent).toBe('MyNamespace');
+      expect(userService.link).toBe('https://example.com/user-service');
+      expect(userService.cssClasses).toBe('default clickable');
+
+      expect(paymentService.parent).toBe('MyNamespace');
+      expect(paymentService.link).toBe('https://example.com/payment-service');
+      expect(paymentService.tooltip).toBe('Payment Service Documentation');
+      expect(paymentService.cssClasses).toBe('default clickable');
+    });
+
     it('should handle accTitle and accDescr', function () {
       const str = `classDiagram
             accTitle: My Title
