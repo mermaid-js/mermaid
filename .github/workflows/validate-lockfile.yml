@@ -19,9 +19,9 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20.19.5
 
-      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
 
       - name: Validate pnpm-lock.yaml entries
         id: validate # give this step an ID so we can reference its outputs
