@@ -4,6 +4,7 @@ const spyOn = vi.spyOn;
 
 const staticCssStyle = 'text-decoration:underline;';
 const abstractCssStyle = 'font-style:italic;';
+const abstractStaticCssStyle = 'text-decoration:underline;font-style:italic;';
 
 describe('given text representing a method, ', function () {
   describe('when method has no parameters', function () {
@@ -56,6 +57,22 @@ describe('given text representing a method, ', function () {
       const classMember = new ClassMember(str, 'method');
       expect(classMember.getDisplayDetails().displayText).toBe('getTime()');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
+    });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTime()*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime()');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTime()$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime()');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
     });
   });
 
@@ -110,6 +127,22 @@ describe('given text representing a method, ', function () {
       expect(classMember.getDisplayDetails().displayText).toBe('getTime(int)');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTime(int)*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime(int)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTime(int)$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime(int)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
   });
 
   describe('when method has single parameter type and name (type first)', function () {
@@ -162,6 +195,22 @@ describe('given text representing a method, ', function () {
       const classMember = new ClassMember(str, 'method');
       expect(classMember.getDisplayDetails().displayText).toBe('getTime(int count)');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
+    });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTime(int count)*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime(int count)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTime(int count)$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime(int count)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
     });
   });
 
@@ -216,6 +265,22 @@ describe('given text representing a method, ', function () {
       expect(classMember.getDisplayDetails().displayText).toBe('getTime(count int)');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTime(count int)*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime(count int)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTime(count int)$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime(count int)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
   });
 
   describe('when method has multiple parameters', function () {
@@ -268,6 +333,22 @@ describe('given text representing a method, ', function () {
       const classMember = new ClassMember(str, 'method');
       expect(classMember.getDisplayDetails().displayText).toBe('getTime(string text, int count)');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
+    });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTime(string text, int count)*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime(string text, int count)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTime(string text, int count)$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime(string text, int count)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
     });
   });
 
@@ -322,6 +403,22 @@ describe('given text representing a method, ', function () {
       expect(classMember.getDisplayDetails().displayText).toBe('getTime() : DateTime');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTime()  DateTime*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime() : DateTime');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTime()  DateTime$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTime() : DateTime');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
   });
 
   describe('when method parameter is generic', function () {
@@ -374,6 +471,22 @@ describe('given text representing a method, ', function () {
       const classMember = new ClassMember(str, 'method');
       expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>)');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
+    });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTimes(List~T~)*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTimes(List~T~)$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
     });
   });
 
@@ -428,6 +541,22 @@ describe('given text representing a method, ', function () {
       expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>, List<OT>)');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTimes(List~T~, List~OT~)*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>, List<OT>)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTimes(List~T~, List~OT~)$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes(List<T>, List<OT>)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
   });
 
   describe('when method parameter is a nested generic', function () {
@@ -480,6 +609,22 @@ describe('given text representing a method, ', function () {
       const classMember = new ClassMember(str, 'method');
       expect(classMember.getDisplayDetails().displayText).toBe('getTimetableList(List<List<T>>)');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
+    });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTimetableList(List~List~T~~)*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimetableList(List<List<T>>)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTimetableList(List~List~T~~)$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimetableList(List<List<T>>)');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
     });
   });
 
@@ -540,6 +685,20 @@ describe('given text representing a method, ', function () {
       expect(classMember.getDisplayDetails().displayText).toBe(expectedMethodNameAndParameters);
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
     });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = methodNameAndParameters + '*$';
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe(expectedMethodNameAndParameters);
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = methodNameAndParameters + '$*';
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe(expectedMethodNameAndParameters);
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
   });
 
   describe('when method return type is generic', function () {
@@ -592,6 +751,22 @@ describe('given text representing a method, ', function () {
       const classMember = new ClassMember(str, 'method');
       expect(classMember.getDisplayDetails().displayText).toBe('getTimes() : List<T>');
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
+    });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTimes() List~T~*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes() : List<T>');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTimes() List~T~$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('getTimes() : List<T>');
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
     });
   });
 
@@ -659,6 +834,26 @@ describe('given text representing a method, ', function () {
         'getTimetableList() : List<List<T>>'
       );
       expect(classMember.getDisplayDetails().cssStyle).toBe(abstractCssStyle);
+    });
+
+    it('should return correct css for abstract static classifier', function () {
+      const str = `getTimetableList() List~List~T~~*$`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe(
+        'getTimetableList() : List<List<T>>'
+      );
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
+    });
+
+    it('should return correct css for static abstract classifier', function () {
+      const str = `getTimetableList() List~List~T~~$*`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe(
+        'getTimetableList() : List<List<T>>'
+      );
+      expect(classMember.getDisplayDetails().cssStyle).toBe(abstractStaticCssStyle);
     });
   });
 
@@ -757,6 +952,28 @@ describe('given text representing an attribute', () => {
 
       expect(displayDetails.displayText).toBe('name String');
       expect(displayDetails.cssStyle).toBe(abstractCssStyle);
+    });
+  });
+
+  describe('when the attribute has abstract static "*$" modifier', () => {
+    it('should parse the display text correctly and apply abstract static css style', () => {
+      const str = 'name String*$';
+
+      const displayDetails = new ClassMember(str, 'attribute').getDisplayDetails();
+
+      expect(displayDetails.displayText).toBe('name String');
+      expect(displayDetails.cssStyle).toBe(abstractStaticCssStyle);
+    });
+  });
+
+  describe('when the attribute has static abstract "$*" modifier', () => {
+    it('should parse the display text correctly and apply abstract static css style', () => {
+      const str = 'name String$*';
+
+      const displayDetails = new ClassMember(str, 'attribute').getDisplayDetails();
+
+      expect(displayDetails.displayText).toBe('name String');
+      expect(displayDetails.cssStyle).toBe(abstractStaticCssStyle);
     });
   });
 });
