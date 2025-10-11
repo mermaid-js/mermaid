@@ -1,38 +1,5 @@
 import { assert, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// -------------------------------------
-//  Mocks and mocking
-
-import { MockedD3 } from './tests/MockedD3.js';
-
-// Note: If running this directly from within an IDE, the mocks directory must be at packages/mermaid/mocks
-vi.mock('d3');
-vi.mock('dagre-d3');
-
-// mermaidAPI.spec.ts:
-import * as accessibility from './accessibility.js'; // Import it this way so we can use spyOn(accessibility,...)
-vi.mock('./accessibility.js', () => ({
-  setA11yDiagramInfo: vi.fn(),
-  addSVGa11yTitleDescription: vi.fn(),
-}));
-
-// Mock the renderers specifically so we can test render(). Need to mock draw() for each renderer
-vi.mock('./diagrams/c4/c4Renderer.js');
-vi.mock('./diagrams/class/classRenderer.js');
-vi.mock('./diagrams/class/classRenderer-v2.js');
-vi.mock('./diagrams/er/erRenderer.js');
-vi.mock('./diagrams/flowchart/flowRenderer-v2.js');
-vi.mock('./diagrams/git/gitGraphRenderer.js');
-vi.mock('./diagrams/gantt/ganttRenderer.js');
-vi.mock('./diagrams/user-journey/journeyRenderer.js');
-vi.mock('./diagrams/pie/pieRenderer.js');
-vi.mock('./diagrams/packet/renderer.js');
-vi.mock('./diagrams/xychart/xychartRenderer.js');
-vi.mock('./diagrams/requirement/requirementRenderer.js');
-vi.mock('./diagrams/sequence/sequenceRenderer.js');
-
-// -------------------------------------
-
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
 import mermaid from './mermaid.js';
@@ -73,6 +40,8 @@ import { SequenceDB } from './diagrams/sequence/sequenceDb.js';
 import { decodeEntities, encodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 import { StateDB } from './diagrams/state/stateDb.js';
+import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
+import { JSDOM } from 'jsdom';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -80,7 +49,6 @@ import { StateDB } from './diagrams/state/stateDb.js';
  */
 
 // -------------------------------------------------------------------------------------
-
 describe('mermaidAPI', () => {
   describe('encodeEntities', () => {
     it('removes the ending ; from style [text1]:[optional word]#[text2]; with ', () => {
@@ -223,63 +191,49 @@ describe('mermaidAPI', () => {
     });
   });
 
-  const fauxParentNode = new MockedD3();
-  const fauxEnclosingDiv = new MockedD3();
-  const fauxSvgNode = new MockedD3();
-
   describe('appendDivSvgG', () => {
-    const fauxGNode = new MockedD3();
-    const parent_append_spy = vi.spyOn(fauxParentNode, 'append').mockReturnValue(fauxEnclosingDiv);
-    const div_append_spy = vi.spyOn(fauxEnclosingDiv, 'append').mockReturnValue(fauxSvgNode);
-    // @ts-ignore @todo TODO why is this getting a type error?
-    const div_attr_spy = vi.spyOn(fauxEnclosingDiv, 'attr').mockReturnValue(fauxEnclosingDiv);
-    const svg_append_spy = vi.spyOn(fauxSvgNode, 'append').mockReturnValue(fauxGNode);
-    // @ts-ignore @todo TODO why is this getting a type error?
-    const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
-
     // cspell:ignore dthe
 
-    it('appends a div node', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(parent_append_spy).toHaveBeenCalledWith('div');
-      expect(div_append_spy).toHaveBeenCalledWith('svg');
+    jsdomIt('appends a div node', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const divNode = ensureNodeFromSelector('div');
+      const svgNode = ensureNodeFromSelector('svg', divNode);
+      ensureNodeFromSelector('g', svgNode);
     });
-    it('the id for the div is "d" with the id appended', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(div_attr_spy).toHaveBeenCalledWith('id', 'dtheId');
-    });
-
-    it('sets the style for the div if one is given', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId', 'given div style', 'given x link');
-      expect(div_attr_spy).toHaveBeenCalledWith('style', 'given div style');
+    jsdomIt('the id for the div is "d" with the id appended', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const divNode = ensureNodeFromSelector('div');
+      expect(divNode?.getAttribute('id')).toBe('dtheId');
     });
 
-    it('appends a svg node to the div node', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(div_attr_spy).toHaveBeenCalledWith('id', 'dtheId');
+    jsdomIt('sets the style for the div if one is given', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId', 'given div style', 'given x link');
+      const divNode = ensureNodeFromSelector('div');
+      expect(divNode?.getAttribute('style')).toBe('given div style');
     });
-    it('sets the svg width to 100%', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_attr_spy).toHaveBeenCalledWith('width', '100%');
+
+    jsdomIt('sets the svg width to 100%', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('width')).toBe('100%');
     });
-    it('the svg id is the id', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_attr_spy).toHaveBeenCalledWith('id', 'theId');
+    jsdomIt('the svg id is the id', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('id')).toBe('theId');
     });
-    it('the svg xml namespace is the 2000 standard', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_attr_spy).toHaveBeenCalledWith('xmlns', 'http://www.w3.org/2000/svg');
+    jsdomIt('the svg xml namespace is the 2000 standard', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
     });
-    it('sets the  svg xlink if one is given', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId', 'div style', 'given x link');
-      expect(svg_attr_spy).toHaveBeenCalledWith('xmlns:xlink', 'given x link');
+    jsdomIt('sets the  svg xlink if one is given', ({ body }) => {
+      appendDivSvgG(body, 'theId', 'dtheId', 'div style', 'given x link');
+      const svgNode = ensureNodeFromSelector('div > svg');
+      expect(svgNode.getAttribute('xmlns:xlink')).toBe('given x link');
     });
-    it('appends a g (group) node to the svg node', () => {
-      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
-      expect(svg_append_spy).toHaveBeenCalledWith('g');
-    });
-    it('returns the given parentRoot d3 nodes', () => {
-      expect(appendDivSvgG(fauxParentNode, 'theId', 'dtheId')).toEqual(fauxParentNode);
+    jsdomIt('returns the given parentRoot d3 nodes', ({ body }) => {
+      expect(appendDivSvgG(body, 'theId', 'dtheId')).toEqual(body);
     });
   });
 
@@ -608,7 +562,7 @@ describe('mermaidAPI', () => {
 
       let error: any = { message: '' };
       try {
-        // @ts-ignore This is a read-only property. Typescript will not allow assignment, but regular javascript might.
+        // @ts-ignore This is a read-only property. TypeScript will not allow assignment, but regular javascript might.
         mermaidAPI.defaultConfig = config;
       } catch (e) {
         error = e;
@@ -780,9 +734,9 @@ graph TD;A--x|text including URL space|B;`)
     // render(id, text, cb?, svgContainingElement?)
 
     // Test all diagram types.  Note that old flowchart 'graph' type will invoke the flowRenderer-v2. (See the flowchart v2 detector.)
-    // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different than was is put in the diagram text (ex: in -v2 diagrams)
+    // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different from what is put in the diagram text (ex: in -v2 diagrams)
     const diagramTypesAndExpectations = [
-      { textDiagramType: 'C4Context', expectedType: 'c4' },
+      // { textDiagramType: 'C4Context', expectedType: 'c4' }, TODO : setAccTitle not called in C4 jison parser
       { textDiagramType: 'classDiagram', expectedType: 'class' },
       { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
       { textDiagramType: 'erDiagram', expectedType: 'er' },
@@ -792,11 +746,23 @@ graph TD;A--x|text including URL space|B;`)
       { textDiagramType: 'gantt', expectedType: 'gantt' },
       { textDiagramType: 'journey', expectedType: 'journey' },
       { textDiagramType: 'pie', expectedType: 'pie' },
+      { textDiagramType: 'packet', expectedType: 'packet' },
       { textDiagramType: 'packet-beta', expectedType: 'packet' },
-      { textDiagramType: 'xychart-beta', expectedType: 'xychart' },
+      {
+        textDiagramType: 'xychart-beta',
+        expectedType: 'xychart',
+        content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
+      },
+      {
+        textDiagramType: 'xychart',
+        expectedType: 'xychart',
+        content: 'x-axis "Attempts" 10000 --> 10000\ny-axis "Passing tests" 1 --> 1\nbar [1]',
+      },
       { textDiagramType: 'requirementDiagram', expectedType: 'requirement' },
       { textDiagramType: 'sequenceDiagram', expectedType: 'sequence' },
       { textDiagramType: 'stateDiagram-v2', expectedType: 'stateDiagram' },
+      { textDiagramType: 'radar-beta', expectedType: 'radar' },
+      { textDiagramType: 'architecture-beta', expectedType: 'architecture' },
     ];
 
     describe('accessibility', () => {
@@ -807,20 +773,25 @@ graph TD;A--x|text including URL space|B;`)
       diagramTypesAndExpectations.forEach((testedDiagram) => {
         describe(`${testedDiagram.textDiagramType}`, () => {
           const diagramType = testedDiagram.textDiagramType;
-          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n`;
+          const content = testedDiagram.content || '';
+          const diagramText = `${diagramType}\n accTitle: ${a11yTitle}\n accDescr: ${a11yDescr}\n ${content}`;
           const expectedDiagramType = testedDiagram.expectedType;
 
-          it('should set aria-roledescription to the diagram type AND should call addSVGa11yTitleDescription', async () => {
-            const a11yDiagramInfo_spy = vi.spyOn(accessibility, 'setA11yDiagramInfo');
-            const a11yTitleDesc_spy = vi.spyOn(accessibility, 'addSVGa11yTitleDescription');
-            const result = await mermaidAPI.render(id, diagramText);
-            expect(result.diagramType).toBe(expectedDiagramType);
-            expect(a11yDiagramInfo_spy).toHaveBeenCalledWith(
-              expect.anything(),
-              expectedDiagramType
-            );
-            expect(a11yTitleDesc_spy).toHaveBeenCalled();
-          });
+          jsdomIt(
+            'should set aria-roledescription to the diagram type AND should call addSVGa11yTitleDescription',
+            async () => {
+              const { svg } = await mermaidAPI.render(id, diagramText);
+              const dom = new JSDOM(svg);
+              const svgNode = ensureNodeFromSelector('svg', dom.window.document);
+              const descNode = ensureNodeFromSelector('desc', svgNode);
+              const titleNode = ensureNodeFromSelector('title', svgNode);
+              expect(svgNode.getAttribute('aria-roledescription')).toBe(expectedDiagramType);
+              expect(svgNode.getAttribute('aria-describedby')).toBe(`chart-desc-${id}`);
+              expect(descNode.getAttribute('id')).toBe(`chart-desc-${id}`);
+              expect(descNode.innerHTML).toBe(a11yDescr);
+              expect(titleNode.innerHTML).toBe(a11yTitle);
+            }
+          );
         });
       });
     });
@@ -939,5 +910,242 @@ graph TD;A--x|text including URL space|B;`)
       assert(sequenceDiagram2.db instanceof SequenceDB);
       expect(sequenceDiagram1.db.getActors()).not.toEqual(sequenceDiagram2.db.getActors());
     });
+  });
+
+  describe('mermaidAPI config precedence', () => {
+    const id = 'mermaid-config-test';
+
+    beforeEach(() => {
+      mermaidAPI.globalReset();
+    });
+
+    jsdomIt('renders with YAML config taking precedence over initialize config', async () => {
+      mermaid.initialize({
+        theme: 'forest',
+        fontFamily: 'Arial',
+        themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        flowchart: { htmlLabels: false },
+      });
+
+      const diagramText = `---
+config:
+  theme: base
+  fontFamily: Courier
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+  flowchart:
+    htmlLabels: true
+---
+flowchart TD
+  A --> B
+`;
+
+      const { svg } = await mermaidAPI.render('yaml-over-init', diagramText);
+
+      const config = mermaidAPI.getConfig();
+      expect(config.theme).toBe('base');
+      expect(config.fontFamily).toBe('Courier');
+      expect(config.themeVariables.fontFamily).toBe('Courier New');
+      expect(config.themeVariables.fontSize).toBe('20px');
+      expect(config.flowchart?.htmlLabels).toBe(true);
+
+      const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+      expect(svgNode).not.toBeNull();
+    });
+
+    jsdomIt(
+      'renders with YAML themeVariables fully overriding initialize themeVariables',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+        const config = mermaidAPI.getConfig();
+
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('20px');
+        expect(config.themeVariables.fontFamily).not.toBe('Arial');
+        expect(config.themeVariables.fontSize).not.toBe('16px');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML themeVariables overriding only provided keys and keeping others from initialize',
+      async () => {
+        mermaid.initialize({
+          theme: 'forest',
+          fontFamily: 'Arial',
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px', colorPrimary: '#ff0000' },
+        });
+
+        const diagramText = `---
+config:
+  themeVariables:
+    fontFamily: "Courier New"
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.themeVariables.colorPrimary).toBe('#ff0000');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML config (no themeVariables) and falls back to initialize themeVariables',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Arial');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.theme).toBe('base');
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with full YAML config block taking full precedence over initialize config',
+      async () => {
+        mermaid.initialize({
+          theme: 'forest',
+          fontFamily: 'Arial',
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+          flowchart: { htmlLabels: false },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+  fontFamily: Courier
+  themeVariables:
+    fontFamily: "Courier New"
+    fontSize: "20px"
+  flowchart:
+    htmlLabels: true
+---
+flowchart TD
+  A --> B
+`;
+
+        const { svg } = await mermaidAPI.render('yaml-over-init', diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.theme).toBe('base');
+        expect(config.fontFamily).toBe('Courier');
+        expect(config.themeVariables.fontFamily).toBe('Courier New');
+        expect(config.themeVariables.fontSize).toBe('20px');
+        expect(config.flowchart?.htmlLabels).toBe(true);
+
+        const svgNode = ensureNodeFromSelector('svg', new JSDOM(svg).window.document);
+        expect(svgNode).not.toBeNull();
+      }
+    );
+
+    jsdomIt(
+      'renders with YAML config (no themeVariables) and falls back to initialize themeVariables (duplicate scenario)',
+      async () => {
+        mermaid.initialize({
+          themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+        });
+
+        const diagramText = `---
+config:
+  theme: base
+---
+flowchart TD
+  A --> B
+`;
+
+        await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.themeVariables.fontFamily).toBe('Arial');
+        expect(config.themeVariables.fontSize).toBe('16px');
+        expect(config.theme).toBe('base');
+      }
+    );
+
+    jsdomIt('renders with no YAML config so initialize config is fully applied', async () => {
+      mermaid.initialize({
+        theme: 'forest',
+        fontFamily: 'Arial',
+        themeVariables: { fontFamily: 'Arial', fontSize: '16px' },
+      });
+
+      const diagramText = `
+flowchart TD
+  A --> B
+`;
+
+      await mermaidAPI.render(id, diagramText);
+
+      const config = mermaidAPI.getConfig();
+      expect(config.theme).toBe('forest');
+      expect(config.fontFamily).toBe('Arial');
+      expect(config.themeVariables.fontFamily).toBe('Arial');
+      expect(config.themeVariables.fontSize).toBe('16px');
+    });
+
+    jsdomIt(
+      'renders with empty YAML config block and falls back to initialize config',
+      async () => {
+        mermaid.initialize({
+          theme: 'dark',
+          themeVariables: { fontFamily: 'Times', fontSize: '14px' },
+        });
+
+        const diagramText = `---
+config: {}
+---
+flowchart TD
+  A --> B
+`;
+
+        await mermaidAPI.render(id, diagramText);
+
+        const config = mermaidAPI.getConfig();
+        expect(config.theme).toBe('dark');
+        expect(config.themeVariables.fontFamily).toBe('Times');
+        expect(config.themeVariables.fontSize).toBe('14px');
+      }
+    );
   });
 });

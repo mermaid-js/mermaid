@@ -13,15 +13,44 @@ export interface NodeMetaData {
   ticket?: string;
 }
 
+export interface ParticipantMetaData {
+  type?:
+    | 'actor'
+    | 'participant'
+    | 'boundary'
+    | 'control'
+    | 'entity'
+    | 'database'
+    | 'collections'
+    | 'queue';
+}
+
 export interface EdgeMetaData {
   animation?: 'fast' | 'slow';
   animate?: boolean;
+  curve?:
+    | 'basis'
+    | 'bumpX'
+    | 'bumpY'
+    | 'cardinal'
+    | 'catmullRom'
+    | 'linear'
+    | 'monotoneX'
+    | 'monotoneY'
+    | 'natural'
+    | 'step'
+    | 'stepAfter'
+    | 'stepBefore';
 }
 import type { MermaidConfig } from './config.type.js';
 
 export interface Point {
   x: number;
   y: number;
+}
+export interface Bounds extends Point {
+  width: number;
+  height: number;
 }
 
 export interface TextDimensionConfig {

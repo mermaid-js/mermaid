@@ -1,9 +1,10 @@
-import { getIconSVG } from '../../rendering-util/icons.js';
 import type cytoscape from 'cytoscape';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';
+import { getIconSVG } from '../../rendering-util/icons.js';
 import type { D3Element } from '../../types.js';
-import { db, getConfigField } from './architectureDb.js';
+import { sanitizeText } from '../common/common.js';
+import type { ArchitectureDB } from './architectureDb.js';
 import { architectureIcons } from './architectureIcons.js';
 import {
   ArchitectureDirectionArrow,
@@ -16,14 +17,18 @@ import {
   isArchitectureDirectionY,
   isArchitecturePairXY,
   nodeData,
-  type ArchitectureDB,
   type ArchitectureJunction,
   type ArchitectureService,
 } from './architectureTypes.js';
+import { getEdgeId } from '../../utils.js';
 
-export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core) {
-  const padding = getConfigField('padding');
-  const iconSize = getConfigField('iconSize');
+export const drawEdges = async function (
+  edgesEl: D3Element,
+  cy: cytoscape.Core,
+  db: ArchitectureDB
+) {
+  const padding = db.getConfigField('padding');
+  const iconSize = db.getConfigField('iconSize');
   const halfIconSize = iconSize / 2;
   const arrowSize = iconSize / 6;
   const halfArrowSize = arrowSize / 2;
@@ -87,7 +92,8 @@ export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core)
 
         g.insert('path')
           .attr('d', `M ${startX},${startY} L ${midX},${midY} L${endX},${endY} `)
-          .attr('class', 'edge');
+          .attr('class', 'edge')
+          .attr('id', getEdgeId(source, target, { prefix: 'L' }));
 
         if (sourceArrow) {
           const xShift = isArchitectureDirectionX(sourceDir)
@@ -183,13 +189,17 @@ export const drawEdges = async function (edgesEl: D3Element, cy: cytoscape.Core)
   );
 };
 
-export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Core) {
-  const padding = getConfigField('padding');
+export const drawGroups = async function (
+  groupsEl: D3Element,
+  cy: cytoscape.Core,
+  db: ArchitectureDB
+) {
+  const padding = db.getConfigField('padding');
   const groupIconSize = padding * 0.75;
 
-  const fontSize = getConfigField('fontSize');
+  const fontSize = db.getConfigField('fontSize');
 
-  const iconSize = getConfigField('iconSize');
+  const iconSize = db.getConfigField('iconSize');
   const halfIconSize = iconSize / 2;
 
   await Promise.all(
@@ -198,8 +208,9 @@ export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Cor
       if (data.type === 'group') {
         const { h, w, x1, y1 } = node.boundingBox();
 
-        groupsEl
-          .append('rect')
+        const groupsNode = groupsEl.append('rect');
+        groupsNode
+          .attr('id', `group-${data.id}`)
           .attr('x', x1 + halfIconSize)
           .attr('y', y1 + halfIconSize)
           .attr('width', w)
@@ -254,6 +265,7 @@ export const drawGroups = async function (groupsEl: D3Element, cy: cytoscape.Cor
               ')'
           );
         }
+        db.setElementForId(data.id, groupsNode);
       }
     })
   );
@@ -264,9 +276,10 @@ export const drawServices = async function (
   elem: D3Element,
   services: ArchitectureService[]
 ): Promise<number> {
+  const config = getConfig();
   for (const service of services) {
     const serviceElem = elem.append('g');
-    const iconSize = getConfigField('iconSize');
+    const iconSize = db.getConfigField('iconSize');
 
     if (service.title) {
       const textElem = serviceElem.append('g');
@@ -278,7 +291,7 @@ export const drawServices = async function (
           width: iconSize * 1.5,
           classes: 'architecture-service-label',
         },
-        getConfig()
+        config
       );
 
       textElem
@@ -313,7 +326,7 @@ export const drawServices = async function (
         .attr('class', 'node-icon-text')
         .attr('style', `height: ${iconSize}px;`)
         .append('div')
-        .html(service.iconText);
+        .html(sanitizeText(service.iconText, config));
       const fontSize =
         parseInt(
           window
@@ -333,9 +346,9 @@ export const drawServices = async function (
         );
     }
 
-    serviceElem.attr('class', 'architecture-service');
+    serviceElem.attr('id', `service-${service.id}`).attr('class', 'architecture-service');
 
-    const { width, height } = serviceElem._groups[0][0].getBBox();
+    const { width, height } = serviceElem.node().getBBox();
     service.width = width;
     service.height = height;
     db.setElementForId(service.id, serviceElem);
@@ -350,7 +363,7 @@ export const drawJunctions = function (
 ) {
   junctions.forEach((junction) => {
     const junctionElem = elem.append('g');
-    const iconSize = getConfigField('iconSize');
+    const iconSize = db.getConfigField('iconSize');
 
     const bkgElem = junctionElem.append('g');
     bkgElem

@@ -7,11 +7,12 @@ export {
   PieSection,
   Architecture,
   GitGraph,
+  Radar,
+  Treemap,
   Branch,
   Commit,
   Merge,
   Statement,
-  isCommon,
   isInfo,
   isPacket,
   isPacketBlock,
@@ -19,6 +20,7 @@ export {
   isPieSection,
   isArchitecture,
   isGitGraph,
+  isTreemap,
   isBranch,
   isCommit,
   isMerge,
@@ -31,6 +33,8 @@ export {
   PieGeneratedModule,
   ArchitectureGeneratedModule,
   GitGraphGeneratedModule,
+  RadarGeneratedModule,
+  TreemapGeneratedModule,
 } from './generated/module.js';
 
 export * from './gitGraph/index.js';
@@ -39,3 +43,5 @@ export * from './info/index.js';
 export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './architecture/index.js';
+export * from './radar/index.js';
+export * from './treemap/index.js';

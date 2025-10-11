@@ -64,7 +64,7 @@ describe('pie chart', () => {
     });
   });
 
-  it('should render a pie diagram when textPosition is setted', () => {
+  it('should render a pie diagram when textPosition is set', () => {
     imgSnapshotTest(
       `pie
         "Dogs": 50
@@ -79,6 +79,15 @@ describe('pie chart', () => {
       `pie showData
         "Dogs": 50
         "Cats": 25
+      `
+    );
+  });
+  it('should render pie slices only for non-zero values but shows all legends', () => {
+    imgSnapshotTest(
+      `   pie title Pets adopted by volunteers
+    "Dogs" : 386
+    "Cats" : 85
+    "Rats" : 1
       `
     );
   });

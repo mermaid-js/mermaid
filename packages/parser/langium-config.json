@@ -25,6 +25,16 @@
       "id": "gitGraph",
       "grammar": "src/language/gitGraph/gitGraph.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "radar",
+      "grammar": "src/language/radar/radar.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "treemap",
+      "grammar": "src/language/treemap/treemap.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",
