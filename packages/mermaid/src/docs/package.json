@@ -19,7 +19,7 @@
     "@mdi/font": "^7.4.47",
     "@vueuse/core": "^13.9.0",
     "font-awesome": "^4.7.0",
-    "jiti": "^2.4.2",
+    "jiti": "^2.6.1",
     "mermaid": "workspace:^",
     "vue": "^3.5.21"
   },
