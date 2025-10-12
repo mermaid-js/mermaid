@@ -1,4 +1,4 @@
-import { it, describe, expect, beforeEach } from 'vitest';
+import { it, describe, expect, beforeEach, afterEach } from 'vitest';
 import mermaid from '../../mermaid.js';
 import { PacketDB } from './db.js';
 import { parser } from './parser.js';
@@ -296,5 +296,110 @@ describe('handDrawn rendering', () => {
     expect(svg).not.toContain('<rect');
 
     mermaid.initialize({});
+  });
+});
+
+describe('packet renderer', () => {
+  beforeEach(() => {
+    // Create a DOM element for mermaid to render into
+    document.body.innerHTML = '<div id="test-container"></div>';
+  });
+
+  afterEach(() => {
+    // Clean up the DOM after each test
+    document.body.innerHTML = '';
+  });
+
+  it('should render a basic packet diagram with blocks and labels', async () => {
+    const diagramDefinition = `
+      packet
+        title My Packet
+        0-7: "Header"
+        8-15: "Data"
+    `;
+
+    // Use the main mermaid render function
+    const { svg } = await mermaid.render('test-diagram', diagramDefinition);
+    const container = document.getElementById('test-container');
+    if (container) {
+      container.innerHTML = svg;
+    }
+
+    // Check that the SVG was created
+    const svgElement = document.querySelector('#test-container svg');
+    expect(svgElement).not.toBeNull();
+
+    // Check for the rendered blocks (rectangles)
+    const blocks = svgElement?.querySelectorAll('.packetBlock');
+    expect(blocks).toHaveLength(2);
+
+    // Check for the labels
+    const labels = svgElement?.querySelectorAll('.packetLabel');
+    expect(labels).toHaveLength(2);
+    expect(labels?.[0].textContent).toBe('Header');
+    expect(labels?.[1].textContent).toBe('Data');
+
+    // Check for the bit numbers
+    const startBits = svgElement?.querySelectorAll('.packetByte.start');
+    const endBits = svgElement?.querySelectorAll('.packetByte.end');
+    expect(startBits).toHaveLength(2);
+    expect(endBits).toHaveLength(2);
+    expect(startBits?.[0].textContent).toBe('0');
+    expect(endBits?.[0].textContent).toBe('7');
+
+    // Check for the title
+    const title = svgElement?.querySelector('.packetTitle');
+    expect(title?.textContent).toBe('My Packet');
+  });
+
+  it('should render a single block correctly', async () => {
+    const diagramDefinition = `
+      packet
+        0: "Flag"
+    `;
+
+    const { svg } = await mermaid.render('test-diagram', diagramDefinition);
+    const testContainer = document.getElementById('test-container');
+    if (testContainer) {
+      testContainer.innerHTML = svg;
+    }
+
+    const svgElement = document.querySelector('#test-container svg');
+    const startBits = svgElement?.querySelectorAll('.packetByte.start');
+    const endBits = svgElement?.querySelectorAll('.packetByte.end');
+
+    // For a single block, there should be no "end" bit number
+    expect(startBits).toHaveLength(1);
+    expect(endBits).toHaveLength(0);
+    expect(startBits?.[0].textContent).toBe('0');
+  });
+});
+
+describe('handDrawn rendering', () => {
+  afterEach(() => {
+    // Reset mermaid config after each test
+    mermaid.initialize({});
+  });
+
+  it('should render a hand-drawn packet diagram using paths instead of rects', async () => {
+    mermaid.initialize({
+      look: 'handDrawn',
+      packet: {
+        blockStrokeWidth: '2',
+      },
+    });
+
+    const diagramDefinition = `
+      packet
+        0-15: "Source Port"
+        16-31: "Destination Port"
+    `;
+
+    const { svg } = await mermaid.render('test-diagram', diagramDefinition);
+
+    // Assert that the SVG contains <path> elements (from rough.js)
+    expect(svg).toContain('<path');
+    // Assert that the SVG does NOT contain <rect> elements
+    expect(svg).not.toContain('<rect');
   });
 });
