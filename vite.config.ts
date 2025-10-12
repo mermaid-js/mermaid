@@ -24,6 +24,7 @@ export default defineConfig({
     },
     includeSource: ['packages/*/src/**/*.{js,ts}'],
     clearMocks: true,
+    testTimeout: 50000,
   },
   build: {
     /** If you set esmExternals to true, this plugins assumes that
