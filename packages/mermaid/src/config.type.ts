@@ -1569,20 +1569,16 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
    * The vertical padding between the rows.
    */
   paddingY?: number;
-
   /**
    * The width of the stroke around each block.
-   * @default 1
    */
   blockStrokeWidth?: string;
   /**
    * The fill color of each block.
-   * @default #efefef
    */
   blockFillColor?: string;
   /**
    * The stroke color of each block.
-   * @default black
    */
   blockStrokeColor?: string;
 }
