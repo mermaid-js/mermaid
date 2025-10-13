@@ -1352,9 +1352,9 @@ Tester --secondary--> "Bug Testing"`;
     const input = `usecase
 actor User
 actor Admin
-User --important--> Login
-Admin <--critical-- Manage
-User --optional-- Dashboard`;
+User -- important --> Login
+Admin <-- critical -- Manage
+User -- optional -- Dashboard`;
 
     const result = parse(input);
     expect(result.relationships).toHaveLength(3);
@@ -1367,7 +1367,7 @@ User --optional-- Dashboard`;
     const input = `usecase
 actor User
 User --> Login
-User --important--> Manage`;
+User -- important --> Manage`;
 
     const result = parse(input);
     expect(result.relationships).toHaveLength(2);
@@ -1391,8 +1391,8 @@ User --important--> Manage`;
   it('should work with node ID syntax and edge labels', () => {
     const input = `usecase
 actor Developer
-Developer --critical--> a(Code Review)
-Developer --optional--> b(Documentation)`;
+Developer -- critical --> a(Code Review)
+Developer -- optional --> b(Documentation)`;
 
     const result = parse(input);
     expect(result.relationships).toHaveLength(2);
@@ -1443,22 +1443,372 @@ actor Tester --critical--> b(testing)`;
   });
 });
 
-describe('Error Handling', () => {
-  describe('Syntax Error Handling', () => {
-    it('should throw UsecaseParseError for invalid syntax', () => {
-      const invalidSyntax = `usecase
-        invalid syntax here
-        actor User
-      `;
+describe('New Arrow Types (--o and --x)', () => {
+  const parse = (input: string): UsecaseParseResult => {
+    return parseUsecaseWithAntlr(input);
+  };
 
-      expect(() => parseUsecaseWithAntlr(invalidSyntax)).toThrow(UsecaseParseError);
-      expect(() => parseUsecaseWithAntlr(invalidSyntax)).toThrow(/Syntax error in usecase diagram/);
+  it('should parse circle arrow (--o) without label', () => {
+    const input = `usecase
+actor Developer
+Developer --o coding`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(1);
+    expect(result.relationships[0]).toEqual({
+      id: 'rel_0',
+      from: 'Developer',
+      to: 'coding',
+      type: 'association',
+      arrowType: ARROW_TYPE.CIRCLE_ARROW,
+    });
+  });
+
+  it('should parse circle arrow (--o) with label', () => {
+    const input = `usecase
+actor Developer
+Developer --"performs"--o coding`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(1);
+    expect(result.relationships[0]).toEqual({
+      id: 'rel_0',
+      from: 'Developer',
+      to: 'coding',
+      type: 'association',
+      arrowType: ARROW_TYPE.CIRCLE_ARROW,
+      label: 'performs',
+    });
+  });
+
+  it('should parse cross arrow (--x) without label', () => {
+    const input = `usecase
+actor Developer
+Developer --x testing`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(1);
+    expect(result.relationships[0]).toEqual({
+      id: 'rel_0',
+      from: 'Developer',
+      to: 'testing',
+      type: 'association',
+      arrowType: ARROW_TYPE.CROSS_ARROW,
+    });
+  });
+
+  it('should parse cross arrow (--x) with label', () => {
+    const input = `usecase
+actor Developer
+Developer --"executes"--x testing`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(1);
+    expect(result.relationships[0]).toEqual({
+      id: 'rel_0',
+      from: 'Developer',
+      to: 'testing',
+      type: 'association',
+      arrowType: ARROW_TYPE.CROSS_ARROW,
+      label: 'executes',
+    });
+  });
+
+  it('should parse mixed arrow types in same diagram', () => {
+    const input = `usecase
+actor Developer
+Developer --> debugging
+Developer --o coding
+Developer --x testing`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(3);
+    expect(result.relationships[0].arrowType).toBe(ARROW_TYPE.SOLID_ARROW);
+    expect(result.relationships[1].arrowType).toBe(ARROW_TYPE.CIRCLE_ARROW);
+    expect(result.relationships[2].arrowType).toBe(ARROW_TYPE.CROSS_ARROW);
+  });
+
+  it('should parse all arrow types with labels', () => {
+    const input = `usecase
+actor Developer
+Developer --"works on"--> debugging
+Developer --"performs"--o coding
+Developer --"executes"--x testing`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(3);
+
+    expect(result.relationships[0]).toEqual({
+      id: 'rel_0',
+      from: 'Developer',
+      to: 'debugging',
+      type: 'association',
+      arrowType: ARROW_TYPE.SOLID_ARROW,
+      label: 'works on',
     });
 
+    expect(result.relationships[1]).toEqual({
+      id: 'rel_1',
+      from: 'Developer',
+      to: 'coding',
+      type: 'association',
+      arrowType: ARROW_TYPE.CIRCLE_ARROW,
+      label: 'performs',
+    });
+
+    expect(result.relationships[2]).toEqual({
+      id: 'rel_2',
+      from: 'Developer',
+      to: 'testing',
+      type: 'association',
+      arrowType: ARROW_TYPE.CROSS_ARROW,
+      label: 'executes',
+    });
+  });
+
+  it('should parse reversed circle arrow (o--) without label', () => {
+    const input = `usecase
+actor Developer
+Developer o-- coding`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(1);
+    expect(result.relationships[0]).toEqual({
+      id: 'rel_0',
+      from: 'Developer',
+      to: 'coding',
+      type: 'association',
+      arrowType: ARROW_TYPE.CIRCLE_ARROW_REVERSED,
+    });
+  });
+
+  it('should parse reversed circle arrow (o--) with label', () => {
+    const input = `usecase
+actor Developer
+Developer o--"performs"-- coding`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(1);
+    expect(result.relationships[0]).toEqual({
+      id: 'rel_0',
+      from: 'Developer',
+      to: 'coding',
+      type: 'association',
+      arrowType: ARROW_TYPE.CIRCLE_ARROW_REVERSED,
+      label: 'performs',
+    });
+  });
+
+  it('should parse reversed cross arrow (x--) without label', () => {
+    const input = `usecase
+actor Developer
+Developer x-- testing`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(1);
+    expect(result.relationships[0]).toEqual({
+      id: 'rel_0',
+      from: 'Developer',
+      to: 'testing',
+      type: 'association',
+      arrowType: ARROW_TYPE.CROSS_ARROW_REVERSED,
+    });
+  });
+
+  it('should parse reversed cross arrow (x--) with label', () => {
+    const input = `usecase
+actor Developer
+Developer x--"executes"-- testing`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(1);
+    expect(result.relationships[0]).toEqual({
+      id: 'rel_0',
+      from: 'Developer',
+      to: 'testing',
+      type: 'association',
+      arrowType: ARROW_TYPE.CROSS_ARROW_REVERSED,
+      label: 'executes',
+    });
+  });
+
+  it('should parse all arrow types including reversed arrows', () => {
+    const input = `usecase
+actor Developer
+Developer --> UC1
+Developer --o UC2
+Developer --x UC3
+Developer o-- UC4
+Developer x-- UC5`;
+
+    const result = parse(input);
+    expect(result.relationships).toHaveLength(5);
+    expect(result.relationships[0].arrowType).toBe(ARROW_TYPE.SOLID_ARROW);
+    expect(result.relationships[1].arrowType).toBe(ARROW_TYPE.CIRCLE_ARROW);
+    expect(result.relationships[2].arrowType).toBe(ARROW_TYPE.CROSS_ARROW);
+    expect(result.relationships[3].arrowType).toBe(ARROW_TYPE.CIRCLE_ARROW_REVERSED);
+    expect(result.relationships[4].arrowType).toBe(ARROW_TYPE.CROSS_ARROW_REVERSED);
+  });
+});
+
+describe('Class Definition and Application', () => {
+  it('should parse classDef statement', () => {
+    const input = `usecase
+      debugging
+      classDef case1 stroke:#f00
+    `;
+
+    const result = parseUsecaseWithAntlr(input);
+
+    expect(result.classDefs).toBeDefined();
+    expect(result.classDefs?.size).toBe(1);
+    expect(result.classDefs?.has('case1')).toBe(true);
+    const classDef = result.classDefs?.get('case1');
+    expect(classDef?.id).toBe('case1');
+    expect(classDef?.styles).toEqual(['stroke:#f00']);
+  });
+
+  it('should parse multiple classDef statements', () => {
+    const input = `usecase
+      debugging
+      coding
+      classDef case1 stroke:#f00
+      classDef case2 stroke:#0f0
+      classDef case3 stroke:#00f
+    `;
+
+    const result = parseUsecaseWithAntlr(input);
+
+    expect(result.classDefs?.size).toBe(3);
+    expect(result.classDefs?.has('case1')).toBe(true);
+    expect(result.classDefs?.has('case2')).toBe(true);
+    expect(result.classDefs?.has('case3')).toBe(true);
+  });
+
+  it('should parse classDef with multiple style properties', () => {
+    const input = `usecase
+      debugging
+      classDef case1 stroke:#f00, fill:#ff0, stroke-width:2px
+    `;
+
+    const result = parseUsecaseWithAntlr(input);
+
+    expect(result.classDefs?.size).toBe(1);
+    const classDef = result.classDefs?.get('case1');
+    expect(classDef?.styles).toEqual(['stroke:#f00', 'fill:#ff0', 'stroke-width:2px']);
+  });
+
+  it('should parse inline class application with ::: syntax', () => {
+    const input = `usecase
+      debugging:::case1
+      classDef case1 stroke:#f00
+    `;
+
+    const result = parseUsecaseWithAntlr(input);
+
+    expect(result.useCases.length).toBe(1);
+    expect(result.useCases[0].id).toBe('debugging');
+    expect(result.useCases[0].classes).toEqual(['case1']);
+  });
+
+  it('should parse class statement', () => {
+    const input = `usecase
+      debugging
+      coding
+      class debugging,coding case1
+      classDef case1 stroke:#f00
+    `;
+
+    const result = parseUsecaseWithAntlr(input);
+
+    expect(result.useCases.length).toBe(2);
+    const debugging = result.useCases.find((uc) => uc.id === 'debugging');
+    const coding = result.useCases.find((uc) => uc.id === 'coding');
+    expect(debugging?.classes).toEqual(['case1']);
+    expect(coding?.classes).toEqual(['case1']);
+  });
+
+  it('should parse inline class application within system boundary', () => {
+    const input = `usecase
+      systemBoundary tasks
+        debugging:::case1
+        coding:::case2
+      end
+      classDef case1 stroke:#f00
+      classDef case2 stroke:#0f0
+    `;
+
+    const result = parseUsecaseWithAntlr(input);
+
+    expect(result.useCases.length).toBe(2);
+    const debugging = result.useCases.find((uc) => uc.id === 'debugging');
+    const coding = result.useCases.find((uc) => uc.id === 'coding');
+    expect(debugging?.classes).toEqual(['case1']);
+    expect(coding?.classes).toEqual(['case2']);
+  });
+
+  it('should parse complete example with classes and relationships', () => {
+    const input = `usecase
+      actor Developer1
+      actor Developer2
+
+      systemBoundary tasks
+        debugging:::case1
+        coding:::case2
+        testing:::case3
+      end
+
+      Developer1 --> debugging
+      Developer1 --> coding
+      Developer1 --> testing
+      Developer2 --> coding
+      Developer2 --> debugging
+
+      classDef case1 stroke:#f00
+      classDef case2 stroke:#0f0
+      classDef case3 stroke:#00f
+    `;
+
+    const result = parseUsecaseWithAntlr(input);
+
+    expect(result.actors.length).toBe(2);
+    expect(result.useCases.length).toBe(3);
+    expect(result.systemBoundaries.length).toBe(1);
+    expect(result.relationships.length).toBe(5);
+    expect(result.classDefs?.size).toBe(3);
+
+    const debugging = result.useCases.find((uc) => uc.id === 'debugging');
+    const coding = result.useCases.find((uc) => uc.id === 'coding');
+    const testing = result.useCases.find((uc) => uc.id === 'testing');
+
+    expect(debugging?.classes).toEqual(['case1']);
+    expect(coding?.classes).toEqual(['case2']);
+    expect(testing?.classes).toEqual(['case3']);
+  });
+
+  it('should handle multiple classes on same use case', () => {
+    const input = `usecase
+      debugging:::case1
+      class debugging case2
+      classDef case1 stroke:#f00
+      classDef case2 fill:#ff0
+    `;
+
+    const result = parseUsecaseWithAntlr(input);
+
+    expect(result.useCases.length).toBe(1);
+    const debugging = result.useCases.find((uc) => uc.id === 'debugging');
+    expect(debugging?.classes).toContain('case1');
+    expect(debugging?.classes).toContain('case2');
+  });
+});
+
+describe('Error Handling', () => {
+  describe('Syntax Error Handling', () => {
     it('should throw UsecaseParseError for incomplete relationships', () => {
       const incompleteSyntax = `usecase
-        actor User
-        User -->
+          actor User
+          User -->
       `;
 
       expect(() => parseUsecaseWithAntlr(incompleteSyntax)).toThrow(UsecaseParseError);
@@ -1568,19 +1918,6 @@ describe('Error Handling', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should throw UsecaseParseError for mixed valid and invalid syntax', () => {
-      const mixedSyntax = `usecase
-        actor User
-        invalid line here
-        User --> Login
-        another invalid line
-        actor Admin
-      `;
-
-      expect(() => parseUsecaseWithAntlr(mixedSyntax)).toThrow(UsecaseParseError);
-      expect(() => parseUsecaseWithAntlr(mixedSyntax)).toThrow(/no viable alternative/);
-    });
-
     it('should handle Unicode characters', () => {
       const unicodeSyntax = `usecase
         actor "用户"

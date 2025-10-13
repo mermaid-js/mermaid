@@ -12,6 +12,16 @@ const getStyles = (options: any) =>
     font-weight: normal;
   }
   
+  .usecase-actor-shape line {
+    stroke: ${options.actorBorder};
+    fill: ${options.actorBkg};
+  }
+  .usecase-actor-shape circle, line {
+    stroke: ${options.actorBorder};
+    fill: ${options.actorBkg};
+    stroke-width: 2px;
+  }
+  
   .usecase {
     stroke: ${options.primaryColor};
     fill: ${options.primaryColor};

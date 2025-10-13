@@ -1,6 +1,7 @@
 import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { getIconSVG } from '../../icons.js';
 import rough from 'roughjs';
 import type { D3Selection } from '../../../types.js';
 import intersect from '../intersect/index.js';
@@ -29,53 +30,17 @@ const getActorStyling = (metadata?: Record<string, string>) => {
 };
 
 /**
- * Create stick figure path data
- * This generates the SVG path for a stick figure centered at (x, y)
+ * Draw actor with icon representation
  */
-const createStickFigurePathD = (x: number, y: number, scale = 1.5): string => {
-  // Base path template (centered at origin):
-  // M 0 -4 C 4.4183 -4 8 -7.5817 8 -12 C 8 -16.4183 4.4183 -20 0 -20 C -4.4183 -20 -8 -16.4183 -8 -12 C -8 -7.5817 -4.4183 -4 0 -4 Z M 0 -4 V 5 M -10 14.5 L 0 5 M 10 14.5 L 0 5 M -11 0 H 11
-
-  // Scale all coordinates
-  const s = (val: number) => val * scale;
-
-  // Translate the path to the desired position
-  return [
-    // Head (circle using cubic bezier curves)
-    `M ${x + s(0)} ${y + s(-4)}`,
-    `C ${x + s(4.4183)} ${y + s(-4)} ${x + s(8)} ${y + s(-7.5817)} ${x + s(8)} ${y + s(-12)}`,
-    `C ${x + s(8)} ${y + s(-16.4183)} ${x + s(4.4183)} ${y + s(-20)} ${x + s(0)} ${y + s(-20)}`,
-    `C ${x + s(-4.4183)} ${y + s(-20)} ${x + s(-8)} ${y + s(-16.4183)} ${x + s(-8)} ${y + s(-12)}`,
-    `C ${x + s(-8)} ${y + s(-7.5817)} ${x + s(-4.4183)} ${y + s(-4)} ${x + s(0)} ${y + s(-4)}`,
-    'Z',
-    // Body (vertical line from head to torso)
-    `M ${x + s(0)} ${y + s(-4)}`,
-    `V ${y + s(5)}`,
-    // Left leg
-    `M ${x + s(-10)} ${y + s(14.5)}`,
-    `L ${x + s(0)} ${y + s(5)}`,
-    // Right leg
-    `M ${x + s(10)} ${y + s(14.5)}`,
-    `L ${x + s(0)} ${y + s(5)}`,
-    // Arms (horizontal line)
-    `M ${x + s(-11)} ${y + s(0)}`,
-    `H ${x + s(11)}`,
-  ].join(' ');
-};
-
-/**
- * Draw traditional stick figure
- */
-const drawStickFigure = (
+const drawActorWithIcon = async (
   actorGroup: D3Selection<SVGGElement>,
+  iconName: string,
   styling: ReturnType<typeof getActorStyling>,
   node: Node
-): void => {
+): Promise<void> => {
   const x = 0; // Center at origin
   const y = -10; // Adjust vertical position
-  actorGroup.attr('class', 'usecase-actor-shape');
-
-  const pathData = createStickFigurePathD(x, y);
+  const iconSize = 50; // Icon size
 
   if (node.look === 'handDrawn') {
     // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
@@ -83,32 +48,60 @@ const drawStickFigure = (
     const options = userNodeOverrides(node, {
       stroke: styling.strokeColor,
       strokeWidth: styling.strokeWidth,
-      fill: styling.fillColor,
+      fill: styling.fillColor === 'none' ? 'white' : styling.fillColor,
     });
-
-    // Draw the stick figure using the path
-    const stickFigure = rc.path(pathData, options);
-    actorGroup.insert(() => stickFigure, ':first-child');
+    actorGroup.attr('class', 'usecase-icon');
+    // Create a rectangle background for the icon
+    const iconBg = rc.rectangle(x - 35, y - 40, 50, 50, options);
+    actorGroup.insert(() => iconBg, ':first-child');
   } else {
-    // Draw the stick figure using standard SVG path
+    // Create a rectangle background for the icon
     actorGroup
-      .append('path')
-      .attr('d', pathData)
-      .attr('fill', styling.fillColor)
+      .append('rect')
+      .attr('x', x - 27.5)
+      .attr('y', y - 42)
+      .attr('width', 55)
+      .attr('height', 55)
+      .attr('rx', 5)
+      .attr('fill', styling.fillColor === 'none' ? 'white' : styling.fillColor)
       .attr('stroke', styling.strokeColor)
       .attr('stroke-width', styling.strokeWidth);
+  }
+
+  // Add icon using getIconSVG (like iconCircle.ts does)
+  const iconElem = actorGroup.append('g').attr('class', 'actor-icon');
+  iconElem.html(
+    `<g>${await getIconSVG(iconName, {
+      height: iconSize,
+      width: iconSize,
+      fallbackPrefix: 'fa',
+    })}</g>`
+  );
+
+  // Get icon bounding box for positioning
+  const iconBBox = iconElem.node()?.getBBox();
+  if (iconBBox) {
+    const iconWidth = iconBBox.width;
+    const iconHeight = iconBBox.height;
+    const iconX = iconBBox.x;
+    const iconY = iconBBox.y;
+
+    // Center the icon in the rectangle
+    iconElem.attr(
+      'transform',
+      `translate(${-iconWidth / 2 - iconX}, ${y - 15 - iconHeight / 2 - iconY})`
+    );
   }
 };
 
 /**
- * Custom shape handler for usecase actors (stick figure)
+ * Custom shape handler for usecase actors with icons
  */
-export async function usecaseActor<T extends SVGGraphicsElement>(
+export async function usecaseActorIcon<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node
 ) {
-  const { labelStyles, nodeStyles } = styles2String(node);
-
+  const { labelStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
@@ -126,10 +119,11 @@ export async function usecaseActor<T extends SVGGraphicsElement>(
     });
   }
 
-  // Draw stick figure
-  drawStickFigure(actorGroup, styling, node);
+  // Get icon name from metadata
+  const iconName = metadata?.icon ?? 'user';
+  await drawActorWithIcon(actorGroup, iconName, styling, node);
 
-  // Get the actual bounding box of the rendered actor
+  // Get the actual bounding box of the rendered actor icon
   const actorBBox = actorGroup.node()?.getBBox();
   const actorHeight = actorBBox?.height ?? 70;
 
@@ -140,16 +134,10 @@ export async function usecaseActor<T extends SVGGraphicsElement>(
   const labelBBox = label.node()?.getBBox() ?? { height: 20 };
   const labelHeight = labelBBox.height + 10; // Space for label below
   const totalHeight = actorHeight + labelHeight;
-
-  actorGroup.attr('transform', `translate(${0}, ${-totalHeight / 2 + 35})`);
   label.attr(
     'transform',
-    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${labelY / 2 - 15} )`
+    `translate(${-bbox.width / 2 - (bbox.x - (bbox.left ?? 0))},${labelY / 2 - 15})`
   );
-
-  if (nodeStyles && node.look !== 'handDrawn') {
-    actorGroup.selectChildren('path').attr('style', nodeStyles);
-  }
 
   // Update node bounds for layout - this will set node.width and node.height from the bounding box
   updateNodeBounds(node, actorGroup);
@@ -159,7 +147,7 @@ export async function usecaseActor<T extends SVGGraphicsElement>(
   node.height = totalHeight;
 
   // Add intersect function for edge connection points
-  // Use rectangular intersection since the actor has a rectangular bounding box
+  // Use rectangular intersection for icon actors
   node.intersect = function (point) {
     return intersect.rect(node, point);
   };
