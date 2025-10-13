@@ -10,14 +10,28 @@ import type {
   SystemBoundary,
   Relationship,
   ArrowType,
+  ClassDef,
 } from './usecaseTypes.js';
 import { db } from './usecaseDb.js';
 
 // ANTLR parser result interface
 interface UsecaseParseResult {
-  actors: { id: string; name: string; metadata?: Record<string, string> }[];
-  useCases: { id: string; name: string; nodeId?: string; systemBoundary?: string }[];
-  systemBoundaries: { id: string; name: string; useCases: string[]; type?: 'package' | 'rect' }[];
+  actors: { id: string; name: string; metadata?: Record<string, string>; styles?: string[] }[];
+  useCases: {
+    id: string;
+    name: string;
+    nodeId?: string;
+    systemBoundary?: string;
+    classes?: string[];
+    styles?: string[];
+  }[];
+  systemBoundaries: {
+    id: string;
+    name: string;
+    useCases: string[];
+    type?: 'package' | 'rect';
+    styles?: string[];
+  }[];
   relationships: {
     id: string;
     from: string;
@@ -26,6 +40,7 @@ interface UsecaseParseResult {
     arrowType: number;
     label?: string;
   }[];
+  classDefs?: Map<string, { id: string; styles: string[] }>;
   direction?: string;
   accDescr?: string;
   accTitle?: string;
@@ -54,17 +69,20 @@ const populateDb = (ast: UsecaseParseResult, db: UsecaseDB) => {
       id: actorData.id,
       name: actorData.name,
       metadata: actorData.metadata,
+      styles: actorData.styles,
     };
     db.addActor(actor);
   });
 
-  // Add use cases (ANTLR result already has id, name, nodeId, and systemBoundary)
+  // Add use cases (ANTLR result already has id, name, nodeId, systemBoundary, and classes)
   ast.useCases.forEach((useCaseData) => {
     const useCase: UseCase = {
       id: useCaseData.id,
       name: useCaseData.name,
       nodeId: useCaseData.nodeId,
       systemBoundary: useCaseData.systemBoundary,
+      classes: useCaseData.classes,
+      styles: useCaseData.styles,
     };
     db.addUseCase(useCase);
   });
@@ -77,6 +95,7 @@ const populateDb = (ast: UsecaseParseResult, db: UsecaseDB) => {
         name: boundaryData.name,
         useCases: boundaryData.useCases,
         type: boundaryData.type || 'rect', // default to 'rect' if not specified
+        styles: boundaryData.styles,
       };
       db.addSystemBoundary(systemBoundary);
     });
@@ -95,6 +114,17 @@ const populateDb = (ast: UsecaseParseResult, db: UsecaseDB) => {
     db.addRelationship(relationship);
   });
 
+  // Add class definitions
+  if (ast.classDefs) {
+    ast.classDefs.forEach((classDefData) => {
+      const classDef: ClassDef = {
+        id: classDefData.id,
+        styles: classDefData.styles,
+      };
+      db.addClassDef(classDef);
+    });
+  }
+
   // Set direction if provided
   if (ast.direction) {
     db.setDirection(ast.direction as any);
@@ -104,6 +134,7 @@ const populateDb = (ast: UsecaseParseResult, db: UsecaseDB) => {
     actors: ast.actors.length,
     useCases: ast.useCases.length,
     relationships: ast.relationships.length,
+    classDefs: ast.classDefs?.size ?? 0,
     direction: ast.direction,
   });
 };

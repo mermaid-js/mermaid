@@ -27,7 +27,7 @@ const draw: DrawDefinition = async (_text, id, _version, diag) => {
 
   data4Layout.nodeSpacing = 50; // Default node spacing
   data4Layout.rankSpacing = 50; // Default rank spacing
-  data4Layout.markers = ['point']; // Use point markers for usecase diagrams
+  data4Layout.markers = ['point', 'circle', 'cross']; // Support point, circle, and cross markers
   data4Layout.diagramId = id;
 
   log.debug('Usecase layout data:', data4Layout);

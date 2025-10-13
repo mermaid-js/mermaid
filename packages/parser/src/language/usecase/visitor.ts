@@ -19,6 +19,8 @@ import type {
   SystemBoundaryTypePropertyContext,
   SystemBoundaryTypeContext,
   UsecaseInBoundaryContext,
+  UsecaseWithClassContext,
+  UsecaseStatementContext,
   ActorNameContext,
   ActorDeclarationContext,
   NodeIdWithLabelContext,
@@ -32,6 +34,9 @@ import type {
   EdgeLabelContext,
   DirectionStatementContext,
   DirectionContext,
+  ClassDefStatementContext,
+  ClassStatementContext,
+  NodeListContext,
 } from './generated/UsecaseParser.js';
 import { ARROW_TYPE } from './types.js';
 import type {
@@ -41,6 +46,7 @@ import type {
   Relationship,
   UsecaseParseResult,
   ArrowType,
+  ClassDef,
 } from './types.js';
 
 export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
@@ -50,6 +56,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
   private relationships: Relationship[] = [];
   private relationshipCounter = 0;
   private direction = 'TB'; // Default direction
+  private classDefs = new Map<string, ClassDef>();
 
   constructor() {
     super();
@@ -62,6 +69,10 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
     this.visitSystemBoundaryStatement = this.visitSystemBoundaryStatementImpl.bind(this);
     this.visitSystemBoundaryTypeStatement = this.visitSystemBoundaryTypeStatementImpl.bind(this);
     this.visitDirectionStatement = this.visitDirectionStatementImpl.bind(this);
+    this.visitClassDefStatement = this.visitClassDefStatementImpl.bind(this);
+    this.visitClassStatement = this.visitClassStatementImpl.bind(this);
+    this.visitStyleStatement = this.visitStyleStatementImpl.bind(this);
+    this.visitUsecaseStatement = this.visitUsecaseStatementImpl.bind(this);
     this.visitActorName = this.visitActorNameImpl.bind(this);
     this.visitArrow = this.visitArrowImpl.bind(this);
   }
@@ -95,7 +106,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
 
   /**
    * Visit statement rule
-   * Grammar: statement : actorStatement | relationshipStatement | systemBoundaryStatement | systemBoundaryTypeStatement | directionStatement | NEWLINE ;
+   * Grammar: statement : actorStatement | relationshipStatement | systemBoundaryStatement | systemBoundaryTypeStatement | directionStatement | classDefStatement | classStatement | usecaseStatement | NEWLINE ;
    */
   private visitStatementImpl(ctx: StatementContext): void {
     if (ctx.actorStatement?.()) {
@@ -108,6 +119,23 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
       this.visitSystemBoundaryTypeStatementImpl(ctx.systemBoundaryTypeStatement()!);
     } else if (ctx.directionStatement?.()) {
       this.visitDirectionStatementImpl(ctx.directionStatement()!);
+    } else if (ctx.classDefStatement?.()) {
+      const classDefStmt = ctx.classDefStatement();
+      if (classDefStmt) {
+        this.visitClassDefStatementImpl(classDefStmt);
+      }
+    } else if (ctx.classStatement?.()) {
+      const classStmt = ctx.classStatement();
+      if (classStmt) {
+        this.visitClassStatementImpl(classStmt);
+      }
+    } else if (ctx.styleStatement?.()) {
+      this.visitStyleStatementImpl(ctx.styleStatement());
+    } else if (ctx.usecaseStatement?.()) {
+      const usecaseStmt = ctx.usecaseStatement();
+      if (usecaseStmt) {
+        this.visitUsecaseStatementImpl(usecaseStmt);
+      }
     }
     // NEWLINE is ignored
   }
@@ -269,9 +297,15 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
 
   /**
    * Visit usecaseInBoundary rule
-   * Grammar: usecaseInBoundary : IDENTIFIER | STRING ;
+   * Grammar: usecaseInBoundary : usecaseWithClass | IDENTIFIER | STRING ;
    */
   private visitUsecaseInBoundaryImpl(ctx: UsecaseInBoundaryContext): string {
+    // Check for usecaseWithClass (e.g., "debugging:::case1")
+    const usecaseWithClass = ctx.usecaseWithClass?.();
+    if (usecaseWithClass) {
+      return this.visitUsecaseWithClassImpl(usecaseWithClass);
+    }
+
     const identifier = ctx.IDENTIFIER?.();
     if (identifier) {
       return identifier.getText();
@@ -285,6 +319,37 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
     }
 
     return '';
+  }
+
+  /**
+   * Visit usecaseWithClass rule
+   * Grammar: usecaseWithClass : IDENTIFIER CLASS_SEPARATOR IDENTIFIER | STRING CLASS_SEPARATOR IDENTIFIER ;
+   */
+  private visitUsecaseWithClassImpl(ctx: UsecaseWithClassContext): string {
+    let usecaseName = '';
+    let className = '';
+
+    const identifier0 = ctx.IDENTIFIER(0);
+    const identifier1 = ctx.IDENTIFIER(1);
+    const string = ctx.STRING();
+
+    if (identifier0 && identifier1) {
+      // IDENTIFIER:::IDENTIFIER
+      usecaseName = identifier0.getText();
+      className = identifier1.getText();
+    } else if (string && identifier0) {
+      // STRING:::IDENTIFIER
+      const text = string.getText();
+      usecaseName = text.slice(1, -1); // Remove quotes
+      className = identifier0.getText();
+    }
+
+    // Apply class to the use case
+    if (usecaseName && className) {
+      this.applyClassToEntity(usecaseName, className);
+    }
+
+    return usecaseName;
   }
 
   /**
@@ -432,15 +497,46 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
 
   /**
    * Visit entityName rule
-   * Grammar: entityName : IDENTIFIER | STRING | nodeIdWithLabel ;
+   * Grammar: entityName : IDENTIFIER CLASS_SEPARATOR IDENTIFIER | STRING CLASS_SEPARATOR IDENTIFIER | IDENTIFIER | STRING | nodeIdWithLabel ;
    */
   private visitEntityNameImpl(ctx: EntityNameContext): string {
-    const identifier = ctx.IDENTIFIER?.();
+    const classSeparator = ctx.CLASS_SEPARATOR?.();
+
+    // Check for class application syntax (e.g., "debugging:::case1")
+    if (classSeparator) {
+      let entityName = '';
+      let className = '';
+
+      const identifier0 = ctx.IDENTIFIER(0);
+      const identifier1 = ctx.IDENTIFIER(1);
+      const string0 = ctx.STRING();
+
+      if (identifier0 && identifier1) {
+        // IDENTIFIER:::IDENTIFIER
+        entityName = identifier0.getText();
+        className = identifier1.getText();
+      } else if (string0 && identifier0) {
+        // STRING:::IDENTIFIER
+        const text = string0.getText();
+        entityName = text.slice(1, -1); // Remove quotes
+        className = identifier0.getText();
+      }
+
+      // Apply class to the entity
+      if (entityName && className) {
+        this.applyClassToEntity(entityName, className);
+      }
+
+      return entityName;
+    }
+
+    // Regular entity name without class
+    const identifier = ctx.IDENTIFIER(0);
     if (identifier) {
       return identifier.getText();
     }
 
-    const string = ctx.STRING?.();
+    const string = ctx.STRING();
     if (string) {
       const text = string.getText();
       // Remove quotes from string
@@ -453,6 +549,30 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
     }
 
     return '';
+  }
+
+  /**
+   * Apply a class to an entity (use case)
+   */
+  private applyClassToEntity(entityName: string, className: string): void {
+    // Find or create the use case
+    let useCase = this.useCases.find((uc) => uc.id === entityName);
+    if (!useCase) {
+      useCase = {
+        id: entityName,
+        name: entityName,
+        classes: [],
+      };
+      this.useCases.push(useCase);
+    }
+
+    // Add the class if not already present
+    if (!useCase.classes) {
+      useCase.classes = [];
+    }
+    if (!useCase.classes.includes(className)) {
+      useCase.classes.push(className);
+    }
   }
 
   /**
@@ -544,7 +664,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
 
   /**
    * Visit arrow rule
-   * Grammar: arrow : SOLID_ARROW | BACK_ARROW | LINE_SOLID | labeledArrow ;
+   * Grammar: arrow : SOLID_ARROW | BACK_ARROW | LINE_SOLID | CIRCLE_ARROW | CROSS_ARROW | CIRCLE_ARROW_REVERSED | CROSS_ARROW_REVERSED | labeledArrow ;
    */
   private visitArrowImpl(ctx: ArrowContext): { arrowType: ArrowType; label?: string } {
     // Check if this is a labeled arrow
@@ -559,6 +679,14 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
       return { arrowType: ARROW_TYPE.BACK_ARROW };
     } else if (ctx.LINE_SOLID()) {
       return { arrowType: ARROW_TYPE.LINE_SOLID };
+    } else if (ctx.CIRCLE_ARROW()) {
+      return { arrowType: ARROW_TYPE.CIRCLE_ARROW };
+    } else if (ctx.CROSS_ARROW()) {
+      return { arrowType: ARROW_TYPE.CROSS_ARROW };
+    } else if (ctx.CIRCLE_ARROW_REVERSED()) {
+      return { arrowType: ARROW_TYPE.CIRCLE_ARROW_REVERSED };
+    } else if (ctx.CROSS_ARROW_REVERSED()) {
+      return { arrowType: ARROW_TYPE.CROSS_ARROW_REVERSED };
     }
 
     // Fallback (should not happen with proper grammar)
@@ -567,7 +695,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
 
   /**
    * Visit labeled arrow rule
-   * Grammar: labeledArrow : LINE_SOLID edgeLabel SOLID_ARROW | BACK_ARROW edgeLabel LINE_SOLID | LINE_SOLID edgeLabel LINE_SOLID ;
+   * Grammar: labeledArrow : LINE_SOLID edgeLabel SOLID_ARROW | BACK_ARROW edgeLabel LINE_SOLID | LINE_SOLID edgeLabel LINE_SOLID | LINE_SOLID edgeLabel CIRCLE_ARROW | LINE_SOLID edgeLabel CROSS_ARROW | CIRCLE_ARROW_REVERSED edgeLabel LINE_SOLID | CROSS_ARROW_REVERSED edgeLabel LINE_SOLID ;
    */
   private visitLabeledArrowImpl(ctx: LabeledArrowContext): { arrowType: ArrowType; label: string } {
     const label = this.visitEdgeLabelImpl(ctx.edgeLabel());
@@ -577,6 +705,14 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
       return { arrowType: ARROW_TYPE.SOLID_ARROW, label };
     } else if (ctx.BACK_ARROW()) {
       return { arrowType: ARROW_TYPE.BACK_ARROW, label };
+    } else if (ctx.CIRCLE_ARROW()) {
+      return { arrowType: ARROW_TYPE.CIRCLE_ARROW, label };
+    } else if (ctx.CROSS_ARROW()) {
+      return { arrowType: ARROW_TYPE.CROSS_ARROW, label };
+    } else if (ctx.CIRCLE_ARROW_REVERSED()) {
+      return { arrowType: ARROW_TYPE.CIRCLE_ARROW_REVERSED, label };
+    } else if (ctx.CROSS_ARROW_REVERSED()) {
+      return { arrowType: ARROW_TYPE.CROSS_ARROW_REVERSED, label };
     } else {
       return { arrowType: ARROW_TYPE.LINE_SOLID, label };
     }
@@ -623,6 +759,126 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
   }
 
   /**
+   * Visit classDefStatement rule
+   * Grammar: classDefStatement : 'classDef' IDENTIFIER stylesOpt NEWLINE* ;
+   */
+  visitClassDefStatementImpl(ctx: ClassDefStatementContext): void {
+    const className = ctx.IDENTIFIER().getText();
+    const stylesOptCtx = ctx.stylesOpt();
+
+    // Get all style properties as an array of strings
+    const styles = this.visitStylesOptImpl(stylesOptCtx);
+
+    this.classDefs.set(className, {
+      id: className,
+      styles,
+    });
+  }
+
+  /**
+   * Visit stylesOpt rule
+   * Grammar: stylesOpt : style | stylesOpt COMMA style ;
+   * Returns an array of style strings like ['stroke:#f00', 'fill:#ff0']
+   */
+  private visitStylesOptImpl(ctx: any): string[] {
+    const styles: string[] = [];
+
+    // Check if this is a recursive stylesOpt (stylesOpt COMMA style)
+    const stylesOptCtx = ctx.stylesOpt?.();
+    if (stylesOptCtx) {
+      styles.push(...this.visitStylesOptImpl(stylesOptCtx));
+    }
+
+    // Get the style context
+    const styleCtx = ctx.style();
+    if (styleCtx) {
+      const styleText = this.visitStyleImpl(styleCtx);
+      styles.push(styleText);
+    }
+
+    return styles;
+  }
+
+  /**
+   * Visit style rule
+   * Grammar: style : styleComponent | style styleComponent ;
+   * Returns a single style string like 'stroke:#f00'
+   */
+  private visitStyleImpl(ctx: any): string {
+    // Get all text from the style context
+    return ctx.getText();
+  }
+
+  /**
+   * Visit classStatement rule
+   * Grammar: classStatement : 'class' nodeList IDENTIFIER NEWLINE* ;
+   */
+  visitClassStatementImpl(ctx: ClassStatementContext): void {
+    const nodeIds = this.visitNodeListImpl(ctx.nodeList());
+    const className = ctx.IDENTIFIER().getText();
+
+    // Apply class to each node
+    nodeIds.forEach((nodeId) => {
+      this.applyClassToEntity(nodeId, className);
+    });
+  }
+
+  /**
+   * Visit styleStatement rule
+   * Grammar: styleStatement : 'style' IDENTIFIER stylesOpt NEWLINE* ;
+   */
+  visitStyleStatementImpl(ctx: any): void {
+    const nodeId = ctx.IDENTIFIER().getText();
+    const stylesOptCtx = ctx.stylesOpt();
+
+    // Get all style properties as an array of strings
+    const styles = this.visitStylesOptImpl(stylesOptCtx);
+
+    // Apply styles directly to the entity
+    let entity = this.useCases.find((uc) => uc.id === nodeId);
+    if (!entity) {
+      entity = this.actors.find((a) => a.id === nodeId);
+    }
+    if (!entity) {
+      entity = this.systemBoundaries.find((sb) => sb.id === nodeId);
+    }
+
+    if (entity) {
+      // Initialize styles array if it doesn't exist
+      if (!entity.styles) {
+        entity.styles = [];
+      }
+      // Add the new styles
+      entity.styles.push(...styles);
+    }
+  }
+
+  /**
+   * Visit nodeList rule
+   * Grammar: nodeList : IDENTIFIER (',' IDENTIFIER)* ;
+   */
+  private visitNodeListImpl(ctx: NodeListContext): string[] {
+    const identifiers = ctx.IDENTIFIER();
+    return identifiers.map((id) => id.getText());
+  }
+
+  /**
+   * Visit usecaseStatement rule
+   * Grammar: usecaseStatement : entityName NEWLINE* ;
+   */
+  visitUsecaseStatementImpl(ctx: UsecaseStatementContext): void {
+    const entityName = this.visitEntityNameImpl(ctx.entityName());
+
+    // Create a standalone use case if it doesn't already exist
+    if (!this.useCases.some((uc) => uc.id === entityName)) {
+      this.useCases.push({
+        id: entityName,
+        name: entityName,
+      });
+    }
+  }
+
+  /**
    * Get the parse result after visiting the diagram
    */
   getParseResult(): UsecaseParseResult {
@@ -631,6 +887,7 @@ export class UsecaseAntlrVisitor extends UsecaseVisitor<void> {
       useCases: this.useCases,
       systemBoundaries: this.systemBoundaries,
       relationships: this.relationships,
+      classDefs: this.classDefs,
       direction: this.direction,
     };
   }

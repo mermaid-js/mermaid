@@ -17,8 +17,9 @@ import type {
   Relationship,
   ActorMetadata,
   Direction,
+  ClassDef,
 } from './usecaseTypes.js';
-import { DEFAULT_DIRECTION } from './usecaseTypes.js';
+import { DEFAULT_DIRECTION, ARROW_TYPE } from './usecaseTypes.js';
 import type { RequiredDeep } from 'type-fest';
 import type { UsecaseDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
@@ -32,6 +33,7 @@ export const DEFAULT_USECASE_DB: RequiredDeep<UsecaseFields> = {
   useCases: new Map(),
   systemBoundaries: new Map(),
   relationships: [],
+  classDefs: new Map(),
   direction: DEFAULT_DIRECTION,
   config: DEFAULT_USECASE_CONFIG,
 } as const;
@@ -40,6 +42,7 @@ let actors = new Map<string, Actor>();
 let useCases = new Map<string, UseCase>();
 let systemBoundaries = new Map<string, SystemBoundary>();
 let relationships: Relationship[] = [];
+let classDefs = new Map<string, ClassDef>();
 let direction: Direction = DEFAULT_DIRECTION;
 const config: Required<UsecaseDiagramConfig> = structuredClone(DEFAULT_USECASE_CONFIG);
 
@@ -50,6 +53,7 @@ const clear = (): void => {
   useCases = new Map();
   systemBoundaries = new Map();
   relationships = [];
+  classDefs = new Map();
   direction = DEFAULT_DIRECTION;
   commonClear();
 };
@@ -139,7 +143,7 @@ const addRelationship = (relationship: Relationship): void => {
 
   // Validate arrow type if present
   if (relationship.arrowType !== undefined) {
-    const validArrowTypes = [0, 1, 2]; // SOLID_ARROW, BACK_ARROW, LINE_SOLID
+    const validArrowTypes = [0, 1, 2, 3, 4, 5, 6]; // SOLID_ARROW, BACK_ARROW, LINE_SOLID, CIRCLE_ARROW, CROSS_ARROW
     if (!validArrowTypes.includes(relationship.arrowType)) {
       throw new Error(
         `Invalid arrow type: ${relationship.arrowType}. Valid arrow types are: ${validArrowTypes.join(', ')}`
@@ -154,6 +158,37 @@ const addRelationship = (relationship: Relationship): void => {
 };
 
 const getRelationships = (): Relationship[] => relationships;
+
+// ClassDef management
+const addClassDef = (classDef: ClassDef): void => {
+  if (!classDef.id) {
+    throw new Error(
+      `Invalid classDef: ClassDef must have an id. Received: ${JSON.stringify(classDef)}`
+    );
+  }
+
+  classDefs.set(classDef.id, classDef);
+  log.debug(`Added classDef: ${classDef.id}`);
+};
+
+const getClassDefs = (): Map<string, ClassDef> => classDefs;
+
+const getClassDef = (id: string): ClassDef | undefined => classDefs.get(id);
+
+/**
+ * Get compiled styles from class definitions
+ * Similar to flowchart's getCompiledStyles method
+ */
+const getCompiledStyles = (classNames: string[]): string[] => {
+  let compiledStyles: string[] = [];
+  for (const className of classNames) {
+    const cssClass = classDefs.get(className);
+    if (cssClass?.styles) {
+      compiledStyles = [...compiledStyles, ...(cssClass.styles ?? [])].map((s) => s.trim());
+    }
+  }
+  return compiledStyles;
+};
 
 // Direction management
 const setDirection = (dir: Direction): void => {
@@ -176,11 +211,17 @@ const getData = (): LayoutData => {
 
   // Convert actors to nodes
   for (const actor of actors.values()) {
+    const classesArray = ['default', 'usecase-actor'];
+    const cssCompiledStyles = getCompiledStyles(classesArray);
+
+    // Determine which shape to use based on whether actor has an icon
+    const actorShape = actor.metadata?.icon ? 'usecaseActorIcon' : 'usecaseActor';
+
     const node: Node = {
       id: actor.id,
       label: actor.name,
       description: actor.description ? [actor.description] : undefined,
-      shape: 'usecaseActor', // Use custom actor shape
+      shape: actorShape, // Use icon shape if icon is present, otherwise stick figure
       isGroup: false,
       padding: 10,
       look: globalConfig.look,
@@ -192,6 +233,8 @@ const getData = (): LayoutData => {
               .join(' ')
           : ''
       }`.trim(),
+      cssStyles: actor.styles ?? [], // Direct styles
+      cssCompiledStyles, // Compiled styles from class definitions
       // Pass actor metadata to the shape handler
       metadata: actor.metadata,
     } as Node & { metadata?: ActorMetadata };
@@ -200,6 +243,16 @@ const getData = (): LayoutData => {
 
   // Convert use cases to nodes
   for (const useCase of useCases.values()) {
+    // Build CSS classes string
+    let cssClasses = 'usecase-element';
+    const classesArray = ['default', 'usecase-element'];
+    if (useCase.classes && useCase.classes.length > 0) {
+      cssClasses += ' ' + useCase.classes.join(' ');
+      classesArray.push(...useCase.classes);
+    }
+
+    // Get compiled styles from class definitions
+    const cssCompiledStyles = getCompiledStyles(classesArray);
     const node: Node = {
       id: useCase.id,
       label: useCase.name,
@@ -208,7 +261,9 @@ const getData = (): LayoutData => {
       isGroup: false,
       padding: 10,
       look: globalConfig.look,
-      cssClasses: 'usecase-element',
+      cssClasses,
+      cssStyles: useCase.styles ?? [], // Direct styles
+      cssCompiledStyles, // Compiled styles from class definitions
       // If use case belongs to a system boundary, set parentId
       ...(useCase.systemBoundary && { parentId: useCase.systemBoundary }),
     };
@@ -217,6 +272,13 @@ const getData = (): LayoutData => {
 
   // Convert system boundaries to group nodes
   for (const boundary of systemBoundaries.values()) {
+    const classesArray = [
+      'default',
+      'system-boundary',
+      `system-boundary-${boundary.type ?? 'rect'}`,
+    ];
+    const cssCompiledStyles = getCompiledStyles(classesArray);
+
     const node: ClusterNode & { boundaryType?: string } = {
       id: boundary.id,
       label: boundary.name,
@@ -225,6 +287,8 @@ const getData = (): LayoutData => {
       padding: 20,
       look: globalConfig.look,
       cssClasses: `system-boundary system-boundary-${boundary.type ?? 'rect'}`,
+      cssStyles: boundary.styles ?? [], // Direct styles
+      cssCompiledStyles, // Compiled styles from class definitions
       // Pass boundary type to the shape handler
       boundaryType: boundary.type,
     };
@@ -233,6 +297,34 @@ const getData = (): LayoutData => {
 
   // Convert relationships to edges
   relationships.forEach((relationship, index) => {
+    // Determine arrow types based on relationship.arrowType
+    let arrowTypeEnd = 'none';
+    let arrowTypeStart = 'none';
+
+    switch (relationship.arrowType) {
+      case ARROW_TYPE.SOLID_ARROW: // -->
+        arrowTypeEnd = 'arrow_point';
+        break;
+      case ARROW_TYPE.BACK_ARROW: // <--
+        arrowTypeStart = 'arrow_point';
+        break;
+      case ARROW_TYPE.CIRCLE_ARROW: // --o
+        arrowTypeEnd = 'arrow_circle';
+        break;
+      case ARROW_TYPE.CROSS_ARROW: // --x
+        arrowTypeEnd = 'arrow_cross';
+        break;
+      case ARROW_TYPE.CIRCLE_ARROW_REVERSED: // o--
+        arrowTypeStart = 'arrow_circle';
+        break;
+      case ARROW_TYPE.CROSS_ARROW_REVERSED: // x--
+        arrowTypeStart = 'arrow_cross';
+        break;
+      case ARROW_TYPE.LINE_SOLID: // --
+        // Both remain 'none'
+        break;
+    }
+
     const edge: Edge = {
       id: relationship.id || `edge-${index}`,
       start: relationship.from,
@@ -240,15 +332,10 @@ const getData = (): LayoutData => {
       source: relationship.from,
       target: relationship.to,
       label: relationship.label,
+      labelpos: 'c', // Center label position for proper dagre layout
       type: relationship.type,
-      arrowTypeEnd:
-        relationship.arrowType === 0
-          ? 'arrow_point' // Forward arrow (-->)
-          : 'none', // No end arrow for back arrow or line
-      arrowTypeStart:
-        relationship.arrowType === 1
-          ? 'arrow_point' // Back arrow (<--)
-          : 'none', // No start arrow for forward arrow or line
+      arrowTypeEnd,
+      arrowTypeStart,
       classes: `relationship relationship-${relationship.type}`,
       look: globalConfig.look,
       thickness: 'normal',
@@ -296,6 +383,10 @@ export const db: UsecaseDB = {
 
   addRelationship,
   getRelationships,
+
+  addClassDef,
+  getClassDefs,
+  getClassDef,
 
   // Direction management
   setDirection,
