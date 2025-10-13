@@ -2,4 +2,4 @@
 'mermaid': major
 ---
 
-add doc to use marmaid.js in GNU Octave
+feat: add doc to use marmaid.js in GNU Octave

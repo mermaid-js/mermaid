@@ -93,7 +93,7 @@ graph LR;
 Here's an example of GNU Octave integration with mermaid-js which uses the
 octave_mermaid_js package to save graph image.
 
-```python
+```matlab
 pkg load octave_mermaid_js
 graph = {
     "graph LR;"
@@ -110,7 +110,7 @@ graph = strjoin(graph, "\n")
 Here's an example of GNU Octave integration with mermaid-js which uses the
 octave_mermaid_js package to show graph image.
 
-```python
+```matlab
 pkg load octave_mermaid_js
 graph = {
     "graph LR;"
