@@ -26,6 +26,7 @@ export default tseslint.config(
       'packages/mermaid/src/config.type.ts',
       'packages/mermaid/src/docs/.vitepress/components.d.ts',
       'CHANGELOG.md',
+      'CONTRIBUTING.md',
     ],
   },
   {
