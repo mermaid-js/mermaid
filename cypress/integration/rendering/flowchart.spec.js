@@ -774,6 +774,21 @@ describe('Graph', () => {
       expect(svg).to.not.have.attr('style');
     });
   });
+  it('40: should add edge animation', () => {
+    renderGraph(
+      `
+      flowchart TD
+          A(["Start"]) L_A_B_0@--> B{"Decision"}
+          B --> C["Option A"] & D["Option B"]
+          style C stroke-width:4px,stroke-dasharray: 5
+          L_A_B_0@{ animation: slow } 
+          L_B_D_0@{ animation: fast }`,
+      { screenshot: false }
+    );
+    // Verify animation classes are applied to both edges
+    cy.get('path#L_A_B_0').should('have.class', 'edge-animation-slow');
+    cy.get('path#L_B_D_0').should('have.class', 'edge-animation-fast');
+  });
   it('58: handle styling with style expressions', () => {
     imgSnapshotTest(
       `
@@ -966,6 +981,21 @@ graph TD
         end
         subgraph B
           c --> d
+        end
+      `,
+      {
+        fontFamily: 'courier',
+      }
+    );
+  });
+
+  it('70: should render a subgraph with direction TD', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+        subgraph A
+          direction TD
+          a --> b
         end
       `,
       {
