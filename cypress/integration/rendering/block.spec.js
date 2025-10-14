@@ -408,7 +408,7 @@ describe('Block diagram', () => {
       {}
     );
   });
-  it('BL31: edge without arrow syntax should render with no arrowheads', () => {
+  it('BL32: WSL node width should be 2', () => {
     imgSnapshotTest(
       `block-beta
   columns 3
@@ -418,7 +418,7 @@ describe('Block diagram', () => {
     dev{{"I am developing here"}}:1
     docker1["Docker"]:1
     docker2["Docker"]:1
-    WSL[WSL<br>This node's length should be 2]:2
+    WSL[WSL<br>This node's width should be 2]:2
   end
   VSCode:1
 
