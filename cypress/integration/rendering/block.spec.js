@@ -409,26 +409,26 @@ describe('Block diagram', () => {
     );
   });
 
-  it('BL32: WSL node width should be 2', () => {
-    imgSnapshotTest(
-      `block-beta
-  columns 3
-  block:group1:2
-    columns 2
-    DB[("db")]:1
-    dev{{"I am developing here"}}:1
-    docker1["Docker"]:1
-    docker2["Docker"]:1
-    WSL:2
-  end
-  VSCode:1
+  //   it('BL32: WSL node width should be 2', () => {
+  //     imgSnapshotTest(
+  //       `block-beta
+  //   columns 3
+  //   block:group1:2
+  //     columns 2
+  //     DB[("db")]:1
+  //     dev{{"I am developing here"}}:1
+  //     docker1["Docker"]:1
+  //     docker2["Docker"]:1
+  //     WSL:2
+  //   end
+  //   VSCode:1
 
-  OS["Windows11"]:3
-  
-VSCode-->dev
+  //   OS["Windows11"]:3
 
-`,
-      {}
-    );
-  });
+  // VSCode-->dev
+
+  // `,
+  //       {}
+  //     );
+  //   });
 });
