@@ -408,6 +408,7 @@ describe('Block diagram', () => {
       {}
     );
   });
+
   it('BL32: WSL node width should be 2', () => {
     imgSnapshotTest(
       `block-beta
@@ -418,13 +419,14 @@ describe('Block diagram', () => {
     dev{{"I am developing here"}}:1
     docker1["Docker"]:1
     docker2["Docker"]:1
-    WSL[WSL<br>This node's width should be 2]:2
+    WSL:2
   end
   VSCode:1
 
   OS["Windows11"]:3
-
+  
 VSCode-->dev
+
 `,
       {}
     );
