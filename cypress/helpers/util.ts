@@ -98,6 +98,7 @@ export const openURLAndVerifyRendering = (
   cy.visit(url);
   cy.window().should('have.property', 'rendered', true);
   cy.get('svg').should('be.visible');
+  cy.get('svg').should('not.have.attr', 'viewbox');
 
   if (validation) {
     cy.get('svg').should(validation);
