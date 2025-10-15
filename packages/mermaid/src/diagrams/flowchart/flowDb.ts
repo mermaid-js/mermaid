@@ -17,6 +17,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
   FlowClass,
   FlowEdge,
@@ -574,15 +575,7 @@ You have to call mermaid.initialize.`
   }
 
   private setupToolTips(element: Element) {
-    let tooltipElem = select('.mermaidTooltip');
-    // @ts-ignore TODO: fix this
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-      // @ts-ignore TODO: fix this
-      tooltipElem = select('body')
-        .append('div')
-        .attr('class', 'mermaidTooltip')
-        .style('opacity', 0);
-    }
+    const tooltipElem = createTooltip();
 
     const svg = select(element).select('svg');
 
@@ -611,21 +604,6 @@ You have to call mermaid.initialize.`
         const el = select(e.currentTarget as Element);
         el.classed('hover', false);
       });
-    // @ts-ignore TODO: fix this
-    tooltipElem = select('body')
-      .append('div')
-      .attr('class', 'mermaidTooltip')
-      .style('opacity', 0)
-      .style('position', 'absolute')
-      .style('text-align', 'center')
-      .style('max-width', '200px')
-      .style('padding', '2px')
-      .style('font-size', '12px')
-      .style('background', '#ffffde')
-      .style('border', '1px solid #333')
-      .style('border-radius', '2px')
-      .style('pointer-events', 'none')
-      .style('z-index', '100');
   }
 
   /**
