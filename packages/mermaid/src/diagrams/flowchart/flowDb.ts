@@ -27,7 +27,7 @@ import type {
   FlowVertex,
   FlowVertexTypeParam,
 } from './types.js';
-
+import DOMPurify from 'dompurify';
 interface LinkData {
   id: string;
 }
@@ -596,7 +596,7 @@ You have to call mermaid.initialize.`
           .text(el.attr('title'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
           .style('top', window.scrollY + rect.bottom + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
+        tooltipElem.html(DOMPurify.sanitize(title));
         el.classed('hover', true);
       })
       .on('mouseout', (e: MouseEvent) => {

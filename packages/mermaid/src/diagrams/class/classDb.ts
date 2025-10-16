@@ -26,6 +26,7 @@ import type {
 } from './classTypes.js';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
+import DOMPurify from 'dompurify';
 
 const MERMAID_DOM_ID_PREFIX = 'classId-';
 let classCounter = 0;
@@ -504,7 +505,7 @@ export class ClassDB implements DiagramDB {
         const rect = (event.currentTarget as Element).getBoundingClientRect();
         tooltipElem.transition().duration(200).style('opacity', '.9');
         tooltipElem
-          .html(this.escapeHtml(title).replace(/&lt;br\/&gt;/g, '<br/>'))
+          .html(DOMPurify.sanitize(title))
           .style('left', `${window.scrollX + rect.left + rect.width / 2}px`)
           .style('top', `${window.scrollY + rect.bottom + 4}px`);
 
