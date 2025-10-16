@@ -46,6 +46,10 @@ export abstract class BaseAxis implements Axis {
   }
 
   getRange(): [number, number] {
+    if (this.axisPosition === 'left' || this.axisPosition === 'right') {
+      // do not apply outer padding to the bottom of the y-axis
+      return [this.range[0] + this.outerPadding, this.range[1]];
+    }
     return [this.range[0] + this.outerPadding, this.range[1] - this.outerPadding];
   }
 
