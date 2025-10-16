@@ -23,6 +23,7 @@ export abstract class BaseAxis implements Axis {
   protected outerPadding = 0;
   protected titleTextHeight = 0;
   protected labelTextHeight = 0;
+  protected isBandAxis = false;
 
   constructor(
     protected axisConfig: XYChartAxisConfig,
@@ -46,11 +47,16 @@ export abstract class BaseAxis implements Axis {
   }
 
   getRange(): [number, number] {
+    if (this.isBandAxis) {
+      return [this.range[0] + this.outerPadding, this.range[1] - this.outerPadding];
+    }
+    // This is a value axis
     if (this.axisPosition === 'left' || this.axisPosition === 'right') {
-      // do not apply outer padding to the bottom of the y-axis
+      // For vertical value axis, no padding at the bottom
       return [this.range[0] + this.outerPadding, this.range[1]];
     }
-    return [this.range[0] + this.outerPadding, this.range[1] - this.outerPadding];
+    // For horizontal value axis, padding only at the end
+    return [this.range[0], this.range[1] - this.outerPadding];
   }
 
   setAxisPosition(axisPosition: AxisPosition): void {
