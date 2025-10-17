@@ -11,12 +11,18 @@ export interface RadarCurve {
   entries: number[];
   label: string;
 }
+export interface TickLabels {
+  labels: string[];
+}
 export interface RadarOptions {
   showLegend: boolean;
   ticks: number;
   max: number | null;
   min: number;
   graticule: 'circle' | 'polygon';
+  tickLabels: TickLabels;
+  tickLabelsAxis: number | null;
+  tickLabelsOffset: number;
 }
 export interface RadarDB extends DiagramDBBase<RadarDiagramConfig> {
   getAxes: () => RadarAxis[];

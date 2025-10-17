@@ -75,6 +75,11 @@ describe('radar diagrams', () => {
         "max": null,
         "min": 0,
         "showLegend": true,
+        "tickLabels": {
+          "labels": [],
+        },
+        "tickLabelsAxis": null,
+        "tickLabelsOffset": 10,
         "ticks": 5,
       }
     `);
@@ -87,6 +92,8 @@ describe('radar diagrams', () => {
     graticule polygon
     min 1
     max 10
+    tickLabels {'-4','-3','-2','-1','0','1','2','3','4','5'}
+    tickLabelsAxis 2
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
     expect(getOptions()).toMatchInlineSnapshot(`
@@ -95,6 +102,22 @@ describe('radar diagrams', () => {
         "max": 10,
         "min": 1,
         "showLegend": false,
+        "tickLabels": {
+          "labels": [
+            "-4",
+            "-3",
+            "-2",
+            "-1",
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+          ],
+        },
+        "tickLabelsAxis": 2,
+        "tickLabelsOffset": 10,
         "ticks": 10,
       }
     `);
@@ -246,6 +269,9 @@ describe('radar diagrams', () => {
         curve mycurve["My Curve"]{1,2,3}
         curve mycurve2["My Curve 2"]{ C: 1, A: 2, B: 3 }
         graticule polygon
+        tickLabels {'-2','-1','0','1','2'}
+        tickLabelsAxis 2
+        tickLabelsOffset 10
         `;
         await mermaidAPI.parse(str);
         const diagram = await Diagram.fromText(str);

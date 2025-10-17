@@ -2,7 +2,7 @@ import type { Diagram } from '../../Diagram.js';
 import type { RadarDiagramConfig } from '../../config.type.js';
 import type { DiagramRenderer, DrawDefinition, SVG, SVGGroup } from '../../diagram-api/types.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import type { RadarDB, RadarAxis, RadarCurve } from './types.js';
+import type { RadarDB, RadarAxis, RadarCurve, TickLabels } from './types.js';
 
 const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const db = diagram.db as RadarDB;
@@ -29,6 +29,17 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
 
   // 🪓 Draw the axes
   drawAxes(g, axes, radius, config);
+
+  // 📏 Draw the tick labels
+  drawTickLabels(
+    g,
+    axes,
+    radius,
+    options.ticks,
+    options.tickLabels,
+    options.tickLabelsAxis,
+    options.tickLabelsOffset
+  );
 
   // 📊 Draw the curves
   drawCurves(g, axes, curves, minValue, maxValue, options.graticule, config);
@@ -117,6 +128,41 @@ const drawAxes = (
       .attr('class', 'radarAxisLabel');
   }
 };
+
+function drawTickLabels(
+  g: SVGGroup,
+  axes: RadarAxis[],
+  radius: number,
+  ticks: number,
+  tickLabels: TickLabels,
+  tickLabelsAxis: number | null,
+  tickLabelsOffset: number
+) {
+  const numAxes = axes.length;
+  for (let tickIdx = 0; tickIdx < ticks; tickIdx++) {
+    const r = (radius * (tickIdx + 1)) / ticks;
+    const {
+      labels: { [tickIdx]: label },
+    } = tickLabels;
+
+    axes.forEach((_, axisIdx) => {
+      const angle = (2 * axisIdx * Math.PI) / numAxes - Math.PI / 2;
+
+      const adjustedAngle = r - tickLabelsOffset;
+      const xWithOffset = adjustedAngle * Math.cos(angle) + tickLabelsOffset * Math.sin(angle);
+      const yWithOffset = adjustedAngle * Math.sin(angle) - tickLabelsOffset * Math.cos(angle);
+
+      const drawForAxis = tickLabelsAxis === null || axisIdx === tickLabelsAxis - 1;
+      if (drawForAxis) {
+        g.append('text')
+          .text(label)
+          .attr('x', xWithOffset)
+          .attr('y', yWithOffset)
+          .attr('class', 'radarAxisTickLabel');
+      }
+    });
+  }
+}
 
 function drawCurves(
   g: SVGGroup,
