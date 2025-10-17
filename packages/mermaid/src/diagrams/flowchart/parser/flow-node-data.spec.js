@@ -144,6 +144,16 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].shape).toEqual('rounded');
     expect(data4Layout.nodes[0].label).toEqual('DD');
   });
+  it('should handle mathematical formulas with backslashes in quoted strings', function () {
+    const res = flow.parser.parse(`flowchart TB
+      A@{ shape: rect, label: "$$\\sin x$$"}`);
+
+    const data4Layout = flow.parser.yy.getData();
+
+    expect(data4Layout.nodes.length).toBe(1);
+    expect(data4Layout.nodes[0].shape).toEqual('rect');
+    expect(data4Layout.nodes[0].label).toEqual('$$\\sin x$$');
+  });
   it('should be possible to link to a node with more data', function () {
     const res = flow.parser.parse(`flowchart TB
       A --> D@{
