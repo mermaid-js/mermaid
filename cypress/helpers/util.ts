@@ -6,6 +6,7 @@ interface CypressConfig {
   listUrl?: boolean;
   listId?: string;
   name?: string;
+  screenshot?: boolean;
 }
 type CypressMermaidConfig = MermaidConfig & CypressConfig;
 
@@ -90,7 +91,7 @@ export const renderGraph = (
 
 export const openURLAndVerifyRendering = (
   url: string,
-  options: CypressMermaidConfig,
+  { screenshot = true, ...options }: CypressMermaidConfig,
   validation?: any
 ): void => {
   const name: string = (options.name ?? cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
@@ -103,7 +104,9 @@ export const openURLAndVerifyRendering = (
     cy.get('svg').should(validation);
   }
 
-  verifyScreenshot(name);
+  if (screenshot) {
+    verifyScreenshot(name);
+  }
 };
 
 export const verifyScreenshot = (name: string): void => {
