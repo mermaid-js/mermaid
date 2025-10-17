@@ -82,8 +82,10 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <class-body><<EOF>>             return "EOF_IN_STRUCT";
 <class-body>"[*]"               { return 'EDGE_STATE';}
 <class-body>[{]                 return "OPEN_IN_STRUCT";
+<class-body>"<<"                return 'ANNOTATION_START';
+<class-body>">>"                return 'ANNOTATION_END';
 <class-body>[\n]                /* nothing */
-<class-body>[^{}\n]*            { return "MEMBER";}
+<class-body>[^{}<>\n]*          { return "MEMBER";}
 
 <*>"cssClass"                   return 'CSSCLASS';
 <*>"callback"                   return 'CALLBACK';
@@ -295,11 +297,21 @@ classStatement
     | classIdentifier STRUCT_START members STRUCT_STOP   {yy.addMembers($1,$3);}
     | classIdentifier STRUCT_START STRUCT_STOP           {}
     | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.setCssClass($1, $3);yy.addMembers($1,$5);}
+    | classIdentifier STRUCT_START NEWLINE annotationList members STRUCT_STOP   {for(const annotation of $4) { yy.addAnnotation($1, annotation); } yy.addMembers($1,$5);}
+    | classIdentifier STRUCT_START NEWLINE annotationList STRUCT_STOP           {for(const annotation of $4) { yy.addAnnotation($1, annotation); }}
+    | classIdentifier STRUCT_START annotationList members STRUCT_STOP   {for(const annotation of $3) { yy.addAnnotation($1, annotation); } yy.addMembers($1,$4);}
+    | classIdentifier STRUCT_START annotationList STRUCT_STOP           {for(const annotation of $3) { yy.addAnnotation($1, annotation); }}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START NEWLINE annotationList members STRUCT_STOP {yy.setCssClass($1, $3); for(const annotation of $6) { yy.addAnnotation($1, annotation); } yy.addMembers($1,$7);}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START NEWLINE annotationList STRUCT_STOP {yy.setCssClass($1, $3); for(const annotation of $6) { yy.addAnnotation($1, annotation); }}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START annotationList members STRUCT_STOP {yy.setCssClass($1, $3); for(const annotation of $5) { yy.addAnnotation($1, annotation); } yy.addMembers($1,$6);}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START annotationList STRUCT_STOP {yy.setCssClass($1, $3); for(const annotation of $5) { yy.addAnnotation($1, annotation); }}
     ;
 
 classIdentifier
     : CLASS className                                    {$$=$2; yy.addClass($2);}
     | CLASS className classLabel                         {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3);}
+    | CLASS className annotationList                     {$$=$2; yy.addClass($2); for(const annotation of $3) { yy.addAnnotation($2, annotation); }}
+    | CLASS className classLabel annotationList          {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3); for(const annotation of $4) { yy.addAnnotation($2, annotation); }}
     ;
 
 

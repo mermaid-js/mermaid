@@ -241,6 +241,31 @@ describe('given a basic class diagram, ', function () {
       expect(c1.annotations[0]).toBe('interface');
     });
 
+    it('should handle multiple external annotations', () => {
+      const str = `classDiagram
+        <<interface>><<service>> Car
+        Car : int size
+        Car : int age`;
+
+      parser.parse(str);
+      const carClass = classDb.getClass('Car');
+      expect(carClass.annotations).toHaveLength(2);
+      expect(carClass.annotations).toContain('interface');
+      expect(carClass.annotations).toContain('service');
+    });
+
+    it('should handle multiple annotations inline with class definition', () => {
+      const str = `classDiagram
+        class Car <<interface>> <<service>>
+        Car : int size`;
+
+      parser.parse(str);
+      const carClass = classDb.getClass('Car');
+      expect(carClass.annotations).toHaveLength(2);
+      expect(carClass.annotations).toContain('interface');
+      expect(carClass.annotations).toContain('service');
+    });
+
     it('should parse a class with text label and css class shorthand', () => {
       const str = 'classDiagram\n' + 'class C1["Class 1 with text label"]:::styleClass';
 

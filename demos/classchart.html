@@ -33,12 +33,15 @@
       Animal: +mate()
 
       class Duck{
+    &lt;&lt;injected&gt;&gt;
+          &lt;&lt;interface&gt;&gt;
+    
         +String beakColor
         +swim()
         +quack()
       }
       class Fish{
-        -Listint sizeInFeet
+        -List~int~ sizeInFeet
         -canEat()
       }
       class Zebra{
@@ -56,6 +59,8 @@
     Class01 <|-- AveryLongClass : Cool
 
     &lt;&lt;interface&gt;&gt; Class01
+    &lt;&lt;injected&gt;&gt; Class01
+    
     Class03 "0" *-- "0..n" Class04
     Class05 "1" o-- "many" Class06
     Class07 .. Class08
@@ -156,7 +161,7 @@
         ~InternalProperty : string
         ~AnotherInternalProperty : List~List~string~~
       }
-      class People List~List~Person~~
+      class People List~Person~
     </pre>
     <hr />
     <pre class="mermaid">

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multiple Annotations Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f5f5f5;
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      .mermaid {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .description {
+        background: #e8f4fd;
+        border-left: 4px solid #0066cc;
+        padding: 10px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Multiple Annotations Test - Issue #6680 Fix</h1>
+
+    <div class="description">
+      <strong>Testing:</strong> Multiple stereotypes/annotations should now render correctly using
+      external and inline annotation methods.
+    </div>
+
+    <h2>Baseline - no annotations</h2>
+    <pre class="mermaid">
+classDiagram
+    class Shape
+    class Circle
+    class Triangle
+    </pre>
+
+    <h2>#0 Baseline - single annotation</h2>
+    <pre class="mermaid">
+classDiagram
+    class Shape
+    class Circle
+    class Triangle
+
+    &LT;&LT;injected&GT;&GT; Shape
+    </pre>
+
+    <h2>Method 1: External/Next-line Annotations</h2>
+    <div class="description">
+      External annotations defined on the line after the class definition:
+    </div>
+    <pre class="mermaid">
+    classDiagram
+        class Shape
+        &LT;&LT;interface&GT;&GT; &LT;&LT;injected&GT;&GT; Shape
+        class Circle
+        &LT;&LT;abstract&GT;&GT; &LT;&LT;serializable&GT;&GT; Circle
+        class Triangle
+        &LT;&LT;interface&GT;&GT; &LT;&LT;cached&GT;&GT; &LT;&LT;singleton&GT;&GT; Triangle
+    </pre>
+
+    <h2>Method 2: Inline Annotations</h2>
+    <div class="description">Inline annotations defined directly with the class definition:</div>
+    <pre class="mermaid">
+    classDiagram
+        class Shape &LT;&LT;interface&GT;&GT; &LT;&LT;injected&GT;&GT;
+        class Circle &LT;&LT;abstract&GT;&GT; &LT;&LT;serializable&GT;&GT;
+        class Square &LT;&LT;service&GT;&GT; &LT;&LT;singleton&GT;&GT; &LT;&LT;cached&GT;&GT;
+        class Triangle &LT;&LT;interface&GT;&GT; &LT;&LT;component&GT;&GT; &LT;&LT;transient&GT;&GT;
+    </pre>
+
+    <h2>Method 3: Mixed Methods Test</h2>
+    <div class="description">Combination of both external and inline annotation methods:</div>
+    <pre class="mermaid">
+    classDiagram
+        class Component &LT;&LT;interface&GT;&GT; &LT;&LT;injected&GT;&GT;
+        class Service
+        &LT;&LT;abstract&GT;&GT; &LT;&LT;singleton&GT;&GT; Service
+        class Repository &LT;&LT;dao&GT;&GT; &LT;&LT;cached&GT;&GT;
+        class Controller
+        &LT;&LT;rest&GT;&GT; &LT;&LT;secured&GT;&GT; Controller
+    </pre>
+
+    <h2>Real-world Example</h2>
+    <div class="description">A practical example with relationships and multiple annotations:</div>
+    <pre class="mermaid">
+    classDiagram
+        class BaseService &LT;&LT;abstract&GT;&GT; &LT;&LT;injectable&GT;&GT;
+        class UserService &LT;&LT;service&GT;&GT; &LT;&LT;singleton&GT;&GT;
+        class UserRepository &LT;&LT;repository&GT;&GT; &LT;&LT;cached&GT;&GT;
+        class UserController
+        &LT;&LT;controller&GT;&GT; &LT;&LT;secured&GT;&GT; UserController
+        
+        BaseService <|-- UserService
+        UserService --> UserRepository
+        UserController --> UserService
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'default',
+        logLevel: 'debug',
+      });
+    </script>
+  </body>
+</html>

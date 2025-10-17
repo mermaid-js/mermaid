@@ -36,8 +36,36 @@ export async function textHelper<T extends SVGGraphicsElement>(
 
   annotationGroup = shapeSvg.insert('g').attr('class', 'annotation-group text');
   if (node.annotations.length > 0) {
-    const annotation = node.annotations[0];
-    await addText(annotationGroup, { text: `«${annotation}»` } as unknown as ClassMember, 0);
+    let yOffset = 0;
+    const annotationElements: any[] = [];
+    let maxAnnotationWidth = 0;
+
+    // First pass: create all annotation elements and find the maximum width
+    for (const annotation of node.annotations) {
+      const annotationEl = annotationGroup.insert('g').attr('class', 'annotation-text');
+      const height = await addText(
+        annotationEl,
+        { text: `«${annotation}»` } as unknown as ClassMember,
+        0
+      );
+      const annotationBBox = annotationEl.node()!.getBBox();
+
+      annotationElements.push({
+        element: annotationEl,
+        width: annotationBBox.width,
+        height: height,
+        yOffset: yOffset,
+      });
+
+      maxAnnotationWidth = Math.max(maxAnnotationWidth, annotationBBox.width);
+      yOffset += height + TEXT_PADDING;
+    }
+
+    // Second pass: center each annotation relative to the maximum width
+    for (const annotation of annotationElements) {
+      const centerOffset = (maxAnnotationWidth - annotation.width) / 2;
+      annotation.element.attr('transform', `translate(${centerOffset}, ${annotation.yOffset})`);
+    }
 
     const annotationGroupBBox = annotationGroup.node()!.getBBox();
     annotationGroupHeight = annotationGroupBBox.height;

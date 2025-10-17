@@ -44,7 +44,7 @@ classDiagram
 UML provides mechanisms to represent class members, such as attributes and methods, and additional information about them.
 A single instance of a class in the diagram contains three compartments:
 
-- The top compartment contains the name of the class. It is printed in bold and centered, and the first letter is capitalized. It may also contain optional annotation text describing the nature of the class.
+- The top compartment contains the name of the class. It is printed in bold and centered, and the first letter is capitalized. It may also contain optional annotation/stereotype text describing the nature of the class.
 - The middle compartment contains the attributes of the class. They are left-aligned and the first letter is lowercase.
 - The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
@@ -349,7 +349,7 @@ classDiagram
     Galaxy --> "many" Star : Contains
 ```
 
-## Annotations on classes
+## Annotations on classes (stereotypes)
 
 It is possible to annotate classes with markers to provide additional metadata about the class. This can give a clearer indication about its nature. Some common annotations include:
 
@@ -358,38 +358,22 @@ It is possible to annotate classes with markers to provide additional metadata a
 - `<<Service>>` To represent a service class
 - `<<Enumeration>>` To represent an enum
 
-Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class, and either way the output will be same:
+Annotations are defined within the opening `<<` and closing `>>`. There are multiple ways to add an annotation to a class, and any of them will output the same result:
 
-> **Tip:**  
-> In Mermaid class diagrams, annotations like `<<interface>>` can be attached in two ways:
->
-> - **Inline with the class definition** (Recommended for consistency):
->
->   ```mermaid-example
->   classDiagram
->     class Shape <<interface>>
->   ```
->
-> - **Separate line after the class definition**:
->
->   ```mermaid-example
->   classDiagram
->     class Shape
->     <<interface>> Shape
->   ```
->
-> Both methods are fully supported and produce identical diagrams.  
-> However, it is recommended to use the **inline style** for better readability and consistent formatting across diagrams.
+- **Inline with the class definition** (Recommended for consistency):
 
-- In a **_separate line_** after a class is defined:
+  ```mermaid-example
+  classDiagram
+    class Shape <<interface>>
+  ```
 
-```mermaid-example
-classDiagram
-class Shape
-<<interface>> Shape
-Shape : noOfVertices
-Shape : draw()
-```
+- **Separate line after the class definition**:
+
+  ```mermaid-example
+  classDiagram
+    class Shape
+    <<interface>> Shape
+  ```
 
 - In a **_nested structure_** along with the class definition:
 
@@ -407,6 +391,19 @@ class Color{
     GREEN
     WHITE
     BLACK
+}
+
+```
+
+For the case of multiple annotations the syntax is similar, you can add other annotations on the same line, or in a nested class definition add an annotation on a new line, as follows:
+
+```mermaid-example
+classDiagram
+class Shape{
+    <<interface>>
+    <<injected>>
+    noOfVertices
+    draw()
 }
 
 ```
