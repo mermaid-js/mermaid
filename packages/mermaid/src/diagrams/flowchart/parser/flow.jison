@@ -152,17 +152,23 @@ that id.
 ","                          return 'COMMA';
 "*"                          return 'MULT';
 
-<INITIAL,edgeText>\s*[xo<]?\-\-+[-xo>]\s*          { this.popState(); return 'LINK'; }
-<INITIAL>\s*[xo<]?\-\-\s*                          { this.pushState("edgeText"); return 'START_LINK'; }
-<edgeText>[^-]|\-(?!\-)+                           return 'EDGE_TEXT';
+<INITIAL,edgeText>\s*[xo<]?\-\-+[xo>]\s+                 { this.popState(); return 'LINK'; }
+<INITIAL,edgeText>\s*[xo<]?\-\-+[xo>](?=[A-Z])           { this.popState(); return 'LINK'; }
+<INITIAL,edgeText>\s*[xo<]?\-\-+[-]\s*                   { this.popState(); return 'LINK'; }
+<INITIAL>\s*[xo<]?\-\-\s*                             { this.pushState("edgeText"); return 'START_LINK'; }
+<edgeText>[^-]|\-(?!\-)+                              return 'EDGE_TEXT';
 
-<INITIAL,thickEdgeText>\s*[xo<]?\=\=+[=xo>]\s*      { this.popState(); return 'LINK'; }
-<INITIAL>\s*[xo<]?\=\=\s*                           { this.pushState("thickEdgeText"); return 'START_LINK'; }
-<thickEdgeText>[^=]|\=(?!=)                         return 'EDGE_TEXT';
+<INITIAL,thickEdgeText>\s*[xo<]?\=\=+[xo>]\s+            { this.popState(); return 'LINK'; }
+<INITIAL,thickEdgeText>\s*[xo<]?\=\=+[xo>](?=[A-Z])       { this.popState(); return 'LINK'; }
+<INITIAL,thickEdgeText>\s*[xo<]?\=\=+[=]\s*               { this.popState(); return 'LINK'; }
+<INITIAL>\s*[xo<]?\=\=\s*                              { this.pushState("thickEdgeText"); return 'START_LINK'; }
+<thickEdgeText>[^=]|\=(?!=)                            return 'EDGE_TEXT';
 
-<INITIAL,dottedEdgeText>\s*[xo<]?\-?\.+\-[xo>]?\s*   { this.popState(); return 'LINK'; }
-<INITIAL>\s*[xo<]?\-\.\s*                            { this.pushState("dottedEdgeText"); return 'START_LINK'; }
-<dottedEdgeText>[^\.]|\.(?!-)                        return 'EDGE_TEXT';
+<INITIAL,dottedEdgeText>\s*[xo<]?\-?\.+\-[xo>]\s+         { this.popState(); return 'LINK'; }
+<INITIAL,dottedEdgeText>\s*[xo<]?\-?\.+\-[xo>](?=[A-Z])    { this.popState(); return 'LINK'; }
+<INITIAL,dottedEdgeText>\s*[xo<]?\-?\.+\-\s*               { this.popState(); return 'LINK'; }
+<INITIAL>\s*[xo<]?\-\.\s*                               { this.pushState("dottedEdgeText"); return 'START_LINK'; }
+<dottedEdgeText>[^\.]|\.(?!-)                           return 'EDGE_TEXT';
 
 
 <*>\s*\~\~[\~]+\s*              return 'LINK';
