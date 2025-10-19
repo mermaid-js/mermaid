@@ -19,11 +19,27 @@ export class BarPlot {
 
     const barPaddingPercent = 0.05;
 
-    const barWidth =
-      Math.min(this.xAxis.getAxisOuterPadding() * 2, this.xAxis.getTickDistance()) *
-      (1 - barPaddingPercent);
-    const barWidthHalf = barWidth / 2;
+    let barWidth: number;
+    let barWidthHalf: number;
 
+    // Axis at the bottom of the bar
+    let bandAxis: Axis;
+    if (this.yAxis.isBandAxis) {
+      bandAxis = this.yAxis;
+    } else {
+      bandAxis = this.xAxis;
+    }
+
+    if (bandAxis.isBandAxis) {
+      barWidth =
+        Math.min(bandAxis.getAxisOuterPadding() * 2, bandAxis.getTickDistance()) *
+        (1 - barPaddingPercent);
+      barWidthHalf = barWidth / 2;
+    } else {
+      // For value axis, keep bars aligned and adjust width for extra half bar
+      barWidth = Math.min(bandAxis.getAxisOuterPadding() * 2, bandAxis.getTickDistance()) * 0.5;
+      barWidthHalf = 0;
+    }
     if (this.orientation === 'horizontal') {
       return [
         {
