@@ -23,7 +23,7 @@ export abstract class BaseAxis implements Axis {
   protected outerPadding = 0;
   protected titleTextHeight = 0;
   protected labelTextHeight = 0;
-  protected isBandAxis = false;
+  public isBandAxis = false;
 
   constructor(
     protected axisConfig: XYChartAxisConfig,
