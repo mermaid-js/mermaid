@@ -18,6 +18,7 @@
 %x acc_descr_multiline
 %x class
 %x class-body
+%x class-body-annotation
 %x namespace
 %x namespace-body
 %%
@@ -82,8 +83,15 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <class-body><<EOF>>             return "EOF_IN_STRUCT";
 <class-body>"[*]"               { return 'EDGE_STATE';}
 <class-body>[{]                 return "OPEN_IN_STRUCT";
+<class-body>"<<"                { this.begin("class-body-annotation"); return 'ANNOTATION_START';}
 <class-body>[\n]                /* nothing */
+<class-body>[ \t]+              /* skip whitespace in class body */
 <class-body>[^{}\n]*            { return "MEMBER";}
+
+<class-body-annotation>">>"     { this.popState(); return 'ANNOTATION_END';}
+<class-body-annotation>[0-9]+   return 'NUM';
+<class-body-annotation>\w+      return 'ALPHA';
+<class-body-annotation>[\s]+    /* ignore whitespace */
 
 <*>"cssClass"                   return 'CSSCLASS';
 <*>"callback"                   return 'CALLBACK';
@@ -294,12 +302,26 @@ classStatement
     | classIdentifier STYLE_SEPARATOR alphaNumToken      {yy.setCssClass($1, $3);}
     | classIdentifier STRUCT_START members STRUCT_STOP   {yy.addMembers($1,$3);}
     | classIdentifier STRUCT_START STRUCT_STOP           {}
+    | classIdentifier STRUCT_START NEWLINE members STRUCT_STOP {yy.addMembers($1,$4);}
+    | classIdentifier STRUCT_START annotationList members STRUCT_STOP {for(const annotation of $3) { yy.addAnnotation($1, annotation); } yy.addMembers($1,$4);}
+    | classIdentifier STRUCT_START annotationList STRUCT_STOP {for(const annotation of $3) { yy.addAnnotation($1, annotation); }}
+    | classIdentifier STRUCT_START NEWLINE annotationList members STRUCT_STOP {for(const annotation of $4) { yy.addAnnotation($1, annotation); } yy.addMembers($1,$5);}
+    | classIdentifier STRUCT_START NEWLINE annotationList STRUCT_STOP {for(const annotation of $4) { yy.addAnnotation($1, annotation); }}
     | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.setCssClass($1, $3);yy.addMembers($1,$5);}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START NEWLINE members STRUCT_STOP {yy.setCssClass($1, $3);yy.addMembers($1,$6);}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START annotationList members STRUCT_STOP {yy.setCssClass($1, $3); for(const annotation of $5) { yy.addAnnotation($1, annotation); } yy.addMembers($1,$6);}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START annotationList STRUCT_STOP {yy.setCssClass($1, $3); for(const annotation of $5) { yy.addAnnotation($1, annotation); }}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START NEWLINE annotationList members STRUCT_STOP {yy.setCssClass($1, $3); for(const annotation of $6) { yy.addAnnotation($1, annotation); } yy.addMembers($1,$7);}
+    | classIdentifier STYLE_SEPARATOR alphaNumToken STRUCT_START NEWLINE annotationList STRUCT_STOP {yy.setCssClass($1, $3); for(const annotation of $6) { yy.addAnnotation($1, annotation); }}
     ;
 
 classIdentifier
     : CLASS className                                    {$$=$2; yy.addClass($2);}
+    | CLASS className ANNOTATION_START alphaNumToken ANNOTATION_END {$$=$2; yy.addClass($2); yy.addAnnotation($2,$4);}
+    | CLASS className annotationList                     {$$=$2; yy.addClass($2); for(const annotation of $3) { yy.addAnnotation($2, annotation); }}
     | CLASS className classLabel                         {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3);}
+    | CLASS className classLabel ANNOTATION_START alphaNumToken ANNOTATION_END {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3); yy.addAnnotation($2,$5);}
+    | CLASS className classLabel annotationList          {$$=$2; yy.addClass($2);yy.setClassLabel($2, $3); for(const annotation of $4) { yy.addAnnotation($2, annotation); }}
     ;
 
 
@@ -311,6 +333,12 @@ emptyBody
 
 annotationStatement
     : ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
+    | annotationList className  { for(const annotation of $1) { yy.addAnnotation($2, annotation); } }
+    ;
+
+annotationList
+    : ANNOTATION_START alphaNumToken ANNOTATION_END { $$ = [$2]; }
+    | annotationList ANNOTATION_START alphaNumToken ANNOTATION_END { $1.push($3); $$ = $1; }
     ;
 
 members
