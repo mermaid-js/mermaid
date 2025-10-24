@@ -240,7 +240,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
     }
   });
 
-  for (let id of clusterDb.keys()) {
+  for (let id of Object.keys(clusterDb)) {
     const nonClusterChild = clusterDb.get(id).id;
     const parent = graph.parent(nonClusterChild);
 
