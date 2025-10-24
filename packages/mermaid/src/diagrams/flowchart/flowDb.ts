@@ -453,7 +453,9 @@ You have to call mermaid.initialize.`
       return;
     }
     tooltip = this.sanitizeText(tooltip);
-
+    // Backwards compatibility. Now that we're using `.innerText` instead of `.textContents`,
+    // we need to scrub out any raw LF or CRs in the contents.
+    tooltip = tooltip.replaceAll('\n', ' ').replaceAll('\r', ' ');
     // Backwards compatibility. No need to support variations with spaces in them,
     // since older versions only supported exactly `<br>` and `<br/>`.
     tooltip = tooltip.replaceAll('<br>', '\n').replaceAll('<br/>', '\n');
