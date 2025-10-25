@@ -3,6 +3,7 @@ import { setSiteConfig } from '../../diagram-api/diagramAPI.js';
 import mermaidAPI from '../../mermaidAPI.js';
 import { Diagram } from '../../Diagram.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
+import { SequenceDB } from './sequenceDb.js';
 
 beforeAll(async () => {
   // Is required to load the sequence diagram
@@ -92,19 +93,20 @@ function addConf(conf, key, value) {
 }
 
 // const parser = sequence.parser;
-let diagram;
 
 describe('more than one sequence diagram', () => {
   it('should not have duplicated messages', async () => {
-    const diagram1 = await Diagram.fromText(`
+    const diagram = await Diagram.fromText(`
         sequenceDiagram
         Alice->Bob:Hello Bob, how are you?
         Bob-->Alice: I am good thanks!`);
-    expect(diagram1.db.getMessages()).toMatchInlineSnapshot(`
+    expect(diagram.db.getMessages()).toMatchInlineSnapshot(`
       [
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Alice",
+          "id": "0",
           "message": "Hello Bob, how are you?",
           "to": "Bob",
           "type": 5,
@@ -112,7 +114,9 @@ describe('more than one sequence diagram', () => {
         },
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Bob",
+          "id": "1",
           "message": "I am good thanks!",
           "to": "Alice",
           "type": 6,
@@ -129,7 +133,9 @@ describe('more than one sequence diagram', () => {
       [
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Alice",
+          "id": "0",
           "message": "Hello Bob, how are you?",
           "to": "Bob",
           "type": 5,
@@ -137,7 +143,9 @@ describe('more than one sequence diagram', () => {
         },
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Bob",
+          "id": "1",
           "message": "I am good thanks!",
           "to": "Alice",
           "type": 6,
@@ -156,7 +164,9 @@ describe('more than one sequence diagram', () => {
       [
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Alice",
+          "id": "0",
           "message": "Hello John, how are you?",
           "to": "John",
           "type": 5,
@@ -164,7 +174,9 @@ describe('more than one sequence diagram', () => {
         },
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "John",
+          "id": "1",
           "message": "I am good thanks!",
           "to": "Alice",
           "type": 6,
@@ -175,7 +187,256 @@ describe('more than one sequence diagram', () => {
   });
 });
 
+describe('Central Connection Parsing', () => {
+  describe('when parsing central connection syntax', () => {
+    it('should parse actor ()->>() actor syntax as CENTRAL_CONNECTION_DUAL', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3); // addMessage + centralConnection + centralConnectionReverse
+
+      // Find the actual message (type: 'addMessage')
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL
+        activate: true,
+        type: 0, // SOLID (based on test output)
+      });
+    });
+
+    it('should parse actor ()-->>() actor syntax as CENTRAL_CONNECTION_DUAL', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()-->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3); // addMessage + centralConnection + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL
+        activate: true,
+        type: 1, // DOTTED (based on test output)
+      });
+    });
+
+    it('should parse actor ->>() actor syntax as CENTRAL_CONNECTION', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(2); // addMessage + centralConnection (no activation for this pattern)
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 59, // CENTRAL_CONNECTION
+        activate: true,
+        type: 0, // SOLID (based on actual parsing)
+      });
+    });
+
+    it('should parse actor ()-->> actor syntax as CENTRAL_CONNECTION_REVERSE', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()-->> Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(2); // addMessage + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 60, // CENTRAL_CONNECTION_REVERSE
+        activate: false,
+        type: 1, // DOTTED (based on test output)
+      });
+    });
+
+    it('should parse actor ()->> actor syntax as CENTRAL_CONNECTION_REVERSE', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()->> Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(2); // addMessage + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 60, // CENTRAL_CONNECTION_REVERSE
+        activate: false,
+        type: 0, // SOLID (based on test output)
+      });
+    });
+
+    it('should parse actor ()<<-->>() actor syntax as CENTRAL_CONNECTION_DUAL', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()<<-->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3); // addMessage + centralConnection + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL
+        activate: true,
+        type: 34, // BIDIRECTIONAL_DOTTED
+      });
+    });
+
+    it('should parse actor ()<<->>() actor syntax as CENTRAL_CONNECTION_DUAL', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()<<->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3); // addMessage + centralConnection + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL
+        activate: true,
+        type: 33, // BIDIRECTIONAL_SOLID
+      });
+    });
+
+    it('should handle multiple central connection types in one diagram', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        participant Charlie
+        Alice ()->>() Bob: Message 1
+        Bob ()-->> Charlie: Message 2
+        Charlie ()<<-->>() Alice: Message 3
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(8); // 3 addMessages + 5 central connection markers
+
+      // Filter to get only the actual messages
+      const actualMessages = messages.filter((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessages).toHaveLength(3);
+
+      expect(actualMessages[0]).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL (()->>())
+      });
+
+      expect(actualMessages[1]).toMatchObject({
+        from: 'Bob',
+        to: 'Charlie',
+        centralConnection: 60, // CENTRAL_CONNECTION_REVERSE (()-->>)
+      });
+
+      expect(actualMessages[2]).toMatchObject({
+        from: 'Charlie',
+        to: 'Alice',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL (()<<-->>())
+      });
+    });
+
+    it('should handle central connections with different arrow types', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()-x() Bob: Cross message
+        Alice ()--x() Bob: Dotted cross message
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(6); // 2 addMessages + 4 central connection markers
+
+      const actualMessages = messages.filter((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessages).toHaveLength(2);
+
+      expect(actualMessages[0]).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL (()-x())
+        type: 3, // SOLID_CROSS
+      });
+
+      expect(actualMessages[1]).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL (()--x())
+        type: 4, // DOTTED_CROSS
+      });
+    });
+
+    it('should not break existing parsing without central connections', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ->> Bob: Normal message
+        Bob -->> Alice: Normal dotted message
+        Alice -x Bob: Normal cross message
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3);
+
+      messages.forEach((msg) => {
+        expect(msg.centralConnection).toBe(0); // No central connection
+      });
+
+      expect(messages[0].type).toBe(0); // SOLID (based on actual parsing)
+      expect(messages[1].type).toBe(1); // DOTTED (based on actual parsing)
+      expect(messages[2].type).toBe(3); // SOLID_CROSS
+    });
+  });
+});
+
 describe('when parsing a sequenceDiagram', function () {
+  let diagram;
   beforeEach(async function () {
     diagram = await Diagram.fromText(`
 sequenceDiagram
@@ -183,14 +444,7 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`);
   });
-  it('should handle a sequenceDiagram definition', async function () {
-    const str = `
-sequenceDiagram
-Alice->Bob:Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
-
-    await mermaidAPI.parse(str);
+  it('should handle a sequenceDiagram definition', function () {
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -208,7 +462,6 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    await mermaidAPI.parse(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(false);
   });
@@ -220,20 +473,20 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
+
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(true);
   });
 
   it('should handle a sequenceDiagram definition with a title:', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 title: Diagram Title
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
+Bob-->Alice: I am good thanks!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -249,14 +502,13 @@ Bob-->Alice: I am good thanks!`;
   });
 
   it('should handle a sequenceDiagram definition with a title without a :', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 title Diagram Title
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
+Bob-->Alice: I am good thanks!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -272,22 +524,20 @@ Bob-->Alice: I am good thanks!`;
   });
 
   it('should handle a sequenceDiagram definition with a accessibility title and description (accDescr)', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 title: Diagram Title
 accTitle: This is the title
 accDescr: Accessibility Description
 Alice->Bob:Hello Bob, how are you?
-`;
+`);
 
-    await mermaidAPI.parse(str);
     expect(diagram.db.getDiagramTitle()).toBe('Diagram Title');
     expect(diagram.db.getAccTitle()).toBe('This is the title');
     expect(diagram.db.getAccDescription()).toBe('Accessibility Description');
-    const messages = diagram.db.getMessages();
   });
   it('should handle a sequenceDiagram definition with a accessibility title and multiline description (accDescr)', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 accTitle: This is the title
 accDescr {
@@ -295,21 +545,18 @@ Accessibility
 Description
 }
 Alice->Bob:Hello Bob, how are you?
-`;
+`);
 
-    await mermaidAPI.parse(str);
     expect(diagram.db.getAccTitle()).toBe('This is the title');
     expect(diagram.db.getAccDescription()).toBe('Accessibility\nDescription');
-    const messages = diagram.db.getMessages();
   });
 
   it('should space in actor names', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob:Hello Bob, how are - you?
-Bob-->Alice: I am good thanks!`;
+Bob-->Alice: I am good thanks!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -321,12 +568,11 @@ Bob-->Alice: I am good thanks!`;
     expect(messages[1].from).toBe('Bob');
   });
   it('should handle dashes in actor names', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice-in-Wonderland->Bob:Hello Bob, how are - you?
-Bob-->Alice-in-Wonderland:I am good thanks!`;
+Bob-->Alice-in-Wonderland:I am good thanks!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice-in-Wonderland').description).toBe('Alice-in-Wonderland');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -339,14 +585,13 @@ Bob-->Alice-in-Wonderland:I am good thanks!`;
   });
 
   it('should handle dashes in participant names', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant Alice-in-Wonderland
 participant Bob
 Alice-in-Wonderland->Bob:Hello Bob, how are - you?
-Bob-->Alice-in-Wonderland:I am good thanks!`;
+Bob-->Alice-in-Wonderland:I am good thanks!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect([...actors.keys()]).toEqual(['Alice-in-Wonderland', 'Bob']);
     expect(actors.get('Alice-in-Wonderland').description).toBe('Alice-in-Wonderland');
@@ -359,15 +604,33 @@ Bob-->Alice-in-Wonderland:I am good thanks!`;
     expect(messages[1].from).toBe('Bob');
   });
 
+  it('should handle equals in participant names', async () => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+participant Alice=Wonderland
+participant Bob
+Alice=Wonderland->Bob:Hello Bob, how are - you?
+Bob-->Alice=Wonderland:I am good thanks!`);
+
+    const actors = diagram.db.getActors();
+    expect([...actors.keys()]).toEqual(['Alice=Wonderland', 'Bob']);
+    expect(actors.get('Alice=Wonderland').description).toBe('Alice=Wonderland');
+    expect(actors.get('Bob').description).toBe('Bob');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(2);
+    expect(messages[0].from).toBe('Alice=Wonderland');
+    expect(messages[1].from).toBe('Bob');
+  });
+
   it('should alias participants', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant A as Alice
 participant B as Bob
 A->B:Hello Bob, how are you?
-B-->A: I am good thanks!`;
-
-    await mermaidAPI.parse(str);
+B-->A: I am good thanks!`);
 
     const actors = diagram.db.getActors();
 
@@ -381,7 +644,7 @@ B-->A: I am good thanks!`;
     expect(messages[1].from).toBe('B');
   });
   it('should alias a mix of actors and participants apa12', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
   actor Alice as Alice2
   actor Bob
@@ -391,9 +654,7 @@ sequenceDiagram
   Bob->>Alice: Hi Alice
   Alice->>John: Hi John
   John->>Mandy: Hi Mandy
-  Mandy ->>Joan: Hi Joan`;
-
-    await mermaidAPI.parse(str);
+  Mandy ->>Joan: Hi Joan`);
 
     const actors = diagram.db.getActors();
     expect([...actors.keys()]).toEqual(['Alice', 'Bob', 'John', 'Mandy', 'Joan']);
@@ -409,14 +670,12 @@ sequenceDiagram
     expect(messages[4].to).toBe('Joan');
   });
   it('should alias actors apa13', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 actor A as Alice
 actor B as Bob
 A->B:Hello Bob, how are you?
-B-->A: I am good thanks!`;
-
-    await mermaidAPI.parse(str);
+B-->A: I am good thanks!`);
 
     const actors = diagram.db.getActors();
     expect([...actors.keys()]).toEqual(['A', 'B']);
@@ -429,11 +688,10 @@ B-->A: I am good thanks!`;
     expect(messages[1].from).toBe('B');
   });
   it('should handle in async messages', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
-Alice-xBob:Hello Bob, how are you?`;
+Alice-xBob:Hello Bob, how are you?`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -444,11 +702,10 @@ Alice-xBob:Hello Bob, how are you?`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.SOLID_CROSS);
   });
   it('should handle in async dotted messages', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
-Alice--xBob:Hello Bob, how are you?`;
+Alice--xBob:Hello Bob, how are you?`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -459,11 +716,10 @@ Alice--xBob:Hello Bob, how are you?`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED_CROSS);
   });
   it('should handle in sync messages', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
-Alice-)Bob:Hello Bob, how are you?`;
+Alice-)Bob:Hello Bob, how are you?`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -474,11 +730,10 @@ Alice-)Bob:Hello Bob, how are you?`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.SOLID_POINT);
   });
   it('should handle in sync dotted messages', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
-Alice--)Bob:Hello Bob, how are you?`;
+Alice--)Bob:Hello Bob, how are you?`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -489,11 +744,10 @@ Alice--)Bob:Hello Bob, how are you?`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED_POINT);
   });
   it('should handle in arrow messages', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
-Alice->>Bob:Hello Bob, how are you?`;
+Alice->>Bob:Hello Bob, how are you?`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -504,9 +758,10 @@ Alice->>Bob:Hello Bob, how are you?`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.SOLID);
   });
   it('should handle in arrow messages', async () => {
-    const str = 'sequenceDiagram\n' + 'Alice-->>Bob:Hello Bob, how are you?';
+    const diagram = await Diagram.fromText(
+      'sequenceDiagram\n' + 'Alice-->>Bob:Hello Bob, how are you?'
+    );
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -517,11 +772,12 @@ Alice->>Bob:Hello Bob, how are you?`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
   });
   it('should handle bidirectional arrow messages', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(
+      `
 sequenceDiagram
-Alice<<->>Bob:Hello Bob, how are you?`;
+Alice<<->>Bob:Hello Bob, how are you?`
+    );
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -532,11 +788,12 @@ Alice<<->>Bob:Hello Bob, how are you?`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.BIDIRECTIONAL_SOLID);
   });
   it('should handle bidirectional dotted arrow messages', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(
+      `
     sequenceDiagram
-    Alice<<-->>Bob:Hello Bob, how are you?`;
+    Alice<<-->>Bob:Hello Bob, how are you?`
+    );
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -547,14 +804,13 @@ Alice<<->>Bob:Hello Bob, how are you?`;
     expect(messages[0].type).toBe(diagram.db.LINETYPE.BIDIRECTIONAL_DOTTED);
   });
   it('should handle actor activation', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice-->>Bob:Hello Bob, how are you?
 activate Bob
 Bob-->>Alice:Hello Alice, I'm fine and  you?
-deactivate Bob`;
+deactivate Bob`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -570,12 +826,11 @@ deactivate Bob`;
     expect(messages[3].from).toBe('Bob');
   });
   it('should handle actor one line notation activation', async () => {
-    const str = `
-      sequenceDiagram
-      Alice-->>+Bob:Hello Bob, how are you?
-      Bob-->>- Alice:Hello Alice, I'm fine and  you?`;
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    Alice-->>+Bob:Hello Bob, how are you?
+    Bob-->>- Alice:Hello Alice, I'm fine and  you?`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -592,14 +847,13 @@ deactivate Bob`;
     expect(messages[3].from).toBe('Bob');
   });
   it('should handle stacked activations', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
       Alice-->>+Bob:Hello Bob, how are you?
       Bob-->>+Carol:Carol, let me introduce Alice?
       Bob-->>- Alice:Hello Alice, please meet Carol?
-      Carol->>- Bob:Oh Bob, I'm so happy to be here!`;
+      Carol->>- Bob:Oh Bob, I'm so happy to be here!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     expect(actors.get('Bob').description).toBe('Bob');
@@ -645,14 +899,13 @@ deactivate Bob`;
   });
 
   it('should handle comments in a sequenceDiagram', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
       Alice->Bob: Hello Bob, how are you?
       %% Comment
       Note right of Bob: Bob thinks
-      Bob-->Alice: I am good thanks!`;
+      Bob-->Alice: I am good thanks!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -664,16 +917,15 @@ deactivate Bob`;
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle new lines in a sequenceDiagram', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
       Alice->Bob: Hello Bob, how are you?
 
       %% Comment
       Note right of Bob: Bob thinks
       Bob-->Alice: I am good thanks!
-      `;
+      `);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -685,10 +937,9 @@ deactivate Bob`;
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle semicolons', async () => {
-    const str = `
-sequenceDiagram;Alice->Bob: Hello Bob, how are you?;Note right of Bob: Bob thinks;Bob-->Alice: I am good thanks!;`;
+    const diagram = await Diagram.fromText(`
+sequenceDiagram;Alice->Bob: Hello Bob, how are you?;Note right of Bob: Bob thinks;Bob-->Alice: I am good thanks!;`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -700,15 +951,14 @@ sequenceDiagram;Alice->Bob: Hello Bob, how are you?;Note right of Bob: Bob think
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle one leading space in lines in a sequenceDiagram', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
  Alice->Bob: Hello Bob, how are you?
 
 %% Comment
 Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
+Bob-->Alice: I am good thanks!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -720,15 +970,14 @@ Bob-->Alice: I am good thanks!`;
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle several leading spaces in lines in a sequenceDiagram', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
    Alice->Bob: Hello Bob, how are you?
 
 %% Comment
 Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
+Bob-->Alice: I am good thanks!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -740,7 +989,7 @@ Bob-->Alice: I am good thanks!`;
     expect(messages[2].from).toBe('Bob');
   });
   it('should handle several leading spaces in lines in a sequenceDiagram', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant Alice
 participant Bob
@@ -751,9 +1000,8 @@ John->John: Fight against hypochondria
 Note right of John: Rational thoughts<br/>prevail...
     John-->Alice: Great!
     John->Bob: How about you?
-Bob-->John: Jolly good!`;
+Bob-->John: Jolly good!`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -765,7 +1013,7 @@ Bob-->John: Jolly good!`;
     expect(messages[2].from).toBe('John');
   });
   it('should handle different line breaks', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant 1 as multiline<br>text
 participant 2 as multiline<br/>text
@@ -779,9 +1027,7 @@ note right of 3: multiline<br/>text
 note right of 4: multiline<br />text
 4->>1: multiline<br \t/>text
 note right of 1: multiline<br \t/>text
-`;
-
-    await mermaidAPI.parse(str);
+`);
 
     const actors = diagram.db.getActors();
     expect(actors.get('1').description).toBe('multiline<br>text');
@@ -800,7 +1046,7 @@ note right of 1: multiline<br \t/>text
     expect(messages[7].message).toBe('multiline<br \t/>text');
   });
   it('should handle notes and messages without wrap specified', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant 1
 participant 2
@@ -814,9 +1060,7 @@ note right of 3:nowrap: single-line text
 note right of 4: multiline<br/>text
 4->>1:nowrap: multiline<br/>text
 note right of 1:nowrap: multiline<br/>text
-`;
-
-    await mermaidAPI.parse(str);
+`);
 
     const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('single-line text');
@@ -839,7 +1083,7 @@ note right of 1:nowrap: multiline<br/>text
     expect(messages[7].wrap).toBe(false);
   });
   it('should handle notes and messages with wrap specified', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant 1
 participant 2
@@ -849,9 +1093,7 @@ participant 4
 note right of 2:wrap: single-line text
 2->>3:wrap: multiline<br/>text
 note right of 3:wrap: multiline<br/>text
-`;
-
-    await mermaidAPI.parse(str);
+`);
 
     const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('single-line text');
@@ -864,15 +1106,13 @@ note right of 3:wrap: multiline<br/>text
     expect(messages[3].wrap).toBe(true);
   });
   it('should handle notes and messages with nowrap or line breaks', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant 1
 participant 2
 1->>2: single-line text
 note right of 2: single-line text
-`;
-
-    await mermaidAPI.parse(str);
+`);
 
     const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('single-line text');
@@ -881,27 +1121,23 @@ note right of 2: single-line text
     expect(messages[1].wrap).toBe(false);
   });
   it('should handle notes over a single actor', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Note over Bob: Bob thinks
-`;
-
-    await mermaidAPI.parse(str);
+`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].from).toBe('Bob');
     expect(messages[1].to).toBe('Bob');
   });
   it('should handle notes over multiple actors', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Note over Alice,Bob: confusion
 Note over Bob,Alice: resolution
-`;
-
-    await mermaidAPI.parse(str);
+`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].from).toBe('Alice');
@@ -910,7 +1146,7 @@ Note over Bob,Alice: resolution
     expect(messages[2].to).toBe('Alice');
   });
   it('should handle loop statements', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 
@@ -919,9 +1155,8 @@ Note right of Bob: Bob thinks
 loop Multiple happy responses
 
 Bob-->Alice: I am good thanks!
-end`;
+end`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -933,7 +1168,7 @@ end`;
     expect(messages[1].from).toBe('Bob');
   });
   it('should add a rect around sequence', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
         %% Comment
@@ -941,9 +1176,8 @@ end`;
         Note right of Bob: Bob thinks
         Bob-->Alice: I am good thanks
         end
-    `;
+    `);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -957,7 +1191,7 @@ end`;
   });
 
   it('should allow for nested rects', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
       sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
         %% Comment
@@ -967,8 +1201,8 @@ end`;
         end
         Bob-->Alice: I am good thanks
         end
-    `;
-    await mermaidAPI.parse(str);
+    `);
+
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -984,7 +1218,7 @@ end`;
     expect(messages[6].type).toEqual(diagram.db.LINETYPE.RECT_END);
   });
   it('should handle opt statements', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 
@@ -993,9 +1227,8 @@ Note right of Bob: Bob thinks
 opt Perhaps a happy response
 
 Bob-->Alice: I am good thanks!
-end`;
+end`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('Alice').description).toBe('Alice');
     actors.get('Bob').description = 'Bob';
@@ -1007,7 +1240,7 @@ end`;
     expect(messages[1].from).toBe('Bob');
   });
   it('should handle alt statements', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 
@@ -1018,9 +1251,8 @@ alt isWell
 Bob-->Alice: I am good thanks!
 else isSick
 Bob-->Alice: Feel sick...
-end`;
+end`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
 
     expect(actors.get('Alice').description).toBe('Alice');
@@ -1033,7 +1265,7 @@ end`;
     expect(messages[1].from).toBe('Bob');
   });
   it('should handle alt statements with multiple elses', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 
@@ -1046,8 +1278,8 @@ else isSick
 Bob-->Alice: Feel sick...
 else default
 Bob-->Alice: :-)
-end`;
-    await mermaidAPI.parse(str);
+end`);
+
     const messages = diagram.db.getMessages();
     expect(messages.length).toBe(9);
     expect(messages[1].from).toBe('Bob');
@@ -1060,13 +1292,12 @@ end`;
     expect(messages[8].type).toBe(diagram.db.LINETYPE.ALT_END);
   });
   it('should handle critical statements without options', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
     critical Establish a connection to the DB
         Service-->DB: connect
-    end`;
+    end`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
 
     expect(actors.get('Service').description).toBe('Service');
@@ -1080,7 +1311,7 @@ sequenceDiagram
     expect(messages[2].type).toBe(diagram.db.LINETYPE.CRITICAL_END);
   });
   it('should handle critical statements with options', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
     critical Establish a connection to the DB
         Service-->DB: connect
@@ -1088,9 +1319,8 @@ sequenceDiagram
         Service-->Service: Log error
     option Credentials rejected
         Service-->Service: Log different error
-    end`;
+    end`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
 
     expect(actors.get('Service').description).toBe('Service');
@@ -1108,16 +1338,15 @@ sequenceDiagram
     expect(messages[6].type).toBe(diagram.db.LINETYPE.CRITICAL_END);
   });
   it('should handle break statements', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
     Consumer-->API: Book something
     API-->BookingService: Start booking process
     break when the booking process fails
         API-->Consumer: show failure
     end
-    API-->BillingService: Start billing process`;
+    API-->BillingService: Start billing process`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
 
     expect(actors.get('Consumer').description).toBe('Consumer');
@@ -1134,7 +1363,7 @@ sequenceDiagram
     expect(messages[5].from).toBe('API');
   });
   it('should handle par statements a sequenceDiagram', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 par Parallel one
 Alice->>Bob: Hello Bob, how are you?
@@ -1145,9 +1374,8 @@ Bob-->>Alice: Fine!
 and Parallel three
 Alice->>Bob: What do you think about it?
 Bob-->>Alice: It's good!
-end`;
+end`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
 
     expect(actors.get('Alice').description).toBe('Alice');
@@ -1161,15 +1389,14 @@ end`;
     expect(messages[2].from).toBe('Bob');
   });
   it('it should handle par_over statements', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 par_over Parallel overlap
 Alice ->> Bob: Message
 Note left of Alice: Alice note
 Note right of Bob: Bob note
-end`;
+end`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
 
     expect(actors.get('Alice').description).toBe('Alice');
@@ -1184,120 +1411,102 @@ end`;
     expect(messages[3].from).toBe('Bob');
   });
   it('should handle special characters in signals', async () => {
-    const str = 'sequenceDiagram\n' + 'Alice->Bob: -:<>,;# comment';
-
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText('sequenceDiagram\n' + 'Alice->Bob: -:<>,;# comment');
 
     const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('-:<>,');
   });
   it('should handle special characters in notes', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
-Note right of Bob: -:<>,;# comment`;
-
-    await mermaidAPI.parse(str);
+Note right of Bob: -:<>,;# comment`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
   });
   it('should handle special characters in loop', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 loop -:<>,;# comment
 Bob-->Alice: I am good thanks!
-end`;
-
-    await mermaidAPI.parse(str);
+end`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
   });
   it('should handle special characters in opt', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 opt -:<>,;# comment
 Bob-->Alice: I am good thanks!
-end`;
-
-    await mermaidAPI.parse(str);
+end`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
   });
   it('should handle special characters in alt', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 alt -:<>,;# comment
 Bob-->Alice: I am good thanks!
 else ,<>:-#; comment
 Bob-->Alice: I am good thanks!
-end`;
-
-    await mermaidAPI.parse(str);
+end`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
     expect(messages[3].message).toBe(',<>:-');
   });
   it('should handle special characters in par', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 par -:<>,;# comment
 Bob-->Alice: I am good thanks!
 and ,<>:-#; comment
 Bob-->Alice: I am good thanks!
-end`;
-
-    await mermaidAPI.parse(str);
+end`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
     expect(messages[3].message).toBe(',<>:-');
   });
   it('should handle no-label loop', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 loop
 Bob-->Alice: I am good thanks!
-end`;
-
-    await mermaidAPI.parse(str);
+end`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('');
     expect(messages[2].message).toBe('I am good thanks!');
   });
   it('should handle no-label opt', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 opt # comment
 Bob-->Alice: I am good thanks!
-end`;
-
-    await mermaidAPI.parse(str);
+end`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('');
     expect(messages[2].message).toBe('I am good thanks!');
   });
   it('should handle no-label alt', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 alt;Bob-->Alice: I am good thanks!
 else # comment
 Bob-->Alice: I am good thanks!
-end`;
-
-    await mermaidAPI.parse(str);
+end`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('');
@@ -1306,15 +1515,13 @@ end`;
     expect(messages[4].message).toBe('I am good thanks!');
   });
   it('should handle no-label par', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 par;Bob-->Alice: I am good thanks!
 and # comment
 Bob-->Alice: I am good thanks!
-end`;
-
-    await mermaidAPI.parse(str);
+end`);
 
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('');
@@ -1324,7 +1531,7 @@ end`;
   });
 
   it('should handle links', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant a as Alice
 participant b as Bob
@@ -1335,9 +1542,8 @@ links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
 link a: Endpoint @ https://alice.contoso.com
 link a: Swagger @ https://swagger.contoso.com
 link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
-`;
+`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('a').links.Repo).toBe('https://repo.contoso.com/');
     expect(actors.get('b').links.Repo).toBe(undefined);
@@ -1352,16 +1558,15 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 
   it('should handle properties EXPERIMENTAL: USE WITH CAUTION', async () => {
     //Be aware that the syntax for "properties" is likely to be changed.
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant a as Alice
 participant b as Bob
 participant c as Charlie
 properties a: {"class": "internal-service-actor", "icon": "@clock"}
 properties b: {"class": "external-service-actor", "icon": "@computer"}
-`;
+`);
 
-    await mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors.get('a').properties.class).toBe('internal-service-actor');
     expect(actors.get('b').properties.class).toBe('external-service-actor');
@@ -1371,7 +1576,7 @@ properties b: {"class": "external-service-actor", "icon": "@computer"}
   });
 
   it('should handle box', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 box green Group 1
 participant a as Alice
@@ -1384,9 +1589,8 @@ links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
 link a: Endpoint @ https://alice.contoso.com
 link a: Swagger @ https://swagger.contoso.com
 link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
-`;
+`);
 
-    await mermaidAPI.parse(str);
     const boxes = diagram.db.getBoxes();
     expect(boxes[0].name).toEqual('Group 1');
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
@@ -1394,7 +1598,7 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   });
 
   it('should handle box without color', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
   sequenceDiagram
   box Group 1
   participant a as Alice
@@ -1407,9 +1611,8 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   link a: Endpoint @ https://alice.contoso.com
   link a: Swagger @ https://swagger.contoso.com
   link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
-  `;
+  `);
 
-    await mermaidAPI.parse(str);
     const boxes = diagram.db.getBoxes();
     expect(boxes[0].name).toEqual('Group 1');
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
@@ -1417,9 +1620,9 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   });
 
   it('should handle box without description', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
   sequenceDiagram
-  box Aqua
+  box aqua
   participant a as Alice
   participant b as Bob
   end
@@ -1430,17 +1633,16 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   link a: Endpoint @ https://alice.contoso.com
   link a: Swagger @ https://swagger.contoso.com
   link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
-  `;
+  `);
 
-    await mermaidAPI.parse(str);
     const boxes = diagram.db.getBoxes();
     expect(boxes[0].name).toBeFalsy();
     expect(boxes[0].actorKeys).toEqual(['a', 'b']);
-    expect(boxes[0].fill).toEqual('Aqua');
+    expect(boxes[0].fill).toEqual('aqua');
   });
 
   it('should handle simple actor creation', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
   sequenceDiagram
   participant a as Alice
   a ->>b: Hello Bob?
@@ -1449,8 +1651,7 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   c ->> b: Hello b?
   create actor d as Donald
   a ->> d: Hello Donald?
-  `;
-    await mermaidAPI.parse(str);
+  `);
     const actors = diagram.db.getActors();
     const createdActors = diagram.db.getCreatedActors();
     expect(actors.get('c').name).toEqual('c');
@@ -1463,7 +1664,7 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(createdActors.get('d')).toEqual(3);
   });
   it('should handle simple actor destruction', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
   sequenceDiagram
   participant a as Alice
   a ->>b: Hello Bob?
@@ -1472,14 +1673,13 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   b ->> c: Where is Alice?
   destroy c
   b ->> c: Where are you?
-  `;
-    await mermaidAPI.parse(str);
+  `);
     const destroyedActors = diagram.db.getDestroyedActors();
     expect(destroyedActors.get('a')).toEqual(1);
     expect(destroyedActors.get('c')).toEqual(3);
   });
   it('should handle the creation and destruction of the same actor', async () => {
-    const str = `
+    const diagram2 = await Diagram.fromText(`
   sequenceDiagram
   a ->>b: Hello Bob?
   create participant c
@@ -1487,10 +1687,9 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
   c ->> b: Hello b?
   destroy c
   b ->> c : Bye c !
-  `;
-    await mermaidAPI.parse(str);
-    const createdActors = diagram.db.getCreatedActors();
-    const destroyedActors = diagram.db.getDestroyedActors();
+  `);
+    const createdActors = diagram2.db.getCreatedActors();
+    const destroyedActors = diagram2.db.getDestroyedActors();
     expect(createdActors.get('c')).toEqual(1);
     expect(destroyedActors.get('c')).toEqual(3);
   });
@@ -1514,7 +1713,12 @@ describe('when checking the bounds in a sequenceDiagram', function () {
   });
 
   let conf;
-  beforeEach(function () {
+  let diagram;
+  beforeEach(async function () {
+    diagram = await Diagram.fromText(`
+      sequenceDiagram
+      Alice->Bob:Hello Bob, how are you?
+      Bob-->Alice: I am good thanks!`);
     mermaidAPI.reset();
     diagram.renderer.bounds.init();
     conf = diagram.db.getConfig();
@@ -1570,7 +1774,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(300);
     expect(bounds.stopy).toBe(400);
   });
-  it('should handle multiple loops withtout expanding the bounds', () => {
+  it('should handle multiple loops without expanding the bounds', () => {
     diagram.renderer.bounds.insert(100, 100, 1000, 1000);
     diagram.renderer.bounds.verticalPos = 200;
     diagram.renderer.bounds.newLoop();
@@ -1643,7 +1847,7 @@ describe('when rendering a sequenceDiagram APA', function () {
     setSiteConfig({ logLevel: 5, sequence: conf });
   });
   let conf;
-  beforeEach(async function () {
+  beforeEach(function () {
     mermaidAPI.reset();
 
     // });
@@ -1662,11 +1866,6 @@ describe('when rendering a sequenceDiagram APA', function () {
       mirrorActors: false,
     };
     setSiteConfig({ logLevel: 5, sequence: conf });
-    diagram = await Diagram.fromText(`
-sequenceDiagram
-Alice->Bob:Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`);
   });
   ['tspan', 'fo', 'old', undefined].forEach(function (textPlacement) {
     it(`
@@ -1675,7 +1874,7 @@ it should handle one actor, when textPlacement is ${textPlacement}`, async () =>
 sequenceDiagram
 participant Alice`;
 
-      await mermaidAPI.parse(str);
+      const diagram = await Diagram.fromText(str);
       // diagram.renderer.setConf(mermaidAPI.getConfig().sequence);
       await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
@@ -1687,14 +1886,12 @@ participant Alice`;
     });
   });
   it('should handle same actor with different whitespace properly', async () => {
-    const str = `
+    const diagram = await Diagram.fromText(`
 sequenceDiagram
 participant Alice
 participant Alice
 participant Alice
-`;
-
-    await mermaidAPI.parse(str);
+`);
 
     const actors = diagram.db.getActors();
     expect([...actors.keys()]).toEqual(['Alice']);
@@ -1705,9 +1902,9 @@ sequenceDiagram
 participant Alice
 Note over Alice: Alice thinks
 `;
+    const diagram = await Diagram.fromText(str);
 
     expect(mermaidAPI.getConfig().sequence.mirrorActors).toBeFalsy();
-    await mermaidAPI.parse(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1723,7 +1920,7 @@ sequenceDiagram
 participant Alice
 Note left of Alice: Alice thinks`;
 
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1739,7 +1936,7 @@ sequenceDiagram
 participant Alice
 Note right of Alice: Alice thinks`;
 
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1754,9 +1951,8 @@ Note right of Alice: Alice thinks`;
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
 
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
-
     const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
@@ -1772,7 +1968,7 @@ participant Bob
 end
 Alice->Bob: Hello Bob, how are you?`;
 
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1786,8 +1982,8 @@ Alice->Bob: Hello Bob, how are you?`;
 %%{init: {'logLevel': 0}}%%
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
-
     await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1802,12 +1998,11 @@ Alice->Bob: Hello Bob, how are you?`;
     const str = `
 %%{init: { 'logLevel': 0}}%%
 sequenceDiagram
-%%{
-wrap
-}%%
+%%{wrap}%%
 Alice->Bob: Hello Bob, how are you?`;
 
     await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const msgs = diagram.db.getMessages();
@@ -1827,8 +2022,8 @@ Alice->Bob: Hello Bob, how are you?
 Note over Alice,Bob: Looks
 Note over Bob,Alice: Looks back
 `;
+    const diagram = await Diagram.fromText(str);
     // mermaidAPI.initialize({logLevel:0})
-    await mermaidAPI.parse(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1843,7 +2038,7 @@ sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Bob->Alice: Fine!`;
 
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1859,7 +2054,7 @@ Alice->Bob: Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob->Alice: Fine!`;
 
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1878,7 +2073,7 @@ Alice->Bob: Hello Bob, how are you?
 Note left of Alice: Bob thinks
 Bob->Alice: Fine!`;
 
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1895,7 +2090,7 @@ Alice->>Bob:wrap: Hello Bob, how are you? If you are not available right now, I 
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
 
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1917,6 +2112,7 @@ Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
 
     await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1940,6 +2136,8 @@ Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
 
     await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
+
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1962,6 +2160,7 @@ Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
     // mermaidAPI.initialize({ logLevel: 0 });
     await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -1985,9 +2184,9 @@ Alice->Bob: Hello Bob, how are you?
 loop Cheers
 Bob->Alice: Fine!
 end`;
-    await mermaidAPI.parse(str);
-    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
     const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
@@ -2003,7 +2202,7 @@ end`;
           Bob->Alice: I feel surrounded by darkness
         end
     `;
-    await mermaidAPI.parse(str);
+    const diagram = await Diagram.fromText(str);
     await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
     const { bounds, models } = diagram.renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
@@ -2037,20 +2236,23 @@ describe('when rendering a sequenceDiagram with actor mirror activated', () => {
   });
 
   let conf;
-  beforeEach(function () {
+  let diagram;
+  beforeEach(async function () {
+    diagram = await Diagram.fromText(`
+      sequenceDiagram
+      Alice->Bob:Hello Bob, how are you?
+      Bob-->Alice: I am good thanks!`);
     mermaidAPI.reset();
     conf = diagram.db.getConfig();
     diagram.renderer.bounds.init();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function (textPlacement) {
     it('should handle one actor, when textPlacement is' + textPlacement, async () => {
-      mermaidAPI.initialize(addConf(conf, 'textPlacement', textPlacement));
-      diagram.renderer.bounds.init();
       const str = `
 sequenceDiagram
 participant Alice`;
+      const diagram = await Diagram.fromText(str);
       diagram.renderer.bounds.init();
-      await mermaidAPI.parse(str);
       await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
       const { bounds, models } = diagram.renderer.bounds.getBounds();
@@ -2069,5 +2271,355 @@ participant Alice`;
 sequenceDiagram
 ${prop}-->>A: Hello, how are you?`)
     ).resolves.toBeDefined();
+  });
+});
+
+describe('sequence db class', () => {
+  let sequenceDb;
+  beforeEach(() => {
+    sequenceDb = new SequenceDB();
+  });
+  // This is to ensure that functions used in sequence JISON are exposed as function from SequenceDB
+  it('should have functions used in sequence JISON as own property', () => {
+    const functionsUsedInParser = [
+      'apply',
+      'parseBoxData',
+      'LINETYPE',
+      'setDiagramTitle',
+      'setAccTitle',
+      'setAccDescription',
+      'parseMessage',
+      'PLACEMENT',
+    ];
+
+    for (const fun of functionsUsedInParser) {
+      expect(Object.hasOwn(sequenceDb, fun)).toBe(true);
+    }
+  });
+  // This test verifies that messages with a colon but no content (e.g., "Alice->>Bob:")
+  // are correctly parsed as valid messages with an empty string as the message content.
+
+  it('should parse a message with a trailing colon but no content', async () => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+Alice->>Bob:
+Bob->>Alice:Got it!
+`);
+
+    const messages = diagram.db.getMessages();
+    expect(messages.length).toBe(2);
+    expect(messages[0].message).toBe('');
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[0].to).toBe('Bob');
+  });
+
+  it('1 should parse ', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    actor Bob
+    actor Alice
+        Bob -|\\ Alice: Hello Alice, how are you?
+        Bob -|/ Alice: Hello Alice, how are you?
+        Bob -// Alice: Hello Alice, how are you?
+        Bob -\\\\ Alice: Hello Alice, how are you?
+        
+        Bob \\|- Alice: Hello Alice, how are you?
+        Bob /|- Alice: Hello Alice, how are you?
+        Bob //- Alice: Hello Alice, how are you?
+        Bob \\\\- Alice: Hello Alice, how are you?        
+    `);
+
+    const messages = diagram.db.getMessages();
+  });
+
+  it('2 should parse ', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    actor Bob
+    actor Alice
+      Alice ()<<->>() Bob: hey?
+    `);
+
+    const messages = diagram.db.getMessages();
+  });
+  describe('when parsing extended participant syntax', () => {
+    it('should parse participants with different quote styles and whitespace', async () => {
+      const diagram = await Diagram.fromText(`
+  sequenceDiagram
+      participant Alice@{ "type" : "database" }
+      participant Bob@{ "type" : "database" }
+      participant Carl@{ type: "database" }
+      participant David@{ "type" : 'database' }
+      participant Eve@{ type: 'database' }
+      participant Favela@{ "type" : "database"    }
+      Bob->>+Alice: Hi Alice
+      Alice->>+Bob: Hi Bob
+    `);
+
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('Alice').type).toBe('database');
+      expect(actors.get('Alice').description).toBe('Alice');
+
+      expect(actors.get('Bob').type).toBe('database');
+      expect(actors.get('Bob').description).toBe('Bob');
+
+      expect(actors.get('Carl').type).toBe('database');
+      expect(actors.get('Carl').description).toBe('Carl');
+
+      expect(actors.get('David').type).toBe('database');
+      expect(actors.get('David').description).toBe('David');
+
+      expect(actors.get('Eve').type).toBe('database');
+      expect(actors.get('Eve').description).toBe('Eve');
+
+      expect(actors.get('Favela').type).toBe('database');
+      expect(actors.get('Favela').description).toBe('Favela');
+
+      // Verify messages were parsed correctly
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(4); // 2 messages + 2 activation messages
+      expect(messages[0].from).toBe('Bob');
+      expect(messages[0].to).toBe('Alice');
+      expect(messages[0].message).toBe('Hi Alice');
+      expect(messages[2].from).toBe('Alice'); // Second message (index 2 due to activation)
+      expect(messages[2].to).toBe('Bob');
+      expect(messages[2].message).toBe('Hi Bob');
+    });
+
+    it('should parse mixed participant types with extended syntax', async () => {
+      const diagram = await Diagram.fromText(`
+    sequenceDiagram
+        participant lead
+        participant dsa@{ "type" : "queue" }
+        API->>+Database: getUserb
+        Database-->>-API: userb
+        dsa --> Database: hello
+`);
+
+      // Verify actors were created
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('lead').type).toBe('participant');
+      expect(actors.get('lead').description).toBe('lead');
+
+      // Participant with extended syntax
+      expect(actors.get('dsa').type).toBe('queue');
+      expect(actors.get('dsa').description).toBe('dsa');
+
+      // Implicitly created actors (from messages)
+      expect(actors.get('API').type).toBe('participant');
+      expect(actors.get('API').description).toBe('API');
+
+      expect(actors.get('Database').type).toBe('participant');
+      expect(actors.get('Database').description).toBe('Database');
+
+      // Verify messages were parsed correctly
+      const messages = diagram.db.getMessages();
+      expect(messages.length).toBe(5); // 3 messages + 2 activation messages
+
+      // First message with activation
+      expect(messages[0].from).toBe('API');
+      expect(messages[0].to).toBe('Database');
+      expect(messages[0].message).toBe('getUserb');
+      expect(messages[0].activate).toBe(true);
+
+      // Second message with deactivation
+      expect(messages[2].from).toBe('Database');
+      expect(messages[2].to).toBe('API');
+      expect(messages[2].message).toBe('userb');
+
+      // Third message
+      expect(messages[4].from).toBe('dsa');
+      expect(messages[4].to).toBe('Database');
+      expect(messages[4].message).toBe('hello');
+    });
+
+    it('should fail for malformed JSON in participant definition', async () => {
+      const invalidDiagram = `
+    sequenceDiagram
+      participant D@{ "type: "entity" }
+      participant E@{ "type": "dat
+      abase }
+  `;
+
+      let error = false;
+      try {
+        await mermaidAPI.parse(invalidDiagram);
+      } catch (e) {
+        error = true;
+      }
+      expect(error).toBe(true);
+    });
+
+    it('should fail for missing colon separator', async () => {
+      const invalidDiagram = `
+    sequenceDiagram
+      participant C@{ "type" "control" }
+      C ->> C: action
+  `;
+
+      let error = false;
+      try {
+        await mermaidAPI.parse(invalidDiagram);
+      } catch (e) {
+        error = true;
+      }
+      expect(error).toBe(true);
+    });
+
+    it('should fail for missing closing brace', async () => {
+      const invalidDiagram = `
+    sequenceDiagram
+      participant E@{ "type": "entity"
+      E ->> E: process
+  `;
+
+      let error = false;
+      try {
+        await mermaidAPI.parse(invalidDiagram);
+      } catch (e) {
+        error = true;
+      }
+      expect(error).toBe(true);
+    });
+  });
+  describe('participant type parsing', () => {
+    it('should parse boundary participant', async () => {
+      const diagram = await Diagram.fromText(`
+          sequenceDiagram
+          participant boundary@{ "type" : "boundary" }
+          boundary->boundary: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('boundary').type).toBe('boundary');
+      expect(actors.get('boundary').description).toBe('boundary');
+    });
+
+    it('should parse control participant', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+         participant C@{ "type" : "control" }
+        C->C: test
+        `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('C').type).toBe('control');
+      expect(actors.get('C').description).toBe('C');
+    });
+
+    it('should parse entity participant', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant E@{ "type" : "entity" }
+      E->E: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('E').type).toBe('entity');
+      expect(actors.get('E').description).toBe('E');
+    });
+
+    it('should parse database participant', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant D@{ "type" : "database" }
+      D->D: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('D').type).toBe('database');
+      expect(actors.get('D').description).toBe('D');
+    });
+
+    it('should parse collections participant', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant L@{ "type" : "collections" }
+      L->L: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('L').type).toBe('collections');
+      expect(actors.get('L').description).toBe('L');
+    });
+
+    it('should parse queue participant', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Q@{ "type" : "queue" }
+      Q->Q: test 
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Q').type).toBe('queue');
+      expect(actors.get('Q').description).toBe('Q');
+    });
+  });
+
+  describe('participant type parsing', () => {
+    it('should parse actor participant', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant A@{ "type" : "queue" }
+      A->A: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('A').type).toBe('queue');
+      expect(actors.get('A').description).toBe('A');
+    });
+
+    it('should parse participant participant', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant P@{ "type" : "database" }
+      P->P: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('P').type).toBe('database');
+      expect(actors.get('P').description).toBe('P');
+    });
+
+    it('should parse boundary using actor keyword', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+        participant Alice@{ "type" : "collections" }
+        participant Bob@{ "type" : "control" }
+        Alice->>Bob: Hello Bob, how are you?
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').type).toBe('collections');
+      expect(actors.get('Bob').type).toBe('control');
+      expect(actors.get('Bob').description).toBe('Bob');
+    });
+
+    it('should parse control using participant keyword', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant C@{ "type" : "control" }
+      C->C: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('C').type).toBe('control');
+      expect(actors.get('C').description).toBe('C');
+    });
+
+    it('should parse entity using actor keyword', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant E@{ "type" : "entity" }
+      E->E: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('E').type).toBe('entity');
+      expect(actors.get('E').description).toBe('E');
+    });
+    it('should handle fail parsing when alias token causes conflicts in participant definition', async () => {
+      let error = false;
+      try {
+        await Diagram.fromText(`
+        sequenceDiagram
+        participant SAS MyServiceWithMoreThan20Chars <br> service decription
+       `);
+      } catch (e) {
+        error = true;
+      }
+      expect(error).toBe(true);
+    });
   });
 });

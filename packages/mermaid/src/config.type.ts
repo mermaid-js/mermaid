@@ -109,6 +109,16 @@ export interface MermaidConfig {
       | 'INTERACTIVE'
       | 'MODEL_ORDER'
       | 'GREEDY_MODEL_ORDER';
+    /**
+     * The node order given by the model does not change to produce a better layout. E.g. if node A is before node B in the model this is not changed during crossing minimization. This assumes that the node model order is already respected before crossing minimization. This can be achieved by setting considerModelOrder.strategy to NODES_AND_EDGES.
+     *
+     */
+    forceNodeModelOrder?: boolean;
+    /**
+     * Preserves the order of nodes and edges in the model file if this does not lead to additional edge crossings. Depending on the strategy this is not always possible since the node and edge order might be conflicting.
+     *
+     */
+    considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
   };
   darkMode?: boolean;
   htmlLabels?: boolean;
@@ -199,6 +209,7 @@ export interface MermaidConfig {
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
+  radar?: RadarDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -261,7 +272,19 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * Defines how mermaid renders curves for flowcharts.
    *
    */
-  curve?: 'basis' | 'linear' | 'cardinal';
+  curve?:
+    | 'basis'
+    | 'bumpX'
+    | 'bumpY'
+    | 'cardinal'
+    | 'catmullRom'
+    | 'linear'
+    | 'monotoneX'
+    | 'monotoneY'
+    | 'natural'
+    | 'step'
+    | 'stepAfter'
+    | 'stepBefore';
   /**
    * Represents the padding between the labels and the shape
    *
@@ -277,11 +300,17 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   /**
    * Width of nodes where text is wrapped.
    *
-   * When using markdown strings the text ius wrapped automatically, this
+   * When using markdown strings the text is wrapped automatically, this
    * value sets the max width of a text before it continues on a new line.
    *
    */
   wrappingWidth?: number;
+  /**
+   * If true, subgraphs without explicit direction will inherit the global graph direction
+   * (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
+   *
+   */
+  inheritDir?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -547,6 +576,10 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
    */
   leftMargin?: number;
   /**
+   * Maximum width of actor labels
+   */
+  maxLabelWidth?: number;
+  /**
    * Width of actor boxes
    */
   width?: number;
@@ -604,6 +637,18 @@ export interface JourneyDiagramConfig extends BaseDiagramConfig {
   actorColours?: string[];
   sectionFills?: string[];
   sectionColours?: string[];
+  /**
+   * Color of the title text in Journey Diagrams
+   */
+  titleColor?: string;
+  /**
+   * Font family to be used for the title text in Journey Diagrams
+   */
+  titleFontFamily?: string;
+  /**
+   * Font size to be used for the title text in Journey Diagrams
+   */
+  titleFontSize?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -795,6 +840,8 @@ export interface ErDiagramConfig extends BaseDiagramConfig {
    *
    */
   entityPadding?: number;
+  nodeSpacing?: number;
+  rankSpacing?: number;
   /**
    * Stroke color of box edges and lines.
    */
@@ -921,6 +968,10 @@ export interface XYChartConfig extends BaseDiagramConfig {
    */
   titlePadding?: number;
   /**
+   * Should show the value corresponding to the bar within the bar
+   */
+  showDataLabel?: boolean;
+  /**
    * Should show the chart title
    */
   showTitle?: boolean;
@@ -1024,6 +1075,10 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
 export interface MindmapDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   maxNodeWidth?: number;
+  /**
+   * Layout algorithm to use for positioning mindmap nodes
+   */
+  layoutAlgorithm?: string;
 }
 /**
  * The object containing configurations specific for kanban diagrams
@@ -1523,6 +1578,50 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+}
+/**
+ * The object containing configurations specific for radar diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RadarDiagramConfig".
+ */
+export interface RadarDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The size of the radar diagram.
+   */
+  width?: number;
+  /**
+   * The size of the radar diagram.
+   */
+  height?: number;
+  /**
+   * The margin from the top of the radar diagram.
+   */
+  marginTop?: number;
+  /**
+   * The margin from the right of the radar diagram.
+   */
+  marginRight?: number;
+  /**
+   * The margin from the bottom of the radar diagram.
+   */
+  marginBottom?: number;
+  /**
+   * The margin from the left of the radar diagram.
+   */
+  marginLeft?: number;
+  /**
+   * The scale factor of the axis.
+   */
+  axisScaleFactor?: number;
+  /**
+   * The scale factor of the axis label.
+   */
+  axisLabelFactor?: number;
+  /**
+   * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
+   */
+  curveTension?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

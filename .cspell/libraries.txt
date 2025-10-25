@@ -26,6 +26,8 @@ dompurify
 elkjs
 fcose
 fontawesome
+Fonticons
+Forgejo
 Foswiki
 Gitea
 graphlib

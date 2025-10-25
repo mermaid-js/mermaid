@@ -230,7 +230,7 @@ const ConfigWarning = {
 } as const;
 
 type ConfigWarningStrings = keyof typeof ConfigWarning;
-const issuedWarnings: { [key in ConfigWarningStrings]?: boolean } = {};
+const issuedWarnings: Partial<Record<ConfigWarningStrings, boolean>> = {};
 const issueWarning = (warning: ConfigWarningStrings) => {
   if (issuedWarnings[warning]) {
     return;
@@ -247,4 +247,18 @@ const checkConfig = (config: MermaidConfig) => {
   if (config.lazyLoadedDiagrams || config.loadExternalDiagramsAtStartup) {
     issueWarning('LAZY_LOAD_DEPRECATED');
   }
+};
+
+export const getUserDefinedConfig = (): MermaidConfig => {
+  let userConfig: MermaidConfig = {};
+
+  if (configFromInitialize) {
+    userConfig = assignWithDepth(userConfig, configFromInitialize);
+  }
+
+  for (const d of directives) {
+    userConfig = assignWithDepth(userConfig, d);
+  }
+
+  return userConfig;
 };

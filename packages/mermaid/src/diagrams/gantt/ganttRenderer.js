@@ -231,10 +231,11 @@ export const draw = function (text, id, version, diagObj) {
    * @param w
    */
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
+    // Sort theArray so that tasks with `vert` come last
+    theArray.sort((a, b) => (a.vert === b.vert ? 0 : a.vert ? 1 : -1));
     // Get unique task orders. Required to draw the background rects when display mode is compact.
     const uniqueTaskOrderIds = [...new Set(theArray.map((item) => item.order))];
     const uniqueTasks = uniqueTaskOrderIds.map((id) => theArray.find((item) => item.order === id));
-
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
@@ -259,7 +260,8 @@ export const draw = function (text, id, version, diagObj) {
           }
         }
         return 'section section0';
-      });
+      })
+      .enter();
 
     // Draw the rects representing the tasks
     const rectangles = svg.append('g').selectAll('rect').data(theArray).enter();
@@ -289,15 +291,26 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
+        if (d.vert) {
+          return conf.gridLineStartPadding;
+        }
         return i * theGap + theTopPad;
       })
       .attr('width', function (d) {
         if (d.milestone) {
           return theBarHeight;
         }
+        if (d.vert) {
+          return 0.08 * theBarHeight;
+        }
         return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
       })
-      .attr('height', theBarHeight)
+      .attr('height', function (d) {
+        if (d.vert) {
+          return taskArray.length * (conf.barHeight + conf.barGap) + conf.barHeight * 2;
+        }
+        return theBarHeight;
+      })
       .attr('transform-origin', function (d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
@@ -354,6 +367,9 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           taskClass = ' milestone ' + taskClass;
         }
+        if (d.vert) {
+          taskClass = ' vert ' + taskClass;
+        }
 
         taskClass += secNum;
 
@@ -377,10 +393,13 @@ export const draw = function (text, id, version, diagObj) {
         let endX = timeScale(d.renderEndTime || d.endTime);
         if (d.milestone) {
           startX += 0.5 * (timeScale(d.endTime) - timeScale(d.startTime)) - 0.5 * theBarHeight;
-        }
-        if (d.milestone) {
           endX = startX + theBarHeight;
         }
+
+        if (d.vert) {
+          return timeScale(d.startTime) + theSidePad;
+        }
+
         const textWidth = this.getBBox().width;
 
         // Check id text width > width of rectangle
@@ -396,6 +415,9 @@ export const draw = function (text, id, version, diagObj) {
       })
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
+        if (d.vert) {
+          return conf.gridLineStartPadding + taskArray.length * (conf.barHeight + conf.barGap) + 60;
+        }
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
       })
@@ -406,6 +428,7 @@ export const draw = function (text, id, version, diagObj) {
         if (d.milestone) {
           endX = startX + theBarHeight;
         }
+
         const textWidth = this.getBBox().width;
 
         let classStr = '';
@@ -445,6 +468,10 @@ export const draw = function (text, id, version, diagObj) {
           taskType += ' milestoneText';
         }
 
+        if (d.vert) {
+          taskType += ' vertText';
+        }
+
         // Check id text width > width of rectangle
         if (textWidth > endX - startX) {
           if (endX + textWidth + 1.5 * conf.leftPadding > w) {
@@ -467,7 +494,7 @@ export const draw = function (text, id, version, diagObj) {
 
     const securityLevel = getConfig().securityLevel;
 
-    // Wrap the tasks in an a tag for working links without javascript
+    // Wrap the tasks in a tag for working links without javascript
     if (securityLevel === 'sandbox') {
       let sandboxElement;
       sandboxElement = select('#i' + id);
@@ -554,17 +581,11 @@ export const draw = function (text, id, version, diagObj) {
 
     rectangles
       .append('rect')
-      .attr('id', function (d) {
-        return 'exclude-' + d.start.format('YYYY-MM-DD');
-      })
-      .attr('x', function (d) {
-        return timeScale(d.start) + theSidePad;
-      })
+      .attr('id', (d) => 'exclude-' + d.start.format('YYYY-MM-DD'))
+      .attr('x', (d) => timeScale(d.start.startOf('day')) + theSidePad)
       .attr('y', conf.gridLineStartPadding)
-      .attr('width', function (d) {
-        const renderEnd = d.end.add(1, 'day');
-        return timeScale(renderEnd) - timeScale(d.start);
-      })
+      .attr('width', (d) => timeScale(d.end.endOf('day')) - timeScale(d.start.startOf('day')))
+
       .attr('height', h - theTopPad - conf.gridLineStartPadding)
       .attr('transform-origin', function (d, i) {
         return (
@@ -588,9 +609,20 @@ export const draw = function (text, id, version, diagObj) {
    * @param h
    */
   function makeGrid(theSidePad, theTopPad, w, h) {
+    const dateFormat = diagObj.db.getDateFormat();
+    const userAxisFormat = diagObj.db.getAxisFormat();
+    let axisFormat;
+    if (userAxisFormat) {
+      axisFormat = userAxisFormat;
+    } else if (dateFormat === 'D') {
+      axisFormat = '%d';
+    } else {
+      axisFormat = conf.axisFormat ?? '%Y-%m-%d';
+    }
+
     let bottomXAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-      .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+      .tickFormat(timeFormat(axisFormat));
 
     const reTickInterval = /^([1-9]\d*)(millisecond|second|minute|hour|day|week|month)$/;
     const resultTickInterval = reTickInterval.exec(
@@ -642,7 +674,7 @@ export const draw = function (text, id, version, diagObj) {
     if (diagObj.db.topAxisEnabled() || conf.topAxis) {
       let topXAxis = axisTop(timeScale)
         .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-        .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+        .tickFormat(timeFormat(axisFormat));
 
       if (resultTickInterval !== null) {
         const every = resultTickInterval[1];

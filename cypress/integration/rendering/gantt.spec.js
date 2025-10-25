@@ -117,7 +117,7 @@ describe('Gantt diagram', () => {
       {}
     );
   });
-  it('should FAIL redering a gantt chart for issue #1060 with invalid date', () => {
+  it('should FAIL rendering a gantt chart for issue #1060 with invalid date', () => {
     imgSnapshotTest(
       `
       gantt
@@ -358,6 +358,23 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render a gantt diagram with a vert tag', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title A Gantt Diagram
+        dateFormat   ss
+        axisFormat   %Ss
+
+        section Section
+        A task           : a1, 00, 6s
+        Milestone     : vert, 01,
+        section Another
+        Task in sec      : 06, 3s
+        another task     : 3s
+      `
+    );
+  });
   it('should render a gantt diagram with tick is 2 milliseconds', () => {
     imgSnapshotTest(
       `
@@ -548,6 +565,18 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should render only the day when using dateFormat D', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      title Test
+      dateFormat D
+      A :a, 1, 1d
+    `,
+      {}
+    );
+  });
+
   // TODO: fix it
   //
   // This test is skipped deliberately
@@ -573,7 +602,7 @@ describe('Gantt diagram', () => {
       `
     );
   });
-  it('should render a gantt diagram exculding friday and saturday', () => {
+  it('should render a gantt diagram excluding friday and saturday', () => {
     imgSnapshotTest(
       `gantt
       title A Gantt Diagram
@@ -584,7 +613,7 @@ describe('Gantt diagram', () => {
       A task :a1, 2024-02-28, 10d`
     );
   });
-  it('should render a gantt diagram exculding saturday and sunday', () => {
+  it('should render a gantt diagram excluding saturday and sunday', () => {
     imgSnapshotTest(
       `gantt
       title A Gantt Diagram
@@ -625,6 +654,49 @@ describe('Gantt diagram', () => {
         G: 13:32:00, 18m
         H: 13:50:00, 20m
         I: 14:10:00, 10m
+    `,
+      {}
+    );
+  });
+
+  it('should render a gantt diagram excluding a specific date in YYYY-MM-DD HH:mm:ss format', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      dateFormat  YYYY-MM-DD HH:mm:ss
+      excludes    2025-07-07
+      section     Section
+      A task      :a1, 2025-07-04 20:30:30, 2025-07-08 10:30:30
+      Another task:after a1, 20h
+    `,
+      {}
+    );
+  });
+
+  it('should render a gantt diagram excluding saturday and sunday in YYYY-MM-DD HH:mm:ss format', () => {
+    imgSnapshotTest(
+      `
+        gantt
+      dateFormat  YYYY-MM-DD HH:mm:ss
+      excludes    weekends
+       weekend saturday
+      section     Section
+      A task      :a1, 2025-07-04 20:30:30, 2025-07-08 10:30:30
+      Another task:after a1, 20h
+    `,
+      {}
+    );
+  });
+  it('should render a gantt diagram excluding friday and saturday in YYYY-MM-DD HH:mm:ss format', () => {
+    imgSnapshotTest(
+      `
+        gantt
+      dateFormat  YYYY-MM-DD HH:mm:ss
+      excludes    weekends
+       weekend friday
+      section     Section
+      A task      :a1, 2025-07-04 20:30:30, 2025-07-08 10:30:30
+      Another task:after a1, 20h
     `,
       {}
     );
@@ -671,7 +743,7 @@ describe('Gantt diagram', () => {
       title Gantt Digram
       dateFormat  YYYY-MM-DD
       section Section
-      ;A task with a semiclon           :a1, 2014-01-01, 30d
+      ;A task with a semicolon           :a1, 2014-01-01, 30d
       Another task     :after a1  , 20d
       section Another
       Task in sec      :2014-01-12  , 12d
@@ -727,6 +799,36 @@ describe('Gantt diagram', () => {
       section Another
       Task in sec      :2014-01-12  , 12d
       another task      : 24d
+    `,
+      {}
+    );
+  });
+  it('should handle numeric timestamps with dateFormat x', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     title Process time profile (ms)
+     dateFormat x
+     axisFormat %L
+     tickInterval 250millisecond
+
+     section Pipeline
+     Parse JSON p1: 000, 120
+    `,
+      {}
+    );
+  });
+  it('should handle numeric timestamps with dateFormat X', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     title Process time profile (ms)
+     dateFormat X
+     axisFormat %L
+     tickInterval 250millisecond
+
+     section Pipeline
+     Parse JSON p1: 000, 120
     `,
       {}
     );

@@ -22,10 +22,36 @@ jobs:
       pull-requests: write # write permission is required to label PRs
     steps:
       - name: Label PR
-        uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348 # v6.0.0
+        uses: release-drafter/release-drafter@b1476f6e6eb133afa41ed8589daba6dc69b4d3f5 # v6.1.0
         with:
           config-name: pr-labeler.yml
           disable-autolabeler: false
           disable-releaser: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add "Sponsored by MermaidChart" label
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const { data: commits } = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            const isSponsored = commits.every(
+              (c) => c.commit.author.email?.endsWith('@mermaidchart.com')
+            );
+
+            if (isSponsored) {
+              console.log('PR is sponsored. Adding label.');
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: ['Sponsored by MermaidChart'],
+              });
+            }

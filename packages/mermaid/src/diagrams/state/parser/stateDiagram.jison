@@ -3,7 +3,7 @@
  *  (c) 2014-2021 Knut Sveidqvist
  *  MIT license.
  *
- *  Based on js sequence diagrams jison grammr
+ *  Based on js sequence diagrams jison grammar
  *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
@@ -45,6 +45,10 @@
 %x LINE
 
 %%
+
+"click"                     return 'CLICK';
+"href"                      return 'HREF';
+\"[^"]*\"                   return 'STRING';   
 
 "default"             return 'DEFAULT';
 
@@ -246,8 +250,26 @@ statement
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
-    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    ;
-
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    
+    | CLICK idStatement STRING STRING NL
+    {
+        $$ = {
+            stmt: "click",
+            id: $2,
+            url: $3,
+            tooltip: $4
+        };
+    }
+    | CLICK idStatement HREF STRING NL
+    {
+        $$ = {
+            stmt: "click",
+            id: $2,
+            url: $4,
+            tooltip: ""
+        };
+    }
+    ;
 
 classDefStatement
     : classDef CLASSDEF_ID CLASSDEF_STYLEOPTS {

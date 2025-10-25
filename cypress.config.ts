@@ -1,8 +1,8 @@
 import eyesPlugin from '@applitools/eyes-cypress';
 import { registerArgosTask } from '@argos-ci/cypress/task';
-import coverage from '@cypress/code-coverage/task';
+import coverage from '@cypress/code-coverage/task.js';
 import { defineConfig } from 'cypress';
-import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin';
+import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin.js';
 import cypressSplit from 'cypress-split';
 
 export default eyesPlugin(
@@ -23,11 +23,12 @@ export default eyesPlugin(
         });
         // copy any needed variables from process.env to config.env
         config.env.useAppli = process.env.USE_APPLI ? true : false;
-        config.env.useArgos = !!process.env.CI;
+        config.env.useArgos = process.env.RUN_VISUAL_TEST === 'true';
 
         if (config.env.useArgos) {
           registerArgosTask(on, config, {
-            token: 'fc3a35cf5200db928d65b2047861582d9444032b',
+            // Enable upload to Argos only when it runs on CI.
+            uploadToArgos: !!process.env.CI,
           });
         } else {
           addMatchImageSnapshotPlugin(on, config);

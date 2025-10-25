@@ -33,7 +33,7 @@ let sections = [];
 let tasks = [];
 let currentSection = '';
 let displayMode = '';
-const tags = ['active', 'done', 'crit', 'milestone'];
+const tags = ['active', 'done', 'crit', 'milestone', 'vert'];
 let funs = [];
 let inclusiveEndDates = false;
 let topAxis = false;
@@ -167,7 +167,10 @@ export const getTasks = function () {
 };
 
 export const isInvalidDate = function (date, dateFormat, excludes, includes) {
-  if (includes.includes(date.format(dateFormat.trim()))) {
+  const formattedDate = date.format(dateFormat.trim());
+  const dateOnly = date.format('YYYY-MM-DD');
+
+  if (includes.includes(formattedDate) || includes.includes(dateOnly)) {
     return false;
   }
   if (
@@ -180,7 +183,7 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
   if (excludes.includes(date.format('dddd').toLowerCase())) {
     return true;
   }
-  return excludes.includes(date.format(dateFormat.trim()));
+  return excludes.includes(formattedDate) || excludes.includes(dateOnly);
 };
 
 export const setWeekday = function (txt) {
@@ -265,7 +268,9 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
 
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
-
+  if ((dateFormat.trim() === 'x' || dateFormat.trim() === 'X') && /^\d+$/.test(str)) {
+    return new Date(Number(str));
+  }
   // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
   const afterStatement = afterRePattern.exec(str);
@@ -422,7 +427,7 @@ const compileData = function (prevTask, dataStr) {
 
   const task = {};
 
-  // Get tags like active, done, crit and milestone
+  // Get tags like active, done, crit, milestone, and vert
   getTaskTags(data, task, tags);
 
   for (let i = 0; i < data.length; i++) {
@@ -470,7 +475,7 @@ const parseData = function (prevTaskId, dataStr) {
 
   const task = {};
 
-  // Get tags like active, done, crit and milestone
+  // Get tags like active, done, crit, milestone, and vert
   getTaskTags(data, task, tags);
 
   for (let i = 0; i < data.length; i++) {
@@ -538,6 +543,7 @@ export const addTask = function (descr, data) {
   rawTask.done = taskInfo.done;
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
+  rawTask.vert = taskInfo.vert;
   rawTask.order = lastOrder;
 
   lastOrder++;
@@ -570,6 +576,7 @@ export const addTaskOrg = function (descr, data) {
   newTask.done = taskInfo.done;
   newTask.crit = taskInfo.crit;
   newTask.milestone = taskInfo.milestone;
+  newTask.vert = taskInfo.vert;
   lastTask = newTask;
   tasks.push(newTask);
 };

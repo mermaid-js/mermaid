@@ -1,4 +1,4 @@
-import { rejects } from 'assert';
+import { log } from '../../logger.js';
 import { db } from './gitGraphAst.js';
 import { parser } from './gitGraphParser.js';
 
@@ -84,7 +84,7 @@ describe('when parsing a gitGraph', function () {
       const commits = db.getCommits();
 
       expect(commits.size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('a commit');
       expect(db.getCurrentBranch()).toBe('main');
     });
@@ -246,7 +246,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -263,7 +263,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -281,7 +281,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual(['test']);
@@ -299,7 +299,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -317,7 +317,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -335,7 +335,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -353,7 +353,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test commit');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -371,7 +371,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test commit');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual([]);
@@ -389,7 +389,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -407,7 +407,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -425,7 +425,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).not.toBeNull();
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -443,7 +443,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -461,7 +461,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test msg');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -471,7 +471,7 @@ describe('when parsing a gitGraph', function () {
     it('should handle a gitGraph commit with custom  type,tag, msg, commit id,', async () => {
       const str = `gitGraph:
         commit type:REVERSE tag: "test tag" msg: "test msg" id: "1111"
-    
+
         `;
 
       await parser.parse(str);
@@ -480,7 +480,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test msg');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -498,7 +498,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test msg');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -516,7 +516,7 @@ describe('when parsing a gitGraph', function () {
       expect(db.getCurrentBranch()).toBe('main');
       expect(db.getDirection()).toBe('LR');
       expect(db.getBranches().size).toBe(1);
-      const key = commits.keys().next().value;
+      const key = commits.keys().next().value!;
       expect(commits.get(key)?.message).toBe('test msg');
       expect(commits.get(key)?.id).toBe('1111');
       expect(commits.get(key)?.tags).toStrictEqual(['test tag']);
@@ -1232,7 +1232,7 @@ describe('when parsing a gitGraph', function () {
         expect(true).toBe(false);
       } catch (e: any) {
         expect(e.message).toBe(
-          'Incorrect usage of "merge". Commit with id:1-111 already exists, use different custom Id'
+          'Incorrect usage of "merge". Commit with id:1-111 already exists, use different custom id'
         );
       }
     });
@@ -1255,7 +1255,7 @@ describe('when parsing a gitGraph', function () {
     it('should throw error when trying to merge branch which has no commits', async () => {
       const str = `gitGraph
         branch test1
-    
+
         checkout main
         commit
         merge test1
@@ -1318,5 +1318,43 @@ describe('when parsing a gitGraph', function () {
         });
       }
     });
+  });
+  it('should log a warning when two commits have the same ID', async () => {
+    const str = `gitGraph
+     commit id:"initial commit"
+     commit id:"work on first release"
+     commit id:"design freeze from here"
+     branch v1-rc
+     checkout v1-rc
+     commit id:"bugfix 1"
+     commit id:"bigfix 2" tag:"v1.0.1"
+     branch FORK-v1.0-MDR
+     checkout FORK-v1.0-MDR
+     commit id:"working on MDR"
+     checkout v1-rc
+     commit id:"minor design changes for MDR" tag:"v1.0.2"
+     checkout FORK-v1.0-MDR
+     merge v1-rc
+     checkout main
+     commit id:"new feature for v1.1…"
+     checkout FORK-v1.0-MDR
+     commit id:"working on MDR"
+     commit id:"finishing MDR"
+     branch v1.0-MDR
+     checkout v1.0-MDR
+     commit id:"brush up release" tag:"v1.0.2-MDR"
+     checkout v1-rc
+     commit id:"bugfix without MDR"
+     checkout main
+     commit id:"work on v1.1"
+  `;
+
+    const logWarnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+    await parser.parse(str);
+
+    expect(logWarnSpy).toHaveBeenCalledWith('Commit ID working on MDR already exists');
+
+    logWarnSpy.mockRestore();
   });
 });

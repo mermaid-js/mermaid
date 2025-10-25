@@ -1,0 +1,70 @@
+name: Validate pnpm-lock.yaml
+
+on:
+  pull_request:
+    paths:
+      - 'pnpm-lock.yaml'
+      - '**/package.json'
+      - '.github/workflows/validate-lockfile.yml'
+
+jobs:
+  validate-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Validate pnpm-lock.yaml entries
+        id: validate # give this step an ID so we can reference its outputs
+        run: |
+          issues=()
+
+          # 1) No tarball references
+          if grep -qF 'tarball:' pnpm-lock.yaml; then
+            issues+=("• Tarball references found (forbidden)")
+          fi
+
+          # 2) No unwanted vitepress paths
+          if grep -qF 'packages/mermaid/src/vitepress' pnpm-lock.yaml; then
+            issues+=("• Disallowed path 'packages/mermaid/src/vitepress' present. Run \`rm -rf packages/mermaid/src/vitepress && pnpm install\` to regenerate.")
+          fi
+
+          # 3) Lockfile only changes when package.json changes
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} > changed.txt
+          if grep -q '^pnpm-lock.yaml$' changed.txt && ! grep -q 'package.json' changed.txt; then
+            issues+=("• pnpm-lock.yaml changed without any package.json modification")
+          fi
+
+          # If any issues, output them and fail
+          if [ ${#issues[@]} -gt 0 ]; then
+            # Use the new GITHUB_OUTPUT approach to set a multiline output
+            {
+              echo "errors<<EOF"
+              printf '%s\n' "${issues[@]}"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Comment on PR if validation failed
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            The following issue(s) were detected:
+            ${{ steps.validate.outputs.errors }}
+
+            Please address these and push an update.
+
+            _Posted automatically by GitHub Actions_

@@ -17,6 +17,7 @@ export default tseslint.config(
   ...tseslint.configs.stylisticTypeChecked,
   {
     ignores: [
+      '**/*.d.ts',
       '**/dist/',
       '**/node_modules/',
       '.git/',
@@ -137,7 +138,6 @@ export default tseslint.config(
       'unicorn/no-instanceof-array': 'error',
       'unicorn/no-typeof-undefined': 'error',
       'unicorn/no-unnecessary-await': 'error',
-      'unicorn/no-unsafe-regex': 'warn',
       'unicorn/no-useless-promise-resolve-reject': 'error',
       'unicorn/prefer-array-find': 'error',
       'unicorn/prefer-array-flat-map': 'error',

@@ -36,7 +36,6 @@ export const getClasses = function (
   text: string,
   diagramObj: any
 ): Map<string, DiagramStyleClassDef> {
-  diagramObj.db.extract(diagramObj.db.getRootDocV2());
   return diagramObj.db.getClasses();
 };
 
@@ -69,6 +68,61 @@ export const draw = async function (text: string, id: string, _version: string, 
   // console.log('REF1:', data4Layout);
   await render(data4Layout, svg);
   const padding = 8;
+
+  // Inject clickable links after nodes are rendered
+  try {
+    const links: Map<string, { url: string; tooltip: string }> =
+      typeof diag.db.getLinks === 'function' ? diag.db.getLinks() : new Map();
+
+    type StateKey = string | { id: string };
+
+    links.forEach((linkInfo, key: StateKey) => {
+      const stateId = typeof key === 'string' ? key : typeof key?.id === 'string' ? key.id : '';
+
+      if (!stateId) {
+        log.warn('⚠️ Invalid or missing stateId from key:', JSON.stringify(key));
+        return;
+      }
+
+      const allNodes = svg.node()?.querySelectorAll('g');
+      let matchedElem: SVGGElement | undefined;
+
+      allNodes?.forEach((g: SVGGElement) => {
+        const text = g.textContent?.trim();
+        if (text === stateId) {
+          matchedElem = g;
+        }
+      });
+
+      if (!matchedElem) {
+        log.warn('⚠️ Could not find node matching text:', stateId);
+        return;
+      }
+
+      const parent = matchedElem.parentNode;
+      if (!parent) {
+        log.warn('⚠️ Node has no parent, cannot wrap:', stateId);
+        return;
+      }
+
+      const a = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+      const cleanedUrl = linkInfo.url.replace(/^"+|"+$/g, ''); // remove leading/trailing quotes
+      a.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', cleanedUrl);
+      a.setAttribute('target', '_blank');
+      if (linkInfo.tooltip) {
+        const tooltip = linkInfo.tooltip.replace(/^"+|"+$/g, '');
+        a.setAttribute('title', tooltip);
+      }
+
+      parent.replaceChild(a, matchedElem);
+      a.appendChild(matchedElem);
+
+      log.info('🔗 Wrapped node in <a> tag for:', stateId, linkInfo.url);
+    });
+  } catch (err) {
+    log.error('❌ Error injecting clickable links:', err);
+  }
+
   utils.insertTitle(
     svg,
     'statediagramTitleText',

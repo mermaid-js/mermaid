@@ -148,7 +148,7 @@
     <pre class="mermaid">
     classDiagram
       class Person {
-        +Id : Guid
+        +ID : Guid
         +FirstName : string
         +LastName : string
         -privateProperty : string
@@ -219,10 +219,10 @@
           +double side
         }
       }
-      
+
       Shape <|-- Circle
       Shape <|-- Square
-      
+
       namespace Vehicles {
         class Vehicle {
           +String brand
@@ -234,12 +234,12 @@
           +boolean hasGears
         }
       }
-      
+
       Vehicle <|-- Car
       Vehicle <|-- Bike
       Car --> Circle : "Logo Shape"
       Bike --> Square : "Logo Shape"
-                  
+
     </pre>
     <hr />
     <pre class="mermaid">
