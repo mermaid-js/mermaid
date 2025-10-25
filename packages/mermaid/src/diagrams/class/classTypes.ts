@@ -5,7 +5,7 @@ export interface ClassNode {
   id: string;
   type: string;
   label: string;
-  shape: string;
+  shape: 'classBox';
   text: string;
   cssClasses: string;
   methods: ClassMember[];

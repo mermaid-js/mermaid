@@ -17,6 +17,7 @@ import type {
   ClassRelation,
   ClassNode,
   ClassNote,
+  ClassNoteMap,
   ClassMap,
   NamespaceMap,
   NamespaceNode,
@@ -33,9 +34,9 @@ const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
 export class ClassDB implements DiagramDB {
   private relations: ClassRelation[] = [];
-  private classes = new Map<string, ClassNode>();
+  private classes: ClassMap = new Map<string, ClassNode>();
   private readonly styleClasses = new Map<string, StyleClass>();
-  private notes = new Map<string, ClassNote>();
+  private notes: ClassNoteMap = new Map<string, ClassNote>();
   private interfaces: Interface[] = [];
   // private static classCounter = 0;
   private namespaces = new Map<string, NamespaceNode>();
@@ -125,7 +126,7 @@ export class ClassDB implements DiagramDB {
       annotations: [],
       styles: [],
       domId: MERMAID_DOM_ID_PREFIX + name + '-' + classCounter,
-    } as ClassNode);
+    });
 
     classCounter++;
   }
@@ -184,7 +185,7 @@ export class ClassDB implements DiagramDB {
     return this.notes.get(key)!;
   }
 
-  public getNotes() {
+  public getNotes(): ClassNoteMap {
     return this.notes;
   }
 
@@ -297,7 +298,7 @@ export class ClassDB implements DiagramDB {
     return note.id;
   }
 
-  public cleanupLabel(label: string) {
+  public cleanupLabel(label: string): string {
     if (label.startsWith(':')) {
       label = label.substring(1);
     }
@@ -363,7 +364,7 @@ export class ClassDB implements DiagramDB {
     });
   }
 
-  public getTooltip(id: string, namespace?: string) {
+  public getTooltip(id: string, namespace?: string): string | undefined {
     if (namespace && this.namespaces.has(namespace)) {
       return this.namespaces.get(namespace)!.classes.get(id)!.tooltip;
     }
@@ -543,10 +544,11 @@ export class ClassDB implements DiagramDB {
 
     this.namespaces.set(id, {
       id: id,
-      classes: new Map(),
-      children: {},
+      classes: new Map<string, ClassNode>(),
+      notes: new Map<string, ClassNote>(),
+      children: new Map<string, NamespaceNode>(),
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + this.namespaceCounter,
-    } as NamespaceNode);
+    });
 
     this.namespaceCounter++;
   }
@@ -648,9 +650,13 @@ export class ClassDB implements DiagramDB {
     }
 
     for (const classNode of this.classes.values()) {
-      const node = classNode as unknown as Node;
-      node.parentId = classNode.parent;
-      node.look = config.look;
+      const node: Node = {
+        ...classNode,
+        type: undefined,
+        isGroup: false,
+        parentId: classNode.parent,
+        look: classNode.look,
+      };
       nodes.push(node);
     }
 
