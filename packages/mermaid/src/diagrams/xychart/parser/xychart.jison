@@ -22,9 +22,9 @@
 "title"                                   { return 'title'; }
 
 "accTitle"\s*":"\s*                         { this.pushState("acc_title");return 'acc_title'; }
-<acc_title>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_title_value"; }
+<acc_title>(?!\n|;)*[^\n]*               { this.popState(); return "acc_title_value"; }
 "accDescr"\s*":"\s*                         { this.pushState("acc_descr");return 'acc_descr'; }
-<acc_descr>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_descr_value"; }
+<acc_descr>(?!\n|;)*[^\n]*              { this.popState(); return "acc_descr_value"; }
 "accDescr"\s*"{"\s*                         { this.pushState("acc_descr_multiline");}
 <acc_descr_multiline>"{"                 { this.popState(); }
 <acc_descr_multiline>[^\}]*               { return "acc_descr_multiline_value"; }
