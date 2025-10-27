@@ -61,7 +61,12 @@ export const insertEdgeLabel = async (elem, edge) => {
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
 
   // Create inner g, label, this will be positioned now for centering the text
-  const label = edgeLabel.insert('g').attr('class', 'label').attr('data-id', edge.id);
+  const label = edgeLabel
+    .insert('g')
+    .attr('class', 'label')
+    .attr('data-id', edge.id)
+    .attr('data-from', edge.start)
+    .attr('data-to', edge.end);
   label.node().appendChild(labelElement);
 
   // Center the label
@@ -689,6 +694,8 @@ export const insertEdge = function (
   svgPath.attr('data-edge', true);
   svgPath.attr('data-et', 'edge');
   svgPath.attr('data-id', edge.id);
+  svgPath.attr('data-from', edge.start);
+  svgPath.attr('data-to', edge.end);
   svgPath.attr('data-points', pointsStr);
 
   // DEBUG code, adds a red circle at each edge coordinate
