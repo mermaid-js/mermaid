@@ -1,5 +1,11 @@
 # mermaid
 
+## 11.12.1
+
+### Patch Changes
+
+- [#7107](https://github.com/mermaid-js/mermaid/pull/7107) [`cbf8946`](https://github.com/mermaid-js/mermaid/commit/cbf89462acecac7a06f19843e8d48cb137df0753) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - fix: Updated the dependency dagre-d3-es to 7.0.13 to fix GHSA-cc8p-78qf-8p7q
+
 ## 11.12.0
 
 ### Minor Changes
