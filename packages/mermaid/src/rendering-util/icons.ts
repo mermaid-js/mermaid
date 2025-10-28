@@ -23,66 +23,100 @@ export const unknownIcon: IconifyIcon = {
   width: 80,
 };
 
-const iconsStore = new Map<string, IconifyJSON>();
-const loaderStore = new Map<string, AsyncIconLoader['loader']>();
+class IconManager {
+  private iconsStore = new Map<string, IconifyJSON>();
+  private loaderStore = new Map<string, AsyncIconLoader['loader']>();
 
-export const registerIconPacks = (iconLoaders: IconLoader[]) => {
-  for (const iconLoader of iconLoaders) {
-    if (!iconLoader.name) {
-      throw new Error(
-        'Invalid icon loader. Must have a "name" property with non-empty string value.'
-      );
-    }
-    log.debug('Registering icon pack:', iconLoader.name);
-    if ('loader' in iconLoader) {
-      loaderStore.set(iconLoader.name, iconLoader.loader);
-    } else if ('icons' in iconLoader) {
-      iconsStore.set(iconLoader.name, iconLoader.icons);
-    } else {
-      log.error('Invalid icon loader:', iconLoader);
-      throw new Error('Invalid icon loader. Must have either "icons" or "loader" property.');
+  registerIconPacks(iconLoaders: IconLoader[]): void {
+    for (const iconLoader of iconLoaders) {
+      if (!iconLoader.name) {
+        throw new Error(
+          'Invalid icon loader. Must have a "name" property with non-empty string value.'
+        );
+      }
+      log.debug('Registering icon pack:', iconLoader.name);
+      if ('loader' in iconLoader) {
+        this.loaderStore.set(iconLoader.name, iconLoader.loader);
+      } else if ('icons' in iconLoader) {
+        this.iconsStore.set(iconLoader.name, iconLoader.icons);
+      } else {
+        log.error('Invalid icon loader:', iconLoader);
+        throw new Error('Invalid icon loader. Must have either "icons" or "loader" property.');
+      }
     }
   }
-};
 
-const getRegisteredIconData = async (iconName: string, fallbackPrefix?: string) => {
-  const data = stringToIcon(iconName, true, fallbackPrefix !== undefined);
-  if (!data) {
-    throw new Error(`Invalid icon name: ${iconName}`);
-  }
-  const prefix = data.prefix || fallbackPrefix;
-  if (!prefix) {
-    throw new Error(`Icon name must contain a prefix: ${iconName}`);
-  }
-  let icons = iconsStore.get(prefix);
-  if (!icons) {
-    const loader = loaderStore.get(prefix);
-    if (!loader) {
-      throw new Error(`Icon set not found: ${data.prefix}`);
+  private async getRegisteredIconData(
+    iconName: string,
+    fallbackPrefix?: string
+  ): Promise<ExtendedIconifyIcon> {
+    const data = stringToIcon(iconName, true, fallbackPrefix !== undefined);
+    if (!data) {
+      throw new Error(`Invalid icon name: ${iconName}`);
     }
+    const prefix = data.prefix || fallbackPrefix;
+    if (!prefix) {
+      throw new Error(`Icon name must contain a prefix: ${iconName}`);
+    }
+    let icons = this.iconsStore.get(prefix);
+    if (!icons) {
+      const loader = this.loaderStore.get(prefix);
+      if (!loader) {
+        throw new Error(`Icon set not found: ${data.prefix}`);
+      }
+      try {
+        const loaded = await loader();
+        icons = { ...loaded, prefix };
+        this.iconsStore.set(prefix, icons);
+      } catch (e) {
+        log.error(e);
+        throw new Error(`Failed to load icon set: ${data.prefix}`);
+      }
+    }
+    const iconData = getIconData(icons, data.name);
+    if (!iconData) {
+      throw new Error(`Icon not found: ${iconName}`);
+    }
+    return iconData;
+  }
+
+  async isIconAvailable(iconName: string): Promise<boolean> {
     try {
-      const loaded = await loader();
-      icons = { ...loaded, prefix };
-      iconsStore.set(prefix, icons);
+      await this.getRegisteredIconData(iconName);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async getIconSVG(
+    iconName: string,
+    customisations?: IconifyIconCustomisations & { fallbackPrefix?: string },
+    extraAttributes?: Record<string, string>
+  ): Promise<string> {
+    let iconData: ExtendedIconifyIcon;
+    try {
+      iconData = await this.getRegisteredIconData(iconName, customisations?.fallbackPrefix);
     } catch (e) {
       log.error(e);
-      throw new Error(`Failed to load icon set: ${data.prefix}`);
+      iconData = unknownIcon;
     }
+    const renderData = iconToSVG(iconData, customisations);
+    const svg = iconToHTML(replaceIDs(renderData.body), {
+      ...renderData.attributes,
+      ...extraAttributes,
+    });
+    return sanitizeText(svg, getConfig());
   }
-  const iconData = getIconData(icons, data.name);
-  if (!iconData) {
-    throw new Error(`Icon not found: ${iconName}`);
-  }
-  return iconData;
-};
+}
 
+const globalIconManager = new IconManager();
+
+// Export the singleton instance methods for backward compatibility
+export const registerIconPacks = (iconLoaders: IconLoader[]) =>
+  globalIconManager.registerIconPacks(iconLoaders);
 export const isIconAvailable = async (iconName: string) => {
-  try {
-    await getRegisteredIconData(iconName);
-    return true;
-  } catch {
-    return false;
-  }
+  return await globalIconManager.isIconAvailable(iconName);
 };
 
 export const getIconSVG = async (
@@ -90,17 +124,5 @@ export const getIconSVG = async (
   customisations?: IconifyIconCustomisations & { fallbackPrefix?: string },
   extraAttributes?: Record<string, string>
 ) => {
-  let iconData: ExtendedIconifyIcon;
-  try {
-    iconData = await getRegisteredIconData(iconName, customisations?.fallbackPrefix);
-  } catch (e) {
-    log.error(e);
-    iconData = unknownIcon;
-  }
-  const renderData = iconToSVG(iconData, customisations);
-  const svg = iconToHTML(replaceIDs(renderData.body), {
-    ...renderData.attributes,
-    ...extraAttributes,
-  });
-  return sanitizeText(svg, getConfig());
+  return await globalIconManager.getIconSVG(iconName, customisations, extraAttributes);
 };
