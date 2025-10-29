@@ -192,7 +192,7 @@ flowchart TB
     imgSnapshotTest(`---
 config:
   icons:
-		timeout: 1
+    timeout: 1
     packs:
       logos: "@iconify-json/logos@1"
 ---
