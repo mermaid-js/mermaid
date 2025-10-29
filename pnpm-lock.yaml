@@ -533,67 +533,6 @@ importers:
         specifier: ^7.3.0
         version: 7.3.0
 
-  packages/mermaid/src/vitepress:
-    dependencies:
-      '@mdi/font':
-        specifier: ^7.4.47
-        version: 7.4.47
-      '@vueuse/core':
-        specifier: ^13.9.0
-        version: 13.9.0(vue@3.5.21(typescript@5.9.2))
-      font-awesome:
-        specifier: ^4.7.0
-        version: 4.7.0
-      jiti:
-        specifier: ^2.4.2
-        version: 2.5.1
-      mermaid:
-        specifier: workspace:^
-        version: link:../..
-      vue:
-        specifier: ^3.5.21
-        version: 3.5.21(typescript@5.9.2)
-    devDependencies:
-      '@iconify-json/carbon':
-        specifier: ^1.2.13
-        version: 1.2.13
-      '@unocss/reset':
-        specifier: ^66.5.1
-        version: 66.5.1
-      '@vite-pwa/vitepress':
-        specifier: ^1.0.0
-        version: 1.0.0(vite-plugin-pwa@1.0.3(vite@7.1.5(@types/node@22.18.6)(jiti@2.5.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0))
-      '@vitejs/plugin-vue':
-        specifier: ^6.0.1
-        version: 6.0.1(vite@7.1.5(@types/node@22.18.6)(jiti@2.5.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2))
-      fast-glob:
-        specifier: ^3.3.3
-        version: 3.3.3
-      https-localhost:
-        specifier: ^4.7.1
-        version: 4.7.1
-      pathe:
-        specifier: ^2.0.3
-        version: 2.0.3
-      unocss:
-        specifier: ^66.5.1
-        version: 66.5.1(postcss@8.5.6)(vite@7.1.5(@types/node@22.18.6)(jiti@2.5.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))
-      unplugin-vue-components:
-        specifier: ^28.4.1
-        version: 28.8.0(@babel/parser@7.28.4)(vue@3.5.21(typescript@5.9.2))
-      vite:
-        specifier: ^7.0.7
-        version: 7.1.5(@types/node@22.18.6)(jiti@2.5.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
-      vite-plugin-pwa:
-        specifier: ^1.0.3
-        version: 1.0.3(vite@7.1.5(@types/node@22.18.6)(jiti@2.5.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(workbox-build@7.3.0(@types/babel__core@7.20.5))(workbox-window@7.3.0)
-      vitepress:
-        specifier: 1.6.4
-        version: 1.6.4(@algolia/client-search@5.37.0)(@types/node@22.18.6)(axios@1.12.2)(postcss@8.5.6)(search-insights@2.17.3)(terser@5.44.0)(typescript@5.9.2)
-      workbox-window:
-        specifier: ^7.3.0
-        version: 7.3.0
-
   packages/parser:
     dependencies:
       langium:
