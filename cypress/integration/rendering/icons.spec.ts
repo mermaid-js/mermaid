@@ -188,6 +188,20 @@ flowchart TB
 `);
   });
 
+  it('should handle timeouts gracefully', () => {
+    imgSnapshotTest(`---
+config:
+  icons:
+		timeout: 1
+    packs:
+      logos: "@iconify-json/logos@1"
+---
+flowchart TB
+  A[Start] --> B@{ icon: 'logos:aws', label: 'Timeout' }
+  B --> C[End]
+`);
+  });
+
   it('should handle missing pack gracefully', () => {
     imgSnapshotTest(`flowchart TB
   A[Start] --> B@{ icon: 'missing:icon', label: 'Missing Pack Icon' }
