@@ -962,7 +962,6 @@ You have to call mermaid.initialize.`
       case 'round':
         return 'roundedRect';
       case 'ellipse':
-        // @ts-expect-error -- Ellipses are broken, see https://github.com/mermaid-js/mermaid/issues/5976
         return 'ellipse';
       default:
         return vertex.type;

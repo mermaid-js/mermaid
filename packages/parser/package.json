@@ -19,7 +19,8 @@
   "scripts": {
     "clean": "rimraf dist src/language/generated",
     "langium:generate": "langium generate",
-    "langium:watch": "langium generate --watch"
+    "langium:watch": "langium generate --watch",
+    "antlr:generate": "tsx ../../.build/antlr-cli.ts antlr-config.json"
   },
   "repository": {
     "type": "git",
@@ -33,9 +34,11 @@
     "ast"
   ],
   "dependencies": {
+    "antlr4ng": "^3.0.7",
     "langium": "3.3.1"
   },
   "devDependencies": {
+    "antlr-ng": "^1.0.10",
     "chevrotain": "^11.0.3"
   },
   "files": [
