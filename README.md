@@ -471,9 +471,9 @@ _Mermaid was created by Knut Sveidqvist for easier documentation._
 
 ## How to Run Mermaid Locally
 
-1. Clone the repo  
-2. Install dependencies: `npm install`  
-3. Build the project: `npm run build`  
+1. Clone the repo
+2. Install dependencies: `npm install`
+3. Build the project: `npm run build`
 4. Preview changes: `npm start`
 
 Happy diagramming!
