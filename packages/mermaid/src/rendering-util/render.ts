@@ -42,7 +42,7 @@ const registerDefaultLayoutLoaders = () => {
       name: 'dagre',
       loader: async () => await import('./layout-algorithms/dagre/index.js'),
     },
-    ...(includeLargeFeatures
+    ...(injected.includeLargeFeatures
       ? [
           {
             name: 'cose-bilkent',
