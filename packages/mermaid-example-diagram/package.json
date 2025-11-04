@@ -44,7 +44,7 @@
   "devDependencies": {
     "concurrently": "^9.2.1",
     "mermaid": "workspace:*",
-    "rimraf": "^6.0.1"
+    "rimraf": "^6.1.0"
   },
   "files": [
     "dist"

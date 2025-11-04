@@ -19,7 +19,7 @@
     "@mdi/font": "^7.4.47",
     "@vueuse/core": "^13.9.0",
     "font-awesome": "^4.7.0",
-    "jiti": "^2.4.2",
+    "jiti": "^2.6.1",
     "mermaid": "workspace:^",
     "vue": "^3.5.21"
   },
@@ -34,7 +34,7 @@
     "unocss": "^66.5.1",
     "unplugin-vue-components": "^28.4.1",
     "vite": "^7.0.7",
-    "vite-plugin-pwa": "^1.0.3",
+    "vite-plugin-pwa": "^1.1.0",
     "vitepress": "1.6.4",
     "workbox-window": "^7.3.0"
   }

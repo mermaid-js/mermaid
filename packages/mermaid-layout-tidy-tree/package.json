@@ -40,7 +40,7 @@
     "mermaid": "workspace:^"
   },
   "peerDependencies": {
-    "mermaid": "^11.0.2"
+    "mermaid": "^11.12.1"
   },
   "files": [
     "dist"
