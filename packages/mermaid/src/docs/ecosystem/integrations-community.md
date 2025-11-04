@@ -52,6 +52,12 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [GitHub Writer](https://github.com/ckeditor/github-writer)
   - [SVG diagram generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
+- [GNU Octave](https://octave.org/) ✅
+  - [Octave Repo Index](https://gnu-octave.github.io/packages/octave_mermaid_js/) ✅
+  - [News](https://github.com/CNOCTAVE/octave_mermaid_js/blob/main/NEWS) ✅
+  - [Source Code](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
+  - [Function Reference](https://cnoctave.github.io/octave_mermaid_js/index.html) ✅
+  - [Bug Tracker](https://github.com/CNOCTAVE/octave_mermaid_js/issues) ✅
 - [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
 - [MonsterWriter](https://www.monsterwriter.com/) ✅
 - [Joplin](https://joplinapp.org) ✅
