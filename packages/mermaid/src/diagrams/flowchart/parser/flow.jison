@@ -140,6 +140,7 @@ that id.
 .*direction\s+BT[^\n]*       return 'direction_bt';
 .*direction\s+RL[^\n]*       return 'direction_rl';
 .*direction\s+LR[^\n]*       return 'direction_lr';
+.*direction\s+TD[^\n]*       return 'direction_td';
 
 [^\s\"]+\@(?=[^\{\"])               { return 'LINK_ID'; }
 [0-9]+                       return 'NUM';
@@ -626,6 +627,8 @@ direction
     { $$={stmt:'dir', value:'RL'};}
     | direction_lr
     { $$={stmt:'dir', value:'LR'};}
+    | direction_td
+    { $$={stmt:'dir', value:'TD'};}
     ;
 
 %%
