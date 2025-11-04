@@ -17,8 +17,8 @@ importers:
         specifier: ^3.55.2
         version: 3.55.2(encoding@0.1.13)(typescript@5.7.3)
       '@argos-ci/cypress':
-        specifier: ^6.1.1
-        version: 6.1.1(cypress@14.5.4)
+        specifier: ^6.1.3
+        version: 6.1.3(cypress@14.5.4)
       '@changesets/changelog-github':
         specifier: ^0.5.1
         version: 0.5.1(encoding@0.1.13)
@@ -251,8 +251,8 @@ importers:
         specifier: ^0.12.3
         version: 0.12.3
       dagre-d3-es:
-        specifier: 7.0.11
-        version: 7.0.11
+        specifier: 7.0.13
+        version: 7.0.13
       dayjs:
         specifier: ^1.11.18
         version: 1.11.18
@@ -796,26 +796,26 @@ packages:
     resolution: {integrity: sha512-8mBaNNJ0zUBlb09ycc8aFTKajoqEu+E7M7kdV1IENIwuVOI3ecM6x9vr4ptWQz0LTnel7M+L3NPqAGJqoQ3AKA==}
     engines: {node: '>=12.13.0'}
 
-  '@argos-ci/api-client@0.11.0':
-    resolution: {integrity: sha512-mv7LWrJfEDjjs+CmAJaM1GIexpb3A8TwuyTUCTKgDp/SHdbU0uF8uC6lV4P/mfeGIvBYZzIRKq/frd+IETlC2g==}
+  '@argos-ci/api-client@0.12.0':
+    resolution: {integrity: sha512-WfhI+StLJKIKERWQaIm7Kv1/k+YO/CYIp3djDVhZIU6mv/8yalyNXHnkRC6ofq1kPpmRvoag1KW79/C2WsB4Ag==}
     engines: {node: '>=20.0.0'}
 
   '@argos-ci/browser@5.0.0':
     resolution: {integrity: sha512-SKAD7EXoLX4u50dzTIT/ABnpD284+DnBfoJM0ZrTIav2eiiVJyknNKSznF5w118lYGnYvugTXbKMnukGPzJeOA==}
     engines: {node: '>=20.0.0'}
 
-  '@argos-ci/core@4.1.5':
-    resolution: {integrity: sha512-tPsbnSuHEClkdGLUU/qHTNsMe3kAPBvz0DK0nkv6Z18N0imEbzVg+ggmcTmc2x2yEm7i1V456Z2MLhFvTqXnlw==}
+  '@argos-ci/core@4.2.0':
+    resolution: {integrity: sha512-3RNyBZ84pYfQ8dn/Ivv5ls2x2rgqFuh8wA8e4ugggA5lx2dE7a6yghJw8cPzud+zbHrpOntl/HBM3akh2SXLkw==}
     engines: {node: '>=20.0.0'}
 
-  '@argos-ci/cypress@6.1.1':
-    resolution: {integrity: sha512-fs6K2o7vEiAjBtQhrB6cp7YG6beYBRI9WyVbAHRVYyhdEic36agAqQ7/q3tx8d+uf7nXjjtZuW7KGUxjBmC9MA==}
+  '@argos-ci/cypress@6.1.3':
+    resolution: {integrity: sha512-JlBabUsksKXH7QT2M47dhBNHRxNwW+GQ1lvBT/mgGaFJX8P/GqLkEEmKolf1YBn28MFemQmjuK4G+z5Pjs3rLg==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       cypress: ^12.0.0 || ^13.0.0 || ^14.0.0
 
-  '@argos-ci/util@3.1.0':
-    resolution: {integrity: sha512-QM0IwJGm9YsRdsvTAskQab9iXpQOTOOLb+h9Yev76L2TzoLZ2tM9QO+pYNNlX9YLK5dYr/H/pBNQ1lWr130Jjw==}
+  '@argos-ci/util@3.1.1':
+    resolution: {integrity: sha512-sGb9PS7yqdVVtxpxRD1Nfter3kaioC4nPPTknVmMSqo2GQKO1gdmjMJtwHY+Nf9FgiMfwpTCnk8Rrf0pjS3Sug==}
     engines: {node: '>=20.0.0'}
 
   '@asamuzakjp/css-color@3.2.0':
@@ -4903,8 +4903,8 @@ packages:
     resolution: {integrity: sha512-e1U46jVP+w7Iut8Jt8ri1YsPOvFpg46k+K8TpCb0P+zjCkjkPnV7WzfDJzMHy1LnA+wj5pLT1wjO901gLXeEhA==}
     engines: {node: '>=12'}
 
-  dagre-d3-es@7.0.11:
-    resolution: {integrity: sha512-tvlJLyQf834SylNKax8Wkzco/1ias1OPw8DcUMDE7oUIoSEW25riQVuiu/0OWEFqT0cxHT3Pa9/D82Jr47IONw==}
+  dagre-d3-es@7.0.13:
+    resolution: {integrity: sha512-efEhnxpSuwpYOKRm/L5KbqoZmNNukHa/Flty4Wp62JRvgH2ojwVgPgdYyr4twpieZnyRDdIH7PY2mopX26+j2Q==}
 
   dashdash@1.14.1:
     resolution: {integrity: sha512-jRFi8UDGo6j+odZiEpjazZaWqEal3w/basFjQHQEwVtZJGDpxbH1MeYluwCS8Xq5wmLJooDlMgvVarmWfGM44g==}
@@ -7606,8 +7606,8 @@ packages:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
 
-  openapi-fetch@0.14.0:
-    resolution: {integrity: sha512-PshIdm1NgdLvb05zp8LqRQMNSKzIlPkyMxYFxwyHR+UlKD4t2nUjkDhNxeRbhRSEd3x5EUNh2w5sJYwkhOH4fg==}
+  openapi-fetch@0.14.1:
+    resolution: {integrity: sha512-l7RarRHxlEZYjMLd/PR0slfMVse2/vvIAGm75/F7J6MlQ8/b9uUQmUF2kCPrQhJqMXSxmYWObVgeYXbFYzZR+A==}
 
   openapi-typescript-helpers@0.0.15:
     resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
@@ -10311,19 +10311,19 @@ snapshots:
 
   '@applitools/utils@1.12.0': {}
 
-  '@argos-ci/api-client@0.11.0':
+  '@argos-ci/api-client@0.12.0':
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
-      openapi-fetch: 0.14.0
+      openapi-fetch: 0.14.1
     transitivePeerDependencies:
       - supports-color
 
   '@argos-ci/browser@5.0.0': {}
 
-  '@argos-ci/core@4.1.5':
+  '@argos-ci/core@4.2.0':
     dependencies:
-      '@argos-ci/api-client': 0.11.0
-      '@argos-ci/util': 3.1.0
+      '@argos-ci/api-client': 0.12.0
+      '@argos-ci/util': 3.1.1
       convict: 6.2.4
       debug: 4.4.3(supports-color@8.1.1)
       fast-glob: 3.3.3
@@ -10332,17 +10332,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/cypress@6.1.1(cypress@14.5.4)':
+  '@argos-ci/cypress@6.1.3(cypress@14.5.4)':
     dependencies:
       '@argos-ci/browser': 5.0.0
-      '@argos-ci/core': 4.1.5
-      '@argos-ci/util': 3.1.0
+      '@argos-ci/core': 4.2.0
+      '@argos-ci/util': 3.1.1
       cypress: 14.5.4
       cypress-wait-until: 3.0.2
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/util@3.1.0': {}
+  '@argos-ci/util@3.1.1': {}
 
   '@asamuzakjp/css-color@3.2.0':
     dependencies:
@@ -15174,7 +15174,7 @@ snapshots:
       d3-transition: 3.0.1(d3-selection@3.0.0)
       d3-zoom: 3.0.0
 
-  dagre-d3-es@7.0.11:
+  dagre-d3-es@7.0.13:
     dependencies:
       d3: 7.9.0
       lodash-es: 4.17.21
@@ -18541,7 +18541,7 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  openapi-fetch@0.14.0:
+  openapi-fetch@0.14.1:
     dependencies:
       openapi-typescript-helpers: 0.0.15
 

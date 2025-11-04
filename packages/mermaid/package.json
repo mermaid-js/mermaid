@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "11.11.0",
+  "version": "11.12.1",
   "description": "Markdown-ish syntax for generating flowcharts, mindmaps, sequence diagrams, class diagrams, gantt charts, git graphs and more.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -76,7 +76,7 @@
     "cytoscape-fcose": "^2.2.0",
     "d3": "^7.9.0",
     "d3-sankey": "^0.12.3",
-    "dagre-d3-es": "7.0.11",
+    "dagre-d3-es": "7.0.13",
     "dayjs": "^1.11.18",
     "dompurify": "^3.2.5",
     "katex": "^0.16.22",
