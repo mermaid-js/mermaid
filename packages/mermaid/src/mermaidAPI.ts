@@ -447,7 +447,7 @@ const render = async function (
   svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
   if (config.look === 'handDrawn' && !diag.capabilities?.handDrawn && includeLargeFeatures) {
     const { OutputType, Svg2Roughjs } = await import('svg2roughjs');
-    const svg2roughjs = new Svg2Roughjs(`${enclosingDivID_selector}`, OutputType.SVG, {
+    const svg2roughjs = new Svg2Roughjs(enclosingDivID_selector, OutputType.SVG, {
       seed: config.handDrawnSeed,
     });
     const graphDiv = document.querySelector<SVGSVGElement>(idSelector)!;
@@ -458,13 +458,13 @@ const render = async function (
     if (!sketch) {
       throw new Error('sketch not found');
     }
-    const sketchHeight = sketch.getAttribute('height');
-    const sketchWidth = sketch.getAttribute('width');
+    const height = sketch.getAttribute('height');
+    const width = sketch.getAttribute('width');
 
     sketch.setAttribute('id', id);
     sketch.removeAttribute('height');
     sketch.setAttribute('width', '100%');
-    sketch.setAttribute('viewBox', `0 0 ${sketchWidth} ${sketchHeight}`);
+    sketch.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
     svgCode = sketch.outerHTML;
   }
