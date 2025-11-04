@@ -7,7 +7,7 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 import DOMPurify from 'dompurify';
 import isEmpty from 'lodash-es/isEmpty.js';
-import packageJson from '../package.json' assert { type: 'json' };
+import packageJson from '../package.json' with { type: 'json' };
 import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
 import assignWithDepth from './assignWithDepth.js';
 import * as configApi from './config.js';
@@ -445,6 +445,29 @@ const render = async function (
 
   log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
   svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
+  if (config.look === 'handDrawn' && !diag.capabilities?.handDrawn && includeLargeFeatures) {
+    const { OutputType, Svg2Roughjs } = await import('svg2roughjs');
+    const svg2roughjs = new Svg2Roughjs(`${enclosingDivID_selector}`, OutputType.SVG, {
+      seed: config.handDrawnSeed,
+    });
+    const graphDiv = document.querySelector<SVGSVGElement>(idSelector)!;
+    svg2roughjs.svg = graphDiv;
+    await svg2roughjs.sketch();
+    graphDiv.remove();
+    const sketch = document.querySelector<SVGSVGElement>(`${enclosingDivID_selector} > svg`);
+    if (!sketch) {
+      throw new Error('sketch not found');
+    }
+    const sketchHeight = sketch.getAttribute('height');
+    const sketchWidth = sketch.getAttribute('width');
+
+    sketch.setAttribute('id', id);
+    sketch.removeAttribute('height');
+    sketch.setAttribute('width', '100%');
+    sketch.setAttribute('viewBox', `0 0 ${sketchWidth} ${sketchHeight}`);
+
+    svgCode = sketch.outerHTML;
+  }
 
   if (isSandboxed) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
