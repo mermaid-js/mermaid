@@ -43,7 +43,7 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
   const group: SVGGroup = svg.append('g');
   group.attr('transform', 'translate(' + pieWidth / 2 + ',' + height / 2 + ')');
 
-  const { themeVariables } = globalConfig;
+  const { themeVariables, look } = globalConfig;
   let [outerStrokeWidth] = parseFontSize(themeVariables.pieOuterStrokeWidth);
   outerStrokeWidth ??= 2;
 
@@ -59,12 +59,14 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .innerRadius(radius * textPosition)
     .outerRadius(radius * textPosition);
 
-  group
-    .append('circle')
-    .attr('cx', 0)
-    .attr('cy', 0)
-    .attr('r', radius + outerStrokeWidth / 2)
-    .attr('class', 'pieOuterCircle');
+  if (look !== 'handDrawn') {
+    group
+      .append('circle')
+      .attr('cx', 0)
+      .attr('cy', 0)
+      .attr('r', radius + outerStrokeWidth / 2)
+      .attr('class', 'pieOuterCircle');
+  }
 
   const sections: Sections = db.getSections();
   const arcs: d3.PieArcDatum<D3Section>[] = createPieArcs(sections);

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hand Drawn Diagrams</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 48px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      h2 {
+        font-size: 24px;
+        margin-bottom: 12px;
+      }
+
+      h3 {
+        font-size: 18px;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        gap: 64px;
+      }
+
+      section.diagram-group {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      .diagram-example {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .diagram-row {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+
+      .diagram-panel {
+        flex: 1 1 420px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .diagram-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        font-weight: 500;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      @media (max-width: 960px) {
+        body {
+          padding: 20px;
+        }
+        .diagram-row {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hand-drawn Look Comparison</h1>
+    <main id="app"></main>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import { diagramData } from './mermaid-examples.esm.mjs';
+
+      mermaid.initialize({ startOnLoad: false });
+
+      const app = document.getElementById('app');
+      const seen = new Set();
+
+      const ensureObject = (value) =>
+        value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+
+      let renderIndex = 0;
+
+      const renderDiagram = async (target, source, overrides = {}) => {
+        const id = `diagram-${renderIndex++}`;
+        const config = {
+          startOnLoad: false,
+          ...overrides,
+        };
+
+        mermaid.initialize(config);
+
+        try {
+          const { svg, bindFunctions } = await mermaid.render(id, source);
+          target.innerHTML = svg;
+          if (typeof bindFunctions === 'function') {
+            bindFunctions(target);
+          }
+        } catch (error) {
+          console.error('Failed to render diagram', { id, error });
+          target.innerHTML = '';
+          const pre = document.createElement('pre');
+          pre.className = 'diagram-error';
+          pre.textContent = String(error);
+          target.appendChild(pre);
+        }
+      };
+
+      const createPanel = (label) => {
+        const panel = document.createElement('article');
+        panel.className = 'diagram-panel';
+
+        const heading = document.createElement('div');
+        heading.className = 'diagram-label';
+        heading.textContent = label;
+        panel.appendChild(heading);
+
+        const surface = document.createElement('div');
+        surface.className = 'diagram-surface';
+        panel.appendChild(surface);
+
+        return { panel, surface };
+      };
+
+      const bootstrap = async () => {
+        const fragment = document.createDocumentFragment();
+
+        const groups = diagramData.filter((group) => {
+          if (!group || seen.has(group.id)) {
+            return false;
+          }
+          seen.add(group.id);
+          return Array.isArray(group.examples) && group.examples.length > 0;
+        });
+
+        for (const group of groups) {
+          const groupSection = document.createElement('section');
+          groupSection.className = 'diagram-group';
+
+          const groupHeading = document.createElement('h2');
+          groupHeading.textContent = group.name ?? group.id;
+          groupSection.appendChild(groupHeading);
+
+          for (const example of group.examples) {
+            const exampleWrapper = document.createElement('div');
+            exampleWrapper.className = 'diagram-example';
+
+            const exampleHeading = document.createElement('h3');
+            exampleHeading.textContent = example.title ?? 'Example';
+            exampleWrapper.appendChild(exampleHeading);
+
+            const row = document.createElement('div');
+            row.className = 'diagram-row';
+
+            const defaultPanel = createPanel('Default config');
+            const handPanel = createPanel('config.look: handDrawn');
+
+            row.append(defaultPanel.panel, handPanel.panel);
+            exampleWrapper.appendChild(row);
+            groupSection.appendChild(exampleWrapper);
+
+            await renderDiagram(defaultPanel.surface, example.code);
+            await renderDiagram(handPanel.surface, example.code, {
+              look: 'handDrawn',
+              handDrawnSeed: 42,
+            });
+          }
+
+          fragment.appendChild(groupSection);
+        }
+
+        app.appendChild(fragment);
+        if (window.Cypress) {
+          window.rendered = true;
+        }
+      };
+
+      bootstrap().catch((error) => {
+        console.error('Failed to bootstrap hand-drawn comparison page', error);
+      });
+    </script>
+  </body>
+</html>

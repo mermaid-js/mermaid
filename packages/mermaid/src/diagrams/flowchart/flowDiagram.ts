@@ -13,6 +13,9 @@ export const diagram = {
     return new FlowDB();
   },
   renderer,
+  capabilities: {
+    handDrawn: true,
+  },
   styles: flowStyles,
   init: (cnf: MermaidConfig) => {
     if (!cnf.flowchart) {
