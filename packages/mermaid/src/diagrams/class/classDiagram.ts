@@ -10,6 +10,9 @@ export const diagram: DiagramDefinition = {
   get db() {
     return new ClassDB();
   },
+  capabilities: {
+    handDrawn: true,
+  },
   renderer,
   styles,
   init: (cnf) => {
