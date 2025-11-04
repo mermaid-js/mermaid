@@ -81,7 +81,7 @@ const createLabel = async (_vertexText, style, isTitle, isNode) => {
     return vertexNode;
   } else {
     const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
+    svgLabel.setAttribute('style', style ? style.replace('color:', 'fill:') : '');
     let rows = [];
     if (typeof vertexText === 'string') {
       rows = vertexText.split(/\\n|\n|<br\s*\/?>/gi);
