@@ -895,6 +895,24 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
+It is possible to specify a starting value and an increment value for automatic numbering. Both the starting value and increment value can include decimals up to the hundredths place.
+
+Use the following syntax in your diagram definition:
+
+```
+autonumber <start> <increment>
+```
+
+For example:
+
+```mermaid-example
+autonumber 1.5 0.25
+```
+
+```mermaid
+autonumber 1.5 0.25
+```
+
 ## Actor Menus
 
 Actors can have popup-menus containing individualized links to external pages. For example, if an actor represented a web service, useful links might include a link to the service health dashboard, repo containing the code for the service, or a wiki page describing the service.
