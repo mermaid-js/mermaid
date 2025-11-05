@@ -72,7 +72,7 @@ export const addDiagrams = () => {
     }
   );
 
-  if (includeLargeFeatures) {
+  if (injected.includeLargeFeatures) {
     registerLazyLoadedDiagrams(flowchartElk, mindmap, architecture);
   }
 

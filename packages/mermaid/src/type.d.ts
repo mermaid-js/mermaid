@@ -1,2 +1,5 @@
 // eslint-disable-next-line no-var
-declare var includeLargeFeatures: boolean;
+declare var injected: {
+  version: string;
+  includeLargeFeatures: boolean;
+};
