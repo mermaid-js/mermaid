@@ -217,6 +217,28 @@
      </pre>
     <hr />
 
+    <pre class="mermaid">
+    C4Context
+    title Line Style Examples for C4 Relations
+
+    Person(user, "User", "A system user")
+    System(webApp, "Web Application", "Main web application")
+    System_Ext(api, "External API", "Third-party API service")
+    SystemDb(database, "Database", "Application database")
+    System(cache, "Cache", "Redis cache layer")
+    
+    Rel(user, webApp, "Uses", "HTTPS")
+    Rel(webApp, api, "Calls", "REST/JSON")
+    Rel(webApp, database, "Reads/Writes", "SQL")
+    BiRel(webApp, cache, "Caches data", "Redis Protocol")
+    
+    UpdateRelStyle(user, webApp, $lineStyle="solid", $lineColor="blue")
+    UpdateRelStyle(webApp, api, $lineStyle="dashed", $lineColor="red")
+    UpdateRelStyle(webApp, database, $lineStyle="dotted", $lineColor="green")
+    UpdateRelStyle(webApp, cache, $lineStyle="dashed", $lineColor="orange", $textColor="orange")
+    </pre>
+    <hr />
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       const ALLOWED_TAGS = [
