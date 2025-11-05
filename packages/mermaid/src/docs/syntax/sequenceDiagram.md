@@ -607,6 +607,8 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
+### Start and Increment values (v<MERMAID_RELEASE_VERSION>+)
+
 It is possible to specify a starting value and an increment value for automatic numbering. Both the starting value and increment value can include decimals up to the hundredths place.
 
 Use the following syntax in your diagram definition:
