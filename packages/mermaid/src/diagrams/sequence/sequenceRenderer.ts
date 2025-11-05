@@ -602,6 +602,15 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       x = 3.5;
     }
 
+    let fontSize = '12px';
+    const sequenceIndexLength = sequenceIndex.toString().length;
+
+    if (sequenceIndexLength > 5) {
+      fontSize = '7px';
+    } else if (sequenceIndexLength > 3) {
+      fontSize = '9px';
+    }
+
     diagram
       .append('line')
       .attr('x1', startx)
@@ -617,7 +626,7 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
       .attr('x', startx)
       .attr('y', lineStartY + 4)
       .attr('font-family', 'sans-serif')
-      .attr('font-size', '12px')
+      .attr('font-size', fontSize)
       .attr('text-anchor', 'middle')
       .attr('class', 'sequenceNumber')
       .text(sequenceIndex)
