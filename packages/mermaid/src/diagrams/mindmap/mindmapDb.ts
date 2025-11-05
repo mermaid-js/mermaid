@@ -204,7 +204,7 @@ export class MindmapDB {
     // For other nodes, inherit parent's section number
     if (node.children) {
       for (const [index, child] of node.children.entries()) {
-        const childSectionNumber = node.level === 0 ? (index % MAX_SECTIONS) - 1 : sectionNumber;
+        const childSectionNumber = node.level === 0 ? index % (MAX_SECTIONS - 1) : sectionNumber;
         this.assignSections(child, childSectionNumber);
       }
     }
