@@ -128,7 +128,7 @@ export async function insertMindmapIcon(
   }
 
   const { iconSize, iconPadding, shapeType } = config;
-  const section = node.section ?? 0;
+  const section = node.section === undefined ? -1 : node.section;
 
   let iconName = node.icon;
   const isCssFormat = iconName.includes(' ');
@@ -171,6 +171,7 @@ export async function insertMindmapIcon(
       }
 
       iconElem.attr('transform', `translate(${iconX}, ${iconY})`);
+      // Use currentColor to inherit label color - works for all shapes including bang
       iconElem.attr('style', 'color: currentColor;');
       return;
     }
