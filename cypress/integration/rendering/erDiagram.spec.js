@@ -445,7 +445,7 @@ ORDER ||--|{ LINE-ITEM : contains
         { logLevel: 1 }
       );
     });
-    it('should render ER diagram with numeric entity names and attributes', () => {
+    it('should render ER diagram with standalone numeric entities', () => {
       imgSnapshotTest(
         `erDiagram
          PRODUCT ||--o{ ORDER-ITEM : has
