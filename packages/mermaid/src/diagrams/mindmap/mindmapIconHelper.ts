@@ -193,7 +193,7 @@ export async function insertMindmapIcon(
     }
     default: {
       const nodeWidth = node.width || 100;
-      iconX = -nodeWidth / 2 + iconPadding;
+      iconX = -nodeWidth / 2;
       break;
     }
   }
