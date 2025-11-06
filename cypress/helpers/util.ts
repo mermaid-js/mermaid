@@ -6,6 +6,7 @@ interface CypressConfig {
   listUrl?: boolean;
   listId?: string;
   name?: string;
+  screenshot?: boolean;
 }
 type CypressMermaidConfig = MermaidConfig & CypressConfig;
 
@@ -14,7 +15,7 @@ interface CodeObject {
   mermaid: CypressMermaidConfig;
 }
 
-const utf8ToB64 = (str: string): string => {
+export const utf8ToB64 = (str: string): string => {
   return Buffer.from(decodeURIComponent(encodeURIComponent(str))).toString('base64');
 };
 
@@ -22,7 +23,7 @@ const batchId: string =
   'mermaid-batch-' +
   (Cypress.env('useAppli')
     ? Date.now().toString()
-    : Cypress.env('CYPRESS_COMMIT') || Date.now().toString());
+    : (Cypress.env('CYPRESS_COMMIT') ?? Date.now().toString()));
 
 export const mermaidUrl = (
   graphStr: string | string[],
@@ -61,9 +62,7 @@ export const imgSnapshotTest = (
     sequence: {
       ...(_options.sequence ?? {}),
       actorFontFamily: 'courier',
-      noteFontFamily: _options.sequence?.noteFontFamily
-        ? _options.sequence.noteFontFamily
-        : 'courier',
+      noteFontFamily: _options.sequence?.noteFontFamily ?? 'courier',
       messageFontFamily: 'courier',
     },
   };
@@ -92,7 +91,7 @@ export const renderGraph = (
 
 export const openURLAndVerifyRendering = (
   url: string,
-  options: CypressMermaidConfig,
+  { screenshot = true, ...options }: CypressMermaidConfig,
   validation?: any
 ): void => {
   const name: string = (options.name ?? cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
@@ -100,12 +99,16 @@ export const openURLAndVerifyRendering = (
   cy.visit(url);
   cy.window().should('have.property', 'rendered', true);
   cy.get('svg').should('be.visible');
+  // cspell:ignore viewbox
+  cy.get('svg').should('not.have.attr', 'viewbox');
 
   if (validation) {
     cy.get('svg').should(validation);
   }
 
-  verifyScreenshot(name);
+  if (screenshot) {
+    verifyScreenshot(name);
+  }
 };
 
 export const verifyScreenshot = (name: string): void => {

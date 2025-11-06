@@ -3,7 +3,7 @@ import "../common/common";
 
 entry Packet:
   NEWLINE*
-  "packet-beta"
+  ("packet"| "packet-beta")
   (
     TitleAndAccessibilities
     | blocks+=PacketBlock
@@ -12,5 +12,10 @@ entry Packet:
 ;
 
 PacketBlock:
-  start=INT('-' end=INT)? ':' label=STRING EOL
+  (
+    start=INT('-' end=INT)?
+    | '+' bits=INT
+  )
+  ':' label=STRING
+  EOL
 ;

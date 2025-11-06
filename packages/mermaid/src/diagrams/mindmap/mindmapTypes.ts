@@ -1,5 +1,4 @@
 import type { RequiredDeep } from 'type-fest';
-import type mindmapDb from './mindmapDb.js';
 
 export interface MindmapNode {
   id: number;
@@ -16,7 +15,7 @@ export interface MindmapNode {
   icon?: string;
   x?: number;
   y?: number;
+  isRoot?: boolean;
 }
 
 export type FilledMindMapNode = RequiredDeep<MindmapNode>;
-export type MindmapDB = typeof mindmapDb;

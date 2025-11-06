@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import type { MermaidBuildOptions } from './util.js';
@@ -31,7 +31,15 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
       // mermaid.js
       { ...iifeOptions },
       // mermaid.min.js
-      { ...iifeOptions, minify: true, metafile: shouldVisualize }
+      { ...iifeOptions, minify: true, metafile: shouldVisualize },
+      // mermaid.tiny.min.js
+      {
+        ...iifeOptions,
+        minify: true,
+        includeLargeFeatures: false,
+        metafile: shouldVisualize,
+        sourcemap: false,
+      }
     );
   }
   if (entryName === 'mermaid-zenuml') {
@@ -70,6 +78,21 @@ const handler = (e) => {
   process.exit(1);
 };
 
+const buildTinyMermaid = async () => {
+  await mkdir('./packages/tiny/dist', { recursive: true });
+  await rename(
+    './packages/mermaid/dist/mermaid.tiny.min.js',
+    './packages/tiny/dist/mermaid.tiny.js'
+  );
+  // Copy version from mermaid's package.json to tiny's package.json
+  const mermaidPkg = JSON.parse(await readFile('./packages/mermaid/package.json', 'utf8'));
+  const tinyPkg = JSON.parse(await readFile('./packages/tiny/package.json', 'utf8'));
+  tinyPkg.version = mermaidPkg.version;
+
+  await writeFile('./packages/tiny/package.json', JSON.stringify(tinyPkg, null, 2) + '\n');
+  await cp('./packages/mermaid/CHANGELOG.md', './packages/tiny/CHANGELOG.md');
+};
+
 const main = async () => {
   await generateLangium();
   await mkdir('stats', { recursive: true });
@@ -78,6 +101,7 @@ const main = async () => {
   for (const pkg of packageNames) {
     await buildPackage(pkg).catch(handler);
   }
+  await buildTinyMermaid();
 };
 
 void main();

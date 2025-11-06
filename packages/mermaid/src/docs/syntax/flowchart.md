@@ -576,7 +576,7 @@ flowchart TD
 
 You can use the `image` shape to include an image in your flowchart. The syntax for defining an image shape is as follows:
 
-```mermaid-example
+```
 flowchart TD
     A@{ img: "https://example.com/image.png", label: "Image Label", pos: "t", w: 60, h: 60, constraint: "off" }
 ```
@@ -590,11 +590,17 @@ flowchart TD
   - `b`
 - **w**: The width of the image. If not defined, this will default to the natural width of the image.
 - **h**: The height of the image. If not defined, this will default to the natural height of the image.
-- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the height (`h`) accordingly to the width (`w`). If not defined, this will default to `off` Possible values are:
+- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the width (`w`) accordingly to the height (`h`). If not defined, this will default to `off` Possible values are:
   - `on`
   - `off`
 
-These new shapes provide additional flexibility and visual appeal to your flowcharts, making them more informative and engaging.
+If you want to resize an image, but keep the same aspect ratio, set `h`, and set `constraint: on` to constrain the aspect ratio. E.g.
+
+```mermaid
+flowchart TD
+  %% My image with a constrained aspect ratio
+  A@{ img: "https://mermaid.js.org/favicon.svg", label: "My example image label", pos: "t", h: 60, constraint: "on" }
+```
 
 ## Links between nodes
 
@@ -980,6 +986,7 @@ flowchart LR
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
 
 ```mermaid-example
+---
 config:
   flowchart:
     htmlLabels: false
@@ -1134,15 +1141,46 @@ It is possible to style the type of curve used for lines between items, if the d
 Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRom`, `linear`, `monotoneX`, `monotoneY`,
 `natural`, `step`, `stepAfter`, and `stepBefore`.
 
+For a full list of available curves, including an explanation of custom curves, refer to
+the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
+
+Line styling can be achieved in two ways:
+
+1. Change the curve style of all the lines
+2. Change the curve style of a particular line
+
+#### Diagram level curve style
+
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
 ```
-%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+---
+config:
+  flowchart:
+    curve: stepBefore
+---
 graph LR
 ```
 
-For a full list of available curves, including an explanation of custom curves, refer to
-the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
+#### Edge level curve style using Edge IDs (v11.10.0+)
+
+You can assign IDs to [edges](#attaching-an-id-to-edges). After assigning an ID you can modify the line style by modifying the edge's `curve` property using the following syntax:
+
+```mermaid
+flowchart LR
+    A e1@==> B
+    A e2@--> C
+    e1@{ curve: linear }
+    e2@{ curve: natural }
+```
+
+```info
+Any edge curve style modified at the edge level overrides the diagram level style.
+```
+
+```info
+If the same edge is modified multiple times the last modification will be rendered.
+```
 
 ### Styling a node
 
@@ -1252,7 +1290,7 @@ flowchart TD
 
 There are two ways to display these FontAwesome icons:
 
-### Register FontAwesome icon packs (v<MERMAID_RELEASE_VERSION>+)
+### Register FontAwesome icon packs (v11.7.0+)
 
 You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
 

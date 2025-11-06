@@ -417,7 +417,7 @@ class C13["With Città foreign language"]
                      note "This is a keyword: ${keyword}. It truly is."
                   `;
       parser.parse(str);
-      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+      expect(classDb.getNote(0).text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
     });
 
     it.each(keywords)(
@@ -427,7 +427,7 @@ class C13["With Città foreign language"]
                       note "${keyword}"`;
 
         parser.parse(str);
-        expect(classDb.getNotes()[0].text).toEqual(`${keyword}`);
+        expect(classDb.getNote(0).text).toEqual(`${keyword}`);
       }
     );
 
@@ -441,7 +441,7 @@ class C13["With Città foreign language"]
                    `;
 
       parser.parse(str);
-      expect(classDb.getNotes()[0].text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
+      expect(classDb.getNote(0).text).toEqual(`This is a keyword: ${keyword}. It truly is.`);
     });
 
     it.each(keywords)(
@@ -456,7 +456,7 @@ class C13["With Città foreign language"]
                     `;
 
         parser.parse(str);
-        expect(classDb.getNotes()[0].text).toEqual(`${keyword}`);
+        expect(classDb.getNote(0).text).toEqual(`${keyword}`);
       }
     );
 
@@ -1069,6 +1069,14 @@ describe('given a class diagram with members and methods ', function () {
         '}';
 
       parser.parse(str);
+    });
+    it('should handle an empty class body with {}', function () {
+      const str = 'classDiagram\nclass EmptyClass {}';
+      parser.parse(str);
+      const actual = parser.yy.getClass('EmptyClass');
+      expect(actual.label).toBe('EmptyClass');
+      expect(actual.members.length).toBe(0);
+      expect(actual.methods.length).toBe(0);
     });
   });
 });

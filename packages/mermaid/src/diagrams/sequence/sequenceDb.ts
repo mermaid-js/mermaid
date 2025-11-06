@@ -1,4 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import * as yaml from 'js-yaml';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
@@ -13,6 +14,7 @@ import {
   setDiagramTitle,
 } from '../common/commonDb.js';
 import type { Actor, AddMessageParams, Box, Message, Note } from './types.js';
+import type { ParticipantMetaData } from '../../types.js';
 
 interface SequenceState {
   prevActor?: string;
@@ -62,6 +64,30 @@ const LINETYPE = {
   PAR_OVER_START: 32,
   BIDIRECTIONAL_SOLID: 33,
   BIDIRECTIONAL_DOTTED: 34,
+
+  SOLID_TOP: 41,
+  SOLID_BOTTOM: 42,
+  STICK_TOP: 43,
+  STICK_BOTTOM: 44,
+
+  SOLID_ARROW_TOP_REVERSE: 45,
+  SOLID_ARROW_BOTTOM_REVERSE: 46,
+  STICK_ARROW_TOP_REVERSE: 47,
+  STICK_ARROW_BOTTOM_REVERSE: 48,
+
+  SOLID_TOP_DOTTED: 51,
+  SOLID_BOTTOM_DOTTED: 52,
+  STICK_TOP_DOTTED: 53,
+  STICK_BOTTOM_DOTTED: 54,
+
+  SOLID_ARROW_TOP_REVERSE_DOTTED: 55,
+  SOLID_ARROW_BOTTOM_REVERSE_DOTTED: 56,
+  STICK_ARROW_TOP_REVERSE_DOTTED: 57,
+  STICK_ARROW_BOTTOM_REVERSE_DOTTED: 58,
+
+  CENTRAL_CONNECTION: 59,
+  CENTRAL_CONNECTION_REVERSE: 60,
+  CENTRAL_CONNECTION_DUAL: 61,
 } as const;
 
 const ARROWTYPE = {
@@ -73,6 +99,17 @@ const PLACEMENT = {
   LEFTOF: 0,
   RIGHTOF: 1,
   OVER: 2,
+} as const;
+
+export const PARTICIPANT_TYPE = {
+  ACTOR: 'actor',
+  BOUNDARY: 'boundary',
+  COLLECTIONS: 'collections',
+  CONTROL: 'control',
+  DATABASE: 'database',
+  ENTITY: 'entity',
+  PARTICIPANT: 'participant',
+  QUEUE: 'queue',
 } as const;
 
 export class SequenceDB implements DiagramDB {
@@ -119,9 +156,22 @@ export class SequenceDB implements DiagramDB {
     id: string,
     name: string,
     description: { text: string; wrap?: boolean | null; type: string },
-    type: string
+    type: string,
+    metadata?: any
   ) {
     let assignedBox = this.state.records.currentBox;
+    let doc;
+    if (metadata !== undefined) {
+      let yamlData;
+      // detect if shapeData contains a newline character
+      if (!metadata.includes('\n')) {
+        yamlData = '{\n' + metadata + '\n}';
+      } else {
+        yamlData = metadata + '\n';
+      }
+      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as ParticipantMetaData;
+    }
+    type = doc?.type ?? type;
     const old = this.state.records.actors.get(id);
     if (old) {
       // If already set and trying to set to a new one throw error
@@ -218,7 +268,8 @@ export class SequenceDB implements DiagramDB {
     idTo?: Message['to'],
     message?: { text: string; wrap: boolean },
     messageType?: number,
-    activate = false
+    activate = false,
+    centralConnection?: number
   ) {
     if (messageType === this.LINETYPE.ACTIVE_END) {
       const cnt = this.activationCount(idFrom ?? '');
@@ -245,6 +296,7 @@ export class SequenceDB implements DiagramDB {
       wrap: message?.wrap ?? this.autoWrap(),
       type: messageType,
       activate,
+      centralConnection: centralConnection ?? 0,
     });
     return true;
   }
@@ -518,7 +570,7 @@ export class SequenceDB implements DiagramDB {
           });
           break;
         case 'addParticipant':
-          this.addActor(param.actor, param.actor, param.description, param.draw);
+          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
           break;
         case 'createParticipant':
           if (this.state.records.actors.has(param.actor)) {
@@ -527,7 +579,7 @@ export class SequenceDB implements DiagramDB {
             );
           }
           this.state.records.lastCreated = param.actor;
-          this.addActor(param.actor, param.actor, param.description, param.draw);
+          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
           this.state.records.createdActors.set(param.actor, this.state.records.messages.length);
           break;
         case 'destroyParticipant':
@@ -535,6 +587,12 @@ export class SequenceDB implements DiagramDB {
           this.state.records.destroyedActors.set(param.actor, this.state.records.messages.length);
           break;
         case 'activeStart':
+          this.addSignal(param.actor, undefined, undefined, param.signalType);
+          break;
+        case 'centralConnection':
+          this.addSignal(param.actor, undefined, undefined, param.signalType);
+          break;
+        case 'centralConnectionReverse':
           this.addSignal(param.actor, undefined, undefined, param.signalType);
           break;
         case 'activeEnd':
@@ -580,7 +638,14 @@ export class SequenceDB implements DiagramDB {
               this.state.records.lastDestroyed = undefined;
             }
           }
-          this.addSignal(param.from, param.to, param.msg, param.signalType, param.activate);
+          this.addSignal(
+            param.from,
+            param.to,
+            param.msg,
+            param.signalType,
+            param.activate,
+            param.centralConnection
+          );
           break;
         case 'boxStart':
           this.addBox(param.boxData);

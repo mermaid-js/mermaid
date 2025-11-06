@@ -40,7 +40,7 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   let TEXT_PADDING = config.er?.entityPadding ?? 6;
 
   const { cssStyles } = node;
-  const { labelStyles } = styles2String(node);
+  const { labelStyles, nodeStyles } = styles2String(node);
 
   // Draw rect if no attributes are found
   if (entityNode.attributes.length === 0 && node.label) {
@@ -294,6 +294,18 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   }
 
   updateNodeBounds(node, rect);
+
+  if (nodeStyles && node.look !== 'handDrawn') {
+    const allStyle = nodeStyles.split(';');
+    const strokeStyles = allStyle
+      ?.filter((e) => {
+        return e.includes('stroke');
+      })
+      ?.map((s) => `${s}`)
+      .join('; ');
+    shapeSvg.selectAll('path').attr('style', strokeStyles ?? '');
+    shapeSvg.selectAll('.row-rect-even path').attr('style', nodeStyles);
+  }
 
   node.intersect = function (point) {
     return intersect.rect(node, point);
