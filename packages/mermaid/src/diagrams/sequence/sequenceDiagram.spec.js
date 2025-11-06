@@ -2621,5 +2621,45 @@ Bob->>Alice:Got it!
       }
       expect(error).toBe(true);
     });
+
+    it('should parse participant with stereotype and alias', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice@{ "type" : "boundary" } as Public API
+      participant Bob@{ "type" : "control" } as Controller
+      Alice->>Bob: Request
+      Bob-->>Alice: Response
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').type).toBe('boundary');
+      expect(actors.get('Alice').description).toBe('Public API');
+      expect(actors.get('Bob').type).toBe('control');
+      expect(actors.get('Bob').description).toBe('Controller');
+    });
+
+    it('should parse actor with stereotype and alias', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      actor A@{ "type" : "database" } AS Database Server
+      actor B@{ "type" : "queue" } as Message Queue
+      A->>B: Send message
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('A').type).toBe('database');
+      expect(actors.get('A').description).toBe('Database Server');
+      expect(actors.get('B').type).toBe('queue');
+      expect(actors.get('B').description).toBe('Message Queue');
+    });
+
+    it('should parse participant with stereotype and simple alias', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant API@{ "type" : "boundary" } AS Public API
+      API->>API: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('API').type).toBe('boundary');
+      expect(actors.get('API').description).toBe('Public API');
+    });
   });
 });

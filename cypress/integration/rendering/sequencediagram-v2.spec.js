@@ -776,5 +776,128 @@ describe('Sequence Diagram Special Cases', () => {
         );
       });
     });
+
+    describe('Participant Stereotypes with Aliases', () => {
+      it('should render participants with stereotypes and aliases', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          participant API@{ "type" : "boundary" } as Public API
+          participant Auth@{ "type" : "control" } as Auth Controller
+          participant DB@{ "type" : "database" } as User Database
+          participant Cache@{ "type" : "entity" } as Cache Layer
+          API ->> Auth: Authenticate request
+          Auth ->> DB: Query user
+          DB -->> Auth: User data
+          Auth ->> Cache: Store session
+          Cache -->> Auth: Confirmed
+          Auth -->> API: Token`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render actors with stereotypes and aliases', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          actor U@{ "type" : "actor" } as End User
+          actor A@{ "type" : "boundary" } as API Gateway
+          actor S@{ "type" : "control" } as Service Layer
+          actor D@{ "type" : "database" } as Data Store
+          U ->> A: Send request
+          A ->> S: Process
+          S ->> D: Persist
+          D -->> S: Success
+          S -->> A: Response
+          A -->> U: Result`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render mixed participants and actors with stereotypes and aliases', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          actor Client@{ "type" : "actor" } AS Mobile Client
+          participant Gateway@{ "type" : "boundary" } as API Gateway
+          participant OrderSvc@{ "type" : "control" } as Order Service
+          participant Queue@{ "type" : "queue" } as Message Queue
+          participant DB@{ "type" : "database" } as Order Database
+          participant Logs@{ "type" : "collections" } as Audit Logs
+          Client ->> Gateway: Place order
+          Gateway ->> OrderSvc: Validate order
+          OrderSvc ->> Queue: Queue for processing  as well
+          OrderSvc ->> DB: Save order
+          OrderSvc ->> Logs: Log transaction
+          Queue -->> OrderSvc: Processing started AS Well
+          DB -->> OrderSvc: Order saved
+          Logs -->> OrderSvc: Logged
+          OrderSvc -->> Gateway: Order confirmed
+          Gateway -->> Client: Confirmation`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render stereotypes with aliases in boxes', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          box rgb(200,220,255) Frontend Layer
+            actor User@{ "type" : "actor" } as End User
+            participant UI@{ "type" : "boundary" } as User Interface
+          end
+          box rgb(255,220,200) Backend Layer
+            participant API@{ "type" : "boundary" } as REST API
+            participant Svc@{ "type" : "control" } as Business Logic
+          end
+          box rgb(220,255,200) Data Layer
+            participant DB@{ "type" : "database" } as Primary DB
+            participant Cache@{ "type" : "entity" } as Cache Store
+          end
+          User ->> UI: Click button
+          UI ->> API: HTTP request
+          API ->> Svc: Process
+          Svc ->> Cache: Check cache
+          Cache -->> Svc: Cache miss
+          Svc ->> DB: Query data
+          DB -->> Svc: Data
+          Svc ->> Cache: Update cache
+          Svc -->> API: Response
+          API -->> UI: Data
+          UI -->> User: Display`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render stereotypes with aliases and complex interactions', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          participant Web@{ "type" : "boundary" } as Web Portal
+          participant Auth@{ "type" : "control" } as Auth Service
+          participant UserDB@{ "type" : "database" } as User DB
+          participant Queue@{ "type" : "queue" } as Event Queue
+          participant Audit@{ "type" : "collections" } as Audit Trail
+          Web ->> Auth: Login request
+          activate Auth
+          Auth ->> UserDB: Verify credentials
+          activate UserDB
+          UserDB -->> Auth: User found
+          deactivate UserDB
+          alt Valid credentials
+            Auth ->> Queue: Publish login event
+            Auth ->> Audit: Log success
+            par Parallel processing
+              Queue -->> Auth: Event queued
+              and
+              Audit -->> Auth: Logged
+            end
+            Auth -->> Web: Success token
+          else Invalid credentials
+            Auth ->> Audit: Log failure
+            Audit -->> Auth: Logged
+            Auth --x Web: Access denied
+          end
+          deactivate Auth
+          Note over Web,Audit: All interactions logged`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+    });
   });
 });
