@@ -333,7 +333,7 @@ const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Prom
     return text.replace(katexRegex, 'MathML is unsupported in this environment.');
   }
 
-  if (includeLargeFeatures) {
+  if (injected.includeLargeFeatures) {
     const { default: katex } = await import('katex');
     const outputMode =
       config.forceLegacyMathML || (!isMathMLSupported() && config.legacyMathML)

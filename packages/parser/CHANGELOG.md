@@ -1,5 +1,15 @@
 # @mermaid-js/parser
 
+## 0.6.3
+
+### Patch Changes
+
+- [#7051](https://github.com/mermaid-js/mermaid/pull/7051) [`63df702`](https://github.com/mermaid-js/mermaid/commit/63df7021462e8dc1f2aaecb9c5febbbbde4c38e3) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - Add validation for negative values in pie charts:
+
+  Prevents crashes during parsing by validating values post-parsing.
+
+  Provides clearer, user-friendly error messages for invalid negative inputs.
+
 ## 0.6.2
 
 ### Patch Changes

@@ -52,6 +52,8 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [GitHub Writer](https://github.com/ckeditor/github-writer)
   - [SVG diagram generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
+- [GNU Octave](https://octave.org/) ✅
+  - [octave_mermaid_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
 - [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
 - [MonsterWriter](https://www.monsterwriter.com/) ✅
 - [Joplin](https://joplinapp.org) ✅
@@ -267,6 +269,7 @@ Communication tools and platforms
   - [reveal.js-mermaid-plugin](https://github.com/ludwick/reveal.js-mermaid-plugin)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
+- [speccharts: Turn your test suites into specification diagrams](https://github.com/arnaudrenaud/speccharts)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
 <!--- cspell:ignore Blazorade HueHive --->
