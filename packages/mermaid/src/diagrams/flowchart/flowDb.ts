@@ -139,6 +139,9 @@ export class FlowDB implements DiagramDB {
       if (edgeDoc?.animation !== undefined) {
         edge.animation = edgeDoc.animation;
       }
+      if (edgeDoc?.curve !== undefined) {
+        edge.interpolate = edgeDoc.curve;
+      }
       return;
     }
 
@@ -403,7 +406,8 @@ You have to call mermaid.initialize.`
    *
    */
   public setDirection(dir: string) {
-    this.direction = dir;
+    this.direction = dir.trim();
+
     if (/.*</.exec(this.direction)) {
       this.direction = 'RL';
     }

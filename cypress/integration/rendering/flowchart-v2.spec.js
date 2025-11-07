@@ -1113,4 +1113,90 @@ end
       );
     });
   });
+  describe('Flowchart Node Shape Rendering', () => {
+    it('should render a stadium-shaped node', () => {
+      imgSnapshotTest(
+        `flowchart TB
+          A(["Start"]) --> n1["Untitled Node"]
+          A --> n2["Untitled Node"]
+        `,
+        {}
+      );
+    });
+    it('should render a diamond-shaped node using shape config', () => {
+      imgSnapshotTest(
+        `flowchart BT
+          n2["Untitled Node"] --> n1["Diamond"]
+          n1@{ shape: diam}
+        `,
+        {}
+      );
+    });
+    it('should render a rounded rectangle and a normal rectangle', () => {
+      imgSnapshotTest(
+        `flowchart BT
+        n2["Untitled Node"] --> n1["Rounded Rectangle"]
+        n3["Untitled Node"] --> n1
+        n1@{ shape: rounded}
+        n3@{ shape: rect}
+    `,
+        {}
+      );
+    });
+  });
+
+  it('6617: Per Link Curve Styling using edge Ids', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A e1@-->B e5@--> E
+      E e7@--> D
+      B e3@-->D
+      A e2@-->C e4@-->D
+      C e6@--> F
+      F e8@--> D
+      e1@{ curve: natural }
+      e2@{ curve: stepAfter }
+      e3@{ curve: monotoneY }
+      e4@{ curve: bumpY }
+      e5@{ curve: linear }
+      e6@{ curve: catmullRom }
+      e7@{ curve: cardinal }
+      `
+    );
+  });
+
+  describe('when rendering unsuported markdown', () => {
+    const graph = `flowchart TB
+    mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"\`<**1**1\`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["\`How to fix **fix**\`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["\`Github, Gitlab, BitBucket, etc.\`"]
+    a["1."]
+    b["- x"]
+      `;
+
+    it('should render raw strings', () => {
+      imgSnapshotTest(graph);
+    });
+
+    it('should render raw strings with htmlLabels: false', () => {
+      imgSnapshotTest(graph, { htmlLabels: false });
+    });
+  });
+
+  it('V2 - 17: should apply class def colour to edge label', () => {
+    imgSnapshotTest(
+      ` graph LR
+    id1(Start) link@-- "Label" -->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+
+class id2 myClass
+classDef myClass fill:#bbf,stroke:#f66,stroke-width:2px,color:white,stroke-dasharray: 5 5
+class link myClass
+`
+    );
+  });
 });

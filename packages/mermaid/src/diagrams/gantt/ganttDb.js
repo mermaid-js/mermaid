@@ -167,7 +167,10 @@ export const getTasks = function () {
 };
 
 export const isInvalidDate = function (date, dateFormat, excludes, includes) {
-  if (includes.includes(date.format(dateFormat.trim()))) {
+  const formattedDate = date.format(dateFormat.trim());
+  const dateOnly = date.format('YYYY-MM-DD');
+
+  if (includes.includes(formattedDate) || includes.includes(dateOnly)) {
     return false;
   }
   if (
@@ -180,7 +183,7 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
   if (excludes.includes(date.format('dddd').toLowerCase())) {
     return true;
   }
-  return excludes.includes(date.format(dateFormat.trim()));
+  return excludes.includes(formattedDate) || excludes.includes(dateOnly);
 };
 
 export const setWeekday = function (txt) {
@@ -265,7 +268,9 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
 
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
-
+  if ((dateFormat.trim() === 'x' || dateFormat.trim() === 'X') && /^\d+$/.test(str)) {
+    return new Date(Number(str));
+  }
   // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
   const afterStatement = afterRePattern.exec(str);

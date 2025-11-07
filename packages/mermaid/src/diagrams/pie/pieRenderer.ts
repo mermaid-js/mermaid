@@ -10,20 +10,14 @@ import { cleanAndMerge, parseFontSize } from '../../utils.js';
 import type { D3Section, PieDB, Sections } from './pieTypes.js';
 
 const createPieArcs = (sections: Sections): d3.PieArcDatum<D3Section>[] => {
-  // Compute the position of each group on the pie:
+  const sum = [...sections.values()].reduce((acc, val) => acc + val, 0);
+
   const pieData: D3Section[] = [...sections.entries()]
-    .map((element: [string, number]): D3Section => {
-      return {
-        label: element[0],
-        value: element[1],
-      };
-    })
-    .sort((a: D3Section, b: D3Section): number => {
-      return b.value - a.value;
-    });
-  const pie: d3.Pie<unknown, D3Section> = d3pie<D3Section>().value(
-    (d3Section: D3Section): number => d3Section.value
-  );
+    .map(([label, value]) => ({ label, value }))
+    .filter((d) => (d.value / sum) * 100 >= 1) // Remove values < 1%
+    .sort((a, b) => b.value - a.value);
+
+  const pie: d3.Pie<unknown, D3Section> = d3pie<D3Section>().value((d) => d.value);
   return pie(pieData);
 };
 
@@ -89,13 +83,21 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     themeVariables.pie11,
     themeVariables.pie12,
   ];
+  let sum = 0;
+  sections.forEach((section) => {
+    sum += section;
+  });
+
+  // Filter out arcs that would render as 0%
+  const filteredArcs = arcs.filter((datum) => ((datum.data.value / sum) * 100).toFixed(0) !== '0');
+
   // Set the color scale
   const color: d3.ScaleOrdinal<string, 12, never> = scaleOrdinal(myGeneratedColors);
 
   // Build the pie chart: each part of the pie is a path that we build using the arc function.
   group
     .selectAll('mySlices')
-    .data(arcs)
+    .data(filteredArcs)
     .enter()
     .append('path')
     .attr('d', arcGenerator)
@@ -104,15 +106,11 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     })
     .attr('class', 'pieCircle');
 
-  let sum = 0;
-  sections.forEach((section) => {
-    sum += section;
-  });
   // Now add the percentage.
   // Use the centroid method to get the best coordinates.
   group
     .selectAll('mySlices')
-    .data(arcs)
+    .data(filteredArcs)
     .enter()
     .append('text')
     .text((datum: d3.PieArcDatum<D3Section>): string => {
@@ -133,15 +131,20 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .attr('class', 'pieTitleText');
 
   // Add the legends/annotations for each section
+  const allSectionData: D3Section[] = [...sections.entries()].map(([label, value]) => ({
+    label,
+    value,
+  }));
+
   const legend = group
     .selectAll('.legend')
-    .data(color.domain())
+    .data(allSectionData)
     .enter()
     .append('g')
     .attr('class', 'legend')
     .attr('transform', (_datum, index: number): string => {
       const height = LEGEND_RECT_SIZE + LEGEND_SPACING;
-      const offset = (height * color.domain().length) / 2;
+      const offset = (height * allSectionData.length) / 2;
       const horizontal = 12 * LEGEND_RECT_SIZE;
       const vertical = index * height - offset;
       return 'translate(' + horizontal + ',' + vertical + ')';
@@ -151,20 +154,18 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     .append('rect')
     .attr('width', LEGEND_RECT_SIZE)
     .attr('height', LEGEND_RECT_SIZE)
-    .style('fill', color)
-    .style('stroke', color);
+    .style('fill', (d) => color(d.label))
+    .style('stroke', (d) => color(d.label));
 
   legend
-    .data(arcs)
     .append('text')
     .attr('x', LEGEND_RECT_SIZE + LEGEND_SPACING)
     .attr('y', LEGEND_RECT_SIZE - LEGEND_SPACING)
-    .text((datum: d3.PieArcDatum<D3Section>): string => {
-      const { label, value } = datum.data;
+    .text((d) => {
       if (db.getShowData()) {
-        return `${label} [${value}]`;
+        return `${d.label} [${d.value}]`;
       }
-      return label;
+      return d.label;
     });
 
   const longestTextWidth = Math.max(
