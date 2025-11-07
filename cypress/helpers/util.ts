@@ -97,10 +97,18 @@ export const openURLAndVerifyRendering = (
 
   cy.visit(url);
   cy.window().should('have.property', 'rendered', true);
-  cy.get('svg').should('be.visible');
 
-  if (validation) {
-    cy.get('svg').should(validation);
+  // Handle sandbox mode where SVG is inside an iframe
+  if (options.securityLevel === 'sandbox') {
+    cy.get('iframe').should('be.visible');
+    if (validation) {
+      cy.get('iframe').should(validation);
+    }
+  } else {
+    cy.get('svg').should('be.visible');
+    if (validation) {
+      cy.get('svg').should(validation);
+    }
   }
 
   verifyScreenshot(name);
