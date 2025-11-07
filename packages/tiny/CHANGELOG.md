@@ -1,5 +1,44 @@
 # mermaid
 
+## 11.12.1
+
+### Patch Changes
+
+- [#7107](https://github.com/mermaid-js/mermaid/pull/7107) [`cbf8946`](https://github.com/mermaid-js/mermaid/commit/cbf89462acecac7a06f19843e8d48cb137df0753) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - fix: Updated the dependency dagre-d3-es to 7.0.13 to fix GHSA-cc8p-78qf-8p7q
+
+## 11.12.0
+
+### Minor Changes
+
+- [#6921](https://github.com/mermaid-js/mermaid/pull/6921) [`764b315`](https://github.com/mermaid-js/mermaid/commit/764b315dc16d0359add7c6b8e3ef7592e9bdc09c) Thanks [@quilicicf](https://github.com/quilicicf)! - feat: Add IDs in architecture diagrams
+
+### Patch Changes
+
+- [#6950](https://github.com/mermaid-js/mermaid/pull/6950) [`a957908`](https://github.com/mermaid-js/mermaid/commit/a9579083bfba367a4f4678547ec37ed7b61b9f5b) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - chore: Fix mindmap rendering in docs and apply tidytree layout
+
+- [#6826](https://github.com/mermaid-js/mermaid/pull/6826) [`1d36810`](https://github.com/mermaid-js/mermaid/commit/1d3681053b9168354e48e5763023b6305cd1ca72) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Ensure edge label color is applied when using classDef with edge IDs
+
+- [#6945](https://github.com/mermaid-js/mermaid/pull/6945) [`d318f1a`](https://github.com/mermaid-js/mermaid/commit/d318f1a13cd7429334a29c70e449074ec1cb9f68) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Resolve gantt chart crash due to invalid array length
+
+- [#6918](https://github.com/mermaid-js/mermaid/pull/6918) [`cfe9238`](https://github.com/mermaid-js/mermaid/commit/cfe9238882cbe95416db1feea3112456a71b6aaf) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - chore: revert marked dependency from ^15.0.7 to ^16.0.0
+  - Reverted marked package version to ^16.0.0 for better compatibility
+  - This is a dependency update that maintains API compatibility
+  - All tests pass with the updated version
+
+## 11.11.0
+
+### Minor Changes
+
+- [#6704](https://github.com/mermaid-js/mermaid/pull/6704) [`012530e`](https://github.com/mermaid-js/mermaid/commit/012530e98e9b8b80962ab270b6bb3b6d9f6ada05) Thanks [@omkarht](https://github.com/omkarht)! - feat: Added support for new participant types (`actor`, `boundary`, `control`, `entity`, `database`, `collections`, `queue`) in `sequenceDiagram`.
+
+- [#6802](https://github.com/mermaid-js/mermaid/pull/6802) [`c8e5027`](https://github.com/mermaid-js/mermaid/commit/c8e50276e877c4de7593a09ec458c99353e65af8) Thanks [@darshanr0107](https://github.com/darshanr0107)! - feat: Update mindmap rendering to support multiple layouts, improved edge intersections, and new shapes
+
+### Patch Changes
+
+- [#6905](https://github.com/mermaid-js/mermaid/pull/6905) [`33bc4a0`](https://github.com/mermaid-js/mermaid/commit/33bc4a0b4e2ca6d937bb0a8c4e2081b1362b2800) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Render newlines as spaces in class diagrams
+
+- [#6886](https://github.com/mermaid-js/mermaid/pull/6886) [`e0b45c2`](https://github.com/mermaid-js/mermaid/commit/e0b45c2d2b41c2a9038bf87646fa3ccd7560eb20) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Handle arrows correctly when auto number is enabled
+
 ## 11.10.0
 
 ### Minor Changes
@@ -154,7 +193,6 @@
 ### Minor Changes
 
 - [#6408](https://github.com/mermaid-js/mermaid/pull/6408) [`ad65313`](https://github.com/mermaid-js/mermaid/commit/ad653138e16765d095613a6e5de86dc5e52ac8f0) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: restore curve type configuration functionality for flowcharts. This fixes the issue where curve type settings were not being applied when configured through any of the following methods:
-
   - Config
   - Init directive (%%{ init: { 'flowchart': { 'curve': '...' } } }%%)
   - LinkStyle command (linkStyle default interpolate ...)
@@ -173,14 +211,12 @@
 ### Minor Changes
 
 - [#6187](https://github.com/mermaid-js/mermaid/pull/6187) [`7809b5a`](https://github.com/mermaid-js/mermaid/commit/7809b5a93fae127f45727071f5ff14325222c518) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - Flowchart new syntax for node metadata bugs
-
   - Incorrect label mapping for nodes when using `&`
   - Syntax error when `}` with trailing spaces before new line
 
 - [#6136](https://github.com/mermaid-js/mermaid/pull/6136) [`ec0d9c3`](https://github.com/mermaid-js/mermaid/commit/ec0d9c389aa6018043187654044c1e0b5aa4f600) Thanks [@knsv](https://github.com/knsv)! - Adding support for animation of flowchart edges
 
 - [#6373](https://github.com/mermaid-js/mermaid/pull/6373) [`05bdf0e`](https://github.com/mermaid-js/mermaid/commit/05bdf0e20e2629fe77513218fbd4e28e65f75882) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - Upgrade Requirement and ER diagram to use the common renderer flow
-
   - Added support for directions
   - Added support for hand drawn look
 

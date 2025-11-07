@@ -104,6 +104,7 @@ describe('more than one sequence diagram', () => {
       [
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Alice",
           "id": "0",
           "message": "Hello Bob, how are you?",
@@ -113,6 +114,7 @@ describe('more than one sequence diagram', () => {
         },
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Bob",
           "id": "1",
           "message": "I am good thanks!",
@@ -131,6 +133,7 @@ describe('more than one sequence diagram', () => {
       [
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Alice",
           "id": "0",
           "message": "Hello Bob, how are you?",
@@ -140,6 +143,7 @@ describe('more than one sequence diagram', () => {
         },
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Bob",
           "id": "1",
           "message": "I am good thanks!",
@@ -160,6 +164,7 @@ describe('more than one sequence diagram', () => {
       [
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "Alice",
           "id": "0",
           "message": "Hello John, how are you?",
@@ -169,6 +174,7 @@ describe('more than one sequence diagram', () => {
         },
         {
           "activate": false,
+          "centralConnection": 0,
           "from": "John",
           "id": "1",
           "message": "I am good thanks!",
@@ -178,6 +184,254 @@ describe('more than one sequence diagram', () => {
         },
       ]
     `);
+  });
+});
+
+describe('Central Connection Parsing', () => {
+  describe('when parsing central connection syntax', () => {
+    it('should parse actor ()->>() actor syntax as CENTRAL_CONNECTION_DUAL', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3); // addMessage + centralConnection + centralConnectionReverse
+
+      // Find the actual message (type: 'addMessage')
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL
+        activate: true,
+        type: 0, // SOLID (based on test output)
+      });
+    });
+
+    it('should parse actor ()-->>() actor syntax as CENTRAL_CONNECTION_DUAL', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()-->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3); // addMessage + centralConnection + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL
+        activate: true,
+        type: 1, // DOTTED (based on test output)
+      });
+    });
+
+    it('should parse actor ->>() actor syntax as CENTRAL_CONNECTION', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(2); // addMessage + centralConnection (no activation for this pattern)
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 59, // CENTRAL_CONNECTION
+        activate: true,
+        type: 0, // SOLID (based on actual parsing)
+      });
+    });
+
+    it('should parse actor ()-->> actor syntax as CENTRAL_CONNECTION_REVERSE', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()-->> Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(2); // addMessage + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 60, // CENTRAL_CONNECTION_REVERSE
+        activate: false,
+        type: 1, // DOTTED (based on test output)
+      });
+    });
+
+    it('should parse actor ()->> actor syntax as CENTRAL_CONNECTION_REVERSE', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()->> Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(2); // addMessage + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 60, // CENTRAL_CONNECTION_REVERSE
+        activate: false,
+        type: 0, // SOLID (based on test output)
+      });
+    });
+
+    it('should parse actor ()<<-->>() actor syntax as CENTRAL_CONNECTION_DUAL', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()<<-->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3); // addMessage + centralConnection + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL
+        activate: true,
+        type: 34, // BIDIRECTIONAL_DOTTED
+      });
+    });
+
+    it('should parse actor ()<<->>() actor syntax as CENTRAL_CONNECTION_DUAL', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()<<->>() Bob: Hello Bob, how are you?
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3); // addMessage + centralConnection + centralConnectionReverse
+
+      const actualMessage = messages.find((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessage).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        message: 'Hello Bob, how are you?',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL
+        activate: true,
+        type: 33, // BIDIRECTIONAL_SOLID
+      });
+    });
+
+    it('should handle multiple central connection types in one diagram', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        participant Charlie
+        Alice ()->>() Bob: Message 1
+        Bob ()-->> Charlie: Message 2
+        Charlie ()<<-->>() Alice: Message 3
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(8); // 3 addMessages + 5 central connection markers
+
+      // Filter to get only the actual messages
+      const actualMessages = messages.filter((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessages).toHaveLength(3);
+
+      expect(actualMessages[0]).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL (()->>())
+      });
+
+      expect(actualMessages[1]).toMatchObject({
+        from: 'Bob',
+        to: 'Charlie',
+        centralConnection: 60, // CENTRAL_CONNECTION_REVERSE (()-->>)
+      });
+
+      expect(actualMessages[2]).toMatchObject({
+        from: 'Charlie',
+        to: 'Alice',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL (()<<-->>())
+      });
+    });
+
+    it('should handle central connections with different arrow types', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ()-x() Bob: Cross message
+        Alice ()--x() Bob: Dotted cross message
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(6); // 2 addMessages + 4 central connection markers
+
+      const actualMessages = messages.filter((msg) => msg.type !== undefined && msg.from && msg.to);
+      expect(actualMessages).toHaveLength(2);
+
+      expect(actualMessages[0]).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL (()-x())
+        type: 3, // SOLID_CROSS
+      });
+
+      expect(actualMessages[1]).toMatchObject({
+        from: 'Alice',
+        to: 'Bob',
+        centralConnection: 61, // CENTRAL_CONNECTION_DUAL (()--x())
+        type: 4, // DOTTED_CROSS
+      });
+    });
+
+    it('should not break existing parsing without central connections', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice ->> Bob: Normal message
+        Bob -->> Alice: Normal dotted message
+        Alice -x Bob: Normal cross message
+      `);
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(3);
+
+      messages.forEach((msg) => {
+        expect(msg.centralConnection).toBe(0); // No central connection
+      });
+
+      expect(messages[0].type).toBe(0); // SOLID (based on actual parsing)
+      expect(messages[1].type).toBe(1); // DOTTED (based on actual parsing)
+      expect(messages[2].type).toBe(3); // SOLID_CROSS
+    });
   });
 });
 
@@ -2058,6 +2312,36 @@ Bob->>Alice:Got it!
     expect(messages[0].from).toBe('Alice');
     expect(messages[0].to).toBe('Bob');
   });
+
+  it('1 should parse ', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    actor Bob
+    actor Alice
+        Bob -|\\ Alice: Hello Alice, how are you?
+        Bob -|/ Alice: Hello Alice, how are you?
+        Bob -// Alice: Hello Alice, how are you?
+        Bob -\\\\ Alice: Hello Alice, how are you?
+        
+        Bob \\|- Alice: Hello Alice, how are you?
+        Bob /|- Alice: Hello Alice, how are you?
+        Bob //- Alice: Hello Alice, how are you?
+        Bob \\\\- Alice: Hello Alice, how are you?        
+    `);
+
+    const messages = diagram.db.getMessages();
+  });
+
+  it('2 should parse ', async () => {
+    const diagram = await Diagram.fromText(`
+    sequenceDiagram
+    actor Bob
+    actor Alice
+      Alice ()<<->>() Bob: hey?
+    `);
+
+    const messages = diagram.db.getMessages();
+  });
   describe('when parsing extended participant syntax', () => {
     it('should parse participants with different quote styles and whitespace', async () => {
       const diagram = await Diagram.fromText(`
@@ -2324,6 +2608,18 @@ Bob->>Alice:Got it!
       const actors = diagram.db.getActors();
       expect(actors.get('E').type).toBe('entity');
       expect(actors.get('E').description).toBe('E');
+    });
+    it('should handle fail parsing when alias token causes conflicts in participant definition', async () => {
+      let error = false;
+      try {
+        await Diagram.fromText(`
+        sequenceDiagram
+        participant SAS MyServiceWithMoreThan20Chars <br> service decription
+       `);
+      } catch (e) {
+        error = true;
+      }
+      expect(error).toBe(true);
     });
   });
 });

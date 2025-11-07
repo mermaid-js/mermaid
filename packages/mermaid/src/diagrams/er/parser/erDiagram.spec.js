@@ -1001,4 +1001,90 @@ describe('when parsing ER diagram it...', function () {
       }
     );
   });
+
+  describe('syntax fixes for special characters and numbers', function () {
+    describe('standalone entity names', function () {
+      it('should allow number "1" as standalone entity', function () {
+        erDiagram.parser.parse(`erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n1`);
+      });
+
+      it('should allow character "u" as standalone entity', function () {
+        erDiagram.parser.parse(`erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\nu`);
+      });
+
+      it('should allow decimal numbers as standalone entities', function () {
+        erDiagram.parser.parse(`erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n2.5`);
+        erDiagram.parser.parse(`erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n1.5`);
+        erDiagram.parser.parse(`erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n0.1`);
+        erDiagram.parser.parse(`erDiagram\nCUSTOMER }|..|{ DELIVERY-ADDRESS : has\n99.99`);
+      });
+    });
+
+    describe('entity names with attributes', function () {
+      it('should allow "u" as entity name with attributes', function () {
+        erDiagram.parser.parse(`erDiagram\nu {\nstring name\nint id\n}`);
+      });
+
+      it('should allow number "1" as entity name with attributes', function () {
+        erDiagram.parser.parse(`erDiagram\n1 {\nstring name\nint id\n}`);
+      });
+
+      it('should allow decimal numbers as entity names with attributes', function () {
+        erDiagram.parser.parse(`erDiagram\n2.5 {\nstring name\nint id\n}`);
+        erDiagram.parser.parse(`erDiagram\n1.5 {\nstring value\n}`);
+      });
+    });
+
+    describe('entity names in relationships', function () {
+      it('should allow "u" in relationships', function () {
+        erDiagram.parser.parse(`erDiagram\nCUSTOMER ||--|| u : has`);
+        erDiagram.parser.parse(`erDiagram\nu ||--|| ORDER : places`);
+        erDiagram.parser.parse(`erDiagram\nu ||--|| v : connects`);
+      });
+
+      it('should allow numbers in relationships', function () {
+        erDiagram.parser.parse(`erDiagram\nCUSTOMER ||--|| 1 : has`);
+        erDiagram.parser.parse(`erDiagram\n1 ||--|| ORDER : places`);
+        erDiagram.parser.parse(`erDiagram\n1 ||--|| 2 : connects`);
+      });
+
+      it('should allow decimal numbers in relationships', function () {
+        erDiagram.parser.parse(`erDiagram\nCUSTOMER ||--|| 2.5 : has`);
+        erDiagram.parser.parse(`erDiagram\n1.5 ||--|| ORDER : places`);
+        erDiagram.parser.parse(`erDiagram\n2.5 ||--|| 5.5 : connects`);
+      });
+    });
+
+    describe('mixed scenarios', function () {
+      it('should handle complex diagram with special entity names', function () {
+        erDiagram.parser.parse(
+          `erDiagram
+              CUSTOMER ||--o{ 1 : places
+              1 ||--|{ u : contains
+              u {
+                string name
+                int quantity
+              }
+              "2.5" ||--|| ORDER : processes
+              ORDER {
+                int id
+                date created
+              }
+        `
+        );
+      });
+
+      it('should handle attributes with numbers in names (but not starting)', function () {
+        erDiagram.parser.parse(
+          `erDiagram
+              ENTITY {
+                string name1
+                int value2
+                float point3_5
+              }
+        `
+        );
+      });
+    });
+  });
 });

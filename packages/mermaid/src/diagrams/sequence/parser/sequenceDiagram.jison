@@ -32,13 +32,14 @@
 <CONFIG>[^\}]+                                                  { return 'CONFIG_CONTENT'; }
 <CONFIG>\}                                                      { this.popState(); this.popState(); return 'CONFIG_END'; }
 <ID>[^\<->\->:\n,;@\s]+(?=\@\{)                                 { yytext = yytext.trim(); return 'ACTOR'; }
-<ID>[^\<->\->:\n,;@]+?([\-]*[^\<->\->:\n,;@]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$) { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
+<ID>[^<>:\n,;@\s]+(?=\s+as\s)                                   { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
+<ID>[^<>:\n,;@]+(?=\s*[\n;#]|$)                                 { yytext = yytext.trim(); this.popState(); return 'ACTOR'; }
+<ID>[^<>:\n,;@]*\<[^\n]*                                        { this.popState(); return 'INVALID'; }
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
 "create"                                                        return 'create';
 "destroy"                                                       { this.begin('ID'); return 'destroy'; }
-<ID>[^<\->\->:\n,;]+?([\-]*[^<\->\->:\n,;]+?)*?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)     { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
 "loop"                                                          { this.begin('LINE'); return 'loop'; }
@@ -78,7 +79,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "off"															return 'off';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
-[^+<\->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+<\->\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
+[^\/\\\+\()\+<\->\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)|\-\|\\|\-\\|\-\/|\-\/\/|\-\|\/|\/\|\-|\\\|\-|\/\/\-|\\\\\-|\/\|\-|\-\-\|\\|\-\-|\(\)))[\-]*[^\+<\->\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; } //final_4.11
 "->>"                                                           return 'SOLID_ARROW';
 "<<->>"                                                           return 'BIDIRECTIONAL_SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
@@ -89,10 +90,36 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \-\-[x]                                                         return 'DOTTED_CROSS';
 \-[\)]                                                          return 'SOLID_POINT';
 \-\-[\)]                                                        return 'DOTTED_POINT';
+
+//normal-dotted
+\-\-\|\\                                                        return 'SOLID_ARROW_TOP_DOTTED';
+\-\-\|\/                                                        return 'SOLID_ARROW_BOTTOM_DOTTED';
+\-\-\\\\                                                        return 'STICK_ARROW_TOP_DOTTED';
+\-\-\/\/                                                        return 'STICK_ARROW_BOTTOM_DOTTED';
+
+//reverse-dotted
+\/\|\-\-                                                          return 'SOLID_ARROW_TOP_REVERSE_DOTTED';
+\\\|\-\-                                                          return 'SOLID_ARROW_BOTTOM_REVERSE_DOTTED';
+\/\/\-\-                                                          return 'STICK_ARROW_TOP_REVERSE_DOTTED';
+\\\\\-\-                                                          return 'STICK_ARROW_BOTTOM_REVERSE_DOTTED';
+
+//normal
+\-\|\\                                                          return 'SOLID_ARROW_TOP';
+\-\|\/                                                          return 'SOLID_ARROW_BOTTOM';
+\-\\\\                                                          return 'STICK_ARROW_TOP';
+\-\/\/                                                          return 'STICK_ARROW_BOTTOM';
+
+//reverse
+\/\|\-                                                          return 'SOLID_ARROW_TOP_REVERSE';
+\\\|\-                                                          return 'SOLID_ARROW_BOTTOM_REVERSE';
+\/\/\-                                                          return 'STICK_ARROW_TOP_REVERSE';
+\\\\\-                                                          return 'STICK_ARROW_BOTTOM_REVERSE';
+
 ":"(?:(?:no)?wrap:)?[^#\n;]*                                    return 'TXT';
 ":"                             								return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
+"()"                                                            return '()';
 <<EOF>>                                                         return 'NEWLINE';
 .                                                               return 'INVALID';
 
@@ -119,6 +146,7 @@ line
 	: SPACE statement { $$ = $2 }
 	| statement { $$ = $1 }
 	| NEWLINE { $$=[]; }
+	| INVALID { $$=[]; }
 	;
 
 box_section
@@ -304,6 +332,20 @@ signal
 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $1.actor}
 	             ]}
+    | actor signaltype '()' actor text2
+	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5, activate: true, centralConnection: yy.LINETYPE.CENTRAL_CONNECTION},
+	              {type: 'centralConnection', signalType: yy.LINETYPE.CENTRAL_CONNECTION, actor: $4.actor, }
+	             ]}
+    
+	| actor '()' signaltype actor text2
+	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$3, msg:$5, activate: false, centralConnection: yy.LINETYPE.CENTRAL_CONNECTION_REVERSE},
+	              {type: 'centralConnectionReverse', signalType: yy.LINETYPE.CENTRAL_CONNECTION_REVERSE, actor: $1.actor}
+	             ]}
+	| actor '()' signaltype '()' actor text2
+	{ $$ = [$1,$5,{type: 'addMessage', from:$1.actor, to:$5.actor, signalType:$3, msg:$6, activate: true, centralConnection: yy.LINETYPE.CENTRAL_CONNECTION_DUAL},
+	 			 {type: 'centralConnection', signalType: yy.LINETYPE.CENTRAL_CONNECTION, actor: $5.actor, },
+				 {type: 'centralConnectionReverse', signalType: yy.LINETYPE.CENTRAL_CONNECTION_REVERSE, actor: $1.actor}
+	             ]}
 	| actor signaltype actor text2
 	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
 	;
@@ -337,7 +379,28 @@ signaltype
 	: SOLID_OPEN_ARROW  { $$ = yy.LINETYPE.SOLID_OPEN; }
 	| DOTTED_OPEN_ARROW { $$ = yy.LINETYPE.DOTTED_OPEN; }
 	| SOLID_ARROW       { $$ = yy.LINETYPE.SOLID; }
-	| BIDIRECTIONAL_SOLID_ARROW       { $$ = yy.LINETYPE.BIDIRECTIONAL_SOLID; }
+	
+	| SOLID_ARROW_TOP    { $$ = yy.LINETYPE.SOLID_TOP; }
+	| SOLID_ARROW_BOTTOM { $$ = yy.LINETYPE.SOLID_BOTTOM; }
+	| STICK_ARROW_TOP    { $$ = yy.LINETYPE.STICK_TOP; }
+	| STICK_ARROW_BOTTOM { $$ = yy.LINETYPE.STICK_BOTTOM; }
+
+	| SOLID_ARROW_TOP_DOTTED    { $$ = yy.LINETYPE.SOLID_TOP_DOTTED; }	
+	| SOLID_ARROW_BOTTOM_DOTTED { $$ = yy.LINETYPE.SOLID_BOTTOM_DOTTED; }
+	| STICK_ARROW_TOP_DOTTED    { $$ = yy.LINETYPE.STICK_TOP_DOTTED; }
+	| STICK_ARROW_BOTTOM_DOTTED { $$ = yy.LINETYPE.STICK_BOTTOM_DOTTED; }
+
+	| SOLID_ARROW_TOP_REVERSE    { $$ = yy.LINETYPE.SOLID_ARROW_TOP_REVERSE; }
+	| SOLID_ARROW_BOTTOM_REVERSE { $$ = yy.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE; }
+	| STICK_ARROW_TOP_REVERSE    { $$ = yy.LINETYPE.STICK_ARROW_TOP_REVERSE; }
+	| STICK_ARROW_BOTTOM_REVERSE { $$ = yy.LINETYPE.STICK_ARROW_BOTTOM_REVERSE; }
+
+	| SOLID_ARROW_TOP_REVERSE_DOTTED    { $$ = yy.LINETYPE.SOLID_ARROW_TOP_REVERSE_DOTTED; }
+	| SOLID_ARROW_BOTTOM_REVERSE_DOTTED { $$ = yy.LINETYPE.SOLID_ARROW_BOTTOM_REVERSE_DOTTED; }
+	| STICK_ARROW_TOP_REVERSE_DOTTED    { $$ = yy.LINETYPE.STICK_ARROW_TOP_REVERSE_DOTTED; }
+	| STICK_ARROW_BOTTOM_REVERSE_DOTTED { $$ = yy.LINETYPE.STICK_ARROW_BOTTOM_REVERSE_DOTTED; }
+
+  | BIDIRECTIONAL_SOLID_ARROW       { $$ = yy.LINETYPE.BIDIRECTIONAL_SOLID; }
 	| DOTTED_ARROW      { $$ = yy.LINETYPE.DOTTED; }
 	| BIDIRECTIONAL_DOTTED_ARROW      { $$ = yy.LINETYPE.BIDIRECTIONAL_DOTTED; }
 	| SOLID_CROSS       { $$ = yy.LINETYPE.SOLID_CROSS; }

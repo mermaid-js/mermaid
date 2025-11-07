@@ -1,11 +1,26 @@
+import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
+// @ts-ignore TODO: Investigate D3 issue
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
-import type { InternalHelpers, LayoutData, RenderOptions, SVG, SVGGroup } from 'mermaid';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 
+import {
+  type P,
+  type RectLike,
+  outsideNode,
+  computeNodeIntersection,
+  replaceEndpoint,
+  onBorder,
+} from './geometry.js';
+
 type Node = LayoutData['nodes'][number];
-// Used to calculate distances in order to avoid floating number rounding issues when comparing floating numbers
-const epsilon = 0.0001;
+
+// Minimal structural type to avoid depending on d3 Selection typings
+interface D3Selection<T extends Element> {
+  node(): T | null;
+  attr(name: string, value: string): D3Selection<T>;
+}
+
 interface LabelData {
   width: number;
   height: number;
@@ -16,18 +31,9 @@ interface LabelData {
 interface NodeWithVertex extends Omit<Node, 'domId'> {
   children?: LayoutData['nodes'];
   labelData?: LabelData;
-  domId?: Node['domId'] | SVGGroup | d3.Selection<SVGAElement, unknown, Element | null, unknown>;
+  domId?: D3Selection<SVGAElement | SVGGElement>;
 }
-interface Point {
-  x: number;
-  y: number;
-}
-function distance(p1?: Point, p2?: Point): number {
-  if (!p1 || !p2) {
-    return 0;
-  }
-  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-}
+
 export const render = async (
   data4Layout: LayoutData,
   svg: SVG,
@@ -61,7 +67,7 @@ export const render = async (
 
     // Add the element to the DOM
     if (!node.isGroup) {
-      // Create a clean node object for ELK with only the properties it expects
+      // const child = node as NodeWithVertex;
       const child: NodeWithVertex = {
         id: node.id,
         width: node.width,
@@ -78,22 +84,24 @@ export const render = async (
         parentId: node.parentId,
       };
       graph.children.push(child);
-      nodeDb[node.id] = child;
+      nodeDb[node.id] = node;
 
       const childNodeEl = await insertNode(nodeEl, node, { config, dir: node.dir });
       const boundingBox = childNodeEl.node()!.getBBox();
       // Store the domId separately for rendering, not in the ELK graph
       child.domId = childNodeEl;
-      child.calcIntersect = node.calcIntersect;
       child.width = boundingBox.width;
       child.height = boundingBox.height;
     } else {
       // A subgraph
       const child: NodeWithVertex & { children: NodeWithVertex[] } = {
         ...node,
+        domId: undefined,
         children: [],
       };
+      // Let elk render with the copy
       graph.children.push(child);
+      // Save the original containing the intersection function
       nodeDb[node.id] = child;
       await addVertices(nodeEl, nodeArr, child, node.id);
 
@@ -157,7 +165,7 @@ export const render = async (
         domId: { node: () => any; attr: (arg0: string, arg1: string) => void };
       }) {
         if (node) {
-          nodeDb[node.id] = node;
+          nodeDb[node.id] ??= {};
           nodeDb[node.id].offset = {
             posX: node.x + relX,
             posY: node.y + relY,
@@ -168,7 +176,7 @@ export const render = async (
             height: node.height,
           };
           if (node.isGroup) {
-            log.debug('id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
+            log.debug('Id abc88 subgraph = ', node.id, node.x, node.y, node.labelData);
             const subgraphEl = subgraphsEl.insert('g').attr('class', 'subgraph');
             // TODO use faster way of cloning
             const clusterNode = JSON.parse(JSON.stringify(node));
@@ -177,10 +185,10 @@ export const render = async (
             clusterNode.width = Math.max(clusterNode.width, node.labelData.width);
             await insertCluster(subgraphEl, clusterNode);
 
-            log.debug('id (UIO)= ', node.id, node.width, node.shape, node.labels);
+            log.debug('Id (UIO)= ', node.id, node.width, node.shape, node.labels);
           } else {
             log.info(
-              'id NODE = ',
+              'Id NODE = ',
               node.id,
               node.x,
               node.y,
@@ -222,25 +230,19 @@ export const render = async (
       });
     });
 
-    subgraphs.forEach(function (subgraph: { id: string | number }) {
-      const data: any = { id: subgraph.id };
-      if (parentLookupDb.parentById[subgraph.id] !== undefined) {
-        data.parent = parentLookupDb.parentById[subgraph.id];
-      }
-    });
     return parentLookupDb;
   };
 
   const getEdgeStartEndPoint = (edge: any) => {
-    const source: any = edge.start;
-    const target: any = edge.end;
+    // edge.start and edge.end are IDs (string/number) in our layout data
+    const sourceId: string | number = edge.start;
+    const targetId: string | number = edge.end;
 
-    // Save the original source and target
-    const sourceId = source;
-    const targetId = target;
+    const source = sourceId;
+    const target = targetId;
 
-    const startNode = nodeDb[edge.start.id];
-    const endNode = nodeDb[edge.end.id];
+    const startNode = nodeDb[sourceId];
+    const endNode = nodeDb[targetId];
 
     if (!startNode || !endNode) {
       return { source, target };
@@ -263,6 +265,112 @@ export const render = async (
   /**
    * Add edges to graph based on parsed graph definition
    */
+  // Edge helper maps and utilities (de-duplicated)
+  const ARROW_MAP: Record<string, [string, string]> = {
+    arrow_open: ['arrow_open', 'arrow_open'],
+    arrow_cross: ['arrow_open', 'arrow_cross'],
+    double_arrow_cross: ['arrow_cross', 'arrow_cross'],
+    arrow_point: ['arrow_open', 'arrow_point'],
+    double_arrow_point: ['arrow_point', 'arrow_point'],
+    arrow_circle: ['arrow_open', 'arrow_circle'],
+    double_arrow_circle: ['arrow_circle', 'arrow_circle'],
+  };
+
+  const computeStroke = (
+    stroke: string | undefined,
+    defaultStyle?: string,
+    defaultLabelStyle?: string
+  ) => {
+    // Defaults correspond to 'normal'
+    let thickness = 'normal';
+    let pattern = 'solid';
+    let style = '';
+    let labelStyle = '';
+
+    if (stroke === 'dotted') {
+      pattern = 'dotted';
+      style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
+    } else if (stroke === 'thick') {
+      thickness = 'thick';
+      style = 'stroke-width: 3.5px;fill:none;';
+    } else {
+      // normal
+      style = defaultStyle ?? 'fill:none;';
+      if (defaultLabelStyle !== undefined) {
+        labelStyle = defaultLabelStyle;
+      }
+    }
+    return { thickness, pattern, style, labelStyle };
+  };
+
+  const getCurve = (edgeInterpolate: any, edgesDefaultInterpolate: any, confCurve: any) => {
+    if (edgeInterpolate !== undefined) {
+      return interpolateToCurve(edgeInterpolate, curveLinear);
+    }
+    if (edgesDefaultInterpolate !== undefined) {
+      return interpolateToCurve(edgesDefaultInterpolate, curveLinear);
+    }
+    // @ts-ignore TODO: fix this
+    return interpolateToCurve(confCurve, curveLinear);
+  };
+  const buildEdgeData = (
+    edge: any,
+    defaults: {
+      defaultStyle?: string;
+      defaultLabelStyle?: string;
+      defaultInterpolate?: any;
+      confCurve: any;
+    },
+    common: any
+  ) => {
+    const edgeData: any = { style: '', labelStyle: '' };
+    edgeData.minlen = edge.length || 1;
+    // maintain legacy behavior
+    edge.text = edge.label;
+
+    // Arrowhead fill vs none
+    edgeData.arrowhead = edge.type === 'arrow_open' ? 'none' : 'normal';
+
+    // Arrow types
+    const arrowMap = ARROW_MAP[edge.type] ?? ARROW_MAP.arrow_open;
+    edgeData.arrowTypeStart = arrowMap[0];
+    edgeData.arrowTypeEnd = arrowMap[1];
+
+    // Optional edge label positioning flags
+    edgeData.startLabelRight = edge.startLabelRight;
+    edgeData.endLabelLeft = edge.endLabelLeft;
+
+    // Stroke
+    const strokeRes = computeStroke(edge.stroke, defaults.defaultStyle, defaults.defaultLabelStyle);
+    edgeData.thickness = strokeRes.thickness;
+    edgeData.pattern = strokeRes.pattern;
+    edgeData.style = (edgeData.style || '') + (strokeRes.style || '');
+    edgeData.labelStyle = (edgeData.labelStyle || '') + (strokeRes.labelStyle || '');
+
+    // Curve
+    // @ts-ignore - defaults.confCurve is present at runtime but missing in type
+    edgeData.curve = getCurve(edge.interpolate, defaults.defaultInterpolate, defaults.confCurve);
+
+    // Arrowhead style + labelpos when we have label text
+    const hasText = (edge?.text ?? '') !== '';
+    if (hasText) {
+      edgeData.arrowheadStyle = 'fill: #333';
+      edgeData.labelpos = 'c';
+    } else if (edge.style !== undefined) {
+      edgeData.arrowheadStyle = 'fill: #333';
+    }
+
+    edgeData.labelType = edge.labelType;
+    edgeData.label = (edge?.text ?? '').replace(common.lineBreakRegex, '\n');
+
+    if (edge.style === undefined) {
+      edgeData.style = edgeData.style ?? 'stroke: #333; stroke-width: 1.5px;fill:none;';
+    }
+
+    edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
+    return edgeData;
+  };
+
   const addEdges = async function (
     dataForLayout: { edges: any; direction?: string },
     graph: {
@@ -284,7 +392,6 @@ export const render = async (
     const edges = dataForLayout.edges;
     const labelsEl = svg.insert('g').attr('class', 'edgeLabels');
     const linkIdCnt: any = {};
-    const dir = dataForLayout.direction || 'DOWN';
     let defaultStyle: string | undefined;
     let defaultLabelStyle: string | undefined;
 
@@ -314,105 +421,24 @@ export const render = async (
           linkIdCnt[linkIdBase]++;
           log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
         }
-        const linkId = linkIdBase + '_' + linkIdCnt[linkIdBase];
+        const linkId = linkIdBase; // + '_' + linkIdCnt[linkIdBase];
         edge.id = linkId;
         log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
         const linkNameStart = 'LS_' + edge.start;
         const linkNameEnd = 'LE_' + edge.end;
 
-        const edgeData: any = { style: '', labelStyle: '' };
-        edgeData.minlen = edge.length || 1;
-        edge.text = edge.label;
-        // Set link type for rendering
-        if (edge.type === 'arrow_open') {
-          edgeData.arrowhead = 'none';
-        } else {
-          edgeData.arrowhead = 'normal';
-        }
-
-        // Check of arrow types, placed here in order not to break old rendering
-        edgeData.arrowTypeStart = 'arrow_open';
-        edgeData.arrowTypeEnd = 'arrow_open';
-
-        /* eslint-disable no-fallthrough */
-        switch (edge.type) {
-          case 'double_arrow_cross':
-            edgeData.arrowTypeStart = 'arrow_cross';
-          case 'arrow_cross':
-            edgeData.arrowTypeEnd = 'arrow_cross';
-            break;
-          case 'double_arrow_point':
-            edgeData.arrowTypeStart = 'arrow_point';
-          case 'arrow_point':
-            edgeData.arrowTypeEnd = 'arrow_point';
-            break;
-          case 'double_arrow_circle':
-            edgeData.arrowTypeStart = 'arrow_circle';
-          case 'arrow_circle':
-            edgeData.arrowTypeEnd = 'arrow_circle';
-            break;
-        }
-
-        let style = '';
-        let labelStyle = '';
-
-        edgeData.startLabelRight = edge.startLabelRight;
-        edgeData.endLabelLeft = edge.endLabelLeft;
-
-        switch (edge.stroke) {
-          case 'normal':
-            style = 'fill:none;';
-            if (defaultStyle !== undefined) {
-              style = defaultStyle;
-            }
-            if (defaultLabelStyle !== undefined) {
-              labelStyle = defaultLabelStyle;
-            }
-            edgeData.thickness = 'normal';
-            edgeData.pattern = 'solid';
-            break;
-          case 'dotted':
-            edgeData.thickness = 'normal';
-            edgeData.pattern = 'dotted';
-            edgeData.style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
-            break;
-          case 'thick':
-            edgeData.thickness = 'thick';
-            edgeData.pattern = 'solid';
-            edgeData.style = 'stroke-width: 3.5px;fill:none;';
-            break;
-        }
-
-        edgeData.style = edgeData.style += style;
-        edgeData.labelStyle = edgeData.labelStyle += labelStyle;
-
         const conf = getConfig();
-        if (edge.interpolate !== undefined) {
-          edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
-        } else if (edges.defaultInterpolate !== undefined) {
-          edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
-        } else {
-          // @ts-ignore TODO: fix this
-          edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
-        }
-
-        if (edge.text === undefined) {
-          if (edge.style !== undefined) {
-            edgeData.arrowheadStyle = 'fill: #333';
-          }
-        } else {
-          edgeData.arrowheadStyle = 'fill: #333';
-          edgeData.labelpos = 'c';
-        }
-
-        edgeData.labelType = edge.labelType;
-        edgeData.label = (edge?.text || '').replace(common.lineBreakRegex, '\n');
-
-        if (edge.style === undefined) {
-          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
-        }
-
-        edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
+        const edgeData = buildEdgeData(
+          edge,
+          {
+            defaultStyle,
+            defaultLabelStyle,
+            defaultInterpolate: edges.defaultInterpolate,
+            // @ts-ignore - conf.curve exists at runtime but is missing from typing
+            confCurve: conf.curve,
+          },
+          common
+        );
 
         edgeData.id = linkId;
         edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
@@ -421,13 +447,11 @@ export const render = async (
 
         // calculate start and end points of the edge, note that the source and target
         // can be modified for shapes that have ports
-        // @ts-ignore TODO: fix this
-        const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge, dir);
+
+        const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge);
         log.debug('abc78 source and target', source, target);
         // Add the edge to the graph
         graph.edges.push({
-          // @ts-ignore TODO: fix this
-          id: 'e' + edge.start + edge.end,
           ...edge,
           sources: [source],
           targets: [target],
@@ -461,6 +485,7 @@ export const render = async (
       case 'RL':
         return 'LEFT';
       case 'TB':
+      case 'TD': // TD is an alias for TB in Mermaid
         return 'DOWN';
       case 'BT':
         return 'UP';
@@ -484,6 +509,203 @@ export const render = async (
     }
   }
 
+  // Node bounds helpers (global)
+  const getEffectiveGroupWidth = (node: any): number => {
+    const labelW = node?.labels?.[0]?.width ?? 0;
+    const padding = node?.padding ?? 0;
+    return Math.max(node.width ?? 0, labelW + padding);
+  };
+
+  const boundsFor = (node: any): RectLike => {
+    const width = node?.isGroup ? getEffectiveGroupWidth(node) : node.width;
+    return {
+      x: node.offset.posX + node.width / 2,
+      y: node.offset.posY + node.height / 2,
+      width,
+      height: node.height,
+      padding: node.padding,
+    };
+  };
+  // Helper utilities for endpoint handling around cutter2
+  type Side = 'start' | 'end';
+  const approxEq = (a: number, b: number, eps = 1e-6) => Math.abs(a - b) < eps;
+  const isCenterApprox = (pt: P, node: { x: number; y: number }) =>
+    approxEq(pt.x, node.x) && approxEq(pt.y, node.y);
+
+  const getCandidateBorderPoint = (
+    points: P[],
+    node: any,
+    side: Side
+  ): { candidate: P; centerApprox: boolean } => {
+    if (!points?.length) {
+      return { candidate: { x: node.x, y: node.y } as P, centerApprox: true };
+    }
+    if (side === 'start') {
+      const first = points[0];
+      const centerApprox = isCenterApprox(first, node);
+      const candidate = centerApprox && points.length > 1 ? points[1] : first;
+      return { candidate, centerApprox };
+    } else {
+      const last = points[points.length - 1];
+      const centerApprox = isCenterApprox(last, node);
+      const candidate = centerApprox && points.length > 1 ? points[points.length - 2] : last;
+      return { candidate, centerApprox };
+    }
+  };
+
+  const dropAutoCenterPoint = (points: P[], side: Side, doDrop: boolean) => {
+    if (!doDrop) {
+      return;
+    }
+    if (side === 'start') {
+      if (points.length > 0) {
+        points.shift();
+      }
+    } else {
+      if (points.length > 0) {
+        points.pop();
+      }
+    }
+  };
+
+  const applyStartIntersectionIfNeeded = (points: P[], startNode: any, startBounds: RectLike) => {
+    let firstOutsideStartIndex = -1;
+    for (const [i, p] of points.entries()) {
+      if (outsideNode(startBounds, p)) {
+        firstOutsideStartIndex = i;
+        break;
+      }
+    }
+    if (firstOutsideStartIndex !== -1) {
+      const outsidePointForStart = points[firstOutsideStartIndex];
+      const startCenter = points[0];
+      const startIntersection = computeNodeIntersection(
+        startNode,
+        startBounds,
+        outsidePointForStart,
+        startCenter
+      );
+      replaceEndpoint(points, 'start', startIntersection);
+      log.debug('UIO cutter2: start-only intersection applied', { startIntersection });
+    }
+  };
+
+  const applyEndIntersectionIfNeeded = (points: P[], endNode: any, endBounds: RectLike) => {
+    let outsideIndexForEnd = -1;
+    for (let i = points.length - 1; i >= 0; i--) {
+      if (outsideNode(endBounds, points[i])) {
+        outsideIndexForEnd = i;
+        break;
+      }
+    }
+    if (outsideIndexForEnd !== -1) {
+      const outsidePointForEnd = points[outsideIndexForEnd];
+      const endCenter = points[points.length - 1];
+      const endIntersection = computeNodeIntersection(
+        endNode,
+        endBounds,
+        outsidePointForEnd,
+        endCenter
+      );
+      replaceEndpoint(points, 'end', endIntersection);
+      log.debug('UIO cutter2: end-only intersection applied', { endIntersection });
+    }
+  };
+
+  const cutter2 = (startNode: any, endNode: any, _points: any[]) => {
+    const startBounds = boundsFor(startNode);
+    const endBounds = boundsFor(endNode);
+
+    if (_points.length === 0) {
+      return [];
+    }
+
+    // Copy the original points array
+    const points: P[] = [..._points] as P[];
+
+    // The first point is the center of sNode, the last point is the center of eNode
+    const startCenter = points[0];
+    const endCenter = points[points.length - 1];
+
+    // Minimal, structured logging for diagnostics
+    log.debug('PPP cutter2: bounds', { startBounds, endBounds });
+    log.debug('PPP cutter2: original points', _points);
+
+    let firstOutsideStartIndex = -1;
+
+    // Single iteration through the array
+    for (const [i, point] of points.entries()) {
+      if (firstOutsideStartIndex === -1 && outsideNode(startBounds, point)) {
+        firstOutsideStartIndex = i;
+      }
+      if (outsideNode(endBounds, point)) {
+        // keep scanning; we'll also scan from the end for the last outside point
+      }
+    }
+
+    // Calculate intersection with start node if we found a point outside it
+    if (firstOutsideStartIndex !== -1) {
+      const outsidePointForStart = points[firstOutsideStartIndex];
+      const startIntersection = computeNodeIntersection(
+        startNode,
+        startBounds,
+        outsidePointForStart,
+        startCenter
+      );
+      log.debug('UIO cutter2: start intersection', startIntersection);
+      replaceEndpoint(points, 'start', startIntersection);
+    }
+
+    // Calculate intersection with end node
+    let outsidePointForEnd = null;
+    let outsideIndexForEnd = -1;
+
+    for (let i = points.length - 1; i >= 0; i--) {
+      if (outsideNode(endBounds, points[i])) {
+        outsidePointForEnd = points[i];
+        outsideIndexForEnd = i;
+        break;
+      }
+    }
+
+    if (!outsidePointForEnd && points.length > 1) {
+      outsidePointForEnd = points[points.length - 2];
+      outsideIndexForEnd = points.length - 2;
+    }
+
+    if (outsidePointForEnd) {
+      const endIntersection = computeNodeIntersection(
+        endNode,
+        endBounds,
+        outsidePointForEnd,
+        endCenter
+      );
+      log.debug('UIO cutter2: end intersection', { endIntersection, outsideIndexForEnd });
+      replaceEndpoint(points, 'end', endIntersection);
+    }
+
+    // Final cleanup: Check if the last point is too close to the previous point
+    if (points.length > 1) {
+      const lastPoint = points[points.length - 1];
+      const secondLastPoint = points[points.length - 2];
+      const distance = Math.sqrt(
+        (lastPoint.x - secondLastPoint.x) ** 2 + (lastPoint.y - secondLastPoint.y) ** 2
+      );
+      if (distance < 2) {
+        log.debug('UIO cutter2: trimming tail point (too close)', {
+          distance,
+          lastPoint,
+          secondLastPoint,
+        });
+        points.pop();
+      }
+    }
+
+    log.debug('UIO cutter2: final points', points);
+
+    return points;
+  };
+
   // @ts-ignore - ELK is not typed
   const elk = new ELK();
   const element = svg.select('g');
@@ -495,17 +717,19 @@ export const render = async (
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'elk.layered.crossingMinimization.forceNodeModelOrder':
-        data4Layout.config.elk?.forceNodeModelOrder,
-      'elk.layered.considerModelOrder.strategy': data4Layout.config.elk?.considerModelOrder,
-
       'elk.algorithm': algorithm,
       'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
-      'spacing.baseValue': 35,
+      'spacing.baseValue': 40,
+      'elk.layered.crossingMinimization.forceNodeModelOrder':
+        data4Layout.config.elk?.forceNodeModelOrder,
+      'elk.layered.considerModelOrder.strategy': data4Layout.config.elk?.considerModelOrder,
       'elk.layered.unnecessaryBendpoints': true,
       'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
+
+      // 'elk.layered.cycleBreaking.strategy': 'GREEDY_MODEL_ORDER',
+      // 'elk.layered.cycleBreaking.strategy': 'MODEL_ORDER',
       // 'spacing.nodeNode': 20,
       // 'spacing.nodeNodeBetweenLayers': 25,
       // 'spacing.edgeNode': 20,
@@ -513,22 +737,28 @@ export const render = async (
       // 'spacing.edgeEdge': 10,
       // 'spacing.edgeEdgeBetweenLayers': 20,
       // 'spacing.nodeSelfLoop': 20,
+
       // Tweaking options
+      // 'nodePlacement.favorStraightEdges': true,
       // 'elk.layered.nodePlacement.favorStraightEdges': true,
       // 'nodePlacement.feedbackEdges': true,
-      // 'elk.layered.wrapping.multiEdge.improveCuts': true,
-      // 'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
+      'elk.layered.wrapping.multiEdge.improveCuts': true,
+      'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
       // 'elk.layered.wrapping.strategy': 'MULTI_EDGE',
-      // 'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
-      // 'elk.layered.mergeHierarchyEdges': true,
+      // 'elk.layered.wrapping.strategy': 'SINGLE_EDGE',
+      'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
+      'elk.layered.mergeHierarchyEdges': true,
+
       // 'elk.layered.feedbackEdges': true,
       // 'elk.layered.crossingMinimization.semiInteractive': true,
       // 'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
       // 'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
       // 'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
       // 'elk.insideSelfLoops.activate': true,
+      // 'elk.separateConnectedComponents': true,
       // 'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
       // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES', // NODES_AND_EDGES
+      // 'elk.layered.considerModelOrder.strategy': 'EDGES', // NODES_AND_EDGES
       // 'elk.layered.wrapping.cutting.strategy': 'ARD', // NODES_AND_EDGES
     },
     children: [],
@@ -538,7 +768,7 @@ export const render = async (
   log.info('Drawing flowchart using v4 renderer', elk);
 
   // Set the direction of the graph based on the parsed information
-  const dir = data4Layout.direction || 'DOWN';
+  const dir = data4Layout.direction ?? 'DOWN';
   elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
 
   // Create the lookup db for the subgraphs and their children to used when creating
@@ -569,15 +799,16 @@ export const render = async (
 
     // Subgraph
     if (parentLookupDb.childrenById[node.id] !== undefined) {
+      // Set label and adjust node width separately (avoid side effects in labels array)
       node.labels = [
         {
           text: node.label,
-          width: node?.labelData?.width || 50,
-          height: node?.labelData?.height || 50,
+          width: node?.labelData?.width ?? 50,
+          height: node?.labelData?.height ?? 50,
         },
-        (node.width = node.width + 2 * node.padding),
-        log.debug('UIO node label', node?.labelData?.width, node.padding),
       ];
+      node.width = node.width + 2 * node.padding;
+      log.debug('UIO node label', node?.labelData?.width, node.padding);
       node.layoutOptions = {
         'spacing.baseValue': 30,
         'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
@@ -641,14 +872,16 @@ export const render = async (
   try {
     g = await elk.layout(elkGraph);
     log.debug('APA01 after - success');
-    log.debug('APA01 layout result:', JSON.stringify(g, null, 2));
+    log.info('APA01 layout result:', JSON.stringify(g, null, 2));
   } catch (error) {
     log.error('APA01 ELK layout error:', error);
+    log.error('APA01 elkGraph that caused error:', JSON.stringify(elkGraph, null, 2));
     throw error;
   }
 
   // debugger;
   await drawNodes(0, 0, g.children, svg, subGraphsEl, 0);
+
   g.edges?.map(
     (edge: {
       sources: (string | number)[];
@@ -702,10 +935,10 @@ export const render = async (
           // sw = Math.max(bbox.width, startNode.width, startNode.labels[0].width);
           sw = Math.max(startNode.width, startNode.labels[0].width + startNode.padding);
           // sw = startNode.width;
-          log.debug(
+          log.info(
             'UIO width',
             startNode.id,
-            startNode.with,
+            startNode.width,
             'bbox.width=',
             bbox.width,
             'lw=',
@@ -725,7 +958,7 @@ export const render = async (
           log.debug(
             'UIO width',
             startNode.id,
-            startNode.with,
+            startNode.width,
             bbox.width,
             'EW = ',
             ew,
@@ -733,38 +966,109 @@ export const render = async (
             startNode.innerHTML
           );
         }
+        startNode.x = startNode.offset.posX + startNode.width / 2;
+        startNode.y = startNode.offset.posY + startNode.height / 2;
+        endNode.x = endNode.offset.posX + endNode.width / 2;
+        endNode.y = endNode.offset.posY + endNode.height / 2;
 
-        if (startNode.calcIntersect) {
-          const intersection = startNode.calcIntersect(
-            {
-              x: startNode.offset.posX + startNode.width / 2,
-              y: startNode.offset.posY + startNode.height / 2,
-              width: startNode.width,
-              height: startNode.height,
-            },
-            edge.points[0]
-          );
+        // Only add center points for non-subgraph nodes or when the edge path doesn't already end near the target
+        const shouldAddStartCenter = startNode.shape !== 'rect33';
+        const shouldAddEndCenter = endNode.shape !== 'rect33';
 
-          if (distance(intersection, edge.points[0]) > epsilon) {
-            edge.points.unshift(intersection);
-          }
-        }
-        if (endNode.calcIntersect) {
-          const intersection = endNode.calcIntersect(
-            {
-              x: endNode.offset.posX + endNode.width / 2,
-              y: endNode.offset.posY + endNode.height / 2,
-              width: endNode.width,
-              height: endNode.height,
-            },
-            edge.points[edge.points.length - 1]
-          );
-
-          if (distance(intersection, edge.points[edge.points.length - 1]) > epsilon) {
-            edge.points.push(intersection);
-          }
+        if (shouldAddStartCenter) {
+          edge.points.unshift({
+            x: startNode.x,
+            y: startNode.y,
+          });
         }
 
+        if (shouldAddEndCenter) {
+          edge.points.push({
+            x: endNode.x,
+            y: endNode.y,
+          });
+        }
+
+        // Debug and sanitize points around cutter2
+        const prevPoints = Array.isArray(edge.points) ? [...edge.points] : [];
+        const endBounds = boundsFor(endNode);
+        log.debug(
+          'PPP cutter2: Points before cutter2:',
+          JSON.stringify(edge.points),
+          'endBounds:',
+          endBounds,
+          onBorder(endBounds, edge.points[edge.points.length - 1])
+        );
+        // Block for reducing variable scope and guardrails for the cutter function
+        {
+          const startBounds = boundsFor(startNode);
+          const endBounds = boundsFor(endNode);
+
+          const startIsGroup = !!startNode?.isGroup;
+          const endIsGroup = !!endNode?.isGroup;
+
+          const { candidate: startCandidate, centerApprox: startCenterApprox } =
+            getCandidateBorderPoint(prevPoints as P[], startNode, 'start');
+          const { candidate: endCandidate, centerApprox: endCenterApprox } =
+            getCandidateBorderPoint(prevPoints as P[], endNode, 'end');
+
+          const skipStart = startIsGroup && onBorder(startBounds, startCandidate);
+          const skipEnd = endIsGroup && onBorder(endBounds, endCandidate);
+
+          dropAutoCenterPoint(prevPoints as P[], 'start', skipStart && startCenterApprox);
+          dropAutoCenterPoint(prevPoints as P[], 'end', skipEnd && endCenterApprox);
+
+          if (skipStart || skipEnd) {
+            if (!skipStart) {
+              applyStartIntersectionIfNeeded(prevPoints as P[], startNode, startBounds);
+            }
+            if (!skipEnd) {
+              applyEndIntersectionIfNeeded(prevPoints as P[], endNode, endBounds);
+            }
+
+            log.debug('PPP cutter2: skipping cutter2 due to on-border group endpoint(s)', {
+              skipStart,
+              skipEnd,
+              startCenterApprox,
+              endCenterApprox,
+              startCandidate,
+              endCandidate,
+            });
+            edge.points = prevPoints;
+          } else {
+            edge.points = cutter2(startNode, endNode, prevPoints);
+          }
+        }
+        log.debug('PPP cutter2: Points after cutter2:', JSON.stringify(edge.points));
+        const hasNaN = (pts: { x: number; y: number }[]) =>
+          pts?.some((p) => !Number.isFinite(p?.x) || !Number.isFinite(p?.y));
+        if (!Array.isArray(edge.points) || edge.points.length < 2 || hasNaN(edge.points)) {
+          log.warn(
+            'POI cutter2: Invalid points from cutter2, falling back to prevPoints',
+            edge.points
+          );
+          // Fallback to previous points and strip any invalid ones just in case
+          const cleaned = prevPoints.filter((p) => Number.isFinite(p?.x) && Number.isFinite(p?.y));
+          edge.points = cleaned.length >= 2 ? cleaned : prevPoints;
+        }
+        log.debug('UIO cutter2: Points after cutter2 (sanitized):', edge.points);
+        // Remove consecutive duplicate points to avoid zero-length segments in path builders
+        const deduped = edge.points.filter(
+          (p: { x: number; y: number }, i: number, arr: { x: number; y: number }[]) => {
+            if (i === 0) {
+              return true;
+            }
+            const prev = arr[i - 1];
+            return Math.abs(p.x - prev.x) > 1e-6 || Math.abs(p.y - prev.y) > 1e-6;
+          }
+        );
+        if (deduped.length !== edge.points.length) {
+          log.debug('UIO cutter2: removed consecutive duplicate points', {
+            before: edge.points,
+            after: deduped,
+          });
+        }
+        edge.points = deduped;
         const paths = insertEdge(
           edgesEl,
           edge,
@@ -772,8 +1076,10 @@ export const render = async (
           data4Layout.type,
           startNode,
           endNode,
-          data4Layout.diagramId
+          data4Layout.diagramId,
+          true
         );
+        log.info('APA12 edge points after insert', JSON.stringify(edge.points));
 
         edge.x = edge.labels[0].x + offset.x + edge.labels[0].width / 2;
         edge.y = edge.labels[0].y + offset.y + edge.labels[0].height / 2;

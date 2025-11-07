@@ -66,12 +66,15 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 \}\|                            return 'ONE_OR_MORE';
 "one"                           return 'ONLY_ONE';
 "only one"                      return 'ONLY_ONE';
-"1"                             return 'ONLY_ONE';
+[0-9]+\.[0-9]+                  return 'DECIMAL_NUM';
+"1"(?=\s+[A-Za-z_"'])           return 'ONLY_ONE';
+"1"                             return 'ENTITY_ONE';
+[0-9]+                          return 'NUM';
 \|\|                            return 'ONLY_ONE';
 o\|                             return 'ZERO_OR_ONE';
 o\{                             return 'ZERO_OR_MORE';
 \|\{                            return 'ONE_OR_MORE';
-\s*u                            return 'MD_PARENT';
+u(?=[\.\-\|])                   return 'MD_PARENT';
 \.\.                            return 'NON_IDENTIFYING';
 \-\-                            return 'IDENTIFYING';
 "to"                            return 'IDENTIFYING';
@@ -80,12 +83,14 @@ o\{                             return 'ZERO_OR_MORE';
 \-\.                            return 'NON_IDENTIFYING';
 <style>([^\x00-\x7F]|\w|\-|\*)+ return 'STYLE_TEXT';
 <style>';'                      return 'SEMI';
-([^\x00-\x7F]|\w|\-|\*)+        return 'UNICODE_TEXT';
-[0-9]                           return 'NUM';
+([^\x00-\x7F]|\w|\-|\*|\.)+      return 'UNICODE_TEXT';
 .                               return yytext[0];
 <<EOF>>                         return 'EOF';
 
 /lex
+
+%left 'ONLY_ONE'
+%left 'ZERO_OR_ONE' 'ZERO_OR_MORE' 'ONE_OR_MORE' 'MD_PARENT'
 
 %start start
 %% /* language grammar */
@@ -228,6 +233,9 @@ styleComponent: STYLE_TEXT | NUM | COLON | BRKT;
 entityName
     : 'ENTITY_NAME'      { $$ = $1.replace(/"/g, ''); }
     | 'UNICODE_TEXT' { $$ = $1; }
+    | 'NUM' { $$ = $1; }
+    | 'DECIMAL_NUM' { $$ = $1; }
+    | 'ENTITY_ONE' { $$ = $1; }
     ;
 
 attributes
