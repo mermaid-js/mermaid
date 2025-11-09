@@ -210,6 +210,7 @@ export interface MermaidConfig {
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
   radar?: RadarDiagramConfig;
+  wardley?: WardleyDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -1622,6 +1623,46 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
    * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
    */
   curveTension?: number;
+}
+/**
+ * The object containing configurations specific for Wardley Maps diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "WardleyDiagramConfig".
+ */
+export interface WardleyDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Wardley diagram canvas.
+   */
+  width?: number;
+  /**
+   * The height of the Wardley diagram canvas.
+   */
+  height?: number;
+  /**
+   * The padding around the Wardley diagram.
+   */
+  padding?: number;
+  /**
+   * The radius of component nodes.
+   */
+  nodeRadius?: number;
+  /**
+   * The offset distance for node labels.
+   */
+  nodeLabelOffset?: number;
+  /**
+   * The font size for axis labels.
+   */
+  axisFontSize?: number;
+  /**
+   * The font size for component labels.
+   */
+  labelFontSize?: number;
+  /**
+   * Whether to display a background grid.
+   */
+  showGrid?: boolean;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
