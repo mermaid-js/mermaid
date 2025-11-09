@@ -1,5 +1,30 @@
 # mermaid
 
+## 11.12.1
+
+### Patch Changes
+
+- [#7107](https://github.com/mermaid-js/mermaid/pull/7107) [`cbf8946`](https://github.com/mermaid-js/mermaid/commit/cbf89462acecac7a06f19843e8d48cb137df0753) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - fix: Updated the dependency dagre-d3-es to 7.0.13 to fix GHSA-cc8p-78qf-8p7q
+
+## 11.12.0
+
+### Minor Changes
+
+- [#6921](https://github.com/mermaid-js/mermaid/pull/6921) [`764b315`](https://github.com/mermaid-js/mermaid/commit/764b315dc16d0359add7c6b8e3ef7592e9bdc09c) Thanks [@quilicicf](https://github.com/quilicicf)! - feat: Add IDs in architecture diagrams
+
+### Patch Changes
+
+- [#6950](https://github.com/mermaid-js/mermaid/pull/6950) [`a957908`](https://github.com/mermaid-js/mermaid/commit/a9579083bfba367a4f4678547ec37ed7b61b9f5b) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - chore: Fix mindmap rendering in docs and apply tidytree layout
+
+- [#6826](https://github.com/mermaid-js/mermaid/pull/6826) [`1d36810`](https://github.com/mermaid-js/mermaid/commit/1d3681053b9168354e48e5763023b6305cd1ca72) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Ensure edge label color is applied when using classDef with edge IDs
+
+- [#6945](https://github.com/mermaid-js/mermaid/pull/6945) [`d318f1a`](https://github.com/mermaid-js/mermaid/commit/d318f1a13cd7429334a29c70e449074ec1cb9f68) Thanks [@darshanr0107](https://github.com/darshanr0107)! - fix: Resolve gantt chart crash due to invalid array length
+
+- [#6918](https://github.com/mermaid-js/mermaid/pull/6918) [`cfe9238`](https://github.com/mermaid-js/mermaid/commit/cfe9238882cbe95416db1feea3112456a71b6aaf) Thanks [@shubhamparikh2704](https://github.com/shubhamparikh2704)! - chore: revert marked dependency from ^15.0.7 to ^16.0.0
+  - Reverted marked package version to ^16.0.0 for better compatibility
+  - This is a dependency update that maintains API compatibility
+  - All tests pass with the updated version
+
 ## 11.11.0
 
 ### Minor Changes
