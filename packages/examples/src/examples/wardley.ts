@@ -36,16 +36,19 @@ note Standardising power allows Kettles to evolve faster [0.30, 0.49]
 title Data Evolution Pipeline
 evolution Unmodelled -> Divergent -> Convergent -> Modelled
 
-component User Needs [0.05, 0.95]
-component Data Collection [0.15, 0.80]
-component Custom Analytics [0.35, 0.70]
+component User Needs [0.95, 0.05]
+component Data Collection [0.80, 0.15]
+component Custom Analytics [0.70, 0.35]
 component Standardized Reports [0.65, 0.65]
+component Commodity Storage [0.60, 0.85]
 
 User Needs -> Data Collection
 Data Collection -> Custom Analytics
 Custom Analytics -> Standardized Reports
+Standardized Reports -> Commodity Storage
 
 evolve Custom Analytics 0.60
+evolve Standardized Reports 0.85
 `,
     },
     {
