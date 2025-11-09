@@ -43,6 +43,8 @@ note A generic note appeared [0.23, 0.33]
       title: 'Custom Evolution Stages',
       code: `wardley
 title Data Evolution Pipeline
+size [1100, 800]
+
 evolution Unmodelled -> Divergent -> Convergent -> Modelled
 
 component User Needs [0.95, 0.05]
