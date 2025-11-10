@@ -30,7 +30,7 @@ importers:
         version: 9.3.0(eslint@9.35.0(jiti@2.5.1))
       '@cypress/code-coverage':
         specifier: ^3.14.7
-        version: 3.14.7(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(babel-loader@10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12)))(cypress@14.5.4)(webpack@5.101.3(esbuild@0.25.12))
+        version: 3.14.7(@babel/core@7.28.4)(@babel/preset-env@7.28.5(@babel/core@7.28.4))(babel-loader@10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12)))(cypress@14.5.4)(webpack@5.101.3(esbuild@0.25.12))
       '@eslint/js':
         specifier: ^9.26.0
         version: 9.35.0
@@ -257,7 +257,7 @@ importers:
         specifier: ^1.11.19
         version: 1.11.19
       dompurify:
-        specifier: ^3.2.7
+        specifier: ^3.3.0
         version: 3.3.0
       katex:
         specifier: ^0.16.25
@@ -1388,12 +1388,6 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0
-
-  '@babel/preset-env@7.28.3':
-    resolution: {integrity: sha512-ROiDcM+GbYVPYBOeCR6uBXKkQpBExLl8k9HO1ygXEyds39j+vCCsjmj7S8GOniZQlEs81QlkdJZe76IpLSiqpg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
 
   '@babel/preset-env@7.28.5':
     resolution: {integrity: sha512-S36mOoi1Sb6Fz98fBfE+UZSpYw5mJm0NUHtIKrOuNcqeFauy1J6dIvXm2KRVKobOSaGq4t/hBXdN4HGU3wL9Wg==}
@@ -11616,7 +11610,7 @@ snapshots:
       '@babel/helper-create-regexp-features-plugin': 7.28.5(@babel/core@7.28.5)
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/preset-env@7.28.3(@babel/core@7.28.4)':
+  '@babel/preset-env@7.28.5(@babel/core@7.28.4)':
     dependencies:
       '@babel/compat-data': 7.28.5
       '@babel/core': 7.28.4
@@ -12257,11 +12251,11 @@ snapshots:
 
   '@csstools/css-tokenizer@3.0.4': {}
 
-  '@cypress/code-coverage@3.14.7(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(babel-loader@10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12)))(cypress@14.5.4)(webpack@5.101.3(esbuild@0.25.12))':
+  '@cypress/code-coverage@3.14.7(@babel/core@7.28.4)(@babel/preset-env@7.28.5(@babel/core@7.28.4))(babel-loader@10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12)))(cypress@14.5.4)(webpack@5.101.3(esbuild@0.25.12))':
     dependencies:
       '@babel/core': 7.28.4
-      '@babel/preset-env': 7.28.3(@babel/core@7.28.4)
-      '@cypress/webpack-preprocessor': 6.0.4(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(babel-loader@10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12)))(webpack@5.101.3(esbuild@0.25.12))
+      '@babel/preset-env': 7.28.5(@babel/core@7.28.4)
+      '@cypress/webpack-preprocessor': 6.0.4(@babel/core@7.28.4)(@babel/preset-env@7.28.5(@babel/core@7.28.4))(babel-loader@10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12)))(webpack@5.101.3(esbuild@0.25.12))
       babel-loader: 10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12))
       chalk: 4.1.2
       cypress: 14.5.4
@@ -12297,10 +12291,10 @@ snapshots:
       tunnel-agent: 0.6.0
       uuid: 8.3.2
 
-  '@cypress/webpack-preprocessor@6.0.4(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(babel-loader@10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12)))(webpack@5.101.3(esbuild@0.25.12))':
+  '@cypress/webpack-preprocessor@6.0.4(@babel/core@7.28.4)(@babel/preset-env@7.28.5(@babel/core@7.28.4))(babel-loader@10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12)))(webpack@5.101.3(esbuild@0.25.12))':
     dependencies:
       '@babel/core': 7.28.4
-      '@babel/preset-env': 7.28.3(@babel/core@7.28.4)
+      '@babel/preset-env': 7.28.5(@babel/core@7.28.4)
       babel-loader: 10.0.0(@babel/core@7.28.4)(webpack@5.101.3(esbuild@0.25.12))
       bluebird: 3.7.1
       debug: 4.4.3(supports-color@8.1.1)
