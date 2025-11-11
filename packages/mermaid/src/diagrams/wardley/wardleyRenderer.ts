@@ -26,19 +26,17 @@ const getTheme = (): WardleyTheme => {
   const { themeVariables } = getConfig();
   return {
     backgroundColor: themeVariables.wardley?.backgroundColor ?? themeVariables.background ?? '#fff',
-    axisColor: themeVariables.wardley?.axisColor ?? themeVariables.primaryBorderColor ?? '#666',
+    axisColor: themeVariables.wardley?.axisColor ?? '#000',
     axisTextColor:
       themeVariables.wardley?.axisTextColor ?? themeVariables.primaryTextColor ?? '#222',
     gridColor: themeVariables.wardley?.gridColor ?? 'rgba(100, 100, 100, 0.2)',
-    componentFill: themeVariables.wardley?.componentFill ?? themeVariables.primaryColor ?? '#fff',
-    componentStroke:
-      themeVariables.wardley?.componentStroke ?? themeVariables.primaryBorderColor ?? '#000',
+    componentFill: themeVariables.wardley?.componentFill ?? '#fff',
+    componentStroke: themeVariables.wardley?.componentStroke ?? '#000',
     componentLabelColor:
       themeVariables.wardley?.componentLabelColor ?? themeVariables.primaryTextColor ?? '#222',
-    linkStroke: themeVariables.wardley?.linkStroke ?? themeVariables.lineColor ?? '#000',
+    linkStroke: themeVariables.wardley?.linkStroke ?? '#000',
     evolutionStroke: themeVariables.wardley?.evolutionStroke ?? '#dc3545',
-    annotationStroke:
-      themeVariables.wardley?.annotationStroke ?? themeVariables.primaryBorderColor ?? '#666',
+    annotationStroke: themeVariables.wardley?.annotationStroke ?? '#000',
     annotationTextColor:
       themeVariables.wardley?.annotationTextColor ?? themeVariables.primaryTextColor ?? '#222',
     annotationFill: themeVariables.wardley?.annotationFill ?? themeVariables.background ?? '#fff',
@@ -207,7 +205,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('y1', height - configValues.padding)
     .attr('y2', height - configValues.padding)
     .attr('stroke', theme.axisColor)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
   axisGroup
     .append('line')
     .attr('x1', configValues.padding)
@@ -215,7 +213,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('y1', configValues.padding)
     .attr('y2', height - configValues.padding)
     .attr('stroke', theme.axisColor)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
 
   const xLabel = data.axes.xLabel ?? 'Evolution';
   const yLabel = data.axes.yLabel ?? 'Visibility';
@@ -285,9 +283,10 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
           .attr('x2', startX)
           .attr('y1', configValues.padding)
           .attr('y2', height - configValues.padding)
-          .attr('stroke', theme.axisColor)
-          .attr('stroke-dasharray', '4 4')
-          .attr('opacity', 0.35);
+          .attr('stroke', '#000')
+          .attr('stroke-width', 1)
+          .attr('stroke-dasharray', '5 5')
+          .attr('opacity', 0.8);
       }
 
       // Draw stage label
@@ -365,7 +364,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
           .attr('x2', next.pos!.x)
           .attr('y2', next.pos!.y)
           .attr('stroke', theme.linkStroke)
-          .attr('stroke-width', 2)
+          .attr('stroke-width', 1)
           .attr('stroke-dasharray', '4 4');
       }
 
@@ -489,7 +488,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       return targetPos.y + (dy / distance) * radius;
     })
     .attr('stroke', theme.linkStroke)
-    .attr('stroke-width', 2)
+    .attr('stroke-width', 1)
     .attr('stroke-dasharray', (link) => (link.dashed ? '6 6' : null))
     .attr('marker-end', (link) => {
       if (link.flow === 'forward' || link.flow === 'bidirectional') {
@@ -610,7 +609,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('x2', (trend) => trend.adjustedX2)
     .attr('y2', (trend) => trend.adjustedY2)
     .attr('stroke', theme.evolutionStroke)
-    .attr('stroke-width', 2)
+    .attr('stroke-width', 1)
     .attr('stroke-dasharray', '4 4')
     .attr('marker-end', `url(#arrow-${id})`);
 
@@ -636,7 +635,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('r', configValues.nodeRadius * 2)
     .attr('fill', '#666')
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
 
   // Render buy overlay circles (larger light grey circle for bought components - behind main circle)
   nodeEnter
@@ -648,7 +647,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('r', configValues.nodeRadius * 2)
     .attr('fill', '#ccc')
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
 
   // Render build overlay circles (larger very light grey circle with black border for built components - behind main circle)
   nodeEnter
@@ -660,7 +659,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('r', configValues.nodeRadius * 2)
     .attr('fill', '#eee')
     .attr('stroke', '#000')
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
 
   // Render market overlay (larger circle with three small circles in triangle pattern)
   const marketNodes = nodeEnter.filter((node) => node.sourceStrategy === 'market');
@@ -674,19 +673,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('r', configValues.nodeRadius * 2)
     .attr('fill', 'white')
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 2);
-
-  // Render anchors (filled circles with bold stroke)
-  nodeEnter
-    .filter((node) => node.className === 'anchor')
-    .append('circle')
-    .attr('class', 'wardley-anchor')
-    .attr('cx', (node) => positions.get(node.id)!.x)
-    .attr('cy', (node) => positions.get(node.id)!.y)
-    .attr('r', configValues.nodeRadius)
-    .attr('fill', theme.componentStroke)
-    .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 3);
+    .attr('stroke-width', 1);
 
   // Render circles for normal nodes and pipeline child components (exclude market components and anchors)
   nodeEnter
@@ -700,7 +687,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('r', configValues.nodeRadius)
     .attr('fill', theme.componentFill)
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
 
   // Render three small circles in triangle pattern for market components (on top of main circle)
   const smallCircleRadius = configValues.nodeRadius * 0.7;
@@ -716,7 +703,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('x2', (node) => positions.get(node.id)!.x - triangleRadius * Math.cos(Math.PI / 6))
     .attr('y2', (node) => positions.get(node.id)!.y + triangleRadius * Math.sin(Math.PI / 6))
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
 
   // Line from bottom-left to bottom-right
   marketNodes
@@ -727,7 +714,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('x2', (node) => positions.get(node.id)!.x + triangleRadius * Math.cos(Math.PI / 6))
     .attr('y2', (node) => positions.get(node.id)!.y + triangleRadius * Math.sin(Math.PI / 6))
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
 
   // Line from bottom-right to top
   marketNodes
@@ -738,7 +725,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('x2', (node) => positions.get(node.id)!.x)
     .attr('y2', (node) => positions.get(node.id)!.y - triangleRadius)
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
 
   // Top circle (white fill so it covers the lines)
   marketNodes
@@ -749,7 +736,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('r', smallCircleRadius)
     .attr('fill', 'white')
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 4);
+    .attr('stroke-width', 2);
 
   // Bottom-left circle (white fill so it covers the lines)
   marketNodes
@@ -760,7 +747,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('r', smallCircleRadius)
     .attr('fill', 'white')
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 4);
+    .attr('stroke-width', 2);
 
   // Bottom-right circle (white fill so it covers the lines)
   marketNodes
@@ -771,7 +758,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('r', smallCircleRadius)
     .attr('fill', 'white')
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 4);
+    .attr('stroke-width', 2);
 
   // Render squares for pipeline parent nodes
   nodeEnter
@@ -783,7 +770,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('height', squareSize)
     .attr('fill', theme.componentFill)
     .attr('stroke', theme.componentStroke)
-    .attr('stroke-width', 2);
+    .attr('stroke-width', 1);
 
   // Render inertia indicators (vertical lines to the right of components)
   nodeEnter
@@ -825,6 +812,10 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .append('text')
     .attr('x', (node) => {
       const pos = positions.get(node.id)!;
+      // Anchors have no offset, centered on position
+      if (node.className === 'anchor') {
+        return node.labelOffsetX !== undefined ? pos.x + node.labelOffsetX : pos.x;
+      }
       let defaultOffset = configValues.nodeLabelOffset;
       // Apply automatic spacing for components with source strategy
       if (node.sourceStrategy && node.labelOffsetX === undefined) {
@@ -835,6 +826,10 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     })
     .attr('y', (node) => {
       const pos = positions.get(node.id)!;
+      // Anchors have small upward offset, centered on position
+      if (node.className === 'anchor') {
+        return node.labelOffsetY !== undefined ? pos.y + node.labelOffsetY : pos.y - 3;
+      }
       let defaultOffset = -configValues.nodeLabelOffset;
       // Apply automatic spacing for components with source strategy
       if (node.sourceStrategy && node.labelOffsetY === undefined) {
@@ -855,7 +850,8 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     })
     .attr('font-size', configValues.labelFontSize)
     .attr('font-weight', (node) => (node.className === 'anchor' ? 'bold' : 'normal'))
-    .attr('dominant-baseline', 'auto')
+    .attr('text-anchor', (node) => (node.className === 'anchor' ? 'middle' : 'start'))
+    .attr('dominant-baseline', (node) => (node.className === 'anchor' ? 'middle' : 'auto'))
     .text((node) => node.label);
 
   // Render annotations
@@ -1041,7 +1037,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
         .attr('d', arrowPath)
         .attr('fill', 'white')
         .attr('stroke', theme.componentStroke)
-        .attr('stroke-width', 2);
+        .attr('stroke-width', 1);
 
       // Add label below the arrow
       acceleratorsGroup
@@ -1086,7 +1082,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
         .attr('d', arrowPath)
         .attr('fill', 'white')
         .attr('stroke', theme.componentStroke)
-        .attr('stroke-width', 2);
+        .attr('stroke-width', 1);
 
       // Add label below the arrow
       deacceleratorsGroup

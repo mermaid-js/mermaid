@@ -36,6 +36,7 @@ ranksep
 rect
 rects
 sandboxed
+sentencepiece
 siebling
 statediagram
 substate
