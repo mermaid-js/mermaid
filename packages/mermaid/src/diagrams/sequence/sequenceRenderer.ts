@@ -648,9 +648,14 @@ const drawMessage = async function (diagram, msgModel, lineStartY: number, diagO
     if (isBidirectional) {
       // For bidirectional arrows, adjust the start position
       if (startx < stopx) {
-        lineStartX = startx + SEQUENCE_NUMBER_RADIUS + (hasCentralConn ? 5 : 0);
+        lineStartX = startx + SEQUENCE_NUMBER_RADIUS * 2;
       } else {
         lineStartX = startx - SEQUENCE_NUMBER_RADIUS + (hasCentralConn ? -5 : 0);
+        lineStartX +=
+          msg?.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_DUAL ||
+          msg?.centralConnection === diagObj.db.LINETYPE.CENTRAL_CONNECTION_REVERSE
+            ? -7.5
+            : 0;
       }
       line.attr('x1', lineStartX);
     } else if (isReverseArrowType) {
@@ -1730,7 +1735,8 @@ const calculateCentralConnectionOffset = function (msg, diagObj, isArrowToRight)
   }
 
   if (
-    msg.centralConnection === CENTRAL_CONNECTION_DUAL &&
+    (msg.centralConnection === CENTRAL_CONNECTION_REVERSE ||
+      msg.centralConnection === CENTRAL_CONNECTION_DUAL) &&
     (msg.type === BIDIRECTIONAL_SOLID || msg.type === BIDIRECTIONAL_DOTTED)
   ) {
     offset += isArrowToRight ? 0 : -CENTRAL_CONNECTION_BIDIRECTIONAL_OFFSET;
