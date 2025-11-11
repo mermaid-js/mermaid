@@ -1231,18 +1231,18 @@ sequenceDiagram
         it('should render self-reference with reverse arrows - without autonumber', () => {
           imgSnapshotTest(
             `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice/|-Alice: Solid top reverse self-reference
-    Bob\\|-Bob: Solid bottom reverse self-reference
-    Charlie//-Charlie: Stick top reverse self-reference
-    Alice\\\\-Alice: Stick bottom reverse self-reference
-    Bob/|--Bob: Dotted solid top reverse self-reference
-    Charlie\\|--Charlie: Dotted solid bottom reverse self-reference
-    Alice//--Alice: Dotted stick top reverse self-reference
-    Bob\\\\--Bob: Dotted stick bottom reverse self-reference`,
+  sequenceDiagram
+      participant Alice
+      participant Bob
+      participant Charlie
+      Alice/|-Alice: Solid top reverse self-reference
+      Bob\\|-Bob: Solid bottom reverse self-reference
+      Charlie//-Charlie: Stick top reverse self-reference
+      Alice\\\\-Alice: Stick bottom reverse self-reference
+      Bob/|--Bob: Dotted solid top reverse self-reference
+      Charlie\\|--Charlie: Dotted solid bottom reverse self-reference
+      Alice//--Alice: Dotted stick top reverse self-reference
+      Bob\\\\--Bob: Dotted stick bottom reverse self-reference`,
             { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
           );
         });
@@ -1298,253 +1298,6 @@ sequenceDiagram
           );
         });
 
-        it('should render self-reference with CENTRAL_CONNECTION - without autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice->>()Alice: Solid arrow with circle at destination
-    Bob-->>()Bob: Dotted arrow with circle at destination
-    Charlie->()Charlie: Open arrow with circle at destination
-    Alice--x()Alice: Cross arrow with circle at destination
-    Bob--)()Bob: Close arrow with circle at destination`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-reference with CENTRAL_CONNECTION - with autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    autonumber
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice->>()Alice: Solid arrow with circle at destination
-    Bob-->>()Bob: Dotted arrow with circle at destination
-    Charlie->()Charlie: Open arrow with circle at destination
-    Alice--x()Alice: Cross arrow with circle at destination
-    Bob--)()Bob: Close arrow with circle at destination`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-reference with CENTRAL_CONNECTION_REVERSE  - without autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()->>Alice: Circle at source with solid arrow
-    Bob()-->>Bob: Circle at source with dotted arrow
-    Charlie()->Charlie: Circle at source with open arrow
-    Alice()--xAlice: Circle at source with cross arrow
-    Bob()--)Bob: Circle at source with close arrow`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-reference with CENTRAL_CONNECTION_REVERSE - with autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    autonumber
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()->>Alice: Circle at source with solid arrow
-    Bob()-->>Bob: Circle at source with dotted arrow
-    Charlie()->Charlie: Circle at source with open arrow
-    Alice()--xAlice: Circle at source with cross arrow
-    Bob()--)Bob: Circle at source with close arrow`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-reference with CENTRAL_CONNECTION_DUAL - without autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()->>()Alice: Circles at both ends with solid arrow
-    Bob()-->>()Bob: Circles at both ends with dotted arrow
-    Charlie()->()Charlie: Circles at both ends with open arrow
-    Alice()--x()Alice: Circles at both ends with cross arrow
-    Bob()--)()Bob: Circles at both ends with close arrow`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-reference with CENTRAL_CONNECTION_DUAL - with autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    autonumber
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()->>()Alice: Circles at both ends with solid arrow
-    Bob()-->>()Bob: Circles at both ends with dotted arrow
-    Charlie()->()Charlie: Circles at both ends with open arrow
-    Alice()--x()Alice: Circles at both ends with cross arrow
-    Bob()--)()Bob: Circles at both ends with close arrow`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-reference with reverse arrows and CENTRAL_CONNECTION', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice/|-()Alice: Solid top reverse with circle at destination
-    Bob\\|-()Bob: Solid bottom reverse with circle at destination
-    Charlie//-()Charlie: Stick top reverse with circle at destination
-    Alice\\\\-()Alice: Stick bottom reverse with circle at destination
-    Bob/|--()Bob: Dotted solid top reverse with circle at destination
-    Charlie\\|--()Charlie: Dotted solid bottom reverse with circle at destination
-    Alice//--()Alice: Dotted stick top reverse with circle at destination
-    Bob\\\\--()Bob: Dotted stick bottom reverse with circle at destination`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-reference with reverse arrows and CENTRAL_CONNECTION - with autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    autonumber
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice/|-()Alice: Solid top reverse with circle at destination
-    Bob\\|-()Bob: Solid bottom reverse with circle at destination
-    Charlie//-()Charlie: Stick top reverse with circle at destination
-    Alice\\\\-()Alice: Stick bottom reverse with circle at destination
-    Bob/|--()Bob: Dotted solid top reverse with circle at destination
-    Charlie\\|--()Charlie: Dotted solid bottom reverse with circle at destination
-    Alice//--()Alice: Dotted stick top reverse with circle at destination
-    Bob\\\\--()Bob: Dotted stick bottom reverse with circle at destination`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-ref reverse Central_Connection_REVERSE no-autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()/|-Alice: Circle at source with solid top reverse
-    Bob()\\|-Bob: Circle at source with solid bottom reverse
-    Charlie()//-Charlie: Circle at source with stick top reverse
-    Alice()\\\\-Alice: Circle at source with stick bottom reverse
-    Bob()/|--Bob: Circle at source with dotted solid top reverse
-    Charlie()\\|--Charlie: Circle at source with dotted solid bottom reverse
-    Alice()//--Alice: Circle at source with dotted stick top reverse
-    Bob()\\\\--Bob: Circle at source with dotted stick bottom reverse`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-ref reverse Central_Connection_REVERSE autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    autonumber
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()/|-Alice: Circle at source with solid top reverse
-    Bob()\\|-Bob: Circle at source with solid bottom reverse
-    Charlie()//-Charlie: Circle at source with stick top reverse
-    Alice()\\\\-Alice: Circle at source with stick bottom reverse
-    Bob()/|--Bob: Circle at source with dotted solid top reverse
-    Charlie()\\|--Charlie: Circle at source with dotted solid bottom reverse
-    Alice()//--Alice: Circle at source with dotted stick top reverse
-    Bob()\\\\--Bob: Circle at source with dotted stick bottom reverse`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-ref reverse Central_Connection_DUAL no-autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()/|-()Alice: Circles at both ends with solid top reverse
-    Bob()\\|-()Bob: Circles at both ends with solid bottom reverse
-    Charlie()//-()Charlie: Circles at both ends with stick top reverse
-    Alice()\\\\-()Alice: Circles at both ends with stick bottom reverse
-    Bob()/|--()Bob: Circles at both ends with dotted solid top reverse
-    Charlie()\\|--()Charlie: Circles at both ends with dotted solid bottom reverse
-    Alice()//--()Alice: Circles at both ends with dotted stick top reverse
-    Bob()\\\\--()Bob: Circles at both ends with dotted stick bottom reverse`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-references, reverse arrows & dual central connection (autonumber).', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    autonumber
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()/|-()Alice: Circles at both ends with solid top reverse
-    Bob()\\|-()Bob: Circles at both ends with solid bottom reverse
-    Charlie()//-()Charlie: Circles at both ends with stick top reverse
-    Alice()\\\\-()Alice: Circles at both ends with stick bottom reverse
-    Bob()/|--()Bob: Circles at both ends with dotted solid top reverse
-    Charlie()\\|--()Charlie: Circles at both ends with dotted solid bottom reverse
-    Alice()//--()Alice: Circles at both ends with dotted stick top reverse
-    Bob()\\\\--()Bob: Circles at both ends with dotted stick bottom reverse`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('Render self-references with bidirectional central connections (no autonumber).', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()<<->>()Alice: Dual central with bidirectional solid
-    Bob()<<-->>()Bob: Dual central with bidirectional dotted
-    Charlie<<->>()Alice: Central at end with bidirectional
-    Bob()<<->>Bob: Central at start with bidirectional`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
-        it('should render self-reference with bidirectional and central connections - with autonumber', () => {
-          imgSnapshotTest(
-            `%%{init: {'theme':'base'}}%%
-sequenceDiagram
-    autonumber
-    participant Alice
-    participant Bob
-    participant Charlie
-    Alice()<<->>()Alice: Dual central with bidirectional solid
-    Bob()<<-->>()Bob: Dual central with bidirectional dotted
-    Charlie<<->>()Charlie: Central at end with bidirectional
-    Bob()<<->>Bob: Central at start with bidirectional`,
-            { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
-          );
-        });
-
         it('should render comprehensive self-reference scenario - all arrow types mixed', () => {
           imgSnapshotTest(
             `%%{init: {'theme':'base'}}%%
@@ -1565,19 +1318,7 @@ sequenceDiagram
 
     Note over Alice,Charlie: Bidirectional arrows
     Charlie<<->>Charlie: Bidirectional solid
-    Alice<<-->>Alice: Bidirectional dotted
-
-    Note over Alice,Charlie: Central connections
-    Bob->>()Bob: Central at destination
-    Charlie()->>Charlie: Central at source
-    Alice()->>()Alice: Dual central
-
-    Note over Alice,Charlie: Reverse with central
-    Bob()/|-()Bob: Reverse with dual central
-    Charlie/|-()Charlie: Reverse with central at destination
-
-    Note over Alice,Charlie: Bidirectional with central
-    Alice()<<->>()Alice: Bidirectional with dual central`,
+    Alice<<-->>Alice: Bidirectional dotted`,
             { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
           );
         });
@@ -1594,15 +1335,104 @@ sequenceDiagram
     Alice->>Bob: Regular message
     Bob->>Bob: Self-reference solid
     Bob-->>Charlie: Regular dotted
-    Charlie()->>()Charlie: Self-ref dual central
     Charlie->>Alice: Regular back
     Alice<<->>Alice: Self-ref bidirectional
     Alice()->>Bob: Regular with central
-    Bob()/|-()Bob: Self-ref reverse dual central
     Bob-->>Alice: Regular dotted back`,
             { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
           );
         });
+      });
+    });
+
+    describe('Comprehensive Test - All Message Types and Arrow Types', () => {
+      it('should render all message types and arrow types in a single comprehensive test', () => {
+        imgSnapshotTest(
+          `%%{init: {'theme':'base'}}%%
+sequenceDiagram
+    autonumber
+    participant Alice
+    participant Bob
+    participant Charlie
+    participant David
+
+    Note over Alice,David: SOLID ARROWS (Filled arrowhead)
+    Alice->>Bob: Solid arrow (->>)
+    Alice->Charlie: Solid open arrow (->)
+    Alice-xDavid: Solid cross (-x)
+    Alice-)Bob: Solid point async (-)
+
+    Note over Alice,David: DOTTED ARROWS (Dashed line)
+    Bob-->>Alice: Dotted arrow (-->>)
+    Bob-->Charlie: Dotted open arrow (-->)
+    Bob--xDavid: Dotted cross (--x)
+    Bob--)Alice: Dotted point async (--)
+
+    Note over Alice,David: BIDIRECTIONAL ARROWS
+    Alice<<->>Bob: Bidirectional solid (<<->>)
+    Charlie<<-->>David: Bidirectional dotted (<<-->>)
+
+    Note over Alice,David: REVERSE ARROWS (Half arrows)
+    Bob/|-Alice: Solid top reverse (/|-)
+    Charlie\\|-Bob: Solid bottom reverse (\\|-)
+    David//-Alice: Stick top reverse (//)
+    Alice\\\\-Bob: Stick bottom reverse (\\\\-)
+
+    Note over Alice,David: DOTTED REVERSE ARROWS
+    Bob/|--Alice: Dotted solid top reverse (/|--)
+    Charlie\\|--Bob: Dotted solid bottom reverse (\\|--)
+    David//--Alice: Dotted stick top reverse (//--)
+    Alice\\\\--Bob: Dotted stick bottom reverse (\\\\--)
+
+    Note over Alice,David: CENTRAL CONNECTIONS (Circle at destination)
+    Alice->>()Bob: Solid with circle at destination
+    Alice-->>()Charlie: Dotted with circle at destination
+    Alice->()David: Open with circle at destination
+    Alice--x()Bob: Cross with circle at destination
+
+    Note over Alice,David: CENTRAL CONNECTIONS REVERSE (Circle at source)
+    Bob()->>Alice: Circle at source with solid
+    Charlie()-->>Bob: Circle at source with dotted
+    David()->Alice: Circle at source with open
+    Bob()--xAlice: Circle at source with cross
+
+    Note over Alice,David: CENTRAL CONNECTIONS DUAL (Circles at both ends)
+    Alice()->>()Bob: Dual circles with solid
+    Alice()-->>()Charlie: Dual circles with dotted
+    Alice()->()David: Dual circles with open
+    Alice()--x()Bob: Dual circles with cross
+
+    Note over Alice,David: BIDIRECTIONAL WITH CENTRAL CONNECTIONS
+    Alice()<<->>()Bob: Dual circles with bidirectional solid
+    Charlie()<<-->>()David: Dual circles with bidirectional dotted
+
+    Note over Alice,David: SELF-REFERENCES (Same participant)
+    Alice->>Alice: Self-reference solid
+    Bob-->>Bob: Self-reference dotted
+    Charlie->Charlie: Self-reference open
+    David-xDavid: Self-reference cross
+
+    Note over Alice,David: SELF-REFERENCES WITH REVERSE ARROWS
+    Alice/|-Alice: Self-ref reverse solid top
+    Bob\\|-Bob: Self-ref reverse solid bottom
+    Charlie//-Charlie: Self-ref reverse stick top
+    David\\\\-David: Self-ref reverse stick bottom
+
+    Note over Alice,David: SELF-REFERENCES BIDIRECTIONAL
+    Alice<<->>Alice: Self-ref bidirectional solid
+    Bob<<-->>Bob: Self-ref bidirectional dotted
+
+    Note over Alice,David: MIXED COMPLEX SCENARIO
+    Alice->>Bob: Regular message
+    Bob()->>()Charlie: Central dual connection
+    Charlie-->>David: Dotted response
+    David/|-Alice: Reverse arrow
+    Alice<<->>Bob: Bidirectional back
+    Bob-xCharlie: Cross message
+    Charlie()->>David: Central reverse
+    David-->>()Alice: Dotted with circle`,
+          { sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
       });
     });
   });
