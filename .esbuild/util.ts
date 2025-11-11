@@ -71,6 +71,9 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
 
   const external: string[] = ['require', 'fs', 'path'];
   const outFileName = getFileName(name, options);
+  const { dependencies, version } = JSON.parse(
+    readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
+  );
   const output: BuildOptions = buildOptions({
     ...rest,
     absWorkingDir: resolve(__dirname, `../packages/${packageName}`),
@@ -82,15 +85,13 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     chunkNames: `chunks/${outFileName}/[name]-[hash]`,
     define: {
       // This needs to be stringified for esbuild
-      includeLargeFeatures: `${includeLargeFeatures}`,
+      'injected.includeLargeFeatures': `${includeLargeFeatures}`,
+      'injected.version': `'${version}'`,
       'import.meta.vitest': 'undefined',
     },
   });
 
   if (core) {
-    const { dependencies } = JSON.parse(
-      readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
-    );
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
     // Ignore dependencies and any dependencies of dependencies
