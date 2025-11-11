@@ -242,6 +242,18 @@ describe('Sequence diagram', () => {
       `
     );
   });
+  it('should render a sequence diagram with sequence numbers that are decimals and increase by a decmial value', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      autonumber 10.1 .01
+      Alice->Bob: Hello Bob, how are you?
+      Bob-->Alice: I am good thanks!
+      Alice->Bob: That is good to hear!
+      Bob->Alice: See you later!
+    `
+    );
+  });
   describe('font settings', () => {
     it('should render different note fonts when configured', () => {
       imgSnapshotTest(
