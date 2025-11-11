@@ -26,7 +26,8 @@ async function addHtmlSpan(
   classes,
   addBackground = false,
   // TODO: Make config mandatory
-  config: MermaidConfig = getConfig()
+  config: MermaidConfig = getConfig(),
+  useLegacyStyle = false
 ) {
   const fo = element.append('foreignObject');
   // This is not the final width but used in order to make sure the foreign
@@ -35,28 +36,50 @@ async function addHtmlSpan(
   fo.attr('height', `${10 * width}px`);
 
   const div = fo.append('xhtml:div');
-  const sanitizedLabel = hasKatex(node.label)
-    ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
-    : sanitizeText(node.label, config);
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  const span = div.append('span');
-  span.html(sanitizedLabel);
-  applyStyle(span, node.labelStyle);
-  span.attr('class', `${labelClass} ${classes}`);
 
-  applyStyle(div, node.labelStyle);
-  div.style('display', 'table-cell');
-  div.style('white-space', 'nowrap');
-  div.style('line-height', '1.5');
-  div.style('max-width', width + 'px');
-  div.style('text-align', 'center');
+  if (useLegacyStyle) {
+    let label = node.label;
+    if (node.label && hasKatex(node.label)) {
+      label = await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config);
+    }
+    const labelSpan =
+      '<span class="' +
+      labelClass +
+      '" ' +
+      (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') + // codeql [js/html-constructed-from-input] : false positive
+      '>' +
+      label +
+      '</span>';
+    div.html(sanitizeText(labelSpan, config));
+    applyStyle(div, node.labelStyle);
+    div.style('display', 'inline-block');
+    div.style('white-space', 'nowrap');
+    div.style('padding-right', '1px');
+  } else {
+    // Use new createText styling for markdown labels
+    const sanitizedLabel = hasKatex(node.label)
+      ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
+      : sanitizeText(node.label, config);
+    const span = div.append('span');
+    span.html(sanitizedLabel);
+    applyStyle(span, node.labelStyle);
+    span.attr('class', `${labelClass} ${classes}`);
+
+    applyStyle(div, node.labelStyle);
+    div.style('display', 'table-cell');
+    div.style('white-space', 'nowrap');
+    div.style('line-height', '1.5');
+    div.style('max-width', width + 'px');
+    div.style('text-align', 'center');
+  }
   div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
   if (addBackground) {
     div.attr('class', 'labelBkg');
   }
 
   let bbox = div.node().getBoundingClientRect();
-  if (bbox.width === width) {
+  if (!useLegacyStyle && bbox.width === width) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
@@ -227,6 +250,7 @@ export const createText = async (
     isNode = true,
     width = 200,
     addSvgBackground = false,
+    useLegacyStyle = false,
   } = {},
   config?: MermaidConfig
 ) => {
@@ -239,23 +263,42 @@ export const createText = async (
     useHtmlLabels,
     isNode,
     'addSvgBackground: ',
-    addSvgBackground
+    addSvgBackground,
+    'useLegacyStyle: ',
+    useLegacyStyle
   );
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
-    const htmlText = markdownToHTML(text, config);
-    const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
+    let processedLabel;
+    if (useLegacyStyle) {
+      const textWithBreaks = text.replace(/\\n|\n/g, '<br />');
+      processedLabel = decodeEntities(textWithBreaks).replace(
+        /fa[blrs]?:fa-[\w-]+/g,
+        (s) => `<i class='${s.replace(':', ' ')}'></i>`
+      );
+    } else {
+      const htmlText = markdownToHTML(text, config);
+      processedLabel = await replaceIconSubstring(decodeEntities(htmlText), config);
+    }
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
     const inputForKatex = text.replace(/\\\\/g, '\\');
 
     const node = {
       isNode,
-      label: hasKatex(text) ? inputForKatex : decodedReplacedText,
+      label: hasKatex(text) ? inputForKatex : processedLabel,
       labelStyle: style.replace('fill:', 'color:'),
     };
-    const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground, config);
+    const vertexNode = await addHtmlSpan(
+      el,
+      node,
+      width,
+      classes,
+      addSvgBackground,
+      config,
+      useLegacyStyle
+    );
     return vertexNode;
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>
