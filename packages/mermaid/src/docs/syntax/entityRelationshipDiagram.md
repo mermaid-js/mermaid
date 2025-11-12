@@ -89,9 +89,9 @@ erDiagram
     "This **is** _Markdown_"
 ```
 
-#### Optional Relationship Labels
+#### Optional Relationship Labels (v<MERMAID_RELEASE_VERSION>+)
 
-Starting from Mermaid version 11.11.0, the relationship label in ER diagrams is optional. You can define relationships without specifying a label, and the diagram will render correctly.
+The relationship label in ER diagrams is optional. You can define relationships without specifying a label, and the diagram will render correctly.
 
 For example, the following is valid:
 
