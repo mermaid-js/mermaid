@@ -908,11 +908,31 @@ autonumber <start> <increment>
 For example:
 
 ```mermaid-example
-autonumber 1.5 0.25
+sequenceDiagram
+    autonumber 1.5 0.25
+    Alice->Bob: Hello Bob, how are you?
+    Bob-->Alice: I am good thanks!
 ```
 
 ```mermaid
-autonumber 1.5 0.25
+sequenceDiagram
+    autonumber 1.5 0.25
+    Alice->Bob: Hello Bob, how are you?
+    Bob-->Alice: I am good thanks!
+```
+
+```mermaid-example
+sequenceDiagram
+    autonumber 1.5 0.25
+    Alice->Bob: Hello Bob, how are you?
+    Bob-->Alice: I am good thanks!
+```
+
+```mermaid
+sequenceDiagram
+    autonumber 1.5 0.25
+    Alice->Bob: Hello Bob, how are you?
+    Bob-->Alice: I am good thanks!
 ```
 
 ## Actor Menus

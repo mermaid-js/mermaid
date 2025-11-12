@@ -242,7 +242,7 @@ describe('Sequence diagram', () => {
       `
     );
   });
-  it('should render a sequence diagram with sequence numbers that are decimals and increase by a decmial value', () => {
+  it('should render a sequence diagram with sequence numbers that are decimals and increase by a decimal value', () => {
     imgSnapshotTest(
       `
       sequenceDiagram
