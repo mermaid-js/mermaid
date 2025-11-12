@@ -98,12 +98,12 @@ describe('Configuration', () => {
     it('should handle arrowMarkerAbsolute set to true', () => {
       renderGraph(
         `flowchart TD
-        A[Christmas] -->|Get money| B(Go shopping)
-        B --> C{Let me think}
-        C -->|One| D[Laptop]
-        C -->|Two| E[iPhone]
-        C -->|Three| F[fa:fa-car Car]
-        `,
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]
+    `,
         {
           arrowMarkerAbsolute: true,
         }
@@ -113,8 +113,7 @@ describe('Configuration', () => {
         cy.get('path')
           .first()
           .should('have.attr', 'marker-end')
-          .should('exist')
-          .and('include', 'url(http\\:\\/\\/localhost');
+          .and('include', 'url(http://localhost');
       });
     });
     it('should not taint the initial configuration when using multiple directives', () => {

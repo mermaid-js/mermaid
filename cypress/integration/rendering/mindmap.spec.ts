@@ -159,12 +159,10 @@ root
   });
   it('square shape', () => {
     imgSnapshotTest(
-      `
-mindmap
+      `mindmap
     root[
       The root
-    ]
-      `,
+    ]`,
       {},
       undefined,
       shouldHaveRoot
@@ -172,12 +170,10 @@ mindmap
   });
   it('rounded rect shape', () => {
     imgSnapshotTest(
-      `
-mindmap
+      `mindmap
     root((
       The root
-    ))
-      `,
+    ))`,
       {},
       undefined,
       shouldHaveRoot
@@ -185,12 +181,10 @@ mindmap
   });
   it('circle shape', () => {
     imgSnapshotTest(
-      `
-mindmap
+      `mindmap
     root(
       The root
-    )
-      `,
+    )`,
       {},
       undefined,
       shouldHaveRoot
@@ -198,10 +192,8 @@ mindmap
   });
   it('default shape', () => {
     imgSnapshotTest(
-      `
-mindmap
-  The root
-      `,
+      `mindmap
+  The root`,
       {},
       undefined,
       shouldHaveRoot
@@ -209,12 +201,10 @@ mindmap
   });
   it('adding children', () => {
     imgSnapshotTest(
-      `
-mindmap
+      `mindmap
   The root
     child1
-    child2
-      `,
+    child2`,
       {},
       undefined,
       shouldHaveRoot
@@ -222,13 +212,11 @@ mindmap
   });
   it('adding grand children', () => {
     imgSnapshotTest(
-      `
-mindmap
+      `mindmap
   The root
     child1
       child2
-      child3
-      `,
+      child3`,
       {},
       undefined,
       shouldHaveRoot
@@ -240,25 +228,21 @@ mindmap
         `mindmap
     id1[\`**Start** with
     a second line 😎\`]
-      id2[\`The dog in **the** hog... a *very long text* about it
-Word!\`]
-`
+      id2[\`The dog in **the** hog... a *very long text* about it Word!\`]`
       );
     });
   });
   describe('Include char sequence "graph" in text (#6795)', () => {
     it('has a label with char sequence "graph"', () => {
       imgSnapshotTest(
-        `
-        mindmap
+        ` mindmap
           root
             Photograph
               Waterfall
               Landscape
             Geography
               Mountains
-              Rocks
-        `,
+              Rocks`,
         { flowchart: { defaultRenderer: 'elk' } }
       );
     });

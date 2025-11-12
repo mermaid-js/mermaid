@@ -590,11 +590,17 @@ flowchart TD
   - `b`
 - **w**: The width of the image. If not defined, this will default to the natural width of the image.
 - **h**: The height of the image. If not defined, this will default to the natural height of the image.
-- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the height (`h`) accordingly to the width (`w`). If not defined, this will default to `off` Possible values are:
+- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the width (`w`) accordingly to the height (`h`). If not defined, this will default to `off` Possible values are:
   - `on`
   - `off`
 
-These new shapes provide additional flexibility and visual appeal to your flowcharts, making them more informative and engaging.
+If you want to resize an image, but keep the same aspect ratio, set `h`, and set `constraint: on` to constrain the aspect ratio. E.g.
+
+```mermaid
+flowchart TD
+  %% My image with a constrained aspect ratio
+  A@{ img: "https://mermaid.js.org/favicon.svg", label: "My example image label", pos: "t", h: 60, constraint: "on" }
+```
 
 ## Links between nodes
 

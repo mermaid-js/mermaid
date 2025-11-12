@@ -803,4 +803,34 @@ describe('Gantt diagram', () => {
       {}
     );
   });
+  it('should handle numeric timestamps with dateFormat x', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     title Process time profile (ms)
+     dateFormat x
+     axisFormat %L
+     tickInterval 250millisecond
+
+     section Pipeline
+     Parse JSON p1: 000, 120
+    `,
+      {}
+    );
+  });
+  it('should handle numeric timestamps with dateFormat X', () => {
+    imgSnapshotTest(
+      `
+     gantt
+     title Process time profile (ms)
+     dateFormat X
+     axisFormat %L
+     tickInterval 250millisecond
+
+     section Pipeline
+     Parse JSON p1: 000, 120
+    `,
+      {}
+    );
+  });
 });
