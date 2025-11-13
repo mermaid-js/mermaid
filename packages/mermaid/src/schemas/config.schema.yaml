@@ -310,7 +310,7 @@ properties:
     $ref: '#/$defs/BlockDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
-  wardley:
+  wardley-beta:
     $ref: '#/$defs/WardleyDiagramConfig'
   dompurifyConfig:
     title: DOM Purify Configuration

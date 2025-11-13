@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/wardley.md](../../packages/mermaid/src/docs/syntax/wardley.md).
 
-# Wardley Maps (v11.0.0+)
+# Wardley Maps (v\<MERMAID_RELEASE_VERSION>+)
 
 > Wardley Maps are visual representations of business strategy that map value chains and component evolution. They help identify strategic opportunities, dependencies, and guide technology decisions.
 
@@ -25,7 +25,7 @@ This dual positioning enables strategic analysis of:
 ## Basic Example
 
 ```mermaid-example
-wardley
+wardley-beta
 title Tea Shop Value Chain
 
 anchor Business [0.95, 0.63]
@@ -48,7 +48,7 @@ note Standardising power allows Kettles to evolve faster [0.30, 0.49]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Tea Shop Value Chain
 
 anchor Business [0.95, 0.63]
@@ -77,13 +77,13 @@ note Standardising power allows Kettles to evolve faster [0.30, 0.49]
 Every Wardley diagram starts with the `wardley` keyword:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Your Map Title
 size [width, height]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Your Map Title
 size [width, height]
 ```
@@ -102,7 +102,7 @@ size [width, height]
 This is **opposite** of typical (x, y) notation!
 
 ```mermaid-example
-wardley
+wardley-beta
 title Coordinate Examples
 
 component Infrastructure [0.30, 0.20]  # Low visibility, low evolution
@@ -111,7 +111,7 @@ component User Need [0.90, 0.95]       # High visibility, high evolution
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Coordinate Examples
 
 component Infrastructure [0.30, 0.20]  # Low visibility, low evolution
@@ -138,7 +138,7 @@ component Name [visibility, evolution] (decorator)
 Example:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Components
 
 component API [0.60, 0.70]
@@ -147,7 +147,7 @@ component "Custom Service" [0.55, 0.35]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Components
 
 component API [0.60, 0.70]
@@ -160,7 +160,7 @@ component "Custom Service" [0.55, 0.35]
 Anchors represent users or customers with bold labels:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Anchors
 
 anchor Customer [0.90, 0.95]
@@ -173,7 +173,7 @@ Business -> Service
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Anchors
 
 anchor Customer [0.90, 0.95]
@@ -192,7 +192,7 @@ Business -> Service
 Mark components resistant to change:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Inertia
 
 component Legacy System [0.45, 0.40] (inertia)
@@ -202,7 +202,7 @@ Legacy System -> New Platform
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Inertia
 
 component Legacy System [0.45, 0.40] (inertia)
@@ -221,7 +221,7 @@ Indicate build/buy/outsource decisions:
 - `(market)` - Circle symbol
 
 ```mermaid-example
-wardley
+wardley-beta
 title Sourcing Strategy
 
 anchor Customer [0.80, 0.95]
@@ -237,7 +237,7 @@ Off-the-shelf Tool -> Cloud Platform
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Sourcing Strategy
 
 anchor Customer [0.80, 0.95]
@@ -275,7 +275,7 @@ A +'text'> B        # Labeled flow
 Example:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Link Types
 
 component User [0.90, 0.95]
@@ -292,7 +292,7 @@ Cache +'backup'> Database
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Link Types
 
 component User [0.90, 0.95]
@@ -315,7 +315,7 @@ Cache +'backup'> Database
 Show component evolution with red dashed arrows:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Evolution
 
 component Database [0.40, 0.50]
@@ -328,7 +328,7 @@ evolve API 0.80
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Evolution
 
 component Database [0.40, 0.50]
@@ -359,7 +359,7 @@ Note: Trends use standard (x, y) order, not \[visibility, evolution]!
 Pipeline components share visibility and only vary by evolution:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Pipeline Evolution
 
 component Database [0.40, 0.60]
@@ -373,7 +373,7 @@ pipeline Database {
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Pipeline Evolution
 
 component Database [0.40, 0.60]
@@ -391,7 +391,7 @@ pipeline Database {
 Define custom axis labels:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Custom Stages
 
 evolution Unmodelled -> Divergent -> Convergent -> Modelled
@@ -402,7 +402,7 @@ component Reports [0.75, 0.70]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Custom Stages
 
 evolution Unmodelled -> Divergent -> Convergent -> Modelled
@@ -415,7 +415,7 @@ component Reports [0.75, 0.70]
 #### Dual Labels
 
 ```mermaid-example
-wardley
+wardley-beta
 title Dual Label Stages
 
 evolution Genesis / Concept -> Custom / Emerging -> Product / Converging -> Commodity / Accepted
@@ -427,7 +427,7 @@ component Utility [0.95, 0.90]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Dual Label Stages
 
 evolution Genesis / Concept -> Custom / Emerging -> Product / Converging -> Commodity / Accepted
@@ -443,7 +443,7 @@ component Utility [0.95, 0.90]
 Specify custom boundary widths using `@` notation:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Custom Widths
 
 evolution Genesis@0.2 -> Custom@0.4 -> Product@0.75 -> Commodity@1.0
@@ -455,7 +455,7 @@ component Utility [0.60, 0.90]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Custom Widths
 
 evolution Genesis@0.2 -> Custom@0.4 -> Product@0.75 -> Commodity@1.0
@@ -471,7 +471,7 @@ component Utility [0.60, 0.90]
 #### Notes
 
 ```mermaid-example
-wardley
+wardley-beta
 title Notes
 
 component API [0.60, 0.70]
@@ -484,7 +484,7 @@ note High risk area [0.40, 0.35]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Notes
 
 component API [0.60, 0.70]
@@ -501,7 +501,7 @@ First line of multi-line notes is bold.
 #### Numbered Annotations
 
 ```mermaid-example
-wardley
+wardley-beta
 title Annotations
 
 component API [0.60, 0.70]
@@ -518,7 +518,7 @@ annotation 3,[0.40, 0.35] Data persistence
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Annotations
 
 component API [0.60, 0.70]
@@ -541,7 +541,7 @@ annotation 3,[0.40, 0.35] Data persistence
 Labeled regions for grouping:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Areas
 
 area Frontend [0.80, 0.75]
@@ -559,7 +559,7 @@ Database -> Cloud
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Areas
 
 area Frontend [0.80, 0.75]
@@ -581,7 +581,7 @@ Database -> Cloud
 Forces affecting evolution:
 
 ```mermaid-example
-wardley
+wardley-beta
 title Forces
 
 component Legacy [0.20, 0.85]
@@ -596,7 +596,7 @@ deaccelerator "Legacy Constraints" [0.15, 0.75]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Forces
 
 component Legacy [0.20, 0.85]
@@ -630,13 +630,13 @@ Negative Y moves up, positive Y moves down.
 ### Custom Canvas Size
 
 ```mermaid-example
-wardley
+wardley-beta
 title Custom Size
 size [800, 1000]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Custom Size
 size [800, 1000]
 ```
@@ -644,7 +644,7 @@ size [800, 1000]
 ## Complete Example
 
 ```mermaid-example
-wardley
+wardley-beta
 title Software Platform Strategy
 size [1100, 800]
 
@@ -687,7 +687,7 @@ note Migrate to cloud-native database [0.60, 0.50]
 ```
 
 ```mermaid
-wardley
+wardley-beta
 title Software Platform Strategy
 size [1100, 800]
 

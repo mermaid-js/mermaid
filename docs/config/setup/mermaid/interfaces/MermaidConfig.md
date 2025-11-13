@@ -466,9 +466,9 @@ Defined in: [packages/mermaid/src/config.type.ts:196](https://github.com/mermaid
 
 ---
 
-### wardley?
+### wardley-beta?
 
-> `optional` **wardley**: `WardleyDiagramConfig`
+> `optional` **wardley-beta**: `WardleyDiagramConfig`
 
 Defined in: [packages/mermaid/src/config.type.ts:213](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L213)
 

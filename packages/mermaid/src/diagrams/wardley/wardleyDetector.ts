@@ -4,10 +4,10 @@ import type {
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
 
-const id = 'wardley';
+const id = 'wardley-beta';
 
 const detector: DiagramDetector = (text) => {
-  return /^\s*wardley/i.test(text);
+  return /^\s*wardley-beta/i.test(text);
 };
 
 const loader: DiagramLoader = async () => {

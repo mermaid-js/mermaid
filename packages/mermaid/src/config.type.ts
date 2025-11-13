@@ -210,7 +210,7 @@ export interface MermaidConfig {
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
   radar?: RadarDiagramConfig;
-  wardley?: WardleyDiagramConfig;
+  'wardley-beta'?: WardleyDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;

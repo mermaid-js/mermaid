@@ -4,7 +4,7 @@ describe('Wardley Maps', () => {
   it('1: should render Tea Shop', () => {
     imgSnapshotTest(
       `
-wardley
+wardley-beta
 title Tea Shop
 size [1100, 800]
 
@@ -41,7 +41,7 @@ note A generic note appeared [0.23, 0.33]
   it('2: should render Data Evolution Stages', () => {
     imgSnapshotTest(
       `
-wardley
+wardley-beta
 title Data Evolution Pipeline
 size [1100, 800]
 
@@ -68,7 +68,7 @@ evolve Standardized Reports 0.85
   it('3: should render Pipelines', () => {
     imgSnapshotTest(
       `
-wardley
+wardley-beta
 title Kettle Evolution Pipeline
 size [1100, 800]
 
@@ -94,7 +94,7 @@ Smart Kettle -> Kettle
   it('4: should render Link Types and Annotations', () => {
     imgSnapshotTest(
       `
-wardley
+wardley-beta
 title Link Features Demo
 size [1100, 800]
 
@@ -119,7 +119,7 @@ Service +'backup'> Database
   it('5: should render Custom Canvas Size', () => {
     imgSnapshotTest(
       `
-wardley
+wardley-beta
 title Custom Size Map
 size [600, 800]
 
@@ -143,7 +143,7 @@ evolve Database 0.60
   it('6: should render GPT Tokeniser Architecture', () => {
     imgSnapshotTest(
       `
-wardley
+wardley-beta
 title GPT Tokeniser
 size [1100, 800]
 

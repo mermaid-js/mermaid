@@ -44,17 +44,17 @@ const getTheme = (): WardleyTheme => {
 };
 
 const getConfigValues = () => {
-  const { wardley } = getConfig();
+  const wardleyConfig = getConfig()['wardley-beta'];
   return {
-    width: wardley?.width ?? 900,
-    height: wardley?.height ?? 600,
-    padding: wardley?.padding ?? 48,
-    nodeRadius: wardley?.nodeRadius ?? 6,
-    nodeLabelOffset: wardley?.nodeLabelOffset ?? 8,
-    axisFontSize: wardley?.axisFontSize ?? 12,
-    labelFontSize: wardley?.labelFontSize ?? 10,
-    showGrid: wardley?.showGrid ?? false,
-    useMaxWidth: wardley?.useMaxWidth ?? true,
+    width: wardleyConfig?.width ?? 900,
+    height: wardleyConfig?.height ?? 600,
+    padding: wardleyConfig?.padding ?? 48,
+    nodeRadius: wardleyConfig?.nodeRadius ?? 6,
+    nodeLabelOffset: wardleyConfig?.nodeLabelOffset ?? 8,
+    axisFontSize: wardleyConfig?.axisFontSize ?? 12,
+    labelFontSize: wardleyConfig?.labelFontSize ?? 10,
+    showGrid: wardleyConfig?.showGrid ?? false,
+    useMaxWidth: wardleyConfig?.useMaxWidth ?? true,
   };
 };
 

@@ -20,7 +20,7 @@ function textSanitizer(text: string) {
 }
 
 function getConfig() {
-  return getGlobalConfig().wardley;
+  return getGlobalConfig()['wardley-beta'];
 }
 
 function addNode(

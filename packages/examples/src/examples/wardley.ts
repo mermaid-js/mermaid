@@ -8,7 +8,7 @@ export default {
     {
       title: 'Tea Shop Value Chain',
       isDefault: true,
-      code: `wardley
+      code: `wardley-beta
 title Tea Shop
 size [1100, 800]
 
@@ -41,7 +41,7 @@ note A generic note appeared [0.23, 0.33]
     },
     {
       title: 'Custom Evolution Stages',
-      code: `wardley
+      code: `wardley-beta
 title Data Evolution Pipeline
 size [1100, 800]
 
@@ -64,7 +64,7 @@ evolve Standardized Reports 0.85
     },
     {
       title: 'Pipeline Components',
-      code: `wardley
+      code: `wardley-beta
 title Kettle Evolution Pipeline
 size [1100, 800]
 
@@ -86,7 +86,7 @@ Smart Kettle -> Kettle
     },
     {
       title: 'GPT Tokeniser Architecture',
-      code: `wardley
+      code: `wardley-beta
 title GPT Tokeniser
 size [1100, 800]
 
