@@ -1,5 +1,4 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { evaluate } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
 import utils from '../../utils.js';
@@ -45,8 +44,8 @@ export const getLabelStyles = (styleArray) => {
 };
 
 export const insertEdgeLabel = async (elem, edge) => {
-  let useHtmlLabels = evaluate(getConfig().flowchart.htmlLabels);
-
+  const config = getConfig();
+  let useHtmlLabels = config.flowchart.htmlLabels;
   const { labelStyles } = styles2String(edge);
   edge.labelStyle = labelStyles;
   const labelElement = await createText(elem, edge.label, {
