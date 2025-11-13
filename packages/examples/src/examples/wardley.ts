@@ -1,7 +1,7 @@
 import type { DiagramMetadata } from '../types.js';
 
 export default {
-  id: 'wardley',
+  id: 'wardley-beta',
   name: 'Wardley Maps',
   description: 'Visualize business strategy and value chains with component evolution',
   examples: [
