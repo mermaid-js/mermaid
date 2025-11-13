@@ -14,9 +14,9 @@ export class WardleyValueConverter extends AbstractMermaidValueConverter {
       case 'TEXT_UNTIL_BRACKET':
       case 'TEXT_LINE':
         return input.trim();
-      case 'QUOTED_STRING':
-        // Remove quotes from quoted strings
-        return input.substring(1, input.length - 1);
+      case 'LINK_LABEL':
+        // Strip the leading ';' and trim whitespace
+        return input.substring(1).trim();
       default:
         return undefined;
     }

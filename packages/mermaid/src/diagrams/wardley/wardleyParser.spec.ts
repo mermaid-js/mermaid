@@ -196,7 +196,43 @@ component A [0.5, 0.5]`
     );
 
     const data = db.getWardleyData();
-    expect(data.width).toBe(1200);
-    expect(data.height).toBe(900);
+    expect(data.size?.width).toBe(1200);
+    expect(data.size?.height).toBe(900);
+  });
+
+  it('handles quoted identifiers, inline labels, and converts coordinates to percentages', async () => {
+    await parser.parse(
+      `wardley-beta
+title Coordinate Handling
+component "Mobile App" [0.2, 0.4] (build) (inertia)
+component API [0.3, 0.5]
+"Mobile App" +<> API; constraint
+note "Check dependencies" [0.25, 0.45]
+annotations [0.10, 0.90]
+annotation 1,[0.60, 0.65] "Critical component"
+accelerator "Cloud Native" [0.20, 0.85]
+deaccelerator "Legacy Data" [0.40, 0.35]`
+    );
+
+    const data = db.getWardleyData();
+    const mobile = data.nodes.find((n) => n.label === 'Mobile App');
+    expect(mobile?.x).toBeCloseTo(40);
+    expect(mobile?.y).toBeCloseTo(20);
+    expect(mobile?.sourceStrategy).toBe('build');
+    expect(mobile?.inertia).toBe(true);
+
+    expect(data.links).toHaveLength(1);
+    expect(data.links[0].flow).toBe('bidirectional');
+    expect(data.links[0].label).toBe('constraint');
+
+    expect(data.notes[0].x).toBeCloseTo(45);
+    expect(data.notes[0].y).toBeCloseTo(25);
+
+    expect(data.annotationsBox).toEqual({ x: 90, y: 10 });
+    expect(data.annotations[0].text).toBe('Critical component');
+    expect(data.annotations[0].coordinates[0]).toEqual({ x: 65, y: 60 });
+
+    expect(data.accelerators[0]).toMatchObject({ name: 'Cloud Native', x: 85, y: 20 });
+    expect(data.deaccelerators[0]).toMatchObject({ name: 'Legacy Data', x: 35, y: 40 });
   });
 });

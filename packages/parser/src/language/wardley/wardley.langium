@@ -36,16 +36,21 @@ Evolution:
 ;
 
 EvolutionStage:
-    name=EVOLUTION_NAME ('@' boundary=FLOAT)? ('/' secondName=EVOLUTION_NAME)?
+    name=EVOLUTION_NAME ('@' boundary=NUMBER)? ('/' secondName=EVOLUTION_NAME)?
 ;
 
 Anchor:
-    'anchor' name=COMPONENT_NAME '[' visibility=FLOAT ',' evolution=FLOAT ']' EOL
+    'anchor' name=(STRING | COMPONENT_NAME) '[' visibility=NUMBER ',' evolution=NUMBER ']' EOL
 ;
 
 Component:
-    'component' name=COMPONENT_NAME '[' visibility=FLOAT ',' evolution=FLOAT ']'
-    label=Label? decorator=Decorator? inertia?='inertia'? EOL
+    'component' name=(STRING | COMPONENT_NAME) '[' visibility=NUMBER ',' evolution=NUMBER ']'
+    label=Label? decorator=Decorator?
+    (
+        inertia?='inertia'
+      | '(' inertia?='inertia' ')'
+    )?
+    EOL
 ;
 
 Label:
@@ -57,55 +62,55 @@ Decorator:
 ;
 
 Link:
-    from=COMPONENT_NAME fromPort=LINK_PORT? arrow=LINK_ARROW to=COMPONENT_NAME toPort=LINK_PORT?
-    (';' linkLabel=STRING)? EOL
+    from=(STRING | COMPONENT_NAME) fromPort=LINK_PORT? arrow=LINK_ARROW? to=(STRING | COMPONENT_NAME) toPort=LINK_PORT?
+    linkLabel=LINK_LABEL? EOL
 ;
 
 Evolve:
-    'evolve' component=COMPONENT_NAME target=FLOAT EOL
+    'evolve' component=(STRING | COMPONENT_NAME) target=NUMBER EOL
 ;
 
 Pipeline:
-    'pipeline' parent=COMPONENT_NAME '{' NEWLINE+
+    'pipeline' parent=(STRING | COMPONENT_NAME) '{' NEWLINE+
     components+=PipelineComponent+
     '}' EOL
 ;
 
 PipelineComponent:
-    'component' name=COMPONENT_NAME '[' evolution=FLOAT ']' label=Label? EOL
+    'component' name=(STRING | COMPONENT_NAME) '[' evolution=NUMBER ']' label=Label? EOL
 ;
 
 Area:
-    'area' name=COMPONENT_NAME '[' visibility=FLOAT ',' evolution=FLOAT ']' EOL
+    'area' name=(STRING | COMPONENT_NAME) '[' visibility=NUMBER ',' evolution=NUMBER ']' EOL
 ;
 
 Note:
-    'note' text=STRING '[' visibility=FLOAT ',' evolution=FLOAT ']' EOL
+    'note' text=STRING '[' visibility=NUMBER ',' evolution=NUMBER ']' EOL
 ;
 
 Annotations:
-    'annotations' '[' x=FLOAT ',' y=FLOAT ']' EOL
+    'annotations' '[' x=NUMBER ',' y=NUMBER ']' EOL
 ;
 
 Annotation:
-    'annotation' number=INT ',' '[' x=FLOAT ',' y=FLOAT ']' text=STRING EOL
+    'annotation' number=INT ',' '[' x=NUMBER ',' y=NUMBER ']' text=STRING EOL
 ;
 
 Accelerator:
-    'accelerator' name=COMPONENT_NAME '[' x=FLOAT ',' y=FLOAT ']' EOL
+    'accelerator' name=(STRING | COMPONENT_NAME) '[' x=NUMBER ',' y=NUMBER ']' EOL
 ;
 
 Deaccelerator:
-    'deaccelerator' name=COMPONENT_NAME '[' x=FLOAT ',' y=FLOAT ']' EOL
+    'deaccelerator' name=(STRING | COMPONENT_NAME) '[' x=NUMBER ',' y=NUMBER ']' EOL
 ;
 
 // Specific terminals first
 terminal LINK_PORT: '+>' | '+<' | '+<>';
-terminal LINK_ARROW: '->' | /\+?'[^']*'?>/ | '>';
-terminal STRATEGY: 'build' | 'buy' | 'outsource' | 'market' | 'inertia';
-terminal QUOTED_STRING: /'[^']*'/;
+terminal LINK_ARROW: '->' | '-->' | '-.->' | '>' | /\+'[^']*'<>/ | /\+'[^']*'</ | /\+'[^']*'>/;
+terminal LINK_LABEL: /;[^\n\r]+/;
+terminal STRATEGY: 'build' | 'buy' | 'outsource' | 'market';
 terminal EVOLUTION_NAME: /[A-Za-z][A-Za-z0-9 ]*/;
-terminal COMPONENT_NAME: /[A-Za-z0-9][A-Za-z0-9 _\-()&]*/;
+terminal COMPONENT_NAME: /[A-Za-z][A-Za-z0-9 _\-()&]*/;
 // Catch-all terminals - must be last and after all other rules
 // These are problematic because they can shadow keywords
 // Solution: Don't use them, use ID or QUOTED_STRING instead
