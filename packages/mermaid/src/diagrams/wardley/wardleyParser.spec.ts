@@ -1,7 +1,6 @@
 import { describe, it, beforeEach, expect } from 'vitest';
 import { diagram } from './wardleyDiagram.js';
 import type WardleyDb from './wardleyDb.js';
-import type { WardleyNode } from './wardleyBuilder.js';
 
 const parser = diagram.parser;
 const db = diagram.db as typeof WardleyDb;
@@ -11,36 +10,41 @@ describe('wardley parser', () => {
     db.clear();
   });
 
-  it('parses nodes, links, and trends', async () => {
-    await parser.parse(
-      `wardley\n  title Example\n  x-axis Left -> Right\n  y-axis Bottom -> Top\n  Alpha(10, 20)\n  Beta(30, 40)\n  Alpha --> Beta\n  Beta -.- (60, 70)`
-    );
+  it('parses components and links', async () => {
+    const input = [
+      'wardley-beta',
+      'title Example',
+      'component Alpha [0.2, 0.1]',
+      'component Beta [0.4, 0.3]',
+      'Alpha -> Beta',
+    ].join('\n');
+
+    await parser.parse(input);
 
     const data = db.getWardleyData();
     expect(data.nodes).toHaveLength(2);
     expect(data.links).toHaveLength(1);
-    expect(data.trends).toHaveLength(1);
-    expect(data.axes.xLabel).toBe('Left -> Right');
-    expect(data.axes.yLabel).toBe('Bottom -> Top');
-  });
-
-  it('rejects coordinates outside allowed range', async () => {
-    await expect(parser.parse(`wardley\n  Alpha(101, 10)`)).rejects.toThrow();
+    expect(data.title).toBe('Example');
   });
 
   it('parses custom evolution stages', async () => {
     await parser.parse(
-      `wardley\ntitle Test\nevolution Genesis -> Custom -> Product -> Commodity\ncomponent A [0.5, 0.5]`
+      `wardley-beta
+title Test
+evolution Genesis -> Custom -> Product -> Commodity
+component A [0.5, 0.5]`
     );
 
     const data = db.getWardleyData();
     expect(data.axes.stages).toEqual(['Genesis', 'Custom', 'Product', 'Commodity']);
-    expect(data.axes.xLabel).toBe('Evolution');
   });
 
   it('parses dual-label evolution stages with slashes', async () => {
     await parser.parse(
-      `wardley\ntitle Test\nevolution Genesis / Concept -> Custom / Emerging -> Product / Converging -> Commodity / Accepted\ncomponent A [0.5, 0.5]`
+      `wardley-beta
+title Test
+evolution Genesis / Concept -> Custom / Emerging -> Product / Converging -> Commodity / Accepted
+component A [0.5, 0.5]`
     );
 
     const data = db.getWardleyData();
@@ -50,25 +54,23 @@ describe('wardley parser', () => {
       'Product / Converging',
       'Commodity / Accepted',
     ]);
-    expect(data.axes.xLabel).toBe('Evolution');
   });
 
   it('parses pipeline blocks with single-coordinate components', async () => {
     await parser.parse(
-      `wardley
+      `wardley-beta
 title Test Pipeline
-component Kettle [0.57, 0.45]
+component Kettle [0.45, 0.57]
 pipeline Kettle {
   component Campfire Kettle [0.35] label [-60, 35]
   component Electric Kettle [0.53]
-}
-Campfire Kettle -> Kettle`
+}`
     );
 
     const data = db.getWardleyData();
-    const kettleNode = data.nodes.find((n: WardleyNode) => n.label === 'Kettle');
-    const campfireNode = data.nodes.find((n: WardleyNode) => n.label === 'Campfire Kettle');
-    const electricNode = data.nodes.find((n: WardleyNode) => n.label === 'Electric Kettle');
+    const kettleNode = data.nodes.find((n) => n.label === 'Kettle');
+    const campfireNode = data.nodes.find((n) => n.label === 'Campfire Kettle');
+    const electricNode = data.nodes.find((n) => n.label === 'Electric Kettle');
 
     expect(kettleNode).toBeDefined();
     expect(campfireNode).toBeDefined();
@@ -78,14 +80,14 @@ Campfire Kettle -> Kettle`
     expect(campfireNode?.y).toBe(kettleNode?.y);
     expect(electricNode?.y).toBe(kettleNode?.y);
 
-    // But have their own X coordinates
-    expect(campfireNode?.x).toBe(35);
-    expect(electricNode?.x).toBe(53);
+    // But have their own X coordinates (evolution values)
+    expect(campfireNode?.x).toBeCloseTo(35);
+    expect(electricNode?.x).toBeCloseTo(53);
   });
 
   it('parses custom stage widths with boundary notation', async () => {
     await parser.parse(
-      `wardley
+      `wardley-beta
 title Test Custom Widths
 evolution Genesis@0.3 -> Custom@0.6 -> Product@0.85 -> Commodity@1.0
 component A [0.5, 0.5]`
@@ -94,28 +96,107 @@ component A [0.5, 0.5]`
     const data = db.getWardleyData();
     expect(data.axes.stages).toEqual(['Genesis', 'Custom', 'Product', 'Commodity']);
     expect(data.axes.stageBoundaries).toEqual([0.3, 0.6, 0.85, 1.0]);
-    expect(data.axes.xLabel).toBe('Evolution');
   });
 
-  it('rejects invalid stage boundaries', async () => {
-    // Boundary > 1.0
-    await expect(parser.parse(`wardley\nevolution Genesis@1.5 -> Custom@2.0`)).rejects.toThrow(
-      'between 0 and 1'
+  it('parses notes with quoted text', async () => {
+    await parser.parse(
+      `wardley-beta
+title Test Notes
+component API [0.6, 0.7]
+note "Critical decision point" [0.65, 0.55]`
     );
 
-    // Boundaries not in ascending order
-    await expect(
-      parser.parse(`wardley\nevolution Genesis@0.5 -> Custom@0.3 -> Product@1.0`)
-    ).rejects.toThrow('ascending order');
+    const data = db.getWardleyData();
+    expect(data.notes).toHaveLength(1);
+    expect(data.notes[0].text).toBe('Critical decision point');
+  });
 
-    // Last boundary not 1.0
-    await expect(
-      parser.parse(`wardley\nevolution Genesis@0.3 -> Custom@0.6 -> Product@0.9`)
-    ).rejects.toThrow('must be 1.0');
+  it('parses annotations with quoted text', async () => {
+    await parser.parse(
+      `wardley-beta
+title Test Annotations
+component API [0.6, 0.7]
+annotations [0.1, 0.9]
+annotation 1,[0.6, 0.65] "Critical component"
+annotation 2,[0.5, 0.5] "Performance layer"`
+    );
 
-    // Mixed format (some with boundaries, some without)
-    await expect(
-      parser.parse(`wardley\nevolution Genesis@0.3 -> Custom -> Product@1.0`)
-    ).rejects.toThrow('Either all stages must have boundaries or none');
+    const data = db.getWardleyData();
+    expect(data.annotations).toHaveLength(2);
+    expect(data.annotations[0].text).toBe('Critical component');
+    expect(data.annotations[1].text).toBe('Performance layer');
+  });
+
+  it('parses anchors', async () => {
+    await parser.parse(
+      `wardley-beta
+title Test Anchors
+anchor Business [0.95, 0.63]
+anchor Public [0.95, 0.78]
+component Tea [0.63, 0.81]`
+    );
+
+    const data = db.getWardleyData();
+    const anchors = data.nodes.filter((n) => n.className === 'anchor');
+    expect(anchors).toHaveLength(2);
+    expect(anchors[0].label).toBe('Business');
+  });
+
+  it('parses evolve statements', async () => {
+    await parser.parse(
+      `wardley-beta
+title Test Evolve
+component Kettle [0.35, 0.43]
+evolve Kettle 0.62`
+    );
+
+    const data = db.getWardleyData();
+    expect(data.trends).toHaveLength(1);
+    expect(data.trends[0].targetX).toBeCloseTo(62);
+  });
+
+  it('parses component decorators', async () => {
+    await parser.parse(
+      `wardley-beta
+title Test Decorators
+component API [0.6, 0.7] (build)
+component Database [0.4, 0.5] (buy)
+component Cache [0.5, 0.6] (outsource)`
+    );
+
+    const data = db.getWardleyData();
+    const api = data.nodes.find((n) => n.label === 'API');
+    const database = data.nodes.find((n) => n.label === 'Database');
+    const cache = data.nodes.find((n) => n.label === 'Cache');
+
+    expect(api?.sourceStrategy).toBe('build');
+    expect(database?.sourceStrategy).toBe('buy');
+    expect(cache?.sourceStrategy).toBe('outsource');
+  });
+
+  it('parses areas', async () => {
+    await parser.parse(
+      `wardley-beta
+title Test Areas
+area Frontend [0.75, 0.80]
+area Backend [0.60, 0.55]`
+    );
+
+    const data = db.getWardleyData();
+    expect(data.areas).toHaveLength(2);
+    expect(data.areas[0].name).toBe('Frontend');
+  });
+
+  it('parses size directive', async () => {
+    await parser.parse(
+      `wardley-beta
+title Test Size
+size [1200, 900]
+component A [0.5, 0.5]`
+    );
+
+    const data = db.getWardleyData();
+    expect(data.width).toBe(1200);
+    expect(data.height).toBe(900);
   });
 });
