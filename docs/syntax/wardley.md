@@ -74,7 +74,7 @@ note "Standardising power allows Kettles to evolve faster" [0.30, 0.49]
 
 ### Diagram Declaration
 
-Every Wardley diagram starts with the `wardley` keyword:
+Every Wardley diagram starts with the `wardley-beta` keyword:
 
 ```mermaid-example
 wardley-beta
@@ -88,7 +88,7 @@ title Your Map Title
 size [width, height]
 ```
 
-- `wardley` - Required diagram type identifier
+- `wardley-beta` - Required diagram type identifier (beta release)
 - `title` - Optional title displayed at top
 - `size` - Optional canvas dimensions in pixels (default: `[1100, 600]`)
 
@@ -470,6 +470,14 @@ component Utility [0.60, 0.90]
 
 #### Notes
 
+Add contextual notes at specific coordinates:
+
+```
+note "text" [visibility, evolution]
+```
+
+> **Note**: Text must be enclosed in quotes.
+
 ```mermaid-example
 wardley-beta
 title Notes
@@ -496,9 +504,16 @@ note "Critical decision point" [0.65, 0.55]
 note "High risk area" [0.40, 0.35]
 ```
 
-First line of multi-line notes is bold.
-
 #### Numbered Annotations
+
+Create numbered references with optional annotation box:
+
+```
+annotations [x, y]              # Optional: position for annotation numbers
+annotation number,[x, y] "text"
+```
+
+> **Note**: Annotation text must be enclosed in quotes.
 
 ```mermaid-example
 wardley-beta
@@ -742,18 +757,19 @@ Wardley Maps support Mermaid's theme system. Use standard Mermaid configuration 
 
 ## Syntax Summary
 
-| Element   | Syntax                              | Example                             |
-| --------- | ----------------------------------- | ----------------------------------- |
-| Diagram   | `wardley`                           | `wardley`                           |
-| Title     | `title Text`                        | `title My Map`                      |
-| Size      | `size [width, height]`              | `size [1100, 800]`                  |
-| Component | `component Name [vis, evo]`         | `component API [0.6, 0.7]`          |
-| Anchor    | `anchor Name [vis, evo]`            | `anchor User [0.9, 0.95]`           |
-| Link      | `A -> B`                            | `API -> Database`                   |
-| Flow      | `A +> B`                            | `User +> API`                       |
-| Evolve    | `evolve Name targetEvo`             | `evolve API 0.85`                   |
-| Note      | `note Text [vis, evo]`              | `note Insight [0.4, 0.5]`           |
-| Inertia   | `(inertia)`                         | `component DB [0.4, 0.6] (inertia)` |
-| Strategy  | `(build\|buy\|outsource\|market)`   | `component API [0.6, 0.7] (buy)`    |
-| Pipeline  | `pipeline Parent { ... }`           | See pipeline example above          |
-| Evolution | `evolution Stage1 -> Stage2 -> ...` | See evolution examples above        |
+| Element    | Syntax                              | Example                             |
+| ---------- | ----------------------------------- | ----------------------------------- |
+| Diagram    | `wardley-beta`                      | `wardley-beta`                      |
+| Title      | `title Text`                        | `title My Map`                      |
+| Size       | `size [width, height]`              | `size [1100, 800]`                  |
+| Component  | `component Name [vis, evo]`         | `component API [0.6, 0.7]`          |
+| Anchor     | `anchor Name [vis, evo]`            | `anchor User [0.9, 0.95]`           |
+| Link       | `A -> B`                            | `API -> Database`                   |
+| Flow       | `A +> B`                            | `User +> API`                       |
+| Evolve     | `evolve Name targetEvo`             | `evolve API 0.85`                   |
+| Note       | `note "Text" [vis, evo]`            | `note "Key insight" [0.4, 0.5]`     |
+| Annotation | `annotation N,[x,y] "Text"`         | `annotation 1,[0.5,0.5] "Critical"` |
+| Inertia    | `(inertia)`                         | `component DB [0.4, 0.6] (inertia)` |
+| Strategy   | `(build\|buy\|outsource\|market)`   | `component API [0.6, 0.7] (buy)`    |
+| Pipeline   | `pipeline Parent { ... }`           | See pipeline example above          |
+| Evolution  | `evolution Stage1 -> Stage2 -> ...` | See evolution examples above        |
