@@ -34,9 +34,9 @@ Kettle -> Power
 evolve Kettle 0.62
 evolve Power 0.89
 
-note Standardising power allows Kettles to evolve faster [0.30, 0.49]
-note Hot water is obvious and well known [0.48, 0.80]
-note A generic note appeared [0.23, 0.33]
+note "Standardising power allows Kettles to evolve faster" [0.30, 0.49]
+note "Hot water is obvious and well known" [0.48, 0.80]
+note "A generic note appeared" [0.23, 0.33]
 `,
     },
     {
@@ -172,13 +172,13 @@ pipeline algo {
 deaccelerator License Play [0.13, 0.78]
 
 annotations [1, 0]
-annotation 1,[0.57, 0.16] Alternative algos in research
-annotation 2,[0.57, 0.76] Most popular, but not the most efficient
-annotation 3,[0.20, 0.3] Ensure balanced token vocabulary
-annotation 4,[0.60, 0.28] Required for delimiters
-annotation 5,[0.70, 0.50] A structured approach for achieving a goal
+annotation 1,[0.57, 0.16] "Alternative algos in research"
+annotation 2,[0.57, 0.76] "Most popular, but not the most efficient"
+annotation 3,[0.20, 0.3] "Ensure balanced token vocabulary"
+annotation 4,[0.60, 0.28] "Required for delimiters"
+annotation 5,[0.70, 0.50] "A structured approach for achieving a goal"
 
-note Voting members: Adobe, Amazon, Apple, Google, Meta, Microsoft, Netflix, Salesforce [0.04, 0.35]
+note "Voting members: Adobe, Amazon, Apple, Google, Meta, Microsoft, Netflix, Salesforce" [0.04, 0.35]
 `,
     },
   ],

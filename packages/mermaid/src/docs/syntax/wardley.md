@@ -38,7 +38,7 @@ Kettle -> Power
 evolve Kettle 0.62
 evolve Power 0.89
 
-note Standardising power allows Kettles to evolve faster [0.30, 0.49]
+note "Standardising power allows Kettles to evolve faster" [0.30, 0.49]
 ```
 
 ## Syntax
@@ -289,8 +289,8 @@ component Database [0.40, 0.50]
 
 API -> Database
 
-note Critical decision point [0.65, 0.55]
-note High risk area [0.40, 0.35]
+note "Critical decision point" [0.65, 0.55]
+note "High risk area" [0.40, 0.35]
 ```
 
 First line of multi-line notes is bold.
@@ -309,9 +309,9 @@ API -> Cache
 Cache -> Database
 
 annotations [0.10, 0.90]
-annotation 1,[0.60, 0.65] Critical component
-annotation 2,[0.50, 0.50] Performance layer
-annotation 3,[0.40, 0.35] Data persistence
+annotation 1,[0.60, 0.65] "Critical component"
+annotation 2,[0.50, 0.50] "Performance layer"
+annotation 3,[0.40, 0.35] "Data persistence"
 ```
 
 ### Visual Elements
@@ -415,12 +415,12 @@ accelerator "Cloud Native" [0.20, 0.85]
 deaccelerator "Legacy Data" [0.45, 0.35]
 
 annotations [0.10, 0.20]
-annotation 1,[0.78, 0.82] User touchpoints
-annotation 2,[0.70, 0.60] Integration layer
-annotation 3,[0.50, 0.40] Data persistence
+annotation 1,[0.78, 0.82] "User touchpoints"
+annotation 2,[0.70, 0.60] "Integration layer"
+annotation 3,[0.50, 0.40] "Data persistence"
 
-note Build mobile-first experience [0.85, 0.90]
-note Migrate to cloud-native database [0.60, 0.50]
+note "Build mobile-first experience" [0.85, 0.90]
+note "Migrate to cloud-native database" [0.60, 0.50]
 ```
 
 ## Configuration
