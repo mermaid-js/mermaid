@@ -24,7 +24,7 @@ describe('wardley parser', () => {
     const data = db.getWardleyData();
     expect(data.nodes).toHaveLength(2);
     expect(data.links).toHaveLength(1);
-    expect(data.title).toBe('Example');
+    expect(db.getDiagramTitle()).toBe('Example');
   });
 
   it('parses custom evolution stages', async () => {

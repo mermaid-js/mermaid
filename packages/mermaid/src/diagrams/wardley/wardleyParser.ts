@@ -135,6 +135,7 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
         `Pipeline "${pipeline.parent}" must reference an existing component with coordinates.`
       );
     }
+    const parentY = parentNode.y; // Extract to ensure type narrowing
 
     db.startPipeline(pipeline.parent);
     pipeline.components.forEach((component) => {
@@ -149,7 +150,7 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
         componentId,
         component.name,
         x,
-        parentNode.y,
+        parentY,
         'pipeline-component',
         labelOffsetX,
         labelOffsetY
