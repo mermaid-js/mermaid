@@ -31,7 +31,8 @@ export const draw = async function (_text: string, id: string, _version: string,
   const svg = getDiagramElement(id, securityLevel);
 
   data4Layout.type = diag.type;
-  data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout, { fallback: 'dagre' });
+  const layoutToUse = layout || 'architecture-fcose';
+  data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layoutToUse, { fallback: 'dagre' });
 
   data4Layout.nodeSpacing = 100;
   data4Layout.rankSpacing = 100;

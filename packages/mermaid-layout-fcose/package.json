@@ -1,0 +1,48 @@
+{
+  "name": "@mermaid-js/layout-fcose",
+  "version": "0.1.0",
+  "description": "FCoSE layout engine for architecture diagrams",
+  "module": "dist/mermaid-layout-fcose.core.mjs",
+  "types": "dist/layouts.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/mermaid-layout-fcose.core.mjs",
+      "types": "./dist/layouts.d.ts"
+    },
+    "./": "./"
+  },
+  "keywords": [
+    "diagram",
+    "markdown",
+    "fcose",
+    "mermaid",
+    "layout",
+    "architecture"
+  ],
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "contributors": [
+    "Knut Sveidqvist"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "cytoscape": "^3.27.0",
+    "cytoscape-fcose": "^2.2.0",
+    "d3": "^7.9.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "mermaid": "workspace:^"
+  },
+  "peerDependencies": {
+    "mermaid": "^11.0.2"
+  },
+  "files": [
+    "dist"
+  ]
+}
+

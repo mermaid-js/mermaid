@@ -38,6 +38,11 @@ export const packageOptions = {
     packageName: 'mermaid-layout-tidy-tree',
     file: 'index.ts',
   },
+  'mermaid-layout-fcose': {
+    name: 'mermaid-layout-fcose',
+    packageName: 'mermaid-layout-fcose',
+    file: 'index.ts',
+  },
   examples: {
     name: 'mermaid-examples',
     packageName: 'examples',
