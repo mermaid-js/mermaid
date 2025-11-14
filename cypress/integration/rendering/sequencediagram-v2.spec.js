@@ -899,5 +899,71 @@ describe('Sequence Diagram Special Cases', () => {
         );
       });
     });
+
+    describe('Participant Inline Alias in Config', () => {
+      it('should render participants with inline alias in config object', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          participant API@{ "type" : "boundary", "alias": "Public API" }
+          participant Auth@{ "type" : "control", "alias": "Auth Service" }
+          participant DB@{ "type" : "database", "alias": "User DB" }
+          API ->> Auth: Login request
+          Auth ->> DB: Query user
+          DB -->> Auth: User data
+          Auth -->> API: Token`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render actors with inline alias in config object', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          actor U@{ "type" : "actor", "alias": "End User" }
+          actor G@{ "type" : "boundary", "alias": "Gateway" }
+          actor S@{ "type" : "control", "alias": "Service" }
+          U ->> G: Request
+          G ->> S: Process
+          S -->> G: Response
+          G -->> U: Result`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should handle mixed inline and external alias syntax', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          participant A@{ "type" : "boundary", "alias": "Service A" }
+          participant B@{ "type" : "control" } as Service B
+          participant C@{ "type" : "database" }
+          A ->> B: Request
+          B ->> C: Query
+          C -->> B: Data
+          B -->> A: Response`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should prioritize external alias over inline alias', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          participant API@{ "type" : "boundary", "alias": "Internal Name" } as External Name
+          participant DB@{ "type" : "database", "alias": "Internal DB" } AS External DB
+          API ->> DB: Query
+          DB -->> API: Result`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+
+      it('should render inline alias with only alias field (no type)', () => {
+        imgSnapshotTest(
+          `sequenceDiagram
+          participant API@{ "alias": "Public API" }
+          participant Auth@{ "alias": "Auth Service" }
+          API ->> Auth: Request
+          Auth -->> API: Response`,
+          { look: 'classic', sequence: { diagramMarginX: 50, diagramMarginY: 10 } }
+        );
+      });
+    });
   });
 });
