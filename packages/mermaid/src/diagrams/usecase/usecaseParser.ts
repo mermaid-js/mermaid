@@ -1,160 +1,30 @@
-// Import ANTLR parser from the parser package
-import { parse } from '@mermaid-js/parser';
+// Import local ANTLR parser
 import { log } from '../../logger.js';
 import type { ParserDefinition } from '../../diagram-api/types.js';
-import { populateCommonDb } from '../common/populateCommonDb.js';
-import type {
-  UsecaseDB,
-  Actor,
-  UseCase,
-  SystemBoundary,
-  Relationship,
-  ArrowType,
-  ClassDef,
-} from './usecaseTypes.js';
 import { db } from './usecaseDb.js';
 
-// ANTLR parser result interface
-interface UsecaseParseResult {
-  actors: { id: string; name: string; metadata?: Record<string, string>; styles?: string[] }[];
-  useCases: {
-    id: string;
-    name: string;
-    nodeId?: string;
-    systemBoundary?: string;
-    classes?: string[];
-    styles?: string[];
-  }[];
-  systemBoundaries: {
-    id: string;
-    name: string;
-    useCases: string[];
-    type?: 'package' | 'rect';
-    styles?: string[];
-  }[];
-  relationships: {
-    id: string;
-    from: string;
-    to: string;
-    type: 'association' | 'include' | 'extend';
-    arrowType: number;
-    label?: string;
-  }[];
-  classDefs?: Map<string, { id: string; styles: string[] }>;
-  direction?: string;
-  accDescr?: string;
-  accTitle?: string;
-  title?: string;
-}
+// Import local ANTLR parser implementation
+import antlrParser from './parser/antlr/antlr-parser.js';
 
 /**
- * Parse usecase diagram using ANTLR parser
+ * Parse usecase diagram using local ANTLR parser
  */
-const parseUsecaseWithAntlr = async (input: string): Promise<UsecaseParseResult> => {
-  // Use the ANTLR parser from @mermaid-js/parser
-  const result = (await parse('usecase', input)) as UsecaseParseResult;
-  return result;
-};
+const parseUsecaseWithLocalAntlr = (input: string) => {
+  // Set the database instance
+  antlrParser.yy = db;
 
-/**
- * Populate the database with parsed ANTLR results
- */
-const populateDb = (ast: UsecaseParseResult, db: UsecaseDB) => {
-  // Clear existing data
-  db.clear();
-
-  // Add actors (ANTLR result already has id, name, and metadata)
-  ast.actors.forEach((actorData) => {
-    const actor: Actor = {
-      id: actorData.id,
-      name: actorData.name,
-      metadata: actorData.metadata,
-      styles: actorData.styles,
-    };
-    db.addActor(actor);
-  });
-
-  // Add use cases (ANTLR result already has id, name, nodeId, systemBoundary, and classes)
-  ast.useCases.forEach((useCaseData) => {
-    const useCase: UseCase = {
-      id: useCaseData.id,
-      name: useCaseData.name,
-      nodeId: useCaseData.nodeId,
-      systemBoundary: useCaseData.systemBoundary,
-      classes: useCaseData.classes,
-      styles: useCaseData.styles,
-    };
-    db.addUseCase(useCase);
-  });
-
-  // Add system boundaries
-  if (ast.systemBoundaries) {
-    ast.systemBoundaries.forEach((boundaryData) => {
-      const systemBoundary: SystemBoundary = {
-        id: boundaryData.id,
-        name: boundaryData.name,
-        useCases: boundaryData.useCases,
-        type: boundaryData.type || 'rect', // default to 'rect' if not specified
-        styles: boundaryData.styles,
-      };
-      db.addSystemBoundary(systemBoundary);
-    });
-  }
-
-  // Add relationships (ANTLR result already has proper structure)
-  ast.relationships.forEach((relationshipData) => {
-    const relationship: Relationship = {
-      id: relationshipData.id,
-      from: relationshipData.from,
-      to: relationshipData.to,
-      type: relationshipData.type,
-      arrowType: relationshipData.arrowType as ArrowType,
-      label: relationshipData.label,
-    };
-    db.addRelationship(relationship);
-  });
-
-  // Add class definitions
-  if (ast.classDefs) {
-    ast.classDefs.forEach((classDefData) => {
-      const classDef: ClassDef = {
-        id: classDefData.id,
-        styles: classDefData.styles,
-      };
-      db.addClassDef(classDef);
-    });
-  }
-
-  // Set direction if provided
-  if (ast.direction) {
-    db.setDirection(ast.direction as any);
-  }
-
-  log.debug('Populated usecase database:', {
-    actors: ast.actors.length,
-    useCases: ast.useCases.length,
-    relationships: ast.relationships.length,
-    classDefs: ast.classDefs?.size ?? 0,
-    direction: ast.direction,
-  });
+  // Parse and return the populated database
+  return antlrParser.parse(input);
 };
 
 export const parser: ParserDefinition = {
-  parse: async (input: string): Promise<void> => {
-    log.debug('Parsing usecase diagram with ANTLR:', input);
+  parse: (input: string): void => {
+    log.debug('Parsing usecase diagram with local ANTLR parser:', input);
 
     try {
-      // Use our ANTLR parser
-      const ast: UsecaseParseResult = await parseUsecaseWithAntlr(input);
-      log.debug('ANTLR parsing result:', ast);
-
-      // Populate common database fields
-      populateCommonDb(ast as any, db);
-
-      // Populate the database with validation
-      populateDb(ast, db);
-
-      log.debug('Usecase diagram parsing completed successfully');
+      // Use local ANTLR parser
+      parseUsecaseWithLocalAntlr(input);
+      log.debug('ANTLR parsing completed successfully');
     } catch (error) {
       log.error('Error parsing usecase diagram:', error);
 

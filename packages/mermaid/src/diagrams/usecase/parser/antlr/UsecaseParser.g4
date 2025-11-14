@@ -1,10 +1,13 @@
-grammar Usecase;
+parser grammar UsecaseParser;
 
-// Parser rules
-usecaseDiagram
-    : 'usecase' NEWLINE* statement* EOF
-    ;
+options {
+    tokenVocab = UsecaseLexer;
+}
 
+// Entry point
+start: USECASE NEWLINE* statement* EOF;
+
+// Statement types
 statement
     : actorStatement
     | relationshipStatement
@@ -18,16 +21,18 @@ statement
     | NEWLINE
     ;
 
+// Usecase statement (standalone entity)
 usecaseStatement
     : entityName NEWLINE*
     ;
 
+// Actor statement
 actorStatement
-    : 'actor' actorList NEWLINE*
+    : ACTOR actorList NEWLINE*
     ;
 
 actorList
-    : actorName (',' actorName)*
+    : actorName (COMMA actorName)*
     ;
 
 actorName
@@ -35,26 +40,26 @@ actorName
     ;
 
 metadata
-    : '@' '{' metadataContent '}'
+    : AT LBRACE metadataContent RBRACE
     ;
 
 metadataContent
-    : metadataProperty (',' metadataProperty)*
+    : metadataProperty (COMMA metadataProperty)*
     ;
 
 metadataProperty
-    : STRING ':' STRING
+    : STRING COLON STRING
     ;
 
-
-
+// Relationship statement
 relationshipStatement
     : entityName arrow entityName NEWLINE*
     | actorDeclaration arrow entityName NEWLINE*
     ;
 
+// System boundary statement
 systemBoundaryStatement
-    : 'systemBoundary' systemBoundaryName NEWLINE* systemBoundaryContent* 'end' NEWLINE*
+    : SYSTEM_BOUNDARY systemBoundaryName NEWLINE* systemBoundaryContent* END NEWLINE*
     ;
 
 systemBoundaryName
@@ -78,23 +83,25 @@ usecaseWithClass
     | STRING CLASS_SEPARATOR IDENTIFIER
     ;
 
+// System boundary type statement
 systemBoundaryTypeStatement
-    : systemBoundaryName '@' '{' systemBoundaryTypeContent '}' NEWLINE*
+    : systemBoundaryName AT LBRACE systemBoundaryTypeContent RBRACE NEWLINE*
     ;
 
 systemBoundaryTypeContent
-    : systemBoundaryTypeProperty (',' systemBoundaryTypeProperty)*
+    : systemBoundaryTypeProperty (COMMA systemBoundaryTypeProperty)*
     ;
 
 systemBoundaryTypeProperty
-    : 'type' ':' systemBoundaryType
+    : TYPE COLON systemBoundaryType
     ;
 
 systemBoundaryType
-    : 'package'
-    | 'rect'
+    : PACKAGE
+    | RECT
     ;
 
+// Entity name (node reference)
 entityName
     : IDENTIFIER CLASS_SEPARATOR IDENTIFIER
     | STRING CLASS_SEPARATOR IDENTIFIER
@@ -103,12 +110,14 @@ entityName
     | nodeIdWithLabel
     ;
 
+// Actor declaration (inline)
 actorDeclaration
-    : 'actor' actorName
+    : ACTOR actorName
     ;
 
+// Node with label
 nodeIdWithLabel
-    : IDENTIFIER '(' nodeLabel ')'
+    : IDENTIFIER LPAREN nodeLabel RPAREN
     ;
 
 nodeLabel
@@ -118,6 +127,7 @@ nodeLabel
     | nodeLabel STRING
     ;
 
+// Arrow types
 arrow
     : SOLID_ARROW
     | BACK_ARROW
@@ -144,20 +154,22 @@ edgeLabel
     | STRING
     ;
 
+// Direction statement
 directionStatement
-    : 'direction' direction NEWLINE*
+    : DIRECTION direction NEWLINE*
     ;
 
 direction
-    : 'TB'
-    | 'TD'
-    | 'BT'
-    | 'RL'
-    | 'LR'
+    : TB
+    | TD
+    | BT
+    | RL
+    | LR
     ;
 
+// Class definition statement
 classDefStatement
-    : 'classDef' IDENTIFIER stylesOpt NEWLINE*
+    : CLASS_DEF IDENTIFIER stylesOpt NEWLINE*
     ;
 
 stylesOpt
@@ -181,105 +193,18 @@ styleComponent
     | PERCENT
     ;
 
+// Class statement
 classStatement
-    : 'class' nodeList IDENTIFIER NEWLINE*
+    : CLASS nodeList IDENTIFIER NEWLINE*
     ;
 
+// Style statement
 styleStatement
-    : 'style' IDENTIFIER stylesOpt NEWLINE*
+    : STYLE IDENTIFIER stylesOpt NEWLINE*
     ;
 
+// Node list
 nodeList
-    : IDENTIFIER (',' IDENTIFIER)*
+    : IDENTIFIER (COMMA IDENTIFIER)*
     ;
 
-// Lexer rules
-SOLID_ARROW
-    : '-->'
-    ;
-
-BACK_ARROW
-    : '<--'
-    ;
-
-CIRCLE_ARROW
-    : '--o'
-    ;
-CIRCLE_ARROW_REVERSED
-    : 'o--'
-    ;
-
-CROSS_ARROW
-    : '--x'
-    ;
-    
-CROSS_ARROW_REVERSED
-    : 'x--'
-    ;
-
-LINE_SOLID
-    : '--'
-    ;
-
-COMMA
-    : ','
-    ;
-
-AT
-    : '@'
-    ;
-
-LBRACE
-    : '{'
-    ;
-
-RBRACE
-    : '}'
-    ;
-
-COLON
-    : ':'
-    ;
-
-CLASS_SEPARATOR
-    : ':::'
-    ;
-
-IDENTIFIER
-    : [a-zA-Z_][a-zA-Z0-9_]*
-    ;
-
-STRING
-    : '"' (~["\r\n])* '"'
-    | '\'' (~['\r\n])* '\''
-    ;
-
-HASH_COLOR
-    : '#' [a-fA-F0-9]+
-    ;
-
-NUMBER
-    : [0-9]+ ('.' [0-9]+)? ([a-zA-Z]+)?
-    ;
-
-// These tokens are defined last so they have lowest priority
-// This ensures arrow tokens like '-->' are matched before DASH
-DASH
-    : '-'
-    ;
-
-DOT
-    : '.'
-    ;
-
-PERCENT
-    : '%'
-    ;
-
-NEWLINE
-    : [\r\n]+
-    ;
-
-WS
-    : [ \t]+ -> skip
-    ;
