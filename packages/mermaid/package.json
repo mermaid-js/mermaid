@@ -34,6 +34,8 @@
   "scripts": {
     "clean": "rimraf dist",
     "dev": "pnpm -w dev",
+    "antlr:generate": "tsx ../../scripts/antlr-generate.mts",
+    "antlr:watch": "tsx ../../scripts/antlr-watch.mts",
     "docs:code": "typedoc src/defaultConfig.ts src/config.ts src/mermaid.ts && prettier --write ./src/docs/config/setup",
     "docs:build": "rimraf ../../docs && pnpm docs:code && pnpm docs:spellcheck && tsx scripts/docs.cli.mts",
     "docs:verify": "pnpm docs:code && pnpm docs:spellcheck && tsx scripts/docs.cli.mts --verify",
@@ -71,6 +73,7 @@
     "@iconify/utils": "^3.0.2",
     "@mermaid-js/parser": "workspace:^",
     "@types/d3": "^7.4.3",
+    "antlr4ng": "^3.0.7",
     "cytoscape": "^3.33.1",
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-fcose": "^2.2.0",

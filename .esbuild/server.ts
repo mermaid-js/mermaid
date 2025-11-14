@@ -4,6 +4,7 @@ import cors from 'cors';
 import { context } from 'esbuild';
 import type { Request, Response } from 'express';
 import express from 'express';
+import { execSync } from 'child_process';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import { defaultOptions, getBuildConfig } from './util.js';
@@ -64,6 +65,28 @@ function eventsHandler(request: Request, response: Response) {
 }
 
 let timeoutID: NodeJS.Timeout | undefined = undefined;
+let isGeneratingAntlr = false;
+
+/**
+ * Generate ANTLR parser files from grammar files
+ */
+function generateAntlr(): void {
+  if (isGeneratingAntlr) {
+    console.log('⏳ ANTLR generation already in progress, skipping...');
+    return;
+  }
+
+  try {
+    isGeneratingAntlr = true;
+    console.log('🎯 ANTLR: Generating parser files...');
+    execSync('tsx scripts/antlr-generate.mts', { stdio: 'inherit' });
+    console.log('✅ ANTLR: Parser files generated successfully\n');
+  } catch (error) {
+    console.error('❌ ANTLR: Failed to generate parser files:', error);
+  } finally {
+    isGeneratingAntlr = false;
+  }
+}
 
 /**
  * Debounce file change events to avoid rebuilding multiple times.
@@ -89,7 +112,7 @@ async function createServer() {
   handleFileChange();
   const app = express();
   chokidar
-    .watch('**/src/**/*.{js,ts,langium,yaml,json}', {
+    .watch('**/src/**/*.{js,ts,g4,langium,yaml,json}', {
       ignoreInitial: true,
       ignored: [/node_modules/, /dist/, /docs/, /coverage/],
     })
@@ -102,6 +125,9 @@ async function createServer() {
       console.log(`${path} changed. Rebuilding...`);
       if (path.endsWith('.langium')) {
         await generateLangium();
+      }
+      if (path.endsWith('.g4')) {
+        generateAntlr();
       }
       handleFileChange();
     });

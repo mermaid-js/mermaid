@@ -1,14 +1,5 @@
 {
   "projectName": "Mermaid",
-  "grammars": [
-    {
-      "id": "usecase",
-      "grammar": "src/language/usecase/Usecase.g4",
-      "outputDir": "src/language/usecase/generated",
-      "language": "TypeScript",
-      "generateVisitor": true,
-      "generateListener": true
-    }
-  ],
+  "grammars": [],
   "mode": "production"
 }

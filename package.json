@@ -15,8 +15,10 @@
     "git graph"
   ],
   "scripts": {
-    "build": "pnpm build:esbuild && pnpm build:types",
+    "build": "pnpm antlr:generate && pnpm build:esbuild && pnpm build:types",
     "build:esbuild": "pnpm run -r clean && tsx .esbuild/build.ts",
+    "antlr:generate": "tsx scripts/antlr-generate.mts",
+    "antlr:watch": "tsx scripts/antlr-watch.mts",
     "build:mermaid": "pnpm build:esbuild --mermaid",
     "build:viz": "pnpm build:esbuild --visualize",
     "build:types": "pnpm --filter mermaid types:build-config && tsx .build/types.ts",
