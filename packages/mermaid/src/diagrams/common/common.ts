@@ -66,7 +66,7 @@ export const removeScript = (txt: string): string => {
 const sanitizeMore = (text: string, config: MermaidConfig) => {
   if (config.flowchart?.htmlLabels !== false) {
     const level = config.securityLevel;
-    if (level === 'antiscript' || level === 'strict') {
+    if (level === 'antiscript' || level === 'strict' || level === 'sandbox') {
       text = removeScript(text);
     } else if (level !== 'loose') {
       text = breakToPlaceholder(text);
