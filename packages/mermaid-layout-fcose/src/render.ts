@@ -54,7 +54,10 @@ export const render = async (
         clusterDb[node.id] = clusterNode;
         nodeDb[node.id] = clusterNode;
 
-        await insertCluster(subGraphsEl, node);
+        const clusterResult = await insertCluster(subGraphsEl, node);
+        if (clusterResult?.cluster) {
+          clusterNode.domId = clusterResult.cluster;
+        }
       } else {
         const nodeWithPosition: NodeWithPosition = {
           ...node,
@@ -97,11 +100,52 @@ export const render = async (
 
   layoutResult.nodes.forEach((positionedNode) => {
     const node = nodeDb[positionedNode.id];
-    if (node?.domId) {
-      node.domId.attr('transform', `translate(${positionedNode.x}, ${positionedNode.y})`);
+    if (
+      node &&
+      positionedNode.x !== undefined &&
+      positionedNode.y !== undefined &&
+      !isNaN(positionedNode.x) &&
+      !isNaN(positionedNode.y)
+    ) {
       node.x = positionedNode.x;
       node.y = positionedNode.y;
-      log.debug(`Positioned node ${node.id} at (${positionedNode.x}, ${positionedNode.y})`);
+
+      if (node.domId) {
+        if (
+          node.isGroup &&
+          positionedNode.width !== undefined &&
+          positionedNode.height !== undefined
+        ) {
+          const rect = node.domId.select('rect');
+          if (!rect.empty()) {
+            rect.attr('width', positionedNode.width);
+            rect.attr('height', positionedNode.height);
+          }
+        }
+        node.domId.attr('transform', `translate(${positionedNode.x}, ${positionedNode.y})`);
+        log.debug(
+          `Positioned node ${node.id} at (${positionedNode.x}, ${positionedNode.y})${node.isGroup ? ` with size ${positionedNode.width}x${positionedNode.height}` : ''}`
+        );
+      } else if (node.isGroup) {
+        const clusterElement = subGraphsEl.select(`#${node.id}`);
+        if (clusterElement && !clusterElement.empty()) {
+          if (positionedNode.width !== undefined && positionedNode.height !== undefined) {
+            const rect = clusterElement.select('rect');
+            if (!rect.empty()) {
+              rect.attr('width', positionedNode.width);
+              rect.attr('height', positionedNode.height);
+            }
+          }
+          clusterElement.attr('transform', `translate(${positionedNode.x}, ${positionedNode.y})`);
+          log.debug(
+            `Positioned group ${node.id} at (${positionedNode.x}, ${positionedNode.y})${positionedNode.width !== undefined ? ` with size ${positionedNode.width}x${positionedNode.height}` : ''}`
+          );
+        }
+      }
+    } else if (node && (isNaN(positionedNode.x) || isNaN(positionedNode.y))) {
+      log.warn(
+        `Node ${node.id} has invalid position: x=${positionedNode.x}, y=${positionedNode.y}`
+      );
     }
   });
 

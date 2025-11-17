@@ -12,6 +12,10 @@ import type {
   PositionedNode,
   PositionedEdge,
 } from './types.js';
+import type {
+  FcoseAlignmentConstraint,
+  FcoseRelativePlacementConstraint,
+} from './cytoscape-fcose.d.js';
 
 cytoscape.use(fcose as any);
 
@@ -362,19 +366,66 @@ export function executeFcoseLayout(data: LayoutData): Promise<LayoutResult> {
         // Extract positioned nodes
         const positionedNodes: PositionedNode[] = [];
         cy.nodes().forEach((cyNode) => {
-          if (cyNode && typeof cyNode.position === 'function') {
-            const pos = cyNode.position();
-            const nodeData = nodeMap.get(cyNode.id());
-            if (nodeData && pos && typeof pos.x === 'number' && typeof pos.y === 'number') {
-              positionedNodes.push({
-                id: cyNode.id(),
-                x: pos.x,
-                y: pos.y,
-                width: typeof cyNode.data === 'function' ? cyNode.data('width') : undefined,
-                height: typeof cyNode.data === 'function' ? cyNode.data('height') : undefined,
-                originalNode: nodeData.originalNode,
-              });
+          const nodeData = nodeMap.get(cyNode.id());
+          if (!nodeData) {
+            return;
+          }
+          const nodeType = typeof cyNode.data === 'function' ? cyNode.data('type') : undefined;
+          const isGroup = nodeType === 'group';
+
+          let pos: { x: number; y: number } | null = null;
+
+          if (isGroup && typeof cyNode.boundingBox === 'function') {
+            const bbox = cyNode.boundingBox();
+            if (
+              bbox &&
+              typeof bbox.x1 === 'number' &&
+              typeof bbox.y1 === 'number' &&
+              !isNaN(bbox.x1) &&
+              !isNaN(bbox.y1)
+            ) {
+              pos = { x: bbox.x1, y: bbox.y1 };
+              if (
+                typeof bbox.w === 'number' &&
+                typeof bbox.h === 'number' &&
+                !isNaN(bbox.w) &&
+                !isNaN(bbox.h)
+              ) {
+                positionedNodes.push({
+                  id: cyNode.id(),
+                  x: pos.x,
+                  y: pos.y,
+                  width: bbox.w,
+                  height: bbox.h,
+                  originalNode: nodeData.originalNode,
+                });
+                return;
+              }
             }
+          }
+
+          if (!pos && typeof cyNode.position === 'function') {
+            const nodePos = cyNode.position();
+            if (
+              nodePos &&
+              typeof nodePos.x === 'number' &&
+              typeof nodePos.y === 'number' &&
+              !isNaN(nodePos.x) &&
+              !isNaN(nodePos.y)
+            ) {
+              pos = { x: nodePos.x, y: nodePos.y };
+            }
+          }
+
+          if (pos) {
+            positionedNodes.push({
+              id: cyNode.id(),
+              x: pos.x,
+              y: pos.y,
+              width: typeof cyNode.data === 'function' ? cyNode.data('width') : undefined,
+              height: typeof cyNode.data === 'function' ? cyNode.data('height') : undefined,
+              originalNode: nodeData.originalNode,
+            });
           }
         });
 
@@ -443,7 +494,7 @@ function getAlignments(
   nodes: LayoutData['nodes'],
   spatialMaps: ArchitectureSpatialMap[],
   groupAlignments: ArchitectureGroupAlignments
-): fcose.FcoseAlignmentConstraint {
+): FcoseAlignmentConstraint {
   const flattenAlignments = (
     alignmentObj: Record<number, Record<string, string[]>>,
     alignmentDir: ArchitectureAlignment
@@ -537,8 +588,8 @@ function getRelativeConstraints(
   spatialMaps: ArchitectureSpatialMap[],
   nodes: LayoutData['nodes'],
   iconSize: number
-): fcose.FcoseRelativePlacementConstraint[] {
-  const relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = [];
+): FcoseRelativePlacementConstraint[] {
+  const relativeConstraints: FcoseRelativePlacementConstraint[] = [];
   const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`;
   const strToPos = (pos: string) => pos.split(',').map((p) => parseInt(p));
 
