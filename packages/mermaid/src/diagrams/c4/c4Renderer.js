@@ -269,7 +269,7 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
       Y = c4Shape.type.Y + c4Shape.type.height;
     } else if (c4Shape.techn && c4Shape.techn.text !== '') {
       c4Shape.techn.text = '[' + c4Shape.techn.text + ']';
-      let c4ShapeTechnConf = c4ShapeFont(conf, c4Shape.techn.text);
+      let c4ShapeTechnConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
       calcC4ShapeTextWH('techn', c4Shape, c4ShapeTextWrap, c4ShapeTechnConf, textLimitWidth);
       c4Shape.techn.Y = Y + 5;
       Y = c4Shape.techn.Y + c4Shape.techn.height;
