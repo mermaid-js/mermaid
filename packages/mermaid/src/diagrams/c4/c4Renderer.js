@@ -288,7 +288,7 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
       rectHeight = Y - c4Shape.descr.textLines * 5;
     }
 
-    rectWidth = rectWidth + conf.c4ShapePadding;
+    rectWidth = rectWidth + conf.c4ShapePadding * 2;
     // let rectHeight =
 
     c4Shape.width = Math.max(c4Shape.width || conf.width, rectWidth, conf.width);

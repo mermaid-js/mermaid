@@ -346,7 +346,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
     c4Shape.y + c4Shape.label.Y,
     c4Shape.width,
     c4Shape.height,
-    { fill: fontColor },
+    { fill: fontColor, 'font-size': textFontConf.fontSize },
     textFontConf
   );
 
@@ -362,7 +362,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
       c4Shape.y + c4Shape.techn.Y,
       c4Shape.width,
       c4Shape.height,
-      { fill: fontColor, 'font-style': 'italic' },
+      { fill: fontColor, 'font-size': textFontConf.fontSize, 'font-style': 'italic' },
       textFontConf
     );
   } else if (c4Shape.type && c4Shape.type.text !== '') {
@@ -373,14 +373,13 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
       c4Shape.y + c4Shape.type.Y,
       c4Shape.width,
       c4Shape.height,
-      { fill: fontColor, 'font-style': 'italic' },
+      { fill: fontColor, 'font-size': textFontConf.fontSize, 'font-style': 'italic' },
       textFontConf
     );
   }
 
   // draw descr
   if (c4Shape.descr && c4Shape.descr.text !== '') {
-    textFontConf = conf.personFont();
     textFontConf.fontColor = fontColor;
     _drawTextCandidateFunc(conf)(
       c4Shape.descr.text,
@@ -389,7 +388,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
       c4Shape.y + c4Shape.descr.Y,
       c4Shape.width,
       c4Shape.height,
-      { fill: fontColor },
+      { fill: fontColor, 'font-size': textFontConf.fontSize },
       textFontConf
     );
   }
