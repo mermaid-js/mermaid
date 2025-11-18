@@ -1177,7 +1177,7 @@ end
     );
   });
 
-  describe('when rendering unsuported markdown', () => {
+  describe('when rendering unsupported markdown', () => {
     const graph = `flowchart TB
     mermaid{"What is\nyourmermaid version?"} --> v10["<11"] --"\`<**1**1\`"--> fine["No bug"]
     mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
