@@ -895,46 +895,6 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-### Start and Increment values (v\<MERMAID_RELEASE_VERSION>+)
-
-It is possible to specify a starting value and an increment value for automatic numbering. Both the starting value and increment value can include decimals up to the hundredths place.
-
-Use the following syntax in your diagram definition:
-
-```
-autonumber <start> <increment>
-```
-
-For example:
-
-```mermaid-example
-sequenceDiagram
-    autonumber 1.5 0.25
-    Alice->Bob: Hello Bob, how are you?
-    Bob-->Alice: I am good thanks!
-```
-
-```mermaid
-sequenceDiagram
-    autonumber 1.5 0.25
-    Alice->Bob: Hello Bob, how are you?
-    Bob-->Alice: I am good thanks!
-```
-
-```mermaid-example
-sequenceDiagram
-    autonumber 1.5 0.25
-    Alice->Bob: Hello Bob, how are you?
-    Bob-->Alice: I am good thanks!
-```
-
-```mermaid
-sequenceDiagram
-    autonumber 1.5 0.25
-    Alice->Bob: Hello Bob, how are you?
-    Bob-->Alice: I am good thanks!
-```
-
 ## Actor Menus
 
 Actors can have popup-menus containing individualized links to external pages. For example, if an actor represented a web service, useful links might include a link to the service health dashboard, repo containing the code for the service, or a wiki page describing the service.
