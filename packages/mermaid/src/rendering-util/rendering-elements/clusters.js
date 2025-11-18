@@ -9,6 +9,7 @@ import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
+import { getIconSVG } from '../icons.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
@@ -30,6 +31,21 @@ const rect = async (parent, node) => {
   // Create the label and insert it after the rect
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ');
 
+  let iconWidth = 0;
+  if (node.icon) {
+    const iconSize = node.padding;
+    const iconEl = labelEl.append('g').attr('class', 'cluster-label-icon');
+    iconEl.html(
+      `<g>${await getIconSVG(node.icon, {
+        height: iconSize,
+        width: iconSize,
+        fallbackPrefix: '',
+      })}</g>`
+    );
+    const iconBBox = iconEl.node().getBBox();
+    iconWidth = iconBBox.width;
+  }
+
   const text = await createText(labelEl, node.label, {
     style: node.labelStyle,
     useHtmlLabels,
@@ -47,8 +63,9 @@ const rect = async (parent, node) => {
     dv.attr('height', bbox.height);
   }
 
-  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
-  if (node.width <= bbox.width + node.padding) {
+  const labelWidth = iconWidth > 0 ? iconWidth + bbox.width : bbox.width;
+  const width = node.width <= labelWidth + node.padding ? labelWidth + node.padding : node.width;
+  if (node.width <= labelWidth + node.padding) {
     node.diff = (width - node.width) / 2 - node.padding;
   } else {
     node.diff = -node.padding;
@@ -93,11 +110,20 @@ const rect = async (parent, node) => {
       .attr('height', height);
   }
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
-  labelEl.attr(
-    'transform',
-    // This puts the label on top of the box instead of inside it
-    `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
-  );
+
+  if (node.icon) {
+    const textX = iconWidth > 0 ? iconWidth + node.padding / 4 : node.padding / 4;
+    const textY = node.padding / 4;
+    select(text).attr('transform', `translate(${textX}, ${textY})`);
+
+    const labelX = x + node.padding / 4;
+    const labelY = y + node.padding / 4;
+    labelEl.attr('transform', `translate(${labelX}, ${labelY})`);
+  } else {
+    const labelX = node.x - labelWidth / 2;
+    const labelY = node.y - node.height / 2 + subGraphTitleTopMargin;
+    labelEl.attr('transform', `translate(${labelX}, ${labelY})`);
+  }
 
   if (labelStyles) {
     const span = labelEl.select('span');

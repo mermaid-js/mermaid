@@ -380,7 +380,7 @@ export class ArchitectureDB implements DiagramDB {
         parentId: group.in,
         isGroup: true,
         shape: 'rect',
-        icon: group.icon,
+        icon: group.icon ? `mermaid-architecture:${group.icon}` : undefined,
         width: groupWidth,
         height: groupHeight,
         padding: padding,
