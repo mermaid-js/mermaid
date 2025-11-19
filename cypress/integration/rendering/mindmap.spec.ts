@@ -247,5 +247,31 @@ root
       );
     });
   });
+  describe('Level 2 nodes exceeding 11', () => {
+    it('should render all Level 2 nodes correctly when there are more than 11', () => {
+      imgSnapshotTest(
+        `mindmap
+root
+  Node1
+  Node2
+  Node3
+  Node4
+  Node5
+  Node6
+  Node7
+  Node8
+  Node9
+  Node10
+  Node11
+  Node12
+  Node13
+  Node14
+  Node15`,
+        {},
+        undefined,
+        shouldHaveRoot
+      );
+    });
+  });
   /* The end */
 });
