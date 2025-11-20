@@ -23,6 +23,7 @@ export interface ParticipantMetaData {
     | 'database'
     | 'collections'
     | 'queue';
+  alias?: string;
 }
 
 export interface EdgeMetaData {
