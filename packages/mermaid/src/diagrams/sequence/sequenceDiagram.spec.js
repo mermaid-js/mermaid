@@ -2622,4 +2622,73 @@ Bob->>Alice:Got it!
       expect(error).toBe(true);
     });
   });
+
+  describe('image and icon participant parsing', () => {
+    it('should parse image participant with image URL', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Bob@{ "type": "image", "image": "https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg" }
+        Bob->>Bob: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Bob').type).toBe('image');
+      expect(actors.get('Bob').doc.image).toBe(
+        'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg'
+      );
+    });
+
+    it('should parse icon participant with icon name', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Alice@{ "type": "icon", "icon": "fa:bell" }
+        Alice->>Alice: test
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').type).toBe('icon');
+      expect(actors.get('Alice').doc.icon).toBe('fa:bell');
+    });
+
+    it('should parse two image participants', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Bob@{ "type": "image", "image": "https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg" }
+        participant Alice@{ "type": "image", "image": "https://cdn.pixabay.com/photo/2016/11/29/09/32/animal-1867121_1280.jpg" }
+        Bob->>Alice: Hello
+        Alice-->>Bob: Hi
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Bob').type).toBe('image');
+      expect(actors.get('Bob').doc.image).toBe(
+        'https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg'
+      );
+      expect(actors.get('Alice').type).toBe('image');
+      expect(actors.get('Alice').doc.image).toBe(
+        'https://cdn.pixabay.com/photo/2016/11/29/09/32/animal-1867121_1280.jpg'
+      );
+    });
+
+    it('should parse image participant with normal participant', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Bob@{ "type": "image", "image": "https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg" }
+        participant Alice
+        Bob->>Alice: Hello
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Bob').type).toBe('image');
+      expect(actors.get('Alice').type).toBe('participant');
+    });
+
+    it('should parse icon participant with normal participant', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant Bob@{ "type": "icon", "icon": "fa:bell" }
+        participant Alice
+        Bob->>Alice: Hello
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Bob').type).toBe('icon');
+      expect(actors.get('Alice').type).toBe('participant');
+    });
+  });
 });

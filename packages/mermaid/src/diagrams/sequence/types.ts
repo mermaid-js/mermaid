@@ -17,6 +17,9 @@ export interface Actor {
   actorCnt: number | null;
   rectData: unknown;
   type: string;
+  doc?: ParticipantMetaData; // For documentation
+  iconName?: string; // For icon type
+  imgSrc?: string; // For img type
 }
 
 export interface Message {
@@ -92,4 +95,21 @@ export interface Note {
   placement: Message['placement'];
   message: string;
   wrap: boolean;
+}
+
+export interface ParticipantMetaData {
+  type?:
+    | 'actor'
+    | 'participant'
+    | 'boundary'
+    | 'control'
+    | 'entity'
+    | 'database'
+    | 'collections'
+    | 'queue'
+    | 'icon'
+    | 'img';
+  icon?: string;
+  img?: string;
+  form?: string;
 }

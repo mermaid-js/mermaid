@@ -194,6 +194,46 @@ sequenceDiagram
     Bob->>Alice: Queue response
 ```
 
+### Icon
+
+If you want to use a custom icon for a participant, use the JSON configuration syntax as shown below. The `icon` value can be a FontAwesome icon name, emoji, or other supported icon identifier.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "icon", "icon": "fa:bell" }
+    participant Bob
+    Alice->>Bob: Icon participant
+    Bob->>Alice: Response to icon
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice@{ "type" : "icon", "icon": "fa:bell" }
+    participant Bob
+    Alice->>Bob: Icon participant
+    Bob->>Alice: Response to icon
+```
+
+### Image
+
+If you want to use a custom image for a participant, use the JSON configuration syntax as shown below. The `image` value should be a valid image URL.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "image", "image": "https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg" }
+    participant Bob
+    Alice->>Bob: Image participant
+    Bob->>Alice: Response to image
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice@{ "type" : "image", "image": "https://cdn.pixabay.com/photo/2020/02/22/18/49/paper-4871356_1280.jpg" }
+    participant Bob
+    Alice->>Bob: Image participant
+    Bob->>Alice: Response to image
+```
+
 ### Aliases
 
 The actor can have a convenient identifier and a descriptive label.
