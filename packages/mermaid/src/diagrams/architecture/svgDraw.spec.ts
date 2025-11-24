@@ -1,4 +1,16 @@
 import { vi } from 'vitest';
+
+// Mock createText to avoid exercising full SVG text rendering logic in unit tests.
+// This mock runs before importing `svgDraw` so the module-under-test uses the stub.
+vi.mock('../../rendering-util/createText.js', () => ({
+  createText: vi.fn(() =>
+    Promise.resolve({
+      // Return a minimal object that `drawGroups` won't rely on for DOM measurements in tests
+      node: () => ({ getBoundingClientRect: () => ({ x: 0, y: 0, width: 0, height: 0 }) }),
+    })
+  ),
+}));
+
 import { drawGroups } from './svgDraw.js';
 
 // Minimal Mock for D3 element
@@ -13,8 +25,17 @@ const MockD3 = (name: string) => {
     children.push(child);
     return child;
   };
+  elem.insert = (tag: string) => {
+    const child = MockD3(tag);
+    children.push(child);
+    return child;
+  };
   elem.attr = vi.fn(() => elem);
   elem.html = vi.fn(() => elem);
+  elem.text = vi.fn((v?: any) => (v === undefined ? '' : elem));
+  elem.style = vi.fn(() => elem);
+  elem.node = () => ({ getComputedTextLength: () => 50 });
+  elem.remove = vi.fn(() => undefined);
   return elem;
 };
 
