@@ -1,6 +1,7 @@
 export interface NodeMetaData {
   shape?: string;
   label?: string;
+  labelType?: string;
   icon?: string;
   form?: string;
   pos?: 't' | 'b';
