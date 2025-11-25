@@ -17,6 +17,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
   FlowClass,
   FlowEdge,
@@ -26,7 +27,7 @@ import type {
   FlowVertex,
   FlowVertexTypeParam,
 } from './types.js';
-
+import DOMPurify from 'dompurify';
 interface LinkData {
   id: string;
 }
@@ -574,15 +575,7 @@ You have to call mermaid.initialize.`
   }
 
   private setupToolTips(element: Element) {
-    let tooltipElem = select('.mermaidTooltip');
-    // @ts-ignore TODO: fix this
-    if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-      // @ts-ignore TODO: fix this
-      tooltipElem = select('body')
-        .append('div')
-        .attr('class', 'mermaidTooltip')
-        .style('opacity', 0);
-    }
+    const tooltipElem = createTooltip();
 
     const svg = select(element).select('svg');
 
@@ -603,7 +596,7 @@ You have to call mermaid.initialize.`
           .text(el.attr('title'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
           .style('top', window.scrollY + rect.bottom + 'px');
-        tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
+        tooltipElem.html(DOMPurify.sanitize(title));
         el.classed('hover', true);
       })
       .on('mouseout', (e: MouseEvent) => {
