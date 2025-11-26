@@ -54,7 +54,7 @@ Component:
 ;
 
 Label:
-    KW_LABEL '[' offsetX=WARDLEY_NUMBER ',' offsetY=WARDLEY_NUMBER ']'
+    KW_LABEL '[' negX?='-'? offsetX=INT ',' negY?='-'? offsetY=INT ']'
 ;
 
 Decorator:
@@ -62,7 +62,7 @@ Decorator:
 ;
 
 Link:
-    from=(STRING | ID | NAME_WITH_SPACES) fromPort=LINK_PORT? arrow=(LINK_ARROW | ARROW) to=(STRING | ID | NAME_WITH_SPACES) toPort=LINK_PORT?
+    from=(STRING | ID | NAME_WITH_SPACES) fromPort=LINK_PORT? arrow=(LINK_ARROW | ARROW)? to=(STRING | ID | NAME_WITH_SPACES) toPort=LINK_PORT?
     linkLabel=LINK_LABEL? EOL
 ;
 

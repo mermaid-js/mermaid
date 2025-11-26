@@ -99,8 +99,12 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
       component.evolution,
       `Component "${component.name}"`
     );
-    const labelOffsetX = component.label?.offsetX;
-    const labelOffsetY = component.label?.offsetY;
+    const labelOffsetX = component.label
+      ? (component.label.negX ? -1 : 1) * component.label.offsetX
+      : undefined;
+    const labelOffsetY = component.label
+      ? (component.label.negY ? -1 : 1) * component.label.offsetY
+      : undefined;
     const sourceStrategy = component.decorator?.strategy as
       | 'build'
       | 'buy'
@@ -147,8 +151,12 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
     pipeline.components.forEach((component) => {
       // Create a synthetic ID for pipeline components
       const componentId = `${pipeline.parent}_${component.name}`;
-      const labelOffsetX = component.label?.offsetX;
-      const labelOffsetY = component.label?.offsetY;
+      const labelOffsetX = component.label
+        ? (component.label.negX ? -1 : 1) * component.label.offsetX
+        : undefined;
+      const labelOffsetY = component.label
+        ? (component.label.negY ? -1 : 1) * component.label.offsetY
+        : undefined;
       const x = toPercent(component.evolution, `Pipeline component "${component.name}" evolution`);
 
       // Add pipeline component node (it will be associated with the parent)
