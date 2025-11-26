@@ -71,7 +71,7 @@ Evolve:
 ;
 
 Pipeline:
-    KW_PIPELINE parent=STRING '{' NEWLINE+
+    KW_PIPELINE parent=(STRING | ID | NAME_WITH_SPACES) '{' NEWLINE+
     components+=PipelineComponent+
     '}' EOL
 ;
@@ -110,7 +110,7 @@ Deaccelerator:
 terminal WARDLEY_NUMBER returns number: /[0-9]+\.[0-9]+/;
 
 terminal ARROW: '->';
-terminal LINK_PORT: '+>' | '+<' | '+<>';
+terminal LINK_PORT: '+<>' | '+>' | '+<';
 terminal LINK_ARROW: '-->' | '-.->' | '>' | /\+'[^']*'<>/ | /\+'[^']*'</ | /\+'[^']*'>/;
 terminal LINK_LABEL: /;[^\n\r]+/;
 terminal STRATEGY: 'build' | 'buy' | 'outsource' | 'market';
