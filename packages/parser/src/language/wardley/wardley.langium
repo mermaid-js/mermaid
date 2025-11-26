@@ -3,7 +3,7 @@ import "../common/common";
 
 entry Wardley:
     NEWLINE*
-    "wardley-beta"
+    KW_WARDLEY
     (
         NEWLINE
         | TitleAndAccessibilities
@@ -28,33 +28,33 @@ fragment Statement:
 ;
 
 Size:
-    'size' '[' width=INT ',' height=INT ']' EOL
+    KW_SIZE '[' width=INT ',' height=INT ']' EOL
 ;
 
 Evolution:
-    'evolution' stages+=EvolutionStage (ARROW stages+=EvolutionStage)+ EOL
+    KW_EVOLUTION stages+=EvolutionStage (ARROW stages+=EvolutionStage)+ EOL
 ;
 
 EvolutionStage:
-    name=ID ('@' boundary=WARDLEY_NUMBER)? ('/' secondName=ID)?
+    name=(ID | STRING | NAME_WITH_SPACES) ('@' boundary=WARDLEY_NUMBER)? ('/' secondName=(ID | STRING | NAME_WITH_SPACES))?
 ;
 
 Anchor:
-    'anchor' name=(STRING | ID) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
+    KW_ANCHOR name=(STRING | ID | NAME_WITH_SPACES) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
 ;
 
 Component:
-    'component' name=(STRING | ID) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']'
+    KW_COMPONENT name=(STRING | ID | NAME_WITH_SPACES) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']'
     label=Label? decorator=Decorator?
     (
-        inertia?='inertia'
-      | '(' inertia?='inertia' ')'
+        inertia?=KW_INERTIA
+      | '(' inertia?=KW_INERTIA ')'
     )?
     EOL
 ;
 
 Label:
-    'label' '[' offsetX=WARDLEY_NUMBER ',' offsetY=WARDLEY_NUMBER ']'
+    KW_LABEL '[' offsetX=WARDLEY_NUMBER ',' offsetY=WARDLEY_NUMBER ']'
 ;
 
 Decorator:
@@ -62,46 +62,46 @@ Decorator:
 ;
 
 Link:
-    from=(STRING | ID) fromPort=LINK_PORT? arrow=(LINK_ARROW | ARROW) to=(STRING | ID) toPort=LINK_PORT?
+    from=(STRING | ID | NAME_WITH_SPACES) fromPort=LINK_PORT? arrow=(LINK_ARROW | ARROW) to=(STRING | ID | NAME_WITH_SPACES) toPort=LINK_PORT?
     linkLabel=LINK_LABEL? EOL
 ;
 
 Evolve:
-    'evolve' component=STRING target=WARDLEY_NUMBER EOL
+    KW_EVOLVE component=STRING target=WARDLEY_NUMBER EOL
 ;
 
 Pipeline:
-    'pipeline' parent=STRING '{' NEWLINE+
+    KW_PIPELINE parent=STRING '{' NEWLINE+
     components+=PipelineComponent+
     '}' EOL
 ;
 
 PipelineComponent:
-    'component' name=(STRING | ID) '[' evolution=WARDLEY_NUMBER ']' label=Label? EOL
+    KW_COMPONENT name=(STRING | ID | NAME_WITH_SPACES) '[' evolution=WARDLEY_NUMBER ']' label=Label? EOL
 ;
 
 Area:
-    'area' name=(STRING | ID) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
+    KW_AREA name=(STRING | ID | NAME_WITH_SPACES) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
 ;
 
 Note:
-    'note' text=STRING '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
+    KW_NOTE text=STRING '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
 ;
 
 Annotations:
-    'annotations' '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
+    KW_ANNOTATIONS '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
 Annotation:
-    'annotation' number=INT ',' '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' text=STRING EOL
+    KW_ANNOTATION number=INT ',' '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' text=STRING EOL
 ;
 
 Accelerator:
-    'accelerator' name=(STRING | ID) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
+    KW_ACCELERATOR name=(STRING | ID | NAME_WITH_SPACES) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
 Deaccelerator:
-    'deaccelerator' name=(STRING | ID) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
+    KW_DEACCELERATOR name=(STRING | ID | NAME_WITH_SPACES) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
 // Terminals must be defined BEFORE imports to take highest precedence
@@ -113,6 +113,28 @@ terminal LINK_PORT: '+>' | '+<' | '+<>';
 terminal LINK_ARROW: '-->' | '-.->' | '>' | /\+'[^']*'<>/ | /\+'[^']*'</ | /\+'[^']*'>/;
 terminal LINK_LABEL: /;[^\n\r]+/;
 terminal STRATEGY: 'build' | 'buy' | 'outsource' | 'market';
+
+// Define keywords explicitly to ensure they take precedence over NAME_WITH_SPACES
+terminal KW_WARDLEY: 'wardley-beta';
+terminal KW_SIZE: 'size';
+terminal KW_EVOLUTION: 'evolution';
+terminal KW_ANCHOR: 'anchor';
+terminal KW_COMPONENT: 'component';
+terminal KW_LABEL: 'label';
+terminal KW_INERTIA: 'inertia';
+terminal KW_EVOLVE: 'evolve';
+terminal KW_PIPELINE: 'pipeline';
+terminal KW_AREA: 'area';
+terminal KW_NOTE: 'note';
+terminal KW_ANNOTATIONS: 'annotations';
+terminal KW_ANNOTATION: 'annotation';
+terminal KW_ACCELERATOR: 'accelerator';
+terminal KW_DEACCELERATOR: 'deaccelerator';
+
+// NAME_WITH_SPACES must be defined LAST to avoid shadowing other terminals
+// Uses negative lookahead to exclude matching content that starts with reserved keywords
+// Does NOT include - or / to avoid conflicts with arrows and evolution syntax
+terminal NAME_WITH_SPACES: /(?!title\s|accTitle|accDescr)[A-Za-z][A-Za-z0-9 _()&]*/;
 // Removed EVOLUTION_NAME and COMPONENT_NAME terminals - they were too greedy
 // and shadowed imported terminals from common.langium (like TITLE)
 // Now using ID for evolution names and STRING for component names
