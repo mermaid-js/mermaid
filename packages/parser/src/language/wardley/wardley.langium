@@ -89,11 +89,15 @@ Note:
 ;
 
 Annotations:
-    KW_ANNOTATIONS '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
+    KW_ANNOTATIONS '[' x=CoordinateValue ',' y=CoordinateValue ']' EOL
 ;
 
 Annotation:
-    KW_ANNOTATION number=INT ',' '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' text=STRING EOL
+    KW_ANNOTATION number=INT ',' '[' x=CoordinateValue ',' y=CoordinateValue ']' text=STRING EOL
+;
+
+CoordinateValue returns number:
+    WARDLEY_NUMBER | INT
 ;
 
 Accelerator:
@@ -106,7 +110,7 @@ Deaccelerator:
 
 // Define decimal number terminal for coordinates
 // This ONLY matches decimals like 0.5, not integers
-// For integers, use INT from common.langium
+// For accepting both decimals and integers, use the CoordinateValue rule
 terminal WARDLEY_NUMBER returns number: /[0-9]+\.[0-9]+/;
 
 terminal ARROW: '->';
