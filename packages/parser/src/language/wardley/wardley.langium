@@ -135,8 +135,9 @@ terminal KW_DEACCELERATOR: 'deaccelerator';
 // NAME_WITH_SPACES must be defined LAST to avoid shadowing other terminals
 // Uses negative lookahead to exclude matching content that starts with reserved keywords
 // Matches names like "Campfire Kettle" but NOT "Kettle 0.5" (stops before numbers after spaces)
-// Pattern: letter, then any combo of letters/digits/_, then optionally (space + letters/digits/_) repeating
-terminal NAME_WITH_SPACES: /(?!title\s|accTitle|accDescr)[A-Za-z][A-Za-z0-9_()&]*(?:\s+[A-Za-z][A-Za-z0-9_()&]*)*/;
+// Pattern: letter, then any combo of letters/digits/_, then optionally (space/tab + letters/digits/_) repeating
+// Uses [ \t]+ instead of \s+ to avoid matching newlines
+terminal NAME_WITH_SPACES: /(?!title\s|accTitle|accDescr)[A-Za-z][A-Za-z0-9_()&]*(?:[ \t]+[A-Za-z][A-Za-z0-9_()&]*)*/;
 // Removed EVOLUTION_NAME and COMPONENT_NAME terminals - they were too greedy
 // and shadowed imported terminals from common.langium (like TITLE)
 // Now using ID for evolution names and STRING for component names
