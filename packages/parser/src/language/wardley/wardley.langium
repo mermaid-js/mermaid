@@ -104,8 +104,8 @@ Deaccelerator:
     KW_DEACCELERATOR name=(STRING | ID | NAME_WITH_SPACES) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
-// Terminals must be defined BEFORE imports to take highest precedence
-// Define number terminals with explicit regex to avoid conflicts
+// Define number terminal FIRST to ensure it matches before imported terminals
+// Langium matches the LONGEST token first, so this /[0-9]+\.[0-9]+/ will match decimals
 terminal WARDLEY_NUMBER returns number: /[0-9]+\.[0-9]+|0|[1-9][0-9]*/;
 
 terminal ARROW: '->';
