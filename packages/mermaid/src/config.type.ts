@@ -1663,6 +1663,14 @@ export interface WardleyDiagramConfig extends BaseDiagramConfig {
    * Whether to display a background grid.
    */
   showGrid?: boolean;
+  /**
+   * The width of area rectangles in pixels.
+   */
+  areaWidth?: number;
+  /**
+   * The height of area rectangles in pixels.
+   */
+  areaHeight?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

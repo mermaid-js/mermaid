@@ -55,6 +55,8 @@ const getConfigValues = () => {
     labelFontSize: wardleyConfig?.labelFontSize ?? 10,
     showGrid: wardleyConfig?.showGrid ?? false,
     useMaxWidth: wardleyConfig?.useMaxWidth ?? true,
+    areaWidth: wardleyConfig?.areaWidth ?? 120,
+    areaHeight: wardleyConfig?.areaHeight ?? 80,
   };
 };
 
@@ -162,8 +164,8 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
   // Render areas as background rectangles
   if (data.areas.length > 0) {
     const areaGroup = root.append('g').attr('class', 'wardley-areas');
-    const areaWidth = 120; // Default width in pixels
-    const areaHeight = 80; // Default height in pixels
+    const areaWidth = configValues.areaWidth;
+    const areaHeight = configValues.areaHeight;
 
     areaGroup
       .selectAll('rect')

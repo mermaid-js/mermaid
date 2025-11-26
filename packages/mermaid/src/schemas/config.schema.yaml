@@ -2377,6 +2377,16 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Whether to display a background grid.
         type: boolean
         default: false
+      areaWidth:
+        description: The width of area rectangles in pixels.
+        type: number
+        minimum: 1
+        default: 120
+      areaHeight:
+        description: The height of area rectangles in pixels.
+        type: number
+        minimum: 1
+        default: 80
 
   FontCalculator:
     title: Font Calculator
