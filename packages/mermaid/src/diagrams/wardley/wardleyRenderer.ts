@@ -55,8 +55,6 @@ const getConfigValues = () => {
     labelFontSize: wardleyConfig?.labelFontSize ?? 10,
     showGrid: wardleyConfig?.showGrid ?? false,
     useMaxWidth: wardleyConfig?.useMaxWidth ?? true,
-    areaWidth: wardleyConfig?.areaWidth ?? 120,
-    areaHeight: wardleyConfig?.areaHeight ?? 80,
   };
 };
 
@@ -160,44 +158,6 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
 
   const projectX = (value: number) => configValues.padding + (value / 100) * chartWidth;
   const projectY = (value: number) => height - configValues.padding - (value / 100) * chartHeight;
-
-  // Render areas as background rectangles
-  if (data.areas.length > 0) {
-    const areaGroup = root.append('g').attr('class', 'wardley-areas');
-    const areaWidth = configValues.areaWidth;
-    const areaHeight = configValues.areaHeight;
-
-    areaGroup
-      .selectAll('rect')
-      .data(data.areas)
-      .enter()
-      .append('rect')
-      .attr('class', 'wardley-area')
-      .attr('x', (area) => projectX(area.x) - areaWidth / 2)
-      .attr('y', (area) => projectY(area.y) - areaHeight / 2)
-      .attr('width', areaWidth)
-      .attr('height', areaHeight)
-      .attr('fill', theme.gridColor)
-      .attr('stroke', theme.axisColor)
-      .attr('stroke-width', 1)
-      .attr('stroke-dasharray', '4 2')
-      .attr('rx', 8)
-      .attr('ry', 8);
-
-    areaGroup
-      .selectAll('text')
-      .data(data.areas)
-      .enter()
-      .append('text')
-      .attr('class', 'wardley-area-label')
-      .attr('x', (area) => projectX(area.x))
-      .attr('y', (area) => projectY(area.y) - areaHeight / 2 - 5)
-      .attr('fill', theme.axisTextColor)
-      .attr('font-size', configValues.labelFontSize)
-      .attr('font-weight', 'bold')
-      .attr('text-anchor', 'middle')
-      .text((area) => area.name);
-  }
 
   const axisGroup = root.append('g').attr('class', 'wardley-axes');
   axisGroup

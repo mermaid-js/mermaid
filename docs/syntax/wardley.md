@@ -551,46 +551,6 @@ annotation 3,[0.40, 0.35] "Data persistence"
 
 ### Visual Elements
 
-#### Areas
-
-Labeled regions for grouping:
-
-```mermaid-example
-wardley-beta
-title Areas
-
-area Frontend [0.80, 0.75]
-area Backend [0.55, 0.60]
-area Infrastructure [0.30, 0.40]
-
-component UI [0.90, 0.85]
-component API [0.65, 0.70]
-component Database [0.45, 0.50]
-component Cloud [0.25, 0.30]
-
-UI -> API
-API -> Database
-Database -> Cloud
-```
-
-```mermaid
-wardley-beta
-title Areas
-
-area Frontend [0.80, 0.75]
-area Backend [0.55, 0.60]
-area Infrastructure [0.30, 0.40]
-
-component UI [0.90, 0.85]
-component API [0.65, 0.70]
-component Database [0.45, 0.50]
-component Cloud [0.25, 0.30]
-
-UI -> API
-API -> Database
-Database -> Cloud
-```
-
 #### Accelerators and Deaccelerators
 
 Forces affecting evolution:
@@ -667,10 +627,6 @@ evolution Genesis@0.25 -> Custom@0.5 -> Product@0.75 -> Commodity@1.0
 
 anchor Customer [0.90, 0.95]
 
-area "User Experience" [0.85, 0.80]
-area "Platform Services" [0.60, 0.55]
-area "Infrastructure" [0.30, 0.90]
-
 component "Mobile App" [0.80, 0.85] (build)
 component "Web App" [0.75, 0.80] (build) label [-60, 10]
 component "API Gateway" [0.70, 0.65] (buy)
@@ -709,10 +665,6 @@ size [1100, 800]
 evolution Genesis@0.25 -> Custom@0.5 -> Product@0.75 -> Commodity@1.0
 
 anchor Customer [0.90, 0.95]
-
-area "User Experience" [0.85, 0.80]
-area "Platform Services" [0.60, 0.55]
-area "Infrastructure" [0.30, 0.90]
 
 component "Mobile App" [0.80, 0.85] (build)
 component "Web App" [0.75, 0.80] (build) label [-60, 10]

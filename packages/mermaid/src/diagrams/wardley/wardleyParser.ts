@@ -128,12 +128,6 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
     );
   });
 
-  // Add areas
-  ast.areas.forEach((area) => {
-    const coords = toCoordinates(area.visibility, area.evolution, `Area "${area.name}"`);
-    db.addArea(area.name, coords.x, coords.y);
-  });
-
   // Add notes
   ast.notes.forEach((note) => {
     const coords = toCoordinates(note.visibility, note.evolution, `Note "${note.text}"`);

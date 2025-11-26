@@ -26,12 +26,6 @@ export interface WardleyTrend {
   targetY: number;
 }
 
-export interface WardleyArea {
-  name: string;
-  x: number;
-  y: number;
-}
-
 export interface WardleyPipeline {
   nodeId: string;
   componentIds: string[];
@@ -72,7 +66,6 @@ export interface WardleyBuildResult {
   nodes: WardleyNode[];
   links: WardleyLink[];
   trends: WardleyTrend[];
-  areas: WardleyArea[];
   pipelines: WardleyPipeline[];
   annotations: WardleyAnnotation[];
   notes: WardleyNote[];
@@ -87,7 +80,6 @@ export class WardleyBuilder {
   private nodes = new Map<string, WardleyNode>();
   private links: WardleyLink[] = [];
   private trends = new Map<string, WardleyTrend>();
-  private areas: WardleyArea[] = [];
   private pipelines = new Map<string, WardleyPipeline>();
   private annotations: WardleyAnnotation[] = [];
   private notes: WardleyNote[] = [];
@@ -115,10 +107,6 @@ export class WardleyBuilder {
 
   public addTrend(trend: WardleyTrend) {
     this.trends.set(trend.nodeId, trend);
-  }
-
-  public addArea(area: WardleyArea) {
-    this.areas.push(area);
   }
 
   public startPipeline(nodeId: string) {
@@ -191,7 +179,6 @@ export class WardleyBuilder {
       nodes,
       links: [...this.links],
       trends: [...this.trends.values()],
-      areas: [...this.areas],
       pipelines: [...this.pipelines.values()],
       annotations: [...this.annotations],
       notes: [...this.notes],
@@ -207,7 +194,6 @@ export class WardleyBuilder {
     this.nodes.clear();
     this.links = [];
     this.trends.clear();
-    this.areas = [];
     this.pipelines.clear();
     this.annotations = [];
     this.notes = [];

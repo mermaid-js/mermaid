@@ -61,10 +61,6 @@ function addTrend(nodeId: string, targetX: number, targetY: number) {
   builder.addTrend({ nodeId, targetX, targetY });
 }
 
-function addArea(name: string, x: number, y: number) {
-  builder.addArea({ name: textSanitizer(name), x, y });
-}
-
 function addAnnotation(number: number, coordinates: { x: number; y: number }[], text?: string) {
   builder.addAnnotation({
     number,
@@ -148,7 +144,6 @@ export default {
   addNode,
   addLink,
   addTrend,
-  addArea,
   addAnnotation,
   addNote,
   addAccelerator,

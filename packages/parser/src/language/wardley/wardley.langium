@@ -19,7 +19,6 @@ fragment Statement:
     | links+=Link
     | evolves+=Evolve
     | pipelines+=Pipeline
-    | areas+=Area
     | notes+=Note
     | annotations+=Annotations
     | annotation+=Annotation
@@ -80,10 +79,6 @@ PipelineComponent:
     KW_COMPONENT name=(STRING | ID | NAME_WITH_SPACES) '[' evolution=WARDLEY_NUMBER ']' label=Label? EOL
 ;
 
-Area:
-    KW_AREA name=(STRING | ID | NAME_WITH_SPACES) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
-;
-
 Note:
     KW_NOTE text=STRING '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
 ;
@@ -129,7 +124,6 @@ terminal KW_LABEL: 'label';
 terminal KW_INERTIA: 'inertia';
 terminal KW_EVOLVE: 'evolve';
 terminal KW_PIPELINE: 'pipeline';
-terminal KW_AREA: 'area';
 terminal KW_NOTE: 'note';
 terminal KW_ANNOTATIONS: 'annotations';
 terminal KW_ANNOTATION: 'annotation';

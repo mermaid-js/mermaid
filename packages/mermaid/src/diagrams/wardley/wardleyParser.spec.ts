@@ -176,19 +176,6 @@ component Cache [0.5, 0.6] (outsource)`
     expect(cache?.sourceStrategy).toBe('outsource');
   });
 
-  it('parses areas', async () => {
-    await parser.parse(
-      `wardley-beta
-title Test Areas
-area Frontend [0.75, 0.80]
-area Backend [0.60, 0.55]`
-    );
-
-    const data = db.getWardleyData();
-    expect(data.areas).toHaveLength(2);
-    expect(data.areas[0].name).toBe('Frontend');
-  });
-
   it('parses size directive', async () => {
     await parser.parse(
       `wardley-beta
