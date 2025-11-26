@@ -7,6 +7,8 @@ const db = diagram.db as typeof WardleyDb;
 
 describe('wardley parser', () => {
   beforeEach(() => {
+    // @ts-expect-error - since type is set to undefined we will have error
+    parser.parser.yy = db;
     db.clear();
   });
 
