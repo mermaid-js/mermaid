@@ -36,15 +36,15 @@ Evolution:
 ;
 
 EvolutionStage:
-    name=EVOLUTION_NAME ('@' boundary=NUMBER)? ('/' secondName=EVOLUTION_NAME)?
+    name=EVOLUTION_NAME ('@' boundary=WARDLEY_NUMBER)? ('/' secondName=EVOLUTION_NAME)?
 ;
 
 Anchor:
-    'anchor' name=(STRING | COMPONENT_NAME) '[' visibility=NUMBER ',' evolution=NUMBER ']' EOL
+    'anchor' name=(STRING | COMPONENT_NAME) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
 ;
 
 Component:
-    'component' name=(STRING | COMPONENT_NAME) '[' visibility=NUMBER ',' evolution=NUMBER ']'
+    'component' name=(STRING | COMPONENT_NAME) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']'
     label=Label? decorator=Decorator?
     (
         inertia?='inertia'
@@ -54,7 +54,7 @@ Component:
 ;
 
 Label:
-    'label' '[' offsetX=NUMBER ',' offsetY=NUMBER ']'
+    'label' '[' offsetX=WARDLEY_NUMBER ',' offsetY=WARDLEY_NUMBER ']'
 ;
 
 Decorator:
@@ -67,7 +67,7 @@ Link:
 ;
 
 Evolve:
-    'evolve' component=(STRING | COMPONENT_NAME) target=NUMBER EOL
+    'evolve' component=(STRING | COMPONENT_NAME) target=WARDLEY_NUMBER EOL
 ;
 
 Pipeline:
@@ -77,34 +77,37 @@ Pipeline:
 ;
 
 PipelineComponent:
-    'component' name=(STRING | COMPONENT_NAME) '[' evolution=NUMBER ']' label=Label? EOL
+    'component' name=(STRING | COMPONENT_NAME) '[' evolution=WARDLEY_NUMBER ']' label=Label? EOL
 ;
 
 Area:
-    'area' name=(STRING | COMPONENT_NAME) '[' visibility=NUMBER ',' evolution=NUMBER ']' EOL
+    'area' name=(STRING | COMPONENT_NAME) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
 ;
 
 Note:
-    'note' text=STRING '[' visibility=NUMBER ',' evolution=NUMBER ']' EOL
+    'note' text=STRING '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
 ;
 
 Annotations:
-    'annotations' '[' x=NUMBER ',' y=NUMBER ']' EOL
+    'annotations' '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
 Annotation:
-    'annotation' number=INT ',' '[' x=NUMBER ',' y=NUMBER ']' text=STRING EOL
+    'annotation' number=INT ',' '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' text=STRING EOL
 ;
 
 Accelerator:
-    'accelerator' name=(STRING | COMPONENT_NAME) '[' x=NUMBER ',' y=NUMBER ']' EOL
+    'accelerator' name=(STRING | COMPONENT_NAME) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
 Deaccelerator:
-    'deaccelerator' name=(STRING | COMPONENT_NAME) '[' x=NUMBER ',' y=NUMBER ']' EOL
+    'deaccelerator' name=(STRING | COMPONENT_NAME) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
-// Specific terminals first
+// Terminals must be defined BEFORE imports to take highest precedence
+// Define number terminals with explicit regex to avoid conflicts
+terminal WARDLEY_NUMBER returns number: /[0-9]+\.[0-9]+|0|[1-9][0-9]*/;
+
 terminal ARROW: '->';
 terminal LINK_PORT: '+>' | '+<' | '+<>';
 terminal LINK_ARROW: '-->' | '-.->' | '>' | /\+'[^']*'<>/ | /\+'[^']*'</ | /\+'[^']*'>/;
