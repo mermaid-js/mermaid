@@ -62,7 +62,7 @@ Decorator:
 ;
 
 Link:
-    from=(STRING | COMPONENT_NAME) fromPort=LINK_PORT? (arrow=LINK_ARROW | ARROW) to=(STRING | COMPONENT_NAME) toPort=LINK_PORT?
+    from=(STRING | COMPONENT_NAME) fromPort=LINK_PORT? arrow=(LINK_ARROW | ARROW) to=(STRING | COMPONENT_NAME) toPort=LINK_PORT?
     linkLabel=LINK_LABEL? EOL
 ;
 
