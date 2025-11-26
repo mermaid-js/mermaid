@@ -9,11 +9,6 @@ export class WardleyValueConverter extends AbstractMermaidValueConverter {
     _cstNode: CstNode
   ): ValueType | undefined {
     switch (rule.name.toUpperCase()) {
-      case 'COMPONENT_NAME':
-      case 'EVOLUTION_NAME':
-      case 'TEXT_UNTIL_BRACKET':
-      case 'TEXT_LINE':
-        return input.trim();
       case 'LINK_LABEL':
         // Strip the leading ';' and trim whitespace
         return input.substring(1).trim();
