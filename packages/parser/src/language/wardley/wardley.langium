@@ -32,7 +32,7 @@ Size:
 ;
 
 Evolution:
-    'evolution' stages+=EvolutionStage ('->' stages+=EvolutionStage)+ EOL
+    'evolution' stages+=EvolutionStage (ARROW stages+=EvolutionStage)+ EOL
 ;
 
 EvolutionStage:
@@ -62,7 +62,7 @@ Decorator:
 ;
 
 Link:
-    from=(STRING | COMPONENT_NAME) fromPort=LINK_PORT? arrow=LINK_ARROW? to=(STRING | COMPONENT_NAME) toPort=LINK_PORT?
+    from=(STRING | COMPONENT_NAME) fromPort=LINK_PORT? (arrow=LINK_ARROW | ARROW) to=(STRING | COMPONENT_NAME) toPort=LINK_PORT?
     linkLabel=LINK_LABEL? EOL
 ;
 
@@ -105,8 +105,9 @@ Deaccelerator:
 ;
 
 // Specific terminals first
+terminal ARROW: '->';
 terminal LINK_PORT: '+>' | '+<' | '+<>';
-terminal LINK_ARROW: '->' | '-->' | '-.->' | '>' | /\+'[^']*'<>/ | /\+'[^']*'</ | /\+'[^']*'>/;
+terminal LINK_ARROW: '-->' | '-.->' | '>' | /\+'[^']*'<>/ | /\+'[^']*'</ | /\+'[^']*'>/;
 terminal LINK_LABEL: /;[^\n\r]+/;
 terminal STRATEGY: 'build' | 'buy' | 'outsource' | 'market';
 terminal EVOLUTION_NAME: /[A-Za-z][A-Za-z0-9 ]*/;
