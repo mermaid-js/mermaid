@@ -104,9 +104,10 @@ Deaccelerator:
     KW_DEACCELERATOR name=(STRING | ID | NAME_WITH_SPACES) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
-// Define number terminal FIRST to ensure it matches before imported terminals
-// Langium matches the LONGEST token first, so this /[0-9]+\.[0-9]+/ will match decimals
-terminal WARDLEY_NUMBER returns number: /[0-9]+\.[0-9]+|0|[1-9][0-9]*/;
+// Define decimal number terminal for coordinates
+// This ONLY matches decimals like 0.5, not integers
+// For integers, use INT from common.langium
+terminal WARDLEY_NUMBER returns number: /[0-9]+\.[0-9]+/;
 
 terminal ARROW: '->';
 terminal LINK_PORT: '+>' | '+<' | '+<>';
