@@ -36,15 +36,15 @@ Evolution:
 ;
 
 EvolutionStage:
-    name=EVOLUTION_NAME ('@' boundary=WARDLEY_NUMBER)? ('/' secondName=EVOLUTION_NAME)?
+    name=ID ('@' boundary=WARDLEY_NUMBER)? ('/' secondName=ID)?
 ;
 
 Anchor:
-    'anchor' name=(STRING | COMPONENT_NAME) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
+    'anchor' name=(STRING | ID) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
 ;
 
 Component:
-    'component' name=(STRING | COMPONENT_NAME) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']'
+    'component' name=(STRING | ID) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']'
     label=Label? decorator=Decorator?
     (
         inertia?='inertia'
@@ -62,26 +62,26 @@ Decorator:
 ;
 
 Link:
-    from=(STRING | COMPONENT_NAME) fromPort=LINK_PORT? arrow=(LINK_ARROW | ARROW) to=(STRING | COMPONENT_NAME) toPort=LINK_PORT?
+    from=(STRING | ID) fromPort=LINK_PORT? arrow=(LINK_ARROW | ARROW) to=(STRING | ID) toPort=LINK_PORT?
     linkLabel=LINK_LABEL? EOL
 ;
 
 Evolve:
-    'evolve' component=(STRING | COMPONENT_NAME) target=WARDLEY_NUMBER EOL
+    'evolve' component=STRING target=WARDLEY_NUMBER EOL
 ;
 
 Pipeline:
-    'pipeline' parent=(STRING | COMPONENT_NAME) '{' NEWLINE+
+    'pipeline' parent=STRING '{' NEWLINE+
     components+=PipelineComponent+
     '}' EOL
 ;
 
 PipelineComponent:
-    'component' name=(STRING | COMPONENT_NAME) '[' evolution=WARDLEY_NUMBER ']' label=Label? EOL
+    'component' name=(STRING | ID) '[' evolution=WARDLEY_NUMBER ']' label=Label? EOL
 ;
 
 Area:
-    'area' name=(STRING | COMPONENT_NAME) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
+    'area' name=(STRING | ID) '[' visibility=WARDLEY_NUMBER ',' evolution=WARDLEY_NUMBER ']' EOL
 ;
 
 Note:
@@ -97,11 +97,11 @@ Annotation:
 ;
 
 Accelerator:
-    'accelerator' name=(STRING | COMPONENT_NAME) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
+    'accelerator' name=(STRING | ID) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
 Deaccelerator:
-    'deaccelerator' name=(STRING | COMPONENT_NAME) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
+    'deaccelerator' name=(STRING | ID) '[' x=WARDLEY_NUMBER ',' y=WARDLEY_NUMBER ']' EOL
 ;
 
 // Terminals must be defined BEFORE imports to take highest precedence
@@ -113,8 +113,9 @@ terminal LINK_PORT: '+>' | '+<' | '+<>';
 terminal LINK_ARROW: '-->' | '-.->' | '>' | /\+'[^']*'<>/ | /\+'[^']*'</ | /\+'[^']*'>/;
 terminal LINK_LABEL: /;[^\n\r]+/;
 terminal STRATEGY: 'build' | 'buy' | 'outsource' | 'market';
-terminal EVOLUTION_NAME: /[A-Za-z][A-Za-z0-9 ]*/;
-terminal COMPONENT_NAME: /[A-Za-z][A-Za-z0-9 _\-()&]*/;
+// Removed EVOLUTION_NAME and COMPONENT_NAME terminals - they were too greedy
+// and shadowed imported terminals from common.langium (like TITLE)
+// Now using ID for evolution names and STRING for component names
 // Catch-all terminals - must be last and after all other rules
 // These are problematic because they can shadow keywords
 // Solution: Don't use them, use ID or QUOTED_STRING instead
