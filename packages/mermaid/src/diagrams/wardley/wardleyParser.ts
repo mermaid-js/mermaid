@@ -6,9 +6,12 @@ import { populateCommonDb } from '../common/populateCommonDb.js';
 import type { WardleyDB } from './wardleyTypes.js';
 
 const toPercent = (value: number, context: string): number => {
+  // Accept values in 0-1 range (converted to percentage) or 0-100 range (used as-is)
   const normalized = value <= 1 ? value * 100 : value;
   if (normalized < 0 || normalized > 100) {
-    throw new Error(`${context} must be between 0 and 1 (0-100). Received: ${value}`);
+    throw new Error(
+      `${context} must be between 0-1 (decimal) or 0-100 (percentage). Received: ${value}`
+    );
   }
   return normalized;
 };
