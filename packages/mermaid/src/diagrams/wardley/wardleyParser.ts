@@ -72,7 +72,13 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
 
   // Process evolution stages
   if (ast.evolution) {
-    const stages = ast.evolution.stages.map((stage) => stage.name);
+    const stages = ast.evolution.stages.map((stage) => {
+      // Handle dual-label stages like "Genesis / Concept"
+      if (stage.secondName) {
+        return `${stage.name.trim()} / ${stage.secondName.trim()}`;
+      }
+      return stage.name.trim();
+    });
     const stageBoundaries = ast.evolution.stages
       .filter((stage) => stage.boundary !== undefined)
       .map((stage) => stage.boundary!);
