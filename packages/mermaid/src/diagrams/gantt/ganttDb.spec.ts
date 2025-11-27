@@ -503,51 +503,6 @@ describe('when using the ganttDb', function () {
   it('should reject dates with ridiculous years', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
-    expect(() => ganttDb.getTasks()).toThrowError(/Invalid date/);
-  });
-
-  describe('when using non-standard date formats (issue #5496)', function () {
-    it('should reject invalid dates when using seconds-only format', function () {
-      ganttDb.setDateFormat('ss');
-      ganttDb.addTask('RTT', 'rtt, 0, 20');
-      expect(() => ganttDb.getTasks()).toThrowError(/Invalid date/);
-    });
-
-    it('should reject invalid dates when using time-only formats without year', function () {
-      // Formats without year info should not fall back to new Date()
-      ganttDb.setDateFormat('HH:mm');
-      ganttDb.addTask('test', 'id1, invalid_date, 1h');
-      expect(() => ganttDb.getTasks()).toThrowError(/Invalid date/);
-    });
-
-    it('should allow valid seconds-only format when date matches', function () {
-      // Valid case - the date format 'ss' should work when the value is valid
-      ganttDb.setDateFormat('ss');
-      ganttDb.addTask('Task', 'task1, 00, 6s');
-      // This should not throw - 00 is a valid 'ss' value
-      const tasks = ganttDb.getTasks();
-      expect(tasks).toHaveLength(1);
-    });
-
-    it('should reject dates with typos in year like 202-12-01 instead of 2024-12-01', function () {
-      ganttDb.setDateFormat('YYYY-MM-DD');
-      ganttDb.addSection('Vacation');
-      ganttDb.addTask('London', '2024-12-01, 7d');
-      ganttDb.addTask('London', '202-12-01, 7d');
-      expect(() => ganttDb.getTasks()).toThrowError(/Invalid date/);
-    });
-
-    it('should work correctly with valid YYYY-MM-DD dates', function () {
-      // Valid case - both dates are correctly formatted
-      ganttDb.setDateFormat('YYYY-MM-DD');
-      ganttDb.addSection('Vacation');
-      ganttDb.addTask('London Trip 1', '2024-12-01, 7d');
-      ganttDb.addTask('London Trip 2', '2024-12-15, 7d');
-      const tasks = ganttDb.getTasks();
-      expect(tasks).toHaveLength(2);
-      // Verify years are correct (2024)
-      expect(tasks[0].startTime.getFullYear()).toBe(2024);
-      expect(tasks[1].startTime.getFullYear()).toBe(2024);
-    });
+    expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
   });
 });

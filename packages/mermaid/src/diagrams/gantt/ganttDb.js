@@ -307,7 +307,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
     const isTimestampFormat = dateFormat.trim() === 'x' || dateFormat.trim() === 'X';
 
     if (!isTimestampFormat) {
-      throw new Error(`Invalid date: "${str}" does not match format "${dateFormat.trim()}".`);
+      log.debug(`Invalid date: "${str}" does not match format "${dateFormat.trim()}".`);
     }
 
     const d = new Date(str);

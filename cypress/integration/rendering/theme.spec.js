@@ -286,9 +286,9 @@ erDiagram
        accTitle: This is a title
        accDescr: This is a description
 
-       dateFormat                YYYY-MM-DD
+       dateFormat                :YYYY-MM-DD
        title                     :Adding GANTT diagram functionality to mermaid
-       excludes                  :excludes the named dates/days from being included in a charted task.
+       excludes                  :excludes the named dates/days from being included in a charted task..
        section A section
        Completed task            :done,    des1, 2014-01-06,2014-01-08
        Active task               :active,  des2, 2014-01-09, 3d
