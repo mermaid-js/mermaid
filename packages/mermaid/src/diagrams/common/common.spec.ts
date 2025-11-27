@@ -110,6 +110,22 @@ describe('generic parser', () => {
   });
 });
 
+describe('sanitizeText with htmlLabels false', () => {
+  const config = { flowchart: { htmlLabels: false } };
+
+  it('should escape special characters', () => {
+    const input = 'Special chars: \\ & < >';
+    const output = sanitizeText(input, config);
+    expect(output).toBe('Special chars: \\\\ &amp; &lt; &gt;');
+  });
+
+  it('should not sanitize HTML tags, but escape them', () => {
+    const input = '<b>Bold</b> & <i>Italic</i>';
+    const output = sanitizeText(input, config);
+    expect(output).toBe('&lt;b&gt;Bold&lt;/b&gt; &amp; &lt;i&gt;Italic&lt;/i&gt;');
+  });
+});
+
 it.each([
   ['', '', 0],
   ['', 'x', 0],
