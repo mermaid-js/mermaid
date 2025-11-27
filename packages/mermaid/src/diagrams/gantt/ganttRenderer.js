@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import dayjsDuration from 'dayjs/plugin/duration.js';
 import { log } from '../../logger.js';
 import {
   select,
@@ -27,6 +28,8 @@ import {
 import common from '../common/common.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
+
+dayjs.extend(dayjsDuration);
 
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
