@@ -1,8 +1,9 @@
-import { labelHelper, updateNodeBounds, getNodeClasses, createPathFromPoints } from './util.js';
+import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
+import { insertPolygonShape } from './insertPolygonShape.js';
 import type { D3Selection } from '../../../types.js';
 
 export const createHexagonPathD = (
@@ -28,50 +29,42 @@ export async function hexagon<T extends SVGGraphicsElement>(parent: D3Selection<
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const h = bbox.height + (node.padding ?? 0);
-  const w = bbox.width + (node.padding ?? 0) * 2.5;
-  const { cssStyles } = node;
-  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
-  const rc = rough.svg(shapeSvg);
-  const options = userNodeOverrides(node, {});
-
-  if (node.look !== 'handDrawn') {
-    options.roughness = 0;
-    options.fillStyle = 'solid';
-  }
-
-  let halfWidth = w / 2;
-  const m = halfWidth / 6; // Margin for label
-  halfWidth = halfWidth + m; // Adjusted half width for hexagon
-
-  const halfHeight = h / 2;
-
-  const fixedLength = halfHeight / 2;
-  const deducedWidth = halfWidth - fixedLength;
-
+  const f = 4;
+  const h = bbox.height + node.padding;
+  const m = h / f;
+  const w = bbox.width + 2 * m + node.padding;
   const points = [
-    { x: -deducedWidth, y: -halfHeight },
-    { x: 0, y: -halfHeight },
-    { x: deducedWidth, y: -halfHeight },
-    { x: halfWidth, y: 0 },
-    { x: deducedWidth, y: halfHeight },
-    { x: 0, y: halfHeight },
-    { x: -deducedWidth, y: halfHeight },
-    { x: -halfWidth, y: 0 },
+    { x: m, y: 0 },
+    { x: w - m, y: 0 },
+    { x: w, y: -h / 2 },
+    { x: w - m, y: -h },
+    { x: m, y: -h },
+    { x: 0, y: -h / 2 },
   ];
 
-  const pathData = createPathFromPoints(points);
-  const shapeNode = rc.path(pathData, options);
+  let polygon: D3Selection<SVGGElement> | Awaited<ReturnType<typeof insertPolygonShape>>;
+  const { cssStyles } = node;
 
-  const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
-  polygon.attr('class', 'basic label-container');
+  if (node.look === 'handDrawn') {
+    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
+    const rc = rough.svg(shapeSvg);
+    const options = userNodeOverrides(node, {});
+    const pathData = createHexagonPathD(0, 0, w, h, m);
+    const roughNode = rc.path(pathData, options);
 
-  if (cssStyles && node.look !== 'handDrawn') {
-    polygon.selectChildren('path').attr('style', cssStyles);
+    polygon = shapeSvg
+      .insert(() => roughNode, ':first-child')
+      .attr('transform', `translate(${-w / 2}, ${h / 2})`);
+
+    if (cssStyles) {
+      polygon.attr('style', cssStyles);
+    }
+  } else {
+    polygon = insertPolygonShape(shapeSvg, w, h, points);
   }
 
-  if (nodeStyles && node.look !== 'handDrawn') {
-    polygon.selectChildren('path').attr('style', nodeStyles);
+  if (nodeStyles) {
+    polygon.attr('style', nodeStyles);
   }
 
   node.width = w;
