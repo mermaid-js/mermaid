@@ -604,7 +604,7 @@ const _drawTextCandidateFunc = (function () {
         .attr('y', y)
         .style('text-anchor', 'middle')
         .attr('dominant-baseline', 'middle')
-        .style('font-size', fontSize)
+        .style('font-size', typeof fontSize === 'number' ? fontSize + 'px' : fontSize)
         .style('font-weight', fontWeight)
         .style('font-family', fontFamily);
       text
