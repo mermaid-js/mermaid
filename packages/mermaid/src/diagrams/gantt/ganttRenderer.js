@@ -614,16 +614,7 @@ export const draw = function (text, id, version, diagObj) {
    */
   function getEstimatedTickCount(minTime, maxTime, every, interval) {
     const timeDiffMs = maxTime - minTime;
-    const msPerUnit = {
-      millisecond: 1,
-      second: 1000,
-      minute: 60 * 1000,
-      hour: 60 * 60 * 1000,
-      day: 24 * 60 * 60 * 1000,
-      week: 7 * 24 * 60 * 60 * 1000,
-      month: 30 * 24 * 60 * 60 * 1000, // Approximate
-    };
-    const intervalMs = (msPerUnit[interval] || msPerUnit.day) * every;
+    const intervalMs = dayjs.duration({ [interval ?? 'day']: every }).asMilliseconds();
     return Math.ceil(timeDiffMs / intervalMs);
   }
 
