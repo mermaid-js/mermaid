@@ -309,12 +309,6 @@ const getStartDate = function (prevTime, dateFormat, str) {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
 
-    // Only allow fallback to new Date() for timestamp formats (x, X)
-    // For all other formats, if dayjs strict parsing fails, throw an error
-    if (!isTimestampFormat(dateFormat)) {
-      log.debug(`Invalid date: "${str}" does not match format "${dateFormat.trim()}".`);
-    }
-
     // Timestamp formats can fall back to new Date()
     const d = new Date(str);
     if (
