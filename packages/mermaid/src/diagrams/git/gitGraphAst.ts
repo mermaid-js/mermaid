@@ -167,9 +167,6 @@ export const merge = (mergeDB: MergeDB): void => {
   const otherCommit: Commit | undefined = otherBranchCheck
     ? state.records.commits.get(otherBranchCheck)
     : undefined;
-  if (currentCommit && otherCommit && currentCommit.branch === otherBranch) {
-    throw new Error(`Cannot merge branch '${otherBranch}' into itself.`);
-  }
   if (state.records.currBranch === otherBranch) {
     const error: any = new Error('Incorrect usage of "merge". Cannot merge a branch to itself');
     error.hash = {
@@ -209,15 +206,6 @@ export const merge = (mergeDB: MergeDB): void => {
       text: `merge ${otherBranch}`,
       token: `merge ${otherBranch}`,
       expected: ['"commit"'],
-    };
-    throw error;
-  }
-  if (currentCommit === otherCommit) {
-    const error: any = new Error('Incorrect usage of "merge". Both branches have same head');
-    error.hash = {
-      text: `merge ${otherBranch}`,
-      token: `merge ${otherBranch}`,
-      expected: ['branch abc'],
     };
     throw error;
   }
