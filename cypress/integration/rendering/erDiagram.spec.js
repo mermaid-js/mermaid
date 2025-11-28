@@ -322,6 +322,18 @@ ORDER ||--|{ LINE-ITEM : contains
     );
   });
 
+  it('should render an ER diagram  without labels also', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        BOOK }|..|{ AUTHOR 
+        BOOK }|..|{ GENRE
+        AUTHOR }|..|{ GENRE 
+      `,
+      { logLevel: 1 }
+    );
+  });
+
   it('should render relationship labels with line breaks', () => {
     imgSnapshotTest(
       `
