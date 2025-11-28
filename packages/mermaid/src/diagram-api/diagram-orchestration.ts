@@ -28,6 +28,7 @@ import architecture from '../diagrams/architecture/architectureDetector.js';
 import { registerLazyLoadedDiagrams } from './detectType.js';
 import { registerDiagram } from './diagramAPI.js';
 import { treemap } from '../diagrams/treemap/detector.js';
+import wardley from '../diagrams/wardley/wardleyDetector.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -101,6 +102,7 @@ export const addDiagrams = () => {
     xychart,
     block,
     radar,
-    treemap
+    treemap,
+    wardley
   );
 };
