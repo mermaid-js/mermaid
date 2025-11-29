@@ -185,4 +185,22 @@ describe('resolveRelativeUrlsInElement', () => {
     resolveRelativeUrlsInElement(svg, baseUrl);
     expect(getFirstHref(svg)).toBe('https://example.com/docs/diagrams/nested.html');
   });
+
+  it('should leave href unchanged when URL resolution fails with invalid base', () => {
+    const svg = createSvgElement('<svg><a href="./page.html">Link</a></svg>');
+    // Invalid base URL that will cause URL constructor to fail
+    resolveRelativeUrlsInElement(svg, 'not-a-valid-url');
+    // Original href should be preserved
+    expect(getFirstHref(svg)).toBe('./page.html');
+  });
+
+  it('should leave xlink:href unchanged when URL resolution fails with invalid base', () => {
+    const svg = createSvgElement(
+      '<svg xmlns:xlink="http://www.w3.org/1999/xlink"><a xlink:href="./page.html">Link</a></svg>'
+    );
+    // Invalid base URL that will cause URL constructor to fail
+    resolveRelativeUrlsInElement(svg, 'not-a-valid-url');
+    // Original xlink:href should be preserved
+    expect(getFirstXlinkHref(svg)).toBe('./page.html');
+  });
 });
