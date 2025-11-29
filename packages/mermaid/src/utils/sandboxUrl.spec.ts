@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isAbsoluteUrl, resolveRelativeUrls } from './sandboxUrl.js';
+import { isAbsoluteUrl, resolveRelativeUrlsInElement } from './sandboxUrl.js';
 
 describe('isAbsoluteUrl', () => {
   it('should return true for http:// URLs', () => {
@@ -42,118 +42,147 @@ describe('isAbsoluteUrl', () => {
   });
 });
 
-describe('resolveRelativeUrls', () => {
+describe('resolveRelativeUrlsInElement', () => {
   const baseUrl = 'https://example.com/docs/diagrams/';
 
+  // Helper to create an SVG element from string
+  function createSvgElement(svgString: string): Element {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgString, 'image/svg+xml');
+    return doc.documentElement;
+  }
+
+  // Helper to get href from first anchor in element
+  function getFirstHref(element: Element): string | null {
+    const anchor = element.querySelector('a');
+    return anchor?.getAttribute('href') ?? null;
+  }
+
+  // Helper to get xlink:href from first anchor in element
+  function getFirstXlinkHref(element: Element): string | null {
+    const anchor = element.querySelector('a');
+    return anchor?.getAttributeNS('http://www.w3.org/1999/xlink', 'href') ?? null;
+  }
+
   it('should resolve relative paths (./) in href attributes', () => {
-    const svg = '<svg><a href="./page.html">Link</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="https://example.com/docs/diagrams/page.html"');
+    const svg = createSvgElement('<svg><a href="./page.html">Link</a></svg>');
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('https://example.com/docs/diagrams/page.html');
   });
 
   it('should resolve relative paths (./) in xlink:href attributes', () => {
-    const svg =
-      '<svg xmlns:xlink="http://www.w3.org/1999/xlink"><a xlink:href="./page.html">Link</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('xlink:href="https://example.com/docs/diagrams/page.html"');
+    const svg = createSvgElement(
+      '<svg xmlns:xlink="http://www.w3.org/1999/xlink"><a xlink:href="./page.html">Link</a></svg>'
+    );
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstXlinkHref(svg)).toBe('https://example.com/docs/diagrams/page.html');
   });
 
   it('should resolve parent directory paths (../)', () => {
-    const svg = '<svg><a href="../other.html">Link</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="https://example.com/docs/other.html"');
+    const svg = createSvgElement('<svg><a href="../other.html">Link</a></svg>');
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('https://example.com/docs/other.html');
   });
 
   it('should resolve absolute paths (/)', () => {
-    const svg = '<svg><a href="/root.html">Link</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="https://example.com/root.html"');
+    const svg = createSvgElement('<svg><a href="/root.html">Link</a></svg>');
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('https://example.com/root.html');
   });
 
   it('should resolve hash links against base URL', () => {
-    const svg = '<svg><a href="#section">Link</a></svg>';
+    const svg = createSvgElement('<svg><a href="#section">Link</a></svg>');
     const baseUrlWithFile = 'https://example.com/docs/index.html';
-    const result = resolveRelativeUrls(svg, baseUrlWithFile);
-    expect(result).toContain('href="https://example.com/docs/index.html#section"');
+    resolveRelativeUrlsInElement(svg, baseUrlWithFile);
+    expect(getFirstHref(svg)).toBe('https://example.com/docs/index.html#section');
   });
 
   it('should not modify absolute URLs with http://', () => {
-    const svg = '<svg><a href="http://other.com/page">Link</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="http://other.com/page"');
+    const svg = createSvgElement('<svg><a href="http://other.com/page">Link</a></svg>');
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('http://other.com/page');
   });
 
   it('should not modify absolute URLs with https://', () => {
-    const svg = '<svg><a href="https://other.com/page">Link</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="https://other.com/page"');
+    const svg = createSvgElement('<svg><a href="https://other.com/page">Link</a></svg>');
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('https://other.com/page');
   });
 
   it('should not modify protocol-relative URLs', () => {
-    const svg = '<svg><a href="//cdn.example.com/resource">Link</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="//cdn.example.com/resource"');
+    const svg = createSvgElement('<svg><a href="//cdn.example.com/resource">Link</a></svg>');
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('//cdn.example.com/resource');
   });
 
   it('should not modify mailto: URLs', () => {
-    const svg = '<svg><a href="mailto:user@example.com">Email</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="mailto:user@example.com"');
+    const svg = createSvgElement('<svg><a href="mailto:user@example.com">Email</a></svg>');
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('mailto:user@example.com');
   });
 
   it('should not modify javascript: URLs', () => {
-    const svg = '<svg><a href="javascript:void(0)">Link</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="javascript:void(0)"');
+    const svg = createSvgElement('<svg><a href="javascript:void(0)">Link</a></svg>');
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('javascript:void(0)');
   });
 
   it('should handle both href and xlink:href in the same SVG', () => {
-    const svg = `<svg xmlns:xlink="http://www.w3.org/1999/xlink">
+    const svg = createSvgElement(`<svg xmlns:xlink="http://www.w3.org/1999/xlink">
       <a href="./a.html">A</a>
       <a xlink:href="./b.html">B</a>
-    </svg>`;
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="https://example.com/docs/diagrams/a.html"');
-    expect(result).toContain('xlink:href="https://example.com/docs/diagrams/b.html"');
+    </svg>`);
+    resolveRelativeUrlsInElement(svg, baseUrl);
+
+    const anchors = svg.querySelectorAll('a');
+    expect(anchors[0].getAttribute('href')).toBe('https://example.com/docs/diagrams/a.html');
+    expect(anchors[1].getAttributeNS('http://www.w3.org/1999/xlink', 'href')).toBe(
+      'https://example.com/docs/diagrams/b.html'
+    );
   });
 
   it('should handle multiple links with mixed URLs', () => {
-    const svg = `<svg xmlns:xlink="http://www.w3.org/1999/xlink">
+    const svg = createSvgElement(`<svg xmlns:xlink="http://www.w3.org/1999/xlink">
       <a href="./relative.html">Relative</a>
       <a href="https://absolute.com">Absolute</a>
       <a xlink:href="../parent.html">Parent</a>
       <a xlink:href="//protocol-relative.com">Protocol</a>
-    </svg>`;
-    const result = resolveRelativeUrls(svg, baseUrl);
+    </svg>`);
+    resolveRelativeUrlsInElement(svg, baseUrl);
 
-    expect(result).toContain('href="https://example.com/docs/diagrams/relative.html"');
-    expect(result).toContain('href="https://absolute.com"');
-    expect(result).toContain('xlink:href="https://example.com/docs/parent.html"');
-    expect(result).toContain('href="//protocol-relative.com"');
+    const anchors = svg.querySelectorAll('a');
+    expect(anchors[0].getAttribute('href')).toBe('https://example.com/docs/diagrams/relative.html');
+    expect(anchors[1].getAttribute('href')).toBe('https://absolute.com');
+    expect(anchors[2].getAttributeNS('http://www.w3.org/1999/xlink', 'href')).toBe(
+      'https://example.com/docs/parent.html'
+    );
+    expect(anchors[3].getAttributeNS('http://www.w3.org/1999/xlink', 'href')).toBe(
+      '//protocol-relative.com'
+    );
   });
 
-  it('should return original content if SVG parsing fails', () => {
-    const invalidSvg = '<not valid xml <<>>';
-    const result = resolveRelativeUrls(invalidSvg, baseUrl);
-    expect(result).toBe(invalidSvg);
-  });
-
-  it('should handle empty SVG', () => {
-    const svg = '<svg></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    // XMLSerializer may output self-closing tag <svg/> or <svg></svg>
-    expect(result).toMatch(/<svg.*?\/?>|<svg.*?><\/svg>/);
-  });
-
-  it('should handle SVG with no links', () => {
-    const svg = '<svg><rect width="100" height="100"/></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('<rect');
+  it('should handle SVG with no links (no-op)', () => {
+    const svg = createSvgElement('<svg><rect width="100" height="100"/></svg>');
+    // Should not throw
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(svg.querySelector('rect')).not.toBeNull();
   });
 
   it('should resolve simple file names without ./', () => {
-    const svg = '<svg><a href="page.html">Link</a></svg>';
-    const result = resolveRelativeUrls(svg, baseUrl);
-    expect(result).toContain('href="https://example.com/docs/diagrams/page.html"');
+    const svg = createSvgElement('<svg><a href="page.html">Link</a></svg>');
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('https://example.com/docs/diagrams/page.html');
+  });
+
+  it('should handle nested elements with links', () => {
+    const svg = createSvgElement(`<svg>
+      <g>
+        <a href="./nested.html">
+          <text>Nested Link</text>
+        </a>
+      </g>
+    </svg>`);
+    resolveRelativeUrlsInElement(svg, baseUrl);
+    expect(getFirstHref(svg)).toBe('https://example.com/docs/diagrams/nested.html');
   });
 });

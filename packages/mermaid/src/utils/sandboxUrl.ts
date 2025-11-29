@@ -6,7 +6,7 @@
  * (e.g., "./page.html") cannot be resolved by the browser.
  *
  * This module provides functionality to pre-resolve relative URLs to absolute URLs
- * before base64-encoding and embedding in the sandbox iframe.
+ * before the SVG is serialized and embedded in the sandbox iframe.
  */
 
 const XLINK_NS = 'http://www.w3.org/1999/xlink';
@@ -34,40 +34,29 @@ export function isAbsoluteUrl(url: string): boolean {
 }
 
 /**
- * Resolves relative URLs in SVG content against a base URL.
+ * Resolves relative URLs in a DOM element (in place) against a base URL.
  * Used for sandbox mode to enable link navigation from data URI iframes.
  *
  * This function finds all elements with href or xlink:href attributes
  * and resolves relative URLs to absolute URLs using the provided base URL.
+ * The element is mutated directly - no return value.
  *
- * @param svgContent - The rendered SVG markup string
+ * @param element - The DOM element (typically an SVG) to process
  * @param baseUrl - The base URL to resolve relative URLs against
- * @returns SVG markup with all relative URLs resolved to absolute
  */
-export function resolveRelativeUrls(svgContent: string, baseUrl: string): string {
-  // Parse SVG as XML
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(svgContent, 'image/svg+xml');
-
-  // Check for parsing errors
-  const parserError = doc.querySelector('parsererror');
-  if (parserError) {
-    // If parsing fails, return original content unchanged
-    return svgContent;
-  }
-
+export function resolveRelativeUrlsInElement(element: Element, baseUrl: string): void {
   // Find all elements with href or xlink:href attributes
   // We need to handle both standard href and xlink:href (used in SVG)
-  const elementsWithHref = doc.querySelectorAll('[href]');
-  const elementsWithXlinkHref = doc.querySelectorAll('[*|href]');
+  const elementsWithHref = element.querySelectorAll('[href]');
+  const elementsWithXlinkHref = element.querySelectorAll('[*|href]');
 
   // Process regular href attributes
-  for (const element of elementsWithHref) {
-    const href = element.getAttribute('href');
+  for (const el of elementsWithHref) {
+    const href = el.getAttribute('href');
     if (href && !isAbsoluteUrl(href)) {
       try {
         const absoluteUrl = new URL(href, baseUrl).href;
-        element.setAttribute('href', absoluteUrl);
+        el.setAttribute('href', absoluteUrl);
       } catch {
         // If URL resolution fails, leave the original href unchanged
       }
@@ -75,19 +64,15 @@ export function resolveRelativeUrls(svgContent: string, baseUrl: string): string
   }
 
   // Process xlink:href attributes (common in SVG)
-  for (const element of elementsWithXlinkHref) {
-    const xlinkHref = element.getAttributeNS(XLINK_NS, 'href');
+  for (const el of elementsWithXlinkHref) {
+    const xlinkHref = el.getAttributeNS(XLINK_NS, 'href');
     if (xlinkHref && !isAbsoluteUrl(xlinkHref)) {
       try {
         const absoluteUrl = new URL(xlinkHref, baseUrl).href;
-        element.setAttributeNS(XLINK_NS, 'xlink:href', absoluteUrl);
+        el.setAttributeNS(XLINK_NS, 'xlink:href', absoluteUrl);
       } catch {
         // If URL resolution fails, leave the original href unchanged
       }
     }
   }
-
-  // Serialize back to string
-  const serializer = new XMLSerializer();
-  return serializer.serializeToString(doc);
 }
