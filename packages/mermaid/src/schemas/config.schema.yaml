@@ -245,6 +245,7 @@ properties:
         'maxTextSize',
         'suppressErrorRendering',
         'maxEdges',
+        'sandboxBaseUrl',
       ]
     type: array
     items:
