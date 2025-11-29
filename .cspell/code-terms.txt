@@ -89,6 +89,7 @@ MULT
 NODIR
 NSTR
 outdir
+parsererror
 Qcontrolx
 QSTR
 reinit

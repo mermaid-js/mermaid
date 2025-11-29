@@ -24,6 +24,7 @@ import theme from './themes/index.js';
 import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { resolveRelativeUrls } from './utils/sandboxUrl.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -206,13 +207,27 @@ export const cleanUpSvgCode = (
  *
  * @param svgCode - the svg code to put inside the iFrame
  * @param svgElement - the d3 node that has the current svgElement so we can get the height from it
+ * @param sandboxBaseUrl - optional base URL for resolving relative URLs in sandbox mode
  * @returns  - the code with the iFrame that now contains the svgCode
  */
-export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
+export const putIntoIFrame = (
+  svgCode = '',
+  svgElement?: D3Element,
+  sandboxBaseUrl?: string
+): string => {
   const height = svgElement?.viewBox?.baseVal?.height
     ? svgElement.viewBox.baseVal.height + 'px'
     : IFRAME_HEIGHT;
-  const base64encodedSrc = toBase64(`<body style="${IFRAME_BODY_STYLE}">${svgCode}</body>`);
+
+  // Resolve relative URLs if sandboxBaseUrl is provided
+  let processedSvgCode = svgCode;
+  if (sandboxBaseUrl) {
+    processedSvgCode = resolveRelativeUrls(svgCode, sandboxBaseUrl);
+  }
+
+  const base64encodedSrc = toBase64(
+    `<body style="${IFRAME_BODY_STYLE}">${processedSvgCode}</body>`
+  );
   return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
 </iframe>`;
@@ -447,7 +462,7 @@ const render = async function (
 
   if (isSandboxed) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
-    svgCode = putIntoIFrame(svgCode, svgEl);
+    svgCode = putIntoIFrame(svgCode, svgEl, config.sandboxBaseUrl);
   } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify
     svgCode = DOMPurify.sanitize(svgCode, {
