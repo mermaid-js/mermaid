@@ -179,10 +179,20 @@ flowchart TD
 
     <script>
       const consoleOutput = document.getElementById('console-output');
+      let consoleCleared = false;
       function log(msg, type = 'info') {
+        // Clear initial placeholder text on first log
+        if (!consoleCleared) {
+          consoleOutput.textContent = '';
+          consoleCleared = true;
+        }
         const colors = { info: '#61afef', error: '#e06c75', success: '#98c379' };
         const time = new Date().toLocaleTimeString();
-        consoleOutput.innerHTML += `<div style="color: ${colors[type]}">[${time}] ${msg}</div>`;
+        // Use DOM manipulation instead of innerHTML to prevent XSS
+        const div = document.createElement('div');
+        div.style.color = colors[type];
+        div.textContent = '[' + time + '] ' + msg;
+        consoleOutput.appendChild(div);
         console.log(msg);
       }
 
