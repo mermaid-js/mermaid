@@ -59,6 +59,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
 - [GNU Octave](https://octave.org/) ✅
   - [octave_mermaid_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
+- [HackMD](https://hackmd.io/c/tutorials/%2F%40docs%2Fflowchart-en#Create-more-complex-flowcharts) ✅
 - [Mermaid Plugin for JetBrains IDEs](https://plugins.jetbrains.com/plugin/20146-mermaid)
 - [MonsterWriter](https://www.monsterwriter.com/) ✅
 - [Joplin](https://joplinapp.org) ✅
