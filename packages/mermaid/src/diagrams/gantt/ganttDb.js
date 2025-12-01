@@ -391,6 +391,13 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     if (newEndTime.isValid()) {
       endTime = newEndTime;
     }
+  } else {
+    // If the string is not a valid ISO date (handled earlier) and it is
+    // also not a recognised duration token, that's an invalid duration
+    // token. Throw an error so the renderer fails loudly and the user
+    // gets a clear message instead of silently omitting the task.
+    // Example invalid tokens: `24de`, `24d+`, `24d=`, `24d7`.
+    throw new Error('Invalid duration:' + str);
   }
   return endTime.toDate();
 };

@@ -505,4 +505,12 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('test1', 'id1,202304,1d');
     expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
   });
+
+  it('should throw on invalid duration tokens', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('invalid duration test');
+    // invalid duration token should cause getTasks() to throw
+    ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,24de');
+    expect(() => ganttDb.getTasks()).toThrowError('Invalid duration:24de');
+  });
 });
