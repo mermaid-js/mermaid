@@ -67,7 +67,7 @@
     "@argos-ci/cypress": "^6.2.2",
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.7",
-    "@cspell/eslint-plugin": "^9.3.0",
+    "@cspell/eslint-plugin": "^9.3.2",
     "@cypress/code-coverage": "^3.14.7",
     "@eslint/js": "^9.26.0",
     "@rollup/plugin-typescript": "^12.1.4",
