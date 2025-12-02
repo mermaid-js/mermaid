@@ -35,7 +35,7 @@ jobs:
       - name: Install Packages
         run: |
           pnpm install --frozen-lockfile
-          pnpm install -g npm@11
+          npm install -g npm@11
           npm --version
 
       # - name: Create Release Pull Request or Publish to npm
