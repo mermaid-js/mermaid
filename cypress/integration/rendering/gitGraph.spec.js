@@ -1569,4 +1569,93 @@ gitGraph TB:
       {}
     );
   });
+  it('77: should hide commit hash labels when showCommitHashLabel is false', () => {
+    imgSnapshotTest(
+      `%%{init: { 'gitGraph': { 'showCommitHashLabel': false } } }%%
+      gitGraph
+        commit id: "Alpha"
+        commit
+        commit
+        branch develop
+        commit id: "Beta"
+        commit
+        checkout main
+        commit id: "Gamma"
+        commit
+        merge develop id: "Delta"
+        commit
+      `,
+      {}
+    );
+  });
+  it('78: should show all commit labels when showCommitHashLabel is true', () => {
+    imgSnapshotTest(
+      `%%{init: { 'gitGraph': { 'showCommitHashLabel': true } } }%%
+      gitGraph
+        commit id: "Alpha"
+        commit
+        commit
+        branch develop
+        commit id: "Beta"
+        commit
+        checkout main
+        commit id: "Gamma"
+        commit
+        merge develop id: "Delta"
+        commit
+      `,
+      {}
+    );
+  });
+  it('79: should hide commit hash labels with mixed custom and auto-generated IDs', () => {
+    imgSnapshotTest(
+      `%%{init: { 'gitGraph': { 'showCommitHashLabel': false } } }%%
+      gitGraph
+        commit id: "1-abcdefg"
+        commit
+        branch feature
+        commit id: "Custom Feature"
+        commit
+        checkout main
+        commit id: "2-abcdefg"
+        merge feature id: "Merge Feature"
+        commit
+      `,
+      {}
+    );
+  });
+  it('80: should hide commit hash labels in vertical orientation (TB)', () => {
+    imgSnapshotTest(
+      `%%{init: { 'gitGraph': { 'showCommitHashLabel': false } } }%%
+      gitGraph TB:
+        commit id: "Alpha"
+        commit
+        branch develop
+        commit id: "Beta"
+        commit
+        checkout main
+        commit id: "Gamma"
+        merge develop
+        commit
+      `,
+      {}
+    );
+  });
+  it('81: should hide commit hash labels in bottom-to-top orientation (BT)', () => {
+    imgSnapshotTest(
+      `%%{init: { 'gitGraph': { 'showCommitHashLabel': false } } }%%
+      gitGraph BT:
+        commit id: "Alpha"
+        commit
+        branch develop
+        commit id: "Beta"
+        commit
+        checkout main
+        commit id: "Gamma"
+        merge develop
+        commit
+      `,
+      {}
+    );
+  });
 });
