@@ -17,6 +17,7 @@ export class BandAxis extends BaseAxis {
     textDimensionCalculator: TextDimensionCalculator
   ) {
     super(axisConfig, title, textDimensionCalculator, axisThemeConfig);
+    this.isBandAxis = true;
     this.categories = categories;
     this.scale = scaleBand().domain(this.categories).range(this.getRange());
   }
