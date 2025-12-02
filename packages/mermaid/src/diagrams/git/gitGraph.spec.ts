@@ -1,6 +1,7 @@
 import { log } from '../../logger.js';
 import { db } from './gitGraphAst.js';
 import { parser } from './gitGraphParser.js';
+import { commitType } from './gitGraphTypes.js';
 
 describe('when parsing a gitGraph', function () {
   beforeEach(function () {
@@ -843,6 +844,39 @@ describe('when parsing a gitGraph', function () {
       expect(db.getBranchesAsObjArray()).toStrictEqual([{ name: 'main' }, { name: 'testBranch' }]);
     });
 
+    it('should handle merging the same branch multiple times', async () => {
+      const str = `gitGraph:
+        commit
+        branch stable
+        checkout stable
+        merge main
+        checkout main
+        commit
+        commit
+        checkout stable
+        merge main
+        `;
+
+      await parser.parse(str);
+      const commits = db.getCommits();
+      expect(commits.size).toBe(5);
+      expect(db.getCurrentBranch()).toBe('stable');
+      expect(db.getDirection()).toBe('LR');
+      expect(db.getBranches().size).toBe(2);
+
+      const commitsArray = db.getCommitsArray();
+      expect(commitsArray[0].branch).toBe('main');
+      expect(commitsArray[0].parents).toStrictEqual([]);
+      expect(commitsArray[1].branch).toBe('stable');
+      expect(commitsArray[1].type).toBe(commitType.MERGE);
+      expect(commitsArray[1].parents.length).toBe(2);
+      expect(commitsArray[2].branch).toBe('main');
+      expect(commitsArray[3].branch).toBe('main');
+      expect(commitsArray[4].branch).toBe('stable');
+      expect(commitsArray[4].type).toBe(commitType.MERGE);
+      expect(commitsArray[4].parents.length).toBe(2);
+    });
+
     it('should handle merge with custom ids, tags and type', async () => {
       const str = `gitGraph:
           commit
@@ -1236,7 +1270,7 @@ describe('when parsing a gitGraph', function () {
         );
       }
     });
-    it('should throw error when trying to merge branches having same heads', async () => {
+    it('should allow merging branches having same heads', async () => {
       const str = `gitGraph
         commit
         branch testBranch
@@ -1244,13 +1278,19 @@ describe('when parsing a gitGraph', function () {
         merge testBranch
         `;
 
-      try {
-        await parser.parse(str);
-        // Fail test if above expression doesn't throw anything.
-        expect(true).toBe(false);
-      } catch (e: any) {
-        expect(e.message).toBe('Incorrect usage of "merge". Both branches have same head');
-      }
+      await parser.parse(str);
+      const commits = db.getCommits();
+      expect(commits.size).toBe(2);
+      expect(db.getCurrentBranch()).toBe('main');
+
+      const commitsArray = db.getCommitsArray();
+      expect(commitsArray[0].branch).toBe('main');
+      expect(commitsArray[0].parents).toStrictEqual([]);
+      expect(commitsArray[1].branch).toBe('main');
+      expect(commitsArray[1].type).toBe(commitType.MERGE);
+      expect(commitsArray[1].parents.length).toBe(2);
+      expect(commitsArray[1].parents[0]).toBe(commitsArray[0].id);
+      expect(commitsArray[1].parents[1]).toBe(commitsArray[0].id);
     });
     it('should throw error when trying to merge branch which has no commits', async () => {
       const str = `gitGraph
