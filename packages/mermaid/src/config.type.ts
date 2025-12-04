@@ -140,6 +140,21 @@ export interface MermaidConfig {
    */
   securityLevel?: 'strict' | 'loose' | 'antiscript' | 'sandbox';
   /**
+   * Base URL for resolving relative links in sandbox mode.
+   *
+   * When securityLevel is 'sandbox', relative URLs in diagram links cannot be resolved
+   * because data: URIs have no base URL context. Providing sandboxBaseUrl enables Mermaid
+   * to pre-resolve all relative URLs to absolute URLs before embedding in the sandbox iframe.
+   *
+   * This option only applies when securityLevel is 'sandbox'.
+   *
+   * Example: If your page is at https://example.com/docs/diagrams/arch.html,
+   * set sandboxBaseUrl to 'https://example.com/docs/diagrams/' to enable relative links
+   * like './details.html' to work correctly.
+   *
+   */
+  sandboxBaseUrl?: string;
+  /**
    * Dictates whether mermaid starts on Page load
    */
   startOnLoad?: boolean;

@@ -24,6 +24,7 @@ import theme from './themes/index.js';
 import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { resolveRelativeUrlsInElement } from './utils/sandboxUrl.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -212,6 +213,7 @@ export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
   const height = svgElement?.viewBox?.baseVal?.height
     ? svgElement.viewBox.baseVal.height + 'px'
     : IFRAME_HEIGHT;
+
   const base64encodedSrc = toBase64(`<body style="${IFRAME_BODY_STYLE}">${svgCode}</body>`);
   return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;charset=UTF-8;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
@@ -439,6 +441,13 @@ const render = async function (
   // Clean up SVG code
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
+  // Resolve relative URLs in sandbox mode before extracting innerHTML
+  // This must happen before serialization to avoid parse/serialize round-trip
+  const svgEl = root.select(enclosingDivID_selector + ' svg').node();
+  if (isSandboxed && config.sandboxBaseUrl) {
+    resolveRelativeUrlsInElement(svgEl, config.sandboxBaseUrl);
+  }
+
   // Fix for when the base tag is used
   let svgCode: string = root.select(enclosingDivID_selector).node().innerHTML;
 
@@ -446,7 +455,6 @@ const render = async function (
   svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
 
   if (isSandboxed) {
-    const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     svgCode = putIntoIFrame(svgCode, svgEl);
   } else if (!isLooseSecurityLevel) {
     // Sanitize the svgCode using DOMPurify

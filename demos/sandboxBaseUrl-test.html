@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sandboxBaseUrl Feature Test</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      .test-section {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .description {
+        background: #e8f4fd;
+        border-left: 4px solid #1890ff;
+        padding: 10px 15px;
+        margin: 10px 0;
+      }
+      .warning {
+        background: #fff7e6;
+        border-left: 4px solid #fa8c16;
+        padding: 10px 15px;
+        margin: 10px 0;
+      }
+      .success {
+        background: #f6ffed;
+        border-left: 4px solid #52c41a;
+        padding: 10px 15px;
+        margin: 10px 0;
+      }
+      pre {
+        background: #282c34;
+        color: #abb2bf;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+      .diagram-container {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px 0;
+        min-height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 sandboxBaseUrl Feature Test</h1>
+
+    <div class="description">
+      <strong>What this tests:</strong> The <code>sandboxBaseUrl</code> config option enables
+      relative URLs in diagram links to work correctly when using
+      <code>securityLevel: 'sandbox'</code>.
+    </div>
+
+    <div class="warning">
+      <strong>Before testing:</strong> You need to build mermaid first. Run from the repo root:
+      <pre>pnpm install && pnpm build</pre>
+    </div>
+
+    <!-- Test 1: With sandboxBaseUrl -->
+    <div class="test-section">
+      <h2>Test 1: With sandboxBaseUrl (should work)</h2>
+      <div class="success">
+        <strong>Expected:</strong> Clicking "Details Page" should navigate to the resolved URL
+        (shown in browser console). Clicking "GitHub" should open GitHub.
+      </div>
+      <div class="diagram-container">
+        <pre class="mermaid-with-base">
+flowchart TD
+    A[Home Page] --> B[Details Page]
+    A --> C[GitHub]
+
+    click A "./" "Go to current directory"
+    click B "./details.html" "View details page"
+    click C "https://github.com/mermaid-js/mermaid" "View GitHub"
+      </pre
+        >
+      </div>
+    </div>
+
+    <!-- Test 2: Without sandboxBaseUrl -->
+    <div class="test-section">
+      <h2>Test 2: Without sandboxBaseUrl (relative links won't work)</h2>
+      <div class="warning">
+        <strong>Expected:</strong> Clicking "Details Page" will fail (navigate to
+        about:blank#blocked). Clicking "GitHub" should still work (absolute URL).
+      </div>
+      <div class="diagram-container">
+        <pre class="mermaid-without-base">
+flowchart TD
+    A[Home Page] --> B[Details Page]
+    A --> C[GitHub]
+
+    click A "./" "Go to current directory"
+    click B "./details.html" "View details page"
+    click C "https://github.com/mermaid-js/mermaid" "View GitHub"
+      </pre
+        >
+      </div>
+    </div>
+
+    <!-- Test 3: Various URL types -->
+    <div class="test-section">
+      <h2>Test 3: Various URL Types with sandboxBaseUrl</h2>
+      <div class="description">
+        Tests different URL patterns: relative (./, ../), absolute (/), hash (#), and external
+        (https://)
+      </div>
+      <div class="diagram-container">
+        <pre class="mermaid-url-types">
+flowchart LR
+    A[Relative ./] --> B[Parent ../]
+    B --> C[Absolute /]
+    C --> D[Hash #section]
+    D --> E[External URL]
+
+    click A "./page.html" "Relative path"
+    click B "../parent.html" "Parent directory"
+    click C "/root.html" "Absolute path"
+    click D "#test-section" "Hash link"
+    click E "https://mermaid.js.org" "External site"
+      </pre
+        >
+      </div>
+    </div>
+
+    <!-- Test 4: Non-sandbox mode comparison -->
+    <div class="test-section">
+      <h2>Test 4: Strict Mode (non-sandbox) - Links Disabled</h2>
+      <div class="description">
+        In <code>strict</code> mode, click functionality is disabled entirely (this is expected
+        behavior).
+      </div>
+      <div class="diagram-container">
+        <pre class="mermaid-strict">
+flowchart TD
+    A[Click me] --> B[Won't work]
+    click A "https://github.com" "This link is disabled in strict mode"
+      </pre
+        >
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>Console Output</h2>
+      <div class="description">
+        Check the browser console (F12) for resolved URLs and any errors.
+      </div>
+      <div
+        id="console-output"
+        style="
+          background: #1e1e1e;
+          color: #d4d4d4;
+          padding: 15px;
+          font-family: monospace;
+          min-height: 100px;
+          border-radius: 4px;
+        "
+      >
+        Waiting for mermaid to load...
+      </div>
+    </div>
+
+    <!-- Load mermaid from local build -->
+    <script src="../packages/mermaid/dist/mermaid.min.js"></script>
+
+    <script>
+      const consoleOutput = document.getElementById('console-output');
+      let consoleCleared = false;
+      function log(msg, type = 'info') {
+        // Clear initial placeholder text on first log
+        if (!consoleCleared) {
+          consoleOutput.textContent = '';
+          consoleCleared = true;
+        }
+        const colors = { info: '#61afef', error: '#e06c75', success: '#98c379' };
+        const time = new Date().toLocaleTimeString();
+        // Use DOM manipulation instead of innerHTML to prevent XSS
+        const div = document.createElement('div');
+        div.style.color = colors[type];
+        div.textContent = '[' + time + '] ' + msg;
+        consoleOutput.appendChild(div);
+        console.log(msg);
+      }
+
+      // Get the base URL for testing
+      const baseUrl = window.location.href.replace(/\/[^\/]*$/, '/');
+      log(`Base URL for testing: ${baseUrl}`, 'info');
+
+      // Test 1: With sandboxBaseUrl
+      try {
+        log('Initializing Test 1: sandbox mode WITH sandboxBaseUrl...', 'info');
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'sandbox',
+          sandboxBaseUrl: baseUrl,
+          flowchart: { htmlLabels: false },
+        });
+
+        const el1 = document.querySelector('.mermaid-with-base');
+        mermaid.render('diagram-with-base', el1.textContent).then(({ svg }) => {
+          el1.innerHTML = svg;
+          log('Test 1 rendered successfully with sandboxBaseUrl', 'success');
+        });
+      } catch (e) {
+        log(`Test 1 error: ${e.message}`, 'error');
+      }
+
+      // Test 2: Without sandboxBaseUrl
+      setTimeout(() => {
+        try {
+          log('Initializing Test 2: sandbox mode WITHOUT sandboxBaseUrl...', 'info');
+          mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: 'sandbox',
+            // sandboxBaseUrl is NOT set
+            flowchart: { htmlLabels: false },
+          });
+
+          const el2 = document.querySelector('.mermaid-without-base');
+          mermaid.render('diagram-without-base', el2.textContent).then(({ svg }) => {
+            el2.innerHTML = svg;
+            log('Test 2 rendered (relative links will fail)', 'info');
+          });
+        } catch (e) {
+          log(`Test 2 error: ${e.message}`, 'error');
+        }
+      }, 500);
+
+      // Test 3: URL types
+      setTimeout(() => {
+        try {
+          log('Initializing Test 3: various URL types...', 'info');
+          mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: 'sandbox',
+            sandboxBaseUrl: baseUrl,
+            flowchart: { htmlLabels: false },
+          });
+
+          const el3 = document.querySelector('.mermaid-url-types');
+          mermaid.render('diagram-url-types', el3.textContent).then(({ svg }) => {
+            el3.innerHTML = svg;
+            log('Test 3 rendered with various URL types', 'success');
+          });
+        } catch (e) {
+          log(`Test 3 error: ${e.message}`, 'error');
+        }
+      }, 1000);
+
+      // Test 4: Strict mode
+      setTimeout(() => {
+        try {
+          log('Initializing Test 4: strict mode (links disabled)...', 'info');
+          mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: 'strict',
+            flowchart: { htmlLabels: true },
+          });
+
+          const el4 = document.querySelector('.mermaid-strict');
+          mermaid.render('diagram-strict', el4.textContent).then(({ svg }) => {
+            el4.innerHTML = svg;
+            log('Test 4 rendered in strict mode', 'info');
+          });
+        } catch (e) {
+          log(`Test 4 error: ${e.message}`, 'error');
+        }
+      }, 1500);
+
+      // Summary
+      setTimeout(() => {
+        log('-----------------------------------', 'info');
+        log('All tests rendered. Click the diagram links to test!', 'success');
+        log('Test 1 & 3: Relative links should work', 'success');
+        log('Test 2: Relative links should fail (about:blank#blocked)', 'info');
+        log('Test 4: All links disabled (strict mode)', 'info');
+      }, 2000);
+    </script>
+  </body>
+</html>
