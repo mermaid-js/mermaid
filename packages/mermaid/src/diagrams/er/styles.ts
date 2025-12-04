@@ -33,10 +33,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     background-color: ${fade(options.tertiaryColor, 0.5)};
   }
 
-  .edgeLabel .label {
-    fill: ${options.nodeBorder};
-    font-size: 14px;
-  }
+
 
   .label {
     font-family: ${options.fontFamily};
@@ -68,6 +65,14 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.lineColor} !important;
     stroke-width: 1;
   }
+    .background {
+    fill: ${options.tertiaryColor};
+    opacity: 0.7;
+    background-color: ${options.tertiaryColor};
+      rect {
+        opacity: 0.5;
+      }
+ }
 `;
 
 export default getStyles;
