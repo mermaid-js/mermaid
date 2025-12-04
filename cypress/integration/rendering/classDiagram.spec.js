@@ -452,6 +452,20 @@ describe('Class diagram', () => {
       &lt;&lt;Interface&gt;&gt; \`This\nTitle\nHas\nMany\nNewlines\`  
     `);
   });
+  it('should render with newlines in title and multiple annotations', () => {
+    imgSnapshotTest(`
+    classDiagram
+      class \`This\nTitle\nHas\nMany\nNewlines\` {
+        +String Also
+        -String Many
+        #int Members
+        +And()
+        -Many()
+        #Methods()
+      }
+      &lt;&lt;Interface&gt;&gt; &lt;&lt;Service&gt;&gt; \`This\nTitle\nHas\nMany\nNewlines\`  
+    `);
+  });
 
   it('should handle newline title in namespace', () => {
     imgSnapshotTest(`

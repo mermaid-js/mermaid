@@ -510,6 +510,16 @@ class Class10
   C1 -->  C2`
     );
   });
+  it('should render a class with a text label, members and multiple annotations', () => {
+    imgSnapshotTest(
+      `classDiagram
+  class C1["Class 1 with text label"] {
+    &lt;&lt;interface&gt;&gt; &lt;&lt;injected&gt;&gt;
+    +member1
+  }
+  C1 -->  C2`
+    );
+  });
   it('should render multiple classes with same text labels', () => {
     imgSnapshotTest(
       `classDiagram
