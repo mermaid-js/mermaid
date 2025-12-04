@@ -329,6 +329,8 @@ properties:
     description: |
       Suppresses inserting 'Syntax error' diagram in the DOM.
       This is useful when you want to control how to handle syntax errors in your application.
+  icons:
+    $ref: '#/$defs/IconsConfig'
 
 $defs: # JSON Schema definition (maybe we should move these to a separate file)
   BaseDiagramConfig:
@@ -2368,3 +2370,49 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: The font weight to use.
         type: ['string', 'number']
         default: normal
+  IconsConfig:
+    title: Icons Config
+    description: |
+      Configuration for icon packs and CDN template.
+      Enables icons in browsers and CLI/headless renders without custom JavaScript.
+    type: object
+    properties:
+      packs:
+        description: |
+          Icon pack configuration. Key is the local pack name. 
+          Value is a package spec with version that complies with Iconify standards.
+          Package specs must include at least a major version (e.g., '@iconify-json/logos@1').
+        type: object
+        additionalProperties:
+          type: string
+      cdnTemplate:
+        description: |
+          URL template for resolving package specs (must contain ${packageSpec}).
+          Used to build URLs for package specs in icons.packs.
+        type: string
+        pattern: '^https://.*\$\{packageSpec\}.*$'
+        default: 'https://cdn.jsdelivr.net/npm/${packageSpec}/icons.json'
+      maxFileSizeMB:
+        description: |
+          Maximum file size in MB for icon pack JSON files.
+        type: integer
+        default: 5
+        minimum: 1
+        maximum: 10
+      timeout:
+        description: |
+          Network timeout in milliseconds for icon pack fetches.
+        type: integer
+        default: 5000
+        minimum: 1000
+        maximum: 30000
+      allowedHosts:
+        description: |
+          List of allowed hosts to fetch icons from
+        type: array
+        items:
+          type: string
+        default:
+          - 'unpkg.com'
+          - 'cdn.jsdelivr.net'
+          - 'npmjs.com'
