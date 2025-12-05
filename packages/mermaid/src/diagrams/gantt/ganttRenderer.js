@@ -253,6 +253,11 @@ export const draw = function (text, id, version, diagObj) {
         i = d.order;
         return i * theGap + theTopPad - 2;
       })
+      .attr('y', function (d, i) {
+        // Ignore the incoming i value and use our order instead
+        i = d.order;
+        return i * theGap + theTopPad - 2;
+      })
       .attr('width', function () {
         return w - conf.rightPadding / 2;
       })
@@ -853,10 +858,11 @@ export const draw = function (text, id, version, diagObj) {
     const todayG = svg.append('g').attr('class', 'today');
     const today = new Date();
     const todayLine = todayG.append('line');
+    const todayScale = timeScale(today) || 0;
 
     todayLine
-      .attr('x1', timeScale(today) + theSidePad)
-      .attr('x2', timeScale(today) + theSidePad)
+      .attr('x1', todayScale + theSidePad)
+      .attr('x2', todayScale + theSidePad)
       .attr('y1', conf.titleTopMargin)
       .attr('y2', h - conf.titleTopMargin)
       .attr('class', 'today');
