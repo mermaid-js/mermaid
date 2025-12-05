@@ -63,4 +63,41 @@ export const draw = async function (text: string, id: string, _version: string, 
   );
 
   setupViewPortForSVG(svg, padding, 'erDiagram', conf?.useMaxWidth ?? true);
+
+  // Handle click events for entities with links
+  const doc = securityLevel === 'sandbox' ? (select('#i' + id).node() as Document) : document;
+  const sandboxElement = securityLevel === 'sandbox' ? select('#i' + id + ' #' + id) : select(null);
+
+  // If node has a link or callback, wrap it in an anchor SVG object.
+  for (const vertex of data4Layout.nodes) {
+    const node = ((sandboxElement?.empty?.() ?? true) ? svg : sandboxElement).select(
+      `#${CSS.escape(vertex.id)}`
+    );
+    if (!node || (!vertex.link && !vertex.haveCallback)) {
+      continue;
+    }
+
+    const link = (doc || document).createElementNS('http://www.w3.org/2000/svg', 'a');
+
+    if (vertex.link) {
+      // Handle regular links
+      link.setAttributeNS('http://www.w3.org/1999/xlink', 'href', vertex.link);
+      if (vertex.linkTarget) {
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
+      }
+    } else if (vertex.haveCallback) {
+      // Handle callbacks with a void href for visual feedback
+      link.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'javascript:void(0)');
+    }
+
+    link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.cssClasses || '');
+    link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+
+    // Insert the <a> tag BEFORE the node, then move the node inside it
+    const parent = node.node()?.parentNode;
+    if (parent) {
+      parent.insertBefore(link, node.node());
+      link.appendChild(node.node());
+    }
+  }
 };
