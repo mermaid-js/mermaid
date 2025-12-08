@@ -93,7 +93,7 @@ export const getTodayMarker = function () {
 };
 
 export const setDateFormat = function (txt) {
-  dateFormat = txt;
+  dateFormat = txt.trim().replace(/^:/, '').trim();
 };
 
 export const enableInclusiveEndDates = function () {
@@ -351,8 +351,12 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * @returns {[value: number, unit: dayjs.ManipulateType]} Arguments to pass to `dayjs.add()`
  */
 const parseDuration = function (str) {
+  const trimmed = str.trim();
+  if (trimmed === '0' || trimmed === '') {
+    return [0, 'ms'];
+  }
   // cspell:disable-next-line
-  const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(str.trim());
+  const statement = /^(\d+(?:\.\d+)?)([Mdhmswy]|ms)$/.exec(trimmed);
   if (statement !== null) {
     return [Number.parseFloat(statement[1]), statement[2]];
   }
