@@ -513,7 +513,7 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('bad duration', 'idInvalid,2019-01-01,24de');
     expect(() => ganttDb.getTasks()).toThrowError('Invalid duration:24de');
   });
-  
+
   it('should handle seconds-only format with valid numeric values (issue #5496)', function () {
     ganttDb.setDateFormat('ss');
     ganttDb.addSection('Network Request');
