@@ -1,0 +1,12 @@
+graph TD
+    A[Ingeniería Mecánica] -->|Abarca| B(Diseño)
+    A -->|Abarca| C(Análisis)
+    A -->|Abarca| D(Manufactura)
+    A -->|Se Fundamenta En| E(Termodinámica)
+    A -->|Se Integra Con| F(Mecatrónica)
+    F -->|Conduce a| G(Sostenibilidad)
+    G -->|Requiere| H(Habilidades de Resolución de Problemas)
+    A -->|Utiliza| I(IA)
+    I -->|Optimiza| B
+    B -->|Permite la| D
+    C -->|Garantiza la| H
