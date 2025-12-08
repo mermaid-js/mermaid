@@ -172,6 +172,12 @@ export class SequenceDB implements DiagramDB {
       doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as ParticipantMetaData;
     }
     type = doc?.type ?? type;
+
+    // If alias is provided in metadata and description is not already set, use the alias
+    if (doc?.alias && (!description || description.text === name)) {
+      description = { text: doc.alias, wrap: description?.wrap, type };
+    }
+
     const old = this.state.records.actors.get(id);
     if (old) {
       // If already set and trying to set to a new one throw error
