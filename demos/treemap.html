@@ -65,12 +65,17 @@ treemap
 
     <h2>Dark/Light Title Contrast Demo (3rd)</h2>
     <p>
-      Toggle the theme and container background to verify the title stays readable on dark backgrounds.
+      Toggle the theme and container background to verify the title stays readable on dark
+      backgrounds.
     </p>
-    <label style="display:inline-flex;gap:8px;align-items:center;margin-bottom:8px;">
+    <label style="display: inline-flex; gap: 8px; align-items: center; margin-bottom: 8px">
       <input type="checkbox" id="darkToggle" /> Dark mode
     </label>
-    <div id="themedBox" class="themed light" style="margin:10px 0; padding:16px; border-radius:8px; border:1px solid #ccc;">
+    <div
+      id="themedBox"
+      class="themed light"
+      style="margin: 10px 0; padding: 16px; border-radius: 8px; border: 1px solid #ccc"
+    >
       <div id="treemap3"></div>
     </div>
 
@@ -83,7 +88,7 @@ treemap
         startOnLoad: true,
       });
       await mermaid.run({ querySelector: 'pre.mermaid' });
-      // Render with theme toggle 
+      // Render with theme toggle
       const baseThirdDiagram = `treemap
 title Sales Data Q4 2024
 "All Products"

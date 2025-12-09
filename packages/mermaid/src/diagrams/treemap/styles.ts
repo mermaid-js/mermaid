@@ -5,7 +5,6 @@ import { getThemeVariables } from '../../themes/theme-default.js';
 import { getConfig as getConfigAPI } from '../../config.js';
 
 const defaultTreemapStyleOptions: TreemapStyleOptions = {
-
   sectionStrokeColor: 'currentColor',
   sectionStrokeWidth: '1',
   sectionFillColor: 'transparent',
