@@ -63,13 +63,65 @@ treemap
             "CI/CD": 5
     </pre>
 
+    <h2>Dark/Light Title Contrast Demo (3rd)</h2>
+    <p>
+      Toggle the theme and container background to verify the title stays readable on dark backgrounds.
+    </p>
+    <label style="display:inline-flex;gap:8px;align-items:center;margin-bottom:8px;">
+      <input type="checkbox" id="darkToggle" /> Dark mode
+    </label>
+    <div id="themedBox" class="themed light" style="margin:10px 0; padding:16px; border-radius:8px; border:1px solid #ccc;">
+      <div id="treemap3"></div>
+    </div>
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
         logLevel: 1,
         securityLevel: 'loose',
+        startOnLoad: true,
       });
+      await mermaid.run({ querySelector: 'pre.mermaid' });
+      // Render with theme toggle 
+      const baseThirdDiagram = `treemap
+title Sales Data Q4 2024
+"All Products"
+  "Electronics"
+    "Laptops": 2000
+    "Phones": 1500
+    "Tablets": 800
+  "Clothing"
+    "Women's": 750
+    "Men's": 500
+    "Kids": 300
+  "Home & Garden"
+    "Furniture": 400
+    "Decor": 200
+`;
+
+      async function renderThird(theme) {
+        const themedDiagram = `%%{init: {"theme": "${theme}", "securityLevel": "loose"}}%%\n${baseThirdDiagram}`;
+        const { svg } = await mermaid.render('treemap3-svg', themedDiagram);
+        const el = document.getElementById('treemap3');
+        el.innerHTML = svg;
+      }
+
+      const box = document.getElementById('themedBox');
+      const toggle = document.getElementById('darkToggle');
+      function setMode(dark) {
+        box.classList.toggle('dark', dark);
+        box.classList.toggle('light', !dark);
+        box.style.background = dark ? '#0e0f12' : '#ffffff';
+        box.style.color = dark ? '#e7e7e7' : '#111111';
+      }
+      toggle.addEventListener('change', (e) => {
+        const dark = e.target.checked;
+        setMode(dark);
+        renderThird(dark ? 'dark' : 'default');
+      });
+      setMode(false);
+      renderThird('default');
     </script>
   </body>
 </html>
