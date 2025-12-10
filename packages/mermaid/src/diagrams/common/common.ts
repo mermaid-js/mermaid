@@ -343,7 +343,7 @@ const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Prom
       .split(lineBreakRegex)
       .map((line) =>
         hasKatex(line)
-          ? `<div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">${line}</div>`
+          ? `<div style="display: flex; align-items: center; justify-content: center; white-space: pre;">${line}</div>`
           : `<div>${line}</div>`
       )
       .join('')
