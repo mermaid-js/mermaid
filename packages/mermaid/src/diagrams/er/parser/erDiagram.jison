@@ -75,7 +75,6 @@ o\|                             return 'ZERO_OR_ONE';
 o\{                             return 'ZERO_OR_MORE';
 \|\{                            return 'ONE_OR_MORE';
 u(?=[\.\-\|])                   return 'MD_PARENT';
-"<>.."                          return 'AGGREGATION_DASHED';
 "<>"                            return 'AGGREGATION';
 \.\.                            return 'NON_IDENTIFYING';
 \-\-                            return 'IDENTIFYING';
@@ -202,18 +201,7 @@ statement
           yy.addRelationship($1, $7, $3, $2);
           yy.setClass([$3], $5);
       }
-    | entityName 'AGGREGATION' entityName COLON role
-      {
-          yy.addEntity($1);
-          yy.addEntity($3);
-          yy.addRelationship($1, $5, $3, { cardA: 'ZERO_OR_MORE', relType: 'AGGREGATION', cardB: 'ZERO_OR_MORE' });
-      }
-    | entityName 'AGGREGATION_DASHED' entityName COLON role
-      {
-          yy.addEntity($1);
-          yy.addEntity($3);
-          yy.addRelationship($1, $5, $3, { cardA: 'ZERO_OR_MORE', relType: 'AGGREGATION_DASHED', cardB: 'ZERO_OR_MORE' });
-      }
+
 
     | title title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
@@ -324,13 +312,13 @@ relSpec
     ;
 
 aggregationRelSpec
-    : 'AGGREGATION' cardinality cardinality
+    : cardinality 'AGGREGATION' 'IDENTIFYING' cardinality
       {
-        $$ = { cardA: $2, relType: $1, cardB: $3 };
+        $$ = { cardA: $1, relType: yy.Aggregation.AGGREGATION, cardB: $4 };
       }
-    | 'AGGREGATION_DASHED' cardinality cardinality
+    | cardinality 'AGGREGATION' 'NON_IDENTIFYING' cardinality
       {
-        $$ = { cardA: $2, relType: $1, cardB: $3 };
+        $$ = { cardA: $1, relType: yy.Aggregation.AGGREGATION_DASHED, cardB: $4 };
       }
     ;
 
@@ -345,8 +333,6 @@ cardinality
 relType
     : 'NON_IDENTIFYING'              { $$ = yy.Identification.NON_IDENTIFYING;  }
     | 'IDENTIFYING'                  { $$ = yy.Identification.IDENTIFYING; }
-    | 'AGGREGATION'                  { $$ = yy.Aggregation.AGGREGATION; }
-    | 'AGGREGATION_DASHED'           { $$ = yy.Aggregation.AGGREGATION_DASHED; }
     ;
 
 role

@@ -463,9 +463,9 @@ ORDER ||--|{ LINE-ITEM : contains
       imgSnapshotTest(
         `
         erDiagram
-          DEPARTMENT <> EMPLOYEE : contains
-          PROJECT <>.. TASK : manages
-          TEAM <> MEMBER : consists_of
+          DEPARTMENT ||<>--|| EMPLOYEE : contains
+          PROJECT o{<>..o{ TASK : manages
+          TEAM ||<>--|| MEMBER : consists_of
         `,
         { logLevel: 1 }
       );
@@ -475,7 +475,7 @@ ORDER ||--|{ LINE-ITEM : contains
       imgSnapshotTest(
         `
         erDiagram
-          DEPARTMENT <> EMPLOYEE : contains
+          DEPARTMENT ||<>--o{ EMPLOYEE : contains
           DEPARTMENT {
             int id PK
             string name
@@ -495,9 +495,9 @@ ORDER ||--|{ LINE-ITEM : contains
       imgSnapshotTest(
         `
         erDiagram
-          UNIVERSITY <> COLLEGE : "has multiple"
-          COLLEGE <> DEPARTMENT : "contains"
-          DEPARTMENT <> FACULTY : "employs"
+          UNIVERSITY ||<>--o{ COLLEGE : "has multiple"
+          COLLEGE ||<>--o{ DEPARTMENT : "contains"
+          DEPARTMENT ||<>--o{ FACULTY : "employs"
         `,
         { logLevel: 1 }
       );
@@ -509,8 +509,8 @@ ORDER ||--|{ LINE-ITEM : contains
         erDiagram
           CUSTOMER ||--o{ ORDER : places
           ORDER ||--|{ ORDER_ITEM : contains
-          PRODUCT <> ORDER_ITEM : "aggregated in"
-          WAREHOUSE <>.. PRODUCT : "stores"
+          PRODUCT ||<>--o{ ORDER_ITEM : "aggregated in"
+          WAREHOUSE o{<>..o{ PRODUCT : "stores"
         `,
         { logLevel: 1 }
       );
@@ -525,8 +525,8 @@ ORDER ||--|{ LINE-ITEM : contains
          p[PROJECT]
          t[TASK]
 
-         d <> e : contains
-         p <>.. t : manages
+         d ||<>--|| e : contains
+         p o{<>..o{ t : manages
 
         `,
         { logLevel: 1 }
@@ -537,11 +537,34 @@ ORDER ||--|{ LINE-ITEM : contains
       imgSnapshotTest(
         `
         erDiagram
-          COMPANY <> DEPARTMENT : owns
-          DEPARTMENT <> EMPLOYEE : contains
-          EMPLOYEE <> PROJECT : works_on
-          PROJECT <> TASK : consists_of
-          TASK <> SUBTASK : includes
+          COMPANY ||<>--o{ DEPARTMENT : owns
+          DEPARTMENT ||<>--o{ EMPLOYEE : contains
+          EMPLOYEE o{<>--o{ PROJECT : works_on
+          PROJECT ||<>--o{ TASK : consists_of
+          TASK ||<>--o{ SUBTASK : includes
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with different cardinalities', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          COMPANY ||<>--o{ DEPARTMENT : has
+          MANAGER o|<>..o| TEAM : leads
+          PRODUCT |{<>--|{ CATEGORY : belongs_to
+        `,
+        { logLevel: 1 }
+      );
+    });
+
+    it('should render aggregation with zero-or-one relationships', () => {
+      imgSnapshotTest(
+        `
+        erDiagram
+          PERSON o|<>--o| PASSPORT : owns
+          EMPLOYEE o|<>..o| PARKING_SPOT : assigned
         `,
         { logLevel: 1 }
       );

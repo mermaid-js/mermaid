@@ -155,30 +155,52 @@ erDiagram
 
 Aggregation represents a "has-a" relationship where the part can exist independently of the whole. This is different from composition, where the part cannot exist without the whole. Aggregation relationships are rendered with hollow diamond markers at the endpoints.
 
-| Value |      Alias for       | Description                    |
-| :---: | :------------------: | ------------------------------ |
-|  <>   |    _aggregation_     | Basic aggregation (solid line) |
-| <>..  | _aggregation-dashed_ | Dashed aggregation line        |
+Aggregation syntax follows a compositional pattern where you combine cardinality markers with the aggregation symbol (`<>`) and line type:
+
+**Syntax:**
+
+```
+<first-entity> <cardinalityA><>--<cardinalityB> <second-entity> : <relationship-label>
+<first-entity> <cardinalityA><>..<cardinalityB> <second-entity> : <relationship-label>
+```
+
+Where:
+
+- `<>` is the aggregation marker
+- `--` represents a solid line (identifying relationship)
+- `..` represents a dashed line (non-identifying relationship)
+- Cardinality markers can be: `||` (only one), `o|` (zero or one), `o{` (zero or more), `|{` (one or more)
 
 **Examples:**
 
 ```mermaid-example
 erDiagram
-    DEPARTMENT <> EMPLOYEE : contains
-    PROJECT <>.. TASK : manages
-    TEAM <> MEMBER : consists_of
+    DEPARTMENT ||<>--o{ EMPLOYEE : contains
+    PROJECT o{<>..o{ TASK : manages
+    TEAM ||<>--|| MEMBER : consists_of
+    COMPANY ||<>--o{ DEPARTMENT : owns
 ```
 
 In these examples:
 
-- `DEPARTMENT <> EMPLOYEE` shows that a department contains employees (aggregation)
-- `PROJECT <>.. TASK` shows that a project manages tasks (dashed aggregation)
-- `TEAM <> MEMBER` shows that a team consists of members (aggregation)
+- `DEPARTMENT ||<>--o{ EMPLOYEE` shows that one department contains zero or more employees (solid aggregation)
+- `PROJECT o{<>..o{ TASK` shows that zero or more projects manage zero or more tasks (dashed aggregation)
+- `TEAM ||<>--|| MEMBER` shows that one team consists of one member (solid aggregation)
+- `COMPANY ||<>--o{ DEPARTMENT` shows that one company owns zero or more departments (solid aggregation)
 
 **Aggregation vs Association**
 
-- **Aggregation** (`<>`): "Has-a" relationship where parts can exist independently
-- **Association** (`||--`, `}o--`): General relationship between entities
+- **Aggregation** (`<>`): "Has-a" relationship where parts can exist independently. The aggregation marker must be combined with cardinalities and line type (e.g., `||<>--o{`)
+- **Association** (`||--`, `}o--`): General relationship between entities with cardinality markers directly connected to line type
+
+**Additional Examples:**
+
+```mermaid-example
+erDiagram
+    UNIVERSITY ||<>--o{ COLLEGE : "has multiple"
+    MANAGER o|<>..o| TEAM : leads
+    PERSON o|<>--o| PASSPORT : owns
+```
 
 ### Attributes
 
