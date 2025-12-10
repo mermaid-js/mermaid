@@ -70,7 +70,6 @@ service dns(internet)[http://www.mywebs]
 service api(server)[api-gateway_v2.0]
 service db(database)[db:5432/primary]
 
-
 If the service belongs to a group, it can be placed inside it through the optional `in` keyword
 
 ```
