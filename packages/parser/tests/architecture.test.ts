@@ -87,33 +87,31 @@ describe('architecture', () => {
   });
 
   describe('should handle special characters in service titles', () => {
-  it('should handle service with dot in title', () => {
-    const context = `architecture-beta
+    it('should handle service with dot in title', () => {
+      const context = `architecture-beta
       service dns1(internet)[www.mywebs]
     `;
-    const result = parse(context);
-    expectNoErrorsOrAlternatives(result);
-    expect(result.value.services[0].title).toBe('www.mywebs');
-  });
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.services[0].title).toBe('www.mywebs');
+    });
 
-  it('should handle service with multiple special characters', () => {
-    const context = `architecture-beta
+    it('should handle service with multiple special characters', () => {
+      const context = `architecture-beta
       service api(server)[api-gateway_v2.0]
     `;
-    const result = parse(context);
-    expectNoErrorsOrAlternatives(result);
-    expect(result.value.services[0].title).toBe('api-gateway_v2.0');
-  });
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.services[0].title).toBe('api-gateway_v2.0');
+    });
 
-  it('should handle service with colons and slashes', () => {
-    const context = `architecture-beta
+    it('should handle service with colons and slashes', () => {
+      const context = `architecture-beta
       service db(database)[db:5432/primary]
     `;
-    const result = parse(context);
-    expectNoErrorsOrAlternatives(result);
-    expect(result.value.services[0].title).toBe('db:5432/primary');
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.services[0].title).toBe('db:5432/primary');
+    });
   });
-});
-
-
 });
