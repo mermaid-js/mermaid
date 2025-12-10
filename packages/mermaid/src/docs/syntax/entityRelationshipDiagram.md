@@ -151,7 +151,7 @@ erDiagram
     PERSON many(0) optionally to 0+ NAMED-DRIVER : is
 ```
 
-### Aggregation
+### Aggregation (v<MERMAID_RELEASE_VERSION>+)
 
 Aggregation represents a "has-a" relationship where the part can exist independently of the whole. This is different from composition, where the part cannot exist without the whole. Aggregation relationships are rendered with hollow diamond markers at the endpoints.
 
