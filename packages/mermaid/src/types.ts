@@ -23,6 +23,7 @@ export interface ParticipantMetaData {
     | 'database'
     | 'collections'
     | 'queue';
+  alias?: string;
 }
 
 export interface EdgeMetaData {
@@ -47,6 +48,10 @@ import type { MermaidConfig } from './config.type.js';
 export interface Point {
   x: number;
   y: number;
+}
+export interface Bounds extends Point {
+  width: number;
+  height: number;
 }
 
 export interface TextDimensionConfig {

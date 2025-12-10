@@ -79,6 +79,18 @@ describe('Flowchart v2', () => {
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
+  it('6a: should render complex HTML in labels with sandbox security', () => {
+    imgSnapshotTest(
+      `flowchart TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[fa:fa-car Car]
+      `,
+      { securityLevel: 'sandbox', flowchart: { htmlLabels: true } }
+    );
+  });
   it('7: should render a flowchart when useMaxWidth is true (default)', () => {
     renderGraph(
       `flowchart TD
@@ -1185,5 +1197,18 @@ end
     it('should render raw strings with htmlLabels: false', () => {
       imgSnapshotTest(graph, { htmlLabels: false });
     });
+  });
+
+  it('V2 - 17: should apply class def colour to edge label', () => {
+    imgSnapshotTest(
+      ` graph LR
+    id1(Start) link@-- "Label" -->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+
+class id2 myClass
+classDef myClass fill:#bbf,stroke:#f66,stroke-width:2px,color:white,stroke-dasharray: 5 5
+class link myClass
+`
+    );
   });
 });

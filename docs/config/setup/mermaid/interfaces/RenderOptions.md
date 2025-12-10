@@ -10,7 +10,7 @@
 
 # Interface: RenderOptions
 
-Defined in: [packages/mermaid/src/rendering-util/render.ts:7](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L7)
+Defined in: [packages/mermaid/src/rendering-util/render.ts:10](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L10)
 
 ## Properties
 
@@ -18,4 +18,4 @@ Defined in: [packages/mermaid/src/rendering-util/render.ts:7](https://github.com
 
 > `optional` **algorithm**: `string`
 
-Defined in: [packages/mermaid/src/rendering-util/render.ts:8](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L8)
+Defined in: [packages/mermaid/src/rendering-util/render.ts:11](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L11)

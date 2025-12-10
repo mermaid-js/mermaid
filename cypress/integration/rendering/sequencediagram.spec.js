@@ -1053,4 +1053,167 @@ describe('Sequence diagram', () => {
       ]);
     });
   });
+  describe('render new arrow type', () => {
+    it('should render Solid half arrow top', () => {
+      imgSnapshotTest(
+        `
+    sequenceDiagram
+      Alice -|\\  John: Hello John, how are you? 
+      Alice-|\\  John: Hi Alice, I can hear you!
+      Alice -|\\  John: Test
+      `
+      );
+    });
+    it('should render Solid half arrow bottom', () => {
+      imgSnapshotTest(
+        `
+    sequenceDiagram
+      Alice-|/John: Hello John, how are you?
+      Alice-|/John: Hi Alice, I can hear you!
+      Alice-|/John: Test
+      `
+      );
+    });
+
+    it('should render Stick half arrow top ', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice-\\\\John: Hello John, how are you?
+      Alice-\\\\John: Hi Alice, I can hear you!
+      Alice-\\\\John: Test
+      `
+      );
+    });
+    it('should render Stick half arrow bottom ', () => {
+      imgSnapshotTest(
+        `
+       sequenceDiagram
+      Alice-//John: Hello John, how are you?
+      Alice-//John: Hi Alice, I can hear you!
+      Alice-//John: Test
+      `
+      );
+    });
+    it('should render Solid half arrow top reverse ', () => {
+      imgSnapshotTest(
+        `
+       sequenceDiagram
+      Alice/|-John: Hello Alice, how are you?
+      Alice/|-John: Hi Alice, I can hear you!
+      Alice/|-John: Test
+
+      `
+      );
+    });
+
+    it('should render Solid half arrow bottom reverse ', () => {
+      imgSnapshotTest(
+        `sequenceDiagram
+        Alice \\|- John: Hello Alice, how are you?
+        Alice \\|- John: Hi Alice, I can hear you!
+        Alice \\|- John: Test`
+      );
+    });
+
+    it('should render Stick half arrow top reverse ', () => {
+      imgSnapshotTest(
+        `
+      sequenceDiagram
+      Alice //-John: Hello Alice, how are you?
+      Alice //-John: Hi Alice, I can hear you!
+      Alice //-John: Test`
+      );
+    });
+
+    it('should render Stick half arrow bottom reverse ', () => {
+      imgSnapshotTest(
+        `
+       sequenceDiagram
+      Alice \\\\-John: Hello Alice, how are you?
+      Alice \\\\-John: Hi Alice, I can hear you!
+      Alice \\\\-John: Test`
+      );
+    });
+
+    it('should render Solid half arrow top dotted', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice --|\\John: Hello John, how are you?
+      Alice --|\\John: Hi Alice, I can hear you!
+      Alice --|\\John: Test`
+      );
+    });
+
+    it('should render Solid half arrow bottom dotted', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice --|/John: Hello John, how are you?
+      Alice --|/John: Hi Alice, I can hear you!
+      Alice --|/John: Test`
+      );
+    });
+
+    it('should render Stick half arrow top dotted', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice--\\\\John: Hello John, how are you?
+      Alice--\\\\John: Hi Alice, I can hear you!
+      Alice--\\\\John: Test`
+      );
+    });
+
+    it('should render Stick half arrow bottom dotted', () => {
+      imgSnapshotTest(
+        `
+     sequenceDiagram
+      Alice--//John: Hello John, how are you?
+      Alice--//John: Hi Alice, I can hear you!
+      Alice--//John: Test`
+      );
+    });
+
+    it('should render Solid half arrow top reverse dotted', () => {
+      imgSnapshotTest(
+        `
+  sequenceDiagram
+      Alice/|--John: Hello Alice, how are you?
+      Alice/|--John: Hi Alice, I can hear you!
+      Alice/|--John: Test`
+      );
+    });
+
+    it('should render Solid half arrow bottom reverse dotted', () => {
+      imgSnapshotTest(
+        `
+  sequenceDiagram
+      Alice\\|--John: Hello Alice, how are you?
+      Alice\\|--John: Hi Alice, I can hear you!
+      Alice\\|--John: Test`
+      );
+    });
+
+    it('should render Stick half arrow top reverse dotted ', () => {
+      imgSnapshotTest(
+        `
+  sequenceDiagram
+      Alice//--John: Hello Alice, how are you?
+      Alice//--John: Hi Alice, I can hear you!
+      Alice//--John: Test`
+      );
+    });
+
+    it('should render Stick half arrow bottom reverse dotted ', () => {
+      imgSnapshotTest(
+        `
+  sequenceDiagram
+      Alice\\\\--John: Hello Alice, how are you?
+      Alice\\\\--John: Hi Alice, I can hear you!
+      Alice\\\\--John: Test`
+      );
+    });
+  });
 });

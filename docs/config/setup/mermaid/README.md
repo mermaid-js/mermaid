@@ -10,10 +10,6 @@
 
 # mermaid
 
-## Classes
-
-- [UnknownDiagramError](classes/UnknownDiagramError.md)
-
 ## Interfaces
 
 - [DetailedError](interfaces/DetailedError.md)
@@ -27,6 +23,7 @@
 - [RenderOptions](interfaces/RenderOptions.md)
 - [RenderResult](interfaces/RenderResult.md)
 - [RunOptions](interfaces/RunOptions.md)
+- [UnknownDiagramError](interfaces/UnknownDiagramError.md)
 
 ## Type Aliases
 

@@ -6,6 +6,18 @@
 
 # Blog
 
+## [The Essential Guide to Mermaid Chart Plugin for VS Code \[08/2025\]](https://docs.mermaidchart.com/blog/posts/the-essential-guide-to-mermaid-chart-plugin-for-vs-code-08-2025)
+
+9/9/2025 • 5 mins
+
+Creating diagrams in VS Code has never been easier—the Mermaid VS Code plugin transforms text-based syntax into clear, professional visuals right inside your editor. With live previews, smart editing, and AI-powered diagram generation, it removes the friction from visualization so you can focus on coding.
+
+## [How to Create Perfect Flowcharts Using AI in 2025 Step-by-Step Guide](https://docs.mermaidchart.com/blog/posts/how-to-create-perfect-flowcharts-using-ai-in-2025-step-by-step-guide)
+
+7/22/2025 • 8 mins
+
+In 2025, AI tools make creating flowcharts faster and easier than ever. With Mermaid’s AI flowchart generator, you can turn plain text into clear, accurate diagrams in seconds. This guide walks through how it works and how to get the most out of it for technical and business workflows alike.
+
 ## [Mermaid introduces the Visual Editor for Entity Relationship diagrams](https://docs.mermaidchart.com/blog/posts/mermaid-introduces-the-visual-editor-for-entity-relationship-diagrams)
 
 7/15/2025 • 7 mins
