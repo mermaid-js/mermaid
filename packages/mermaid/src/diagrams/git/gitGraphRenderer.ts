@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
-import utils from '../../utils.js';
+import utils, { sanitizeUrl } from '../../utils.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
 import type d3 from 'd3';
 import type { Commit, GitGraphDBRenderProvider, DiagramOrientation } from './gitGraphTypes.js';
@@ -197,8 +197,12 @@ const drawCommitBullet = (
   branchIndex: number,
   commitSymbolType: number
 ) => {
+  const commitGroup = gBullets.append('g');
+  commitGroup.attr('class', 'commit');
+  commitGroup.attr('data-commit-id', commit.id);
+
   if (commitSymbolType === commitType.HIGHLIGHT) {
-    gBullets
+    commitGroup
       .append('rect')
       .attr('x', commitPosition.x - 10)
       .attr('y', commitPosition.y - 10)
@@ -208,7 +212,7 @@ const drawCommitBullet = (
         'class',
         `commit ${commit.id} commit-highlight${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-outer`
       );
-    gBullets
+    commitGroup
       .append('rect')
       .attr('x', commitPosition.x - 6)
       .attr('y', commitPosition.y - 6)
@@ -219,27 +223,27 @@ const drawCommitBullet = (
         `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT} ${typeClass}-inner`
       );
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
-    gBullets
+    commitGroup
       .append('circle')
       .attr('cx', commitPosition.x)
       .attr('cy', commitPosition.y)
       .attr('r', 10)
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    commitGroup
       .append('circle')
       .attr('cx', commitPosition.x - 3)
       .attr('cy', commitPosition.y + 2)
       .attr('r', 2.75)
       .attr('fill', '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    commitGroup
       .append('circle')
       .attr('cx', commitPosition.x + 3)
       .attr('cy', commitPosition.y + 2)
       .attr('r', 2.75)
       .attr('fill', '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    commitGroup
       .append('line')
       .attr('x1', commitPosition.x + 3)
       .attr('y1', commitPosition.y + 1)
@@ -247,7 +251,7 @@ const drawCommitBullet = (
       .attr('y2', commitPosition.y - 5)
       .attr('stroke', '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
-    gBullets
+    commitGroup
       .append('line')
       .attr('x1', commitPosition.x - 3)
       .attr('y1', commitPosition.y + 1)
@@ -256,13 +260,13 @@ const drawCommitBullet = (
       .attr('stroke', '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
   } else {
-    const circle = gBullets.append('circle');
+    const circle = commitGroup.append('circle');
     circle.attr('cx', commitPosition.x);
     circle.attr('cy', commitPosition.y);
     circle.attr('r', commit.type === commitType.MERGE ? 9 : 10);
     circle.attr('class', `commit ${commit.id} commit${branchIndex % THEME_COLOR_LIMIT}`);
     if (commitSymbolType === commitType.MERGE) {
-      const circle2 = gBullets.append('circle');
+      const circle2 = commitGroup.append('circle');
       circle2.attr('cx', commitPosition.x);
       circle2.attr('cy', commitPosition.y);
       circle2.attr('r', 6);
@@ -272,7 +276,7 @@ const drawCommitBullet = (
       );
     }
     if (commitSymbolType === commitType.REVERSE) {
-      const cross = gBullets.append('path');
+      const cross = commitGroup.append('path');
       cross
         .attr(
           'd',
@@ -895,6 +899,79 @@ const setBranchPosition = function (
   return pos;
 };
 
+/**
+ * Sets up click events for commits with links
+ * @param svgId - The ID of the SVG element
+ * @param db - The gitGraph database
+ * @param securityLevel - The mermaid security level
+ * @returns A function to bind events, or undefined if no links
+ */
+const setupClickEvents = (
+  svgId: string,
+  db: GitGraphDBRenderProvider,
+  securityLevel: string
+): (() => void) | undefined => {
+  const links = db.getLinks?.();
+  if (!links || links.size === 0) {
+    return undefined;
+  }
+  return () => {
+    const svg = select(`[id="${svgId}"]`);
+    links.forEach((linkData, commitId) => {
+      // Escape special characters in commit ID for CSS selector
+      const escapedId = CSS.escape(commitId);
+      const element = svg.select(`[data-commit-id="${escapedId}"]`);
+      if (element.empty()) {
+        return;
+      }
+      // Sanitize URL to prevent XSS
+      const sanitizedUrl = sanitizeUrl(linkData.link);
+      if (!sanitizedUrl) {
+        return;
+      }
+      // Add clickable styling and accessibility
+      element
+        .classed('clickable', true)
+        .attr('tabindex', '0')
+        .style('cursor', 'pointer');
+      // Add tooltip if provided
+      if (linkData.tooltip) {
+        element.append('title').text(linkData.tooltip);
+      }
+      // Click handler
+      const handleClick = () => {
+        if (securityLevel === 'sandbox') {
+          // In sandbox mode, post message to parent frame
+          // @ts-ignore - window.parent is available in sandbox
+          window.parent.postMessage(
+            {
+              type: 'mermaid:gitgraph:link',
+              url: sanitizedUrl,
+              target: linkData.target,
+            },
+            '*'
+          );
+        } else if (linkData.target === '_blank') {
+          // Open in new tab with security attributes
+          window.open(sanitizedUrl, '_blank', 'noopener,noreferrer');
+        } else {
+          // Navigate in current window
+          window.location.href = sanitizedUrl;
+        }
+      };
+      // Bind click event
+      element.on('click', handleClick);
+      // Bind keyboard event for accessibility
+      element.on('keydown', (event: KeyboardEvent) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          handleClick();
+        }
+      });
+    });
+  };
+};
+
 export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   clear();
 
@@ -945,6 +1022,11 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     DEFAULT_GITGRAPH_CONFIG.diagramPadding,
     DEFAULT_GITGRAPH_CONFIG.useMaxWidth
   );
+
+  const bindFunctions = setupClickEvents(id, db, DEFAULT_CONFIG?.securityLevel ?? 'strict');
+  if (bindFunctions) {
+    bindFunctions();
+  }
 };
 
 export default {
