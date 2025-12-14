@@ -13,7 +13,13 @@ const fade = (color: string, opacity: number) => {
   return khroma.rgba(r, g, b, opacity);
 };
 
-const getStyles = (options: FlowChartStyleOptions) =>
+export interface ErStyleOptions {
+  rowOdd: string;
+  rowEven: string;
+}
+
+const getStyles = (options: FlowChartStyleOptions & ErStyleOptions) =>
+  // language=css
   `
   .entityBox {
     fill: ${options.mainBkg};
@@ -68,6 +74,16 @@ const getStyles = (options: FlowChartStyleOptions) =>
     stroke: ${options.lineColor} !important;
     stroke-width: 1;
   }
+  
+  /*
+  .row-rect-odd {
+    fill: ${options.rowOdd};
+  }
+  
+  .row-rect-even {
+    fill: ${options.rowEven};
+  }
+  */
 `;
 
 export default getStyles;
