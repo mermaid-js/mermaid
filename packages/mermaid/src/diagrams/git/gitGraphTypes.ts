@@ -113,6 +113,14 @@ export interface GitGraphDB extends DiagramDBBase<GitGraphDiagramConfig> {
   getCurrentBranch: () => string;
   getDirection: () => DiagramOrientation;
   getHead: () => Commit | null;
+  setLink: (
+    id: string,
+    link: string,
+    tooltip?: string,
+    target?: '_self' | '_blank' | '_parent' | '_top'
+  ) => void;
+  getLink: (id: string) => GitGraphLink | undefined;
+  getLinks: () => Map<string, GitGraphLink>;
 }
 
 export interface GitGraphDBParseProvider extends Partial<GitGraphDB> {
